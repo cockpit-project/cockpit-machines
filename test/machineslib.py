@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
 
-from testlib import *
+from testlib import MachineCase, no_retry_when_changed, nondestructive, skipImage, test_main, wait
 from netlib import NetworkHelpers
 from storagelib import StorageHelpers
 from machinesxmls import *

@@ -17,11 +17,18 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
 
-import parent
-from machineslib import *
-from testlib import *
+import os
+import sys
 from datetime import datetime
 import time
+
+# import Cockpit's machinery for test VMs and its browser test API
+TEST_DIR = os.path.dirname(__file__)
+sys.path.append(os.path.join(TEST_DIR, "common"))
+sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
+
+from machineslib import VirtualMachinesCase  # noqa
+from testlib import nondestructive, skipImage, test_main  # noqa
 
 distrosWithoutSnapshot = ["centos-8-stream", "debian-stable", "fedora-32", "fedora-coreos", "rhel-8-3", "rhel-8-3-distropkg", "rhel-8-4", "rhel-8-4-distropkg", "ubuntu-2004", "ubuntu-stable"]
 
