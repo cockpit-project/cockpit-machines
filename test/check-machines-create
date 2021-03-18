@@ -380,7 +380,8 @@ class TestMachinesCreate(VirtualMachinesCase):
             target_iqn = "iqn.2019-09.cockpit.lan"
             self.prepareStorageDeviceOnISCSI(target_iqn)
 
-            print(self.machine.execute("virsh pool-define-as iscsi-pool --type iscsi --target /dev/disk/by-id --source-host 127.0.0.1 --source-dev {0} && ls -la /dev/disk/by-id && virsh pool-start iscsi-pool".format(target_iqn)))
+            print(self.machine.execute(
+                "virsh pool-define-as iscsi-pool --type iscsi --target /dev/disk/by-id --source-host 127.0.0.1 --source-dev {0} && ls -la /dev/disk/by-id && virsh pool-start iscsi-pool".format(target_iqn)))
             wait(lambda: "unit:0:0:0" in self.machine.execute("virsh pool-refresh iscsi-pool && virsh vol-list iscsi-pool"), delay=3)
 
             self.addCleanup(self.machine.execute, "virsh pool-destroy iscsi-pool; virsh pool-delete iscsi-pool; virsh pool-undefine iscsi-pool")
@@ -998,7 +999,8 @@ class TestMachinesCreate(VirtualMachinesCase):
             cmds = [
                 # Generate certificate for https server
                 "cd {0}".format(self.test_obj.vm_tmpdir),
-                "openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -subj '/CN=archive.fedoraproject.org' -nodes -config {0}/min-openssl-config.cnf".format(self.test_obj.vm_tmpdir),
+                "openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -subj '/CN=archive.fedoraproject.org' -nodes -config {0}/min-openssl-config.cnf".format(
+                    self.test_obj.vm_tmpdir),
                 "cat cert.pem key.pem > server.pem"
             ]
 
@@ -1383,7 +1385,8 @@ class TestMachinesCreate(VirtualMachinesCase):
         m.execute("virsh attach-interface --persistent VmNotInstalled bridge virbr0")
 
         # Change the os boot firmware configuration
-        supports_firmware_config = m.image in ['fedora-32', 'fedora-33', 'fedora-34', 'fedora-testing', 'centos-8-stream', 'rhel-8-3', 'rhel-8-3-distropkg', "rhel-8-4", "rhel-8-4-distropkg", 'debian-testing', 'ubuntu-stable', 'ubuntu-2004']
+        supports_firmware_config = m.image in ['fedora-32', 'fedora-33', 'fedora-34', 'fedora-testing', 'centos-8-stream',
+                                               'rhel-8-3', 'rhel-8-3-distropkg', "rhel-8-4", "rhel-8-4-distropkg", 'debian-testing', 'ubuntu-stable', 'ubuntu-2004']
         if supports_firmware_config:
             b.wait_in_text("#vm-VmNotInstalled-firmware", "BIOS")
             b.click("#vm-VmNotInstalled-firmware")
