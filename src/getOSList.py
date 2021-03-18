@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
+import json
+from gi.repository import Libosinfo
 import gi
 gi.require_version('Libosinfo', '1.0')
-from gi.repository import Libosinfo
-import json
 
 
 def _getInstallScriptProfile(installScriptList):
@@ -72,13 +72,13 @@ for i in range(oses.get_length()):
         osObj['medias'][mediaId]['profiles'] = []
 
         if (osObj['unattendedInstallable'] and
-           hasattr(media, 'supports_installer_script')):
+                hasattr(media, 'supports_installer_script')):
             supports = media.supports_installer_script()
             osObj['medias'][mediaId]['unattendedInstallable'] = supports
 
             mediaInstallScripts = media.get_install_script_list()
             osObj['medias'][mediaId]['profiles'].extend(
-                     _getInstallScriptProfile(mediaInstallScripts))
+                _getInstallScriptProfile(mediaInstallScripts))
 
             if supports and not osObj['medias'][mediaId]['profiles']:
                 osObj['medias'][mediaId]['profiles'].extend(osObj['profiles'])
@@ -89,8 +89,8 @@ for i in range(oses.get_length()):
         tree = trees.get_nth(j)
 
         if (tree.get_url() and
-           ((hasattr(tree, 'has_treeinfo') and tree.has_treeinfo()) or
-           (tree.get_kernel_path() and tree.get_initrd_path()))):
+            ((hasattr(tree, 'has_treeinfo') and tree.has_treeinfo()) or
+             (tree.get_kernel_path() and tree.get_initrd_path()))):
             osObj['treeInstallable'] = True
 
     res.append(osObj)
