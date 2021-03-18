@@ -1,0 +1,43 @@
+#!/bin/sh
+# image-customize script to enable cockpit in test VMs
+# The application RPM will be installed separately
+set -eu
+
+# for Debian based images, build and install debs; for RPM based ones, the locally built rpm gets installed separately
+if [ -d /var/tmp/debian ]; then
+    apt-get update
+    if grep -q 'VERSION_ID="20.10"' /etc/os-release; then
+        BACKPORTS="-t groovy-backports"
+    fi
+    eatmydata apt-get install ${BACKPORTS:-} ${APT_INSTALL_OPTIONS:-} -y cockpit-ws cockpit-system
+
+    # build source package
+    cd /var/tmp
+    TAR=$(ls cockpit-machines-*.tar.gz)
+    VERSION="${TAR#cockpit-machines-}"
+    VERSION="${VERSION%.tar.gz}"
+    ln -s $TAR cockpit-machines_${VERSION}.orig.tar.gz
+    tar xf "$TAR"
+    cd cockpit-machines
+    cp -r ../debian .
+    sed -i "s/(0-1)/(${VERSION}-1)/" debian/changelog
+    dpkg-buildpackage -S -us -uc -nc
+
+    # build and install binary package; prefer pbuilder if available (on Cockpit test VMs)
+    if [ -e /var/cache/pbuilder/base.tgz ]; then
+        pbuilder build --buildresult .. ../*.dsc
+    else
+        eatmydata apt-get install ${APT_INSTALL_OPTIONS:-} -y build-essential debhelper
+        dpkg-buildpackage -us -uc -b
+    fi
+    dpkg -i ../*.deb
+fi
+
+systemctl enable cockpit.socket
+
+# don't force https:// (self-signed cert)
+printf "[WebService]\\nAllowUnencrypted=true\\n" > /etc/cockpit/cockpit.conf
+
+if type firewall-cmd >/dev/null 2>&1; then
+    firewall-cmd --add-service=cockpit --permanent
+fi
