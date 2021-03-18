@@ -1,5 +1,5 @@
 import cockpit from 'cockpit';
-import * as service from '../lib/service.js';
+import * as service from 'service.js';
 import createVmScript from 'raw-loader!./scripts/create_machine.sh';
 import installVmScript from 'raw-loader!./scripts/install_machine.sh';
 import getLibvirtServiceNameScript from 'raw-loader!./scripts/get_libvirt_service_name.sh';
