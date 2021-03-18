@@ -1,0 +1,21 @@
+Source: cockpit-machines
+Section: admin
+Priority: optional
+Maintainer: Cockpit <cockpit-devel@lists.fedorahosted.org>
+Build-Depends: debhelper-compat (= 12),
+Standards-Version: 4.5.1
+Homepage: https://github.com/cockpit-project/cockpit-machines
+
+Package: cockpit-machines
+Architecture: all
+Multi-Arch: foreign
+Depends: ${misc:Depends},
+         libvirt-daemon-system,
+         libvirt-clients | libvirt-bin,
+         libvirt-dbus
+Recommends: virtinst, python3-gi, gir1.2-libosinfo-1.0, qemu-block-extra
+Description: Cockpit user interface for virtual machines
+ The Cockpit components for managing virtual machines.
+ .
+ If the "virtinst" package is installed, you can also create new virtual
+ machines.
