@@ -225,6 +225,10 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
             self.allow_journal_messages('.* type=1400 .* apparmor="DENIED" operation="open" profile="libvirt.* name="/" .* denied_mask="r" .*')
             self.allow_journal_messages('.* type=1400 .* apparmor="DENIED" operation="open" profile="libvirt.* name="/sys/bus/nd/devices/" .* denied_mask="r" .*')
 
+        if m.image in ["ubuntu-2004"]:
+            # noisy debug message from old cockpit-ws
+            self.allow_journal_messages("logged in user session", "User .* logged into session .*", "New connection to session .*", "Connection to session .* closed")
+
         # FIXME: testDomainMemorySettings on Fedora-32 reports this. Figure out where it comes from.
         # Ignoring just to unbreak tests for now
         self.allow_journal_messages("Failed to get COMM: No such process")
