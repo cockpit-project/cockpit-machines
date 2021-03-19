@@ -39,6 +39,11 @@ if [ -d /var/tmp/debian ]; then
     dpkg -i ../*.deb
 fi
 
+# for Debian images, allow libvirtd coredumps
+if grep -q 'ID=debian' /etc/os-release; then
+    echo '* soft core unlimited' >> /etc/security/limits.conf
+fi
+
 systemctl enable cockpit.socket
 
 # don't force https:// (self-signed cert)
