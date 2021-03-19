@@ -994,7 +994,7 @@ class TestMachinesCreate(VirtualMachinesCase):
             self.machine.execute(" && ".join(cmds))
 
         def _setupMockFileServer(self):
-            self.machine.upload(["verify/files/min-openssl-config.cnf", "verify/files/mock-range-server.py"], self.test_obj.vm_tmpdir)
+            self.machine.upload(["files/min-openssl-config.cnf", "files/mock-range-server.py"], self.test_obj.vm_tmpdir)
             cmds = [
                 # Generate certificate for https server
                 "cd {0}".format(self.test_obj.vm_tmpdir),
@@ -1042,7 +1042,7 @@ class TestMachinesCreate(VirtualMachinesCase):
             self._setupMockFileServer()
             distro_tree_path = "/var/lib/libvirt/pub/archive/fedora/linux/releases/28/Server/x86_64/os/"
             self.machine.execute("mkdir -p {0}".format(distro_tree_path))
-            self.machine.upload(["verify/files/fakefedoratree/.treeinfo", "verify/files/fakefedoratree/images"], distro_tree_path)
+            self.machine.upload(["files/fakefedoratree/.treeinfo", "files/fakefedoratree/images"], distro_tree_path)
             # borrow the kernel executable for the test server
             self.machine.execute("cp /boot/vmlinuz-{0} {1}images/pxeboot/vmlinuz".format(self.machine.execute("uname -r").rstrip(), distro_tree_path))
             self.machine.execute("chown -R 777 /var/lib/libvirt/pub")
