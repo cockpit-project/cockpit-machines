@@ -12,6 +12,9 @@ if [ -d /var/tmp/debian ]; then
 
         BACKPORTS="-t groovy-backports"
     fi
+    if grep -q 'VERSION_ID="10"' /etc/os-release; then
+        BACKPORTS="-t buster-backports"
+    fi
     eatmydata apt-get install ${BACKPORTS:-} ${APT_INSTALL_OPTIONS:-} -y cockpit-ws cockpit-system
 
     # build source package
