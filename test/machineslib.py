@@ -192,10 +192,6 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
         self.restore_dir("/var/lib/libvirt")
         self.restore_dir("/etc/libvirt")
 
-        if m.image in ["ubuntu-2004", "ubuntu-stable"]:
-            # https://bugs.launchpad.net/ubuntu/+source/libvirt-dbus/+bug/1892757
-            m.execute("usermod -a -G libvirt libvirtdbus")
-
         self.startLibvirt()
         self.addCleanup(m.execute, "systemctl stop libvirtd")
 
