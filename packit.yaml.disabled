@@ -4,6 +4,8 @@ synced_files:
 upstream_package_name: cockpit-machines
 downstream_package_name: cockpit-machines
 actions:
+  # FIXME: build OOMs with the packit sandcastle machines; requires building
+  # the dist tarball in a GitHub workflow
   post-upstream-clone: make cockpit-machines.spec
   # reduce memory consumption of webpack in sandcastle container
   # https://github.com/packit/sandcastle/pull/92
