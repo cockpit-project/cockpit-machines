@@ -24,6 +24,9 @@ URL:            https://github.com/cockpit-project/cockpit-machines
 
 Source0:        https://github.com/cockpit-project/cockpit-machines/releases/download/%{version}/cockpit-machines-%{version}.tar.gz
 BuildArch:      noarch
+BuildRequires:  libappstream-glib
+BuildRequires:  make
+
 Requires: cockpit-bridge >= 215
 %if 0%{?suse_version}
 Requires: libvirt-daemon-qemu
