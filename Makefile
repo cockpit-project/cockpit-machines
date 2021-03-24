@@ -99,6 +99,11 @@ devel-install: $(WEBPACK_TEST)
 dist-gzip: $(TARFILE)
 	@ls -1 $(TARFILE)
 
+# ensure that LIB_TEST and spec are older than the unpacked tarball
+download-dist: $(LIB_TEST) cockpit-machines.spec
+	test/download-dist
+	@ls -1 $(TARFILE)
+
 # when building a distribution tarball, call webpack with a 'production' environment
 # we don't ship node_modules for license and compactness reasons; we ship a
 # pre-built dist/ (so it's not necessary) and ship packge-lock.json (so that
