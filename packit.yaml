@@ -1,0 +1,17 @@
+specfile_path: cockpit-machines.spec
+synced_files:
+  - cockpit-machines.spec
+upstream_package_name: cockpit-machines
+downstream_package_name: cockpit-machines
+actions:
+  post-upstream-clone: make cockpit-machines.spec
+  create-archive:
+    - test/download-dist --wait
+    - find -name 'cockpit-machines-*.tar.gz'
+jobs:
+  - job: tests
+    trigger: pull_request
+    metadata:
+      targets:
+      - fedora-33
+      - fedora-34
