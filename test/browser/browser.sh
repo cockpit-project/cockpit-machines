@@ -22,11 +22,6 @@ if ! rpm -q chromium; then
     dnf install -y chromium
 fi
 
-# HACK: systemd kills the services after 90s
-# See https://github.com/containers/podman/issues/8751
-sed -i 's/Type=notify/Type=exec/' /usr/lib/systemd/system/podman.service
-sed -i 's/Type=notify/Type=exec/' /usr/lib/systemd/user/podman.service
-
 # create user account for logging in
 if ! id admin 2>/dev/null; then
     useradd -c Administrator -G wheel admin
@@ -52,20 +47,12 @@ chown -R runtest "$SOURCE"
 # disable core dumps, we rather investigate them upstream where test VMs are accessible
 echo core > /proc/sys/kernel/core_pattern
 
-# grab a few images to play with; tests run offline, so they cannot download images
-podman rmi --all
-podman pull quay.io/libpod/busybox
-podman pull quay.io/libpod/alpine
-podman pull quay.io/cockpit/registry:2
+systemctl enable --now cockpit.socket
 
-# copy images for user podman tests; podman insists on user session
-loginctl enable-linger $(id -u admin)
-for img in quay.io/libpod/busybox quay.io/libpod/alpine quay.io/cockpit/registry:2; do
-    podman save  $img | sudo -i -u admin podman load
-done
-loginctl disable-linger $(id -u admin)
-
-systemctl enable --now cockpit.socket podman.socket
+# make sure that we can access cockpit through the firewall
+systemctl start firewalld
+firewall-cmd --add-service=cockpit --permanent
+firewall-cmd --add-service=cockpit
 
 # Run tests as unprivileged user
 su - -c "env SOURCE=$SOURCE LOGS=$LOGS $TESTS/run-test.sh" runtest
