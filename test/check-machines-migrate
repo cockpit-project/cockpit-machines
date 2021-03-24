@@ -1,0 +1,229 @@
+#!/usr/bin/python3
+
+# This file is part of Cockpit.
+#
+# Copyright (C) 2021 Red Hat, Inc.
+#
+# Cockpit is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation; either version 2.1 of the License, or
+# (at your option) any later version.
+#
+# Cockpit is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
+
+import os
+import sys
+
+# import Cockpit's machinery for test VMs and its browser test API
+TEST_DIR = os.path.dirname(__file__)
+sys.path.append(os.path.join(TEST_DIR, "common"))
+sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
+
+from machineslib import VirtualMachinesCase  # noqa
+from testlib import wait, test_main, skipImage  # noqa
+from machinesxmls import POOL_XML  # noqa
+
+
+class TestMachinesMigration(VirtualMachinesCase):
+    provision = {
+        "machine1": {"address": "10.111.113.1/20", "dns": "10.111.112.100"},
+        "machine2": {"address": "10.111.113.2/20", "dns": "10.111.112.100"},
+    }
+
+    def prepare(self, machine1, machine2, fail):
+        machine1.execute("echo '10.111.113.2 machine2' >> /etc/hosts")
+        machine1.execute("echo '10.111.113.1 machine1' >> /etc/hosts")
+        machine2.execute("echo '10.111.113.2 machine2' >> /etc/hosts")
+        machine2.execute("echo '10.111.113.1 machine1' >> /etc/hosts")
+        machine2.execute("sed -i 's/127.0.1.1.*/127.0.1.1 machine2/' /etc/hosts")
+        machine2.execute("hostnamectl set-hostname machine2")
+        machine2.execute("systemctl restart libvirtd")
+
+        if fail != "authentication":
+            # setup key authentication
+            machine1.execute("mkdir -m 0700 -p /root/.ssh")
+            machine1.execute("ssh-keygen -t rsa -N '\' -f /root/.ssh/id_rsa")
+            machine1.execute("echo 'StrictHostKeyChecking no' > /root/.ssh/config")
+            machine1PubKey = machine1.execute("cat /root/.ssh/id_rsa.pub")
+            machine2.execute("echo '{0}' >> /root/.ssh/authorized_keys".format(machine1PubKey))
+
+        if fail != "pool":
+            # Setup the default storage pool on the destination host
+            # This is normally automatically created when creating the first VM but in this case our dest VM was never populated
+            xml = POOL_XML.format(path="/var/lib/libvirt/images")
+            machine2.execute("echo \"{0}\" > /tmp/xml && virsh pool-define /tmp/xml && virsh pool-start images".format(xml))
+        if fail == "volume":
+            machine2.execute("virsh vol-create-as images subVmTest1-2.img --capacity 1M --format qcow2")
+
+        if fail != "port_closed":
+            # Iptables < 1.8.3 will cause firewall-cmd --reload to fail
+            # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=914694
+            # Let's disable the firewall on debian-stable and let the test run instead of adding a naughty
+            if machine1.image not in ["debian-stable"]:
+                # Plain migration: The source host VM opens a direct unencrypted TCP connection to the destination host for sending the migration data.
+                # Unless a port is manually specified, libvirt will choose a migration port in the range 49152-49215, which will need to be open in the firewall on the remote host.
+                # https://wiki.libvirt.org/page/FAQ
+                machine2.execute("systemctl start firewalld")
+                machine2.execute("firewall-cmd --permanent --add-port 49152-49215/tcp")
+                machine2.execute("firewall-cmd --reload")
+            else:
+                machine2.execute("systemctl stop firewalld && "
+                                 "iptables -F && iptables -P INPUT ACCEPT")
+
+    def preCreateStorageOnDest(self, machine1, machine2):
+        dev = self.add_ram_disk(2)
+        disk_xml = '''
+<disk type='block' device='disk'>
+  <driver name='qemu' type='raw' cache='none'/>
+  <source dev='{0}'/>
+  <target dev='vda'/>
+</disk>'''
+        machine1.execute("echo \"{0}\" > /tmp/disk_xml".format(disk_xml.format(dev)))
+        machine1.execute("virsh destroy subVmTest1")
+        machine1.execute("virt-xml --remove-device --disk 1 subVmTest1 && "
+                         "virsh attach-device --domain subVmTest1 --file /tmp/disk_xml --config && "
+                         "virsh start subVmTest1")
+
+        self.add_ram_disk(2, machine2)
+
+    def testSharedStorageMigration(self):
+        self._testMigrationGeneric(False, False, None)
+
+    def testCopyStorageMigration(self):
+        self._testMigrationGeneric(True, False, None)
+
+    def testMoveTemporarilyMigration(self):
+        self._testMigrationGeneric(False, True, None)
+
+    def testFailMigrationPoolNotFound(self):
+        # Equivalent storage pool is not present on the destination
+        self._testMigrationGeneric(True, False, "pool")
+
+    # Only qemu 5.1.0 and above does checking for volumes compatibility during migration
+    # See https://mail.gnu.org/archive/html/qemu-devel/2020-04/msg05559.html
+    @skipImage('Fails validation because ubuntu-2004 with qemu version below 5.1.0 doesnt compare volume sizes', "ubuntu-2004")
+    def testFailMigrationVolumesNotCompatible(self):
+        # Different sized volume already exists on destination
+        self._testMigrationGeneric(True, False, "volume")
+
+    def testFailMigrationTCPPortClosed(self):
+        # Ports for TCP tranfer are closed
+        self._testMigrationGeneric(True, False, "port_closed")
+
+    def testFailMigrationAuthentication(self):
+        # No key authentication is set up
+        self._testMigrationGeneric(True, False, "authentication")
+
+    def testFailMigrationUriIncorrect(self):
+        # Incorrect uri inputted
+        self._testMigrationGeneric(True, False, "uri")
+
+    def testFailMigrationDomainUnknown(self):
+        # Destination domain name is not defined in /etc/hosts and is not resolvable
+        self._testMigrationGeneric(True, False, "domain")
+
+    def testFailMigrationStopLibvirtd(self):
+        # Libvirtd.service is not working on the destination
+        self._testMigrationGeneric(True, False, "libvirtd")
+
+    def testFailMigrationKillDestination(self):
+        # Kill destination server in the middle of migration
+        self._testMigrationGeneric(True, False, "kill")
+
+    def _testMigrationGeneric(self, copy_storage, temporary, fail):
+        b = self.browser
+        machine1 = self.machine
+        machine2 = self.machines['machine2']
+
+        self.createVm("subVmTest1")
+        self.login_and_go("/machines")
+        self.prepare(machine1, machine2, fail)
+
+        if not copy_storage:
+            self.preCreateStorageOnDest(machine1, machine2)
+        # Older libvirt needs the destination storage preallocated
+        elif self.machine.image in ["ubuntu-2004"] and fail != "pool":
+            machine2.execute("qemu-img create -f qcow2 /var/lib/libvirt/images/subVmTest1-2.img 50M")
+
+        self.waitVmRow("subVmTest1")
+        self.goToVmPage("subVmTest1")
+
+        self.performAction("subVmTest1", "migrate")
+        b.wait_visible("#migrate-modal")
+
+        if fail == "uri":
+            # test failure for syntactically incorrect destination uri
+            b.set_input_text("#dest-uri-input", "qemu+ssh://root@machine2/sistem")
+        elif fail == "domain":
+            # test failure for unknown domain
+            b.set_input_text("#dest-uri-input", "qemu+ssh://root@someunknowndomain/system")
+        else:
+            b.set_input_text("#dest-uri-input", "qemu+ssh://root@machine2/system")
+
+        if copy_storage:
+            b.click("#copy")
+        else:
+            b.click("#shared")
+
+        b.set_checked("#temporary", temporary)
+        if temporary:
+            b.wait_visible(".pf-c-modal-box__footer .pf-c-alert")
+
+        # The VM does not exist in destination before migration happens
+        self.assertNotIn("subVmTest1", machine2.execute("virsh list --all"))
+
+        if fail == "libvirtd":
+            machine2.execute("systemctl stop libvirtd.service")
+            if machine1.image not in ["debian-stable"]:
+                machine2.execute("systemctl stop libvirtd.socket")
+
+        b.click("#migrate-button")
+        if fail:
+            if fail == "kill":
+                machine2.execute("sleep 1; kill -SEGV 1")
+
+            b.wait_visible(".pf-c-modal-box__footer .pf-c-alert pf-c-alert__title:contains(Migration failed)")
+
+            if fail == "libvirtd":
+                machine2.execute("systemctl start libvirtd.service")
+                if machine1.image not in ["debian-stable"]:
+                    machine2.execute("systemctl start libvirtd.socket")
+
+            if fail != "kill":
+                wait(lambda: "subVmTest1" not in machine2.execute("virsh list --all"), delay=3)
+            self.assertIn("subVmTest1", machine1.execute("virsh list --all"))
+        else:
+            b.wait_not_present("#migrate-modal")
+
+            # Verify the state of the migrated VM in the destination host
+            # The migrated VM should always exist on destination - domstate depends on the options of the dialog set
+            wait(lambda: "subVmTest1" in machine2.execute("virsh list --all"), delay=3)
+            wait(lambda: "running" in machine2.execute("virsh domstate subVmTest1"), delay=3)
+            if temporary:
+                # VM on the destination host should be transient
+                self.assertIn("Persistent:     no", machine2.execute("virsh dominfo subVmTest1"))
+            else:
+                # VM on the destination host should be transient
+                self.assertIn("Persistent:     yes", machine2.execute("virsh dominfo subVmTest1"))
+
+            # Verify the state of the migrated VM in the source host
+            if temporary:
+                # VM on the source host should be still defined
+                self.assertIn("shut off", machine1.execute("virsh domstate subVmTest1"))
+            else:
+                # VM should not exist on the source host
+                self.assertNotIn("subVmTest1", machine1.execute("virsh list --all"))
+
+            if not copy_storage:
+                # Running VM on destination host has disk with a block storage which is available on both source and destination
+                self.assertIn("disk type='block'", machine2.execute("virsh dumpxml subVmTest1"))
+
+
+if __name__ == '__main__':
+    test_main()
