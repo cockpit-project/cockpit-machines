@@ -1,0 +1,131 @@
+#!/usr/bin/python3
+# This file is part of Cockpit.
+#
+# Copyright (C) 2021 Red Hat, Inc.
+#
+# Cockpit is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation; either version 2.1 of the License, or
+# (at your option) any later version.
+#
+# Cockpit is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
+
+import glob
+import io
+import os
+import urllib.request
+import subprocess
+import sys
+import tarfile
+import time
+import argparse
+
+
+def message(*args):
+    print(*args, file=sys.stderr)
+
+
+def download_dist(wait=False):
+    '''Download dists tarball for current git SHA from GitHub
+
+    These are produced by .github/workflows/build-dist.yml for every PR and push.
+    This is a lot faster than having to npm install and run webpack.
+
+    Returns path to downloaded tarball, or None if it isn't available.
+    This can happen because the current directory is not a git checkout, or it is
+    a SHA which is not pushed/PRed.
+    '''
+    try:
+        sha = subprocess.check_output(["git", "rev-parse", "HEAD"], stderr=subprocess.DEVNULL).decode().strip()
+    except subprocess.CalledProcessError:
+        message("download-dist: not a git repository")
+        return None
+
+    if subprocess.call(["git", "diff", "--quiet", "--", ":^test"]) > 0:
+        message("download-dist: uncommitted local changes, skipping download")
+        return None
+
+    dists = glob.glob(f"cockpit-machines-*{sha[:8]}*.tar.gz")
+    if dists:
+        message("download-dist: already downloaded", dists[0])
+        return os.path.abspath(dists[0])
+
+    download_url = f"https://github.com/{ os.getenv('GITHUB_BASE', 'cockpit-project/cockpit-machines') }-dist/raw/main/{sha}.tar"
+    request = urllib.request.Request(download_url)
+    tario = io.BytesIO()
+    retries = 50 if wait else 1  # 25 minutes, once every 30s
+    while retries > 0:
+        try:
+            with urllib.request.urlopen(request) as response:
+                sys.stderr.write(f"download-dist: Downloading dist tarball from {download_url} ...\n")
+                if os.isatty(sys.stderr.fileno()):
+                    total_size = 0
+                else:
+                    total_size = None
+                MB = 10**6
+                # read tar into a stringio, as the stream is not seekable and tar requires that
+                while True:
+                    block = response.read(MB)
+                    if len(block) == 0:
+                        break
+                    if total_size is not None:
+                        total_size += len(block)
+                        sys.stderr.write(f"\r{ total_size // MB } MB")
+
+                    tario.write(block)
+
+                # clear the download progress in tty mode
+                if total_size is not None:
+                    sys.stderr.write("\r                             \r")
+
+                break
+
+        except urllib.error.HTTPError as e:
+            retries -= 1
+
+            if retries == 0:
+                message(f"download-dist: Downloading {download_url} failed:", e)
+                return None
+
+            message(f"download-dist: {download_url} not yet available, waiting...")
+            time.sleep(30)
+
+    tario.seek(0)
+    with tarfile.open(fileobj=tario) as ftar:
+        names = ftar.getnames()
+        try:
+            names.remove('.')
+        except ValueError:
+            pass
+        if len(names) != 1 or not names[0].endswith(".tar.gz"):
+            message("download-dist: expected tar with exactly one tar.gz member")
+            return None
+        ftar.extract(names[0])
+        tar_path = os.path.realpath(names[0])
+
+    # Extract some files locally for speeding up the build and allowing integration tests to run
+    unpack_paths = [d for d in ["dist", "package-lock.json"] if not os.path.exists(d)]
+    if unpack_paths:
+        message("download-dist: Extracting paths from tarball:", ' '.join(unpack_paths))
+        prefixed_unpack_paths = ["cockpit-machines/" + d for d in unpack_paths]
+        subprocess.check_call(["tar", "--touch", "--strip-components=1", "-xf", tar_path] + prefixed_unpack_paths)
+        # ensure that tarball appears new, to avoid make rebuilding it
+        subprocess.check_call(["touch", tar_path])
+
+    return tar_path
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Download release tarball")
+    parser.add_argument('-w', '--wait', action='store_true', help="Wait for up to 20 minutes for download tarball")
+    args = parser.parse_args()
+    dist = download_dist(args.wait)
+    if not dist:
+        sys.exit(1)
+    print(dist)
