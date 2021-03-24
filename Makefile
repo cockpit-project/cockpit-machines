@@ -99,24 +99,24 @@ devel-install: $(WEBPACK_TEST)
 dist-gzip: $(TARFILE)
 	@ls -1 $(TARFILE)
 
-# ensure that LIB_TEST and spec are older than the unpacked tarball
-download-dist: $(LIB_TEST) cockpit-machines.spec
-	test/download-dist
-	@ls -1 $(TARFILE)
-
+# when downloading a tarball, ensure that LIB_TEST and spec are older than the unpacked tarball
 # when building a distribution tarball, call webpack with a 'production' environment
 # we don't ship node_modules for license and compactness reasons; we ship a
 # pre-built dist/ (so it's not necessary) and ship packge-lock.json (so that
 # node_modules/ can be reconstructed if necessary)
 $(TARFILE): NODE_ENV=production
-$(TARFILE): $(WEBPACK_TEST) $(RPM_NAME).spec
-	mv node_modules node_modules.release
-	touch -r package.json $(NODE_MODULES_TEST)
-	touch dist/*
-	tar czf $(TARFILE) --transform 's,^,cockpit-$(PACKAGE_NAME)/,' \
-		--exclude $(RPM_NAME).spec.in \
-		$$(git ls-files) $(LIB_TEST) src/lib/patternfly/*.scss package-lock.json $(RPM_NAME).spec dist/
-	mv node_modules.release node_modules
+$(TARFILE): $(LIB_TEST) $(RPM_NAME).spec
+	if ! test/download-dist; then \
+	    $(MAKE) $(WEBPACK_TEST); \
+	    mv node_modules node_modules.release; \
+	    touch -r package.json $(NODE_MODULES_TEST); \
+	    touch dist/*; \
+	    tar czf $(TARFILE) --transform 's,^,cockpit-$(PACKAGE_NAME)/,' \
+		    --exclude $(RPM_NAME).spec.in \
+		    $$(git ls-files) $(LIB_TEST) src/lib/patternfly/*.scss package-lock.json $(RPM_NAME).spec dist/; \
+	    mv node_modules.release node_modules; \
+	fi
+	@ls -1 $(TARFILE)
 
 srpm: $(TARFILE) $(RPM_NAME).spec
 	rpmbuild -bs \
