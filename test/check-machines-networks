@@ -624,6 +624,12 @@ class TestMachinesNetworks(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-network-1-type", "network")
         b.wait_in_text("#vm-subVmTest1-network-1-source", "test_network")
 
+        # Remove test_network from the VM again
+        b.click("#delete-vm-subVmTest1-iface-1")
+        b.wait_in_text(".pf-c-modal-box__title-text", "Delete Network Interface")
+        b.click(".pf-c-modal-box button.pf-m-danger")
+        b.wait_not_present("#vm-subVmTest1-network-1-type")
+
         # Remove all Virtual Networks and confirm that trying to choose
         # Virtual Networks type for a NIC disables the save button
         m.execute("virsh net-dumpxml default > /tmp/net-default.xml")
@@ -640,11 +646,9 @@ class TestMachinesNetworks(VirtualMachinesCase):
 
         self.goToVmPage("subVmTest1")
 
-        # Remove the network interface
-        m.execute("virsh detach-interface --persistent --type network --domain subVmTest1")
-
         # Start the VM in order that the UI picks up the new interface, since we don't get events of shut off domains
         m.execute("virsh start subVmTest1")
+        b.wait_in_text("#vm-subVmTest1-state", "Running")
 
         # Create a second bridge to LAN NIC
         m.execute("ip link add name br1 type bridge && virsh attach-interface --current subVmTest1 bridge br1")
