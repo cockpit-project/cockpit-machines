@@ -26,10 +26,9 @@ sys.path.append(os.path.join(TEST_DIR, "common"))
 sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
 
 from machineslib import VirtualMachinesCase  # noqa
-from testlib import no_retry_when_changed, nondestructive, skipImage, test_main, wait  # noqa
+from testlib import no_retry_when_changed, nondestructive, test_main, wait  # noqa
 
 
-@skipImage("Atomic cannot run virtual machines", "fedora-coreos")
 @nondestructive
 @no_retry_when_changed
 class TestMachinesConsoles(VirtualMachinesCase):
