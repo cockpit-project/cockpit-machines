@@ -170,7 +170,8 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         self.waitVmRow("subVmTest1")
         self.waitVmRow("subVmTest2")
 
-        if superuser:
+        # Debian 10's libvirtd goes insane when restarting it with running VMs
+        if superuser and m.image not in ["debian-stable"]:
             # restart libvirtd
             m.execute("systemctl stop libvirtd.service")
             b.wait_in_text(".pf-c-empty-state", "Virtualization service (libvirt) is not active")
