@@ -43,7 +43,6 @@ def release_target(used_targets, target):
 
 
 @nondestructive
-@no_retry_when_changed
 class TestMachinesDisks(VirtualMachinesCase):
 
     def wait_for_disk_stats(self, name, target):
@@ -454,6 +453,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         if m.image in ["debian-testing"]:
             self.allow_journal_messages('.* type=1400 .* apparmor="DENIED" operation="open" profile="libvirt.* name="%s.*' % self.vm_tmpdir)
 
+    @no_retry_when_changed
     def testAddDiskNFS(self):
         b = self.browser
         m = self.machine
@@ -564,6 +564,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             self.allow_journal_messages('.* type=1400 .* apparmor="DENIED" operation="open" profile="libvirt.* name="%s.*' % self.vm_tmpdir)
 
     @timeout(900)
+    @no_retry_when_changed
     def testAddDiskDirPool(self):
         b = self.browser
         m = self.machine
@@ -748,6 +749,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             mode='custom-path'
         ).execute()
 
+    @no_retry_when_changed
     def testAddDiskAdditionalOptions(self):
         b = self.browser
         m = self.machine

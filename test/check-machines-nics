@@ -31,9 +31,9 @@ from machinesxmls import TEST_NETWORK_XML  # noqa
 
 
 @nondestructive
-@no_retry_when_changed
 class TestMachinesNICs(VirtualMachinesCase):
 
+    @no_retry_when_changed
     def testVmNICs(self):
         b = self.browser
         m = self.machine
