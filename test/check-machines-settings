@@ -26,14 +26,13 @@ sys.path.append(os.path.join(TEST_DIR, "common"))
 sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
 
 from machineslib import VirtualMachinesCase  # noqa
-from testlib import skipImage, nondestructive, wait, test_main  # noqa
+from testlib import nondestructive, wait, test_main  # noqa
 
 # If this test fails to run, the host machine needs:
 # echo "options kvm-intel nested=1" > /etc/modprobe.d/kvm-intel.conf
 # rmmod kvm-intel && modprobe kvm-intel || true
 
 
-@skipImage("Atomic cannot run virtual machines", "fedora-coreos")
 @nondestructive
 class TestMachinesSettings(VirtualMachinesCase):
 

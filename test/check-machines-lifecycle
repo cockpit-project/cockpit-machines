@@ -30,7 +30,6 @@ from machineslib import VirtualMachinesCase  # noqa
 from testlib import nondestructive, skipImage, test_main, wait  # noqa
 
 
-@skipImage("Atomic cannot run virtual machines", "fedora-coreos")
 @nondestructive
 class TestMachinesLifecycle(VirtualMachinesCase):
 
