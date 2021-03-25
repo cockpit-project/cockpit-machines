@@ -35,7 +35,6 @@ from machinesxmls import NETWORK_XML_PXE, PXE_SERVER_CFG  # noqa
 
 
 @nondestructive
-@no_retry_when_changed
 class TestMachinesCreate(VirtualMachinesCase):
 
     # This test contains basic form validation of the Create VM dialog
@@ -355,6 +354,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         b.wait_in_text("#vm-pxe-guest-boot-order", "disk")
         b.wait_not_in_text("#vm-pxe-guest-boot-order", "network")
 
+    @no_retry_when_changed
     def testCreateThenInstall(self):
         runner = TestMachinesCreate.CreateVmRunner(self)
         config = TestMachinesCreate.TestCreateConfig
@@ -516,6 +516,7 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                       memory_size=256, memory_size_unit='MiB',
                                                       start_vm=True))
 
+    @no_retry_when_changed
     def testCreateUrlSource(self):
         runner = TestMachinesCreate.CreateVmRunner(self)
         config = TestMachinesCreate.TestCreateConfig
