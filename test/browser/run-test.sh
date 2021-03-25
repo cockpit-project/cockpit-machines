@@ -19,10 +19,6 @@ mv .git dot-git
 . /etc/os-release
 export TEST_OS="${ID}-${VERSION_ID/./-}"
 export TEST_AUDIT_NO_SELINUX=1
-# HACK: upstream does not yet know about rawhide
-if [ "$TEST_OS" = "fedora-35" ]; then
-    export TEST_OS=fedora-34
-fi
 
 EXCLUDES=""
 
