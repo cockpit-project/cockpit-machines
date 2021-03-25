@@ -168,7 +168,7 @@ codecheck:
 
 # run the browser integration tests; skip check for SELinux denials
 check: $(NODE_MODULES_TEST) $(VM_IMAGE) test/common
-	test/common/run-tests
+	test/common/run-tests --base main
 
 # checkout Cockpit's bots for standard test VM images and API to launch them
 # must be from master, as only that has current and existing images; but testvm.py API is stable
