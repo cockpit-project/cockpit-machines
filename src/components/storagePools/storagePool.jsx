@@ -89,7 +89,7 @@ export const getStoragePoolRow = ({ storagePool, vms, dispatch, onAddErrorNotifi
             { title: name, header: true },
             { title: size },
             { title: rephraseUI('connections', storagePool.connectionName) },
-            { title: state },
+            { title: state, props: { className: 'resource-state-text-cell' } },
         ],
         props: { key: idPrefix, 'data-row-id': idPrefix },
         expandedContent: expandedContent,
