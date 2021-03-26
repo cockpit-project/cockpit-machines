@@ -66,7 +66,7 @@ export const getNetworkRow = ({ dispatch, network, onAddErrorNotification }) => 
         { title: device },
         { title: rephraseUI('connections', network.connectionName) },
         { title: forwarding },
-        { title: state },
+        { title: state, props: { className: 'resource-state-text-cell' } },
     ];
 
     const overviewTabName = (
