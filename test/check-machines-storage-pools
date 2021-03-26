@@ -440,13 +440,19 @@ class TestMachinesStoragePools(VirtualMachinesCase):
             xfail=True,
         ).execute()
 
-        StoragePoolCreateDialog(
-            self,
-            name="my_dir_pool_two",
-            pool_type="netfs",
-            target=p2 + "/",
-            source={"host": "127.0.0.1", "source_path": mnt_exports}
-        ).execute()
+        # On fedora-34 there is a selinux bug which causes nfs-mountd.service to fail nfs server cannot be be set up
+        # https://bugzilla.redhat.com/show_bug.cgi?id=1943157
+        if "fedora-34" not in m.image:
+            StoragePoolCreateDialog(
+                self,
+                name="my_dir_pool_two",
+                pool_type="netfs",
+                target=p2 + "/",
+                source={"host": "127.0.0.1", "source_path": mnt_exports}
+            ).execute()
+        else:
+            # This will inform us once the nfs-mountd.service failure is fixed
+            m.execute("systemctl is-failed nfs-mountd")
 
         # Prepare a disk with gpt partition table to test the disk storage pool type
         dev = self.add_ram_disk(2)
