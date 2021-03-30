@@ -106,7 +106,8 @@ dist-gzip: $(TARFILE)
 # node_modules/ can be reconstructed if necessary)
 $(TARFILE): export NODE_ENV=production
 $(TARFILE): $(LIB_TEST) $(RPM_NAME).spec
-	if ! test/download-dist ${DOWNLOAD_DIST_OPTIONS:-}; then \
+	test/download-dist || true
+	if ! test -f $(TARFILE); then \
 	    $(MAKE) $(WEBPACK_TEST); \
 	    mv node_modules node_modules.release; \
 	    touch -r package.json $(NODE_MODULES_TEST); \
