@@ -235,6 +235,11 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
         libvirtServiceName = "libvirtd.service"
 
+        # disable journal core dumps and traces for this test -- libvirt tends to crash on stopping
+        core_pattern = m.execute("cat /proc/sys/kernel/core_pattern").strip()
+        m.execute("echo core > /proc/sys/kernel/core_pattern")
+        self.addCleanup(m.execute, f"echo '{core_pattern}' > /proc/sys/kernel/core_pattern")
+
         def checkLibvirtEnabled():
             try:
                 m.execute("systemctl -q is-enabled {0}".format(libvirtServiceName))
