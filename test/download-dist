@@ -109,6 +109,17 @@ def download_dist(wait=False):
         ftar.extract(names[0])
         tar_path = os.path.realpath(names[0])
 
+    # Rename tar to what Makefile expects for a release
+    try:
+        tag = subprocess.check_output(['git', 'describe', '--exact-match'],
+                                      stderr=subprocess.DEVNULL, universal_newlines=True).strip()
+        new_path = os.path.join(os.path.dirname(tar_path), f"cockpit-machines-{tag}.tar.gz")
+        message(f"download-dist: renamed tarball to {new_path} for tag {tag}")
+        os.rename(tar_path, new_path)
+        tar_path = new_path
+    except subprocess.CalledProcessError:
+        pass
+
     # Extract some files locally for speeding up the build and allowing integration tests to run
     unpack_paths = [d for d in ["dist", "package-lock.json"] if not os.path.exists(d)]
     if unpack_paths:
