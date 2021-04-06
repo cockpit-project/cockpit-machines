@@ -55,15 +55,15 @@ function validateParams(dialogValues) {
         validationFailed.name = _("Name should not be empty");
 
     if (dialogValues.ip === "IPv4 only" || dialogValues.ip === "IPv4 and IPv6") {
-        if (isEmpty(dialogValues.ipv4.trim()))
-            validationFailed.ipv4 = _("IPv4 network should not be empty");
-        else if (!utils.validateIpv4(dialogValues.ipv4))
-            validationFailed.ipv4 = _("Invalid IPv4 address");
-
         if (isEmpty(dialogValues.netmask.trim()))
             validationFailed.netmask = _("Mask or prefix length should not be empty");
         else if (!utils.validateNetmask(dialogValues.netmask))
             validationFailed.netmask = _("Invalid IPv4 mask or prefix length");
+
+        if (isEmpty(dialogValues.ipv4.trim()))
+            validationFailed.ipv4 = _("IPv4 network should not be empty");
+        else if (!utils.validateIpv4(dialogValues.ipv4))
+            validationFailed.ipv4 = _("Invalid IPv4 address");
 
         if (dialogValues.ipv4DhcpEnabled) {
             if (isEmpty(dialogValues.ipv4DhcpRangeStart.trim()))
