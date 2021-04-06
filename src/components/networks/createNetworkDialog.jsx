@@ -234,7 +234,7 @@ const Ipv4Row = ({ validationFailed, dialogValues, onValueChanged }) => {
 
     return (
         <>
-            <FormGroup fieldId='network-ipv4-address' label={_("IPv4 network")}
+            <FormGroup fieldId='network-ipv4-address' label={_("IPv4 address")}
                        helperTextInvalid={validationFailed.ipv4}
                        validated={validationAddress}>
                 <TextInput id='network-ipv4-address'
@@ -266,7 +266,7 @@ const Ipv6Row = ({ validationFailed, dialogValues, onValueChanged }) => {
 
     return (
         <>
-            <FormGroup fieldId='network-ipv6-address' label={_("IPv6 network")}
+            <FormGroup fieldId='network-ipv6-address' label={_("IPv6 address")}
                        helperTextInvalid={validationFailed.ipv6}
                        validated={validationAddress}>
                 <TextInput id='network-ipv6-address'
