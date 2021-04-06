@@ -28,7 +28,7 @@ jobs:
         run: |
           # override GitHub's bind mount from host, we don't want anything from there and it interferes with ssh
           export HOME=$(getent passwd $(id -u) | cut -f6 -d:)
-          # This will make download-dist to fail in order to create dist manually instead
-          export GITHUB_BASE=fake/nonexisting
           cd /build
+          # Wait for build-dist and publish-dist workflows to complete
+          export DOWNLOAD_DIST_OPTIONS=--wait
           release-runner -r https://github.com/$GITHUB_REPOSITORY -t $(basename $GITHUB_REF) ./cockpituous-release

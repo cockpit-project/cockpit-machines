@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
 
-import glob
 import io
 import os
 import urllib.request
@@ -32,29 +31,32 @@ def message(*args):
 
 
 def download_dist(wait=False):
-    '''Download dists tarball for current git SHA from GitHub
+    '''Download and unpack dist/ for current git SHA from GitHub
 
     These are produced by .github/workflows/build-dist.yml for every PR and push.
     This is a lot faster than having to npm install and run webpack.
 
-    Returns path to downloaded tarball, or None if it isn't available.
-    This can happen because the current directory is not a git checkout, or it is
-    a SHA which is not pushed/PRed.
+    Returns True when successful, or False if the download isn't available.
+    This can happen because dist/ already exists, or the current directory is not a git checkout,
+    or it is a SHA which is not pushed/PRed.
     '''
+    if os.path.exists("dist"):
+        message("download-dist: dist/ already exists")
+        return False
+
+    if os.getenv("NODE_ENV") == "development":
+        message("download-dist: pre-built dist/ are for NODE_ENV=production")
+        return False
+
     try:
         sha = subprocess.check_output(["git", "rev-parse", "HEAD"], stderr=subprocess.DEVNULL).decode().strip()
     except subprocess.CalledProcessError:
         message("download-dist: not a git repository")
-        return None
+        return False
 
     if subprocess.call(["git", "diff", "--quiet", "--", ":^test", ":^packit.yaml", ":^packaging"]) > 0:
         message("download-dist: uncommitted local changes, skipping download")
-        return None
-
-    dists = glob.glob(f"cockpit-machines-*{sha[:8]}*.tar.gz")
-    if dists:
-        message("download-dist: already downloaded", dists[0])
-        return os.path.abspath(dists[0])
+        return False
 
     download_url = f"https://github.com/{ os.getenv('GITHUB_BASE', 'cockpit-project/cockpit-machines') }-dist/raw/main/{sha}.tar"
     request = urllib.request.Request(download_url)
@@ -91,7 +93,7 @@ def download_dist(wait=False):
 
             if retries == 0:
                 message(f"download-dist: Downloading {download_url} failed:", e)
-                return None
+                return False
 
             message(f"download-dist: {download_url} not yet available, waiting...")
             time.sleep(30)
@@ -105,38 +107,23 @@ def download_dist(wait=False):
             pass
         if len(names) != 1 or not names[0].endswith(".tar.gz"):
             message("download-dist: expected tar with exactly one tar.gz member")
-            return None
+            return False
         ftar.extract(names[0])
         tar_path = os.path.realpath(names[0])
 
-    # Rename tar to what Makefile expects for a release
-    try:
-        tag = subprocess.check_output(['git', 'describe', '--exact-match'],
-                                      stderr=subprocess.DEVNULL, universal_newlines=True).strip()
-        new_path = os.path.join(os.path.dirname(tar_path), f"cockpit-machines-{tag}.tar.gz")
-        message(f"download-dist: renamed tarball to {new_path} for tag {tag}")
-        os.rename(tar_path, new_path)
-        tar_path = new_path
-    except subprocess.CalledProcessError:
-        pass
+    # Extract relevant files
+    unpack_paths = ["dist", "package-lock.json"]
+    message("download-dist: Extracting paths from tarball:", ' '.join(unpack_paths))
+    prefixed_unpack_paths = ["cockpit-machines/" + d for d in unpack_paths]
+    subprocess.check_call(["tar", "--touch", "--strip-components=1", "-xf", tar_path] + prefixed_unpack_paths)
 
-    # Extract some files locally for speeding up the build and allowing integration tests to run
-    unpack_paths = [d for d in ["dist", "package-lock.json"] if not os.path.exists(d)]
-    if unpack_paths:
-        message("download-dist: Extracting paths from tarball:", ' '.join(unpack_paths))
-        prefixed_unpack_paths = ["cockpit-machines/" + d for d in unpack_paths]
-        subprocess.check_call(["tar", "--touch", "--strip-components=1", "-xf", tar_path] + prefixed_unpack_paths)
-        # ensure that tarball appears new, to avoid make rebuilding it
-        subprocess.check_call(["touch", tar_path])
-
-    return tar_path
+    os.remove(tar_path)
+    return True
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Download release tarball")
+    parser = argparse.ArgumentParser(description="Download pre-built dist/ for current commit")
     parser.add_argument('-w', '--wait', action='store_true', help="Wait for up to 20 minutes for download tarball")
     args = parser.parse_args()
-    dist = download_dist(args.wait)
-    if not dist:
+    if not download_dist(args.wait):
         sys.exit(1)
-    print(dist)

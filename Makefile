@@ -10,7 +10,7 @@ TARFILE=cockpit-$(PACKAGE_NAME)-$(VERSION).tar.gz
 RPMFILE=$(shell rpmspec -D"VERSION $(VERSION)" -q `ls cockpit-machines.spec.in cockpit-machines.spec 2>/dev/null | head -n1`).rpm
 VM_IMAGE=$(CURDIR)/test/images/$(TEST_OS)
 # stamp file to check if/when npm install ran
-NODE_MODULES_TEST=package-lock.json
+NODE_MODULES_TEST=node_modules/.bin/webpack
 # one example file in dist/ from webpack to check if that already ran
 WEBPACK_TEST=dist/manifest.json
 # one example file in src/lib to check if it was already checked out
@@ -75,8 +75,8 @@ download-po: $(WEBLATE_REPO)
 %.spec: %.spec.in
 	sed -e 's/%{VERSION}/$(VERSION)/g' $< > $@
 
-$(WEBPACK_TEST): $(NODE_MODULES_TEST) $(LIB_TEST) $(shell find src/ -type f) package.json webpack.config.js
-	NODE_ENV=$(NODE_ENV) npm run build
+$(WEBPACK_TEST): $(LIB_TEST) $(shell find src/ -type f) package.json webpack.config.js
+	test/download-dist $${DOWNLOAD_DIST_OPTIONS:-} || ($(MAKE) $(NODE_MODULES_TEST) && NODE_ENV=$(NODE_ENV) npm run build)
 
 watch:
 	NODE_ENV=$(NODE_ENV) npm run watch
@@ -99,24 +99,15 @@ devel-install: $(WEBPACK_TEST)
 dist-gzip: $(TARFILE)
 	@ls -1 $(TARFILE)
 
-# when downloading a tarball, ensure that LIB_TEST and spec are older than the unpacked tarball
 # when building a distribution tarball, call webpack with a 'production' environment
 # we don't ship node_modules for license and compactness reasons; we ship a
-# pre-built dist/ (so it's not necessary) and ship packge-lock.json (so that
+# pre-built dist/ (so it's not necessary) and ship package-lock.json (so that
 # node_modules/ can be reconstructed if necessary)
 $(TARFILE): export NODE_ENV=production
-$(TARFILE): $(LIB_TEST) $(RPM_NAME).spec
-	if ! test/download-dist; then \
-	    $(MAKE) $(WEBPACK_TEST); \
-	    mv node_modules node_modules.release; \
-	    touch -r package.json $(NODE_MODULES_TEST); \
-	    touch dist/*; \
-	    tar czf $(TARFILE) --transform 's,^,cockpit-$(PACKAGE_NAME)/,' \
-		    --exclude $(RPM_NAME).spec.in \
-		    $$(git ls-files) $(LIB_TEST) src/lib/patternfly/*.scss package-lock.json $(RPM_NAME).spec dist/; \
-	    mv node_modules.release node_modules; \
-	fi
-	@ls -1 $(TARFILE)
+$(TARFILE): $(WEBPACK_TEST) $(RPM_NAME).spec
+	tar czf $(TARFILE) --transform 's,^,cockpit-$(PACKAGE_NAME)/,' \
+		--exclude $(RPM_NAME).spec.in \
+		$$(git ls-files) $(LIB_TEST) src/lib/patternfly/*.scss package-lock.json $(RPM_NAME).spec dist/; \
 
 srpm: $(TARFILE) $(RPM_NAME).spec
 	rpmbuild -bs \
