@@ -64,6 +64,14 @@ function validateParams(dialogValues) {
             validationFailed.ipv4 = _("IPv4 network should not be empty");
         else if (!utils.validateIpv4(dialogValues.ipv4))
             validationFailed.ipv4 = _("Invalid IPv4 address");
+        // During virtual network creation, address is assigned to bridge. However no interface can have the
+        // address same as the network identifier, as it would disable the connectivity of the virtual network.
+        else if (utils.ipv4IsNetworkIdentifier(dialogValues.ipv4, dialogValues.netmask))
+            validationFailed.ipv4 = _("IPv4 address cannot be same as the network identifier");
+        // Using broacast address of network space as the address of virtual network's bridge
+        // is forbidden and would disable the connectivity of the virtual network.
+        else if (utils.ipv4IsBroadcast(dialogValues.ipv4, dialogValues.netmask))
+            validationFailed.ipv4 = _("IPv4 address cannot be same as the network's broadcast address");
 
         if (dialogValues.ipv4DhcpEnabled) {
             if (isEmpty(dialogValues.ipv4DhcpRangeStart.trim()))

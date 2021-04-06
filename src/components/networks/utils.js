@@ -30,6 +30,38 @@ export function validateIpv4(address) {
 }
 
 /**
+ * Returns if the provided address is the network's broadcast address
+ *
+ * @param {string} address
+ * @returns {boolean}
+ */
+export function ipv4IsBroadcast(address, netMask) {
+    if (!validateNetmask(netMask))
+        return false;
+    const mask = netmaskConvert(netMask);
+    const subnet = ip.subnet(address, mask);
+
+    // user provided netmask
+    return address === subnet.broadcastAddress;
+}
+
+/**
+ * Returns if the provided address is the network identifier
+ *
+ * @param {string} address
+ * @returns {boolean}
+ */
+export function ipv4IsNetworkIdentifier(address, netMask) {
+    if (!validateNetmask(netMask))
+        return false;
+    const mask = netmaskConvert(netMask);
+    const subnet = ip.subnet(address, mask);
+
+    // user provided network identifier
+    return address === subnet.networkAddress;
+}
+
+/**
  * validates correctness of ipv4 prefix length or mask
  *
  * @param {string} prefixOrNetmask
