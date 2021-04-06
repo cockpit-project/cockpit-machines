@@ -17,6 +17,8 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
+import * as ip from "ip";
+
 /**
  * Validates correctness of ipv4 address
  *
@@ -24,19 +26,7 @@
  * @returns {boolean}
  */
 export function validateIpv4(address) {
-    const ipv4 = address.split('.');
-    if (ipv4.length !== 4)
-        return false;
-
-    for (let i = 0; i < ipv4.length; i++) {
-        if (!/^[0-9]+$/.test(ipv4[i].trim()))
-            return false;
-        const part = parseInt(ipv4[i], 10);
-        if (isNaN(part) || part < 0 || part > 255)
-            return false;
-    }
-
-    return true;
+    return ip.isV4Format(address);
 }
 
 /**
@@ -79,40 +69,12 @@ export function validateNetmask(prefixOrNetmask) {
  * @returns {string}
  */
 export function netmaskConvert(prefixOrNetmask) {
-    const prefixToNetmask = {
-        8: "255", 7: "254", 6: "252", 5: "248", 4: "240", 3: "224", 2: "192", 1: "128", 0: "0"
-    };
     const parts = prefixOrNetmask.split('.');
 
     if (parts.length === 4)
         return prefixOrNetmask;
-
-    const prefixLength = parseInt(parts[0]);
-
-    let netmask = "";
-    let i = 0;
-    for (i = 0; i < Math.floor(prefixLength / 8); i++)
-        netmask += "255.";
-
-    const remainder = prefixLength % 8;
-    netmask += prefixToNetmask[remainder];
-
-    // Fill out the rest with 0s
-    if (i < 3)
-        netmask += ".0".repeat(3 - i);
-
-    return netmask;
-}
-
-/**
- * Converts ipv4 address to decimal number
- *
- * @param {string} prefixOrNetmask
- * @returns {number}
- */
-export function ipv4ToNum(ip) {
-    const tmp = ip.split('.');
-    return (tmp[0] << 24) | (tmp[1] << 16) | (tmp[2] << 8) | (tmp[3] << 0);
+    else if (parts.length === 1)
+        return ip.fromPrefixLen(prefixOrNetmask);
 }
 
 /**
@@ -123,13 +85,12 @@ export function ipv4ToNum(ip) {
  * @param {string} ip
  * @returns {boolean}
  */
-export function isIpv4InNetwork(network, netmask, ip) {
-    network = ipv4ToNum(network);
-    netmask = netmaskConvert(netmask);
-    netmask = ipv4ToNum(netmask);
-    ip = ipv4ToNum(ip);
+export function isIpv4InNetwork(network, netmask, ipaddr) {
+    if (!ip.isV4Format(network) || !validateNetmask(netmask) || !ip.isV4Format(ipaddr))
+        return false;
+    const mask = netmaskConvert(netmask);
 
-    return (ip > network) && (ip < (network | ~netmask));
+    return ip.subnet(network, mask).contains(ipaddr);
 }
 
 /**
@@ -139,31 +100,7 @@ export function isIpv4InNetwork(network, netmask, ip) {
  * @returns {boolean}
  */
 export function validateIpv6(address) {
-    const parts = address.split(':');
-    if (parts.length < 1 || parts.length > 8)
-        return false;
-
-    if (parts[0] === "")
-        parts[0] = "0";
-    if (parts[parts.length - 1] === "")
-        parts[parts.length - 1] = "0";
-
-    let empty_seen = false;
-    for (let i = 0; i < parts.length; i++) {
-        if (parts[i] === "") {
-            if (empty_seen)
-                return false;
-            empty_seen = true;
-        } else {
-            if (!/^[0-9a-fA-F]+$/.test(parts[i].trim()))
-                return false;
-            const n = parseInt(parts[i], 16);
-            if (isNaN(n) || n < 0 || n > 0xFFFF)
-                return false;
-        }
-    }
-
-    return true;
+    return ip.isV6Format(address);
 }
 
 /**
