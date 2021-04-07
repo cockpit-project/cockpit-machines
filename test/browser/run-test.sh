@@ -65,6 +65,7 @@ EXCLUDES="$EXCLUDES
           TestMachinesDisks.testDiskEdit
 
           TestMachinesLifecycle.testBasicLibvirtUserUnprivileged
+          TestMachinesLifecycle.testBasicNonrootUserUnprivileged
           TestMachinesLifecycle.testBasicWheelUserUnprivileged
           TestMachinesLifecycle.testDelete
           TestMachinesLifecycle.testLibvirt

@@ -38,9 +38,8 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         self._testBasic()
 
     def createUser(self, user_group):
-        user_name = 'test_' + user_group + '_user'
-        self.machine.execute(
-            'useradd -G {0} {1} && echo "{1}:foobar" | chpasswd'.format(user_group, user_name))
+        user_name = f"test_{user_group if user_group else 'none'}_user"
+        self.machine.execute(f"useradd{' -G ' + user_group if user_group else '' } {user_name} && echo '{user_name}:foobar' | chpasswd")
         # user libvirtd instance tends to SIGABRT with "Failed to find user record for uid .." on shutdown during cleanup
         # so make sure that there are no leftover user processes that bleed into the next test
         self.addCleanup(self.machine.execute, "pkill -u {0}; while pgrep -u {0}; do sleep 0.5; done".format(user_name))
@@ -48,6 +47,10 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         self.allow_journal_messages('Process .*libvirtd.* of user 10.* dumped core.*')
 
         return user_name
+
+    def testBasicNonrootUserUnprivileged(self):
+        user = self.createUser(user_group=None)
+        self._testBasic(user, False, True)
 
     # FIXME remove this skipImage
     @skipImage('Fails with Rejected send message, 1 matched rules; type="method_call"',
