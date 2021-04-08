@@ -12,6 +12,7 @@ jobs:
       - name: Download build-dist artifacts
         uses: dawidd6/action-download-artifact@v2
         with:
+          name: dist
           workflow: build-dist
           run_id: ${{ github.event.workflow_run.id }}
 
@@ -23,40 +24,37 @@ jobs:
           git config --global credential.helper store
           echo 'https://token:${{ secrets.COCKPITUOUS_TOKEN }}@github.com' >> ~/.git-credentials
 
-      - name: Commit dist tarball dist repo
+      - name: Commit to dist repo
         run: |
           set -ex
-
-          # we need a fully predictable name/URL, and git introduces these
-          # additional numbers into the version; so wrap it in a predictable named tar
-          sha=$(ls -d dist-* | sed 's/dist-//')
+          SHA=$(cat SHA)
 
           # multiple parallel workflows race against each other, so the final
           # `git push` may fail
           rc=1
           for retry in $(seq 5); do
               git clone https://github.com/${{ github.repository }}-dist.git dist-repo
-              tar -cvf "dist-repo/${sha}.tar" -C "dist-$sha" .
+              rm -rf dist-repo/dist
+              cp -r dist/ package-lock.json dist-repo/
 
               # freshly created empty repo?
               cd dist-repo
               git rev-parse HEAD >/dev/null 2>&1 || git init -b main
-              git add "${sha}.tar"
-              git commit -m "Build for $sha"
 
-              # remove tarballs older than a week
-              now=$(date +%s)
-              for f in *.tar; do
-                  fmtime=$(git log --pretty=%at -n1 -- $f)
-                  [ $(($now - $fmtime)) -lt 604800 ] || git rm $f
-              done
-              [ -z "$(git status --short)" ] || git commit -m 'Drop old builds'
+              # commit the updated files
+              git add .
+              # may have no changes
+              git diff --cached --quiet || git commit -m "Build for $SHA"
+              tag="sha-$SHA"
+              git tag $tag
 
-              if git push; then
+              # push commit and tag
+              if git push origin HEAD $tag; then
                   rc=0
                   break
               else
                   echo "ERROR: conflict? Retrying git commit"
+                  git push origin :$tag || true
                   cd ..
                   rm -rf dist-repo
               fi
