@@ -116,6 +116,7 @@ import {
     updateBootOrder,
     updateDisk,
     updateMaxMemory,
+    updateNetworkIface,
     updateVCPUSettings,
 } from './libvirt-xml-update.js';
 
@@ -1342,88 +1343,6 @@ function attachDevice({ connectionName, vmId, permanent, hotplug, xmlDesc }) {
 
     // Error handling is done from the calling side
     return call(connectionName, vmId, 'org.libvirt.Domain', 'AttachDevice', [xmlDesc, flags], { timeout, type: 'su' });
-}
-
-/**
- * Returns updated XML description of the network interface specified by mac address.
- * @param  {String} domXml      Domain XML description.
- * @param  {String} networkMac  MAC Address of the network interface we will update.
- * @param  {String} state       Desired state; one of up/down.
- * @return {String}             Updated XML description of the device we will update or null on error.
- */
-function updateNetworkIface({ domXml, networkMac, networkState, networkModelType, networkType, networkSource }) {
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(domXml, "application/xml");
-
-    if (!xmlDoc) {
-        console.warn(`Can't parse dumpxml, input: "${domXml}"`);
-        return null;
-    }
-
-    const domainElem = xmlDoc.getElementsByTagName("domain")[0];
-    const devicesElem = domainElem.getElementsByTagName("devices")[0];
-    const interfaceElems = devicesElem.getElementsByTagName('interface');
-
-    if (interfaceElems) {
-        for (let i = 0; i < interfaceElems.length; i++) {
-            const interfaceElem = interfaceElems[i];
-            const macElem = getSingleOptionalElem(interfaceElem, 'mac');
-            if (macElem === undefined)
-                return null;
-            const mac = macElem.getAttribute('address');
-
-            if (mac !== networkMac)
-                continue;
-
-            if (networkState) {
-                let linkElem = getSingleOptionalElem(interfaceElem, 'link');
-                if (linkElem === undefined) {
-                    const doc = document.implementation.createDocument('', '', null);
-                    linkElem = doc.createElement('link');
-                    interfaceElem.appendChild(linkElem);
-                }
-                linkElem.setAttribute('state', networkState);
-            }
-
-            const typeChanged = networkType !== interfaceElem.getAttribute('type', networkType);
-            if (networkType) {
-                interfaceElem.setAttribute('type', networkType);
-            }
-
-            if (networkSource && networkType) {
-                let sourceElem = getSingleOptionalElem(interfaceElem, 'source');
-                // Source elements of different iface types might contain differently named attributes,
-                // so we delete whole element and create a new one
-                if (typeChanged && sourceElem) {
-                    sourceElem.remove();
-                    sourceElem = undefined;
-                }
-                if (!sourceElem) {
-                    sourceElem = document.createElement("source");
-                    interfaceElem.appendChild(sourceElem);
-                }
-                if (networkType === 'network')
-                    sourceElem.setAttribute('network', networkSource);
-                else if (networkType === 'direct')
-                    sourceElem.setAttribute('dev', networkSource);
-                else if (networkType === 'bridge')
-                    sourceElem.setAttribute('bridge', networkSource);
-            }
-
-            if (networkModelType) {
-                const modelElem = getSingleOptionalElem(interfaceElem, 'model');
-                modelElem.setAttribute('type', networkModelType);
-            }
-
-            const returnXML = (new XMLSerializer()).serializeToString(interfaceElem);
-
-            logDebug(`updateNetworkIface: Updated XML: "${returnXML}"`);
-
-            return returnXML;
-        }
-    }
-    console.warn("Can't update network interface element in domXml");
-    return null;
 }
 
 export function attachIface({ connectionName, vmId, mac, permanent, hotplug, sourceType, source, model }) {
