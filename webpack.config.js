@@ -4,7 +4,7 @@ const childProcess = require('child_process');
 const copy = require("copy-webpack-plugin");
 const extract = require("mini-css-extract-plugin");
 const TerserJSPlugin = require('terser-webpack-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const CompressionPlugin = require("compression-webpack-plugin");
 const ESLintPlugin = require('eslint-webpack-plugin');
 const CockpitPoPlugin = require("./src/lib/cockpit-po-plugin");
@@ -54,7 +54,18 @@ module.exports = {
     resolve: {
         modules: [ nodedir, path.resolve(__dirname, 'src/lib') ],
         alias: { 'font-awesome': path.resolve(nodedir, 'font-awesome-sass/assets/stylesheets') },
+        // TODO: The following fallbacks are needed for ip module - replace this module with one better maintained
+        fallback: {
+            "browser": false,
+            "os": false,
+            "buffer": require.resolve("buffer"),
+        }
     },
+    // FIXME: Ignore warnings from PF3 table - this is included but not used - the ignoreWarnings can be dropped once we stop using patternfly-react
+    ignoreWarnings: [
+        { module: /node_modules\/patternfly-react\/dist\/esm\/components\/Table\/Table\.js/ },
+        (warning) => true,
+    ],
     resolveLoader: {
         modules: [ nodedir, path.resolve(__dirname, 'src/lib') ],
     },
@@ -75,10 +86,17 @@ module.exports = {
     optimization: {
         minimize: production,
         minimizer: [
-            new TerserJSPlugin({}),
-            // Workaround: https://github.com/patternfly/patternfly-react/issues/5650
-            new OptimizeCSSAssetsPlugin({
-                cssProcessorPluginOptions: {
+            new TerserJSPlugin({
+                extractComments: {
+                    condition: true,
+                    filename: `[file].LICENSE.txt?query=[query]&filebase=[base]`,
+                    banner(licenseFile) {
+                        return `License information can be found in ${licenseFile}`;
+                    },
+                },
+            }),
+            new CssMinimizerPlugin({
+                minimizerOptions: {
                     preset: ['default', { mergeLonghand: false }]
                 }
             })
