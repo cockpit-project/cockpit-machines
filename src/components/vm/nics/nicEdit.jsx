@@ -19,25 +19,23 @@
 import React from 'react';
 import cockpit from 'cockpit';
 import PropTypes from 'prop-types';
-import { Button, Alert, Form, FormGroup, Modal } from '@patternfly/react-core';
+import { Button, Alert, Form, FormGroup, Modal, TextInput } from '@patternfly/react-core';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { NetworkTypeAndSourceRow, NetworkModelRow } from './nicBody.jsx';
-import {
-    changeNetworkSettings,
-    getVm
-} from '../../../actions/provider-actions.js';
+import { getVm } from '../../../actions/provider-actions.js';
+import { changeNetworkSettings } from '../../../libvirt-dbus.js';
 
 import 'form-layout.scss';
 
 const _ = cockpit.gettext;
 
-const NetworkMacRow = ({ network }) => {
+const NetworkMacRow = ({ mac, onValueChanged, idPrefix }) => {
     return (
-        <FormGroup fieldId='mac' label={_("MAC address")} hasNoPaddingTop>
-            <samp id='mac'>
-                {network.mac}
-            </samp>
+        <FormGroup fieldId={`${idPrefix}-edit-dialog-mac`} label={_("MAC address")} hasNoPaddingTop>
+            <TextInput id={`${idPrefix}-edit-dialog-mac`}
+                       value={mac}
+                       onChange={value => onValueChanged("networkMac", value)} />
         </FormGroup>
     );
 };
@@ -67,6 +65,7 @@ export class EditNICModal extends React.Component {
             networkType: props.network.type,
             networkSource: defaultNetworkSource,
             networkModel: props.network.model,
+            networkMac: props.network.mac,
             saveDisabled: false,
             availableSources: props.availableSources,
         };
@@ -110,18 +109,25 @@ export class EditNICModal extends React.Component {
     save() {
         const { dispatch, vm, network } = this.props;
 
-        dispatch(changeNetworkSettings({
-            vm, macAddress: network.mac,
+        changeNetworkSettings({
+            name: vm.name,
+            id: vm.id,
+            connectionName: vm.connectionName,
+            hotplug: vm.state === 'running',
+            persistent: vm.persistent,
+            macAddress: network.mac,
+            newMacAddress: this.state.networkMac,
             networkModel: this.state.networkModel,
             networkType: this.state.networkType,
-            networkSource: this.state.networkSource
-        }))
-                .fail((exc) => {
-                    this.dialogErrorSet(_("Network interface settings could not be saved"), exc.message);
-                })
+            networkSource: this.state.networkSource,
+            dispatch
+        })
                 .then(() => {
                     dispatch(getVm({ connectionName: vm.connectionName, id: vm.id }));
                     this.props.onClose();
+                })
+                .catch((exc) => {
+                    this.dialogErrorSet(_("Network interface settings could not be saved"), exc.message);
                 });
     }
 
@@ -139,7 +145,7 @@ export class EditNICModal extends React.Component {
                                  onValueChanged={this.onValueChanged}
                                  osTypeArch={vm.arch}
                                  osTypeMachine={vm.emulatedMachine} />
-                <NetworkMacRow network={network} />
+                <NetworkMacRow mac={this.state.networkMac} onValueChanged={this.onValueChanged} idPrefix={idPrefix} />
             </Form>
         );
         const showWarning = () => {
