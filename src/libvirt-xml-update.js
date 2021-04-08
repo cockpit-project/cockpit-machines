@@ -251,11 +251,11 @@ export function updateBootOrder(domXml, devices) {
 /**
  * Returns updated XML description of the network interface specified by mac address.
  * @param  {String} domXml      Domain XML description.
- * @param  {String} networkMac  MAC Address of the network interface we will update.
+ * @param  {String} macAddress  MAC Address of the network interface we will update.
  * @param  {String} state       Desired state; one of up/down.
  * @return {String}             Updated XML description of the device we will update or null on error.
  */
-export function updateNetworkIface({ domXml, networkMac, networkState, networkModelType, networkType, networkSource }) {
+export function updateNetworkIface({ domXml, macAddress, newMacAddress, networkState, networkModelType, networkType, networkSource }) {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(domXml, "application/xml");
 
@@ -276,7 +276,7 @@ export function updateNetworkIface({ domXml, networkMac, networkState, networkMo
                 return null;
             const mac = macElem.getAttribute('address');
 
-            if (mac !== networkMac)
+            if (mac !== macAddress)
                 continue;
 
             if (networkState) {

@@ -24,7 +24,6 @@ import { virt } from '../provider.js';
 import {
     ATTACH_DISK,
     CHANGE_BOOT_ORDER,
-    CHANGE_NETWORK_SETTINGS,
     CHANGE_NETWORK_STATE,
     CHANGE_VM_AUTOSTART,
     CHECK_LIBVIRT_STATUS,
@@ -86,19 +85,6 @@ export function changeBootOrder({ vm, devices }) {
         id: vm.id,
         connectionName: vm.connectionName,
         devices,
-    });
-}
-
-export function changeNetworkSettings({ vm, macAddress, networkType, networkSource, networkModel }) {
-    return virt(CHANGE_NETWORK_SETTINGS, {
-        id: vm.id,
-        name: vm.name,
-        connectionName: vm.connectionName,
-        networkType,
-        networkSource,
-        networkModel,
-        macAddress,
-        isRunning: vm.state == 'running'
     });
 }
 

@@ -228,41 +228,6 @@ const LIBVIRT_DBUS_PROVIDER = {
                 });
     },
 
-    CHANGE_NETWORK_SETTINGS({
-        name,
-        id: objPath,
-        connectionName,
-        macAddress,
-        networkType,
-        networkSource,
-        networkModel,
-    }) {
-        /*
-         * 0 -> VIR_DOMAIN_AFFECT_CURRENT
-         * 1 -> VIR_DOMAIN_AFFECT_LIVE
-         * 2 -> VIR_DOMAIN_AFFECT_CONFIG
-         */
-        let flags = Enum.VIR_DOMAIN_AFFECT_CURRENT;
-        flags |= Enum.VIR_DOMAIN_AFFECT_CONFIG;
-
-        // Error handling inside the modal dialog this function is called
-        return clientLibvirt[connectionName].call(objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' })
-                .then(domXml => {
-                    const updatedXml = updateNetworkIface({
-                        domXml: domXml[0],
-                        networkMac: macAddress,
-                        networkType,
-                        networkSource,
-                        networkModelType: networkModel
-                    });
-                    if (!updatedXml) {
-                        return Promise.reject(new Error("VM CHANGE_NETWORK_SETTINGS action failed: updated device XML couldn't not be generated"));
-                    } else {
-                        return clientLibvirt[connectionName].call(objPath, 'org.libvirt.Domain', 'UpdateDevice', [updatedXml, flags], { timeout, type: 'su' });
-                    }
-                });
-    },
-
     CHANGE_NETWORK_STATE({
         connectionName,
         id: objPath,
@@ -272,7 +237,7 @@ const LIBVIRT_DBUS_PROVIDER = {
     }) {
         return call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [0], { timeout, type: 'u' })
                 .then(domXml => {
-                    const updatedXml = updateNetworkIface({ domXml: domXml[0], networkMac, networkState: state });
+                    const updatedXml = updateNetworkIface({ domXml: domXml[0], macAddress: networkMac, networkState: state });
                     // updateNetworkIface can fail but we 'll catch the exception from the API call itself that will error on null argument
                     return call(connectionName, objPath, 'org.libvirt.Domain', 'UpdateDevice', [updatedXml, Enum.VIR_DOMAIN_AFFECT_CURRENT], { timeout, type: 'su' });
                 });
@@ -1367,6 +1332,62 @@ export function changeNetworkAutostart(network, autostart, dispatch) {
                 return call(network.connectionName, networkPath[0], 'org.freedesktop.DBus.Properties', 'Set', args, { timeout, type: 'ssv' });
             })
             .then(() => dispatch(getNetwork({ connectionName: network.connectionName, id: network.id, name: network.name })));
+}
+
+export function changeNetworkSettings({
+    name,
+    id: objPath,
+    connectionName,
+    hotplug,
+    persistent,
+    macAddress,
+    newMacAddress,
+    networkType,
+    networkSource,
+    networkModel,
+    dispatch,
+}) {
+    /*
+     * 0 -> VIR_DOMAIN_AFFECT_CURRENT
+     * 1 -> VIR_DOMAIN_AFFECT_LIVE
+     * 2 -> VIR_DOMAIN_AFFECT_CONFIG
+     */
+    let flags = Enum.VIR_DOMAIN_AFFECT_CURRENT;
+    flags |= Enum.VIR_DOMAIN_AFFECT_CONFIG;
+
+    if (newMacAddress && newMacAddress !== macAddress) {
+        return detachIface(macAddress, connectionName, objPath, hotplug, persistent, dispatch)
+                .then(() => {
+                    return attachIface({
+                        connectionName,
+                        hotplug,
+                        vmId: objPath,
+                        mac: newMacAddress,
+                        permanent: persistent,
+                        sourceType: networkType,
+                        source: networkSource,
+                        model: networkModel
+                    });
+                });
+    } else {
+        // Error handling inside the modal dialog this function is called
+        return call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' })
+                .then(domXml => {
+                    const updatedXml = updateNetworkIface({
+                        domXml: domXml[0],
+                        macAddress,
+                        newMacAddress,
+                        networkType,
+                        networkSource,
+                        networkModelType: networkModel
+                    });
+                    if (!updatedXml) {
+                        return Promise.reject(new Error("VM CHANGE_NETWORK_SETTINGS action failed: updated device XML couldn't not be generated"));
+                    } else {
+                        return call(connectionName, objPath, 'org.libvirt.Domain', 'UpdateDevice', [updatedXml, flags], { timeout, type: 'su' });
+                    }
+                });
+    }
 }
 
 export function createSnapshot({ connectionName, vmId, name, description }) {

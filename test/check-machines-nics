@@ -181,16 +181,29 @@ class TestMachinesNICs(VirtualMachinesCase):
         # Test Warning message when changes are done in a running VM
         self.NICAddDialog(
             self,
-            source_type="direct",
+            source_type="bridge",
             source="eth42",
+            mac="52:54:00:f0:eb:63",
             remove=False
         ).execute()
 
+        b.click("#vm-subVmTest1-network-2-edit-dialog")
+        b.wait_visible("#vm-subVmTest1-network-2-edit-dialog-modal-window")
+        b.select_from_dropdown("#vm-subVmTest1-network-2-select-source", "eth43")
+        b.select_from_dropdown("#vm-subVmTest1-network-2-select-type", "direct")
+        b.set_input_text("#vm-subVmTest1-network-2-edit-dialog-mac", "52:54:00:f0:eb:62")
+        b.click("#vm-subVmTest1-network-2-edit-dialog-save")
+        b.wait_not_present("#vm-subVmTest1-network-2-edit-dialog-modal-window")
+
+        b.wait_in_text("#vm-subVmTest1-network-2-type", "direct")
+        b.wait_in_text("#vm-subVmTest1-network-2-mac", "52:54:00:f0:eb:62")
+
+        # Test a warning shows up when editing a vNIC for a running VM
         b.click("#vm-subVmTest1-run")
         b.wait_in_text("#vm-subVmTest1-state", "Running")
 
         b.click("#vm-subVmTest1-network-2-edit-dialog")
-        b.select_from_dropdown("#vm-subVmTest1-network-2-select-source", "eth43")
+        b.select_from_dropdown("#vm-subVmTest1-network-2-select-source", "eth42")
         b.wait_visible("#vm-subVmTest1-network-2-edit-dialog-idle-message")
 
     class NICAddDialog:
