@@ -34,8 +34,6 @@ import { FileAutoComplete } from 'cockpit-components-file-autocomplete.jsx';
 import { createStoragePool } from '../../actions/provider-actions.js';
 import cockpit from 'cockpit';
 
-import './createStoragePoolDialog.css';
-
 const _ = cockpit.gettext;
 
 const StoragePoolNameRow = ({ onValueChanged, dialogValues }) => {
