@@ -1475,6 +1475,7 @@ export function detachIface(mac, connectionName, id, live, persistent, dispatch)
     let detachFlags = Enum.VIR_DOMAIN_AFFECT_CURRENT;
     if (live)
         detachFlags |= Enum.VIR_DOMAIN_AFFECT_LIVE;
+    let domInactiveXml;
 
     return call(connectionName, id, 'org.libvirt.Domain', 'GetXMLDesc', [0], { timeout, type: 'u' })
             .then(domXml => {
@@ -1483,12 +1484,14 @@ export function detachIface(mac, connectionName, id, live, persistent, dispatch)
 
                 return call(connectionName, id, 'org.libvirt.Domain', 'GetXMLDesc', [getXMLFlags], { timeout, type: 'u' });
             })
-            .then(domInactiveXml => {
+            .then(xml => {
+                domInactiveXml = xml;
+                return call(connectionName, id, 'org.libvirt.Domain', 'DetachDevice', [ifaceXML, detachFlags], { timeout, type: 'su' });
+            })
+            .then(() => {
                 const ifaceInactiveXML = getIfaceElemByMac(domInactiveXml[0], mac);
                 if (ifaceInactiveXML && persistent)
-                    detachFlags |= Enum.VIR_DOMAIN_AFFECT_CONFIG;
-
-                return call(connectionName, id, 'org.libvirt.Domain', 'DetachDevice', [ifaceXML, detachFlags], { timeout, type: 'su' });
+                    return call(connectionName, id, 'org.libvirt.Domain', 'DetachDevice', [ifaceInactiveXML, Enum.VIR_DOMAIN_AFFECT_CONFIG], { timeout, type: 'su' });
             })
             .then(() => dispatch(getVm({ connectionName, id })));
 }
