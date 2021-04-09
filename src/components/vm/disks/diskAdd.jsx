@@ -33,8 +33,6 @@ import { volumeCreateAndAttach, attachDisk, getVm, getAllStoragePools } from '..
 import { VolumeCreateBody } from '../../storagePools/storageVolumeCreateBody.jsx';
 import LibvirtDBus, { updateDiskAttributes } from '../../../libvirt-dbus.js';
 
-import './diskAdd.css';
-
 const _ = cockpit.gettext;
 
 const CREATE_NEW = 'create-new';

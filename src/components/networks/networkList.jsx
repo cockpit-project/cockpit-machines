@@ -31,8 +31,6 @@ import { getNetworkRow } from './network.jsx';
 import { getNetworkDevices } from '../../helpers.js';
 import { CreateNetworkAction } from './createNetworkDialog.jsx';
 
-import './networkList.scss';
-
 const _ = cockpit.gettext;
 
 export class NetworkList extends React.Component {
