@@ -33,4 +33,4 @@ jobs:
           # for pull_requests, use HEAD of the proposed branch, for pushes to origin the current SHA
           name: "dist-${{ github.event.pull_request.head.sha || github.sha }}"
           path: cockpit-machines-*.tar.gz
-          retention-days: 7
+          retention-days: 1
