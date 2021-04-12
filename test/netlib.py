@@ -17,12 +17,6 @@
 
 # This is a Trimmed version from NetworkHelpers from cockpit-project/cockpit/test/verify/netlib
 
-import re
-import subprocess
-
-from testlib import *
-
-
 class NetworkHelpers:
     '''Mix-in class for tests that require network setup'''
 
