@@ -15,10 +15,10 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
 
-from testlib import MachineCase, no_retry_when_changed, nondestructive, skipImage, test_main, wait
+from testlib import MachineCase
 from netlib import NetworkHelpers
 from storagelib import StorageHelpers
-from machinesxmls import *
+import machinesxmls
 
 
 class VirtualMachinesCaseHelpers:
@@ -117,16 +117,16 @@ class VirtualMachinesCaseHelpers:
         }
 
         if ptyconsole:
-            args["console"] = PTYCONSOLE_XML
+            args["console"] = machinesxmls.PTYCONSOLE_XML
         else:
             m.execute("chmod 777 /var/log/libvirt")
             args["logfile"] = "/var/log/libvirt/console-{0}.log".format(name)
-            args["console"] = CONSOLE_XML.format(log=args["logfile"])
+            args["console"] = machinesxmls.CONSOLE_XML.format(log=args["logfile"])
 
         if graphics == 'spice':
-            cxml = SPICE_XML
+            cxml = machinesxmls.SPICE_XML
         elif graphics == 'vnc':
-            cxml = VNC_XML
+            cxml = machinesxmls.VNC_XML
         elif graphics == 'none':
             cxml = ""
         else:
@@ -134,11 +134,11 @@ class VirtualMachinesCaseHelpers:
         args["graphics"] = cxml.format(**args)
 
         if not self.created_pool:
-            xml = POOL_XML.format(path="/var/lib/libvirt/images")
+            xml = machinesxmls.POOL_XML.format(path="/var/lib/libvirt/images")
             m.execute("echo \"{0}\" > /tmp/xml && virsh pool-define /tmp/xml && virsh pool-start images".format(xml))
             self.created_pool = True
 
-        xml = DOMAIN_XML.format(**args)
+        xml = machinesxmls.DOMAIN_XML.format(**args)
         m.execute("echo \"{0}\" > /tmp/xml && virsh define /tmp/xml{1}".format(xml,
                                                                                " && virsh start {}".format(name) if running else ""))
 

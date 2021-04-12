@@ -17,12 +17,6 @@
 
 # This is a Trimmed version from StorageHelpers from cockpit-project/cockpit/test/verify/storagelib
 
-import re
-import os.path
-
-from testlib import *
-
-
 class StorageHelpers:
     '''Mix-in class for using in tests that derive from something else than MachineCase or StorageCase'''
     def add_ram_disk(self, size=50):
