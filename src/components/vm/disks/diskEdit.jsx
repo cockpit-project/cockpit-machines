@@ -79,7 +79,9 @@ const CacheRow = ({ onValueChanged, dialogValues, idPrefix, shutoff }) => {
 };
 
 const BusRow = ({ onValueChanged, dialogValues, idPrefix, shutoff }) => {
-    const busTypes = ['sata', 'scsi', 'usb', 'virtio'];
+    const busTypes = ['sata', 'scsi', 'usb', 'virtio'].map(type => ({ value: type }));
+    if (!busTypes.includes(dialogValues.busType))
+        busTypes.push({ value: dialogValues.busType, disabled: true });
 
     return (
         <FormGroup fieldId={`${idPrefix}-bus-type`} label={_("Bus")}
@@ -95,8 +97,9 @@ const BusRow = ({ onValueChanged, dialogValues, idPrefix, shutoff }) => {
                 isDisabled={!shutoff}>
                 {busTypes.map(busType => {
                     return (
-                        <FormSelectOption value={busType} key={busType}
-                                          label={busType} />
+                        <FormSelectOption value={busType.value} key={busType.value}
+                                          isDisabled={busType.disabled}
+                                          label={busType.value} />
                     );
                 })}
             </FormSelect>
