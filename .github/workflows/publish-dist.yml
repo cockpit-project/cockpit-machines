@@ -8,6 +8,7 @@ jobs:
   run:
     if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Download build-dist artifacts
         uses: dawidd6/action-download-artifact@v2
