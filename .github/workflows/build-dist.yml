@@ -24,11 +24,17 @@ jobs:
           sudo apt install -y --no-install-recommends npm make gettext sassc
 
       - name: Build
+        run: NODE_ENV=production make
+
+      - name: Save event information
+        env:
+          GITHUB_EVENT: ${{ toJSON(github.event) }}
         run: |
-          NODE_ENV=production make
-           # https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions
-           # for pull_requests, use HEAD of the proposed branch, for pushes to origin the current SHA
+          # https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions
+          # for pull_requests, use HEAD of the proposed branch, for pushes to origin the current SHA
           echo "${{ github.event.pull_request.head.sha || github.sha }}" > SHA
+          # Save event for follow-up workflows
+          echo "$GITHUB_EVENT" > event.json
 
       - name: Create dist artifact
         uses: actions/upload-artifact@v2
@@ -38,4 +44,5 @@ jobs:
             SHA
             dist/
             package-lock.json
+            event.json
           retention-days: 1
