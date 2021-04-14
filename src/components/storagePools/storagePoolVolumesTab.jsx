@@ -77,17 +77,15 @@ export class StoragePoolVolumesTab extends React.Component {
         const volumes = this.state.rows;
         const isVolumeUsed = getStorageVolumesUsage(vms, storagePool);
         const columnTitles = [_("Name"), _("Used by"), _("Size")];
-        const actions = (
-            <div className='table-actions'>
-                <StorageVolumeDelete key='volume-delete-action'
-                        storagePool={storagePool}
-                        isVolumeUsed={isVolumeUsed}
-                        volumes={volumes.filter(row => row.selected)}
-                        deleteErrorHandler={this.deleteErrorHandler} />
-                <StorageVolumeCreate key='volume-create-action'
-                        storagePool={storagePool} />
-            </div>
-        );
+        const actions = [
+            <StorageVolumeDelete key='volume-delete-action'
+                    storagePool={storagePool}
+                    isVolumeUsed={isVolumeUsed}
+                    volumes={volumes.filter(row => row.selected)}
+                    deleteErrorHandler={this.deleteErrorHandler} />,
+            <StorageVolumeCreate key='volume-create-action'
+                    storagePool={storagePool} />
+        ];
 
         const sortFunction = (volumeA, volumeB) => volumeA.name.localeCompare(volumeB.name);
         const rows = volumes

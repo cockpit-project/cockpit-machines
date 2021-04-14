@@ -104,7 +104,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         # Check storage volumes of a pool
         b.wait_visible("#pool-myPoolOne-{0}-storage-volumes".format(connectionName))
         self.gotoVolumesTab("myPoolOne")
-        b.wait_in_text("tr[data-row-id=pool-myPoolOne-{0}] + tr table td".format(connectionName),
+        b.wait_in_text("tr[data-row-id=pool-myPoolOne-{0}] + tr .pf-c-empty-state".format(connectionName),
                        "No storage volumes defined for this storage pool")
 
         # Close expanded row for this pool
@@ -149,7 +149,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         # Try deactivating and activating a pool
         b.click("#deactivate-pool-myPoolOne-{0}".format(connectionName))
         b.wait_in_text("#pool-myPoolOne-{0}-state".format(connectionName), "inactive")
-        b.wait_in_text("tr[data-row-id=pool-myPoolOne-{0}] + tr table td".format(connectionName), "Activate the storage pool to administer volumes")
+        b.wait_in_text("tr[data-row-id=pool-myPoolOne-{0}] + tr .pf-c-empty-state".format(connectionName), "Activate the storage pool to administer volumes")
         b.wait_visible('#myPoolOne-{0}-create-volume-button:disabled'.format(connectionName))
         b.click("#activate-pool-myPoolOne-{0}".format(connectionName))
         b.wait_in_text("#pool-myPoolOne-{0}-state".format(connectionName), "active")
