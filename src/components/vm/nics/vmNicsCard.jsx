@@ -300,9 +300,9 @@ export class VmNetworkTab extends React.Component {
                     return (
                         <div className='machines-listing-actions'>
                             {deleteNICAction}
-                            <button className='pf-c-button pf-m-secondary' onClick={onChangeState(network)} title={`${isUp ? _("Unplug") : _("Plug")}`}>
+                            <Button variant='secondary' onClick={onChangeState(network)} title={`${isUp ? _("Unplug") : _("Plug")}`}>
                                 {isUp ? 'Unplug' : 'Plug'}
-                            </button>
+                            </Button>
                             {editNICAction()}
                         </div>
                     );
