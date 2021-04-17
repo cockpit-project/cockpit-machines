@@ -460,6 +460,8 @@ class TestMachinesDisks(VirtualMachinesCase):
 
         used_targets = ['vda']
 
+        m.execute("if selinuxenabled 2>/dev/null; then setsebool -P virt_use_nfs 1; fi")
+
         # Prepare a local NFS pool
         self.restore_file("/etc/exports")
         nfs_pool = os.path.join(self.vm_tmpdir, "nfs_pool")
