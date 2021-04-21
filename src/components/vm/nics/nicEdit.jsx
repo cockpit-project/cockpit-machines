@@ -135,7 +135,7 @@ export class EditNICModal extends React.Component {
         const { idPrefix, vm, network } = this.props;
 
         const defaultBody = (
-            <Form>
+            <Form isHorizontal>
                 <NetworkTypeAndSourceRow idPrefix={idPrefix}
                                          dialogValues={this.state}
                                          onValueChanged={this.onValueChanged}
