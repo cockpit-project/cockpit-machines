@@ -44,8 +44,6 @@ if [ "$ID" = "fedora" ]; then
            TestMachinesSettings.testVCPU
            TestMachinesSnapshots.testSnapshots
            "
-else
-    TESTS="$TestMachines"
 fi
 
 # pre-download cirros image for Machines tests
@@ -59,7 +57,7 @@ done
 # execute run-tests
 RC=0
 test/common/run-tests --nondestructive $exclude_options \
-    --machine localhost:22 --browser localhost:9090 $TESTS || RC=$?
+    --machine localhost:22 --browser localhost:9090 ${TESTS:-} || RC=$?
 
 echo $RC > "$LOGS/exitcode"
 cp --verbose Test* "$LOGS" || true
