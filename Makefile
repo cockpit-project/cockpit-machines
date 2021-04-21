@@ -140,7 +140,7 @@ VM_DEP=$(TARFILE) packaging/debian/rules packaging/debian/control
 VM_PACKAGE=--upload `pwd`/$(TARFILE):/var/tmp/ --upload `pwd`/packaging/debian:/var/tmp/
 else
 VM_DEP=$(RPMFILE)
-VM_PACKAGE=--install cockpit-ws --install `pwd`/$(RPMFILE)
+VM_PACKAGE=--no-network --upload `pwd`/$(RPMFILE):/var/tmp/
 endif
 
 # build a VM with locally built rpm/dsc installed

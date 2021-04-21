@@ -3,7 +3,7 @@
 # The application RPM will be installed separately
 set -eu
 
-# for Debian based images, build and install debs; for RPM based ones, the locally built rpm gets installed separately
+# for Debian based images, build and install debs
 if [ -d /var/tmp/debian ]; then
     apt-get update
     if grep -q 'VERSION_ID="20.10"' /etc/os-release; then
@@ -37,7 +37,12 @@ if [ -d /var/tmp/debian ]; then
         dpkg-buildpackage -us -uc -b
     fi
     dpkg -i ../*.deb
+
+# install rpms
+elif [ -e /var/tmp/*.rpm ]; then
+    rpm -i --verbose /var/tmp/*.rpm
 fi
+
 
 # for Debian images, allow libvirtd coredumps
 if grep -q 'ID=debian' /etc/os-release; then
