@@ -28,39 +28,19 @@ jobs:
       - name: Commit to dist repo
         run: |
           set -ex
-          SHA=$(cat SHA)
+          SHA="$(cat SHA)"
 
-          # multiple parallel workflows race against each other, so the final
-          # `git push` may fail
-          rc=1
-          for retry in $(seq 5); do
-              git clone https://github.com/${{ github.repository }}-dist.git dist-repo
-              rm -rf dist-repo/dist
-              cp -r dist/ package-lock.json dist-repo/
+          mkdir dist-repo
+          cd dist-repo
+          git init
+          cp -r ../dist/ ../package-lock.json .
 
-              # freshly created empty repo?
-              cd dist-repo
-              git rev-parse HEAD >/dev/null 2>&1 || git init -b main
+          git add .
+          git commit -m "Build for $SHA"
+          tag="sha-$SHA"
+          git tag "$tag"
 
-              # commit the updated files
-              git add .
-              # may have no changes
-              git diff --cached --quiet || git commit -m "Build for $SHA"
-              tag="sha-$SHA"
-              git tag $tag
-
-              # push commit and tag
-              if git push origin HEAD $tag; then
-                  rc=0
-                  break
-              else
-                  echo "ERROR: conflict? Retrying git commit"
-                  git push origin :$tag || true
-                  cd ..
-                  rm -rf dist-repo
-              fi
-          done
-          exit $rc
+          git push https://github.com/${{ github.repository }}-dist.git $tag
 
       - name: Trigger integration tests for PRs
         run: |

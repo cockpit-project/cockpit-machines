@@ -10,10 +10,12 @@ jobs:
   run:
     runs-on: ubuntu-latest
     steps:
+      - name: Clone repository
+        uses: actions/checkout@v2
+
       - name: Set up configuration and secrets
         run: |
           printf '[user]\n\tname = Cockpit Project\n\temail=cockpituous@gmail.com\n' > ~/.gitconfig
-          echo '${{ secrets.COCKPITUOUS_TOKEN }}' > ~/.config/github-token
           # we push to -dist repo via https://github.com, that needs our cockpituous token
           git config --global credential.helper store
           echo 'https://token:${{ secrets.COCKPITUOUS_TOKEN }}@github.com' >> ~/.git-credentials
@@ -22,20 +24,22 @@ jobs:
         run: |
           git clone https://github.com/${{ github.repository }}-dist.git dist-repo
 
-      - name: Truncate history of -dist repo
+      - name: Delete old tags
         run: |
           set -ex
+
+          HEAD=$(git rev-parse HEAD)
+
           cd dist-repo
-          # keep one week of builds
-          # oldest commit that applies to any still present tarball
-          REF=$(git log --before '7 days ago' --pretty=format:%H -1)
-          # empty if there are no old commits
-          [ -n "$REF" ] || exit 0
-
-          git checkout --orphan temp $REF
-          git commit -m "Truncated history"
-          git rebase --onto temp $REF main
-          git branch -D temp
-          git reflog expire --expire=now --all
-
-          git push -f
+          now="$(date +%s)"
+          for tag in $(git tag -l); do
+              tag_time="$(git show -s --format=%at $tag)"
+              if [ "$tag" = "sha-${HEAD}" ]; then
+                  echo "$tag refers to current project HEAD, keeping"
+              elif [ $((now - tag_time)) -ge 604800 ]; then
+                  echo "$tag is older than 7 days, deleting..."
+                  git push origin ":$tag"
+              else
+                  echo "$tag is younger than 7 days, keeping"
+              fi
+          done

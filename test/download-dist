@@ -62,9 +62,9 @@ def download_dist(wait=False):
 
     if not os.path.exists(dist_git_checkout):
         message(f"download-dist: Creating dist cache {dist_git_checkout}")
-        # we can't directly clone a tag with clone -b, so always fetch main initially
-        # this is usually very close to what we are interested in anyway
-        subprocess.check_call(["git", "clone", "--quiet", "--depth=1", "--bare", "https://github.com/" + REPO, dist_git_checkout])
+        os.makedirs(dist_git_checkout)
+        subprocess.check_call(["git", "-C", dist_git_checkout, "init", "--bare", "--quiet"])
+        subprocess.check_call(["git", "-C", dist_git_checkout, "remote", "add", "origin", "https://github.com/" + REPO])
 
     retries = 50 if wait else 1  # 25 minutes, once every 30s
     while retries > 0:
