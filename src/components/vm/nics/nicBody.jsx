@@ -119,19 +119,21 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
     }
 
     return (
-        <FormGroup fieldId={`${idPrefix}-select-type`} label={_("Interface type")}>
-            <FormSelect id={`${idPrefix}-select-type`}
-                        onChange={value => onValueChanged('networkType', value)}
-                        value={defaultNetworkType}>
-                {availableNetworkTypes
-                        .map(networkType => {
-                            return (
-                                <FormSelectOption value={networkType.name} key={networkType.name}
-                                                  isDisabled={networkType.disabled || false}
-                                                  label={networkType.desc} />
-                            );
-                        })}
-            </FormSelect>
+        <>
+            <FormGroup fieldId={`${idPrefix}-select-type`} label={_("Interface type")}>
+                <FormSelect id={`${idPrefix}-select-type`}
+                            onChange={value => onValueChanged('networkType', value)}
+                            value={defaultNetworkType}>
+                    {availableNetworkTypes
+                            .map(networkType => {
+                                return (
+                                    <FormSelectOption value={networkType.name} key={networkType.name}
+                                                      isDisabled={networkType.disabled || false}
+                                                      label={networkType.desc} />
+                                );
+                            })}
+                </FormSelect>
+            </FormGroup>
             {["network", "direct", "bridge"].includes(dialogValues.networkType) && (
                 <FormGroup fieldId={`${idPrefix}-select-source`} label={_("Source")}>
                     <FormSelect id={`${idPrefix}-select-source`}
@@ -142,7 +144,7 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
                     </FormSelect>
                 </FormGroup>
             )}
-        </FormGroup>
+        </>
     );
 };
 
