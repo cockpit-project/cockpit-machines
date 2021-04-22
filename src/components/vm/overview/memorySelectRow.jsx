@@ -19,10 +19,12 @@
 import React from 'react';
 import cockpit from 'cockpit';
 import {
-    FormHelperText,
-    FormSelect, FormSelectOption,
+    InputGroup,
+    FormGroup, FormSelect, FormSelectOption,
+    Grid, GridItem,
+    Slider,
+    TextInput,
 } from '@patternfly/react-core';
-import { Slider } from 'patternfly-react';
 
 import { digitFilter, units } from "../../../helpers.js";
 
@@ -43,53 +45,52 @@ class MemorySelectRow extends React.Component {
     }
 
     render() {
-        const { id, value, minValue, maxValue, initialUnit, onValueChange, onUnitChange, readOnly, helperText } = this.props;
-        /* We have the weird key attribute in the Slider because of
-         * https://github.com/patternfly/patternfly-react/issues/3186
-         * https://github.com/patternfly/patternfly-react/issues/3179
-         * We have the focus callback in the Slider because of
-         * https://github.com/patternfly/patternfly-react/issues/3191
-         */
+        const { id, value, label, minValue, maxValue, initialUnit, onValueChange, onUnitChange, isDisabled, helperText } = this.props;
+
         return (
-            <>
-                <div className={'slider-input-group' + (readOnly ? ' disabled' : '')}
-                     key={[id, "slider", minValue, maxValue].join("-")}>
-                    { (minValue != undefined && maxValue != undefined && value >= minValue) ? <Slider id={id + "-slider"}
-                        type="range"
-                        min={minValue}
-                        max={maxValue}
-                        value={value}
-                        showBoundaries
-                        title={value}
-                        ref={slider => { this.slider = slider }}
-                        focus={() => { this.slider.current.focus() }}
-                        onSlide={onValueChange} /> : null}
-                    <div role="group" className="form-group">
-                        <input id={id} className="form-control"
-                            type="text" inputMode="numeric" pattern="[0-9]*"
-                            min={minValue}
-                            max={maxValue}
-                            value={this.state.memory}
-                            onKeyPress={digitFilter}
-                            step={1}
-                            disabled={readOnly}
-                            onFocus={ () => this.setState({ inputHasFocus: true }) }
-                            onBlur={e => { onValueChange(e.target.value); this.setState({ inputHasFocus: false }) } }
-                            onClick={e => onValueChange(e.target.value)}
-                            onChange={e => this.setState({ memory: e.target.value })} />
-                        <FormSelect id={id + "-unit-select"}
-                                    value={initialUnit}
-                                    isDisabled={readOnly}
-                                    onChange={onUnitChange}>
-                            <FormSelectOption value={units.MiB.name} key={units.MiB.name}
-                                              label={_("MiB")} />
-                            <FormSelectOption value={units.GiB.name} key={units.GiB.name}
-                                              label={_("GiB")} />
-                        </FormSelect>
-                    </div>
-                </div>
-                {helperText && <FormHelperText isHidden={false}>{helperText}</FormHelperText>}
-            </>
+            <FormGroup fieldId={id}
+                       helperText={helperText}
+                       label={label}>
+                <Grid hasGutter>
+                    <GridItem span={12} sm={8}>
+                        <Slider className='memory-slider'
+                                id={id + '-slider'}
+                                key={id + '-slider-max-' + maxValue}
+                                max={maxValue}
+                                min={minValue}
+                                onChange={value => onValueChange(value)}
+                                showBoundaries
+                                showTicks={false}
+                                step={1}
+                                value={value} />
+                    </GridItem>
+                    <GridItem span={12} sm={4}>
+                        <InputGroup>
+                            <TextInput id={id}
+                                       className="ct-machines-size-input"
+                                       type="text"
+                                       inputMode="numeric"
+                                       pattern="[0-9]*"
+                                       value={this.state.memory}
+                                       onKeyPress={digitFilter}
+                                       isDisabled={isDisabled}
+                                       onFocus={ () => this.setState({ inputHasFocus: true }) }
+                                       onBlur={() => { onValueChange(Math.min(Math.max(minValue, this.state.memory), maxValue)); this.setState({ inputHasFocus: false }) }}
+                                       onChange={memory => this.setState({ memory })} />
+                            <FormSelect id={id + "-unit-select"}
+                                        className="ct-machines-select-unit"
+                                        value={initialUnit}
+                                        isDisabled={isDisabled}
+                                        onChange={onUnitChange}>
+                                <FormSelectOption value={units.MiB.name} key={units.MiB.name}
+                                                  label={_("MiB")} />
+                                <FormSelectOption value={units.GiB.name} key={units.GiB.name}
+                                                  label={_("GiB")} />
+                            </FormSelect>
+                        </InputGroup>
+                    </GridItem>
+                </Grid>
+            </FormGroup>
         );
     }
 }
