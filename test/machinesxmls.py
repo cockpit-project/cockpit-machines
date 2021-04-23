@@ -116,7 +116,7 @@ DOMAIN_XML = """
   <name>{name}</name>
   <vcpu>1</vcpu>
   <os>
-    <type arch='x86_64'>hvm</type>
+    <type arch='x86_64' machine='q35'>hvm</type>
     <boot dev='hd'/>
     <boot dev='network'/>
   </os>
@@ -126,6 +126,17 @@ DOMAIN_XML = """
     <acpi/>
   </features>
   <devices>
+    <controller type='pci' model='pcie-root'/>
+    <controller type='pci' model='pcie-root-port'/>
+    <controller type='pci' model='pcie-root-port'/>
+    <controller type='pci' model='pcie-root-port'/>
+    <controller type='pci' model='pcie-root-port'/>
+    <controller type='pci' model='pcie-root-port'/>
+    <controller type='pci' model='pcie-root-port'/>
+    <controller type='pci' model='pcie-root-port'/>
+    <controller type='pci' model='pcie-root-port'/>
+    <controller type='pci' model='pcie-root-port'/>
+    <controller type='pci' model='pcie-to-pci-bridge'/>
     <disk type='file'>
       <driver name='qemu' type='qcow2'/>
       <source file='{image}'/>
