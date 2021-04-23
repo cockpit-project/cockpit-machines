@@ -23,8 +23,9 @@ export TEST_AUDIT_NO_SELINUX=1
 EXCLUDES=""
 
 # Fedora gating tests are running on infra without /dev/kvm; Machines tests are too darn slow there
-# so just pick a representative sample
-if [ "$ID" = "fedora" ]; then
+# too many tests also fail on RHEL 9 (also on testing farm); so just pick a representative sample on these
+# Only RHEL 8 gating env can run all tests
+if ! [ "$ID" = "rhel" -a "${VERSION_ID#8}" != "$VERSION_ID" ]; then
     # Testing Farm machines are really slow in European evenings
     export TEST_TIMEOUT_FACTOR=3
     TESTS="TestMachinesConsoles.testInlineConsole
