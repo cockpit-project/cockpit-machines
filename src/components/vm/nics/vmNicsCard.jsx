@@ -233,7 +233,7 @@ export class VmNetworkTab extends React.Component {
             },
             {
                 name: _("Source"), value: (network, networkId) => {
-                    const sourceElem = source => checkDeviceAviability(source) ? <Button variant="link" className='machines-network-source-link' onClick={sourceJump(source)}>{source}</Button> : source;
+                    const sourceElem = source => checkDeviceAviability(source) ? <Button variant="link" isInline onClick={sourceJump(source)}>{source}</Button> : source;
                     const mapSource = {
                         direct: (source) => sourceElem(source.dev),
                         network: (source) => sourceElem(source.network),
