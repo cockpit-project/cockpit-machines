@@ -187,15 +187,23 @@ class TestMachinesNICs(VirtualMachinesCase):
             remove=False
         ).execute()
 
+        # The dialog fields should reflect the permanent configuration
         b.click("#vm-subVmTest1-network-2-edit-dialog")
         b.wait_visible("#vm-subVmTest1-network-2-edit-dialog-modal-window")
+        b.wait_in_text("#vm-subVmTest1-network-2-select-source", "eth42")
+        b.wait_val("#vm-subVmTest1-network-2-edit-dialog-mac", "52:54:00:f0:eb:63")
+
+        # Changing the NIC configuration for a shut off VM should not display any warning
         b.select_from_dropdown("#vm-subVmTest1-network-2-select-type", "direct")
         b.select_from_dropdown("#vm-subVmTest1-network-2-select-source", "eth43")
         b.set_input_text("#vm-subVmTest1-network-2-edit-dialog-mac", "52:54:00:f0:eb:62")
+        b.wait_not_present("#vm-subVmTest1-network-2-edit-dialog-idle-message")
         b.click("#vm-subVmTest1-network-2-edit-dialog-save")
         b.wait_not_present("#vm-subVmTest1-network-2-edit-dialog-modal-window")
 
+        # The NICs table should reflect the updated permanent configuration
         b.wait_in_text("#vm-subVmTest1-network-2-type", "direct")
+        b.wait_in_text("#vm-subVmTest1-network-2-source", "eth43")
         b.wait_in_text("#vm-subVmTest1-network-2-mac", "52:54:00:f0:eb:62")
 
         # Test a warning shows up when editing a vNIC for a running VM
@@ -205,6 +213,11 @@ class TestMachinesNICs(VirtualMachinesCase):
         b.click("#vm-subVmTest1-network-2-edit-dialog")
         b.select_from_dropdown("#vm-subVmTest1-network-2-select-source", "eth42")
         b.wait_visible("#vm-subVmTest1-network-2-edit-dialog-idle-message")
+        b.click("#vm-subVmTest1-network-2-edit-dialog-save")
+        b.wait_not_present("#vm-subVmTest1-network-2-edit-dialog-modal-window")
+
+        # The NICs table should display the permanent configuration which is different than the live which we just set
+        b.wait_in_text("#vm-subVmTest1-network-2-source", "eth43")
 
     class NICAddDialog:
 
