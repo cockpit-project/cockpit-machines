@@ -6,13 +6,15 @@ set -eu
 # for Debian based images, build and install debs
 if [ -d /var/tmp/debian ]; then
     apt-get update
-    if grep -q 'VERSION_ID="20.10"' /etc/os-release; then
+    if grep -q 'VERSION_ID="21.04"' /etc/os-release; then
+        # HACK: nftables backend does not currently work with libvirt: https://launchpad.net/bugs/1799095
+        sed -i 's/FirewallBackend=nftables/FirewallBackend=iptables/' /etc/firewalld/firewalld.conf
+    elif grep -q 'VERSION_ID="20.10"' /etc/os-release; then
         # HACK: nftables backend does not currently work with libvirt: https://launchpad.net/bugs/1799095
         sed -i 's/FirewallBackend=nftables/FirewallBackend=iptables/' /etc/firewalld/firewalld.conf
 
         BACKPORTS="-t groovy-backports"
-    fi
-    if grep -q 'VERSION_ID="10"' /etc/os-release; then
+    elif grep -q 'VERSION_ID="10"' /etc/os-release; then
         BACKPORTS="-t buster-backports"
     fi
     eatmydata apt-get install ${BACKPORTS:-} ${APT_INSTALL_OPTIONS:-} -y cockpit-ws cockpit-system
