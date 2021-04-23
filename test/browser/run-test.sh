@@ -22,10 +22,6 @@ export TEST_AUDIT_NO_SELINUX=1
 
 EXCLUDES=""
 
-# triggers SELinux violation
-# See journal: SELinux is preventing /usr/libexec/qemu-kvm from open access on the file /var/lib/cockpittest/nfs_pool/nfs-volume-0.
-EXCLUDES="$EXCLUDES TestMachinesDisks.testAddDiskNFS"
-
 # Fedora gating tests are running on infra without /dev/kvm; Machines tests are too darn slow there
 # so just pick a representative sample
 if [ "$ID" = "fedora" ]; then
