@@ -189,8 +189,8 @@ class TestMachinesNICs(VirtualMachinesCase):
 
         b.click("#vm-subVmTest1-network-2-edit-dialog")
         b.wait_visible("#vm-subVmTest1-network-2-edit-dialog-modal-window")
-        b.select_from_dropdown("#vm-subVmTest1-network-2-select-source", "eth43")
         b.select_from_dropdown("#vm-subVmTest1-network-2-select-type", "direct")
+        b.select_from_dropdown("#vm-subVmTest1-network-2-select-source", "eth43")
         b.set_input_text("#vm-subVmTest1-network-2-edit-dialog-mac", "52:54:00:f0:eb:62")
         b.click("#vm-subVmTest1-network-2-edit-dialog-save")
         b.wait_not_present("#vm-subVmTest1-network-2-edit-dialog-modal-window")
