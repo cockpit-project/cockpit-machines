@@ -16,7 +16,9 @@ chmod a+w "$LOGS"
 # HACK: chromium-headless ought to be enough, but version 88 has a crash: https://bugs.chromium.org/p/chromium/issues/detail?id=1170634
 if ! rpm -q chromium; then
     if grep -q 'ID=.*rhel' /etc/os-release; then
+        # There is no EPEL for RHEL 9 yet, force 8
         dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+        sed -i 's/$releasever/8/' /etc/yum.repos.d/epel*.repo
         dnf config-manager --enable epel
     fi
     dnf install -y chromium
