@@ -543,27 +543,27 @@ class TestMachinesCreate(VirtualMachinesCase):
 
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='url',
                                                       location=config.VALID_URL,
-                                                      memory_size=512, memory_size_unit='MiB',
+                                                      memory_size=128, memory_size_unit='MiB',
                                                       storage_pool="NoStorage",
                                                       os_name=config.FEDORA_28))
 
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='url',
                                                       location=config.VALID_URL,
-                                                      memory_size=512, memory_size_unit='MiB',
+                                                      memory_size=128, memory_size_unit='MiB',
                                                       storage_pool="NoStorage",
                                                       os_name=config.FEDORA_28,
                                                       start_vm=False))
 
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='url',
                                                       location=config.VALID_URL,
-                                                      memory_size=256, memory_size_unit='MiB',
+                                                      memory_size=128, memory_size_unit='MiB',
                                                       storage_size=128, storage_size_unit='MiB',
                                                       start_vm=False))
 
         # Test detection of ISO file in URL
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='url',
                                                       location=config.ISO_URL,
-                                                      memory_size=256, memory_size_unit='MiB',
+                                                      memory_size=128, memory_size_unit='MiB',
                                                       storage_pool="NoStorage",
                                                       start_vm=True))
 
