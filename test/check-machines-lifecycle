@@ -303,6 +303,9 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         # Make sure that unprivileged users can see the VM list when libvirtd is not running
         m.execute("systemctl stop libvirtd.service")
         m.execute("useradd nonadmin; echo nonadmin:foobar | chpasswd")
+        # user libvirtd instance tends to SIGABRT with "Failed to find user record for uid .." on shutdown during cleanup
+        # so make sure that there are no leftover user processes that bleed into the next test
+        self.addCleanup(self.machine.execute, "pkill -u nonadmin; while pgrep -u nonadmin; do sleep 0.5; done")
         self.login_and_go("/machines", user="nonadmin", superuser=False)
         b.wait_in_text("body", "Virtual machines")
         b.wait_in_text("#virtual-machines-listing .pf-c-empty-state", "No VM is running")
