@@ -18,7 +18,6 @@
 from testlib import MachineCase
 from netlib import NetworkHelpers
 from storagelib import StorageHelpers
-import machinesxmls
 
 
 class VirtualMachinesCaseHelpers:
@@ -111,36 +110,33 @@ class VirtualMachinesCaseHelpers:
         args = {
             "name": name,
             "image": img,
-            "logfile": None,
-            "console": "",
+            "logfile": "/var/log/libvirt/console-{0}.log".format(name),
             "memory": memory,
         }
-
         if ptyconsole:
-            args["console"] = machinesxmls.PTYCONSOLE_XML
+            if m.image not in ['debian-stable']:
+                console = "pty,target.type=virtio "
+            else:
+                console = "pty,target_type=virtio "
         else:
-            m.execute("chmod 777 /var/log/libvirt")
-            args["logfile"] = "/var/log/libvirt/console-{0}.log".format(name)
-            args["console"] = machinesxmls.CONSOLE_XML.format(log=args["logfile"])
+            if m.image not in ['debian-stable']:
+                console = "file,target.type=serial,source.path={} ".format(args["logfile"])
+            else:
+                console = "file,target_type=serial,path={} ".format(args["logfile"])
 
-        if graphics == 'spice':
-            cxml = machinesxmls.SPICE_XML
-        elif graphics == 'vnc':
-            cxml = machinesxmls.VNC_XML
-        elif graphics == 'none':
-            cxml = ""
-        else:
-            assert False, "invalid value for graphics"
-        args["graphics"] = cxml.format(**args)
+        m.execute("virt-install --connect qemu:///system --name {0} "
+                  "--os-variant cirros0.4.0 "
+                  "--boot hd,network "
+                  "--vcpus 1 "
+                  "--memory {1} "
+                  "--import --disk {2} "
+                  "--graphics {3},listen=127.0.0.1 "
+                  "--console {4}"
+                  "--print-step 1 > /tmp/xml".format(name, memory, img, graphics, console))
 
-        if not self.created_pool:
-            xml = machinesxmls.POOL_XML.format(path="/var/lib/libvirt/images")
-            m.execute("echo \"{0}\" > /tmp/xml && virsh pool-define /tmp/xml && virsh pool-start images".format(xml))
-            self.created_pool = True
-
-        xml = machinesxmls.DOMAIN_XML.format(**args)
-        m.execute("echo \"{0}\" > /tmp/xml && virsh define /tmp/xml{1}".format(xml,
-                                                                               " && virsh start {}".format(name) if running else ""))
+        m.execute("virsh define /tmp/xml")
+        if running:
+            m.execute("virsh start {}".format(name))
 
         m.execute('[ "$(virsh domstate {0})" = {1} ] || {{ virsh dominfo {0} >&2; cat /var/log/libvirt/qemu/{0}.log >&2; exit 1; }}'.format(name,
                                                                                                                                             "running" if running else "\"shut off\""))
