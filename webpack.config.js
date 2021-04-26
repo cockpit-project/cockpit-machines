@@ -74,7 +74,15 @@ module.exports = {
 
     optimization: {
         minimize: production,
-        minimizer: [new TerserJSPlugin({}), new OptimizeCSSAssetsPlugin({})],
+        minimizer: [
+            new TerserJSPlugin({}),
+            // Workaround: https://github.com/patternfly/patternfly-react/issues/5650
+            new OptimizeCSSAssetsPlugin({
+                cssProcessorPluginOptions: {
+                    preset: ['default', { mergeLonghand: false }]
+                }
+            })
+        ],
     },
 
     module: {
