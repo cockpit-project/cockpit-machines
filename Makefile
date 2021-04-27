@@ -107,6 +107,7 @@ $(TARFILE): export NODE_ENV=production
 $(TARFILE): $(WEBPACK_TEST) $(RPM_NAME).spec
 	tar czf $(TARFILE) --transform 's,^,cockpit-$(PACKAGE_NAME)/,' \
 		--exclude $(RPM_NAME).spec.in \
+		--exclude test/reference \
 		$$(git ls-files) $(LIB_TEST) src/lib/patternfly/*.scss package-lock.json $(RPM_NAME).spec dist/; \
 
 srpm: $(TARFILE) $(RPM_NAME).spec
@@ -158,7 +159,7 @@ codecheck:
 	python3 -m pycodestyle --max-line-length=195 $(PYTHONFILES) # TODO: Fix long lines
 
 # run the browser integration tests; skip check for SELinux denials
-check: $(NODE_MODULES_TEST) $(VM_IMAGE) test/common
+check: $(NODE_MODULES_TEST) $(VM_IMAGE) test/common test/reference
 	test/common/run-tests
 
 # checkout Cockpit's bots for standard test VM images and API to launch them
@@ -173,9 +174,12 @@ bots:
 # when you start a new project, use the latest release, and update it from time to time
 test/common:
 	flock Makefile sh -ec '\
-	    git fetch --depth=1 https://github.com/cockpit-project/cockpit.git 241; \
+	    git fetch --depth=1 https://github.com/cockpit-project/cockpit.git pull/15479/head; \
 	    git checkout --force FETCH_HEAD -- test/common; \
 	    git reset test/common'
+
+test/reference: test/common
+	test/common/pixel-tests pull
 
 # checkout Cockpit's PF/React/build library; again this has no API stability guarantee, so check out a stable tag
 $(LIB_TEST):
