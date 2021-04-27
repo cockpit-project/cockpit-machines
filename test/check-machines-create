@@ -56,13 +56,15 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                             location=config.NOVELL_MOCKUP_ISO_PATH,
                                                             memory_size=128, memory_size_unit='MiB',
                                                             storage_size=12500, storage_size_unit='GiB',
-                                                            start_vm=True))
+                                                            start_vm=True,
+                                                            pixel_test_tag="iso"))
 
         runner.cancelDialogTest(TestMachinesCreate.VmDialog(self, sourceType='url',
                                                             location=config.VALID_URL,
                                                             memory_size=256, memory_size_unit='MiB',
                                                             os_name=config.FEDORA_28,
-                                                            start_vm=False))
+                                                            start_vm=False,
+                                                            pixel_test_tag="url"))
 
         # OS input check
         runner.checkOsInputTest(TestMachinesCreate.VmDialog(self))
@@ -76,10 +78,12 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                             memory_size=256, memory_size_unit='MiB',
                                                             storage_pool="NoStorage",
                                                             os_name=config.FEDORA_28,
-                                                            start_vm=False))
+                                                            start_vm=False,
+                                                            pixel_test_tag="auto"))
 
         # check if older os are filtered
-        runner.checkFilteredOsTest(TestMachinesCreate.VmDialog(self, os_name=config.REDHAT_RHEL_4_7_FILTERED_OS))
+        runner.checkFilteredOsTest(TestMachinesCreate.VmDialog(self, os_name=config.REDHAT_RHEL_4_7_FILTERED_OS,
+                                                               pixel_test_tag="filter"))
 
         runner.checkFilteredOsTest(TestMachinesCreate.VmDialog(self, os_name=config.MANDRIVA_2011_FILTERED_OS))
 
@@ -638,7 +642,8 @@ class TestMachinesCreate(VirtualMachinesCase):
                      delete=True,
                      env_is_empty=True,
                      check_script_finished=True,
-                     connection=None):
+                     connection=None,
+                     pixel_test_tag=None):
 
             TestMachinesCreate.VmDialog.vmId += 1  # This variable is static - don't use self here
 
@@ -678,6 +683,8 @@ class TestMachinesCreate(VirtualMachinesCase):
             self.env_is_empty = env_is_empty
             self.check_script_finished = check_script_finished
             self.connection = connection
+
+            self.pixel_test_tag = pixel_test_tag
 
         def open(self):
             b = self.browser
@@ -958,6 +965,12 @@ class TestMachinesCreate(VirtualMachinesCase):
             b.click(".pf-c-alert-group li .pf-c-alert button.pf-m-plain")
             b.wait_not_present(".pf-c-alert-group li .pf-c-alert")
 
+            return self
+
+        def assert_pixels(self, subtag=None):
+            if self.pixel_test_tag:
+                tag = self.pixel_test_tag + ("-" + subtag if subtag else "")
+                self.browser.assert_pixels("#create-vm-dialog", tag)
             return self
 
     class CreateVmRunner:
@@ -1279,6 +1292,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         def cancelDialogTest(self, dialog):
             dialog.open() \
                 .fill() \
+                .assert_pixels() \
                 .cancel(True)
             self._assertScriptFinished() \
                 .checkEnvIsEmpty()
@@ -1286,6 +1300,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         def checkFilteredOsTest(self, dialog):
             dialog.open() \
                 .checkOsFiltered() \
+                .assert_pixels() \
                 .cancel(True)
             self._assertScriptFinished() \
                 .checkEnvIsEmpty()
