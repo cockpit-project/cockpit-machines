@@ -260,3 +260,57 @@ export function getSnapshotXML(name, description) {
 
     return new XMLSerializer().serializeToString(doc.documentElement);
 }
+
+export function getFilesystemXML(source, target, xattr) {
+    const doc = document.implementation.createDocument('', '', null);
+
+    const filesystemElem = doc.createElement('filesystem');
+
+    const driverElem = doc.createElement('driver');
+    driverElem.setAttribute('type', 'virtiofs');
+    filesystemElem.appendChild(driverElem);
+
+    if (xattr) {
+        const binaryElem = doc.createElement('binary');
+        binaryElem.setAttribute('xattr', 'on');
+        filesystemElem.appendChild(binaryElem);
+    }
+
+    const sourceElem = doc.createElement('source');
+    sourceElem.appendChild(doc.createTextNode(name));
+    sourceElem.setAttribute('dir', source);
+    filesystemElem.appendChild(sourceElem);
+
+    const targetElem = doc.createElement('target');
+    targetElem.appendChild(doc.createTextNode(name));
+    targetElem.setAttribute('dir', target);
+    filesystemElem.appendChild(targetElem);
+
+    doc.appendChild(filesystemElem);
+
+    return new XMLSerializer().serializeToString(doc.documentElement);
+}
+
+export function getMemoryBackingXML(type, memory) {
+    const doc = document.implementation.createDocument('', '', null);
+
+    const memoryBackingElem = doc.createElement('memoryBacking');
+
+    const accessElem = doc.createElement('access');
+    accessElem.setAttribute('mode', 'shared');
+    memoryBackingElem.appendChild(accessElem);
+
+    if (type == "hugepages") {
+        const hugepagesElem = doc.createElement('hugepages');
+        const pageElem = doc.createElement('page');
+        pageElem.setAttribute('size', memory);
+        pageElem.setAttribute('unit', 'KiB');
+
+        hugepagesElem.appendChild(pageElem);
+        memoryBackingElem.appendChild(hugepagesElem);
+    }
+
+    doc.appendChild(memoryBackingElem);
+
+    return new XMLSerializer().serializeToString(doc.documentElement);
+}

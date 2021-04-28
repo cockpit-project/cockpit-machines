@@ -200,6 +200,7 @@ export function parseDumpxml(dispatch, connectionName, domXml, id_overwrite) {
     const osElem = domainElem.getElementsByTagNameNS("", "os")[0];
     const currentMemoryElem = domainElem.getElementsByTagName("currentMemory")[0];
     const memoryElem = domainElem.getElementsByTagName("memory")[0];
+    const memoryBackingElem = domainElem.getElementsByTagName("memoryBacking")[0];
     const vcpuElem = domainElem.getElementsByTagName("vcpu")[0];
     const cpuElem = domainElem.getElementsByTagName("cpu")[0];
     const vcpuCurrentAttr = vcpuElem.attributes.getNamedItem('current');
@@ -230,6 +231,7 @@ export function parseDumpxml(dispatch, connectionName, domXml, id_overwrite) {
     const interfaces = parseDumpxmlForInterfaces(devicesElem);
     const redirectedDevices = parseDumpxmlForRedirectedDevices(devicesElem);
     const hostDevices = parseDumpxmlForHostDevices(devicesElem);
+    const filesystems = parseDumpxmlForFilesystems(devicesElem);
 
     const hasInstallPhase = parseDumpxmlMachinesMetadataElement(metadataElem, 'has_install_phase') === 'true';
     const installSourceType = parseDumpxmlMachinesMetadataElement(metadataElem, 'install_source_type');
@@ -254,6 +256,7 @@ export function parseDumpxml(dispatch, connectionName, domXml, id_overwrite) {
         arch,
         currentMemory,
         memory,
+        memoryBacking: !!memoryBackingElem,
         vcpus,
         disks,
         emulatedMachine,
@@ -262,6 +265,7 @@ export function parseDumpxml(dispatch, connectionName, domXml, id_overwrite) {
         interfaces,
         redirectedDevices,
         hostDevices,
+        filesystems,
         metadata,
     };
 }
@@ -423,6 +427,37 @@ export function parseDumpxmlForDisks(devicesElem) {
     }
 
     return disks;
+}
+
+export function parseDumpxmlForFilesystems(devicesElem) {
+    const filesystems = [];
+    const filesystemElems = devicesElem.getElementsByTagName('filesystem');
+
+    if (filesystemElems) {
+        for (let i = 0; i < filesystemElems.length; i++) {
+            const filesystemElem = filesystemElems[i];
+
+            const sourceElem = getSingleOptionalElem(filesystemElem, 'source');
+            const targetElem = getSingleOptionalElem(filesystemElem, 'target');
+            const accessElem = getSingleOptionalElem(filesystemElem, 'readonly');
+
+            const filesystem = { // https://libvirt.org/formatdomain.html#filesystems
+                accessmode: filesystemElem.getAttribute('accessmode'),
+                readonly: !!accessElem,
+                source: {
+                    dir: sourceElem.getAttribute('dir'),
+                    name: sourceElem.getAttribute('name'),
+                    socket: sourceElem.getAttribute('socket'),
+                    file: sourceElem.getAttribute('file'),
+                },
+                target : {
+                    dir: targetElem.getAttribute('dir'),
+                },
+            };
+            filesystems.push(filesystem);
+        }
+    }
+    return filesystems;
 }
 
 export function parseDumpxmlForRedirectedDevices(devicesElem) {

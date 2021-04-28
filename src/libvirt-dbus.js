@@ -65,7 +65,9 @@ import {
     getNetworkXML,
     getPoolXML,
     getVolumeXML,
-    getSnapshotXML
+    getSnapshotXML,
+    getFilesystemXML,
+    getMemoryBackingXML,
 } from './xmlCreator.js';
 
 import {
@@ -1400,6 +1402,50 @@ export function createSnapshot({ connectionName, vmId, name, description }) {
     const xmlDesc = getSnapshotXML(name, description);
 
     return call(connectionName, vmId, 'org.libvirt.Domain', 'SnapshotCreateXML', [xmlDesc, 0], { timeout, type: 'su' });
+}
+
+export function createFilesystem({ connectionName, objPath, source, target, xattr }) {
+    return call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' })
+            .then(domXml => {
+                const xmlDesc = getFilesystemXML(source, target, xattr);
+                if (!xmlDesc) {
+                    return Promise.reject(new Error("Could not generate filesystem device XML"));
+                } else {
+                    const domainElem = getElem(domXml);
+                    const deviceElem = domainElem.getElementsByTagName("devices")[0];
+                    const filesystemElem = getElem(xmlDesc);
+
+                    deviceElem.appendChild(filesystemElem);
+
+                    const tmp = document.createElement("div");
+                    tmp.appendChild(domainElem);
+
+                    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [tmp.innerHTML], { timeout, type: 's' });
+                }
+            });
+}
+
+export function setMemoryBacking({ connectionName, objPath, type, memory }) {
+    return call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' })
+            .then(domXml => {
+                const domainElem = getElem(domXml);
+
+                if (!domainElem)
+                    throw new Error("setMemoryBacking: domXML has no domain element");
+
+                let memoryBackingElem = domainElem.getElementsByTagName("memoryBacking");
+                if (memoryBackingElem.length)
+                    return Promise.resolve();
+
+                memoryBackingElem = getMemoryBackingXML(type, memory);
+
+                domainElem.appendChild(getElem(memoryBackingElem));
+
+                const tmp = document.createElement("div");
+                tmp.appendChild(domainElem);
+
+                return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [tmp.innerHTML], { timeout, type: 's' });
+            });
 }
 
 export function deleteSnapshot({ connectionName, domainPath, snapshotName }) {
