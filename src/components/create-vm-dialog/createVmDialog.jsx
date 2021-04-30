@@ -162,7 +162,10 @@ function validateParams(vmParams) {
             break;
         }
     } else if (vmParams.sourceType != DOWNLOAD_AN_OS) {
-        validationFailed.source = _("Installation source must not be empty");
+        if (vmParams.sourceType == EXISTING_DISK_IMAGE_SOURCE)
+            validationFailed.source = _("Disk image path must not be empty");
+        else
+            validationFailed.source = _("Installation source must not be empty");
     }
 
     if (vmParams.memorySize === 0) {
@@ -308,7 +311,8 @@ const SourceRow = ({ connectionName, source, sourceType, networks, nodeDevices, 
             </FormGroup>}
 
             {sourceType != DOWNLOAD_AN_OS
-                ? <FormGroup label={_("Installation source")} id={installationSourceId + "-group"} fieldId={installationSourceId}
+                ? <FormGroup label={sourceType != EXISTING_DISK_IMAGE_SOURCE ? _("Installation source") : _("Disk image")}
+                             id={installationSourceId + "-group"} fieldId={installationSourceId}
                              helperText={installationSourceWarning}
                              helperTextInvalid={validationFailed.source}
                              validated={validationStateSource}>
