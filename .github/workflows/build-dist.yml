@@ -14,9 +14,6 @@ jobs:
         with:
           # need this to also fetch tags
           fetch-depth: 0
-          # avoid checking out the default pull/NNN/head ref, as that gives
-          # mismatching SHAs in generated artifacts
-          ref: "${{ github.event.pull_request.head.sha || github.sha }}"
 
       - name: Set up dependencies
         run: |
@@ -30,9 +27,6 @@ jobs:
         env:
           GITHUB_EVENT: ${{ toJSON(github.event) }}
         run: |
-          # https://docs.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions
-          # for pull_requests, use HEAD of the proposed branch, for pushes to origin the current SHA
-          echo "${{ github.event.pull_request.head.sha || github.sha }}" > SHA
           # Save event for follow-up workflows
           echo "$GITHUB_EVENT" > event.json
 
@@ -41,7 +35,6 @@ jobs:
         with:
           name: dist
           path: |
-            SHA
             dist/
             package-lock.json
             event.json
