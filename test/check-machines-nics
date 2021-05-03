@@ -55,7 +55,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-network-1-type", "network")
         b.wait_in_text("#vm-subVmTest1-network-1-source", "default")
 
-        b.wait_in_text("#vm-subVmTest1-network-1-ipaddress", "192.168.122.")
+        b.wait_in_text("#vm-subVmTest1-network-1-ipv4-address", "192.168.122.")
 
         b.wait_in_text("#vm-subVmTest1-network-1-state", "up")
 
@@ -66,8 +66,16 @@ class TestMachinesNICs(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-network-2-source", "default")
         b.wait_in_text("#vm-subVmTest1-network-2-model", "virtio")
         b.wait_in_text("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:5f")
+        b.wait_in_text("#vm-subVmTest1-network-2-ipv4-address", "192.168.122.")
 
         b.wait_in_text("#vm-subVmTest1-network-2-state", "up")
+
+        # Test bridge network
+        m.execute("virsh attach-interface --domain subVmTest1 --type bridge --source virbr0 --model virtio --mac 52:54:00:4b:73:5e --config --live")
+
+        b.wait_in_text("#vm-subVmTest1-network-3-type", "bridge")
+        b.wait_in_text("#vm-subVmTest1-network-3-source", "virbr0")
+        b.wait_in_text("#vm-subVmTest1-network-3-ipv4-address", "192.168.122.")
 
     def testNICAdd(self):
         b = self.browser
