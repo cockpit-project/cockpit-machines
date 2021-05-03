@@ -261,14 +261,19 @@ export class VmNetworkTab extends React.Component {
 
                     const ips = this.state.ips;
 
-                    if (!Object.keys(ips).length || !ips.inet) {
+                    if (!Object.keys(ips).length) {
                         // There is not IP address associated with this NIC
                         return _("Unknown");
                     } else {
                         return (
-                            <div id={`${id}-network-${networkId}-ipv4-address`}>
-                                {'inet ' + ips.inet}
-                            </div>
+                            <>
+                                {ips.inet && <div id={`${id}-network-${networkId}-ipv4-address`}>
+                                    {'inet ' + ips.inet}
+                                </div>}
+                                {ips.inet6 && <div id={`${id}-network-${networkId}-ipv6-address`}>
+                                    {'inet6 ' + ips.inet6}
+                                </div>}
+                            </>
                         );
                     }
                 }
