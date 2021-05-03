@@ -17,11 +17,11 @@ jobs:
           name: dist
           workflow: build-dist
           run_id: ${{ github.event.workflow_run.id }}
+          path: dist-repo
 
       - name: Set up configuration and secrets
         run: |
           printf '[user]\n\tname = Cockpit Project\n\temail=cockpituous@gmail.com\n' > ~/.gitconfig
-          echo '${{ secrets.COCKPITUOUS_TOKEN }}' > ~/.config/github-token
           # we push to -dist repo via https://github.com, that needs our cockpituous token
           git config --global credential.helper store
           echo 'https://token:${{ secrets.COCKPITUOUS_TOKEN }}@github.com' >> ~/.git-credentials
@@ -29,16 +29,11 @@ jobs:
       - name: Commit to dist repo
         run: |
           set -ex
-
-          mkdir dist-repo
           cd dist-repo
           git init
-          cp -r ../dist/ ../package-lock.json .
-
           git add .
-          git commit -m "Build for ${{ github.event.workflow_run.head_sha }}"
-          tag="sha-${{ github.event.workflow_run.head_sha }}"
+          git commit -m 'Build for ${{ github.event.workflow_run.head_sha }}'
+          tag='sha-${{ github.event.workflow_run.head_sha }}'
           git tag "$tag"
 
           git push https://github.com/${{ github.repository }}-dist.git "$tag"
-
