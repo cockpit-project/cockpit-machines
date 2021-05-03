@@ -13,20 +13,20 @@ jobs:
       - name: Set up configuration and secrets
         run: |
           printf '[user]\n\tname = Cockpit Project\n\temail=cockpituous@gmail.com\n' > ~/.gitconfig
-          # we push to -dist repo via https://github.com, that needs our cockpituous token
+          # we push to -dist repo via https, that needs our cockpituous token
           git config --global credential.helper store
           echo 'https://token:${{ secrets.COCKPITUOUS_TOKEN }}@github.com' >> ~/.git-credentials
 
       - name: Clone -dist repo
         run: |
-          git clone https://github.com/${{ github.repository }}-dist.git dist-repo
+          git clone "${GITHUB_SERVER_URL}/${{ github.repository }}-dist.git" dist-repo
 
       - name: Delete old tags
         run: |
           set -ex
 
           # head commit SHA of default branch
-          HEAD=$(git ls-remote 'https://github.com/${{ github.repository }}' main master | cut -f1 | head -n1)
+          HEAD=$(git ls-remote "${GITHUB_SERVER_URL}/${{ github.repository }}" main master | cut -f1 | head -n1)
 
           cd dist-repo
           now="$(date +%s)"
