@@ -42,28 +42,3 @@ jobs:
 
           git push https://github.com/${{ github.repository }}-dist.git "$tag"
 
-      - name: Trigger integration tests for PRs
-        run: |
-          if ! grep -q '"pull_request"' event.json; then
-              echo "build-dist event was not a pull request"
-              exit 0
-          fi
-          # support running this from forks
-          if [ -z '${{ secrets.AMQP_CLIENT_KEY }}' ]; then
-              echo "No AMQP secrets, skipping tests-scan"
-              exit 0
-          fi
-
-          pip install pika
-
-          git clone --depth=1 https://github.com/cockpit-project/bots
-
-          # tests-scan does not currently have a --secrets-dir option
-          sudo mkdir -p /run/secrets/webhook
-          echo '${{ secrets.COCKPIT_CA_PEM }}' | sudo dd status=none of=/run/secrets/webhook/ca.pem
-          echo '${{ secrets.AMQP_CLIENT_PEM }}' | sudo dd status=none of=/run/secrets/webhook/amqp-client.pem
-          echo '${{ secrets.AMQP_CLIENT_KEY }}' | sudo dd status=none of=/run/secrets/webhook/amqp-client.key
-
-          # FIXME: make this nicer in tests-scan
-          AMQP_SERVER=$(PYTHONPATH=bots python3 -c 'from task.distributed_queue import *; print(DEFAULT_AMQP_SERVER)')
-          GITHUB_BASE=${{ github.repository }} bots/tests-scan -d --pull-data "$(cat event.json)" --amqp "$AMQP_SERVER"
