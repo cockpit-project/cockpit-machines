@@ -19,7 +19,7 @@ jobs:
         run: |
           printf '[user]\n\tname = Cockpit Project\n\temail=cockpituous@gmail.com\n' > ~/.gitconfig
           echo '${{ secrets.COCKPITUOUS_TOKEN }}' > ~/.config/github-token
-          # po-refresh pushes to weblate repo via https://github.com, that needs our cockpituous token
+          # po-refresh pushes to weblate repo via https, that needs our cockpituous token
           git config --global credential.helper store
           echo 'https://token:${{ secrets.COCKPITUOUS_TOKEN }}@github.com' >> ~/.git-credentials
 

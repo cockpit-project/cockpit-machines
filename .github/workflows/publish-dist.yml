@@ -22,7 +22,7 @@ jobs:
       - name: Set up configuration and secrets
         run: |
           printf '[user]\n\tname = Cockpit Project\n\temail=cockpituous@gmail.com\n' > ~/.gitconfig
-          # we push to -dist repo via https://github.com, that needs our cockpituous token
+          # we push to -dist repo via https, that needs our cockpituous token
           git config --global credential.helper store
           echo 'https://token:${{ secrets.COCKPITUOUS_TOKEN }}@github.com' >> ~/.git-credentials
 
@@ -36,4 +36,4 @@ jobs:
           tag='sha-${{ github.event.workflow_run.head_sha }}'
           git tag "$tag"
 
-          git push https://github.com/${{ github.repository }}-dist.git "$tag"
+          git push "${GITHUB_SERVER_URL}/${{ github.repository }}-dist.git" "$tag"

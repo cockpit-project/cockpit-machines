@@ -31,4 +31,4 @@ jobs:
           cd /build
           # Wait for build-dist and publish-dist workflows to complete
           export DOWNLOAD_DIST_OPTIONS=--wait
-          release-runner -r https://github.com/$GITHUB_REPOSITORY -t $(basename $GITHUB_REF) ./cockpituous-release
+          release-runner -r "${GITHUB_SERVER_URL}/${{ github.repository }}" -t $(basename "$GITHUB_REF") ./cockpituous-release
