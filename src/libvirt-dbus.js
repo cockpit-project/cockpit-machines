@@ -129,6 +129,8 @@ const Enum = {
     VIR_DOMAIN_AFFECT_LIVE: 1,
     VIR_DOMAIN_AFFECT_CONFIG: 2,
     VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_LEASE: 0,
+    VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_AGENT: 1,
+    VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_ARP: 2,
     VIR_DOMAIN_UNDEFINE_MANAGED_SAVE: 1,
     VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA: 2,
     VIR_DOMAIN_UNDEFINE_NVRAM: 4,
@@ -1568,8 +1570,11 @@ export function storageVolumeDelete(connectionName, poolName, volName) {
 }
 
 export function vmInterfaceAddresses(connectionName, objPath) {
-    // 'lease' source will work only for those domains which take IP address from libvirt spawned dnsmasq (i.e. have <interface type='network'/>)
-    return call(connectionName, objPath, 'org.libvirt.Domain', 'InterfaceAddresses', [Enum.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_LEASE, 0], { timeout, type: 'uu' });
+    return Promise.allSettled([
+        call(connectionName, objPath, 'org.libvirt.Domain', 'InterfaceAddresses', [Enum.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_LEASE, 0], { timeout, type: 'uu' }),
+        call(connectionName, objPath, 'org.libvirt.Domain', 'InterfaceAddresses', [Enum.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_ARP, 0], { timeout, type: 'uu' }),
+        call(connectionName, objPath, 'org.libvirt.Domain', 'InterfaceAddresses', [Enum.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_AGENT, 0], { timeout, type: 'uu' })
+    ]);
 }
 
 export default LIBVIRT_DBUS_PROVIDER;

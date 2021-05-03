@@ -100,11 +100,13 @@ export class VmNetworkTab extends React.Component {
         super(props);
 
         this.state = {
-            interfaceAddress: [],
+            domifaddressAllSources: [],
             networkDevices: undefined,
+            ips: {},
         };
 
         this.deviceProxyHandler = this.deviceProxyHandler.bind(this);
+        this.getIpAddr = this.getIpAddr.bind(this);
         this.client = cockpit.dbus("org.freedesktop.NetworkManager", {});
         this.hostDevices = this.client.proxies("org.freedesktop.NetworkManager.Device");
         this.hostDevices.addEventListener('changed', this.deviceProxyHandler);
@@ -115,23 +117,61 @@ export class VmNetworkTab extends React.Component {
         this.forceUpdate();
     }
 
+    getIpAddr() {
+        if (this.props.vm.state != 'running' && this.props.vm.state != 'paused') {
+            this.setState({ ips: {} });
+            return;
+        }
+
+        vmInterfaceAddresses(this.props.vm.connectionName, this.props.vm.id)
+                .then(domifaddressAllSources => {
+                    const allRejected = !domifaddressAllSources.some(promise => promise.status == 'fulfilled');
+
+                    if (allRejected)
+                        this.props.onAddErrorNotification({
+                            text: cockpit.format(_("Failed to fetch the IP addresses of the interfaces present in $0"), this.props.vm.name),
+                            detail: [...new Set(domifaddressAllSources.map(promise => promise.reason ? promise.reason.message : ''))].join(', '),
+                            resourceId: this.props.vm.id,
+                        });
+                    else {
+                        const ipaddr = {};
+
+                        domifaddressAllSources
+                                .filter(promise => promise.status == 'fulfilled')
+                                .forEach(promise => {
+                                    const ifaces = promise.value[0];
+
+                                    ifaces.forEach(iface => {
+                                        // Ignore loopback interface
+                                        if (!iface.length || iface[0] == "lo")
+                                            return;
+
+                                        iface[2].forEach(ifAddress => {
+                                            // type == 0 -> ipv4
+                                            // type == 1 -> ipv6
+                                            const type = ifAddress[0] == 0 ? 'inet' : 'inet6';
+
+                                            if (ifAddress.length && !ipaddr[type] && ifAddress[0] <= 1) {
+                                                // 0 cell -> type, 1 cell -> address, 2 cell -> prefix
+                                                ipaddr[type] = ifAddress[1] + '/' + ifAddress[2];
+                                            }
+                                        });
+                                    });
+                                });
+                        this.setState({ ips: ipaddr });
+                    }
+                });
+    }
+
     componentDidMount() {
         // only consider symlinks -- there might be other stuff like "bonding_masters" which we don't want
         getNetworkDevices(devs => this.setState({ networkDevices: devs }));
+        this.getIpAddr();
+    }
 
-        if (this.props.vm.state != 'running' && this.props.vm.state != 'paused')
-            return;
-
-        // Load the interface addresses list when the tab mounts
-        vmInterfaceAddresses(this.props.vm.connectionName, this.props.vm.id)
-                .then(ifaces => {
-                    this.setState({ interfaceAddress: ifaces[0] });
-                }, ex => {
-                    this.props.onAddErrorNotification({
-                        text: cockpit.format(_("Failed to fetch the IP addresses of the interfaces present in $0"), this.props.vm.name),
-                        detail: ex.message, resourceId: this.props.vm.id,
-                    });
-                });
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.vm.state !== this.props.vm.state)
+            this.getIpAddr();
     }
 
     componentWillUnmount() {
@@ -215,17 +255,19 @@ export class VmNetworkTab extends React.Component {
             },
             { name: _("MAC address"), value: 'mac' },
             {
-                name: _("IP address"), value: (network) => {
-                    const iface = this.state.interfaceAddress.find(iface => iface[1] == network.mac);
-                    const ips = (iface && iface[2]) ? iface[2] : undefined;
+                name: _("IP address"), value: () => {
+                    if (this.props.vm.state != 'running' && this.props.vm.state != 'paused')
+                        return '';
 
-                    if (!ips) {
-                    // There is not IP address associated with this NIC
+                    const ips = this.state.ips;
+
+                    if (!Object.keys(ips).length || !ips.inet) {
+                        // There is not IP address associated with this NIC
                         return _("Unknown");
                     } else {
                         return (
-                            <div id={`${id}-network-${networkId}-ipaddress`}>
-                                { ips.map(ip => cockpit.format("$0/$1", ip[1], ip[2])).join(',') }
+                            <div id={`${id}-network-${networkId}-ipv4-address`}>
+                                {'inet ' + ips.inet}
                             </div>
                         );
                     }
