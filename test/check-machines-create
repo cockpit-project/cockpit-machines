@@ -970,8 +970,10 @@ class TestMachinesCreate(VirtualMachinesCase):
         def assert_pixels(self, subtag=None):
             if self.pixel_test_tag:
                 tag = self.pixel_test_tag + ("-" + subtag if subtag else "")
-                self.browser.assert_pixels("#create-vm-dialog", tag,
-                                           ignore=["#storage-size-helper", "#memory-size-helper"])
+                ignore = ["#memory-size-helper"]
+                if self.storage_pool != "NoStorage":
+                    ignore += ["#storage-size-helper"]
+                self.browser.assert_pixels("#create-vm-dialog", tag, ignore=ignore)
             return self
 
     class CreateVmRunner:
