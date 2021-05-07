@@ -20,22 +20,25 @@
 import cockpit from 'cockpit';
 import React, { useState } from 'react';
 import {
-    Alert,
     Button,
-    Checkbox,
     Flex,
+    FlexItem,
     Form,
     FormGroup,
     Modal,
     Radio,
     TextInput,
-    Tooltip
+    ToggleGroup,
+    ToggleGroupItem,
+    Popover
 } from '@patternfly/react-core';
 import { OutlinedQuestionCircleIcon } from "@patternfly/react-icons";
 
 import { migrateToUri } from '../../libvirt-dbus.js';
 import { isEmpty, isObjectEmpty } from '../../helpers.js';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
+
+import './vmMigrateDialog.scss';
 
 const _ = cockpit.gettext;
 
@@ -53,50 +56,64 @@ const DestUriRow = ({ validationFailed, destUri, setDestUri }) => {
     );
 };
 
-const OptionsRow = ({ temporary, setTemporary }) => {
+const DurationRow = ({ temporary, setTemporary }) => {
     return (
-        <FormGroup label={_("Options")}
-                   hasNoPaddingTop>
-            <Checkbox id="temporary"
-                      isChecked={temporary}
-                      label={
-                          <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }}>
-                              <span>{_("Move temporarily")}</span>
-                              <Tooltip position="top"
-                                       content={
-                                           <>
-                                               <p>{_("By default, the migrated VM config is removed from the source host, and saved persistently on the destination host. The destination host is considered the new home of the VM.")}</p>
-                                               <p>{_("If 'temporary' is selected, the migration is considered only a temporary move: the source host maintains a copy of the VM config, and the running copy moved to the destination is only transient, and will disappear when it is shutdown.")}</p>
-                                           </>}>
-                                  <OutlinedQuestionCircleIcon />
-                              </Tooltip>
-                          </Flex>
-                      }
-                      onChange={setTemporary} />
+        <FormGroup hasNoPaddingTop
+                   label={
+                       <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }}>
+                           <span>{_("Duration")}</span>
+                           <Popover aria-label="Duration popover"
+                                    bodyContent={<Flex direction={{ default: 'column' }}>
+                                        <FlexItem>
+                                            <h4 className="popover-headline">{_("Persistent (default)")}</h4>
+                                            <p>{_("The migrated VM configuration is removed from the source host. The destination host is considered the new home of the VM.")}</p>
+                                        </FlexItem>
+                                        <FlexItem>
+                                            <h4 className="popover-headline">{_("Temporary")}</h4>
+                                            <p>{_("A copy of the VM will run on the destination and will disappear when it is shut off. Meanwhile, the origin host keeps its copy of the VM configuration.")}</p>
+                                        </FlexItem>
+                                    </Flex>}>
+                               <OutlinedQuestionCircleIcon />
+                           </Popover>
+                       </Flex>
+                   }>
+            <ToggleGroup aria-label="Duration options">
+                <ToggleGroupItem text={_("Move permanently")} buttonId="permanent" isSelected={!temporary} onChange={() => setTemporary(false)} />
+                <ToggleGroupItem text={_("Migrate temporarily")} buttonId="temporary" isSelected={temporary} onChange={() => setTemporary(true)} />
+            </ToggleGroup>
         </FormGroup>
     );
 };
 
 const StorageRow = ({ storage, setStorage }) => {
     return (
-        <FormGroup label={_("Storage")}
-                   hasNoPaddingTop>
+        <FormGroup hasNoPaddingTop
+                   label={
+                       <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }}>
+                           <span>{_("Storage")}</span>
+                           <Popover aria-label="Storage popover"
+                                    bodyContent={<Flex direction={{ default: 'column' }}>
+                                        <FlexItem>
+                                            <h4 className="popover-headline">{_("Shared storage")}</h4>
+                                            <p>{_("Use the same location on both the origin and destination hosts for your storage. This can be a shared storage pool, NFS, or any other method of sharing storage.")}</p>
+                                        </FlexItem>
+                                        <FlexItem>
+                                            <h4 className="popover-headline">{_("Copy storage")}</h4>
+                                            <p>{_("Full disk images and the domain's memory will be migrated. Only non-shared, writable disk images will be transferred. Unused storage will remain on the origin after migration.")}</p>
+                                        </FlexItem>
+                                    </Flex>}>
+                               <OutlinedQuestionCircleIcon />
+                           </Popover>
+                       </Flex>
+                   }>
             <Radio id="shared"
                    name="storage"
-                   label={_("VM's storage is already shared with the destination")}
+                   label={_("Storage is at a shared location")}
                    isChecked={storage === "nocopy"}
                    onChange={() => setStorage("nocopy")} />
             <Radio id="copy"
                    name="storage"
-                   label={
-                       <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }}>
-                           <span>{_("VM's storage needs to be copied to the destination")}</span>
-                           <Tooltip id="storage-copy-tooltip"
-                                    content={_("Migrate full disk images in addition to domain's memory. Only non-shared non-readonly disk images will be transferred.")}>
-                               <OutlinedQuestionCircleIcon />
-                           </Tooltip>
-                       </Flex>
-                   }
+                   label={_("Copy storage")}
                    isChecked={storage === "copy"}
                    onChange={() => setStorage("copy")} />
         </FormGroup>
@@ -138,21 +155,20 @@ export const MigrateDialog = ({ vm, connectionName, toggleModal }) => {
             <DestUriRow destUri={destUri}
                         setDestUri={setDestUri}
                         validationFailed={validationFailed} />
+            <DurationRow temporary={temporary}
+                        setTemporary={setTemporary} />
             <StorageRow storage={storage}
                         setStorage={setStorage} />
-            <OptionsRow temporary={temporary}
-                        setTemporary={setTemporary} />
         </Form>
     );
 
     const dataCorruptionWarning = () => {
         const hasWriteableDisks = Object.values(vm.disks).findIndex(a => !a.readonly) !== -1;
-        if (storage === "nocopy" && temporary && hasWriteableDisks) {
-            return <Alert isInline
-                          variant="warning"
-                          id="data-corruption-warning"
-                          title={_("Do not run this VM on multiple hosts at the same time, as it will lead to data corruption.")} />;
-        }
+
+        if (temporary && storage === "nocopy" && hasWriteableDisks)
+            return <div className="footer-warning">{_("Make sure to not run this VM on the origin host while it is running on the destination host.")}</div>;
+        else if (temporary && storage === "copy")
+            return <div className="footer-warning">{_("All VM activity, including storage, will be temporary. This will cause data loss.")}</div>;
     };
 
     const footer = (

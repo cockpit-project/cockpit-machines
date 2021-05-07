@@ -166,14 +166,21 @@ class TestMachinesMigration(VirtualMachinesCase):
         else:
             b.set_input_text("#dest-uri-input", "qemu+ssh://root@machine2/system")
 
+        if temporary:
+            b.click("#temporary")
+        else:
+            b.click("#permanent")
+
         if copy_storage:
             b.click("#copy")
         else:
             b.click("#shared")
 
-        b.set_checked("#temporary", temporary)
         if temporary:
-            b.wait_visible(".pf-c-modal-box__footer .pf-c-alert")
+            if copy_storage:
+                b.wait_visible(".footer-warning:contains('All VM activity, including storage, will be temporary. This will cause data loss.')")
+            else:
+                b.wait_visible(".footer-warning:contains('Make sure to not run this VM on the origin host while it is running on the destination host.')")
 
         # The VM does not exist in destination before migration happens
         self.assertNotIn("subVmTest1", machine2.execute("virsh list --all"))
@@ -186,9 +193,9 @@ class TestMachinesMigration(VirtualMachinesCase):
         b.click("#migrate-button")
         if fail:
             if fail == "kill":
-                machine2.execute("sleep 1; kill -SEGV 1")
+                machine2.execute("kill -SEGV 1")
 
-            b.wait_visible(".pf-c-modal-box__footer .pf-c-alert pf-c-alert__title:contains(Migration failed)")
+            b.wait_visible(".pf-c-modal-box__footer .pf-c-alert .pf-c-alert__title:contains('Migration failed')")
 
             if fail == "libvirtd":
                 machine2.execute("systemctl start libvirtd.service")
