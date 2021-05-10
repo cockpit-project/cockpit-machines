@@ -30,7 +30,8 @@ import {
     TextInput,
     ToggleGroup,
     ToggleGroupItem,
-    Popover
+    Popover,
+    PopoverPosition
 } from '@patternfly/react-core';
 import { OutlinedQuestionCircleIcon } from "@patternfly/react-icons";
 
@@ -63,6 +64,8 @@ const DurationRow = ({ temporary, setTemporary }) => {
                        <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }}>
                            <span>{_("Duration")}</span>
                            <Popover aria-label="Duration popover"
+                                    position={PopoverPosition.bottom}
+                                    enableFlip
                                     bodyContent={<Flex direction={{ default: 'column' }}>
                                         <FlexItem>
                                             <h4 className="popover-headline">{_("Permanent (default)")}</h4>
@@ -92,6 +95,8 @@ const StorageRow = ({ storage, setStorage }) => {
                        <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }}>
                            <span>{_("Storage")}</span>
                            <Popover aria-label="Storage popover"
+                                    position={PopoverPosition.bottom}
+                                    enableFlip
                                     bodyContent={<Flex direction={{ default: 'column' }}>
                                         <FlexItem>
                                             <h4 className="popover-headline">{_("Shared storage")}</h4>
