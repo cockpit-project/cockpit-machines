@@ -65,7 +65,7 @@ const DurationRow = ({ temporary, setTemporary }) => {
                            <Popover aria-label="Duration popover"
                                     bodyContent={<Flex direction={{ default: 'column' }}>
                                         <FlexItem>
-                                            <h4 className="popover-headline">{_("Persistent (default)")}</h4>
+                                            <h4 className="popover-headline">{_("Permanent (default)")}</h4>
                                             <p>{_("The migrated VM configuration is removed from the source host. The destination host is considered the new home of the VM.")}</p>
                                         </FlexItem>
                                         <FlexItem>
@@ -166,9 +166,9 @@ export const MigrateDialog = ({ vm, connectionName, toggleModal }) => {
         const hasWriteableDisks = Object.values(vm.disks).findIndex(a => !a.readonly) !== -1;
 
         if (temporary && storage === "nocopy" && hasWriteableDisks)
-            return <div className="footer-warning">{_("Make sure to not run this VM on the origin host while it is running on the destination host.")}</div>;
+            return <div className="footer-warning">{_("Do not run this VM on the origin and destination hosts at the same time.")}</div>;
         else if (temporary && storage === "copy")
-            return <div className="footer-warning">{_("All VM activity, including storage, will be temporary. This will cause data loss.")}</div>;
+            return <div className="footer-warning">{_("All VM activity, including storage, will be temporary. This will result in data loss on the destination host.")}</div>;
     };
 
     const footer = (
