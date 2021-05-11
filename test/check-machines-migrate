@@ -166,19 +166,15 @@ class TestMachinesMigration(VirtualMachinesCase):
         else:
             b.set_input_text("#dest-uri-input", "qemu+ssh://root@machine2/system")
 
-        if temporary:
-            b.click("#temporary")
-        else:
-            b.click("#permanent")
+        b.set_checked("#temporary", temporary)
 
         if copy_storage:
             b.click("#copy")
         else:
             b.click("#shared")
 
-        if temporary:
-            if copy_storage:
-                b.wait_visible(".footer-warning")
+        if temporary and copy_storage:
+            b.wait_visible(".footer-warning")
 
         # The VM does not exist in destination before migration happens
         self.assertNotIn("subVmTest1", machine2.execute("virsh list --all"))

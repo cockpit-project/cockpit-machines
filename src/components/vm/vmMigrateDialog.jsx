@@ -21,6 +21,7 @@ import cockpit from 'cockpit';
 import React, { useState } from 'react';
 import {
     Button,
+    Checkbox,
     Flex,
     FlexItem,
     Form,
@@ -28,8 +29,6 @@ import {
     Modal,
     Radio,
     TextInput,
-    ToggleGroup,
-    ToggleGroupItem,
     Popover,
     PopoverPosition
 } from '@patternfly/react-core';
@@ -60,6 +59,7 @@ const DestUriRow = ({ validationFailed, destUri, setDestUri }) => {
 const DurationRow = ({ temporary, setTemporary }) => {
     return (
         <FormGroup hasNoPaddingTop
+                   fieldId="temporary"
                    label={
                        <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }}>
                            <span>{_("Duration")}</span>
@@ -80,10 +80,10 @@ const DurationRow = ({ temporary, setTemporary }) => {
                            </Popover>
                        </Flex>
                    }>
-            <ToggleGroup aria-label="Duration options">
-                <ToggleGroupItem text={_("Move permanently")} buttonId="permanent" isSelected={!temporary} onChange={() => setTemporary(false)} />
-                <ToggleGroupItem text={_("Migrate temporarily")} buttonId="temporary" isSelected={temporary} onChange={() => setTemporary(true)} />
-            </ToggleGroup>
+            <Checkbox id="temporary"
+                      isChecked={temporary}
+                      label={_("Temporary migration")}
+                      onChange={setTemporary} />
         </FormGroup>
     );
 };
