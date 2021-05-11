@@ -178,9 +178,7 @@ class TestMachinesMigration(VirtualMachinesCase):
 
         if temporary:
             if copy_storage:
-                b.wait_visible(".footer-warning:contains('All VM activity, including storage, will be temporary. This will cause data loss.')")
-            else:
-                b.wait_visible(".footer-warning:contains('Make sure to not run this VM on the origin host while it is running on the destination host.')")
+                b.wait_visible(".footer-warning")
 
         # The VM does not exist in destination before migration happens
         self.assertNotIn("subVmTest1", machine2.execute("virsh list --all"))
@@ -193,7 +191,7 @@ class TestMachinesMigration(VirtualMachinesCase):
         b.click("#migrate-button")
         if fail:
             if fail == "kill":
-                machine2.execute("kill -SEGV 1")
+                machine2.execute("sleep 1; systemctl stop libvirtd.service")
 
             b.wait_visible(".pf-c-modal-box__footer .pf-c-alert .pf-c-alert__title:contains('Migration failed')")
 
