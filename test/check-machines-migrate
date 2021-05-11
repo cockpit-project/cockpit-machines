@@ -132,10 +132,6 @@ class TestMachinesMigration(VirtualMachinesCase):
         # Libvirtd.service is not working on the destination
         self._testMigrationGeneric(True, False, "libvirtd")
 
-    def testFailMigrationKillDestination(self):
-        # Kill destination server in the middle of migration
-        self._testMigrationGeneric(True, False, "kill")
-
     def _testMigrationGeneric(self, copy_storage, temporary, fail):
         b = self.browser
         machine1 = self.machine
@@ -186,9 +182,6 @@ class TestMachinesMigration(VirtualMachinesCase):
 
         b.click("#migrate-button")
         if fail:
-            if fail == "kill":
-                machine2.execute("sleep 1; systemctl stop libvirtd.service")
-
             b.wait_visible(".pf-c-modal-box__footer .pf-c-alert .pf-c-alert__title:contains('Migration failed')")
 
             if fail == "libvirtd":
@@ -196,8 +189,7 @@ class TestMachinesMigration(VirtualMachinesCase):
                 if machine1.image not in ["debian-stable"]:
                     machine2.execute("systemctl start libvirtd.socket")
 
-            if fail != "kill":
-                wait(lambda: "subVmTest1" not in machine2.execute("virsh list --all"), delay=3)
+            wait(lambda: "subVmTest1" not in machine2.execute("virsh list --all"), delay=3)
             self.assertIn("subVmTest1", machine1.execute("virsh list --all"))
         else:
             b.wait_not_present("#migrate-modal")
