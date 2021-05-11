@@ -510,7 +510,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         b = self.browser
         m = self.machine
 
-        dev = self.add_ram_disk(2)
+        dev = self.add_ram_disk(8)
         used_targets = ['vda']
 
         args = self.createVm("subVmTest1")
@@ -538,6 +538,17 @@ class TestMachinesDisks(VirtualMachinesCase):
             volume_name=partition,
             volume_size=1,
             volume_size_unit='MiB',
+            expected_target=get_next_free_target(used_targets)[-1],
+        ).execute()
+
+        existing_disk = os.path.basename(dev) + "2"
+        self.machine.execute("virsh vol-create-as pool-disk %s 1M" % existing_disk)
+        self.VMAddDiskDialog(
+            self,
+            mode="use-existing",
+            pool_name='pool-disk',
+            pool_type='disk',
+            volume_name=existing_disk,
             expected_target=get_next_free_target(used_targets)[-1],
         ).execute()
 
