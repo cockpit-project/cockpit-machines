@@ -648,7 +648,7 @@ class TestMachinesCreate(VirtualMachinesCase):
             TestMachinesCreate.VmDialog.vmId += 1  # This variable is static - don't use self here
 
             if name is None:
-                self.name = 'subVmTestCreate' + str(TestMachinesCreate.VmDialog.vmId)
+                self.name = 'subVmTestCreateFailingPixelTest' + str(TestMachinesCreate.VmDialog.vmId)
             else:
                 self.name = name
 
