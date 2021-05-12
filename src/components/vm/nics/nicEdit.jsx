@@ -32,7 +32,7 @@ const _ = cockpit.gettext;
 
 const NetworkMacRow = ({ mac, onValueChanged, idPrefix }) => {
     return (
-        <FormGroup fieldId={`${idPrefix}-edit-dialog-mac`} label={_("MAC address")} hasNoPaddingTop>
+        <FormGroup fieldId={`${idPrefix}-edit-dialog-mac`} label={_("MAC address")}>
             <TextInput id={`${idPrefix}-edit-dialog-mac`}
                        value={mac}
                        onChange={value => onValueChanged("networkMac", value)} />
