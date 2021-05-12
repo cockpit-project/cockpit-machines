@@ -102,3 +102,16 @@ PXE_SERVER_CFG = """#!ipxe
 echo Rebooting in 60 seconds
 sleep 60
 reboot"""
+
+USB_HOSTDEV = """<hostdev mode='subsystem' type='usb'>
+  <source>
+    <vendor id='0x1d6b'/>
+    <product id='0x0001'/>
+  </source>
+</hostdev>"""
+
+PCI_HOSTDEV = """<hostdev mode='subsystem' type='pci'>
+  <source>
+    <address domain='0x0000' bus='0x00' slot='0xF' function='0x0'/>
+  </source>
+</hostdev>"""

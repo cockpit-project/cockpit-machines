@@ -613,10 +613,10 @@ const LIBVIRT_DBUS_PROVIDER = {
                             return cockpit.spawn(["udevadm", "info", "--path", deviceXmlObject.path], { err: "message" })
                                     .then(output => {
                                         const nodeDev = parseUdevDB(output);
-                                        if (nodeDev.SUBSYSTEM === "pci" && nodeDev) {
+                                        if (nodeDev && nodeDev.SUBSYSTEM === "pci") {
                                             deviceXmlObject.pciSlotName = nodeDev.PCI_SLOT_NAME;
                                             deviceXmlObject.class = nodeDev.ID_PCI_CLASS_FROM_DATABASE;
-                                        } else if (nodeDev.SUBSYSTEM === "usb" && nodeDev) {
+                                        } else if (nodeDev && nodeDev.SUBSYSTEM === "usb") {
                                             deviceXmlObject.class = nodeDev.ID_USB_CLASS_FROM_DATABASE;
                                             deviceXmlObject.busnum = nodeDev.BUSNUM;
                                             deviceXmlObject.devnum = nodeDev.DEVNUM;
