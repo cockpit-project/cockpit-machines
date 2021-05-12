@@ -1,0 +1,83 @@
+#!/usr/bin/python3
+
+# This file is part of Cockpit.
+#
+# Copyright (C) 2021 Red Hat, Inc.
+#
+# Cockpit is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation; either version 2.1 of the License, or
+# (at your option) any later version.
+#
+# Cockpit is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
+
+import os
+import sys
+
+# import Cockpit's machinery for test VMs and its browser test API
+TEST_DIR = os.path.dirname(__file__)
+sys.path.append(os.path.join(TEST_DIR, "common"))
+sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
+
+from machineslib import VirtualMachinesCase  # noqa
+from testlib import nondestructive, test_main  # noqa
+from machinesxmls import USB_HOSTDEV, PCI_HOSTDEV  # noqa
+
+
+@nondestructive
+class TestMachinesHostDevs(VirtualMachinesCase):
+
+    def testHostDevicesList(self):
+        b = self.browser
+        m = self.machine
+
+        self.createVm("subVmTest1")
+
+        self.login_and_go("/machines")
+        b.wait_in_text("body", "Virtual machines")
+        self.waitVmRow("subVmTest1")
+
+        b.wait_in_text("#vm-subVmTest1-state", "Running")
+
+        self.goToVmPage("subVmTest1")
+
+        b.wait_in_text("#vm-subVmTest1-hostdevs .pf-c-empty-state__body", "No host devices assigned to this VM")
+
+        # Test hostplug of USB host device
+        # A usb device might not always be present
+        nodedev_list = m.execute("virsh nodedev-list")
+        lines = nodedev_list.partition('\n')
+        for line in lines:
+            if "usb_usb" in line:
+                m.execute("echo \"{0}\" > /tmp/usbhostedxml".format(USB_HOSTDEV))
+                m.execute("virsh attach-device --domain subVmTest1 --file /tmp/usbhostedxml")
+
+                b.wait_in_text("#vm-subVmTest1-hostdev-1-type", "usb")
+                b.wait_in_text("#vm-subVmTest1-hostdev-1-vendor", "Linux Foundation")
+                b.wait_in_text("#vm-subVmTest1-hostdev-1-product", "1.1 root hub")
+                b.wait_in_text("#vm-subVmTest1-hostdev-1-source #1-device", "1")
+                b.wait_in_text("#vm-subVmTest1-hostdev-1-source #1-bus", "1")
+
+        # Test offline attachment of PCI host device
+        # A pci device should always be present
+        m.execute("virsh destroy subVmTest1")
+        b.wait_in_text("#vm-subVmTest1-state", "Shut off")
+        m.execute("echo \"{0}\" > /tmp/pcihostedxml".format(PCI_HOSTDEV))
+        m.execute("virsh attach-device --domain subVmTest1 --file /tmp/pcihostedxml --persistent")
+        b.reload()
+        b.enter_page('/machines')
+
+        b.wait_in_text("#vm-subVmTest1-hostdev-1-type", "pci")
+        b.wait_in_text("#vm-subVmTest1-hostdev-1-vendor", "Red Hat, Inc")
+        b.wait_in_text("#vm-subVmTest1-hostdev-1-product", "Virtio network device")
+        b.wait_in_text("#vm-subVmTest1-hostdev-1-source #1-slot", "0000:00:0f.0")
+
+
+if __name__ == '__main__':
+    test_main()
