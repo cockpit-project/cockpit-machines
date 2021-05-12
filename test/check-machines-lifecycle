@@ -38,8 +38,13 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
         # older cockpit-system versions try to authorize; wheel is not a thing on Debian/Ubuntu
         if self.machine.image in ["ubuntu-2004"]:
-            self.allow_journal_messages('cannot reauthorize identity.*')
-            self.allow_failed_sudo_journal_messages()
+            self.allow_journal_messages(".* is not in the sudoers file.  This incident will be reported.",
+                                        "Error executing command as another user: Not authorized",
+                                        "This incident has been reported.",
+                                        "Sorry, try again.",
+                                        ".*incorrect password attempt.*",
+                                        "sudo:.*",
+                                        "cannot reauthorize identity.*")
 
     def testBasic(self):
         self._testBasic()
