@@ -19,7 +19,8 @@
 
 class StorageHelpers:
     '''Mix-in class for using in tests that derive from something else than MachineCase or StorageCase'''
-    def add_ram_disk(self, size=50):
+    def add_ram_disk(self, size=50, machine=None):
+        m = machine if machine else self.machine
         '''Add per-test RAM disk
 
         The disk gets removed automatically when the test ends. This is safe for @nondestructive tests.
@@ -27,10 +28,10 @@ class StorageHelpers:
         Return the device name.
         '''
         # sanity test: should not yet be loaded
-        self.machine.execute("test ! -e /sys/module/scsi_debug")
-        self.machine.execute("modprobe scsi_debug dev_size_mb=%s" % size)
-        dev = self.machine.execute('set -e; while true; do O=$(ls /sys/bus/pseudo/drivers/scsi_debug/adapter*/host*/target*/*:*/block 2>/dev/null || true); '
-                                   '[ -n "$O" ] && break || sleep 0.1; done; echo "/dev/$O"').strip()
+        m.execute("test ! -e /sys/module/scsi_debug")
+        m.execute("modprobe scsi_debug dev_size_mb=%s" % size)
+        dev = m.execute('set -e; while true; do O=$(ls /sys/bus/pseudo/drivers/scsi_debug/adapter*/host*/target*/*:*/block 2>/dev/null || true); '
+                        '[ -n "$O" ] && break || sleep 0.1; done; echo "/dev/$O"').strip()
         # don't use addCleanup() here, this is often busy and needs to be cleaned up late; done in MachineCase.nonDestructiveSetup()
 
         return dev
