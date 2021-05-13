@@ -34,3 +34,14 @@ class StorageHelpers:
         # don't use addCleanup() here, this is often busy and needs to be cleaned up late; done in MachineCase.nonDestructiveSetup()
 
         return dev
+
+    def add_loop_disk(self, size=50):
+        'Create file for loop device'
+        availableLoop = self.machine.execute("losetup -f").strip()
+        virtualBlockFilePath = self.vm_tmpdir + "/" + availableLoop.split("/")[-1]
+
+        self.machine.execute("dd if=/dev/zero of={} bs=1M count={}".format(virtualBlockFilePath, size))
+        self.machine.execute("losetup {} {}".format(availableLoop, virtualBlockFilePath))
+        self.addCleanup(self.machine.execute, "losetup -d {}".format(availableLoop))
+
+        return availableLoop

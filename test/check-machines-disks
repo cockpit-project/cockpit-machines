@@ -510,7 +510,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         b = self.browser
         m = self.machine
 
-        dev = self.add_ram_disk(8)
+        dev = self.add_ram_disk(2)
         used_targets = ['vda']
 
         args = self.createVm("subVmTest1")
@@ -541,13 +541,20 @@ class TestMachinesDisks(VirtualMachinesCase):
             expected_target=get_next_free_target(used_targets)[-1],
         ).execute()
 
-        existing_disk = os.path.basename(dev) + "2"
-        self.machine.execute("virsh vol-create-as pool-disk %s 1M" % existing_disk)
+        loop_dev = self.add_loop_disk()
+        existing_disk = os.path.basename(loop_dev) + "p1"
+        cmds = [
+            "virsh pool-define-as {0} disk - - {1} - {2}".format("loop-disk", loop_dev, os.path.join(self.vm_tmpdir, "poolLoopImages")),
+            "virsh pool-build {} --overwrite".format("loop-disk"),
+            "virsh pool-start {}".format("loop-disk"),
+            "virsh vol-create-as {} {} 1M".format("loop-disk", existing_disk)
+        ]
+        self.machine.execute(" && ".join(cmds))
         self.VMAddDiskDialog(
             self,
             mode="use-existing",
-            pool_name='pool-disk',
-            pool_type='disk',
+            pool_name="loop-disk",
+            pool_type="disk",
             volume_name=existing_disk,
             expected_target=get_next_free_target(used_targets)[-1],
         ).execute()
