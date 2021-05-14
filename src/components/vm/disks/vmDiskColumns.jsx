@@ -26,11 +26,11 @@ export const DiskSourceCell = ({ diskSource, idPrefix }) => {
     const addOptional = (chunks, value, type, descr) => {
         if (value) {
             chunks.push(
-                <div className='machines-disks-source' key={descr}>
-                    <strong className='machines-disks-source-label'>
+                <div className='machines-multivalue-column' key={descr}>
+                    <strong className='machines-multivalue-column-label'>
                         {descr}
                     </strong>
-                    <span className='machines-disks-source-value' id={`${idPrefix}-source-${type}`}>
+                    <span className='machines-multivalue-column-value' id={`${idPrefix}-source-${type}`}>
                         {value}
                     </span>
                 </div>
