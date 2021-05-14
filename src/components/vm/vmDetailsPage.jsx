@@ -48,7 +48,7 @@ import './vmDetailsPage.scss';
 const _ = cockpit.gettext;
 
 export const VmDetailsPage = ({
-    vm, vms, config, libvirtVersion, hostDevices, storagePools,
+    vm, vms, config, libvirtVersion, storagePools,
     onUsageStartPolling, onUsageStopPolling, dispatch, networks,
     nodeDevices, notifications, onAddErrorNotification
 }) => {
