@@ -128,6 +128,10 @@ const DeviceRow = ({ idPrefix, device, index, onToggle, upDisabled, downDisabled
                 addOptional(additionalInfo, device.device.type, _("Type"));
                 addOptional(additionalInfo, nodeDev.capability.vendor._value, _("Vendor"));
                 addOptional(additionalInfo, nodeDev.capability.product._value, _("Product"));
+                addOptional(additionalInfo, nodeDev.capability.bus, _("Bus"));
+                addOptional(additionalInfo, nodeDev.capability.domain, _("Domain"));
+                addOptional(additionalInfo, nodeDev.capability.function, _("Function"));
+                addOptional(additionalInfo, nodeDev.capability.slot, _("Slot"));
                 break;
             }
             case "scsi": {

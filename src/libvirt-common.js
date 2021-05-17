@@ -851,14 +851,18 @@ export function parseNodeDeviceDumpxml(nodeDevice) {
     }
 
     const name = deviceElem.getElementsByTagName("name")[0].childNodes[0].nodeValue;
+    const path = deviceElem.getElementsByTagName("path")[0].childNodes[0].nodeValue;
     const capabilityElem = deviceElem.getElementsByTagName("capability")[0];
 
     const capability = {};
-    const path = {};
 
     capability.type = capabilityElem.getAttribute("type");
     if (capability.type == 'net')
         capability.interface = capabilityElem.getElementsByTagName("interface")[0].childNodes[0].nodeValue;
+    else if (capability.type == 'storage')
+        capability.block = capabilityElem.getElementsByTagName("block")[0].childNodes[0].nodeValue;
+    else if (capability.type == 'misc')
+        capability.char = capabilityElem.getElementsByTagName("char")[0].childNodes[0].nodeValue;
     else if (capability.type == 'usb_device' || capability.type == 'pci') {
         capability.product = {};
         capability.vendor = {};
@@ -872,6 +876,24 @@ export function parseNodeDeviceDumpxml(nodeDevice) {
         if (vendorElem) {
             capability.vendor.id = vendorElem.getAttribute("id");
             capability.vendor._value = vendorElem.childNodes[0] ? vendorElem.childNodes[0].nodeValue : undefined;
+        }
+
+        if (capability.type == "pci") {
+            const domainElem = capabilityElem.getElementsByTagName("domain")[0];
+            const busElem = capabilityElem.getElementsByTagName("bus")[0];
+            const functionElem = capabilityElem.getElementsByTagName("function")[0];
+            const slotElem = capabilityElem.getElementsByTagName("slot")[0];
+
+            capability.domain = domainElem.childNodes[0] ? domainElem.childNodes[0].nodeValue : undefined;
+            capability.bus = busElem.childNodes[0] ? busElem.childNodes[0].nodeValue : undefined;
+            capability.function = functionElem.childNodes[0] ? functionElem.childNodes[0].nodeValue : undefined;
+            capability.slot = slotElem.childNodes[0] ? slotElem.childNodes[0].nodeValue : undefined;
+        } else if (capability.type == "usb_device") {
+            const deviceElem = capabilityElem.getElementsByTagName("device")[0];
+            const busElem = capabilityElem.getElementsByTagName("bus")[0];
+
+            capability.device = deviceElem.childNodes[0] ? deviceElem.childNodes[0].nodeValue : undefined;
+            capability.bus = busElem.childNodes[0] ? busElem.childNodes[0].nodeValue : undefined;
         }
     } else if (capability.type == 'scsi') {
         capability.bus = {};
@@ -888,14 +910,25 @@ export function parseNodeDeviceDumpxml(nodeDevice) {
             capability.lun._value = lunElem.childNodes[0] ? lunElem.childNodes[0].nodeValue : undefined;
         if (targetElem)
             capability.target._value = targetElem.childNodes[0] ? targetElem.childNodes[0].nodeValue : undefined;
-    } else if (capability.type == 'mdev') {
-        const pathElem = deviceElem.getElementsByTagName("bus")[0];
+    } else if (capability.type == 'scsi_host') {
+        capability.host = {};
+        capability.uniqueId = {};
 
-        if (pathElem)
-            path._value = pathElem.childNodes[0] ? pathElem.childNodes[0].nodeValue : undefined;
+        const hostElem = capabilityElem.getElementsByTagName("host")[0];
+        const unique_idElem = capabilityElem.getElementsByTagName("unique_id")[0];
+
+        if (hostElem)
+            capability.host._value = hostElem.childNodes[0] ? hostElem.childNodes[0].nodeValue : undefined;
+        if (unique_idElem)
+            capability.uniqueId._value = unique_idElem.childNodes[0] ? unique_idElem.childNodes[0].nodeValue : undefined;
+    } else if (capability.type == 'mdev') {
+        const uuidElem = capabilityElem.getElementsByTagName("uuid")[0];
+
+        if (uuidElem)
+            capability.uuid = uuidElem.childNodes[0] ? uuidElem.childNodes[0].nodeValue : undefined;
     }
 
-    return { name, capability };
+    return { name, path, capability };
 }
 
 export function parseOsInfoList(dispatch, osList) {
