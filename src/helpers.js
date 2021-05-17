@@ -398,9 +398,26 @@ export function findHostNodeDevice(hostdev, nodeDevices) {
     case "usb": {
         const vendorId = hostdev.source.vendor.id;
         const productId = hostdev.source.product.id;
+        const device = parseInt(hostdev.source.device, 16).toString();
+        const bus = parseInt(hostdev.source.bus, 16).toString();
 
         nodeDev = nodeDevices.find(d => {
-            if (vendorId &&
+            // vendor and product are properties used to identify correct device. But vendor and product
+            // are not unique, and in some cases, multiple host devices with same vendor and product can exist.
+            // In such cases, optional properties (bus, device) are used in addition to product and vendor
+            // to identify correct device
+            if (bus &&
+                device &&
+                vendorId &&
+                productId &&
+                d.capability.vendor &&
+                d.capability.product &&
+                d.capability.bus == bus &&
+                d.capability.device == device &&
+                d.capability.vendor.id == vendorId &&
+                d.capability.product.id == productId)
+                return true;
+            else if (vendorId &&
                 productId &&
                 d.capability.vendor &&
                 d.capability.product &&
@@ -418,15 +435,15 @@ export function findHostNodeDevice(hostdev, nodeDevices) {
         const func = parseInt(hostdev.source.address.func, 16).toString();
 
         nodeDev = nodeDevices.find(d => {
-            if ((domain && bus && slot && func) &&
-                d.capability.domain &&
-                d.capability.bus &&
-                d.capability.slot &&
-                d.capability.function &&
-                d.capability.domain._value == domain &&
-                d.capability.bus._value == bus &&
-                d.capability.slot._value == slot &&
-                d.capability.function._value == func)
+            // pci device is identified by bus, slot, domain, function
+            if (bus &&
+                slot &&
+                func &&
+                domain &&
+                d.capability.bus == bus &&
+                d.capability.slot == slot &&
+                d.capability.function == func &&
+                d.capability.domain == domain)
                 return true;
         });
         break;
@@ -449,16 +466,45 @@ export function findHostNodeDevice(hostdev, nodeDevices) {
         break;
     }
     case "scsi_host": {
-        // TODO add scsi_host
-        nodeDev = undefined;
+        // TODO implement scsi_host
         break;
     }
     case "mdev": {
         const uuid = hostdev.source.address.uuid;
 
         nodeDev = nodeDevices.find(d => {
-            if (d.path &&
-                d.path._value.contains(uuid))
+            if ((uuid) &&
+                d.capability.uuid == uuid)
+                return true;
+        });
+        break;
+    }
+    case "storage": {
+        const block = hostdev.source.block;
+
+        nodeDev = nodeDevices.find(d => {
+            if ((block) &&
+                d.capability.block == block)
+                return true;
+        });
+        break;
+    }
+    case "misc": {
+        const ch = hostdev.source.char;
+
+        nodeDev = nodeDevices.find(d => {
+            if ((ch) &&
+                d.capability.char == ch)
+                return true;
+        });
+        break;
+    }
+    case "net": {
+        const iface = hostdev.source.interface;
+
+        nodeDev = nodeDevices.find(d => {
+            if ((iface) &&
+                d.capability.interface == iface)
                 return true;
         });
         break;
