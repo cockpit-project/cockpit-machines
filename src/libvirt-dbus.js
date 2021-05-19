@@ -329,7 +329,7 @@ const LIBVIRT_DBUS_PROVIDER = {
             return call(connectionName, objPath, 'org.libvirt.Domain', 'Destroy', [0], { timeout, type: 'u' });
         }
 
-        function undefine() {
+        function undefine(dispatch) {
             const storageVolPromises = [];
             const flags = Enum.VIR_DOMAIN_UNDEFINE_MANAGED_SAVE | Enum.VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA | Enum.VIR_DOMAIN_UNDEFINE_NVRAM;
 
@@ -369,18 +369,16 @@ const LIBVIRT_DBUS_PROVIDER = {
                 }
             }
 
-            // FIXME: use Promise.all() here; but that causes "Error: Actions must be plain objects"
-            // eslint-disable-next-line cockpit/no-cockpit-all
-            return cockpit.all(storageVolPromises)
+            return Promise.all(storageVolPromises)
                     .then(() => {
-                        return call(connectionName, objPath, 'org.libvirt.Domain', 'Undefine', [flags], { timeout, type: 'u' });
+                        return dispatch(call(connectionName, objPath, 'org.libvirt.Domain', 'Undefine', [flags], { timeout, type: 'u' }));
                     });
         }
 
         if (options.destroy) {
-            return undefine().then(destroy());
+            return dispatch => undefine(dispatch).then(destroy());
         } else {
-            return undefine()
+            return dispatch => undefine(dispatch)
                     .catch(ex => {
                         // Transient domains get undefined after shut off
                         if (!ex.message.includes("Domain not found"))
