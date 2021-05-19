@@ -240,4 +240,4 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
         m.execute("virsh net-define /etc/libvirt/qemu/networks/default.xml || true")
 
         # avoid error noise about resources getting cleaned up
-        self.addCleanup(self.browser.logout)
+        self.addCleanup(lambda: not self.browser.cdp.valid or self.browser.logout())
