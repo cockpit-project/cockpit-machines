@@ -503,6 +503,7 @@ export function parseDumpxmlForHostDevices(devicesElem) {
             const hostdevElem = hostdevElems[i];
             const bootElem = getSingleOptionalElem(hostdevElem, 'boot');
             const type = hostdevElem.getAttribute('type');
+            const mode = hostdevElem.getAttribute('mode');
             let dev;
 
             switch (type) {
@@ -517,6 +518,7 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                 }
                 dev = {
                     type: type,
+                    mode: mode,
                     bootOrder: bootElem ? bootElem.getAttribute('order') : undefined,
                     address: {
                         port: addressElem ? addressElem.getAttribute('port') : undefined,
@@ -528,6 +530,8 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                         product: {
                             id: productElem ? productElem.getAttribute('id') : undefined,
                         },
+                        device: addressElem.getAttribute('device'),
+                        bus: addressElem.getAttribute('bus'),
                     },
                 };
                 hostdevs.push(dev);
@@ -537,11 +541,23 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                 const sourceElem = hostdevElem.getElementsByTagName('source')[0];
                 const addressElem = sourceElem.getElementsByTagName('address')[0];
 
+                let vendorElem, productElem;
+                if (sourceElem) {
+                    vendorElem = sourceElem.getElementsByTagName('vendor')[0];
+                    productElem = sourceElem.getElementsByTagName('product')[0];
+                }
                 dev = {
                     type: type,
+                    mode: mode,
                     bootOrder: bootElem ? bootElem.getAttribute('order') : undefined,
                     source: {
                         address: {
+                            vendor: {
+                                id: vendorElem ? vendorElem.getAttribute('id') : undefined,
+                            },
+                            product: {
+                                id: productElem ? productElem.getAttribute('id') : undefined,
+                            },
                             domain: addressElem.getAttribute('domain'),
                             bus: addressElem.getAttribute('bus'),
                             slot: addressElem.getAttribute('slot'),
@@ -563,6 +579,7 @@ export function parseDumpxmlForHostDevices(devicesElem) {
 
                 dev = {
                     type: type,
+                    mode: mode,
                     bootOrder: bootElem ? bootElem.getAttribute('order') : undefined,
                     source: {
                         protocol: protocol,
@@ -585,6 +602,7 @@ export function parseDumpxmlForHostDevices(devicesElem) {
 
                 dev = {
                     type: type,
+                    mode: mode,
                     bootOrder: bootElem ? bootElem.getAttribute('order') : undefined,
                     source: {
                         protocol: sourceElem.getAttribute('protocol'),
@@ -600,11 +618,57 @@ export function parseDumpxmlForHostDevices(devicesElem) {
 
                 dev = {
                     type: type,
+                    mode: mode,
                     bootOrder: bootElem ? bootElem.getAttribute('order') : undefined,
                     source: {
                         address: {
                             uuid: addressElem.getAttribute('uuid'),
                         },
+                    },
+                };
+                hostdevs.push(dev);
+                break;
+            }
+            case "storage": {
+                const sourceElem = hostdevElem.getElementsByTagName('source')[0];
+                const blockElem = sourceElem.getElementsByTagName('block')[0];
+
+                dev = {
+                    type: type,
+                    mode: mode,
+                    bootOrder: bootElem ? bootElem.getAttribute('order') : undefined,
+                    source: {
+                        block: blockElem.childNodes[0].nodeValue
+                    },
+                };
+                hostdevs.push(dev);
+                break;
+            }
+            case "misc": {
+                const sourceElem = hostdevElem.getElementsByTagName('source')[0];
+                const charElem = sourceElem.getElementsByTagName('char')[0];
+
+                dev = {
+                    type: type,
+                    mode: mode,
+                    bootOrder: bootElem ? bootElem.getAttribute('order') : undefined,
+                    source: {
+                        char: charElem.childNodes[0].nodeValue
+                    },
+                };
+                hostdevs.push(dev);
+                break;
+            }
+            case "net": {
+                const sourceElem = hostdevElem.getElementsByTagName('source')[0];
+                const interfaceElem = sourceElem.getElementsByTagName('interface')[0];
+
+                dev = {
+                    type: type,
+                    mode: mode,
+                    bootOrder: bootElem ? bootElem.getAttribute('order') : undefined,
+                    source: {
+                        interface: interfaceElem.childNodes[0].nodeValue
                     },
                 };
                 hostdevs.push(dev);
