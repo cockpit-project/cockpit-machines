@@ -215,7 +215,7 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
         self.addCleanup(m.execute, "for n in $(virsh net-list --all --name); do virsh net-destroy $n || true; done")
 
         # we don't have configuration to open the firewall for local libvirt machines, so just stop firewalld
-        m.execute("systemctl stop firewalld; systemctl try-restart libvirtd")
+        m.execute("systemctl stop firewalld; systemctl reset-failed libvirtd; systemctl try-restart libvirtd")
 
         # user libvirtd instance tends to SIGABRT with "Failed to find user record for uid .." on shutdown during cleanup
         # so make sure that there are no leftover user processes that bleed into the next test
