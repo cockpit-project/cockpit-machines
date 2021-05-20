@@ -59,3 +59,9 @@ printf "[WebService]\\nAllowUnencrypted=true\\n" > /etc/cockpit/cockpit.conf
 if type firewall-cmd >/dev/null 2>&1; then
     firewall-cmd --add-service=cockpit --permanent
 fi
+
+if grep -q 'VERSION_ID="8.5"' /etc/os-release; then
+    # HACK: https://bugzilla.redhat.com/show_bug.cgi?id=1961562
+    mkdir -p /etc/qemu/firmware
+    touch /etc/qemu/firmware/50-edk2-ovmf-cc.json
+fi
