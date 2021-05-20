@@ -331,7 +331,7 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         # Check memory hotunplugging
         # The balloon driver needs to be loaded to descrease memory
-        wait(lambda: "Linux version" in self.machine.execute("cat {0}".format(args["logfile"])), delay=3)
+        wait(lambda: "login as 'cirros' user" in self.machine.execute("cat {0}".format(args["logfile"])), delay=3)
 
         b.set_input_text("#vm-subVmTest1-memory-modal-memory", str(current_memory - 10))
         b.blur("#vm-subVmTest1-memory-modal-memory")

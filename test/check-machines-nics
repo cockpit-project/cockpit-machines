@@ -127,7 +127,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         m.execute("> {0}".format(args["logfile"]))  # clear logfile
         b.click("#vm-subVmTest1-run")
         b.wait_in_text("#vm-subVmTest1-state", "Running")
-        wait(lambda: "Linux version" in self.machine.execute("cat {0}".format(args["logfile"])), delay=3)
+        wait(lambda: "login as 'cirros' user." in self.machine.execute("cat {0}".format(args["logfile"])), delay=3)
 
         # Test permanent attachment to running VM
         self.NICAddDialog(
