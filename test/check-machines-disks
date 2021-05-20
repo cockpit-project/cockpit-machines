@@ -897,7 +897,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         m.execute("> {0}".format(args["logfile"]))  # clear logfile
         m.execute("virsh start subVmTest1")
         # Make sure that the VM booted normally before attempting to suspend it
-        wait(lambda: "Linux version" in m.execute("cat {0}".format(args["logfile"])), delay=3)
+        wait(lambda: "login as 'cirros' user" in m.execute("cat {0}".format(args["logfile"])), delay=3)
         m.execute("virsh suspend subVmTest1")
         b.wait_in_text("#vm-subVmTest1-state", "Paused")
         b.wait_attr("#delete-subVmTest1-disk-vde", "disabled", "")

@@ -381,7 +381,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         self.goToVmPage(name)
 
         # Make sure that the VM booted normally before attempting to suspend it
-        wait(lambda: "Linux version" in self.machine.execute("cat {0}".format(args["logfile"])), delay=3)
+        wait(lambda: "login as 'cirros' user" in self.machine.execute("cat {0}".format(args["logfile"])), delay=3)
 
         self.machine.execute("virsh -c qemu:///system suspend {0}".format(name))
         b.wait_in_text("#vm-{0}-state".format(name), "Paused")
