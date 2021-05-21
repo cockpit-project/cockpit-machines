@@ -26,7 +26,7 @@ sys.path.append(os.path.join(TEST_DIR, "common"))
 sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
 
 from machineslib import VirtualMachinesCase  # noqa
-from testlib import no_retry_when_changed, nondestructive, test_main, wait  # noqa
+from testlib import nondestructive, test_main, wait  # noqa
 from machinesxmls import TEST_NETWORK2_XML, TEST_NETWORK3_XML, TEST_NETWORK4_XML, TEST_NETWORK_XML  # noqa
 
 
@@ -44,7 +44,6 @@ def getNetworkDevice(m):
 
 
 @nondestructive
-@no_retry_when_changed
 class TestMachinesNetworks(VirtualMachinesCase):
 
     def testNetworks(self):
