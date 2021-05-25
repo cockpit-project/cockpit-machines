@@ -19,7 +19,6 @@
 
 import {
     addUiVm,
-    updateUiVm,
     deleteUiVm,
 } from '../../actions/store-actions.js';
 
@@ -35,8 +34,6 @@ export function setVmCreateInProgress(dispatch, name, connectionName, settings) 
         name,
         connectionName,
         isUi: true,
-        expanded: true,
-        openConsoleTab: true,
         createInProgress: true,
     }, settings);
 
@@ -48,28 +45,11 @@ export function setVmInstallInProgress(dispatch, original_vm, settings) {
     const vm = Object.assign({}, {
         ...original_vm,
         isUi: true,
-        expanded: true,
-        openConsoleTab: true,
         installInProgress: true,
     }, settings);
 
     dispatch(addUiVm(vm));
     setupCleanupTimeout(dispatch, original_vm.name, original_vm.connectionName, INSTALL_TIMEOUT);
-}
-
-export function finishVmCreateInProgress(dispatch, name, connectionName, settings) {
-    const vm = Object.assign({}, {
-        name,
-        connectionName,
-        createInProgress: false,
-    }, settings);
-    dispatch(updateUiVm(vm));
-}
-
-export function removeVmCreateInProgress(dispatch, name, connectionName, settings) {
-    if (clearTimeout(name, connectionName, CREATE_TIMEOUT)) {
-        finishVmCreateInProgress(dispatch, name, connectionName, settings);
-    }
 }
 
 export function clearVmUiState(dispatch, name, connectionName) {

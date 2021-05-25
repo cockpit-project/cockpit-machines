@@ -36,14 +36,11 @@ import {
 } from './libvirtUtils.js';
 
 import {
-    finishVmCreateInProgress,
-    removeVmCreateInProgress,
     setVmCreateInProgress,
     setVmInstallInProgress,
     clearVmUiState,
 } from './components/create-vm-dialog/uiState.js';
 
-import store from './store.js';
 import VMS_CONFIG from './config.js';
 
 const _ = cockpit.gettext;
@@ -881,29 +878,6 @@ export function parseStorageVolumeDumpxml(connectionName, storageVolumeXml, id_o
     };
 }
 
-export function resolveUiState(dispatch, name, connectionName) {
-    const result = {
-        // used just the first time vm is shown
-        initiallyExpanded: false,
-        initiallyOpenedConsoleTab: false,
-    };
-
-    const uiState = store.getState().ui.vms.find(vm => vm.name == name && vm.connectionName == connectionName);
-
-    if (uiState) {
-        result.initiallyExpanded = uiState.expanded;
-        result.initiallyOpenedConsoleTab = uiState.openConsoleTab;
-
-        if (uiState.installInProgress) {
-            removeVmCreateInProgress(dispatch, name, connectionName);
-        } else {
-            clearVmUiState(dispatch, name, connectionName);
-        }
-    }
-
-    return result;
-}
-
 export function unknownConnectionName(action, libvirtServiceName) {
     return dispatch => {
         return cockpit.user().done(loggedUser => {
@@ -997,7 +971,7 @@ export function CREATE_VM({
     logDebug(`${this.name}.CREATE_VM(${vmName}):`);
     return dispatch => {
         // shows dummy vm  until we get vm from virsh (cleans up inProgress)
-        setVmCreateInProgress(dispatch, vmName, connectionName, { openConsoleTab: startVm });
+        setVmCreateInProgress(dispatch, vmName, connectionName);
 
         if (startVm) {
             setVmInstallInProgress(dispatch, { name: vmName, connectionName });
@@ -1026,7 +1000,6 @@ export function CREATE_VM({
             useCloudInit,
         ], opts)
                 .done(() => {
-                    finishVmCreateInProgress(dispatch, vmName, connectionName);
                     clearVmUiState(dispatch, vmName, connectionName);
                 })
                 .fail((exception, data) => {
