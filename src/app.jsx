@@ -112,9 +112,9 @@ class App extends React.Component {
     }
 
     render() {
-        const { vms, config, storagePools, systemInfo, ui, networks, nodeDevices, interfaces } = this.props.store.getState();
+        const { vms, config, storagePools, systemInfo, ui, networks, nodeDevices, interfaces } = this.props.store;
         const path = this.state.path;
-        const dispatch = this.props.store.dispatch;
+        const dispatch = this.props.dispatch;
         const combinedVms = [...vms, ...dummyVmsFilter(vms, ui.vms)];
         const properties = {
             dispatch,

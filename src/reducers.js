@@ -16,9 +16,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import { combineReducers } from 'redux/dist/redux';
-import VMS_CONFIG from "./config.js";
 import { logDebug, isObjectEmpty } from './helpers.js';
+import VMS_CONFIG from "./config.js";
 import {
     ADD_UI_VM,
     DELETE_UI_VM,
@@ -57,10 +56,6 @@ function replaceResource({ state, updatedResource, index }) {
 
 // --- reducers ------------------
 function config(state, action) {
-    state = state || {
-        refreshInterval: VMS_CONFIG.DefaultRefreshInterval,
-    };
-
     switch (action.type) {
     case SET_NODE_MAX_MEMORY: {
         const newState = Object.assign({}, state);
@@ -72,26 +67,7 @@ function config(state, action) {
     }
 }
 
-/**
- * Provider might optionally extend the reducer tree (see state.provider.reducer() function)
- */
-function lazyComposedReducer({ parentReducer, getSubreducer, getSubstate, setSubstate }) {
-    return (state, action) => {
-        let newState = parentReducer(state, action);
-        const subreducer = getSubreducer(newState);
-        if (subreducer) {
-            const newSubstate = subreducer(getSubstate(newState), action);
-            if (newSubstate !== getSubstate(newState)) {
-                newState = setSubstate(newState, newSubstate);
-            }
-        }
-        return newState;
-    };
-}
-
 function interfaces(state, action) {
-    state = state || [];
-
     switch (action.type) {
     case UPDATE_ADD_INTERFACE: {
         const { iface } = action.payload;
@@ -117,8 +93,6 @@ function interfaces(state, action) {
 }
 
 function networks(state, action) {
-    state = state || [];
-
     switch (action.type) {
     case UNDEFINE_NETWORK: {
         const { connectionName, id } = action.payload;
@@ -155,8 +129,6 @@ function networks(state, action) {
 }
 
 function nodeDevices(state, action) {
-    state = state || [];
-
     switch (action.type) {
     case UPDATE_ADD_NODE_DEVICE: {
         const { nodedev } = action.payload;
@@ -182,8 +154,6 @@ function nodeDevices(state, action) {
 }
 
 function vms(state, action) {
-    state = state || [];
-
     logDebug('reducer vms: action=' + JSON.stringify(action));
 
     function findVmToUpdate(state, { connectionName, id, name }) {
@@ -277,17 +247,6 @@ function vms(state, action) {
 }
 
 function systemInfo(state, action) {
-    state = state || {
-        libvirtService: {
-            name: 'unknown',
-            activeState: 'unknown',
-            unitState: 'unknown',
-        },
-        libvirtVersion: 0,
-        osInfoList: null,
-        loggedUser: null,
-    };
-
     switch (action.type) {
     case UPDATE_OS_INFO_LIST: {
         if (action.osInfoList instanceof Array) {
@@ -310,8 +269,6 @@ function systemInfo(state, action) {
 }
 
 function storagePools(state, action) {
-    state = state || [];
-
     function findStoragePoolToUpdate(state, { connectionName, id, name }) {
         const index = id ? getFirstIndexOfResource(state, 'id', id, connectionName)
             : getFirstIndexOfResource(state, 'name', name, connectionName);
@@ -375,11 +332,6 @@ function storagePools(state, action) {
 }
 
 function ui(state, action) {
-    // transient properties
-    state = state || {
-        notifications: [],
-        vms: [], // transient property
-    };
     const addVm = () => {
         const existingVm = state.vms.find(vm => vm.name == action.vm.name && vm.connectionName == action.vm.connectionName);
         if (existingVm === undefined) {
@@ -439,13 +391,18 @@ function timeSampleUsageData(newVmRecord, previousVmRecord) {
     }
 }
 
-export default combineReducers({
-    config: lazyComposedReducer({
-        parentReducer: config,
-        getSubreducer: (state) => (state.provider && state.provider.reducer) ? state.provider.reducer : undefined,
-        getSubstate: (state) => state.providerState,
-        setSubstate: (state, subState) => Object.assign({}, state, { providerState: subState }),
-    }),
+function combineReducers(reducers) {
+    return (state = {}, action) => {
+        const newState = {};
+        for (const key in reducers) {
+            newState[key] = reducers[key](state[key], action);
+        }
+        return newState;
+    };
+}
+
+export const appReducers = combineReducers({
+    config,
     interfaces,
     networks,
     nodeDevices,
@@ -454,3 +411,28 @@ export default combineReducers({
     storagePools,
     ui,
 });
+
+export const initialState = {
+    interfaces: [],
+    networks: [],
+    nodeDevices: [],
+    vms: [],
+    systemInfo: {
+        libvirtService: {
+            name: 'unknown',
+            activeState: 'unknown',
+            unitState: 'unknown',
+        },
+        libvirtVersion: 0,
+        osInfoList: null,
+        loggedUser: null,
+    },
+    storagePools: [],
+    ui: {
+        notifications: [],
+        vms: [], // transient property
+    },
+    config: {
+        refreshInterval: VMS_CONFIG.DefaultRefreshInterval,
+    }
+};

@@ -19,42 +19,52 @@
 import 'patternfly/patternfly-cockpit.scss';
 import 'polyfills'; // once per application
 
-import React from 'react';
+import React, { createContext, useEffect, useReducer } from 'react';
 import ReactDOM from 'react-dom';
 
-import store from './store.js';
+import { appReducers, initialState } from './reducers';
+import { initDataRetrieval } from "./actions/provider-actions.js";
 import App from './app.jsx';
-import { initDataRetrieval } from './actions/provider-actions.js';
-import { logDebug } from './helpers.js';
+
+export const StateContext = createContext(initialState);
+export const DispatchContext = React.createContext(undefined);
+
+const AppWrapper = () => {
+    const [state, dispatch] = useReducerWithThunk(appReducers, initialState);
+    useEffect(() => {
+        dispatch(initDataRetrieval());
+    }, []);
+
+    return (
+        <StateContext.Provider value={state}>
+            <DispatchContext.Provider value={dispatch}>
+                <App store={state} dispatch={dispatch} />
+            </DispatchContext.Provider>
+        </StateContext.Provider>
+    );
+};
+
+function useReducerWithThunk(reducer, initialState) {
+    const [state, dispatch] = useReducer(reducer, initialState);
+    const customDispatch = (action) => {
+        if (typeof action === 'function') {
+            action(customDispatch);
+        } else {
+            dispatch(action);
+        }
+    };
+    return [state, customDispatch];
+}
 
 function render() {
     ReactDOM.render(
-        <App store={store} />,
+        <AppWrapper />,
         document.getElementById('app')
     );
 }
 
-function renderApp() {
-    // initiate data retrieval
-    store.dispatch(initDataRetrieval());
-
-    // re-render app every time the state changes
-    store.subscribe(render);
-
-    // do initial render
-    render();
-}
-
-/**
- * Start the application.
- */
-function appMain() {
-    logDebug('index.js: initial state: ' + JSON.stringify(store.getState()));
-    renderApp();
-}
-
 (function() {
     document.addEventListener("DOMContentLoaded", function() {
-        appMain();
+        render();
     });
 }());
