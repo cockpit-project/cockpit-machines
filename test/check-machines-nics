@@ -220,6 +220,7 @@ class TestMachinesNICs(VirtualMachinesCase):
 
         b.click("#vm-subVmTest1-network-2-edit-dialog")
         b.select_from_dropdown("#vm-subVmTest1-network-2-select-source", "eth42")
+        b.wait_attr("#vm-subVmTest1-network-2-edit-dialog-mac", "readonly", "")
         b.wait_visible("#vm-subVmTest1-network-2-edit-dialog-idle-message")
         b.click("#vm-subVmTest1-network-2-edit-dialog-save")
         b.wait_not_present("#vm-subVmTest1-network-2-edit-dialog-modal-window")
