@@ -19,7 +19,7 @@
 import React from 'react';
 import cockpit from 'cockpit';
 import PropTypes from 'prop-types';
-import { Button, Alert, Form, FormGroup, Modal, TextInput } from '@patternfly/react-core';
+import { Button, Alert, Form, FormGroup, Modal, TextInput, Tooltip } from '@patternfly/react-core';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { NetworkTypeAndSourceRow, NetworkModelRow } from './nicBody.jsx';
@@ -30,12 +30,19 @@ import 'form-layout.scss';
 
 const _ = cockpit.gettext;
 
-const NetworkMacRow = ({ mac, onValueChanged, idPrefix }) => {
+const NetworkMacRow = ({ mac, onValueChanged, idPrefix, isShutoff }) => {
+    let macInput = (
+        <TextInput id={`${idPrefix}-edit-dialog-mac`}
+                   isReadOnly={!isShutoff}
+                   value={mac}
+                   onChange={value => onValueChanged("networkMac", value)} />
+    );
+    if (!isShutoff)
+        macInput = <Tooltip content={_("Only editable when the guest is shut off")}>{macInput}</Tooltip>;
+
     return (
         <FormGroup fieldId={`${idPrefix}-edit-dialog-mac`} label={_("MAC address")}>
-            <TextInput id={`${idPrefix}-edit-dialog-mac`}
-                       value={mac}
-                       onChange={value => onValueChanged("networkMac", value)} />
+            {macInput}
         </FormGroup>
     );
 };
@@ -145,7 +152,10 @@ export class EditNICModal extends React.Component {
                                  onValueChanged={this.onValueChanged}
                                  osTypeArch={vm.arch}
                                  osTypeMachine={vm.emulatedMachine} />
-                <NetworkMacRow mac={this.state.networkMac} onValueChanged={this.onValueChanged} idPrefix={idPrefix} />
+                <NetworkMacRow mac={this.state.networkMac}
+                               onValueChanged={this.onValueChanged}
+                               idPrefix={idPrefix}
+                               isShutoff={vm.state == "shut off"} />
             </Form>
         );
         const showWarning = () => {

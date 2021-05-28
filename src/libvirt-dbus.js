@@ -1364,19 +1364,17 @@ export function changeNetworkSettings({
     flags |= Enum.VIR_DOMAIN_AFFECT_CONFIG;
 
     if (newMacAddress && newMacAddress !== macAddress) {
-        return detachIface(macAddress, connectionName, objPath, hotplug, persistent, dispatch)
-                .then(() => {
-                    return attachIface({
-                        connectionName,
-                        hotplug,
-                        vmId: objPath,
-                        mac: newMacAddress,
-                        permanent: persistent,
-                        sourceType: networkType,
-                        source: networkSource,
-                        model: networkModel
-                    });
-                });
+        return attachIface({
+            connectionName,
+            hotplug,
+            vmId: objPath,
+            mac: newMacAddress,
+            permanent: persistent,
+            sourceType: networkType,
+            source: networkSource,
+            model: networkModel
+        })
+                .then(() => detachIface(macAddress, connectionName, objPath, hotplug, persistent, dispatch));
     } else {
         // Error handling inside the modal dialog this function is called
         return call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' })
