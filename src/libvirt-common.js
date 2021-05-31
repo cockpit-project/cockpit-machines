@@ -851,7 +851,8 @@ export function parseNodeDeviceDumpxml(nodeDevice) {
     }
 
     const name = deviceElem.getElementsByTagName("name")[0].childNodes[0].nodeValue;
-    const path = deviceElem.getElementsByTagName("path")[0].childNodes[0].nodeValue;
+    const pathElem = getSingleOptionalElem(deviceElem, 'path');
+    const path = pathElem ? pathElem.childNodes[0].nodeValue : undefined;
     const capabilityElem = deviceElem.getElementsByTagName("capability")[0];
 
     const capability = {};

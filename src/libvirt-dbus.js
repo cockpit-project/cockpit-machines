@@ -76,7 +76,8 @@ import {
 
 import {
     logDebug,
-    DOMAINSTATE
+    DOMAINSTATE,
+    parseUdevDB
 } from './helpers.js';
 
 import {
@@ -448,8 +449,10 @@ const LIBVIRT_DBUS_PROVIDER = {
         connectionName,
     }) {
         return dispatch => {
-            call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListNodeDevices', [0], { timeout, type: 'u' })
-                    .then(objPaths => Promise.all(objPaths[0].map(path => dispatch(getNodeDevice({ connectionName, id:path })))))
+            return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListNodeDevices', [0], { timeout, type: 'u' })
+                    .then(objPaths => {
+                        Promise.all(objPaths[0].map(path => dispatch(getNodeDevice({ connectionName, id:path }))));
+                    })
                     .catch(ex => console.warn('GET_ALL_NODE_DEVICES action failed:', ex.toString()));
         };
     },
@@ -599,13 +602,31 @@ const LIBVIRT_DBUS_PROVIDER = {
         id: objPath,
         connectionName,
     }) {
+        let deviceXmlObject;
         return dispatch => {
             call(connectionName, objPath, 'org.libvirt.NodeDevice', 'GetXMLDesc', [0], { timeout, type: 'u' })
                     .then(deviceXml => {
-                        const deviceXmlObject = parseNodeDeviceDumpxml(deviceXml);
+                        deviceXmlObject = parseNodeDeviceDumpxml(deviceXml);
                         deviceXmlObject.connectionName = connectionName;
 
-                        dispatch(updateOrAddNodeDevice(deviceXmlObject));
+                        if (deviceXmlObject.path && ["pci", "usb_device"].includes(deviceXmlObject.capability.type)) {
+                            return cockpit.spawn(["udevadm", "info", "--path", deviceXmlObject.path], { err: "message" })
+                                    .then(output => {
+                                        const nodeDev = parseUdevDB(output);
+                                        if (nodeDev.SUBSYSTEM === "pci" && nodeDev) {
+                                            deviceXmlObject.pciSlotName = nodeDev.PCI_SLOT_NAME;
+                                            deviceXmlObject.class = nodeDev.ID_PCI_CLASS_FROM_DATABASE;
+                                        } else if (nodeDev.SUBSYSTEM === "usb" && nodeDev) {
+                                            deviceXmlObject.class = nodeDev.ID_USB_CLASS_FROM_DATABASE;
+                                            deviceXmlObject.busnum = nodeDev.BUSNUM;
+                                            deviceXmlObject.devnum = nodeDev.DEVNUM;
+                                        }
+
+                                        return dispatch(updateOrAddNodeDevice(deviceXmlObject));
+                                    });
+                        } else {
+                            return dispatch(updateOrAddNodeDevice(deviceXmlObject));
+                        }
                     })
                     .catch(ex => console.warn('GET_NODE_DEVICE action failed for path', objPath, ex.toString()));
         };
