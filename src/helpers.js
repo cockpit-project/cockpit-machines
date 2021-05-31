@@ -845,3 +845,26 @@ export function getNextAvailableTarget(existingTargets, busType) {
         i++;
     }
 }
+
+/**
+ * Parses output of "udevadm info --path [devicePath]" into a node device object
+ * Inspired by parseUdevDB() from cockpit's pkg/lib/machine-info.js
+ *
+ * @param {string} text output of "udevadm" commdn
+ * @returns {object}
+ */
+export function parseUdevDB(text) {
+    const udevPropertyRE = /^E: (\w+)=(.*)$/;
+    const device = {};
+
+    if (!(text = text.trim()))
+        return;
+
+    text.split("\n").forEach(line => {
+        const match = line.match(udevPropertyRE);
+        if (match)
+            device[match[1]] = match[2];
+    });
+
+    return device;
+}
