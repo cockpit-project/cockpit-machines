@@ -519,7 +519,7 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                       storage_pool="NoStorage",
                                                       start_vm=True,))
 
-        self.machine.execute("touch '{0}'".format(config.PATH_WITH_SPACE))
+        self.machine.execute("qemu-img create -f raw '{0}' 1M".format(config.PATH_WITH_SPACE))
         # Check file with empty space
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='file',
                                                       location=config.PATH_WITH_SPACE,
@@ -1082,7 +1082,7 @@ class TestMachinesCreate(VirtualMachinesCase):
             self.test_obj = test_obj
             self.run_admin = test_obj.run_admin
 
-            self.machine.execute("touch {0}".format(TestMachinesCreate.TestCreateConfig.NOVELL_MOCKUP_ISO_PATH))
+            self.machine.execute("qemu-img create -f raw {0} 1M".format(TestMachinesCreate.TestCreateConfig.NOVELL_MOCKUP_ISO_PATH))
             self.machine.execute("qemu-img create {0} 500M".format(TestMachinesCreate.TestCreateConfig.VALID_DISK_IMAGE_PATH))
             test_obj.addCleanup(test_obj.machine.execute, "rm -f {0} {1}".format(
                 TestMachinesCreate.TestCreateConfig.NOVELL_MOCKUP_ISO_PATH,
