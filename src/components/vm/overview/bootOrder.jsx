@@ -20,13 +20,24 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 import {
-    ButtonGroup,
-    Icon,
-    ListView,
-    ListViewItem,
-} from 'patternfly-react';
-
-import { Button, Modal, Tooltip } from '@patternfly/react-core';
+    Alert,
+    Button,
+    DataList,
+    DataListCell,
+    DataListCheck,
+    DataListControl,
+    DataListDragButton,
+    DataListItem,
+    DataListItemCells,
+    DataListItemRow,
+    DragDrop, Draggable, Droppable,
+    DescriptionList,
+    DescriptionListDescription,
+    DescriptionListGroup,
+    DescriptionListTerm,
+    Modal,
+    Tooltip,
+} from '@patternfly/react-core';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import {
     findHostNodeDevice,
@@ -59,14 +70,14 @@ function getUIBootOrderDevices(vm) {
 
 const DeviceInfo = ({ descr, value }) => {
     return (
-        <div className='ct-form'>
-            <label className='control-label' htmlFor={value}>
+        <DescriptionListGroup>
+            <DescriptionListTerm>
                 {descr}
-            </label>
-            <span id={value}>
+            </DescriptionListTerm>
+            <DescriptionListDescription id={value}>
                 {value}
-            </span>
-        </div>
+            </DescriptionListDescription>
+        </DescriptionListGroup>
     );
 };
 
@@ -155,153 +166,162 @@ const DeviceRow = ({ idPrefix, device, index, onToggle, upDisabled, downDisabled
     }
     }
 
-    const upArrow = <Button isDisabled={upDisabled} onClick={moveUp}><Icon id={`${idPrefix}-up`} type="fa" name="angle-up" /></Button>;
-    const downArrow = <Button isDisabled={downDisabled} onClick={moveDown}><Icon id={`${idPrefix}-down`} type="fa" name="angle-down" /></Button>;
-
-    const actions = (
-        <ButtonGroup>
-            {upArrow}
-            {downArrow}
-        </ButtonGroup>
-    );
-
-    const checkbox = (
-        <label htmlFor={`${idPrefix}-device-row-${index}-checkbox`}>
-            <input id={`${idPrefix}-device-row-${index}-checkbox`} type="checkbox" checked={device.checked} onChange={onToggle} />
-        </label>
-    );
-
     return (
-        <ListViewItem
-            id={`${idPrefix}-device-row-${index}`}
-            className={ device.checked ? "is-checked" : "" }
-            checkboxInput={checkbox}
-            heading={heading}
-            additionalInfo={additionalInfo}
-            actions={actions}
-        />
+        <Draggable key={`device-${index}`} hasNoWrapper>
+            <DataListItem id={`device-${index}`}>
+                <DataListItemRow>
+                    <DataListControl>
+                        <DataListDragButton aria-label={_("Reorder")}
+                                            aria-describedby={_("Press space or enter to begin dragging, and use the arrow keys to navigate up or down. Press enter to confirm the drag, or any other key to cancel the drag operation.")}
+                                            isDisabled={!device.checked} />
+                        <DataListCheck id={`${idPrefix}-device-${index}-checkbox`}
+                                       name={`${idPrefix}-device-${index}-checkbox`}
+                                       otherControls
+                                       onChange={onToggle}
+                                       isChecked={!!device.checked} />
+                    </DataListControl>
+                    <DataListItemCells dataListCells={[
+                        <DataListCell className="boot-order-modal-cell" key="item1">
+                            <span className="boot-order-description">{heading}</span>
+                            <span className="boot-order-additional-info">
+                                <DescriptionList isHorizontal>{additionalInfo}</DescriptionList>
+                            </span>
+                        </DataListCell>
+                    ]} />
+                </DataListItemRow>
+            </DataListItem>
+        </Draggable>
     );
 };
 
-class BootOrderModal extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            devices: getUIBootOrderDevices(props.vm),
-        };
-        this.dialogErrorSet = this.dialogErrorSet.bind(this);
-        this.close = props.close;
-        this.save = this.save.bind(this);
-        this.onToggleDevice = this.onToggleDevice.bind(this);
-        this.moveUp = this.moveUp.bind(this);
-        this.moveDown = this.moveDown.bind(this);
+const reorder = (list, startIndex, endIndex) => {
+    const result = Array.from(list);
+    const [removed] = result.splice(startIndex, 1);
+    result.splice(endIndex, 0, removed);
+    return result;
+};
+
+const BootOrderModal = ({ vm, nodeDevices, close }) => {
+    const [items, setItems] = React.useState(getUIBootOrderDevices(vm).map((content, index) => ({ id: `device-${index}`, content })));
+    const [error, setError] = React.useState();
+    const [liveText, setLiveText] = React.useState('');
+
+    function onDrop(source, dest) {
+        if (dest) {
+            const newItems = reorder(
+                items,
+                source.index,
+                dest.index
+            );
+            setItems(newItems);
+
+            setLiveText('Dragging finished.');
+            return true; // Signal that this is a valid drop and not to animate the item returning home.
+        } else {
+            setLiveText('Dragging cancelled. List unchanged.');
+        }
     }
 
-    dialogErrorSet(text, detail) {
-        this.setState({ dialogError: text, dialogErrorDetail: detail });
-    }
-
-    save() {
-        const { vm } = this.props;
-        const devices = this.state.devices.filter((device) => device.checked);
-
+    function save() {
         domainChangeBootOrder({
             id: vm.id,
             connectionName: vm.connectionName,
-            devices,
+            devices: items
+                    .filter(item => item.content.checked)
+                    .map(item => item.content),
         })
                 .then(() => {
                     domainGet({ connectionName: vm.connectionName, id: vm.id });
-                    this.close();
+                    close();
                 })
-                .catch(exc => this.dialogErrorSet(_("Boot order settings could not be saved"), exc.message));
+                .catch(exc => setError(_("Boot order settings could not be saved"), exc.message));
     }
 
-    onToggleDevice(device) {
+    function onToggleDevice(index) {
         // create new array so we don't edit state
-        const devices = [...this.state.devices];
+        const devices = [...items];
 
-        devices[devices.indexOf(device)].checked = !devices[devices.indexOf(device)].checked;
-
-        this.setState({ devices: devices });
+        devices[index].content.checked = !devices[index].content.checked;
+        setItems(devices);
     }
 
-    moveUp(device) {
-        const direction = -1;
-        // create new array so we don't edit state
-        const devices = [...this.state.devices];
+    const idPrefix = vmId(vm.name) + '-order-modal';
 
-        const index = devices.indexOf(device);
-        const tmp = devices[index + direction];
-        devices[index + direction] = devices[index];
-        devices[index] = tmp;
+    /**
+     * Returns whetever state of device represented in UI has changed
+     *
+     * @param {object} device
+     * @param {number} index order of device in list
+     * @returns {boolean}
+     */
+    function deviceStateHasChanged(device, index) {
+        // device was selected
+        if (device.checked && !device.initialOrder)
+            return true;
 
-        this.setState({ devices: devices });
+        // device was unselected
+        if (!device.checked && device.initialOrder)
+            return true;
+
+        // device was moved in boot order list
+        if (device.initialOrder && device.initialOrder !== index + 1)
+            return true;
+
+        return false;
     }
 
-    moveDown(device) {
-        const direction = 1;
-        // create new array so we don't edit state
-        const devices = [...this.state.devices];
+    const showWarning = () => {
+        if (vm.state === "running" &&
+            items.some((device, index) => deviceStateHasChanged(device, index))) {
+            return <Alert isInline variant='warning' id={`${idPrefix}-min-message`} title={_("Changes will take effect after shutting down the VM")} />;
+        }
+    };
 
-        const index = devices.indexOf(device);
-        const tmp = devices[index + direction];
-        devices[index + direction] = devices[index];
-        devices[index] = tmp;
-
-        this.setState({ devices: devices });
-    }
-
-    render() {
-        const { nodeDevices, vm } = this.props;
-        const idPrefix = vmId(vm.name) + '-order-modal';
-        const defaultBody = (
-            <div className="list-group dialog-list-ct">
-                <ListView className="boot-order-list-view">
-                    {this.state.devices.map((device, index) => {
-                        const nextDevice = this.state.devices[index + 1];
-                        return <DeviceRow
-                                    key={index}
-                                    idPrefix={idPrefix}
-                                    index={index}
-                                    device={device}
-                                    onClick={() => this.onToggleDevice(device)}
-                                    onToggle={() => this.onToggleDevice(device)}
-                                    upDisabled={!index || !device.checked}
-                                    downDisabled={index + 1 == this.state.devices.length || !nextDevice.checked}
-                                    moveUp={() => this.moveUp(device)}
-                                    moveDown={() => this.moveDown(device)}
-                                    nodeDevices={nodeDevices}
+    const defaultBody = (
+        <DragDrop onDrop={onDrop}>
+            <Droppable hasNoWrapper>
+                <DataList isCompact
+                          className="boot-order-list-view">
+                    {items.map((device, index) => {
+                        return <DeviceRow onToggle={() => onToggleDevice(index)}
+                                          key={index}
+                                          idPrefix={idPrefix}
+                                          index={index}
+                                          device={device.content}
+                                          nodeDevices={nodeDevices}
                         />;
                     })}
-                </ListView>
+                </DataList>
+            </Droppable>
+            <div className="pf-screen-reader" aria-live="assertive">
+                {liveText}
             </div>
-        );
+        </DragDrop>
+    );
 
-        return (
-            <Modal position="top" variant="medium" id={`${idPrefix}-window`} isOpen onClose={this.close} className='boot-order'
-                   title={_("Change boot order")}
-                   footer={
-                       <>
-                           {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
-                           <Button id={`${idPrefix}-save`} variant='primary' onClick={this.save}>
-                               {_("Save")}
-                           </Button>
-                           <Button id={`${idPrefix}-cancel`} variant='link' onClick={this.close}>
-                               {_("Cancel")}
-                           </Button>
-                       </>
-                   }>
-                <>
-                    {defaultBody}
-                </>
-            </Modal>
-        );
-    }
-}
+    return (
+        <Modal position="top" variant="medium" id={`${idPrefix}-window`} isOpen onClose={close} className='boot-order'
+               title={_("Change boot order")}
+               footer={
+                   <>
+                       {error && <ModalError dialogError={_("Failed to change boot order")} dialogErrorDetail={error} />}
+                       <Button id={`${idPrefix}-save`} variant='primary' onClick={save}>
+                           {_("Save")}
+                       </Button>
+                       <Button id={`${idPrefix}-cancel`} variant='link' onClick={close}>
+                           {_("Cancel")}
+                       </Button>
+                   </>
+               }>
+            <>
+                {showWarning()}
+                {defaultBody}
+            </>
+        </Modal>
+    );
+};
 
 BootOrderModal.propTypes = {
-    close: PropTypes.func.isRequired,
     vm: PropTypes.object.isRequired,
     nodeDevices: PropTypes.array.isRequired,
 };

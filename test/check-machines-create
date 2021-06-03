@@ -1506,12 +1506,19 @@ class TestMachinesCreate(VirtualMachinesCase):
         b.click("#machines-vcpu-modal-dialog-apply")
         b.wait_not_present(".pf-c-modal-box__body")
 
+        def move_down(device):
+            b.focus(device + " .pf-c-data-list__item-draggable-button")
+            b.key_press(chr(13), use_ord=True)
+            b.wait_attr(device, "aria-pressed", "true")
+            b.key_press(chr(40), use_ord=True)
+            b.key_press(chr(13), use_ord=True)
+
         # Change Boot Order setting
         bootOrder = b.text("#vm-VmNotInstalled-boot-order")
         b.click("#vm-VmNotInstalled-boot-order button")
         b.wait_visible(".pf-c-modal-box__body")
-        b.set_checked("#vm-VmNotInstalled-order-modal-device-row-1-checkbox", True)
-        b.click("#vm-VmNotInstalled-order-modal-device-row-0 #vm-VmNotInstalled-order-modal-down")
+        b.set_checked("#vm-VmNotInstalled-order-modal-device-1-checkbox", True)
+        move_down("#device-0")
         b.click("#vm-VmNotInstalled-order-modal-save")
         b.wait_not_present(".pf-c-modal-box__body")
 
