@@ -25,17 +25,6 @@ import {
     Tooltip,
 } from '@patternfly/react-core';
 
-import {
-    shutdownVm,
-    pauseVm,
-    resumeVm,
-    forceVmOff,
-    forceRebootVm,
-    rebootVm,
-    sendNMI,
-    startVm,
-    installVm,
-} from "../../actions/provider-actions.js";
 import { updateVm } from '../../actions/store-actions.js';
 import {
     vmId,
@@ -44,7 +33,17 @@ import {
 import { CloneDialog } from './vmCloneDialog.jsx';
 import { DeleteDialog } from "./deleteDialog.jsx";
 import { MigrateDialog } from './vmMigrateDialog.jsx';
-import LibvirtDBus from '../../libvirt-dbus.js';
+import { installVm } from "../../libvirt-common.js";
+import LibvirtDBus, {
+    forceOffVm,
+    forceRebootVm,
+    pauseVm,
+    rebootVm,
+    resumeVm,
+    sendNMI,
+    shutdownVm,
+    startVm,
+} from '../../libvirt-dbus.js';
 
 const _ = cockpit.gettext;
 
@@ -72,7 +71,7 @@ const VmActions = ({ vm, dispatch, storagePools, onAddErrorNotification, isDetai
     const hasInstallPhase = vm.metadata && vm.metadata.hasInstallPhase;
     const dropdownItems = [];
 
-    const onStart = () => dispatch(startVm(vm)).catch(ex => {
+    const onStart = () => startVm({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
         setOperationInProgress(false);
         dispatch(
             updateVm({
@@ -85,13 +84,8 @@ const VmActions = ({ vm, dispatch, storagePools, onAddErrorNotification, isDetai
             })
         );
     });
-    const onInstall = () => dispatch(installVm(vm)).catch(ex => {
-        onAddErrorNotification({
-            text: cockpit.format(_("VM $0 failed to get installed"), vm.name),
-            detail: ex.message, resourceId: vm.id,
-        });
-    });
-    const onReboot = () => dispatch(rebootVm(vm)).catch(ex => {
+    const onInstall = () => installVm({ vm, onAddErrorNotification });
+    const onReboot = () => rebootVm({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
         dispatch(
             updateVm({
                 connectionName: vm.connectionName,
@@ -103,7 +97,7 @@ const VmActions = ({ vm, dispatch, storagePools, onAddErrorNotification, isDetai
             })
         );
     });
-    const onForceReboot = () => dispatch(forceRebootVm(vm)).catch(ex => {
+    const onForceReboot = () => forceRebootVm({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
         dispatch(
             updateVm({
                 connectionName: vm.connectionName,
@@ -115,7 +109,7 @@ const VmActions = ({ vm, dispatch, storagePools, onAddErrorNotification, isDetai
             })
         );
     });
-    const onShutdown = () => dispatch(shutdownVm(vm))
+    const onShutdown = () => shutdownVm({ name: vm.name, id: vm.id, connectionName: vm.connectionName })
             .then(() => !vm.persistent && cockpit.location.go(["vms"]))
             .catch(ex => {
                 setOperationInProgress(false);
@@ -130,7 +124,7 @@ const VmActions = ({ vm, dispatch, storagePools, onAddErrorNotification, isDetai
                     })
                 );
             });
-    const onPause = () => dispatch(pauseVm(vm)).catch(ex => {
+    const onPause = () => pauseVm({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
         dispatch(
             updateVm({
                 connectionName: vm.connectionName,
@@ -142,7 +136,7 @@ const VmActions = ({ vm, dispatch, storagePools, onAddErrorNotification, isDetai
             })
         );
     });
-    const onResume = () => dispatch(resumeVm(vm)).catch(ex => {
+    const onResume = () => resumeVm({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
         dispatch(
             updateVm({
                 connectionName: vm.connectionName,
@@ -154,7 +148,7 @@ const VmActions = ({ vm, dispatch, storagePools, onAddErrorNotification, isDetai
             })
         );
     });
-    const onForceoff = () => dispatch(forceVmOff(vm))
+    const onForceoff = () => forceOffVm({ name: vm.name, id: vm.id, connectionName: vm.connectionName })
             .then(() => !vm.persistent && cockpit.location.go(["vms"]))
             .catch(ex => {
                 dispatch(
@@ -168,7 +162,7 @@ const VmActions = ({ vm, dispatch, storagePools, onAddErrorNotification, isDetai
                     })
                 );
             });
-    const onSendNMI = () => dispatch(sendNMI(vm)).catch(ex => {
+    const onSendNMI = () => sendNMI({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
         dispatch(
             updateVm({
                 connectionName: vm.connectionName,

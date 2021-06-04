@@ -15,9 +15,7 @@ import {
 
 import {
     getApiData,
-    getLoggedInUser,
-    getOsInfoList
-} from './actions/provider-actions.js';
+} from './libvirt-dbus.js';
 
 import {
     convertToUnit,
@@ -187,7 +185,7 @@ export function parseDomainSnapshotDumpxml(snapshot) {
     return { name, description, state, creationTime, parentName };
 }
 
-export function parseDumpxml(dispatch, connectionName, domXml, id_overwrite) {
+export function parseDumpxml(connectionName, domXml, id_overwrite) {
     const domainElem = getElem(domXml);
     if (!domainElem) {
         return;
@@ -928,10 +926,10 @@ export function parseNodeDeviceDumpxml(nodeDevice) {
     return { name, path, capability };
 }
 
-export function parseOsInfoList(dispatch, osList) {
+export function parseOsInfoList(osList) {
     const osinfodata = JSON.parse(osList);
 
-    dispatch(updateOsInfoList(osinfodata.filter(os => os.shortId)));
+    store.dispatch(updateOsInfoList(osinfodata.filter(os => os.shortId)));
 }
 
 export function parseStoragePoolDumpxml(connectionName, storagePoolXml, id_overwrite) {
@@ -1024,9 +1022,9 @@ export function resolveUiState(dispatch, name, connectionName) {
         result.initiallyOpenedConsoleTab = uiState.openConsoleTab;
 
         if (uiState.installInProgress) {
-            removeVmCreateInProgress(dispatch, name, connectionName);
+            removeVmCreateInProgress(name, connectionName);
         } else {
-            clearVmUiState(dispatch, name, connectionName);
+            clearVmUiState(name, connectionName);
         }
     }
 
@@ -1041,7 +1039,7 @@ export function unknownConnectionName(action, libvirtServiceName) {
                         // The 'root' user does not have its own qemu:///session just qemu:///system
                         // https://bugzilla.redhat.com/show_bug.cgi?id=1045069
                         connectionName => canLoggedUserConnectSession(connectionName, loggedUser))
-                    .map(connectionName => dispatch(action(connectionName, libvirtServiceName)));
+                    .map(connectionName => dispatch(action({ connectionName, libvirtServiceName })));
             return Promise.all(promises);
         });
     };
@@ -1064,25 +1062,23 @@ export const canResume = (vmState) => vmState == 'paused';
 export const isRunning = (vmState) => canReset(vmState);
 export const serialConsoleCommand = ({ vm }) => vm.displays.pty ? ['virsh', ...VMS_CONFIG.Virsh.connections[vm.connectionName].params, 'console', vm.name] : false;
 
-export function CHECK_LIBVIRT_STATUS({ serviceName }) {
-    logDebug(`${this.name}.CHECK_LIBVIRT_STATUS`);
-    return dispatch => {
-        const libvirtService = service.proxy(serviceName);
-        const dfd = cockpit.defer();
+export function checkLibvirtStatus({ serviceName }) {
+    logDebug(`CHECK_LIBVIRT_STATUS`);
+    const libvirtService = service.proxy(serviceName);
+    const dfd = cockpit.defer();
 
-        libvirtService.wait(() => {
-            const activeState = libvirtService.exists ? libvirtService.state : 'stopped';
-            const unitState = libvirtService.exists && libvirtService.enabled ? 'enabled' : 'disabled';
+    libvirtService.wait(() => {
+        const activeState = libvirtService.exists ? libvirtService.state : 'stopped';
+        const unitState = libvirtService.exists && libvirtService.enabled ? 'enabled' : 'disabled';
 
-            dispatch(updateLibvirtState({
-                activeState,
-                unitState,
-            }));
-            dfd.resolve();
-        });
+        store.dispatch(updateLibvirtState({
+            activeState,
+            unitState,
+        }));
+        dfd.resolve();
+    });
 
-        return dfd.promise();
-    };
+    return dfd.promise();
 }
 
 /*
@@ -1091,21 +1087,19 @@ export function CHECK_LIBVIRT_STATUS({ serviceName }) {
  *
  * To try with virt-install: --graphics spice,listen=[external host IP]
  */
-export function CONSOLE_VM({
+export function vmDesktopConsole({
     name,
     consoleDetail
 }) {
-    logDebug(`${this.name}.CONSOLE_VM(name='${name}'), detail = `, consoleDetail);
-    return dispatch => {
-        fileDownload({
-            data: buildConsoleVVFile(consoleDetail),
-            fileName: 'console.vv',
-            mimeType: 'application/x-virt-viewer'
-        });
-    };
+    logDebug(`CONSOLE_VM(name='${name}'), detail = `, consoleDetail);
+    fileDownload({
+        data: buildConsoleVVFile(consoleDetail),
+        fileName: 'console.vv',
+        mimeType: 'application/x-virt-viewer'
+    });
 }
 
-export function CREATE_VM({
+export function createVm({
     connectionName,
     vmName,
     source,
@@ -1123,145 +1117,133 @@ export function CREATE_VM({
     profile,
     useCloudInit,
 }) {
-    logDebug(`${this.name}.CREATE_VM(${vmName}):`);
-    return dispatch => {
-        // shows dummy vm  until we get vm from virsh (cleans up inProgress)
-        setVmCreateInProgress(dispatch, vmName, connectionName, { openConsoleTab: startVm });
+    logDebug(`CREATE_VM(${vmName}):`);
+    // shows dummy vm  until we get vm from virsh (cleans up inProgress)
+    setVmCreateInProgress(vmName, connectionName, { openConsoleTab: startVm });
 
-        if (startVm) {
-            setVmInstallInProgress(dispatch, { name: vmName, connectionName });
-        }
+    if (startVm) {
+        setVmInstallInProgress({ name: vmName, connectionName });
+    }
 
-        const opts = { err: "message", environ: ['LC_ALL=C'] };
-        if (connectionName === 'system')
-            opts.superuser = 'try';
+    const opts = { err: "message", environ: ['LC_ALL=C'] };
+    if (connectionName === 'system')
+        opts.superuser = 'try';
 
-        return cockpit.script(createVmScript, [
-            connectionName,
-            vmName,
-            source,
-            sourceType,
-            os,
-            memorySize,
-            storageSize,
-            startVm,
-            storagePool,
-            storageVolume,
-            unattended,
-            rootPassword,
-            userPassword,
-            userLogin,
-            profile,
-            useCloudInit,
-        ], opts)
-                .done(() => {
-                    finishVmCreateInProgress(dispatch, vmName, connectionName);
-                    clearVmUiState(dispatch, vmName, connectionName);
-                })
-                .fail((exception, data) => {
-                    clearVmUiState(dispatch, vmName, connectionName); // inProgress cleanup
-                    console.info(`spawn 'vm creation' returned error: "${JSON.stringify(exception)}", data: "${JSON.stringify(data)}"`);
-                });
-    };
-}
-
-export function ENABLE_LIBVIRT({ enable, serviceName }) {
-    logDebug(`${this.name}.ENABLE_LIBVIRT`);
-    return dispatch => {
-        const libvirtService = service.proxy(serviceName);
-        const promise = enable ? libvirtService.enable() : libvirtService.disable();
-
-        return promise.fail(exception => {
-            console.info(`enabling libvirt failed: "${JSON.stringify(exception)}"`);
-        });
-    };
-}
-
-export function GET_LOGGED_IN_USER() {
-    logDebug(`${this.name}.GET_LOGGED_IN_USER:`);
-    return dispatch => {
-        return cockpit.user().then(loggedUser => {
-            dispatch(setLoggedInUser({ loggedUser }));
-        });
-    };
-}
-
-export function GET_OS_INFO_LIST () {
-    logDebug(`${this.name}.GET_OS_INFO_LIST():`);
-    return dispatch => python.spawn(getOSListScript, null, { err: "message", environ: ['LC_ALL=C.UTF-8'] })
-            .then(osList => {
-                parseOsInfoList(dispatch, osList);
+    return cockpit.script(createVmScript, [
+        connectionName,
+        vmName,
+        source,
+        sourceType,
+        os,
+        memorySize,
+        storageSize,
+        startVm,
+        storagePool,
+        storageVolume,
+        unattended,
+        rootPassword,
+        userPassword,
+        userLogin,
+        profile,
+        useCloudInit,
+    ], opts)
+            .done(() => {
+                finishVmCreateInProgress(vmName, connectionName);
+                clearVmUiState(vmName, connectionName);
             })
             .fail((exception, data) => {
-                console.error(`get os list returned error: "${JSON.stringify(exception)}", data: "${JSON.stringify(data)}"`);
-                parseOsInfoList(dispatch, '[]');
+                clearVmUiState(vmName, connectionName); // inProgress cleanup
+                console.info(`spawn 'vm creation' returned error: "${JSON.stringify(exception)}", data: "${JSON.stringify(data)}"`);
             });
 }
 
-export function INIT_DATA_RETRIEVAL () {
-    logDebug(`${this.name}.INIT_DATA_RETRIEVAL():`);
-    return dispatch => {
-        dispatch(getOsInfoList());
-        dispatch(getLoggedInUser());
-        return cockpit.script(getLibvirtServiceNameScript, null, { err: "message", environ: ['LC_ALL=C.UTF-8'] })
-                .then(serviceName => {
-                    const match = serviceName.match(/([^\s]+)/);
-                    const name = match ? match[0] : null;
-                    dispatch(updateLibvirtState({ name }));
-                    if (name) {
-                        dispatch(getApiData(null, name));
-                    } else {
-                        console.error("initialize failed: getting libvirt service name failed");
-                    }
-                })
-                .fail((exception, data) => {
-                    dispatch(updateLibvirtState({ name: null }));
-                    console.error(`initialize failed: getting libvirt service name returned error: "${JSON.stringify(exception)}", data: "${JSON.stringify(data)}"`);
-                });
-    };
+export function enableLibvirt({ enable, serviceName }) {
+    logDebug(`ENABLE_LIBVIRT`);
+    const libvirtService = service.proxy(serviceName);
+    const promise = enable ? libvirtService.enable() : libvirtService.disable();
+
+    return promise.fail(exception => {
+        console.info(`enabling libvirt failed: "${JSON.stringify(exception)}"`);
+    });
 }
 
-export function INSTALL_VM({ onAddErrorNotification, ...vm }) {
+export function getLoggedInUser() {
+    logDebug(`GET_LOGGED_IN_USER:`);
+    return cockpit.user().then(loggedUser => {
+        store.dispatch(setLoggedInUser({ loggedUser }));
+    });
+}
+
+export function getOsInfoList () {
+    logDebug(`GET_OS_INFO_LIST():`);
+    return python.spawn(getOSListScript, null, { err: "message", environ: ['LC_ALL=C.UTF-8'] })
+            .then(osList => {
+                parseOsInfoList(osList);
+            })
+            .fail((exception, data) => {
+                console.error(`get os list returned error: "${JSON.stringify(exception)}", data: "${JSON.stringify(data)}"`);
+                parseOsInfoList('[]');
+            });
+}
+
+export function initDataRetrieval() {
+    logDebug(`INIT_DATA_RETRIEVAL():`);
+    getOsInfoList();
+    getLoggedInUser();
+    return cockpit.script(getLibvirtServiceNameScript, null, { err: "message", environ: ['LC_ALL=C.UTF-8'] })
+            .then(serviceName => {
+                const match = serviceName.match(/([^\s]+)/);
+                const name = match ? match[0] : null;
+                store.dispatch(updateLibvirtState({ name }));
+                if (name) {
+                    store.dispatch(getApiData({ connectionName: null, libvirtServiceName: name }));
+                } else {
+                    console.error("initialize failed: getting libvirt service name failed");
+                }
+            })
+            .fail((exception, data) => {
+                store.dispatch(updateLibvirtState({ name: null }));
+                console.error(`initialize failed: getting libvirt service name returned error: "${JSON.stringify(exception)}", data: "${JSON.stringify(data)}"`);
+            });
+}
+
+export function installVm({ onAddErrorNotification, vm }) {
     const {
         autostart, connectionName, cpu, currentMemory,
         disks, displays, firmware, interfaces, memory,
         metadata, name, vcpus,
     } = vm;
 
-    logDebug(`${this.name}.INSTALL_VM(${name}):`);
-    return dispatch => {
-        // shows dummy vm until we get vm from virsh (cleans up inProgress)
-        // vm should be returned even if script fails
-        setVmInstallInProgress(dispatch, vm);
+    logDebug(`INSTALL_VM(${name}):`);
+    // shows dummy vm until we get vm from virsh (cleans up inProgress)
+    // vm should be returned even if script fails
+    setVmInstallInProgress(vm);
 
-        const opts = { err: "message", environ: ['LC_ALL=C'] };
-        if (connectionName === 'system')
-            opts.superuser = 'try';
+    const opts = { err: "message", environ: ['LC_ALL=C'] };
+    if (connectionName === 'system')
+        opts.superuser = 'try';
 
-        return cockpit.script(installVmScript, [
-            connectionName,
-            name,
-            metadata.installSourceType,
-            metadata.installSource,
-            metadata.osVariant,
-            prepareMemoryParam(convertToUnit(currentMemory, units.KiB, units.MiB), convertToUnit(memory, units.KiB, units.MiB)),
-            prepareVcpuParam(vcpus, cpu),
-            prepareDisksParam(disks),
-            prepareDisplaysParam(displays),
-            prepareNICParam(interfaces),
-            firmware == "efi" ? 'uefi' : '',
-            autostart,
-        ], opts)
-                .always(() => clearVmUiState(dispatch, name, connectionName));
-    };
+    return cockpit.script(installVmScript, [
+        connectionName,
+        name,
+        metadata.installSourceType,
+        metadata.installSource,
+        metadata.osVariant,
+        prepareMemoryParam(convertToUnit(currentMemory, units.KiB, units.MiB), convertToUnit(memory, units.KiB, units.MiB)),
+        prepareVcpuParam(vcpus, cpu),
+        prepareDisksParam(disks),
+        prepareDisplaysParam(displays),
+        prepareNICParam(interfaces),
+        firmware == "efi" ? 'uefi' : '',
+        autostart,
+    ], opts)
+            .always(() => clearVmUiState(name, connectionName));
 }
 
-export function START_LIBVIRT({ serviceName }) {
-    logDebug(`${this.name}.START_LIBVIRT`);
-    return dispatch => {
-        return service.proxy(serviceName).start()
-                .fail(exception => {
-                    console.info(`starting libvirt failed: "${JSON.stringify(exception)}"`);
-                });
-    };
+export function startLibvirt({ serviceName }) {
+    logDebug(`START_LIBVIRT`);
+    return service.proxy(serviceName).start()
+            .fail(exception => {
+                console.info(`starting libvirt failed: "${JSON.stringify(exception)}"`);
+            });
 }

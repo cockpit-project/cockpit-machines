@@ -24,7 +24,7 @@ import ReactDOM from 'react-dom';
 
 import store from './store.js';
 import App from './app.jsx';
-import { initDataRetrieval } from './actions/provider-actions.js';
+import { initDataRetrieval } from './libvirt-common.js';
 import { logDebug } from './helpers.js';
 
 function render() {

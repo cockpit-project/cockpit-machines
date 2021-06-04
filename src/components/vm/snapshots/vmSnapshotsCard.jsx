@@ -27,8 +27,7 @@ import { Button, Tooltip } from '@patternfly/react-core';
 import { InfoAltIcon } from '@patternfly/react-icons';
 import { DeleteResourceButton, DeleteResourceModal } from '../../common/deleteResource.jsx';
 import { RevertSnapshotModal } from './vmSnapshotsRevertModal.jsx';
-import { deleteSnapshot } from '../../../libvirt-dbus.js';
-import { getVmSnapshots } from '../../../actions/provider-actions.js';
+import { deleteSnapshot, getVmSnapshots } from '../../../libvirt-dbus.js';
 
 import './vmSnapshotsCard.scss';
 
@@ -68,7 +67,7 @@ export class VmSnapshotsActions extends React.Component {
     }
 
     render() {
-        const { vm, dispatch } = this.props;
+        const { vm } = this.props;
         const id = vmId(vm.name);
 
         return (
@@ -78,8 +77,7 @@ export class VmSnapshotsActions extends React.Component {
                 </Button>
 
                 {this.state.showCreateSnapshotModal &&
-                    <CreateSnapshotModal dispatch={dispatch}
-                        idPrefix={`${id}-create-snapshot`}
+                    <CreateSnapshotModal idPrefix={`${id}-create-snapshot`}
                         vm={vm}
                         onClose={this.closeCreateSnapshot} />}
             </>
@@ -94,7 +92,7 @@ export class VmSnapshotsCard extends React.Component {
     }
 
     render() {
-        const { vm, dispatch } = this.props;
+        const { vm } = this.props;
         const id = vmId(vm.name);
 
         let detailMap = [
@@ -201,7 +199,7 @@ export class VmSnapshotsCard extends React.Component {
                             onClose: () => this.setState({ deleteDialogProps: undefined }),
                             deleteHandler: () => {
                                 return deleteSnapshot({ connectionName: vm.connectionName, domainPath: vm.id, snapshotName: snap.name })
-                                        .then(() => dispatch(getVmSnapshots({ connectionName: vm.connectionName, domainPath: vm.id })));
+                                        .then(() => getVmSnapshots({ connectionName: vm.connectionName, domainPath: vm.id }));
                             },
                         };
 

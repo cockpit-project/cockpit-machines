@@ -10,7 +10,7 @@ import {
 import { InfoAltIcon } from '@patternfly/react-icons';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
-import { setVCPUSettings } from "../../../actions/provider-actions.js";
+import { setVCPUSettings } from "../../../libvirt-dbus.js";
 import { digitFilter } from "../../../helpers.js";
 
 import './vcpuModal.css';
@@ -153,9 +153,19 @@ export class VCPUModal extends React.Component {
     }
 
     save() {
-        const { close, dispatch, vm } = this.props;
+        const { close, vm } = this.props;
 
-        return dispatch(setVCPUSettings(vm, this.state.max, this.state.count, this.state.sockets, this.state.threads, this.state.cores))
+        return setVCPUSettings({
+            id: vm.id,
+            name: vm.name,
+            connectionName: vm.connectionName,
+            max: this.state.max,
+            count: this.state.count,
+            sockets: this.state.sockets,
+            threads: this.state.threads,
+            cores: this.state.cores,
+            isRunning: vm.state == 'running'
+        })
                 .fail((exc) => {
                     this.dialogErrorSet(_("VCPU settings could not be saved"), exc.message);
                 })
@@ -264,7 +274,6 @@ export class VCPUModal extends React.Component {
     }
 }
 VCPUModal.propTypes = {
-    dispatch: PropTypes.func.isRequired,
     vm: PropTypes.object.isRequired,
     maxVcpu: PropTypes.number.isRequired,
     close: PropTypes.func.isRequired,

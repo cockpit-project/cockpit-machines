@@ -25,7 +25,7 @@ import {
     checkLibvirtStatus,
     startLibvirt,
     enableLibvirt,
-} from "../actions/provider-actions.js";
+} from "../libvirt-common.js";
 
 import { EmptyStatePanel } from "cockpit-components-empty-state.jsx";
 import { Button } from "@patternfly/react-core";
@@ -57,14 +57,14 @@ class LibvirtSlate extends React.Component {
     checkStatus() {
         const service = this.props.libvirtService;
 
-        this.props.dispatch(checkLibvirtStatus(service.name));
+        checkLibvirtStatus({ serviceName: service.name });
     }
 
     startService() {
         const service = this.props.libvirtService;
 
-        this.props.dispatch(enableLibvirt(this.state.libvirtEnabled, service.name));
-        this.props.dispatch(startLibvirt(service.name));
+        enableLibvirt({ enable: this.state.libvirtEnabled, serviceName: service.name });
+        startLibvirt({ serviceName: service.name });
     }
 
     goToServicePage() {
@@ -111,7 +111,6 @@ class LibvirtSlate extends React.Component {
 }
 
 LibvirtSlate.propTypes = {
-    dispatch: PropTypes.func.isRequired,
     libvirtService: PropTypes.object.isRequired,
 };
 

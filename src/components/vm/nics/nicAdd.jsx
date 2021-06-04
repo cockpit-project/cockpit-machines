@@ -23,8 +23,7 @@ import { Button, Checkbox, Form, FormGroup, Modal, Radio, TextInput } from '@pat
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { NetworkTypeAndSourceRow, NetworkModelRow } from './nicBody.jsx';
-import { getVm } from '../../../actions/provider-actions.js';
-import LibvirtDBus, { attachIface } from '../../../libvirt-dbus.js';
+import LibvirtDBus, { attachIface, getVm } from '../../../libvirt-dbus.js';
 
 import './nic.css';
 
@@ -123,7 +122,7 @@ export class AddNIC extends React.Component {
                     this.dialogErrorSet(_("Network interface settings could not be saved"), exc.message);
                 })
                 .then(() => {
-                    dispatch(getVm({ connectionName: vm.connectionName, id: vm.id }));
+                    getVm({ connectionName: vm.connectionName, id: vm.id });
                     this.props.close();
                 });
     }

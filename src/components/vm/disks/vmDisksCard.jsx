@@ -24,7 +24,7 @@ import { Button } from '@patternfly/react-core';
 
 import { convertToUnit, diskPropertyChanged, toReadableNumber, units, vmId } from "../../../helpers.js";
 import { AddDiskModalBody } from './diskAdd.jsx';
-import { getVm, detachDisk } from '../../../actions/provider-actions.js';
+import { detachDisk, getVm } from '../../../libvirt-dbus.js';
 import { EditDiskAction } from './diskEdit.jsx';
 import WarningInactive from '../../common/warningInactive.jsx';
 import { ListingTable } from "cockpit-components-table.jsx";
@@ -81,7 +81,7 @@ export class VmDisksActions extends React.Component {
     }
 
     render() {
-        const { dispatch, vm, vms, storagePools } = this.props;
+        const { vm, vms, storagePools } = this.props;
         const idPrefix = `${vmId(vm.name)}-disks`;
 
         return (
@@ -89,7 +89,7 @@ export class VmDisksActions extends React.Component {
                 <Button id={`${idPrefix}-adddisk`} variant='secondary' onClick={this.open}>
                     {_("Add disk")}
                 </Button>
-                {this.state.showAddDiskModal && <AddDiskModalBody close={this.close} dispatch={dispatch} idPrefix={idPrefix} vm={vm} vms={vms} storagePools={storagePools.filter(pool => pool && pool.active)} />}
+                {this.state.showAddDiskModal && <AddDiskModalBody close={this.close} idPrefix={idPrefix} vm={vm} vms={vms} storagePools={storagePools.filter(pool => pool && pool.active)} />}
             </>
         );
     }
@@ -172,7 +172,7 @@ export class VmDisksCardLibvirt extends React.Component {
     }
 
     render() {
-        const { vm, dispatch, storagePools } = this.props;
+        const { vm, storagePools } = this.props;
 
         const idPrefix = `${vmId(vm.name)}-disks`;
         const areDiskStatsSupported = this.getDiskStatsSupport(vm);
@@ -188,7 +188,6 @@ export class VmDisksCardLibvirt extends React.Component {
                 vm={vm}
                 disks={disks}
                 renderCapacity={areDiskStatsSupported}
-                dispatch={dispatch}
                 onAddErrorNotification={this.props.onAddErrorNotification} />
         );
     }
@@ -196,7 +195,6 @@ export class VmDisksCardLibvirt extends React.Component {
 
 VmDisksCardLibvirt.propTypes = {
     vm: PropTypes.object.isRequired,
-    dispatch: PropTypes.func.isRequired,
 };
 
 export class VmDisksCard extends React.Component {
@@ -206,7 +204,7 @@ export class VmDisksCard extends React.Component {
     }
 
     render() {
-        const { vm, disks, renderCapacity, dispatch, onAddErrorNotification } = this.props;
+        const { vm, disks, renderCapacity, onAddErrorNotification } = this.props;
         let renderCapacityUsed, renderAccess, renderAdditional;
         const columnTitles = [_("Device")];
         const idPrefix = `${vmId(vm.name)}-disks`;
@@ -266,7 +264,7 @@ export class VmDisksCard extends React.Component {
                 columns.push({ title: disk.diskExtras || '' });
 
             const onRemoveDisk = () => {
-                return dispatch(detachDisk({ connectionName:vm.connectionName, id:vm.id, name:vm.name, target: disk.target, live: vm.state == 'running', persistent: vm.persistent }))
+                return detachDisk({ connectionName: vm.connectionName, id: vm.id, name: vm.name, target: disk.target, live: vm.state === 'running', persistent: vm.persistent })
                         .catch(ex => {
                             onAddErrorNotification({
                                 text: cockpit.format(_("Disk $0 fail to get detached from VM $1"), disk.target, vm.name),
@@ -274,7 +272,7 @@ export class VmDisksCard extends React.Component {
                             });
                         })
                         .then(() => {
-                            dispatch(getVm({ connectionName: vm.connectionName, id:vm.id }));
+                            getVm({ connectionName: vm.connectionName, id:vm.id });
                         });
             };
             const deleteDialogProps = {
