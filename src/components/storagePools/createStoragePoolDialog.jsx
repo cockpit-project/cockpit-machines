@@ -31,7 +31,7 @@ import { LIBVIRT_SYSTEM_CONNECTION } from '../../helpers.js';
 import { MachinesConnectionSelector } from '../common/machinesConnectionSelector.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { FileAutoComplete } from 'cockpit-components-file-autocomplete.jsx';
-import { createStoragePool } from '../../actions/provider-actions.js';
+import { createStoragePool } from '../../libvirt-dbus.js';
 import cockpit from 'cockpit';
 
 const _ = cockpit.gettext;
@@ -296,7 +296,6 @@ class CreateStoragePoolModal extends React.Component {
     }
 
     onCreateClicked() {
-        const { dispatch } = this.props;
         let modalIsIncomplete = false;
         const validationFailed = Object.assign({}, this.state.validationFailed);
 
@@ -388,7 +387,7 @@ class CreateStoragePoolModal extends React.Component {
 
         if (!modalIsIncomplete) {
             this.setState({ createInProgress: true });
-            dispatch(createStoragePool(this.state))
+            createStoragePool(this.state)
                     .fail(exc => {
                         this.setState({ createInProgress: false });
                         this.dialogErrorSet(_("Storage pool failed to be created"), exc.message);
@@ -446,7 +445,6 @@ class CreateStoragePoolModal extends React.Component {
 }
 CreateStoragePoolModal.propTypes = {
     close: PropTypes.func.isRequired,
-    dispatch: PropTypes.func.isRequired,
     libvirtVersion: PropTypes.number,
     loggedUser: PropTypes.object.isRequired,
 };
@@ -476,7 +474,6 @@ export class CreateStoragePoolAction extends React.Component {
                 { this.state.showModal &&
                 <CreateStoragePoolModal
                     close={this.close}
-                    dispatch={this.props.dispatch}
                     libvirtVersion={this.props.libvirtVersion}
                     loggedUser={this.props.loggedUser} /> }
             </>
@@ -484,7 +481,6 @@ export class CreateStoragePoolAction extends React.Component {
     }
 }
 CreateStoragePoolAction.propTypes = {
-    dispatch: PropTypes.func.isRequired,
     libvirtVersion: PropTypes.number,
     loggedUser: PropTypes.object.isRequired,
 };

@@ -23,8 +23,7 @@ import { Button, Alert, Form, FormGroup, Modal, TextInput, Tooltip } from '@patt
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { NetworkTypeAndSourceRow, NetworkModelRow } from './nicBody.jsx';
-import { getVm } from '../../../actions/provider-actions.js';
-import { changeNetworkSettings } from '../../../libvirt-dbus.js';
+import { changeNetworkSettings, getVm } from '../../../libvirt-dbus.js';
 
 import 'form-layout.scss';
 
@@ -130,7 +129,7 @@ export class EditNICModal extends React.Component {
             dispatch
         })
                 .then(() => {
-                    dispatch(getVm({ connectionName: vm.connectionName, id: vm.id }));
+                    getVm({ connectionName: vm.connectionName, id: vm.id });
                     this.props.onClose();
                 })
                 .catch((exc) => {

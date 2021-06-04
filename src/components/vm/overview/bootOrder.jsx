@@ -34,10 +34,7 @@ import {
     rephraseUI,
     vmId
 } from '../../../helpers.js';
-import {
-    changeBootOrder,
-    getVm
-} from '../../../actions/provider-actions.js';
+import { getVm, changeBootOrder } from '../../../libvirt-dbus.js';
 
 import './bootOrder.css';
 
@@ -205,16 +202,17 @@ class BootOrderModal extends React.Component {
     }
 
     save() {
-        const { dispatch, vm } = this.props;
+        const { vm } = this.props;
         const devices = this.state.devices.filter((device) => device.checked);
 
-        dispatch(changeBootOrder({
-            vm,
+        changeBootOrder({
+            id: vm.id,
+            connectionName: vm.connectionName,
             devices,
-        }))
+        })
                 .fail(exc => this.dialogErrorSet(_("Boot order settings could not be saved"), exc.message))
                 .then(() => {
-                    dispatch(getVm({ connectionName: vm.connectionName, id: vm.id }));
+                    getVm({ connectionName: vm.connectionName, id: vm.id });
                     this.close();
                 });
     }
@@ -306,7 +304,6 @@ class BootOrderModal extends React.Component {
 
 BootOrderModal.propTypes = {
     close: PropTypes.func.isRequired,
-    dispatch: PropTypes.func.isRequired,
     vm: PropTypes.object.isRequired,
     nodeDevices: PropTypes.array.isRequired,
 };
@@ -328,7 +325,7 @@ function getBootOrder(vm) {
     return bootOrder;
 }
 
-export const BootOrderLink = ({ vm, idPrefix, close, dispatch, nodeDevices }) => {
+export const BootOrderLink = ({ vm, idPrefix, close, nodeDevices }) => {
     const [bootOrderShow, setBootOrderShow] = useState(false);
     const modalButton = (
         <Button variant="link" className="edit-inline" isInline isAriaDisabled={vm.state != 'shut off'} onClick={setBootOrderShow}>
@@ -338,7 +335,7 @@ export const BootOrderLink = ({ vm, idPrefix, close, dispatch, nodeDevices }) =>
 
     return (
         <>
-            {bootOrderShow && <BootOrderModal close={() => setBootOrderShow(false)} vm={vm} dispatch={dispatch} nodeDevices={nodeDevices} />}
+            {bootOrderShow && <BootOrderModal close={() => setBootOrderShow(false)} vm={vm} nodeDevices={nodeDevices} />}
             {getBootOrder(vm)}
             {vm.state == 'shut off' ? modalButton : <Tooltip content={_("Only editable when the guest is shut off")}>{modalButton}</Tooltip>}
         </>

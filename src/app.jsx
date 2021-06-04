@@ -35,7 +35,7 @@ import { InlineNotification } from 'cockpit-components-inline-notification.jsx';
 import {
     usageStartPolling,
     usageStopPolling,
-} from "./actions/provider-actions.js";
+} from "./libvirt-dbus.js";
 
 const _ = cockpit.gettext;
 
@@ -176,8 +176,8 @@ class App extends React.Component {
                         : undefined}
                     onAddErrorNotification={this.onAddErrorNotification}
                     storagePools={(storagePools || []).filter(pool => pool && pool.connectionName == connectionName)}
-                    onUsageStartPolling={() => dispatch(usageStartPolling(vm))}
-                    onUsageStopPolling={() => dispatch(usageStopPolling(vm))}
+                    onUsageStartPolling={() => usageStartPolling({ name: vm.name, id: vm.id, connectionName: vm.connectionName })}
+                    onUsageStopPolling={() => usageStopPolling({ name: vm.name, id: vm.id, connectionName: vm.connectionName })}
                     dispatch={dispatch}
                     networks={(networks || []).filter(network => network && network.connectionName == connectionName)}
                     nodeDevices={(nodeDevices || []).filter(device => device && device.connectionName == connectionName)}

@@ -17,6 +17,7 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
+import store from '../../store.js';
 import {
     addUiVm,
     updateUiVm,
@@ -30,7 +31,7 @@ const CREATE_TIMEOUT = 'CREATE_TIMEOUT';
 
 const timeouts = { session: {}, system: {} };
 
-export function setVmCreateInProgress(dispatch, name, connectionName, settings) {
+export function setVmCreateInProgress(name, connectionName, settings) {
     const vm = Object.assign({}, {
         name,
         connectionName,
@@ -40,11 +41,11 @@ export function setVmCreateInProgress(dispatch, name, connectionName, settings) 
         createInProgress: true,
     }, settings);
 
-    dispatch(addUiVm(vm));
-    setupCleanupTimeout(dispatch, name, connectionName, CREATE_TIMEOUT);
+    store.dispatch(addUiVm(vm));
+    setupCleanupTimeout(name, connectionName, CREATE_TIMEOUT);
 }
 
-export function setVmInstallInProgress(dispatch, original_vm, settings) {
+export function setVmInstallInProgress(original_vm, settings) {
     const vm = Object.assign({}, {
         ...original_vm,
         isUi: true,
@@ -53,43 +54,43 @@ export function setVmInstallInProgress(dispatch, original_vm, settings) {
         installInProgress: true,
     }, settings);
 
-    dispatch(addUiVm(vm));
-    setupCleanupTimeout(dispatch, original_vm.name, original_vm.connectionName, INSTALL_TIMEOUT);
+    store.dispatch(addUiVm(vm));
+    setupCleanupTimeout(original_vm.name, original_vm.connectionName, INSTALL_TIMEOUT);
 }
 
-export function finishVmCreateInProgress(dispatch, name, connectionName, settings) {
+export function finishVmCreateInProgress(name, connectionName, settings) {
     const vm = Object.assign({}, {
         name,
         connectionName,
         createInProgress: false,
     }, settings);
-    dispatch(updateUiVm(vm));
+    store.dispatch(updateUiVm(vm));
 }
 
-export function removeVmCreateInProgress(dispatch, name, connectionName, settings) {
+export function removeVmCreateInProgress(name, connectionName, settings) {
     if (clearTimeout(name, connectionName, CREATE_TIMEOUT)) {
-        finishVmCreateInProgress(dispatch, name, connectionName, settings);
+        finishVmCreateInProgress(name, connectionName, settings);
     }
 }
 
-export function clearVmUiState(dispatch, name, connectionName) {
+export function clearVmUiState(name, connectionName) {
     // clear timeouts
     clearTimeout(name, connectionName, CREATE_TIMEOUT);
     clearTimeout(name, connectionName, INSTALL_TIMEOUT);
     clearSettings(name, connectionName);
 
     // clear store state
-    dispatch(deleteUiVm({
+    store.dispatch(deleteUiVm({
         name,
         connectionName,
     }));
 }
 
-function setupCleanupTimeout(dispatch, name, connectionName, TIMEOUT_ID) {
+function setupCleanupTimeout(name, connectionName, TIMEOUT_ID) {
     const vmTimeouts = getSettings(name, connectionName);
 
     vmTimeouts[TIMEOUT_ID] = window.setTimeout(() => {
-        clearVmUiState(dispatch, name, connectionName);
+        clearVmUiState(name, connectionName);
     }, VMS_CONFIG.DummyVmsWaitInterval);// 10 * 1000
 }
 

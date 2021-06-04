@@ -11,10 +11,10 @@ import {
 } from '../../../helpers.js';
 import MemorySelectRow from './memorySelectRow.jsx';
 import {
+    getVm,
     setMemory,
     setMaxMemory,
-    getVm
-} from '../../../actions/provider-actions.js';
+} from '../../../libvirt-dbus.js';
 
 import 'form-layout.scss';
 
@@ -71,28 +71,42 @@ export class MemoryModal extends React.Component {
     }
 
     save() {
-        const { dispatch, vm } = this.props;
+        const { vm } = this.props;
 
         if (vm.memory !== this.state.maxMemory) {
-            dispatch(setMaxMemory(vm, this.state.maxMemory))
+            setMaxMemory({
+                id: vm.id,
+                connectionName: vm.connectionName,
+                maxMemory: this.state.maxMemory
+            })
                     .fail(exc => this.dialogErrorSet(_("Maximum memory could not be saved"), exc.message))
                     .then(() => {
                         if (vm.currentMemory !== this.state.maxMemory) {
-                            dispatch(setMemory(vm, this.state.memory))
+                            setMemory({
+                                id: vm.id,
+                                connectionName: vm.connectionName,
+                                memory: this.state.memory,
+                                isRunning: vm.state == 'running'
+                            })
                                     .fail(exc => this.dialogErrorSet(_("Memory could not be saved"), exc.message))
                                     .then(() => {
                                         if (vm.state !== 'running')
-                                            dispatch(getVm({ connectionName: vm.connectionName, id: vm.id }));
+                                            getVm({ connectionName: vm.connectionName, id: vm.id });
                                         this.close();
                                     });
                         }
                     });
         } else if (vm.currentMemory !== this.state.memory) {
-            dispatch(setMemory(vm, this.state.memory))
+            setMemory({
+                id: vm.id,
+                connectionName: vm.connectionName,
+                memory: this.state.memory,
+                isRunning: vm.state == 'running'
+            })
                     .fail(exc => this.dialogErrorSet(_("Memory could not be saved"), exc.message))
                     .then(() => {
                         if (vm.state !== 'running')
-                            dispatch(getVm({ connectionName: vm.connectionName, id: vm.id }));
+                            getVm({ connectionName: vm.connectionName, id: vm.id });
                         this.close();
                     });
         } else {
@@ -150,7 +164,6 @@ export class MemoryModal extends React.Component {
 }
 
 MemoryModal.propTypes = {
-    dispatch: PropTypes.func.isRequired,
     vm: PropTypes.object.isRequired,
     config: PropTypes.object.isRequired,
     close: PropTypes.func.isRequired,

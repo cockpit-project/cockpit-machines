@@ -29,9 +29,14 @@ import cockpit from 'cockpit';
 import { FileAutoComplete } from 'cockpit-components-file-autocomplete.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { diskCacheModes, units, convertToUnit, getDefaultVolumeFormat, getNextAvailableTarget, getStorageVolumesUsage, getStorageVolumeDiskTarget } from '../../../helpers.js';
-import { volumeCreateAndAttach, attachDisk, getVm, getAllStoragePools } from '../../../actions/provider-actions.js';
 import { VolumeCreateBody } from '../../storagePools/storageVolumeCreateBody.jsx';
-import LibvirtDBus, { updateDiskAttributes } from '../../../libvirt-dbus.js';
+import LibvirtDBus, {
+    attachDisk,
+    getAllStoragePools,
+    getVm,
+    updateDiskAttributes,
+    volumeCreateAndAttach
+} from '../../../libvirt-dbus.js';
 
 const _ = cockpit.gettext;
 
@@ -312,7 +317,7 @@ export class AddDiskModalBody extends React.Component {
         // Refresh storage volume list before displaying the dialog.
         // There are recently no Libvirt events for storage volumes and polling is ugly.
         // https://bugzilla.redhat.com/show_bug.cgi?id=1578836
-        this.props.dispatch(getAllStoragePools(this.props.vm.connectionName))
+        getAllStoragePools({ connectionName: this.props.vm.connectionName })
                 .fail(exc => this.dialogErrorSet(_("Disk settings could not be saved"), exc.message))
                 .then(() => this.setState({ dialogLoading: false }));
     }
@@ -452,7 +457,7 @@ export class AddDiskModalBody extends React.Component {
     }
 
     onAddClicked() {
-        const { vm, dispatch, close, vms, storagePools } = this.props;
+        const { vm, close, vms, storagePools } = this.props;
 
         const validation = this.validateParams();
         if (Object.getOwnPropertyNames(validation).length > 0)
@@ -461,7 +466,7 @@ export class AddDiskModalBody extends React.Component {
         if (this.state.mode === CREATE_NEW) {
             this.setState({ addDiskInProgress: true, validate: false });
             // create new disk
-            return dispatch(volumeCreateAndAttach({
+            return volumeCreateAndAttach({
                 connectionName: vm.connectionName,
                 poolName: this.state.storagePoolName,
                 volumeName: this.state.volumeName,
@@ -474,14 +479,14 @@ export class AddDiskModalBody extends React.Component {
                 vmId: vm.id,
                 cacheMode: this.state.cacheMode,
                 busType: this.state.busType
-            }))
+            })
                     .fail(exc => {
                         this.setState({ addDiskInProgress: false });
                         this.dialogErrorSet(_("Disk failed to be created"), exc.message);
                     })
                     .then(() => { // force reload of VM data, events are not reliable (i.e. for a down VM)
                         close();
-                        return dispatch(getVm({ connectionName: vm.connectionName, name: vm.name, id: vm.id }));
+                        return getVm({ connectionName: vm.connectionName, name: vm.name, id: vm.id });
                     });
         }
 
@@ -490,7 +495,7 @@ export class AddDiskModalBody extends React.Component {
         const volume = storagePool.volumes.find(vol => vol.name === this.state.existingVolumeName);
         const isVolumeUsed = getStorageVolumesUsage(vms, storagePool);
 
-        return dispatch(attachDisk({
+        return attachDisk({
             connectionName: vm.connectionName,
             type: this.state.mode === CUSTOM_PATH ? "file" : "volume",
             file: this.state.file,
@@ -506,7 +511,7 @@ export class AddDiskModalBody extends React.Component {
             cacheMode: this.state.cacheMode,
             shareable: volume && volume.format === "raw" && isVolumeUsed[this.state.existingVolumeName],
             busType: this.state.busType
-        }))
+        })
                 .fail(exc => {
                     this.setState({ addDiskInProgress: false });
                     this.dialogErrorSet(_("Disk failed to be attached"), exc.message);
@@ -530,7 +535,7 @@ export class AddDiskModalBody extends React.Component {
                         close();
                     }
 
-                    return dispatch(getVm({ connectionName: vm.connectionName, name: vm.name, id: vm.id }));
+                    return getVm({ connectionName: vm.connectionName, name: vm.name, id: vm.id });
                 });
     }
 

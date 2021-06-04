@@ -34,7 +34,6 @@ import {
 import cockpit from 'cockpit';
 import { MachinesConnectionSelector } from '../common/machinesConnectionSelector.jsx';
 import { FileAutoComplete } from "cockpit-components-file-autocomplete.jsx";
-import { createVm } from '../../actions/provider-actions.js';
 import {
     isEmpty,
     digitFilter,
@@ -60,6 +59,7 @@ import {
     filterReleaseEolDates,
     getOSStringRepresentation,
 } from "./createVmDialogUtils.js";
+import { createVm } from '../../libvirt-common.js';
 import { storagePoolRefresh } from '../../libvirt-dbus.js';
 import { PasswordFormFields, password_quality } from 'cockpit-components-password.jsx';
 
@@ -899,7 +899,7 @@ class CreateVmModal extends React.Component {
     }
 
     onCreateClicked() {
-        const { dispatch, storagePools, close, onAddErrorNotification, osInfoList, nodeMaxMemory, vms } = this.props;
+        const { storagePools, close, onAddErrorNotification, osInfoList, nodeMaxMemory, vms } = this.props;
 
         const validation = validateParams({ ...this.state, osInfoList, nodeMaxMemory, vms: vms.filter(vm => vm.connectionName == this.state.connectionName) });
         if (Object.getOwnPropertyNames(validation).length > 0) {
@@ -930,7 +930,7 @@ class CreateVmModal extends React.Component {
             };
 
             return timeoutedPromise(
-                dispatch(createVm(vmParams)),
+                createVm(vmParams),
                 VMS_CONFIG.LeaveCreateVmDialogVisibleAfterSubmit,
                 () => {
                     close();
@@ -1180,7 +1180,7 @@ export class CreateVmAction extends React.Component {
                 { this.state.showModal &&
                 <CreateVmModal
                     mode={this.props.mode}
-                    close={this.close} dispatch={this.props.dispatch}
+                    close={this.close}
                     networks={this.props.networks}
                     nodeDevices={this.props.nodeDevices}
                     nodeMaxMemory={this.props.nodeMaxMemory}
@@ -1202,7 +1202,6 @@ export class CreateVmAction extends React.Component {
 
 CreateVmAction.propTypes = {
     mode: PropTypes.string.isRequired,
-    dispatch: PropTypes.func.isRequired,
     networks: PropTypes.array.isRequired,
     nodeDevices: PropTypes.array.isRequired,
     nodeMaxMemory: PropTypes.number,

@@ -25,7 +25,7 @@ import SerialConsole from './serialConsole.jsx';
 import Vnc from './vnc.jsx';
 import DesktopConsole from './desktopConsole.jsx';
 
-import { vmDesktopConsole } from '../../../actions/provider-actions.js';
+import { vmDesktopConsole } from '../../../libvirt-common.js';
 import LibvirtDBus from '../../../libvirt-dbus.js';
 
 import './consoles.css';
@@ -74,9 +74,9 @@ class Consoles extends React.Component {
     }
 
     onDesktopConsoleDownload (type) {
-        const { dispatch, vm } = this.props;
+        const { vm } = this.props;
         // fire download of the .vv file
-        dispatch(vmDesktopConsole(vm, vm.displays[type]));
+        vmDesktopConsole({ name: vm.name, id: vm.id, connectionName: vm.connectionName, consoleDetail: vm.displays[type] });
     }
 
     render () {
@@ -120,7 +120,6 @@ class Consoles extends React.Component {
 }
 Consoles.propTypes = {
     vm: PropTypes.object.isRequired,
-    dispatch: PropTypes.func.isRequired,
     onAddErrorNotification: PropTypes.func.isRequired,
 };
 

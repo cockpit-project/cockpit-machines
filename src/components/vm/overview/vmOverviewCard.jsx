@@ -32,16 +32,12 @@ import {
     rephraseUI,
     vmId
 } from '../../../helpers.js';
-import {
-    changeVmAutostart,
-    getVm
-} from '../../../actions/provider-actions.js';
 import { updateVm } from '../../../actions/store-actions.js';
 import { BootOrderLink } from './bootOrder.jsx';
 import { FirmwareLink } from './firmware.jsx';
 import WarningInactive from '../../common/warningInactive.jsx';
 import { StateIcon } from '../../common/stateIcon.jsx';
-import { getDomainCapabilities } from '../../../libvirt-dbus.js';
+import { changeVmAutostart, getDomainCapabilities, getVm } from '../../../libvirt-dbus.js';
 import {
     getDomainCapLoader,
     getDomainCapMaxVCPU,
@@ -97,12 +93,12 @@ class VmOverviewCard extends React.Component {
     }
 
     onAutostartChanged() {
-        const { dispatch, vm } = this.props;
+        const { vm } = this.props;
         const autostart = !vm.autostart;
 
-        dispatch(changeVmAutostart({ vm, autostart }))
+        changeVmAutostart({ connectionName: vm.connectionName, vmName: vm.name, autostart: autostart })
                 .then(() => {
-                    dispatch(getVm({ connectionName: vm.connectionName, id: vm.id }));
+                    getVm({ connectionName: vm.connectionName, id: vm.id });
                 });
     }
 

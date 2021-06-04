@@ -21,13 +21,12 @@ import PropTypes from 'prop-types';
 import { Button } from '@patternfly/react-core';
 
 import cockpit from 'cockpit';
-import { changeNetworkState, getVm } from "../../../actions/provider-actions.js";
 import { rephraseUI, vmId } from "../../../helpers.js";
 import AddNIC from './nicAdd.jsx';
 import { EditNICModal } from './nicEdit.jsx';
 import WarningInactive from '../../common/warningInactive.jsx';
 import './nic.css';
-import { detachIface, vmInterfaceAddresses } from '../../../libvirt-dbus.js';
+import { changeNetworkState, detachIface, getVm, vmInterfaceAddresses } from '../../../libvirt-dbus.js';
 import { ListingTable } from "cockpit-components-table.jsx";
 import { DeleteResourceButton, DeleteResourceModal } from '../../common/deleteResource.jsx';
 
@@ -211,14 +210,14 @@ export class VmNetworkTab extends React.Component {
             return (e) => {
                 e.stopPropagation();
                 if (network.mac) {
-                    dispatch(changeNetworkState(vm, network.mac, network.state === 'up' ? 'down' : 'up'))
+                    changeNetworkState({ name: vm.name, id: vm.id, connectionName: vm.connectionName, networkMac: network.mac, state: network.state === 'up' ? 'down' : 'up' })
                             .catch(ex => {
                                 onAddErrorNotification({
                                     text: cockpit.format(_("NIC $0 of VM $1 failed to change state"), network.mac, vm.name),
                                     detail: ex.message, resourceId: vm.id,
                                 });
                             })
-                            .then(() => dispatch(getVm({ connectionName: vm.connectionName, id:vm.id, name: vm.name })));
+                            .then(() => getVm({ connectionName: vm.connectionName, id:vm.id, name: vm.name }));
                 }
             };
         };

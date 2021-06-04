@@ -29,8 +29,7 @@ import {
 } from "@patternfly/react-core";
 
 import { ModalError } from "cockpit-components-inline-notification.jsx";
-import { createSnapshot } from "../../../libvirt-dbus.js";
-import { getVmSnapshots } from '../../../actions/provider-actions.js';
+import { createSnapshot, getVmSnapshots } from "../../../libvirt-dbus.js";
 
 const _ = cockpit.gettext;
 
@@ -98,7 +97,7 @@ export class CreateSnapshotModal extends React.Component {
     }
 
     onCreate() {
-        const { vm, onClose, dispatch } = this.props;
+        const { vm, onClose } = this.props;
         const { name, description } = this.state;
         const validationError = this.onValidate(true);
 
@@ -109,7 +108,7 @@ export class CreateSnapshotModal extends React.Component {
             createSnapshot({ connectionName: vm.connectionName, vmId: vm.id, name, description })
                     .then(() => {
                         // VM Snapshots do not trigger any events so we have to refresh them manually
-                        dispatch(getVmSnapshots({ connectionName: vm.connectionName, domainPath: vm.id }));
+                        getVmSnapshots({ connectionName: vm.connectionName, domainPath: vm.id });
                         onClose();
                     })
                     .catch(exc => {
