@@ -278,11 +278,9 @@ class BootOrderModal extends React.Component {
             </div>
         );
 
-        const title = _("Boot order");
-
         return (
             <Modal position="top" variant="medium" id={`${idPrefix}-window`} isOpen onClose={this.close} className='boot-order'
-                   title={`${vm.name} ${title}`}
+                   title={_("Change boot order")}
                    footer={
                        <>
                            {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
