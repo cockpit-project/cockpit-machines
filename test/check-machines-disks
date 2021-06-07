@@ -239,6 +239,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             bus_type='virtio', verify=True, pool_type=None,
             volume_format=None,
             persistent_vm=True,
+            pixel_test_tag=None
         ):
             self.test_obj = test_obj
             self.vm_name = vm_name
@@ -258,6 +259,8 @@ class TestMachinesDisks(VirtualMachinesCase):
             self.volume_format = volume_format
             self.persistent_vm = persistent_vm
 
+            self.pixel_test_tag = pixel_test_tag
+
         def getExpectedFormat(selfi, pool_type):
             # Guess by the name of the pool it's format to avoid passing more parameters
             if pool_type == 'iscsi':
@@ -270,6 +273,11 @@ class TestMachinesDisks(VirtualMachinesCase):
         def execute(self):
             self.open()
             self.fill()
+
+            if self.pixel_test_tag:
+                self.test_obj.browser.assert_pixels("#vm-subVmTest1-disks-adddisk-dialog-modal-window", self.pixel_test_tag,
+                                                    ignore=["#vm-subVmTest1-disks-adddisk-dialog-modal-window .pf-c-expandable-section__toggle-icon"])
+
             if self.verify:
                 self.add_disk()
                 self.verify_disk_added()
@@ -430,7 +438,7 @@ class TestMachinesDisks(VirtualMachinesCase):
                 self,
                 pool_name='iscsi-pool',
                 pool_type='iscsi',
-                verify=False
+                verify=False,
             ).execute()
 
             self.VMAddDiskDialog(
@@ -487,6 +495,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             volume_size=1,
             volume_size_unit='MiB',
             expected_target=get_next_free_target(used_targets)[-1],
+            pixel_test_tag='vm-add-disk-modal-nfs'
         ).execute()
 
         self.VMAddDiskDialog(
@@ -535,6 +544,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             volume_size=1,
             volume_size_unit='MiB',
             expected_target=get_next_free_target(used_targets)[-1],
+            pixel_test_tag='vm-add-disk-modal-disk-pool'
         ).execute()
 
         loop_dev = self.add_loop_disk()
@@ -719,7 +729,8 @@ class TestMachinesDisks(VirtualMachinesCase):
             bus_type='scsi',
             expected_target='sda',
             file_path='/var/lib/libvirt/novell.iso',
-            mode='custom-path'
+            mode='custom-path',
+            pixel_test_tag='vm-add-disk-modal-custom-path'
         ).execute()
 
         # non iso file
@@ -773,6 +784,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             volume_size=2,
             cache_mode='writeback',
             expected_target=get_next_free_target(used_targets)[-1],
+            pixel_test_tag='vm-add-disk-modal-additional-options'
         ).execute()
 
         # Configure scsi bus type from the UI

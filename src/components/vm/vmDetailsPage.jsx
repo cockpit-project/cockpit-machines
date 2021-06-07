@@ -76,6 +76,7 @@ export const VmDetailsPage = ({
     if (cockpit.location.path[1] == "console") {
         return (
             <Page groupProps={{ sticky: 'top' }}
+                  id={"vm-" + vm.name + "-consoles-page"}
                   isBreadcrumbGrouped
                   breadcrumb={
                       <Breadcrumb className='machines-listing-breadcrumb'>
