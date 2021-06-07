@@ -59,6 +59,8 @@ class TestMachinesNICs(VirtualMachinesCase):
 
         b.wait_in_text("#vm-subVmTest1-network-1-state", "up")
 
+        b.assert_pixels("#vm-subVmTest1-networks", "vm-details-nics-card", ignore=["#vm-subVmTest1-network-1-mac", "#vm-subVmTest1-network-1-ipv4-address"])
+
         # Test add network
         m.execute("virsh attach-interface --domain subVmTest1 --type network --source default --model virtio --mac 52:54:00:4b:73:5f --config --live")
 
@@ -102,6 +104,7 @@ class TestMachinesNICs(VirtualMachinesCase):
             self,
             source_type="network",
             source="test_network",
+            pixel_test_tag="vm-add-nic-modal"
         ).execute()
 
         # Test direct
@@ -201,6 +204,8 @@ class TestMachinesNICs(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-network-2-select-source", "eth42")
         b.wait_val("#vm-subVmTest1-network-2-edit-dialog-mac", "52:54:00:f0:eb:63")
 
+        b.assert_pixels("#vm-subVmTest1-network-2-edit-dialog-modal-window", "vm-edit-nic-modal")
+
         # Changing the NIC configuration for a shut off VM should not display any warning
         b.select_from_dropdown("#vm-subVmTest1-network-2-select-type", "direct")
         b.select_from_dropdown("#vm-subVmTest1-network-2-select-source", "eth43")
@@ -233,7 +238,8 @@ class TestMachinesNICs(VirtualMachinesCase):
         def __init__(
             # We have always have to specify mac and source_type to identify the device in xml and $virsh detach-interface
             self, test_obj, source_type="direct", source=None, model=None, nic_num=2,
-            permanent=False, mac="52:54:00:a5:f8:c0", remove=True, persistent_vm=True
+            permanent=False, mac="52:54:00:a5:f8:c0", remove=True, persistent_vm=True,
+            pixel_test_tag=None
         ):
             self.source_type = source_type
             self.source = source
@@ -248,9 +254,12 @@ class TestMachinesNICs(VirtualMachinesCase):
             self.machine = test_obj.machine
             self.assertEqual = test_obj.assertEqual
 
+            self.pixel_test_tag = pixel_test_tag
+
         def execute(self):
             self.open()
             self.fill()
+            self.assert_pixels()
             self.create()
             self.verify()
             self.verify_overview()
@@ -277,6 +286,10 @@ class TestMachinesNICs(VirtualMachinesCase):
 
             if not self.persistent_vm:
                 self.browser.wait_not_present("#vm-subVmTest1-add-iface-permanent")
+
+        def assert_pixels(self):
+            if self.pixel_test_tag:
+                self.browser.assert_pixels("#vm-subVmTest1-add-iface-dialog", self.pixel_test_tag)
 
         def cancel(self):
             self.browser.click(".pf-c-modal-box__footer button:contains(Cancel)")

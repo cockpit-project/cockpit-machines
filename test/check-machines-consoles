@@ -55,15 +55,20 @@ class TestMachinesConsoles(VirtualMachinesCase):
         self.assertEqual(b.attr("#dynamically-generated-file", "href"),
                          u"data:application/x-virt-viewer,%5Bvirt-viewer%5D%0Atype%3Dspice%0Ahost%3D127.0.0.1%0Aport%3D5900%0Adelete-this-file%3D1%0Afullscreen%3D0%0A")
 
+        # HACK: clicking 'Launch Remote Viewer' kills execution context and thus CDP fails
+        b.reload()
+        b.enter_page("/machines")
+
+        # Go to the expanded console view
+        b.click("button:contains(Expand)")
+
         # Check "More information"
         b.click('.pf-c-console__remote-viewer .pf-c-expandable-section__toggle')
         b.wait_in_text('.pf-c-expandable-section__content',
                        'Clicking "Launch remote viewer" will download')
 
-        # HACK: clicking 'Launch Remote Viewer' kills execution context and thus CDP fails
-        b.reload()
-        b.enter_page("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        b.assert_pixels("#vm-subVmTest1-consoles-page", "vm-details-console-external",
+                        ignore=["#vm-subVmTest1-consoles-page .pf-c-expandable-section__toggle-icon"])
 
     def testInlineConsole(self, urlroot=""):
         b = self.browser
@@ -85,6 +90,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
 
         # make sure the log file is full - then empty it and reboot the VM - the log file should fill up again
         wait(lambda: "login as 'cirros' user." in self.machine.execute("cat {0}".format(args["logfile"])), delay=3)
+
         self.machine.execute("echo '' > {0}".format(args["logfile"]))
         b.click("#{0}-system-vnc-sendkey button".format("subVmTest1"))
         b.click("#ctrl-alt-Delete")
@@ -119,6 +125,9 @@ class TestMachinesConsoles(VirtualMachinesCase):
 
         b.click("#{0}-serialconsole-connect".format(name))
         b.wait_in_text("#{0}-terminal .xterm-accessibility-tree > div:nth-child(1)".format(name), "Connected to domain")
+
+        b.click("button:contains(Expand)")
+        b.assert_pixels("#vm-vmWithSerialConsole-consoles-page", "vm-details-console-serial")
 
         # disconnecting the serial console closes the pty channel
         self.allow_journal_messages("connection unexpectedly closed by peer",
