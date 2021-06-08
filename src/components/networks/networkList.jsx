@@ -40,10 +40,10 @@ export class NetworkList extends React.Component {
     }
 
     render() {
-        const { dispatch, networks, resourceHasError, onAddErrorNotification, vms, nodeDevices, interfaces } = this.props;
+        const { networks, resourceHasError, onAddErrorNotification, vms, nodeDevices, interfaces } = this.props;
         const sortFunction = (networkA, networkB) => networkA.name.localeCompare(networkB.name);
         const devices = getNetworkDevices(vms, nodeDevices, interfaces);
-        const actions = (<CreateNetworkAction devices={devices} dispatch={dispatch} />);
+        const actions = (<CreateNetworkAction devices={devices} />);
 
         return (
             <Page groupProps={{ sticky: 'top' }}
@@ -80,7 +80,7 @@ export class NetworkList extends React.Component {
                                 emptyCaption={_("No network is defined on this host")}
                                 rows={networks
                                         .sort(sortFunction)
-                                        .map(network => getNetworkRow({ dispatch, network, resourceHasError, onAddErrorNotification }))
+                                        .map(network => getNetworkRow({ network, resourceHasError, onAddErrorNotification }))
                                 } />
                         </CardBody>
                     </Card>
@@ -90,7 +90,6 @@ export class NetworkList extends React.Component {
     }
 }
 NetworkList.propTypes = {
-    dispatch: PropTypes.func.isRequired,
     networks: PropTypes.array.isRequired,
     onAddErrorNotification: PropTypes.func.isRequired,
     resourceHasError: PropTypes.object.isRequired,

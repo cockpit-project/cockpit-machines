@@ -50,7 +50,7 @@ const _ = cockpit.gettext;
 
 export const VmDetailsPage = ({
     vm, vms, config, libvirtVersion, storagePools,
-    onUsageStartPolling, onUsageStopPolling, dispatch, networks,
+    onUsageStartPolling, onUsageStopPolling, networks,
     nodeDevices, notifications, onAddErrorNotification
 }) => {
     useEffect(() => {
@@ -69,7 +69,6 @@ export const VmDetailsPage = ({
                 <h2 className="vm-name">{vm.name}</h2>
                 <VmActions vm={vm}
                            config={config}
-                           dispatch={dispatch}
                            storagePools={storagePools}
                            onAddErrorNotification={onAddErrorNotification}
                            isDetailsPage />
@@ -97,7 +96,7 @@ export const VmDetailsPage = ({
                       </Breadcrumb>}>
                 {vmActionsPageSection}
                 <PageSection variant={PageSectionVariants.light}>
-                    <Consoles vm={vm} config={config} dispatch={dispatch}
+                    <Consoles vm={vm} config={config}
                         onAddErrorNotification={onAddErrorNotification} />
                 </PageSection>
             </Page>
@@ -108,7 +107,7 @@ export const VmDetailsPage = ({
         {
             id: `${vmId(vm.name)}-overview`,
             title: _("Overview"),
-            body: <VmOverviewCard vm={vm} config={config} dispatch={dispatch}
+            body: <VmOverviewCard vm={vm} config={config}
                                   nodeDevices={nodeDevices} libvirtVersion={libvirtVersion} />,
         },
         {
@@ -129,25 +128,23 @@ export const VmDetailsPage = ({
                            }}
                            icon={<ExpandIcon />}
                            iconPosition="right">{_("Expand")}</Button>,
-            body: <Consoles vm={vm} config={config} dispatch={dispatch}
+            body: <Consoles vm={vm} config={config}
                             onAddErrorNotification={onAddErrorNotification} />,
         },
         {
             id: `${vmId(vm.name)}-disks`,
             className: "disks-card",
             title: _("Disks"),
-            actions: <VmDisksActions vm={vm} vms={vms} storagePools={storagePools}
-                                     dispatch={dispatch} />,
+            actions: <VmDisksActions vm={vm} vms={vms} storagePools={storagePools} />,
             body: <VmDisksCardLibvirt vm={vm} config={config} storagePools={storagePools}
-                                      dispatch={dispatch} onAddErrorNotification={onAddErrorNotification} />,
+                                      onAddErrorNotification={onAddErrorNotification} />,
         },
         {
             id: `${vmId(vm.name)}-networks`,
             className: "networks-card",
             title: _("Networks"),
-            actions: <VmNetworkActions vm={vm} dispatch={dispatch}
-                                       networks={networks} />,
-            body: <VmNetworkTab vm={vm} dispatch={dispatch} config={config}
+            actions: <VmNetworkActions vm={vm} networks={networks} />,
+            body: <VmNetworkTab vm={vm} config={config}
                                 networks={networks}
                                 onAddErrorNotification={onAddErrorNotification} />,
         },
@@ -159,16 +156,14 @@ export const VmDetailsPage = ({
         }
     ];
     if (vm.snapshots !== -1 && vm.snapshots !== undefined) {
-        cardContents.push(
-            {
-                id: cockpit.format("$0-snapshots", vmId(vm.name)),
-                className: "snapshots-card",
-                title: _("Snapshots"),
-                actions: <VmSnapshotsActions vm={vm} dispatch={dispatch} />,
-                body: <VmSnapshotsCard vm={vm} dispatch={dispatch} config={config}
-                                       onAddErrorNotification={onAddErrorNotification} />
-            }
-        );
+        cardContents.push({
+            id: cockpit.format("$0-snapshots", vmId(vm.name)),
+            className: "snapshots-card",
+            title: _("Snapshots"),
+            actions: <VmSnapshotsActions vm={vm} />,
+            body: <VmSnapshotsCard vm={vm} config={config}
+                                   onAddErrorNotification={onAddErrorNotification} />
+        });
     }
     if (libvirtVersion && libvirtVersion >= 6008000 && vm.connectionName == "system") {
         cardContents.push(
@@ -199,7 +194,6 @@ export const VmDetailsPage = ({
                     </>
                 ),
                 actions: <VmFilesystemActions connectionName={vm.connectionName}
-                                              dispatch={dispatch}
                                               objPath={vm.id}
                                               vmName={vm.name}
                                               vmState={vm.state}
@@ -253,7 +247,6 @@ VmDetailsPage.propTypes = {
     config: PropTypes.object.isRequired,
     libvirtVersion: PropTypes.number.isRequired,
     storagePools: PropTypes.array.isRequired,
-    dispatch: PropTypes.func.isRequired,
     networks: PropTypes.array.isRequired,
     notifications: PropTypes.array,
     onAddErrorNotification: PropTypes.func.isRequired,

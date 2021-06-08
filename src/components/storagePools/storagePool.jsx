@@ -32,12 +32,13 @@ import { StoragePoolOverviewTab } from './storagePoolOverviewTab.jsx';
 import { StoragePoolVolumesTab } from './storagePoolVolumesTab.jsx';
 import { StoragePoolDelete } from './storagePoolDelete.jsx';
 import { storagePoolActivate, storagePoolDeactivate } from '../../libvirt-dbus.js';
+import store from '../../store.js';
 
 import cockpit from 'cockpit';
 
 const _ = cockpit.gettext;
 
-export const getStoragePoolRow = ({ storagePool, vms, dispatch, onAddErrorNotification }) => {
+export const getStoragePoolRow = ({ storagePool, vms, onAddErrorNotification }) => {
     const idPrefix = `${storagePoolId(storagePool.name, storagePool.connectionName)}`;
     const name = (
         <span id={`${idPrefix}-name`}>
@@ -57,7 +58,7 @@ export const getStoragePoolRow = ({ storagePool, vms, dispatch, onAddErrorNotifi
     const state = (
         <StateIcon error={storagePool.error} state={storagePool.active ? _("active") : "inactive" }
                    valueId={`${idPrefix}-state`}
-                   dismissError={() => dispatch(updateOrAddStoragePool({
+                   dismissError={() => store.dispatch(updateOrAddStoragePool({
                        connectionName: storagePool.connectionName,
                        name: storagePool.name,
                        error: null
@@ -81,7 +82,7 @@ export const getStoragePoolRow = ({ storagePool, vms, dispatch, onAddErrorNotifi
     const expandedContent = (
         <ListingPanel
             tabRenderers={tabRenderers}
-            listingActions={<StoragePoolActions dispatch={dispatch} storagePool={storagePool} vms={vms} />} />
+            listingActions={<StoragePoolActions storagePool={storagePool} vms={vms} />} />
     );
 
     return {
@@ -110,7 +111,7 @@ class StoragePoolActions extends React.Component {
         this.setState({ operationInProgress: true });
         storagePoolActivate(storagePool.connectionName, storagePool.id)
                 .fail(exc => {
-                    this.props.dispatch(
+                    store.dispatch(
                         updateOrAddStoragePool({
                             connectionName: storagePool.connectionName,
                             name: storagePool.name,
@@ -130,7 +131,7 @@ class StoragePoolActions extends React.Component {
         this.setState({ operationInProgress: true });
         storagePoolDeactivate(storagePool.connectionName, storagePool.id)
                 .fail(exc => {
-                    this.props.dispatch(
+                    store.dispatch(
                         updateOrAddStoragePool({
                             connectionName: storagePool.connectionName,
                             name: storagePool.name,

@@ -68,7 +68,7 @@ export class VmNetworkActions extends React.Component {
     }
 
     render() {
-        const { vm, dispatch, networks } = this.props;
+        const { vm, networks } = this.props;
         const id = vmId(vm.name);
         const availableSources = {
             network: networks.map(network => network.name),
@@ -76,8 +76,7 @@ export class VmNetworkActions extends React.Component {
         };
         return (<>
             {this.state.showAddNICModal && this.state.networkDevices !== undefined &&
-                <AddNIC dispatch={dispatch}
-                    idPrefix={`${id}-add-iface`}
+                <AddNIC idPrefix={`${id}-add-iface`}
                     vm={vm}
                     availableSources={availableSources}
                     close={this.close} />}
@@ -91,7 +90,6 @@ export class VmNetworkActions extends React.Component {
 VmNetworkActions.propTypes = {
     vm: PropTypes.object.isRequired,
     networks: PropTypes.array.isRequired,
-    dispatch: PropTypes.func.isRequired,
 };
 
 export class VmNetworkTab extends React.Component {
@@ -178,7 +176,7 @@ export class VmNetworkTab extends React.Component {
     }
 
     render() {
-        const { vm, dispatch, networks, onAddErrorNotification } = this.props;
+        const { vm, networks, onAddErrorNotification } = this.props;
         const id = vmId(vm.name);
         const availableSources = {
             network: networks.map(network => network.name),
@@ -318,7 +316,6 @@ export class VmNetworkTab extends React.Component {
                     const isUp = network.state === 'up';
                     const editNICAction = () => {
                         const editNICDialogProps = {
-                            dispatch,
                             idPrefix: `${id}-network-${networkId}`,
                             vm,
                             network,
@@ -339,7 +336,7 @@ export class VmNetworkTab extends React.Component {
                         objectType: "Network Interface",
                         objectName: network.mac,
                         onClose: () => this.setState({ deleteDialogProps: undefined }),
-                        deleteHandler: () => detachIface(network.mac, vm.connectionName, vm.id, vm.state === 'running', vm.persistent, dispatch),
+                        deleteHandler: () => detachIface(network.mac, vm.connectionName, vm.id, vm.state === 'running', vm.persistent),
                     };
                     const deleteNICAction = (
                         <DeleteResourceButton objectId={`${id}-iface-${networkId}`}
@@ -402,5 +399,4 @@ VmNetworkTab.propTypes = {
     vm: PropTypes.object.isRequired,
     networks: PropTypes.array.isRequired,
     onAddErrorNotification: PropTypes.func.isRequired,
-    dispatch: PropTypes.func.isRequired,
 };

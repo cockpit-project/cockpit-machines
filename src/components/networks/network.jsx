@@ -33,12 +33,13 @@ import {
     networkDeactivate,
     networkUndefine
 } from '../../libvirt-dbus.js';
+import store from '../../store.js';
 
 import cockpit from 'cockpit';
 
 const _ = cockpit.gettext;
 
-export const getNetworkRow = ({ dispatch, network, onAddErrorNotification }) => {
+export const getNetworkRow = ({ network, onAddErrorNotification }) => {
     const idPrefix = `${networkId(network.name, network.connectionName)}`;
     const name = (
         <span id={`${idPrefix}-name`}>
@@ -55,7 +56,7 @@ export const getNetworkRow = ({ dispatch, network, onAddErrorNotification }) => 
     const state = (
         <StateIcon error={network.error} state={network.active ? _("active") : "inactive" }
                    valueId={`${idPrefix}-state`}
-                   dismissError={() => dispatch(updateOrAddNetwork({
+                   dismissError={() => store.dispatch(updateOrAddNetwork({
                        connectionName: network.connectionName,
                        name: network.name,
                        error: null
@@ -79,14 +80,14 @@ export const getNetworkRow = ({ dispatch, network, onAddErrorNotification }) => 
         {
             name: overviewTabName,
             renderer: NetworkOverviewTab,
-            data: { network, dispatch, }
+            data: { network }
         },
     ];
 
     const expandedContent = (
         <ListingPanel
             tabRenderers={tabRenderers}
-            listingActions={<NetworkActions dispatch={dispatch} network={network} />} />
+            listingActions={<NetworkActions network={network} />} />
     );
 
     return {
@@ -110,7 +111,7 @@ class NetworkActions extends React.Component {
         networkActivate(network.connectionName, network.id)
                 .always(() => this.setState({ operationInProgress: false }))
                 .fail(exc => {
-                    this.props.dispatch(
+                    store.dispatch(
                         updateOrAddNetwork({
                             connectionName: network.connectionName,
                             name: network.name,
@@ -129,7 +130,7 @@ class NetworkActions extends React.Component {
         networkDeactivate(this.props.network.connectionName, this.props.network.id)
                 .always(() => this.setState({ operationInProgress: false }))
                 .fail(exc => {
-                    this.props.dispatch(
+                    store.dispatch(
                         updateOrAddNetwork({
                             connectionName: network.connectionName,
                             name: network.name,

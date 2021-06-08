@@ -114,10 +114,8 @@ class App extends React.Component {
     render() {
         const { vms, config, storagePools, systemInfo, ui, networks, nodeDevices, interfaces } = this.props.store.getState();
         const path = this.state.path;
-        const dispatch = this.props.store.dispatch;
         const combinedVms = [...vms, ...dummyVmsFilter(vms, ui.vms)];
         const properties = {
-            dispatch,
             networks, nodeDevices, nodeMaxMemory: config.nodeMaxMemory,
             onAddErrorNotification: this.onAddErrorNotification,
             storagePools, systemInfo, vms: combinedVms,
@@ -132,8 +130,7 @@ class App extends React.Component {
         if ((systemInfo.libvirtService.activeState !== 'running' && (this.state.allowed === undefined || this.state.allowed)) ||
             loadingResources) {
             return (<LibvirtSlate libvirtService={systemInfo.libvirtService}
-                        loadingResources={loadingResources}
-                        dispatch={dispatch} />);
+                        loadingResources={loadingResources} />);
         }
 
         const pathVms = path.length == 0 || (path.length > 0 && path[0] == 'vms');
@@ -178,7 +175,6 @@ class App extends React.Component {
                     storagePools={(storagePools || []).filter(pool => pool && pool.connectionName == connectionName)}
                     onUsageStartPolling={() => usageStartPolling({ name: vm.name, id: vm.id, connectionName: vm.connectionName })}
                     onUsageStopPolling={() => usageStopPolling({ name: vm.name, id: vm.id, connectionName: vm.connectionName })}
-                    dispatch={dispatch}
                     networks={(networks || []).filter(network => network && network.connectionName == connectionName)}
                     nodeDevices={(nodeDevices || []).filter(device => device && device.connectionName == connectionName)}
                     key={vmId(vm.name)}
@@ -209,7 +205,6 @@ class App extends React.Component {
                     ui={ui}
                     libvirtVersion={systemInfo.libvirtVersion}
                     storagePools={storagePools}
-                    dispatch={dispatch}
                     interfaces={interfaces}
                     networks={networks}
                     actions={vmActions}
@@ -219,7 +214,6 @@ class App extends React.Component {
                 {path.length > 0 && path[0] == 'vms' && vmContent}
                 {path.length > 0 && path[0] == 'storages' &&
                 <StoragePoolList storagePools={storagePools}
-                    dispatch={dispatch}
                     vms={vms}
                     loggedUser={systemInfo.loggedUser}
                     libvirtVersion={systemInfo.libvirtVersion}
@@ -227,7 +221,6 @@ class App extends React.Component {
                 }
                 {path.length > 0 && path[0] == 'networks' &&
                 <NetworkList networks={networks}
-                    dispatch={dispatch}
                     resourceHasError={this.state.resourceHasError}
                     onAddErrorNotification={this.onAddErrorNotification}
                     vms={vms}
