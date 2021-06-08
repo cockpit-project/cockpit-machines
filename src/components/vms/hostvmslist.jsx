@@ -37,6 +37,7 @@ import { vmId, rephraseUI, dummyVmsFilter, DOMAINSTATE } from "../../helpers.js"
 import { ListingTable } from "cockpit-components-table.jsx";
 import StateIcon from '../common/stateIcon.jsx';
 import { AggregateStatusCards } from "../aggregateStatusCards.jsx";
+import store from "../../store.js";
 
 import "./hostvmslist.scss";
 
@@ -59,7 +60,7 @@ const _ = cockpit.gettext;
 /**
  * List of all VMs defined on this host
  */
-const HostVmsList = ({ vms, config, ui, storagePools, dispatch, actions, networks, onAddErrorNotification }) => {
+const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddErrorNotification }) => {
     const [statusSelected, setStatusSelected] = useState({ value: _("All"), toString: function() { return this.value } });
     const [currentTextFilter, setCurrentTextFilter] = useState("");
     const [statusIsExpanded, setStatusIsExpanded] = useState(false);
@@ -144,7 +145,6 @@ const HostVmsList = ({ vms, config, ui, storagePools, dispatch, actions, network
                                         const vmActions = <VmActions
                                             vm={vm}
                                             config={config}
-                                            dispatch={dispatch}
                                             storagePools={storagePools}
                                             onAddErrorNotification={onAddErrorNotification}
                                         />;
@@ -164,7 +164,7 @@ const HostVmsList = ({ vms, config, ui, storagePools, dispatch, actions, network
                                                 {
                                                     title: (
                                                         <VmState vm={vm}
-                                                                 dismissError={() => dispatch(updateVm({
+                                                                 dismissError={() => store.dispatch(updateVm({
                                                                      connectionName: vm.connectionName,
                                                                      name: vm.name,
                                                                      error: null
@@ -193,7 +193,6 @@ HostVmsList.propTypes = {
     config: PropTypes.object.isRequired,
     ui: PropTypes.object.isRequired,
     storagePools: PropTypes.array.isRequired,
-    dispatch: PropTypes.func.isRequired,
     onAddErrorNotification: PropTypes.func.isRequired,
 };
 

@@ -44,6 +44,7 @@ import {
     getDomainCapCPUCustomModels,
     getDomainCapCPUHostModel,
 } from '../../../libvirt-common.js';
+import store from '../../../store.js';
 
 import '../../common/overviewCard.css';
 
@@ -119,7 +120,7 @@ class VmOverviewCard extends React.Component {
     }
 
     render() {
-        const { vm, dispatch, config, nodeDevices, libvirtVersion } = this.props;
+        const { vm, config, nodeDevices, libvirtVersion } = this.props;
         const idPrefix = vmId(vm.name);
 
         const vcpusChanged = (vm.vcpus.count !== vm.inactiveXML.vcpus.count) ||
@@ -204,7 +205,7 @@ class VmOverviewCard extends React.Component {
                                     <StateIcon error={vm.error}
                                                state={vm.state}
                                                valueId={`${idPrefix}-state`}
-                                               dismissError={() => dispatch(updateVm({
+                                               dismissError={() => store.dispatch(updateVm({
                                                    connectionName: vm.connectionName,
                                                    name: vm.name,
                                                    error: null
@@ -232,7 +233,6 @@ class VmOverviewCard extends React.Component {
                                 <DescriptionListDescription id={`${idPrefix}-boot-order`}>
                                     <BootOrderLink vm={vm} idPrefix={idPrefix}
                                                    close={this.close}
-                                                   dispatch={dispatch}
                                                    nodeDevices={nodeDevices} />
                                 </DescriptionListDescription>
                             </DescriptionListGroup>
@@ -265,9 +265,9 @@ class VmOverviewCard extends React.Component {
                         </DescriptionList>
                     </FlexItem>
                 </Flex>
-                { this.state.showMemoryModal && <MemoryModal close={this.close} vm={vm} dispatch={dispatch} config={config} /> }
-                { this.state.showVcpuModal && <VCPUModal close={this.close} vm={vm} dispatch={dispatch} maxVcpu={this.state.maxVcpu} /> }
-                { this.state.showCpuTypeModal && <CPUTypeModal close={this.close} vm={vm} dispatch={dispatch} models={this.state.cpuModels} /> }
+                { this.state.showMemoryModal && <MemoryModal close={this.close} vm={vm} config={config} /> }
+                { this.state.showVcpuModal && <VCPUModal close={this.close} vm={vm} maxVcpu={this.state.maxVcpu} /> }
+                { this.state.showCpuTypeModal && <CPUTypeModal close={this.close} vm={vm} models={this.state.cpuModels} /> }
             </>
         );
     }
@@ -277,7 +277,6 @@ VmOverviewCard.propTypes = {
     vm: PropTypes.object.isRequired,
     config: PropTypes.object.isRequired,
     libvirtVersion: PropTypes.number.isRequired,
-    dispatch: PropTypes.func.isRequired,
     nodeDevices: PropTypes.array.isRequired,
 };
 

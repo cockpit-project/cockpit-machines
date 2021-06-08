@@ -61,10 +61,10 @@ export class NetworkOverviewTab extends React.Component {
     }
 
     onAutostartChanged() {
-        const { dispatch, network } = this.props;
+        const { network } = this.props;
         const autostart = !network.autostart;
 
-        changeNetworkAutostart(network, autostart, dispatch);
+        changeNetworkAutostart(network, autostart);
     }
 
     render() {
@@ -165,6 +165,5 @@ export class NetworkOverviewTab extends React.Component {
 }
 
 NetworkOverviewTab.propTypes = {
-    dispatch: PropTypes.func.isRequired,
     network: PropTypes.object.isRequired,
 };

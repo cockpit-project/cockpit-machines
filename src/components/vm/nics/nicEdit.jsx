@@ -113,7 +113,7 @@ export class EditNICModal extends React.Component {
     }
 
     save() {
-        const { dispatch, vm, network } = this.props;
+        const { vm, network } = this.props;
 
         changeNetworkSettings({
             name: vm.name,
@@ -126,7 +126,6 @@ export class EditNICModal extends React.Component {
             networkModel: this.state.networkModel,
             networkType: this.state.networkType,
             networkSource: this.state.networkSource,
-            dispatch
         })
                 .then(() => {
                     getVm({ connectionName: vm.connectionName, id: vm.id });
@@ -191,7 +190,6 @@ export class EditNICModal extends React.Component {
 }
 EditNICModal.propTypes = {
     availableSources: PropTypes.object.isRequired,
-    dispatch: PropTypes.func.isRequired,
     idPrefix: PropTypes.string.isRequired,
     vm: PropTypes.object.isRequired,
     network: PropTypes.object.isRequired,

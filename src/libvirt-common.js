@@ -1008,7 +1008,7 @@ export function parseStorageVolumeDumpxml(connectionName, storageVolumeXml, id_o
     };
 }
 
-export function resolveUiState(dispatch, name, connectionName) {
+export function resolveUiState(name, connectionName) {
     const result = {
         // used just the first time vm is shown
         initiallyExpanded: false,
@@ -1032,17 +1032,15 @@ export function resolveUiState(dispatch, name, connectionName) {
 }
 
 export function unknownConnectionName(action, libvirtServiceName) {
-    return dispatch => {
-        return cockpit.user().done(loggedUser => {
-            const promises = Object.getOwnPropertyNames(VMS_CONFIG.Virsh.connections)
-                    .filter(
-                        // The 'root' user does not have its own qemu:///session just qemu:///system
-                        // https://bugzilla.redhat.com/show_bug.cgi?id=1045069
-                        connectionName => canLoggedUserConnectSession(connectionName, loggedUser))
-                    .map(connectionName => dispatch(action({ connectionName, libvirtServiceName })));
-            return Promise.all(promises);
-        });
-    };
+    return cockpit.user().done(loggedUser => {
+        const promises = Object.getOwnPropertyNames(VMS_CONFIG.Virsh.connections)
+                .filter(
+                    // The 'root' user does not have its own qemu:///session just qemu:///system
+                    // https://bugzilla.redhat.com/show_bug.cgi?id=1045069
+                    connectionName => canLoggedUserConnectSession(connectionName, loggedUser))
+                .map(connectionName => action({ connectionName, libvirtServiceName }));
+        return Promise.all(promises);
+    });
 }
 
 /*
@@ -1196,7 +1194,7 @@ export function initDataRetrieval() {
                 const name = match ? match[0] : null;
                 store.dispatch(updateLibvirtState({ name }));
                 if (name) {
-                    store.dispatch(getApiData({ connectionName: null, libvirtServiceName: name }));
+                    getApiData({ connectionName: null, libvirtServiceName: name });
                 } else {
                     console.error("initialize failed: getting libvirt service name failed");
                 }

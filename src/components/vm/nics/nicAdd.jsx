@@ -106,9 +106,9 @@ export class AddNIC extends React.Component {
     }
 
     add() {
-        const { dispatch, vm } = this.props;
+        const { vm } = this.props;
 
-        dispatch(attachIface({
+        attachIface({
             connectionName: vm.connectionName,
             vmId: vm.id,
             model: this.state.networkModel,
@@ -117,7 +117,7 @@ export class AddNIC extends React.Component {
             mac: this.state.setNetworkMac ? this.state.networkMac : undefined,
             permanent: this.state.permanent,
             hotplug: vm.state === "running",
-        }))
+        })
                 .fail((exc) => {
                     this.dialogErrorSet(_("Network interface settings could not be saved"), exc.message);
                 })
@@ -179,7 +179,6 @@ export class AddNIC extends React.Component {
 }
 
 AddNIC.propTypes = {
-    dispatch: PropTypes.func.isRequired,
     idPrefix: PropTypes.string.isRequired,
     vm: PropTypes.object.isRequired,
 };
