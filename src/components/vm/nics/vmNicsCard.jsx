@@ -240,7 +240,8 @@ export class VmNetworkTab extends React.Component {
                             {inactiveNIC && inactiveNIC.type !== network.type && <WarningInactive iconId={`${id}-network-${networkId}-type-tooltip`} tooltipId="tip-network" />}
                         </div>
                     );
-                }
+                },
+                props: { width: 10 }
             },
             {
                 name: _("Model type"), value: (network, networkId) => {
@@ -251,9 +252,10 @@ export class VmNetworkTab extends React.Component {
                             {inactiveNIC && inactiveNIC.model !== network.model && <WarningInactive iconId={`${id}-network-${networkId}-model-tooltip`} tooltipId="tip-network" />}
                         </div>
                     );
-                }
+                },
+                props: { width: 10 }
             },
-            { name: _("MAC address"), value: 'mac' },
+            { name: _("MAC address"), value: 'mac', props: { width: 20 } },
             {
                 name: _("IP address"), value: () => {
                     if (this.props.vm.state != 'running' && this.props.vm.state != 'paused')
@@ -276,7 +278,8 @@ export class VmNetworkTab extends React.Component {
                             </>
                         );
                     }
-                }
+                },
+                props: { width: 20 }
             },
             {
                 name: _("Source"), value: (network, networkId) => {
@@ -302,12 +305,14 @@ export class VmNetworkTab extends React.Component {
                     } else {
                         return null;
                     }
-                }
+                },
+                props: { width: 10 }
             },
             {
                 name: _("State"), value: (network, networkId) => {
                     return <span className='machines-network-state' id={`${id}-network-${networkId}-state`}>{rephraseUI('networkState', network.state)}</span>;
-                }
+                },
+                props: { width: 10 }
             },
             {
                 name: "", value: (network, networkId) => {
@@ -353,7 +358,8 @@ export class VmNetworkTab extends React.Component {
                             {editNICAction()}
                         </div>
                     );
-                }
+                },
+                props: { width: 20 }
             },
         ];
 
@@ -366,11 +372,11 @@ export class VmNetworkTab extends React.Component {
                 let column = null;
                 if (typeof d.value === 'string') {
                     if (target[d.value] !== undefined) {
-                        column = { title: <div id={`${id}-network-${networkId}-${d.value}`}>{target[d.value]}</div> };
+                        column = { title: <div id={`${id}-network-${networkId}-${d.value}`}>{target[d.value]}</div>, props: d.props };
                     }
                 }
                 if (typeof d.value === 'function') {
-                    column = { title: d.value(target, networkId, vm.connectionName) };
+                    column = { title: d.value(target, networkId, vm.connectionName), props: d.props };
                 }
                 return column;
             });
