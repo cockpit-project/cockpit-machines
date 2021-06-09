@@ -331,20 +331,16 @@ class TestMachinesDisks(VirtualMachinesCase):
                 b.wait_not_present("#vm-{0}-disks-adddisk-new-permanent".format(self.vm_name))
 
             # Configure performance options
-            if self.cache_mode:
+            if self.cache_mode and b.is_visible("div.pf-c-modal-box button:contains(Show additional options)"):
                 b.click("div.pf-c-modal-box button:contains(Show additional options)")
                 b.select_from_dropdown("div.pf-c-modal-box #cache-mode", self.cache_mode)
-                b.click("div.pf-c-modal-box button:contains(Hide additional options)")
             else:
                 b.wait_not_present("#div.pf-c-modal-box #cache-mode")
 
             # Configure bus type
-            if self.bus_type != "virtio":
+            if self.bus_type != "virtio" and b.is_visible("div.pf-c-modal-box button:contains(Show additional options)"):
                 b.click("div.pf-c-modal-box button:contains(Show additional options)")
                 b.select_from_dropdown("div.pf-c-modal-box #bus-type", self.bus_type)
-                b.click("div.pf-c-modal-box button:contains(Hide additional options)")
-            else:
-                b.wait_not_present("#div.pf-c-modal-box #cache-mode")
 
             return self
 
