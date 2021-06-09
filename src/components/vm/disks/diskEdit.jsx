@@ -80,7 +80,7 @@ const CacheRow = ({ onValueChanged, dialogValues, idPrefix, shutoff }) => {
 
 const BusRow = ({ onValueChanged, dialogValues, idPrefix, shutoff }) => {
     const busTypes = ['sata', 'scsi', 'usb', 'virtio'].map(type => ({ value: type }));
-    if (!busTypes.includes(dialogValues.busType))
+    if (busTypes.find(busType => busType.value == dialogValues.busType) == undefined)
         busTypes.push({ value: dialogValues.busType, disabled: true });
 
     return (
