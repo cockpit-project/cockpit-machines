@@ -99,7 +99,7 @@ class VirtualMachinesCaseHelpers:
         m.execute("virsh net-start default || true")
         m.execute(r"until virsh net-info default | grep 'Active:\s*yes'; do sleep 1; done")
 
-    def createVm(self, name, graphics='spice', ptyconsole=False, running=True, memory=128):
+    def createVm(self, name, graphics='none', ptyconsole=False, running=True, memory=128):
         m = self.machine
 
         image_file = m.pull("cirros")
@@ -130,9 +130,9 @@ class VirtualMachinesCaseHelpers:
                   "--vcpus 1 "
                   "--memory {1} "
                   "--import --disk {2} "
-                  "--graphics {3},listen=127.0.0.1 "
+                  "--graphics {3} "
                   "--console {4}"
-                  "--print-step 1 > /tmp/xml".format(name, memory, img, graphics, console))
+                  "--print-step 1 > /tmp/xml".format(name, memory, img, "none" if graphics == "none" else graphics + ",listen=127.0.0.1", console))
 
         m.execute("virsh define /tmp/xml")
         if running:

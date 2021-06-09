@@ -26,17 +26,18 @@ sys.path.append(os.path.join(TEST_DIR, "common"))
 sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
 
 from machineslib import VirtualMachinesCase  # noqa
-from testlib import no_retry_when_changed, nondestructive, test_main, wait  # noqa
+from testlib import no_retry_when_changed, nondestructive, test_main, wait, skipImage  # noqa
 
 
 @nondestructive
 class TestMachinesConsoles(VirtualMachinesCase):
 
     @no_retry_when_changed
+    @skipImage('spice-server does not exist ont rhel-9', "rhel-9-0")
     def testExternalConsole(self):
         b = self.browser
 
-        self.createVm("subVmTest1")
+        self.createVm("subVmTest1", graphics="spice")
 
         self.login_and_go("/machines")
         b.wait_in_text("body", "Virtual machines")
@@ -67,7 +68,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
     def testInlineConsole(self, urlroot=""):
         b = self.browser
 
-        args = self.createVm("subVmTest1", graphics='vnc')
+        args = self.createVm("subVmTest1", "vnc")
 
         if urlroot != "":
             self.machine.execute('mkdir -p /etc/cockpit/ && echo "[WebService]\nUrlRoot=%s" > /etc/cockpit/cockpit.conf' % urlroot)
