@@ -333,9 +333,9 @@ class TestMachinesDisks(VirtualMachinesCase):
             # Configure performance options
             if self.cache_mode and b.is_visible("div.pf-c-modal-box button:contains(Show additional options)"):
                 b.click("div.pf-c-modal-box button:contains(Show additional options)")
-                b.select_from_dropdown("div.pf-c-modal-box #cache-mode", self.cache_mode)
+                b.select_from_dropdown("#cache-mode", self.cache_mode)
             else:
-                b.wait_not_present("#div.pf-c-modal-box #cache-mode")
+                b.wait_not_visible("#cache-mode")
 
             # Configure bus type
             if self.bus_type != "virtio" and b.is_visible("div.pf-c-modal-box button:contains(Show additional options)"):
