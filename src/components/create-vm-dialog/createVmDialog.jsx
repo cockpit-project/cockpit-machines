@@ -369,6 +369,7 @@ class OSRow extends React.Component {
 
         return (
             <FormGroup fieldId='os-select'
+                       data-loading={!!isLoading}
                        id="os-select-group"
                        validated={validationStateOS}
                        helperTextInvalid={validationFailed.os}

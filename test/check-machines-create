@@ -823,7 +823,8 @@ class TestMachinesCreate(VirtualMachinesCase):
             if self.sourceTypeSecondChoice:
                 b.select_from_dropdown("#source-type", self.sourceTypeSecondChoice)
 
-            # For the mocked fedora URL installation wait to see that the OS section is automatically filed
+            b.wait_attr("#os-select-group", "data-loading", "false")
+            # For the mocked fedora URL installation wait to see that the OS section is automatically filled
             if self.sourceType == "url" and self.location == TestMachinesCreate.TestCreateConfig.TREE_URL:
                 # libosinfo >= "1.4" is needed for OS autodetection
                 # Otherwise we get this error:  Failed to load .treeinfo file: Operation not supported (15)
