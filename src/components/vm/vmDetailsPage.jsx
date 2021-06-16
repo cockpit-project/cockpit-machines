@@ -23,14 +23,18 @@ import cockpit from 'cockpit';
 import {
     AlertGroup,
     Breadcrumb, BreadcrumbItem,
+    CodeBlock, CodeBlockCode,
     Gallery, Button,
+    List, ListItem,
     Card, CardTitle, CardActions, CardHeader, CardBody, CardFooter,
     Page, PageSection, PageSectionVariants,
+    Popover,
 } from '@patternfly/react-core';
-import { ExpandIcon } from '@patternfly/react-icons';
+import { ExpandIcon, HelpIcon } from '@patternfly/react-icons';
 
 import { vmId } from "../../helpers.js";
 
+import { VmFilesystemsCard, VmFilesystemActions } from './filesystems/vmFilesystemsCard.jsx';
 import { VmDisksCardLibvirt, VmDisksActions } from './disks/vmDisksCard.jsx';
 import { VmNetworkTab, VmNetworkActions } from './nics/vmNicsCard.jsx';
 import Consoles from './consoles/consoles.jsx';
@@ -145,17 +149,58 @@ export const VmDetailsPage = ({
             body: <VmNetworkTab vm={vm} dispatch={dispatch} config={config}
                                 networks={networks}
                                 onAddErrorNotification={onAddErrorNotification} />,
-        },
+        }
     ];
     if (vm.snapshots !== -1 && vm.snapshots !== undefined) {
-        cardContents.push({
-            id: cockpit.format("$0-snapshots", vmId(vm.name)),
-            className: "snapshots-card",
-            title: _("Snapshots"),
-            actions: <VmSnapshotsActions vm={vm} dispatch={dispatch} />,
-            body: <VmSnapshotsCard vm={vm} dispatch={dispatch} config={config}
-                                   onAddErrorNotification={onAddErrorNotification} />
-        });
+        cardContents.push(
+            {
+                id: cockpit.format("$0-snapshots", vmId(vm.name)),
+                className: "snapshots-card",
+                title: _("Snapshots"),
+                actions: <VmSnapshotsActions vm={vm} dispatch={dispatch} />,
+                body: <VmSnapshotsCard vm={vm} dispatch={dispatch} config={config}
+                                       onAddErrorNotification={onAddErrorNotification} />
+            }
+        );
+    }
+    if (libvirtVersion && libvirtVersion >= 6008000 && vm.connectionName == "system") {
+        cardContents.push(
+            {
+                id: `${vmId(vm.name)}-filesystems`,
+                className: "filesystems-card",
+                title: (
+                    <>
+                        {_("Shared directories")}
+                        <Popover
+                            headerContent={_("Shared host directories need to be manually mounted inside the VM")}
+                            bodyContent={
+                                <CodeBlock>
+                                    <CodeBlockCode>mount -t virtiofs [mount tag] [mount point]</CodeBlockCode>
+                                </CodeBlock>
+                            }
+                            footerContent={
+                                <List>
+                                    <ListItem>{_("mount tag: The tag associated to the exported mount point")}</ListItem>
+                                    <ListItem>{_("mount point: The mount point inside the guest")}</ListItem>
+                                </List>
+                            }
+                            hasAutoWidth>
+                            <Button variant="plain" aria-label={_("more info")}>
+                                <HelpIcon />
+                            </Button>
+                        </Popover>
+                    </>
+                ),
+                actions: <VmFilesystemActions connectionName={vm.connectionName}
+                                              dispatch={dispatch}
+                                              objPath={vm.id}
+                                              vmName={vm.name}
+                                              vmState={vm.state}
+                                              memory={vm.memory}
+                                              memoryBacking={vm.memoryBacking} />,
+                body: <VmFilesystemsCard filesystems={vm.filesystems} vmName={vm.name} />
+            }
+        );
     }
 
     const cards = cardContents.map(card => {
@@ -167,7 +212,7 @@ export const VmDetailsPage = ({
                     <CardTitle><h2>{card.title}</h2></CardTitle>
                     {card.actions && <CardActions>{card.actions}</CardActions>}
                 </CardHeader>
-                <CardBody className={["disks-card", "networks-card", "snapshots-card"].includes(card.className) ? "contains-list" : ""}>
+                <CardBody className={["disks-card", "networks-card", "snapshots-card", "filesystems-card"].includes(card.className) ? "contains-list" : ""}>
                     {card.body}
                 </CardBody>
                 <CardFooter />
