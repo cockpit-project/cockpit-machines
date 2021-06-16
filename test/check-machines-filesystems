@@ -31,18 +31,23 @@ from testlib import skipImage, nondestructive, test_main  # noqa
 
 @nondestructive
 class TestMachinesFilesystems(VirtualMachinesCase):
+    def testBasicSystemConnection(self):
+        self._testBasic()
 
-    def testBasic(self):
+    def testBasicSessionConnection(self):
+        self._testBasic("session")
+
+    def _testBasic(self, connection="system"):
         b = self.browser
         m = self.machine
 
         m.execute("mkdir -p /tmp/dir1 /tmp/dir2")
 
-        self.createVm("subVmTest1", running=False)
+        self.createVm("subVmTest1", running=False, connection=connection)
         self.login_and_go("/machines")
-        self.goToVmPage("subVmTest1")
+        self.goToVmPage("subVmTest1", connectionName=connection)
 
-        if m.image in ["rhel-8-5", "centos-8-stream", "ubuntu-2004", "fedora-33"]:
+        if m.image in ["rhel-8-5", "centos-8-stream", "ubuntu-2004", "fedora-33"] or connection == "session":
             b.wait_not_present("#vm-subVmTest1-filesystems-add")
             return
 
