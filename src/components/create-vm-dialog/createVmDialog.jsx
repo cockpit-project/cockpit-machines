@@ -750,8 +750,7 @@ class CreateVmModal extends React.Component {
             useCloudInit: false,
             source: '',
             os: undefined,
-            memorySize: Math.min(convertToUnit(1024, units.MiB, units.GiB), // tied to Unit
-                                 Math.floor(convertToUnit(props.nodeMaxMemory, units.KiB, units.GiB))),
+            memorySize: props.nodeMaxMemory ? Math.min(1, Math.floor(convertToUnit(props.nodeMaxMemory, units.KiB, units.GiB))) : 1,
             memorySizeUnit: units.GiB.name,
             storageSize: convertToUnit(10 * 1024, units.MiB, units.GiB), // tied to Unit
             storageSizeUnit: units.GiB.name,
@@ -1209,7 +1208,4 @@ CreateVmAction.propTypes = {
     nodeMaxMemory: PropTypes.number,
     onAddErrorNotification: PropTypes.func.isRequired,
     systemInfo: PropTypes.object.isRequired,
-};
-CreateVmAction.defaultProps = {
-    nodeMaxMemory: 1048576, // 1GiB
 };
