@@ -40,6 +40,7 @@ import {
     digitFilter,
     convertToUnit,
     timeoutedPromise,
+    toReadableNumber,
     units,
     getStorageVolumesUsage,
     LIBVIRT_SYSTEM_CONNECTION,
@@ -179,7 +180,7 @@ function validateParams(vmParams) {
     if (vmParams.nodeMaxMemory && vmParams.memorySize > Math.floor(convertToUnit(vmParams.nodeMaxMemory, units.KiB, vmParams.memorySizeUnit))) {
         validationFailed.memory = cockpit.format(
             _("Up to $0 $1 available on the host"),
-            Math.floor(convertToUnit(vmParams.nodeMaxMemory, units.KiB, vmParams.memorySizeUnit)),
+            toReadableNumber(convertToUnit(vmParams.nodeMaxMemory, units.KiB, vmParams.memorySizeUnit)),
             vmParams.memorySizeUnit
         );
     }
@@ -590,7 +591,7 @@ const MemoryRow = ({ memorySize, memorySizeUnit, nodeMaxMemory, minimumMemory, o
         nodeMaxMemory
             ? cockpit.format(
                 _("Up to $0 $1 available on the host"),
-                Math.floor(convertToUnit(nodeMaxMemory, units.KiB, memorySizeUnit)),
+                toReadableNumber(convertToUnit(nodeMaxMemory, units.KiB, memorySizeUnit)),
                 memorySizeUnit
             ) : ""
     );
@@ -638,7 +639,7 @@ const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit,
         poolSpaceAvailable
             ? cockpit.format(
                 _("Up to $0 $1 available on the default location"),
-                Math.floor(convertToUnit(poolSpaceAvailable, units.B, storageSizeUnit)),
+                toReadableNumber(convertToUnit(poolSpaceAvailable, units.B, storageSizeUnit)),
                 storageSizeUnit
             )
             : ""
