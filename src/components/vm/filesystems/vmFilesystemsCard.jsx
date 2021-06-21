@@ -141,7 +141,7 @@ const VmFilesystemAddModal = ({ connectionName, dispatch, memory, memoryBacking,
     };
     return (
         <Modal position="top" isOpen variant="medium" onClose={() => setIsOpen(false)}
-               title={_("Share a shared host directory with the guest")}
+               title={_("Share a host directory with the guest")}
                footer={
                    <>
                        {dialogError && <ModalError dialogError={_("Failed to add shared directory")} dialogErrorDetail={dialogError} />}
