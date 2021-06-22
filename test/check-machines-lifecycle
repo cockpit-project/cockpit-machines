@@ -29,6 +29,8 @@ sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
 from machineslib import VirtualMachinesCase  # noqa
 from testlib import nondestructive, skipImage, test_main, wait  # noqa
 
+distrosWithoutSnapshot = ["centos-8-stream", "debian-stable", "rhel-8-4", "rhel-8-5", "ubuntu-2004"]
+
 
 @nondestructive
 class TestMachinesLifecycle(VirtualMachinesCase):
@@ -400,6 +402,32 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         self.performAction(name, "delete")
         b.click("#vm-{0}-delete-modal-dialog button:contains(Delete)".format(name))
         self.waitVmRow(name, 'system', False)
+
+        if m.image not in distrosWithoutSnapshot:
+            # Delete a VM with snapshots and ensure the qcow2 image overlays get also cleaned up
+            name = "vm-with-snapshots"
+            self.createVm(name, running=False)
+
+            m.execute("virsh snapshot-create-as --domain {0} --name snapshotA --description 'Description of snapshotA'".format(name))
+
+            qemu_img_info = m.execute("qemu-img info /var/lib/libvirt/images/{0}-2.img".format(name))
+            self.assertIn("snapshotA", qemu_img_info)
+
+            # snapshots events not available yet: https://gitlab.com/libvirt/libvirt/-/issues/44
+            b.reload()
+            b.enter_page('/machines')
+            self.goToVmPage(name)
+            b.wait_in_text("#vm-{0}-snapshot-0-name".format(name), "snapshotA")
+
+            self.performAction(name, "delete")
+
+            # Unselect the disks - we don't want to delete them
+            b.click("#vm-vm-with-snapshots-delete-modal-dialog ul li:first-child #disk-source-file")
+            b.click("#vm-vm-with-snapshots-delete-modal-dialog button:contains(Delete)")
+            b.wait_not_present("#vm-{0}-delete-modal-dialog".format(name))
+
+            qemu_img_info = m.execute("qemu-img info /var/lib/libvirt/images/{0}-2.img".format(name))
+            self.assertNotIn("snapshotA", qemu_img_info)
 
         # Try to delete a transient VM
         name = "transient-VM"
