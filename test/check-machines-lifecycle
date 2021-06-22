@@ -281,6 +281,18 @@ class TestMachinesLifecycle(VirtualMachinesCase):
             b.wait_not_present(".pf-c-empty-state")
             self.waitVmRow("subVmTest1")
 
+            # Ensure that create VM dialog does not crash after starting libvirt from the UI
+            # https://bugzilla.redhat.com/show_bug.cgi?id=1974228
+            b.click("#create-new-vm")
+            b.wait_visible("#create-vm-dialog")
+
+            self.browser.switch_to_top()
+            self.browser.wait_not_visible("#navbar-oops")
+
+            self.browser.reload()
+            self.browser.enter_page('/machines')
+            self.browser.wait_in_text("body", "Virtual machines")
+
         hack_libvirtd_crash()
         m.execute("systemctl stop {0}".format(libvirtServiceName))
         b.wait_in_text(".pf-c-empty-state", "Virtualization service (libvirt) is not active")

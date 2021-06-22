@@ -109,7 +109,7 @@ function interfaces(state, action) {
         }
 
         const updatedIface = Object.assign({}, state[index], iface);
-        return replaceResource({ state, updatedIface, index });
+        return replaceResource({ state, updatedResource: updatedIface, index });
     }
     default:
         return state;
@@ -174,7 +174,7 @@ function nodeDevices(state, action) {
         }
 
         const updatedNodedev = Object.assign({}, state[index], nodedev);
-        return replaceResource({ state, updatedNodedev, index });
+        return replaceResource({ state, updatedResource: updatedNodedev, index });
     }
     default:
         return state;
