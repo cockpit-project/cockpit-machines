@@ -177,7 +177,7 @@ function validateParams(vmParams) {
         validationFailed.storage = _("Storage size must not be 0");
     }
 
-    if (vmParams.nodeMaxMemory && vmParams.memorySize > Math.floor(convertToUnit(vmParams.nodeMaxMemory, units.KiB, vmParams.memorySizeUnit))) {
+    if (vmParams.nodeMaxMemory && vmParams.memorySize > convertToUnit(vmParams.nodeMaxMemory, units.KiB, vmParams.memorySizeUnit)) {
         validationFailed.memory = cockpit.format(
             _("Up to $0 $1 available on the host"),
             toReadableNumber(convertToUnit(vmParams.nodeMaxMemory, units.KiB, vmParams.memorySizeUnit)),
