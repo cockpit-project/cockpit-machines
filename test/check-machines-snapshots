@@ -85,17 +85,26 @@ class TestMachinesSnapshots(VirtualMachinesCase):
         self.performAction("subVmTest1", "forceOff")
 
         time1 = datetime.now().strftime("%H:%M:%S")
-        m.execute("virsh snapshot-create-as --domain subVmTest1 --name snapshotC --description 'Description of snapshotC'")
+        long_description = "This is a long description"*10
+        m.execute("virsh snapshot-create-as --domain subVmTest1 --name snapshotC --description '{0}'".format(long_description))
 
         b.reload()  # snapshots events not available yet: https://gitlab.com/libvirt/libvirt/-/issues/44
         b.enter_page('/machines')
 
         b.wait_in_text("#vm-subVmTest1-snapshot-0-name", "snapshotC")
-        b.wait_in_text("#vm-subVmTest1-snapshot-0-description", "Description of snapshotC")
+        b.wait_in_text("#vm-subVmTest1-snapshot-0-description", long_description)
         b.wait_in_text("#vm-subVmTest1-snapshot-0-type", "shut off")
         b.wait_in_text("#vm-subVmTest1-snapshot-0-parent", "snapshotB")
         time2 = b.text("#vm-subVmTest1-snapshot-0-date")
         self.assertTrue(checkTimeDiff(time1, time2, 60))
+
+        b.assert_pixels(
+            "#vm-subVmTest1-snapshots", "vm-snapshost-card",
+            ignore=[
+                "tr:nth-child(1) .snap-creation-time",
+                "tr:nth-child(2) .snap-creation-time",
+            ]
+        )
 
     def testSnapshotCreate(self):
         b = self.browser

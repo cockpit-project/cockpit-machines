@@ -223,7 +223,7 @@ export class VmSnapshotsCard extends React.Component {
 
         detailMap = detailMap.filter(d => !d.hidden);
 
-        const columnTitles = detailMap.map(target => ({ title: target.name }));
+        const columnTitles = detailMap.map(target => ({ title: target.name, props: { width: 15 } }));
         let rows = [];
         if (vm.snapshots) {
             rows = vm.snapshots.sort((a, b) => ((b.creationTime - a.creationTime) || (a.name.localeCompare(b.name)))).map((target, snapId) => {
