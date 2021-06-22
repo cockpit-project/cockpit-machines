@@ -147,15 +147,24 @@ class TestMachinesSnapshots(VirtualMachinesCase):
                 if self.description:
                     b.set_input_text("#snapshot-create-dialog-description", self.description)
 
+            def assert_pixels(self):
+                if self.name == 'test_snap_1':
+                    b.assert_pixels("#vm-subVmTest1-create-snapshot-modal", "create-snapshot-dialog" + ("" if not self.xfail else "-error"))
+
             def cancel(self):
                 b.click(".pf-c-modal-box__footer button:contains(Cancel)")
                 b.wait_not_present("#vm-subVmTest1-create-snapshot-modal")
 
             def create(self):
+                if not self.xfail:
+                    self.assert_pixels()
+
                 b.click(".pf-c-modal-box__footer button:contains(Create)")
+
                 if not self.xfail:
                     b.wait_not_present("#vm-subVmTest1-create-snapshot-modal")
                 else:
+                    self.assert_pixels()
                     b.wait_visible("#snapshot-create-dialog-name[aria-invalid=true]")
                     b.click(".pf-c-modal-box__footer button:contains(Cancel)")
 
