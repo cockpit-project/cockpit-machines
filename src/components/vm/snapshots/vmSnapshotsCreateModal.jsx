@@ -34,7 +34,7 @@ import { getVmSnapshots } from '../../../actions/provider-actions.js';
 
 const _ = cockpit.gettext;
 
-const NameRow = ({ onValueChanged, dialogValues, onValidate }) => {
+const NameRow = ({ onValueChanged, dialogValues }) => {
     return (
         <FormGroup validated={dialogValues.validationError.name ? "error" : "default"}
             label={_("Name")}
