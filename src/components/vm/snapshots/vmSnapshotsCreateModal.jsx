@@ -34,25 +34,25 @@ import { getVmSnapshots } from '../../../actions/provider-actions.js';
 
 const _ = cockpit.gettext;
 
-const NameRow = ({ onValueChanged, dialogValues }) => {
+const NameRow = ({ onValueChanged, name, validationError }) => {
     return (
-        <FormGroup validated={dialogValues.validationError.name ? "error" : "default"}
+        <FormGroup validated={validationError.name ? "error" : "default"}
             label={_("Name")}
-            fieldId="name"
-            helperTextInvalid={dialogValues.validationError.name}>
-            <TextInput value={dialogValues.name}
-                validated={dialogValues.validationError.name ? "error" : "default"}
-                id="name"
+            fieldId="snapshot-create-dialog-name"
+            helperTextInvalid={validationError.name}>
+            <TextInput value={name}
+                validated={validationError.name ? "error" : "default"}
+                id="snapshot-create-dialog-name"
                 onChange={(value) => onValueChanged("name", value)} />
         </FormGroup>
     );
 };
 
-const DescriptionRow = ({ onValueChanged, dialogValues }) => {
+const DescriptionRow = ({ onValueChanged, description }) => {
     return (
-        <FormGroup fieldId="description" label={_("Description")}>
-            <TextArea value={dialogValues.description}
-                id="description"
+        <FormGroup fieldId="snapshot-create-dialog-description" label={_("Description")}>
+            <TextArea value={description}
+                id="snapshot-create-dialog-description"
                 onChange={(value) => onValueChanged("description", value)}
                 resizeOrientation="vertical"
             />
@@ -84,25 +84,27 @@ export class CreateSnapshotModal extends React.Component {
         this.setState({ dialogError: text, dialogErrorDetail: detail });
     }
 
-    onValidate() {
-        const { name, validationError } = this.state;
+    onValidate(submitted = false) {
+        const { name } = this.state;
         const { vm } = this.props;
+        const validationError = {};
 
-        const newValidationError = { ...validationError };
         if (vm.snapshots.findIndex(snap => snap.name === name) > -1)
-            newValidationError.name = "Name already exists";
-        else
-            newValidationError.name = undefined;
+            validationError.name = "Name already exists";
+        else if (!name && submitted)
+            validationError.name = "Name should not be empty";
 
-        this.setState(prevState => ({ ...prevState, validationError: newValidationError }));
+        return validationError;
     }
 
     onCreate() {
         const { vm, onClose, dispatch } = this.props;
-        const { name, description, validationError } = this.state;
+        const { name, description } = this.state;
+        const validationError = this.onValidate(true);
 
-        this.onValidate();
-        if (!validationError.name) {
+        this.setState({ submitted: true });
+
+        if (!Object.keys(validationError).length) {
             this.setState({ inProgress: true });
             createSnapshot({ connectionName: vm.connectionName, vmId: vm.id, name, description })
                     .then(() => {
@@ -119,11 +121,13 @@ export class CreateSnapshotModal extends React.Component {
 
     render() {
         const { idPrefix, onClose } = this.props;
+        const { name, description, submitted } = this.state;
+        const validationError = this.onValidate(submitted);
 
         const body = (
             <Form isHorizontal>
-                <NameRow dialogValues={this.state} onValueChanged={this.onValueChanged} />
-                <DescriptionRow dialogValues={this.state} onValueChanged={this.onValueChanged} />
+                <NameRow name={name} validationError={validationError} onValueChanged={this.onValueChanged} />
+                <DescriptionRow description={description} onValueChanged={this.onValueChanged} />
             </Form>
         );
 
