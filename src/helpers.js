@@ -30,10 +30,10 @@ export function dummyVmsFilter(vms, uiVms) {
 
 export function toReadableNumber(number) {
     if (number < 1) {
-        return number.toFixed(2);
+        return Math.floor(number * 100) / 100;
     } else {
-        const fixed1 = number.toFixed(1);
-        return (number - fixed1 === 0) ? number.toFixed(0) : fixed1;
+        const fixed1 = Math.floor((number * 10) / 10);
+        return (number - fixed1 === 0) ? Math.floor(number) : fixed1;
     }
 }
 

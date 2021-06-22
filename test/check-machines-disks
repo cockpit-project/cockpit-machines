@@ -205,8 +205,8 @@ class TestMachinesDisks(VirtualMachinesCase):
 
         self.wait_for_disk_stats("subVmTest1", "vdc")
         if b.is_present("#vm-subVmTest1-disks-vdc-used"):
-            b.wait_in_text("#vm-subVmTest1-disks-vdc-used", "0.00")
-            b.wait_in_text("#vm-subVmTest1-disks-vdc-capacity", "0.13")  # 128 MB
+            b.wait_in_text("#vm-subVmTest1-disks-vdc-used", "0")
+            b.wait_in_text("#vm-subVmTest1-disks-vdc-capacity", "0.12")  # 128 MB
 
         # Test remove disk - by external action
         m.execute("virsh detach-disk subVmTest1 vdc")
