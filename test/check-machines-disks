@@ -276,7 +276,7 @@ class TestMachinesDisks(VirtualMachinesCase):
 
             if self.pixel_test_tag:
                 self.test_obj.browser.assert_pixels("#vm-subVmTest1-disks-adddisk-dialog-modal-window", self.pixel_test_tag,
-                                                    ignore=["#vm-subVmTest1-disks-adddisk-dialog-modal-window .pf-c-expandable-section__toggle-icon"])
+                                                    ignore=[".pf-c-expandable-section__toggle-icon"])
 
             if self.verify:
                 self.add_disk()
