@@ -39,7 +39,7 @@ const NameRow = ({ onValueChanged, dialogValues }) => {
         <FormGroup validated={dialogValues.validationError.name ? "error" : "default"}
             label={_("Name")}
             fieldId="name"
-            helperText={dialogValues.validationError.name}>
+            helperTextInvalid={dialogValues.validationError.name}>
             <TextInput value={dialogValues.name}
                 validated={dialogValues.validationError.name ? "error" : "default"}
                 id="name"
