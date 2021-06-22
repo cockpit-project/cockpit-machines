@@ -117,7 +117,7 @@ class TestMachinesSnapshots(VirtualMachinesCase):
 
         class SnapshotCreateDialog(object):
             def __init__(
-                self, test_obj, name=None, description=None, state="shutoff", snap_num=0, remove=True
+                self, test_obj, name=None, description=None, state="shutoff", snap_num=0, xfail=False, remove=True
             ):
                 self.test_obj = test_obj
                 self.name = name
@@ -125,15 +125,17 @@ class TestMachinesSnapshots(VirtualMachinesCase):
                 self.state = state
                 self.snap_num = snap_num
                 self.remove = remove
+                self.xfail = xfail
 
             def execute(self):
                 self.open()
                 self.fill()
                 self.create()
-                self.verify_frontend()
-                self.verify_backend()
-                if self.remove:
-                    self.cleanup()
+                if not self.xfail:
+                    self.verify_frontend()
+                    self.verify_backend()
+                    if self.remove:
+                        self.cleanup()
 
             def open(self):
                 b.click("#vm-subVmTest1-add-snapshot-button")
@@ -141,9 +143,9 @@ class TestMachinesSnapshots(VirtualMachinesCase):
 
             def fill(self):
                 if self.name:
-                    b.set_input_text("#name", self.name)
+                    b.set_input_text("#snapshot-create-dialog-name", self.name)
                 if self.description:
-                    b.set_input_text("#description", self.description)
+                    b.set_input_text("#snapshot-create-dialog-description", self.description)
 
             def cancel(self):
                 b.click(".pf-c-modal-box__footer button:contains(Cancel)")
@@ -151,7 +153,11 @@ class TestMachinesSnapshots(VirtualMachinesCase):
 
             def create(self):
                 b.click(".pf-c-modal-box__footer button:contains(Create)")
-                b.wait_not_present("#vm-subVmTest1-create-snapshot-modal")
+                if not self.xfail:
+                    b.wait_not_present("#vm-subVmTest1-create-snapshot-modal")
+                else:
+                    b.wait_visible("#snapshot-create-dialog-name[aria-invalid=true]")
+                    b.click(".pf-c-modal-box__footer button:contains(Cancel)")
 
             def verify_frontend(self):
                 if self.name:
@@ -201,7 +207,17 @@ class TestMachinesSnapshots(VirtualMachinesCase):
             name="test_snap_1",
             description="Description of test_snap_1",
             state="shutoff",
+            remove=False,
         ).execute()
+
+        # Test inline validation for existing snapshot name
+        SnapshotCreateDialog(
+            self,
+            name="test_snap_1",
+            state="shutoff",
+            xfail=True,
+        ).execute()
+        m.execute("virsh snapshot-delete subVmTest1 test_snap_1")
 
         b.click("#vm-subVmTest1-run")
         b.wait_in_text("#vm-subVmTest1-state", "Running")
