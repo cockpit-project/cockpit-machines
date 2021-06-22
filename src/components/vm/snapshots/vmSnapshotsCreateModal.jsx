@@ -43,7 +43,6 @@ const NameRow = ({ onValueChanged, dialogValues }) => {
             <TextInput value={dialogValues.name}
                 validated={dialogValues.validationError.name ? "error" : "default"}
                 id="name"
-                type="text"
                 onChange={(value) => onValueChanged("name", value)} />
         </FormGroup>
     );
