@@ -99,11 +99,17 @@ class VirtualMachinesCaseHelpers:
         m.execute("virsh net-start default || true")
         m.execute(r"until virsh net-info default | grep 'Active:\s*yes'; do sleep 1; done")
 
-    def createVm(self, name, graphics='none', ptyconsole=False, running=True, memory=128):
+    def createVm(self, name, graphics='none', ptyconsole=False, running=True, memory=128, connection='system'):
         m = self.machine
 
         image_file = m.pull("cirros")
-        img = "/var/lib/libvirt/images/{0}-2.img".format(name)
+
+        if connection == "system":
+            img = "/var/lib/libvirt/images/{0}-2.img".format(name)
+        else:
+            m.execute("runuser -l admin -c 'mkdir -p /home/admin/.local/share/libvirt/images'")
+            img = "/home/admin/.local/share/libvirt/images/{0}-2.img".format(name)
+
         m.upload([image_file], img)
         m.execute("chmod 777 {0}".format(img))
 
@@ -124,22 +130,26 @@ class VirtualMachinesCaseHelpers:
             else:
                 console = "file,target_type=serial,path={} ".format(args["logfile"])
 
-        m.execute("virt-install --connect qemu:///system --name {0} "
-                  "--os-variant cirros0.4.0 "
-                  "--boot hd,network "
-                  "--vcpus 1 "
-                  "--memory {1} "
-                  "--import --disk {2} "
-                  "--graphics {3} "
-                  "--console {4}"
-                  "--print-step 1 > /tmp/xml".format(name, memory, img, "none" if graphics == "none" else graphics + ",listen=127.0.0.1", console))
+        command = ["virt-install --connect qemu:///{5} --name {0} "
+                   "--os-variant cirros0.4.0 "
+                   "--boot hd,network "
+                   "--vcpus 1 "
+                   "--memory {1} "
+                   "--import --disk {2} "
+                   "--graphics {3} "
+                   "--console {4}"
+                   "--print-step 1 > /tmp/xml-{5}".format(name, memory, img, "none" if graphics == "none" else graphics + ",listen=127.0.0.1", console, connection)]
 
-        m.execute("virsh define /tmp/xml")
+        command.append("virsh define /tmp/xml-" + connection)
         if running:
-            m.execute("virsh start {}".format(name))
+            command.append("virsh start {}".format(name))
 
-        m.execute('[ "$(virsh domstate {0})" = {1} ] || {{ virsh dominfo {0} >&2; cat /var/log/libvirt/qemu/{0}.log >&2; exit 1; }}'.format(name,
-                                                                                                                                            "running" if running else "\"shut off\""))
+        if connection == "system":
+            command.append('[ "$(virsh domstate {0})" = {1} ] || {{ virsh dominfo {0} >&2; cat /var/log/libvirt/qemu/{0}.log >&2; exit 1; }}'.format(name,
+                                                                                                                                                     "running" if running else "\"shut off\""))
+            m.execute(" && ".join(command))
+        else:
+            m.execute("runuser -l admin -c '" + " && ".join(command) + "'")
 
         # TODO check if kernel is booted
         # Ideally we would like to check guest agent event for that
@@ -196,19 +206,32 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
         self.addCleanup(m.execute, "systemctl stop libvirtd")
 
         # Stop all domains
-        self.addCleanup(m.execute, "for d in $(virsh list --name); do virsh destroy $d || true; done")
+        for connection in ["system", "session"]:
+            cmd = "for d in $(virsh -c qemu:///{0} list --name); do virsh -c qemu:///{0} destroy $d || true; done".format(connection)
+            if connection == "session":
+                cmd += "; for d in $(virsh -c qemu:///{0} list --all --name); do virsh -c qemu:///{0} undefine $d || true; done".format(connection)
+                cmd = "runuser -l admin -c '{0}'".format(cmd)
+            self.addCleanup(m.execute, cmd)
 
         # Cleanup pools
         self.addCleanup(m.execute, "rm -rf /run/libvirt/storage/*")
 
         # Stop all pools
-        self.addCleanup(m.execute, "for n in $(virsh pool-list --all --name); do virsh pool-destroy $n || true; done")
+        for connection in ["system", "session"]:
+            cmd = "for n in $(virsh -c qemu:///{0} pool-list --all --name); do virsh -c qemu:///{0} pool-destroy $n || true; done"
+            if connection == "session":
+                cmd = "runuser -l admin -c '{0}'".format(cmd)
+            self.addCleanup(m.execute, cmd)
 
         # Cleanup networks
         self.addCleanup(m.execute, "rm -rf /run/libvirt/network/test_network*")
 
         # Stop all networks
-        self.addCleanup(m.execute, "for n in $(virsh net-list --all --name); do virsh net-destroy $n || true; done")
+        for connection in ["system", "session"]:
+            cmd = "for n in $(virsh -c qemu:///{0} net-list --all --name); do virsh -c qemu:///{0} net-destroy $n || true; done"
+            if connection == "session":
+                cmd = "runuser -l admin -c '{0}'".format(cmd)
+            self.addCleanup(m.execute, cmd)
 
         # we don't have configuration to open the firewall for local libvirt machines, so just stop firewalld
         m.execute("systemctl stop firewalld; systemctl reset-failed libvirtd; systemctl try-restart libvirtd")
