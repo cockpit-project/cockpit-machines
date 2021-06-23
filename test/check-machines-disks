@@ -61,6 +61,21 @@ class TestMachinesDisks(VirtualMachinesCase):
         b = self.browser
         m = self.machine
 
+        def open(target):
+            b.click("#vm-subVmTest1-disks-{0}-edit".format(target))
+            b.wait_visible("#vm-subVmTest1-disks-{0}-edit-dialog".format(target))
+
+        def cancel(target):
+            b.click("#vm-subVmTest1-disks-{0}-edit-dialog-cancel".format(target))
+            b.wait_not_present("#vm-subVmTest1-disks-{0}-edit-dialog".format(target))
+
+        def save(target, xfail=None):
+            b.click("#vm-subVmTest1-disks-{0}-edit-dialog-save".format(target))
+            if xfail:
+                b.wait_in_text("#vm-subVmTest1-disks-{0}-edit-dialog .pf-c-alert".format(target), xfail)
+            else:
+                b.wait_not_present("#vm-subVmTest1-disks-{0}-edit-dialog".format(target))
+
         self.createVm("subVmTest1")
 
         # prepare libvirt storage pools
@@ -70,9 +85,8 @@ class TestMachinesDisks(VirtualMachinesCase):
         m.execute("virsh vol-create-as myPoolOne mydisk --capacity 100M --format raw")  # raw support shareable
         m.execute("virsh vol-create-as myPoolOne mydisk2 --capacity 100M --format raw")
         m.execute("virsh vol-create-as myPoolOne mydisk3 --capacity 100M --format qcow2")
-        wait(lambda: "mydisk" in m.execute("virsh vol-list myPoolOne"))
-        wait(lambda: "mydisk2" in m.execute("virsh vol-list myPoolOne"))
-        wait(lambda: "mydisk3" in m.execute("virsh vol-list myPoolOne"))
+        m.execute("virsh vol-create-as myPoolOne mydisk4 --capacity 100M --format qcow2")
+        wait(lambda: all(disk in m.execute("virsh vol-list myPoolOne") for disk in ["mydisk", "mydisk2", "mydisk3", "mydisk4"]))
 
         m.execute("virsh attach-disk --domain subVmTest1 --source {0}/mydisk --target vde --targetbus virtio --persistent".format(p1))
         m.execute("virsh attach-disk --domain subVmTest1 --source {0}/mydisk2 --target vdf --targetbus virtio".format(p1))
@@ -89,18 +103,14 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_not_present("#vm-subVmTest1-disks-vdf-edit")
 
         # Test qcow2 disk has only readonly attribute configurable
-        b.click("#vm-subVmTest1-disks-vdg-edit")
-        b.wait_visible("#vm-subVmTest1-disks-vdg-edit-dialog")
+        open("vdg")
         b.wait_visible("#vm-subVmTest1-disks-vdg-edit-readonly")
         b.wait_visible("#vm-subVmTest1-disks-vdg-edit-writable")
         b.wait_not_present("#vm-subVmTest1-disks-vdg-edit-writable-shareable")
-        b.click("#vm-subVmTest1-disks-vdg-edit-dialog-cancel")
-        b.wait_not_present("#vm-subVmTest1-disks-vdg-edit-dialog")
+        cancel("vdg")
 
         # Test configuration of readonly and shareable attributes
-        b.click("#vm-subVmTest1-disks-vde-edit")
-        b.wait_visible("#vm-subVmTest1-disks-vde-edit-dialog")
-
+        open("vde")
         # Changing readonly with running VM
         b.set_checked("#vm-subVmTest1-disks-vde-edit-readonly", True)
 
@@ -108,8 +118,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_visible("#vm-subVmTest1-disks-vde-edit-idle-message")
 
         # Save changes
-        b.click("#vm-subVmTest1-disks-vde-edit-dialog-save")
-        b.wait_not_present("#vm-subVmTest1-disks-vde-edit-dialog")
+        save("vde")
         # See tooltip present in disk listing table
         b.wait_visible("#vm-subVmTest1-disks-vde-access-tooltip")
 
@@ -121,42 +130,49 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_not_present("#vm-subVmTest1-disks-vde-access-tooltip")
 
         # Test configuration of readonly and shareable attributes for Shut off VM
-        b.click("#vm-subVmTest1-disks-vde-edit")
-        b.wait_visible("#vm-subVmTest1-disks-vde-edit-dialog")
-
+        open("vde")
         # Changing readonly
         b.set_checked("#vm-subVmTest1-disks-vde-edit-writable-shareable", True)
         # Tooltip in dialog should not be present
         b.wait_not_present("#vm-subVmTest1-disks-vde-edit-idle-message")
 
         # Close dialog
-        b.click("#vm-subVmTest1-disks-vde-edit-dialog-save")
-        b.wait_not_present("#vm-subVmTest1-disks-vde-edit-dialog")
+        save("vde")
         b.wait_in_text("#vm-subVmTest1-disks-vde-access", "Writeable and shared")
         b.wait_not_present("#vm-subVmTest1-disks-vde-access-tooltip")
 
         b.wait_in_text("#vm-subVmTest1-disks-vde-bus", "virtio")
         b.wait_not_present("#vm-subVmTest1-disks-vde-cache")
         # Change bus type to scsi and cache mode to writeback
-        b.click("#vm-subVmTest1-disks-vde-edit")
-        b.wait_visible("#vm-subVmTest1-disks-vde-edit-dialog")
+        open("vde")
         b.select_from_dropdown("#vm-subVmTest1-disks-vde-edit-bus-type", "scsi")
         b.select_from_dropdown("#vm-subVmTest1-disks-vde-edit-cache-mode", "writeback")
 
         # Close dialog
-        b.click("#vm-subVmTest1-disks-vde-edit-dialog-save")
-        b.wait_not_present("#vm-subVmTest1-disks-vde-edit-dialog")
+        save("vde")
         # Target has changed from vdX to sdX
         b.wait_in_text("#vm-subVmTest1-disks-sda-bus", "scsi")
         b.wait_in_text("#vm-subVmTest1-disks-sda-cache", "writeback")
+
+        if m.execute("virsh --version") >= "6.10.0":
+            # Check that errors appear correctly and dissappear when closing the dialog and reopening
+            m.execute("virsh attach-disk --domain subVmTest1 --source {0}/mydisk4 --target sdb --targetbus sata --persistent".format(p1))
+            b.reload()
+            b.enter_page('/machines')
+            open("sdb")
+            b.set_checked("#vm-subVmTest1-disks-sdb-edit-readonly", True)
+            save("sdb", "readonly sata disks are not supported")
+            cancel("sdb")
+            open("sdb")
+            b.wait_not_present("#vm-subVmTest1-disks-sdb-edit-dialog .pf-c-alert")
+            cancel("sdb")
 
         # Start Vm
         b.click("#vm-subVmTest1-run")
         b.wait_in_text("#vm-subVmTest1-state", "Running")
 
         # Test disk's bus and cache cannot be changed on running VM
-        b.click("#vm-subVmTest1-disks-sda-edit")
-        b.wait_visible("#vm-subVmTest1-disks-sda-edit-dialog")
+        open("sda")
         b.wait_visible("#vm-subVmTest1-disks-sda-edit-bus-type:disabled")
         b.wait_visible("#vm-subVmTest1-disks-sda-edit-cache-mode:disabled")
 
