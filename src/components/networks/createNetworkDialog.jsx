@@ -41,9 +41,9 @@ const _ = cockpit.gettext;
 const ConnectionRow = ({ connectionName }) => {
     return (
         <FormGroup fieldId="create-network-connection-name" label={_("Connection")} hasNoPaddingTop>
-            <samp id="create-network-connection-name">
+            <div id="create-network-connection-name">
                 {connectionName}
-            </samp>
+            </div>
         </FormGroup>
     );
 };

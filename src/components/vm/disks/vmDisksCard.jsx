@@ -293,9 +293,9 @@ export class VmDisksCard extends React.Component {
                        actionName={_("Remove")} />
                     { vm.persistent && vm.inactiveXML.disks[disk.target] && // supported only  for persistent disks
                     <EditDiskAction disk={disk}
-                        vm={vm}
-                        idPrefix={idPrefixRow}
-                        onAddErrorNotification={onAddErrorNotification} /> }
+                                    vm={vm}
+                                    idPrefix={`${idPrefixRow}-edit`}
+                                    onAddErrorNotification={onAddErrorNotification} /> }
                 </div>
             );
             columns.push({ title: diskActions });

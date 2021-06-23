@@ -17,7 +17,7 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import cockpit from 'cockpit';
 import {
     Alert, Button, Form, FormGroup,
@@ -46,9 +46,9 @@ const NameRow = ({ idPrefix, name, diskType }) => {
 
     return (
         <FormGroup fieldId={`${idPrefix}-name`} label={label} hasNoPaddingTop>
-            <samp id={`${idPrefix}-name`}>
+            <div id={`${idPrefix}-name`}>
                 {name}
-            </samp>
+            </div>
         </FormGroup>
     );
 };
@@ -139,7 +139,24 @@ const AccessRow = ({ onValueChanged, dialogValues, driverType, idPrefix }) => {
     );
 };
 
-export class EditDiskAction extends React.Component {
+export const EditDiskAction = ({ idPrefix, disk, onAddErrorNotification, vm }) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    return (
+        <>
+            <Button id={idPrefix} variant='secondary' onClick={() => setIsOpen(true)}>
+                {_("Edit")}
+            </Button>
+            {isOpen && <EditDiskModal idPrefix={idPrefix}
+                                      disk={disk}
+                                      onAddErrorNotification={onAddErrorNotification}
+                                      setIsOpen={setIsOpen}
+                                      vm={vm} />}
+        </>
+    );
+};
+
+export class EditDiskModal extends React.Component {
     constructor(props) {
         super(props);
         let access;
@@ -169,7 +186,7 @@ export class EditDiskAction extends React.Component {
     }
 
     onSaveClicked() {
-        const { disk, vm } = this.props;
+        const { disk, vm, setIsOpen } = this.props;
         const existingTargets = Object.getOwnPropertyNames(vm.disks);
 
         updateDiskAttributes({
@@ -181,15 +198,14 @@ export class EditDiskAction extends React.Component {
             cache: this.state.cacheMode,
             existingTargets
         })
-                .then(() => this.setState({ isOpen: false }))
+                .then(() => setIsOpen(false))
                 .fail((exc) => {
                     this.dialogErrorSet(_("Disk settings could not be saved"), exc.message);
                 });
     }
 
     render() {
-        const { vm, disk } = this.props;
-        const idPrefix = `${this.props.idPrefix}-edit`;
+        const { vm, disk, idPrefix, setIsOpen } = this.props;
 
         const defaultBody = (
             <Form isHorizontal>
@@ -223,33 +239,27 @@ export class EditDiskAction extends React.Component {
         };
 
         return (
-            <>
-                <Button id={idPrefix} variant='secondary' onClick={() => this.setState({ isOpen: true })}>
-                    {_("Edit")}
-                </Button>
-                {this.state.isOpen &&
-                <Modal position="top" variant="medium" id={`${idPrefix}-dialog`}
-                       isOpen
-                       onClose={() => this.setState({ isOpen: false })}
-                       title={cockpit.format(_("Edit $0 attributes"), getDiskPrettyName(vm.disks[disk.target]))}
-                       footer={
-                           <>
-                               {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
-                               <Button id={`${idPrefix}-dialog-save`} variant='primary' onClick={this.onSaveClicked}>
-                                   {_("Save")}
-                               </Button>
-                               <Button id={`${idPrefix}-dialog-cancel`} variant='link' className='btn-cancel' onClick={() => this.setState({ isOpen: false })}>
-                                   {_("Cancel")}
-                               </Button>
-                           </>
-                       }
-                >
-                    <>
-                        {showWarning()}
-                        {defaultBody}
-                    </>
-                </Modal>}
-            </>
+            <Modal position="top" variant="medium" id={`${idPrefix}-dialog`}
+                   isOpen
+                   onClose={() => this.setState({ isOpen: false })}
+                   title={cockpit.format(_("Edit $0 attributes"), getDiskPrettyName(vm.disks[disk.target]))}
+                   footer={
+                       <>
+                           {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
+                           <Button id={`${idPrefix}-dialog-save`} variant='primary' onClick={this.onSaveClicked}>
+                               {_("Save")}
+                           </Button>
+                           <Button id={`${idPrefix}-dialog-cancel`} variant='link' className='btn-cancel' onClick={() => setIsOpen(false)}>
+                               {_("Cancel")}
+                           </Button>
+                       </>
+                   }
+            >
+                <>
+                    {showWarning()}
+                    {defaultBody}
+                </>
+            </Modal>
         );
     }
 }
