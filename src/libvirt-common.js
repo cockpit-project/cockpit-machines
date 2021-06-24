@@ -58,10 +58,6 @@ export function buildConsoleVVFile(consoleDetail) {
         'fullscreen=0\n';
 }
 
-export function buildScriptTimeoutFailHandler(handler, delay) {
-    return () => window.setTimeout(handler, delay);
-}
-
 export function canLoggedUserConnectSession (connectionName, loggedUser) {
     return connectionName !== 'session' || loggedUser.name !== 'root';
 }
@@ -1256,13 +1252,7 @@ export function INSTALL_VM({ onAddErrorNotification, ...vm }) {
             firmware == "efi" ? 'uefi' : '',
             autostart,
         ], opts)
-                .done(() => clearVmUiState(dispatch, name, connectionName))
-                .fail(ex => {
-                    clearVmUiState(dispatch, name, connectionName); // inProgress cleanup
-                    buildScriptTimeoutFailHandler(
-                        () => onAddErrorNotification({ text: cockpit.format(_("VM $0 failed to get installed"), name), detail: ex.message })
-                        , VMS_CONFIG.WaitForRetryInstallVm);
-                });
+                .always(() => clearVmUiState(dispatch, name, connectionName));
     };
 }
 
