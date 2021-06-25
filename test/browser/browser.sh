@@ -24,6 +24,9 @@ if ! rpm -q chromium; then
     dnf install -y chromium
 fi
 
+# Show critical packages versions
+rpm -qi qemu-kvm libvirt-daemon selinux-policy
+
 # create user account for logging in
 if ! id admin 2>/dev/null; then
     useradd -c Administrator -G wheel admin
