@@ -74,8 +74,9 @@ class TestMachinesHostDevs(VirtualMachinesCase):
         b.enter_page('/machines')
 
         b.wait_in_text("#vm-subVmTest1-hostdev-1-type", "pci")
-        b.wait_in_text("#vm-subVmTest1-hostdev-1-vendor", "Red Hat, Inc")
-        b.wait_in_text("#vm-subVmTest1-hostdev-1-product", "Virtio network device")
+        if 'virtio' in m.execute("cut -f18 /proc/bus/pci/devices"):
+            b.wait_in_text("#vm-subVmTest1-hostdev-1-vendor", "Red Hat, Inc")
+            b.wait_in_text("#vm-subVmTest1-hostdev-1-product", "Virtio network device")
         b.wait_in_text("#vm-subVmTest1-hostdev-1-source #1-slot", "0000:00:0f.0")
 
 
