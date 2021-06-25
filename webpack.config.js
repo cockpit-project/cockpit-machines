@@ -1,5 +1,4 @@
 const path = require("path");
-const childProcess = require('child_process');
 
 const copy = require("copy-webpack-plugin");
 const extract = require("mini-css-extract-plugin");
@@ -35,18 +34,6 @@ if (production) {
         test: /\.(js|html|css)$/,
         deleteOriginalAssets: true
     }));
-}
-
-/* check if sassc is available, to avoid unintelligible error messages */
-try {
-    childProcess.execFileSync('sassc', ['--version'], { stdio: ['pipe', 'inherit', 'inherit'] });
-} catch (e) {
-    if (e.code === 'ENOENT') {
-        console.error("ERROR: You need to install the 'sassc' package to build this project.");
-        process.exit(1);
-    } else {
-        throw e;
-    }
 }
 
 module.exports = {
@@ -149,7 +136,23 @@ module.exports = {
                             ]
                         },
                     },
-                    'sassc-loader',
+                    {
+                        loader: 'sass-loader',
+                        options: {
+                            sourceMap: !production,
+                            sassOptions: {
+                                quietDeps: true,
+                                outputStyle: production ? 'compressed' : undefined,
+                                includePaths: [
+                                    // Teach webpack to resolve these references in order to build PF3 scss
+                                    path.resolve(nodedir),
+                                    path.resolve(nodedir, 'font-awesome-sass', 'assets', 'stylesheets'),
+                                    path.resolve(nodedir, 'patternfly', 'dist', 'sass'),
+                                    path.resolve(nodedir, 'bootstrap-sass', 'assets', 'stylesheets'),
+                                ],
+                            },
+                        },
+                    },
                 ]
             },
             {
@@ -178,7 +181,16 @@ module.exports = {
                             ]
                         },
                     },
-                    'sassc-loader',
+                    {
+                        loader: 'sass-loader',
+                        options: {
+                            sourceMap: !production,
+                            sassOptions: {
+                                quietDeps: true,
+                                outputStyle: production ? 'compressed' : undefined,
+                            },
+                        },
+                    },
                 ]
             },
             {
@@ -193,7 +205,18 @@ module.exports = {
                             url: false
                         }
                     },
-                    'sassc-loader',
+                    {
+                        loader: 'sass-loader',
+                        options: {
+                            sourceMap: !production,
+                            sassOptions: {
+                                quietDeps: true,
+                                outputStyle: production ? 'compressed' : undefined,
+                            },
+                        },
+                    },
+
+
                 ]
             },
             {
