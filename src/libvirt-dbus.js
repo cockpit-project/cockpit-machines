@@ -77,6 +77,7 @@ import {
     canShutdown,
     checkLibvirtStatus,
     getDiskElemByTarget,
+    getDoc,
     getElem,
     getIfaceElemByMac,
     getSingleOptionalElem,
@@ -1404,16 +1405,15 @@ export function createFilesystem({ connectionName, objPath, source, target, xatt
                 if (!xmlDesc) {
                     return Promise.reject(new Error("Could not generate filesystem device XML"));
                 } else {
-                    const domainElem = getElem(domXml);
+                    const doc = getDoc(domXml);
+                    const domainElem = doc.firstElementChild;
                     const deviceElem = domainElem.getElementsByTagName("devices")[0];
                     const filesystemElem = getElem(xmlDesc);
+                    const s = new XMLSerializer();
 
                     deviceElem.appendChild(filesystemElem);
 
-                    const tmp = document.createElement("div");
-                    tmp.appendChild(domainElem);
-
-                    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [tmp.innerHTML], { timeout, type: 's' });
+                    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [s.serializeToString(doc)], { timeout, type: 's' });
                 }
             });
 }
@@ -1421,7 +1421,9 @@ export function createFilesystem({ connectionName, objPath, source, target, xatt
 export function setMemoryBacking({ connectionName, objPath, type, memory }) {
     return call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' })
             .then(domXml => {
-                const domainElem = getElem(domXml);
+                const doc = getDoc(domXml);
+                const domainElem = doc.firstElementChild;
+                const s = new XMLSerializer();
 
                 if (!domainElem)
                     throw new Error("setMemoryBacking: domXML has no domain element");
@@ -1434,10 +1436,7 @@ export function setMemoryBacking({ connectionName, objPath, type, memory }) {
 
                 domainElem.appendChild(getElem(memoryBackingElem));
 
-                const tmp = document.createElement("div");
-                tmp.appendChild(domainElem);
-
-                return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [tmp.innerHTML], { timeout, type: 's' });
+                return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [s.serializeToString(doc)], { timeout, type: 's' });
             });
 }
 
@@ -1563,7 +1562,9 @@ export function setCpuMode({
 export function setOSFirmware(connectionName, objPath, loaderType) {
     return call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' })
             .then(domXml => {
-                const domainElem = getElem(domXml);
+                const s = new XMLSerializer();
+                const doc = getDoc(domXml);
+                const domainElem = doc.firstElementChild;
 
                 if (!domainElem)
                     throw new Error("setOSFirmware: domXML has no domain element");
@@ -1581,10 +1582,7 @@ export function setOSFirmware(connectionName, objPath, loaderType) {
 
                 domainElem.appendChild(osElem);
 
-                const tmp = document.createElement("div");
-                tmp.appendChild(domainElem);
-
-                return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [tmp.innerHTML], { timeout, type: 's' });
+                return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [s.serializeToString(doc)], { timeout, type: 's' });
             });
 }
 
