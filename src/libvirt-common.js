@@ -124,7 +124,7 @@ export function getIfaceElemByMac(domxml, mac) {
     }
 }
 
-export function getElem(xml) {
+export function getDoc(xml) {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xml, "application/xml");
 
@@ -132,6 +132,12 @@ export function getElem(xml) {
         console.warn(`Can't parse dumpxml, input: "${xml}"`);
         return;
     }
+
+    return xmlDoc;
+}
+
+export function getElem(xml) {
+    const xmlDoc = getDoc(xml);
 
     return xmlDoc.firstElementChild;
 }

@@ -1,8 +1,10 @@
-import { getElem, getSingleOptionalElem } from './libvirt-common.js';
+import { getDoc, getElem, getSingleOptionalElem } from './libvirt-common.js';
 import { getNextAvailableTarget, logDebug } from './helpers.js';
 
 export function updateDisk({ domXml, diskTarget, readonly, shareable, busType, existingTargets, cache }) {
-    const domainElem = getElem(domXml);
+    const s = new XMLSerializer();
+    const doc = getDoc(domXml);
+    const domainElem = doc.firstElementChild;
     if (!domainElem)
         throw new Error("updateBootOrder: domXML has no domain element");
 
@@ -15,7 +17,7 @@ export function updateDisk({ domXml, diskTarget, readonly, shareable, busType, e
         if (target == diskTarget) {
             let shareAbleElem = getSingleOptionalElem(disk, "shareable");
             if (!shareAbleElem && shareable) {
-                shareAbleElem = document.createElement("shareable");
+                shareAbleElem = doc.createElement("shareable");
                 disk.appendChild(shareAbleElem);
             } else if (shareAbleElem && !shareable) {
                 shareAbleElem.remove();
@@ -23,7 +25,7 @@ export function updateDisk({ domXml, diskTarget, readonly, shareable, busType, e
 
             let readOnlyElem = getSingleOptionalElem(disk, "readonly");
             if (!readOnlyElem && readonly) {
-                readOnlyElem = document.createElement("readonly");
+                readOnlyElem = doc.createElement("readonly");
                 disk.appendChild(readOnlyElem);
             } else if (readOnlyElem && !readonly) {
                 readOnlyElem.remove();
@@ -46,15 +48,13 @@ export function updateDisk({ domXml, diskTarget, readonly, shareable, busType, e
         }
     }
 
-    const tmp = document.createElement("div");
-
-    tmp.appendChild(domainElem);
-
-    return tmp.innerHTML;
+    return s.serializeToString(doc);
 }
 
 export function updateBootOrder(domXml, devices) {
-    const domainElem = getElem(domXml);
+    const s = new XMLSerializer();
+    const doc = getDoc(domXml);
+    const domainElem = doc.firstElementChild;
     if (!domainElem)
         throw new Error("updateBootOrder: domXML has no domain element");
 
@@ -80,7 +80,7 @@ export function updateBootOrder(domXml, devices) {
         let bootElem = getSingleOptionalElem(disk, "boot");
         if (index >= 0) { // it will have bootorder
             if (!bootElem) {
-                bootElem = document.createElement("boot");
+                bootElem = doc.createElement("boot");
                 disk.appendChild(bootElem);
             }
             bootElem.setAttribute("order", index + 1);
@@ -99,7 +99,7 @@ export function updateBootOrder(domXml, devices) {
         let bootElem = getSingleOptionalElem(iface, "boot");
         if (index >= 0) { // it will have bootorder
             if (!bootElem) {
-                bootElem = document.createElement("boot");
+                bootElem = doc.createElement("boot");
                 iface.appendChild(bootElem);
             }
             bootElem.setAttribute("order", index + 1);
@@ -121,7 +121,7 @@ export function updateBootOrder(domXml, devices) {
         let bootElem = getSingleOptionalElem(redirdev, "boot");
         if (index >= 0) { // it will have bootorder
             if (!bootElem) {
-                bootElem = document.createElement("boot");
+                bootElem = doc.createElement("boot");
                 redirdev.appendChild(bootElem);
             }
             bootElem.setAttribute("order", index + 1);
@@ -232,7 +232,7 @@ export function updateBootOrder(domXml, devices) {
 
         if (index >= 0) { // it will have bootorder
             if (!bootElem) {
-                bootElem = document.createElement("boot");
+                bootElem = doc.createElement("boot");
                 hostdev.appendChild(bootElem);
             }
             bootElem.setAttribute("order", index + 1);
@@ -242,10 +242,7 @@ export function updateBootOrder(domXml, devices) {
         }
     }
 
-    const tmp = document.createElement("div");
-    tmp.appendChild(domainElem);
-
-    return tmp.innerHTML;
+    return s.serializeToString(doc);
 }
 
 /**
@@ -282,8 +279,7 @@ export function updateNetworkIface({ domXml, macAddress, newMacAddress, networkS
             if (networkState) {
                 let linkElem = getSingleOptionalElem(interfaceElem, 'link');
                 if (linkElem === undefined) {
-                    const doc = document.implementation.createDocument('', '', null);
-                    linkElem = doc.createElement('link');
+                    linkElem = xmlDoc.createElement('link');
                     interfaceElem.appendChild(linkElem);
                 }
                 linkElem.setAttribute('state', networkState);
@@ -303,7 +299,7 @@ export function updateNetworkIface({ domXml, macAddress, newMacAddress, networkS
                     sourceElem = undefined;
                 }
                 if (!sourceElem) {
-                    sourceElem = document.createElement("source");
+                    sourceElem = xmlDoc.createElement("source");
                     interfaceElem.appendChild(sourceElem);
                 }
                 if (networkType === 'network')
@@ -334,30 +330,31 @@ export function updateNetworkIface({ domXml, macAddress, newMacAddress, networkS
  * This function is used to define only offline attribute of memory.
  */
 export function updateMaxMemory(domXml, maxMemory) {
-    const domainElem = getElem(domXml);
+    const doc = getDoc(domXml);
+    const domainElem = doc.firstElementChild;
+    const s = new XMLSerializer();
 
     const memElem = domainElem.getElementsByTagName("memory")[0];
     memElem.textContent = `${maxMemory}`;
 
-    const tmp = document.createElement("div");
-    tmp.appendChild(domainElem);
-
-    return tmp.innerHTML;
+    return s.serializeToString(doc);
 }
 
 export function updateVCPUSettings(domXml, count, max, sockets, cores, threads) {
-    const domainElem = getElem(domXml);
+    const s = new XMLSerializer();
+    const doc = getDoc(domXml);
+    const domainElem = doc.firstElementChild;
     if (!domainElem)
         throw new Error("updateVCPUSettings: domXML has no domain element");
 
     let cpuElem = domainElem.getElementsByTagName("cpu")[0];
     if (!cpuElem) {
-        cpuElem = document.createElement("cpu");
+        cpuElem = doc.createElement("cpu");
         domainElem.appendChild(cpuElem);
     }
     let topologyElem = cpuElem.getElementsByTagName("topology")[0];
     if (!topologyElem) {
-        topologyElem = document.createElement("topology");
+        topologyElem = doc.createElement("topology");
         cpuElem.appendChild(topologyElem);
     }
     topologyElem.setAttribute("sockets", sockets);
@@ -366,7 +363,7 @@ export function updateVCPUSettings(domXml, count, max, sockets, cores, threads) 
 
     let vcpuElem = domainElem.getElementsByTagName("vcpu")[0];
     if (!vcpuElem) {
-        vcpuElem = document.createElement("vcpu");
+        vcpuElem = doc.createElement("vcpu");
         domainElem.appendChild(vcpuElem);
         vcpuElem.setAttribute("placement", "static");
     }
@@ -374,9 +371,5 @@ export function updateVCPUSettings(domXml, count, max, sockets, cores, threads) 
     vcpuElem.setAttribute("current", count);
     vcpuElem.textContent = max;
 
-    const tmp = document.createElement("div");
-
-    tmp.appendChild(domainElem);
-
-    return tmp.innerHTML;
+    return s.serializeToString(doc);
 }
