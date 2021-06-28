@@ -191,7 +191,7 @@ fi
 
 if [ "$START_VM" = "true" ]; then
     vmExists "$VM_NAME" || handleFailure $?
-    virsh -c "$CONNECTION_URI" -q dumpxml "$VM_NAME" > "$XMLS_FILE"
+    virsh -c "$CONNECTION_URI" -q dumpxml --inactive "$VM_NAME" > "$XMLS_FILE"
 fi
 
 # LAST STEP ONLY - virt-install can output 1 or 2 steps
