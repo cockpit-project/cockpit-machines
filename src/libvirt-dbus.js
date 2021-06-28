@@ -1473,7 +1473,7 @@ export function detachIface(mac, connectionName, id, live, persistent) {
                 if (ifaceInactiveXML && persistent)
                     detachFlags |= Enum.VIR_DOMAIN_AFFECT_CONFIG;
 
-                return call(connectionName, id, 'org.libvirt.Domain', 'DetachDevice', [ifaceXML, detachFlags], { timeout, type: 'su' });
+                return call(connectionName, id, 'org.libvirt.Domain', 'DetachDevice', [(ifaceInactiveXML && persistent) ? ifaceInactiveXML : ifaceXML, detachFlags], { timeout, type: 'su' });
             })
             .then(() => getVm({ connectionName, id }));
 }
