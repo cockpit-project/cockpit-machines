@@ -855,3 +855,28 @@ export function getNextAvailableTarget(existingTargets, busType) {
         i++;
     }
 }
+
+export function getNodeDevSource(dev) {
+    let source;
+
+    if (dev.capability.type === "pci") {
+        let domain = Number(dev.capability.domain);
+        let bus = Number(dev.capability.bus);
+        let slot = Number(dev.capability.slot);
+        let func = Number(dev.capability.function);
+
+        domain = domain.toString(16).padStart(4, '0');
+        bus = bus.toString(16).padStart(2, '0');
+        slot = slot.toString(16).padStart(2, '0');
+        func = func.toString(16).padStart(1, '0');
+
+        source = `${domain}:${bus}:${slot}.${func}`;
+    } else if (dev.capability.type === "usb_device") {
+        const device = dev.devnum;
+        const bus = dev.busnum;
+
+        source = `${bus}.${device}`;
+    }
+
+    return source;
+}
