@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import {
+    Button,
     DescriptionList,
     DescriptionListTerm,
     DescriptionListGroup,
@@ -29,8 +30,29 @@ import {
 import cockpit from 'cockpit';
 import { vmId, findHostNodeDevice } from "../../../helpers.js";
 import { ListingTable } from "cockpit-components-table.jsx";
+import AddHostDev from "./hostDevAdd.jsx";
 
 const _ = cockpit.gettext;
+
+export const VmHostDevActions = ({ vm, nodeDevices }) => {
+    const [showAttachModal, setShowAttachModal] = useState(false);
+
+    const idPrefix = `${vmId(vm.name)}-hostdevs`;
+
+    return (
+        <>
+            <Button id={`${idPrefix}-add`} variant='secondary' onClick={() => setShowAttachModal(true)}>
+                {_("Add host device")}
+            </Button>
+            {showAttachModal &&
+                <AddHostDev close={() => setShowAttachModal(false)}
+                            idPrefix={idPrefix}
+                            vm={vm}
+                            nodeDevices={nodeDevices} />
+            }
+        </>
+    );
+};
 
 /* Adds an optional description-value pair to an array which represents multiple values of a table cell
  *
