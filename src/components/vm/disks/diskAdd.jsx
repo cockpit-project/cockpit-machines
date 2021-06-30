@@ -179,22 +179,36 @@ class AdditionalOptions extends React.Component {
     }
 }
 
-const CreateNewDisk = ({ idPrefix, onValueChanged, validationFailed, dialogValues, vmStoragePools, vm }) => {
-    const storagePool = vmStoragePools.find(pool => pool.name == dialogValues.storagePoolName);
+const CreateNewDisk = ({
+    format,
+    idPrefix,
+    onValueChanged,
+    size,
+    storagePoolName,
+    unit,
+    validationFailed,
+    vm,
+    vmStoragePools,
+    volumeName,
+}) => {
+    const storagePool = vmStoragePools.find(pool => pool.name == storagePoolName);
     const poolTypesNotSupportingVolumeCreation = ['iscsi', 'iscsi-direct', 'gluster', 'mpath'];
 
     return (
         <>
             <PoolRow idPrefix={idPrefix}
-                     storagePoolName={dialogValues.storagePoolName}
+                     storagePoolName={storagePoolName}
                      validationFailed={validationFailed}
                      onValueChanged={onValueChanged}
                      vmStoragePools={vmStoragePools.map(pool => ({ ...pool, disabled: poolTypesNotSupportingVolumeCreation.includes(pool.type) }))} />
             {storagePool &&
-            <VolumeCreateBody idPrefix={idPrefix}
+            <VolumeCreateBody format={format}
+                              size={size}
                               storagePool={storagePool}
+                              unit={unit}
                               validationFailed={validationFailed}
-                              dialogValues={dialogValues}
+                              volumeName={volumeName}
+                              idPrefix={idPrefix}
                               onValueChanged={onValueChanged} />}
         </>
     );
@@ -215,32 +229,41 @@ const ChangeShareable = ({ idPrefix, vms, storagePool, volumeName, onValueChange
     return <Alert isInline variant='warning' id={`${idPrefix}-vms-usage`} title={text} />;
 };
 
-const UseExistingDisk = ({ idPrefix, onValueChanged, validationFailed, dialogValues, vmStoragePools, vm, vms }) => {
+const UseExistingDisk = ({
+    existingVolumeName,
+    idPrefix,
+    onValueChanged,
+    storagePoolName,
+    validationFailed,
+    vm,
+    vmStoragePools,
+    vms,
+}) => {
     return (
         <>
             <PoolRow idPrefix={idPrefix}
-                     storagePoolName={dialogValues.storagePoolName}
+                     storagePoolName={storagePoolName}
                      validationFailed={validationFailed}
                      onValueChanged={onValueChanged}
                      vmStoragePools={vmStoragePools} />
             {vmStoragePools.length > 0 && <>
                 <SelectExistingVolume idPrefix={idPrefix}
-                                      storagePoolName={dialogValues.storagePoolName}
-                                      existingVolumeName={dialogValues.existingVolumeName}
+                                      storagePoolName={storagePoolName}
+                                      existingVolumeName={existingVolumeName}
                                       onValueChanged={onValueChanged}
                                       vmStoragePools={vmStoragePools}
                                       vmDisks={vm.disks} />
                 <ChangeShareable idPrefix={idPrefix}
-                    vms={vms}
-                    storagePool={vmStoragePools.find(pool => pool.name === dialogValues.storagePoolName)}
-                    volumeName={dialogValues.existingVolumeName}
-                    onValueChanged={onValueChanged} />
+                                 vms={vms}
+                                 storagePool={vmStoragePools.find(pool => pool.name === storagePoolName)}
+                                 volumeName={existingVolumeName}
+                                 onValueChanged={onValueChanged} />
             </>}
         </>
     );
 };
 
-const CustomPath = ({ idPrefix, onValueChanged, dialogValues }) => {
+const CustomPath = ({ idPrefix, onValueChanged, device }) => {
     return (<>
         <FormGroup id={`${idPrefix}-file`}
                    fieldId={`${idPrefix}-file-autocomplete`}
@@ -255,7 +278,7 @@ const CustomPath = ({ idPrefix, onValueChanged, dialogValues }) => {
                    label={_("Device")}>
             <FormSelect id={`${idPrefix}-select-device`}
                         onChange={value => onValueChanged('device', value)}
-                        value={dialogValues.device}>
+                        value={device}>
                 <FormSelectOption value="disk" key="disk"
                                   label={_("Disk image file")} />
                 <FormSelectOption value="cdrom" key="cdrom"
@@ -575,7 +598,11 @@ export class AddDiskModalBody extends React.Component {
                     {this.state.mode === CREATE_NEW && (
                         <CreateNewDisk idPrefix={`${idPrefix}-new`}
                                        onValueChanged={this.onValueChanged}
-                                       dialogValues={this.state}
+                                       storagePoolName={this.state.storagePoolName}
+                                       volumeName={this.state.volumeName}
+                                       size={this.state.size}
+                                       unit={this.state.unit}
+                                       format={this.state.format}
                                        validationFailed={validationFailed}
                                        vmStoragePools={storagePools}
                                        vm={vm} />
@@ -583,7 +610,8 @@ export class AddDiskModalBody extends React.Component {
                     {this.state.mode === USE_EXISTING && (
                         <UseExistingDisk idPrefix={`${idPrefix}-existing`}
                                          onValueChanged={this.onValueChanged}
-                                         dialogValues={this.state}
+                                         storagePoolName={this.state.storagePoolName}
+                                         existingVolumeName={this.state.existingVolumeName}
                                          validationFailed={validationFailed}
                                          vmStoragePools={storagePools}
                                          vms={vms}
@@ -592,7 +620,7 @@ export class AddDiskModalBody extends React.Component {
                     {this.state.mode === CUSTOM_PATH && (
                         <CustomPath idPrefix={idPrefix}
                                     onValueChanged={this.onValueChanged}
-                                    dialogValues={this.state} />
+                                    device={this.state.device} />
                     )}
                     {vm.persistent &&
                     <PermanentChange idPrefix={idPrefix}

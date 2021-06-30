@@ -110,28 +110,40 @@ const VolumeDetails = ({ idPrefix, size, unit, format, storagePoolCapacity, stor
     );
 };
 
-export const VolumeCreateBody = ({ idPrefix, storagePool, validationFailed, onValueChanged, dialogValues }) => {
+export const VolumeCreateBody = ({
+    format,
+    idPrefix,
+    onValueChanged,
+    size,
+    storagePool,
+    unit,
+    validationFailed,
+    volumeName,
+}) => {
     return (
         <>
             <VolumeName idPrefix={idPrefix}
-                        volumeName={dialogValues.volumeName}
+                        volumeName={volumeName}
                         validationFailed={validationFailed}
                         onValueChanged={onValueChanged} />
-            <VolumeDetails idPrefix={idPrefix}
-                           size={dialogValues.size}
-                           unit={dialogValues.unit}
-                           format={dialogValues.format}
+            <VolumeDetails format={format}
+                           idPrefix={idPrefix}
+                           onValueChanged={onValueChanged}
+                           size={size}
                            storagePoolCapacity={storagePool.capacity}
                            storagePoolType={storagePool.type}
-                           validationFailed={validationFailed}
-                           onValueChanged={onValueChanged} />
+                           unit={unit}
+                           validationFailed={validationFailed} />
         </>
     );
 };
 
 VolumeCreateBody.propTypes = {
+    format: PropTypes.string.isRequired,
     idPrefix: PropTypes.string.isRequired,
-    storagePool: PropTypes.object.isRequired,
     onValueChanged: PropTypes.func.isRequired,
-    dialogValues: PropTypes.object.isRequired,
+    size: PropTypes.number.isRequired,
+    storagePool: PropTypes.object.isRequired,
+    unit: PropTypes.string.isRequired,
+    volumeName: PropTypes.string.isRequired,
 };

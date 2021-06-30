@@ -107,11 +107,14 @@ class CreateStorageVolumeModal extends React.Component {
                        </>
                    }>
                 <Form isHorizontal>
-                    <VolumeCreateBody idPrefix={idPrefix}
+                    <VolumeCreateBody format={this.state.format}
+                                      idPrefix={idPrefix}
+                                      onValueChanged={this.onValueChanged}
+                                      size={this.state.size}
                                       storagePool={this.props.storagePool}
-                                      dialogValues={this.state}
+                                      unit={this.state.unit}
                                       validationFailed={validationFailed}
-                                      onValueChanged={this.onValueChanged} />
+                                      volumeName={this.state.volumeName} />
                 </Form>
             </Modal>
         );
