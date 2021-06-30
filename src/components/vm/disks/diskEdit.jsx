@@ -241,7 +241,7 @@ export class EditDiskModal extends React.Component {
         return (
             <Modal position="top" variant="medium" id={`${idPrefix}-dialog`}
                    isOpen
-                   onClose={() => this.setState({ isOpen: false })}
+                   onClose={() => setIsOpen(false)}
                    title={cockpit.format(_("Edit $0 attributes"), getDiskPrettyName(vm.disks[disk.target]))}
                    footer={
                        <>

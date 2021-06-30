@@ -102,6 +102,11 @@ class TestMachinesDisks(VirtualMachinesCase):
         # Test non-persistent disks are not configurable
         b.wait_not_present("#vm-subVmTest1-disks-vdf-edit")
 
+        # Test close button
+        open("vdg")
+        b.click("#vm-subVmTest1-disks-vdg-edit-dialog > button:first-child")
+        b.wait_not_present("#vm-subVmTest1-disks-vdg-edit-dialog")
+
         # Test qcow2 disk has only readonly attribute configurable
         open("vdg")
         b.wait_visible("#vm-subVmTest1-disks-vdg-edit-readonly")
