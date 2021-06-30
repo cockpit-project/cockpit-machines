@@ -316,7 +316,7 @@ export class VmNetworkTab extends React.Component {
                     const isUp = network.state === 'up';
                     const editNICAction = () => {
                         const editNICDialogProps = {
-                            idPrefix: `${id}-network-${networkId}`,
+                            idPrefix: `${id}-network-${networkId}-edit-dialog`,
                             vm,
                             network,
                             availableSources,
@@ -324,7 +324,7 @@ export class VmNetworkTab extends React.Component {
                         };
                         if (vm.persistent && this.state.networkDevices !== undefined) {
                             return (
-                                <Button id={`${editNICDialogProps.idPrefix}-edit-dialog`} variant='secondary'
+                                <Button id={editNICDialogProps.idPrefix} variant='secondary'
                                         onClick={() => this.setState({ editNICDialogProps })}>
                                     {_("Edit")}
                                 </Button>
