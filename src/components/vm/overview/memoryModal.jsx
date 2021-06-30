@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Form, FormGroup, Modal } from '@patternfly/react-core';
+import { Button, Form, Modal } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 
 import cockpit from 'cockpit';
@@ -16,7 +16,7 @@ import {
     setMaxMemory,
 } from '../../../libvirt-dbus.js';
 
-import 'form-layout.scss';
+import './memoryModal.scss';
 
 const _ = cockpit.gettext;
 
@@ -119,27 +119,25 @@ export class MemoryModal extends React.Component {
         const idPrefix = vmId(vm.name) + '-memory-modal';
         const defaultBody = (
             <Form isHorizontal id='memory-config-dialog'>
-                <FormGroup fieldId={`${idPrefix}-memory`} label={_("Current allocation")}>
-                    <MemorySelectRow id={`${idPrefix}-memory`}
-                        value={Math.floor(convertToUnit(this.state.memory, 'KiB', this.state.memoryUnit))}
-                        minValue={Math.floor(convertToUnit(this.state.minAllowedMemory, 'KiB', this.state.memoryUnit))}
-                        maxValue={Math.floor(convertToUnit(this.state.maxMemory, 'KiB', this.state.memoryUnit))}
-                        initialUnit={this.state.memoryUnit}
-                        onValueChange={value => this.onValueChanged('memory', value)}
-                        onUnitChange={value => this.onValueChanged('memoryUnit', value)} />
-                </FormGroup>
+                <MemorySelectRow id={`${idPrefix}-memory`}
+                    label={_("Current allocation")}
+                    value={Math.floor(convertToUnit(this.state.memory, 'KiB', this.state.memoryUnit))}
+                    minValue={Math.floor(convertToUnit(this.state.minAllowedMemory, 'KiB', this.state.memoryUnit))}
+                    maxValue={Math.floor(convertToUnit(this.state.maxMemory, 'KiB', this.state.memoryUnit))}
+                    initialUnit={this.state.memoryUnit}
+                    onValueChange={value => this.onValueChanged('memory', value)}
+                    onUnitChange={value => this.onValueChanged('memoryUnit', value)} />
 
-                <FormGroup fieldId={`${idPrefix}-max-memory`} label={_("Maximum allocation")}>
-                    <MemorySelectRow id={`${idPrefix}-max-memory`}
-                        value={Math.floor(convertToUnit(this.state.maxMemory, 'KiB', this.state.maxMemoryUnit))}
-                        minValue={Math.floor(convertToUnit(this.state.minAllowedMemory, 'KiB', this.state.maxMemoryUnit))}
-                        maxValue={Math.floor(convertToUnit(this.state.nodeMaxMemory, 'KiB', this.state.maxMemoryUnit))}
-                        initialUnit={this.state.maxMemoryUnit}
-                        onValueChange={value => this.onValueChanged('maxMemory', value)}
-                        onUnitChange={value => this.onValueChanged('maxMemoryUnit', value)}
-                        helperText={vm.state === 'running' && _("Only editable when the guest is shut off")}
-                        readOnly={vm.state != 'shut off'} />
-                </FormGroup>
+                <MemorySelectRow id={`${idPrefix}-max-memory`}
+                    label={_("Maximum allocation")}
+                    value={Math.floor(convertToUnit(this.state.maxMemory, 'KiB', this.state.maxMemoryUnit))}
+                    minValue={Math.floor(convertToUnit(this.state.minAllowedMemory, 'KiB', this.state.maxMemoryUnit))}
+                    maxValue={Math.floor(convertToUnit(this.state.nodeMaxMemory, 'KiB', this.state.maxMemoryUnit))}
+                    initialUnit={this.state.maxMemoryUnit}
+                    onValueChange={value => this.onValueChanged('maxMemory', value)}
+                    onUnitChange={value => this.onValueChanged('maxMemoryUnit', value)}
+                    helperText={vm.state === 'running' && _("Only editable when the guest is shut off")}
+                    isDisabled={vm.state != 'shut off'} />
             </Form>
         );
 

@@ -328,8 +328,8 @@ class TestMachinesSettings(VirtualMachinesCase):
         # Change memory
         b.wait_visible("#vm-subVmTest1-memory-modal-memory")
 
-        b.wait_attr("#vm-subVmTest1-memory-modal-memory-slider  div[role=slider].hide", "aria-valuemin", "128")
-        b.wait_attr("#vm-subVmTest1-memory-modal-max-memory-slider  div[role=slider].hide", "aria-valuemin", "128")
+        b.wait_attr("#vm-subVmTest1-memory-modal-memory-slider  div[role=slider]", "aria-valuemin", "128")
+        b.wait_attr("#vm-subVmTest1-memory-modal-max-memory-slider  div[role=slider]", "aria-valuemin", "128")
 
         # VM initially should have 256MiB
         current_memory = int(b.attr("#vm-subVmTest1-memory-modal-memory", "value"))
@@ -359,11 +359,6 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.set_input_text("#vm-subVmTest1-memory-modal-max-memory", str(current_memory - 20))
         b.blur("#vm-subVmTest1-memory-modal-max-memory")
         self.assertEqual(int(b.attr("#vm-subVmTest1-memory-modal-memory", "value")), current_memory - 20)
-
-        # Verify that increasing current memory in offline VMs above max memory will increase max memory as well
-        b.set_input_text("#vm-subVmTest1-memory-modal-memory", str(current_memory))
-        b.blur("#vm-subVmTest1-memory-modal-memory")
-        b.wait_attr("#vm-subVmTest1-memory-modal-max-memory", "value", str(current_memory))
 
         # Verify that unit conversions work
         b.select_from_dropdown("#vm-subVmTest1-memory-modal-memory-unit-select", "GiB")
