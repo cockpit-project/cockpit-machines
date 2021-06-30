@@ -195,16 +195,135 @@ class TestMachinesNICs(VirtualMachinesCase):
         b.wait_not_present("#vm-subVmTest1-network-3-mac")
         b.wait_not_present(".pf-c-modal-box")
 
+    class NICEditDialog:
+
+        def __init__(
+            self,
+            test_obj,
+            mac="52:54:00:f0:eb:63",
+            model=None,
+            nic_num=2,
+            source=None,
+            source_type=None,
+        ):
+            self.assertEqual = test_obj.assertEqual
+            self.browser = test_obj.browser
+            self.mac = mac
+            self.machine = test_obj.machine
+            self.model = model
+            self.nic_num = nic_num
+            self.source = source
+            self.source_type = source_type
+            self.vm_state = "running" if "running" in test_obj.machine.execute("virsh domstate subVmTest1") else "shut off"
+
+        def execute(self):
+            self.open()
+            self.fill()
+            self.save()
+            self.verify()
+            self.verify_overview()
+
+        def open(self):
+            b = self.browser
+
+            b.click(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog")
+            b.wait_visible(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-modal-window")
+
+            # select widget options are never visible for the headless chrome - call therefore directly the js function
+            self.source_type_current = b.attr(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-type", "data-value")
+            self.source_current = b.attr(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-source", "data-value")
+            self.mac_current = b.text(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-mac")
+            self.model_current = b.attr(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-model", "data-value")
+
+        def fill(self):
+            b = self.browser
+
+            if self.source_type:
+                b.select_from_dropdown(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-type", self.source_type)
+            if self.source:
+                b.select_from_dropdown(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-source", self.source)
+            if self.model:
+                b.select_from_dropdown(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-model", self.model)
+
+            if self.vm_state == "running":
+                b.wait_attr(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-mac", "readonly", "")
+            else:
+                b.set_input_text(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-mac", self.mac)
+
+            if (self.vm_state == "running" and
+                    (self.source_type is not None and self.source_type != self.source_type_current or
+                        self.source is not None and self.source != self.source_current or
+                        self.model is not None and self.model != self.model_current or
+                        self.mac is not None and self.mac != self.mac_current)):
+                b.wait_visible(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-idle-message")
+            else:
+                b.wait_not_present(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-idle-message")
+
+        def save(self):
+            b = self.browser
+
+            b.click(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-save")
+            b.wait_not_present(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-modal-window")
+
+        def cancel(self):
+            b = self.browser
+
+            b.click(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-cancel")
+            b.wait_not_present(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-modal-window")
+
+        def verify(self):
+            dom_xml = "virsh -c qemu:///system dumpxml --domain subVmTest1"
+            mac_string = '"{0}"'.format(self.mac)
+            xmllint_element = "{0} | xmllint --xpath 'string(//domain/devices/interface[starts-with(mac/@address,{1})]/{{prop}})' - 2>&1 || true".format(dom_xml, mac_string)
+
+            if self.source_type == "network":
+                self.assertEqual(
+                    "network" if self.vm_state == "shut off" else self.source_type_current,
+                    self.machine.execute(xmllint_element.format(prop='@type')).strip()
+                )
+                if self.source:
+                    self.assertEqual(
+                        self.source if self.vm_state == "shut off" else self.source_current,
+                        self.machine.execute(xmllint_element.format(prop='source/@network')).strip()
+                    )
+            elif self.source_type == "direct":
+                self.assertEqual(
+                    "direct" if self.vm_state == "shut off" else self.source_type_current,
+                    self.machine.execute(xmllint_element.format(prop='@type')).strip()
+                )
+                if self.source:
+                    self.assertEqual(
+                        self.source if self.vm_state == "shut off" else self.source,
+                        self.machine.execute(xmllint_element.format(prop='source/@dev')).strip()
+                    )
+            if self.model:
+                self.assertEqual(
+                    self.model if self.vm_state == "shut off" else self.model_current,
+                    self.machine.execute(xmllint_element.format(prop='model/@type')).strip()
+                )
+
+        def verify_overview(self):
+            b = self.browser
+
+            b.wait_in_text(
+                f"#vm-subVmTest1-network-{self.nic_num}-type",
+                self.source_type if self.source_type and self.vm_state == "shut off" else self.source_type_current
+            )
+            b.wait_in_text(
+                f"#vm-subVmTest1-network-{self.nic_num}-source",
+                self.source if self.source and self.vm_state == "shut off" else self.source_current
+            )
+            b.wait_in_text(
+                f"#vm-subVmTest1-network-{self.nic_num}-model",
+                self.model if self.model and self.vm_state == "shut off" else self.model_current
+            )
+            b.wait_in_text(
+                f"#vm-subVmTest1-network-{self.nic_num}-mac",
+                self.mac if self.mac and self.vm_state == "shut off" else self.mac_current
+            )
+
     def testNICEdit(self):
         b = self.browser
-
-        def open(iface):
-            b.click("#vm-subVmTest1-network-{0}-edit-dialog".format(iface))
-            b.wait_visible("#vm-subVmTest1-network-{0}-edit-dialog-modal-window".format(iface))
-
-        def save(iface):
-            b.click("#vm-subVmTest1-network-{0}-edit-dialog-save".format(iface))
-            b.wait_not_present("#vm-subVmTest1-network-{0}-edit-dialog-modal-window".format(iface))
 
         self.add_veth("eth42")
         self.add_veth("eth43")
@@ -226,41 +345,34 @@ class TestMachinesNICs(VirtualMachinesCase):
         ).execute()
 
         # The dialog fields should reflect the permanent configuration
-        open(2)
-        b.wait_in_text("#vm-subVmTest1-network-2-select-source", "eth42")
+        dialog = self.NICEditDialog(self)
+        dialog.open()
+        b.wait_in_text("#vm-subVmTest1-network-2-edit-dialog-source", "eth42")
         b.wait_val("#vm-subVmTest1-network-2-edit-dialog-mac", "52:54:00:f0:eb:63")
-
         b.assert_pixels("#vm-subVmTest1-network-2-edit-dialog-modal-window", "vm-edit-nic-modal")
+        dialog.cancel()
 
         # Changing the NIC configuration for a shut off VM should not display any warning
-        b.select_from_dropdown("#vm-subVmTest1-network-2-select-type", "direct")
-        b.select_from_dropdown("#vm-subVmTest1-network-2-select-source", "eth43")
-        b.set_input_text("#vm-subVmTest1-network-2-edit-dialog-mac", "52:54:00:f0:eb:62")
-        b.wait_not_present("#vm-subVmTest1-network-2-edit-dialog-idle-message")
-        save(2)
+        self.NICEditDialog(
+            self,
+            source_type="direct",
+            source="eth43",
+        ).execute()
 
-        # The NICs table should reflect the updated permanent configuration
-        b.wait_in_text("#vm-subVmTest1-network-2-type", "direct")
-        b.wait_in_text("#vm-subVmTest1-network-2-source", "eth43")
-        b.wait_in_text("#vm-subVmTest1-network-2-mac", "52:54:00:f0:eb:62")
-
-        # Test a warning shows up when editing a vNIC for a running VM
         b.click("#vm-subVmTest1-run")
         b.wait_in_text("#vm-subVmTest1-state", "Running")
 
-        open(2)
-        b.select_from_dropdown("#vm-subVmTest1-network-2-select-source", "eth42")
-        b.wait_attr("#vm-subVmTest1-network-2-edit-dialog-mac", "readonly", "")
-        b.wait_visible("#vm-subVmTest1-network-2-edit-dialog-idle-message")
-        save(2)
-
-        # The NICs table should display the permanent configuration which is different than the live which we just set
-        b.wait_in_text("#vm-subVmTest1-network-2-source", "eth43")
+        # Test a warning shows up when editing a vNIC for a running VM
+        self.NICEditDialog(
+            self,
+            source="eth42",
+        ).execute()
 
         # Change source type from direct to virtual network - https://bugzilla.redhat.com/show_bug.cgi?id=1977669
-        open(2)
-        b.select_from_dropdown("#vm-subVmTest1-network-2-select-type", "network")
-        save(2)
+        self.NICEditDialog(
+            self,
+            source_type="network",
+        ).execute()
 
     class NICAddDialog:
 
@@ -301,11 +413,11 @@ class TestMachinesNICs(VirtualMachinesCase):
             self.browser.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Add virtual network interface")
 
         def fill(self):
-            self.browser.select_from_dropdown("#vm-subVmTest1-add-iface-select-type", self.source_type)
+            self.browser.select_from_dropdown("#vm-subVmTest1-add-iface-type", self.source_type)
             if self.source:
-                self.browser.select_from_dropdown("#vm-subVmTest1-add-iface-select-source", self.source)
+                self.browser.select_from_dropdown("#vm-subVmTest1-add-iface-source", self.source)
             if self.model:
-                self.browser.select_from_dropdown("#vm-subVmTest1-add-iface-select-model", self.model)
+                self.browser.select_from_dropdown("#vm-subVmTest1-add-iface-model", self.model)
 
             if self.mac:
                 self.browser.click("#vm-subVmTest1-add-iface-set-mac")

@@ -31,7 +31,7 @@ const _ = cockpit.gettext;
 
 const NetworkMacRow = ({ mac, onValueChanged, idPrefix, isShutoff }) => {
     let macInput = (
-        <TextInput id={`${idPrefix}-edit-dialog-mac`}
+        <TextInput id={`${idPrefix}-mac`}
                    isReadOnly={!isShutoff}
                    value={mac}
                    onChange={value => onValueChanged("networkMac", value)} />
@@ -40,7 +40,7 @@ const NetworkMacRow = ({ mac, onValueChanged, idPrefix, isShutoff }) => {
         macInput = <Tooltip content={_("Only editable when the guest is shut off")}>{macInput}</Tooltip>;
 
     return (
-        <FormGroup fieldId={`${idPrefix}-edit-dialog-mac`} label={_("MAC address")}>
+        <FormGroup fieldId={`${idPrefix}-mac`} label={_("MAC address")}>
             {macInput}
         </FormGroup>
     );
@@ -162,20 +162,20 @@ export class EditNICModal extends React.Component {
                 this.state.networkSource !== this.getNetworkSource(network) ||
                 this.state.networkModel !== network.model)
             ) {
-                return <Alert isInline variant='warning' id={`${idPrefix}-edit-dialog-idle-message`} title={_("Changes will take effect after shutting down the VM")} />;
+                return <Alert isInline variant='warning' id={`${idPrefix}-idle-message`} title={_("Changes will take effect after shutting down the VM")} />;
             }
         };
 
         return (
-            <Modal position="top" variant="medium" id={`${idPrefix}-edit-dialog-modal-window`} isOpen onClose={this.props.onClose} className='nic-edit'
+            <Modal position="top" variant="medium" id={`${idPrefix}-modal-window`} isOpen onClose={this.props.onClose} className='nic-edit'
                    title={cockpit.format(_("$0 virtual network interface settings"), network.mac)}
                    footer={
                        <>
                            {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
-                           <Button isDisabled={this.state.saveDisabled} id={`${idPrefix}-edit-dialog-save`} variant='primary' onClick={this.save}>
+                           <Button isDisabled={this.state.saveDisabled} id={`${idPrefix}-save`} variant='primary' onClick={this.save}>
                                {_("Save")}
                            </Button>
-                           <Button id={`${idPrefix}-edit-dialog-cancel`} variant='link' className='btn-cancel' onClick={this.props.onClose}>
+                           <Button id={`${idPrefix}-cancel`} variant='link' className='btn-cancel' onClick={this.props.onClose}>
                                {_("Cancel")}
                            </Button>
                        </>

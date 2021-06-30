@@ -42,9 +42,10 @@ export const NetworkModelRow = ({ idPrefix, onValueChanged, dialogValues, osType
         availableModelTypes.push({ name: 'spapr-vlan' });
 
     return (
-        <FormGroup fieldId={`${idPrefix}-select-model`} label={_("Model")}>
-            <FormSelect id={`${idPrefix}-select-model`}
+        <FormGroup fieldId={`${idPrefix}-model`} label={_("Model")}>
+            <FormSelect id={`${idPrefix}-model`}
                         onChange={value => onValueChanged('networkModel', value)}
+                        data-value={defaultModelType}
                         value={defaultModelType}>
                 {availableModelTypes
                         .map(networkModel => {
@@ -120,9 +121,10 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
 
     return (
         <>
-            <FormGroup fieldId={`${idPrefix}-select-type`} label={_("Interface type")}>
-                <FormSelect id={`${idPrefix}-select-type`}
+            <FormGroup fieldId={`${idPrefix}-type`} label={_("Interface type")}>
+                <FormSelect id={`${idPrefix}-type`}
                             onChange={value => onValueChanged('networkType', value)}
+                            data-value={defaultNetworkType}
                             value={defaultNetworkType}>
                     {availableNetworkTypes
                             .map(networkType => {
@@ -135,10 +137,11 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
                 </FormSelect>
             </FormGroup>
             {["network", "direct", "bridge"].includes(dialogValues.networkType) && (
-                <FormGroup fieldId={`${idPrefix}-select-source`} label={_("Source")}>
-                    <FormSelect id={`${idPrefix}-select-source`}
+                <FormGroup fieldId={`${idPrefix}-source`} label={_("Source")}>
+                    <FormSelect id={`${idPrefix}-source`}
                                 onChange={value => onValueChanged('networkSource', value)}
                                 isDisabled={!networkSourceEnabled}
+                                data-value={defaultNetworkSource}
                                 value={defaultNetworkSource}>
                         {networkSourcesContent}
                     </FormSelect>
