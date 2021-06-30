@@ -19,6 +19,7 @@
 
 import os
 import sys
+import time
 
 # import Cockpit's machinery for test VMs and its browser test API
 TEST_DIR = os.path.dirname(__file__)
@@ -793,6 +794,21 @@ class TestMachinesDisks(VirtualMachinesCase):
             file_path='/var/lib/libvirt/novell.iso',
             mode='custom-path'
         ).execute()
+
+        # Ensure that pressing a few times arrow-down in the file selector will not cause an oops
+        # https://bugzilla.redhat.com/show_bug.cgi?id=1977554
+        self.VMAddDiskDialog(
+            self,
+            mode='custom-path'
+        ).open()
+        b.click("#vm-subVmTest1-disks-adddisk-file .pf-c-select__toggle-button")
+        b.wait_visible("#vm-subVmTest1-disks-adddisk-file-autocomplete")
+        b.key_press(chr(40), use_ord=True)
+        b.focus("#vm-subVmTest1-disks-adddisk-file-autocomplete li:first-child")
+        for retry in range(0, 10):
+            b.key_press(chr(40), use_ord=True)
+            time.sleep(0.5)
+        b.wait_not_present("#navbar-oops")
 
     @no_retry_when_changed
     def testAddDiskAdditionalOptions(self):
