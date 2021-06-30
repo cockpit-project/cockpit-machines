@@ -198,6 +198,14 @@ class TestMachinesNICs(VirtualMachinesCase):
     def testNICEdit(self):
         b = self.browser
 
+        def open(iface):
+            b.click("#vm-subVmTest1-network-{0}-edit-dialog".format(iface))
+            b.wait_visible("#vm-subVmTest1-network-{0}-edit-dialog-modal-window".format(iface))
+
+        def save(iface):
+            b.click("#vm-subVmTest1-network-{0}-edit-dialog-save".format(iface))
+            b.wait_not_present("#vm-subVmTest1-network-{0}-edit-dialog-modal-window".format(iface))
+
         self.add_veth("eth42")
         self.add_veth("eth43")
 
@@ -218,8 +226,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         ).execute()
 
         # The dialog fields should reflect the permanent configuration
-        b.click("#vm-subVmTest1-network-2-edit-dialog")
-        b.wait_visible("#vm-subVmTest1-network-2-edit-dialog-modal-window")
+        open(2)
         b.wait_in_text("#vm-subVmTest1-network-2-select-source", "eth42")
         b.wait_val("#vm-subVmTest1-network-2-edit-dialog-mac", "52:54:00:f0:eb:63")
 
@@ -230,8 +237,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         b.select_from_dropdown("#vm-subVmTest1-network-2-select-source", "eth43")
         b.set_input_text("#vm-subVmTest1-network-2-edit-dialog-mac", "52:54:00:f0:eb:62")
         b.wait_not_present("#vm-subVmTest1-network-2-edit-dialog-idle-message")
-        b.click("#vm-subVmTest1-network-2-edit-dialog-save")
-        b.wait_not_present("#vm-subVmTest1-network-2-edit-dialog-modal-window")
+        save(2)
 
         # The NICs table should reflect the updated permanent configuration
         b.wait_in_text("#vm-subVmTest1-network-2-type", "direct")
@@ -242,15 +248,19 @@ class TestMachinesNICs(VirtualMachinesCase):
         b.click("#vm-subVmTest1-run")
         b.wait_in_text("#vm-subVmTest1-state", "Running")
 
-        b.click("#vm-subVmTest1-network-2-edit-dialog")
+        open(2)
         b.select_from_dropdown("#vm-subVmTest1-network-2-select-source", "eth42")
         b.wait_attr("#vm-subVmTest1-network-2-edit-dialog-mac", "readonly", "")
         b.wait_visible("#vm-subVmTest1-network-2-edit-dialog-idle-message")
-        b.click("#vm-subVmTest1-network-2-edit-dialog-save")
-        b.wait_not_present("#vm-subVmTest1-network-2-edit-dialog-modal-window")
+        save(2)
 
         # The NICs table should display the permanent configuration which is different than the live which we just set
         b.wait_in_text("#vm-subVmTest1-network-2-source", "eth43")
+
+        # Change source type from direct to virtual network - https://bugzilla.redhat.com/show_bug.cgi?id=1977669
+        open(2)
+        b.select_from_dropdown("#vm-subVmTest1-network-2-select-type", "network")
+        save(2)
 
     class NICAddDialog:
 
