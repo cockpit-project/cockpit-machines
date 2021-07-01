@@ -18,7 +18,7 @@
  */
 import React from 'react';
 import {
-    Alert, Button, Checkbox,
+    Alert, Bullseye, Button, Checkbox,
     ExpandableSection, Form, FormGroup,
     FormSelect, FormSelectOption,
     Grid,
@@ -546,7 +546,11 @@ export class AddDiskModalBody extends React.Component {
 
         let defaultBody;
         if (this.state.dialogLoading) {
-            defaultBody = <Spinner isSVG />;
+            defaultBody = (
+                <Bullseye>
+                    <Spinner isSVG />
+                </Bullseye>
+            );
         } else {
             defaultBody = (
                 <Form isHorizontal>
