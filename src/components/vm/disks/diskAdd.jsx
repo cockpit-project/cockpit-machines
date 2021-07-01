@@ -436,14 +436,14 @@ export class AddDiskModalBody extends React.Component {
             }
 
             if (newBus) {
-                this.onValueChanged("busType", "scsi");
+                this.onValueChanged("busType", newBus);
                 // Disk device "cdrom" and bus "virtio" are incompatible, see:
                 // https://listman.redhat.com/archives/libvir-list/2019-January/msg01104.html
             } else if (value === "cdrom" && this.state.busType === "virtio") {
                 // use onValueChange instead of setState in order to perform subsequent state change logic
                 // According to https://libvirt.org/formatdomain.html#hard-drives-floppy-disks-cdroms (section about 'target'),
                 // scsi is the default option for libvirt in this case too
-                this.onValueChanged("busType", newBus);
+                this.onValueChanged("busType", "scsi");
             }
             break;
         }
