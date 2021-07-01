@@ -331,6 +331,7 @@ const VmActions = ({ vm, storagePools, onAddErrorNotification, isDetailsPage }) 
             <MigrateDialog key='action-migrate'
                            vm={vm}
                            connectionName={vm.connectionName}
+                           storagePools={storagePools}
                            toggleModal={() => toggleMigrateDialog(!showMigrateDialog)} />
         );
     }

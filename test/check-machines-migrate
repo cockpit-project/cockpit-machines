@@ -93,46 +93,49 @@ class TestMachinesMigration(VirtualMachinesCase):
         self.add_ram_disk(2, machine2)
 
     def testSharedStorageMigration(self):
-        self._testMigrationGeneric(False, False, None)
+        self._testMigrationGeneric(False, False, None, False)
 
     def testCopyStorageMigration(self):
-        self._testMigrationGeneric(True, False, None)
+        self._testMigrationGeneric(True, False, None, False)
+
+    def testCopyAndDeleteStorageMigration(self):
+        self._testMigrationGeneric(True, False, None, True)
 
     def testMoveTemporarilyMigration(self):
-        self._testMigrationGeneric(False, True, None)
+        self._testMigrationGeneric(False, True, None, False)
 
     def testFailMigrationPoolNotFound(self):
         # Equivalent storage pool is not present on the destination
-        self._testMigrationGeneric(True, False, "pool")
+        self._testMigrationGeneric(True, False, "pool", False)
 
     # Only qemu 5.1.0 and above does checking for volumes compatibility during migration
     # See https://mail.gnu.org/archive/html/qemu-devel/2020-04/msg05559.html
     @skipImage('Fails validation because ubuntu-2004 with qemu version below 5.1.0 doesnt compare volume sizes', "ubuntu-2004")
     def testFailMigrationVolumesNotCompatible(self):
         # Different sized volume already exists on destination
-        self._testMigrationGeneric(True, False, "volume")
+        self._testMigrationGeneric(True, False, "volume", False)
 
     def testFailMigrationTCPPortClosed(self):
         # Ports for TCP tranfer are closed
-        self._testMigrationGeneric(True, False, "port_closed")
+        self._testMigrationGeneric(True, False, "port_closed", False)
 
     def testFailMigrationAuthentication(self):
         # No key authentication is set up
-        self._testMigrationGeneric(True, False, "authentication")
+        self._testMigrationGeneric(True, False, "authentication", False)
 
     def testFailMigrationUriIncorrect(self):
         # Incorrect uri inputted
-        self._testMigrationGeneric(True, False, "uri")
+        self._testMigrationGeneric(True, False, "uri", False)
 
     def testFailMigrationDomainUnknown(self):
         # Destination domain name is not defined in /etc/hosts and is not resolvable
-        self._testMigrationGeneric(True, False, "domain")
+        self._testMigrationGeneric(True, False, "domain", False)
 
     def testFailMigrationStopLibvirtd(self):
         # Libvirtd.service is not working on the destination
-        self._testMigrationGeneric(True, False, "libvirtd")
+        self._testMigrationGeneric(True, False, "libvirtd", False)
 
-    def _testMigrationGeneric(self, copy_storage, temporary, fail):
+    def _testMigrationGeneric(self, copy_storage, temporary, fail, delete_storage):
         b = self.browser
         machine1 = self.machine
         machine2 = self.machines['machine2']
@@ -166,8 +169,11 @@ class TestMachinesMigration(VirtualMachinesCase):
 
         if copy_storage:
             b.click("#copy")
+            if delete_storage:
+                b.set_checked("#delete-storage", True)
         else:
             b.click("#shared")
+            b.wait_not_present("#delete-storage")
 
         if temporary and copy_storage:
             b.wait_visible(".footer-warning")
@@ -216,6 +222,13 @@ class TestMachinesMigration(VirtualMachinesCase):
             if not copy_storage:
                 # Running VM on destination host has disk with a block storage which is available on both source and destination
                 self.assertIn("disk type='block'", machine2.execute("virsh dumpxml subVmTest1"))
+
+            if delete_storage:
+                # fails if file is present
+                machine1.execute("[ ! -f /var/lib/libvirt/images/subVmTest1-2.img ]")
+            else:
+                # fails if file is not present
+                machine1.execute("[ -f /var/lib/libvirt/images/subVmTest1-2.img ]")
 
 
 if __name__ == '__main__':

@@ -34,7 +34,7 @@ import {
 } from '@patternfly/react-core';
 import { OutlinedQuestionCircleIcon } from "@patternfly/react-icons";
 
-import { migrateToUri } from '../../libvirt-dbus.js';
+import { deleteVmDisks, migrateToUri } from '../../libvirt-dbus.js';
 import { isEmpty, isObjectEmpty } from '../../helpers.js';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 
@@ -88,7 +88,7 @@ const DurationRow = ({ temporary, setTemporary }) => {
     );
 };
 
-const StorageRow = ({ storage, setStorage }) => {
+const StorageRow = ({ storage, setStorage, temporary, deleteStorage, setDeleteStorage }) => {
     return (
         <FormGroup hasNoPaddingTop
                    label={_("Storage")}
@@ -110,7 +110,8 @@ const StorageRow = ({ storage, setStorage }) => {
                                <OutlinedQuestionCircleIcon />
                            </button>
                        </Popover>
-                   }>
+                   }
+                   isStack>
             <Radio id="shared"
                    name="storage"
                    label={_("Storage is at a shared location")}
@@ -120,16 +121,25 @@ const StorageRow = ({ storage, setStorage }) => {
                    name="storage"
                    label={_("Copy storage")}
                    isChecked={storage === "copy"}
-                   onChange={() => setStorage("copy")} />
+                   onChange={() => setStorage("copy")}
+                   body={
+                       (storage === "copy" && !temporary)
+                           ? <Checkbox id="delete-storage"
+                                       isChecked={deleteStorage}
+                                       label={_("Delete storage from origin host after migration")}
+                                       onChange={value => setDeleteStorage(value)} />
+                           : null
+                   } />
         </FormGroup>
     );
 };
 
-export const MigrateDialog = ({ vm, connectionName, toggleModal }) => {
+export const MigrateDialog = ({ vm, connectionName, toggleModal, storagePools }) => {
     const [destUri, setDestUri] = useState("");
     const [error, setDialogError] = useState({});
     const [inProgress, setInProgress] = useState(false);
     const [storage, setStorage] = useState("nocopy");
+    const [deleteStorage, setDeleteStorage] = useState(false);
     const [temporary, setTemporary] = useState(false);
     const [validationFailed, setValidationFailed] = useState(false);
 
@@ -149,7 +159,20 @@ export const MigrateDialog = ({ vm, connectionName, toggleModal }) => {
 
         setInProgress(true);
         return migrateToUri(connectionName, vm.id, destUri, storage, temporary)
-                .then(toggleModal, exc => {
+                .then(() => {
+                    if (storage === "copy" && !temporary && deleteStorage) {
+                        const disks = Object.values(vm.disks);
+
+                        return deleteVmDisks({ connectionName, disks: disks, storagePools })
+                                .then(toggleModal, exc => {
+                                    setInProgress(false);
+                                    setDialogError({ dialogError: _("Storage deletion failed"), message: exc.message });
+                                });
+                    } else {
+                        toggleModal();
+                    }
+                })
+                .catch(exc => {
                     setInProgress(false);
                     setDialogError({ dialogError: _("Migration failed"), message: exc.message });
                 });
@@ -163,7 +186,10 @@ export const MigrateDialog = ({ vm, connectionName, toggleModal }) => {
             <DurationRow temporary={temporary}
                         setTemporary={setTemporary} />
             <StorageRow storage={storage}
-                        setStorage={setStorage} />
+                        setStorage={setStorage}
+                        temporary={temporary}
+                        deleteStorage={deleteStorage}
+                        setDeleteStorage={setDeleteStorage} />
         </Form>
     );
 
