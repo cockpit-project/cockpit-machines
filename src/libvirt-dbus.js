@@ -339,46 +339,9 @@ export function deleteVm({
     }
 
     function undefine() {
-        const storageVolPromises = [];
         const flags = Enum.VIR_DOMAIN_UNDEFINE_MANAGED_SAVE | Enum.VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA | Enum.VIR_DOMAIN_UNDEFINE_NVRAM;
 
-        for (let i = 0; i < options.storage.length; i++) {
-            const disk = options.storage[i];
-
-            switch (disk.type) {
-            case 'file': {
-                storageVolPromises.push(
-                    call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StorageVolLookupByPath', [disk.source.file], { timeout, type: 's' })
-                            .then(volPath => call(connectionName, volPath[0], 'org.libvirt.StorageVol', 'Delete', [0], { timeout, type: 'u' }))
-                            .catch(ex => {
-                                if (!ex.message.includes("no storage vol with matching path"))
-                                    return Promise.reject(ex);
-                                else
-                                    return cockpit.file(disk.source.file, { superuser: "try" }).replace(null); // delete key file
-                            })
-                );
-                const pool = storagePools.find(pool => pool.connectionName === connectionName && pool.volumes.some(vol => vol.path === disk.source.file));
-                if (pool)
-                    storageVolPromises.push(storagePoolRefresh(connectionName, pool.id));
-                break;
-            }
-            case 'volume': {
-                storageVolPromises.push(
-                    call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName', [disk.source.pool], { timeout, type: 's' })
-                            .then(objPath => call(connectionName, objPath[0], 'org.libvirt.StoragePool', 'StorageVolLookupByName', [disk.source.volume], { timeout, type: 's' }))
-                            .then(volPath => call(connectionName, volPath[0], 'org.libvirt.StorageVol', 'Delete', [0], { timeout, type: 'u' }))
-                );
-                const pool = storagePools.find(pool => pool.connectionName === connectionName && pool.name === disk.source.pool);
-                if (pool)
-                    storageVolPromises.push(storagePoolRefresh(connectionName, pool.id));
-                break;
-            }
-            default:
-                logDebug("Disks of type $0 are currently ignored during VM deletion".format(disk.type));
-            }
-        }
-
-        return Promise.all(storageVolPromises)
+        return deleteVmDisks({ connectionName, disks: options.storage, storagePools })
                 .then(() => {
                     return call(connectionName, objPath, 'org.libvirt.Domain', 'Undefine', [flags], { timeout, type: 'u' });
                 });
@@ -394,6 +357,52 @@ export function deleteVm({
                         return Promise.reject(ex);
                 });
     }
+}
+
+export function deleteVmDisks({
+    connectionName,
+    disks,
+    storagePools
+}) {
+    const storageVolPromises = [];
+
+    for (let i = 0; i < disks.length; i++) {
+        const disk = disks[i];
+
+        switch (disk.type) {
+        case 'file': {
+            storageVolPromises.push(
+                call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StorageVolLookupByPath', [disk.source.file], { timeout, type: 's' })
+                        .then(volPath => call(connectionName, volPath[0], 'org.libvirt.StorageVol', 'Delete', [0], { timeout, type: 'u' }))
+                        .catch(ex => {
+                            if (!ex.message.includes("no storage vol with matching path"))
+                                return Promise.reject(ex);
+                            else
+                                return cockpit.file(disk.source.file, { superuser: "try" }).replace(null); // delete key file
+                        })
+            );
+            const pool = storagePools.find(pool => pool.connectionName === connectionName && pool.volumes.some(vol => vol.path === disk.source.file));
+            if (pool)
+                storageVolPromises.push(storagePoolRefresh(connectionName, pool.id));
+            break;
+        }
+        case 'volume': {
+            storageVolPromises.push(
+                call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName', [disk.source.pool], { timeout, type: 's' })
+                        .then(objPath => call(connectionName, objPath[0], 'org.libvirt.StoragePool', 'StorageVolLookupByName', [disk.source.volume], { timeout, type: 's' }))
+                        .then(volPath => call(connectionName, volPath[0], 'org.libvirt.StorageVol', 'Delete', [0], { timeout, type: 'u' }))
+            );
+            const pool = storagePools.find(pool => pool.connectionName === connectionName && pool.name === disk.source.pool);
+            if (pool)
+                storageVolPromises.push(storagePoolRefresh(connectionName, pool.id));
+            break;
+        }
+        default:
+            logDebug("Disks of type $0 are currently ignored during VM deletion".format(disk.type));
+        }
+    }
+
+    return Promise.all(storageVolPromises);
 }
 
 export function detachDisk({
