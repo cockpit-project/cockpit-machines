@@ -76,7 +76,11 @@ export const CloneDialog = ({ name, connectionName, toggleModal }) => {
                    </Button>
                </>
            }>
-            <Form isHorizontal>
+            <Form onSubmit={e => {
+                e.preventDefault();
+                onClone();
+            }}
+            isHorizontal>
                 <FormGroup label={_("Name")} fieldId="vm-name"
                            id="vm-name-group"
                            helperTextInvalid={validationFailed.name}

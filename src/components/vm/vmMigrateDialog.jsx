@@ -156,7 +156,7 @@ export const MigrateDialog = ({ vm, connectionName, toggleModal }) => {
     }
 
     const body = (
-        <Form isHorizontal>
+        <Form onSubmit={e => e.preventDefault()} isHorizontal>
             <DestUriRow destUri={destUri}
                         setDestUri={setDestUri}
                         validationFailed={validationFailed} />

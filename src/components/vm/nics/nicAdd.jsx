@@ -131,7 +131,7 @@ export class AddNIC extends React.Component {
         const { idPrefix, vm } = this.props;
 
         const defaultBody = (
-            <Form isHorizontal>
+            <Form onSubmit={e => e.preventDefault()} isHorizontal>
                 <NetworkTypeAndSourceRow idPrefix={idPrefix}
                                          dialogValues={this.state}
                                          onValueChanged={this.onValueChanged}

@@ -549,7 +549,7 @@ export class AddDiskModalBody extends React.Component {
             defaultBody = <Spinner isSVG />;
         } else {
             defaultBody = (
-                <Form isHorizontal>
+                <Form onSubmit={e => e.preventDefault()} isHorizontal>
                     <FormGroup fieldId={`${idPrefix}-source`}
                                label={_("Source")} isInline hasNoPaddingTop>
                         <Radio id={`${idPrefix}-createnew`}
