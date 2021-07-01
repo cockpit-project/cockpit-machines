@@ -162,6 +162,15 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                         root_password="dogsaremybestfr13nds",
                                                                         start_vm=True))
 
+            # Test using a cloud image without setting the cloud init options
+            # https://bugzilla.redhat.com/show_bug.cgi?id=1978206
+            runner.createCloudBaseImageTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
+                                                                        storage_size=10, storage_size_unit='MiB',
+                                                                        location=config.VALID_DISK_IMAGE_PATH,
+                                                                        os_name=config.FEDORA_28,
+                                                                        os_short_id=config.FEDORA_28_SHORTID,
+                                                                        start_vm=True))
+
     def testCreateDownloadAnOS(self):
         runner = TestMachinesCreate.CreateVmRunner(self)
         config = TestMachinesCreate.TestCreateConfig
@@ -776,7 +785,11 @@ class TestMachinesCreate(VirtualMachinesCase):
 
             wait(lambda: self.machine.execute(virt_install_cmd), delay=3)
             virt_install_cmd_out = self.machine.execute(virt_install_cmd)
-            self.assertIn("--cloud-init user-data=", virt_install_cmd_out)
+            if self.user_login or self.user_password:
+                self.assertIn("--cloud-init user-data=", virt_install_cmd_out)
+
+            self.machine.execute(f"virsh destroy {self.name}")
+            self.assertIn(f"backing file: {self.location}", self.machine.execute(f"qemu-img info /var/lib/libvirt/images/{self.name}.qcow2"))
 
         def createAndVerifyVirtInstallArgsUnattended(self):
             self.browser.click(".pf-c-modal-box__footer button:contains(Create)")
@@ -880,7 +893,8 @@ class TestMachinesCreate(VirtualMachinesCase):
                 if self.is_unattended:
                     b.click("#unattended-installation")
                 else:
-                    b.click("#cloud-init-checkbox")
+                    if self.user_password or self.user_login or self.root_password:
+                        b.click("#cloud-init-checkbox")
 
                 if self.profile:
                     b.select_from_dropdown("#profile-select", self.profile)

@@ -562,19 +562,20 @@ const UsersConfigurationRow = ({
 };
 
 const CloudInitOptionsRow = ({
-    useCloudInit,
     onValueChanged,
     rootPassword,
     userLogin, userPassword,
     validationFailed,
 }) => {
+    const [showOptions, setShowOptions] = useState(false);
+
     return (
         <FormGroup fieldId="cloud-init-checkbox">
             <Checkbox id="cloud-init-checkbox"
-                      isChecked={useCloudInit}
-                      onChange={checked => onValueChanged('useCloudInit', checked)}
-                      label={_("Cloud init parameters")} />
-            {useCloudInit && <UsersConfigurationRow rootPassword={rootPassword}
+                      isChecked={showOptions}
+                      onChange={setShowOptions}
+                      label={_("Set cloud init parameters")} />
+            {showOptions && <UsersConfigurationRow rootPassword={rootPassword}
                                                     rootPasswordLabelInfo={_("Leave the password blank if you do not wish to set a root password")}
                                                     showUserFields
                                                     userLogin={userLogin}
@@ -747,7 +748,6 @@ class CreateVmModal extends React.Component {
             connectionName: LIBVIRT_SYSTEM_CONNECTION,
             sourceType: defaultSourceType,
             unattendedInstallation: false,
-            useCloudInit: false,
             source: '',
             os: undefined,
             memorySize: props.nodeMaxMemory ? Math.min(1, Math.floor(convertToUnit(props.nodeMaxMemory, units.KiB, units.GiB))) : 1,
@@ -926,7 +926,7 @@ class CreateVmModal extends React.Component {
                 userPassword: this.state.userPassword,
                 rootPassword: this.state.rootPassword,
                 userLogin: this.state.userLogin,
-                useCloudInit: this.state.useCloudInit,
+                useCloudInit: this.state.sourceType === CLOUD_IMAGE,
             };
 
             return timeoutedPromise(
@@ -1067,7 +1067,6 @@ class CreateVmModal extends React.Component {
                                       rootPassword={this.state.rootPassword}
                                       userLogin={this.state.userLogin}
                                       userPassword={this.state.userPassword}
-                                      useCloudInit={this.state.useCloudInit}
                                       onValueChanged={this.onValueChanged} />}
 
                 {this.state.sourceType !== CLOUD_IMAGE && startVmCheckbox}
