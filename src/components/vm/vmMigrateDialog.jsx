@@ -60,25 +60,25 @@ const DurationRow = ({ temporary, setTemporary }) => {
     return (
         <FormGroup hasNoPaddingTop
                    fieldId="temporary"
-                   label={
-                       <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }}>
-                           <span>{_("Duration")}</span>
-                           <Popover aria-label="Duration popover"
-                                    position={PopoverPosition.bottom}
-                                    enableFlip
-                                    bodyContent={<Flex direction={{ default: 'column' }}>
-                                        <FlexItem>
-                                            <h4 className="popover-headline">{_("Permanent (default)")}</h4>
-                                            <p>{_("The migrated VM configuration is removed from the source host. The destination host is considered the new home of the VM.")}</p>
-                                        </FlexItem>
-                                        <FlexItem>
-                                            <h4 className="popover-headline">{_("Temporary")}</h4>
-                                            <p>{_("A copy of the VM will run on the destination and will disappear when it is shut off. Meanwhile, the origin host keeps its copy of the VM configuration.")}</p>
-                                        </FlexItem>
-                                    </Flex>}>
+                   label={_("Duration")}
+                   labelIcon={
+                       <Popover aria-label="Duration popover"
+                                position={PopoverPosition.bottom}
+                                enableFlip
+                                bodyContent={<Flex direction={{ default: 'column' }}>
+                                    <FlexItem>
+                                        <h4 className="popover-headline">{_("Permanent (default)")}</h4>
+                                        <p>{_("The migrated VM configuration is removed from the source host. The destination host is considered the new home of the VM.")}</p>
+                                    </FlexItem>
+                                    <FlexItem>
+                                        <h4 className="popover-headline">{_("Temporary")}</h4>
+                                        <p>{_("A copy of the VM will run on the destination and will disappear when it is shut off. Meanwhile, the origin host keeps its copy of the VM configuration.")}</p>
+                                    </FlexItem>
+                                </Flex>}>
+                           <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
                                <OutlinedQuestionCircleIcon />
-                           </Popover>
-                       </Flex>
+                           </button>
+                       </Popover>
                    }>
             <Checkbox id="temporary"
                       isChecked={temporary}
@@ -91,25 +91,25 @@ const DurationRow = ({ temporary, setTemporary }) => {
 const StorageRow = ({ storage, setStorage }) => {
     return (
         <FormGroup hasNoPaddingTop
-                   label={
-                       <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }}>
-                           <span>{_("Storage")}</span>
-                           <Popover aria-label="Storage popover"
-                                    position={PopoverPosition.bottom}
-                                    enableFlip
-                                    bodyContent={<Flex direction={{ default: 'column' }}>
-                                        <FlexItem>
-                                            <h4 className="popover-headline">{_("Shared storage")}</h4>
-                                            <p>{_("Use the same location on both the origin and destination hosts for your storage. This can be a shared storage pool, NFS, or any other method of sharing storage.")}</p>
-                                        </FlexItem>
-                                        <FlexItem>
-                                            <h4 className="popover-headline">{_("Copy storage")}</h4>
-                                            <p>{_("Full disk images and the domain's memory will be migrated. Only non-shared, writable disk images will be transferred. Unused storage will remain on the origin after migration.")}</p>
-                                        </FlexItem>
-                                    </Flex>}>
+                   label={_("Storage")}
+                   labelIcon={
+                       <Popover aria-label="Storage popover"
+                                position={PopoverPosition.bottom}
+                                enableFlip
+                                bodyContent={<Flex direction={{ default: 'column' }}>
+                                    <FlexItem>
+                                        <h4 className="popover-headline">{_("Shared storage")}</h4>
+                                        <p>{_("Use the same location on both the origin and destination hosts for your storage. This can be a shared storage pool, NFS, or any other method of sharing storage.")}</p>
+                                    </FlexItem>
+                                    <FlexItem>
+                                        <h4 className="popover-headline">{_("Copy storage")}</h4>
+                                        <p>{_("Full disk images and the domain's memory will be migrated. Only non-shared, writable disk images will be transferred. Unused storage will remain on the origin after migration.")}</p>
+                                    </FlexItem>
+                                </Flex>}>
+                           <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
                                <OutlinedQuestionCircleIcon />
-                           </Popover>
-                       </Flex>
+                           </button>
+                       </Popover>
                    }>
             <Radio id="shared"
                    name="storage"
