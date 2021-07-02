@@ -124,7 +124,7 @@ export class CreateSnapshotModal extends React.Component {
         const validationError = this.onValidate(submitted);
 
         const body = (
-            <Form isHorizontal>
+            <Form onSubmit={e => e.preventDefault()} isHorizontal>
                 <NameRow name={name} validationError={validationError} onValueChanged={this.onValueChanged} />
                 <DescriptionRow description={description} onValueChanged={this.onValueChanged} />
             </Form>
