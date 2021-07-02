@@ -253,11 +253,11 @@ class TestMachinesDisks(VirtualMachinesCase):
         def __init__(
             self, test_obj, pool_name=None, volume_name=None,
             vm_name='subVmTest1',
-            file_path=None, device='disk',
+            file_path=None, device=None,
             volume_size=10, volume_size_unit='MiB',
             mode="create-new",
             expected_target='vda', permanent=False, cache_mode=None,
-            bus_type='virtio', verify=True, pool_type=None,
+            bus_type=None, verify=True, pool_type=None,
             volume_format=None,
             persistent_vm=True,
             pixel_test_tag=None
@@ -343,7 +343,8 @@ class TestMachinesDisks(VirtualMachinesCase):
                 b.wait_visible("#vm-{0}-disks-adddisk-file".format(self.vm_name))
                 # Type in file path
                 b.set_file_autocomplete_val("#vm-{0}-disks-adddisk-file".format(self.vm_name), self.file_path)
-                b.select_from_dropdown("#vm-{0}-disks-adddisk-select-device".format(self.vm_name), self.device)
+                if self.device:
+                    b.select_from_dropdown("#vm-{0}-disks-adddisk-select-device".format(self.vm_name), self.device)
             elif self.mode == "use-existing":
                 b.wait_visible("#vm-{0}-disks-adddisk-existing-select-pool:enabled".format(self.vm_name))
                 # Choose storage pool
@@ -367,7 +368,7 @@ class TestMachinesDisks(VirtualMachinesCase):
                 b.wait_not_visible("#cache-mode")
 
             # Configure bus type
-            if self.bus_type != "virtio" and b.is_visible("div.pf-c-modal-box button:contains(Show additional options)"):
+            if self.bus_type and b.is_visible("div.pf-c-modal-box button:contains(Show additional options)"):
                 b.click("div.pf-c-modal-box button:contains(Show additional options)")
                 b.select_from_dropdown("div.pf-c-modal-box #bus-type", self.bus_type)
 
@@ -383,8 +384,15 @@ class TestMachinesDisks(VirtualMachinesCase):
         def verify_disk_added(self):
             b = self.test_obj.browser
             m = self.test_obj.machine
-            b.wait_in_text("#vm-{0}-disks-{1}-bus".format(self.vm_name, self.expected_target), self.bus_type)
-            b.wait_in_text("#vm-{0}-disks-{1}-device".format(self.vm_name, self.expected_target), self.device)
+            if self.device == "cdrom" or (self.file_path and self.file_path.endswith(".iso")):
+                expected_bus_type = self.bus_type or "scsi"
+                expected_device = self.device or "cdrom"
+            else:
+                expected_bus_type = self.bus_type or "virtio"
+                expected_device = self.device or "disk"
+
+            b.wait_in_text("#vm-{0}-disks-{1}-bus".format(self.vm_name, self.expected_target), expected_bus_type)
+            b.wait_in_text("#vm-{0}-disks-{1}-device".format(self.vm_name, self.expected_target), expected_device)
 
             # Check volume was added to pool's volume list
             if self.mode == "create-new":
@@ -772,6 +780,15 @@ class TestMachinesDisks(VirtualMachinesCase):
             self,
             device='cdrom',
             bus_type='scsi',
+            expected_target='sda',
+            file_path='/var/lib/libvirt/novell.iso',
+            mode='custom-path'
+        ).execute()
+
+        # check that bus and device type can be automatically picked up from the *.iso extension
+        # https://bugzilla.redhat.com/show_bug.cgi?id=1977810
+        self.VMAddDiskDialog(
+            self,
             expected_target='sda',
             file_path='/var/lib/libvirt/novell.iso',
             mode='custom-path'
