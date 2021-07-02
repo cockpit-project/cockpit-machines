@@ -34,7 +34,7 @@ import {
 } from '@patternfly/react-core';
 import { OutlinedQuestionCircleIcon } from "@patternfly/react-icons";
 
-import { migrateToUri } from '../../libvirt-dbus.js';
+import { getAllVms, migrateToUri } from '../../libvirt-dbus.js';
 import { isEmpty, isObjectEmpty } from '../../helpers.js';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 
@@ -149,7 +149,17 @@ export const MigrateDialog = ({ vm, connectionName, toggleModal }) => {
 
         setInProgress(true);
         return migrateToUri(connectionName, vm.id, destUri, storage, temporary)
-                .then(toggleModal, exc => {
+                .then(() => {
+                    toggleModal();
+                    if (!temporary)
+                        cockpit.location.go(["vms"]);
+                })
+                .then(() => {
+                    // Because of bug, we don't get event when migration undefines a VM
+                    // https://gitlab.com/libvirt/libvirt/-/issues/186
+                    return getAllVms({ connectionName });
+                })
+                .catch(exc => {
                     setInProgress(false);
                     setDialogError({ dialogError: _("Migration failed"), message: exc.message });
                 });

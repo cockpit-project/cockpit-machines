@@ -217,6 +217,12 @@ class TestMachinesMigration(VirtualMachinesCase):
                 # Running VM on destination host has disk with a block storage which is available on both source and destination
                 self.assertIn("disk type='block'", machine2.execute("virsh dumpxml subVmTest1"))
 
+            if temporary:
+                b.wait_visible("#vm-details")
+            else:
+                b.wait_not_present("#vm-details")
+                b.wait_not_present("tbody tr[data-row-id=vm-subVmTest1-system]")
+
 
 if __name__ == '__main__':
     test_main()
