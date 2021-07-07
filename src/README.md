@@ -1,6 +1,6 @@
 Please refer guide/html/feature-virtualmachines.html to general information and how to set up nested virtualization.
 
-With nested virtualization enabled, Vagrant can be used to try pkg/machines:
+With nested virtualization enabled, Vagrant can be used to try cockpit-machines:
 
     $ sudo vagrant up
     $ vagrant ssh
