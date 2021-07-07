@@ -163,7 +163,7 @@ check: $(NODE_MODULES_TEST) $(VM_IMAGE) test/common test/reference
 	test/common/run-tests
 
 # checkout Cockpit's bots for standard test VM images and API to launch them
-# must be from master, as only that has current and existing images; but testvm.py API is stable
+# must be from main, as only that has current and existing images; but testvm.py API is stable
 # support CI testing against a bots change
 bots:
 	git clone --quiet --reference-if-able $${XDG_CACHE_HOME:-$$HOME/.cache}/cockpit-project/bots https://github.com/cockpit-project/bots.git
