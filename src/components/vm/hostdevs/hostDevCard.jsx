@@ -28,9 +28,11 @@ import {
 } from '@patternfly/react-core';
 
 import cockpit from 'cockpit';
-import { vmId, findHostNodeDevice } from "../../../helpers.js";
+import { vmId, findHostNodeDevice, getNodeDevSource } from "../../../helpers.js";
 import { ListingTable } from "cockpit-components-table.jsx";
 import AddHostDev from "./hostDevAdd.jsx";
+import { domainDetachHostDevice } from '../../../libvirtApi/domain.js';
+import { DeleteResourceButton, DeleteResourceModal } from '../../common/deleteResource.jsx';
 
 const _ = cockpit.gettext;
 
@@ -74,6 +76,8 @@ export function getOptionalValue(value, id, descr) {
 }
 
 export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
+    const [deleteDialogProps, setDeleteDialogProps] = useState(undefined);
+
     function getClass(hostDev, hostdevId) {
         const nodeDev = findHostNodeDevice(hostDev, nodeDevices);
 
@@ -208,6 +212,28 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
                 );
             }
         },
+        {
+            name: "", value: (hostdev, hostdevId) => {
+                const nodeDev = findHostNodeDevice(hostdev, nodeDevices);
+
+                const deleteNICAction = (
+                    <DeleteResourceButton objectId={`${id}-hostdev-${hostdevId}`}
+                                          actionName={_("Remove")}
+                                          showDialog={() => setDeleteDialogProps({
+                                              objectType: hostdev.type + " host device",
+                                              objectName: getNodeDevSource(nodeDev),
+                                              onClose: () => setDeleteDialogProps(undefined),
+                                              deleteHandler: () => domainDetachHostDevice({ connectionName: vm.connectionName, vmName: vm.name, live: vm.state !== 'shut off', dev: nodeDev }),
+                                          })} />
+                );
+
+                return (
+                    <div className='machines-listing-actions'>
+                        {nodeDev && deleteNICAction}
+                    </div>
+                );
+            }
+        },
     ];
 
     let hostdevId = 1;
@@ -222,12 +248,16 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
     });
 
     return (
-        <ListingTable aria-label={_(`VM ${vm.name} Host Devices`)}
-            gridBreakPoint='grid-xl'
-            variant='compact'
-            emptyCaption={_("No host devices assigned to this VM")}
-            rows={rows}
-            columns={columnTitles} />
+        <>
+            {deleteDialogProps &&
+                <DeleteResourceModal {...deleteDialogProps} actionName={_("Remove")} />}
+            <ListingTable aria-label={_(`VM ${vm.name} Host Devices`)}
+                gridBreakPoint='grid-xl'
+                variant='compact'
+                emptyCaption={_("No host devices assigned to this VM")}
+                rows={rows}
+                columns={columnTitles} />
+        </>
     );
 };
 

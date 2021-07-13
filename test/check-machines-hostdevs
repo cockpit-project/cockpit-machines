@@ -107,7 +107,7 @@ class TestMachinesHostDevs(VirtualMachinesCase):
 
         class HostDevAddDialog(object):
             def __init__(
-                self, test_obj, dev_type="usb_device", dev_id=0, vm_dev_id=1, fail_message=None
+                self, test_obj, dev_type="usb_device", dev_id=0, vm_dev_id=1, remove=True, fail_message=None
             ):
                 self.test_obj = test_obj
                 self.dev_type = dev_type
@@ -124,6 +124,8 @@ class TestMachinesHostDevs(VirtualMachinesCase):
                 if not self.fail_message:
                     self.verify()
                     self.verify_backend()
+                    if self.remove:
+                        self.remove()
 
             def open(self):
                 b.wait_not_present("#vm-subVmTest1-hostdev-{0}-product".format(self.vm_dev_id))
@@ -189,12 +191,16 @@ class TestMachinesHostDevs(VirtualMachinesCase):
 
                 raise Exception("Verification failed. No matching node device was found in VM's xml.")
 
+            def remove(self):
+                b.click("#delete-vm-subVmTest1-hostdev-{0}".format(self.vm_dev_id))
+                b.click('.pf-c-modal-box__footer button:contains("Remove")')
+                b.wait_not_present("#vm-subVmTest1-hostdev-{0}-product".format(self.vm_dev_id))
+
         output = m.execute("virsh nodedev-list --cap usb_device")
         if output.strip() != "":
             HostDevAddDialog(
                 self,
                 dev_type="usb_device",
-                vm_dev_id=1
             ).execute()
 
         output = m.execute("virsh nodedev-list --cap pci")
@@ -202,7 +208,6 @@ class TestMachinesHostDevs(VirtualMachinesCase):
             HostDevAddDialog(
                 self,
                 dev_type="pci",
-                vm_dev_id=2
             ).execute()
 
         m.execute("mv /usr/bin/virt-xml /tmp/virt-xml")

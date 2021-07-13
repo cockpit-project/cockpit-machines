@@ -468,6 +468,18 @@ export function domainDetachDisk({
             });
 }
 
+export function domainDetachHostDevice({ connectionName, vmName, live, dev }) {
+    const source = getNodeDevSource(dev);
+    const args = ["virt-xml", "-c", `qemu:///${connectionName}`, vmName, "--remove-device", "--hostdev", source];
+    if (live)
+        args.push("--update");
+
+    return cockpit.spawn(
+        args,
+        { superuser: "try", err: "message" }
+    );
+}
+
 export function domainDetachIface({ connectionName, mac, vmName, live, persistent }) {
     const options = { err: "message" };
     if (connectionName === "system")
