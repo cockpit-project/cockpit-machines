@@ -92,6 +92,9 @@ class TestMachinesCreate(VirtualMachinesCase):
         # check that newer oses are present and searchable with substring match
         runner.checkFilteredOsTest(TestMachinesCreate.VmDialog(self, os_name=config.WINDOWS_SERVER_10, os_search_name=config.WINDOWS_SERVER_10_SHORT))
 
+        # Memory unit conversion
+        runner.memoryUnitConversionTest(TestMachinesCreate.VmDialog(self, sourceType='disk-image'))
+
         # try to CREATE WITH DIALOG ERROR
         # name
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, "", storage_size=1), {"vm-name": "Name must not be empty"})
@@ -719,6 +722,16 @@ class TestMachinesCreate(VirtualMachinesCase):
 
             return self
 
+        def checkMemoryUnitConversion(self):
+            b = self.browser
+
+            b.select_from_dropdown("#memory-size-unit-select", "MiB")
+            b.set_input_text("#memory-size", "128")
+            b.select_from_dropdown("#memory-size-unit-select", "GiB")
+            b.wait_val("#memory-size", "0.125")
+
+            return self
+
         def checkOsInput(self):
             b = self.browser
 
@@ -1313,6 +1326,11 @@ class TestMachinesCreate(VirtualMachinesCase):
                 .cancel(True)
             self._assertScriptFinished() \
                 .checkEnvIsEmpty()
+
+        def memoryUnitConversionTest(self, dialog):
+            dialog.open() \
+                .checkMemoryUnitConversion() \
+                .cancel(True)
 
         def checkFilteredOsTest(self, dialog):
             dialog.open() \

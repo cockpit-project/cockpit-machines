@@ -750,7 +750,7 @@ class CreateVmModal extends React.Component {
             unattendedInstallation: false,
             source: '',
             os: undefined,
-            memorySize: props.nodeMaxMemory ? Math.min(1, Math.floor(convertToUnit(props.nodeMaxMemory, units.KiB, units.GiB))) : 1,
+            memorySize: props.nodeMaxMemory ? Math.min(1, convertToUnit(props.nodeMaxMemory, units.KiB, units.GiB)) : 1,
             memorySizeUnit: units.GiB.name,
             storageSize: convertToUnit(10 * 1024, units.MiB, units.GiB), // tied to Unit
             storageSizeUnit: units.GiB.name,
@@ -833,13 +833,13 @@ class CreateVmModal extends React.Component {
         case 'memorySizeUnit':
             this.setState({ [key]: value });
             key = 'memorySize';
-            value = Math.round(convertToUnit(this.state.memorySize, this.state.memorySizeUnit, value));
+            value = convertToUnit(this.state.memorySize, this.state.memorySizeUnit, value);
             this.setState({ [key]: value });
             break;
         case 'storageSizeUnit':
             this.setState({ [key]: value });
             key = 'storageSize';
-            value = Math.round(convertToUnit(this.state.storageSize, this.state.storageSizeUnit, value));
+            value = convertToUnit(this.state.storageSize, this.state.storageSizeUnit, value);
             this.setState({ [key]: value });
             break;
         case 'startVm': {
@@ -870,7 +870,7 @@ class CreateVmModal extends React.Component {
 
                 const converted = convertToUnit(stateDelta.minimumMemory, units.B, units.GiB);
                 if (converted == 0 || converted % 1 !== 0) // If minimum memory is not a whole number in GiB, set value in MiB
-                    this.setState({ memorySizeUnit: units.MiB.name }, () => this.onValueChanged("memorySize", Math.floor(convertToUnit(stateDelta.minimumMemory, units.B, units.MiB))));
+                    this.setState({ memorySizeUnit: units.MiB.name }, () => this.onValueChanged("memorySize", convertToUnit(stateDelta.minimumMemory, units.B, units.MiB)));
                 else
                     this.setState({ memorySizeUnit: units.GiB.name }, () => this.onValueChanged("memorySize", converted));
             }
@@ -880,7 +880,7 @@ class CreateVmModal extends React.Component {
 
                 const converted = convertToUnit(stateDelta.minimumStorage, units.B, this.state.storageSizeUnit);
                 if (converted == 0 || converted % 1 !== 0) // If minimum storage is not a whole number in GiB, set value in MiB
-                    this.setState({ storageSizeUnit: units.MiB.name }, () => this.onValueChanged("storageSize", Math.floor(convertToUnit(stateDelta.minimumStorage, units.B, units.MiB))));
+                    this.setState({ storageSizeUnit: units.MiB.name }, () => this.onValueChanged("storageSize", convertToUnit(stateDelta.minimumStorage, units.B, units.MiB)));
                 else
                     this.setState({ storageSizeUnit: units.GiB.name }, () => this.onValueChanged("storageSize", converted));
             }
