@@ -75,7 +75,6 @@ import {
     canRun,
     canSendNMI,
     canShutdown,
-    checkLibvirtStatus,
     getDiskElemByTarget,
     getDoc,
     getElem,
@@ -486,26 +485,22 @@ export function getAllVms({ connectionName }) {
 
 export function getApiData({ connectionName, libvirtServiceName }) {
     if (connectionName) {
-        checkLibvirtStatus({ serviceName: libvirtServiceName });
         dbus_client(connectionName);
         startEventMonitor({ connectionName, libvirtServiceName });
-        getAllVms({ connectionName });
-        getAllStoragePools({ connectionName });
-        getAllInterfaces({ connectionName });
-        getAllNetworks({ connectionName });
-        getAllNodeDevices({ connectionName });
-        getNodeMaxMemory({ connectionName });
-        getLibvirtVersion({ connectionName });
+        return Promise.allSettled([
+            getAllVms({ connectionName }),
+            getAllStoragePools({ connectionName }),
+            getAllInterfaces({ connectionName }),
+            getAllNetworks({ connectionName }),
+            getAllNodeDevices({ connectionName }),
+            getNodeMaxMemory({ connectionName }),
+            getLibvirtVersion({ connectionName }),
+        ]);
     } else {
-        /* Initial all resources to empty objects before loading them */
-        const flags = Enum.VIR_CONNECT_LIST_INTERFACES_ACTIVE | Enum.VIR_CONNECT_LIST_INTERFACES_INACTIVE;
-        unknownConnectionName(({ connectionName }) => store.dispatch(initResource(connectionName, "ListInterfaces", updateOrAddInterface, flags)));
-        unknownConnectionName(({ connectionName }) => store.dispatch(initResource(connectionName, "ListNodeDevices", updateOrAddNodeDevice, 0)));
-        unknownConnectionName(({ connectionName }) => store.dispatch(initResource(connectionName, "ListNetworks", updateOrAddNetwork, 0)));
-        unknownConnectionName(({ connectionName }) => store.dispatch(initResource(connectionName, "ListStoragePools", updateOrAddStoragePool, 0)));
-        unknownConnectionName(({ connectionName }) => store.dispatch(initResource(connectionName, "ListDomains", updateOrAddVm, 0)));
-        /* Load resource for all of the connections */
-        unknownConnectionName(getApiData, libvirtServiceName);
+        return unknownConnectionName()
+                .then(connectionNames => {
+                    return Promise.allSettled(connectionNames.map(conn => getApiData({ connectionName: conn, libvirtServiceName })));
+                });
     }
 }
 
@@ -1028,12 +1023,9 @@ function doUsagePolling(name, connectionName, objPath) {
  * @param  {String} connectionName D-Bus connection type; one of session/system.
  * @param  {String} libvirtServiceName
  */
-function startEventMonitor({ connectionName, libvirtServiceName }) {
+function startEventMonitor({ connectionName }) {
     if (connectionName !== 'session' && connectionName !== 'system')
         return;
-
-    /* Handlers for libvirtd status changes */
-    startEventMonitorLibvirtd(connectionName, libvirtServiceName);
 
     /* Handlers for domain events */
     startEventMonitorDomains(connectionName);
@@ -1128,25 +1120,6 @@ function startEventMonitorDomains(connectionName) {
                 logDebug(`handle DomainEvent on ${connectionName}: ignoring event ${signal}`);
             }
         });
-}
-
-function startEventMonitorLibvirtd(connectionName, libvirtServiceName) {
-    /* Listen on a stopped libvirtd on systemd D-Bus. If user is using libvirtd not started
-     * by systemd this handler will not be triggered.
-     */
-    if (connectionName === 'system') {
-        const systemdClient = cockpit.dbus('org.freedesktop.systemd1', { bus: connectionName });
-        systemdClient.subscribe(
-            { interface: 'org.freedesktop.DBus.Properties', path: '/org/freedesktop/systemd1/unit/libvirtd_2eservice', member: 'PropertiesChanged' },
-            (path, iface, signal, args) => {
-                if (args[0] === "org.freedesktop.systemd1.Unit" && args[1].ActiveState.v === "deactivating") {
-                    checkLibvirtStatus({ serviceName: libvirtServiceName });
-                    store.dispatch(deleteUnlistedVMs(connectionName, []));
-                    delayPolling(() => getApiData({ connectionName, libvirtServiceName }));
-                }
-            }
-        );
-    }
 }
 
 // Undefined the VM from Redux store only if it's not transient
@@ -1494,14 +1467,6 @@ export function getAllInterfaces({ connectionName }) {
 
 export function getDomainCapabilities(connectionName, arch, model) {
     return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'GetDomainCapabilities', ['', arch, model, '', 0], { timeout, type: 'ssssu' });
-}
-
-function initResource(connectionName, method, updateOrAddMethod, flags) {
-    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', method, [flags], { timeout, type: 'u' })
-            .then(objPaths => {
-                return Promise.all(objPaths[0].map(() => updateOrAddMethod({})));
-            })
-            .catch(ex => console.warn('initResource action failed:', ex.toString()));
 }
 
 export function migrateToUri(connectionName, objPath, destUri, storage, temporary) {

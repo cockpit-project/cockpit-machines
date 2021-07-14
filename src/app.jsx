@@ -16,8 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, useEffect, useRef } from 'react';
 import { AlertGroup, Button } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { superuser } from "superuser.js";
@@ -30,18 +29,65 @@ import { NetworkList } from "./components/networks/networkList.jsx";
 import { VmDetailsPage } from './components/vm/vmDetailsPage.jsx';
 import { CreateVmAction } from "./components/create-vm-dialog/createVmDialog.jsx";
 import LibvirtSlate from "./components/libvirtSlate.jsx";
-import { isObjectEmpty, dummyVmsFilter, vmId } from "./helpers.js";
+import { dummyVmsFilter, vmId } from "./helpers.js";
 import { InlineNotification } from 'cockpit-components-inline-notification.jsx';
 import {
+    getApiData,
     usageStartPolling,
     usageStopPolling,
 } from "./libvirt-dbus.js";
+import { getOsInfoList, getLoggedInUser } from './libvirt-common.js';
+import { useObject, useEvent } from "hooks";
+import * as service from 'service.js';
+import store from './store.js';
 
+import { updateLibvirtState } from './actions/store-actions.js';
 const _ = cockpit.gettext;
 
 superuser.reload_page_on_change();
 
-class App extends React.Component {
+export const App = ({ name }) => {
+    const libvirtService = useObject(() => service.proxy(name), null, []);
+    const prevLibvirtServiceRef = useRef();
+    const [loadingResources, setLoadingResources] = useState(false);
+
+    useEvent(libvirtService, "changed", () => {
+        store.dispatch(updateLibvirtState({
+            activeState: libvirtService.state,
+        }));
+        if (libvirtService.state == 'running' && prevLibvirtServiceRef.current !== 'running' && prevLibvirtServiceRef.current !== null) {
+            setLoadingResources(true);
+            getApiData({ connectionName: 'system' })
+                    .catch(exc => console.warn("getApiData failed:", exc.message))
+                    .finally(() => setLoadingResources(false));
+        }
+        prevLibvirtServiceRef.current = libvirtService.state;
+    });
+    useEvent(superuser, "changed");
+    useEffect(() => {
+        getOsInfoList();
+        getLoggedInUser();
+        prevLibvirtServiceRef.current = libvirtService.state;
+
+        setLoadingResources(true);
+        getApiData({ connectionName: null })
+                .catch(exc => console.warn("getApiData failed: ", exc.message))
+                .finally(() => setLoadingResources(false));
+    }, []);
+
+    // Show libvirtSlate component if libvirtd is not running only to users that are allowed to start the service.
+    if (((!libvirtService.exists || libvirtService.state !== 'running') && superuser.allowed) ||
+        loadingResources) {
+        return (
+            <LibvirtSlate libvirtService={libvirtService}
+                          loadingResources={loadingResources} />
+        );
+    } else return (
+        <AppActive />
+    );
+};
+
+class AppActive extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -54,21 +100,14 @@ class App extends React.Component {
         this.onAddErrorNotification = this.onAddErrorNotification.bind(this);
         this.onDismissErrorNotification = this.onDismissErrorNotification.bind(this);
         this.onNavigate = () => this.setState({ path: cockpit.location.path });
-        this.onSuperuserChanged = this.onSuperuserChanged.bind(this);
     }
 
     componentDidMount() {
         cockpit.addEventListener("locationchanged", this.onNavigate);
-        superuser.addEventListener("changed", this.onSuperuserChanged);
     }
 
     componentWillUnmount() {
         cockpit.removeEventListener("locationchanged", this.onNavigate);
-        superuser.removeEventListener("changed", this.onSuperuserChanged);
-    }
-
-    onSuperuserChanged() {
-        this.setState({ allowed: !!superuser.allowed });
     }
 
     /*
@@ -112,7 +151,7 @@ class App extends React.Component {
     }
 
     render() {
-        const { vms, config, storagePools, systemInfo, ui, networks, nodeDevices, interfaces } = this.props.store.getState();
+        const { vms, config, storagePools, systemInfo, ui, networks, nodeDevices, interfaces } = store.getState();
         const path = this.state.path;
         const combinedVms = [...vms, ...dummyVmsFilter(vms, ui.vms)];
         const properties = {
@@ -123,16 +162,6 @@ class App extends React.Component {
         const createVmAction = <CreateVmAction {...properties} mode='create' />;
         const importDiskAction = <CreateVmAction {...properties} mode='import' />;
         const vmActions = <> {createVmAction} {importDiskAction} </>;
-        const resources = [...storagePools, ...networks, ...nodeDevices, ...interfaces, ...vms];
-        const loadingResources = resources.some(resource => isObjectEmpty(resource));
-
-        // Show libvirtSlate component if libvirtd is not running only to users that are allowed to start the service.
-        if ((systemInfo.libvirtService.activeState !== 'running' && (this.state.allowed === undefined || this.state.allowed)) ||
-            loadingResources) {
-            return (<LibvirtSlate libvirtService={systemInfo.libvirtService}
-                        loadingResources={loadingResources} />);
-        }
-
         const pathVms = path.length == 0 || (path.length > 0 && path[0] == 'vms');
 
         let vmContent;
@@ -231,8 +260,5 @@ class App extends React.Component {
         );
     }
 }
-App.propTypes = {
-    store: PropTypes.object.isRequired,
-};
 
 export default App;

@@ -21,7 +21,6 @@ import PropTypes from 'prop-types';
 
 import cockpit from 'cockpit';
 import {
-    checkLibvirtStatus,
     startLibvirt,
     enableLibvirt,
 } from "../libvirt-common.js";
@@ -44,30 +43,29 @@ const LibvirtSlate = ({ loadingResources, libvirtService }) => {
 
         enableLibvirt({
             enable: libvirtEnabled,
-            serviceName: libvirtService.name
+            serviceName: libvirtService.unit.Id
         })
                 .then(() => {
                     startLibvirt({
-                        serviceName: libvirtService.name
+                        serviceName: libvirtService.unit.Id
                     }).catch(ex => { setError(_("Failed to start virtualization service")); setErrorDetail(ex.message) });
                 }, ex => { setError(_("Failed to enable virtualization service")); setErrorDetail(ex.message) })
                 .always(() => setActionInProgress(false));
     };
 
     const goToServicePage = () => {
-        const name = libvirtService.name ? libvirtService.name : 'libvirtd.service'; // fallback
+        const name = libvirtService.unit.Id ? libvirtService.unit.Id : 'libvirtd.service'; // fallback
         cockpit.jump("/system/services#/" + name);
     };
 
-    const name = libvirtService.name;
-
-    if (name && libvirtService.activeState === 'unknown')
+    if (libvirtService.state === null)
         return <EmptyStatePanel title={ _("Connecting to virtualization service") } loading />;
+
+    const name = libvirtService.unit.Id;
 
     if (loadingResources)
         return <EmptyStatePanel title={ _("Loading resources") } loading />;
 
-    checkLibvirtStatus({ serviceName: name });
     const detail = (
         <Checkbox id="enable-libvirt"
                   isDisabled={!name}
