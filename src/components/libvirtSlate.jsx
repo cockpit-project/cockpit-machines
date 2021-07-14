@@ -27,7 +27,7 @@ import {
 } from "../libvirt-common.js";
 
 import { EmptyStatePanel } from "cockpit-components-empty-state.jsx";
-import { Button } from "@patternfly/react-core";
+import { Button, Checkbox } from "@patternfly/react-core";
 import { ExclamationCircleIcon } from "@patternfly/react-icons";
 import { InlineNotification } from 'cockpit-components-inline-notification.jsx';
 
@@ -40,18 +40,9 @@ class LibvirtSlate extends React.Component {
             libvirtEnabled: true,
         };
 
-        this.onLibvirtEnabledChanged = this.onLibvirtEnabledChanged.bind(this);
         this.startService = this.startService.bind(this);
         this.checkStatus = this.checkStatus.bind(this);
         this.goToServicePage = this.goToServicePage.bind(this);
-    }
-
-    onLibvirtEnabledChanged(e) {
-        if (e && e.target && typeof e.target.checked === "boolean") {
-            this.setState({
-                libvirtEnabled: e.target.checked,
-            });
-        }
     }
 
     checkStatus() {
@@ -91,18 +82,12 @@ class LibvirtSlate extends React.Component {
             return <EmptyStatePanel title={ _("Loading resources") } loading />;
 
         this.checkStatus();
-        // TODO: Convert to PF4-React Checkbox, but this is badly aligned
         const detail = (
-            <div className="checkbox">
-                <label>
-                    <input type="checkbox"
-                           id="enable-libvirt"
-                           disabled={!name}
-                           checked={this.state.libvirtEnabled}
-                           onChange={this.onLibvirtEnabledChanged} />
-                    {_("Automatically start libvirt on boot")}
-                </label>
-            </div>
+            <Checkbox id="enable-libvirt"
+                      isDisabled={!name}
+                      isChecked={this.state.libvirtEnabled}
+                      label={_("Automatically start libvirt on boot")}
+                      onChange={enabled => this.setState({ libvirtEnabled: enabled })} />
         );
 
         const troubleshoot_btn = (
