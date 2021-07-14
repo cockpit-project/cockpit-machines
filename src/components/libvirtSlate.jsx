@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import cockpit from 'cockpit';
@@ -33,88 +33,74 @@ import { InlineNotification } from 'cockpit-components-inline-notification.jsx';
 
 const _ = cockpit.gettext;
 
-class LibvirtSlate extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            libvirtEnabled: true,
-        };
+const LibvirtSlate = ({ loadingResources, libvirtService }) => {
+    const [actionInProgress, setActionInProgress] = useState(false);
+    const [error, setError] = useState();
+    const [errorDetail, setErrorDetail] = useState();
+    const [libvirtEnabled, setLibvirtEnabled] = useState(true);
 
-        this.startService = this.startService.bind(this);
-        this.checkStatus = this.checkStatus.bind(this);
-        this.goToServicePage = this.goToServicePage.bind(this);
-    }
-
-    checkStatus() {
-        const service = this.props.libvirtService;
-
-        checkLibvirtStatus({ serviceName: service.name });
-    }
-
-    startService() {
-        this.setState({ actionInProgress: true });
-        const service = this.props.libvirtService;
+    const startService = () => {
+        setActionInProgress(true);
 
         enableLibvirt({
-            enable: this.state.libvirtEnabled,
-            serviceName: service.name
+            enable: libvirtEnabled,
+            serviceName: libvirtService.name
         })
                 .then(() => {
                     startLibvirt({
-                        serviceName: service.name
-                    }).catch(ex => this.setState({ error: _("Failed to start virtualization service"), errorDetail: ex.message }));
-                }, ex => this.setState({ error: _("Failed to enable virtualization service"), errorDetail: ex.message }))
-                .always(() => this.setState({ actionInProgress: false }));
-    }
+                        serviceName: libvirtService.name
+                    }).catch(ex => { setError(_("Failed to start virtualization service")); setErrorDetail(ex.message) });
+                }, ex => { setError(_("Failed to enable virtualization service")); setErrorDetail(ex.message) })
+                .always(() => setActionInProgress(false));
+    };
 
-    goToServicePage() {
-        const name = this.props.libvirtService.name ? this.props.libvirtService.name : 'libvirtd.service'; // fallback
+    const goToServicePage = () => {
+        const name = libvirtService.name ? libvirtService.name : 'libvirtd.service'; // fallback
         cockpit.jump("/system/services#/" + name);
-    }
+    };
 
-    render() {
-        const name = this.props.libvirtService.name;
+    const name = libvirtService.name;
 
-        if (name && this.props.libvirtService.activeState === 'unknown')
-            return <EmptyStatePanel title={ _("Connecting to virtualization service") } loading />;
+    if (name && libvirtService.activeState === 'unknown')
+        return <EmptyStatePanel title={ _("Connecting to virtualization service") } loading />;
 
-        if (this.props.loadingResources)
-            return <EmptyStatePanel title={ _("Loading resources") } loading />;
+    if (loadingResources)
+        return <EmptyStatePanel title={ _("Loading resources") } loading />;
 
-        this.checkStatus();
-        const detail = (
-            <Checkbox id="enable-libvirt"
-                      isDisabled={!name}
-                      isChecked={this.state.libvirtEnabled}
-                      label={_("Automatically start libvirt on boot")}
-                      onChange={enabled => this.setState({ libvirtEnabled: enabled })} />
-        );
+    checkLibvirtStatus({ serviceName: name });
+    const detail = (
+        <Checkbox id="enable-libvirt"
+                  isDisabled={!name}
+                  isChecked={libvirtEnabled}
+                  label={_("Automatically start libvirt on boot")}
+                  onChange={setLibvirtEnabled} />
+    );
 
-        const troubleshoot_btn = (
-            <Button variant="link" onClick={ this.goToServicePage }>
-                { _("Troubleshoot") }
-            </Button>);
+    const troubleshoot_btn = (
+        <Button variant="link" onClick={ goToServicePage }>
+            { _("Troubleshoot") }
+        </Button>);
 
-        return (
-            <>
-                {this.state.error
-                    ? <InlineNotification type='danger' text={this.state.error}
-                                          detail={this.state.errorDetail}
-                                          onDismiss={() => this.setState({ error: undefined }) } /> : null}
-                <EmptyStatePanel icon={ ExclamationCircleIcon }
-                                 title={ _("Virtualization service (libvirt) is not active") }
-                                 paragraph={ detail }
-                                 action={ name ? _("Start libvirt") : null }
-                                 isActionInProgress={this.state.actionInProgress}
-                                 onAction={ this.startService }
-                                 secondary={ troubleshoot_btn } />
-            </>
-        );
-    }
-}
+    return (
+        <>
+            {error
+                ? <InlineNotification type='danger' text={error}
+                                      detail={errorDetail}
+                                      onDismiss={() => setError(undefined)} /> : null}
+            <EmptyStatePanel icon={ ExclamationCircleIcon }
+                             title={ _("Virtualization service (libvirt) is not active") }
+                             paragraph={ detail }
+                             action={ name ? _("Start libvirt") : null }
+                             isActionInProgress={actionInProgress}
+                             onAction={ startService }
+                             secondary={ troubleshoot_btn } />
+        </>
+    );
+};
 
 LibvirtSlate.propTypes = {
     libvirtService: PropTypes.object.isRequired,
+    loadingResources: PropTypes.bool.isRequired,
 };
 
 export default LibvirtSlate;
