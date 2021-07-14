@@ -36,7 +36,7 @@ export function toReadableNumber(number) {
     if (number < 1) {
         return Math.floor(number * 100) / 100;
     } else {
-        const fixed1 = Math.floor((number * 10) / 10);
+        const fixed1 = Math.floor(number * 10) / 10;
         return (number - fixed1 === 0) ? Math.floor(number) : fixed1;
     }
 }
