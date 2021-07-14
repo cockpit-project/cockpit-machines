@@ -2,20 +2,14 @@ import cockpit from 'cockpit';
 import * as service from 'service.js';
 import createVmScript from 'raw-loader!./scripts/create_machine.sh';
 import installVmScript from 'raw-loader!./scripts/install_machine.sh';
-import getLibvirtServiceNameScript from 'raw-loader!./scripts/get_libvirt_service_name.sh';
 
 import * as python from "python.js";
 import getOSListScript from 'raw-loader!./getOSList.py';
 
 import {
     setLoggedInUser,
-    updateLibvirtState,
     updateOsInfoList,
 } from './actions/store-actions.js';
-
-import {
-    getApiData,
-} from './libvirt-dbus.js';
 
 import {
     convertToUnit,
@@ -1037,16 +1031,17 @@ export function resolveUiState(name, connectionName) {
     return result;
 }
 
-export function unknownConnectionName(action, libvirtServiceName) {
-    return cockpit.user().done(loggedUser => {
-        const promises = Object.getOwnPropertyNames(VMS_CONFIG.Virsh.connections)
-                .filter(
-                    // The 'root' user does not have its own qemu:///session just qemu:///system
-                    // https://bugzilla.redhat.com/show_bug.cgi?id=1045069
-                    connectionName => canLoggedUserConnectSession(connectionName, loggedUser))
-                .map(connectionName => action({ connectionName, libvirtServiceName }));
-        return Promise.all(promises);
-    });
+export function unknownConnectionName() {
+    return cockpit.user()
+            .then(loggedUser => {
+                const connectionNames = (
+                    Object.getOwnPropertyNames(VMS_CONFIG.Virsh.connections).filter(
+                        // The 'root' user does not have its own qemu:///session just qemu:///system
+                        // https://bugzilla.redhat.com/show_bug.cgi?id=1045069
+                        connectionName => canLoggedUserConnectSession(connectionName, loggedUser))
+                );
+                return connectionNames;
+            });
 }
 
 /*
@@ -1065,25 +1060,6 @@ export const canPause = (vmState) => vmState == 'running';
 export const canResume = (vmState) => vmState == 'paused';
 export const isRunning = (vmState) => canReset(vmState);
 export const serialConsoleCommand = ({ vm }) => vm.displays.pty ? ['virsh', ...VMS_CONFIG.Virsh.connections[vm.connectionName].params, 'console', vm.name] : false;
-
-export function checkLibvirtStatus({ serviceName }) {
-    logDebug(`CHECK_LIBVIRT_STATUS`);
-    const libvirtService = service.proxy(serviceName);
-    const dfd = cockpit.defer();
-
-    libvirtService.wait(() => {
-        const activeState = libvirtService.exists ? libvirtService.state : 'stopped';
-        const unitState = libvirtService.exists && libvirtService.enabled ? 'enabled' : 'disabled';
-
-        store.dispatch(updateLibvirtState({
-            activeState,
-            unitState,
-        }));
-        dfd.resolve();
-    });
-
-    return dfd.promise();
-}
 
 /*
  * Basic, but working.
@@ -1185,28 +1161,6 @@ export function getOsInfoList () {
                 parseOsInfoList('[]');
             });
 }
-
-export function initDataRetrieval() {
-    logDebug(`INIT_DATA_RETRIEVAL():`);
-    getOsInfoList();
-    getLoggedInUser();
-    return cockpit.script(getLibvirtServiceNameScript, null, { err: "message", environ: ['LC_ALL=C.UTF-8'] })
-            .then(serviceName => {
-                const match = serviceName.match(/([^\s]+)/);
-                const name = match ? match[0] : null;
-                store.dispatch(updateLibvirtState({ name }));
-                if (name) {
-                    getApiData({ connectionName: null, libvirtServiceName: name });
-                } else {
-                    console.error("initialize failed: getting libvirt service name failed");
-                }
-            })
-            .fail((exception, data) => {
-                store.dispatch(updateLibvirtState({ name: null }));
-                console.error(`initialize failed: getting libvirt service name returned error: "${JSON.stringify(exception)}", data: "${JSON.stringify(data)}"`);
-            });
-}
-
 export function installVm({ onAddErrorNotification, vm }) {
     const {
         autostart, connectionName, cpu, currentMemory,

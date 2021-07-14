@@ -83,8 +83,9 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         self.login_and_go("/machines", user=user, superuser=superuser)
 
         if expect_empty_list:
-            b.wait_in_text("#virtual-machines-listing .pf-c-empty-state", "No VM is running")
-            return
+            with b.wait_timeout(20):
+                b.wait_in_text("#virtual-machines-listing .pf-c-empty-state", "No VM is running")
+                return
         b.wait_in_text("body", "Virtual machines")
         self.waitVmRow("subVmTest1")
 
@@ -254,73 +255,102 @@ class TestMachinesLifecycle(VirtualMachinesCase):
             except subprocess.CalledProcessError:  # return code != 0
                 return False
 
+        def stopLibvirtSocket():
+            # newer libvirtd versions use socket activation
+            # we should test that separately, but here we test only using the service unit
+            if m.image not in ["debian-stable", "rhel-8-4"]:
+                m.execute("systemctl stop libvirtd-ro.socket libvirtd.socket libvirtd-admin.socket")
+                self.addCleanup(m.execute, "systemctl start libvirtd-ro.socket libvirtd.socket libvirtd-admin.socket")
+
+        def stopLibvirtService():
+            m.execute("systemctl stop {0}".format(libvirtServiceName))
+
+        def disableLibvirtService():
+            m.execute("systemctl disable {0}".format(libvirtServiceName))
+
+        def hack_libvirtd_crash():
+            # work around libvirtd crashing when stopped too quickly; https://bugzilla.redhat.com/show_bug.cgi?id=1828207
+            m.execute("virsh domifaddr 1")
+
+        def waitEmptyState():
+            with b.wait_timeout(15):
+                b.wait_in_text(".pf-c-empty-state", "Virtualization service (libvirt) is not active")
+
+        # Test that empty state appears when stopping libvirt service while page was loaded
         self.createVm("subVmTest1")
         self.login_and_go("/machines")
 
         b.wait_in_text("body", "Virtual machines")
         self.waitVmRow("subVmTest1")
 
-        # newer libvirtd versions use socket activation
-        # we should test that separately, but here we test only using the service unit
-        if m.image not in ["debian-stable", "rhel-8-4", "rhel-8-5", "centos-8-stream"]:
-            m.execute("systemctl stop libvirtd-ro.socket libvirtd.socket libvirtd-admin.socket")
-            self.addCleanup(m.execute, "systemctl start libvirtd-ro.socket libvirtd.socket libvirtd-admin.socket")
-
-        def hack_libvirtd_crash():
-            # work around libvirtd crashing when stopped too quickly; https://bugzilla.redhat.com/show_bug.cgi?id=1828207
-            m.execute("virsh domifaddr 1")
-
-        m.execute("systemctl disable {0}".format(libvirtServiceName))
+        disableLibvirtService()
         hack_libvirtd_crash()
-        m.execute("systemctl stop {0}".format(libvirtServiceName))
+        stopLibvirtSocket()
+        stopLibvirtService()
 
-        b.wait_in_text(".pf-c-empty-state", "Virtualization service (libvirt) is not active")
+        waitEmptyState()
+
+        # Test that starting libvirt service from the UI updates the page
         b.wait_visible("#enable-libvirt:checked")
         b.click(".pf-c-empty-state button.pf-m-primary")  # Start libvirt
         b.wait(lambda: checkLibvirtEnabled())
         b.wait_in_text("body", "Virtual machines")
-        with b.wait_timeout(15):
-            b.wait_not_present(".pf-c-empty-state")
-            self.waitVmRow("subVmTest1")
+        b.wait_not_present(".pf-c-empty-state")
+        self.waitVmRow("subVmTest1")
 
-            # Ensure that create VM dialog does not crash after starting libvirt from the UI
-            # https://bugzilla.redhat.com/show_bug.cgi?id=1974228
-            b.click("#create-new-vm")
-            b.wait_visible("#create-vm-dialog")
+        # Ensure that create VM dialog does not crash after starting libvirt from the UI
+        # https://bugzilla.redhat.com/show_bug.cgi?id=1974228
+        b.click("#create-new-vm")
+        b.wait_visible("#create-vm-dialog")
 
-            self.browser.switch_to_top()
-            self.browser.wait_not_visible("#navbar-oops")
+        b.switch_to_top()
+        b.wait_not_visible("#navbar-oops")
 
-            self.browser.reload()
-            self.browser.enter_page('/machines')
-            self.browser.wait_in_text("body", "Virtual machines")
+        # Reload the page in order to start from an empty app state
+        b.reload()
+        b.enter_page('/machines')
+        b.wait_in_text("body", "Virtual machines")
 
+        # Test that disabling the libvirt service from the UI has effect
         hack_libvirtd_crash()
-        m.execute("systemctl stop {0}".format(libvirtServiceName))
-        b.wait_in_text(".pf-c-empty-state", "Virtualization service (libvirt) is not active")
+        stopLibvirtSocket()
+        stopLibvirtService()
+        waitEmptyState()
         b.wait_visible("#enable-libvirt:checked")
-        b.click("#enable-libvirt")  # uncheck it ; ; TODO: fix this, do not assume initial state of the checkbox
+        b.set_checked("#enable-libvirt", False)
         b.click(".pf-c-empty-state button.pf-m-primary")  # Start libvirt
         b.wait(lambda: not checkLibvirtEnabled())
         b.wait_in_text("body", "Virtual machines")
-        with b.wait_timeout(15):
-            b.wait_not_present(".pf-c-empty-state")
-            self.waitVmRow("subVmTest1")
+        b.wait_not_present(".pf-c-empty-state")
+        self.waitVmRow("subVmTest1")
 
+        # Test that enabling the service from the CLI has effect in the UI
         m.execute("systemctl enable {0}".format(libvirtServiceName))
         hack_libvirtd_crash()
-        m.execute("systemctl stop {0}".format(libvirtServiceName))
-
-        b.wait_in_text(".pf-c-empty-state", "Virtualization service (libvirt) is not active")
+        stopLibvirtSocket()
+        stopLibvirtService()
+        waitEmptyState()
         b.wait_visible("#enable-libvirt:checked")
 
+        # Test that resources are shown after starting libvirt service from the UI
+        stopLibvirtSocket()
+        stopLibvirtService()
+        b.reload()
+        b.enter_page('/machines')
+        waitEmptyState()
+        b.click(".pf-c-empty-state button.pf-m-primary")  # Start libvirt
+        self.waitVmRow("subVmTest1")
+
+        stopLibvirtSocket()
+        stopLibvirtService()
+        waitEmptyState()
         b.click(".pf-c-empty-state button.pf-m-link")  # Troubleshoot
         b.leave_page()
         url_location = "/system/services#/{0}".format(libvirtServiceName)
         b.wait(lambda: url_location in b.eval_js("window.location.href"))
 
         # Make sure that unprivileged users can see the VM list when libvirtd is not running
-        m.execute("systemctl stop libvirtd.service")
+        stopLibvirtService()
         m.execute("useradd nonadmin; echo nonadmin:foobar | chpasswd")
         # user libvirtd instance tends to SIGABRT with "Failed to find user record for uid .." on shutdown during cleanup
         # so make sure that there are no leftover user processes that bleed into the next test
