@@ -1164,11 +1164,7 @@ export function createVm({
 export function enableLibvirt({ enable, serviceName }) {
     logDebug(`ENABLE_LIBVIRT`);
     const libvirtService = service.proxy(serviceName);
-    const promise = enable ? libvirtService.enable() : libvirtService.disable();
-
-    return promise.fail(exception => {
-        console.info(`enabling libvirt failed: "${JSON.stringify(exception)}"`);
-    });
+    return enable ? libvirtService.enable() : libvirtService.disable();
 }
 
 export function getLoggedInUser() {
@@ -1246,8 +1242,5 @@ export function installVm({ onAddErrorNotification, vm }) {
 
 export function startLibvirt({ serviceName }) {
     logDebug(`START_LIBVIRT`);
-    return service.proxy(serviceName).start()
-            .fail(exception => {
-                console.info(`starting libvirt failed: "${JSON.stringify(exception)}"`);
-            });
+    return service.proxy(serviceName).start();
 }

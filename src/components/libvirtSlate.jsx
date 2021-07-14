@@ -29,6 +29,7 @@ import {
 import { EmptyStatePanel } from "cockpit-components-empty-state.jsx";
 import { Button } from "@patternfly/react-core";
 import { ExclamationCircleIcon } from "@patternfly/react-icons";
+import { InlineNotification } from 'cockpit-components-inline-notification.jsx';
 
 const _ = cockpit.gettext;
 
@@ -60,10 +61,19 @@ class LibvirtSlate extends React.Component {
     }
 
     startService() {
+        this.setState({ actionInProgress: true });
         const service = this.props.libvirtService;
 
-        enableLibvirt({ enable: this.state.libvirtEnabled, serviceName: service.name });
-        startLibvirt({ serviceName: service.name });
+        enableLibvirt({
+            enable: this.state.libvirtEnabled,
+            serviceName: service.name
+        })
+                .then(() => {
+                    startLibvirt({
+                        serviceName: service.name
+                    }).catch(ex => this.setState({ error: _("Failed to start virtualization service"), errorDetail: ex.message }));
+                }, ex => this.setState({ error: _("Failed to enable virtualization service"), errorDetail: ex.message }))
+                .always(() => this.setState({ actionInProgress: false }));
     }
 
     goToServicePage() {
@@ -100,12 +110,21 @@ class LibvirtSlate extends React.Component {
                 { _("Troubleshoot") }
             </Button>);
 
-        return <EmptyStatePanel icon={ ExclamationCircleIcon }
-                                title={ _("Virtualization service (libvirt) is not active") }
-                                paragraph={ detail }
-                                action={ name ? _("Start libvirt") : null }
-                                onAction={ this.startService }
-                                secondary={ troubleshoot_btn } />;
+        return (
+            <>
+                {this.state.error
+                    ? <InlineNotification type='danger' text={this.state.error}
+                                          detail={this.state.errorDetail}
+                                          onDismiss={() => this.setState({ error: undefined }) } /> : null}
+                <EmptyStatePanel icon={ ExclamationCircleIcon }
+                                 title={ _("Virtualization service (libvirt) is not active") }
+                                 paragraph={ detail }
+                                 action={ name ? _("Start libvirt") : null }
+                                 isActionInProgress={this.state.actionInProgress}
+                                 onAction={ this.startService }
+                                 secondary={ troubleshoot_btn } />
+            </>
+        );
     }
 }
 
