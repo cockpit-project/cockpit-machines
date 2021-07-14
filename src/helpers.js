@@ -345,15 +345,6 @@ export function storagePoolId(poolName, connectionName) {
     return `pool-${poolName}-${connectionName}`;
 }
 
-export function mouseClick(fun) {
-    return function (event) {
-        if (!event || event.button !== 0)
-            return;
-        event.preventDefault();
-        return fun(event);
-    };
-}
-
 /**
  * Let promise resolve itself in specified delay or force resolve it with 0 arguments
  *

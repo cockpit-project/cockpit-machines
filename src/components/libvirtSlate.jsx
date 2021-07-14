@@ -20,7 +20,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import cockpit from 'cockpit';
-import { mouseClick } from "../helpers.js";
 import {
     checkLibvirtStatus,
     startLibvirt,
@@ -97,7 +96,7 @@ class LibvirtSlate extends React.Component {
         );
 
         const troubleshoot_btn = (
-            <Button variant="link" onClick={ mouseClick(this.goToServicePage) }>
+            <Button variant="link" onClick={ this.goToServicePage }>
                 { _("Troubleshoot") }
             </Button>);
 
@@ -105,7 +104,7 @@ class LibvirtSlate extends React.Component {
                                 title={ _("Virtualization service (libvirt) is not active") }
                                 paragraph={ detail }
                                 action={ name ? _("Start libvirt") : null }
-                                onAction={ mouseClick(this.startService) }
+                                onAction={ this.startService }
                                 secondary={ troubleshoot_btn } />;
     }
 }
