@@ -17,10 +17,9 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import moment from "moment";
 
 import cockpit from 'cockpit';
-import { vmId } from "../../../helpers.js";
+import { vmId, localize_datetime } from "../../../helpers.js";
 import { CreateSnapshotModal } from "./vmSnapshotsCreateModal.jsx";
 import { ListingTable } from "cockpit-components-table.jsx";
 import { Button, Tooltip } from '@patternfly/react-core';
@@ -32,20 +31,6 @@ import { deleteSnapshot, getVmSnapshots } from '../../../libvirt-dbus.js';
 import './vmSnapshotsCard.scss';
 
 const _ = cockpit.gettext;
-
-function prettyTime(unixTime) {
-    const yesterday = _("Yesterday");
-    const today = _("Today");
-    moment.locale(cockpit.language, {
-        calendar : {
-            lastDay : `[${yesterday}] LT`,
-            sameDay : `[${today}] LT`,
-            sameElse : "L LT"
-        }
-    });
-
-    return moment(Number(unixTime) * 1000).calendar();
-}
 
 export class VmSnapshotsActions extends React.Component {
     constructor(props) {
@@ -98,7 +83,7 @@ export class VmSnapshotsCard extends React.Component {
         let detailMap = [
             {
                 name: _("Creation time"), value: (snap, snapId) => {
-                    const date = prettyTime(snap.creationTime);
+                    const date = localize_datetime(snap.creationTime * 1000);
                     return (<div className="snap-creation-time">
                         <div id={`${id}-snapshot-${snapId}-date`}>
                             {date}
