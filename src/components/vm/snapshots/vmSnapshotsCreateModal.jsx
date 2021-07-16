@@ -62,8 +62,11 @@ const DescriptionRow = ({ onValueChanged, description }) => {
 export class CreateSnapshotModal extends React.Component {
     constructor(props) {
         super(props);
+        // cut off seconds, subseconds, and timezone
+        const now = new Date().toISOString()
+                .replace(/:[^:]*$/, '');
         this.state = {
-            name: props.vm.name + '_' + moment().format("YYYY-MM-DD_hh:mma"),
+            name: props.vm.name + '_' + now,
             description: "",
             validationError: {},
             inProgress: false,

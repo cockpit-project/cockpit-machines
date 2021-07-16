@@ -16,6 +16,10 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
+
+import * as dfnlocales from 'date-fns/locale';
+import { formatRelative } from 'date-fns';
+
 import cockpit from 'cockpit';
 import VMS_CONFIG from './config.js';
 
@@ -35,6 +39,11 @@ export function toReadableNumber(number) {
         const fixed1 = Math.floor((number * 10) / 10);
         return (number - fixed1 === 0) ? Math.floor(number) : fixed1;
     }
+}
+
+export function localize_datetime(time) {
+    const locale = (cockpit.language == "en") ? dfnlocales.enUS : dfnlocales[cockpit.language.replace('_', '')];
+    return formatRelative(time, Date.now(), { locale });
 }
 
 export const diskCacheModes = ['default', 'none', 'writethrough', 'writeback', 'directsync', 'unsafe'];

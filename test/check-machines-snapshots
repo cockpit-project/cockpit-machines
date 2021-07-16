@@ -39,8 +39,8 @@ class TestMachinesSnapshots(VirtualMachinesCase):
     def testSnapshots(self):
         # Checks if difference of @time1 and @time2 is not greater than @difference (in seconds)
         def checkTimeDiff(time1, time2, difference):
-            tmp = time2.split(' ')  # split "Today 13:13:13" into day and time
-            if not tmp[1].startswith('00:') and not tmp[0] == "Today":
+            tmp = time2.split(' ')  # split "today at 13:13:13" into day and time
+            if not tmp[2].startswith('00:') and not tmp[0] == "today":
                 return False
 
             diff = datetime.strptime(time1, '%H:%M:%S') - datetime.strptime("".join(tmp[-2:]), '%I:%M%p')
