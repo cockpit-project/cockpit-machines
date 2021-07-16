@@ -22,8 +22,8 @@ import cockpit from 'cockpit';
 import { vmId, localize_datetime } from "../../../helpers.js";
 import { CreateSnapshotModal } from "./vmSnapshotsCreateModal.jsx";
 import { ListingTable } from "cockpit-components-table.jsx";
-import { Button, Tooltip } from '@patternfly/react-core';
-import { InfoAltIcon } from '@patternfly/react-icons';
+import { Button, Tooltip, Flex, FlexItem } from '@patternfly/react-core';
+import { CheckIcon, InfoAltIcon } from '@patternfly/react-icons';
 import { DeleteResourceButton, DeleteResourceModal } from '../../common/deleteResource.jsx';
 import { RevertSnapshotModal } from './vmSnapshotsRevertModal.jsx';
 import { deleteSnapshot, getVmSnapshots } from '../../../libvirt-dbus.js';
@@ -84,14 +84,14 @@ export class VmSnapshotsCard extends React.Component {
             {
                 name: _("Creation time"), value: (snap, snapId) => {
                     const date = localize_datetime(snap.creationTime * 1000);
-                    return (<div className="snap-creation-time">
-                        <div id={`${id}-snapshot-${snapId}-date`}>
+                    return (<Flex className="snap-creation-time">
+                        <FlexItem id={`${id}-snapshot-${snapId}-date`} spacer={{ default: 'spacerSm' }}>
                             {date}
-                        </div>
-                        { snap.isCurrent && <Tooltip content={_("Current")}>
-                            <i id={`${id}-snapshot-${snapId}-current`} className="pficon pficon-ok" />
-                        </Tooltip> }
-                    </div>);
+                        </FlexItem>
+                        { snap.isCurrent && <FlexItem><Tooltip content={_("Current")}>
+                            <CheckIcon id={`${id}-snapshot-${snapId}-current`} />
+                        </Tooltip></FlexItem> }
+                    </Flex>);
                 }
             },
             {
