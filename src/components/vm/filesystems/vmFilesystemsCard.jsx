@@ -125,13 +125,11 @@ const VmFilesystemAddModal = ({ connectionName, memory, memoryBacking, objPath, 
                 type: memoryBackingType,
                 memory
             })
-                    .then(() => {
-                        createFilesystem({
-                            connectionName, objPath,
-                            source, target: mountTag,
-                            xattr,
-                        });
-                    })
+                    .then(() => createFilesystem({
+                        connectionName, objPath,
+                        source, target: mountTag,
+                        xattr,
+                    }))
                     .then(
                         () => setIsOpen(false),
                         exc => setDialogError(exc.message)
