@@ -93,14 +93,18 @@ class TestMachinesFilesystems(VirtualMachinesCase):
         self.assertEqual('', self.machine.execute(xmllint_element.format(prop='devices/filesystem[2]/binary/@xattr')).strip())
 
         # Try to add a new shared filesystem with the same mount tag
-        # Due to a libvirt bug this will be actually added without an error
-        # Keep the test here and add the expected behavior when the BZ is fixed
-        # https://bugzilla.redhat.com/show_bug.cgi?id=1972218
         b.click("#vm-subVmTest1-filesystems-add")
         b.set_file_autocomplete_val("#vm-subVmTest1-filesystems-modal-source-group", "/tmp/dir1/")
         b.set_input_text("#vm-subVmTest1-filesystems-modal-mountTag", "dir1")
         b.click("#vm-subVmTest1-filesystems-modal-add")
-        b.wait_visible("tr:nth-child(3)[data-row-id='vm-subVmTest1-filesystem-/tmp/dir1/-dir1']")
+        if m.execute("virsh --version") >= "7.5.0":
+            b.wait_in_text(".pf-c-alert", "Failed to add shared directory")
+            b.wait_in_text(".pf-c-alert", "filesystem target 'dir1' specified twice")
+            b.click("#vm-subVmTest1-filesystems-modal-cancel")
+        else:
+            # Due to a libvirt < 7.5.0 bug this will be actually added without an error:
+            # https://bugzilla.redhat.com/show_bug.cgi?id=1972218
+            b.wait_visible("tr:nth-child(3)[data-row-id='vm-subVmTest1-filesystem-/tmp/dir1/-dir1']")
 
         # Try to add a new shared filesystem with non existing source directory
         b.click("#vm-subVmTest1-filesystems-add")
