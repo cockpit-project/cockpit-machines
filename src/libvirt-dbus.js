@@ -614,15 +614,11 @@ export function getNodeDevice({
 }
 
 export function getNodeMaxMemory({ connectionName }) {
-    if (connectionName) {
-        // Some nodes don't return all memory in just one cell.
-        // Using -1 == VIR_NODE_MEMORY_STATS_ALL_CELLS will return memory across all cells
-        return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'NodeGetMemoryStats', [-1, 0], { timeout, type: 'iu' })
-                .then(stats => store.dispatch(setNodeMaxMemory({ memory: stats[0].total })))
-                .catch(ex => console.warn("NodeGetMemoryStats failed: %s", ex));
-    }
-
-    return unknownConnectionName(setNodeMaxMemory);
+    // Some nodes don't return all memory in just one cell.
+    // Using -1 == VIR_NODE_MEMORY_STATS_ALL_CELLS will return memory across all cells
+    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'NodeGetMemoryStats', [-1, 0], { timeout, type: 'iu' })
+            .then(stats => store.dispatch(setNodeMaxMemory({ memory: stats[0].total })))
+            .catch(ex => console.warn("NodeGetMemoryStats failed: %s", ex));
 }
 
 /*
