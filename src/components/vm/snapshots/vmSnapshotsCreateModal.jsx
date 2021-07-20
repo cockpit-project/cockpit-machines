@@ -18,7 +18,6 @@
  */
 import cockpit from "cockpit";
 import React from "react";
-import moment from "moment";
 
 import {
     Button,
