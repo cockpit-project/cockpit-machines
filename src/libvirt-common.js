@@ -1,7 +1,6 @@
 import cockpit from 'cockpit';
 import * as service from 'service.js';
-import createVmScript from 'raw-loader!./scripts/create_machine.sh';
-import installVmScript from 'raw-loader!./scripts/install_machine.sh';
+import installVmScript from 'raw-loader!./scripts/install_machine.py';
 
 import * as python from "python.js";
 import getOSListScript from 'raw-loader!./getOSList.py';
@@ -39,6 +38,8 @@ import store from './store.js';
 import VMS_CONFIG from './config.js';
 
 const METADATA_NAMESPACE = "https://github.com/cockpit-project/cockpit-machines";
+
+let pythonPath;
 
 export function buildConsoleVVFile(consoleDetail) {
     return '[virt-viewer]\n' +
@@ -1101,7 +1102,8 @@ export function createVm({
     if (connectionName === 'system')
         opts.superuser = 'try';
 
-    return cockpit.script(createVmScript, [
+    const args = JSON.stringify({
+        type: "create",
         connectionName,
         vmName,
         source,
@@ -1117,7 +1119,11 @@ export function createVm({
         userPassword,
         userLogin,
         profile,
-    ], opts)
+    });
+
+    return cockpit
+            .spawn([pythonPath, "--", "-", args], opts)
+            .input(installVmScript)
             .then(() => {
                 finishVmCreateInProgress(vmName, connectionName);
                 clearVmUiState(vmName, connectionName);
@@ -1141,7 +1147,11 @@ function getLoggedInUser() {
     });
 }
 
-function getOsInfoList () {
+function getPythonPath() {
+    return cockpit.spawn(["/bin/sh", "-c", "which /usr/libexec/platform-python 2>/dev/null || which python3 2>/dev/null || which python"]).then(pyexe => { pythonPath = pyexe.trim() });
+}
+
+function getOsInfoList() {
     logDebug(`GET_OS_INFO_LIST():`);
     return python.spawn(getOSListScript, null, { err: "message", environ: ['LC_ALL=C.UTF-8'] })
             .then(osList => {
@@ -1154,6 +1164,7 @@ function getOsInfoList () {
 }
 
 export function initState() {
+    getPythonPath();
     getLoggedInUser();
     getOsInfoList();
 }
@@ -1174,20 +1185,25 @@ export function installVm({ onAddErrorNotification, vm }) {
     if (connectionName === 'system')
         opts.superuser = 'try';
 
-    return cockpit.script(installVmScript, [
-        connectionName,
-        name,
-        metadata.installSourceType,
-        metadata.installSource,
-        metadata.osVariant,
-        prepareMemoryParam(convertToUnit(currentMemory, units.KiB, units.MiB), convertToUnit(memory, units.KiB, units.MiB)),
-        prepareVcpuParam(vcpus, cpu),
-        prepareDisksParam(disks),
-        prepareDisplaysParam(displays),
-        prepareNICParam(interfaces),
-        firmware == "efi" ? 'uefi' : '',
+    const args = JSON.stringify({
         autostart,
-    ], opts)
+        connectionName,
+        disks: prepareDisksParam(disks),
+        firmware: firmware == "efi" ? 'uefi' : '',
+        graphics: prepareDisplaysParam(displays),
+        memorySize: prepareMemoryParam(convertToUnit(currentMemory, units.KiB, units.MiB), convertToUnit(memory, units.KiB, units.MiB)),
+        os: metadata.osVariant,
+        source: metadata.installSource,
+        sourceType: metadata.installSourceType,
+        type: "install",
+        vcpu: prepareVcpuParam(vcpus, cpu),
+        vmName: name,
+        vnics: prepareNICParam(interfaces),
+    });
+
+    return cockpit
+            .spawn([pythonPath, "--", "-", args], opts)
+            .input(installVmScript)
             .finally(() => clearVmUiState(name, connectionName));
 }
 

@@ -1259,18 +1259,18 @@ class TestMachinesCreate(VirtualMachinesCase):
             return self
 
         def _assertDomainDefined(self, name, connection):
-            listCmd = ""
+            dumpxmlCmd = ""
             if connection == "session":
-                listCmd = "runuser -l admin -c 'virsh -c qemu:///session dumpxml --inactive {0}'".format(name)
+                dumpxmlCmd = "runuser -l admin -c 'virsh -c qemu:///session dumpxml --inactive {0}'".format(name)
             else:
                 # When creating VMs from the UI default connection is the system
                 # In this case don't use runuser -l admin because we get errors 'authentication unavailable'
-                listCmd = "virsh -c qemu:///system dumpxml --inactive {0}".format(name)
+                dumpxmlCmd = "virsh -c qemu:///system dumpxml --inactive {0}".format(name)
 
-            wait(lambda: "6" in self.machine.execute(listCmd + " | grep cockpit_machines | wc -l"))
+            wait(lambda: "7" in self.machine.execute(dumpxmlCmd + " | grep cockpit_machines | wc -l"))
             # The running XML has always substituted port
             # This checks that the defined domain is using the proper inactive XML
-            wait(lambda: self.machine.execute(listCmd + " | grep \"type='vnc' port='-1'\""))
+            wait(lambda: self.machine.execute(dumpxmlCmd + " | grep \"type='vnc' port='-1'\""))
 
             return self
 

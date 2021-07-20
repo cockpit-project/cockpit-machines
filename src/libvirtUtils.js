@@ -42,12 +42,13 @@ function prepareParamsFromObj(dataElem, valueTransformer) {
 }
 
 function prepareParamsFromArrOfObjs(arrayData, valueTransformer) {
-    return arrayData.map(dataElem => prepareObj(dataElem, valueTransformer)).join("\n");
+    return arrayData.map(dataElem => prepareObj(dataElem, valueTransformer))
+            .filter(Boolean);
 }
 
 function prepareParamsFromObjOfObjs(objectData, valueTransformer) {
     return Object.keys(objectData).map(key => prepareObj(objectData[key], valueTransformer))
-            .join("\n");
+            .filter(Boolean);
 }
 
 export function prepareDisplaysParam(displays) {
