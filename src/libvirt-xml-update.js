@@ -1,4 +1,4 @@
-import { getDoc, getElem, getSingleOptionalElem } from './libvirt-common.js';
+import { getDoc, getSingleOptionalElem } from './libvirt-common.js';
 import { getNextAvailableTarget, logDebug } from './helpers.js';
 
 export function updateDisk({ domXml, diskTarget, readonly, shareable, busType, existingTargets, cache }) {

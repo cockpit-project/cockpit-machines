@@ -38,7 +38,6 @@ import {
 import store from './store.js';
 import VMS_CONFIG from './config.js';
 
-const _ = cockpit.gettext;
 const METADATA_NAMESPACE = "https://github.com/cockpit-project/cockpit-machines";
 
 export function buildConsoleVVFile(consoleDetail) {
