@@ -341,7 +341,7 @@ export class AddDiskModalBody extends React.Component {
         // There are recently no Libvirt events for storage volumes and polling is ugly.
         // https://bugzilla.redhat.com/show_bug.cgi?id=1578836
         getAllStoragePools({ connectionName: this.props.vm.connectionName })
-                .fail(exc => this.dialogErrorSet(_("Disk settings could not be saved"), exc.message))
+                .fail(exc => this.dialogErrorSet(_("Storage pools could not be fetched"), exc.message))
                 .then(() => this.setState({ dialogLoading: false }));
     }
 

@@ -445,7 +445,10 @@ export function getAllNetworks({
             .then(objPaths => {
                 return Promise.all(objPaths[0].map((path) => getNetwork({ connectionName, id:path })));
             })
-            .catch(ex => console.warn('GET_ALL_NETWORKS action failed:', ex.toString()));
+            .catch(ex => {
+                console.warn('GET_ALL_NETWORKS action failed:', ex.toString());
+                return Promise.reject(ex);
+            });
 }
 
 export function getAllNodeDevices({
@@ -453,7 +456,10 @@ export function getAllNodeDevices({
 }) {
     return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListNodeDevices', [0], { timeout, type: 'u' })
             .then(objPaths => Promise.all(objPaths[0].map(path => getNodeDevice({ connectionName, id:path }))))
-            .catch(ex => console.warn('GET_ALL_NODE_DEVICES action failed:', ex.toString()));
+            .catch(ex => {
+                console.warn('GET_ALL_NODE_DEVICES action failed:', ex.toString());
+                return Promise.reject(ex);
+            });
 }
 
 export function getAllStoragePools({
@@ -471,7 +477,10 @@ export function getAllStoragePools({
                             });
                 }));
             })
-            .catch(ex => console.warn('GET_ALL_STORAGE_POOLS action failed:', ex.toString()));
+            .catch(ex => {
+                console.warn('GET_ALL_STORAGE_POOLS action failed:', ex.toString());
+                return Promise.reject(ex);
+            });
 }
 
 export function getAllVms({ connectionName }) {
@@ -480,7 +489,10 @@ export function getAllVms({ connectionName }) {
                 store.dispatch(deleteUnlistedVMs(connectionName, [], objPaths[0]));
                 return Promise.all(objPaths[0].map(path => getVm({ connectionName, id:path })));
             })
-            .catch(ex => console.warn('GET_ALL_VMS action failed:', ex.toString()));
+            .catch(ex => {
+                console.warn('GET_ALL_VMS action failed:', ex.toString());
+                return Promise.reject(ex);
+            });
 }
 
 export function getApiData({ connectionName, libvirtServiceName }) {
@@ -618,7 +630,10 @@ export function getNodeMaxMemory({ connectionName }) {
     // Using -1 == VIR_NODE_MEMORY_STATS_ALL_CELLS will return memory across all cells
     return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'NodeGetMemoryStats', [-1, 0], { timeout, type: 'iu' })
             .then(stats => store.dispatch(setNodeMaxMemory({ memory: stats[0].total })))
-            .catch(ex => console.warn("NodeGetMemoryStats failed: %s", ex));
+            .catch(ex => {
+                console.warn("NodeGetMemoryStats failed: %s", ex);
+                return Promise.reject(ex);
+            });
 }
 
 /*
@@ -1456,9 +1471,12 @@ export function domainSendKey(connectionName, id, keyCodes) {
 export function getAllInterfaces({ connectionName }) {
     const flags = Enum.VIR_CONNECT_LIST_INTERFACES_ACTIVE | Enum.VIR_CONNECT_LIST_INTERFACES_INACTIVE;
 
-    call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListInterfaces', [flags], { timeout, type: 'u' })
+    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListInterfaces', [flags], { timeout, type: 'u' })
             .then(ifaces => Promise.all(ifaces[0].map(path => getInterface({ connectionName, id:path }))))
-            .catch(ex => console.warn('getAllInterfaces action failed:', ex.toString()));
+            .catch(ex => {
+                console.warn('getAllInterfaces action failed:', ex.toString());
+                return Promise.reject(ex);
+            });
 }
 
 export function getDomainCapabilities(connectionName, arch, model) {
