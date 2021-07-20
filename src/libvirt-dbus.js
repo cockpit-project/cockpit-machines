@@ -1139,7 +1139,7 @@ function domainUpdateOrDelete(connectionName, domPath) {
                 else // Transient vm will get undefined when stopped
                     store.dispatch(undefineVm({ connectionName, id:domPath, transientOnly: true }));
             })
-            .catch(ex => console.warn('GET_ALL_NETWORKS action failed:', ex.toString()));
+            .catch(ex => console.warn('domainUpdateOrDelete action failed:', ex.toString()));
 }
 
 function storagePoolUpdateOrDelete(connectionName, poolPath) {
@@ -1150,7 +1150,7 @@ function storagePoolUpdateOrDelete(connectionName, poolPath) {
                 else // Transient pool which got undefined when stopped
                     store.dispatch(undefineStoragePool({ connectionName, id:poolPath }));
             })
-            .catch(ex => console.warn('GET_ALL_NETWORKS action failed:', ex.toString()));
+            .catch(ex => console.warn('storagePoolUpdateOrDelete action failed:', ex.toString()));
 }
 
 function networkUpdateOrDelete(connectionName, netPath) {
@@ -1161,7 +1161,7 @@ function networkUpdateOrDelete(connectionName, netPath) {
                 else // Transient network which got undefined when stopped
                     store.dispatch(undefineNetwork({ connectionName, id:netPath }));
             })
-            .catch(ex => console.warn('GET_ALL_NETWORKS action failed:', ex.toString()));
+            .catch(ex => console.warn('networkUpdateOrDelete action failed:', ex.toString()));
 }
 
 function startEventMonitorNetworks(connectionName) {
