@@ -56,6 +56,10 @@ export const App = ({ name }) => {
         store.dispatch(updateLibvirtState({
             activeState: libvirtService.state,
         }));
+        if (libvirtService.state == 'failed') {
+            console.warn("Libvirtd has failed");
+            setLoadingResources(false);
+        }
         if (libvirtService.state == 'running' && prevLibvirtServiceRef.current !== 'running' && prevLibvirtServiceRef.current !== null) {
             setLoadingResources(true);
             // If promises rejected here show an toast alert in the main page
