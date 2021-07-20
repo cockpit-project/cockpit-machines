@@ -50,6 +50,7 @@ export const App = ({ name }) => {
     const libvirtService = useObject(() => service.proxy(name), null, []);
     const prevLibvirtServiceRef = useRef();
     const [loadingResources, setLoadingResources] = useState(false);
+    const [error, setError] = useState('');
 
     useEvent(libvirtService, "changed", () => {
         store.dispatch(updateLibvirtState({
@@ -57,8 +58,16 @@ export const App = ({ name }) => {
         }));
         if (libvirtService.state == 'running' && prevLibvirtServiceRef.current !== 'running' && prevLibvirtServiceRef.current !== null) {
             setLoadingResources(true);
+            // If promises rejected here show an toast alert in the main page
             getApiData({ connectionName: 'system' })
-                    .catch(exc => console.warn("getApiData failed:", exc.message))
+                    .then(promises => {
+                        const errorMsgs = [];
+                        promises.forEach(promise => {
+                            if (promise.status == 'rejected' && promise.reason)
+                                errorMsgs.push(promise.reason.message);
+                        });
+                        setError(errorMsgs.join(', '));
+                    })
                     .finally(() => setLoadingResources(false));
         }
         prevLibvirtServiceRef.current = libvirtService.state;
@@ -70,8 +79,8 @@ export const App = ({ name }) => {
         prevLibvirtServiceRef.current = libvirtService.state;
 
         setLoadingResources(true);
+        // Let's not show errors from resource fetching here as it can be related to permissions and in this case we should not spam users
         getApiData({ connectionName: null })
-                .catch(exc => console.warn("getApiData failed: ", exc.message))
                 .finally(() => setLoadingResources(false));
     }, []);
 
@@ -83,7 +92,7 @@ export const App = ({ name }) => {
                           loadingResources={loadingResources} />
         );
     } else return (
-        <AppActive />
+        <AppActive error={error} />
     );
 };
 
@@ -104,6 +113,9 @@ class AppActive extends React.Component {
 
     componentDidMount() {
         cockpit.addEventListener("locationchanged", this.onNavigate);
+
+        if (this.props.error)
+            this.onAddErrorNotification({ text: _("Failed to fetch some resources"), detail: this.props.error });
     }
 
     componentWillUnmount() {
