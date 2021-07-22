@@ -112,6 +112,6 @@ USB_HOSTDEV = """<hostdev mode='subsystem' type='usb'>
 
 PCI_HOSTDEV = """<hostdev mode='subsystem' type='pci'>
   <source>
-    <address domain='0x0000' bus='0x00' slot='0xF' function='0x0'/>
+    <address domain='0x0000' bus='{bus}' slot='{slot}' function='{function}'/>
   </source>
 </hostdev>"""

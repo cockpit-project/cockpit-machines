@@ -19,6 +19,7 @@
 
 import os
 import sys
+import re
 
 # import Cockpit's machinery for test VMs and its browser test API
 TEST_DIR = os.path.dirname(__file__)
@@ -68,16 +69,31 @@ class TestMachinesHostDevs(VirtualMachinesCase):
         # A pci device should always be present
         m.execute("virsh destroy subVmTest1")
         b.wait_in_text("#vm-subVmTest1-state", "Shut off")
-        m.execute("echo \"{0}\" > /tmp/pcihostedxml".format(PCI_HOSTDEV))
+
+        # Find the first network device and pass it through to the guest
+        pci = m.execute("find /sys/class/net/ -name e* | head -1 | xargs udevadm info").strip()
+        pci_tag = m.execute(f"echo '{pci}' | grep -P ID_PATH=").strip().split("=")[1]
+        pci_vendor = m.execute(f"echo '{pci}' | grep -P ID_VENDOR_FROM_DATABASE=").strip().split("=")[1]
+        pci_class = m.execute(f"echo '{pci}' | grep -P ID_PCI_CLASS_FROM_DATABASE=").strip().split("=")[1]
+        pci_model = m.execute(f"echo '{pci}' | grep -P ID_MODEL_FROM_DATABASE=").strip().split("=")[1]
+        pci_parts = re.split('\\:|\\.', pci_tag)
+        bus = hex(int(pci_parts[-3], 16))
+        slot = hex(int(pci_parts[-2], 16))
+        function = hex(int(pci_parts[-1], 16))
+
+        m.execute("echo \"{0}\" > /tmp/pcihostedxml".format(PCI_HOSTDEV.format(bus=bus, slot=slot, function=function)))
         m.execute("virsh attach-device --domain subVmTest1 --file /tmp/pcihostedxml --persistent")
+
         b.reload()
         b.enter_page('/machines')
 
         b.wait_in_text("#vm-subVmTest1-hostdev-1-type", "pci")
-        if 'virtio' in m.execute("cut -f18 /proc/bus/pci/devices"):
-            b.wait_in_text("#vm-subVmTest1-hostdev-1-vendor", "Red Hat, Inc")
-            b.wait_in_text("#vm-subVmTest1-hostdev-1-product", "Virtio network device")
-        b.wait_in_text("#vm-subVmTest1-hostdev-1-source #1-slot", "0000:00:0f.0")
+        b.wait_in_text("#vm-subVmTest1-hostdev-1-class", pci_class)
+        b.wait_in_text("#vm-subVmTest1-hostdev-1-vendor", pci_vendor)
+        b.wait_in_text("#vm-subVmTest1-hostdev-1-product", pci_model)
+        b.wait_in_text("#vm-subVmTest1-hostdev-1-source #1-slot", pci_tag[4:])
+
+        b.assert_pixels("#vm-subVmTest1-hostdevs", "vm-details-hostdevs-card")
 
 
 if __name__ == '__main__':
