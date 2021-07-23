@@ -19,6 +19,7 @@
 
 import os
 import sys
+import subprocess
 
 # import Cockpit's machinery for test VMs and its browser test API
 TEST_DIR = os.path.dirname(__file__)
@@ -74,9 +75,14 @@ class TestMachinesHostDevs(VirtualMachinesCase):
         b.enter_page('/machines')
 
         b.wait_in_text("#vm-subVmTest1-hostdev-1-type", "pci")
-        if 'virtio' in m.execute("cut -f18 /proc/bus/pci/devices"):
+        try:
+            m.execute("test -d /sys/devices/pci0000\\:00/0000\\:00\\:0f.0/")
             b.wait_in_text("#vm-subVmTest1-hostdev-1-vendor", "Red Hat, Inc")
             b.wait_in_text("#vm-subVmTest1-hostdev-1-product", "Virtio network device")
+            b.assert_pixels("#vm-subVmTest1-hostdevs", "vm-details-hostdevs-card")
+        except subprocess.CalledProcessError:
+            pass
+
         b.wait_in_text("#vm-subVmTest1-hostdev-1-source #1-slot", "0000:00:0f.0")
 
 
