@@ -132,6 +132,21 @@ export const MigrateDialog = ({ vm, connectionName, toggleModal }) => {
     const [storage, setStorage] = useState("nocopy");
     const [temporary, setTemporary] = useState(false);
     const [validationFailed, setValidationFailed] = useState(false);
+    const [copyStorageHidden, setCopyStorageHidden] = useState(true);
+
+    cockpit.file("/etc/os-release").read()
+            .then(data => {
+                let isRhel = false;
+
+                data.split('\n').forEach(line => {
+                    const parts = line.split('=');
+
+                    if (parts.length === 2 && parts[0] === "ID" && parts[1].replace(/^"(.*)"$/, '$1') === "rhel")
+                        isRhel = true;
+                });
+
+                setCopyStorageHidden(isRhel);
+            });
 
     function validateParams() {
         const validation = {};
@@ -171,9 +186,10 @@ export const MigrateDialog = ({ vm, connectionName, toggleModal }) => {
                         setDestUri={setDestUri}
                         validationFailed={validationFailed} />
             <DurationRow temporary={temporary}
-                        setTemporary={setTemporary} />
-            <StorageRow storage={storage}
-                        setStorage={setStorage} />
+                         setTemporary={setTemporary} />
+            {!copyStorageHidden && <StorageRow storage={storage}
+                                               setStorage={setStorage} />
+            }
         </Form>
     );
 
@@ -205,8 +221,9 @@ export const MigrateDialog = ({ vm, connectionName, toggleModal }) => {
 
     return (
         <Modal id="migrate-modal" position="top" variant="medium" isOpen onClose={toggleModal}
-           title={_("Migrate VM to another host")}
-           footer={footer}>
+               description={copyStorageHidden && _("Storage volumes must be shared between this host and the destination host.")}
+               title={_("Migrate VM to another host")}
+               footer={footer}>
             {body}
         </Modal>
     );
