@@ -33,7 +33,6 @@ import {
     updateLibvirtVersion,
     updateDomainSnapshots,
     updateOrAddInterface,
-    updateOrAddNetwork,
     updateOrAddNodeDevice,
     updateOrAddVm,
     updateOrAddStoragePool,
@@ -44,7 +43,6 @@ import {
 import {
     getDiskXML,
     getIfaceXML,
-    getNetworkXML,
     getPoolXML,
     getVolumeXML,
     getSnapshotXML,
@@ -82,7 +80,6 @@ import {
     isRunning,
     parseDomainSnapshotDumpxml,
     parseDumpxml,
-    parseNetDumpxml,
     parseIfaceDumpxml,
     parseNodeDeviceDumpxml,
     parsePoolCapabilities,
@@ -106,6 +103,10 @@ import {
     Enum,
     timeout,
 } from './libvirtApi/helpers.js';
+import {
+    networkGet,
+    networkGetAll,
+} from './libvirtApi/network.js';
 
 const LIBVIRT_DBUS_PROVIDER = {
     name: 'LibvirtDBus',
@@ -387,19 +388,6 @@ export function forceRebootVm({
     return call(connectionName, objPath, 'org.libvirt.Domain', 'Reset', [0], { timeout, type: 'u' });
 }
 
-export function getAllNetworks({
-    connectionName,
-}) {
-    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListNetworks', [0], { timeout, type: 'u' })
-            .then(objPaths => {
-                return Promise.all(objPaths[0].map((path) => getNetwork({ connectionName, id:path })));
-            })
-            .catch(ex => {
-                console.warn('GET_ALL_NETWORKS action failed:', ex.toString());
-                return Promise.reject(ex);
-            });
-}
-
 export function getAllNodeDevices({
     connectionName,
 }) {
@@ -452,7 +440,7 @@ export function getApiData({ connectionName, libvirtServiceName }) {
             getAllVms({ connectionName }),
             getAllStoragePools({ connectionName }),
             getAllInterfaces({ connectionName }),
-            getAllNetworks({ connectionName }),
+            networkGetAll({ connectionName }),
             getAllNodeDevices({ connectionName }),
             getNodeMaxMemory({ connectionName }),
             getLibvirtVersion({ connectionName }),
@@ -463,43 +451,6 @@ export function getApiData({ connectionName, libvirtServiceName }) {
                     return Promise.allSettled(connectionNames.map(conn => getApiData({ connectionName: conn, libvirtServiceName })));
                 });
     }
-}
-
-/*
- * Read properties of a single Network
- *
- * @param Network object path
- */
-export function getNetwork({
-    id: objPath,
-    connectionName,
-    updateOnly,
-}) {
-    const props = {};
-
-    call(connectionName, objPath, 'org.freedesktop.DBus.Properties', 'GetAll', ['org.libvirt.Network'], { timeout, type: 's' })
-            .then(resultProps => {
-                /* Sometimes not all properties are returned; for example when some network got deleted while part
-                 * of the properties got fetched from libvirt. Make sure that there is check before reading the attributes.
-                 */
-                if ("Active" in resultProps[0])
-                    props.active = resultProps[0].Active.v.v;
-                if ("Persistent" in resultProps[0])
-                    props.persistent = resultProps[0].Persistent.v.v;
-                if ("Autostart" in resultProps[0])
-                    props.autostart = resultProps[0].Autostart.v.v;
-                if ("Name" in resultProps[0])
-                    props.name = resultProps[0].Name.v.v;
-                props.id = objPath;
-                props.connectionName = connectionName;
-
-                return call(connectionName, objPath, 'org.libvirt.Network', 'GetXMLDesc', [0], { timeout, type: 'u' });
-            })
-            .then(xml => {
-                const network = parseNetDumpxml(xml);
-                store.dispatch(updateOrAddNetwork(Object.assign({}, props, network), updateOnly));
-            })
-            .catch(ex => console.warn('GET_NETWORK action failed for path', objPath, ex.toString()));
 }
 
 /*
@@ -1122,7 +1073,7 @@ function networkUpdateOrDelete(connectionName, netPath) {
     call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListNetworks', [0], { timeout, type: 'u' })
             .then(objPaths => {
                 if (objPaths[0].includes(netPath))
-                    getNetwork({ connectionName, id:netPath, updateOnly: true });
+                    networkGet({ connectionName, id:netPath, updateOnly: true });
                 else // Transient network which got undefined when stopped
                     store.dispatch(undefineNetwork({ connectionName, id:netPath }));
             })
@@ -1139,7 +1090,7 @@ function startEventMonitorNetworks(connectionName) {
             switch (eventType) {
             case Enum.VIR_NETWORK_EVENT_DEFINED:
             case Enum.VIR_NETWORK_EVENT_STARTED:
-                getNetwork({ connectionName, id:objPath });
+                networkGet({ connectionName, id:objPath });
                 break;
             case Enum.VIR_NETWORK_EVENT_STOPPED:
                 networkUpdateOrDelete(connectionName, objPath);
@@ -1160,7 +1111,7 @@ function startEventMonitorNetworks(connectionName) {
             switch (signal) {
             case 'Refresh':
             /* These signals imply possible changes in what we display, so re-read the state */
-                getNetwork({ connectionName, id:path });
+                networkGet({ connectionName, id:path });
                 break;
             default:
                 logDebug(`handleEvent Network on ${connectionName} : ignoring event ${signal}`);
@@ -1239,16 +1190,6 @@ export function updateDiskAttributes({ connectionName, objPath, target, readonly
                 const updatedXML = updateDisk({ diskTarget: target, domXml, readonly, shareable, busType, existingTargets, cache });
                 return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [updatedXML], { timeout, type: 's' });
             });
-}
-
-export function changeNetworkAutostart(network, autostart) {
-    return call(network.connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'NetworkLookupByName', [network.name], { timeout, type: 's' })
-            .then(networkPath => {
-                const args = ['org.libvirt.Network', 'Autostart', cockpit.variant('b', autostart)];
-
-                return call(network.connectionName, networkPath[0], 'org.freedesktop.DBus.Properties', 'Set', args, { timeout, type: 'ssv' });
-            })
-            .then(() => getNetwork({ connectionName: network.connectionName, id: network.id, name: network.name }));
 }
 
 export function changeNetworkSettings({
@@ -1451,30 +1392,6 @@ export function migrateToUri(connectionName, objPath, destUri, storage, temporar
         flags = flags | Enum.VIR_MIGRATE_UNDEFINE_SOURCE;
 
     return call(connectionName, objPath, 'org.libvirt.Domain', 'MigrateToURI3', [destUri, {}, flags], { type: 'sa{sv}u' });
-}
-
-export function networkActivate(connectionName, objPath) {
-    return call(connectionName, objPath, 'org.libvirt.Network', 'Create', [], { timeout, type: '' });
-}
-
-export function networkCreate({
-    connectionName, name, forwardMode, device, ipv4, netmask, ipv6, prefix,
-    ipv4DhcpRangeStart, ipv4DhcpRangeEnd, ipv6DhcpRangeStart, ipv6DhcpRangeEnd
-}) {
-    const netXmlDesc = getNetworkXML({
-        name, forwardMode, ipv4, netmask, ipv6, prefix, device,
-        ipv4DhcpRangeStart, ipv4DhcpRangeEnd, ipv6DhcpRangeStart, ipv6DhcpRangeEnd
-    });
-
-    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'NetworkDefineXML', [netXmlDesc], { timeout, type: 's' });
-}
-
-export function networkDeactivate(connectionName, objPath) {
-    return call(connectionName, objPath, 'org.libvirt.Network', 'Destroy', [], { timeout, type: '' });
-}
-
-export function networkUndefine(connectionName, objPath) {
-    return call(connectionName, objPath, 'org.libvirt.Network', 'Undefine', [], { timeout, type: '' });
 }
 
 export function setCpuMode({
