@@ -26,7 +26,7 @@ import {
 import cockpit from 'cockpit';
 
 import { networkId } from '../../helpers.js';
-import { changeNetworkAutostart } from '../../libvirt-dbus.js';
+import { networkChangeAutostart } from '../../libvirtApi/network.js';
 
 import '../common/overviewCard.css';
 
@@ -64,7 +64,7 @@ export class NetworkOverviewTab extends React.Component {
         const { network } = this.props;
         const autostart = !network.autostart;
 
-        changeNetworkAutostart(network, autostart);
+        networkChangeAutostart({ network, autostart });
     }
 
     render() {

@@ -29,7 +29,7 @@ import {
 } from '@patternfly/react-core';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
-import { networkCreate } from '../../libvirt-dbus.js';
+import { networkCreate } from '../../libvirtApi/network.js';
 import { isEmpty, LIBVIRT_SYSTEM_CONNECTION, rephraseUI } from '../../helpers.js';
 import * as utils from './utils';
 import cockpit from 'cockpit';

@@ -32,7 +32,7 @@ import {
     networkActivate,
     networkDeactivate,
     networkUndefine
-} from '../../libvirt-dbus.js';
+} from '../../libvirtApi/network.js';
 import store from '../../store.js';
 
 import cockpit from 'cockpit';
@@ -108,7 +108,7 @@ class NetworkActions extends React.Component {
     onActivate() {
         const network = this.props.network;
 
-        networkActivate(network.connectionName, network.id)
+        networkActivate({ connectionName: network.connectionName, objPath: network.id })
                 .finally(() => this.setState({ operationInProgress: false }))
                 .catch(exc => {
                     store.dispatch(
@@ -127,7 +127,7 @@ class NetworkActions extends React.Component {
     onDeactivate() {
         const network = this.props.network;
 
-        networkDeactivate(this.props.network.connectionName, this.props.network.id)
+        networkDeactivate({ connectionName: this.props.network.connectionName, objPath: this.props.network.id })
                 .finally(() => this.setState({ operationInProgress: false }))
                 .catch(exc => {
                     store.dispatch(
@@ -148,10 +148,10 @@ class NetworkActions extends React.Component {
         const id = networkId(network.name, network.connectionName);
         const deleteHandler = (network) => {
             if (network.active) {
-                return networkDeactivate(network.connectionName, network.id)
-                        .then(() => networkUndefine(network.connectionName, network.id));
+                return networkDeactivate({ connectionName: network.connectionName, objPath: network.id })
+                        .then(() => networkUndefine({ connectionName: network.connectionName, objPath: network.id }));
             } else {
-                return networkUndefine(network.connectionName, network.id);
+                return networkUndefine({ connectionName: network.connectionName, objPath: network.id });
             }
         };
         const deleteDialogProps = {
