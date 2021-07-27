@@ -31,7 +31,7 @@ import { LIBVIRT_SYSTEM_CONNECTION } from '../../helpers.js';
 import { MachinesConnectionSelector } from '../common/machinesConnectionSelector.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { FileAutoComplete } from 'cockpit-components-file-autocomplete.jsx';
-import { createStoragePool } from '../../libvirt-dbus.js';
+import { createStoragePool, getPoolCapabilities } from '../../libvirt-dbus.js';
 import cockpit from 'cockpit';
 
 const _ = cockpit.gettext;
@@ -52,7 +52,7 @@ const StoragePoolNameRow = ({ onValueChanged, dialogValues }) => {
     );
 };
 
-const StoragePoolTypeRow = ({ onValueChanged, dialogValues, libvirtVersion }) => {
+const StoragePoolTypeRow = ({ onValueChanged, dialogValues, libvirtVersion, poolCapabilities }) => {
     const poolTypes = [
         { type: 'dir', detail: _("Filesystem directory") },
         { type: 'netfs', detail:_("Network file system") },
@@ -63,6 +63,8 @@ const StoragePoolTypeRow = ({ onValueChanged, dialogValues, libvirtVersion }) =>
     // iscsi-direct exists since 4.7.0
     if (libvirtVersion && libvirtVersion >= 4007000)
         poolTypes.push({ type: 'iscsi-direct', detail: _("iSCSI direct target") });
+
+    const supportedPoolTypes = poolTypes.filter(pool => poolCapabilities[pool.type] ? poolCapabilities[pool.type].supported : true);
 
     /* TODO
         { type: 'fs', detail _("Pre-formatted Block Device") },
@@ -79,7 +81,7 @@ const StoragePoolTypeRow = ({ onValueChanged, dialogValues, libvirtVersion }) =>
             <FormSelect id='storage-pool-dialog-type'
                         value={dialogValues.type}
                         onChange={value => onValueChanged('type', value)}>
-                { poolTypes
+                { supportedPoolTypes
                         .map(pool => {
                             return (
                                 <FormSelectOption value={pool.type} key={pool.type}
@@ -409,6 +411,7 @@ class CreateStoragePoolModal extends React.Component {
                                     onValueChanged={this.onValueChanged} />
                 <StoragePoolTypeRow dialogValues={this.state}
                                     libvirtVersion={this.props.libvirtVersion}
+                                    poolCapabilities={this.props.poolCapabilities}
                                     onValueChanged={this.onValueChanged} />
 
                 <StoragePoolTargetRow dialogValues={this.state}
@@ -452,9 +455,15 @@ CreateStoragePoolModal.propTypes = {
 export class CreateStoragePoolAction extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { showModal: false };
+        this.state = { showModal: false, poolCapabilities: undefined };
         this.open = this.open.bind(this);
         this.close = this.close.bind(this);
+    }
+
+    componentDidMount() {
+        getPoolCapabilities({ connectionName: "session" })
+                .then(poolCapabilities => this.setState({ poolCapabilities }))
+                .always(() => this.setState({ poolCapabilities: {} }));
     }
 
     close() {
@@ -468,11 +477,15 @@ export class CreateStoragePoolAction extends React.Component {
     render() {
         return (
             <>
-                <Button id='create-storage-pool' variant='secondary' onClick={this.open}>
+                <Button id='create-storage-pool'
+                        variant='secondary'
+                        isDisabled={this.state.poolCapabilities === undefined}
+                        onClick={this.open}>
                     {_("Create storage pool")}
                 </Button>
                 { this.state.showModal &&
                 <CreateStoragePoolModal
+                    poolCapabilities={this.state.poolCapabilities}
                     close={this.close}
                     libvirtVersion={this.props.libvirtVersion}
                     loggedUser={this.props.loggedUser} /> }

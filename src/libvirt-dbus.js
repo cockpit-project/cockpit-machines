@@ -86,6 +86,7 @@ import {
     parseNetDumpxml,
     parseIfaceDumpxml,
     parseNodeDeviceDumpxml,
+    parsePoolCapabilities,
     parseStoragePoolDumpxml,
     parseStorageVolumeDumpxml,
     resolveUiState,
@@ -1481,6 +1482,21 @@ export function getAllInterfaces({ connectionName }) {
 
 export function getDomainCapabilities(connectionName, arch, model) {
     return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'GetDomainCapabilities', ['', arch, model, '', 0], { timeout, type: 'ssssu' });
+}
+
+export function getPoolCapabilities({ connectionName }) {
+    // TODO: replace with D-Bus API once available https://bugzilla.redhat.com/show_bug.cgi?id=1986321
+    const opts = { err: "message", environ: ['LC_ALL=C'] };
+    if (connectionName === 'system')
+        opts.superuser = 'try';
+
+    return cockpit.spawn(
+        ["virsh", "-c", "qemu:///" + connectionName, "pool-capabilities"],
+        opts
+    ).then(poolCapabilities => parsePoolCapabilities(poolCapabilities), ex => {
+        console.warn('virsh pool-capabilities failed:', ex.toString());
+        return cockpit.reject(ex);
+    });
 }
 
 export function migrateToUri(connectionName, objPath, destUri, storage, temporary) {

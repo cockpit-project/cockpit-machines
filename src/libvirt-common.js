@@ -135,6 +135,18 @@ export function getElem(xml) {
     return xmlDoc.firstElementChild;
 }
 
+export function parsePoolCapabilities(capsXML) {
+    const poolCapsElem = getElem(capsXML);
+    const poolElements = poolCapsElem.getElementsByTagName("pool");
+
+    return Array.prototype.reduce.call(poolElements, function(result, item) {
+        const type = item.getAttribute('type');
+        const supported = item.getAttribute('supported');
+        result[type] = { supported };
+        return result;
+    }, {});
+}
+
 export function getDomainCapMaxVCPU(capsXML) {
     const domainCapsElem = getElem(capsXML);
     const vcpuElem = domainCapsElem.getElementsByTagName("vcpu") && domainCapsElem.getElementsByTagName("vcpu")[0];
