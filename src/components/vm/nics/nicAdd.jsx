@@ -118,9 +118,7 @@ export class AddNIC extends React.Component {
             permanent: this.state.permanent,
             hotplug: vm.state === "running",
         })
-                .fail((exc) => {
-                    this.dialogErrorSet(_("Network interface settings could not be saved"), exc.message);
-                })
+                .catch(exc => this.dialogErrorSet(_("Network interface settings could not be saved"), exc.message))
                 .then(() => {
                     getVm({ connectionName: vm.connectionName, id: vm.id });
                     this.props.close();

@@ -394,9 +394,7 @@ class CreateStoragePoolModal extends React.Component {
                         this.setState({ createInProgress: false });
                         this.dialogErrorSet(_("Storage pool failed to be created"), exc.message);
                     })
-                    .then(() => {
-                        this.props.close();
-                    });
+                    .then(() => this.props.close());
         }
     }
 
@@ -463,7 +461,7 @@ export class CreateStoragePoolAction extends React.Component {
     componentDidMount() {
         getPoolCapabilities({ connectionName: "session" })
                 .then(poolCapabilities => this.setState({ poolCapabilities }))
-                .always(() => this.setState({ poolCapabilities: {} }));
+                .finally(() => this.setState({ poolCapabilities: {} }));
     }
 
     close() {

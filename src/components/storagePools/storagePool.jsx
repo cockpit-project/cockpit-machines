@@ -110,7 +110,7 @@ class StoragePoolActions extends React.Component {
 
         this.setState({ operationInProgress: true });
         storagePoolActivate(storagePool.connectionName, storagePool.id)
-                .fail(exc => {
+                .catch(exc => {
                     store.dispatch(
                         updateOrAddStoragePool({
                             connectionName: storagePool.connectionName,
@@ -122,7 +122,7 @@ class StoragePoolActions extends React.Component {
                         }, true)
                     );
                 })
-                .always(() => this.setState({ operationInProgress: false }));
+                .finally(() => this.setState({ operationInProgress: false }));
     }
 
     onDeactivate() {
@@ -130,7 +130,7 @@ class StoragePoolActions extends React.Component {
 
         this.setState({ operationInProgress: true });
         storagePoolDeactivate(storagePool.connectionName, storagePool.id)
-                .fail(exc => {
+                .catch(exc => {
                     store.dispatch(
                         updateOrAddStoragePool({
                             connectionName: storagePool.connectionName,
@@ -142,7 +142,7 @@ class StoragePoolActions extends React.Component {
                         }, true)
                     );
                 })
-                .always(() => this.setState({ operationInProgress: false }));
+                .finally(() => this.setState({ operationInProgress: false }));
     }
 
     render() {

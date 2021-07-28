@@ -48,9 +48,7 @@ function renderApp() {
                     render(name);
                 }
             })
-            .fail((exception, data) => {
-                console.error(`initialize failed: getting libvirt service name returned error: "${JSON.stringify(exception)}", data: "${JSON.stringify(data)}"`);
-            });
+            .catch(ex => console.error(`initialize failed: getting libvirt service name returned error: "${JSON.stringify(ex)}"`));
 }
 
 /**

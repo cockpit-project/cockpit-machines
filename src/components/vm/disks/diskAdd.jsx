@@ -341,7 +341,7 @@ export class AddDiskModalBody extends React.Component {
         // There are recently no Libvirt events for storage volumes and polling is ugly.
         // https://bugzilla.redhat.com/show_bug.cgi?id=1578836
         getAllStoragePools({ connectionName: this.props.vm.connectionName })
-                .fail(exc => this.dialogErrorSet(_("Storage pools could not be fetched"), exc.message))
+                .catch(exc => this.dialogErrorSet(_("Storage pools could not be fetched"), exc.message))
                 .then(() => this.setState({ dialogLoading: false }));
     }
 
@@ -503,7 +503,7 @@ export class AddDiskModalBody extends React.Component {
                 cacheMode: this.state.cacheMode,
                 busType: this.state.busType
             })
-                    .fail(exc => {
+                    .catch(exc => {
                         this.setState({ addDiskInProgress: false });
                         this.dialogErrorSet(_("Disk failed to be created"), exc.message);
                     })
@@ -535,7 +535,7 @@ export class AddDiskModalBody extends React.Component {
             shareable: volume && volume.format === "raw" && isVolumeUsed[this.state.existingVolumeName],
             busType: this.state.busType
         })
-                .fail(exc => {
+                .catch(exc => {
                     this.setState({ addDiskInProgress: false });
                     this.dialogErrorSet(_("Disk failed to be attached"), exc.message);
                 })
@@ -548,7 +548,7 @@ export class AddDiskModalBody extends React.Component {
 
                             promises.push(
                                 updateDiskAttributes({ connectionName: vm.connectionName, objPath: vm.id, readonly: false, shareable: true, target: diskTarget })
-                                        .fail(exc => this.dialogErrorSet(_("Disk settings could not be saved"), exc.message))
+                                        .catch(exc => this.dialogErrorSet(_("Disk settings could not be saved"), exc.message))
                             );
                         });
 

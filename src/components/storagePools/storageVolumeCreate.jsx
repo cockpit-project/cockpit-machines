@@ -78,13 +78,11 @@ class CreateStorageVolumeModal extends React.Component {
             const size = convertToUnit(this.state.size, this.state.unit, 'MiB');
 
             storageVolumeCreate(connectionName, name, volumeName, size, format)
-                    .fail(exc => {
+                    .catch(exc => {
                         this.setState({ createInProgress: false });
                         this.dialogErrorSet(_("Volume failed to be created"), exc.message);
                     })
-                    .then(() => {
-                        this.props.close();
-                    });
+                    .then(() => this.props.close());
         }
     }
 

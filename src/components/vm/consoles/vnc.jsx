@@ -126,7 +126,7 @@ class Vnc extends React.Component {
                     key={cockpit.format("ctrl-alt-$0", keyName)}
                     onClick={() => {
                         return domainSendKey(connectionName, vmId, [Enum.KEY_LEFTCTRL, Enum.KEY_LEFTALT, Enum[cockpit.format("KEY_$0", keyName.toUpperCase())]])
-                                .fail(ex => onAddErrorNotification({
+                                .catch(ex => onAddErrorNotification({
                                     text: cockpit.format(_("Failed to send key Ctrl+Alt+$0 to VM $1"), keyName, vmName),
                                     detail: ex.message
                                 }));
