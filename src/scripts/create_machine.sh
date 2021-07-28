@@ -16,7 +16,6 @@ ROOT_PASSWORD="${12}"
 USER_PASSWORD="${13}"
 USER_LOGIN="${14}"
 PROFILE="${15}"
-USE_CLOUD_INIT="${16}"
 
 vmExists(){
    virsh -c "$CONNECTION_URI" list --all | awk  '{print $2}' | grep -q --line-regexp --fixed-strings "$1"
@@ -65,7 +64,7 @@ else
     UNATTENDED_PARAMS=""
 fi
 
-if [ "$USE_CLOUD_INIT" = "true" ]; then
+if [ "$SOURCE_TYPE" = "cloud" ]; then
     if [ -z "$USER_PASSWORD" ]; then
         USER_LINE=""
         CREATE_USER_LINE=""
@@ -103,7 +102,7 @@ else
     else
         DISK_OPTIONS="size=$STORAGE_SIZE,format=qcow2"
     fi
-    if [ "$USE_CLOUD_INIT" = "true" ]; then
+    if [ "$SOURCE_TYPE" = "cloud" ]; then
         DISK_OPTIONS="$DISK_OPTIONS,backing_store='$SOURCE'"
     fi
 fi
@@ -125,7 +124,7 @@ if [ "$SOURCE_TYPE" = "pxe" ]; then
 elif [ "$SOURCE_TYPE" = "os" ]; then
     INSTALL_METHOD="--install os=$OS"
 elif [ "$START_VM" = "true" ]; then
-    if [ $USE_CLOUD_INIT = "true" ]; then
+    if [ $SOURCE_TYPE = "cloud" ]; then
         INSTALL_METHOD=""
     elif [ "$SOURCE_TYPE" = "disk_image" ]; then
         INSTALL_METHOD="--import"

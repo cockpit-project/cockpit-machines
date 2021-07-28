@@ -927,7 +927,6 @@ class CreateVmModal extends React.Component {
                 userPassword: this.state.userPassword,
                 rootPassword: this.state.rootPassword,
                 userLogin: this.state.userLogin,
-                useCloudInit: this.state.sourceType === CLOUD_IMAGE,
             };
 
             return timeoutedPromise(
