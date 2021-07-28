@@ -1075,20 +1075,20 @@ export function vmDesktopConsole({
 
 export function createVm({
     connectionName,
-    vmName,
+    memorySize,
+    os,
+    profile,
+    rootPassword,
     source,
     sourceType,
-    os,
-    memorySize,
-    storageSize,
     startVm,
     storagePool,
+    storageSize,
     storageVolume,
     unattended,
-    rootPassword,
-    userPassword,
     userLogin,
-    profile,
+    userPassword,
+    vmName,
 }) {
     logDebug(`CREATE_VM(${vmName}):`);
     // shows dummy vm  until we get vm from virsh (cleans up inProgress)
@@ -1103,22 +1103,22 @@ export function createVm({
         opts.superuser = 'try';
 
     const args = JSON.stringify({
-        type: "create",
         connectionName,
-        vmName,
+        memorySize,
+        os,
+        profile,
+        rootPassword,
         source,
         sourceType,
-        os,
-        memorySize,
-        storageSize,
         startVm,
         storagePool,
+        storageSize,
         storageVolume,
+        type: "create",
         unattended,
-        rootPassword,
-        userPassword,
         userLogin,
-        profile,
+        userPassword,
+        vmName,
     });
 
     return cockpit
@@ -1170,41 +1170,35 @@ export function initState() {
 }
 
 export function installVm({ onAddErrorNotification, vm }) {
-    const {
-        autostart, connectionName, cpu, currentMemory,
-        disks, displays, firmware, interfaces, memory,
-        metadata, name, vcpus,
-    } = vm;
-
     logDebug(`INSTALL_VM(${name}):`);
     // shows dummy vm until we get vm from virsh (cleans up inProgress)
     // vm should be returned even if script fails
     setVmInstallInProgress(vm);
 
     const opts = { err: "message", environ: ['LC_ALL=C'] };
-    if (connectionName === 'system')
+    if (vm.connectionName === 'system')
         opts.superuser = 'try';
 
     const args = JSON.stringify({
-        autostart,
-        connectionName,
-        disks: prepareDisksParam(disks),
-        firmware: firmware == "efi" ? 'uefi' : '',
-        graphics: prepareDisplaysParam(displays),
-        memorySize: prepareMemoryParam(convertToUnit(currentMemory, units.KiB, units.MiB), convertToUnit(memory, units.KiB, units.MiB)),
-        os: metadata.osVariant,
-        source: metadata.installSource,
-        sourceType: metadata.installSourceType,
+        autostart: vm.autostart,
+        connectionName: vm.connectionName,
+        disks: prepareDisksParam(vm.disks),
+        firmware: vm.firmware == "efi" ? 'uefi' : '',
+        graphics: prepareDisplaysParam(vm.displays),
+        memorySize: prepareMemoryParam(convertToUnit(vm.currentMemory, units.KiB, units.MiB), convertToUnit(vm.memory, units.KiB, units.MiB)),
+        os: vm.metadata.osVariant,
+        source: vm.metadata.installSource,
+        sourceType: vm.metadata.installSourceType,
         type: "install",
-        vcpu: prepareVcpuParam(vcpus, cpu),
-        vmName: name,
-        vnics: prepareNICParam(interfaces),
+        vcpu: prepareVcpuParam(vm.vcpus, vm.cpu),
+        vmName: vm.name,
+        vnics: prepareNICParam(vm.interfaces),
     });
 
     return cockpit
             .spawn([pythonPath, "--", "-", args], opts)
             .input(installVmScript)
-            .finally(() => clearVmUiState(name, connectionName));
+            .finally(() => clearVmUiState(vm.name, vm.connectionName));
 }
 
 export function startLibvirt({ serviceName }) {
