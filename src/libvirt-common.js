@@ -53,24 +53,6 @@ export function canLoggedUserConnectSession (connectionName, loggedUser) {
     return connectionName !== 'session' || loggedUser.name !== 'root';
 }
 
-export function createTempFile(content) {
-    const dfd = cockpit.defer();
-    cockpit.spawn(["mktemp", "/tmp/abc-script.XXXXXX"]).then(tempFilename => {
-        cockpit.file(tempFilename.trim())
-                .replace(content)
-                .done(() => {
-                    dfd.resolve(tempFilename);
-                })
-                .fail((ex, data) => {
-                    dfd.reject(ex, data, "Can't write to temporary file");
-                });
-    })
-            .fail((ex, data) => {
-                dfd.reject(ex, data, "Can't create temporary file");
-            });
-    return dfd.promise;
-}
-
 export function getDiskElemByTarget(domxml, targetOriginal) {
     const domainElem = getElem(domxml);
 
