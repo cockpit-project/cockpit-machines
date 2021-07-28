@@ -36,7 +36,7 @@ import {
     usageStartPolling,
     usageStopPolling,
 } from "./libvirt-dbus.js";
-import { getOsInfoList, getLoggedInUser } from './libvirt-common.js';
+import { initState } from './libvirt-common.js';
 import { useObject, useEvent } from "hooks";
 import * as service from 'service.js';
 import store from './store.js';
@@ -78,8 +78,7 @@ export const App = ({ name }) => {
     });
     useEvent(superuser, "changed");
     useEffect(() => {
-        getOsInfoList();
-        getLoggedInUser();
+        initState();
         prevLibvirtServiceRef.current = libvirtService.state;
 
         setLoadingResources(true);
