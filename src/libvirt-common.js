@@ -1088,7 +1088,6 @@ export function createVm({
     userPassword,
     userLogin,
     profile,
-    useCloudInit,
 }) {
     logDebug(`CREATE_VM(${vmName}):`);
     // shows dummy vm  until we get vm from virsh (cleans up inProgress)
@@ -1118,7 +1117,6 @@ export function createVm({
         userPassword,
         userLogin,
         profile,
-        useCloudInit,
     ], opts)
             .then(() => {
                 finishVmCreateInProgress(vmName, connectionName);
