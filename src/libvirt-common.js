@@ -1136,14 +1136,14 @@ export function enableLibvirt({ enable, serviceName }) {
     return enable ? libvirtService.enable() : libvirtService.disable();
 }
 
-export function getLoggedInUser() {
+function getLoggedInUser() {
     logDebug(`GET_LOGGED_IN_USER:`);
     return cockpit.user().then(loggedUser => {
         store.dispatch(setLoggedInUser({ loggedUser }));
     });
 }
 
-export function getOsInfoList () {
+function getOsInfoList () {
     logDebug(`GET_OS_INFO_LIST():`);
     return python.spawn(getOSListScript, null, { err: "message", environ: ['LC_ALL=C.UTF-8'] })
             .then(osList => {
@@ -1154,6 +1154,12 @@ export function getOsInfoList () {
                 parseOsInfoList('[]');
             });
 }
+
+export function initState() {
+    getLoggedInUser();
+    getOsInfoList();
+}
+
 export function installVm({ onAddErrorNotification, vm }) {
     const {
         autostart, connectionName, cpu, currentMemory,
