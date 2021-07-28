@@ -66,7 +66,7 @@ export const CloneDialog = ({ name, connectionName, toggleModal }) => {
                    {!isObjectEmpty(error) && <ModalError dialogError={error.dialogError} dialogErrorDetail={virtCloneOutput} />}
                    {isObjectEmpty(error) && virtCloneOutput && <code className="vm-clone-virt-clone-output">{virtCloneOutput}</code>}
                    <Button variant='primary'
-                           isDisabled={!isObjectEmpty(validationFailed)}
+                           isDisabled={inProgress || !isObjectEmpty(validationFailed)}
                            isLoading={inProgress}
                            onClick={onClone}>
                        {_("Clone")}
