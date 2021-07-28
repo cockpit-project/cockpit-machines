@@ -761,6 +761,7 @@ class CreateVmModal extends React.Component {
             minimumStorage: 0,
 
             // Unattended installation or cloud init options for cloud images
+            profile: '',
             userPassword: '',
             rootPassword: '',
             userLogin: '',
