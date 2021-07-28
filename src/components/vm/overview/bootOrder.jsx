@@ -210,7 +210,7 @@ class BootOrderModal extends React.Component {
             connectionName: vm.connectionName,
             devices,
         })
-                .fail(exc => this.dialogErrorSet(_("Boot order settings could not be saved"), exc.message))
+                .catch(exc => this.dialogErrorSet(_("Boot order settings could not be saved"), exc.message))
                 .then(() => {
                     getVm({ connectionName: vm.connectionName, id: vm.id });
                     this.close();

@@ -997,7 +997,7 @@ function doUsagePolling(name, connectionName, objPath) {
     const flags = Enum.VIR_DOMAIN_STATS_BALLOON | Enum.VIR_DOMAIN_STATS_VCPU | Enum.VIR_DOMAIN_STATS_BLOCK | Enum.VIR_DOMAIN_STATS_STATE;
 
     return call(connectionName, objPath, 'org.libvirt.Domain', 'GetStats', [flags, 0], { timeout: 5000, type: 'uu' })
-            .done(info => {
+            .then(info => {
                 if (Object.getOwnPropertyNames(info[0]).length > 0) {
                     info = info[0];
                     const props = { name, connectionName, id: objPath };
@@ -1027,7 +1027,7 @@ function doUsagePolling(name, connectionName, objPath) {
                 }
             })
             .catch(ex => console.warn(`GetStats(${name}, ${connectionName}) failed: ${ex.toString()}`))
-            .always(() => delayPolling(() => doUsagePolling(name, connectionName, objPath), null, name, connectionName));
+            .finally(() => delayPolling(() => doUsagePolling(name, connectionName, objPath), null, name, connectionName));
 }
 
 /**

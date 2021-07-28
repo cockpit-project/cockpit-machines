@@ -109,8 +109,8 @@ class NetworkActions extends React.Component {
         const network = this.props.network;
 
         networkActivate(network.connectionName, network.id)
-                .always(() => this.setState({ operationInProgress: false }))
-                .fail(exc => {
+                .finally(() => this.setState({ operationInProgress: false }))
+                .catch(exc => {
                     store.dispatch(
                         updateOrAddNetwork({
                             connectionName: network.connectionName,
@@ -128,8 +128,8 @@ class NetworkActions extends React.Component {
         const network = this.props.network;
 
         networkDeactivate(this.props.network.connectionName, this.props.network.id)
-                .always(() => this.setState({ operationInProgress: false }))
-                .fail(exc => {
+                .finally(() => this.setState({ operationInProgress: false }))
+                .catch(exc => {
                     store.dispatch(
                         updateOrAddNetwork({
                             connectionName: network.connectionName,

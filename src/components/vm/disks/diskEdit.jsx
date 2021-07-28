@@ -199,9 +199,7 @@ export class EditDiskModal extends React.Component {
             existingTargets
         })
                 .then(() => setIsOpen(false))
-                .fail((exc) => {
-                    this.dialogErrorSet(_("Disk settings could not be saved"), exc.message);
-                });
+                .catch(exc => this.dialogErrorSet(_("Disk settings could not be saved"), exc.message));
     }
 
     render() {

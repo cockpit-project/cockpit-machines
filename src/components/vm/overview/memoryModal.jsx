@@ -79,7 +79,7 @@ export class MemoryModal extends React.Component {
                 connectionName: vm.connectionName,
                 maxMemory: this.state.maxMemory
             })
-                    .fail(exc => this.dialogErrorSet(_("Maximum memory could not be saved"), exc.message))
+                    .catch(exc => this.dialogErrorSet(_("Maximum memory could not be saved"), exc.message))
                     .then(() => {
                         if (vm.currentMemory !== this.state.maxMemory) {
                             setMemory({
@@ -88,7 +88,7 @@ export class MemoryModal extends React.Component {
                                 memory: this.state.memory,
                                 isRunning: vm.state == 'running'
                             })
-                                    .fail(exc => this.dialogErrorSet(_("Memory could not be saved"), exc.message))
+                                    .catch(exc => this.dialogErrorSet(_("Memory could not be saved"), exc.message))
                                     .then(() => {
                                         if (vm.state !== 'running')
                                             getVm({ connectionName: vm.connectionName, id: vm.id });
@@ -103,7 +103,7 @@ export class MemoryModal extends React.Component {
                 memory: this.state.memory,
                 isRunning: vm.state == 'running'
             })
-                    .fail(exc => this.dialogErrorSet(_("Memory could not be saved"), exc.message))
+                    .catch(exc => this.dialogErrorSet(_("Memory could not be saved"), exc.message))
                     .then(() => {
                         if (vm.state !== 'running')
                             getVm({ connectionName: vm.connectionName, id: vm.id });

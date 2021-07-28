@@ -50,7 +50,7 @@ const LibvirtSlate = ({ loadingResources, libvirtService }) => {
                         serviceName: libvirtService.unit.Id
                     }).catch(ex => { setError(_("Failed to start virtualization service")); setErrorDetail(ex.message) });
                 }, ex => { setError(_("Failed to enable virtualization service")); setErrorDetail(ex.message) })
-                .always(() => setActionInProgress(false));
+                .finally(() => setActionInProgress(false));
     };
 
     const goToServicePage = () => {

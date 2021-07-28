@@ -76,7 +76,7 @@ class VmOverviewCard extends React.Component {
     componentDidMount() {
         this._isMounted = true;
         getDomainCapabilities(this.props.vm.connectionName, this.props.vm.arch, this.props.vm.emulatedMachine)
-                .done(domCaps => {
+                .then(domCaps => {
                     const loaderElems = getDomainCapLoader(domCaps);
                     const maxVcpu = getDomainCapMaxVCPU(domCaps);
                     const cpuModels = getDomainCapCPUCustomModels(domCaps);
@@ -85,7 +85,7 @@ class VmOverviewCard extends React.Component {
                     if (this._isMounted)
                         this.setState({ loaderElems, maxVcpu: Number(maxVcpu), cpuModels, cpuHostModel });
                 })
-                .fail(() => console.warn("getDomainCapabilities failed"));
+                .catch(() => console.warn("getDomainCapabilities failed"));
 
         cockpit.spawn(['which', 'virt-xml'], { err: 'ignore' })
                 .then(() => {

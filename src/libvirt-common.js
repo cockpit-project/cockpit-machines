@@ -1120,13 +1120,13 @@ export function createVm({
         profile,
         useCloudInit,
     ], opts)
-            .done(() => {
+            .then(() => {
                 finishVmCreateInProgress(vmName, connectionName);
                 clearVmUiState(vmName, connectionName);
             })
-            .fail((exception, data) => {
+            .fail(ex => {
                 clearVmUiState(vmName, connectionName); // inProgress cleanup
-                console.info(`spawn 'vm creation' returned error: "${JSON.stringify(exception)}", data: "${JSON.stringify(data)}"`);
+                console.info(`spawn 'vm creation' returned error: "${JSON.stringify(ex)}"`);
             });
 }
 
@@ -1149,8 +1149,8 @@ export function getOsInfoList () {
             .then(osList => {
                 parseOsInfoList(osList);
             })
-            .fail((exception, data) => {
-                console.error(`get os list returned error: "${JSON.stringify(exception)}", data: "${JSON.stringify(data)}"`);
+            .catch(ex => {
+                console.error(`get os list returned error: "${JSON.stringify(ex)}"`);
                 parseOsInfoList('[]');
             });
 }
@@ -1184,7 +1184,7 @@ export function installVm({ onAddErrorNotification, vm }) {
         firmware == "efi" ? 'uefi' : '',
         autostart,
     ], opts)
-            .always(() => clearVmUiState(name, connectionName));
+            .finally(() => clearVmUiState(name, connectionName));
 }
 
 export function startLibvirt({ serviceName }) {
