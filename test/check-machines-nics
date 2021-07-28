@@ -374,6 +374,17 @@ class TestMachinesNICs(VirtualMachinesCase):
             source_type="network",
         ).execute()
 
+        # Changing settings of a transient NIC is not implemented - https://bugzilla.redhat.com/show_bug.cgi?id=1977669
+        self.NICAddDialog(
+            self,
+            source_type="direct",
+            source="eth43",
+            mac="52:54:00:f0:eb:64",
+            nic_num=3,
+            remove=False
+        ).execute()
+        b.wait_visible("#vm-subVmTest1-network-3-edit-dialog[aria-disabled=true]")
+
     class NICAddDialog:
 
         def __init__(

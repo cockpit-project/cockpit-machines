@@ -653,13 +653,12 @@ class TestMachinesNetworks(VirtualMachinesCase):
 
         self.goToVmPage("subVmTest1")
 
-        # Start the VM in order that the UI picks up the new interface, since we don't get events of shut off domains
-        m.execute("virsh start subVmTest1")
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
-
         # Create a second bridge to LAN NIC
         m.execute("ip link add name br1 type bridge && virsh attach-interface --current subVmTest1 bridge br1")
         self.addCleanup(m.execute, "ip link delete br1")
+
+        m.execute("virsh start subVmTest1")
+        b.wait_in_text("#vm-subVmTest1-state", "Running")
 
         # Open the modal dialog
         b.click("#vm-subVmTest1-network-1-edit-dialog")
