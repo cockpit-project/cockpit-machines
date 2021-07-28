@@ -18,7 +18,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button } from '@patternfly/react-core';
+import { Button, Tooltip } from '@patternfly/react-core';
 
 import cockpit from 'cockpit';
 import { rephraseUI, vmId } from "../../../helpers.js";
@@ -322,13 +322,36 @@ export class VmNetworkTab extends React.Component {
                             availableSources,
                             onClose: () => this.setState({ editNICDialogProps: undefined }),
                         };
-                        if (vm.persistent && this.state.networkDevices !== undefined) {
+                        const nicPersistent = !!vm.inactiveXML.interfaces.filter(iface => iface.mac == network.mac).length;
+
+                        let isEditDisabled = false;
+                        let editDisabledReason;
+
+                        if (!vm.persistent) {
+                            isEditDisabled = true;
+                            editDisabledReason = _("Editing network interfaces of transient guests is not allowed");
+                        } else if (this.state.networkDevices === undefined) {
+                            isEditDisabled = true;
+                            editDisabledReason = _("Loading available network devices");
+                        } else if (!nicPersistent) {
+                            isEditDisabled = true;
+                            editDisabledReason = _("Editing transient network interfaces is not allowed");
+                        }
+                        const editButton = (
+                            <Button id={editNICDialogProps.idPrefix} variant='secondary'
+                                    isAriaDisabled={isEditDisabled}
+                                    onClick={() => this.setState({ editNICDialogProps })}>
+                                {_("Edit")}
+                            </Button>
+                        );
+                        if (isEditDisabled) {
                             return (
-                                <Button id={editNICDialogProps.idPrefix} variant='secondary'
-                                        onClick={() => this.setState({ editNICDialogProps })}>
-                                    {_("Edit")}
-                                </Button>
+                                <Tooltip content={editDisabledReason}>
+                                    {editButton}
+                                </Tooltip>
                             );
+                        } else {
+                            return editButton;
                         }
                     };
 
