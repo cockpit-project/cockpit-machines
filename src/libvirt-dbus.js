@@ -323,7 +323,7 @@ export function createStoragePool({
             }, exc => {
                 if (storagePoolPath)
                     storagePoolUndefine(connectionName, storagePoolPath);
-                return cockpit.reject(exc);
+                return Promise.reject(exc);
             });
 }
 
@@ -1495,7 +1495,7 @@ export function getPoolCapabilities({ connectionName }) {
         opts
     ).then(poolCapabilities => parsePoolCapabilities(poolCapabilities), ex => {
         console.warn('virsh pool-capabilities failed:', ex.toString());
-        return cockpit.reject(ex);
+        return Promise.reject(ex);
     });
 }
 
