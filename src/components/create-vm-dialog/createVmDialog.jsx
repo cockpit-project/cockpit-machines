@@ -944,7 +944,7 @@ class CreateVmModal extends React.Component {
                 (exception) => {
                     onAddErrorNotification({
                         text: cockpit.format(_("Creation of VM $0 failed"), vmParams.vmName),
-                        detail: exception.message,
+                        detail: exception.message.split(/Traceback(.+)/)[0],
                     });
                     close();
                 });

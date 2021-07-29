@@ -88,7 +88,8 @@ const VmActions = ({ vm, storagePools, onAddErrorNotification, isDetailsPage }) 
     const onInstall = () => installVm({ vm, onAddErrorNotification }).catch(ex => {
         onAddErrorNotification({
             text: cockpit.format(_("VM $0 failed to get installed"), vm.name),
-            detail: ex.message, resourceId: vm.id,
+            detail: ex.message.split(/Traceback(.+)/)[0],
+            resourceId: vm.id,
         });
     });
     const onReboot = () => rebootVm({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
