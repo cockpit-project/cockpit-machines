@@ -578,6 +578,7 @@ export class AddDiskModalBody extends React.Component {
             defaultBody = (
                 <Form onSubmit={e => e.preventDefault()} isHorizontal>
                     <FormGroup fieldId={`${idPrefix}-source`}
+                               id={`${idPrefix}-source-group`}
                                label={_("Source")} isInline hasNoPaddingTop>
                         <Radio id={`${idPrefix}-createnew`}
                                name="source"
@@ -641,7 +642,11 @@ export class AddDiskModalBody extends React.Component {
                    footer={
                        <>
                            {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
-                           <Button id={`${idPrefix}-dialog-add`} variant='primary' isLoading={this.state.addDiskInProgress} isDisabled={this.state.addDiskInProgress || storagePools.length == 0} onClick={this.onAddClicked}>
+                           <Button id={`${idPrefix}-dialog-add`}
+                                   variant='primary'
+                                   isLoading={this.state.addDiskInProgress}
+                                   isDisabled={this.state.addDiskInProgress || (storagePools.length == 0 && this.state.mode != CUSTOM_PATH)}
+                                   onClick={this.onAddClicked}>
                                {_("Add")}
                            </Button>
                            <Button id={`${idPrefix}-dialog-cancel`} variant='link' className='btn-cancel' onClick={this.props.close}>

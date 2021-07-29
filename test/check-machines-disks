@@ -306,14 +306,15 @@ class TestMachinesDisks(VirtualMachinesCase):
 
         def open(self):
             b = self.test_obj.browser
-            b.click("#vm-{0}-disks-adddisk".format(self.vm_name))  # button
+            prefix = f"#vm-{self.vm_name}-disks-adddisk"
+            b.click(prefix)  # button
             b.wait_in_text(".pf-c-modal-box__title", "Add disk")
 
-            b.wait_visible("label:contains(Create new)")
+            b.wait_visible(f"{prefix}-source-group label:contains(Create new)")
             if self.mode == "use-existing":
-                b.click("label:contains(Use existing)")
+                b.click(f"{prefix}-source-group label:contains(Use existing)")
             elif self.mode == "custom-path":
-                b.click("label:contains(Custom path)")
+                b.click(f"{prefix}-source-group label:contains(Custom path)")
 
             return self
 
@@ -809,6 +810,17 @@ class TestMachinesDisks(VirtualMachinesCase):
             b.key_press(chr(40), use_ord=True)
             time.sleep(0.5)
         b.wait_not_present("#navbar-oops")
+
+        # Ensure that adding disks with custom path is possible when no storage pools are present
+        # https://bugzilla.redhat.com/show_bug.cgi?id=1985228
+        m.execute("for pool in $(virsh pool-list --all --name); do virsh pool-destroy $pool || true; virsh pool-undefine $pool; done")
+        prefix = "#vm-subVmTest1-disks-adddisk"
+        b.click(prefix)
+        b.wait_visible(".pf-c-modal-box__footer button:contains(Add)[aria-disabled=false]")
+        b.click(f"{prefix}-source-group label:contains(Create new)")
+        b.wait_visible(".pf-c-modal-box__footer button:contains(Add)[aria-disabled=true]")
+        b.click(f"{prefix}-source-group label:contains(Use existing)")
+        b.wait_visible(".pf-c-modal-box__footer button:contains(Add)[aria-disabled=true]")
 
     @no_retry_when_changed
     def testAddDiskAdditionalOptions(self):
