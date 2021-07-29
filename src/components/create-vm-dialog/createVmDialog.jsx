@@ -38,6 +38,7 @@ import {
     isEmpty,
     digitFilter,
     convertToUnit,
+    getBestUnit,
     timeoutedPromise,
     toReadableNumber,
     units,
@@ -714,6 +715,7 @@ const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit,
                                    onKeyPress={digitFilter}
                                    onChange={value => onValueChanged('storageSize', Number(value))} />
                         <FormSelect id="storage-size-unit-select"
+                                    data-value={storageSizeUnit}
                                     className="unit-select"
                                     value={storageSizeUnit}
                                     onChange={value => onValueChanged('storageSizeUnit', value)}>
@@ -869,21 +871,17 @@ class CreateVmModal extends React.Component {
             if (value && value.minimumResources.ram) {
                 stateDelta.minimumMemory = value.minimumResources.ram;
 
-                const converted = convertToUnit(stateDelta.minimumMemory, units.B, units.GiB);
-                if (converted == 0 || converted % 1 !== 0) // If minimum memory is not a whole number in GiB, set value in MiB
-                    this.setState({ memorySizeUnit: units.MiB.name }, () => this.onValueChanged("memorySize", convertToUnit(stateDelta.minimumMemory, units.B, units.MiB)));
-                else
-                    this.setState({ memorySizeUnit: units.GiB.name }, () => this.onValueChanged("memorySize", converted));
+                const bestUnit = getBestUnit(stateDelta.minimumMemory, units.B);
+                const converted = convertToUnit(stateDelta.minimumMemory, units.B, bestUnit);
+                this.setState({ memorySizeUnit: bestUnit.name }, () => this.onValueChanged("memorySize", converted));
             }
 
             if (value && value.minimumResources.storage) {
                 stateDelta.minimumStorage = value.minimumResources.storage;
 
-                const converted = convertToUnit(stateDelta.minimumStorage, units.B, this.state.storageSizeUnit);
-                if (converted == 0 || converted % 1 !== 0) // If minimum storage is not a whole number in GiB, set value in MiB
-                    this.setState({ storageSizeUnit: units.MiB.name }, () => this.onValueChanged("storageSize", convertToUnit(stateDelta.minimumStorage, units.B, units.MiB)));
-                else
-                    this.setState({ storageSizeUnit: units.GiB.name }, () => this.onValueChanged("storageSize", converted));
+                const bestUnit = getBestUnit(stateDelta.minimumStorage, units.B);
+                const converted = convertToUnit(stateDelta.minimumStorage, units.B, bestUnit);
+                this.setState({ storageSizeUnit: bestUnit.name }, () => this.onValueChanged("storageSize", converted));
             }
             if (!value || !value.unattendedInstallable)
                 this.onValueChanged('unattendedInstallation', false);

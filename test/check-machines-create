@@ -93,7 +93,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         runner.checkFilteredOsTest(TestMachinesCreate.VmDialog(self, os_name=config.WINDOWS_SERVER_10, os_search_name=config.WINDOWS_SERVER_10_SHORT))
 
         # Memory unit conversion
-        runner.memoryUnitConversionTest(TestMachinesCreate.VmDialog(self, sourceType='disk-image'))
+        runner.unitConversionTest(TestMachinesCreate.VmDialog(self, sourceType='disk-image'))
 
         # try to CREATE WITH DIALOG ERROR
         # name
@@ -722,13 +722,27 @@ class TestMachinesCreate(VirtualMachinesCase):
 
             return self
 
-        def checkMemoryUnitConversion(self):
+        def checkUnitConversion(self):
             b = self.browser
 
             b.select_from_dropdown("#memory-size-unit-select", "MiB")
             b.set_input_text("#memory-size", "128")
             b.select_from_dropdown("#memory-size-unit-select", "GiB")
             b.wait_val("#memory-size", "0.125")
+
+            # Check that the best unit is chosen when the storage size is automatically filled after selecting an OS
+            # https://bugzilla.redhat.com/show_bug.cgi?id=1987120
+            b.select_from_dropdown("#source-type", "url")
+            fake_fedora = "Fedora 28"  # 128 MiB minimum storage
+            suse = "SUSE CaaS Platform Unknown (unknown)"  # 20 GiB minimum storage
+            b.set_input_text("#os-select-group input", fake_fedora)
+            b.click(f"#os-select li button:contains('{fake_fedora}')")
+            b.wait_val("#storage-size", "128")
+            b.wait_visible("#storage-size-unit-select[data-value=MiB]")
+            b.set_input_text("#os-select-group input", suse)
+            b.click(f"#os-select li button:contains('{suse}')")
+            b.wait_val("#storage-size", "20")
+            b.wait_visible("#storage-size-unit-select[data-value=GiB]")
 
             return self
 
@@ -1327,9 +1341,9 @@ class TestMachinesCreate(VirtualMachinesCase):
             self._assertScriptFinished() \
                 .checkEnvIsEmpty()
 
-        def memoryUnitConversionTest(self, dialog):
+        def unitConversionTest(self, dialog):
             dialog.open() \
-                .checkMemoryUnitConversion() \
+                .checkUnitConversion() \
                 .cancel(True)
 
         def checkFilteredOsTest(self, dialog):
