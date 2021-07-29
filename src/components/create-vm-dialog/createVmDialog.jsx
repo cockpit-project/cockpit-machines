@@ -651,7 +651,7 @@ const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit,
         helperTextNewVolume = (
             cockpit.format(
                 _("The selected operating system has minimum storage size requirement of $0 $1"),
-                convertToUnit(minimumStorage, units.B, storageSizeUnit),
+                toReadableNumber(convertToUnit(minimumStorage, units.B, storageSizeUnit)),
                 storageSizeUnit)
         );
     }
