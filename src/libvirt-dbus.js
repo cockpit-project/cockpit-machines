@@ -121,6 +121,7 @@ const Enum = {
     VIR_DOMAIN_STATS_VCPU: 8,
     VIR_DOMAIN_STATS_BLOCK: 32,
     VIR_DOMAIN_STATS_STATE: 1,
+    VIR_DOMAIN_XML_SECURE: 1,
     VIR_DOMAIN_XML_INACTIVE: 2,
     VIR_CONNECT_LIST_DOMAINS_PERSISTENT: 4,
     VIR_CONNECT_LIST_DOMAINS_TRANSIENT: 8,
@@ -734,10 +735,10 @@ export function getVm({
     let props = {};
     let domainXML;
 
-    return call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [0], { timeout, type: 'u' })
+    return call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_SECURE], { timeout, type: 'u' })
             .then(domXml => {
                 domainXML = domXml[0];
-                return call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
+                return call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_SECURE | Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
             })
             .then(domInactiveXml => {
                 const dumpInactiveXmlParams = parseDumpxml(connectionName, domInactiveXml[0], objPath);
