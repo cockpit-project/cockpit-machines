@@ -1230,8 +1230,7 @@ function startEventMonitorStoragePools(connectionName) {
             switch (eventType) {
             case Enum.VIR_STORAGE_POOL_EVENT_DEFINED:
             case Enum.VIR_STORAGE_POOL_EVENT_CREATED:
-                store.dispatch(updateOrAddStoragePool({ connectionName, id: objPath }));
-                getStoragePool({ connectionName, id:objPath, updateOnly: true });
+                getStoragePool({ connectionName, id:objPath });
                 break;
             case Enum.VIR_STORAGE_POOL_EVENT_STOPPED:
                 storagePoolUpdateOrDelete(connectionName, objPath);
