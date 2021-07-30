@@ -34,7 +34,6 @@ import {
     UPDATE_LIBVIRT_VERSION,
     UPDATE_DOMAIN_SNAPSHOTS,
     UPDATE_OS_INFO_LIST,
-    UPDATE_STORAGE_VOLUMES,
     UPDATE_UI_VM,
     UPDATE_VM,
 } from '../constants/store-action-types.js';
@@ -181,17 +180,6 @@ export function updateOsInfoList(osInfoList) {
     return {
         type: UPDATE_OS_INFO_LIST,
         osInfoList,
-    };
-}
-
-export function updateStorageVolumes({ connectionName, poolName, volumes }) {
-    return {
-        type: UPDATE_STORAGE_VOLUMES,
-        payload: {
-            connectionName,
-            poolName,
-            volumes,
-        },
     };
 }
 

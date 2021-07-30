@@ -37,7 +37,6 @@ import {
     updateOrAddNodeDevice,
     updateOrAddVm,
     updateOrAddStoragePool,
-    updateStorageVolumes,
     updateVm,
     setNodeMaxMemory,
 } from './actions/store-actions.js';
@@ -670,17 +669,22 @@ export function getStoragePool({
                 if ("Autostart" in resultProps[0])
                     props.autostart = resultProps[0].Autostart.v.v;
 
-                store.dispatch(updateOrAddStoragePool(Object.assign({}, dumpxmlParams, props), updateOnly));
-                if (props.active)
-                    getStorageVolumes({ connectionName, poolName: dumpxmlParams.name });
-                else
-                    store.dispatch(updateStorageVolumes({ connectionName, poolName: dumpxmlParams.name, volumes: [] }));
+                props.volumes = [];
+                if (props.active) {
+                    getStorageVolumes({ connectionName, poolName: dumpxmlParams.name })
+                            .then(volumes => {
+                                props.volumes = volumes;
+                            })
+                            .finally(() => store.dispatch(updateOrAddStoragePool(Object.assign({}, dumpxmlParams, props), updateOnly)));
+                } else {
+                    store.dispatch(updateOrAddStoragePool(Object.assign({}, dumpxmlParams, props), updateOnly));
+                }
             })
             .catch(ex => console.warn('GET_STORAGE_POOL action failed for path', objPath, ex.toString()));
 }
 
 export function getStorageVolumes({ connectionName, poolName }) {
-    call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName', [poolName], { timeout, type: 's' })
+    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName', [poolName], { timeout, type: 's' })
             .then(storagePoolPath => {
                 return call(connectionName, storagePoolPath[0], 'org.libvirt.StoragePool', 'ListStorageVolumes', [0], { timeout, type: 'u' });
             })
@@ -703,7 +707,7 @@ export function getStorageVolumes({ connectionName, poolName }) {
                             .catch(error => ({ success: false, error }));
                 };
 
-                Promise.all(storageVolumesPropsPromises.map(toResultObject)).then(volumeXmlList => {
+                return Promise.all(storageVolumesPropsPromises.map(toResultObject)).then(volumeXmlList => {
                     for (let i = 0; i < volumeXmlList.length; i++) {
                         if (volumeXmlList[i].success) {
                             const volumeXml = volumeXmlList[i].result[0];
@@ -712,11 +716,7 @@ export function getStorageVolumes({ connectionName, poolName }) {
                             volumes.push(dumpxmlParams);
                         }
                     }
-                    return store.dispatch(updateStorageVolumes({
-                        connectionName,
-                        poolName,
-                        volumes
-                    }));
+                    return Promise.resolve(volumes);
                 });
             })
             .catch(ex => console.warn("GET_STORAGE_VOLUMES action failed for pool %s: %s", poolName, ex.toString()));

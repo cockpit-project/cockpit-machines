@@ -37,7 +37,6 @@ import {
     UPDATE_LIBVIRT_VERSION,
     UPDATE_DOMAIN_SNAPSHOTS,
     UPDATE_OS_INFO_LIST,
-    UPDATE_STORAGE_VOLUMES,
     UPDATE_UI_VM,
     UPDATE_VM,
 } from './constants/store-action-types.js';
@@ -312,18 +311,6 @@ function systemInfo(state, action) {
 function storagePools(state, action) {
     state = state || [];
 
-    function findStoragePoolToUpdate(state, { connectionName, id, name }) {
-        const index = id ? getFirstIndexOfResource(state, 'id', id, connectionName)
-            : getFirstIndexOfResource(state, 'name', name, connectionName);
-        if (index < 0) {
-            return null;
-        }
-        return {
-            index,
-            storagePoolCopy: Object.assign({}, state[index]),
-        };
-    }
-
     switch (action.type) {
     case UNDEFINE_STORAGE_POOL: {
         const { connectionName, id } = action.payload;
@@ -353,21 +340,6 @@ function storagePools(state, action) {
 
         const updatedStoragePool = Object.assign({}, state[index], storagePool);
         return replaceResource({ state, updatedResource: updatedStoragePool, index });
-    }
-    case UPDATE_STORAGE_VOLUMES: {
-        const { connectionName, poolName, volumes } = action.payload;
-        const index = getFirstIndexOfResource(state, 'name', poolName, connectionName);
-
-        if (index < 0) {
-            return state;
-        }
-
-        const indexedStoragePool = findStoragePoolToUpdate(state, { connectionName, name: poolName });
-        const updatedStoragePool = Object.assign({}, state[index]);
-
-        updatedStoragePool.volumes = volumes;
-
-        return replaceResource({ state, updatedResource: updatedStoragePool, index: indexedStoragePool.index });
     }
     default:
         return state;
