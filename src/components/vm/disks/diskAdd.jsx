@@ -297,7 +297,6 @@ export class AddDiskModalBody extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            ...this.initialState,
             validate: false,
             dialogLoading: true
         };
@@ -310,7 +309,7 @@ export class AddDiskModalBody extends React.Component {
     }
 
     get initialState() {
-        const { vm, storagePools } = this.props;
+        const { vm, storagePools, vms } = this.props;
         const defaultBus = 'virtio';
         const existingTargets = Object.getOwnPropertyNames(vm.disks);
         const availableTarget = getNextAvailableTarget(existingTargets, defaultBus);
@@ -322,6 +321,8 @@ export class AddDiskModalBody extends React.Component {
                     .sort(sortFunction)[0];
 
         return {
+            storagePools,
+            vm, vms,
             file: "",
             device: "disk",
             storagePoolName: defaultPool && defaultPool.name,
@@ -348,7 +349,7 @@ export class AddDiskModalBody extends React.Component {
         // https://bugzilla.redhat.com/show_bug.cgi?id=1578836
         getAllStoragePools({ connectionName: this.props.vm.connectionName })
                 .catch(exc => this.dialogErrorSet(_("Storage pools could not be fetched"), exc.message))
-                .then(() => this.setState({ dialogLoading: false }));
+                .then(() => this.setState({ dialogLoading: false, ...this.initialState }));
     }
 
     validateParams() {
@@ -377,7 +378,7 @@ export class AddDiskModalBody extends React.Component {
     }
 
     existingVolumeNameDelta(value, poolName) {
-        const { storagePools, vm } = this.props;
+        const { storagePools, vm } = this.state;
         const stateDelta = { existingVolumeName: value };
         const pool = storagePools.find(pool => pool.name === poolName && pool.connectionName === vm.connectionName);
         if (!pool)
@@ -393,7 +394,7 @@ export class AddDiskModalBody extends React.Component {
     }
 
     getDefaultVolumeName(poolName) {
-        const { storagePools, vm } = this.props;
+        const { storagePools, vm } = this.state;
         const vmStoragePool = storagePools.find(pool => pool.name == poolName);
         const filteredVolumes = getFilteredVolumes(vmStoragePool, vm.disks);
         return filteredVolumes[0] && filteredVolumes[0].name;
@@ -401,7 +402,7 @@ export class AddDiskModalBody extends React.Component {
 
     onValueChanged(key, value) {
         let stateDelta = {};
-        const { storagePools, vm } = this.props;
+        const { storagePools, vm } = this.state;
 
         switch (key) {
         case 'storagePoolName': {
@@ -489,7 +490,8 @@ export class AddDiskModalBody extends React.Component {
     }
 
     onAddClicked() {
-        const { vm, close, vms, storagePools } = this.props;
+        const { vm, vms, storagePools } = this.state;
+        const close = this.props.close;
 
         const validation = this.validateParams();
         if (Object.getOwnPropertyNames(validation).length > 0)
@@ -572,12 +574,12 @@ export class AddDiskModalBody extends React.Component {
     }
 
     render() {
-        const { vm, storagePools, vms } = this.props;
+        const { dialogLoading, vm, storagePools, vms } = this.state;
         const idPrefix = `${this.props.idPrefix}-adddisk`;
         const validationFailed = this.state.validate ? this.validateParams() : {};
 
         let defaultBody;
-        if (this.state.dialogLoading) {
+        if (dialogLoading) {
             defaultBody = (
                 <Bullseye>
                     <Spinner isSVG />
@@ -654,7 +656,7 @@ export class AddDiskModalBody extends React.Component {
                            <Button id={`${idPrefix}-dialog-add`}
                                    variant='primary'
                                    isLoading={this.state.addDiskInProgress}
-                                   isDisabled={this.state.addDiskInProgress || (storagePools.length == 0 && this.state.mode != CUSTOM_PATH)}
+                                   isDisabled={this.state.addDiskInProgress || dialogLoading || (storagePools.length == 0 && this.state.mode != CUSTOM_PATH)}
                                    onClick={this.onAddClicked}>
                                {_("Add")}
                            </Button>

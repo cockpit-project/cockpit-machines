@@ -560,6 +560,23 @@ class TestMachinesDisks(VirtualMachinesCase):
         dev = self.add_ram_disk(2)
         used_targets = ['vda']
 
+        cmds = [
+            "virsh pool-define-as pool-disk disk - - {0} - {1}".format(dev, os.path.join(self.vm_tmpdir, "poolDiskImages")),
+            "virsh pool-build pool-disk --overwrite",
+            "virsh pool-start pool-disk",
+        ]
+        self.machine.execute(" && ".join(cmds))
+
+        loop_dev = self.add_loop_disk()
+        existing_disk = os.path.basename(loop_dev) + "p1"
+        cmds = [
+            "virsh pool-define-as {0} disk - - {1} - {2}".format("loop-disk", loop_dev, os.path.join(self.vm_tmpdir, "poolLoopImages")),
+            "virsh pool-build {} --overwrite".format("loop-disk"),
+            "virsh pool-start {}".format("loop-disk"),
+            "virsh vol-create-as {} {} 1M".format("loop-disk", existing_disk)
+        ]
+        self.machine.execute(" && ".join(cmds))
+
         args = self.createVm("subVmTest1")
 
         # Wait for the system to completely start
@@ -571,12 +588,6 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-state", "Running")
         self.goToVmPage("subVmTest1")
 
-        cmds = [
-            "virsh pool-define-as pool-disk disk - - {0} - {1}".format(dev, os.path.join(self.vm_tmpdir, "poolDiskImages")),
-            "virsh pool-build pool-disk --overwrite",
-            "virsh pool-start pool-disk",
-        ]
-        self.machine.execute(" && ".join(cmds))
         partition = os.path.basename(dev) + "1"
         self.VMAddDiskDialog(
             self,
@@ -589,15 +600,6 @@ class TestMachinesDisks(VirtualMachinesCase):
             pixel_test_tag='vm-add-disk-modal-disk-pool'
         ).execute()
 
-        loop_dev = self.add_loop_disk()
-        existing_disk = os.path.basename(loop_dev) + "p1"
-        cmds = [
-            "virsh pool-define-as {0} disk - - {1} - {2}".format("loop-disk", loop_dev, os.path.join(self.vm_tmpdir, "poolLoopImages")),
-            "virsh pool-build {} --overwrite".format("loop-disk"),
-            "virsh pool-start {}".format("loop-disk"),
-            "virsh vol-create-as {} {} 1M".format("loop-disk", existing_disk)
-        ]
-        self.machine.execute(" && ".join(cmds))
         self.VMAddDiskDialog(
             self,
             mode="use-existing",
@@ -839,6 +841,10 @@ class TestMachinesDisks(VirtualMachinesCase):
         m = self.machine
 
         used_targets = ['vda']
+        # prepare libvirt storage pools
+        v1 = os.path.join(self.vm_tmpdir, "vm_one")
+        m.execute("mkdir --mode 777 {0}".format(v1))
+        m.execute("virsh pool-define-as myPoolOne --type dir --target {0} && virsh pool-start myPoolOne".format(v1))
 
         self.createVm("subVmTest1", running=False)
 
@@ -846,11 +852,6 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_in_text("body", "Virtual machines")
 
         self.goToVmPage("subVmTest1")
-
-        # prepare libvirt storage pools
-        v1 = os.path.join(self.vm_tmpdir, "vm_one")
-        m.execute("mkdir --mode 777 {0}".format(v1))
-        m.execute("virsh pool-define-as myPoolOne --type dir --target {0} && virsh pool-start myPoolOne".format(v1))
 
         # Configure cache mode from the UI
         self.VMAddDiskDialog(
