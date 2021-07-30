@@ -381,7 +381,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             # Configure bus type
             if self.bus_type and b.is_visible("div.pf-c-modal-box button:contains(Show additional options)"):
                 b.click("div.pf-c-modal-box button:contains(Show additional options)")
-                b.select_from_dropdown("div.pf-c-modal-box #bus-type", self.bus_type)
+                b.select_from_dropdown(f"div.pf-c-modal-box #vm-{self.vm_name}-disks-adddisk-bus-type", self.bus_type)
 
             return self
 
@@ -834,6 +834,16 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_visible(".pf-c-modal-box__footer button:contains(Add)[aria-disabled=true]")
         b.click(f"{prefix}-source-group label:contains(Use existing)")
         b.wait_visible(".pf-c-modal-box__footer button:contains(Add)[aria-disabled=true]")
+        b.click("#vm-subVmTest1-disks-adddisk-dialog-cancel")
+
+        # Ensure that the bus type autofilled value is according to the bus types of the existing disks of the guest,
+        # even when these are not in the predefined value (see ide)
+        m.execute("virt-xml subVmTest1 --edit --disk target=vda,bus=ide,path=/var/lib/libvirt/images/subVmTest1-2.img,clearxml=yes")
+        b.click(prefix)
+        b.click(f"{prefix}-source-group label:contains(Custom path)")
+        b.select_from_dropdown("#vm-subVmTest1-disks-adddisk-select-device", "disk")
+        b.click("div.pf-c-modal-box button:contains(Show additional options)")
+        b.wait_visible("#vm-subVmTest1-disks-adddisk-bus-type[data-value=ide]")
 
     @no_retry_when_changed
     def testAddDiskAdditionalOptions(self):
