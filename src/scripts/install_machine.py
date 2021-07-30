@@ -1,6 +1,7 @@
 #! /usr/bin/python3
 
 from contextlib import contextmanager
+import configparser
 import traceback
 import json
 import subprocess
@@ -44,12 +45,30 @@ def get_graphics_capabilies(connection):
 
 
 def prepare_graphics_params(connection):
+    listen = {
+        'spice': '127.0.0.1',
+        'vnc': '127.0.0.1',
+    }
+    try:
+        # Configparser needs a default section
+        with open("/etc/libvirt/qemu.conf", 'r') as f:
+            config_string = '[dummy_section]\n' + f.read()
+
+        config = configparser.ConfigParser()
+        config.read_string(config_string)
+        listen = {
+            'spice': config['dummy_section'].get('spice_listen', '127.0.0.1'),
+            'vnc': config['dummy_section'].get('vnc_listen', '127.0.0.1')
+        }
+    except (EnvironmentError, configparser.Error) as exc:
+        logging.debug(exc)
+        pass
     params = []
 
     graphics_cap = get_graphics_capabilies(connection)
     if graphics_cap:
         for graphics in graphics_cap:
-            params += ['--graphics', f"{graphics},listen=127.0.0.1"]
+            params += ['--graphics', f"{graphics},listen={listen[graphics]}"]
     else:
         params += ['--graphics', 'none']
     return params
