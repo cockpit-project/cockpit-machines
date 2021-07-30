@@ -55,6 +55,7 @@ class MemorySelectRow extends React.Component {
                     <GridItem span={12} sm={8}>
                         <Slider className='memory-slider'
                                 id={id + '-slider'}
+                                isDisabled={isDisabled}
                                 key={id + '-slider-max-' + maxValue}
                                 max={maxValue}
                                 min={minValue}
