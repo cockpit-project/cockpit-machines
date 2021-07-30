@@ -45,9 +45,9 @@ def get_graphics_capabilies(connection):
 
 
 def prepare_graphics_params(connection):
-    listen = {
-        'spice': '127.0.0.1',
-        'vnc': '127.0.0.1',
+    graphics_config = {
+        'spice': {'listen': '127.0.0.1'},
+        'vnc': {'listen': '127.0.0.1'}
     }
     try:
         # Configparser needs a default section
@@ -56,10 +56,16 @@ def prepare_graphics_params(connection):
 
         config = configparser.ConfigParser()
         config.read_string(config_string)
-        listen = {
-            'spice': config['dummy_section'].get('spice_listen', '127.0.0.1'),
-            'vnc': config['dummy_section'].get('vnc_listen', '127.0.0.1')
-        }
+
+        graphics_config['spice']['listen'] = config['dummy_section'].get('spice_listen', '127.0.0.1')
+        spice_password = config['dummy_section'].get('spice_password', None)
+        if spice_password is not None:
+            graphics_config['spice']['password'] = spice_password
+
+        graphics_config['vnc']['listen'] = config['dummy_section'].get('vnc_listen', '127.0.0.1')
+        vnc_password = config['dummy_section'].get('vnc_password', None)
+        if vnc_password is not None:
+            graphics_config['vnc']['password'] = vnc_password
     except (EnvironmentError, configparser.Error) as exc:
         logging.debug(exc)
         pass
@@ -68,7 +74,9 @@ def prepare_graphics_params(connection):
     graphics_cap = get_graphics_capabilies(connection)
     if graphics_cap:
         for graphics in graphics_cap:
-            params += ['--graphics', f"{graphics},listen={listen[graphics]}"]
+            config_options = graphics_config[graphics].keys()
+            graphics_options = map(lambda option: f"{option}={graphics_config[graphics][option]}", config_options)
+            params += ['--graphics', graphics + "," + ",".join(graphics_options)]
     else:
         params += ['--graphics', 'none']
     return params

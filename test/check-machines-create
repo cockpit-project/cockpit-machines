@@ -380,12 +380,14 @@ class TestMachinesCreate(VirtualMachinesCase):
 
         vnc_listen = "192.168.2.6"
         m.execute(f"echo 'vnc_listen = \"{vnc_listen}\"' >> /etc/libvirt/qemu.conf")
+        vnc_passwd = "mypass"
+        m.execute(f"echo 'vnc_password= \"{vnc_passwd}\"' >> /etc/libvirt/qemu.conf")
 
         runner.createAndVerifyQemuConfParsedTest(
                 TestMachinesCreate.VmDialog(self, sourceType='file',
                                             storage_pool="NoStorage",
                                             location=config.NOVELL_MOCKUP_ISO_PATH),
-                vnc_listen, "127.0.0.1")
+                vnc_listen, "127.0.0.1", vnc_passwd, None)
 
         # Ensure that missing qemu.conf would not crash the script but just pick the 127.0.0.1 default value
         self.restore_file("/etc/libvirt/qemu.conf")
@@ -394,7 +396,7 @@ class TestMachinesCreate(VirtualMachinesCase):
                 TestMachinesCreate.VmDialog(self, sourceType='file',
                                             storage_pool="NoStorage",
                                             location=config.NOVELL_MOCKUP_ISO_PATH),
-                "127.0.0.1", "127.0.0.1")
+                "127.0.0.1", "127.0.0.1", None, None)
 
     @no_retry_when_changed
     def testCreateThenInstall(self):
@@ -845,19 +847,21 @@ class TestMachinesCreate(VirtualMachinesCase):
             self.machine.execute(f"virsh destroy {self.name}")
             self.assertIn(f"backing file: {self.location}", self.machine.execute(f"qemu-img info /var/lib/libvirt/images/{self.name}.qcow2"))
 
-        def createRespectQemuConfConsoleConfig(self, vnc_listen, spice_listen):
+        def createRespectQemuConfConsoleConfig(self, vnc_listen, spice_listen, vnc_passwd, spice_passwd):
             self.browser.click(".pf-c-modal-box__footer button:contains(Create)")
             self.browser.wait_not_present("#create-vm-dialog")
 
-            domainXML = self.machine.execute(f"virsh dumpxml {self.name}")
+            domainXML = self.machine.execute(f"virsh dumpxml --security-info {self.name}")
             root = ET.fromstring(domainXML)
 
             if self.machine.image != "rhel-9-0":
                 spice = root.findall(".//graphics[@type='spice']")[0]
                 self.assertEqual(spice_listen, spice.attrib['listen'])
+                self.assertEqual(spice_passwd, spice.attrib.get('passwd', None))
 
             vnc = root.findall(".//graphics[@type='vnc']")[0]
             self.assertEqual(vnc_listen, vnc.attrib['listen'])
+            self.assertEqual(vnc_passwd, vnc.attrib.get('passwd', None))
 
         def createAndVerifyVirtInstallArgsUnattended(self):
             self.browser.click(".pf-c-modal-box__footer button:contains(Create)")
@@ -1411,10 +1415,10 @@ class TestMachinesCreate(VirtualMachinesCase):
                 self._deleteVm(dialog) \
                     .checkEnvIsEmpty()
 
-        def createAndVerifyQemuConfParsedTest(self, dialog, vnc_listen, spice_listen):
+        def createAndVerifyQemuConfParsedTest(self, dialog, vnc_listen, spice_listen, vnc_passwd, spice_passwd):
             dialog.open() \
                 .fill() \
-                .createRespectQemuConfConsoleConfig(vnc_listen, spice_listen)
+                .createRespectQemuConfConsoleConfig(vnc_listen, spice_listen, vnc_passwd, spice_passwd)
             if dialog.delete:
                 self._deleteVm(dialog) \
                     .checkEnvIsEmpty()
