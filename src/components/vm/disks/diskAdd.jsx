@@ -149,6 +149,10 @@ class AdditionalOptions extends React.Component {
     }
 
     render() {
+        const displayBusTypes = busTypes[this.props.device].map(type => ({ value: type }));
+        if (displayBusTypes.find(busType => busType.value == this.props.busType) == undefined)
+            displayBusTypes.push({ value: this.props.busType, disabled: true });
+
         return (
             <ExpandableSection toggleText={ this.state.expanded ? _("Hide additional options") : _("Show additional options")}
                                onToggle={() => this.setState({ expanded: !this.state.expanded })} isExpanded={this.state.expanded} className="add-disk-additional-options">
@@ -166,15 +170,17 @@ class AdditionalOptions extends React.Component {
                         </FormSelect>
                     </FormGroup>
 
-                    <FormGroup fieldId='bus-type' label={_("Bus")}>
-                        <FormSelect id='bus-type'
+                    <FormGroup fieldId={this.props.idPrefix + '-bus-type'} label={_("Bus")}>
+                        <FormSelect id={this.props.idPrefix + '-bus-type'}
+                            data-value={this.props.busType}
                             onChange={value => this.props.onValueChanged('busType', value)}
                             value={this.props.busType}>
-                            {busTypes[this.props.device].map(busType => {
+                            {displayBusTypes.map(busType => {
                                 return (
-                                    <FormSelectOption value={busType}
-                                                      key={busType}
-                                                      label={busType} />
+                                    <FormSelectOption value={busType.value}
+                                                      key={busType.value}
+                                                      isDisabled={busType.disabled}
+                                                      label={busType.value} />
                                 );
                             })}
                         </FormSelect>
@@ -641,6 +647,7 @@ export class AddDiskModalBody extends React.Component {
                                      vm={vm} />}
                     <AdditionalOptions cacheMode={this.state.cacheMode}
                                        device={this.state.device}
+                                       idPrefix={idPrefix}
                                        onValueChanged={this.onValueChanged}
                                        busType={this.state.busType} />
                 </Form>
