@@ -691,6 +691,9 @@ export function getStorageVolumeDiskTarget(vm, storagePool, volumeName) {
  * @returns {object}
  */
 export function getStorageVolumesUsage(vms, storagePool) {
+    if (!storagePool)
+        return false;
+
     // Get a dictionary of vmName -> disks for a specific connection
     const vmDisksMap = getVmDisksMap(vms, storagePool.connectionName);
     const volumes = storagePool.volumes || [];
