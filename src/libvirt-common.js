@@ -322,6 +322,7 @@ export function parseDumpxmlForConsoles(devicesElem) {
                 port: graphicsElem.getAttribute('port'),
                 tlsPort: graphicsElem.getAttribute('tlsPort'),
                 address: graphicsElem.getAttribute('listen'),
+                password: graphicsElem.getAttribute('passwd'),
                 autoport: graphicsElem.getAttribute('autoport'),
             };
             if (display.type &&
