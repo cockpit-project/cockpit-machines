@@ -871,7 +871,9 @@ class CreateVmModal extends React.Component {
             if (value && value.minimumResources.ram) {
                 stateDelta.minimumMemory = value.minimumResources.ram;
 
-                const bestUnit = getBestUnit(stateDelta.minimumMemory, units.B);
+                let bestUnit = getBestUnit(stateDelta.minimumMemory, units.B);
+                if (bestUnit.base1024Exponent >= 4) bestUnit = units.GiB;
+                if (bestUnit.base1024Exponent <= 1) bestUnit = units.MiB;
                 const converted = convertToUnit(stateDelta.minimumMemory, units.B, bestUnit);
                 this.setState({ memorySizeUnit: bestUnit.name }, () => this.onValueChanged("memorySize", converted));
             }
@@ -879,7 +881,9 @@ class CreateVmModal extends React.Component {
             if (value && value.minimumResources.storage) {
                 stateDelta.minimumStorage = value.minimumResources.storage;
 
-                const bestUnit = getBestUnit(stateDelta.minimumStorage, units.B);
+                let bestUnit = getBestUnit(stateDelta.minimumStorage, units.B);
+                if (bestUnit.base1024Exponent >= 4) bestUnit = units.GiB;
+                if (bestUnit.base1024Exponent <= 1) bestUnit = units.MiB;
                 const converted = convertToUnit(stateDelta.minimumStorage, units.B, bestUnit);
                 this.setState({ storageSizeUnit: bestUnit.name }, () => this.onValueChanged("storageSize", converted));
             }
