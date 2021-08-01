@@ -22,7 +22,8 @@ import { Button, Checkbox, Form, FormGroup, Modal, Tooltip } from '@patternfly/r
 
 import { getStorageVolumesUsage, storagePoolId } from '../../helpers.js';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
-import { storagePoolDeactivate, storagePoolUndefine, storageVolumeDelete } from '../../libvirt-dbus.js';
+import { storageVolumeDelete } from '../../libvirt-dbus.js';
+import { storagePoolDeactivate, storagePoolUndefine } from '../../libvirtApi/storagePool.js';
 import cockpit from 'cockpit';
 
 import './storagePoolDelete.css';
@@ -111,10 +112,10 @@ export class StoragePoolDelete extends React.Component {
         const volumes = storagePool.volumes || [];
         const storagePoolDeactivateAndUndefine = (storagePool) => {
             if (storagePool.active) {
-                return storagePoolDeactivate(storagePool.connectionName, storagePool.id)
-                        .then(() => storagePoolUndefine(storagePool.connectionName, storagePool.id));
+                return storagePoolDeactivate({ connectionName: storagePool.connectionName, objPath: storagePool.id })
+                        .then(() => storagePoolUndefine({ connectionName: storagePool.connectionName, objPath: storagePool.id }));
             } else {
-                return storagePoolUndefine(storagePool.connectionName, storagePool.id);
+                return storagePoolUndefine({ connectionName: storagePool.connectionName, objPath: storagePool.id });
             }
         };
 

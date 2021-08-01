@@ -61,7 +61,7 @@ import {
     getOSStringRepresentation,
 } from "./createVmDialogUtils.js";
 import { createVm } from '../../libvirt-common.js';
-import { storagePoolRefresh } from '../../libvirt-dbus.js';
+import { storagePoolRefresh } from '../../libvirtApi/storagePool.js';
 import { PasswordFormFields, password_quality } from 'cockpit-components-password.jsx';
 
 import './createVmDialog.scss';
@@ -941,7 +941,7 @@ class CreateVmModal extends React.Component {
                     if (this.state.storagePool === "NewVolume") {
                         const storagePool = storagePools.find(pool => pool.connectionName === this.state.connectionName && pool.name === "default");
                         if (storagePool)
-                            storagePoolRefresh(storagePool.connectionName, storagePool.id);
+                            storagePoolRefresh({ connectionName: storagePool.connectionName, objPath: storagePool.id });
                     }
                 },
                 (exception) => {

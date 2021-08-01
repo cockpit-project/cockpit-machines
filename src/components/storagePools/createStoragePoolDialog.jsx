@@ -31,7 +31,7 @@ import { LIBVIRT_SYSTEM_CONNECTION } from '../../helpers.js';
 import { MachinesConnectionSelector } from '../common/machinesConnectionSelector.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { FileAutoComplete } from 'cockpit-components-file-autocomplete.jsx';
-import { createStoragePool, getPoolCapabilities } from '../../libvirt-dbus.js';
+import { storagePoolCreate, storagePoolGetCapabilities } from '../../libvirtApi/storagePool.js';
 import cockpit from 'cockpit';
 
 const _ = cockpit.gettext;
@@ -389,7 +389,7 @@ class CreateStoragePoolModal extends React.Component {
 
         if (!modalIsIncomplete) {
             this.setState({ createInProgress: true });
-            createStoragePool(this.state)
+            storagePoolCreate({ ...this.state })
                     .fail(exc => {
                         this.setState({ createInProgress: false });
                         this.dialogErrorSet(_("Storage pool failed to be created"), exc.message);
@@ -459,7 +459,7 @@ export class CreateStoragePoolAction extends React.Component {
     }
 
     componentDidMount() {
-        getPoolCapabilities({ connectionName: "session" })
+        storagePoolGetCapabilities({ connectionName: "session" })
                 .then(poolCapabilities => this.setState({ poolCapabilities }))
                 .catch(() => this.setState({ poolCapabilities: {} }));
     }

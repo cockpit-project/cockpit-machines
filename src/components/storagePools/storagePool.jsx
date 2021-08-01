@@ -31,7 +31,7 @@ import { updateOrAddStoragePool } from '../../actions/store-actions.js';
 import { StoragePoolOverviewTab } from './storagePoolOverviewTab.jsx';
 import { StoragePoolVolumesTab } from './storagePoolVolumesTab.jsx';
 import { StoragePoolDelete } from './storagePoolDelete.jsx';
-import { storagePoolActivate, storagePoolDeactivate } from '../../libvirt-dbus.js';
+import { storagePoolActivate, storagePoolDeactivate } from '../../libvirtApi/storagePool.js';
 import store from '../../store.js';
 
 import cockpit from 'cockpit';
@@ -109,7 +109,7 @@ class StoragePoolActions extends React.Component {
         const storagePool = this.props.storagePool;
 
         this.setState({ operationInProgress: true });
-        storagePoolActivate(storagePool.connectionName, storagePool.id)
+        storagePoolActivate({ connectionName: storagePool.connectionName, objPath: storagePool.id })
                 .catch(exc => {
                     store.dispatch(
                         updateOrAddStoragePool({
@@ -129,7 +129,7 @@ class StoragePoolActions extends React.Component {
         const storagePool = this.props.storagePool;
 
         this.setState({ operationInProgress: true });
-        storagePoolDeactivate(storagePool.connectionName, storagePool.id)
+        storagePoolDeactivate({ connectionName: storagePool.connectionName, objPath: storagePool.id })
                 .catch(exc => {
                     store.dispatch(
                         updateOrAddStoragePool({
