@@ -21,7 +21,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Tooltip } from '@patternfly/react-core';
 
-import { storageVolumeDelete, storagePoolRefresh } from '../../libvirt-dbus.js';
+import { storageVolumeDelete } from '../../libvirt-dbus.js';
+import { storagePoolRefresh } from '../../libvirtApi/storagePool.js';
 import cockpit from 'cockpit';
 
 import './storageVolumeDelete.css';
@@ -41,7 +42,7 @@ export class StorageVolumeDelete extends React.Component {
             storageVolumeDelete(storagePool.connectionName, storagePool.name, volume.name)
         ))
                 .then(() => {
-                    storagePoolRefresh(storagePool.connectionName, storagePool.id);
+                    storagePoolRefresh({ connectionName: storagePool.connectionName, objPath: storagePool.id });
                 })
                 .catch(exc => {
                     this.props.deleteErrorHandler(_("Storage volumes could not be deleted"), exc.message);
