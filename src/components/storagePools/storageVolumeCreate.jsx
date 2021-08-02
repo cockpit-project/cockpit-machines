@@ -24,7 +24,7 @@ import cockpit from 'cockpit';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { units, getDefaultVolumeFormat, convertToUnit, isEmpty } from '../../helpers.js';
-import { storageVolumeCreate } from '../../libvirt-dbus.js';
+import { storageVolumeCreate } from '../../libvirtApi/storageVolume.js';
 import { VolumeCreateBody } from './storageVolumeCreateBody.jsx';
 
 const _ = cockpit.gettext;
@@ -77,7 +77,7 @@ class CreateStorageVolumeModal extends React.Component {
             const { name, connectionName } = this.props.storagePool;
             const size = convertToUnit(this.state.size, this.state.unit, 'MiB');
 
-            storageVolumeCreate(connectionName, name, volumeName, size, format)
+            storageVolumeCreate({ connectionName, poolName: name, volName: volumeName, size, format })
                     .then(() => this.props.close())
                     .catch(exc => {
                         this.setState({ createInProgress: false });

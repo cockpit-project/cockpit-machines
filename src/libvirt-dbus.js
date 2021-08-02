@@ -43,7 +43,6 @@ import {
 import {
     getDiskXML,
     getIfaceXML,
-    getVolumeXML,
     getSnapshotXML,
     getFilesystemXML,
     getMemoryBackingXML,
@@ -81,7 +80,6 @@ import {
     parseDumpxml,
     parseIfaceDumpxml,
     parseNodeDeviceDumpxml,
-    parseStorageVolumeDumpxml,
     resolveUiState,
     serialConsoleCommand,
     unknownConnectionName,
@@ -223,34 +221,6 @@ export function changeVmAutostart ({
                 const args = ['org.libvirt.Domain', 'Autostart', cockpit.variant('b', autostart)];
 
                 return call(connectionName, domainPath[0], 'org.freedesktop.DBus.Properties', 'Set', args, { timeout, type: 'ssv' });
-            });
-}
-
-export function volumeCreateAndAttach({
-    connectionName,
-    poolName,
-    volumeName,
-    size,
-    format,
-    target,
-    vmId,
-    vmName,
-    permanent,
-    hotplug,
-    cacheMode,
-    busType,
-}) {
-    const volXmlDesc = getVolumeXML(volumeName, size, format);
-
-    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName', [poolName], { timeout, type: 's' })
-            .then((storagePoolPath) => {
-                return call(connectionName, storagePoolPath[0], 'org.libvirt.StoragePool', 'StorageVolCreateXML', [volXmlDesc, 0], { timeout, type: 'su' })
-                        .then(() => {
-                            return storagePoolRefresh(connectionName, storagePoolPath[0]);
-                        });
-            })
-            .then((volPath) => {
-                return attachDisk({ connectionName, type: "volume", device: "disk", poolName, volumeName, format, target, vmId, permanent, hotplug, cacheMode, busType });
             });
 }
 
@@ -491,45 +461,6 @@ export function getNodeMaxMemory({ connectionName }) {
                 console.warn("NodeGetMemoryStats failed: %s", ex);
                 return Promise.reject(ex);
             });
-}
-
-export function getStorageVolumes({ connectionName, poolName }) {
-    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName', [poolName], { timeout, type: 's' })
-            .then(storagePoolPath => {
-                return call(connectionName, storagePoolPath[0], 'org.libvirt.StoragePool', 'ListStorageVolumes', [0], { timeout, type: 'u' });
-            })
-            .then((objPaths) => {
-                const volumes = [];
-                const storageVolumesPropsPromises = [];
-
-                for (let i = 0; i < objPaths[0].length; i++) {
-                    const objPath = objPaths[0][i];
-
-                    storageVolumesPropsPromises.push(
-                        call(connectionName, objPath, 'org.libvirt.StorageVol', 'GetXMLDesc', [0], { timeout, type: 'u' })
-                    );
-                }
-
-                // WA to avoid Promise.all() fail-fast behavior
-                const toResultObject = (promise) => {
-                    return promise
-                            .then(result => ({ success: true, result }))
-                            .catch(error => ({ success: false, error }));
-                };
-
-                return Promise.all(storageVolumesPropsPromises.map(toResultObject)).then(volumeXmlList => {
-                    for (let i = 0; i < volumeXmlList.length; i++) {
-                        if (volumeXmlList[i].success) {
-                            const volumeXml = volumeXmlList[i].result[0];
-                            const dumpxmlParams = parseStorageVolumeDumpxml(connectionName, volumeXml);
-
-                            volumes.push(dumpxmlParams);
-                        }
-                    }
-                    return Promise.resolve(volumes);
-                });
-            })
-            .catch(ex => console.warn("GET_STORAGE_VOLUMES action failed for pool %s: %s", poolName, ex.toString()));
 }
 
 /*
@@ -1335,24 +1266,6 @@ export function setOSFirmware(connectionName, objPath, loaderType) {
 
 export function snapshotCurrent(connectionName, objPath) {
     return call(connectionName, objPath, 'org.libvirt.Domain', 'SnapshotCurrent', [0], { timeout, type: 'u' });
-}
-
-export function storageVolumeCreate(connectionName, poolName, volName, size, format) {
-    const volXmlDesc = getVolumeXML(volName, size, format);
-
-    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName', [poolName], { timeout, type: 's' })
-            .then(path => {
-                return call(connectionName, path[0], 'org.libvirt.StoragePool', 'StorageVolCreateXML', [volXmlDesc, 0], { timeout, type: 'su' })
-                        .then(() => {
-                            return storagePoolRefresh(connectionName, path[0]);
-                        });
-            });
-}
-
-export function storageVolumeDelete(connectionName, poolName, volName) {
-    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName', [poolName], { timeout, type: 's' })
-            .then(objPath => call(connectionName, objPath[0], 'org.libvirt.StoragePool', 'StorageVolLookupByName', [volName], { timeout, type: 's' }))
-            .then(objPath => call(connectionName, objPath[0], 'org.libvirt.StorageVol', 'Delete', [0], { timeout, type: 'u' }));
 }
 
 export function vmInterfaceAddresses(connectionName, objPath) {
