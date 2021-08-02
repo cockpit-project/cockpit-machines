@@ -27,7 +27,7 @@ import store from '../store.js';
 import { updateOrAddStoragePool } from '../actions/store-actions.js';
 import { getPoolXML } from '../xmlCreator.js';
 import { parsePoolCapabilities, parseStoragePoolDumpxml } from '../libvirt-common.js';
-import { getStorageVolumes } from '../libvirt-dbus.js';
+import { storageVolumeGetAll } from './storageVolume.js';
 import { call, Enum, timeout } from './helpers.js';
 
 export function storagePoolActivate({ connectionName, objPath }) {
@@ -95,7 +95,7 @@ export function storagePoolGet({
 
                 props.volumes = [];
                 if (props.active) {
-                    getStorageVolumes({ connectionName, poolName: dumpxmlParams.name })
+                    storageVolumeGetAll({ connectionName, poolName: dumpxmlParams.name })
                             .then(volumes => {
                                 props.volumes = volumes;
                             })

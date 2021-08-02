@@ -22,7 +22,7 @@ import { Button, Checkbox, Form, FormGroup, Modal, Tooltip } from '@patternfly/r
 
 import { getStorageVolumesUsage, storagePoolId } from '../../helpers.js';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
-import { storageVolumeDelete } from '../../libvirt-dbus.js';
+import { storageVolumeDelete } from '../../libvirtApi/storageVolume.js';
 import { storagePoolDeactivate, storagePoolUndefine } from '../../libvirtApi/storagePool.js';
 import cockpit from 'cockpit';
 
@@ -120,7 +120,7 @@ export class StoragePoolDelete extends React.Component {
         };
 
         if (this.state.deleteVolumes && storagePool.volumes.length > 0) {
-            Promise.all(volumes.map(volume => storageVolumeDelete(storagePool.connectionName, storagePool.name, volume.name)))
+            Promise.all(volumes.map(volume => storageVolumeDelete({ connectionName: storagePool.connectionName, poolName: storagePool.name, volName: volume.name })))
                     .then(() => storagePoolDeactivateAndUndefine(storagePool))
                     .then(() => this.close,
                           exc => this.dialogErrorSet(_("The storage pool could not be deleted"), exc.message));

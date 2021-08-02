@@ -21,7 +21,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Tooltip } from '@patternfly/react-core';
 
-import { storageVolumeDelete } from '../../libvirt-dbus.js';
+import { storageVolumeDelete } from '../../libvirtApi/storageVolume.js';
 import { storagePoolRefresh } from '../../libvirtApi/storagePool.js';
 import cockpit from 'cockpit';
 
@@ -39,7 +39,7 @@ export class StorageVolumeDelete extends React.Component {
         const { volumes, storagePool } = this.props;
 
         Promise.all(volumes.map(volume =>
-            storageVolumeDelete(storagePool.connectionName, storagePool.name, volume.name)
+            storageVolumeDelete({ connectionName: storagePool.connectionName, poolName: storagePool.name, volName: volume.name })
         ))
                 .then(() => {
                     storagePoolRefresh({ connectionName: storagePool.connectionName, objPath: storagePool.id });
