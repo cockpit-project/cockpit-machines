@@ -24,7 +24,7 @@ import { Button } from '@patternfly/react-core';
 
 import { convertToUnit, diskPropertyChanged, toReadableNumber, units, vmId } from "../../../helpers.js";
 import { AddDiskModalBody } from './diskAdd.jsx';
-import { detachDisk, getVm } from '../../../libvirt-dbus.js';
+import { domainDetachDisk, domainGet } from '../../../libvirtApi/domain.js';
 import { EditDiskAction } from './diskEdit.jsx';
 import WarningInactive from '../../common/warningInactive.jsx';
 import { ListingTable } from "cockpit-components-table.jsx";
@@ -264,9 +264,9 @@ export class VmDisksCard extends React.Component {
                 columns.push({ title: disk.diskExtras || '' });
 
             const onRemoveDisk = () => {
-                return detachDisk({ connectionName: vm.connectionName, id: vm.id, name: vm.name, target: disk.target, live: vm.state === 'running', persistent: vm.persistent })
+                return domainDetachDisk({ connectionName: vm.connectionName, id: vm.id, name: vm.name, target: disk.target, live: vm.state === 'running', persistent: vm.persistent })
                         .then(() => {
-                            getVm({ connectionName: vm.connectionName, id:vm.id });
+                            domainGet({ connectionName: vm.connectionName, id:vm.id });
                         })
                         .catch(ex => {
                             onAddErrorNotification({

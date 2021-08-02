@@ -1,6 +1,5 @@
 import cockpit from 'cockpit';
 import * as service from 'service.js';
-import installVmScript from 'raw-loader!./scripts/install_machine.py';
 
 import * as python from "python.js";
 import getOSListScript from 'raw-loader!./getOSList.py';
@@ -13,42 +12,14 @@ import {
 import {
     convertToUnit,
     logDebug,
-    fileDownload,
     rephraseUI,
     units,
 } from './helpers.js';
-
-import {
-    prepareDisksParam,
-    prepareDisplaysParam,
-    prepareNICParam,
-    prepareVcpuParam,
-    prepareMemoryParam,
-} from './libvirtUtils.js';
-
-import {
-    finishVmCreateInProgress,
-    removeVmCreateInProgress,
-    setVmCreateInProgress,
-    setVmInstallInProgress,
-    clearVmUiState,
-} from './components/create-vm-dialog/uiState.js';
 
 import store from './store.js';
 import VMS_CONFIG from './config.js';
 
 const METADATA_NAMESPACE = "https://github.com/cockpit-project/cockpit-machines";
-
-let pythonPath;
-
-export function buildConsoleVVFile(consoleDetail) {
-    return '[virt-viewer]\n' +
-        `type=${consoleDetail.type}\n` +
-        `host=${consoleDetail.address}\n` +
-        `port=${consoleDetail.port}\n` +
-        'delete-this-file=1\n' +
-        'fullscreen=0\n';
-}
 
 export function canLoggedUserConnectSession (connectionName, loggedUser) {
     return connectionName !== 'session' || loggedUser.name !== 'root';
@@ -1003,29 +974,6 @@ export function parseStorageVolumeDumpxml(connectionName, storageVolumeXml, id_o
     };
 }
 
-export function resolveUiState(name, connectionName) {
-    const result = {
-        // used just the first time vm is shown
-        initiallyExpanded: false,
-        initiallyOpenedConsoleTab: false,
-    };
-
-    const uiState = store.getState().ui.vms.find(vm => vm.name == name && vm.connectionName == connectionName);
-
-    if (uiState) {
-        result.initiallyExpanded = uiState.expanded;
-        result.initiallyOpenedConsoleTab = uiState.openConsoleTab;
-
-        if (uiState.installInProgress) {
-            removeVmCreateInProgress(name, connectionName);
-        } else {
-            clearVmUiState(name, connectionName);
-        }
-    }
-
-    return result;
-}
-
 export function unknownConnectionName() {
     return cockpit.user()
             .then(loggedUser => {
@@ -1074,67 +1022,6 @@ export function vmDesktopConsole({
     });
 }
 
-export function createVm({
-    connectionName,
-    memorySize,
-    os,
-    profile,
-    rootPassword,
-    source,
-    sourceType,
-    startVm,
-    storagePool,
-    storageSize,
-    storageVolume,
-    unattended,
-    userLogin,
-    userPassword,
-    vmName,
-}) {
-    logDebug(`CREATE_VM(${vmName}):`);
-    // shows dummy vm  until we get vm from virsh (cleans up inProgress)
-    setVmCreateInProgress(vmName, connectionName, { openConsoleTab: startVm });
-
-    if (startVm) {
-        setVmInstallInProgress({ name: vmName, connectionName });
-    }
-
-    const opts = { err: "message", environ: ['LC_ALL=C'] };
-    if (connectionName === 'system')
-        opts.superuser = 'try';
-
-    const args = JSON.stringify({
-        connectionName,
-        memorySize,
-        os,
-        profile,
-        rootPassword,
-        source,
-        sourceType,
-        startVm,
-        storagePool,
-        storageSize,
-        storageVolume,
-        type: "create",
-        unattended,
-        userLogin,
-        userPassword,
-        vmName,
-    });
-
-    return cockpit
-            .spawn([pythonPath, "--", "-", args], opts)
-            .input(installVmScript)
-            .then(() => {
-                finishVmCreateInProgress(vmName, connectionName);
-                clearVmUiState(vmName, connectionName);
-            })
-            .fail(ex => {
-                clearVmUiState(vmName, connectionName); // inProgress cleanup
-                console.info(`spawn 'vm creation' returned error: "${JSON.stringify(ex)}"`);
-            });
-}
-
 export function enableLibvirt({ enable, serviceName }) {
     logDebug(`ENABLE_LIBVIRT`);
     const libvirtService = service.proxy(serviceName);
@@ -1163,43 +1050,10 @@ function getOsInfoList() {
                 parseOsInfoList('[]');
             });
 }
-
 export function initState() {
     getPythonPath();
     getLoggedInUser();
     getOsInfoList();
-}
-
-export function installVm({ onAddErrorNotification, vm }) {
-    logDebug(`INSTALL_VM(${name}):`);
-    // shows dummy vm until we get vm from virsh (cleans up inProgress)
-    // vm should be returned even if script fails
-    setVmInstallInProgress(vm);
-
-    const opts = { err: "message", environ: ['LC_ALL=C'] };
-    if (vm.connectionName === 'system')
-        opts.superuser = 'try';
-
-    const args = JSON.stringify({
-        autostart: vm.autostart,
-        connectionName: vm.connectionName,
-        disks: prepareDisksParam(vm.disks),
-        firmware: vm.firmware == "efi" ? 'uefi' : '',
-        graphics: prepareDisplaysParam(vm.displays),
-        memorySize: prepareMemoryParam(convertToUnit(vm.currentMemory, units.KiB, units.MiB), convertToUnit(vm.memory, units.KiB, units.MiB)),
-        os: vm.metadata.osVariant,
-        source: vm.metadata.installSource,
-        sourceType: vm.metadata.installSourceType,
-        type: "install",
-        vcpu: prepareVcpuParam(vm.vcpus, vm.cpu),
-        vmName: vm.name,
-        vnics: prepareNICParam(vm.interfaces),
-    });
-
-    return cockpit
-            .spawn([pythonPath, "--", "-", args], opts)
-            .input(installVmScript)
-            .finally(() => clearVmUiState(vm.name, vm.connectionName));
 }
 
 export function startLibvirt({ serviceName }) {

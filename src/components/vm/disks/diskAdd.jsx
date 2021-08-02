@@ -30,13 +30,9 @@ import { FileAutoComplete } from 'cockpit-components-file-autocomplete.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { diskCacheModes, units, convertToUnit, getDefaultVolumeFormat, getNextAvailableTarget, getStorageVolumesUsage, getStorageVolumeDiskTarget } from '../../../helpers.js';
 import { VolumeCreateBody } from '../../storagePools/storageVolumeCreateBody.jsx';
-import LibvirtDBus, {
-    attachDisk,
-    getAllStoragePools,
-    getVm,
-    updateDiskAttributes,
-    volumeCreateAndAttach
-} from '../../../libvirt-dbus.js';
+import { domainAttachDisk, domainGet, domainIsRunning, domainUpdateDiskAttributes } from '../../../libvirtApi/domain.js';
+import { storagePoolGetAll } from '../../../libvirtApi/storagePool.js';
+import { storageVolumeCreateAndAttach } from '../../../libvirtApi/storageVolume.js';
 
 const _ = cockpit.gettext;
 
@@ -100,7 +96,7 @@ const SelectExistingVolume = ({ idPrefix, storagePoolName, existingVolumeName, o
 
 const PermanentChange = ({ idPrefix, onValueChanged, permanent, vm }) => {
     // By default for a running VM, the disk is attached until shut down only. Enable permanent change of the domain.xml
-    if (!LibvirtDBus.isRunning(vm.state)) {
+    if (!domainIsRunning(vm.state)) {
         return null;
     }
 
@@ -340,8 +336,8 @@ export class AddDiskModalBody extends React.Component {
             unit: units.GiB.name,
             format: defaultPool && getDefaultVolumeFormat(defaultPool),
             target: availableTarget,
-            permanent: !LibvirtDBus.isRunning(vm.state), // default true for a down VM; for a running domain, the disk is attached tentatively only
-            hotplug: LibvirtDBus.isRunning(vm.state), // must be kept false for a down VM; the value is not being changed by user
+            permanent: !domainIsRunning(vm.state), // default true for a down VM; for a running domain, the disk is attached tentatively only
+            hotplug: domainIsRunning(vm.state), // must be kept false for a down VM; the value is not being changed by user
             addDiskInProgress: false,
             cacheMode: 'default',
             busType: defaultBus,
@@ -353,7 +349,7 @@ export class AddDiskModalBody extends React.Component {
         // Refresh storage volume list before displaying the dialog.
         // There are recently no Libvirt events for storage volumes and polling is ugly.
         // https://bugzilla.redhat.com/show_bug.cgi?id=1578836
-        getAllStoragePools({ connectionName: this.props.vm.connectionName })
+        storagePoolGetAll({ connectionName: this.props.vm.connectionName })
                 .then(() => this.setState({ dialogLoading: false, ...this.initialState }))
                 .catch(exc => this.dialogErrorSet(_("Storage pools could not be fetched"), exc.message));
     }
@@ -506,7 +502,7 @@ export class AddDiskModalBody extends React.Component {
         if (this.state.mode === CREATE_NEW) {
             this.setState({ addDiskInProgress: true, validate: false });
             // create new disk
-            return volumeCreateAndAttach({
+            return storageVolumeCreateAndAttach({
                 connectionName: vm.connectionName,
                 poolName: this.state.storagePoolName,
                 volumeName: this.state.volumeName,
@@ -522,7 +518,7 @@ export class AddDiskModalBody extends React.Component {
             })
                     .then(() => { // force reload of VM data, events are not reliable (i.e. for a down VM)
                         close();
-                        return getVm({ connectionName: vm.connectionName, name: vm.name, id: vm.id });
+                        return domainGet({ connectionName: vm.connectionName, name: vm.name, id: vm.id });
                     })
                     .catch(exc => {
                         this.setState({ addDiskInProgress: false });
@@ -535,7 +531,7 @@ export class AddDiskModalBody extends React.Component {
         const volume = storagePool.volumes.find(vol => vol.name === this.state.existingVolumeName);
         const isVolumeUsed = getStorageVolumesUsage(vms, storagePool);
 
-        return attachDisk({
+        return domainAttachDisk({
             connectionName: vm.connectionName,
             type: this.state.mode === CUSTOM_PATH ? "file" : "volume",
             file: this.state.file,
@@ -560,7 +556,7 @@ export class AddDiskModalBody extends React.Component {
                             const diskTarget = getStorageVolumeDiskTarget(vm, storagePool, this.state.existingVolumeName);
 
                             promises.push(
-                                updateDiskAttributes({ connectionName: vm.connectionName, objPath: vm.id, readonly: false, shareable: true, target: diskTarget })
+                                domainUpdateDiskAttributes({ connectionName: vm.connectionName, objPath: vm.id, readonly: false, shareable: true, target: diskTarget })
                                         .catch(exc => this.dialogErrorSet(_("Disk settings could not be saved"), exc.message))
                             );
                         });
@@ -571,7 +567,7 @@ export class AddDiskModalBody extends React.Component {
                         close();
                     }
 
-                    return getVm({ connectionName: vm.connectionName, name: vm.name, id: vm.id });
+                    return domainGet({ connectionName: vm.connectionName, name: vm.name, id: vm.id });
                 })
                 .catch(exc => {
                     this.setState({ addDiskInProgress: false });

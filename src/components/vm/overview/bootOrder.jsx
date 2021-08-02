@@ -34,7 +34,7 @@ import {
     rephraseUI,
     vmId
 } from '../../../helpers.js';
-import { getVm, changeBootOrder } from '../../../libvirt-dbus.js';
+import { domainGet, domainChangeBootOrder } from '../../../libvirtApi/domain.js';
 
 import './bootOrder.css';
 
@@ -205,13 +205,13 @@ class BootOrderModal extends React.Component {
         const { vm } = this.props;
         const devices = this.state.devices.filter((device) => device.checked);
 
-        changeBootOrder({
+        domainChangeBootOrder({
             id: vm.id,
             connectionName: vm.connectionName,
             devices,
         })
                 .then(() => {
-                    getVm({ connectionName: vm.connectionName, id: vm.id });
+                    domainGet({ connectionName: vm.connectionName, id: vm.id });
                     this.close();
                 })
                 .catch(exc => this.dialogErrorSet(_("Boot order settings could not be saved"), exc.message));

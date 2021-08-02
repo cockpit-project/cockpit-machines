@@ -33,17 +33,24 @@ import {
 import { CloneDialog } from './vmCloneDialog.jsx';
 import { DeleteDialog } from "./deleteDialog.jsx";
 import { MigrateDialog } from './vmMigrateDialog.jsx';
-import { installVm } from "../../libvirt-common.js";
-import LibvirtDBus, {
-    forceOffVm,
-    forceRebootVm,
-    pauseVm,
-    rebootVm,
-    resumeVm,
-    sendNMI,
-    shutdownVm,
-    startVm,
-} from '../../libvirt-dbus.js';
+import {
+    domainCanDelete,
+    domainCanInstall,
+    domainCanReset,
+    domainCanResume,
+    domainCanRun,
+    domainCanPause,
+    domainCanShutdown,
+    domainForceOff,
+    domainForceReboot,
+    domainInstall,
+    domainPause,
+    domainReboot,
+    domainResume,
+    domainSendNMI,
+    domainShutdown,
+    domainStart,
+} from '../../libvirtApi/domain.js';
 import store from "../../store.js";
 
 const _ = cockpit.gettext;
@@ -72,7 +79,7 @@ const VmActions = ({ vm, storagePools, onAddErrorNotification, isDetailsPage }) 
     const hasInstallPhase = vm.metadata && vm.metadata.hasInstallPhase;
     const dropdownItems = [];
 
-    const onStart = () => startVm({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
+    const onStart = () => domainStart({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
         setOperationInProgress(false);
         store.dispatch(
             updateVm({
@@ -85,14 +92,14 @@ const VmActions = ({ vm, storagePools, onAddErrorNotification, isDetailsPage }) 
             })
         );
     });
-    const onInstall = () => installVm({ vm, onAddErrorNotification }).catch(ex => {
+    const onInstall = () => domainInstall({ vm, onAddErrorNotification }).catch(ex => {
         onAddErrorNotification({
             text: cockpit.format(_("VM $0 failed to get installed"), vm.name),
             detail: ex.message.split(/Traceback(.+)/)[0],
             resourceId: vm.id,
         });
     });
-    const onReboot = () => rebootVm({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
+    const onReboot = () => domainReboot({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
         store.dispatch(
             updateVm({
                 connectionName: vm.connectionName,
@@ -104,7 +111,7 @@ const VmActions = ({ vm, storagePools, onAddErrorNotification, isDetailsPage }) 
             })
         );
     });
-    const onForceReboot = () => forceRebootVm({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
+    const onForceReboot = () => domainForceReboot({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
         store.dispatch(
             updateVm({
                 connectionName: vm.connectionName,
@@ -116,7 +123,7 @@ const VmActions = ({ vm, storagePools, onAddErrorNotification, isDetailsPage }) 
             })
         );
     });
-    const onShutdown = () => shutdownVm({ name: vm.name, id: vm.id, connectionName: vm.connectionName })
+    const onShutdown = () => domainShutdown({ name: vm.name, id: vm.id, connectionName: vm.connectionName })
             .then(() => !vm.persistent && cockpit.location.go(["vms"]))
             .catch(ex => {
                 setOperationInProgress(false);
@@ -131,7 +138,7 @@ const VmActions = ({ vm, storagePools, onAddErrorNotification, isDetailsPage }) 
                     })
                 );
             });
-    const onPause = () => pauseVm({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
+    const onPause = () => domainPause({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
         store.dispatch(
             updateVm({
                 connectionName: vm.connectionName,
@@ -143,7 +150,7 @@ const VmActions = ({ vm, storagePools, onAddErrorNotification, isDetailsPage }) 
             })
         );
     });
-    const onResume = () => resumeVm({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
+    const onResume = () => domainResume({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
         store.dispatch(
             updateVm({
                 connectionName: vm.connectionName,
@@ -155,7 +162,7 @@ const VmActions = ({ vm, storagePools, onAddErrorNotification, isDetailsPage }) 
             })
         );
     });
-    const onForceoff = () => forceOffVm({ name: vm.name, id: vm.id, connectionName: vm.connectionName })
+    const onForceoff = () => domainForceOff({ name: vm.name, id: vm.id, connectionName: vm.connectionName })
             .then(() => !vm.persistent && cockpit.location.go(["vms"]))
             .catch(ex => {
                 store.dispatch(
@@ -169,7 +176,7 @@ const VmActions = ({ vm, storagePools, onAddErrorNotification, isDetailsPage }) 
                     })
                 );
             });
-    const onSendNMI = () => sendNMI({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
+    const onSendNMI = () => domainSendNMI({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
         store.dispatch(
             updateVm({
                 connectionName: vm.connectionName,
@@ -184,7 +191,7 @@ const VmActions = ({ vm, storagePools, onAddErrorNotification, isDetailsPage }) 
 
     let shutdown;
 
-    if (LibvirtDBus.canPause(state)) {
+    if (domainCanPause(state)) {
         dropdownItems.push(
             <DropdownItem key={`${id}-pause`}
                           id={`${id}-pause`}
@@ -195,7 +202,7 @@ const VmActions = ({ vm, storagePools, onAddErrorNotification, isDetailsPage }) 
         dropdownItems.push(<DropdownSeparator key="separator-pause" />);
     }
 
-    if (LibvirtDBus.canResume(state)) {
+    if (domainCanResume(state)) {
         dropdownItems.push(
             <DropdownItem key={`${id}-resume`}
                           id={`${id}-resume`}
@@ -206,7 +213,7 @@ const VmActions = ({ vm, storagePools, onAddErrorNotification, isDetailsPage }) 
         dropdownItems.push(<DropdownSeparator key="separator-resume" />);
     }
 
-    if (LibvirtDBus.canShutdown(state)) {
+    if (domainCanShutdown(state)) {
         shutdown = (
             <Button key='action-shutdown'
                     isSmall
@@ -242,7 +249,7 @@ const VmActions = ({ vm, storagePools, onAddErrorNotification, isDetailsPage }) 
         dropdownItems.push(<DropdownSeparator key="separator-sendnmi" />);
     }
 
-    if (LibvirtDBus.canReset(state)) {
+    if (domainCanReset(state)) {
         dropdownItems.push(
             <DropdownItem key={`${id}-reboot`}
                           id={`${id}-reboot`}
@@ -261,7 +268,7 @@ const VmActions = ({ vm, storagePools, onAddErrorNotification, isDetailsPage }) 
     }
 
     let run = null;
-    if (LibvirtDBus.canRun(state, hasInstallPhase)) {
+    if (domainCanRun(state, hasInstallPhase)) {
         run = (
             <Button key='action-run'
                     isSmall
@@ -275,7 +282,7 @@ const VmActions = ({ vm, storagePools, onAddErrorNotification, isDetailsPage }) 
     }
 
     let install = null;
-    if (LibvirtDBus.canInstall(state, hasInstallPhase)) {
+    if (domainCanInstall(state, hasInstallPhase)) {
         install = (<Button key='action-install' variant="secondary"
                            isLoading={vm.isUi}
                            isDisabled={vm.isUi}
@@ -337,7 +344,7 @@ const VmActions = ({ vm, storagePools, onAddErrorNotification, isDetailsPage }) 
     }
 
     let deleteAction = null;
-    if (state !== undefined && LibvirtDBus.canDelete && LibvirtDBus.canDelete(state, vm.id)) {
+    if (state !== undefined && domainCanDelete(state, vm.id)) {
         if (!vm.persistent) {
             dropdownItems.push(
                 <Tooltip key={`${id}-delete`} id={`${id}-delete-tooltip`} content={_("This VM is transient. Shut it down if you wish to delete it.")}>

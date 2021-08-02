@@ -37,7 +37,7 @@ import { BootOrderLink } from './bootOrder.jsx';
 import { FirmwareLink } from './firmware.jsx';
 import WarningInactive from '../../common/warningInactive.jsx';
 import { StateIcon } from '../../common/stateIcon.jsx';
-import { changeVmAutostart, getDomainCapabilities, getVm } from '../../../libvirt-dbus.js';
+import { domainChangeAutostart, domainGetCapabilities, domainGet } from '../../../libvirtApi/domain.js';
 import {
     getDomainCapLoader,
     getDomainCapMaxVCPU,
@@ -75,7 +75,7 @@ class VmOverviewCard extends React.Component {
 
     componentDidMount() {
         this._isMounted = true;
-        getDomainCapabilities(this.props.vm.connectionName, this.props.vm.arch, this.props.vm.emulatedMachine)
+        domainGetCapabilities({ connectionName: this.props.vm.connectionName, arch: this.props.vm.arch, model: this.props.vm.emulatedMachine })
                 .then(domCaps => {
                     const loaderElems = getDomainCapLoader(domCaps);
                     const maxVcpu = getDomainCapMaxVCPU(domCaps);
@@ -97,9 +97,9 @@ class VmOverviewCard extends React.Component {
         const { vm } = this.props;
         const autostart = !vm.autostart;
 
-        changeVmAutostart({ connectionName: vm.connectionName, vmName: vm.name, autostart: autostart })
+        domainChangeAutostart({ connectionName: vm.connectionName, vmName: vm.name, autostart: autostart })
                 .then(() => {
-                    getVm({ connectionName: vm.connectionName, id: vm.id });
+                    domainGet({ connectionName: vm.connectionName, id: vm.id });
                 });
     }
 
