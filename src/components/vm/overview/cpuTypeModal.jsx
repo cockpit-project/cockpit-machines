@@ -3,7 +3,7 @@ import cockpit from 'cockpit';
 import { Button, Form, FormGroup, FormSelect, FormSelectOption, FormSelectOptionGroup, Modal } from '@patternfly/react-core';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
-import { setCpuMode as setCpuModeLibvirt } from '../../../libvirt-dbus.js';
+import { domainSetCpuMode } from '../../../libvirtApi/domain.js';
 
 const _ = cockpit.gettext;
 
@@ -15,7 +15,7 @@ export const CPUTypeModal = ({ vm, models, close }) => {
 
     function save() {
         setIsLoading(true);
-        setCpuModeLibvirt({
+        domainSetCpuMode({
             name: vm.name,
             id: vm.id,
             connectionName: vm.connectionName,

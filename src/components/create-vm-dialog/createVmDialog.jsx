@@ -60,7 +60,7 @@ import {
     filterReleaseEolDates,
     getOSStringRepresentation,
 } from "./createVmDialogUtils.js";
-import { createVm } from '../../libvirt-common.js';
+import { domainCreate } from '../../libvirtApi/domain.js';
 import { storagePoolRefresh } from '../../libvirtApi/storagePool.js';
 import { PasswordFormFields, password_quality } from 'cockpit-components-password.jsx';
 
@@ -933,7 +933,7 @@ class CreateVmModal extends React.Component {
             };
 
             return timeoutedPromise(
-                createVm(vmParams),
+                domainCreate(vmParams),
                 VMS_CONFIG.LeaveCreateVmDialogVisibleAfterSubmit,
                 () => {
                     close();

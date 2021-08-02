@@ -11,10 +11,10 @@ import {
 } from '../../../helpers.js';
 import MemorySelectRow from './memorySelectRow.jsx';
 import {
-    getVm,
-    setMemory,
-    setMaxMemory,
-} from '../../../libvirt-dbus.js';
+    domainGet,
+    domainSetMemory,
+    domainSetMaxMemory,
+} from '../../../libvirtApi/domain.js';
 
 import './memoryModal.scss';
 
@@ -74,14 +74,14 @@ export class MemoryModal extends React.Component {
         const { vm } = this.props;
 
         if (vm.memory !== this.state.maxMemory) {
-            setMaxMemory({
+            domainSetMaxMemory({
                 id: vm.id,
                 connectionName: vm.connectionName,
                 maxMemory: this.state.maxMemory
             })
                     .then(() => {
                         if (vm.currentMemory !== this.state.maxMemory) {
-                            setMemory({
+                            domainSetMemory({
                                 id: vm.id,
                                 connectionName: vm.connectionName,
                                 memory: this.state.memory,
@@ -89,7 +89,7 @@ export class MemoryModal extends React.Component {
                             })
                                     .then(() => {
                                         if (vm.state !== 'running')
-                                            getVm({ connectionName: vm.connectionName, id: vm.id });
+                                            domainGet({ connectionName: vm.connectionName, id: vm.id });
                                         this.close();
                                     })
                                     .catch(exc => this.dialogErrorSet(_("Memory could not be saved"), exc.message));
@@ -97,7 +97,7 @@ export class MemoryModal extends React.Component {
                     })
                     .catch(exc => this.dialogErrorSet(_("Maximum memory could not be saved"), exc.message));
         } else if (vm.currentMemory !== this.state.memory) {
-            setMemory({
+            domainSetMemory({
                 id: vm.id,
                 connectionName: vm.connectionName,
                 memory: this.state.memory,
@@ -105,7 +105,7 @@ export class MemoryModal extends React.Component {
             })
                     .then(() => {
                         if (vm.state !== 'running')
-                            getVm({ connectionName: vm.connectionName, id: vm.id });
+                            domainGet({ connectionName: vm.connectionName, id: vm.id });
                         this.close();
                     })
                     .catch(exc => this.dialogErrorSet(_("Memory could not be saved"), exc.message));

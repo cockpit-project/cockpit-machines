@@ -18,6 +18,12 @@
  */
 
 import cockpit from 'cockpit';
+import store from '../store.js';
+
+import {
+    removeVmCreateInProgress,
+    clearVmUiState,
+} from '../components/create-vm-dialog/uiState.js';
 
 /* Default timeout for libvirt-dbus method calls */
 export const timeout = 30000;
@@ -98,4 +104,27 @@ export function dbusClient(connectionName) {
     }
 
     return clientLibvirt[connectionName];
+}
+
+export function resolveUiState(name, connectionName) {
+    const result = {
+        // used just the first time vm is shown
+        initiallyExpanded: false,
+        initiallyOpenedConsoleTab: false,
+    };
+
+    const uiState = store.getState().ui.vms.find(vm => vm.name == name && vm.connectionName == connectionName);
+
+    if (uiState) {
+        result.initiallyExpanded = uiState.expanded;
+        result.initiallyOpenedConsoleTab = uiState.openConsoleTab;
+
+        if (uiState.installInProgress) {
+            removeVmCreateInProgress(name, connectionName);
+        } else {
+            clearVmUiState(name, connectionName);
+        }
+    }
+
+    return result;
 }

@@ -10,7 +10,7 @@ import {
 import { InfoAltIcon } from '@patternfly/react-icons';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
-import { setVCPUSettings } from "../../../libvirt-dbus.js";
+import { domainSetVCPUSettings } from "../../../libvirtApi/domain.js";
 import { digitFilter } from "../../../helpers.js";
 
 import './vcpuModal.css';
@@ -155,7 +155,7 @@ export class VCPUModal extends React.Component {
     save() {
         const { close, vm } = this.props;
 
-        return setVCPUSettings({
+        return domainSetVCPUSettings({
             id: vm.id,
             name: vm.name,
             connectionName: vm.connectionName,

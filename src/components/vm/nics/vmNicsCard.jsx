@@ -26,7 +26,7 @@ import AddNIC from './nicAdd.jsx';
 import { EditNICModal } from './nicEdit.jsx';
 import WarningInactive from '../../common/warningInactive.jsx';
 import './nic.css';
-import { changeNetworkState, detachIface, getVm, vmInterfaceAddresses } from '../../../libvirt-dbus.js';
+import { domainChangeInterfaceState, domainDetachIface, domainInterfaceAddresses, domainGet } from '../../../libvirtApi/domain.js';
 import { ListingTable } from "cockpit-components-table.jsx";
 import { DeleteResourceButton, DeleteResourceModal } from '../../common/deleteResource.jsx';
 
@@ -120,7 +120,7 @@ export class VmNetworkTab extends React.Component {
             return;
         }
 
-        vmInterfaceAddresses(this.props.vm.connectionName, this.props.vm.id)
+        domainInterfaceAddresses({ connectionName: this.props.vm.connectionName, objPath: this.props.vm.id })
                 .then(domifaddressAllSources => {
                     const allRejected = !domifaddressAllSources.some(promise => promise.status == 'fulfilled');
 
@@ -208,8 +208,8 @@ export class VmNetworkTab extends React.Component {
             return (e) => {
                 e.stopPropagation();
                 if (network.mac) {
-                    changeNetworkState({ name: vm.name, id: vm.id, connectionName: vm.connectionName, networkMac: network.mac, state: network.state === 'up' ? 'down' : 'up' })
-                            .then(() => getVm({ connectionName: vm.connectionName, id:vm.id, name: vm.name }))
+                    domainChangeInterfaceState({ name: vm.name, id: vm.id, connectionName: vm.connectionName, networkMac: network.mac, state: network.state === 'up' ? 'down' : 'up' })
+                            .then(() => domainGet({ connectionName: vm.connectionName, id:vm.id, name: vm.name }))
                             .catch(ex => {
                                 onAddErrorNotification({
                                     text: cockpit.format(_("NIC $0 of VM $1 failed to change state"), network.mac, vm.name),
@@ -359,7 +359,7 @@ export class VmNetworkTab extends React.Component {
                         objectType: _("network interface"),
                         objectName: network.mac,
                         onClose: () => this.setState({ deleteDialogProps: undefined }),
-                        deleteHandler: () => detachIface(network.mac, vm.connectionName, vm.id, vm.state === 'running', vm.persistent),
+                        deleteHandler: () => domainDetachIface({ connectionName: vm.connectionName, mac: network.mac, id: vm.id, live: vm.state === 'running', persistent: vm.persistent }),
                     };
                     const deleteNICAction = (
                         <DeleteResourceButton objectId={`${id}-iface-${networkId}`}

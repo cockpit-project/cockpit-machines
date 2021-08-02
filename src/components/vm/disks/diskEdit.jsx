@@ -28,7 +28,7 @@ import { InfoAltIcon } from '@patternfly/react-icons';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 
-import { updateDiskAttributes } from '../../../libvirt-dbus.js';
+import { domainUpdateDiskAttributes } from '../../../libvirtApi/domain.js';
 import { diskCacheModes, getDiskPrettyName, getDiskFullName } from '../../../helpers.js';
 
 import 'form-layout.scss';
@@ -189,7 +189,7 @@ export class EditDiskModal extends React.Component {
         const { disk, vm, setIsOpen } = this.props;
         const existingTargets = Object.getOwnPropertyNames(vm.disks);
 
-        updateDiskAttributes({
+        domainUpdateDiskAttributes({
             connectionName: vm.connectionName,
             objPath: vm.id, target: disk.target,
             readonly: this.state.access == "readonly",

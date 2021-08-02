@@ -36,7 +36,7 @@ import { ListingTable } from "cockpit-components-table.jsx";
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { FileAutoComplete } from "cockpit-components-file-autocomplete.jsx";
 
-import { createFilesystem, deleteFilesystem, setMemoryBacking } from "../../../libvirt-dbus.js";
+import { domainCreateFilesystem, domainDeleteFilesystem, domainSetMemoryBacking } from "../../../libvirtApi/domain.js";
 import { vmId } from "../../../helpers.js";
 import { DeleteResourceButton, DeleteResourceModal } from '../../common/deleteResource.jsx';
 
@@ -63,7 +63,7 @@ export const VmFilesystemsCard = ({ connectionName, vmName, vmState, objPath, fi
                                           actionName: _("Remove"),
                                           objectName: filesystemTarget,
                                           onClose: () => setDeleteDialogProps(undefined),
-                                          deleteHandler: () => deleteFilesystem({ connectionName, objPath, target: filesystemTarget }),
+                                          deleteHandler: () => domainDeleteFilesystem({ connectionName, objPath, target: filesystemTarget }),
                                       })}
                                       overlayText={_("Deleting shared directories is possible only when the guest is shut off")} />
             </div>
@@ -140,12 +140,12 @@ const VmFilesystemAddModal = ({ connectionName, memory, memoryBacking, objPath, 
         setValidationFailed(validationFailed);
 
         if (Object.getOwnPropertyNames(validationFailed).length == 0) {
-            setMemoryBacking({
+            domainSetMemoryBacking({
                 connectionName, objPath,
                 type: memoryBackingType,
                 memory
             })
-                    .then(() => createFilesystem({
+                    .then(() => domainCreateFilesystem({
                         connectionName, objPath,
                         source, target: mountTag,
                         xattr,

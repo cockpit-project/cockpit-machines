@@ -23,7 +23,7 @@ import { Button, Alert, Form, FormGroup, Modal, TextInput, Tooltip } from '@patt
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { NetworkTypeAndSourceRow, NetworkModelRow } from './nicBody.jsx';
-import { changeNetworkSettings, getVm } from '../../../libvirt-dbus.js';
+import { domainChangeInterfaceSettings, domainGet } from '../../../libvirtApi/domain.js';
 
 import 'form-layout.scss';
 
@@ -115,7 +115,7 @@ export class EditNICModal extends React.Component {
     save() {
         const { vm, network } = this.props;
 
-        changeNetworkSettings({
+        domainChangeInterfaceSettings({
             name: vm.name,
             id: vm.id,
             connectionName: vm.connectionName,
@@ -128,7 +128,7 @@ export class EditNICModal extends React.Component {
             networkSource: this.state.networkSource,
         })
                 .then(() => {
-                    getVm({ connectionName: vm.connectionName, id: vm.id });
+                    domainGet({ connectionName: vm.connectionName, id: vm.id });
                     this.props.onClose();
                 })
                 .catch((exc) => {

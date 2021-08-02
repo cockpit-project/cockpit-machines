@@ -24,9 +24,11 @@ import { AccessConsoles } from "@patternfly/react-console";
 import SerialConsole from './serialConsole.jsx';
 import Vnc from './vnc.jsx';
 import DesktopConsole from './desktopConsole.jsx';
-
-import { vmDesktopConsole } from '../../../libvirt-common.js';
-import LibvirtDBus from '../../../libvirt-dbus.js';
+import {
+    domainCanConsole,
+    domainDesktopConsole,
+    domainSerialConsoleCommand
+} from '../../../libvirtApi/domain.js';
 
 import './consoles.css';
 
@@ -64,7 +66,7 @@ class Consoles extends React.Component {
             }
         }
 
-        const serialConsoleCommand = LibvirtDBus.serialConsoleCommand({ vm });
+        const serialConsoleCommand = domainSerialConsoleCommand({ vm });
         if (serialConsoleCommand) {
             return 'SerialConsole';
         }
@@ -76,17 +78,17 @@ class Consoles extends React.Component {
     onDesktopConsoleDownload (type) {
         const { vm } = this.props;
         // fire download of the .vv file
-        vmDesktopConsole({ name: vm.name, id: vm.id, connectionName: vm.connectionName, consoleDetail: vm.displays[type] });
+        domainDesktopConsole({ name: vm.name, id: vm.id, connectionName: vm.connectionName, consoleDetail: vm.displays[type] });
     }
 
     render () {
         const { vm, onAddErrorNotification } = this.props;
 
-        if (!LibvirtDBus.canConsole || !LibvirtDBus.canConsole(vm.state)) {
+        if (!domainCanConsole || !domainCanConsole(vm.state)) {
             return (<VmNotRunning />);
         }
 
-        const serialConsoleCommand = LibvirtDBus.serialConsoleCommand({ vm });
+        const serialConsoleCommand = domainSerialConsoleCommand({ vm });
 
         const onDesktopConsole = () => { // prefer spice over vnc
             this.onDesktopConsoleDownload(vm.displays.spice ? 'spice' : 'vnc');

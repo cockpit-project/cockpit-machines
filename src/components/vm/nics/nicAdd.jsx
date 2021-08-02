@@ -23,7 +23,7 @@ import { Button, Checkbox, Form, FormGroup, Modal, Radio, TextInput } from '@pat
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { NetworkTypeAndSourceRow, NetworkModelRow } from './nicBody.jsx';
-import LibvirtDBus, { attachIface, getVm } from '../../../libvirt-dbus.js';
+import { domainAttachIface, domainGet, domainIsRunning } from '../../../libvirtApi/domain.js';
 
 import './nic.css';
 
@@ -108,7 +108,7 @@ export class AddNIC extends React.Component {
     add() {
         const { vm } = this.props;
 
-        attachIface({
+        domainAttachIface({
             connectionName: vm.connectionName,
             vmId: vm.id,
             model: this.state.networkModel,
@@ -119,7 +119,7 @@ export class AddNIC extends React.Component {
             hotplug: vm.state === "running",
         })
                 .then(() => {
-                    getVm({ connectionName: vm.connectionName, id: vm.id });
+                    domainGet({ connectionName: vm.connectionName, id: vm.id });
                     this.props.close();
                 })
                 .catch(exc => this.dialogErrorSet(_("Network interface settings could not be saved"), exc.message));
@@ -145,7 +145,7 @@ export class AddNIC extends React.Component {
                                dialogValues={this.state}
                                onValueChanged={this.onValueChanged} />
 
-                {LibvirtDBus.isRunning(vm.state) && vm.persistent &&
+                {domainIsRunning(vm.state) && vm.persistent &&
                 <PermanentChange idPrefix={idPrefix}
                                  dialogValues={this.state}
                                  onValueChanged={this.onValueChanged}

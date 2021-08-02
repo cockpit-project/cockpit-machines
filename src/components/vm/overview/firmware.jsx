@@ -26,7 +26,7 @@ import {
 } from '@patternfly/react-core';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
-import LibvirtDBus, { setOSFirmware } from "../../../libvirt-dbus.js";
+import { domainSetOSFirmware, domainCanInstall } from "../../../libvirtApi/domain.js";
 import { supportsUefiXml, labelForFirmwarePath } from './helpers.js';
 
 const _ = cockpit.gettext;
@@ -48,7 +48,7 @@ class FirmwareModal extends React.Component {
     }
 
     save() {
-        setOSFirmware(this.props.connectionName, this.props.vmId, this.state.firmware)
+        domainSetOSFirmware({ connectionName: this.props.connectionName, objPath: this.props.vmId, loaderType: this.state.firmware })
                 .then(this.close, exc => this.dialogErrorSet(_("Failed to change firmware"), exc.message));
     }
 
@@ -118,7 +118,7 @@ export const FirmwareLink = ({ vm, loaderElems, idPrefix }) => {
         currentFirmware = "BIOS";
 
     /* If the VM hasn't an install phase then don't show a link, just the text  */
-    if (!LibvirtDBus.canInstall(vm.state, hasInstallPhase)) {
+    if (!domainCanInstall(vm.state, hasInstallPhase)) {
         firmwareLinkWrapper = <div id={`${idPrefix}-firmware`}>{currentFirmware}</div>;
     } else {
         const uefiPaths = getOVMFBinariesOnHost(loaderElems).filter(elem => elem !== undefined);

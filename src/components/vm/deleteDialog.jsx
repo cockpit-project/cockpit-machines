@@ -22,7 +22,8 @@ import React from 'react';
 import { Button, Modal } from '@patternfly/react-core';
 
 import { vmId } from '../../helpers.js';
-import { deleteVm, deleteSnapshot } from '../../libvirt-dbus.js';
+import { domainDelete } from '../../libvirtApi/domain.js';
+import { snapshotDelete } from '../../libvirtApi/snapshot.js';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 
 import './deleteDialog.css';
@@ -121,9 +122,9 @@ export class DeleteDialog extends React.Component {
 
         Promise.all(
             (Array.isArray(vm.snapshots) ? vm.snapshots : [])
-                    .map(snapshot => deleteSnapshot({ connectionName: vm.connectionName, domainPath: vm.id, snapshotName: snapshot.name }))
+                    .map(snapshot => snapshotDelete({ connectionName: vm.connectionName, domainPath: vm.id, snapshotName: snapshot.name }))
         )
-                .then(() => deleteVm({ name: vm.name, id: vm.id, connectionName: vm.connectionName, options: { destroy: this.props.vm.state != 'shut off', storage: storage }, storagePools }))
+                .then(() => domainDelete({ name: vm.name, id: vm.id, connectionName: vm.connectionName, options: { destroy: this.props.vm.state != 'shut off', storage: storage }, storagePools }))
                 .then(() => cockpit.location.go(["vms"]))
                 .catch(exc => {
                     this.dialogErrorSet(cockpit.format(_("VM $0 failed to get deleted"), vm.name), exc.message);

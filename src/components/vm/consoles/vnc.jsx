@@ -23,7 +23,7 @@ import { VncConsole } from '@patternfly/react-console';
 import { Dropdown, DropdownToggle, DropdownItem, DropdownSeparator } from '@patternfly/react-core';
 
 import { logDebug } from '../../../helpers.js';
-import { domainSendKey } from '../../../libvirt-dbus.js';
+import { domainSendKey } from '../../../libvirtApi/domain.js';
 
 const _ = cockpit.gettext;
 // https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h
@@ -125,7 +125,7 @@ class Vnc extends React.Component {
                     id={cockpit.format("ctrl-alt-$0", keyName)}
                     key={cockpit.format("ctrl-alt-$0", keyName)}
                     onClick={() => {
-                        return domainSendKey(connectionName, vmId, [Enum.KEY_LEFTCTRL, Enum.KEY_LEFTALT, Enum[cockpit.format("KEY_$0", keyName.toUpperCase())]])
+                        return domainSendKey({ connectionName, id: vmId, keyCodes: [Enum.KEY_LEFTCTRL, Enum.KEY_LEFTALT, Enum[cockpit.format("KEY_$0", keyName.toUpperCase())]] })
                                 .catch(ex => onAddErrorNotification({
                                     text: cockpit.format(_("Failed to send key Ctrl+Alt+$0 to VM $1"), keyName, vmName),
                                     detail: ex.message
