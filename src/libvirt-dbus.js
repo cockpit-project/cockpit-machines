@@ -31,7 +31,6 @@ import {
     undefineStoragePool,
     undefineVm,
     updateLibvirtVersion,
-    updateOrAddInterface,
     updateOrAddNodeDevice,
     updateOrAddVm,
     updateOrAddStoragePool,
@@ -75,7 +74,6 @@ import {
     getSingleOptionalElem,
     isRunning,
     parseDumpxml,
-    parseIfaceDumpxml,
     parseNodeDeviceDumpxml,
     resolveUiState,
     serialConsoleCommand,
@@ -95,6 +93,9 @@ import {
     Enum,
     timeout,
 } from './libvirtApi/helpers.js';
+import {
+    interfaceGetAll,
+} from './libvirtApi/interface.js';
 import {
     networkGet,
     networkGetAll,
@@ -366,7 +367,7 @@ export function getApiData({ connectionName, libvirtServiceName }) {
         return Promise.allSettled([
             getAllVms({ connectionName }),
             storagePoolGetAll({ connectionName }),
-            getAllInterfaces({ connectionName }),
+            interfaceGetAll({ connectionName }),
             networkGetAll({ connectionName }),
             getAllNodeDevices({ connectionName }),
             getNodeMaxMemory({ connectionName }),
@@ -378,41 +379,6 @@ export function getApiData({ connectionName, libvirtServiceName }) {
                     return Promise.allSettled(connectionNames.map(conn => getApiData({ connectionName: conn, libvirtServiceName })));
                 });
     }
-}
-
-/*
- * Read properties of a single Interface
- *
- * @param {object} objPath interface object path
- * @param {string} connectionName
- */
-export function getInterface({
-    id: objPath,
-    connectionName,
-}) {
-    const props = {};
-
-    call(connectionName, objPath, 'org.freedesktop.DBus.Properties', 'GetAll', ['org.libvirt.Interface'], { timeout, type: 's' })
-            .then(resultProps => {
-                /* Sometimes not all properties are returned; for example when some network got deleted while part
-                 * of the properties got fetched from libvirt. Make sure that there is check before reading the attributes.
-                 */
-                if ("Active" in resultProps[0])
-                    props.active = resultProps[0].Active.v.v;
-                if ("MAC" in resultProps[0])
-                    props.mac = resultProps[0].MAC.v.v;
-                if ("Name" in resultProps[0])
-                    props.name = resultProps[0].Name.v.v;
-                props.id = objPath;
-                props.connectionName = connectionName;
-
-                return call(connectionName, objPath, 'org.libvirt.Interface', 'GetXMLDesc', [0], { timeout, type: 'u' });
-            })
-            .then(xml => {
-                const iface = parseIfaceDumpxml(xml);
-                store.dispatch(updateOrAddInterface(Object.assign({}, props, iface)));
-            })
-            .catch(ex => console.log('listInactiveInterfaces action for path', objPath, ex.toString()));
 }
 
 /*
@@ -1114,17 +1080,6 @@ export function domainSendKey(connectionName, id, keyCodes) {
     const flags = 0;
 
     return call(connectionName, id, 'org.libvirt.Domain', 'SendKey', [Enum.VIR_KEYCODE_SET_LINUX, holdTime, keyCodes, flags], { timeout, type: "uuauu" });
-}
-
-export function getAllInterfaces({ connectionName }) {
-    const flags = Enum.VIR_CONNECT_LIST_INTERFACES_ACTIVE | Enum.VIR_CONNECT_LIST_INTERFACES_INACTIVE;
-
-    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListInterfaces', [flags], { timeout, type: 'u' })
-            .then(ifaces => Promise.all(ifaces[0].map(path => getInterface({ connectionName, id:path }))))
-            .catch(ex => {
-                console.warn('getAllInterfaces action failed:', ex.toString());
-                return Promise.reject(ex);
-            });
 }
 
 export function getDomainCapabilities(connectionName, arch, model) {
