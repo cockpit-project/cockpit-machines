@@ -31,7 +31,6 @@ import {
     undefineStoragePool,
     undefineVm,
     updateLibvirtVersion,
-    updateOrAddNodeDevice,
     updateOrAddVm,
     updateOrAddStoragePool,
     updateVm,
@@ -54,7 +53,6 @@ import VMS_CONFIG from "./config.js";
 import {
     logDebug,
     DOMAINSTATE,
-    parseUdevDB
 } from './helpers.js';
 
 import {
@@ -74,7 +72,6 @@ import {
     getSingleOptionalElem,
     isRunning,
     parseDumpxml,
-    parseNodeDeviceDumpxml,
     resolveUiState,
     serialConsoleCommand,
     unknownConnectionName,
@@ -100,6 +97,9 @@ import {
     networkGet,
     networkGetAll,
 } from './libvirtApi/network.js';
+import {
+    nodeDeviceGetAll,
+} from './libvirtApi/nodeDevice.js';
 import {
     snapshotGetAll,
 } from './libvirtApi/snapshot.js';
@@ -337,17 +337,6 @@ export function forceRebootVm({
     return call(connectionName, objPath, 'org.libvirt.Domain', 'Reset', [0], { timeout, type: 'u' });
 }
 
-export function getAllNodeDevices({
-    connectionName,
-}) {
-    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListNodeDevices', [0], { timeout, type: 'u' })
-            .then(objPaths => Promise.all(objPaths[0].map(path => getNodeDevice({ connectionName, id:path }))))
-            .catch(ex => {
-                console.warn('GET_ALL_NODE_DEVICES action failed:', ex.toString());
-                return Promise.reject(ex);
-            });
-}
-
 export function getAllVms({ connectionName }) {
     return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListDomains', [0], { timeout, type: 'u' })
             .then(objPaths => {
@@ -369,7 +358,7 @@ export function getApiData({ connectionName, libvirtServiceName }) {
             storagePoolGetAll({ connectionName }),
             interfaceGetAll({ connectionName }),
             networkGetAll({ connectionName }),
-            getAllNodeDevices({ connectionName }),
+            nodeDeviceGetAll({ connectionName }),
             getNodeMaxMemory({ connectionName }),
             getLibvirtVersion({ connectionName }),
         ]);
@@ -379,43 +368,6 @@ export function getApiData({ connectionName, libvirtServiceName }) {
                     return Promise.allSettled(connectionNames.map(conn => getApiData({ connectionName: conn, libvirtServiceName })));
                 });
     }
-}
-
-/*
- * Read properties of a single NodeDevice
- *
- * @param NodeDevice object path
- */
-export function getNodeDevice({
-    id: objPath,
-    connectionName,
-}) {
-    let deviceXmlObject;
-    return call(connectionName, objPath, 'org.libvirt.NodeDevice', 'GetXMLDesc', [0], { timeout, type: 'u' })
-            .then(deviceXml => {
-                deviceXmlObject = parseNodeDeviceDumpxml(deviceXml);
-                deviceXmlObject.connectionName = connectionName;
-
-                if (deviceXmlObject.path && ["pci", "usb_device"].includes(deviceXmlObject.capability.type)) {
-                    return cockpit.spawn(["udevadm", "info", "--path", deviceXmlObject.path], { err: "message" })
-                            .then(output => {
-                                const nodeDev = parseUdevDB(output);
-                                if (nodeDev && nodeDev.SUBSYSTEM === "pci") {
-                                    deviceXmlObject.pciSlotName = nodeDev.PCI_SLOT_NAME;
-                                    deviceXmlObject.class = nodeDev.ID_PCI_CLASS_FROM_DATABASE;
-                                } else if (nodeDev && nodeDev.SUBSYSTEM === "usb") {
-                                    deviceXmlObject.class = nodeDev.ID_USB_CLASS_FROM_DATABASE;
-                                    deviceXmlObject.busnum = nodeDev.BUSNUM;
-                                    deviceXmlObject.devnum = nodeDev.DEVNUM;
-                                }
-
-                                return store.dispatch(updateOrAddNodeDevice(deviceXmlObject));
-                            });
-                } else {
-                    return store.dispatch(updateOrAddNodeDevice(deviceXmlObject));
-                }
-            })
-            .catch(ex => console.warn('GET_NODE_DEVICE action failed for path', objPath, ex.toString()));
 }
 
 export function getNodeMaxMemory({ connectionName }) {
