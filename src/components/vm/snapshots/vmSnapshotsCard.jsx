@@ -26,7 +26,7 @@ import { Button, Tooltip, Flex, FlexItem } from '@patternfly/react-core';
 import { CheckIcon, InfoAltIcon } from '@patternfly/react-icons';
 import { DeleteResourceButton, DeleteResourceModal } from '../../common/deleteResource.jsx';
 import { RevertSnapshotModal } from './vmSnapshotsRevertModal.jsx';
-import { deleteSnapshot, getVmSnapshots } from '../../../libvirt-dbus.js';
+import { snapshotDelete, snapshotGetAll } from '../../../libvirtApi/snapshot.js';
 
 import './vmSnapshotsCard.scss';
 
@@ -183,8 +183,8 @@ export class VmSnapshotsCard extends React.Component {
                             actionDescription: _("After deleting the snapshot, all its captured content will be lost."),
                             onClose: () => this.setState({ deleteDialogProps: undefined }),
                             deleteHandler: () => {
-                                return deleteSnapshot({ connectionName: vm.connectionName, domainPath: vm.id, snapshotName: snap.name })
-                                        .then(() => getVmSnapshots({ connectionName: vm.connectionName, domainPath: vm.id }));
+                                return snapshotDelete({ connectionName: vm.connectionName, domainPath: vm.id, snapshotName: snap.name })
+                                        .then(() => snapshotGetAll({ connectionName: vm.connectionName, domainPath: vm.id }));
                             },
                         };
 

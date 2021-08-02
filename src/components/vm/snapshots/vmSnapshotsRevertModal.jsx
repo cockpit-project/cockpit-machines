@@ -23,7 +23,7 @@ import { Button, Modal } from '@patternfly/react-core';
 
 import cockpit from 'cockpit';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
-import { revertSnapshot } from '../../../libvirt-dbus.js';
+import { snapshotRevert } from '../../../libvirtApi/snapshot.js';
 
 const _ = cockpit.gettext;
 
@@ -44,7 +44,7 @@ export class RevertSnapshotModal extends React.Component {
         this.setState({ inProgress: true });
         const { vm, snap } = this.props;
 
-        revertSnapshot({ connectionName: vm.connectionName, domainPath: vm.id, snapshotName: snap.name })
+        snapshotRevert({ connectionName: vm.connectionName, domainPath: vm.id, snapshotName: snap.name })
                 .then(this.props.onClose, exc => {
                     this.setState({ inProgress: false });
                     this.dialogErrorSet(_("Could not revert to snapshot"), exc.message);

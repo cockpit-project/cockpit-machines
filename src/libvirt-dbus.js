@@ -31,7 +31,6 @@ import {
     undefineStoragePool,
     undefineVm,
     updateLibvirtVersion,
-    updateDomainSnapshots,
     updateOrAddInterface,
     updateOrAddNodeDevice,
     updateOrAddVm,
@@ -43,7 +42,6 @@ import {
 import {
     getDiskXML,
     getIfaceXML,
-    getSnapshotXML,
     getFilesystemXML,
     getMemoryBackingXML,
 } from './xmlCreator.js';
@@ -76,7 +74,6 @@ import {
     getIfaceElemByMac,
     getSingleOptionalElem,
     isRunning,
-    parseDomainSnapshotDumpxml,
     parseDumpxml,
     parseIfaceDumpxml,
     parseNodeDeviceDumpxml,
@@ -102,6 +99,9 @@ import {
     networkGet,
     networkGetAll,
 } from './libvirtApi/network.js';
+import {
+    snapshotGetAll,
+} from './libvirtApi/snapshot.js';
 import {
     storagePoolGet,
     storagePoolGetAll,
@@ -520,64 +520,9 @@ export function getVm({
                 else
                     store.dispatch(updateOrAddVm(Object.assign({}, props, dumpxmlParams)));
 
-                getVmSnapshots({ connectionName, domainPath: objPath });
+                snapshotGetAll({ connectionName, domainPath: objPath });
             })
             .catch(ex => console.warn("GET_VM action failed for path", objPath, ex.toString()));
-}
-
-export function getVmSnapshots({ connectionName, domainPath }) {
-    call(connectionName, domainPath, 'org.libvirt.Domain', 'ListDomainSnapshots', [0], { timeout, type: 'u' })
-            .then(objPaths => {
-                const snaps = [];
-                const promises = [];
-
-                objPaths[0].forEach(objPath => {
-                    promises.push(call(connectionName, objPath, 'org.libvirt.DomainSnapshot', 'GetXMLDesc', [0], { timeout, type: 'u' })
-                            .then((xml) => {
-                                const result = { xml };
-                                return call(connectionName, objPath, 'org.libvirt.DomainSnapshot', 'IsCurrent', [0], { timeout, type: 'u' })
-                                        .then((isCurrent) => {
-                                            result.isCurrent = isCurrent;
-                                            return result;
-                                        });
-                            })
-                    );
-                });
-
-                // WA to avoid Promise.all() fail-fast behavior
-                const toResultObject = (promise) => {
-                    return promise
-                            .then(result => ({ success: true, result }))
-                            .catch(error => ({ success: false, error }));
-                };
-
-                Promise.all(promises.map(toResultObject))
-                        .then(snapXmlList => {
-                            snapXmlList.forEach(snap => {
-                                if (snap.success) {
-                                    const result = snap.result;
-                                    const snapParams = parseDomainSnapshotDumpxml(result.xml[0]);
-                                    snapParams.isCurrent = result.isCurrent[0];
-                                    snaps.push(snapParams);
-                                } else {
-                                    console.warn("DomainSnapshot method GetXMLDesc failed", snap.error.toString());
-                                }
-                            });
-                            return store.dispatch(updateDomainSnapshots({
-                                connectionName,
-                                domainPath,
-                                snaps: snaps.sort((a, b) => a.creationTime - b.creationTime)
-                            }));
-                        });
-            })
-            .catch(ex => {
-                console.warn("LIST_DOMAIN_SNAPSHOTS action failed for domain %s: %s", domainPath, JSON.stringify(ex));
-                store.dispatch(updateDomainSnapshots({
-                    connectionName,
-                    domainPath,
-                    snaps: -1
-                }));
-            });
 }
 
 export function pauseVm({
@@ -1088,12 +1033,6 @@ export function changeNetworkSettings({
     }
 }
 
-export function createSnapshot({ connectionName, vmId, name, description }) {
-    const xmlDesc = getSnapshotXML(name, description);
-
-    return call(connectionName, vmId, 'org.libvirt.Domain', 'SnapshotCreateXML', [xmlDesc, 0], { timeout, type: 'su' });
-}
-
 export function createFilesystem({ connectionName, objPath, source, target, xattr }) {
     return call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' })
             .then(domXml => {
@@ -1144,20 +1083,6 @@ export function setMemoryBacking({ connectionName, objPath, type, memory }) {
                 domainElem.appendChild(getElem(memoryBackingElem));
 
                 return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [s.serializeToString(doc)], { timeout, type: 's' });
-            });
-}
-
-export function deleteSnapshot({ connectionName, domainPath, snapshotName }) {
-    return call(connectionName, domainPath, 'org.libvirt.Domain', 'SnapshotLookupByName', [snapshotName, 0], { timeout, type: 'su' })
-            .then((objPath) => {
-                return call(connectionName, objPath[0], 'org.libvirt.DomainSnapshot', 'Delete', [0], { timeout, type: 'u' });
-            });
-}
-
-export function revertSnapshot({ connectionName, domainPath, snapshotName }) {
-    return call(connectionName, domainPath, 'org.libvirt.Domain', 'SnapshotLookupByName', [snapshotName, 0], { timeout, type: 'su' })
-            .then((objPath) => {
-                return call(connectionName, objPath[0], 'org.libvirt.DomainSnapshot', 'Revert', [0], { timeout, type: 'u' });
             });
 }
 
@@ -1262,10 +1187,6 @@ export function setOSFirmware(connectionName, objPath, loaderType) {
 
                 return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [s.serializeToString(doc)], { timeout, type: 's' });
             });
-}
-
-export function snapshotCurrent(connectionName, objPath) {
-    return call(connectionName, objPath, 'org.libvirt.Domain', 'SnapshotCurrent', [0], { timeout, type: 'u' });
 }
 
 export function vmInterfaceAddresses(connectionName, objPath) {
