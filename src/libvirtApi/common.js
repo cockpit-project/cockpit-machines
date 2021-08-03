@@ -21,57 +21,104 @@
  * Provider for Libvirt using libvirt-dbus API.
  * See https://github.com/libvirt/libvirt-dbus
  */
-import cockpit from 'cockpit';
+import cockpit from "cockpit";
+import store from "../store.js";
+import * as python from "python.js";
+import * as service from "service.js";
 
-import store from './store.js';
+import getOSListScript from "raw-loader!../getOSList.py";
 
 import {
     undefineNetwork,
     undefineStoragePool,
     undefineVm,
     updateLibvirtVersion,
-    updateOrAddStoragePool,
+    updateOsInfoList,
     updateVm,
+    setLoggedInUser,
     setNodeMaxMemory,
-} from './actions/store-actions.js';
+} from "../actions/store-actions.js";
 
 import {
     getLibvirtServiceState,
     getRefreshInterval,
     usagePollingEnabled
-} from './selectors.js';
-import VMS_CONFIG from "./config.js";
+} from "../selectors.js";
+import VMS_CONFIG from "../config.js";
 import {
     logDebug,
-} from './helpers.js';
+} from "../helpers.js";
 
-import {
-    unknownConnectionName,
-} from './libvirt-common.js';
 import {
     domainGet,
     domainGetAll,
-} from './libvirtApi/domain.js';
+    getPythonPath,
+} from "../libvirtApi/domain.js";
 import {
     call,
     dbusClient,
     Enum,
     timeout,
-} from './libvirtApi/helpers.js';
+} from "../libvirtApi/helpers.js";
 import {
     interfaceGetAll,
-} from './libvirtApi/interface.js';
+} from "../libvirtApi/interface.js";
 import {
     networkGet,
     networkGetAll,
-} from './libvirtApi/network.js';
+} from "../libvirtApi/network.js";
 import {
     nodeDeviceGetAll,
-} from './libvirtApi/nodeDevice.js';
+} from "../libvirtApi/nodeDevice.js";
 import {
     storagePoolGet,
     storagePoolGetAll,
-} from './libvirtApi/storagePool.js';
+} from "../libvirtApi/storagePool.js";
+
+/**
+ * Calculates disk statistics.
+ * @param  {info} Object returned by GetStats method call.
+ * @return {Dictionary Object}
+ */
+function calculateDiskStats(info) {
+    const disksStats = {};
+
+    if (!("block.count" in info))
+        return;
+    const count = info["block.count"].v.v;
+    if (!count)
+        return;
+
+    /* Note 1: Libvirt reports disk capacity since version 1.2.18 (year 2015)
+       TODO: If disk stats is required for old systems, find a way how to get
+       it when 'block.X.capacity' is not present, consider various options for
+       'sources'
+
+       Note 2: Casting to string happens for return types to be same with
+       results from libvirt.js file.
+     */
+    for (let i = 0; i < count; i++) {
+        const target = info[`block.${i}.name`].v.v;
+        const physical = info[`block.${i}.physical`] === undefined ? NaN : info[`block.${i}.physical`].v.v.toString();
+        const capacity = info[`block.${i}.capacity`] === undefined ? NaN : info[`block.${i}.capacity`].v.v.toString();
+        const allocation = info[`block.${i}.allocation`] === undefined ? NaN : info[`block.${i}.allocation`].v.v.toString();
+
+        if (target) {
+            disksStats[target] = {
+                physical,
+                capacity,
+                allocation,
+            };
+        } else {
+            console.warn(`calculateDiskStats(): mandatory property is missing in info (block.${i}.name)`);
+        }
+    }
+    return disksStats;
+}
+
+export function canLoggedUserConnectSession (connectionName, loggedUser) {
+    return connectionName !== 'session' || loggedUser.name !== 'root';
+}
 
 function delayPollingHelper(action, timeout) {
     window.setTimeout(() => {
@@ -110,97 +157,28 @@ function delayPolling(action, timeout) {
     }
 }
 
-function getNodeMaxMemory({ connectionName }) {
-    // Some nodes don't return all memory in just one cell.
-    // Using -1 == VIR_NODE_MEMORY_STATS_ALL_CELLS will return memory across all cells
-    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'NodeGetMemoryStats', [-1, 0], { timeout, type: 'iu' })
-            .then(stats => store.dispatch(setNodeMaxMemory({ memory: stats[0].total })))
-            .catch(ex => {
-                console.warn("NodeGetMemoryStats failed: %s", ex);
-                return Promise.reject(ex);
-            });
+// Undefined the VM from Redux store only if it"s not transient
+function domainEventUndefined(connectionName, domPath) {
+    call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "ListDomains", [Enum.VIR_CONNECT_LIST_DOMAINS_TRANSIENT], { timeout, type: "u" })
+            .then(objPaths => {
+                if (!objPaths[0].includes(domPath))
+                    store.dispatch(undefineVm({ connectionName, id: domPath }));
+                else
+                    domainGet({ connectionName, id:domPath, updateOnly: true });
+            })
+            .catch(ex => console.warn("ListDomains action failed:", ex.toString()));
 }
 
-export function getApiData({ connectionName, libvirtServiceName }) {
-    if (connectionName) {
-        dbusClient(connectionName);
-        startEventMonitor({ connectionName, libvirtServiceName });
-        return Promise.allSettled([
-            domainGetAll({ connectionName }),
-            storagePoolGetAll({ connectionName }),
-            interfaceGetAll({ connectionName }),
-            networkGetAll({ connectionName }),
-            nodeDeviceGetAll({ connectionName }),
-            getNodeMaxMemory({ connectionName }),
-            getLibvirtVersion({ connectionName }),
-        ]);
-    } else {
-        return unknownConnectionName()
-                .then(connectionNames => {
-                    return Promise.allSettled(connectionNames.map(conn => getApiData({ connectionName: conn, libvirtServiceName })));
-                });
-    }
-}
-
-export function usageStartPolling({
-    name,
-    connectionName,
-    id: objPath
-}) {
-    store.dispatch(updateVm({ connectionName, name, usagePolling: true }));
-    doUsagePolling(name, connectionName, objPath);
-}
-
-export function usageStopPolling({
-    name,
-    connectionName
-}) {
-    return store.dispatch(updateVm({
-        connectionName,
-        name,
-        usagePolling: false
-    }));
-}
-
-/**
- * Calculates disk statistics.
- * @param  {info} Object returned by GetStats method call.
- * @return {Dictionary Object}
- */
-function calculateDiskStats(info) {
-    const disksStats = {};
-
-    if (!('block.count' in info))
-        return;
-    const count = info['block.count'].v.v;
-    if (!count)
-        return;
-
-    /* Note 1: Libvirt reports disk capacity since version 1.2.18 (year 2015)
-       TODO: If disk stats is required for old systems, find a way how to get
-       it when 'block.X.capacity' is not present, consider various options for
-       'sources'
-
-       Note 2: Casting to string happens for return types to be same with
-       results from libvirt.js file.
-     */
-    for (let i = 0; i < count; i++) {
-        const target = info[`block.${i}.name`].v.v;
-        const physical = info[`block.${i}.physical`] === undefined ? NaN : info[`block.${i}.physical`].v.v.toString();
-        const capacity = info[`block.${i}.capacity`] === undefined ? NaN : info[`block.${i}.capacity`].v.v.toString();
-        const allocation = info[`block.${i}.allocation`] === undefined ? NaN : info[`block.${i}.allocation`].v.v.toString();
-
-        if (target) {
-            disksStats[target] = {
-                physical,
-                capacity,
-                allocation,
-            };
-        } else {
-            console.warn(`calculateDiskStats(): mandatory property is missing in info (block.${i}.name)`);
-        }
-    }
-    return disksStats;
+function domainUpdateOrDelete(connectionName, domPath) {
+    // Transient VMs cease to exists once they are stopped. Check if VM was transient and update or undefined it
+    call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "ListDomains", [0], { timeout, type: "u" })
+            .then(objPaths => {
+                if (objPaths[0].includes(domPath))
+                    domainGet({ connectionName, id:domPath, updateOnly: true });
+                else // Transient vm will get undefined when stopped
+                    store.dispatch(undefineVm({ connectionName, id:domPath, transientOnly: true }));
+            })
+            .catch(ex => console.warn("domainUpdateOrDelete action failed:", ex.toString()));
 }
 
 /**
@@ -219,24 +197,24 @@ function doUsagePolling(name, connectionName, objPath) {
     }
     const flags = Enum.VIR_DOMAIN_STATS_BALLOON | Enum.VIR_DOMAIN_STATS_VCPU | Enum.VIR_DOMAIN_STATS_BLOCK | Enum.VIR_DOMAIN_STATS_STATE;
 
-    return call(connectionName, objPath, 'org.libvirt.Domain', 'GetStats', [flags, 0], { timeout: 5000, type: 'uu' })
+    return call(connectionName, objPath, "org.libvirt.Domain", "GetStats", [flags, 0], { timeout: 5000, type: "uu" })
             .then(info => {
                 if (Object.getOwnPropertyNames(info[0]).length > 0) {
                     info = info[0];
                     const props = { name, connectionName, id: objPath };
                     let avgvCpuTime = 0;
 
-                    if ('balloon.rss' in info)
-                        props.rssMemory = info['balloon.rss'].v.v;
-                    else if ('state.state' in info && info['state.state'].v.v == Enum.VIR_DOMAIN_SHUTOFF)
+                    if ("balloon.rss" in info)
+                        props.rssMemory = info["balloon.rss"].v.v;
+                    else if ("state.state" in info && info["state.state"].v.v == Enum.VIR_DOMAIN_SHUTOFF)
                         props.rssMemory = 0.0;
-                    for (var i = 0; i < info['vcpu.maximum'].v.v; i++) {
+                    for (var i = 0; i < info["vcpu.maximum"].v.v; i++) {
                         if (!(`vcpu.${i}.time` in info))
                             continue;
                         avgvCpuTime += info[`vcpu.${i}.time`].v.v;
                     }
-                    avgvCpuTime /= info['vcpu.current'].v.v;
-                    if (info['vcpu.current'].v.v > 0)
+                    avgvCpuTime /= info["vcpu.current"].v.v;
+                    if (info["vcpu.current"].v.v > 0)
                         Object.assign(props, {
                             actualTimeInMs: Date.now(),
                             cpuTime: avgvCpuTime
@@ -253,13 +231,65 @@ function doUsagePolling(name, connectionName, objPath) {
             .finally(() => delayPolling(() => doUsagePolling(name, connectionName, objPath), null, name, connectionName));
 }
 
+function getLoggedInUser() {
+    logDebug(`GET_LOGGED_IN_USER:`);
+    return cockpit.user().then(loggedUser => {
+        store.dispatch(setLoggedInUser({ loggedUser }));
+    });
+}
+
+function getLibvirtVersion({ connectionName }) {
+    return call(connectionName, "/org/libvirt/QEMU", "org.freedesktop.DBus.Properties", "Get", ["org.libvirt.Connect", "LibVersion"], { timeout, type: "ss" })
+            .then(version => store.dispatch(updateLibvirtVersion({ libvirtVersion: version[0].v })));
+}
+
+function getNodeMaxMemory({ connectionName }) {
+    // Some nodes don"t return all memory in just one cell.
+    // Using -1 == VIR_NODE_MEMORY_STATS_ALL_CELLS will return memory across all cells
+    return call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "NodeGetMemoryStats", [-1, 0], { timeout, type: "iu" })
+            .then(stats => store.dispatch(setNodeMaxMemory({ memory: stats[0].total })))
+            .catch(ex => {
+                console.warn("NodeGetMemoryStats failed: %s", ex);
+                return Promise.reject(ex);
+            });
+}
+
+function getOsInfoList () {
+    logDebug(`GET_OS_INFO_LIST():`);
+    return python.spawn(getOSListScript, null, { err: "message", environ: ['LC_ALL=C.UTF-8'] })
+            .then(osList => {
+                parseOsInfoList(osList);
+            })
+            .catch(ex => {
+                console.error(`get os list returned error: "${JSON.stringify(ex)}"`);
+                parseOsInfoList('[]');
+            });
+}
+
+function networkUpdateOrDelete(connectionName, netPath) {
+    call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "ListNetworks", [0], { timeout, type: "u" })
+            .then(objPaths => {
+                if (objPaths[0].includes(netPath))
+                    networkGet({ connectionName, id:netPath, updateOnly: true });
+                else // Transient network which got undefined when stopped
+                    store.dispatch(undefineNetwork({ connectionName, id:netPath }));
+            })
+            .catch(ex => console.warn("networkUpdateOrDelete action failed:", ex.toString()));
+}
+
+function parseOsInfoList(osList) {
+    const osinfodata = JSON.parse(osList);
+
+    store.dispatch(updateOsInfoList(osinfodata.filter(os => os.shortId)));
+}
+
 /**
  * Subscribe to D-Bus signals and defines the handlers to be invoked in each occasion.
  * @param  {String} connectionName D-Bus connection type; one of session/system.
  * @param  {String} libvirtServiceName
  */
 function startEventMonitor({ connectionName }) {
-    if (connectionName !== 'session' && connectionName !== 'system')
+    if (connectionName !== "session" && connectionName !== "system")
         return;
 
     /* Handlers for domain events */
@@ -275,7 +305,7 @@ function startEventMonitor({ connectionName }) {
 function startEventMonitorDomains(connectionName) {
     /* Subscribe to Domain Lifecycle signals on Connect Interface */
     dbusClient(connectionName).subscribe(
-        { interface: 'org.libvirt.Connect', member: 'DomainEvent' },
+        { interface: "org.libvirt.Connect", member: "DomainEvent" },
         (path, iface, signal, args) => {
             const domainEvent = {
                 Defined: 0,
@@ -310,7 +340,7 @@ function startEventMonitorDomains(connectionName) {
                 store.dispatch(updateVm({
                     connectionName,
                     id: objPath,
-                    state: 'paused'
+                    state: "paused"
                 }));
                 break;
 
@@ -318,7 +348,7 @@ function startEventMonitorDomains(connectionName) {
                 store.dispatch(updateVm({
                     connectionName,
                     id: objPath,
-                    state: 'running'
+                    state: "running"
                 }));
                 break;
 
@@ -335,18 +365,18 @@ function startEventMonitorDomains(connectionName) {
 
     /* Subscribe to signals on Domain Interface */
     dbusClient(connectionName).subscribe(
-        { interface: 'org.libvirt.Domain' },
+        { interface: "org.libvirt.Domain" },
         (path, iface, signal, args) => {
             logDebug(`signal on ${path}: ${iface}.${signal}(${JSON.stringify(args)})`);
 
             switch (signal) {
-            case 'BalloonChange':
-            case 'ControlError':
-            case 'DeviceAdded':
-            case 'DeviceRemoved':
-            case 'DiskChange':
-            case 'MetadataChanged':
-            case 'TrayChange':
+            case "BalloonChange":
+            case "ControlError":
+            case "DeviceAdded":
+            case "DeviceRemoved":
+            case "DiskChange":
+            case "MetadataChanged":
+            case "TrayChange":
             /* These signals imply possible changes in what we display, so re-read the state */
                 domainGet({ connectionName, id:path, updateOnly: true });
                 break;
@@ -357,55 +387,9 @@ function startEventMonitorDomains(connectionName) {
         });
 }
 
-// Undefined the VM from Redux store only if it's not transient
-function domainEventUndefined(connectionName, domPath) {
-    call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListDomains', [Enum.VIR_CONNECT_LIST_DOMAINS_TRANSIENT], { timeout, type: 'u' })
-            .then(objPaths => {
-                if (!objPaths[0].includes(domPath))
-                    store.dispatch(undefineVm({ connectionName, id: domPath }));
-                else
-                    domainGet({ connectionName, id:domPath, updateOnly: true });
-            })
-            .catch(ex => console.warn('ListDomains action failed:', ex.toString()));
-}
-
-function domainUpdateOrDelete(connectionName, domPath) {
-    // Transient VMs cease to exists once they are stopped. Check if VM was transient and update or undefined it
-    call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListDomains', [0], { timeout, type: 'u' })
-            .then(objPaths => {
-                if (objPaths[0].includes(domPath))
-                    domainGet({ connectionName, id:domPath, updateOnly: true });
-                else // Transient vm will get undefined when stopped
-                    store.dispatch(undefineVm({ connectionName, id:domPath, transientOnly: true }));
-            })
-            .catch(ex => console.warn('domainUpdateOrDelete action failed:', ex.toString()));
-}
-
-function storagePoolUpdateOrDelete(connectionName, poolPath) {
-    call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListStoragePools', [0], { timeout, type: 'u' })
-            .then(objPaths => {
-                if (objPaths[0].includes(poolPath))
-                    storagePoolGet({ connectionName, id:poolPath, updateOnly: true });
-                else // Transient pool which got undefined when stopped
-                    store.dispatch(undefineStoragePool({ connectionName, id:poolPath }));
-            })
-            .catch(ex => console.warn('storagePoolUpdateOrDelete action failed:', ex.toString()));
-}
-
-function networkUpdateOrDelete(connectionName, netPath) {
-    call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListNetworks', [0], { timeout, type: 'u' })
-            .then(objPaths => {
-                if (objPaths[0].includes(netPath))
-                    networkGet({ connectionName, id:netPath, updateOnly: true });
-                else // Transient network which got undefined when stopped
-                    store.dispatch(undefineNetwork({ connectionName, id:netPath }));
-            })
-            .catch(ex => console.warn('networkUpdateOrDelete action failed:', ex.toString()));
-}
-
 function startEventMonitorNetworks(connectionName) {
     dbusClient(connectionName).subscribe(
-        { interface: 'org.libvirt.Connect', member: 'NetworkEvent' },
+        { interface: "org.libvirt.Connect", member: "NetworkEvent" },
         (path, iface, signal, args) => {
             const objPath = args[0];
             const eventType = args[1];
@@ -429,10 +413,10 @@ function startEventMonitorNetworks(connectionName) {
 
     /* Subscribe to signals on Network Interface */
     dbusClient(connectionName).subscribe(
-        { interface: 'org.libvirt.Network' },
+        { interface: "org.libvirt.Network" },
         (path, iface, signal, args) => {
             switch (signal) {
-            case 'Refresh':
+            case "Refresh":
             /* These signals imply possible changes in what we display, so re-read the state */
                 networkGet({ connectionName, id:path });
                 break;
@@ -444,7 +428,7 @@ function startEventMonitorNetworks(connectionName) {
 
 function startEventMonitorStoragePools(connectionName) {
     dbusClient(connectionName).subscribe(
-        { interface: 'org.libvirt.Connect', member: 'StoragePoolEvent' },
+        { interface: "org.libvirt.Connect", member: "StoragePoolEvent" },
         (path, iface, signal, args) => {
             const objPath = args[0];
             const eventType = args[1];
@@ -472,10 +456,10 @@ function startEventMonitorStoragePools(connectionName) {
 
     /* Subscribe to signals on StoragePool Interface */
     dbusClient(connectionName).subscribe(
-        { interface: 'org.libvirt.StoragePool' },
+        { interface: "org.libvirt.StoragePool" },
         (path, iface, signal, args) => {
             switch (signal) {
-            case 'Refresh':
+            case "Refresh":
             /* These signals imply possible changes in what we display, so re-read the state */
                 storagePoolGet({ connectionName, id:path });
                 break;
@@ -485,7 +469,84 @@ function startEventMonitorStoragePools(connectionName) {
         });
 }
 
-function getLibvirtVersion({ connectionName }) {
-    return call(connectionName, "/org/libvirt/QEMU", "org.freedesktop.DBus.Properties", "Get", ["org.libvirt.Connect", "LibVersion"], { timeout, type: 'ss' })
-            .then(version => store.dispatch(updateLibvirtVersion({ libvirtVersion: version[0].v })));
+function storagePoolUpdateOrDelete(connectionName, poolPath) {
+    call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "ListStoragePools", [0], { timeout, type: "u" })
+            .then(objPaths => {
+                if (objPaths[0].includes(poolPath))
+                    storagePoolGet({ connectionName, id:poolPath, updateOnly: true });
+                else // Transient pool which got undefined when stopped
+                    store.dispatch(undefineStoragePool({ connectionName, id:poolPath }));
+            })
+            .catch(ex => console.warn("storagePoolUpdateOrDelete action failed:", ex.toString()));
+}
+
+function unknownConnectionName() {
+    return cockpit.user()
+            .then(loggedUser => {
+                const connectionNames = (
+                    Object.getOwnPropertyNames(VMS_CONFIG.Virsh.connections).filter(
+                        // The 'root' user does not have its own qemu:///session just qemu:///system
+                        // https://bugzilla.redhat.com/show_bug.cgi?id=1045069
+                        connectionName => canLoggedUserConnectSession(connectionName, loggedUser))
+                );
+                return connectionNames;
+            });
+}
+
+export function enableLibvirt({ enable, serviceName }) {
+    logDebug(`ENABLE_LIBVIRT`);
+    const libvirtService = service.proxy(serviceName);
+    return enable ? libvirtService.enable() : libvirtService.disable();
+}
+
+export function getApiData({ connectionName, libvirtServiceName }) {
+    if (connectionName) {
+        dbusClient(connectionName);
+        startEventMonitor({ connectionName, libvirtServiceName });
+        return Promise.allSettled([
+            domainGetAll({ connectionName }),
+            storagePoolGetAll({ connectionName }),
+            interfaceGetAll({ connectionName }),
+            networkGetAll({ connectionName }),
+            nodeDeviceGetAll({ connectionName }),
+            getNodeMaxMemory({ connectionName }),
+            getLibvirtVersion({ connectionName }),
+        ]);
+    } else {
+        return unknownConnectionName()
+                .then(connectionNames => {
+                    return Promise.allSettled(connectionNames.map(conn => getApiData({ connectionName: conn, libvirtServiceName })));
+                });
+    }
+}
+
+export function initState() {
+    getPythonPath();
+    getLoggedInUser();
+    getOsInfoList();
+}
+
+export function startLibvirt({ serviceName }) {
+    logDebug(`START_LIBVIRT`);
+    return service.proxy(serviceName).start();
+}
+
+export function usageStartPolling({
+    name,
+    connectionName,
+    id: objPath
+}) {
+    store.dispatch(updateVm({ connectionName, name, usagePolling: true }));
+    doUsagePolling(name, connectionName, objPath);
+}
+
+export function usageStopPolling({
+    name,
+    connectionName
+}) {
+    return store.dispatch(updateVm({
+        connectionName,
+        name,
+        usagePolling: false
+    }));
 }

@@ -1,14 +1,3 @@
-import cockpit from 'cockpit';
-import * as service from 'service.js';
-
-import * as python from "python.js";
-import getOSListScript from 'raw-loader!./getOSList.py';
-
-import {
-    setLoggedInUser,
-    updateOsInfoList,
-} from './actions/store-actions.js';
-
 import {
     convertToUnit,
     logDebug,
@@ -16,14 +5,7 @@ import {
     units,
 } from './helpers.js';
 
-import store from './store.js';
-import VMS_CONFIG from './config.js';
-
 const METADATA_NAMESPACE = "https://github.com/cockpit-project/cockpit-machines";
-
-export function canLoggedUserConnectSession (connectionName, loggedUser) {
-    return connectionName !== 'session' || loggedUser.name !== 'root';
-}
 
 export function getDiskElemByTarget(domxml, targetOriginal) {
     const domainElem = getElem(domxml);
@@ -892,12 +874,6 @@ export function parseNodeDeviceDumpxml(nodeDevice) {
     return { name, path, capability };
 }
 
-export function parseOsInfoList(osList) {
-    const osinfodata = JSON.parse(osList);
-
-    store.dispatch(updateOsInfoList(osinfodata.filter(os => os.shortId)));
-}
-
 export function parseStoragePoolDumpxml(connectionName, storagePoolXml, id_overwrite) {
     const storagePoolElem = getElem(storagePoolXml);
     if (!storagePoolElem) {
@@ -972,91 +948,4 @@ export function parseStorageVolumeDumpxml(connectionName, storageVolumeXml, id_o
         physical,
         format,
     };
-}
-
-export function unknownConnectionName() {
-    return cockpit.user()
-            .then(loggedUser => {
-                const connectionNames = (
-                    Object.getOwnPropertyNames(VMS_CONFIG.Virsh.connections).filter(
-                        // The 'root' user does not have its own qemu:///session just qemu:///system
-                        // https://bugzilla.redhat.com/show_bug.cgi?id=1045069
-                        connectionName => canLoggedUserConnectSession(connectionName, loggedUser))
-                );
-                return connectionNames;
-            });
-}
-
-/*
- * Start of Common Provider function declarations.
- * The order should be kept alphabetical in this section.
- */
-
-export const canConsole = (vmState) => vmState == 'running';
-export const canDelete = (vmState, vmId) => true;
-export const canInstall = (vmState, hasInstallPhase) => vmState != 'running' && hasInstallPhase;
-export const canReset = (vmState) => vmState == 'running' || vmState == 'idle' || vmState == 'paused';
-export const canRun = (vmState, hasInstallPhase) => !hasInstallPhase && vmState == 'shut off';
-export const canSendNMI = (vmState) => canReset(vmState);
-export const canShutdown = (vmState) => canReset(vmState);
-export const canPause = (vmState) => vmState == 'running';
-export const canResume = (vmState) => vmState == 'paused';
-export const isRunning = (vmState) => canReset(vmState);
-export const serialConsoleCommand = ({ vm }) => vm.displays.pty ? ['virsh', ...VMS_CONFIG.Virsh.connections[vm.connectionName].params, 'console', vm.name] : false;
-
-/*
- * Basic, but working.
- * TODO: provide support for more complex scenarios, like with TLS or proxy
- *
- * To try with virt-install: --graphics spice,listen=[external host IP]
- */
-export function vmDesktopConsole({
-    name,
-    consoleDetail
-}) {
-    logDebug(`CONSOLE_VM(name='${name}'), detail = `, consoleDetail);
-    fileDownload({
-        data: buildConsoleVVFile(consoleDetail),
-        fileName: 'console.vv',
-        mimeType: 'application/x-virt-viewer'
-    });
-}
-
-export function enableLibvirt({ enable, serviceName }) {
-    logDebug(`ENABLE_LIBVIRT`);
-    const libvirtService = service.proxy(serviceName);
-    return enable ? libvirtService.enable() : libvirtService.disable();
-}
-
-function getLoggedInUser() {
-    logDebug(`GET_LOGGED_IN_USER:`);
-    return cockpit.user().then(loggedUser => {
-        store.dispatch(setLoggedInUser({ loggedUser }));
-    });
-}
-
-function getPythonPath() {
-    return cockpit.spawn(["/bin/sh", "-c", "which /usr/libexec/platform-python 2>/dev/null || which python3 2>/dev/null || which python"]).then(pyexe => { pythonPath = pyexe.trim() });
-}
-
-function getOsInfoList() {
-    logDebug(`GET_OS_INFO_LIST():`);
-    return python.spawn(getOSListScript, null, { err: "message", environ: ['LC_ALL=C.UTF-8'] })
-            .then(osList => {
-                parseOsInfoList(osList);
-            })
-            .catch(ex => {
-                console.error(`get os list returned error: "${JSON.stringify(ex)}"`);
-                parseOsInfoList('[]');
-            });
-}
-export function initState() {
-    getPythonPath();
-    getLoggedInUser();
-    getOsInfoList();
-}
-
-export function startLibvirt({ serviceName }) {
-    logDebug(`START_LIBVIRT`);
-    return service.proxy(serviceName).start();
 }

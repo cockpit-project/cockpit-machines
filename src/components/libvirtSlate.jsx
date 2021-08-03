@@ -23,7 +23,7 @@ import cockpit from 'cockpit';
 import {
     startLibvirt,
     enableLibvirt,
-} from "../libvirt-common.js";
+} from "../libvirtApi/common.js";
 
 import { EmptyStatePanel } from "cockpit-components-empty-state.jsx";
 import { Button, Checkbox } from "@patternfly/react-core";
