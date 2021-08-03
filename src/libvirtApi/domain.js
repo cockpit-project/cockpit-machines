@@ -64,7 +64,7 @@ import {
     getIfaceElemByMac,
     getSingleOptionalElem,
     parseDumpxml,
-} from '../libvirt-common.js';
+} from '../libvirt-xml-parse.js';
 import {
     deleteFilesystem as deleteFilesystemXML,
     updateBootOrder,

@@ -25,7 +25,7 @@ import store from '../store.js';
 
 import { updateDomainSnapshots } from '../actions/store-actions.js';
 import { getSnapshotXML } from '../xmlCreator.js';
-import { parseDomainSnapshotDumpxml } from '../libvirt-common.js';
+import { parseDomainSnapshotDumpxml } from '../libvirt-xml-parse.js';
 import { call, timeout } from './helpers.js';
 
 export function snapshotCreate({ connectionName, vmId, name, description }) {

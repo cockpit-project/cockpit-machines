@@ -25,7 +25,7 @@ import cockpit from 'cockpit';
 import store from '../store.js';
 
 import { updateOrAddNodeDevice } from '../actions/store-actions.js';
-import { parseNodeDeviceDumpxml } from '../libvirt-common.js';
+import { parseNodeDeviceDumpxml } from '../libvirt-xml-parse.js';
 import { call, timeout } from './helpers.js';
 
 /*

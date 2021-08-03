@@ -22,7 +22,7 @@
  * See https://github.com/libvirt/libvirt-dbus
  */
 import { getVolumeXML } from '../xmlCreator.js';
-import { parseStorageVolumeDumpxml } from '../libvirt-common.js';
+import { parseStorageVolumeDumpxml } from '../libvirt-xml-parse.js';
 import { storagePoolRefresh } from './storagePool.js';
 import { domainAttachDisk } from './domain.js';
 import { call, timeout } from './helpers.js';
