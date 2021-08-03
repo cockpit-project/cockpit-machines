@@ -43,7 +43,7 @@ import {
     getIfaceXML,
     getFilesystemXML,
     getMemoryBackingXML,
-} from '../xmlCreator.js';
+} from '../libvirt-xml-create.js';
 import {
     finishVmCreateInProgress,
     setVmCreateInProgress,

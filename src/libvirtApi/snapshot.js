@@ -24,7 +24,7 @@
 import store from '../store.js';
 
 import { updateDomainSnapshots } from '../actions/store-actions.js';
-import { getSnapshotXML } from '../xmlCreator.js';
+import { getSnapshotXML } from '../libvirt-xml-create.js';
 import { parseDomainSnapshotDumpxml } from '../libvirt-xml-parse.js';
 import { call, timeout } from './helpers.js';
 
