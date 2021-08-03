@@ -25,7 +25,7 @@ import cockpit from 'cockpit';
 import store from '../store.js';
 
 import { updateOrAddNetwork } from '../actions/store-actions.js';
-import { getNetworkXML } from '../xmlCreator.js';
+import { getNetworkXML } from '../libvirt-xml-create.js';
 import { parseNetDumpxml } from '../libvirt-xml-parse.js';
 import { call, timeout } from './helpers.js';
 

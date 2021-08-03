@@ -21,7 +21,7 @@
  * Provider for Libvirt using libvirt-dbus API.
  * See https://github.com/libvirt/libvirt-dbus
  */
-import { getVolumeXML } from '../xmlCreator.js';
+import { getVolumeXML } from '../libvirt-xml-create.js';
 import { parseStorageVolumeDumpxml } from '../libvirt-xml-parse.js';
 import { storagePoolRefresh } from './storagePool.js';
 import { domainAttachDisk } from './domain.js';
