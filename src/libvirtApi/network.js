@@ -26,7 +26,7 @@ import store from '../store.js';
 
 import { updateOrAddNetwork } from '../actions/store-actions.js';
 import { getNetworkXML } from '../xmlCreator.js';
-import { parseNetDumpxml } from '../libvirt-common.js';
+import { parseNetDumpxml } from '../libvirt-xml-parse.js';
 import { call, timeout } from './helpers.js';
 
 export function networkActivate({ connectionName, objPath }) {

@@ -43,7 +43,7 @@ import {
     getDomainCapMaxVCPU,
     getDomainCapCPUCustomModels,
     getDomainCapCPUHostModel,
-} from '../../../libvirt-common.js';
+} from '../../../libvirt-xml-parse.js';
 import store from '../../../store.js';
 
 import '../../common/overviewCard.css';

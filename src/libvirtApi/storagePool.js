@@ -26,7 +26,7 @@ import store from '../store.js';
 
 import { updateOrAddStoragePool } from '../actions/store-actions.js';
 import { getPoolXML } from '../xmlCreator.js';
-import { parsePoolCapabilities, parseStoragePoolDumpxml } from '../libvirt-common.js';
+import { parsePoolCapabilities, parseStoragePoolDumpxml } from '../libvirt-xml-parse.js';
 import { storageVolumeGetAll } from './storageVolume.js';
 import { call, Enum, timeout } from './helpers.js';
 

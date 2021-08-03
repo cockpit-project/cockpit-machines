@@ -24,7 +24,7 @@
 import store from '../store.js';
 
 import { updateOrAddInterface } from '../actions/store-actions.js';
-import { parseIfaceDumpxml } from '../libvirt-common.js';
+import { parseIfaceDumpxml } from '../libvirt-xml-parse.js';
 import { call, Enum, timeout } from './helpers.js';
 
 /*
