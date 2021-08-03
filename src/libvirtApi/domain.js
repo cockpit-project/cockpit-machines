@@ -111,6 +111,10 @@ function domainAttachDevice({ connectionName, vmId, permanent, hotplug, xmlDesc 
     return call(connectionName, vmId, 'org.libvirt.Domain', 'AttachDevice', [xmlDesc, flags], { timeout, type: 'su' });
 }
 
+export function getPythonPath() {
+    return cockpit.spawn(["/bin/sh", "-c", "which /usr/libexec/platform-python 2>/dev/null || which python3 2>/dev/null || which python"]).then(pyexe => { pythonPath = pyexe.trim() });
+}
+
 export function domainAttachDisk({
     connectionName,
     type,

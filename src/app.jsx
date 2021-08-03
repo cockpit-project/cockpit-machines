@@ -33,10 +33,10 @@ import { dummyVmsFilter, vmId } from "./helpers.js";
 import { InlineNotification } from 'cockpit-components-inline-notification.jsx';
 import {
     getApiData,
+    initState,
     usageStartPolling,
     usageStopPolling,
-} from "./libvirt-dbus.js";
-import { initState } from './libvirt-common.js';
+} from "./libvirtApi/common.js";
 import { useObject, useEvent } from "hooks";
 import * as service from 'service.js';
 import store from './store.js';
