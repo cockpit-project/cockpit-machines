@@ -1173,7 +1173,9 @@ class TestMachinesCreate(VirtualMachinesCase):
 
             # Make sure that the initial state goes away and then try to check what the new state is
             # because we might end up checking the text for the new state the momment it disappears
-            wait(lambda: b.text(selector) != before, tries=30, delay=3)
+            # HACK: Ensure that the selector exists to avoid a quadratic timeout loop; see
+            # https://github.com/cockpit-project/cockpit/pull/16200
+            wait(lambda: b.is_present(selector) and b.text(selector) != before, tries=30, delay=3)
             b.wait_in_text(selector, after)
 
         def _create(self, dialog):
