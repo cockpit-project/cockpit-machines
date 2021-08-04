@@ -61,7 +61,7 @@ class TestMachinesCreate(VirtualMachinesCase):
 
         runner.cancelDialogTest(TestMachinesCreate.VmDialog(self, sourceType='url',
                                                             location=config.VALID_URL,
-                                                            memory_size=256, memory_size_unit='MiB',
+                                                            memory_size=128, memory_size_unit='MiB',
                                                             os_name=config.FEDORA_28,
                                                             start_vm=False,
                                                             pixel_test_tag="url"))
@@ -75,7 +75,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         # Test OS autodetection from URL tree media
         runner.cancelDialogTest(TestMachinesCreate.VmDialog(self, sourceType='url',
                                                             location=config.TREE_URL,
-                                                            memory_size=256, memory_size_unit='MiB',
+                                                            memory_size=128, memory_size_unit='MiB',
                                                             storage_pool="NoStorage",
                                                             os_name=config.FEDORA_28,
                                                             start_vm=False,
@@ -297,7 +297,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         # to have serial console at bios and also redirect serial console to a file
         runner.createTest(TestMachinesCreate.VmDialog(self, name='pxe-guest', sourceType='pxe',
                                                       location="network=pxe-nat",
-                                                      memory_size=256, memory_size_unit='MiB',
+                                                      memory_size=128, memory_size_unit='MiB',
                                                       storage_pool="NoStorage",
                                                       start_vm=True, delete=False))
 
@@ -420,7 +420,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         # Check choosing existing volume as destination storage
         runner.createThenInstallTest(TestMachinesCreate.VmDialog(self, sourceType='file',
                                                                  location=config.NOVELL_MOCKUP_ISO_PATH,
-                                                                 memory_size=256, memory_size_unit='MiB',
+                                                                 memory_size=128, memory_size_unit='MiB',
                                                                  storage_pool="poolDisk",
                                                                  storage_volume=partition))
 
@@ -444,20 +444,20 @@ class TestMachinesCreate(VirtualMachinesCase):
             # Check choosing existing volume as destination storage
             runner.createThenInstallTest(TestMachinesCreate.VmDialog(self, sourceType='file',
                                                                      location=config.NOVELL_MOCKUP_ISO_PATH,
-                                                                     memory_size=256, memory_size_unit='MiB',
+                                                                     memory_size=128, memory_size_unit='MiB',
                                                                      storage_pool="iscsi-pool",
                                                                      storage_volume="unit:0:0:0"))
 
         # Click the install button through the VM details
         runner.createThenInstallTest(TestMachinesCreate.VmDialog(self, sourceType='file',
                                                                  location=config.NOVELL_MOCKUP_ISO_PATH,
-                                                                 memory_size=256, memory_size_unit='MiB',
+                                                                 memory_size=128, memory_size_unit='MiB',
                                                                  storage_pool="NoStorage"), True)
 
         # Try performing an installation which will fail and ensure that the 'Install' button is still available
         runner.createThenInstallTest(TestMachinesCreate.VmDialog(self, sourceType='file',
                                                                  location=config.NOVELL_MOCKUP_ISO_PATH,
-                                                                 memory_size=256, memory_size_unit='MiB',
+                                                                 memory_size=128, memory_size_unit='MiB',
                                                                  storage_pool="NoStorage"), True, True)
 
     def testCreateFileSource(self):
@@ -493,7 +493,7 @@ class TestMachinesCreate(VirtualMachinesCase):
 
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='file',
                                                       location=config.NOVELL_MOCKUP_ISO_PATH,
-                                                      memory_size=256, memory_size_unit='MiB',
+                                                      memory_size=128, memory_size_unit='MiB',
                                                       storage_pool="NoStorage",
                                                       start_vm=False,
                                                       connection='session'))
@@ -513,7 +513,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         # Check choosing existing volume as destination storage
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='file',
                                                       location=config.NOVELL_MOCKUP_ISO_PATH,
-                                                      memory_size=256, memory_size_unit='MiB',
+                                                      memory_size=128, memory_size_unit='MiB',
                                                       storage_pool="tmp pool",
                                                       storage_volume="vmTmpDestination.qcow2",
                                                       start_vm=True,))
@@ -521,7 +521,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         # Check "NoStorage" option (only define VM)
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='file',
                                                       location=config.NOVELL_MOCKUP_ISO_PATH,
-                                                      memory_size=256, memory_size_unit='MiB',
+                                                      memory_size=128, memory_size_unit='MiB',
                                                       storage_pool="NoStorage",
                                                       start_vm=True,))
 
@@ -529,7 +529,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         # Check file with empty space
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='file',
                                                       location=config.PATH_WITH_SPACE,
-                                                      memory_size=256, memory_size_unit='MiB',
+                                                      memory_size=128, memory_size_unit='MiB',
                                                       storage_pool="NoStorage",
                                                       start_vm=True,))
 
@@ -542,7 +542,7 @@ class TestMachinesCreate(VirtualMachinesCase):
 
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='disk_image',
                                                       location=config.VALID_DISK_IMAGE_PATH,
-                                                      memory_size=256, memory_size_unit='MiB',
+                                                      memory_size=128, memory_size_unit='MiB',
                                                       start_vm=False))
 
         # Recreate the image the previous test just deleted to reuse it
@@ -557,7 +557,7 @@ class TestMachinesCreate(VirtualMachinesCase):
 
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='disk_image',
                                                       location=config.VALID_DISK_IMAGE_PATH,
-                                                      memory_size=256, memory_size_unit='MiB',
+                                                      memory_size=128, memory_size_unit='MiB',
                                                       start_vm=True))
 
     @no_retry_when_changed
@@ -618,7 +618,7 @@ class TestMachinesCreate(VirtualMachinesCase):
             self.machine.execute("dpkg -P qemu-block-extra")
             runner.checkDialogErrorTest(TestMachinesCreate.VmDialog(self, sourceType='url',
                                                                     location=config.ISO_URL,
-                                                                    memory_size=256, memory_size_unit='MiB',
+                                                                    memory_size=128, memory_size_unit='MiB',
                                                                     storage_pool="NoStorage",
                                                                     start_vm=True), ["qemu", "protocol"])
 
@@ -665,7 +665,7 @@ class TestMachinesCreate(VirtualMachinesCase):
 
         def __init__(self, test_obj, name=None,
                      sourceType='file', sourceTypeSecondChoice=None, location='',
-                     memory_size=256, memory_size_unit='MiB',
+                     memory_size=128, memory_size_unit='MiB',
                      expected_memory_size=None,
                      storage_size=None, storage_size_unit='GiB',
                      expected_storage_size=None,
@@ -1460,7 +1460,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         dialog = TestMachinesCreate.VmDialog(self, sourceType='file',
                                              name="VmNotInstalled",
                                              location=TestMachinesCreate.TestCreateConfig.NOVELL_MOCKUP_ISO_PATH,
-                                             memory_size=256, memory_size_unit='MiB',
+                                             memory_size=128, memory_size_unit='MiB',
                                              storage_size=256, storage_size_unit='MiB',
                                              start_vm=False)
         dialog.open() \
