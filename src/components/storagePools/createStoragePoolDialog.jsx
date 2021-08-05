@@ -461,7 +461,7 @@ export class CreateStoragePoolAction extends React.Component {
     componentDidMount() {
         getPoolCapabilities({ connectionName: "session" })
                 .then(poolCapabilities => this.setState({ poolCapabilities }))
-                .finally(() => this.setState({ poolCapabilities: {} }));
+                .catch(() => this.setState({ poolCapabilities: {} }));
     }
 
     close() {
