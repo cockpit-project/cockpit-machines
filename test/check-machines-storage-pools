@@ -286,7 +286,11 @@ class TestMachinesStoragePools(VirtualMachinesCase):
             def fill(self):
                 b.set_input_text("#storage-pool-dialog-name", self.name)
 
+                if "rhel-9" in m.image:
+                    b.wait_not_present("#storage-pool-dialog-type option[value='iscsi-direct']")
+
                 if self.pool_type:
+                    b.wait_visible("#storage-pool-dialog-type")
                     b.set_val("#storage-pool-dialog-type", self.pool_type)
 
                 if self.target:
