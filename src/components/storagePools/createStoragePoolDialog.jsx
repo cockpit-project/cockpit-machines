@@ -64,7 +64,7 @@ const StoragePoolTypeRow = ({ onValueChanged, dialogValues, libvirtVersion, pool
     if (libvirtVersion && libvirtVersion >= 4007000)
         poolTypes.push({ type: 'iscsi-direct', detail: _("iSCSI direct target") });
 
-    const supportedPoolTypes = poolTypes.filter(pool => poolCapabilities[pool.type] ? poolCapabilities[pool.type].supported : true);
+    const supportedPoolTypes = poolTypes.filter(pool => poolCapabilities[pool.type] ? poolCapabilities[pool.type].supported === "yes" : true);
 
     /* TODO
         { type: 'fs', detail _("Pre-formatted Block Device") },
