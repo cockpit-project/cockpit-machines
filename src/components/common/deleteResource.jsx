@@ -57,6 +57,7 @@ export class DeleteResourceModal extends React.Component {
 
         return (
             <Modal position="top" variant="medium" isOpen onClose={onClose}
+                   id="delete-resource-modal"
                    title={ (actionName || _("Delete")) + cockpit.format((" $0 $1"), objectType, objectName) }
                    footer={
                        <>

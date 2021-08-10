@@ -26,7 +26,7 @@ sys.path.append(os.path.join(TEST_DIR, "common"))
 sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
 
 from machineslib import VirtualMachinesCase  # noqa
-from testlib import nondestructive, test_main  # noqa
+from testlib import skipImage, nondestructive, test_main  # noqa
 
 
 @nondestructive
@@ -115,6 +115,23 @@ class TestMachinesFilesystems(VirtualMachinesCase):
         # Start VM and ensure that adding filesystem is disabled
         b.click("#vm-subVmTest1-run")
         b.wait_visible("#vm-subVmTest1-filesystems-add[aria-disabled=true]")
+
+    @skipImage("Older libvirt does not support virtiofs", "rhel-8-5", "centos-8-stream", "debian-stable", "ubuntu-2004", "fedora-33")
+    def testDelete(self):
+        b = self.browser
+        m = self.machine
+
+        m.execute("mkdir -p /tmp/dir1")
+
+        self.createVm("subVmTest1", running=False)
+        self.login_and_go("/machines")
+        self.goToVmPage("subVmTest1")
+
+        m.execute("virt-xml subVmTest1 --add-device --filesystem source=/tmp/dir1/,target=dir1")
+        b.wait_visible("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir1/-dir1']")
+        b.click("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir1/-dir1'] button:contains(Delete)")
+        b.click("#delete-resource-modal button:contains(Delete)")
+        b.wait_not_present("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir1/-dir1']")
 
 
 if __name__ == '__main__':
