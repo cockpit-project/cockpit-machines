@@ -960,10 +960,10 @@ class TestMachinesDisks(VirtualMachinesCase):
 
         def removeDiskAndChecks(target):
             b.click("#delete-subVmTest1-disk-{}".format(target))
-            b.wait_in_text("div[role=dialog]:contains(\"Remove Disk\")", target)
+            b.wait_in_text("div[role=dialog]:contains(\"Remove disk\")", target)
             b.click("div[role=dialog] button:contains(Remove)")
             # The deletion dialog should be closed
-            b.wait_not_present("div[role=dialog]:contains(\"Remove Disk\")")
+            b.wait_not_present("div[role=dialog]:contains(\"Remove disk\")")
             # No error shown
             b.wait_not_present("div[aria-label=\"Danger Alert\"]")
             b.wait_not_present("#vm-subVmTest1-disks-{}-device".format(target))

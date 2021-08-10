@@ -36,7 +36,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         b = self.browser
 
         b.click("#delete-vm-subVmTest1-iface-{0}".format(iface))
-        b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Delete Network Interface")
+        b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Delete network interface")
         b.click(".pf-c-modal-box__footer button:contains(Delete)")
 
     @no_retry_when_changed

@@ -207,7 +207,7 @@ class TestMachinesSnapshots(VirtualMachinesCase):
 
             def cleanup(self):
                 b.click("#delete-vm-subVmTest1-snapshot-{0}".format(self.snap_num))
-                b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Delete Snapshot {0}".format(self.name))
+                b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Delete snapshot {0}".format(self.name))
                 b.click('.pf-c-modal-box__footer button:contains("Delete")')
                 b.wait_not_present("#vm-subVmTest1-snapshot-{0}-name:contains({1})".format(self.snap_num, self.name))
 

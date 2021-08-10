@@ -633,7 +633,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
 
         # Remove test_network from the VM again
         b.click("#delete-vm-subVmTest1-iface-1")
-        b.wait_in_text(".pf-c-modal-box__title-text", "Delete Network Interface")
+        b.wait_in_text(".pf-c-modal-box__title-text", "Delete network interface")
         b.click(".pf-c-modal-box button.pf-m-danger")
         b.wait_not_present("#vm-subVmTest1-network-1-type")
 
