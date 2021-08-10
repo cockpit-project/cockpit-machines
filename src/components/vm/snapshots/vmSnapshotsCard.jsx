@@ -178,7 +178,7 @@ export class VmSnapshotsCard extends React.Component {
 
                     const deleteSnapshotHelper = () => {
                         const deleteDialogProps = {
-                            objectType: "Snapshot",
+                            objectType: _("snapshot"),
                             objectName: snap.name,
                             actionDescription: _("After deleting the snapshot, all its captured content will be lost."),
                             onClose: () => this.setState({ deleteDialogProps: undefined }),

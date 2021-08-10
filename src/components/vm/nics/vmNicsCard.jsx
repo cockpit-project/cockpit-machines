@@ -356,7 +356,7 @@ export class VmNetworkTab extends React.Component {
                     };
 
                     const deleteDialogProps = {
-                        objectType: "Network Interface",
+                        objectType: _("network interface"),
                         objectName: network.mac,
                         onClose: () => this.setState({ deleteDialogProps: undefined }),
                         deleteHandler: () => detachIface(network.mac, vm.connectionName, vm.id, vm.state === 'running', vm.persistent),

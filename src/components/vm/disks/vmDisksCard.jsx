@@ -276,7 +276,7 @@ export class VmDisksCard extends React.Component {
                         });
             };
             const deleteDialogProps = {
-                objectType: "Disk",
+                objectType: _("disk"),
                 objectName: disk.target,
                 actionName: _("Remove"),
                 onClose: () => this.setState({ deleteDialogProps: undefined }),
