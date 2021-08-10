@@ -94,6 +94,7 @@ import {
     unknownConnectionName,
 } from './libvirt-common.js';
 import {
+    deleteFilesystem as deleteFilesystemXML,
     updateBootOrder,
     updateDisk,
     updateMaxMemory,
@@ -1400,6 +1401,17 @@ export function createFilesystem({ connectionName, objPath, source, target, xatt
 
                     return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [s.serializeToString(doc)], { timeout, type: 's' });
                 }
+            });
+}
+
+export function deleteFilesystem({ connectionName, objPath, target }) {
+    return call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' })
+            .then(domXml => {
+                const xmlDesc = deleteFilesystemXML(domXml[0], target);
+                if (!xmlDesc)
+                    return Promise.reject(new Error("Could not delete filesystem device"));
+                else
+                    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [xmlDesc], { timeout, type: 's' });
             });
 }
 

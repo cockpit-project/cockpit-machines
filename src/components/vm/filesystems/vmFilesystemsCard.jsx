@@ -36,25 +36,40 @@ import { ListingTable } from "cockpit-components-table.jsx";
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { FileAutoComplete } from "cockpit-components-file-autocomplete.jsx";
 
-import { createFilesystem, setMemoryBacking } from "../../../libvirt-dbus.js";
+import { createFilesystem, deleteFilesystem, setMemoryBacking } from "../../../libvirt-dbus.js";
 import { vmId } from "../../../helpers.js";
+import { DeleteResourceButton, DeleteResourceModal } from '../../common/deleteResource.jsx';
 
 import "./vmFilesystemsCard.scss";
 
 const _ = cockpit.gettext;
 
-export const VmFilesystemsCard = ({ vmName, filesystems }) => {
-    const columnTitles = [_("Source path"), _("Mount tag")];
+export const VmFilesystemsCard = ({ connectionName, vmName, vmState, objPath, filesystems }) => {
+    const [deleteDialogProps, setDeleteDialogProps] = useState(undefined);
+    const columnTitles = [_("Source path"), _("Mount tag"), ""];
 
     const rows = filesystems.map(filesystem => {
         const sourceKey = Object.keys(filesystem.source).find(key => filesystem.source[key]);
         const filesystemSource = sourceKey ? filesystem.source[sourceKey] : undefined;
         const filesystemTarget = filesystem.target.dir;
         const rowId = `${vmId(vmName)}-filesystem-${filesystemSource}-${filesystemTarget}`;
-
+        const actions = (
+            <div className='machines-listing-actions'>
+                <DeleteResourceButton objectId={rowId}
+                                      disabled={vmState != 'shut off'}
+                                      showDialog={() => setDeleteDialogProps({
+                                          objectType: _("filesystem"),
+                                          objectName: filesystemTarget,
+                                          onClose: () => setDeleteDialogProps(undefined),
+                                          deleteHandler: () => deleteFilesystem({ connectionName, objPath, target: filesystemTarget }),
+                                      })}
+                                      overlayText={_("Deleting shared directories is possible only when the guest is shut off")} />
+            </div>
+        );
         const columns = [
             { title: filesystemSource },
             { title: filesystemTarget },
+            { title: actions },
         ];
 
         return {
@@ -64,11 +79,14 @@ export const VmFilesystemsCard = ({ vmName, filesystems }) => {
     });
 
     return (
-        <ListingTable variant='compact'
-                      gridBreakPoint='grid-xl'
-                      emptyCaption={_("No directories shared between the host and this VM")}
-                      columns={columnTitles}
-                      rows={rows} />
+        <>
+            {deleteDialogProps && <DeleteResourceModal {...deleteDialogProps} />}
+            <ListingTable variant='compact'
+                          gridBreakPoint='grid-xl'
+                          emptyCaption={_("No directories shared between the host and this VM")}
+                          columns={columnTitles}
+                          rows={rows} />
+        </>
     );
 };
 
