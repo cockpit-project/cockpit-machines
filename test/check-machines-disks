@@ -263,7 +263,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             persistent_vm=True,
             pixel_test_tag=None,
             xfail=False, xfail_object=None, xfail_error=None,
-
+            pixel_test_ignore=None
         ):
             self.test_obj = test_obj
             self.vm_name = vm_name
@@ -283,6 +283,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             self.persistent_vm = persistent_vm
 
             self.pixel_test_tag = pixel_test_tag
+            self.pixel_test_ignore = pixel_test_ignore
 
             self.xfail = xfail
             self.xfail_object = xfail_object
@@ -302,10 +303,14 @@ class TestMachinesDisks(VirtualMachinesCase):
             self.fill()
 
             if self.pixel_test_tag:
+                ignore_selectors = [".pf-c-expandable-section__toggle-icon"]
+                if self.pixel_test_ignore:
+                    ignore_selectors.append(self.pixel_test_ignore)
                 # focus away from any input field, to avoid the text cursor in screenshots
                 self.test_obj.browser.focus("#vm-subVmTest1-disks-adddisk-dialog-cancel")
+                self.test_obj.browser.wait_visible("#vm-subVmTest1-disks-adddisk-dialog-add[aria-disabled=false]")
                 self.test_obj.browser.assert_pixels("#vm-subVmTest1-disks-adddisk-dialog-modal-window", self.pixel_test_tag,
-                                                    ignore=[".pf-c-expandable-section__toggle-icon"])
+                                                    ignore=ignore_selectors)
 
             self.add_disk()
             if not self.xfail:
@@ -374,6 +379,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             # Configure performance options
             if self.cache_mode and b.is_visible("div.pf-c-modal-box button:contains(Show additional options)"):
                 b.click("div.pf-c-modal-box button:contains(Show additional options)")
+                b.wait_visible("div.pf-c-modal-box button[aria-expanded=true]:contains(Hide additional options)")
                 b.select_from_dropdown("#cache-mode", self.cache_mode)
             else:
                 b.wait_not_visible("#cache-mode")
@@ -381,6 +387,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             # Configure bus type
             if self.bus_type and b.is_visible("div.pf-c-modal-box button:contains(Show additional options)"):
                 b.click("div.pf-c-modal-box button:contains(Show additional options)")
+                b.wait_visible("div.pf-c-modal-box button[aria-expanded=true]:contains(Hide additional options)")
                 b.select_from_dropdown(f"div.pf-c-modal-box #vm-{self.vm_name}-disks-adddisk-bus-type", self.bus_type)
 
             return self
@@ -537,7 +544,8 @@ class TestMachinesDisks(VirtualMachinesCase):
             volume_size=1,
             volume_size_unit='MiB',
             expected_target=get_next_free_target(used_targets)[-1],
-            pixel_test_tag='vm-add-disk-modal-nfs'
+            pixel_test_tag='vm-add-disk-modal-nfs',
+            pixel_test_ignore='.pf-c-modal-box__footer',  # FIXME: The buttons size seems to change undeterministically
         ).execute()
 
         self.VMAddDiskDialog(
@@ -597,7 +605,8 @@ class TestMachinesDisks(VirtualMachinesCase):
             volume_size=1,
             volume_size_unit='MiB',
             expected_target=get_next_free_target(used_targets)[-1],
-            pixel_test_tag='vm-add-disk-modal-disk-pool'
+            pixel_test_tag='vm-add-disk-modal-disk-pool',
+            pixel_test_ignore='.pf-c-modal-box__footer',  # FIXME: The buttons size seems to change undeterministically
         ).execute()
 
         self.VMAddDiskDialog(
