@@ -419,8 +419,7 @@ const UnattendedRow = ({
         <Checkbox id="unattended-installation"
                   isChecked={unattendedInstallation}
                   isDisabled={unattendedDisabled}
-                  onChange={checked => onValueChanged('unattendedInstallation', checked)}
-                  label={_("Run unattended installation")} />
+                  onChange={checked => onValueChanged('unattendedInstallation', checked)} />
     );
     if (unattendedDisabled) {
         unattendedInstallationCheckbox = (
@@ -431,7 +430,9 @@ const UnattendedRow = ({
     }
 
     return (
-        <FormGroup fieldId="unattended-installation">
+        <FormGroup fieldId="unattended-installation"
+                   label={_("Run unattended installation")}
+                   hasNoPaddingTop>
             {unattendedInstallationCheckbox}
             {!unattendedDisabled && unattendedInstallation && <>
                 {os.profiles.length > 0 &&
@@ -957,11 +958,10 @@ class CreateVmModal extends React.Component {
         const { nodeMaxMemory, nodeDevices, networks, osInfoList, loggedUser, storagePools, vms } = this.props;
         const validationFailed = this.state.validate && validateParams({ ...this.state, osInfoList, nodeMaxMemory, vms: vms.filter(vm => vm.connectionName == this.state.connectionName) });
         let startVmCheckbox = (
-            <FormGroup fieldId="start-vm">
+            <FormGroup fieldId="start-vm" label={_("Immediately start VM")} hasNoPaddingTop>
                 <Checkbox id="start-vm"
                     isChecked={this.state.startVm}
                     isDisabled={this.state.unattendedInstallation}
-                    label={_("Immediately start VM")}
                     onChange={checked => this.onValueChanged('startVm', checked)} />
             </FormGroup>
         );
