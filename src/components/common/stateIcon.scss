@@ -17,8 +17,8 @@
 }
 
 .resource-state-text-cell {
-  // Fix labels to not fully stretch when in responsive mode
-  justify-items: start;
+  // Add some spacer if multiple labels exist
+  row-gap: var(--pf-global--spacer--sm);
 }
 
 .pf-c-label.resource-state--shut-off, .pf-c-label.resource-state--inactive {

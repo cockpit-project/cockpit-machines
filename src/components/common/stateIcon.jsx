@@ -20,7 +20,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 
-import { Button, Label, Popover } from '@patternfly/react-core';
+import { Button, Flex, Label, Popover } from '@patternfly/react-core';
 import { ErrorCircleOIcon, PendingIcon } from '@patternfly/react-icons';
 
 import {
@@ -48,7 +48,7 @@ export const StateIcon = ({ state, valueId, error, dismissError }) => {
     };
 
     const label = (
-        <>
+        <Flex className="resource-state-text-cell">
             {error &&
             <Label color="red"
                 icon={<ErrorCircleOIcon />}
@@ -68,7 +68,7 @@ export const StateIcon = ({ state, valueId, error, dismissError }) => {
                     {rephraseUI('resourceStates', state)}
                 </>
             </Label>
-        </>
+        </Flex>
     );
 
     if (error)

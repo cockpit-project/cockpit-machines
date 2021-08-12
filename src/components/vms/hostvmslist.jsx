@@ -170,7 +170,6 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                                                                      error: null
                                                                  }))} />
                                                     ),
-                                                    props: { className: "resource-state-text-cell" },
                                                 },
                                                 { title: vmActions },
                                             ],
