@@ -1055,6 +1055,8 @@ class TestMachinesCreate(VirtualMachinesCase):
             return self
 
         def assert_pixels(self, subtag=None):
+            # focus away from any input field, to avoid the text cursor in screenshots
+            self.browser.focus("#create-vm-dialog .btn-cancel")
             if self.pixel_test_tag:
                 tag = self.pixel_test_tag + ("-" + subtag if subtag else "")
                 ignore = ["#memory-size-helper"]
