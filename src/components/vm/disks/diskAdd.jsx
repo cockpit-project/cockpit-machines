@@ -48,6 +48,7 @@ const busTypes = {
     disk: ['sata', 'scsi', 'usb', 'virtio'],
     cdrom: ['sata', 'scsi', 'usb']
 };
+const poolTypesNotSupportingVolumeCreation = ['iscsi', 'iscsi-direct', 'gluster', 'mpath'];
 
 function getFilteredVolumes(vmStoragePool, disks) {
     const usedDiskPaths = Object.getOwnPropertyNames(disks)
@@ -113,13 +114,18 @@ const PermanentChange = ({ idPrefix, onValueChanged, permanent, vm }) => {
     );
 };
 
-const PoolRow = ({ idPrefix, onValueChanged, storagePoolName, vmStoragePools }) => {
+const PoolRow = ({ idPrefix, onValueChanged, storagePoolName, validationFailed, vmStoragePools }) => {
+    const validationStatePool = validationFailed.storagePool ? 'error' : 'default';
+
     return (
         <FormGroup fieldId={`${idPrefix}-select-pool`}
+                   helperTextInvalid={validationFailed.storagePool}
+                   validated={validationStatePool}
                    label={_("Pool")}>
             <FormSelect id={`${idPrefix}-select-pool`}
                            isDisabled={!vmStoragePools.length || !vmStoragePools.every(pool => pool.volumes !== undefined)}
                            onChange={value => onValueChanged('storagePoolName', value)}
+                           validated={validationStatePool}
                            value={storagePoolName || 'no-resource'}>
                 {vmStoragePools.length > 0 ? vmStoragePools
                         .sort((a, b) => a.name.localeCompare(b.name))
@@ -192,7 +198,6 @@ const CreateNewDisk = ({
     volumeName,
 }) => {
     const storagePool = vmStoragePools.find(pool => pool.name == storagePoolName);
-    const poolTypesNotSupportingVolumeCreation = ['iscsi', 'iscsi-direct', 'gluster', 'mpath'];
 
     return (
         <>
@@ -320,6 +325,7 @@ export class AddDiskModalBody extends React.Component {
             file: "",
             device: "disk",
             storagePoolName: defaultPool && defaultPool.name,
+            storagePoolType: defaultPool && defaultPool.type,
             mode: CREATE_NEW,
             volumeName: undefined,
             existingVolumeName: undefined,
@@ -354,6 +360,9 @@ export class AddDiskModalBody extends React.Component {
         if (this.state.mode === CREATE_NEW) {
             if (!this.state.volumeName) {
                 validationFailed.volumeName = _("Please enter new volume name");
+            }
+            if (poolTypesNotSupportingVolumeCreation.includes(this.state.storagePoolType)) {
+                validationFailed.storagePool = cockpit.format(_("Pool type $0 does not support volume creation"), this.state.storagePoolType);
             }
             const poolCapacity = parseFloat(convertToUnit(this.props.storagePools.find(pool => pool.name == this.state.storagePoolName).capacity, units.B, this.state.unit));
             if (this.state.size > poolCapacity) {
@@ -398,7 +407,7 @@ export class AddDiskModalBody extends React.Component {
         case 'storagePoolName': {
             const currentPool = storagePools.find(pool => pool.name === value && pool.connectionName === vm.connectionName);
             const prevPool = storagePools.find(pool => pool.name === this.state.storagePoolName && pool.connectionName === vm.connectionName);
-            this.setState({ storagePoolName: value });
+            this.setState({ storagePoolName: value, storagePoolType: currentPool.type });
             // Reset the format only when the Format selection dropdown changes entries - otherwise just keep the old selection
             // All pool types apart from 'disk' have either 'raw' or 'qcow2' format
             if (currentPool && prevPool && ((currentPool.type == 'disk' && prevPool.type != 'disk') || (currentPool.type != 'disk' && prevPool.type == 'disk'))) {

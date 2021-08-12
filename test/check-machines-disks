@@ -258,10 +258,12 @@ class TestMachinesDisks(VirtualMachinesCase):
             volume_size=10, volume_size_unit='MiB',
             mode="create-new",
             expected_target='vda', permanent=False, cache_mode=None,
-            bus_type=None, verify=True, pool_type=None,
+            bus_type=None, pool_type=None,
             volume_format=None,
             persistent_vm=True,
-            pixel_test_tag=None
+            pixel_test_tag=None,
+            xfail=False, xfail_object=None, xfail_error=None,
+
         ):
             self.test_obj = test_obj
             self.vm_name = vm_name
@@ -276,12 +278,15 @@ class TestMachinesDisks(VirtualMachinesCase):
             self.permanent = permanent
             self.cache_mode = cache_mode
             self.bus_type = bus_type
-            self.verify = verify
             self.pool_type = pool_type
             self.volume_format = volume_format
             self.persistent_vm = persistent_vm
 
             self.pixel_test_tag = pixel_test_tag
+
+            self.xfail = xfail
+            self.xfail_object = xfail_object
+            self.xfail_error = xfail_error
 
         def getExpectedFormat(selfi, pool_type):
             # Guess by the name of the pool it's format to avoid passing more parameters
@@ -302,9 +307,11 @@ class TestMachinesDisks(VirtualMachinesCase):
                 self.test_obj.browser.assert_pixels("#vm-subVmTest1-disks-adddisk-dialog-modal-window", self.pixel_test_tag,
                                                     ignore=[".pf-c-expandable-section__toggle-icon"])
 
-            if self.verify:
-                self.add_disk()
+            self.add_disk()
+            if not self.xfail:
                 self.verify_disk_added()
+            else:
+                self.test_obj.browser.wait_in_text(f"#vm-subVmTest1-disks-adddisk-{self.xfail_object}-helper.pf-m-error", self.xfail_error)
 
         def open(self):
             b = self.test_obj.browser
@@ -381,13 +388,13 @@ class TestMachinesDisks(VirtualMachinesCase):
         def add_disk(self):
             b = self.test_obj.browser
             b.click(".pf-c-modal-box__footer button:contains(Add)")
-            b.wait_not_present("#vm-{0}-disks-adddisk-dialog-modal-window".format(self.vm_name))
 
             return self
 
         def verify_disk_added(self):
             b = self.test_obj.browser
             m = self.test_obj.machine
+            b.wait_not_present("#vm-{0}-disks-adddisk-dialog-modal-window".format(self.vm_name))
             if self.device == "cdrom" or (self.file_path and self.file_path.endswith(".iso")):
                 expected_bus_type = self.bus_type or "scsi"
                 expected_device = self.device or "cdrom"
@@ -445,7 +452,6 @@ class TestMachinesDisks(VirtualMachinesCase):
         # Debian images' -cloud kernel don't have target-cli-mod kmod
         if "debian" not in m.image:
             # Preparations for testing ISCSI pools
-
             target_iqn = "iqn.2019-09.cockpit.lan"
             self.prepareStorageDeviceOnISCSI(target_iqn)
 
@@ -455,6 +461,9 @@ class TestMachinesDisks(VirtualMachinesCase):
             self.addCleanup(self.machine.execute, "virsh pool-destroy iscsi-pool; virsh pool-delete iscsi-pool; virsh pool-undefine iscsi-pool")
 
         args = self.createVm("subVmTest1")
+
+        # Remove images pool so that we get the iscsi-pool pool first on the list
+        m.execute("virsh pool-destroy images && virsh pool-undefine images")
 
         # Wait for the system to completely start
         wait(lambda: "login as 'cirros' user." in self.machine.execute("cat {0}".format(args["logfile"])), delay=3)
@@ -471,7 +480,7 @@ class TestMachinesDisks(VirtualMachinesCase):
                 self,
                 pool_name='iscsi-pool',
                 pool_type='iscsi',
-                verify=False,
+                xfail=True, xfail_object='new-select-pool', xfail_error='Pool type iscsi does not support volume creation',
             ).execute()
 
             self.VMAddDiskDialog(
