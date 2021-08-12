@@ -129,16 +129,16 @@ def prepare_cloud_init(args):
             mode='w+'
         )
         user_data_file.write("#cloud-config\n")
-        if 'userLogin' in args:
+        if args['userLogin']:
             user_data_file.write("users:\n")
             user_data_file.write(f"  - name: {args['userLogin']}\n")
 
-        if 'rootPassword' in args or 'userPassword' in args:
+        if args['rootPassword'] or args['userPassword']:
             user_data_file.write("chpasswd:\n")
             user_data_file.write("  list: |\n")
-            if 'rootPassword' in args:
+            if args['rootPassword']:
                 user_data_file.write(f"    root:{args['rootPassword']}\n")
-            if 'userPassword' in args:
+            if args['userPassword']:
                 user_data_file.write(f"    {args['userLogin']}:{args['userPassword']}\n")
             user_data_file.write("  expire: False\n")
 
