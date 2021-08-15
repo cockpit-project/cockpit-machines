@@ -126,6 +126,9 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
         # pause
         self.performAction("subVmTest1", "pause")
+        # check removing button of disk and network interface when the VM is paused
+        b.wait_visible("#delete-subVmTest1-disk-vda:disabled")
+        b.wait_visible("#delete-vm-subVmTest1-iface-1:disabled")
 
         # resume
         self.performAction("subVmTest1", "resume")
