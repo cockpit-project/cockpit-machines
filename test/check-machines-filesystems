@@ -129,8 +129,8 @@ class TestMachinesFilesystems(VirtualMachinesCase):
 
         m.execute("virt-xml subVmTest1 --add-device --filesystem source=/tmp/dir1/,target=dir1")
         b.wait_visible("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir1/-dir1']")
-        b.click("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir1/-dir1'] button:contains(Delete)")
-        b.click("#delete-resource-modal button:contains(Delete)")
+        b.click("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir1/-dir1'] button:contains(Remove)")
+        b.click("#delete-resource-modal button:contains(Remove)")
         b.wait_not_present("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir1/-dir1']")
 
 
