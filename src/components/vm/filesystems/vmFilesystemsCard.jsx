@@ -57,8 +57,10 @@ export const VmFilesystemsCard = ({ connectionName, vmName, vmState, objPath, fi
             <div className='machines-listing-actions'>
                 <DeleteResourceButton objectId={rowId}
                                       disabled={vmState != 'shut off'}
+                                      actionName={_("Remove")}
                                       showDialog={() => setDeleteDialogProps({
                                           objectType: _("filesystem"),
+                                          actionName: _("Remove"),
                                           objectName: filesystemTarget,
                                           onClose: () => setDeleteDialogProps(undefined),
                                           deleteHandler: () => deleteFilesystem({ connectionName, objPath, target: filesystemTarget }),
