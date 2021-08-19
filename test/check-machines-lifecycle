@@ -417,6 +417,20 @@ class TestMachinesLifecycle(VirtualMachinesCase):
             qemu_img_info = m.execute(f"qemu-img info /var/lib/libvirt/images/{name}-2.img")
             self.assertNotIn("snapshotA", qemu_img_info)
 
+        # Try to delete a VM and keep its volume
+        name = "vm-keep-vol"
+        args = self.createVm(name)
+        self.waitVmRow(name)
+        wait(lambda: "vm-keep-vol" in m.execute("virsh list --all --name"))
+
+        self.performAction(name, "delete")
+        b.set_checked(f"#vm-{name}-delete-modal-dialog input[type=checkbox]", False)
+        b.click(f"#vm-{name}-delete-modal-dialog button:contains(Delete)")
+
+        self.waitVmRow(name, present=False)
+        wait(lambda: "vm-keep-vol" not in m.execute("virsh list --all --name"))
+        m.execute(f"test -f {args['image']}")
+
         # Try to delete a transient VM
         name = "transient-VM"
         args = self.createVm(name)
