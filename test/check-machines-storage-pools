@@ -686,6 +686,19 @@ class TestMachinesStoragePools(VirtualMachinesCase):
             remove=True,
         ).execute()
 
+        StorageVolumeCreateDialog(
+            self,
+            pool_name="disk-pool",
+            pool_type="disk",
+            vol_name="unacceptable name",  # Partition names must follow pattern of sda1, sda2..., anything else will fail
+            size="2",
+            unit="MiB",
+            format="none",
+            xfail=True,
+            xfail_error="invalid partition name",
+            remove=True,
+        ).execute()
+
         # Try raw format
         StorageVolumeCreateDialog(
             self,
