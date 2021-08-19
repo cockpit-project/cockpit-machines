@@ -262,7 +262,8 @@ class TestMachinesDisks(VirtualMachinesCase):
             volume_format=None,
             persistent_vm=True,
             pixel_test_tag=None,
-            xfail=False, xfail_object=None, xfail_error=None,
+            xfail=False, xfail_object=None,
+            xfail_error_message=None, xfail_error_title=None,
             pixel_test_ignore=None
         ):
             self.test_obj = test_obj
@@ -287,7 +288,8 @@ class TestMachinesDisks(VirtualMachinesCase):
 
             self.xfail = xfail
             self.xfail_object = xfail_object
-            self.xfail_error = xfail_error
+            self.xfail_error_message = xfail_error_message
+            self.xfail_error_title = xfail_error_title
 
         def getExpectedFormat(selfi, pool_type):
             # Guess by the name of the pool it's format to avoid passing more parameters
@@ -316,7 +318,11 @@ class TestMachinesDisks(VirtualMachinesCase):
             if not self.xfail:
                 self.verify_disk_added()
             else:
-                self.test_obj.browser.wait_in_text(f"#vm-subVmTest1-disks-adddisk-{self.xfail_object}-helper.pf-m-error", self.xfail_error)
+                if self.xfail_object:
+                    self.test_obj.browser.wait_in_text(f"#vm-subVmTest1-disks-adddisk-{self.xfail_object}-helper.pf-m-error", self.xfail_error_message)
+                else:
+                    self.test_obj.browser.wait_in_text(".pf-c-modal-box__footer .pf-c-alert__title", self.xfail_error_title)
+                    self.test_obj.browser.click(".pf-c-modal-box__footer button:contains(Cancel)")
 
         def open(self):
             b = self.test_obj.browser
@@ -487,7 +493,7 @@ class TestMachinesDisks(VirtualMachinesCase):
                 self,
                 pool_name='iscsi-pool',
                 pool_type='iscsi',
-                xfail=True, xfail_object='new-select-pool', xfail_error='Pool type iscsi does not support volume creation',
+                xfail=True, xfail_object='new-select-pool', xfail_error_message='Pool type iscsi does not support volume creation',
             ).execute()
 
             self.VMAddDiskDialog(
@@ -774,6 +780,15 @@ class TestMachinesDisks(VirtualMachinesCase):
 
         b.wait_in_text("#vm-subVmTest1-state", "Running")
         self.goToVmPage("subVmTest1")
+
+        # Using directory path for disk should create API failure
+        self.VMAddDiskDialog(
+            self,
+            device='disk',
+            file_path='/tmp/',
+            mode='custom-path',
+            xfail=True, xfail_error_title="Disk failed to be attached",
+        ).execute()
 
         # check disk device type
         self.VMAddDiskDialog(
