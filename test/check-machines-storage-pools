@@ -69,7 +69,8 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         m.execute("virsh vol-create-as myPoolTwo VolumeOne --capacity 1G --format qcow2")
         m.execute("virsh vol-create-as myPoolTwo VolumeTwo --capacity 1G --format qcow2")
         m.execute("virsh vol-create-as myPoolTwo VolumeThree --capacity 1G --format qcow2")
-        wait(lambda: all(volume in m.execute("virsh vol-list myPoolTwo") for volume in ["VolumeOne", "VolumeTwo", "VolumeThree"]))
+        m.execute("virsh vol-create-as myPoolTwo VolumeFour --capacity 1G --format qcow2")
+        wait(lambda: all(volume in m.execute("virsh vol-list myPoolTwo") for volume in ["VolumeOne", "VolumeTwo", "VolumeThree", "VolumeFour"]))
         m.execute('virsh pool-refresh myPoolOne; virsh pool-refresh myPoolTwo')
 
         connectionName = m.execute("virsh uri | head -1 | cut -d/ -f4").strip()
@@ -118,7 +119,20 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         b.wait_in_text("#pool-myPoolTwo-{0}-volume-VolumeOne-name".format(connectionName), "VolumeOne")
         b.wait_in_text("#pool-myPoolTwo-{0}-volume-VolumeTwo-name".format(connectionName), "VolumeTwo")
         b.wait_in_text("#pool-myPoolTwo-{0}-volume-VolumeThree-name".format(connectionName), "VolumeThree")
+        b.wait_in_text("#pool-myPoolTwo-{0}-volume-VolumeFour-name".format(connectionName), "VolumeFour")
         b.wait_not_present("#storage-volumes-delete")
+
+        # Delete a volume from terminal and verify API error will be shown when trying to delete from UI
+        m.execute("virsh vol-delete --pool myPoolTwo --vol VolumeFour")
+        b.wait_visible("#pool-myPoolTwo-{0}-volume-VolumeFour-name".format(connectionName))
+        b.click("tbody input[aria-label='Select row 0']")
+        b.wait_in_text("#storage-volumes-delete", "Delete 1 volume")
+        b.click("#storage-volumes-delete")
+        b.wait_in_text(".pf-c-alert .pf-c-alert__title", "Storage volumes could not be deleted")
+        b.reload()
+        b.enter_page('/machines')
+        self.togglePoolRow("myPoolTwo", connectionName)
+        self.gotoVolumesTab("myPoolTwo")
 
         # Delete a volume from terminal and verify that refresh worked by reloading the browser page
         m.execute("rm -f {0}".format(os.path.join(p2, "VolumeThree")))
