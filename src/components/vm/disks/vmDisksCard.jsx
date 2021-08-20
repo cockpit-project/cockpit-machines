@@ -265,14 +265,14 @@ export class VmDisksCard extends React.Component {
 
             const onRemoveDisk = () => {
                 return detachDisk({ connectionName: vm.connectionName, id: vm.id, name: vm.name, target: disk.target, live: vm.state === 'running', persistent: vm.persistent })
+                        .then(() => {
+                            getVm({ connectionName: vm.connectionName, id:vm.id });
+                        })
                         .catch(ex => {
                             onAddErrorNotification({
                                 text: cockpit.format(_("Disk $0 fail to get detached from VM $1"), disk.target, vm.name),
                                 detail: ex.message, resourceId: vm.id,
                             });
-                        })
-                        .then(() => {
-                            getVm({ connectionName: vm.connectionName, id:vm.id });
                         });
             };
             const deleteDialogProps = {
