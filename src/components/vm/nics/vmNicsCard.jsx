@@ -209,13 +209,13 @@ export class VmNetworkTab extends React.Component {
                 e.stopPropagation();
                 if (network.mac) {
                     changeNetworkState({ name: vm.name, id: vm.id, connectionName: vm.connectionName, networkMac: network.mac, state: network.state === 'up' ? 'down' : 'up' })
+                            .then(() => getVm({ connectionName: vm.connectionName, id:vm.id, name: vm.name }))
                             .catch(ex => {
                                 onAddErrorNotification({
                                     text: cockpit.format(_("NIC $0 of VM $1 failed to change state"), network.mac, vm.name),
                                     detail: ex.message, resourceId: vm.id,
                                 });
-                            })
-                            .then(() => getVm({ connectionName: vm.connectionName, id:vm.id, name: vm.name }));
+                            });
                 }
             };
         };
