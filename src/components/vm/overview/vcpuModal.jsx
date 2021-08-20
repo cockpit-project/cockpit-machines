@@ -166,8 +166,8 @@ export class VCPUModal extends React.Component {
             cores: this.state.cores,
             isRunning: vm.state == 'running'
         })
-                .catch(exc => this.dialogErrorSet(_("VCPU settings could not be saved"), exc.message))
-                .then(close);
+                .then(close)
+                .catch(exc => this.dialogErrorSet(_("VCPU settings could not be saved"), exc.message));
     }
 
     render() {
