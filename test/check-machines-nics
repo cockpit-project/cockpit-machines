@@ -27,7 +27,7 @@ sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
 
 from machineslib import VirtualMachinesCase  # noqa
 from testlib import no_retry_when_changed, nondestructive, test_main, wait  # noqa
-from machinesxmls import TEST_NETWORK_XML  # noqa
+from machinesxmls import TEST_NETWORK_XML, TEST_NETWORK4_XML  # noqa
 
 
 @nondestructive
@@ -106,17 +106,28 @@ class TestMachinesNICs(VirtualMachinesCase):
         m = self.machine
 
         m.execute("echo \"{0}\" > /tmp/xml && virsh net-define /tmp/xml && virsh net-start test_network".format(TEST_NETWORK_XML))
+        m.execute("echo \"{0}\" > /tmp/xml2 && virsh net-define /tmp/xml2".format(TEST_NETWORK4_XML))
 
         args = self.createVm("subVmTest1")
 
         self.login_and_go("/machines")
         b.wait_in_text("body", "Virtual machines")
+
+        self.goToVmPage("subVmTest1")
+
+        # Test a error message handling
+        self.NICAddDialog(
+            self,
+            source_type="network",
+            source="test_network4",
+            xfail=True,
+            xfail_error="Network interface settings could not be saved",  # fail because network 'test_network4' is not active
+        ).execute()
+
         # Shut off domain
         b.click("#vm-subVmTest1-action-kebab button")
         b.click("#vm-subVmTest1-forceOff")
         b.wait_in_text("#vm-subVmTest1-state", "Shut off")
-
-        self.goToVmPage("subVmTest1")
 
         # No NICs present
         b.wait_visible("#vm-subVmTest1-add-iface-button")  # open the Network Interfaces subtab
@@ -391,7 +402,7 @@ class TestMachinesNICs(VirtualMachinesCase):
             # We have always have to specify mac and source_type to identify the device in xml and $virsh detach-interface
             self, test_obj, source_type="direct", source=None, model=None, nic_num=2,
             permanent=False, mac="52:54:00:a5:f8:c0", remove=True, persistent_vm=True,
-            pixel_test_tag=None
+            xfail=False, xfail_error=None, pixel_test_tag=None
         ):
             self.source_type = source_type
             self.source = source
@@ -407,6 +418,8 @@ class TestMachinesNICs(VirtualMachinesCase):
             self.assertEqual = test_obj.assertEqual
             self.deleteIface = test_obj.deleteIface
 
+            self.xfail = xfail
+            self.xfail_error = xfail_error
             self.pixel_test_tag = pixel_test_tag
 
         def execute(self):
@@ -414,10 +427,11 @@ class TestMachinesNICs(VirtualMachinesCase):
             self.fill()
             self.assert_pixels()
             self.create()
-            self.verify()
-            self.verify_overview()
-            if self.remove:
-                self.cleanup()
+            if not self.xfail:
+                self.verify()
+                self.verify_overview()
+                if self.remove:
+                    self.cleanup()
 
         def open(self):
             self.browser.click("#vm-subVmTest1-add-iface-button")  # open the Network Interfaces subtab
@@ -451,7 +465,11 @@ class TestMachinesNICs(VirtualMachinesCase):
         def create(self):
             self.browser.click(".pf-c-modal-box__footer button:contains(Add)")
 
-            self.browser.wait_not_present("#vm-subVmTest1-add-iface-dialog")
+            if not self.xfail:
+                self.browser.wait_not_present("#vm-subVmTest1-add-iface-dialog")
+            else:
+                self.browser.wait_in_text(".pf-c-modal-box__footer .pf-c-alert__title", self.xfail_error)
+                self.browser.click(".pf-c-modal-box__footer button:contains(Cancel)")
 
         def verify(self):
             # Verify libvirt XML
