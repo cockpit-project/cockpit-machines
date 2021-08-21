@@ -125,6 +125,7 @@ class TestMachinesNICs(VirtualMachinesCase):
 
     def testNICDelete(self):
         b = self.browser
+        m = self.machine
 
         args = self.createVm("subVmTest1")
 
@@ -138,6 +139,27 @@ class TestMachinesNICs(VirtualMachinesCase):
         self.deleteIface(1)
         b.wait_not_present(".pf-c-modal-box")
         b.wait_not_present("#vm-subVmTest1-network-1-mac")
+
+        # Detach NIC when the VM is shutoff, Also check this issue: https://bugzilla.redhat.com/show_bug.cgi?id=1791543
+        self.performAction("subVmTest1", "off")
+        # Attach since no NIC now
+        m.execute("virsh attach-interface --domain subVmTest1 --type network --source default --model virtio --mac 52:54:00:4b:73:5f --config")
+        m.execute("virsh attach-interface --domain subVmTest1 --type bridge --source virbr0 --model virtio --mac 52:54:00:4b:73:6f --config")
+        m.execute("virsh attach-interface --domain subVmTest1 --type network --source default --model virtio --mac 52:54:00:4b:73:4f --config")
+        # Refresh for getting new added NIC
+        b.reload()
+        b.enter_page('/machines')
+        b.wait_in_text("body", "Virtual machines")
+        # Check NIC MAC addresses
+        b.wait_text("#vm-subVmTest1-network-1-mac", "52:54:00:4b:73:5f")
+        b.wait_text("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:6f")
+        b.wait_text("#vm-subVmTest1-network-3-mac", "52:54:00:4b:73:4f")
+        # Detach
+        self.deleteIface(2)
+        # Make sure popup dialog disappeared
+        b.wait_not_present(".pf-c-modal-box")
+        b.wait_text_not("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:6f")
+        b.wait_text("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:4f")
 
     def testNICAdd(self):
         def get_next_mac(last_mac):
@@ -262,13 +284,6 @@ class TestMachinesNICs(VirtualMachinesCase):
             nic_num=3,
             remove=False,
         ).execute()
-
-        # Now there are three NICs present - try to delete the second one and make sure that it's deleted and the dialog is not present anymore
-        b.wait_visible("#vm-subVmTest1-network-3-mac")
-        self.deleteIface(2)
-        # Check NIC is no longer in list
-        b.wait_not_present("#vm-subVmTest1-network-3-mac")
-        b.wait_not_present(".pf-c-modal-box")
 
     class NICEditDialog:
 
