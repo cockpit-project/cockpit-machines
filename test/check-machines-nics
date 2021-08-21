@@ -60,9 +60,7 @@ class TestMachinesNICs(VirtualMachinesCase):
 
         b.wait_in_text("#vm-subVmTest1-network-1-type", "network")
         b.wait_in_text("#vm-subVmTest1-network-1-source", "default")
-
         b.wait_in_text("#vm-subVmTest1-network-1-ipv4-address", "192.168.122.")
-
         b.wait_in_text("#vm-subVmTest1-network-1-state", "up")
 
         b.assert_pixels("#vm-subVmTest1-networks", "vm-details-nics-card", ignore=["#vm-subVmTest1-network-1-mac", "#vm-subVmTest1-network-1-ipv4-address"])
@@ -75,7 +73,6 @@ class TestMachinesNICs(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-network-2-model", "virtio")
         b.wait_in_text("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:5f")
         b.wait_in_text("#vm-subVmTest1-network-2-ipv4-address", "192.168.122.")
-
         b.wait_in_text("#vm-subVmTest1-network-2-state", "up")
 
         # Test bridge network
@@ -84,6 +81,47 @@ class TestMachinesNICs(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-network-3-type", "bridge")
         b.wait_in_text("#vm-subVmTest1-network-3-source", "virbr0")
         b.wait_in_text("#vm-subVmTest1-network-3-ipv4-address", "192.168.122.")
+
+    def testNICPlugingAndUnpluging(self):
+        b = self.browser
+        m = self.machine
+
+        self.createVm("subVmTest1")
+
+        self.login_and_go("/machines")
+        b.wait_in_text("body", "Virtual machines")
+
+        self.waitVmRow("subVmTest1")
+        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        self.goToVmPage("subVmTest1")
+
+        # Plug and unplug NICs
+        def plugAndUnplugNICs():
+            mac_address = b.text("#vm-subVmTest1-network-1-mac")
+
+            b.wait_in_text("#vm-subVmTest1-network-1-state", "up")
+            b.wait_in_text("#delete-vm-subVmTest1-iface-1 + button", "Unplug")
+
+            # Click "Unplug"
+            b.click("#delete-vm-subVmTest1-iface-1 + button")
+
+            b.wait_in_text("#vm-subVmTest1-network-1-state", "down")
+            b.wait_in_text("#delete-vm-subVmTest1-iface-1 + button", "Plug")
+            wait(lambda: "down" in m.execute(f"virsh domif-getlink subVmTest1 {mac_address}"))
+
+            # Click "plug"
+            b.click("#delete-vm-subVmTest1-iface-1 + button")
+
+            b.wait_in_text("#vm-subVmTest1-network-1-state", "up")
+            b.wait_in_text("#delete-vm-subVmTest1-iface-1 + button", "Unplug")
+            wait(lambda: "up" in m.execute(f"virsh domif-getlink subVmTest1 {mac_address}"))
+
+        plugAndUnplugNICs()
+
+        self.performAction("subVmTest1", "forceOff")
+
+        # Check again after VM is off
+        plugAndUnplugNICs()
 
     def testNICDelete(self):
         b = self.browser
