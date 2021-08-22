@@ -73,12 +73,15 @@ class TestMachinesCreate(VirtualMachinesCase):
         runner.checkOsInputTest(TestMachinesCreate.VmDialog(self, sourceType="disk_image"))
 
         # Test OS autodetection from URL tree media
+        # Auto auto-detection can change "Operating system" field without Ooops
+        # https://bugzilla.redhat.com/show_bug.cgi?id=1715409
         runner.cancelDialogTest(TestMachinesCreate.VmDialog(self, sourceType='url',
                                                             location=config.TREE_URL,
                                                             memory_size=128, memory_size_unit='MiB',
                                                             storage_pool="NoStorage",
-                                                            os_name=config.FEDORA_28,
+                                                            os_name=config.CENTOS_7,
                                                             start_vm=False,
+                                                            expected_os_name=config.FEDORA_28,
                                                             pixel_test_tag="auto"))
 
         # check if older os are filtered
@@ -644,6 +647,8 @@ class TestMachinesCreate(VirtualMachinesCase):
         FEDORA_28 = 'Fedora 28'
         FEDORA_28_SHORTID = 'fedora28'
 
+        CENTOS_7 = 'CentOS 7'
+
         MANDRIVA_2011_FILTERED_OS = 'Mandriva Linux 2011'
 
         MAGEIA_3_FILTERED_OS = 'Mageia 3'
@@ -663,6 +668,7 @@ class TestMachinesCreate(VirtualMachinesCase):
                      os_name="Fedora 28",
                      os_search_name=None,
                      os_short_id="fedora28",
+                     expected_os_name=None,
                      is_unattended=None,
                      profile=None,
                      root_password=None,
@@ -703,6 +709,7 @@ class TestMachinesCreate(VirtualMachinesCase):
             self.os_name = os_name
             self.os_search_name = os_search_name
             self.os_short_id = os_short_id
+            self.expected_os_name = expected_os_name
             self.is_unattended = is_unattended
             self.profile = profile
             self.root_password = root_password
@@ -888,6 +895,11 @@ class TestMachinesCreate(VirtualMachinesCase):
             b = self.browser
             b.set_input_text("#vm-name", self.name)
 
+            if self.os_name:
+                b.click("#os-select-group > div button")
+                b.click("#os-select li:contains('{0}') button".format(self.os_name))
+                b.wait_attr("#os-select-group input", "value", self.os_name)
+
             if self.sourceType != 'disk_image':
                 b.select_from_dropdown("#source-type", self.sourceType)
             else:
@@ -908,9 +920,9 @@ class TestMachinesCreate(VirtualMachinesCase):
             # For the mocked fedora URL installation wait to see that the OS section is automatically filled
             if self.sourceType == "url" and self.location == TestMachinesCreate.TestCreateConfig.TREE_URL:
                 b.wait_attr("#os-select-group input", "value", TestMachinesCreate.TestCreateConfig.FEDORA_28)
-            elif self.os_name:
-                b.click("#os-select-group > div button")
-                b.click("#os-select li:contains('{0}') button".format(self.os_name))
+
+            if self.expected_os_name:
+                b.wait_attr("#os-select-group input", "value", self.expected_os_name)
 
             if self.sourceType != 'disk_image':
                 if not self.expected_storage_size:
@@ -1052,6 +1064,13 @@ class TestMachinesCreate(VirtualMachinesCase):
                 if self.storage_pool != "NoStorage":
                     ignore += ["#storage-size-helper"]
                 self.browser.assert_pixels("#create-vm-dialog", tag, ignore=ignore)
+            return self
+
+        def checkNoCrashOnThePage(self):
+            self.browser.switch_to_top()
+            self.browser.wait_not_present("#navbar-oops:not([hidden])")
+            self.browser.enter_page("/machines")
+
             return self
 
     class CreateVmRunner:
@@ -1370,6 +1389,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         def cancelDialogTest(self, dialog):
             dialog.open() \
                 .fill() \
+                .checkNoCrashOnThePage() \
                 .assert_pixels() \
                 .cancel(True)
             self._assertScriptFinished() \
