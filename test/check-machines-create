@@ -1481,9 +1481,9 @@ class TestMachinesCreate(VirtualMachinesCase):
         # Change memory settings
         b.click("#vm-VmNotInstalled-memory-count button")
         b.wait_visible("#vm-memory-modal")
-        b.set_input_text("#vm-VmNotInstalled-memory-modal-max-memory", "400")
+        b.set_input_text("#vm-VmNotInstalled-memory-modal-max-memory", "150")
         b.blur("#vm-VmNotInstalled-memory-modal-max-memory")
-        b.set_input_text("#vm-VmNotInstalled-memory-modal-memory", "300")
+        b.set_input_text("#vm-VmNotInstalled-memory-modal-memory", "130")
         b.blur("#vm-VmNotInstalled-memory-modal-memory")
         b.click("#vm-VmNotInstalled-memory-modal-save")
         b.wait_not_present(".pf-c-modal-box__body")
@@ -1579,14 +1579,14 @@ class TestMachinesCreate(VirtualMachinesCase):
             wait(lambda: "char device" in self.machine.execute("cat {0}".format(logfile)), delay=3)
             self.performAction("VmNotInstalled", "forceOff", False)
         b.wait_in_text("#vm-VmNotInstalled-state", "Shut off")
-        wait(lambda: "307200" in m.execute("virsh dominfo VmNotInstalled | grep 'Used memory'"), delay=1)  # Wait until memory parameters get adjusted after shutting the VM
+        wait(lambda: "133120" in m.execute("virsh dominfo VmNotInstalled | grep 'Used memory'"), delay=1)  # Wait until memory parameters get adjusted after shutting the VM
 
         # Check configuration changes survived installation
         # Check memory settings have persisted
         b.click("#vm-VmNotInstalled-memory-count button")
         b.wait_visible("#vm-VmNotInstalled-memory-modal-memory")
-        b.wait_val("#vm-VmNotInstalled-memory-modal-max-memory", "400")
-        b.wait_val("#vm-VmNotInstalled-memory-modal-memory", "300")
+        b.wait_val("#vm-VmNotInstalled-memory-modal-max-memory", "150")
+        b.wait_val("#vm-VmNotInstalled-memory-modal-memory", "130")
         b.click("#vm-VmNotInstalled-memory-modal-cancel")
         b.wait_not_present(".pf-c-modal-box__body")
 
