@@ -42,7 +42,7 @@ class TestMachinesFilesystems(VirtualMachinesCase):
         self.login_and_go("/machines")
         self.goToVmPage("subVmTest1")
 
-        if m.image in ["rhel-8-5", "centos-8-stream", "debian-stable", "ubuntu-2004", "fedora-33"]:
+        if m.image in ["rhel-8-5", "centos-8-stream", "ubuntu-2004", "fedora-33"]:
             b.wait_not_present("#vm-subVmTest1-filesystems-add")
             return
 
@@ -116,7 +116,7 @@ class TestMachinesFilesystems(VirtualMachinesCase):
         b.click("#vm-subVmTest1-run")
         b.wait_visible("#vm-subVmTest1-filesystems-add[aria-disabled=true]")
 
-    @skipImage("Older libvirt does not support virtiofs", "rhel-8-5", "centos-8-stream", "debian-stable", "ubuntu-2004", "fedora-33")
+    @skipImage("Older libvirt does not support virtiofs", "rhel-8-5", "centos-8-stream", "ubuntu-2004", "fedora-33")
     def testDelete(self):
         b = self.browser
         m = self.machine

@@ -150,7 +150,7 @@ class TestMachinesCreate(VirtualMachinesCase):
 
         # try to CREATE few machines
         # --cloud-init user-data option exists since virt-install >= 3.0.0
-        if m.image in ['centos-8-stream', 'rhel-8-4', 'rhel-8-5', 'ubuntu-2004', 'debian-stable']:
+        if m.image in ['centos-8-stream', 'rhel-8-4', 'rhel-8-5', 'ubuntu-2004']:
             b.click("#create-new-vm")
             b.wait_visible("#create-vm-dialog")
             self.browser.wait_not_present('select option[value=cloud]')
@@ -185,71 +185,62 @@ class TestMachinesCreate(VirtualMachinesCase):
         self.browser.wait_in_text("body", "Virtual machines")
 
         # try to CREATE few machines
-        if m.image in ['debian-stable']:
-            b.click("#create-new-vm")
-            b.wait_visible("#create-vm-dialog")
-            b.wait_not_present('select option[value=os]')
-        else:
+        runner.createDownloadAnOSTest(TestMachinesCreate.VmDialog(self, sourceType='os',
+                                                                  expected_memory_size=128,
+                                                                  expected_storage_size=128,
+                                                                  os_name=config.FEDORA_28,
+                                                                  os_short_id=config.FEDORA_28_SHORTID,
+                                                                  start_vm=True))
+
+        # user-login option exists since virt-install >= 3.0.0
+        if m.image not in ['centos-8-stream', 'rhel-8-4', 'rhel-8-5', 'ubuntu-2004']:
             runner.createDownloadAnOSTest(TestMachinesCreate.VmDialog(self, sourceType='os',
-                                                                      expected_memory_size=128,
-                                                                      expected_storage_size=128,
-                                                                      os_name=config.FEDORA_28,
-                                                                      os_short_id=config.FEDORA_28_SHORTID,
-                                                                      start_vm=True))
-
-            # user-login option exists since virt-install >= 3.0.0
-            if m.image not in ['centos-8-stream', 'rhel-8-4', 'rhel-8-5', 'ubuntu-2004']:
-                runner.createDownloadAnOSTest(TestMachinesCreate.VmDialog(self, sourceType='os',
-                                                                          is_unattended=True, profile="desktop",
-                                                                          user_password="catsaremybestfr13nds",
-                                                                          user_login="foo",
-                                                                          root_password="dogsaremybestfr13nds",
-                                                                          storage_size=246, storage_size_unit='MiB',
-                                                                          os_name=config.FEDORA_28,
-                                                                          os_short_id=config.FEDORA_28_SHORTID))
-
-                # Don't create root account
-                runner.createDownloadAnOSTest(TestMachinesCreate.VmDialog(self, sourceType='os',
-                                                                          is_unattended=True, profile="desktop",
-                                                                          user_login="foo",
-                                                                          user_password="catsaremybestfr13nds",
-                                                                          storage_size=256, storage_size_unit='MiB',
-                                                                          os_name=config.FEDORA_28,
-                                                                          os_short_id=config.FEDORA_28_SHORTID))
-            else:
-                b.click("#create-new-vm")
-                b.wait_visible("#create-vm-dialog")
-                b.click("#os-select-group > div button")
-                b.click("#os-select li:contains('{0}') button".format(config.FEDORA_28))
-                b.click("#unattended-installation")
-                b.wait_not_present("#create-vm-dialog-user-password-pw1")
-                b.wait_not_present("#user-login")
-                b.click(".pf-c-modal-box__footer button:contains(Cancel)")
-                b.wait_not_present("#create-vm-dialog")
-
-            # Don't create user account
-            runner.createDownloadAnOSTest(TestMachinesCreate.VmDialog(self, sourceType='os',
-                                                                      is_unattended=True, profile="jeos",
-                                                                      root_password="catsaremybestfr13nds",
-                                                                      storage_size=256, storage_size_unit='MiB',
+                                                                      is_unattended=True, profile="desktop",
+                                                                      user_password="catsaremybestfr13nds",
+                                                                      user_login="foo",
+                                                                      root_password="dogsaremybestfr13nds",
+                                                                      storage_size=246, storage_size_unit='MiB',
                                                                       os_name=config.FEDORA_28,
                                                                       os_short_id=config.FEDORA_28_SHORTID))
 
-            # name already used from a VM that is currently being created
-            # https://bugzilla.redhat.com/show_bug.cgi?id=1780451
-            # os option exists only in virt-install >= 2.2.1 which is the reason we have the condition for the OSes list below
-            if self.machine.image in ['debian-stable']:
-                self.browser.wait_not_present('select option[value=os]')
-            else:
-                runner.createDownloadAnOSTest(TestMachinesCreate.VmDialog(self, name='existing-name', sourceType='os',
-                                                                          expected_memory_size=128,
-                                                                          expected_storage_size=128,
-                                                                          os_name=config.FEDORA_28,
-                                                                          os_short_id=config.FEDORA_28_SHORTID,
-                                                                          start_vm=True, delete=False))
+            # Don't create root account
+            runner.createDownloadAnOSTest(TestMachinesCreate.VmDialog(self, sourceType='os',
+                                                                      is_unattended=True, profile="desktop",
+                                                                      user_login="foo",
+                                                                      user_password="catsaremybestfr13nds",
+                                                                      storage_size=256, storage_size_unit='MiB',
+                                                                      os_name=config.FEDORA_28,
+                                                                      os_short_id=config.FEDORA_28_SHORTID))
+        else:
+            b.click("#create-new-vm")
+            b.wait_visible("#create-vm-dialog")
+            b.click("#os-select-group > div button")
+            b.click("#os-select li:contains('{0}') button".format(config.FEDORA_28))
+            b.click("#unattended-installation")
+            b.wait_not_present("#create-vm-dialog-user-password-pw1")
+            b.wait_not_present("#user-login")
+            b.click(".pf-c-modal-box__footer button:contains(Cancel)")
+            b.wait_not_present("#create-vm-dialog")
 
-                runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, "existing-name", storage_size=1,
-                                                                                 check_script_finished=False, env_is_empty=False), {"vm-name": "already exists"})
+        # Don't create user account
+        runner.createDownloadAnOSTest(TestMachinesCreate.VmDialog(self, sourceType='os',
+                                                                  is_unattended=True, profile="jeos",
+                                                                  root_password="catsaremybestfr13nds",
+                                                                  storage_size=256, storage_size_unit='MiB',
+                                                                  os_name=config.FEDORA_28,
+                                                                  os_short_id=config.FEDORA_28_SHORTID))
+
+        # name already used from a VM that is currently being created
+        # https://bugzilla.redhat.com/show_bug.cgi?id=1780451
+        runner.createDownloadAnOSTest(TestMachinesCreate.VmDialog(self, name='existing-name', sourceType='os',
+                                                                  expected_memory_size=128,
+                                                                  expected_storage_size=128,
+                                                                  os_name=config.FEDORA_28,
+                                                                  os_short_id=config.FEDORA_28_SHORTID,
+                                                                  start_vm=True, delete=False))
+
+        runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, "existing-name", storage_size=1,
+                                                                         check_script_finished=False, env_is_empty=False), {"vm-name": "already exists"})
 
     def testCreatePXE(self):
         runner = TestMachinesCreate.CreateVmRunner(self)
@@ -304,7 +295,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         # We don't want to use start_vm == False because if we get a separate install phase
         # virt-install will overwrite our changes.
 
-        if self.machine.image in ["debian-stable", "ubuntu-2004", "centos-8-stream", "rhel-8-4", "rhel-8-5"]:
+        if self.machine.image in ["ubuntu-2004", "centos-8-stream", "rhel-8-4", "rhel-8-5"]:
             # https://bugzilla.redhat.com/show_bug.cgi?id=1818089
             # After shutting it off virt-install will restart the domain and exit because of the above bug
             self.machine.execute("virsh destroy pxe-guest")
@@ -911,14 +902,7 @@ class TestMachinesCreate(VirtualMachinesCase):
             b.wait_attr("#os-select-group", "data-loading", "false")
             # For the mocked fedora URL installation wait to see that the OS section is automatically filled
             if self.sourceType == "url" and self.location == TestMachinesCreate.TestCreateConfig.TREE_URL:
-                # libosinfo >= "1.4" is needed for OS autodetection
-                # Otherwise we get this error:  Failed to load .treeinfo file: Operation not supported (15)
-                if self.machine.image not in ["debian-stable"]:
-                    b.wait_attr("#os-select-group input", "value", TestMachinesCreate.TestCreateConfig.FEDORA_28)
-                else:
-                    b.wait_attr("#os-select-group input", "value", "")
-                    b.click("#os-select-group div button")
-                    b.click("#os-select li:contains('{0}') button".format(self.os_name))
+                b.wait_attr("#os-select-group input", "value", TestMachinesCreate.TestCreateConfig.FEDORA_28)
             elif self.os_name:
                 b.click("#os-select-group > div button")
                 b.click("#os-select li:contains('{0}') button".format(self.os_name))
@@ -1146,11 +1130,7 @@ class TestMachinesCreate(VirtualMachinesCase):
             root = ET.fromstring(fedora_28_xml)
             root.find('os').find('resources').find('minimum').find('ram').text = '134217728'
             root.find('os').find('resources').find('minimum').find('storage').text = '134217728'
-            if self.machine.image not in ["debian-stable"]:
-                root.find('os').find('eol-date').text = '9999-12-31'
-            else:
-                eol_date = ET.SubElement(root.find('os'), 'eol-date')
-                eol_date.text = '9999-12-31'
+            root.find('os').find('eol-date').text = '9999-12-31'
             new_fedora_28_xml = ET.tostring(root)
             self.machine.execute("echo \'{0}\' > {1}/fedora-28.xml".format(str(new_fedora_28_xml, 'utf-8'), self.test_obj.vm_tmpdir))
             self.machine.execute("mount -o bind  {0}/fedora-28.xml /usr/share/osinfo/os/fedoraproject.org/fedora-28.xml".format(self.test_obj.vm_tmpdir))
@@ -1514,55 +1494,51 @@ class TestMachinesCreate(VirtualMachinesCase):
         m.execute("virsh attach-interface --persistent VmNotInstalled bridge virbr0")
 
         # Change the os boot firmware configuration
-        supports_firmware_config = m.image not in ['debian-stable']
-        if supports_firmware_config:
-            b.wait_in_text("#vm-VmNotInstalled-firmware", "BIOS")
-            b.click("#vm-VmNotInstalled-firmware")
-            b.wait_visible(".pf-c-modal-box__body")
-            b.select_from_dropdown(".pf-c-modal-box__body select", "efi")
-            b.click("#firmware-dialog-apply")
-            b.wait_not_present(".pf-c-modal-box__body")
-            b.wait_in_text("#vm-VmNotInstalled-firmware", "UEFI")
+        b.wait_in_text("#vm-VmNotInstalled-firmware", "BIOS")
+        b.click("#vm-VmNotInstalled-firmware")
+        b.wait_visible(".pf-c-modal-box__body")
+        b.select_from_dropdown(".pf-c-modal-box__body select", "efi")
+        b.click("#firmware-dialog-apply")
+        b.wait_not_present(".pf-c-modal-box__body")
+        b.wait_in_text("#vm-VmNotInstalled-firmware", "UEFI")
 
-            # Temporarily delete the OVMF binary and check the firmware options again
-            if "fedora" in m.image or "rhel" in m.image or "centos-8" in m.image:
-                ovmf_path = "/usr/share/edk2"
-            elif "debian" in m.image or "ubuntu" in m.image:
-                ovmf_path = "/usr/share/OVMF"
-            else:
-                raise AssertionError("Unhandled distro for OVMF path")
-
-            m.execute("mount -t tmpfs tmpfs " + ovmf_path)
-            self.addCleanup(m.execute, "umount {0} || true".format(ovmf_path))
-
-            # Reload for the new configuration to be read
-            b.reload()
-            b.enter_page('/machines')
-
-            # HACK: Capabilities are not updated dynamically
-            # https://bugzilla.redhat.com/show_bug.cgi?id=1807198
-            def hack_broken_caps():
-                if m.image in [
-                    "fedora-33", "fedora-34", "fedora-35", "fedora-testing",
-                    "centos-8-stream", "rhel-8-4", "rhel-8-5", "rhel-9-0",
-                    "ubuntu-2004", "ubuntu-stable", "debian-stable", "debian-testing"
-                ]:
-                    m.execute("systemctl restart libvirtd")
-                    # We don't get events for shut off VMs so reload the page
-                    b.reload()
-                    b.enter_page('/machines')
-
-            hack_broken_caps()
-
-            b.mouse("#vm-VmNotInstalled-firmware-tooltip", "mouseenter")
-            b.wait_in_text(".pf-c-tooltip", "Libvirt did not detect any UEFI/OVMF firmware image installed on the host")
-            b.mouse("#vm-VmNotInstalled-firmware-tooltip", "mouseleave")
-            b.wait_not_present("#missing-uefi-images")
-            m.execute("umount " + ovmf_path)
-
-            hack_broken_caps()
+        # Temporarily delete the OVMF binary and check the firmware options again
+        if "fedora" in m.image or "rhel" in m.image or "centos-8" in m.image:
+            ovmf_path = "/usr/share/edk2"
+        elif "debian" in m.image or "ubuntu" in m.image:
+            ovmf_path = "/usr/share/OVMF"
         else:
-            b.wait_not_present("#vm-VmNotInstalled-firmware")
+            raise AssertionError("Unhandled distro for OVMF path")
+
+        m.execute("mount -t tmpfs tmpfs " + ovmf_path)
+        self.addCleanup(m.execute, "umount {0} || true".format(ovmf_path))
+
+        # Reload for the new configuration to be read
+        b.reload()
+        b.enter_page('/machines')
+
+        # HACK: Capabilities are not updated dynamically
+        # https://bugzilla.redhat.com/show_bug.cgi?id=1807198
+        def hack_broken_caps():
+            if m.image in [
+                "fedora-33", "fedora-34", "fedora-35", "fedora-testing",
+                "centos-8-stream", "rhel-8-4", "rhel-8-5", "rhel-9-0",
+                "ubuntu-2004", "ubuntu-stable", "debian-stable", "debian-testing"
+            ]:
+                m.execute("systemctl restart libvirtd")
+                # We don't get events for shut off VMs so reload the page
+                b.reload()
+                b.enter_page('/machines')
+
+        hack_broken_caps()
+
+        b.mouse("#vm-VmNotInstalled-firmware-tooltip", "mouseenter")
+        b.wait_in_text(".pf-c-tooltip", "Libvirt did not detect any UEFI/OVMF firmware image installed on the host")
+        b.mouse("#vm-VmNotInstalled-firmware-tooltip", "mouseleave")
+        b.wait_not_present("#missing-uefi-images")
+        m.execute("umount " + ovmf_path)
+
+        hack_broken_caps()
 
         # Install the VM
         b.click("#vm-VmNotInstalled-install")
@@ -1572,7 +1548,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         logfile = "/var/log/libvirt/qemu/VmNotInstalled.log"
         m.execute("> {0}".format(logfile))  # clear logfile
         self.performAction("VmNotInstalled", "forceOff", False)
-        if m.image in ["debian-stable", "ubuntu-2004", "centos-8-stream", "rhel-8-4", "rhel-8-5"]:
+        if m.image in ["ubuntu-2004", "centos-8-stream", "rhel-8-4", "rhel-8-5"]:
             # https://bugzilla.redhat.com/show_bug.cgi?id=1818089
             # After shutting it off virt-install will restart the domain and exit because of the above bug
             # We need to wait till it's restarted and shut if off again in order to edit the offline VM configuration
@@ -1605,10 +1581,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         b.wait_text_not("#vm-VmNotInstalled-boot-order", bootOrder)
 
         # Check firmware changes persisted
-        if supports_firmware_config:
-            b.wait_in_text("#vm-VmNotInstalled-firmware", "UEFI")
-        else:
-            b.wait_not_present("#vm-VmNotInstalled-firmware")
+        b.wait_in_text("#vm-VmNotInstalled-firmware", "UEFI")
 
         # Check autostart have persisted
         self.assertEqual(b.get_checked("#vm-VmNotInstalled-autostart-checkbox"), autostart)
