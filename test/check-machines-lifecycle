@@ -29,7 +29,7 @@ sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
 from machineslib import VirtualMachinesCase  # noqa
 from testlib import nondestructive, skipImage, test_main, wait  # noqa
 
-distrosWithoutSnapshot = ["centos-8-stream", "debian-stable", "rhel-8-4", "rhel-8-5", "ubuntu-2004"]
+distrosWithoutSnapshot = ["centos-8-stream", "rhel-8-4", "rhel-8-5", "ubuntu-2004"]
 
 
 @nondestructive
@@ -179,8 +179,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         self.waitVmRow("subVmTest1")
         self.waitVmRow("subVmTest2")
 
-        # Debian 10's libvirtd goes insane when restarting it with running VMs
-        if superuser and m.image not in ["debian-stable"]:
+        if superuser:
             # restart libvirtd
             m.execute("systemctl stop libvirtd.service")
             b.wait_in_text(".pf-c-empty-state", "Virtualization service (libvirt) is not active")
@@ -261,7 +260,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         def stopLibvirtSocket():
             # newer libvirtd versions use socket activation
             # we should test that separately, but here we test only using the service unit
-            if m.image not in ["debian-stable", "rhel-8-4"]:
+            if m.image not in ["rhel-8-4"]:
                 m.execute("systemctl stop libvirtd-ro.socket libvirtd.socket libvirtd-admin.socket")
                 self.addCleanup(m.execute, "systemctl start libvirtd-ro.socket libvirtd.socket libvirtd-admin.socket")
 

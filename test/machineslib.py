@@ -114,15 +114,9 @@ class VirtualMachinesCaseHelpers:
             "memory": memory,
         }
         if ptyconsole:
-            if m.image not in ['debian-stable']:
-                console = "pty,target.type=virtio "
-            else:
-                console = "pty,target_type=virtio "
+            console = "pty,target.type=virtio "
         else:
-            if m.image not in ['debian-stable']:
-                console = "file,target.type=serial,source.path={} ".format(args["logfile"])
-            else:
-                console = "file,target_type=serial,path={} ".format(args["logfile"])
+            console = "file,target.type=serial,source.path={} ".format(args["logfile"])
 
         m.execute("virt-install --connect qemu:///system --name {0} "
                   "--os-variant cirros0.4.0 "

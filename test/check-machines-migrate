@@ -62,19 +62,12 @@ class TestMachinesMigration(VirtualMachinesCase):
             machine2.execute("virsh vol-create-as images subVmTest1-2.img --capacity 1M --format qcow2")
 
         if fail != "port_closed":
-            # Iptables < 1.8.3 will cause firewall-cmd --reload to fail
-            # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=914694
-            # Let's disable the firewall on debian-stable and let the test run instead of adding a naughty
-            if machine1.image not in ["debian-stable"]:
-                # Plain migration: The source host VM opens a direct unencrypted TCP connection to the destination host for sending the migration data.
-                # Unless a port is manually specified, libvirt will choose a migration port in the range 49152-49215, which will need to be open in the firewall on the remote host.
-                # https://wiki.libvirt.org/page/FAQ
-                machine2.execute("systemctl start firewalld")
-                machine2.execute("firewall-cmd --permanent --add-port 49152-49215/tcp")
-                machine2.execute("firewall-cmd --reload")
-            else:
-                machine2.execute("systemctl stop firewalld && "
-                                 "iptables -F && iptables -P INPUT ACCEPT")
+            # Plain migration: The source host VM opens a direct unencrypted TCP connection to the destination host for sending the migration data.
+            # Unless a port is manually specified, libvirt will choose a migration port in the range 49152-49215, which will need to be open in the firewall on the remote host.
+            # https://wiki.libvirt.org/page/FAQ
+            machine2.execute("systemctl start firewalld")
+            machine2.execute("firewall-cmd --permanent --add-port 49152-49215/tcp")
+            machine2.execute("firewall-cmd --reload")
 
     def preCreateStorageOnDest(self, machine1, machine2):
         dev = self.add_ram_disk(2)
@@ -188,8 +181,7 @@ class TestMachinesMigration(VirtualMachinesCase):
 
         if fail == "libvirtd":
             machine2.execute("systemctl stop libvirtd.service")
-            if machine1.image not in ["debian-stable"]:
-                machine2.execute("systemctl stop libvirtd.socket")
+            machine2.execute("systemctl stop libvirtd.socket")
 
         b.click("#migrate-button")
         if fail:
@@ -197,8 +189,7 @@ class TestMachinesMigration(VirtualMachinesCase):
 
             if fail == "libvirtd":
                 machine2.execute("systemctl start libvirtd.service")
-                if machine1.image not in ["debian-stable"]:
-                    machine2.execute("systemctl start libvirtd.socket")
+                machine2.execute("systemctl start libvirtd.socket")
 
             wait(lambda: "subVmTest1" not in machine2.execute("virsh list --all"), delay=3)
             self.assertIn("subVmTest1", machine1.execute("virsh list --all"))
