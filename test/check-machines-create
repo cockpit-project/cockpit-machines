@@ -834,6 +834,11 @@ class TestMachinesCreate(VirtualMachinesCase):
             virt_install_cmd_out = self.machine.execute(virt_install_cmd)
             if self.user_login or self.user_password:
                 self.assertIn("--cloud-init user-data=", virt_install_cmd_out)
+                # parse the file
+                user_data_path = virt_install_cmd_out.split("user-data=", 1)[1].split()[0]
+                user_data = self.machine.execute("cat " + user_data_path)
+
+                self.assertIn("\nssh_pwauth: true", user_data)
 
             self.machine.execute(f"virsh destroy {self.name}")
             self.assertIn(f"backing file: {self.location}", self.machine.execute(f"qemu-img info /var/lib/libvirt/images/{self.name}.qcow2"))
