@@ -134,6 +134,8 @@ def prepare_cloud_init(args):
             user_data_file.write(f"  - name: {args['userLogin']}\n")
 
         if args['rootPassword'] or args['userPassword']:
+            # enable SSH password login if any password is set
+            user_data_file.write("ssh_pwauth: true\n")
             user_data_file.write("chpasswd:\n")
             user_data_file.write("  list: |\n")
             if args['rootPassword']:
