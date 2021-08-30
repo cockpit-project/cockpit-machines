@@ -859,6 +859,12 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.click(f"{prefix}-source-group label:contains(Use existing)")
         b.wait_visible(".pf-c-modal-box__footer button:contains(Add)[aria-disabled=true]")
         b.click("#vm-subVmTest1-disks-adddisk-dialog-cancel")
+        self.VMAddDiskDialog(
+            self,
+            expected_target='sda',
+            file_path='/var/lib/libvirt/novell.iso',
+            mode='custom-path'
+        ).execute()
 
         # Ensure that the bus type autofilled value is according to the bus types of the existing disks of the guest,
         # even when these are not in the predefined value (see ide)
