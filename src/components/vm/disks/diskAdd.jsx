@@ -489,6 +489,7 @@ export class AddDiskModalBody extends React.Component {
 
     onAddClicked() {
         const { vm, vms, storagePools } = this.state;
+        let storagePool, volume, isVolumeUsed;
         const close = this.props.close;
 
         const validation = this.validateParams();
@@ -520,12 +521,12 @@ export class AddDiskModalBody extends React.Component {
                         this.setState({ addDiskInProgress: false });
                         this.dialogErrorSet(_("Disk failed to be created"), exc.message);
                     });
+        } else if (this.state.mode === USE_EXISTING) {
+            // use existing volume
+            storagePool = storagePools.find(pool => pool.name === this.state.storagePoolName);
+            volume = storagePool.volumes.find(vol => vol.name === this.state.existingVolumeName);
+            isVolumeUsed = getStorageVolumesUsage(vms, storagePool);
         }
-
-        // use existing volume
-        const storagePool = storagePools.find(pool => pool.name === this.state.storagePoolName);
-        const volume = storagePool.volumes.find(vol => vol.name === this.state.existingVolumeName);
-        const isVolumeUsed = getStorageVolumesUsage(vms, storagePool);
 
         return domainAttachDisk({
             connectionName: vm.connectionName,
