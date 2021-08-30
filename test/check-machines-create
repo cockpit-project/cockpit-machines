@@ -410,6 +410,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         # Test create VM with disk of type "block"
         # Check choosing existing volume as destination storage
         runner.createThenInstallTest(TestMachinesCreate.VmDialog(self, sourceType='file',
+                                                                 os_name=config.WINDOWS_SERVER_10,
                                                                  location=config.NOVELL_MOCKUP_ISO_PATH,
                                                                  memory_size=128, memory_size_unit='MiB',
                                                                  storage_pool="poolDisk",
@@ -434,6 +435,7 @@ class TestMachinesCreate(VirtualMachinesCase):
 
             # Check choosing existing volume as destination storage
             runner.createThenInstallTest(TestMachinesCreate.VmDialog(self, sourceType='file',
+                                                                     os_name=config.WINDOWS_SERVER_10,
                                                                      location=config.NOVELL_MOCKUP_ISO_PATH,
                                                                      memory_size=128, memory_size_unit='MiB',
                                                                      storage_pool="iscsi-pool",
@@ -441,12 +443,14 @@ class TestMachinesCreate(VirtualMachinesCase):
 
         # Click the install button through the VM details
         runner.createThenInstallTest(TestMachinesCreate.VmDialog(self, sourceType='file',
+                                                                 os_name=config.WINDOWS_SERVER_10,
                                                                  location=config.NOVELL_MOCKUP_ISO_PATH,
                                                                  memory_size=128, memory_size_unit='MiB',
                                                                  storage_pool="NoStorage"), True)
 
         # Try performing an installation which will fail and ensure that the 'Install' button is still available
         runner.createThenInstallTest(TestMachinesCreate.VmDialog(self, sourceType='file',
+                                                                 os_name=config.WINDOWS_SERVER_10,
                                                                  location=config.NOVELL_MOCKUP_ISO_PATH,
                                                                  memory_size=128, memory_size_unit='MiB',
                                                                  storage_pool="NoStorage"), True, True)
@@ -463,6 +467,7 @@ class TestMachinesCreate(VirtualMachinesCase):
 
         # Check that when there is no storage pool defined a VM can still be created
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='file',
+                                                      os_name=config.WINDOWS_SERVER_10,
                                                       location=config.NOVELL_MOCKUP_ISO_PATH,
                                                       storage_pool="NoStorage",
                                                       start_vm=True))
@@ -483,6 +488,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         self.browser.wait_in_text("body", "Virtual machines")
 
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='file',
+                                                      os_name=config.WINDOWS_SERVER_10,
                                                       location=config.NOVELL_MOCKUP_ISO_PATH,
                                                       memory_size=128, memory_size_unit='MiB',
                                                       storage_pool="NoStorage",
@@ -503,6 +509,7 @@ class TestMachinesCreate(VirtualMachinesCase):
 
         # Check choosing existing volume as destination storage
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='file',
+                                                      os_name=config.WINDOWS_SERVER_10,
                                                       location=config.NOVELL_MOCKUP_ISO_PATH,
                                                       memory_size=128, memory_size_unit='MiB',
                                                       storage_pool="tmp pool",
@@ -511,6 +518,7 @@ class TestMachinesCreate(VirtualMachinesCase):
 
         # Check "NoStorage" option (only define VM)
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='file',
+                                                      os_name=config.WINDOWS_SERVER_10,
                                                       location=config.NOVELL_MOCKUP_ISO_PATH,
                                                       memory_size=128, memory_size_unit='MiB',
                                                       storage_pool="NoStorage",
@@ -519,6 +527,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         self.machine.execute("touch '{0}'".format(config.PATH_WITH_SPACE))
         # Check file with empty space
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='file',
+                                                      os_name=config.WINDOWS_SERVER_10,
                                                       location=config.PATH_WITH_SPACE,
                                                       memory_size=128, memory_size_unit='MiB',
                                                       storage_pool="NoStorage",
@@ -597,6 +606,7 @@ class TestMachinesCreate(VirtualMachinesCase):
 
         # Test detection of ISO file in URL
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='url',
+                                                      os_name=config.WINDOWS_SERVER_10,
                                                       location=config.ISO_URL,
                                                       memory_size=128, memory_size_unit='MiB',
                                                       storage_pool="NoStorage",
@@ -608,6 +618,7 @@ class TestMachinesCreate(VirtualMachinesCase):
             # remove package
             self.machine.execute("dpkg -P qemu-block-extra")
             runner.checkDialogErrorTest(TestMachinesCreate.VmDialog(self, sourceType='url',
+                                                                    os_name=config.WINDOWS_SERVER_10,
                                                                     location=config.ISO_URL,
                                                                     memory_size=128, memory_size_unit='MiB',
                                                                     storage_pool="NoStorage",
@@ -1258,7 +1269,11 @@ class TestMachinesCreate(VirtualMachinesCase):
 
             # check bus type
             if dialog.storage_pool != "NoStorage":
-                self.browser.wait_in_text("#vm-{}-disks-vda-bus".format(dialog.name), "virtio")
+                if b.is_present("#vm-{0}-disks-vda-device".format(name)):
+                    b.wait_in_text("#vm-{0}-disks-vda-bus".format(name), "virtio")
+                elif b.is_present("#vm-{0}-disks-sda-device".format(name)):
+                    b.wait_in_text("#vm-{0}-disks-sda-bus".format(name), "sata")
+
             # check memory
             # adjust to how cockpit_format_bytes() formats sizes > 1024 MiB -- this depends on how much RAM
             # the host has (less or more than 1 GiB), and thus needs to be dynamic
@@ -1437,6 +1452,7 @@ class TestMachinesCreate(VirtualMachinesCase):
     # Check various configuration changes made before VM installation persist after installation
     def testConfigureBeforeInstall(self):
         TestMachinesCreate.CreateVmRunner(self)
+        config = TestMachinesCreate.TestCreateConfig
 
         b = self.browser
         m = self.machine
@@ -1446,6 +1462,7 @@ class TestMachinesCreate(VirtualMachinesCase):
 
         dialog = TestMachinesCreate.VmDialog(self, sourceType='file',
                                              name="VmNotInstalled",
+                                             os_name=config.WINDOWS_SERVER_10,
                                              location=TestMachinesCreate.TestCreateConfig.NOVELL_MOCKUP_ISO_PATH,
                                              memory_size=128, memory_size_unit='MiB',
                                              storage_size=256, storage_size_unit='MiB',

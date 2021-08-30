@@ -6,7 +6,6 @@ import traceback
 import json
 import subprocess
 import sys
-import os
 import xml.etree.ElementTree as ET
 import tempfile
 import logging
@@ -162,8 +161,7 @@ def prepare_installation_source(args):
         params += ['--install', f"os={args['os']}"]
     elif args['sourceType'] in ['disk_image', 'cloud']:
         params.append("--import")
-    elif ((args['source'][0] == '/' and os.path.isfile(args['source'])) or
-            (args['sourceType'] == 'url' and args['source'].endswith(".iso"))):
+    elif args['source'].endswith(".iso") and args['os'].startswith('win'):
         if not only_define:
             params += ['--cdrom', args['source']]
     else:
