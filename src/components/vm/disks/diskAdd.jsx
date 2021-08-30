@@ -28,7 +28,7 @@ import cockpit from 'cockpit';
 
 import { FileAutoComplete } from 'cockpit-components-file-autocomplete.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
-import { diskCacheModes, units, convertToUnit, getDefaultVolumeFormat, getNextAvailableTarget, getStorageVolumesUsage, getStorageVolumeDiskTarget } from '../../../helpers.js';
+import { diskBusTypes, diskCacheModes, units, convertToUnit, getDefaultVolumeFormat, getNextAvailableTarget, getStorageVolumesUsage, getStorageVolumeDiskTarget } from '../../../helpers.js';
 import { VolumeCreateBody } from '../../storagePools/storageVolumeCreateBody.jsx';
 import { domainAttachDisk, domainGet, domainIsRunning, domainUpdateDiskAttributes } from '../../../libvirtApi/domain.js';
 import { storagePoolGetAll } from '../../../libvirtApi/storagePool.js';
@@ -40,10 +40,6 @@ const CREATE_NEW = 'create-new';
 const USE_EXISTING = 'use-existing';
 const CUSTOM_PATH = 'custom-path';
 
-const busTypes = {
-    disk: ['sata', 'scsi', 'usb', 'virtio'],
-    cdrom: ['sata', 'scsi', 'usb']
-};
 const poolTypesNotSupportingVolumeCreation = ['iscsi', 'iscsi-direct', 'gluster', 'mpath'];
 
 function getFilteredVolumes(vmStoragePool, disks) {
@@ -145,7 +141,7 @@ class AdditionalOptions extends React.Component {
     }
 
     render() {
-        const displayBusTypes = busTypes[this.props.device].map(type => ({ value: type }));
+        const displayBusTypes = diskBusTypes[this.props.device].map(type => ({ value: type }));
         if (displayBusTypes.find(busType => busType.value == this.props.busType) == undefined)
             displayBusTypes.push({ value: this.props.busType, disabled: true });
 

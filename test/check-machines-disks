@@ -173,6 +173,16 @@ class TestMachinesDisks(VirtualMachinesCase):
             b.wait_not_present("#vm-subVmTest1-disks-sdb-edit-dialog .pf-c-alert")
             cancel("sdb")
 
+        # Virtio bus type should not be shown for CDROM devices
+        m.execute("touch /var/lib/libvirt/novell.iso")
+        m.execute("virsh attach-disk --domain subVmTest1 --source /var/lib/libvirt/novell.iso --target hda --type cdrom --mode readonly --persistent")
+        # virsh attach-disk want send an event for offline VM changes
+        b.reload()
+        b.enter_page('/machines')
+        open("hda")
+        b._wait_present("#vm-subVmTest1-disks-hda-edit-bus-type option[value=sata]")
+        self.assertFalse(b.is_present("#vm-subVmTest1-disks-hda-edit-bus-type option[value=virtio]"))
+
         # Start Vm
         b.click("#vm-subVmTest1-run")
         b.wait_in_text("#vm-subVmTest1-state", "Running")
