@@ -107,7 +107,7 @@ const BusRow = ({ onValueChanged, dialogValues, diskDevice, idPrefix, shutoff })
     );
 };
 
-const AccessRow = ({ onValueChanged, dialogValues, driverType, idPrefix }) => {
+const AccessRow = ({ onValueChanged, dialogValues, diskDevice, driverType, idPrefix }) => {
     return (
         <FormGroup fieldId={`${idPrefix}-access`} label={_("Access")} isInline hasNoPaddingTop>
             <Radio id={`${idPrefix}-readonly`}
@@ -118,23 +118,25 @@ const AccessRow = ({ onValueChanged, dialogValues, driverType, idPrefix }) => {
                        onValueChanged("access", event.currentTarget.value);
                    }}
                    label={_("Read-only")} />
-            <Radio id={`${idPrefix}-writable`}
-                   name="access"
-                   value="writable"
-                   isChecked={dialogValues.access == "writable" }
-                   onChange={(_, event) => {
-                       onValueChanged("access", event.currentTarget.value);
-                   }}
-                   label={_("Writeable")} />
-            {(driverType === "raw") &&
-            <Radio id={`${idPrefix}-writable-shareable`}
-                   name="access"
-                   value="shareable"
-                   isChecked={dialogValues.access == "shareable" }
-                   onChange={(_, event) => {
-                       onValueChanged("access", event.currentTarget.value);
-                   }}
-                   label={_("Writeable and shared")} />}
+            {diskDevice != "cdrom" && <>
+                <Radio id={`${idPrefix}-writable`}
+                       name="access"
+                       value="writable"
+                       isChecked={dialogValues.access == "writable" }
+                       onChange={(_, event) => {
+                           onValueChanged("access", event.currentTarget.value);
+                       }}
+                       label={_("Writeable")} />
+                {(driverType === "raw") &&
+                <Radio id={`${idPrefix}-writable-shareable`}
+                       name="access"
+                       value="shareable"
+                       isChecked={dialogValues.access == "shareable" }
+                       onChange={(_, event) => {
+                           onValueChanged("access", event.currentTarget.value);
+                       }}
+                       label={_("Writeable and shared")} />}
+            </>}
         </FormGroup>
     );
 };
@@ -215,6 +217,7 @@ export class EditDiskModal extends React.Component {
                          name={getDiskFullName(vm.disks[disk.target])} />
 
                 <AccessRow dialogValues={this.state}
+                           diskDevice={disk.device}
                            idPrefix={idPrefix}
                            driverType={vm.disks[disk.target].driver.type}
                            onValueChanged={this.onValueChanged} />

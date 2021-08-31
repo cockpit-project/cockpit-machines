@@ -183,6 +183,11 @@ class TestMachinesDisks(VirtualMachinesCase):
         b._wait_present("#vm-subVmTest1-disks-hda-edit-bus-type option[value=sata]")
         self.assertFalse(b.is_present("#vm-subVmTest1-disks-hda-edit-bus-type option[value=virtio]"))
 
+        # As CDROMs are readonly access mode editing should be disabled
+        b.wait_visible("#vm-subVmTest1-disks-hda-edit-readonly")
+        b.wait_not_present("#vm-subVmTest1-disks-hda-edit-writable")
+        b.wait_not_present("#vm-subVmTest1-disks-hda-edit-writable-shareable")
+
         # Start Vm
         b.click("#vm-subVmTest1-run")
         b.wait_in_text("#vm-subVmTest1-state", "Running")
