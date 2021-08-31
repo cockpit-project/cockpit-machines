@@ -29,7 +29,7 @@ import { InfoAltIcon } from '@patternfly/react-icons';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 
 import { domainUpdateDiskAttributes } from '../../../libvirtApi/domain.js';
-import { diskCacheModes, getDiskPrettyName, getDiskFullName } from '../../../helpers.js';
+import { diskBusTypes, diskCacheModes, getDiskPrettyName, getDiskFullName } from '../../../helpers.js';
 
 import 'form-layout.scss';
 
@@ -78,8 +78,8 @@ const CacheRow = ({ onValueChanged, dialogValues, idPrefix, shutoff }) => {
     );
 };
 
-const BusRow = ({ onValueChanged, dialogValues, idPrefix, shutoff }) => {
-    const busTypes = ['sata', 'scsi', 'usb', 'virtio'].map(type => ({ value: type }));
+const BusRow = ({ onValueChanged, dialogValues, diskDevice, idPrefix, shutoff }) => {
+    const busTypes = diskBusTypes[diskDevice].map(type => ({ value: type }));
     if (busTypes.find(busType => busType.value == dialogValues.busType) == undefined)
         busTypes.push({ value: dialogValues.busType, disabled: true });
 
@@ -144,7 +144,10 @@ export const EditDiskAction = ({ idPrefix, disk, onAddErrorNotification, vm }) =
 
     return (
         <>
-            <Button id={idPrefix} variant='secondary' onClick={() => setIsOpen(true)}>
+            <Button id={idPrefix}
+                    isDisabled={!Object.keys(diskBusTypes).includes(disk.device)}
+                    variant='secondary'
+                    onClick={() => setIsOpen(true)}>
                 {_("Edit")}
             </Button>
             {isOpen && <EditDiskModal idPrefix={idPrefix}
@@ -217,6 +220,7 @@ export class EditDiskModal extends React.Component {
                            onValueChanged={this.onValueChanged} />
 
                 <BusRow dialogValues={this.state}
+                        diskDevice={disk.device}
                         idPrefix={idPrefix}
                         onValueChanged={this.onValueChanged}
                         shutoff={vm.state == 'shut off'} />

@@ -46,6 +46,13 @@ export function localize_datetime(time) {
     return formatRelative(time, Date.now(), { locale });
 }
 
+export const diskBusTypes = {
+    cdrom: ['sata', 'scsi', 'usb'],
+    disk: ['sata', 'scsi', 'usb', 'virtio'],
+    floppy: ['sata', 'scsi', 'usb', 'virtio'],
+    lun: ['sata', 'scsi', 'usb', 'virtio'],
+};
+
 export const diskCacheModes = ['default', 'none', 'writethrough', 'writeback', 'directsync', 'unsafe'];
 
 export const units = {
