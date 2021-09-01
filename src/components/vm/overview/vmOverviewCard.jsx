@@ -22,7 +22,8 @@ import cockpit from 'cockpit';
 import {
     Button, Text, TextVariants, Tooltip,
     DescriptionList, DescriptionListGroup, DescriptionListTerm, DescriptionListDescription,
-    Flex, FlexItem
+    Flex, FlexItem,
+    Switch,
 } from "@patternfly/react-core";
 
 import { VCPUModal } from './vcpuModal.jsx';
@@ -142,13 +143,10 @@ class VmOverviewCard extends React.Component {
 
         const autostart = (
             <DescriptionListDescription>
-                <label className='checkbox-inline'>
-                    <input id={`${idPrefix}-autostart-checkbox`}
-                        type="checkbox"
-                        checked={vm.autostart}
-                        onChange={this.onAutostartChanged} />
-                    {_("Run when host boots")}
-                </label>
+                <Switch id={`${idPrefix}-autostart-switch`}
+                        isChecked={vm.autostart}
+                        onChange={this.onAutostartChanged}
+                        label={_("Run when host boots")} />
             </DescriptionListDescription>
         );
         const memoryLink = (

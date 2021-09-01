@@ -172,22 +172,22 @@ class TestMachinesSettings(VirtualMachinesCase):
             self.goToVmPage(vm_name)
 
             # set checkbox state and check state of checkbox
-            b.set_checked("#vm-{}-autostart-checkbox".format(vm_name), True)  # don't know the initial state of checkbox, so set it to checked
-            b.wait_visible("#vm-{}-autostart-checkbox:checked".format(vm_name))
+            b.set_checked("#vm-{}-autostart-switch".format(vm_name), True)  # don't know the initial state of checkbox, so set it to checked
+            b.wait_visible("#vm-{}-autostart-switch:checked".format(vm_name))
             # check virsh state
             autostartState = m.execute("virsh dominfo %s | grep 'Autostart:' | awk '{print $2}'" % vm_name).strip()
             self.assertEqual(autostartState, "enable")
 
             # change checkbox state and check state of checkbox
-            b.click("#vm-{}-autostart-checkbox".format(vm_name))
-            b.wait_not_present("#vm-{}-autostart-checkbox:checked".format(vm_name))
+            b.click("#vm-{}-autostart-switch".format(vm_name))
+            b.wait_not_present("#vm-{}-autostart-switch:checked".format(vm_name))
             # check virsh state
             autostartState = m.execute("virsh dominfo %s | grep 'Autostart:' | awk '{print $2}'" % vm_name).strip()
             self.assertEqual(autostartState, "disable")
 
             # change checkbox state and check state of checkbox
-            b.click("#vm-{}-autostart-checkbox".format(vm_name))
-            b.wait_visible("#vm-{}-autostart-checkbox:checked".format(vm_name))
+            b.click("#vm-{}-autostart-switch".format(vm_name))
+            b.wait_visible("#vm-{}-autostart-switch:checked".format(vm_name))
             # check virsh state
             autostartState = m.execute("virsh dominfo %s | grep 'Autostart:' | awk '{print $2}'" % vm_name).strip()
             self.assertEqual(autostartState, "enable")
@@ -195,7 +195,7 @@ class TestMachinesSettings(VirtualMachinesCase):
             # non-persistent VM doesn't have autostart
             if running:
                 m.execute("virsh undefine {}".format(vm_name))
-                b.wait_not_present("#vm-{}-autostart-checkbox".format(vm_name))
+                b.wait_not_present("#vm-{}-autostart-switch".format(vm_name))
 
             self.goToMainPage()
 
