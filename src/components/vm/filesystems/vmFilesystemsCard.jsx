@@ -211,7 +211,7 @@ const VmFilesystemAddModal = ({ connectionName, memory, memoryBacking, objPath, 
                                </Popover>
                            }
                            helperTextInvalid={validationFailed.source}
-                           validated={validationFailed.mountTag ? "error" : "default"}>
+                           validated={validationFailed.source ? "error" : "default"}>
                     <FileAutoComplete id={`${idPrefix}-modal-source`}
                                       onChange={value => setSource(value)}
                                       placeholder="/export/to/guest"
