@@ -20,20 +20,27 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 
+import {
+    DescriptionList,
+    DescriptionListTerm,
+    DescriptionListGroup,
+    DescriptionListDescription,
+} from '@patternfly/react-core';
+
 const _ = cockpit.gettext;
 
 export const DiskSourceCell = ({ diskSource, idPrefix }) => {
     const addOptional = (chunks, value, type, descr) => {
         if (value) {
             chunks.push(
-                <div className='machines-multivalue-column' key={descr}>
-                    <strong className='machines-multivalue-column-label'>
+                <DescriptionListGroup key={descr}>
+                    <DescriptionListTerm>
                         {descr}
-                    </strong>
-                    <span className='machines-multivalue-column-value' id={`${idPrefix}-source-${type}`}>
+                    </DescriptionListTerm>
+                    <DescriptionListDescription id={`${idPrefix}-source-${type}`}>
                         {value}
-                    </span>
-                </div>
+                    </DescriptionListDescription>
+                </DescriptionListGroup>
             );
         }
     };
@@ -47,7 +54,7 @@ export const DiskSourceCell = ({ diskSource, idPrefix }) => {
     addOptional(chunks, diskSource.host.name, "host", _("Host"));
     addOptional(chunks, diskSource.host.port, "port", _("Port"));
 
-    return chunks;
+    return <DescriptionList isHorizontal>{chunks}</DescriptionList>;
 };
 
 DiskSourceCell.propTypes = {
@@ -59,14 +66,14 @@ export const DiskExtras = ({ idPrefix, cache, io, discard, errorPolicy }) => {
     const addOptional = (chunks, value, type, descr) => {
         if (value) {
             chunks.push(
-                <div className='ct-form' key={descr}>
-                    <label htmlFor={`${idPrefix}-${type}`} className='control-label'>
+                <DescriptionListGroup key={descr}>
+                    <DescriptionListTerm>
                         {descr}
-                    </label>
-                    <div id={`${idPrefix}-${type}`}>
+                    </DescriptionListTerm>
+                    <DescriptionListDescription id={`${idPrefix}-${type}`}>
                         {value}
-                    </div>
-                </div>
+                    </DescriptionListDescription>
+                </DescriptionListGroup>
             );
         }
     };
@@ -74,7 +81,7 @@ export const DiskExtras = ({ idPrefix, cache, io, discard, errorPolicy }) => {
     const chunks = [];
     addOptional(chunks, cache, "cache", _("Cache"));
 
-    return chunks;
+    return <DescriptionList isHorizontal>{chunks}</DescriptionList>;
 };
 
 DiskExtras.propTypes = {
