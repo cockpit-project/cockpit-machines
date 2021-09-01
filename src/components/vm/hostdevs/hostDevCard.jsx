@@ -19,6 +19,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import {
+    DescriptionList,
+    DescriptionListTerm,
+    DescriptionListGroup,
+    DescriptionListDescription,
+} from '@patternfly/react-core';
+
 import cockpit from 'cockpit';
 import { vmId, findHostNodeDevice } from "../../../helpers.js";
 import { ListingTable } from "cockpit-components-table.jsx";
@@ -35,14 +42,14 @@ const _ = cockpit.gettext;
 function addOptionalToCell(chunks, value, id, descr) {
     if (value) {
         chunks.push(
-            <div className='machines-multivalue-column' key={descr}>
-                <strong className='machines-multivalue-column-label'>
+            <DescriptionListGroup key={descr}>
+                <DescriptionListTerm>
                     {descr}
-                </strong>
-                <span className='machines-multivalue-column-value' id={id}>
+                </DescriptionListTerm>
+                <DescriptionListDescription id={id}>
                     {value}
-                </span>
-            </div>
+                </DescriptionListDescription>
+            </DescriptionListGroup>
         );
     }
 }
@@ -130,7 +137,7 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
             addOptionalToCell(cell, iface, `${hostdevId}-interface`, _("Interface"));
         }
 
-        return cell;
+        return <DescriptionList isHorizontal>{cell}</DescriptionList>;
     }
 
     const id = vmId(vm.name);
