@@ -1460,8 +1460,8 @@ class TestMachinesCreate(VirtualMachinesCase):
         self.goToVmPage("VmNotInstalled")
 
         # Change autostart
-        autostart = not b.get_checked("#vm-VmNotInstalled-autostart-checkbox")
-        b.set_checked("#vm-VmNotInstalled-autostart-checkbox", autostart)
+        autostart = not b.get_checked("#vm-VmNotInstalled-autostart-switch")
+        b.click("#vm-VmNotInstalled-autostart-switch")
 
         # Change memory settings
         b.click("#vm-VmNotInstalled-memory-count button")
@@ -1589,7 +1589,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         b.wait_in_text("#vm-VmNotInstalled-firmware", "UEFI")
 
         # Check autostart have persisted
-        self.assertEqual(b.get_checked("#vm-VmNotInstalled-autostart-checkbox"), autostart)
+        self.assertEqual(b.get_checked("#vm-VmNotInstalled-autostart-switch"), autostart)
 
         # Check new vNIC have persisted
         b.wait_visible("#vm-VmNotInstalled-network-1-type")
