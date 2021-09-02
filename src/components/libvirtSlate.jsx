@@ -32,7 +32,7 @@ import { InlineNotification } from 'cockpit-components-inline-notification.jsx';
 
 const _ = cockpit.gettext;
 
-const LibvirtSlate = ({ loadingResources, libvirtService }) => {
+const LibvirtSlate = ({ loadingResources, libvirtUnit, type }) => {
     const [actionInProgress, setActionInProgress] = useState(false);
     const [error, setError] = useState();
     const [errorDetail, setErrorDetail] = useState();
@@ -43,25 +43,29 @@ const LibvirtSlate = ({ loadingResources, libvirtService }) => {
 
         enableLibvirt({
             enable: libvirtEnabled,
-            serviceName: libvirtService.unit.Id
+            unitName: libvirtUnit.unit.Id
         })
                 .then(() => {
                     startLibvirt({
-                        serviceName: libvirtService.unit.Id
+                        unitName: libvirtUnit.unit.Id
                     }).catch(ex => { setError(_("Failed to start virtualization service")); setErrorDetail(ex.message) });
                 }, ex => { setError(_("Failed to enable virtualization service")); setErrorDetail(ex.message) })
                 .finally(() => setActionInProgress(false));
     };
 
     const goToServicePage = () => {
-        const name = libvirtService.unit.Id ? libvirtService.unit.Id : 'libvirtd.service'; // fallback
+        let name;
+        if (libvirtUnit.unit.Id)
+            name = libvirtUnit.unit.Id;
+        else
+            name = type === "service" ? "libvirtd.service" : "libvirtd.socket"; // fallback
         cockpit.jump("/system/services#/" + name);
     };
 
-    if (libvirtService.state === null)
+    if (libvirtUnit.state === null)
         return <EmptyStatePanel title={ _("Connecting to virtualization service") } loading />;
 
-    const name = libvirtService.unit.Id;
+    const name = libvirtUnit.unit.Id;
 
     if (loadingResources)
         return <EmptyStatePanel title={ _("Loading resources") } loading />;
@@ -97,7 +101,7 @@ const LibvirtSlate = ({ loadingResources, libvirtService }) => {
 };
 
 LibvirtSlate.propTypes = {
-    libvirtService: PropTypes.object.isRequired,
+    libvirtUnit: PropTypes.object.isRequired,
     loadingResources: PropTypes.bool.isRequired,
 };
 

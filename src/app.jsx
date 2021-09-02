@@ -41,26 +41,35 @@ import { useObject, useEvent } from "hooks";
 import * as service from 'service.js';
 import store from './store.js';
 
-import { updateLibvirtState } from './actions/store-actions.js';
+import { updateLibvirtService } from './actions/store-actions.js';
 const _ = cockpit.gettext;
 
 superuser.reload_page_on_change();
 
-export const App = ({ name }) => {
-    const libvirtService = useObject(() => service.proxy(name), null, []);
+export const App = ({ serviceName, socketName }) => {
+    const libvirtService = useObject(() => service.proxy(serviceName), null, []);
+    const libvirtSocket = useObject(() => service.proxy(socketName), null, []);
+    const prevLibvirtSocketRef = useRef();
     const prevLibvirtServiceRef = useRef();
     const [loadingResources, setLoadingResources] = useState(false);
     const [error, setError] = useState('');
 
     useEvent(libvirtService, "changed", () => {
-        store.dispatch(updateLibvirtState({
+        store.dispatch(updateLibvirtService({
             activeState: libvirtService.state,
         }));
         if (libvirtService.state == 'failed') {
-            console.warn("Libvirtd has failed");
+            console.warn(libvirtService.unit.Id + " has failed");
             setLoadingResources(false);
         }
-        if (libvirtService.state == 'running' && prevLibvirtServiceRef.current !== 'running' && prevLibvirtServiceRef.current !== null) {
+    });
+
+    useEvent(libvirtSocket, "changed", () => {
+        if (libvirtSocket.state == 'failed') {
+            console.warn(libvirtSocket.unit.Id + " has failed");
+            setLoadingResources(false);
+        }
+        if (libvirtSocket.state == 'running' && prevLibvirtSocketRef.current !== 'running' && prevLibvirtSocketRef.current !== null) {
             setLoadingResources(true);
             // If promises rejected here show an toast alert in the main page
             getApiData({ connectionName: 'system' })
@@ -74,7 +83,7 @@ export const App = ({ name }) => {
                     })
                     .finally(() => setLoadingResources(false));
         }
-        prevLibvirtServiceRef.current = libvirtService.state;
+        prevLibvirtSocketRef.current = libvirtSocket.state;
     });
     useEvent(superuser, "changed");
     useEffect(() => {
@@ -87,11 +96,18 @@ export const App = ({ name }) => {
                 .finally(() => setLoadingResources(false));
     }, []);
 
-    // Show libvirtSlate component if libvirtd is not running only to users that are allowed to start the service.
-    if (((!libvirtService.exists || libvirtService.state !== 'running') && superuser.allowed) ||
+    // Show libvirtSlate component if libvirt service/socket is not running only to users that are allowed to start the service.
+    if (((!libvirtSocket.exists || libvirtSocket.state !== 'running') && superuser.allowed) ||
         loadingResources) {
         return (
-            <LibvirtSlate libvirtService={libvirtService}
+            <LibvirtSlate libvirtUnit={libvirtSocket}
+                          type="socket"
+                          loadingResources={loadingResources} />
+        );
+    } else if (((!libvirtService.exists || libvirtService.state === 'failed') && superuser.allowed)) {
+        return (
+            <LibvirtSlate libvirtUnit={libvirtService}
+                          type="service"
                           loadingResources={loadingResources} />
         );
     } else return (

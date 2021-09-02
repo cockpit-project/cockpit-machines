@@ -493,10 +493,10 @@ function unknownConnectionName() {
             });
 }
 
-export function enableLibvirt({ enable, serviceName }) {
+export function enableLibvirt({ enable, unitName }) {
     logDebug(`ENABLE_LIBVIRT`);
-    const libvirtService = service.proxy(serviceName);
-    return enable ? libvirtService.enable() : libvirtService.disable();
+    const libvirtUnit = service.proxy(unitName);
+    return enable ? libvirtUnit.enable() : libvirtUnit.disable();
 }
 
 export function getApiData({ connectionName, libvirtServiceName }) {
@@ -526,9 +526,9 @@ export function initState() {
     getOsInfoList();
 }
 
-export function startLibvirt({ serviceName }) {
+export function startLibvirt({ unitName }) {
     logDebug(`START_LIBVIRT`);
-    return service.proxy(serviceName).start();
+    return service.proxy(unitName).start();
 }
 
 export function usageStartPolling({

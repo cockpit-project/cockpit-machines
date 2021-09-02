@@ -43,7 +43,7 @@ class TestMachinesMigration(VirtualMachinesCase):
         machine2.execute("echo '10.111.113.1 machine1' >> /etc/hosts")
         machine2.execute("sed -i 's/127.0.1.1.*/127.0.1.1 machine2/' /etc/hosts")
         machine2.execute("hostnamectl set-hostname machine2")
-        machine2.execute("systemctl restart libvirtd")
+        machine2.execute("systemctl restart {0}".format(self.getLibvirtServiceName()))
 
         if fail != "authentication":
             # setup key authentication
@@ -129,9 +129,9 @@ class TestMachinesMigration(VirtualMachinesCase):
         self._testMigrationGeneric(True, False, "domain")
 
     @skipImage('RHEL doesnt provide support for copy-storage migration', "rhel-8-4", "rhel-8-5", "rhel-9-0")
-    def testFailMigrationStopLibvirtd(self):
-        # Libvirtd.service is not working on the destination
-        self._testMigrationGeneric(True, False, "libvirtd")
+    def testFailMigrationStopService(self):
+        # Libvirtd/virtqemud.service is not working on the destination
+        self._testMigrationGeneric(True, False, "service")
 
     def _testMigrationGeneric(self, copy_storage, temporary, fail):
         b = self.browser
@@ -179,17 +179,17 @@ class TestMachinesMigration(VirtualMachinesCase):
         # The VM does not exist in destination before migration happens
         self.assertNotIn("subVmTest1", machine2.execute("virsh list --all"))
 
-        if fail == "libvirtd":
-            machine2.execute("systemctl stop libvirtd.service")
-            machine2.execute("systemctl stop libvirtd.socket")
+        if fail == "service":
+            machine2.execute("systemctl stop {0}.service".format(self.getLibvirtServiceName()))
+            machine2.execute("systemctl stop {0}.socket".format(self.getLibvirtServiceName()))
 
         b.click("#migrate-button")
         if fail:
             b.wait_visible(".pf-c-modal-box__footer .pf-c-alert .pf-c-alert__title:contains('Migration failed')")
 
-            if fail == "libvirtd":
-                machine2.execute("systemctl start libvirtd.service")
-                machine2.execute("systemctl start libvirtd.socket")
+            if fail == "service":
+                machine2.execute("systemctl start {0}.service".format(self.getLibvirtServiceName()))
+                machine2.execute("systemctl start {0}.socket".format(self.getLibvirtServiceName()))
 
             wait(lambda: "subVmTest1" not in machine2.execute("virsh list --all"), delay=3)
             self.assertIn("subVmTest1", machine1.execute("virsh list --all"))

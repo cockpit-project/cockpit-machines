@@ -23,6 +23,14 @@ from storagelib import StorageHelpers
 class VirtualMachinesCaseHelpers:
     created_pool = False
 
+    def getLibvirtServiceName(self):
+        m = self.machine
+
+        if m.image in ["fedora-35"]:
+            return "virtqemud"
+        else:
+            return "libvirtd"
+
     def performAction(self, vmName, action, checkExpectedState=True):
         b = self.browser
         b.click("#vm-{0}-action-kebab button".format(vmName))
@@ -89,7 +97,12 @@ class VirtualMachinesCaseHelpers:
         m = self.machine
 
         # Ensure everything has started correctly
-        m.execute("systemctl start libvirtd.service")
+        if self.getLibvirtServiceName() == "libvirtd":
+            m.execute("systemctl start libvirtd.service")
+
+        # https://bugzilla.redhat.com/show_bug.cgi?id=2002279
+        if m.image in ["fedora-35"]:
+            m.execute("systemctl start virtlogd.socket")
 
         # Wait until we can get a list of domains
         m.execute("until virsh list; do sleep 1; done")
@@ -97,7 +110,7 @@ class VirtualMachinesCaseHelpers:
         # Wait for the network 'default' to become active
         m.execute("virsh net-define /etc/libvirt/qemu/networks/default.xml || true")
         m.execute("virsh net-start default || true")
-        m.execute(r"until virsh net-info default | grep 'Active:\s*yes'; do sleep 1; done")
+        # m.execute(r"until virsh net-info default | grep 'Active:\s*yes'; do sleep 1; done")
 
     def createVm(self, name, graphics='none', ptyconsole=False, running=True, memory=128):
         m = self.machine
@@ -129,6 +142,7 @@ class VirtualMachinesCaseHelpers:
                   "--print-step 1 > /tmp/xml".format(name, memory, img, "none" if graphics == "none" else graphics + ",listen=127.0.0.1", console))
 
         m.execute("virsh define /tmp/xml")
+
         if running:
             m.execute("virsh start {}".format(name))
 
@@ -187,7 +201,7 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
             m.execute("usermod -a -G libvirt libvirtdbus")
 
         self.startLibvirt()
-        self.addCleanup(m.execute, "systemctl stop libvirtd")
+        self.addCleanup(m.execute, "systemctl stop {0}".format(self.getLibvirtServiceName()))
 
         # Stop all domains
         self.addCleanup(m.execute, "for d in $(virsh list --name); do virsh destroy $d || true; done")
@@ -205,7 +219,7 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
         self.addCleanup(m.execute, "for n in $(virsh net-list --all --name); do virsh net-destroy $n || true; done")
 
         # we don't have configuration to open the firewall for local libvirt machines, so just stop firewalld
-        m.execute("systemctl stop firewalld; systemctl reset-failed libvirtd; systemctl try-restart libvirtd")
+        m.execute("systemctl stop firewalld; systemctl reset-failed {0}; systemctl try-restart {0}".format(self.getLibvirtServiceName()))
 
         # user libvirtd instance tends to SIGABRT with "Failed to find user record for uid .." on shutdown during cleanup
         # so make sure that there are no leftover user processes that bleed into the next test

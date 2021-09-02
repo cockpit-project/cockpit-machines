@@ -26,26 +26,27 @@ import cockpit from 'cockpit';
 import store from './store.js';
 import App from './app.jsx';
 import { logDebug } from './helpers.js';
-import getLibvirtServiceNameScript from 'raw-loader!./scripts/get_libvirt_service_name.sh';
+import getLibvirtSocketNameScript from 'raw-loader!./scripts/get_libvirt_socket_name.sh';
 
-function render(name) {
+function render(serviceName, socketName) {
     ReactDOM.render(
-        <App name={name} />,
+        <App serviceName={serviceName} socketName={socketName} />,
         document.getElementById('app')
     );
 }
 
 function renderApp() {
-    return cockpit.script(getLibvirtServiceNameScript, null, { err: "message", environ: ['LC_ALL=C.UTF-8'] })
-            .then(serviceName => {
-                const match = serviceName.match(/([^\s]+)/);
-                const name = match ? match[0] : null;
-                if (name) {
+    return cockpit.script(getLibvirtSocketNameScript, null, { err: "message", environ: ['LC_ALL=C.UTF-8'] })
+            .then(socketName => {
+                const socketMatch = socketName.match(/([^\s]+)/);
+                socketName = socketMatch ? socketMatch[0] : null;
+                const serviceName = socketName.replace("socket", "service");
+                if (serviceName && socketName) {
                     // re-render app every time the state changes
-                    store.subscribe(() => render(name));
+                    store.subscribe(() => render(serviceName, socketName));
 
                     // do initial render
-                    render(name);
+                    render(serviceName, socketName);
                 }
             })
             .catch(ex => console.error(`initialize failed: getting libvirt service name returned error: "${JSON.stringify(ex)}"`));

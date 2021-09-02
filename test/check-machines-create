@@ -1530,7 +1530,7 @@ class TestMachinesCreate(VirtualMachinesCase):
                 "centos-8-stream", "rhel-8-4", "rhel-8-5", "rhel-9-0",
                 "ubuntu-2004", "ubuntu-stable", "debian-stable", "debian-testing"
             ]:
-                m.execute("systemctl restart libvirtd")
+                m.execute("systemctl restart {0}".format(self.getLibvirtServiceName()))
                 # We don't get events for shut off VMs so reload the page
                 b.reload()
                 b.enter_page('/machines')

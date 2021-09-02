@@ -30,7 +30,7 @@ import {
     UPDATE_ADD_NODE_DEVICE,
     UPDATE_ADD_STORAGE_POOL,
     UPDATE_ADD_VM,
-    UPDATE_LIBVIRT_STATE,
+    UPDATE_LIBVIRT_SERVICE,
     UPDATE_LIBVIRT_VERSION,
     UPDATE_DOMAIN_SNAPSHOTS,
     UPDATE_OS_INFO_LIST,
@@ -116,9 +116,9 @@ export function undefineVm({ connectionName, name, id, transientOnly }) {
     };
 }
 
-export function updateLibvirtState(state) {
+export function updateLibvirtService(state) {
     return {
-        type: UPDATE_LIBVIRT_STATE,
+        type: UPDATE_LIBVIRT_SERVICE,
         state,
     };
 }

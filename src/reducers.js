@@ -33,7 +33,7 @@ import {
     UPDATE_ADD_NODE_DEVICE,
     UPDATE_ADD_VM,
     UPDATE_ADD_STORAGE_POOL,
-    UPDATE_LIBVIRT_STATE,
+    UPDATE_LIBVIRT_SERVICE,
     UPDATE_LIBVIRT_VERSION,
     UPDATE_DOMAIN_SNAPSHOTS,
     UPDATE_OS_INFO_LIST,
@@ -282,6 +282,11 @@ function systemInfo(state, action) {
             activeState: 'unknown',
             unitState: 'unknown',
         },
+        libvirtSocket: {
+            name: 'unknown',
+            activeState: 'unknown',
+            unitState: 'unknown',
+        },
         libvirtVersion: 0,
         osInfoList: null,
         loggedUser: null,
@@ -294,7 +299,7 @@ function systemInfo(state, action) {
         }
         return state;
     }
-    case UPDATE_LIBVIRT_STATE: {
+    case UPDATE_LIBVIRT_SERVICE: {
         return Object.assign({}, state, { libvirtService:  Object.assign({}, state.libvirtService, action.state) });
     }
     case UPDATE_LIBVIRT_VERSION: {

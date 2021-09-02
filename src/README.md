@@ -10,7 +10,7 @@ In the vagrant:
     $ sudo virt-host-validate
     $ sudo su
     # systemctl start virtlogd.socket
-    # systemctl start libvirtd.service
+    # systemctl start libvirtd.socket # or systemctl start virtqemud.socket
     # cd /tmp
     # NAME=subVmTest1 &amp;&amp; qemu-img create -f qcow2 ${NAME}.img 256M &amp; &amp; \
         virt-install -r 128 --pxe --force --nographics --noautoconsole \

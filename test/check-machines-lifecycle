@@ -180,10 +180,11 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         self.waitVmRow("subVmTest2")
 
         if superuser:
-            # restart libvirtd
-            m.execute("systemctl stop libvirtd.service")
+            # restart libvirtd/virtqemud
+            m.execute("systemctl stop {0}.socket".format(self.getLibvirtServiceName()))
+            m.execute("systemctl stop {0}.service".format(self.getLibvirtServiceName()))
             b.wait_in_text(".pf-c-empty-state", "Virtualization service (libvirt) is not active")
-            m.execute("systemctl start libvirtd.service")
+            m.execute("systemctl start {0}.socket".format(self.getLibvirtServiceName()))
             b.wait_in_text("body", "Virtual machines")
             self.waitVmRow("subVmTest1")
             self.waitVmRow("subVmTest2")
@@ -243,7 +244,8 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
         self.allow_restart_journal_messages()
 
-        libvirtServiceName = "libvirtd.service"
+        libvirtServiceName = "{0}.service".format(self.getLibvirtServiceName())
+        libvirtSocketName = "{0}.socket".format(self.getLibvirtServiceName())
 
         # disable journal core dumps and traces for this test -- libvirt tends to crash on stopping
         core_pattern = m.execute("cat /proc/sys/kernel/core_pattern").strip()
@@ -252,26 +254,26 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
         def checkLibvirtEnabled():
             try:
-                m.execute("systemctl -q is-enabled {0}".format(libvirtServiceName))
+                m.execute("systemctl -q is-enabled {0}".format(libvirtSocketName))
                 return True
             except subprocess.CalledProcessError:  # return code != 0
                 return False
 
         def stopLibvirtSocket():
-            # newer libvirtd versions use socket activation
+            # newer libvirtd/virtqemud versions use socket activation
             # we should test that separately, but here we test only using the service unit
             if m.image not in ["rhel-8-4"]:
-                m.execute("systemctl stop libvirtd-ro.socket libvirtd.socket libvirtd-admin.socket")
-                self.addCleanup(m.execute, "systemctl start libvirtd-ro.socket libvirtd.socket libvirtd-admin.socket")
+                m.execute("systemctl stop {0}-ro.socket {0}.socket {0}-admin.socket".format(self.getLibvirtServiceName()))
+                self.addCleanup(m.execute, "systemctl start {0}-ro.socket {0}.socket {0}-admin.socket".format(self.getLibvirtServiceName()))
 
         def stopLibvirtService():
             m.execute("systemctl stop {0}".format(libvirtServiceName))
 
-        def disableLibvirtService():
-            m.execute("systemctl disable {0}".format(libvirtServiceName))
+        def disableLibvirtSocket():
+            m.execute("systemctl disable {0}".format(libvirtSocketName))
 
-        def hack_libvirtd_crash():
-            # work around libvirtd crashing when stopped too quickly; https://bugzilla.redhat.com/show_bug.cgi?id=1828207
+        def hack_libvirt_service_crash():
+            # work around libvirtd/virtqemud crashing when stopped too quickly; https://bugzilla.redhat.com/show_bug.cgi?id=1828207
             m.execute("virsh domifaddr 1")
 
         def waitEmptyState():
@@ -285,8 +287,8 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         b.wait_in_text("body", "Virtual machines")
         self.waitVmRow("subVmTest1")
 
-        disableLibvirtService()
-        hack_libvirtd_crash()
+        disableLibvirtSocket()
+        hack_libvirt_service_crash()
         stopLibvirtSocket()
         stopLibvirtService()
 
@@ -314,7 +316,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         b.wait_in_text("body", "Virtual machines")
 
         # Test that disabling the libvirt service from the UI has effect
-        hack_libvirtd_crash()
+        hack_libvirt_service_crash()
         stopLibvirtSocket()
         stopLibvirtService()
         waitEmptyState()
@@ -328,7 +330,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
         # Test that enabling the service from the CLI has effect in the UI
         m.execute("systemctl enable {0}".format(libvirtServiceName))
-        hack_libvirtd_crash()
+        hack_libvirt_service_crash()
         stopLibvirtSocket()
         stopLibvirtService()
         waitEmptyState()
@@ -348,13 +350,13 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         waitEmptyState()
         b.click(".pf-c-empty-state button.pf-m-link")  # Troubleshoot
         b.leave_page()
-        url_location = "/system/services#/{0}".format(libvirtServiceName)
+        url_location = "/system/services#/{0}".format(libvirtSocketName)
         b.wait(lambda: url_location in b.eval_js("window.location.href"))
 
-        # Make sure that unprivileged users can see the VM list when libvirtd is not running
+        # Make sure that unprivileged users can see the VM list when libvirtd/virtqemud is not running
         stopLibvirtService()
         m.execute("useradd nonadmin; echo nonadmin:foobar | chpasswd")
-        # user libvirtd instance tends to SIGABRT with "Failed to find user record for uid .." on shutdown during cleanup
+        # user libvirtd/virtqemud instance tends to SIGABRT with "Failed to find user record for uid .." on shutdown during cleanup
         # so make sure that there are no leftover user processes that bleed into the next test
         self.addCleanup(self.machine.execute, "pkill -u nonadmin; while pgrep -u nonadmin; do sleep 0.5; done")
         self.login_and_go("/machines", user="nonadmin", superuser=False)
