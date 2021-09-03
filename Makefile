@@ -113,7 +113,7 @@ $(TARFILE): $(WEBPACK_TEST) $(RPM_NAME).spec
 	tar czf $(TARFILE) --transform 's,^,cockpit-$(PACKAGE_NAME)/,' \
 		--exclude $(RPM_NAME).spec.in \
 		--exclude test/reference \
-		$$(git ls-files) $(LIB_TEST) src/lib/patternfly/*.scss package-lock.json $(RPM_NAME).spec dist/; \
+		$$(git ls-files) $(LIB_TEST) src/lib/ package-lock.json $(RPM_NAME).spec dist/; \
 
 srpm: $(TARFILE) $(RPM_NAME).spec
 	rpmbuild -bs \
