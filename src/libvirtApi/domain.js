@@ -40,7 +40,6 @@ import {
 } from '../actions/store-actions.js';
 import {
     getDiskXML,
-    getIfaceXML,
     getFilesystemXML,
     getMemoryBackingXML,
 } from '../libvirt-xml-create.js';
@@ -61,7 +60,6 @@ import {
     getDiskElemByTarget,
     getDoc,
     getElem,
-    getIfaceElemByMac,
     getSingleOptionalElem,
     parseDumpxml,
 } from '../libvirt-xml-parse.js';
@@ -138,10 +136,23 @@ export function domainAttachDisk({
     return domainAttachDevice({ connectionName, vmId, permanent, hotplug, xmlDesc });
 }
 
-export function domainAttachIface({ connectionName, vmId, mac, permanent, hotplug, sourceType, source, model }) {
-    const xmlDesc = getIfaceXML(sourceType, source, model, mac);
+export function domainAttachIface({ connectionName, vmName, mac, permanent, hotplug, sourceType, source, model }) {
+    const macArg = mac ? "mac=" + mac + "," : "";
+    const options = { err: "message" };
+    if (connectionName === "system")
+        options.superuser = "try";
 
-    return domainAttachDevice({ connectionName, vmId, permanent, hotplug, xmlDesc });
+    let update = "";
+    if (hotplug)
+        update = "--update";
+    let define = "--define";
+    if (hotplug && !permanent)
+        define = "--no-define";
+
+    return cockpit.script(
+        `virt-xml -c qemu:///${connectionName} ${vmName} --add-device --network ${macArg}type=${sourceType},source=${source},model=${model} ${define} ${update}`,
+        options
+    );
 }
 
 export function domainChangeInterfaceSettings({
@@ -168,14 +179,14 @@ export function domainChangeInterfaceSettings({
         return domainAttachIface({
             connectionName,
             hotplug,
-            vmId: objPath,
+            vmName: name,
             mac: newMacAddress,
             permanent: persistent,
             sourceType: networkType,
             source: networkSource,
             model: networkModel
         })
-                .then(() => domainDetachIface({ connectionName, mac: macAddress, objPath, live: hotplug, persistent }));
+                .then(() => domainDetachIface({ connectionName, mac: macAddress, vmName: name, live: hotplug, persistent }));
     } else {
         // Error handling inside the modal dialog this function is called
         return call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' })
@@ -445,27 +456,22 @@ export function domainDetachDisk({
             });
 }
 
-export function domainDetachIface({ connectionName, mac, id, live, persistent }) {
-    let ifaceXML;
-    let detachFlags = Enum.VIR_DOMAIN_AFFECT_CURRENT;
+export function domainDetachIface({ connectionName, mac, vmName, live, persistent }) {
+    const options = { err: "message" };
+    if (connectionName === "system")
+        options.superuser = "try";
+
+    let update = "";
     if (live)
-        detachFlags |= Enum.VIR_DOMAIN_AFFECT_LIVE;
+        update = "--update";
+    let define = "--define";
+    if (live && !persistent)
+        define = "--no-define";
 
-    return call(connectionName, id, 'org.libvirt.Domain', 'GetXMLDesc', [0], { timeout, type: 'u' })
-            .then(domXml => {
-                const getXMLFlags = Enum.VIR_DOMAIN_XML_INACTIVE;
-                ifaceXML = getIfaceElemByMac(domXml[0], mac);
-
-                return call(connectionName, id, 'org.libvirt.Domain', 'GetXMLDesc', [getXMLFlags], { timeout, type: 'u' });
-            })
-            .then(domInactiveXml => {
-                const ifaceInactiveXML = getIfaceElemByMac(domInactiveXml[0], mac);
-                if (ifaceInactiveXML && persistent)
-                    detachFlags |= Enum.VIR_DOMAIN_AFFECT_CONFIG;
-
-                return call(connectionName, id, 'org.libvirt.Domain', 'DetachDevice', [(ifaceInactiveXML && persistent) ? ifaceInactiveXML : ifaceXML, detachFlags], { timeout, type: 'su' });
-            })
-            .then(() => domainGet({ connectionName, id }));
+    return cockpit.script(
+        `virt-xml -c qemu:///${connectionName} ${vmName} --remove-device --network mac=${mac} ${define} ${update}`,
+        options
+    );
 }
 
 export function domainForceOff({
