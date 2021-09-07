@@ -286,7 +286,6 @@ function parseOsInfoList(osList) {
 /**
  * Subscribe to D-Bus signals and defines the handlers to be invoked in each occasion.
  * @param  {String} connectionName D-Bus connection type; one of session/system.
- * @param  {String} libvirtServiceName
  */
 function startEventMonitor({ connectionName }) {
     if (connectionName !== "session" && connectionName !== "system")
@@ -499,10 +498,10 @@ export function enableLibvirt({ enable, serviceName }) {
     return enable ? libvirtService.enable() : libvirtService.disable();
 }
 
-export function getApiData({ connectionName, libvirtServiceName }) {
+export function getApiData({ connectionName }) {
     if (connectionName) {
         dbusClient(connectionName);
-        startEventMonitor({ connectionName, libvirtServiceName });
+        startEventMonitor({ connectionName });
         return Promise.allSettled([
             domainGetAll({ connectionName }),
             storagePoolGetAll({ connectionName }),
@@ -515,7 +514,7 @@ export function getApiData({ connectionName, libvirtServiceName }) {
     } else {
         return unknownConnectionName()
                 .then(connectionNames => {
-                    return Promise.allSettled(connectionNames.map(conn => getApiData({ connectionName: conn, libvirtServiceName })));
+                    return Promise.allSettled(connectionNames.map(conn => getApiData({ connectionName: conn })));
                 });
     }
 }
