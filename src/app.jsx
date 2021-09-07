@@ -108,6 +108,12 @@ class AppActive extends React.Component {
             resourceHasError: {},
             notificationIdCnt: 0,
             path: cockpit.location.path,
+            /* virt-install feature support checks */
+            cloudInitSupported: undefined,
+            downloadOSSupported: undefined,
+            unattendedSupported: undefined,
+            unattendedUserLogin: undefined,
+            virtInstallAvailable: undefined,
         };
         this.onAddErrorNotification = this.onAddErrorNotification.bind(this);
         this.onDismissErrorNotification = this.onDismissErrorNotification.bind(this);
@@ -119,6 +125,23 @@ class AppActive extends React.Component {
 
         if (this.props.error)
             this.onAddErrorNotification({ text: _("Failed to fetch some resources"), detail: this.props.error });
+
+        cockpit.spawn(['which', 'virt-install'], { err: 'ignore' })
+                .then(() => {
+                    this.setState({ virtInstallAvailable: true });
+                    cockpit.spawn(['virt-install', '--install=?'], { err: 'ignore' })
+                            .then(() => this.setState({ downloadOSSupported: true }),
+                                  () => this.setState({ downloadOSSupported: false }));
+
+                    cockpit.spawn(['virt-install', '--cloud-init=?'], { err: 'ignore' })
+                            .then(() => this.setState({ cloudInitSupported: true }),
+                                  () => this.setState({ cloudInitSupported: false }));
+
+                    cockpit.spawn(['virt-install', '--unattended=?'], { err: 'ignore' })
+                            .then(options => this.setState({ unattendedSupported: true, unattendedUserLogin: options.includes('user-login') }),
+                                  () => this.setState({ unattendedSupported: false }));
+                },
+                      () => this.setState({ virtInstallAvailable: false }));
     }
 
     componentWillUnmount() {
@@ -167,12 +190,17 @@ class AppActive extends React.Component {
 
     render() {
         const { vms, config, storagePools, systemInfo, ui, networks, nodeDevices, interfaces } = store.getState();
-        const path = this.state.path;
+        const { path, cloudInitSupported, downloadOSSupported, unattendedSupported, unattendedUserLogin, virtInstallAvailable } = this.state;
         const combinedVms = [...vms, ...dummyVmsFilter(vms, ui.vms)];
         const properties = {
             networks, nodeDevices, nodeMaxMemory: config.nodeMaxMemory,
             onAddErrorNotification: this.onAddErrorNotification,
             storagePools, systemInfo, vms: combinedVms,
+            cloudInitSupported,
+            downloadOSSupported,
+            unattendedSupported,
+            unattendedUserLogin,
+            virtInstallAvailable,
         };
         const createVmAction = <CreateVmAction {...properties} mode='create' />;
         const importDiskAction = <CreateVmAction {...properties} mode='import' />;
