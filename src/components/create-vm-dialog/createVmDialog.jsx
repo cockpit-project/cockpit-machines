@@ -1103,33 +1103,9 @@ export class CreateVmAction extends React.Component {
         super(props);
         this.state = {
             showModal: false,
-            virtInstallAvailable: undefined,
-            cloudInitSupported: undefined,
-            downloadOSSupported: undefined,
-            unattendedSupported: undefined,
-            unattendedUserLogin: undefined,
         };
         this.open = this.open.bind(this);
         this.close = this.close.bind(this);
-    }
-
-    componentDidMount() {
-        cockpit.spawn(['which', 'virt-install'], { err: 'ignore' })
-                .then(() => {
-                    this.setState({ virtInstallAvailable: true });
-                    cockpit.spawn(['virt-install', '--install=?'], { err: 'ignore' })
-                            .then(() => this.setState({ downloadOSSupported: true }),
-                                  () => this.setState({ downloadOSSupported: false }));
-
-                    cockpit.spawn(['virt-install', '--cloud-init=?'], { err: 'ignore' })
-                            .then(() => this.setState({ cloudInitSupported: true }),
-                                  () => this.setState({ cloudInitSupported: false }));
-
-                    cockpit.spawn(['virt-install', '--unattended=?'], { err: 'ignore' })
-                            .then(options => this.setState({ unattendedSupported: true, unattendedUserLogin: options.includes('user-login') }),
-                                  () => this.setState({ unattendedSupported: false }));
-                },
-                      () => this.setState({ virtInstallAvailable: false }));
     }
 
     // That will stop any state setting on unmounted/unmounting components
@@ -1152,9 +1128,9 @@ export class CreateVmAction extends React.Component {
         let testdata;
         if (!this.props.systemInfo.osInfoList)
             testdata = "disabledOsInfo";
-        else if (!this.state.virtInstallAvailable)
+        else if (!this.props.virtInstallAvailable)
             testdata = "disabledVirtInstall";
-        else if (this.state.downloadOSSupported === undefined || this.state.unattendedSupported === undefined)
+        else if (this.props.downloadOSSupported === undefined || this.props.unattendedSupported === undefined)
             testdata = "disabledCheckingFeatures";
         let createButton = (
             <Button isDisabled={testdata !== undefined}
@@ -1165,7 +1141,7 @@ export class CreateVmAction extends React.Component {
                 {this.props.mode == 'create' ? _("Create VM") : _("Import VM")}
             </Button>
         );
-        if (!this.state.virtInstallAvailable)
+        if (!this.props.virtInstallAvailable)
             createButton = (
                 <Tooltip id='virt-install-not-available-tooltip'
                          content={_("virt-install package needs to be installed on the system in order to create new VMs")}>
@@ -1191,10 +1167,10 @@ export class CreateVmAction extends React.Component {
                     vms={this.props.vms}
                     osInfoList={this.props.systemInfo.osInfoList}
                     onAddErrorNotification={this.props.onAddErrorNotification}
-                    cloudInitSupported={this.state.cloudInitSupported}
-                    downloadOSSupported={this.state.downloadOSSupported}
-                    unattendedSupported={this.state.unattendedSupported}
-                    unattendedUserLogin={this.state.unattendedUserLogin}
+                    cloudInitSupported={this.props.cloudInitSupported}
+                    downloadOSSupported={this.props.downloadOSSupported}
+                    unattendedSupported={this.props.unattendedSupported}
+                    unattendedUserLogin={this.props.unattendedUserLogin}
                     loggedUser={this.props.systemInfo.loggedUser} /> }
             </>
         );
