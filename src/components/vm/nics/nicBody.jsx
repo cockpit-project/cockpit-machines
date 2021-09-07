@@ -20,9 +20,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
+    Flex,
     FormGroup,
     FormSelect, FormSelectOption,
+    Popover, PopoverPosition,
+    Text, TextContent, TextVariants,
 } from '@patternfly/react-core';
+import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 
 import cockpit from 'cockpit';
 
@@ -75,16 +79,35 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
     let networkSourceEnabled = true;
 
     // { name: 'ethernet', desc: 'Generic ethernet connection' }, Add back to the list when implemented
+    const virtualNetwork = [{
+        name: 'network',
+        desc: 'Virtual network',
+        detailHeadline: _("This is the recommended config for general guest connectivity on hosts with dynamic / wireless networking configs."),
+        detailParagraph: _("Provides a connection whose details are described by the named network definition.")
+    }];
     if (connectionName !== 'session') {
         availableNetworkTypes = [
-            { name: 'network', desc: 'Virtual network' },
-            { name: 'bridge', desc: 'Bridge to LAN' },
-            { name: 'direct', desc: 'Direct attachment' },
+            ...virtualNetwork,
+            {
+                name: 'bridge',
+                desc: 'Bridge to LAN',
+                detailHeadline: _("This is the recommended config for general guest connectivity on hosts with static wired networking configs."),
+                detailParagraph: _("Provides a bridge from the guest virtual machine directly onto the LAN. This needs a bridge device on the host with one or more physical NICs.")
+            },
+            {
+                name: 'direct',
+                desc: 'Direct attachment',
+                detailParagraph: _("Uses the macvtap driver to attach the guest's NIC directly to a specified physical interface of the host machine.")
+            },
         ];
     } else {
         availableNetworkTypes = [
-            { name: 'network', desc: 'Virtual network' },
-            { name: 'user', desc: 'Userspace SLIRP stack' },
+            ...virtualNetwork,
+            {
+                name: 'user',
+                desc: 'Userspace SLIRP stack',
+                detailParagraph: _("Provides a virtual LAN with NAT to the outside world.")
+            },
         ];
     }
 
@@ -121,7 +144,23 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
 
     return (
         <>
-            <FormGroup fieldId={`${idPrefix}-type`} label={_("Interface type")}>
+            <FormGroup fieldId={`${idPrefix}-type`}
+                       label={_("Interface type")}
+                       labelIcon={
+                           <Popover aria-label={_("Interface type help")}
+                                    position={PopoverPosition.bottom}
+                                    bodyContent={<Flex direction={{ default: 'column' }}>
+                                        {availableNetworkTypes.map(type => <TextContent key={type.name}>
+                                            <Text component={TextVariants.h4}>{type.desc}</Text>
+                                            <strong>{type.detailHeadline}</strong>
+                                            <p>{type.detailParagraph}</p>
+                                        </TextContent>)}
+                                    </Flex>}>
+                               <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
+                                   <OutlinedQuestionCircleIcon />
+                               </button>
+                           </Popover>
+                       }>
                 <FormSelect id={`${idPrefix}-type`}
                             onChange={value => onValueChanged('networkType', value)}
                             data-value={defaultNetworkType}
