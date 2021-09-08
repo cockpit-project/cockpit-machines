@@ -1,0 +1,82 @@
+/*
+ * This file is part of Cockpit.
+ *
+ * Copyright (C) 2021 Red Hat, Inc.
+ *
+ * Cockpit is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * Cockpit is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import cockpit from 'cockpit';
+import React, { useState } from 'react';
+import { Button, Form, FormGroup, Modal, TextInput } from '@patternfly/react-core';
+
+import { ModalError } from 'cockpit-components-inline-notification.jsx';
+
+import { isObjectEmpty } from '../../helpers.js';
+import { domainRename } from '../../libvirtApi/domain.js';
+
+const _ = cockpit.gettext;
+
+export const RenameDialog = ({ vmName, vmId, connectionName, toggleModal }) => {
+    const [newName, setNewName] = useState(vmName);
+    const [error, dialogErrorSet] = useState({});
+    const [submitted, setSubmitted] = useState(false);
+
+    function onRename() {
+        setSubmitted(true);
+
+        if (!newName)
+            return;
+
+        return domainRename({ connectionName, id: vmId, newName: newName })
+                .then(toggleModal, exc => {
+                    dialogErrorSet({ dialogError: cockpit.format(_("Failed to rename VM $0"), vmName), dialogErrorDetail: exc.message });
+                });
+    }
+
+    return (
+        <Modal position="top" variant="small" isOpen onClose={toggleModal}
+           title={cockpit.format(_("Rename VM $0"), vmName)}
+           footer={
+               <>
+                   {!isObjectEmpty(error) && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.dialogErrorDetail} />}
+                   <Button variant='primary'
+                           id="rename-dialog-confirm"
+                           isDisabled={!newName}
+                           onClick={onRename}>
+                       {_("Rename")}
+                   </Button>
+                   <Button variant='link' onClick={toggleModal}>
+                       {_("Cancel")}
+                   </Button>
+               </>
+           }>
+            <Form onSubmit={e => {
+                e.preventDefault();
+                onRename();
+            }}
+            isHorizontal>
+                <FormGroup label={_("New name")}
+                           fieldId="rename-dialog-new-name"
+                           helperTextInvalid={_("New name must not be empty")}
+                           validated={submitted && !newName ? "error" : "default"}>
+                    <TextInput id='rename-dialog-new-name'
+                               validated={submitted && !newName ? "error" : "default"}
+                               value={newName}
+                               onChange={setNewName} />
+                </FormGroup>
+            </Form>
+        </Modal>
+    );
+};

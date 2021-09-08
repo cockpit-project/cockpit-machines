@@ -237,6 +237,29 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         b.wait_in_text(".pf-c-popover", "VM subVmTest2 failed to start")
         b.click('#vm-subVmTest2-state button[aria-label=label-close-button]')
 
+    def testRename(self):
+        b = self.browser
+
+        self.createVm("old", running=False)
+
+        self.login_and_go("/machines")
+
+        b.wait_in_text("body", "Virtual machines")
+
+        self.performAction("old", "rename")
+
+        b.set_input_text("#rename-dialog-new-name", "new")
+        b.click("#rename-dialog-confirm")
+        self.waitVmRow("new")
+        self.waitVmRow("old-name", "system", False)
+
+        # Rename to itself and expect error
+        self.performAction("new", "rename")
+
+        b.set_input_text("#rename-dialog-new-name", "new")
+        b.click("#rename-dialog-confirm")
+        b.wait_in_text(".pf-c-modal-box__footer .pf-c-alert.pf-m-danger", "Can't rename domain to itself")
+
     def testLibvirt(self):
         b = self.browser
         m = self.machine

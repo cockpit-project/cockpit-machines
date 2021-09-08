@@ -85,6 +85,7 @@ export const domainCanRun = (vmState, hasInstallPhase) => !hasInstallPhase && vm
 export const domainCanSendNMI = (vmState) => domainCanReset(vmState);
 export const domainCanShutdown = (vmState) => domainCanReset(vmState);
 export const domainCanPause = (vmState) => vmState == 'running';
+export const domainCanRename = (vmState) => vmState == 'shut off';
 export const domainCanResume = (vmState) => vmState == 'paused';
 export const domainIsRunning = (vmState) => domainCanReset(vmState);
 export const domainSerialConsoleCommand = ({ vm }) => vm.displays.pty ? ['virsh', ...VMS_CONFIG.Virsh.connections[vm.connectionName].params, 'console', vm.name] : false;
@@ -627,6 +628,14 @@ export function domainReboot({
     id: objPath
 }) {
     return call(connectionName, objPath, 'org.libvirt.Domain', 'Reboot', [0], { timeout, type: 'u' });
+}
+
+export function domainRename({
+    connectionName,
+    id: objPath,
+    newName,
+}) {
+    return call(connectionName, objPath, 'org.libvirt.Domain', 'Rename', [newName, 0], { timeout, type: 'su' });
 }
 
 export function domainResume({
