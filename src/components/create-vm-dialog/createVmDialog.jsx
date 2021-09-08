@@ -1045,9 +1045,7 @@ class CreateVmModal extends React.Component {
                     minimumMemory={this.state.minimumMemory}
                 />
 
-                {this.state.sourceType != PXE_SOURCE &&
-                 this.state.sourceType != EXISTING_DISK_IMAGE_SOURCE &&
-                 this.state.sourceType != CLOUD_IMAGE &&
+                {this.state.sourceType == DOWNLOAD_AN_OS &&
                  this.props.unattendedSupported &&
                  <>
                      <UnattendedRow
