@@ -60,7 +60,6 @@ class TestMachinesFilesystems(VirtualMachinesCase):
         b.click(".pf-c-expandable-section__toggle")
         b.wait_visible("#vm-subVmTest1-filesystems-modal-xattr:not(:checked)")
         b.set_checked("#vm-subVmTest1-filesystems-modal-xattr", True)
-        b.wait_visible("#vm-subVmTest1-filesystems-modal-file-backed")
 
         b.click("#vm-subVmTest1-filesystems-modal-add")
         b.wait_visible("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir1/-dir1']")
@@ -81,7 +80,6 @@ class TestMachinesFilesystems(VirtualMachinesCase):
         b.set_input_text("#vm-subVmTest1-filesystems-modal-mountTag", "dir2")
         b.click(".pf-c-expandable-section__toggle")
         b.set_checked("#vm-subVmTest1-filesystems-modal-xattr", False)
-        b.wait_not_present("#vm-subVmTest1-filesystems-modal-file-backed")
 
         b.click("#vm-subVmTest1-filesystems-modal-add")
         b.wait_visible("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir2/-dir2']")

@@ -300,15 +300,9 @@ export function getMemoryBackingXML(type, memory) {
     accessElem.setAttribute('mode', 'shared');
     memoryBackingElem.appendChild(accessElem);
 
-    if (type == "hugepages") {
-        const hugepagesElem = doc.createElement('hugepages');
-        const pageElem = doc.createElement('page');
-        pageElem.setAttribute('size', memory);
-        pageElem.setAttribute('unit', 'KiB');
-
-        hugepagesElem.appendChild(pageElem);
-        memoryBackingElem.appendChild(hugepagesElem);
-    }
+    const sourceElem = doc.createElement('source');
+    sourceElem.setAttribute('type', type);
+    memoryBackingElem.appendChild(sourceElem);
 
     doc.appendChild(memoryBackingElem);
 
