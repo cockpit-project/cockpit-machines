@@ -24,11 +24,10 @@ import {
     CodeBlock, CodeBlockCode,
     ExpandableSection,
     Form, FormGroup,
-    Grid,
     List, ListItem,
     Modal,
     Popover,
-    Radio, TextInput, Tooltip
+    TextInput, Tooltip
 } from "@patternfly/react-core";
 import { HelpIcon } from "@patternfly/react-icons";
 
@@ -92,7 +91,7 @@ export const VmFilesystemsCard = ({ connectionName, vmName, vmState, objPath, fi
     );
 };
 
-export const VmFilesystemActions = ({ connectionName, memory, memoryBacking, objPath, vmName, vmState }) => {
+export const VmFilesystemActions = ({ connectionName, memory, objPath, vmName, vmState }) => {
     const [isOpen, setIsOpen] = useState(false);
     const idPrefix = `${vmId(vmName)}-filesystems`;
     const addButton = (
@@ -110,7 +109,6 @@ export const VmFilesystemActions = ({ connectionName, memory, memoryBacking, obj
             {isOpen &&
             <VmFilesystemAddModal connectionName={connectionName}
                                   memory={memory}
-                                  memoryBacking={memoryBacking}
                                   objPath={objPath}
                                   vmName={vmName}
                                   vmState={vmState}
@@ -119,10 +117,9 @@ export const VmFilesystemActions = ({ connectionName, memory, memoryBacking, obj
     );
 };
 
-const VmFilesystemAddModal = ({ connectionName, memory, memoryBacking, objPath, setIsOpen, vmName, vmState }) => {
+const VmFilesystemAddModal = ({ connectionName, memory, objPath, setIsOpen, vmName, vmState }) => {
     const [additionalOptionsExpanded, setAdditionalOptionsExpanded] = useState(false);
     const [dialogError, setDialogError] = useState();
-    const [memoryBackingType, setMemoryBackingType] = useState("file");
     const [mountTag, setMountTag] = useState("");
     const [source, setSource] = useState("");
     const [validationFailed, setValidationFailed] = useState({});
@@ -142,7 +139,7 @@ const VmFilesystemAddModal = ({ connectionName, memory, memoryBacking, objPath, 
         if (Object.getOwnPropertyNames(validationFailed).length == 0) {
             domainSetMemoryBacking({
                 connectionName, objPath,
-                type: memoryBackingType,
+                type: "memfd",
                 memory
             })
                     .then(() => domainCreateFilesystem({
@@ -241,34 +238,14 @@ const VmFilesystemAddModal = ({ connectionName, memory, memoryBacking, objPath, 
                 <ExpandableSection toggleText={ additionalOptionsExpanded ? _("Hide additional options") : _("Show additional options")}
                                    onToggle={() => setAdditionalOptionsExpanded(!additionalOptionsExpanded)}
                                    isExpanded={additionalOptionsExpanded}>
-                    <Grid hasGutter>
-                        {!memoryBacking &&
-                        <FormGroup hasNoPaddingTop
-                                   helperText={_("Using virtiofs requires setting up shared memory")}
-                                   fieldId={`${idPrefix}-modal-file-backed`}
-                                   label={_("Memory backing")}>
-                            <Radio id={`${idPrefix}-modal-file-backed`}
-                                   isChecked={memoryBackingType == "file" }
-                                   label={_("File backed")}
-                                   name="memoryBackingType"
-                                   onChange={(_, event) => setMemoryBackingType(event.currentTarget.value)}
-                                   value="file" />
-                            <Radio id={`${idPrefix}-modal-hugepages`}
-                                   isChecked={memoryBackingType == "hugepages" }
-                                   label={_("Hugepages")}
-                                   name="memoryBackingType"
-                                   onChange={(_, event) => setMemoryBackingType(event.currentTarget.value)}
-                                   value="hugepages" />
-                        </FormGroup>}
-                        <FormGroup hasNoPaddingTop
-                                   fieldId={`${idPrefix}-modal-xattr`}
-                                   label="Extended attributes">
-                            <Checkbox id={`${idPrefix}-modal-xattr`}
-                                      isChecked={xattr}
-                                      label={_("Enable/disable extended attributes (xattr) on files and directories")}
-                                      onChange={xattr => setXattr(xattr)} />
-                        </FormGroup>
-                    </Grid>
+                    <FormGroup hasNoPaddingTop
+                               fieldId={`${idPrefix}-modal-xattr`}
+                               label="Extended attributes">
+                        <Checkbox id={`${idPrefix}-modal-xattr`}
+                                  isChecked={xattr}
+                                  label={_("Enable/disable extended attributes (xattr) on files and directories")}
+                                  onChange={xattr => setXattr(xattr)} />
+                    </FormGroup>
                 </ExpandableSection>
             </Form>
         </Modal>
