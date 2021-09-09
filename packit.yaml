@@ -6,7 +6,7 @@ downstream_package_name: cockpit-machines
 actions:
   post-upstream-clone: make cockpit-machines.spec
   create-archive:
-    - make dist-gzip DOWNLOAD_DIST_OPTIONS=--wait FORCE_DOWNLOAD_DIST=1
+    - make dist DOWNLOAD_DIST_OPTIONS=--wait FORCE_DOWNLOAD_DIST=1
     - find -name 'cockpit-machines-*.tar.gz'
 jobs:
   - job: tests
