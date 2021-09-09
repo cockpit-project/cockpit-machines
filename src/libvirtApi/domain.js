@@ -658,10 +658,12 @@ export function domainSetCpuMode({
     model,
 }) {
     const modelStr = model ? `,model=${model}` : "";
+    const opts = { err: "message", environ: ['LC_ALL=C'] };
+    if (connectionName === 'system')
+        opts.superuser = 'try';
 
     return cockpit.script(
-        `virt-xml -c qemu:///${connectionName} --cpu clearxml=true,mode=${mode}${modelStr} ${name} --edit`,
-        { superuser: "try", err: "message" }
+        `virt-xml -c qemu:///${connectionName} --cpu clearxml=true,mode=${mode}${modelStr} ${name} --edit`, opts
     );
 }
 
