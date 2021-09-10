@@ -20,13 +20,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
+    Button,
     Flex,
     FormGroup,
     FormSelect, FormSelectOption,
     Popover, PopoverPosition,
     Text, TextContent, TextVariants,
 } from '@patternfly/react-core';
-import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
+import { ExternalLinkSquareAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 
 import cockpit from 'cockpit';
 
@@ -97,7 +98,20 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
             {
                 name: 'direct',
                 desc: 'Direct attachment',
-                detailParagraph: _("Uses the macvtap driver to attach the guest's NIC directly to a specified physical interface of the host machine.")
+                detailHeadline: _("This is the recommended config for high performance or enhanced security."),
+                detailParagraph: _("In the default 'vepa' mode, switching is offloaded to the external switch. If the switch is not VEPA-capable, communication between guest virtual machines, or between a guests and the host is not possible."),
+                externalDocs: (
+                    <Button isInline
+                            className='ct-external-docs-link'
+                            variant="link"
+                            component="a"
+                            icon={<ExternalLinkSquareAltIcon />}
+                            iconPosition="right"
+                            target="__blank"
+                            href="https://libvirt.org/formatdomain.html#direct-attachment-to-physical-interface">
+                        {_("more info")}
+                    </Button>
+                )
             },
         ];
     } else {
@@ -149,11 +163,15 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
                        labelIcon={
                            <Popover aria-label={_("Interface type help")}
                                     position={PopoverPosition.bottom}
+                                    enableFlip={false}
                                     bodyContent={<Flex direction={{ default: 'column' }}>
                                         {availableNetworkTypes.map(type => <TextContent key={type.name}>
                                             <Text component={TextVariants.h4}>{type.desc}</Text>
                                             <strong>{type.detailHeadline}</strong>
-                                            <p>{type.detailParagraph}</p>
+                                            <p>
+                                                {type.detailParagraph}
+                                                {type.externalDocs}
+                                            </p>
                                         </TextContent>)}
                                     </Flex>}>
                                <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
