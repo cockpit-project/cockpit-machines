@@ -33,10 +33,12 @@ import {
 import { CloneDialog } from './vmCloneDialog.jsx';
 import { DeleteDialog } from "./deleteDialog.jsx";
 import { MigrateDialog } from './vmMigrateDialog.jsx';
+import { RenameDialog } from './vmRenameDialog.jsx';
 import {
     domainCanDelete,
     domainCanInstall,
     domainCanReset,
+    domainCanRename,
     domainCanResume,
     domainCanRun,
     domainCanPause,
@@ -59,6 +61,7 @@ const VmActions = ({ vm, storagePools, onAddErrorNotification, isDetailsPage }) 
     const [isActionOpen, setIsActionOpen] = useState(false);
     const [showDeleteDialog, toggleDeleteModal] = useState(false);
     const [showMigrateDialog, toggleMigrateDialog] = useState(false);
+    const [showRenameDialog, toggleRenameDialog] = useState(false);
     const [showCloneDialog, toggleCloneModal] = useState(false);
     const [operationInProgress, setOperationInProgress] = useState(false);
     const [prevVmState, setPrevVmState] = useState(vm.state);
@@ -343,6 +346,28 @@ const VmActions = ({ vm, storagePools, onAddErrorNotification, isDetailsPage }) 
         );
     }
 
+    if (domainCanRename(state)) {
+        dropdownItems.push(
+            <DropdownItem key={`${id}-rename`}
+                          id={`${id}-rename`}
+                          onClick={() => toggleRenameDialog(true)}>
+                {_("Rename")}
+            </DropdownItem>
+        );
+        dropdownItems.push(<DropdownSeparator key="separator-rename" />);
+    }
+
+    let renameAction;
+    if (showRenameDialog) {
+        renameAction = (
+            <RenameDialog key='action-rename'
+                          vmName={vm.name}
+                          vmId={vm.id}
+                          connectionName={vm.connectionName}
+                          toggleModal={() => toggleRenameDialog(!showRenameDialog)} />
+        );
+    }
+
     let deleteAction = null;
     if (state !== undefined && domainCanDelete(state, vm.id)) {
         if (!vm.persistent) {
@@ -377,6 +402,7 @@ const VmActions = ({ vm, storagePools, onAddErrorNotification, isDetailsPage }) 
             {deleteAction}
             {cloneAction}
             {migrateAction}
+            {renameAction}
             <Dropdown onSelect={() => setIsActionOpen(!isActionOpen)}
                       id={`${id}-action-kebab`}
                       toggle={<KebabToggle isDisabled={vm.isUi} onToggle={isOpen => setIsActionOpen(isOpen)} />}
