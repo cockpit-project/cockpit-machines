@@ -76,7 +76,12 @@ download-po: $(WEBLATE_REPO)
 	sed -e 's/%{VERSION}/$(VERSION)/g' $< > $@
 
 $(WEBPACK_TEST): $(LIB_TEST) $(shell find src/ -type f) package.json webpack.config.js
-	test/download-dist $${DOWNLOAD_DIST_OPTIONS:-} || ($(MAKE) $(NODE_MODULES_TEST) && NODE_ENV=$(NODE_ENV) npm run build)
+	test/download-dist $${DOWNLOAD_DIST_OPTIONS:-} || \
+	    if [ -z "$$FORCE_DOWNLOAD_DIST" ]; then \
+		($(MAKE) $(NODE_MODULES_TEST) && NODE_ENV=$(NODE_ENV) npm run build); \
+	    else \
+		exit 1; \
+	    fi
 
 watch:
 	NODE_ENV=$(NODE_ENV) npm run watch
