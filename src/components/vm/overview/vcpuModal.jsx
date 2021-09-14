@@ -156,7 +156,6 @@ export class VCPUModal extends React.Component {
         const { close, vm } = this.props;
 
         return domainSetVCPUSettings({
-            id: vm.id,
             name: vm.name,
             connectionName: vm.connectionName,
             max: this.state.max,

@@ -340,40 +340,6 @@ export function updateMaxMemory(domXml, maxMemory) {
     return s.serializeToString(doc);
 }
 
-export function updateVCPUSettings(domXml, count, max, sockets, cores, threads) {
-    const s = new XMLSerializer();
-    const doc = getDoc(domXml);
-    const domainElem = doc.firstElementChild;
-    if (!domainElem)
-        throw new Error("updateVCPUSettings: domXML has no domain element");
-
-    let cpuElem = domainElem.getElementsByTagName("cpu")[0];
-    if (!cpuElem) {
-        cpuElem = doc.createElement("cpu");
-        domainElem.appendChild(cpuElem);
-    }
-    let topologyElem = cpuElem.getElementsByTagName("topology")[0];
-    if (!topologyElem) {
-        topologyElem = doc.createElement("topology");
-        cpuElem.appendChild(topologyElem);
-    }
-    topologyElem.setAttribute("sockets", sockets);
-    topologyElem.setAttribute("threads", threads);
-    topologyElem.setAttribute("cores", cores);
-
-    let vcpuElem = domainElem.getElementsByTagName("vcpu")[0];
-    if (!vcpuElem) {
-        vcpuElem = doc.createElement("vcpu");
-        domainElem.appendChild(vcpuElem);
-        vcpuElem.setAttribute("placement", "static");
-    }
-
-    vcpuElem.setAttribute("current", count);
-    vcpuElem.textContent = max;
-
-    return s.serializeToString(doc);
-}
-
 export function deleteFilesystem(domXml, target) {
     const s = new XMLSerializer();
     const doc = getDoc(domXml);
