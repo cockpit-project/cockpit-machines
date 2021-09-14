@@ -388,6 +388,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.click("#vm-subVmTest1-cpu-model button")
         b.select_from_dropdown("#cpu-model-select-group select", "host-passthrough")
         b.click("#cpu-config-dialog-apply")
+        b.wait_visible("#cpu-tooltip")
 
         # Change vCPUs setting
         b.click("#vm-subVmTest1-vcpus-count button")  # Open dialog
