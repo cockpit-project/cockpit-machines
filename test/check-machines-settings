@@ -373,6 +373,7 @@ class TestMachinesSettings(VirtualMachinesCase):
 
     def testMultipleSettings(self):
         b = self.browser
+        m = self.machine
 
         self.createVm("subVmTest1")
 
@@ -397,6 +398,14 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         # Shut off domain
         self.performAction("subVmTest1", "forceOff")
+
+        dom_xml = "virsh -c qemu:///system dumpxml subVmTest1"
+
+        xmllint_elem = "{0} | xmllint --xpath 'string(//domain/cpu/@mode)' - 2>&1 || true".format(dom_xml)
+        wait(lambda: "host-passthrough" in m.execute(xmllint_elem).strip())
+
+        xmllint_elem = "{0} | xmllint --xpath 'string(//domain/vcpu)' - 2>&1 || true".format(dom_xml)
+        wait(lambda: "3" in m.execute(xmllint_elem).strip())
 
         # Check both changes have been applied
         b.wait_in_text("#vm-subVmTest1-cpu-model", "host passthrough")
