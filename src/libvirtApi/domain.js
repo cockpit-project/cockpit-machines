@@ -69,7 +69,6 @@ import {
     updateDisk,
     updateMaxMemory,
     updateNetworkIface,
-    updateVCPUSettings,
 } from '../libvirt-xml-update.js';
 import { storagePoolRefresh } from './storagePool.js';
 import { snapshotGetAll } from './snapshot.js';
@@ -758,7 +757,6 @@ export function domainSetOSFirmware({ connectionName, objPath, loaderType }) {
 
 export function domainSetVCPUSettings ({
     name,
-    id: objPath,
     connectionName,
     count,
     max,
@@ -767,11 +765,13 @@ export function domainSetVCPUSettings ({
     threads,
     isRunning
 }) {
-    return call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' })
-            .then(domXml => {
-                const updatedXML = updateVCPUSettings(domXml[0], count, max, sockets, cores, threads);
-                return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [updatedXML], { timeout, type: 's' });
-            });
+    const opts = { err: "message", environ: ['LC_ALL=C.UTF-8'] };
+    if (connectionName === 'system')
+        opts.superuser = 'try';
+
+    return cockpit.spawn([
+        'virt-xml', '-c', `qemu:///${connectionName}`, '--vcpu', `${max},vcpu.current=${count},sockets=${sockets},cores=${cores},threads=${threads}`, name, '--edit'
+    ], opts);
 }
 
 export function domainShutdown({
