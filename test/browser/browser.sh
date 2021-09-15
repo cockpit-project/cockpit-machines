@@ -12,11 +12,17 @@ LOGS="$(pwd)/logs"
 mkdir -p "$LOGS"
 chmod a+w "$LOGS"
 
-# install browser; on RHEL, use firefox-nightly as chromium broke CDP on rhel-9
-# Install firefox to pull in all the deps
-dnf -y install firefox
-curl --location 'https://download.mozilla.org/?product=firefox-nightly-latest-ssl&os=linux64&lang=en-US' | tar -C /usr/local/lib/ -xj
-ln -s /usr/local/lib/firefox/firefox /usr/local/bin/
+# install browser; on RHEL/CentOS, use firefox
+if grep -Eq 'ID=.*(rhel|centos)' /etc/os-release; then
+    # Install firefox to pull in all the deps
+    dnf install -y firefox
+    curl --location 'https://download.mozilla.org/?product=firefox-nightly-latest-ssl&os=linux64&lang=en-US' | tar -C /usr/local/lib/ -xj
+    ln -s /usr/local/lib/firefox/firefox /usr/local/bin/
+    TEST_BROWSER=firefox
+else
+    dnf install -y chromium
+    TEST_BROWSER=chromium
+fi
 
 #HACK: unbreak rhel-9-0's default choice of 999999999 rounds, see https://bugzilla.redhat.com/show_bug.cgi?id=1993919
 sed -ie 's/#SHA_CRYPT_MAX_ROUNDS 5000/SHA_CRYPT_MAX_ROUNDS 5000/' /etc/login.defs
@@ -57,7 +63,7 @@ firewall-cmd --add-service=cockpit --permanent
 firewall-cmd --add-service=cockpit
 
 # Run tests as unprivileged user
-su - -c "env TEST_BROWSER=firefox SOURCE=$SOURCE LOGS=$LOGS $TESTS/run-test.sh" runtest
+su - -c "env TEST_BROWSER=$TEST_BROWSER SOURCE=$SOURCE LOGS=$LOGS $TESTS/run-test.sh" runtest
 
 RC=$(cat $LOGS/exitcode)
 exit ${RC:-1}
