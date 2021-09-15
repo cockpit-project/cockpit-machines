@@ -375,7 +375,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         b = self.browser
         m = self.machine
 
-        self.createVm("subVmTest1")
+        args = self.createVm("subVmTest1")
 
         self.login_and_go("/machines")
         b.wait_in_text("body", "Virtual machines")
@@ -383,6 +383,8 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         b.wait_in_text("#vm-subVmTest1-state", "Running")
         self.goToVmPage("subVmTest1")
+
+        wait(lambda: "login as 'cirros' user" in m.execute("cat {0}".format(args["logfile"])), delay=3)
 
         # Change CPU model setting
         b.click("#vm-subVmTest1-cpu-model button")
