@@ -110,7 +110,7 @@ export class AddNIC extends React.Component {
 
         domainAttachIface({
             connectionName: vm.connectionName,
-            vmId: vm.id,
+            vmName: vm.name,
             model: this.state.networkModel,
             sourceType: this.state.networkType,
             source: this.state.networkSource,

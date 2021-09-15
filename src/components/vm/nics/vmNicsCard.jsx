@@ -359,7 +359,7 @@ export class VmNetworkTab extends React.Component {
                         objectType: _("network interface"),
                         objectName: network.mac,
                         onClose: () => this.setState({ deleteDialogProps: undefined }),
-                        deleteHandler: () => domainDetachIface({ connectionName: vm.connectionName, mac: network.mac, id: vm.id, live: vm.state === 'running', persistent: vm.persistent }),
+                        deleteHandler: () => domainDetachIface({ connectionName: vm.connectionName, mac: network.mac, vmName: vm.name, live: vm.state === 'running', persistent: vm.persistent }),
                     };
                     const deleteNICAction = (
                         <DeleteResourceButton objectId={`${id}-iface-${networkId}`}

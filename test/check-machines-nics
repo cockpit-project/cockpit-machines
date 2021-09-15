@@ -140,6 +140,14 @@ class TestMachinesNICs(VirtualMachinesCase):
         b.wait_not_present("#vm-subVmTest1-network-1-mac")
 
     def testNICAdd(self):
+        def get_next_mac(last_mac):
+            parts = last_mac.split(':')
+            suffix = parts[-1]
+            new_suffix = format(int(suffix, 16) + 1, "x").zfill(2)
+            parts[-1] = new_suffix
+            new_mac = ':'.join(parts)
+            return new_mac
+
         b = self.browser
         m = self.machine
 
@@ -153,11 +161,13 @@ class TestMachinesNICs(VirtualMachinesCase):
 
         self.goToVmPage("subVmTest1")
 
+        mac_address = "52:54:00:a5:f8:00"
         # Test a error message handling
         self.NICAddDialog(
             self,
             source_type="network",
             source="test_network4",
+            mac=mac_address,
             xfail=True,
             xfail_error="Network interface settings could not be saved",  # fail because network 'test_network4' is not active
         ).execute()
@@ -170,29 +180,37 @@ class TestMachinesNICs(VirtualMachinesCase):
         # No NICs present
         b.wait_visible("#vm-subVmTest1-add-iface-button")  # open the Network Interfaces subtab
 
+        mac_address = get_next_mac(mac_address)
         self.NICAddDialog(
             self,
             source_type="network",
             source="test_network",
+            mac=mac_address,
             pixel_test_tag="vm-add-nic-modal"
         ).execute()
 
         # Test direct
+        mac_address = get_next_mac(mac_address)
         self.NICAddDialog(
             self,
+            mac=mac_address,
             source_type="direct",
         ).execute()
 
         # Test Bridge
+        mac_address = get_next_mac(mac_address)
         self.NICAddDialog(
             self,
+            mac=mac_address,
             source_type="bridge",
             source="virbr0",
         ).execute()
 
         # Test model
+        mac_address = get_next_mac(mac_address)
         self.NICAddDialog(
             self,
+            mac=mac_address,
             model="e1000e",
         ).execute()
 
@@ -203,8 +221,10 @@ class TestMachinesNICs(VirtualMachinesCase):
         wait(lambda: "login as 'cirros' user." in self.machine.execute("cat {0}".format(args["logfile"])), delay=3)
 
         # Test permanent attachment to running VM
+        mac_address = get_next_mac(mac_address)
         self.NICAddDialog(
             self,
+            mac=mac_address,
             source_type="network",
             source="test_network",
             permanent=True,
@@ -213,11 +233,12 @@ class TestMachinesNICs(VirtualMachinesCase):
         # Test NIC attaching to non-persistent VM
         m.execute("virsh dumpxml --inactive subVmTest1 > /tmp/subVmTest1.xml; virsh undefine subVmTest1")
         b.wait_visible("div[data-vm-transient=\"true\"]")
+        mac_address = get_next_mac(mac_address)
         self.NICAddDialog(
             self,
             source_type="network",
             source="test_network",
-            mac="52:54:00:a5:f8:c1",
+            mac=mac_address,
             nic_num=3,
             persistent_vm=False,
         ).execute()
@@ -227,13 +248,18 @@ class TestMachinesNICs(VirtualMachinesCase):
         b.click("#vm-subVmTest1-forceOff")
         b.wait_in_text("#vm-subVmTest1-state", "Shut off")
 
+        mac_address = get_next_mac(mac_address)
         self.NICAddDialog(
             self,
+            mac=mac_address,
             remove=False,
         ).execute()
 
+        mac_address = get_next_mac(mac_address)
         self.NICAddDialog(
             self,
+            mac=mac_address,
+            nic_num=3,
             remove=False,
         ).execute()
 
@@ -439,7 +465,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         def __init__(
             # We have always have to specify mac and source_type to identify the device in xml and $virsh detach-interface
             self, test_obj, source_type="direct", source=None, model=None, nic_num=2,
-            permanent=False, mac="52:54:00:a5:f8:c0", remove=True, persistent_vm=True,
+            permanent=False, mac=None, remove=True, persistent_vm=True,
             xfail=False, xfail_error=None, pixel_test_tag=None
         ):
             self.source_type = source_type
