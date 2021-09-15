@@ -100,20 +100,20 @@ class TestMachinesNICs(VirtualMachinesCase):
             mac_address = b.text("#vm-subVmTest1-network-1-mac")
 
             b.wait_in_text("#vm-subVmTest1-network-1-state", "up")
-            b.wait_in_text("#delete-vm-subVmTest1-iface-1 + button", "Unplug")
+            b.wait_in_text("#vm-subVmTest1-iface-1-unplug", "Unplug")
 
             # Click "Unplug"
-            b.click("#delete-vm-subVmTest1-iface-1 + button")
+            b.click("#vm-subVmTest1-iface-1-unplug")
 
             b.wait_in_text("#vm-subVmTest1-network-1-state", "down")
-            b.wait_in_text("#delete-vm-subVmTest1-iface-1 + button", "Plug")
+            b.wait_in_text("#vm-subVmTest1-iface-1-plug", "Plug")
             wait(lambda: "down" in m.execute(f"virsh domif-getlink subVmTest1 {mac_address}"))
 
             # Click "plug"
-            b.click("#delete-vm-subVmTest1-iface-1 + button")
+            b.click("#vm-subVmTest1-iface-1-plug")
 
             b.wait_in_text("#vm-subVmTest1-network-1-state", "up")
-            b.wait_in_text("#delete-vm-subVmTest1-iface-1 + button", "Unplug")
+            b.wait_in_text("#vm-subVmTest1-iface-1-unplug", "Unplug")
             wait(lambda: "up" in m.execute(f"virsh domif-getlink subVmTest1 {mac_address}"))
 
         plugAndUnplugNICs()
