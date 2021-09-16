@@ -21,6 +21,7 @@ import PropTypes from 'prop-types';
 import {
     DescriptionList, DescriptionListGroup, DescriptionListTerm, DescriptionListDescription,
     Flex, FlexItem,
+    Switch,
     Text, TextVariants,
 } from '@patternfly/react-core';
 import cockpit from 'cockpit';
@@ -56,15 +57,6 @@ const DHCPHost = (host, index, family, idPrefix) => {
 export class NetworkOverviewTab extends React.Component {
     constructor(props) {
         super(props);
-
-        this.onAutostartChanged = this.onAutostartChanged.bind(this);
-    }
-
-    onAutostartChanged() {
-        const { network } = this.props;
-        const autostart = !network.autostart;
-
-        networkChangeAutostart({ network, autostart });
     }
 
     render() {
@@ -93,13 +85,10 @@ export class NetworkOverviewTab extends React.Component {
                         {network.persistent && <DescriptionListGroup>
                             <DescriptionListTerm> {_("Autostart")} </DescriptionListTerm>
                             <DescriptionListDescription>
-                                <div className='checkbox-inline'>
-                                    <input id={`${idPrefix}-autostart-checkbox`}
-                                           type="checkbox"
-                                           checked={network.autostart}
-                                           onChange={this.onAutostartChanged} />
-                                    {_("Run when host boots")}
-                                </div>
+                                <Switch id={`${idPrefix}-autostart`}
+                                        isChecked={network.autostart}
+                                        onChange={autostart => networkChangeAutostart({ network: this.props.network, autostart })}
+                                        label={_("Run when host boots")} />
                             </DescriptionListDescription>
                         </DescriptionListGroup>}
 
