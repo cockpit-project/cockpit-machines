@@ -22,7 +22,7 @@ Summary:        Cockpit user interface for virtual machines
 License:        LGPLv2+ and MIT
 URL:            https://github.com/cockpit-project/cockpit-machines
 
-Source0:        https://github.com/cockpit-project/cockpit-machines/releases/download/%{version}/cockpit-machines-%{version}.tar.xz
+Source0:        https://github.com/cockpit-project/%{name}/releases/download/%{version}/%{name}-%{version}.tar.xz
 BuildArch:      noarch
 BuildRequires:  libappstream-glib
 BuildRequires:  make
@@ -40,13 +40,13 @@ Recommends: virt-install
 Recommends: libosinfo
 Recommends: python3-gobject-base
 
-%description -n cockpit-machines
+%description
 Cockpit component for managing virtual machines.
 
 If "virt-install" is installed, you can also create new virtual machines.
 
 %prep
-%setup -q -n cockpit-machines
+%setup -q -n %{name}
 
 %build
 # Nothing to build
