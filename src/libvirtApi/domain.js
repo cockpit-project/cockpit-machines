@@ -676,9 +676,9 @@ export function domainSetCpuMode({
     if (connectionName === 'system')
         opts.superuser = 'try';
 
-    return cockpit.script(
-        `virt-xml -c qemu:///${connectionName} --cpu clearxml=true,mode=${mode}${modelStr} ${name} --edit`, opts
-    );
+    return cockpit.spawn([
+        'virt-xml', '-c', `qemu:///${connectionName}`, '--cpu', `clearxml=true,mode=${mode}${modelStr}`, name, '--edit'
+    ], opts);
 }
 
 export function domainSetMemoryBacking({ connectionName, objPath, type, memory }) {
