@@ -114,7 +114,7 @@ $(TARFILE): $(WEBPACK_TEST) $(RPM_NAME).spec
 	tar --xz -cf $(TARFILE) --transform 's,^,cockpit-$(PACKAGE_NAME)/,' \
 		--exclude $(RPM_NAME).spec.in \
 		--exclude test/reference \
-		$$(git ls-files) $(LIB_TEST) src/lib/ package-lock.json $(RPM_NAME).spec dist/; \
+		$$(git ls-files) src/lib/ package-lock.json $(RPM_NAME).spec dist/; \
 
 $(NODE_CACHE): $(NODE_MODULES_TEST)
 	tar --xz -cf $@ node_modules
