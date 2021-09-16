@@ -130,7 +130,7 @@ export function storagePoolGetAll({
 
 export function storagePoolGetCapabilities({ connectionName }) {
     // TODO: replace with D-Bus API once available https://bugzilla.redhat.com/show_bug.cgi?id=1986321
-    const opts = { err: "message", environ: ['LC_ALL=C'] };
+    const opts = { err: "message", environ: ['LC_ALL=C.UTF-8'] };
     if (connectionName === 'system')
         opts.superuser = 'try';
 
