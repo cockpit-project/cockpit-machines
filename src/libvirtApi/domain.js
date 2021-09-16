@@ -272,7 +272,7 @@ export function domainCreate({
         setVmInstallInProgress({ name: vmName, connectionName });
     }
 
-    const opts = { err: "message", environ: ['LC_ALL=C'] };
+    const opts = { err: "message", environ: ['LC_ALL=C.UTF-8'] };
     if (connectionName === 'system')
         opts.superuser = 'try';
 
@@ -571,7 +571,7 @@ export function domainInstall({ onAddErrorNotification, vm }) {
     // vm should be returned even if script fails
     setVmInstallInProgress(vm);
 
-    const opts = { err: "message", environ: ['LC_ALL=C'] };
+    const opts = { err: "message", environ: ['LC_ALL=C.UTF-8'] };
     if (vm.connectionName === 'system')
         opts.superuser = 'try';
 
