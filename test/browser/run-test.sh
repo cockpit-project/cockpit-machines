@@ -38,6 +38,11 @@ if [ "$ID" = "rhel" ]; then
     "
 fi
 
+# packit centos-stream-8
+if [ "$TEST_OS" = centos-8-stream ]; then
+    EXCLUDES="TestMachinesConsoles.testExternalConsole"
+fi
+
 # Fedora gating tests are running on infra without /dev/kvm; Machines tests are too darn slow there
 # so just pick a representative sample
 if [ "$ID" = "fedora" ]; then
