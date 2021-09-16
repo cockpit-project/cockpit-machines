@@ -84,7 +84,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
 
         # Check overview network properties are present
         b.wait_in_text("#network-test_network2-{0}-persistent".format(connectionName), "yes")
-        b.wait_visible("#network-test_network2-{0}-autostart-checkbox:not(:checked)".format(connectionName))
+        b.wait_visible("#network-test_network2-{0}-autostart:not(:checked)".format(connectionName))
         b.wait_in_text("#network-test_network2-{0}-ipv4-address".format(connectionName), "192.168.100.1")
         b.wait_in_text("#network-test_network2-{0}-ipv4-netmask".format(connectionName), "255.255.255.0")
         b.wait_in_text("#network-test_network2-{0}-ipv4-dhcp-range".format(connectionName), "192.168.100.128 - 192.168.100.170")
@@ -103,7 +103,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
 
         # Check overview network properties are present
         b.wait_in_text("#network-test_network3-{0}-persistent".format(connectionName), "yes")
-        b.wait_visible("#network-test_network3-{0}-autostart-checkbox:not(:checked)".format(connectionName))
+        b.wait_visible("#network-test_network3-{0}-autostart:not(:checked)".format(connectionName))
 
         # Check overview network properties are not present
         b.wait_not_present("#network-test_network3-{0}-ipv4-address".format(connectionName))
@@ -118,7 +118,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
         # Transient network
         self.toggleNetworkRow("test_network4", connectionName)
         b.wait_in_text("#network-test_network4-{0}-persistent".format(connectionName), "no")
-        b.wait_not_present("#network-test_network4-{0}-autostart-checkbox".format(connectionName))  # Transient network shouldn't have autostart option
+        b.wait_not_present("#network-test_network4-{0}-autostart".format(connectionName))  # Transient network shouldn't have autostart option
         b.wait_visible('#delete-network-test_network4-{0}:disabled'.format(connectionName))  # Transient network cannot be deleted
         b.click('#deactivate-network-test_network4-{0}'.format(connectionName))  # Deactivate transient network
         self.waitNetworkRow("test_network4", connectionName, False)  # Check it's not present after deactivation
@@ -713,25 +713,25 @@ class TestMachinesNetworks(VirtualMachinesCase):
         # Expand row for first network
         self.toggleNetworkRow("test_network2", connectionName)
 
-        b.wait_visible("#network-test_network2-{0}-autostart-checkbox".format(connectionName))
+        b.wait_visible("#network-test_network2-{0}-autostart".format(connectionName))
 
         # set checkbox state and check state of checkbox
-        b.set_checked("#network-test_network2-{0}-autostart-checkbox".format(connectionName), True)  # don't know the initial state of checkbox, so set it to checked
-        b.wait_visible("#network-test_network2-{0}-autostart-checkbox:checked".format(connectionName))
+        b.set_checked("#network-test_network2-{0}-autostart".format(connectionName), True)  # don't know the initial state of checkbox, so set it to checked
+        b.wait_visible("#network-test_network2-{0}-autostart:checked".format(connectionName))
         # check virsh state
         autostartState = m.execute("virsh net-info test_network2 | grep 'Autostart:' | awk '{print $2}'").strip()
         self.assertEqual(autostartState, "yes")
 
         # change checkbox state and check state of checkbox
-        b.click("#network-test_network2-{0}-autostart-checkbox".format(connectionName))
-        b.wait_visible("#network-test_network2-{0}-autostart-checkbox:not(:checked)".format(connectionName))
+        b.click("#network-test_network2-{0}-autostart".format(connectionName))
+        b.wait_visible("#network-test_network2-{0}-autostart:not(:checked)".format(connectionName))
         # check virsh state
         autostartState = m.execute("virsh net-info test_network2 | grep 'Autostart:' | awk '{print $2}'").strip()
         self.assertEqual(autostartState, "no")
 
         # change checkbox state and check state of checkbox
-        b.click("#network-test_network2-{0}-autostart-checkbox".format(connectionName))
-        b.wait_visible("#network-test_network2-{0}-autostart-checkbox:checked".format(connectionName))
+        b.click("#network-test_network2-{0}-autostart".format(connectionName))
+        b.wait_visible("#network-test_network2-{0}-autostart:checked".format(connectionName))
         # check virsh state
         autostartState = m.execute("virsh net-info test_network2 | grep 'Autostart:' | awk '{print $2}'").strip()
         self.assertEqual(autostartState, "yes")
