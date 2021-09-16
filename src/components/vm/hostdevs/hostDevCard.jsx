@@ -126,11 +126,11 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
         } else if (hostDev.type === "storage") {
             const block = hostDev.source.block;
 
-            addOptionalToCell(cell, block, `${hostdevId}-block`, _("Block"));
+            addOptionalToCell(cell, block, `${hostdevId}-block`, _("Path"));
         } else if (hostDev.type === "misc") {
             const ch = hostDev.source.char;
 
-            addOptionalToCell(cell, ch, `${hostdevId}-char`, _("Char"));
+            addOptionalToCell(cell, ch, `${hostdevId}-char`, _("Path"));
         } else if (hostDev.type === "net") {
             const iface = hostDev.source.interface;
 
