@@ -21,6 +21,11 @@ mv .git dot-git
 
 . /etc/os-release
 export TEST_OS="${ID}-${VERSION_ID/./-}"
+
+if [ "$TEST_OS" = "centos-8" ]; then
+    TEST_OS=centos-8-stream
+fi
+
 export TEST_AUDIT_NO_SELINUX=1
 
 EXCLUDES=""
