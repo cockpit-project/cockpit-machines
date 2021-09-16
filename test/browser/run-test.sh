@@ -33,7 +33,6 @@ EXCLUDES=""
 if [ "$ID" = "rhel" ]; then
     EXCLUDES="TestMachinesDisks.testDetachDisk
               TestMachinesDisks.testDiskEdit
-              TestMachinesDisks.testAddDiskDirPool
               TestMachinesNetworks.testNetworkSettings
     "
 fi
