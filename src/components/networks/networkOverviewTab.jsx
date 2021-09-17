@@ -54,104 +54,97 @@ const DHCPHost = (host, index, family, idPrefix) => {
     </React.Fragment>);
 };
 
-export class NetworkOverviewTab extends React.Component {
-    constructor(props) {
-        super(props);
-    }
+export const NetworkOverviewTab = ({ network }) => {
+    const idPrefix = `${networkId(network.name, network.connectionName)}`;
 
-    render() {
-        const network = this.props.network;
-        const idPrefix = `${networkId(network.name, network.connectionName)}`;
+    const ip = [];
+    // Libvirt allows network to have multiple ipv6 and ipv4 addresses.
+    // But we only first one of each
+    ip[0] = network.ip.find(ip => ip.family === "ipv4");
+    ip[1] = network.ip.find(ip => ip.family === "ipv6");
 
-        const ip = [];
-        // Libvirt allows network to have multiple ipv6 and ipv4 addresses.
-        // But we only first one of each
-        ip[0] = network.ip.find(ip => ip.family === "ipv4");
-        ip[1] = network.ip.find(ip => ip.family === "ipv6");
+    return (
+        <Flex className="overview-tab">
+            <FlexItem>
+                <DescriptionList>
+                    <Text component={TextVariants.h4}>
+                        {_("General")}
+                    </Text>
 
-        return (
-            <Flex className="overview-tab">
-                <FlexItem>
-                    <DescriptionList>
-                        <Text component={TextVariants.h4}>
-                            {_("General")}
-                        </Text>
+                    <DescriptionListGroup>
+                        <DescriptionListTerm> {_("Persistent")} </DescriptionListTerm>
+                        <DescriptionListDescription id={`${idPrefix}-persistent`}> {network.persistent ? _("yes") : _("no")} </DescriptionListDescription>
+                    </DescriptionListGroup>
 
-                        <DescriptionListGroup>
-                            <DescriptionListTerm> {_("Persistent")} </DescriptionListTerm>
-                            <DescriptionListDescription id={`${idPrefix}-persistent`}> {network.persistent ? _("yes") : _("no")} </DescriptionListDescription>
-                        </DescriptionListGroup>
+                    {network.persistent && <DescriptionListGroup>
+                        <DescriptionListTerm> {_("Autostart")} </DescriptionListTerm>
+                        <DescriptionListDescription>
+                            <Switch id={`${idPrefix}-autostart`}
+                                    isChecked={network.autostart}
+                                    onChange={autostart => networkChangeAutostart({ network, autostart })}
+                                    label={_("Run when host boots")} />
+                        </DescriptionListDescription>
+                    </DescriptionListGroup>}
 
-                        {network.persistent && <DescriptionListGroup>
-                            <DescriptionListTerm> {_("Autostart")} </DescriptionListTerm>
-                            <DescriptionListDescription>
-                                <Switch id={`${idPrefix}-autostart`}
-                                        isChecked={network.autostart}
-                                        onChange={autostart => networkChangeAutostart({ network: this.props.network, autostart })}
-                                        label={_("Run when host boots")} />
-                            </DescriptionListDescription>
-                        </DescriptionListGroup>}
+                    { network.mtu && <DescriptionListGroup>
+                        <DescriptionListTerm> {_("Maximum transmission unit")} </DescriptionListTerm>
+                        <DescriptionListDescription id={`${idPrefix}-mtu`}> {network.mtu} </DescriptionListDescription>
+                    </DescriptionListGroup> }
+                </DescriptionList>
+            </FlexItem>
 
-                        { network.mtu && <DescriptionListGroup>
-                            <DescriptionListTerm> {_("Maximum transmission unit")} </DescriptionListTerm>
-                            <DescriptionListDescription id={`${idPrefix}-mtu`}> {network.mtu} </DescriptionListDescription>
-                        </DescriptionListGroup> }
-                    </DescriptionList>
-                </FlexItem>
+            { ip[0] && <FlexItem>
+                <DescriptionList>
+                    <Text component={TextVariants.h4}>
+                        {_("IPv4 address")}
+                    </Text>
 
-                { ip[0] && <FlexItem>
-                    <DescriptionList>
-                        <Text component={TextVariants.h4}>
-                            {_("IPv4 address")}
-                        </Text>
+                    { ip[0].address && <DescriptionListGroup>
+                        <DescriptionListTerm> {_("Address")} </DescriptionListTerm>
+                        <DescriptionListDescription id={`${idPrefix}-ipv4-address`}> {ip[0].address} </DescriptionListDescription>
+                    </DescriptionListGroup> }
 
-                        { ip[0].address && <DescriptionListGroup>
-                            <DescriptionListTerm> {_("Address")} </DescriptionListTerm>
-                            <DescriptionListDescription id={`${idPrefix}-ipv4-address`}> {ip[0].address} </DescriptionListDescription>
-                        </DescriptionListGroup> }
+                    { ip[0].netmask && <DescriptionListGroup>
+                        <DescriptionListTerm> {_("Netmask")} </DescriptionListTerm>
+                        <DescriptionListDescription id={`${idPrefix}-ipv4-netmask`}> {ip[0].netmask} </DescriptionListDescription>
+                    </DescriptionListGroup> }
 
-                        { ip[0].netmask && <DescriptionListGroup>
-                            <DescriptionListTerm> {_("Netmask")} </DescriptionListTerm>
-                            <DescriptionListDescription id={`${idPrefix}-ipv4-netmask`}> {ip[0].netmask} </DescriptionListDescription>
-                        </DescriptionListGroup> }
+                    { ip[0].dhcp.range.start && <DescriptionListGroup>
+                        <DescriptionListTerm> {_("DHCP range")} </DescriptionListTerm>
+                        <DescriptionListDescription id={`${idPrefix}-ipv4-dhcp-range`}> {ip[0].dhcp.range.start + " - " + ip[0].dhcp.range.end} </DescriptionListDescription>
+                    </DescriptionListGroup> }
 
-                        { ip[0].dhcp.range.start && <DescriptionListGroup>
-                            <DescriptionListTerm> {_("DHCP range")} </DescriptionListTerm>
-                            <DescriptionListDescription id={`${idPrefix}-ipv4-dhcp-range`}> {ip[0].dhcp.range.start + " - " + ip[0].dhcp.range.end} </DescriptionListDescription>
-                        </DescriptionListGroup> }
+                    { ip[0].dhcp.hosts.map((host, index) => DHCPHost(host, index, ip[0].family, idPrefix))}
+                </DescriptionList>
+            </FlexItem>}
 
-                        { ip[0].dhcp.hosts.map((host, index) => DHCPHost(host, index, ip[0].family, idPrefix))}
-                    </DescriptionList>
-                </FlexItem>}
+            { ip[1] && <FlexItem>
+                <DescriptionList>
+                    <Text component={TextVariants.h4}>
+                        {_("IPv6 address")}
+                    </Text>
 
-                { ip[1] && <FlexItem>
-                    <DescriptionList>
-                        <Text component={TextVariants.h4}>
-                            {_("IPv6 address")}
-                        </Text>
+                    { ip[1].address && <DescriptionListGroup>
+                        <DescriptionListTerm> {_("Address")} </DescriptionListTerm>
+                        <DescriptionListDescription id={`${idPrefix}-ipv6-address`}> {ip[1].address} </DescriptionListDescription>
+                    </DescriptionListGroup> }
 
-                        { ip[1].address && <DescriptionListGroup>
-                            <DescriptionListTerm> {_("Address")} </DescriptionListTerm>
-                            <DescriptionListDescription id={`${idPrefix}-ipv6-address`}> {ip[1].address} </DescriptionListDescription>
-                        </DescriptionListGroup> }
+                    { ip[1].prefix && <DescriptionListGroup>
+                        <DescriptionListTerm> {_("Prefix")} </DescriptionListTerm>
+                        <DescriptionListDescription id={`${idPrefix}-ipv6-prefix`}> {ip[1].prefix} </DescriptionListDescription>
+                    </DescriptionListGroup> }
 
-                        { ip[1].prefix && <DescriptionListGroup>
-                            <DescriptionListTerm> {_("Prefix")} </DescriptionListTerm>
-                            <DescriptionListDescription id={`${idPrefix}-ipv6-prefix`}> {ip[1].prefix} </DescriptionListDescription>
-                        </DescriptionListGroup> }
+                    { ip[1].dhcp.range.start && <DescriptionListGroup>
+                        <DescriptionListTerm> {_("DHCP range")} </DescriptionListTerm>
+                        <DescriptionListDescription id={`${idPrefix}-ipv6-dhcp-range`}> {ip[1].dhcp.range.start + " - " + ip[1].dhcp.range.end} </DescriptionListDescription>
+                    </DescriptionListGroup> }
 
-                        { ip[1].dhcp.range.start && <DescriptionListGroup>
-                            <DescriptionListTerm> {_("DHCP range")} </DescriptionListTerm>
-                            <DescriptionListDescription id={`${idPrefix}-ipv6-dhcp-range`}> {ip[1].dhcp.range.start + " - " + ip[1].dhcp.range.end} </DescriptionListDescription>
-                        </DescriptionListGroup> }
-
-                        { ip[1].dhcp.hosts.map((host, index) => DHCPHost(host, index, ip[1].family, idPrefix))}
-                    </DescriptionList>
-                </FlexItem>}
-            </Flex>
-        );
-    }
-}
+                    { ip[1].dhcp.hosts.map((host, index) => DHCPHost(host, index, ip[1].family, idPrefix))}
+                </DescriptionList>
+            </FlexItem>}
+        </Flex>
+    );
+};
 
 NetworkOverviewTab.propTypes = {
     network: PropTypes.object.isRequired,
