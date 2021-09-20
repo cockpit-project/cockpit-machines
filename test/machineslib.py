@@ -85,11 +85,19 @@ class VirtualMachinesCaseHelpers:
         else:
             b.wait_not_present(network_row)
 
+    def getLibvirtServiceName(self):
+        m = self.machine
+
+        if m.image in ["fedora-35"]:
+            return "virtqemud"
+        else:
+            return "libvirtd"
+
     def startLibvirt(self):
         m = self.machine
 
         # Ensure everything has started correctly
-        m.execute("systemctl start libvirtd.service")
+        m.execute(f"systemctl start {self.getLibvirtServiceName()}.service")
 
         # Wait until we can get a list of domains
         m.execute("until virsh list; do sleep 1; done")
@@ -187,7 +195,7 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
             m.execute("usermod -a -G libvirt libvirtdbus")
 
         self.startLibvirt()
-        self.addCleanup(m.execute, "systemctl stop libvirtd")
+        self.addCleanup(m.execute, f"systemctl stop {self.getLibvirtServiceName()}")
 
         # Stop all domains
         self.addCleanup(m.execute, "for d in $(virsh list --name); do virsh destroy $d || true; done")
@@ -205,7 +213,10 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
         self.addCleanup(m.execute, "for n in $(virsh net-list --all --name); do virsh net-destroy $n || true; done")
 
         # we don't have configuration to open the firewall for local libvirt machines, so just stop firewalld
-        m.execute("systemctl stop firewalld; systemctl reset-failed libvirtd; systemctl try-restart libvirtd")
+        if m.image in ["fedora-35"]:
+            m.execute("systemctl stop firewalld; systemctl reset-failed virtnetworkd; systemctl try-restart virtnetworkd")
+        else:
+            m.execute("systemctl stop firewalld; systemctl reset-failed libvirtd; systemctl try-restart libvirtd")
 
         # user libvirtd instance tends to SIGABRT with "Failed to find user record for uid .." on shutdown during cleanup
         # so make sure that there are no leftover user processes that bleed into the next test

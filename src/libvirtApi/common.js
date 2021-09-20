@@ -24,7 +24,6 @@
 import cockpit from "cockpit";
 import store from "../store.js";
 import * as python from "python.js";
-import * as service from "service.js";
 
 import getOSListScript from "raw-loader!../getOSList.py";
 
@@ -40,7 +39,6 @@ import {
 } from "../actions/store-actions.js";
 
 import {
-    getLibvirtServiceState,
     getRefreshInterval,
     usagePollingEnabled
 } from "../selectors.js";
@@ -116,16 +114,8 @@ function calculateDiskStats(info) {
     return disksStats;
 }
 
-export function canLoggedUserConnectSession (connectionName, loggedUser) {
-    return connectionName !== 'session' || loggedUser.name !== 'root';
-}
-
 function delayPollingHelper(action, timeout) {
     window.setTimeout(() => {
-        const libvirtState = getLibvirtServiceState(store.getState());
-        if (libvirtState !== "running")
-            return delayPollingHelper(action, timeout);
-
         logDebug('Executing delayed action');
         action();
     }, timeout);
@@ -238,7 +228,7 @@ function getLoggedInUser() {
     });
 }
 
-function getLibvirtVersion({ connectionName }) {
+export function getLibvirtVersion({ connectionName }) {
     return call(connectionName, "/org/libvirt/QEMU", "org.freedesktop.DBus.Properties", "Get", ["org.libvirt.Connect", "LibVersion"], { timeout, type: "ss" })
             .then(version => store.dispatch(updateLibvirtVersion({ libvirtVersion: version[0].v })));
 }
@@ -479,55 +469,23 @@ function storagePoolUpdateOrDelete(connectionName, poolPath) {
             .catch(ex => console.warn("storagePoolUpdateOrDelete action failed:", ex.toString()));
 }
 
-function unknownConnectionName() {
-    return cockpit.user()
-            .then(loggedUser => {
-                const connectionNames = (
-                    Object.getOwnPropertyNames(VMS_CONFIG.Virsh.connections).filter(
-                        // The 'root' user does not have its own qemu:///session just qemu:///system
-                        // https://bugzilla.redhat.com/show_bug.cgi?id=1045069
-                        connectionName => canLoggedUserConnectSession(connectionName, loggedUser))
-                );
-                return connectionNames;
-            });
-}
-
-export function enableLibvirt({ enable, serviceName }) {
-    logDebug(`ENABLE_LIBVIRT`);
-    const libvirtService = service.proxy(serviceName);
-    return enable ? libvirtService.enable() : libvirtService.disable();
-}
-
 export function getApiData({ connectionName }) {
-    if (connectionName) {
-        dbusClient(connectionName);
-        startEventMonitor({ connectionName });
-        return Promise.allSettled([
-            domainGetAll({ connectionName }),
-            storagePoolGetAll({ connectionName }),
-            interfaceGetAll({ connectionName }),
-            networkGetAll({ connectionName }),
-            nodeDeviceGetAll({ connectionName }),
-            getNodeMaxMemory({ connectionName }),
-            getLibvirtVersion({ connectionName }),
-        ]);
-    } else {
-        return unknownConnectionName()
-                .then(connectionNames => {
-                    return Promise.allSettled(connectionNames.map(conn => getApiData({ connectionName: conn })));
-                });
-    }
+    dbusClient(connectionName);
+    startEventMonitor({ connectionName });
+    return Promise.allSettled([
+        domainGetAll({ connectionName }),
+        storagePoolGetAll({ connectionName }),
+        interfaceGetAll({ connectionName }),
+        networkGetAll({ connectionName }),
+        nodeDeviceGetAll({ connectionName }),
+        getNodeMaxMemory({ connectionName }),
+    ]);
 }
 
 export function initState() {
     getPythonPath();
     getLoggedInUser();
     getOsInfoList();
-}
-
-export function startLibvirt({ serviceName }) {
-    logDebug(`START_LIBVIRT`);
-    return service.proxy(serviceName).start();
 }
 
 export function usageStartPolling({
