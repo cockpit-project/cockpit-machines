@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AlertGroup, Button } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { superuser } from "superuser.js";
@@ -33,66 +33,73 @@ import { dummyVmsFilter, vmId } from "./helpers.js";
 import { InlineNotification } from 'cockpit-components-inline-notification.jsx';
 import {
     getApiData,
+    getLibvirtVersion,
     initState,
     usageStartPolling,
     usageStopPolling,
 } from "./libvirtApi/common.js";
-import { useObject, useEvent } from "hooks";
-import * as service from 'service.js';
+import { useEvent } from "hooks";
 import store from './store.js';
+import VMS_CONFIG from "./config.js";
 
-import { updateLibvirtState } from './actions/store-actions.js';
 const _ = cockpit.gettext;
 
 superuser.reload_page_on_change();
 
-export const App = ({ name }) => {
-    const libvirtService = useObject(() => service.proxy(name), null, []);
-    const prevLibvirtServiceRef = useRef();
+function canLoggedUserConnectSession (connectionName, loggedUser) {
+    return connectionName !== 'session' || loggedUser.name !== 'root';
+}
+
+function unknownConnectionName() {
+    return cockpit.user()
+            .then(loggedUser => {
+                const connectionNames = (
+                    Object.getOwnPropertyNames(VMS_CONFIG.Virsh.connections).filter(
+                        // The 'root' user does not have its own qemu:///session just qemu:///system
+                        // https://bugzilla.redhat.com/show_bug.cgi?id=1045069
+                        connectionName => canLoggedUserConnectSession(connectionName, loggedUser))
+                );
+                return connectionNames;
+            });
+}
+export const App = () => {
     const [loadingResources, setLoadingResources] = useState(false);
     const [error, setError] = useState('');
+    const [systemSocketInactive, setSystemSocketInactive] = useState(false);
 
-    useEvent(libvirtService, "changed", () => {
-        store.dispatch(updateLibvirtState({
-            activeState: libvirtService.state,
-        }));
-        if (libvirtService.state == 'failed') {
-            console.warn("Libvirtd has failed");
-            setLoadingResources(false);
-        }
-        if (libvirtService.state == 'running' && prevLibvirtServiceRef.current !== 'running' && prevLibvirtServiceRef.current !== null) {
-            setLoadingResources(true);
-            // If promises rejected here show an toast alert in the main page
-            getApiData({ connectionName: 'system' })
-                    .then(promises => {
-                        const errorMsgs = [];
-                        promises.forEach(promise => {
-                            if (promise.status == 'rejected' && promise.reason)
-                                errorMsgs.push(promise.reason.message);
-                        });
-                        setError(errorMsgs.join(', '));
-                    })
-                    .finally(() => setLoadingResources(false));
-        }
-        prevLibvirtServiceRef.current = libvirtService.state;
-    });
     useEvent(superuser, "changed");
     useEffect(() => {
         initState();
-        prevLibvirtServiceRef.current = libvirtService.state;
 
         setLoadingResources(true);
-        // Let's not show errors from resource fetching here as it can be related to permissions and in this case we should not spam users
-        getApiData({ connectionName: null })
+
+        return unknownConnectionName()
+                .then(connectionNames => {
+                    return Promise.allSettled(connectionNames.map(conn => {
+                        return getLibvirtVersion({ connectionName: conn })
+                                .then(() => {
+                                    getApiData({ connectionName: conn })
+                                            .then(promises => {
+                                                const errorMsgs = [];
+                                                promises.forEach(promise => {
+                                                    if (promise.status == 'rejected' && promise.reason)
+                                                        errorMsgs.push(promise.reason.message);
+                                                });
+                                                setError(errorMsgs.join(', '));
+                                            });
+                                }, () => {
+                                    /* If the API call failed on system connection and the user has superuser privileges then show the Empty state screen */
+                                    if (conn == "system")
+                                        setSystemSocketInactive(true);
+                                });
+                    }));
+                })
                 .finally(() => setLoadingResources(false));
     }, []);
 
-    // Show libvirtSlate component if libvirtd is not running only to users that are allowed to start the service.
-    if (((!libvirtService.exists || libvirtService.state !== 'running') && superuser.allowed) ||
-        loadingResources) {
+    if ((superuser.allowed && systemSocketInactive) || loadingResources) {
         return (
-            <LibvirtSlate libvirtService={libvirtService}
-                          loadingResources={loadingResources} />
+            <LibvirtSlate loadingResources={loadingResources} />
         );
     } else return (
         <AppActive error={error} />

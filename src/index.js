@@ -22,33 +22,23 @@ import 'polyfills'; // once per application
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import cockpit from 'cockpit';
 import store from './store.js';
 import App from './app.jsx';
 import { logDebug } from './helpers.js';
-import getLibvirtServiceNameScript from 'raw-loader!./scripts/get_libvirt_service_name.sh';
 
-function render(name) {
+function render() {
     ReactDOM.render(
-        <App name={name} />,
+        <App />,
         document.getElementById('app')
     );
 }
 
 function renderApp() {
-    return cockpit.script(getLibvirtServiceNameScript, null, { err: "message", environ: ['LC_ALL=C.UTF-8'] })
-            .then(serviceName => {
-                const match = serviceName.match(/([^\s]+)/);
-                const name = match ? match[0] : null;
-                if (name) {
-                    // re-render app every time the state changes
-                    store.subscribe(() => render(name));
+    // re-render app every time the state changes
+    store.subscribe(() => render());
 
-                    // do initial render
-                    render(name);
-                }
-            })
-            .catch(ex => console.error(`initialize failed: getting libvirt service name returned error: "${JSON.stringify(ex)}"`));
+    // do initial render
+    render();
 }
 
 /**

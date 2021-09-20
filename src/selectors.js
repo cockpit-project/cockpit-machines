@@ -28,10 +28,6 @@ export function getRefreshInterval(state) {
     return state.config.refreshInterval;
 }
 
-export function getLibvirtServiceState(state) {
-    return state.systemInfo.libvirtService.activeState;
-}
-
 export function usagePollingEnabled(state, name, connectionName) {
     const vm = state.vms.find(vm => vm.connectionName === connectionName && vm.name === name);
     return vm ? vm.usagePolling : false; // VM got undefined

@@ -43,7 +43,7 @@ class TestMachinesMigration(VirtualMachinesCase):
         machine2.execute("echo '10.111.113.1 machine1' >> /etc/hosts")
         machine2.execute("sed -i 's/127.0.1.1.*/127.0.1.1 machine2/' /etc/hosts")
         machine2.execute("hostnamectl set-hostname machine2")
-        machine2.execute("systemctl restart libvirtd")
+        machine2.execute(f"systemctl restart {self.getLibvirtServiceName()}")
 
         if fail != "authentication":
             # setup key authentication
@@ -180,16 +180,16 @@ class TestMachinesMigration(VirtualMachinesCase):
         self.assertNotIn("subVmTest1", machine2.execute("virsh list --all"))
 
         if fail == "libvirtd":
-            machine2.execute("systemctl stop libvirtd.service")
-            machine2.execute("systemctl stop libvirtd.socket")
+            machine2.execute(f"systemctl stop {self.getLibvirtServiceName()}.service")
+            machine2.execute(f"systemctl stop {self.getLibvirtServiceName()}.socket")
 
         b.click("#migrate-button")
         if fail:
             b.wait_visible(".pf-c-modal-box__footer .pf-c-alert .pf-c-alert__title:contains('Migration failed')")
 
             if fail == "libvirtd":
-                machine2.execute("systemctl start libvirtd.service")
-                machine2.execute("systemctl start libvirtd.socket")
+                machine2.execute(f"systemctl start {self.getLibvirtServiceName()}.service")
+                machine2.execute(f"systemctl start {self.getLibvirtServiceName()}.socket")
 
             wait(lambda: "subVmTest1" not in machine2.execute("virsh list --all"), delay=3)
             self.assertIn("subVmTest1", machine1.execute("virsh list --all"))
