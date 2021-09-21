@@ -8,17 +8,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-14 18:14+0000\n"
-"PO-Revision-Date: 2021-05-29 14:02+0000\n"
-"Last-Translator: Ricky Tigg <ricky.tigg@gmail.com>\n"
-"Language-Team: Finnish <https://translate.fedoraproject.org/projects/cockpit-"
-"machines/main/fi/>\n"
+"POT-Creation-Date: 2021-09-15 06:55+0000\n"
+"PO-Revision-Date: 2021-09-20 08:05+0000\n"
+"Last-Translator: Jan Kuparinen <copper_fin@hotmail.com>\n"
+"Language-Team: Finnish <https://translate.fedoraproject.org/projects/"
+"cockpit-machines/main/fi/>\n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1\n"
-"X-Generator: Weblate 4.6.2\n"
+"X-Generator: Weblate 4.8\n"
 
 #: src/components/vm/overview/cpuTypeModal.jsx:60
 msgid "$0 CPU configuration"
@@ -71,6 +71,8 @@ msgid ""
 "A copy of the VM will run on the destination and will disappear when it is "
 "shut off. Meanwhile, the origin host keeps its copy of the VM configuration."
 msgstr ""
+"Kopio virtuaalikoneesta suoritetaan kohteessa ja katoaa, kun se sammutetaan. "
+"Samaan aikaan isäntäkone säilyttää kopion virtuaalikoneen kokoonpanosta."
 
 #: src/components/vm/disks/vmDisksCard.jsx:225
 #: src/components/vm/disks/diskEdit.jsx:112
@@ -101,20 +103,18 @@ msgid "Add network interface"
 msgstr "Lisää verkkoliitäntä"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:102
-#, fuzzy
-#| msgid "No such file or directory"
 msgid "Add shared directory"
-msgstr "Ei tällaista tiedostoa tai hakemistoa"
+msgstr "Lisää jaettu kansio"
 
 #: src/components/vm/nics/nicAdd.jsx:158
 msgid "Add virtual network interface"
 msgstr "Lisää virtuaalinen verkkoliitäntä"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:108
-#, fuzzy
-#| msgid "Only editable when the guest is shut off"
 msgid "Adding shared directories is possible only when the guest is shut off"
-msgstr "Muokattavissa vain, kun vieras on sammutettuna"
+msgstr ""
+"Jaettujen kansioiden lisääminen on mahdollista vain, kun vieras on "
+"sammutettuna"
 
 #: src/components/vm/disks/vmDisksCard.jsx:229
 msgid "Additional"
@@ -148,6 +148,8 @@ msgid ""
 "All VM activity, including storage, will be temporary. This will result in "
 "data loss on the destination host."
 msgstr ""
+"Kaikki virtuaalikoneen toiminnot, mukaan lukien tallennustila, ovat "
+"väliaikaisia. Tämä johtaa tietojen menetykseen kohdepalvelimessa."
 
 #: src/components/vm/nics/nicAdd.jsx:60 src/components/vm/disks/diskAdd.jsx:103
 msgid "Always attach"
@@ -179,10 +181,8 @@ msgid "Autostart"
 msgstr "Automaattikäynnistys"
 
 #: src/components/vm/hostdevs/hostDevCard.jsx:129
-#, fuzzy
-#| msgid "Blocked"
 msgid "Block"
-msgstr "Estetty"
+msgstr "Lohko"
 
 #: src/helpers.js:237
 msgid "Blocked"
@@ -272,7 +272,7 @@ msgstr "Muutokset tulevat voimaan virtuaalikoneen sammuttamisen jälkeen"
 
 #: src/components/vm/hostdevs/hostDevCard.jsx:133
 msgid "Char"
-msgstr ""
+msgstr "Merkki"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:385
 #: src/components/create-vm-dialog/createVmDialog.jsx:386
@@ -281,7 +281,7 @@ msgstr "Valitse käyttöjärjestelmä"
 
 #: src/components/vm/hostdevs/hostDevCard.jsx:157
 msgid "Class"
-msgstr ""
+msgstr "Luokka"
 
 #: src/components/vm/consoles/desktopConsole.jsx:58
 msgid ""
@@ -311,10 +311,8 @@ msgid "Connect with any viewer application for following protocols"
 msgstr "Yhdistä mihin tahansa katseluohjelmaan seuraaviin protokolliin"
 
 #: src/components/vm/consoles/vnc.jsx:168
-#, fuzzy
-#| msgid "Connection"
 msgid "Connecting"
-msgstr "Yhteys"
+msgstr "Yhdistetään"
 
 #: src/components/libvirtSlate.jsx:62
 msgid "Connecting to virtualization service"
@@ -335,10 +333,8 @@ msgstr "Konsoli"
 
 #: src/components/vm/vmMigrateDialog.jsx:105
 #: src/components/vm/vmMigrateDialog.jsx:121
-#, fuzzy
-#| msgid "No storage"
 msgid "Copy storage"
-msgstr "Ei tallennustilaa"
+msgstr "Kopioi tallennustila"
 
 #: src/components/vm/overview/vcpuModal.jsx:233
 msgid "Cores per socket"
@@ -494,10 +490,10 @@ msgstr ""
 "varannosta. Sen sisältöä ei poisteta."
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:67
-#, fuzzy
-#| msgid "Only editable when the guest is shut off"
 msgid "Deleting shared directories is possible only when the guest is shut off"
-msgstr "Muokattavissa vain, kun vieras on sammutettuna"
+msgstr ""
+"Jaettujen kansioiden poistaminen on mahdollista vain, kun vieras on "
+"sammutettuna"
 
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:51
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:107
@@ -509,16 +505,12 @@ msgid "Desktop viewer"
 msgstr "Työpöydän katseluohjelma"
 
 #: src/components/vm/vmMigrateDialog.jsx:47
-#, fuzzy
-#| msgid "Description"
 msgid "Destination URI"
-msgstr "Kuvaus"
+msgstr "Kohde URI"
 
 #: src/components/vm/vmMigrateDialog.jsx:154
-#, fuzzy
-#| msgid "Installation source must not be empty"
 msgid "Destination URI must not be empty"
-msgstr "Asennuslähteen ei tulisi olla tyhjä"
+msgstr "Kohde URI ei voi olla tyhjä"
 
 #: src/components/storagePools/storagePoolDelete.jsx:153
 #: src/components/storagePools/storagePoolDelete.jsx:180
@@ -549,10 +541,8 @@ msgid "Disconnect"
 msgstr "Katkaise yhteys"
 
 #: src/components/vm/consoles/vnc.jsx:169
-#, fuzzy
-#| msgid "Disconnect"
 msgid "Disconnected"
-msgstr "Katkaise yhteys"
+msgstr "Yhteys katkaistu"
 
 #: src/components/vm/consoles/serialConsole.jsx:77
 msgid "Disconnected from serial console. Click the connect button."
@@ -571,20 +561,16 @@ msgid "Disk failed to be created"
 msgstr "Levyn luominen epäonnistui"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:316
-#, fuzzy
-#| msgid "Disk image file"
 msgid "Disk image"
-msgstr "Levykuvatiedosto"
+msgstr "Levykuva"
 
 #: src/components/vm/disks/diskAdd.jsx:286
 msgid "Disk image file"
 msgstr "Levykuvatiedosto"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:168
-#, fuzzy
-#| msgid "Name must not be empty"
 msgid "Disk image path must not be empty"
-msgstr "Nimi ei saa olla tyhjä"
+msgstr "Levykuvan polku ei voi olla tyhjä"
 
 #: src/components/vm/disks/diskAdd.jsx:557
 #: src/components/vm/disks/diskEdit.jsx:207
@@ -603,10 +589,12 @@ msgstr "Levyt"
 msgid ""
 "Do not run this VM on the origin and destination hosts at the same time."
 msgstr ""
+"Älä suorita tätä virtuaalikonetta alkuperä- ja kohdepalvelimissa "
+"samanaikaisesti."
 
 #: src/components/vm/overview/bootOrder.jsx:129
 msgid "Domain"
-msgstr ""
+msgstr "Toimialue"
 
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:132
 msgid "Domain has crashed"
@@ -621,10 +609,8 @@ msgid "Download an OS"
 msgstr "Lataa käyttöjärjestelmä"
 
 #: src/components/vm/vmMigrateDialog.jsx:63
-#, fuzzy
-#| msgid "Description"
 msgid "Duration"
-msgstr "Kuvaus"
+msgstr "Kesto"
 
 #: src/helpers.js:235
 msgid "Dying"
@@ -642,10 +628,11 @@ msgstr "Muokkaa $0 attribuuttia"
 #: src/components/vm/nics/vmNicsCard.jsx:332
 msgid "Editing network interfaces of transient guests is not allowed"
 msgstr ""
+"Väliaikaisten vieraskoneiden verkkoliitäntöjen muokkaaminen ei ole sallittua"
 
 #: src/components/vm/nics/vmNicsCard.jsx:338
 msgid "Editing transient network interfaces is not allowed"
-msgstr ""
+msgstr "Väliaikaisten verkkoliitäntöjen muokkaaminen ei ole sallittua"
 
 #: src/components/vm/overview/vmOverviewCard.jsx:251
 msgid "Emulated machine"
@@ -654,6 +641,8 @@ msgstr "Sulautettu kone"
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:246
 msgid "Enable/disable extended attributes (xattr) on files and directories"
 msgstr ""
+"Ota käyttöön/poista käytöstä laajennetut määritteet (xattr) tiedostoissa ja "
+"hakemistoissa"
 
 #: src/components/networks/createNetworkDialog.jsx:227
 msgid "End"
@@ -666,7 +655,7 @@ msgstr "Loppu ei saa olla tyhjä"
 
 #: src/components/vm/vmMigrateDialog.jsx:53
 msgid "Example, $0"
-msgstr ""
+msgstr "Esimerkki, $0"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:245
 msgid "Existing disk image on host's file system"
@@ -681,10 +670,8 @@ msgid "Failed"
 msgstr "Epäonnistui"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:161
-#, fuzzy
-#| msgid "Filesystem directory"
 msgid "Failed to add shared directory"
-msgstr "Tiedostojärjestelmän hakemisto"
+msgstr "Jaetun hakemiston lisäys epäonnistui"
 
 #: src/components/vm/overview/firmware.jsx:52
 msgid "Failed to change firmware"
@@ -695,36 +682,28 @@ msgid "Failed to clone VM $0"
 msgstr "VM:n $0 kloonaus epäonnistui"
 
 #: src/components/libvirtSlate.jsx:52
-#, fuzzy
-#| msgid "Connecting to virtualization service"
 msgid "Failed to enable virtualization service"
-msgstr "Yhdistetään virtualisointipalveluun"
+msgstr "Virtualisointipalvelun käyttöönotto epäonnistui"
 
 #: src/app.jsx:127
-#, fuzzy
-#| msgid "Failed to change firmware"
 msgid "Failed to fetch some resources"
-msgstr "Laiteohjelmiston vaihtaminen epäonnistui"
+msgstr "Joidenkin resurssien hakeminen epäonnistui"
 
 #: src/components/vm/nics/vmNicsCard.jsx:129
 msgid "Failed to fetch the IP addresses of the interfaces present in $0"
 msgstr "$0:ssa olevien liitäntöjen IP-osoitteiden noutaminen epäonnistui"
 
 #: src/components/vm/vmRenameDialog.jsx:44
-#, fuzzy
-#| msgid "Failed to clone VM $0"
 msgid "Failed to rename VM $0"
-msgstr "VM:n $0 kloonaus epäonnistui"
+msgstr "VM:n $0 nimen vaihto epäonnistui"
 
 #: src/components/vm/consoles/vnc.jsx:130
 msgid "Failed to send key Ctrl+Alt+$0 to VM $1"
 msgstr "Näppäimen Ctrl+Alt+$0 lähettäminen virtuaalikoneeseen $1 epäonnistui"
 
 #: src/components/libvirtSlate.jsx:51
-#, fuzzy
-#| msgid "Connecting to virtualization service"
 msgid "Failed to start virtualization service"
-msgstr "Yhdistetään virtualisointipalveluun"
+msgstr "Virtualisointipalvelun käynnistäminen epäonnistui"
 
 #: src/components/vm/overview/vcpuModal.jsx:192
 msgid "Fewer than the maximum number of virtual CPUs should be enabled."
@@ -775,12 +754,13 @@ msgid ""
 "writable disk images will be transferred. Unused storage will remain on the "
 "origin after migration."
 msgstr ""
+"Kokonaiset levykuvat ja toimialueen muisti siirretään. Vain jakamattomat, "
+"kirjoitettavat levykuvat siirretään. Käyttämätön tallennustila pysyy "
+"alkuperäisenä siirron jälkeen."
 
 #: src/components/vm/overview/bootOrder.jsx:130
-#, fuzzy
-#| msgid "Connection"
 msgid "Function"
-msgstr "Yhteys"
+msgstr "Funktio"
 
 #: src/components/networks/networkOverviewTab.jsx:85
 #: src/components/vm/overview/vmOverviewCard.jsx:197
@@ -820,8 +800,6 @@ msgid "Host device"
 msgstr "Isäntälaite"
 
 #: src/components/vm/vmDetailsPage.jsx:154
-#, fuzzy
-#| msgid "Host device"
 msgid "Host devices"
 msgstr "Isäntälaite"
 
@@ -856,11 +834,11 @@ msgstr "IPv4-osoite"
 
 #: src/components/networks/createNetworkDialog.jsx:70
 msgid "IPv4 address cannot be same as the network identifier"
-msgstr ""
+msgstr "IPv4-osoite ei voi olla sama kuin verkkotunniste"
 
 #: src/components/networks/createNetworkDialog.jsx:74
 msgid "IPv4 address cannot be same as the network's broadcast address"
-msgstr ""
+msgstr "IPv4-osoite ei voi olla sama kuin verkon kaikkilähetysosoite"
 
 #: src/components/networks/createNetworkDialog.jsx:192
 msgid "IPv4 and IPv6"
@@ -939,20 +917,16 @@ msgid "Installation type"
 msgstr "Asennustyyppi"
 
 #: src/components/vm/hostdevs/hostDevCard.jsx:137
-#, fuzzy
-#| msgid "Interface type"
 msgid "Interface"
-msgstr "Liitäntätyyppi"
+msgstr "Liitäntä"
 
 #: src/components/vm/nics/nicBody.jsx:148
 msgid "Interface type"
 msgstr "Liitäntätyyppi"
 
 #: src/components/vm/nics/nicBody.jsx:150
-#, fuzzy
-#| msgid "Interface type"
 msgid "Interface type help"
-msgstr "Liitäntätyyppi"
+msgstr "Liitäntätyypin ohjeet"
 
 #: src/components/networks/createNetworkDialog.jsx:66
 #: src/components/networks/createNetworkDialog.jsx:80
@@ -1015,10 +989,8 @@ msgid "Libvirt or hypervisor does not support UEFI"
 msgstr "Libvirt tai hypervisori ei tue UEFI:a"
 
 #: src/components/vm/nics/vmNicsCard.jsx:335
-#, fuzzy
-#| msgid "No network devices"
 msgid "Loading available network devices"
-msgstr "Ei verkkolaitteita"
+msgstr "Ladataan käytettävissä olevat verkkolaitteet"
 
 #: src/components/libvirtSlate.jsx:67
 msgid "Loading resources"
@@ -1116,17 +1088,15 @@ msgstr "Mit"
 #: src/components/vm/vmActions.jsx:333
 #: src/components/vm/vmMigrateDialog.jsx:214
 msgid "Migrate"
-msgstr ""
+msgstr "Migratoi"
 
 #: src/components/vm/vmMigrateDialog.jsx:225
 msgid "Migrate VM to another host"
-msgstr ""
+msgstr "Siirrä virtuaalikone toiseen koneeseen"
 
 #: src/components/vm/vmMigrateDialog.jsx:179
-#, fuzzy
-#| msgid "Creation of VM $0 failed"
 msgid "Migration failed"
-msgstr "Virtuaalikoneen $0 luominen epäonnistui"
+msgstr "Migraatio epäonnistui"
 
 #: src/components/vm/overview/cpuTypeModal.jsx:32
 #: src/components/vm/overview/cpuTypeModal.jsx:34
@@ -1144,22 +1114,20 @@ msgstr "Mallityyppi"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:222
 msgid "More info for mount tag field"
-msgstr ""
+msgstr "Lisätietoja liitostunnistekentästä"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:202
 msgid "More info for source path field"
-msgstr ""
+msgstr "Lisätietoja lähteen polkukentästä"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:48
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:219
 msgid "Mount tag"
-msgstr ""
+msgstr "Liitostunniste"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:133
-#, fuzzy
-#| msgid "Name must not be empty"
 msgid "Mount tag must not be empty"
-msgstr "Nimi ei saa olla tyhjä"
+msgstr "Liitostunnus ei voi olla tyhjä"
 
 #: src/components/create-vm-dialog/pxe-helpers.js:93
 msgid "NAT to $0"
@@ -1227,10 +1195,8 @@ msgid "Network interface settings could not be saved"
 msgstr "Verkkoliitännän asetuksia ei voitu tallentaa"
 
 #: src/components/vm/vmDetailsPage.jsx:145
-#, fuzzy
-#| msgid "Add network interface"
 msgid "Network interfaces"
-msgstr "Lisää verkkoliitäntä"
+msgstr "Verkkoliitännät"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:261
 msgid "Network selection does not support PXE."
@@ -1243,16 +1209,12 @@ msgid "Networks"
 msgstr "Verkot"
 
 #: src/components/vm/vmRenameDialog.jsx:70
-#, fuzzy
-#| msgid "New volume name"
 msgid "New name"
-msgstr "Uusi taltion nimi"
+msgstr "Uusi nimi"
 
 #: src/components/vm/vmRenameDialog.jsx:72
-#, fuzzy
-#| msgid "Name must not be empty"
 msgid "New name must not be empty"
-msgstr "Nimi ei saa olla tyhjä"
+msgstr "Uusi nimi ei saa olla tyhjä"
 
 #: src/components/storagePools/storageVolumeCreateBody.jsx:43
 msgid "New volume name"
@@ -1277,16 +1239,15 @@ msgstr "Ei kuvausta"
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:87
 msgid "No directories shared between the host and this VM"
 msgstr ""
+"Isäntäkoneen ja tämän virtuaalikoneen välillä ei ole jaettuja hakemistoja"
 
 #: src/components/vm/disks/vmDisksCard.jsx:308
 msgid "No disks defined for this VM"
 msgstr "Tälle virtuaalikoneelle ei ole määritetty levyjä"
 
 #: src/components/vm/hostdevs/hostDevCard.jsx:209
-#, fuzzy
-#| msgid "No snapshots defined for this VM"
 msgid "No host devices assigned to this VM"
-msgstr "Tälle virtuaalikoneelle ei ole määritetty tilannevedoksia"
+msgstr "Tälle virtuaalikoneelle ei ole määritetty isäntälaitteita"
 
 #: src/components/vm/nics/nicBody.jsx:135
 msgid "No network devices"
@@ -1428,7 +1389,7 @@ msgstr "Keskeytetty"
 
 #: src/components/vm/vmMigrateDialog.jsx:70
 msgid "Permanent (default)"
-msgstr ""
+msgstr "Pysyvä (oletus)"
 
 #: src/components/vm/nics/nicAdd.jsx:57 src/components/vm/disks/diskAdd.jsx:100
 msgid "Persistence"
@@ -1475,10 +1436,8 @@ msgid "Pool needs to be active to create volume"
 msgstr "Varannon on oltava aktiivinen taltion luomiseksi"
 
 #: src/components/vm/disks/diskAdd.jsx:364
-#, fuzzy
-#| msgid "Pool type doesn't support volume creation"
 msgid "Pool type $0 does not support volume creation"
-msgstr "Varannon tyyppi ei tue taltion luomista"
+msgstr "Varannon tyyppi $0 ei tue taltion luomista"
 
 #: src/components/storagePools/storageVolumeCreate.jsx:158
 msgid "Pool type doesn't support volume creation"
@@ -1545,16 +1504,18 @@ msgid ""
 "Provides a bridge from the guest virtual machine directly onto the LAN. This "
 "needs a bridge device on the host with one or more physical NICs."
 msgstr ""
+"Tarjoaa sillan vierasvirtuaalikoneesta suoraan lähiverkkoon. Tämä vaatii "
+"isäntälaitteen, jolla on yksi tai useampi fyysinen verkkokortti."
 
 #: src/components/vm/nics/nicBody.jsx:86
 msgid ""
 "Provides a connection whose details are described by the named network "
 "definition."
-msgstr ""
+msgstr "Tarjoaa yhteyden, jonka tiedot kuvataan nimetyllä verkon määritelmällä."
 
 #: src/components/vm/nics/nicBody.jsx:109
 msgid "Provides a virtual LAN with NAT to the outside world."
-msgstr ""
+msgstr "Tarjoaa virtuaalisen lähiverkon NATin kanssa ulkomaailmaan."
 
 #: src/components/vm/disks/vmDisksCard.jsx:253
 #: src/components/vm/disks/diskEdit.jsx:120
@@ -1582,11 +1543,11 @@ msgstr "Poista"
 
 #: src/components/vm/vmActions.jsx:354 src/components/vm/vmRenameDialog.jsx:58
 msgid "Rename"
-msgstr ""
+msgstr "Nimeä uudelleen"
 
 #: src/components/vm/vmRenameDialog.jsx:50
 msgid "Rename VM $0"
-msgstr ""
+msgstr "Nimeä uudelleen VM $0"
 
 #: src/components/vm/vmActions.jsx:213
 msgid "Resume"
@@ -1685,10 +1646,8 @@ msgid "Set DHCP range"
 msgstr "Määritä DHCP-alue"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:579
-#, fuzzy
-#| msgid "Cloud init parameters"
 msgid "Set cloud init parameters"
-msgstr "pilvi-init:n parametrit"
+msgstr "Aseta pilvi-init:n parametrit"
 
 #: src/components/vm/nics/nicAdd.jsx:43
 msgid "Set manually"
@@ -1704,26 +1663,24 @@ msgstr ""
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:165
 msgid "Share"
-msgstr ""
+msgstr "Jako"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:158
 msgid "Share a host directory with the guest"
-msgstr ""
+msgstr "Jaa isäntähakemisto vieraalle"
 
 #: src/components/vm/vmDetailsPage.jsx:175
 msgid "Shared directories"
-msgstr ""
+msgstr "Jaetut hakemistot"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:176
 #: src/components/vm/vmDetailsPage.jsx:177
 msgid "Shared host directories need to be manually mounted inside the VM"
-msgstr ""
+msgstr "Jaetut isäntähakemistot on liitettävä manuaalisesti virtuaalikoneessa"
 
 #: src/components/vm/vmMigrateDialog.jsx:101
-#, fuzzy
-#| msgid "No storage"
 msgid "Shared storage"
-msgstr "Ei tallennustilaa"
+msgstr "Jaettu tallennustila"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:238
 #: src/components/vm/disks/diskAdd.jsx:149
@@ -1757,7 +1714,7 @@ msgstr "Koko"
 #: src/components/vm/hostdevs/hostDevCard.jsx:107
 #: src/components/vm/hostdevs/hostDevCard.jsx:114
 msgid "Slot"
-msgstr ""
+msgstr "Aukko"
 
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:118
 msgid "Snapshot failed to be created"
@@ -1785,10 +1742,8 @@ msgid "Source format"
 msgstr "Lähteen muoto"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:135
-#, fuzzy
-#| msgid "Name must not be empty"
 msgid "Source must not be empty"
-msgstr "Nimi ei saa olla tyhjä"
+msgstr "Lähde ei saa olla tyhjä"
 
 #: src/components/storagePools/storagePoolOverviewTab.jsx:43
 #: src/components/storagePools/storagePoolOverviewTab.jsx:48
@@ -1848,7 +1803,7 @@ msgstr "Tallennustila"
 
 #: src/components/vm/vmMigrateDialog.jsx:116
 msgid "Storage is at a shared location"
-msgstr ""
+msgstr "Tallennustila on jaetussa paikassa"
 
 #: src/components/storagePools/storagePool.jsx:119
 msgid "Storage pool $0 failed to get activated"
@@ -1874,10 +1829,8 @@ msgid "Storage pools"
 msgstr "Tallennustilavarannot"
 
 #: src/components/vm/disks/diskAdd.jsx:350
-#, fuzzy
-#| msgid "Storage volumes could not be deleted"
 msgid "Storage pools could not be fetched"
-msgstr "Varastointitaltioita ei voitu poistaa"
+msgstr "Tallennusvarantoja ei voitu hakea"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:178
 msgid "Storage size must not be 0"
@@ -1904,7 +1857,7 @@ msgstr "Varastointitaltioita ei voitu poistaa"
 #: src/components/vm/vmMigrateDialog.jsx:224
 msgid ""
 "Storage volumes must be shared between this host and the destination host."
-msgstr ""
+msgstr "Tallennustilat on pakko jakaa tämän isännän ja kohdepalvelimen kesken."
 
 #: src/helpers.js:236
 msgid "Suspended (PM)"
@@ -1930,11 +1883,11 @@ msgstr "Kohdepolku ei saa olla tyhjä"
 
 #: src/components/vm/vmMigrateDialog.jsx:74
 msgid "Temporary"
-msgstr ""
+msgstr "Väliaikainen"
 
 #: src/components/vm/vmMigrateDialog.jsx:85
 msgid "Temporary migration"
-msgstr ""
+msgstr "Väliaikainen migraatio"
 
 #: src/components/common/deleteResource.jsx:47
 msgid "The $0 could not be deleted"
@@ -1957,13 +1910,15 @@ msgstr "Viedyn palvelimen hakemisto"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:201
 msgid "The host path that is to be exported."
-msgstr ""
+msgstr "Vietävä isäntäpolku."
 
 #: src/components/vm/vmMigrateDialog.jsx:71
 msgid ""
 "The migrated VM configuration is removed from the source host. The "
 "destination host is considered the new home of the VM."
 msgstr ""
+"Siirretty virtuaalikoneen kokoonpano poistetaan lähdekoneesta. Kohdekonetta "
+"pidetään virtuaalikoneen uutena kotina."
 
 #: src/components/vm/disks/diskAdd.jsx:76
 msgid "The pool is empty"
@@ -1989,7 +1944,7 @@ msgstr "Tallennusvarantoa ei voitu poistaa"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:221
 msgid "The tag name to be used by the guest to mount this export point."
-msgstr ""
+msgstr "Tunnisteen nimi, jota vieras käyttää tämän vientipisteen liittämiseen."
 
 #: src/components/vm/vmActions.jsx:375
 msgid "This VM is transient. Shut it down if you wish to delete it."
@@ -2000,12 +1955,16 @@ msgid ""
 "This is the recommended config for general guest connectivity on hosts with "
 "dynamic / wireless networking configs."
 msgstr ""
+"Tämä on suositeltu kokoonpano yleisille vierasyhteyksille koneissa, joissa "
+"on dynaamiset/langattomat verkkoasetukset."
 
 #: src/components/vm/nics/nicBody.jsx:94
 msgid ""
 "This is the recommended config for general guest connectivity on hosts with "
 "static wired networking configs."
 msgstr ""
+"Tämä on suositeltu kokoonpano yleisille vierasyhteyksille koneissa, joissa "
+"on staattiset langalliset verkkoasetukset."
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:696
 msgid "This volume is already used by another VM."
@@ -2052,7 +2011,7 @@ msgstr "URL (ISO-kuvan tai jakelun asennuspuu)"
 
 #: src/components/vm/hostdevs/hostDevCard.jsx:125
 msgid "UUID"
-msgstr ""
+msgstr "UUID"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:210
 msgid "Unique name"
@@ -2101,6 +2060,9 @@ msgid ""
 "storage. This can be a shared storage pool, NFS, or any other method of "
 "sharing storage."
 msgstr ""
+"Käytä samaa sijaintia sekä lähtö- että kohdekoneiden tallennustilassa. Tämä "
+"voi olla jaettu tallennustila, NFS tai mikä tahansa muu tapa jakaa "
+"tallennustilaa."
 
 #: src/components/vm/disks/vmDisksCard.jsx:219
 msgid "Used"
@@ -2135,6 +2097,8 @@ msgid ""
 "Uses the macvtap driver to attach the guest's NIC directly to a specified "
 "physical interface of the host machine."
 msgstr ""
+"Liittää vieraan verkkokortin macvtap-ohjaimen avulla suoraan isäntäkoneen "
+"määritettyyn fyysiseen rajapintaan."
 
 #: src/components/vm/overview/vcpuModal.jsx:170
 msgid "VCPU settings could not be saved"
@@ -2280,7 +2244,7 @@ msgstr "Kirjoitettava ja jaettu"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:178
 msgid "You can mount the shared folder using:"
-msgstr ""
+msgstr "Voit liittää jaetun kansion seuraavasti:"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:142
 msgid "You need to select the most closely matching operating system"
@@ -2336,10 +2300,8 @@ msgid "ethernet"
 msgstr "ethernet"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:61
-#, fuzzy
-#| msgid "Network file system"
 msgid "filesystem"
-msgstr "Verkkotiedostojärjestelmä"
+msgstr "tiedostojärjestelmä"
 
 #: src/helpers.js:250
 msgid "host"
@@ -2388,26 +2350,24 @@ msgstr "monilähetys"
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:190
 #: src/components/vm/vmDetailsPage.jsx:190
 msgid "more info"
-msgstr ""
+msgstr "lisätietoja"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:186
 #: src/components/vm/vmDetailsPage.jsx:186
 msgid "mount point: The mount point inside the guest"
-msgstr ""
+msgstr "liitoskohta: liitoskohta vieraskoneessa"
 
 #: src/components/vm/vmDetailsPage.jsx:185
 msgid "mount tag: The tag associated to the exported mount point"
-msgstr ""
+msgstr "liitostunniste: vietyyn liitoskohtaan liittyvä tunniste"
 
 #: src/helpers.js:243 src/helpers.js:255
 msgid "network"
 msgstr "verkko"
 
 #: src/components/vm/nics/vmNicsCard.jsx:359
-#, fuzzy
-#| msgid "Add network interface"
 msgid "network interface"
-msgstr "Lisää verkkoliitäntä"
+msgstr "verkkoliitäntä"
 
 #: src/helpers.js:278 src/components/storagePools/storagePoolOverviewTab.jsx:69
 #: src/components/storagePools/storagePoolOverviewTab.jsx:74
@@ -2440,10 +2400,8 @@ msgid "server"
 msgstr "palvelin"
 
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:181
-#, fuzzy
-#| msgid "Snapshots"
 msgid "snapshot"
-msgstr "Tilannevedokset"
+msgstr "tilannevedos"
 
 #: src/helpers.js:262
 msgid "udp"
