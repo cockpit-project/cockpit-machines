@@ -98,6 +98,10 @@ class VirtualMachinesCaseHelpers:
 
         # Ensure everything has started correctly
         m.execute(f"systemctl start {self.getLibvirtServiceName()}.service")
+        if m.image in ["fedora-35"]:
+            # HACK for missing deps on virtlockd/virtlogd sockets - needed till f-35 uses libvirt v7.7.0
+            # https://github.com/libvirt/libvirt/commit/88c5b9f827779ae6fe5a6f08100a4b6184492a1c
+            m.execute("systemctl start virtlockd.socket && systemctl start virtlogd.socket")
 
         # Wait until we can get a list of domains
         m.execute("until virsh list; do sleep 1; done")

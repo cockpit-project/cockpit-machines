@@ -45,6 +45,11 @@ class TestMachinesMigration(VirtualMachinesCase):
         machine2.execute("hostnamectl set-hostname machine2")
         machine2.execute(f"systemctl restart {self.getLibvirtServiceName()}")
 
+        if machine2.image in ["fedora-35"]:
+            # HACK for missing deps on virtlockd/virtlogd sockets - needed till f-35 uses libvirt v7.7.0
+            # https://github.com/libvirt/libvirt/commit/88c5b9f827779ae6fe5a6f08100a4b6184492a1c
+            machine2.execute("systemctl start virtlockd.socket && systemctl start virtlogd.socket")
+
         if fail != "authentication":
             # setup key authentication
             machine1.execute("mkdir -m 0700 -p /root/.ssh")
