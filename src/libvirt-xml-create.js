@@ -1,18 +1,18 @@
 export function getDiskXML(type, file, device, poolName, volumeName, format, target, cacheMode, shareable, busType) {
-    var doc = document.implementation.createDocument('', '', null);
+    const doc = document.implementation.createDocument('', '', null);
 
-    var diskElem = doc.createElement('disk');
+    const diskElem = doc.createElement('disk');
     diskElem.setAttribute('type', type);
     diskElem.setAttribute('device', device);
 
-    var driverElem = doc.createElement('driver');
+    const driverElem = doc.createElement('driver');
     driverElem.setAttribute('name', 'qemu');
     if (format && ['qcow2', 'raw'].includes(format))
         driverElem.setAttribute('type', format);
     driverElem.setAttribute('cache', cacheMode);
     diskElem.appendChild(driverElem);
 
-    var sourceElem = doc.createElement('source');
+    const sourceElem = doc.createElement('source');
     if (type === 'file') {
         sourceElem.setAttribute('file', file);
     } else {
@@ -21,7 +21,7 @@ export function getDiskXML(type, file, device, poolName, volumeName, format, tar
     }
     diskElem.appendChild(sourceElem);
 
-    var targetElem = doc.createElement('target');
+    const targetElem = doc.createElement('target');
     targetElem.setAttribute('dev', target);
     targetElem.setAttribute('bus', busType);
     diskElem.appendChild(targetElem);
@@ -145,24 +145,24 @@ export function getNetworkXML({ name, forwardMode, device, ipv4, netmask, ipv6, 
 }
 
 export function getVolumeXML(volumeName, size, format) {
-    var doc = document.implementation.createDocument('', '', null);
+    const doc = document.implementation.createDocument('', '', null);
 
-    var volElem = doc.createElement('volume');
+    const volElem = doc.createElement('volume');
     volElem.setAttribute('type', 'file');
 
-    var nameElem = doc.createElement('name');
+    const nameElem = doc.createElement('name');
     nameElem.appendChild(doc.createTextNode(volumeName));
     volElem.appendChild(nameElem);
 
-    var allocationElem = doc.createElement('capacity');
+    const allocationElem = doc.createElement('capacity');
     allocationElem.setAttribute('unit', 'MiB');
     allocationElem.appendChild(doc.createTextNode(size));
     volElem.appendChild(allocationElem);
 
-    var targetElem = doc.createElement('target');
+    const targetElem = doc.createElement('target');
 
     if (format) {
-        var formatElem = doc.createElement('format');
+        const formatElem = doc.createElement('format');
         formatElem.setAttribute('type', format);
         targetElem.appendChild(formatElem);
     }

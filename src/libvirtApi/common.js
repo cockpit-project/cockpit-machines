@@ -208,7 +208,7 @@ function doUsagePolling(name, connectionName, objPath) {
                         props.rssMemory = info["balloon.rss"].v.v;
                     else if ("state.state" in info && info["state.state"].v.v == Enum.VIR_DOMAIN_SHUTOFF)
                         props.rssMemory = 0.0;
-                    for (var i = 0; i < info["vcpu.maximum"].v.v; i++) {
+                    for (let i = 0; i < info["vcpu.maximum"].v.v; i++) {
                         if (!(`vcpu.${i}.time` in info))
                             continue;
                         avgvCpuTime += info[`vcpu.${i}.time`].v.v;
