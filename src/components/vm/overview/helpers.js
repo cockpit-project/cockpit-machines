@@ -46,7 +46,7 @@ export function labelForFirmwarePath(path, guest_arch) {
         else
             return "unknown";
     } else {
-        for (var arch in uefi_arch_patterns) {
+        for (const arch in uefi_arch_patterns) {
             for (let i = 0; i < uefi_arch_patterns[arch].length; i++) {
                 const pathRegExp = uefi_arch_patterns[arch][i];
                 if (path.match(pathRegExp))
