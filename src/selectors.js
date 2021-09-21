@@ -33,10 +33,6 @@ export function getLibvirtServiceState(state) {
 }
 
 export function usagePollingEnabled(state, name, connectionName) {
-    for (var i = 0; i < state.vms.length; i++) {
-        const vm = state.vms[i];
-        if (vm.connectionName === connectionName && vm.name === name)
-            return vm.usagePolling;
-    }
-    return false; // VM got undefined
+    const vm = state.vms.find(vm => vm.connectionName === connectionName && vm.name === name);
+    return vm ? vm.usagePolling : false; // VM got undefined
 }
