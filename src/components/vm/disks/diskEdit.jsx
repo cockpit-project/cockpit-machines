@@ -78,8 +78,10 @@ const CacheRow = ({ onValueChanged, dialogValues, idPrefix, shutoff }) => {
     );
 };
 
-const BusRow = ({ onValueChanged, dialogValues, diskDevice, idPrefix, shutoff }) => {
-    const busTypes = diskBusTypes[diskDevice].map(type => ({ value: type }));
+const BusRow = ({ onValueChanged, dialogValues, diskDevice, idPrefix, shutoff, supportedDiskBusTypes }) => {
+    const busTypes = diskBusTypes[diskDevice]
+            .filter(bus => supportedDiskBusTypes.includes(bus))
+            .map(type => ({ value: type }));
     if (busTypes.find(busType => busType.value == dialogValues.busType) == undefined)
         busTypes.push({ value: dialogValues.busType, disabled: true });
 
@@ -141,13 +143,13 @@ const AccessRow = ({ onValueChanged, dialogValues, diskDevice, driverType, idPre
     );
 };
 
-export const EditDiskAction = ({ idPrefix, disk, onAddErrorNotification, vm }) => {
+export const EditDiskAction = ({ idPrefix, disk, onAddErrorNotification, vm, supportedDiskBusTypes }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
         <>
             <Button id={idPrefix}
-                    isDisabled={!Object.keys(diskBusTypes).includes(disk.device)}
+                    isDisabled={!Object.keys(diskBusTypes).includes(disk.device) || !supportedDiskBusTypes}
                     variant='secondary'
                     onClick={() => setIsOpen(true)}>
                 {_("Edit")}
@@ -156,6 +158,7 @@ export const EditDiskAction = ({ idPrefix, disk, onAddErrorNotification, vm }) =
                                       disk={disk}
                                       onAddErrorNotification={onAddErrorNotification}
                                       setIsOpen={setIsOpen}
+                                      supportedDiskBusTypes={supportedDiskBusTypes}
                                       vm={vm} />}
         </>
     );
@@ -208,7 +211,7 @@ export class EditDiskModal extends React.Component {
     }
 
     render() {
-        const { vm, disk, idPrefix, setIsOpen } = this.props;
+        const { vm, disk, idPrefix, setIsOpen, supportedDiskBusTypes } = this.props;
 
         const defaultBody = (
             <Form isHorizontal>
@@ -226,7 +229,8 @@ export class EditDiskModal extends React.Component {
                         diskDevice={disk.device}
                         idPrefix={idPrefix}
                         onValueChanged={this.onValueChanged}
-                        shutoff={vm.state == 'shut off'} />
+                        shutoff={vm.state == 'shut off'}
+                        supportedDiskBusTypes={supportedDiskBusTypes} />
 
                 <CacheRow dialogValues={this.state}
                         idPrefix={idPrefix}

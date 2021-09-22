@@ -38,13 +38,7 @@ import { BootOrderLink } from './bootOrder.jsx';
 import { FirmwareLink } from './firmware.jsx';
 import WarningInactive from '../../common/warningInactive.jsx';
 import { StateIcon } from '../../common/stateIcon.jsx';
-import { domainChangeAutostart, domainGetCapabilities, domainGet } from '../../../libvirtApi/domain.js';
-import {
-    getDomainCapLoader,
-    getDomainCapMaxVCPU,
-    getDomainCapCPUCustomModels,
-    getDomainCapCPUHostModel,
-} from '../../../libvirt-xml-parse.js';
+import { domainChangeAutostart, domainGet } from '../../../libvirtApi/domain.js';
 import store from '../../../store.js';
 
 import '../../common/overviewCard.css';
@@ -60,7 +54,6 @@ class VmOverviewCard extends React.Component {
             showVcpuModal: false,
             showCpuTypeModal: false,
             showMemoryModal: false,
-            cpuModels: [],
             virtXMLAvailable: undefined,
         };
         this.openVcpu = this.openVcpu.bind(this);
@@ -70,24 +63,7 @@ class VmOverviewCard extends React.Component {
         this.onAutostartChanged = this.onAutostartChanged.bind(this);
     }
 
-    componentWillUnmount() {
-        this._isMounted = false;
-    }
-
     componentDidMount() {
-        this._isMounted = true;
-        domainGetCapabilities({ connectionName: this.props.vm.connectionName, arch: this.props.vm.arch, model: this.props.vm.emulatedMachine })
-                .then(domCaps => {
-                    const loaderElems = getDomainCapLoader(domCaps);
-                    const maxVcpu = getDomainCapMaxVCPU(domCaps);
-                    const cpuModels = getDomainCapCPUCustomModels(domCaps);
-                    const cpuHostModel = getDomainCapCPUHostModel(domCaps);
-
-                    if (this._isMounted)
-                        this.setState({ loaderElems, maxVcpu: Number(maxVcpu), cpuModels, cpuHostModel });
-                })
-                .catch(() => console.warn("getDomainCapabilities failed"));
-
         cockpit.spawn(['which', 'virt-xml'], { err: 'ignore' })
                 .then(() => {
                     this.setState({ virtXMLAvailable: true });
@@ -135,7 +111,7 @@ class VmOverviewCard extends React.Component {
          */
         let cpuModeChanged = false;
         if (vm.inactiveXML.cpu.mode == 'host-model')
-            cpuModeChanged = !(vm.cpu.mode == 'host-model' || vm.cpu.model == this.state.cpuHostModel);
+            cpuModeChanged = !(vm.cpu.mode == 'host-model' || vm.cpu.model == this.props.cpuHostModel);
         else if (vm.inactiveXML.cpu.mode == 'host-passthrough')
             cpuModeChanged = vm.cpu.mode != 'host-passthrough';
         else if (vm.inactiveXML.cpu.mode == 'custom')
@@ -252,11 +228,11 @@ class VmOverviewCard extends React.Component {
                                 <DescriptionListDescription id={`${idPrefix}-emulated-machine`}>{vm.emulatedMachine}</DescriptionListDescription>
                             </DescriptionListGroup>
 
-                            { this.state.loaderElems && libvirtVersion >= 5002000 && // <os firmware=[bios/efi]' settings is available only for libvirt version >= 5.2. Before that version it silently ignores this attribute in the XML
+                            { this.props.loaderElems && libvirtVersion >= 5002000 && // <os firmware=[bios/efi]' settings is available only for libvirt version >= 5.2. Before that version it silently ignores this attribute in the XML
                             <DescriptionListGroup>
                                 <DescriptionListTerm>{_("Firmware")}</DescriptionListTerm>
                                 <FirmwareLink vm={vm}
-                                              loaderElems={this.state.loaderElems}
+                                              loaderElems={this.props.loaderElems}
                                               libvirtVersion={libvirtVersion}
                                               idPrefix={idPrefix} />
                             </DescriptionListGroup>}
@@ -264,8 +240,8 @@ class VmOverviewCard extends React.Component {
                     </FlexItem>
                 </Flex>
                 { this.state.showMemoryModal && <MemoryModal close={this.close} vm={vm} config={config} /> }
-                { this.state.showVcpuModal && <VCPUModal close={this.close} vm={vm} maxVcpu={this.state.maxVcpu} /> }
-                { this.state.showCpuTypeModal && <CPUTypeModal close={this.close} vm={vm} models={this.state.cpuModels} /> }
+                { this.state.showVcpuModal && <VCPUModal close={this.close} vm={vm} maxVcpu={this.props.maxVcpu} /> }
+                { this.state.showCpuTypeModal && <CPUTypeModal close={this.close} vm={vm} models={this.props.cpuModels} /> }
             </>
         );
     }

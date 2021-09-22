@@ -86,10 +86,15 @@ export class VmDisksActions extends React.Component {
 
         return (
             <>
-                <Button id={`${idPrefix}-adddisk`} variant='secondary' onClick={this.open}>
+                <Button id={`${idPrefix}-adddisk`} variant='secondary' onClick={this.open} isDisabled={!this.props.supportedDiskBusTypes}>
                     {_("Add disk")}
                 </Button>
-                {this.state.showAddDiskModal && <AddDiskModalBody close={this.close} idPrefix={idPrefix} vm={vm} vms={vms} storagePools={storagePools.filter(pool => pool && pool.active)} />}
+                {this.state.showAddDiskModal &&
+                <AddDiskModalBody close={this.close}
+                                  idPrefix={idPrefix}
+                                  vm={vm} vms={vms}
+                                  storagePools={storagePools.filter(pool => pool && pool.active)}
+                                  supportedDiskBusTypes={this.props.supportedDiskBusTypes} />}
             </>
         );
     }
@@ -172,7 +177,7 @@ export class VmDisksCardLibvirt extends React.Component {
     }
 
     render() {
-        const { vm, storagePools } = this.props;
+        const { vm, storagePools, supportedDiskBusTypes } = this.props;
 
         const idPrefix = `${vmId(vm.name)}-disks`;
         const areDiskStatsSupported = this.getDiskStatsSupport(vm);
@@ -188,12 +193,14 @@ export class VmDisksCardLibvirt extends React.Component {
                 vm={vm}
                 disks={disks}
                 renderCapacity={areDiskStatsSupported}
+                supportedDiskBusTypes={supportedDiskBusTypes}
                 onAddErrorNotification={this.props.onAddErrorNotification} />
         );
     }
 }
 
 VmDisksCardLibvirt.propTypes = {
+    supportedDiskBusTypes: PropTypes.array,
     vm: PropTypes.object.isRequired,
 };
 
@@ -204,7 +211,7 @@ export class VmDisksCard extends React.Component {
     }
 
     render() {
-        const { vm, disks, renderCapacity, onAddErrorNotification } = this.props;
+        const { vm, disks, renderCapacity, onAddErrorNotification, supportedDiskBusTypes } = this.props;
         let renderCapacityUsed, renderAccess, renderAdditional;
         const columnTitles = [_("Device")];
         const idPrefix = `${vmId(vm.name)}-disks`;
@@ -293,7 +300,8 @@ export class VmDisksCard extends React.Component {
                     <EditDiskAction disk={disk}
                                     vm={vm}
                                     idPrefix={`${idPrefixRow}-edit`}
-                                    onAddErrorNotification={onAddErrorNotification} /> }
+                                    onAddErrorNotification={onAddErrorNotification}
+                                    supportedDiskBusTypes={supportedDiskBusTypes} />}
                 </div>
             );
             columns.push({ title: diskActions });
@@ -317,4 +325,5 @@ VmDisksCard.propTypes = {
     disks: PropTypes.array.isRequired,
     renderCapacity: PropTypes.bool,
     onAddErrorNotification: PropTypes.func.isRequired,
+    supportedDiskBusTypes: PropTypes.array,
 };

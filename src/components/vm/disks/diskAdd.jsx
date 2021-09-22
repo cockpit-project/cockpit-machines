@@ -141,7 +141,9 @@ class AdditionalOptions extends React.Component {
     }
 
     render() {
-        const displayBusTypes = diskBusTypes[this.props.device].map(type => ({ value: type }));
+        const displayBusTypes = diskBusTypes[this.props.device]
+                .filter(bus => this.props.supportedDiskBusTypes.includes(bus))
+                .map(type => ({ value: type }));
         if (displayBusTypes.find(busType => busType.value == this.props.busType) == undefined)
             displayBusTypes.push({ value: this.props.busType, disabled: true });
 
@@ -642,7 +644,8 @@ export class AddDiskModalBody extends React.Component {
                                        device={this.state.device}
                                        idPrefix={idPrefix}
                                        onValueChanged={this.onValueChanged}
-                                       busType={this.state.busType} />
+                                       busType={this.state.busType}
+                                       supportedDiskBusTypes={this.props.supportedDiskBusTypes} />
                 </Form>
             );
         }

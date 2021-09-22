@@ -111,6 +111,15 @@ export function getDomainCapCPUHostModel(capsXML) {
     return hostModelModeElem && Array.prototype.map.call(hostModelModeElem.getElementsByTagName("model"), modelElem => modelElem.textContent)[0];
 }
 
+export function getDomainCapDiskBusTypes(capsXML) {
+    const domainCapsElem = getElem(capsXML);
+    const devicesCapsElem = domainCapsElem.getElementsByTagName("devices") && domainCapsElem.getElementsByTagName("devices")[0];
+    const diskCapsElem = devicesCapsElem.getElementsByTagName("disk") && devicesCapsElem.getElementsByTagName("disk")[0];
+    const enumElems = diskCapsElem && diskCapsElem.getElementsByTagName("enum");
+    const busElem = enumElems && Array.prototype.find.call(enumElems, enumElem => enumElem.getAttribute("name") == "bus");
+    return busElem && Array.prototype.map.call(busElem.getElementsByTagName("value"), valueElem => valueElem.textContent);
+}
+
 export function getSingleOptionalElem(parent, name) {
     const subElems = parent.getElementsByTagName(name);
     return subElems.length > 0 ? subElems[0] : undefined; // optional
