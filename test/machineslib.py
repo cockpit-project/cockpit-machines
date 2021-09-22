@@ -200,6 +200,8 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
 
         self.startLibvirt()
         self.addCleanup(m.execute, f"systemctl stop {self.getLibvirtServiceName()}")
+        if m.image in ["fedora-35"]:
+            self.addCleanup(m.execute, "systemctl stop virtstoraged.service virtnetworkd.service")
 
         # Stop all domains
         self.addCleanup(m.execute, "for d in $(virsh list --name); do virsh destroy $d || true; done")
