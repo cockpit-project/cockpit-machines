@@ -37,7 +37,7 @@ import { vmId } from "../../helpers.js";
 import { VmFilesystemsCard, VmFilesystemActions } from './filesystems/vmFilesystemsCard.jsx';
 import { VmDisksCardLibvirt, VmDisksActions } from './disks/vmDisksCard.jsx';
 import { VmNetworkTab, VmNetworkActions } from './nics/vmNicsCard.jsx';
-import { VmHostDevCard } from './hostdevs/hostDevCard.jsx';
+import { VmHostDevCard, VmHostDevActions } from './hostdevs/hostDevCard.jsx';
 import Consoles from './consoles/consoles.jsx';
 import VmOverviewCard from './overview/vmOverviewCard.jsx';
 import VmUsageTab from './vmUsageCard.jsx';
@@ -152,6 +152,7 @@ export const VmDetailsPage = ({
             id: `${vmId(vm.name)}-hostdevs`,
             className: "hostdevs-card",
             title: _("Host devices"),
+            actions: <VmHostDevActions vm={vm} nodeDevices={nodeDevices} />,
             body: <VmHostDevCard vm={vm} nodeDevices={nodeDevices} config={config} />,
         }
     ];

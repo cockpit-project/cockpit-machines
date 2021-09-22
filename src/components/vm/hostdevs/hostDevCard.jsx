@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 
 import {
+    Button,
     DescriptionList,
     DescriptionListTerm,
     DescriptionListGroup,
@@ -27,34 +28,56 @@ import {
 } from '@patternfly/react-core';
 
 import cockpit from 'cockpit';
-import { vmId, findHostNodeDevice } from "../../../helpers.js";
+import { vmId, findHostNodeDevice, getNodeDevSource } from "../../../helpers.js";
 import { ListingTable } from "cockpit-components-table.jsx";
+import AddHostDev from "./hostDevAdd.jsx";
+import { domainDetachHostDevice } from '../../../libvirtApi/domain.js';
+import { DeleteResourceButton, DeleteResourceModal } from '../../common/deleteResource.jsx';
 
 const _ = cockpit.gettext;
 
+export const VmHostDevActions = ({ vm, nodeDevices }) => {
+    const [showAttachModal, setShowAttachModal] = useState(false);
+
+    const idPrefix = `${vmId(vm.name)}-hostdevs`;
+
+    return (
+        <>
+            <Button id={`${idPrefix}-add`} variant='secondary' onClick={() => setShowAttachModal(true)}>
+                {_("Add host device")}
+            </Button>
+            {showAttachModal &&
+                <AddHostDev close={() => setShowAttachModal(false)}
+                            idPrefix={idPrefix}
+                            vm={vm}
+                            nodeDevices={nodeDevices} />
+            }
+        </>
+    );
+};
+
 /* Adds an optional description-value pair to an array which represents multiple values of a table cell
  *
- * @param chunks an array into which element is added to
  * @param value a value of the descr-value pair
  * @param descr a description of the descr-value pair
  * @param id
  */
-function addOptionalToCell(chunks, value, id, descr) {
-    if (value) {
-        chunks.push(
-            <DescriptionListGroup key={descr}>
-                <DescriptionListTerm>
-                    {descr}
-                </DescriptionListTerm>
-                <DescriptionListDescription id={id}>
-                    {value}
-                </DescriptionListDescription>
-            </DescriptionListGroup>
-        );
-    }
+export function getOptionalValue(value, id, descr) {
+    return (
+        <DescriptionListGroup key={descr}>
+            <DescriptionListTerm>
+                {descr}
+            </DescriptionListTerm>
+            <DescriptionListDescription id={id}>
+                {value}
+            </DescriptionListDescription>
+        </DescriptionListGroup>
+    );
 }
 
 export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
+    const [deleteDialogProps, setDeleteDialogProps] = useState(undefined);
+
     function getClass(hostDev, hostdevId) {
         const nodeDev = findHostNodeDevice(hostDev, nodeDevices);
 
@@ -85,14 +108,14 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
     }
 
     function getSource(hostDev, hostdevId) {
-        const cell = [];
+        const cells = [];
         const nodeDev = findHostNodeDevice(hostDev, nodeDevices);
         if (hostDev.type === "usb" && nodeDev) {
             const device = nodeDev.devnum;
             const bus = nodeDev.busnum;
 
-            addOptionalToCell(cell, device, `${hostdevId}-device`, _("Device"));
-            addOptionalToCell(cell, bus, `${hostdevId}-bus`, _("Bus"));
+            cells.push(getOptionalValue(device, `${hostdevId}-device`, _("Device")));
+            cells.push(getOptionalValue(bus, `${hostdevId}-bus`, _("Bus")));
         } else if (hostDev.type === "pci") {
             let domain = hostDev.source.address.domain.split('x')[1];
             let bus = hostDev.source.address.bus.split('x')[1];
@@ -104,40 +127,40 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
             slot = String(slot).padStart(2, '0');
             func = String(func).padStart(1, '0');
 
-            addOptionalToCell(cell, `${domain}:${bus}:${slot}.${func}`, `${hostdevId}-slot`, _("Slot"));
+            cells.push(getOptionalValue(`${domain}:${bus}:${slot}.${func}`, `${hostdevId}-slot`, _("Slot")));
         } else if (hostDev.type === "scsi") {
             const bus = hostDev.source.address.bus;
             const target = hostDev.source.address.target;
             const unit = hostDev.source.address.lun;
 
-            addOptionalToCell(cell, bus, `${hostdevId}-bus`, _("Bus"));
-            addOptionalToCell(cell, unit, `${hostdevId}-unit`, _("Slot"));
-            addOptionalToCell(cell, target, `${hostdevId}-target`, _("Target"));
+            cells.push(getOptionalValue(bus, `${hostdevId}-bus`, _("Bus")));
+            cells.push(getOptionalValue(unit, `${hostdevId}-unit`, _("Slot")));
+            cells.push(getOptionalValue(target, `${hostdevId}-target`, _("Target")));
         } else if (hostDev.type === "scsi_host") {
             const protocol = hostDev.source.protocol;
             const wwpn = hostDev.source.wwpn;
 
-            addOptionalToCell(cell, protocol, `${hostdevId}-protocol`, _("Protocol"));
-            addOptionalToCell(cell, wwpn, `${hostdevId}-wwpn`, _("WWPN"));
+            cells.push(getOptionalValue(protocol, `${hostdevId}-protocol`, _("Protocol")));
+            cells.push(getOptionalValue(wwpn, `${hostdevId}-wwpn`, _("WWPN")));
         } else if (hostDev.type === "mdev") {
             const uuid = hostDev.source.address.uuid;
 
-            addOptionalToCell(cell, uuid, `${hostdevId}-uuid`, _("UUID"));
+            cells.push(getOptionalValue(uuid, `${hostdevId}-uuid`, _("UUID")));
         } else if (hostDev.type === "storage") {
             const block = hostDev.source.block;
 
-            addOptionalToCell(cell, block, `${hostdevId}-block`, _("Path"));
+            cells.push(getOptionalValue(block, `${hostdevId}-block`, _("Path")));
         } else if (hostDev.type === "misc") {
             const ch = hostDev.source.char;
 
-            addOptionalToCell(cell, ch, `${hostdevId}-char`, _("Path"));
+            cells.push(getOptionalValue(ch, `${hostdevId}-char`, _("Path")));
         } else if (hostDev.type === "net") {
             const iface = hostDev.source.interface;
 
-            addOptionalToCell(cell, iface, `${hostdevId}-interface`, _("Interface"));
+            cells.push(getOptionalValue(iface, `${hostdevId}-interface`, _("Interface")));
         }
 
-        return <DescriptionList isHorizontal>{cell}</DescriptionList>;
+        return <DescriptionList isHorizontal>{cells}</DescriptionList>;
     }
 
     const id = vmId(vm.name);
@@ -189,6 +212,28 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
                 );
             }
         },
+        {
+            name: "", value: (hostdev, hostdevId) => {
+                const nodeDev = findHostNodeDevice(hostdev, nodeDevices);
+
+                const deleteNICAction = (
+                    <DeleteResourceButton objectId={`${id}-hostdev-${hostdevId}`}
+                                          actionName={_("Remove")}
+                                          showDialog={() => setDeleteDialogProps({
+                                              objectType: hostdev.type + " host device",
+                                              objectName: getNodeDevSource(nodeDev),
+                                              onClose: () => setDeleteDialogProps(undefined),
+                                              deleteHandler: () => domainDetachHostDevice({ connectionName: vm.connectionName, vmName: vm.name, live: vm.state !== 'shut off', dev: nodeDev }),
+                                          })} />
+                );
+
+                return (
+                    <div className='machines-listing-actions'>
+                        {nodeDev && deleteNICAction}
+                    </div>
+                );
+            }
+        },
     ];
 
     let hostdevId = 1;
@@ -203,12 +248,16 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
     });
 
     return (
-        <ListingTable aria-label={_(`VM ${vm.name} Host Devices`)}
-            gridBreakPoint='grid-xl'
-            variant='compact'
-            emptyCaption={_("No host devices assigned to this VM")}
-            rows={rows}
-            columns={columnTitles} />
+        <>
+            {deleteDialogProps &&
+                <DeleteResourceModal {...deleteDialogProps} actionName={_("Remove")} />}
+            <ListingTable aria-label={_(`VM ${vm.name} Host Devices`)}
+                gridBreakPoint='grid-xl'
+                variant='compact'
+                emptyCaption={_("No host devices assigned to this VM")}
+                rows={rows}
+                columns={columnTitles} />
+        </>
     );
 };
 

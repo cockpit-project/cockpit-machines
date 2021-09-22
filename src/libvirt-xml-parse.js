@@ -795,6 +795,8 @@ export function parseNodeDeviceDumpxml(nodeDevice) {
     const name = deviceElem.getElementsByTagName("name")[0].childNodes[0].nodeValue;
     const pathElem = getSingleOptionalElem(deviceElem, 'path');
     const path = pathElem ? pathElem.childNodes[0].nodeValue : undefined;
+    const parentElem = getSingleOptionalElem(deviceElem, 'parent');
+    const parentName = parentElem ? parentElem.childNodes[0].nodeValue : undefined;
     const capabilityElem = deviceElem.getElementsByTagName("capability")[0];
 
     const capability = {};
@@ -871,7 +873,7 @@ export function parseNodeDeviceDumpxml(nodeDevice) {
             capability.uuid = uuidElem.childNodes[0] ? uuidElem.childNodes[0].nodeValue : undefined;
     }
 
-    return { name, path, capability };
+    return { name, path, parent: parentName, capability };
 }
 
 export function parseStoragePoolDumpxml(connectionName, storagePoolXml, id_overwrite) {

@@ -53,6 +53,7 @@ import {
     convertToUnit,
     DOMAINSTATE,
     fileDownload,
+    getNodeDevSource,
     logDebug,
     units,
 } from '../helpers.js';
@@ -133,6 +134,18 @@ export function domainAttachDisk({
     const xmlDesc = getDiskXML(type, file, device, poolName, volumeName, format, target, cacheMode, shareable, busType);
 
     return domainAttachDevice({ connectionName, vmId, permanent, hotplug, xmlDesc });
+}
+
+export function domainAttachHostDevice({ connectionName, vmName, live, dev }) {
+    const source = getNodeDevSource(dev);
+    const args = ["virt-xml", "-c", `qemu:///${connectionName}`, vmName, "--add-device", "--hostdev", source];
+    if (live)
+        args.push("--update");
+
+    return cockpit.spawn(
+        args,
+        { superuser: "try", err: "message" }
+    );
 }
 
 export function domainAttachIface({ connectionName, vmName, mac, permanent, hotplug, sourceType, source, model }) {
@@ -453,6 +466,18 @@ export function domainDetachDisk({
 
                 return call(connectionName, vmPath, 'org.libvirt.Domain', 'DetachDevice', [diskXML, detachFlags], { timeout, type: 'su' });
             });
+}
+
+export function domainDetachHostDevice({ connectionName, vmName, live, dev }) {
+    const source = getNodeDevSource(dev);
+    const args = ["virt-xml", "-c", `qemu:///${connectionName}`, vmName, "--remove-device", "--hostdev", source];
+    if (live)
+        args.push("--update");
+
+    return cockpit.spawn(
+        args,
+        { superuser: "try", err: "message" }
+    );
 }
 
 export function domainDetachIface({ connectionName, mac, vmName, live, persistent }) {
