@@ -28,7 +28,7 @@ fi
 sed -ie 's/#SHA_CRYPT_MAX_ROUNDS 5000/SHA_CRYPT_MAX_ROUNDS 5000/' /etc/login.defs
 
 # Show critical packages versions
-rpm -qi qemu-kvm libvirt-daemon selinux-policy
+rpm -q qemu-kvm libvirt-daemon selinux-policy
 
 # create user account for logging in
 if ! id admin 2>/dev/null; then
