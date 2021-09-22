@@ -62,6 +62,18 @@ systemctl start firewalld
 firewall-cmd --add-service=cockpit --permanent
 firewall-cmd --add-service=cockpit
 
+if grep -Eq 'PLATFORM_ID=.*(f35)' /etc/os-release; then
+    # HACK: new modular libvirt sockets are not running by default in f35
+    # https://gitlab.com/libvirt/libvirt/-/issues/219
+    systemctl start virtinterfaced.socket
+    systemctl start virtnetworkd.socket
+    systemctl start virtnodedevd.socket
+    systemctl start virtnwfilterd.socket
+    systemctl start virtproxyd.socket
+    systemctl start virtsecretd.socket
+    systemctl start virtstoraged.socket
+fi
+
 # Run tests as unprivileged user
 su - -c "env TEST_BROWSER=$TEST_BROWSER SOURCE=$SOURCE LOGS=$LOGS $TESTS/run-test.sh" runtest
 
