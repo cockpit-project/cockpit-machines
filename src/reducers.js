@@ -33,7 +33,6 @@ import {
     UPDATE_ADD_NODE_DEVICE,
     UPDATE_ADD_VM,
     UPDATE_ADD_STORAGE_POOL,
-    UPDATE_LIBVIRT_STATE,
     UPDATE_LIBVIRT_VERSION,
     UPDATE_DOMAIN_SNAPSHOTS,
     UPDATE_OS_INFO_LIST,
@@ -293,9 +292,6 @@ function systemInfo(state, action) {
             return Object.assign({}, state, { osInfoList: action.osInfoList });
         }
         return state;
-    }
-    case UPDATE_LIBVIRT_STATE: {
-        return Object.assign({}, state, { libvirtService:  Object.assign({}, state.libvirtService, action.state) });
     }
     case UPDATE_LIBVIRT_VERSION: {
         return Object.assign({}, state, { libvirtVersion:  action.libvirtVersion });
