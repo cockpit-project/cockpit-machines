@@ -28,7 +28,7 @@ sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
 from machineslib import VirtualMachinesCase  # noqa
 from testlib import nondestructive, skipImage, test_main, wait  # noqa
 
-distrosWithoutSnapshot = ["centos-8-stream", "rhel-8-4", "rhel-8-5", "ubuntu-2004"]
+distrosWithoutSnapshot = ["centos-8-stream", "rhel-8-4", "rhel-8-5", "rhel-8-6", "ubuntu-2004"]
 
 
 @nondestructive
@@ -64,7 +64,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
     # FIXME remove this skipImage
     @skipImage('Fails with Rejected send message, 1 matched rules; type="method_call"',
-               "rhel-8-4", "rhel-8-5", "ubuntu-stable", "ubuntu-2004", "debian-testing", "debian-stable", "centos-8-stream")
+               "rhel-8-4", "rhel-8-5", "rhel-8-6", "ubuntu-stable", "ubuntu-2004", "debian-testing", "debian-stable", "centos-8-stream")
     def testBasicLibvirtUserUnprivileged(self):
         user = self.createUser(user_group='libvirt')
         self._testBasic(user, False)

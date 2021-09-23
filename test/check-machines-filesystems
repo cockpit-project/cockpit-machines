@@ -114,7 +114,7 @@ class TestMachinesFilesystems(VirtualMachinesCase):
         b.click("#vm-subVmTest1-run")
         b.wait_visible("#vm-subVmTest1-filesystems-add[aria-disabled=true]")
 
-    @skipImage("Older libvirt does not support virtiofs", "rhel-8-5", "centos-8-stream", "ubuntu-2004", "fedora-33")
+    @skipImage("Older libvirt does not support virtiofs", "rhel-8-5", "rhel-8-6", "centos-8-stream", "ubuntu-2004", "fedora-33")
     def testDelete(self):
         b = self.browser
         m = self.machine
