@@ -32,9 +32,6 @@ import {
     updateOrAddVm,
 } from '../actions/store-actions.js';
 import {
-    getDiskXML,
-} from '../libvirt-xml-create.js';
-import {
     setVmCreateInProgress,
     setVmInstallInProgress,
     updateImageDownloadProgress,
@@ -101,17 +98,6 @@ function buildConsoleVVFile(consoleDetail) {
         'fullscreen=0\n';
 }
 
-function domainAttachDevice({ connectionName, vmId, permanent, hotplug, xmlDesc }) {
-    let flags = Enum.VIR_DOMAIN_AFFECT_CURRENT;
-    if (hotplug)
-        flags |= Enum.VIR_DOMAIN_AFFECT_LIVE;
-    if (permanent)
-        flags |= Enum.VIR_DOMAIN_AFFECT_CONFIG;
-
-    // Error handling is done from the calling side
-    return call(connectionName, vmId, 'org.libvirt.Domain', 'AttachDevice', [xmlDesc, flags], { timeout, type: 'su' });
-}
-
 export function getPythonPath() {
     return cockpit.spawn(["/bin/sh", "-c", "command -v /usr/libexec/platform-python || command -v python3 || command -v python"]).then(pyexe => { pythonPath = pyexe.trim() });
 }
@@ -125,7 +111,6 @@ export function domainAttachDisk({
     volumeName,
     format,
     target,
-    vmId,
     vmName,
     permanent,
     hotplug,
@@ -134,9 +119,31 @@ export function domainAttachDisk({
     busType,
     serial,
 }) {
-    const xmlDesc = getDiskXML(type, file, device, poolName, volumeName, format, target, cacheMode, shareable, busType, serial);
+    const options = { err: "message" };
+    if (connectionName === "system")
+        options.superuser = "try";
+    let define = "--define";
+    if (hotplug && !permanent)
+        define = "--no-define";
+    let source = "";
+    if (type === 'file')
+        source = `,source.file=${file}`;
+    else
+        source = `,source.pool=${poolName},source.volume=${volumeName}`;
+    let driverType = "";
+    if (format && ['qcow2', 'raw'].includes(format))
+        driverType = `,driver.type=${format}`;
+    let serialNum = "";
+    if (serial)
+        serialNum = `,serial=${serial}`;
+    const shareableOption = shareable ? "yes" : "no";
 
-    return domainAttachDevice({ connectionName, vmId, permanent, hotplug, xmlDesc });
+    const args = ["virt-xml", "-c", `qemu:///${connectionName}`, vmName, "--add-device", "--disk", `type=${type},shareable=${shareableOption},target.bus=${busType},target.dev=${target},driver.name=qemu,driver.discard=unmap,cache=${cacheMode},device=${device}${source}${driverType}${serialNum}`, define];
+
+    if (hotplug)
+        args.push("--update");
+
+    return cockpit.spawn(args, options);
 }
 
 export function domainAttachHostDevices({ connectionName, vmName, live, devices }) {

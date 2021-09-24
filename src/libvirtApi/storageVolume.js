@@ -46,7 +46,6 @@ export function storageVolumeCreateAndAttach({
     size,
     format,
     target,
-    vmId,
     vmName,
     permanent,
     hotplug,
@@ -63,8 +62,8 @@ export function storageVolumeCreateAndAttach({
                             return storagePoolRefresh({ connectionName, objPath: storagePoolPath[0] });
                         });
             })
-            .then((volPath) => {
-                return domainAttachDisk({ connectionName, type: "volume", device: "disk", poolName, volumeName, format, target, vmId, permanent, hotplug, cacheMode, busType, serial });
+            .then(() => {
+                return domainAttachDisk({ connectionName, type: "volume", device: "disk", poolName, volumeName, format, target, vmName, permanent, hotplug, cacheMode, busType, serial });
             });
 }
 
