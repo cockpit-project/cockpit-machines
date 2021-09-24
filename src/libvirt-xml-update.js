@@ -339,28 +339,3 @@ export function updateMaxMemory(domXml, maxMemory) {
 
     return s.serializeToString(doc);
 }
-
-export function deleteFilesystem(domXml, target) {
-    const s = new XMLSerializer();
-    const doc = getDoc(domXml);
-    const domainElem = doc.firstElementChild;
-
-    if (!domainElem)
-        throw new Error("deleteFilesystem: domXML has no domain element");
-
-    const devicesElem = domainElem.getElementsByTagName('devices')[0];
-    const filesystemElems = devicesElem.getElementsByTagName('filesystem');
-
-    if (filesystemElems) {
-        for (let i = 0; i < filesystemElems.length; i++) {
-            const filesystemElem = filesystemElems[i];
-            const targetElem = filesystemElem.getElementsByTagName('target')[0];
-            const dir = targetElem.getAttribute('dir');
-            if (dir === target) {
-                filesystemElem.remove();
-                break;
-            }
-        }
-    }
-    return s.serializeToString(doc);
-}
