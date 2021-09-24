@@ -85,6 +85,10 @@ class VirtualMachinesCaseHelpers:
         else:
             b.wait_not_present(network_row)
 
+    def getDomainMacAddress(self, vmName):
+        dom_xml = f"virsh -c qemu:///system dumpxml --domain {vmName}"
+        return self.machine.execute(f"{dom_xml} | xmllint --xpath 'string(//domain/devices/interface/mac/@address)' - 2>&1 || true").strip()
+
     def getLibvirtServiceName(self):
         m = self.machine
 
