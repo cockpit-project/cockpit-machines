@@ -27,10 +27,25 @@ import store from '../store.js';
 import { updateOrAddNetwork } from '../actions/store-actions.js';
 import { getNetworkXML } from '../libvirt-xml-create.js';
 import { parseNetDumpxml } from '../libvirt-xml-parse.js';
-import { call, timeout } from './helpers.js';
+import { call, timeout, Enum } from './helpers.js';
 
 export function networkActivate({ connectionName, objPath }) {
     return call(connectionName, objPath, 'org.libvirt.Network', 'Create', [], { timeout, type: '' });
+}
+
+export function networkAddStaticHostEntries({ connectionName, objPath, macAddress, ipAddress, parentIndex, isNetworkActive }) {
+    let flags = Enum.VIR_NETWORK_UPDATE_AFFECT_CONFIG;
+    if (isNetworkActive)
+        flags |= Enum.VIR_NETWORK_UPDATE_AFFECT_LIVE;
+
+    return call(
+        connectionName,
+        objPath,
+        'org.libvirt.Network',
+        'Update',
+        [Enum.VIR_NETWORK_UPDATE_COMMAND_ADD_LAST, Enum.VIR_NETWORK_SECTION_IP_DHCP_HOST, parentIndex, `<host mac='${macAddress}' ip='${ipAddress}' />`, flags]
+        , { timeout, type: 'uuisu' }
+    );
 }
 
 export function networkCreate({

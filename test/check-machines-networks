@@ -786,6 +786,45 @@ class TestMachinesNetworks(VirtualMachinesCase):
         b.click(".pf-c-modal-box__footer button:contains(Delete)")
         self.waitNetworkRow("test_network2", connectionName, False)
 
+    def testNetworkAddStaticDCHPHosts(self):
+        b = self.browser
+        m = self.machine
+
+        self.createVm("subVmTest1", running=False)
+
+        self.login_and_go("/machines")
+        b.wait_in_text("body", "Virtual machines")
+
+        # Click on Networks card
+        b.click(".pf-c-card .pf-c-card__header button:contains(Network)")
+
+        # Check that all networks are there
+        b.wait_in_text("body", "Networks")
+        self.waitNetworkRow("default")
+
+        # Expand row for first network
+        self.toggleNetworkRow("default")
+
+        # Set up a static IP address
+        mac = self.getDomainMacAddress("subVmTest1")
+        b.click("#network-default-system-static-host-entries-add")
+        b.set_input_text("#add-new-static-entry-mac-address", mac)
+        b.set_input_text("#add-new-static-entry-ip-address", "192.168.122.222")
+        b.click("#add-new-static-entry-save")
+        b.wait_in_text("#network-default-system-ipv4-dhcp-host-0", f"MAC: {mac}, IP: 192.168.122.222")
+
+        # Try to set up the same MAC -> IP mapping and expect error
+        b.click("#network-default-system-static-host-entries-add")
+        b.set_input_text("#add-new-static-entry-mac-address", self.getDomainMacAddress("subVmTest1"))
+        b.set_input_text("#add-new-static-entry-ip-address", "192.168.122.222")
+        b.click("#add-new-static-entry-save")
+        b.wait_in_text(".pf-c-modal-box .pf-c-alert.pf-m-danger", "there is an existing dhcp host entry")
+        b.click("#add-new-static-entry-cancel")
+
+        # Check that the static IP is correctly assigned to the VM
+        m.execute("virsh start subVmTest1")
+        wait(lambda: "1" in self.machine.execute("virsh domifaddr subVmTest1 | grep 192.168.122.222 | wc -l"), delay=3)
+
 
 if __name__ == '__main__':
     test_main()
