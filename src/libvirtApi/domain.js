@@ -40,7 +40,6 @@ import {
 } from '../actions/store-actions.js';
 import {
     getDiskXML,
-    getMemoryBackingXML,
     getFilesystemXML,
 } from '../libvirt-xml-create.js';
 import {
@@ -733,26 +732,15 @@ export function domainSetCpuMode({
     ], opts);
 }
 
-export function domainSetMemoryBacking({ connectionName, objPath, type, memory }) {
-    return call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' })
-            .then(domXml => {
-                const doc = getDoc(domXml);
-                const domainElem = doc.firstElementChild;
-                const s = new XMLSerializer();
+export function domainSetMemoryBacking({ connectionName, vmName, type }) {
+    const options = { err: "message" };
+    if (connectionName === "system")
+        options.superuser = "try";
 
-                if (!domainElem)
-                    throw new Error("setMemoryBacking: domXML has no domain element");
-
-                let memoryBackingElem = domainElem.getElementsByTagName("memoryBacking");
-                if (memoryBackingElem.length)
-                    return Promise.resolve();
-
-                memoryBackingElem = getMemoryBackingXML(type, memory);
-
-                domainElem.appendChild(getElem(memoryBackingElem));
-
-                return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [s.serializeToString(doc)], { timeout, type: 's' });
-            });
+    return cockpit.spawn(
+        ['virt-xml', '-c', `qemu:///${connectionName}`, '--memorybacking', `access.mode=shared,source.type=${type}`, vmName, '--edit'],
+        options
+    );
 }
 
 export function domainSetMemory({

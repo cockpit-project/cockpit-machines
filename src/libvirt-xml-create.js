@@ -260,21 +260,3 @@ export function getFilesystemXML(source, target, xattr) {
 
     return new XMLSerializer().serializeToString(doc.documentElement);
 }
-
-export function getMemoryBackingXML(type, memory) {
-    const doc = document.implementation.createDocument('', '', null);
-
-    const memoryBackingElem = doc.createElement('memoryBacking');
-
-    const accessElem = doc.createElement('access');
-    accessElem.setAttribute('mode', 'shared');
-    memoryBackingElem.appendChild(accessElem);
-
-    const sourceElem = doc.createElement('source');
-    sourceElem.setAttribute('type', type);
-    memoryBackingElem.appendChild(sourceElem);
-
-    doc.appendChild(memoryBackingElem);
-
-    return new XMLSerializer().serializeToString(doc.documentElement);
-}

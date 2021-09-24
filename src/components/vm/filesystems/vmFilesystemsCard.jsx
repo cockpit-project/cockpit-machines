@@ -91,7 +91,7 @@ export const VmFilesystemsCard = ({ connectionName, vmName, vmState, filesystems
     );
 };
 
-export const VmFilesystemActions = ({ connectionName, memory, objPath, vmName, vmState }) => {
+export const VmFilesystemActions = ({ connectionName, objPath, vmName, vmState }) => {
     const [isOpen, setIsOpen] = useState(false);
     const idPrefix = `${vmId(vmName)}-filesystems`;
     const addButton = (
@@ -108,8 +108,6 @@ export const VmFilesystemActions = ({ connectionName, memory, objPath, vmName, v
             {vmState == 'shut off' ? addButton : <Tooltip content={_("Adding shared directories is possible only when the guest is shut off")}>{addButton}</Tooltip>}
             {isOpen &&
             <VmFilesystemAddModal connectionName={connectionName}
-                                  memory={memory}
-                                  objPath={objPath}
                                   vmName={vmName}
                                   objPath={objPath}
                                   vmState={vmState}
@@ -118,7 +116,7 @@ export const VmFilesystemActions = ({ connectionName, memory, objPath, vmName, v
     );
 };
 
-const VmFilesystemAddModal = ({ connectionName, memory, objPath, setIsOpen, vmName, vmState }) => {
+const VmFilesystemAddModal = ({ connectionName, setIsOpen, objPath, vmName, vmState }) => {
     const [additionalOptionsExpanded, setAdditionalOptionsExpanded] = useState(false);
     const [dialogError, setDialogError] = useState();
     const [mountTag, setMountTag] = useState("");
@@ -139,9 +137,8 @@ const VmFilesystemAddModal = ({ connectionName, memory, objPath, setIsOpen, vmNa
 
         if (Object.getOwnPropertyNames(validationFailed).length == 0) {
             domainSetMemoryBacking({
-                connectionName, objPath,
+                connectionName, vmName,
                 type: "memfd",
-                memory
             })
                     .then(() => domainCreateFilesystem({
                         connectionName, objPath, vmName,
