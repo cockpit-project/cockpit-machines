@@ -168,7 +168,7 @@ class NetworkActions extends React.Component {
                     {_("Deactivate")}
                 </Button> }
                 { !network.active &&
-                <Button id={`activate-${id}`} isLoading={this.state.operationInProgress} isDisabled={this.state.operationInProgress} onClick={this.onActivate}>
+                <Button id={`activate-${id}`} variant="secondary" isLoading={this.state.operationInProgress} isDisabled={this.state.operationInProgress} onClick={this.onActivate}>
                     {_("Activate")}
                 </Button>
                 }
