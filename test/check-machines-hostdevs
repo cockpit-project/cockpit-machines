@@ -28,7 +28,7 @@ sys.path.append(os.path.join(TEST_DIR, "common"))
 sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
 
 from machineslib import VirtualMachinesCase  # noqa
-from testlib import nondestructive, test_main  # noqa
+from testlib import skipImage, nondestructive, test_main  # noqa
 from machinesxmls import USB_HOSTDEV, PCI_HOSTDEV  # noqa
 
 virt_xml_mock = """#!/usr/bin/python
@@ -90,16 +90,21 @@ class TestMachinesHostDevs(VirtualMachinesCase):
 
         b.wait_in_text("#vm-subVmTest1-hostdev-1-source #1-slot", "0000:00:0f.0")
 
-    def testHostDevAdd(self):
+    # Maybe related to https://listman.redhat.com/archives/libvirt-users/2016-March/msg00065.html - TODO
+    @skipImage("Ubuntu variants get confused with session VMs when XDG_RUNTIME_DIR is expicitely set", "ubuntu-2004", "ubuntu-stable")
+    def testHostDevAddSessionConnection(self):
+        self.testHostDevAdd('session')
+
+    def testHostDevAdd(self, connectionName='system'):
         b = self.browser
         m = self.machine
 
-        self.createVm("subVmTest1", running=False)
+        self.createVm("subVmTest1", running=False, connection=connectionName)
 
         self.login_and_go("/machines")
         b.wait_in_text("body", "Virtual machines")
 
-        self.goToVmPage("subVmTest1")
+        self.goToVmPage("subVmTest1", connectionName)
         b.wait_visible("#vm-subVmTest1-hostdevs")
 
         class HostDevAddDialog(object):
@@ -113,6 +118,7 @@ class TestMachinesHostDevs(VirtualMachinesCase):
                 self._vendor = None
                 self._model = None
                 self.fail_message = fail_message
+                self.run_admin = test_obj.run_admin
 
             def execute(self):
                 self.open()
@@ -128,7 +134,8 @@ class TestMachinesHostDevs(VirtualMachinesCase):
                 b.wait_not_present("#vm-subVmTest1-hostdev-{0}-product".format(self.vm_dev_id))
                 b.click("button#vm-subVmTest1-hostdevs-add")
                 b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Add host device")
-                b.assert_pixels(".pf-c-modal-box", "vm-hostdevs-add-dialog")
+                if connectionName != "session":
+                    b.assert_pixels(".pf-c-modal-box", "vm-hostdevs-add-dialog")
 
             def fill(self):
                 b.click("input#{0}".format(self.dev_type))
@@ -143,7 +150,7 @@ class TestMachinesHostDevs(VirtualMachinesCase):
                 b.wait_not_present("#vm-subVmTest1-hostdevs-dialog")
 
             def add(self):
-                m.execute("virsh dumpxml subVmTest1 > /tmp/vmxml1")
+                self.run_admin("virsh dumpxml subVmTest1 > /tmp/vmxml1", connectionName)
                 b.click(".pf-c-modal-box__footer button:contains(Add)")
                 if self.fail_message:
                     b.wait_in_text(".pf-c-modal-box__footer .pf-c-alert__title", self.fail_message)
@@ -156,19 +163,19 @@ class TestMachinesHostDevs(VirtualMachinesCase):
                 b.wait_in_text("#vm-subVmTest1-hostdev-{0}-vendor".format(self.vm_dev_id), self._vendor)
 
             def verify_backend(self):
-                m.execute("virsh dumpxml subVmTest1 > /tmp/vmxml2")
+                self.run_admin("virsh dumpxml subVmTest1 > /tmp/vmxml2", connectionName)
                 m.execute("diff /tmp/vmxml1 /tmp/vmxml2 | sed -e 's/^>//;1d' > /tmp/vmdiff")
 
                 if self.dev_type == "usb_device":
                     vendor_id = m.execute("cat /tmp/vmdiff | xmllint --xpath 'string(//hostdev/source/vendor/@id)' - 2>&1 || true").strip()
                     product_id = m.execute("cat /tmp/vmdiff | xmllint --xpath 'string(//hostdev/source/product/@id)' - 2>&1 || true").strip()
 
-                    output = m.execute("virsh nodedev-list --cap {0}".format(self.dev_type))
+                    output = self.run_admin("virsh nodedev-list --cap {0}".format(self.dev_type), connectionName)
                     devices = output.splitlines()
                     devices = list(filter(None, devices))
                     for dev in devices:
                         if self.dev_type == "usb_device":
-                            m.execute("virsh nodedev-dumpxml --device {0} > /tmp/nodedevxml".format(dev))
+                            self.run_admin("virsh nodedev-dumpxml --device {0} > /tmp/nodedevxml".format(dev), connectionName)
                             vendor = m.execute("cat /tmp/nodedevxml | xmllint --xpath 'string(//device/capability/vendor[starts-with(@id, \"{0}\")])' - 2>&1 || true".format(vendor_id))
                             product = m.execute("cat /tmp/nodedevxml | xmllint --xpath 'string(//device/capability/product[starts-with(@id, \"{0}\")])' - 2>&1 || true".format(product_id))
 
@@ -193,7 +200,7 @@ class TestMachinesHostDevs(VirtualMachinesCase):
                 b.click('.pf-c-modal-box__footer button:contains("Remove")')
                 b.wait_not_present("#vm-subVmTest1-hostdev-{0}-product".format(self.vm_dev_id))
 
-        output = m.execute("virsh nodedev-list --cap usb_device")
+        output = self.run_admin("virsh nodedev-list --cap usb_device", connectionName)
         if output.strip() != "":
             HostDevAddDialog(
                 self,
