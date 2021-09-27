@@ -21,6 +21,7 @@ import PropTypes from 'prop-types';
 import {
     DescriptionList, DescriptionListGroup, DescriptionListTerm, DescriptionListDescription,
     Flex, FlexItem,
+    List, ListItem,
     Switch,
     Text, TextVariants,
 } from '@patternfly/react-core';
@@ -48,10 +49,7 @@ const DHCPHost = (host, index, family, idPrefix) => {
 
     const hostInfo = hostVals.join(", ");
 
-    return (<React.Fragment key={index}>
-        <label className='control-label' htmlFor={id}> {`DHCP Host ${index + 1}`} </label>
-        <div id={id}> {hostInfo} </div>
-    </React.Fragment>);
+    return <ListItem key={index} id={id}> {hostInfo} </ListItem>;
 };
 
 export const NetworkOverviewTab = ({ network }) => {
@@ -114,7 +112,7 @@ export const NetworkOverviewTab = ({ network }) => {
                         <DescriptionListDescription id={`${idPrefix}-ipv4-dhcp-range`}> {ip[0].dhcp.range.start + " - " + ip[0].dhcp.range.end} </DescriptionListDescription>
                     </DescriptionListGroup> }
 
-                    { ip[0].dhcp.hosts.map((host, index) => DHCPHost(host, index, ip[0].family, idPrefix))}
+                    <List isPlain>{ ip[0].dhcp.hosts.map((host, index) => DHCPHost(host, index, ip[0].family, idPrefix))}</List>
                 </DescriptionList>
             </FlexItem>}
 
@@ -139,7 +137,7 @@ export const NetworkOverviewTab = ({ network }) => {
                         <DescriptionListDescription id={`${idPrefix}-ipv6-dhcp-range`}> {ip[1].dhcp.range.start + " - " + ip[1].dhcp.range.end} </DescriptionListDescription>
                     </DescriptionListGroup> }
 
-                    { ip[1].dhcp.hosts.map((host, index) => DHCPHost(host, index, ip[1].family, idPrefix))}
+                    <List isPlain>{ ip[1].dhcp.hosts.map((host, index) => DHCPHost(host, index, ip[1].family, idPrefix))}</List>
                 </DescriptionList>
             </FlexItem>}
         </Flex>
