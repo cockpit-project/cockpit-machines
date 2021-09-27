@@ -40,7 +40,12 @@ export const RenameDialog = ({ vmName, vmId, connectionName, toggleModal }) => {
             return;
 
         return domainRename({ connectionName, id: vmId, newName: newName })
-                .then(toggleModal, exc => {
+                .then(() => {
+                    toggleModal();
+                    // If we are on the VMs details page change the URL to reflect the new name after the rename operation succeeded
+                    if (cockpit.location.path.length > 0)
+                        cockpit.location.go(["vm"], { ...cockpit.location.options, name: newName, connection: connectionName });
+                }, exc => {
                     dialogErrorSet({ dialogError: cockpit.format(_("Failed to rename VM $0"), vmName), dialogErrorDetail: exc.message });
                 });
     }

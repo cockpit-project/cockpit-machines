@@ -248,6 +248,15 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         b.click("#rename-dialog-confirm")
         b.wait_in_text(".pf-c-modal-box__footer .pf-c-alert.pf-m-danger", "Can't rename domain to itself")
 
+        self.goToVmPage("new")
+        self.performAction("new", "rename")
+
+        b.set_input_text("#rename-dialog-new-name", "test%")
+        b.click("#rename-dialog-confirm")
+        b.wait(lambda: "vm?name=test%25&connection=system" in b.eval_js("window.location.href"))
+        b.wait_text("h2.vm-name", "test%")
+        b.wait_not_present("#navbar-oops")
+
     def testLibvirt(self):
         b = self.browser
         m = self.machine
