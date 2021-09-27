@@ -155,9 +155,7 @@ class VirtualMachinesCaseHelpers:
             command.append(
                 f'[ "$(virsh -c qemu:///{connection} domstate {name})" = {state} ] || \
                 {{ virsh -c qemu:///{connection} dominfo {name} >&2; cat /var/log/libvirt/qemu/{name}.log >&2; exit 1; }}')
-            m.execute(" && ".join(command))
-        else:
-            m.execute("runuser -l admin -c '" + " && ".join(command) + "'")
+        self.run_admin(" && ".join(command), connection)
 
         # TODO check if kernel is booted
         # Ideally we would like to check guest agent event for that
@@ -194,6 +192,14 @@ class VirtualMachinesCaseHelpers:
         self.addCleanup(m.execute, "targetcli /backstores/ramdisk delete test && targetcli /iscsi delete %s && (iscsiadm -m node -o delete || true)" % target_iqn)
         return orig_iqn
 
+    def run_admin(self, cmd, connectionName='system'):
+        m = self.machine
+
+        if connectionName == 'session':
+            return m.execute(f"su - admin -c 'export XDG_RUNTIME_DIR=/run/user/$(id -u admin); {cmd}'")
+        else:
+            return m.execute(cmd)
+
 
 class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelpers, NetworkHelpers):
 
@@ -210,6 +216,9 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
         if m.image in ["ubuntu-stable"]:
             # https://bugs.launchpad.net/ubuntu/+source/libvirt-dbus/+bug/1892757
             m.execute("usermod -a -G libvirt libvirtdbus")
+
+        # no XDG_RUNTIME_DIR yet there
+        m.execute("mkdir -p /run/user/$(id -u admin); chown admin:admin /run/user/$(id -u admin)")
 
         self.startLibvirt()
         self.addCleanup(m.execute, f"systemctl stop {self.getLibvirtServiceName()}")

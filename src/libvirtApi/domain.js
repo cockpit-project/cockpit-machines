@@ -137,16 +137,17 @@ export function domainAttachDisk({
 }
 
 export function domainAttachHostDevice({ connectionName, vmName, live, dev }) {
+    const options = { err: "message" };
     const source = getNodeDevSource(dev);
     const args = ["virt-xml", "-c", `qemu:///${connectionName}`, vmName, "--add-device", "--hostdev", source];
+
+    if (connectionName === "system")
+        options.superuser = "try";
 
     if (live)
         args.push("--update");
 
-    return cockpit.spawn(
-        args,
-        { superuser: "try", err: "message" }
-    );
+    return cockpit.spawn(args, options);
 }
 
 export function domainAttachIface({ connectionName, vmName, mac, permanent, hotplug, sourceType, source, model }) {
@@ -468,15 +469,17 @@ export function domainDetachDisk({
 }
 
 export function domainDetachHostDevice({ connectionName, vmName, live, dev }) {
+    const options = { err: "message" };
     const source = getNodeDevSource(dev);
     const args = ["virt-xml", "-c", `qemu:///${connectionName}`, vmName, "--remove-device", "--hostdev", source];
+
+    if (connectionName === "system")
+        options.superuser = "try";
+
     if (live)
         args.push("--update");
 
-    return cockpit.spawn(
-        args,
-        { superuser: "try", err: "message" }
-    );
+    return cockpit.spawn(args, options);
 }
 
 export function domainDetachIface({ connectionName, mac, vmName, live, persistent }) {
