@@ -112,8 +112,8 @@ export const VmDetailsPage = ({
                           <BreadcrumbItem to='#'>
                               {_("Virtual machines")}
                           </BreadcrumbItem>
-                          <BreadcrumbItem onClick={() => cockpit.location.go(["vm"], Object.assign(cockpit.location.options, { name: vm.name, connection: vm.connectionName }))}>
-                              <a className="pf-c-breadcrumb__link">{vm.name}</a>
+                          <BreadcrumbItem to={'#' + cockpit.format("vm?name=$0&connection=$1", encodeURIComponent(vm.name), vm.connectionName)}>
+                              {vm.name}
                           </BreadcrumbItem>
                           <BreadcrumbItem isActive>
                               {_("Console")}
