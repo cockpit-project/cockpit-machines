@@ -94,16 +94,13 @@ class TestMachinesHostDevs(VirtualMachinesCase):
         b = self.browser
         m = self.machine
 
-        self.createVm("subVmTest1")
+        self.createVm("subVmTest1", running=False)
 
         self.login_and_go("/machines")
         b.wait_in_text("body", "Virtual machines")
 
         self.goToVmPage("subVmTest1")
         b.wait_visible("#vm-subVmTest1-hostdevs")
-
-        # Shut off domain
-        self.performAction("subVmTest1", "forceOff")
 
         class HostDevAddDialog(object):
             def __init__(
