@@ -12,22 +12,21 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-15 06:55+0000\n"
-"PO-Revision-Date: 2020-12-05 09:04+0000\n"
-"Last-Translator: Matej Marusak <mmarusak@redhat.com>\n"
-"Language-Team: Czech <https://translate.fedoraproject.org/projects/cockpit/"
-"master/cs/>\n"
+"POT-Creation-Date: 2021-09-21 18:15+0000\n"
+"PO-Revision-Date: 2021-09-23 12:05+0000\n"
+"Last-Translator: Pavel Borecki <pavel.borecki@gmail.com>\n"
+"Language-Team: Czech <https://translate.fedoraproject.org/projects/cockpit-"
+"machines/main/cs/>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
-"X-Generator: Weblate 4.3.2\n"
+"X-Generator: Weblate 4.8\n"
 
 #: src/components/vm/overview/cpuTypeModal.jsx:60
-#, fuzzy
 msgid "$0 CPU configuration"
-msgstr "Nastavení IP"
+msgstr "Nastavení procesoru $0"
 
 #: src/components/aggregateStatusCards.jsx:77
 msgid "$0 Network"
@@ -68,7 +67,7 @@ msgstr[2] "$0 virt. procesorů"
 
 # auto translated by TM merge from project: libreport, version: master, DocId:
 # libreport
-#: src/components/vm/overview/vcpuModal.jsx:254
+#: src/components/vm/overview/vcpuModal.jsx:253
 msgid "$0 vCPU details"
 msgstr "$0 podrobnosti virt. procesoru"
 
@@ -81,25 +80,27 @@ msgid ""
 "A copy of the VM will run on the destination and will disappear when it is "
 "shut off. Meanwhile, the origin host keeps its copy of the VM configuration."
 msgstr ""
+"Na cíli bude spuštěna kopie virt. stroje a po jejím vypnutí zmizí. Mezitím, "
+"původní hostitel si ponechá svou kopii nastavení virt. stroje."
 
-#: src/components/vm/disks/vmDisksCard.jsx:225
 #: src/components/vm/disks/diskEdit.jsx:112
+#: src/components/vm/disks/vmDisksCard.jsx:225
 msgid "Access"
 msgstr "Přístup"
 
-#: src/components/storagePools/storagePool.jsx:166
 #: src/components/networks/network.jsx:172
+#: src/components/storagePools/storagePool.jsx:166
 msgid "Activate"
 msgstr "Aktivovat"
 
 #: src/components/storagePools/storagePoolVolumesTab.jsx:113
 msgid "Activate the storage pool to administer volumes"
-msgstr ""
+msgstr "Pokud chcete spravovat svazky, aktivujte fond úložiště"
 
 # auto translated by TM merge from project: FreeIPA, version: ipa-4-5, DocId:
 # po/ipa
-#: src/components/vm/nics/nicAdd.jsx:166
 #: src/components/vm/disks/diskAdd.jsx:661
+#: src/components/vm/nics/nicAdd.jsx:166
 msgid "Add"
 msgstr "Přidat"
 
@@ -113,20 +114,16 @@ msgid "Add network interface"
 msgstr "Přidat síťové rozhraní"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:102
-#, fuzzy
-#| msgid "No such file or directory"
 msgid "Add shared directory"
-msgstr "Žádný takový soubor nebo složka"
+msgstr "Přidat sdílenou složku"
 
 #: src/components/vm/nics/nicAdd.jsx:158
 msgid "Add virtual network interface"
 msgstr "Přidat virtuální síťové rozhraní"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:108
-#, fuzzy
-#| msgid "Only editable when the guest is shut off"
 msgid "Adding shared directories is possible only when the guest is shut off"
-msgstr "Upravit je možné pouze pokud je host vypnutý"
+msgstr "Přidávání sdílených složek je možné pouze je host vypnutý"
 
 #: src/components/vm/disks/vmDisksCard.jsx:229
 msgid "Additional"
@@ -134,10 +131,10 @@ msgstr "Další"
 
 # auto translated by TM merge from project: firewalld, version: master, DocId:
 # po/firewalld
-#: src/components/networks/networkOverviewTab.jsx:120
-#: src/components/networks/networkOverviewTab.jsx:145
 #: src/components/vm/consoles/desktopConsole.jsx:47
 #: src/components/vm/nics/vmNicsCard.jsx:224
+#: src/components/networks/networkOverviewTab.jsx:103
+#: src/components/networks/networkOverviewTab.jsx:128
 msgid "Address"
 msgstr "Adresa"
 
@@ -161,15 +158,17 @@ msgid ""
 "All VM activity, including storage, will be temporary. This will result in "
 "data loss on the destination host."
 msgstr ""
+"Veškerá aktivita virt. stroje, včetně úložiště, bude dočasná. Toto vyústí ve "
+"ztrátu dat na cílovém hostiteli."
 
-#: src/components/vm/nics/nicAdd.jsx:60 src/components/vm/disks/diskAdd.jsx:103
+#: src/components/vm/disks/diskAdd.jsx:103 src/components/vm/nics/nicAdd.jsx:60
 msgid "Always attach"
 msgstr "Vždy připojit"
 
 # auto translated by TM merge from project: FreeIPA, version: ipa-4-5, DocId:
 # po/ipa
 #: src/components/vm/overview/cpuTypeModal.jsx:65
-#: src/components/vm/overview/vcpuModal.jsx:259
+#: src/components/vm/overview/vcpuModal.jsx:258
 msgid "Apply"
 msgstr "Použít"
 
@@ -189,24 +188,18 @@ msgstr "Automaticky"
 msgid "Automatically start libvirt on boot"
 msgstr "Spouštět libvirt automaticky při startu"
 
-#: src/components/storagePools/storagePoolOverviewTab.jsx:73
-#: src/components/networks/networkOverviewTab.jsx:94
 #: src/components/vm/overview/vmOverviewCard.jsx:239
+#: src/components/networks/networkOverviewTab.jsx:80
+#: src/components/storagePools/storagePoolOverviewTab.jsx:73
 msgid "Autostart"
 msgstr "Automatické spouštění"
-
-#: src/components/vm/hostdevs/hostDevCard.jsx:129
-#, fuzzy
-#| msgid "Blocked"
-msgid "Block"
-msgstr "Blokované"
 
 #: src/helpers.js:237
 msgid "Blocked"
 msgstr "Blokované"
 
-#: src/components/vm/overview/bootOrder.jsx:281
 #: src/components/vm/overview/vmOverviewCard.jsx:230
+#: src/components/vm/overview/bootOrder.jsx:281
 msgid "Boot order"
 msgstr "Pořadí zavádění"
 
@@ -220,56 +213,55 @@ msgstr "Nastavení pořadí zavádění se nepodařilo uložit"
 #: src/components/vm/overview/bootOrder.jsx:136
 #: src/components/vm/hostdevs/hostDevCard.jsx:95
 #: src/components/vm/hostdevs/hostDevCard.jsx:113
+#: src/components/vm/disks/diskEdit.jsx:87
 #: src/components/vm/disks/diskAdd.jsx:165
 #: src/components/vm/disks/vmDisksCard.jsx:223
-#: src/components/vm/disks/diskEdit.jsx:87
 msgid "Bus"
 msgstr "Sběrnice"
 
 #: src/components/vm/disks/diskAdd.jsx:288
 msgid "CD/DVD disc"
-msgstr ""
+msgstr "CD/DVD disk"
 
 #: src/components/vm/vmUsageCard.jsx:71
 msgid "CPU"
 msgstr "Procesor"
 
 #: src/components/vm/overview/cpuTypeModal.jsx:26
-#, fuzzy
 msgid "CPU configuration could not be saved"
-msgstr "Nastavení virt. procesoru se nepodařilo uložit"
+msgstr "Nastavení procesoru se nepodařilo uložit"
 
 #: src/components/vm/overview/vmOverviewCard.jsx:225
 msgid "CPU type"
 msgstr "Typ procesoru"
 
+#: src/components/vm/disks/diskEdit.jsx:59
 #: src/components/vm/disks/diskAdd.jsx:152
 #: src/components/vm/disks/vmDiskColumns.jsx:82
-#: src/components/vm/disks/diskEdit.jsx:59
 msgid "Cache"
 msgstr "Mezipaměť"
 
+#: src/components/vm/deleteDialog.jsx:146
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:71
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:145
+#: src/components/vm/overview/firmware.jsx:66
+#: src/components/vm/overview/memoryModal.jsx:154
+#: src/components/vm/overview/cpuTypeModal.jsx:68
+#: src/components/vm/overview/bootOrder.jsx:293
+#: src/components/vm/overview/vcpuModal.jsx:261
+#: src/components/vm/vmMigrateDialog.jsx:217
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:170
+#: src/components/vm/vmCloneDialog.jsx:75
+#: src/components/vm/vmRenameDialog.jsx:61
+#: src/components/vm/disks/diskEdit.jsx:258
+#: src/components/vm/disks/diskAdd.jsx:664
+#: src/components/vm/nics/nicAdd.jsx:169 src/components/vm/nics/nicEdit.jsx:179
+#: src/components/networks/createNetworkDialog.jsx:415
 #: src/components/storagePools/storagePoolDelete.jsx:225
 #: src/components/storagePools/storageVolumeCreate.jsx:103
 #: src/components/storagePools/createStoragePoolDialog.jsx:438
 #: src/components/common/deleteResource.jsx:69
 #: src/components/create-vm-dialog/createVmDialog.jsx:1090
-#: src/components/networks/createNetworkDialog.jsx:415
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:71
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:145
-#: src/components/vm/deleteDialog.jsx:146
-#: src/components/vm/overview/cpuTypeModal.jsx:68
-#: src/components/vm/overview/bootOrder.jsx:293
-#: src/components/vm/overview/firmware.jsx:66
-#: src/components/vm/overview/vcpuModal.jsx:262
-#: src/components/vm/overview/memoryModal.jsx:154
-#: src/components/vm/vmRenameDialog.jsx:61
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:170
-#: src/components/vm/nics/nicAdd.jsx:169 src/components/vm/nics/nicEdit.jsx:179
-#: src/components/vm/vmMigrateDialog.jsx:217
-#: src/components/vm/disks/diskAdd.jsx:664
-#: src/components/vm/disks/diskEdit.jsx:258
-#: src/components/vm/vmCloneDialog.jsx:75
 msgid "Cancel"
 msgstr "Storno"
 
@@ -283,16 +275,12 @@ msgstr "Kapacita"
 msgid "Change firmware"
 msgstr "Změnit firmware"
 
-#: src/components/common/warningInactive.jsx:12
-#: src/components/vm/overview/vcpuModal.jsx:184
-#: src/components/vm/nics/nicEdit.jsx:165
+#: src/components/vm/overview/vcpuModal.jsx:183
 #: src/components/vm/disks/diskEdit.jsx:242
+#: src/components/vm/nics/nicEdit.jsx:165
+#: src/components/common/warningInactive.jsx:12
 msgid "Changes will take effect after shutting down the VM"
 msgstr "Změny se projeví až po vypnutí virt. stroje"
-
-#: src/components/vm/hostdevs/hostDevCard.jsx:133
-msgid "Char"
-msgstr ""
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:385
 #: src/components/create-vm-dialog/createVmDialog.jsx:386
@@ -301,24 +289,22 @@ msgstr "Zvolte operační systém"
 
 #: src/components/vm/hostdevs/hostDevCard.jsx:157
 msgid "Class"
-msgstr ""
+msgstr "Třída"
 
 #: src/components/vm/consoles/desktopConsole.jsx:58
-#, fuzzy
 msgid ""
 "Clicking \"Launch remote viewer\" will download a .vv file and launch $0."
 msgstr ""
 "Kliknutím na „Spustit vzdálený prohlížeč“ se stáhne soubor ve formátu .vv a "
 "spustí se $0."
 
-#: src/components/vm/vmActions.jsx:302 src/components/vm/vmCloneDialog.jsx:72
+#: src/components/vm/vmCloneDialog.jsx:72 src/components/vm/vmActions.jsx:302
 msgid "Clone"
-msgstr ""
+msgstr "Klonovat"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:304
-#, fuzzy
 msgid "Cloud base image"
-msgstr "Obraz se nedaří smazat"
+msgstr "Obraz Cloud Base"
 
 #: src/components/common/deleteResource.jsx:73
 msgid "Confirm this action"
@@ -331,17 +317,15 @@ msgid "Connect"
 msgstr "Připojit"
 
 #: src/components/vm/consoles/desktopConsole.jsx:46
-#, fuzzy
 msgid "Connect with any viewer application for following protocols"
-msgstr "Připojte se libovolnou aplikací pro zobrazování $0."
+msgstr ""
+"Připojte se libovolnou aplikací pro zobrazování následujících protokolů"
 
 # auto translated by TM merge from project: system-config-printer, version:
 # master, DocId: system-config-printer
 #: src/components/vm/consoles/vnc.jsx:168
-#, fuzzy
-#| msgid "Connection"
 msgid "Connecting"
-msgstr "Spojení"
+msgstr "Připojuje se"
 
 #: src/components/libvirtSlate.jsx:62
 msgid "Connecting to virtualization service"
@@ -349,10 +333,10 @@ msgstr "Připojuje se ke službě virtualizace"
 
 # auto translated by TM merge from project: system-config-printer, version:
 # master, DocId: system-config-printer
+#: src/components/networks/networkList.jsx:76
+#: src/components/networks/createNetworkDialog.jsx:43
 #: src/components/storagePools/storagePoolList.jsx:75
 #: src/components/common/machinesConnectionSelector.jsx:33
-#: src/components/networks/createNetworkDialog.jsx:43
-#: src/components/networks/networkList.jsx:76
 #: src/components/vms/hostvmslist.jsx:137
 msgid "Connection"
 msgstr "Spojení"
@@ -364,12 +348,10 @@ msgstr "Konzole"
 
 #: src/components/vm/vmMigrateDialog.jsx:105
 #: src/components/vm/vmMigrateDialog.jsx:121
-#, fuzzy
-#| msgid "No storage"
 msgid "Copy storage"
-msgstr "Žádné úložiště"
+msgstr "Zkopírovat úložiště"
 
-#: src/components/vm/overview/vcpuModal.jsx:233
+#: src/components/vm/overview/vcpuModal.jsx:232
 msgid "Cores per socket"
 msgstr "Jader na patici"
 
@@ -383,11 +365,11 @@ msgstr "Nedaří se vrátit do podoby ze zachyceného stavu"
 msgid "Crashed"
 msgstr "Zhavarovalo"
 
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:142
+#: src/components/networks/createNetworkDialog.jsx:412
 #: src/components/storagePools/storageVolumeCreate.jsx:100
 #: src/components/storagePools/createStoragePoolDialog.jsx:435
 #: src/components/create-vm-dialog/createVmDialog.jsx:1085
-#: src/components/networks/createNetworkDialog.jsx:412
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:142
 msgid "Create"
 msgstr "Vytvořit"
 
@@ -396,9 +378,8 @@ msgid "Create VM"
 msgstr "Vytvořit virt. stroj"
 
 #: src/components/vm/vmCloneDialog.jsx:63
-#, fuzzy
 msgid "Create a clone VM based on $0"
-msgstr "Vytvořit oddíl na $0"
+msgstr "Vytvořit klon virt. stroje založený na $0"
 
 #: src/components/vm/disks/diskAdd.jsx:595
 msgid "Create new"
@@ -412,8 +393,8 @@ msgstr "Vytvořit nový virtuální stroj"
 msgid "Create new volume"
 msgstr "Vytvořit nový svazek"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:137
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:61
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:137
 msgid "Create snapshot"
 msgstr "Pořídit zachycený stav"
 
@@ -470,22 +451,23 @@ msgstr "Uživatelsky určený firmware: $0"
 
 #: src/components/vm/disks/diskAdd.jsx:273
 #: src/components/vm/disks/diskAdd.jsx:605
-#, fuzzy
 msgid "Custom path"
-msgstr "Uživatelsky určené porty"
+msgstr "Uživatelsky určený popis umístění"
 
-#: src/components/networks/networkOverviewTab.jsx:130
-#: src/components/networks/networkOverviewTab.jsx:155
+#: src/components/networks/networkOverviewTab.jsx:113
+#: src/components/networks/networkOverviewTab.jsx:138
 msgid "DHCP range"
 msgstr "DHCP rozsah"
 
-#: src/components/storagePools/storagePool.jsx:157
 #: src/components/networks/network.jsx:168
+#: src/components/storagePools/storagePool.jsx:157
 msgid "Deactivate"
 msgstr "Deaktivovat"
 
 # auto translated by TM merge from project: FreeIPA, version: ipa-4-5, DocId:
 # po/ipa
+#: src/components/vm/deleteDialog.jsx:143 src/components/vm/vmActions.jsx:379
+#: src/components/vm/vmActions.jsx:386
 #: src/components/storagePools/storagePoolDelete.jsx:194
 #: src/components/storagePools/storagePoolDelete.jsx:204
 #: src/components/storagePools/storagePoolDelete.jsx:222
@@ -493,8 +475,6 @@ msgstr "Deaktivovat"
 #: src/components/common/deleteResource.jsx:66
 #: src/components/common/deleteResource.jsx:95
 #: src/components/common/deleteResource.jsx:105
-#: src/components/vm/deleteDialog.jsx:143 src/components/vm/vmActions.jsx:379
-#: src/components/vm/vmActions.jsx:386
 msgid "Delete"
 msgstr "Smazat"
 
@@ -530,38 +510,31 @@ msgstr ""
 "samotný smazán nebude."
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:67
-#, fuzzy
-#| msgid "Only editable when the guest is shut off"
 msgid "Deleting shared directories is possible only when the guest is shut off"
-msgstr "Upravit je možné pouze pokud je host vypnutý"
+msgstr "Mazání sdílených složek je možné pouze pokud je host vypnutý"
 
 # auto translated by TM merge from project: FreeIPA, version: ipa-4-5, DocId:
 # po/ipa
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:51
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:107
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:51
 msgid "Description"
 msgstr "Popis"
 
 # auto translated by TM merge from project: Fedora Websites, version:
 # arm.fedoraproject.org, DocId: po/arm.fedoraproject.org
 #: src/components/vm/consoles/consoles.jsx:102
-#, fuzzy
 msgid "Desktop viewer"
-msgstr "Desktop"
+msgstr "Desktopový prohlížeč"
 
 # auto translated by TM merge from project: FreeIPA, version: ipa-4-5, DocId:
 # po/ipa
 #: src/components/vm/vmMigrateDialog.jsx:47
-#, fuzzy
-#| msgid "Description"
 msgid "Destination URI"
-msgstr "Popis"
+msgstr "Cílová URI"
 
 #: src/components/vm/vmMigrateDialog.jsx:154
-#, fuzzy
-#| msgid "Installation source must not be empty"
 msgid "Destination URI must not be empty"
-msgstr "Zdroj pro instalaci je třeba vyplnit"
+msgstr "Cílovou URI je třeba vyplnit"
 
 #: src/components/storagePools/storagePoolDelete.jsx:153
 #: src/components/storagePools/storagePoolDelete.jsx:180
@@ -573,14 +546,14 @@ msgstr ""
 
 # auto translated by TM merge from project: anaconda, version: f25, DocId:
 # main
-#: src/components/networks/createNetworkDialog.jsx:162
-#: src/components/networks/networkList.jsx:75
 #: src/components/vm/overview/bootOrder.jsx:89
 #: src/components/vm/overview/bootOrder.jsx:96
 #: src/components/vm/hostdevs/hostDevCard.jsx:94
 #: src/components/vm/disks/diskAdd.jsx:281
-#: src/components/vm/disks/vmDiskColumns.jsx:50
 #: src/components/vm/disks/vmDisksCard.jsx:209
+#: src/components/vm/disks/vmDiskColumns.jsx:50
+#: src/components/networks/networkList.jsx:75
+#: src/components/networks/createNetworkDialog.jsx:162
 msgid "Device"
 msgstr "Zařízení"
 
@@ -594,10 +567,8 @@ msgid "Disconnect"
 msgstr "Odpojit"
 
 #: src/components/vm/consoles/vnc.jsx:169
-#, fuzzy
-#| msgid "Disconnect"
 msgid "Disconnected"
-msgstr "Odpojit"
+msgstr "Odpojeno"
 
 #: src/components/vm/consoles/serialConsole.jsx:77
 msgid "Disconnected from serial console. Click the connect button."
@@ -616,23 +587,19 @@ msgid "Disk failed to be created"
 msgstr "Disk se nepodařilo vytvořit"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:316
-#, fuzzy
 msgid "Disk image"
-msgstr "Soubor představující zařízení"
+msgstr "Obraz disku"
 
 #: src/components/vm/disks/diskAdd.jsx:286
-#, fuzzy
 msgid "Disk image file"
-msgstr "Soubor představující zařízení"
+msgstr "Soubor s obrazem disku"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:168
-#, fuzzy
-#| msgid "Name must not be empty"
 msgid "Disk image path must not be empty"
-msgstr "Název je třeba vyplnit"
+msgstr "Popis umístění obrazu disku je třeba vyplnit"
 
-#: src/components/vm/disks/diskAdd.jsx:557
 #: src/components/vm/disks/diskEdit.jsx:207
+#: src/components/vm/disks/diskAdd.jsx:557
 msgid "Disk settings could not be saved"
 msgstr "Nastavení disku nebylo možné uložit"
 
@@ -649,11 +616,11 @@ msgstr "Disky"
 #: src/components/vm/vmMigrateDialog.jsx:200
 msgid ""
 "Do not run this VM on the origin and destination hosts at the same time."
-msgstr ""
+msgstr "Nespouštějte tento virt. stroj na původním a cílovém hostiteli naráz."
 
 #: src/components/vm/overview/bootOrder.jsx:129
 msgid "Domain"
-msgstr ""
+msgstr "Doména"
 
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:132
 msgid "Domain has crashed"
@@ -670,10 +637,8 @@ msgstr "Stáhnout operační systém"
 # auto translated by TM merge from project: FreeIPA, version: ipa-4-5, DocId:
 # po/ipa
 #: src/components/vm/vmMigrateDialog.jsx:63
-#, fuzzy
-#| msgid "Description"
 msgid "Duration"
-msgstr "Popis"
+msgstr "Trvání"
 
 #: src/helpers.js:235
 msgid "Dying"
@@ -681,8 +646,8 @@ msgstr "Vypíná se"
 
 # auto translated by TM merge from project: FreeIPA, version: ipa-4-5, DocId:
 # po/ipa
-#: src/components/vm/nics/vmNicsCard.jsx:344
 #: src/components/vm/disks/diskEdit.jsx:153
+#: src/components/vm/nics/vmNicsCard.jsx:344
 msgid "Edit"
 msgstr "Upravit"
 
@@ -692,11 +657,11 @@ msgstr "Upravit atributy $0"
 
 #: src/components/vm/nics/vmNicsCard.jsx:332
 msgid "Editing network interfaces of transient guests is not allowed"
-msgstr ""
+msgstr "Upravování síťových rozhraní přechodných hostů není dovoleno"
 
 #: src/components/vm/nics/vmNicsCard.jsx:338
 msgid "Editing transient network interfaces is not allowed"
-msgstr ""
+msgstr "Upravování přechodných síťový rozhraní není dovoleno"
 
 #: src/components/vm/overview/vmOverviewCard.jsx:251
 msgid "Emulated machine"
@@ -704,7 +669,7 @@ msgstr "Emulovaný stroj"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:246
 msgid "Enable/disable extended attributes (xattr) on files and directories"
-msgstr ""
+msgstr "Zapnout/vypnout rozšířené atributy (xattr) na souborech a složkách"
 
 #: src/components/networks/createNetworkDialog.jsx:227
 msgid "End"
@@ -717,7 +682,7 @@ msgstr "Konec je třeba vyplnit"
 
 #: src/components/vm/vmMigrateDialog.jsx:53
 msgid "Example, $0"
-msgstr ""
+msgstr "Příklad, $0"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:245
 msgid "Existing disk image on host's file system"
@@ -734,52 +699,42 @@ msgid "Failed"
 msgstr "Neúspěšné"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:161
-#, fuzzy
-#| msgid "Filesystem directory"
 msgid "Failed to add shared directory"
-msgstr "Složka v souborovém systému"
+msgstr "Nepodařilo se přidat sdílenou složku"
 
 #: src/components/vm/overview/firmware.jsx:52
 msgid "Failed to change firmware"
 msgstr "Firmware se nepodařilo změnit"
 
 #: src/components/vm/vmCloneDialog.jsx:56
-#, fuzzy
 msgid "Failed to clone VM $0"
-msgstr "Nepodařilo se přidat stroj: $0"
+msgstr "Nepodařilo se naklonovat virt. stroj $0"
 
 #: src/components/libvirtSlate.jsx:52
-#, fuzzy
-#| msgid "Connecting to virtualization service"
 msgid "Failed to enable virtualization service"
-msgstr "Připojuje se ke službě virtualizace"
+msgstr "Nepodařilo se povolit službu virtualizace"
 
 #: src/app.jsx:127
-#, fuzzy
-#| msgid "Failed to change firmware"
 msgid "Failed to fetch some resources"
-msgstr "Firmware se nepodařilo změnit"
+msgstr "Nepodařilo se stáhnout si některé prostředky"
 
 #: src/components/vm/nics/vmNicsCard.jsx:129
 msgid "Failed to fetch the IP addresses of the interfaces present in $0"
 msgstr "Nepodařilo se zjistit IP adresy rozhraní nacházející se v $0"
 
 #: src/components/vm/vmRenameDialog.jsx:44
-#, fuzzy
 msgid "Failed to rename VM $0"
-msgstr "Nepodařilo se přidat stroj: $0"
+msgstr "Nepodařilo se přejmenovat virt. stroj $0"
 
 #: src/components/vm/consoles/vnc.jsx:130
 msgid "Failed to send key Ctrl+Alt+$0 to VM $1"
 msgstr "Nepodařilo se odeslat kombinaci kláves Ctrl+Alt+$0 do virt. stroje $1"
 
 #: src/components/libvirtSlate.jsx:51
-#, fuzzy
-#| msgid "Connecting to virtualization service"
 msgid "Failed to start virtualization service"
-msgstr "Připojuje se ke službě virtualizace"
+msgstr "Nepodařilo se spustit službu virtualizace"
 
-#: src/components/vm/overview/vcpuModal.jsx:192
+#: src/components/vm/overview/vcpuModal.jsx:191
 msgid "Fewer than the maximum number of virtual CPUs should be enabled."
 msgstr "Mělo by být zapnuto méně než maximální počet virtuálních procesorů."
 
@@ -806,7 +761,6 @@ msgid "Firmware"
 msgstr "Firmware"
 
 #: src/components/vm/vmActions.jsx:267
-#, fuzzy
 msgid "Force reboot"
 msgstr "Vynutit restart"
 
@@ -816,8 +770,8 @@ msgstr "Vynutit vypnutí"
 
 # auto translated by TM merge from project: blivet-gui, version: f23-branch,
 # DocId: blivet-gui
-#: src/components/storagePools/storageVolumeCreateBody.jsx:70
 #: src/components/storagePools/createStoragePoolDialog.jsx:201
+#: src/components/storagePools/storageVolumeCreateBody.jsx:70
 msgid "Format"
 msgstr "Formát"
 
@@ -835,19 +789,20 @@ msgid ""
 "writable disk images will be transferred. Unused storage will remain on the "
 "origin after migration."
 msgstr ""
+"Budou přestěhovány celé obrazy disků a paměť virt. domény. Přeneseny budou "
+"pouze obrazy nesdílených, zapisovatelných disků. Nepoužitá úložiště zůstanou "
+"po přestěhování v původním umístění."
 
 # auto translated by TM merge from project: system-config-printer, version:
 # master, DocId: system-config-printer
 #: src/components/vm/overview/bootOrder.jsx:130
-#, fuzzy
-#| msgid "Connection"
 msgid "Function"
-msgstr "Spojení"
+msgstr "Funkce"
 
 # auto translated by TM merge from project: Cockpit, version: rhel-7.4, DocId:
 # cockpit
-#: src/components/networks/networkOverviewTab.jsx:85
 #: src/components/vm/overview/vmOverviewCard.jsx:197
+#: src/components/networks/networkOverviewTab.jsx:71
 msgid "General"
 msgstr "Obecné"
 
@@ -857,17 +812,17 @@ msgstr "Vytvořit automaticky"
 
 # auto translated by TM merge from project: virt-manager, version: master,
 # DocId: virt-manager
+#: src/components/vm/overview/memorySelectRow.jsx:89
+#: src/components/vm/disks/vmDisksCard.jsx:51
 #: src/components/storagePools/storageVolumeCreateBody.jsx:104
 #: src/components/create-vm-dialog/createVmDialog.jsx:630
 #: src/components/create-vm-dialog/createVmDialog.jsx:726
-#: src/components/vm/overview/memorySelectRow.jsx:89
-#: src/components/vm/disks/vmDisksCard.jsx:51
 msgid "GiB"
 msgstr "GiB"
 
 #: src/app.jsx:219
 msgid "Go to VMs list"
-msgstr ""
+msgstr "Přejít na seznam virt. strojů"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:238
 #: src/components/vm/disks/diskAdd.jsx:149
@@ -876,10 +831,10 @@ msgstr "Skrýt další možnosti"
 
 # auto translated by TM merge from project: FreeIPA, version: ipa-4-5, DocId:
 # po/ipa
-#: src/components/storagePools/storagePoolOverviewTab.jsx:36
-#: src/components/storagePools/createStoragePoolDialog.jsx:121
 #: src/components/vm/overview/bootOrder.jsx:93
 #: src/components/vm/disks/vmDiskColumns.jsx:54
+#: src/components/storagePools/storagePoolOverviewTab.jsx:36
+#: src/components/storagePools/createStoragePoolDialog.jsx:121
 msgid "Host"
 msgstr "Počítač"
 
@@ -888,8 +843,6 @@ msgid "Host device"
 msgstr "Zařízení hostitele"
 
 #: src/components/vm/vmDetailsPage.jsx:154
-#, fuzzy
-#| msgid "Host device"
 msgid "Host devices"
 msgstr "Zařízení hostitele"
 
@@ -923,18 +876,18 @@ msgstr "IP adresa"
 msgid "IP configuration"
 msgstr "Nastavení IP"
 
-#: src/components/networks/networkOverviewTab.jsx:116
+#: src/components/networks/networkOverviewTab.jsx:99
 #: src/components/networks/createNetworkDialog.jsx:245
 msgid "IPv4 address"
 msgstr "IPv4 adresa"
 
 #: src/components/networks/createNetworkDialog.jsx:70
 msgid "IPv4 address cannot be same as the network identifier"
-msgstr ""
+msgstr "IPv4 adresa nemůže být stejná jako identifikátor sítě"
 
 #: src/components/networks/createNetworkDialog.jsx:74
 msgid "IPv4 address cannot be same as the network's broadcast address"
-msgstr ""
+msgstr "IPv4 adresa nemůže být stejná jako adresa všesměrového vysílání sítě"
 
 #: src/components/networks/createNetworkDialog.jsx:192
 msgid "IPv4 and IPv6"
@@ -948,7 +901,7 @@ msgstr "IPv4 síť je třeba vyplnit"
 msgid "IPv4 only"
 msgstr "Pouze IPv4"
 
-#: src/components/networks/networkOverviewTab.jsx:141
+#: src/components/networks/networkOverviewTab.jsx:124
 #: src/components/networks/createNetworkDialog.jsx:277
 msgid "IPv6 address"
 msgstr "IPv6 adresa"
@@ -987,6 +940,13 @@ msgid ""
 "communication."
 msgstr "Ve většině uspořádání, macvtap nefunguje pro komunikaci hostitel-host."
 
+#: src/components/vm/nics/nicBody.jsx:102
+msgid ""
+"In the default 'vepa' mode, switching is offloaded to the external switch. "
+"If the switch is not VEPA-capable, communication between guest virtual "
+"machines, or between a guests and the host is not possible."
+msgstr ""
+
 #: src/components/storagePools/createStoragePoolDialog.jsx:139
 msgid "Initiator"
 msgstr "Iniciátor"
@@ -1003,7 +963,6 @@ msgstr "Nainstalovat"
 # auto translated by TM merge from project: Fedora Installation Guide,
 # version: f22, DocId: pot/SourceSpoke
 #: src/components/create-vm-dialog/createVmDialog.jsx:316
-#, fuzzy
 msgid "Installation source"
 msgstr "Zdroj instalace"
 
@@ -1016,20 +975,16 @@ msgid "Installation type"
 msgstr "Typ instalace"
 
 #: src/components/vm/hostdevs/hostDevCard.jsx:137
-#, fuzzy
-#| msgid "Interface type"
 msgid "Interface"
-msgstr "Typ rozhraní"
+msgstr "Rozhraní"
 
-#: src/components/vm/nics/nicBody.jsx:148
+#: src/components/vm/nics/nicBody.jsx:162
 msgid "Interface type"
 msgstr "Typ rozhraní"
 
-#: src/components/vm/nics/nicBody.jsx:150
-#, fuzzy
-#| msgid "Interface type"
+#: src/components/vm/nics/nicBody.jsx:164
 msgid "Interface type help"
-msgstr "Typ rozhraní"
+msgstr "Nápověda k typu rozhraní"
 
 #: src/components/networks/createNetworkDialog.jsx:66
 #: src/components/networks/createNetworkDialog.jsx:80
@@ -1064,7 +1019,6 @@ msgid "LVM volume group"
 msgstr "LVM skupina svazků"
 
 #: src/components/vm/consoles/desktopConsole.jsx:54
-#, fuzzy
 msgid "Launch remote viewer"
 msgstr "Spustit vzdálený prohlížeč"
 
@@ -1079,9 +1033,8 @@ msgid ""
 msgstr "Pokud si nepřejete vytvářet uživatelský účet, nevyplňujte heslo"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:581
-#, fuzzy
 msgid "Leave the password blank if you do not wish to set a root password"
-msgstr "Pokud si nepřejete vytvořit účet root, nevyplňujte heslo"
+msgstr "Pokud si nepřejete nastavit heslo pro účet root, nevyplňujte ho"
 
 #: src/components/vm/overview/firmware.jsx:157
 msgid ""
@@ -1093,10 +1046,8 @@ msgid "Libvirt or hypervisor does not support UEFI"
 msgstr "Libvirt nebo hypervizor nepodporuje UEFI"
 
 #: src/components/vm/nics/vmNicsCard.jsx:335
-#, fuzzy
-#| msgid "No network devices"
 msgid "Loading available network devices"
-msgstr "Žádná síťová zařízení"
+msgstr "Načítání sítových zařízení, která jsou k dispozici"
 
 #: src/components/libvirtSlate.jsx:67
 msgid "Loading resources"
@@ -1108,7 +1059,7 @@ msgstr "Načítání…"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:306
 msgid "Local install media (ISO image or distro install tree)"
-msgstr ""
+msgstr "Místní instalační médium (ISO obraz nebo instalační strom distribuce)"
 
 #: src/components/vm/overview/bootOrder.jsx:103
 msgid "MAC"
@@ -1116,9 +1067,8 @@ msgstr "MAC"
 
 # auto translated by TM merge from project: libvirt, version: master, DocId:
 # libvirt
-#: src/components/vm/nics/nicAdd.jsx:34
+#: src/components/vm/nics/nicAdd.jsx:34 src/components/vm/nics/nicEdit.jsx:43
 #: src/components/vm/nics/vmNicsCard.jsx:255
-#: src/components/vm/nics/nicEdit.jsx:43
 msgid "MAC address"
 msgstr "MAC adresa"
 
@@ -1128,7 +1078,6 @@ msgstr ""
 "Aby bylo možné změnit typ sběrnice je třeba, aby virt. stroj byl vypnutý"
 
 #: src/components/vm/disks/diskEdit.jsx:61
-#, fuzzy
 msgid "Machine must be shut off before changing cache mode"
 msgstr ""
 "Aby bylo možné změnit typ sběrnice je třeba, aby virt. stroj byl vypnutý"
@@ -1157,12 +1106,12 @@ msgstr "Přiřadit nanejvýš"
 msgid "Maximum memory could not be saved"
 msgstr "Paměťové maximum se nepodařilo uložit"
 
-#: src/components/vm/overview/vcpuModal.jsx:207
+#: src/components/vm/overview/vcpuModal.jsx:206
 msgid "Maximum number of virtual CPUs allocated for the guest OS"
 msgstr ""
 "Maximální počet virtuálních procesorů, přiřazených operačnímu systému hosta"
 
-#: src/components/vm/overview/vcpuModal.jsx:206
+#: src/components/vm/overview/vcpuModal.jsx:205
 msgid ""
 "Maximum number of virtual CPUs allocated for the guest OS, which must be "
 "between 1 and $0"
@@ -1170,15 +1119,15 @@ msgstr ""
 "Maximální počet virtuálních procesorů, přiřazených operačnímu systému hosta. "
 "Je třeba, aby bylo z rozmezí 1 až $0"
 
-#: src/components/networks/networkOverviewTab.jsx:107
+#: src/components/networks/networkOverviewTab.jsx:90
 msgid "Maximum transmission unit"
 msgstr "Přenosová jednotka nejvýše"
 
 # auto translated by TM merge from project: virt-manager, version: master,
 # DocId: virt-manager
-#: src/components/create-vm-dialog/createVmDialog.jsx:614
-#: src/components/vm/overview/vmOverviewCard.jsx:215
 #: src/components/vm/vmUsageCard.jsx:60
+#: src/components/vm/overview/vmOverviewCard.jsx:215
+#: src/components/create-vm-dialog/createVmDialog.jsx:614
 msgid "Memory"
 msgstr "Paměť"
 
@@ -1193,27 +1142,25 @@ msgstr "Je třeba, aby paměť nebyla 0 (nula)"
 
 # auto translated by TM merge from project: libbytesize, version: master,
 # DocId: libbytesize
+#: src/components/vm/overview/memorySelectRow.jsx:87
 #: src/components/storagePools/storageVolumeCreateBody.jsx:102
 #: src/components/create-vm-dialog/createVmDialog.jsx:628
 #: src/components/create-vm-dialog/createVmDialog.jsx:724
-#: src/components/vm/overview/memorySelectRow.jsx:87
 msgid "MiB"
 msgstr "MiB"
 
-#: src/components/vm/vmActions.jsx:333
 #: src/components/vm/vmMigrateDialog.jsx:214
+#: src/components/vm/vmActions.jsx:333
 msgid "Migrate"
-msgstr ""
+msgstr "Přesunout"
 
 #: src/components/vm/vmMigrateDialog.jsx:225
 msgid "Migrate VM to another host"
-msgstr ""
+msgstr "Přestěhovat virt. stroj na jiného hostitele"
 
 #: src/components/vm/vmMigrateDialog.jsx:179
-#, fuzzy
-#| msgid "Creation of VM $0 failed"
 msgid "Migration failed"
-msgstr "Vytvoření virt. stroje $0 se nezdařilo"
+msgstr "Přestěhování se nezdařilo"
 
 #: src/components/vm/overview/cpuTypeModal.jsx:32
 #: src/components/vm/overview/cpuTypeModal.jsx:34
@@ -1223,7 +1170,7 @@ msgstr "Režim"
 # auto translated by TM merge from project: Cockpit, version: master, DocId:
 # cockpit
 #: src/components/vm/hostdevs/hostDevCard.jsx:166
-#: src/components/vm/nics/nicBody.jsx:49
+#: src/components/vm/nics/nicBody.jsx:50
 msgid "Model"
 msgstr "Model"
 
@@ -1233,22 +1180,20 @@ msgstr "Typ modelu"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:222
 msgid "More info for mount tag field"
-msgstr ""
+msgstr "Další informace pro kolonku štítek připojování"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:202
 msgid "More info for source path field"
-msgstr ""
+msgstr "Další informace pro kolonku zdrojový popis umístění"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:48
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:219
 msgid "Mount tag"
-msgstr ""
+msgstr "Štítek připojování"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:133
-#, fuzzy
-#| msgid "Name must not be empty"
 msgid "Mount tag must not be empty"
-msgstr "Název je třeba vyplnit"
+msgstr "Štítek připojování je třeba vyplnit"
 
 #: src/components/create-vm-dialog/pxe-helpers.js:93
 msgid "NAT to $0"
@@ -1260,17 +1205,17 @@ msgstr "Nepodařilo se změnit stav síť. rozhraní $0 virt. stroje $1"
 
 # auto translated by TM merge from project: Cockpit, version: rhel-7.4, DocId:
 # cockpit
-#: src/components/storagePools/storagePoolVolumesTab.jsx:79
-#: src/components/storagePools/storageVolumeCreateBody.jsx:40
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:98
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:38
+#: src/components/vm/vmCloneDialog.jsx:84
+#: src/components/networks/networkList.jsx:74
+#: src/components/networks/createNetworkDialog.jsx:128
 #: src/components/storagePools/createStoragePoolDialog.jsx:43
 #: src/components/storagePools/storagePoolList.jsx:73
+#: src/components/storagePools/storageVolumeCreateBody.jsx:40
+#: src/components/storagePools/storagePoolVolumesTab.jsx:79
 #: src/components/create-vm-dialog/createVmDialog.jsx:202
-#: src/components/networks/createNetworkDialog.jsx:128
-#: src/components/networks/networkList.jsx:74
 #: src/components/vms/hostvmslist.jsx:136
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:38
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:98
-#: src/components/vm/vmCloneDialog.jsx:84
 msgid "Name"
 msgstr "Název"
 
@@ -1278,22 +1223,22 @@ msgstr "Název"
 msgid "Name contains invalid characters"
 msgstr "Název obsahuje neplatné znaky"
 
+#: src/components/vm/vmCloneDialog.jsx:39
 #: src/components/storagePools/storageVolumeCreate.jsx:61
 #: src/components/create-vm-dialog/createVmDialog.jsx:137
-#: src/components/vm/vmCloneDialog.jsx:39
 msgid "Name must not be empty"
 msgstr "Název je třeba vyplnit"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:44
 #: src/components/networks/createNetworkDialog.jsx:55
+#: src/components/storagePools/createStoragePoolDialog.jsx:44
 msgid "Name should not be empty"
 msgstr "Název je třeba vyplnit"
 
-#: src/components/networks/networkOverviewTab.jsx:40
+#: src/components/networks/networkOverviewTab.jsx:41
 msgid "Name: "
 msgstr "Název: "
 
-#: src/components/networks/networkOverviewTab.jsx:125
+#: src/components/networks/networkOverviewTab.jsx:108
 msgid "Netmask"
 msgstr "Maska sítě"
 
@@ -1318,10 +1263,8 @@ msgid "Network interface settings could not be saved"
 msgstr "Nastavení síťového rozhraní se nepodařilo uložit"
 
 #: src/components/vm/vmDetailsPage.jsx:145
-#, fuzzy
-#| msgid "Add network interface"
 msgid "Network interfaces"
-msgstr "Přidat síťové rozhraní"
+msgstr "Síťová rozhraní"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:261
 msgid "Network selection does not support PXE."
@@ -1334,16 +1277,12 @@ msgid "Networks"
 msgstr "Sítě"
 
 #: src/components/vm/vmRenameDialog.jsx:70
-#, fuzzy
-#| msgid "New volume name"
 msgid "New name"
-msgstr "Název pro nový svazek"
+msgstr "Nový název"
 
 #: src/components/vm/vmRenameDialog.jsx:72
-#, fuzzy
-#| msgid "Name must not be empty"
 msgid "New name must not be empty"
-msgstr "Název je třeba vyplnit"
+msgstr "Nový název je třeba vyplnit"
 
 #: src/components/storagePools/storageVolumeCreateBody.jsx:43
 msgid "New volume name"
@@ -1358,9 +1297,8 @@ msgid "No boot device found"
 msgstr "Nenalezeno žádné zařízení pro zavádění"
 
 #: src/components/vm/consoles/desktopConsole.jsx:45
-#, fuzzy
 msgid "No connection available"
-msgstr "Není k dispozici žádný popis"
+msgstr "Není k dispozici žádné připojení"
 
 # auto translated by TM merge from project: FreeIPA, version: ipa-4-5, DocId:
 # po/ipa
@@ -1370,22 +1308,21 @@ msgstr "Bez popisu"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:87
 msgid "No directories shared between the host and this VM"
-msgstr ""
+msgstr "Mezi hostitelem a tímto virt. strojem nejsou sdíleny žádné složky"
 
 #: src/components/vm/disks/vmDisksCard.jsx:308
 msgid "No disks defined for this VM"
 msgstr "Pro tento virt. stroj nejsou definované žádné disky"
 
 #: src/components/vm/hostdevs/hostDevCard.jsx:209
-#, fuzzy
 msgid "No host devices assigned to this VM"
-msgstr "Pro tento virt. stroj nejsou definované žádné disky"
+msgstr "Tomuto virt. stroji nejsou přiřazena žádná zařízení hostitele"
 
-#: src/components/vm/nics/nicBody.jsx:135
+#: src/components/vm/nics/nicBody.jsx:149
 msgid "No network devices"
 msgstr "Žádná síťová zařízení"
 
-#: src/components/vm/nics/vmNicsCard.jsx:413
+#: src/components/vm/nics/vmNicsCard.jsx:415
 msgid "No network interfaces defined for this VM"
 msgstr "Pro tento virt. stroj nebyla určena žádná síťová rozhraní"
 
@@ -1404,9 +1341,8 @@ msgid "No parent"
 msgstr "Nic nenadřazeno"
 
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:226
-#, fuzzy
 msgid "No snapshots defined for this VM"
-msgstr "Pro tento virt. stroj nejsou definované žádné disky"
+msgstr "Pro tento virt. stroj nejsou definované žádné zachycené stavy"
 
 #: src/helpers.js:238
 msgid "No state"
@@ -1428,7 +1364,7 @@ msgstr "Nejsou k dispozici žádné fondy úložiště"
 msgid "No storage volumes defined for this storage pool"
 msgstr "Pro tento fond úložiště nejsou definované žádné úložné svazky"
 
-#: src/components/vm/nics/nicBody.jsx:133
+#: src/components/vm/nics/nicBody.jsx:147
 msgid "No virtual networks"
 msgstr "Žádné virtuální sítě"
 
@@ -1461,8 +1397,8 @@ msgstr ""
 "Jeden či více z vybraných svazků je používán doménami. Aby bylo možné svazek "
 "smazat, je třeba nejprve odpojit disky."
 
-#: src/components/vm/overview/bootOrder.jsx:340
 #: src/components/vm/overview/memoryModal.jsx:139
+#: src/components/vm/overview/bootOrder.jsx:340
 #: src/components/vm/nics/nicEdit.jsx:40
 msgid "Only editable when the guest is shut off"
 msgstr "Upravit je možné pouze pokud je host vypnutý"
@@ -1482,9 +1418,9 @@ msgstr "Operace probíhá"
 
 # auto translated by TM merge from project: Fedora Release Notes, version:
 # f23, DocId: pot/Overview
-#: src/components/storagePools/storagePool.jsx:70
-#: src/components/networks/network.jsx:75
 #: src/components/vm/vmDetailsPage.jsx:109
+#: src/components/networks/network.jsx:75
+#: src/components/storagePools/storagePool.jsx:70
 msgid "Overview"
 msgstr "Přehled"
 
@@ -1495,6 +1431,8 @@ msgstr "Nadřazený zachycený stav"
 # auto translated by TM merge from project: selinux (policycoreutils),
 # version: master, DocId: policycoreutils
 #: src/components/vm/deleteDialog.jsx:46
+#: src/components/vm/hostdevs/hostDevCard.jsx:129
+#: src/components/vm/hostdevs/hostDevCard.jsx:133
 #: src/components/vm/disks/diskEdit.jsx:41
 msgid "Path"
 msgstr "Popis umístění"
@@ -1508,14 +1446,12 @@ msgid "Path to ISO file on host's file system"
 msgstr "Popis umístění ISO souboru na souborovém systému hostitele"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:236
-#, fuzzy
 msgid "Path to cloud image file on host's file system"
-msgstr "Popis umístění ISO souboru na souborovém systému hostitele"
+msgstr "Popis umístění souboru s cloud obrazem na souborovém systému hostitele"
 
 #: src/components/vm/disks/diskAdd.jsx:275
-#, fuzzy
 msgid "Path to file on host's file system"
-msgstr "Popis umístění ISO souboru na souborovém systému hostitele"
+msgstr "Popis umístění souboru na souborovém systému hostitele"
 
 #: src/components/vm/vmActions.jsx:202
 msgid "Pause"
@@ -1527,14 +1463,14 @@ msgstr "Pozastaveno"
 
 #: src/components/vm/vmMigrateDialog.jsx:70
 msgid "Permanent (default)"
-msgstr ""
+msgstr "Trvalé (výchozí)"
 
-#: src/components/vm/nics/nicAdd.jsx:57 src/components/vm/disks/diskAdd.jsx:100
+#: src/components/vm/disks/diskAdd.jsx:100 src/components/vm/nics/nicAdd.jsx:57
 msgid "Persistence"
 msgstr "Trvalost"
 
+#: src/components/networks/networkOverviewTab.jsx:75
 #: src/components/storagePools/storagePoolOverviewTab.jsx:68
-#: src/components/networks/networkOverviewTab.jsx:89
 msgid "Persistent"
 msgstr "Trvalé"
 
@@ -1573,13 +1509,11 @@ msgstr "Úložiště"
 
 #: src/components/storagePools/storageVolumeCreate.jsx:158
 msgid "Pool needs to be active to create volume"
-msgstr ""
+msgstr "Aby bylo možné vytvořit svazek, fond je třeba aktivovat"
 
 #: src/components/vm/disks/diskAdd.jsx:364
-#, fuzzy
-#| msgid "Pool type doesn't support volume creation"
 msgid "Pool type $0 does not support volume creation"
-msgstr "Typ fondu nepodporuje vytvoření svazku"
+msgstr "Typ fondu $0 nepodporuje vytvoření svazku"
 
 #: src/components/storagePools/storageVolumeCreate.jsx:158
 msgid "Pool type doesn't support volume creation"
@@ -1594,16 +1528,16 @@ msgstr "Svazky fondu jsou využívány virt. stroji "
 # po/ipa
 #: src/components/vm/overview/bootOrder.jsx:94
 #: src/components/vm/overview/bootOrder.jsx:110
-#: src/components/vm/nics/vmNicsCard.jsx:225
 #: src/components/vm/disks/vmDiskColumns.jsx:55
+#: src/components/vm/nics/vmNicsCard.jsx:225
 msgid "Port"
 msgstr "Port"
 
-#: src/components/vm/overview/vcpuModal.jsx:221
+#: src/components/vm/overview/vcpuModal.jsx:220
 msgid "Preferred number of sockets to expose to the guest."
 msgstr "Upřednostňovaný počet patic který odhalit hostovi."
 
-#: src/components/networks/networkOverviewTab.jsx:150
+#: src/components/networks/networkOverviewTab.jsx:133
 msgid "Prefix"
 msgstr "Předpona"
 
@@ -1645,24 +1579,28 @@ msgstr "Profil"
 msgid "Protocol"
 msgstr "Protokol"
 
-#: src/components/vm/nics/nicBody.jsx:95
+#: src/components/vm/nics/nicBody.jsx:96
 msgid ""
 "Provides a bridge from the guest virtual machine directly onto the LAN. This "
 "needs a bridge device on the host with one or more physical NICs."
 msgstr ""
+"Poskytuje most mezi virt. strojem hosta do místní sítě. To potřebuje "
+"zařízení mostu na hostiteli a v něm jedno či více fyzických síťových "
+"rozhraní."
 
-#: src/components/vm/nics/nicBody.jsx:86
+#: src/components/vm/nics/nicBody.jsx:87
 msgid ""
 "Provides a connection whose details are described by the named network "
 "definition."
 msgstr ""
+"Poskytuje připojení jehož podrobnosti jsou popsány v definici nazvané sítě."
 
-#: src/components/vm/nics/nicBody.jsx:109
+#: src/components/vm/nics/nicBody.jsx:123
 msgid "Provides a virtual LAN with NAT to the outside world."
-msgstr ""
+msgstr "Poskytuje virtuální místní síť s NAT překladem pro vnější svět."
 
-#: src/components/vm/disks/vmDisksCard.jsx:253
 #: src/components/vm/disks/diskEdit.jsx:120
+#: src/components/vm/disks/vmDisksCard.jsx:253
 msgid "Read-only"
 msgstr "Pouze pro čtení"
 
@@ -1679,9 +1617,8 @@ msgstr "Vzdálená URL adresa"
 # auto translated by TM merge from project: Fedora Websites, version:
 # getfedora.org, DocId: po/getfedora
 #: src/components/vm/consoles/desktopConsole.jsx:55
-#, fuzzy
 msgid "Remote viewer details"
-msgstr "Podrobnosti o hypervizoru"
+msgstr "Podrobnosti o vzdáleném prohlížeči"
 
 # auto translated by TM merge from project: system-config-printer, version:
 # master, DocId: system-config-printer
@@ -1692,13 +1629,13 @@ msgstr "Podrobnosti o hypervizoru"
 msgid "Remove"
 msgstr "Odebrat"
 
-#: src/components/vm/vmActions.jsx:354 src/components/vm/vmRenameDialog.jsx:58
+#: src/components/vm/vmRenameDialog.jsx:58 src/components/vm/vmActions.jsx:354
 msgid "Rename"
-msgstr ""
+msgstr "Přejmenovat"
 
 #: src/components/vm/vmRenameDialog.jsx:50
 msgid "Rename VM $0"
-msgstr ""
+msgstr "Přejmenovat virt. stroj $0"
 
 #: src/components/vm/vmActions.jsx:213
 msgid "Resume"
@@ -1745,8 +1682,8 @@ msgstr "Spustit"
 msgid "Run unattended installation"
 msgstr "Spustit bezobslužnou instalaci"
 
-#: src/components/networks/networkOverviewTab.jsx:101
 #: src/components/vm/overview/vmOverviewCard.jsx:149
+#: src/components/networks/networkOverviewTab.jsx:85
 msgid "Run when host boots"
 msgstr "Spustit při startu stroje"
 
@@ -1757,34 +1694,30 @@ msgid "Running"
 msgstr "Spuštěné"
 
 #: src/components/vm/consoles/desktopConsole.jsx:52
-#, fuzzy
 msgid "SPICE TLS port"
-msgstr "TLS port SPICE:"
+msgstr "TLS port SPICE"
 
 #: src/components/vm/consoles/desktopConsole.jsx:48
-#, fuzzy
 msgid "SPICE address"
-msgstr "Adresa SPICE:"
+msgstr "Adresa SPICE"
 
 #: src/components/vm/consoles/desktopConsole.jsx:50
-#, fuzzy
 msgid "SPICE port"
-msgstr "Port SPICE:"
+msgstr "Port SPICE"
 
 # auto translated by TM merge from project: Cockpit, version: rhel-7.4, DocId:
 # cockpit
-#: src/components/vm/overview/bootOrder.jsx:290
 #: src/components/vm/overview/firmware.jsx:63
 #: src/components/vm/overview/memoryModal.jsx:151
-#: src/components/vm/nics/nicEdit.jsx:176
+#: src/components/vm/overview/bootOrder.jsx:290
 #: src/components/vm/disks/diskEdit.jsx:255
+#: src/components/vm/nics/nicEdit.jsx:176
 msgid "Save"
 msgstr "Uložit"
 
 #: src/components/vm/consoles/consoles.jsx:99
-#, fuzzy
 msgid "Select console type"
-msgstr "Typ konzole"
+msgstr "Vybrat typ konzole"
 
 #: src/components/vm/consoles/vnc.jsx:149
 msgid "Send key"
@@ -1808,7 +1741,7 @@ msgstr "Nastavit DHCP rozsah"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:579
 msgid "Set cloud init parameters"
-msgstr ""
+msgstr "Nastavit parametry pro cloud init"
 
 #: src/components/vm/nics/nicAdd.jsx:43
 msgid "Set manually"
@@ -1824,26 +1757,24 @@ msgstr ""
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:165
 msgid "Share"
-msgstr ""
+msgstr "Sdílení"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:158
 msgid "Share a host directory with the guest"
-msgstr ""
+msgstr "Sdílet složku na hostiteli s hostem"
 
 #: src/components/vm/vmDetailsPage.jsx:175
 msgid "Shared directories"
-msgstr ""
+msgstr "Sdílené složky"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:176
 #: src/components/vm/vmDetailsPage.jsx:177
 msgid "Shared host directories need to be manually mounted inside the VM"
-msgstr ""
+msgstr "Složky sdílené s hostitelem je třeba ve virt. stroji připojit ručně"
 
 #: src/components/vm/vmMigrateDialog.jsx:101
-#, fuzzy
-#| msgid "No storage"
 msgid "Shared storage"
-msgstr "Žádné úložiště"
+msgstr "Sdílené úložiště"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:238
 #: src/components/vm/disks/diskAdd.jsx:149
@@ -1874,9 +1805,9 @@ msgstr "Vypínání"
 
 # auto translated by TM merge from project: FreeIPA, version: ipa-4-5, DocId:
 # po/ipa
-#: src/components/storagePools/storagePoolVolumesTab.jsx:79
-#: src/components/storagePools/storageVolumeCreateBody.jsx:86
 #: src/components/storagePools/storagePoolList.jsx:74
+#: src/components/storagePools/storageVolumeCreateBody.jsx:86
+#: src/components/storagePools/storagePoolVolumesTab.jsx:79
 #: src/components/create-vm-dialog/createVmDialog.jsx:708
 msgid "Size"
 msgstr "Velikost"
@@ -1885,7 +1816,7 @@ msgstr "Velikost"
 #: src/components/vm/hostdevs/hostDevCard.jsx:107
 #: src/components/vm/hostdevs/hostDevCard.jsx:114
 msgid "Slot"
-msgstr ""
+msgstr "Slot"
 
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:118
 msgid "Snapshot failed to be created"
@@ -1895,17 +1826,17 @@ msgstr "Zachycený stav se nepodařilo vytvořit"
 msgid "Snapshots"
 msgstr "Zachycené stavy"
 
-#: src/components/vm/overview/vcpuModal.jsx:219
+#: src/components/vm/overview/vcpuModal.jsx:218
 msgid "Sockets"
 msgstr "Sokety"
 
 # auto translated by TM merge from project: dnf, version: master, DocId: dnf
-#: src/components/storagePools/storagePoolOverviewTab.jsx:53
 #: src/components/vm/hostdevs/hostDevCard.jsx:184
-#: src/components/vm/nics/nicBody.jsx:179
-#: src/components/vm/nics/vmNicsCard.jsx:282
 #: src/components/vm/disks/diskAdd.jsx:592
 #: src/components/vm/disks/vmDisksCard.jsx:227
+#: src/components/vm/nics/nicBody.jsx:197
+#: src/components/vm/nics/vmNicsCard.jsx:282
+#: src/components/storagePools/storagePoolOverviewTab.jsx:53
 msgid "Source"
 msgstr "Zdroj"
 
@@ -1914,17 +1845,15 @@ msgid "Source format"
 msgstr "Zdrojový formát"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:135
-#, fuzzy
-#| msgid "Name must not be empty"
 msgid "Source must not be empty"
-msgstr "Název je třeba vyplnit"
+msgstr "Zdroj je třeba vyplnit"
 
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:48
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:199
 #: src/components/storagePools/storagePoolOverviewTab.jsx:43
 #: src/components/storagePools/storagePoolOverviewTab.jsx:48
 #: src/components/storagePools/createStoragePoolDialog.jsx:173
 #: src/components/storagePools/createStoragePoolDialog.jsx:191
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:48
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:199
 msgid "Source path"
 msgstr "Popis umístění zdroje"
 
@@ -1964,24 +1893,24 @@ msgstr "Při spuštění"
 
 # auto translated by TM merge from project: selinux (policycoreutils),
 # version: master, DocId: policycoreutils
-#: src/components/storagePools/storagePoolList.jsx:76
-#: src/components/networks/networkList.jsx:78
-#: src/components/vms/hostvmslist.jsx:96 src/components/vms/hostvmslist.jsx:138
 #: src/components/vm/overview/vmOverviewCard.jsx:201
 #: src/components/vm/nics/vmNicsCard.jsx:309
+#: src/components/networks/networkList.jsx:78
+#: src/components/storagePools/storagePoolList.jsx:76
+#: src/components/vms/hostvmslist.jsx:96 src/components/vms/hostvmslist.jsx:138
 msgid "State"
 msgstr "Stav"
 
 # auto translated by TM merge from project: virt-manager, version: master,
 # DocId: virt-manager
-#: src/components/create-vm-dialog/createVmDialog.jsx:677
 #: src/components/vm/vmMigrateDialog.jsx:94
+#: src/components/create-vm-dialog/createVmDialog.jsx:677
 msgid "Storage"
 msgstr "Úložiště"
 
 #: src/components/vm/vmMigrateDialog.jsx:116
 msgid "Storage is at a shared location"
-msgstr ""
+msgstr "Úložiště se nachází ve sdíleném umístění"
 
 #: src/components/storagePools/storagePool.jsx:119
 msgid "Storage pool $0 failed to get activated"
@@ -2007,10 +1936,8 @@ msgid "Storage pools"
 msgstr "Fondy úložiště"
 
 #: src/components/vm/disks/diskAdd.jsx:350
-#, fuzzy
-#| msgid "Storage volumes could not be deleted"
 msgid "Storage pools could not be fetched"
-msgstr "Svazky úložiště není možné smazat"
+msgstr "Fondy úložiště se nepodařilo získat"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:178
 msgid "Storage size must not be 0"
@@ -2020,10 +1947,12 @@ msgstr "Velikost úložiště nemůže být nula"
 msgid "Storage volume"
 msgstr "Svazek úložiště"
 
-#: src/components/storagePools/storageVolumeCreate.jsx:64
 #: src/components/vm/disks/diskAdd.jsx:368
+#: src/components/storagePools/storageVolumeCreate.jsx:64
 msgid "Storage volume size must not exceed the storage pool's capacity ($0 $1)"
 msgstr ""
+"Je třeba, aby velikost svazku úložiště nepřesahovala kapacitu fondu úložiště "
+"($0 $1)"
 
 #: src/components/storagePools/storagePool.jsx:76
 msgid "Storage volumes"
@@ -2037,6 +1966,8 @@ msgstr "Svazky úložiště není možné smazat"
 msgid ""
 "Storage volumes must be shared between this host and the destination host."
 msgstr ""
+"Je třeba, aby svazky úložišť byly sdíleny mezi tímto hostitelem a cílovým "
+"hostitelem."
 
 #: src/helpers.js:236
 msgid "Suspended (PM)"
@@ -2066,11 +1997,11 @@ msgstr "Popis umístění cíle je třeba vyplnit"
 
 #: src/components/vm/vmMigrateDialog.jsx:74
 msgid "Temporary"
-msgstr ""
+msgstr "Dočasné"
 
 #: src/components/vm/vmMigrateDialog.jsx:85
 msgid "Temporary migration"
-msgstr ""
+msgstr "Dočasné přestěhování"
 
 #: src/components/common/deleteResource.jsx:47
 msgid "The $0 could not be deleted"
@@ -2080,8 +2011,8 @@ msgstr "$0 nebylo možné smazat"
 msgid "The VM is running and will be forced off before deletion."
 msgstr "Virt. stroj je spuštěný a před smazáním bude vynuceně vypnut."
 
-#: src/components/vm/nics/vmNicsCard.jsx:368
 #: src/components/vm/disks/vmDisksCard.jsx:290
+#: src/components/vm/nics/vmNicsCard.jsx:368
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr ""
 "Pro odpojení tohoto zařízení je třeba, aby virt. stroj byl spuštěný nebo "
@@ -2093,13 +2024,15 @@ msgstr "Složka na serveru, kterou exportovat"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:201
 msgid "The host path that is to be exported."
-msgstr ""
+msgstr "Popis umístění na hostiteli, které má být exportováno."
 
 #: src/components/vm/vmMigrateDialog.jsx:71
 msgid ""
 "The migrated VM configuration is removed from the source host. The "
 "destination host is considered the new home of the VM."
 msgstr ""
+"Nastavení přestěhovaného virt. stroje je odebráno ze zdrojového hostitele. "
+"Cílový host je považován za nový domov virt. stroje."
 
 #: src/components/vm/disks/diskAdd.jsx:76
 msgid "The pool is empty"
@@ -2126,22 +2059,32 @@ msgstr "Fond úložiště se nepodařilo smazat"
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:221
 msgid "The tag name to be used by the guest to mount this export point."
 msgstr ""
+"Název štítku, který použít hostem pro připojení tohoto exportního bodu."
 
 #: src/components/vm/vmActions.jsx:375
 msgid "This VM is transient. Shut it down if you wish to delete it."
 msgstr ""
 "Tento vir. stroj je přechodný. Pokud ho chcete smazat, stačí ho vypnout."
 
-#: src/components/vm/nics/nicBody.jsx:85
+#: src/components/vm/nics/nicBody.jsx:86
 msgid ""
 "This is the recommended config for general guest connectivity on hosts with "
 "dynamic / wireless networking configs."
 msgstr ""
+"Toto je doporučené nastavení pro obecné připojení hosta na hostitelích s "
+"dynamickými / bezdrátovými uspořádáními sítě."
 
-#: src/components/vm/nics/nicBody.jsx:94
+#: src/components/vm/nics/nicBody.jsx:95
 msgid ""
 "This is the recommended config for general guest connectivity on hosts with "
 "static wired networking configs."
+msgstr ""
+"toto je doporučené nastavení pro obecné připojení hosta na hostitelích se "
+"statickým drátovým uspořádáním sítě."
+
+#: src/components/vm/nics/nicBody.jsx:101
+msgid ""
+"This is the recommended config for high performance or enhanced security."
 msgstr ""
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:696
@@ -2152,7 +2095,7 @@ msgstr "Tento svazek už je využíván jiným virt. strojem."
 msgid "This volume is already used by: "
 msgstr "Tento svazek je zrovna používán: "
 
-#: src/components/vm/overview/vcpuModal.jsx:241
+#: src/components/vm/overview/vcpuModal.jsx:240
 msgid "Threads per core"
 msgstr "Vláken na jádro"
 
@@ -2168,8 +2111,6 @@ msgstr "Řešit potíže"
 
 # auto translated by TM merge from project: FreeIPA, version: ipa-4-5, DocId:
 # po/ipa
-#: src/components/storagePools/storagePoolOverviewTab.jsx:78
-#: src/components/storagePools/createStoragePoolDialog.jsx:80
 #: src/components/vm/overview/bootOrder.jsx:108
 #: src/components/vm/overview/bootOrder.jsx:119
 #: src/components/vm/overview/bootOrder.jsx:125
@@ -2178,6 +2119,8 @@ msgstr "Řešit potíže"
 #: src/components/vm/overview/bootOrder.jsx:148
 #: src/components/vm/hostdevs/hostDevCard.jsx:148
 #: src/components/vm/nics/vmNicsCard.jsx:232
+#: src/components/storagePools/storagePoolOverviewTab.jsx:78
+#: src/components/storagePools/createStoragePoolDialog.jsx:80
 msgid "Type"
 msgstr "Typ"
 
@@ -2187,11 +2130,11 @@ msgstr "Identifikátor typu"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:308
 msgid "URL (ISO image or distro install tree)"
-msgstr ""
+msgstr "URL (ISO obraz nebo instalační strom distribuce)"
 
 #: src/components/vm/hostdevs/hostDevCard.jsx:125
 msgid "UUID"
-msgstr ""
+msgstr "UUID"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:210
 msgid "Unique name"
@@ -2217,12 +2160,12 @@ msgstr "Neznámý firmware"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:644
 msgid "Up to $0 $1 available on the default location"
-msgstr ""
+msgstr "Ve výchozím umístění je k dispozici až $0 $1"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:183
 #: src/components/create-vm-dialog/createVmDialog.jsx:596
 msgid "Up to $0 $1 available on the host"
-msgstr ""
+msgstr "Až $0 $1 k dispozici na hostiteli"
 
 #: src/components/vm/disks/diskEdit.jsx:43
 msgid "Url"
@@ -2244,6 +2187,9 @@ msgid ""
 "storage. This can be a shared storage pool, NFS, or any other method of "
 "sharing storage."
 msgstr ""
+"Použít stejné umístění na jak pro původním, tak pro cílovém hostiteli pro "
+"své úložiště. To může být sdílený fond úložišť, NFS, nebo jakákoli jiná "
+"metoda sdíleného úložiště."
 
 #: src/components/vm/disks/vmDisksCard.jsx:219
 msgid "Used"
@@ -2254,13 +2200,14 @@ msgid "Used by"
 msgstr "Používá"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:547
-#, fuzzy
 msgid "User login"
-msgstr "Poslední přihlášení"
+msgstr "Přihlášení uživatele"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:192
 msgid "User login must not be empty when user password is set"
 msgstr ""
+"Pokud je nastaveno heslo pro uživatele, je třeba vyplnit přihlašovací jméno "
+"uživatele"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:554
 msgid "User password"
@@ -2269,14 +2216,9 @@ msgstr "Heslo uživatele"
 #: src/components/create-vm-dialog/createVmDialog.jsx:189
 msgid "User password must not be empty when user login is set"
 msgstr ""
+"Pokud je nastavené uživatelské jméno, je třeba vyplnit heslo pro uživatele"
 
-#: src/components/vm/nics/nicBody.jsx:100
-msgid ""
-"Uses the macvtap driver to attach the guest's NIC directly to a specified "
-"physical interface of the host machine."
-msgstr ""
-
-#: src/components/vm/overview/vcpuModal.jsx:170
+#: src/components/vm/overview/vcpuModal.jsx:169
 msgid "VCPU settings could not be saved"
 msgstr "Nastavení virt. procesoru se nepodařilo uložit"
 
@@ -2286,7 +2228,7 @@ msgstr "Virt. stroj $0 už existuje"
 
 #: src/app.jsx:215
 msgid "VM $0 does not exist on $1 connection"
-msgstr ""
+msgstr "Virt. stroj $0 neexistuje na $1 připojení"
 
 #: src/components/vm/vmActions.jsx:123
 msgid "VM $0 failed to force reboot"
@@ -2335,24 +2277,20 @@ msgid "VM state"
 msgstr "Stav virt. stroje"
 
 #: src/components/vm/consoles/desktopConsole.jsx:53
-#, fuzzy
 msgid "VNC TLS port"
-msgstr "VNC TLS port:"
+msgstr "VNC TLS port"
 
 #: src/components/vm/consoles/desktopConsole.jsx:49
-#, fuzzy
 msgid "VNC address"
-msgstr "VNC adresa:"
+msgstr "VNC adresa"
 
 #: src/components/vm/consoles/consoles.jsx:101
-#, fuzzy
 msgid "VNC console"
-msgstr "konzole"
+msgstr "VNC konzole"
 
 #: src/components/vm/consoles/desktopConsole.jsx:51
-#, fuzzy
 msgid "VNC port"
-msgstr "VNC port:"
+msgstr "VNC port"
 
 # auto translated by TM merge from project: libosinfo, version: master, DocId:
 # libosinfo
@@ -2366,12 +2304,12 @@ msgstr "Výrobce"
 msgid "Virtual Machines"
 msgstr "Virtuální stroje"
 
-#: src/components/storagePools/storagePoolList.jsx:53
-#: src/components/networks/networkList.jsx:54
-#: src/components/vms/hostvmslist.jsx:126
-#: src/components/vms/hostvmslist.jsx:133
 #: src/components/vm/vmDetailsPage.jsx:88
 #: src/components/vm/vmDetailsPage.jsx:231
+#: src/components/networks/networkList.jsx:54
+#: src/components/storagePools/storagePoolList.jsx:53
+#: src/components/vms/hostvmslist.jsx:126
+#: src/components/vms/hostvmslist.jsx:133
 msgid "Virtual machines"
 msgstr "Virtuální stroje"
 
@@ -2393,11 +2331,11 @@ msgstr "Služba virtualizace (libvirt) není aktivní"
 
 # auto translated by TM merge from project: anaconda, version: master, DocId:
 # main
-#: src/components/create-vm-dialog/createVmDialog.jsx:694
 #: src/components/vm/deleteDialog.jsx:51
 #: src/components/vm/overview/bootOrder.jsx:92
 #: src/components/vm/disks/diskAdd.jsx:82
 #: src/components/vm/disks/vmDiskColumns.jsx:53
+#: src/components/create-vm-dialog/createVmDialog.jsx:694
 msgid "Volume"
 msgstr "Svazek"
 
@@ -2418,19 +2356,19 @@ msgstr "Název skupiny svazků je třeba vyplnit"
 msgid "WWPN"
 msgstr "Neopakující se číslo portu"
 
-#: src/components/vm/disks/vmDisksCard.jsx:253
 #: src/components/vm/disks/diskEdit.jsx:129
+#: src/components/vm/disks/vmDisksCard.jsx:253
 msgid "Writeable"
 msgstr "Zapisovatelné"
 
-#: src/components/vm/disks/vmDisksCard.jsx:253
 #: src/components/vm/disks/diskEdit.jsx:138
+#: src/components/vm/disks/vmDisksCard.jsx:253
 msgid "Writeable and shared"
 msgstr "Zapisovatelné a sdílené"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:178
 msgid "You can mount the shared folder using:"
-msgstr ""
+msgstr "Sdílenou složku je možné připojit pomocí:"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:142
 msgid "You need to select the most closely matching operating system"
@@ -2438,8 +2376,8 @@ msgstr "Je třeba vybrat co nejvíce odpovídající operační systém"
 
 # auto translated by TM merge from project: libvirt, version: master, DocId:
 # libvirt
-#: src/components/storagePools/storagePool.jsx:59
 #: src/components/networks/network.jsx:57
+#: src/components/storagePools/storagePool.jsx:59
 msgid "active"
 msgstr "aktivní"
 
@@ -2476,10 +2414,10 @@ msgstr "disk"
 msgid "down"
 msgstr "vypnuté"
 
-#: src/components/vm/overview/bootOrder.jsx:332
 #: src/components/vm/overview/vmOverviewCard.jsx:156
 #: src/components/vm/overview/vmOverviewCard.jsx:165
 #: src/components/vm/overview/vmOverviewCard.jsx:172
+#: src/components/vm/overview/bootOrder.jsx:332
 msgid "edit"
 msgstr "upravit"
 
@@ -2494,10 +2432,8 @@ msgid "ethernet"
 msgstr "ethernet"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:61
-#, fuzzy
-#| msgid "Network file system"
 msgid "filesystem"
-msgstr "Síťový souborový systém"
+msgstr "souborový systém"
 
 #: src/helpers.js:250
 msgid "host"
@@ -2508,9 +2444,8 @@ msgid "host device"
 msgstr "zařízení hostitele"
 
 #: src/helpers.js:251
-#, fuzzy
 msgid "host passthrough"
-msgstr "do umístění stroje"
+msgstr "průchod na hostitele"
 
 #: src/helpers.js:259
 msgid "hostdev"
@@ -2546,31 +2481,30 @@ msgstr "vícesměrvysílání"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:190
 #: src/components/vm/vmDetailsPage.jsx:190
+#: src/components/vm/nics/nicBody.jsx:112
 msgid "more info"
-msgstr ""
+msgstr "další informace"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:186
 #: src/components/vm/vmDetailsPage.jsx:186
 msgid "mount point: The mount point inside the guest"
-msgstr ""
+msgstr "přípojný bod: Přípojný bod uvnitř hosta"
 
 #: src/components/vm/vmDetailsPage.jsx:185
 msgid "mount tag: The tag associated to the exported mount point"
-msgstr ""
+msgstr "štítek připojení: Štítek přiřazený k exportovanému přípojnému bodu"
 
 #: src/helpers.js:243 src/helpers.js:255
 msgid "network"
 msgstr "síť"
 
 #: src/components/vm/nics/vmNicsCard.jsx:359
-#, fuzzy
-#| msgid "Add network interface"
 msgid "network interface"
-msgstr "Přidat síťové rozhraní"
+msgstr "síťové rozhraní"
 
-#: src/helpers.js:278 src/components/storagePools/storagePoolOverviewTab.jsx:69
+#: src/helpers.js:278 src/components/networks/networkOverviewTab.jsx:76
+#: src/components/storagePools/storagePoolOverviewTab.jsx:69
 #: src/components/storagePools/storagePoolOverviewTab.jsx:74
-#: src/components/networks/networkOverviewTab.jsx:90
 msgid "no"
 msgstr "ne"
 
@@ -2599,10 +2533,8 @@ msgid "server"
 msgstr "server"
 
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:181
-#, fuzzy
-#| msgid "Snapshots"
 msgid "snapshot"
-msgstr "Zachycené stavy"
+msgstr "zachycený stav"
 
 # auto translated by TM merge from project: selinux (policycoreutils),
 # version: master, DocId: policycoreutils
@@ -2620,11 +2552,11 @@ msgstr "zapnuto"
 msgid "user"
 msgstr "uživatel"
 
-#: src/components/vm/overview/vcpuModal.jsx:190
+#: src/components/vm/overview/vcpuModal.jsx:189
 msgid "vCPU count"
 msgstr "Počet virt. procesorů"
 
-#: src/components/vm/overview/vcpuModal.jsx:203
+#: src/components/vm/overview/vcpuModal.jsx:202
 msgid "vCPU maximum"
 msgstr "Maximum virt. procesorů"
 
@@ -2641,13 +2573,12 @@ msgid "view more..."
 msgstr "zobrazit více…"
 
 #: src/components/vm/vmActions.jsx:311
-#, fuzzy
 msgid ""
 "virt-install package needs to be installed on the system in order to clone "
 "VMs"
 msgstr ""
-"Aby bylo možné vytvářet nové virt. stroje je třeba, aby byl nainstalovaný "
-"balíček virt-install"
+"Aby bylo možné klonovat virt. stroje je třeba, aby byl nainstalovaný balíček "
+"virt-install"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:1145
 msgid ""
@@ -2658,12 +2589,11 @@ msgstr ""
 "balíček virt-install"
 
 #: src/components/vm/overview/vmOverviewCard.jsx:178
-#, fuzzy
 msgid ""
 "virt-install package needs to be installed on the system in order to edit "
 "this attribute"
 msgstr ""
-"Aby bylo možné vytvářet nové virt. stroje je třeba, aby byl nainstalovaný "
+"Aby bylo možné upravovat tento atribut je třeba, aby byl nainstalovaný "
 "balíček virt-install"
 
 #: src/manifest.json:0
@@ -2672,11 +2602,24 @@ msgstr "virt. stroj"
 
 # auto translated by TM merge from project: Pulseaudio, version: master,
 # DocId: pulseaudio.pot
-#: src/helpers.js:277 src/components/storagePools/storagePoolOverviewTab.jsx:69
+#: src/helpers.js:277 src/components/networks/networkOverviewTab.jsx:76
+#: src/components/storagePools/storagePoolOverviewTab.jsx:69
 #: src/components/storagePools/storagePoolOverviewTab.jsx:74
-#: src/components/networks/networkOverviewTab.jsx:90
 msgid "yes"
 msgstr "ano"
+
+#~ msgid "Block"
+#~ msgstr "Blok"
+
+#~ msgid "Char"
+#~ msgstr "Znak"
+
+#~ msgid ""
+#~ "Uses the macvtap driver to attach the guest's NIC directly to a specified "
+#~ "physical interface of the host machine."
+#~ msgstr ""
+#~ "Používá ovladač macvtap pro připojení síťového rozhraní hosta přímo na "
+#~ "zadané fyzické rozhraní stroje hostitele."
 
 #~ msgid "$0 day"
 #~ msgid_plural "$0 days"

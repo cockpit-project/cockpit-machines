@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-15 06:55+0000\n"
-"PO-Revision-Date: 2021-09-17 08:05+0000\n"
+"POT-Creation-Date: 2021-09-21 18:15+0000\n"
+"PO-Revision-Date: 2021-09-25 18:05+0000\n"
 "Last-Translator: Oğuz Ersen <oguzersen@protonmail.com>\n"
 "Language-Team: Turkish <https://translate.fedoraproject.org/projects/"
 "cockpit-machines/main/tr/>\n"
@@ -60,7 +60,7 @@ msgid_plural "$0 vCPUs"
 msgstr[0] "$0 vCPU"
 msgstr[1] "$0 vCPU"
 
-#: src/components/vm/overview/vcpuModal.jsx:254
+#: src/components/vm/overview/vcpuModal.jsx:253
 msgid "$0 vCPU details"
 msgstr "$0 vCPU ayrıntıları"
 
@@ -77,13 +77,13 @@ msgstr ""
 "kaybolacaktır. Bu arada kaynak ana makine, sanal makine yapılandırmasının "
 "kopyasını tutar."
 
-#: src/components/vm/disks/vmDisksCard.jsx:225
 #: src/components/vm/disks/diskEdit.jsx:112
+#: src/components/vm/disks/vmDisksCard.jsx:225
 msgid "Access"
 msgstr "Erişim"
 
-#: src/components/storagePools/storagePool.jsx:166
 #: src/components/networks/network.jsx:172
+#: src/components/storagePools/storagePool.jsx:166
 msgid "Activate"
 msgstr "Etkinleştir"
 
@@ -91,8 +91,8 @@ msgstr "Etkinleştir"
 msgid "Activate the storage pool to administer volumes"
 msgstr "Birimleri yönetmek için depolama havuzunu etkinleştir"
 
-#: src/components/vm/nics/nicAdd.jsx:166
 #: src/components/vm/disks/diskAdd.jsx:661
+#: src/components/vm/nics/nicAdd.jsx:166
 msgid "Add"
 msgstr "Ekle"
 
@@ -121,10 +121,10 @@ msgstr "Paylaşılan dizinler eklemek yalnızca konuk kapalı olduğunda mümkü
 msgid "Additional"
 msgstr "Ek"
 
-#: src/components/networks/networkOverviewTab.jsx:120
-#: src/components/networks/networkOverviewTab.jsx:145
 #: src/components/vm/consoles/desktopConsole.jsx:47
 #: src/components/vm/nics/vmNicsCard.jsx:224
+#: src/components/networks/networkOverviewTab.jsx:103
+#: src/components/networks/networkOverviewTab.jsx:128
 msgid "Address"
 msgstr "Adres"
 
@@ -151,12 +151,12 @@ msgstr ""
 "Depolama dahil tüm sanal makine etkinliği geçici olacaktır. Bu, hedef ana "
 "makinede veri kaybına neden olacaktır."
 
-#: src/components/vm/nics/nicAdd.jsx:60 src/components/vm/disks/diskAdd.jsx:103
+#: src/components/vm/disks/diskAdd.jsx:103 src/components/vm/nics/nicAdd.jsx:60
 msgid "Always attach"
 msgstr "Her zaman bağla"
 
 #: src/components/vm/overview/cpuTypeModal.jsx:65
-#: src/components/vm/overview/vcpuModal.jsx:259
+#: src/components/vm/overview/vcpuModal.jsx:258
 msgid "Apply"
 msgstr "Uygula"
 
@@ -174,22 +174,18 @@ msgstr "Otomatik"
 msgid "Automatically start libvirt on boot"
 msgstr "Önyüklemede libvirt'i otomatik olarak başlat"
 
-#: src/components/storagePools/storagePoolOverviewTab.jsx:73
-#: src/components/networks/networkOverviewTab.jsx:94
 #: src/components/vm/overview/vmOverviewCard.jsx:239
+#: src/components/networks/networkOverviewTab.jsx:80
+#: src/components/storagePools/storagePoolOverviewTab.jsx:73
 msgid "Autostart"
 msgstr "Otomatik başlat"
-
-#: src/components/vm/hostdevs/hostDevCard.jsx:129
-msgid "Block"
-msgstr "Blok"
 
 #: src/helpers.js:237
 msgid "Blocked"
 msgstr "Engellendi"
 
-#: src/components/vm/overview/bootOrder.jsx:281
 #: src/components/vm/overview/vmOverviewCard.jsx:230
+#: src/components/vm/overview/bootOrder.jsx:281
 msgid "Boot order"
 msgstr "Önyükleme sırası"
 
@@ -203,9 +199,9 @@ msgstr "Önyükleme sırası ayarları kaydedilemedi"
 #: src/components/vm/overview/bootOrder.jsx:136
 #: src/components/vm/hostdevs/hostDevCard.jsx:95
 #: src/components/vm/hostdevs/hostDevCard.jsx:113
+#: src/components/vm/disks/diskEdit.jsx:87
 #: src/components/vm/disks/diskAdd.jsx:165
 #: src/components/vm/disks/vmDisksCard.jsx:223
-#: src/components/vm/disks/diskEdit.jsx:87
 msgid "Bus"
 msgstr "Veri yolu"
 
@@ -225,33 +221,33 @@ msgstr "CPU yapılandırması kaydedilemedi"
 msgid "CPU type"
 msgstr "CPU türü"
 
+#: src/components/vm/disks/diskEdit.jsx:59
 #: src/components/vm/disks/diskAdd.jsx:152
 #: src/components/vm/disks/vmDiskColumns.jsx:82
-#: src/components/vm/disks/diskEdit.jsx:59
 msgid "Cache"
 msgstr "Önbellek"
 
+#: src/components/vm/deleteDialog.jsx:146
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:71
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:145
+#: src/components/vm/overview/firmware.jsx:66
+#: src/components/vm/overview/memoryModal.jsx:154
+#: src/components/vm/overview/cpuTypeModal.jsx:68
+#: src/components/vm/overview/bootOrder.jsx:293
+#: src/components/vm/overview/vcpuModal.jsx:261
+#: src/components/vm/vmMigrateDialog.jsx:217
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:170
+#: src/components/vm/vmCloneDialog.jsx:75
+#: src/components/vm/vmRenameDialog.jsx:61
+#: src/components/vm/disks/diskEdit.jsx:258
+#: src/components/vm/disks/diskAdd.jsx:664
+#: src/components/vm/nics/nicAdd.jsx:169 src/components/vm/nics/nicEdit.jsx:179
+#: src/components/networks/createNetworkDialog.jsx:415
 #: src/components/storagePools/storagePoolDelete.jsx:225
 #: src/components/storagePools/storageVolumeCreate.jsx:103
 #: src/components/storagePools/createStoragePoolDialog.jsx:438
 #: src/components/common/deleteResource.jsx:69
 #: src/components/create-vm-dialog/createVmDialog.jsx:1090
-#: src/components/networks/createNetworkDialog.jsx:415
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:71
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:145
-#: src/components/vm/deleteDialog.jsx:146
-#: src/components/vm/overview/cpuTypeModal.jsx:68
-#: src/components/vm/overview/bootOrder.jsx:293
-#: src/components/vm/overview/firmware.jsx:66
-#: src/components/vm/overview/vcpuModal.jsx:262
-#: src/components/vm/overview/memoryModal.jsx:154
-#: src/components/vm/vmRenameDialog.jsx:61
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:170
-#: src/components/vm/nics/nicAdd.jsx:169 src/components/vm/nics/nicEdit.jsx:179
-#: src/components/vm/vmMigrateDialog.jsx:217
-#: src/components/vm/disks/diskAdd.jsx:664
-#: src/components/vm/disks/diskEdit.jsx:258
-#: src/components/vm/vmCloneDialog.jsx:75
 msgid "Cancel"
 msgstr "İptal"
 
@@ -263,16 +259,12 @@ msgstr "Kapasite"
 msgid "Change firmware"
 msgstr "Aygıt yazılımını değiştir"
 
-#: src/components/common/warningInactive.jsx:12
-#: src/components/vm/overview/vcpuModal.jsx:184
-#: src/components/vm/nics/nicEdit.jsx:165
+#: src/components/vm/overview/vcpuModal.jsx:183
 #: src/components/vm/disks/diskEdit.jsx:242
+#: src/components/vm/nics/nicEdit.jsx:165
+#: src/components/common/warningInactive.jsx:12
 msgid "Changes will take effect after shutting down the VM"
 msgstr "Değişiklikler, sanal makine kapatıldıktan sonra etkili olacaktır"
-
-#: src/components/vm/hostdevs/hostDevCard.jsx:133
-msgid "Char"
-msgstr "Karakter"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:385
 #: src/components/create-vm-dialog/createVmDialog.jsx:386
@@ -290,7 +282,7 @@ msgstr ""
 "\"Remote Viewer'ı Başlat\"a tıklamak bir .vv dosyası indirecek ve $0 "
 "başlatılacak."
 
-#: src/components/vm/vmActions.jsx:302 src/components/vm/vmCloneDialog.jsx:72
+#: src/components/vm/vmCloneDialog.jsx:72 src/components/vm/vmActions.jsx:302
 msgid "Clone"
 msgstr "Kopya"
 
@@ -319,10 +311,10 @@ msgstr "Bağlanıyor"
 msgid "Connecting to virtualization service"
 msgstr "Sanallaştırma hizmetine bağlanılıyor"
 
+#: src/components/networks/networkList.jsx:76
+#: src/components/networks/createNetworkDialog.jsx:43
 #: src/components/storagePools/storagePoolList.jsx:75
 #: src/components/common/machinesConnectionSelector.jsx:33
-#: src/components/networks/createNetworkDialog.jsx:43
-#: src/components/networks/networkList.jsx:76
 #: src/components/vms/hostvmslist.jsx:137
 msgid "Connection"
 msgstr "Bağlantı"
@@ -337,7 +329,7 @@ msgstr "Konsol"
 msgid "Copy storage"
 msgstr "Depolamayı kopyala"
 
-#: src/components/vm/overview/vcpuModal.jsx:233
+#: src/components/vm/overview/vcpuModal.jsx:232
 msgid "Cores per socket"
 msgstr "Soket başına çekirdek sayısı"
 
@@ -349,11 +341,11 @@ msgstr "Anlık görüntüye geri döndürülemedi"
 msgid "Crashed"
 msgstr "Çöktü"
 
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:142
+#: src/components/networks/createNetworkDialog.jsx:412
 #: src/components/storagePools/storageVolumeCreate.jsx:100
 #: src/components/storagePools/createStoragePoolDialog.jsx:435
 #: src/components/create-vm-dialog/createVmDialog.jsx:1085
-#: src/components/networks/createNetworkDialog.jsx:412
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:142
 msgid "Create"
 msgstr "Oluştur"
 
@@ -377,8 +369,8 @@ msgstr "Yeni sanal makine oluştur"
 msgid "Create new volume"
 msgstr "Yeni birim oluştur"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:137
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:61
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:137
 msgid "Create snapshot"
 msgstr "Anlık görüntü oluştur"
 
@@ -438,16 +430,18 @@ msgstr "Özel aygıt yazılımı: $0"
 msgid "Custom path"
 msgstr "Özel yol"
 
-#: src/components/networks/networkOverviewTab.jsx:130
-#: src/components/networks/networkOverviewTab.jsx:155
+#: src/components/networks/networkOverviewTab.jsx:113
+#: src/components/networks/networkOverviewTab.jsx:138
 msgid "DHCP range"
 msgstr "DHCP aralığı"
 
-#: src/components/storagePools/storagePool.jsx:157
 #: src/components/networks/network.jsx:168
+#: src/components/storagePools/storagePool.jsx:157
 msgid "Deactivate"
 msgstr "Devre dışı bırak"
 
+#: src/components/vm/deleteDialog.jsx:143 src/components/vm/vmActions.jsx:379
+#: src/components/vm/vmActions.jsx:386
 #: src/components/storagePools/storagePoolDelete.jsx:194
 #: src/components/storagePools/storagePoolDelete.jsx:204
 #: src/components/storagePools/storagePoolDelete.jsx:222
@@ -455,8 +449,6 @@ msgstr "Devre dışı bırak"
 #: src/components/common/deleteResource.jsx:66
 #: src/components/common/deleteResource.jsx:95
 #: src/components/common/deleteResource.jsx:105
-#: src/components/vm/deleteDialog.jsx:143 src/components/vm/vmActions.jsx:379
-#: src/components/vm/vmActions.jsx:386
 msgid "Delete"
 msgstr "Sil"
 
@@ -494,8 +486,8 @@ msgstr ""
 msgid "Deleting shared directories is possible only when the guest is shut off"
 msgstr "Paylaşılan dizinleri silmek yalnızca konuk kapalı olduğunda mümkündür"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:51
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:107
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:51
 msgid "Description"
 msgstr "Açıklama"
 
@@ -519,14 +511,14 @@ msgstr ""
 "Silmeyi denemeden önce bu havuzu kullanan diskleri herhangi bir sanal "
 "makineden ayırın."
 
-#: src/components/networks/createNetworkDialog.jsx:162
-#: src/components/networks/networkList.jsx:75
 #: src/components/vm/overview/bootOrder.jsx:89
 #: src/components/vm/overview/bootOrder.jsx:96
 #: src/components/vm/hostdevs/hostDevCard.jsx:94
 #: src/components/vm/disks/diskAdd.jsx:281
-#: src/components/vm/disks/vmDiskColumns.jsx:50
 #: src/components/vm/disks/vmDisksCard.jsx:209
+#: src/components/vm/disks/vmDiskColumns.jsx:50
+#: src/components/networks/networkList.jsx:75
+#: src/components/networks/createNetworkDialog.jsx:162
 msgid "Device"
 msgstr "Aygıt"
 
@@ -571,8 +563,8 @@ msgstr "Disk kalıp dosyası"
 msgid "Disk image path must not be empty"
 msgstr "Disk kalıbı yolu boş olmamalıdır"
 
-#: src/components/vm/disks/diskAdd.jsx:557
 #: src/components/vm/disks/diskEdit.jsx:207
+#: src/components/vm/disks/diskAdd.jsx:557
 msgid "Disk settings could not be saved"
 msgstr "Disk ayarları kaydedilemedi"
 
@@ -587,7 +579,8 @@ msgstr "Diskler"
 #: src/components/vm/vmMigrateDialog.jsx:200
 msgid ""
 "Do not run this VM on the origin and destination hosts at the same time."
-msgstr "Bu sanal makineyi kaynak ve hedef ana makinede aynı anda çalıştırmayın."
+msgstr ""
+"Bu sanal makineyi kaynak ve hedef ana makinede aynı anda çalıştırmayın."
 
 #: src/components/vm/overview/bootOrder.jsx:129
 msgid "Domain"
@@ -613,8 +606,8 @@ msgstr "Süre"
 msgid "Dying"
 msgstr "Sonlanıyor"
 
-#: src/components/vm/nics/vmNicsCard.jsx:344
 #: src/components/vm/disks/diskEdit.jsx:153
+#: src/components/vm/nics/vmNicsCard.jsx:344
 msgid "Edit"
 msgstr "Düzenle"
 
@@ -702,7 +695,7 @@ msgstr ""
 msgid "Failed to start virtualization service"
 msgstr "Sanallaştırma hizmetini başlatma başarısız oldu"
 
-#: src/components/vm/overview/vcpuModal.jsx:192
+#: src/components/vm/overview/vcpuModal.jsx:191
 msgid "Fewer than the maximum number of virtual CPUs should be enabled."
 msgstr "En fazla sanal CPU sayısından daha azı etkinleştirilmelidir."
 
@@ -732,8 +725,8 @@ msgstr "Yeniden başlatmaya zorla"
 msgid "Force shut down"
 msgstr "Kapatmaya zorla"
 
-#: src/components/storagePools/storageVolumeCreateBody.jsx:70
 #: src/components/storagePools/createStoragePoolDialog.jsx:201
+#: src/components/storagePools/storageVolumeCreateBody.jsx:70
 msgid "Format"
 msgstr "Biçimlendir"
 
@@ -759,8 +752,8 @@ msgstr ""
 msgid "Function"
 msgstr "İşlev"
 
-#: src/components/networks/networkOverviewTab.jsx:85
 #: src/components/vm/overview/vmOverviewCard.jsx:197
+#: src/components/networks/networkOverviewTab.jsx:71
 msgid "General"
 msgstr "Genel"
 
@@ -768,11 +761,11 @@ msgstr "Genel"
 msgid "Generate automatically"
 msgstr "Otomatik olarak oluştur"
 
+#: src/components/vm/overview/memorySelectRow.jsx:89
+#: src/components/vm/disks/vmDisksCard.jsx:51
 #: src/components/storagePools/storageVolumeCreateBody.jsx:104
 #: src/components/create-vm-dialog/createVmDialog.jsx:630
 #: src/components/create-vm-dialog/createVmDialog.jsx:726
-#: src/components/vm/overview/memorySelectRow.jsx:89
-#: src/components/vm/disks/vmDisksCard.jsx:51
 msgid "GiB"
 msgstr "GiB"
 
@@ -785,10 +778,10 @@ msgstr "Sanal makineler listesine git"
 msgid "Hide additional options"
 msgstr "Ek seçenekleri gizle"
 
-#: src/components/storagePools/storagePoolOverviewTab.jsx:36
-#: src/components/storagePools/createStoragePoolDialog.jsx:121
 #: src/components/vm/overview/bootOrder.jsx:93
 #: src/components/vm/disks/vmDiskColumns.jsx:54
+#: src/components/storagePools/storagePoolOverviewTab.jsx:36
+#: src/components/storagePools/createStoragePoolDialog.jsx:121
 msgid "Host"
 msgstr "Anamakine"
 
@@ -824,7 +817,7 @@ msgstr "IP adresi"
 msgid "IP configuration"
 msgstr "IP yapılandırması"
 
-#: src/components/networks/networkOverviewTab.jsx:116
+#: src/components/networks/networkOverviewTab.jsx:99
 #: src/components/networks/createNetworkDialog.jsx:245
 msgid "IPv4 address"
 msgstr "IPv4 adresi"
@@ -849,7 +842,7 @@ msgstr "IPv4 ağı boş olmamalıdır"
 msgid "IPv4 only"
 msgstr "Sadece IPv4"
 
-#: src/components/networks/networkOverviewTab.jsx:141
+#: src/components/networks/networkOverviewTab.jsx:124
 #: src/components/networks/createNetworkDialog.jsx:277
 msgid "IPv6 address"
 msgstr "IPv6 adresi"
@@ -889,6 +882,16 @@ msgid ""
 msgstr ""
 "Çoğu yapılandırmada, anamakineden konuğa ağ iletişimi için macvtap çalışmaz."
 
+#: src/components/vm/nics/nicBody.jsx:102
+msgid ""
+"In the default 'vepa' mode, switching is offloaded to the external switch. "
+"If the switch is not VEPA-capable, communication between guest virtual "
+"machines, or between a guests and the host is not possible."
+msgstr ""
+"Öntanımlı 'vepa' modunda, anahtarlama harici anahtar tarafından yapılır. "
+"Anahtar VEPA özellikli değilse, konuk sanal makineleri arasında veya konuk "
+"ile ana makine arasında iletişim mümkün değildir."
+
 #: src/components/storagePools/createStoragePoolDialog.jsx:139
 msgid "Initiator"
 msgstr "Başlatıcı"
@@ -917,11 +920,11 @@ msgstr "Kurulum türü"
 msgid "Interface"
 msgstr "Arayüz"
 
-#: src/components/vm/nics/nicBody.jsx:148
+#: src/components/vm/nics/nicBody.jsx:162
 msgid "Interface type"
 msgstr "Arayüz türü"
 
-#: src/components/vm/nics/nicBody.jsx:150
+#: src/components/vm/nics/nicBody.jsx:164
 msgid "Interface type help"
 msgstr "Arayüz türü yardımı"
 
@@ -1007,9 +1010,8 @@ msgstr "Yerel kurulum ortamı (ISO kalıbı veya dağıtım kurulum ağacı)"
 msgid "MAC"
 msgstr "MAC"
 
-#: src/components/vm/nics/nicAdd.jsx:34
+#: src/components/vm/nics/nicAdd.jsx:34 src/components/vm/nics/nicEdit.jsx:43
 #: src/components/vm/nics/vmNicsCard.jsx:255
-#: src/components/vm/nics/nicEdit.jsx:43
 msgid "MAC address"
 msgstr "MAC adresi"
 
@@ -1045,11 +1047,11 @@ msgstr "En fazla ayırma"
 msgid "Maximum memory could not be saved"
 msgstr "En fazla bellek kaydedilemedi"
 
-#: src/components/vm/overview/vcpuModal.jsx:207
+#: src/components/vm/overview/vcpuModal.jsx:206
 msgid "Maximum number of virtual CPUs allocated for the guest OS"
 msgstr "Konuk işletim sistemi için ayrılmış en fazla sanal CPU sayısı"
 
-#: src/components/vm/overview/vcpuModal.jsx:206
+#: src/components/vm/overview/vcpuModal.jsx:205
 msgid ""
 "Maximum number of virtual CPUs allocated for the guest OS, which must be "
 "between 1 and $0"
@@ -1057,13 +1059,13 @@ msgstr ""
 "1 ile $0 arasında olmak zorunda olan konuk işletim sistemi için ayrılmış en "
 "fazla sanal CPU sayısı"
 
-#: src/components/networks/networkOverviewTab.jsx:107
+#: src/components/networks/networkOverviewTab.jsx:90
 msgid "Maximum transmission unit"
 msgstr "En fazla iletim birimi (MTU)"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:614
-#: src/components/vm/overview/vmOverviewCard.jsx:215
 #: src/components/vm/vmUsageCard.jsx:60
+#: src/components/vm/overview/vmOverviewCard.jsx:215
+#: src/components/create-vm-dialog/createVmDialog.jsx:614
 msgid "Memory"
 msgstr "Bellek"
 
@@ -1076,15 +1078,15 @@ msgstr "Bellek kaydedilemedi"
 msgid "Memory must not be 0"
 msgstr "Bellek 0 olmamak zorundadır"
 
+#: src/components/vm/overview/memorySelectRow.jsx:87
 #: src/components/storagePools/storageVolumeCreateBody.jsx:102
 #: src/components/create-vm-dialog/createVmDialog.jsx:628
 #: src/components/create-vm-dialog/createVmDialog.jsx:724
-#: src/components/vm/overview/memorySelectRow.jsx:87
 msgid "MiB"
 msgstr "MiB"
 
-#: src/components/vm/vmActions.jsx:333
 #: src/components/vm/vmMigrateDialog.jsx:214
+#: src/components/vm/vmActions.jsx:333
 msgid "Migrate"
 msgstr "Taşı"
 
@@ -1102,7 +1104,7 @@ msgid "Mode"
 msgstr "Kip"
 
 #: src/components/vm/hostdevs/hostDevCard.jsx:166
-#: src/components/vm/nics/nicBody.jsx:49
+#: src/components/vm/nics/nicBody.jsx:50
 msgid "Model"
 msgstr "Model"
 
@@ -1135,17 +1137,17 @@ msgstr "$0 ağına NAT yap"
 msgid "NIC $0 of VM $1 failed to change state"
 msgstr "$1 sanal makinesinin $0 NIC'inin durumunu değiştirme başarısız oldu"
 
-#: src/components/storagePools/storagePoolVolumesTab.jsx:79
-#: src/components/storagePools/storageVolumeCreateBody.jsx:40
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:98
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:38
+#: src/components/vm/vmCloneDialog.jsx:84
+#: src/components/networks/networkList.jsx:74
+#: src/components/networks/createNetworkDialog.jsx:128
 #: src/components/storagePools/createStoragePoolDialog.jsx:43
 #: src/components/storagePools/storagePoolList.jsx:73
+#: src/components/storagePools/storageVolumeCreateBody.jsx:40
+#: src/components/storagePools/storagePoolVolumesTab.jsx:79
 #: src/components/create-vm-dialog/createVmDialog.jsx:202
-#: src/components/networks/createNetworkDialog.jsx:128
-#: src/components/networks/networkList.jsx:74
 #: src/components/vms/hostvmslist.jsx:136
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:38
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:98
-#: src/components/vm/vmCloneDialog.jsx:84
 msgid "Name"
 msgstr "Ad"
 
@@ -1153,22 +1155,22 @@ msgstr "Ad"
 msgid "Name contains invalid characters"
 msgstr "Ad geçersiz karakterler içeriyor"
 
+#: src/components/vm/vmCloneDialog.jsx:39
 #: src/components/storagePools/storageVolumeCreate.jsx:61
 #: src/components/create-vm-dialog/createVmDialog.jsx:137
-#: src/components/vm/vmCloneDialog.jsx:39
 msgid "Name must not be empty"
 msgstr "Ad boş olmamak zorundadır"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:44
 #: src/components/networks/createNetworkDialog.jsx:55
+#: src/components/storagePools/createStoragePoolDialog.jsx:44
 msgid "Name should not be empty"
 msgstr "Ad boş olmamalıdır"
 
-#: src/components/networks/networkOverviewTab.jsx:40
+#: src/components/networks/networkOverviewTab.jsx:41
 msgid "Name: "
 msgstr "Ad: "
 
-#: src/components/networks/networkOverviewTab.jsx:125
+#: src/components/networks/networkOverviewTab.jsx:108
 msgid "Netmask"
 msgstr "Ağ maskesi"
 
@@ -1246,11 +1248,11 @@ msgstr "Bu sanal makine için tanımlanan diskler yok"
 msgid "No host devices assigned to this VM"
 msgstr "Bu sanal makineye atanan ana makine aygıtı yok"
 
-#: src/components/vm/nics/nicBody.jsx:135
+#: src/components/vm/nics/nicBody.jsx:149
 msgid "No network devices"
 msgstr "Ağ aygıtları yok"
 
-#: src/components/vm/nics/vmNicsCard.jsx:413
+#: src/components/vm/nics/vmNicsCard.jsx:415
 msgid "No network interfaces defined for this VM"
 msgstr "Bu sanal makine için tanımlanan ağ arayüzleri yok"
 
@@ -1290,7 +1292,7 @@ msgstr "Kullanılabilir depolama havuzları yok"
 msgid "No storage volumes defined for this storage pool"
 msgstr "Bu depolama havuzu için tanımlı depolama birimleri yok"
 
-#: src/components/vm/nics/nicBody.jsx:133
+#: src/components/vm/nics/nicBody.jsx:147
 msgid "No virtual networks"
 msgstr "Sanal ağlar yok"
 
@@ -1325,8 +1327,8 @@ msgstr ""
 "Seçilen bir veya daha fazla birim etki alanları tarafından kullanılıyor. "
 "Birimi silmeye izin vermek için önce diskleri ayırın."
 
-#: src/components/vm/overview/bootOrder.jsx:340
 #: src/components/vm/overview/memoryModal.jsx:139
+#: src/components/vm/overview/bootOrder.jsx:340
 #: src/components/vm/nics/nicEdit.jsx:40
 msgid "Only editable when the guest is shut off"
 msgstr "Sadece konuk kapatıldığında düzenlenebilir"
@@ -1344,9 +1346,9 @@ msgstr "İşletim sistemi"
 msgid "Operation is in progress"
 msgstr "İşlem devam ediyor"
 
-#: src/components/storagePools/storagePool.jsx:70
-#: src/components/networks/network.jsx:75
 #: src/components/vm/vmDetailsPage.jsx:109
+#: src/components/networks/network.jsx:75
+#: src/components/storagePools/storagePool.jsx:70
 msgid "Overview"
 msgstr "Genel Bakış"
 
@@ -1355,6 +1357,8 @@ msgid "Parent snapshot"
 msgstr "Üst öğe anlık görüntüsü"
 
 #: src/components/vm/deleteDialog.jsx:46
+#: src/components/vm/hostdevs/hostDevCard.jsx:129
+#: src/components/vm/hostdevs/hostDevCard.jsx:133
 #: src/components/vm/disks/diskEdit.jsx:41
 msgid "Path"
 msgstr "Yol"
@@ -1387,12 +1391,12 @@ msgstr "Duraklatıldı"
 msgid "Permanent (default)"
 msgstr "Kalıcı (öntanımlı)"
 
-#: src/components/vm/nics/nicAdd.jsx:57 src/components/vm/disks/diskAdd.jsx:100
+#: src/components/vm/disks/diskAdd.jsx:100 src/components/vm/nics/nicAdd.jsx:57
 msgid "Persistence"
 msgstr "Kalıcılık"
 
+#: src/components/networks/networkOverviewTab.jsx:75
 #: src/components/storagePools/storagePoolOverviewTab.jsx:68
-#: src/components/networks/networkOverviewTab.jsx:89
 msgid "Persistent"
 msgstr "Kalıcı"
 
@@ -1446,16 +1450,16 @@ msgstr "Havuzun birimleri sanal makineler tarafından kullanılıyor "
 
 #: src/components/vm/overview/bootOrder.jsx:94
 #: src/components/vm/overview/bootOrder.jsx:110
-#: src/components/vm/nics/vmNicsCard.jsx:225
 #: src/components/vm/disks/vmDiskColumns.jsx:55
+#: src/components/vm/nics/vmNicsCard.jsx:225
 msgid "Port"
 msgstr "Bağlantı noktası"
 
-#: src/components/vm/overview/vcpuModal.jsx:221
+#: src/components/vm/overview/vcpuModal.jsx:220
 msgid "Preferred number of sockets to expose to the guest."
 msgstr "Konuğa açılacak tercih edilen soket sayısı."
 
-#: src/components/networks/networkOverviewTab.jsx:150
+#: src/components/networks/networkOverviewTab.jsx:133
 msgid "Prefix"
 msgstr "Ön ek"
 
@@ -1495,7 +1499,7 @@ msgstr "Profil"
 msgid "Protocol"
 msgstr "Protokol"
 
-#: src/components/vm/nics/nicBody.jsx:95
+#: src/components/vm/nics/nicBody.jsx:96
 msgid ""
 "Provides a bridge from the guest virtual machine directly onto the LAN. This "
 "needs a bridge device on the host with one or more physical NICs."
@@ -1503,18 +1507,18 @@ msgstr ""
 "Konuk sanal makineden doğrudan LAN'a bir köprü sağlar. Bunun için ana "
 "makinede bir veya daha fazla fiziksel NIC'e sahip bir köprü aygıtı gerekir."
 
-#: src/components/vm/nics/nicBody.jsx:86
+#: src/components/vm/nics/nicBody.jsx:87
 msgid ""
 "Provides a connection whose details are described by the named network "
 "definition."
 msgstr "Ayrıntıları adlandırılan ağ tanımıyla açıklanan bir bağlantı sağlar."
 
-#: src/components/vm/nics/nicBody.jsx:109
+#: src/components/vm/nics/nicBody.jsx:123
 msgid "Provides a virtual LAN with NAT to the outside world."
 msgstr "NAT ile dış dünyaya sanal bir LAN sağlar."
 
-#: src/components/vm/disks/vmDisksCard.jsx:253
 #: src/components/vm/disks/diskEdit.jsx:120
+#: src/components/vm/disks/vmDisksCard.jsx:253
 msgid "Read-only"
 msgstr "Salt-okunur"
 
@@ -1537,7 +1541,7 @@ msgstr "Uzak görüntüleyici ayrıntıları"
 msgid "Remove"
 msgstr "Kaldır"
 
-#: src/components/vm/vmActions.jsx:354 src/components/vm/vmRenameDialog.jsx:58
+#: src/components/vm/vmRenameDialog.jsx:58 src/components/vm/vmActions.jsx:354
 msgid "Rename"
 msgstr "Yeniden adlandır"
 
@@ -1588,8 +1592,8 @@ msgstr "Çalıştır"
 msgid "Run unattended installation"
 msgstr "Katılımsız kurulumu çalıştır"
 
-#: src/components/networks/networkOverviewTab.jsx:101
 #: src/components/vm/overview/vmOverviewCard.jsx:149
+#: src/components/networks/networkOverviewTab.jsx:85
 msgid "Run when host boots"
 msgstr "Anamakine önyüklendiğinde çalıştır"
 
@@ -1609,11 +1613,11 @@ msgstr "SPICE adresi"
 msgid "SPICE port"
 msgstr "SPICE bağlantı noktası"
 
-#: src/components/vm/overview/bootOrder.jsx:290
 #: src/components/vm/overview/firmware.jsx:63
 #: src/components/vm/overview/memoryModal.jsx:151
-#: src/components/vm/nics/nicEdit.jsx:176
+#: src/components/vm/overview/bootOrder.jsx:290
 #: src/components/vm/disks/diskEdit.jsx:255
+#: src/components/vm/nics/nicEdit.jsx:176
 msgid "Save"
 msgstr "Kaydet"
 
@@ -1701,9 +1705,9 @@ msgstr "Aygıt yazılımı yapılandırmasını düzenlemek için sanal makineyi
 msgid "Shutting down"
 msgstr "Kapatılıyor"
 
-#: src/components/storagePools/storagePoolVolumesTab.jsx:79
-#: src/components/storagePools/storageVolumeCreateBody.jsx:86
 #: src/components/storagePools/storagePoolList.jsx:74
+#: src/components/storagePools/storageVolumeCreateBody.jsx:86
+#: src/components/storagePools/storagePoolVolumesTab.jsx:79
 #: src/components/create-vm-dialog/createVmDialog.jsx:708
 msgid "Size"
 msgstr "Boyut"
@@ -1722,16 +1726,16 @@ msgstr "Anlık görüntünün oluşturulması başarısız oldu"
 msgid "Snapshots"
 msgstr "Anlık görüntüler"
 
-#: src/components/vm/overview/vcpuModal.jsx:219
+#: src/components/vm/overview/vcpuModal.jsx:218
 msgid "Sockets"
 msgstr "Soketler"
 
-#: src/components/storagePools/storagePoolOverviewTab.jsx:53
 #: src/components/vm/hostdevs/hostDevCard.jsx:184
-#: src/components/vm/nics/nicBody.jsx:179
-#: src/components/vm/nics/vmNicsCard.jsx:282
 #: src/components/vm/disks/diskAdd.jsx:592
 #: src/components/vm/disks/vmDisksCard.jsx:227
+#: src/components/vm/nics/nicBody.jsx:197
+#: src/components/vm/nics/vmNicsCard.jsx:282
+#: src/components/storagePools/storagePoolOverviewTab.jsx:53
 msgid "Source"
 msgstr "Kaynak"
 
@@ -1743,12 +1747,12 @@ msgstr "Kaynak biçimi"
 msgid "Source must not be empty"
 msgstr "Kaynak boş olmamalıdır"
 
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:48
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:199
 #: src/components/storagePools/storagePoolOverviewTab.jsx:43
 #: src/components/storagePools/storagePoolOverviewTab.jsx:48
 #: src/components/storagePools/createStoragePoolDialog.jsx:173
 #: src/components/storagePools/createStoragePoolDialog.jsx:191
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:48
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:199
 msgid "Source path"
 msgstr "Kaynak yolu"
 
@@ -1786,16 +1790,16 @@ msgstr "Başlangıç boş olmamalıdır"
 msgid "Startup"
 msgstr "Başlatma"
 
-#: src/components/storagePools/storagePoolList.jsx:76
-#: src/components/networks/networkList.jsx:78
-#: src/components/vms/hostvmslist.jsx:96 src/components/vms/hostvmslist.jsx:138
 #: src/components/vm/overview/vmOverviewCard.jsx:201
 #: src/components/vm/nics/vmNicsCard.jsx:309
+#: src/components/networks/networkList.jsx:78
+#: src/components/storagePools/storagePoolList.jsx:76
+#: src/components/vms/hostvmslist.jsx:96 src/components/vms/hostvmslist.jsx:138
 msgid "State"
 msgstr "Durum"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:677
 #: src/components/vm/vmMigrateDialog.jsx:94
+#: src/components/create-vm-dialog/createVmDialog.jsx:677
 msgid "Storage"
 msgstr "Depolama"
 
@@ -1838,8 +1842,8 @@ msgstr "Depolama boyutu 0 olmamak zorundadır"
 msgid "Storage volume"
 msgstr "Depolama birimi"
 
-#: src/components/storagePools/storageVolumeCreate.jsx:64
 #: src/components/vm/disks/diskAdd.jsx:368
+#: src/components/storagePools/storageVolumeCreate.jsx:64
 msgid "Storage volume size must not exceed the storage pool's capacity ($0 $1)"
 msgstr ""
 "Depolama birimi boyutu, depolama havuzunun kapasitesini ($0 $1) aşmamak "
@@ -1898,8 +1902,8 @@ msgstr "$0 silinemedi"
 msgid "The VM is running and will be forced off before deletion."
 msgstr "Sanal makine çalışıyor ve silinmeden önce kapanmaya zorlanacaktır."
 
-#: src/components/vm/nics/vmNicsCard.jsx:368
 #: src/components/vm/disks/vmDisksCard.jsx:290
+#: src/components/vm/nics/vmNicsCard.jsx:368
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr ""
 "Bu aygıtı ayırmak için sanal makinenin çalışıyor olması veya kapatılması "
@@ -1953,7 +1957,7 @@ msgstr ""
 msgid "This VM is transient. Shut it down if you wish to delete it."
 msgstr "Bu sanal makine geçicidir. Silmek istiyorsanız kapatın."
 
-#: src/components/vm/nics/nicBody.jsx:85
+#: src/components/vm/nics/nicBody.jsx:86
 msgid ""
 "This is the recommended config for general guest connectivity on hosts with "
 "dynamic / wireless networking configs."
@@ -1961,13 +1965,20 @@ msgstr ""
 "Bu, dinamik / kablosuz ağ yapılandırmalarına sahip ana makinelerde genel "
 "konuk bağlantısı için tavsiye edilen yapılandırmadır."
 
-#: src/components/vm/nics/nicBody.jsx:94
+#: src/components/vm/nics/nicBody.jsx:95
 msgid ""
 "This is the recommended config for general guest connectivity on hosts with "
 "static wired networking configs."
 msgstr ""
 "Bu, statik kablolu ağ yapılandırmalarına sahip ana makinelerde genel konuk "
 "bağlantısı için tavsiye edilen yapılandırmadır."
+
+#: src/components/vm/nics/nicBody.jsx:101
+msgid ""
+"This is the recommended config for high performance or enhanced security."
+msgstr ""
+"Bu, yüksek performans veya gelişmiş güvenlik için tavsiye edilen "
+"yapılandırmadır."
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:696
 msgid "This volume is already used by another VM."
@@ -1977,7 +1988,7 @@ msgstr "Bu birim zaten başka bir sanal makine tarafından kullanılıyor."
 msgid "This volume is already used by: "
 msgstr "Bu birim zaten şunlar tarafından kullanılıyor: "
 
-#: src/components/vm/overview/vcpuModal.jsx:241
+#: src/components/vm/overview/vcpuModal.jsx:240
 msgid "Threads per core"
 msgstr "Çekirdek başına iş parçacığı sayısı"
 
@@ -1991,8 +2002,6 @@ msgstr ""
 msgid "Troubleshoot"
 msgstr "Sorun gider"
 
-#: src/components/storagePools/storagePoolOverviewTab.jsx:78
-#: src/components/storagePools/createStoragePoolDialog.jsx:80
 #: src/components/vm/overview/bootOrder.jsx:108
 #: src/components/vm/overview/bootOrder.jsx:119
 #: src/components/vm/overview/bootOrder.jsx:125
@@ -2001,6 +2010,8 @@ msgstr "Sorun gider"
 #: src/components/vm/overview/bootOrder.jsx:148
 #: src/components/vm/hostdevs/hostDevCard.jsx:148
 #: src/components/vm/nics/vmNicsCard.jsx:232
+#: src/components/storagePools/storagePoolOverviewTab.jsx:78
+#: src/components/storagePools/createStoragePoolDialog.jsx:80
 msgid "Type"
 msgstr "Tür"
 
@@ -2095,15 +2106,7 @@ msgstr ""
 "Kullanıcı oturum açma bilgileri ayarlandığında kullanıcı parolası boş "
 "olmamalıdır"
 
-#: src/components/vm/nics/nicBody.jsx:100
-msgid ""
-"Uses the macvtap driver to attach the guest's NIC directly to a specified "
-"physical interface of the host machine."
-msgstr ""
-"Konuğun NIC'ini doğrudan ana makinenin belirli bir fiziksel arayüzüne "
-"bağlamak için macvtap sürücüsünü kullanır."
-
-#: src/components/vm/overview/vcpuModal.jsx:170
+#: src/components/vm/overview/vcpuModal.jsx:169
 msgid "VCPU settings could not be saved"
 msgstr "VCPU ayarları kaydedilemedi"
 
@@ -2185,12 +2188,12 @@ msgstr "Satıcı"
 msgid "Virtual Machines"
 msgstr "Sanal Makineler"
 
-#: src/components/storagePools/storagePoolList.jsx:53
-#: src/components/networks/networkList.jsx:54
-#: src/components/vms/hostvmslist.jsx:126
-#: src/components/vms/hostvmslist.jsx:133
 #: src/components/vm/vmDetailsPage.jsx:88
 #: src/components/vm/vmDetailsPage.jsx:231
+#: src/components/networks/networkList.jsx:54
+#: src/components/storagePools/storagePoolList.jsx:53
+#: src/components/vms/hostvmslist.jsx:126
+#: src/components/vms/hostvmslist.jsx:133
 msgid "Virtual machines"
 msgstr "Sanal makineler"
 
@@ -2210,11 +2213,11 @@ msgstr "Sanal ağ oluşturulması başarısız oldu"
 msgid "Virtualization service (libvirt) is not active"
 msgstr "Sanallaştırma hizmeti (libvirt) etkin değil"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:694
 #: src/components/vm/deleteDialog.jsx:51
 #: src/components/vm/overview/bootOrder.jsx:92
 #: src/components/vm/disks/diskAdd.jsx:82
 #: src/components/vm/disks/vmDiskColumns.jsx:53
+#: src/components/create-vm-dialog/createVmDialog.jsx:694
 msgid "Volume"
 msgstr "Birim"
 
@@ -2235,13 +2238,13 @@ msgstr "Birim grubu adı boş olmamalıdır"
 msgid "WWPN"
 msgstr "WWPN"
 
-#: src/components/vm/disks/vmDisksCard.jsx:253
 #: src/components/vm/disks/diskEdit.jsx:129
+#: src/components/vm/disks/vmDisksCard.jsx:253
 msgid "Writeable"
 msgstr "Yazılabilir"
 
-#: src/components/vm/disks/vmDisksCard.jsx:253
 #: src/components/vm/disks/diskEdit.jsx:138
+#: src/components/vm/disks/vmDisksCard.jsx:253
 msgid "Writeable and shared"
 msgstr "Yazılabilir ve paylaşılan"
 
@@ -2253,8 +2256,8 @@ msgstr "Paylaşılan klasörü şu komutu kullanarak bağlayabilirsiniz:"
 msgid "You need to select the most closely matching operating system"
 msgstr "En yakından eşleşen işletim sistemini seçmeniz gerekli"
 
-#: src/components/storagePools/storagePool.jsx:59
 #: src/components/networks/network.jsx:57
+#: src/components/storagePools/storagePool.jsx:59
 msgid "active"
 msgstr "etkin"
 
@@ -2287,10 +2290,10 @@ msgstr "disk"
 msgid "down"
 msgstr "kapalı"
 
-#: src/components/vm/overview/bootOrder.jsx:332
 #: src/components/vm/overview/vmOverviewCard.jsx:156
 #: src/components/vm/overview/vmOverviewCard.jsx:165
 #: src/components/vm/overview/vmOverviewCard.jsx:172
+#: src/components/vm/overview/bootOrder.jsx:332
 msgid "edit"
 msgstr "düzenle"
 
@@ -2352,6 +2355,7 @@ msgstr "mcast"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:190
 #: src/components/vm/vmDetailsPage.jsx:190
+#: src/components/vm/nics/nicBody.jsx:112
 msgid "more info"
 msgstr "daha fazla bilgi"
 
@@ -2372,9 +2376,9 @@ msgstr "ağ"
 msgid "network interface"
 msgstr "ağ arayüzü"
 
-#: src/helpers.js:278 src/components/storagePools/storagePoolOverviewTab.jsx:69
+#: src/helpers.js:278 src/components/networks/networkOverviewTab.jsx:76
+#: src/components/storagePools/storagePoolOverviewTab.jsx:69
 #: src/components/storagePools/storagePoolOverviewTab.jsx:74
-#: src/components/networks/networkOverviewTab.jsx:90
 msgid "no"
 msgstr "hayır"
 
@@ -2418,11 +2422,11 @@ msgstr "açık"
 msgid "user"
 msgstr "kullanıcı"
 
-#: src/components/vm/overview/vcpuModal.jsx:190
+#: src/components/vm/overview/vcpuModal.jsx:189
 msgid "vCPU count"
 msgstr "vCPU sayısı"
 
-#: src/components/vm/overview/vcpuModal.jsx:203
+#: src/components/vm/overview/vcpuModal.jsx:202
 msgid "vCPU maximum"
 msgstr "en fazla vCPU"
 
@@ -2466,11 +2470,24 @@ msgstr ""
 msgid "vm"
 msgstr "sanal makine"
 
-#: src/helpers.js:277 src/components/storagePools/storagePoolOverviewTab.jsx:69
+#: src/helpers.js:277 src/components/networks/networkOverviewTab.jsx:76
+#: src/components/storagePools/storagePoolOverviewTab.jsx:69
 #: src/components/storagePools/storagePoolOverviewTab.jsx:74
-#: src/components/networks/networkOverviewTab.jsx:90
 msgid "yes"
 msgstr "evet"
+
+#~ msgid "Block"
+#~ msgstr "Blok"
+
+#~ msgid "Char"
+#~ msgstr "Karakter"
+
+#~ msgid ""
+#~ "Uses the macvtap driver to attach the guest's NIC directly to a specified "
+#~ "physical interface of the host machine."
+#~ msgstr ""
+#~ "Konuğun NIC'ini doğrudan ana makinenin belirli bir fiziksel arayüzüne "
+#~ "bağlamak için macvtap sürücüsünü kullanır."
 
 #~ msgid "$0 day"
 #~ msgid_plural "$0 days"
