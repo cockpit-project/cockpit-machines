@@ -100,6 +100,8 @@ class TestMachinesHostDevs(VirtualMachinesCase):
         m = self.machine
 
         self.createVm("subVmTest1", running=False, connection=connectionName)
+        self.run_admin("mkdir /tmp/vmdir", connectionName)
+        self.addCleanup(self.run_admin, "rm -rf /tmp/vmdir/", connectionName)
 
         self.login_and_go("/machines")
         b.wait_in_text("body", "Virtual machines")
@@ -119,6 +121,7 @@ class TestMachinesHostDevs(VirtualMachinesCase):
                 self._model = None
                 self.fail_message = fail_message
                 self.run_admin = test_obj.run_admin
+                self.addCleanup = test_obj.addCleanup
 
             def execute(self):
                 self.open()
@@ -150,7 +153,8 @@ class TestMachinesHostDevs(VirtualMachinesCase):
                 b.wait_not_present("#vm-subVmTest1-hostdevs-dialog")
 
             def add(self):
-                self.run_admin("virsh dumpxml subVmTest1 > /tmp/vmxml1", connectionName)
+                self.addCleanup(self.run_admin, "rm -f /tmp/vmdir/vmxml1", connectionName)
+                self.run_admin("virsh dumpxml subVmTest1 > /tmp/vmdir/vmxml1", connectionName)
                 b.click(".pf-c-modal-box__footer button:contains(Add)")
                 if self.fail_message:
                     b.wait_in_text(".pf-c-modal-box__footer .pf-c-alert__title", self.fail_message)
@@ -163,30 +167,33 @@ class TestMachinesHostDevs(VirtualMachinesCase):
                 b.wait_in_text("#vm-subVmTest1-hostdev-{0}-vendor".format(self.vm_dev_id), self._vendor)
 
             def verify_backend(self):
-                self.run_admin("virsh dumpxml subVmTest1 > /tmp/vmxml2", connectionName)
-                m.execute("diff /tmp/vmxml1 /tmp/vmxml2 | sed -e 's/^>//;1d' > /tmp/vmdiff")
+                self.addCleanup(self.run_admin, "rm -f /tmp/vmdir/vmxml2", connectionName)
+                self.run_admin("virsh dumpxml subVmTest1 > /tmp/vmdir/vmxml2", connectionName)
+                self.addCleanup(m.execute, "rm -f /tmp/vmdir/vmdiff")
+                m.execute("diff /tmp/vmdir/vmxml1 /tmp/vmdir/vmxml2 | sed -e 's/^>//;1d' > /tmp/vmdir/vmdiff")
 
                 if self.dev_type == "usb_device":
-                    vendor_id = m.execute("cat /tmp/vmdiff | xmllint --xpath 'string(//hostdev/source/vendor/@id)' - 2>&1 || true").strip()
-                    product_id = m.execute("cat /tmp/vmdiff | xmllint --xpath 'string(//hostdev/source/product/@id)' - 2>&1 || true").strip()
+                    vendor_id = m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/vendor/@id)' - 2>&1 || true").strip()
+                    product_id = m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/product/@id)' - 2>&1 || true").strip()
 
                     output = self.run_admin("virsh nodedev-list --cap {0}".format(self.dev_type), connectionName)
                     devices = output.splitlines()
                     devices = list(filter(None, devices))
                     for dev in devices:
                         if self.dev_type == "usb_device":
-                            self.run_admin("virsh nodedev-dumpxml --device {0} > /tmp/nodedevxml".format(dev), connectionName)
-                            vendor = m.execute("cat /tmp/nodedevxml | xmllint --xpath 'string(//device/capability/vendor[starts-with(@id, \"{0}\")])' - 2>&1 || true".format(vendor_id))
-                            product = m.execute("cat /tmp/nodedevxml | xmllint --xpath 'string(//device/capability/product[starts-with(@id, \"{0}\")])' - 2>&1 || true".format(product_id))
+                            self.addCleanup(self.run_admin, "rm -f /tmp/vmdir/nodedevxml", connectionName)
+                            self.run_admin("virsh nodedev-dumpxml --device {0} > /tmp/vmdir/nodedevxml".format(dev), connectionName)
+                            vendor = m.execute("cat /tmp/vmdir/nodedevxml | xmllint --xpath 'string(//device/capability/vendor[starts-with(@id, \"{0}\")])' - 2>&1 || true".format(vendor_id))
+                            product = m.execute("cat /tmp/vmdir/nodedevxml | xmllint --xpath 'string(//device/capability/product[starts-with(@id, \"{0}\")])' - 2>&1 || true".format(product_id))
 
                             if vendor.strip() == self._vendor and product.strip() == self._model:
                                 return
 
                 elif self.dev_type == "pci":
-                    domain = int(m.execute("cat /tmp/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@domain)' - 2>&1 || true"), base=16)
-                    bus = int(m.execute("cat /tmp/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@bus)' - 2>&1 || true"), base=16)
-                    slot = int(m.execute("cat /tmp/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@slot)' - 2>&1 || true"), base=16)
-                    func = int(m.execute("cat /tmp/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@function)' - 2>&1 || true"), base=16)
+                    domain = int(m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@domain)' - 2>&1 || true"), base=16)
+                    bus = int(m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@bus)' - 2>&1 || true"), base=16)
+                    slot = int(m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@slot)' - 2>&1 || true"), base=16)
+                    func = int(m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@function)' - 2>&1 || true"), base=16)
 
                     slot_parts = re.split(r":|\.", self._slot)
 
@@ -214,7 +221,7 @@ class TestMachinesHostDevs(VirtualMachinesCase):
                 dev_type="pci",
             ).execute()
 
-        m.execute("mv /usr/bin/virt-xml /tmp/virt-xml")
+        m.execute("mv /usr/bin/virt-xml /tmp/vmdir/virt-xml")
         m.execute("echo '{0}' > /usr/bin/virt-xml".format(virt_xml_mock))
         m.execute("chmod 777 /usr/bin/virt-xml")
         HostDevAddDialog(
@@ -222,7 +229,7 @@ class TestMachinesHostDevs(VirtualMachinesCase):
             dev_type="pci",
             fail_message="Host device could not be attached",
         ).execute()
-        m.execute("mv /tmp/virt-xml /usr/bin/virt-xml")
+        m.execute("mv /tmp/vmdir/virt-xml /usr/bin/virt-xml")
 
 
 if __name__ == '__main__':
