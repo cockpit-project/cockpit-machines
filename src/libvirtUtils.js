@@ -52,12 +52,13 @@ function prepareParamsFromObjOfObjs(objectData, valueTransformer) {
 }
 
 export function prepareDisplaysParam(displays) {
-    return prepareParamsFromObjOfObjs(displays, display => {
+    return prepareParamsFromArrOfObjs(displays.filter(display => ["vnc", "spice"].includes(display.type)), display => {
         return {
             type: display.type,
             listen: display.address,
             port: display.port,
             tlsport: display.tlsPort,
+            alias: display.alias,
         };
     });
 }
