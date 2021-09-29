@@ -58,10 +58,10 @@ class Consoles extends React.Component {
         const { vm } = this.props;
 
         if (vm.displays) {
-            if (vm.displays.vnc) {
+            if (vm.displays.find(display => display.type == "vnc")) {
                 return 'VncConsole';
             }
-            if (vm.displays.spice) {
+            if (vm.displays.find(display => display.type == "spice")) {
                 return 'DesktopViewer';
             }
         }
@@ -78,20 +78,21 @@ class Consoles extends React.Component {
     onDesktopConsoleDownload (type) {
         const { vm } = this.props;
         // fire download of the .vv file
-        domainDesktopConsole({ name: vm.name, id: vm.id, connectionName: vm.connectionName, consoleDetail: vm.displays[type] });
+        domainDesktopConsole({ name: vm.name, id: vm.id, connectionName: vm.connectionName, consoleDetail: vm.displays.find(display => display.type == type) });
     }
 
     render () {
         const { vm, onAddErrorNotification } = this.props;
+        const spice = vm.displays && vm.displays.find(display => display.type == 'spice');
+        const serial = vm.displays && vm.displays.filter(display => display.type == 'pty');
+        const vnc = vm.displays && vm.displays.find(display => display.type == 'vnc');
 
         if (!domainCanConsole || !domainCanConsole(vm.state)) {
             return (<VmNotRunning />);
         }
 
-        const serialConsoleCommand = domainSerialConsoleCommand({ vm });
-
         const onDesktopConsole = () => { // prefer spice over vnc
-            this.onDesktopConsoleDownload(vm.displays.spice ? 'spice' : 'vnc');
+            this.onDesktopConsoleDownload(spice ? 'spice' : 'vnc');
         };
 
         return (
@@ -100,22 +101,23 @@ class Consoles extends React.Component {
                             textSerialConsole={_("Serial console")}
                             textVncConsole={_("VNC console")}
                             textDesktopViewerConsole={_("Desktop viewer")}>
-                {!!serialConsoleCommand &&
-                <SerialConsole type="SerialConsole"
-                               connectionName={vm.connectionName}
-                               vmName={vm.name}
-                               spawnArgs={serialConsoleCommand} />}
-                {vm.displays && vm.displays.vnc &&
+                {serial.map((pty, idx) => <SerialConsole type={serial.length == 1 ? "SerialConsole" : cockpit.format(_("Serial console ($0)"), pty.alias || idx)}
+                                                  key={"pty-" + idx}
+                                                  connectionName={vm.connectionName}
+                                                  vmName={vm.name}
+                                                  spawnArgs={domainSerialConsoleCommand({ vm, alias: pty.alias })} />)}
+                {vnc &&
                 <Vnc type="VncConsole"
                      vmName={vm.name}
                      vmId={vm.id}
                      connectionName={vm.connectionName}
-                     consoleDetail={vm.displays.vnc}
+                     consoleDetail={vnc}
                      onAddErrorNotification={onAddErrorNotification} />}
-                {vm.displays && (vm.displays.vnc || vm.displays.spice) &&
+                {(vnc || spice) &&
                 <DesktopConsole type="DesktopViewer"
                                 onDesktopConsole={onDesktopConsole}
-                                displays={vm.displays} />}
+                                vnc={vnc}
+                                spice={spice} />}
             </AccessConsoles>
         );
     }

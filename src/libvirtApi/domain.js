@@ -83,7 +83,12 @@ export const domainCanPause = (vmState) => vmState == 'running';
 export const domainCanRename = (vmState) => vmState == 'shut off';
 export const domainCanResume = (vmState) => vmState == 'paused';
 export const domainIsRunning = (vmState) => domainCanReset(vmState);
-export const domainSerialConsoleCommand = ({ vm }) => vm.displays.pty ? ['virsh', ...VMS_CONFIG.Virsh.connections[vm.connectionName].params, 'console', vm.name] : false;
+export const domainSerialConsoleCommand = ({ vm, alias }) => {
+    if (vm.displays.find(display => display.type == 'pty'))
+        return ['virsh', ...VMS_CONFIG.Virsh.connections[vm.connectionName].params, 'console', vm.name, alias || ''];
+    else
+        return false;
+};
 
 let pythonPath;
 

@@ -36,10 +36,10 @@ function fmt_to_fragments(fmt) {
     return React.createElement.apply(null, [React.Fragment, { }].concat(fmt.split(/(\$[0-9]+)/g).map(replace)));
 }
 
-const DesktopConsoleDownload = ({ displays, onDesktopConsole }) => {
+const DesktopConsoleDownload = ({ vnc, spice, onDesktopConsole }) => {
     return (
-        <DesktopViewer spice={displays.spice}
-                       vnc={displays.vnc}
+        <DesktopViewer spice={spice}
+                       vnc={vnc}
                        onDownload={onDesktopConsole}
                        textManualConnection={_("Manual connection")}
                        textNoProtocol={_("No connection available")}

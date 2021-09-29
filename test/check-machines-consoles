@@ -103,6 +103,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
     @no_retry_when_changed
     def testSerialConsole(self):
         b = self.browser
+        m = self.machine
         name = "vmWithSerialConsole"
 
         self.createVm(name, graphics='vnc', ptyconsole=True)
@@ -130,10 +131,21 @@ class TestMachinesConsoles(VirtualMachinesCase):
         b.click("button:contains(Expand)")
         b.assert_pixels("#vm-vmWithSerialConsole-consoles-page", "vm-details-console-serial")
 
+        # Add a second serial console
+        m.execute("virsh destroy vmWithSerialConsole && virt-xml --add-device vmWithSerialConsole --console pty,target_type=virtio && virsh start vmWithSerialConsole")
+        b.click("#pf-c-console__type-selector")
+        b.wait_visible("#pf-c-console__type-selector + .pf-c-select__menu")
+        b.click("li:contains('Serial console (console0)') button")
+        b.wait(lambda: m.execute("ps aux | grep 'virsh -c qemu:///system console vmWithSerialConsole console0'"))
+        b.click("#pf-c-console__type-selector")
+        b.click("li:contains('Serial console (console1)') button")
+        b.wait(lambda: m.execute("ps aux | grep 'virsh -c qemu:///system console vmWithSerialConsole console1'"))
+
         # disconnecting the serial console closes the pty channel
         self.allow_journal_messages("connection unexpectedly closed by peer",
                                     ".*Connection reset by peer")
         self.allow_browser_errors("Disconnection timed out.")
+        self.allow_journal_messages(".* couldn't shutdown fd: Transport endpoint is not connected")
 
     def testSwitchConsoleFromSerialToGraphical(self):
         b = self.browser
