@@ -173,7 +173,7 @@ export const VmDetailsPage = ({
             id: `${vmId(vm.name)}-networks`,
             className: "networks-card",
             title: _("Network interfaces"),
-            actions: <VmNetworkActions vm={vm} networks={networks} />,
+            actions: <VmNetworkActions vm={vm} vms={vms} networks={networks} />,
             body: <VmNetworkTab vm={vm} config={config}
                                 networks={networks}
                                 onAddErrorNotification={onAddErrorNotification} />,
