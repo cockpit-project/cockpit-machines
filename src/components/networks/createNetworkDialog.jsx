@@ -34,8 +34,6 @@ import { isEmpty, LIBVIRT_SYSTEM_CONNECTION, rephraseUI } from '../../helpers.js
 import * as utils from './utils';
 import cockpit from 'cockpit';
 
-import './createNetworkDialog.css';
-
 const _ = cockpit.gettext;
 
 const ConnectionRow = ({ connectionName }) => {
@@ -181,7 +179,7 @@ const NetworkDeviceRow = ({ devices, onValueChanged, dialogValues }) => {
 
 const IpRow = ({ onValueChanged, dialogValues, validationFailed }) => {
     return (
-        <FormGroup fieldId='create-network-ip-configuration' label={_("IP configuration")}>
+        <FormGroup fieldId='create-network-ip-configuration' label={_("IP configuration")} isStack>
             <FormSelect id='create-network-ip-configuration'
                         value={dialogValues.ip}
                         onChange={value => onValueChanged('ip', value)}>
