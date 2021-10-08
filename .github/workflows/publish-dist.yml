@@ -9,6 +9,11 @@ jobs:
     if: github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    permissions:
+      pull-requests: none
+    environment: cockpit-machines-dist
+    env:
+      DIST_REPO: ssh://git@github.com/${{ github.repository }}-dist.git
     steps:
       - name: Download build-dist artifacts
         # 2.14.0; if you update this, audit the diff and ensure that it does not leak/abuse secrets
@@ -19,12 +24,9 @@ jobs:
           run_id: ${{ github.event.workflow_run.id }}
           path: dist-repo
 
-      - name: Set up configuration and secrets
+      - name: Set up configuration
         run: |
           printf '[user]\n\tname = Cockpit Project\n\temail=cockpituous@gmail.com\n' > ~/.gitconfig
-          # we push to -dist repo via https, that needs our cockpituous token
-          git config --global credential.helper store
-          echo 'https://token:${{ secrets.COCKPITUOUS_TOKEN }}@github.com' >> ~/.git-credentials
 
       - name: Commit to dist repo
         run: |
@@ -36,4 +38,10 @@ jobs:
           tag='sha-${{ github.event.workflow_run.head_sha }}'
           git tag "$tag"
 
-          git push "${GITHUB_SERVER_URL}/${{ github.repository }}-dist.git" "$tag"
+          eval $(ssh-agent)
+          ssh-add - <<< '${{ secrets.DEPLOY_KEY }}'
+
+          git push "$DIST_REPO" "$tag"
+
+          ssh-add -D
+          ssh-agent -k
