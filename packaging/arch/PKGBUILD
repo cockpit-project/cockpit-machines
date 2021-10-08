@@ -1,0 +1,16 @@
+pkgname=cockpit-machines
+pkgver=VERSION
+pkgrel=1
+pkgdesc='Cockpit UI for virtual machines'
+arch=('x86_64')
+url='https://github.com/cockpit-project/cockpit-machines'
+license=(LGPL)
+depends=(cockpit libvirt-dbus)
+optdepends=("virt-install: create new virtual machines")
+source=("SOURCE")
+sha256sums=('SKIP')
+
+package() {
+  cd $pkgname
+  make DESTDIR="$pkgdir" install
+}
