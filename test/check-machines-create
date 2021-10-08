@@ -1131,6 +1131,11 @@ class TestMachinesCreate(VirtualMachinesCase):
                     "cp {0}/cert.pem /usr/local/share/ca-certificates/cert.crt".format(self.test_obj.vm_tmpdir),
                     "update-ca-certificates"
                 ]
+            elif self.machine.image.startswith("arch"):
+                cmds += [
+                    "cp {0}/cert.pem /etc/ca-certificates/trust-source/anchors/cert.pem".format(self.test_obj.vm_tmpdir),
+                    "update-ca-trust"
+                ]
             else:
                 cmds += [
                     "cp {0}/cert.pem /etc/pki/ca-trust/source/anchors/cert.pem".format(self.test_obj.vm_tmpdir),
@@ -1167,7 +1172,10 @@ class TestMachinesCreate(VirtualMachinesCase):
             self.machine.execute("mkdir -p {0}".format(distro_tree_path))
             self.machine.upload(["files/fakefedoratree/.treeinfo", "files/fakefedoratree/images"], distro_tree_path)
             # borrow the kernel executable for the test server
-            self.machine.execute("cp /boot/vmlinuz-{0} {1}images/pxeboot/vmlinuz".format(self.machine.execute("uname -r").rstrip(), distro_tree_path))
+            if self.machine.image == "arch":
+                self.machine.execute("cp /boot/vmlinuz-linux {0}images/pxeboot/vmlinuz".format(distro_tree_path))
+            else:
+                self.machine.execute("cp /boot/vmlinuz-{0} {1}images/pxeboot/vmlinuz".format(self.machine.execute("uname -r").rstrip(), distro_tree_path))
             self.machine.execute("chown -R 777 /var/lib/libvirt/pub")
             self.test_obj.restore_file("/etc/hosts")
             self.machine.execute('echo "127.0.0.1 archive.fedoraproject.org" >> /etc/hosts')
@@ -1527,6 +1535,8 @@ class TestMachinesCreate(VirtualMachinesCase):
             ovmf_path = "/usr/share/edk2"
         elif "debian" in m.image or "ubuntu" in m.image:
             ovmf_path = "/usr/share/OVMF"
+        elif "arch" in m.image:
+            ovmf_path = "/usr/share/edk2-ovmf"
         else:
             raise AssertionError("Unhandled distro for OVMF path")
 
