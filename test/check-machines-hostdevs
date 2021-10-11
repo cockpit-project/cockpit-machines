@@ -99,12 +99,13 @@ class TestMachinesHostDevs(VirtualMachinesCase):
         b = self.browser
         m = self.machine
 
-        self.createVm("subVmTest1", running=False, connection=connectionName)
         self.run_admin("mkdir /tmp/vmdir", connectionName)
         self.addCleanup(self.run_admin, "rm -rf /tmp/vmdir/", connectionName)
 
         self.login_and_go("/machines")
         b.wait_in_text("body", "Virtual machines")
+
+        self.createVm("subVmTest1", running=False, connection=connectionName)
 
         self.goToVmPage("subVmTest1", connectionName)
         b.wait_visible("#vm-subVmTest1-hostdevs")

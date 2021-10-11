@@ -217,9 +217,6 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
             # https://bugs.launchpad.net/ubuntu/+source/libvirt-dbus/+bug/1892757
             m.execute("usermod -a -G libvirt libvirtdbus")
 
-        # no XDG_RUNTIME_DIR yet there
-        m.execute("mkdir -p /run/user/$(id -u admin); chown admin:admin /run/user/$(id -u admin)")
-
         self.startLibvirt()
         self.addCleanup(m.execute, f"systemctl stop {self.getLibvirtServiceName()}")
         if m.image in ["fedora-35"]:

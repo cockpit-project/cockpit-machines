@@ -43,8 +43,8 @@ class TestMachinesFilesystems(VirtualMachinesCase):
 
         m.execute("mkdir -p /tmp/dir1 /tmp/dir2")
 
-        self.createVm("subVmTest1", running=False, connection=connection)
         self.login_and_go("/machines")
+        self.createVm("subVmTest1", running=False, connection=connection)
         self.goToVmPage("subVmTest1", connectionName=connection)
 
         if m.image in ["rhel-8-5", "centos-8-stream", "ubuntu-2004", "fedora-33"] or connection == "session":
