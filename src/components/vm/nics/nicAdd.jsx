@@ -29,6 +29,34 @@ import './nic.css';
 
 const _ = cockpit.gettext;
 
+function getRandomMac(vms) {
+    // prevent getting cycled in inforseen case where all MACs will conflict with existing ones
+    for (let i = 0; i < 42; i++) {
+        const parts = ["52", "54", "00"];
+        for (let j = 0; j < 3; j++)
+            parts.push(Math.floor(Math.random() * 256).toString(16)
+                    .padStart(2, '0'));
+
+        const mac = parts.join(':');
+
+        // check no other VM uses the same MAC address
+        let addressConflicts = false;
+        vms.forEach(vm => {
+            vm.interfaces.forEach(iface => {
+                if (iface.mac === mac)
+                    addressConflicts = true;
+            });
+        });
+
+        console.log(mac);
+        if (!addressConflicts)
+            return mac;
+    }
+
+    console.warn("Could not generate non-conflicting MAC address");
+    return undefined;
+}
+
 const NetworkMacRow = ({ idPrefix, dialogValues, onValueChanged }) => {
     return (
         <FormGroup fieldId={`${idPrefix}-generate-mac`} label={_("MAC address")} hasNoPaddingTop isInline>
@@ -106,7 +134,7 @@ export class AddNIC extends React.Component {
     }
 
     add() {
-        const { vm } = this.props;
+        const { vm, vms } = this.props;
 
         domainAttachIface({
             connectionName: vm.connectionName,
@@ -114,7 +142,9 @@ export class AddNIC extends React.Component {
             model: this.state.networkModel,
             sourceType: this.state.networkType,
             source: this.state.networkSource,
-            mac: this.state.setNetworkMac ? this.state.networkMac : undefined,
+            // Generate our own random MAC address because virt-xml has bug which generates different MAC for online and offline XML
+            // https://github.com/virt-manager/virt-manager/issues/305
+            mac: this.state.setNetworkMac ? this.state.networkMac : getRandomMac(vms),
             permanent: this.state.permanent,
             hotplug: vm.state === "running",
         })
@@ -179,6 +209,7 @@ export class AddNIC extends React.Component {
 AddNIC.propTypes = {
     idPrefix: PropTypes.string.isRequired,
     vm: PropTypes.object.isRequired,
+    vms: PropTypes.array.isRequired,
 };
 
 export default AddNIC;
