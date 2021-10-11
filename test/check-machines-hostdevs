@@ -153,7 +153,6 @@ class TestMachinesHostDevs(VirtualMachinesCase):
                 b.wait_not_present("#vm-subVmTest1-hostdevs-dialog")
 
             def add(self):
-                self.addCleanup(self.run_admin, "rm -f /tmp/vmdir/vmxml1", connectionName)
                 self.run_admin("virsh dumpxml subVmTest1 > /tmp/vmdir/vmxml1", connectionName)
                 b.click(".pf-c-modal-box__footer button:contains(Add)")
                 if self.fail_message:
@@ -167,9 +166,7 @@ class TestMachinesHostDevs(VirtualMachinesCase):
                 b.wait_in_text("#vm-subVmTest1-hostdev-{0}-vendor".format(self.vm_dev_id), self._vendor)
 
             def verify_backend(self):
-                self.addCleanup(self.run_admin, "rm -f /tmp/vmdir/vmxml2", connectionName)
                 self.run_admin("virsh dumpxml subVmTest1 > /tmp/vmdir/vmxml2", connectionName)
-                self.addCleanup(m.execute, "rm -f /tmp/vmdir/vmdiff")
                 m.execute("diff /tmp/vmdir/vmxml1 /tmp/vmdir/vmxml2 | sed -e 's/^>//;1d' > /tmp/vmdir/vmdiff")
 
                 if self.dev_type == "usb_device":
@@ -181,7 +178,6 @@ class TestMachinesHostDevs(VirtualMachinesCase):
                     devices = list(filter(None, devices))
                     for dev in devices:
                         if self.dev_type == "usb_device":
-                            self.addCleanup(self.run_admin, "rm -f /tmp/vmdir/nodedevxml", connectionName)
                             self.run_admin("virsh nodedev-dumpxml --device {0} > /tmp/vmdir/nodedevxml".format(dev), connectionName)
                             vendor = m.execute("cat /tmp/vmdir/nodedevxml | xmllint --xpath 'string(//device/capability/vendor[starts-with(@id, \"{0}\")])' - 2>&1 || true".format(vendor_id))
                             product = m.execute("cat /tmp/vmdir/nodedevxml | xmllint --xpath 'string(//device/capability/product[starts-with(@id, \"{0}\")])' - 2>&1 || true".format(product_id))
