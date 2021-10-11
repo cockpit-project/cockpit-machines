@@ -221,15 +221,15 @@ class TestMachinesHostDevs(VirtualMachinesCase):
                 dev_type="pci",
             ).execute()
 
-        m.execute("mv /usr/bin/virt-xml /tmp/vmdir/virt-xml")
-        m.execute("echo '{0}' > /usr/bin/virt-xml".format(virt_xml_mock))
-        m.execute("chmod 777 /usr/bin/virt-xml")
+        mock_virt_xml = f"{self.vm_tmpdir}/mock-virt-xml"
+        m.execute(f"echo '{virt_xml_mock}' > {mock_virt_xml}; chmod 777 {mock_virt_xml}")
+        m.execute(f"mount -o bind {mock_virt_xml} /usr/bin/virt-xml")
+        self.addCleanup(m.execute, "umount /usr/bin/virt-xml")
         HostDevAddDialog(
             self,
             dev_type="pci",
             fail_message="Host device could not be attached",
         ).execute()
-        m.execute("mv /tmp/vmdir/virt-xml /usr/bin/virt-xml")
 
 
 if __name__ == '__main__':
