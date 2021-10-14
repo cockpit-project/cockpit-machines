@@ -42,24 +42,9 @@ if [ "$TEST_OS" = centos-8-stream ]; then
     EXCLUDES="TestMachinesConsoles.testExternalConsole"
 fi
 
-# Fedora gating tests are running on infra without /dev/kvm; Machines tests are too darn slow there
-# so just pick a representative sample
 if [ "$ID" = "fedora" ]; then
     # Testing Farm machines are really slow in European evenings
     export TEST_TIMEOUT_FACTOR=3
-    TESTS="TestMachinesConsoles.testInlineConsole
-           TestMachinesCreate.testCreateImportDisk
-           TestMachinesCreate.testCreatePXE
-           TestMachinesDisks.testAddDiskDirPool
-           TestMachinesDisks.testAddDiskNFS
-           TestMachinesDisks.testAddDiskSCSI
-           TestMachinesLifecycle.testBasic
-           TestMachinesNICs.testNICAdd
-           TestMachinesNetworks.testNetworks
-           TestMachinesSettings.testBootOrder
-           TestMachinesSettings.testVCPU
-           TestMachinesSnapshots.testSnapshots
-           "
 fi
 
 # pre-download cirros image for Machines tests
@@ -73,7 +58,7 @@ done
 # execute run-tests
 RC=0
 test/common/run-tests --nondestructive $exclude_options \
-    --machine localhost:22 --browser localhost:9090 ${TESTS:-} || RC=$?
+    --machine localhost:22 --browser localhost:9090 || RC=$?
 
 echo $RC > "$LOGS/exitcode"
 cp --verbose Test* "$LOGS" || true
