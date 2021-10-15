@@ -67,7 +67,6 @@ import {
     updateBootOrder,
     updateDisk,
     updateMaxMemory,
-    updateNetworkIface,
 } from '../libvirt-xml-update.js';
 import { storagePoolRefresh } from './storagePool.js';
 import { snapshotGetAll } from './snapshot.js';
@@ -166,8 +165,7 @@ export function domainAttachIface({ connectionName, vmName, mac, permanent, hotp
 }
 
 export function domainChangeInterfaceSettings({
-    name,
-    id: objPath,
+    vmName,
     connectionName,
     hotplug,
     persistent,
@@ -176,46 +174,39 @@ export function domainChangeInterfaceSettings({
     networkType,
     networkSource,
     networkModel,
+    state,
 }) {
-    /*
-     * 0 -> VIR_DOMAIN_AFFECT_CURRENT
-     * 1 -> VIR_DOMAIN_AFFECT_LIVE
-     * 2 -> VIR_DOMAIN_AFFECT_CONFIG
-     */
-    let flags = Enum.VIR_DOMAIN_AFFECT_CURRENT;
-    flags |= Enum.VIR_DOMAIN_AFFECT_CONFIG;
+    const options = { err: "message" };
+    if (connectionName === "system")
+        options.superuser = "try";
 
-    if (newMacAddress && newMacAddress !== macAddress) {
-        return domainAttachIface({
-            connectionName,
-            hotplug,
-            vmName: name,
-            mac: newMacAddress,
-            permanent: persistent,
-            sourceType: networkType,
-            source: networkSource,
-            model: networkModel
-        })
-                .then(() => domainDetachIface({ connectionName, mac: macAddress, vmName: name, live: hotplug, persistent }));
+    let networkParams = "";
+    if (state) {
+        networkParams = `link.state=${state}`;
     } else {
-        // Error handling inside the modal dialog this function is called
-        return call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' })
-                .then(domXml => {
-                    const updatedXml = updateNetworkIface({
-                        domXml: domXml[0],
-                        macAddress,
-                        newMacAddress,
-                        networkType,
-                        networkSource,
-                        networkModelType: networkModel
-                    });
-                    if (!updatedXml) {
-                        return Promise.reject(new Error("VM CHANGE_NETWORK_SETTINGS action failed: updated device XML couldn't not be generated"));
-                    } else {
-                        return call(connectionName, objPath, 'org.libvirt.Domain', 'UpdateDevice', [updatedXml, flags], { timeout, type: 'su' });
-                    }
-                });
+        if (newMacAddress)
+            networkParams += `mac=${newMacAddress},`;
+        if (networkType)
+            networkParams += `type=${networkType},`;
+        if (networkSource)
+            networkParams += `source=${networkSource},`;
+        if (networkModel)
+            networkParams += `model=${networkModel},`;
     }
+
+    const args = [
+        "virt-xml", "-c", `qemu:///${connectionName}`,
+        vmName, "--edit", `mac=${macAddress}`, "--network",
+        networkParams
+    ];
+
+    if (hotplug) {
+        args.push("--update");
+        if (!persistent)
+            args.push("--no-define");
+    }
+
+    return cockpit.spawn(args, options);
 }
 
 export function domainChangeAutostart ({
@@ -240,21 +231,6 @@ export function domainChangeBootOrder({
             .then(domXml => {
                 const updatedXML = updateBootOrder(domXml, devices);
                 return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [updatedXML], { timeout, type: 's' });
-            });
-}
-
-export function domainChangeInterfaceState({
-    connectionName,
-    id: objPath,
-    name,
-    networkMac,
-    state,
-}) {
-    return call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [0], { timeout, type: 'u' })
-            .then(domXml => {
-                const updatedXml = updateNetworkIface({ domXml: domXml[0], macAddress: networkMac, networkState: state });
-                // updateNetworkIface can fail but we 'll catch the exception from the API call itself that will error on null argument
-                return call(connectionName, objPath, 'org.libvirt.Domain', 'UpdateDevice', [updatedXml, Enum.VIR_DOMAIN_AFFECT_CURRENT], { timeout, type: 'su' });
             });
 }
 
