@@ -26,7 +26,7 @@ import AddNIC from './nicAdd.jsx';
 import { EditNICModal } from './nicEdit.jsx';
 import WarningInactive from '../../common/warningInactive.jsx';
 import './nic.css';
-import { domainChangeInterfaceState, domainDetachIface, domainInterfaceAddresses, domainGet } from '../../../libvirtApi/domain.js';
+import { domainChangeInterfaceSettings, domainDetachIface, domainInterfaceAddresses, domainGet } from '../../../libvirtApi/domain.js';
 import { ListingTable } from "cockpit-components-table.jsx";
 import { DeleteResourceButton, DeleteResourceModal } from '../../common/deleteResource.jsx';
 
@@ -210,7 +210,7 @@ export class VmNetworkTab extends React.Component {
             return (e) => {
                 e.stopPropagation();
                 if (network.mac) {
-                    domainChangeInterfaceState({ name: vm.name, id: vm.id, connectionName: vm.connectionName, networkMac: network.mac, state: network.state === 'up' ? 'down' : 'up' })
+                    domainChangeInterfaceSettings({ vmName: vm.name, connectionName: vm.connectionName, macAddress: network.mac, state: network.state === 'up' ? 'down' : 'up', hotplug: vm.state === "running" })
                             .then(() => domainGet({ connectionName: vm.connectionName, id:vm.id, name: vm.name }))
                             .catch(ex => {
                                 onAddErrorNotification({
