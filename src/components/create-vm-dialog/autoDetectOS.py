@@ -2,9 +2,11 @@
 
 import json
 import sys
-from gi.repository import Libosinfo
 import gi
+
+# Libosinfo has to be imported with specifying the version first.
 gi.require_version('Libosinfo', '1.0')
+from gi.repository import Libosinfo  # noqa
 
 
 loader = Libosinfo.Loader()
