@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-12 02:54+0000\n"
-"PO-Revision-Date: 2021-10-09 16:05+0000\n"
+"POT-Creation-Date: 2021-10-17 02:54+0000\n"
+"PO-Revision-Date: 2021-10-17 13:05+0000\n"
 "Last-Translator: Geert Warrink <geert.warrink@onsnet.nu>\n"
 "Language-Team: Dutch <https://translate.fedoraproject.org/projects/cockpit-"
 "machines/main/nl/>\n"
@@ -89,11 +89,16 @@ msgstr "Activeren"
 msgid "Activate the storage pool to administer volumes"
 msgstr "Activeer de opslagpool om volumes te beheren"
 
+#: src/components/networks/networkOverviewTab.jsx:200
 #: src/components/vm/nics/nicAdd.jsx:196
 #: src/components/vm/disks/diskAdd.jsx:664
 #: src/components/vm/hostdevs/hostDevAdd.jsx:214
 msgid "Add"
 msgstr "Toevoegen"
+
+#: src/components/networks/networkOverviewTab.jsx:195
+msgid "Add a DHCP static host entry"
+msgstr "Voeg een DHCP statische hostingang toe"
 
 #: src/components/vm/disks/vmDisksCard.jsx:90
 #: src/components/vm/disks/diskAdd.jsx:655
@@ -127,8 +132,8 @@ msgstr ""
 msgid "Additional"
 msgstr "Extra"
 
-#: src/components/networks/networkOverviewTab.jsx:103
-#: src/components/networks/networkOverviewTab.jsx:128
+#: src/components/networks/networkOverviewTab.jsx:105
+#: src/components/networks/networkOverviewTab.jsx:125
 #: src/components/vm/nics/vmNicsCard.jsx:226
 #: src/components/vm/consoles/desktopConsole.jsx:47
 msgid "Address"
@@ -178,7 +183,7 @@ msgid "Automatic"
 msgstr "Automatisch"
 
 #: src/components/storagePools/storagePoolOverviewTab.jsx:73
-#: src/components/networks/networkOverviewTab.jsx:80
+#: src/components/networks/networkOverviewTab.jsx:82
 #: src/components/vm/overview/vmOverviewCard.jsx:215
 msgid "Autostart"
 msgstr "Automatische start"
@@ -236,6 +241,7 @@ msgstr "Cache"
 #: src/components/storagePools/storageVolumeCreate.jsx:103
 #: src/components/storagePools/storagePoolDelete.jsx:225
 #: src/components/networks/createNetworkDialog.jsx:413
+#: src/components/networks/networkOverviewTab.jsx:203
 #: src/components/create-vm-dialog/createVmDialog.jsx:1090
 #: src/components/vm/vmMigrateDialog.jsx:217
 #: src/components/vm/deleteDialog.jsx:146
@@ -430,10 +436,9 @@ msgstr "Aangepaste firmware: $0"
 msgid "Custom path"
 msgstr "Aangepast pad"
 
-#: src/components/networks/networkOverviewTab.jsx:113
-#: src/components/networks/networkOverviewTab.jsx:138
-msgid "DHCP range"
-msgstr "DHCP-bereik"
+#: src/components/networks/networkOverviewTab.jsx:238
+msgid "DHCP Settings"
+msgstr "DHCP-instellingen"
 
 #: src/components/storagePools/storagePool.jsx:157
 #: src/components/networks/network.jsx:168
@@ -686,6 +691,10 @@ msgstr "Het ophalen van de IP-adressen van de interfaces in $0 is mislukt"
 msgid "Failed to rename VM $0"
 msgstr "Kan de naam van VM $0 niet wijzigen"
 
+#: src/components/networks/networkOverviewTab.jsx:198
+msgid "Failed to save network settings"
+msgstr "Opslaan van netwerkinstellingen mislukte"
+
 #: src/components/vm/consoles/vnc.jsx:130
 msgid "Failed to send key Ctrl+Alt+$0 to VM $1"
 msgstr "Kan toets Ctrl+Alt+$0 niet verzenden naar VM $1"
@@ -747,7 +756,7 @@ msgstr ""
 msgid "Function"
 msgstr "Functie"
 
-#: src/components/networks/networkOverviewTab.jsx:71
+#: src/components/networks/networkOverviewTab.jsx:73
 #: src/components/vm/overview/vmOverviewCard.jsx:173
 msgid "General"
 msgstr "Algemeen"
@@ -808,16 +817,21 @@ msgstr "Hypervisor-details"
 msgid "ID"
 msgstr "ID"
 
+#: src/components/networks/networkOverviewTab.jsx:218
 #: src/components/vm/nics/vmNicsCard.jsx:259
 msgid "IP address"
 msgstr "IP-adres"
+
+#: src/components/networks/networkOverviewTab.jsx:219
+msgid "IP address must not be empty"
+msgstr "IP-adres mag niet leeg zijn"
 
 #: src/components/networks/createNetworkDialog.jsx:182
 msgid "IP configuration"
 msgstr "IP-configuratie"
 
 #: src/components/networks/createNetworkDialog.jsx:243
-#: src/components/networks/networkOverviewTab.jsx:99
+#: src/components/networks/networkOverviewTab.jsx:101
 msgid "IPv4 address"
 msgstr "IPv4-adres"
 
@@ -843,7 +857,7 @@ msgid "IPv4 only"
 msgstr "alleen IPv4"
 
 #: src/components/networks/createNetworkDialog.jsx:275
-#: src/components/networks/networkOverviewTab.jsx:124
+#: src/components/networks/networkOverviewTab.jsx:121
 msgid "IPv6 address"
 msgstr "IPv6-adres"
 
@@ -1012,11 +1026,16 @@ msgstr "Locatie"
 msgid "MAC"
 msgstr "MAC"
 
+#: src/components/networks/networkOverviewTab.jsx:210
 #: src/components/vm/nics/nicAdd.jsx:62
 #: src/components/vm/nics/vmNicsCard.jsx:257
 #: src/components/vm/nics/nicEdit.jsx:43
 msgid "MAC address"
 msgstr "MAC-adres"
+
+#: src/components/networks/networkOverviewTab.jsx:211
+msgid "MAC address must not be empty"
+msgstr "MAC-adres mag niet leeg zijn"
 
 #: src/components/vm/disks/diskEdit.jsx:91
 msgid "Machine must be shut off before changing bus type"
@@ -1065,7 +1084,7 @@ msgstr ""
 "Maximaal aantal virtuele CPU's toegewezen voor het gastbesturingssysteem, "
 "dat moet liggen tussen 1 en $0"
 
-#: src/components/networks/networkOverviewTab.jsx:90
+#: src/components/networks/networkOverviewTab.jsx:92
 msgid "Maximum transmission unit"
 msgstr "Maximale transmissie-eenheid"
 
@@ -1172,11 +1191,11 @@ msgstr "Naam mag niet leeg zijn"
 msgid "Name should not be empty"
 msgstr "Naam mag niet leeg zijn"
 
-#: src/components/networks/networkOverviewTab.jsx:41
+#: src/components/networks/networkOverviewTab.jsx:46
 msgid "Name: "
 msgstr "Naam: "
 
-#: src/components/networks/networkOverviewTab.jsx:108
+#: src/components/networks/networkOverviewTab.jsx:110
 msgid "Netmask"
 msgstr "Netmasker"
 
@@ -1407,7 +1426,7 @@ msgid "Persistence"
 msgstr "Volhardend"
 
 #: src/components/storagePools/storagePoolOverviewTab.jsx:68
-#: src/components/networks/networkOverviewTab.jsx:75
+#: src/components/networks/networkOverviewTab.jsx:77
 msgid "Persistent"
 msgstr "Aanhoudend"
 
@@ -1470,7 +1489,7 @@ msgstr "Poort"
 msgid "Preferred number of sockets to expose to the guest."
 msgstr "Gewenst aantal sockets voor de gast."
 
-#: src/components/networks/networkOverviewTab.jsx:133
+#: src/components/networks/networkOverviewTab.jsx:130
 msgid "Prefix"
 msgstr "Voorvoegsel"
 
@@ -1531,6 +1550,10 @@ msgstr ""
 #: src/components/vm/nics/nicBody.jsx:123
 msgid "Provides a virtual LAN with NAT to the outside world."
 msgstr "Biedt een virtueel LAN met NAT naar de buitenwereld."
+
+#: src/components/networks/networkOverviewTab.jsx:242
+msgid "Range"
+msgstr "Reeks"
 
 #: src/components/vm/disks/diskEdit.jsx:122
 #: src/components/vm/disks/vmDisksCard.jsx:260
@@ -1609,7 +1632,7 @@ msgstr "Uitvoeren"
 msgid "Run unattended installation"
 msgstr "Voer een installatie zonder toezicht uit"
 
-#: src/components/networks/networkOverviewTab.jsx:85
+#: src/components/networks/networkOverviewTab.jsx:87
 #: src/components/vm/overview/vmOverviewCard.jsx:125
 msgid "Run when host boots"
 msgstr "Uitvoeren wanneer de host opstart"
@@ -1809,6 +1832,10 @@ msgstr "Opstarten"
 #: src/components/vm/overview/vmOverviewCard.jsx:177
 msgid "State"
 msgstr "Toestand"
+
+#: src/components/networks/networkOverviewTab.jsx:250
+msgid "Static host entries"
+msgstr "Statische hostingangen"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:677
 #: src/components/vm/vmMigrateDialog.jsx:94
@@ -2291,6 +2318,10 @@ msgstr "Je moet het meest overeenkomende besturingssysteem selecteren"
 msgid "active"
 msgstr "actief"
 
+#: src/components/networks/networkOverviewTab.jsx:154
+msgid "add entry"
+msgstr "voeg ingang toe"
+
 #: src/helpers.js:256
 msgid "bridge"
 msgstr "brug"
@@ -2409,13 +2440,17 @@ msgstr "netwerkinterface"
 
 #: src/helpers.js:278 src/components/storagePools/storagePoolOverviewTab.jsx:69
 #: src/components/storagePools/storagePoolOverviewTab.jsx:74
-#: src/components/networks/networkOverviewTab.jsx:76
+#: src/components/networks/networkOverviewTab.jsx:78
 msgid "no"
 msgstr "nee"
 
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:124
 msgid "no state saved"
 msgstr "geen toestand opgeslagen"
+
+#: src/components/networks/networkOverviewTab.jsx:258
+msgid "none"
+msgstr "geen"
 
 #: src/manifest.json:0
 msgid "pxe"
@@ -2503,7 +2538,7 @@ msgstr "vm"
 
 #: src/helpers.js:277 src/components/storagePools/storagePoolOverviewTab.jsx:69
 #: src/components/storagePools/storagePoolOverviewTab.jsx:74
-#: src/components/networks/networkOverviewTab.jsx:76
+#: src/components/networks/networkOverviewTab.jsx:78
 msgid "yes"
 msgstr "ja"
 
@@ -2639,9 +2674,6 @@ msgstr "ja"
 
 #~ msgid "Cannot schedule event in the past"
 #~ msgstr "Kan evenement niet in het verleden plannen"
-
-#~ msgid "Change"
-#~ msgstr "Verandering"
 
 #~ msgid "Change system time"
 #~ msgstr "Verander systeemtijd"
