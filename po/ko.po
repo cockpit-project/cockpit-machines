@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-12 02:54+0000\n"
-"PO-Revision-Date: 2021-10-09 16:05+0000\n"
+"POT-Creation-Date: 2021-10-17 02:54+0000\n"
+"PO-Revision-Date: 2021-10-17 13:05+0000\n"
 "Last-Translator: simmon <simmon@nplob.com>\n"
 "Language-Team: Korean <https://translate.fedoraproject.org/projects/cockpit-"
 "machines/main/ko/>\n"
@@ -91,11 +91,16 @@ msgstr "활성화"
 msgid "Activate the storage pool to administer volumes"
 msgstr "볼륨을 관리하려면 저장소 풀을 활성화하세요"
 
+#: src/components/networks/networkOverviewTab.jsx:200
 #: src/components/vm/nics/nicAdd.jsx:196
 #: src/components/vm/disks/diskAdd.jsx:664
 #: src/components/vm/hostdevs/hostDevAdd.jsx:214
 msgid "Add"
 msgstr "추가"
+
+#: src/components/networks/networkOverviewTab.jsx:195
+msgid "Add a DHCP static host entry"
+msgstr "DHCP 고정 호스트 항목 추가"
 
 #: src/components/vm/disks/vmDisksCard.jsx:90
 #: src/components/vm/disks/diskAdd.jsx:655
@@ -127,8 +132,8 @@ msgstr "공유 디렉토리 추가는 게스트가 종료된 경우에만 편집
 msgid "Additional"
 msgstr "추가"
 
-#: src/components/networks/networkOverviewTab.jsx:103
-#: src/components/networks/networkOverviewTab.jsx:128
+#: src/components/networks/networkOverviewTab.jsx:105
+#: src/components/networks/networkOverviewTab.jsx:125
 #: src/components/vm/nics/vmNicsCard.jsx:226
 #: src/components/vm/consoles/desktopConsole.jsx:47
 msgid "Address"
@@ -175,7 +180,7 @@ msgid "Automatic"
 msgstr "자동"
 
 #: src/components/storagePools/storagePoolOverviewTab.jsx:73
-#: src/components/networks/networkOverviewTab.jsx:80
+#: src/components/networks/networkOverviewTab.jsx:82
 #: src/components/vm/overview/vmOverviewCard.jsx:215
 msgid "Autostart"
 msgstr "자동 시작"
@@ -233,6 +238,7 @@ msgstr "캐쉬"
 #: src/components/storagePools/storageVolumeCreate.jsx:103
 #: src/components/storagePools/storagePoolDelete.jsx:225
 #: src/components/networks/createNetworkDialog.jsx:413
+#: src/components/networks/networkOverviewTab.jsx:203
 #: src/components/create-vm-dialog/createVmDialog.jsx:1090
 #: src/components/vm/vmMigrateDialog.jsx:217
 #: src/components/vm/deleteDialog.jsx:146
@@ -427,10 +433,9 @@ msgstr "사용자 지정 펌웨어: $0"
 msgid "Custom path"
 msgstr "사용자 지정 경로"
 
-#: src/components/networks/networkOverviewTab.jsx:113
-#: src/components/networks/networkOverviewTab.jsx:138
-msgid "DHCP range"
-msgstr "DHCP 범위"
+#: src/components/networks/networkOverviewTab.jsx:238
+msgid "DHCP Settings"
+msgstr "DHCP 설정"
 
 #: src/components/storagePools/storagePool.jsx:157
 #: src/components/networks/network.jsx:168
@@ -675,6 +680,10 @@ msgstr "$0에 표시된 연결장치의 IP 주소를 가져오지 못했습니�
 msgid "Failed to rename VM $0"
 msgstr "VM $0 이름변경에 실패함"
 
+#: src/components/networks/networkOverviewTab.jsx:198
+msgid "Failed to save network settings"
+msgstr "네트워크 설정을 저장하는데 실패함"
+
 #: src/components/vm/consoles/vnc.jsx:130
 msgid "Failed to send key Ctrl+Alt+$0 to VM $1"
 msgstr "키 Ctrl+Alt+$0를 VM $1으로 보내지 못했습니다"
@@ -737,7 +746,7 @@ msgstr ""
 msgid "Function"
 msgstr "기능"
 
-#: src/components/networks/networkOverviewTab.jsx:71
+#: src/components/networks/networkOverviewTab.jsx:73
 #: src/components/vm/overview/vmOverviewCard.jsx:173
 msgid "General"
 msgstr "일반"
@@ -798,16 +807,21 @@ msgstr "하이퍼바이저 세부 사항"
 msgid "ID"
 msgstr "ID"
 
+#: src/components/networks/networkOverviewTab.jsx:218
 #: src/components/vm/nics/vmNicsCard.jsx:259
 msgid "IP address"
 msgstr "네트워크 주소"
+
+#: src/components/networks/networkOverviewTab.jsx:219
+msgid "IP address must not be empty"
+msgstr "IP 주소는 비워두면 안됩니다"
 
 #: src/components/networks/createNetworkDialog.jsx:182
 msgid "IP configuration"
 msgstr "IP 구성"
 
 #: src/components/networks/createNetworkDialog.jsx:243
-#: src/components/networks/networkOverviewTab.jsx:99
+#: src/components/networks/networkOverviewTab.jsx:101
 msgid "IPv4 address"
 msgstr "IPv4 주소"
 
@@ -832,7 +846,7 @@ msgid "IPv4 only"
 msgstr "IPv4만"
 
 #: src/components/networks/createNetworkDialog.jsx:275
-#: src/components/networks/networkOverviewTab.jsx:124
+#: src/components/networks/networkOverviewTab.jsx:121
 msgid "IPv6 address"
 msgstr "IPv6 주소"
 
@@ -1009,11 +1023,16 @@ msgstr "MAC"
 
 # auto translated by TM merge from project: RHOSP Director Installation and
 # Usage , version: 11-Korean, DocId: master
+#: src/components/networks/networkOverviewTab.jsx:210
 #: src/components/vm/nics/nicAdd.jsx:62
 #: src/components/vm/nics/vmNicsCard.jsx:257
 #: src/components/vm/nics/nicEdit.jsx:43
 msgid "MAC address"
 msgstr "MAC 주소"
+
+#: src/components/networks/networkOverviewTab.jsx:211
+msgid "MAC address must not be empty"
+msgstr "맥 주소는 비워두면 안됩니다"
 
 #: src/components/vm/disks/diskEdit.jsx:91
 msgid "Machine must be shut off before changing bus type"
@@ -1057,7 +1076,7 @@ msgid ""
 "between 1 and $0"
 msgstr "게스트 OS에 할당된 가상 CPU의 최대 개수는 1에서 $0 사이여야 합니다"
 
-#: src/components/networks/networkOverviewTab.jsx:90
+#: src/components/networks/networkOverviewTab.jsx:92
 msgid "Maximum transmission unit"
 msgstr "MTU(Maximum Transmission Unit)"
 
@@ -1164,11 +1183,11 @@ msgstr "이름을 입력하셔야 합니다"
 msgid "Name should not be empty"
 msgstr "이름을 입력해야 합니다"
 
-#: src/components/networks/networkOverviewTab.jsx:41
+#: src/components/networks/networkOverviewTab.jsx:46
 msgid "Name: "
 msgstr "이름: "
 
-#: src/components/networks/networkOverviewTab.jsx:108
+#: src/components/networks/networkOverviewTab.jsx:110
 msgid "Netmask"
 msgstr "넷마스크"
 
@@ -1399,7 +1418,7 @@ msgid "Persistence"
 msgstr "고집"
 
 #: src/components/storagePools/storagePoolOverviewTab.jsx:68
-#: src/components/networks/networkOverviewTab.jsx:75
+#: src/components/networks/networkOverviewTab.jsx:77
 msgid "Persistent"
 msgstr "지속적"
 
@@ -1462,7 +1481,7 @@ msgstr "포트"
 msgid "Preferred number of sockets to expose to the guest."
 msgstr "게스트에게 공개하기 위한 권장 소캣 수입니다."
 
-#: src/components/networks/networkOverviewTab.jsx:133
+#: src/components/networks/networkOverviewTab.jsx:130
 msgid "Prefix"
 msgstr "접두어"
 
@@ -1521,6 +1540,10 @@ msgstr ""
 #: src/components/vm/nics/nicBody.jsx:123
 msgid "Provides a virtual LAN with NAT to the outside world."
 msgstr "NAT을 통한 가상 랜을 외부 세상으로 제공합니다."
+
+#: src/components/networks/networkOverviewTab.jsx:242
+msgid "Range"
+msgstr "범위"
 
 #: src/components/vm/disks/diskEdit.jsx:122
 #: src/components/vm/disks/vmDisksCard.jsx:260
@@ -1598,7 +1621,7 @@ msgstr "실행"
 msgid "Run unattended installation"
 msgstr "무인 설치 실행"
 
-#: src/components/networks/networkOverviewTab.jsx:85
+#: src/components/networks/networkOverviewTab.jsx:87
 #: src/components/vm/overview/vmOverviewCard.jsx:125
 msgid "Run when host boots"
 msgstr "호스트 부팅 시 실행"
@@ -1801,6 +1824,10 @@ msgstr "시작"
 #: src/components/vm/overview/vmOverviewCard.jsx:177
 msgid "State"
 msgstr "상태"
+
+#: src/components/networks/networkOverviewTab.jsx:250
+msgid "Static host entries"
+msgstr "고정 호스트 항목"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:677
 #: src/components/vm/vmMigrateDialog.jsx:94
@@ -2269,6 +2296,10 @@ msgstr "가장 일치하는 운영 체제를 선택해야합니다"
 msgid "active"
 msgstr "활성"
 
+#: src/components/networks/networkOverviewTab.jsx:154
+msgid "add entry"
+msgstr "항목 추가"
+
 #: src/helpers.js:256
 msgid "bridge"
 msgstr "브릿지"
@@ -2386,13 +2417,17 @@ msgstr "네트워크 연결장치"
 
 #: src/helpers.js:278 src/components/storagePools/storagePoolOverviewTab.jsx:69
 #: src/components/storagePools/storagePoolOverviewTab.jsx:74
-#: src/components/networks/networkOverviewTab.jsx:76
+#: src/components/networks/networkOverviewTab.jsx:78
 msgid "no"
 msgstr "아니요"
 
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:124
 msgid "no state saved"
 msgstr "저장된 상태 없음"
+
+#: src/components/networks/networkOverviewTab.jsx:258
+msgid "none"
+msgstr "없음"
 
 #: src/manifest.json:0
 msgid "pxe"
@@ -2478,7 +2513,7 @@ msgstr "vm"
 
 #: src/helpers.js:277 src/components/storagePools/storagePoolOverviewTab.jsx:69
 #: src/components/storagePools/storagePoolOverviewTab.jsx:74
-#: src/components/networks/networkOverviewTab.jsx:76
+#: src/components/networks/networkOverviewTab.jsx:78
 msgid "yes"
 msgstr "예"
 
@@ -2608,9 +2643,6 @@ msgstr "예"
 
 #~ msgid "Cannot schedule event in the past"
 #~ msgstr "이전 이벤트를 예약할 수 없습니다"
-
-#~ msgid "Change"
-#~ msgstr "변경"
 
 #~ msgid "Change system time"
 #~ msgstr "시스템 시간 변경"

@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-12 02:54+0000\n"
+"POT-Creation-Date: 2021-10-17 02:54+0000\n"
 "PO-Revision-Date: 2021-09-17 08:05+0000\n"
 "Last-Translator: Sundeep Anand <suanand@redhat.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.fedoraproject.org/"
@@ -96,11 +96,16 @@ msgstr "激活"
 msgid "Activate the storage pool to administer volumes"
 msgstr "激活存储池以管理卷"
 
+#: src/components/networks/networkOverviewTab.jsx:200
 #: src/components/vm/nics/nicAdd.jsx:196
 #: src/components/vm/disks/diskAdd.jsx:664
 #: src/components/vm/hostdevs/hostDevAdd.jsx:214
 msgid "Add"
 msgstr "添加"
+
+#: src/components/networks/networkOverviewTab.jsx:195
+msgid "Add a DHCP static host entry"
+msgstr ""
 
 #: src/components/vm/disks/vmDisksCard.jsx:90
 #: src/components/vm/disks/diskAdd.jsx:655
@@ -134,8 +139,8 @@ msgstr "只有在客户机处于关机状态时才能添加共享目录"
 msgid "Additional"
 msgstr "额外"
 
-#: src/components/networks/networkOverviewTab.jsx:103
-#: src/components/networks/networkOverviewTab.jsx:128
+#: src/components/networks/networkOverviewTab.jsx:105
+#: src/components/networks/networkOverviewTab.jsx:125
 #: src/components/vm/nics/vmNicsCard.jsx:226
 #: src/components/vm/consoles/desktopConsole.jsx:47
 msgid "Address"
@@ -181,7 +186,7 @@ msgid "Automatic"
 msgstr "自动"
 
 #: src/components/storagePools/storagePoolOverviewTab.jsx:73
-#: src/components/networks/networkOverviewTab.jsx:80
+#: src/components/networks/networkOverviewTab.jsx:82
 #: src/components/vm/overview/vmOverviewCard.jsx:215
 msgid "Autostart"
 msgstr "自动启动"
@@ -239,6 +244,7 @@ msgstr "缓存"
 #: src/components/storagePools/storageVolumeCreate.jsx:103
 #: src/components/storagePools/storagePoolDelete.jsx:225
 #: src/components/networks/createNetworkDialog.jsx:413
+#: src/components/networks/networkOverviewTab.jsx:203
 #: src/components/create-vm-dialog/createVmDialog.jsx:1090
 #: src/components/vm/vmMigrateDialog.jsx:217
 #: src/components/vm/deleteDialog.jsx:146
@@ -431,9 +437,10 @@ msgstr "自定义固件：$0"
 msgid "Custom path"
 msgstr "自定义路径"
 
-#: src/components/networks/networkOverviewTab.jsx:113
-#: src/components/networks/networkOverviewTab.jsx:138
-msgid "DHCP range"
+#: src/components/networks/networkOverviewTab.jsx:238
+#, fuzzy
+#| msgid "DHCP range"
+msgid "DHCP Settings"
 msgstr "DHCP 范围"
 
 #: src/components/storagePools/storagePool.jsx:157
@@ -677,6 +684,10 @@ msgstr "获取在 $0 中的接口的 IP 地址失败"
 msgid "Failed to rename VM $0"
 msgstr "重新命名虚拟机 $0 失败"
 
+#: src/components/networks/networkOverviewTab.jsx:198
+msgid "Failed to save network settings"
+msgstr ""
+
 #: src/components/vm/consoles/vnc.jsx:130
 msgid "Failed to send key Ctrl+Alt+$0 to VM $1"
 msgstr "发送按键 Ctrl+Alt+$0 到 VM $1 失败"
@@ -737,7 +748,7 @@ msgstr ""
 msgid "Function"
 msgstr "功能"
 
-#: src/components/networks/networkOverviewTab.jsx:71
+#: src/components/networks/networkOverviewTab.jsx:73
 #: src/components/vm/overview/vmOverviewCard.jsx:173
 msgid "General"
 msgstr "通用"
@@ -800,16 +811,23 @@ msgstr "Hypervisor 详情"
 msgid "ID"
 msgstr "ID"
 
+#: src/components/networks/networkOverviewTab.jsx:218
 #: src/components/vm/nics/vmNicsCard.jsx:259
 msgid "IP address"
 msgstr "IP 地址"
+
+#: src/components/networks/networkOverviewTab.jsx:219
+#, fuzzy
+#| msgid "Name must not be empty"
+msgid "IP address must not be empty"
+msgstr "名称不能为空"
 
 #: src/components/networks/createNetworkDialog.jsx:182
 msgid "IP configuration"
 msgstr "IP 配置"
 
 #: src/components/networks/createNetworkDialog.jsx:243
-#: src/components/networks/networkOverviewTab.jsx:99
+#: src/components/networks/networkOverviewTab.jsx:101
 msgid "IPv4 address"
 msgstr "IPv4 地址"
 
@@ -834,7 +852,7 @@ msgid "IPv4 only"
 msgstr "仅 IPv4"
 
 #: src/components/networks/createNetworkDialog.jsx:275
-#: src/components/networks/networkOverviewTab.jsx:124
+#: src/components/networks/networkOverviewTab.jsx:121
 msgid "IPv6 address"
 msgstr "IPv6 地址"
 
@@ -1000,11 +1018,18 @@ msgstr "连接"
 msgid "MAC"
 msgstr "MAC"
 
+#: src/components/networks/networkOverviewTab.jsx:210
 #: src/components/vm/nics/nicAdd.jsx:62
 #: src/components/vm/nics/vmNicsCard.jsx:257
 #: src/components/vm/nics/nicEdit.jsx:43
 msgid "MAC address"
 msgstr "MAC 地址"
+
+#: src/components/networks/networkOverviewTab.jsx:211
+#, fuzzy
+#| msgid "Name must not be empty"
+msgid "MAC address must not be empty"
+msgstr "名称不能为空"
 
 #: src/components/vm/disks/diskEdit.jsx:91
 msgid "Machine must be shut off before changing bus type"
@@ -1048,7 +1073,7 @@ msgid ""
 "between 1 and $0"
 msgstr "为客户机操作系统分配的最大虚拟 CPU 数，必须介于 1 和 $0 之间"
 
-#: src/components/networks/networkOverviewTab.jsx:90
+#: src/components/networks/networkOverviewTab.jsx:92
 msgid "Maximum transmission unit"
 msgstr "最大传输单元"
 
@@ -1155,11 +1180,11 @@ msgstr "名称不能为空"
 msgid "Name should not be empty"
 msgstr "名称不应为空"
 
-#: src/components/networks/networkOverviewTab.jsx:41
+#: src/components/networks/networkOverviewTab.jsx:46
 msgid "Name: "
 msgstr "名称： "
 
-#: src/components/networks/networkOverviewTab.jsx:108
+#: src/components/networks/networkOverviewTab.jsx:110
 msgid "Netmask"
 msgstr "网络掩码"
 
@@ -1384,7 +1409,7 @@ msgid "Persistence"
 msgstr "持久"
 
 #: src/components/storagePools/storagePoolOverviewTab.jsx:68
-#: src/components/networks/networkOverviewTab.jsx:75
+#: src/components/networks/networkOverviewTab.jsx:77
 msgid "Persistent"
 msgstr "持久"
 
@@ -1447,7 +1472,7 @@ msgstr "端口"
 msgid "Preferred number of sockets to expose to the guest."
 msgstr "向客户机公开的首选插槽数。"
 
-#: src/components/networks/networkOverviewTab.jsx:133
+#: src/components/networks/networkOverviewTab.jsx:130
 msgid "Prefix"
 msgstr "前缀"
 
@@ -1503,6 +1528,12 @@ msgstr "提供一个连接，其详细信息由指定网络定义描述。"
 #: src/components/vm/nics/nicBody.jsx:123
 msgid "Provides a virtual LAN with NAT to the outside world."
 msgstr "通过 NAT 向外界提供虚拟 LAN。"
+
+#: src/components/networks/networkOverviewTab.jsx:242
+#, fuzzy
+#| msgid "Change"
+msgid "Range"
+msgstr "变更"
 
 #: src/components/vm/disks/diskEdit.jsx:122
 #: src/components/vm/disks/vmDisksCard.jsx:260
@@ -1580,7 +1611,7 @@ msgstr "运行"
 msgid "Run unattended installation"
 msgstr "执行无人值守安装"
 
-#: src/components/networks/networkOverviewTab.jsx:85
+#: src/components/networks/networkOverviewTab.jsx:87
 #: src/components/vm/overview/vmOverviewCard.jsx:125
 msgid "Run when host boots"
 msgstr "在主机引导时运行"
@@ -1778,6 +1809,10 @@ msgstr "启动"
 #: src/components/vm/overview/vmOverviewCard.jsx:177
 msgid "State"
 msgstr "状态"
+
+#: src/components/networks/networkOverviewTab.jsx:250
+msgid "Static host entries"
+msgstr ""
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:677
 #: src/components/vm/vmMigrateDialog.jsx:94
@@ -2233,6 +2268,10 @@ msgstr "您需要选择最匹配的操作系统"
 msgid "active"
 msgstr "激活"
 
+#: src/components/networks/networkOverviewTab.jsx:154
+msgid "add entry"
+msgstr ""
+
 #: src/helpers.js:256
 msgid "bridge"
 msgstr "网桥"
@@ -2350,13 +2389,17 @@ msgstr "网络接口"
 
 #: src/helpers.js:278 src/components/storagePools/storagePoolOverviewTab.jsx:69
 #: src/components/storagePools/storagePoolOverviewTab.jsx:74
-#: src/components/networks/networkOverviewTab.jsx:76
+#: src/components/networks/networkOverviewTab.jsx:78
 msgid "no"
 msgstr "否"
 
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:124
 msgid "no state saved"
 msgstr "无保存的状态"
+
+#: src/components/networks/networkOverviewTab.jsx:258
+msgid "none"
+msgstr ""
 
 #: src/manifest.json:0
 msgid "pxe"
@@ -2438,7 +2481,7 @@ msgstr "vm"
 
 #: src/helpers.js:277 src/components/storagePools/storagePoolOverviewTab.jsx:69
 #: src/components/storagePools/storagePoolOverviewTab.jsx:74
-#: src/components/networks/networkOverviewTab.jsx:76
+#: src/components/networks/networkOverviewTab.jsx:78
 msgid "yes"
 msgstr "是"
 
@@ -2566,9 +2609,6 @@ msgstr "是"
 
 #~ msgid "Cannot schedule event in the past"
 #~ msgstr "无法调度以前的事件"
-
-#~ msgid "Change"
-#~ msgstr "变更"
 
 #~ msgid "Change system time"
 #~ msgstr "修改系统时间"

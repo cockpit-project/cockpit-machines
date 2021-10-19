@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-12 02:54+0000\n"
-"PO-Revision-Date: 2021-10-09 16:05+0000\n"
+"POT-Creation-Date: 2021-10-17 02:54+0000\n"
+"PO-Revision-Date: 2021-10-17 13:05+0000\n"
 "Last-Translator: Oğuz Ersen <oguzersen@protonmail.com>\n"
 "Language-Team: Turkish <https://translate.fedoraproject.org/projects/cockpit-"
 "machines/main/tr/>\n"
@@ -91,11 +91,16 @@ msgstr "Etkinleştir"
 msgid "Activate the storage pool to administer volumes"
 msgstr "Birimleri yönetmek için depolama havuzunu etkinleştir"
 
+#: src/components/networks/networkOverviewTab.jsx:200
 #: src/components/vm/nics/nicAdd.jsx:196
 #: src/components/vm/disks/diskAdd.jsx:664
 #: src/components/vm/hostdevs/hostDevAdd.jsx:214
 msgid "Add"
 msgstr "Ekle"
+
+#: src/components/networks/networkOverviewTab.jsx:195
+msgid "Add a DHCP static host entry"
+msgstr "DHCP statik ana makine girdisi ekle"
 
 #: src/components/vm/disks/vmDisksCard.jsx:90
 #: src/components/vm/disks/diskAdd.jsx:655
@@ -127,8 +132,8 @@ msgstr "Paylaşılan dizinler eklemek yalnızca konuk kapalı olduğunda mümkü
 msgid "Additional"
 msgstr "Ek"
 
-#: src/components/networks/networkOverviewTab.jsx:103
-#: src/components/networks/networkOverviewTab.jsx:128
+#: src/components/networks/networkOverviewTab.jsx:105
+#: src/components/networks/networkOverviewTab.jsx:125
 #: src/components/vm/nics/vmNicsCard.jsx:226
 #: src/components/vm/consoles/desktopConsole.jsx:47
 msgid "Address"
@@ -177,7 +182,7 @@ msgid "Automatic"
 msgstr "Otomatik"
 
 #: src/components/storagePools/storagePoolOverviewTab.jsx:73
-#: src/components/networks/networkOverviewTab.jsx:80
+#: src/components/networks/networkOverviewTab.jsx:82
 #: src/components/vm/overview/vmOverviewCard.jsx:215
 msgid "Autostart"
 msgstr "Otomatik başlat"
@@ -235,6 +240,7 @@ msgstr "Önbellek"
 #: src/components/storagePools/storageVolumeCreate.jsx:103
 #: src/components/storagePools/storagePoolDelete.jsx:225
 #: src/components/networks/createNetworkDialog.jsx:413
+#: src/components/networks/networkOverviewTab.jsx:203
 #: src/components/create-vm-dialog/createVmDialog.jsx:1090
 #: src/components/vm/vmMigrateDialog.jsx:217
 #: src/components/vm/deleteDialog.jsx:146
@@ -430,10 +436,9 @@ msgstr "Özel aygıt yazılımı: $0"
 msgid "Custom path"
 msgstr "Özel yol"
 
-#: src/components/networks/networkOverviewTab.jsx:113
-#: src/components/networks/networkOverviewTab.jsx:138
-msgid "DHCP range"
-msgstr "DHCP aralığı"
+#: src/components/networks/networkOverviewTab.jsx:238
+msgid "DHCP Settings"
+msgstr "DHCP Ayarları"
 
 #: src/components/storagePools/storagePool.jsx:157
 #: src/components/networks/network.jsx:168
@@ -684,6 +689,10 @@ msgstr "$0 içinde bulunan arayüzlerin IP adreslerinin alınması başarısız 
 msgid "Failed to rename VM $0"
 msgstr "$0 sanal makinesini yeniden adlandırma başarısız oldu"
 
+#: src/components/networks/networkOverviewTab.jsx:198
+msgid "Failed to save network settings"
+msgstr "Ağ ayarları kaydedilemedi"
+
 #: src/components/vm/consoles/vnc.jsx:130
 msgid "Failed to send key Ctrl+Alt+$0 to VM $1"
 msgstr ""
@@ -746,7 +755,7 @@ msgstr ""
 msgid "Function"
 msgstr "İşlev"
 
-#: src/components/networks/networkOverviewTab.jsx:71
+#: src/components/networks/networkOverviewTab.jsx:73
 #: src/components/vm/overview/vmOverviewCard.jsx:173
 msgid "General"
 msgstr "Genel"
@@ -807,16 +816,21 @@ msgstr "Hipervizör ayrıntıları"
 msgid "ID"
 msgstr "Kimlik"
 
+#: src/components/networks/networkOverviewTab.jsx:218
 #: src/components/vm/nics/vmNicsCard.jsx:259
 msgid "IP address"
 msgstr "IP adresi"
+
+#: src/components/networks/networkOverviewTab.jsx:219
+msgid "IP address must not be empty"
+msgstr "IP adresi boş olmamak zorundadır"
 
 #: src/components/networks/createNetworkDialog.jsx:182
 msgid "IP configuration"
 msgstr "IP yapılandırması"
 
 #: src/components/networks/createNetworkDialog.jsx:243
-#: src/components/networks/networkOverviewTab.jsx:99
+#: src/components/networks/networkOverviewTab.jsx:101
 msgid "IPv4 address"
 msgstr "IPv4 adresi"
 
@@ -841,7 +855,7 @@ msgid "IPv4 only"
 msgstr "Sadece IPv4"
 
 #: src/components/networks/createNetworkDialog.jsx:275
-#: src/components/networks/networkOverviewTab.jsx:124
+#: src/components/networks/networkOverviewTab.jsx:121
 msgid "IPv6 address"
 msgstr "IPv6 adresi"
 
@@ -1012,11 +1026,16 @@ msgstr "Konum"
 msgid "MAC"
 msgstr "MAC"
 
+#: src/components/networks/networkOverviewTab.jsx:210
 #: src/components/vm/nics/nicAdd.jsx:62
 #: src/components/vm/nics/vmNicsCard.jsx:257
 #: src/components/vm/nics/nicEdit.jsx:43
 msgid "MAC address"
 msgstr "MAC adresi"
+
+#: src/components/networks/networkOverviewTab.jsx:211
+msgid "MAC address must not be empty"
+msgstr "MAC adresi boş olmamak zorundadır"
 
 #: src/components/vm/disks/diskEdit.jsx:91
 msgid "Machine must be shut off before changing bus type"
@@ -1062,7 +1081,7 @@ msgstr ""
 "1 ile $0 arasında olmak zorunda olan konuk işletim sistemi için ayrılmış en "
 "fazla sanal CPU sayısı"
 
-#: src/components/networks/networkOverviewTab.jsx:90
+#: src/components/networks/networkOverviewTab.jsx:92
 msgid "Maximum transmission unit"
 msgstr "En fazla iletim birimi (MTU)"
 
@@ -1169,11 +1188,11 @@ msgstr "Ad boş olmamak zorundadır"
 msgid "Name should not be empty"
 msgstr "Ad boş olmamalıdır"
 
-#: src/components/networks/networkOverviewTab.jsx:41
+#: src/components/networks/networkOverviewTab.jsx:46
 msgid "Name: "
 msgstr "Ad: "
 
-#: src/components/networks/networkOverviewTab.jsx:108
+#: src/components/networks/networkOverviewTab.jsx:110
 msgid "Netmask"
 msgstr "Ağ maskesi"
 
@@ -1403,7 +1422,7 @@ msgid "Persistence"
 msgstr "Kalıcılık"
 
 #: src/components/storagePools/storagePoolOverviewTab.jsx:68
-#: src/components/networks/networkOverviewTab.jsx:75
+#: src/components/networks/networkOverviewTab.jsx:77
 msgid "Persistent"
 msgstr "Kalıcı"
 
@@ -1466,7 +1485,7 @@ msgstr "Bağlantı noktası"
 msgid "Preferred number of sockets to expose to the guest."
 msgstr "Konuğa açılacak tercih edilen soket sayısı."
 
-#: src/components/networks/networkOverviewTab.jsx:133
+#: src/components/networks/networkOverviewTab.jsx:130
 msgid "Prefix"
 msgstr "Ön ek"
 
@@ -1524,6 +1543,10 @@ msgstr "Ayrıntıları adlandırılan ağ tanımıyla açıklanan bir bağlantı
 #: src/components/vm/nics/nicBody.jsx:123
 msgid "Provides a virtual LAN with NAT to the outside world."
 msgstr "NAT ile dış dünyaya sanal bir LAN sağlar."
+
+#: src/components/networks/networkOverviewTab.jsx:242
+msgid "Range"
+msgstr "Aralık"
 
 #: src/components/vm/disks/diskEdit.jsx:122
 #: src/components/vm/disks/vmDisksCard.jsx:260
@@ -1602,7 +1625,7 @@ msgstr "Çalıştır"
 msgid "Run unattended installation"
 msgstr "Katılımsız kurulumu çalıştır"
 
-#: src/components/networks/networkOverviewTab.jsx:85
+#: src/components/networks/networkOverviewTab.jsx:87
 #: src/components/vm/overview/vmOverviewCard.jsx:125
 msgid "Run when host boots"
 msgstr "Anamakine önyüklendiğinde çalıştır"
@@ -1804,6 +1827,10 @@ msgstr "Başlatma"
 #: src/components/vm/overview/vmOverviewCard.jsx:177
 msgid "State"
 msgstr "Durum"
+
+#: src/components/networks/networkOverviewTab.jsx:250
+msgid "Static host entries"
+msgstr "Statik ana makine girdileri"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:677
 #: src/components/vm/vmMigrateDialog.jsx:94
@@ -2282,6 +2309,10 @@ msgstr "En yakından eşleşen işletim sistemini seçmeniz gerekli"
 msgid "active"
 msgstr "etkin"
 
+#: src/components/networks/networkOverviewTab.jsx:154
+msgid "add entry"
+msgstr "girdi ekle"
+
 #: src/helpers.js:256
 msgid "bridge"
 msgstr "köprü"
@@ -2399,13 +2430,17 @@ msgstr "ağ arayüzü"
 
 #: src/helpers.js:278 src/components/storagePools/storagePoolOverviewTab.jsx:69
 #: src/components/storagePools/storagePoolOverviewTab.jsx:74
-#: src/components/networks/networkOverviewTab.jsx:76
+#: src/components/networks/networkOverviewTab.jsx:78
 msgid "no"
 msgstr "hayır"
 
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:124
 msgid "no state saved"
 msgstr "kaydedilen durum yok"
+
+#: src/components/networks/networkOverviewTab.jsx:258
+msgid "none"
+msgstr "yok"
 
 #: src/manifest.json:0
 msgid "pxe"
@@ -2493,7 +2528,7 @@ msgstr "sanal makine"
 
 #: src/helpers.js:277 src/components/storagePools/storagePoolOverviewTab.jsx:69
 #: src/components/storagePools/storagePoolOverviewTab.jsx:74
-#: src/components/networks/networkOverviewTab.jsx:76
+#: src/components/networks/networkOverviewTab.jsx:78
 msgid "yes"
 msgstr "evet"
 
@@ -2629,9 +2664,6 @@ msgstr "evet"
 
 #~ msgid "Cannot schedule event in the past"
 #~ msgstr "Geçmişteki olay zamanlanamıyor"
-
-#~ msgid "Change"
-#~ msgstr "Değiştir"
 
 #~ msgid "Change system time"
 #~ msgstr "Sistem saatini değiştir"
