@@ -49,7 +49,10 @@ export const CloneDialog = ({ name, connectionName, toggleModal }) => {
         }
 
         setInProgress(true);
-        return cockpit.spawn(["virt-clone", "--connect", "qemu:///" + connectionName, "--original", name, "--name", newVmName, "--auto-clone"], { superuser: "try", pty: true })
+        const options = { pty: true };
+        if (connectionName === "system")
+            options.superuser = "try";
+        return cockpit.spawn(["virt-clone", "--connect", "qemu:///" + connectionName, "--original", name, "--name", newVmName, "--auto-clone"], options)
                 .stream(setVirtCloneOutput)
                 .then(toggleModal, exc => {
                     setInProgress(false);
