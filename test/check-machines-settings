@@ -253,7 +253,8 @@ class TestMachinesSettings(VirtualMachinesCase):
         b = self.browser
 
         self.createVm("subVmTest1")
-        self.machine.execute("touch /var/lib/libvirt/images/phonycdrom; virsh attach-disk subVmTest1 /var/lib/libvirt/images/phonycdrom sdb --type cdrom --config")
+        self.machine.execute("qemu-img create -f raw /var/lib/libvirt/images/phonycdrom 1M; "
+                             "virsh attach-disk subVmTest1 /var/lib/libvirt/images/phonycdrom sdb --type cdrom --config")
 
         self.login_and_go("/machines")
         b.wait_in_text("body", "Virtual machines")
