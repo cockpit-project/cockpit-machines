@@ -160,6 +160,14 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-disks-sda-bus", "scsi")
         b.wait_in_text("#vm-subVmTest1-disks-sda-cache", "writeback")
 
+        # Configure readonly for the qcow2 disk
+        open("vdg")
+        b.set_checked("#vm-subVmTest1-disks-vdg-edit-readonly", True)
+
+        save("vdg")
+        b.wait_not_present("#vm-subVmTest1-disks-vdg-access-tooltip")
+        b.wait_in_text("#vm-subVmTest1-disks-vdg-access", "Read-only")
+
         if m.execute("virsh --version") >= "6.10.0":
             # Check that errors appear correctly and dissappear when closing the dialog and reopening
             m.execute("virsh attach-disk --domain subVmTest1 --source {0}/mydisk4 --target sdb --targetbus sata --persistent".format(p1))
