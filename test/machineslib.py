@@ -217,10 +217,6 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
         self.restore_dir("/etc/libvirt")
         self.restore_dir("/home/admin/.local/share/libvirt/")
 
-        if m.image in ["ubuntu-stable"]:
-            # https://bugs.launchpad.net/ubuntu/+source/libvirt-dbus/+bug/1892757
-            m.execute("usermod -a -G libvirt libvirtdbus")
-
         self.startLibvirt()
         self.addCleanup(m.execute, f"systemctl stop {self.getLibvirtServiceName()}")
         if m.image in ["fedora-35"]:
