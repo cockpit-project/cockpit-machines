@@ -97,8 +97,7 @@ class VirtualMachinesCaseHelpers:
         else:
             return "libvirtd"
 
-    def startLibvirt(self):
-        m = self.machine
+    def startLibvirt(self, m):
 
         # Ensure everything has started correctly
         m.execute(f"systemctl start {self.getLibvirtServiceName()}.service")
@@ -217,7 +216,7 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
         self.restore_dir("/etc/libvirt")
         self.restore_dir("/home/admin/.local/share/libvirt/")
 
-        self.startLibvirt()
+        self.startLibvirt(m)
         self.addCleanup(m.execute, f"systemctl stop {self.getLibvirtServiceName()}")
         if m.image in ["fedora-35"]:
             self.addCleanup(m.execute, "systemctl stop virtstoraged.service virtnetworkd.service")
