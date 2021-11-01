@@ -242,7 +242,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
             def verify_expected_error_on_head(self, error_message):
                 b.click('#network-{0}-system-state button:contains("view more")'.format(self.name))
                 b.wait_in_text(".pf-c-popover", error_message)
-                b.click('#network-{0}-system-state button[aria-label=label-close-button]'.format(self.name))
+                b.click('#network-{0}-system-state button[aria-label=Close]'.format(self.name))
 
             def verify_dialog(self):
                 # Check that the defined network is now visible
