@@ -53,6 +53,7 @@ export const StateIcon = ({ state, valueId, error, dismissError }) => {
             <Label color="red"
                 icon={<ErrorCircleOIcon />}
                 className="resource-state-text"
+                closeBtnAriaLabel={_("Close")}
                 onClose={dismissError}
                 id={valueId}>
                 <>
