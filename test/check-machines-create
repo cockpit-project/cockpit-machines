@@ -378,19 +378,19 @@ class TestMachinesCreate(VirtualMachinesCase):
         m.execute(f"echo 'vnc_password= \"{vnc_passwd}\"' >> /etc/libvirt/qemu.conf")
 
         runner.createAndVerifyQemuConfParsedTest(
-                TestMachinesCreate.VmDialog(self, sourceType='file',
-                                            storage_pool="NoStorage",
-                                            location=config.NOVELL_MOCKUP_ISO_PATH),
-                vnc_listen, "127.0.0.1", vnc_passwd, None)
+            TestMachinesCreate.VmDialog(self, sourceType='file',
+                                        storage_pool="NoStorage",
+                                        location=config.NOVELL_MOCKUP_ISO_PATH),
+            vnc_listen, "127.0.0.1", vnc_passwd, None)
 
         # Ensure that missing qemu.conf would not crash the script but just pick the 127.0.0.1 default value
         self.restore_file("/etc/libvirt/qemu.conf")
         m.execute("rm /etc/libvirt/qemu.conf")
         runner.createAndVerifyQemuConfParsedTest(
-                TestMachinesCreate.VmDialog(self, sourceType='file',
-                                            storage_pool="NoStorage",
-                                            location=config.NOVELL_MOCKUP_ISO_PATH),
-                "127.0.0.1", "127.0.0.1", None, None)
+            TestMachinesCreate.VmDialog(self, sourceType='file',
+                                        storage_pool="NoStorage",
+                                        location=config.NOVELL_MOCKUP_ISO_PATH),
+            "127.0.0.1", "127.0.0.1", None, None)
 
     @no_retry_when_changed
     def testCreateThenInstall(self):
