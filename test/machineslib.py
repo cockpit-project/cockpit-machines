@@ -277,6 +277,10 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
         # Ignoring just to unbreak tests for now
         self.allow_journal_messages("Failed to get COMM: No such process")
 
+        # FIXME: Testing on Arch Linux fails randomly with networkmanager time outs while the test passes.
+        if m.image == 'arch':
+            self.allow_journal_messages(r".* couldn't get all properties of org.freedesktop.NetworkManager.Device at /org/freedesktop/NetworkManager/Devices/\d+: Timeout was reached")
+
         m.execute("virsh net-define /etc/libvirt/qemu/networks/default.xml || true")
 
         # avoid error noise about resources getting cleaned up
