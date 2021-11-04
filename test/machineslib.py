@@ -92,7 +92,7 @@ class VirtualMachinesCaseHelpers:
     def getLibvirtServiceName(self):
         m = self.machine
 
-        if m.image in ["fedora-35"]:
+        if m.image in ["fedora-35", "rhel-9-0"]:
             return "virtqemud"
         else:
             return "libvirtd"
@@ -101,7 +101,7 @@ class VirtualMachinesCaseHelpers:
 
         # Ensure everything has started correctly
         m.execute(f"systemctl start {self.getLibvirtServiceName()}.service")
-        if m.image in ["fedora-35"]:
+        if m.image in ["fedora-35", "rhel-9-0"]:
             # HACK for missing deps on virtlockd/virtlogd sockets - needed till f-35 uses libvirt v7.7.0
             # https://github.com/libvirt/libvirt/commit/88c5b9f827779ae6fe5a6f08100a4b6184492a1c
             m.execute("systemctl start virtlockd.socket && systemctl start virtlogd.socket")
@@ -218,7 +218,7 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
 
         self.startLibvirt(m)
         self.addCleanup(m.execute, f"systemctl stop {self.getLibvirtServiceName()}")
-        if m.image in ["fedora-35"]:
+        if m.image in ["fedora-35", "rhel-9-0"]:
             self.addCleanup(m.execute, "systemctl stop virtstoraged.service virtnetworkd.service")
 
         # Stop all domains
@@ -252,7 +252,7 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
             self.addCleanup(m.execute, cmd)
 
         # we don't have configuration to open the firewall for local libvirt machines, so just stop firewalld
-        if m.image in ["fedora-35"]:
+        if m.image in ["fedora-35", "rhel-9-0"]:
             m.execute("systemctl stop firewalld; systemctl reset-failed virtnetworkd; systemctl try-restart virtnetworkd")
         else:
             m.execute("systemctl stop firewalld; systemctl reset-failed libvirtd; systemctl try-restart libvirtd")
