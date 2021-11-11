@@ -146,6 +146,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
                                     ".*Connection reset by peer")
         self.allow_browser_errors("Disconnection timed out.")
         self.allow_journal_messages(".* couldn't shutdown fd: Transport endpoint is not connected")
+        self.allow_journal_messages("127.0.0.1:5900: couldn't read: Connection refused")
 
     def testSwitchConsoleFromSerialToGraphical(self):
         b = self.browser
