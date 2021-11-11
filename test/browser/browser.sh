@@ -57,7 +57,7 @@ systemctl start firewalld
 firewall-cmd --add-service=cockpit --permanent
 firewall-cmd --add-service=cockpit
 
-if grep -Eq 'PLATFORM_ID=.*(f35)' /etc/os-release; then
+if grep -Eq 'PLATFORM_ID=.*(f35|f36|el9)' /etc/os-release; then
     # HACK: new modular libvirt sockets are not running by default in f35
     # https://gitlab.com/libvirt/libvirt/-/issues/219
     systemctl start virtinterfaced.socket
