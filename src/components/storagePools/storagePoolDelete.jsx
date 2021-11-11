@@ -18,15 +18,19 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Checkbox, Form, FormGroup, Modal, Tooltip } from '@patternfly/react-core';
+import {
+    Button, Checkbox,
+    Form, FormGroup,
+    HelperText, HelperTextItem,
+    Modal, Tooltip
+} from '@patternfly/react-core';
+import { InfoIcon } from '@patternfly/react-icons';
 
 import { getStorageVolumesUsage, storagePoolId } from '../../helpers.js';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { storageVolumeDelete } from '../../libvirtApi/storageVolume.js';
 import { storagePoolDeactivate, storagePoolUndefine } from '../../libvirtApi/storagePool.js';
 import cockpit from 'cockpit';
-
-import './storagePoolDelete.css';
 
 const _ = cockpit.gettext;
 
@@ -146,12 +150,13 @@ export class StoragePoolDelete extends React.Component {
         const showWarning = () => {
             if (canDeleteOnlyWithoutVolumes(storagePool, vms) && this.state.deleteVolumes) {
                 return (
-                    <span id={`delete-${id}-idle-message`}>
-                        <i className='pficon pficon-info' />
-                        {_("Pool's volumes are used by VMs ")}
-                        <b> {vmsUsage + "."} </b>
-                        {_("Detach the disks using this pool from any VMs before attempting deletion.")}
-                    </span>
+                    <HelperText>
+                        <HelperTextItem icon={<InfoIcon />}>
+                            {_("Pool's volumes are used by VMs ")}
+                            <b> {vmsUsage + "."} </b>
+                            {_("Detach the disks using this pool from any VMs before attempting deletion.")}
+                        </HelperTextItem>
+                    </HelperText>
                 );
             }
         };
