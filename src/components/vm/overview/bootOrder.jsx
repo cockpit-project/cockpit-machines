@@ -26,7 +26,11 @@ import {
     ListViewItem,
 } from 'patternfly-react';
 
-import { Button, Modal, Tooltip } from '@patternfly/react-core';
+import {
+    Button,
+    Flex, FlexItem,
+    Modal, Tooltip
+} from '@patternfly/react-core';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import {
     findHostNodeDevice,
@@ -328,16 +332,16 @@ function getBootOrder(vm) {
 export const BootOrderLink = ({ vm, idPrefix, close, nodeDevices }) => {
     const [bootOrderShow, setBootOrderShow] = useState(false);
     const modalButton = (
-        <Button variant="link" className="edit-inline" isInline isAriaDisabled={vm.state != 'shut off'} onClick={setBootOrderShow}>
+        <Button variant="link" isInline isAriaDisabled={vm.state != 'shut off'} onClick={setBootOrderShow}>
             {_("edit")}
         </Button>
     );
 
     return (
-        <>
+        <Flex spaceItems={{ default: 'spaceItemsSm' }}>
             {bootOrderShow && <BootOrderModal close={() => setBootOrderShow(false)} vm={vm} nodeDevices={nodeDevices} />}
-            {getBootOrder(vm)}
+            <FlexItem>{getBootOrder(vm)}</FlexItem>
             {vm.state == 'shut off' ? modalButton : <Tooltip content={_("Only editable when the guest is shut off")}>{modalButton}</Tooltip>}
-        </>
+        </Flex>
     );
 };

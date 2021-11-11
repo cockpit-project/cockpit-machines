@@ -127,10 +127,14 @@ class VmOverviewCard extends React.Component {
         );
         const memoryLink = (
             <DescriptionListDescription id={`${idPrefix}-memory-count`}>
-                {cockpit.format_bytes(vm.currentMemory * 1024)}
-                <Button variant="link" className="edit-inline" isInline isDisabled={!vm.persistent} onClick={this.openMemory}>
-                    {_("edit")}
-                </Button>
+                <Flex spaceItems={{ default: 'spaceItemsSm' }}>
+                    <FlexItem>
+                        {cockpit.format_bytes(vm.currentMemory * 1024)}
+                    </FlexItem>
+                    <Button variant="link" isInline isDisabled={!vm.persistent} onClick={this.openMemory}>
+                        {_("edit")}
+                    </Button>
+                </Flex>
             </DescriptionListDescription>
         );
         const vcpuLink = (
@@ -138,7 +142,7 @@ class VmOverviewCard extends React.Component {
                 <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }}>
                     <FlexItem>{vm.vcpus.count}</FlexItem>
                     { vm.persistent && vm.state === "running" && vcpusChanged && <WarningInactive iconId="vcpus-tooltip" tooltipId="tip-vcpus" /> }
-                    <Button variant="link" className="edit-inline" isInline isDisabled={!vm.persistent} onClick={this.openVcpu}>
+                    <Button variant="link" isInline isDisabled={!vm.persistent} onClick={this.openVcpu}>
                         {_("edit")}
                     </Button>
                 </Flex>
@@ -146,7 +150,7 @@ class VmOverviewCard extends React.Component {
         );
 
         let cpuEditButton = (
-            <Button variant="link" className="edit-inline" isInline isAriaDisabled={!vm.persistent || !this.state.virtXMLAvailable} onClick={this.openCpuType}>
+            <Button variant="link" isInline isAriaDisabled={!vm.persistent || !this.state.virtXMLAvailable} onClick={this.openCpuType}>
                 {_("edit")}
             </Button>
         );
