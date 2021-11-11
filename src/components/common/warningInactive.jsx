@@ -2,15 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 import { Tooltip } from "@patternfly/react-core";
-
-import './warningInactive.css';
+import { PendingIcon } from "@patternfly/react-icons";
 
 const _ = cockpit.gettext;
 
 const WarningInactive = ({ iconId, tooltipId }) => {
     return (
         <Tooltip id={tooltipId} content={_("Changes will take effect after shutting down the VM")}>
-            <i id={iconId} className='pficon pficon-pending' />
+            <PendingIcon color="orange" id={iconId} />
         </Tooltip>
     );
 };

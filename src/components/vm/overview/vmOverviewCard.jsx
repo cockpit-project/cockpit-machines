@@ -135,11 +135,13 @@ class VmOverviewCard extends React.Component {
         );
         const vcpuLink = (
             <DescriptionListDescription id={`${idPrefix}-vcpus-count`}>
-                {vm.vcpus.count}
-                { vm.persistent && vm.state === "running" && vcpusChanged && <WarningInactive iconId="vcpus-tooltip" tooltipId="tip-vcpus" /> }
-                <Button variant="link" className="edit-inline" isInline isDisabled={!vm.persistent} onClick={this.openVcpu}>
-                    {_("edit")}
-                </Button>
+                <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }}>
+                    <FlexItem>{vm.vcpus.count}</FlexItem>
+                    { vm.persistent && vm.state === "running" && vcpusChanged && <WarningInactive iconId="vcpus-tooltip" tooltipId="tip-vcpus" /> }
+                    <Button variant="link" className="edit-inline" isInline isDisabled={!vm.persistent} onClick={this.openVcpu}>
+                        {_("edit")}
+                    </Button>
+                </Flex>
             </DescriptionListDescription>
         );
 
@@ -158,9 +160,13 @@ class VmOverviewCard extends React.Component {
         }
         const vmCpuType = (
             <DescriptionListDescription id={`${idPrefix}-cpu-model`}>
-                {rephraseUI('cpuMode', vm.cpu.mode) + (vm.cpu.model ? ` (${vm.cpu.model})` : '')}
-                { vm.persistent && vm.state === "running" && cpuModeChanged && <WarningInactive iconId="cpu-tooltip" tooltipId="tip-cpu" /> }
-                { cpuEditButton }
+                <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }}>
+                    <FlexItem>
+                        {rephraseUI('cpuMode', vm.cpu.mode) + (vm.cpu.model ? ` (${vm.cpu.model})` : '')}
+                    </FlexItem>
+                    { vm.persistent && vm.state === "running" && cpuModeChanged && <WarningInactive iconId="cpu-tooltip" tooltipId="tip-cpu" /> }
+                    { cpuEditButton }
+                </Flex>
             </DescriptionListDescription>
         );
 
