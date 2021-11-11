@@ -22,7 +22,8 @@ import {
     Button, Checkbox,
     Form, FormGroup,
     HelperText, HelperTextItem,
-    Modal, Tooltip
+    Modal,
+    Stack, Tooltip
 } from '@patternfly/react-core';
 import { InfoIcon } from '@patternfly/react-icons';
 
@@ -162,7 +163,7 @@ export class StoragePoolDelete extends React.Component {
         };
 
         const defaultBody = (
-            <>
+            <Stack hasGutter>
                 <Form isHorizontal>
                     { storagePool.active && volumes.length > 0 &&
                     <FormGroup label={_("Delete content")} fieldId='storage-pool-delete-volumes' hasNoPaddingTop>
@@ -174,7 +175,7 @@ export class StoragePoolDelete extends React.Component {
                     { !storagePool.active && _("Deleting an inactive storage pool will only undefine the pool. Its content will not be deleted.")}
                 </Form>
                 { storagePool.active && showWarning() }
-            </>
+            </Stack>
         );
         const deleteButton = () => {
             let tooltipText;
