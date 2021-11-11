@@ -25,8 +25,6 @@ import { storageVolumeDelete } from '../../libvirtApi/storageVolume.js';
 import { storagePoolRefresh } from '../../libvirtApi/storagePool.js';
 import cockpit from 'cockpit';
 
-import './storageVolumeDelete.css';
-
 const _ = cockpit.gettext;
 
 export class StorageVolumeDelete extends React.Component {
