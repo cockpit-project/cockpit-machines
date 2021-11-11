@@ -18,7 +18,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Tooltip } from '@patternfly/react-core';
+import { Button, Flex, FlexItem, Tooltip } from '@patternfly/react-core';
 
 import cockpit from 'cockpit';
 import { rephraseUI, vmId } from "../../../helpers.js";
@@ -234,10 +234,10 @@ export class VmNetworkTab extends React.Component {
                 name: _("Type"), value: (network, networkId) => {
                     const inactiveNIC = nicLookupByMAC(vm.inactiveXML.interfaces, network.mac);
                     return (
-                        <div id={`${id}-network-${networkId}-type`}>
-                            {network.type}
+                        <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${id}-network-${networkId}-type`}>
+                            <FlexItem>{network.type}</FlexItem>
                             {inactiveNIC && inactiveNIC.type !== network.type && <WarningInactive iconId={`${id}-network-${networkId}-type-tooltip`} tooltipId="tip-network" />}
-                        </div>
+                        </Flex>
                     );
                 },
                 props: { width: 10 }
@@ -246,10 +246,10 @@ export class VmNetworkTab extends React.Component {
                 name: _("Model type"), value: (network, networkId) => {
                     const inactiveNIC = nicLookupByMAC(vm.inactiveXML.interfaces, network.mac);
                     return (
-                        <div id={`${id}-network-${networkId}-model`}>
-                            {network.model}
+                        <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${id}-network-${networkId}-model`}>
+                            <FlexItem>{network.model}</FlexItem>
                             {inactiveNIC && inactiveNIC.model !== network.model && <WarningInactive iconId={`${id}-network-${networkId}-model-tooltip`} tooltipId="tip-network" />}
-                        </div>
+                        </Flex>
                     );
                 },
                 props: { width: 10 }
@@ -295,11 +295,10 @@ export class VmNetworkTab extends React.Component {
                     if (mapSource[network.type] !== undefined) {
                         const inactiveNIC = nicLookupByMAC(vm.inactiveXML.interfaces, network.mac);
                         return (
-                            <div id={`${id}-network-${networkId}-source`}>
-                                {mapSource[network.type](network.source, networkId)}
+                            <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${id}-network-${networkId}-source`}>
+                                <FlexItem>{mapSource[network.type](network.source, networkId)}</FlexItem>
                                 {inactiveNIC && inactiveNIC.source[inactiveNIC.type] !== network.source[network.type] && <WarningInactive iconId={`${id}-network-${networkId}-source-tooltip`} tooltipId="tip-network" />}
-
-                            </div>
+                            </Flex>
                         );
                     } else {
                         return null;

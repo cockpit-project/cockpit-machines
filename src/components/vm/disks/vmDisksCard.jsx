@@ -20,7 +20,7 @@ import "form-layout.scss";
 import React from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
-import { Button } from '@patternfly/react-core';
+import { Button, Flex, FlexItem } from '@patternfly/react-core';
 
 import { convertToUnit, diskPropertyChanged, toReadableNumber, units, vmId } from "../../../helpers.js";
 import { AddDiskModalBody } from './diskAdd.jsx';
@@ -256,12 +256,12 @@ export class VmDisksCard extends React.Component {
 
             if (renderAccess) {
                 const access = (
-                    <span id={`${idPrefixRow}-access`}>
-                        { disk.readonly ? _("Read-only") : disk.shareable ? _("Writeable and shared") : _("Writeable") }
+                    <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${idPrefixRow}-access`}>
+                        <FlexItem>{ disk.readonly ? _("Read-only") : disk.shareable ? _("Writeable and shared") : _("Writeable") }</FlexItem>
                         { vm.state === "running" &&
                         (diskPropertyChanged(vm, disk.target, "readonly") || diskPropertyChanged(vm, disk.target, "shareable")) &&
                             <WarningInactive iconId={`${idPrefixRow}-access-tooltip`} tooltipId={`tip-${idPrefixRow}-access`} /> }
-                    </span>
+                    </Flex>
                 );
                 columns.push({ title: access });
             }
