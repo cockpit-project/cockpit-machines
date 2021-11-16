@@ -33,7 +33,7 @@ from testlib import no_retry_when_changed, nondestructive, test_main, wait, skip
 class TestMachinesConsoles(VirtualMachinesCase):
 
     @no_retry_when_changed
-    @skipImage('spice-server does not exist ont rhel-9', "rhel-9-0")
+    @skipImage('spice-server does not exist on RHEL 9', "rhel-9-0", "centos-9-stream")
     def testExternalConsole(self):
         b = self.browser
 
