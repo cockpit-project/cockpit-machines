@@ -182,7 +182,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             cancel("sdb")
 
         # Virtio bus type should not be shown for CDROM devices
-        m.execute("qemu-img create -f raw /var/lib/libvirt/novell.iso 1M")
+        m.execute("touch /var/lib/libvirt/novell.iso")
         m.execute("virsh attach-disk --domain subVmTest1 --source /var/lib/libvirt/novell.iso --target hda --type cdrom --mode readonly --persistent")
         # virsh attach-disk want send an event for offline VM changes
         b.reload()
@@ -440,9 +440,6 @@ class TestMachinesDisks(VirtualMachinesCase):
 
             b.wait_in_text("#vm-{0}-disks-{1}-bus".format(self.vm_name, self.expected_target), expected_bus_type)
             b.wait_in_text("#vm-{0}-disks-{1}-device".format(self.vm_name, self.expected_target), expected_device)
-            # Check 'Used' and 'Capacity' is not null
-            wait(lambda: b.text("#vm-{0}-disks-{1}-used".format(self.vm_name, self.expected_target)))
-            wait(lambda: b.text("#vm-{0}-disks-{1}-capacity".format(self.vm_name, self.expected_target)))
 
             # Check volume was added to pool's volume list
             if self.mode == "create-new":
@@ -800,8 +797,8 @@ class TestMachinesDisks(VirtualMachinesCase):
         self.createVm("subVmTest1")
 
         # Prepare file for Custom File disk type
-        m.execute("qemu-img create -f raw /var/lib/libvirt/novell.iso 1M")
-        m.execute("qemu-img create -f qcow2 /var/lib/libvirt/novell.qcow2 1M")
+        m.execute("touch /var/lib/libvirt/novell.iso")
+        m.execute("touch /var/lib/libvirt/novell.qcow2")
 
         self.login_and_go("/machines")
         b.wait_in_text("body", "Virtual machines")
