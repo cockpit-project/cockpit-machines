@@ -301,7 +301,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
             def fill(self):
                 b.set_input_text("#storage-pool-dialog-name", self.name)
 
-                if "rhel-9" in m.image:
+                if "rhel-9" in m.image or m.image in ["centos-9-stream"]:
                     b.wait_not_present("#storage-pool-dialog-type option[value='iscsi-direct']")
 
                 if self.pool_type:
@@ -494,7 +494,8 @@ class TestMachinesStoragePools(VirtualMachinesCase):
                 source={"host": "127.0.0.1", "source_path": target_iqn}
             ).execute()
 
-            if "debian" not in m.image and "ubuntu" not in m.image and "rhel-9" not in m.image and float(m.execute("virsh --version").strip()[:3]) >= 4.7:
+            if ("debian" not in m.image and "ubuntu" not in m.image and "rhel-9" not in m.image and "centos-9" not in m.image
+                    and float(m.execute("virsh --version").strip()[:3]) >= 4.7):
                 # iscsi-direct pool type is available since libvirt 4.7, but not in Debian/Ubuntu (https://bugs.debian.org/918728)
                 StoragePoolCreateDialog(
                     self,
