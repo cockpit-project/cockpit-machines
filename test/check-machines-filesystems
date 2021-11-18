@@ -58,7 +58,7 @@ class TestMachinesFilesystems(VirtualMachinesCase):
         # wait until page initialized
         b.wait_visible("#vm-subVmTest1-hostdevs")
 
-        if m.image in ["rhel-8-5", "centos-8-stream", "ubuntu-2004", "fedora-33"] or connection == "session":
+        if m.image in ["rhel-8-5", "ubuntu-2004", "fedora-33"] or connection == "session":
             b.wait_not_present("#vm-subVmTest1-filesystems-add")
             return
 
