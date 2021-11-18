@@ -212,6 +212,7 @@ class TestMachinesDisks(VirtualMachinesCase):
     def testDisks(self):
         b = self.browser
         m = self.machine
+        prefix = "#vm-subVmTest1-disks-adddisk"
 
         self.createVm("subVmTest1")
 
@@ -265,13 +266,13 @@ class TestMachinesDisks(VirtualMachinesCase):
         # delete the default pool
         m.execute("virsh pool-destroy images && virsh pool-undefine images")
         # Open "add disk" dialog
-        b.click("#vm-subVmTest1-disks-adddisk")
-        b.click("#vm-subVmTest1-disks-adddisk-useexisting")
+        b.click(f"{prefix}")
+        b.click(f"{prefix}-useexisting")
         # Check
         b.wait_not_present("#navbar-oops")
-        b.wait_visible("#vm-subVmTest1-disks-adddisk-existing-select-pool:disabled")
-        b.wait_in_text("#vm-subVmTest1-disks-adddisk-existing-select-pool:disabled", "No storage pools available")
-        b.wait_visible("#vm-subVmTest1-disks-adddisk-dialog-add:disabled")
+        b.wait_visible(f"{prefix}-existing-select-pool:disabled")
+        b.wait_in_text(f"{prefix}-existing-select-pool:disabled", "No storage pools available")
+        b.wait_visible(f"{prefix}-dialog-add:disabled")
 
     class VMAddDiskDialog(object):
         def __init__(
@@ -326,15 +327,16 @@ class TestMachinesDisks(VirtualMachinesCase):
         def execute(self):
             self.open()
             self.fill()
+            prefix = "#vm-subVmTest1-disks-adddisk"
 
             if self.pixel_test_tag:
                 ignore_selectors = [".pf-c-expandable-section__toggle-icon"]
                 if self.pixel_test_ignore:
                     ignore_selectors.append(self.pixel_test_ignore)
                 # focus away from any input field, to avoid the text cursor in screenshots
-                self.test_obj.browser.focus("#vm-subVmTest1-disks-adddisk-dialog-cancel")
-                self.test_obj.browser.wait_visible("#vm-subVmTest1-disks-adddisk-dialog-add[aria-disabled=false]")
-                self.test_obj.browser.assert_pixels("#vm-subVmTest1-disks-adddisk-dialog-modal-window", self.pixel_test_tag,
+                self.test_obj.browser.focus(f"{prefix}-dialog-cancel")
+                self.test_obj.browser.wait_visible(f"{prefix}-dialog-add[aria-disabled=false]")
+                self.test_obj.browser.assert_pixels(f"{prefix}-dialog-modal-window", self.pixel_test_tag,
                                                     ignore=ignore_selectors)
 
             self.add_disk()
@@ -342,10 +344,10 @@ class TestMachinesDisks(VirtualMachinesCase):
                 self.verify_disk_added()
             else:
                 if self.xfail_object:
-                    self.test_obj.browser.wait_in_text(f"#vm-subVmTest1-disks-adddisk-{self.xfail_object}-helper.pf-m-error", self.xfail_error_message)
+                    self.test_obj.browser.wait_in_text(f"{prefix}-{self.xfail_object}-helper.pf-m-error", self.xfail_error_message)
                 else:
                     self.test_obj.browser.wait_in_text(".pf-c-modal-box__footer .pf-c-alert__title", self.xfail_error_title)
-                    self.test_obj.browser.click(".pf-c-modal-box__footer button:contains(Cancel)")
+                    self.test_obj.browser.click(f"{prefix}-dialog-cancel")
 
         def open(self):
             b = self.test_obj.browser
@@ -658,6 +660,7 @@ class TestMachinesDisks(VirtualMachinesCase):
     def testAddDiskDirPool(self):
         b = self.browser
         m = self.machine
+        prefix = "#vm-subVmTest1-disks-adddisk"
 
         used_targets = ['vda']
         transient_targets = []
@@ -701,12 +704,12 @@ class TestMachinesDisks(VirtualMachinesCase):
             pool_name='myPoolOne',
             mode='use-existing',
         ).open()
-        b.select_from_dropdown("#vm-subVmTest1-disks-adddisk-existing-select-pool", "myPoolOne")
+        b.select_from_dropdown(f"{prefix}-existing-select-pool", "myPoolOne")
         # since both disks are already attached
-        b.wait_attr("#vm-subVmTest1-disks-adddisk-existing-select-volume", "disabled", "")
-        b.wait_in_text("#vm-subVmTest1-disks-adddisk-existing-select-volume", "The pool is empty")
-        b.click("#vm-subVmTest1-disks-adddisk-dialog-cancel")
-        b.wait_not_present("#vm-subVmTest1-test-disks-adddisk-dialog-modal-window")
+        b.wait_attr(f"{prefix}-existing-select-volume", "disabled", "")
+        b.wait_in_text(f"{prefix}-existing-select-volume", "The pool is empty")
+        b.click(f"{prefix}-dialog-cancel")
+        b.wait_not_present(f"{prefix}-dialog-modal-window")
 
         self.VMAddDiskDialog(
             self,
@@ -773,11 +776,11 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_in_text("#card-pf-storage-pools .active-resources:nth-of-type(2)", "0")
 
         self.goToVmPage('subVmTest1')
-        b.click("#vm-subVmTest1-disks-adddisk")  # radio button label in modal dialog
-        b.wait_visible("#vm-subVmTest1-disks-adddisk-dialog-add:disabled")
+        b.click(prefix)  # radio button label in modal dialog
+        b.wait_visible(f"{prefix}-dialog-add:disabled")
         b.click(f"{prefix}-useexisting")
-        b.wait_visible("#vm-subVmTest1-disks-adddisk-dialog-add:disabled")
-        b.click(".pf-c-modal-box__footer button:contains(Cancel)")
+        b.wait_visible(f"{prefix}-dialog-add:disabled")
+        b.click(f"{prefix}-dialog-cancel")
 
         # Make sure that trying to inspect the Disks tab will just show the fields that are available when a pool is inactive
         b.reload()
@@ -793,6 +796,7 @@ class TestMachinesDisks(VirtualMachinesCase):
     def testAddDiskCustomPath(self):
         b = self.browser
         m = self.machine
+        prefix = "#vm-subVmTest1-disks-adddisk"
 
         self.createVm("subVmTest1")
 
@@ -864,10 +868,10 @@ class TestMachinesDisks(VirtualMachinesCase):
             self,
             mode='custom-path'
         ).open()
-        b.click("#vm-subVmTest1-disks-adddisk-file .pf-c-select__toggle-button")
-        b.wait_visible("#vm-subVmTest1-disks-adddisk-file-autocomplete")
+        b.click(f"{prefix}-file .pf-c-select__toggle-button")
+        b.wait_visible(f"{prefix}-file-autocomplete")
         b.key_press(chr(40), use_ord=True)
-        b.focus("#vm-subVmTest1-disks-adddisk-file-autocomplete li:first-child")
+        b.focus(f"{prefix}-file-autocomplete li:first-child")
         for retry in range(0, 10):
             b.key_press(chr(40), use_ord=True)
             time.sleep(0.5)
@@ -876,14 +880,14 @@ class TestMachinesDisks(VirtualMachinesCase):
         # Ensure that adding disks with custom path is possible when no storage pools are present
         # https://bugzilla.redhat.com/show_bug.cgi?id=1985228
         m.execute("for pool in $(virsh pool-list --all --name); do virsh pool-destroy $pool || true; virsh pool-undefine $pool; done")
-        prefix = "#vm-subVmTest1-disks-adddisk"
         b.click(prefix)
-        b.wait_visible(".pf-c-modal-box__footer button:contains(Add)[aria-disabled=false]")
+        b.wait_visible(f"{prefix}-custompath:checked")
+        b.wait_visible(f"{prefix}-dialog-add[aria-disabled=false]")
         b.click(f"{prefix}-createnew")
-        b.wait_visible(".pf-c-modal-box__footer button:contains(Add)[aria-disabled=true]")
+        b.wait_visible(f"{prefix}-dialog-add[aria-disabled=true]")
         b.click(f"{prefix}-useexisting")
-        b.wait_visible(".pf-c-modal-box__footer button:contains(Add)[aria-disabled=true]")
-        b.click("#vm-subVmTest1-disks-adddisk-dialog-cancel")
+        b.wait_visible(f"{prefix}-dialog-add[aria-disabled=true]")
+        b.click(f"{prefix}-dialog-cancel")
         self.VMAddDiskDialog(
             self,
             expected_target='sda',
@@ -896,9 +900,9 @@ class TestMachinesDisks(VirtualMachinesCase):
         m.execute("virt-xml subVmTest1 --edit --disk target=vda,bus=ide,path=/var/lib/libvirt/images/subVmTest1-2.img,clearxml=yes")
         b.click(prefix)
         b.click(f"{prefix}-custompath")
-        b.select_from_dropdown("#vm-subVmTest1-disks-adddisk-select-device", "disk")
+        b.select_from_dropdown(f"{prefix}-select-device", "disk")
         b.click("div.pf-c-modal-box button:contains(Show additional options)")
-        b.wait_visible("#vm-subVmTest1-disks-adddisk-bus-type[data-value=ide]")
+        b.wait_visible(f"{prefix}-bus-type[data-value=ide]")
 
     @no_retry_when_changed
     def testAddDiskAdditionalOptions(self):
