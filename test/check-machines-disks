@@ -763,19 +763,15 @@ class TestMachinesDisks(VirtualMachinesCase):
                 expected_target=get_next_free_target(used_targets)[-1],
             ).execute()
 
-        self.goToMainPage()
-
         # Undefine all Storage pools and  confirm that the Add Disk dialog is disabled
         active_pools = filter(lambda pool: pool != '', m.execute("virsh pool-list --name").split('\n'))
         for pool in active_pools:
             m.execute("virsh pool-destroy {0}".format(pool))
-        b.wait_in_text("#card-pf-storage-pools .active-resources:nth-of-type(1)", "0")
         inactive_pools = filter(lambda pool: pool != '', m.execute("virsh pool-list --inactive --name").split('\n'))
         for pool in inactive_pools:
             m.execute("virsh pool-undefine {0}".format(pool))
-        b.wait_in_text("#card-pf-storage-pools .active-resources:nth-of-type(2)", "0")
+        b.wait_visible("#vm-details[data-pools-count=0]")
 
-        self.goToVmPage('subVmTest1')
         b.click(prefix)  # radio button label in modal dialog
         b.wait_visible(f"{prefix}-dialog-add:disabled")
         b.click(f"{prefix}-useexisting")
@@ -880,6 +876,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         # Ensure that adding disks with custom path is possible when no storage pools are present
         # https://bugzilla.redhat.com/show_bug.cgi?id=1985228
         m.execute("for pool in $(virsh pool-list --all --name); do virsh pool-destroy $pool || true; virsh pool-undefine $pool; done")
+        b.wait_visible("#vm-details[data-pools-count=0]")
         b.click(prefix)
         b.wait_visible(f"{prefix}-custompath:checked")
         b.wait_visible(f"{prefix}-dialog-add[aria-disabled=false]")

@@ -256,15 +256,18 @@ export const VmDetailsPage = ({
     });
 
     return (
-        <Page id="vm-details" className="vm-details" breadcrumb={
-            <Breadcrumb className='machines-listing-breadcrumb'>
-                <BreadcrumbItem to='#'>
-                    {_("Virtual machines")}
-                </BreadcrumbItem>
-                <BreadcrumbItem isActive>
-                    {vm.name}
-                </BreadcrumbItem>
-            </Breadcrumb>}>
+        <Page id="vm-details"
+              className="vm-details"
+              data-pools-count={storagePools.length}
+              breadcrumb={
+                  <Breadcrumb className='machines-listing-breadcrumb'>
+                      <BreadcrumbItem to='#'>
+                          {_("Virtual machines")}
+                      </BreadcrumbItem>
+                      <BreadcrumbItem isActive>
+                          {vm.name}
+                      </BreadcrumbItem>
+                  </Breadcrumb>}>
             {vmActionsPageSection}
             <PageSection>
                 <Gallery className='ct-vm-overview' hasGutter>
