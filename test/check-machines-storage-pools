@@ -33,14 +33,14 @@ from testlib import nondestructive, test_main, wait  # noqa
 class TestMachinesStoragePools(VirtualMachinesCase):
 
     def gotoVolumesTab(self, poolName, connectionName="system"):
-        selector = f"#pool-{poolName}-{connectionName}-storage-volumes"
-        self.browser.click(selector)
-        self.browser.wait_attr(selector, "class", "pf-c-nav__link pf-m-current")
+        selector = f"tr[data-row-id=pool-{poolName}-{connectionName}] + tr li:contains('Storage volumes')"
+        self.browser.click(selector + " > button")
+        self.browser.wait_attr(selector, "class", "pf-c-tabs__item pf-m-current")
 
     def gotoOverviewTab(self, poolName, connectionName="system"):
-        selector = f"#pool-{poolName}-{connectionName}-overview"
-        self.browser.click(selector)
-        self.browser.wait_attr(selector, "class", "pf-c-nav__link pf-m-current")
+        selector = f"tr[data-row-id=pool-{poolName}-{connectionName}] + tr li:contains('Overview')"
+        self.browser.click(selector + " > button")
+        self.browser.wait_attr(selector, "class", "pf-c-tabs__item pf-m-current")
 
     def testStoragePools(self):
         b = self.browser
@@ -103,7 +103,6 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         b.wait_in_text(f"#pool-myPoolOne-{connectionName}-type", "dir")
 
         # Check storage volumes of a pool
-        b.wait_visible(f"#pool-myPoolOne-{connectionName}-storage-volumes")
         self.gotoVolumesTab("myPoolOne")
         b.wait_in_text(f"tr[data-row-id=pool-myPoolOne-{connectionName}] + tr .pf-c-empty-state",
                        "No storage volumes defined for this storage pool")
@@ -113,7 +112,6 @@ class TestMachinesStoragePools(VirtualMachinesCase):
 
         # Expand row for second storage pool and check list of storage volumes
         self.togglePoolRow("myPoolTwo", connectionName)
-        b.wait_visible(f"#pool-myPoolTwo-{connectionName}-storage-volumes")
         self.gotoVolumesTab("myPoolTwo")
         b.wait_visible(f"#pool-myPoolTwo-{connectionName}-volume-VolumeOne-name")
         b.wait_in_text(f"#pool-myPoolTwo-{connectionName}-volume-VolumeOne-name", "VolumeOne")
@@ -231,7 +229,6 @@ class TestMachinesStoragePools(VirtualMachinesCase):
 
         # Expand row for myPoolTwo and check list of storage volumes
         self.togglePoolRow("myPoolTwo", connectionName)
-        b.wait_visible(f"#pool-myPoolTwo-{connectionName}-storage-volumes")
         self.gotoVolumesTab("myPoolTwo")
 
         b.wait_visible(f"#pool-myPoolTwo-{connectionName}-volume-VolumeOne-usedby")

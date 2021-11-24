@@ -92,8 +92,8 @@ export const getStoragePoolRow = ({ storagePool, vms, onAddErrorNotification }) 
             { title: rephraseUI('connections', storagePool.connectionName) },
             { title: state },
         ],
-        props: { key: idPrefix, 'data-row-id': idPrefix },
-        expandedContent: expandedContent,
+        props: { key: storagePool.uuid, 'data-row-id': idPrefix },
+        expandedContent: <ListingPanel tabRenderers={tabRenderers} />
     };
 };
 

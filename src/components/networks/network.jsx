@@ -92,7 +92,7 @@ export const getNetworkRow = ({ network, onAddErrorNotification }) => {
 
     return {
         columns: cols,
-        props: { key: idPrefix, 'data-row-id': idPrefix },
+        props: { key: network.uuid, 'data-row-id': idPrefix },
         expandedContent: expandedContent,
     };
 };
