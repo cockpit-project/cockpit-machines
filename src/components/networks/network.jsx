@@ -16,10 +16,9 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
-import { Button } from '@patternfly/react-core';
+import React, { useState } from 'react';
+import { Button, DropdownItem, Dropdown, KebabToggle, Tooltip } from '@patternfly/react-core';
 
-import { ListingPanel } from 'cockpit-components-listing-panel.jsx';
 import {
     rephraseUI,
     networkId
@@ -27,7 +26,7 @@ import {
 import StateIcon from '../common/stateIcon.jsx';
 import { updateOrAddNetwork } from '../../actions/store-actions.js';
 import { NetworkOverviewTab } from './networkOverviewTab.jsx';
-import { DeleteResourceModal, DeleteResourceButton } from '../common/deleteResource.jsx';
+import { DeleteResourceModal } from '../common/deleteResource.jsx';
 import {
     networkActivate,
     networkDeactivate,
@@ -68,48 +67,27 @@ export const getNetworkRow = ({ network, onAddErrorNotification }) => {
         { title: rephraseUI('connections', network.connectionName) },
         { title: forwarding },
         { title: state },
+        { title: <NetworkActions network={network} /> }
     ];
 
-    const overviewTabName = (
-        <div id={`${idPrefix}-overview`}>
-            {_("Overview")}
-        </div>
-    );
-
-    const tabRenderers = [
-        {
-            name: overviewTabName,
-            renderer: NetworkOverviewTab,
-            data: { network }
-        },
-    ];
-
-    const expandedContent = (
-        <ListingPanel
-            tabRenderers={tabRenderers}
-            listingActions={<NetworkActions network={network} />} />
-    );
+    const expandedContent = <NetworkOverviewTab network={network} />;
 
     return {
         columns: cols,
         props: { key: network.uuid, 'data-row-id': idPrefix },
         expandedContent: expandedContent,
+        hasPadding: true,
     };
 };
 
-class NetworkActions extends React.Component {
-    constructor() {
-        super();
-        this.state = { deleteDialogProps: undefined, operationInProgress: false };
-        this.onActivate = this.onActivate.bind(this);
-        this.onDeactivate = this.onDeactivate.bind(this);
-    }
+const NetworkActions = ({ network }) => {
+    const [isActionOpen, setIsActionOpen] = useState(false);
+    const [deleteDialogProps, setDeleteDialogProps] = useState();
+    const [operationInProgress, setOperationInProgress] = useState(false);
 
-    onActivate() {
-        const network = this.props.network;
-
+    const onActivate = () => {
         networkActivate({ connectionName: network.connectionName, objPath: network.id })
-                .finally(() => this.setState({ operationInProgress: false }))
+                .finally(() => setOperationInProgress(false))
                 .catch(exc => {
                     store.dispatch(
                         updateOrAddNetwork({
@@ -122,13 +100,11 @@ class NetworkActions extends React.Component {
                         }, true)
                     );
                 });
-    }
+    };
 
-    onDeactivate() {
-        const network = this.props.network;
-
-        networkDeactivate({ connectionName: this.props.network.connectionName, objPath: this.props.network.id })
-                .finally(() => this.setState({ operationInProgress: false }))
+    const onDeactivate = () => {
+        networkDeactivate({ connectionName: network.connectionName, objPath: network.id })
+                .finally(() => setOperationInProgress(false))
                 .catch(exc => {
                     store.dispatch(
                         updateOrAddNetwork({
@@ -141,43 +117,60 @@ class NetworkActions extends React.Component {
                         }, true)
                     );
                 });
-    }
+    };
 
-    render() {
-        const network = this.props.network;
-        const id = networkId(network.name, network.connectionName);
-        const deleteHandler = (network) => {
-            if (network.active) {
-                return networkDeactivate({ connectionName: network.connectionName, objPath: network.id })
-                        .then(() => networkUndefine({ connectionName: network.connectionName, objPath: network.id }));
-            } else {
-                return networkUndefine({ connectionName: network.connectionName, objPath: network.id });
+    const id = networkId(network.name, network.connectionName);
+    const deleteHandler = (network) => {
+        if (network.active) {
+            return networkDeactivate({ connectionName: network.connectionName, objPath: network.id })
+                    .then(() => networkUndefine({ connectionName: network.connectionName, objPath: network.id }));
+        } else {
+            return networkUndefine({ connectionName: network.connectionName, objPath: network.id });
+        }
+    };
+    const dialogProps = {
+        objectType: "Network",
+        objectName: network.name,
+        onClose: () => setDeleteDialogProps(undefined),
+        deleteHandler: () => deleteHandler(network),
+    };
+
+    const dropdownItemContent = (
+        !network.persistent
+            ? <Tooltip content={_("Non-persistent network cannot be deleted. It ceases to exists when it's deactivated.")}>
+                <span>{_("Delete")}</span>
+            </Tooltip>
+            : _("Delete")
+    );
+    const dropdownItems = [
+        <DropdownItem key={`delete-${id}`}
+                      id={`delete-${id}`}
+                      className="pf-m-danger"
+                      isAriaDisabled={!network.persistent}
+                      onClick={() => setDeleteDialogProps(dialogProps)}>
+            {dropdownItemContent}
+        </DropdownItem>
+    ];
+
+    return (
+        <div className="btn-group">
+            { network.active &&
+            <Button id={`deactivate-${id}`} variant="secondary" isLoading={operationInProgress} isDisabled={operationInProgress} onClick={onDeactivate}>
+                {_("Deactivate")}
+            </Button> }
+            { !network.active &&
+            <Button id={`activate-${id}`} variant="secondary" isLoading={operationInProgress} isDisabled={operationInProgress} onClick={onActivate}>
+                {_("Activate")}
+            </Button>
             }
-        };
-        const deleteDialogProps = {
-            objectType: "Network",
-            objectName: network.name,
-            onClose: () => this.setState({ deleteDialogProps: undefined }),
-            deleteHandler: () => deleteHandler(network),
-        };
-
-        return (
-            <>
-                { network.active &&
-                <Button id={`deactivate-${id}`} variant="secondary" isLoading={this.state.operationInProgress} isDisabled={this.state.operationInProgress} onClick={this.onDeactivate}>
-                    {_("Deactivate")}
-                </Button> }
-                { !network.active &&
-                <Button id={`activate-${id}`} variant="secondary" isLoading={this.state.operationInProgress} isDisabled={this.state.operationInProgress} onClick={this.onActivate}>
-                    {_("Activate")}
-                </Button>
-                }
-                {this.state.deleteDialogProps && <DeleteResourceModal {...this.state.deleteDialogProps} />}
-                <DeleteResourceButton objectId={id}
-                                      showDialog={() => this.setState({ deleteDialogProps })}
-                                      overlayText={_("Non-persistent network cannot be deleted. It ceases to exists when it's deactivated.")}
-                                      disabled={!network.persistent} />
-            </>
-        );
-    }
-}
+            {deleteDialogProps && <DeleteResourceModal {...deleteDialogProps} />}
+            <Dropdown onSelect={() => setIsActionOpen(!isActionOpen)}
+                      id={`${id}-action-kebab`}
+                      toggle={<KebabToggle onToggle={isOpen => setIsActionOpen(isOpen)} />}
+                      isPlain
+                      isOpen={isActionOpen}
+                      position='right'
+                      dropdownItems={dropdownItems} />
+        </div>
+    );
+};

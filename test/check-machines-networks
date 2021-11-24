@@ -119,7 +119,8 @@ class TestMachinesNetworks(VirtualMachinesCase):
         self.toggleNetworkRow("test_network4", connectionName)
         b.wait_in_text(f"#network-test_network4-{connectionName}-persistent", "no")
         b.wait_not_present(f"#network-test_network4-{connectionName}-autostart")  # Transient network shouldn't have autostart option
-        b.wait_visible(f'#delete-network-test_network4-{connectionName}:disabled')  # Transient network cannot be deleted
+        b.click(f"#network-test_network4-{connectionName}-action-kebab button")
+        b.wait_visible(f'#delete-network-test_network4-{connectionName} a.pf-m-aria-disabled')  # Transient network cannot be deleted
         b.click(f'#deactivate-network-test_network4-{connectionName}')  # Deactivate transient network
         self.waitNetworkRow("test_network4", connectionName, False)  # Check it's not present after deactivation
 
@@ -774,6 +775,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
         wait(lambda: "no" == m.execute("virsh net-info test_network2 | grep 'Active:' | awk '{print $2}'").strip(), tries=5)
 
         # Delete an inactive network
+        b.click(f"#network-test_network2-{connectionName}-action-kebab button")
         b.click(f'#delete-network-test_network2-{connectionName}')
         b.click(".pf-c-modal-box__footer button:contains(Delete)")
         self.waitNetworkRow("test_network2", connectionName, False)
@@ -782,6 +784,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
         m.execute(f"echo \"{TEST_NETWORK2_XML}\" > /tmp/xml && virsh net-define /tmp/xml && virsh net-start test_network2")
         b.wait_in_text(f"#network-test_network2-{connectionName}-state", "active")
         self.toggleNetworkRow("test_network2", connectionName)
+        b.click(f"#network-test_network2-{connectionName}-action-kebab button")
         b.click(f'#delete-network-test_network2-{connectionName}')
         b.click(".pf-c-modal-box__footer button:contains(Delete)")
         self.waitNetworkRow("test_network2", connectionName, False)
