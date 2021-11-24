@@ -451,8 +451,7 @@ class TestMachinesDisks(VirtualMachinesCase):
                 self.test_obj.waitPoolRow(self.pool_name)
                 self.test_obj.togglePoolRow(self.pool_name)
 
-                b.wait_visible(f"#pool-{self.pool_name}-system-storage-volumes")
-                b.click(f"#pool-{self.pool_name}-system-storage-volumes")  # open the "Storage volumes" subtab
+                b.click(f"tr[data-row-id=pool-{self.pool_name}-system] + tr li:contains('Storage volumes') button")  # open the "Storage volumes" subtab
                 b.wait_visible(f"#pool-{self.pool_name}-system-volume-{self.volume_name}-name")
 
                 b.click(".machines-listing-breadcrumb li a:contains(Virtual machines)")
