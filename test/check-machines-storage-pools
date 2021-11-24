@@ -97,6 +97,11 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         self.waitPoolRow("myPoolOne", connectionName)
         self.waitPoolRow("myPoolTwo", connectionName)
 
+        b.assert_pixels(
+            "#app", "storage-pools-page",
+            ignore=map(lambda pool: f"tr[data-row-id=pool-{pool}-system] .pf-c-progress", ["images", "myPoolOne", "myPoolTwo"])
+        )
+
         # Check basic pool properties
         self.togglePoolRow("myPoolOne", connectionName)
         b.wait_in_text(f"#pool-myPoolOne-{connectionName}-target-path", p1)

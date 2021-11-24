@@ -759,6 +759,8 @@ class TestMachinesNetworks(VirtualMachinesCase):
         # Expand row for first network
         self.toggleNetworkRow("test_network2", connectionName)
 
+        b.assert_pixels("#app", "networks-page")
+
         # activate network
         b.wait_visible(f"#activate-network-test_network2-{connectionName}")
         b.click(f"#activate-network-test_network2-{connectionName}")
