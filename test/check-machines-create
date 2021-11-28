@@ -472,7 +472,10 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                       start_vm=True))
 
         self.browser.switch_to_top()
-        self.browser.wait_not_visible("#navbar-oops")
+        if self.system_before(258):
+            self.browser.wait_not_visible("#navbar-oops")
+        else:
+            self.browser.wait_not_present("#navbar-oops")
 
         # define again the default storage pool for system connection
         # we need so that the UI will know the remaining available space when we use that pool's path
