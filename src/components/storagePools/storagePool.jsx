@@ -17,7 +17,12 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import { Button, Progress, Tooltip } from '@patternfly/react-core';
+import {
+    Button,
+    Dropdown,
+    KebabToggle, Progress,
+    Tooltip
+} from '@patternfly/react-core';
 
 import { ListingPanel } from 'cockpit-components-listing-panel.jsx';
 import {
@@ -30,7 +35,7 @@ import StateIcon from '../common/stateIcon.jsx';
 import { updateOrAddStoragePool } from '../../actions/store-actions.js';
 import { StoragePoolOverviewTab } from './storagePoolOverviewTab.jsx';
 import { StoragePoolVolumesTab } from './storagePoolVolumesTab.jsx';
-import { StoragePoolDelete } from './storagePoolDelete.jsx';
+import { StoragePoolDelete, StoragePoolDeleteAction } from './storagePoolDelete.jsx';
 import { storagePoolActivate, storagePoolDeactivate } from '../../libvirtApi/storagePool.js';
 import store from '../../store.js';
 
@@ -79,11 +84,6 @@ export const getStoragePoolRow = ({ storagePool, vms, onAddErrorNotification }) 
             id: `${idPrefix}-storage-volumes`
         },
     ];
-    const expandedContent = (
-        <ListingPanel
-            tabRenderers={tabRenderers}
-            listingActions={<StoragePoolActions storagePool={storagePool} vms={vms} />} />
-    );
 
     return {
         columns: [
@@ -91,6 +91,7 @@ export const getStoragePoolRow = ({ storagePool, vms, onAddErrorNotification }) 
             { title: size },
             { title: rephraseUI('connections', storagePool.connectionName) },
             { title: state },
+            { title: <StoragePoolActions storagePool={storagePool} vms={vms} /> },
         ],
         props: { key: storagePool.uuid, 'data-row-id': idPrefix },
         expandedContent: <ListingPanel tabRenderers={tabRenderers} />
@@ -100,7 +101,11 @@ export const getStoragePoolRow = ({ storagePool, vms, onAddErrorNotification }) 
 class StoragePoolActions extends React.Component {
     constructor() {
         super();
-        this.state = { operationInProgress: false };
+        this.state = {
+            isActionOpen: false,
+            operationInProgress: false,
+            showDeleteModal: false,
+        };
         this.onActivate = this.onActivate.bind(this);
         this.onDeactivate = this.onDeactivate.bind(this);
     }
@@ -183,12 +188,29 @@ class StoragePoolActions extends React.Component {
             );
         }
 
+        const dropdownItems = [
+            <StoragePoolDeleteAction open={() => this.setState({ showDeleteModal: true })}
+                                     key="storage-pool-delete-action"
+                                     storagePool={storagePool}
+                                     vms={vms} />
+        ];
+
         return (
-            <>
+            <div className="btn-group">
                 { storagePool.active && deactivateButton }
                 { !storagePool.active && activateButton }
-                <StoragePoolDelete storagePool={storagePool} vms={vms} />
-            </>
+                <Dropdown onSelect={() => this.setState({ isActionOpen: !this.state.isActionOpen })}
+                          id={`${id}-action-kebab`}
+                          toggle={<KebabToggle onToggle={isActionOpen => this.setState({ isActionOpen })} />}
+                          isPlain
+                          isOpen={this.state.isActionOpen}
+                          position='right'
+                          dropdownItems={dropdownItems} />
+                {this.state.showDeleteModal &&
+                <StoragePoolDelete close={() => this.setState({ showDeleteModal: false })}
+                                   storagePool={storagePool}
+                                   vms={vms} />}
+            </div>
         );
     }
 }
