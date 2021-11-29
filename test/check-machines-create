@@ -1554,11 +1554,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         # HACK: Capabilities are not updated dynamically
         # https://bugzilla.redhat.com/show_bug.cgi?id=1807198
         def hack_broken_caps():
-            if m.image in [
-                "fedora-33", "fedora-34", "fedora-testing",
-                "centos-8-stream", "centos-9-stream", "rhel-8-4", "rhel-8-5", "rhel-8-6", "rhel-9-0",
-                "ubuntu-2004", "ubuntu-stable", "debian-stable", "debian-testing"
-            ]:
+            if m.image in ["rhel-8-5", "ubuntu-2004"]:
                 m.execute("systemctl restart libvirtd")
                 # We don't get events for shut off VMs so reload the page
                 b.reload()
