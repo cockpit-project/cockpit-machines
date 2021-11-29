@@ -168,7 +168,8 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         b.wait_visible(f'#myPoolOne-{connectionName}-create-volume-button:enabled')
 
         # See deletion of Pool is disabled because this pool is referenced by VM's disk
-        b.wait_visible(f"#delete-pool-myPoolTwo-{connectionName}:disabled")
+        b.click(f"#pool-myPoolTwo-{connectionName}-action-kebab > button")
+        b.wait_visible(f"#delete-pool-myPoolTwo-{connectionName} > a[aria-disabled=true]")
 
         # Detach disk so pool can be deleted
         m.execute("virsh detach-disk --domain subVmTest1 --target vdc --config")
@@ -183,7 +184,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         b.click(f"#deactivate-pool-myPoolTwo-{connectionName}")
 
         # Delete an inactive Pool. It's volumes won't be deleted
-        b.wait_visible(f"#delete-pool-myPoolTwo-{connectionName}")
+        b.click(f"#pool-myPoolTwo-{connectionName}-action-kebab > button")
         b.click(f"#delete-pool-myPoolTwo-{connectionName}")
         b.wait_in_text("div.pf-c-modal-box div.pf-c-modal-box__body", "Its content will not be deleted.")
         b.click('.pf-c-modal-box__footer button:contains("Delete")')
@@ -200,7 +201,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         b.click(f"#activate-pool-myPoolTwo-{connectionName}")
 
         # Delete and active Pool and also its volumes
-        b.wait_visible(f"#delete-pool-myPoolTwo-{connectionName}")
+        b.click(f"#pool-myPoolTwo-{connectionName}-action-kebab > button")
         b.click(f"#delete-pool-myPoolTwo-{connectionName}")
         b.wait_visible("div.pf-c-modal-box")
         b.set_checked("input#storage-pool-delete-volumes", True)
@@ -237,10 +238,11 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         m.execute("virsh detach-disk --config --target vdd subVmTest1")
         b.wait_in_text(f"#pool-myPoolTwo-{connectionName}-volume-VolumeOne-usedby", "")
 
-        # Transient network
+        # Transient pool
         self.togglePoolRow("myPoolThree", connectionName)
         b.wait_not_present(f"#pool-myPoolThree-{connectionName}-autostart")  # Transient pool shouldn't have autostart option
-        b.wait_visible(f'#delete-pool-myPoolThree-{connectionName}:disabled')  # Transient pool cannot be deleted
+        b.click(f"#pool-myPoolThree-{connectionName}-action-kebab > button")
+        b.wait_visible(f'#delete-pool-myPoolThree-{connectionName} > a[aria-disabled=true]')  # Transient pool cannot be deleted
         b.click(f'#deactivate-pool-myPoolThree-{connectionName}')  # Deactivate transient pool
         # Check it's not present after deactivation
         self.waitPoolRow("myPoolThree", connectionName, False)

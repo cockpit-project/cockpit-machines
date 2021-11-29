@@ -20,6 +20,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
     Button, Checkbox,
+    DropdownItem,
     Form, FormGroup,
     HelperText, HelperTextItem,
     Modal,
@@ -78,17 +79,30 @@ function canDelete(pool, vms) {
     return true;
 }
 
+function getPoolDeleteHelperText(vms, storagePool) {
+    const usage = getStorageVolumesUsage(vms, storagePool);
+    let vmsUsage = [];
+    for (const property in usage)
+        vmsUsage = vmsUsage.concat(usage[property]);
+
+    vmsUsage = [...new Set(vmsUsage)]; // remove duplicates
+    return (
+        <>
+            {_("Pool's volumes are used by VMs ")}
+            <b> {vmsUsage.join(', ') + "."} </b>
+            {_("Detach the disks using this pool from any VMs before attempting deletion.")}
+        </>
+    );
+}
+
 export class StoragePoolDelete extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            showModal: false,
             dialogError: undefined,
             deleteVolumes: false,
         };
-        this.open = this.open.bind(this);
-        this.close = this.close.bind(this);
         this.delete = this.delete.bind(this);
         this.onValueChanged = this.onValueChanged.bind(this);
         this.dialogErrorSet = this.dialogErrorSet.bind(this);
@@ -102,14 +116,6 @@ export class StoragePoolDelete extends React.Component {
 
     dialogErrorSet(text, detail) {
         this.setState({ dialogError: text, dialogErrorDetail: detail });
-    }
-
-    close() {
-        this.setState({ showModal: false, dialogError: undefined });
-    }
-
-    open() {
-        this.setState({ showModal: true });
     }
 
     delete() {
@@ -127,35 +133,25 @@ export class StoragePoolDelete extends React.Component {
         if (this.state.deleteVolumes && storagePool.volumes.length > 0) {
             Promise.all(volumes.map(volume => storageVolumeDelete({ connectionName: storagePool.connectionName, poolName: storagePool.name, volName: volume.name })))
                     .then(() => storagePoolDeactivateAndUndefine(storagePool))
-                    .then(() => this.close,
+                    .then(() => this.props.close,
                           exc => this.dialogErrorSet(_("The storage pool could not be deleted"), exc.message));
         } else {
             storagePoolDeactivateAndUndefine(storagePool)
-                    .then(() => this.close,
+                    .then(() => this.props.close,
                           exc => this.dialogErrorSet(_("The storage pool could not be deleted"), exc.message));
         }
     }
 
     render() {
         const { storagePool, vms } = this.props;
-        const id = storagePoolId(storagePool.name, storagePool.connectionName);
         const volumes = storagePool.volumes || [];
 
-        const usage = getStorageVolumesUsage(vms, storagePool);
-        let vmsUsage = [];
-        for (const property in usage)
-            vmsUsage = vmsUsage.concat(usage[property]);
-
-        vmsUsage = [...new Set(vmsUsage)]; // remove duplicates
-        vmsUsage = vmsUsage.join(', ');
         const showWarning = () => {
             if (canDeleteOnlyWithoutVolumes(storagePool, vms) && this.state.deleteVolumes) {
                 return (
                     <HelperText>
                         <HelperTextItem icon={<InfoIcon />}>
-                            {_("Pool's volumes are used by VMs ")}
-                            <b> {vmsUsage + "."} </b>
-                            {_("Detach the disks using this pool from any VMs before attempting deletion.")}
+                            {getPoolDeleteHelperText(vms, storagePool)}
                         </HelperTextItem>
                     </HelperText>
                 );
@@ -177,68 +173,63 @@ export class StoragePoolDelete extends React.Component {
                 { storagePool.active && showWarning() }
             </Stack>
         );
-        const deleteButton = () => {
-            let tooltipText;
-            if (!canDelete(storagePool, vms)) {
-                tooltipText = (<>
-                    {_("Pool's volumes are used by VMs ")}
-                    <b> {vmsUsage + ". "} </b>
-                    {_("Detach the disks using this pool from any VMs before attempting deletion.")}
-                </>);
-            } else if (!storagePool.persistent) {
-                tooltipText = _("Non-persistent storage pool cannot be deleted. It ceases to exists when it's deactivated.");
-            }
-
-            if (!canDelete(storagePool, vms) || !storagePool.persistent) {
-                return (
-                    <Tooltip id='delete-tooltip'
-                             content={tooltipText}>
-                        <span>
-                            <Button id={`delete-${id}`}
-                                variant='danger'
-                                isDisabled>
-                                {_("Delete")}
-                            </Button>
-                        </span>
-                    </Tooltip>
-                );
-            } else {
-                return (
-                    <Button id={`delete-${id}`}
-                        variant='danger'
-                        onClick={this.open}>
-                        {_("Delete")}
-                    </Button>
-                );
-            }
-        };
 
         return (
-            <>
-                {deleteButton()}
-
-                <Modal position="top" variant="medium" isOpen={this.state.showModal} onClose={this.close}
-                       title={cockpit.format(_("Delete storage pool $0"), storagePool.name)}
-                       footer={
-                           <>
-                               {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
-                               <Button variant='danger'
-                                   onClick={this.delete}
-                                   isDisabled={canDeleteOnlyWithoutVolumes(storagePool, vms) && this.state.deleteVolumes}>
-                                   {_("Delete")}
-                               </Button>
-                               <Button variant='link' className='btn-cancel' onClick={this.close}>
-                                   {_("Cancel")}
-                               </Button>
-                           </>
-                       }>
-                    {defaultBody}
-                </Modal>
-            </>
+            <Modal position="top" variant="medium" isOpen onClose={this.props.close}
+                   title={cockpit.format(_("Delete storage pool $0"), storagePool.name)}
+                   footer={
+                       <>
+                           {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
+                           <Button variant='danger'
+                               onClick={this.delete}
+                               isDisabled={canDeleteOnlyWithoutVolumes(storagePool, vms) && this.state.deleteVolumes}>
+                               {_("Delete")}
+                           </Button>
+                           <Button variant='link' className='btn-cancel' onClick={this.props.close}>
+                               {_("Cancel")}
+                           </Button>
+                       </>
+                   }>
+                {defaultBody}
+            </Modal>
         );
     }
 }
 StoragePoolDelete.propTypes = {
     storagePool: PropTypes.object.isRequired,
     vms: PropTypes.array.isRequired,
+    close: PropTypes.func.isRequired,
+};
+
+export const StoragePoolDeleteAction = ({ storagePool, open, vms }) => {
+    const id = storagePoolId(storagePool.name, storagePool.connectionName);
+    let tooltipText;
+    if (!canDelete(storagePool, vms)) {
+        tooltipText = getPoolDeleteHelperText(vms, storagePool);
+    } else if (!storagePool.persistent) {
+        tooltipText = _("Non-persistent storage pool cannot be deleted. It ceases to exists when it's deactivated.");
+    }
+
+    if (!canDelete(storagePool, vms) || !storagePool.persistent) {
+        return (
+            <Tooltip id='delete-tooltip'
+                     content={tooltipText}>
+                <span>
+                    <DropdownItem id={`delete-${id}`}
+                                  className='pf-m-danger'
+                                  isAriaDisabled>
+                        {_("Delete")}
+                    </DropdownItem>
+                </span>
+            </Tooltip>
+        );
+    } else {
+        return (
+            <DropdownItem id={`delete-${id}`}
+                          className='pf-m-danger'
+                          onClick={open}>
+                {_("Delete")}
+            </DropdownItem>
+        );
+    }
 };

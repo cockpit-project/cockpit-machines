@@ -70,10 +70,11 @@ export class StoragePoolList extends React.Component {
                             <ListingTable aria-label={_("Storage pools")}
                                 variant='compact'
                                 columns={[
-                                    { title: _("Name"), header: true, props: { width: 20 } },
+                                    { title: _("Name"), header: true, props: { width: 15 } },
                                     { title: _("Size"), props: { width: 40 } },
-                                    { title: _("Connection"), props: { width: 20 } },
-                                    { title: _("State"), props: { width: 20 } },
+                                    { title: _("Connection"), props: { width: 15 } },
+                                    { title: _("State"), props: { width: 15 } },
+                                    { title: _(""), props: { width: 15 } },
                                 ]}
                                 emptyCaption={_("No storage pool is defined on this host")}
                                 rows={storagePools
