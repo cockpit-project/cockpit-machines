@@ -35,7 +35,7 @@ class TestMachinesNICs(VirtualMachinesCase):
     def deleteIface(self, iface):
         b = self.browser
 
-        b.click("#delete-vm-subVmTest1-iface-{0}".format(iface))
+        b.click(f"#delete-vm-subVmTest1-iface-{iface}")
         b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Delete network interface")
         b.click(".pf-c-modal-box__footer button:contains(Delete)")
 
@@ -132,7 +132,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         b.wait_in_text("body", "Virtual machines")
         self.waitVmRow("subVmTest1")
         b.wait_in_text("#vm-subVmTest1-state", "Running")
-        wait(lambda: "login as 'cirros' user." in self.machine.execute("cat {0}".format(args["logfile"])), delay=3)
+        wait(lambda: "login as 'cirros' user." in self.machine.execute(f"cat {args['logfile']}"), delay=3)
         self.goToVmPage("subVmTest1")
 
         self.deleteIface(1)
@@ -151,8 +151,8 @@ class TestMachinesNICs(VirtualMachinesCase):
         b = self.browser
         m = self.machine
 
-        m.execute("echo \"{0}\" > /tmp/xml && virsh net-define /tmp/xml && virsh net-start test_network".format(TEST_NETWORK_XML))
-        m.execute("echo \"{0}\" > /tmp/xml2 && virsh net-define /tmp/xml2".format(TEST_NETWORK4_XML))
+        m.execute(f"echo \"{TEST_NETWORK_XML}\" > /tmp/xml && virsh net-define /tmp/xml && virsh net-start test_network")
+        m.execute(f"echo \"{TEST_NETWORK4_XML}\" > /tmp/xml2 && virsh net-define /tmp/xml2")
 
         args = self.createVm("subVmTest1")
 
@@ -215,10 +215,10 @@ class TestMachinesNICs(VirtualMachinesCase):
         ).execute()
 
         # Start vm and wait until kernel is booted
-        m.execute("> {0}".format(args["logfile"]))  # clear logfile
+        m.execute(f"> {args['logfile']}")  # clear logfile
         b.click("#vm-subVmTest1-run")
         b.wait_in_text("#vm-subVmTest1-state", "Running")
-        wait(lambda: "login as 'cirros' user." in self.machine.execute("cat {0}".format(args["logfile"])), delay=3)
+        wait(lambda: "login as 'cirros' user." in self.machine.execute(f"cat {args['logfile']}"), delay=3)
 
         # Test permanent attachment to running VM
         mac_address = get_next_mac(mac_address)
@@ -348,8 +348,8 @@ class TestMachinesNICs(VirtualMachinesCase):
 
         def verify(self):
             dom_xml = "virsh -c qemu:///system dumpxml --domain subVmTest1"
-            mac_string = '"{0}"'.format(self.mac)
-            xmllint_element = "{0} | xmllint --xpath 'string(//domain/devices/interface[starts-with(mac/@address,{1})]/{{prop}})' - 2>&1 || true".format(dom_xml, mac_string)
+            mac_string = f'"{self.mac}"'
+            xmllint_element = f"{dom_xml} | xmllint --xpath 'string(//domain/devices/interface[starts-with(mac/@address,{mac_string})]/{{prop}})' - 2>&1 || true"
 
             if self.source_type == "network":
                 self.assertEqual(
@@ -537,9 +537,9 @@ class TestMachinesNICs(VirtualMachinesCase):
 
         def verify(self):
             # Verify libvirt XML
-            dom_xml = "virsh -c qemu:///system dumpxml --domain {0}".format("subVmTest1")
-            mac_string = '"{0}"'.format(self.mac)
-            xmllint_element = "{0} | xmllint --xpath 'string(//domain/devices/interface[starts-with(mac/@address,{1})]/{{prop}})' - 2>&1 || true".format(dom_xml, mac_string)
+            dom_xml = "virsh -c qemu:///system dumpxml --domain subVmTest1"
+            mac_string = f'"{self.mac}"'
+            xmllint_element = f"{dom_xml} | xmllint --xpath 'string(//domain/devices/interface[starts-with(mac/@address,{mac_string})]/{{prop}})' - 2>&1 || true"
 
             if (self.source_type == "network"):
                 self.assertEqual("network", self.machine.execute(xmllint_element.format(prop='@type')).strip())
@@ -555,17 +555,17 @@ class TestMachinesNICs(VirtualMachinesCase):
 
         def verify_overview(self):
             # The first NIC is default, our new NIC is second in row
-            self.browser.wait_in_text("#vm-subVmTest1-network-{0}-type".format(self.nic_num), self.source_type)
+            self.browser.wait_in_text(f"#vm-subVmTest1-network-{self.nic_num}-type", self.source_type)
             if self.model:
-                self.browser.wait_in_text("#vm-subVmTest1-network-{0}-model".format(self.nic_num), self.model)
+                self.browser.wait_in_text(f"#vm-subVmTest1-network-{self.nic_num}-model", self.model)
             if self.source:
-                self.browser.wait_in_text("#vm-subVmTest1-network-{0}-source".format(self.nic_num), self.source)
+                self.browser.wait_in_text(f"#vm-subVmTest1-network-{self.nic_num}-source", self.source)
             if self.mac:
-                self.browser.wait_in_text("#vm-subVmTest1-network-{0}-mac".format(self.nic_num), self.mac)
+                self.browser.wait_in_text(f"#vm-subVmTest1-network-{self.nic_num}-mac", self.mac)
 
         def cleanup(self):
             if self.permanent:
-                self.machine.execute("virsh detach-interface --mac {0} --domain subVmTest1 --type {1} --config".format(self.mac, self.source_type))
+                self.machine.execute(f"virsh detach-interface --mac {self.mac} --domain subVmTest1 --type {self.source_type} --config")
 
                 # we don't get any signal for interface detaching right now
                 self.browser.reload()
@@ -579,7 +579,7 @@ class TestMachinesNICs(VirtualMachinesCase):
                     self.browser.wait_visible(".pf-c-modal-box__footer button.pf-m-in-progress")
 
                 # Check NIC is no longer in list
-                self.browser.wait_not_present("#vm-subVmTest1-network-{0}-mac".format(self.nic_num))
+                self.browser.wait_not_present(f"#vm-subVmTest1-network-{self.nic_num}-mac")
                 self.browser.wait_not_present(".pf-c-modal-box")
 
 

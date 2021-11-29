@@ -76,7 +76,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
         args = self.createVm("subVmTest1", "vnc")
 
         if urlroot != "":
-            self.machine.execute('mkdir -p /etc/cockpit/ && echo "[WebService]\nUrlRoot=%s" > /etc/cockpit/cockpit.conf' % urlroot)
+            self.machine.execute(f'mkdir -p /etc/cockpit/ && echo "[WebService]\nUrlRoot={urlroot}" > /etc/cockpit/cockpit.conf')
 
         self.login_and_go("/machines", urlroot=urlroot)
         b.wait_in_text("body", "Virtual machines")
@@ -89,12 +89,12 @@ class TestMachinesConsoles(VirtualMachinesCase):
         b.wait_visible(".pf-c-console__vnc canvas")
 
         # make sure the log file is full - then empty it and reboot the VM - the log file should fill up again
-        wait(lambda: "login as 'cirros' user." in self.machine.execute("cat {0}".format(args["logfile"])), delay=3)
+        wait(lambda: "login as 'cirros' user." in self.machine.execute(f"cat {args['logfile']}"), delay=3)
 
-        self.machine.execute("echo '' > {0}".format(args["logfile"]))
-        b.click("#{0}-system-vnc-sendkey button".format("subVmTest1"))
+        self.machine.execute(f"echo '' > {args['logfile']}")
+        b.click("#subVmTest1-system-vnc-sendkey button")
         b.click("#ctrl-alt-Delete")
-        wait(lambda: "Requesting system reboot" in self.machine.execute("cat {0}".format(args["logfile"])), delay=3)
+        wait(lambda: "Requesting system reboot" in self.machine.execute(f"cat {args['logfile']}"), delay=3)
 
     def testInlineConsoleWithUrlRoot(self, urlroot=""):
         self.testInlineConsole(urlroot="/webcon")
@@ -113,20 +113,20 @@ class TestMachinesConsoles(VirtualMachinesCase):
         self.waitVmRow(name)
 
         self.goToVmPage(name)
-        b.wait_in_text("#vm-{0}-state".format(name), "Running")  # running or paused
+        b.wait_in_text(f"#vm-{name}-state", "Running")  # running or paused
 
         b.click("#pf-c-console__type-selector")
         b.wait_visible("#pf-c-console__type-selector + .pf-c-select__menu")
         b.click("#SerialConsole button")
         b.wait_not_present("#pf-c-console__type-selector + .pf-c-select__menu")
 
-        b.wait_in_text("#{0}-terminal .xterm-accessibility-tree".format(name), "cirros login")
+        b.wait_in_text(f"#{name}-terminal .xterm-accessibility-tree", "cirros login")
 
-        b.click("#{0}-serialconsole-disconnect".format(name))
-        b.wait_text("#{0}-terminal".format(name), "Disconnected from serial console. Click the connect button.")
+        b.click(f"#{name}-serialconsole-disconnect")
+        b.wait_text(f"#{name}-terminal", "Disconnected from serial console. Click the connect button.")
 
-        b.click("#{0}-serialconsole-connect".format(name))
-        b.wait_in_text("#{0}-terminal .xterm-accessibility-tree > div:nth-child(1)".format(name), "Connected to domain")
+        b.click(f"#{name}-serialconsole-connect")
+        b.wait_in_text(f"#{name}-terminal .xterm-accessibility-tree > div:nth-child(1)", "Connected to domain")
 
         b.click("button:contains(Expand)")
         b.assert_pixels("#vm-vmWithSerialConsole-consoles-page", "vm-details-console-serial")
@@ -159,9 +159,9 @@ class TestMachinesConsoles(VirtualMachinesCase):
 
         self.waitVmRow(name)
         self.goToVmPage(name)
-        b.wait_in_text("#vm-{0}-state".format(name), "Running")
+        b.wait_in_text(f"#vm-{name}-state", "Running")
 
-        b.wait_visible("#vm-{0}-consoles".format(name))
+        b.wait_visible(f"#vm-{name}-consoles")
         b.wait_visible(".pf-c-console__vnc canvas")
 
         b.click("#pf-c-console__type-selector")
@@ -170,7 +170,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
         b.wait_not_present("#pf-c-console__type-selector + .pf-c-select__menu")
 
         b.wait_not_present(".pf-c-console__vnc canvas")
-        b.wait_visible("#{}-terminal".format(name))
+        b.wait_visible(f"#{name}-terminal")
 
         b.wait_not_present("#navbar-oops")
 

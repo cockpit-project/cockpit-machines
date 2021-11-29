@@ -61,7 +61,7 @@ class TestMachinesHostDevs(VirtualMachinesCase):
         lines = nodedev_list.partition('\n')
         for line in lines:
             if "usb_usb" in line:
-                m.execute("echo \"{0}\" > /tmp/usbhostedxml".format(USB_HOSTDEV))
+                m.execute(f"echo \"{USB_HOSTDEV}\" > /tmp/usbhostedxml")
                 m.execute("virsh attach-device --domain subVmTest1 --file /tmp/usbhostedxml")
 
                 b.wait_in_text("#vm-subVmTest1-hostdev-1-type", "usb")
@@ -74,7 +74,7 @@ class TestMachinesHostDevs(VirtualMachinesCase):
         # A pci device should always be present
         m.execute("virsh destroy subVmTest1")
         b.wait_in_text("#vm-subVmTest1-state", "Shut off")
-        m.execute("echo \"{0}\" > /tmp/pcihostedxml".format(PCI_HOSTDEV))
+        m.execute(f"echo \"{PCI_HOSTDEV}\" > /tmp/pcihostedxml")
         m.execute("virsh attach-device --domain subVmTest1 --file /tmp/pcihostedxml --persistent")
         b.reload()
         b.enter_page('/machines')
@@ -134,19 +134,19 @@ class TestMachinesHostDevs(VirtualMachinesCase):
                         self.remove()
 
             def open(self):
-                b.wait_not_present("#vm-subVmTest1-hostdev-{0}-product".format(self.vm_dev_id))
+                b.wait_not_present(f"#vm-subVmTest1-hostdev-{self.vm_dev_id}-product")
                 b.click("button#vm-subVmTest1-hostdevs-add")
                 b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Add host device")
                 if connectionName != "session":
                     b.assert_pixels(".pf-c-modal-box", "vm-hostdevs-add-dialog")
 
             def fill(self):
-                b.click("input#{0}".format(self.dev_type))
-                b.set_checked(".pf-c-table input[name='checkrow{0}']".format(self.dev_id), True)
-                self._model = b.text("#vm-subVmTest1-hostdevs-dialog table tbody tr:nth-child({0}) td:nth-child(2)".format(self.dev_id + 1))
-                self._vendor = b.text("#vm-subVmTest1-hostdevs-dialog table tbody tr:nth-child({0}) td:nth-child(3)".format(self.dev_id + 1))
+                b.click(f"input#{self.dev_type}")
+                b.set_checked(f".pf-c-table input[name='checkrow{self.dev_id}']", True)
+                self._model = b.text(f"#vm-subVmTest1-hostdevs-dialog table tbody tr:nth-child({self.dev_id + 1}) td:nth-child(2)")
+                self._vendor = b.text(f"#vm-subVmTest1-hostdevs-dialog table tbody tr:nth-child({self.dev_id + 1}) td:nth-child(3)")
                 if self.dev_type == "pci":
-                    self._slot = b.text("#vm-subVmTest1-hostdevs-dialog table tbody tr:nth-child({0}) td:nth-child(4) dd".format(self.dev_id + 1))
+                    self._slot = b.text(f"#vm-subVmTest1-hostdevs-dialog table tbody tr:nth-child({self.dev_id + 1}) td:nth-child(4) dd")
 
             def cancel(self):
                 b.click(".pf-c-modal-box__footer button:contains(Cancel)")
@@ -161,9 +161,9 @@ class TestMachinesHostDevs(VirtualMachinesCase):
                 b.wait_not_present("#vm-subVmTest1-hostdevs-dialog")
 
             def verify(self):
-                b.wait_visible("#vm-subVmTest1-hostdev-{0}-product".format(self.vm_dev_id))
-                b.wait_in_text("#vm-subVmTest1-hostdev-{0}-product".format(self.vm_dev_id), self._model)
-                b.wait_in_text("#vm-subVmTest1-hostdev-{0}-vendor".format(self.vm_dev_id), self._vendor)
+                b.wait_visible(f"#vm-subVmTest1-hostdev-{self.vm_dev_id}-product")
+                b.wait_in_text(f"#vm-subVmTest1-hostdev-{self.vm_dev_id}-product", self._model)
+                b.wait_in_text(f"#vm-subVmTest1-hostdev-{self.vm_dev_id}-vendor", self._vendor)
 
             def verify_backend(self):
                 self.run_admin(f"virsh -c qemu:///{connectionName} dumpxml subVmTest1 > /tmp/vmdir/vmxml2", connectionName)
@@ -179,8 +179,8 @@ class TestMachinesHostDevs(VirtualMachinesCase):
                     for dev in devices:
                         if self.dev_type == "usb_device":
                             self.run_admin(f"virsh -c qemu:///{connectionName} nodedev-dumpxml --device {dev} > /tmp/vmdir/nodedevxml", connectionName)
-                            vendor = m.execute("cat /tmp/vmdir/nodedevxml | xmllint --xpath 'string(//device/capability/vendor[starts-with(@id, \"{0}\")])' - 2>&1 || true".format(vendor_id))
-                            product = m.execute("cat /tmp/vmdir/nodedevxml | xmllint --xpath 'string(//device/capability/product[starts-with(@id, \"{0}\")])' - 2>&1 || true".format(product_id))
+                            vendor = m.execute(f"cat /tmp/vmdir/nodedevxml | xmllint --xpath 'string(//device/capability/vendor[starts-with(@id, \"{vendor_id}\")])' - 2>&1 || true")
+                            product = m.execute(f"cat /tmp/vmdir/nodedevxml | xmllint --xpath 'string(//device/capability/product[starts-with(@id, \"{product_id}\")])' - 2>&1 || true")
 
                             if vendor.strip() == self._vendor and product.strip() == self._model:
                                 return
@@ -199,9 +199,9 @@ class TestMachinesHostDevs(VirtualMachinesCase):
                 raise Exception("Verification failed. No matching node device was found in VM's xml.")
 
             def remove(self):
-                b.click("#delete-vm-subVmTest1-hostdev-{0}".format(self.vm_dev_id))
+                b.click(f"#delete-vm-subVmTest1-hostdev-{self.vm_dev_id}")
                 b.click('.pf-c-modal-box__footer button:contains("Remove")')
-                b.wait_not_present("#vm-subVmTest1-hostdev-{0}-product".format(self.vm_dev_id))
+                b.wait_not_present(f"#vm-subVmTest1-hostdev-{self.vm_dev_id}-product")
 
         output = self.run_admin(f"virsh -c qemu:///{connectionName} nodedev-list --cap usb_device", connectionName)
         if output.strip() != "":

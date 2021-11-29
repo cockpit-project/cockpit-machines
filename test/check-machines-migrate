@@ -53,13 +53,13 @@ class TestMachinesMigration(VirtualMachinesCase):
             machine1.execute("ssh-keygen -t rsa -N '\' -f /root/.ssh/id_rsa")
             machine1.execute("echo 'StrictHostKeyChecking no' > /root/.ssh/config")
             machine1PubKey = machine1.execute("cat /root/.ssh/id_rsa.pub")
-            machine2.execute("echo '{0}' >> /root/.ssh/authorized_keys".format(machine1PubKey))
+            machine2.execute(f"echo '{machine1PubKey}' >> /root/.ssh/authorized_keys")
 
         if fail != "pool":
             # Setup the default storage pool on the destination host
             # This is normally automatically created when creating the first VM but in this case our dest VM was never populated
             xml = POOL_XML.format(path="/var/lib/libvirt/images")
-            machine2.execute("echo \"{0}\" > /tmp/xml && virsh pool-define /tmp/xml && virsh pool-start images".format(xml))
+            machine2.execute(f"echo \"{xml}\" > /tmp/xml && virsh pool-define /tmp/xml && virsh pool-start images")
         if fail == "volume":
             machine2.execute("virsh vol-create-as images subVmTest1-2.img --capacity 1M --format qcow2")
 
@@ -79,7 +79,7 @@ class TestMachinesMigration(VirtualMachinesCase):
   <source dev='{0}'/>
   <target dev='vda'/>
 </disk>'''
-        machine1.execute("echo \"{0}\" > /tmp/disk_xml".format(disk_xml.format(dev)))
+        machine1.execute(f"echo \"{disk_xml.format(dev)}\" > /tmp/disk_xml")
         machine1.execute("virsh destroy subVmTest1")
         machine1.execute("virt-xml --remove-device --disk 1 subVmTest1 && "
                          "virsh attach-device --domain subVmTest1 --file /tmp/disk_xml --config && "
