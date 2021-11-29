@@ -58,10 +58,10 @@ class TestMachinesNetworks(VirtualMachinesCase):
         b.wait_in_text("#card-pf-networks .card-pf-title-link", "1 Network")
 
         # Create dummy network
-        m.execute("echo \"{0}\" > /tmp/xml && virsh net-define /tmp/xml".format(TEST_NETWORK2_XML))
+        m.execute(f"echo \"{TEST_NETWORK2_XML}\" > /tmp/xml && virsh net-define /tmp/xml")
         b.wait_in_text("#card-pf-networks .card-pf-title-link", "2 Networks")
-        m.execute("echo \"{0}\" > /tmp/xml && virsh net-define /tmp/xml".format(TEST_NETWORK3_XML))
-        m.execute("echo \"{0}\" > /tmp/xml && virsh net-create /tmp/xml".format(TEST_NETWORK4_XML))
+        m.execute(f"echo \"{TEST_NETWORK3_XML}\" > /tmp/xml && virsh net-define /tmp/xml")
+        m.execute(f"echo \"{TEST_NETWORK4_XML}\" > /tmp/xml && virsh net-create /tmp/xml")
 
         # Click on Networks card
         b.click(".pf-c-card .pf-c-card__header button:contains(Networks)")
@@ -72,28 +72,28 @@ class TestMachinesNetworks(VirtualMachinesCase):
         self.waitNetworkRow("test_network3", connectionName)
 
         # Check headers of networks
-        b.wait_in_text("#network-test_network2-{0}-name".format(connectionName), "test_network2")
-        b.wait_in_text("#network-test_network2-{0}-device".format(connectionName), "virbr1")
-        b.wait_in_text("#network-test_network2-{0}-forwarding".format(connectionName), "None (isolated network)")
-        b.wait_in_text("#network-test_network3-{0}-name".format(connectionName), "test_network3")
-        b.wait_in_text("#network-test_network3-{0}-device".format(connectionName), "br0")
-        b.wait_in_text("#network-test_network3-{0}-forwarding".format(connectionName), "Bridge")
+        b.wait_in_text(f"#network-test_network2-{connectionName}-name", "test_network2")
+        b.wait_in_text(f"#network-test_network2-{connectionName}-device", "virbr1")
+        b.wait_in_text(f"#network-test_network2-{connectionName}-forwarding", "None (isolated network)")
+        b.wait_in_text(f"#network-test_network3-{connectionName}-name", "test_network3")
+        b.wait_in_text(f"#network-test_network3-{connectionName}-device", "br0")
+        b.wait_in_text(f"#network-test_network3-{connectionName}-forwarding", "Bridge")
 
         # Expand row for first network
         self.toggleNetworkRow("test_network2", connectionName)
 
         # Check overview network properties are present
-        b.wait_in_text("#network-test_network2-{0}-persistent".format(connectionName), "yes")
-        b.wait_visible("#network-test_network2-{0}-autostart:not(:checked)".format(connectionName))
-        b.wait_in_text("#network-test_network2-{0}-ipv4-address".format(connectionName), "192.168.100.1")
-        b.wait_in_text("#network-test_network2-{0}-ipv4-netmask".format(connectionName), "255.255.255.0")
-        b.wait_in_text("#network-test_network2-{0}-ipv4-dhcp-range".format(connectionName), "192.168.100.128 - 192.168.100.170")
-        b.wait_in_text("#network-test_network2-{0}-ipv4-dhcp-host-0".format(connectionName), "Name: paul, MAC: 00:16:3E:5D:C7:9E, IP: 192.168.122.254")
-        b.wait_in_text("#network-test_network2-{0}-ipv6-address".format(connectionName), "fd00:e81d:a6d7:55::1")
-        b.wait_in_text("#network-test_network2-{0}-ipv6-prefix".format(connectionName), "64")
-        b.wait_in_text("#network-test_network2-{0}-ipv6-dhcp-range".format(connectionName), "fd00:e81d:a6d7:55::100 - fd00:e81d:a6d7:55::1ff")
-        b.wait_in_text("#network-test_network2-{0}-ipv6-dhcp-host-0".format(connectionName), "Name: simon, IP: 2001:db8:ca2:2:3::1")
-        b.wait_in_text("#network-test_network2-{0}-ipv6-dhcp-host-1".format(connectionName), "ID: 0:1:0:1:18:aa:62:fe:0:16:3e:44:55:66, IP: 2001:db8:ca2:2:3::2")
+        b.wait_in_text(f"#network-test_network2-{connectionName}-persistent", "yes")
+        b.wait_visible(f"#network-test_network2-{connectionName}-autostart:not(:checked)")
+        b.wait_in_text(f"#network-test_network2-{connectionName}-ipv4-address", "192.168.100.1")
+        b.wait_in_text(f"#network-test_network2-{connectionName}-ipv4-netmask", "255.255.255.0")
+        b.wait_in_text(f"#network-test_network2-{connectionName}-ipv4-dhcp-range", "192.168.100.128 - 192.168.100.170")
+        b.wait_in_text(f"#network-test_network2-{connectionName}-ipv4-dhcp-host-0", "Name: paul, MAC: 00:16:3E:5D:C7:9E, IP: 192.168.122.254")
+        b.wait_in_text(f"#network-test_network2-{connectionName}-ipv6-address", "fd00:e81d:a6d7:55::1")
+        b.wait_in_text(f"#network-test_network2-{connectionName}-ipv6-prefix", "64")
+        b.wait_in_text(f"#network-test_network2-{connectionName}-ipv6-dhcp-range", "fd00:e81d:a6d7:55::100 - fd00:e81d:a6d7:55::1ff")
+        b.wait_in_text(f"#network-test_network2-{connectionName}-ipv6-dhcp-host-0", "Name: simon, IP: 2001:db8:ca2:2:3::1")
+        b.wait_in_text(f"#network-test_network2-{connectionName}-ipv6-dhcp-host-1", "ID: 0:1:0:1:18:aa:62:fe:0:16:3e:44:55:66, IP: 2001:db8:ca2:2:3::2")
 
         # Close expanded row for this pool
         self.toggleNetworkRow("test_network2", connectionName)
@@ -102,25 +102,25 @@ class TestMachinesNetworks(VirtualMachinesCase):
         self.toggleNetworkRow("test_network3", connectionName)
 
         # Check overview network properties are present
-        b.wait_in_text("#network-test_network3-{0}-persistent".format(connectionName), "yes")
-        b.wait_visible("#network-test_network3-{0}-autostart:not(:checked)".format(connectionName))
+        b.wait_in_text(f"#network-test_network3-{connectionName}-persistent", "yes")
+        b.wait_visible(f"#network-test_network3-{connectionName}-autostart:not(:checked)")
 
         # Check overview network properties are not present
-        b.wait_not_present("#network-test_network3-{0}-ipv4-address".format(connectionName))
-        b.wait_not_present("#network-test_network3-{0}-ipv4-netmask".format(connectionName))
-        b.wait_not_present("#network-test_network3-{0}-ipv4-dhcp-range".format(connectionName))
-        b.wait_not_present("#network-test_network3-{0}-ipv4-dhcp-host-0".format(connectionName))
-        b.wait_not_present("#network-test_network3-{0}-ipv6-address".format(connectionName))
-        b.wait_not_present("#network-test_network3-{0}-ipv6-prefix".format(connectionName))
-        b.wait_not_present("#network-test_network3-{0}-ipv6-dhcp-range".format(connectionName))
-        b.wait_not_present("#network-test_network3-{0}-ipv6-dhcp-host-0".format(connectionName))
+        b.wait_not_present(f"#network-test_network3-{connectionName}-ipv4-address")
+        b.wait_not_present(f"#network-test_network3-{connectionName}-ipv4-netmask")
+        b.wait_not_present(f"#network-test_network3-{connectionName}-ipv4-dhcp-range")
+        b.wait_not_present(f"#network-test_network3-{connectionName}-ipv4-dhcp-host-0")
+        b.wait_not_present(f"#network-test_network3-{connectionName}-ipv6-address")
+        b.wait_not_present(f"#network-test_network3-{connectionName}-ipv6-prefix")
+        b.wait_not_present(f"#network-test_network3-{connectionName}-ipv6-dhcp-range")
+        b.wait_not_present(f"#network-test_network3-{connectionName}-ipv6-dhcp-host-0")
 
         # Transient network
         self.toggleNetworkRow("test_network4", connectionName)
-        b.wait_in_text("#network-test_network4-{0}-persistent".format(connectionName), "no")
-        b.wait_not_present("#network-test_network4-{0}-autostart".format(connectionName))  # Transient network shouldn't have autostart option
-        b.wait_visible('#delete-network-test_network4-{0}:disabled'.format(connectionName))  # Transient network cannot be deleted
-        b.click('#deactivate-network-test_network4-{0}'.format(connectionName))  # Deactivate transient network
+        b.wait_in_text(f"#network-test_network4-{connectionName}-persistent", "no")
+        b.wait_not_present(f"#network-test_network4-{connectionName}-autostart")  # Transient network shouldn't have autostart option
+        b.wait_visible(f'#delete-network-test_network4-{connectionName}:disabled')  # Transient network cannot be deleted
+        b.click(f'#deactivate-network-test_network4-{connectionName}')  # Deactivate transient network
         self.waitNetworkRow("test_network4", connectionName, False)  # Check it's not present after deactivation
 
     def testNetworksCreate(self):
@@ -240,17 +240,17 @@ class TestMachinesNetworks(VirtualMachinesCase):
                     b.wait_not_present("#create-network-dialog")
 
             def verify_expected_error_on_head(self, error_message):
-                b.click('#network-{0}-system-state button:contains("view more")'.format(self.name))
+                b.click(f'#network-{self.name}-system-state button:contains("view more")')
                 b.wait_in_text(".pf-c-popover", error_message)
-                b.click('#network-{0}-system-state button[aria-label=Close]'.format(self.name))
+                b.click(f'#network-{self.name}-system-state button[aria-label=Close]')
 
             def verify_dialog(self):
                 # Check that the defined network is now visible
                 b.wait_in_text("body", "Networks")
 
                 # Verify libvirt XML
-                net_xml = "virsh -c qemu:///system net-dumpxml {0}".format(self.name)
-                xmllint_element = "{0} | xmllint --xpath 'string(//network/{{prop}})' - 2>&1 || true".format(net_xml)
+                net_xml = f"virsh -c qemu:///system net-dumpxml {self.name}"
+                xmllint_element = f"{net_xml} | xmllint --xpath 'string(//network/{{prop}})' - 2>&1 || true"
 
                 self.test_obj.assertEqual(self.name, m.execute(xmllint_element.format(prop='name')).strip())
                 if (self.forward_mode == "none"):
@@ -283,39 +283,39 @@ class TestMachinesNetworks(VirtualMachinesCase):
                          "bridge": "Bridge", "private": "Private", "vepa": "VEPA", "passthrough": "Passthrough", "hostdev": "Hostdev"}
                 connectionName = m.execute("virsh uri | head -1 | cut -d/ -f4").strip()
 
-                b.wait_in_text("#network-{0}-{1}-forwarding".format(self.name, connectionName), modes[self.forward_mode])
+                b.wait_in_text(f"#network-{self.name}-{connectionName}-forwarding", modes[self.forward_mode])
                 self.test_obj.toggleNetworkRow(self.name, connectionName)
 
                 if self.activate:
-                    b.click("#activate-network-{}-{}".format(self.name, connectionName))
+                    b.click(f"#activate-network-{self.name}-{connectionName}")
                     # For checking danger alter, only set xfail_objects, and don't set xfail
                     if self.xfail_objects and 'danger_alert' in self.xfail_objects:
                         self.verify_expected_error_on_head(self.xfail_error)
 
                 if self.ip_conf != "None":
                     if "4" in self.ip_conf:
-                        b.wait_in_text("#network-{0}-{1}-ipv4-address".format(self.name, connectionName), self.ipv4_address)
-                        b.wait_in_text("#network-{0}-{1}-ipv4-netmask".format(self.name, connectionName), self.ipv4_netmask)
+                        b.wait_in_text(f"#network-{self.name}-{connectionName}-ipv4-address", self.ipv4_address)
+                        b.wait_in_text(f"#network-{self.name}-{connectionName}-ipv4-netmask", self.ipv4_netmask)
                         if self.ipv4_dhcp_start and self.ipv4_dhcp_start:
-                            b.wait_in_text("#network-{0}-{1}-ipv4-dhcp-range".format(self.name, connectionName), self.ipv4_dhcp_start + " - " + self.ipv4_dhcp_end)
+                            b.wait_in_text(f"#network-{self.name}-{connectionName}-ipv4-dhcp-range", self.ipv4_dhcp_start + " - " + self.ipv4_dhcp_end)
                     if "6" in self.ip_conf:
-                        b.wait_in_text("#network-{0}-{1}-ipv6-address".format(self.name, connectionName), self.ipv6_address)
-                        b.wait_in_text("#network-{0}-{1}-ipv6-prefix".format(self.name, connectionName), self.ipv6_prefix)
+                        b.wait_in_text(f"#network-{self.name}-{connectionName}-ipv6-address", self.ipv6_address)
+                        b.wait_in_text(f"#network-{self.name}-{connectionName}-ipv6-prefix", self.ipv6_prefix)
                         if self.ipv6_dhcp_start and self.ipv6_dhcp_start:
-                            b.wait_in_text("#network-{0}-{1}-ipv6-dhcp-range".format(self.name, connectionName), self.ipv6_dhcp_start + " - " + self.ipv6_dhcp_end)
+                            b.wait_in_text(f"#network-{self.name}-{connectionName}-ipv6-dhcp-range", self.ipv6_dhcp_start + " - " + self.ipv6_dhcp_end)
 
                     if "4" not in self.ip_conf:
-                        b.wait_not_present("#network-{0}-{1}-ipv4-address".format(self.name, connectionName))
+                        b.wait_not_present(f"#network-{self.name}-{connectionName}-ipv4-address")
                     if "6" not in self.ip_conf:
-                        b.wait_not_present("#network-{0}-{1}-ipv6-address".format(self.name, connectionName))
+                        b.wait_not_present(f"#network-{self.name}-{connectionName}-ipv6-address")
                 else:
-                    b.wait_not_present("#network-{0}-{1}-ipv4-address".format(self.name, connectionName))
-                    b.wait_not_present("#network-{0}-{1}-ipv6-address".format(self.name, connectionName))
+                    b.wait_not_present(f"#network-{self.name}-{connectionName}-ipv4-address")
+                    b.wait_not_present(f"#network-{self.name}-{connectionName}-ipv6-address")
 
             def cleanup(self):
                 if self.activate and not self.xfail_objects:
-                    m.execute("virsh net-destroy {}".format(self.name))
-                m.execute("virsh net-undefine {0}".format(self.name))
+                    m.execute(f"virsh net-destroy {self.name}")
+                m.execute(f"virsh net-undefine {self.name}")
 
         # Test various forward Modes
         duplicated_net = NetworkCreateDialog(
@@ -503,7 +503,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
         self.createVm("subVmTest1")
 
         # Create dummy network
-        m.execute("echo \"{0}\" > /tmp/xml && virsh net-define /tmp/xml && virsh net-start test_network".format(TEST_NETWORK_XML))
+        m.execute(f"echo \"{TEST_NETWORK_XML}\" > /tmp/xml && virsh net-define /tmp/xml && virsh net-start test_network")
 
         # Create a second bridge to LAN NIC, virbr0 does not make sense but let's use it for test purposes
         m.execute("virsh attach-interface --persistent subVmTest1 bridge virbr0")
@@ -695,7 +695,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
         m = self.machine
 
         # Create dummy network
-        m.execute("echo \"{0}\" > /tmp/xml && virsh net-define /tmp/xml".format(TEST_NETWORK2_XML))
+        m.execute(f"echo \"{TEST_NETWORK2_XML}\" > /tmp/xml && virsh net-define /tmp/xml")
 
         connectionName = m.execute("virsh uri | head -1 | cut -d/ -f4").strip()
 
@@ -713,25 +713,25 @@ class TestMachinesNetworks(VirtualMachinesCase):
         # Expand row for first network
         self.toggleNetworkRow("test_network2", connectionName)
 
-        b.wait_visible("#network-test_network2-{0}-autostart".format(connectionName))
+        b.wait_visible(f"#network-test_network2-{connectionName}-autostart")
 
         # set checkbox state and check state of checkbox
-        b.set_checked("#network-test_network2-{0}-autostart".format(connectionName), True)  # don't know the initial state of checkbox, so set it to checked
-        b.wait_visible("#network-test_network2-{0}-autostart:checked".format(connectionName))
+        b.set_checked(f"#network-test_network2-{connectionName}-autostart", True)  # don't know the initial state of checkbox, so set it to checked
+        b.wait_visible(f"#network-test_network2-{connectionName}-autostart:checked")
         # check virsh state
         autostartState = m.execute("virsh net-info test_network2 | grep 'Autostart:' | awk '{print $2}'").strip()
         self.assertEqual(autostartState, "yes")
 
         # change checkbox state and check state of checkbox
-        b.click("#network-test_network2-{0}-autostart".format(connectionName))
-        b.wait_visible("#network-test_network2-{0}-autostart:not(:checked)".format(connectionName))
+        b.click(f"#network-test_network2-{connectionName}-autostart")
+        b.wait_visible(f"#network-test_network2-{connectionName}-autostart:not(:checked)")
         # check virsh state
         autostartState = m.execute("virsh net-info test_network2 | grep 'Autostart:' | awk '{print $2}'").strip()
         self.assertEqual(autostartState, "no")
 
         # change checkbox state and check state of checkbox
-        b.click("#network-test_network2-{0}-autostart".format(connectionName))
-        b.wait_visible("#network-test_network2-{0}-autostart:checked".format(connectionName))
+        b.click(f"#network-test_network2-{connectionName}-autostart")
+        b.wait_visible(f"#network-test_network2-{connectionName}-autostart:checked")
         # check virsh state
         autostartState = m.execute("virsh net-info test_network2 | grep 'Autostart:' | awk '{print $2}'").strip()
         self.assertEqual(autostartState, "yes")
@@ -741,7 +741,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
         m = self.machine
 
         # Create dummy network
-        m.execute("echo \"{0}\" > /tmp/xml && virsh net-define /tmp/xml".format(TEST_NETWORK2_XML))
+        m.execute(f"echo \"{TEST_NETWORK2_XML}\" > /tmp/xml && virsh net-define /tmp/xml")
 
         connectionName = m.execute("virsh uri | head -1 | cut -d/ -f4").strip()
 
@@ -759,30 +759,30 @@ class TestMachinesNetworks(VirtualMachinesCase):
         self.toggleNetworkRow("test_network2", connectionName)
 
         # activate network
-        b.wait_visible("#activate-network-test_network2-{0}".format(connectionName))
-        b.click("#activate-network-test_network2-{0}".format(connectionName))
-        b.wait_in_text("#network-test_network2-{0}-state".format(connectionName), "active")
+        b.wait_visible(f"#activate-network-test_network2-{connectionName}")
+        b.click(f"#activate-network-test_network2-{connectionName}")
+        b.wait_in_text(f"#network-test_network2-{connectionName}-state", "active")
         # check virsh state
         wait(lambda: "yes" == m.execute("virsh net-info test_network2 | grep 'Active:' | awk '{print $2}'").strip(), tries=5)
 
         # deactivate network
-        b.wait_visible("#deactivate-network-test_network2-{0}".format(connectionName))
-        b.click("#deactivate-network-test_network2-{0}".format(connectionName))
-        b.wait_in_text("#network-test_network2-{0}-state".format(connectionName), "inactive")
-        b.wait_visible("#activate-network-test_network2-{0}".format(connectionName))
+        b.wait_visible(f"#deactivate-network-test_network2-{connectionName}")
+        b.click(f"#deactivate-network-test_network2-{connectionName}")
+        b.wait_in_text(f"#network-test_network2-{connectionName}-state", "inactive")
+        b.wait_visible(f"#activate-network-test_network2-{connectionName}")
         # check virsh state
         wait(lambda: "no" == m.execute("virsh net-info test_network2 | grep 'Active:' | awk '{print $2}'").strip(), tries=5)
 
         # Delete an inactive network
-        b.click('#delete-network-test_network2-{0}'.format(connectionName))
+        b.click(f'#delete-network-test_network2-{connectionName}')
         b.click(".pf-c-modal-box__footer button:contains(Delete)")
         self.waitNetworkRow("test_network2", connectionName, False)
 
         # Delete an active network
-        m.execute("echo \"{0}\" > /tmp/xml && virsh net-define /tmp/xml && virsh net-start test_network2".format(TEST_NETWORK2_XML))
-        b.wait_in_text("#network-test_network2-{0}-state".format(connectionName), "active")
+        m.execute(f"echo \"{TEST_NETWORK2_XML}\" > /tmp/xml && virsh net-define /tmp/xml && virsh net-start test_network2")
+        b.wait_in_text(f"#network-test_network2-{connectionName}-state", "active")
         self.toggleNetworkRow("test_network2", connectionName)
-        b.click('#delete-network-test_network2-{0}'.format(connectionName))
+        b.click(f'#delete-network-test_network2-{connectionName}')
         b.click(".pf-c-modal-box__footer button:contains(Delete)")
         self.waitNetworkRow("test_network2", connectionName, False)
 

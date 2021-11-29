@@ -86,7 +86,7 @@ class TestMachinesSnapshots(VirtualMachinesCase):
 
         time1 = datetime.now().strftime("%H:%M:%S")
         long_description = "This is a long description"*10
-        m.execute("virsh snapshot-create-as --domain subVmTest1 --name snapshotC --description '{0}'".format(long_description))
+        m.execute(f"virsh snapshot-create-as --domain subVmTest1 --name snapshotC --description '{long_description}'")
 
         b.reload()  # snapshots events not available yet: https://gitlab.com/libvirt/libvirt/-/issues/44
         b.enter_page('/machines')
@@ -179,24 +179,24 @@ class TestMachinesSnapshots(VirtualMachinesCase):
 
             def verify_frontend(self):
                 if self.name:
-                    b.wait_in_text("#vm-subVmTest1-snapshot-{0}-name".format(self.snap_num), self.name)
+                    b.wait_in_text(f"#vm-subVmTest1-snapshot-{self.snap_num}-name", self.name)
                 else:
-                    self.name = b.text("#vm-subVmTest1-snapshot-{0}-name".format(self.snap_num))
+                    self.name = b.text(f"#vm-subVmTest1-snapshot-{self.snap_num}-name")
                 if self.description:
-                    b.wait_in_text("#vm-subVmTest1-snapshot-{0}-description".format(self.snap_num), self.description)
+                    b.wait_in_text(f"#vm-subVmTest1-snapshot-{self.snap_num}-description", self.description)
                 else:
-                    b.wait_in_text("#vm-subVmTest1-snapshot-{0}-description".format(self.snap_num), "No description")
+                    b.wait_in_text(f"#vm-subVmTest1-snapshot-{self.snap_num}-description", "No description")
                 if self.state:
                     if self.state == "shutoff":
                         state = "shut off"
                     else:
                         state = self.state
-                    b.wait_in_text("#vm-subVmTest1-snapshot-{0}-type".format(self.snap_num), state)
+                    b.wait_in_text(f"#vm-subVmTest1-snapshot-{self.snap_num}-type", state)
 
             def verify_backend(self):
                 # Verify libvirt XML
-                snap_xml = "virsh -c qemu:///system snapshot-dumpxml --domain {0} --snapshotname {1}".format("subVmTest1", self.name)
-                xmllint_element = "{0} | xmllint --xpath 'string(//domainsnapshot/{{prop}})' - 2>&1 || true".format(snap_xml)
+                snap_xml = f"virsh -c qemu:///system snapshot-dumpxml --domain subVmTest1 --snapshotname {self.name}"
+                xmllint_element = f"{snap_xml} | xmllint --xpath 'string(//domainsnapshot/{{prop}})' - 2>&1 || true"
 
                 if (self.name):
                     self.test_obj.assertEqual(self.name, m.execute(xmllint_element.format(prop='name')).strip())
@@ -206,10 +206,10 @@ class TestMachinesSnapshots(VirtualMachinesCase):
                     self.test_obj.assertEqual(self.state, m.execute(xmllint_element.format(prop='state')).strip())
 
             def cleanup(self):
-                b.click("#delete-vm-subVmTest1-snapshot-{0}".format(self.snap_num))
-                b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Delete snapshot {0}".format(self.name))
+                b.click(f"#delete-vm-subVmTest1-snapshot-{self.snap_num}")
+                b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", f"Delete snapshot {self.name}")
                 b.click('.pf-c-modal-box__footer button:contains("Delete")')
-                b.wait_not_present("#vm-subVmTest1-snapshot-{0}-name:contains({1})".format(self.snap_num, self.name))
+                b.wait_not_present(f"#vm-subVmTest1-snapshot-{self.snap_num}-name:contains({self.name})")
 
         # No Snapshots present
         b.wait_visible("#vm-subVmTest1-add-snapshot-button")

@@ -168,34 +168,34 @@ class TestMachinesSettings(VirtualMachinesCase):
         def checkAutostart(vm_name, running):
             self.createVm(vm_name, running=running)
             self.waitVmRow(vm_name)
-            b.wait_in_text("#vm-{}-state".format(vm_name), "Running" if running else "Shut off")
+            b.wait_in_text(f"#vm-{vm_name}-state", "Running" if running else "Shut off")
             self.goToVmPage(vm_name)
 
             # set checkbox state and check state of checkbox
-            b.set_checked("#vm-{}-autostart-switch".format(vm_name), True)  # don't know the initial state of checkbox, so set it to checked
-            b.wait_visible("#vm-{}-autostart-switch:checked".format(vm_name))
+            b.set_checked(f"#vm-{vm_name}-autostart-switch", True)  # don't know the initial state of checkbox, so set it to checked
+            b.wait_visible(f"#vm-{vm_name}-autostart-switch:checked")
             # check virsh state
             autostartState = m.execute("virsh dominfo %s | grep 'Autostart:' | awk '{print $2}'" % vm_name).strip()
             self.assertEqual(autostartState, "enable")
 
             # change checkbox state and check state of checkbox
-            b.click("#vm-{}-autostart-switch".format(vm_name))
-            b.wait_not_present("#vm-{}-autostart-switch:checked".format(vm_name))
+            b.click(f"#vm-{vm_name}-autostart-switch")
+            b.wait_not_present(f"#vm-{vm_name}-autostart-switch:checked")
             # check virsh state
             autostartState = m.execute("virsh dominfo %s | grep 'Autostart:' | awk '{print $2}'" % vm_name).strip()
             self.assertEqual(autostartState, "disable")
 
             # change checkbox state and check state of checkbox
-            b.click("#vm-{}-autostart-switch".format(vm_name))
-            b.wait_visible("#vm-{}-autostart-switch:checked".format(vm_name))
+            b.click(f"#vm-{vm_name}-autostart-switch")
+            b.wait_visible(f"#vm-{vm_name}-autostart-switch:checked")
             # check virsh state
             autostartState = m.execute("virsh dominfo %s | grep 'Autostart:' | awk '{print $2}'" % vm_name).strip()
             self.assertEqual(autostartState, "enable")
 
             # non-persistent VM doesn't have autostart
             if running:
-                m.execute("virsh undefine {}".format(vm_name))
-                b.wait_not_present("#vm-{}-autostart-switch".format(vm_name))
+                m.execute(f"virsh undefine {vm_name}")
+                b.wait_not_present(f"#vm-{vm_name}-autostart-switch")
 
             self.goToMainPage()
 
@@ -235,8 +235,8 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-cpu-model .pf-c-description-list__text", "custom (coreduo)")
 
         # Verify libvirt XML
-        dom_xml = "virsh dumpxml {0}".format("subVmTest1")
-        xmllint_element = "{0} | xmllint --xpath 'string(//domain/{{prop}})' - 2>&1 || true".format(dom_xml)
+        dom_xml = "virsh dumpxml subVmTest1"
+        xmllint_element = f"{dom_xml} | xmllint --xpath 'string(//domain/{{prop}})' - 2>&1 || true"
         self.assertEqual("coreduo", m.execute(xmllint_element.format(prop='cpu/model')).strip())
 
         # Host-model gets expanded  to custom mode when the VM is running
@@ -338,7 +338,7 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         # Check memory hotunplugging
         # The balloon driver needs to be loaded to descrease memory
-        wait(lambda: "login as 'cirros' user" in self.machine.execute("cat {0}".format(args["logfile"])), delay=3)
+        wait(lambda: "login as 'cirros' user" in self.machine.execute(f"cat {args['logfile']}"), delay=3)
 
         b.set_input_text("#vm-subVmTest1-memory-modal-memory", str(current_memory - 10))
         b.blur("#vm-subVmTest1-memory-modal-memory")
@@ -346,11 +346,11 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.click("#vm-subVmTest1-memory-modal-save")
         b.wait_not_present("#vm-memory-modal")
 
-        b.wait_in_text("#vm-subVmTest1-memory-count", "{0} MiB".format(current_memory - 10))
+        b.wait_in_text("#vm-subVmTest1-memory-count", f"{current_memory - 10} MiB")
 
         # Shut off domain and check changes are  still there
         self.performAction("subVmTest1", "forceOff")
-        b.wait_in_text("#vm-subVmTest1-memory-count", "{0} MiB".format(current_memory - 10))
+        b.wait_in_text("#vm-subVmTest1-memory-count", f"{current_memory - 10} MiB")
 
         # Click for the edit link
         b.click("#vm-subVmTest1-memory-count button")
@@ -384,7 +384,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-state", "Running")
         self.goToVmPage("subVmTest1")
 
-        wait(lambda: "login as 'cirros' user" in m.execute("cat {0}".format(args["logfile"])), delay=3)
+        wait(lambda: "login as 'cirros' user" in m.execute(f"cat {args['logfile']}"), delay=3)
 
         # Change CPU model setting
         b.click("#vm-subVmTest1-cpu-model button")
@@ -404,10 +404,10 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         dom_xml = "virsh -c qemu:///system dumpxml subVmTest1"
 
-        xmllint_elem = "{0} | xmllint --xpath 'string(//domain/cpu/@mode)' - 2>&1 || true".format(dom_xml)
+        xmllint_elem = f"{dom_xml} | xmllint --xpath 'string(//domain/cpu/@mode)' - 2>&1 || true"
         wait(lambda: "host-passthrough" in m.execute(xmllint_elem).strip())
 
-        xmllint_elem = "{0} | xmllint --xpath 'string(//domain/vcpu)' - 2>&1 || true".format(dom_xml)
+        xmllint_elem = f"{dom_xml} | xmllint --xpath 'string(//domain/vcpu)' - 2>&1 || true"
         wait(lambda: "3" in m.execute(xmllint_elem).strip())
 
         # Check both changes have been applied

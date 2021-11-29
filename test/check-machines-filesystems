@@ -82,8 +82,8 @@ class TestMachinesFilesystems(VirtualMachinesCase):
         b.wait_in_text("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir1/-dir1'] td[data-label='Source path']", "/tmp/dir1/")
         b.wait_in_text("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir1/-dir1'] td[data-label='Mount tag']", "dir1")
 
-        domain_xml = "virsh -c qemu:///system dumpxml {0}".format("subVmTest1")
-        xmllint_element = "{0} | xmllint --xpath 'string(//domain/{{prop}})' - 2>&1 || true".format(domain_xml)
+        domain_xml = "virsh -c qemu:///system dumpxml subVmTest1"
+        xmllint_element = f"{domain_xml} | xmllint --xpath 'string(//domain/{{prop}})' - 2>&1 || true"
 
         self.assertEqual('/tmp/dir1/', self.machine.execute(xmllint_element.format(prop='devices/filesystem/source/@dir')).strip())
         self.assertEqual('dir1', self.machine.execute(xmllint_element.format(prop='devices/filesystem/target/@dir')).strip())
