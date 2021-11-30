@@ -538,7 +538,6 @@ class TestMachinesDisks(VirtualMachinesCase):
         if m.image in ["debian-testing"]:
             self.allow_journal_messages(f'.* type=1400 .* apparmor="DENIED" operation="open" profile="libvirt.* name="{self.vm_tmpdir}.*')
 
-    @skipImage("TODO: nfs packages missing on arch image", "arch")
     @no_retry_when_changed
     def testAddDiskNFS(self):
         b = self.browser
