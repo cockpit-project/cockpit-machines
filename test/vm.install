@@ -5,9 +5,6 @@ set -eu
 
 # for Debian based images, build and install debs
 if [ -d /var/tmp/debian ]; then
-    apt-get update
-    eatmydata apt-get install ${APT_INSTALL_OPTIONS:-} -y cockpit-ws cockpit-system
-
     # build source package
     cd /var/tmp
     TAR=$(ls cockpit-machines-*.tar.xz)

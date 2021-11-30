@@ -149,7 +149,7 @@ $(RPMFILE): $(TARFILE) $(RPM_NAME).spec
 # determine what to depend on and do for Fedora/RHEL/Debian VM preparation
 ifneq ($(filter debian-% ubuntu-%,$(TEST_OS)),)
 VM_DEP=$(TARFILE) packaging/debian/rules packaging/debian/control
-VM_PACKAGE=--upload `pwd`/$(TARFILE):/var/tmp/ --upload `pwd`/packaging/debian:/var/tmp/
+VM_PACKAGE=--no-network --upload `pwd`/$(TARFILE):/var/tmp/ --upload `pwd`/packaging/debian:/var/tmp/
 else
 ifneq ($(filter arch,$(TEST_OS)),)
 VM_DEP=$(TARFILE) packaging/arch/PKGBUILD
