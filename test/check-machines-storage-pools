@@ -26,7 +26,7 @@ sys.path.append(os.path.join(TEST_DIR, "common"))
 sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
 
 from machineslib import VirtualMachinesCase  # noqa
-from testlib import nondestructive, skipImage, test_main, wait  # noqa
+from testlib import nondestructive, test_main, wait  # noqa
 
 
 @nondestructive
@@ -248,7 +248,6 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         # Check it's not present after deactivation
         self.waitPoolRow("myPoolThree", connectionName, False)
 
-    @skipImage("TODO: enable nfs support on the arch image", "arch")
     def testStoragePoolsCreate(self):
         b = self.browser
         m = self.machine
@@ -471,6 +470,9 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         dev = self.add_ram_disk(2)
         m.execute(f"parted {dev} mklabel gpt")
 
+        if m.image == "arch":
+            m.execute("mkdir -p /media/")
+
         StoragePoolCreateDialog(
             self,
             name="my_disk_pool",
@@ -480,7 +482,8 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         ).execute()
 
         # Debian images' -cloud kernel don't have target-cli-mod kmod
-        if "debian" not in m.image:
+        # TODO: Arch image has no iscsi yet
+        if "debian" not in m.image and "arch" != m.image:
             # Preparations for testing ISCSI pools
 
             target_iqn = "iqn.2019-09.cockpit.lan"
@@ -527,7 +530,6 @@ class TestMachinesStoragePools(VirtualMachinesCase):
             source={"source_path": "vol_grp1"},
         ).execute()
 
-    @skipImage("TODO: enable nfs support on the arch image", "arch")
     def testStorageVolumesCreate(self):
         b = self.browser
         m = self.machine
