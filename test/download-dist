@@ -48,11 +48,17 @@ def download_dist(wait=False):
         message("download-dist: pre-built dist/ are for NODE_ENV=production")
         return False
 
+    # If the HEAD commit is a merge (when checking out a pull request /merge ref), use the merged
+    # commit ID to find the cached data, instead of the merge itself
     try:
-        sha = subprocess.check_output(["git", "rev-parse", "HEAD"], stderr=subprocess.DEVNULL).decode().strip()
+        sha = subprocess.check_output(["git", "rev-parse", "--verify", "HEAD^2"], stderr=subprocess.DEVNULL).decode().strip()
     except subprocess.CalledProcessError:
-        message("download-dist: not a git repository")
-        return False
+        # otherwise use the HEAD as-is
+        try:
+            sha = subprocess.check_output(["git", "rev-parse", "HEAD"], stderr=subprocess.DEVNULL).decode().strip()
+        except subprocess.CalledProcessError:
+            message("download-dist: not a git repository")
+            return False
 
     if subprocess.call(["git", "diff", "--quiet", "--", ":^test", ":^packit.yaml", ":^packaging", ":^.github"]) > 0:
         message("download-dist: uncommitted local changes, skipping download")
