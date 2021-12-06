@@ -86,6 +86,7 @@ const NetworkActions = ({ network }) => {
     const [operationInProgress, setOperationInProgress] = useState(false);
 
     const onActivate = () => {
+        setOperationInProgress(true);
         networkActivate({ connectionName: network.connectionName, objPath: network.id })
                 .finally(() => setOperationInProgress(false))
                 .catch(exc => {
@@ -103,6 +104,7 @@ const NetworkActions = ({ network }) => {
     };
 
     const onDeactivate = () => {
+        setOperationInProgress(true);
         networkDeactivate({ connectionName: network.connectionName, objPath: network.id })
                 .finally(() => setOperationInProgress(false))
                 .catch(exc => {
