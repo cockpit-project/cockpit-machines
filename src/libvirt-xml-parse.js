@@ -141,7 +141,7 @@ export function parseDomainSnapshotDumpxml(snapshot) {
     return { name, description, state, creationTime, parentName };
 }
 
-export function parseDumpxml(connectionName, domXml, id_overwrite) {
+export function parseDumpxml(connectionName, domXml, objPath) {
     const domainElem = getElem(domXml);
     if (!domainElem) {
         return;
@@ -160,7 +160,7 @@ export function parseDumpxml(connectionName, domXml, id_overwrite) {
     const metadataElem = getSingleOptionalElem(domainElem, "metadata");
 
     const name = domainElem.getElementsByTagName("name")[0].childNodes[0].nodeValue;
-    const id = id_overwrite || domainElem.getElementsByTagName("uuid")[0].childNodes[0].nodeValue;
+    const id = objPath;
     const osType = osTypeElem.nodeValue;
     const osBoot = parseDumpxmlForOsBoot(osBootElems);
     const arch = osTypeElem.getAttribute("arch");
@@ -886,7 +886,7 @@ export function parseNodeDeviceDumpxml(nodeDevice) {
     return { name, path, parent: parentName, capability };
 }
 
-export function parseStoragePoolDumpxml(connectionName, storagePoolXml, id_overwrite) {
+export function parseStoragePoolDumpxml(connectionName, storagePoolXml, objPath) {
     const storagePoolElem = getElem(storagePoolXml);
     if (!storagePoolElem) {
         return;
@@ -895,7 +895,7 @@ export function parseStoragePoolDumpxml(connectionName, storagePoolXml, id_overw
     const result = { connectionName };
     result.type = storagePoolElem.getAttribute('type');
     result.name = storagePoolElem.getElementsByTagName('name')[0].childNodes[0].nodeValue;
-    result.id = id_overwrite || storagePoolElem.getElementsByTagName('uuid')[0].childNodes[0].nodeValue;
+    result.id = objPath;
     result.uuid = storagePoolElem.getElementsByTagName("uuid")[0].childNodes[0].nodeValue;
     result.capacity = storagePoolElem.getElementsByTagName('capacity')[0].childNodes[0].nodeValue;
     result.available = storagePoolElem.getElementsByTagName('available')[0].childNodes[0].nodeValue;
@@ -934,14 +934,14 @@ export function parseStoragePoolDumpxml(connectionName, storagePoolXml, id_overw
     return result;
 }
 
-export function parseStorageVolumeDumpxml(connectionName, storageVolumeXml, id_overwrite) {
+export function parseStorageVolumeDumpxml(connectionName, storageVolumeXml, objPath) {
     const storageVolumeElem = getElem(storageVolumeXml);
     if (!storageVolumeElem) {
         return;
     }
     const type = storageVolumeElem.getAttribute('type');
     const name = storageVolumeElem.getElementsByTagName('name')[0].childNodes[0].nodeValue;
-    const id = id_overwrite || undefined;
+    const id = objPath;
     const targetElem = storageVolumeElem.getElementsByTagName('target')[0];
     const path = getSingleOptionalElem(targetElem, 'path').childNodes[0].nodeValue;
     const capacity = storageVolumeElem.getElementsByTagName('capacity')[0].childNodes[0].nodeValue;
