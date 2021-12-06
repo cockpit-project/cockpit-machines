@@ -48,9 +48,6 @@ if [ "$TEST_OS" = "centos-8-stream" ]; then
     EXCLUDES="$EXCLUDES TestMachinesConsoles.testExternalConsole"
 fi
 
-# depends on available host devices, TF machines not predictable enough
-EXCLUDES="$EXCLUDES TestMachinesHostDevs.testHostDevAdd"
-
 # FIXME: https://github.com/cockpit-project/cockpit-machines/issues/581
 EXCLUDES="$EXCLUDES TestMachinesCreate.testCreateThenInstall"
 

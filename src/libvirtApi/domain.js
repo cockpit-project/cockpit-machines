@@ -136,14 +136,16 @@ export function domainAttachDisk({
     return domainAttachDevice({ connectionName, vmId, permanent, hotplug, xmlDesc });
 }
 
-export function domainAttachHostDevice({ connectionName, vmName, live, dev }) {
+export function domainAttachHostDevices({ connectionName, vmName, live, devices }) {
     const options = { err: "message" };
-    const source = getNodeDevSource(dev);
-    const args = ["virt-xml", "-c", `qemu:///${connectionName}`, vmName, "--add-device", "--hostdev", source];
+    const args = ["virt-xml", "-c", `qemu:///${connectionName}`, vmName];
+
+    devices.forEach(dev => {
+        args.push("--add-device", "--hostdev", getNodeDevSource(dev));
+    });
 
     if (connectionName === "system")
         options.superuser = "try";
-
     if (live)
         args.push("--update");
 
