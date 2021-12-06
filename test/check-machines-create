@@ -153,7 +153,7 @@ class TestMachinesCreate(VirtualMachinesCase):
 
         # try to CREATE few machines
         # --cloud-init user-data option exists since virt-install >= 3.0.0
-        if m.image in ['centos-8-stream', 'rhel-8-4', 'rhel-8-5', 'rhel-8-6', 'ubuntu-2004']:
+        if m.image in ['rhel-8-4', 'rhel-8-5', 'ubuntu-2004']:
             b.click("#create-new-vm")
             b.wait_visible("#create-vm-dialog")
             self.browser.wait_not_present('select option[value=cloud]')
@@ -196,7 +196,7 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                   start_vm=True))
 
         # user-login option exists since virt-install >= 3.0.0
-        if m.image not in ['centos-8-stream', 'rhel-8-4', 'rhel-8-5', 'rhel-8-6', 'ubuntu-2004']:
+        if m.image not in ['rhel-8-4', 'rhel-8-5', 'ubuntu-2004']:
             runner.createDownloadAnOSTest(TestMachinesCreate.VmDialog(self, sourceType='os',
                                                                       is_unattended=True, profile="desktop",
                                                                       user_password="catsaremybestfr13nds",
@@ -298,7 +298,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         # We don't want to use start_vm == False because if we get a separate install phase
         # virt-install will overwrite our changes.
 
-        if self.machine.image in ["ubuntu-2004", "centos-8-stream", "rhel-8-4", "rhel-8-5", "rhel-8-6"]:
+        if self.machine.image in ["ubuntu-2004", "rhel-8-4", "rhel-8-5"]:
             # https://bugzilla.redhat.com/show_bug.cgi?id=1818089
             # After shutting it off virt-install will restart the domain and exit because of the above bug
             self.machine.execute("virsh destroy pxe-guest")
@@ -1578,7 +1578,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         logfile = "/var/log/libvirt/qemu/VmNotInstalled.log"
         m.execute(f"> {logfile}")  # clear logfile
         self.performAction("VmNotInstalled", "forceOff", False)
-        if m.image in ["ubuntu-2004", "centos-8-stream", "rhel-8-4", "rhel-8-5", "rhel-8-6"]:
+        if m.image in ["ubuntu-2004", "rhel-8-4", "rhel-8-5"]:
             # https://bugzilla.redhat.com/show_bug.cgi?id=1818089
             # After shutting it off virt-install will restart the domain and exit because of the above bug
             # We need to wait till it's restarted and shut if off again in order to edit the offline VM configuration
