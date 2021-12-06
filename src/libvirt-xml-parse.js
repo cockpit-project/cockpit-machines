@@ -141,7 +141,7 @@ export function parseDomainSnapshotDumpxml(snapshot) {
     return { name, description, state, creationTime, parentName };
 }
 
-export function parseDumpxml(connectionName, domXml, objPath) {
+export function parseDomainDumpxml(connectionName, domXml, objPath) {
     const domainElem = getElem(domXml);
     if (!domainElem) {
         return;
