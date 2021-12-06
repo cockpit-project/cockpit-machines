@@ -61,7 +61,7 @@ import {
     getDoc,
     getElem,
     getSingleOptionalElem,
-    parseDumpxml,
+    parseDomainDumpxml,
 } from '../libvirt-xml-parse.js';
 import {
     updateBootOrder,
@@ -539,7 +539,7 @@ export function domainGet({
                 return call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_SECURE | Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
             })
             .then(domInactiveXml => {
-                const dumpInactiveXmlParams = parseDumpxml(connectionName, domInactiveXml[0], objPath);
+                const dumpInactiveXmlParams = parseDomainDumpxml(connectionName, domInactiveXml[0], objPath);
                 props.inactiveXML = dumpInactiveXmlParams;
                 return call(connectionName, objPath, 'org.libvirt.Domain', 'GetState', [0], { timeout, type: 'u' });
             })
@@ -570,7 +570,7 @@ export function domainGet({
 
                 logDebug(`${this.name}.GET_VM(${objPath}, ${connectionName}): update props ${JSON.stringify(props)}`);
 
-                const dumpxmlParams = parseDumpxml(connectionName, domainXML, objPath);
+                const dumpxmlParams = parseDomainDumpxml(connectionName, domainXML, objPath);
                 if (updateOnly)
                     store.dispatch(updateVm(Object.assign({}, props, dumpxmlParams)));
                 else
