@@ -34,7 +34,7 @@ import {
 } from "@patternfly/react-core";
 
 import { ModalError } from "cockpit-components-inline-notification.jsx";
-import { domainAttachHostDevice, domainGet } from "../../../libvirtApi/domain.js";
+import { domainAttachHostDevices, domainGet } from "../../../libvirtApi/domain.js";
 import { findHostNodeDevice } from "../../../helpers.js";
 import { getOptionalValue } from "./hostDevCard.jsx";
 import "./hostDevAdd.scss";
@@ -88,10 +88,10 @@ const DevRow = ({ idPrefix, type, selectableDevices, setSelectableDevices }) => 
             cells.push(getOptionalValue(device, `${id}-device`, _("Device")));
             cells.push(getOptionalValue(bus, `${id}-bus`, _("Bus")));
         } else if (nodeDev.capability.type === "pci") {
-            let domain = nodeDev.capability.domain;
-            let bus = nodeDev.capability.bus;
-            let slot = nodeDev.capability.slot;
-            let func = nodeDev.capability.function;
+            let domain = Number(nodeDev.capability.domain);
+            let bus = Number(nodeDev.capability.bus);
+            let slot = Number(nodeDev.capability.slot);
+            let func = Number(nodeDev.capability.function);
 
             domain = domain.toString(16).padStart(4, '0');
             bus = bus.toString(16).padStart(2, '0');
@@ -182,18 +182,21 @@ const AddHostDev = ({ idPrefix, vm, nodeDevices, close }) => {
     };
 
     const attach = () => {
-        Promise.all(selectableDevices.map(device => {
-            if (device.selected)
-                return domainAttachHostDevice({ connectionName: vm.connectionName, vmName: vm.name, live: vm.state !== "shut off", dev: device.nodeDev });
-        }))
-                .then(() => {
-                    domainGet({ connectionName: vm.connectionName, id: vm.id });
-                    close();
-                })
-                .catch(exc => {
-                    setDialogError(_("Host device could not be attached"));
-                    setDialogErrorDetail(exc.message);
-                });
+        const devicesToAttach = selectableDevices.flatMap(device => device.selected ? [device.nodeDev] : []);
+
+        if (devicesToAttach.length > 0) {
+            return domainAttachHostDevices({ connectionName: vm.connectionName, vmName: vm.name, live: vm.state !== "shut off", devices: devicesToAttach })
+                    .then(() => {
+                        domainGet({ connectionName: vm.connectionName, id: vm.id });
+                        close();
+                    })
+                    .catch(exc => {
+                        setDialogError(_("Host device could not be attached"));
+                        setDialogErrorDetail(exc.message);
+                    });
+        } else {
+            setDialogError(_("No host device selected"));
+        }
     };
 
     const body = (

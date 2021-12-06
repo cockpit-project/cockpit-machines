@@ -21,6 +21,7 @@ import os
 import sys
 import subprocess
 import re
+import xml.etree.ElementTree as ET
 
 # import Cockpit's machinery for test VMs and its browser test API
 TEST_DIR = os.path.dirname(__file__)
@@ -92,9 +93,9 @@ class TestMachinesHostDevs(VirtualMachinesCase):
 
     @skipImage("exporting devices to qemu:///session not supported yet", "ubuntu-2004")
     def testHostDevAddSessionConnection(self):
-        self.testHostDevAdd('session')
+        self.testHostDevAddSingleDevice('session')
 
-    def testHostDevAdd(self, connectionName='system'):
+    def testHostDevAddSingleDevice(self, connectionName='system'):
         b = self.browser
         m = self.machine
 
@@ -193,7 +194,7 @@ class TestMachinesHostDevs(VirtualMachinesCase):
 
                     slot_parts = re.split(r":|\.", self._slot)
 
-                    if int(slot_parts[0]) == domain and int(slot_parts[1]) == bus and int(slot_parts[2]) == slot and int(slot_parts[3]) == func:
+                    if int(slot_parts[0], 16) == domain and int(slot_parts[1], 16) == bus and int(slot_parts[2], 16) == slot and int(slot_parts[3], 16) == func:
                         return
 
                 raise Exception("Verification failed. No matching node device was found in VM's xml.")
@@ -226,6 +227,87 @@ class TestMachinesHostDevs(VirtualMachinesCase):
             dev_type="pci",
             fail_message="Host device could not be attached",
         ).execute()
+
+    def testHostDevAddMultipleDevices(self, connectionName='system'):
+        b = self.browser
+        m = self.machine
+
+        self.run_admin("mkdir /tmp/vmdir", connectionName)
+        self.addCleanup(self.run_admin, "rm -rf /tmp/vmdir/", connectionName)
+
+        self.login_and_go("/machines")
+        b.wait_in_text("body", "Virtual machines")
+        self.createVm("subVmTest1", running=False, connection=connectionName)
+        self.goToVmPage("subVmTest1", connectionName)
+
+        b.wait_visible("#vm-subVmTest1-hostdevs")
+        b.wait_not_present("#vm-subVmTest1-hostdev-1-product")
+
+        b.click("button#vm-subVmTest1-hostdevs-add")
+        b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Add host device")
+        b.click("input#pci")
+
+        b.set_checked(".pf-c-table input[name='checkrow0']", True)
+        slot1 = b.text("#vm-subVmTest1-hostdevs-dialog table tbody tr:nth-child(1) td:nth-child(4) dd")
+
+        b.set_checked(".pf-c-table input[name='checkrow1']", True)
+        slot2 = b.text("#vm-subVmTest1-hostdevs-dialog table tbody tr:nth-child(2) td:nth-child(4) dd")
+
+        # PCI devies will be sorted in the UI by slot
+        if slot1 > slot2:
+            (slot1, slot2) = (slot2, slot1)
+
+        self.run_admin(f"virsh -c qemu:///{connectionName} dumpxml subVmTest1 > /tmp/vmdir/vmxml1", connectionName)
+        b.click(".pf-c-modal-box__footer button:contains(Add)")
+        b.wait_not_present("#vm-subVmTest1-hostdevs-dialog")
+
+        b.wait_visible("#vm-subVmTest1-hostdev-1-product")
+        b.wait_in_text("#1-slot", slot1)
+
+        b.wait_visible("#vm-subVmTest1-hostdev-2-product")
+        b.wait_in_text("#2-slot", slot2)
+
+        self.run_admin(f"virsh -c qemu:///{connectionName} dumpxml subVmTest1 > /tmp/vmdir/vmxml2", connectionName)
+        vm_diff = m.execute("diff /tmp/vmdir/vmxml1 /tmp/vmdir/vmxml2 | sed -e 's/^>//;1d'")  # Print difference between XMLs before and after adding host devices
+        vm_diff = f'<root>{vm_diff}</root>'  # Diff contains 2 <hostdevice> elements. Add root to ease xml parsing
+
+        root = ET.fromstring(vm_diff)
+
+        hostdev1_address_elem = root[0].find('source').find('address')
+        hostdev2_address_elem = root[1].find('source').find('address')
+
+        hostdev1_domain = hostdev1_address_elem.get('domain')[2:]  # Remove '0x' prefix from hex number
+        hostdev1_bus = hostdev1_address_elem.get('bus')[2:]
+        hostdev1_slot = hostdev1_address_elem.get('slot')[2:]
+        hostdev1_function = hostdev1_address_elem.get('function')[2:]
+        hostdev2_domain = hostdev2_address_elem.get('domain')[2:]
+        hostdev2_bus = hostdev2_address_elem.get('bus')[2:]
+        hostdev2_slot = hostdev2_address_elem.get('slot')[2:]
+        hostdev2_function = hostdev2_address_elem.get('function')[2:]
+
+        slot_parts1 = re.split(r":|\.", slot1)
+        slot_parts2 = re.split(r":|\.", slot2)
+        # Cannot guarantee order of host devices in VM's XML, try in different order in case of failure
+        try:
+            self.assertEqual(slot_parts1[0], hostdev1_domain)
+            self.assertEqual(slot_parts1[1], hostdev1_bus)
+            self.assertEqual(slot_parts1[2], hostdev1_slot)
+            self.assertEqual(slot_parts1[3], hostdev1_function)
+
+            self.assertEqual(slot_parts2[0], hostdev2_domain)
+            self.assertEqual(slot_parts2[1], hostdev2_bus)
+            self.assertEqual(slot_parts2[2], hostdev2_slot)
+            self.assertEqual(slot_parts2[3], hostdev2_function)
+        except AssertionError:
+            self.assertEqual(slot_parts1[0], hostdev2_domain)
+            self.assertEqual(slot_parts1[1], hostdev2_bus)
+            self.assertEqual(slot_parts1[2], hostdev2_slot)
+            self.assertEqual(slot_parts1[3], hostdev2_function)
+
+            self.assertEqual(slot_parts2[0], hostdev1_domain)
+            self.assertEqual(slot_parts2[1], hostdev1_bus)
+            self.assertEqual(slot_parts2[2], hostdev1_slot)
+            self.assertEqual(slot_parts2[3], hostdev1_function)
 
 
 if __name__ == '__main__':
