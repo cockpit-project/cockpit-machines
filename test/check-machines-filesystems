@@ -111,7 +111,7 @@ class TestMachinesFilesystems(VirtualMachinesCase):
         b.set_file_autocomplete_val("#vm-subVmTest1-filesystems-modal-source-group", "/tmp/dir1/")
         b.set_input_text("#vm-subVmTest1-filesystems-modal-mountTag", "dir1")
         b.click("#vm-subVmTest1-filesystems-modal-add")
-        if m.execute("virsh --version") >= "7.5.0":
+        if m.image not in ['rhel-8-4', 'rhel-8-5', 'ubuntu-2004', 'fedora-34', 'debian-stable']:
             b.wait_in_text(".pf-c-alert", "Failed to add shared directory")
             b.wait_in_text(".pf-c-alert", "filesystem target 'dir1' specified twice")
             b.click("#vm-subVmTest1-filesystems-modal-cancel")
