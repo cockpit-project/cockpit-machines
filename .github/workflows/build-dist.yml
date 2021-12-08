@@ -18,7 +18,7 @@ jobs:
       - name: Set up dependencies
         run: |
           sudo apt update
-          sudo apt install -y --no-install-recommends npm make gettext sassc
+          sudo apt install -y --no-install-recommends npm make gettext
 
       - name: Build
         run: NODE_ENV=production make
