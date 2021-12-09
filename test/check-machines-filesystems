@@ -32,15 +32,6 @@ from testlib import skipImage, nondestructive, test_main  # noqa
 @nondestructive
 class TestMachinesFilesystems(VirtualMachinesCase):
     def testBasicSystemConnection(self):
-        m = self.machine
-        if "rhel-8-6" in m.image:
-            # This should warn us when virtmanager package is updated in rhel-8-6. When that happens, we can update domainCreateFilesystem() API
-            # Attaching filesystem to a VM was fully implemented to virt-xml in virtmanager 3.0.
-            # RHEL 8.6 still uses virtmanager with version lesser than 3.0, therefore we use fallback for the old API
-            output = m.execute("virt-xml --add-device --filesystem=?")
-            unsupported_parameters = ['driver.type', 'source.dir', 'target.dir', 'binary.xattr']
-            for param in unsupported_parameters:
-                self.assertFalse(param in output)
         self._testBasic()
 
     def testBasicSessionConnection(self):

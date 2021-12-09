@@ -40,7 +40,6 @@ import {
 } from '../actions/store-actions.js';
 import {
     getDiskXML,
-    getFilesystemXML,
 } from '../libvirt-xml-create.js';
 import {
     finishVmCreateInProgress,
@@ -59,7 +58,6 @@ import {
 import {
     getDiskElemByTarget,
     getDoc,
-    getElem,
     getSingleOptionalElem,
     parseDomainDumpxml,
 } from '../libvirt-xml-parse.js';
@@ -301,51 +299,21 @@ export function domainCreate({
 }
 
 export function domainCreateFilesystem({ connectionName, objPath, vmName, source, target, xattr }) {
-    // Attaching filesystem to a VM was fully implemented to virt-xml in virtmanager 3.0.
-    // RHEL 8.6 still uses virtmanager with version lesser than 3.0, therefore we should have a fallback for the old API
-    // Once rhel-8-6 is dropped from our test images, we can remove domainCreateFilesystemLegacy()
-    return cockpit.spawn(['virt-xml', '--add-device', '--filesystem=?'], { err: "message" })
-            .then(output => {
-                if (!output.includes('driver.type') || !output.includes('source.dir') || !output.includes('target.dir') || !output.includes('binary.xattr')) {
-                    return domainCreateFilesystemLegacy({ connectionName, objPath, vmName, source, target, xattr });
-                } else {
-                    const options = { err: "message" };
-                    if (connectionName === "system")
-                        options.superuser = "try";
+    const options = { err: "message" };
+    if (connectionName === "system")
+        options.superuser = "try";
 
-                    let xattrOption = "";
-                    if (xattr)
-                        xattrOption = ",binary.xattr=on";
+    let xattrOption = "";
+    if (xattr)
+        xattrOption = ",binary.xattr=on";
 
-                    return cockpit.spawn(
-                        [
-                            'virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--add-device', '--filesystem',
-                            `type=mount,accessmode=passthrough,driver.type=virtiofs,source.dir=${source},target.dir=${target}${xattrOption}`
-                        ],
-                        options
-                    );
-                }
-            });
-}
-
-export function domainCreateFilesystemLegacy({ connectionName, objPath, source, target, xattr }) {
-    return call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' })
-            .then(domXml => {
-                const xmlDesc = getFilesystemXML(source, target, xattr);
-                if (!xmlDesc) {
-                    return Promise.reject(new Error("Could not generate filesystem device XML"));
-                } else {
-                    const doc = getDoc(domXml);
-                    const domainElem = doc.firstElementChild;
-                    const deviceElem = domainElem.getElementsByTagName("devices")[0];
-                    const filesystemElem = getElem(xmlDesc);
-                    const s = new XMLSerializer();
-
-                    deviceElem.appendChild(filesystemElem);
-
-                    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [s.serializeToString(doc)], { timeout, type: 's' });
-                }
-            });
+    return cockpit.spawn(
+        [
+            'virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--add-device', '--filesystem',
+            `type=mount,accessmode=passthrough,driver.type=virtiofs,source.dir=${source},target.dir=${target}${xattrOption}`
+        ],
+        options
+    );
 }
 
 export function domainDelete({
