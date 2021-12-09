@@ -69,6 +69,7 @@ class TestMachinesFilesystems(VirtualMachinesCase):
         b.set_checked("#vm-subVmTest1-filesystems-modal-xattr", True)
 
         b.click("#vm-subVmTest1-filesystems-modal-add")
+        b.wait_not_present("#vm-subVmTest1-filesystems-modal-add")
         b.wait_visible("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir1/-dir1']")
         b.wait_in_text("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir1/-dir1'] td[data-label='Source path']", "/tmp/dir1/")
         b.wait_in_text("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir1/-dir1'] td[data-label='Mount tag']", "dir1")
@@ -89,6 +90,7 @@ class TestMachinesFilesystems(VirtualMachinesCase):
         b.set_checked("#vm-subVmTest1-filesystems-modal-xattr", False)
 
         b.click("#vm-subVmTest1-filesystems-modal-add")
+        b.wait_not_present("#vm-subVmTest1-filesystems-modal-add")
         b.wait_visible("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir2/-dir2']")
         b.wait_in_text("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir2/-dir2'] td[data-label='Source path']", "/tmp/dir2/")
         b.wait_in_text("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir2/-dir2'] td[data-label='Mount tag']", "dir2")
@@ -109,6 +111,7 @@ class TestMachinesFilesystems(VirtualMachinesCase):
         else:
             # Due to a libvirt < 7.5.0 bug this will be actually added without an error:
             # https://bugzilla.redhat.com/show_bug.cgi?id=1972218
+            b.wait_not_present("#vm-subVmTest1-filesystems-modal-add")
             b.wait_visible("tr:nth-child(3)[data-row-id='vm-subVmTest1-filesystem-/tmp/dir1/-dir1']")
 
         # Try to add a new shared filesystem with non existing source directory
