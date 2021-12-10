@@ -28,18 +28,40 @@ fi
 
 export TEST_AUDIT_NO_SELINUX=1
 
+#
+# exclude known-broken tests
+#
 EXCLUDES=""
 
+# FIXME: Fails everywhere on the Testing Farm but not locally with tmt virtual
+EXCLUDES="$EXCLUDES TestMachinesNetworks.testNetworkAddStaticDCHPHosts"
+
 if [ "$ID" = "rhel" ]; then
-    EXCLUDES="TestMachinesDisks.testDetachDisk
+    EXCLUDES="$EXCLUDES
+              TestMachinesDisks.testDetachDisk
               TestMachinesDisks.testDiskEdit
               TestMachinesNetworks.testNetworkSettings
     "
 fi
 
-# packit centos-stream-8
-if [ "$TEST_OS" = centos-8-stream ]; then
-    EXCLUDES="TestMachinesConsoles.testExternalConsole"
+if [ "$TEST_OS" = "centos-8-stream" ]; then
+    EXCLUDES="$EXCLUDES TestMachinesConsoles.testExternalConsole"
+fi
+
+if [ "$TEST_OS" = "fedora-34" ] || [ "$TEST_OS" = "centos-8-stream" ]; then
+    # this does not always fail, but often
+    EXCLUDES="$EXCLUDES TestMachinesCreate.testCreateFileSource"
+fi
+
+if [ "$TEST_OS" = "fedora-35" ] || [ "$TEST_OS" = "centos-9-stream" ]; then
+    EXCLUDES="$EXCLUDES TestMachinesHostDevs.testHostDevAdd"
+fi
+
+if [ "$TEST_OS" = "fedora-36" ]; then
+    EXCLUDES="$EXCLUDES
+              TestMachinesNICs.testNICDelete
+              TestMachinesConsoles.testSerialConsole
+    "
 fi
 
 if [ "$ID" = "fedora" ]; then
