@@ -29,4 +29,6 @@ which is run weekly or upon [manual request](https://github.com/cockpit-project/
 [npm-update.yml](.github/workflows/npm-update.yml) [GitHub action](https://github.com/features/actions).
 
 Similarly, translations are refreshed every Tuesday evening (or manually) through the
-[po-refresh.yml](.github/workflows/po-refresh.yml) action.
+[weblate-sync-po.yml](.github/workflows/weblate-sync-po.yml) action.
+Conversely, the PO template is uploaded to weblate every day through the
+[weblate-sync-pot.yml](.github/workflows/weblate-sync-pot.yml) action.
