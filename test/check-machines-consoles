@@ -129,7 +129,8 @@ class TestMachinesConsoles(VirtualMachinesCase):
         b.wait_in_text(f"#{name}-terminal .xterm-accessibility-tree > div:nth-child(1)", "Connected to domain")
 
         b.click("button:contains(Expand)")
-        b.assert_pixels("#vm-vmWithSerialConsole-consoles-page", "vm-details-console-serial")
+        b.assert_pixels("#vm-vmWithSerialConsole-consoles-page", "vm-details-console-serial",
+                        ignore=[".pf-c-console__vnc"])
 
         # Add a second serial console
         m.execute("virsh destroy vmWithSerialConsole && virt-xml --add-device vmWithSerialConsole --console pty,target_type=virtio && virsh start vmWithSerialConsole")
