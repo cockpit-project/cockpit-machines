@@ -169,7 +169,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-disks-vdg-access", "Read-only")
 
         if m.execute("virsh --version") >= "6.10.0":
-            # Check that errors appear correctly and dissappear when closing the dialog and reopening
+            # Check that errors appear correctly and disappear when closing the dialog and reopening
             m.execute(f"virsh attach-disk --domain subVmTest1 --source {p1}/mydisk4 --target sdb --targetbus sata --persistent")
             b.reload()
             b.enter_page('/machines')

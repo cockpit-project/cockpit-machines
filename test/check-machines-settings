@@ -221,10 +221,10 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.click("#cpu-config-dialog-apply")
         b.wait_not_present("#cpu-config-dialog-apply")
 
-        # Warning about about difference in persistent and non-persitent XML shoud appear
+        # Warning about about difference in persistent and non-persitent XML should appear
         b.wait_visible("#cpu-tooltip")
         self.performAction("subVmTest1", "forceOff")
-        # Warning should dissapear and changes should be visible in the UI
+        # Warning should disappear and changes should be visible in the UI
         b.wait_not_present("#cpu-tooltip")
         b.wait_in_text("#vm-subVmTest1-cpu-model .pf-c-description-list__text", "host")
 
@@ -355,7 +355,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         # Click for the edit link
         b.click("#vm-subVmTest1-memory-count button")
 
-        # Verify that limiting max memory in offline VMs bellow memory will decrease memory as well
+        # Verify that limiting max memory in offline VMs below memory will decrease memory as well
         b.set_input_text("#vm-subVmTest1-memory-modal-max-memory", str(current_memory - 20))
         b.blur("#vm-subVmTest1-memory-modal-max-memory")
         self.assertEqual(int(b.attr("#vm-subVmTest1-memory-modal-memory", "value")), current_memory - 20)
