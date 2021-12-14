@@ -17,11 +17,12 @@
 # Côme Borsoi <fedora@borsoi.fr>, 2020.
 # Sébastien Pascal-Poher <spoher@pm.me>, 2020.
 # Olivier FRANCHET <o.franchet@dominux.fr>, 2020.
+#: src/components/storagePools/storagePoolList.jsx:77
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-05 03:00+0000\n"
+"POT-Creation-Date: 2021-12-13 02:58+0000\n"
 "PO-Revision-Date: 2021-09-17 08:05+0000\n"
 "Last-Translator: Sundeep Anand <suanand@redhat.com>\n"
 "Language-Team: French <https://translate.fedoraproject.org/projects/cockpit-"
@@ -94,8 +95,8 @@ msgstr ""
 msgid "Access"
 msgstr "Accès"
 
-#: src/components/storagePools/storagePool.jsx:166
-#: src/components/networks/network.jsx:172
+#: src/components/storagePools/storagePool.jsx:171
+#: src/components/networks/network.jsx:165
 msgid "Activate"
 msgstr "Activer"
 
@@ -253,7 +254,7 @@ msgid "Cache"
 msgstr "Cache"
 
 #: src/components/common/deleteResource.jsx:69
-#: src/components/storagePools/storagePoolDelete.jsx:231
+#: src/components/storagePools/storagePoolDelete.jsx:189
 #: src/components/storagePools/createStoragePoolDialog.jsx:438
 #: src/components/storagePools/storageVolumeCreate.jsx:103
 #: src/components/networks/networkOverviewTab.jsx:203
@@ -464,8 +465,8 @@ msgstr "Chemin personnalisé"
 msgid "DHCP Settings"
 msgstr "Plage DHCP"
 
-#: src/components/storagePools/storagePool.jsx:157
-#: src/components/networks/network.jsx:168
+#: src/components/storagePools/storagePool.jsx:162
+#: src/components/networks/network.jsx:161
 msgid "Deactivate"
 msgstr "Désactiver"
 
@@ -473,11 +474,12 @@ msgstr "Désactiver"
 #: src/components/common/deleteResource.jsx:66
 #: src/components/common/deleteResource.jsx:95
 #: src/components/common/deleteResource.jsx:105
-#: src/components/storagePools/storagePoolDelete.jsx:200
-#: src/components/storagePools/storagePoolDelete.jsx:210
-#: src/components/storagePools/storagePoolDelete.jsx:228
-#: src/components/vm/vmActions.jsx:379 src/components/vm/vmActions.jsx:386
-#: src/components/vm/deleteDialog.jsx:143
+#: src/components/storagePools/storagePoolDelete.jsx:186
+#: src/components/storagePools/storagePoolDelete.jsx:221
+#: src/components/storagePools/storagePoolDelete.jsx:231
+#: src/components/networks/network.jsx:143
+#: src/components/networks/network.jsx:145 src/components/vm/vmActions.jsx:379
+#: src/components/vm/vmActions.jsx:386 src/components/vm/deleteDialog.jsx:143
 msgid "Delete"
 msgstr "Supprimer"
 
@@ -491,19 +493,19 @@ msgstr[1] "Supprimer les volumes $0"
 msgid "Delete associated storage files:"
 msgstr "Supprimer les fichiers de stockage associés :"
 
-#: src/components/storagePools/storagePoolDelete.jsx:169
+#: src/components/storagePools/storagePoolDelete.jsx:165
 msgid "Delete content"
 msgstr "Supprimer le contenu"
 
-#: src/components/storagePools/storagePoolDelete.jsx:221
+#: src/components/storagePools/storagePoolDelete.jsx:179
 msgid "Delete storage pool $0"
 msgstr "Supprimer le pool de stockage $0"
 
-#: src/components/storagePools/storagePoolDelete.jsx:172
+#: src/components/storagePools/storagePoolDelete.jsx:168
 msgid "Delete the volumes inside this pool"
 msgstr "Supprimer les volumes de ce pool"
 
-#: src/components/storagePools/storagePoolDelete.jsx:175
+#: src/components/storagePools/storagePoolDelete.jsx:171
 msgid ""
 "Deleting an inactive storage pool will only undefine the pool. Its content "
 "will not be deleted."
@@ -534,8 +536,7 @@ msgstr "URI de destination"
 msgid "Destination URI must not be empty"
 msgstr "L'URI de destination ne doit pas être vide"
 
-#: src/components/storagePools/storagePoolDelete.jsx:158
-#: src/components/storagePools/storagePoolDelete.jsx:186
+#: src/components/storagePools/storagePoolDelete.jsx:93
 msgid ""
 "Detach the disks using this pool from any VMs before attempting deletion."
 msgstr ""
@@ -1243,11 +1244,11 @@ msgstr "Nom : "
 msgid "Netmask"
 msgstr "Masque réseau"
 
-#: src/components/networks/network.jsx:119
+#: src/components/networks/network.jsx:98
 msgid "Network $0 failed to get activated"
 msgstr "Échec de l’activation du réseau $0"
 
-#: src/components/networks/network.jsx:138
+#: src/components/networks/network.jsx:116
 msgid "Network $0 failed to get deactivated"
 msgstr "Échec de la désactivation du réseau $0"
 
@@ -1326,7 +1327,7 @@ msgstr "Aucun périphérique réseau disponible"
 msgid "No network interfaces defined for this VM"
 msgstr "Aucune interface réseau définie pour cette machine virtuelle"
 
-#: src/components/networks/networkList.jsx:80
+#: src/components/networks/networkList.jsx:81
 msgid "No network is defined on this host"
 msgstr "Aucun réseau n’est défini sur cet hôte"
 
@@ -1350,7 +1351,7 @@ msgstr "Pas d'État"
 msgid "No storage"
 msgstr "Aucun stockage"
 
-#: src/components/storagePools/storagePoolList.jsx:78
+#: src/components/storagePools/storagePoolList.jsx:79
 msgid "No storage pool is defined on this host"
 msgstr "Aucun pool de stockage n’a été défini sur cet hôte"
 
@@ -1366,7 +1367,7 @@ msgstr "Aucun volume de stockage n’a été défini pour ce pool de stockage"
 msgid "No virtual networks"
 msgstr "Aucun réseau virtuel"
 
-#: src/components/networks/network.jsx:178
+#: src/components/networks/network.jsx:142
 msgid ""
 "Non-persistent network cannot be deleted. It ceases to exists when it's "
 "deactivated."
@@ -1374,7 +1375,7 @@ msgstr ""
 "Un réseau non persistant ne peut pas être supprimé. Il cesse d’exister quand "
 "il est désactivé."
 
-#: src/components/storagePools/storagePoolDelete.jsx:189
+#: src/components/storagePools/storagePoolDelete.jsx:210
 msgid ""
 "Non-persistent storage pool cannot be deleted. It ceases to exists when it's "
 "deactivated."
@@ -1412,13 +1413,12 @@ msgstr "Ouvrir"
 msgid "Operating system"
 msgstr "Système d’exploitation"
 
-#: src/components/storagePools/storagePool.jsx:171
-#: src/components/storagePools/storagePool.jsx:178
+#: src/components/storagePools/storagePool.jsx:176
+#: src/components/storagePools/storagePool.jsx:183
 msgid "Operation is in progress"
 msgstr "Opération en cours"
 
-#: src/components/storagePools/storagePool.jsx:70
-#: src/components/networks/network.jsx:75
+#: src/components/storagePools/storagePool.jsx:75
 #: src/components/vm/vmDetailsPage.jsx:134
 msgid "Overview"
 msgstr "Aperçu"
@@ -1519,8 +1519,7 @@ msgstr "Le type de pool $0 ne prend pas en charge la création de volume"
 msgid "Pool type doesn't support volume creation"
 msgstr "Le type de pool ne supporte pas la création de volume"
 
-#: src/components/storagePools/storagePoolDelete.jsx:156
-#: src/components/storagePools/storagePoolDelete.jsx:184
+#: src/components/storagePools/storagePoolDelete.jsx:91
 msgid "Pool's volumes are used by VMs "
 msgstr "Les volumes de pool sont utilisés par les VM "
 
@@ -1902,11 +1901,11 @@ msgstr "Stockage"
 msgid "Storage is at a shared location"
 msgstr "Le stockage est dans un emplacement partagé"
 
-#: src/components/storagePools/storagePool.jsx:119
+#: src/components/storagePools/storagePool.jsx:124
 msgid "Storage pool $0 failed to get activated"
 msgstr "Échec de l’activation du pool de stockage $0"
 
-#: src/components/storagePools/storagePool.jsx:139
+#: src/components/storagePools/storagePool.jsx:144
 msgid "Storage pool $0 failed to get deactivated"
 msgstr "Échec de la désactivation du pool de stockage $0"
 
@@ -1944,7 +1943,7 @@ msgstr ""
 "La taille du volume de stockage ne doit pas dépasser la capacité du pool de "
 "stockage ($0 $1)"
 
-#: src/components/storagePools/storagePool.jsx:76
+#: src/components/storagePools/storagePool.jsx:81
 msgid "Storage volumes"
 msgstr "Volumes de stockage"
 
@@ -2044,8 +2043,8 @@ msgid ""
 msgstr ""
 "Le système d’exécution sélectionné a un besoin en mémoire minimum de $0 $1"
 
-#: src/components/storagePools/storagePoolDelete.jsx:131
-#: src/components/storagePools/storagePoolDelete.jsx:135
+#: src/components/storagePools/storagePoolDelete.jsx:137
+#: src/components/storagePools/storagePoolDelete.jsx:141
 msgid "The storage pool could not be deleted"
 msgstr "Le pool de stockage n’a pas pu être supprimé"
 
@@ -2364,8 +2363,8 @@ msgstr "Vous pouvez monter le dossier partagé en utilisant :"
 msgid "You need to select the most closely matching operating system"
 msgstr "Vous devez sélectionner le système d’exploitation le plus proche"
 
-#: src/components/storagePools/storagePool.jsx:59
-#: src/components/networks/network.jsx:57
+#: src/components/storagePools/storagePool.jsx:64
+#: src/components/networks/network.jsx:56
 msgid "active"
 msgstr "actif"
 
