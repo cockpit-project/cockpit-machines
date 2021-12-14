@@ -19,7 +19,6 @@
 
 import os
 import sys
-import time
 
 # import Cockpit's machinery for test VMs and its browser test API
 TEST_DIR = os.path.dirname(__file__)
@@ -763,8 +762,6 @@ class TestMachinesNetworks(VirtualMachinesCase):
         b.wait_visible("#network-test_network2-system-autostart-off")
         b.wait_in_text("#network-test_network2-system-ipv6-dhcp-host-0", "simon")
 
-        # HACK: the expanded content is rendered with animation, needs to settle
-        time.sleep(2)
         b.assert_pixels("#app", "networks-page")
 
         # activate network
