@@ -60,7 +60,7 @@ class TestMachinesFilesystems(VirtualMachinesCase):
         b.wait_visible("#vm-subVmTest1-filesystems-modal-mountTag-helper")
         b.click("#vm-subVmTest1-filesystems-modal-cancel")
 
-        # Add a new shared fileystem
+        # Add a new shared filesystem
         b.click("#vm-subVmTest1-filesystems-add")
         b.set_file_autocomplete_val("#vm-subVmTest1-filesystems-modal-source-group", "/tmp/dir1/")
         b.set_input_text("#vm-subVmTest1-filesystems-modal-mountTag", "dir1")
@@ -82,7 +82,7 @@ class TestMachinesFilesystems(VirtualMachinesCase):
         self.assertEqual('on', self.machine.execute(xmllint_element.format(prop='devices/filesystem/binary/@xattr')).strip())
         self.assertEqual('shared', self.machine.execute(xmllint_element.format(prop='memoryBacking/access/@mode')).strip())
 
-        # Add a new shared fileystem - now the memoryBacking is configured and hidden from the dialog
+        # Add a new shared filesystem - now the memoryBacking is configured and hidden from the dialog
         b.click("#vm-subVmTest1-filesystems-add")
         b.set_file_autocomplete_val("#vm-subVmTest1-filesystems-modal-source-group", "/tmp/dir2/")
         b.set_input_text("#vm-subVmTest1-filesystems-modal-mountTag", "dir2")

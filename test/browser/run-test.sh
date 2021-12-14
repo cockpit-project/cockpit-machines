@@ -9,7 +9,7 @@ make bots test/common test/reference
 
 # support running from clean git tree
 if [ ! -d node_modules/chrome-remote-interface ]; then
-    # copy package.json temporarilly otherwise npm might try to install the dependencies from it
+    # copy package.json temporarily otherwise npm might try to install the dependencies from it
     mv package.json .package.json
     npm install chrome-remote-interface sizzle
     mv .package.json package.json
