@@ -330,14 +330,9 @@ class TestMachinesDisks(VirtualMachinesCase):
             prefix = "#vm-subVmTest1-disks-adddisk"
 
             if self.pixel_test_tag:
-                ignore_selectors = [".pf-c-expandable-section__toggle-icon"]
-                if self.pixel_test_ignore:
-                    ignore_selectors.append(self.pixel_test_ignore)
-                # focus away from any input field, to avoid the text cursor in screenshots
-                self.test_obj.browser.focus(f"{prefix}-dialog-cancel")
                 self.test_obj.browser.wait_visible(f"{prefix}-dialog-add[aria-disabled=false]")
                 self.test_obj.browser.assert_pixels(f"{prefix}-dialog-modal-window", self.pixel_test_tag,
-                                                    ignore=ignore_selectors)
+                                                    ignore=[self.pixel_test_ignore] if self.pixel_test_ignore else [])
 
             self.add_disk()
             if not self.xfail:

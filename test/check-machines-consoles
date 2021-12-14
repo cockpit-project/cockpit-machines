@@ -67,8 +67,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
         b.wait_in_text('.pf-c-expandable-section__content',
                        'Clicking "Launch remote viewer" will download')
 
-        b.assert_pixels("#vm-subVmTest1-consoles-page", "vm-details-console-external",
-                        ignore=[".pf-c-expandable-section__toggle-icon"])
+        b.assert_pixels("#vm-subVmTest1-consoles-page", "vm-details-console-external")
 
     def testInlineConsole(self, urlroot=""):
         b = self.browser
