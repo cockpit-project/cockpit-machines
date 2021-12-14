@@ -8,11 +8,12 @@
 # Martin Pitt <mpitt@redhat.com>, 2020.
 # Casey Jones <nahareport@yahoo.com>, 2020.
 # Hajime Taira <htaira@pantora.net>, 2020.
+#: src/components/storagePools/storagePoolList.jsx:77
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-05 03:00+0000\n"
+"POT-Creation-Date: 2021-12-13 02:58+0000\n"
 "PO-Revision-Date: 2021-09-17 08:05+0000\n"
 "Last-Translator: Sundeep Anand <suanand@redhat.com>\n"
 "Language-Team: Japanese <https://translate.fedoraproject.org/projects/"
@@ -80,8 +81,8 @@ msgstr ""
 msgid "Access"
 msgstr "アクセス"
 
-#: src/components/storagePools/storagePool.jsx:166
-#: src/components/networks/network.jsx:172
+#: src/components/storagePools/storagePool.jsx:171
+#: src/components/networks/network.jsx:165
 msgid "Activate"
 msgstr "有効化"
 
@@ -238,7 +239,7 @@ msgid "Cache"
 msgstr "キャッシュ"
 
 #: src/components/common/deleteResource.jsx:69
-#: src/components/storagePools/storagePoolDelete.jsx:231
+#: src/components/storagePools/storagePoolDelete.jsx:189
 #: src/components/storagePools/createStoragePoolDialog.jsx:438
 #: src/components/storagePools/storageVolumeCreate.jsx:103
 #: src/components/networks/networkOverviewTab.jsx:203
@@ -447,8 +448,8 @@ msgstr "カスタムパス"
 msgid "DHCP Settings"
 msgstr "DHCP の範囲"
 
-#: src/components/storagePools/storagePool.jsx:157
-#: src/components/networks/network.jsx:168
+#: src/components/storagePools/storagePool.jsx:162
+#: src/components/networks/network.jsx:161
 msgid "Deactivate"
 msgstr "解除"
 
@@ -456,11 +457,12 @@ msgstr "解除"
 #: src/components/common/deleteResource.jsx:66
 #: src/components/common/deleteResource.jsx:95
 #: src/components/common/deleteResource.jsx:105
-#: src/components/storagePools/storagePoolDelete.jsx:200
-#: src/components/storagePools/storagePoolDelete.jsx:210
-#: src/components/storagePools/storagePoolDelete.jsx:228
-#: src/components/vm/vmActions.jsx:379 src/components/vm/vmActions.jsx:386
-#: src/components/vm/deleteDialog.jsx:143
+#: src/components/storagePools/storagePoolDelete.jsx:186
+#: src/components/storagePools/storagePoolDelete.jsx:221
+#: src/components/storagePools/storagePoolDelete.jsx:231
+#: src/components/networks/network.jsx:143
+#: src/components/networks/network.jsx:145 src/components/vm/vmActions.jsx:379
+#: src/components/vm/vmActions.jsx:386 src/components/vm/deleteDialog.jsx:143
 msgid "Delete"
 msgstr "削除"
 
@@ -473,19 +475,19 @@ msgstr[0] "$0 ボリュームの削除"
 msgid "Delete associated storage files:"
 msgstr "関連するストレージファイルの削除:"
 
-#: src/components/storagePools/storagePoolDelete.jsx:169
+#: src/components/storagePools/storagePoolDelete.jsx:165
 msgid "Delete content"
 msgstr "コンテンツの削除"
 
-#: src/components/storagePools/storagePoolDelete.jsx:221
+#: src/components/storagePools/storagePoolDelete.jsx:179
 msgid "Delete storage pool $0"
 msgstr "ストレージプール $0 の削除"
 
-#: src/components/storagePools/storagePoolDelete.jsx:172
+#: src/components/storagePools/storagePoolDelete.jsx:168
 msgid "Delete the volumes inside this pool"
 msgstr "このプール内のボリュームを削除します"
 
-#: src/components/storagePools/storagePoolDelete.jsx:175
+#: src/components/storagePools/storagePoolDelete.jsx:171
 msgid ""
 "Deleting an inactive storage pool will only undefine the pool. Its content "
 "will not be deleted."
@@ -515,8 +517,7 @@ msgstr "宛先 URI"
 msgid "Destination URI must not be empty"
 msgstr "宛先 URI は空欄にできません"
 
-#: src/components/storagePools/storagePoolDelete.jsx:158
-#: src/components/storagePools/storagePoolDelete.jsx:186
+#: src/components/storagePools/storagePoolDelete.jsx:93
 msgid ""
 "Detach the disks using this pool from any VMs before attempting deletion."
 msgstr "削除を試みる前に、このプールを使用して VM からディスクを切り離します。"
@@ -1210,11 +1211,11 @@ msgstr "名前: "
 msgid "Netmask"
 msgstr "ネットマスク"
 
-#: src/components/networks/network.jsx:119
+#: src/components/networks/network.jsx:98
 msgid "Network $0 failed to get activated"
 msgstr "ネットワーク $0 のアクティベートに失敗しました"
 
-#: src/components/networks/network.jsx:138
+#: src/components/networks/network.jsx:116
 msgid "Network $0 failed to get deactivated"
 msgstr "ネットワーク $0 の停止に失敗しました"
 
@@ -1292,7 +1293,7 @@ msgstr "ネットワークデバイスはありません"
 msgid "No network interfaces defined for this VM"
 msgstr "この仮想マシンにはネットワークインターフェースが定義されていません"
 
-#: src/components/networks/networkList.jsx:80
+#: src/components/networks/networkList.jsx:81
 msgid "No network is defined on this host"
 msgstr "このホストで定義されるネットワークはありません"
 
@@ -1316,7 +1317,7 @@ msgstr "状態なし"
 msgid "No storage"
 msgstr "ストレージはありません"
 
-#: src/components/storagePools/storagePoolList.jsx:78
+#: src/components/storagePools/storagePoolList.jsx:79
 msgid "No storage pool is defined on this host"
 msgstr "このホストではストレージプールが定義されていません"
 
@@ -1332,7 +1333,7 @@ msgstr "このストレージプールにストレージボリュームが定義
 msgid "No virtual networks"
 msgstr "仮想ネットワークはありません"
 
-#: src/components/networks/network.jsx:178
+#: src/components/networks/network.jsx:142
 msgid ""
 "Non-persistent network cannot be deleted. It ceases to exists when it's "
 "deactivated."
@@ -1340,7 +1341,7 @@ msgstr ""
 "非永続的なネットワークは削除できません。非アクティブ化されると、存在しなくな"
 "ります。"
 
-#: src/components/storagePools/storagePoolDelete.jsx:189
+#: src/components/storagePools/storagePoolDelete.jsx:210
 msgid ""
 "Non-persistent storage pool cannot be deleted. It ceases to exists when it's "
 "deactivated."
@@ -1378,13 +1379,12 @@ msgstr "開く"
 msgid "Operating system"
 msgstr "オペレーティングシステム"
 
-#: src/components/storagePools/storagePool.jsx:171
-#: src/components/storagePools/storagePool.jsx:178
+#: src/components/storagePools/storagePool.jsx:176
+#: src/components/storagePools/storagePool.jsx:183
 msgid "Operation is in progress"
 msgstr "操作を実行中"
 
-#: src/components/storagePools/storagePool.jsx:70
-#: src/components/networks/network.jsx:75
+#: src/components/storagePools/storagePool.jsx:75
 #: src/components/vm/vmDetailsPage.jsx:134
 msgid "Overview"
 msgstr "概要"
@@ -1484,8 +1484,7 @@ msgstr "プールタイプ $0 はボリューム作成をサポートしませ�
 msgid "Pool type doesn't support volume creation"
 msgstr "プールタイプは、ボリューム作成をサポートしません"
 
-#: src/components/storagePools/storagePoolDelete.jsx:156
-#: src/components/storagePools/storagePoolDelete.jsx:184
+#: src/components/storagePools/storagePoolDelete.jsx:91
 msgid "Pool's volumes are used by VMs "
 msgstr "プールのボリュームは VM が使用します "
 
@@ -1863,11 +1862,11 @@ msgstr "ストレージ"
 msgid "Storage is at a shared location"
 msgstr "ストレージは共有場所にあります"
 
-#: src/components/storagePools/storagePool.jsx:119
+#: src/components/storagePools/storagePool.jsx:124
 msgid "Storage pool $0 failed to get activated"
 msgstr "ストレージプール $0 は、アクティベートに失敗しました"
 
-#: src/components/storagePools/storagePool.jsx:139
+#: src/components/storagePools/storagePool.jsx:144
 msgid "Storage pool $0 failed to get deactivated"
 msgstr "ストレージプール $0 は、停止に失敗しました"
 
@@ -1905,7 +1904,7 @@ msgstr ""
 "ストレージボリュームサイズは、ストレージプールの容量を超えることはできません "
 "($0 $1)"
 
-#: src/components/storagePools/storagePool.jsx:76
+#: src/components/storagePools/storagePool.jsx:81
 msgid "Storage volumes"
 msgstr "ストレージボリューム"
 
@@ -2003,8 +2002,8 @@ msgid ""
 msgstr ""
 "選択したオペレーティングシステムには、最小ストレージザイズ $0 $1 が必要です"
 
-#: src/components/storagePools/storagePoolDelete.jsx:131
-#: src/components/storagePools/storagePoolDelete.jsx:135
+#: src/components/storagePools/storagePoolDelete.jsx:137
+#: src/components/storagePools/storagePoolDelete.jsx:141
 msgid "The storage pool could not be deleted"
 msgstr "ストレージプールを削除できませんでした"
 
@@ -2317,8 +2316,8 @@ msgstr "以下を使用して、共有フォルダーをマウントできます
 msgid "You need to select the most closely matching operating system"
 msgstr "最も一致するオペレーティングシステムを選択する必要があります"
 
-#: src/components/storagePools/storagePool.jsx:59
-#: src/components/networks/network.jsx:57
+#: src/components/storagePools/storagePool.jsx:64
+#: src/components/networks/network.jsx:56
 msgid "active"
 msgstr "アクティブ"
 

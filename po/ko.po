@@ -7,11 +7,12 @@
 # MinWoo Joh <igtzhsou@naver.com>, 2019. #zanata
 # Matej Marusak <mmarusak@redhat.com>, 2020.
 # Seungyeon Choi <p@ij.rs>, 2020.
+#: src/components/storagePools/storagePoolList.jsx:77
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-05 03:00+0000\n"
+"POT-Creation-Date: 2021-12-13 02:58+0000\n"
 "PO-Revision-Date: 2021-11-21 19:16+0000\n"
 "Last-Translator: simmon <simmon@nplob.com>\n"
 "Language-Team: Korean <https://translate.fedoraproject.org/projects/cockpit-"
@@ -82,8 +83,8 @@ msgstr ""
 msgid "Access"
 msgstr "접근"
 
-#: src/components/storagePools/storagePool.jsx:166
-#: src/components/networks/network.jsx:172
+#: src/components/storagePools/storagePool.jsx:171
+#: src/components/networks/network.jsx:165
 msgid "Activate"
 msgstr "활성화"
 
@@ -234,7 +235,7 @@ msgid "Cache"
 msgstr "캐쉬"
 
 #: src/components/common/deleteResource.jsx:69
-#: src/components/storagePools/storagePoolDelete.jsx:231
+#: src/components/storagePools/storagePoolDelete.jsx:189
 #: src/components/storagePools/createStoragePoolDialog.jsx:438
 #: src/components/storagePools/storageVolumeCreate.jsx:103
 #: src/components/networks/networkOverviewTab.jsx:203
@@ -441,8 +442,8 @@ msgstr "사용자 지정 경로"
 msgid "DHCP Settings"
 msgstr "DHCP 설정"
 
-#: src/components/storagePools/storagePool.jsx:157
-#: src/components/networks/network.jsx:168
+#: src/components/storagePools/storagePool.jsx:162
+#: src/components/networks/network.jsx:161
 msgid "Deactivate"
 msgstr "비활성화"
 
@@ -450,11 +451,12 @@ msgstr "비활성화"
 #: src/components/common/deleteResource.jsx:66
 #: src/components/common/deleteResource.jsx:95
 #: src/components/common/deleteResource.jsx:105
-#: src/components/storagePools/storagePoolDelete.jsx:200
-#: src/components/storagePools/storagePoolDelete.jsx:210
-#: src/components/storagePools/storagePoolDelete.jsx:228
-#: src/components/vm/vmActions.jsx:379 src/components/vm/vmActions.jsx:386
-#: src/components/vm/deleteDialog.jsx:143
+#: src/components/storagePools/storagePoolDelete.jsx:186
+#: src/components/storagePools/storagePoolDelete.jsx:221
+#: src/components/storagePools/storagePoolDelete.jsx:231
+#: src/components/networks/network.jsx:143
+#: src/components/networks/network.jsx:145 src/components/vm/vmActions.jsx:379
+#: src/components/vm/vmActions.jsx:386 src/components/vm/deleteDialog.jsx:143
 msgid "Delete"
 msgstr "삭제"
 
@@ -467,19 +469,19 @@ msgstr[0] "$0 볼륨 삭제"
 msgid "Delete associated storage files:"
 msgstr "관련된 저장소 파일 삭제:"
 
-#: src/components/storagePools/storagePoolDelete.jsx:169
+#: src/components/storagePools/storagePoolDelete.jsx:165
 msgid "Delete content"
 msgstr "내용 삭제"
 
-#: src/components/storagePools/storagePoolDelete.jsx:221
+#: src/components/storagePools/storagePoolDelete.jsx:179
 msgid "Delete storage pool $0"
 msgstr "저장소 풀 $0 삭제"
 
-#: src/components/storagePools/storagePoolDelete.jsx:172
+#: src/components/storagePools/storagePoolDelete.jsx:168
 msgid "Delete the volumes inside this pool"
 msgstr "이 풀 안에 있는 볼륨을 삭제합니다"
 
-#: src/components/storagePools/storagePoolDelete.jsx:175
+#: src/components/storagePools/storagePoolDelete.jsx:171
 msgid ""
 "Deleting an inactive storage pool will only undefine the pool. Its content "
 "will not be deleted."
@@ -508,8 +510,7 @@ msgstr "대상 URI"
 msgid "Destination URI must not be empty"
 msgstr "대상 URI는 비워 두면 안됩니다"
 
-#: src/components/storagePools/storagePoolDelete.jsx:158
-#: src/components/storagePools/storagePoolDelete.jsx:186
+#: src/components/storagePools/storagePoolDelete.jsx:93
 msgid ""
 "Detach the disks using this pool from any VMs before attempting deletion."
 msgstr "삭제를 시도하기 전에 VM에서 이 풀을 사용하는 디스크를 분리하십시오."
@@ -1195,11 +1196,11 @@ msgstr "이름: "
 msgid "Netmask"
 msgstr "넷마스크"
 
-#: src/components/networks/network.jsx:119
+#: src/components/networks/network.jsx:98
 msgid "Network $0 failed to get activated"
 msgstr "네트워크 $0의 활성화에 실패했습니다"
 
-#: src/components/networks/network.jsx:138
+#: src/components/networks/network.jsx:116
 msgid "Network $0 failed to get deactivated"
 msgstr "네트워크 $0의 비활성화에 실패했습니다"
 
@@ -1277,7 +1278,7 @@ msgstr "네트워크 장치 없음"
 msgid "No network interfaces defined for this VM"
 msgstr "이 가상 머신에 네트워크 연결장치가 정의되지 않았습니다"
 
-#: src/components/networks/networkList.jsx:80
+#: src/components/networks/networkList.jsx:81
 msgid "No network is defined on this host"
 msgstr "이 호스트에 정의된 네트워크가 없습니다"
 
@@ -1301,7 +1302,7 @@ msgstr "상태 없음"
 msgid "No storage"
 msgstr "저장소 없음"
 
-#: src/components/storagePools/storagePoolList.jsx:78
+#: src/components/storagePools/storagePoolList.jsx:79
 msgid "No storage pool is defined on this host"
 msgstr "이 호스트에 지정된 저장소 풀이 없습니다"
 
@@ -1317,14 +1318,14 @@ msgstr "이 저장소 풀에 대해 정의된 저장소 볼륨 없음"
 msgid "No virtual networks"
 msgstr "가상 네트워크 없음"
 
-#: src/components/networks/network.jsx:178
+#: src/components/networks/network.jsx:142
 msgid ""
 "Non-persistent network cannot be deleted. It ceases to exists when it's "
 "deactivated."
 msgstr ""
 "비영구적 네트워크는 삭제할 수 없습니다. 비활성화되면 존재하지 않습니다."
 
-#: src/components/storagePools/storagePoolDelete.jsx:189
+#: src/components/storagePools/storagePoolDelete.jsx:210
 msgid ""
 "Non-persistent storage pool cannot be deleted. It ceases to exists when it's "
 "deactivated."
@@ -1361,15 +1362,14 @@ msgstr "열기"
 msgid "Operating system"
 msgstr "운영 체제"
 
-#: src/components/storagePools/storagePool.jsx:171
-#: src/components/storagePools/storagePool.jsx:178
+#: src/components/storagePools/storagePool.jsx:176
+#: src/components/storagePools/storagePool.jsx:183
 msgid "Operation is in progress"
 msgstr "실행 중인 작업"
 
 # translation auto-copied from project virt-manager, version 0.10.0, document
 # virt-manager
-#: src/components/storagePools/storagePool.jsx:70
-#: src/components/networks/network.jsx:75
+#: src/components/storagePools/storagePool.jsx:75
 #: src/components/vm/vmDetailsPage.jsx:134
 msgid "Overview"
 msgstr "개요"
@@ -1469,8 +1469,7 @@ msgstr "풀 유형 $0는 볼륨 생성을 지원하지 않습니다"
 msgid "Pool type doesn't support volume creation"
 msgstr "풀 유형이 볼륨 생성을 지원하지 않습니다"
 
-#: src/components/storagePools/storagePoolDelete.jsx:156
-#: src/components/storagePools/storagePoolDelete.jsx:184
+#: src/components/storagePools/storagePoolDelete.jsx:91
 msgid "Pool's volumes are used by VMs "
 msgstr "풀 볼륨은 VM에서 사용됩니다 "
 
@@ -1846,11 +1845,11 @@ msgstr "저장소"
 msgid "Storage is at a shared location"
 msgstr "저장소는 공유된 장소에 있습니다"
 
-#: src/components/storagePools/storagePool.jsx:119
+#: src/components/storagePools/storagePool.jsx:124
 msgid "Storage pool $0 failed to get activated"
 msgstr "저장소 풀 $0의 활성화에 실패했습니다"
 
-#: src/components/storagePools/storagePool.jsx:139
+#: src/components/storagePools/storagePool.jsx:144
 msgid "Storage pool $0 failed to get deactivated"
 msgstr "저장소 풀 $0의 비활성화에 실패했습니다"
 
@@ -1886,7 +1885,7 @@ msgstr "저장소 볼륨"
 msgid "Storage volume size must not exceed the storage pool's capacity ($0 $1)"
 msgstr "저장소 볼륨 크기는 저장소 풀의 용량을 초과해서는 안 됩니다($0 $1)"
 
-#: src/components/storagePools/storagePool.jsx:76
+#: src/components/storagePools/storagePool.jsx:81
 msgid "Storage volumes"
 msgstr "저장소 볼륨"
 
@@ -1981,8 +1980,8 @@ msgid ""
 "The selected operating system has minimum storage size requirement of $0 $1"
 msgstr "선택한 운영 체제의 최소 저장소 크기 요구 사항은 $0 $1입니다"
 
-#: src/components/storagePools/storagePoolDelete.jsx:131
-#: src/components/storagePools/storagePoolDelete.jsx:135
+#: src/components/storagePools/storagePoolDelete.jsx:137
+#: src/components/storagePools/storagePoolDelete.jsx:141
 msgid "The storage pool could not be deleted"
 msgstr "저장소 풀을 삭제 할 수 없습니다"
 
@@ -2298,8 +2297,8 @@ msgstr "다음을 사용하여 공유 폴더를 적재 할 수 있습니다:"
 msgid "You need to select the most closely matching operating system"
 msgstr "가장 일치하는 운영 체제를 선택해야합니다"
 
-#: src/components/storagePools/storagePool.jsx:59
-#: src/components/networks/network.jsx:57
+#: src/components/storagePools/storagePool.jsx:64
+#: src/components/networks/network.jsx:56
 msgid "active"
 msgstr "활성"
 
