@@ -53,7 +53,7 @@ if [ "$TEST_OS" = "fedora-34" ] || [ "$TEST_OS" = "centos-8-stream" ]; then
     EXCLUDES="$EXCLUDES TestMachinesCreate.testCreateFileSource"
 fi
 
-if [ "$TEST_OS" = "fedora-35" ] || [ "$TEST_OS" = "centos-9-stream" ]; then
+if [ "$TEST_OS" = "fedora-35" ] || [ "$TEST_OS" = "fedora-36" ] || [ "$TEST_OS" = "centos-9-stream" ]; then
     EXCLUDES="$EXCLUDES TestMachinesHostDevs.testHostDevAdd"
 fi
 
