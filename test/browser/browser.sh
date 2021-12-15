@@ -12,12 +12,9 @@ LOGS="$(pwd)/logs"
 mkdir -p "$LOGS"
 chmod a+w "$LOGS"
 
-# install firefox (available everywhere in Fedora and RHEL); install the package to pull in all the dependencies
+# install firefox (available everywhere in Fedora and RHEL)
 # we don't need the H.264 codec, and it is sometimes not available (rhbz#2005760)
 dnf install --disablerepo=fedora-cisco-openh264 -y firefox
-# install nightly for Chrome DevTools Protocol support
-curl --location 'https://download.mozilla.org/?product=firefox-nightly-latest-ssl&os=linux64&lang=en-US' | tar -C /usr/local/lib/ -xj
-ln -s /usr/local/lib/firefox/firefox /usr/local/bin/
 
 #HACK: unbreak rhel-9-0's default choice of 999999999 rounds, see https://bugzilla.redhat.com/show_bug.cgi?id=1993919
 sed -ie 's/#SHA_CRYPT_MAX_ROUNDS 5000/SHA_CRYPT_MAX_ROUNDS 5000/' /etc/login.defs
