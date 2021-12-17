@@ -147,7 +147,7 @@ function delayPolling(action, timeout) {
     }
 }
 
-// Undefined the VM from Redux store only if it"s not transient
+// Undefined the VM from Redux store only if it's not transient
 function domainEventUndefined(connectionName, domPath) {
     call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "ListDomains", [Enum.VIR_CONNECT_LIST_DOMAINS_TRANSIENT], { timeout, type: "u" })
             .then(objPaths => {
@@ -159,7 +159,7 @@ function domainEventUndefined(connectionName, domPath) {
             .catch(ex => console.warn("ListDomains action failed:", ex.toString()));
 }
 
-function domainUpdateOrDelete(connectionName, domPath) {
+function domainEventStopped(connectionName, domPath) {
     // Transient VMs cease to exists once they are stopped. Check if VM was transient and update or undefined it
     call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "ListDomains", [0], { timeout, type: "u" })
             .then(objPaths => {
@@ -168,7 +168,7 @@ function domainUpdateOrDelete(connectionName, domPath) {
                 else // Transient vm will get undefined when stopped
                     store.dispatch(undefineVm({ connectionName, id:domPath, transientOnly: true }));
             })
-            .catch(ex => console.warn("domainUpdateOrDelete action failed:", ex.toString()));
+            .catch(ex => console.warn("domainEventStopped action failed:", ex.toString()));
 }
 
 /**
@@ -342,7 +342,7 @@ function startEventMonitorDomains(connectionName) {
                 break;
 
             case domainEvent.Stopped:
-                domainUpdateOrDelete(connectionName, objPath);
+                domainEventStopped(connectionName, objPath);
                 break;
 
             default:
