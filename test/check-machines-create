@@ -853,6 +853,7 @@ class TestMachinesCreate(VirtualMachinesCase):
 
             self.machine.execute(f"virsh destroy {self.name}")
             self.assertIn(f"backing file: {self.location}", self.machine.execute(f"qemu-img info /var/lib/libvirt/images/{self.name}.qcow2"))
+            self.browser.wait_text(f"#vm-{self.name}-state", "Shut off")
 
         def createRespectQemuConfConsoleConfig(self, vnc_listen, spice_listen, vnc_passwd, spice_passwd):
             self.browser.click(".pf-c-modal-box__footer button:contains(Create)")
