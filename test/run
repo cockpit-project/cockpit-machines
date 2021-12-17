@@ -8,6 +8,5 @@ if [ -v TEST_SCENARIO ]; then
     [ "${TEST_SCENARIO}" = "${TEST_SCENARIO%%mobile}" ] || export TEST_MOBILE=true
 fi
 
-make codecheck
 make check
 make po/machines.pot
