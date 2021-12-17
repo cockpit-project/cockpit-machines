@@ -38,13 +38,21 @@ class SerialConsoleCockpit extends React.Component {
     }
 
     componentDidMount() {
-        this.createChannel();
+        this.createChannel(this.props.spawnArgs);
     }
 
-    createChannel () {
+    componentDidUpdate(prevProps) {
+        const oldSpawnArgs = prevProps.spawnArgs;
+        const newSpawnArgs = this.props.spawnArgs;
+
+        if (newSpawnArgs.length !== oldSpawnArgs.length || oldSpawnArgs.some((arg, index) => arg !== newSpawnArgs[index]))
+            this.createChannel(this.props.spawnArgs);
+    }
+
+    createChannel (spawnArgs) {
         const opts = {
             payload: "stream",
-            spawn: this.props.spawnArgs,
+            spawn: spawnArgs,
             pty: true,
         };
         if (this.props.connectionName == "system")
@@ -82,7 +90,7 @@ class SerialConsoleCockpit extends React.Component {
                 <div className="pf-c-console__actions-serial">
                     {this.state.channel
                         ? <Button id={this.props.vmName + "-serialconsole-disconnect"} variant="secondary" onClick={this.onDisconnect}>{_("Disconnect")}</Button>
-                        : <Button id={this.props.vmName + "-serialconsole-connect"} variant="secondary" onClick={this.createChannel}>{_("Connect")}</Button>
+                        : <Button id={this.props.vmName + "-serialconsole-connect"} variant="secondary" onClick={() => this.createChannel(this.props.spawnArgs)}>{_("Connect")}</Button>
                     }
                 </div>
                 <div id={pid} className="vm-terminal pf-c-console__serial">

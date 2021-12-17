@@ -48,10 +48,21 @@ class Consoles extends React.Component {
 
         this.state = {
             consoleDetail: undefined,
+            serial: props.vm.displays && props.vm.displays.filter(display => display.type == 'pty'),
         };
 
         this.getDefaultConsole = this.getDefaultConsole.bind(this);
         this.onDesktopConsoleDownload = this.onDesktopConsoleDownload.bind(this);
+    }
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+        const oldSerial = prevState.serial;
+        const newSerial = nextProps.vm.displays && nextProps.vm.displays.filter(display => display.type == 'pty');
+
+        if (newSerial.length !== oldSerial.length || oldSerial.some((pty, index) => pty.alias !== newSerial[index].alias))
+            return { serial: newSerial };
+
+        return null;
     }
 
     getDefaultConsole () {
@@ -83,8 +94,8 @@ class Consoles extends React.Component {
 
     render () {
         const { vm, onAddErrorNotification } = this.props;
+        const { serial } = this.state;
         const spice = vm.displays && vm.displays.find(display => display.type == 'spice');
-        const serial = vm.displays && vm.displays.filter(display => display.type == 'pty');
         const vnc = vm.displays && vm.displays.find(display => display.type == 'vnc');
 
         if (!domainCanConsole || !domainCanConsole(vm.state)) {
