@@ -180,6 +180,30 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                         os_short_id=config.FEDORA_28_SHORTID,
                                                                         start_vm=True))
 
+    def testCreateCloudBaseImage2(self):
+        self.testCreateCloudBaseImage()
+
+    def testCreateCloudBaseImage3(self):
+        self.testCreateCloudBaseImage()
+
+    def testCreateCloudBaseImage4(self):
+        self.testCreateCloudBaseImage()
+
+    def testCreateCloudBaseImage5(self):
+        self.testCreateCloudBaseImage()
+
+    def testCreateCloudBaseImage6(self):
+        self.testCreateCloudBaseImage()
+
+    def testCreateCloudBaseImage7(self):
+        self.testCreateCloudBaseImage()
+
+    def testCreateCloudBaseImage8(self):
+        self.testCreateCloudBaseImage()
+
+    def testCreateCloudBaseImage9(self):
+        self.testCreateCloudBaseImage()
+
     def testCreateDownloadAnOS(self):
         runner = TestMachinesCreate.CreateVmRunner(self)
         config = TestMachinesCreate.TestCreateConfig
@@ -538,6 +562,30 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                       storage_pool="NoStorage",
                                                       start_vm=True,))
 
+    def testCreateFileSource2(self):
+        self.testCreateFileSource()
+
+    def testCreateFileSource3(self):
+        self.testCreateFileSource()
+
+    def testCreateFileSource4(self):
+        self.testCreateFileSource()
+
+    def testCreateFileSource5(self):
+        self.testCreateFileSource()
+
+    def testCreateFileSource6(self):
+        self.testCreateFileSource()
+
+    def testCreateFileSource7(self):
+        self.testCreateFileSource()
+
+    def testCreateFileSource8(self):
+        self.testCreateFileSource()
+
+    def testCreateFileSource9(self):
+        self.testCreateFileSource()
+
     def testCreateImportDisk(self):
         runner = TestMachinesCreate.CreateVmRunner(self)
         config = TestMachinesCreate.TestCreateConfig
@@ -628,6 +676,30 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                     memory_size=128, memory_size_unit='MiB',
                                                                     storage_pool="NoStorage",
                                                                     start_vm=True), ["qemu", "protocol"])
+
+    def testCreateUrlSource2(self):
+        self.testCreateUrlSource()
+
+    def testCreateUrlSource3(self):
+        self.testCreateUrlSource()
+
+    def testCreateUrlSource4(self):
+        self.testCreateUrlSource()
+
+    def testCreateUrlSource5(self):
+        self.testCreateUrlSource()
+
+    def testCreateUrlSource6(self):
+        self.testCreateUrlSource()
+
+    def testCreateUrlSource7(self):
+        self.testCreateUrlSource()
+
+    def testCreateUrlSource8(self):
+        self.testCreateUrlSource()
+
+    def testCreateUrlSource9(self):
+        self.testCreateUrlSource()
 
     def testDisabledCreate(self):
         self.login_and_go("/machines")
