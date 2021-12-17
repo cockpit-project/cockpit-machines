@@ -325,13 +325,8 @@ export function domainDelete({
     options,
     storagePools
 }) {
-    function destroy() {
-        return call(connectionName, objPath, 'org.libvirt.Domain', 'Destroy', [0], { timeout, type: 'u' });
-    }
-
-    function undefine() {
+    function deleteStorage() {
         const storageVolPromises = [];
-        const flags = Enum.VIR_DOMAIN_UNDEFINE_MANAGED_SAVE | Enum.VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA | Enum.VIR_DOMAIN_UNDEFINE_NVRAM;
 
         for (let i = 0; i < options.storage.length; i++) {
             const disk = options.storage[i];
@@ -369,14 +364,23 @@ export function domainDelete({
             }
         }
 
-        return Promise.all(storageVolPromises)
-                .then(() => {
-                    return call(connectionName, objPath, 'org.libvirt.Domain', 'Undefine', [flags], { timeout, type: 'u' });
-                });
+        return Promise.all(storageVolPromises);
+    }
+
+    function destroy() {
+        return call(connectionName, objPath, 'org.libvirt.Domain', 'Destroy', [0], { timeout, type: 'u' });
+    }
+
+    function undefine() {
+        const flags = Enum.VIR_DOMAIN_UNDEFINE_MANAGED_SAVE | Enum.VIR_DOMAIN_UNDEFINE_SNAPSHOTS_METADATA | Enum.VIR_DOMAIN_UNDEFINE_NVRAM;
+
+        return call(connectionName, objPath, 'org.libvirt.Domain', 'Undefine', [flags], { timeout, type: 'u' });
     }
 
     if (options.destroy) {
-        return undefine().then(destroy());
+        return destroy()
+                .then(undefine)
+                .then(deleteStorage);
     } else {
         return undefine()
                 .catch(ex => {
