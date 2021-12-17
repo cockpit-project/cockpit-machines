@@ -149,24 +149,32 @@ function delayPolling(action, timeout) {
 
 // Undefined the VM from Redux store only if it's not transient
 function domainEventUndefined(connectionName, domPath) {
+    logDebug("domainEventUndefined", connectionName, domPath);
     call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "ListDomains", [Enum.VIR_CONNECT_LIST_DOMAINS_TRANSIENT], { timeout, type: "u" })
             .then(objPaths => {
-                if (!objPaths[0].includes(domPath))
+                if (!objPaths[0].includes(domPath)) {
+                    logDebug("domainEventUndefined", connectionName, domPath, " -- not in ListDomains any more, undefining");
                     store.dispatch(undefineVm({ connectionName, id: domPath }));
-                else
+                } else {
+                    logDebug("domainEventUndefined", connectionName, domPath, " -- still in ListDomains, getting props");
                     domainGet({ connectionName, id: domPath, updateOnly: true });
+                }
             })
             .catch(ex => console.warn("ListDomains action failed:", ex.toString()));
 }
 
 function domainEventStopped(connectionName, domPath) {
+    logDebug("domainEventStopped", connectionName, domPath);
     // Transient VMs cease to exists once they are stopped. Check if VM was transient and update or undefined it
     call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "ListDomains", [0], { timeout, type: "u" })
             .then(objPaths => {
-                if (objPaths[0].includes(domPath))
+                if (objPaths[0].includes(domPath)) {
+                    logDebug("domainEventStopped", connectionName, domPath, " -- still in ListDomains, getting props");
                     domainGet({ connectionName, id: domPath, updateOnly: true });
-                else // Transient vm will get undefined when stopped
+                } else { // Transient vm will get undefined when stopped
+                    logDebug("domainEventStopped", connectionName, domPath, " -- not in ListDomains any more, undefining");
                     store.dispatch(undefineVm({ connectionName, id:domPath, transientOnly: true }));
+                }
             })
             .catch(ex => console.warn("domainEventStopped action failed:", ex.toString()));
 }

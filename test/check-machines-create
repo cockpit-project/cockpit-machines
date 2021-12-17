@@ -147,9 +147,12 @@ class TestMachinesCreate(VirtualMachinesCase):
 
         b = self.browser
         m = self.machine
+        b.cdp.trace = True
 
         self.login_and_go("/machines")
         self.browser.wait_in_text("body", "Virtual machines")
+
+        b.eval_js('window.debugging = "machines"')
 
         # try to CREATE few machines
         # --cloud-init user-data option exists since virt-install >= 3.0.0
@@ -466,6 +469,9 @@ class TestMachinesCreate(VirtualMachinesCase):
         self.login_and_go("/machines")
         self.browser.wait_in_text("body", "Virtual machines")
 
+        self.browser.cdp.trace = True
+        self.browser.eval_js('window.debugging = "machines"')
+
         # Check that when there is no storage pool defined a VM can still be created
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='file',
                                                       location=config.NOVELL_MOCKUP_ISO_PATH,
@@ -604,6 +610,8 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                       start_vm=False))
 
         # Test detection of ISO file in URL
+        self.browser.cdp.trace = True
+        self.browser.eval_js('window.debugging = "machines"')
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='url',
                                                       location=config.ISO_URL,
                                                       memory_size=128, memory_size_unit='MiB',
