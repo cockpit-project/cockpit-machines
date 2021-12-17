@@ -558,7 +558,6 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                       memory_size=128, memory_size_unit='MiB',
                                                       start_vm=True))
 
-    @no_retry_when_changed
     def testCreateUrlSource(self):
         runner = TestMachinesCreate.CreateVmRunner(self)
         config = TestMachinesCreate.TestCreateConfig
