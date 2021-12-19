@@ -21,7 +21,6 @@ import * as dfnlocales from 'date-fns/locale';
 import { formatRelative } from 'date-fns';
 
 import cockpit from 'cockpit';
-import VMS_CONFIG from './config.js';
 
 const _ = cockpit.gettext;
 
@@ -175,14 +174,9 @@ export function arrayEquals(arr1, arr2) {
     return diff.length === 0;
 }
 
-export function logDebug(msg, ...params) {
-    if (VMS_CONFIG.isDev) {
-        console.log(msg, ...params);
-    }
-}
-
-export function logError(msg, ...params) {
-    console.error(msg, ...params);
+export function logDebug() {
+    if (window.debugging === "all" || window.debugging === "machines")
+        console.debug.apply(console, arguments);
 }
 
 export function digitFilter(event, allowDots = false) {
