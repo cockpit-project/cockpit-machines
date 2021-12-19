@@ -36,8 +36,6 @@ const VMS_CONFIG = {
             }
         }
     },
-    // TODO: make it configurable via config file
-    isDev: false, // Never commit with 'true'
 };
 
 export default VMS_CONFIG;
