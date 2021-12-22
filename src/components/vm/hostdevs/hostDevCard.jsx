@@ -28,10 +28,11 @@ import {
 } from '@patternfly/react-core';
 
 import cockpit from 'cockpit';
-import { vmId, findHostNodeDevice, getNodeDevSource, getHostDevSourceObject } from "../../../helpers.js";
+import { vmId, findHostNodeDevice, getHostDevSourceObject } from "../../../helpers.js";
 import { ListingTable } from "cockpit-components-table.jsx";
 import AddHostDev from "./hostDevAdd.jsx";
-import { domainDetachHostDevice } from '../../../libvirtApi/domain.js';
+import { domainGet, domainDetachHostDevice } from '../../../libvirtApi/domain.js';
+import { nodeDeviceGetAll } from '../../../libvirtApi/nodeDevice.js';
 import { DeleteResourceButton, DeleteResourceModal } from '../../common/deleteResource.jsx';
 
 const _ = cockpit.gettext;
@@ -214,22 +215,25 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
         },
         {
             name: "", value: (hostdev, hostdevId) => {
-                const nodeDev = findHostNodeDevice(hostdev, nodeDevices);
-
                 const deleteNICAction = (
                     <DeleteResourceButton objectId={`${id}-hostdev-${hostdevId}`}
                                           actionName={_("Remove")}
                                           showDialog={() => setDeleteDialogProps({
                                               objectType: hostdev.type + " host device",
-                                              objectName: getNodeDevSource(nodeDev),
+                                              objectName: "",
                                               onClose: () => setDeleteDialogProps(undefined),
-                                              deleteHandler: () => domainDetachHostDevice({ connectionName: vm.connectionName, vmName: vm.name, live: vm.state !== 'shut off', dev: nodeDev }),
+                                              deleteHandler: () => {
+                                                  // refresh nodeDevice since usb number may be changed
+                                                  return domainDetachHostDevice({ connectionName: vm.connectionName, vmId: vm.id, live: vm.state !== 'shut off', dev: hostdev })
+                                                          .then(() => nodeDeviceGetAll({ connectionName: vm.connectionName }))
+                                                          .then(() => domainGet({ connectionName: vm.connectionName, id: vm.id }));
+                                              }
                                           })} />
                 );
 
                 return (
                     <div className='machines-listing-actions'>
-                        {nodeDev && deleteNICAction}
+                        {deleteNICAction}
                     </div>
                 );
             }

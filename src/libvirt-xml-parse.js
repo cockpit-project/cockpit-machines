@@ -30,6 +30,68 @@ export function getDiskElemByTarget(domxml, targetOriginal) {
     }
 }
 
+export function getHostDevElemBySource(domxml, source) {
+    const domainElem = getElem(domxml);
+
+    if (!domainElem) {
+        console.warn(`Can't parse dumpxml, input: "${domainElem}"`);
+        return;
+    }
+
+    const devicesElem = domainElem.getElementsByTagName('devices')[0];
+    if (!devicesElem) {
+        console.warn(`Can't parse dumpxml for host devices, devices element is not present`);
+        return;
+    }
+
+    const hostdevElems = devicesElem.getElementsByTagName('hostdev');
+
+    if (hostdevElems) {
+        for (let i = 0; i < hostdevElems.length; i++) {
+            const hostdevElem = hostdevElems[i];
+            const type = hostdevElem.getAttribute('type');
+            const sourceElem = hostdevElem.getElementsByTagName('source')[0];
+            if (!sourceElem)
+                continue;
+            const addressElem = sourceElem.getElementsByTagName('address')[0];
+
+            if (type === "usb" && "vendor" in source && "product" in source) {
+                const vendorElem = sourceElem.getElementsByTagName('vendor')[0];
+                const productElem = sourceElem.getElementsByTagName('product')[0];
+                if (!vendorElem || !productElem)
+                    continue;
+                const vendor = vendorElem.getAttribute('id');
+                const product = productElem.getAttribute('id');
+
+                if (vendor && product && vendor === source.vendor && product === source.product) {
+                    if (addressElem) {
+                        // If XML does contain bus/device numbers, we have to identify correct hostdev by them
+                        const bus = addressElem.getAttribute('bus');
+                        const device = addressElem.getAttribute('device');
+
+                        if (bus === source.bus && device === source.device)
+                            return new XMLSerializer().serializeToString(hostdevElem);
+                    } else {
+                        // If XML doesn't contain bus/device numbers, we can identify only by vendor/product ids
+                        return new XMLSerializer().serializeToString(hostdevElem);
+                    }
+                }
+            }
+
+            // PCI device
+            if (type === "pci" && "bus" in source && "domain" in source && "slot" in source && "func" in source) {
+                const bus = addressElem.getAttribute('bus');
+                const domain = addressElem.getAttribute('domain');
+                const slot = addressElem.getAttribute('slot');
+                const func = addressElem.getAttribute('function');
+
+                if (bus && domain && slot && func && domain === source.domain && slot === source.slot && bus === source.bus && func === source.func)
+                    return new XMLSerializer().serializeToString(hostdevElem);
+            }
+        }
+    }
+}
+
 export function getIfaceElemByMac(domxml, mac) {
     const domainElem = getElem(domxml);
 

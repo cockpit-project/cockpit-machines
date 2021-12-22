@@ -399,8 +399,8 @@ export function findHostNodeDevice(hostdev, nodeDevices) {
     case "usb": {
         const vendorId = hostdev.source.vendor.id;
         const productId = hostdev.source.product.id;
-        const device = parseInt(hostdev.source.device, 16).toString();
-        const bus = parseInt(hostdev.source.bus, 16).toString();
+        const device = hostdev.source.device;
+        const bus = hostdev.source.bus;
 
         nodeDev = nodeDevices.find(d => {
             // vendor and product are properties used to identify correct device. But vendor and product
@@ -870,6 +870,32 @@ export function getNodeDevSource(dev) {
         const bus = dev.busnum;
 
         source = `${bus}.${device}`;
+    } else {
+        throw new Error(`getNodeDevSource: unsupport device type '${dev.type}'`);
+    }
+
+    return source;
+}
+
+export function getHostDevSourceObject(dev) {
+    let source;
+
+    if (dev.type === "pci") {
+        const domain = dev.source.address.domain;
+        const bus = dev.source.address.bus;
+        const slot = dev.source.address.slot;
+        const func = dev.source.address.func;
+
+        source = { domain, bus, slot, func };
+    } else if (dev.type === "usb") {
+        const device = dev.source.device;
+        const bus = dev.source.bus;
+        const vendor = dev.source.vendor.id;
+        const product = dev.source.product.id;
+
+        source = { vendor, product, bus, device };
+    } else {
+        throw new Error(`getHostDevSourceObject: unsupport device type '${dev.type}'`);
     }
 
     return source;

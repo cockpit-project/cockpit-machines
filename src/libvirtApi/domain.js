@@ -51,6 +51,7 @@ import {
     convertToUnit,
     DOMAINSTATE,
     fileDownload,
+    getHostDevSourceObject,
     getNodeDevSource,
     logDebug,
     units,
@@ -60,6 +61,7 @@ import {
     getDoc,
     getSingleOptionalElem,
     parseDomainDumpxml,
+    getHostDevElemBySource,
 } from '../libvirt-xml-parse.js';
 import {
     updateBootOrder,
@@ -454,18 +456,35 @@ export function domainDetachDisk({
             });
 }
 
-export function domainDetachHostDevice({ connectionName, vmName, live, dev }) {
-    const options = { err: "message" };
-    const source = getNodeDevSource(dev);
-    const args = ["virt-xml", "-c", `qemu:///${connectionName}`, vmName, "--remove-device", "--hostdev", source];
+// Cannot use virt-xml until https://github.com/virt-manager/virt-manager/issues/357 is fixed
+export function domainDetachHostDevice({ connectionName, vmId, live, dev }) {
+    const source = getHostDevSourceObject(dev);
 
-    if (connectionName === "system")
-        options.superuser = "try";
+    const hostDevPromises = [];
 
-    if (live)
-        args.push("--update");
+    // hostdev's <address bus=... device=...> may be different between live XML and offline XML (or it may be present in live XML but missing in offline XML)
+    // therefore we need to call DetachDevice twice with different hostdevXMLs, once for live XML and once for offline XML
+    hostDevPromises.push(
+        call(connectionName, vmId, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' })
+                .then(domInactiveXml => {
+                    const hostdevInactiveXML = getHostDevElemBySource(domInactiveXml[0], source);
+                    if (hostdevInactiveXML)
+                        return call(connectionName, vmId, 'org.libvirt.Domain', 'DetachDevice', [hostdevInactiveXML, Enum.VIR_DOMAIN_AFFECT_CONFIG], { timeout, type: 'su' });
+                })
+    );
 
-    return cockpit.spawn(args, options);
+    if (live) {
+        hostDevPromises.push(
+            call(connectionName, vmId, 'org.libvirt.Domain', 'GetXMLDesc', [0], { timeout, type: 'u' })
+                    .then(domXml => {
+                        const hostdevXML = getHostDevElemBySource(domXml[0], source);
+
+                        return call(connectionName, vmId, 'org.libvirt.Domain', 'DetachDevice', [hostdevXML, Enum.VIR_DOMAIN_AFFECT_LIVE], { timeout, type: 'su' });
+                    })
+        );
+    }
+
+    return Promise.all(hostDevPromises);
 }
 
 export function domainDetachIface({ connectionName, mac, vmName, live, persistent }) {
