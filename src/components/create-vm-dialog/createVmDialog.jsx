@@ -888,13 +888,15 @@ class CreateVmModal extends React.Component {
                 const converted = convertToUnit(stateDelta.minimumStorage, units.B, bestUnit);
                 this.setState({ storageSizeUnit: bestUnit.name }, () => this.onValueChanged("storageSize", converted));
             }
+
             if (!value || !value.unattendedInstallable)
                 this.onValueChanged('unattendedInstallation', false);
+
             this.setState(stateDelta);
             break;
         }
         case 'unattendedInstallation':
-            this.setState({ unattendedInstallation: value, startVm: true });
+            this.setState({ unattendedInstallation: value });
             break;
         default:
             this.setState({ [key]: value });
@@ -925,7 +927,7 @@ class CreateVmModal extends React.Component {
                 storageSize: convertToUnit(this.state.storageSize, this.state.storageSizeUnit, units.GiB),
                 storagePool: this.state.storagePool,
                 storageVolume: this.state.storageVolume,
-                startVm: this.state.startVm,
+                startVm: this.state.unattendedInstallation || this.state.startVm,
                 unattended: this.state.unattendedInstallation,
                 userPassword: this.state.userPassword,
                 rootPassword: this.state.rootPassword,
@@ -960,7 +962,7 @@ class CreateVmModal extends React.Component {
         let startVmCheckbox = (
             <FormGroup fieldId="start-vm" label={_("Immediately start VM")} hasNoPaddingTop>
                 <Checkbox id="start-vm"
-                    isChecked={this.state.startVm}
+                    isChecked={this.state.unattendedInstallation || this.state.startVm}
                     isDisabled={this.state.unattendedInstallation}
                     onChange={checked => this.onValueChanged('startVm', checked)} />
             </FormGroup>
