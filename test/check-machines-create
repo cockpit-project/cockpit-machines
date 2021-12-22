@@ -696,6 +696,7 @@ class TestMachinesCreate(VirtualMachinesCase):
             self.browser = test_obj.browser
             self.machine = test_obj.machine
             self.assertTrue = test_obj.assertTrue
+            self.assertFalse = test_obj.assertFalse
             self.assertIn = test_obj.assertIn
             self.assertEqual = test_obj.assertEqual
             self.goToVmPage = test_obj.goToVmPage
@@ -798,9 +799,12 @@ class TestMachinesCreate(VirtualMachinesCase):
             b.wait_not_present("#navbar-oops")
 
             # click the 'X' button to clear the OS input and check there is no Ooops
+            # Also check start VM checkbox was not changed (https://bugzilla.redhat.com/show_bug.cgi?id=2033603)
+            b.set_checked("#start-vm", False)
             b.click("#os-select-group button[aria-label=\"Clear all\"]")
             b.wait_attr("#os-select-group input", "value", "")
             b.wait_not_present("#navbar-oops")
+            self.assertFalse(b.get_checked("#start-vm"))
 
             return self
 
