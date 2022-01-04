@@ -254,7 +254,6 @@ export function domainCreate({
     userPassword,
     vmName,
 }) {
-    logDebug(`CREATE_VM(${vmName}):`);
     // shows dummy vm  until we get vm from virsh (cleans up inProgress)
     setVmCreateInProgress(vmName, connectionName, { openConsoleTab: startVm });
 
@@ -284,6 +283,8 @@ export function domainCreate({
         userPassword,
         vmName,
     });
+
+    logDebug(`CREATE_VM(${vmName}): install_machine.py '${args}'`);
 
     return cockpit
             .spawn([pythonPath, "--", "-", args], opts)
