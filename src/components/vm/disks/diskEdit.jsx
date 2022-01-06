@@ -31,8 +31,6 @@ import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { domainUpdateDiskAttributes } from '../../../libvirtApi/domain.js';
 import { diskBusTypes, diskCacheModes, getDiskPrettyName, getDiskFullName } from '../../../helpers.js';
 
-import 'form-layout.scss';
-
 const _ = cockpit.gettext;
 
 const NameRow = ({ idPrefix, name, diskType }) => {

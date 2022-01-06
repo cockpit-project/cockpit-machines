@@ -25,8 +25,6 @@ import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { NetworkTypeAndSourceRow, NetworkModelRow } from './nicBody.jsx';
 import { domainChangeInterfaceSettings, domainGet } from '../../../libvirtApi/domain.js';
 
-import 'form-layout.scss';
-
 const _ = cockpit.gettext;
 
 const NetworkMacRow = ({ mac, onValueChanged, idPrefix, isShutoff }) => {
