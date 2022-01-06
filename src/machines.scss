@@ -1,7 +1,9 @@
-@import "./lib/page.scss";
+@use "page.scss";
+@use "ct-card.scss";
 
+/* For pf-t-light mixin */
+@import "@patternfly/patternfly/sass-utilities/mixins.scss";
 @import "@patternfly/patternfly/components/Alert/alert.scss";
-@import "./lib/ct-card.scss";
 
 /* Style the list cards as ct-cards */
 .pf-c-page__main-section > .pf-c-card {

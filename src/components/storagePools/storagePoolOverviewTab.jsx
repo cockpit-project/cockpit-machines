@@ -23,8 +23,6 @@ import { DescriptionList, DescriptionListGroup, DescriptionListTerm, Description
 import { storagePoolId } from '../../helpers.js';
 import cockpit from 'cockpit';
 
-import 'form-layout.scss';
-
 const _ = cockpit.gettext;
 
 export const StoragePoolOverviewTab = ({ storagePool }) => {
