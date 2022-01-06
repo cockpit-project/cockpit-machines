@@ -56,7 +56,7 @@ export const NetworkModelRow = ({ idPrefix, onValueChanged, dialogValues, osType
                         .map(networkModel => {
                             return (
                                 <FormSelectOption value={networkModel.name} key={networkModel.name}
-                                                  label={networkModel.name && '(' + networkModel.desc + ')'} />
+                                                  label={networkModel.name + ' (' + networkModel.desc + ')'} />
                             );
                         })}
             </FormSelect>
