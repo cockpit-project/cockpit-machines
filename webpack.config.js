@@ -1,3 +1,4 @@
+const fs = require("fs");
 const path = require("path");
 
 const copy = require("copy-webpack-plugin");
@@ -7,9 +8,13 @@ const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const CompressionPlugin = require("compression-webpack-plugin");
 const ESLintPlugin = require('eslint-webpack-plugin');
 const CockpitPoPlugin = require("./src/lib/cockpit-po-plugin");
+const CockpitRsyncPlugin = require("./src/lib/cockpit-rsync-plugin");
 
 // absolute path disables recursive module resolution, so build a relative one
 const nodedir = path.relative(process.cwd(), path.resolve((process.env.SRCDIR || __dirname), "node_modules"));
+
+// Obtain package name from package.json
+const packageJson = JSON.parse(fs.readFileSync('package.json'));
 
 /* A standard nodejs and webpack pattern */
 const production = process.env.NODE_ENV === 'production';
@@ -28,6 +33,7 @@ const plugins = [
         failOnWarning: true,
     }),
     new CockpitPoPlugin(),
+    new CockpitRsyncPlugin({ dest: packageJson.name }),
 ];
 
 /* Only minimize when in production mode */
