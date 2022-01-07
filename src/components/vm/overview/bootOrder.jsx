@@ -21,7 +21,6 @@ import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 import {
     ButtonGroup,
-    Icon,
     ListView,
     ListViewItem,
 } from 'patternfly-react';
@@ -31,6 +30,12 @@ import {
     Flex, FlexItem,
     Modal, Tooltip
 } from '@patternfly/react-core';
+
+import {
+    AngleDownIcon,
+    AngleUpIcon
+} from '@patternfly/react-icons';
+
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import {
     findHostNodeDevice,
@@ -159,8 +164,8 @@ const DeviceRow = ({ idPrefix, device, index, onToggle, upDisabled, downDisabled
     }
     }
 
-    const upArrow = <Button isDisabled={upDisabled} onClick={moveUp}><Icon id={`${idPrefix}-up`} type="fa" name="angle-up" /></Button>;
-    const downArrow = <Button isDisabled={downDisabled} onClick={moveDown}><Icon id={`${idPrefix}-down`} type="fa" name="angle-down" /></Button>;
+    const upArrow = <Button isDisabled={upDisabled} onClick={moveUp} icon={<AngleUpIcon />} id={`${idPrefix}-up`} />;
+    const downArrow = <Button isDisabled={downDisabled} onClick={moveDown} icon={<AngleDownIcon />} id={`${idPrefix}-down`} />;
 
     const actions = (
         <ButtonGroup>
