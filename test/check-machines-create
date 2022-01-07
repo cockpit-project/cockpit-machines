@@ -1516,7 +1516,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         bootOrder = b.text("#vm-VmNotInstalled-boot-order")
         b.click("#vm-VmNotInstalled-boot-order button")
         b.wait_visible(".pf-c-modal-box__body")
-        b.set_checked("#vm-VmNotInstalled-order-modal-device-row-1-checkbox", True)
+        b.set_checked("#vm-VmNotInstalled-order-modal-device-1-checkbox", True)
         b.click("#vm-VmNotInstalled-order-modal-device-row-0 #vm-VmNotInstalled-order-modal-down")
         b.click("#vm-VmNotInstalled-order-modal-save")
         b.wait_not_present(".pf-c-modal-box__body")
