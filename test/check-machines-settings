@@ -275,17 +275,17 @@ class TestMachinesSettings(VirtualMachinesCase):
         # Check boot options details:
         # Checking the VM system disk path is the same with virsh command results
         # Checking the VM MAC address is the same with virsh command results
-        b.wait_in_text("#vm-subVmTest1-order-modal-device-row-0 div.list-view-pf-main-info span",
+        b.wait_in_text("#vm-subVmTest1-order-modal-device-row-0 .boot-order-additional-info",
                        self.machine.execute("virsh domblklist subVmTest1 | awk 'NR==3{print $2}'").strip())
-        b.wait_in_text("#vm-subVmTest1-order-modal-device-row-1 div.list-view-pf-main-info span",
+        b.wait_in_text("#vm-subVmTest1-order-modal-device-row-1 .boot-order-additional-info",
                        self.machine.execute("virsh domiflist subVmTest1 | awk 'NR==3{print $5}'").strip())
         # Check a cdrom attributes are shown correctly
-        cdrom_row = b.text("#vm-subVmTest1-order-modal-device-row-2 .list-view-pf-additional-info")
+        cdrom_row = b.text(".boot-order-list-view li:nth-child(3) .boot-order-additional-info")
         self.assertTrue("cdrom" and "/var/lib/libvirt/images/phonycdrom" in cdrom_row)
         # Move first device down and check whetever succeeded
-        row = b.text("#vm-subVmTest1-order-modal-device-row-1 .list-view-pf-additional-info")
+        row = b.text("#vm-subVmTest1-order-modal-device-row-1 .boot-order-additional-info")
         b.click("#vm-subVmTest1-order-modal-device-row-0 #vm-subVmTest1-order-modal-down")
-        b.wait_in_text("#vm-subVmTest1-order-modal-device-row-0 .list-view-pf-additional-info", row)
+        b.wait_in_text("#vm-subVmTest1-order-modal-device-row-0 .boot-order-additional-info", row)
 
         # Save
         b.click("#vm-subVmTest1-order-modal-save")
@@ -300,7 +300,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.click("#vm-subVmTest1-boot-order button")
         b.wait_visible("#vm-subVmTest1-order-modal-window")
         # Unselect second device
-        b.click("#vm-subVmTest1-order-modal-device-row-1 input")
+        b.set_checked("#vm-subVmTest1-order-modal-device-1-checkbox", False)
 
         # Save
         b.click("#vm-subVmTest1-order-modal-save")

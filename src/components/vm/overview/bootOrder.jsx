@@ -19,16 +19,25 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
-import {
-    ButtonGroup,
-    ListView,
-    ListViewItem,
-} from 'patternfly-react';
 
 import {
     Button,
-    Flex, FlexItem,
-    Modal, Tooltip
+    DataList,
+    DataListAction,
+    DataListCell,
+    DataListCheck,
+    DataListControl,
+    DataListItem,
+    DataListItemCells,
+    DataListItemRow,
+    Flex,
+    FlexItem,
+    DescriptionList,
+    DescriptionListDescription,
+    DescriptionListGroup,
+    DescriptionListTerm,
+    Modal,
+    Tooltip,
 } from '@patternfly/react-core';
 
 import {
@@ -68,14 +77,14 @@ function getUIBootOrderDevices(vm) {
 
 const DeviceInfo = ({ descr, value }) => {
     return (
-        <div className='ct-form'>
-            <label className='control-label' htmlFor={value}>
+        <DescriptionListGroup>
+            <DescriptionListTerm>
                 {descr}
-            </label>
-            <span id={value}>
+            </DescriptionListTerm>
+            <DescriptionListDescription id={value}>
                 {value}
-            </span>
-        </div>
+            </DescriptionListDescription>
+        </DescriptionListGroup>
     );
 };
 
@@ -164,31 +173,38 @@ const DeviceRow = ({ idPrefix, device, index, onToggle, upDisabled, downDisabled
     }
     }
 
-    const upArrow = <Button isDisabled={upDisabled} onClick={moveUp} icon={<AngleUpIcon />} id={`${idPrefix}-up`} />;
-    const downArrow = <Button isDisabled={downDisabled} onClick={moveDown} icon={<AngleDownIcon />} id={`${idPrefix}-down`} />;
-
-    const actions = (
-        <ButtonGroup>
-            {upArrow}
-            {downArrow}
-        </ButtonGroup>
-    );
-
-    const checkbox = (
-        <label htmlFor={`${idPrefix}-device-row-${index}-checkbox`}>
-            <input id={`${idPrefix}-device-row-${index}-checkbox`} type="checkbox" checked={device.checked} onChange={onToggle} />
-        </label>
-    );
+    const upArrow = <Button isSmall isDisabled={upDisabled} onClick={moveUp} icon={<AngleUpIcon />} id={`${idPrefix}-up`} />;
+    const downArrow = <Button isSmall isDisabled={downDisabled} onClick={moveDown} icon={<AngleDownIcon />} id={`${idPrefix}-down`} />;
 
     return (
-        <ListViewItem
+        <DataListItem
             id={`${idPrefix}-device-row-${index}`}
             className={ device.checked ? "is-checked" : "" }
-            checkboxInput={checkbox}
-            heading={heading}
-            additionalInfo={additionalInfo}
-            actions={actions}
-        />
+        >
+            <DataListItemRow>
+                <DataListControl>
+                    <DataListCheck id={`${idPrefix}-device-${index}-checkbox`}
+                                       name={`${idPrefix}-device-${index}-checkbox`}
+                                       otherControls
+                                       onChange={onToggle}
+                                       isChecked={!!device.checked} />
+                </DataListControl>
+                <DataListItemCells dataListCells={[
+                    <DataListCell className="boot-order-modal-cell" key="item1">
+                        <span className="boot-order-description">{heading}</span>
+                        <span className="boot-order-additional-info">
+                            <DescriptionList isHorizontal>{additionalInfo}</DescriptionList>
+                        </span>
+                    </DataListCell>
+                ]} />
+                <DataListAction>
+                    {upArrow}
+                </DataListAction>
+                <DataListAction>
+                    {downArrow}
+                </DataListAction>
+            </DataListItemRow>
+        </DataListItem>
     );
 };
 
@@ -265,11 +281,11 @@ class BootOrderModal extends React.Component {
         const { nodeDevices, vm } = this.props;
         const idPrefix = vmId(vm.name) + '-order-modal';
         const defaultBody = (
-            <div className="list-group dialog-list-ct">
-                <ListView className="boot-order-list-view">
-                    {this.state.devices.map((device, index) => {
-                        const nextDevice = this.state.devices[index + 1];
-                        return <DeviceRow
+            <DataList isCompact
+                          className="boot-order-list-view">
+                {this.state.devices.map((device, index) => {
+                    const nextDevice = this.state.devices[index + 1];
+                    return <DeviceRow
                                     key={index}
                                     idPrefix={idPrefix}
                                     index={index}
@@ -281,10 +297,9 @@ class BootOrderModal extends React.Component {
                                     moveUp={() => this.moveUp(device)}
                                     moveDown={() => this.moveDown(device)}
                                     nodeDevices={nodeDevices}
-                        />;
-                    })}
-                </ListView>
-            </div>
+                    />;
+                })}
+            </DataList>
         );
 
         return (
