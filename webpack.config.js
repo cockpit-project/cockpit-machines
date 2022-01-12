@@ -8,8 +8,6 @@ const CompressionPlugin = require("compression-webpack-plugin");
 const ESLintPlugin = require('eslint-webpack-plugin');
 const CockpitPoPlugin = require("./src/lib/cockpit-po-plugin");
 
-const webpack = require("webpack");
-
 // absolute path disables recursive module resolution, so build a relative one
 const nodedir = path.relative(process.cwd(), path.resolve((process.env.SRCDIR || __dirname), "node_modules"));
 
@@ -81,6 +79,7 @@ module.exports = {
                     },
                 },
             }),
+            // https://github.com/patternfly/patternfly-react/issues/5650
             new CssMinimizerPlugin({
                 minimizerOptions: {
                     preset: ['default', { mergeLonghand: false }]
