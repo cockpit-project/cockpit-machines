@@ -151,10 +151,15 @@ function delayPolling(action, timeout) {
 function domainEventUndefined(connectionName, domPath) {
     call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "ListDomains", [Enum.VIR_CONNECT_LIST_DOMAINS_TRANSIENT], { timeout, type: "u" })
             .then(objPaths => {
-                if (!objPaths[0].includes(domPath))
+                if (!objPaths[0].includes(domPath)) {
                     store.dispatch(undefineVm({ connectionName, id: domPath }));
-                else
-                    domainGet({ connectionName, id: domPath, updateOnly: true });
+                } else {
+                    domainGet({ connectionName, id: domPath, updateOnly: true, reportErrors: true })
+                            .catch(e => {
+                                logDebug("domainEventUndefined", connectionName, domPath, "domainGet failed, deleting", JSON.stringify(e));
+                                store.dispatch(undefineVm({ connectionName, id: domPath }));
+                            });
+                }
             })
             .catch(ex => console.warn("ListDomains action failed:", ex.toString()));
 }
@@ -163,10 +168,15 @@ function domainEventStopped(connectionName, domPath) {
     // Transient VMs cease to exists once they are stopped. Check if VM was transient and update or undefined it
     call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "ListDomains", [0], { timeout, type: "u" })
             .then(objPaths => {
-                if (objPaths[0].includes(domPath))
-                    domainGet({ connectionName, id: domPath, updateOnly: true });
-                else // Transient vm will get undefined when stopped
+                if (objPaths[0].includes(domPath)) {
+                    domainGet({ connectionName, id: domPath, updateOnly: true, reportErrors: true })
+                            .catch(e => {
+                                logDebug("domainEventUndefined", connectionName, domPath, "domainGet failed, deleting", JSON.stringify(e));
+                                store.dispatch(undefineVm({ connectionName, id: domPath }));
+                            });
+                } else { // Transient vm will get undefined when stopped
                     store.dispatch(undefineVm({ connectionName, id:domPath, transientOnly: true }));
+                }
             })
             .catch(ex => console.warn("domainEventStopped action failed:", ex.toString()));
 }

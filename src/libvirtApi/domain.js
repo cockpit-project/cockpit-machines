@@ -498,11 +498,12 @@ export function domainGet({
     id: objPath,
     connectionName,
     updateOnly,
+    reportErrors,
 }) {
     let props = {};
     let domainXML;
 
-    return call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_SECURE], { timeout, type: 'u' })
+    const p = call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_SECURE], { timeout, type: 'u' })
             .then(domXml => {
                 domainXML = domXml[0];
                 return call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_SECURE | Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
@@ -546,8 +547,12 @@ export function domainGet({
                     store.dispatch(updateOrAddVm(Object.assign({}, props, dumpxmlParams)));
 
                 snapshotGetAll({ connectionName, domainPath: objPath });
-            })
-            .catch(ex => console.warn("GET_VM action failed for path", objPath, ex.toString()));
+            });
+
+    if (reportErrors)
+        return p;
+
+    return p.catch(ex => console.warn("GET_VM action failed for path", objPath, ex.toString()));
 }
 
 export function domainGetAll({ connectionName }) {
