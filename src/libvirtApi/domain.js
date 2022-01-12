@@ -35,6 +35,7 @@ import {
 } from '../libvirtUtils.js';
 import {
     deleteUnlistedVMs,
+    undefineVm,
     updateOrAddVm,
     updateVm,
 } from '../actions/store-actions.js';
@@ -502,7 +503,14 @@ export function domainGet({
     let props = {};
     let domainXML;
 
-    return call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_SECURE], { timeout, type: 'u' })
+    const promiseGetXML = call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_SECURE], { timeout, type: 'u' });
+
+    promiseGetXML.catch(ex => {
+        logDebug("GET_VM action GetXMLDesc failed for path", objPath, ex.toString(), "undefining VM");
+        store.dispatch(undefineVm({ connectionName, id: objPath }));
+    });
+
+    return promiseGetXML
             .then(domXml => {
                 domainXML = domXml[0];
                 return call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_SECURE | Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
