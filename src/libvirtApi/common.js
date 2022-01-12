@@ -154,7 +154,7 @@ function domainEventUndefined(connectionName, domPath) {
                 if (!objPaths[0].includes(domPath))
                     store.dispatch(undefineVm({ connectionName, id: domPath }));
                 else
-                    domainGet({ connectionName, id:domPath, updateOnly: true });
+                    domainGet({ connectionName, id: domPath, updateOnly: true });
             })
             .catch(ex => console.warn("ListDomains action failed:", ex.toString()));
 }
@@ -164,7 +164,7 @@ function domainEventStopped(connectionName, domPath) {
     call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "ListDomains", [0], { timeout, type: "u" })
             .then(objPaths => {
                 if (objPaths[0].includes(domPath))
-                    domainGet({ connectionName, id:domPath, updateOnly: true });
+                    domainGet({ connectionName, id: domPath, updateOnly: true });
                 else // Transient vm will get undefined when stopped
                     store.dispatch(undefineVm({ connectionName, id:domPath, transientOnly: true }));
             })
