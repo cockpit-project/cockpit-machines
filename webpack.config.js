@@ -52,11 +52,6 @@ module.exports = {
             "buffer": require.resolve("buffer"),
         }
     },
-    // FIXME: Ignore warnings from PF3 table - this is included but not used - the ignoreWarnings can be dropped once we stop using patternfly-react
-    ignoreWarnings: [
-        { module: /node_modules\/patternfly-react\/dist\/esm\/components\/Table\/Table\.js/ },
-        (warning) => true,
-    ],
     resolveLoader: {
         modules: [ nodedir, path.resolve(__dirname, 'src/lib') ],
     },
@@ -103,63 +98,6 @@ module.exports = {
             },
             /* HACK: remove unwanted fonts from PatternFly's css */
             {
-                test: /patternfly-cockpit.scss$/,
-                use: [
-                    extract.loader,
-                    {
-                        loader: 'css-loader',
-                        options: {
-                            sourceMap: !production,
-                            url: false,
-                        },
-                    },
-                    {
-                        loader: 'string-replace-loader',
-                        options: {
-                            multiple: [
-                                {
-                                    search: /src:url[(]"patternfly-icons-fake-path\/glyphicons-halflings-regular[^}]*/g,
-                                    replace: 'font-display:block; src:url("../base1/fonts/glyphicons.woff") format("woff");',
-                                },
-                                {
-                                    search: /src:url[(]"patternfly-fonts-fake-path\/PatternFlyIcons[^}]*/g,
-                                    replace: 'src:url("../base1/fonts/patternfly.woff") format("woff");',
-                                },
-                                {
-                                    search: /src:url[(]"patternfly-fonts-fake-path\/fontawesome[^}]*/,
-                                    replace: 'font-display:block; src:url("../base1/fonts/fontawesome.woff?v=4.2.0") format("woff");',
-                                },
-                                {
-                                    search: /src:url\("patternfly-icons-fake-path\/pficon[^}]*/g,
-                                    replace: 'src:url("../base1/fonts/patternfly.woff") format("woff");',
-                                },
-                                {
-                                    search: /@font-face[^}]*patternfly-fonts-fake-path[^}]*}/g,
-                                    replace: '',
-                                },
-                            ]
-                        },
-                    },
-                    {
-                        loader: 'sass-loader',
-                        options: {
-                            sourceMap: !production,
-                            sassOptions: {
-                                quietDeps: true,
-                                outputStyle: production ? 'compressed' : undefined,
-                                includePaths: [
-                                    // Teach webpack to resolve these references in order to build PF3 scss
-                                    path.resolve(nodedir),
-                                    path.resolve(nodedir, 'font-awesome-sass', 'assets', 'stylesheets'),
-                                    path.resolve(nodedir, 'patternfly', 'dist', 'sass'),
-                                    path.resolve(nodedir, 'bootstrap-sass', 'assets', 'stylesheets'),
-                                ],
-                            },
-                        },
-                    },
-                ]
-            },
-            {
                 test: /patternfly-4-cockpit.scss$/,
                 use: [
                     extract.loader,
@@ -176,7 +114,7 @@ module.exports = {
                             multiple: [
                                 {
                                     search: /src:url\("patternfly-icons-fake-path\/pficon[^}]*/g,
-                                    replace: "src:url('fonts/patternfly.woff')format('woff');",
+                                    replace: 'src:url("../base1/fonts/patternfly.woff") format("woff");',
                                 },
                                 {
                                     search: /@font-face[^}]*patternfly-fonts-fake-path[^}]*}/g,
@@ -199,7 +137,7 @@ module.exports = {
             },
             {
                 test: /\.s?css$/,
-                exclude: /patternfly-(4-)?cockpit.scss/,
+                exclude: /patternfly-4-cockpit.scss/,
                 use: [
                     extract.loader,
                     {
