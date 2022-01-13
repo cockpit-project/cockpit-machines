@@ -18,7 +18,7 @@ The release steps are controlled by the
 
 Pushing the release tag triggers the [release.yml](.github/workflows/release.yml)
 [GitHub action](https://github.com/features/actions) workflow. This uses the
-[cockpit-project organization secrets](https://github.com/organizations/cockpit-project/settings/secrets).
+secrets in the [release GitHub action environment](https://github.com/cockpit-project/cockpit-machines/settings/environments).
 
 # Automated maintenance
 
