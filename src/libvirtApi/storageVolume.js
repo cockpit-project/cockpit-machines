@@ -109,5 +109,5 @@ export function storageVolumeGetAll({ connectionName, poolName }) {
                     return Promise.resolve(volumes);
                 });
             })
-            .catch(ex => console.warn("GET_STORAGE_VOLUMES action failed for pool %s: %s", poolName, ex.toString()));
+            .catch(ex => console.warn("GET_STORAGE_VOLUMES action failed for pool", poolName, ":", ex.toString()));
 }

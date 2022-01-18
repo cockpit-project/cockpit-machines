@@ -239,7 +239,7 @@ function getNodeMaxMemory({ connectionName }) {
     return call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "NodeGetMemoryStats", [-1, 0], { timeout, type: "iu" })
             .then(stats => store.dispatch(setNodeMaxMemory({ memory: stats[0].total })))
             .catch(ex => {
-                console.warn("NodeGetMemoryStats failed: %s", ex);
+                console.warn("NodeGetMemoryStats failed:", ex.toString());
                 return Promise.reject(ex);
             });
 }
