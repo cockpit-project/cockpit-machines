@@ -27,6 +27,7 @@ import { updateDomainSnapshots } from '../actions/store-actions.js';
 import { getSnapshotXML } from '../libvirt-xml-create.js';
 import { parseDomainSnapshotDumpxml } from '../libvirt-xml-parse.js';
 import { call, timeout } from './helpers.js';
+import { logDebug } from '../helpers.js';
 
 export function snapshotCreate({ connectionName, vmId, name, description }) {
     const xmlDesc = getSnapshotXML(name, description);
@@ -91,7 +92,10 @@ export function snapshotGetAll({ connectionName, domainPath }) {
                         });
             })
             .catch(ex => {
-                console.warn("LIST_DOMAIN_SNAPSHOTS action failed for domain", domainPath, ":", JSON.stringify(ex));
+                if (ex.name === 'org.freedesktop.DBus.Error.UnknownMethod')
+                    logDebug("LIST_DOMAIN_SNAPSHOTS action failed for domain", domainPath, ", not supported by libvirt-dbus");
+                else
+                    console.warn("LIST_DOMAIN_SNAPSHOTS action failed for domain", domainPath, ":", JSON.stringify(ex), "name:", ex.name);
                 store.dispatch(updateDomainSnapshots({
                     connectionName,
                     domainPath,
