@@ -91,7 +91,7 @@ export function snapshotGetAll({ connectionName, domainPath }) {
                         });
             })
             .catch(ex => {
-                console.warn("LIST_DOMAIN_SNAPSHOTS action failed for domain %s: %s", domainPath, JSON.stringify(ex));
+                console.warn("LIST_DOMAIN_SNAPSHOTS action failed for domain", domainPath, ":", JSON.stringify(ex));
                 store.dispatch(updateDomainSnapshots({
                     connectionName,
                     domainPath,
