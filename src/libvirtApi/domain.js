@@ -557,7 +557,7 @@ export function domainGet({
                 else
                     store.dispatch(updateOrAddVm(Object.assign({}, props, dumpxmlParams)));
 
-                snapshotGetAll({ connectionName, domainPath: objPath });
+                return snapshotGetAll({ connectionName, domainPath: objPath });
             })
             .catch(ex => console.warn("GET_VM action failed for path", objPath, ex.toString()));
 }

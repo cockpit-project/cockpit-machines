@@ -47,7 +47,7 @@ export function snapshotDelete({ connectionName, domainPath, snapshotName }) {
 }
 
 export function snapshotGetAll({ connectionName, domainPath }) {
-    call(connectionName, domainPath, 'org.libvirt.Domain', 'ListDomainSnapshots', [0], { timeout, type: 'u' })
+    return call(connectionName, domainPath, 'org.libvirt.Domain', 'ListDomainSnapshots', [0], { timeout, type: 'u' })
             .then(objPaths => {
                 const snaps = [];
                 const promises = [];
