@@ -522,6 +522,7 @@ export function parseDumpxmlForHostDevices(devicesElem) {
             case "usb": {
                 const addressElem = getSingleOptionalElem(hostdevElem, 'address');
                 const sourceElem = getSingleOptionalElem(hostdevElem, 'source');
+                const sourceAddressElem = getSingleOptionalElem(sourceElem, 'address');
 
                 let vendorElem, productElem;
                 if (sourceElem) {
@@ -542,8 +543,8 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                         product: {
                             id: productElem ? productElem.getAttribute('id') : undefined,
                         },
-                        device: addressElem.getAttribute('device'),
-                        bus: addressElem.getAttribute('bus'),
+                        device: sourceAddressElem ? sourceAddressElem.getAttribute('device') : undefined,
+                        bus: sourceAddressElem ? sourceAddressElem.getAttribute('bus') : undefined,
                     },
                 };
                 hostdevs.push(dev);
