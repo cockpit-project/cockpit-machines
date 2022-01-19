@@ -537,7 +537,7 @@ export function domainGet({
 
                 return call(connectionName, objPath, "org.freedesktop.DBus.Properties", "GetAll", ["org.libvirt.Domain"], { timeout, type: 's' });
             })
-            .then(function(returnProps) {
+            .then(returnProps => {
                 /* Sometimes not all properties are returned, for example when some domain got deleted while part
                  * of the properties got fetched from libvirt. Make sure that there is check before reading the attributes.
                  */
@@ -549,7 +549,7 @@ export function domainGet({
                     props.autostart = returnProps[0].Autostart.v.v;
                 props.ui = resolveUiState(props.name, props.connectionName);
 
-                logDebug(`${this.name}.GET_VM(${objPath}, ${connectionName}): update props ${JSON.stringify(props)}`);
+                logDebug(`${props.name}.GET_VM(${objPath}, ${connectionName}): update props ${JSON.stringify(props)}`);
 
                 const dumpxmlParams = parseDomainDumpxml(connectionName, domainXML, objPath);
                 if (updateOnly)
