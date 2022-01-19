@@ -855,9 +855,13 @@ class TestMachinesCreate(VirtualMachinesCase):
 
                 self.assertIn("\nssh_pwauth: true", user_data)
 
+            self.browser.wait_text(f"#vm-{self.name}-state", "Running")
+
             self.machine.execute(f"virsh destroy {self.name}")
             self.assertIn(f"backing file: {self.location}", self.machine.execute(f"qemu-img info /var/lib/libvirt/images/{self.name}.qcow2"))
             self.browser.wait_text(f"#vm-{self.name}-state", "Shut off")
+            # wait for virt-install to finish
+            self.machine.execute(f"while {virt_install_cmd}; do sleep 1; done")
 
         def createRespectQemuConfConsoleConfig(self, vnc_listen, spice_listen, vnc_passwd, spice_passwd):
             self.browser.click(".pf-c-modal-box__footer button:contains(Create)")
