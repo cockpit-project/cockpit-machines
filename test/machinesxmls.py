@@ -110,6 +110,13 @@ USB_HOSTDEV = """<hostdev mode='subsystem' type='usb'>
   </source>
 </hostdev>"""
 
+USB_HOSTDEV_NONEXISTENT = """<hostdev mode='subsystem' type='usb'>
+  <source>
+    <vendor id='0xffff'/>
+    <product id='0xffff'/>
+  </source>
+</hostdev>"""
+
 PCI_HOSTDEV = """<hostdev mode='subsystem' type='pci'>
   <source>
     <address domain='0x0000' bus='0x00' slot='0xF' function='0x0'/>

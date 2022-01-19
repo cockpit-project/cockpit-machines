@@ -47,7 +47,7 @@ import {
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import {
-    findHostNodeDevice,
+    findMatchingNodeDevices,
     getSortedBootOrderDevices,
     rephraseUI,
     vmId
@@ -130,13 +130,24 @@ const DeviceRow = ({ idPrefix, device, index, onToggle, upDisabled, downDisabled
     }
     case "hostdev": {
         heading = rephraseUI("bootableDisk", "hostdev");
-        const nodeDev = findHostNodeDevice(device.device, nodeDevices);
-        if (nodeDev) {
+        // Sometimes we can't identify unique node devices, so a list of all matching devices is returned
+        const nodeDevs = findMatchingNodeDevices(device.device, nodeDevices);
+        if (nodeDevs.length > 0) {
+            const nodeDev = nodeDevs[0];
             switch (device.device.type) {
             case "usb": {
                 addOptional(additionalInfo, device.device.type, _("Type"));
                 addOptional(additionalInfo, nodeDev.capability.vendor._value, _("Vendor"));
                 addOptional(additionalInfo, nodeDev.capability.product._value, _("Product"));
+                if (nodeDevs.length > 1) {
+                    // If there are 2 usb devices without specified bus/device and same vendor/product,
+                    // it's impossible to identify which one is the one referred in VM's XML
+                    addOptional(additionalInfo, _("Unspecified"), _("Bus"));
+                    addOptional(additionalInfo, _("Unspecified"), _("Device"));
+                } else {
+                    addOptional(additionalInfo, nodeDev.capability.bus, _("Bus"));
+                    addOptional(additionalInfo, nodeDev.capability.device, _("Device"));
+                }
                 break;
             }
             case "pci": {

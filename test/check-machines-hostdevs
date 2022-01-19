@@ -30,7 +30,7 @@ sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
 
 from machineslib import VirtualMachinesCase  # noqa
 from testlib import skipImage, nondestructive, test_main  # noqa
-from machinesxmls import USB_HOSTDEV, PCI_HOSTDEV  # noqa
+from machinesxmls import USB_HOSTDEV, USB_HOSTDEV_NONEXISTENT, PCI_HOSTDEV  # noqa
 
 virt_xml_mock = """#!/usr/bin/python
 
@@ -71,10 +71,24 @@ class TestMachinesHostDevs(VirtualMachinesCase):
                 b.wait_in_text("#vm-subVmTest1-hostdev-1-source #1-device", "1")
                 b.wait_in_text("#vm-subVmTest1-hostdev-1-source #1-bus", "1")
 
-        # Test offline attachment of PCI host device
-        # A pci device should always be present
         m.execute("virsh destroy subVmTest1")
         b.wait_in_text("#vm-subVmTest1-state", "Shut off")
+
+        # Test attachment of non-existent host device
+        m.execute(f"echo \"{USB_HOSTDEV_NONEXISTENT}\" > /tmp/usbnonexistenthostedxml")
+        m.execute("virsh attach-device --domain subVmTest1 --file /tmp/usbnonexistenthostedxml --config")
+        b.reload()
+        b.enter_page('/machines')
+
+        b.wait_in_text("#vm-subVmTest1-hostdev-1-vendor", "0xffff")
+        b.wait_in_text("#vm-subVmTest1-hostdev-1-product", "0xffff")
+        b.wait_in_text("#vm-subVmTest1-hostdev-1-source #1-device", "Unspecified")
+        b.wait_in_text("#vm-subVmTest1-hostdev-1-source #1-bus", "Unspecified")
+
+        m.execute("virsh detach-device --domain subVmTest1 --file /tmp/usbnonexistenthostedxml --config")
+
+        # Test offline attachment of PCI host device
+        # A pci device should always be present
         m.execute(f"echo \"{PCI_HOSTDEV}\" > /tmp/pcihostedxml")
         m.execute("virsh attach-device --domain subVmTest1 --file /tmp/pcihostedxml --persistent")
         b.reload()

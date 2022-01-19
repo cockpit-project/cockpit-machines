@@ -393,8 +393,8 @@ export function timeoutedPromise(promise, delay, afterTimeoutHandler, afterTimeo
     return deferred.promise;
 }
 
-export function findHostNodeDevice(hostdev, nodeDevices) {
-    let nodeDev;
+export function findMatchingNodeDevices(hostdev, nodeDevices) {
+    let nodeDevs = [];
     switch (hostdev.type) {
     case "usb": {
         const vendorId = hostdev.source.vendor.id;
@@ -402,29 +402,23 @@ export function findHostNodeDevice(hostdev, nodeDevices) {
         const device = hostdev.source.device;
         const bus = hostdev.source.bus;
 
-        nodeDev = nodeDevices.find(d => {
+        nodeDevs = nodeDevices.filter(d => {
             // vendor and product are properties used to identify correct device. But vendor and product
             // are not unique, and in some cases, multiple host devices with same vendor and product can exist.
-            // In such cases, optional properties (bus, device) are used in addition to product and vendor
-            // to identify correct device
-            if (bus &&
-                device &&
-                vendorId &&
-                productId &&
-                d.capability.vendor &&
-                d.capability.product &&
-                d.capability.bus == bus &&
-                d.capability.device == device &&
-                d.capability.vendor.id == vendorId &&
-                d.capability.product.id == productId)
-                return true;
-            else if (vendorId &&
+            // In such cases, optional properties (bus, device) are used in addition to product and vendor to identify correct device
+            // But there are cases when usb and device are not specified.
+            // If there are 2 usb devices without specified bus/device and same vendor/product,
+            // it's impossible to identify which one is the one referred in VM's XML, so we return an array of all matching
+            if (vendorId &&
                 productId &&
                 d.capability.vendor &&
                 d.capability.product &&
                 d.capability.vendor.id == vendorId &&
-                d.capability.product.id == productId)
-                return true;
+                d.capability.product.id == productId) {
+                if ((!bus && !device) ||
+                    (bus && device && d.capability.bus == bus && d.capability.device == device))
+                    return true;
+            }
         });
         break;
     }
@@ -435,7 +429,7 @@ export function findHostNodeDevice(hostdev, nodeDevices) {
         const slot = parseInt(hostdev.source.address.slot, 16).toString();
         const func = parseInt(hostdev.source.address.func, 16).toString();
 
-        nodeDev = nodeDevices.find(d => {
+        nodeDevs = nodeDevices.filter(d => {
             // pci device is identified by bus, slot, domain, function
             if (bus &&
                 slot &&
@@ -454,7 +448,7 @@ export function findHostNodeDevice(hostdev, nodeDevices) {
         const target = hostdev.source.address.target;
         const unit = hostdev.source.address.unit;
 
-        nodeDev = nodeDevices.find(d => {
+        nodeDevs = nodeDevices.filter(d => {
             if ((bus && target && unit) &&
                 d.capability.bus &&
                 d.capability.lun &&
@@ -473,7 +467,7 @@ export function findHostNodeDevice(hostdev, nodeDevices) {
     case "mdev": {
         const uuid = hostdev.source.address.uuid;
 
-        nodeDev = nodeDevices.find(d => {
+        nodeDevs = nodeDevices.filter(d => {
             if ((uuid) &&
                 d.capability.uuid == uuid)
                 return true;
@@ -483,7 +477,7 @@ export function findHostNodeDevice(hostdev, nodeDevices) {
     case "storage": {
         const block = hostdev.source.block;
 
-        nodeDev = nodeDevices.find(d => {
+        nodeDevs = nodeDevices.filter(d => {
             if ((block) &&
                 d.capability.block == block)
                 return true;
@@ -493,7 +487,7 @@ export function findHostNodeDevice(hostdev, nodeDevices) {
     case "misc": {
         const ch = hostdev.source.char;
 
-        nodeDev = nodeDevices.find(d => {
+        nodeDevs = nodeDevices.filter(d => {
             if ((ch) &&
                 d.capability.char == ch)
                 return true;
@@ -503,7 +497,7 @@ export function findHostNodeDevice(hostdev, nodeDevices) {
     case "net": {
         const iface = hostdev.source.interface;
 
-        nodeDev = nodeDevices.find(d => {
+        nodeDevs = nodeDevices.filter(d => {
             if ((iface) &&
                 d.capability.interface == iface)
                 return true;
@@ -511,7 +505,8 @@ export function findHostNodeDevice(hostdev, nodeDevices) {
         break;
     }
     }
-    return nodeDev;
+
+    return nodeDevs;
 }
 
 /**
