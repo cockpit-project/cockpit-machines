@@ -35,7 +35,7 @@ import {
 
 import { ModalError } from "cockpit-components-inline-notification.jsx";
 import { domainAttachHostDevices, domainGet } from "../../../libvirtApi/domain.js";
-import { findHostNodeDevice } from "../../../helpers.js";
+import { findMatchingNodeDevices } from "../../../helpers.js";
 import { getOptionalValue } from "./hostDevCard.jsx";
 import "./hostDevAdd.scss";
 
@@ -151,9 +151,9 @@ function getSelectableDevices(nodeDevices, vm, type) {
         let deviceIsAlreadyAttached = false;
 
         vm.hostDevices.forEach(hostDev => {
-            const foundNodeDevice = findHostNodeDevice(hostDev, nodeDevices);
+            const foundNodeDevices = findMatchingNodeDevices(hostDev, nodeDevices);
 
-            if (foundNodeDevice && nodeDev.path === foundNodeDevice.path)
+            if (foundNodeDevices.length === 1 && nodeDev.path === foundNodeDevices[0].path)
                 deviceIsAlreadyAttached = true;
         });
 

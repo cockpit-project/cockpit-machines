@@ -28,7 +28,7 @@ import {
 } from '@patternfly/react-core';
 
 import cockpit from 'cockpit';
-import { vmId, findHostNodeDevice, getHostDevSourceObject } from "../../../helpers.js";
+import { vmId, findMatchingNodeDevices, getHostDevSourceObject } from "../../../helpers.js";
 import { ListingTable } from "cockpit-components-table.jsx";
 import AddHostDev from "./hostDevAdd.jsx";
 import { domainGet, domainDetachHostDevice } from '../../../libvirtApi/domain.js';
@@ -80,14 +80,14 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
     const [deleteDialogProps, setDeleteDialogProps] = useState(undefined);
 
     function getClass(hostDev, hostdevId) {
-        const nodeDev = findHostNodeDevice(hostDev, nodeDevices);
+        const nodeDev = findMatchingNodeDevices(hostDev, nodeDevices)[0];
 
         if (nodeDev && (["usb_device", "pci"].includes(nodeDev.capability.type)))
             return nodeDev.class;
     }
 
     function getProduct(hostDev, hostdevId) {
-        const nodeDev = findHostNodeDevice(hostDev, nodeDevices);
+        const nodeDev = findMatchingNodeDevices(hostDev, nodeDevices)[0];
 
         if (["usb", "pci"].includes(hostDev.type)) {
             if (nodeDev)
@@ -98,7 +98,7 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
     }
 
     function getVendor(hostDev, hostdevId) {
-        const nodeDev = findHostNodeDevice(hostDev, nodeDevices);
+        const nodeDev = findMatchingNodeDevices(hostDev, nodeDevices)[0];
 
         if (["usb", "pci"].includes(hostDev.type)) {
             if (nodeDev)
@@ -110,11 +110,23 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
 
     function getSource(hostDev, hostdevId) {
         const cells = [];
-        const nodeDev = findHostNodeDevice(hostDev, nodeDevices);
-        if (hostDev.type === "usb" && nodeDev) {
-            const device = nodeDev.devnum;
-            const bus = nodeDev.busnum;
+        if (hostDev.type === "usb") {
+            const nodeDevs = findMatchingNodeDevices(hostDev, nodeDevices);
+            let device;
+            let bus;
 
+            if (nodeDevs.length === 1) {
+                device = nodeDevs[0].devnum;
+                bus = nodeDevs[0].busnum;
+            } else {
+                // If there are multiple usb devices without specified bus/device and same vendor/product,
+                // it's impossible to identify which one is the one referred in VM's XML
+                device = _("Unspecified");
+                bus = _("Unspecified");
+            }
+
+            // If there are 2 usb devices without specified bus/device and same vendor/product,
+            // it's impossible to identify which one is the one referred in VM's XML
             cells.push(getOptionalValue(device, `${hostdevId}-device`, _("Device")));
             cells.push(getOptionalValue(bus, `${hostdevId}-bus`, _("Bus")));
         } else if (hostDev.type === "pci") {
