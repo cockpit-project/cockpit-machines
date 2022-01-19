@@ -55,6 +55,8 @@ fi
 
 if [ "$TEST_OS" = "fedora-35" ] || [ "$TEST_OS" = "fedora-36" ] || [ "$TEST_OS" = "centos-9-stream" ]; then
     EXCLUDES="$EXCLUDES TestMachinesHostDevs.testHostDevAdd"
+    # https://github.com/cockpit-project/cockpit-machines/issues/526
+    EXCLUDES="$EXCLUDES TestMachinesCreate.testCreateThenInstall"
 fi
 
 if [ "$TEST_OS" = "fedora-36" ]; then
