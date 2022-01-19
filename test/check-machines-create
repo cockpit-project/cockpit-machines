@@ -171,15 +171,6 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                         root_password="dogsaremybestfr13nds",
                                                                         start_vm=True))
 
-            # Test using a cloud image without setting the cloud init options
-            # https://bugzilla.redhat.com/show_bug.cgi?id=1978206
-            runner.createCloudBaseImageTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
-                                                                        storage_size=10, storage_size_unit='MiB',
-                                                                        location=config.VALID_DISK_IMAGE_PATH,
-                                                                        os_name=config.FEDORA_28,
-                                                                        os_short_id=config.FEDORA_28_SHORTID,
-                                                                        start_vm=True))
-
     def testCreateCloudBaseImage2(self):
         self.testCreateCloudBaseImage()
 
