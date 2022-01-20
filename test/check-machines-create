@@ -610,11 +610,11 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                       storage_pool="NoStorage",
                                                       start_vm=True))
 
-        # This functionality works on debian only because of extra dep.
+        # This functionality works on debian only because of extra qemu-block-extra dep.
         # Check error is returned if dependency is missing
         if self.machine.image.startswith("debian"):
-            # remove package
-            self.machine.execute("dpkg -P qemu-block-extra")
+            self.machine.execute("mount -o bind /dev/null /usr/lib/x86_64-linux-gnu/qemu/block-curl.so")
+            self.addCleanup(self.machine.execute, "umount /usr/lib/x86_64-linux-gnu/qemu/block-curl.so")
             runner.checkDialogErrorTest(TestMachinesCreate.VmDialog(self, sourceType='url',
                                                                     location=config.ISO_URL,
                                                                     memory_size=128, memory_size_unit='MiB',
