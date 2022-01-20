@@ -455,6 +455,7 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                  memory_size=128, memory_size_unit='MiB',
                                                                  storage_pool="NoStorage"), True, True)
 
+    @skipImage("https://bugzilla.redhat.com/show_bug.cgi?id=1818089", "ubuntu-2004", "rhel-8-5")
     def testCreateFileSource(self):
         runner = TestMachinesCreate.CreateVmRunner(self)
         config = TestMachinesCreate.TestCreateConfig
