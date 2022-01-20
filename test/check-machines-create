@@ -1275,7 +1275,17 @@ class TestMachinesCreate(VirtualMachinesCase):
             b.wait_visible(f"#vm-{dialog.name}-delete-modal-dialog")
             b.click(f"#vm-{dialog.name}-delete-modal-dialog button:contains(Delete)")
             b.wait_not_present(f"#vm-{dialog.name}-delete-modal-dialog")
-            self.test_obj.waitVmRow(dialog.name, "system", False)
+
+            try:
+                self.test_obj.waitVmRow(dialog.name, "system", False)
+            except Error:
+                if dialog.sourceType == 'url' and self.machine.image in ["ubuntu-2004", "rhel-8-4", "rhel-8-5"]:
+                    # https://bugzilla.redhat.com/show_bug.cgi?id=1818089
+                    # After destroying, virt-install will restart the domain and exit
+                    self.machine.execute(f"virsh undefine {dialog.name}; virsh destroy {dialog.name}")
+                    self.test_obj.waitVmRow(dialog.name, "system", False)
+                else:
+                    raise
 
             return self
 
