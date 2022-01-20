@@ -604,11 +604,13 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                       start_vm=False))
 
         # Test detection of ISO file in URL
-        runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='url',
-                                                      location=config.ISO_URL,
-                                                      memory_size=128, memory_size_unit='MiB',
-                                                      storage_pool="NoStorage",
-                                                      start_vm=True))
+        # not supported on RHEL/CentOS 9: https://bugzilla.redhat.com/show_bug.cgi?id=2014229
+        if not self.machine.image.startswith('rhel-9') and not self.machine.image.startswith("centos-9"):
+            runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='url',
+                                                          location=config.ISO_URL,
+                                                          memory_size=128, memory_size_unit='MiB',
+                                                          storage_pool="NoStorage",
+                                                          start_vm=True))
 
         # This functionality works on debian only because of extra qemu-block-extra dep.
         # Check error is returned if dependency is missing
