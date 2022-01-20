@@ -30,7 +30,7 @@ sys.path.append(os.path.join(TEST_DIR, "common"))
 sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
 
 from machineslib import VirtualMachinesCase  # noqa
-from testlib import no_retry_when_changed, nondestructive, skipImage, test_main, wait, Error  # noqa
+from testlib import nondestructive, skipImage, test_main, wait, Error  # noqa
 from machinesxmls import NETWORK_XML_PXE, PXE_SERVER_CFG  # noqa
 
 
@@ -393,7 +393,6 @@ class TestMachinesCreate(VirtualMachinesCase):
             "127.0.0.1", "127.0.0.1", None, None)
 
     @skipImage("TODO: Arch Linux has no iscsi support", "arch")
-    @no_retry_when_changed
     def testCreateThenInstall(self):
         runner = TestMachinesCreate.CreateVmRunner(self)
         config = TestMachinesCreate.TestCreateConfig
@@ -559,7 +558,6 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                       memory_size=128, memory_size_unit='MiB',
                                                       start_vm=True))
 
-    @no_retry_when_changed
     def testCreateUrlSource(self):
         runner = TestMachinesCreate.CreateVmRunner(self)
         config = TestMachinesCreate.TestCreateConfig
