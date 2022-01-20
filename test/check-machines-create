@@ -1440,6 +1440,9 @@ class TestMachinesCreate(VirtualMachinesCase):
         def checkEnvIsEmpty(self):
             b = self.browser
             b.wait_in_text("#virtual-machines-listing .pf-c-empty-state", "No VM is running")
+            print("\n\n##### checkEnvIsEmpty: waiting a bit ###############")
+            time.sleep(3)
+            b.wait_in_text("#virtual-machines-listing .pf-c-empty-state", "No VM is running")
             # wait for the vm and disks to be deleted
             self.machine.execute("until test -z $(virsh list --all --name); do sleep 1; done")
             self.machine.execute("until test -z $(ls /home/admin/.local/share/libvirt/images/ 2>/dev/null); do sleep 1; done")
@@ -1477,6 +1480,8 @@ class TestMachinesCreate(VirtualMachinesCase):
             if dialog.sourceType == 'disk_image':
                 self._assertScriptFinished() \
                     ._assertDomainDefined(dialog.name, dialog.connection)
+
+            print("\n\n##### Deleting VM ###############")
 
             if dialog.delete:
                 self._deleteVm(dialog) \
