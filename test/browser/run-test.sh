@@ -48,11 +48,6 @@ if [ "$TEST_OS" = "centos-8-stream" ]; then
     EXCLUDES="$EXCLUDES TestMachinesConsoles.testExternalConsole"
 fi
 
-if [ "$TEST_OS" = "fedora-34" ] || [ "$TEST_OS" = "centos-8-stream" ]; then
-    # this does not always fail, but often
-    EXCLUDES="$EXCLUDES TestMachinesCreate.testCreateFileSource"
-fi
-
 if [ "$TEST_OS" = "fedora-35" ] || [ "$TEST_OS" = "fedora-36" ] || [ "$TEST_OS" = "centos-9-stream" ]; then
     EXCLUDES="$EXCLUDES TestMachinesHostDevs.testHostDevAdd"
     # https://github.com/cockpit-project/cockpit-machines/issues/526
