@@ -553,7 +553,12 @@ export function domainGet({
                 return snapshotGetAll({ connectionName, domainPath: objPath });
             })
             .catch(ex => {
-                console.warn("GET_VM action GetXMLDesc failed for path", objPath, ex.toString(), "undefining VM");
+                // "not found" is an expected error, as this runs on Stopped/Undefined events; so be quiet about these
+                if (ex.message.startsWith("Domain not found"))
+                    logDebug(`GET_VM: domain ${connectionName} ${objPath} went away, undefining: ${ex.toString()}`);
+                else
+                    console.warn(`GET_VM failed for ${objPath}, undefining: ${ex.toString()}`);
+                // but undefine either way -- if we  can't get info about the VM, don't show it
                 store.dispatch(undefineVm({ connectionName, id: objPath }));
             });
 }
