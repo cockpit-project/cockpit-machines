@@ -635,7 +635,7 @@ const MemoryRow = ({ memorySize, memorySizeUnit, nodeMaxMemory, minimumMemory, o
     );
 };
 
-const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit, onValueChanged, minimumStorage, storagePoolName, storagePools, storageVolume, vms, validationFailed }) => {
+const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit, onValueChanged, minimumStorage, storagePoolName, storagePools, storageVolume, vms, validationFailed, inProgress }) => {
     let validationStateStorage = validationFailed.storage ? 'error' : 'default';
     const poolSpaceAvailable = getSpaceAvailable(storagePools, connectionName);
     let helperTextNewVolume = (
@@ -693,11 +693,11 @@ const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit,
             storagePoolName !== "NoStorage" &&
             <FormGroup label={_("Volume")}
                        fieldId="storage-volume-select"
-                       helperText={(isVolumeUsed[storageVolume] && isVolumeUsed[storageVolume].length > 0) && _("This volume is already used by another VM.")}
-                       validated={(isVolumeUsed[storageVolume] && isVolumeUsed[storageVolume].length > 0) ? "warning" : "default"}>
+                       helperText={!inProgress && (isVolumeUsed[storageVolume] && isVolumeUsed[storageVolume].length > 0) && _("This volume is already used by another VM.")}
+                       validated={!inProgress && (isVolumeUsed[storageVolume] && isVolumeUsed[storageVolume].length > 0) ? "warning" : "default"}>
                 <FormSelect id="storage-volume-select"
                             value={storageVolume}
-                            validated={(isVolumeUsed[storageVolume] && isVolumeUsed[storageVolume].length > 0) ? "warning" : "default"}
+                            validated={!inProgress && (isVolumeUsed[storageVolume] && isVolumeUsed[storageVolume].length > 0) ? "warning" : "default"}
                             onChange={value => onValueChanged('storageVolume', value)}>
                     {volumeEntries}
                 </FormSelect>
@@ -1036,6 +1036,7 @@ class CreateVmModal extends React.Component {
                     vms={vms}
                     minimumStorage={this.state.minimumStorage}
                     validationFailed={validationFailed}
+                    inProgress={this.state.inProgress}
                 />}
 
                 <MemoryRow
