@@ -30,7 +30,6 @@ import getOSListScript from "raw-loader!../getOSList.py";
 import {
     undefineNetwork,
     undefineStoragePool,
-    undefineVm,
     updateLibvirtVersion,
     updateOsInfoList,
     updateVm,
@@ -145,30 +144,6 @@ function delayPolling(action, timeout) {
         // logDebug(`Skipping delayed action since refreshing is switched off`);
         window.setTimeout(() => delayPolling(action, timeout), VMS_CONFIG.DefaultRefreshInterval);
     }
-}
-
-// Undefined the VM from Redux store only if it's not transient
-function domainEventUndefined(connectionName, domPath) {
-    call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "ListDomains", [Enum.VIR_CONNECT_LIST_DOMAINS_TRANSIENT], { timeout, type: "u" })
-            .then(objPaths => {
-                if (!objPaths[0].includes(domPath))
-                    store.dispatch(undefineVm({ connectionName, id: domPath }));
-                else
-                    domainGet({ connectionName, id: domPath, updateOnly: true });
-            })
-            .catch(ex => console.warn("ListDomains action failed:", ex.toString()));
-}
-
-function domainEventStopped(connectionName, domPath) {
-    // Transient VMs cease to exists once they are stopped. Check if VM was transient and update or undefined it
-    call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "ListDomains", [0], { timeout, type: "u" })
-            .then(objPaths => {
-                if (objPaths[0].includes(domPath))
-                    domainGet({ connectionName, id: domPath, updateOnly: true });
-                else // Transient vm will get undefined when stopped
-                    store.dispatch(undefineVm({ connectionName, id:domPath, transientOnly: true }));
-            })
-            .catch(ex => console.warn("domainEventStopped action failed:", ex.toString()));
 }
 
 /**
@@ -303,14 +278,9 @@ function startEventMonitorDomains(connectionName) {
 
             switch (eventType) {
             case Enum.VIR_DOMAIN_EVENT_DEFINED:
-                domainGet({ connectionName, id:objPath });
-                break;
-
             case Enum.VIR_DOMAIN_EVENT_UNDEFINED:
-                domainEventUndefined(connectionName, objPath);
-                break;
-
             case Enum.VIR_DOMAIN_EVENT_STARTED:
+            case Enum.VIR_DOMAIN_EVENT_STOPPED:
                 domainGet({ connectionName, id:objPath });
                 break;
 
@@ -328,10 +298,6 @@ function startEventMonitorDomains(connectionName) {
                     id: objPath,
                     state: "running"
                 }));
-                break;
-
-            case Enum.VIR_DOMAIN_EVENT_STOPPED:
-                domainEventStopped(connectionName, objPath);
                 break;
 
             default:

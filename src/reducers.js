@@ -216,6 +216,10 @@ function vms(state, action) {
         }
 
         const updatedVm = Object.assign({}, state[index], action.vm);
+        if (action.vm.actualTimeInMs < 0) { // clear the usage data (i.e. VM went down)
+            logDebug(`Clearing usage data for vm '${action.vm.name}'`);
+            clearUsageData(updatedVm);
+        }
         return replaceResource({ state, updatedResource: updatedVm, index });
     }
     case UPDATE_VM: {
