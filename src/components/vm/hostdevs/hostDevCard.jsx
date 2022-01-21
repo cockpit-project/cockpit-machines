@@ -219,7 +219,7 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
                     <DeleteResourceButton objectId={`${id}-hostdev-${hostdevId}`}
                                           actionName={_("Remove")}
                                           showDialog={() => setDeleteDialogProps({
-                                              objectType: hostdev.type + " host device",
+                                              objectType: cockpit.format(_("$1 host device"), hostdev.type),
                                               objectName: "",
                                               onClose: () => setDeleteDialogProps(undefined),
                                               deleteHandler: () => {
