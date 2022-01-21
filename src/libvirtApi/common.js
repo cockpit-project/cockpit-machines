@@ -322,7 +322,7 @@ function startEventMonitorDomains(connectionName) {
             case "MetadataChanged":
             case "TrayChange":
             /* These signals imply possible changes in what we display, so re-read the state */
-                domainGet({ connectionName, id:path, updateOnly: true });
+                domainGet({ connectionName, id:path });
                 break;
 
             default:
