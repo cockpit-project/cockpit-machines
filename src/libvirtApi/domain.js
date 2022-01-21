@@ -37,7 +37,6 @@ import {
     deleteUnlistedVMs,
     undefineVm,
     updateOrAddVm,
-    updateVm,
 } from '../actions/store-actions.js';
 import {
     getDiskXML,
@@ -502,7 +501,6 @@ export function domainForceReboot({
 export function domainGet({
     id: objPath,
     connectionName,
-    updateOnly,
 }) {
     let props = {};
     let domainXML;
@@ -545,10 +543,7 @@ export function domainGet({
                 logDebug(`${props.name}.GET_VM(${objPath}, ${connectionName}): update props ${JSON.stringify(props)}`);
 
                 const dumpxmlParams = parseDomainDumpxml(connectionName, domainXML, objPath);
-                if (updateOnly)
-                    store.dispatch(updateVm(Object.assign({}, props, dumpxmlParams)));
-                else
-                    store.dispatch(updateOrAddVm(Object.assign({}, props, dumpxmlParams)));
+                store.dispatch(updateOrAddVm(Object.assign({}, props, dumpxmlParams)));
 
                 return snapshotGetAll({ connectionName, domainPath: objPath });
             })
