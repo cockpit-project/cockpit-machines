@@ -335,6 +335,7 @@ class TestMachinesCreate(VirtualMachinesCase):
 
         # Add a serial console of type file
         console = ET.fromstring(self.machine.execute("virt-xml --build --console file,path=/tmp/serial.txt,target_type=serial"))
+        self.addCleanup(self.machine.execute, "rm -f /tmp/serial.txt")
         devices = root.find('devices')
         devices.append(console)
 
