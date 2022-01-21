@@ -296,36 +296,25 @@ function startEventMonitorDomains(connectionName) {
     dbusClient(connectionName).subscribe(
         { interface: "org.libvirt.Connect", member: "DomainEvent" },
         (path, iface, signal, args) => {
-            const domainEvent = {
-                Defined: 0,
-                Undefined: 1,
-                Started: 2,
-                Suspended: 3,
-                Resumed: 4,
-                Stopped: 5,
-                Shutdown: 6,
-                PMsuspended: 7,
-                Crashed: 8
-            };
             const objPath = args[0];
             const eventType = args[1];
 
             logDebug(`signal on ${path}: ${iface}.${signal}(${JSON.stringify(args)})`);
 
             switch (eventType) {
-            case domainEvent.Defined:
+            case Enum.VIR_DOMAIN_EVENT_DEFINED:
                 domainGet({ connectionName, id:objPath });
                 break;
 
-            case domainEvent.Undefined:
+            case Enum.VIR_DOMAIN_EVENT_UNDEFINED:
                 domainEventUndefined(connectionName, objPath);
                 break;
 
-            case domainEvent.Started:
+            case Enum.VIR_DOMAIN_EVENT_STARTED:
                 domainGet({ connectionName, id:objPath });
                 break;
 
-            case domainEvent.Suspended:
+            case Enum.VIR_DOMAIN_EVENT_SUSPENDED:
                 store.dispatch(updateVm({
                     connectionName,
                     id: objPath,
@@ -333,7 +322,7 @@ function startEventMonitorDomains(connectionName) {
                 }));
                 break;
 
-            case domainEvent.Resumed:
+            case Enum.VIR_DOMAIN_EVENT_RESUMED:
                 store.dispatch(updateVm({
                     connectionName,
                     id: objPath,
@@ -341,7 +330,7 @@ function startEventMonitorDomains(connectionName) {
                 }));
                 break;
 
-            case domainEvent.Stopped:
+            case Enum.VIR_DOMAIN_EVENT_STOPPED:
                 domainEventStopped(connectionName, objPath);
                 break;
 
