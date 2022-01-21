@@ -306,7 +306,6 @@ class TestMachinesCreate(VirtualMachinesCase):
         # Wait for virt-install to define the VM and then stop it
         wait(lambda: "pxe-guest" in self.machine.execute("virsh list --persistent"), delay=3)
         self.machine.execute("virsh destroy pxe-guest")
-        self.goToMainPage()
 
         # Remove all serial ports and consoles first and tehn add a console of type file
         # virt-xml tool does not allow to remove both serial and console devices at once
@@ -348,6 +347,7 @@ class TestMachinesCreate(VirtualMachinesCase):
 
         # The file is full of ANSI control characters in between every letter, filter them out
         wait(lambda: self.machine.execute(r"sed 's,\x1B\[[0-9;]*[a-zA-Z],,g' /tmp/serial.txt | grep 'Rebooting in 60'"), delay=3)
+        self.goToMainPage()
 
         self.machine.execute("virsh destroy pxe-guest && virsh undefine pxe-guest")
         runner.checkEnvIsEmpty()
