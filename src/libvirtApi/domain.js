@@ -488,9 +488,13 @@ export function domainDetachHostDevice({ connectionName, vmId, live, dev }) {
     return Promise.all(hostDevPromises);
 }
 
-export function domainDetachIface({ connectionName, mac, vmName, live, persistent }) {
+export function domainDetachIface({ connectionName, index, vmName, live, persistent }) {
     const options = { err: "message" };
-    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--remove-device', '--network', `mac=${mac}`];
+    // Normally we should identify a vNIC to detach by a number of slot, bus, function and domain.
+    // Such detachment is however broken in virt-xml, so instead let's detach it by the index of <interface> in array of VM's XML <devices>
+    // This serves as workaround for https://github.com/virt-manager/virt-manager/issues/356
+    // virt-xml counts devices starting from 1, so we have to increase index by 1
+    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--remove-device', '--network', `${index + 1}`];
 
     if (connectionName === "system")
         options.superuser = "try";

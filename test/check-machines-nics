@@ -147,18 +147,30 @@ class TestMachinesNICs(VirtualMachinesCase):
         m.execute("virsh attach-interface --domain subVmTest1 --type network --source default --model virtio --mac 52:54:00:4b:73:5f --config")
         m.execute("virsh attach-interface --domain subVmTest1 --type bridge --source virbr0 --model virtio --mac 52:54:00:4b:73:6f --config")
         m.execute("virsh attach-interface --domain subVmTest1 --type network --source default --model virtio --mac 52:54:00:4b:73:4f --config")
+        # Add network with the same MAC address
+        m.execute("virsh attach-interface --domain subVmTest1 --type network --source default --model e1000e --mac 52:54:00:4b:73:5f --config")
         # Refresh for getting new added NIC
         b.reload()
         b.enter_page('/machines')
         b.wait_in_text("body", "Virtual machines")
         # Check NIC MAC addresses
-        b.wait_text("#vm-subVmTest1-network-1-mac", "52:54:00:4b:73:4f")
-        b.wait_text("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:5f")
-        b.wait_text("#vm-subVmTest1-network-3-mac", "52:54:00:4b:73:6f")
+        b.wait_text("#vm-subVmTest1-network-1-mac", "52:54:00:4b:73:6f")
+        b.wait_text("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:4f")
+        b.wait_text("#vm-subVmTest1-network-3-mac", "52:54:00:4b:73:5f")
+        b.wait_text("#vm-subVmTest1-network-3-model", "virtio")
+        b.wait_text("#vm-subVmTest1-network-4-mac", "52:54:00:4b:73:5f")
+        b.wait_text("#vm-subVmTest1-network-4-model", "e1000e")
         # Detach
         self.deleteIface(2)
-        b.wait_text_not("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:5f")
-        b.wait_text("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:6f")
+        b.wait_not_present("#vm-subVmTest1-network-4-mac")
+        b.wait_text_not("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:4f")
+        b.wait_text("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:5f")
+        b.wait_text("#vm-subVmTest1-network-2-model", "virtio")
+        # Test deleting the interface with same MAC address as the other vNIC will delete the correct one
+        self.deleteIface(2)
+        b.wait_not_present("#vm-subVmTest1-network-3-mac")
+        b.wait_text("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:5f")
+        b.wait_text("#vm-subVmTest1-network-2-model", "e1000e")
 
     def testNICAdd(self):
         b = self.browser
@@ -608,10 +620,6 @@ class TestMachinesNICs(VirtualMachinesCase):
                 self.browser.wait_in_text("body", "Virtual machines")
             else:
                 self.deleteIface(self.nic_num)
-                vm_state = self.browser.text("#vm-subVmTest1-state")
-                # On a running VM detaching NIC takes longer and we can see the spinner
-                if vm_state == "Running":
-                    self.browser.wait_visible(".pf-c-modal-box__footer button.pf-m-in-progress")
 
                 # Check NIC is no longer in list
                 self.browser.wait_not_present(f"#vm-subVmTest1-network-{self.nic_num}-mac")
