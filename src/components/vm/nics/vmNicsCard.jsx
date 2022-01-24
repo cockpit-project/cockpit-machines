@@ -376,7 +376,7 @@ export class VmNetworkTab extends React.Component {
                         objectType: _("network interface"),
                         objectName: network.mac,
                         onClose: () => this.setState({ deleteDialogProps: undefined }),
-                        deleteHandler: () => domainDetachIface({ connectionName: vm.connectionName, mac: network.mac, vmName: vm.name, live: vm.state === 'running', persistent: nicPersistent }),
+                        deleteHandler: () => domainDetachIface({ connectionName: vm.connectionName, index: network.index, vmName: vm.name, live: vm.state === 'running', persistent: nicPersistent }),
                     };
                     const deleteNICAction = (
                         <DeleteResourceButton objectId={`${id}-iface-${networkId}`}
@@ -413,7 +413,11 @@ export class VmNetworkTab extends React.Component {
             else
                 return 0;
         };
-        const rows = vm.interfaces.sort(sortIfaces).map(target => {
+        // Normally we should identify a vNIC to detach by a number of slot, bus, function and domain.
+        // Such detachment is however broken in virt-xml, so instead let's detach it by the index of <interface> in array of VM's XML <devices>
+        // This serves as workaround for https://github.com/virt-manager/virt-manager/issues/356
+        const ifaces = vm.interfaces.map((iface, index) => ({ ...iface, index }));
+        const rows = ifaces.sort(sortIfaces).map(target => {
             const columns = detailMap.map(d => {
                 let column = null;
                 if (typeof d.value === 'string') {
