@@ -37,13 +37,6 @@ class TestMachinesNICs(VirtualMachinesCase):
         # querying object manager often runs into that on network changes; irrelevant
         self.allow_journal_messages("org.freedesktop.NetworkManager: couldn't get managed objects at /org/freedesktop: Timeout was reached")
 
-    def deleteIface(self, iface):
-        b = self.browser
-
-        b.click(f"#delete-vm-subVmTest1-iface-{iface}")
-        b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Delete network interface")
-        b.click(".pf-c-modal-box__footer button:contains(Delete)")
-
     @no_retry_when_changed
     def testVmNICs(self):
         b = self.browser
@@ -70,22 +63,26 @@ class TestMachinesNICs(VirtualMachinesCase):
 
         b.assert_pixels("#vm-subVmTest1-networks", "vm-details-nics-card", ignore=["#vm-subVmTest1-network-1-mac", "#vm-subVmTest1-network-1-ipv4-address"])
 
+        # Remove default interface
+        self.deleteIface(1)
+
         # Test add network
         m.execute("virsh attach-interface --domain subVmTest1 --type network --source default --model virtio --mac 52:54:00:4b:73:5f --config --live")
 
-        b.wait_in_text("#vm-subVmTest1-network-2-type", "network")
-        b.wait_in_text("#vm-subVmTest1-network-2-source", "default")
-        b.wait_in_text("#vm-subVmTest1-network-2-model", "virtio")
-        b.wait_in_text("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:5f")
-        b.wait_in_text("#vm-subVmTest1-network-2-ipv4-address", "192.168.122.")
-        b.wait_in_text("#vm-subVmTest1-network-2-state", "up")
+        b.wait_in_text("#vm-subVmTest1-network-1-type", "network")
+        b.wait_in_text("#vm-subVmTest1-network-1-source", "default")
+        b.wait_in_text("#vm-subVmTest1-network-1-model", "virtio")
+        b.wait_in_text("#vm-subVmTest1-network-1-mac", "52:54:00:4b:73:5f")
+        b.wait_in_text("#vm-subVmTest1-network-1-ipv4-address", "192.168.122.")
+        b.wait_in_text("#vm-subVmTest1-network-1-state", "up")
 
         # Test bridge network
         m.execute("virsh attach-interface --domain subVmTest1 --type bridge --source virbr0 --model virtio --mac 52:54:00:4b:73:5e --config --live")
 
-        b.wait_in_text("#vm-subVmTest1-network-3-type", "bridge")
-        b.wait_in_text("#vm-subVmTest1-network-3-source", "virbr0")
-        b.wait_in_text("#vm-subVmTest1-network-3-ipv4-address", "192.168.122.")
+        # vNICs are alphabetically sorted by MAC address, so now the new vNIC is first in the list
+        b.wait_in_text("#vm-subVmTest1-network-1-type", "bridge")
+        b.wait_in_text("#vm-subVmTest1-network-1-source", "virbr0")
+        b.wait_in_text("#vm-subVmTest1-network-1-ipv4-address", "192.168.122.")
 
     def testNICPlugingAndUnpluging(self):
         b = self.browser
@@ -156,25 +153,17 @@ class TestMachinesNICs(VirtualMachinesCase):
         b.enter_page('/machines')
         b.wait_in_text("body", "Virtual machines")
         # Check NIC MAC addresses
-        b.wait_text("#vm-subVmTest1-network-1-mac", "52:54:00:4b:73:5f")
-        b.wait_text("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:6f")
-        b.wait_text("#vm-subVmTest1-network-3-mac", "52:54:00:4b:73:4f")
+        b.wait_text("#vm-subVmTest1-network-1-mac", "52:54:00:4b:73:4f")
+        b.wait_text("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:5f")
+        b.wait_text("#vm-subVmTest1-network-3-mac", "52:54:00:4b:73:6f")
         # Detach
         self.deleteIface(2)
         # Make sure popup dialog disappeared
         b.wait_not_present(".pf-c-modal-box")
-        b.wait_text_not("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:6f")
-        b.wait_text("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:4f")
+        b.wait_text_not("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:5f")
+        b.wait_text("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:6f")
 
     def testNICAdd(self):
-        def get_next_mac(last_mac):
-            parts = last_mac.split(':')
-            suffix = parts[-1]
-            new_suffix = format(int(suffix, 16) + 1, "x").zfill(2)
-            parts[-1] = new_suffix
-            new_mac = ':'.join(parts)
-            return new_mac
-
         b = self.browser
         m = self.machine
 
@@ -187,6 +176,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         b.wait_in_text("body", "Virtual machines")
 
         self.goToVmPage("subVmTest1")
+        self.deleteIface(1)  # Remove default vNIC
 
         mac_address = "52:54:00:a5:f8:00"
         # Test a error message handling
@@ -207,7 +197,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         # No NICs present
         b.wait_visible("#vm-subVmTest1-add-iface-button")  # open the Network Interfaces subtab
 
-        mac_address = get_next_mac(mac_address)
+        mac_address = self.get_next_mac(mac_address)
         self.NICAddDialog(
             self,
             source_type="network",
@@ -217,7 +207,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         ).execute()
 
         # Test direct
-        mac_address = get_next_mac(mac_address)
+        mac_address = self.get_next_mac(mac_address)
         self.NICAddDialog(
             self,
             mac=mac_address,
@@ -225,7 +215,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         ).execute()
 
         # Test Bridge
-        mac_address = get_next_mac(mac_address)
+        mac_address = self.get_next_mac(mac_address)
         self.NICAddDialog(
             self,
             mac=mac_address,
@@ -234,7 +224,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         ).execute()
 
         # Test model
-        mac_address = get_next_mac(mac_address)
+        mac_address = self.get_next_mac(mac_address)
         self.NICAddDialog(
             self,
             mac=mac_address,
@@ -247,48 +237,51 @@ class TestMachinesNICs(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-state", "Running")
         wait(lambda: "login as 'cirros' user." in self.machine.execute(f"cat {args['logfile']}"), delay=3)
 
-        # Test permanent attachment to running VM
-        mac_address = get_next_mac(mac_address)
-        self.NICAddDialog(
-            self,
-            mac=mac_address,
-            source_type="network",
-            source="test_network",
-            permanent=True,
-        ).execute()
+        # Because of bug in debian-testing, attachment of virtio vNICs after restarting VM will fail
+        # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1005284
+        if m.image not in ["debian-stable", "debian-testing"]:
+            # Test permanent attachment to running VM
+            mac_address = self.get_next_mac(mac_address)
+            self.NICAddDialog(
+                self,
+                mac=mac_address,
+                source_type="network",
+                source="test_network",
+                permanent=True,
+            ).execute()
 
-        # Test NIC attaching to non-persistent VM
-        m.execute("virsh dumpxml --inactive subVmTest1 > /tmp/subVmTest1.xml; virsh undefine subVmTest1")
-        b.wait_visible("div[data-vm-transient=\"true\"]")
-        mac_address = get_next_mac(mac_address)
-        self.NICAddDialog(
-            self,
-            source_type="network",
-            source="test_network",
-            mac=mac_address,
-            nic_num=3,
-            persistent_vm=False,
-        ).execute()
-        m.execute("virsh define /tmp/subVmTest1.xml")
-        b.wait_visible("div[data-vm-transient=\"false\"]")
-        b.click("#vm-subVmTest1-action-kebab button")
-        b.click("#vm-subVmTest1-forceOff")
-        b.wait_in_text("#vm-subVmTest1-state", "Shut off")
+            # Test NIC attaching to non-persistent VM
+            m.execute("virsh dumpxml --inactive subVmTest1 > /tmp/subVmTest1.xml; virsh undefine subVmTest1")
+            b.wait_visible("div[data-vm-transient=\"true\"]")
+            mac_address = self.get_next_mac(mac_address)
+            self.NICAddDialog(
+                self,
+                source_type="network",
+                source="test_network",
+                mac=mac_address,
+                nic_num=2,
+                persistent_vm=False,
+            ).execute()
+            m.execute("virsh define /tmp/subVmTest1.xml")
+            b.wait_visible("div[data-vm-transient=\"false\"]")
+            b.click("#vm-subVmTest1-action-kebab button")
+            b.click("#vm-subVmTest1-forceOff")
+            b.wait_in_text("#vm-subVmTest1-state", "Shut off")
 
-        mac_address = get_next_mac(mac_address)
-        self.NICAddDialog(
-            self,
-            mac=mac_address,
-            remove=False,
-        ).execute()
+            mac_address = self.get_next_mac(mac_address)
+            self.NICAddDialog(
+                self,
+                mac=mac_address,
+                remove=False,
+            ).execute()
 
-        mac_address = get_next_mac(mac_address)
-        self.NICAddDialog(
-            self,
-            mac=mac_address,
-            nic_num=3,
-            remove=False,
-        ).execute()
+            mac_address = self.get_next_mac(mac_address)
+            self.NICAddDialog(
+                self,
+                mac=mac_address,
+                nic_num=2,
+                remove=False,
+            ).execute()
 
     class NICEditDialog:
 
@@ -297,7 +290,7 @@ class TestMachinesNICs(VirtualMachinesCase):
             test_obj,
             mac="52:54:00:f0:eb:63",
             model=None,
-            nic_num=2,
+            nic_num=1,
             source=None,
             source_type=None,
         ):
@@ -452,6 +445,10 @@ class TestMachinesNICs(VirtualMachinesCase):
 
         self.goToVmPage("subVmTest1")
 
+        # Remove default vNIC
+        self.deleteIface(1)
+
+        # Test Warning message when changes are done in a running VM
         self.NICAddDialog(
             self,
             source_type="bridge",
@@ -463,9 +460,9 @@ class TestMachinesNICs(VirtualMachinesCase):
         # The dialog fields should reflect the permanent configuration
         dialog = self.NICEditDialog(self)
         dialog.open()
-        b.wait_in_text("#vm-subVmTest1-network-2-edit-dialog-source", "eth42")
-        b.wait_val("#vm-subVmTest1-network-2-edit-dialog-mac", "52:54:00:f0:eb:63")
-        b.assert_pixels("#vm-subVmTest1-network-2-edit-dialog-modal-window", "vm-edit-nic-modal")
+        b.wait_in_text("#vm-subVmTest1-network-1-edit-dialog-source", "eth42")
+        b.wait_val("#vm-subVmTest1-network-1-edit-dialog-mac", "52:54:00:f0:eb:63")
+        b.assert_pixels("#vm-subVmTest1-network-1-edit-dialog-modal-window", "vm-edit-nic-modal")
         dialog.cancel()
 
         # Changing the NIC configuration for a shut off VM should not display any warning
@@ -496,16 +493,16 @@ class TestMachinesNICs(VirtualMachinesCase):
             source_type="direct",
             source="eth43",
             mac="52:54:00:f0:eb:64",
-            nic_num=3,
+            nic_num=2,
             remove=False
         ).execute()
-        b.wait_visible("#vm-subVmTest1-network-3-edit-dialog[aria-disabled=true]")
+        b.wait_visible("#vm-subVmTest1-network-2-edit-dialog[aria-disabled=true]")
 
     class NICAddDialog:
 
         def __init__(
             # We have always have to specify mac and source_type to identify the device in xml and $virsh detach-interface
-            self, test_obj, source_type="direct", source=None, model=None, nic_num=2,
+            self, test_obj, source_type="direct", source=None, model=None, nic_num=1,
             permanent=False, mac=None, remove=True, persistent_vm=True,
             xfail=False, xfail_error=None, pixel_test_tag=None
         ):
