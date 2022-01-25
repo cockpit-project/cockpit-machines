@@ -405,7 +405,15 @@ export class VmNetworkTab extends React.Component {
         detailMap = detailMap.filter(d => !d.hidden);
 
         const columnTitles = detailMap.map(target => target.name);
-        const rows = vm.interfaces.sort().map(target => {
+        const sortIfaces = (a, b) => {
+            if (a.type !== b.type)
+                return a.type > b.type ? 1 : -1;
+            else if (a.mac !== b.mac)
+                return a.mac > b.mac ? 1 : -1;
+            else
+                return 0;
+        };
+        const rows = vm.interfaces.sort(sortIfaces).map(target => {
             const columns = detailMap.map(d => {
                 let column = null;
                 if (typeof d.value === 'string') {

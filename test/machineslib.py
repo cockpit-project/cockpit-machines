@@ -208,9 +208,23 @@ class VirtualMachinesCaseHelpers:
         else:
             return m.execute(cmd)
 
+    def deleteIface(self, iface):
+        b = self.browser
+
+        b.click(f"#delete-vm-subVmTest1-iface-{iface}")
+        b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Delete network interface")
+        b.click(".pf-c-modal-box__footer button:contains(Delete)")
+
+    def get_next_mac(self, last_mac):
+        parts = last_mac.split(':')
+        suffix = parts[-1]
+        new_suffix = format(int(suffix, 16) + 1, "x").zfill(2)
+        parts[-1] = new_suffix
+        new_mac = ':'.join(parts)
+        return new_mac
+
 
 class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelpers, NetworkHelpers):
-
     def setUp(self):
         super().setUp()
 
