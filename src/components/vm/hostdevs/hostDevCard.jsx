@@ -28,7 +28,7 @@ import {
 } from '@patternfly/react-core';
 
 import cockpit from 'cockpit';
-import { vmId, findHostNodeDevice, getNodeDevSource } from "../../../helpers.js";
+import { vmId, findHostNodeDevice, getNodeDevSource, getHostDevSourceObject } from "../../../helpers.js";
 import { ListingTable } from "cockpit-components-table.jsx";
 import AddHostDev from "./hostDevAdd.jsx";
 import { domainDetachHostDevice } from '../../../libvirtApi/domain.js';
@@ -238,8 +238,28 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
 
     let hostdevId = 1;
 
+    const sortHostDevices = (a, b) => {
+        if (a.type !== b.type)
+            return a.type > b.type ? 1 : -1;
+
+        const aSource = getHostDevSourceObject(a);
+        const bSource = getHostDevSourceObject(b);
+        if (a.type === "pci") {
+            const aSlot = `${aSource.domain}:${aSource.bus}:${aSource.slot}.${aSource.func}`;
+            const bSlot = `${bSource.domain}:${bSource.bus}:${bSource.slot}.${bSource.func}`;
+            if (aSlot !== bSlot)
+                return aSlot > bSlot ? 1 : -1;
+        } else if (a.type === "usb") {
+            const aVendorAndProduct = `${aSource.vendor}-${aSource.product}`;
+            const bVendorAndProduct = `${bSource.vendor}-${bSource.product}`;
+            if (aVendorAndProduct !== bVendorAndProduct)
+                return aVendorAndProduct > bVendorAndProduct ? 1 : -1;
+        }
+
+        return 0;
+    };
     const columnTitles = detailMap.map(target => target.name);
-    const rows = vm.hostDevices.sort((a, b) => a.type < b.type && -1).map(target => {
+    const rows = vm.hostDevices.sort(sortHostDevices).map(target => {
         const columns = detailMap.map(d => {
             return { title: d.value(target, hostdevId, vm.connectionName) };
         });
