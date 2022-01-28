@@ -214,6 +214,7 @@ class VirtualMachinesCaseHelpers:
         b.click(f"#delete-vm-subVmTest1-iface-{iface}")
         b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Delete network interface")
         b.click(".pf-c-modal-box__footer button:contains(Delete)")
+        b.wait_not_present(".pf-c-modal-box")
 
     def get_next_mac(self, last_mac):
         parts = last_mac.split(':')
