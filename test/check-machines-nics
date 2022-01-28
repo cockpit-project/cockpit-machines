@@ -139,7 +139,6 @@ class TestMachinesNICs(VirtualMachinesCase):
         self.goToVmPage("subVmTest1")
 
         self.deleteIface(1)
-        b.wait_not_present(".pf-c-modal-box")
         b.wait_not_present("#vm-subVmTest1-network-1-mac")
 
         # Detach NIC when the VM is shutoff, Also check this issue: https://bugzilla.redhat.com/show_bug.cgi?id=1791543
@@ -158,8 +157,6 @@ class TestMachinesNICs(VirtualMachinesCase):
         b.wait_text("#vm-subVmTest1-network-3-mac", "52:54:00:4b:73:6f")
         # Detach
         self.deleteIface(2)
-        # Make sure popup dialog disappeared
-        b.wait_not_present(".pf-c-modal-box")
         b.wait_text_not("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:5f")
         b.wait_text("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:6f")
 
