@@ -931,6 +931,8 @@ class TestMachinesCreate(VirtualMachinesCase):
             if self.sourceTypeSecondChoice:
                 b.select_from_dropdown("#source-type", self.sourceTypeSecondChoice)
 
+            # Data loading doesn't start immediately
+            time.sleep(1)
             b.wait_attr("#os-select-group", "data-loading", "false")
             # For the mocked fedora URL installation wait to see that the OS section is automatically filled
             if self.sourceType == "url" and self.location == TestMachinesCreate.TestCreateConfig.TREE_URL:
