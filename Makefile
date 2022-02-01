@@ -8,7 +8,8 @@ endif
 export TEST_OS
 TARFILE=cockpit-$(PACKAGE_NAME)-$(VERSION).tar.xz
 NODE_CACHE=cockpit-$(PACKAGE_NAME)-node-$(VERSION).tar.xz
-RPMFILE=$(shell rpmspec -D"VERSION $(VERSION)" -q `ls cockpit-machines.spec.in cockpit-machines.spec 2>/dev/null | head -n1`).rpm
+SPEC=$(RPM_NAME).spec
+RPMFILE=$(shell rpmspec -D"VERSION $(VERSION)" -q `ls packaging/$(SPEC).in $(SPEC) 2>/dev/null | head -n1`).rpm
 VM_IMAGE=$(CURDIR)/test/images/$(TEST_OS)
 # stamp file to check if/when npm install ran
 NODE_MODULES_TEST=node_modules/.bin/webpack
@@ -73,7 +74,7 @@ download-po: $(WEBLATE_REPO)
 # Build/Install/dist
 #
 
-%.spec: %.spec.in
+%.spec: packaging/%.spec.in
 	sed -e 's/%{VERSION}/$(VERSION)/g' $< > $@
 
 $(WEBPACK_TEST): $(LIB_TEST) $(shell find src/ -type f) package.json webpack.config.js
@@ -89,7 +90,7 @@ watch:
 
 clean:
 	rm -rf dist/
-	[ ! -e $(RPM_NAME).spec.in ] || rm -f $(RPM_NAME).spec
+	rm -f $(SPEC)
 
 install: $(WEBPACK_TEST)
 	mkdir -p $(DESTDIR)/usr/share/cockpit/$(PACKAGE_NAME)
@@ -110,26 +111,26 @@ dist: $(TARFILE)
 # pre-built dist/ (so it's not necessary) and ship package-lock.json (so that
 # node_modules/ can be reconstructed if necessary)
 $(TARFILE): export NODE_ENV=production
-$(TARFILE): $(WEBPACK_TEST) $(RPM_NAME).spec
+$(TARFILE): $(WEBPACK_TEST) $(SPEC)
 	tar --xz -cf $(TARFILE) --transform 's,^,cockpit-$(PACKAGE_NAME)/,' \
-		--exclude $(RPM_NAME).spec.in \
+		--exclude packaging/$(SPEC).in \
 		--exclude test/reference \
-		$$(git ls-files) src/lib/ package-lock.json $(RPM_NAME).spec dist/; \
+		$$(git ls-files) src/lib/ package-lock.json $(SPEC) dist/; \
 
 $(NODE_CACHE): $(NODE_MODULES_TEST)
 	tar --xz -cf $@ node_modules
 
 node-cache: $(NODE_CACHE)
 
-srpm: $(TARFILE) $(RPM_NAME).spec
+srpm: $(TARFILE) $(SPEC)
 	rpmbuild -bs \
 	  --define "_sourcedir `pwd`" \
 	  --define "_srcrpmdir `pwd`" \
-	  $(RPM_NAME).spec
+	  $(SPEC)
 
 rpm: $(RPMFILE)
 
-$(RPMFILE): $(TARFILE) $(RPM_NAME).spec
+$(RPMFILE): $(TARFILE) $(SPEC)
 	mkdir -p "`pwd`/output"
 	mkdir -p "`pwd`/rpmbuild"
 	rpmbuild -bb \
@@ -139,7 +140,7 @@ $(RPMFILE): $(TARFILE) $(RPM_NAME).spec
 	  --define "_srcrpmdir `pwd`" \
 	  --define "_rpmdir `pwd`/output" \
 	  --define "_buildrootdir `pwd`/build" \
-	  $(RPM_NAME).spec
+	  $(SPEC)
 	find `pwd`/output -name '*.rpm' -printf '%f\n' -exec mv {} . \;
 	rm -r "`pwd`/rpmbuild"
 	rm -r "`pwd`/output" "`pwd`/build"
