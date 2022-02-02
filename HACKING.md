@@ -1,12 +1,7 @@
 # Hacking on Cockpit Machines
 
-Here's where to get the code:
-
-    $ git clone https://github.com/cockpit-project/cockpit-machines
-    $ cd cockpit-machines
-
-The remainder of the commands assume you're in the top level of the
-Cockpit Machines git repository checkout.
+The commands here assume you're in the top level of the Cockpit Machines git
+repository checkout.
 
 For development, you usually want to run your module straight out of the git
 tree. To do that, link that to the location were `cockpit-bridge` looks for packages:

@@ -10,6 +10,26 @@ This is the [Cockpit](https://cockpit-project.org/) user interface for virtual m
   for creating and modifying machine definitions; both part of the
   [virt-manager](https://virt-manager.org/) project
 
+# Getting and building the source
+
+Make sure you have `npm` available (usually from your distribution package).
+These commands check out the source and build it into the `dist/` directory:
+
+```
+git clone https://github.com/cockpit-project/cockpit-machines
+cd cockpit-machines
+make
+```
+
+# Installing
+
+`sudo make install` installs the package in `/usr/share/cockpit/`. The
+convenience make targets `srpm` and `rpm` build the source and binary rpms,
+respectively. Both of these make use of the `dist` target, which is used
+to generate the distribution tarball. In `production` mode, source files are
+automatically minified and compressed. Set `NODE_ENV=production` if you want to
+duplicate this behavior.
+
 # Automated release
 
 Releases are automated using [Cockpituous release](https://github.com/cockpit-project/cockpituous/tree/main/release)
