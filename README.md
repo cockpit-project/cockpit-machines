@@ -1,10 +1,14 @@
 # cockpit-machines
 
-This is the [Cockpit](https://cockpit-project.org/) user interface for virtual machines
+This is the [Cockpit](https://cockpit-project.org/) user interface for virtual machines.
 
 ## Technologies
 
-- cockpit-machines communicates to libvirt through its [dbus API](https://libvirt.org/dbus.html).
+- [libvirt-dbus](https://libvirt.org/dbus.html) for enumerating machines, getting status
+  update notifications, and operations such as start/stop/delete
+- [virt-install](https://manpages.org/virt-install) and [virt-xml](https://manpages.org/virt-xml)
+  for creating and modifying machine definitions; both part of the
+  [virt-manager](https://virt-manager.org/) project
 
 # Automated release
 
