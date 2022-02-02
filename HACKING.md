@@ -3,8 +3,12 @@
 The commands here assume you're in the top level of the Cockpit Machines git
 repository checkout.
 
+## Running out of git checkout
+
 For development, you usually want to run your module straight out of the git
-tree. To do that, link that to the location were `cockpit-bridge` looks for packages:
+tree. To do that, run `make devel-install`, which links your checkout to the
+location were `cockpit-bridge` looks for packages. If you prefer to do this
+manually:
 
 ```
 mkdir -p ~/.local/share/cockpit
@@ -17,10 +21,6 @@ your browser.
 You can also use
 [watch mode](https://webpack.js.org/guides/development/#using-watch-mode) to
 automatically update the webpack on every code change with
-
-    $ npm run watch
-
-or
 
     $ make watch
 
