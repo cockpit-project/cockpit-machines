@@ -30,6 +30,11 @@ to generate the distribution tarball. In `production` mode, source files are
 automatically minified and compressed. Set `NODE_ENV=production` if you want to
 duplicate this behavior.
 
+# Development instructions
+
+See [HACKING.md](./HACKING.md) for details about how to efficiently change the
+code, run, and test it.
+
 # Automated release
 
 Releases are automated using [Cockpituous release](https://github.com/cockpit-project/cockpituous/tree/main/release)
