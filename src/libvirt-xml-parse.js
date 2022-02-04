@@ -422,7 +422,7 @@ export function parseDumpxmlForDisks(devicesElem) {
 
                 },
                 bus: targetElem.getAttribute('bus'), // i.e. scsi, ide
-                serial: serialElem ? serialElem.getAttribute('serial') : undefined, // optional serial number
+                serial: serialElem ? serialElem.childNodes[0].nodeValue : undefined, // optional serial number
                 aliasName: aliasElem ? aliasElem.getAttribute('name') : undefined, // i.e. scsi0-0-0-0, ide0-1-0
                 readonly: !!readonlyElem,
                 shareable: !!shareableElem,
