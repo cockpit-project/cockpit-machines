@@ -177,7 +177,9 @@ class TestMachinesHostDevs(VirtualMachinesCase):
 
             def verify(self):
                 b.wait_visible(f"#vm-subVmTest1-hostdev-{self.vm_dev_id}-product")
-                b.wait_in_text(f"#vm-subVmTest1-hostdev-{self.vm_dev_id}-product", self._model)
+                if (self._model != "(Undefined)"):
+                    b.wait_in_text(f"#vm-subVmTest1-hostdev-{self.vm_dev_id}-product", self._model)
+
                 b.wait_in_text(f"#vm-subVmTest1-hostdev-{self.vm_dev_id}-vendor", self._vendor)
 
             def verify_backend(self):
