@@ -16,13 +16,14 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Alert, Bullseye, Button, Checkbox,
     ExpandableSection, Form, FormGroup,
     FormSelect, FormSelectOption,
     Grid,
-    Modal, Radio, Spinner,
+    HelperText, HelperTextItem,
+    Modal, Radio, Spinner, TextInput,
 } from '@patternfly/react-core';
 import cockpit from 'cockpit';
 
@@ -43,6 +44,10 @@ const USE_EXISTING = 'use-existing';
 const CUSTOM_PATH = 'custom-path';
 
 const poolTypesNotSupportingVolumeCreation = ['iscsi', 'iscsi-direct', 'gluster', 'mpath'];
+
+function clearSerial(serial) {
+    return serial.replace(' ', '_').replace(/([^A-Za-z0-9_.+-]+)/gi, '');
+}
 
 function getFilteredVolumes(vmStoragePool, disks) {
     const usedDiskPaths = Object.getOwnPropertyNames(disks)
@@ -136,58 +141,102 @@ const PoolRow = ({ idPrefix, onValueChanged, storagePoolName, validationFailed, 
     );
 };
 
-class AdditionalOptions extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { expanded: false };
-    }
+const AdditionalOptions = ({ cacheMode, device, idPrefix, onValueChanged, busType, serial, validationFailed, supportedDiskBusTypes }) => {
+    const [expanded, setExpanded] = useState(false);
+    const [showAllowedCharactersMessage, setShowAllowedCharactersMessage] = useState(false);
+    const [showMaxLengthMessage, setShowMaxLengthMessage] = useState(false);
+    const [truncatedSerial, setTruncatedSerial] = useState("");
 
-    render() {
-        const displayBusTypes = diskBusTypes[this.props.device]
-                .filter(bus => this.props.supportedDiskBusTypes.includes(bus))
-                .map(type => ({ value: type }));
-        if (!displayBusTypes.find(busType => busType.value === this.props.busType))
-            displayBusTypes.push({ value: this.props.busType, disabled: true });
+    useEffect(() => {
+        setSerialHelper(serial);
+    }, [busType]);
 
-        return (
-            <ExpandableSection toggleText={ this.state.expanded ? _("Hide additional options") : _("Show additional options")}
-                               onToggle={() => this.setState({ expanded: !this.state.expanded })} isExpanded={this.state.expanded} className="pf-u-pt-lg">
-                <Form onSubmit={e => e.preventDefault()} isHorizontal>
-                    <Grid hasGutter md={6}>
-                        <FormGroup fieldId='cache-mode' label={_("Cache")}>
-                            <FormSelect id='cache-mode'
-                                onChange={value => this.props.onValueChanged('cacheMode', value)}
-                                value={this.props.cacheMode}>
-                                {diskCacheModes.map(cacheMode => {
-                                    return (
-                                        <FormSelectOption value={cacheMode} key={cacheMode}
-                                                          label={cacheMode} />
-                                    );
-                                })}
-                            </FormSelect>
-                        </FormGroup>
+    const displayBusTypes = diskBusTypes[device]
+            .filter(bus => supportedDiskBusTypes.includes(bus))
+            .map(type => ({ value: type }));
+    if (!displayBusTypes.find(displayBusType => busType.value === displayBusType.busType))
+        displayBusTypes.push({ value: busType, disabled: true });
 
-                        <FormGroup fieldId={this.props.idPrefix + '-bus-type'} label={_("Bus")}>
-                            <FormSelect id={this.props.idPrefix + '-bus-type'}
-                                data-value={this.props.busType}
-                                onChange={value => this.props.onValueChanged('busType', value)}
-                                value={this.props.busType}>
-                                {displayBusTypes.map(busType => {
-                                    return (
-                                        <FormSelectOption value={busType.value}
-                                                          key={busType.value}
-                                                          isDisabled={busType.disabled}
-                                                          label={busType.value} />
-                                    );
-                                })}
-                            </FormSelect>
-                        </FormGroup>
-                    </Grid>
-                </Form>
-            </ExpandableSection>
-        );
-    }
-}
+    // Many disk types have serial length limitations.
+    // libvirt docs: "IDE/SATA devices are commonly limited to 20 characters. SCSI devices depending on hypervisor version are limited to 20, 36 or 247 characters."
+    // https://libvirt.org/formatdomain.html#hard-drives-floppy-disks-cdroms
+    const serialLength = busType === "scsi" ? 36 : 20;
+
+    const setSerialHelper = value => {
+        const clearedSerial = clearSerial(value);
+
+        if (value !== clearedSerial)
+            // Show the message once triggerred and leave it around as reminder
+            setShowAllowedCharactersMessage(true);
+        if (clearedSerial.length > serialLength) {
+            setShowMaxLengthMessage(true);
+            setTruncatedSerial(clearedSerial.substring(0, serialLength));
+        } else {
+            setShowMaxLengthMessage(false);
+        }
+
+        onValueChanged('serial', clearedSerial);
+    };
+
+    return (
+        <ExpandableSection toggleText={ expanded ? _("Hide additional options") : _("Show additional options")}
+                           onToggle={() => setExpanded(!expanded)} isExpanded={expanded} className="pf-u-pt-lg">
+            <Form onSubmit={e => e.preventDefault()} isHorizontal>
+                <Grid hasGutter md={6}>
+                    <FormGroup fieldId='cache-mode' label={_("Cache")}>
+                        <FormSelect id='cache-mode'
+                            onChange={value => onValueChanged('cacheMode', value)}
+                            value={cacheMode}>
+                            {diskCacheModes.map(cacheMode =>
+                                <FormSelectOption value={cacheMode} key={cacheMode}
+                                                  label={cacheMode} />
+                            )}
+                        </FormSelect>
+                    </FormGroup>
+
+                    <FormGroup fieldId={idPrefix + '-bus-type'} label={_("Bus")}>
+                        <FormSelect id={idPrefix + '-bus-type'}
+                            data-value={busType}
+                            onChange={value => onValueChanged('busType', value)}
+                            value={busType}>
+                            {displayBusTypes.map(busType =>
+                                <FormSelectOption value={busType.value}
+                                                  key={busType.value}
+                                                  isDisabled={busType.disabled}
+                                                  label={busType.value} />
+                            )}
+                        </FormSelect>
+                    </FormGroup>
+                </Grid>
+                <FormGroup fieldId={idPrefix + "-serial"}
+                    helperTextInvalid={validationFailed.serial}
+                    helperText={
+                        <HelperText component="ul">
+                            { showAllowedCharactersMessage &&
+                                <HelperTextItem id="serial-characters-message" key="regex" variant="indeterminate" hasIcon>
+                                    {_("Allowed characters: basic Latin alphabet, numbers, and limited punctuation (-, _, +, .)")}
+                                </HelperTextItem>
+                            }
+                            { showMaxLengthMessage &&
+                                <HelperTextItem id="serial-length-message" key="length" variant="warning" hasIcon>
+                                    {_(`Identifier may be silently truncated to ${serialLength} characters `)}
+                                    <span className="disk-serial">{`(${truncatedSerial})`}</span>
+                                </HelperTextItem>
+                            }
+                        </HelperText>
+                    }
+                    validated={validationFailed.serial ? 'error' : 'default'}
+                    label={_("Disk identifier")}>
+                    <TextInput id={idPrefix + "-serial"}
+                        aria-label={_("serial number")}
+                        className="disk-serial"
+                        value={serial}
+                        onChange={value => setSerialHelper(value)} />
+                </FormGroup>
+            </Form>
+        </ExpandableSection>
+    );
+};
 
 const CreateNewDisk = ({
     format,
@@ -344,6 +393,7 @@ export class AddDiskModalBody extends React.Component {
             cacheMode: 'default',
             busType: defaultBus,
             updateDisks: false,
+            serial: "",
         };
     }
 
@@ -517,7 +567,8 @@ export class AddDiskModalBody extends React.Component {
                 vmName: vm.name,
                 vmId: vm.id,
                 cacheMode: this.state.cacheMode,
-                busType: this.state.busType
+                busType: this.state.busType,
+                serial: clearSerial(this.state.serial)
             })
                     .then(() => { // force reload of VM data, events are not reliable (i.e. for a down VM)
                         close();
@@ -549,7 +600,8 @@ export class AddDiskModalBody extends React.Component {
             vmId: vm.id,
             cacheMode: this.state.cacheMode,
             shareable: volume && volume.format === "raw" && isVolumeUsed[this.state.existingVolumeName],
-            busType: this.state.busType
+            busType: this.state.busType,
+            serial: this.state.serial
         })
                 .then(() => { // force reload of VM data, events are not reliable (i.e. for a down VM)
                     const promises = [];
@@ -651,6 +703,8 @@ export class AddDiskModalBody extends React.Component {
                                        idPrefix={idPrefix}
                                        onValueChanged={this.onValueChanged}
                                        busType={this.state.busType}
+                                       serial={this.state.serial}
+                                       validationFailed={validationFailed}
                                        supportedDiskBusTypes={this.props.supportedDiskBusTypes} />
                 </>
             );

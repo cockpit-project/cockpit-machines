@@ -52,6 +52,7 @@ export function storageVolumeCreateAndAttach({
     hotplug,
     cacheMode,
     busType,
+    serial,
 }) {
     const volXmlDesc = getVolumeXML(volumeName, size, format);
 
@@ -63,7 +64,7 @@ export function storageVolumeCreateAndAttach({
                         });
             })
             .then((volPath) => {
-                return domainAttachDisk({ connectionName, type: "volume", device: "disk", poolName, volumeName, format, target, vmId, permanent, hotplug, cacheMode, busType });
+                return domainAttachDisk({ connectionName, type: "volume", device: "disk", poolName, volumeName, format, target, vmId, permanent, hotplug, cacheMode, busType, serial });
             });
 }
 

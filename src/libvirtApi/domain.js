@@ -132,8 +132,9 @@ export function domainAttachDisk({
     cacheMode,
     shareable,
     busType,
+    serial,
 }) {
-    const xmlDesc = getDiskXML(type, file, device, poolName, volumeName, format, target, cacheMode, shareable, busType);
+    const xmlDesc = getDiskXML(type, file, device, poolName, volumeName, format, target, cacheMode, shareable, busType, serial);
 
     return domainAttachDevice({ connectionName, vmId, permanent, hotplug, xmlDesc });
 }
