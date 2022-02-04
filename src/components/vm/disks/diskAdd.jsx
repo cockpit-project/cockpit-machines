@@ -34,6 +34,8 @@ import { domainAttachDisk, domainGet, domainIsRunning, domainUpdateDiskAttribute
 import { storagePoolGetAll } from '../../../libvirtApi/storagePool.js';
 import { storageVolumeCreateAndAttach } from '../../../libvirtApi/storageVolume.js';
 
+import './diskAdd.scss';
+
 const _ = cockpit.gettext;
 
 const CREATE_NEW = 'create-new';
@@ -149,37 +151,39 @@ class AdditionalOptions extends React.Component {
 
         return (
             <ExpandableSection toggleText={ this.state.expanded ? _("Hide additional options") : _("Show additional options")}
-                               onToggle={() => this.setState({ expanded: !this.state.expanded })} isExpanded={this.state.expanded} className="add-disk-additional-options">
-                <Grid hasGutter md={6}>
-                    <FormGroup fieldId='cache-mode' label={_("Cache")}>
-                        <FormSelect id='cache-mode'
-                            onChange={value => this.props.onValueChanged('cacheMode', value)}
-                            value={this.props.cacheMode}>
-                            {diskCacheModes.map(cacheMode => {
-                                return (
-                                    <FormSelectOption value={cacheMode} key={cacheMode}
-                                                      label={cacheMode} />
-                                );
-                            })}
-                        </FormSelect>
-                    </FormGroup>
+                               onToggle={() => this.setState({ expanded: !this.state.expanded })} isExpanded={this.state.expanded} className="pf-u-pt-lg">
+                <Form onSubmit={e => e.preventDefault()} isHorizontal>
+                    <Grid hasGutter md={6}>
+                        <FormGroup fieldId='cache-mode' label={_("Cache")}>
+                            <FormSelect id='cache-mode'
+                                onChange={value => this.props.onValueChanged('cacheMode', value)}
+                                value={this.props.cacheMode}>
+                                {diskCacheModes.map(cacheMode => {
+                                    return (
+                                        <FormSelectOption value={cacheMode} key={cacheMode}
+                                                          label={cacheMode} />
+                                    );
+                                })}
+                            </FormSelect>
+                        </FormGroup>
 
-                    <FormGroup fieldId={this.props.idPrefix + '-bus-type'} label={_("Bus")}>
-                        <FormSelect id={this.props.idPrefix + '-bus-type'}
-                            data-value={this.props.busType}
-                            onChange={value => this.props.onValueChanged('busType', value)}
-                            value={this.props.busType}>
-                            {displayBusTypes.map(busType => {
-                                return (
-                                    <FormSelectOption value={busType.value}
-                                                      key={busType.value}
-                                                      isDisabled={busType.disabled}
-                                                      label={busType.value} />
-                                );
-                            })}
-                        </FormSelect>
-                    </FormGroup>
-                </Grid>
+                        <FormGroup fieldId={this.props.idPrefix + '-bus-type'} label={_("Bus")}>
+                            <FormSelect id={this.props.idPrefix + '-bus-type'}
+                                data-value={this.props.busType}
+                                onChange={value => this.props.onValueChanged('busType', value)}
+                                value={this.props.busType}>
+                                {displayBusTypes.map(busType => {
+                                    return (
+                                        <FormSelectOption value={busType.value}
+                                                          key={busType.value}
+                                                          isDisabled={busType.disabled}
+                                                          label={busType.value} />
+                                    );
+                                })}
+                            </FormSelect>
+                        </FormGroup>
+                    </Grid>
+                </Form>
             </ExpandableSection>
         );
     }
@@ -588,65 +592,67 @@ export class AddDiskModalBody extends React.Component {
             );
         } else {
             defaultBody = (
-                <Form onSubmit={e => e.preventDefault()} isHorizontal>
-                    <FormGroup fieldId={`${idPrefix}-source`}
-                               id={`${idPrefix}-source-group`}
-                               label={_("Source")} isInline hasNoPaddingTop>
-                        <Radio id={`${idPrefix}-createnew`}
-                               name="source"
-                               label={_("Create new")}
-                               isChecked={this.state.mode === CREATE_NEW}
-                               onChange={() => this.onValueChanged('mode', CREATE_NEW)} />
-                        <Radio id={`${idPrefix}-useexisting`}
-                               name="source"
-                               label={_("Use existing")}
-                               isChecked={this.state.mode === USE_EXISTING}
-                               onChange={e => this.onValueChanged('mode', USE_EXISTING)} />
-                        <Radio id={`${idPrefix}-custompath`}
-                               name="source"
-                               label={_("Custom path")}
-                               isChecked={this.state.mode === CUSTOM_PATH}
-                               onChange={e => this.onValueChanged('mode', CUSTOM_PATH)} />
-                    </FormGroup>
-                    {this.state.mode === CREATE_NEW && (
-                        <CreateNewDisk idPrefix={`${idPrefix}-new`}
-                                       onValueChanged={this.onValueChanged}
-                                       storagePoolName={this.state.storagePoolName}
-                                       volumeName={this.state.volumeName}
-                                       size={this.state.size}
-                                       unit={this.state.unit}
-                                       format={this.state.format}
-                                       validationFailed={validationFailed}
-                                       vmStoragePools={storagePools}
-                                       vm={vm} />
-                    )}
-                    {this.state.mode === USE_EXISTING && (
-                        <UseExistingDisk idPrefix={`${idPrefix}-existing`}
+                <>
+                    <Form onSubmit={e => e.preventDefault()} isHorizontal>
+                        <FormGroup fieldId={`${idPrefix}-source`}
+                                   id={`${idPrefix}-source-group`}
+                                   label={_("Source")} isInline hasNoPaddingTop>
+                            <Radio id={`${idPrefix}-createnew`}
+                                   name="source"
+                                   label={_("Create new")}
+                                   isChecked={this.state.mode === CREATE_NEW}
+                                   onChange={() => this.onValueChanged('mode', CREATE_NEW)} />
+                            <Radio id={`${idPrefix}-useexisting`}
+                                   name="source"
+                                   label={_("Use existing")}
+                                   isChecked={this.state.mode === USE_EXISTING}
+                                   onChange={e => this.onValueChanged('mode', USE_EXISTING)} />
+                            <Radio id={`${idPrefix}-custompath`}
+                                   name="source"
+                                   label={_("Custom path")}
+                                   isChecked={this.state.mode === CUSTOM_PATH}
+                                   onChange={e => this.onValueChanged('mode', CUSTOM_PATH)} />
+                        </FormGroup>
+                        {this.state.mode === CREATE_NEW && (
+                            <CreateNewDisk idPrefix={`${idPrefix}-new`}
+                                           onValueChanged={this.onValueChanged}
+                                           storagePoolName={this.state.storagePoolName}
+                                           volumeName={this.state.volumeName}
+                                           size={this.state.size}
+                                           unit={this.state.unit}
+                                           format={this.state.format}
+                                           validationFailed={validationFailed}
+                                           vmStoragePools={storagePools}
+                                           vm={vm} />
+                        )}
+                        {this.state.mode === USE_EXISTING && (
+                            <UseExistingDisk idPrefix={`${idPrefix}-existing`}
+                                             onValueChanged={this.onValueChanged}
+                                             storagePoolName={this.state.storagePoolName}
+                                             existingVolumeName={this.state.existingVolumeName}
+                                             validationFailed={validationFailed}
+                                             vmStoragePools={storagePools}
+                                             vms={vms}
+                                             vm={vm} />
+                        )}
+                        {this.state.mode === CUSTOM_PATH && (
+                            <CustomPath idPrefix={idPrefix}
+                                        onValueChanged={this.onValueChanged}
+                                        device={this.state.device} />
+                        )}
+                        {vm.persistent &&
+                        <PermanentChange idPrefix={idPrefix}
+                                         permanent={this.state.permanent}
                                          onValueChanged={this.onValueChanged}
-                                         storagePoolName={this.state.storagePoolName}
-                                         existingVolumeName={this.state.existingVolumeName}
-                                         validationFailed={validationFailed}
-                                         vmStoragePools={storagePools}
-                                         vms={vms}
-                                         vm={vm} />
-                    )}
-                    {this.state.mode === CUSTOM_PATH && (
-                        <CustomPath idPrefix={idPrefix}
-                                    onValueChanged={this.onValueChanged}
-                                    device={this.state.device} />
-                    )}
-                    {vm.persistent &&
-                    <PermanentChange idPrefix={idPrefix}
-                                     permanent={this.state.permanent}
-                                     onValueChanged={this.onValueChanged}
-                                     vm={vm} />}
+                                         vm={vm} />}
+                    </Form>
                     <AdditionalOptions cacheMode={this.state.cacheMode}
                                        device={this.state.device}
                                        idPrefix={idPrefix}
                                        onValueChanged={this.onValueChanged}
                                        busType={this.state.busType}
                                        supportedDiskBusTypes={this.props.supportedDiskBusTypes} />
-                </Form>
+                </>
             );
         }
 
