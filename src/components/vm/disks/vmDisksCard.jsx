@@ -165,11 +165,12 @@ export class VmDisksCardLibvirt extends React.Component {
             // ugly hack due to complexity, refactor if abstraction is really needed
             diskSourceCell: (<DiskSourceCell diskSource={disk.source} idPrefix={idPrefix} />),
             diskExtras: (
-                (disk.driver.cache || disk.driver.io || disk.driver.discard || disk.driver.errorPolicy)
+                (disk.driver.cache || disk.driver.io || disk.driver.discard || disk.driver.errorPolicy || disk.serial)
                     ? <DiskExtras idPrefix={idPrefix}
                                   cache={disk.driver.cache}
                                   io={disk.driver.io}
                                   discard={disk.driver.discard}
+                                  serial={disk.serial}
                                   errorPolicy={disk.driver.errorPolicy} /> : null
             ),
         };
