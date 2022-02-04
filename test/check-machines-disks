@@ -282,12 +282,14 @@ class TestMachinesDisks(VirtualMachinesCase):
             volume_size=10, volume_size_unit='MiB',
             mode="create-new",
             expected_target='vda', permanent=False, cache_mode=None,
+            serial=None, expected_serial=None,
             bus_type=None, pool_type=None,
             volume_format=None,
             persistent_vm=True,
             pixel_test_tag=None,
             xfail=False, xfail_object=None,
             xfail_error_message=None, xfail_error_title=None,
+            xwarning_object=None, xwarning_message=None,
             pixel_test_ignore=None
         ):
             self.test_obj = test_obj
@@ -303,6 +305,8 @@ class TestMachinesDisks(VirtualMachinesCase):
             self.permanent = permanent
             self.cache_mode = cache_mode
             self.bus_type = bus_type
+            self.serial = serial
+            self.expected_serial = expected_serial or serial
             self.pool_type = pool_type
             self.volume_format = volume_format
             self.persistent_vm = persistent_vm
@@ -314,6 +318,8 @@ class TestMachinesDisks(VirtualMachinesCase):
             self.xfail_object = xfail_object
             self.xfail_error_message = xfail_error_message
             self.xfail_error_title = xfail_error_title
+            self.xwarning_object = xwarning_object
+            self.xwarning_message = xwarning_message
 
         def getExpectedFormat(selfi, pool_type):
             # Guess by the name of the pool it's format to avoid passing more parameters
@@ -403,7 +409,7 @@ class TestMachinesDisks(VirtualMachinesCase):
                 b.wait_not_present(f"#vm-{self.vm_name}-disks-adddisk-new-permanent")
 
             # Expand additional options
-            if self.cache_mode or self.bus_type:
+            if self.cache_mode or self.bus_type or self.serial:
                 b.click("div.pf-c-modal-box button:contains(Show additional options)")
                 b.wait_visible("div.pf-c-modal-box button[aria-expanded=true]:contains(Hide additional options)")
 
@@ -414,9 +420,27 @@ class TestMachinesDisks(VirtualMachinesCase):
                 # Configure bus type
                 if self.bus_type:
                     b.select_from_dropdown(f"div.pf-c-modal-box #vm-{self.vm_name}-disks-adddisk-bus-type", self.bus_type)
+
+                # Configure serial number
+                if self.serial:
+                    if self.xwarning_object != "serial-characters":
+                        b.set_input_text(f"#vm-{self.vm_name}-disks-adddisk-serial", self.serial)
+                    else:
+                        b.set_input_text(f"#vm-{self.vm_name}-disks-adddisk-serial", self.serial, value_check=False)
+                        # unfit characters gets dynamically filtered from serial number
+                        b.wait_val(f"#vm-{self.vm_name}-disks-adddisk-serial", self.expected_serial)
+
+                    if self.xwarning_object == 'serial-characters':
+                        b.wait_in_text("#serial-characters-message .pf-c-helper-text__item-text", self.xwarning_message)
+                    elif self.xwarning_object == 'serial-length':
+                        b.wait_in_text("#serial-length-message .pf-c-helper-text__item-text", self.xwarning_message)
+                    else:
+                        b.wait_not_present("#serial-length-message")
+                        b.wait_not_present("#serial-characters-message")
             else:
                 b.wait_not_visible("#cache-mode")
                 b.wait_not_visible(f"div.pf-c-modal-box #vm-{self.vm_name}-disks-adddisk-bus-type")
+                b.wait_not_visible(f"#vm-{self.vm_name}-disks-adddisk-serial")
 
             return self
 
@@ -473,6 +497,9 @@ class TestMachinesDisks(VirtualMachinesCase):
 
             if self.cache_mode:
                 b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.expected_target}-cache", self.cache_mode)
+
+            if self.expected_serial:
+                b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.expected_target}-serial", self.expected_serial)
 
             return self
 
@@ -954,6 +981,42 @@ class TestMachinesDisks(VirtualMachinesCase):
             mode='create-new',
             bus_type='sata',
             expected_target='sdc',
+        ).execute()
+
+        # Disk with serial number
+        self.VMAddDiskDialog(
+            self,
+            pool_name='myPoolOne',
+            volume_name='disk_with_serial',
+            mode='create-new',
+            serial='disk_WITH-serial+.',
+            expected_target='vdc',
+        ).execute()
+
+        # Disk with serial number
+        self.VMAddDiskDialog(
+            self,
+            pool_name='myPoolOne',
+            volume_name='disk_with_serial_warning1',
+            mode='create-new',
+            serial='íňválíď;šéříáľ123',
+            expected_serial='vl123',
+            expected_target='vdd',
+            xwarning_object="serial-characters",
+            xwarning_message="Allowed characters"
+        ).execute()
+
+        # Disk with serial number
+        self.VMAddDiskDialog(
+            self,
+            pool_name='myPoolOne',
+            volume_name='disk_with_serial_warning2',
+            mode='create-new',
+            serial='serial_so_long_its_longer_than_20_characters',
+            expected_serial='serial_so_long_its_l',
+            expected_target='vde',
+            xwarning_object="serial-length",
+            xwarning_message="Identifier may be silently truncated to 20 characters (serial_so_long_its_l)"
         ).execute()
 
     def testDetachDisk(self):

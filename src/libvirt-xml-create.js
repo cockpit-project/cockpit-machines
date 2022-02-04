@@ -1,4 +1,4 @@
-export function getDiskXML(type, file, device, poolName, volumeName, format, target, cacheMode, shareable, busType) {
+export function getDiskXML(type, file, device, poolName, volumeName, format, target, cacheMode, shareable, busType, serial) {
     const doc = document.implementation.createDocument('', '', null);
 
     const diskElem = doc.createElement('disk');
@@ -29,6 +29,12 @@ export function getDiskXML(type, file, device, poolName, volumeName, format, tar
     if (shareable) {
         const shareableElem = doc.createElement('shareable');
         diskElem.appendChild(shareableElem);
+    }
+
+    if (serial) {
+        const serialElem = doc.createElement('serial');
+        serialElem.appendChild(doc.createTextNode(serial));
+        diskElem.appendChild(serialElem);
     }
 
     doc.appendChild(diskElem);
