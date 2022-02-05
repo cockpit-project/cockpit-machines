@@ -77,6 +77,12 @@ download-po: $(WEBLATE_REPO)
 %.spec: packaging/%.spec.in
 	sed -e 's/%{VERSION}/$(VERSION)/g' $< > $@
 
+packaging/arch/PKGBUILD: packaging/arch/PKGBUILD.in
+	sed 's/VERSION/$(VERSION)/; s/SOURCE/$(TARFILE)/' $< > $@
+
+packaging/debian/changelog: packaging/debian/changelog.in
+	sed 's/VERSION/$(VERSION)/' $< > $@
+
 $(WEBPACK_TEST): $(LIB_TEST) $(shell find src/ -type f) package.json webpack.config.js
 	test/download-dist $${DOWNLOAD_DIST_OPTIONS:-} || \
 	    if [ -z "$$FORCE_DOWNLOAD_DIST" ]; then \
@@ -90,7 +96,7 @@ watch:
 
 clean:
 	rm -rf dist/
-	rm -f $(SPEC)
+	rm -f $(SPEC) packaging/arch/PKGBUILD packaging/debian/changelog
 
 install: $(WEBPACK_TEST)
 	mkdir -p $(DESTDIR)/usr/share/cockpit/$(PACKAGE_NAME)
@@ -111,11 +117,10 @@ dist: $(TARFILE)
 # pre-built dist/ (so it's not necessary) and ship package-lock.json (so that
 # node_modules/ can be reconstructed if necessary)
 $(TARFILE): export NODE_ENV=production
-$(TARFILE): $(WEBPACK_TEST) $(SPEC)
+$(TARFILE): $(WEBPACK_TEST) $(SPEC) packaging/arch/PKGBUILD packaging/debian/changelog
 	tar --xz -cf $(TARFILE) --transform 's,^,cockpit-$(PACKAGE_NAME)/,' \
-		--exclude packaging/$(SPEC).in \
-		--exclude test/reference \
-		$$(git ls-files) src/lib/ package-lock.json $(SPEC) dist/; \
+		--exclude '*.in' --exclude test/reference \
+		$$(git ls-files) src/lib/ package-lock.json $(SPEC) packaging/arch/PKGBUILD packaging/debian/changelog dist/
 
 $(NODE_CACHE): $(NODE_MODULES_TEST)
 	tar --xz -cf $@ node_modules
