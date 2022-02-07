@@ -21,14 +21,14 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { debounce } from 'throttle-debounce';
 import {
-    Checkbox,
     Form, FormGroup,
     FormSelect, FormSelectOption, FormSelectOptionGroup,
     InputGroup,
     Modal,
     Select as PFSelect, SelectOption, SelectVariant,
+    Tabs, Tab, TabTitleText,
     TextInput,
-    Button, Tooltip, TooltipPosition
+    Button, Tooltip
 } from '@patternfly/react-core';
 
 import cockpit from 'cockpit';
@@ -188,10 +188,11 @@ function validateParams(vmParams) {
             vmParams.memorySizeUnit
         );
     }
-    if (vmParams.unattendedInstallation && !vmParams.userPassword && vmParams.userLogin) {
+
+    if (!vmParams.userPassword && vmParams.userLogin) {
         validationFailed.userPassword = _("User password must not be empty when user login is set");
     }
-    if (vmParams.unattendedInstallation && vmParams.userPassword && !vmParams.userLogin) {
+    if (vmParams.userPassword && !vmParams.userLogin) {
         validationFailed.userLogin = _("User login must not be empty when user password is set");
     }
 
@@ -412,63 +413,42 @@ const UnattendedRow = ({
     onValueChanged,
     os, profile,
     rootPassword,
-    unattendedDisabled,
-    unattendedInstallation,
     unattendedUserLogin,
     userLogin, userPassword,
     validationFailed,
 }) => {
-    let unattendedInstallationCheckbox = (
-        <Checkbox id="unattended-installation"
-                  isChecked={unattendedInstallation}
-                  isDisabled={unattendedDisabled}
-                  onChange={checked => onValueChanged('unattendedInstallation', checked)} />
-    );
-    if (unattendedDisabled) {
-        unattendedInstallationCheckbox = (
-            <Tooltip id='os-unattended-installation-tooltip' content={_("The selected operating system does not support unattended installation")} position={TooltipPosition.left}>
-                {unattendedInstallationCheckbox}
-            </Tooltip>
-        );
-    }
-
     return (
-        <FormGroup fieldId="unattended-installation"
-                   label={_("Run unattended installation")}
-                   hasNoPaddingTop>
-            {unattendedInstallationCheckbox}
-            {!unattendedDisabled && unattendedInstallation && <>
-                {os.profiles.length > 0 &&
-                <FormGroup fieldId="profile-select"
-                           label={_("Profile")}>
-                    <FormSelect id="profile-select"
-                                value={profile || (os.profiles && os.profiles[0])}
-                                onChange={e => onValueChanged('profile', e)}>
-                        { (os.profiles || []).sort()
-                                .reverse() // Let jeos (Server) appear always first on the list since in osinfo-db it's not consistent
-                                .map(profile => {
-                                    let profileName;
-                                    if (profile == 'jeos')
-                                        profileName = 'Server';
-                                    else if (profile == 'desktop')
-                                        profileName = 'Workstation';
-                                    else
-                                        profileName = profile;
-                                    return <FormSelectOption value={profile}
-                                                             key={profile}
-                                                             label={profileName} />;
-                                }) }
-                    </FormSelect>
-                </FormGroup>}
-                <UsersConfigurationRow rootPassword={rootPassword}
-                                       rootPasswordLabelInfo={_("Leave the password blank if you do not wish to have a root account created")}
-                                       showUserFields={unattendedUserLogin}
-                                       userLogin={userLogin}
-                                       userPassword={userPassword}
-                                       validationFailed={validationFailed}
-                                       onValueChanged={onValueChanged} />
-            </>}
-        </FormGroup>
+        <>
+            {os.profiles.length > 0 &&
+            <FormGroup fieldId="profile-select"
+                       label={_("Profile")}>
+                <FormSelect id="profile-select"
+                            value={profile || (os.profiles && os.profiles[0])}
+                            onChange={e => onValueChanged('profile', e)}>
+                    { (os.profiles || []).sort()
+                            .reverse() // Let jeos (Server) appear always first on the list since in osinfo-db it's not consistent
+                            .map(profile => {
+                                let profileName;
+                                if (profile == 'jeos')
+                                    profileName = 'Server';
+                                else if (profile == 'desktop')
+                                    profileName = 'Workstation';
+                                else
+                                    profileName = profile;
+                                return <FormSelectOption value={profile}
+                                                         key={profile}
+                                                         label={profileName} />;
+                            }) }
+                </FormSelect>
+            </FormGroup>}
+            <UsersConfigurationRow rootPassword={rootPassword}
+                                   rootPasswordLabelInfo={_("Leave the password blank if you do not wish to have a root account created")}
+                                   showUserFields={unattendedUserLogin}
+                                   userLogin={userLogin}
+                                   userPassword={userPassword}
+                                   validationFailed={validationFailed}
+                                   onValueChanged={onValueChanged} />
+        </>
     );
 };
 
@@ -572,22 +552,14 @@ const CloudInitOptionsRow = ({
     userLogin, userPassword,
     validationFailed,
 }) => {
-    const [showOptions, setShowOptions] = useState(false);
-
     return (
-        <FormGroup fieldId="cloud-init-checkbox">
-            <Checkbox id="cloud-init-checkbox"
-                      isChecked={showOptions}
-                      onChange={setShowOptions}
-                      label={_("Set cloud init parameters")} />
-            {showOptions && <UsersConfigurationRow rootPassword={rootPassword}
-                                                    rootPasswordLabelInfo={_("Leave the password blank if you do not wish to set a root password")}
-                                                    showUserFields
-                                                    userLogin={userLogin}
-                                                    userPassword={userPassword}
-                                                    validationFailed={validationFailed}
-                                                    onValueChanged={onValueChanged} />}
-        </FormGroup>
+        <UsersConfigurationRow rootPassword={rootPassword}
+                               rootPasswordLabelInfo={_("Leave the password blank if you do not wish to set a root password")}
+                               showUserFields
+                               userLogin={userLogin}
+                               userPassword={userPassword}
+                               validationFailed={validationFailed}
+                               onValueChanged={onValueChanged} />
     );
 };
 
@@ -749,11 +721,11 @@ class CreateVmModal extends React.Component {
         super(props);
         this.state = {
             createMode: NONE,
+            activeTabKey: 0,
             validate: false,
             vmName: '',
             connectionName: LIBVIRT_SYSTEM_CONNECTION,
             sourceType: defaultSourceType,
-            unattendedInstallation: false,
             source: '',
             os: undefined,
             memorySize: props.nodeMaxMemory ? Math.min(1, convertToUnit(props.nodeMaxMemory, units.KiB, units.GiB)) : 1,
@@ -801,6 +773,14 @@ class CreateVmModal extends React.Component {
             });
         });
     }
+
+    handleTabClick = (event, tabIndex) => {
+        // Prevent the form from being submitted.
+        event.preventDefault();
+        this.setState({
+            activeTabKey: tabIndex,
+        });
+    };
 
     onValueChanged(key, value) {
         switch (key) {
@@ -894,9 +874,6 @@ class CreateVmModal extends React.Component {
             this.setState(stateDelta);
             break;
         }
-        case 'unattendedInstallation':
-            this.setState({ unattendedInstallation: value });
-            break;
         default:
             this.setState({ [key]: value });
             break;
@@ -915,6 +892,7 @@ class CreateVmModal extends React.Component {
             // then show errors in the notification area
             this.setState({ createMode: startVm ? RUN : EDIT, validate: false });
 
+            const unattendedInstallation = this.state.rootPassword || this.state.userLogin || this.state.userPassword;
             const vmParams = {
                 connectionName: this.state.connectionName,
                 vmName: this.state.vmName,
@@ -926,7 +904,7 @@ class CreateVmModal extends React.Component {
                 storageSize: convertToUnit(this.state.storageSize, this.state.storageSizeUnit, units.GiB),
                 storagePool: this.state.storagePool,
                 storageVolume: this.state.storageVolume,
-                unattended: this.state.unattendedInstallation,
+                unattended: unattendedInstallation,
                 userPassword: this.state.userPassword,
                 rootPassword: this.state.rootPassword,
                 userLogin: this.state.userLogin,
@@ -970,6 +948,10 @@ class CreateVmModal extends React.Component {
         const { nodeMaxMemory, nodeDevices, networks, osInfoList, loggedUser, storagePools, vms } = this.props;
         const validationFailed = this.state.validate && validateParams({ ...this.state, osInfoList, nodeMaxMemory, vms: vms.filter(vm => vm.connectionName == this.state.connectionName) });
 
+        const unattendedInstructionsMessage = _("Enter root and/or user information to enable unattended installation.");
+        const unattendedUnavailableMessage = _("Automated installs are only available when downloading an image or using cloud-init.");
+        const unattendedOsUnsupportedMessageFormat = os => cockpit.format(_("$0 does not support unattended installation."), os);
+
         let unattendedDisabled = true;
         if ((this.state.sourceType == URL_SOURCE || this.state.sourceType == LOCAL_INSTALL_MEDIA_SOURCE) && this.state.os) {
             if (this.state.os.medias && this.state.sourceMediaID in this.state.os.medias)
@@ -980,92 +962,117 @@ class CreateVmModal extends React.Component {
             unattendedDisabled = !this.state.os || !this.state.os.unattendedInstallable;
         }
 
+        let automationTabTooltip;
+        if (!((this.state.sourceType === CLOUD_IMAGE && this.props.cloudInitSupported) ||
+            (this.state.os && this.state.sourceType === DOWNLOAD_AN_OS && this.props.unattendedSupported))) {
+            automationTabTooltip = <Tooltip content={unattendedUnavailableMessage} />;
+        } else if (this.state.os && this.state.sourceType === DOWNLOAD_AN_OS && this.props.unattendedSupported) {
+            if (unattendedDisabled) {
+                automationTabTooltip = <Tooltip content={unattendedOsUnsupportedMessageFormat(getOSStringRepresentation(this.state.os))} />;
+            }
+        }
+
+        const detailsTab = <>
+            <MachinesConnectionSelector id='connection'
+                connectionName={this.state.connectionName}
+                onValueChanged={this.onValueChanged}
+                loggedUser={loggedUser} />
+            <SourceRow
+                connectionName={this.state.connectionName}
+                networks={networks.filter(network => network.connectionName == this.state.connectionName)}
+                nodeDevices={nodeDevices.filter(nodeDevice => nodeDevice.connectionName == this.state.connectionName)}
+                source={this.state.source}
+                sourceType={this.state.sourceType}
+                os={this.state.os}
+                osInfoList={this.props.osInfoList}
+                cloudInitSupported={this.props.cloudInitSupported}
+                downloadOSSupported={this.props.downloadOSSupported}
+                onValueChanged={this.onValueChanged}
+                validationFailed={validationFailed} />
+
+            {this.state.sourceType != DOWNLOAD_AN_OS &&
+            <>
+                <OSRow
+                    os={this.state.os}
+                    osInfoList={this.props.osInfoList}
+                    onValueChanged={this.onValueChanged}
+                    isLoading={this.state.autodetectOSInProgress}
+                    validationFailed={validationFailed} />
+
+            </>}
+            { this.state.sourceType != EXISTING_DISK_IMAGE_SOURCE &&
+            <StorageRow
+                allowNoDisk={this.state.sourceType !== CLOUD_IMAGE}
+                connectionName={this.state.connectionName}
+                storageSize={this.state.storageSize}
+                storageSizeUnit={this.state.storageSizeUnit}
+                onValueChanged={this.onValueChanged}
+                storagePoolName={this.state.storagePool}
+                storagePools={storagePools.filter(pool => pool.connectionName === this.state.connectionName)}
+                storageVolume={this.state.storageVolume}
+                vms={vms}
+                minimumStorage={this.state.minimumStorage}
+                validationFailed={validationFailed}
+                createMode={this.state.createMode}
+            />}
+
+            <MemoryRow
+                memorySize={this.state.memorySize}
+                memorySizeUnit={this.state.memorySizeUnit}
+                nodeMaxMemory={nodeMaxMemory}
+                onValueChanged={this.onValueChanged}
+                validationFailed={validationFailed}
+                minimumMemory={this.state.minimumMemory}
+            />
+        </>;
+
+        const automationTab = <>
+            {unattendedInstructionsMessage}
+            {this.state.os && this.state.sourceType === DOWNLOAD_AN_OS && this.props.unattendedSupported &&
+                <UnattendedRow
+                    validationFailed={validationFailed}
+                    rootPassword={this.state.rootPassword}
+                    userLogin={this.state.userLogin}
+                    userPassword={this.state.userPassword}
+                    unattendedUserLogin={this.props.unattendedUserLogin}
+                    os={this.state.os}
+                    profile={this.state.profile}
+                    onValueChanged={this.onValueChanged} />
+            }
+            {this.state.sourceType === CLOUD_IMAGE && this.props.cloudInitSupported &&
+                <CloudInitOptionsRow validationFailed={validationFailed}
+                                     rootPassword={this.state.rootPassword}
+                                     userLogin={this.state.userLogin}
+                                     userPassword={this.state.userPassword}
+                                     onValueChanged={this.onValueChanged} />
+            }
+        </>;
+
         const dialogBody = (
             <Form isHorizontal>
                 <NameRow
                     vmName={this.state.vmName}
                     onValueChanged={this.onValueChanged}
                     validationFailed={validationFailed} />
-
-                <MachinesConnectionSelector id='connection'
-                    connectionName={this.state.connectionName}
-                    onValueChanged={this.onValueChanged}
-                    loggedUser={loggedUser} />
-
-                <SourceRow
-                    connectionName={this.state.connectionName}
-                    networks={networks.filter(network => network.connectionName == this.state.connectionName)}
-                    nodeDevices={nodeDevices.filter(nodeDevice => nodeDevice.connectionName == this.state.connectionName)}
-                    source={this.state.source}
-                    sourceType={this.state.sourceType}
-                    os={this.state.os}
-                    osInfoList={this.props.osInfoList}
-                    cloudInitSupported={this.props.cloudInitSupported}
-                    downloadOSSupported={this.props.downloadOSSupported}
-                    onValueChanged={this.onValueChanged}
-                    validationFailed={validationFailed} />
-
-                {this.state.sourceType != DOWNLOAD_AN_OS &&
-                <>
-                    <OSRow
-                        os={this.state.os}
-                        osInfoList={this.props.osInfoList}
-                        onValueChanged={this.onValueChanged}
-                        isLoading={this.state.autodetectOSInProgress}
-                        validationFailed={validationFailed} />
-                </>}
-
-                { this.state.sourceType != EXISTING_DISK_IMAGE_SOURCE &&
-                <StorageRow
-                    allowNoDisk={this.state.sourceType !== CLOUD_IMAGE}
-                    connectionName={this.state.connectionName}
-                    storageSize={this.state.storageSize}
-                    storageSizeUnit={this.state.storageSizeUnit}
-                    onValueChanged={this.onValueChanged}
-                    storagePoolName={this.state.storagePool}
-                    storagePools={storagePools.filter(pool => pool.connectionName === this.state.connectionName)}
-                    storageVolume={this.state.storageVolume}
-                    vms={vms}
-                    minimumStorage={this.state.minimumStorage}
-                    validationFailed={validationFailed}
-                    createMode={this.state.createMode}
-                />}
-
-                <MemoryRow
-                    memorySize={this.state.memorySize}
-                    memorySizeUnit={this.state.memorySizeUnit}
-                    nodeMaxMemory={nodeMaxMemory}
-                    onValueChanged={this.onValueChanged}
-                    validationFailed={validationFailed}
-                    minimumMemory={this.state.minimumMemory}
-                />
-
-                {this.state.sourceType == DOWNLOAD_AN_OS &&
-                 this.props.unattendedSupported &&
-                 <>
-                     <UnattendedRow
-                         validationFailed={validationFailed}
-                         rootPassword={this.state.rootPassword}
-                         userLogin={this.state.userLogin}
-                         userPassword={this.state.userPassword}
-                         unattendedDisabled={unattendedDisabled}
-                         unattendedInstallation={this.state.unattendedInstallation}
-                         unattendedUserLogin={this.props.unattendedUserLogin}
-                         os={this.state.os}
-                         profile={this.state.profile}
-                         onValueChanged={this.onValueChanged} />
-                 </>}
-
-                {this.state.sourceType == CLOUD_IMAGE &&
-                 this.props.cloudInitSupported &&
-                 <CloudInitOptionsRow validationFailed={validationFailed}
-                                      rootPassword={this.state.rootPassword}
-                                      userLogin={this.state.userLogin}
-                                      userPassword={this.state.userPassword}
-                                      onValueChanged={this.onValueChanged} />}
+                { this.props.mode === "create"
+                    ? <Tabs activeKey={this.state.activeTabKey} onSelect={this.handleTabClick}>
+                        <Tab eventKey={0} title={<TabTitleText>{_("Details")}</TabTitleText>} id="details-tab" className="pf-c-form">
+                            {detailsTab}
+                        </Tab>
+                        <Tab eventKey={1}
+                             title={<TabTitleText>{_("Automation")}</TabTitleText>}
+                             id="automation"
+                             className="pf-c-form"
+                             tooltip={automationTabTooltip}
+                             isAriaDisabled={!!automationTabTooltip}>
+                            {automationTab}
+                        </Tab>
+                    </Tabs>
+                    : detailsTab }
             </Form>
         );
 
+        const unattendedInstallation = this.state.rootPassword || this.state.userLogin || this.state.userPassword;
         let createAndEdit = (
             <Button variant="secondary"
                     key="secondary-button"
@@ -1074,14 +1081,14 @@ class CreateVmModal extends React.Component {
                     isAriaDisabled={
                         this.state.createMode === EDIT ||
                         Object.getOwnPropertyNames(validationFailed).length > 0 ||
-                        this.state.unattendedInstallation ||
-                        this.state.sourceType === CLOUD_IMAGE
+                        this.state.sourceType === CLOUD_IMAGE ||
+                        unattendedInstallation
                     }
                     onClick={() => this.onCreateClicked(false)}>
                 {this.props.mode == 'create' ? _("Create and edit") : _("Import and edit")}
             </Button>
         );
-        if (this.state.unattendedInstallation) {
+        if (unattendedInstallation) {
             createAndEdit = (
                 <Tooltip id='virt-install-not-available-tooltip'
                          content={_("Setting the user passwords for unattended installation requires starting the VM when creating it")}>

@@ -986,11 +986,8 @@ vnc_password= "{vnc_passwd}"
                 b.set_checked(f"#connectionName-{self.connection}", True)
 
             if self.is_unattended or self.sourceType == "cloud":
-                if self.is_unattended:
-                    b.click("#unattended-installation")
-                else:
-                    if self.user_password or self.user_login or self.root_password:
-                        b.click("#cloud-init-checkbox")
+                if self.is_unattended or self.user_password or self.user_login or self.root_password:
+                    b.click("#pf-tab-1-automation")
 
                 if self.profile:
                     b.select_from_dropdown("#profile-select", self.profile)
