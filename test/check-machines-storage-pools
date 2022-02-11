@@ -98,15 +98,12 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         self.waitPoolRow("myPoolTwo", connectionName)
         b.wait_visible("#create-storage-pool:not(:disabled)")
 
-        pools = ["images", "myPoolOne", "myPoolTwo"]
         b.assert_pixels(
             "#app", "storage-pools-page",
             ignore=(
-                [f"tr[data-row-id=pool-{p}-system] .pf-c-progress" for p in pools] +
-                # HACK: the font rendering of these two columns is jittery, even after sleep()
-                ["th:contains('Connection')", "th:contains('State')"] +
-                [f"tr[data-row-id=pool-{p}-system] .pf-c-label__content" for p in pools] +
-                [f"tr[data-row-id=pool-{p}-system] td[data-label='Connection']" for p in pools]
+                # HACK: the font rendering of middle columns is jittery, even after sleep()
+                [f"td:nth-child({n})" for n in range(2, 6)] +
+                [f"th:nth-child({n})" for n in range(2, 6)]
             )
         )
 
