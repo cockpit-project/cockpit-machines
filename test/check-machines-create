@@ -449,6 +449,12 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                  memory_size=128, memory_size_unit='MiB',
                                                                  storage_pool="NoStorage"), True)
 
+        # Check PXE boot with separate install phase
+        runner.createThenInstallTest(TestMachinesCreate.VmDialog(self, sourceType='pxe',
+                                                                 location="network=default",
+                                                                 memory_size=128, memory_size_unit='MiB',
+                                                                 storage_pool="NoStorage"))
+
         # Try performing an installation which will fail and ensure that the 'Install' button is still available
         runner.createThenInstallTest(TestMachinesCreate.VmDialog(self, sourceType='file',
                                                                  location=config.NOVELL_MOCKUP_ISO_PATH,
@@ -1268,7 +1274,7 @@ class TestMachinesCreate(VirtualMachinesCase):
                 # Wait for virt-install to define the VM and then stop it - otherwise we get 'domain is ready being removed' error
                 wait(lambda: dialog.name in self.machine.execute("virsh list --persistent"), delay=3)
 
-                # unfinished install script runs indefinitelly, so we need to force it off
+                # unfinished install script runs indefinitely, so we need to force it off
                 self.test_obj.performAction(name, "forceOff", False)
                 # https://bugzilla.redhat.com/show_bug.cgi?id=1818089
                 # After shutting it off virt-install will restart the domain and exit because of the above bug
