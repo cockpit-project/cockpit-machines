@@ -154,7 +154,7 @@ def prepare_installation_source(args):
     params = []
     only_define = args['type'] == 'create' and not args['startVm']
     if only_define:
-        params.append("--print-xml")
+        params.append("--print-xml=1")
 
     if args['sourceType'] == "pxe":
         params += ['--pxe', '--network', args['source']]
