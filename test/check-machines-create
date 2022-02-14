@@ -287,14 +287,14 @@ class TestMachinesCreate(VirtualMachinesCase):
         b.enter_page('/machines')
         b.wait_in_text("body", "Virtual machines")
 
-        # First create the PXE VM but do not start it. We 'll need to tweak a bit the XML
-        # to have serial console at bios and also redirect serial console to a file
+        # Create with immediate starting
         runner.createTest(TestMachinesCreate.VmDialog(self, name='pxe-guest', sourceType='pxe',
                                                       location="network=pxe-nat",
                                                       memory_size=128, memory_size_unit='MiB',
                                                       storage_pool="NoStorage",
                                                       start_vm=True, delete=False))
 
+        # Stop it, tweak the XML to have serial console at bios and also redirect serial console to a file
         # We don't want to use start_vm == False because if we get a separate install phase
         # virt-install will overwrite our changes.
 
@@ -307,7 +307,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         wait(lambda: "pxe-guest" in self.machine.execute("virsh list --persistent"), delay=3)
         self.machine.execute("virsh destroy pxe-guest")
 
-        # Remove all serial ports and consoles first and tehn add a console of type file
+        # Remove all serial ports and consoles first and then add a console of type file
         # virt-xml tool does not allow to remove both serial and console devices at once
         # https://bugzilla.redhat.com/show_bug.cgi?id=1685541
         # So use python xml parsing to change the domain XML.
