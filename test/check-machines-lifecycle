@@ -254,7 +254,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         b.set_input_text("#rename-dialog-new-name", "new")
         b.click("#rename-dialog-confirm")
         self.waitVmRow("new")
-        self.waitVmRow("old-name", "system", False)
+        self.waitVmRow("old", "system", False)
 
         # Rename to itself and expect error
         self.performAction("new", "rename")
