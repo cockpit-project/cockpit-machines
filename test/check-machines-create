@@ -1452,17 +1452,9 @@ vnc_password= "{vnc_passwd}"
                     self.assertRegex(b.text(".pf-c-empty-state__body .pf-c-progress__status"), r"^[0-9][0-9]?%$|^100%$")
 
                 b.wait_in_text(f"#vm-{dialog.name}-{dialog.connection}-state", final_state)
-            elif dialog.create_and_run:
-                init_state = "Creating VM installation" if dialog.create_and_run else "Creating VM"
-
-                # Getting rid of timeouts and unecessary waiting at VM creation dialog at
-                # https://github.com/cockpit-project/cockpit-machines/pull/699
-                # caused the VM creation process to get faster and sometimes tests might
-                # not catch "Creating VM" state.
-                # Therefore, test only for such states for VM which are created and
-                # STARTED IMMEDIATELLY as that causes "creating VM" stage to take longer time.
-                self._assertVmStates(dialog.name, dialog.connection, init_state, final_state)
             b.wait_not_present("#create-vm-dialog")
+            b.wait_text(f"#vm-{dialog.name}-{dialog.connection}-state",
+                        dialog.create_and_run and "Running" or "Shut off")
 
         def _tryCreate(self, dialog, generated_name=None):
             name = generated_name or dialog.name

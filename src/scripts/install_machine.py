@@ -170,6 +170,7 @@ def prepare_installation_source(args):
     only_define = args['type'] == 'create' and not args['startVm']
     if only_define:
         params.append("--print-xml=1")
+        return params
 
     if args['sourceType'] == "pxe":
         params += ['--pxe', '--network', args['source']]
@@ -179,11 +180,9 @@ def prepare_installation_source(args):
         params.append("--import")
     elif ((args['source'][0] == '/' and os.path.isfile(args['source'])) or
             (args['sourceType'] == 'url' and args['source'].endswith(".iso"))):
-        if not only_define:
-            params += ['--cdrom', args['source']]
+        params += ['--cdrom', args['source']]
     else:
-        if not only_define:
-            params += ['--location', args['source']]
+        params += ['--location', args['source']]
 
     return params
 
@@ -196,12 +195,18 @@ def prepare_virt_install_params(args):
             "virt-install",
             "--connect", f"qemu:///{args['connectionName']}",
             "--quiet",
-            "--name", args['vmName'],
-            "--os-variant", args['os'],
-            "--memory", str(args['memorySize']),
+            "--os-variant", args['os']
         ]
 
-        if args['type'] == 'install' or ('storagePool' in args and args['storagePool'] != 'NewVolume'):
+        if args['type'] == 'install':
+            params += ['--reinstall', args['vmName']]
+        else:
+            params += [
+                "--memory", str(args['memorySize']),
+                "--name", args['vmName']
+            ]
+
+        if 'storagePool' in args and args['storagePool'] != 'NewVolume':
             params += ["--check", "path_in_use=off"]
 
         if args['sourceType'] != 'disk_image':
@@ -211,11 +216,7 @@ def prepare_virt_install_params(args):
             params.append("--noautoconsole")
 
         # Disks
-        if args['type'] == 'install':
-            disks = args['disks'] or ['none']
-            for disk in disks:
-                params += ['--disk', disk]
-        else:
+        if args['type'] != 'install':
             params.append("--disk")
 
             if args['sourceType'] == 'disk_image':
@@ -231,27 +232,13 @@ def prepare_virt_install_params(args):
                     disk += f",backing_store={args['source']}"
             params.append(disk)
 
-        # NICs
-        if args['type'] == "install":
-            vnics = args['vnics'] or ['none']
-            for network in vnics:
-                params += ['--network', network]
-
         # Consoles
-        if args['type'] == "install":
-            graphics = args['graphics'] or ['none']
-            for console in graphics:
-                params += ['--graphics', console]
-        else:
+        if args['type'] != "install":
             params += prepare_graphics_params(args['connectionName'])
 
         # Installation media
         if args['sourceType'] != "cloud":
             params += prepare_installation_source(args)
-
-        # Autostart
-        if args['type'] == 'install' and args['autostart']:
-            params.append("--autostart")
 
         # VCPUs
         if 'vcpu' in args:
@@ -289,15 +276,7 @@ def create_vm(args):
 
 
 def install_vm(args):
-    # If the VM already exists and we want to run the installer we need to remove it first
-    try:
-        virsh(args['connectionName'], "destroy", args['vmName'])
-    except subprocess.CalledProcessError:
-        pass
-
     prevXML = virsh(args['connectionName'], "dumpxml", args['vmName'])
-
-    virsh(args['connectionName'], "undefine", args['vmName'], "--managed-save")
 
     with prepare_virt_install_params(args) as params:
         try:
@@ -322,10 +301,15 @@ def install_vm(args):
 
 
 def inject_metadata(xml):
+    # Register used namespaces
+    ns = {"cockpit_machines": "https://github.com/cockpit-project/cockpit-machines"}
+    ET.register_namespace("cockpit_machines", ns["cockpit_machines"])
+    ET.register_namespace("libosinfo", "http://libosinfo.org/xmlns/libvirt/domain/1.0")
+
     # ET.fromstring() already wants UTF-8 encoded bytes
     root = ET.fromstring(xml)
     metadata = root.find('metadata')
-    cockpit_machines_metadata = metadata.find('cockpit_machines')
+    cockpit_machines_metadata = metadata.find('cockpit_machines:data', ns)
     if cockpit_machines_metadata:
         metadata.remove(cockpit_machines_metadata)
 
@@ -336,10 +320,6 @@ def inject_metadata(xml):
     # - The script is called from the 'Import' dialog
     if args['type'] == 'install' or args['startVm'] or args['sourceType'] == 'disk_image':
         has_install_phase = "false"
-
-    # Register used namespaces
-    ET.register_namespace("cockpit_machines", "https://github.com/cockpit-project/cockpit-machines")
-    ET.register_namespace("libosinfo", "http://libosinfo.org/xmlns/libvirt/domain/1.0")
 
     METADATA = f'''
 <cockpit_machines:data xmlns:cockpit_machines="https://github.com/cockpit-project/cockpit-machines"> \

@@ -41,8 +41,6 @@ export const StateIcon = ({ state, valueId, error, dismissError }) => {
         crashed: { color: "red" },
         dying: { color: "red" },
         'Creating VM': { icon: <PendingIcon /> },
-        'Creating VM installation': { icon: <PendingIcon /> },
-
         /* Storage Pool/Network States  */
         active: { color: "green" },
     };

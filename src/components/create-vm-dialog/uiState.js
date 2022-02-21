@@ -20,13 +20,13 @@
 import store from '../../store.js';
 import {
     addUiVm,
+    updateVm,
     updateUiVm,
     deleteUiVm,
 } from '../../actions/store-actions.js';
 
 import VMS_CONFIG from "../../config.js";
 
-const INSTALL_TIMEOUT = 'INSTALL_TIMEOUT';
 const CREATE_TIMEOUT = 'CREATE_TIMEOUT';
 
 const timeouts = { session: {}, system: {} };
@@ -45,17 +45,15 @@ export function setVmCreateInProgress(name, connectionName, settings) {
     setupCleanupTimeout(name, connectionName, CREATE_TIMEOUT);
 }
 
-export function setVmInstallInProgress(original_vm, settings) {
+export function setVmInstallInProgress(original_vm, installInProgress = true) {
     const vm = Object.assign({}, {
         ...original_vm,
-        isUi: true,
-        expanded: true,
-        openConsoleTab: true,
-        installInProgress: true,
-    }, settings);
+        expanded: installInProgress,
+        openConsoleTab: installInProgress,
+        installInProgress,
+    });
 
-    store.dispatch(addUiVm(vm));
-    setupCleanupTimeout(original_vm.name, original_vm.connectionName, INSTALL_TIMEOUT);
+    store.dispatch(updateVm(vm));
 }
 
 export function updateImageDownloadProgress(name, connectionName, downloadProgress, settings) {
@@ -86,7 +84,6 @@ export function removeVmCreateInProgress(name, connectionName, settings) {
 export function clearVmUiState(name, connectionName) {
     // clear timeouts
     clearTimeout(name, connectionName, CREATE_TIMEOUT);
-    clearTimeout(name, connectionName, INSTALL_TIMEOUT);
     clearSettings(name, connectionName);
 
     // clear store state
