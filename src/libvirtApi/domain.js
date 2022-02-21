@@ -27,13 +27,6 @@ import VMS_CONFIG from '../config.js';
 
 import installVmScript from 'raw-loader!../scripts/install_machine.py';
 import {
-    prepareDisksParam,
-    prepareDisplaysParam,
-    prepareNICParam,
-    prepareVcpuParam,
-    prepareMemoryParam,
-} from '../libvirtUtils.js';
-import {
     deleteUnlistedVMs,
     undefineVm,
     updateOrAddVm,
@@ -49,14 +42,12 @@ import {
     clearVmUiState,
 } from '../components/create-vm-dialog/uiState.js';
 import {
-    convertToUnit,
     DOMAINSTATE,
     fileDownload,
     getHostDevSourceObject,
     getNodeDevSource,
     LIBVIRT_SYSTEM_CONNECTION,
     logDebug,
-    units,
 } from '../helpers.js';
 import {
     getDiskElemByTarget,
@@ -695,19 +686,12 @@ export function domainInstall({ vm }) {
         opts.superuser = 'try';
 
     const args = JSON.stringify({
-        autostart: vm.autostart,
         connectionName: vm.connectionName,
-        disks: prepareDisksParam(vm.disks),
-        firmware: vm.firmware == "efi" ? 'uefi' : '',
-        graphics: prepareDisplaysParam(vm.displays),
-        memorySize: prepareMemoryParam(convertToUnit(vm.currentMemory, units.KiB, units.MiB), convertToUnit(vm.memory, units.KiB, units.MiB)),
         os: vm.metadata.osVariant,
         source: vm.metadata.installSource,
         sourceType: vm.metadata.installSourceType,
         type: "install",
-        vcpu: prepareVcpuParam(vm.vcpus, vm.cpu),
         vmName: vm.name,
-        vnics: prepareNICParam(vm.interfaces),
     });
 
     return cockpit
@@ -717,7 +701,7 @@ export function domainInstall({ vm }) {
                 console.error(JSON.stringify(ex));
                 return Promise.reject(ex);
             })
-            .finally(() => clearVmUiState(vm.name, vm.connectionName));
+            .finally(() => setVmInstallInProgress({ name: vm.name, connectionName: vm.connectionName }, false));
 }
 
 export function domainInsertDisk({

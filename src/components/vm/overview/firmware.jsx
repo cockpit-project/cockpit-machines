@@ -32,6 +32,9 @@ import { supportsUefiXml, labelForFirmwarePath } from './helpers.js';
 
 const _ = cockpit.gettext;
 
+const xmlToState = value => value || 'bios';
+const stateToXml = value => value == 'bios' ? null : value;
+
 class FirmwareModal extends React.Component {
     static contextType = DialogsContext;
 
@@ -39,7 +42,7 @@ class FirmwareModal extends React.Component {
         super(props);
         this.state = {
             dialogError: null,
-            firmware: props.firmware == 'efi' ? props.firmware : 'bios',
+            firmware: xmlToState(props.firmware),
         };
         this.dialogErrorSet = this.dialogErrorSet.bind(this);
         this.save = this.save.bind(this);
@@ -51,7 +54,7 @@ class FirmwareModal extends React.Component {
 
     save() {
         const Dialogs = this.context;
-        domainSetOSFirmware({ connectionName: this.props.connectionName, objPath: this.props.vmId, loaderType: this.state.firmware })
+        domainSetOSFirmware({ connectionName: this.props.connectionName, objPath: this.props.vmId, loaderType: stateToXml(this.state.firmware) })
                 .then(Dialogs.close, exc => this.dialogErrorSet(_("Failed to change firmware"), exc.message));
     }
 

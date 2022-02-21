@@ -47,8 +47,6 @@ const VmState = ({ vm, dismissError }) => {
 
     if (vm.downloadProgress) {
         state = cockpit.format(_("Downloading: $0%"), vm.downloadProgress);
-    } else if (vm.installInProgress) {
-        state = _("Creating VM installation");
     } else if (vm.createInProgress) {
         state = _("Creating VM");
     } else {

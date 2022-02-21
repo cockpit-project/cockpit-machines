@@ -285,8 +285,8 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
     let install = null;
     if (domainCanInstall(state, hasInstallPhase)) {
         install = (<Button key='action-install' variant="secondary"
-                           isLoading={vm.isUi}
-                           isDisabled={vm.isUi}
+                           isLoading={vm.installInProgress}
+                           isDisabled={vm.installInProgress}
                            onClick={() => onInstall()} id={`${id}-install`}>
             {_("Install")}
         </Button>);
