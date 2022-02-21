@@ -70,6 +70,11 @@ if [ "${PLATFORM_ID:-}" != "platform:f34" ] && [ "${PLATFORM_ID:-}" != "platform
     systemctl start virtstoraged.socket
 fi
 
+# Fedora 36/37 and RHEL 9 split out qemu-virtiofsd; once this is in all supported OSes, move to main.fmf
+if [ "${PLATFORM_ID:-}" != "platform:f35" ] && [ "${PLATFORM_ID:-}" != "platform:el8" ]; then
+    dnf install -y qemu-virtiofsd
+fi
+
 # Run tests as unprivileged user
 su - -c "env TEST_BROWSER=firefox SOURCE=$SOURCE LOGS=$LOGS $TESTS/run-test.sh" runtest
 
