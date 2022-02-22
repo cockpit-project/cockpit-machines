@@ -19,7 +19,7 @@ fi
 # and TF machines are slow and brittle
 mv .git dot-git
 
-. /etc/os-release
+. /usr/lib/os-release
 export TEST_OS="${ID}-${VERSION_ID/./-}"
 
 if [ "${TEST_OS#centos-}" != "$TEST_OS" ]; then
@@ -48,18 +48,11 @@ if [ "$TEST_OS" = "centos-8-stream" ]; then
     EXCLUDES="$EXCLUDES TestMachinesConsoles.testExternalConsole"
 fi
 
-if [ "$TEST_OS" = "fedora-35" ] || [ "$TEST_OS" = "fedora-36" ] || [ "$TEST_OS" = "centos-9-stream" ]; then
-    EXCLUDES="$EXCLUDES TestMachinesHostDevs.testHostDevAdd"
-    # https://github.com/cockpit-project/cockpit-machines/issues/526
-    EXCLUDES="$EXCLUDES TestMachinesCreate.testCreateThenInstall"
-fi
+# depends on available host devices, TF machines not predictable enough
+EXCLUDES="$EXCLUDES TestMachinesHostDevs.testHostDevAdd"
 
-if [ "$TEST_OS" = "fedora-36" ]; then
-    EXCLUDES="$EXCLUDES
-              TestMachinesNICs.testNICDelete
-              TestMachinesConsoles.testSerialConsole
-    "
-fi
+# FIXME: https://github.com/cockpit-project/cockpit-machines/issues/581
+EXCLUDES="$EXCLUDES TestMachinesCreate.testCreateThenInstall"
 
 if [ "$ID" = "fedora" ]; then
     # Testing Farm machines are really slow in European evenings
