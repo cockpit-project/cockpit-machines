@@ -863,7 +863,12 @@ class TestMachinesCreate(VirtualMachinesCase):
 
             self.browser.wait_text(f"#vm-{self.name}-state", "Running")
 
+            # Wait for it to become permanent before destruction.  If
+            # we destroy it while it is still transient, the domain
+            # will come back as running.
+            wait(lambda: "yes" in self.machine.execute(f"virsh dominfo {self.name} | grep ^Persistent"))
             self.machine.execute(f"virsh destroy {self.name}")
+
             # wait for virt-install to finish
             self.machine.execute(f"while {virt_install_cmd}; do sleep 1; done")
 
