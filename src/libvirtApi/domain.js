@@ -629,6 +629,10 @@ export function domainInstall({ onAddErrorNotification, vm }) {
     return cockpit
             .spawn([pythonPath, "--", "-", args], opts)
             .input(installVmScript)
+            .catch(ex => {
+                console.error(JSON.stringify(ex));
+                return Promise.reject(ex);
+            })
             .finally(() => clearVmUiState(vm.name, vm.connectionName));
 }
 

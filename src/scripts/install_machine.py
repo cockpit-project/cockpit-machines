@@ -288,6 +288,7 @@ def install_vm(args):
         try:
             subprocess.check_output(params)
         except subprocess.CalledProcessError as e:
+            logging.exception(e)
             # If virt-install returned non-zero return code, redefine
             # the VM so that we get back the metadata which enable the 'Install'
             # button, so that the user can re-attempt installation
