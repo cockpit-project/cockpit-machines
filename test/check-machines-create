@@ -1518,6 +1518,8 @@ class TestMachinesCreate(VirtualMachinesCase):
         b.click(".pf-c-modal-box__footer button:contains(Create)")
         b.wait_not_present("#create-vm-dialog")
 
+        wait(lambda: "<cockpit_machines:os_variant>fedora28</cockpit_machines:os_variant>" in m.execute("virsh dumpxml VmNotInstalled"), delay=3)
+
         self.waitVmRow("VmNotInstalled")
         self.goToVmPage("VmNotInstalled")
 
