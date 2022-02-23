@@ -290,3 +290,9 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
 
         # HACK: older c-ws versions always log an assertion, fixed in PR cockpit#16765
         self.allow_journal_messages("json_object_get_string_member: assertion 'node != NULL' failed")
+
+    def tearDown(self):
+        b = self.browser
+        if b.cdp.valid and b.is_present("#button.alert-link.more-button"):
+            b.click("button.alert-link.more-button")
+        super().tearDown()
