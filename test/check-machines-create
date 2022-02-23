@@ -575,12 +575,12 @@ class TestMachinesCreate(VirtualMachinesCase):
         runner.checkEnvIsEmpty()
 
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='url',
-                                                      location=config.VALID_URL,
+                                                      location=config.TREE_URL,
                                                       storage_size=1))
 
         # name already exists
         runner.createTest(TestMachinesCreate.VmDialog(self, name='existing-name', sourceType='url',
-                                                      location=config.VALID_URL, storage_size=1,
+                                                      location=config.TREE_URL, storage_size=1,
                                                       delete=False))
 
         self.goToMainPage()
@@ -590,20 +590,20 @@ class TestMachinesCreate(VirtualMachinesCase):
         self.machine.execute("virsh undefine existing-name")
 
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='url',
-                                                      location=config.VALID_URL,
+                                                      location=config.TREE_URL,
                                                       memory_size=128, memory_size_unit='MiB',
                                                       storage_pool="NoStorage",
                                                       os_name=config.FEDORA_28))
 
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='url',
-                                                      location=config.VALID_URL,
+                                                      location=config.TREE_URL,
                                                       memory_size=128, memory_size_unit='MiB',
                                                       storage_pool="NoStorage",
                                                       os_name=config.FEDORA_28,
                                                       start_vm=False))
 
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='url',
-                                                      location=config.VALID_URL,
+                                                      location=config.TREE_URL,
                                                       memory_size=128, memory_size_unit='MiB',
                                                       storage_size=128, storage_size_unit='MiB',
                                                       start_vm=False))
