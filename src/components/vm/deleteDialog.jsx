@@ -19,7 +19,12 @@
 
 import cockpit from 'cockpit';
 import React from 'react';
-import { Button, Modal } from '@patternfly/react-core';
+import {
+    Button,
+    DataList, DataListItem, DataListItemRow, DataListCheck, DataListItemCells, DataListCell,
+    Form,
+    Modal
+} from '@patternfly/react-core';
 
 import { vmId } from '../../helpers.js';
 import { domainDelete } from '../../libvirtApi/domain.js';
@@ -33,30 +38,41 @@ const _ = cockpit.gettext;
 const DeleteDialogBody = ({ disks, destroy, onChange }) => {
     function disk_row(disk, index) {
         return (
-            <li className='list-group-item' key={disk.target}>
-                <div className='checkbox disk-row'>
-                    <label>
-                        <input type="checkbox" checked={disk.checked}
-                            onChange={(event) => {
-                                onChange(index, event.target.checked);
-                            }} />
-                        <strong>{disk.target}</strong>
-                        {disk.type == 'file' &&
-                        <div className='disk-source'>
-                            <span> {_("Path")} </span>
-                            <strong id='disk-source-file'> {disk.source.file} </strong>
-                        </div>}
-                        {disk.type == 'volume' &&
-                        <div className='disk-source'>
-                            <span htmlFor='disk-source-volume'> {_("Volume")} </span>
-                            <strong id='disk-source-volume'> {disk.source.volume} </strong>
+            <DataListItem key={disk.target}
+                          aria-labelledby={disk.target}>
+                <DataListItemRow>
+                    <DataListCheck
+                            aria-labelledby={disk.target}
+                            name={"check-action-" + disk.target}
+                            onChange={checked => {
+                                onChange(index, checked);
+                            }}
+                            checked={!!disk.checked} // https://github.com/patternfly/patternfly-react/issues/6762
+                            isChecked={!!disk.checked} />
+                    <DataListItemCells
+                        dataListCells={[
+                            <DataListCell id={disk.target} key="target name">
+                                <strong>{disk.target}</strong>
+                            </DataListCell>,
+                            <DataListCell key="target source">
+                                {disk.type == 'file' &&
+                                <div className='disk-source'>
+                                    <span> {_("Path")} </span>
+                                    <strong id='disk-source-file'> {disk.source.file} </strong>
+                                </div>}
+                                {disk.type == 'volume' &&
+                                <div className='disk-source'>
+                                    <span htmlFor='disk-source-volume'> {_("Volume")} </span>
+                                    <strong id='disk-source-volume'> {disk.source.volume} </strong>
 
-                            <span htmlFor='disk-source-pool'> {_("Pool")} </span>
-                            <strong id='disk-source-pool'> {disk.source.pool} </strong>
-                        </div>}
-                    </label>
-                </div>
-            </li>
+                                    <span htmlFor='disk-source-pool'> {_("Pool")} </span>
+                                    <strong id='disk-source-pool'> {disk.source.pool} </strong>
+                                </div>}
+                            </DataListCell>,
+                        ]}
+                    />
+                </DataListItemRow>
+            </DataListItem>
         );
     }
 
@@ -67,14 +83,12 @@ const DeleteDialogBody = ({ disks, destroy, onChange }) => {
     let disksBody = null;
     if (disks.length > 0)
         disksBody = (
-            <>
+            <Form onSubmit={e => e.preventDefault()}>
                 <p>{_("Delete associated storage files:")}</p>
-                <form>
-                    <ul className="list-group dialog-list-ct">
-                        { disks.map(disk_row) }
-                    </ul>
-                </form>
-            </>
+                <DataList isCompact>
+                    { disks.map(disk_row) }
+                </DataList>
+            </Form>
         );
 
     return (
