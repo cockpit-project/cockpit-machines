@@ -32,6 +32,11 @@ from testlib import nondestructive, wait, test_main  # noqa
 # echo "options kvm-intel nested=1" > /etc/modprobe.d/kvm-intel.conf
 # rmmod kvm-intel && modprobe kvm-intel || true
 
+# virt-install changed the default to "host-passthrough"
+# https://github.com/virt-manager/virt-manager/commit/2c477f330244e04614e174f50fbf37260c535705
+distrosWithDefaultHostModel = ["fedora-34", "fedora-35", "rhel-8-4", "rhel-8-5", "rhel-8-6", "rhel-9-0",
+                               "ubuntu-stable", "ubuntu-2004", "debian-testing", "debian-stable", "centos-8-stream", "arch"]
+
 
 @nondestructive
 class TestMachinesSettings(VirtualMachinesCase):
@@ -215,9 +220,13 @@ class TestMachinesSettings(VirtualMachinesCase):
         self.goToVmPage("subVmTest1")
         b.wait_in_text("#vm-subVmTest1-state", "Running")
 
+        cpu_model = "host-model"
+        if m.image in distrosWithDefaultHostModel:
+            cpu_model = "host-passthrough"
+
         # Copy host CPU configuration
         b.click("#vm-subVmTest1-cpu-model button")
-        b.select_from_dropdown("#cpu-model-select-group select", "host-passthrough")
+        b.select_from_dropdown("#cpu-model-select-group select", cpu_model)
         b.click("#cpu-config-dialog-apply")
         b.wait_not_present("#cpu-config-dialog-apply")
 
@@ -388,7 +397,10 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         # Change CPU model setting
         b.click("#vm-subVmTest1-cpu-model button")
-        b.select_from_dropdown("#cpu-model-select-group select", "host-passthrough")
+        cpu_model = "host-model"
+        if m.image in distrosWithDefaultHostModel:
+            cpu_model = "host-passthrough"
+        b.select_from_dropdown("#cpu-model-select-group select", cpu_model)
         b.click("#cpu-config-dialog-apply")
         b.wait_visible("#cpu-tooltip")
 
@@ -405,13 +417,13 @@ class TestMachinesSettings(VirtualMachinesCase):
         dom_xml = "virsh -c qemu:///system dumpxml subVmTest1"
 
         xmllint_elem = f"{dom_xml} | xmllint --xpath 'string(//domain/cpu/@mode)' - 2>&1 || true"
-        wait(lambda: "host-passthrough" in m.execute(xmllint_elem).strip())
+        wait(lambda: cpu_model in m.execute(xmllint_elem).strip())
 
         xmllint_elem = f"{dom_xml} | xmllint --xpath 'string(//domain/vcpu)' - 2>&1 || true"
         wait(lambda: "3" in m.execute(xmllint_elem).strip())
 
         # Check both changes have been applied
-        b.wait_in_text("#vm-subVmTest1-cpu-model", "host passthrough")
+        b.wait_in_text("#vm-subVmTest1-cpu-model", "host passthrough" if m.image in distrosWithDefaultHostModel else "host")
         b.wait_in_text("#vm-subVmTest1-vcpus-count", "3")
 
 
