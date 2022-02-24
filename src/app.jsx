@@ -87,7 +87,8 @@ export const App = () => {
                                                 });
                                                 setError(errorMsgs.join(', '));
                                             });
-                                }, () => {
+                                }, ex => {
+                                    console.error("Failed to get libvirt version from the dbus API:" + ex.message);
                                     /* If the API call failed on system connection and the user has superuser privileges then show the Empty state screen */
                                     if (conn == "system")
                                         setSystemSocketInactive(true);
