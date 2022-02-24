@@ -19,7 +19,7 @@ from testlib import MachineCase
 from netlib import NetworkHelpers
 from storagelib import StorageHelpers
 
-distrosWithMonolithicDaemon = ["fedora-34", "rhel-8-4", "rhel-8-5", "rhel-8-6", "ubuntu-stable", "ubuntu-2004", "debian-testing", "debian-stable", "centos-8-stream", "arch"]
+distrosWithMonolithicDaemon = ["fedora-34", "rhel-8-6", "ubuntu-stable", "debian-testing", "debian-stable", "centos-8-stream", "arch"]
 
 
 class VirtualMachinesCaseHelpers:
@@ -218,7 +218,11 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
         self.restore_dir("/etc/libvirt")
         self.restore_dir("/home/admin/.local/share/libvirt/")
 
+        # Reload the page between tests to ensure that error notifications from previous tests are not present
+        self.addCleanup(b.reload)
+
         self.startLibvirt(m)
+
         self.addCleanup(m.execute, f"systemctl stop {self.getLibvirtServiceName()}")
         if m.image not in distrosWithMonolithicDaemon:
             self.addCleanup(m.execute, "systemctl stop virtstoraged.service virtnetworkd.service")
@@ -267,13 +271,9 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
         self.allow_journal_messages(r'.* type=1400 .* apparmor="DENIED" operation="capable" profile="\S*libvirtd.* capname="sys_rawio".*')
         # AppArmor doesn't like the non-standard path for our storage pools
         self.allow_journal_messages('.* type=1400 .* apparmor="DENIED" operation="open" profile="virt-aa-helper" name="%s.*' % self.vm_tmpdir)
-        if m.image in ["ubuntu-2004", "ubuntu-stable"]:
+        if m.image in ["ubuntu-stable"]:
             self.allow_journal_messages('.* type=1400 .* apparmor="DENIED" operation="open" profile="libvirt.* name="/" .* denied_mask="r" .*')
             self.allow_journal_messages('.* type=1400 .* apparmor="DENIED" operation="open" profile="libvirt.* name="/sys/bus/nd/devices/" .* denied_mask="r" .*')
-
-        if m.image in ["ubuntu-2004"]:
-            # noisy debug message from old cockpit-ws
-            self.allow_journal_messages("logged in user session", "User .* logged into session .*", "New connection to session .*", "Connection to session .* closed")
 
         # FIXME: testDomainMemorySettings on Fedora-32 reports this. Figure out where it comes from.
         # Ignoring just to unbreak tests for now

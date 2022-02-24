@@ -104,33 +104,32 @@ class TestMachinesMigration(VirtualMachinesCase):
 
     # Only qemu 5.1.0 and above does checking for volumes compatibility during migration
     # See https://mail.gnu.org/archive/html/qemu-devel/2020-04/msg05559.html
-    @skipImage('Fails validation because ubuntu-2004 with qemu version below 5.1.0 does not compare volume sizes', "ubuntu-2004")
-    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-4", "rhel-8-5", "rhel-8-6", "rhel-9-0", "centos-9-stream")
+    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-6", "rhel-9-0", "centos-9-stream")
     def testFailMigrationVolumesNotCompatible(self):
         # Different sized volume already exists on destination
         self._testMigrationGeneric(True, False, "volume")
 
-    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-4", "rhel-8-5", "rhel-8-6", "rhel-9-0", "centos-9-stream")
+    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-6", "rhel-9-0", "centos-9-stream")
     def testFailMigrationTCPPortClosed(self):
         # Ports for TCP transfer are closed
         self._testMigrationGeneric(True, False, "port_closed")
 
-    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-4", "rhel-8-5", "rhel-8-6", "rhel-9-0", "centos-9-stream")
+    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-6", "rhel-9-0", "centos-9-stream")
     def testFailMigrationAuthentication(self):
         # No key authentication is set up
         self._testMigrationGeneric(True, False, "authentication")
 
-    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-4", "rhel-8-5", "rhel-8-6", "rhel-9-0", "centos-9-stream")
+    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-6", "rhel-9-0", "centos-9-stream")
     def testFailMigrationUriIncorrect(self):
         # Incorrect uri inputted
         self._testMigrationGeneric(True, False, "uri")
 
-    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-4", "rhel-8-5", "rhel-8-6", "rhel-9-0", "centos-9-stream")
+    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-6", "rhel-9-0", "centos-9-stream")
     def testFailMigrationDomainUnknown(self):
         # Destination domain name is not defined in /etc/hosts and is not resolvable
         self._testMigrationGeneric(True, False, "domain")
 
-    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-4", "rhel-8-5", "rhel-8-6", "rhel-9-0", "centos-9-stream")
+    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-6", "rhel-9-0", "centos-9-stream")
     def testFailMigrationStopLibvirtd(self):
         # Libvirtd.service is not working on the destination
         self._testMigrationGeneric(True, False, "libvirtd")
@@ -146,9 +145,6 @@ class TestMachinesMigration(VirtualMachinesCase):
 
         if not copy_storage:
             self.preCreateStorageOnDest(machine1, machine2)
-        # Older libvirt needs the destination storage preallocated
-        elif self.machine.image in ["ubuntu-2004"] and fail != "pool":
-            machine2.execute("qemu-img create -f qcow2 /var/lib/libvirt/images/subVmTest1-2.img 50M")
 
         self.waitVmRow("subVmTest1")
         self.goToVmPage("subVmTest1")

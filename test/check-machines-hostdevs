@@ -29,7 +29,7 @@ sys.path.append(os.path.join(TEST_DIR, "common"))
 sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
 
 from machineslib import VirtualMachinesCase  # noqa
-from testlib import skipImage, nondestructive, test_main  # noqa
+from testlib import nondestructive, test_main  # noqa
 from machinesxmls import USB_HOSTDEV, USB_HOSTDEV_NONEXISTENT, PCI_HOSTDEV  # noqa
 
 virt_xml_mock = """#!/usr/bin/python
@@ -105,7 +105,6 @@ class TestMachinesHostDevs(VirtualMachinesCase):
 
         b.wait_in_text("#vm-subVmTest1-hostdev-1-source #1-slot", "0000:00:0f.0")
 
-    @skipImage("exporting devices to qemu:///session not supported yet", "ubuntu-2004")
     def testHostDevAddSessionConnection(self):
         self.testHostDevAddSingleDevice('session')
 
