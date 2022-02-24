@@ -49,7 +49,7 @@ class TestMachinesFilesystems(VirtualMachinesCase):
         # wait until page initialized
         b.wait_visible("#vm-subVmTest1-hostdevs")
 
-        if m.image in ["rhel-8-5", "ubuntu-2004", "fedora-33"] or connection == "session":
+        if connection == "session":
             b.wait_not_present("#vm-subVmTest1-filesystems-add")
             return
 
@@ -104,7 +104,7 @@ class TestMachinesFilesystems(VirtualMachinesCase):
         b.set_file_autocomplete_val("#vm-subVmTest1-filesystems-modal-source-group", "/tmp/dir1/")
         b.set_input_text("#vm-subVmTest1-filesystems-modal-mountTag", "dir1")
         b.click("#vm-subVmTest1-filesystems-modal-add")
-        if m.image not in ['rhel-8-4', 'rhel-8-5', 'ubuntu-2004', 'fedora-34', 'debian-stable']:
+        if m.image not in ['fedora-34', 'debian-stable']:
             b.wait_in_text(".pf-c-alert", "Failed to add shared directory")
             b.wait_in_text(".pf-c-alert", "filesystem target 'dir1' specified twice")
             b.click("#vm-subVmTest1-filesystems-modal-cancel")
@@ -124,7 +124,7 @@ class TestMachinesFilesystems(VirtualMachinesCase):
         b.click("#vm-subVmTest1-run")
         b.wait_visible("#vm-subVmTest1-filesystems-add[aria-disabled=true]")
 
-    @skipImage("Older libvirt does not support virtiofs", "rhel-8-5", "rhel-8-6", "centos-8-stream", "ubuntu-2004", "fedora-33")
+    @skipImage("Older libvirt does not support virtiofs", "rhel-8-6", "centos-8-stream")
     def testDelete(self):
         b = self.browser
         m = self.machine

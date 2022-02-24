@@ -145,44 +145,33 @@ class TestMachinesCreate(VirtualMachinesCase):
         runner = TestMachinesCreate.CreateVmRunner(self)
         config = TestMachinesCreate.TestCreateConfig
 
-        b = self.browser
-        m = self.machine
-
         self.login_and_go("/machines")
         self.browser.wait_in_text("body", "Virtual machines")
 
         # try to CREATE few machines
         # --cloud-init user-data option exists since virt-install >= 3.0.0
-        if m.image in ['rhel-8-4', 'rhel-8-5', 'ubuntu-2004']:
-            b.click("#create-new-vm")
-            b.wait_visible("#create-vm-dialog")
-            self.browser.wait_not_present('select option[value=cloud]')
-        else:
-            runner.createCloudBaseImageTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
-                                                                        storage_size=10, storage_size_unit='MiB',
-                                                                        location=config.VALID_DISK_IMAGE_PATH,
-                                                                        os_name=config.FEDORA_28,
-                                                                        os_short_id=config.FEDORA_28_SHORTID,
-                                                                        user_password="catsaremybestfr13nds",
-                                                                        user_login="foo",
-                                                                        root_password="dogsaremybestfr13nds",
-                                                                        start_vm=True))
+        runner.createCloudBaseImageTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
+                                                                    storage_size=10, storage_size_unit='MiB',
+                                                                    location=config.VALID_DISK_IMAGE_PATH,
+                                                                    os_name=config.FEDORA_28,
+                                                                    os_short_id=config.FEDORA_28_SHORTID,
+                                                                    user_password="catsaremybestfr13nds",
+                                                                    user_login="foo",
+                                                                    root_password="dogsaremybestfr13nds",
+                                                                    start_vm=True))
 
-            # Test using a cloud image without setting the cloud init options
-            # https://bugzilla.redhat.com/show_bug.cgi?id=1978206
-            runner.createCloudBaseImageTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
-                                                                        storage_size=10, storage_size_unit='MiB',
-                                                                        location=config.VALID_DISK_IMAGE_PATH,
-                                                                        os_name=config.FEDORA_28,
-                                                                        os_short_id=config.FEDORA_28_SHORTID,
-                                                                        start_vm=True))
+        # Test using a cloud image without setting the cloud init options
+        # https://bugzilla.redhat.com/show_bug.cgi?id=1978206
+        runner.createCloudBaseImageTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
+                                                                    storage_size=10, storage_size_unit='MiB',
+                                                                    location=config.VALID_DISK_IMAGE_PATH,
+                                                                    os_name=config.FEDORA_28,
+                                                                    os_short_id=config.FEDORA_28_SHORTID,
+                                                                    start_vm=True))
 
     def testCreateDownloadAnOS(self):
         runner = TestMachinesCreate.CreateVmRunner(self)
         config = TestMachinesCreate.TestCreateConfig
-
-        b = self.browser
-        m = self.machine
 
         self.login_and_go("/machines")
         self.browser.wait_in_text("body", "Virtual machines")
@@ -195,35 +184,23 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                   os_short_id=config.FEDORA_28_SHORTID,
                                                                   start_vm=True))
 
-        # user-login option exists since virt-install >= 3.0.0
-        if m.image not in ['rhel-8-4', 'rhel-8-5', 'ubuntu-2004']:
-            runner.createDownloadAnOSTest(TestMachinesCreate.VmDialog(self, sourceType='os',
-                                                                      is_unattended=True, profile="desktop",
-                                                                      user_password="catsaremybestfr13nds",
-                                                                      user_login="foo",
-                                                                      root_password="dogsaremybestfr13nds",
-                                                                      storage_size=246, storage_size_unit='MiB',
-                                                                      os_name=config.FEDORA_28,
-                                                                      os_short_id=config.FEDORA_28_SHORTID))
+        runner.createDownloadAnOSTest(TestMachinesCreate.VmDialog(self, sourceType='os',
+                                                                  is_unattended=True, profile="desktop",
+                                                                  user_password="catsaremybestfr13nds",
+                                                                  user_login="foo",
+                                                                  root_password="dogsaremybestfr13nds",
+                                                                  storage_size=246, storage_size_unit='MiB',
+                                                                  os_name=config.FEDORA_28,
+                                                                  os_short_id=config.FEDORA_28_SHORTID))
 
-            # Don't create root account
-            runner.createDownloadAnOSTest(TestMachinesCreate.VmDialog(self, sourceType='os',
-                                                                      is_unattended=True, profile="desktop",
-                                                                      user_login="foo",
-                                                                      user_password="catsaremybestfr13nds",
-                                                                      storage_size=256, storage_size_unit='MiB',
-                                                                      os_name=config.FEDORA_28,
-                                                                      os_short_id=config.FEDORA_28_SHORTID))
-        else:
-            b.click("#create-new-vm")
-            b.wait_visible("#create-vm-dialog")
-            b.click("#os-select-group > div button")
-            b.click(f"#os-select li:contains('{config.FEDORA_28}') button")
-            b.click("#unattended-installation")
-            b.wait_not_present("#create-vm-dialog-user-password-pw1")
-            b.wait_not_present("#user-login")
-            b.click(".pf-c-modal-box__footer button:contains(Cancel)")
-            b.wait_not_present("#create-vm-dialog")
+        # Don't create root account
+        runner.createDownloadAnOSTest(TestMachinesCreate.VmDialog(self, sourceType='os',
+                                                                  is_unattended=True, profile="desktop",
+                                                                  user_login="foo",
+                                                                  user_password="catsaremybestfr13nds",
+                                                                  storage_size=256, storage_size_unit='MiB',
+                                                                  os_name=config.FEDORA_28,
+                                                                  os_short_id=config.FEDORA_28_SHORTID))
 
         # Don't create user account
         runner.createDownloadAnOSTest(TestMachinesCreate.VmDialog(self, sourceType='os',
@@ -297,11 +274,6 @@ class TestMachinesCreate(VirtualMachinesCase):
         # Stop it, tweak the XML to have serial console at bios and also redirect serial console to a file
         # We don't want to use start_vm == False because if we get a separate install phase
         # virt-install will overwrite our changes.
-
-        if self.machine.image in ["ubuntu-2004", "rhel-8-4", "rhel-8-5"]:
-            # https://bugzilla.redhat.com/show_bug.cgi?id=1818089
-            # After shutting it off virt-install will restart the domain and exit because of the above bug
-            self.machine.execute("virsh destroy pxe-guest")
 
         # Wait for virt-install to define the VM and then stop it
         wait(lambda: "pxe-guest" in self.machine.execute("virsh list --persistent"), delay=3)
@@ -461,7 +433,6 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                  memory_size=128, memory_size_unit='MiB',
                                                                  storage_pool="NoStorage"), True, True)
 
-    @skipImage("https://bugzilla.redhat.com/show_bug.cgi?id=1818089", "ubuntu-2004", "rhel-8-5")
     def testCreateFileSource(self):
         runner = TestMachinesCreate.CreateVmRunner(self)
         config = TestMachinesCreate.TestCreateConfig
@@ -1294,17 +1265,7 @@ class TestMachinesCreate(VirtualMachinesCase):
             b.click(f"#vm-{dialog.name}-delete-modal-dialog button:contains(Delete)")
             b.wait_not_present(f"#vm-{dialog.name}-delete-modal-dialog")
 
-            try:
-                self.test_obj.waitVmRow(dialog.name, "system", False)
-            except Error:
-                if dialog.sourceType == 'url' and self.machine.image in ["ubuntu-2004", "rhel-8-4", "rhel-8-5"]:
-                    # https://bugzilla.redhat.com/show_bug.cgi?id=1818089
-                    # After destroying, virt-install will restart the domain and exit
-                    self.machine.execute(f"virsh undefine {dialog.name}; virsh destroy {dialog.name}")
-                    self.test_obj.waitVmRow(dialog.name, "system", False)
-                else:
-                    raise
-
+            self.test_obj.waitVmRow(dialog.name, "system", False)
             return self
 
         def _commandNotRunning(self, command):
@@ -1588,24 +1549,11 @@ class TestMachinesCreate(VirtualMachinesCase):
         b.reload()
         b.enter_page('/machines')
 
-        # HACK: Capabilities are not updated dynamically
-        # https://bugzilla.redhat.com/show_bug.cgi?id=1807198
-        def hack_broken_caps():
-            if m.image in ["rhel-8-5", "ubuntu-2004"]:
-                m.execute("systemctl restart libvirtd")
-                # We don't get events for shut off VMs so reload the page
-                b.reload()
-                b.enter_page('/machines')
-
-        hack_broken_caps()
-
         b.mouse("#vm-VmNotInstalled-firmware-tooltip", "mouseenter")
         b.wait_in_text(".pf-c-tooltip", "Libvirt did not detect any UEFI/OVMF firmware image installed on the host")
         b.mouse("#vm-VmNotInstalled-firmware-tooltip", "mouseleave")
         b.wait_not_present("#missing-uefi-images")
         m.execute("umount " + ovmf_path)
-
-        hack_broken_caps()
 
         # Install the VM
         b.click("#vm-VmNotInstalled-install")
@@ -1615,12 +1563,6 @@ class TestMachinesCreate(VirtualMachinesCase):
         logfile = "/var/log/libvirt/qemu/VmNotInstalled.log"
         m.execute(f"> {logfile}")  # clear logfile
         self.performAction("VmNotInstalled", "forceOff", False)
-        if m.image in ["ubuntu-2004", "rhel-8-4", "rhel-8-5"]:
-            # https://bugzilla.redhat.com/show_bug.cgi?id=1818089
-            # After shutting it off virt-install will restart the domain and exit because of the above bug
-            # We need to wait till it's restarted and shut if off again in order to edit the offline VM configuration
-            wait(lambda: "char device" in self.machine.execute(f"cat {logfile}"), delay=3)
-            self.performAction("VmNotInstalled", "forceOff", False)
         b.wait_in_text("#vm-VmNotInstalled-state", "Shut off")
         wait(lambda: "133120" in m.execute("virsh dominfo VmNotInstalled | grep 'Used memory'"), delay=1)  # Wait until memory parameters get adjusted after shutting the VM
 
