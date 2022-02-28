@@ -389,7 +389,8 @@ export function domainDelete({
                     // Transient domains get undefined after shut off
                     if (!ex.message.includes("Domain not found"))
                         return Promise.reject(ex);
-                });
+                })
+                .then(deleteStorage);
     }
 }
 
