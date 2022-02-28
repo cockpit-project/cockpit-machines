@@ -444,6 +444,27 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         self.waitVmRow(name, 'system', False)
         b.wait_not_present(f'#vm-{name}-state button:contains("view more")')
 
+        # Delete a shut-off guest and verify the storage was removed
+        name = "vm-shutoff"
+        img2 = f"/var/lib/libvirt/images/{name}-2.img"
+        self.createVm(name, running=False)
+        # Guest disk image exists
+        m.execute(f"while ! test -f {img2}; do sleep 1; done")
+
+        self.performAction(name, "delete")
+
+        b.wait_visible(f"#vm-{name}-delete-modal-dialog .disk-source-file:contains({img2})")
+        b.wait_visible(f"#vm-{name}-delete-modal-dialog input[name='check-action-vda']:checked")
+        b.click(f"#vm-{name}-delete-modal-dialog button:contains(Delete)")
+        b.wait_not_present(f"#vm-{name}-delete-modal-dialog")
+
+        self.waitVmRow(name, "system", False)
+
+        # Guest disk image has been deleted
+        m.execute(f"while test -f {img2}; do sleep 1; done")
+
+        self.assertNotIn(name, m.execute("virsh list --all --name"))
+
         # Deleting a running guest will disconnect the serial console
         self.allow_browser_errors("Disconnection timed out.")
         self.allow_journal_messages(".* couldn't shutdown fd: Transport endpoint is not connected")
