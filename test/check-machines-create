@@ -22,6 +22,7 @@ import xml.etree.ElementTree as ET
 import os
 import sys
 import math
+from datetime import datetime
 
 # import Cockpit's machinery for test VMs and its browser test API
 TEST_DIR = os.path.dirname(__file__)
@@ -55,7 +56,7 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                             location=config.NOVELL_MOCKUP_ISO_PATH,
                                                             memory_size=128, memory_size_unit='MiB',
                                                             storage_size=12500, storage_size_unit='GiB',
-                                                            create_and_run=True,
+                                                            create_and_run=False,
                                                             pixel_test_tag="iso"))
 
         runner.cancelDialogTest(TestMachinesCreate.VmDialog(self, sourceType='url',
@@ -99,7 +100,7 @@ class TestMachinesCreate(VirtualMachinesCase):
 
         # try to CREATE WITH DIALOG ERROR
         # name
-        runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, "", storage_size=1), {"vm-name": "Name must not be empty"})
+        runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, "", storage_size=1, os_name=None), {"vm-name": "Name must not be empty"})
 
         # location
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, sourceType='url',
@@ -139,6 +140,58 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                          sourceTypeSecondChoice='url',
                                                                          create_and_run=False),
                                              {"source-url": "Installation source must not be empty"})
+
+    def testCreateNameGeneration(self):
+        config = TestMachinesCreate.TestCreateConfig
+        runner = TestMachinesCreate.CreateVmRunner(self)
+
+        self.login_and_go("/machines")
+        self.browser.wait_in_text("body", "Virtual machines")
+
+        runner.checkEnvIsEmpty()
+
+        date = datetime.today().strftime('%Y-%-m-%-d')
+        connection_name = "system"
+        predicted_name = "fedora28-" + date
+        runner.createTest(TestMachinesCreate.VmDialog(self, name=predicted_name,
+                                                      name_generated=True,
+                                                      sourceType='os',
+                                                      storage_size=10, storage_size_unit='MiB',
+                                                      os_name=config.FEDORA_28,
+                                                      os_short_id=config.FEDORA_28_SHORTID,
+                                                      connection=connection_name,
+                                                      delete=False,
+                                                      create_and_run=False))
+
+        self.goToMainPage()
+
+        # The VM with the same name already exists, so "-B" will be appended
+        connection_name = "system"
+        predicted_name += "-B"
+        runner.createTest(TestMachinesCreate.VmDialog(self, name=predicted_name,
+                                                      name_generated=True, sourceType='os',
+                                                      storage_size=10, storage_size_unit='MiB',
+                                                      os_name=config.FEDORA_28,
+                                                      os_short_id=config.FEDORA_28_SHORTID,
+                                                      connection=connection_name,
+                                                      delete=True,
+                                                      create_and_run=False),
+                          check_env_empty=False)
+
+        # Generation for user session connection
+        # It's possible for 2 VMs with the same name to exist on cifferent connections
+        connection_name = "session"
+        predicted_name = "fedora28-" + date
+        runner.createTest(TestMachinesCreate.VmDialog(self, name=predicted_name,
+                                                      name_generated=True,
+                                                      sourceType='os',
+                                                      storage_size=10, storage_size_unit='MiB',
+                                                      os_name=config.FEDORA_28,
+                                                      os_short_id=config.FEDORA_28_SHORTID,
+                                                      connection=connection_name,
+                                                      delete=True,
+                                                      create_and_run=False),
+                          check_env_empty=False)
 
     def testCreateCloudBaseImage(self):
         runner = TestMachinesCreate.CreateVmRunner(self)
@@ -650,7 +703,7 @@ vnc_password= "{vnc_passwd}"
     class VmDialog:
         vmId = 0
 
-        def __init__(self, test_obj, name=None,
+        def __init__(self, test_obj, name=None, name_generated=False,
                      sourceType='file', sourceTypeSecondChoice=None, location='',
                      memory_size=128, memory_size_unit='MiB',
                      expected_memory_size=None,
@@ -714,6 +767,7 @@ vnc_password= "{vnc_passwd}"
             self.env_is_empty = env_is_empty
             self.check_script_finished = check_script_finished
             self.connection = connection
+            self.name_generated = name_generated
 
             self.pixel_test_tag = pixel_test_tag
 
@@ -948,7 +1002,8 @@ vnc_password= "{vnc_passwd}"
 
         def fill(self):
             b = self.browser
-            b.set_input_text("#vm-name", self.name)
+            if not self.name_generated:
+                b.set_input_text("#vm-name", self.name)
 
             if self.os_name:
                 b.click("#os-select-group > div button")
@@ -1287,8 +1342,8 @@ vnc_password= "{vnc_passwd}"
             self._assertVmStates(dialog.name, dialog.connection, init_state, second_state)
             b.wait_not_present("#create-vm-dialog")
 
-        def _tryCreate(self, dialog):
-            name = dialog.name
+        def _tryCreate(self, dialog, generated_name=None):
+            name = generated_name or dialog.name
 
             dialog.open() \
                 .fill()
@@ -1470,7 +1525,7 @@ vnc_password= "{vnc_passwd}"
             if dialog.env_is_empty:
                 self.checkEnvIsEmpty()
 
-        def createTest(self, dialog):
+        def createTest(self, dialog, check_env_empty=True):
             self._tryCreate(dialog) \
 
             # When not booting the actual OS from either existing image
@@ -1481,8 +1536,9 @@ vnc_password= "{vnc_passwd}"
                     ._assertDomainDefined(dialog.name, dialog.connection)
 
             if dialog.delete:
-                self._deleteVm(dialog) \
-                    .checkEnvIsEmpty(dialog)
+                self._deleteVm(dialog)
+                if check_env_empty:
+                    self.checkEnvIsEmpty(dialog)
 
         def cancelDialogTest(self, dialog):
             dialog.open() \

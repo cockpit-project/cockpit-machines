@@ -51,6 +51,7 @@ EXCLUDES="$EXCLUDES
           TestMachinesCreate.testConfigureBeforeInstall
           TestMachinesCreate.testConfigureBeforeInstallBios
           TestMachinesCreate.testCreateBasicValidation
+          TestMachinesCreate.testCreateNameGeneration
           TestMachinesCreate.testDisabledCreate
 
           TestMachinesConsoles.testExternalConsole
