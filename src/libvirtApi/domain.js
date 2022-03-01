@@ -332,6 +332,8 @@ export function domainDelete({
 
             switch (disk.type) {
             case 'file': {
+                logDebug(`deleteStorage: deleting file storage ${disk.source.file}`);
+
                 storageVolPromises.push(
                     call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StorageVolLookupByPath', [disk.source.file], { timeout, type: 's' })
                             .then(volPath => call(connectionName, volPath[0], 'org.libvirt.StorageVol', 'Delete', [0], { timeout, type: 'u' }))
@@ -348,6 +350,7 @@ export function domainDelete({
                 break;
             }
             case 'volume': {
+                logDebug(`deleteStorage: deleting volume storage ${disk.source.volume} on pool ${disk.source.pool}`);
                 storageVolPromises.push(
                     call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName', [disk.source.pool], { timeout, type: 's' })
                             .then(objPath => call(connectionName, objPath[0], 'org.libvirt.StoragePool', 'StorageVolLookupByName', [disk.source.volume], { timeout, type: 's' }))
