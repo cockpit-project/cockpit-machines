@@ -58,15 +58,15 @@ const DeleteDialogBody = ({ disks, destroy, onChange }) => {
                                 {disk.type == 'file' &&
                                 <div className='disk-source'>
                                     <span> {_("Path")} </span>
-                                    <strong id='disk-source-file'> {disk.source.file} </strong>
+                                    <strong className='disk-source-file'> {disk.source.file} </strong>
                                 </div>}
                                 {disk.type == 'volume' &&
                                 <div className='disk-source'>
                                     <span htmlFor='disk-source-volume'> {_("Volume")} </span>
-                                    <strong id='disk-source-volume'> {disk.source.volume} </strong>
+                                    <strong className='disk-source-volume'> {disk.source.volume} </strong>
 
                                     <span htmlFor='disk-source-pool'> {_("Pool")} </span>
-                                    <strong id='disk-source-pool'> {disk.source.pool} </strong>
+                                    <strong className='disk-source-pool'> {disk.source.pool} </strong>
                                 </div>}
                             </DataListCell>,
                         ]}
