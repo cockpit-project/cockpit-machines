@@ -156,10 +156,28 @@ function getStorageDefaults() {
     return { storageSize, storageSizeUnit, minimumStorage };
 }
 
+function getVmName(connectionName, vms, os) {
+    let retName = os.shortId;
+
+    const date = new Date();
+    retName += '-' + date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+
+    let tmpRetName = retName;
+    // VM with same name already exists, append a character at the end, starting with 'B'
+    for (let i = 66; vms.some(vm => vm.name === tmpRetName && connectionName == vm.connectionName) && i <= 91; i++) {
+        // Could not generate name which doesn't collide with any other VM name
+        if (i === 91)
+            return "";
+        tmpRetName = retName + '-' + String.fromCharCode(i);
+    }
+
+    return tmpRetName;
+}
+
 function validateParams(vmParams) {
     const validationFailed = {};
 
-    if (isEmpty(vmParams.vmName.trim()))
+    if (isEmpty(vmParams.vmName.trim()) && isEmpty(vmParams.suggestedVmName.trim()))
         validationFailed.vmName = _("Name must not be empty");
     else if (vmParams.vms.some(vm => vm.name === vmParams.vmName))
         validationFailed.vmName = cockpit.format(_("VM $0 already exists"), vmParams.vmName);
@@ -222,7 +240,7 @@ function validateParams(vmParams) {
     return validationFailed;
 }
 
-const NameRow = ({ vmName, onValueChanged, validationFailed }) => {
+const NameRow = ({ vmName, suggestedVmName, onValueChanged, validationFailed }) => {
     const validationStateName = validationFailed.vmName ? 'error' : 'default';
 
     return (
@@ -234,7 +252,7 @@ const NameRow = ({ vmName, onValueChanged, validationFailed }) => {
                        validated={validationStateName}
                        minLength={1}
                        value={vmName || ''}
-                       placeholder={_("Unique name")}
+                       placeholder={isEmpty(suggestedVmName.trim()) ? _("Unique name") : cockpit.format(_("Unique name, default: $0"), suggestedVmName)}
                        onChange={value => onValueChanged('vmName', value)} />
         </FormGroup>
     );
@@ -748,6 +766,7 @@ class CreateVmModal extends React.Component {
             activeTabKey: 0,
             validate: false,
             vmName: '',
+            suggestedVmName: '',
             connectionName: LIBVIRT_SYSTEM_CONNECTION,
             sourceType: defaultSourceType,
             source: '',
@@ -870,6 +889,12 @@ class CreateVmModal extends React.Component {
                 // storage pools are different for each connection, so we set storagePool value to default (newVolume)
                 this.setState({ storagePool: "NewVolume" });
             }
+
+            // For different connections the generated VM names might differ
+            // try to regenerate it
+            if (this.state.os)
+                this.setState({ suggestedVmName: getVmName(value, this.props.vms, this.state.os) });
+
             break;
         case 'os': {
             const stateDelta = { [key]: value };
@@ -904,6 +929,10 @@ class CreateVmModal extends React.Component {
             if (!value || !value.unattendedInstallable)
                 this.onValueChanged('unattendedInstallation', false);
 
+            // generate VM name based on OS if user selects an OS
+            // clear generated VM name if they unselect an OS
+            stateDelta.suggestedVmName = value ? getVmName(this.state.connectionName, this.props.vms, value) : "";
+
             this.setState(stateDelta);
             break;
         }
@@ -915,6 +944,7 @@ class CreateVmModal extends React.Component {
 
     onCreateClicked(startVm) {
         const { storagePools, close, onAddErrorNotification, osInfoList, nodeMaxMemory, vms } = this.props;
+        const vmName = isEmpty(this.state.vmName.trim()) ? this.state.suggestedVmName : this.state.vmName;
 
         const validation = validateParams({ ...this.state, osInfoList, nodeMaxMemory, vms: vms.filter(vm => vm.connectionName == this.state.connectionName) });
         if (Object.getOwnPropertyNames(validation).length > 0) {
@@ -928,7 +958,7 @@ class CreateVmModal extends React.Component {
             const unattendedInstallation = this.state.rootPassword || this.state.userLogin || this.state.userPassword;
             const vmParams = {
                 connectionName: this.state.connectionName,
-                vmName: this.state.vmName,
+                vmName,
                 source: this.state.source,
                 sourceType: this.state.sourceType,
                 os: this.state.os ? this.state.os.shortId : 'auto',
@@ -970,7 +1000,7 @@ class CreateVmModal extends React.Component {
                 return promise
                         .then(() => cockpit.location.go(["vm"], {
                             ...cockpit.location.options,
-                            name: this.state.vmName,
+                            name: vmName,
                             connection: this.state.connectionName
                         }));
             }
@@ -1085,6 +1115,8 @@ class CreateVmModal extends React.Component {
             <Form isHorizontal>
                 <NameRow
                     vmName={this.state.vmName}
+                    suggestedVmName={this.state.suggestedVmName}
+                    os={this.state.os}
                     onValueChanged={this.onValueChanged}
                     validationFailed={validationFailed} />
                 { this.props.mode === "create"
