@@ -377,10 +377,10 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         self.performAction(name, "delete")
 
         b.wait_visible(f"#vm-{name}-delete-modal-dialog .modal-body:contains(The VM is running)")
-        b.wait_visible(f"#vm-{name}-delete-modal-dialog ul li:first-child #disk-source-file:contains({img2})")
+        b.wait_visible(f"#vm-{name}-delete-modal-dialog ul li:first-child .disk-source-file:contains({img2})")
         # virsh attach-disk does not create disks of type volume
-        b.wait_visible(f"#vm-{name}-delete-modal-dialog #disk-source-volume:contains({secondDiskVolName})")
-        b.wait_visible(f"#vm-{name}-delete-modal-dialog #disk-source-pool:contains({poolName})")
+        b.wait_visible(f"#vm-{name}-delete-modal-dialog .disk-source-volume:contains({secondDiskVolName})")
+        b.wait_visible(f"#vm-{name}-delete-modal-dialog .disk-source-pool:contains({poolName})")
         b.assert_pixels(f"#vm-{name}-delete-modal-dialog", "vm-delete-dialog")
         b.click(f"#vm-{name}-delete-modal-dialog button:contains(Delete)")
         b.wait_not_present(f"#vm-{name}-delete-modal-dialog")
@@ -426,7 +426,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
             self.performAction(name, "delete")
 
             # Unselect the disks - we don't want to delete them
-            b.click("#vm-vm-with-snapshots-delete-modal-dialog ul li:first-child #disk-source-file")
+            b.click("#vm-vm-with-snapshots-delete-modal-dialog ul li:first-child input")
             b.click("#vm-vm-with-snapshots-delete-modal-dialog button:contains(Delete)")
             b.wait_not_present(f"#vm-{name}-delete-modal-dialog")
 
