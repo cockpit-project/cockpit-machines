@@ -54,6 +54,10 @@ EXCLUDES="$EXCLUDES TestMachinesHostDevs.testHostDevAdd"
 # FIXME: https://github.com/cockpit-project/cockpit-machines/issues/581
 EXCLUDES="$EXCLUDES TestMachinesCreate.testCreateThenInstall"
 
+if [ "$TEST_OS" = "fedora-37" ]; then
+    EXCLUDES="$EXCLUDES TestMachinesSettings.testVCPU"
+fi
+
 if [ "$ID" = "fedora" ]; then
     # Testing Farm machines are really slow in European evenings
     export TEST_TIMEOUT_FACTOR=3
