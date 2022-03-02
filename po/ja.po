@@ -12,9 +12,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-02-16 02:55+0000\n"
-"PO-Revision-Date: 2021-09-17 08:05+0000\n"
-"Last-Translator: Sundeep Anand <suanand@redhat.com>\n"
+"POT-Creation-Date: 2022-03-02 03:00+0000\n"
+"PO-Revision-Date: 2022-03-02 12:34+0000\n"
+"Last-Translator: Transtats <suanand@redhat.com>\n"
 "Language-Team: Japanese <https://translate.fedoraproject.org/projects/"
 "cockpit-machines/main/ja/>\n"
 "Language: ja\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0\n"
-"X-Generator: Weblate 4.8\n"
+"X-Generator: Weblate 4.11\n"
 
 #: src/components/vm/overview/cpuTypeModal.jsx:60
 msgid "$0 CPU configuration"
@@ -98,7 +98,7 @@ msgstr "追加する"
 
 #: src/components/networks/networkOverviewTab.jsx:195
 msgid "Add a DHCP static host entry"
-msgstr ""
+msgstr "DHCP 静的ホストエントリーの追加"
 
 #: src/components/vm/disks/diskAdd.jsx:655
 #: src/components/vm/disks/vmDisksCard.jsx:89
@@ -107,10 +107,8 @@ msgstr "ディスクの追加"
 
 #: src/components/vm/hostdevs/hostDevAdd.jsx:230
 #: src/components/vm/hostdevs/hostDevCard.jsx:47
-#, fuzzy
-#| msgid "host device"
 msgid "Add host device"
-msgstr "ホストデバイス"
+msgstr "ホストデバイスの追加"
 
 #: src/components/vm/nics/vmNicsCard.jsx:85
 msgid "Add network interface"
@@ -244,7 +242,7 @@ msgstr "キャッシュ"
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:168
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:71
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:145
-#: src/components/vm/deleteDialog.jsx:146
+#: src/components/vm/deleteDialog.jsx:160
 #: src/components/vm/overview/memoryModal.jsx:154
 #: src/components/vm/overview/bootOrder.jsx:315
 #: src/components/vm/overview/vcpuModal.jsx:261
@@ -267,10 +265,8 @@ msgid "Capacity"
 msgstr "容量"
 
 #: src/components/vm/overview/bootOrder.jsx:307
-#, fuzzy
-#| msgid "Boot order"
 msgid "Change boot order"
-msgstr "ブート順序"
+msgstr "ブート順序の変更"
 
 #: src/components/vm/overview/firmware.jsx:58
 msgid "Change firmware"
@@ -447,10 +443,8 @@ msgid "Custom path"
 msgstr "カスタムパス"
 
 #: src/components/networks/networkOverviewTab.jsx:238
-#, fuzzy
-#| msgid "DHCP range"
 msgid "DHCP Settings"
-msgstr "DHCP の範囲"
+msgstr "DHCP 設定"
 
 #: src/components/storagePools/storagePool.jsx:162
 #: src/components/networks/network.jsx:161
@@ -462,7 +456,7 @@ msgstr "解除"
 #: src/components/storagePools/storagePoolDelete.jsx:231
 #: src/components/networks/network.jsx:143
 #: src/components/networks/network.jsx:145
-#: src/components/vm/deleteDialog.jsx:143 src/components/vm/vmActions.jsx:379
+#: src/components/vm/deleteDialog.jsx:157 src/components/vm/vmActions.jsx:379
 #: src/components/vm/vmActions.jsx:386
 #: src/components/common/deleteResource.jsx:61
 #: src/components/common/deleteResource.jsx:66
@@ -476,7 +470,7 @@ msgid "Delete $0 volume"
 msgid_plural "Delete $0 volumes"
 msgstr[0] "$0 ボリュームの削除"
 
-#: src/components/vm/deleteDialog.jsx:71
+#: src/components/vm/deleteDialog.jsx:87
 msgid "Delete associated storage files:"
 msgstr "関連するストレージファイルの削除:"
 
@@ -686,7 +680,7 @@ msgstr "ファームウェアの変更に失敗しました"
 msgid "Failed to clone VM $0"
 msgstr "VM $0 仮想マシンのクローンに失敗しました"
 
-#: src/app.jsx:134
+#: src/app.jsx:135
 msgid "Failed to fetch some resources"
 msgstr "一部のリソースの取得に失敗しました"
 
@@ -700,7 +694,7 @@ msgstr "仮想マシン $0 の名前変更に失敗しました"
 
 #: src/components/networks/networkOverviewTab.jsx:198
 msgid "Failed to save network settings"
-msgstr ""
+msgstr "ネットワーク設定の保存に失敗しました"
 
 #: src/components/vm/consoles/vnc.jsx:130
 msgid "Failed to send key Ctrl+Alt+$0 to VM $1"
@@ -780,7 +774,7 @@ msgstr "自動生成"
 msgid "GiB"
 msgstr "GiB"
 
-#: src/app.jsx:226
+#: src/app.jsx:227
 msgid "Go to VMs list"
 msgstr "仮想マシンの一覧に移動"
 
@@ -801,10 +795,8 @@ msgid "Host device"
 msgstr "ホストデバイス"
 
 #: src/components/vm/hostdevs/hostDevAdd.jsx:194
-#, fuzzy
-#| msgid "Boot order settings could not be saved"
 msgid "Host device could not be attached"
-msgstr "ブート順序の設定は保存できませんでした"
+msgstr "ホストデバイスを割り当てられませんでした"
 
 #: src/components/vm/vmDetailsPage.jsx:184
 msgid "Host devices"
@@ -832,10 +824,8 @@ msgid "IP address"
 msgstr "IP アドレス"
 
 #: src/components/networks/networkOverviewTab.jsx:219
-#, fuzzy
-#| msgid "Name must not be empty"
 msgid "IP address must not be empty"
-msgstr "名前は空欄にできません"
+msgstr "IP アドレスを空欄にすることはできません"
 
 #: src/components/networks/createNetworkDialog.jsx:182
 msgid "IP configuration"
@@ -915,6 +905,9 @@ msgid ""
 "If the switch is not VEPA-capable, communication between guest virtual "
 "machines, or between a guests and the host is not possible."
 msgstr ""
+"デフォルトの「vepa」モードでは、切り替えは外部スイッチにオフロードされます。"
+"スイッチが VEPA 対応ではない場合、ゲスト仮想マシン間の通信、またはゲストとホ"
+"スト間の通信はできません。"
 
 #: src/components/storagePools/createStoragePoolDialog.jsx:139
 msgid "Initiator"
@@ -1035,10 +1028,8 @@ msgstr ""
 "トールツリー)"
 
 #: src/components/vm/hostdevs/hostDevAdd.jsx:129
-#, fuzzy
-#| msgid "Connection"
 msgid "Location"
-msgstr "接続"
+msgstr "場所"
 
 #: src/components/vm/overview/bootOrder.jsx:121
 msgid "MAC"
@@ -1052,10 +1043,8 @@ msgid "MAC address"
 msgstr "MAC アドレス"
 
 #: src/components/networks/networkOverviewTab.jsx:211
-#, fuzzy
-#| msgid "Name must not be empty"
 msgid "MAC address must not be empty"
-msgstr "名前は空欄にできません"
+msgstr "MAC アドレスを空欄にすることはできません"
 
 #: src/components/vm/disks/diskEdit.jsx:89
 msgid "Machine must be shut off before changing bus type"
@@ -1396,13 +1385,13 @@ msgstr "概要"
 
 #: src/components/vm/hostdevs/hostDevAdd.jsx:57
 msgid "PCI"
-msgstr ""
+msgstr "PCI"
 
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:151
 msgid "Parent snapshot"
 msgstr "親のスナップショット"
 
-#: src/components/vm/deleteDialog.jsx:46
+#: src/components/vm/deleteDialog.jsx:60
 #: src/components/vm/hostdevs/hostDevCard.jsx:152
 #: src/components/vm/hostdevs/hostDevCard.jsx:156
 #: src/components/vm/disks/diskEdit.jsx:39
@@ -1470,7 +1459,7 @@ msgstr "新しいボリューム名を入力してください"
 msgid "Please start the virtual machine to access its console."
 msgstr "仮想マシンを起動して、コンソールにアクセスしてください。"
 
-#: src/components/vm/deleteDialog.jsx:54
+#: src/components/vm/deleteDialog.jsx:68
 #: src/components/vm/overview/bootOrder.jsx:109
 #: src/components/vm/disks/diskAdd.jsx:116
 #: src/components/vm/disks/vmDiskColumns.jsx:52
@@ -1565,10 +1554,8 @@ msgid "Provides a virtual LAN with NAT to the outside world."
 msgstr "NAT で仮想 LAN を外部に提供します。"
 
 #: src/components/networks/networkOverviewTab.jsx:242
-#, fuzzy
-#| msgid "Change"
 msgid "Range"
-msgstr "変更"
+msgstr "範囲"
 
 #: src/components/vm/disks/diskEdit.jsx:120
 #: src/components/vm/disks/vmDisksCard.jsx:259
@@ -1692,10 +1679,8 @@ msgid "Serial console"
 msgstr "シリアルコンソール"
 
 #: src/components/vm/consoles/consoles.jsx:115
-#, fuzzy
-#| msgid "Serial console"
 msgid "Serial console ($0)"
-msgstr "シリアルコンソール"
+msgstr "シリアルコンソール ($0)"
 
 #: src/components/common/machinesConnectionSelector.jsx:43 src/helpers.js:220
 msgid "Session"
@@ -1856,7 +1841,7 @@ msgstr "状態"
 
 #: src/components/networks/networkOverviewTab.jsx:250
 msgid "Static host entries"
-msgstr ""
+msgstr "静的ホストエントリー"
 
 #: src/components/vm/vmMigrateDialog.jsx:94
 #: src/components/create-vm-dialog/createVmDialog.jsx:677
@@ -1934,7 +1919,7 @@ msgstr "システム"
 
 #: src/components/vm/hostdevs/hostDevAdd.jsx:128
 msgid "Table of selectable host devices"
-msgstr ""
+msgstr "選択可能なホストデバイスの表"
 
 #: src/components/vm/overview/bootOrder.jsx:155
 #: src/components/vm/hostdevs/hostDevCard.jsx:138
@@ -1962,7 +1947,7 @@ msgstr "一時的な移行"
 msgid "The $0 could not be deleted"
 msgstr "$0 は削除できませんでした"
 
-#: src/components/vm/deleteDialog.jsx:65
+#: src/components/vm/deleteDialog.jsx:81
 msgid "The VM is running and will be forced off before deletion."
 msgstr "仮想マシンが稼動しているため、削除前に強制的に電源がオフになります。"
 
@@ -2041,6 +2026,7 @@ msgstr ""
 msgid ""
 "This is the recommended config for high performance or enhanced security."
 msgstr ""
+"これは、高パフォーマンスまたはセキュリティーの強化用に推奨される設定です。"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:696
 msgid "This volume is already used by another VM."
@@ -2086,7 +2072,7 @@ msgstr "URL (ISO イメージまたはディストリビューションインス
 
 #: src/components/vm/hostdevs/hostDevAdd.jsx:52
 msgid "USB"
-msgstr ""
+msgstr "USB"
 
 #: src/components/vm/hostdevs/hostDevCard.jsx:148
 msgid "UUID"
@@ -2094,7 +2080,7 @@ msgstr "UUID"
 
 #: src/components/vm/hostdevs/hostDevAdd.jsx:133
 msgid "Undefined"
-msgstr ""
+msgstr "未定義"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:210
 msgid "Unique name"
@@ -2179,7 +2165,7 @@ msgstr "VCPU 設定を保存できませんでした"
 msgid "VM $0 already exists"
 msgstr "VM $0 はすでに存在します"
 
-#: src/app.jsx:222
+#: src/app.jsx:223
 msgid "VM $0 does not exist on $1 connection"
 msgstr "VM $0 は $1 接続に存在しません"
 
@@ -2191,7 +2177,7 @@ msgstr "VM $0 は、強制的に再起動させることに失敗しました"
 msgid "VM $0 failed to force shutdown"
 msgstr "VM $0 は、強制的にシャットダウンさせることに失敗しました"
 
-#: src/components/vm/deleteDialog.jsx:130
+#: src/components/vm/deleteDialog.jsx:144
 msgid "VM $0 failed to get deleted"
 msgstr "VM $0 の削除に失敗しました"
 
@@ -2279,7 +2265,7 @@ msgstr "仮想ネットワークの作成に失敗しました"
 msgid "Virtualization service (libvirt) is not active"
 msgstr "仮想化サービス (libvirt) は有効ではありません"
 
-#: src/components/vm/deleteDialog.jsx:51
+#: src/components/vm/deleteDialog.jsx:65
 #: src/components/vm/overview/bootOrder.jsx:110
 #: src/components/vm/disks/diskAdd.jsx:82
 #: src/components/vm/disks/vmDiskColumns.jsx:53
@@ -2329,7 +2315,7 @@ msgstr "アクティブ"
 
 #: src/components/networks/networkOverviewTab.jsx:154
 msgid "add entry"
-msgstr ""
+msgstr "エントリーの追加"
 
 #: src/helpers.js:250
 msgid "bridge"
@@ -2458,7 +2444,7 @@ msgstr "保存されている状態がありません"
 
 #: src/components/networks/networkOverviewTab.jsx:258
 msgid "none"
-msgstr ""
+msgstr "なし"
 
 #: src/manifest.json:0
 msgid "pxe"
