@@ -21,6 +21,11 @@ dnf install --disablerepo=fedora-cisco-openh264 -y firefox
 #HACK: unbreak rhel-9-0's default choice of 999999999 rounds, see https://bugzilla.redhat.com/show_bug.cgi?id=1993919
 sed -ie 's/#SHA_CRYPT_MAX_ROUNDS 5000/SHA_CRYPT_MAX_ROUNDS 5000/' /etc/login.defs
 
+# HACK: https://bugzilla.redhat.com/show_bug.cgi?id=2057769
+if [ "$(rpm -q edk2-ovmf)" = "edk2-ovmf-20220126gitbb1bba3d77-3.el9.noarch" ]; then
+    rm /usr/share/qemu/firmware/50-edk2-ovmf-amdsev.json
+fi
+
 # Show critical packages versions
 rpm -q qemu-kvm libvirt-daemon selinux-policy cockpit-bridge cockpit-machines
 
