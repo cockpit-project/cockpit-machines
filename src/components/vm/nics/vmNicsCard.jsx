@@ -313,7 +313,7 @@ export class VmNetworkTab extends React.Component {
                         return (
                             <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${id}-network-${networkId}-source`}>
                                 <FlexItem>{getSourceElem[network.type](getIfaceSourceName(network), networkId)}</FlexItem>
-                                {inactiveNIC && inactiveNIC.source[inactiveNIC.type] !== network.source[network.type] && <WarningInactive iconId={`${id}-network-${networkId}-source-tooltip`} tooltipId="tip-network" />}
+                                {inactiveNIC && getIfaceSourceName(inactiveNIC) !== getIfaceSourceName(network) && <WarningInactive iconId={`${id}-network-${networkId}-source-tooltip`} tooltipId="tip-network" />}
                             </Flex>
                         );
                     } else {
