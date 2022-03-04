@@ -411,6 +411,28 @@ class TestMachinesNICs(VirtualMachinesCase):
                 f"#vm-subVmTest1-network-{self.nic_num}-mac",
                 self.mac if self.mac and self.vm_state == "shut off" else self.mac_current
             )
+            if self.vm_state == "running":
+                if self.source_type is not None and self.source_type != self.source_type_current:
+                    b.wait_visible(f"#vm-subVmTest1-network-{self.nic_num}-type-tooltip")
+                else:
+                    b.wait_not_present(f"#vm-subVmTest1-network-{self.nic_num}-type-tooltip")
+
+                if self.source is not None and self.source != self.source_current:
+                    b.wait_visible(f"#vm-subVmTest1-network-{self.nic_num}-source-tooltip")
+                # Changing source_type may in effect also change source, so tooltip being present is correct
+                # Only changing source type beteen bridge and direct should not affect source
+                elif self.source_type in ["direct", "bridge"] and self.source_type_current in ["direct", "bridge"]:
+                    b.wait_not_present(f"#vm-subVmTest1-network-{self.nic_num}-source-tooltip")
+
+                if self.mac is not None and self.mac != self.mac_current:
+                    b.wait_visible(f"#vm-subVmTest1-network-{self.nic_num}-mac-tooltip")
+                else:
+                    b.wait_not_present(f"#vm-subVmTest1-network-{self.nic_num}-mac-tooltip")
+
+                if self.model is not None and self.model != self.model_current:
+                    b.wait_visible(f"#vm-subVmTest1-network-{self.nic_num}-model-tooltip")
+                else:
+                    b.wait_not_present(f"#vm-subVmTest1-network-{self.nic_num}-model-tooltip")
 
     def testNICEdit(self):
         b = self.browser
