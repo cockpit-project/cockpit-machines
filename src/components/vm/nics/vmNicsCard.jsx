@@ -221,12 +221,6 @@ export class VmNetworkTab extends React.Component {
                 }
             };
         };
-        const addressPortSource = (source, networkId) => (<table id={`${id}-network-${networkId}-source`}>
-            <tbody>
-                <tr><td className='machines-network-source-descr'>{_("Address")}</td><td className='machines-network-source-value'>{source.address}</td></tr>
-                <tr><td className='machines-network-source-descr'>{_("Port")}</td><td className='machines-network-source-value'>{source.port}</td></tr>
-            </tbody>
-        </table>);
 
         // Network data mapping to rows
         let detailMap = [
@@ -283,14 +277,20 @@ export class VmNetworkTab extends React.Component {
             {
                 name: _("Source"), value: (network, networkId) => {
                     const sourceElem = source => checkDeviceAviability(source) ? <Button variant="link" isInline onClick={sourceJump(source)}>{source}</Button> : source;
+                    const addressPortSourceElem = (source, networkId) => (<table id={`${id}-network-${networkId}-source`}>
+                        <tbody>
+                            <tr><td className='machines-network-source-descr'>{_("Address")}</td><td className='machines-network-source-value'>{source.address}</td></tr>
+                            <tr><td className='machines-network-source-descr'>{_("Port")}</td><td className='machines-network-source-value'>{source.port}</td></tr>
+                        </tbody>
+                    </table>);
                     const mapSource = {
                         direct: (source) => sourceElem(source.dev),
                         network: (source) => sourceElem(source.network),
                         bridge: (source) => sourceElem(source.bridge),
-                        mcast: addressPortSource,
-                        server: addressPortSource,
-                        client: addressPortSource,
-                        udp: addressPortSource,
+                        mcast: addressPortSourceElem,
+                        server: addressPortSourceElem,
+                        client: addressPortSourceElem,
+                        udp: addressPortSourceElem,
                     };
                     if (mapSource[network.type] !== undefined) {
                         const inactiveNIC = nicLookupByMAC(vm.inactiveXML.interfaces, network.mac);
