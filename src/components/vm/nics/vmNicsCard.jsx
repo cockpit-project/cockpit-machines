@@ -276,27 +276,43 @@ export class VmNetworkTab extends React.Component {
             },
             {
                 name: _("Source"), value: (network, networkId) => {
-                    const sourceElem = source => checkDeviceAviability(source) ? <Button variant="link" isInline onClick={sourceJump(source)}>{source}</Button> : source;
+                    const singleSourceElem = source => checkDeviceAviability(source) ? <Button variant="link" isInline onClick={sourceJump(source)}>{source}</Button> : source;
                     const addressPortSourceElem = (source, networkId) => (<table id={`${id}-network-${networkId}-source`}>
                         <tbody>
                             <tr><td className='machines-network-source-descr'>{_("Address")}</td><td className='machines-network-source-value'>{source.address}</td></tr>
                             <tr><td className='machines-network-source-descr'>{_("Port")}</td><td className='machines-network-source-value'>{source.port}</td></tr>
                         </tbody>
                     </table>);
-                    const mapSource = {
-                        direct: (source) => sourceElem(source.dev),
-                        network: (source) => sourceElem(source.network),
-                        bridge: (source) => sourceElem(source.bridge),
+
+                    const getIfaceSourceName = (iface) => {
+                        const mapper = {
+                            direct: source => source.dev,
+                            network: source => source.network,
+                            bridge: source => source.bridge,
+                            mcast: source => ({ address: source.address, port: source.port }),
+                            server: source => ({ address: source.address, port: source.port }),
+                            client: source => ({ address: source.address, port: source.port }),
+                            udp: source => ({ address: source.address, port: source.port }),
+                        };
+
+                        return mapper[iface.type](iface.source);
+                    };
+
+                    const getSourceElem = {
+                        direct: singleSourceElem,
+                        network: singleSourceElem,
+                        bridge: singleSourceElem,
                         mcast: addressPortSourceElem,
                         server: addressPortSourceElem,
                         client: addressPortSourceElem,
                         udp: addressPortSourceElem,
                     };
-                    if (mapSource[network.type] !== undefined) {
+
+                    if (getSourceElem[network.type] !== undefined) {
                         const inactiveNIC = nicLookupByMAC(vm.inactiveXML.interfaces, network.mac);
                         return (
                             <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${id}-network-${networkId}-source`}>
-                                <FlexItem>{mapSource[network.type](network.source, networkId)}</FlexItem>
+                                <FlexItem>{getSourceElem[network.type](getIfaceSourceName(network), networkId)}</FlexItem>
                                 {inactiveNIC && inactiveNIC.source[inactiveNIC.type] !== network.source[network.type] && <WarningInactive iconId={`${id}-network-${networkId}-source-tooltip`} tooltipId="tip-network" />}
                             </Flex>
                         );
