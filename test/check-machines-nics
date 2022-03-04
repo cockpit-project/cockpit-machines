@@ -322,7 +322,7 @@ class TestMachinesNICs(VirtualMachinesCase):
             # select widget options are never visible for the headless chrome - call therefore directly the js function
             self.source_type_current = b.attr(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-type", "data-value")
             self.source_current = b.attr(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-source", "data-value")
-            self.mac_current = b.text(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-mac")
+            self.mac_current = b.val(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-mac")
             self.model_current = b.attr(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-model", "data-value")
 
         def fill(self):
