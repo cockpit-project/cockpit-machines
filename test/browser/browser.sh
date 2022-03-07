@@ -27,11 +27,6 @@ $DNF libvirt-daemon-driver-storage-iscsi-direct || true
 #HACK: unbreak rhel-9-0's default choice of 999999999 rounds, see https://bugzilla.redhat.com/show_bug.cgi?id=1993919
 sed -ie 's/#SHA_CRYPT_MAX_ROUNDS 5000/SHA_CRYPT_MAX_ROUNDS 5000/' /etc/login.defs
 
-# HACK: https://bugzilla.redhat.com/show_bug.cgi?id=2057769
-if [ "$(rpm -q libvirt-daemon)" = "libvirt-daemon-8.0.0-5.el9.x86_64" ]; then
-    rm /usr/share/qemu/firmware/50-edk2-ovmf-amdsev.json
-fi
-
 # Show critical packages versions
 rpm -q selinux-policy cockpit-bridge cockpit-machines
 rpm -qa | grep -E 'libvirt|qemu' | sort
