@@ -146,7 +146,7 @@ class AdditionalOptions extends React.Component {
         const displayBusTypes = diskBusTypes[this.props.device]
                 .filter(bus => this.props.supportedDiskBusTypes.includes(bus))
                 .map(type => ({ value: type }));
-        if (displayBusTypes.find(busType => busType.value == this.props.busType) == undefined)
+        if (!displayBusTypes.find(busType => busType.value === this.props.busType))
             displayBusTypes.push({ value: this.props.busType, disabled: true });
 
         return (
