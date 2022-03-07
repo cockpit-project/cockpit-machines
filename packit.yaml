@@ -3,6 +3,9 @@ synced_files:
   - cockpit-machines.spec
 upstream_package_name: cockpit-machines
 downstream_package_name: cockpit-machines
+srpm_build_deps:
+- npm
+- make
 actions:
   post-upstream-clone: make cockpit-machines.spec
   create-archive:
