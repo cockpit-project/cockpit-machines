@@ -402,19 +402,21 @@ class TestMachinesDisks(VirtualMachinesCase):
             if not self.persistent_vm:
                 b.wait_not_present(f"#vm-{self.vm_name}-disks-adddisk-new-permanent")
 
-            # Configure performance options
-            if self.cache_mode and b.is_visible("div.pf-c-modal-box button:contains(Show additional options)"):
+            # Expand additional options
+            if self.cache_mode or self.bus_type:
                 b.click("div.pf-c-modal-box button:contains(Show additional options)")
                 b.wait_visible("div.pf-c-modal-box button[aria-expanded=true]:contains(Hide additional options)")
-                b.select_from_dropdown("#cache-mode", self.cache_mode)
+
+                # Configure performance options
+                if self.cache_mode:
+                    b.select_from_dropdown("#cache-mode", self.cache_mode)
+
+                # Configure bus type
+                if self.bus_type:
+                    b.select_from_dropdown(f"div.pf-c-modal-box #vm-{self.vm_name}-disks-adddisk-bus-type", self.bus_type)
             else:
                 b.wait_not_visible("#cache-mode")
-
-            # Configure bus type
-            if self.bus_type and b.is_visible("div.pf-c-modal-box button:contains(Show additional options)"):
-                b.click("div.pf-c-modal-box button:contains(Show additional options)")
-                b.wait_visible("div.pf-c-modal-box button[aria-expanded=true]:contains(Hide additional options)")
-                b.select_from_dropdown(f"div.pf-c-modal-box #vm-{self.vm_name}-disks-adddisk-bus-type", self.bus_type)
+                b.wait_not_visible(f"div.pf-c-modal-box #vm-{self.vm_name}-disks-adddisk-bus-type")
 
             return self
 
