@@ -40,7 +40,7 @@ export const MachinesConnectionSelector = ({ onValueChanged, loggedUser, connect
                    onChange={() => onValueChanged('connectionName', LIBVIRT_SESSION_CONNECTION)}
                    name="connectionName"
                    id="connectionName-session"
-                   label={_("Session")} />
+                   label={_("User session")} />
         </FormGroup>
     );
 };
