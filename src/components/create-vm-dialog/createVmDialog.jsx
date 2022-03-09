@@ -705,17 +705,17 @@ const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit,
 
             { storagePoolName === "NewVolume" &&
             <>
-                <FormGroup label={_("Size")} fieldId='storage-size'
+                <FormGroup label={_("Storage Limit")} fieldId='storage-limit'
                            id='storage-group'
                            validated={validationStateStorage}
                            helperText={helperTextNewVolume}
                            helperTextInvalid={validationFailed.storage}>
                     <InputGroup>
-                        <TextInput id='storage-size' value={storageSize}
+                        <TextInput id='storage-limit' value={storageSize}
                                    className="size-input"
                                    onKeyPress={digitFilter}
                                    onChange={value => onValueChanged('storageSize', Number(value))} />
-                        <FormSelect id="storage-size-unit-select"
+                        <FormSelect id="storage-limit-unit-select"
                                     data-value={storageSizeUnit}
                                     className="unit-select"
                                     value={storageSizeUnit}
