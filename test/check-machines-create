@@ -755,12 +755,12 @@ vnc_password= "{vnc_passwd}"
             suse = "SUSE CaaS Platform Unknown (unknown)"  # 20 GiB minimum storage
             b.set_input_text("#os-select-group input", fake_fedora)
             b.click(f"#os-select li button:contains('{fake_fedora}')")
-            b.wait_val("#storage-size", "128")
-            b.wait_visible("#storage-size-unit-select[data-value=MiB]")
+            b.wait_val("#storage-limit", "128")
+            b.wait_visible("#storage-limit-unit-select[data-value=MiB]")
             b.set_input_text("#os-select-group input", suse)
             b.click(f"#os-select li button:contains('{suse}')")
-            b.wait_val("#storage-size", "20")
-            b.wait_visible("#storage-size-unit-select[data-value=GiB]")
+            b.wait_val("#storage-limit", "20")
+            b.wait_visible("#storage-limit-unit-select[data-value=GiB]")
 
             return self
 
@@ -955,13 +955,13 @@ vnc_password= "{vnc_passwd}"
                         b.select_from_dropdown("#storage-volume-select", self.storage_volume)
 
                     if self.storage_pool != 'NewVolume':
-                        b.wait_not_present("#storage-size")
+                        b.wait_not_present("#storage-limit")
                     else:
-                        b.select_from_dropdown("#storage-size-unit-select", self.storage_size_unit)
+                        b.select_from_dropdown("#storage-limit-unit-select", self.storage_size_unit)
                         if self.storage_size is not None:
-                            b.set_input_text("#storage-size", str(self.storage_size), value_check=False)
+                            b.set_input_text("#storage-limit", str(self.storage_size), value_check=False)
                 else:
-                    b.wait_val("#storage-size", self.expected_storage_size)
+                    b.wait_val("#storage-limit", self.expected_storage_size)
 
             # First select the unit so that UI will auto-adjust the memory input
             # value according to the available total memory on the host
@@ -1079,7 +1079,7 @@ vnc_password= "{vnc_passwd}"
                 tag = self.pixel_test_tag + ("-" + subtag if subtag else "")
                 ignore = ["#memory-size-helper"]
                 if self.storage_pool != "NoStorage":
-                    ignore += ["#storage-size-helper"]
+                    ignore += ["#storage-limit-helper"]
                 self.browser.assert_pixels("#create-vm-dialog", tag, ignore=ignore)
             return self
 
