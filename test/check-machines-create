@@ -54,14 +54,14 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                             location=config.NOVELL_MOCKUP_ISO_PATH,
                                                             memory_size=128, memory_size_unit='MiB',
                                                             storage_size=12500, storage_size_unit='GiB',
-                                                            start_vm=True,
+                                                            create_and_run=True,
                                                             pixel_test_tag="iso"))
 
         runner.cancelDialogTest(TestMachinesCreate.VmDialog(self, sourceType='url',
                                                             location=config.VALID_URL,
                                                             memory_size=128, memory_size_unit='MiB',
                                                             os_name=config.FEDORA_28,
-                                                            start_vm=False,
+                                                            create_and_run=False,
                                                             pixel_test_tag="url"))
 
         # OS input check
@@ -78,7 +78,7 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                             memory_size=128, memory_size_unit='MiB',
                                                             storage_pool="NoStorage",
                                                             os_name=config.CENTOS_7,
-                                                            start_vm=False,
+                                                            create_and_run=False,
                                                             expected_os_name=config.FEDORA_28,
                                                             pixel_test_tag="auto"))
 
@@ -117,18 +117,18 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                          location=config.NOVELL_MOCKUP_ISO_PATH,
                                                                          memory_size=100000, memory_size_unit='MiB',
                                                                          storage_pool="NoStorage",
-                                                                         start_vm=False),
+                                                                         create_and_run=False),
                                              {"memory": "Up to "})
 
         # start vm
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, storage_size=1,
-                                                                         os_name=config.FEDORA_28, start_vm=True),
+                                                                         os_name=config.FEDORA_28, create_and_run=True),
                                              {"source-file": "Installation source must not be empty"})
 
         # disallow empty OS
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, sourceType='url', location=config.VALID_URL,
                                                                          storage_size=100, storage_size_unit='MiB',
-                                                                         start_vm=False, os_name=None),
+                                                                         create_and_run=False, os_name=None),
                                              {"os-select": "You need to select the most closely matching operating system"})
 
         # When switching from PXE mode to anything else make sure that the source input is empty
@@ -136,7 +136,7 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                          sourceType='pxe',
                                                                          location=f"type=direct,source={iface}",
                                                                          sourceTypeSecondChoice='url',
-                                                                         start_vm=False),
+                                                                         create_and_run=False),
                                              {"source-url": "Installation source must not be empty"})
 
     def testCreateCloudBaseImage(self):
@@ -156,7 +156,7 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                     user_password="catsaremybestfr13nds",
                                                                     user_login="foo",
                                                                     root_password="dogsaremybestfr13nds",
-                                                                    start_vm=True))
+                                                                    create_and_run=True))
 
         # Test using a cloud image without setting the cloud init options
         # https://bugzilla.redhat.com/show_bug.cgi?id=1978206
@@ -165,7 +165,7 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                     location=config.VALID_DISK_IMAGE_PATH,
                                                                     os_name=config.FEDORA_28,
                                                                     os_short_id=config.FEDORA_28_SHORTID,
-                                                                    start_vm=True))
+                                                                    create_and_run=True))
 
     def testCreateDownloadAnOS(self):
         runner = TestMachinesCreate.CreateVmRunner(self)
@@ -180,7 +180,7 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                   expected_storage_size=128,
                                                                   os_name=config.FEDORA_28,
                                                                   os_short_id=config.FEDORA_28_SHORTID,
-                                                                  start_vm=True))
+                                                                  create_and_run=True))
 
         runner.createDownloadAnOSTest(TestMachinesCreate.VmDialog(self, sourceType='os',
                                                                   is_unattended=True, profile="desktop",
@@ -215,7 +215,7 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                   expected_storage_size=128,
                                                                   os_name=config.FEDORA_28,
                                                                   os_short_id=config.FEDORA_28_SHORTID,
-                                                                  start_vm=True, delete=False))
+                                                                  create_and_run=True, delete=False))
 
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, "existing-name", storage_size=1,
                                                                          check_script_finished=False, env_is_empty=False), {"vm-name": "already exists"})
@@ -267,10 +267,10 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                       location="network=pxe-nat",
                                                       memory_size=128, memory_size_unit='MiB',
                                                       storage_pool="NoStorage",
-                                                      start_vm=True, delete=False))
+                                                      create_and_run=True, delete=False))
 
         # Stop it, tweak the XML to have serial console at bios and also redirect serial console to a file
-        # We don't want to use start_vm == False because if we get a separate install phase
+        # We don't want to use create_and_run == False because if we get a separate install phase
         # virt-install will overwrite our changes.
 
         # Wait for virt-install to define the VM, stop it, and wait for virt-install to be done
@@ -331,7 +331,7 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                       name="pxe-guest",
                                                       location=f"type=direct,source={iface}",
                                                       storage_size=128, storage_size_unit='MiB',
-                                                      start_vm=True,
+                                                      create_and_run=True,
                                                       delete=False))
         # Wait for virt-install to define the VM and then stop it
         wait(lambda: "pxe-guest" in self.machine.execute("virsh list --persistent"), delay=3)
@@ -455,7 +455,7 @@ vnc_password= "{vnc_passwd}"
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='file',
                                                       location=config.NOVELL_MOCKUP_ISO_PATH,
                                                       storage_pool="NoStorage",
-                                                      start_vm=True))
+                                                      create_and_run=True))
 
         self.browser.switch_to_top()
         if self.system_before(258):
@@ -479,7 +479,7 @@ vnc_password= "{vnc_passwd}"
                                                       location=config.NOVELL_MOCKUP_ISO_PATH,
                                                       memory_size=128, memory_size_unit='MiB',
                                                       storage_pool="NoStorage",
-                                                      start_vm=False,
+                                                      create_and_run=False,
                                                       connection='session'))
         cmds = [
             "mkdir -p '/var/lib/libvirt/pools/tmp pool'; chmod a+rwx '/var/lib/libvirt/pools/tmp pool'",
@@ -500,14 +500,14 @@ vnc_password= "{vnc_passwd}"
                                                       memory_size=128, memory_size_unit='MiB',
                                                       storage_pool="tmp pool",
                                                       storage_volume="vmTmpDestination.qcow2",
-                                                      start_vm=True,))
+                                                      create_and_run=True,))
 
         # Check "NoStorage" option (only define VM)
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='file',
                                                       location=config.NOVELL_MOCKUP_ISO_PATH,
                                                       memory_size=128, memory_size_unit='MiB',
                                                       storage_pool="NoStorage",
-                                                      start_vm=True,))
+                                                      create_and_run=True,))
 
         self.machine.execute(f"touch '{config.PATH_WITH_SPACE}'")
         # Check file with empty space
@@ -515,7 +515,7 @@ vnc_password= "{vnc_passwd}"
                                                       location=config.PATH_WITH_SPACE,
                                                       memory_size=128, memory_size_unit='MiB',
                                                       storage_pool="NoStorage",
-                                                      start_vm=True,))
+                                                      create_and_run=True,))
 
     def testCreateImportDisk(self):
         runner = TestMachinesCreate.CreateVmRunner(self)
@@ -527,7 +527,7 @@ vnc_password= "{vnc_passwd}"
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='disk_image',
                                                       location=config.VALID_DISK_IMAGE_PATH,
                                                       memory_size=128, memory_size_unit='MiB',
-                                                      start_vm=False))
+                                                      create_and_run=False))
 
         # Recreate the image the previous test just deleted to reuse it
         self.machine.execute(f"qemu-img create {TestMachinesCreate.TestCreateConfig.VALID_DISK_IMAGE_PATH} 500M")
@@ -542,7 +542,7 @@ vnc_password= "{vnc_passwd}"
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='disk_image',
                                                       location=config.VALID_DISK_IMAGE_PATH,
                                                       memory_size=128, memory_size_unit='MiB',
-                                                      start_vm=True))
+                                                      create_and_run=True))
 
     def testCreateUrlSource(self):
         m = self.machine
@@ -580,20 +580,20 @@ vnc_password= "{vnc_passwd}"
                                                       memory_size=128, memory_size_unit='MiB',
                                                       storage_pool="NoStorage",
                                                       os_name=config.FEDORA_28,
-                                                      start_vm=False))
+                                                      create_and_run=False))
 
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='url',
                                                       location=config.TREE_URL,
                                                       memory_size=128, memory_size_unit='MiB',
                                                       storage_size=128, storage_size_unit='MiB',
-                                                      start_vm=False))
+                                                      create_and_run=False))
 
         # Test detection of ISO file in URL
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='url',
                                                       location=config.ISO_URL,
                                                       memory_size=128, memory_size_unit='MiB',
                                                       storage_pool="NoStorage",
-                                                      start_vm=True))
+                                                      create_and_run=True))
 
         # This functionality works on debian only because of extra qemu-block-extra dep.
         # Check error is returned if dependency is missing
@@ -604,7 +604,7 @@ vnc_password= "{vnc_passwd}"
                                                                     location=config.ISO_URL,
                                                                     memory_size=128, memory_size_unit='MiB',
                                                                     storage_pool="NoStorage",
-                                                                    start_vm=True), ["qemu", "protocol"])
+                                                                    create_and_run=True), ["qemu", "protocol"])
 
     def testDisabledCreate(self):
         self.login_and_go("/machines")
@@ -665,7 +665,7 @@ vnc_password= "{vnc_passwd}"
                      user_password=None,
                      user_login=None,
                      storage_pool='NewVolume', storage_volume='',
-                     start_vm=False,
+                     create_and_run=False,
                      delete=True,
                      env_is_empty=True,
                      check_script_finished=True,
@@ -706,7 +706,7 @@ vnc_password= "{vnc_passwd}"
             self.root_password = root_password
             self.user_password = user_password
             self.user_login = user_login
-            self.start_vm = start_vm
+            self.create_and_run = create_and_run or is_unattended or sourceType == "cloud"
             self.storage_pool = storage_pool
             self.storage_volume = storage_volume
             self.delete = delete
@@ -785,12 +785,9 @@ vnc_password= "{vnc_passwd}"
             b.wait_not_present("#navbar-oops")
 
             # click the 'X' button to clear the OS input and check there is no Ooops
-            # Also check start VM checkbox was not changed (https://bugzilla.redhat.com/show_bug.cgi?id=2033603)
-            b.set_checked("#start-vm", False)
             b.click("#os-select-group button[aria-label=\"Clear all\"]")
             b.wait_attr("#os-select-group input", "value", "")
             b.wait_not_present("#navbar-oops")
-            self.assertFalse(b.get_checked("#start-vm"))
 
             return self
 
@@ -819,7 +816,10 @@ vnc_password= "{vnc_passwd}"
             return self
 
         def createAndVerifyVirtInstallArgsCloudInit(self):
-            self.browser.click(".pf-c-modal-box__footer button:contains(Create)")
+            if self.create_and_run:
+                self.browser.click(".pf-c-modal-box__footer button:contains(Create and run)")
+            else:
+                self.browser.click(".pf-c-modal-box__footer button:contains(Create and edit)")
             self.browser.wait_not_present("#create-vm-dialog")
 
             self.goToVmPage(self.name)
@@ -859,7 +859,10 @@ vnc_password= "{vnc_passwd}"
         def createRespectQemuConfConsoleConfig(self, vnc_listen, spice_listen, vnc_passwd, spice_passwd):
             m = self.machine
 
-            self.browser.click(".pf-c-modal-box__footer button:contains(Create)")
+            if self.create_and_run:
+                self.browser.click(".pf-c-modal-box__footer button:contains(Create and run)")
+            else:
+                self.browser.click(".pf-c-modal-box__footer button:contains(Create and edit)")
             self.browser.wait_not_present("#create-vm-dialog")
             self.browser.wait_text(f"#vm-{self.name}-state", "Shut off")
 
@@ -884,7 +887,10 @@ vnc_password= "{vnc_passwd}"
             self.assertEqual(vnc_passwd, vnc.attrib.get('passwd', None))
 
         def createAndVerifyVirtInstallArgsUnattended(self):
-            self.browser.click(".pf-c-modal-box__footer button:contains(Create)")
+            if self.create_and_run:
+                self.browser.click(".pf-c-modal-box__footer button:contains(Create and run)")
+            else:
+                self.browser.click(".pf-c-modal-box__footer button:contains(Create and edit)")
             self.browser.wait_not_present("#create-vm-dialog")
             if self.storage_pool != "NoStorage":
                 self.goToVmPage(self.name)
@@ -972,11 +978,9 @@ vnc_password= "{vnc_passwd}"
                 b.wait_val("#memory-size", self.expected_memory_size)
 
             if self.sourceType == "cloud":
-                b.wait_not_present("#start-vm")
+                b.wait_visible("#create-and-edit[aria-disabled=true]")
             else:
-                b.wait_visible("#start-vm")
-                if not self.start_vm:
-                    b.click("#start-vm")  # TODO: fix this, do not assume initial state of the checkbox
+                b.wait_visible("#create-and-run[aria-disabled=false]")
 
             if (self.connection):
                 b.set_checked(f"#connectionName-{self.connection}", True)
@@ -1012,9 +1016,15 @@ vnc_password= "{vnc_passwd}"
             b = self.browser
 
             if self.sourceType == 'disk_image':
-                b.click(".pf-c-modal-box__footer button:contains(Import)")
+                if self.create_and_run:
+                    b.click(".pf-c-modal-box__footer button:contains(Import and run)")
+                else:
+                    b.click(".pf-c-modal-box__footer button:contains(Import and edit)")
             else:
-                b.click(".pf-c-modal-box__footer button:contains(Create)")
+                if self.create_and_run:
+                    b.click(".pf-c-modal-box__footer button:contains(Create and run)")
+                else:
+                    b.click(".pf-c-modal-box__footer button:contains(Create and edit)")
 
             for error, error_msg in errors.items():
                 error_location = f".pf-c-modal-box__body #{error}-group .pf-c-form__helper-text.pf-m-error"
@@ -1023,9 +1033,11 @@ vnc_password= "{vnc_passwd}"
                     b.wait_in_text(error_location, error_msg)
 
             if self.sourceType == 'disk_image':
-                b.wait_visible(".pf-c-modal-box__footer button:contains(Import):disabled")
+                b.wait_visible(".pf-c-modal-box__footer button:contains(Import and run)[aria-disabled=true]")
+                b.wait_visible(".pf-c-modal-box__footer button:contains(Import and edit)[aria-disabled=true]")
             else:
-                b.wait_visible(".pf-c-modal-box__footer button:contains(Create):disabled")
+                b.wait_visible(".pf-c-modal-box__footer button:contains(Create and run)[aria-disabled=true]")
+                b.wait_visible(".pf-c-modal-box__footer button:contains(Create and edit)[aria-disabled=true]")
 
             return self
 
@@ -1042,7 +1054,10 @@ vnc_password= "{vnc_passwd}"
                     raise Error("Retry limit exceeded: None of [%s] is part of the error message '%s'" % (
                         ', '.join(errors), b.text(error_location)))
 
-            b.click(".pf-c-modal-box__footer button:contains(Create)")
+            if self.create_and_run:
+                b.click(".pf-c-modal-box__footer button:contains(Create and run)")
+            else:
+                b.click(".pf-c-modal-box__footer button:contains(Create and edit)")
 
             error_location = ".pf-c-modal-box__footer div.pf-c-alert"
 
@@ -1216,11 +1231,17 @@ vnc_password= "{vnc_passwd}"
         def _create(self, dialog):
             b = self.browser
             if dialog.sourceType == 'disk_image':
-                b.click(".pf-c-modal-box__footer button:contains(Import)")
+                if dialog.create_and_run:
+                    b.click(".pf-c-modal-box__footer button:contains(Import and run)")
+                else:
+                    b.click(".pf-c-modal-box__footer button:contains(Import and edit)")
             else:
-                b.click(".pf-c-modal-box__footer button:contains(Create)")
-            init_state = "Creating VM installation" if dialog.start_vm else "Creating VM"
-            second_state = "Running" if dialog.start_vm else "Shut off"
+                if dialog.create_and_run:
+                    b.click(".pf-c-modal-box__footer button:contains(Create and run)")
+                else:
+                    b.click(".pf-c-modal-box__footer button:contains(Create and edit)")
+            init_state = "Creating VM installation" if dialog.create_and_run else "Creating VM"
+            second_state = "Running" if dialog.create_and_run else "Shut off"
 
             self._assertVmStates(dialog.name, init_state, second_state)
             b.wait_not_present("#create-vm-dialog")
@@ -1232,8 +1253,12 @@ vnc_password= "{vnc_passwd}"
                 .fill()
             self._create(dialog)
 
-            # successfully created
-            self.test_obj.waitVmRow(name, dialog.connection or "system")
+            if dialog.create_and_run:
+                # successfully created
+                self.test_obj.waitVmRow(name, dialog.connection or "system")
+            else:
+                # created and redirected
+                self.test_obj.waitVmPage(name)
 
             self._assertCorrectConfiguration(dialog)
 
@@ -1242,20 +1267,24 @@ vnc_password= "{vnc_passwd}"
         def _tryCreateThenInstall(self, dialog, installFromVmDetails, tryWithFailInstall):
             b = self.browser
             m = self.machine
-            dialog.start_vm = False
+            dialog.create_and_run = False
             name = dialog.name
 
             dialog.open() \
                 .fill()
             self._create(dialog)
 
-            self.test_obj.waitVmRow(name)
+            if dialog.create_and_run:
+                # successfully created
+                self.test_obj.waitVmRow(name, dialog.connection or "system")
 
-            if installFromVmDetails:
-                self.test_obj.goToVmPage(name)
-                b.click(f"#vm-{name}-install")
+                if installFromVmDetails:
+                    self.test_obj.goToVmPage(name)
             else:
-                b.click(f"#vm-{name}-install")
+                # created and redirected
+                self.test_obj.waitVmPage(name)
+
+            b.click(f"#vm-{name}-install")
 
             if tryWithFailInstall:
                 # Deleting the default network will make the installation to fail immediately
@@ -1495,17 +1524,16 @@ vnc_password= "{vnc_passwd}"
                                              location=TestMachinesCreate.TestCreateConfig.NOVELL_MOCKUP_ISO_PATH,
                                              memory_size=128, memory_size_unit='MiB',
                                              storage_size=256, storage_size_unit='MiB',
-                                             start_vm=False)
+                                             create_and_run=False)
         dialog.open() \
             .fill() \
 
-        b.click(".pf-c-modal-box__footer button:contains(Create)")
+        b.click(".pf-c-modal-box__footer button:contains(Create and edit)")
         b.wait_not_present("#create-vm-dialog")
 
         wait(lambda: "<cockpit_machines:os_variant>fedora28</cockpit_machines:os_variant>" in m.execute("virsh dumpxml VmNotInstalled"), delay=3)
 
-        self.waitVmRow("VmNotInstalled")
-        self.goToVmPage("VmNotInstalled")
+        self.waitVmPage("VmNotInstalled")
 
         # Change autostart
         autostart = not b.get_checked("#vm-VmNotInstalled-autostart-switch")
@@ -1638,14 +1666,13 @@ vnc_password= "{vnc_passwd}"
                                              location=TestMachinesCreate.TestCreateConfig.NOVELL_MOCKUP_ISO_PATH,
                                              memory_size=128, memory_size_unit='MiB',
                                              storage_size=256, storage_size_unit='MiB',
-                                             start_vm=False)
+                                             create_and_run=False)
         dialog.open().fill()
 
-        b.click(".pf-c-modal-box__footer button:contains(Create)")
+        b.click(".pf-c-modal-box__footer #create-and-edit")
         b.wait_not_present("#create-vm-dialog")
 
-        self.waitVmRow("VmNotInstalledBios")
-        self.goToVmPage("VmNotInstalledBios")
+        self.waitVmPage("VmNotInstalledBios")
 
         # Show and keep the os boot firmware configuration
         b.wait_in_text("#vm-VmNotInstalledBios-firmware", "BIOS")
