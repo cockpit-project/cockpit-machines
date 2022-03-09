@@ -47,6 +47,9 @@ class VirtualMachinesCaseHelpers:
     def goToMainPage(self):
         self.browser.click(".machines-listing-breadcrumb li:first-of-type a")
 
+    def waitVmPage(self, vmName):
+        self.browser.wait_in_text("#vm-details .vm-name", vmName)
+
     def waitVmRow(self, vmName, connectionName='system', present=True):
         b = self.browser
         vm_row = "tbody tr[data-row-id=vm-{0}-{1}]".format(vmName, connectionName)
