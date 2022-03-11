@@ -272,6 +272,6 @@ export class VCPUModal extends React.Component {
 }
 VCPUModal.propTypes = {
     vm: PropTypes.object.isRequired,
-    maxVcpu: PropTypes.number.isRequired,
+    maxVcpu: PropTypes.string.isRequired,
     close: PropTypes.func.isRequired,
 };
