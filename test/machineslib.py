@@ -218,9 +218,6 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
         self.restore_dir("/etc/libvirt")
         self.restore_dir("/home/admin/.local/share/libvirt/")
 
-        # Reload the page between tests to ensure that error notifications from previous tests are not present
-        self.addCleanup(b.reload)
-
         self.startLibvirt(m)
 
         self.addCleanup(m.execute, f"systemctl stop {self.getLibvirtServiceName()}")
