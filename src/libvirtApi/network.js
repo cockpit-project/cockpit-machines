@@ -113,6 +113,10 @@ export function networkChangeAutostart({ network, autostart }) {
             .then(() => networkGet({ connectionName: network.connectionName, id: network.id, name: network.name }));
 }
 
+export function networkRemoveStaticHostEntries(params) {
+    return networkUpdateStaticHostEntries({ ...params, commandFlag: Enum.VIR_NETWORK_UPDATE_COMMAND_DELETE });
+}
+
 export function networkUndefine({ connectionName, objPath }) {
     return call(connectionName, objPath, 'org.libvirt.Network', 'Undefine', [], { timeout, type: '' });
 }

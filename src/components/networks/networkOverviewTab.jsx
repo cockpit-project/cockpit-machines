@@ -32,13 +32,16 @@ import cockpit from 'cockpit';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { networkId } from '../../helpers.js';
-import { networkGet, networkAddStaticHostEntries, networkChangeAutostart } from '../../libvirtApi/network.js';
+import { networkGet, networkAddStaticHostEntries, networkChangeAutostart, networkRemoveStaticHostEntries } from '../../libvirtApi/network.js';
+import { DeleteResourceButton, DeleteResourceModal } from '../common/deleteResource.jsx';
 
 import '../common/overviewCard.css';
 
 const _ = cockpit.gettext;
 
-const DHCPHost = (host, index, family, idPrefix) => {
+const DHCPHost = (host, index, family, idPrefix, network, parentIndex) => {
+    const [deleteDialogProps, setDeleteDialogProps] = useState(undefined);
+
     const id = `${idPrefix}-${family}-dhcp-host-${index}`;
 
     const hostVals = [];
@@ -53,7 +56,45 @@ const DHCPHost = (host, index, family, idPrefix) => {
 
     const hostInfo = hostVals.join(", ");
 
-    return <ListItem key={index} id={id}> {hostInfo} </ListItem>;
+    const removeDHCPHostButton = (
+        <DeleteResourceButton objectId={`${id}-button`}
+            actionName={_("remove")}
+            isLink
+            isInline
+            showDialog={() => setDeleteDialogProps({
+                objectType: _("static host from DHCP"),
+                objectName: "",
+                actionDescription: cockpit.format(_("The static host entry for $0 will be removed:"), host.ip),
+                objectDescription: [
+                    { name: _("IP"), value: <span className="ct-monospace">{host.ip}</span> },
+                    { name: _("MAC"), value: <span className="ct-monospace">{host.mac}</span> }
+                ],
+                actionName: _("Remove"),
+                onClose: () => setDeleteDialogProps(undefined),
+                deleteHandler: () => networkRemoveStaticHostEntries({
+                    connectionName: network.connectionName,
+                    objPath: network.id,
+                    macAddress: host.mac,
+                    ipAddress: host.ip,
+                    parentIndex,
+                    isNetworkActive: network.active
+                }).then(() => networkGet({ connectionName: network.connectionName, id: network.id, updateOnly: true }))
+            })} />
+    );
+
+    return (<>
+        <ListItem key={index} id={id}>
+            <Flex>
+                <Flex flex={{ default: 'flex_4' }}>
+                    {hostInfo}
+                </Flex>
+                <Flex>
+                    {removeDHCPHostButton}
+                </Flex>
+            </Flex>
+        </ListItem>
+        {deleteDialogProps && <DeleteResourceModal {...deleteDialogProps} />}
+    </>);
 };
 
 export const NetworkOverviewTab = ({ network }) => {
@@ -191,7 +232,7 @@ const NetworkAddStaticHostEntries = ({ idPrefix, network, parentIndex, setIsOpen
 
     return (
         <>
-            <Modal position="top" variant="small" isOpen onClose={() => setIsOpen(false)}
+            <Modal id="add-new-static-entry" position="top" variant="small" isOpen onClose={() => setIsOpen(false)}
                 title={_("Add a DHCP static host entry")}
                 footer={
                     <>
@@ -254,7 +295,7 @@ const StaticDHCPSettings = ({ idPrefix, ip, network, protocol }) => {
                 <DescriptionListDescription id={`${idPrefix}-${protocol}-dhcp-static`}>
                     <List isPlain>
                         { ip[parentIndex].dhcp.hosts.length
-                            ? ip[parentIndex].dhcp.hosts.map((host, index) => DHCPHost(host, index, ip[parentIndex].family, idPrefix))
+                            ? ip[parentIndex].dhcp.hosts.map((host, index) => DHCPHost(host, index, ip[parentIndex].family, idPrefix, network, parentIndex))
                             : <ListItem>{_("none")}</ListItem>
                         }
                     </List>

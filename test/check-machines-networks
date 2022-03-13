@@ -861,9 +861,9 @@ class TestMachinesNetworks(VirtualMachinesCase):
                 b.wait_in_text(f"#network-{self.network_name}-{self.connection_name}-ipv4-dhcp-host-{self.entry_id}", f"MAC: {self.mac}, IP: {self.ip}")
 
             def cleanup(self):
-                if self.activate and not self.xfail_objects:
-                    m.execute(f"virsh net-destroy {self.network_name}")
-                m.execute(f"virsh net-undefine {self.network_name}")
+                b.click(f"#delete-network-{self.network_name}-{self.connection_name}-ipv4-dhcp-host-{self.entry_id}-button")
+                b.click(".pf-c-modal-box__footer button:contains(Remove)")
+                b.wait_not_present(f"#network-{self.network_name}-{self.connection_name}-ipv4-dhcp-host-{self.entry_id}")
 
         b = self.browser
         m = self.machine
@@ -883,7 +883,14 @@ class TestMachinesNetworks(VirtualMachinesCase):
         # Expand row for first network
         self.toggleNetworkRow("default")
 
-        # Attach basic static DHCP host
+        # Attach basic static DHCP host and try to remove it
+        NetworkAddStaticDCHPHostsDialog(
+            self,
+            mac=self.getDomainMacAddress("subVmTest1"),
+            ip="192.168.122.222",
+        ).execute()
+
+        # Attach basic static and keep it persistent
         NetworkAddStaticDCHPHostsDialog(
             self,
             mac=self.getDomainMacAddress("subVmTest1"),
