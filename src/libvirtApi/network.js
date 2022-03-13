@@ -33,19 +33,8 @@ export function networkActivate({ connectionName, objPath }) {
     return call(connectionName, objPath, 'org.libvirt.Network', 'Create', [], { timeout, type: '' });
 }
 
-export function networkAddStaticHostEntries({ connectionName, objPath, macAddress, ipAddress, parentIndex, isNetworkActive }) {
-    let flags = Enum.VIR_NETWORK_UPDATE_AFFECT_CONFIG;
-    if (isNetworkActive)
-        flags |= Enum.VIR_NETWORK_UPDATE_AFFECT_LIVE;
-
-    return call(
-        connectionName,
-        objPath,
-        'org.libvirt.Network',
-        'Update',
-        [Enum.VIR_NETWORK_UPDATE_COMMAND_ADD_LAST, Enum.VIR_NETWORK_SECTION_IP_DHCP_HOST, parentIndex, `<host mac='${macAddress}' ip='${ipAddress}' />`, flags]
-        , { timeout, type: 'uuisu' }
-    );
+export function networkAddStaticHostEntries(params) {
+    return networkUpdateStaticHostEntries({ ...params, commandFlag: Enum.VIR_NETWORK_UPDATE_COMMAND_ADD_LAST });
 }
 
 export function networkCreate({
@@ -126,4 +115,19 @@ export function networkChangeAutostart({ network, autostart }) {
 
 export function networkUndefine({ connectionName, objPath }) {
     return call(connectionName, objPath, 'org.libvirt.Network', 'Undefine', [], { timeout, type: '' });
+}
+
+function networkUpdateStaticHostEntries({ connectionName, objPath, macAddress, ipAddress, parentIndex, isNetworkActive, commandFlag }) {
+    let flags = Enum.VIR_NETWORK_UPDATE_AFFECT_CONFIG;
+    if (isNetworkActive)
+        flags |= Enum.VIR_NETWORK_UPDATE_AFFECT_LIVE;
+
+    return call(
+        connectionName,
+        objPath,
+        'org.libvirt.Network',
+        'Update',
+        [commandFlag, Enum.VIR_NETWORK_SECTION_IP_DHCP_HOST, parentIndex, `<host mac='${macAddress}' ip='${ipAddress}' />`, flags]
+        , { timeout, type: 'uuisu' }
+    );
 }
