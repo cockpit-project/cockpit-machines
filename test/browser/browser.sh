@@ -14,10 +14,6 @@ LOGS="${TMT_TEST_DATA:-$(pwd)/logs}"
 mkdir -p "$LOGS"
 chmod a+w "$LOGS"
 
-# install firefox (available everywhere in Fedora and RHEL)
-# we don't need the H.264 codec, and it is sometimes not available (rhbz#2005760)
-dnf install --disablerepo=fedora-cisco-openh264 -y firefox
-
 #HACK: unbreak rhel-9-0's default choice of 999999999 rounds, see https://bugzilla.redhat.com/show_bug.cgi?id=1993919
 sed -ie 's/#SHA_CRYPT_MAX_ROUNDS 5000/SHA_CRYPT_MAX_ROUNDS 5000/' /etc/login.defs
 
@@ -27,7 +23,7 @@ if [ "$(rpm -q edk2-ovmf)" = "edk2-ovmf-20220126gitbb1bba3d77-3.el9.noarch" ]; t
 fi
 
 # Show critical packages versions
-rpm -q qemu-kvm libvirt-daemon selinux-policy cockpit-bridge cockpit-machines
+rpm -qa | grep -E 'libvirt|qemu'
 
 # create user account for logging in
 if ! id admin 2>/dev/null; then
@@ -73,6 +69,7 @@ if [ "${PLATFORM_ID:-}" != "platform:f34" ] && [ "${PLATFORM_ID:-}" != "platform
     systemctl start virtproxyd.socket
     systemctl start virtsecretd.socket
     systemctl start virtstoraged.socket
+    systemctl start virtqemud.socket
 fi
 
 # Fedora 36/37 and RHEL 9 split out qemu-virtiofsd; once this is in all supported OSes, move to main.fmf
@@ -80,8 +77,6 @@ if [ "${PLATFORM_ID:-}" != "platform:f35" ] && [ "${PLATFORM_ID:-}" != "platform
     dnf install -y qemu-virtiofsd
 fi
 
-# Run tests as unprivileged user
-su - -c "env TEST_BROWSER=firefox SOURCE=$SOURCE LOGS=$LOGS $TESTS/run-test.sh" runtest
+qemu-img info https://archive.fedoraproject.org/pub/archive/fedora/linux/releases/28/Server/x86_64/os/images/boot.iso || true
 
-RC=$(cat $LOGS/exitcode)
-exit ${RC:-1}
+timeout 60 virt-install -d -d --connect qemu:///system --name test1 --os-variant fedora28 --memory 128 --check path_in_use=off --wait -1 --noautoconsole --disk none --cdrom https://archive.fedoraproject.org/pub/archive/fedora/linux/releases/28/Server/x86_64/os/images/boot.iso
