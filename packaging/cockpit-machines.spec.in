@@ -35,8 +35,21 @@ Requires: cockpit-bridge >= 215
 %if 0%{?suse_version}
 Requires: libvirt-daemon-qemu
 %else
-Requires: libvirt-daemon-kvm
+Requires: libvirt-daemon-driver-qemu
+Requires: libvirt-daemon-driver-network
+Requires: libvirt-daemon-driver-nodedev
+Requires: libvirt-daemon-driver-storage-core
+Requires: (libvirt-daemon-driver-interface if virt-install)
 Requires: (libvirt-daemon-config-network if virt-install)
+Recommends: libvirt-daemon-driver-storage-disk
+%if 0%{?rhel}
+Requires: qemu-kvm
+%else
+# smaller footprint on Fedora, as qemu-kvm is really expensive on a server
+Requires: qemu-kvm-core
+Recommends: qemu-block-curl
+Recommends: qemu-device-usb-redirect
+%endif
 %endif
 Requires: libvirt-client
 Requires: libvirt-dbus >= 1.2.0

@@ -14,9 +14,21 @@ LOGS="${TMT_TEST_DATA:-$(pwd)/logs}"
 mkdir -p "$LOGS"
 chmod a+w "$LOGS"
 
+# we don't need the H.264 codec, and it is sometimes not available (rhbz#2005760)
+DNF="dnf install --disablerepo=fedora-cisco-openh264 -y"
+
 # install firefox (available everywhere in Fedora and RHEL)
 # we don't need the H.264 codec, and it is sometimes not available (rhbz#2005760)
-dnf install --disablerepo=fedora-cisco-openh264 -y --setopt=install_weak_deps=False firefox
+$DNF --setopt=install_weak_deps=False firefox
+
+# RHEL/CentOS 8 and Fedora have this, but not RHEL 9; tests check this more precisely
+$DNF libvirt-daemon-driver-storage-iscsi-direct || true
+
+# FIXME: tests currently require spice QXL support; fix them to get along without
+# Fedora has split packages (much smaller footprint), RHEL doesn't
+if grep -q 'ID=fedora' /usr/lib/os-release; then
+    $DNF qemu-device-display-qxl qemu-char-spice
+fi
 
 #HACK: unbreak rhel-9-0's default choice of 999999999 rounds, see https://bugzilla.redhat.com/show_bug.cgi?id=1993919
 sed -ie 's/#SHA_CRYPT_MAX_ROUNDS 5000/SHA_CRYPT_MAX_ROUNDS 5000/' /etc/login.defs
@@ -27,7 +39,8 @@ if [ "$(rpm -q libvirt-daemon)" = "libvirt-daemon-8.0.0-5.el9.x86_64" ]; then
 fi
 
 # Show critical packages versions
-rpm -q qemu-kvm libvirt-daemon selinux-policy cockpit-bridge cockpit-machines
+rpm -q selinux-policy cockpit-bridge cockpit-machines
+rpm -qa | grep -E 'libvirt|qemu' | sort
 
 # create user account for logging in
 if ! id admin 2>/dev/null; then
@@ -69,9 +82,7 @@ if [ "${PLATFORM_ID:-}" != "platform:f34" ] && [ "${PLATFORM_ID:-}" != "platform
     systemctl start virtinterfaced.socket
     systemctl start virtnetworkd.socket
     systemctl start virtnodedevd.socket
-    systemctl start virtnwfilterd.socket
     systemctl start virtproxyd.socket
-    systemctl start virtsecretd.socket
     systemctl start virtstoraged.socket
 fi
 
