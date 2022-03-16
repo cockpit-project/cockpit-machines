@@ -152,7 +152,7 @@ rpm: $(TARFILE) $(SPEC)
 
 # build a VM with locally built distro pkgs installed
 $(VM_IMAGE): $(TARFILE) packaging/debian/rules packaging/debian/control packaging/arch/PKGBUILD bots
-	bots/image-customize --verbose --no-network --fresh --build $(TARFILE) --script $(CURDIR)/test/vm.install $(TEST_OS)
+	bots/image-customize --no-network --fresh --build $(TARFILE) --script $(CURDIR)/test/vm.install $(TEST_OS)
 
 # convenience target for the above
 vm: $(VM_IMAGE)
