@@ -152,14 +152,9 @@ rpm: $(TARFILE) $(SPEC)
 	rm -r "`pwd`/rpmbuild"
 	rm -r "`pwd`/output" "`pwd`/build"
 
-# rpms/debs can be built offline; arch can't yet
-ifeq ($(filter arch,$(TEST_OS)),)
-NETWORK=--no-network
-endif
-
 # build a VM with locally built distro pkgs installed
 $(VM_IMAGE): $(TARFILE) packaging/debian/rules packaging/debian/control packaging/arch/PKGBUILD bots
-	bots/image-customize --verbose $(NETWORK) --fresh --build $(TARFILE) --script $(CURDIR)/test/vm.install $(TEST_OS)
+	bots/image-customize --verbose --no-network --fresh --build $(TARFILE) --script $(CURDIR)/test/vm.install $(TEST_OS)
 
 # convenience target for the above
 vm: $(VM_IMAGE)
