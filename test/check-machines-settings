@@ -406,6 +406,7 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         # Change vCPUs setting
         b.click("#vm-subVmTest1-vcpus-count button")  # Open dialog
+        b.wait_visible("#machines-vcpu-modal-dialog")
         b.set_input_text("#machines-vcpu-max-field", "3")  # Change values
         b.set_input_text("#machines-vcpu-count-field", "3")
         b.click("#machines-vcpu-modal-dialog-apply")  # Save
