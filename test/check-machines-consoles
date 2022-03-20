@@ -145,6 +145,21 @@ class TestMachinesConsoles(VirtualMachinesCase):
         b.click("li:contains('Serial console (console1)') button")
         b.wait(lambda: m.execute("ps aux | grep 'virsh -c qemu:///system console vmWithSerialConsole console1'"))
 
+        # Add multiple serial consoles
+        # Remove all console firstly
+        m.execute("virsh destroy vmWithSerialConsole")
+        m.execute("virt-xml --remove-device vmWithSerialConsole --console all")
+        # Add serial0 and console1 ~ console5
+        m.execute("virt-xml vmWithSerialConsole --add-device --console pty,target.type=serial")
+        m.execute("for i in {1..5};do virt-xml vmWithSerialConsole --add-device --console pty,target.type=virtio; done")
+        m.execute("virsh start vmWithSerialConsole")
+
+        for i in range(0, 6):
+            b.click("#pf-c-console__type-selector")
+            b.wait_visible("#pf-c-console__type-selector + .pf-c-select__menu")
+            b.click(f'li:contains(\'Serial console ({"serial" if i == 0 else "console"}{i})\') button')
+            b.wait(lambda: m.execute(f'ps aux | grep \'virsh -c qemu:///system console vmWithSerialConsole {"serial" if i == 0 else "console"}{i}\''))
+
         # disconnecting the serial console closes the pty channel
         self.allow_journal_messages("connection unexpectedly closed by peer",
                                     ".*Connection reset by peer")
