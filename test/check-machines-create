@@ -331,6 +331,9 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                       storage_size=128, storage_size_unit='MiB',
                                                       start_vm=True,
                                                       delete=False))
+        # Wait for virt-install to define the VM and then stop it
+        wait(lambda: "pxe-guest" in self.machine.execute("virsh list --persistent"), delay=3)
+        b.wait_in_text("#vm-pxe-guest-state", "Running")
         self.machine.execute("virsh destroy pxe-guest")
 
         # Verify that the newly created disk is first in the boot order and the network used for the PXE boot is not on the bootable devices list
