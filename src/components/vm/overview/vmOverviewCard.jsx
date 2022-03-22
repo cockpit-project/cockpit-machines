@@ -59,7 +59,6 @@ class VmOverviewCard extends React.Component {
         this.openVcpu = this.openVcpu.bind(this);
         this.openCpuType = this.openCpuType.bind(this);
         this.openMemory = this.openMemory.bind(this);
-        this.close = this.close.bind(this);
         this.onAutostartChanged = this.onAutostartChanged.bind(this);
     }
 
@@ -78,10 +77,6 @@ class VmOverviewCard extends React.Component {
                 .then(() => {
                     domainGet({ connectionName: vm.connectionName, id: vm.id });
                 });
-    }
-
-    close() {
-        this.setState({ showVcpuModal: false, showCpuTypeModal: false, showMemoryModal: false });
     }
 
     openVcpu() {
@@ -248,9 +243,9 @@ class VmOverviewCard extends React.Component {
                         </DescriptionList>
                     </FlexItem>
                 </Flex>
-                { this.state.showMemoryModal && <MemoryModal close={this.close} vm={vm} config={config} /> }
-                { this.state.showVcpuModal && <VCPUModal close={this.close} vm={vm} maxVcpu={this.props.maxVcpu} /> }
-                { this.state.showCpuTypeModal && <CPUTypeModal close={this.close} vm={vm} models={this.props.cpuModels} /> }
+                { this.state.showMemoryModal && <MemoryModal close={() => this.setState({ showMemoryModal: false }) } vm={vm} config={config} /> }
+                { this.state.showVcpuModal && <VCPUModal close={() => this.setState({ showVcpuModal: false }) } vm={vm} maxVcpu={this.props.maxVcpu} /> }
+                { this.state.showCpuTypeModal && <CPUTypeModal close={() => this.setState({ showCpuTypeModal: false }) } vm={vm} models={this.props.cpuModels} /> }
             </>
         );
     }
