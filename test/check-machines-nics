@@ -32,6 +32,11 @@ from machinesxmls import TEST_NETWORK_XML, TEST_NETWORK4_XML  # noqa
 
 @nondestructive
 class TestMachinesNICs(VirtualMachinesCase):
+    def setUp(self):
+        super().setUp()
+        # querying object manager often runs into that on network changes; irrelevant
+        self.allow_journal_messages("org.freedesktop.NetworkManager: couldn't get managed objects at org/freedesktop: Timeout was reached")
+
     def deleteIface(self, iface):
         b = self.browser
 
