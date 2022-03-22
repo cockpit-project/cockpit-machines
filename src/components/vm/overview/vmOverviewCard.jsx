@@ -216,7 +216,6 @@ class VmOverviewCard extends React.Component {
                                 <DescriptionListTerm>{_("Boot order")}</DescriptionListTerm>
                                 <DescriptionListDescription id={`${idPrefix}-boot-order`}>
                                     <BootOrderLink vm={vm} idPrefix={idPrefix}
-                                                   close={this.close}
                                                    nodeDevices={nodeDevices} />
                                 </DescriptionListDescription>
                             </DescriptionListGroup>

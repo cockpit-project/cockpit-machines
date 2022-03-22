@@ -358,7 +358,7 @@ function getBootOrder(vm) {
     return bootOrder;
 }
 
-export const BootOrderLink = ({ vm, idPrefix, close, nodeDevices }) => {
+export const BootOrderLink = ({ vm, idPrefix, nodeDevices }) => {
     const [bootOrderShow, setBootOrderShow] = useState(false);
     const modalButton = (
         <Button variant="link" isInline isAriaDisabled={vm.state != 'shut off'} onClick={setBootOrderShow}>
