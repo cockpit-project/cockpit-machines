@@ -1352,14 +1352,11 @@ class TestMachinesCreate(VirtualMachinesCase):
             self.machine.execute("until test -z $(ls /home/admin/.local/share/libvirt/images/ 2>/dev/null); do sleep 1; done")
 
             # When we delete a VM while virt-install is running there will be an error
-            if dialog and dialog.start_vm and dialog.sourceType in ["url", "os"]:
-                b.wait_visible(".pf-c-alert-group")
-
             alerts = self.browser.call_js_func("ph_count", ".pf-c-alert-group li")
             for i in range(alerts):
                 b.click(".pf-c-alert-group li:first-of-type .pf-c-alert button.pf-m-plain")
 
-            b.wait_not_present(".pf-c-alert-group li .pf-c-alert")
+            b.wait_not_present(".pf-c-alert-group")
 
             return self
 
