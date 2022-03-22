@@ -56,7 +56,7 @@ export const CPUTypeModal = ({ vm, models, close }) => {
     );
 
     return (
-        <Modal position="top" variant="small" isOpen onClose={close}
+        <Modal position="top" variant="small" id="machines-cpu-type-modal" isOpen onClose={close}
                title={cockpit.format(_("$0 CPU configuration"), vm.name)}
                footer={
                    <>

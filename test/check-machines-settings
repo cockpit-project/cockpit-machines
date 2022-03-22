@@ -56,7 +56,7 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         b.click("#vm-subVmTest1-vcpus-count button")  # open VCPU modal detail window
 
-        b.wait_visible(".pf-c-modal-box__body")
+        b.wait_visible("#machines-vcpu-modal-dialog")
 
         # Test basic vCPU properties
         b.wait_val("#machines-vcpu-count-field", "1")
@@ -74,7 +74,7 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         # Save
         b.click("#machines-vcpu-modal-dialog-apply")
-        b.wait_not_present(".pf-c-modal-box__body")
+        b.wait_not_present("#machines-vcpu-modal-dialog")
 
         # Make sure warning next to vcpus appears
         b.wait_visible("#vcpus-tooltip")
@@ -226,9 +226,10 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         # Copy host CPU configuration
         b.click("#vm-subVmTest1-cpu-model button")
+        b.wait_visible("#machines-cpu-type-modal")
         b.select_from_dropdown("#cpu-model-select-group select", cpu_model)
         b.click("#cpu-config-dialog-apply")
-        b.wait_not_present("#cpu-config-dialog-apply")
+        b.wait_not_present("#machines-cpu-type-modal")
 
         # Warning about about difference in persistent and non-persitent XML should appear
         b.wait_visible("#cpu-tooltip")
@@ -239,8 +240,10 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         # Choose manually a CPU model
         b.click("#vm-subVmTest1-cpu-model button")
+        b.wait_visible("#machines-cpu-type-modal")
         b.select_from_dropdown("#cpu-model-select-group select", "coreduo")
         b.click("#cpu-config-dialog-apply")
+        b.wait_not_present("#machines-cpu-type-modal")
         b.wait_in_text("#vm-subVmTest1-cpu-model .pf-c-description-list__text", "custom (coreduo)")
 
         # Verify libvirt XML
@@ -250,8 +253,10 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         # Host-model gets expanded  to custom mode when the VM is running
         b.click("#vm-subVmTest1-cpu-model button")
+        b.wait_visible("#machines-cpu-type-modal")
         b.select_from_dropdown("#cpu-model-select-group select", "host-model")
         b.click("#cpu-config-dialog-apply")
+        b.wait_not_present("#machines-cpu-type-modal")
         b.wait_in_text("#vm-subVmTest1-cpu-model .pf-c-description-list__text", "host")
         b.click("#vm-subVmTest1-run")
         b.wait_in_text("#vm-subVmTest1-cpu-model .pf-c-description-list__text", "custom")
@@ -402,6 +407,7 @@ class TestMachinesSettings(VirtualMachinesCase):
             cpu_model = "host-passthrough"
         b.select_from_dropdown("#cpu-model-select-group select", cpu_model)
         b.click("#cpu-config-dialog-apply")
+        b.wait_not_present("#machines-vcpu-modal-dialog")
         b.wait_visible("#cpu-tooltip")
 
         # Change vCPUs setting
@@ -410,7 +416,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.set_input_text("#machines-vcpu-max-field", "3")  # Change values
         b.set_input_text("#machines-vcpu-count-field", "3")
         b.click("#machines-vcpu-modal-dialog-apply")  # Save
-        b.wait_not_present(".pf-c-modal-box__body")
+        b.wait_not_present("#machines-vcpu-modal-dialog")
 
         # Shut off domain
         self.performAction("subVmTest1", "forceOff")
