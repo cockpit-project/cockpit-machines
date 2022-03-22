@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-03-02 03:00+0000\n"
-"PO-Revision-Date: 2022-01-17 15:16+0000\n"
+"POT-Creation-Date: 2022-03-21 03:14+0000\n"
+"PO-Revision-Date: 2022-03-21 15:16+0000\n"
 "Last-Translator: Geert Warrink <geert.warrink@onsnet.nu>\n"
 "Language-Team: Dutch <https://translate.fedoraproject.org/projects/cockpit-"
 "machines/main/nl/>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1\n"
-"X-Generator: Weblate 4.10.1\n"
+"X-Generator: Weblate 4.11.2\n"
 
 #: src/components/vm/overview/cpuTypeModal.jsx:60
 msgid "$0 CPU configuration"
@@ -66,6 +66,10 @@ msgstr "$0 vCPU-details"
 msgid "$0 virtual network interface settings"
 msgstr "$0 virtueel netwerkinterface instellingen"
 
+#: src/components/vm/hostdevs/hostDevCard.jsx:234
+msgid "$1 host device"
+msgstr "$1 hostapparaat"
+
 #: src/components/vm/vmMigrateDialog.jsx:75
 msgid ""
 "A copy of the VM will run on the destination and will disappear when it is "
@@ -76,7 +80,7 @@ msgstr ""
 "kopie van de VM-configuratie."
 
 #: src/components/vm/disks/diskEdit.jsx:112
-#: src/components/vm/disks/vmDisksCard.jsx:231
+#: src/components/vm/disks/vmDisksCard.jsx:232
 msgid "Access"
 msgstr "Toegang"
 
@@ -90,8 +94,8 @@ msgid "Activate the storage pool to administer volumes"
 msgstr "Activeer de opslagpool om volumes te beheren"
 
 #: src/components/networks/networkOverviewTab.jsx:200
-#: src/components/vm/hostdevs/hostDevAdd.jsx:214
-#: src/components/vm/disks/diskAdd.jsx:664
+#: src/components/vm/hostdevs/hostDevAdd.jsx:217
+#: src/components/vm/disks/diskAdd.jsx:724
 #: src/components/vm/nics/nicAdd.jsx:196
 msgid "Add"
 msgstr "Toevoegen"
@@ -100,13 +104,13 @@ msgstr "Toevoegen"
 msgid "Add a DHCP static host entry"
 msgstr "Voeg een DHCP statische hostingang toe"
 
-#: src/components/vm/disks/diskAdd.jsx:655
+#: src/components/vm/disks/diskAdd.jsx:715
 #: src/components/vm/disks/vmDisksCard.jsx:89
 msgid "Add disk"
 msgstr "Schijf toevoegen"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:230
-#: src/components/vm/hostdevs/hostDevCard.jsx:47
+#: src/components/vm/hostdevs/hostDevAdd.jsx:233
+#: src/components/vm/hostdevs/hostDevCard.jsx:48
 msgid "Add host device"
 msgstr "Voeg hostapparaat toe"
 
@@ -128,14 +132,14 @@ msgstr ""
 "Het toevoegen van gedeelde mappen is alleen mogelijk als de gast is "
 "uitgeschakeld"
 
-#: src/components/vm/disks/vmDisksCard.jsx:235
+#: src/components/vm/disks/vmDisksCard.jsx:236
 msgid "Additional"
 msgstr "Extra"
 
 #: src/components/networks/networkOverviewTab.jsx:105
 #: src/components/networks/networkOverviewTab.jsx:125
 #: src/components/vm/consoles/desktopConsole.jsx:47
-#: src/components/vm/nics/vmNicsCard.jsx:226
+#: src/components/vm/nics/vmNicsCard.jsx:282
 msgid "Address"
 msgstr "Adres"
 
@@ -163,7 +167,15 @@ msgstr ""
 "Alle VM-activiteiten, inclusief opslag, zullen tijdelijk zijn. Dit "
 "resulteert in dataverlies op de bestemmingshost."
 
-#: src/components/vm/disks/diskAdd.jsx:103 src/components/vm/nics/nicAdd.jsx:88
+#: src/components/vm/disks/diskAdd.jsx:217
+msgid ""
+"Allowed characters: basic Latin alphabet, numbers, and limited punctuation "
+"(-, _, +, .)"
+msgstr ""
+"Toegestane tekens: basis Latijns alfabet, cijfers en beperkte interpunctie "
+"(-, _, +, .)"
+
+#: src/components/vm/disks/diskAdd.jsx:110 src/components/vm/nics/nicAdd.jsx:88
 msgid "Always attach"
 msgstr "Altijd hechten"
 
@@ -172,7 +184,7 @@ msgstr "Altijd hechten"
 msgid "Apply"
 msgstr "Toepassen"
 
-#: src/components/vm/disks/diskAdd.jsx:232
+#: src/components/vm/disks/diskAdd.jsx:285
 msgid "Attaching it will make this disk shareable for every VM using it."
 msgstr ""
 "Door deze aan te sluiten, wordt deze schijf deelbaar voor elke VM die deze "
@@ -196,24 +208,26 @@ msgstr "Geblokkeerd"
 msgid "Boot order"
 msgstr "Opstartvolgorde"
 
-#: src/components/vm/overview/bootOrder.jsx:242
+#: src/components/vm/overview/bootOrder.jsx:253
 msgid "Boot order settings could not be saved"
 msgstr "Opstartvolgorde instellingen konden niet opgeslagen worden"
 
 #: src/components/vm/overview/bootOrder.jsx:115
 #: src/components/vm/overview/bootOrder.jsx:127
-#: src/components/vm/overview/bootOrder.jsx:146
-#: src/components/vm/overview/bootOrder.jsx:154
+#: src/components/vm/overview/bootOrder.jsx:145
+#: src/components/vm/overview/bootOrder.jsx:148
+#: src/components/vm/overview/bootOrder.jsx:157
+#: src/components/vm/overview/bootOrder.jsx:165
 #: src/components/vm/hostdevs/hostDevAdd.jsx:89
-#: src/components/vm/hostdevs/hostDevCard.jsx:118
-#: src/components/vm/hostdevs/hostDevCard.jsx:136
-#: src/components/vm/disks/diskAdd.jsx:167
+#: src/components/vm/hostdevs/hostDevCard.jsx:131
+#: src/components/vm/hostdevs/hostDevCard.jsx:149
+#: src/components/vm/disks/diskAdd.jsx:197
 #: src/components/vm/disks/diskEdit.jsx:87
-#: src/components/vm/disks/vmDisksCard.jsx:229
+#: src/components/vm/disks/vmDisksCard.jsx:230
 msgid "Bus"
 msgstr "Bus"
 
-#: src/components/vm/disks/diskAdd.jsx:290
+#: src/components/vm/disks/diskAdd.jsx:343
 msgid "CD/DVD disc"
 msgstr "CD/DVD-schijf"
 
@@ -229,7 +243,7 @@ msgstr "CPU-configuratie kon niet worden opgeslagen"
 msgid "CPU type"
 msgstr "CPU-type"
 
-#: src/components/vm/disks/diskAdd.jsx:154
+#: src/components/vm/disks/diskAdd.jsx:186
 #: src/components/vm/disks/diskEdit.jsx:57
 #: src/components/vm/disks/vmDiskColumns.jsx:82
 msgid "Cache"
@@ -245,14 +259,14 @@ msgstr "Cache"
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:145
 #: src/components/vm/deleteDialog.jsx:160
 #: src/components/vm/overview/memoryModal.jsx:154
-#: src/components/vm/overview/bootOrder.jsx:315
+#: src/components/vm/overview/bootOrder.jsx:326
 #: src/components/vm/overview/vcpuModal.jsx:261
 #: src/components/vm/overview/cpuTypeModal.jsx:68
 #: src/components/vm/overview/firmware.jsx:66
 #: src/components/vm/vmCloneDialog.jsx:78
 #: src/components/vm/vmRenameDialog.jsx:66
-#: src/components/vm/hostdevs/hostDevAdd.jsx:220
-#: src/components/vm/disks/diskAdd.jsx:667
+#: src/components/vm/hostdevs/hostDevAdd.jsx:223
+#: src/components/vm/disks/diskAdd.jsx:727
 #: src/components/vm/disks/diskEdit.jsx:260
 #: src/components/vm/vmMigrateDialog.jsx:217
 #: src/components/vm/nics/nicEdit.jsx:175 src/components/vm/nics/nicAdd.jsx:199
@@ -261,11 +275,11 @@ msgstr "Cache"
 msgid "Cancel"
 msgstr "Annuleren"
 
-#: src/components/vm/disks/vmDisksCard.jsx:227
+#: src/components/vm/disks/vmDisksCard.jsx:228
 msgid "Capacity"
 msgstr "Capaciteit"
 
-#: src/components/vm/overview/bootOrder.jsx:307
+#: src/components/vm/overview/bootOrder.jsx:318
 msgid "Change boot order"
 msgstr "Verander opstartvolgorde"
 
@@ -285,7 +299,7 @@ msgstr "Wijzigingen worden van kracht na het afsluiten van de VM"
 msgid "Choose an operating system"
 msgstr "Kies een besturingssysteem"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:180
+#: src/components/vm/hostdevs/hostDevCard.jsx:193
 msgid "Class"
 msgstr "Klasse"
 
@@ -370,7 +384,7 @@ msgstr "Maak VM aan"
 msgid "Create a clone VM based on $0"
 msgstr "Maak een kloon VM aan gebaseerd op $0"
 
-#: src/components/vm/disks/diskAdd.jsx:597
+#: src/components/vm/disks/diskAdd.jsx:654
 msgid "Create new"
 msgstr "Nieuwe aanmaken"
 
@@ -438,8 +452,8 @@ msgstr "Huidige toewijzing"
 msgid "Custom firmware: $0"
 msgstr "Aangepaste firmware: $0"
 
-#: src/components/vm/disks/diskAdd.jsx:275
-#: src/components/vm/disks/diskAdd.jsx:607
+#: src/components/vm/disks/diskAdd.jsx:328
+#: src/components/vm/disks/diskAdd.jsx:664
 msgid "Custom path"
 msgstr "Aangepast pad"
 
@@ -530,11 +544,13 @@ msgstr ""
 #: src/components/networks/createNetworkDialog.jsx:160
 #: src/components/vm/overview/bootOrder.jsx:107
 #: src/components/vm/overview/bootOrder.jsx:114
+#: src/components/vm/overview/bootOrder.jsx:146
+#: src/components/vm/overview/bootOrder.jsx:149
 #: src/components/vm/hostdevs/hostDevAdd.jsx:88
 #: src/components/vm/hostdevs/hostDevAdd.jsx:123
-#: src/components/vm/hostdevs/hostDevCard.jsx:117
-#: src/components/vm/disks/diskAdd.jsx:283
-#: src/components/vm/disks/vmDisksCard.jsx:215
+#: src/components/vm/hostdevs/hostDevCard.jsx:130
+#: src/components/vm/disks/diskAdd.jsx:336
+#: src/components/vm/disks/vmDisksCard.jsx:216
 #: src/components/vm/disks/vmDiskColumns.jsx:50
 msgid "Device"
 msgstr "Apparaat"
@@ -556,23 +572,27 @@ msgstr "Niet verbonden"
 msgid "Disconnected from serial console. Click the connect button."
 msgstr "Verbinden met seriële console verbroken. Klik op de verbinden knop."
 
-#: src/components/vm/disks/vmDisksCard.jsx:279
+#: src/components/vm/disks/vmDisksCard.jsx:280
 msgid "Disk $0 fail to get detached from VM $1"
 msgstr "Schijf $0 kan niet worden losgekoppeld van VM $1"
 
-#: src/components/vm/disks/diskAdd.jsx:573
+#: src/components/vm/disks/diskAdd.jsx:629
 msgid "Disk failed to be attached"
 msgstr "Schijf kon niet worden aangesloten"
 
-#: src/components/vm/disks/diskAdd.jsx:524
+#: src/components/vm/disks/diskAdd.jsx:579
 msgid "Disk failed to be created"
 msgstr "Schijf kon niet aangemaakt worden"
+
+#: src/components/vm/disks/diskAdd.jsx:229
+msgid "Disk identifier"
+msgstr "Schijf-ID"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:316
 msgid "Disk image"
 msgstr "Schijfimage"
 
-#: src/components/vm/disks/diskAdd.jsx:288
+#: src/components/vm/disks/diskAdd.jsx:341
 msgid "Disk image file"
 msgstr "Schijfimagebestand"
 
@@ -580,7 +600,7 @@ msgstr "Schijfimagebestand"
 msgid "Disk image path must not be empty"
 msgstr "Schijfimagepad mag niet leeg zijn"
 
-#: src/components/vm/disks/diskAdd.jsx:559
+#: src/components/vm/disks/diskAdd.jsx:615
 #: src/components/vm/disks/diskEdit.jsx:208
 msgid "Disk settings could not be saved"
 msgstr "Schijfinstellingen konden niet opgeslagen worden"
@@ -599,7 +619,7 @@ msgid ""
 msgstr ""
 "Voer deze VM niet tegelijkertijd uit op de herkomst- en bestemmingshosts."
 
-#: src/components/vm/overview/bootOrder.jsx:147
+#: src/components/vm/overview/bootOrder.jsx:158
 msgid "Domain"
 msgstr "Domein"
 
@@ -624,7 +644,7 @@ msgid "Dying"
 msgstr "Achteruitgaan"
 
 #: src/components/vm/disks/diskEdit.jsx:153
-#: src/components/vm/nics/vmNicsCard.jsx:345
+#: src/components/vm/nics/vmNicsCard.jsx:361
 msgid "Edit"
 msgstr "Bewerken"
 
@@ -632,12 +652,12 @@ msgstr "Bewerken"
 msgid "Edit $0 attributes"
 msgstr "Bewerk $0 attributen"
 
-#: src/components/vm/nics/vmNicsCard.jsx:333
+#: src/components/vm/nics/vmNicsCard.jsx:349
 msgid "Editing network interfaces of transient guests is not allowed"
 msgstr ""
 "Het bewerken van netwerkinterfaces van tijdelijke gasten is niet toegestaan"
 
-#: src/components/vm/nics/vmNicsCard.jsx:339
+#: src/components/vm/nics/vmNicsCard.jsx:355
 msgid "Editing transient network interfaces is not allowed"
 msgstr "Het bewerken van tijdelijke netwerkinterfaces is niet toegestaan"
 
@@ -760,7 +780,7 @@ msgstr ""
 "Alleen niet-gedeelde, beschrijfbare schijfimages worden overgedragen. "
 "Ongebruikte opslag blijft na migratie op de oorsprong staan."
 
-#: src/components/vm/overview/bootOrder.jsx:148
+#: src/components/vm/overview/bootOrder.jsx:159
 msgid "Function"
 msgstr "Functie"
 
@@ -786,7 +806,7 @@ msgid "Go to VMs list"
 msgstr "Ga naar VM's lijst"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:236
-#: src/components/vm/disks/diskAdd.jsx:151
+#: src/components/vm/disks/diskAdd.jsx:182
 msgid "Hide additional options"
 msgstr "Verberg extra opties"
 
@@ -826,7 +846,7 @@ msgid "ID"
 msgstr "ID"
 
 #: src/components/networks/networkOverviewTab.jsx:218
-#: src/components/vm/nics/vmNicsCard.jsx:259
+#: src/components/vm/nics/vmNicsCard.jsx:253
 msgid "IP address"
 msgstr "IP-adres"
 
@@ -939,7 +959,7 @@ msgstr "Installatiebron mag niet leeg zijn"
 msgid "Installation type"
 msgstr "Installatietype"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:160
+#: src/components/vm/hostdevs/hostDevCard.jsx:173
 msgid "Interface"
 msgstr "Interface"
 
@@ -1010,7 +1030,7 @@ msgstr "Libvirt heeft geen UEFI/OVMF firmware-image op de host gedetecteerd"
 msgid "Libvirt or hypervisor does not support UEFI"
 msgstr "Libvirt of hypervisor ondersteunt UEFI niet"
 
-#: src/components/vm/nics/vmNicsCard.jsx:336
+#: src/components/vm/nics/vmNicsCard.jsx:352
 msgid "Loading available network devices"
 msgstr "Beschikbare netwerkapparaten worden geladen"
 
@@ -1036,7 +1056,7 @@ msgstr "MAC"
 
 #: src/components/networks/networkOverviewTab.jsx:210
 #: src/components/vm/nics/nicEdit.jsx:41
-#: src/components/vm/nics/vmNicsCard.jsx:257
+#: src/components/vm/nics/vmNicsCard.jsx:251
 #: src/components/vm/nics/nicAdd.jsx:62
 msgid "MAC address"
 msgstr "MAC-adres"
@@ -1054,6 +1074,14 @@ msgstr ""
 msgid "Machine must be shut off before changing cache mode"
 msgstr ""
 "De machine moet worden uitgeschakeld voordat de cachemodus wordt gewijzigd"
+
+#: org.cockpit-project.machines.metainfo.xml:5
+msgid "Machines"
+msgstr "Machines"
+
+#: org.cockpit-project.machines.metainfo.xml:6
+msgid "Manage your virtual machines"
+msgstr "Beheer je virtuele machines"
 
 #: src/manifest.json:0
 msgid "Managing virtual machines"
@@ -1136,12 +1164,12 @@ msgstr "Migratie mislukte"
 msgid "Mode"
 msgstr "Modus"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:189
+#: src/components/vm/hostdevs/hostDevCard.jsx:202
 #: src/components/vm/nics/nicBody.jsx:50
 msgid "Model"
 msgstr "Model"
 
-#: src/components/vm/nics/vmNicsCard.jsx:246
+#: src/components/vm/nics/vmNicsCard.jsx:240
 msgid "Model type"
 msgstr "Modeltype"
 
@@ -1257,7 +1285,7 @@ msgstr "Nieuwe volumenaam"
 msgid "No VM is running or defined on this host"
 msgstr "Er is geen VM actief of gedefinieerd op deze host"
 
-#: src/components/vm/overview/bootOrder.jsx:340
+#: src/components/vm/overview/bootOrder.jsx:351
 msgid "No boot device found"
 msgstr "Geen opstartapparaat gevonden"
 
@@ -1273,11 +1301,15 @@ msgstr "Geen beschrijving"
 msgid "No directories shared between the host and this VM"
 msgstr "Geen mappen gedeeld tussen de host en deze VM"
 
-#: src/components/vm/disks/vmDisksCard.jsx:315
+#: src/components/vm/disks/vmDisksCard.jsx:316
 msgid "No disks defined for this VM"
 msgstr "Geen schijven gedefinieerd voor deze VM"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:257
+#: src/components/vm/hostdevs/hostDevAdd.jsx:198
+msgid "No host device selected"
+msgstr "Geen hostapparaat geselecteerd"
+
+#: src/components/vm/hostdevs/hostDevCard.jsx:293
 msgid "No host devices assigned to this VM"
 msgstr "Geen hostapparaten toegewezen aan deze VM"
 
@@ -1285,7 +1317,7 @@ msgstr "Geen hostapparaten toegewezen aan deze VM"
 msgid "No network devices"
 msgstr "Geen netwerkapparaten"
 
-#: src/components/vm/nics/vmNicsCard.jsx:416
+#: src/components/vm/nics/vmNicsCard.jsx:432
 msgid "No network interfaces defined for this VM"
 msgstr "Geen netwerkinterfaces gedefinieerd voor deze VM"
 
@@ -1317,7 +1349,7 @@ msgstr "Geen opslag"
 msgid "No storage pool is defined on this host"
 msgstr "Er is geen opslagpool gedefinieerd op deze host"
 
-#: src/components/vm/disks/diskAdd.jsx:131
+#: src/components/vm/disks/diskAdd.jsx:138
 msgid "No storage pools available"
 msgstr "Geen opslagpools beschikbaar"
 
@@ -1362,7 +1394,7 @@ msgstr ""
 "de schijven los om het volume te verwijderen."
 
 #: src/components/vm/overview/memoryModal.jsx:139
-#: src/components/vm/overview/bootOrder.jsx:362
+#: src/components/vm/overview/bootOrder.jsx:373
 #: src/components/vm/nics/nicEdit.jsx:38
 msgid "Only editable when the guest is shut off"
 msgstr "Alleen bewerkbaar wanneer de gast uitgeschakeld is"
@@ -1394,8 +1426,8 @@ msgid "Parent snapshot"
 msgstr "Ouder momentopname"
 
 #: src/components/vm/deleteDialog.jsx:60
-#: src/components/vm/hostdevs/hostDevCard.jsx:152
-#: src/components/vm/hostdevs/hostDevCard.jsx:156
+#: src/components/vm/hostdevs/hostDevCard.jsx:165
+#: src/components/vm/hostdevs/hostDevCard.jsx:169
 #: src/components/vm/disks/diskEdit.jsx:39
 msgid "Path"
 msgstr "Pad"
@@ -1412,7 +1444,7 @@ msgstr "Pad naar ISO-bestand op bestandssysteem van host"
 msgid "Path to cloud image file on host's file system"
 msgstr "Pad naar cloud-image op bestandssysteem van host"
 
-#: src/components/vm/disks/diskAdd.jsx:277
+#: src/components/vm/disks/diskAdd.jsx:330
 msgid "Path to file on host's file system"
 msgstr "Pad naar bestand op bestandssysteem van host"
 
@@ -1428,7 +1460,7 @@ msgstr "Gepauzeerd"
 msgid "Permanent (default)"
 msgstr "Permanent (standaard)"
 
-#: src/components/vm/disks/diskAdd.jsx:100 src/components/vm/nics/nicAdd.jsx:85
+#: src/components/vm/disks/diskAdd.jsx:107 src/components/vm/nics/nicAdd.jsx:85
 msgid "Persistence"
 msgstr "Volhardend"
 
@@ -1445,15 +1477,15 @@ msgstr "Fysiek schijfapparaat"
 msgid "Physical disk device on host"
 msgstr "Fysiek schijfapparaat op host"
 
-#: src/components/vm/disks/diskAdd.jsx:359
+#: src/components/vm/disks/diskAdd.jsx:413
 msgid "Please choose a storage pool"
 msgstr "Kies een opslagpool"
 
-#: src/components/vm/disks/diskAdd.jsx:374
+#: src/components/vm/disks/diskAdd.jsx:428
 msgid "Please choose a volume"
 msgstr "Kies een volume"
 
-#: src/components/vm/disks/diskAdd.jsx:363
+#: src/components/vm/disks/diskAdd.jsx:417
 msgid "Please enter new volume name"
 msgstr "Voer een nieuwe volumenaam in"
 
@@ -1463,7 +1495,7 @@ msgstr "Start de virtuele machine om toegang te krijgen tot de console."
 
 #: src/components/vm/deleteDialog.jsx:68
 #: src/components/vm/overview/bootOrder.jsx:109
-#: src/components/vm/disks/diskAdd.jsx:116
+#: src/components/vm/disks/diskAdd.jsx:123
 #: src/components/vm/disks/vmDiskColumns.jsx:52
 msgid "Pool"
 msgstr "Pool"
@@ -1472,7 +1504,7 @@ msgstr "Pool"
 msgid "Pool needs to be active to create volume"
 msgstr "Pool moet actief zijn om volume te creëren"
 
-#: src/components/vm/disks/diskAdd.jsx:366
+#: src/components/vm/disks/diskAdd.jsx:420
 msgid "Pool type $0 does not support volume creation"
 msgstr "Pooltype $0 ondersteunt geen volume-creatie"
 
@@ -1487,7 +1519,7 @@ msgstr "De volumes van pool worden gebruikt door VM's "
 #: src/components/vm/overview/bootOrder.jsx:112
 #: src/components/vm/overview/bootOrder.jsx:128
 #: src/components/vm/disks/vmDiskColumns.jsx:55
-#: src/components/vm/nics/vmNicsCard.jsx:227
+#: src/components/vm/nics/vmNicsCard.jsx:283
 msgid "Port"
 msgstr "Poort"
 
@@ -1519,8 +1551,8 @@ msgstr ""
 msgid "Private"
 msgstr "Privaat"
 
-#: src/components/vm/overview/bootOrder.jsx:139
-#: src/components/vm/overview/bootOrder.jsx:145
+#: src/components/vm/overview/bootOrder.jsx:141
+#: src/components/vm/overview/bootOrder.jsx:156
 #: src/components/vm/hostdevs/hostDevAdd.jsx:129
 msgid "Product"
 msgstr "Product"
@@ -1530,8 +1562,8 @@ msgid "Profile"
 msgstr "Profiel"
 
 #: src/components/vm/overview/bootOrder.jsx:108
-#: src/components/vm/overview/bootOrder.jsx:161
-#: src/components/vm/hostdevs/hostDevCard.jsx:143
+#: src/components/vm/overview/bootOrder.jsx:172
+#: src/components/vm/hostdevs/hostDevCard.jsx:156
 #: src/components/vm/disks/vmDiskColumns.jsx:51
 msgid "Protocol"
 msgstr "Protocol"
@@ -1562,7 +1594,7 @@ msgid "Range"
 msgstr "Reeks"
 
 #: src/components/vm/disks/diskEdit.jsx:120
-#: src/components/vm/disks/vmDisksCard.jsx:259
+#: src/components/vm/disks/vmDisksCard.jsx:260
 msgid "Read-only"
 msgstr "Alleen-lezen"
 
@@ -1580,10 +1612,10 @@ msgstr "Viewerdetails op afstand"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:59
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:62
-#: src/components/vm/hostdevs/hostDevCard.jsx:221
-#: src/components/vm/hostdevs/hostDevCard.jsx:253
-#: src/components/vm/disks/vmDisksCard.jsx:287
-#: src/components/vm/disks/vmDisksCard.jsx:297
+#: src/components/vm/hostdevs/hostDevCard.jsx:232
+#: src/components/vm/hostdevs/hostDevCard.jsx:289
+#: src/components/vm/disks/vmDisksCard.jsx:288
+#: src/components/vm/disks/vmDisksCard.jsx:298
 msgid "Remove"
 msgstr "Verwijderen"
 
@@ -1660,7 +1692,7 @@ msgid "SPICE port"
 msgstr "SPICE poort"
 
 #: src/components/vm/overview/memoryModal.jsx:151
-#: src/components/vm/overview/bootOrder.jsx:312
+#: src/components/vm/overview/bootOrder.jsx:323
 #: src/components/vm/overview/firmware.jsx:63
 #: src/components/vm/disks/diskEdit.jsx:257
 #: src/components/vm/nics/nicEdit.jsx:172
@@ -1678,6 +1710,10 @@ msgstr "Verzend sleutel"
 #: src/components/vm/vmActions.jsx:249
 msgid "Send non-maskable interrupt"
 msgstr "Verzend niet-maskeerbare onderbreking"
+
+#: src/components/vm/disks/vmDiskColumns.jsx:83
+msgid "Serial"
+msgstr "Serieel"
 
 #: src/components/vm/consoles/consoles.jsx:112
 msgid "Serial console"
@@ -1733,7 +1769,7 @@ msgid "Shared storage"
 msgstr "Gedeelde opslag"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:236
-#: src/components/vm/disks/diskAdd.jsx:151
+#: src/components/vm/disks/diskAdd.jsx:182
 msgid "Show additional options"
 msgstr "Extra opties tonen"
 
@@ -1760,10 +1796,10 @@ msgstr "Afsluiten"
 msgid "Size"
 msgstr "Grootte"
 
-#: src/components/vm/overview/bootOrder.jsx:149
+#: src/components/vm/overview/bootOrder.jsx:160
 #: src/components/vm/hostdevs/hostDevAdd.jsx:101
-#: src/components/vm/hostdevs/hostDevCard.jsx:130
-#: src/components/vm/hostdevs/hostDevCard.jsx:137
+#: src/components/vm/hostdevs/hostDevCard.jsx:143
+#: src/components/vm/hostdevs/hostDevCard.jsx:150
 msgid "Slot"
 msgstr "Slot"
 
@@ -1780,11 +1816,11 @@ msgid "Sockets"
 msgstr "Sockets"
 
 #: src/components/storagePools/storagePoolOverviewTab.jsx:51
-#: src/components/vm/hostdevs/hostDevCard.jsx:207
-#: src/components/vm/disks/diskAdd.jsx:594
-#: src/components/vm/disks/vmDisksCard.jsx:233
+#: src/components/vm/hostdevs/hostDevCard.jsx:220
+#: src/components/vm/disks/diskAdd.jsx:651
+#: src/components/vm/disks/vmDisksCard.jsx:234
 #: src/components/vm/nics/nicBody.jsx:197
-#: src/components/vm/nics/vmNicsCard.jsx:284
+#: src/components/vm/nics/vmNicsCard.jsx:278
 msgid "Source"
 msgstr "Bron"
 
@@ -1838,7 +1874,7 @@ msgstr "Opstarten"
 #: src/components/storagePools/storagePoolList.jsx:76
 #: src/components/networks/networkList.jsx:78
 #: src/components/vm/overview/vmOverviewCard.jsx:187
-#: src/components/vm/nics/vmNicsCard.jsx:310
+#: src/components/vm/nics/vmNicsCard.jsx:326
 #: src/components/vms/hostvmslist.jsx:96 src/components/vms/hostvmslist.jsx:138
 msgid "State"
 msgstr "Toestand"
@@ -1879,7 +1915,7 @@ msgstr "Opslagpoolnaam"
 msgid "Storage pools"
 msgstr "Opslagpools"
 
-#: src/components/vm/disks/diskAdd.jsx:352
+#: src/components/vm/disks/diskAdd.jsx:406
 msgid "Storage pools could not be fetched"
 msgstr "Opslagpools kunnen niet worden opgehaald"
 
@@ -1892,7 +1928,7 @@ msgid "Storage volume"
 msgstr "Opslagvolume"
 
 #: src/components/storagePools/storageVolumeCreate.jsx:64
-#: src/components/vm/disks/diskAdd.jsx:370
+#: src/components/vm/disks/diskAdd.jsx:424
 msgid "Storage volume size must not exceed the storage pool's capacity ($0 $1)"
 msgstr ""
 "De grootte van het opslagvolume mag de capaciteit van de opslagpool niet "
@@ -1923,8 +1959,8 @@ msgstr "Systeem"
 msgid "Table of selectable host devices"
 msgstr "Tabel met selecteerbare hostapparaten"
 
-#: src/components/vm/overview/bootOrder.jsx:155
-#: src/components/vm/hostdevs/hostDevCard.jsx:138
+#: src/components/vm/overview/bootOrder.jsx:166
+#: src/components/vm/hostdevs/hostDevCard.jsx:151
 msgid "Target"
 msgstr "Doel"
 
@@ -1953,8 +1989,8 @@ msgstr "De $0 kon niet verwijderd worden"
 msgid "The VM is running and will be forced off before deletion."
 msgstr "De VM is actief en wordt vóór verwijdering uitgeschakeld."
 
-#: src/components/vm/disks/vmDisksCard.jsx:296
-#: src/components/vm/nics/vmNicsCard.jsx:369
+#: src/components/vm/disks/vmDisksCard.jsx:297
+#: src/components/vm/nics/vmNicsCard.jsx:385
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr "De VM moet actief of uitgeschakeld zijn om dit apparaat te ontkoppelen"
 
@@ -1974,7 +2010,7 @@ msgstr ""
 "De gemigreerde VM-configuratie wordt verwijderd van de bronhost. De doelhost "
 "wordt beschouwd als de nieuwe thuisbasis van de VM."
 
-#: src/components/vm/disks/diskAdd.jsx:76
+#: src/components/vm/disks/diskAdd.jsx:83
 msgid "The pool is empty"
 msgstr "De pool is leeg"
 
@@ -2037,11 +2073,19 @@ msgstr ""
 "Dit is de aanbevolen configuratie voor hoge prestaties of verbeterde "
 "beveiliging."
 
+#: org.cockpit-project.machines.metainfo.xml:8
+msgid ""
+"This tool manages virtual machines. With it, you can create, monitor, and "
+"control the virtual machines of the libvirt subsystem."
+msgstr ""
+"Dit gereedschap beheert virtuele machines. Hiermee kun je de virtuele "
+"machines van het libvirt-subsysteem maken, bewaken en besturen."
+
 #: src/components/create-vm-dialog/createVmDialog.jsx:696
 msgid "This volume is already used by another VM."
 msgstr "Dit volume wordt al gebruikt door een andere VM."
 
-#: src/components/vm/disks/diskAdd.jsx:230
+#: src/components/vm/disks/diskAdd.jsx:283
 msgid "This volume is already used by: "
 msgstr "Dit volume wordt al gebruikt door: "
 
@@ -2062,18 +2106,18 @@ msgstr "Problemen"
 #: src/components/storagePools/createStoragePoolDialog.jsx:80
 #: src/components/storagePools/storagePoolOverviewTab.jsx:76
 #: src/components/vm/overview/bootOrder.jsx:126
-#: src/components/vm/overview/bootOrder.jsx:137
-#: src/components/vm/overview/bootOrder.jsx:143
-#: src/components/vm/overview/bootOrder.jsx:153
-#: src/components/vm/overview/bootOrder.jsx:160
-#: src/components/vm/overview/bootOrder.jsx:166
+#: src/components/vm/overview/bootOrder.jsx:139
+#: src/components/vm/overview/bootOrder.jsx:154
+#: src/components/vm/overview/bootOrder.jsx:164
+#: src/components/vm/overview/bootOrder.jsx:171
+#: src/components/vm/overview/bootOrder.jsx:177
 #: src/components/vm/hostdevs/hostDevAdd.jsx:47
-#: src/components/vm/hostdevs/hostDevCard.jsx:171
-#: src/components/vm/nics/vmNicsCard.jsx:234
+#: src/components/vm/hostdevs/hostDevCard.jsx:184
+#: src/components/vm/nics/vmNicsCard.jsx:228
 msgid "Type"
 msgstr "Type"
 
-#: src/components/vm/overview/bootOrder.jsx:167
+#: src/components/vm/overview/bootOrder.jsx:178
 msgid "Type ID"
 msgstr "Type-ID"
 
@@ -2085,7 +2129,7 @@ msgstr "URL (ISO image of distro installatieboom)"
 msgid "USB"
 msgstr "USB"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:148
+#: src/components/vm/hostdevs/hostDevCard.jsx:161
 msgid "UUID"
 msgstr "UUID"
 
@@ -2101,17 +2145,24 @@ msgstr "Unieke naam"
 msgid "Unique network name"
 msgstr "Unieke netwerknaam"
 
-#: src/components/vm/overview/bootOrder.jsx:156
+#: src/components/vm/overview/bootOrder.jsx:167
 msgid "Unit"
 msgstr "Unit"
 
-#: src/components/vm/nics/vmNicsCard.jsx:267
+#: src/components/vm/nics/vmNicsCard.jsx:261
 msgid "Unknown"
 msgstr "Onbekend"
 
 #: src/components/vm/overview/firmware.jsx:116
 msgid "Unknown firmware"
 msgstr "Onbekende firmware"
+
+#: src/components/vm/overview/bootOrder.jsx:145
+#: src/components/vm/overview/bootOrder.jsx:146
+#: src/components/vm/hostdevs/hostDevCard.jsx:124
+#: src/components/vm/hostdevs/hostDevCard.jsx:125
+msgid "Unspecified"
+msgstr "Niet gespecificeerd"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:644
 msgid "Up to $0 $1 available on the default location"
@@ -2130,7 +2181,7 @@ msgstr "Url"
 msgid "Usage"
 msgstr "Gebruik"
 
-#: src/components/vm/disks/diskAdd.jsx:602
+#: src/components/vm/disks/diskAdd.jsx:659
 msgid "Use existing"
 msgstr "Gebruik bestaande"
 
@@ -2144,7 +2195,7 @@ msgstr ""
 "je opslag. Dit kan een gedeelde opslagpool, NFS of een andere methode voor "
 "het delen van opslag zijn."
 
-#: src/components/vm/disks/vmDisksCard.jsx:225
+#: src/components/vm/disks/vmDisksCard.jsx:226
 msgid "Used"
 msgstr "Gebruikt"
 
@@ -2244,10 +2295,10 @@ msgstr "VNC-console"
 msgid "VNC port"
 msgstr "VNC-poort"
 
-#: src/components/vm/overview/bootOrder.jsx:138
-#: src/components/vm/overview/bootOrder.jsx:144
+#: src/components/vm/overview/bootOrder.jsx:140
+#: src/components/vm/overview/bootOrder.jsx:155
 #: src/components/vm/hostdevs/hostDevAdd.jsx:129
-#: src/components/vm/hostdevs/hostDevCard.jsx:198
+#: src/components/vm/hostdevs/hostDevCard.jsx:211
 msgid "Vendor"
 msgstr "Leverancier"
 
@@ -2282,7 +2333,7 @@ msgstr "Virtualisatieservice (libvirt) is niet actief"
 
 #: src/components/vm/deleteDialog.jsx:65
 #: src/components/vm/overview/bootOrder.jsx:110
-#: src/components/vm/disks/diskAdd.jsx:82
+#: src/components/vm/disks/diskAdd.jsx:89
 #: src/components/vm/disks/vmDiskColumns.jsx:53
 #: src/components/create-vm-dialog/createVmDialog.jsx:694
 msgid "Volume"
@@ -2300,18 +2351,18 @@ msgstr "Naam van volumegroep"
 msgid "Volume group name should not be empty"
 msgstr "Naam van volumegroep mag niet leeg zijn"
 
-#: src/components/vm/overview/bootOrder.jsx:162
-#: src/components/vm/hostdevs/hostDevCard.jsx:144
+#: src/components/vm/overview/bootOrder.jsx:173
+#: src/components/vm/hostdevs/hostDevCard.jsx:157
 msgid "WWPN"
 msgstr "WWPN"
 
 #: src/components/vm/disks/diskEdit.jsx:129
-#: src/components/vm/disks/vmDisksCard.jsx:259
+#: src/components/vm/disks/vmDisksCard.jsx:260
 msgid "Writeable"
 msgstr "Beschrijfbaar"
 
 #: src/components/vm/disks/diskEdit.jsx:138
-#: src/components/vm/disks/vmDisksCard.jsx:259
+#: src/components/vm/disks/vmDisksCard.jsx:260
 msgid "Writeable and shared"
 msgstr "Beschrijfbaar en gedeeld"
 
@@ -2352,7 +2403,7 @@ msgstr "direct"
 msgid "disabled"
 msgstr "uitgeschakeld"
 
-#: src/components/vm/disks/vmDisksCard.jsx:285 src/helpers.js:235
+#: src/components/vm/disks/vmDisksCard.jsx:286 src/helpers.js:235
 #: src/helpers.js:238
 msgid "disk"
 msgstr "schijf"
@@ -2361,7 +2412,7 @@ msgstr "schijf"
 msgid "down"
 msgstr "niet actief"
 
-#: src/components/vm/overview/bootOrder.jsx:354
+#: src/components/vm/overview/bootOrder.jsx:365
 #: src/components/vm/overview/vmOverviewCard.jsx:135
 #: src/components/vm/overview/vmOverviewCard.jsx:146
 #: src/components/vm/overview/vmOverviewCard.jsx:154
@@ -2444,7 +2495,7 @@ msgstr ""
 msgid "network"
 msgstr "netwerk"
 
-#: src/components/vm/nics/vmNicsCard.jsx:360
+#: src/components/vm/nics/vmNicsCard.jsx:376
 msgid "network interface"
 msgstr "netwerkinterface"
 
@@ -2477,6 +2528,10 @@ msgstr "qemu"
 #: src/helpers.js:239
 msgid "redirected device"
 msgstr "omgeleid apparaat"
+
+#: src/components/vm/disks/diskAdd.jsx:231
+msgid "serial number"
+msgstr "serienummer"
 
 #: src/helpers.js:255
 msgid "server"
