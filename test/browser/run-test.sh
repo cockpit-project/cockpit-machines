@@ -44,9 +44,42 @@ if [ "$ID" = "rhel" ]; then
     "
 fi
 
-if [ "$TEST_OS" = "centos-8-stream" ]; then
-    EXCLUDES="$EXCLUDES TestMachinesConsoles.testExternalConsole"
-fi
+# We only have one VM and tests should take at most one hour. So run those tests which exercise external API
+# (and thus are useful for reverse dependency testing and gating), and exclude those which test internal
+# functionality -- upstream CI covers that.
+EXCLUDES="$EXCLUDES
+          TestMachinesCreate.testConfigureBeforeInstall
+          TestMachinesCreate.testCreateBasicValidation
+          TestMachinesCreate.testDisabledCreate
+
+          TestMachinesConsoles.testExternalConsole
+          TestMachinesConsoles.testInlineConsole
+          TestMachinesConsoles.testInlineConsoleWithUrlRoot
+          TestMachinesConsoles.testSerialConsole
+          TestMachinesConsoles.testSwitchConsoleFromSerialToGraphical
+
+          TestMachinesDisks.testAddDiskAdditionalOptions
+          TestMachinesDisks.testAddDiskCustomPath
+          TestMachinesDisks.testDetachDisk
+          TestMachinesDisks.testDiskEdit
+
+          TestMachinesLifecycle.testBasicLibvirtUserUnprivileged
+          TestMachinesLifecycle.testBasicWheelUserUnprivileged
+          TestMachinesLifecycle.testDelete
+          TestMachinesLifecycle.testLibvirt
+
+          TestMachinesHostDevs.testHostDevAddMultipleDevices
+
+          TestMachinesMigration.testFailMigrationUriIncorrect
+          TestMachinesMigration.testFailMigrationDomainUnknown
+
+          TestMachinesNetworks.testNetworkSettings
+          TestMachinesNetworks.testNICPlugingAndUnpluging
+
+          TestMachinesNICs.NICAddDialog
+
+          TestMachinesSettings.testMultipleSettings
+          "
 
 if [ "$ID" = "fedora" ]; then
     # Testing Farm machines are really slow in European evenings
