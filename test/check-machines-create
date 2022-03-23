@@ -313,7 +313,8 @@ class TestMachinesCreate(VirtualMachinesCase):
         # Redefine the domain with the new XML
         xmlstr = ET.tostring(root, encoding='unicode', method='xml')
 
-        self.machine.execute(f"echo '{xmlstr}' > /tmp/domain.xml && virsh define --file /tmp/domain.xml")
+        self.write_file("/tmp/domain.xml", xmlstr)
+        self.machine.execute("virsh define --file /tmp/domain.xml")
 
         self.machine.execute("virsh start pxe-guest")
 
