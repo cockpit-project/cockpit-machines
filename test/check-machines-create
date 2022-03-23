@@ -275,9 +275,12 @@ class TestMachinesCreate(VirtualMachinesCase):
         # We don't want to use start_vm == False because if we get a separate install phase
         # virt-install will overwrite our changes.
 
-        # Wait for virt-install to define the VM and then stop it
-        wait(lambda: "pxe-guest" in self.machine.execute("virsh list --persistent"), delay=3)
+        # Wait for virt-install to define the VM, stop it, and wait for virt-install to be done
+        wait(lambda: "pxe-guest" in self.machine.execute("virsh list --name --persistent"), delay=3)
+        wait(lambda: "pxe-guest" in self.machine.execute("virsh list --name"), delay=3)
         self.machine.execute("virsh destroy pxe-guest")
+        self.machine.execute("while pgrep virt-install; do sleep 1; done")
+        self.assertEqual(self.machine.execute("virsh list --name").strip(), "")
 
         # Remove all serial ports and consoles first and then add a console of type file
         # virt-xml tool does not allow to remove both serial and console devices at once
