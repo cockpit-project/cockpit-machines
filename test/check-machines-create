@@ -349,13 +349,17 @@ class TestMachinesCreate(VirtualMachinesCase):
         config = TestMachinesCreate.TestCreateConfig
         m = self.machine
 
+        self.restore_file("/etc/libvirt/qemu.conf")
+
         self.login_and_go("/machines")
         self.browser.wait_in_text("body", "Virtual machines")
 
         vnc_listen = "192.168.2.6"
-        m.execute(f"echo 'vnc_listen = \"{vnc_listen}\"' >> /etc/libvirt/qemu.conf")
         vnc_passwd = "mypass"
-        m.execute(f"echo 'vnc_password= \"{vnc_passwd}\"' >> /etc/libvirt/qemu.conf")
+
+        m.write("/etc/libvirt/qemu.conf", f'''vnc_listen = "{vnc_listen}"
+vnc_password= "{vnc_passwd}"
+''', append=True)
 
         runner.createAndVerifyQemuConfParsedTest(
             TestMachinesCreate.VmDialog(self, sourceType='file',
@@ -364,7 +368,6 @@ class TestMachinesCreate(VirtualMachinesCase):
             vnc_listen, "127.0.0.1", vnc_passwd, None)
 
         # Ensure that missing qemu.conf would not crash the script but just pick the 127.0.0.1 default value
-        self.restore_file("/etc/libvirt/qemu.conf")
         m.execute("rm /etc/libvirt/qemu.conf")
         runner.createAndVerifyQemuConfParsedTest(
             TestMachinesCreate.VmDialog(self, sourceType='file',
