@@ -857,6 +857,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         def createRespectQemuConfConsoleConfig(self, vnc_listen, spice_listen, vnc_passwd, spice_passwd):
             self.browser.click(".pf-c-modal-box__footer button:contains(Create)")
             self.browser.wait_not_present("#create-vm-dialog")
+            self.browser.wait_text(f"#vm-{self.name}-state", "Shut off")
 
             domainXML = self.machine.execute(f"virsh dumpxml --security-info {self.name}")
             root = ET.fromstring(domainXML)
