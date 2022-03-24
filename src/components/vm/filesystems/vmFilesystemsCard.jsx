@@ -238,10 +238,10 @@ const VmFilesystemAddModal = ({ connectionName, setIsOpen, objPath, vmName, vmSt
                                    isExpanded={additionalOptionsExpanded}>
                     <FormGroup hasNoPaddingTop
                                fieldId={`${idPrefix}-modal-xattr`}
-                               label="Extended attributes">
+                               label={_("Extended attributes")}>
                         <Checkbox id={`${idPrefix}-modal-xattr`}
                                   isChecked={xattr}
-                                  label={_("Enable/disable extended attributes (xattr) on files and directories")}
+                                  label={_("Use extended attributes on files and directories")}
                                   onChange={xattr => setXattr(xattr)} />
                     </FormGroup>
                 </ExpandableSection>
