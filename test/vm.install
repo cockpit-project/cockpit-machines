@@ -15,3 +15,8 @@ printf "[WebService]\\nAllowUnencrypted=true\\n" > /etc/cockpit/cockpit.conf
 if type firewall-cmd >/dev/null 2>&1; then
     firewall-cmd --add-service=cockpit --permanent
 fi
+
+# HACK: libvirtdbus permissions regressed in jammy: https://launchpad.net/bugs/1802005
+if grep -q 'UBUNTU_CODENAME=jammy' /usr/lib/os-release; then
+    adduser libvirtdbus libvirt
+fi
