@@ -273,11 +273,8 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         self.addCleanup(m.execute, f"echo '{core_pattern}' > /proc/sys/kernel/core_pattern")
 
         def stopLibvirtSocket():
-            # newer libvirtd versions use socket activation
-            # we should test that separately, but here we test only using the service unit
-            if m.image not in ["rhel-8-4"]:
-                m.execute(f"systemctl stop {self.getLibvirtServiceName()}-ro.socket {self.getLibvirtServiceName()}.socket {self.getLibvirtServiceName()}-admin.socket")
-                self.addCleanup(m.execute, f"systemctl start {self.getLibvirtServiceName()}-ro.socket {self.getLibvirtServiceName()}.socket {self.getLibvirtServiceName()}-admin.socket")
+            m.execute(f"systemctl stop {self.getLibvirtServiceName()}-ro.socket {self.getLibvirtServiceName()}.socket {self.getLibvirtServiceName()}-admin.socket")
+            self.addCleanup(m.execute, f"systemctl start {self.getLibvirtServiceName()}-ro.socket {self.getLibvirtServiceName()}.socket {self.getLibvirtServiceName()}-admin.socket")
 
         def stopLibvirtService():
             m.execute(f"systemctl stop {libvirtServiceName}")

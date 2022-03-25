@@ -90,14 +90,14 @@ class TestMachinesMigration(VirtualMachinesCase):
     def testSharedStorageMigration(self):
         self._testMigrationGeneric(False, False, None)
 
-    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-4", "rhel-8-5", "rhel-8-6", "rhel-9-0", "centos-9-stream")
+    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-6", "rhel-9-0", "centos-9-stream")
     def testCopyStorageMigration(self):
         self._testMigrationGeneric(True, False, None)
 
     def testMoveTemporarilyMigration(self):
         self._testMigrationGeneric(False, True, None)
 
-    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-4", "rhel-8-5", "rhel-8-6", "rhel-9-0", "centos-9-stream")
+    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-6", "rhel-9-0", "centos-9-stream")
     def testFailMigrationPoolNotFound(self):
         # Equivalent storage pool is not present on the destination
         self._testMigrationGeneric(True, False, "pool")
@@ -163,7 +163,7 @@ class TestMachinesMigration(VirtualMachinesCase):
 
         b.set_checked("#temporary", temporary)
 
-        if self.machine.image in ["rhel-8-4", "rhel-8-5", "rhel-8-6", "rhel-9-0", "centos-9-stream"]:
+        if self.machine.image in ["rhel-8-6", "rhel-9-0", "centos-9-stream"]:
             b.wait_not_present("#copy")
         else:
             if copy_storage:
