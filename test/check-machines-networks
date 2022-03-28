@@ -19,6 +19,7 @@
 
 import os
 import sys
+import xml.etree.ElementTree as ET
 
 # import Cockpit's machinery for test VMs and its browser test API
 TEST_DIR = os.path.dirname(__file__)
@@ -795,6 +796,75 @@ class TestMachinesNetworks(VirtualMachinesCase):
         self.waitNetworkRow("test_network2", connectionName, False)
 
     def testNetworkAddStaticDCHPHosts(self):
+        class NetworkAddStaticDCHPHostsDialog(object):
+            def __init__(
+                self, test_obj=None, network_name="default", connection_name="system", mac=None, ip=None, entry_id=0,
+                xfail=None, remove=True
+            ):
+                self.test_obj = test_obj
+                self.network_name = network_name
+                self.connection_name = connection_name
+                self.mac = mac
+                self.ip = ip
+                self.entry_id = entry_id
+                self.xfail = xfail
+                self.remove = remove
+
+            def execute(self):
+                self.open()
+                self.fill()
+                self.add()
+                if not self.xfail:
+                    self.verify_dialog()
+                    self.verify_overview()
+                    if self.remove:
+                        self.cleanup()
+
+            def open(self):
+                b.click(f"#network-{self.network_name}-{self.connection_name}-static-host-entries-add")
+                b.wait_visible("#add-new-static-entry-mac-address")
+                b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Add a DHCP static host entry")
+
+            def fill(self):
+                b.set_input_text("#add-new-static-entry-mac-address", self.mac)
+                b.set_input_text("#add-new-static-entry-ip-address", self.ip)
+
+            def cancel(self):
+                b.click(".pf-c-modal-box__footer button:contains(Cancel)")
+                b.wait_not_present("#add-new-static-entry")
+
+            def add(self):
+                b.click(".pf-c-modal-box__footer button:contains(Add)")
+
+                if (self.xfail):
+                    # Check incomplete dialog
+                    b.wait_in_text(".pf-c-modal-box .pf-c-alert.pf-m-danger", self.xfail)
+                    self.cancel()
+                else:
+                    b.wait_not_present("#add-new-static-entry")
+
+            def verify_dialog(self):
+                # Check that the defined network is now visible
+                b.wait_in_text("body", "Networks")
+
+                # Verify libvirt XML
+                net_xml = m.execute(f"virsh -c qemu:///system net-dumpxml {self.network_name}")
+                network_node = ET.fromstring(net_xml)
+                host_by_mac = network_node.find(f'./ip/dhcp/host[@mac="{self.mac}"]')
+                if host_by_mac is None:
+                    raise Exception(f'No DHCP host with MAC address {self.mac} found in network XML:\n{net_xml}')
+                host_by_ip = network_node.find(f'./ip/dhcp/host[@ip="{self.ip}"]')
+                if host_by_ip is None:
+                    raise Exception(f'No DHCP host with IP address {self.ip} found in network XML:\n{net_xml}')
+
+            def verify_overview(self):
+                b.wait_in_text(f"#network-{self.network_name}-{self.connection_name}-ipv4-dhcp-host-{self.entry_id}", f"MAC: {self.mac}, IP: {self.ip}")
+
+            def cleanup(self):
+                if self.activate and not self.xfail_objects:
+                    m.execute(f"virsh net-destroy {self.network_name}")
+                m.execute(f"virsh net-undefine {self.network_name}")
+
         b = self.browser
         m = self.machine
 
@@ -813,21 +883,21 @@ class TestMachinesNetworks(VirtualMachinesCase):
         # Expand row for first network
         self.toggleNetworkRow("default")
 
-        # Set up a static IP address
-        mac = self.getDomainMacAddress("subVmTest1")
-        b.click("#network-default-system-static-host-entries-add")
-        b.set_input_text("#add-new-static-entry-mac-address", mac)
-        b.set_input_text("#add-new-static-entry-ip-address", "192.168.122.222")
-        b.click("#add-new-static-entry-save")
-        b.wait_in_text("#network-default-system-ipv4-dhcp-host-0", f"MAC: {mac}, IP: 192.168.122.222")
+        # Attach basic static DHCP host
+        NetworkAddStaticDCHPHostsDialog(
+            self,
+            mac=self.getDomainMacAddress("subVmTest1"),
+            ip="192.168.122.222",
+            remove=False,
+        ).execute()
 
-        # Try to set up the same MAC -> IP mapping and expect error
-        b.click("#network-default-system-static-host-entries-add")
-        b.set_input_text("#add-new-static-entry-mac-address", self.getDomainMacAddress("subVmTest1"))
-        b.set_input_text("#add-new-static-entry-ip-address", "192.168.122.222")
-        b.click("#add-new-static-entry-save")
-        b.wait_in_text(".pf-c-modal-box .pf-c-alert.pf-m-danger", "there is an existing dhcp host entry")
-        b.click("#add-new-static-entry-cancel")
+        # Check "IPv4 address cannot be same as the network identifier"
+        NetworkAddStaticDCHPHostsDialog(
+            self,
+            mac=self.getDomainMacAddress("subVmTest1"),
+            ip="192.168.122.222",
+            xfail="there is an existing dhcp host entry",
+        ).execute()
 
         # Check that the static IP is correctly assigned to the VM
         m.execute("virsh start subVmTest1")
