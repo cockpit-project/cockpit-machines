@@ -97,13 +97,14 @@ DeleteResourceModal.propTypes = {
     onClose: PropTypes.func.isRequired,
 };
 
-export const DeleteResourceButton = ({ objectId, disabled, overlayText, actionName, showDialog, isLink, isInline }) => {
+export const DeleteResourceButton = ({ objectId, disabled, overlayText, actionName, showDialog, isLink, isInline, className }) => {
     if (disabled) {
         return (
             <Tooltip id={`delete-${objectId}-tooltip`}
                      content={overlayText}>
                 <span>
                     <Button id={`delete-${objectId}`}
+                        className={className}
                         variant={isLink ? 'link' : 'danger'}
                         isDanger={isLink}
                         isInline={isInline}
@@ -116,6 +117,7 @@ export const DeleteResourceButton = ({ objectId, disabled, overlayText, actionNa
     } else {
         return (
             <Button id={`delete-${objectId}`}
+                className={className}
                 variant={isLink ? 'link' : 'danger'}
                 isDanger={isLink}
                 isInline={isInline}
