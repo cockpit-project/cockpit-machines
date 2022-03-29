@@ -118,7 +118,7 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                          memory_size=100000, memory_size_unit='MiB',
                                                                          storage_pool="NoStorage",
                                                                          create_and_run=False),
-                                             {"memory": "Up to "})
+                                             {"memory": "available on host"})
 
         # start vm
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, storage_size=1,

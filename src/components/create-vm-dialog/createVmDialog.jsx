@@ -183,7 +183,7 @@ function validateParams(vmParams) {
 
     if (vmParams.nodeMaxMemory && vmParams.memorySize > convertToUnit(vmParams.nodeMaxMemory, units.KiB, vmParams.memorySizeUnit)) {
         validationFailed.memory = cockpit.format(
-            _("Up to $0 $1 available on the host"),
+            _("$0 $1 available on host"),
             toReadableNumber(convertToUnit(vmParams.nodeMaxMemory, units.KiB, vmParams.memorySizeUnit)),
             vmParams.memorySizeUnit
         );
@@ -596,7 +596,7 @@ const MemoryRow = ({ memorySize, memorySizeUnit, nodeMaxMemory, minimumMemory, o
     let helperText = (
         nodeMaxMemory
             ? cockpit.format(
-                _("Up to $0 $1 available on the host"),
+                _("$0 $1 available on host"),
                 toReadableNumber(convertToUnit(nodeMaxMemory, units.KiB, memorySizeUnit)),
                 memorySizeUnit
             ) : ""
@@ -644,7 +644,7 @@ const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit,
     let helperTextNewVolume = (
         poolSpaceAvailable
             ? cockpit.format(
-                _("Up to $0 $1 available on the default location"),
+                _("$0 $1 available at default location"),
                 toReadableNumber(convertToUnit(poolSpaceAvailable, units.B, storageSizeUnit)),
                 storageSizeUnit
             )
