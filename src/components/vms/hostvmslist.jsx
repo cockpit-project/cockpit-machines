@@ -155,7 +155,7 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                                                     title: <Button id={`${vmId(vm.name)}-${vm.connectionName}-name`}
                                                               variant="link"
                                                               isInline
-                                                              isDisabled={vm.isUi}
+                                                              isDisabled={vm.isUi && !vm.createInProgress}
                                                               component="a"
                                                               href={'#' + cockpit.format("vm?name=$0&connection=$1", encodeURIComponent(vm.name), vm.connectionName)}
                                                               className="vm-list-item-name">{vm.name}</Button>
