@@ -27,7 +27,7 @@ sys.path.append(os.path.join(TEST_DIR, "common"))
 sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
 
 from machineslib import VirtualMachinesCase  # noqa
-from testlib import no_retry_when_changed, nondestructive, test_main, wait, Error, skipImage, timeout  # noqa
+from testlib import nondestructive, test_main, wait, Error, skipImage, timeout  # noqa
 
 
 def get_next_free_target(used_targets):
@@ -561,7 +561,6 @@ class TestMachinesDisks(VirtualMachinesCase):
         if m.image in ["debian-testing"]:
             self.allow_journal_messages(f'.* type=1400 .* apparmor="DENIED" operation="open" profile="libvirt.* name="{self.vm_tmpdir}.*')
 
-    @no_retry_when_changed
     def testAddDiskNFS(self):
         b = self.browser
         m = self.machine
@@ -678,7 +677,6 @@ class TestMachinesDisks(VirtualMachinesCase):
             self.allow_journal_messages(f'.* type=1400 .* apparmor="DENIED" operation="open" profile="libvirt.* name="{self.vm_tmpdir}.*')
 
     @timeout(900)
-    @no_retry_when_changed
     def testAddDiskDirPool(self):
         b = self.browser
         m = self.machine
@@ -923,7 +921,6 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.click("div.pf-c-modal-box button:contains(Show additional options)")
         b.wait_visible(f"{prefix}-bus-type[data-value=ide]")
 
-    @no_retry_when_changed
     def testAddDiskAdditionalOptions(self):
         b = self.browser
         m = self.machine
