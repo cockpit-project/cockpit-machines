@@ -1261,8 +1261,7 @@ vnc_password= "{vnc_passwd}"
 
                 # unfinished install script runs indefinitely, so we need to force it off
                 self.test_obj.performAction(name, "forceOff", False)
-                # https://bugzilla.redhat.com/show_bug.cgi?id=1818089
-                # After shutting it off virt-install will restart the domain and exit because of the above bug
+                b.wait_in_text(f"#vm-{name}-state", "Shut off")
 
             return self
 
