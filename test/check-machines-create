@@ -1335,12 +1335,21 @@ vnc_password= "{vnc_passwd}"
             return self
 
         def _assertDomainDefined(self, name, connection):
-            dumpxmlCmd = f"virsh -c qemu:///system dumpxml --inactive {name}"
-
-            wait(lambda: "7" in self.run_admin(dumpxmlCmd + " | grep cockpit_machines | wc -l", connection))
-            # The running XML has always substituted port
-            # This checks that the defined domain is using the proper inactive XML
-            wait(lambda: self.run_admin(dumpxmlCmd + " | grep \"type='vnc' port='-1'\"", connection))
+            for retry in range(5):
+                dumpxml = self.run_admin(f"virsh -c qemu:///system dumpxml --inactive {name}", connection)
+                try:
+                    # has cockpit-machines specific metadata
+                    self.test_obj.assertIn("<cockpit_machines:has_install_phase>", dumpxml)
+                    self.test_obj.assertIn("<cockpit_machines:install_source>", dumpxml)
+                    # The running XML has always substituted port
+                    # This checks that the defined domain is using the proper inactive XML
+                    self.test_obj.assertIn("type='vnc' port='-1'", dumpxml)
+                    break
+                except AssertionError as e:
+                    fail = e
+                    time.sleep(2)
+            else:
+                raise fail
 
             return self
 
