@@ -323,7 +323,8 @@ class TestMachinesDisks(VirtualMachinesCase):
             self.xwarning_object = xwarning_object
             self.xwarning_message = xwarning_message
 
-        def getExpectedFormat(selfi, pool_type, expected_volume_format):
+        @staticmethod
+        def getExpectedFormat(pool_type, expected_volume_format):
             # Guess by the name of the pool it's format to avoid passing more parameters
             if pool_type == 'iscsi':
                 return 'unknown'
