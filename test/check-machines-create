@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
 
-import functools
-import subprocess
 import time
 import xml.etree.ElementTree as ET
 import os
@@ -279,7 +277,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         wait(lambda: "pxe-guest" in self.machine.execute("virsh list --name --persistent"), delay=3)
         wait(lambda: "pxe-guest" in self.machine.execute("virsh list --name"), delay=3)
         self.machine.execute("virsh destroy pxe-guest")
-        self.machine.execute("while pgrep virt-install; do sleep 1; done")
+        runner._assertScriptFinished()
         self.assertEqual(self.machine.execute("virsh list --name").strip(), "")
 
         # Remove all serial ports and consoles first and then add a console of type file
@@ -1279,13 +1277,6 @@ vnc_password= "{vnc_passwd}"
             self.test_obj.waitVmRow(dialog.name, "system", False)
             return self
 
-        def _commandNotRunning(self, command):
-            try:
-                self.machine.execute(f"pgrep -c {command}")
-                return False
-            except subprocess.CalledProcessError as e:
-                return hasattr(e, 'returncode') and e.returncode == 1
-
         def _assertCorrectConfiguration(self, dialog):
             b = self.browser
             name = dialog.name
@@ -1340,9 +1331,7 @@ vnc_password= "{vnc_passwd}"
             return self
 
         def _assertScriptFinished(self):
-            with self.browser.wait_timeout(20):
-                self.browser.wait(functools.partial(self._commandNotRunning, "virt-install"))
-
+            self.machine.execute("while pgrep virt-install; do sleep 1; done", timeout=20)
             return self
 
         def _assertDomainDefined(self, name, connection):
