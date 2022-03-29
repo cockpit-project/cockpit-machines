@@ -545,8 +545,14 @@ vnc_password= "{vnc_passwd}"
                                                       start_vm=True))
 
     def testCreateUrlSource(self):
+        m = self.machine
         runner = TestMachinesCreate.CreateVmRunner(self)
         config = TestMachinesCreate.TestCreateConfig
+
+        # disable QXL driver for Fedora, which builds this as a module -- should work and not add a spice console then
+        if 'fedora' in m.image:
+            m.execute("mount -o bind /dev/null /usr/lib64/qemu/hw-display-qxl.so")
+            self.addCleanup(m.execute, "umount /usr/lib64/qemu/hw-display-qxl.so")
 
         self.login_and_go("/machines")
         self.browser.wait_in_text("body", "Virtual machines")
@@ -566,7 +572,7 @@ vnc_password= "{vnc_passwd}"
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, "existing-name", storage_size=1,
                                                                          env_is_empty=False), {"vm-name": "already exists"})
 
-        self.machine.execute("virsh undefine existing-name")
+        m.execute("virsh undefine existing-name")
 
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='url',
                                                       location=config.TREE_URL,
@@ -596,9 +602,9 @@ vnc_password= "{vnc_passwd}"
 
         # This functionality works on debian only because of extra qemu-block-extra dep.
         # Check error is returned if dependency is missing
-        if self.machine.image.startswith("debian"):
-            self.machine.execute("mount -o bind /dev/null /usr/lib/x86_64-linux-gnu/qemu/block-curl.so")
-            self.addCleanup(self.machine.execute, "umount /usr/lib/x86_64-linux-gnu/qemu/block-curl.so")
+        if m.image.startswith("debian"):
+            m.execute("mount -o bind /dev/null /usr/lib/x86_64-linux-gnu/qemu/block-curl.so")
+            self.addCleanup(m.execute, "umount /usr/lib/x86_64-linux-gnu/qemu/block-curl.so")
             runner.checkDialogErrorTest(TestMachinesCreate.VmDialog(self, sourceType='url',
                                                                     location=config.ISO_URL,
                                                                     memory_size=128, memory_size_unit='MiB',
