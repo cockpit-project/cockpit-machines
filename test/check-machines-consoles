@@ -110,12 +110,18 @@ class TestMachinesConsoles(VirtualMachinesCase):
         self.waitVmRow(name)
 
         self.goToVmPage(name)
-        b.wait_in_text(f"#vm-{name}-state", "Running")  # running or paused
+        b.wait_in_text(f"#vm-{name}-state", "Running")
 
         b.click("#pf-c-console__type-selector")
         b.wait_visible("#pf-c-console__type-selector + .pf-c-select__menu")
         b.click("#SerialConsole button")
         b.wait_not_present("#pf-c-console__type-selector + .pf-c-select__menu")
+
+        b.wait_in_text(f"#{name}-terminal .xterm-accessibility-tree", f"Connected to domain '{name}'")
+
+        # in case the OS already finished booting, press Enter into the console to re-trigger the login prompt
+        b.focus(f"#{name}-terminal .xterm-accessibility-tree")
+        b.key_press("\r")
 
         b.wait_in_text(f"#{name}-terminal .xterm-accessibility-tree", "cirros login")
 
