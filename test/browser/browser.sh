@@ -22,7 +22,7 @@ dnf install --disablerepo=fedora-cisco-openh264 -y firefox
 sed -ie 's/#SHA_CRYPT_MAX_ROUNDS 5000/SHA_CRYPT_MAX_ROUNDS 5000/' /etc/login.defs
 
 # HACK: https://bugzilla.redhat.com/show_bug.cgi?id=2057769
-if [ "$(rpm -q edk2-ovmf)" = "edk2-ovmf-20220126gitbb1bba3d77-3.el9.noarch" ]; then
+if [ "$(rpm -q libvirt-daemon)" = "libvirt-daemon-8.0.0-5.el9.x86_64" ]; then
     rm /usr/share/qemu/firmware/50-edk2-ovmf-amdsev.json
 fi
 
