@@ -484,7 +484,7 @@ class TestMachinesDisks(VirtualMachinesCase):
                 self.test_obj.goToVmPage("subVmTest1")
 
             # Detect volume format
-            if not self.mode == "custom-path":
+            if self.mode != "custom-path":
                 volume_xml = m.execute(f"virsh vol-dumpxml {self.volume_name} {self.pool_name} ")
                 detect_format_cmd = "echo \"{0}\" | xmllint --xpath '{1}' -"
 
