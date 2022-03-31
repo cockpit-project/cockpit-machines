@@ -97,7 +97,6 @@ class TestMachinesConsoles(VirtualMachinesCase):
     def testInlineConsoleWithUrlRoot(self, urlroot=""):
         self.testInlineConsole(urlroot="/webcon")
 
-    @skipImage('TODO: setlocale: No such file or directory', "arch")
     def testSerialConsole(self):
         b = self.browser
         m = self.machine
