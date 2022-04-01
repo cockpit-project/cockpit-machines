@@ -19,7 +19,12 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Modal, Tooltip } from '@patternfly/react-core';
+import {
+    Button,
+    DescriptionList, DescriptionListGroup, DescriptionListTerm, DescriptionListDescription,
+    Modal,
+    Tooltip
+} from '@patternfly/react-core';
 
 import cockpit from 'cockpit';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
@@ -53,10 +58,10 @@ export class DeleteResourceModal extends React.Component {
     }
 
     render() {
-        const { objectName, objectType, actionName, actionDescription, onClose } = this.props;
+        const { objectName, objectType, objectDescription, actionName, actionDescription, onClose } = this.props;
 
         return (
-            <Modal position="top" variant="medium" isOpen onClose={onClose}
+            <Modal position="top" variant="small" isOpen onClose={onClose}
                    id="delete-resource-modal"
                    title={ (actionName || _("Delete")) + cockpit.format((" $0 $1"), objectType, objectName) }
                    footer={
@@ -70,7 +75,15 @@ export class DeleteResourceModal extends React.Component {
                            </Button>
                        </>
                    }>
-                { actionDescription || cockpit.format(_("Confirm this action")) }
+                <DescriptionList isHorizontal>
+                    {actionDescription || cockpit.format(_("Confirm this action"))}
+                    {objectDescription && objectDescription.map(row => (
+                        <DescriptionListGroup id={`delete-resource-modal-${row.name}`} key={row.name}>
+                            <DescriptionListTerm>{row.name}</DescriptionListTerm>
+                            <DescriptionListDescription>{row.value}</DescriptionListDescription>
+                        </DescriptionListGroup>
+                    )) }
+                </DescriptionList>
             </Modal>
         );
     }
@@ -79,6 +92,7 @@ export class DeleteResourceModal extends React.Component {
 DeleteResourceModal.propTypes = {
     objectType: PropTypes.string.isRequired,
     objectName: PropTypes.string.isRequired,
+    objectDescription: PropTypes.array,
     deleteHandler: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired,
 };
