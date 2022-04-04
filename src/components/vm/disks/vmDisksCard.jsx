@@ -28,7 +28,7 @@ import { EditDiskAction } from './diskEdit.jsx';
 import WarningInactive from '../../common/warningInactive.jsx';
 import { ListingTable } from "cockpit-components-table.jsx";
 import { DeleteResourceButton, DeleteResourceModal } from '../../common/deleteResource.jsx';
-import { DiskSourceCell, DiskExtras } from './vmDiskColumns.jsx';
+import { DISK_SOURCE_LIST, DiskSourceCell, DiskExtras, getDiskSourceValue } from './vmDiskColumns.jsx';
 
 const _ = cockpit.gettext;
 
@@ -267,12 +267,20 @@ export class VmDisksCard extends React.Component {
             };
 
             const deleteDialogProps = {
+                title: _("Remove disk from VM?"),
                 actionName: _("Remove"),
-                title: cockpit.format(_("Remove disk $0"), disk.target),
                 errorMessage: cockpit.format(_("Disk $0 could not be removed"), disk.target),
+                actionDescription: cockpit.format(_("This disk will be removed from $0:"), vm.name),
+                objectDescription: [
+                    { name: _("Target"), value: <span className="ct-monospace">{disk.target}</span> },
+                    ...DISK_SOURCE_LIST.flatMap(entry => getDiskSourceValue(disk.source, entry.name)
+                        ? { name: entry.label, value: <span className="ct-monospace">{getDiskSourceValue(disk.source, entry.name)}</span> }
+                        : [])
+                ],
                 onClose: () => this.setState({ deleteDialogProps: undefined }),
                 deleteHandler: () => onRemoveDisk(),
             };
+
             const diskActions = (
                 <div className='machines-listing-actions'>
                     <DeleteResourceButton objectId={vm.name + "-disk-" + disk.target}
