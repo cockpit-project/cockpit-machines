@@ -663,23 +663,26 @@ vnc_password= "{vnc_passwd}"
                                                       storage_size=128, storage_size_unit='MiB',
                                                       create_and_run=False))
 
-        # Test detection of ISO file in URL
+        # This functionality works on debian only because of extra qemu-block-extra dep.
+        # Check error is returned if dependency is missing
+        if m.image.startswith("debian"):
+            m.execute("mount -o bind /dev/null /usr/lib/x86_64-linux-gnu/qemu/block-curl.so")
+            try:
+                runner.checkDialogErrorTest(TestMachinesCreate.VmDialog(self, sourceType='url',
+                                                                        location=config.ISO_URL,
+                                                                        memory_size=128, memory_size_unit='MiB',
+                                                                        storage_pool="NoStorage",
+                                                                        create_and_run=True), ["qemu", "protocol"])
+            finally:
+                m.execute("umount /usr/lib/x86_64-linux-gnu/qemu/block-curl.so")
+
+        # Test detection of ISO file in URL; HACK: unpredictable behaviour, the "failed to install" alert sometimes appears,
+        # sometimes not; so run this last
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='url',
                                                       location=config.ISO_URL,
                                                       memory_size=128, memory_size_unit='MiB',
                                                       storage_pool="NoStorage",
                                                       create_and_run=True))
-
-        # This functionality works on debian only because of extra qemu-block-extra dep.
-        # Check error is returned if dependency is missing
-        if m.image.startswith("debian"):
-            m.execute("mount -o bind /dev/null /usr/lib/x86_64-linux-gnu/qemu/block-curl.so")
-            self.addCleanup(m.execute, "umount /usr/lib/x86_64-linux-gnu/qemu/block-curl.so")
-            runner.checkDialogErrorTest(TestMachinesCreate.VmDialog(self, sourceType='url',
-                                                                    location=config.ISO_URL,
-                                                                    memory_size=128, memory_size_unit='MiB',
-                                                                    storage_pool="NoStorage",
-                                                                    create_and_run=True), ["qemu", "protocol"])
 
     def testDisabledCreate(self):
         self.login_and_go("/machines")
