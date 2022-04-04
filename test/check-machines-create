@@ -1306,6 +1306,7 @@ vnc_password= "{vnc_passwd}"
             # check disks
             # Test disk got imported/created
             if dialog.sourceType == 'disk_image':
+                b.wait_visible(".disks-card table tbody > tr:first-child")
                 if b.is_present(f"#vm-{name}-disks-vda-device"):
                     b.wait_in_text(f"#vm-{name}-disks-vda-source-file", dialog.location)
                 elif b.is_present(f"#vm-{name}-disks-hda-device"):
@@ -1314,6 +1315,7 @@ vnc_password= "{vnc_passwd}"
                     raise AssertionError("Unknown disk device")
             # New volume was created or existing volume was already chosen as destination
             elif (dialog.storage_size is not None and dialog.storage_size > 0) or dialog.storage_pool not in ["NoStorage", "NewVolume"]:
+                b.wait_visible(".disks-card table tbody > tr:first-child")
                 if b.is_present(f"#vm-{name}-disks-vda-device"):
                     b.wait_in_text(f"#vm-{name}-disks-vda-device", "disk")
                 elif b.is_present(f"#vm-{name}-disks-hda-device"):
@@ -1323,6 +1325,7 @@ vnc_password= "{vnc_passwd}"
                 else:
                     raise AssertionError("Unknown disk device")
             elif (vm_state == "Running" and (((dialog.storage_pool == 'NoStorage' or dialog.storage_size == 0) and dialog.sourceType == 'file') or dialog.sourceType == 'url')):
+                b.wait_visible(".disks-card table tbody > tr:first-child")
                 if b.is_present(f"#vm-{name}-disks-sda-device"):
                     b.wait_in_text(f"#vm-{name}-disks-sda-device", "cdrom")
                 elif b.is_present(f"#vm-{name}-disks-hda-device"):
