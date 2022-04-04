@@ -29,6 +29,25 @@ import {
 
 const _ = cockpit.gettext;
 
+export const DISK_SOURCE_LIST = [
+    { name: "file", label: _("File") },
+    { name: "device", label: _("Device") },
+    { name: "protocol", label: _("Protocol") },
+    { name: "pool", label: _("Pool") },
+    { name: "volume", label: _("Volume") },
+    { name: "name", label: _("Host") },
+    { name: "port", label: _("Port") },
+];
+
+export function getDiskSourceValue(diskSource, value) {
+    if (value === "host")
+        return diskSource.host.name;
+    else if (value === "port")
+        return diskSource.host.port;
+    else
+        return diskSource[value];
+}
+
 export const DiskSourceCell = ({ diskSource, idPrefix }) => {
     const addOptional = (chunks, value, type, descr) => {
         if (value) {
@@ -46,13 +65,7 @@ export const DiskSourceCell = ({ diskSource, idPrefix }) => {
     };
 
     const chunks = [];
-    addOptional(chunks, diskSource.file, "file", _("File"));
-    addOptional(chunks, diskSource.dev, "device", _("Device"));
-    addOptional(chunks, diskSource.protocol, "protocol", _("Protocol"));
-    addOptional(chunks, diskSource.pool, "pool", _("Pool"));
-    addOptional(chunks, diskSource.volume, "volume", _("Volume"));
-    addOptional(chunks, diskSource.host.name, "host", _("Host"));
-    addOptional(chunks, diskSource.host.port, "port", _("Port"));
+    DISK_SOURCE_LIST.forEach(entry => addOptional(chunks, getDiskSourceValue(diskSource, entry.name), entry.name, entry.label));
 
     return <DescriptionList isHorizontal>{chunks}</DescriptionList>;
 };
