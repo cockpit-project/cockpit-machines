@@ -231,12 +231,32 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
         },
         {
             name: "", value: (hostdev, hostdevId) => {
+                const source = getHostDevSourceObject(hostdev);
+
+                let objectDescription = [];
+                if (hostdev.type === "pci") {
+                    objectDescription = [
+                        { name: _("Vendor"), value: getVendor(hostdev, nodeDevices) },
+                        { name: _("Product"), value: getProduct(hostdev, nodeDevices) },
+                        { name: _("Slot"), value: getPciSlot(hostdev) },
+                    ];
+                } else if (hostdev.type == "usb") {
+                    objectDescription = [
+                        { name: _("Vendor"), value: getVendor(hostdev, nodeDevices) },
+                        { name: _("Product"), value: getProduct(hostdev, nodeDevices) },
+                        { name: _("Device"), value: source.device },
+                        { name: _("Bus"), value: source.bus },
+                    ];
+                }
+
                 const deleteNICAction = (
                     <DeleteResourceButton objectId={`${id}-hostdev-${hostdevId}`}
                                           actionName={_("Remove")}
                                           showDialog={() => setDeleteDialogProps({
-                                              title: _("Remove host device"),
+                                              title: _("Remove host device from VM?"),
                                               errorMessage: ("Host device could not be removed"),
+                                              actionDescription: cockpit.format(_("Host device will be removed from $0:"), vm.name),
+                                              objectDescription,
                                               onClose: () => setDeleteDialogProps(undefined),
                                               deleteHandler: () => {
                                                   // refresh nodeDevice since usb number may be changed
