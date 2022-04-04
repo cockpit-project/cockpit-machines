@@ -833,8 +833,11 @@ export function getHostDevSourceObject(dev) {
         const bus = dev.source.address.bus;
         const slot = dev.source.address.slot;
         const func = dev.source.address.func;
+        // In pci devices vendor and product is optional
+        const vendor = dev.source.vendor && dev.source.vendor.id;
+        const product = dev.source.product && dev.source.product.id;
 
-        source = { domain, bus, slot, func };
+        source = { domain, bus, slot, func, vendor, product };
     } else if (dev.type === "usb") {
         const device = dev.source.device;
         const bus = dev.source.bus;
