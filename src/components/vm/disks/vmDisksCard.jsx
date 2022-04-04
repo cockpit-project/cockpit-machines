@@ -152,27 +152,9 @@ export class VmDisksCardLibvirt extends React.Component {
         }
 
         return {
+            ...disk,
             used: used,
             capacity: capacity,
-
-            device: disk.device,
-            driver: disk.driver,
-            target: disk.target,
-            bus: disk.bus,
-            readonly: disk.readonly,
-            shareable: disk.shareable,
-
-            // ugly hack due to complexity, refactor if abstraction is really needed
-            diskSourceCell: (<DiskSourceCell diskSource={disk.source} idPrefix={idPrefix} />),
-            diskExtras: (
-                (disk.driver.cache || disk.driver.io || disk.driver.discard || disk.driver.errorPolicy || disk.serial)
-                    ? <DiskExtras idPrefix={idPrefix}
-                                  cache={disk.driver.cache}
-                                  io={disk.driver.io}
-                                  discard={disk.driver.discard}
-                                  serial={disk.serial}
-                                  errorPolicy={disk.driver.errorPolicy} /> : null
-            ),
         };
     }
 
@@ -217,9 +199,9 @@ export class VmDisksCard extends React.Component {
         const idPrefix = `${vmId(vm.name)}-disks`;
 
         if (disks && disks.length > 0) {
-            renderCapacityUsed = !!disks.find(disk => (!!disk.used));
-            renderAccess = !!disks.find(disk => (typeof disk.readonly !== "undefined") || (typeof disk.shareable !== "undefined"));
-            renderAdditional = !!disks.find(disk => (!!disk.diskExtras));
+            renderCapacityUsed = disks.some(disk => (!!disk.used));
+            renderAccess = disks.some(disk => (typeof disk.readonly !== "undefined") || (typeof disk.shareable !== "undefined"));
+            renderAdditional = disks.some(disk => (disk.driver.cache || disk.driver.io || disk.driver.discard || disk.driver.errorPolicy || disk.serial));
 
             if (renderCapacity) {
                 if (renderCapacityUsed) {
@@ -266,9 +248,18 @@ export class VmDisksCard extends React.Component {
                 columns.push({ title: access });
             }
 
-            columns.push({ title: disk.diskSourceCell });
-            if (renderAdditional)
-                columns.push({ title: disk.diskExtras || '' });
+            columns.push({ title: <DiskSourceCell diskSource={disk.source} idPrefix={idPrefixRow} /> });
+
+            if (renderAdditional) {
+                columns.push({
+                    title: <DiskExtras idPrefix={idPrefixRow}
+                                       cache={disk.driver.cache}
+                                       io={disk.driver.io}
+                                       discard={disk.driver.discard}
+                                       serial={disk.serial}
+                                       errorPolicy={disk.driver.errorPolicy} />
+                });
+            }
 
             const onRemoveDisk = () => {
                 return domainDetachDisk({ connectionName: vm.connectionName, id: vm.id, name: vm.name, target: disk.target, live: vm.state === 'running', persistent: vm.persistent })
