@@ -373,15 +373,18 @@ export class VmNetworkTab extends React.Component {
                     };
 
                     const deleteDialogProps = {
-                        title: cockpit.format(_("Delete network interface $0"), network.mac),
-                        errorMessage: cockpit.format(_("Network interface $0 could not be deleted"), network.mac),
+                        title: _("Remove network interface?"),
+                        errorMessage: cockpit.format(_("Network interface $0 could not be removed"), network.mac),
+                        actionDescription: cockpit.format(_("Network interface $0 will be removed from $1"), network.mac, vm.name),
                         onClose: () => this.setState({ deleteDialogProps: undefined }),
+                        actionName: _("Remove"),
                         deleteHandler: () => domainDetachIface({ connectionName: vm.connectionName, index: network.index, vmName: vm.name, live: vm.state === 'running', persistent: nicPersistent }),
                     };
                     const deleteNICAction = (
                         <DeleteResourceButton objectId={`${id}-iface-${networkId}`}
                                               disabled={vm.state != 'shut off' && vm.state != 'running'}
                                               showDialog={() => this.setState({ deleteDialogProps })}
+                                              actionName={_("Remove")}
                                               overlayText={_("The VM needs to be running or shut off to detach this device")} />
                     );
 

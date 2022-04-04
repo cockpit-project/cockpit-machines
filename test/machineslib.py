@@ -208,12 +208,14 @@ class VirtualMachinesCaseHelpers:
         else:
             return m.execute(cmd)
 
-    def deleteIface(self, iface):
+    def deleteIface(self, iface, mac=None, vm_name=None):
         b = self.browser
 
         b.click(f"#delete-vm-subVmTest1-iface-{iface}")
-        b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Delete network interface")
-        b.click(".pf-c-modal-box__footer button:contains(Delete)")
+        b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Remove network interface?")
+        if mac and vm_name:
+            b.wait_in_text(".pf-c-modal-box__body .pf-c-description-list", f"{mac} will be removed from {vm_name}")
+        b.click(".pf-c-modal-box__footer button:contains(Remove)")
         b.wait_not_present(".pf-c-modal-box")
 
     def get_next_mac(self, last_mac):
