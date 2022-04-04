@@ -161,13 +161,13 @@ class TestMachinesNICs(VirtualMachinesCase):
         b.wait_text("#vm-subVmTest1-network-4-mac", "52:54:00:4b:73:5f")
         b.wait_text("#vm-subVmTest1-network-4-model", "e1000e")
         # Detach
-        self.deleteIface(2)
+        self.deleteIface(2, "52:54:00:4b:73:4f", "subVmTest1")
         b.wait_not_present("#vm-subVmTest1-network-4-mac")
         b.wait_text_not("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:4f")
         b.wait_text("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:5f")
         b.wait_text("#vm-subVmTest1-network-2-model", "virtio")
         # Test deleting the interface with same MAC address as the other vNIC will delete the correct one
-        self.deleteIface(2)
+        self.deleteIface(2, "52:54:00:4b:73:5f", "subVmTest1")
         b.wait_not_present("#vm-subVmTest1-network-3-mac")
         b.wait_text("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:5f")
         b.wait_text("#vm-subVmTest1-network-2-model", "e1000e")
