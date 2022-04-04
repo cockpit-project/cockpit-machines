@@ -220,7 +220,7 @@ const AdditionalOptions = ({ cacheMode, device, idPrefix, onValueChanged, busTyp
                             { showMaxLengthMessage &&
                                 <HelperTextItem id="serial-length-message" key="length" variant="warning" hasIcon>
                                     {cockpit.format(_("Identifier may be silently truncated to $0 characters "), serialLength)}
-                                    <span className="disk-serial">{`(${truncatedSerial})`}</span>
+                                    <span className="ct-monospace">{`(${truncatedSerial})`}</span>
                                 </HelperTextItem>
                             }
                         </HelperText>
@@ -229,7 +229,7 @@ const AdditionalOptions = ({ cacheMode, device, idPrefix, onValueChanged, busTyp
                     label={_("Disk identifier")}>
                     <TextInput id={idPrefix + "-serial"}
                         aria-label={_("serial number")}
-                        className="disk-serial"
+                        className="ct-monospace"
                         value={serial}
                         onChange={value => setSerialHelper(value)} />
                 </FormGroup>

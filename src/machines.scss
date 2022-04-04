@@ -1,9 +1,12 @@
 @use "page.scss";
 @use "ct-card.scss";
+/* Imports 'pf-u-pt-md' class used for Expander in Add Disk dialog */
+@use "../node_modules/@patternfly/patternfly/utilities/Spacing/spacing.css";
 
 /* For pf-t-light mixin */
 @import "@patternfly/patternfly/sass-utilities/mixins.scss";
 @import "@patternfly/patternfly/components/Alert/alert.scss";
+
 
 /* Style the list cards as ct-cards */
 .pf-c-page__main-section > .pf-c-card {
@@ -76,4 +79,8 @@
 
 .ct-external-docs-link.pf-c-button.pf-m-link.pf-m-inline {
   padding-left: var(--pf-global--spacer--sm);
+}
+
+.ct-monospace {
+    font-family: var(--pf-global--FontFamily--redhat--monospace);
 }
