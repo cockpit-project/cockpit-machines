@@ -784,6 +784,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
         # Delete an inactive network
         b.click(f"#network-test_network2-{connectionName}-action-kebab button")
         b.click(f'#delete-network-test_network2-{connectionName}')
+        b.wait_in_text(".pf-c-modal-box__body .pf-c-description-list", "test_network2")
         b.click(".pf-c-modal-box__footer button:contains(Delete)")
         self.waitNetworkRow("test_network2", connectionName, False)
 
@@ -793,6 +794,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
         self.toggleNetworkRow("test_network2", connectionName)
         b.click(f"#network-test_network2-{connectionName}-action-kebab button")
         b.click(f'#delete-network-test_network2-{connectionName}')
+        b.wait_in_text(".pf-c-modal-box__body .pf-c-description-list", "test_network2")
         b.click(".pf-c-modal-box__footer button:contains(Delete)")
         self.waitNetworkRow("test_network2", connectionName, False)
 
