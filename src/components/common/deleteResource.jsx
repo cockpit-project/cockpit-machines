@@ -77,12 +77,12 @@ export class DeleteResourceModal extends React.Component {
                    }>
                 <DescriptionList isHorizontal>
                     {actionDescription || cockpit.format(_("Confirm this action"))}
-                    {objectDescription && objectDescription.map(row => (
-                        <DescriptionListGroup id={`delete-resource-modal-${row.name}`} key={row.name}>
+                    {objectDescription && objectDescription.flatMap(row => row.value
+                        ? <DescriptionListGroup id={`delete-resource-modal-${row.name}`} key={row.name}>
                             <DescriptionListTerm>{row.name}</DescriptionListTerm>
                             <DescriptionListDescription>{row.value}</DescriptionListDescription>
                         </DescriptionListGroup>
-                    )) }
+                        : [])}
                 </DescriptionList>
             </Modal>
         );
