@@ -58,8 +58,13 @@ export const VmFilesystemsCard = ({ connectionName, vmName, vmState, filesystems
                                       disabled={vmState != 'shut off'}
                                       actionName={_("Remove")}
                                       showDialog={() => setDeleteDialogProps({
-                                          title: cockpit.format(_("Remove filesystem $0"), filesystemTarget),
+                                          title: _("Remove filesystem?"),
                                           errorMessage: cockpit.format(_("Filesystem $0 could not be removed"), filesystemTarget),
+                                          actionDescription: cockpit.format(_("This filesystem will be removed from $0:"), vmName),
+                                          objectDescription: [
+                                              { name: _("Source path"), value: <span className="ct-monospace">{filesystemSource}</span> },
+                                              { name: _("Mount tag"), value: <span className="ct-monospace">{filesystemTarget}</span> }
+                                          ],
                                           actionName: _("Remove"),
                                           onClose: () => setDeleteDialogProps(undefined),
                                           deleteHandler: () => domainDeleteFilesystem({ connectionName, vmName, target: filesystemTarget }),
