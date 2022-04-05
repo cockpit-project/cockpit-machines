@@ -131,8 +131,9 @@ const NetworkActions = ({ network }) => {
         }
     };
     const dialogProps = {
-        title: cockpit.format(_("Delete network $0"), network.name),
+        title: _("Delete network?"),
         errorMessage: cockpit.format(_("Network $0 could not be deleted"), network.name),
+        actionDescription: cockpit.format(_("Network $0 will be permanently deleted."), network.name),
         onClose: () => setDeleteDialogProps(undefined),
         deleteHandler: () => deleteHandler(network),
     };
