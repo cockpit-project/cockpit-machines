@@ -37,6 +37,107 @@ import { DeleteResourceButton, DeleteResourceModal } from '../../common/deleteRe
 
 const _ = cockpit.gettext;
 
+function getClass(hostDev, nodeDevices) {
+    const nodeDev = findMatchingNodeDevices(hostDev, nodeDevices)[0];
+
+    if (nodeDev && (["usb_device", "pci"].includes(nodeDev.capability.type)))
+        return nodeDev.class;
+}
+
+function getProduct(hostDev, nodeDevices) {
+    const nodeDev = findMatchingNodeDevices(hostDev, nodeDevices)[0];
+
+    if (["usb", "pci"].includes(hostDev.type)) {
+        if (nodeDev)
+            return nodeDev.capability.product._value;
+        else if (hostDev.type === "usb")
+            return hostDev.source.product.id;
+    }
+}
+
+function getPciSlot(hostDev) {
+    let domain = hostDev.source.address.domain.split('x')[1];
+    let bus = hostDev.source.address.bus.split('x')[1];
+    let slot = hostDev.source.address.slot.split('x')[1];
+    let func = hostDev.source.address.func.split('x')[1];
+
+    domain = String(domain).padStart(4, '0');
+    bus = String(bus).padStart(2, '0');
+    slot = String(slot).padStart(2, '0');
+    func = String(func).padStart(1, '0');
+
+    return `${domain}:${bus}:${slot}.${func}`;
+}
+
+function getVendor(hostDev, nodeDevices) {
+    const nodeDev = findMatchingNodeDevices(hostDev, nodeDevices)[0];
+
+    if (["usb", "pci"].includes(hostDev.type)) {
+        if (nodeDev)
+            return nodeDev.capability.vendor._value;
+        else if (hostDev.type === "usb")
+            return hostDev.source.vendor.id;
+    }
+}
+
+function getSource(hostDev, nodeDevices, hostdevId) {
+    const cells = [];
+    if (hostDev.type === "usb") {
+        const nodeDevs = findMatchingNodeDevices(hostDev, nodeDevices);
+        let device;
+        let bus;
+
+        if (nodeDevs.length === 1) {
+            device = nodeDevs[0].devnum;
+            bus = nodeDevs[0].busnum;
+        } else {
+            // If there are multiple usb devices without specified bus/device and same vendor/product,
+            // it's impossible to identify which one is the one referred in VM's XML
+            device = _("Unspecified");
+            bus = _("Unspecified");
+        }
+
+        // If there are 2 usb devices without specified bus/device and same vendor/product,
+        // it's impossible to identify which one is the one referred in VM's XML
+        cells.push(getOptionalValue(device, `${hostdevId}-device`, _("Device")));
+        cells.push(getOptionalValue(bus, `${hostdevId}-bus`, _("Bus")));
+    } else if (hostDev.type === "pci") {
+        cells.push(getOptionalValue(getPciSlot(hostDev), `${hostdevId}-slot`, _("Slot")));
+    } else if (hostDev.type === "scsi") {
+        const bus = hostDev.source.address.bus;
+        const target = hostDev.source.address.target;
+        const unit = hostDev.source.address.lun;
+
+        cells.push(getOptionalValue(bus, `${hostdevId}-bus`, _("Bus")));
+        cells.push(getOptionalValue(unit, `${hostdevId}-unit`, _("Slot")));
+        cells.push(getOptionalValue(target, `${hostdevId}-target`, _("Target")));
+    } else if (hostDev.type === "scsi_host") {
+        const protocol = hostDev.source.protocol;
+        const wwpn = hostDev.source.wwpn;
+
+        cells.push(getOptionalValue(protocol, `${hostdevId}-protocol`, _("Protocol")));
+        cells.push(getOptionalValue(wwpn, `${hostdevId}-wwpn`, _("WWPN")));
+    } else if (hostDev.type === "mdev") {
+        const uuid = hostDev.source.address.uuid;
+
+        cells.push(getOptionalValue(uuid, `${hostdevId}-uuid`, _("UUID")));
+    } else if (hostDev.type === "storage") {
+        const block = hostDev.source.block;
+
+        cells.push(getOptionalValue(block, `${hostdevId}-block`, _("Path")));
+    } else if (hostDev.type === "misc") {
+        const ch = hostDev.source.char;
+
+        cells.push(getOptionalValue(ch, `${hostdevId}-char`, _("Path")));
+    } else if (hostDev.type === "net") {
+        const iface = hostDev.source.interface;
+
+        cells.push(getOptionalValue(iface, `${hostdevId}-interface`, _("Interface")));
+    }
+
+    return <DescriptionList isHorizontal>{cells}</DescriptionList>;
+}
+
 export const VmHostDevActions = ({ vm, nodeDevices }) => {
     const [showAttachModal, setShowAttachModal] = useState(false);
 
@@ -79,103 +180,6 @@ export function getOptionalValue(value, id, descr) {
 export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
     const [deleteDialogProps, setDeleteDialogProps] = useState(undefined);
 
-    function getClass(hostDev, hostdevId) {
-        const nodeDev = findMatchingNodeDevices(hostDev, nodeDevices)[0];
-
-        if (nodeDev && (["usb_device", "pci"].includes(nodeDev.capability.type)))
-            return nodeDev.class;
-    }
-
-    function getProduct(hostDev, hostdevId) {
-        const nodeDev = findMatchingNodeDevices(hostDev, nodeDevices)[0];
-
-        if (["usb", "pci"].includes(hostDev.type)) {
-            if (nodeDev)
-                return nodeDev.capability.product._value;
-            else if (hostDev.type === "usb")
-                return hostDev.source.product.id;
-        }
-    }
-
-    function getVendor(hostDev, hostdevId) {
-        const nodeDev = findMatchingNodeDevices(hostDev, nodeDevices)[0];
-
-        if (["usb", "pci"].includes(hostDev.type)) {
-            if (nodeDev)
-                return nodeDev.capability.vendor._value;
-            else if (hostDev.type === "usb")
-                return hostDev.source.vendor.id;
-        }
-    }
-
-    function getSource(hostDev, hostdevId) {
-        const cells = [];
-        if (hostDev.type === "usb") {
-            const nodeDevs = findMatchingNodeDevices(hostDev, nodeDevices);
-            let device;
-            let bus;
-
-            if (nodeDevs.length === 1) {
-                device = nodeDevs[0].devnum;
-                bus = nodeDevs[0].busnum;
-            } else {
-                // If there are multiple usb devices without specified bus/device and same vendor/product,
-                // it's impossible to identify which one is the one referred in VM's XML
-                device = _("Unspecified");
-                bus = _("Unspecified");
-            }
-
-            // If there are 2 usb devices without specified bus/device and same vendor/product,
-            // it's impossible to identify which one is the one referred in VM's XML
-            cells.push(getOptionalValue(device, `${hostdevId}-device`, _("Device")));
-            cells.push(getOptionalValue(bus, `${hostdevId}-bus`, _("Bus")));
-        } else if (hostDev.type === "pci") {
-            let domain = hostDev.source.address.domain.split('x')[1];
-            let bus = hostDev.source.address.bus.split('x')[1];
-            let slot = hostDev.source.address.slot.split('x')[1];
-            let func = hostDev.source.address.func.split('x')[1];
-
-            domain = String(domain).padStart(4, '0');
-            bus = String(bus).padStart(2, '0');
-            slot = String(slot).padStart(2, '0');
-            func = String(func).padStart(1, '0');
-
-            cells.push(getOptionalValue(`${domain}:${bus}:${slot}.${func}`, `${hostdevId}-slot`, _("Slot")));
-        } else if (hostDev.type === "scsi") {
-            const bus = hostDev.source.address.bus;
-            const target = hostDev.source.address.target;
-            const unit = hostDev.source.address.lun;
-
-            cells.push(getOptionalValue(bus, `${hostdevId}-bus`, _("Bus")));
-            cells.push(getOptionalValue(unit, `${hostdevId}-unit`, _("Slot")));
-            cells.push(getOptionalValue(target, `${hostdevId}-target`, _("Target")));
-        } else if (hostDev.type === "scsi_host") {
-            const protocol = hostDev.source.protocol;
-            const wwpn = hostDev.source.wwpn;
-
-            cells.push(getOptionalValue(protocol, `${hostdevId}-protocol`, _("Protocol")));
-            cells.push(getOptionalValue(wwpn, `${hostdevId}-wwpn`, _("WWPN")));
-        } else if (hostDev.type === "mdev") {
-            const uuid = hostDev.source.address.uuid;
-
-            cells.push(getOptionalValue(uuid, `${hostdevId}-uuid`, _("UUID")));
-        } else if (hostDev.type === "storage") {
-            const block = hostDev.source.block;
-
-            cells.push(getOptionalValue(block, `${hostdevId}-block`, _("Path")));
-        } else if (hostDev.type === "misc") {
-            const ch = hostDev.source.char;
-
-            cells.push(getOptionalValue(ch, `${hostdevId}-char`, _("Path")));
-        } else if (hostDev.type === "net") {
-            const iface = hostDev.source.interface;
-
-            cells.push(getOptionalValue(iface, `${hostdevId}-interface`, _("Interface")));
-        }
-
-        return <DescriptionList isHorizontal>{cells}</DescriptionList>;
-    }
-
     const id = vmId(vm.name);
 
     // Hostdev data mapping to rows
@@ -193,7 +197,7 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
             name: _("Class"), value: (hostdev, hostdevId) => {
                 return (
                     <span id={`${id}-hostdev-${hostdevId}-class`}>
-                        {getClass(hostdev, hostdevId)}
+                        {getClass(hostdev, nodeDevices)}
                     </span>
                 );
             }
@@ -202,7 +206,7 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
             name: _("Model"), value: (hostdev, hostdevId) => {
                 return (
                     <div id={`${id}-hostdev-${hostdevId}-product`}>
-                        {getProduct(hostdev, hostdevId)}
+                        {getProduct(hostdev, nodeDevices)}
                     </div>
                 );
             }
@@ -211,7 +215,7 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
             name: _("Vendor"), value: (hostdev, hostdevId) => {
                 return (
                     <div id={`${id}-hostdev-${hostdevId}-vendor`}>
-                        {getVendor(hostdev, hostdevId)}
+                        {getVendor(hostdev, nodeDevices)}
                     </div>
                 );
             }
@@ -220,7 +224,7 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
             name: _("Source"), value: (hostdev, hostdevId) => {
                 return (
                     <div id={`${id}-hostdev-${hostdevId}-source`}>
-                        {getSource(hostdev, hostdevId)}
+                        {getSource(hostdev, nodeDevices, hostdevId)}
                     </div>
                 );
             }
