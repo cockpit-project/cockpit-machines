@@ -126,13 +126,14 @@ class TestMachinesSnapshots(VirtualMachinesCase):
 
         class SnapshotCreateDialog(object):
             def __init__(
-                self, test_obj, name=None, description=None, state="shutoff", snap_num=0, xfail=False, remove=True
+                self, test_obj, name=None, description=None, state="shutoff", snap_num=0, vm_name="subVmTest1", xfail=False, remove=True
             ):
                 self.test_obj = test_obj
                 self.name = name
                 self.description = description
                 self.state = state
                 self.snap_num = snap_num
+                self.vm_name = vm_name
                 self.remove = remove
                 self.xfail = xfail
 
@@ -207,7 +208,8 @@ class TestMachinesSnapshots(VirtualMachinesCase):
 
             def cleanup(self):
                 b.click(f"#delete-vm-subVmTest1-snapshot-{self.snap_num}")
-                b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", f"Delete snapshot {self.name}")
+                b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Delete snapshot?")
+                b.wait_in_text(".pf-c-modal-box__body .pf-c-description-list", f"{self.name} will be deleted from {self.vm_name}")
                 b.click('.pf-c-modal-box__footer button:contains("Delete")')
                 b.wait_not_present(f"#vm-subVmTest1-snapshot-{self.snap_num}-name:contains({self.name})")
 
