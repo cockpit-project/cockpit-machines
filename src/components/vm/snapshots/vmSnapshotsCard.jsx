@@ -178,9 +178,9 @@ export class VmSnapshotsCard extends React.Component {
 
                     const deleteSnapshotHelper = () => {
                         const deleteDialogProps = {
-                            title: cockpit.format(_("Delete snapshot $0"), snap.name),
+                            title: _("Delete snapshot?"),
                             errorMessage: cockpit.format(_("Snapshot $0 could not be deleted"), snap.name),
-                            actionDescription: _("After deleting the snapshot, all its captured content will be lost."),
+                            actionDescription: cockpit.format(_("Snapshot $0 will be deleted from $1. All of its captured content will be lost."), snap.name, vm.name),
                             onClose: () => this.setState({ deleteDialogProps: undefined }),
                             deleteHandler: () => {
                                 return snapshotDelete({ connectionName: vm.connectionName, domainPath: vm.id, snapshotName: snap.name })
