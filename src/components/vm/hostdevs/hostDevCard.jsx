@@ -287,7 +287,7 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
         <>
             {deleteDialogProps &&
                 <DeleteResourceModal {...deleteDialogProps} actionName={_("Remove")} />}
-            <ListingTable aria-label={_(`VM ${vm.name} Host Devices`)}
+            <ListingTable aria-label={cockpit.format(_("VM $0 Host Devices"), vm.name)}
                 gridBreakPoint='grid-xl'
                 variant='compact'
                 emptyCaption={_("No host devices assigned to this VM")}
