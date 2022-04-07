@@ -22,8 +22,6 @@ WEBLATE_REPO=tmp/weblate-repo
 WEBLATE_REPO_URL=https://github.com/cockpit-project/cockpit-machines-weblate.git
 WEBLATE_REPO_BRANCH=main
 
-PYTHONFILES=$(shell git grep -lI '^#!.*python') $(shell git ls-tree -r --name-only HEAD | grep '\.py')
-
 all: $(WEBPACK_TEST)
 
 #
@@ -160,10 +158,8 @@ $(VM_IMAGE): $(TARFILE) packaging/debian/rules packaging/debian/control packagin
 vm: $(VM_IMAGE)
 	echo $(VM_IMAGE)
 
-# run static code checks for python code
 codecheck:
-	python3 -m pyflakes $(PYTHONFILES)
-	python3 -m pycodestyle --max-line-length=195 $(PYTHONFILES) # TODO: Fix long lines
+	test/static-code
 
 # run the browser integration tests; skip check for SELinux denials
 check: $(NODE_MODULES_TEST) $(VM_IMAGE) test/common test/reference
