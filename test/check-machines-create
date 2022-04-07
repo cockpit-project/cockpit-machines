@@ -1620,6 +1620,46 @@ vnc_password= "{vnc_passwd}"
         self.allow_browser_errors("Tried changing state of a disconnected RFB object")
         self.allow_journal_messages(".* couldn't shutdown fd: Transport endpoint is not connected")
 
+    def testConfigureBeforeInstallBios(self):
+        TestMachinesCreate.CreateVmRunner(self)
+
+        b = self.browser
+
+        self.login_and_go("/machines")
+        b.wait_in_text("body", "Virtual machines")
+
+        dialog = TestMachinesCreate.VmDialog(self, sourceType='file',
+                                             name="VmNotInstalledBios",
+                                             location=TestMachinesCreate.TestCreateConfig.NOVELL_MOCKUP_ISO_PATH,
+                                             memory_size=128, memory_size_unit='MiB',
+                                             storage_size=256, storage_size_unit='MiB',
+                                             start_vm=False)
+        dialog.open().fill()
+
+        b.click(".pf-c-modal-box__footer button:contains(Create)")
+        b.wait_not_present("#create-vm-dialog")
+
+        self.waitVmRow("VmNotInstalledBios")
+        self.goToVmPage("VmNotInstalledBios")
+
+        # Show and keep the os boot firmware configuration
+        b.wait_in_text("#vm-VmNotInstalledBios-firmware", "BIOS")
+        b.click("#vm-VmNotInstalledBios-firmware")
+        b.wait_visible(".pf-c-modal-box__body")
+        b.wait_val(".pf-c-modal-box__body select", "bios")
+        b.click("#firmware-dialog-apply")
+        b.wait_not_present(".pf-c-modal-box__body")
+        b.wait_in_text("#vm-VmNotInstalledBios-firmware", "BIOS")
+
+        # Install the VM
+        b.click("#vm-VmNotInstalledBios-install")
+        b.wait_in_text("#vm-VmNotInstalledBios-state", "Running")
+
+        domainXML = self.machine.execute("virsh dumpxml VmNotInstalledBios")
+        # no explicit "firmware=" field
+        self.assertIn("<os>", domainXML)
+        self.assertNotIn("efi", domainXML)
+
 
 if __name__ == '__main__':
     test_main()
