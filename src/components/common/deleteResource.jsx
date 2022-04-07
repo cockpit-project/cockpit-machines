@@ -98,33 +98,27 @@ DeleteResourceModal.propTypes = {
 };
 
 export const DeleteResourceButton = ({ objectId, disabled, overlayText, actionName, showDialog, isLink, isInline, className }) => {
+    const button = (
+        <Button id={`delete-${objectId}`}
+            className={className}
+            variant={isLink ? 'link' : 'danger'}
+            isDanger={isLink}
+            isInline={isInline}
+            onClick={showDialog}
+            isDisabled={disabled}>
+            {actionName || _("Delete")}
+        </Button>
+    );
+
     if (disabled) {
         return (
             <Tooltip id={`delete-${objectId}-tooltip`}
                      content={overlayText}>
-                <span>
-                    <Button id={`delete-${objectId}`}
-                        className={className}
-                        variant={isLink ? 'link' : 'danger'}
-                        isDanger={isLink}
-                        isInline={isInline}
-                        isDisabled>
-                        {actionName || _("Delete")}
-                    </Button>
-                </span>
+                <span>{button}</span>
             </Tooltip>
         );
     } else {
-        return (
-            <Button id={`delete-${objectId}`}
-                className={className}
-                variant={isLink ? 'link' : 'danger'}
-                isDanger={isLink}
-                isInline={isInline}
-                onClick={showDialog}>
-                {actionName || _("Delete")}
-            </Button>
-        );
+        return button;
     }
 };
 DeleteResourceButton.propTypes = {
