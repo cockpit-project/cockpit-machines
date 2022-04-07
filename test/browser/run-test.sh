@@ -49,6 +49,7 @@ fi
 # functionality -- upstream CI covers that.
 EXCLUDES="$EXCLUDES
           TestMachinesCreate.testConfigureBeforeInstall
+          TestMachinesCreate.testConfigureBeforeInstallBios
           TestMachinesCreate.testCreateBasicValidation
           TestMachinesCreate.testDisabledCreate
 
