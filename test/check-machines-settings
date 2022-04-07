@@ -347,7 +347,7 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         # VM initially should have 256MiB
         def mib_to_mb(memory):
-            return round(memory * (1024 * 1024)/1000/1000)
+            return round(memory * (1024 * 1024) / 1000 / 1000)
 
         current_memory = int(b.attr("#vm-subVmTest1-memory-modal-memory", "value"))
         self.assertEqual(current_memory, 256)
