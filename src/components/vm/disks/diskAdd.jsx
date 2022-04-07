@@ -219,7 +219,7 @@ const AdditionalOptions = ({ cacheMode, device, idPrefix, onValueChanged, busTyp
                             }
                             { showMaxLengthMessage &&
                                 <HelperTextItem id="serial-length-message" key="length" variant="warning" hasIcon>
-                                    {_(`Identifier may be silently truncated to ${serialLength} characters `)}
+                                    {cockpit.format(_("Identifier may be silently truncated to $0 characters "), serialLength)}
                                     <span className="disk-serial">{`(${truncatedSerial})`}</span>
                                 </HelperTextItem>
                             }
