@@ -85,7 +85,7 @@ class TestMachinesSnapshots(VirtualMachinesCase):
         self.performAction("subVmTest1", "forceOff")
 
         time1 = datetime.now().strftime("%H:%M:%S")
-        long_description = "This is a long description"*10
+        long_description = "This is a long description" * 10
         m.execute(f"virsh snapshot-create-as --domain subVmTest1 --name snapshotC --description '{long_description}'")
 
         b.reload()  # snapshots events not available yet: https://gitlab.com/libvirt/libvirt/-/issues/44
