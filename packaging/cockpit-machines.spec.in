@@ -36,6 +36,7 @@ Requires: cockpit-bridge >= 215
 Requires: libvirt-daemon-qemu
 %else
 Requires: libvirt-daemon-kvm
+Requires: (libvirt-daemon-config-network if virt-install)
 %endif
 Requires: libvirt-client
 Requires: libvirt-dbus >= 1.2.0
