@@ -549,11 +549,6 @@ vnc_password= "{vnc_passwd}"
         runner = TestMachinesCreate.CreateVmRunner(self)
         config = TestMachinesCreate.TestCreateConfig
 
-        # disable QXL driver for Fedora, which builds this as a module -- should work and not add a spice console then
-        if 'fedora' in m.image:
-            m.execute("mount -o bind /dev/null /usr/lib64/qemu/hw-display-qxl.so")
-            self.addCleanup(m.execute, "umount /usr/lib64/qemu/hw-display-qxl.so")
-
         self.login_and_go("/machines")
         self.browser.wait_in_text("body", "Virtual machines")
 

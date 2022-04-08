@@ -24,12 +24,6 @@ $DNF --setopt=install_weak_deps=False firefox
 # RHEL/CentOS 8 and Fedora have this, but not RHEL 9; tests check this more precisely
 $DNF libvirt-daemon-driver-storage-iscsi-direct || true
 
-# FIXME: tests currently require spice QXL support; fix them to get along without
-# Fedora has split packages (much smaller footprint), RHEL doesn't
-if grep -q 'ID=fedora' /usr/lib/os-release; then
-    $DNF qemu-device-display-qxl qemu-char-spice
-fi
-
 #HACK: unbreak rhel-9-0's default choice of 999999999 rounds, see https://bugzilla.redhat.com/show_bug.cgi?id=1993919
 sed -ie 's/#SHA_CRYPT_MAX_ROUNDS 5000/SHA_CRYPT_MAX_ROUNDS 5000/' /etc/login.defs
 
