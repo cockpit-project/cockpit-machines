@@ -25,6 +25,7 @@ import {
     HelperText, HelperTextItem,
     Modal, Radio, Spinner, TextInput,
 } from '@patternfly/react-core';
+import ExclamationCircleIcon from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
 import cockpit from 'cockpit';
 import { DialogsContext } from 'dialogs.jsx';
 
@@ -326,10 +327,13 @@ const UseExistingDisk = ({
     );
 };
 
-const CustomPath = ({ idPrefix, onValueChanged, device, hideDeviceRow }) => {
+const CustomPath = ({ idPrefix, onValueChanged, device, validationFailed, hideDeviceRow }) => {
     return (<>
         <FormGroup id={`${idPrefix}-file`}
                    fieldId={`${idPrefix}-file-autocomplete`}
+                   helperTextInvalid={validationFailed.customPath}
+                   helperTextInvalidIcon={<ExclamationCircleIcon />}
+                   validated={validationFailed.customPath && "error"}
                    label={_("Custom path")}>
             <FileAutoComplete id={`${idPrefix}-file-autocomplete`}
                 placeholder={_("Path to file on host's file system")}
@@ -358,7 +362,11 @@ export class AddDiskModalBody extends React.Component {
         super(props);
         this.state = {
             validate: false,
-            dialogLoading: true
+            dialogLoading: true,
+            customDiskVerificationFailed: false,
+            customDiskVerificationMessage: null,
+            verificationInProgress: false,
+            file: null,
         };
         this.onValueChanged = this.onValueChanged.bind(this);
         this.dialogErrorSet = this.dialogErrorSet.bind(this);
@@ -420,6 +428,9 @@ export class AddDiskModalBody extends React.Component {
 
         if (this.state.mode !== CUSTOM_PATH && !this.state.storagePoolName)
             validationFailed.storagePool = _("Please choose a storage pool");
+
+        if (this.state.mode === CUSTOM_PATH && this.state.customDiskVerificationFailed)
+            validationFailed.customPath = this.state.customDiskVerificationMessage;
 
         if (this.state.mode === CREATE_NEW) {
             if (!this.state.volumeName) {
@@ -513,11 +524,50 @@ export class AddDiskModalBody extends React.Component {
             break;
         }
         case 'file': {
+            this.setState({ file: value });
+
             if (value.endsWith(".iso")) {
                 // use onValueChange instead of setState in order to perform subsequent state change logic
                 this.onValueChanged("device", "cdrom");
             }
-            this.setState({ file: value });
+
+            if (value && this.state.device === "disk") {
+                this.setState({ verificationInProgress: true, validate: false });
+                cockpit.spawn(["head", "--bytes=16", value], { binary: true, err: "message", superuser: "try" })
+                        .then(file_header => {
+                            let format = "";
+
+                            // https://git.qemu.org/?p=qemu.git;a=blob;f=docs/interop/qcow2.txt
+                            if (file_header[0] == 81 && file_header[1] == 70 &&
+                                file_header[2] == 73 && file_header[3] == 251) {
+                                format = "qcow2";
+                                // All zeros, no backing file offset
+                                if (file_header.slice(8).every(bytes => bytes === 0)) {
+                                    this.setState({ customDiskVerificationFailed: false, format: format });
+                                } else {
+                                    this.setState({
+                                        format: format,
+                                        customDiskVerificationFailed: true,
+                                        customDiskVerificationMessage: _("Importing an image with a backing file is unsupported"),
+                                        validate: true
+                                    });
+                                }
+                            } else {
+                                format = "raw";
+                                this.setState({ customDiskVerificationFailed: false, format: format });
+                            }
+                            this.setState({ verificationInProgress: false });
+                        })
+                        .catch(e => {
+                            this.setState({
+                                verificationInProgress: false,
+                                format: "raw",
+                            });
+                            console.warn("could not execute head --bytes=16", e.toString());
+                        });
+            } else {
+                this.setState({ customDiskVerificationFailed: false });
+            }
             break;
         }
         case 'device': {
@@ -633,7 +683,7 @@ export class AddDiskModalBody extends React.Component {
             device: this.state.device,
             poolName: this.state.storagePoolName,
             volumeName: this.state.existingVolumeName,
-            format: this.state.mode !== CUSTOM_PATH ? this.state.format : "raw", // TODO: let user choose format for disks with custom file path
+            format: this.state.format,
             target: this.state.target,
             permanent: this.state.permanent,
             hotplug: this.state.hotplug,
@@ -715,7 +765,8 @@ export class AddDiskModalBody extends React.Component {
                     {this.state.mode === CUSTOM_PATH && (
                         <CustomPath idPrefix={idPrefix}
                                     onValueChanged={this.onValueChanged}
-                                    hideDeviceRow />
+                                    hideDeviceRow
+                                    validationFailed={validationFailed} />
                     )}
                 </Form>
             );
@@ -766,7 +817,8 @@ export class AddDiskModalBody extends React.Component {
                         {this.state.mode === CUSTOM_PATH && (
                             <CustomPath idPrefix={idPrefix}
                                         onValueChanged={this.onValueChanged}
-                                        device={this.state.device} />
+                                        device={this.state.device}
+                                        validationFailed={validationFailed} />
                         )}
                         {vm.persistent &&
                         <PermanentChange idPrefix={idPrefix}
@@ -795,7 +847,9 @@ export class AddDiskModalBody extends React.Component {
                            <Button id={`${idPrefix}-dialog-add`}
                                    variant='primary'
                                    isLoading={this.state.addDiskInProgress}
-                                   isDisabled={this.state.addDiskInProgress || dialogLoading || (storagePools.length == 0 && this.state.mode != CUSTOM_PATH)}
+                                   isDisabled={this.state.addDiskInProgress || dialogLoading ||
+                                               (storagePools.length == 0 && this.state.mode != CUSTOM_PATH) ||
+                                               (this.state.mode == CUSTOM_PATH && this.state.device === "disk" && this.state.customDiskVerificationFailed)}
                                    onClick={isMediaInsertion ? this.onInsertClicked : this.onAddClicked}>
                                {isMediaInsertion ? _("Insert") : _("Add")}
                            </Button>
