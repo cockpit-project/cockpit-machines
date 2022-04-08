@@ -20,6 +20,7 @@
 import os
 import sys
 import time
+import xml.etree.ElementTree as ET
 
 # import Cockpit's machinery for test VMs and its browser test API
 TEST_DIR = os.path.dirname(__file__)
@@ -481,6 +482,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             volume_size=10, volume_size_unit='MiB',
             mode="create-new",
             expected_target='vda', permanent=False, cache_mode=None,
+            expected_format='raw',
             serial=None, expected_serial=None,
             bus_type=None, pool_type=None,
             volume_format=None, expected_volume_format=None,
@@ -490,7 +492,8 @@ class TestMachinesDisks(VirtualMachinesCase):
             xfail=False, xfail_object=None,
             xfail_error_message=None, xfail_error_title=None,
             xwarning_object=None, xwarning_message=None,
-            pixel_test_ignore=None
+            pixel_test_ignore=None,
+            skip_add=False,
         ):
             self.test_obj = test_obj
             self.vm_name = vm_name
@@ -502,6 +505,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             self.volume_size = volume_size
             self.volume_size_unit = volume_size_unit
             self.expected_target = expected_target
+            self.expected_format = expected_format
             self.permanent = permanent
             self.cache_mode = cache_mode
             self.bus_type = bus_type
@@ -512,6 +516,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             self.expected_volume_format = expected_volume_format
             self.persistent_vm = persistent_vm
             self.expected_access = expected_access
+            self.skip_add = skip_add
 
             self.pixel_test_tag = pixel_test_tag
             self.pixel_test_ignore = pixel_test_ignore
@@ -545,7 +550,8 @@ class TestMachinesDisks(VirtualMachinesCase):
                 self.test_obj.browser.assert_pixels(f"{prefix}-dialog-modal-window", self.pixel_test_tag,
                                                     ignore=[self.pixel_test_ignore] if self.pixel_test_ignore else [])
 
-            self.add_disk()
+            if not self.skip_add:
+                self.add_disk()
             if not self.xfail:
                 self.verify_disk_added()
             else:
@@ -705,6 +711,15 @@ class TestMachinesDisks(VirtualMachinesCase):
                     self.test_obj.assertEqual(vol_xml, f'<format type="{self.volume_format or expected_format}"/>')
             else:
                 b.wait_in_text(f'#vm-{self.vm_name}-disks-{self.expected_target}-source-file', self.file_path)
+                domainXML = self.test_obj.machine.execute(f"virsh dumpxml {self.vm_name}")
+                root = ET.fromstring(domainXML)
+                devices = root.find('devices')
+                for disk in devices.findall('disk'):
+                    filepath = disk.find('source').get('file')
+                    if filepath == self.file_path:
+                        diskformat = disk.find('driver').get('type')
+                        self.test_obj.assertEqual(diskformat, self.expected_format)
+                        break
 
             if self.cache_mode:
                 b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.expected_target}-cache", self.cache_mode)
@@ -1094,10 +1109,37 @@ class TestMachinesDisks(VirtualMachinesCase):
             device='disk',
             bus_type='scsi',
             expected_target='sda',
+            expected_format='raw',
             file_path='/var/lib/libvirt/novell.iso',
             mode='custom-path',
             pixel_test_tag='vm-add-disk-modal-custom-path'
         ).execute()
+
+        # Disk type should be detected
+        m.execute("qemu-img create -f qcow2 /tmp/foobar.qcow2 1M")
+        self.VMAddDiskDialog(
+            self,
+            device='disk',
+            expected_target='vdb',
+            expected_format='qcow2',
+            file_path='/tmp/foobar.qcow2',
+            mode='custom-path',
+        ).execute()
+
+        # Disk with backing file should shown a warning
+        m.execute("qemu-img create -f qcow2 /tmp/backing.qcow2 1M")
+        m.execute("qemu-img create -f qcow2 -F qcow2 -b /tmp/backing.qcow2 /tmp/base.qcow2")
+        self.VMAddDiskDialog(
+            self,
+            device='disk',
+            file_path='/tmp/base.qcow2',
+            mode='custom-path',
+            skip_add=True,
+            xfail=True, xfail_object='file-autocomplete',
+            xfail_error_message='Importing an image with a backing file is unsupported',
+        ).execute()
+        # Image can't be added, close dialog
+        b.click(".pf-c-modal-box__footer button:contains(Cancel)")
 
         # non iso file
         self.VMAddDiskDialog(
@@ -1151,6 +1193,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         m.execute("for pool in $(virsh pool-list --all --name); do virsh pool-destroy $pool || true; virsh pool-undefine $pool; done")
         b.wait_visible("#vm-details[data-pools-count=0]")
         b.click(prefix)
+        b.set_file_autocomplete_val("#vm-subVmTest1-disks-adddisk-file", "/var/lib/libvirt/novell.iso")
         b.wait_visible(f"{prefix}-custompath:checked")
         b.wait_visible(f"{prefix}-dialog-add[aria-disabled=false]")
         b.click(f"{prefix}-createnew")
