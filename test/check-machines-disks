@@ -28,6 +28,7 @@ sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
 
 from machineslib import VirtualMachinesCase  # noqa
 from testlib import nondestructive, test_main, wait, Error, skipImage, timeout  # noqa
+from parent import BOTS_DIR  # noqa
 
 
 def get_next_free_target(used_targets):
@@ -284,7 +285,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             expected_target='vda', permanent=False, cache_mode=None,
             serial=None, expected_serial=None,
             bus_type=None, pool_type=None,
-            volume_format=None,
+            volume_format=None, expected_volume_format=None,
             persistent_vm=True,
             pixel_test_tag=None,
             xfail=False, xfail_object=None,
@@ -309,6 +310,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             self.expected_serial = expected_serial or serial
             self.pool_type = pool_type
             self.volume_format = volume_format
+            self.expected_volume_format = expected_volume_format
             self.persistent_vm = persistent_vm
 
             self.pixel_test_tag = pixel_test_tag
@@ -321,12 +323,14 @@ class TestMachinesDisks(VirtualMachinesCase):
             self.xwarning_object = xwarning_object
             self.xwarning_message = xwarning_message
 
-        def getExpectedFormat(selfi, pool_type):
+        def getExpectedFormat(selfi, pool_type, expected_volume_format):
             # Guess by the name of the pool it's format to avoid passing more parameters
             if pool_type == 'iscsi':
                 return 'unknown'
             elif pool_type == 'disk':
                 return 'none'
+            elif expected_volume_format == 'iso':
+                return 'iso'
             else:
                 return 'qcow2'
 
@@ -386,7 +390,7 @@ class TestMachinesDisks(VirtualMachinesCase):
                 if self.volume_format:
                     b.select_from_dropdown(f"#vm-{self.vm_name}-disks-adddisk-new-format", self.volume_format)
                 else:
-                    b.wait_val(f"#vm-{self.vm_name}-disks-adddisk-new-format", self.getExpectedFormat(self.pool_type))
+                    b.wait_val(f"#vm-{self.vm_name}-disks-adddisk-new-format", self.getExpectedFormat(self.pool_type, self.expected_volume_format))
             elif self.mode == "custom-path":
                 b.wait_visible(f"#vm-{self.vm_name}-disks-adddisk-file")
                 # Type in file path
@@ -454,7 +458,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             b = self.test_obj.browser
             m = self.test_obj.machine
             b.wait_not_present(f"#vm-{self.vm_name}-disks-adddisk-dialog-modal-window")
-            if self.device == "cdrom" or (self.file_path and self.file_path.endswith(".iso")):
+            if self.device == "cdrom" or (self.file_path and self.file_path.endswith(".iso")) or self.expected_volume_format == "iso":
                 expected_bus_type = self.bus_type or "scsi"
                 expected_device = self.device or "cdrom"
             else:
@@ -485,7 +489,7 @@ class TestMachinesDisks(VirtualMachinesCase):
 
                 b.wait_in_text(f'#vm-{self.vm_name}-disks-{self.expected_target}-source-volume', self.volume_name)
 
-                expected_format = self.getExpectedFormat(self.pool_type)
+                expected_format = self.getExpectedFormat(self.pool_type, self.expected_volume_format)
                 # Unknown pool format isn't present in xml anymore
                 if expected_format == "unknown" and m.execute("virsh --version") >= "5.6.0":
                     m.execute(detect_format_cmd.format(volume_xml, "/volume/target") + " | grep -qv format")
@@ -694,6 +698,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         m.execute(f"virsh pool-define-as myPoolOne --type dir --target {v1} && virsh pool-start myPoolOne")
         m.execute(f"virsh pool-define-as myPoolTwo --type dir --target {v2} && virsh pool-start myPoolTwo")
 
+        m.upload([os.path.join(BOTS_DIR, "machine/cloud-init.iso")], os.path.join(default_tmp, "defaultVol.iso"))
         m.execute("virsh vol-create-as default_tmp defaultVol --capacity 10M --format raw")
         m.execute("virsh vol-create-as myPoolTwo mydiskofpooltwo_temporary --capacity 50M --format qcow2")
         m.execute("virsh vol-create-as myPoolTwo mydiskofpooltwo_permanent --capacity 50M --format qcow2")
@@ -765,6 +770,16 @@ class TestMachinesDisks(VirtualMachinesCase):
         permanent_targets = [t for t in used_targets if t not in transient_targets]
         for target in permanent_targets:
             b.wait_visible(f"#vm-subVmTest1-disks-{target}-device")
+
+        # check that bus and device type can be automatically picked up from the volume format (ISO)
+        self.VMAddDiskDialog(
+            self,
+            expected_target='sda',
+            pool_name='default_tmp',
+            volume_name='defaultVol.iso',
+            mode='use-existing',
+            expected_volume_format='iso',
+        ).execute()
 
         # Apparmor on debian and ubuntu may prevent access to /dev/sdb1 when starting VM,
         # https://bugs.launchpad.net/ubuntu/+source/libvirt/+bug/1677398
