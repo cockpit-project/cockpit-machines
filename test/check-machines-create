@@ -862,17 +862,27 @@ vnc_password= "{vnc_passwd}"
             self.assertIn(f"backing file: {self.location}", self.machine.execute(f"qemu-img info /var/lib/libvirt/images/{self.name}.qcow2"))
 
         def createRespectQemuConfConsoleConfig(self, vnc_listen, spice_listen, vnc_passwd, spice_passwd):
+            m = self.machine
+
             self.browser.click(".pf-c-modal-box__footer button:contains(Create)")
             self.browser.wait_not_present("#create-vm-dialog")
             self.browser.wait_text(f"#vm-{self.name}-state", "Shut off")
 
-            domainXML = self.machine.execute(f"virsh dumpxml --security-info {self.name}")
+            domainXML = m.execute(f"virsh dumpxml --security-info {self.name}")
             root = ET.fromstring(domainXML)
 
-            if self.machine.image not in ["rhel-9-0", "centos-9-stream"]:
-                spice = root.findall(".//graphics[@type='spice']")[0]
-                self.assertEqual(spice_listen, spice.attrib['listen'])
-                self.assertEqual(spice_passwd, spice.attrib.get('passwd', None))
+            expect_spice = m.image not in ["rhel-9-0", "centos-9-stream"]
+            if m.image.startswith("fedora"):
+                # HACK: Fedora splits out the driver into a separate package, which we don't depend on
+                # spice currently requires this, but shouldn't: https://bugzilla.redhat.com/show_bug.cgi?id=2064594
+                expect_spice = m.execute("if rpm -q qemu-device-display-qxl >/dev/null; then echo yes; fi").strip() == "yes"
+
+            spice = root.findall(".//graphics[@type='spice']")
+            if expect_spice:
+                self.assertEqual(spice_listen, spice[0].attrib['listen'])
+                self.assertEqual(spice_passwd, spice[0].attrib.get('passwd', None))
+            else:
+                self.assertEqual(spice, [])
 
             vnc = root.findall(".//graphics[@type='vnc']")[0]
             self.assertEqual(vnc_listen, vnc.attrib['listen'])
