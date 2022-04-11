@@ -19,7 +19,7 @@
 
 import React from 'react';
 
-import { LIBVIRT_SYSTEM_CONNECTION, LIBVIRT_SESSION_CONNECTION } from '../../helpers.js';
+import { LIBVIRT_SYSTEM_CONNECTION, LIBVIRT_SESSION_CONNECTION, rephraseUI } from '../../helpers.js';
 import { FormGroup, Radio } from '@patternfly/react-core';
 import cockpit from 'cockpit';
 
@@ -35,12 +35,12 @@ export const MachinesConnectionSelector = ({ onValueChanged, loggedUser, connect
                    onChange={() => onValueChanged('connectionName', LIBVIRT_SYSTEM_CONNECTION)}
                    name="connectionName"
                    id="connectionName-system"
-                   label={_("System")} />
+                   label={rephraseUI("connections", LIBVIRT_SYSTEM_CONNECTION)} />
             <Radio isChecked={connectionName == LIBVIRT_SESSION_CONNECTION}
                    onChange={() => onValueChanged('connectionName', LIBVIRT_SESSION_CONNECTION)}
                    name="connectionName"
                    id="connectionName-session"
-                   label={_("User session")} />
+                   label={rephraseUI("connections", LIBVIRT_SESSION_CONNECTION)} />
         </FormGroup>
     );
 };
