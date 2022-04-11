@@ -217,7 +217,7 @@ const transform = {
     },
     connections: {
         system: _("System"),
-        session: _("Session"),
+        session: _("User session"),
     },
     resourceStates: {
         running: _("Running"),
