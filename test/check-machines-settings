@@ -266,7 +266,7 @@ class TestMachinesSettings(VirtualMachinesCase):
     def testBootOrder(self):
         b = self.browser
 
-        self.createVm("subVmTest1")
+        args = self.createVm("subVmTest1")
         self.machine.execute("touch /var/lib/libvirt/images/phonycdrom; virsh attach-disk subVmTest1 /var/lib/libvirt/images/phonycdrom sdb --type cdrom --config")
 
         self.login_and_go("/machines")
@@ -296,11 +296,10 @@ class TestMachinesSettings(VirtualMachinesCase):
         # Check a cdrom attributes are shown correctly
         cdrom_row = b.text(".boot-order-list-view li:nth-child(3) .boot-order-additional-info")
         self.assertTrue("cdrom" and "/var/lib/libvirt/images/phonycdrom" in cdrom_row)
-        # Move first device down and check whetever succeeded
+        # Move first device down and check whether succeeded
         row = b.text("#vm-subVmTest1-order-modal-device-row-1 .boot-order-additional-info")
         b.click("#vm-subVmTest1-order-modal-device-row-0 #vm-subVmTest1-order-modal-down")
         b.wait_in_text("#vm-subVmTest1-order-modal-device-row-0 .boot-order-additional-info", row)
-
         # Save
         b.click("#vm-subVmTest1-order-modal-save")
         b.wait_not_present("#vm-subVmTest1-order-modal-window")
@@ -322,6 +321,40 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         # Check boot order has changed and no warning is shown
         b.wait_not_in_text("#vm-subVmTest1-boot-order", bootOrder)
+
+        # After unchecking all the boot options, the VM should fall back to using the first hard disk as a boot image
+        # Check that UI is able to detect this fallback
+        def uncheckTheLastBootOption(firstOptionType="disk"):
+            b.click("#vm-subVmTest1-boot-order button")
+            b.wait_visible("#vm-subVmTest1-order-modal-window")
+
+            # check boot option order
+            # use the first and the third option since network will be the third option if unchecking it
+            row0Type = "disk" if firstOptionType == "disk" else "network"
+            row2Type = "network" if firstOptionType == "disk" else "disk"
+            b.wait_text("#vm-subVmTest1-order-modal-device-row-0 .boot-order-description",
+                        row0Type)
+            b.wait_text("#vm-subVmTest1-order-modal-device-row-2 .boot-order-description",
+                        row2Type)
+
+            b.set_checked("#vm-subVmTest1-order-modal-device-row-0 input", False)
+            b.click("#vm-subVmTest1-order-modal-save")
+            b.wait_not_present("#vm-subVmTest1-order-modal-window")
+
+            b.wait_text("#vm-subVmTest1-boot-order", "diskedit")
+
+            # re-open and check the boot option is the disk
+            b.click("#vm-subVmTest1-boot-order button")
+            b.wait_visible("#vm-subVmTest1-order-modal-window")
+            b.wait_text("#vm-subVmTest1-order-modal-device-row-0 .pf-c-description-list__description .pf-c-description-list__text", args["image"])
+
+            b.click("#vm-subVmTest1-order-modal-cancel")
+            b.wait_not_present("#vm-subVmTest1-order-modal-window")
+
+        # Uncheck the last boot option which is network
+        uncheckTheLastBootOption(firstOptionType="network")
+        # Uncheck the last boot option which is disk
+        uncheckTheLastBootOption()
 
     def testDomainMemorySettings(self):
         b = self.browser
