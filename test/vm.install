@@ -20,3 +20,8 @@ fi
 if grep -q 'UBUNTU_CODENAME=jammy' /usr/lib/os-release; then
     adduser libvirtdbus libvirt
 fi
+
+# HACK: libvirt-daemon-driver-storage-core is missing unit enablement script: https://bugzilla.redhat.com/show_bug.cgi?id=2025644
+if grep -q 'PLATFORM_ID="platform:f35"' /usr/lib/os-release; then
+    systemctl enable virtstoraged.socket
+fi
