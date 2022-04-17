@@ -38,7 +38,7 @@ class VirtualMachinesCaseHelpers:
             b.wait_in_text("#vm-{0}-{1}-state".format(vmName, connectionName), "Paused")
         if action == "resume" or action == "run":
             b.wait_in_text("#vm-{0}-{1}-state".format(vmName, connectionName), "Running")
-        if action == "forceOff":
+        if action == "forceOff" or action == "off":
             b.wait_in_text("#vm-{0}-{1}-state".format(vmName, connectionName), "Shut off")
 
     def goToVmPage(self, vmName, connectionName='system'):
