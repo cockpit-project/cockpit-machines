@@ -16,7 +16,7 @@ NODE_MODULES_TEST=node_modules/.bin/webpack
 # one example file in dist/ from webpack to check if that already ran
 WEBPACK_TEST=dist/manifest.json
 # one example file in pkg/lib to check if it was already checked out
-LIB_TEST=pkg/lib/cockpit-po-plugin.js
+COCKPIT_REPO_STAMP = pkg/lib/cockpit.js
 
 WEBLATE_REPO=tmp/weblate-repo
 WEBLATE_REPO_URL=https://github.com/cockpit-project/cockpit-machines-weblate.git
@@ -87,7 +87,7 @@ packaging/arch/PKGBUILD: packaging/arch/PKGBUILD.in
 packaging/debian/changelog: packaging/debian/changelog.in
 	sed 's/VERSION/$(VERSION)/' $< > $@
 
-$(WEBPACK_TEST): $(LIB_TEST) $(shell find src/ -type f) package.json webpack.config.js
+$(WEBPACK_TEST): $(COCKPIT_REPO_STAMP) $(shell find src/ -type f) package.json webpack.config.js
 	test/download-dist $${DOWNLOAD_DIST_OPTIONS:-} || \
 	    if [ -z "$$FORCE_DOWNLOAD_DIST" ]; then \
 		($(MAKE) $(NODE_MODULES_TEST) && NODE_ENV=$(NODE_ENV) node_modules/.bin/webpack); \
@@ -173,24 +173,8 @@ bots:
 	if [ -n "$$COCKPIT_BOTS_REF" ]; then git -C bots fetch --quiet --depth=1 origin "$$COCKPIT_BOTS_REF"; git -C bots checkout --quiet FETCH_HEAD; fi
 	@echo "checked out bots/ ref $$(git -C bots rev-parse HEAD)"
 
-# checkout Cockpit's test API; this has no API stability guarantee, so check out a stable tag
-# when you start a new project, use the latest release, and update it from time to time
-test/common:
-	flock Makefile sh -ec '\
-	    git fetch --depth=1 https://github.com/cockpit-project/cockpit.git 267; \
-	    git checkout --force FETCH_HEAD -- test/common; \
-	    git reset test/common'
-
 test/reference: test/common
 	test/common/pixel-tests pull
-
-# checkout Cockpit's PF/React/build library; again this has no API stability guarantee, so check out a stable tag
-$(LIB_TEST):
-	flock Makefile sh -ec '\
-	    git fetch --depth=1 https://github.com/cockpit-project/cockpit.git 267; \
-	    git checkout --force FETCH_HEAD -- pkg/lib; \
-	    git reset -- pkg/lib'
-	mv pkg/lib src/ && rmdir -p pkg
 
 $(NODE_MODULES_TEST): package.json
 	# if it exists already, npm install won't update it; force that so that we always get up-to-date packages
@@ -200,3 +184,21 @@ $(NODE_MODULES_TEST): package.json
 	env -u NODE_ENV npm prune
 
 .PHONY: all clean install devel-install dist node-cache rpm check vm update-po
+
+# checkout common files from Cockpit repository required to build this project;
+# this has no API stability guarantee, so check out a stable tag when you start
+# a new project, use the latest release, and update it from time to time
+COCKPIT_REPO_FILES = \
+	pkg/lib \
+	test/common \
+	$(NULL)
+
+COCKPIT_REPO_URL = https://github.com/cockpit-project/cockpit.git
+COCKPIT_REPO_COMMIT = 4f8ad7314676b375fcca5c98a543ef5078cc1af5 # 267
+
+$(COCKPIT_REPO_FILES): $(COCKPIT_REPO_STAMP)
+COCKPIT_REPO_TREE = '$(strip $(COCKPIT_REPO_COMMIT))^{tree}'
+$(COCKPIT_REPO_STAMP): Makefile
+	@git rev-list --quiet --objects $(COCKPIT_REPO_TREE) -- 2>/dev/null || \
+	    git fetch --no-tags --no-write-fetch-head --depth=1 $(COCKPIT_REPO_URL) $(COCKPIT_REPO_COMMIT)
+	git archive $(COCKPIT_REPO_TREE) -- tools/git-utils.sh $(COCKPIT_REPO_FILES) | tar x
