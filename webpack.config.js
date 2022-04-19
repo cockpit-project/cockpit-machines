@@ -7,8 +7,8 @@ const TerserJSPlugin = require('terser-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const CompressionPlugin = require("compression-webpack-plugin");
 const ESLintPlugin = require('eslint-webpack-plugin');
-const CockpitPoPlugin = require("./src/lib/cockpit-po-plugin");
-const CockpitRsyncPlugin = require("./src/lib/cockpit-rsync-plugin");
+const CockpitPoPlugin = require("./pkg/lib/cockpit-po-plugin");
+const CockpitRsyncPlugin = require("./pkg/lib/cockpit-rsync-plugin");
 
 // absolute path disables recursive module resolution, so build a relative one
 const nodedir = path.relative(process.cwd(), path.resolve((process.env.SRCDIR || __dirname), "node_modules"));
@@ -47,7 +47,7 @@ if (production) {
 module.exports = {
     mode: production ? 'production' : 'development',
     resolve: {
-        modules: [ nodedir, path.resolve(__dirname, 'src/lib') ],
+        modules: [ nodedir, path.resolve(__dirname, 'pkg/lib') ],
         alias: { 'font-awesome': path.resolve(nodedir, 'font-awesome-sass/assets/stylesheets') },
         // TODO: The following fallbacks are needed for ip module - replace this module with one better maintained
         fallback: {
@@ -57,7 +57,7 @@ module.exports = {
         }
     },
     resolveLoader: {
-        modules: [ nodedir, path.resolve(__dirname, 'src/lib') ],
+        modules: [ nodedir, path.resolve(__dirname, 'pkg/lib') ],
     },
     watchOptions: {
         ignored: /node_modules/,
