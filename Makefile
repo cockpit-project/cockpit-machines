@@ -15,8 +15,8 @@ VM_IMAGE=$(CURDIR)/test/images/$(TEST_OS)
 NODE_MODULES_TEST=node_modules/.bin/webpack
 # one example file in dist/ from webpack to check if that already ran
 WEBPACK_TEST=dist/manifest.json
-# one example file in src/lib to check if it was already checked out
-LIB_TEST=src/lib/cockpit-po-plugin.js
+# one example file in pkg/lib to check if it was already checked out
+LIB_TEST=pkg/lib/cockpit-po-plugin.js
 
 WEBLATE_REPO=tmp/weblate-repo
 WEBLATE_REPO_URL=https://github.com/cockpit-project/cockpit-machines-weblate.git
@@ -127,7 +127,7 @@ $(TARFILE): export NODE_ENV=production
 $(TARFILE): $(WEBPACK_TEST) $(SPEC) packaging/arch/PKGBUILD packaging/debian/changelog
 	tar --xz -cf $(TARFILE) --transform 's,^,cockpit-$(PACKAGE_NAME)/,' \
 		--exclude '*.in' --exclude test/reference \
-		$$(git ls-files) src/lib/ package-lock.json $(SPEC) packaging/arch/PKGBUILD packaging/debian/changelog dist/
+		$$(git ls-files) pkg/lib/ package-lock.json $(SPEC) packaging/arch/PKGBUILD packaging/debian/changelog dist/
 
 $(NODE_CACHE): $(NODE_MODULES_TEST)
 	tar --xz -cf $@ node_modules
