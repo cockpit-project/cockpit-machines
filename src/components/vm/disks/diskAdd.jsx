@@ -246,7 +246,6 @@ const CreateNewDisk = ({
     storagePoolName,
     unit,
     validationFailed,
-    vm,
     vmStoragePools,
     volumeName,
 }) => {
@@ -272,7 +271,7 @@ const CreateNewDisk = ({
     );
 };
 
-const ChangeShareable = ({ idPrefix, vms, storagePool, volumeName, onValueChanged }) => {
+const ChangeShareable = ({ idPrefix, vms, storagePool, volumeName }) => {
     const isVolumeUsed = getStorageVolumesUsage(vms, storagePool);
     const volume = storagePool.volumes.find(vol => vol.name === volumeName);
 
@@ -314,8 +313,7 @@ const UseExistingDisk = ({
                 <ChangeShareable idPrefix={idPrefix}
                                  vms={vms}
                                  storagePool={vmStoragePools.find(pool => pool.name === storagePoolName)}
-                                 volumeName={existingVolumeName}
-                                 onValueChanged={onValueChanged} />
+                                 volumeName={existingVolumeName} />
             </>}
         </>
     );
@@ -663,12 +661,12 @@ export class AddDiskModalBody extends React.Component {
                                    name="source"
                                    label={_("Use existing")}
                                    isChecked={this.state.mode === USE_EXISTING}
-                                   onChange={e => this.onValueChanged('mode', USE_EXISTING)} />
+                                   onChange={() => this.onValueChanged('mode', USE_EXISTING)} />
                             <Radio id={`${idPrefix}-custompath`}
                                    name="source"
                                    label={_("Custom path")}
                                    isChecked={this.state.mode === CUSTOM_PATH}
-                                   onChange={e => this.onValueChanged('mode', CUSTOM_PATH)} />
+                                   onChange={() => this.onValueChanged('mode', CUSTOM_PATH)} />
                         </FormGroup>
                         {this.state.mode === CREATE_NEW && (
                             <CreateNewDisk idPrefix={`${idPrefix}-new`}
@@ -679,8 +677,7 @@ export class AddDiskModalBody extends React.Component {
                                            unit={this.state.unit}
                                            format={this.state.format}
                                            validationFailed={validationFailed}
-                                           vmStoragePools={storagePools}
-                                           vm={vm} />
+                                           vmStoragePools={storagePools} />
                         )}
                         {this.state.mode === USE_EXISTING && (
                             <UseExistingDisk idPrefix={`${idPrefix}-existing`}
