@@ -1,30 +1,32 @@
+# Please keep this file sorted (LC_COLLATE=C.UTF-8),
+# grouped into the 3 categories below:
+#  - general patterns (match in all directories)
+#  - patterns to match files at the toplevel
+#  - patterns to match files in subdirs
+
+# general patterns
 *.pyc
 *.rpm
-*.tar.xz
-bots
-dist/
-lib/
-test/common/
-cockpit-machines.spec
-node_modules/
-package-lock.json
-packaging/arch/PKGBUILD
-packaging/debian/changelog
-test/images/
-tools/
-tmp/
 
-# Configuration directory of IDE and editor
-.vscode
-.idea
+# toplevel (/...)
+/Test*.html
+/Test*.json
+/Test*.log
+/Test*.png
+/bots
+/cockpit-*.tar.xz
+/cockpit-machines.spec
+/dist/
+/node_modules/
+/package-lock.json
+/pkg/
+/tmp/
+/tools/
 
-# Test output
-Test*.log
-cockpit-*.tar*
-Test*.png
-Test*.html
-Test*.json
-
-# Translation temporary files
-*.pot
+# subdirs (/subdir/...)
+/packaging/arch/PKGBUILD
+/packaging/debian/changelog
+/po/*.pot
 /po/LINGUAS
+/test/common/
+/test/images/
