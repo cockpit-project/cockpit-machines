@@ -145,5 +145,5 @@ VolumeCreateBody.propTypes = {
     size: PropTypes.number.isRequired,
     storagePool: PropTypes.object.isRequired,
     unit: PropTypes.string.isRequired,
-    volumeName: PropTypes.string.isRequired,
+    volumeName: PropTypes.string,
 };
