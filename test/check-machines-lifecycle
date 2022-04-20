@@ -59,9 +59,19 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         user = self.createUser(user_group='libvirt')
         self._testBasic(user, False)
 
-    def testBasicWheelUserUnprivileged(self):
-        user = self.createUser(user_group='wheel')
+    def testBasicAdminUser(self):
+        # The group in debian based distro should be sudo
+        if "ubuntu" in self.machine.image or "debian" in self.machine.image:
+            user_group = "sudo"
+        else:
+            user_group = "wheel"
+        user = self.createUser(user_group=user_group)
+
+        # Check NON-PRIVILEGED user won't see any VMs even though they are in wheel group
         self._testBasic(user, False, True)
+        self.machine.execute("virsh destroy subVmTest1 && virsh undefine subVmTest1")
+        # Check wheel group PRIVILEGED user will see VMs and can do operations on them
+        self._testBasic(user, True, False)
 
     def _testBasic(self, user=None, superuser=True, expect_empty_list=False):
         b = self.browser
