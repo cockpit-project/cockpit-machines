@@ -381,7 +381,7 @@ export class AddDiskModalBody extends React.Component {
             storagePoolName: defaultPool && defaultPool.name,
             storagePoolType: defaultPool && defaultPool.type,
             mode: CREATE_NEW,
-            volumeName: undefined,
+            volumeName: "",
             existingVolumeName: undefined,
             size: 1,
             unit: units.GiB.name,
