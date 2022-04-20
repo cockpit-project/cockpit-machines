@@ -66,7 +66,6 @@ export class DeleteResourceModal extends React.Component {
                    title={title}
                    footer={
                        <>
-                           {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                            <Button variant='danger' isLoading={this.state.inProgress} isDisabled={this.state.inProgress} onClick={this.delete}>
                                {actionName || _("Delete")}
                            </Button>
@@ -75,7 +74,8 @@ export class DeleteResourceModal extends React.Component {
                            </Button>
                        </>
                    }>
-                <DescriptionList isHorizontal>
+                {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
+                <DescriptionList className={this.state.dialogError && "pf-u-pt-md"} isHorizontal>
                     {actionDescription || cockpit.format(_("Confirm this action"))}
                     {objectDescription && objectDescription.flatMap(row => row.value
                         ? <DescriptionListGroup id={`delete-resource-modal-${row.name.toLowerCase().replace(/ /g, "-")}`} key={row.name}>
