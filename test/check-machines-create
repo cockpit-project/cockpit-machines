@@ -869,7 +869,7 @@ vnc_password= "{vnc_passwd}"
             domainXML = m.execute(f"virsh dumpxml --security-info {self.name}")
             root = ET.fromstring(domainXML)
 
-            expect_spice = m.image not in ["rhel-9-0", "centos-9-stream"]
+            expect_spice = not m.image.startswith("rhel-9") and m.image not in ["centos-9-stream"]
             if m.image.startswith("fedora"):
                 # HACK: Fedora splits out the driver into a separate package, which we don't depend on
                 # spice currently requires this, but shouldn't: https://bugzilla.redhat.com/show_bug.cgi?id=2064594
