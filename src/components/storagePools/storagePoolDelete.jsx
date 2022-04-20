@@ -21,18 +21,20 @@ import PropTypes from 'prop-types';
 import {
     Button, Checkbox,
     DropdownItem,
-    Form, FormGroup,
     HelperText, HelperTextItem,
+    List, ListItem,
     Modal,
     Stack, Tooltip
 } from '@patternfly/react-core';
-import { InfoIcon } from '@patternfly/react-icons';
+import { ExclamationTriangleIcon, InfoIcon } from '@patternfly/react-icons';
 
 import { getStorageVolumesUsage, storagePoolId } from '../../helpers.js';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { storageVolumeDelete } from '../../libvirtApi/storageVolume.js';
 import { storagePoolDeactivate, storagePoolUndefine } from '../../libvirtApi/storagePool.js';
 import cockpit from 'cockpit';
+
+import './storagePoolDelete.scss';
 
 const _ = cockpit.gettext;
 
@@ -160,26 +162,32 @@ export class StoragePoolDelete extends React.Component {
 
         const defaultBody = (
             <Stack hasGutter>
-                <Form isHorizontal>
-                    { storagePool.active && volumes.length > 0 &&
-                    <FormGroup label={_("Delete content")} fieldId='storage-pool-delete-volumes' hasNoPaddingTop>
-                        <Checkbox id='storage-pool-delete-volumes'
-                                  isChecked={this.state.deleteVolumes}
-                                  label={_("Delete the volumes inside this pool")}
-                                  onChange={checked => this.onValueChanged('deleteVolumes', checked)} />
-                    </FormGroup>}
-                    { !storagePool.active && _("Deleting an inactive storage pool will only undefine the pool. Its content will not be deleted.")}
-                </Form>
-                { storagePool.active && showWarning() }
+                { storagePool.active
+                    ? (volumes.length > 0
+                        ? <Checkbox id='storage-pool-delete-volumes'
+                                    isChecked={this.state.deleteVolumes}
+                                    label={<>
+                                        { _("Also delete all volumes inside this pool:")}
+                                        <List className="pool-volumes-delete-list">
+                                            {volumes.map(vol => <ListItem key={storagePool.name + vol.name}>{vol.name}</ListItem>)}
+                                        </List>
+                                    </>}
+                                    onChange={checked => this.onValueChanged('deleteVolumes', checked)} />
+                        : _("No volumes exist in this storage pool."))
+                    : _("Deleting an inactive storage pool will only undefine the pool. Its content will not be deleted.")
+                }
             </Stack>
         );
 
         return (
-            <Modal position="top" variant="medium" isOpen onClose={this.props.close}
-                   title={cockpit.format(_("Delete storage pool $0"), storagePool.name)}
+            <Modal position="top" variant="small" isOpen onClose={this.props.close}
+                title={<>
+                    <ExclamationTriangleIcon color="orange" className="pf-u-mr-sm" />
+                    { cockpit.format(_("Delete $0 storage pool?"), storagePool.name) }
+                </>}
                    footer={
                        <>
-                           {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
+                           {showWarning()}
                            <Button variant='danger'
                                onClick={this.delete}
                                isDisabled={canDeleteOnlyWithoutVolumes(storagePool, vms) && this.state.deleteVolumes}>
@@ -190,6 +198,7 @@ export class StoragePoolDelete extends React.Component {
                            </Button>
                        </>
                    }>
+                {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                 {defaultBody}
             </Modal>
         );

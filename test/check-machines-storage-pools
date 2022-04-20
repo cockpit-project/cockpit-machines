@@ -213,6 +213,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         b.click(f"#delete-pool-myPoolTwo-{connectionName}")
         b.wait_visible("div.pf-c-modal-box")
         b.set_checked("input#storage-pool-delete-volumes", True)
+        b.wait_in_text(".pool-volumes-delete-list", "VolumeOne")
         b.click('.pf-c-modal-box__footer button:contains("Delete")')
         b.wait_not_present("div.pf-c-modal-box")
         b.wait_not_present(f"#pool-myPoolTwo-{connectionName}-storage-volumes-list")
