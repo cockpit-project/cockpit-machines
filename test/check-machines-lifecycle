@@ -373,7 +373,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
         self.performAction(name, "delete")
 
-        b.wait_visible(f"#vm-{name}-delete-modal-dialog .modal-body:contains(The VM is running)")
+        b.wait_visible(f"#vm-{name}-delete-modal-dialog .modal-body:contains(The VM {name} is running)")
         b.wait_visible(f"#vm-{name}-delete-modal-dialog ul li:first-child .disk-source-file:contains({img2})")
         # virsh attach-disk does not create disks of type volume
         b.wait_visible(f"#vm-{name}-delete-modal-dialog .disk-source-volume:contains({secondDiskVolName})")

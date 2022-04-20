@@ -25,6 +25,7 @@ import {
     Form,
     Modal
 } from '@patternfly/react-core';
+import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 
 import { vmId } from '../../helpers.js';
 import { domainDelete } from '../../libvirtApi/domain.js';
@@ -35,7 +36,7 @@ import './deleteDialog.css';
 
 const _ = cockpit.gettext;
 
-const DeleteDialogBody = ({ disks, destroy, onChange }) => {
+const DeleteDialogBody = ({ disks, vmName, destroy, onChange }) => {
     function disk_row(disk, index) {
         return (
             <DataListItem key={disk.target}
@@ -51,10 +52,10 @@ const DeleteDialogBody = ({ disks, destroy, onChange }) => {
                             isChecked={!!disk.checked} />
                     <DataListItemCells
                         dataListCells={[
-                            <DataListCell id={disk.target} key="target name">
+                            <DataListCell id={disk.target} className="pf-u-mr-2xl" key="target name" isFilled={false}>
                                 <strong>{disk.target}</strong>
                             </DataListCell>,
-                            <DataListCell key="target source">
+                            <DataListCell key="target source" alignRight>
                                 {disk.type == 'file' &&
                                 <div className='disk-source'>
                                     <span> {_("Path")} </span>
@@ -78,7 +79,7 @@ const DeleteDialogBody = ({ disks, destroy, onChange }) => {
 
     let alert = null;
     if (destroy)
-        alert = <p>{_("The VM is running and will be forced off before deletion.")}</p>;
+        alert = <p>{cockpit.format(_("The VM $0 is running and will be forced off before deletion."), vmName)}</p>;
 
     let disksBody = null;
     if (disks.length > 0)
@@ -149,10 +150,12 @@ export class DeleteDialog extends React.Component {
         const id = vmId(this.props.vm.name);
         return (
             <Modal position="top" variant="medium" id={`${id}-delete-modal-dialog`} isOpen onClose={this.props.toggleModal}
-                title={`Confirm deletion of ${this.props.vm.name}`}
+                title={<>
+                    <ExclamationTriangleIcon color="orange" className="pf-u-mr-sm" />
+                    { cockpit.format(_("Delete $0 VM?"), this.props.vm.name) }
+                </>}
                 footer={
                     <>
-                        {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                         <Button variant='danger' onClick={this.delete}>
                             {_("Delete")}
                         </Button>
@@ -161,7 +164,8 @@ export class DeleteDialog extends React.Component {
                         </Button>
                     </>
                 }>
-                <DeleteDialogBody disks={this.state.disks} destroy={this.props.vm.state != 'shut off'} onChange={this.onDiskCheckedChanged} />
+                {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
+                <DeleteDialogBody disks={this.state.disks} vmName={this.props.vm.name} destroy={this.props.vm.state != 'shut off'} onChange={this.onDiskCheckedChanged} />
             </Modal>
         );
     }
