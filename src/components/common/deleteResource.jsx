@@ -64,6 +64,7 @@ export class DeleteResourceModal extends React.Component {
             <Modal position="top" variant="small" isOpen onClose={onClose}
                    id="delete-resource-modal"
                    title={title}
+                   titleIconVariant="warning"
                    footer={
                        <>
                            <Button variant='danger' isLoading={this.state.inProgress} isDisabled={this.state.inProgress} onClick={this.delete}>
