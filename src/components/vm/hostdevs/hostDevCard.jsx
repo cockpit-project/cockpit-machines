@@ -231,8 +231,8 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
                     <DeleteResourceButton objectId={`${id}-hostdev-${hostdevId}`}
                                           actionName={_("Remove")}
                                           showDialog={() => setDeleteDialogProps({
-                                              objectType: cockpit.format(_("$1 host device"), hostdev.type),
-                                              objectName: "",
+                                              title: _("Remove host device"),
+                                              errorMessage: ("Host device could not be removed"),
                                               onClose: () => setDeleteDialogProps(undefined),
                                               deleteHandler: () => {
                                                   // refresh nodeDevice since usb number may be changed

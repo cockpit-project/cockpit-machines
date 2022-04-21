@@ -49,7 +49,7 @@ export class DeleteResourceModal extends React.Component {
         this.props.deleteHandler()
                 .then(this.props.onClose, exc => {
                     this.setState({ inProgress: false });
-                    this.dialogErrorSet(cockpit.format(_("The $0 could not be deleted"), this.props.objectType.toLowerCase()), exc.message);
+                    this.dialogErrorSet(this.props.errorMessage, exc.message);
                 });
     }
 
@@ -58,12 +58,12 @@ export class DeleteResourceModal extends React.Component {
     }
 
     render() {
-        const { objectName, objectType, objectDescription, actionName, actionDescription, onClose } = this.props;
+        const { title, objectDescription, actionName, actionDescription, onClose } = this.props;
 
         return (
             <Modal position="top" variant="small" isOpen onClose={onClose}
                    id="delete-resource-modal"
-                   title={ (actionName || _("Delete")) + cockpit.format((" $0 $1"), objectType, objectName) }
+                   title={title}
                    footer={
                        <>
                            {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
@@ -90,8 +90,8 @@ export class DeleteResourceModal extends React.Component {
 }
 
 DeleteResourceModal.propTypes = {
-    objectType: PropTypes.string.isRequired,
-    objectName: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    errorMessage: PropTypes.string.isRequired,
     objectDescription: PropTypes.array,
     deleteHandler: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired,

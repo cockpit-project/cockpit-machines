@@ -373,8 +373,8 @@ export class VmNetworkTab extends React.Component {
                     };
 
                     const deleteDialogProps = {
-                        objectType: _("network interface"),
-                        objectName: network.mac,
+                        title: cockpit.format(_("Delete network interface $0"), network.mac),
+                        errorMessage: cockpit.format(_("Network interface $0 could not be deleted"), network.mac),
                         onClose: () => this.setState({ deleteDialogProps: undefined }),
                         deleteHandler: () => domainDetachIface({ connectionName: vm.connectionName, index: network.index, vmName: vm.name, live: vm.state === 'running', persistent: nicPersistent }),
                     };
