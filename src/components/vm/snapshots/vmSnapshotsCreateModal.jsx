@@ -91,9 +91,9 @@ export class CreateSnapshotModal extends React.Component {
         const validationError = {};
 
         if (vm.snapshots.findIndex(snap => snap.name === name) > -1)
-            validationError.name = "Name already exists";
+            validationError.name = _("Name already exists");
         else if (!name && submitted)
-            validationError.name = "Name should not be empty";
+            validationError.name = _("Name should not be empty");
 
         return validationError;
     }
