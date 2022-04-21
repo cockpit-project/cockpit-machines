@@ -158,7 +158,7 @@ $(VM_IMAGE): $(TARFILE) packaging/debian/rules packaging/debian/control packagin
 vm: $(VM_IMAGE)
 	echo $(VM_IMAGE)
 
-codecheck:
+codecheck: test/static-code
 	test/static-code
 
 # run the browser integration tests; skip check for SELinux denials
@@ -186,12 +186,13 @@ $(NODE_MODULES_TEST): package.json
 COCKPIT_REPO_FILES = \
 	pkg/lib \
 	test/common \
+	test/static-code \
 	tools/git-utils.sh \
 	tools/make-bots \
 	$(NULL)
 
 COCKPIT_REPO_URL = https://github.com/cockpit-project/cockpit.git
-COCKPIT_REPO_COMMIT = 4f8ad7314676b375fcca5c98a543ef5078cc1af5 # 267
+COCKPIT_REPO_COMMIT = b19b07757ecf874342a3b1152780fbeceadbed37 # 267 + PR#17268
 
 $(COCKPIT_REPO_FILES): $(COCKPIT_REPO_STAMP)
 COCKPIT_REPO_TREE = '$(strip $(COCKPIT_REPO_COMMIT))^{tree}'
