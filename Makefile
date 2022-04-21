@@ -18,10 +18,6 @@ WEBPACK_TEST=dist/manifest.json
 # one example file in pkg/lib to check if it was already checked out
 COCKPIT_REPO_STAMP = pkg/lib/cockpit.js
 
-WEBLATE_REPO=tmp/weblate-repo
-WEBLATE_REPO_URL=https://github.com/cockpit-project/cockpit-machines-weblate.git
-WEBLATE_REPO_BRANCH=main
-
 all: $(WEBPACK_TEST)
 
 #
@@ -53,26 +49,6 @@ po/$(PACKAGE_NAME).pot: po/$(PACKAGE_NAME).html.pot po/$(PACKAGE_NAME).js.pot po
 
 po/LINGUAS:
 	echo $(LINGUAS) | tr ' ' '\n' > $@
-
-# Update translations against current PO template
-update-po: po/$(PACKAGE_NAME).pot
-	for lang in $(LINGUAS); do \
-		msgmerge --output-file=po/$$lang.po po/$$lang.po $<; \
-	done
-
-$(WEBLATE_REPO):
-	git clone --depth=1 -b $(WEBLATE_REPO_BRANCH) $(WEBLATE_REPO_URL) $(WEBLATE_REPO)
-
-upload-pot: po/$(PACKAGE_NAME).pot $(WEBLATE_REPO)
-	cp ./po/$(PACKAGE_NAME).pot $(WEBLATE_REPO)
-	git -C $(WEBLATE_REPO) commit -m "Update source file" -- $(PACKAGE_NAME).pot
-	git -C $(WEBLATE_REPO) push
-
-clean-po:
-	rm ./po/*.po
-
-download-po: $(WEBLATE_REPO)
-	cp $(WEBLATE_REPO)/*.po ./po/
 
 #
 # Build/Install/dist
@@ -178,7 +154,7 @@ $(NODE_MODULES_TEST): package.json
 	env -u NODE_ENV npm install
 	env -u NODE_ENV npm prune
 
-.PHONY: all clean install devel-install dist node-cache rpm check vm update-po
+.PHONY: all clean install devel-install dist node-cache rpm check vm
 
 # checkout common files from Cockpit repository required to build this project;
 # this has no API stability guarantee, so check out a stable tag when you start
