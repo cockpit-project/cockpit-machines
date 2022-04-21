@@ -61,7 +61,7 @@ export const getStoragePoolRow = ({ storagePool, vms, onAddErrorNotification }) 
     );
 
     const state = (
-        <StateIcon error={storagePool.error} state={storagePool.active ? _("active") : "inactive" }
+        <StateIcon error={storagePool.error} state={storagePool.active ? _("active") : _("inactive") }
                    valueId={`${idPrefix}-state`}
                    dismissError={() => store.dispatch(updateOrAddStoragePool({
                        connectionName: storagePool.connectionName,
