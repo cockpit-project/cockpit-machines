@@ -283,9 +283,9 @@ export class VmDisksCard extends React.Component {
                         });
             };
             const deleteDialogProps = {
-                objectType: _("disk"),
-                objectName: disk.target,
                 actionName: _("Remove"),
+                title: cockpit.format(_("Remove disk $0"), disk.target),
+                errorMessage: cockpit.format(_("Disk $0 could not be removed"), disk.target),
                 onClose: () => this.setState({ deleteDialogProps: undefined }),
                 deleteHandler: () => onRemoveDisk(),
             };

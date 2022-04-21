@@ -62,8 +62,8 @@ const DHCPHost = (host, index, family, idPrefix, network, parentIndex) => {
             isLink
             isInline
             showDialog={() => setDeleteDialogProps({
-                objectType: _("static host from DHCP"),
-                objectName: "",
+                title: _("Remove static host from DHCP"),
+                errorMessage: _("Static host from DHCP could not be removed"),
                 actionDescription: cockpit.format(_("The static host entry for $0 will be removed:"), host.ip),
                 objectDescription: [
                     { name: _("IP"), value: <span className="ct-monospace">{host.ip}</span> },
