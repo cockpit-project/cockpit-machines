@@ -817,6 +817,15 @@ class CreateVmModal extends React.Component {
         case 'storageVolume':
             this.setState({ [key]: value });
             break;
+        case 'memorySize': {
+            // virt-install doesn't allow memory, supplied in MiB, to be a float number
+            // check if number is a integer, and if not, round up (ceil)
+            const valueMiB = Math.ceil(convertToUnit(value, this.state.memorySizeUnit, units.MiB));
+            value = convertToUnit(valueMiB, units.MiB, this.state.memorySizeUnit);
+
+            this.setState({ [key]: value });
+            break;
+        }
         case 'memorySizeUnit':
             this.setState({ [key]: value });
             key = 'memorySize';
