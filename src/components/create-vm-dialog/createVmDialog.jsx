@@ -133,6 +133,29 @@ function getSpaceAvailable(storagePools, connectionName) {
     return space;
 }
 
+function getMemoryDefaults(nodeMaxMemory) {
+    // Use available memory on host as initial default value in modal
+    let memorySizeUnit = units.MiB.name;
+    let memorySize = nodeMaxMemory && Math.floor(convertToUnit(nodeMaxMemory, units.KiB, units.MiB));
+    // If available memory is higher than 1GiB, set 1GiB as default value in modal
+    if (memorySize > 1024) {
+        memorySizeUnit = units.GiB.name;
+        memorySize = 1;
+    }
+
+    const minimumMemory = 0;
+
+    return { memorySize, memorySizeUnit, minimumMemory };
+}
+
+function getStorageDefaults() {
+    const storageSize = convertToUnit(10 * 1024, units.MiB, units.GiB); // tied to Unit
+    const storageSizeUnit = units.GiB.name;
+    const minimumStorage = 0;
+
+    return { storageSize, storageSizeUnit, minimumStorage };
+}
+
 function validateParams(vmParams) {
     const validationFailed = {};
 
@@ -597,6 +620,7 @@ const MemoryRow = ({ memorySize, memorySizeUnit, nodeMaxMemory, minimumMemory, o
                                onChange={value => onValueChanged('memorySize', Number(value))} />
                     <FormSelect id="memory-size-unit-select"
                                 className="unit-select"
+                                data-value={memorySizeUnit}
                                 value={memorySizeUnit}
                                 onChange={value => onValueChanged('memorySizeUnit', value)}>
                         <FormSelectOption value={units.MiB.name} key={units.MiB.name}
@@ -728,15 +752,11 @@ class CreateVmModal extends React.Component {
             sourceType: defaultSourceType,
             source: '',
             os: undefined,
-            memorySize: props.nodeMaxMemory ? Math.min(1, convertToUnit(props.nodeMaxMemory, units.KiB, units.GiB)) : 1,
-            memorySizeUnit: units.GiB.name,
-            storageSize: convertToUnit(10 * 1024, units.MiB, units.GiB), // tied to Unit
-            storageSizeUnit: units.GiB.name,
+            ...getMemoryDefaults(props.nodeMaxMemory),
+            ...getStorageDefaults(),
             storagePool: 'NewVolume',
             storageVolume: '',
             startVm: true,
-            minimumMemory: 0,
-            minimumStorage: 0,
 
             // Unattended installation or cloud init options for cloud images
             profile: '',
@@ -865,6 +885,8 @@ class CreateVmModal extends React.Component {
                 if (bestUnit.base1024Exponent <= 1) bestUnit = units.MiB;
                 const converted = convertToUnit(stateDelta.minimumMemory, units.B, bestUnit);
                 this.setState({ memorySizeUnit: bestUnit.name }, () => this.onValueChanged("memorySize", converted));
+            } else {
+                this.setState(getMemoryDefaults(this.props.nodeMaxMemory));
             }
 
             if (value && value.minimumResources.storage) {
@@ -875,6 +897,8 @@ class CreateVmModal extends React.Component {
                 if (bestUnit.base1024Exponent <= 1) bestUnit = units.MiB;
                 const converted = convertToUnit(stateDelta.minimumStorage, units.B, bestUnit);
                 this.setState({ storageSizeUnit: bestUnit.name }, () => this.onValueChanged("storageSize", converted));
+            } else {
+                this.setState(getStorageDefaults());
             }
 
             if (!value || !value.unattendedInstallable)
