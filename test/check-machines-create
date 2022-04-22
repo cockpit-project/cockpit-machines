@@ -21,6 +21,7 @@ import time
 import xml.etree.ElementTree as ET
 import os
 import sys
+import math
 
 # import Cockpit's machinery for test VMs and its browser test API
 TEST_DIR = os.path.dirname(__file__)
@@ -94,7 +95,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         runner.checkFilteredOsTest(TestMachinesCreate.VmDialog(self, os_name=config.WINDOWS_SERVER_10, os_search_name=config.WINDOWS_SERVER_10_SHORT))
 
         # Memory unit conversion
-        runner.unitConversionTest(TestMachinesCreate.VmDialog(self, sourceType='disk-image'))
+        runner.unitPredictionTest(TestMachinesCreate.VmDialog(self, sourceType='disk-image'))
 
         # try to CREATE WITH DIALOG ERROR
         # name
@@ -740,8 +741,9 @@ vnc_password= "{vnc_passwd}"
 
             return self
 
-        def checkUnitConversion(self):
+        def checkUnitPrediction(self):
             b = self.browser
+            m = self.machine
 
             b.select_from_dropdown("#memory-size-unit-select", "MiB")
             b.set_input_text("#memory-size", "128")
@@ -757,10 +759,40 @@ vnc_password= "{vnc_passwd}"
             b.click(f"#os-select li button:contains('{fake_fedora}')")
             b.wait_val("#storage-limit", "128")
             b.wait_visible("#storage-limit-unit-select[data-value=MiB]")
+
+            # Check minimum requirement warnings are present
+            b.set_input_text("#memory-size", "127")
+            b.wait_in_text("#memory-size-helper", "The selected operating system has minimum memory requirement of 128 MiB")
+            b.set_input_text("#storage-limit", "127")
+            b.wait_in_text("#storage-limit-helper", "The selected operating system has minimum storage size requirement of 128 MiB")
+
             b.set_input_text("#os-select-group input", suse)
             b.click(f"#os-select li button:contains('{suse}')")
             b.wait_val("#storage-limit", "20")
             b.wait_visible("#storage-limit-unit-select[data-value=GiB]")
+
+            # Check case when minimum requirements are unknown
+            fake_fedora = "Fedora 29"  # no minimum memory or storage
+            b.set_input_text("#os-select-group input", fake_fedora)
+            b.click(f"#os-select li button:contains('{fake_fedora}')")
+            # get available memory on host
+            memory = m.execute("virsh nodeinfo | grep 'Memory size:' | awk '{print $3}'").strip()
+            memory = math.floor(int(memory) / 1024)
+            # If available memory on host is lesser than 1GiB, set it as default memory in dialog
+            memoryUnit = "MiB" if memory < 1024 else "GiB"
+            memory = memory if memory < 1024 else 1
+            # Check memory and storage were set to defaults
+            b.wait_val("#memory-size", memory)
+            b.wait_visible(f"#memory-size-unit-select[data-value={memoryUnit}]")
+            b.wait_val("#storage-limit", "10")
+            b.wait_visible("#storage-limit-unit-select[data-value=GiB]")
+            # Since minimum requirements are unknown Check no warning about minimum requirement is shown
+            b.select_from_dropdown("#memory-size-unit-select", "MiB")
+            b.set_input_text("#memory-size", "1")
+            b.wait_not_in_text("#memory-size-helper", "The selected operating system has minimum memory requirement")
+            b.select_from_dropdown("#storage-limit-unit-select", "MiB")
+            b.set_input_text("#storage-limit", "1")
+            b.wait_not_in_text("#storage-limit-helper", "The selected operating system has minimum storage size requirement")
 
             return self
 
@@ -1198,6 +1230,18 @@ vnc_password= "{vnc_passwd}"
             self.machine.execute(f"mount -o bind  {self.test_obj.vm_tmpdir}/fedora-28.xml /usr/share/osinfo/os/fedoraproject.org/fedora-28.xml")
             self.test_obj.addCleanup(self.machine.execute, "umount /usr/share/osinfo/os/fedoraproject.org/fedora-28.xml || true")
 
+            # Fake distro with no minimum ram or storage defined
+            fedora_29_xml = self.machine.execute("cat /usr/share/osinfo/os/fedoraproject.org/fedora-29.xml")
+            root = ET.fromstring(fedora_29_xml)
+            root.find('os').find('eol-date').text = '9999-12-31'
+            minimum = root.find('os').find('resources').find('minimum')
+            minimum.remove(minimum.find('ram'))
+            minimum.remove(minimum.find('storage'))
+            new_fedora_29_xml = ET.tostring(root)
+            self.machine.execute(f"echo '{str(new_fedora_29_xml, 'utf-8')}' > {self.test_obj.vm_tmpdir}/fedora-29.xml")
+            self.machine.execute(f"mount -o bind  {self.test_obj.vm_tmpdir}/fedora-29.xml /usr/share/osinfo/os/fedoraproject.org/fedora-29.xml")
+            self.test_obj.addCleanup(self.machine.execute, "umount /usr/share/osinfo/os/fedoraproject.org/fedora-29.xml || true")
+
         def _fakeFedoraTree(self):
             self._setupMockFileServer()
             distro_tree_path = "/var/lib/libvirt/pub/archive/fedora/linux/releases/28/Server/x86_64/os/"
@@ -1447,9 +1491,9 @@ vnc_password= "{vnc_passwd}"
             self._assertScriptFinished() \
                 .checkEnvIsEmpty()
 
-        def unitConversionTest(self, dialog):
+        def unitPredictionTest(self, dialog):
             dialog.open() \
-                .checkUnitConversion() \
+                .checkUnitPrediction() \
                 .cancel(True)
 
         def checkFilteredOsTest(self, dialog):
