@@ -834,7 +834,7 @@ class TestMachinesDisks(VirtualMachinesCase):
 
         # Prepare file for Custom File disk type
         m.execute("touch /var/lib/libvirt/novell.iso")
-        m.execute("touch /var/lib/libvirt/novell.qcow2")
+        m.execute("touch /var/lib/libvirt/empty.img")
 
         self.login_and_go("/machines")
         b.wait_in_text("body", "Virtual machines")
@@ -868,7 +868,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             device='disk',
             bus_type='scsi',
             expected_target='sdb',
-            file_path='/var/lib/libvirt/novell.qcow2',
+            file_path='/var/lib/libvirt/empty.img',
             mode='custom-path'
         ).execute()
 
