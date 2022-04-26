@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-16 03:17+0000\n"
+"POT-Creation-Date: 2022-04-25 03:35+0000\n"
 "PO-Revision-Date: 2022-04-14 09:17+0000\n"
 "Last-Translator: 김인수 <simmon@nplob.com>\n"
 "Language-Team: Korean <https://translate.fedoraproject.org/projects/cockpit-"
@@ -81,10 +81,6 @@ msgstr "$0 vCPU 세부 정보"
 #: src/components/vm/nics/nicEdit.jsx:167
 msgid "$0 virtual network interface settings"
 msgstr "$0 가상 네트워크 연결장치 설정"
-
-#: src/components/vm/hostdevs/hostDevCard.jsx:234
-msgid "$1 host device"
-msgstr "$1 호스트 장치"
 
 #: src/components/vm/vmMigrateDialog.jsx:75
 msgid ""
@@ -497,7 +493,6 @@ msgstr "DHCP 설정"
 msgid "Deactivate"
 msgstr "비활성화"
 
-#: src/components/common/deleteResource.jsx:66
 #: src/components/common/deleteResource.jsx:71
 #: src/components/common/deleteResource.jsx:109
 #: src/components/storagePools/storagePoolDelete.jsx:186
@@ -522,6 +517,24 @@ msgstr "관련된 저장소 파일 삭제:"
 #: src/components/storagePools/storagePoolDelete.jsx:165
 msgid "Delete content"
 msgstr "내용 삭제"
+
+#: src/components/networks/network.jsx:134
+#, fuzzy
+#| msgid "Isolated network"
+msgid "Delete network $0"
+msgstr "격리된 네트워크"
+
+#: src/components/vm/nics/vmNicsCard.jsx:376
+#, fuzzy
+#| msgid "network interface"
+msgid "Delete network interface $0"
+msgstr "네트워크 연결장치"
+
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:181
+#, fuzzy
+#| msgid "Revert to snapshot $0"
+msgid "Delete snapshot $0"
+msgstr "스냅샷 $0(으)로 되돌리기"
 
 #: src/components/storagePools/storagePoolDelete.jsx:179
 msgid "Delete storage pool $0"
@@ -600,6 +613,12 @@ msgstr "연결 끊김"
 #: src/components/vm/consoles/serialConsole.jsx:85
 msgid "Disconnected from serial console. Click the connect button."
 msgstr "시리얼 콘솔에서 연결이 끊어졌습니다. 연결 버튼을 눌러주세요."
+
+#: src/components/vm/disks/vmDisksCard.jsx:288
+#, fuzzy
+#| msgid "Disk settings could not be saved"
+msgid "Disk $0 could not be removed"
+msgstr "디스크 설정을 저장 할 수 없습니다"
 
 #: src/components/vm/disks/vmDisksCard.jsx:280
 msgid "Disk $0 fail to get detached from VM $1"
@@ -765,6 +784,12 @@ msgstr "최대 가상 CPU 수 보다 적은 수를 활성화해야 합니다."
 #: src/components/vm/overview/bootOrder.jsx:106
 msgid "File"
 msgstr "파일"
+
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:62
+#, fuzzy
+#| msgid "The $0 could not be deleted"
+msgid "Filesystem $0 could not be removed"
+msgstr "$0을(를) 삭제할 수 없습니다"
 
 #: src/components/storagePools/createStoragePoolDialog.jsx:57
 msgid "Filesystem directory"
@@ -1253,6 +1278,12 @@ msgstr "VM $1의 NIC $0은 상태 변경에 실패했습니다"
 msgid "Name"
 msgstr "이름"
 
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:94
+#, fuzzy
+#| msgid "VM $0 already exists"
+msgid "Name already exists"
+msgstr "VM $0이 이미 존재합니다"
+
 #: src/components/storagePools/createStoragePoolDialog.jsx:44
 msgid "Name contains invalid characters"
 msgstr "이름에 잘못된 문자가 있습니다"
@@ -1265,6 +1296,7 @@ msgstr "이름을 입력하셔야 합니다"
 
 #: src/components/storagePools/createStoragePoolDialog.jsx:44
 #: src/components/networks/createNetworkDialog.jsx:53
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:96
 msgid "Name should not be empty"
 msgstr "이름을 입력해야 합니다"
 
@@ -1275,6 +1307,12 @@ msgstr "이름: "
 #: src/components/networks/networkOverviewTab.jsx:151
 msgid "Netmask"
 msgstr "넷마스크"
+
+#: src/components/networks/network.jsx:135
+#, fuzzy
+#| msgid "The $0 could not be deleted"
+msgid "Network $0 could not be deleted"
+msgstr "$0을(를) 삭제할 수 없습니다"
 
 #: src/components/networks/network.jsx:98
 msgid "Network $0 failed to get activated"
@@ -1291,6 +1329,12 @@ msgstr "네트워크 부팅(PXE)"
 #: src/components/storagePools/createStoragePoolDialog.jsx:58
 msgid "Network file system"
 msgstr "네트워크 파일 시스템"
+
+#: src/components/vm/nics/vmNicsCard.jsx:377
+#, fuzzy
+#| msgid "Network interface settings could not be saved"
+msgid "Network interface $0 could not be deleted"
+msgstr "네트워크 연결장치 설정을 저장하지 못했습니다"
 
 #: src/components/vm/nics/nicAdd.jsx:155 src/components/vm/nics/nicEdit.jsx:131
 msgid "Network interface settings could not be saved"
@@ -1650,14 +1694,38 @@ msgid "Remote viewer details"
 msgstr "원격 뷰어 세부 정보"
 
 #: src/components/networks/networkOverviewTab.jsx:72
-#: src/components/vm/disks/vmDisksCard.jsx:288
+#: src/components/vm/disks/vmDisksCard.jsx:286
 #: src/components/vm/disks/vmDisksCard.jsx:298
 #: src/components/vm/hostdevs/hostDevCard.jsx:232
 #: src/components/vm/hostdevs/hostDevCard.jsx:289
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:59
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:62
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:63
 msgid "Remove"
 msgstr "제거"
+
+#: src/components/vm/disks/vmDisksCard.jsx:287
+#, fuzzy
+#| msgid "Removing $0"
+msgid "Remove disk $0"
+msgstr "$0 삭제 중"
+
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:61
+#, fuzzy
+#| msgid "filesystem"
+msgid "Remove filesystem $0"
+msgstr "파일 시스템"
+
+#: src/components/vm/hostdevs/hostDevCard.jsx:234
+#, fuzzy
+#| msgid "host device"
+msgid "Remove host device"
+msgstr "호스트 장치"
+
+#: src/components/networks/networkOverviewTab.jsx:65
+#, fuzzy
+#| msgid "static host from DHCP"
+msgid "Remove static host from DHCP"
+msgstr "DHCP에서 고정 호스트"
 
 #: src/components/vm/vmRenameDialog.jsx:63 src/components/vm/vmActions.jsx:354
 msgid "Rename"
@@ -1834,6 +1902,12 @@ msgstr "크기"
 msgid "Slot"
 msgstr "슬롯"
 
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:182
+#, fuzzy
+#| msgid "The $0 could not be deleted"
+msgid "Snapshot $0 could not be deleted"
+msgstr "$0을(를) 삭제할 수 없습니다"
+
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:118
 msgid "Snapshot failed to be created"
 msgstr "스냅샷을 만들지 못했습니다"
@@ -1915,6 +1989,12 @@ msgstr "상태"
 #: src/components/networks/networkOverviewTab.jsx:291
 msgid "Static host entries"
 msgstr "고정 호스트 항목"
+
+#: src/components/networks/networkOverviewTab.jsx:66
+#, fuzzy
+#| msgid "static host from DHCP"
+msgid "Static host from DHCP could not be removed"
+msgstr "DHCP에서 고정 호스트"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:652
 #: src/components/vm/vmMigrateDialog.jsx:94
@@ -2017,10 +2097,6 @@ msgstr "임시"
 #: src/components/vm/vmMigrateDialog.jsx:85
 msgid "Temporary migration"
 msgstr "임시 이전"
-
-#: src/components/common/deleteResource.jsx:52
-msgid "The $0 could not be deleted"
-msgstr "$0을(를) 삭제할 수 없습니다"
 
 #: src/components/vm/deleteDialog.jsx:81
 msgid "The VM is running and will be forced off before deletion."
@@ -2429,8 +2505,7 @@ msgstr "직접"
 msgid "disabled"
 msgstr "비활성화됩니다"
 
-#: src/components/vm/disks/vmDisksCard.jsx:286 src/helpers.js:235
-#: src/helpers.js:238
+#: src/helpers.js:235 src/helpers.js:238
 msgid "disk"
 msgstr "디스크"
 
@@ -2452,10 +2527,6 @@ msgstr "활성화됩니다"
 #: src/helpers.js:252
 msgid "ethernet"
 msgstr "이더넷"
-
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:61
-msgid "filesystem"
-msgstr "파일 시스템"
 
 #: src/helpers.js:244
 msgid "host"
@@ -2489,6 +2560,13 @@ msgstr "iSCSI 대상"
 msgid "iSCSI target IQN"
 msgstr "iSCSI 대상 IQN"
 
+#: src/components/storagePools/storagePool.jsx:64
+#: src/components/networks/network.jsx:56
+#, fuzzy
+#| msgid "active"
+msgid "inactive"
+msgstr "활성"
+
 #: src/manifest.json:0
 msgid "iso"
 msgstr "iso"
@@ -2519,10 +2597,6 @@ msgstr "적재 태그: 내보낸 적재점과 연결된 태그"
 #: src/helpers.js:237 src/helpers.js:249
 msgid "network"
 msgstr "네트워크"
-
-#: src/components/vm/nics/vmNicsCard.jsx:376
-msgid "network interface"
-msgstr "네트워크 연결장치"
 
 #: src/components/storagePools/storagePoolOverviewTab.jsx:67
 #: src/components/storagePools/storagePoolOverviewTab.jsx:72
@@ -2565,14 +2639,6 @@ msgstr "일련 번호"
 #: src/helpers.js:255
 msgid "server"
 msgstr "서버"
-
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:181
-msgid "snapshot"
-msgstr "스냅샷"
-
-#: src/components/networks/networkOverviewTab.jsx:65
-msgid "static host from DHCP"
-msgstr "DHCP에서 고정 호스트"
 
 #: src/helpers.js:256
 msgid "udp"
@@ -2637,6 +2703,12 @@ msgstr "vm"
 #: src/components/networks/networkOverviewTab.jsx:119 src/helpers.js:271
 msgid "yes"
 msgstr "예"
+
+#~ msgid "$1 host device"
+#~ msgstr "$1 호스트 장치"
+
+#~ msgid "snapshot"
+#~ msgstr "스냅샷"
 
 #~ msgid "Immediately start VM"
 #~ msgstr "바로 VM을 시작"
@@ -2998,9 +3070,6 @@ msgstr "예"
 
 #~ msgid "Removals:"
 #~ msgstr "삭제:"
-
-#~ msgid "Removing $0"
-#~ msgstr "$0 삭제 중"
 
 #~ msgid "Sealed-case PC"
 #~ msgstr "쉴드 케이스 PC"
