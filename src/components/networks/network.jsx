@@ -38,7 +38,7 @@ import cockpit from 'cockpit';
 
 const _ = cockpit.gettext;
 
-export const getNetworkRow = ({ network, onAddErrorNotification }) => {
+export const getNetworkRow = ({ network }) => {
     const idPrefix = `${networkId(network.name, network.connectionName)}`;
     const name = (
         <span id={`${idPrefix}-name`}>

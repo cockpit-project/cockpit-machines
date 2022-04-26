@@ -313,7 +313,6 @@ class AppActive extends React.Component {
                 {path.length > 0 && path[0] == 'networks' &&
                 <NetworkList networks={networks}
                     resourceHasError={this.state.resourceHasError}
-                    onAddErrorNotification={this.onAddErrorNotification}
                     vms={vms}
                     nodeDevices={nodeDevices}
                     interfaces={interfaces} />
