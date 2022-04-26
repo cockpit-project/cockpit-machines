@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-16 03:17+0000\n"
+"POT-Creation-Date: 2022-04-25 03:35+0000\n"
 "PO-Revision-Date: 2022-04-12 14:17+0000\n"
 "Last-Translator: Ludek Janda <ljanda@redhat.com>\n"
 "Language-Team: Japanese <https://translate.fedoraproject.org/projects/"
@@ -87,12 +87,6 @@ msgstr "$0 vCPU 詳細"
 #: src/components/vm/nics/nicEdit.jsx:167
 msgid "$0 virtual network interface settings"
 msgstr "$0 仮想ネットワークインターフェーイス設定"
-
-#: src/components/vm/hostdevs/hostDevCard.jsx:234
-#, fuzzy
-#| msgid "host device"
-msgid "$1 host device"
-msgstr "ホストデバイス"
 
 #: src/components/vm/vmMigrateDialog.jsx:75
 msgid ""
@@ -515,7 +509,6 @@ msgstr "DHCP 設定"
 msgid "Deactivate"
 msgstr "解除"
 
-#: src/components/common/deleteResource.jsx:66
 #: src/components/common/deleteResource.jsx:71
 #: src/components/common/deleteResource.jsx:109
 #: src/components/storagePools/storagePoolDelete.jsx:186
@@ -540,6 +533,24 @@ msgstr "関連するストレージファイルの削除:"
 #: src/components/storagePools/storagePoolDelete.jsx:165
 msgid "Delete content"
 msgstr "コンテンツの削除"
+
+#: src/components/networks/network.jsx:134
+#, fuzzy
+#| msgid "Isolated network"
+msgid "Delete network $0"
+msgstr "隔離されたネットワーク"
+
+#: src/components/vm/nics/vmNicsCard.jsx:376
+#, fuzzy
+#| msgid "network interface"
+msgid "Delete network interface $0"
+msgstr "ネットワークインターフェース"
+
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:181
+#, fuzzy
+#| msgid "Revert to snapshot $0"
+msgid "Delete snapshot $0"
+msgstr "スナップショット $0 に戻す"
 
 #: src/components/storagePools/storagePoolDelete.jsx:179
 msgid "Delete storage pool $0"
@@ -619,6 +630,12 @@ msgstr "切断されています"
 #: src/components/vm/consoles/serialConsole.jsx:85
 msgid "Disconnected from serial console. Click the connect button."
 msgstr "シリアルコンソールから切断されました。接続ボタンをクリックします。"
+
+#: src/components/vm/disks/vmDisksCard.jsx:288
+#, fuzzy
+#| msgid "Disk settings could not be saved"
+msgid "Disk $0 could not be removed"
+msgstr "ディスク設定を保存できませんでした"
 
 #: src/components/vm/disks/vmDisksCard.jsx:280
 msgid "Disk $0 fail to get detached from VM $1"
@@ -789,6 +806,12 @@ msgstr "仮想 CPU の最大数よりも少ない数を有効にするべきで�
 #: src/components/vm/overview/bootOrder.jsx:106
 msgid "File"
 msgstr "ファイル"
+
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:62
+#, fuzzy
+#| msgid "The $0 could not be deleted"
+msgid "Filesystem $0 could not be removed"
+msgstr "$0 は削除できませんでした"
 
 #: src/components/storagePools/createStoragePoolDialog.jsx:57
 msgid "Filesystem directory"
@@ -1285,6 +1308,12 @@ msgstr "VM $1 の NIC $0 は、状態の変更に失敗しました"
 msgid "Name"
 msgstr "名前"
 
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:94
+#, fuzzy
+#| msgid "VM $0 already exists"
+msgid "Name already exists"
+msgstr "VM $0 はすでに存在します"
+
 #: src/components/storagePools/createStoragePoolDialog.jsx:44
 msgid "Name contains invalid characters"
 msgstr "名前に無効な文字が含まれています"
@@ -1297,6 +1326,7 @@ msgstr "名前は空欄にできません"
 
 #: src/components/storagePools/createStoragePoolDialog.jsx:44
 #: src/components/networks/createNetworkDialog.jsx:53
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:96
 msgid "Name should not be empty"
 msgstr "名前は空欄にできません"
 
@@ -1307,6 +1337,12 @@ msgstr "名前: "
 #: src/components/networks/networkOverviewTab.jsx:151
 msgid "Netmask"
 msgstr "ネットマスク"
+
+#: src/components/networks/network.jsx:135
+#, fuzzy
+#| msgid "The $0 could not be deleted"
+msgid "Network $0 could not be deleted"
+msgstr "$0 は削除できませんでした"
 
 #: src/components/networks/network.jsx:98
 msgid "Network $0 failed to get activated"
@@ -1323,6 +1359,12 @@ msgstr "ネットワークブート (PXE)"
 #: src/components/storagePools/createStoragePoolDialog.jsx:58
 msgid "Network file system"
 msgstr "ネットワークファイルシステム"
+
+#: src/components/vm/nics/vmNicsCard.jsx:377
+#, fuzzy
+#| msgid "Network interface settings could not be saved"
+msgid "Network interface $0 could not be deleted"
+msgstr "ネットワークインターフェース設定を保存できませんでした"
 
 #: src/components/vm/nics/nicAdd.jsx:155 src/components/vm/nics/nicEdit.jsx:131
 msgid "Network interface settings could not be saved"
@@ -1684,14 +1726,38 @@ msgid "Remote viewer details"
 msgstr "リモートビューアーの詳細"
 
 #: src/components/networks/networkOverviewTab.jsx:72
-#: src/components/vm/disks/vmDisksCard.jsx:288
+#: src/components/vm/disks/vmDisksCard.jsx:286
 #: src/components/vm/disks/vmDisksCard.jsx:298
 #: src/components/vm/hostdevs/hostDevCard.jsx:232
 #: src/components/vm/hostdevs/hostDevCard.jsx:289
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:59
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:62
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:63
 msgid "Remove"
 msgstr "削除"
+
+#: src/components/vm/disks/vmDisksCard.jsx:287
+#, fuzzy
+#| msgid "Removing $0"
+msgid "Remove disk $0"
+msgstr "$0 を削除中"
+
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:61
+#, fuzzy
+#| msgid "filesystem"
+msgid "Remove filesystem $0"
+msgstr "ファイルシステム"
+
+#: src/components/vm/hostdevs/hostDevCard.jsx:234
+#, fuzzy
+#| msgid "host device"
+msgid "Remove host device"
+msgstr "ホストデバイス"
+
+#: src/components/networks/networkOverviewTab.jsx:65
+#, fuzzy
+#| msgid "Static host entries"
+msgid "Remove static host from DHCP"
+msgstr "静的ホストエントリー"
 
 #: src/components/vm/vmRenameDialog.jsx:63 src/components/vm/vmActions.jsx:354
 msgid "Rename"
@@ -1870,6 +1936,12 @@ msgstr "サイズ"
 msgid "Slot"
 msgstr "スロット"
 
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:182
+#, fuzzy
+#| msgid "The $0 could not be deleted"
+msgid "Snapshot $0 could not be deleted"
+msgstr "$0 は削除できませんでした"
+
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:118
 msgid "Snapshot failed to be created"
 msgstr "スナップショットの作成に失敗しました"
@@ -1948,6 +2020,12 @@ msgstr "状態"
 
 #: src/components/networks/networkOverviewTab.jsx:291
 msgid "Static host entries"
+msgstr "静的ホストエントリー"
+
+#: src/components/networks/networkOverviewTab.jsx:66
+#, fuzzy
+#| msgid "Static host entries"
+msgid "Static host from DHCP could not be removed"
 msgstr "静的ホストエントリー"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:652
@@ -2055,10 +2133,6 @@ msgstr "一時的"
 #: src/components/vm/vmMigrateDialog.jsx:85
 msgid "Temporary migration"
 msgstr "一時的な移行"
-
-#: src/components/common/deleteResource.jsx:52
-msgid "The $0 could not be deleted"
-msgstr "$0 は削除できませんでした"
 
 #: src/components/vm/deleteDialog.jsx:81
 msgid "The VM is running and will be forced off before deletion."
@@ -2471,8 +2545,7 @@ msgstr "ダイレクト"
 msgid "disabled"
 msgstr "無効"
 
-#: src/components/vm/disks/vmDisksCard.jsx:286 src/helpers.js:235
-#: src/helpers.js:238
+#: src/helpers.js:235 src/helpers.js:238
 msgid "disk"
 msgstr "ディスク"
 
@@ -2494,10 +2567,6 @@ msgstr "有効"
 #: src/helpers.js:252
 msgid "ethernet"
 msgstr "Ethernet"
-
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:61
-msgid "filesystem"
-msgstr "ファイルシステム"
 
 #: src/helpers.js:244
 msgid "host"
@@ -2531,6 +2600,13 @@ msgstr "iSCSI ターゲット"
 msgid "iSCSI target IQN"
 msgstr "iSCSI ターゲット IQN"
 
+#: src/components/storagePools/storagePool.jsx:64
+#: src/components/networks/network.jsx:56
+#, fuzzy
+#| msgid "active"
+msgid "inactive"
+msgstr "アクティブ"
+
 #: src/manifest.json:0
 msgid "iso"
 msgstr "iso"
@@ -2561,10 +2637,6 @@ msgstr "マウントタグ: エクスポートされたマウントポイント�
 #: src/helpers.js:237 src/helpers.js:249
 msgid "network"
 msgstr "ネットワーク"
-
-#: src/components/vm/nics/vmNicsCard.jsx:376
-msgid "network interface"
-msgstr "ネットワークインターフェース"
 
 #: src/components/storagePools/storagePoolOverviewTab.jsx:67
 #: src/components/storagePools/storagePoolOverviewTab.jsx:72
@@ -2609,16 +2681,6 @@ msgstr ""
 #: src/helpers.js:255
 msgid "server"
 msgstr "サーバー"
-
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:181
-msgid "snapshot"
-msgstr "スナップショット"
-
-#: src/components/networks/networkOverviewTab.jsx:65
-#, fuzzy
-#| msgid "Static host entries"
-msgid "static host from DHCP"
-msgstr "静的ホストエントリー"
 
 #: src/helpers.js:256
 msgid "udp"
@@ -2685,6 +2747,14 @@ msgstr "vm"
 #: src/components/networks/networkOverviewTab.jsx:119 src/helpers.js:271
 msgid "yes"
 msgstr "はい"
+
+#, fuzzy
+#~| msgid "host device"
+#~ msgid "$1 host device"
+#~ msgstr "ホストデバイス"
+
+#~ msgid "snapshot"
+#~ msgstr "スナップショット"
 
 #~ msgid "Immediately start VM"
 #~ msgstr "仮想マシンをすぐに起動"
@@ -3046,9 +3116,6 @@ msgstr "はい"
 
 #~ msgid "Removals:"
 #~ msgstr "削除:"
-
-#~ msgid "Removing $0"
-#~ msgstr "$0 を削除中"
 
 #~ msgid "Sealed-case PC"
 #~ msgstr "シールドケース PC"

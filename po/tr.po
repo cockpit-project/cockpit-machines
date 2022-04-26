@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-16 03:17+0000\n"
+"POT-Creation-Date: 2022-04-25 03:35+0000\n"
 "PO-Revision-Date: 2022-04-14 09:17+0000\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language-Team: Turkish <https://translate.fedoraproject.org/projects/cockpit-"
@@ -80,10 +80,6 @@ msgstr "$0 vCPU ayrıntıları"
 #: src/components/vm/nics/nicEdit.jsx:167
 msgid "$0 virtual network interface settings"
 msgstr "$0 sanal ağ arayüzü ayarları"
-
-#: src/components/vm/hostdevs/hostDevCard.jsx:234
-msgid "$1 host device"
-msgstr "$1 anamakine aygıtı"
 
 #: src/components/vm/vmMigrateDialog.jsx:75
 msgid ""
@@ -502,7 +498,6 @@ msgstr "DHCP Ayarları"
 msgid "Deactivate"
 msgstr "Devre dışı bırak"
 
-#: src/components/common/deleteResource.jsx:66
 #: src/components/common/deleteResource.jsx:71
 #: src/components/common/deleteResource.jsx:109
 #: src/components/storagePools/storagePoolDelete.jsx:186
@@ -528,6 +523,24 @@ msgstr "İlişkili depolama dosyalarını sil:"
 #: src/components/storagePools/storagePoolDelete.jsx:165
 msgid "Delete content"
 msgstr "İçeriği sil"
+
+#: src/components/networks/network.jsx:134
+#, fuzzy
+#| msgid "Isolated network"
+msgid "Delete network $0"
+msgstr "Yalıtılmış ağ"
+
+#: src/components/vm/nics/vmNicsCard.jsx:376
+#, fuzzy
+#| msgid "network interface"
+msgid "Delete network interface $0"
+msgstr "ağ arayüzü"
+
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:181
+#, fuzzy
+#| msgid "Revert to snapshot $0"
+msgid "Delete snapshot $0"
+msgstr "$0 anlık görüntüsüne geri döndür"
 
 #: src/components/storagePools/storagePoolDelete.jsx:179
 msgid "Delete storage pool $0"
@@ -608,6 +621,12 @@ msgstr "Bağlantı kesildi"
 #: src/components/vm/consoles/serialConsole.jsx:85
 msgid "Disconnected from serial console. Click the connect button."
 msgstr "Seri konsoldan bağlantı kesildi. Bağlan düğmesine tıklayın."
+
+#: src/components/vm/disks/vmDisksCard.jsx:288
+#, fuzzy
+#| msgid "Disk settings could not be saved"
+msgid "Disk $0 could not be removed"
+msgstr "Disk ayarları kaydedilemedi"
 
 #: src/components/vm/disks/vmDisksCard.jsx:280
 msgid "Disk $0 fail to get detached from VM $1"
@@ -777,6 +796,12 @@ msgstr "En fazla sanal CPU sayısından daha azı etkinleştirilmelidir."
 #: src/components/vm/overview/bootOrder.jsx:106
 msgid "File"
 msgstr "Dosya"
+
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:62
+#, fuzzy
+#| msgid "The $0 could not be deleted"
+msgid "Filesystem $0 could not be removed"
+msgstr "$0 silinemedi"
 
 #: src/components/storagePools/createStoragePoolDialog.jsx:57
 msgid "Filesystem directory"
@@ -1260,6 +1285,12 @@ msgstr "$1 sanal makinesinin $0 NIC'inin durumunu değiştirme başarısız oldu
 msgid "Name"
 msgstr "Ad"
 
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:94
+#, fuzzy
+#| msgid "VM $0 already exists"
+msgid "Name already exists"
+msgstr "$0 sanal makinesi zaten var"
+
 #: src/components/storagePools/createStoragePoolDialog.jsx:44
 msgid "Name contains invalid characters"
 msgstr "Ad geçersiz karakterler içeriyor"
@@ -1272,6 +1303,7 @@ msgstr "Ad boş olmamak zorundadır"
 
 #: src/components/storagePools/createStoragePoolDialog.jsx:44
 #: src/components/networks/createNetworkDialog.jsx:53
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:96
 msgid "Name should not be empty"
 msgstr "Ad boş olmamalıdır"
 
@@ -1282,6 +1314,12 @@ msgstr "Ad: "
 #: src/components/networks/networkOverviewTab.jsx:151
 msgid "Netmask"
 msgstr "Ağ maskesi"
+
+#: src/components/networks/network.jsx:135
+#, fuzzy
+#| msgid "The $0 could not be deleted"
+msgid "Network $0 could not be deleted"
+msgstr "$0 silinemedi"
 
 #: src/components/networks/network.jsx:98
 msgid "Network $0 failed to get activated"
@@ -1298,6 +1336,12 @@ msgstr "Ağ üzerinden önyükleme (PXE)"
 #: src/components/storagePools/createStoragePoolDialog.jsx:58
 msgid "Network file system"
 msgstr "Ağ dosya sistemi (NFS)"
+
+#: src/components/vm/nics/vmNicsCard.jsx:377
+#, fuzzy
+#| msgid "Network interface settings could not be saved"
+msgid "Network interface $0 could not be deleted"
+msgstr "Ağ arayüzü ayarları kaydedilemedi"
 
 #: src/components/vm/nics/nicAdd.jsx:155 src/components/vm/nics/nicEdit.jsx:131
 msgid "Network interface settings could not be saved"
@@ -1655,14 +1699,38 @@ msgid "Remote viewer details"
 msgstr "Uzak görüntüleyici ayrıntıları"
 
 #: src/components/networks/networkOverviewTab.jsx:72
-#: src/components/vm/disks/vmDisksCard.jsx:288
+#: src/components/vm/disks/vmDisksCard.jsx:286
 #: src/components/vm/disks/vmDisksCard.jsx:298
 #: src/components/vm/hostdevs/hostDevCard.jsx:232
 #: src/components/vm/hostdevs/hostDevCard.jsx:289
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:59
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:62
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:63
 msgid "Remove"
 msgstr "Kaldır"
+
+#: src/components/vm/disks/vmDisksCard.jsx:287
+#, fuzzy
+#| msgid "Removing $0"
+msgid "Remove disk $0"
+msgstr "$0 kaldırılıyor"
+
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:61
+#, fuzzy
+#| msgid "filesystem"
+msgid "Remove filesystem $0"
+msgstr "dosya sistemi"
+
+#: src/components/vm/hostdevs/hostDevCard.jsx:234
+#, fuzzy
+#| msgid "host device"
+msgid "Remove host device"
+msgstr "anamakine aygıtı"
+
+#: src/components/networks/networkOverviewTab.jsx:65
+#, fuzzy
+#| msgid "static host from DHCP"
+msgid "Remove static host from DHCP"
+msgstr "DHCP'den statik ana makine"
 
 #: src/components/vm/vmRenameDialog.jsx:63 src/components/vm/vmActions.jsx:354
 msgid "Rename"
@@ -1841,6 +1909,12 @@ msgstr "Boyut"
 msgid "Slot"
 msgstr "Yuva"
 
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:182
+#, fuzzy
+#| msgid "The $0 could not be deleted"
+msgid "Snapshot $0 could not be deleted"
+msgstr "$0 silinemedi"
+
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:118
 msgid "Snapshot failed to be created"
 msgstr "Anlık görüntünün oluşturulması başarısız oldu"
@@ -1920,6 +1994,12 @@ msgstr "Durum"
 #: src/components/networks/networkOverviewTab.jsx:291
 msgid "Static host entries"
 msgstr "Statik ana makine girdileri"
+
+#: src/components/networks/networkOverviewTab.jsx:66
+#, fuzzy
+#| msgid "static host from DHCP"
+msgid "Static host from DHCP could not be removed"
+msgstr "DHCP'den statik ana makine"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:652
 #: src/components/vm/vmMigrateDialog.jsx:94
@@ -2024,10 +2104,6 @@ msgstr "Geçici"
 #: src/components/vm/vmMigrateDialog.jsx:85
 msgid "Temporary migration"
 msgstr "Geçici taşıma"
-
-#: src/components/common/deleteResource.jsx:52
-msgid "The $0 could not be deleted"
-msgstr "$0 silinemedi"
 
 #: src/components/vm/deleteDialog.jsx:81
 msgid "The VM is running and will be forced off before deletion."
@@ -2444,8 +2520,7 @@ msgstr "doğrudan"
 msgid "disabled"
 msgstr "etkisizleştirildi"
 
-#: src/components/vm/disks/vmDisksCard.jsx:286 src/helpers.js:235
-#: src/helpers.js:238
+#: src/helpers.js:235 src/helpers.js:238
 msgid "disk"
 msgstr "disk"
 
@@ -2467,10 +2542,6 @@ msgstr "etkinleştirildi"
 #: src/helpers.js:252
 msgid "ethernet"
 msgstr "ethernet"
-
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:61
-msgid "filesystem"
-msgstr "dosya sistemi"
 
 #: src/helpers.js:244
 msgid "host"
@@ -2504,6 +2575,13 @@ msgstr "iSCSI hedefi"
 msgid "iSCSI target IQN"
 msgstr "iSCSI hedefi IQN"
 
+#: src/components/storagePools/storagePool.jsx:64
+#: src/components/networks/network.jsx:56
+#, fuzzy
+#| msgid "active"
+msgid "inactive"
+msgstr "etkin"
+
 #: src/manifest.json:0
 msgid "iso"
 msgstr "iso"
@@ -2534,10 +2612,6 @@ msgstr "bağlama etiketi: Dışa aktarılan bağlama noktasıyla ilişkili etike
 #: src/helpers.js:237 src/helpers.js:249
 msgid "network"
 msgstr "ağ"
-
-#: src/components/vm/nics/vmNicsCard.jsx:376
-msgid "network interface"
-msgstr "ağ arayüzü"
 
 #: src/components/storagePools/storagePoolOverviewTab.jsx:67
 #: src/components/storagePools/storagePoolOverviewTab.jsx:72
@@ -2580,14 +2654,6 @@ msgstr "seri numarası"
 #: src/helpers.js:255
 msgid "server"
 msgstr "sunucu"
-
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:181
-msgid "snapshot"
-msgstr "anlık görüntü"
-
-#: src/components/networks/networkOverviewTab.jsx:65
-msgid "static host from DHCP"
-msgstr "DHCP'den statik ana makine"
 
 #: src/helpers.js:256
 msgid "udp"
@@ -2654,6 +2720,12 @@ msgstr "sanal makine"
 #: src/components/networks/networkOverviewTab.jsx:119 src/helpers.js:271
 msgid "yes"
 msgstr "evet"
+
+#~ msgid "$1 host device"
+#~ msgstr "$1 anamakine aygıtı"
+
+#~ msgid "snapshot"
+#~ msgstr "anlık görüntü"
 
 #~ msgid "Immediately start VM"
 #~ msgstr "Sanal makineyi hemen başlat"
@@ -3022,9 +3094,6 @@ msgstr "evet"
 
 #~ msgid "Removals:"
 #~ msgstr "Kaldırılanlar:"
-
-#~ msgid "Removing $0"
-#~ msgstr "$0 kaldırılıyor"
 
 #~ msgid "Sealed-case PC"
 #~ msgstr "Mühürlü Kasa PC"

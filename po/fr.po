@@ -21,9 +21,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-04-16 03:17+0000\n"
-"PO-Revision-Date: 2022-03-02 12:34+0000\n"
-"Last-Translator: Transtats <suanand@redhat.com>\n"
+"POT-Creation-Date: 2022-04-25 03:35+0000\n"
+"PO-Revision-Date: 2022-04-21 18:17+0000\n"
+"Last-Translator: Nicolas Bourgeois <nicolas+fedora@graour.com>\n"
 "Language-Team: French <https://translate.fedoraproject.org/projects/cockpit-"
 "machines/main/fr/>\n"
 "Language: fr\n"
@@ -31,20 +31,20 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1\n"
-"X-Generator: Weblate 4.11\n"
+"X-Generator: Weblate 4.11.2\n"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:619
 #, fuzzy
 #| msgid "Up to $0 $1 available on the default location"
 msgid "$0 $1 available at default location"
-msgstr "Un maximum de $0 $1 disponibles sur l'emplacement par défaut"
+msgstr "$0 $1 disponibles sur l'emplacement par défaut"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:186
 #: src/components/create-vm-dialog/createVmDialog.jsx:571
 #, fuzzy
 #| msgid "Up to $0 $1 available on the host"
 msgid "$0 $1 available on host"
-msgstr "Un maximum de $0 $1 disponibles sur l'hôte"
+msgstr "$0 $1 disponibles sur l'hôte"
 
 #: src/components/vm/overview/cpuTypeModal.jsx:60
 msgid "$0 CPU configuration"
@@ -63,13 +63,8 @@ msgstr[0] "$0 Pool de stockage"
 msgstr[1] "$0 Pools de stockage"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:953
-#, fuzzy
-#| msgid ""
-#| "The selected operating system does not support unattended installation"
 msgid "$0 does not support unattended installation."
-msgstr ""
-"Le système d’exécution sélectionné ne prend pas en charge les installations "
-"sans surveillance"
+msgstr "$0 ne prend pas en charge les installations sans surveillance"
 
 #: src/components/vm/consoles/desktopConsole.jsx:61
 msgid ""
@@ -101,12 +96,6 @@ msgstr "$0 détails vCPU"
 #: src/components/vm/nics/nicEdit.jsx:167
 msgid "$0 virtual network interface settings"
 msgstr "$0 les paramètres de l'interface réseau virtuelle"
-
-#: src/components/vm/hostdevs/hostDevCard.jsx:234
-#, fuzzy
-#| msgid "host device"
-msgid "$1 host device"
-msgstr "périphérique hôte"
 
 #: src/components/vm/vmMigrateDialog.jsx:75
 msgid ""
@@ -210,6 +199,8 @@ msgid ""
 "Allowed characters: basic Latin alphabet, numbers, and limited punctuation "
 "(-, _, +, .)"
 msgstr ""
+"Caractères autorisés : lettres de l'alphabet latin, chiffres et un ensemble "
+"limité de caractères de ponctuation (-, _, +, .)"
 
 #: src/components/vm/disks/diskAdd.jsx:110 src/components/vm/nics/nicAdd.jsx:88
 msgid "Always attach"
@@ -231,6 +222,8 @@ msgid ""
 "Automated installs are only available when downloading an image or using "
 "cloud-init."
 msgstr ""
+"Les installations automatiques ne sont disponibles que lorsque vous "
+"téléchargez une image ou utilisez cloud-init."
 
 #: src/components/networks/createNetworkDialog.jsx:166
 msgid "Automatic"
@@ -434,16 +427,12 @@ msgid "Create a clone VM based on $0"
 msgstr "Créer un clone VM basé sur $0"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:1088
-#, fuzzy
-#| msgid "Create new"
 msgid "Create and edit"
-msgstr "Créer Nouveau"
+msgstr "Créer nouveau et éditer"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:1113
-#, fuzzy
-#| msgid "Create new"
 msgid "Create and run"
-msgstr "Créer Nouveau"
+msgstr "Créer nouveau et exécuter"
 
 #: src/components/vm/disks/diskAdd.jsx:659
 msgid "Create new"
@@ -486,10 +475,8 @@ msgid "Creating VM"
 msgstr "Création de la VM"
 
 #: src/app.jsx:234
-#, fuzzy
-#| msgid "Creating VM"
 msgid "Creating VM $0"
-msgstr "Création de la VM"
+msgstr "Création de la VM $0"
 
 #: src/components/vms/hostvmslist.jsx:48
 msgid "Creating VM installation"
@@ -533,7 +520,6 @@ msgstr "Paramètres DHCP"
 msgid "Deactivate"
 msgstr "Désactiver"
 
-#: src/components/common/deleteResource.jsx:66
 #: src/components/common/deleteResource.jsx:71
 #: src/components/common/deleteResource.jsx:109
 #: src/components/storagePools/storagePoolDelete.jsx:186
@@ -559,6 +545,24 @@ msgstr "Supprimer les fichiers de stockage associés :"
 #: src/components/storagePools/storagePoolDelete.jsx:165
 msgid "Delete content"
 msgstr "Supprimer le contenu"
+
+#: src/components/networks/network.jsx:134
+#, fuzzy
+#| msgid "Isolated network"
+msgid "Delete network $0"
+msgstr "Réseau isolé"
+
+#: src/components/vm/nics/vmNicsCard.jsx:376
+#, fuzzy
+#| msgid "network interface"
+msgid "Delete network interface $0"
+msgstr "interface réseau"
+
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:181
+#, fuzzy
+#| msgid "Revert to snapshot $0"
+msgid "Delete snapshot $0"
+msgstr "Revenir à l'instantané $0"
 
 #: src/components/storagePools/storagePoolDelete.jsx:179
 msgid "Delete storage pool $0"
@@ -608,7 +612,7 @@ msgstr ""
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:1059
 msgid "Details"
-msgstr ""
+msgstr "Détails"
 
 #: src/components/networks/createNetworkDialog.jsx:160
 #: src/components/networks/networkList.jsx:75
@@ -641,6 +645,13 @@ msgstr "Déconnecté"
 #: src/components/vm/consoles/serialConsole.jsx:85
 msgid "Disconnected from serial console. Click the connect button."
 msgstr "Déconnecté de la console série. Cliquez sur le bouton Connecter."
+
+#: src/components/vm/disks/vmDisksCard.jsx:288
+#, fuzzy
+#| msgid "Disk settings could not be saved"
+msgid "Disk $0 could not be removed"
+msgstr ""
+"Les paramètres de configuration du disque n’ont pas pu être sauvegardés"
 
 #: src/components/vm/disks/vmDisksCard.jsx:280
 msgid "Disk $0 fail to get detached from VM $1"
@@ -818,6 +829,12 @@ msgstr ""
 #: src/components/vm/overview/bootOrder.jsx:106
 msgid "File"
 msgstr "Fichier"
+
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:62
+#, fuzzy
+#| msgid "The $0 could not be deleted"
+msgid "Filesystem $0 could not be removed"
+msgstr "$0 n’a pas pu être supprimé"
 
 #: src/components/storagePools/createStoragePoolDialog.jsx:57
 msgid "Filesystem directory"
@@ -1318,6 +1335,12 @@ msgstr "Échec du changement d’état du NIC $0 de la VM $1"
 msgid "Name"
 msgstr "Nom"
 
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:94
+#, fuzzy
+#| msgid "VM $0 already exists"
+msgid "Name already exists"
+msgstr "VM $0 existe déjà"
+
 #: src/components/storagePools/createStoragePoolDialog.jsx:44
 msgid "Name contains invalid characters"
 msgstr "Le nom contient des caractères invalides"
@@ -1330,6 +1353,7 @@ msgstr "Le nom ne doit pas être vide"
 
 #: src/components/storagePools/createStoragePoolDialog.jsx:44
 #: src/components/networks/createNetworkDialog.jsx:53
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:96
 msgid "Name should not be empty"
 msgstr "Le nom ne doit pas être vide"
 
@@ -1340,6 +1364,12 @@ msgstr "Nom : "
 #: src/components/networks/networkOverviewTab.jsx:151
 msgid "Netmask"
 msgstr "Masque réseau"
+
+#: src/components/networks/network.jsx:135
+#, fuzzy
+#| msgid "The $0 could not be deleted"
+msgid "Network $0 could not be deleted"
+msgstr "$0 n’a pas pu être supprimé"
 
 #: src/components/networks/network.jsx:98
 msgid "Network $0 failed to get activated"
@@ -1356,6 +1386,12 @@ msgstr "Démarrage réseau (PXE)"
 #: src/components/storagePools/createStoragePoolDialog.jsx:58
 msgid "Network file system"
 msgstr "Système de fichiers par réseau (NFS)"
+
+#: src/components/vm/nics/vmNicsCard.jsx:377
+#, fuzzy
+#| msgid "Network interface settings could not be saved"
+msgid "Network interface $0 could not be deleted"
+msgstr "Les paramètres de l’interface réseau n’ont pas pu être enregistrés"
 
 #: src/components/vm/nics/nicAdd.jsx:155 src/components/vm/nics/nicEdit.jsx:131
 msgid "Network interface settings could not be saved"
@@ -1721,14 +1757,38 @@ msgid "Remote viewer details"
 msgstr "Détails de la visionneuse à distance"
 
 #: src/components/networks/networkOverviewTab.jsx:72
-#: src/components/vm/disks/vmDisksCard.jsx:288
+#: src/components/vm/disks/vmDisksCard.jsx:286
 #: src/components/vm/disks/vmDisksCard.jsx:298
 #: src/components/vm/hostdevs/hostDevCard.jsx:232
 #: src/components/vm/hostdevs/hostDevCard.jsx:289
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:59
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:62
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:63
 msgid "Remove"
 msgstr "Retirer"
+
+#: src/components/vm/disks/vmDisksCard.jsx:287
+#, fuzzy
+#| msgid "Removing $0"
+msgid "Remove disk $0"
+msgstr "Suppression de $0"
+
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:61
+#, fuzzy
+#| msgid "filesystem"
+msgid "Remove filesystem $0"
+msgstr "système de fichiers"
+
+#: src/components/vm/hostdevs/hostDevCard.jsx:234
+#, fuzzy
+#| msgid "host device"
+msgid "Remove host device"
+msgstr "périphérique hôte"
+
+#: src/components/networks/networkOverviewTab.jsx:65
+#, fuzzy
+#| msgid "Static host entries"
+msgid "Remove static host from DHCP"
+msgstr "Entrées d'hôtes statiques"
 
 #: src/components/vm/vmRenameDialog.jsx:63 src/components/vm/vmActions.jsx:354
 msgid "Rename"
@@ -1909,6 +1969,12 @@ msgstr "Taille"
 msgid "Slot"
 msgstr "Emplacement"
 
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:182
+#, fuzzy
+#| msgid "The $0 could not be deleted"
+msgid "Snapshot $0 could not be deleted"
+msgstr "$0 n’a pas pu être supprimé"
+
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:118
 msgid "Snapshot failed to be created"
 msgstr "L'instantané n'a pas été créé"
@@ -1987,6 +2053,12 @@ msgstr "État"
 
 #: src/components/networks/networkOverviewTab.jsx:291
 msgid "Static host entries"
+msgstr "Entrées d'hôtes statiques"
+
+#: src/components/networks/networkOverviewTab.jsx:66
+#, fuzzy
+#| msgid "Static host entries"
+msgid "Static host from DHCP could not be removed"
 msgstr "Entrées d'hôtes statiques"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:652
@@ -2094,10 +2166,6 @@ msgstr "Temporaire"
 #: src/components/vm/vmMigrateDialog.jsx:85
 msgid "Temporary migration"
 msgstr "Migration temporaire"
-
-#: src/components/common/deleteResource.jsx:52
-msgid "The $0 could not be deleted"
-msgstr "$0 n’a pas pu être supprimé"
 
 #: src/components/vm/deleteDialog.jsx:81
 msgid "The VM is running and will be forced off before deletion."
@@ -2520,8 +2588,7 @@ msgstr "direct"
 msgid "disabled"
 msgstr "désactivé"
 
-#: src/components/vm/disks/vmDisksCard.jsx:286 src/helpers.js:235
-#: src/helpers.js:238
+#: src/helpers.js:235 src/helpers.js:238
 msgid "disk"
 msgstr "disque"
 
@@ -2543,10 +2610,6 @@ msgstr "activée"
 #: src/helpers.js:252
 msgid "ethernet"
 msgstr "ethernet"
-
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:61
-msgid "filesystem"
-msgstr "système de fichiers"
 
 #: src/helpers.js:244
 msgid "host"
@@ -2580,6 +2643,13 @@ msgstr "Cible iSCSI"
 msgid "iSCSI target IQN"
 msgstr "Cible iSCSI IQN"
 
+#: src/components/storagePools/storagePool.jsx:64
+#: src/components/networks/network.jsx:56
+#, fuzzy
+#| msgid "active"
+msgid "inactive"
+msgstr "actif"
+
 #: src/manifest.json:0
 msgid "iso"
 msgstr "iso"
@@ -2610,10 +2680,6 @@ msgstr "balise de montage : la balise associée au point de montage exporté"
 #: src/helpers.js:237 src/helpers.js:249
 msgid "network"
 msgstr "réseau"
-
-#: src/components/vm/nics/vmNicsCard.jsx:376
-msgid "network interface"
-msgstr "interface réseau"
 
 #: src/components/storagePools/storagePoolOverviewTab.jsx:67
 #: src/components/storagePools/storagePoolOverviewTab.jsx:72
@@ -2658,16 +2724,6 @@ msgstr ""
 #: src/helpers.js:255
 msgid "server"
 msgstr "serveur"
-
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:181
-msgid "snapshot"
-msgstr "instantané"
-
-#: src/components/networks/networkOverviewTab.jsx:65
-#, fuzzy
-#| msgid "Static host entries"
-msgid "static host from DHCP"
-msgstr "Entrées d'hôtes statiques"
 
 #: src/helpers.js:256
 msgid "udp"
@@ -2734,6 +2790,14 @@ msgstr "vm"
 #: src/components/networks/networkOverviewTab.jsx:119 src/helpers.js:271
 msgid "yes"
 msgstr "oui"
+
+#, fuzzy
+#~| msgid "host device"
+#~ msgid "$1 host device"
+#~ msgstr "périphérique hôte"
+
+#~ msgid "snapshot"
+#~ msgstr "instantané"
 
 #~ msgid "Immediately start VM"
 #~ msgstr "Démarrer immédiatement la VM"
@@ -3102,9 +3166,6 @@ msgstr "oui"
 
 #~ msgid "Removals:"
 #~ msgstr "Suppressions :"
-
-#~ msgid "Removing $0"
-#~ msgstr "Suppression de $0"
 
 #~ msgid "Sealed-case PC"
 #~ msgstr "PC scellé"
