@@ -37,7 +37,7 @@ from machinesxmls import NETWORK_XML_PXE, PXE_SERVER_CFG  # noqa
 @nondestructive
 class TestMachinesCreate(VirtualMachinesCase):
 
-    # This test contains basic form validation of the Create VM dialog
+    # This test contains basic button and form validation of the Create VM dialog
     # None of the sub-tests will actually call virt-install
     def testCreateBasicValidation(self):
         runner = TestMachinesCreate.CreateVmRunner(self)
@@ -49,6 +49,9 @@ class TestMachinesCreate(VirtualMachinesCase):
 
         self.login_and_go("/machines")
         self.browser.wait_in_text("body", "Virtual machines")
+
+        # test create and import [VM] buttons show appropriate tooltips when hovered over
+        runner.createAndImportTooltipsTest()
 
         # test just the DIALOG CREATION and cancel
         print("    *\n    * validation errors and ui info/warn messages expected:\n    * ")
@@ -775,7 +778,7 @@ vnc_password= "{vnc_passwd}"
             b = self.browser
 
             if self.sourceType == 'disk_image':
-                b.click("#import-vm-disk")
+                b.click("#import-existing-vm")
             else:
                 b.click("#create-new-vm")
 
@@ -1544,6 +1547,18 @@ vnc_password= "{vnc_passwd}"
                 self._deleteVm(dialog)
                 if check_env_empty:
                     self.checkEnvIsEmpty(dialog)
+
+        def createAndImportTooltipsTest(self):
+            b = self.browser
+
+            b.wait_visible("#import-existing-vm:not(:disabled)")
+            b.mouse("#import-existing-vm", "mouseenter")
+            b.wait_in_text("#import-button-tooltip", "existing")
+            b.mouse("#import-existing-vm", "mouseleave")
+            b.wait_visible("#create-new-vm:not(:disabled)")
+            b.mouse("#create-new-vm", "mouseenter")
+            b.wait_in_text("#create-button-tooltip", "medium")
+            b.mouse("#create-new-vm", "mouseleave")
 
         def cancelDialogTest(self, dialog):
             dialog.open() \

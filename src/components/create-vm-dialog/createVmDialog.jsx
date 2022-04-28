@@ -1217,7 +1217,7 @@ export class CreateVmAction extends React.Component {
         let createButton = (
             <Button isDisabled={testdata !== undefined}
                     testdata={testdata}
-                    id={this.props.mode == 'create' ? 'create-new-vm' : 'import-vm-disk'}
+                    id={this.props.mode == 'create' ? 'create-new-vm' : 'import-existing-vm'}
                     variant='secondary'
                     onClick={this.open}>
                 {this.props.mode == 'create' ? _("Create VM") : _("Import VM")}
@@ -1227,6 +1227,21 @@ export class CreateVmAction extends React.Component {
             createButton = (
                 <Tooltip id='virt-install-not-available-tooltip'
                          content={_("virt-install package needs to be installed on the system in order to create new VMs")}>
+                    <span>
+                        {createButton}
+                    </span>
+                </Tooltip>
+            );
+        else
+            createButton = (
+                <Tooltip id={this.props.mode + '-button-tooltip'}
+                         position={this.props.mode === "create" ? "top-end" : "top"}
+                         className={this.props.mode === "create" && "custom-arrow"}
+                         content={this.props.mode === "create"
+                             ? _("Create VM from local or network installation medium")
+                             : _("Create VM by importing a disk image of an existing VM installation")
+                         }
+                         isContentLeftAligned>
                     <span>
                         {createButton}
                     </span>
