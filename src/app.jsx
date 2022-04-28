@@ -212,7 +212,7 @@ class AppActive extends React.Component {
         };
         const createVmAction = <CreateVmAction {...properties} mode='create' />;
         const importDiskAction = <CreateVmAction {...properties} mode='import' />;
-        const vmActions = <> {createVmAction} {importDiskAction} </>;
+        const vmActions = <> {importDiskAction} {createVmAction} </>;
         const pathVms = path.length == 0 || (path.length > 0 && path[0] == 'vms');
 
         let vmContent;
