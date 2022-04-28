@@ -144,7 +144,7 @@ test/reference: test/common
 # We want tools/node-modules to run every time package-lock.json is requested
 # See https://www.gnu.org/software/make/manual/html_node/Force-Targets.html
 FORCE:
-package-lock.json: FORCE
+package-lock.json: FORCE tools/node-modules
 	tools/node-modules make_package_lock_json
 
 .PHONY: all clean install devel-install dist rpm check vm
