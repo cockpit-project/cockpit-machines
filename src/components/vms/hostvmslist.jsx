@@ -52,7 +52,7 @@ const VmState = ({ vm, dismissError }) => {
         state = vm.state;
     }
 
-    return <StateIcon dismissError={dismissError} error={vm.error} state={state} valueId={`${vmId(vm.name)}-state`} />;
+    return <StateIcon dismissError={dismissError} error={vm.error} state={state} valueId={`${vmId(vm.name)}-${vm.connectionName}-state`} />;
 };
 
 const _ = cockpit.gettext;

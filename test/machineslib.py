@@ -25,7 +25,7 @@ distrosWithMonolithicDaemon = ["rhel-8-6", "ubuntu-stable", "ubuntu-2204", "debi
 class VirtualMachinesCaseHelpers:
     created_pool = False
 
-    def performAction(self, vmName, action, checkExpectedState=True):
+    def performAction(self, vmName, action, checkExpectedState=True, connectionName="system"):
         b = self.browser
         b.click("#vm-{0}-action-kebab button".format(vmName))
         b.wait_visible("#vm-{0}-action-kebab > .pf-c-dropdown__menu".format(vmName))
@@ -35,11 +35,11 @@ class VirtualMachinesCaseHelpers:
             return
 
         if action == "pause":
-            b.wait_in_text("#vm-{0}-state".format(vmName), "Paused")
+            b.wait_in_text("#vm-{0}-{1}-state".format(vmName, connectionName), "Paused")
         if action == "resume" or action == "run":
-            b.wait_in_text("#vm-{0}-state".format(vmName), "Running")
+            b.wait_in_text("#vm-{0}-{1}-state".format(vmName, connectionName), "Running")
         if action == "forceOff":
-            b.wait_in_text("#vm-{0}-state".format(vmName), "Shut off")
+            b.wait_in_text("#vm-{0}-{1}-state".format(vmName, connectionName), "Shut off")
 
     def goToVmPage(self, vmName, connectionName='system'):
         self.browser.click("tbody tr[data-row-id=vm-{0}-{1}] a.vm-list-item-name".format(vmName, connectionName))  # click on the row

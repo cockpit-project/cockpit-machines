@@ -336,7 +336,7 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                       delete=False))
         # Wait for virt-install to define the VM and then stop it
         wait(lambda: "pxe-guest" in self.machine.execute("virsh list --persistent"), delay=3)
-        b.wait_in_text("#vm-pxe-guest-state", "Running")
+        b.wait_in_text("#vm-pxe-guest-system-state", "Running")
         self.machine.execute("virsh destroy pxe-guest")
 
         # Verify that the newly created disk is first in the boot order and the network used for the PXE boot is not on the bootable devices list
@@ -670,7 +670,7 @@ vnc_password= "{vnc_passwd}"
                      delete=True,
                      env_is_empty=True,
                      check_script_finished=True,
-                     connection=None,
+                     connection="system",
                      pixel_test_tag=None):
 
             TestMachinesCreate.VmDialog.vmId += 1  # This variable is static - don't use self here
@@ -873,7 +873,7 @@ vnc_password= "{vnc_passwd}"
 
                 self.assertIn("\nssh_pwauth: true", user_data)
 
-            self.browser.wait_text(f"#vm-{self.name}-state", "Running")
+            self.browser.wait_text(f"#vm-{self.name}-{self.connection}-state", "Running")
 
             # Wait for it to become permanent before destruction.  If
             # we destroy it while it is still transient, the domain
@@ -884,7 +884,7 @@ vnc_password= "{vnc_passwd}"
             # wait for virt-install to finish
             self.machine.execute(f"while {virt_install_cmd}; do sleep 1; done")
 
-            self.browser.wait_text(f"#vm-{self.name}-state", "Shut off")
+            self.browser.wait_text(f"#vm-{self.name}-{self.connection}-state", "Shut off")
 
             self.assertIn(f"backing file: {self.location}", self.machine.execute(f"qemu-img info /var/lib/libvirt/images/{self.name}.qcow2"))
 
@@ -896,7 +896,7 @@ vnc_password= "{vnc_passwd}"
             else:
                 self.browser.click(".pf-c-modal-box__footer button:contains(Create and edit)")
             self.browser.wait_not_present("#create-vm-dialog")
-            self.browser.wait_text(f"#vm-{self.name}-state", "Shut off")
+            self.browser.wait_text(f"#vm-{self.name}-{self.connection}-state", "Shut off")
 
             domainXML = m.execute(f"virsh dumpxml --security-info {self.name}")
             root = ET.fromstring(domainXML)
@@ -1256,9 +1256,9 @@ vnc_password= "{vnc_passwd}"
             self.test_obj.restore_file("/etc/hosts")
             self.machine.execute('echo "127.0.0.1 archive.fedoraproject.org" >> /etc/hosts')
 
-        def _assertVmStates(self, name, before, after):
+        def _assertVmStates(self, name, connection, before, after):
             b = self.browser
-            selector = f"#vm-{name}-state"
+            selector = f"#vm-{name}-{connection}-state"
 
             b.wait_in_text(selector, before)
 
@@ -1284,7 +1284,7 @@ vnc_password= "{vnc_passwd}"
             init_state = "Creating VM installation" if dialog.create_and_run else "Creating VM"
             second_state = "Running" if dialog.create_and_run else "Shut off"
 
-            self._assertVmStates(dialog.name, init_state, second_state)
+            self._assertVmStates(dialog.name, dialog.connection, init_state, second_state)
             b.wait_not_present("#create-vm-dialog")
 
         def _tryCreate(self, dialog):
@@ -1296,7 +1296,7 @@ vnc_password= "{vnc_passwd}"
 
             if dialog.create_and_run:
                 # successfully created
-                self.test_obj.waitVmRow(name, dialog.connection or "system")
+                self.test_obj.waitVmRow(name, dialog.connection)
             else:
                 # created and redirected
                 self.test_obj.waitVmPage(name)
@@ -1310,6 +1310,7 @@ vnc_password= "{vnc_passwd}"
             m = self.machine
             dialog.create_and_run = False
             name = dialog.name
+            connection = dialog.connection
 
             dialog.open() \
                 .fill()
@@ -1317,7 +1318,7 @@ vnc_password= "{vnc_passwd}"
 
             if dialog.create_and_run:
                 # successfully created
-                self.test_obj.waitVmRow(name, dialog.connection or "system")
+                self.test_obj.waitVmRow(name, dialog.connection)
 
                 if installFromVmDetails:
                     self.test_obj.goToVmPage(name)
@@ -1330,19 +1331,19 @@ vnc_password= "{vnc_passwd}"
             if tryWithFailInstall:
                 # Deleting the default network will make the installation to fail immediately
                 m.execute("virsh net-destroy default")
-                b.wait_in_text(f"#vm-{name}-state", "Shut off")
+                b.wait_in_text(f"#vm-{name}-{connection}-state", "Shut off")
                 b.wait_visible(f"#vm-{name}-install")
                 b.wait_in_text(".pf-c-alert", "failed to get installed")
             else:
-                b.wait_in_text(f"#vm-{name}-state", "Running")
+                b.wait_in_text(f"#vm-{name}-{connection}-state", "Running")
                 self._assertCorrectConfiguration(dialog)
 
                 # Wait for virt-install to define the VM and then stop it - otherwise we get 'domain is ready being removed' error
                 wait(lambda: dialog.name in self.machine.execute("virsh list --persistent"), delay=3)
 
                 # unfinished install script runs indefinitely, so we need to force it off
-                self.test_obj.performAction(name, "forceOff", False)
-                b.wait_in_text(f"#vm-{name}-state", "Shut off")
+                self.test_obj.performAction(name, "forceOff", checkExpectedState=False)
+                b.wait_in_text(f"#vm-{name}-{connection}-state", "Shut off")
 
             return self
 
@@ -1354,21 +1355,22 @@ vnc_password= "{vnc_passwd}"
             b.click(f"#vm-{dialog.name}-delete-modal-dialog button:contains(Delete)")
             b.wait_not_present(f"#vm-{dialog.name}-delete-modal-dialog")
 
-            self.test_obj.waitVmRow(dialog.name, "system", False)
+            self.test_obj.waitVmRow(dialog.name, dialog.connection, False)
             return self
 
         def _assertCorrectConfiguration(self, dialog):
             b = self.browser
             name = dialog.name
+            connection = dialog.connection
 
             if not (b.is_present("#vm-details") and b.is_visible("#vm-details")):
                 self.test_obj.goToVmPage(name, dialog.connection or "system")
 
-            vm_state = b.text(f"#vm-{dialog.name}-state")
+            vm_state = b.text(f"#vm-{name}-{connection}-state")
 
             # check bus type
             if dialog.storage_pool != "NoStorage":
-                self.browser.wait_in_text(f"#vm-{dialog.name}-disks-vda-bus", "virtio")
+                self.browser.wait_in_text(f"#vm-{name}-disks-vda-bus", "virtio")
             # check memory
             # adjust to how cockpit_format_bytes() formats sizes > 1024 MiB -- this depends on how much RAM
             # the host has (less or more than 1 GiB), and thus needs to be dynamic
@@ -1654,8 +1656,8 @@ vnc_password= "{vnc_passwd}"
         wait(lambda: "VmNotInstalled" in m.execute("virsh list --persistent"), delay=3)
         logfile = "/var/log/libvirt/qemu/VmNotInstalled.log"
         m.execute(f"> {logfile}")  # clear logfile
-        self.performAction("VmNotInstalled", "forceOff", False)
-        b.wait_in_text("#vm-VmNotInstalled-state", "Shut off")
+        self.performAction("VmNotInstalled", "forceOff", checkExpectedState=False)
+        b.wait_in_text("#vm-VmNotInstalled-system-state", "Shut off")
         wait(lambda: "133120" in m.execute("virsh dominfo VmNotInstalled | grep 'Used memory'"), delay=1)  # Wait until memory parameters get adjusted after shutting the VM
 
         # Check configuration changes survived installation
@@ -1726,7 +1728,7 @@ vnc_password= "{vnc_passwd}"
 
         # Install the VM
         b.click("#vm-VmNotInstalledBios-install")
-        b.wait_in_text("#vm-VmNotInstalledBios-state", "Running")
+        b.wait_in_text("#vm-VmNotInstalledBios-system-state", "Running")
 
         domainXML = self.machine.execute("virsh dumpxml VmNotInstalledBios")
         # no explicit "firmware=" field

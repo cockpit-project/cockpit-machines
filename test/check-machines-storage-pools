@@ -87,7 +87,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         # disks later
         b.click("#vm-subVmTest1-action-kebab button")
         b.click("#vm-subVmTest1-forceOff")
-        b.wait_in_text("#vm-subVmTest1-state", "Shut off")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Shut off")
 
         # Click on Storage pools card
         b.click(".pf-c-card .pf-c-card__header button:contains(Storage pools)")

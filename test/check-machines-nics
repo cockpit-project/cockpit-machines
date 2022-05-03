@@ -48,7 +48,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         b.wait_in_text("body", "Virtual machines")
         self.waitVmRow("subVmTest1")
 
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # Wait for the dynamic IP address to be assigned before logging in
         # If the IP will change or get assigned after fetching the domain data the user will not see any
@@ -94,7 +94,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         b.wait_in_text("body", "Virtual machines")
 
         self.waitVmRow("subVmTest1")
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
 
         # Plug and unplug NICs
@@ -134,7 +134,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         self.login_and_go("/machines")
         b.wait_in_text("body", "Virtual machines")
         self.waitVmRow("subVmTest1")
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         wait(lambda: "login as 'cirros' user." in self.machine.execute(f"cat {args['logfile']}"), delay=3)
         self.goToVmPage("subVmTest1")
 
@@ -201,7 +201,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         # Shut off domain
         b.click("#vm-subVmTest1-action-kebab button")
         b.click("#vm-subVmTest1-forceOff")
-        b.wait_in_text("#vm-subVmTest1-state", "Shut off")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Shut off")
 
         # No NICs present
         b.wait_visible("#vm-subVmTest1-add-iface-button")  # open the Network Interfaces subtab
@@ -243,7 +243,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         # Start vm and wait until kernel is booted
         m.execute(f"> {args['logfile']}")  # clear logfile
         b.click("#vm-subVmTest1-run")
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         wait(lambda: "login as 'cirros' user." in self.machine.execute(f"cat {args['logfile']}"), delay=3)
 
         # Because of bug in debian-testing, attachment of virtio vNICs after restarting VM will fail
@@ -275,7 +275,7 @@ class TestMachinesNICs(VirtualMachinesCase):
             b.wait_visible("div[data-vm-transient=\"false\"]")
             b.click("#vm-subVmTest1-action-kebab button")
             b.click("#vm-subVmTest1-forceOff")
-            b.wait_in_text("#vm-subVmTest1-state", "Shut off")
+            b.wait_in_text("#vm-subVmTest1-system-state", "Shut off")
 
             mac_address = self.get_next_mac(mac_address)
             self.NICAddDialog(
@@ -482,7 +482,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         ).execute()
 
         b.click("#vm-subVmTest1-run")
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # Test a warning shows up when editing a vNIC for a running VM
         self.NICEditDialog(

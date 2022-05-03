@@ -54,7 +54,7 @@ class TestMachinesSnapshots(VirtualMachinesCase):
         self.login_and_go("/machines")
         b.wait_in_text("body", "Virtual machines")
         self.waitVmRow("subVmTest1")
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         self.goToVmPage("subVmTest1")
         if m.image in distrosWithoutSnapshot:
@@ -72,7 +72,7 @@ class TestMachinesSnapshots(VirtualMachinesCase):
 
         b.reload()  # snapshots events not available yet: https://gitlab.com/libvirt/libvirt/-/issues/44
         b.enter_page('/machines')
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         b.wait_in_text("#vm-subVmTest1-snapshot-0-name", "snapshotB")
         b.wait_in_text("#vm-subVmTest1-snapshot-0-description", "Description of snapshotB")
@@ -238,7 +238,7 @@ class TestMachinesSnapshots(VirtualMachinesCase):
         m.execute("virsh snapshot-delete subVmTest1 test_snap_1")
 
         b.click("#vm-subVmTest1-run")
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # Test snapshot creation on running VM
         SnapshotCreateDialog(

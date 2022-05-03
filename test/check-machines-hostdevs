@@ -50,7 +50,7 @@ class TestMachinesHostDevs(VirtualMachinesCase):
         b.wait_in_text("body", "Virtual machines")
         self.waitVmRow("subVmTest1")
 
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         self.goToVmPage("subVmTest1")
 
@@ -72,7 +72,7 @@ class TestMachinesHostDevs(VirtualMachinesCase):
                 b.wait_in_text("#vm-subVmTest1-hostdev-1-source #1-bus", "1")
 
         m.execute("virsh destroy subVmTest1")
-        b.wait_in_text("#vm-subVmTest1-state", "Shut off")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Shut off")
 
         # Test attachment of non-existent host device
         m.execute(f"echo \"{USB_HOSTDEV_NONEXISTENT}\" > /tmp/usbnonexistenthostedxml")
