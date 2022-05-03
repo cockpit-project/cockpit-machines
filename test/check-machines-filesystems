@@ -121,7 +121,7 @@ class TestMachinesFilesystems(VirtualMachinesCase):
         b.click("#vm-subVmTest1-filesystems-modal-cancel")
 
         # Start VM and ensure that adding filesystem is disabled
-        b.click("#vm-subVmTest1-run")
+        b.click("#vm-subVmTest1-system-run")
         b.wait_visible("#vm-subVmTest1-filesystems-add[aria-disabled=true]")
 
     @skipImage("Older libvirt does not support virtiofs", "rhel-8-6", "centos-8-stream")

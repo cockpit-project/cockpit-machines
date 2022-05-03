@@ -199,9 +199,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         ).execute()
 
         # Shut off domain
-        b.click("#vm-subVmTest1-action-kebab button")
-        b.click("#vm-subVmTest1-forceOff")
-        b.wait_in_text("#vm-subVmTest1-system-state", "Shut off")
+        self.performAction("subVmTest1", "forceOff")
 
         # No NICs present
         b.wait_visible("#vm-subVmTest1-add-iface-button")  # open the Network Interfaces subtab
@@ -242,7 +240,7 @@ class TestMachinesNICs(VirtualMachinesCase):
 
         # Start vm and wait until kernel is booted
         m.execute(f"> {args['logfile']}")  # clear logfile
-        b.click("#vm-subVmTest1-run")
+        b.click("#vm-subVmTest1-system-run")
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         wait(lambda: "login as 'cirros' user." in self.machine.execute(f"cat {args['logfile']}"), delay=3)
 
@@ -273,9 +271,7 @@ class TestMachinesNICs(VirtualMachinesCase):
             ).execute()
             m.execute("virsh define /tmp/subVmTest1.xml")
             b.wait_visible("div[data-vm-transient=\"false\"]")
-            b.click("#vm-subVmTest1-action-kebab button")
-            b.click("#vm-subVmTest1-forceOff")
-            b.wait_in_text("#vm-subVmTest1-system-state", "Shut off")
+            self.performAction("subVmTest1", "forceOff")
 
             mac_address = self.get_next_mac(mac_address)
             self.NICAddDialog(
@@ -481,7 +477,7 @@ class TestMachinesNICs(VirtualMachinesCase):
             source="eth43",
         ).execute()
 
-        b.click("#vm-subVmTest1-run")
+        b.click("#vm-subVmTest1-system-run")
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # Test a warning shows up when editing a vNIC for a running VM

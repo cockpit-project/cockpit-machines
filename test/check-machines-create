@@ -1326,13 +1326,13 @@ vnc_password= "{vnc_passwd}"
                 # created and redirected
                 self.test_obj.waitVmPage(name)
 
-            b.click(f"#vm-{name}-install")
+            b.click(f"#vm-{name}-{connection}-install")
 
             if tryWithFailInstall:
                 # Deleting the default network will make the installation to fail immediately
                 m.execute("virsh net-destroy default")
                 b.wait_in_text(f"#vm-{name}-{connection}-state", "Shut off")
-                b.wait_visible(f"#vm-{name}-install")
+                b.wait_visible(f"#vm-{name}-{connection}-install")
                 b.wait_in_text(".pf-c-alert", "failed to get installed")
             else:
                 b.wait_in_text(f"#vm-{name}-{connection}-state", "Running")
@@ -1350,7 +1350,7 @@ vnc_password= "{vnc_passwd}"
         def _deleteVm(self, dialog):
             b = self.browser
 
-            self.test_obj.performAction(dialog.name, "delete")
+            self.test_obj.performAction(dialog.name, "delete", connectionName=dialog.connection)
             b.wait_visible(f"#vm-{dialog.name}-delete-modal-dialog")
             b.click(f"#vm-{dialog.name}-delete-modal-dialog button:contains(Delete)")
             b.wait_not_present(f"#vm-{dialog.name}-delete-modal-dialog")
@@ -1650,7 +1650,7 @@ vnc_password= "{vnc_passwd}"
         m.execute("umount " + ovmf_path)
 
         # Install the VM
-        b.click("#vm-VmNotInstalled-install")
+        b.click("#vm-VmNotInstalled-system-install")
 
         # Wait for virt-install to define the VM and then stop it - otherwise we get 'domain is ready being removed' error
         wait(lambda: "VmNotInstalled" in m.execute("virsh list --persistent"), delay=3)
@@ -1727,7 +1727,7 @@ vnc_password= "{vnc_passwd}"
         b.wait_in_text("#vm-VmNotInstalledBios-firmware", "BIOS")
 
         # Install the VM
-        b.click("#vm-VmNotInstalledBios-install")
+        b.click("#vm-VmNotInstalledBios-system-install")
         b.wait_in_text("#vm-VmNotInstalledBios-system-state", "Running")
 
         domainXML = self.machine.execute("virsh dumpxml VmNotInstalledBios")

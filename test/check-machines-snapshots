@@ -237,7 +237,7 @@ class TestMachinesSnapshots(VirtualMachinesCase):
         ).execute()
         m.execute("virsh snapshot-delete subVmTest1 test_snap_1")
 
-        b.click("#vm-subVmTest1-run")
+        b.click("#vm-subVmTest1-system-run")
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # Test snapshot creation on running VM

@@ -27,9 +27,9 @@ class VirtualMachinesCaseHelpers:
 
     def performAction(self, vmName, action, checkExpectedState=True, connectionName="system"):
         b = self.browser
-        b.click("#vm-{0}-action-kebab button".format(vmName))
-        b.wait_visible("#vm-{0}-action-kebab > .pf-c-dropdown__menu".format(vmName))
-        b.click("#vm-{0}-{1} a".format(vmName, action))
+        b.click("#vm-{0}-{1}-action-kebab button".format(vmName, connectionName))
+        b.wait_visible("#vm-{0}-{1}-action-kebab > .pf-c-dropdown__menu".format(vmName, connectionName))
+        b.click("#vm-{0}-{1}-{2} a".format(vmName, connectionName, action))
 
         if not checkExpectedState:
             return

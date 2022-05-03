@@ -77,7 +77,7 @@ const VmActions = ({ vm, storagePools, onAddErrorNotification, isDetailsPage }) 
         setOperationInProgress(false);
     }
 
-    const id = vmId(vm.name);
+    const id = `${vmId(vm.name)}-${vm.connectionName}`;
     const state = vm.state;
     const hasInstallPhase = vm.metadata && vm.metadata.hasInstallPhase;
     const dropdownItems = [];

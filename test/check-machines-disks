@@ -198,7 +198,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_not_present("#vm-subVmTest1-disks-hda-edit-writable-shareable")
 
         # Start Vm
-        b.click("#vm-subVmTest1-run")
+        b.click("#vm-subVmTest1-system-run")
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # Test disk's bus and cache cannot be changed on running VM
@@ -785,7 +785,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         # https://bugs.launchpad.net/ubuntu/+source/libvirt/+bug/1677398
         if "debian" not in m.image and "ubuntu" not in m.image:
             # Run VM
-            b.click("#vm-subVmTest1-run")
+            b.click("#vm-subVmTest1-system-run")
             b.wait_in_text("#vm-subVmTest1-system-state", "Running")
             # Test disk attachment to non-persistent VM
             m.execute("virsh undefine subVmTest1")

@@ -85,9 +85,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
 
         # Shuf off the VM in order to allow deleting volumes that are used as
         # disks later
-        b.click("#vm-subVmTest1-action-kebab button")
-        b.click("#vm-subVmTest1-forceOff")
-        b.wait_in_text("#vm-subVmTest1-system-state", "Shut off")
+        self.performAction("subVmTest1", "forceOff")
 
         # Click on Storage pools card
         b.click(".pf-c-card .pf-c-card__header button:contains(Storage pools)")
