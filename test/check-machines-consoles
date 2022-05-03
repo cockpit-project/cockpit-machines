@@ -42,7 +42,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
         b.wait_in_text("body", "Virtual machines")
         self.waitVmRow("subVmTest1")
 
-        b.wait_in_text("#vm-subVmTest1-state", "Running")  # running or paused
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")  # running or paused
         self.goToVmPage("subVmTest1")
 
         # since VNC is not defined for this VM, the view for "Desktop Viewer" is rendered by default
@@ -80,7 +80,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
         b.wait_in_text("body", "Virtual machines")
         self.waitVmRow("subVmTest1")
 
-        b.wait_in_text("#vm-subVmTest1-state", "Running")  # running or paused
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")  # running or paused
         self.goToVmPage("subVmTest1")
 
         # since VNC is defined for this VM, the view for "In-Browser Viewer" is rendered by default
@@ -109,7 +109,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
         self.waitVmRow(name)
 
         self.goToVmPage(name)
-        b.wait_in_text(f"#vm-{name}-state", "Running")
+        b.wait_in_text(f"#vm-{name}-system-state", "Running")
 
         b.click("#pf-c-console__type-selector")
         b.wait_visible("#pf-c-console__type-selector + .pf-c-select__menu")
@@ -162,7 +162,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
 
         self.waitVmRow(name)
         self.goToVmPage(name)
-        b.wait_in_text(f"#vm-{name}-state", "Running")
+        b.wait_in_text(f"#vm-{name}-system-state", "Running")
 
         b.wait_visible(f"#vm-{name}-consoles")
         b.wait_visible(".pf-c-console__vnc canvas")

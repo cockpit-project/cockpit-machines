@@ -51,7 +51,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.wait_in_text("body", "Virtual machines")
         self.waitVmRow("subVmTest1")
 
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
 
         b.click("#vm-subVmTest1-vcpus-count button")  # open VCPU modal detail window
@@ -91,7 +91,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         # Check after boot
         # Run VM
         b.click("#vm-subVmTest1-run")
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # Check VCPU count
         b.wait_in_text("#vm-subVmTest1-vcpus-count", "3")
@@ -137,7 +137,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         # Run VM - this ensures that the internal state is updated before we move on.
         # We need this here because we can't wait for UI updates after we open the modal dialog.
         b.click("#vm-subVmTest1-run")
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # Wait for the VCPUs link to get new values before opening the dialog
         b.wait_visible("#vm-subVmTest1-vcpus-count")
@@ -173,7 +173,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         def checkAutostart(vm_name, running):
             self.createVm(vm_name, running=running)
             self.waitVmRow(vm_name)
-            b.wait_in_text(f"#vm-{vm_name}-state", "Running" if running else "Shut off")
+            b.wait_in_text(f"#vm-{vm_name}-system-state", "Running" if running else "Shut off")
             self.goToVmPage(vm_name)
 
             # set checkbox state and check state of checkbox
@@ -218,7 +218,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         self.waitVmRow("subVmTest1")
 
         self.goToVmPage("subVmTest1")
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         cpu_model = "host-model"
         if m.image in distrosWithDefaultHostModel:
@@ -273,7 +273,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.wait_in_text("body", "Virtual machines")
         self.waitVmRow("subVmTest1")
 
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
 
         # Wait for the edit button
@@ -366,7 +366,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.wait_in_text("body", "Virtual machines")
         self.waitVmRow("subVmTest1")
 
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
 
         # Wait for the edit link
@@ -422,7 +422,7 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         # Run VM
         b.click("#vm-subVmTest1-run")
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         # Non-persistent VM doesn't have configurable memory
         m.execute("virsh undefine subVmTest1")
         b.wait_visible("#vm-subVmTest1-memory-count button:disabled")
@@ -437,7 +437,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.wait_in_text("body", "Virtual machines")
         self.waitVmRow("subVmTest1")
 
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
 
         wait(lambda: "login as 'cirros' user" in m.execute(f"cat {args['logfile']}"), delay=3)

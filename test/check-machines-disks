@@ -97,7 +97,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         self.login_and_go("/machines")
         b.wait_in_text("body", "Virtual machines")
         self.waitVmRow("subVmTest1")
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         self.goToVmPage("subVmTest1")
 
@@ -199,7 +199,7 @@ class TestMachinesDisks(VirtualMachinesCase):
 
         # Start Vm
         b.click("#vm-subVmTest1-run")
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # Test disk's bus and cache cannot be changed on running VM
         open("sda")
@@ -221,7 +221,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_in_text("body", "Virtual machines")
         self.waitVmRow("subVmTest1")
 
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         self.goToVmPage("subVmTest1")
 
@@ -537,7 +537,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         self.login_and_go("/machines")
         b.wait_in_text("body", "Virtual machines")
 
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
 
         if "debian" not in m.image and "ubuntu" not in m.image:
@@ -591,7 +591,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         self.login_and_go("/machines")
         b.wait_in_text("body", "Virtual machines")
 
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
 
         self.VMAddDiskDialog(
@@ -651,7 +651,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         self.login_and_go("/machines")
         b.wait_in_text("body", "Virtual machines")
 
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
 
         partition = os.path.basename(dev) + "1"
@@ -709,7 +709,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         self.login_and_go("/machines")
         b.wait_in_text("body", "Virtual machines")
 
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
 
         transient_targets.append(get_next_free_target(used_targets)[-1])
@@ -786,7 +786,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         if "debian" not in m.image and "ubuntu" not in m.image:
             # Run VM
             b.click("#vm-subVmTest1-run")
-            b.wait_in_text("#vm-subVmTest1-state", "Running")
+            b.wait_in_text("#vm-subVmTest1-system-state", "Running")
             # Test disk attachment to non-persistent VM
             m.execute("virsh undefine subVmTest1")
             self.VMAddDiskDialog(
@@ -838,7 +838,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         self.login_and_go("/machines")
         b.wait_in_text("body", "Virtual machines")
 
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
 
         # Using directory path for disk should create API failure
@@ -1060,7 +1060,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         wait(lambda: "login as 'cirros' user" in self.machine.execute(f"cat {args['logfile']}"), delay=3)
 
         # Test detaching non permanent disk of a running domain
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
 
         b.wait_visible("#vm-subVmTest1-disks-vdc-device")
@@ -1123,7 +1123,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         # Make sure that the VM booted normally before attempting to suspend it
         wait(lambda: "login as 'cirros' user" in m.execute(f"cat {args['logfile']}"), delay=3)
         m.execute("virsh suspend subVmTest1")
-        b.wait_in_text("#vm-subVmTest1-state", "Paused")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Paused")
         b.wait_attr("#delete-subVmTest1-disk-vde", "disabled", "")
         m.execute("virsh resume subVmTest1")
         wait(lambda: "login as 'cirros' user." in self.machine.execute(f"cat {args['logfile']}"), delay=3)

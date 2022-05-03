@@ -88,7 +88,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         b.wait_in_text("body", "Virtual machines")
         self.waitVmRow("subVmTest1")
 
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
         b.wait_in_text("#vm-subVmTest1-vcpus-count", "1")
 
@@ -110,10 +110,10 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
         # suspend/resume
         m.execute("virsh suspend subVmTest1")
-        b.wait_in_text("#vm-subVmTest1-state", "Paused")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Paused")
         # resume sometimes fails with "unable to execute QEMU command 'cont': Resetting the Virtual Machine is required"
         m.execute('virsh resume subVmTest1 || { virsh destroy subVmTest1 && virsh start subVmTest1; }')
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # Wait for the system to completely start
         wait(lambda: "login as 'cirros' user." in self.machine.execute(f"cat {args['logfile']}"), delay=3)
@@ -136,13 +136,13 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         self.machine.execute(f"echo '' > {args['logfile']}")
         self.performAction("subVmTest1", "reboot")
         wait(lambda: "reboot: Power down" in self.machine.execute(f"cat {args['logfile']}"), delay=3)
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # force reboot
         self.machine.execute(f"echo '' > {args['logfile']}")
         self.performAction("subVmTest1", "forceReboot")
         wait(lambda: "Initializing cgroup subsys" in self.machine.execute(f"cat {args['logfile']}"), delay=3)
-        b.wait_in_text("#vm-subVmTest1-state", "Running")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # shut off
         self.performAction("subVmTest1", "forceOff")
@@ -155,7 +155,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         m.execute("virsh dumpxml subVmTest1 > /tmp/subVmTest1.xml")
         m.execute("virsh start {0} && virsh undefine {0}".format("subVmTest1"))
         b.wait_visible("div[data-vm-transient=\"true\"]")
-        self.performAction("subVmTest1", "forceOff", False)
+        self.performAction("subVmTest1", "forceOff", checkExpectedState=False)
         b.wait_in_text("#virtual-machines-listing .pf-c-empty-state", "No VM is running")
         m.execute("virsh define --file /tmp/subVmTest1.xml")
 
@@ -207,9 +207,9 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
         # Try to run subVmTest1 - it will fail because of inactive default network
         tryRunDomain(1, 'subVmTest1')
-        b.click('#vm-subVmTest1-state button:contains("view more")')
+        b.click('#vm-subVmTest1-system-state button:contains("view more")')
         b.wait_in_text(".pf-c-popover", "VM subVmTest1 failed to start")
-        b.click('#vm-subVmTest1-state button[aria-label=Close]')
+        b.click('#vm-subVmTest1-system-state button[aria-label=Close]')
 
         # Try to run subVmTest2
         tryRunDomain(2, 'subVmTest2')
@@ -399,7 +399,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         wait(lambda: "login as 'cirros' user" in self.machine.execute(f"cat {args['logfile']}"), delay=3)
 
         self.machine.execute(f"virsh -c qemu:///system suspend {name}")
-        b.wait_in_text(f"#vm-{name}-state", "Paused")
+        b.wait_in_text(f"#vm-{name}-system-state", "Paused")
         self.performAction(name, "delete")
         b.click(f"#vm-{name}-delete-modal-dialog button:contains(Delete)")
         self.waitVmRow(name, 'system', False)
@@ -453,7 +453,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         b.wait_visible(f"#vm-{name}-delete a.pf-m-disabled")
         b.click(f"#vm-{name}-forceOff")
         self.waitVmRow(name, 'system', False)
-        b.wait_not_present(f'#vm-{name}-state button:contains("view more")')
+        b.wait_not_present(f'#vm-{name}-system-state button:contains("view more")')
 
         # Delete a shut-off guest and verify the storage was removed
         name = "vm-shutoff"
