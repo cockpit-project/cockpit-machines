@@ -161,7 +161,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
         # start another one, should appear automatically
         self.createVm("subVmTest2")
-        b.wait_in_text("#vm-subVmTest2-state", "Running")
+        b.wait_in_text("#vm-subVmTest2-system-state", "Running")
         self.goToVmPage("subVmTest2")
         b.wait_in_text("#vm-subVmTest2-vcpus-count", "1")
         b.wait_in_text("#vm-subVmTest2-boot-order", "disk,network")
@@ -173,7 +173,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         # stop second VM, event handling should still work
         self.performAction("subVmTest2", "forceOff")
 
-        b.click("#vm-subVmTest2-run")
+        b.click("#vm-subVmTest2-system-run")
 
         b.set_input_text("#text-search", "subVmTest2")
         self.waitVmRow("subVmTest2")
@@ -200,22 +200,22 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         self.createVm("subVmTest3")
         m.execute("virsh destroy subVmTest2 && virsh destroy subVmTest3 && virsh net-destroy default")
 
-        def tryRunDomain(index, name):
+        def tryRunDomain(index, name, connection):
             self.waitVmRow(name)
 
-            b.click(f"#vm-{name}-run")
+            b.click(f"#vm-{name}-{connection}-run")
 
         # Try to run subVmTest1 - it will fail because of inactive default network
-        tryRunDomain(1, 'subVmTest1')
+        tryRunDomain(1, 'subVmTest1', 'system')
         b.click('#vm-subVmTest1-system-state button:contains("view more")')
         b.wait_in_text(".pf-c-popover", "VM subVmTest1 failed to start")
         b.click('#vm-subVmTest1-system-state button[aria-label=Close]')
 
         # Try to run subVmTest2
-        tryRunDomain(2, 'subVmTest2')
-        b.click('#vm-subVmTest2-state button:contains("view more")')
+        tryRunDomain(2, 'subVmTest2', 'system')
+        b.click('#vm-subVmTest2-system-state button:contains("view more")')
         b.wait_in_text(".pf-c-popover", "VM subVmTest2 failed to start")
-        b.click('#vm-subVmTest2-state button[aria-label=Close]')
+        b.click('#vm-subVmTest2-system-state button[aria-label=Close]')
 
     def testCloneSessionConnection(self):
         self.testClone(connectionName='session')
@@ -233,7 +233,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
         self.waitVmRow("subVmTest1", connectionName=connectionName)
 
-        self.performAction("subVmTest1", "clone")
+        self.performAction("subVmTest1", "clone", connectionName=connectionName)
 
         b.wait_text(".pf-c-modal-box__title-text", "Create a clone VM based on subVmTest1")
         b.click("footer button.pf-m-primary")
@@ -449,9 +449,9 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         args = self.createVm(name)
         m.execute(f"virsh undefine {name}")
         b.wait_visible(f"tr[data-row-id=vm-{name}-system][data-vm-transient=true]")
-        b.click(f"#vm-{name}-action-kebab button")
-        b.wait_visible(f"#vm-{name}-delete a.pf-m-disabled")
-        b.click(f"#vm-{name}-forceOff")
+        b.click(f"#vm-{name}-system-action-kebab button")
+        b.wait_visible(f"#vm-{name}-system-delete a.pf-m-disabled")
+        b.click(f"#vm-{name}-system-forceOff")
         self.waitVmRow(name, 'system', False)
         b.wait_not_present(f'#vm-{name}-system-state button:contains("view more")')
 

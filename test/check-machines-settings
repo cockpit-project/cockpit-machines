@@ -90,7 +90,7 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         # Check after boot
         # Run VM
-        b.click("#vm-subVmTest1-run")
+        b.click("#vm-subVmTest1-system-run")
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # Check VCPU count
@@ -136,7 +136,7 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         # Run VM - this ensures that the internal state is updated before we move on.
         # We need this here because we can't wait for UI updates after we open the modal dialog.
-        b.click("#vm-subVmTest1-run")
+        b.click("#vm-subVmTest1-system-run")
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # Wait for the VCPUs link to get new values before opening the dialog
@@ -258,7 +258,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.click("#cpu-config-dialog-apply")
         b.wait_not_present("#machines-cpu-type-modal")
         b.wait_in_text("#vm-subVmTest1-cpu-model .pf-c-description-list__text", "host")
-        b.click("#vm-subVmTest1-run")
+        b.click("#vm-subVmTest1-system-run")
         b.wait_in_text("#vm-subVmTest1-cpu-model .pf-c-description-list__text", "custom")
         # In the test ENV libvirt does not properly set the CPU model so we see a tooltip https://bugzilla.redhat.com/show_bug.cgi?id=1913337
         # b.wait_not_present("#cpu-tooltip")
@@ -421,7 +421,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.wait_attr("#vm-subVmTest1-memory-modal-memory", "value", "0")
 
         # Run VM
-        b.click("#vm-subVmTest1-run")
+        b.click("#vm-subVmTest1-system-run")
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         # Non-persistent VM doesn't have configurable memory
         m.execute("virsh undefine subVmTest1")
