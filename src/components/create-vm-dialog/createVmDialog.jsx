@@ -972,7 +972,7 @@ class CreateVmModal extends React.Component {
                 startVm
             };
 
-            const promise = domainCreate(vmParams).then(() => {
+            domainCreate(vmParams).then(() => {
                 if (this.state.storagePool === "NewVolume") {
                     const storagePool = storagePools.find(pool => pool.connectionName === this.state.connectionName && pool.name === "default");
                     if (storagePool)
@@ -985,17 +985,15 @@ class CreateVmModal extends React.Component {
                 });
             });
 
-            if (startVm) {
-                promise();
-            } else {
-                promise().then(() => cockpit.location.go(["vm"], {
+            close();
+
+            if (!startVm) {
+                cockpit.location.go(["vm"], {
                     ...cockpit.location.options,
                     name: vmName,
                     connection: this.state.connectionName
-                }));
+                });
             }
-
-            close();
         }
     }
 
