@@ -45,6 +45,7 @@ import {
     finishVmCreateInProgress,
     setVmCreateInProgress,
     setVmInstallInProgress,
+    updateImageDownloadProgress,
     clearVmUiState,
 } from '../components/create-vm-dialog/uiState.js';
 import {
@@ -53,6 +54,7 @@ import {
     fileDownload,
     getHostDevSourceObject,
     getNodeDevSource,
+    LIBVIRT_SYSTEM_CONNECTION,
     logDebug,
     units,
 } from '../helpers.js';
@@ -70,7 +72,9 @@ import {
 } from '../libvirt-xml-update.js';
 import { storagePoolRefresh } from './storagePool.js';
 import { snapshotGetAll } from './snapshot.js';
+import { downloadRhelImage, getAccessToken, getRhelImageUrl } from './rhel-images.js';
 import { call, Enum, timeout, resolveUiState } from './helpers.js';
+import { DOWNLOAD_AN_OS, LOCAL_INSTALL_MEDIA_SOURCE, needsRHToken } from '../components/create-vm-dialog/createVmDialogUtils.js';
 
 export const domainCanConsole = (vmState) => vmState == 'running';
 export const domainCanDelete = (vmState, vmId) => true;
@@ -250,6 +254,7 @@ export function domainCreate({
     connectionName,
     memorySize,
     os,
+    osVersion,
     profile,
     rootPassword,
     source,
@@ -262,6 +267,8 @@ export function domainCreate({
     userLogin,
     userPassword,
     vmName,
+    offlineToken,
+    loggedUser
 }) {
     // shows dummy vm  until we get vm from virsh (cleans up inProgress)
     setVmCreateInProgress(vmName, connectionName, { openConsoleTab: startVm });
@@ -274,7 +281,7 @@ export function domainCreate({
     if (connectionName === 'system')
         opts.superuser = 'try';
 
-    const args = JSON.stringify({
+    const args = {
         connectionName,
         memorySize,
         os,
@@ -291,21 +298,57 @@ export function domainCreate({
         userLogin,
         userPassword,
         vmName,
-    });
+    };
 
     logDebug(`CREATE_VM(${vmName}): install_machine.py '${args}'`);
 
-    return cockpit
-            .spawn([pythonPath, "--", "-", args], opts)
-            .input(installVmScript)
-            .then(() => {
-                finishVmCreateInProgress(vmName, connectionName);
-                clearVmUiState(vmName, connectionName);
-            })
-            .fail(ex => {
-                clearVmUiState(vmName, connectionName); // inProgress cleanup
-                console.info(`spawn 'vm creation' returned error: "${JSON.stringify(ex)}"`);
-            });
+    const tryDownloadRhelImage = () => {
+        if (sourceType == DOWNLOAD_AN_OS && needsRHToken(os)) {
+            let arch;
+            let accessToken;
+            const options = { err: "message" };
+            if (connectionName === "system")
+                options.superuser = "try";
+
+            return cockpit.spawn(['uname', '-m'], options)
+                    .then(out => {
+                        arch = out.trim();
+
+                        return getAccessToken(offlineToken);
+                    })
+                    .then(out => {
+                        accessToken = out.trim();
+                        return getRhelImageUrl(accessToken, osVersion, arch);
+                    })
+                    .then(out => {
+                        const isSystem = connectionName === LIBVIRT_SYSTEM_CONNECTION;
+                        const outObj = JSON.parse(out);
+                        const url = outObj.url;
+                        const filename = outObj.filename;
+                        const downloadDir = isSystem ? "/var/lib/libvirt/images/" : loggedUser.home + "/.local/share/libvirt/images/";
+                        args.sourceType = LOCAL_INSTALL_MEDIA_SOURCE;
+                        args.source = downloadDir + filename;
+
+                        let buffer = "";
+                        return downloadRhelImage(accessToken, url, filename, downloadDir, isSystem)
+                                .stream(progress => {
+                                    buffer += progress;
+                                    const chunks = buffer.split("\n");
+                                    buffer = chunks.pop();
+
+                                    if (chunks.length > 0)
+                                        updateImageDownloadProgress(vmName, connectionName, chunks.pop());
+                                });
+                    });
+        } else {
+            return Promise.resolve();
+        }
+    };
+
+    return tryDownloadRhelImage()
+            .then(() => cockpit.spawn([pythonPath, "--", "-", JSON.stringify(args)], opts).input(installVmScript))
+            .then(() => finishVmCreateInProgress(vmName, connectionName))
+            .finally(() => clearVmUiState(vmName, connectionName));
 }
 
 export function domainCreateFilesystem({ connectionName, objPath, vmName, source, target, xattr }) {

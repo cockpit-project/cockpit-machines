@@ -17,7 +17,7 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { useState, useEffect } from 'react';
-import { AlertGroup, Button } from '@patternfly/react-core';
+import { AlertGroup, Button, Progress, ProgressMeasureLocation } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { superuser } from "superuser.js";
 import cockpit from 'cockpit';
@@ -241,18 +241,19 @@ class AppActive extends React.Component {
                                      }
                                      icon={ExclamationCircleIcon} />
                 </>);
-            }
-
-            if (vm.createInProgress) {
+            } else if (vm.createInProgress) {
                 return (<>
                     {allNotifications}
-                    <EmptyStatePanel title={ cockpit.format(_("Creating VM $0"), cockpit.location.options.name) }
+                    <EmptyStatePanel title={cockpit.format(vm.downloadProgress ? _("Downloading image for VM $0") : _("Creating VM $0"), cockpit.location.options.name)}
                                      action={
                                          <Button variant="link"
                                                  onClick={() => cockpit.location.go(["vms"])}>
                                              {_("Go to VMs list")}
                                          </Button>
                                      }
+                                     paragraph={vm.downloadProgress && <Progress aria-label={_("Download progress")}
+                                                                                 value={Number(vm.downloadProgress)}
+                                                                                 measureLocation={ProgressMeasureLocation.outside} />}
                                      loading />
                 </>);
             }

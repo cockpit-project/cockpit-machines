@@ -141,3 +141,7 @@ export function correctSpecialCases(os) {
 
     return os;
 }
+
+export function needsRHToken(osName) {
+    return osName.startsWith("rhel");
+}

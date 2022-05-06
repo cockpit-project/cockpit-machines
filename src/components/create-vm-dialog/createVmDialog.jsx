@@ -28,10 +28,11 @@ import {
     Select as PFSelect, SelectOption, SelectVariant,
     Tabs, Tab, TabTitleText,
     TextInput,
-    Button, Tooltip
+    Button, Tooltip, TextArea
 } from '@patternfly/react-core';
-import { DialogsContext } from 'dialogs.jsx';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
+import { DialogsContext } from 'dialogs.jsx';
 import cockpit from 'cockpit';
 import store from "../../store.js";
 import { MachinesConnectionSelector } from '../common/machinesConnectionSelector.jsx';
@@ -69,6 +70,7 @@ import {
     correctSpecialCases,
     filterReleaseEolDates,
     getOSStringRepresentation,
+    needsRHToken,
 } from "./createVmDialogUtils.js";
 import { domainCreate } from '../../libvirtApi/domain.js';
 import { storagePoolRefresh } from '../../libvirtApi/storagePool.js';
@@ -257,7 +259,7 @@ const NameRow = ({ vmName, suggestedVmName, onValueChanged, validationFailed }) 
     );
 };
 
-const SourceRow = ({ connectionName, source, sourceType, networks, nodeDevices, os, osInfoList, cloudInitSupported, downloadOSSupported, onValueChanged, validationFailed }) => {
+const SourceRow = ({ connectionName, source, sourceType, networks, nodeDevices, os, osInfoList, offlineToken, cloudInitSupported, downloadOSSupported, onValueChanged, validationFailed }) => {
     let installationSource;
     let installationSourceId;
     let installationSourceWarning;
@@ -364,11 +366,18 @@ const SourceRow = ({ connectionName, source, sourceType, networks, nodeDevices, 
                              validated={validationStateSource}>
                     {installationSource}
                 </FormGroup>
-                : <OSRow os={os}
-                         osInfoList={osInfoList.filter(os => os.treeInstallable)}
+                : <>
+                    <OSRow os={os}
+                         osInfoList={osInfoList.filter(os => os.treeInstallable || (needsRHToken(os.shortId) && !os.version.endsWith("unknown")))}
                          onValueChanged={onValueChanged}
                          isLoading={false}
-                         validationFailed={validationFailed} />}
+                         validationFailed={validationFailed} />
+                    {os && needsRHToken(os.shortId) &&
+                        <OfflineTokenRow
+                            offlineToken={offlineToken}
+                            onValueChanged={onValueChanged}
+                            validationFailed={validationFailed} />}
+                </>}
         </>
     );
 };
@@ -455,6 +464,30 @@ class OSRow extends React.Component {
         );
     }
 }
+
+const OfflineTokenRow = ({ offlineToken, onValueChanged, validationFailed }) => {
+    const validationStateToken = validationFailed.offlineToken ? 'error' : 'default';
+
+    return (
+        <FormGroup label={_("Offline token")} fieldId="offline-token"
+                   id="offline-token-group"
+                   helperTextInvalid={validationFailed.offlineToken}
+                   validated={validationStateToken}
+                   helperText={<span>
+                       <a href="https://access.redhat.com/management/api" target="_blank" rel="noopener noreferrer">
+                           <ExternalLinkAltIcon className="pf-u-mr-xs" />
+                           {_("Get a new RHSM token.")}
+                       </a>
+                       {" " + _(" Then copy the token and paste it above.")}
+                   </span>}>
+            <TextArea id='offline-token'
+                      validated={validationStateToken}
+                      minLength={1}
+                      value={offlineToken || ''}
+                      onChange={value => onValueChanged('offlineToken', value)} />
+        </FormGroup>
+    );
+};
 
 const UnattendedRow = ({
     onValueChanged,
@@ -790,6 +823,7 @@ class CreateVmModal extends React.Component {
             userPassword: '',
             rootPassword: '',
             userLogin: '',
+            offlineToken: '',
         };
         this.onCreateClicked = this.onCreateClicked.bind(this);
         this.onValueChanged = this.onValueChanged.bind(this);
@@ -953,7 +987,7 @@ class CreateVmModal extends React.Component {
 
     onCreateClicked(startVm) {
         const Dialogs = this.context;
-        const { onAddErrorNotification, osInfoList, nodeMaxMemory, vms } = this.props;
+        const { onAddErrorNotification, osInfoList, nodeMaxMemory, vms, loggedUser } = this.props;
         const { storagePools } = store.getState();
         const vmName = isEmpty(this.state.vmName.trim()) ? this.state.suggestedVmName : this.state.vmName;
 
@@ -973,6 +1007,7 @@ class CreateVmModal extends React.Component {
                 source: this.state.source,
                 sourceType: this.state.sourceType,
                 os: this.state.os ? this.state.os.shortId : 'auto',
+                osVersion: this.state.os && this.state.os.version,
                 profile: this.state.profile,
                 memorySize: convertToUnit(this.state.memorySize, this.state.memorySizeUnit, units.MiB),
                 storageSize: convertToUnit(this.state.storageSize, this.state.storageSizeUnit, units.GiB),
@@ -982,7 +1017,9 @@ class CreateVmModal extends React.Component {
                 userPassword: this.state.userPassword,
                 rootPassword: this.state.rootPassword,
                 userLogin: this.state.userLogin,
-                startVm
+                startVm,
+                offlineToken: this.state.offlineToken,
+                loggedUser
             };
 
             domainCreate(vmParams).then(() => {
@@ -992,6 +1029,7 @@ class CreateVmModal extends React.Component {
                         storagePoolRefresh({ connectionName: storagePool.connectionName, objPath: storagePool.id });
                 }
             }, (exception) => {
+                console.error(`spawn 'vm creation' returned error: "${JSON.stringify(exception)}"`);
                 onAddErrorNotification({
                     text: cockpit.format(_("Creation of VM $0 failed"), vmParams.vmName),
                     detail: exception.message.split(/Traceback(.+)/)[0],
@@ -1053,6 +1091,7 @@ class CreateVmModal extends React.Component {
                 sourceType={this.state.sourceType}
                 os={this.state.os}
                 osInfoList={this.props.osInfoList}
+                offlineToken={this.state.offlineToken}
                 cloudInitSupported={this.props.cloudInitSupported}
                 downloadOSSupported={this.props.downloadOSSupported}
                 onValueChanged={this.onValueChanged}
