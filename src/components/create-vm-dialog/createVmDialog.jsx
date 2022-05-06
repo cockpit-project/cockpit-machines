@@ -39,7 +39,6 @@ import {
     digitFilter,
     convertToUnit,
     getBestUnit,
-    timeoutedPromise,
     toReadableNumber,
     units,
     getStorageVolumesUsage,
@@ -65,7 +64,6 @@ import { storagePoolRefresh } from '../../libvirtApi/storagePool.js';
 import { PasswordFormFields, password_quality } from 'cockpit-components-password.jsx';
 
 import './createVmDialog.scss';
-import VMS_CONFIG from '../../config.js';
 
 const _ = cockpit.gettext;
 
@@ -974,25 +972,21 @@ class CreateVmModal extends React.Component {
                 startVm
             };
 
-            const promise = timeoutedPromise(
-                domainCreate(vmParams),
-                VMS_CONFIG.LeaveCreateVmDialogVisibleAfterSubmit,
-                () => {
-                    close();
+            const promise = domainCreate(vmParams).then(() => {
+                close();
 
-                    if (this.state.storagePool === "NewVolume") {
-                        const storagePool = storagePools.find(pool => pool.connectionName === this.state.connectionName && pool.name === "default");
-                        if (storagePool)
-                            storagePoolRefresh({ connectionName: storagePool.connectionName, objPath: storagePool.id });
-                    }
-                },
-                (exception) => {
-                    onAddErrorNotification({
-                        text: cockpit.format(_("Creation of VM $0 failed"), vmParams.vmName),
-                        detail: exception.message.split(/Traceback(.+)/)[0],
-                    });
-                    close();
+                if (this.state.storagePool === "NewVolume") {
+                    const storagePool = storagePools.find(pool => pool.connectionName === this.state.connectionName && pool.name === "default");
+                    if (storagePool)
+                        storagePoolRefresh({ connectionName: storagePool.connectionName, objPath: storagePool.id });
+                }
+            }, (exception) => {
+                onAddErrorNotification({
+                    text: cockpit.format(_("Creation of VM $0 failed"), vmParams.vmName),
+                    detail: exception.message.split(/Traceback(.+)/)[0],
                 });
+                close();
+            });
 
             if (startVm) {
                 return promise;
