@@ -346,53 +346,6 @@ export function storagePoolId(poolName, connectionName) {
     return `pool-${poolName}-${connectionName}`;
 }
 
-/**
- * Let promise resolve itself in specified delay or force resolve it with 0 arguments
- *
- * @param promise
- * @param delay of timeout in ms
- * @param afterTimeoutHandler called if promise succeeded before timeout expired
- * or timeout expired before promise returned
- * @param afterTimeoutFailHandler called only if promise failed after timeout
- * @returns new promise
- */
-export function timeoutedPromise(promise, delay, afterTimeoutHandler, afterTimeoutFailHandler) {
-    const deferred = cockpit.defer();
-    let done = false;
-
-    const timer = window.setTimeout(() => {
-        if (!done) {
-            deferred.resolve();
-            done = true;
-            afterTimeoutHandler();
-        }
-    }, delay);
-
-    promise.then(function(/* ... */) {
-        if (!done) {
-            done = true;
-            window.clearTimeout(timer);
-            deferred.resolve.apply(deferred, arguments);
-        }
-        if (typeof afterTimeoutHandler === 'function') {
-            afterTimeoutHandler.apply(afterTimeoutFailHandler, arguments);
-        }
-    });
-
-    promise.catch(function(/* ... */) {
-        if (!done) {
-            done = true;
-            window.clearTimeout(timer);
-            deferred.reject.apply(deferred, arguments);
-        }
-        if (typeof afterTimeoutFailHandler === 'function') {
-            afterTimeoutFailHandler.apply(afterTimeoutFailHandler, arguments);
-        }
-    });
-
-    return deferred.promise;
-}
-
 export function findMatchingNodeDevices(hostdev, nodeDevices) {
     let nodeDevs = [];
     switch (hostdev.type) {
