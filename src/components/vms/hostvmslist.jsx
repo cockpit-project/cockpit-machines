@@ -45,7 +45,9 @@ import "./hostvmslist.scss";
 const VmState = ({ vm, dismissError }) => {
     let state = null;
 
-    if (vm.installInProgress) {
+    if (vm.downloadProgress) {
+        state = cockpit.format(_("Downloading: $0%"), vm.downloadProgress);
+    } else if (vm.installInProgress) {
         state = _("Creating VM installation");
     } else if (vm.createInProgress) {
         state = _("Creating VM");

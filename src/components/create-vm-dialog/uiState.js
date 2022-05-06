@@ -58,10 +58,20 @@ export function setVmInstallInProgress(original_vm, settings) {
     setupCleanupTimeout(original_vm.name, original_vm.connectionName, INSTALL_TIMEOUT);
 }
 
+export function updateImageDownloadProgress(name, connectionName, downloadProgress, settings) {
+    const vm = Object.assign({}, {
+        name,
+        connectionName,
+        downloadProgress,
+    }, settings);
+    store.dispatch(updateUiVm(vm));
+}
+
 export function finishVmCreateInProgress(name, connectionName, settings) {
     const vm = Object.assign({}, {
         name,
         connectionName,
+        downloadProgress: undefined,
         createInProgress: false,
     }, settings);
     store.dispatch(updateUiVm(vm));
