@@ -973,8 +973,6 @@ class CreateVmModal extends React.Component {
             };
 
             const promise = domainCreate(vmParams).then(() => {
-                close();
-
                 if (this.state.storagePool === "NewVolume") {
                     const storagePool = storagePools.find(pool => pool.connectionName === this.state.connectionName && pool.name === "default");
                     if (storagePool)
@@ -985,19 +983,19 @@ class CreateVmModal extends React.Component {
                     text: cockpit.format(_("Creation of VM $0 failed"), vmParams.vmName),
                     detail: exception.message.split(/Traceback(.+)/)[0],
                 });
-                close();
             });
 
             if (startVm) {
-                return promise;
+                promise();
             } else {
-                return promise
-                        .then(() => cockpit.location.go(["vm"], {
-                            ...cockpit.location.options,
-                            name: vmName,
-                            connection: this.state.connectionName
-                        }));
+                promise().then(() => cockpit.location.go(["vm"], {
+                    ...cockpit.location.options,
+                    name: vmName,
+                    connection: this.state.connectionName
+                }));
             }
+
+            close();
         }
     }
 

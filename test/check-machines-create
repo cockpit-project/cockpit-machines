@@ -1145,8 +1145,6 @@ vnc_password= "{vnc_passwd}"
 
             error_location = ".pf-c-modal-box__footer div.pf-c-alert"
 
-            b.wait_visible(".pf-c-modal-box__footer button.pf-m-in-progress")
-            b.wait_not_present(".pf-c-modal-box__footer button.pf-m-in-progress")
             try:
                 with b.wait_timeout(10):
                     b.wait_visible(error_location)
