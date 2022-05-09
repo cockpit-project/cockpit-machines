@@ -1337,7 +1337,14 @@ vnc_password= "{vnc_passwd}"
             init_state = "Creating VM installation" if dialog.create_and_run else "Creating VM"
             second_state = "Running" if dialog.create_and_run else "Shut off"
 
-            self._assertVmStates(dialog.name, dialog.connection, init_state, second_state)
+            # Getting rid of timeouts and unecessary waiting at VM creation dialog at
+            # https://github.com/cockpit-project/cockpit-machines/pull/699
+            # caused the VM creation process to get faster and sometimes tests might
+            # not catch "Creating VM" state.
+            # Therefore, test only for such states for VM which are created and
+            # STARTED IMMEDIATELLY as that causes "creating VM" stage to take longer time.
+            if dialog.create_and_run:
+                self._assertVmStates(dialog.name, dialog.connection, init_state, second_state)
             b.wait_not_present("#create-vm-dialog")
 
         def _tryCreate(self, dialog, generated_name=None):
