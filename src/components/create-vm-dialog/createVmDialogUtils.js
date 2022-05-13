@@ -26,6 +26,7 @@ import autoDetectOSScript from 'raw-loader!./autoDetectOS.py';
 
 const ACCEPT_RELEASE_DATES_AFTER = getTodayYearShifted(-3);
 const ACCEPT_EOL_DATES_AFTER = getTodayYearShifted(-1);
+const RHSM_TOKEN = "rhsm-offline-token";
 
 export const URL_SOURCE = 'url';
 export const LOCAL_INSTALL_MEDIA_SOURCE = 'file';
@@ -152,4 +153,16 @@ export function isDownloadableOs(os) {
         !os.version.endsWith("unknown") &&
         // RHSM API supports only rhel versions >= 8: https://access.redhat.com/management/api/rhsm#/images/listImageDownloadsByVersionArch
         (os.version.localeCompare("8.0", undefined, { numeric: true, sensitivity: 'base' }) >= 0));
+}
+
+export function saveOfflineToken(offlineToken) {
+    return localStorage.setItem(RHSM_TOKEN, offlineToken);
+}
+
+export function loadOfflineToken(setToken) {
+    return setToken(localStorage.getItem(RHSM_TOKEN));
+}
+
+export function removeOfflineToken() {
+    return localStorage.removeItem(RHSM_TOKEN);
 }
