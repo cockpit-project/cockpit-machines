@@ -74,6 +74,9 @@ import {
     getOSStringRepresentation,
     needsRHToken,
     isDownloadableOs,
+    loadOfflineToken,
+    removeOfflineToken,
+    saveOfflineToken,
 } from "./createVmDialogUtils.js";
 import { domainCreate } from '../../libvirtApi/domain.js';
 import { storagePoolRefresh } from '../../libvirtApi/storagePool.js';
@@ -476,12 +479,13 @@ class OSRow extends React.Component {
 // Debounce will trigger "getAccessToken" only if >500ms has passed since user changed offlineToken
 // Since "getAccessToken" basically triggers HTTP request, this prevents user from triggering dozens of HTTP requests
 // while typing an offline token
-const getAccessTokenDebounce = debounce(500, (offlineToken, onValueChanged, setValidationState, validationStates) => {
+const getAccessTokenDebounce = debounce(500, (offlineToken, onValueChanged, setValidationState, validationStates, saveOfflineToken) => {
     getAccessToken(offlineToken)
             .then(out => {
                 const accessToken = out.trim();
                 onValueChanged("accessToken", accessToken);
                 setValidationState(validationStates.SUCCESS);
+                saveOfflineToken(offlineToken);
             })
             .catch(ex => {
                 console.error(`Offline token validation failed: "${JSON.stringify(ex)}"`);
@@ -517,6 +521,16 @@ const OfflineTokenRow = ({ offlineToken, onValueChanged, formValidationFailed })
                 </FlexItem>
             </Flex>,
         },
+        EXPIRED: {
+            option: "default",
+            message: <Flex id="token-helper-message">
+                <FlexItem grow={{ default: 'grow' }}>{_("Old token expired") + " "}</FlexItem>
+                <FlexItem>
+                    { link }
+                    {" " + _("Then copy and paste it above.")}
+                </FlexItem>
+            </Flex>,
+        },
         SUCCESS: {
             option: "success",
             message: _("Valid token"),
@@ -524,6 +538,35 @@ const OfflineTokenRow = ({ offlineToken, onValueChanged, formValidationFailed })
     };
 
     const [validationState, setValidationState] = useState(validationStates.DEFAULT);
+    const [disabled, setDisabled] = useState(false);
+
+    useEffect(() => {
+        loadOfflineToken((token) => {
+            if (token) {
+                onValueChanged("offlineToken", token);
+                setDisabled(true);
+                setValidationState(validationStates.INPROGRESS);
+                getAccessToken(token)
+                        .then(out => {
+                            const accessToken = out.trim();
+                            setDisabled(false);
+                            onValueChanged("accessToken", accessToken);
+                            setValidationState(validationStates.SUCCESS);
+                        })
+                        .catch(ex => {
+                            if (ex.message && ex.message.includes("400")) // RHSM API returns '400' if token is not valid
+                                setValidationState(validationStates.EXPIRED);
+                            else
+                                setValidationState(validationStates.FAILED);
+
+                            onValueChanged("offlineToken", "");
+                            removeOfflineToken();
+                            setDisabled(false);
+                            console.info(`Could not validate saved offline token from localStorage: "${JSON.stringify(ex)}"`);
+                        });
+            }
+        });
+    }, []);
 
     const setOfflineTokenHelper = (offlineToken) => {
         onValueChanged("offlineToken", offlineToken);
@@ -536,7 +579,7 @@ const OfflineTokenRow = ({ offlineToken, onValueChanged, formValidationFailed })
             onValueChanged("accessToken", "");
         } else {
             setValidationState(validationStates.INPROGRESS);
-            getAccessTokenDebounce(offlineToken, onValueChanged, setValidationState, validationStates);
+            getAccessTokenDebounce(offlineToken, onValueChanged, setValidationState, validationStates, saveOfflineToken);
         }
     };
 
@@ -548,6 +591,7 @@ const OfflineTokenRow = ({ offlineToken, onValueChanged, formValidationFailed })
                    helperTextInvalid={formValidationFailed.offlineToken || (validationState.option === "error" && validationState.message)}>
             <TextArea id="offline-token"
                       validated={formValidationFailed.offlineToken ? "error" : validationState.option}
+                      disabled={disabled}
                       minLength={1}
                       value={offlineToken || ""}
                       onChange={setOfflineTokenHelper} />

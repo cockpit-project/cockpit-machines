@@ -756,6 +756,7 @@ vnc_password= "{vnc_passwd}"
                      check_script_finished=True,
                      connection="system",
                      offline_token=None,
+                     offline_token_autofilled=True,
                      pixel_test_tag=None):
 
             TestMachinesCreate.VmDialog.vmId += 1  # This variable is static - don't use self here
@@ -802,6 +803,7 @@ vnc_password= "{vnc_passwd}"
             self.connection = connection
             self.name_generated = name_generated
             self.offline_token = offline_token
+            self.offline_token_autofilled = offline_token_autofilled
 
             self.pixel_test_tag = pixel_test_tag
 
@@ -1126,7 +1128,10 @@ vnc_password= "{vnc_passwd}"
                 b.wait_attr("#os-select-group input", "value", self.expected_os_name)
 
             if self.sourceType == "os" and self.os_name in [TestMachinesCreate.TestCreateConfig.RHEL_8_1, TestMachinesCreate.TestCreateConfig.RHEL_8_2]:
-                b.set_input_text("#offline-token", self.offline_token)
+                if not self.offline_token_autofilled:
+                    b.set_input_text("#offline-token", self.offline_token)
+                b.wait_in_text("#offline-token", self.offline_token)
+                b.wait_in_text("#offline-token-helper", "Valid")
 
             if self.sourceType != 'disk_image':
                 if not self.expected_storage_size:
@@ -1690,7 +1695,8 @@ vnc_password= "{vnc_passwd}"
             b.click("#os-select-group > div button")
             b.click(f"#os-select li:contains('{dialog.os_name}') button")
             b.wait_attr("#os-select-group input", "value", dialog.os_name)
-            b.set_input_text("#offline-token", dialog.offline_token)
+            if not dialog.offline_token_autofilled:
+                b.set_input_text("#offline-token", dialog.offline_token)
 
             b.wait_visible("#token-helper-message")
             b.wait_in_text("#token-helper-message", error_msg)
@@ -1979,6 +1985,7 @@ vnc_password= "{vnc_passwd}"
                                                                           os_name=config.RHEL_8_1,
                                                                           os_short_id=config.RHEL_8_1_SHORTID,
                                                                           offline_token="invalid_token",
+                                                                          offline_token_autofilled=False,
                                                                           create_and_run=True),
                                               "Error",
                                               True)
@@ -1986,14 +1993,16 @@ vnc_password= "{vnc_passwd}"
         runner.checkDialogErrorTest(TestMachinesCreate.VmDialog(self, sourceType='os',
                                                                 os_name=config.RHEL_8_2,
                                                                 os_short_id=config.RHEL_8_2_SHORTID,
-                                                                offline_token="my_offline_token",
+                                                                offline_token="valid_token",
+                                                                offline_token_autofilled=False,
                                                                 create_and_run=True),
                                     ["No image available for RHEL 8.2"])
 
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='os',
                                                       os_name=config.RHEL_8_1,
                                                       os_short_id=config.RHEL_8_1_SHORTID,
-                                                      offline_token="my_offline_token",
+                                                      offline_token="valid_token",
+                                                      offline_token_autofilled=False,
                                                       create_and_run=False))
 
         m.execute("rm /var/lib/libvirt/images/rhel-8-1-boot.iso")
@@ -2001,20 +2010,30 @@ vnc_password= "{vnc_passwd}"
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='os',
                                                       os_name=config.RHEL_8_1,
                                                       os_short_id=config.RHEL_8_1_SHORTID,
-                                                      offline_token="my_offline_token",
+                                                      offline_token="valid_token",
+                                                      offline_token_autofilled=True,
                                                       create_and_run=True))
 
         # If run on different connection, the downloaded iso should be stored in ~/.local/share/libvirt/images/
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='os',
                                                       os_name=config.RHEL_8_1,
                                                       os_short_id=config.RHEL_8_1_SHORTID,
-                                                      offline_token="my_offline_token",
+                                                      offline_token="valid_token",
                                                       create_and_run=True,
                                                       connection="session"),
                           check_env_empty=False)
 
         # Check only RHEL >= 8 are available for download
         runner.checkRhelIsDownloadableTest(TestMachinesCreate.VmDialog(self))
+
+        # Change token saved at localStorage to imitate expiration of a token
+        b.call_js_func("localStorage.setItem", "rhsm-offline-token", "expired_token")
+        runner.checkDialogInvalidOfflineToken(TestMachinesCreate.VmDialog(self, sourceType='os',
+                                                                          os_name=config.RHEL_8_1,
+                                                                          os_short_id=config.RHEL_8_1_SHORTID,
+                                                                          offline_token_autofilled=True),
+                                              "expired",
+                                              False)
 
 
 if __name__ == '__main__':

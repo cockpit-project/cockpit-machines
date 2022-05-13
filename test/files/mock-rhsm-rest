@@ -15,13 +15,13 @@ class handler(BaseHTTPRequestHandler):
     def do_POST(self):
         data = self.rfile.read(int(self.headers['Content-Length']))
         m = self.match("/auth/realms/redhat-external/protocol/openid-connect/token")
-        if m and data == b'grant_type=refresh_token&client_id=rhsm-api&refresh_token=my_offline_token':
+        if m and data == b'grant_type=refresh_token&client_id=rhsm-api&refresh_token=valid_token':
             self.send_response(200)
             self.end_headers()
             self.wfile.write(b'{ "access_token": "my_access_token" }\n')
             return
 
-        self.send_response(404)
+        self.send_response(400)
         self.end_headers()
 
     def do_GET(self):
