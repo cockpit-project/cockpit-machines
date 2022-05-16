@@ -1428,9 +1428,15 @@ vnc_password= "{vnc_passwd}"
 
             vm_state = b.text(f"#vm-{name}-{connection}-state")
 
+            # check firmware configuration is available after importing and/or before installing VM
+            if vm_state != "Running" and (dialog.sourceType == "disk_image" or not dialog.create_and_run):
+                b.wait_visible(f"button#vm-{name}-firmware")
+            else:
+                b.wait_not_present(f"button#vm-{name}-firmware")
+
             # check bus type
             if dialog.storage_pool != "NoStorage":
-                self.browser.wait_in_text(f"#vm-{name}-disks-vda-bus", "virtio")
+                b.wait_in_text(f"#vm-{name}-disks-vda-bus", "virtio")
             # check memory
             # adjust to how cockpit_format_bytes() formats sizes > 1024 MiB -- this depends on how much RAM
             # the host has (less or more than 1 GiB), and thus needs to be dynamic
