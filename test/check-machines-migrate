@@ -90,46 +90,46 @@ class TestMachinesMigration(VirtualMachinesCase):
     def testSharedStorageMigration(self):
         self._testMigrationGeneric(False, False, None)
 
-    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-6", "rhel-9-0", "rhel-9-1", "centos-9-stream")
+    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-6", "rhel-8-7", "rhel-9-0", "rhel-9-1", "centos-9-stream")
     def testCopyStorageMigration(self):
         self._testMigrationGeneric(True, False, None)
 
     def testMoveTemporarilyMigration(self):
         self._testMigrationGeneric(False, True, None)
 
-    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-6", "rhel-9-0", "rhel-9-1", "centos-9-stream")
+    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-6", "rhel-8-7", "rhel-9-0", "rhel-9-1", "centos-9-stream")
     def testFailMigrationPoolNotFound(self):
         # Equivalent storage pool is not present on the destination
         self._testMigrationGeneric(True, False, "pool")
 
     # Only qemu 5.1.0 and above does checking for volumes compatibility during migration
     # See https://mail.gnu.org/archive/html/qemu-devel/2020-04/msg05559.html
-    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-6", "rhel-9-0", "rhel-9-1", "centos-9-stream")
+    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-6", "rhel-8-7", "rhel-9-0", "rhel-9-1", "centos-9-stream")
     def testFailMigrationVolumesNotCompatible(self):
         # Different sized volume already exists on destination
         self._testMigrationGeneric(True, False, "volume")
 
-    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-6", "rhel-9-0", "rhel-9-1", "centos-9-stream")
+    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-6", "rhel-8-7", "rhel-9-0", "rhel-9-1", "centos-9-stream")
     def testFailMigrationTCPPortClosed(self):
         # Ports for TCP transfer are closed
         self._testMigrationGeneric(True, False, "port_closed")
 
-    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-6", "rhel-9-0", "rhel-9-1", "centos-9-stream")
+    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-6", "rhel-8-7", "rhel-9-0", "rhel-9-1", "centos-9-stream")
     def testFailMigrationAuthentication(self):
         # No key authentication is set up
         self._testMigrationGeneric(True, False, "authentication")
 
-    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-6", "rhel-9-0", "rhel-9-1", "centos-9-stream")
+    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-6", "rhel-8-7", "rhel-9-0", "rhel-9-1", "centos-9-stream")
     def testFailMigrationUriIncorrect(self):
         # Incorrect uri inputted
         self._testMigrationGeneric(True, False, "uri")
 
-    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-6", "rhel-9-0", "rhel-9-1", "centos-9-stream")
+    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-6", "rhel-8-7", "rhel-9-0", "rhel-9-1", "centos-9-stream")
     def testFailMigrationDomainUnknown(self):
         # Destination domain name is not defined in /etc/hosts and is not resolvable
         self._testMigrationGeneric(True, False, "domain")
 
-    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-6", "rhel-9-0", "rhel-9-1", "centos-9-stream")
+    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-6", "rhel-8-7", "rhel-9-0", "rhel-9-1", "centos-9-stream")
     def testFailMigrationStopLibvirtd(self):
         # Libvirtd.service is not working on the destination
         self._testMigrationGeneric(True, False, "libvirtd")
@@ -163,7 +163,7 @@ class TestMachinesMigration(VirtualMachinesCase):
 
         b.set_checked("#temporary", temporary)
 
-        if self.machine.image in ["rhel-8-6", "rhel-9-0", "rhel-9-1", "centos-9-stream"]:
+        if self.machine.image.startswith("rhel") or self.machine.image.startswith("centos-9"):
             b.wait_not_present("#copy")
         else:
             if copy_storage:
