@@ -105,6 +105,7 @@ export const FirmwareLink = ({ vm, loaderElems, idPrefix }) => {
 
     let firmwareLinkWrapper;
     const hasInstallPhase = vm.metadata && vm.metadata.hasInstallPhase;
+    const sourceType = vm.metadata && vm.metadata.installSourceType;
     const labelForFirmware = labelForFirmwarePath(vm.loader, vm.arch);
     let currentFirmware;
 
@@ -117,8 +118,8 @@ export const FirmwareLink = ({ vm, loaderElems, idPrefix }) => {
     else
         currentFirmware = "BIOS";
 
-    /* If the VM hasn't an install phase then don't show a link, just the text  */
-    if (!domainCanInstall(vm.state, hasInstallPhase)) {
+    /* If the VM hasn't an install phase and the VM was not imported then don't show a link, just the text */
+    if (!domainCanInstall(vm.state, hasInstallPhase) && sourceType !== "disk_image") {
         firmwareLinkWrapper = <div id={`${idPrefix}-firmware`}>{currentFirmware}</div>;
     } else {
         const uefiPaths = getOVMFBinariesOnHost(loaderElems).filter(elem => elem !== undefined);
