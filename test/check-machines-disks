@@ -235,7 +235,8 @@ class TestMachinesDisks(VirtualMachinesCase):
         # Test domstats
         self.wait_for_disk_stats("subVmTest1", "vda")
         if b.is_present("#vm-subVmTest1-disks-vda-used"):
-            b.wait_in_text("#vm-subVmTest1-disks-vda-used", "0.0")
+            b.wait_in_text("#vm-subVmTest1-disks-vda-used", "GiB")
+            self.assertRegex(b.text("#vm-subVmTest1-disks-vda-used"), r"^(0|0\.0|0\.01) GiB$")
 
         # Test add disk by external action
         m.execute("qemu-img create -f raw /var/lib/libvirt/images/image3.img 128M")
