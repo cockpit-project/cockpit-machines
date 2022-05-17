@@ -1069,6 +1069,8 @@ vnc_password= "{vnc_passwd}"
 
             if self.sourceType == "cloud":
                 b.wait_visible("#create-and-edit[aria-disabled=true]")
+                b.mouse("#create-and-edit", "mouseenter")
+                b.wait_visible("#create-and-edit-disabled-tooltip")
             else:
                 b.wait_visible("#create-and-run[aria-disabled=false]")
 
