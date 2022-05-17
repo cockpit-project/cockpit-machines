@@ -16,11 +16,6 @@ if type firewall-cmd >/dev/null 2>&1; then
     firewall-cmd --add-service=cockpit --permanent
 fi
 
-# HACK: libvirtdbus permissions regressed in jammy: https://launchpad.net/bugs/1802005
-if grep -q 'UBUNTU_CODENAME=jammy' /usr/lib/os-release; then
-    adduser libvirtdbus libvirt
-fi
-
 # HACK: libvirt-daemon-driver-storage-core is missing unit enablement script: https://bugzilla.redhat.com/show_bug.cgi?id=2025644
 if grep -q 'PLATFORM_ID="platform:f35"' /usr/lib/os-release; then
     systemctl enable virtstoraged.socket
