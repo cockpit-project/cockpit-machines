@@ -22,6 +22,7 @@ import xml.etree.ElementTree as ET
 import os
 import sys
 import math
+import re
 from datetime import datetime
 
 # import Cockpit's machinery for test VMs and its browser test API
@@ -795,8 +796,10 @@ vnc_password= "{vnc_passwd}"
                 b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Create new virtual machine")
 
             if self.os_name is not None:
+                # remove os codename from os name, e.g.: 'bullseye' in 'Debian 11 (bullseye)'
+                query_result = re.sub(r" \(.*\)", "", self.os_name)
+                query_result = f'{query_result}'
                 # check if there is os present in osinfo-query because it can be filtered out in the UI
-                query_result = f'{self.os_name}'
                 # throws exception if grep fails
                 self.machine.execute(
                     r"osinfo-query os --fields=name | tail -n +3 | sed -e 's/\s*|\s*/|/g; s/^\s*//g; s/\s*$//g' | grep '{0}'".format(
