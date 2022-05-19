@@ -1256,40 +1256,7 @@ vnc_password= "{vnc_passwd}"
             self.machine.execute(" && ".join(cmds))
 
         def _setupMockFileServer(self):
-            self.machine.upload(["files/min-openssl-config.cnf", "files/mock-range-server.py"], self.test_obj.vm_tmpdir)
-            cmds = [
-                # Generate certificate for https server
-                f"cd {self.test_obj.vm_tmpdir}",
-                "openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -subj '/CN=archive.fedoraproject.org' -nodes -config {0}/min-openssl-config.cnf".format(
-                    self.test_obj.vm_tmpdir),
-                "cat cert.pem key.pem > server.pem"
-            ]
-
-            if self.machine.image.startswith("ubuntu") or self.machine.image.startswith("debian"):
-                cmds += [
-                    f"cp {self.test_obj.vm_tmpdir}/cert.pem /usr/local/share/ca-certificates/cert.crt",
-                    "update-ca-certificates"
-                ]
-            elif self.machine.image.startswith("arch"):
-                cmds += [
-                    f"cp {self.test_obj.vm_tmpdir}/cert.pem /etc/ca-certificates/trust-source/anchors/cert.pem",
-                    "update-ca-trust"
-                ]
-            else:
-                cmds += [
-                    f"cp {self.test_obj.vm_tmpdir}/cert.pem /etc/pki/ca-trust/source/anchors/cert.pem",
-                    "update-ca-trust"
-                ]
-            self.machine.execute(" && ".join(cmds))
-
-            # Run https server with range option support. QEMU uses range option
-            # see: https://lists.gnu.org/archive/html/qemu-devel/2013-06/msg02661.html
-            # or
-            # https://github.com/qemu/qemu/blob/master/block/curl.c
-            #
-            # and on certain distribution supports only https (not http)
-            # see: block-drv-ro-whitelist option in qemu-kvm.spec for certain distribution
-            server = self.machine.spawn("cd /var/lib/libvirt && exec python3 {0}/mock-range-server.py {0}/server.pem".format(self.test_obj.vm_tmpdir), "httpsserver")
+            server = setup_mock_server("mock-range-server.py", ["archive.fedoraproject.org"])
             self.test_obj.addCleanup(self.machine.execute, f"kill {server}")
 
         def _fakeOsDBInfo(self):
@@ -1328,8 +1295,6 @@ vnc_password= "{vnc_passwd}"
             else:
                 self.machine.execute(f"cp /boot/vmlinuz-{self.machine.execute('uname -r').rstrip()} {distro_tree_path}images/pxeboot/vmlinuz")
             self.machine.execute("chown -R 777 /var/lib/libvirt/pub")
-            self.test_obj.restore_file("/etc/hosts")
-            self.machine.execute('echo "127.0.0.1 archive.fedoraproject.org" >> /etc/hosts')
 
         def _assertVmStates(self, name, connection, before, after):
             b = self.browser

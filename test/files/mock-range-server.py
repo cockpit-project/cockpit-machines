@@ -86,5 +86,5 @@ class RangeHTTPRequestHandler(SimpleHTTPRequestHandler):
 
 if __name__ == '__main__':
     httpd = HTTPServer(('localhost', 443), RangeHTTPRequestHandler)
-    httpd.socket = ssl.wrap_socket(httpd.socket, certfile=sys.argv[1], server_side=True)
+    httpd.socket = ssl.wrap_socket(httpd.socket, certfile=sys.argv[1], keyfile=sys.argv[2], server_side=True)
     httpd.serve_forever()

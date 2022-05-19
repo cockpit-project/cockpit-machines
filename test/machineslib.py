@@ -228,6 +228,46 @@ class VirtualMachinesCaseHelpers:
         new_mac = ':'.join(parts)
         return new_mac
 
+    def setup_mock_server(self, mock_server_filename, subj_names):
+        self.machine.upload(["files/min-openssl-config.cnf", f"files/{mock_server_filename}"], self.vm_tmpdir)
+
+        self.restore_file("/etc/hosts")
+        for i, sub_name in enumerate(subj_names):
+            self.machine.write("/etc/hosts", f"127.0.0.1 {sub_name}\n", append=True)
+            self.machine.write(f"{self.vm_tmpdir}/min-openssl-config.cnf", f"DNS.{i + 2} = {sub_name}\n", append=True)
+
+        cmds = [
+            # Generate certificate for https server
+            f"cd {self.vm_tmpdir}",
+            f"openssl req -x509 -newkey rsa:4096 -nodes -keyout server.key -new -out server.crt -config {self.vm_tmpdir}/min-openssl-config.cnf -sha256 -days 365 -extensions dn"
+        ]
+
+        if self.machine.image.startswith("ubuntu") or self.machine.image.startswith("debian"):
+            cmds += [
+                f"cp {self.vm_tmpdir}/server.crt /usr/local/share/ca-certificates/cert.crt",
+                "update-ca-certificates"
+            ]
+        elif self.machine.image.startswith("arch"):
+            cmds += [
+                f"cp {self.vm_tmpdir}/server.crt /etc/ca-certificates/trust-source/anchors/server.crt",
+                "update-ca-trust"
+            ]
+        else:
+            cmds += [
+                f"cp {self.vm_tmpdir}/server.crt /etc/pki/ca-trust/source/anchors/server.crt",
+                "update-ca-trust"
+            ]
+        self.machine.execute(" && ".join(cmds))
+
+        # Run https server with range option support. QEMU uses range option
+        # see: https://lists.gnu.org/archive/html/qemu-devel/2013-06/msg02661.html
+        # or
+        # https://github.com/qemu/qemu/blob/master/block/curl.c
+        #
+        # and on certain distribution supports only https (not http)
+        # see: block-drv-ro-whitelist option in qemu-kvm.spec for certain distribution
+        return self.machine.spawn(f"cd /var/lib/libvirt && exec python3 {self.vm_tmpdir}/{mock_server_filename} {self.vm_tmpdir}/server.crt {self.vm_tmpdir}/server.key", "httpsserver")
+
 
 class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelpers, NetworkHelpers):
     def setUp(self):
