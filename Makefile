@@ -11,7 +11,6 @@ NODE_CACHE=cockpit-$(PACKAGE_NAME)-node-$(VERSION).tar.xz
 SPEC=$(RPM_NAME).spec
 APPSTREAMFILE=org.cockpit-project.$(PACKAGE_NAME).metainfo.xml
 VM_IMAGE=$(CURDIR)/test/images/$(TEST_OS)
-# stamp file to check if/when npm install ran
 # one example file in dist/ from webpack to check if that already ran
 WEBPACK_TEST=dist/manifest.json
 # one example file in pkg/lib to check if it was already checked out
