@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-16 03:26+0000\n"
-"PO-Revision-Date: 2022-05-16 16:18+0000\n"
-"Last-Translator: Luna Jernberg <bittin@reimu.nl>\n"
+"POT-Creation-Date: 2022-05-24 03:44+0000\n"
+"PO-Revision-Date: 2022-05-24 09:18+0000\n"
+"Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish <https://translate.fedoraproject.org/projects/cockpit-"
 "machines/main/sv/>\n"
 "Language: sv\n"
@@ -53,7 +53,7 @@ msgid ""
 "$0 is available for most operating systems. To install it, search for it in "
 "GNOME Software or run the following:"
 msgstr ""
-"$0 är tillgängligt till de flesta operativsystem.  Sök efter det i GNOME-"
+"$0 är tillgängligt till de flesta operativsystem. Sök efter det i GNOME-"
 "programvara för att installera det eller kör följande:"
 
 #: src/components/vm/overview/memoryModal.jsx:146
@@ -67,7 +67,7 @@ msgstr "$0 Nätverk"
 #: src/components/vm/vmUsageCard.jsx:49
 msgid "$0 vCPU"
 msgid_plural "$0 vCPUs"
-msgstr[0] "$0 vCPU:er"
+msgstr[0] "$0 vCPU"
 msgstr[1] "$0 vCPU:er"
 
 #: src/components/vm/overview/vcpuModal.jsx:253
@@ -83,13 +83,16 @@ msgid ""
 "A copy of the VM will run on the destination and will disappear when it is "
 "shut off. Meanwhile, the origin host keeps its copy of the VM configuration."
 msgstr ""
+"En kopia av VM:en kommer köra på destinationen och kommer försvinna när den "
+"stängs av. Under tiden behåller ursprungsvärden sitt exemplar av VM-"
+"konfigurationen."
 
+#: src/components/vm/disks/vmDisksCard.jsx:214
 #: src/components/vm/disks/diskEdit.jsx:112
-#: src/components/vm/disks/vmDisksCard.jsx:232
 msgid "Access"
 msgstr "Åtkomst"
 
-#: src/components/networks/network.jsx:165
+#: src/components/networks/network.jsx:166
 #: src/components/storagePools/storagePool.jsx:171
 msgid "Activate"
 msgstr "Aktivera"
@@ -98,10 +101,10 @@ msgstr "Aktivera"
 msgid "Activate the storage pool to administer volumes"
 msgstr "Aktivera lagringspoolen för att administrera volymer"
 
-#: src/components/vm/nics/nicAdd.jsx:196
-#: src/components/vm/disks/diskAdd.jsx:726
-#: src/components/vm/hostdevs/hostDevAdd.jsx:217
 #: src/components/networks/networkOverviewTab.jsx:241
+#: src/components/vm/disks/diskAdd.jsx:726
+#: src/components/vm/nics/nicAdd.jsx:196
+#: src/components/vm/hostdevs/hostDevAdd.jsx:217
 msgid "Add"
 msgstr "Lägg till"
 
@@ -114,8 +117,8 @@ msgstr "Lägg till en statisk DHCP-värdpost"
 msgid "Add disk"
 msgstr "Lägg till disk"
 
+#: src/components/vm/hostdevs/hostDevCard.jsx:149
 #: src/components/vm/hostdevs/hostDevAdd.jsx:233
-#: src/components/vm/hostdevs/hostDevCard.jsx:48
 msgid "Add host device"
 msgstr "Lägg till värdenhet"
 
@@ -123,7 +126,7 @@ msgstr "Lägg till värdenhet"
 msgid "Add network interface"
 msgstr "Lägg till nätverksport"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:102
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:107
 msgid "Add shared directory"
 msgstr "Lägg till delad katalog"
 
@@ -131,18 +134,19 @@ msgstr "Lägg till delad katalog"
 msgid "Add virtual network interface"
 msgstr "Lägg till virtuell nätverksport"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:108
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:113
 msgid "Adding shared directories is possible only when the guest is shut off"
 msgstr ""
+"Att lägga till delade kataloger är endast möjligt när gästen är avstängd"
 
-#: src/components/vm/disks/vmDisksCard.jsx:236
+#: src/components/vm/disks/vmDisksCard.jsx:218
 msgid "Additional"
 msgstr "Ytterligare"
 
-#: src/components/vm/nics/vmNicsCard.jsx:282
-#: src/components/vm/consoles/desktopConsole.jsx:47
 #: src/components/networks/networkOverviewTab.jsx:146
 #: src/components/networks/networkOverviewTab.jsx:166
+#: src/components/vm/consoles/desktopConsole.jsx:47
+#: src/components/vm/nics/vmNicsCard.jsx:282
 msgid "Address"
 msgstr "Adress"
 
@@ -153,12 +157,6 @@ msgstr "Adress"
 msgid "Address not within subnet"
 msgstr "Adress inte inom subnät"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:183
-msgid "After deleting the snapshot, all its captured content will be lost."
-msgstr ""
-"Efter att en ögonblicksbild raderats kommer allt dess fångade innehåll att "
-"gå förlorat."
-
 #: src/components/vms/hostvmslist.jsx:64 src/components/vms/hostvmslist.jsx:81
 msgid "All"
 msgstr "Alla"
@@ -168,6 +166,8 @@ msgid ""
 "All VM activity, including storage, will be temporary. This will result in "
 "data loss on the destination host."
 msgstr ""
+"All VM-aktivitet, inklusive lagring, kommer vara tillfällig. Detta kommer "
+"resultera i dataförlust på destinationsvärden."
 
 #: src/components/vm/disks/diskAdd.jsx:217
 msgid ""
@@ -177,7 +177,11 @@ msgstr ""
 "Tillåtna tecken: grundläggande latinska alfabet, siffror och begränsad "
 "skiljetecken (-, _, +, .)"
 
-#: src/components/vm/nics/nicAdd.jsx:88 src/components/vm/disks/diskAdd.jsx:110
+#: src/components/storagePools/storagePoolDelete.jsx:170
+msgid "Also delete all volumes inside this pool:"
+msgstr "Ta också bort alla volymer i denna pool:"
+
+#: src/components/vm/disks/diskAdd.jsx:110 src/components/vm/nics/nicAdd.jsx:88
 msgid "Always attach"
 msgstr "Anslut alltid"
 
@@ -197,6 +201,8 @@ msgid ""
 "Automated installs are only available when downloading an image or using "
 "cloud-init."
 msgstr ""
+"Automatiserade installationer är endast tillgängliga ner en avbild hämtas "
+"eller cloud-init används."
 
 #: src/components/networks/createNetworkDialog.jsx:166
 msgid "Automatic"
@@ -206,8 +212,8 @@ msgstr "Automatisk"
 msgid "Automation"
 msgstr "Automatisering"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:219
 #: src/components/networks/networkOverviewTab.jsx:123
+#: src/components/vm/overview/vmOverviewCard.jsx:219
 #: src/components/storagePools/storagePoolOverviewTab.jsx:71
 msgid "Autostart"
 msgstr "Starta automatiskt"
@@ -224,18 +230,19 @@ msgstr "Uppstartsordning"
 msgid "Boot order settings could not be saved"
 msgstr "Uppstartsordningen kunde inte sparas"
 
-#: src/components/vm/disks/diskEdit.jsx:87
-#: src/components/vm/disks/vmDisksCard.jsx:230
-#: src/components/vm/disks/diskAdd.jsx:197
-#: src/components/vm/hostdevs/hostDevAdd.jsx:89
-#: src/components/vm/hostdevs/hostDevCard.jsx:131
-#: src/components/vm/hostdevs/hostDevCard.jsx:149
 #: src/components/vm/overview/bootOrder.jsx:115
 #: src/components/vm/overview/bootOrder.jsx:127
 #: src/components/vm/overview/bootOrder.jsx:145
 #: src/components/vm/overview/bootOrder.jsx:148
 #: src/components/vm/overview/bootOrder.jsx:157
 #: src/components/vm/overview/bootOrder.jsx:165
+#: src/components/vm/disks/vmDisksCard.jsx:212
+#: src/components/vm/disks/diskAdd.jsx:197
+#: src/components/vm/disks/diskEdit.jsx:87
+#: src/components/vm/hostdevs/hostDevCard.jsx:103
+#: src/components/vm/hostdevs/hostDevCard.jsx:111
+#: src/components/vm/hostdevs/hostDevCard.jsx:248
+#: src/components/vm/hostdevs/hostDevAdd.jsx:89
 msgid "Bus"
 msgstr "Buss"
 
@@ -255,39 +262,39 @@ msgstr "CPU-inställningarna kunde inte sparas"
 msgid "CPU type"
 msgstr "CPU-typ"
 
-#: src/components/vm/disks/diskEdit.jsx:57
+#: src/components/vm/disks/vmDiskColumns.jsx:95
 #: src/components/vm/disks/diskAdd.jsx:186
-#: src/components/vm/disks/vmDiskColumns.jsx:82
+#: src/components/vm/disks/diskEdit.jsx:57
 msgid "Cache"
 msgstr "Cache"
 
-#: src/components/vm/deleteDialog.jsx:160
-#: src/components/vm/vmMigrateDialog.jsx:217
-#: src/components/vm/nics/nicEdit.jsx:175 src/components/vm/nics/nicAdd.jsx:199
-#: src/components/vm/vmRenameDialog.jsx:66
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:168
-#: src/components/vm/vmCloneDialog.jsx:78
-#: src/components/vm/disks/diskEdit.jsx:260
-#: src/components/vm/disks/diskAdd.jsx:729
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:145
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:71
-#: src/components/vm/hostdevs/hostDevAdd.jsx:223
-#: src/components/vm/overview/memoryModal.jsx:154
-#: src/components/vm/overview/bootOrder.jsx:326
+#: src/components/create-vm-dialog/createVmDialog.jsx:1174
+#: src/components/common/deleteResource.jsx:74
+#: src/components/networks/networkOverviewTab.jsx:244
+#: src/components/networks/createNetworkDialog.jsx:413
+#: src/components/vm/deleteDialog.jsx:163
 #: src/components/vm/overview/firmware.jsx:66
 #: src/components/vm/overview/vcpuModal.jsx:261
+#: src/components/vm/overview/memoryModal.jsx:154
+#: src/components/vm/overview/bootOrder.jsx:326
 #: src/components/vm/overview/cpuTypeModal.jsx:68
-#: src/components/create-vm-dialog/createVmDialog.jsx:1174
-#: src/components/networks/createNetworkDialog.jsx:413
-#: src/components/networks/networkOverviewTab.jsx:244
-#: src/components/storagePools/storagePoolDelete.jsx:189
-#: src/components/storagePools/createStoragePoolDialog.jsx:438
+#: src/components/vm/vmMigrateDialog.jsx:217
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:145
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:71
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:173
+#: src/components/vm/disks/diskAdd.jsx:729
+#: src/components/vm/disks/diskEdit.jsx:260
+#: src/components/vm/vmCloneDialog.jsx:78
+#: src/components/vm/vmRenameDialog.jsx:66
+#: src/components/vm/nics/nicAdd.jsx:199 src/components/vm/nics/nicEdit.jsx:175
+#: src/components/vm/hostdevs/hostDevAdd.jsx:223
+#: src/components/storagePools/storagePoolDelete.jsx:197
 #: src/components/storagePools/storageVolumeCreate.jsx:103
-#: src/components/common/deleteResource.jsx:74
+#: src/components/storagePools/createStoragePoolDialog.jsx:438
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: src/components/vm/disks/vmDisksCard.jsx:228
+#: src/components/vm/disks/vmDisksCard.jsx:210
 msgid "Capacity"
 msgstr "Kapacitet"
 
@@ -299,10 +306,10 @@ msgstr "Ändra uppstartsordning"
 msgid "Change firmware"
 msgstr "Ändra hårdvarufirmware"
 
-#: src/components/vm/nics/nicEdit.jsx:161
-#: src/components/vm/disks/diskEdit.jsx:244
-#: src/components/vm/overview/vcpuModal.jsx:183
 #: src/components/common/warningInactive.jsx:11
+#: src/components/vm/overview/vcpuModal.jsx:183
+#: src/components/vm/disks/diskEdit.jsx:244
+#: src/components/vm/nics/nicEdit.jsx:161
 msgid "Changes will take effect after shutting down the VM"
 msgstr "Ändringar kommer verkställas efter att VM:en stängs av"
 
@@ -311,7 +318,7 @@ msgstr "Ändringar kommer verkställas efter att VM:en stängs av"
 msgid "Choose an operating system"
 msgstr "Välj ett operativsystem"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:193
+#: src/components/vm/hostdevs/hostDevCard.jsx:197
 msgid "Class"
 msgstr "Klass"
 
@@ -333,7 +340,7 @@ msgstr "Stäng"
 msgid "Cloud base image"
 msgstr "Molnbasavbilder"
 
-#: src/components/common/deleteResource.jsx:79
+#: src/components/common/deleteResource.jsx:80
 msgid "Confirm this action"
 msgstr "Bekräfta den här åtgärden"
 
@@ -349,11 +356,11 @@ msgstr "Anslut med valfritt visarprogram för följande protokoll"
 msgid "Connecting"
 msgstr "Ansluter"
 
-#: src/components/networks/networkList.jsx:76
-#: src/components/networks/createNetworkDialog.jsx:41
-#: src/components/storagePools/storagePoolList.jsx:75
 #: src/components/vms/hostvmslist.jsx:137
 #: src/components/common/machinesConnectionSelector.jsx:33
+#: src/components/networks/createNetworkDialog.jsx:41
+#: src/components/networks/networkList.jsx:76
+#: src/components/storagePools/storagePoolList.jsx:75
 msgid "Connection"
 msgstr "Anslutning"
 
@@ -379,16 +386,25 @@ msgstr "Kunde inte återgå till ögonblicksbilden"
 msgid "Crashed"
 msgstr "Kraschad"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:142
 #: src/components/networks/createNetworkDialog.jsx:410
-#: src/components/storagePools/createStoragePoolDialog.jsx:435
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:142
 #: src/components/storagePools/storageVolumeCreate.jsx:100
+#: src/components/storagePools/createStoragePoolDialog.jsx:435
 msgid "Create"
 msgstr "Skapa"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:1223
 msgid "Create VM"
 msgstr "Skapa en VM"
+
+#: src/components/create-vm-dialog/createVmDialog.jsx:1242
+msgid "Create VM by importing a disk image of an existing VM installation"
+msgstr ""
+"Skapa en VM genom att importera en diskavbild av en befintlig VM-installation"
+
+#: src/components/create-vm-dialog/createVmDialog.jsx:1241
+msgid "Create VM from local or network installation medium"
+msgstr "Skapa en VM från ett lokalt eller nätverksinstallationsmedium"
 
 #: src/components/vm/vmCloneDialog.jsx:66
 msgid "Create a clone VM based on $0"
@@ -414,8 +430,8 @@ msgstr "Skapa en ny virtuell maskin"
 msgid "Create new volume"
 msgstr "Skapa ny volym"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:61
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:137
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:61
 msgid "Create snapshot"
 msgstr "Skapa en ögonblicksbild"
 
@@ -470,7 +486,7 @@ msgstr "Aktuell"
 msgid "Current allocation"
 msgstr "Nuvarande indelning"
 
-#: src/components/vm/overview/firmware.jsx:114
+#: src/components/vm/overview/firmware.jsx:115
 msgid "Custom firmware: $0"
 msgstr "Eget hårdvaruprogram: $0"
 
@@ -483,21 +499,29 @@ msgstr "Anpassad sökväg"
 msgid "DHCP Settings"
 msgstr "DHCP Inställningar"
 
-#: src/components/networks/network.jsx:161
+#: src/components/networks/network.jsx:162
 #: src/components/storagePools/storagePool.jsx:162
 msgid "Deactivate"
 msgstr "Avaktivera"
 
-#: src/components/vm/deleteDialog.jsx:157 src/components/vm/vmActions.jsx:379
-#: src/components/vm/vmActions.jsx:386 src/components/networks/network.jsx:143
-#: src/components/networks/network.jsx:145
-#: src/components/storagePools/storagePoolDelete.jsx:186
-#: src/components/storagePools/storagePoolDelete.jsx:221
-#: src/components/storagePools/storagePoolDelete.jsx:231
 #: src/components/common/deleteResource.jsx:71
-#: src/components/common/deleteResource.jsx:109
+#: src/components/common/deleteResource.jsx:110
+#: src/components/networks/network.jsx:144
+#: src/components/networks/network.jsx:146 src/components/vm/vmActions.jsx:379
+#: src/components/vm/vmActions.jsx:386 src/components/vm/deleteDialog.jsx:160
+#: src/components/storagePools/storagePoolDelete.jsx:194
+#: src/components/storagePools/storagePoolDelete.jsx:230
+#: src/components/storagePools/storagePoolDelete.jsx:240
 msgid "Delete"
 msgstr "Ta bort"
+
+#: src/components/vm/deleteDialog.jsx:155
+msgid "Delete $0 VM?"
+msgstr "Ta bort VM $0?"
+
+#: src/components/storagePools/storagePoolDelete.jsx:186
+msgid "Delete $0 storage pool?"
+msgstr "Ta bort lagringspoolen $0?"
 
 #: src/components/storagePools/storageVolumeDelete.jsx:62
 msgid "Delete $0 volume"
@@ -505,35 +529,19 @@ msgid_plural "Delete $0 volumes"
 msgstr[0] "Ta bort volymen $0"
 msgstr[1] "Ta bort volymerna $0"
 
-#: src/components/vm/deleteDialog.jsx:87
+#: src/components/vm/deleteDialog.jsx:88
 msgid "Delete associated storage files:"
 msgstr "Ta bort assoicierade lagringsfiler:"
 
-#: src/components/storagePools/storagePoolDelete.jsx:165
-msgid "Delete content"
-msgstr "Ta bort innehållet"
-
 #: src/components/networks/network.jsx:134
-msgid "Delete network $0"
-msgstr "Ta bort nätverk $0"
-
-#: src/components/vm/nics/vmNicsCard.jsx:376
-msgid "Delete network interface $0"
-msgstr "Ta bort nätverksgränssnitt $0"
+msgid "Delete network?"
+msgstr "Ta bort nätverket?"
 
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:181
-msgid "Delete snapshot $0"
-msgstr "Ta bort ögonblicksbild $0"
+msgid "Delete snapshot?"
+msgstr "Ta bort ögonblicksbild?"
 
-#: src/components/storagePools/storagePoolDelete.jsx:179
-msgid "Delete storage pool $0"
-msgstr "Ta bort lagringspool $0"
-
-#: src/components/storagePools/storagePoolDelete.jsx:168
-msgid "Delete the volumes inside this pool"
-msgstr "Ta bort volymerna i denna pool"
-
-#: src/components/storagePools/storagePoolDelete.jsx:171
+#: src/components/storagePools/storagePoolDelete.jsx:177
 msgid ""
 "Deleting an inactive storage pool will only undefine the pool. Its content "
 "will not be deleted."
@@ -541,12 +549,12 @@ msgstr ""
 "Att ta bort en inaktiv lagringspool kommer bara att odefiniera poolen. Dess "
 "innehåll kommer inte att raderas."
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:67
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:72
 msgid "Deleting shared directories is possible only when the guest is shut off"
 msgstr "Att ta bort delade kataloger är endast möjligt när gästen är avstängd"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:107
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:51
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:107
 msgid "Description"
 msgstr "Beskrivning"
 
@@ -562,7 +570,7 @@ msgstr "Destinations-URI"
 msgid "Destination URI must not be empty"
 msgstr "Destinations-URI kan inte vara tom"
 
-#: src/components/storagePools/storagePoolDelete.jsx:93
+#: src/components/storagePools/storagePoolDelete.jsx:95
 msgid ""
 "Detach the disks using this pool from any VMs before attempting deletion."
 msgstr ""
@@ -573,18 +581,19 @@ msgstr ""
 msgid "Details"
 msgstr "Detaljer"
 
-#: src/components/vm/disks/vmDisksCard.jsx:216
-#: src/components/vm/disks/diskAdd.jsx:334
-#: src/components/vm/disks/vmDiskColumns.jsx:50
-#: src/components/vm/hostdevs/hostDevAdd.jsx:88
-#: src/components/vm/hostdevs/hostDevAdd.jsx:123
-#: src/components/vm/hostdevs/hostDevCard.jsx:130
+#: src/components/networks/createNetworkDialog.jsx:160
+#: src/components/networks/networkList.jsx:75
 #: src/components/vm/overview/bootOrder.jsx:107
 #: src/components/vm/overview/bootOrder.jsx:114
 #: src/components/vm/overview/bootOrder.jsx:146
 #: src/components/vm/overview/bootOrder.jsx:149
-#: src/components/networks/networkList.jsx:75
-#: src/components/networks/createNetworkDialog.jsx:160
+#: src/components/vm/disks/vmDiskColumns.jsx:34
+#: src/components/vm/disks/vmDisksCard.jsx:198
+#: src/components/vm/disks/diskAdd.jsx:334
+#: src/components/vm/hostdevs/hostDevCard.jsx:102
+#: src/components/vm/hostdevs/hostDevCard.jsx:247
+#: src/components/vm/hostdevs/hostDevAdd.jsx:88
+#: src/components/vm/hostdevs/hostDevAdd.jsx:123
 msgid "Device"
 msgstr "Enhet"
 
@@ -605,13 +614,9 @@ msgstr "Frånkopplad"
 msgid "Disconnected from serial console. Click the connect button."
 msgstr "Frånkopplad från seriekonsolen. Klicka på Anslut."
 
-#: src/components/vm/disks/vmDisksCard.jsx:288
+#: src/components/vm/disks/vmDisksCard.jsx:272
 msgid "Disk $0 could not be removed"
 msgstr "Disk $0 kunde inte tas bort"
-
-#: src/components/vm/disks/vmDisksCard.jsx:280
-msgid "Disk $0 fail to get detached from VM $1"
-msgstr "Disken $0 kunde inte kopplas bort från VM $1"
 
 #: src/components/vm/disks/diskAdd.jsx:632
 msgid "Disk failed to be attached"
@@ -637,14 +642,14 @@ msgstr "Diskavbilds fil"
 msgid "Disk image path must not be empty"
 msgstr "Diskavbildningssökväg får inte vara tom"
 
-#: src/components/vm/disks/diskEdit.jsx:208
 #: src/components/vm/disks/diskAdd.jsx:618
+#: src/components/vm/disks/diskEdit.jsx:208
 msgid "Disk settings could not be saved"
 msgstr "Inställningarna för disken kunde inte sparas"
 
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:130
 msgid "Disk-only snapshot"
-msgstr ""
+msgstr "Endast diskögonblicksbild"
 
 #: src/components/vm/vmDetailsPage.jsx:166
 msgid "Disks"
@@ -653,7 +658,7 @@ msgstr "Diskar"
 #: src/components/vm/vmMigrateDialog.jsx:200
 msgid ""
 "Do not run this VM on the origin and destination hosts at the same time."
-msgstr ""
+msgstr "Kör inte denna VM på ursprungs- och destinationsvärdarna samtidigt."
 
 #: src/components/vm/overview/bootOrder.jsx:158
 msgid "Domain"
@@ -665,7 +670,7 @@ msgstr "Domänen har kraschat"
 
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:131
 msgid "Domain is blocked on resource"
-msgstr ""
+msgstr "Domänen är blockerad av en resurs"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:345
 msgid "Download an OS"
@@ -679,8 +684,8 @@ msgstr "Varaktighet"
 msgid "Dying"
 msgstr "Döende"
 
-#: src/components/vm/nics/vmNicsCard.jsx:361
 #: src/components/vm/disks/diskEdit.jsx:153
+#: src/components/vm/nics/vmNicsCard.jsx:361
 msgid "Edit"
 msgstr "Redigera"
 
@@ -690,11 +695,11 @@ msgstr "Redigera $0 attribut"
 
 #: src/components/vm/nics/vmNicsCard.jsx:349
 msgid "Editing network interfaces of transient guests is not allowed"
-msgstr ""
+msgstr "Att redigera nätverksgränssnitt för transienta gäster är inte tillåtet"
 
 #: src/components/vm/nics/vmNicsCard.jsx:355
 msgid "Editing transient network interfaces is not allowed"
-msgstr ""
+msgstr "Att redigera transienta nätverksgränssnit är inte tillåtet"
 
 #: src/components/vm/overview/vmOverviewCard.jsx:231
 msgid "Emulated machine"
@@ -727,7 +732,7 @@ msgstr "En annan disk på den här datorns filsystem"
 msgid "Expand"
 msgstr "Expandera"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:241
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:246
 msgid "Extended attributes"
 msgstr "Utökade attribut"
 
@@ -735,7 +740,7 @@ msgstr "Utökade attribut"
 msgid "Failed"
 msgstr "Misslyckades"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:159
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:164
 msgid "Failed to add shared directory"
 msgstr "Misslyckades att lägga till delad katalog"
 
@@ -771,8 +776,8 @@ msgstr "Kunde inte skicka Ctrl+Alt+$0 till VM $1"
 msgid "Fewer than the maximum number of virtual CPUs should be enabled."
 msgstr "Färre än det maximala antalet virtuella CPU:er skall vara aktiverade."
 
-#: src/components/vm/disks/vmDiskColumns.jsx:49
 #: src/components/vm/overview/bootOrder.jsx:106
+#: src/components/vm/disks/vmDiskColumns.jsx:33
 msgid "File"
 msgstr "Arkiv"
 
@@ -788,8 +793,8 @@ msgstr "Filsystemskatalog"
 msgid "Filter by name"
 msgstr "Filtrera efter namn"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:237
 #: src/components/vm/overview/firmware.jsx:71
+#: src/components/vm/overview/vmOverviewCard.jsx:237
 msgid "Firmware"
 msgstr "Hårdvaruprogram"
 
@@ -808,11 +813,11 @@ msgstr "Formater"
 
 #: src/components/networks/createNetworkDialog.jsx:142
 msgid "Forward mode"
-msgstr ""
+msgstr "Vidarebefordransläge"
 
 #: src/components/networks/networkList.jsx:77
 msgid "Forwarding mode"
-msgstr ""
+msgstr "Vidarebefordransläge"
 
 #: src/components/vm/vmMigrateDialog.jsx:106
 msgid ""
@@ -828,8 +833,8 @@ msgstr ""
 msgid "Function"
 msgstr "Funktion"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:178
 #: src/components/networks/networkOverviewTab.jsx:114
+#: src/components/vm/overview/vmOverviewCard.jsx:178
 msgid "General"
 msgstr "Allmänt"
 
@@ -837,25 +842,25 @@ msgstr "Allmänt"
 msgid "Generate automatically"
 msgstr "Skapa automatiskt"
 
-#: src/components/vm/disks/vmDisksCard.jsx:50
-#: src/components/vm/overview/memorySelectRow.jsx:89
 #: src/components/create-vm-dialog/createVmDialog.jsx:645
 #: src/components/create-vm-dialog/createVmDialog.jsx:741
+#: src/components/vm/overview/memorySelectRow.jsx:89
+#: src/components/vm/disks/vmDisksCard.jsx:50
 #: src/components/storagePools/storageVolumeCreateBody.jsx:104
 msgid "GiB"
 msgstr "GiB"
 
 #: src/app.jsx:227 src/app.jsx:238
 msgid "Go to VMs list"
-msgstr ""
+msgstr "Gå till VM-listan"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:236
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:241
 #: src/components/vm/disks/diskAdd.jsx:182
 msgid "Hide additional options"
 msgstr "Göm ytterligare inställningar"
 
-#: src/components/vm/disks/vmDiskColumns.jsx:54
 #: src/components/vm/overview/bootOrder.jsx:111
+#: src/components/vm/disks/vmDiskColumns.jsx:38
 #: src/components/storagePools/storagePoolOverviewTab.jsx:34
 #: src/components/storagePools/createStoragePoolDialog.jsx:121
 msgid "Host"
@@ -868,6 +873,10 @@ msgstr "Värdenhet"
 #: src/components/vm/hostdevs/hostDevAdd.jsx:194
 msgid "Host device could not be attached"
 msgstr "Värdenheten kunde inte anslutas"
+
+#: src/components/vm/hostdevs/hostDevCard.jsx:258
+msgid "Host device will be removed from $0:"
+msgstr "Värdenheter kommer tas bort från $0:"
 
 #: src/components/vm/vmDetailsPage.jsx:184
 msgid "Host devices"
@@ -893,8 +902,8 @@ msgstr "ID"
 msgid "IP"
 msgstr "IP"
 
-#: src/components/vm/nics/vmNicsCard.jsx:253
 #: src/components/networks/networkOverviewTab.jsx:259
+#: src/components/vm/nics/vmNicsCard.jsx:253
 msgid "IP address"
 msgstr "IP-adress"
 
@@ -906,8 +915,8 @@ msgstr "IP address kan inte vara tomt"
 msgid "IP configuration"
 msgstr "IP-konfiguration"
 
-#: src/components/networks/createNetworkDialog.jsx:243
 #: src/components/networks/networkOverviewTab.jsx:142
+#: src/components/networks/createNetworkDialog.jsx:243
 msgid "IPv4 address"
 msgstr "IPv4-adress"
 
@@ -917,7 +926,7 @@ msgstr "IPv4-adressen kan inte vara samma som nätverksidentifieraren"
 
 #: src/components/networks/createNetworkDialog.jsx:72
 msgid "IPv4 address cannot be same as the network's broadcast address"
-msgstr ""
+msgstr "IPv4-adressen kan inte vara densamma som nätverkets broadcast-adress"
 
 #: src/components/networks/createNetworkDialog.jsx:190
 msgid "IPv4 and IPv6"
@@ -931,8 +940,8 @@ msgstr "IPv4 nätverk kan inte vara tom"
 msgid "IPv4 only"
 msgstr "IPv4 enbart"
 
-#: src/components/networks/createNetworkDialog.jsx:275
 #: src/components/networks/networkOverviewTab.jsx:162
+#: src/components/networks/createNetworkDialog.jsx:275
 msgid "IPv6 address"
 msgstr "IPv6-adress"
 
@@ -946,7 +955,7 @@ msgstr "IPv6 enbart"
 
 #: src/components/vm/disks/diskAdd.jsx:222
 msgid "Identifier may be silently truncated to $0 characters "
-msgstr ""
+msgstr "Identifierare kan tyst avkortas till $0 tecken "
 
 #: src/helpers.js:224
 msgid "Idle"
@@ -982,6 +991,9 @@ msgid ""
 "If the switch is not VEPA-capable, communication between guest virtual "
 "machines, or between a guests and the host is not possible."
 msgstr ""
+"I standard ”vepa”-läge avlastas växling till den externa växeln. Om växeln "
+"inte har VEPA-förmåga är inte kommunikation mellan virtuella gästmaskiner "
+"eller mellan en gäst och värden möjlig."
 
 #: src/components/storagePools/createStoragePoolDialog.jsx:139
 msgid "Initiator"
@@ -1007,7 +1019,7 @@ msgstr "Installationskällan kan inte vara tom"
 msgid "Installation type"
 msgstr "Installationstyp"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:173
+#: src/components/vm/hostdevs/hostDevCard.jsx:135
 msgid "Interface"
 msgstr "Gränssnitt"
 
@@ -1069,13 +1081,13 @@ msgstr "Lämna lösenordet tomt om du inte vill skapa en användare"
 msgid "Leave the password blank if you do not wish to set a root password"
 msgstr "Lämna lösenordet tomt om du inte vill skapa en rootanvändare"
 
-#: src/components/vm/overview/firmware.jsx:157
+#: src/components/vm/overview/firmware.jsx:158
 msgid ""
 "Libvirt did not detect any UEFI/OVMF firmware image installed on the host"
 msgstr ""
 "Libvirt hittade inte något UEFI/OVMF hårdvaruprogram installerat på värden"
 
-#: src/components/vm/overview/firmware.jsx:151
+#: src/components/vm/overview/firmware.jsx:152
 msgid "Libvirt or hypervisor does not support UEFI"
 msgstr "Libvirt eller hypervisor stödjer inte UEFI"
 
@@ -1099,14 +1111,14 @@ msgstr "Lokalt installationsmedia (ISO avbild eller distro installationsträd)"
 msgid "Location"
 msgstr "Plats"
 
-#: src/components/vm/overview/bootOrder.jsx:121
 #: src/components/networks/networkOverviewTab.jsx:70
+#: src/components/vm/overview/bootOrder.jsx:121
 msgid "MAC"
 msgstr "MAC"
 
-#: src/components/vm/nics/nicEdit.jsx:41 src/components/vm/nics/nicAdd.jsx:62
-#: src/components/vm/nics/vmNicsCard.jsx:251
 #: src/components/networks/networkOverviewTab.jsx:251
+#: src/components/vm/nics/vmNicsCard.jsx:251
+#: src/components/vm/nics/nicAdd.jsx:62 src/components/vm/nics/nicEdit.jsx:41
 msgid "MAC address"
 msgstr "MAC-adress"
 
@@ -1170,9 +1182,9 @@ msgstr ""
 msgid "Maximum transmission unit"
 msgstr "Maximal överföringsstorlek"
 
+#: src/components/create-vm-dialog/createVmDialog.jsx:628
 #: src/components/vm/vmUsageCard.jsx:60
 #: src/components/vm/overview/vmOverviewCard.jsx:196
-#: src/components/create-vm-dialog/createVmDialog.jsx:628
 msgid "Memory"
 msgstr "Minne"
 
@@ -1185,15 +1197,15 @@ msgstr "Minnet kunde inte sparas"
 msgid "Memory must not be 0"
 msgstr "Minne kan inte vara 0"
 
-#: src/components/vm/overview/memorySelectRow.jsx:87
 #: src/components/create-vm-dialog/createVmDialog.jsx:643
 #: src/components/create-vm-dialog/createVmDialog.jsx:739
+#: src/components/vm/overview/memorySelectRow.jsx:87
 #: src/components/storagePools/storageVolumeCreateBody.jsx:102
 msgid "MiB"
 msgstr "MiB"
 
-#: src/components/vm/vmMigrateDialog.jsx:214
 #: src/components/vm/vmActions.jsx:333
+#: src/components/vm/vmMigrateDialog.jsx:214
 msgid "Migrate"
 msgstr "Migrera"
 
@@ -1211,7 +1223,7 @@ msgid "Mode"
 msgstr "Läge"
 
 #: src/components/vm/nics/nicBody.jsx:50
-#: src/components/vm/hostdevs/hostDevCard.jsx:202
+#: src/components/vm/hostdevs/hostDevCard.jsx:206
 msgid "Model"
 msgstr "Modell"
 
@@ -1219,24 +1231,23 @@ msgstr "Modell"
 msgid "Model type"
 msgstr "Modelltyp"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:220
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:225
 msgid "More info for mount tag field"
 msgstr "Mer info för monteringsetikettfält"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:200
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:205
 msgid "More info for source path field"
 msgstr "Mer information om källsökvägsfält"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:48
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:217
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:66
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:222
 msgid "Mount tag"
-msgstr ""
+msgstr "Monteringstagg"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:132
-#, fuzzy
-#| msgid "Name must not be empty"
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:137
 msgid "Mount tag must not be empty"
-msgstr "Namnet kan inte vara tomt"
+msgstr "Monteringstaggen får inte vara tom"
 
 #: src/components/create-vm-dialog/pxe-helpers.js:93
 msgid "NAT to $0"
@@ -1246,17 +1257,17 @@ msgstr "NAT till $0"
 msgid "NIC $0 of VM $1 failed to change state"
 msgstr "NIC $0 på VM $1 kunde inte ändra läge"
 
-#: src/components/vm/vmCloneDialog.jsx:87
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:98
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:38
 #: src/components/create-vm-dialog/createVmDialog.jsx:245
-#: src/components/networks/networkList.jsx:74
-#: src/components/networks/createNetworkDialog.jsx:126
-#: src/components/storagePools/storagePoolList.jsx:73
-#: src/components/storagePools/createStoragePoolDialog.jsx:43
-#: src/components/storagePools/storagePoolVolumesTab.jsx:79
-#: src/components/storagePools/storageVolumeCreateBody.jsx:40
 #: src/components/vms/hostvmslist.jsx:136
+#: src/components/networks/createNetworkDialog.jsx:126
+#: src/components/networks/networkList.jsx:74
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:38
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:98
+#: src/components/vm/vmCloneDialog.jsx:87
+#: src/components/storagePools/storagePoolVolumesTab.jsx:79
+#: src/components/storagePools/createStoragePoolDialog.jsx:43
+#: src/components/storagePools/storagePoolList.jsx:73
+#: src/components/storagePools/storageVolumeCreateBody.jsx:40
 msgid "Name"
 msgstr "Namn"
 
@@ -1268,21 +1279,21 @@ msgstr "Namn existerar redan"
 msgid "Name contains invalid characters"
 msgstr "Namnet innehåller ogiltiga tecken"
 
-#: src/components/vm/vmCloneDialog.jsx:39
 #: src/components/create-vm-dialog/createVmDialog.jsx:179
+#: src/components/vm/vmCloneDialog.jsx:39
 #: src/components/storagePools/storageVolumeCreate.jsx:61
 msgid "Name must not be empty"
 msgstr "Namnet kan inte vara tomt"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:96
 #: src/components/networks/createNetworkDialog.jsx:53
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:96
 #: src/components/storagePools/createStoragePoolDialog.jsx:44
 msgid "Name should not be empty"
 msgstr "Namnet får inte vara tomt"
 
 #: src/components/networks/networkOverviewTab.jsx:49
 msgid "Name: "
-msgstr "Namn:"
+msgstr "Namn: "
 
 #: src/components/networks/networkOverviewTab.jsx:151
 msgid "Netmask"
@@ -1300,6 +1311,10 @@ msgstr "Kunde inte starta nätverk $0"
 msgid "Network $0 failed to get deactivated"
 msgstr "Kunde inte stoppa nätverk $0"
 
+#: src/components/networks/network.jsx:136
+msgid "Network $0 will be permanently deleted."
+msgstr "Nätverk $0 kommer att raderas permanent."
+
 #: src/components/create-vm-dialog/createVmDialog.jsx:354
 msgid "Network boot (PXE)"
 msgstr "Nätverksboot (PXE)"
@@ -1309,12 +1324,14 @@ msgid "Network file system"
 msgstr "Nätverksfilsystem"
 
 #: src/components/vm/nics/vmNicsCard.jsx:377
-#, fuzzy
-#| msgid "Network interface settings could not be saved"
-msgid "Network interface $0 could not be deleted"
-msgstr "Inställningar för nätverksgränssnitt kunde inte sparas"
+msgid "Network interface $0 could not be removed"
+msgstr "Nätverksgränssnitt $0 kunde inte tas bort"
 
-#: src/components/vm/nics/nicEdit.jsx:131 src/components/vm/nics/nicAdd.jsx:155
+#: src/components/vm/nics/vmNicsCard.jsx:378
+msgid "Network interface $0 will be removed from $1"
+msgstr "Nätverksgränssnitt $0 kommer tas bort från $1"
+
+#: src/components/vm/nics/nicAdd.jsx:155 src/components/vm/nics/nicEdit.jsx:131
 msgid "Network interface settings could not be saved"
 msgstr "Inställningar för nätverksgränssnitt kunde inte sparas"
 
@@ -1346,7 +1363,7 @@ msgstr "Nytt volymnamn"
 
 #: src/components/vms/hostvmslist.jsx:141
 msgid "No VM is running or defined on this host"
-msgstr "Ingen VM kör eller är definierad på denna värd."
+msgstr "Ingen VM kör eller är definierad på denna värd"
 
 #: src/components/vm/overview/bootOrder.jsx:351
 msgid "No boot device found"
@@ -1360,21 +1377,19 @@ msgstr "Ingen anslutning tillgänglig"
 msgid "No description"
 msgstr "Ingen beskrivning"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:87
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:92
 msgid "No directories shared between the host and this VM"
 msgstr "Inga kataloger delade mellan värden och denna VM"
 
-#: src/components/vm/disks/vmDisksCard.jsx:316
+#: src/components/vm/disks/vmDisksCard.jsx:308
 msgid "No disks defined for this VM"
 msgstr "Inga diskar är definerade för denna VM"
 
 #: src/components/vm/hostdevs/hostDevAdd.jsx:198
-#, fuzzy
-#| msgid "No boot device found"
 msgid "No host device selected"
-msgstr "Ingen startenhet hittades"
+msgstr "Ingen värdenhet vald"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:293
+#: src/components/vm/hostdevs/hostDevCard.jsx:317
 msgid "No host devices assigned to this VM"
 msgstr "Inga värd enheter är definerade för denna VM"
 
@@ -1382,7 +1397,7 @@ msgstr "Inga värd enheter är definerade för denna VM"
 msgid "No network devices"
 msgstr "Inga nätverksenheter"
 
-#: src/components/vm/nics/vmNicsCard.jsx:444
+#: src/components/vm/nics/vmNicsCard.jsx:447
 msgid "No network interfaces defined for this VM"
 msgstr "Inga nätverksgränssnitt är definierade för denna VM"
 
@@ -1426,17 +1441,25 @@ msgstr "Inga lagringsvolymer är definierade för denna lagringspool"
 msgid "No virtual networks"
 msgstr "Inga virtuella nätverk"
 
-#: src/components/networks/network.jsx:142
+#: src/components/storagePools/storagePoolDelete.jsx:176
+msgid "No volumes exist in this storage pool."
+msgstr "Inga volymer finns i denna lagringspool."
+
+#: src/components/networks/network.jsx:143
 msgid ""
 "Non-persistent network cannot be deleted. It ceases to exists when it's "
 "deactivated."
 msgstr ""
+"Icke varaktiga nätverk kan inte raderas. Det slutar att finnas när det "
+"deaktiveras."
 
-#: src/components/storagePools/storagePoolDelete.jsx:210
+#: src/components/storagePools/storagePoolDelete.jsx:219
 msgid ""
 "Non-persistent storage pool cannot be deleted. It ceases to exists when it's "
 "deactivated."
 msgstr ""
+"Icke varaktig lagringspool kan inte raderas. Den slutar att finnas när den "
+"deaktiveras."
 
 #: src/components/networks/createNetworkDialog.jsx:187
 msgid "None"
@@ -1451,10 +1474,12 @@ msgid ""
 "One or more selected volumes are used by domains. Detach the disks first to "
 "allow volume deletion."
 msgstr ""
+"En eller flera valda volymer används av domäner. Koppla loss diskarna först "
+"för att tillåta radering av volymer."
 
-#: src/components/vm/nics/nicEdit.jsx:38
 #: src/components/vm/overview/memoryModal.jsx:139
 #: src/components/vm/overview/bootOrder.jsx:373
+#: src/components/vm/nics/nicEdit.jsx:38
 msgid "Only editable when the guest is shut off"
 msgstr "Kan endast redigeras när gästen är avstängd"
 
@@ -1481,14 +1506,13 @@ msgid "PCI"
 msgstr "PCI"
 
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:151
-#, fuzzy
 msgid "Parent snapshot"
-msgstr "Skapa en ögonblicksbild"
+msgstr "Föräldraögonblicksbild"
 
-#: src/components/vm/deleteDialog.jsx:60
+#: src/components/vm/deleteDialog.jsx:61
 #: src/components/vm/disks/diskEdit.jsx:39
-#: src/components/vm/hostdevs/hostDevCard.jsx:165
-#: src/components/vm/hostdevs/hostDevCard.jsx:169
+#: src/components/vm/hostdevs/hostDevCard.jsx:127
+#: src/components/vm/hostdevs/hostDevCard.jsx:131
 msgid "Path"
 msgstr "Sökväg"
 
@@ -1501,9 +1525,8 @@ msgid "Path to ISO file on host's file system"
 msgstr "Sökväg till ISO-fil på värdens filsystem"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:279
-#, fuzzy
 msgid "Path to cloud image file on host's file system"
-msgstr "Sökväg till ISO-fil på värdens filsystem"
+msgstr "Sökväg till molnavbildsfilen värdens filsystem"
 
 #: src/components/vm/disks/diskAdd.jsx:328
 msgid "Path to file on host's file system"
@@ -1521,7 +1544,7 @@ msgstr "Pausad"
 msgid "Permanent (default)"
 msgstr "Permanent (standard)"
 
-#: src/components/vm/nics/nicAdd.jsx:85 src/components/vm/disks/diskAdd.jsx:107
+#: src/components/vm/disks/diskAdd.jsx:107 src/components/vm/nics/nicAdd.jsx:85
 msgid "Persistence"
 msgstr "Varaktighet"
 
@@ -1554,10 +1577,10 @@ msgstr "Ange ett nytt volymnamn"
 msgid "Please start the virtual machine to access its console."
 msgstr "Starta den virtuella maskinen för att komma åt dess konsol."
 
-#: src/components/vm/deleteDialog.jsx:68
-#: src/components/vm/disks/diskAdd.jsx:123
-#: src/components/vm/disks/vmDiskColumns.jsx:52
+#: src/components/vm/deleteDialog.jsx:69
 #: src/components/vm/overview/bootOrder.jsx:109
+#: src/components/vm/disks/vmDiskColumns.jsx:36
+#: src/components/vm/disks/diskAdd.jsx:123
 msgid "Pool"
 msgstr "Pool"
 
@@ -1573,14 +1596,14 @@ msgstr "Pooltyp $0 stödjer inte att skapa volymer"
 msgid "Pool type doesn't support volume creation"
 msgstr "Pooltyp stödjer inte att skapa volymer"
 
-#: src/components/storagePools/storagePoolDelete.jsx:91
+#: src/components/storagePools/storagePoolDelete.jsx:93
 msgid "Pool's volumes are used by VMs "
-msgstr ""
+msgstr "Poolens volymer används av VM:ar "
 
-#: src/components/vm/nics/vmNicsCard.jsx:283
-#: src/components/vm/disks/vmDiskColumns.jsx:55
 #: src/components/vm/overview/bootOrder.jsx:112
 #: src/components/vm/overview/bootOrder.jsx:128
+#: src/components/vm/disks/vmDiskColumns.jsx:39
+#: src/components/vm/nics/vmNicsCard.jsx:283
 msgid "Port"
 msgstr "Port"
 
@@ -1612,9 +1635,11 @@ msgstr ""
 msgid "Private"
 msgstr "Privat"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:129
 #: src/components/vm/overview/bootOrder.jsx:141
 #: src/components/vm/overview/bootOrder.jsx:156
+#: src/components/vm/hostdevs/hostDevCard.jsx:240
+#: src/components/vm/hostdevs/hostDevCard.jsx:246
+#: src/components/vm/hostdevs/hostDevAdd.jsx:129
 msgid "Product"
 msgstr "Produkt"
 
@@ -1622,10 +1647,10 @@ msgstr "Produkt"
 msgid "Profile"
 msgstr "Profil"
 
-#: src/components/vm/disks/vmDiskColumns.jsx:51
-#: src/components/vm/hostdevs/hostDevCard.jsx:156
 #: src/components/vm/overview/bootOrder.jsx:108
 #: src/components/vm/overview/bootOrder.jsx:172
+#: src/components/vm/disks/vmDiskColumns.jsx:35
+#: src/components/vm/hostdevs/hostDevCard.jsx:118
 msgid "Protocol"
 msgstr "Protokoll"
 
@@ -1634,6 +1659,8 @@ msgid ""
 "Provides a bridge from the guest virtual machine directly onto the LAN. This "
 "needs a bridge device on the host with one or more physical NICs."
 msgstr ""
+"Tillhandahåller en brygga från den virtuella gästmaskinen direkt till LAN:"
+"et. Detta kräver en bryggenhet på hävrden med en eller flera fysiska NIC:er."
 
 #: src/components/vm/nics/nicBody.jsx:87
 msgid ""
@@ -1651,8 +1678,8 @@ msgstr "Tillhandahåller ett virtuellt LAN med NAT till omvärlden."
 msgid "Range"
 msgstr "Räckvidd"
 
+#: src/components/vm/disks/vmDisksCard.jsx:242
 #: src/components/vm/disks/diskEdit.jsx:120
-#: src/components/vm/disks/vmDisksCard.jsx:260
 msgid "Read-only"
 msgstr "Skrivskyddad"
 
@@ -1665,37 +1692,42 @@ msgid "Remote URL"
 msgstr "Fjärr-URL"
 
 #: src/components/vm/consoles/desktopConsole.jsx:55
-#, fuzzy
 msgid "Remote viewer details"
-msgstr "Detaljer om hypervisorn"
+msgstr "Detaljer om fjärrvisaren"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:59
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:63
-#: src/components/vm/disks/vmDisksCard.jsx:286
-#: src/components/vm/disks/vmDisksCard.jsx:298
-#: src/components/vm/hostdevs/hostDevCard.jsx:232
-#: src/components/vm/hostdevs/hostDevCard.jsx:289
 #: src/components/networks/networkOverviewTab.jsx:72
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:59
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:68
+#: src/components/vm/disks/vmDisksCard.jsx:271
+#: src/components/vm/disks/vmDisksCard.jsx:290
+#: src/components/vm/nics/vmNicsCard.jsx:380
+#: src/components/vm/nics/vmNicsCard.jsx:387
+#: src/components/vm/hostdevs/hostDevCard.jsx:254
+#: src/components/vm/hostdevs/hostDevCard.jsx:313
 msgid "Remove"
 msgstr "Ta bort"
 
-#: src/components/vm/disks/vmDisksCard.jsx:287
-msgid "Remove disk $0"
-msgstr "Ta bort disk $0"
+#: src/components/vm/disks/vmDisksCard.jsx:270
+msgid "Remove disk from VM?"
+msgstr "Ta bort en disk från VM:en?"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:61
-msgid "Remove filesystem $0"
-msgstr "Ta bort filsystem $0"
+msgid "Remove filesystem?"
+msgstr "Ta bort filsysteme?"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:234
-msgid "Remove host device"
-msgstr "Ta bort värdenhet"
+#: src/components/vm/hostdevs/hostDevCard.jsx:256
+msgid "Remove host device from VM?"
+msgstr "Ta bort värdenhet från VM:en?"
+
+#: src/components/vm/nics/vmNicsCard.jsx:376
+msgid "Remove network interface?"
+msgstr "Ta bort nätverksgränssnittet?"
 
 #: src/components/networks/networkOverviewTab.jsx:65
 msgid "Remove static host from DHCP"
 msgstr "Ta bort statiska värdposter från DHCP"
 
-#: src/components/vm/vmRenameDialog.jsx:63 src/components/vm/vmActions.jsx:354
+#: src/components/vm/vmActions.jsx:354 src/components/vm/vmRenameDialog.jsx:63
 msgid "Rename"
 msgstr "Byt namn"
 
@@ -1707,8 +1739,8 @@ msgstr "Byt namn på VM $0"
 msgid "Resume"
 msgstr "Återuppta"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:174
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:68
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:174
 msgid "Revert"
 msgstr "Återställ"
 
@@ -1743,8 +1775,8 @@ msgstr "Ruttlagt nätverk"
 msgid "Run"
 msgstr "Kör"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:120
 #: src/components/networks/networkOverviewTab.jsx:128
+#: src/components/vm/overview/vmOverviewCard.jsx:120
 msgid "Run when host boots"
 msgstr "Kör när värd startar"
 
@@ -1754,7 +1786,7 @@ msgstr "Kör"
 
 #: src/components/vm/consoles/desktopConsole.jsx:52
 msgid "SPICE TLS port"
-msgstr "SPICE TLS port"
+msgstr "SPICE TLS-port"
 
 #: src/components/vm/consoles/desktopConsole.jsx:48
 msgid "SPICE address"
@@ -1764,11 +1796,11 @@ msgstr "SPICE-adress"
 msgid "SPICE port"
 msgstr "SPICE-port"
 
-#: src/components/vm/nics/nicEdit.jsx:172
-#: src/components/vm/disks/diskEdit.jsx:257
+#: src/components/vm/overview/firmware.jsx:63
 #: src/components/vm/overview/memoryModal.jsx:151
 #: src/components/vm/overview/bootOrder.jsx:323
-#: src/components/vm/overview/firmware.jsx:63
+#: src/components/vm/disks/diskEdit.jsx:257
+#: src/components/vm/nics/nicEdit.jsx:172
 msgid "Save"
 msgstr "Spara"
 
@@ -1784,7 +1816,7 @@ msgstr "Skicka tangenttryck"
 msgid "Send non-maskable interrupt"
 msgstr "Skicka ej maskerbart avbrott"
 
-#: src/components/vm/disks/vmDiskColumns.jsx:83
+#: src/components/vm/disks/vmDiskColumns.jsx:96
 msgid "Serial"
 msgstr "Seriell"
 
@@ -1809,12 +1841,14 @@ msgid ""
 "Setting the user passwords for unattended installation requires starting the "
 "VM when creating it"
 msgstr ""
+"Att sätta användarlösenordet för oövervakad installation kräver att man "
+"startar VM:en när den skapas"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:163
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:168
 msgid "Share"
 msgstr "Dela"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:156
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:161
 msgid "Share a host directory with the guest"
 msgstr "Dela en värdkatalog med gäst"
 
@@ -1822,16 +1856,16 @@ msgstr "Dela en värdkatalog med gäst"
 msgid "Shared directories"
 msgstr "Delade kataloger"
 
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:179
 #: src/components/vm/vmDetailsPage.jsx:208
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:174
 msgid "Shared host directories need to be manually mounted inside the VM"
-msgstr ""
+msgstr "Delade värdkataloger behöver monteras manuellt inuti VM:en"
 
 #: src/components/vm/vmMigrateDialog.jsx:101
 msgid "Shared storage"
 msgstr "Delad lagring"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:236
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:241
 #: src/components/vm/disks/diskAdd.jsx:182
 msgid "Show additional options"
 msgstr "Visa ytterligare åtgärder"
@@ -1844,30 +1878,40 @@ msgstr "Stäng av"
 msgid "Shut off"
 msgstr "Stäng av"
 
-#: src/components/vm/overview/firmware.jsx:138
+#: src/components/vm/overview/firmware.jsx:139
 msgid "Shut off the VM in order to edit firmware configuration"
 msgstr ""
+"Stäng av VM:en för att redigera konfigurationen av den fasta programvaran"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:129 src/helpers.js:226
+#: src/helpers.js:226 src/components/vm/snapshots/vmSnapshotsCard.jsx:129
 msgid "Shutting down"
 msgstr "Stänger av"
 
-#: src/components/storagePools/storagePoolList.jsx:74
 #: src/components/storagePools/storagePoolVolumesTab.jsx:79
+#: src/components/storagePools/storagePoolList.jsx:74
 #: src/components/storagePools/storageVolumeCreateBody.jsx:86
 msgid "Size"
 msgstr "Storlek"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:101
-#: src/components/vm/hostdevs/hostDevCard.jsx:143
-#: src/components/vm/hostdevs/hostDevCard.jsx:150
 #: src/components/vm/overview/bootOrder.jsx:160
+#: src/components/vm/hostdevs/hostDevCard.jsx:105
+#: src/components/vm/hostdevs/hostDevCard.jsx:112
+#: src/components/vm/hostdevs/hostDevCard.jsx:241
+#: src/components/vm/hostdevs/hostDevAdd.jsx:101
 msgid "Slot"
 msgstr "Plats"
 
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:182
 msgid "Snapshot $0 could not be deleted"
 msgstr "Ögonblicksbild $0 kunde inte raderas"
+
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:183
+msgid ""
+"Snapshot $0 will be deleted from $1. All of its captured content will be "
+"lost."
+msgstr ""
+"Ögonblicksbilden $0 kommer raderas från $1. All dess fångade innehåll kommer "
+"att gå förlorat."
 
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:118
 msgid "Snapshot failed to be created"
@@ -1881,11 +1925,11 @@ msgstr "Ögonblicksbilder"
 msgid "Sockets"
 msgstr "Uttag"
 
-#: src/components/vm/nics/nicBody.jsx:197
-#: src/components/vm/nics/vmNicsCard.jsx:278
-#: src/components/vm/disks/vmDisksCard.jsx:234
+#: src/components/vm/disks/vmDisksCard.jsx:216
 #: src/components/vm/disks/diskAdd.jsx:654
-#: src/components/vm/hostdevs/hostDevCard.jsx:220
+#: src/components/vm/nics/vmNicsCard.jsx:278
+#: src/components/vm/nics/nicBody.jsx:197
+#: src/components/vm/hostdevs/hostDevCard.jsx:224
 #: src/components/storagePools/storagePoolOverviewTab.jsx:51
 msgid "Source"
 msgstr "Källa"
@@ -1894,12 +1938,13 @@ msgstr "Källa"
 msgid "Source format"
 msgstr "Källformat"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:134
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:139
 msgid "Source must not be empty"
 msgstr "Källa kan inte vara tomt"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:48
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:197
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:65
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:202
 #: src/components/storagePools/storagePoolOverviewTab.jsx:41
 #: src/components/storagePools/storagePoolOverviewTab.jsx:46
 #: src/components/storagePools/createStoragePoolDialog.jsx:173
@@ -1937,11 +1982,11 @@ msgstr "Start ska inte vara tomt"
 msgid "Startup"
 msgstr "Uppstart"
 
-#: src/components/vm/nics/vmNicsCard.jsx:326
-#: src/components/vm/overview/vmOverviewCard.jsx:182
-#: src/components/networks/networkList.jsx:78
-#: src/components/storagePools/storagePoolList.jsx:76
 #: src/components/vms/hostvmslist.jsx:96 src/components/vms/hostvmslist.jsx:138
+#: src/components/networks/networkList.jsx:78
+#: src/components/vm/overview/vmOverviewCard.jsx:182
+#: src/components/vm/nics/vmNicsCard.jsx:326
+#: src/components/storagePools/storagePoolList.jsx:76
 msgid "State"
 msgstr "Tillstånd"
 
@@ -1953,8 +1998,8 @@ msgstr "Statiska värdposter"
 msgid "Static host from DHCP could not be removed"
 msgstr "Statiska värdposter från DHCP kunde inte tas bort"
 
-#: src/components/vm/vmMigrateDialog.jsx:94
 #: src/components/create-vm-dialog/createVmDialog.jsx:692
+#: src/components/vm/vmMigrateDialog.jsx:94
 msgid "Storage"
 msgstr "Lagring"
 
@@ -2009,7 +2054,7 @@ msgstr ""
 
 #: src/components/storagePools/storagePool.jsx:81
 msgid "Storage volumes"
-msgstr " Lagringsvolymer"
+msgstr "Lagringsvolymer"
 
 #: src/components/storagePools/storageVolumeDelete.jsx:46
 msgid "Storage volumes could not be deleted"
@@ -2018,7 +2063,7 @@ msgstr "Lagringsvolymer kunde inte raderas"
 #: src/components/vm/vmMigrateDialog.jsx:224
 msgid ""
 "Storage volumes must be shared between this host and the destination host."
-msgstr ""
+msgstr "Lagringsvolymer måste delas mellan denna värd och destinationsvärden."
 
 #: src/helpers.js:230
 msgid "Suspended (PM)"
@@ -2032,8 +2077,9 @@ msgstr "System"
 msgid "Table of selectable host devices"
 msgstr "Tabell över valbara värdenheter"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:151
 #: src/components/vm/overview/bootOrder.jsx:166
+#: src/components/vm/disks/vmDisksCard.jsx:275
+#: src/components/vm/hostdevs/hostDevCard.jsx:113
 msgid "Target"
 msgstr "Mål"
 
@@ -2054,20 +2100,21 @@ msgstr "Temporär"
 msgid "Temporary migration"
 msgstr "Tillfällig migration"
 
-#: src/components/vm/deleteDialog.jsx:81
-msgid "The VM is running and will be forced off before deletion."
-msgstr "VM:en kör och kommer tvingande stängas av före den tas bort."
+#: src/components/vm/deleteDialog.jsx:82
+msgid "The VM $0 is running and will be forced off before deletion."
+msgstr "VM:en $0 kör och kommer tvingande stängas av före den tas bort."
 
-#: src/components/vm/nics/vmNicsCard.jsx:385
-#: src/components/vm/disks/vmDisksCard.jsx:297
+#: src/components/vm/disks/vmDisksCard.jsx:289
+#: src/components/vm/nics/vmNicsCard.jsx:388
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr ""
+"VM:en behöver köra eller vara avstängd för att koppla ifrån denna enhet"
 
 #: src/components/storagePools/createStoragePoolDialog.jsx:159
 msgid "The directory on the server being exported"
 msgstr "Katalogen på servern exporteras"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:199
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:204
 msgid "The host path that is to be exported."
 msgstr "Värdsökvägen som ska exporteras."
 
@@ -2076,6 +2123,8 @@ msgid ""
 "The migrated VM configuration is removed from the source host. The "
 "destination host is considered the new home of the VM."
 msgstr ""
+"Den migrerade VM-konfigurationen tas bårt från källvärden. "
+"Destinationsvärden anses vara det nya hemmet för VM:en."
 
 #: src/components/vm/disks/diskAdd.jsx:83
 msgid "The pool is empty"
@@ -2094,18 +2143,27 @@ msgstr "Det valda operativsystemet har ett minsta lagringskrav på $0 $1"
 msgid "The static host entry for $0 will be removed:"
 msgstr "Den statiska värdposten för $0 kommer att tas bort:"
 
-#: src/components/storagePools/storagePoolDelete.jsx:137
-#: src/components/storagePools/storagePoolDelete.jsx:141
+#: src/components/storagePools/storagePoolDelete.jsx:139
+#: src/components/storagePools/storagePoolDelete.jsx:143
 msgid "The storage pool could not be deleted"
 msgstr "Lagringspoolen kunde inte raderas"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:219
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:224
 msgid "The tag name to be used by the guest to mount this export point."
 msgstr ""
+"Taggnamnet som gästen skall använda för att montera denna exporteringspunkt."
 
 #: src/components/vm/vmActions.jsx:375
 msgid "This VM is transient. Shut it down if you wish to delete it."
-msgstr ""
+msgstr "Denna VM är transient. Stäng av den om du vill radera den."
+
+#: src/components/vm/disks/vmDisksCard.jsx:273
+msgid "This disk will be removed from $0:"
+msgstr "Denna disk kommer tas bort från $0:"
+
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:63
+msgid "This filesystem will be removed from $0:"
+msgstr "Detta filsystem kommer tas bort från $0:"
 
 #: src/components/vm/nics/nicBody.jsx:86
 msgid ""
@@ -2135,6 +2193,8 @@ msgid ""
 "This tool manages virtual machines. With it, you can create, monitor, and "
 "control the virtual machines of the libvirt subsystem."
 msgstr ""
+"Detta verktyg hanterar virtuella maskiner. Med det kan man skapa, övervaka "
+"och styra de virtuella maskinerna i libvirt-subsystemet."
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:711
 msgid "This volume is already used by another VM."
@@ -2148,23 +2208,25 @@ msgstr "Denna volym används redan av: "
 msgid "Threads per core"
 msgstr "Trådar per kärna"
 
-#: src/components/vm/overview/firmware.jsx:144
+#: src/components/vm/overview/firmware.jsx:145
 msgid "Transient VMs don't support editing firmware configuration"
 msgstr ""
+"Transienta VM:ar stödjer inte att redigera konfigurationen av den fasta "
+"programvaran"
 
 #: src/components/libvirtSlate.jsx:36
 msgid "Troubleshoot"
 msgstr "Felsök"
 
-#: src/components/vm/nics/vmNicsCard.jsx:228
-#: src/components/vm/hostdevs/hostDevAdd.jsx:47
-#: src/components/vm/hostdevs/hostDevCard.jsx:184
 #: src/components/vm/overview/bootOrder.jsx:126
 #: src/components/vm/overview/bootOrder.jsx:139
 #: src/components/vm/overview/bootOrder.jsx:154
 #: src/components/vm/overview/bootOrder.jsx:164
 #: src/components/vm/overview/bootOrder.jsx:171
 #: src/components/vm/overview/bootOrder.jsx:177
+#: src/components/vm/nics/vmNicsCard.jsx:228
+#: src/components/vm/hostdevs/hostDevCard.jsx:188
+#: src/components/vm/hostdevs/hostDevAdd.jsx:47
 #: src/components/storagePools/storagePoolOverviewTab.jsx:76
 #: src/components/storagePools/createStoragePoolDialog.jsx:80
 msgid "Type"
@@ -2182,7 +2244,7 @@ msgstr "URL (ISO avbild eller distro install träd)"
 msgid "USB"
 msgstr "USB"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:161
+#: src/components/vm/hostdevs/hostDevCard.jsx:123
 msgid "UUID"
 msgstr "UUID"
 
@@ -2210,14 +2272,14 @@ msgstr "Enhet"
 msgid "Unknown"
 msgstr "Okänd"
 
-#: src/components/vm/overview/firmware.jsx:116
+#: src/components/vm/overview/firmware.jsx:117
 msgid "Unknown firmware"
 msgstr "Okänt firmware"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:124
-#: src/components/vm/hostdevs/hostDevCard.jsx:125
 #: src/components/vm/overview/bootOrder.jsx:145
 #: src/components/vm/overview/bootOrder.jsx:146
+#: src/components/vm/hostdevs/hostDevCard.jsx:96
+#: src/components/vm/hostdevs/hostDevCard.jsx:97
 msgid "Unspecified"
 msgstr "Ospecificerad"
 
@@ -2233,7 +2295,7 @@ msgstr "Användning"
 msgid "Use existing"
 msgstr "Använd befintlig"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:244
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:249
 msgid "Use extended attributes on files and directories"
 msgstr "Använd utökade attribut på filer och kataloger"
 
@@ -2243,8 +2305,10 @@ msgid ""
 "storage. This can be a shared storage pool, NFS, or any other method of "
 "sharing storage."
 msgstr ""
+"Använd samma plats för lagringen på ursprungs- och destinationsvärden. Detta "
+"kan vara en delad lagringspool, NFS eller någon annan metod att dela lagring."
 
-#: src/components/vm/disks/vmDisksCard.jsx:226
+#: src/components/vm/disks/vmDisksCard.jsx:208
 msgid "Used"
 msgstr "Använt"
 
@@ -2278,7 +2342,7 @@ msgstr "Användarsession"
 msgid "VCPU settings could not be saved"
 msgstr "VCPU-inställningarna kunde inte sparas"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:290
+#: src/components/vm/hostdevs/hostDevCard.jsx:314
 msgid "VM $0 Host Devices"
 msgstr "VM $0 VärdEnheter"
 
@@ -2296,39 +2360,39 @@ msgstr "VM $0 misslyckades med att tvinga omstart"
 
 #: src/components/vm/vmActions.jsx:176
 msgid "VM $0 failed to force shutdown"
-msgstr ""
+msgstr "VM:en $0 kunde inte tvingande stängas av"
 
-#: src/components/vm/deleteDialog.jsx:144
+#: src/components/vm/deleteDialog.jsx:145
 msgid "VM $0 failed to get deleted"
-msgstr ""
+msgstr "VM:en $0 misslyckades att raderas"
 
 #: src/components/vm/vmActions.jsx:100
 msgid "VM $0 failed to get installed"
-msgstr ""
+msgstr "VM:en $0 kunde inte installeras"
 
 #: src/components/vm/vmActions.jsx:150
 msgid "VM $0 failed to pause"
-msgstr ""
+msgstr "VM:en $0 kunde inte pausa"
 
 #: src/components/vm/vmActions.jsx:111
 msgid "VM $0 failed to reboot"
-msgstr ""
+msgstr "VM:en $0 kunde inte starta om"
 
 #: src/components/vm/vmActions.jsx:162
 msgid "VM $0 failed to resume"
-msgstr ""
+msgstr "VM:en $0 kunde inte återuppta"
 
 #: src/components/vm/vmActions.jsx:188
 msgid "VM $0 failed to send NMI"
-msgstr ""
+msgstr "VM:en $0 kunde inte skicka NMI"
 
 #: src/components/vm/vmActions.jsx:138
 msgid "VM $0 failed to shutdown"
-msgstr ""
+msgstr "VM $0 kunde inte stängas av"
 
 #: src/components/vm/vmActions.jsx:92
 msgid "VM $0 failed to start"
-msgstr ""
+msgstr "VM:en $0 kunde inte starta"
 
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:121
 msgid "VM state"
@@ -2350,10 +2414,12 @@ msgstr "VNC konsol"
 msgid "VNC port"
 msgstr "VNC-port"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:129
-#: src/components/vm/hostdevs/hostDevCard.jsx:211
 #: src/components/vm/overview/bootOrder.jsx:140
 #: src/components/vm/overview/bootOrder.jsx:155
+#: src/components/vm/hostdevs/hostDevCard.jsx:215
+#: src/components/vm/hostdevs/hostDevCard.jsx:239
+#: src/components/vm/hostdevs/hostDevCard.jsx:245
+#: src/components/vm/hostdevs/hostDevAdd.jsx:129
 msgid "Vendor"
 msgstr "Leverantör"
 
@@ -2361,12 +2427,12 @@ msgstr "Leverantör"
 msgid "Virtual Machines"
 msgstr "Virtuella maskiner"
 
-#: src/components/vm/vmDetailsPage.jsx:113
-#: src/components/vm/vmDetailsPage.jsx:265
-#: src/components/networks/networkList.jsx:54
-#: src/components/storagePools/storagePoolList.jsx:53
 #: src/components/vms/hostvmslist.jsx:126
 #: src/components/vms/hostvmslist.jsx:133
+#: src/components/networks/networkList.jsx:54
+#: src/components/vm/vmDetailsPage.jsx:113
+#: src/components/vm/vmDetailsPage.jsx:265
+#: src/components/storagePools/storagePoolList.jsx:53
 msgid "Virtual machines"
 msgstr "Virtuella maskiner"
 
@@ -2386,16 +2452,17 @@ msgstr "Det gick inte att skapa ett virtuellt nätverk"
 msgid "Virtualization service (libvirt) is not active"
 msgstr "Virtualiseringstjänsten (libvirt) är inte aktiv"
 
-#: src/components/vm/deleteDialog.jsx:65 src/components/vm/disks/diskAdd.jsx:89
-#: src/components/vm/disks/vmDiskColumns.jsx:53
-#: src/components/vm/overview/bootOrder.jsx:110
 #: src/components/create-vm-dialog/createVmDialog.jsx:709
+#: src/components/vm/deleteDialog.jsx:66
+#: src/components/vm/overview/bootOrder.jsx:110
+#: src/components/vm/disks/vmDiskColumns.jsx:37
+#: src/components/vm/disks/diskAdd.jsx:89
 msgid "Volume"
 msgstr "Volym"
 
 #: src/components/storagePools/storageVolumeCreate.jsx:84
 msgid "Volume failed to be created"
-msgstr ""
+msgstr "Volymen kunde inte skapas"
 
 #: src/components/storagePools/createStoragePoolDialog.jsx:168
 msgid "Volume group name"
@@ -2405,28 +2472,28 @@ msgstr "Volym gruppnamn"
 msgid "Volume group name should not be empty"
 msgstr "Volymgruppens namn ska inte vara tomt"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:157
 #: src/components/vm/overview/bootOrder.jsx:173
+#: src/components/vm/hostdevs/hostDevCard.jsx:119
 msgid "WWPN"
 msgstr "WWPN"
 
+#: src/components/vm/disks/vmDisksCard.jsx:242
 #: src/components/vm/disks/diskEdit.jsx:129
-#: src/components/vm/disks/vmDisksCard.jsx:260
 msgid "Writeable"
 msgstr "Skrivbar"
 
+#: src/components/vm/disks/vmDisksCard.jsx:242
 #: src/components/vm/disks/diskEdit.jsx:138
-#: src/components/vm/disks/vmDisksCard.jsx:260
 msgid "Writeable and shared"
 msgstr "Skrivbar och delad"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:176
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:181
 msgid "You can mount the shared folder using:"
 msgstr "Du kan montera den delade mappen med:"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:184
 msgid "You need to select the most closely matching operating system"
-msgstr ""
+msgstr "Du behöver välja det operativsystem som stämmer bäst"
 
 #: src/components/networks/network.jsx:56
 #: src/components/storagePools/storagePool.jsx:64
@@ -2445,7 +2512,7 @@ msgstr "brygga"
 msgid "cdrom"
 msgstr "cdrom"
 
-#: src/components/vm/overview/cpuTypeModal.jsx:50 src/helpers.js:243
+#: src/helpers.js:243 src/components/vm/overview/cpuTypeModal.jsx:50
 msgid "custom"
 msgstr "anpassad"
 
@@ -2489,9 +2556,8 @@ msgid "host device"
 msgstr "värdenhet"
 
 #: src/helpers.js:245
-#, fuzzy
 msgid "host passthrough"
-msgstr "till värdsökväg"
+msgstr "genomgång till värd"
 
 #: src/helpers.js:253
 msgid "hostdev"
@@ -2503,7 +2569,7 @@ msgstr "iSCSI direktmål"
 
 #: src/components/storagePools/createStoragePoolDialog.jsx:143
 msgid "iSCSI initiator IQN"
-msgstr ""
+msgstr "iSCSI initierar-IQN"
 
 #: src/components/storagePools/createStoragePoolDialog.jsx:59
 msgid "iSCSI target"
@@ -2530,34 +2596,35 @@ msgstr "libvirt"
 msgid "mcast"
 msgstr "mcast"
 
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:193
 #: src/components/vm/vmDetailsPage.jsx:221
 #: src/components/vm/nics/nicBody.jsx:112
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:188
 msgid "more info"
 msgstr "mer information"
 
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:189
 #: src/components/vm/vmDetailsPage.jsx:217
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:184
 msgid "mount point: The mount point inside the guest"
 msgstr "monteringspunkt: monteringspunkten inuti gästen"
 
 #: src/components/vm/vmDetailsPage.jsx:216
 msgid "mount tag: The tag associated to the exported mount point"
 msgstr ""
+"monteringstagg: taggen associerad med den exporterade monteringspunkten"
 
 #: src/helpers.js:237 src/helpers.js:249
 msgid "network"
 msgstr "nätverk"
 
-#: src/components/networks/networkOverviewTab.jsx:119
+#: src/helpers.js:272 src/components/networks/networkOverviewTab.jsx:119
 #: src/components/storagePools/storagePoolOverviewTab.jsx:67
-#: src/components/storagePools/storagePoolOverviewTab.jsx:72 src/helpers.js:272
+#: src/components/storagePools/storagePoolOverviewTab.jsx:72
 msgid "no"
 msgstr "nej"
 
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:124
 msgid "no state saved"
-msgstr ""
+msgstr "inget tillstånd sparat"
 
 #: src/components/networks/networkOverviewTab.jsx:299
 msgid "none"
@@ -2651,11 +2718,20 @@ msgstr ""
 msgid "vm"
 msgstr "vm"
 
-#: src/components/networks/networkOverviewTab.jsx:119
+#: src/helpers.js:271 src/components/networks/networkOverviewTab.jsx:119
 #: src/components/storagePools/storagePoolOverviewTab.jsx:67
-#: src/components/storagePools/storagePoolOverviewTab.jsx:72 src/helpers.js:271
+#: src/components/storagePools/storagePoolOverviewTab.jsx:72
 msgid "yes"
 msgstr "ja"
+
+#~ msgid "Delete content"
+#~ msgstr "Ta bort innehållet"
+
+#~ msgid "Delete network interface $0"
+#~ msgstr "Ta bort nätverksgränssnitt $0"
+
+#~ msgid "Disk $0 fail to get detached from VM $1"
+#~ msgstr "Disken $0 kunde inte kopplas bort från VM $1"
 
 #~ msgid "Session"
 #~ msgstr "Session"
