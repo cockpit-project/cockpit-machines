@@ -1625,16 +1625,17 @@ vnc_password= "{vnc_passwd}"
 
         def checkEnvIsEmpty(self, dialog=None):
             b = self.browser
+
+            # wait until virt-install process is finished
+            wait(lambda: "virt-install" not in self.machine.execute("ps aux | grep '[v]irt-install --connect' || true"))
             b.wait_in_text("#virtual-machines-listing .pf-c-empty-state", "No VM is running")
             # wait for the vm and disks to be deleted
             self.machine.execute("until test -z $(virsh list --all --name); do sleep 1; done")
             self.machine.execute("until test -z $(ls /home/admin/.local/share/libvirt/images/ 2>/dev/null); do sleep 1; done")
 
             # When we delete a VM while virt-install is running there will be an error
-            alerts = self.browser.call_js_func("ph_count", ".pf-c-alert-group li")
-            for i in range(alerts):
+            while (b.is_present(".pf-c-alert-group li")):
                 b.click(".pf-c-alert-group li:first-of-type .pf-c-alert button.pf-m-plain")
-
             b.wait_not_present(".pf-c-alert-group")
 
             return self
