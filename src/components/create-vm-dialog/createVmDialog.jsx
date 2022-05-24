@@ -379,13 +379,20 @@ class OSRow extends React.Component {
                 .map(os => correctSpecialCases(os))
                 .filter(os => filterReleaseEolDates(os) && !IGNORE_VENDORS.find(vendor => vendor == os.vendor))
                 .sort((a, b) => {
-                    if (a.vendor == b.vendor)
-                        if (a.releaseDate || b.releaseDate)
+                    if (a.vendor == b.vendor) {
+                        // Sort OS with numbered version by version
+                        if ((a.version && b.version) && (a.version !== b.version))
+                            return b.version.localeCompare(a.version, undefined, { numeric: true, sensitivity: 'base' });
+                        // Sort OS with non-numbered version (e.g. "testing", "rawhide") by release date
+                        else if ((a.releaseDate || b.releaseDate) && (a.releaseDate !== b.releaseDate))
                             return compareDates(a.releaseDate, b.releaseDate, true) > 0;
-                        else
-                            return a.version < b.version;
-                    else
-                        return getOSStringRepresentation(a).toLowerCase() > getOSStringRepresentation(b).toLowerCase();
+
+                        // Sort OSes of the same vendor in DESCENDING order
+                        return getOSStringRepresentation(a).toLowerCase() < getOSStringRepresentation(b).toLowerCase() ? 1 : -1;
+                    }
+
+                    // Sort different vendors in ASCENDING order
+                    return getOSStringRepresentation(a).toLowerCase() > getOSStringRepresentation(b).toLowerCase() ? 1 : -1;
                 });
 
         this.state = {

@@ -98,6 +98,9 @@ class TestMachinesCreate(VirtualMachinesCase):
         # check that newer oses are present and searchable with substring match
         runner.checkFilteredOsTest(TestMachinesCreate.VmDialog(self, os_name=config.WINDOWS_SERVER_10, os_search_name=config.WINDOWS_SERVER_10_SHORT))
 
+        # check OS versons are sorted in alphabetical order
+        runner.checkSortedOsTest(TestMachinesCreate.VmDialog(self), [config.FEDORA_29, config.FEDORA_28])
+
         # Memory unit conversion
         runner.unitPredictionTest(TestMachinesCreate.VmDialog(self, sourceType='disk-image'))
 
@@ -694,6 +697,9 @@ vnc_password= "{vnc_passwd}"
         FEDORA_28 = 'Fedora 28'
         FEDORA_28_SHORTID = 'fedora28'
 
+        FEDORA_29 = 'Fedora 29'
+        FEDORA_29_SHORTID = 'fedora29'
+
         CENTOS_7 = 'CentOS 7'
 
         MANDRIVA_2011_FILTERED_OS = 'Mandriva Linux 2011'
@@ -897,6 +903,17 @@ vnc_password= "{vnc_passwd}"
                     raise AssertionError(f"{self.os_name} was not filtered")
             else:
                 b.wait_visible(f"#os-select li button:contains({self.os_search_name})")
+
+        def checkOsSorted(self, sorted_list):
+            b = self.browser
+
+            b.click("#os-select-group .pf-c-select .pf-c-button")
+
+            # Find the first OS from the sorted list, and get a text of it's next neighbour
+            next_os = b.text(f"#os-select-group li:contains({sorted_list[0]}) + li")
+            # The next neighbour should contain the second OS from the sorted list
+            self.assertEqual(next_os, sorted_list[1])
+            return self
 
         def checkPXENotAvailableSession(self):
             self.browser.set_checked(f"#connectionName-{self.connection}", True)
@@ -1586,6 +1603,13 @@ vnc_password= "{vnc_passwd}"
             dialog.open() \
                 .checkOsFiltered() \
                 .assert_pixels() \
+                .cancel(True)
+            self._assertScriptFinished() \
+                .checkEnvIsEmpty()
+
+        def checkSortedOsTest(self, dialog, sorted_list):
+            dialog.open() \
+                .checkOsSorted(sorted_list) \
                 .cancel(True)
             self._assertScriptFinished() \
                 .checkEnvIsEmpty()
