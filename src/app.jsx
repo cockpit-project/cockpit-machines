@@ -215,7 +215,6 @@ class AppActive extends React.Component {
         const vmActions = <> {importDiskAction} {createVmAction} </>;
         const pathVms = path.length == 0 || (path.length > 0 && path[0] == 'vms');
 
-        let vmContent;
         if (path.length > 0 && path[0] == 'vm') {
             const vm = combinedVms.find(vm => vm.name == cockpit.location.options.name && vm.connectionName == cockpit.location.options.connection);
             if (!vm) {
@@ -302,7 +301,6 @@ class AppActive extends React.Component {
                     resourceHasError={this.state.resourceHasError}
                     onAddErrorNotification={this.onAddErrorNotification} />
                 }
-                {path.length > 0 && path[0] == 'vms' && vmContent}
                 {path.length > 0 && path[0] == 'storages' &&
                 <StoragePoolList storagePools={storagePools}
                     vms={vms}
