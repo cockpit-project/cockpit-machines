@@ -228,10 +228,16 @@ class AppActive extends React.Component {
         const vmActions = <> {importDiskAction} {createVmAction} </>;
         const pathVms = path.length == 0 || (path.length > 0 && path[0] == 'vms');
 
+        const allNotifications = Object.keys(this.state.notifications).length > 0 &&
+            <AlertGroup isToast>
+                {this.getInlineNotifications(Object.keys(this.state.notifications).map(notificationId => this.state.notifications[notificationId]))}
+            </AlertGroup>;
+
         if (path.length > 0 && path[0] == 'vm') {
             const vm = combinedVms.find(vm => vm.name == cockpit.location.options.name && vm.connectionName == cockpit.location.options.connection);
             if (!vm) {
-                return (
+                return (<>
+                    {allNotifications}
                     <EmptyStatePanel title={ cockpit.format(_("VM $0 does not exist on $1 connection"), cockpit.location.options.name, cockpit.location.options.connection) }
                                      action={
                                          <Button variant="link"
@@ -240,11 +246,12 @@ class AppActive extends React.Component {
                                          </Button>
                                      }
                                      icon={ExclamationCircleIcon} />
-                );
+                </>);
             }
 
             if (vm.createInProgress) {
-                return (
+                return (<>
+                    {allNotifications}
                     <EmptyStatePanel title={ cockpit.format(_("Creating VM $0"), cockpit.location.options.name) }
                                      action={
                                          <Button variant="link"
@@ -253,37 +260,39 @@ class AppActive extends React.Component {
                                          </Button>
                                      }
                                      loading />
-                );
+                </>);
             }
 
             const connectionName = vm.connectionName;
+            const vmNotifications = this.state.resourceHasError[vm.id]
+                ? <AlertGroup isToast>
+                    {this.getInlineNotifications(Object.keys(this.state.notifications)
+                            .map(notificationId => this.state.notifications[notificationId])
+                            .filter(notification => notification.resourceId == vm.id))}
+                </AlertGroup>
+                : undefined;
             // If vm.isUi is set we show a dummy placeholder until libvirt gets a real domain object for newly created V
             const expandedContent = (vm.isUi && !vm.id) ? null : (
-                <VmDetailsPage vm={vm} vms={combinedVms} config={config}
-                    libvirtVersion={systemInfo.libvirtVersion}
-                notifications={this.state.resourceHasError[vm.id]
-                    ? this.getInlineNotifications(Object.keys(this.state.notifications)
-                            .map(notificationId => this.state.notifications[notificationId])
-                            .filter(notification => notification.resourceId == vm.id))
-                    : undefined}
-                    onAddErrorNotification={this.onAddErrorNotification}
-                    storagePools={(storagePools || []).filter(pool => pool && pool.connectionName == connectionName)}
-                    onUsageStartPolling={() => usageStartPolling({ name: vm.name, id: vm.id, connectionName: vm.connectionName })}
-                    onUsageStopPolling={() => usageStopPolling({ name: vm.name, id: vm.id, connectionName: vm.connectionName })}
-                    networks={(networks || []).filter(network => network && network.connectionName == connectionName)}
-                    nodeDevices={(nodeDevices || []).filter(device => device && device.connectionName == connectionName)}
-                    key={vmId(vm.name)}
-                />
+                <>
+                    {vmNotifications}
+                    <VmDetailsPage vm={vm} vms={combinedVms} config={config}
+                        libvirtVersion={systemInfo.libvirtVersion}
+                        onAddErrorNotification={this.onAddErrorNotification}
+                        storagePools={(storagePools || []).filter(pool => pool && pool.connectionName == connectionName)}
+                        onUsageStartPolling={() => usageStartPolling({ name: vm.name, id: vm.id, connectionName: vm.connectionName })}
+                        onUsageStopPolling={() => usageStopPolling({ name: vm.name, id: vm.id, connectionName: vm.connectionName })}
+                        networks={(networks || []).filter(network => network && network.connectionName == connectionName)}
+                        nodeDevices={(nodeDevices || []).filter(device => device && device.connectionName == connectionName)}
+                        key={vmId(vm.name)}
+                    />
+                </>
             );
             return expandedContent;
         }
 
         return (
             <>
-                {Object.keys(this.state.notifications).length > 0 &&
-                    <AlertGroup isToast>
-                        {this.getInlineNotifications(Object.keys(this.state.notifications).map(notificationId => this.state.notifications[notificationId]))}
-                    </AlertGroup>}
+                {allNotifications}
                 {pathVms && <HostVmsList vms={vms}
                     config={config}
                     ui={ui}
