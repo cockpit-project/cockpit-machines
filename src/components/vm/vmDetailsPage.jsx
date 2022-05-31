@@ -21,7 +21,6 @@ import React, { useEffect, useState } from 'react';
 import cockpit from 'cockpit';
 
 import {
-    AlertGroup,
     Breadcrumb, BreadcrumbItem,
     CodeBlock, CodeBlockCode,
     Gallery, Button,
@@ -60,7 +59,7 @@ const _ = cockpit.gettext;
 export const VmDetailsPage = ({
     vm, vms, config, libvirtVersion, storagePools,
     onUsageStartPolling, onUsageStopPolling, networks,
-    nodeDevices, notifications, onAddErrorNotification
+    nodeDevices, onAddErrorNotification
 }) => {
     const [loaderElems, setLoaderElems] = useState();
     const [maxVcpu, setMaxVcpu] = useState();
@@ -98,7 +97,6 @@ export const VmDetailsPage = ({
                            onAddErrorNotification={onAddErrorNotification}
                            isDetailsPage />
             </div>
-            {notifications && <AlertGroup isToast>{notifications}</AlertGroup>}
         </PageSection>
     );
 
@@ -285,7 +283,6 @@ VmDetailsPage.propTypes = {
     libvirtVersion: PropTypes.number.isRequired,
     storagePools: PropTypes.array.isRequired,
     networks: PropTypes.array.isRequired,
-    notifications: PropTypes.array,
     onAddErrorNotification: PropTypes.func.isRequired,
     nodeDevices: PropTypes.array.isRequired,
 };
