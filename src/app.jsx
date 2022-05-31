@@ -112,10 +112,9 @@ class AppActive extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            notifications: {},
+            notifications: [],
             /* Dictionary with keys being a resource's UUID and values the number of active error notifications for that resource */
             resourceHasError: {},
-            notificationIdCnt: 0,
             path: cockpit.location.path,
             /* virt-install feature support checks */
             cloudInitSupported: undefined,
@@ -159,7 +158,7 @@ class AppActive extends React.Component {
     }
 
     /*
-     * Adds a new notification object to the notifications Object. It also updates
+     * Adds a new notification object to the notifications array. It also updates
      * the error count for a specific resource.
      * @param {object} notification - The notification object to be added to the array.
      */
@@ -171,39 +170,34 @@ class AppActive extends React.Component {
         else
             resourceHasError[notification.resourceId] = 1;
 
-        notification.index = this.state.notificationIdCnt;
-
         this.setState({
-            notifications: {
-                ...this.state.notifications,
-                [this.state.notificationIdCnt]: notification
-            },
-            notificationIdCnt: this.state.notificationIdCnt + 1,
+            notifications: this.state.notifications.concat([notification]), // append new notification to the end of array
             resourceHasError,
         });
     }
 
     /*
-     * Removes the notification with index notificationIndex from the notifications Object.
+     * Removes the notification with index notificationIndex from the notifications array.
      * It also updates the error count for a specific resource.
      * @param {int} notificationIndex - Index of the notification to be removed.
      */
     onDismissErrorNotification(notificationIndex) {
-        const notifications = Object.assign({}, this.state.notifications);
-        const resourceHasError = Object.assign({}, this.state.resourceHasError);
+        const notifications = [...this.state.notifications];
 
+        const resourceHasError = { ...this.state.resourceHasError };
         resourceHasError[notifications[notificationIndex].resourceId]--;
-        delete notifications[notificationIndex];
+
+        notifications.splice(notificationIndex, 1);
 
         this.setState({ notifications, resourceHasError });
     }
 
     getInlineNotifications(notifications) {
-        return notifications.map(notification =>
-            <InlineNotification type='danger' key={notification.index}
+        return notifications.map((notification, index) =>
+            <InlineNotification type='danger' key={index}
                 isLiveRegion
                 isInline={false}
-                onDismiss={() => this.onDismissErrorNotification(notification.index)}
+                onDismiss={() => this.onDismissErrorNotification(index)}
                 text={notification.text}
                 detail={notification.detail} />
         );
@@ -228,9 +222,9 @@ class AppActive extends React.Component {
         const vmActions = <> {importDiskAction} {createVmAction} </>;
         const pathVms = path.length == 0 || (path.length > 0 && path[0] == 'vms');
 
-        const allNotifications = Object.keys(this.state.notifications).length > 0 &&
+        const allNotifications = this.state.notifications.length > 0 &&
             <AlertGroup isToast>
-                {this.getInlineNotifications(Object.keys(this.state.notifications).map(notificationId => this.state.notifications[notificationId]))}
+                {this.getInlineNotifications(this.state.notifications)}
             </AlertGroup>;
 
         if (path.length > 0 && path[0] == 'vm') {
@@ -266,9 +260,7 @@ class AppActive extends React.Component {
             const connectionName = vm.connectionName;
             const vmNotifications = this.state.resourceHasError[vm.id]
                 ? <AlertGroup isToast>
-                    {this.getInlineNotifications(Object.keys(this.state.notifications)
-                            .map(notificationId => this.state.notifications[notificationId])
-                            .filter(notification => notification.resourceId == vm.id))}
+                    {this.getInlineNotifications(this.state.notifications.filter(notification => notification.resourceId == vm.id))}
                 </AlertGroup>
                 : undefined;
             // If vm.isUi is set we show a dummy placeholder until libvirt gets a real domain object for newly created V
