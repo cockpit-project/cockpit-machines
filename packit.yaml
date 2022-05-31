@@ -22,10 +22,7 @@ actions:
     # HACK: until FMF uses tests from dist-git source tarball: https://github.com/teemtee/tmt/issues/585
     - sh -exc 'mkdir -p tmp; curl --silent --fail https://src.fedoraproject.org/rpms/cockpit-machines/raw/rawhide/f/plans/upstream.fmf | sed -r "/ref:/ s/[0-9.]+/$(git describe --abbrev=0)/" > tmp/upstream.fmf'
 
-  create-archive:
-    - make dist DOWNLOAD_DIST_OPTIONS=--wait FORCE_DOWNLOAD_DIST=1
-    - rm -f test/common/sizzle.js
-    - find -name 'cockpit-machines-*.tar.xz'
+  create-archive: make dist DOWNLOAD_DIST_OPTIONS=--wait FORCE_DOWNLOAD_DIST=1
 
 jobs:
   - job: tests
