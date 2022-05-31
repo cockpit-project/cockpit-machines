@@ -62,6 +62,7 @@ function unknownConnectionName() {
                 return connectionNames;
             });
 }
+
 export const App = () => {
     const [loadingResources, setLoadingResources] = useState(false);
     const [error, setError] = useState('');
@@ -125,6 +126,7 @@ class AppActive extends React.Component {
         };
         this.onAddErrorNotification = this.onAddErrorNotification.bind(this);
         this.onDismissErrorNotification = this.onDismissErrorNotification.bind(this);
+        this.getInlineNotifications = this.getInlineNotifications.bind(this);
         this.onNavigate = () => this.setState({ path: cockpit.location.path });
     }
 
@@ -196,6 +198,17 @@ class AppActive extends React.Component {
         this.setState({ notifications, resourceHasError });
     }
 
+    getInlineNotifications(notifications) {
+        return notifications.map(notification =>
+            <InlineNotification type='danger' key={notification.index}
+                isLiveRegion
+                isInline={false}
+                onDismiss={() => this.onDismissErrorNotification(notification.index)}
+                text={notification.text}
+                detail={notification.detail} />
+        );
+    }
+
     render() {
         const { vms, config, storagePools, systemInfo, ui, networks, nodeDevices, interfaces } = store.getState();
         const { path, cloudInitSupported, downloadOSSupported, unattendedSupported, unattendedUserLogin, virtInstallAvailable } = this.state;
@@ -228,7 +241,9 @@ class AppActive extends React.Component {
                                      }
                                      icon={ExclamationCircleIcon} />
                 );
-            } else if (vm.createInProgress) {
+            }
+
+            if (vm.createInProgress) {
                 return (
                     <EmptyStatePanel title={ cockpit.format(_("Creating VM $0"), cockpit.location.options.name) }
                                      action={
@@ -246,21 +261,11 @@ class AppActive extends React.Component {
             const expandedContent = (vm.isUi && !vm.id) ? null : (
                 <VmDetailsPage vm={vm} vms={combinedVms} config={config}
                     libvirtVersion={systemInfo.libvirtVersion}
-                    notifications={this.state.resourceHasError[vm.id]
-                        ? Object.keys(this.state.notifications)
-                                .map(notificationId => this.state.notifications[notificationId])
-                                .filter(notification => notification.resourceId == vm.id)
-                                .map(notification => {
-                                    return (
-                                        <InlineNotification type='danger' key={notification.index}
-                                               isLiveRegion
-                                               isInline={false}
-                                               onDismiss={() => this.onDismissErrorNotification(notification.index)}
-                                               text={notification.text}
-                                               detail={notification.detail} />
-                                    );
-                                })
-                        : undefined}
+                notifications={this.state.resourceHasError[vm.id]
+                    ? this.getInlineNotifications(Object.keys(this.state.notifications)
+                            .map(notificationId => this.state.notifications[notificationId])
+                            .filter(notification => notification.resourceId == vm.id))
+                    : undefined}
                     onAddErrorNotification={this.onAddErrorNotification}
                     storagePools={(storagePools || []).filter(pool => pool && pool.connectionName == connectionName)}
                     onUsageStartPolling={() => usageStartPolling({ name: vm.name, id: vm.id, connectionName: vm.connectionName })}
@@ -276,20 +281,9 @@ class AppActive extends React.Component {
         return (
             <>
                 {Object.keys(this.state.notifications).length > 0 &&
-                <AlertGroup isToast>
-                    {Object.keys(this.state.notifications).map(notificationId => {
-                        const notification = this.state.notifications[notificationId];
-
-                        return (
-                            <InlineNotification type='danger' key={notification.index}
-                                isLiveRegion
-                                isInline={false}
-                                onDismiss={() => this.onDismissErrorNotification(notification.index)}
-                                text={notification.text}
-                                detail={notification.detail} />
-                        );
-                    })}
-                </AlertGroup>}
+                    <AlertGroup isToast>
+                        {this.getInlineNotifications(Object.keys(this.state.notifications).map(notificationId => this.state.notifications[notificationId]))}
+                    </AlertGroup>}
                 {pathVms && <HostVmsList vms={vms}
                     config={config}
                     ui={ui}
