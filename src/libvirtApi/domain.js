@@ -604,8 +604,8 @@ export function domainGetCapabilities({ connectionName, arch, model }) {
     return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'GetDomainCapabilities', ['', arch, model, '', 0], { timeout, type: 'ssssu' });
 }
 
-export function domainInstall({ onAddErrorNotification, vm }) {
-    logDebug(`INSTALL_VM(${name}):`);
+export function domainInstall({ vm }) {
+    logDebug(`INSTALL_VM(${vm.name}):`);
     // shows dummy vm until we get vm from virsh (cleans up inProgress)
     // vm should be returned even if script fails
     setVmInstallInProgress(vm);

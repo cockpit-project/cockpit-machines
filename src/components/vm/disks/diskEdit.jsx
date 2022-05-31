@@ -141,7 +141,7 @@ const AccessRow = ({ onValueChanged, dialogValues, diskDevice, driverType, idPre
     );
 };
 
-export const EditDiskAction = ({ idPrefix, disk, onAddErrorNotification, vm, supportedDiskBusTypes }) => {
+export const EditDiskAction = ({ idPrefix, disk, vm, supportedDiskBusTypes }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -154,7 +154,6 @@ export const EditDiskAction = ({ idPrefix, disk, onAddErrorNotification, vm, sup
             </Button>
             {isOpen && <EditDiskModal idPrefix={idPrefix}
                                       disk={disk}
-                                      onAddErrorNotification={onAddErrorNotification}
                                       setIsOpen={setIsOpen}
                                       supportedDiskBusTypes={supportedDiskBusTypes}
                                       vm={vm} />}

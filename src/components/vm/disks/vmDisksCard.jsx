@@ -175,8 +175,7 @@ export class VmDisksCardLibvirt extends React.Component {
                 vm={vm}
                 disks={disks}
                 renderCapacity={areDiskStatsSupported}
-                supportedDiskBusTypes={supportedDiskBusTypes}
-                onAddErrorNotification={this.props.onAddErrorNotification} />
+                supportedDiskBusTypes={supportedDiskBusTypes} />
         );
     }
 }
@@ -193,7 +192,7 @@ export class VmDisksCard extends React.Component {
     }
 
     render() {
-        const { vm, disks, renderCapacity, onAddErrorNotification, supportedDiskBusTypes } = this.props;
+        const { vm, disks, renderCapacity, supportedDiskBusTypes } = this.props;
         let renderCapacityUsed, renderAccess, renderAdditional;
         const columnTitles = [_("Device")];
         const idPrefix = `${vmId(vm.name)}-disks`;
@@ -292,7 +291,6 @@ export class VmDisksCard extends React.Component {
                     <EditDiskAction disk={disk}
                                     vm={vm}
                                     idPrefix={`${idPrefixRow}-edit`}
-                                    onAddErrorNotification={onAddErrorNotification}
                                     supportedDiskBusTypes={supportedDiskBusTypes} />}
                 </div>
             );
@@ -316,6 +314,5 @@ export class VmDisksCard extends React.Component {
 VmDisksCard.propTypes = {
     disks: PropTypes.array.isRequired,
     renderCapacity: PropTypes.bool,
-    onAddErrorNotification: PropTypes.func.isRequired,
     supportedDiskBusTypes: PropTypes.array,
 };

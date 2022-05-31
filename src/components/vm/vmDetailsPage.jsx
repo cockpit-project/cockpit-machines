@@ -164,8 +164,7 @@ export const VmDetailsPage = ({
             title: _("Disks"),
             actions: <VmDisksActions vm={vm} vms={vms} supportedDiskBusTypes={supportedDiskBusTypes} storagePools={storagePools} />,
             body: <VmDisksCardLibvirt vm={vm} config={config} storagePools={storagePools}
-                                      supportedDiskBusTypes={supportedDiskBusTypes}
-                                      onAddErrorNotification={onAddErrorNotification} />,
+                                      supportedDiskBusTypes={supportedDiskBusTypes} />,
         },
         {
             id: `${vmId(vm.name)}-networks`,
@@ -190,8 +189,7 @@ export const VmDetailsPage = ({
             className: "snapshots-card",
             title: _("Snapshots"),
             actions: <VmSnapshotsActions vm={vm} />,
-            body: <VmSnapshotsCard vm={vm} config={config}
-                                   onAddErrorNotification={onAddErrorNotification} />
+            body: <VmSnapshotsCard vm={vm} config={config} />
         });
     }
     if (libvirtVersion && libvirtVersion >= 6008000 && vm.connectionName == "system") {
