@@ -30,7 +30,7 @@ sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
 
 from machineslib import VirtualMachinesCase  # noqa
 from testlib import nondestructive, test_main  # noqa
-from machinesxmls import USB_HOSTDEV, USB_HOSTDEV_NONEXISTENT, PCI_HOSTDEV  # noqa
+from machinesxmls import USB_HOSTDEV, USB_HOSTDEV_NONEXISTENT, PCI_HOSTDEV, SCSI_HOST_HOSTDEV  # noqa
 
 virt_xml_mock = """#!/usr/bin/python
 
@@ -104,6 +104,17 @@ class TestMachinesHostDevs(VirtualMachinesCase):
             pass
 
         b.wait_in_text("#vm-subVmTest1-hostdev-1-source #1-slot", "0000:00:0f.0")
+
+        # QEMU version on rhel and centos-8/9-stream doesn't support scsi-host devices yet
+        if not m.image.startswith("rhel-8") and not m.image.startswith("rhel-9") and m.image != "centos-8-stream" and m.image != "centos-9-stream":
+            # Test the unsupported device type, e.g. scsi_host, doesn't have "Remove" button
+            m.execute(f"echo \"{SCSI_HOST_HOSTDEV}\" > /tmp/scsihost_hostdevxml")
+            m.execute("virsh attach-device --domain subVmTest1 --file /tmp/scsihost_hostdevxml --persistent")
+            b.reload()
+            b.enter_page('/machines')
+
+            b.wait_in_text("#vm-subVmTest1-hostdev-2-type", "scsi_host")
+            b.wait_not_present("#delete-vm-subVmTest1-hostdev-r2")
 
     def testHostDevAddSessionConnection(self):
         self.testHostDevAddSingleDevice('session')

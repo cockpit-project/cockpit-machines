@@ -269,11 +269,11 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
                                           })} />
                 );
 
-                return (
-                    <div className='machines-listing-actions'>
+                return ["usb", "pci"].includes(hostdev.type)
+                    ? <div className='machines-listing-actions'>
                         {deleteNICAction}
                     </div>
-                );
+                    : null;
             }
         },
     ];
