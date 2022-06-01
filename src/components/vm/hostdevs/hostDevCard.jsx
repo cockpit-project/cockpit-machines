@@ -244,9 +244,11 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
                     objectDescription = [
                         { name: _("Vendor"), value: getVendor(hostdev, nodeDevices) },
                         { name: _("Product"), value: getProduct(hostdev, nodeDevices) },
-                        { name: _("Device"), value: source.device },
-                        { name: _("Bus"), value: source.bus },
                     ];
+                    if (source) {
+                        objectDescription.push({ name: _("Device"), value: source.device });
+                        objectDescription.push({ name: _("Bus"), value: source.bus });
+                    }
                 }
 
                 const deleteNICAction = (
@@ -284,16 +286,18 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
 
         const aSource = getHostDevSourceObject(a);
         const bSource = getHostDevSourceObject(b);
-        if (a.type === "pci") {
-            const aSlot = `${aSource.domain}:${aSource.bus}:${aSource.slot}.${aSource.func}`;
-            const bSlot = `${bSource.domain}:${bSource.bus}:${bSource.slot}.${bSource.func}`;
-            if (aSlot !== bSlot)
-                return aSlot > bSlot ? 1 : -1;
-        } else if (a.type === "usb") {
-            const aVendorAndProduct = `${aSource.vendor}-${aSource.product}`;
-            const bVendorAndProduct = `${bSource.vendor}-${bSource.product}`;
-            if (aVendorAndProduct !== bVendorAndProduct)
-                return aVendorAndProduct > bVendorAndProduct ? 1 : -1;
+        if (aSource && bSource) {
+            if (a.type === "pci") {
+                const aSlot = `${aSource.domain}:${aSource.bus}:${aSource.slot}.${aSource.func}`;
+                const bSlot = `${bSource.domain}:${bSource.bus}:${bSource.slot}.${bSource.func}`;
+                if (aSlot !== bSlot)
+                    return aSlot > bSlot ? 1 : -1;
+            } else if (a.type === "usb") {
+                const aVendorAndProduct = `${aSource.vendor}-${aSource.product}`;
+                const bVendorAndProduct = `${bSource.vendor}-${bSource.product}`;
+                if (aVendorAndProduct !== bVendorAndProduct)
+                    return aVendorAndProduct > bVendorAndProduct ? 1 : -1;
+            }
         }
 
         return 0;
