@@ -144,7 +144,11 @@ export function domainAttachHostDevices({ connectionName, vmName, live, devices 
     const args = ["virt-xml", "-c", `qemu:///${connectionName}`, vmName];
 
     devices.forEach(dev => {
-        args.push("--add-device", "--hostdev", getNodeDevSource(dev));
+        const source = getNodeDevSource(dev);
+        if (!source)
+            throw new Error(`domainAttachHostDevices: could not determine device's source identifier`);
+
+        args.push("--add-device", "--hostdev", source);
     });
 
     if (connectionName === "system")
@@ -460,6 +464,8 @@ export function domainDetachDisk({
 // Cannot use virt-xml until https://github.com/virt-manager/virt-manager/issues/357 is fixed
 export function domainDetachHostDevice({ connectionName, vmId, live, dev }) {
     const source = getHostDevSourceObject(dev);
+    if (!source)
+        throw new Error(`domainDetachHostDevice: could not determine device's source identifier`);
 
     const hostDevPromises = [];
 

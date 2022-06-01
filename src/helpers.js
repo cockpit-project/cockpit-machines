@@ -819,7 +819,7 @@ export function getNodeDevSource(dev) {
 
         source = `${bus}.${device}`;
     } else {
-        throw new Error(`getNodeDevSource: unsupport device type '${dev.type}'`);
+        console.warn(`getNodeDevSource: unsupported device type '${dev.type}'`);
     }
 
     return source;
@@ -846,7 +846,7 @@ export function getHostDevSourceObject(dev) {
 
         source = { vendor, product, bus, device };
     } else {
-        throw new Error(`getHostDevSourceObject: unsupport device type '${dev.type}'`);
+        console.warn(`getHostDevSourceObject: unsupport device type '${dev.type}'`);
     }
 
     return source;
