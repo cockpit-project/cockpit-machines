@@ -122,3 +122,8 @@ PCI_HOSTDEV = """<hostdev mode='subsystem' type='pci'>
     <address domain='0x0000' bus='0x00' slot='0xF' function='0x0'/>
   </source>
 </hostdev>"""
+
+# Unsupported hostdev type
+SCSI_HOST_HOSTDEV = """<hostdev mode='subsystem' type='scsi_host'>
+  <source protocol='vhost' wwpn='naa.50014057667280d8'/>
+</hostdev>"""
