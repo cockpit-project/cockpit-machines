@@ -62,12 +62,7 @@ packaging/debian/changelog: packaging/debian/changelog.in
 	sed 's/VERSION/$(VERSION)/' $< > $@
 
 $(WEBPACK_TEST): $(COCKPIT_REPO_STAMP) $(shell find src/ -type f) package.json webpack.config.js
-	test/download-dist $${DOWNLOAD_DIST_OPTIONS:-} || \
-	    if [ -z "$$FORCE_DOWNLOAD_DIST" ]; then \
-		($(MAKE) package-lock.json && NODE_ENV=$(NODE_ENV) node_modules/.bin/webpack); \
-	    else \
-		exit 1; \
-	    fi
+	$(MAKE) package-lock.json && NODE_ENV=$(NODE_ENV) node_modules/.bin/webpack
 
 watch:
 	NODE_ENV=$(NODE_ENV) node_modules/.bin/webpack --watch
