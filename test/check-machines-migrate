@@ -164,7 +164,8 @@ class TestMachinesMigration(VirtualMachinesCase):
         b.set_checked("#temporary", temporary)
 
         if self.machine.image.startswith("rhel") or self.machine.image.startswith("centos-9"):
-            b.wait_not_present("#copy")
+            with b.wait_timeout(120):
+                b.wait_not_present("#copy")
         else:
             if copy_storage:
                 b.click("#copy")
@@ -183,7 +184,8 @@ class TestMachinesMigration(VirtualMachinesCase):
 
         b.click("#migrate-button")
         if fail:
-            b.wait_visible(".pf-c-modal-box__footer .pf-c-alert .pf-c-alert__title:contains('Migration failed')")
+            with b.wait_timeout(120):
+                b.wait_visible(".pf-c-modal-box__footer .pf-c-alert .pf-c-alert__title:contains('Migration failed')")
 
             if fail == "libvirtd":
                 machine2.execute(f"systemctl start {self.getLibvirtServiceName()}.service")
@@ -192,7 +194,8 @@ class TestMachinesMigration(VirtualMachinesCase):
             wait(lambda: "subVmTest1" not in machine2.execute("virsh list --all"), delay=3)
             self.assertIn("subVmTest1", machine1.execute("virsh list --all"))
         else:
-            b.wait_not_present("#migrate-modal")
+            with b.wait_timeout(120):
+                b.wait_not_present("#migrate-modal")
 
             # Verify the state of the migrated VM in the destination host
             # The migrated VM should always exist on destination - domstate depends on the options of the dialog set

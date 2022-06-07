@@ -122,7 +122,8 @@ class TestMachinesConsoles(VirtualMachinesCase):
         b.focus(f"#{name}-terminal .xterm-accessibility-tree")
         b.key_press("\r")
 
-        b.wait_in_text(f"#{name}-terminal .xterm-accessibility-tree", "cirros login")
+        with b.wait_timeout(60):
+            b.wait_in_text(f"#{name}-terminal .xterm-accessibility-tree", "cirros login")
 
         b.click(f"#{name}-serialconsole-disconnect")
         b.wait_text(f"#{name}-terminal", "Disconnected from serial console. Click the connect button.")
