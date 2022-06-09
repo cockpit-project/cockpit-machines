@@ -5,7 +5,7 @@ set -eux
 cd $SOURCE
 git init
 rm -f bots  # common local case: existing bots symlink
-make bots test/common test/reference
+make bots
 
 # support running from clean git tree
 if [ ! -d node_modules/chrome-remote-interface ]; then
