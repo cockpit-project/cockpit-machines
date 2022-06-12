@@ -7,23 +7,12 @@ downstream_package_name: cockpit-machines
 # use the nicely formatted release description from our upstream release, instead of git shortlog
 copy_upstream_release_description: true
 
-# HACK: packit.yml and spec get synced by default; drop this when the plans/upstream.fmf HACK above gets dropped
-files_to_sync:
-  - packit.yaml
-  - cockpit-machines.spec
-  - src: tmp/upstream.fmf
-    dest: plans/upstream.fmf
-
 srpm_build_deps:
 - npm
 - make
 
 actions:
-  post-upstream-clone:
-    - make cockpit-machines.spec
-    # HACK: until FMF uses tests from dist-git source tarball: https://github.com/teemtee/tmt/issues/585
-    - sh -exc 'mkdir -p tmp; curl --silent --fail https://src.fedoraproject.org/rpms/cockpit-machines/raw/rawhide/f/plans/upstream.fmf | sed -r "/ref:/ s/[0-9.]+/$(git describe --abbrev=0)/" > tmp/upstream.fmf'
-
+  post-upstream-clone: make cockpit-machines.spec
   create-archive: make dist
 
 jobs:
