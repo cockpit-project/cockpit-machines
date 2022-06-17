@@ -197,7 +197,9 @@ class VirtualMachinesCaseHelpers:
                   targetcli /iscsi/%(tgt)s/tpg1/acls create %(ini)s
                   """ % {"tgt": target_iqn, "ini": orig_iqn})
 
-        self.addCleanup(m.execute, "targetcli /backstores/ramdisk delete test && targetcli /iscsi delete %s && (iscsiadm -m node -o delete || true)" % target_iqn)
+        # targetcli throws an error but succeeds https://bugzilla.redhat.com/show_bug.cgi?id=2093976
+        self.addCleanup(m.execute, "targetcli /backstores/ramdisk delete test" + (" || true" if m.image.startswith("fedora") else ""))
+        self.addCleanup(m.execute, "targetcli /iscsi delete %s && (iscsiadm -m node -o delete || true)" % target_iqn)
         return orig_iqn
 
     def run_admin(self, cmd, connectionName='system'):
