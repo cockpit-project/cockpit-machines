@@ -53,6 +53,15 @@ import {
 } from './pxe-helpers.js';
 
 import {
+    URL_SOURCE,
+    LOCAL_INSTALL_MEDIA_SOURCE,
+    CLOUD_IMAGE,
+    DOWNLOAD_AN_OS,
+    EXISTING_DISK_IMAGE_SOURCE,
+    PXE_SOURCE,
+    NONE,
+    RUN,
+    EDIT,
     autodetectOS,
     compareDates,
     correctSpecialCases,
@@ -66,16 +75,6 @@ import { PasswordFormFields, password_quality } from 'cockpit-components-passwor
 import './createVmDialog.scss';
 
 const _ = cockpit.gettext;
-
-const URL_SOURCE = 'url';
-const LOCAL_INSTALL_MEDIA_SOURCE = 'file';
-const CLOUD_IMAGE = 'cloud';
-const DOWNLOAD_AN_OS = 'os';
-const EXISTING_DISK_IMAGE_SOURCE = 'disk_image';
-const PXE_SOURCE = 'pxe';
-const NONE = 0;
-const RUN = 1;
-const EDIT = 2;
 
 /* Returns pool's available space
  * Pool needs to be referenced by it's name or path.

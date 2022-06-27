@@ -27,6 +27,16 @@ import autoDetectOSScript from 'raw-loader!./autoDetectOS.py';
 const ACCEPT_RELEASE_DATES_AFTER = getTodayYearShifted(-3);
 const ACCEPT_EOL_DATES_AFTER = getTodayYearShifted(-1);
 
+export const URL_SOURCE = 'url';
+export const LOCAL_INSTALL_MEDIA_SOURCE = 'file';
+export const CLOUD_IMAGE = 'cloud';
+export const DOWNLOAD_AN_OS = 'os';
+export const EXISTING_DISK_IMAGE_SOURCE = 'disk_image';
+export const PXE_SOURCE = 'pxe';
+export const NONE = 0;
+export const RUN = 1;
+export const EDIT = 2;
+
 /*
  * Uses libosinfo to autodetect an OS based on its media/treeinfo.
  * treeinfo detection currently works only for rpm based distros.
