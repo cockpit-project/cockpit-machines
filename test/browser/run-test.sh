@@ -65,9 +65,12 @@ EXCLUDES="$EXCLUDES
           TestMachinesDisks.testDetachDisk
           TestMachinesDisks.testDiskEdit
 
+          TestMachinesFilesystems.testBasicSessionConnection
+
           TestMachinesLifecycle.testBasicAdminUser
           TestMachinesLifecycle.testBasicLibvirtUserUnprivileged
           TestMachinesLifecycle.testBasicNonrootUserUnprivileged
+          TestMachinesLifecycle.testCloneSystemConnection
           TestMachinesLifecycle.testDelete
           TestMachinesLifecycle.testLibvirt
 
