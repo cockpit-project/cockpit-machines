@@ -20,6 +20,7 @@ import React from 'react';
 import cockpit from 'cockpit';
 import PropTypes from 'prop-types';
 import { Button, Checkbox, Form, FormGroup, Modal, Radio, TextInput } from '@patternfly/react-core';
+import { DialogsContext } from 'dialogs.jsx';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { NetworkTypeAndSourceRow, NetworkModelRow } from './nicBody.jsx';
@@ -92,6 +93,8 @@ const PermanentChange = ({ idPrefix, onValueChanged, dialogValues, vm }) => {
 };
 
 export class AddNIC extends React.Component {
+    static contextType = DialogsContext;
+
     constructor(props) {
         super(props);
 
@@ -134,6 +137,7 @@ export class AddNIC extends React.Component {
     }
 
     add() {
+        const Dialogs = this.context;
         const { vm, vms } = this.props;
 
         domainAttachIface({
@@ -150,12 +154,13 @@ export class AddNIC extends React.Component {
         })
                 .then(() => {
                     domainGet({ connectionName: vm.connectionName, id: vm.id });
-                    this.props.close();
+                    Dialogs.close();
                 })
                 .catch(exc => this.dialogErrorSet(_("Network interface settings could not be saved"), exc.message));
     }
 
     render() {
+        const Dialogs = this.context;
         const { idPrefix, vm } = this.props;
 
         const defaultBody = (
@@ -184,7 +189,7 @@ export class AddNIC extends React.Component {
         );
 
         return (
-            <Modal position="top" variant="medium" id={`${idPrefix}-dialog`} isOpen onClose={this.props.close} className='nic-add'
+            <Modal position="top" variant="medium" id={`${idPrefix}-dialog`} isOpen onClose={Dialogs.close} className='nic-add'
                 title={_("Add virtual network interface")}
                 footer={
                     <>
@@ -195,7 +200,7 @@ export class AddNIC extends React.Component {
                                 onClick={this.add}>
                             {_("Add")}
                         </Button>
-                        <Button id={`${idPrefix}-cancel`} variant='link' className='btn-cancel' onClick={this.props.close}>
+                        <Button id={`${idPrefix}-cancel`} variant='link' className='btn-cancel' onClick={Dialogs.close}>
                             {_("Cancel")}
                         </Button>
                     </>

@@ -20,6 +20,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 import { Button, Flex, FlexItem } from '@patternfly/react-core';
+import { useDialogs } from 'dialogs.jsx';
 
 import { convertToUnit, diskPropertyChanged, toReadableNumber, units, vmId } from "../../../helpers.js";
 import { AddDiskModalBody } from './diskAdd.jsx';
@@ -27,7 +28,7 @@ import { domainDetachDisk, domainGet } from '../../../libvirtApi/domain.js';
 import { EditDiskAction } from './diskEdit.jsx';
 import WarningInactive from '../../common/warningInactive.jsx';
 import { ListingTable } from "cockpit-components-table.jsx";
-import { DeleteResourceButton, DeleteResourceModal } from '../../common/deleteResource.jsx';
+import { DeleteResourceButton } from '../../common/deleteResource.jsx';
 import { DISK_SOURCE_LIST, DiskSourceCell, DiskExtras, getDiskSourceValue } from './vmDiskColumns.jsx';
 
 const _ = cockpit.gettext;
@@ -60,44 +61,23 @@ const VmDiskCell = ({ value, id }) => {
     );
 };
 
-export class VmDisksActions extends React.Component {
-    constructor(props) {
-        super(props);
+export const VmDisksActions = ({ vm, vms, supportedDiskBusTypes }) => {
+    const Dialogs = useDialogs();
+    const idPrefix = `${vmId(vm.name)}-disks`;
 
-        this.state = {
-            showAddDiskModal: false,
-        };
-        this.open = this.open.bind(this);
-        this.close = this.close.bind(this);
+    function open() {
+        Dialogs.show(<AddDiskModalBody idPrefix={idPrefix}
+                                       vm={vm} vms={vms}
+                                       supportedDiskBusTypes={supportedDiskBusTypes} />);
     }
 
-    close() {
-        this.setState({ showAddDiskModal: false });
-    }
-
-    open() {
-        this.setState({ showAddDiskModal: true });
-    }
-
-    render() {
-        const { vm, vms, storagePools } = this.props;
-        const idPrefix = `${vmId(vm.name)}-disks`;
-
-        return (
-            <>
-                <Button id={`${idPrefix}-adddisk`} variant='secondary' onClick={this.open} isDisabled={!this.props.supportedDiskBusTypes}>
-                    {_("Add disk")}
-                </Button>
-                {this.state.showAddDiskModal &&
-                <AddDiskModalBody close={this.close}
-                                  idPrefix={idPrefix}
-                                  vm={vm} vms={vms}
-                                  storagePools={storagePools.filter(pool => pool && pool.active)}
-                                  supportedDiskBusTypes={this.props.supportedDiskBusTypes} />}
-            </>
-        );
-    }
-}
+    return (
+        <Button id={`${idPrefix}-adddisk`} variant='secondary'
+                onClick={open} isDisabled={!supportedDiskBusTypes || supportedDiskBusTypes.length == 0}>
+            {_("Add disk")}
+        </Button>
+    );
+};
 
 export class VmDisksCardLibvirt extends React.Component {
     /**
@@ -186,11 +166,6 @@ VmDisksCardLibvirt.propTypes = {
 };
 
 export class VmDisksCard extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {};
-    }
-
     render() {
         const { vm, disks, renderCapacity, supportedDiskBusTypes } = this.props;
         let renderCapacityUsed, renderAccess, renderAdditional;
@@ -276,17 +251,16 @@ export class VmDisksCard extends React.Component {
                         ? { name: entry.label, value: <span className="ct-monospace">{getDiskSourceValue(disk.source, entry.name)}</span> }
                         : [])
                 ],
-                onClose: () => this.setState({ deleteDialogProps: undefined }),
                 deleteHandler: () => onRemoveDisk(),
             };
 
             const diskActions = (
                 <div className='machines-listing-actions'>
                     <DeleteResourceButton objectId={vm.name + "-disk-" + disk.target}
-                       disabled={vm.state != 'shut off' && vm.state != 'running'}
-                       showDialog={() => this.setState({ deleteDialogProps })}
-                       overlayText={_("The VM needs to be running or shut off to detach this device")}
-                       actionName={_("Remove")} />
+                                          disabled={vm.state != 'shut off' && vm.state != 'running'}
+                                          dialogProps={deleteDialogProps}
+                                          overlayText={_("The VM needs to be running or shut off to detach this device")}
+                                          actionName={_("Remove")} />
                     { vm.persistent && vm.inactiveXML.disks[disk.target] && // supported only  for persistent disks
                     <EditDiskAction disk={disk}
                                     vm={vm}
@@ -300,7 +274,6 @@ export class VmDisksCard extends React.Component {
 
         return (
             <>
-                {this.state.deleteDialogProps && <DeleteResourceModal {...this.state.deleteDialogProps} />}
                 <ListingTable variant='compact'
                     gridBreakPoint='grid-xl'
                     emptyCaption={_("No disks defined for this VM")}

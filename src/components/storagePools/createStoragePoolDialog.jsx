@@ -26,6 +26,7 @@ import {
     Grid,
     Modal, TextInput
 } from '@patternfly/react-core';
+import { DialogsContext } from 'dialogs.jsx';
 
 import { LIBVIRT_SYSTEM_CONNECTION } from '../../helpers.js';
 import { MachinesConnectionSelector } from '../common/machinesConnectionSelector.jsx';
@@ -243,6 +244,8 @@ const StoragePoolAutostartRow = ({ onValueChanged, dialogValues }) => {
 };
 
 class CreateStoragePoolModal extends React.Component {
+    static contextType = DialogsContext;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -298,6 +301,8 @@ class CreateStoragePoolModal extends React.Component {
     }
 
     onCreateClicked() {
+        const Dialogs = this.context;
+
         let modalIsIncomplete = false;
         const validationFailed = Object.assign({}, this.state.validationFailed);
 
@@ -394,11 +399,13 @@ class CreateStoragePoolModal extends React.Component {
                         this.setState({ createInProgress: false });
                         this.dialogErrorSet(_("Storage pool failed to be created"), exc.message);
                     })
-                    .then(() => this.props.close());
+                    .then(Dialogs.close);
         }
     }
 
     render() {
+        const Dialogs = this.context;
+
         const defaultBody = (
             <Form isHorizontal>
                 <MachinesConnectionSelector id='storage-pool-dialog-connection'
@@ -426,7 +433,7 @@ class CreateStoragePoolModal extends React.Component {
         );
 
         return (
-            <Modal position="top" variant="medium" id='create-storage-pool-dialog' className='pool-create' isOpen onClose={ this.props.close }
+            <Modal position="top" variant="medium" id='create-storage-pool-dialog' className='pool-create' isOpen onClose={ Dialogs.close }
                    title={_("Create storage pool")}
                    footer={
                        <>
@@ -434,7 +441,7 @@ class CreateStoragePoolModal extends React.Component {
                            <Button variant='primary' isLoading={this.state.createInProgress} isDisabled={this.state.createInProgress} onClick={this.onCreateClicked}>
                                {_("Create")}
                            </Button>
-                           <Button variant='link' className='btn-cancel' onClick={ this.props.close }>
+                           <Button variant='link' className='btn-cancel' onClick={ Dialogs.close }>
                                {_("Cancel")}
                            </Button>
                        </>
@@ -445,17 +452,16 @@ class CreateStoragePoolModal extends React.Component {
     }
 }
 CreateStoragePoolModal.propTypes = {
-    close: PropTypes.func.isRequired,
     libvirtVersion: PropTypes.number,
     loggedUser: PropTypes.object.isRequired,
 };
 
 export class CreateStoragePoolAction extends React.Component {
+    static contextType = DialogsContext;
+
     constructor(props) {
         super(props);
-        this.state = { showModal: false, poolCapabilities: undefined };
-        this.open = this.open.bind(this);
-        this.close = this.close.bind(this);
+        this.state = { poolCapabilities: undefined };
     }
 
     componentDidMount() {
@@ -464,30 +470,22 @@ export class CreateStoragePoolAction extends React.Component {
                 .catch(() => this.setState({ poolCapabilities: {} }));
     }
 
-    close() {
-        this.setState({ showModal: false });
-    }
-
-    open() {
-        this.setState({ showModal: true });
-    }
-
     render() {
+        const Dialogs = this.context;
+
+        const open = () => {
+            Dialogs.show(<CreateStoragePoolModal poolCapabilities={this.state.poolCapabilities}
+                                                 libvirtVersion={this.props.libvirtVersion}
+                                                 loggedUser={this.props.loggedUser} />);
+        };
+
         return (
-            <>
-                <Button id='create-storage-pool'
-                        variant='secondary'
-                        isDisabled={this.state.poolCapabilities === undefined}
-                        onClick={this.open}>
-                    {_("Create storage pool")}
-                </Button>
-                { this.state.showModal &&
-                <CreateStoragePoolModal
-                    poolCapabilities={this.state.poolCapabilities}
-                    close={this.close}
-                    libvirtVersion={this.props.libvirtVersion}
-                    loggedUser={this.props.loggedUser} /> }
-            </>
+            <Button id='create-storage-pool'
+                    variant='secondary'
+                    isDisabled={this.state.poolCapabilities === undefined}
+                    onClick={open}>
+                {_("Create storage pool")}
+            </Button>
         );
     }
 }

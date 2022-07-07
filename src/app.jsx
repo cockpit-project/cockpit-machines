@@ -208,9 +208,9 @@ class AppActive extends React.Component {
         const { path, cloudInitSupported, downloadOSSupported, unattendedSupported, unattendedUserLogin, virtInstallAvailable } = this.state;
         const combinedVms = [...vms, ...dummyVmsFilter(vms, ui.vms)];
         const properties = {
-            networks, nodeDevices, nodeMaxMemory: config.nodeMaxMemory,
+            nodeMaxMemory: config.nodeMaxMemory,
             onAddErrorNotification: this.onAddErrorNotification,
-            storagePools, systemInfo, vms: combinedVms,
+            systemInfo, vms: combinedVms,
             cloudInitSupported,
             downloadOSSupported,
             unattendedSupported,
@@ -305,10 +305,7 @@ class AppActive extends React.Component {
                 }
                 {path.length > 0 && path[0] == 'networks' &&
                 <NetworkList networks={networks}
-                    resourceHasError={this.state.resourceHasError}
-                    vms={vms}
-                    nodeDevices={nodeDevices}
-                    interfaces={interfaces} />
+                             resourceHasError={this.state.resourceHasError} />
                 }
             </>
         );

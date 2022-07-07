@@ -17,7 +17,7 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React, { useState } from 'react';
+import React from 'react';
 import cockpit from 'cockpit';
 import {
     Alert, Button, Form, FormGroup,
@@ -27,6 +27,7 @@ import {
 import { InfoAltIcon } from '@patternfly/react-icons';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
+import { useDialogs, DialogsContext } from 'dialogs.jsx';
 
 import { domainUpdateDiskAttributes } from '../../../libvirtApi/domain.js';
 import { diskBusTypes, diskCacheModes, getDiskPrettyName, getDiskFullName } from '../../../helpers.js';
@@ -142,26 +143,32 @@ const AccessRow = ({ onValueChanged, dialogValues, diskDevice, driverType, idPre
 };
 
 export const EditDiskAction = ({ idPrefix, disk, vm, supportedDiskBusTypes }) => {
-    const [isOpen, setIsOpen] = useState(false);
+    const Dialogs = useDialogs();
+
+    function open() {
+        Dialogs.show(<EditDiskModal idPrefix={idPrefix}
+                                    disk={disk}
+                                    supportedDiskBusTypes={supportedDiskBusTypes}
+                                    vm={vm} />);
+    }
+
+    const enabled = (Object.keys(diskBusTypes).includes(disk.device) &&
+                     supportedDiskBusTypes &&
+                     supportedDiskBusTypes.length > 0);
 
     return (
-        <>
-            <Button id={idPrefix}
-                    isDisabled={!Object.keys(diskBusTypes).includes(disk.device) || !supportedDiskBusTypes}
-                    variant='secondary'
-                    onClick={() => setIsOpen(true)}>
-                {_("Edit")}
-            </Button>
-            {isOpen && <EditDiskModal idPrefix={idPrefix}
-                                      disk={disk}
-                                      setIsOpen={setIsOpen}
-                                      supportedDiskBusTypes={supportedDiskBusTypes}
-                                      vm={vm} />}
-        </>
+        <Button id={idPrefix}
+                isDisabled={!enabled}
+                variant='secondary'
+                onClick={open}>
+            {_("Edit")}
+        </Button>
     );
 };
 
 export class EditDiskModal extends React.Component {
+    static contextType = DialogsContext;
+
     constructor(props) {
         super(props);
         let access;
@@ -191,7 +198,8 @@ export class EditDiskModal extends React.Component {
     }
 
     onSaveClicked() {
-        const { disk, vm, setIsOpen } = this.props;
+        const Dialogs = this.context;
+        const { disk, vm } = this.props;
         const existingTargets = Object.getOwnPropertyNames(vm.disks);
 
         domainUpdateDiskAttributes({
@@ -203,12 +211,13 @@ export class EditDiskModal extends React.Component {
             cache: this.state.cacheMode,
             existingTargets
         })
-                .then(() => setIsOpen(false))
+                .then(Dialogs.close)
                 .catch(exc => this.dialogErrorSet(_("Disk settings could not be saved"), exc.message));
     }
 
     render() {
-        const { vm, disk, idPrefix, setIsOpen, supportedDiskBusTypes } = this.props;
+        const Dialogs = this.context;
+        const { vm, disk, idPrefix, supportedDiskBusTypes } = this.props;
 
         const defaultBody = (
             <Form isHorizontal>
@@ -247,7 +256,7 @@ export class EditDiskModal extends React.Component {
         return (
             <Modal position="top" variant="medium" id={`${idPrefix}-dialog`}
                    isOpen
-                   onClose={() => setIsOpen(false)}
+                   onClose={Dialogs.close}
                    title={cockpit.format(_("Edit $0 attributes"), getDiskPrettyName(vm.disks[disk.target]))}
                    footer={
                        <>
@@ -255,7 +264,7 @@ export class EditDiskModal extends React.Component {
                            <Button id={`${idPrefix}-dialog-save`} variant='primary' onClick={this.onSaveClicked}>
                                {_("Save")}
                            </Button>
-                           <Button id={`${idPrefix}-dialog-cancel`} variant='link' className='btn-cancel' onClick={() => setIsOpen(false)}>
+                           <Button id={`${idPrefix}-dialog-cancel`} variant='link' className='btn-cancel' onClick={Dialogs.close}>
                                {_("Cancel")}
                            </Button>
                        </>

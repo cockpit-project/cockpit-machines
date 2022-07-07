@@ -28,6 +28,7 @@ import {
     Select, SelectOption, SelectVariant,
     Page, PageSection, Text, TextVariants,
 } from '@patternfly/react-core';
+import { WithDialogs } from 'dialogs.jsx';
 
 import VmActions from '../vm/vmActions.jsx';
 import { updateVm } from '../../actions/store-actions.js';
@@ -116,21 +117,22 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
         </ToolbarContent>
     </Toolbar>;
 
-    return (<Page>
-        <PageSection>
-            <Gallery className="ct-cards-grid" hasGutter>
-                <AggregateStatusCards networks={networks} storagePools={storagePools} />
-                <Card id='virtual-machines-listing'>
-                    <CardHeader>
-                        <CardTitle>
-                            <Text component={TextVariants.h2}>{_("Virtual machines")}</Text>
-                        </CardTitle>
-                        <CardActions>
-                            {toolBar}
-                        </CardActions>
-                    </CardHeader>
-                    <CardBody className="contains-list">
-                        <ListingTable aria-label={_("Virtual machines")}
+    return (<WithDialogs>
+        <Page>
+            <PageSection>
+                <Gallery className="ct-cards-grid" hasGutter>
+                    <AggregateStatusCards networks={networks} storagePools={storagePools} />
+                    <Card id='virtual-machines-listing'>
+                        <CardHeader>
+                            <CardTitle>
+                                <Text component={TextVariants.h2}>{_("Virtual machines")}</Text>
+                            </CardTitle>
+                            <CardActions>
+                                {toolBar}
+                            </CardActions>
+                        </CardHeader>
+                        <CardBody className="contains-list">
+                            <ListingTable aria-label={_("Virtual machines")}
                             variant='compact'
                             columns={[
                                 { title: _("Name"), header: true, props: { width: 25 } },
@@ -180,12 +182,13 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                                             },
                                         };
                                     }) }
-                        />
-                    </CardBody>
-                </Card>
-            </Gallery>
-        </PageSection>
-    </Page>);
+                            />
+                        </CardBody>
+                    </Card>
+                </Gallery>
+            </PageSection>
+        </Page>
+    </WithDialogs>);
 };
 HostVmsList.propTypes = {
     vms: PropTypes.array.isRequired,

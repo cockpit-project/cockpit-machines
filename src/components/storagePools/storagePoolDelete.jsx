@@ -27,6 +27,7 @@ import {
     Stack, Tooltip
 } from '@patternfly/react-core';
 import { ExclamationTriangleIcon, InfoIcon } from '@patternfly/react-icons';
+import { useDialogs, DialogsContext } from 'dialogs.jsx';
 
 import { getStorageVolumesUsage, storagePoolId } from '../../helpers.js';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
@@ -97,7 +98,9 @@ function getPoolDeleteHelperText(vms, storagePool) {
     );
 }
 
-export class StoragePoolDelete extends React.Component {
+class StoragePoolDelete extends React.Component {
+    static contextType = DialogsContext;
+
     constructor(props) {
         super(props);
 
@@ -121,6 +124,7 @@ export class StoragePoolDelete extends React.Component {
     }
 
     delete() {
+        const Dialogs = this.context;
         const storagePool = this.props.storagePool;
         const volumes = storagePool.volumes || [];
         const storagePoolDeactivateAndUndefine = (storagePool) => {
@@ -135,16 +139,17 @@ export class StoragePoolDelete extends React.Component {
         if (this.state.deleteVolumes && storagePool.volumes.length > 0) {
             Promise.all(volumes.map(volume => storageVolumeDelete({ connectionName: storagePool.connectionName, poolName: storagePool.name, volName: volume.name })))
                     .then(() => storagePoolDeactivateAndUndefine(storagePool))
-                    .then(() => this.props.close,
+                    .then(() => Dialogs.close(),
                           exc => this.dialogErrorSet(_("The storage pool could not be deleted"), exc.message));
         } else {
             storagePoolDeactivateAndUndefine(storagePool)
-                    .then(() => this.props.close,
+                    .then(() => Dialogs.close(),
                           exc => this.dialogErrorSet(_("The storage pool could not be deleted"), exc.message));
         }
     }
 
     render() {
+        const Dialogs = this.context;
         const { storagePool, vms } = this.props;
         const volumes = storagePool.volumes || [];
 
@@ -180,7 +185,7 @@ export class StoragePoolDelete extends React.Component {
         );
 
         return (
-            <Modal position="top" variant="small" isOpen onClose={this.props.close}
+            <Modal position="top" variant="small" isOpen onClose={Dialogs.close}
                 title={<>
                     <ExclamationTriangleIcon color="orange" className="pf-u-mr-sm" />
                     { cockpit.format(_("Delete $0 storage pool?"), storagePool.name) }
@@ -193,7 +198,7 @@ export class StoragePoolDelete extends React.Component {
                                isDisabled={canDeleteOnlyWithoutVolumes(storagePool, vms) && this.state.deleteVolumes}>
                                {_("Delete")}
                            </Button>
-                           <Button variant='link' className='btn-cancel' onClick={this.props.close}>
+                           <Button variant='link' className='btn-cancel' onClick={Dialogs.close}>
                                {_("Cancel")}
                            </Button>
                        </>
@@ -207,10 +212,11 @@ export class StoragePoolDelete extends React.Component {
 StoragePoolDelete.propTypes = {
     storagePool: PropTypes.object.isRequired,
     vms: PropTypes.array.isRequired,
-    close: PropTypes.func.isRequired,
 };
 
-export const StoragePoolDeleteAction = ({ storagePool, open, vms }) => {
+export const StoragePoolDeleteAction = ({ storagePool, vms }) => {
+    const Dialogs = useDialogs();
+
     const id = storagePoolId(storagePool.name, storagePool.connectionName);
     let tooltipText;
     if (!canDelete(storagePool, vms)) {
@@ -236,7 +242,7 @@ export const StoragePoolDeleteAction = ({ storagePool, open, vms }) => {
         return (
             <DropdownItem id={`delete-${id}`}
                           className='pf-m-danger'
-                          onClick={open}>
+                          onClick={() => Dialogs.show(<StoragePoolDelete storagePool={storagePool} vms={vms} />)}>
                 {_("Delete")}
             </DropdownItem>
         );

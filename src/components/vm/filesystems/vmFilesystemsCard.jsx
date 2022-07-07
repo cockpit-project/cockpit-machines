@@ -34,17 +34,17 @@ import { HelpIcon } from "@patternfly/react-icons";
 import { ListingTable } from "cockpit-components-table.jsx";
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { FileAutoComplete } from "cockpit-components-file-autocomplete.jsx";
+import { useDialogs } from 'dialogs.jsx';
 
 import { domainCreateFilesystem, domainDeleteFilesystem, domainSetMemoryBacking } from "../../../libvirtApi/domain.js";
 import { vmId } from "../../../helpers.js";
-import { DeleteResourceButton, DeleteResourceModal } from '../../common/deleteResource.jsx';
+import { DeleteResourceButton } from '../../common/deleteResource.jsx';
 
 import "./vmFilesystemsCard.scss";
 
 const _ = cockpit.gettext;
 
 export const VmFilesystemsCard = ({ connectionName, vmName, vmState, filesystems }) => {
-    const [deleteDialogProps, setDeleteDialogProps] = useState(undefined);
     const columnTitles = [_("Source path"), _("Mount tag"), ""];
 
     const rows = filesystems.map(filesystem => {
@@ -57,7 +57,7 @@ export const VmFilesystemsCard = ({ connectionName, vmName, vmState, filesystems
                 <DeleteResourceButton objectId={rowId}
                                       disabled={vmState != 'shut off'}
                                       actionName={_("Remove")}
-                                      showDialog={() => setDeleteDialogProps({
+                                      dialogProps={{
                                           title: _("Remove filesystem?"),
                                           errorMessage: cockpit.format(_("Filesystem $0 could not be removed"), filesystemTarget),
                                           actionDescription: cockpit.format(_("This filesystem will be removed from $0:"), vmName),
@@ -66,9 +66,8 @@ export const VmFilesystemsCard = ({ connectionName, vmName, vmState, filesystems
                                               { name: _("Mount tag"), value: <span className="ct-monospace">{filesystemTarget}</span> }
                                           ],
                                           actionName: _("Remove"),
-                                          onClose: () => setDeleteDialogProps(undefined),
                                           deleteHandler: () => domainDeleteFilesystem({ connectionName, vmName, target: filesystemTarget }),
-                                      })}
+                                      }}
                                       overlayText={_("Deleting shared directories is possible only when the guest is shut off")} />
             </div>
         );
@@ -86,7 +85,6 @@ export const VmFilesystemsCard = ({ connectionName, vmName, vmState, filesystems
 
     return (
         <>
-            {deleteDialogProps && <DeleteResourceModal {...deleteDialogProps} />}
             <ListingTable variant='compact'
                           gridBreakPoint='grid-xl'
                           emptyCaption={_("No directories shared between the host and this VM")}
@@ -97,31 +95,30 @@ export const VmFilesystemsCard = ({ connectionName, vmName, vmState, filesystems
 };
 
 export const VmFilesystemActions = ({ connectionName, objPath, vmName, vmState }) => {
-    const [isOpen, setIsOpen] = useState(false);
+    const Dialogs = useDialogs();
     const idPrefix = `${vmId(vmName)}-filesystems`;
+
+    function open() {
+        Dialogs.show(<VmFilesystemAddModal connectionName={connectionName}
+                                           vmName={vmName}
+                                           objPath={objPath}
+                                           vmState={vmState} />);
+    }
+
     const addButton = (
         <Button id={`${idPrefix}-add`}
                 isAriaDisabled={vmState != 'shut off'}
-                onClick={() => setIsOpen(true)}
+                onClick={open}
                 variant="secondary">
             {_("Add shared directory")}
         </Button>
     );
 
-    return (
-        <>
-            {vmState == 'shut off' ? addButton : <Tooltip content={_("Adding shared directories is possible only when the guest is shut off")}>{addButton}</Tooltip>}
-            {isOpen &&
-            <VmFilesystemAddModal connectionName={connectionName}
-                                  vmName={vmName}
-                                  objPath={objPath}
-                                  vmState={vmState}
-                                  setIsOpen={setIsOpen} />}
-        </>
-    );
+    return vmState == 'shut off' ? addButton : <Tooltip content={_("Adding shared directories is possible only when the guest is shut off")}>{addButton}</Tooltip>;
 };
 
-const VmFilesystemAddModal = ({ connectionName, setIsOpen, objPath, vmName, vmState }) => {
+const VmFilesystemAddModal = ({ connectionName, objPath, vmName, vmState }) => {
+    const Dialogs = useDialogs();
     const [additionalOptionsExpanded, setAdditionalOptionsExpanded] = useState(false);
     const [dialogError, setDialogError] = useState();
     const [mountTag, setMountTag] = useState("");
@@ -151,13 +148,13 @@ const VmFilesystemAddModal = ({ connectionName, setIsOpen, objPath, vmName, vmSt
                         xattr,
                     }))
                     .then(
-                        () => setIsOpen(false),
+                        Dialogs.close,
                         exc => setDialogError(exc.message)
                     );
         }
     };
     return (
-        <Modal position="top" isOpen variant="medium" onClose={() => setIsOpen(false)}
+        <Modal position="top" isOpen variant="medium" onClose={Dialogs.close}
                title={_("Share a host directory with the guest")}
                footer={
                    <>
@@ -169,7 +166,7 @@ const VmFilesystemAddModal = ({ connectionName, setIsOpen, objPath, vmName, vmSt
                        </Button>
                        <Button id={`${idPrefix}-modal-cancel`}
                                variant='link'
-                               onClick={() => setIsOpen(false)}>
+                               onClick={Dialogs.close}>
                            {_("Cancel")}
                        </Button>
                    </>

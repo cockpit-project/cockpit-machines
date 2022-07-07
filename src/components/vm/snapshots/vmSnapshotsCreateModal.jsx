@@ -27,6 +27,7 @@ import {
     TextInput
 } from "@patternfly/react-core";
 
+import { DialogsContext } from 'dialogs.jsx';
 import { ModalError } from "cockpit-components-inline-notification.jsx";
 import { snapshotCreate, snapshotGetAll } from "../../../libvirtApi/snapshot.js";
 
@@ -59,6 +60,8 @@ const DescriptionRow = ({ onValueChanged, description }) => {
 };
 
 export class CreateSnapshotModal extends React.Component {
+    static contextType = DialogsContext;
+
     constructor(props) {
         super(props);
         // cut off seconds, subseconds, and timezone
@@ -99,7 +102,8 @@ export class CreateSnapshotModal extends React.Component {
     }
 
     onCreate() {
-        const { vm, onClose } = this.props;
+        const Dialogs = this.context;
+        const { vm } = this.props;
         const { name, description } = this.state;
         const validationError = this.onValidate(true);
 
@@ -111,7 +115,7 @@ export class CreateSnapshotModal extends React.Component {
                     .then(() => {
                         // VM Snapshots do not trigger any events so we have to refresh them manually
                         snapshotGetAll({ connectionName: vm.connectionName, domainPath: vm.id });
-                        onClose();
+                        Dialogs.close();
                     })
                     .catch(exc => {
                         this.setState({ inProgress: false });
@@ -121,7 +125,8 @@ export class CreateSnapshotModal extends React.Component {
     }
 
     render() {
-        const { idPrefix, onClose } = this.props;
+        const Dialogs = this.context;
+        const { idPrefix } = this.props;
         const { name, description, submitted } = this.state;
         const validationError = this.onValidate(submitted);
 
@@ -133,7 +138,7 @@ export class CreateSnapshotModal extends React.Component {
         );
 
         return (
-            <Modal position="top" variant="medium" id={`${idPrefix}-modal`} isOpen onClose={onClose}
+            <Modal position="top" variant="medium" id={`${idPrefix}-modal`} isOpen onClose={Dialogs.close}
                    title={_("Create snapshot")}
                    footer={
                        <>
@@ -141,7 +146,7 @@ export class CreateSnapshotModal extends React.Component {
                            <Button variant="primary" isLoading={this.state.inProgress} isDisabled={this.state.inProgress} onClick={this.onCreate}>
                                {_("Create")}
                            </Button>
-                           <Button variant="link" className="btn-cancel" onClick={onClose}>
+                           <Button variant="link" className="btn-cancel" onClick={Dialogs.close}>
                                {_("Cancel")}
                            </Button>
                        </>

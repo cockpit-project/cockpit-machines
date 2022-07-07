@@ -30,6 +30,7 @@ import {
     Popover,
 } from '@patternfly/react-core';
 import { ExpandIcon, HelpIcon } from '@patternfly/react-icons';
+import { WithDialogs } from 'dialogs.jsx';
 
 import { vmId } from "../../helpers.js";
 
@@ -93,7 +94,6 @@ export const VmDetailsPage = ({
                 <h2 className="vm-name">{vm.name}</h2>
                 <VmActions vm={vm}
                            config={config}
-                           storagePools={storagePools}
                            onAddErrorNotification={onAddErrorNotification}
                            isDetailsPage />
             </div>
@@ -162,7 +162,7 @@ export const VmDetailsPage = ({
             id: `${vmId(vm.name)}-disks`,
             className: "disks-card",
             title: _("Disks"),
-            actions: <VmDisksActions vm={vm} vms={vms} supportedDiskBusTypes={supportedDiskBusTypes} storagePools={storagePools} />,
+            actions: <VmDisksActions vm={vm} vms={vms} supportedDiskBusTypes={supportedDiskBusTypes} />,
             body: <VmDisksCardLibvirt vm={vm} config={config} storagePools={storagePools}
                                       supportedDiskBusTypes={supportedDiskBusTypes} />,
         },
@@ -179,7 +179,7 @@ export const VmDetailsPage = ({
             id: `${vmId(vm.name)}-hostdevs`,
             className: "hostdevs-card",
             title: _("Host devices"),
-            actions: <VmHostDevActions vm={vm} nodeDevices={nodeDevices} />,
+            actions: <VmHostDevActions vm={vm} />,
             body: <VmHostDevCard vm={vm} nodeDevices={nodeDevices} config={config} />,
         }
     ];
@@ -252,25 +252,27 @@ export const VmDetailsPage = ({
     });
 
     return (
-        <Page id="vm-details"
-              className="vm-details"
-              data-pools-count={storagePools.length}
-              breadcrumb={
-                  <Breadcrumb className='machines-listing-breadcrumb'>
-                      <BreadcrumbItem to='#'>
-                          {_("Virtual machines")}
-                      </BreadcrumbItem>
-                      <BreadcrumbItem isActive>
-                          {vm.name}
-                      </BreadcrumbItem>
-                  </Breadcrumb>}>
-            {vmActionsPageSection}
-            <PageSection>
-                <Gallery className='ct-vm-overview' hasGutter>
-                    {cards}
-                </Gallery>
-            </PageSection>
-        </Page>
+        <WithDialogs>
+            <Page id="vm-details"
+                  className="vm-details"
+                  data-pools-count={storagePools.length}
+                  breadcrumb={
+                      <Breadcrumb className='machines-listing-breadcrumb'>
+                          <BreadcrumbItem to='#'>
+                              {_("Virtual machines")}
+                          </BreadcrumbItem>
+                          <BreadcrumbItem isActive>
+                              {vm.name}
+                          </BreadcrumbItem>
+                      </Breadcrumb>}>
+                {vmActionsPageSection}
+                <PageSection>
+                    <Gallery className='ct-vm-overview' hasGutter>
+                        {cards}
+                    </Gallery>
+                </PageSection>
+            </Page>
+        </WithDialogs>
     );
 };
 

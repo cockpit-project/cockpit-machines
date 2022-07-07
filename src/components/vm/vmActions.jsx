@@ -24,6 +24,7 @@ import {
     Dropdown, DropdownItem, DropdownSeparator, KebabToggle,
     Tooltip,
 } from '@patternfly/react-core';
+import { useDialogs } from 'dialogs.jsx';
 
 import { updateVm } from '../../actions/store-actions.js';
 import {
@@ -57,12 +58,9 @@ import store from "../../store.js";
 
 const _ = cockpit.gettext;
 
-const VmActions = ({ vm, storagePools, onAddErrorNotification, isDetailsPage }) => {
+const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
+    const Dialogs = useDialogs();
     const [isActionOpen, setIsActionOpen] = useState(false);
-    const [showDeleteDialog, toggleDeleteModal] = useState(false);
-    const [showMigrateDialog, toggleMigrateDialog] = useState(false);
-    const [showRenameDialog, toggleRenameDialog] = useState(false);
-    const [showCloneDialog, toggleCloneModal] = useState(false);
     const [operationInProgress, setOperationInProgress] = useState(false);
     const [prevVmState, setPrevVmState] = useState(vm.state);
     const [virtCloneAvailable, setVirtCloneAvailable] = useState(false);
@@ -298,10 +296,13 @@ const VmActions = ({ vm, storagePools, onAddErrorNotification, isDetailsPage }) 
         <DropdownItem isDisabled={!virtCloneAvailable}
                       key={`${id}-clone`}
                       id={`${id}-clone`}
-                      onClick={() => toggleCloneModal(true)}>
+                      onClick={() => Dialogs.show(<CloneDialog name={vm.name}
+                                                               connectionName={vm.connectionName} />)}>
+
             {_("Clone")}
         </DropdownItem>
     );
+
     if (state == "shut off") {
         if (virtCloneAvailable)
             dropdownItems.push(cloneItem);
@@ -315,60 +316,31 @@ const VmActions = ({ vm, storagePools, onAddErrorNotification, isDetailsPage }) 
                 </Tooltip>
             );
     }
-    let cloneAction;
-    if (showCloneDialog) {
-        cloneAction = (
-            <CloneDialog key='action-clone'
-                         name={vm.name}
-                         connectionName={vm.connectionName}
-                         toggleModal={() => toggleCloneModal(!showCloneDialog)} />
-        );
-    }
 
     if (vm.state !== "shut off") {
         dropdownItems.push(
             <DropdownItem key={`${id}-migrate`}
                           id={`${id}-migrate`}
-                          onClick={() => toggleMigrateDialog(true)}>
+                          onClick={() => Dialogs.show(<MigrateDialog vm={vm} connectionName={vm.connectionName} />)}>
                 {_("Migrate")}
             </DropdownItem>
         );
         dropdownItems.push(<DropdownSeparator key="separator-migrate" />);
     }
 
-    let migrateAction;
-    if (showMigrateDialog) {
-        migrateAction = (
-            <MigrateDialog key='action-migrate'
-                           vm={vm}
-                           connectionName={vm.connectionName}
-                           toggleModal={() => toggleMigrateDialog(!showMigrateDialog)} />
-        );
-    }
-
     if (domainCanRename(state)) {
         dropdownItems.push(
             <DropdownItem key={`${id}-rename`}
                           id={`${id}-rename`}
-                          onClick={() => toggleRenameDialog(true)}>
+                          onClick={() => Dialogs.show(<RenameDialog vmName={vm.name}
+                                                                    vmId={vm.id}
+                                                                    connectionName={vm.connectionName} />)}>
                 {_("Rename")}
             </DropdownItem>
         );
         dropdownItems.push(<DropdownSeparator key="separator-rename" />);
     }
 
-    let renameAction;
-    if (showRenameDialog) {
-        renameAction = (
-            <RenameDialog key='action-rename'
-                          vmName={vm.name}
-                          vmId={vm.id}
-                          connectionName={vm.connectionName}
-                          toggleModal={() => toggleRenameDialog(!showRenameDialog)} />
-        );
-    }
-
-    let deleteAction = null;
     if (state !== undefined && domainCanDelete(state, vm.id)) {
         if (!vm.persistent) {
             dropdownItems.push(
@@ -382,14 +354,10 @@ const VmActions = ({ vm, storagePools, onAddErrorNotification, isDetailsPage }) 
             );
         } else {
             dropdownItems.push(
-                <DropdownItem className='pf-m-danger' key={`${id}-delete`} id={`${id}-delete`} onClick={() => toggleDeleteModal(true)}>
+                <DropdownItem className='pf-m-danger' key={`${id}-delete`} id={`${id}-delete`}
+                              onClick={() => Dialogs.show(<DeleteDialog vm={vm} />)}>
                     {_("Delete")}
                 </DropdownItem>
-            );
-        }
-        if (showDeleteDialog) {
-            deleteAction = (
-                <DeleteDialog key='action-delete' vm={vm} storagePools={storagePools} toggleModal={() => toggleDeleteModal(!showDeleteDialog)} />
             );
         }
     }
@@ -399,10 +367,6 @@ const VmActions = ({ vm, storagePools, onAddErrorNotification, isDetailsPage }) 
             {run}
             {shutdown}
             {install}
-            {deleteAction}
-            {cloneAction}
-            {migrateAction}
-            {renameAction}
             <Dropdown onSelect={() => setIsActionOpen(!isActionOpen)}
                       id={`${id}-action-kebab`}
                       toggle={<KebabToggle isDisabled={vm.isUi} onToggle={isOpen => setIsActionOpen(isOpen)} />}
@@ -416,7 +380,6 @@ const VmActions = ({ vm, storagePools, onAddErrorNotification, isDetailsPage }) 
 
 VmActions.propTypes = {
     vm: PropTypes.object.isRequired,
-    storagePools: PropTypes.array.isRequired,
     onAddErrorNotification: PropTypes.func.isRequired,
 };
 

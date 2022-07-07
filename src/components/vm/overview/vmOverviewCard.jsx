@@ -25,6 +25,7 @@ import {
     Flex, FlexItem,
     Switch,
 } from "@patternfly/react-core";
+import { DialogsContext } from 'dialogs.jsx';
 
 import { VCPUModal } from './vcpuModal.jsx';
 import { CPUTypeModal } from './cpuTypeModal.jsx';
@@ -46,14 +47,13 @@ import '../../common/overviewCard.css';
 const _ = cockpit.gettext;
 
 class VmOverviewCard extends React.Component {
+    static contextType = DialogsContext;
+
     constructor(props) {
         super(props);
 
         this.state = {
             runningVmUpdated: false,
-            showVcpuModal: false,
-            showCpuTypeModal: false,
-            showMemoryModal: false,
             virtXMLAvailable: undefined,
         };
         this.openVcpu = this.openVcpu.bind(this);
@@ -80,19 +80,22 @@ class VmOverviewCard extends React.Component {
     }
 
     openVcpu() {
-        this.setState({ showVcpuModal: true });
+        const Dialogs = this.context;
+        Dialogs.show(<VCPUModal vm={this.props.vm} maxVcpu={this.props.maxVcpu} />);
     }
 
     openCpuType() {
-        this.setState({ showCpuTypeModal: true });
+        const Dialogs = this.context;
+        Dialogs.show(<CPUTypeModal vm={this.props.vm} models={this.props.cpuModels} />);
     }
 
     openMemory() {
-        this.setState({ showMemoryModal: true });
+        const Dialogs = this.context;
+        Dialogs.show(<MemoryModal vm={this.props.vm} config={this.props.config} />);
     }
 
     render() {
-        const { vm, config, nodeDevices, libvirtVersion } = this.props;
+        const { vm, nodeDevices, libvirtVersion } = this.props;
         const idPrefix = vmId(vm.name);
 
         const vcpusChanged = (vm.vcpus.count !== vm.inactiveXML.vcpus.count) ||
@@ -170,18 +173,17 @@ class VmOverviewCard extends React.Component {
         );
 
         return (
-            <>
-                <Flex className="overview-tab" direction={{ default:"column", "2xl": "row" }}>
-                    <FlexItem>
-                        <DescriptionList isHorizontal>
-                            <Text component={TextVariants.h4}>
-                                {_("General")}
-                            </Text>
+            <Flex className="overview-tab" direction={{ default:"column", "2xl": "row" }}>
+                <FlexItem>
+                    <DescriptionList isHorizontal>
+                        <Text component={TextVariants.h4}>
+                            {_("General")}
+                        </Text>
 
-                            <DescriptionListGroup>
-                                <DescriptionListTerm>{_("State")}</DescriptionListTerm>
-                                <DescriptionListDescription>
-                                    <StateIcon error={vm.error}
+                        <DescriptionListGroup>
+                            <DescriptionListTerm>{_("State")}</DescriptionListTerm>
+                            <DescriptionListDescription>
+                                <StateIcon error={vm.error}
                                                state={vm.state}
                                                valueId={`${idPrefix}-${vm.connectionName}-state`}
                                                dismissError={() => store.dispatch(updateVm({
@@ -189,50 +191,50 @@ class VmOverviewCard extends React.Component {
                                                    name: vm.name,
                                                    error: null
                                                }))} />
-                                </DescriptionListDescription>
-                            </DescriptionListGroup>
+                            </DescriptionListDescription>
+                        </DescriptionListGroup>
 
-                            <DescriptionListGroup>
-                                <DescriptionListTerm>{_("Memory")}</DescriptionListTerm>
-                                {memoryLink}
-                            </DescriptionListGroup>
+                        <DescriptionListGroup>
+                            <DescriptionListTerm>{_("Memory")}</DescriptionListTerm>
+                            {memoryLink}
+                        </DescriptionListGroup>
 
-                            <DescriptionListGroup>
-                                <DescriptionListTerm>{_("vCPUs")}</DescriptionListTerm>
-                                {vcpuLink}
-                            </DescriptionListGroup>
+                        <DescriptionListGroup>
+                            <DescriptionListTerm>{_("vCPUs")}</DescriptionListTerm>
+                            {vcpuLink}
+                        </DescriptionListGroup>
 
-                            <DescriptionListGroup>
-                                <DescriptionListTerm>{_("CPU type")}</DescriptionListTerm>
-                                {vmCpuType}
-                            </DescriptionListGroup>
+                        <DescriptionListGroup>
+                            <DescriptionListTerm>{_("CPU type")}</DescriptionListTerm>
+                            {vmCpuType}
+                        </DescriptionListGroup>
 
-                            <DescriptionListGroup>
-                                <DescriptionListTerm>{_("Boot order")}</DescriptionListTerm>
-                                <DescriptionListDescription id={`${idPrefix}-boot-order`}>
-                                    <BootOrderLink vm={vm} idPrefix={idPrefix}
+                        <DescriptionListGroup>
+                            <DescriptionListTerm>{_("Boot order")}</DescriptionListTerm>
+                            <DescriptionListDescription id={`${idPrefix}-boot-order`}>
+                                <BootOrderLink vm={vm} idPrefix={idPrefix}
                                                    nodeDevices={nodeDevices} />
-                                </DescriptionListDescription>
-                            </DescriptionListGroup>
+                            </DescriptionListDescription>
+                        </DescriptionListGroup>
 
-                            {vm.persistent && <DescriptionListGroup>
-                                <DescriptionListTerm>{_("Autostart")}</DescriptionListTerm>
-                                {autostart}
-                            </DescriptionListGroup>}
-                        </DescriptionList>
-                    </FlexItem>
-                    <FlexItem>
-                        <DescriptionList isHorizontal>
-                            <Text component={TextVariants.h4}>
-                                {_("Hypervisor details")}
-                            </Text>
+                        {vm.persistent && <DescriptionListGroup>
+                            <DescriptionListTerm>{_("Autostart")}</DescriptionListTerm>
+                            {autostart}
+                        </DescriptionListGroup>}
+                    </DescriptionList>
+                </FlexItem>
+                <FlexItem>
+                    <DescriptionList isHorizontal>
+                        <Text component={TextVariants.h4}>
+                            {_("Hypervisor details")}
+                        </Text>
 
-                            <DescriptionListGroup>
-                                <DescriptionListTerm>{_("Emulated machine")}</DescriptionListTerm>
-                                <DescriptionListDescription id={`${idPrefix}-emulated-machine`}>{vm.emulatedMachine}</DescriptionListDescription>
-                            </DescriptionListGroup>
+                        <DescriptionListGroup>
+                            <DescriptionListTerm>{_("Emulated machine")}</DescriptionListTerm>
+                            <DescriptionListDescription id={`${idPrefix}-emulated-machine`}>{vm.emulatedMachine}</DescriptionListDescription>
+                        </DescriptionListGroup>
 
-                            { this.props.loaderElems && libvirtVersion >= 5002000 && // <os firmware=[bios/efi]' settings is available only for libvirt version >= 5.2. Before that version it silently ignores this attribute in the XML
+                        { this.props.loaderElems && libvirtVersion >= 5002000 && // <os firmware=[bios/efi]' settings is available only for libvirt version >= 5.2. Before that version it silently ignores this attribute in the XML
                             <DescriptionListGroup>
                                 <DescriptionListTerm>{_("Firmware")}</DescriptionListTerm>
                                 <FirmwareLink vm={vm}
@@ -240,13 +242,9 @@ class VmOverviewCard extends React.Component {
                                               libvirtVersion={libvirtVersion}
                                               idPrefix={idPrefix} />
                             </DescriptionListGroup>}
-                        </DescriptionList>
-                    </FlexItem>
-                </Flex>
-                { this.state.showMemoryModal && <MemoryModal close={() => this.setState({ showMemoryModal: false }) } vm={vm} config={config} /> }
-                { this.state.showVcpuModal && <VCPUModal close={() => this.setState({ showVcpuModal: false }) } vm={vm} maxVcpu={this.props.maxVcpu} /> }
-                { this.state.showCpuTypeModal && <CPUTypeModal close={() => this.setState({ showCpuTypeModal: false }) } vm={vm} models={this.props.cpuModels} /> }
-            </>
+                    </DescriptionList>
+                </FlexItem>
+            </Flex>
         );
     }
 }

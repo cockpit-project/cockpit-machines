@@ -23,11 +23,13 @@ import { Button, Form, FormGroup, Modal, TextInput } from '@patternfly/react-cor
 
 import { isEmpty, isObjectEmpty } from '../../helpers.js';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
+import { useDialogs } from 'dialogs.jsx';
 
 import "./vmCloneDialog.scss";
 const _ = cockpit.gettext;
 
-export const CloneDialog = ({ name, connectionName, toggleModal }) => {
+export const CloneDialog = ({ name, connectionName }) => {
+    const Dialogs = useDialogs();
     const [newVmName, setNewVmName] = useState(name + '-clone');
     const [inProgress, setInProgress] = useState(false);
     const [virtCloneOutput, setVirtCloneOutput] = useState('');
@@ -54,7 +56,7 @@ export const CloneDialog = ({ name, connectionName, toggleModal }) => {
             options.superuser = "try";
         return cockpit.spawn(["virt-clone", "--connect", "qemu:///" + connectionName, "--original", name, "--name", newVmName, "--auto-clone"], options)
                 .stream(setVirtCloneOutput)
-                .then(toggleModal, exc => {
+                .then(Dialogs.close, exc => {
                     setInProgress(false);
                     dialogErrorSet({ dialogError: cockpit.format(_("Failed to clone VM $0"), name) });
                 });
@@ -62,7 +64,7 @@ export const CloneDialog = ({ name, connectionName, toggleModal }) => {
 
     const validationFailed = validateParams();
     return (
-        <Modal position="top" variant="small" isOpen onClose={toggleModal}
+        <Modal position="top" variant="small" isOpen onClose={Dialogs.close}
            title={cockpit.format(_("Create a clone VM based on $0"), name)}
            footer={
                <>
@@ -74,7 +76,7 @@ export const CloneDialog = ({ name, connectionName, toggleModal }) => {
                            onClick={onClone}>
                        {_("Clone")}
                    </Button>
-                   <Button variant='link' onClick={toggleModal}>
+                   <Button variant='link' onClick={Dialogs.close}>
                        {_("Cancel")}
                    </Button>
                </>

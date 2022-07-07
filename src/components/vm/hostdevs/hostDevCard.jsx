@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 
 import {
@@ -26,6 +26,7 @@ import {
     DescriptionListGroup,
     DescriptionListDescription,
 } from '@patternfly/react-core';
+import { useDialogs } from 'dialogs.jsx';
 
 import cockpit from 'cockpit';
 import { vmId, findMatchingNodeDevices, getHostDevSourceObject } from "../../../helpers.js";
@@ -33,7 +34,7 @@ import { ListingTable } from "cockpit-components-table.jsx";
 import AddHostDev from "./hostDevAdd.jsx";
 import { domainGet, domainDetachHostDevice } from '../../../libvirtApi/domain.js';
 import { nodeDeviceGetAll } from '../../../libvirtApi/nodeDevice.js';
-import { DeleteResourceButton, DeleteResourceModal } from '../../common/deleteResource.jsx';
+import { DeleteResourceButton } from '../../common/deleteResource.jsx';
 
 const _ = cockpit.gettext;
 
@@ -138,22 +139,19 @@ function getSource(hostDev, nodeDevices, hostdevId) {
     return <DescriptionList isHorizontal>{cells}</DescriptionList>;
 }
 
-export const VmHostDevActions = ({ vm, nodeDevices }) => {
-    const [showAttachModal, setShowAttachModal] = useState(false);
-
+export const VmHostDevActions = ({ vm }) => {
+    const Dialogs = useDialogs();
     const idPrefix = `${vmId(vm.name)}-hostdevs`;
+
+    function open() {
+        Dialogs.show(<AddHostDev idPrefix={idPrefix} vm={vm} />);
+    }
 
     return (
         <>
-            <Button id={`${idPrefix}-add`} variant='secondary' onClick={() => setShowAttachModal(true)}>
+            <Button id={`${idPrefix}-add`} variant='secondary' onClick={open}>
                 {_("Add host device")}
             </Button>
-            {showAttachModal &&
-                <AddHostDev close={() => setShowAttachModal(false)}
-                            idPrefix={idPrefix}
-                            vm={vm}
-                            nodeDevices={nodeDevices} />
-            }
         </>
     );
 };
@@ -178,8 +176,6 @@ export function getOptionalValue(value, id, descr) {
 }
 
 export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
-    const [deleteDialogProps, setDeleteDialogProps] = useState(undefined);
-
     const id = vmId(vm.name);
 
     // Hostdev data mapping to rows
@@ -254,19 +250,19 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
                 const deleteNICAction = (
                     <DeleteResourceButton objectId={`${id}-hostdev-${hostdevId}`}
                                           actionName={_("Remove")}
-                                          showDialog={() => setDeleteDialogProps({
+                                          dialogProps={{
                                               title: _("Remove host device from VM?"),
                                               errorMessage: ("Host device could not be removed"),
                                               actionDescription: cockpit.format(_("Host device will be removed from $0:"), vm.name),
                                               objectDescription,
-                                              onClose: () => setDeleteDialogProps(undefined),
+                                              actionName: _("Remove"),
                                               deleteHandler: () => {
                                                   // refresh nodeDevice since usb number may be changed
                                                   return domainDetachHostDevice({ connectionName: vm.connectionName, vmId: vm.id, live: vm.state !== 'shut off', dev: hostdev })
                                                           .then(() => nodeDeviceGetAll({ connectionName: vm.connectionName }))
                                                           .then(() => domainGet({ connectionName: vm.connectionName, id: vm.id }));
                                               }
-                                          })} />
+                                          }} />
                 );
 
                 return ["usb", "pci"].includes(hostdev.type)
@@ -312,16 +308,12 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
     });
 
     return (
-        <>
-            {deleteDialogProps &&
-                <DeleteResourceModal {...deleteDialogProps} actionName={_("Remove")} />}
-            <ListingTable aria-label={cockpit.format(_("VM $0 Host Devices"), vm.name)}
-                gridBreakPoint='grid-xl'
-                variant='compact'
-                emptyCaption={_("No host devices assigned to this VM")}
-                rows={rows}
-                columns={columnTitles} />
-        </>
+        <ListingTable aria-label={cockpit.format(_("VM $0 Host Devices"), vm.name)}
+                      gridBreakPoint='grid-xl'
+                      variant='compact'
+                      emptyCaption={_("No host devices assigned to this VM")}
+                      rows={rows}
+                      columns={columnTitles} />
     );
 };
 

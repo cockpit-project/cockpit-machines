@@ -19,7 +19,6 @@
  */
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import {
     Button, Checkbox,
     Form, FormGroup,
@@ -27,10 +26,11 @@ import {
     Grid,
     Modal, TextInput
 } from '@patternfly/react-core';
+import { useDialogs, DialogsContext } from 'dialogs.jsx';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { networkCreate } from '../../libvirtApi/network.js';
-import { isEmpty, LIBVIRT_SYSTEM_CONNECTION, rephraseUI } from '../../helpers.js';
+import { isEmpty, LIBVIRT_SYSTEM_CONNECTION, rephraseUI, getNetworkDevices } from '../../helpers.js';
 import * as utils from './utils';
 import cockpit from 'cockpit';
 
@@ -155,7 +155,8 @@ const NetworkForwardModeRow = ({ onValueChanged, dialogValues }) => {
     );
 };
 
-const NetworkDeviceRow = ({ devices, onValueChanged, dialogValues }) => {
+const NetworkDeviceRow = ({ onValueChanged, dialogValues }) => {
+    const devices = getNetworkDevices();
     return (
         <FormGroup fieldId='create-network-device' label={_("Device")}>
             <FormSelect id='create-network-device'
@@ -299,6 +300,8 @@ const Ipv6Row = ({ validationFailed, dialogValues, onValueChanged }) => {
 };
 
 class CreateNetworkModal extends React.Component {
+    static contextType = DialogsContext;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -347,6 +350,7 @@ class CreateNetworkModal extends React.Component {
     }
 
     onCreate() {
+        const Dialogs = this.context;
         if (Object.getOwnPropertyNames(validateParams(this.state)).length > 0) {
             this.setState({ inProgress: false, validate: true });
         } else {
@@ -367,11 +371,12 @@ class CreateNetworkModal extends React.Component {
                         this.setState({ createInProgress: false });
                         this.dialogErrorSet(_("Virtual network failed to be created"), exc.message);
                     })
-                    .then(() => this.props.close());
+                    .then(Dialogs.close);
         }
     }
 
     render() {
+        const Dialogs = this.context;
         const validationFailed = this.state.validate && validateParams(this.state);
 
         const body = (
@@ -386,7 +391,6 @@ class CreateNetworkModal extends React.Component {
                                        onValueChanged={this.onValueChanged} />
                 { (this.state.forwardMode === "nat" || this.state.forwardMode === "route") &&
                 <NetworkDeviceRow dialogValues={this.state}
-                                  devices={this.props.devices}
                                   onValueChanged={this.onValueChanged}
                                   validationFailed={validationFailed} /> }
 
@@ -398,7 +402,7 @@ class CreateNetworkModal extends React.Component {
         );
 
         return (
-            <Modal position="top" variant="medium" id='create-network-dialog' className='network-create' isOpen onClose={ this.props.close }
+            <Modal position="top" variant="medium" id='create-network-dialog' className='network-create' isOpen onClose={ Dialogs.close }
                    title={_("Create virtual network")}
                    footer={
                        <>
@@ -409,7 +413,7 @@ class CreateNetworkModal extends React.Component {
                                    onClick={ this.onCreate }>
                                {_("Create")}
                            </Button>
-                           <Button variant='link' className='btn-cancel' onClick={ this.props.close }>
+                           <Button variant='link' className='btn-cancel' onClick={ Dialogs.close }>
                                {_("Cancel")}
                            </Button>
                        </>
@@ -419,42 +423,15 @@ class CreateNetworkModal extends React.Component {
         );
     }
 }
-CreateNetworkModal.propTypes = {
-    close: PropTypes.func.isRequired,
-    devices: PropTypes.array.isRequired,
-};
 
-export class CreateNetworkAction extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { showModal: false };
-        this.open = this.open.bind(this);
-        this.close = this.close.bind(this);
-    }
+export const CreateNetworkAction = () => {
+    const Dialogs = useDialogs();
 
-    close() {
-        this.setState({ showModal: false });
-    }
-
-    open() {
-        this.setState({ showModal: true });
-    }
-
-    render() {
-        return (
-            <>
-                <Button id='create-network'
-                        variant='secondary' onClick={this.open}>
-                    {_("Create virtual network")}
-                </Button>
-                { this.state.showModal &&
-                <CreateNetworkModal
-                    close={this.close}
-                    devices={this.props.devices} /> }
-            </>
-        );
-    }
-}
-CreateNetworkAction.propTypes = {
-    devices: PropTypes.array.isRequired,
+    return (
+        <Button id='create-network'
+                variant='secondary'
+                onClick={() => Dialogs.show(<CreateNetworkModal />)}>
+            {_("Create virtual network")}
+        </Button>
+    );
 };

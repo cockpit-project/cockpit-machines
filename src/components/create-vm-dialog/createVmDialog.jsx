@@ -30,8 +30,10 @@ import {
     TextInput,
     Button, Tooltip
 } from '@patternfly/react-core';
+import { DialogsContext } from 'dialogs.jsx';
 
 import cockpit from 'cockpit';
+import store from "../../store.js";
 import { MachinesConnectionSelector } from '../common/machinesConnectionSelector.jsx';
 import { FileAutoComplete } from "cockpit-components-file-autocomplete.jsx";
 import {
@@ -754,6 +756,8 @@ const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit,
 };
 
 class CreateVmModal extends React.Component {
+    static contextType = DialogsContext;
+
     constructor(props) {
         let defaultSourceType;
         if (props.mode == 'create') {
@@ -838,8 +842,9 @@ class CreateVmModal extends React.Component {
         case 'sourceType':
             this.setState({ [key]: value });
             if (value == PXE_SOURCE) {
-                const initialPXESource = getPXEInitialNetworkSource(this.props.nodeDevices.filter(nodeDevice => nodeDevice.connectionName == this.state.connectionName),
-                                                                    this.props.networks.filter(network => network.connectionName == this.state.connectionName));
+                const { nodeDevices, networks } = store.getState();
+                const initialPXESource = getPXEInitialNetworkSource(nodeDevices.filter(nodeDevice => nodeDevice.connectionName == this.state.connectionName),
+                                                                    networks.filter(network => network.connectionName == this.state.connectionName));
                 this.setState({ source: initialPXESource });
             } else if (this.state.sourceType == PXE_SOURCE && value != PXE_SOURCE) {
                 // Reset the source when the previous selection was PXE;
@@ -848,7 +853,7 @@ class CreateVmModal extends React.Component {
             }
             break;
         case 'storagePool': {
-            const storagePool = this.props.storagePools.filter(pool => pool.connectionName === this.state.connectionName).find(pool => pool.name === value);
+            const storagePool = store.getState().storagePools.filter(pool => pool.connectionName === this.state.connectionName).find(pool => pool.name === value);
             const storageVolumes = storagePool ? storagePool.volumes : undefined;
             const storageVolume = storageVolumes ? storageVolumes[0] : undefined;
             this.setState({
@@ -947,7 +952,9 @@ class CreateVmModal extends React.Component {
     }
 
     onCreateClicked(startVm) {
-        const { storagePools, close, onAddErrorNotification, osInfoList, nodeMaxMemory, vms } = this.props;
+        const Dialogs = this.context;
+        const { onAddErrorNotification, osInfoList, nodeMaxMemory, vms } = this.props;
+        const { storagePools } = store.getState();
         const vmName = isEmpty(this.state.vmName.trim()) ? this.state.suggestedVmName : this.state.vmName;
 
         const validation = validateParams({ ...this.state, osInfoList, nodeMaxMemory, vms: vms.filter(vm => vm.connectionName == this.state.connectionName) });
@@ -991,7 +998,7 @@ class CreateVmModal extends React.Component {
                 });
             });
 
-            close();
+            Dialogs.close();
 
             if (!startVm) {
                 cockpit.location.go(["vm"], {
@@ -1004,7 +1011,9 @@ class CreateVmModal extends React.Component {
     }
 
     render() {
-        const { nodeMaxMemory, nodeDevices, networks, osInfoList, loggedUser, storagePools, vms } = this.props;
+        const Dialogs = this.context;
+        const { nodeMaxMemory, osInfoList, loggedUser, vms } = this.props;
+        const { storagePools, nodeDevices, networks } = store.getState();
         const validationFailed = this.state.validate && validateParams({ ...this.state, osInfoList, nodeMaxMemory, vms: vms.filter(vm => vm.connectionName == this.state.connectionName) });
 
         const unattendedInstructionsMessage = _("Enter root and/or user information to enable unattended installation.");
@@ -1159,7 +1168,7 @@ class CreateVmModal extends React.Component {
         }
 
         return (
-            <Modal position="top" variant="medium" id='create-vm-dialog' isOpen onClose={ this.props.close }
+            <Modal position="top" variant="medium" id='create-vm-dialog' isOpen onClose={Dialogs.close}
                 title={this.props.mode == 'create' ? _("Create new virtual machine") : _("Import a virtual machine")}
                 actions={[
                     <Button variant="primary"
@@ -1176,7 +1185,7 @@ class CreateVmModal extends React.Component {
                     createAndEdit,
                     <Button variant='link'
                             key="cancel-button"
-                            className='btn-cancel' onClick={ this.props.close }>
+                            className='btn-cancel' onClick={Dialogs.close}>
                         {_("Cancel")}
                     </Button>
                 ]}>
@@ -1187,31 +1196,28 @@ class CreateVmModal extends React.Component {
 }
 
 export class CreateVmAction extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            showModal: false,
-        };
-        this.open = this.open.bind(this);
-        this.close = this.close.bind(this);
-    }
-
-    // That will stop any state setting on unmounted/unmounting components
-    componentWillUnmount() {
-        this.isClosed = true;
-    }
-
-    close() {
-        !this.isClosed && this.setState({ showModal: false });
-    }
-
-    open() {
-        !this.isClosed && this.setState({ showModal: true });
-    }
+    static contextType = DialogsContext;
 
     render() {
+        const Dialogs = this.context;
+
         if (this.props.systemInfo.osInfoList == null)
             return null;
+
+        const open = () => {
+            // The initial resources fetching contains only ID - this will be immediately
+            // replaced with the whole resource object but there is enough time to cause a crash if parsed here
+            Dialogs.show(<CreateVmModal mode={this.props.mode}
+                                        nodeMaxMemory={this.props.nodeMaxMemory}
+                                        vms={this.props.vms}
+                                        osInfoList={this.props.systemInfo.osInfoList}
+                                        onAddErrorNotification={this.props.onAddErrorNotification}
+                                        cloudInitSupported={this.props.cloudInitSupported}
+                                        downloadOSSupported={this.props.downloadOSSupported}
+                                        unattendedSupported={this.props.unattendedSupported}
+                                        unattendedUserLogin={this.props.unattendedUserLogin}
+                                        loggedUser={this.props.systemInfo.loggedUser} />);
+        };
 
         let testdata;
         if (!this.props.systemInfo.osInfoList)
@@ -1225,7 +1231,7 @@ export class CreateVmAction extends React.Component {
                     testdata={testdata}
                     id={this.props.mode == 'create' ? 'create-new-vm' : 'import-existing-vm'}
                     variant='secondary'
-                    onClick={this.open}>
+                    onClick={open}>
                 {this.props.mode == 'create' ? _("Create VM") : _("Import VM")}
             </Button>
         );
@@ -1254,36 +1260,12 @@ export class CreateVmAction extends React.Component {
                 </Tooltip>
             );
 
-        return (
-            <>
-                { createButton }
-                { this.state.showModal &&
-                <CreateVmModal
-                    mode={this.props.mode}
-                    close={this.close}
-                    networks={this.props.networks}
-                    nodeDevices={this.props.nodeDevices}
-                    nodeMaxMemory={this.props.nodeMaxMemory}
-                    // The initial resources fetching contains only ID - this will be immediately
-                    // replaced with the whole resource object but there is enough time to cause a crash if parsed here
-                    storagePools={this.props.storagePools.filter(pool => pool.name)}
-                    vms={this.props.vms}
-                    osInfoList={this.props.systemInfo.osInfoList}
-                    onAddErrorNotification={this.props.onAddErrorNotification}
-                    cloudInitSupported={this.props.cloudInitSupported}
-                    downloadOSSupported={this.props.downloadOSSupported}
-                    unattendedSupported={this.props.unattendedSupported}
-                    unattendedUserLogin={this.props.unattendedUserLogin}
-                    loggedUser={this.props.systemInfo.loggedUser} /> }
-            </>
-        );
+        return createButton;
     }
 }
 
 CreateVmAction.propTypes = {
     mode: PropTypes.string.isRequired,
-    networks: PropTypes.array.isRequired,
-    nodeDevices: PropTypes.array.isRequired,
     nodeMaxMemory: PropTypes.number,
     onAddErrorNotification: PropTypes.func.isRequired,
     systemInfo: PropTypes.object.isRequired,

@@ -18,6 +18,7 @@
  */
 import React, { useState } from 'react';
 import { Button, DropdownItem, Dropdown, KebabToggle, Tooltip } from '@patternfly/react-core';
+import { useDialogs } from 'dialogs.jsx';
 
 import {
     rephraseUI,
@@ -81,8 +82,8 @@ export const getNetworkRow = ({ network }) => {
 };
 
 const NetworkActions = ({ network }) => {
+    const Dialogs = useDialogs();
     const [isActionOpen, setIsActionOpen] = useState(false);
-    const [deleteDialogProps, setDeleteDialogProps] = useState();
     const [operationInProgress, setOperationInProgress] = useState(false);
 
     const onActivate = () => {
@@ -134,7 +135,6 @@ const NetworkActions = ({ network }) => {
         title: _("Delete network?"),
         errorMessage: cockpit.format(_("Network $0 could not be deleted"), network.name),
         actionDescription: cockpit.format(_("Network $0 will be permanently deleted."), network.name),
-        onClose: () => setDeleteDialogProps(undefined),
         deleteHandler: () => deleteHandler(network),
     };
 
@@ -150,7 +150,7 @@ const NetworkActions = ({ network }) => {
                       id={`delete-${id}`}
                       className="pf-m-danger"
                       isAriaDisabled={!network.persistent}
-                      onClick={() => setDeleteDialogProps(dialogProps)}>
+                      onClick={() => Dialogs.show(<DeleteResourceModal {...dialogProps} />)}>
             {dropdownItemContent}
         </DropdownItem>
     ];
@@ -166,7 +166,6 @@ const NetworkActions = ({ network }) => {
                 {_("Activate")}
             </Button>
             }
-            {deleteDialogProps && <DeleteResourceModal {...deleteDialogProps} />}
             <Dropdown onSelect={() => setIsActionOpen(!isActionOpen)}
                       id={`${id}-action-kebab`}
                       toggle={<KebabToggle onToggle={isOpen => setIsActionOpen(isOpen)} />}

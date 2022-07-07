@@ -24,11 +24,11 @@ import {
     Page, PageSection, PageSectionVariants,
     Text, TextVariants,
 } from '@patternfly/react-core';
+import { WithDialogs } from 'dialogs.jsx';
 
 import cockpit from 'cockpit';
 import { ListingTable } from 'cockpit-components-table.jsx';
 import { getNetworkRow } from './network.jsx';
-import { getNetworkDevices } from '../../helpers.js';
 import { CreateNetworkAction } from './createNetworkDialog.jsx';
 
 const _ = cockpit.gettext;
@@ -40,13 +40,12 @@ export class NetworkList extends React.Component {
     }
 
     render() {
-        const { networks, resourceHasError, vms, nodeDevices, interfaces } = this.props;
+        const { networks, resourceHasError } = this.props;
         const sortFunction = (networkA, networkB) => networkA.name.localeCompare(networkB.name);
-        const devices = getNetworkDevices(vms, nodeDevices, interfaces);
-        const actions = (<CreateNetworkAction devices={devices} />);
 
         return (
-            <Page groupProps={{ sticky: 'top' }}
+            <WithDialogs>
+                <Page groupProps={{ sticky: 'top' }}
                   isBreadcrumbGrouped
                   breadcrumb={
                       <Breadcrumb variant={PageSectionVariants.light} className='machines-listing-breadcrumb'>
@@ -57,18 +56,18 @@ export class NetworkList extends React.Component {
                               {_("Networks")}
                           </BreadcrumbItem>
                       </Breadcrumb>}>
-                <PageSection id='networks-listing'>
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>
-                                <Text component={TextVariants.h2}>{_("Networks")}</Text>
-                            </CardTitle>
-                            <CardActions>
-                                {actions}
-                            </CardActions>
-                        </CardHeader>
-                        <CardBody className="contains-list">
-                            <ListingTable aria-label={_("Networks")}
+                    <PageSection id='networks-listing'>
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>
+                                    <Text component={TextVariants.h2}>{_("Networks")}</Text>
+                                </CardTitle>
+                                <CardActions>
+                                    <CreateNetworkAction />
+                                </CardActions>
+                            </CardHeader>
+                            <CardBody className="contains-list">
+                                <ListingTable aria-label={_("Networks")}
                                 variant='compact'
                                 columns={[
                                     { title: _("Name"), header: true, props: { width: 15 } },
@@ -83,17 +82,15 @@ export class NetworkList extends React.Component {
                                         .sort(sortFunction)
                                         .map(network => getNetworkRow({ network, resourceHasError }))
                                 } />
-                        </CardBody>
-                    </Card>
-                </PageSection>
-            </Page>
+                            </CardBody>
+                        </Card>
+                    </PageSection>
+                </Page>
+            </WithDialogs>
         );
     }
 }
 NetworkList.propTypes = {
     networks: PropTypes.array.isRequired,
     resourceHasError: PropTypes.object.isRequired,
-    vms: PropTypes.array.isRequired,
-    nodeDevices: PropTypes.array.isRequired,
-    interfaces: PropTypes.array.isRequired,
 };

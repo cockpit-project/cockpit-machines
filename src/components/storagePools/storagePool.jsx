@@ -35,7 +35,7 @@ import StateIcon from '../common/stateIcon.jsx';
 import { updateOrAddStoragePool } from '../../actions/store-actions.js';
 import { StoragePoolOverviewTab } from './storagePoolOverviewTab.jsx';
 import { StoragePoolVolumesTab } from './storagePoolVolumesTab.jsx';
-import { StoragePoolDelete, StoragePoolDeleteAction } from './storagePoolDelete.jsx';
+import { StoragePoolDeleteAction } from './storagePoolDelete.jsx';
 import { storagePoolActivate, storagePoolDeactivate } from '../../libvirtApi/storagePool.js';
 import store from '../../store.js';
 
@@ -104,7 +104,6 @@ class StoragePoolActions extends React.Component {
         this.state = {
             isActionOpen: false,
             operationInProgress: false,
-            showDeleteModal: false,
         };
         this.onActivate = this.onActivate.bind(this);
         this.onDeactivate = this.onDeactivate.bind(this);
@@ -189,8 +188,7 @@ class StoragePoolActions extends React.Component {
         }
 
         const dropdownItems = [
-            <StoragePoolDeleteAction open={() => this.setState({ showDeleteModal: true })}
-                                     key="storage-pool-delete-action"
+            <StoragePoolDeleteAction key="storage-pool-delete-action"
                                      storagePool={storagePool}
                                      vms={vms} />
         ];
@@ -206,10 +204,6 @@ class StoragePoolActions extends React.Component {
                           isOpen={this.state.isActionOpen}
                           position='right'
                           dropdownItems={dropdownItems} />
-                {this.state.showDeleteModal &&
-                <StoragePoolDelete close={() => this.setState({ showDeleteModal: false })}
-                                   storagePool={storagePool}
-                                   vms={vms} />}
             </div>
         );
     }

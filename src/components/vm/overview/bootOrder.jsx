@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 
@@ -45,6 +45,7 @@ import {
     AngleUpIcon
 } from '@patternfly/react-icons';
 
+import { useDialogs, DialogsContext } from 'dialogs.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import {
     findMatchingNodeDevices,
@@ -54,6 +55,7 @@ import {
     vmId
 } from '../../../helpers.js';
 import { domainGet, domainChangeBootOrder } from '../../../libvirtApi/domain.js';
+import store from "../../../store.js";
 
 import './bootOrder.css';
 
@@ -218,13 +220,14 @@ const DeviceRow = ({ idPrefix, device, index, onToggle, upDisabled, downDisabled
 };
 
 class BootOrderModal extends React.Component {
+    static contextType = DialogsContext;
+
     constructor(props) {
         super(props);
         this.state = {
             devices: getUIBootOrderDevices(props.vm),
         };
         this.dialogErrorSet = this.dialogErrorSet.bind(this);
-        this.close = props.close;
         this.save = this.save.bind(this);
         this.onToggleDevice = this.onToggleDevice.bind(this);
         this.moveUp = this.moveUp.bind(this);
@@ -236,6 +239,7 @@ class BootOrderModal extends React.Component {
     }
 
     save() {
+        const Dialogs = this.context;
         const { vm } = this.props;
         const devices = this.state.devices.filter((device) => device.checked);
 
@@ -246,7 +250,7 @@ class BootOrderModal extends React.Component {
         })
                 .then(() => {
                     domainGet({ connectionName: vm.connectionName, id: vm.id });
-                    this.close();
+                    Dialogs.close();
                 })
                 .catch(exc => this.dialogErrorSet(_("Boot order settings could not be saved"), exc.message));
     }
@@ -287,7 +291,9 @@ class BootOrderModal extends React.Component {
     }
 
     render() {
-        const { nodeDevices, vm } = this.props;
+        const Dialogs = this.context;
+        const { vm } = this.props;
+        const { nodeDevices } = store.getState();
         const idPrefix = vmId(vm.name) + '-order-modal';
         const defaultBody = (
             <DataList isCompact
@@ -312,7 +318,7 @@ class BootOrderModal extends React.Component {
         );
 
         return (
-            <Modal position="top" variant="medium" id={`${idPrefix}-window`} isOpen onClose={this.close} className='boot-order'
+            <Modal position="top" variant="medium" id={`${idPrefix}-window`} isOpen onClose={Dialogs.close} className='boot-order'
                    title={_("Change boot order")}
                    footer={
                        <>
@@ -320,7 +326,7 @@ class BootOrderModal extends React.Component {
                            <Button id={`${idPrefix}-save`} variant='primary' onClick={this.save}>
                                {_("Save")}
                            </Button>
-                           <Button id={`${idPrefix}-cancel`} variant='link' onClick={this.close}>
+                           <Button id={`${idPrefix}-cancel`} variant='link' onClick={Dialogs.close}>
                                {_("Cancel")}
                            </Button>
                        </>
@@ -334,9 +340,7 @@ class BootOrderModal extends React.Component {
 }
 
 BootOrderModal.propTypes = {
-    close: PropTypes.func.isRequired,
     vm: PropTypes.object.isRequired,
-    nodeDevices: PropTypes.array.isRequired,
 };
 
 /**
@@ -357,16 +361,20 @@ function getBootOrder(vm) {
 }
 
 export const BootOrderLink = ({ vm, idPrefix, nodeDevices }) => {
-    const [bootOrderShow, setBootOrderShow] = useState(false);
+    const Dialogs = useDialogs();
+
+    function open() {
+        Dialogs.show(<BootOrderModal vm={vm} />);
+    }
+
     const modalButton = (
-        <Button variant="link" isInline isAriaDisabled={vm.state != 'shut off'} onClick={setBootOrderShow}>
+        <Button variant="link" isInline isAriaDisabled={vm.state != 'shut off'} onClick={open}>
             {_("edit")}
         </Button>
     );
 
     return (
         <Flex spaceItems={{ default: 'spaceItemsSm' }}>
-            {bootOrderShow && <BootOrderModal close={() => setBootOrderShow(false)} vm={vm} nodeDevices={nodeDevices} />}
             <FlexItem>{getBootOrder(vm)}</FlexItem>
             {vm.state == 'shut off' ? modalButton : <Tooltip content={_("Only editable when the guest is shut off")}>{modalButton}</Tooltip>}
         </Flex>

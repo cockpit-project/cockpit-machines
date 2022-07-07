@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 import {
@@ -24,6 +24,7 @@ import {
     Form, FormGroup, FormSelect, FormSelectOption,
     Modal, Tooltip
 } from '@patternfly/react-core';
+import { useDialogs, DialogsContext } from 'dialogs.jsx';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { domainSetOSFirmware, domainCanInstall } from "../../../libvirtApi/domain.js";
@@ -32,6 +33,8 @@ import { supportsUefiXml, labelForFirmwarePath } from './helpers.js';
 const _ = cockpit.gettext;
 
 class FirmwareModal extends React.Component {
+    static contextType = DialogsContext;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -39,7 +42,6 @@ class FirmwareModal extends React.Component {
             firmware: props.firmware == 'efi' ? props.firmware : 'bios',
         };
         this.dialogErrorSet = this.dialogErrorSet.bind(this);
-        this.close = props.close;
         this.save = this.save.bind(this);
     }
 
@@ -48,13 +50,15 @@ class FirmwareModal extends React.Component {
     }
 
     save() {
+        const Dialogs = this.context;
         domainSetOSFirmware({ connectionName: this.props.connectionName, objPath: this.props.vmId, loaderType: this.state.firmware })
-                .then(this.close, exc => this.dialogErrorSet(_("Failed to change firmware"), exc.message));
+                .then(Dialogs.close, exc => this.dialogErrorSet(_("Failed to change firmware"), exc.message));
     }
 
     render() {
+        const Dialogs = this.context;
         return (
-            <Modal position="top" variant="medium" isOpen onClose={this.close}
+            <Modal position="top" variant="medium" isOpen onClose={Dialogs.close}
                    title={_("Change firmware")}
                    footer={
                        <>
@@ -62,7 +66,7 @@ class FirmwareModal extends React.Component {
                            <Button variant='primary' id="firmware-dialog-apply" onClick={this.save}>
                                {_("Save")}
                            </Button>
-                           <Button variant='link' onClick={this.close}>
+                           <Button variant='link' onClick={Dialogs.close}>
                                {_("Cancel")}
                            </Button>
                        </>
@@ -85,14 +89,13 @@ class FirmwareModal extends React.Component {
 }
 
 FirmwareModal.propTypes = {
-    close: PropTypes.func.isRequired,
     connectionName: PropTypes.string.isRequired,
     vmId: PropTypes.string.isRequired,
     firmware: PropTypes.string,
 };
 
 export const FirmwareLink = ({ vm, loaderElems, idPrefix }) => {
-    const [firmwareShow, setFirmwareShow] = useState(false);
+    const Dialogs = useDialogs();
 
     function getOVMFBinariesOnHost(loaderElems) {
         return Array.prototype.map.call(loaderElems, loader => {
@@ -101,6 +104,10 @@ export const FirmwareLink = ({ vm, loaderElems, idPrefix }) => {
             if (valueElem && valueElem[0].parentNode == loader)
                 return valueElem[0].textContent;
         });
+    }
+
+    function open() {
+        Dialogs.show(<FirmwareModal connectionName={vm.connectionName} vmId={vm.id} firmware={vm.firmware} />);
     }
 
     let firmwareLinkWrapper;
@@ -126,7 +133,7 @@ export const FirmwareLink = ({ vm, loaderElems, idPrefix }) => {
         const firmwareLink = disabled => {
             return (
                 <span id={`${idPrefix}-firmware-tooltip`}>
-                    <Button variant="link" isInline id={`${idPrefix}-firmware`} isDisabled={disabled} onClick={() => setFirmwareShow(true)}>
+                    <Button variant="link" isInline id={`${idPrefix}-firmware`} isDisabled={disabled} onClick={open}>
                         {currentFirmware}
                     </Button>
                 </span>
@@ -164,10 +171,5 @@ export const FirmwareLink = ({ vm, loaderElems, idPrefix }) => {
         }
     }
 
-    return (
-        <>
-            { firmwareShow && <FirmwareModal close={() => setFirmwareShow(false)} connectionName={vm.connectionName} vmId={vm.id} firmware={vm.firmware} /> }
-            {firmwareLinkWrapper}
-        </>
-    );
+    return firmwareLinkWrapper;
 };

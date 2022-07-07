@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 
 import cockpit from 'cockpit';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
+import { DialogsContext } from 'dialogs.jsx';
 import {
     units,
     convertToUnit,
@@ -21,6 +22,8 @@ import './memoryModal.scss';
 const _ = cockpit.gettext;
 
 export class MemoryModal extends React.Component {
+    static contextType = DialogsContext;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -31,7 +34,6 @@ export class MemoryModal extends React.Component {
             nodeMaxMemory: props.config.nodeMaxMemory,
             minAllowedMemory: convertToUnit(128, 'MiB', 'KiB'),
         };
-        this.close = props.close;
         this.save = this.save.bind(this);
         this.onValueChanged = this.onValueChanged.bind(this);
         this.dialogErrorSet = this.dialogErrorSet.bind(this);
@@ -71,6 +73,7 @@ export class MemoryModal extends React.Component {
     }
 
     save() {
+        const Dialogs = this.context;
         const { vm } = this.props;
 
         if (vm.memory !== this.state.maxMemory) {
@@ -90,7 +93,7 @@ export class MemoryModal extends React.Component {
                                     .then(() => {
                                         if (vm.state !== 'running')
                                             domainGet({ connectionName: vm.connectionName, id: vm.id });
-                                        this.close();
+                                        Dialogs.close();
                                     })
                                     .catch(exc => this.dialogErrorSet(_("Memory could not be saved"), exc.message));
                         }
@@ -106,15 +109,16 @@ export class MemoryModal extends React.Component {
                     .then(() => {
                         if (vm.state !== 'running')
                             domainGet({ connectionName: vm.connectionName, id: vm.id });
-                        this.close();
+                        Dialogs.close();
                     })
                     .catch(exc => this.dialogErrorSet(_("Memory could not be saved"), exc.message));
         } else {
-            this.close();
+            Dialogs.close();
         }
     }
 
     render() {
+        const Dialogs = this.context;
         const vm = this.props.vm;
         const idPrefix = vmId(vm.name) + '-memory-modal';
         const defaultBody = (
@@ -142,7 +146,7 @@ export class MemoryModal extends React.Component {
         );
 
         return (
-            <Modal position="top" variant="medium" id='vm-memory-modal' isOpen onClose={this.close}
+            <Modal position="top" variant="medium" id='vm-memory-modal' isOpen onClose={Dialogs.close}
                    title={cockpit.format(_("$0 memory adjustment"), vm.name)}
                    footer={
                        <>
@@ -150,7 +154,7 @@ export class MemoryModal extends React.Component {
                            <Button id={`${idPrefix}-save`} variant='primary' onClick={this.save}>
                                {_("Save")}
                            </Button>
-                           <Button id={`${idPrefix}-cancel`} variant='link' onClick={this.close}>
+                           <Button id={`${idPrefix}-cancel`} variant='link' onClick={Dialogs.close}>
                                {_("Cancel")}
                            </Button>
                        </>
@@ -164,7 +168,6 @@ export class MemoryModal extends React.Component {
 MemoryModal.propTypes = {
     vm: PropTypes.object.isRequired,
     config: PropTypes.object.isRequired,
-    close: PropTypes.func.isRequired,
 };
 
 export default MemoryModal;
