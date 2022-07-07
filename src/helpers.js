@@ -21,6 +21,7 @@ import * as dfnlocales from 'date-fns/locale';
 import { formatRelative } from 'date-fns';
 
 import cockpit from 'cockpit';
+import store from './store.js';
 
 const _ = cockpit.gettext;
 
@@ -676,12 +677,10 @@ export function getStorageVolumesUsage(vms, storagePool) {
  * Returns a list of potential physical devices suitable as network devices
  * by merging all network node devices and interfaces.
  *
- * @param {array} vms
- * @param {array} nodeDevices
- * @param {array} interfaces
  * @returns {array}
  */
-export function getNetworkDevices(vms, nodeDevices, interfaces) {
+export function getNetworkDevices() {
+    const { nodeDevices, interfaces } = store.getState();
     const devs = [];
 
     nodeDevices.forEach(dev => {
@@ -850,4 +849,9 @@ export function getHostDevSourceObject(dev) {
     }
 
     return source;
+}
+
+export function getVmStoragePools(vm) {
+    const { storagePools } = store.getState();
+    return storagePools.filter(sp => sp && sp.name && sp.connectionName == vm.connectionName && sp.active);
 }

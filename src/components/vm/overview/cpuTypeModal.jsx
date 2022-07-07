@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import cockpit from 'cockpit';
 import { Button, Form, FormGroup, FormSelect, FormSelectOption, FormSelectOptionGroup, Modal } from '@patternfly/react-core';
+import { useDialogs } from 'dialogs.jsx';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { domainSetCpuMode } from '../../../libvirtApi/domain.js';
 
 const _ = cockpit.gettext;
 
-export const CPUTypeModal = ({ vm, models, close }) => {
+export const CPUTypeModal = ({ vm, models }) => {
+    const Dialogs = useDialogs();
     const [error, setError] = useState({});
     const [cpuMode, setCpuMode] = useState(vm.cpu.mode);
     const [cpuModel, setCpuModel] = useState(vm.cpu.model);
@@ -21,7 +23,7 @@ export const CPUTypeModal = ({ vm, models, close }) => {
             connectionName: vm.connectionName,
             mode: cpuMode,
             model: cpuModel
-        }).then(close, exc => {
+        }).then(Dialogs.close, exc => {
             setIsLoading(false);
             setError({ dialogError: _("CPU configuration could not be saved"), dialogErrorDetail: exc.message });
         });
@@ -56,7 +58,7 @@ export const CPUTypeModal = ({ vm, models, close }) => {
     );
 
     return (
-        <Modal position="top" variant="small" id="machines-cpu-type-modal" isOpen onClose={close}
+        <Modal position="top" variant="small" id="machines-cpu-type-modal" isOpen onClose={Dialogs.close}
                title={cockpit.format(_("$0 CPU configuration"), vm.name)}
                footer={
                    <>
@@ -64,7 +66,7 @@ export const CPUTypeModal = ({ vm, models, close }) => {
                        <Button variant='primary' isDisabled={isLoading} isLoading={isLoading} id="cpu-config-dialog-apply" onClick={save}>
                            {_("Apply")}
                        </Button>
-                       <Button variant='link' onClick={close}>
+                       <Button variant='link' onClick={Dialogs.close}>
                            {_("Cancel")}
                        </Button>
                    </>

@@ -28,10 +28,13 @@ import {
 
 import cockpit from 'cockpit';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
+import { useDialogs, DialogsContext } from 'dialogs.jsx';
 
 const _ = cockpit.gettext;
 
 export class DeleteResourceModal extends React.Component {
+    static contextType = DialogsContext;
+
     constructor(props) {
         super(props);
 
@@ -45,9 +48,10 @@ export class DeleteResourceModal extends React.Component {
     }
 
     delete() {
+        const Dialogs = this.context;
         this.setState({ inProgress: true });
         this.props.deleteHandler()
-                .then(this.props.onClose, exc => {
+                .then(Dialogs.close, exc => {
                     this.setState({ inProgress: false });
                     this.dialogErrorSet(this.props.errorMessage, exc.message);
                 });
@@ -58,10 +62,11 @@ export class DeleteResourceModal extends React.Component {
     }
 
     render() {
-        const { title, objectDescription, actionName, actionDescription, onClose } = this.props;
+        const Dialogs = this.context;
+        const { title, objectDescription, actionName, actionDescription } = this.props;
 
         return (
-            <Modal position="top" variant="small" isOpen onClose={onClose}
+            <Modal position="top" variant="small" isOpen onClose={Dialogs.close}
                    id="delete-resource-modal"
                    title={title}
                    titleIconVariant="warning"
@@ -70,7 +75,7 @@ export class DeleteResourceModal extends React.Component {
                            <Button variant='danger' isLoading={this.state.inProgress} isDisabled={this.state.inProgress} onClick={this.delete}>
                                {actionName || _("Delete")}
                            </Button>
-                           <Button variant='link' className='btn-cancel' onClick={onClose}>
+                           <Button variant='link' className='btn-cancel' onClick={Dialogs.close}>
                                {_("Cancel")}
                            </Button>
                        </>
@@ -94,19 +99,20 @@ DeleteResourceModal.propTypes = {
     title: PropTypes.string.isRequired,
     errorMessage: PropTypes.string.isRequired,
     objectDescription: PropTypes.array,
-    deleteHandler: PropTypes.func.isRequired,
-    onClose: PropTypes.func.isRequired,
+    deleteHandler: PropTypes.func.isRequired
 };
 
-export const DeleteResourceButton = ({ objectId, disabled, overlayText, actionName, showDialog, isLink, isInline, className }) => {
+export const DeleteResourceButton = ({ objectId, disabled, overlayText, actionName, dialogProps, isLink, isInline, className }) => {
+    const Dialogs = useDialogs();
+
     const button = (
         <Button id={`delete-${objectId}`}
-            className={className}
-            variant={isLink ? 'link' : 'danger'}
-            isDanger={isLink}
-            isInline={isInline}
-            onClick={showDialog}
-            isDisabled={disabled}>
+                className={className}
+                variant={isLink ? 'link' : 'danger'}
+                isDanger={isLink}
+                isInline={isInline}
+                onClick={() => Dialogs.show(<DeleteResourceModal {...dialogProps} />)}
+                isDisabled={disabled}>
             {actionName || _("Delete")}
         </Button>
     );
@@ -127,5 +133,5 @@ DeleteResourceButton.propTypes = {
     disabled: PropTypes.bool,
     overlayText: PropTypes.string,
     actionName: PropTypes.string,
-    showDialog: PropTypes.func.isRequired,
+    dialogProps: PropTypes.object.isRequired,
 };

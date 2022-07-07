@@ -26,10 +26,11 @@ import {
     Modal, Radio, Spinner, TextInput,
 } from '@patternfly/react-core';
 import cockpit from 'cockpit';
+import { DialogsContext } from 'dialogs.jsx';
 
 import { FileAutoComplete } from 'cockpit-components-file-autocomplete.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
-import { diskBusTypes, diskCacheModes, units, convertToUnit, getDefaultVolumeFormat, getNextAvailableTarget, getStorageVolumesUsage, getStorageVolumeDiskTarget } from '../../../helpers.js';
+import { diskBusTypes, diskCacheModes, units, convertToUnit, getDefaultVolumeFormat, getNextAvailableTarget, getStorageVolumesUsage, getStorageVolumeDiskTarget, getVmStoragePools } from '../../../helpers.js';
 import { VolumeCreateBody } from '../../storagePools/storageVolumeCreateBody.jsx';
 import { domainAttachDisk, domainGet, domainIsRunning, domainUpdateDiskAttributes } from '../../../libvirtApi/domain.js';
 import { storagePoolGetAll } from '../../../libvirtApi/storagePool.js';
@@ -345,6 +346,8 @@ const CustomPath = ({ idPrefix, onValueChanged, device }) => {
 };
 
 export class AddDiskModalBody extends React.Component {
+    static contextType = DialogsContext;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -360,7 +363,8 @@ export class AddDiskModalBody extends React.Component {
     }
 
     get initialState() {
-        const { vm, storagePools, vms } = this.props;
+        const { vm, vms } = this.props;
+        const storagePools = getVmStoragePools(vm);
         const defaultBus = 'virtio';
         const existingTargets = Object.getOwnPropertyNames(vm.disks);
         const availableTarget = getNextAvailableTarget(existingTargets, defaultBus);
@@ -417,7 +421,7 @@ export class AddDiskModalBody extends React.Component {
             if (poolTypesNotSupportingVolumeCreation.includes(this.state.storagePoolType)) {
                 validationFailed.storagePool = cockpit.format(_("Pool type $0 does not support volume creation"), this.state.storagePoolType);
             }
-            const poolCapacity = parseFloat(convertToUnit(this.props.storagePools.find(pool => pool.name == this.state.storagePoolName).capacity, units.B, this.state.unit));
+            const poolCapacity = parseFloat(convertToUnit(this.state.storagePools.find(pool => pool.name == this.state.storagePoolName).capacity, units.B, this.state.unit));
             if (this.state.size > poolCapacity) {
                 validationFailed.size = cockpit.format(_("Storage volume size must not exceed the storage pool's capacity ($0 $1)"), poolCapacity.toFixed(2), this.state.unit);
             }
@@ -547,9 +551,10 @@ export class AddDiskModalBody extends React.Component {
     }
 
     onAddClicked() {
+        const Dialogs = this.context;
         const { vm, vms, storagePools } = this.state;
         let storagePool, volume, isVolumeUsed;
-        const close = this.props.close;
+        const close = Dialogs.close;
 
         const validation = this.validateParams();
         if (Object.getOwnPropertyNames(validation).length > 0)
@@ -634,6 +639,7 @@ export class AddDiskModalBody extends React.Component {
     }
 
     render() {
+        const Dialogs = this.context;
         const { dialogLoading, vm, storagePools, vms } = this.state;
         const idPrefix = `${this.props.idPrefix}-adddisk`;
         const validationFailed = this.state.validate ? this.validateParams() : {};
@@ -713,7 +719,7 @@ export class AddDiskModalBody extends React.Component {
         }
 
         return (
-            <Modal position="top" variant="medium" id={`${idPrefix}-dialog-modal-window`} isOpen onClose={this.props.close}
+            <Modal position="top" variant="medium" id={`${idPrefix}-dialog-modal-window`} isOpen onClose={Dialogs.close}
                    title={_("Add disk")}
                    footer={
                        <>
@@ -725,7 +731,7 @@ export class AddDiskModalBody extends React.Component {
                                    onClick={this.onAddClicked}>
                                {_("Add")}
                            </Button>
-                           <Button id={`${idPrefix}-dialog-cancel`} variant='link' className='btn-cancel' onClick={this.props.close}>
+                           <Button id={`${idPrefix}-dialog-cancel`} variant='link' className='btn-cancel' onClick={Dialogs.close}>
                                {_("Cancel")}
                            </Button>
                        </>

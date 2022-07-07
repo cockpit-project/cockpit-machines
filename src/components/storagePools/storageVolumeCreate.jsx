@@ -23,6 +23,7 @@ import { Button, Form, Modal, Tooltip } from '@patternfly/react-core';
 import cockpit from 'cockpit';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
+import { DialogsContext } from 'dialogs.jsx';
 import { units, getDefaultVolumeFormat, convertToUnit, isEmpty } from '../../helpers.js';
 import { storageVolumeCreate } from '../../libvirtApi/storageVolume.js';
 import { VolumeCreateBody } from './storageVolumeCreateBody.jsx';
@@ -30,6 +31,8 @@ import { VolumeCreateBody } from './storageVolumeCreateBody.jsx';
 const _ = cockpit.gettext;
 
 class CreateStorageVolumeModal extends React.Component {
+    static contextType = DialogsContext;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -67,6 +70,7 @@ class CreateStorageVolumeModal extends React.Component {
     }
 
     onCreateClicked() {
+        const Dialogs = this.context;
         const validation = this.validateParams();
         if (Object.getOwnPropertyNames(validation).length > 0) {
             this.setState({ createInProgress: false, validate: true });
@@ -78,7 +82,7 @@ class CreateStorageVolumeModal extends React.Component {
             const size = convertToUnit(this.state.size, this.state.unit, 'MiB');
 
             storageVolumeCreate({ connectionName, poolName: name, volName: volumeName, size, format })
-                    .then(() => this.props.close())
+                    .then(() => Dialogs.close())
                     .catch(exc => {
                         this.setState({ createInProgress: false });
                         this.dialogErrorSet(_("Volume failed to be created"), exc.message);
@@ -87,11 +91,12 @@ class CreateStorageVolumeModal extends React.Component {
     }
 
     render() {
+        const Dialogs = this.context;
         const idPrefix = `${this.props.idPrefix}-dialog`;
         const validationFailed = this.state.validate ? this.validateParams() : {};
 
         return (
-            <Modal position="top" variant="medium" id={`${idPrefix}-modal`} className='volume-create' isOpen onClose={this.props.close}
+            <Modal position="top" variant="medium" id={`${idPrefix}-modal`} className='volume-create' isOpen onClose={Dialogs.close}
                    title={_("Create storage volume")}
                    footer={
                        <>
@@ -99,7 +104,7 @@ class CreateStorageVolumeModal extends React.Component {
                            <Button variant="primary" onClick={this.onCreateClicked} isLoading={this.state.createInProgress} isDisabled={this.state.createInProgress}>
                                {_("Create")}
                            </Button>
-                           <Button variant='link' className='btn-cancel' onClick={ this.props.close }>
+                           <Button variant='link' className='btn-cancel' onClick={Dialogs.close}>
                                {_("Cancel")}
                            </Button>
                        </>
@@ -120,26 +125,13 @@ class CreateStorageVolumeModal extends React.Component {
 }
 CreateStorageVolumeModal.propTypes = {
     storagePool: PropTypes.object.isRequired,
-    close: PropTypes.func.isRequired,
 };
 
 export class StorageVolumeCreate extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { showModal: false };
-        this.open = this.open.bind(this);
-        this.close = this.close.bind(this);
-    }
-
-    close() {
-        this.setState({ showModal: false });
-    }
-
-    open() {
-        this.setState({ showModal: true });
-    }
+    static contextType = DialogsContext;
 
     render() {
+        const Dialogs = this.context;
         const idPrefix = `${this.props.storagePool.name}-${this.props.storagePool.connectionName}-create-volume`;
         const poolTypesNotSupportingVolumeCreation = ['iscsi', 'iscsi-direct', 'gluster', 'mpath'];
 
@@ -147,8 +139,9 @@ export class StorageVolumeCreate extends React.Component {
             if (!poolTypesNotSupportingVolumeCreation.includes(this.props.storagePool.type) && this.props.storagePool.active) {
                 return (
                     <Button id={`${idPrefix}-button`}
-                        variant='secondary'
-                        onClick={this.open}>
+                            variant='secondary'
+                            onClick={() => Dialogs.show(<CreateStorageVolumeModal idPrefix="create-volume"
+                                                                                  storagePool={this.props.storagePool} />)}>
                         {_("Create volume")}
                     </Button>
                 );
@@ -168,16 +161,7 @@ export class StorageVolumeCreate extends React.Component {
             }
         };
 
-        return (
-            <>
-                { createButton() }
-                { this.state.showModal &&
-                <CreateStorageVolumeModal
-                    idPrefix="create-volume"
-                    storagePool={this.props.storagePool}
-                    close={this.close} /> }
-            </>
-        );
+        return createButton();
     }
 }
 

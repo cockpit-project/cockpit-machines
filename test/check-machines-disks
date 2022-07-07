@@ -196,6 +196,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_visible("#vm-subVmTest1-disks-hda-edit-readonly")
         b.wait_not_present("#vm-subVmTest1-disks-hda-edit-writable")
         b.wait_not_present("#vm-subVmTest1-disks-hda-edit-writable-shareable")
+        cancel("hda")
 
         # Start Vm
         b.click("#vm-subVmTest1-system-run")
@@ -932,6 +933,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         # Ensure that the bus type autofilled value is according to the bus types of the existing disks of the guest,
         # even when these are not in the predefined value (see ide)
         m.execute("virt-xml subVmTest1 --edit --disk target=vda,bus=ide,path=/var/lib/libvirt/images/subVmTest1-2.img,clearxml=yes")
+        b.wait_text("#vm-subVmTest1-disks-vda-bus", "ide")
         b.click(prefix)
         b.click(f"{prefix}-custompath")
         b.select_from_dropdown(f"{prefix}-select-device", "disk")

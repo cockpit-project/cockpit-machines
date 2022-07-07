@@ -37,6 +37,7 @@ import { OutlinedQuestionCircleIcon } from "@patternfly/react-icons";
 import { domainGetAll, domainMigrateToUri } from '../../libvirtApi/domain.js';
 import { isEmpty, isObjectEmpty } from '../../helpers.js';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
+import { useDialogs } from 'dialogs.jsx';
 
 import './vmMigrateDialog.scss';
 
@@ -125,7 +126,8 @@ const StorageRow = ({ storage, setStorage }) => {
     );
 };
 
-export const MigrateDialog = ({ vm, connectionName, toggleModal }) => {
+export const MigrateDialog = ({ vm, connectionName }) => {
+    const Dialogs = useDialogs();
     const [destUri, setDestUri] = useState("");
     const [error, setDialogError] = useState({});
     const [inProgress, setInProgress] = useState(false);
@@ -165,7 +167,7 @@ export const MigrateDialog = ({ vm, connectionName, toggleModal }) => {
         setInProgress(true);
         return domainMigrateToUri({ connectionName, objPath: vm.id, destUri, storage, temporary })
                 .then(() => {
-                    toggleModal();
+                    Dialogs.close();
                     if (!temporary)
                         cockpit.location.go(["vms"]);
                 })
@@ -213,14 +215,14 @@ export const MigrateDialog = ({ vm, connectionName, toggleModal }) => {
                     onClick={onMigrate}>
                 {_("Migrate")}
             </Button>
-            <Button id="cancel-button" variant='link' onClick={toggleModal}>
+            <Button id="cancel-button" variant='link' onClick={Dialogs.close}>
                 {_("Cancel")}
             </Button>
         </>
     );
 
     return (
-        <Modal id="migrate-modal" position="top" variant="medium" isOpen onClose={toggleModal}
+        <Modal id="migrate-modal" position="top" variant="medium" isOpen onClose={Dialogs.close}
                description={copyStorageHidden && _("Storage volumes must be shared between this host and the destination host.")}
                title={_("Migrate VM to another host")}
                footer={footer}>

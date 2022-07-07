@@ -9,6 +9,7 @@ import {
 } from '@patternfly/react-core';
 import { InfoAltIcon } from '@patternfly/react-icons';
 
+import { DialogsContext } from 'dialogs.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { domainSetVCPUSettings } from "../../../libvirtApi/domain.js";
 import { digitFilter } from "../../../helpers.js";
@@ -38,6 +39,8 @@ const clamp = (value, max, min) => {
 };
 
 export class VCPUModal extends React.Component {
+    static contextType = DialogsContext;
+
     constructor(props) {
         super(props);
         this.state = {
@@ -153,7 +156,8 @@ export class VCPUModal extends React.Component {
     }
 
     save() {
-        const { close, vm } = this.props;
+        const Dialogs = this.context;
+        const { vm } = this.props;
 
         return domainSetVCPUSettings({
             name: vm.name,
@@ -165,11 +169,12 @@ export class VCPUModal extends React.Component {
             cores: this.state.cores,
             isRunning: vm.state == 'running'
         })
-                .then(close)
+                .then(Dialogs.close)
                 .catch(exc => this.dialogErrorSet(_("VCPU settings could not be saved"), exc.message));
     }
 
     render() {
+        const Dialogs = this.context;
         const { vm } = this.props;
         let caution = null;
 
@@ -249,7 +254,7 @@ export class VCPUModal extends React.Component {
         );
 
         return (
-            <Modal position="top" variant="medium" id='machines-vcpu-modal-dialog' isOpen onClose={this.props.close}
+            <Modal position="top" variant="medium" id='machines-vcpu-modal-dialog' isOpen onClose={Dialogs.close}
                    title={cockpit.format(_("$0 vCPU details"), vm.name)}
                    footer={
                        <>
@@ -257,7 +262,7 @@ export class VCPUModal extends React.Component {
                            <Button id='machines-vcpu-modal-dialog-apply' variant='primary' onClick={this.save}>
                                {_("Apply")}
                            </Button>
-                           <Button id='machines-vcpu-modal-dialog-cancel' variant='link' className='btn-cancel' onClick={this.props.close}>
+                           <Button id='machines-vcpu-modal-dialog-cancel' variant='link' className='btn-cancel' onClick={Dialogs.close}>
                                {_("Cancel")}
                            </Button>
                        </>
@@ -273,5 +278,4 @@ export class VCPUModal extends React.Component {
 VCPUModal.propTypes = {
     vm: PropTypes.object.isRequired,
     maxVcpu: PropTypes.string.isRequired,
-    close: PropTypes.func.isRequired,
 };

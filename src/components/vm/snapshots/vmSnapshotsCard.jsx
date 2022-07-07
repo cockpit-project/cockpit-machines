@@ -19,12 +19,13 @@
 import React from 'react';
 
 import cockpit from 'cockpit';
+import { useDialogs, DialogsContext } from 'dialogs.jsx';
 import { vmId, localize_datetime } from "../../../helpers.js";
 import { CreateSnapshotModal } from "./vmSnapshotsCreateModal.jsx";
 import { ListingTable } from "cockpit-components-table.jsx";
 import { Button, Tooltip, Flex, FlexItem } from '@patternfly/react-core';
 import { CheckIcon, InfoAltIcon } from '@patternfly/react-icons';
-import { DeleteResourceButton, DeleteResourceModal } from '../../common/deleteResource.jsx';
+import { DeleteResourceButton } from '../../common/deleteResource.jsx';
 import { RevertSnapshotModal } from './vmSnapshotsRevertModal.jsx';
 import { snapshotDelete, snapshotGetAll } from '../../../libvirtApi/snapshot.js';
 
@@ -32,51 +33,32 @@ import './vmSnapshotsCard.scss';
 
 const _ = cockpit.gettext;
 
-export class VmSnapshotsActions extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            showCreateSnapshotModal: false,
-        };
+export const VmSnapshotsActions = ({ vm }) => {
+    const Dialogs = useDialogs();
+    const id = vmId(vm.name);
 
-        this.openCreateSnapshot = this.openCreateSnapshot.bind(this);
-        this.closeCreateSnapshot = this.closeCreateSnapshot.bind(this);
+    function open() {
+        Dialogs.show(<CreateSnapshotModal idPrefix={`${id}-create-snapshot`}
+                                          vm={vm} />);
     }
 
-    openCreateSnapshot() {
-        this.setState({ showCreateSnapshotModal: true });
-    }
-
-    closeCreateSnapshot() {
-        this.setState({ showCreateSnapshotModal: false });
-    }
-
-    render() {
-        const { vm } = this.props;
-        const id = vmId(vm.name);
-
-        return (
-            <>
-                <Button id={`${id}-add-snapshot-button`} variant="secondary" onClick={this.openCreateSnapshot}>
-                    {_("Create snapshot")}
-                </Button>
-
-                {this.state.showCreateSnapshotModal &&
-                    <CreateSnapshotModal idPrefix={`${id}-create-snapshot`}
-                        vm={vm}
-                        onClose={this.closeCreateSnapshot} />}
-            </>
-        );
-    }
-}
+    return (
+        <Button id={`${id}-add-snapshot-button`} variant="secondary" onClick={open}>
+            {_("Create snapshot")}
+        </Button>
+    );
+};
 
 export class VmSnapshotsCard extends React.Component {
+    static contextType = DialogsContext;
+
     constructor(props) {
         super(props);
         this.state = {};
     }
 
     render() {
+        const Dialogs = this.context;
         const { vm } = this.props;
         const id = vmId(vm.name);
 
@@ -164,13 +146,12 @@ export class VmSnapshotsCard extends React.Component {
                         const revertDialogProps = {
                             idPrefix: `${id}-snapshot-${snapId}-revert`,
                             vm,
-                            snap,
-                            onClose: () => this.setState({ revertDialogProps: undefined }),
+                            snap
                         };
                         return (
                             <Button id={`${id}-snapshot-${snapId}-revert`}
-                                variant='secondary'
-                                onClick={() => this.setState({ revertDialogProps })}>
+                                    variant='secondary'
+                                    onClick={() => Dialogs.show(<RevertSnapshotModal {...revertDialogProps } />)}>
                                 {_("Revert")}
                             </Button>
                         );
@@ -190,7 +171,7 @@ export class VmSnapshotsCard extends React.Component {
 
                         return (
                             <DeleteResourceButton objectId={`${id}-snapshot-${snapId}`}
-                                showDialog={() => this.setState({ deleteDialogProps })} />
+                                                  dialogProps={deleteDialogProps} />
                         );
                     };
 
@@ -216,18 +197,13 @@ export class VmSnapshotsCard extends React.Component {
         }
 
         return (
-            <>
-                {this.state.deleteDialogProps && <DeleteResourceModal {...this.state.deleteDialogProps} />}
-                {this.state.revertDialogProps && <RevertSnapshotModal {...this.state.revertDialogProps } />}
-
-                <ListingTable aria-label={`VM ${vm.name} Snapshots Cards`}
-                    gridBreakPoint='grid-xl'
-                    variant="compact"
-                    emptyCaption={_("No snapshots defined for this VM")}
-                    emptyCaptionDetail={_("Previously taken snapshots allow you to revert to an earlier state if something goes wrong")}
-                    columns={columnTitles}
-                    rows={rows} />
-            </>
+            <ListingTable aria-label={`VM ${vm.name} Snapshots Cards`}
+                          gridBreakPoint='grid-xl'
+                          variant="compact"
+                          emptyCaption={_("No snapshots defined for this VM")}
+                          emptyCaptionDetail={_("Previously taken snapshots allow you to revert to an earlier state if something goes wrong")}
+                          columns={columnTitles}
+                          rows={rows} />
         );
     }
 }

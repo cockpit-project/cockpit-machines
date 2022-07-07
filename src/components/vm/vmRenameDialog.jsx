@@ -22,13 +22,15 @@ import React, { useState } from 'react';
 import { Button, Form, FormGroup, Modal, TextInput } from '@patternfly/react-core';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
+import { useDialogs } from 'dialogs.jsx';
 
 import { isObjectEmpty } from '../../helpers.js';
 import { domainRename } from '../../libvirtApi/domain.js';
 
 const _ = cockpit.gettext;
 
-export const RenameDialog = ({ vmName, vmId, connectionName, toggleModal }) => {
+export const RenameDialog = ({ vmName, vmId, connectionName }) => {
+    const Dialogs = useDialogs();
     const [newName, setNewName] = useState(vmName);
     const [error, dialogErrorSet] = useState({});
     const [submitted, setSubmitted] = useState(false);
@@ -41,7 +43,7 @@ export const RenameDialog = ({ vmName, vmId, connectionName, toggleModal }) => {
 
         return domainRename({ connectionName, id: vmId, newName: newName })
                 .then(() => {
-                    toggleModal();
+                    Dialogs.close();
                     // If we are on the VMs details page change the URL to reflect the new name after the rename operation succeeded
                     if (cockpit.location.path.length > 0)
                         cockpit.location.go(["vm"], { ...cockpit.location.options, name: newName, connection: connectionName });
@@ -51,7 +53,7 @@ export const RenameDialog = ({ vmName, vmId, connectionName, toggleModal }) => {
     }
 
     return (
-        <Modal position="top" variant="small" isOpen onClose={toggleModal}
+        <Modal position="top" variant="small" isOpen onClose={Dialogs.close}
            title={cockpit.format(_("Rename VM $0"), vmName)}
            footer={
                <>
@@ -62,7 +64,7 @@ export const RenameDialog = ({ vmName, vmId, connectionName, toggleModal }) => {
                            onClick={onRename}>
                        {_("Rename")}
                    </Button>
-                   <Button variant='link' onClick={toggleModal}>
+                   <Button variant='link' onClick={Dialogs.close}>
                        {_("Cancel")}
                    </Button>
                </>

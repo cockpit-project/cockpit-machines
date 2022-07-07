@@ -23,6 +23,7 @@ import {
     Card, CardActions, CardHeader, CardTitle, CardBody,
     Page, PageSection, Text, TextVariants,
 } from '@patternfly/react-core';
+import { WithDialogs } from 'dialogs.jsx';
 
 import cockpit from 'cockpit';
 import { ListingTable } from 'cockpit-components-table.jsx';
@@ -45,51 +46,53 @@ export class StoragePoolList extends React.Component {
         const actions = (<CreateStoragePoolAction loggedUser={loggedUser} libvirtVersion={libvirtVersion} />);
 
         return (
-            <Page groupProps={{ sticky: 'top' }}
-                  isBreadcrumbGrouped
-                  breadcrumb={
-                      <Breadcrumb className='machines-listing-breadcrumb'>
-                          <BreadcrumbItem to='#'>
-                              {_("Virtual machines")}
-                          </BreadcrumbItem>
-                          <BreadcrumbItem isActive>
-                              {_("Storage pools")}
-                          </BreadcrumbItem>
-                      </Breadcrumb>}>
-                <PageSection id='storage-pools-listing'>
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>
-                                <Text component={TextVariants.h2}>{_("Storage pools")}</Text>
-                            </CardTitle>
-                            <CardActions>
-                                {actions}
-                            </CardActions>
-                        </CardHeader>
-                        <CardBody className="contains-list">
-                            <ListingTable aria-label={_("Storage pools")}
-                                variant='compact'
-                                columns={[
-                                    { title: _("Name"), header: true, props: { width: 15 } },
-                                    { title: _("Size"), props: { width: 40 } },
-                                    { title: _("Connection"), props: { width: 15 } },
-                                    { title: _("State"), props: { width: 15 } },
-                                    { title: "", props: { width: 15 } },
-                                ]}
-                                emptyCaption={_("No storage pool is defined on this host")}
-                                rows={storagePools
-                                        .sort(sortFunction)
-                                        .map(storagePool => {
-                                            const filterVmsByConnection = vms.filter(vm => vm.connectionName == storagePool.connectionName);
+            <WithDialogs>
+                <Page groupProps={{ sticky: 'top' }}
+                      isBreadcrumbGrouped
+                      breadcrumb={
+                          <Breadcrumb className='machines-listing-breadcrumb'>
+                              <BreadcrumbItem to='#'>
+                                  {_("Virtual machines")}
+                              </BreadcrumbItem>
+                              <BreadcrumbItem isActive>
+                                  {_("Storage pools")}
+                              </BreadcrumbItem>
+                          </Breadcrumb>}>
+                    <PageSection id='storage-pools-listing'>
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>
+                                    <Text component={TextVariants.h2}>{_("Storage pools")}</Text>
+                                </CardTitle>
+                                <CardActions>
+                                    {actions}
+                                </CardActions>
+                            </CardHeader>
+                            <CardBody className="contains-list">
+                                <ListingTable aria-label={_("Storage pools")}
+                                              variant='compact'
+                                              columns={[
+                                                  { title: _("Name"), header: true, props: { width: 15 } },
+                                                  { title: _("Size"), props: { width: 40 } },
+                                                  { title: _("Connection"), props: { width: 15 } },
+                                                  { title: _("State"), props: { width: 15 } },
+                                                  { title: "", props: { width: 15 } },
+                                              ]}
+                                              emptyCaption={_("No storage pool is defined on this host")}
+                                              rows={storagePools
+                                                      .sort(sortFunction)
+                                                      .map(storagePool => {
+                                                          const filterVmsByConnection = vms.filter(vm => vm.connectionName == storagePool.connectionName);
 
-                                            return getStoragePoolRow({ storagePool, vms: filterVmsByConnection, onAddErrorNotification });
-                                        })
-                                }
-                            />
-                        </CardBody>
-                    </Card>
-                </PageSection>
-            </Page>
+                                                          return getStoragePoolRow({ storagePool, vms: filterVmsByConnection, onAddErrorNotification });
+                                                      })
+                                              }
+                                />
+                            </CardBody>
+                        </Card>
+                    </PageSection>
+                </Page>
+            </WithDialogs>
         );
     }
 }

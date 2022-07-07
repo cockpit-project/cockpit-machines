@@ -19,6 +19,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, Flex, FlexItem, Tooltip } from '@patternfly/react-core';
+import { DialogsContext } from 'dialogs.jsx';
 
 import cockpit from 'cockpit';
 import { rephraseUI, vmId } from "../../../helpers.js";
@@ -28,7 +29,7 @@ import WarningInactive from '../../common/warningInactive.jsx';
 import './nic.css';
 import { domainChangeInterfaceSettings, domainDetachIface, domainInterfaceAddresses, domainGet } from '../../../libvirtApi/domain.js';
 import { ListingTable } from "cockpit-components-table.jsx";
-import { DeleteResourceButton, DeleteResourceModal } from '../../common/deleteResource.jsx';
+import { DeleteResourceButton } from '../../common/deleteResource.jsx';
 
 const _ = cockpit.gettext;
 
@@ -42,24 +43,14 @@ const getNetworkDevices = (updateState) => {
 };
 
 export class VmNetworkActions extends React.Component {
+    static contextType = DialogsContext;
+
     constructor(props) {
         super(props);
 
         this.state = {
-            showAddNICModal: false,
             networkDevices: undefined,
         };
-
-        this.open = this.open.bind(this);
-        this.close = this.close.bind(this);
-    }
-
-    close() {
-        this.setState({ showAddNICModal: false });
-    }
-
-    open() {
-        this.setState({ showAddNICModal: true });
     }
 
     componentDidMount() {
@@ -68,23 +59,28 @@ export class VmNetworkActions extends React.Component {
     }
 
     render() {
+        const Dialogs = this.context;
         const { vm, vms, networks } = this.props;
         const id = vmId(vm.name);
         const availableSources = {
             network: networks.map(network => network.name),
             device: this.state.networkDevices,
         };
-        return (<>
-            {this.state.showAddNICModal && this.state.networkDevices !== undefined &&
-                <AddNIC idPrefix={`${id}-add-iface`}
-                    vm={vm}
-                    vms={vms}
-                    availableSources={availableSources}
-                    close={this.close} />}
-            <Button id={`${id}-add-iface-button`} variant="secondary" onClick={this.open}>
+
+        const open = () => {
+            Dialogs.show(<AddNIC idPrefix={`${id}-add-iface`}
+                                 vm={vm}
+                                 vms={vms}
+                                 availableSources={availableSources} />);
+        };
+
+        return (
+            <Button id={`${id}-add-iface-button`} variant="secondary"
+                    isDisabled={this.state.networkDevices === undefined}
+                    onClick={open}>
                 {_("Add network interface")}
             </Button>
-        </>);
+        );
     }
 }
 
@@ -95,6 +91,8 @@ VmNetworkActions.propTypes = {
 };
 
 export class VmNetworkTab extends React.Component {
+    static contextType = DialogsContext;
+
     constructor(props) {
         super(props);
 
@@ -178,6 +176,7 @@ export class VmNetworkTab extends React.Component {
     }
 
     render() {
+        const Dialogs = this.context;
         const { vm, networks, onAddErrorNotification } = this.props;
         const id = vmId(vm.name);
         const availableSources = {
@@ -341,6 +340,10 @@ export class VmNetworkTab extends React.Component {
                             onClose: () => this.setState({ editNICDialogProps: undefined }),
                         };
 
+                        function open() {
+                            Dialogs.show(<EditNICModal {...editNICDialogProps } />);
+                        }
+
                         let isEditDisabled = false;
                         let editDisabledReason;
 
@@ -357,7 +360,7 @@ export class VmNetworkTab extends React.Component {
                         const editButton = (
                             <Button id={editNICDialogProps.idPrefix} variant='secondary'
                                     isAriaDisabled={isEditDisabled}
-                                    onClick={() => this.setState({ editNICDialogProps })}>
+                                    onClick={open}>
                                 {_("Edit")}
                             </Button>
                         );
@@ -376,14 +379,13 @@ export class VmNetworkTab extends React.Component {
                         title: _("Remove network interface?"),
                         errorMessage: cockpit.format(_("Network interface $0 could not be removed"), network.mac),
                         actionDescription: cockpit.format(_("Network interface $0 will be removed from $1"), network.mac, vm.name),
-                        onClose: () => this.setState({ deleteDialogProps: undefined }),
                         actionName: _("Remove"),
                         deleteHandler: () => domainDetachIface({ connectionName: vm.connectionName, index: network.index, vmName: vm.name, live: vm.state === 'running', persistent: nicPersistent }),
                     };
                     const deleteNICAction = (
                         <DeleteResourceButton objectId={`${id}-iface-${networkId}`}
                                               disabled={vm.state != 'shut off' && vm.state != 'running'}
-                                              showDialog={() => this.setState({ deleteDialogProps })}
+                                              dialogProps={deleteDialogProps}
                                               actionName={_("Remove")}
                                               overlayText={_("The VM needs to be running or shut off to detach this device")} />
                     );
@@ -438,16 +440,12 @@ export class VmNetworkTab extends React.Component {
         });
 
         return (
-            <>
-                {this.state.deleteDialogProps && <DeleteResourceModal {...this.state.deleteDialogProps} />}
-                {this.state.editNICDialogProps && <EditNICModal {...this.state.editNICDialogProps } />}
-                <ListingTable aria-label={`VM ${vm.name} Network Interface Cards`}
-                    gridBreakPoint='grid-xl'
-                    variant='compact'
-                    emptyCaption={_("No network interfaces defined for this VM")}
-                    columns={columnTitles}
-                    rows={rows} />
-            </>
+            <ListingTable aria-label={`VM ${vm.name} Network Interface Cards`}
+                          gridBreakPoint='grid-xl'
+                          variant='compact'
+                          emptyCaption={_("No network interfaces defined for this VM")}
+                          columns={columnTitles}
+                          rows={rows} />
         );
     }
 }

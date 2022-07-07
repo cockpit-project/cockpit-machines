@@ -22,6 +22,7 @@ import PropTypes from 'prop-types';
 import { Button, Alert, Form, FormGroup, Modal, TextInput, Tooltip } from '@patternfly/react-core';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
+import { DialogsContext } from 'dialogs.jsx';
 import { NetworkTypeAndSourceRow, NetworkModelRow } from './nicBody.jsx';
 import { domainChangeInterfaceSettings, domainGet } from '../../../libvirtApi/domain.js';
 
@@ -45,6 +46,8 @@ const NetworkMacRow = ({ mac, onValueChanged, idPrefix, isShutoff }) => {
 };
 
 export class EditNICModal extends React.Component {
+    static contextType = DialogsContext;
+
     constructor(props) {
         super(props);
 
@@ -111,6 +114,7 @@ export class EditNICModal extends React.Component {
     }
 
     save() {
+        const Dialogs = this.context;
         const { vm, network } = this.props;
 
         domainChangeInterfaceSettings({
@@ -125,7 +129,7 @@ export class EditNICModal extends React.Component {
         })
                 .then(() => {
                     domainGet({ connectionName: vm.connectionName, id: vm.id });
-                    this.props.onClose();
+                    Dialogs.close();
                 })
                 .catch((exc) => {
                     this.dialogErrorSet(_("Network interface settings could not be saved"), exc.message);
@@ -133,6 +137,7 @@ export class EditNICModal extends React.Component {
     }
 
     render() {
+        const Dialogs = this.context;
         const { idPrefix, vm, network } = this.props;
 
         const defaultBody = (
@@ -163,7 +168,7 @@ export class EditNICModal extends React.Component {
         };
 
         return (
-            <Modal position="top" variant="medium" id={`${idPrefix}-modal-window`} isOpen onClose={this.props.onClose} className='nic-edit'
+            <Modal position="top" variant="medium" id={`${idPrefix}-modal-window`} isOpen onClose={Dialogs.close} className='nic-edit'
                    title={cockpit.format(_("$0 virtual network interface settings"), network.mac)}
                    footer={
                        <>
@@ -171,7 +176,7 @@ export class EditNICModal extends React.Component {
                            <Button isDisabled={this.state.saveDisabled} id={`${idPrefix}-save`} variant='primary' onClick={this.save}>
                                {_("Save")}
                            </Button>
-                           <Button id={`${idPrefix}-cancel`} variant='link' className='btn-cancel' onClick={this.props.onClose}>
+                           <Button id={`${idPrefix}-cancel`} variant='link' className='btn-cancel' onClick={Dialogs.close}>
                                {_("Cancel")}
                            </Button>
                        </>
@@ -189,5 +194,4 @@ EditNICModal.propTypes = {
     idPrefix: PropTypes.string.isRequired,
     vm: PropTypes.object.isRequired,
     network: PropTypes.object.isRequired,
-    onClose: PropTypes.func.isRequired,
 };

@@ -26,8 +26,9 @@ import {
     Modal
 } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
+import { DialogsContext } from 'dialogs.jsx';
 
-import { vmId } from '../../helpers.js';
+import { vmId, getVmStoragePools } from '../../helpers.js';
 import { domainDelete } from '../../libvirtApi/domain.js';
 import { snapshotDelete } from '../../libvirtApi/snapshot.js';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
@@ -101,6 +102,8 @@ const DeleteDialogBody = ({ disks, vmName, destroy, onChange }) => {
 };
 
 export class DeleteDialog extends React.Component {
+    static contextType = DialogsContext;
+
     constructor(props) {
         super(props);
         this.delete = this.delete.bind(this);
@@ -132,24 +135,27 @@ export class DeleteDialog extends React.Component {
     }
 
     delete() {
+        const Dialogs = this.context;
         const storage = this.state.disks.filter(d => d.checked);
-        const { vm, storagePools } = this.props;
+        const { vm } = this.props;
+        const storagePools = getVmStoragePools(vm);
 
         Promise.all(
             (Array.isArray(vm.snapshots) ? vm.snapshots : [])
                     .map(snapshot => snapshotDelete({ connectionName: vm.connectionName, domainPath: vm.id, snapshotName: snapshot.name }))
         )
                 .then(() => domainDelete({ name: vm.name, id: vm.id, connectionName: vm.connectionName, options: { destroy: this.props.vm.state != 'shut off', storage: storage }, storagePools }))
-                .then(() => cockpit.location.go(["vms"]))
+                .then(() => { Dialogs.close(); cockpit.location.go(["vms"]) })
                 .catch(exc => {
                     this.dialogErrorSet(cockpit.format(_("VM $0 failed to get deleted"), vm.name), exc.message);
                 });
     }
 
     render() {
+        const Dialogs = this.context;
         const id = vmId(this.props.vm.name);
         return (
-            <Modal position="top" variant="medium" id={`${id}-delete-modal-dialog`} isOpen onClose={this.props.toggleModal}
+            <Modal position="top" variant="medium" id={`${id}-delete-modal-dialog`} isOpen onClose={Dialogs.close}
                 title={<>
                     <ExclamationTriangleIcon color="orange" className="pf-u-mr-sm" />
                     { cockpit.format(_("Delete $0 VM?"), this.props.vm.name) }
@@ -159,7 +165,7 @@ export class DeleteDialog extends React.Component {
                         <Button variant='danger' onClick={this.delete}>
                             {_("Delete")}
                         </Button>
-                        <Button variant='link' className='btn-cancel' onClick={this.props.toggleModal}>
+                        <Button variant='link' className='btn-cancel' onClick={Dialogs.close}>
                             {_("Cancel")}
                         </Button>
                     </>

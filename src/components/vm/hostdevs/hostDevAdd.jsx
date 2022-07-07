@@ -32,11 +32,14 @@ import {
     Modal,
     Radio
 } from "@patternfly/react-core";
+import { useDialogs } from 'dialogs.jsx';
 
 import { ModalError } from "cockpit-components-inline-notification.jsx";
 import { domainAttachHostDevices, domainGet } from "../../../libvirtApi/domain.js";
 import { findMatchingNodeDevices } from "../../../helpers.js";
 import { getOptionalValue } from "./hostDevCard.jsx";
+import store from "../../../store.js";
+
 import "./hostDevAdd.scss";
 
 const _ = cockpit.gettext;
@@ -164,12 +167,14 @@ function getSelectableDevices(nodeDevices, vm, type) {
     return devicesNotAlreadyAttached;
 }
 
-const AddHostDev = ({ idPrefix, vm, nodeDevices, close }) => {
+const AddHostDev = ({ idPrefix, vm }) => {
+    const Dialogs = useDialogs();
     const [type, setType] = useState("usb_device");
     const [selectableDevices, setSelectableDevices] = useState([]);
     const [dialogError, setDialogError] = useState("");
     const [dialogErrorDetail, setDialogErrorDetail] = useState("");
 
+    const { nodeDevices } = store.getState();
     const allDevices = devicesHaveAChild([...nodeDevices]);
 
     useEffect(() => {
@@ -188,7 +193,7 @@ const AddHostDev = ({ idPrefix, vm, nodeDevices, close }) => {
             return domainAttachHostDevices({ connectionName: vm.connectionName, vmName: vm.name, live: vm.state !== "shut off", devices: devicesToAttach })
                     .then(() => {
                         domainGet({ connectionName: vm.connectionName, id: vm.id });
-                        close();
+                        Dialogs.close();
                     })
                     .catch(exc => {
                         setDialogError(_("Host device could not be attached"));
@@ -219,7 +224,7 @@ const AddHostDev = ({ idPrefix, vm, nodeDevices, close }) => {
             <Button id={`${idPrefix}-cancel`}
                     variant="link"
                     className="btn-cancel"
-                    onClick={close}>
+                    onClick={Dialogs.close}>
                 {_("Cancel")}
             </Button>
         </>
@@ -229,7 +234,7 @@ const AddHostDev = ({ idPrefix, vm, nodeDevices, close }) => {
         <Modal position="top"
                variant="medium"
                id={`${idPrefix}-dialog`}
-               onClose={close}
+               onClose={Dialogs.close}
                title={_("Add host device")}
                footer={footer}
                isOpen>

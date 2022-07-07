@@ -22,12 +22,15 @@ import PropTypes from 'prop-types';
 import { Button, Modal } from '@patternfly/react-core';
 
 import cockpit from 'cockpit';
+import { DialogsContext } from 'dialogs.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { snapshotRevert } from '../../../libvirtApi/snapshot.js';
 
 const _ = cockpit.gettext;
 
 export class RevertSnapshotModal extends React.Component {
+    static contextType = DialogsContext;
+
     constructor(props) {
         super(props);
 
@@ -41,11 +44,12 @@ export class RevertSnapshotModal extends React.Component {
     }
 
     revert() {
-        this.setState({ inProgress: true });
+        const Dialogs = this.context;
         const { vm, snap } = this.props;
 
+        this.setState({ inProgress: true });
         snapshotRevert({ connectionName: vm.connectionName, domainPath: vm.id, snapshotName: snap.name })
-                .then(this.props.onClose, exc => {
+                .then(Dialogs.close, exc => {
                     this.setState({ inProgress: false });
                     this.dialogErrorSet(_("Could not revert to snapshot"), exc.message);
                 });
@@ -56,10 +60,11 @@ export class RevertSnapshotModal extends React.Component {
     }
 
     render() {
-        const { idPrefix, snap, onClose } = this.props;
+        const Dialogs = this.context;
+        const { idPrefix, snap } = this.props;
 
         return (
-            <Modal position="top" variant="medium" id={`${idPrefix}-snapshot-${snap.name}-modal`} isOpen onClose={onClose}
+            <Modal position="top" variant="medium" id={`${idPrefix}-snapshot-${snap.name}-modal`} isOpen onClose={Dialogs.close}
                    title={cockpit.format(_("Revert to snapshot $0"), snap.name)}
                    footer={
                        <>
@@ -67,7 +72,7 @@ export class RevertSnapshotModal extends React.Component {
                            <Button variant='primary' isLoading={this.state.inProgress} isDisabled={this.state.inProgress} onClick={this.revert}>
                                {_("Revert")}
                            </Button>
-                           <Button variant='link' className='btn-cancel' onClick={onClose}>
+                           <Button variant='link' className='btn-cancel' onClick={Dialogs.close}>
                                {_("Cancel")}
                            </Button>
                        </>
@@ -84,5 +89,4 @@ RevertSnapshotModal.propTypes = {
     idPrefix: PropTypes.string.isRequired,
     vm: PropTypes.object.isRequired,
     snap: PropTypes.object.isRequired,
-    onClose: PropTypes.func.isRequired,
 };
