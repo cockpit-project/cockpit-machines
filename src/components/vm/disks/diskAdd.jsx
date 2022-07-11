@@ -18,7 +18,7 @@
  */
 import React, { useState, useEffect } from 'react';
 import {
-    Alert, Bullseye, Button, Checkbox,
+    Bullseye, Button, Checkbox,
     ExpandableSection, Form, FormGroup,
     FormSelect, FormSelectOption,
     Grid,
@@ -64,7 +64,23 @@ function getFilteredVolumes(vmStoragePool, disks) {
     return filteredVolumesSorted;
 }
 
-const SelectExistingVolume = ({ idPrefix, storagePoolName, existingVolumeName, onValueChanged, vmStoragePools, vmDisks }) => {
+function getDiskUsageMessage(vms, storagePool, volumeName) {
+    const isVolumeUsed = getStorageVolumesUsage(vms, storagePool);
+
+    if (!isVolumeUsed[volumeName] || (isVolumeUsed[volumeName].length === 0))
+        return null;
+
+    const vmsUsing = isVolumeUsed[volumeName].join(', ');
+    const volume = storagePool.volumes.find(vol => vol.name === volumeName);
+
+    let message = cockpit.format(_("This volume is already used by $0."), vmsUsing);
+    if (volume.format === "raw")
+        message += " " + _("Attaching it will make this disk shareable for every VM using it.");
+
+    return message;
+}
+
+const SelectExistingVolume = ({ idPrefix, storagePoolName, existingVolumeName, onValueChanged, vmStoragePools, vmDisks, vms }) => {
     const vmStoragePool = vmStoragePools.find(pool => pool.name == storagePoolName);
     const filteredVolumes = getFilteredVolumes(vmStoragePool, vmDisks);
 
@@ -86,11 +102,16 @@ const SelectExistingVolume = ({ idPrefix, storagePoolName, existingVolumeName, o
         initiallySelected = "empty";
     }
 
+    const diskUsageMessage = getDiskUsageMessage(vms, vmStoragePools.find(pool => pool.name === storagePoolName), existingVolumeName);
     return (
-        <FormGroup fieldId={`${idPrefix}-select-volume`} label={_("Volume")}>
+        <FormGroup fieldId={`${idPrefix}-select-volume`}
+                   label={_("Volume")}
+                   helperText={diskUsageMessage}
+                   validated="warning">
             <FormSelect id={`${idPrefix}-select-volume`}
                         onChange={value => onValueChanged('existingVolumeName', value)}
                         value={initiallySelected}
+                        validated={diskUsageMessage && "warning"}
                         isDisabled={!filteredVolumes.length}>
                 {content}
             </FormSelect>
@@ -272,21 +293,6 @@ const CreateNewDisk = ({
     );
 };
 
-const ChangeShareable = ({ idPrefix, vms, storagePool, volumeName }) => {
-    const isVolumeUsed = getStorageVolumesUsage(vms, storagePool);
-    const volume = storagePool.volumes.find(vol => vol.name === volumeName);
-
-    if (!isVolumeUsed[volumeName] || (isVolumeUsed[volumeName].length === 0))
-        return null;
-
-    const vmsUsing = isVolumeUsed[volumeName].join(', ') + '.';
-    let text = _("This volume is already used by: ") + vmsUsing;
-    if (volume.format === "raw")
-        text += _("Attaching it will make this disk shareable for every VM using it.");
-
-    return <Alert isInline variant='warning' id={`${idPrefix}-vms-usage`} title={text} />;
-};
-
 const UseExistingDisk = ({
     existingVolumeName,
     idPrefix,
@@ -304,18 +310,14 @@ const UseExistingDisk = ({
                      validationFailed={validationFailed}
                      onValueChanged={onValueChanged}
                      vmStoragePools={vmStoragePools} />
-            {vmStoragePools.length > 0 && <>
+            {vmStoragePools.length > 0 &&
                 <SelectExistingVolume idPrefix={idPrefix}
+                                      vms={vms}
                                       storagePoolName={storagePoolName}
                                       existingVolumeName={existingVolumeName}
                                       onValueChanged={onValueChanged}
                                       vmStoragePools={vmStoragePools}
-                                      vmDisks={vm.disks} />
-                <ChangeShareable idPrefix={idPrefix}
-                                 vms={vms}
-                                 storagePool={vmStoragePools.find(pool => pool.name === storagePoolName)}
-                                 volumeName={existingVolumeName} />
-            </>}
+                                      vmDisks={vm.disks} />}
         </>
     );
 };
