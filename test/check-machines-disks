@@ -217,6 +217,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         prefix = "#vm-subVmTest1-disks-adddisk"
 
         self.createVm("subVmTest1")
+        self.createVm("subVmTest2")
 
         self.login_and_go("/machines")
         b.wait_in_text("body", "Virtual machines")
@@ -256,6 +257,14 @@ class TestMachinesDisks(VirtualMachinesCase):
         if b.is_present("#vm-subVmTest1-disks-vdc-used"):
             b.wait_in_text("#vm-subVmTest1-disks-vdc-used", "0")
             b.wait_in_text("#vm-subVmTest1-disks-vdc-capacity", "0.12")  # 128 MB
+
+        # Check a warning message about a volume being used by another VM
+        b.click(f"{prefix}")
+        b.click(f"{prefix}-useexisting")
+        b.select_from_dropdown("#vm-subVmTest1-disks-adddisk-existing-select-pool", "images")
+        b.select_from_dropdown("#vm-subVmTest1-disks-adddisk-existing-select-volume", "subVmTest2-2.img")
+        b.wait_in_text("#vm-subVmTest1-disks-adddisk-existing-select-volume-helper", "used by subVmTest2")
+        b.click(".pf-c-modal-box__footer button:contains(Cancel)")
 
         # Test remove disk - by external action
         m.execute("virsh detach-disk subVmTest1 vdc")
