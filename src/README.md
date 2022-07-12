@@ -1,4 +1,4 @@
-Please refer guide/html/feature-virtualmachines.html to general information and how to set up nested virtualization.
+Please refer [to the following guide](https://cockpit-project.org/guide/195/feature-virtualmachines.html) for general information and how to set up nested virtualization.
 
 With nested virtualization enabled, Vagrant can be used to try cockpit-machines:
 
