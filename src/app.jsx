@@ -194,7 +194,7 @@ class AppActive extends React.Component {
 
     getInlineNotifications(notifications) {
         return notifications.map((notification, index) =>
-            <InlineNotification type='danger' key={index}
+            <InlineNotification type={notification.type || 'danger'} key={index}
                 isLiveRegion
                 isInline={false}
                 onDismiss={() => this.onDismissErrorNotification(index)}
