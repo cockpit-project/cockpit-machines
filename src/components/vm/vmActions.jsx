@@ -355,7 +355,7 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
         } else {
             dropdownItems.push(
                 <DropdownItem className='pf-m-danger' key={`${id}-delete`} id={`${id}-delete`}
-                              onClick={() => Dialogs.show(<DeleteDialog vm={vm} />)}>
+                              onClick={() => Dialogs.show(<DeleteDialog vm={vm} onAddErrorNotification={onAddErrorNotification} />)}>
                     {_("Delete")}
                 </DropdownItem>
             );

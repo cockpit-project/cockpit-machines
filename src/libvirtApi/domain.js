@@ -329,8 +329,7 @@ export function domainCreateFilesystem({ connectionName, objPath, vmName, source
 export function domainDelete({
     connectionName,
     id: objPath,
-    options,
-    storagePools,
+    live,
 }) {
     function destroy() {
         return call(connectionName, objPath, 'org.libvirt.Domain', 'Destroy', [0], { timeout, type: 'u' });
@@ -342,30 +341,28 @@ export function domainDelete({
         return call(connectionName, objPath, 'org.libvirt.Domain', 'Undefine', [flags], { timeout, type: 'u' });
     }
 
-    if (options.destroy) {
+    if (live) {
         return destroy()
-                .then(undefine)
-                .then(() => domainDeleteStorage({ connectionName, options, storagePools }));
+                .then(undefine);
     } else {
         return undefine()
                 .catch(ex => {
                     // Transient domains get undefined after shut off
                     if (!ex.message.includes("Domain not found"))
                         return Promise.reject(ex);
-                })
-                .then(() => domainDeleteStorage({ connectionName, options, storagePools }));
+                });
     }
 }
 
 export function domainDeleteStorage({
     connectionName,
-    options,
+    storage,
     storagePools
 }) {
     const storageVolPromises = [];
 
-    for (let i = 0; i < options.storage.length; i++) {
-        const disk = options.storage[i];
+    for (let i = 0; i < storage.length; i++) {
+        const disk = storage[i];
 
         switch (disk.type) {
         case 'file': {

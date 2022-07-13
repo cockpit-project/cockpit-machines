@@ -29,7 +29,7 @@ import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { DialogsContext } from 'dialogs.jsx';
 
 import { vmId, getVmStoragePools } from '../../helpers.js';
-import { domainDelete } from '../../libvirtApi/domain.js';
+import { domainDelete, domainDeleteStorage } from '../../libvirtApi/domain.js';
 import { snapshotDelete } from '../../libvirtApi/snapshot.js';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 
@@ -137,17 +137,41 @@ export class DeleteDialog extends React.Component {
     delete() {
         const Dialogs = this.context;
         const storage = this.state.disks.filter(d => d.checked);
-        const { vm } = this.props;
+        const { vm, onAddErrorNotification } = this.props;
         const storagePools = getVmStoragePools(vm);
 
         Promise.all(
             (Array.isArray(vm.snapshots) ? vm.snapshots : [])
                     .map(snapshot => snapshotDelete({ connectionName: vm.connectionName, domainPath: vm.id, snapshotName: snapshot.name }))
         )
-                .then(() => domainDelete({ name: vm.name, id: vm.id, connectionName: vm.connectionName, options: { destroy: this.props.vm.state != 'shut off', storage: storage }, storagePools }))
-                .then(() => { Dialogs.close(); cockpit.location.go(["vms"]) })
-                .catch(exc => {
-                    this.dialogErrorSet(cockpit.format(_("VM $0 failed to get deleted"), vm.name), exc.message);
+                .then(() => {
+                    return domainDelete({
+                        name: vm.name,
+                        id: vm.id,
+                        connectionName: vm.connectionName,
+                        live: this.props.vm.state != 'shut off',
+                        storagePools
+                    })
+                            .catch(exc => {
+                                console.warn(cockpit.format(_("VM $0 failed to get deleted: $1"), vm.name, exc.message));
+                                this.dialogErrorSet(cockpit.format(_("VM $0 failed to get deleted"), vm.name), exc.message);
+                                throw exc; // Rethrow error so that the storage deletion and page redirection doesn't get invoked
+                            });
+                })
+                .then(() => {
+                    return domainDeleteStorage({ connectionName: vm.connectionName, storage, storagePools })
+                            .catch(exc => {
+                                console.warn(cockpit.format("Could not delete storage volume for $0: $1", vm.name, exc.message));
+                                onAddErrorNotification({
+                                    text: cockpit.format(_("Could not delete storage volume for $0"), vm.name),
+                                    detail: exc.message,
+                                    type: "warning"
+                                });
+                            });
+                })
+                .then(() => {
+                    Dialogs.close();
+                    cockpit.location.go(["vms"]);
                 });
     }
 
