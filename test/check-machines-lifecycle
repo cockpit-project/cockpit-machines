@@ -434,14 +434,14 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         name = "vm-keep-vol"
         args = self.createVm(name)
         self.waitVmRow(name)
-        wait(lambda: "vm-keep-vol" in m.execute("virsh list --all --name"))
+        wait(lambda: name in m.execute("virsh list --all --name"))
 
         self.performAction(name, "delete")
         b.set_checked(f"#vm-{name}-delete-modal-dialog input[type=checkbox]", False)
         b.click(f"#vm-{name}-delete-modal-dialog button:contains(Delete)")
 
         self.waitVmRow(name, present=False)
-        wait(lambda: "vm-keep-vol" not in m.execute("virsh list --all --name"))
+        wait(lambda: name not in m.execute("virsh list --all --name"))
         m.execute(f"test -f {args['image']}")
 
         # Try to delete a transient VM
@@ -454,6 +454,28 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         b.click(f"#vm-{name}-system-forceOff")
         self.waitVmRow(name, 'system', False)
         b.wait_not_present(f'#vm-{name}-system-state button:contains("view more")')
+
+        # Try to delete a VM where storage deletion will fail
+        name = "vm-fail-storage-deletion"
+        args = self.createVm(name)
+        self.waitVmRow(name)
+        wait(lambda: name in m.execute("virsh list --all --name"))
+        # Remove VM's disk from command line
+        m.execute(f"rm {args['image']}")
+
+        self.performAction(name, "delete")
+        b.set_checked(f"#vm-{name}-delete-modal-dialog input[type=checkbox]", True)
+        b.click(f"#vm-{name}-delete-modal-dialog button:contains(Delete)")
+
+        # Check VM got deleted, but there is a warning about unsuccessful storage deletion
+        self.waitVmRow(name, present=False)
+        wait(lambda: name not in m.execute("virsh list --all --name"))
+        b.wait_visible(".pf-c-alert-group li .pf-c-alert")
+        b.wait_in_text(".pf-c-alert-group li .pf-c-alert .pf-c-alert__title", f"Storage of VM {name} failed to get deleted")
+        b.click("button.alert-link.more-button")
+        b.wait_in_text(".pf-c-alert-group li .pf-c-alert .pf-c-alert__description", args['image'])
+        # Close the notification
+        b.click(".pf-c-alert-group li .pf-c-alert button.pf-m-plain")
 
         # Delete a shut-off guest and verify the storage was removed
         name = "vm-shutoff"
