@@ -152,26 +152,20 @@ export class DeleteDialog extends React.Component {
                         live: this.props.vm.state != 'shut off',
                         storagePools
                     })
-                            .catch(exc => {
-                                console.warn(cockpit.format(_("VM $0 failed to get deleted: $1"), vm.name, exc.message));
-                                this.dialogErrorSet(cockpit.format(_("VM $0 failed to get deleted"), vm.name), exc.message);
-                                throw exc; // Rethrow error so that the storage deletion and page redirection doesn't get invoked
-                            });
+                            .then(() => {
+                                Dialogs.close();
+                                cockpit.location.go(["vms"]);
+                            })
+                            // Fail implicitly returns the exception, which is useful so that cleanup operation doesn't get invoked
+                            .fail(exc => this.dialogErrorSet(cockpit.format(_("Could not delete $0"), vm.name), exc.message));
                 })
-                .then(() => {
+                .then(() => { // Cleanup operations
                     return domainDeleteStorage({ connectionName: vm.connectionName, storage, storagePools })
-                            .catch(exc => {
-                                console.warn(cockpit.format("Could not delete storage volume for $0: $1", vm.name, exc.message));
-                                onAddErrorNotification({
-                                    text: cockpit.format(_("Could not delete storage volume for $0"), vm.name),
-                                    detail: exc.message,
-                                    type: "warning"
-                                });
-                            });
-                })
-                .then(() => {
-                    Dialogs.close();
-                    cockpit.location.go(["vms"]);
+                            .catch(exc => onAddErrorNotification({
+                                text: cockpit.format(_("Could not delete storage for $0"), vm.name),
+                                detail: exc.message,
+                                type: "warning"
+                            }));
                 });
     }
 
