@@ -647,11 +647,13 @@ class TestMachinesDisks(VirtualMachinesCase):
 
         loop_dev = self.add_loop_disk()
         existing_disk = os.path.basename(loop_dev) + "p1"
+        existing_disk2 = os.path.basename(loop_dev) + "p2"
         cmds = [
             f"virsh pool-define-as loop-disk disk - - {loop_dev} - {os.path.join(self.vm_tmpdir, 'poolLoopImages')}",
             "virsh pool-build loop-disk --overwrite",
             "virsh pool-start loop-disk",
-            f"virsh vol-create-as loop-disk {existing_disk} 1M"
+            f"virsh vol-create-as loop-disk {existing_disk} 1M",
+            f"virsh vol-create-as loop-disk {existing_disk2} 1M",
         ]
         self.machine.execute(" && ".join(cmds))
 
@@ -687,6 +689,30 @@ class TestMachinesDisks(VirtualMachinesCase):
             volume_name=existing_disk,
             expected_target=get_next_free_target(used_targets)[-1],
         ).execute()
+
+        # Test fix for https://bugzilla.redhat.com/show_bug.cgi?id=2107247
+        m.upload([os.path.join(BOTS_DIR, "machine/cloud-init.iso")], "/var/lib/libvirt/images/defaultVol.iso")
+        m.execute("virsh pool-refresh images")
+        wait(lambda: "defaultVol.iso" in m.execute("virsh vol-list images"), delay=3)
+        dialog = self.VMAddDiskDialog(
+            self,
+            mode="use-existing",
+            pool_name="loop-disk",
+            pool_type="disk",
+            volume_name=existing_disk2,
+            expected_target=get_next_free_target(used_targets)[-1],
+            device="disk",
+        )
+        dialog.open()
+        b.wait_visible("#vm-subVmTest1-disks-adddisk-existing-select-pool:enabled")
+        # First select some iso file, where disk type is set to "cdrom"
+        b.select_from_dropdown("#vm-subVmTest1-disks-adddisk-existing-select-pool", "images")
+        b.select_from_dropdown("#vm-subVmTest1-disks-adddisk-existing-select-volume", "defaultVol.iso")
+        # Then choose a different storage pool without selecting the volume (let UI automatically select the first volume from loop-disk storage pool)
+        # This tests that type of disk automatically resets back to default "disk"
+        b.select_from_dropdown("#vm-subVmTest1-disks-adddisk-existing-select-pool", "loop-disk")
+        # Check that newly attached disk is indeed of type "disk"
+        dialog.add_disk().verify_disk_added()
 
         # AppArmor doesn't like the non-standard path for our storage pools
         if m.image in ["debian-testing"]:

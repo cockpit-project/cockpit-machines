@@ -443,16 +443,18 @@ export class AddDiskModalBody extends React.Component {
             return stateDelta;
 
         stateDelta.format = getDefaultVolumeFormat(pool);
+        let deviceType = "disk";
         if (['dir', 'fs', 'netfs', 'gluster', 'vstorage'].indexOf(pool.type) > -1) {
             const volume = pool.volumes.find(vol => vol.name === value);
             if (volume && volume.format) {
                 stateDelta.format = volume.format;
                 if (volume.format === "iso")
-                    this.onValueChanged("device", "cdrom");
-                else
-                    this.onValueChanged("device", "disk");
+                    deviceType = "cdrom";
             }
         }
+
+        this.onValueChanged("device", deviceType);
+
         return stateDelta;
     }
 
