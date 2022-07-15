@@ -23,6 +23,7 @@ import {
     Button,
     DataList, DataListItem, DataListItemRow, DataListCheck, DataListItemCells, DataListCell,
     Form,
+    FormGroup,
     Modal
 } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
@@ -78,27 +79,17 @@ const DeleteDialogBody = ({ disks, vmName, destroy, onChange }) => {
         );
     }
 
-    let alert = null;
-    if (destroy)
-        alert = <p>{cockpit.format(_("The VM $0 is running and will be forced off before deletion."), vmName)}</p>;
-
-    let disksBody = null;
-    if (disks.length > 0)
-        disksBody = (
-            <Form onSubmit={e => e.preventDefault()}>
-                <p>{_("Delete associated storage files:")}</p>
+    return (<Form onSubmit={e => e.preventDefault()}>
+        <FormGroup>
+            {destroy && <p>{cockpit.format(_("The VM $0 is running and will be forced off before deletion."), vmName)}</p>}
+            {disks.length > 0 && <>
+                <p className="pf-u-mb-sm">{_("Delete associated storage files:")}</p>
                 <DataList isCompact>
                     { disks.map(disk_row) }
                 </DataList>
-            </Form>
-        );
-
-    return (
-        <>
-            {alert}
-            {disksBody}
-        </>
-    );
+            </>}
+        </FormGroup>
+    </Form>);
 };
 
 export class DeleteDialog extends React.Component {
