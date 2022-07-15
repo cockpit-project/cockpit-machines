@@ -94,10 +94,10 @@ const DeleteDialogBody = ({ disks, vmName, destroy, onChange }) => {
         );
 
     return (
-        <div className="modal-body">
+        <>
             {alert}
             {disksBody}
-        </div>
+        </>
     );
 };
 
