@@ -471,7 +471,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         self.waitVmRow(name, present=False)
         wait(lambda: name not in m.execute("virsh list --all --name"))
         b.wait_visible(".pf-c-alert-group li .pf-c-alert")
-        b.wait_in_text(".pf-c-alert-group li .pf-c-alert .pf-c-alert__title", f"Storage of VM {name} failed to get deleted")
+        b.wait_in_text(".pf-c-alert-group li .pf-c-alert .pf-c-alert__title", f"Could not delete storage for {name}")
         b.click("button.alert-link.more-button")
         b.wait_in_text(".pf-c-alert-group li .pf-c-alert .pf-c-alert__description", args['image'])
         # Close the notification
