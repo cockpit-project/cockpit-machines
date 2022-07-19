@@ -9,6 +9,7 @@ const CompressionPlugin = require("compression-webpack-plugin");
 const ESLintPlugin = require('eslint-webpack-plugin');
 const CockpitPoPlugin = require("./pkg/lib/cockpit-po-plugin");
 const CockpitRsyncPlugin = require("./pkg/lib/cockpit-rsync-plugin");
+const StylelintPlugin = require('stylelint-webpack-plugin');
 
 // absolute path disables recursive module resolution, so build a relative one
 const nodedir = path.relative(process.cwd(), path.resolve((process.env.SRCDIR || __dirname), "node_modules"));
@@ -18,6 +19,9 @@ const packageJson = JSON.parse(fs.readFileSync('package.json'));
 
 /* A standard nodejs and webpack pattern */
 const production = process.env.NODE_ENV === 'production';
+
+/* Default to disable csslint for faster production builds */
+const stylelint = process.env.STYLELINT ? (process.env.STYLELINT !== '0') : !production;
 
 // Non-JS files which are copied verbatim to dist/
 const copy_files = [
@@ -35,6 +39,12 @@ const plugins = [
     new CockpitPoPlugin(),
     new CockpitRsyncPlugin({ dest: packageJson.name }),
 ];
+
+if (stylelint) {
+    plugins.push(new StylelintPlugin({
+      context: "src/",
+    }));
+}
 
 /* Only minimize when in production mode */
 if (production) {
