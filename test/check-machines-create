@@ -148,6 +148,14 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                          create_and_run=False),
                                              {"source-url": "Installation source must not be empty"})
 
+        # user password
+        runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
+                                                                         storage_size=10, storage_size_unit='MiB',
+                                                                         location=config.VALID_DISK_IMAGE_PATH,
+                                                                         user_login="foo",
+                                                                         create_and_run=True),
+                                             {"create-vm-dialog-user-password": "User password must not be empty when user login is set"})
+
     def testCreateNameGeneration(self):
         config = TestMachinesCreate.TestCreateConfig
         runner = TestMachinesCreate.CreateVmRunner(self)

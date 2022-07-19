@@ -620,7 +620,7 @@ const UsersConfigurationRow = ({
                                     idPrefix="create-vm-dialog-user-password"
                                     password_message={user_pwd_message}
                                     password_label_info={_("Leave the password blank if you do not wish to have a user account created")}
-                                    error_password={validationFailed && (validationFailed.userLogin ? validationFailed.userLogin : user_pwd_errors.password)}
+                                    error_password={validationFailed && (validationFailed.userPassword ? validationFailed.userPassword : user_pwd_errors.password)}
                                     change={(_, value) => onValueChanged('userPassword', value)} />
             </>}
         </>
