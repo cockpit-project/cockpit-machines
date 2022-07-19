@@ -9,7 +9,6 @@
 @import "@patternfly/patternfly/sass-utilities/mixins.scss";
 @import "@patternfly/patternfly/components/Alert/alert.scss";
 
-
 /* Style the list cards as ct-cards */
 .pf-c-page__main-section > .pf-c-card {
     @extend .ct-card;
@@ -36,11 +35,11 @@
 .machines-network-source-descr {
     color: var(--ct-color-subtle-copy);
     text-align: right;
-    padding: 5px 10px 5px 10px !important;
+    padding: 5px 10px !important;
 }
 
 .machines-network-source-value {
-    padding: 5px 10px 5px 10px !important;
+    padding: 5px 10px !important;
     text-align: left !important;
 }
 
@@ -63,10 +62,10 @@
         align-items: center;
     }
 
-    > tbody > tr:not(.pf-c-table__expandable-row) > [data-label=Actions] .pf-c-button {
+    > tbody > tr:not(.pf-c-table__expandable-row) > [data-label="Actions"] .pf-c-button {
         // vertical: compensate for padding; fixing alignment
         // horizontal: add some needed padding
-        margin:  -0.25rem 0.25rem;
+        margin: -0.25rem 0.25rem;
     }
 }
 
