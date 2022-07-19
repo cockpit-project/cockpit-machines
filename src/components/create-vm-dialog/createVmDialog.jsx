@@ -606,6 +606,7 @@ const UsersConfigurationRow = ({
             {showUserFields &&
             <>
                 <FormGroup fieldId="user-login"
+                           id="create-vm-dialog-user-login-group"
                            helperTextInvalid={validationFailed.userLogin}
                            validated={validationFailed.userLogin ? "error" : "default"}
                            label={_("User login")}>
