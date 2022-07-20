@@ -21,6 +21,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { debounce } from 'throttle-debounce';
 import {
+    Flex, FlexItem,
     Form, FormGroup,
     FormSelect, FormSelectOption, FormSelectOptionGroup,
     InputGroup,
@@ -28,7 +29,8 @@ import {
     Select as PFSelect, SelectOption, SelectVariant,
     Tabs, Tab, TabTitleText,
     TextInput,
-    Button, Tooltip, TextArea
+    Button, Tooltip, TextArea,
+    Spinner,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
@@ -75,6 +77,7 @@ import {
 } from "./createVmDialogUtils.js";
 import { domainCreate } from '../../libvirtApi/domain.js';
 import { storagePoolRefresh } from '../../libvirtApi/storagePool.js';
+import { getAccessToken } from '../../libvirtApi/rhel-images.js';
 import { PasswordFormFields, password_quality } from 'cockpit-components-password.jsx';
 
 import './createVmDialog.scss';
@@ -216,6 +219,9 @@ function validateParams(vmParams) {
             validationFailed.source = _("Installation source must not be empty");
     }
 
+    if (vmParams.os && needsRHToken(vmParams.os.shortId) && isEmpty(vmParams.offlineToken))
+        validationFailed.offlineToken = _("Offline token must not be empty");
+
     if (vmParams.memorySize === 0) {
         validationFailed.memory = _("Memory must not be 0");
     }
@@ -260,7 +266,7 @@ const NameRow = ({ vmName, suggestedVmName, onValueChanged, validationFailed }) 
     );
 };
 
-const SourceRow = ({ connectionName, source, sourceType, networks, nodeDevices, os, osInfoList, offlineToken, cloudInitSupported, downloadOSSupported, onValueChanged, validationFailed }) => {
+const SourceRow = ({ connectionName, source, sourceType, networks, nodeDevices, os, osInfoList, cloudInitSupported, downloadOSSupported, offlineToken, onValueChanged, validationFailed }) => {
     let installationSource;
     let installationSourceId;
     let installationSourceWarning;
@@ -377,7 +383,7 @@ const SourceRow = ({ connectionName, source, sourceType, networks, nodeDevices, 
                         <OfflineTokenRow
                             offlineToken={offlineToken}
                             onValueChanged={onValueChanged}
-                            validationFailed={validationFailed} />}
+                            formValidationFailed={validationFailed} />}
                 </>}
         </>
     );
@@ -466,26 +472,85 @@ class OSRow extends React.Component {
     }
 }
 
-const OfflineTokenRow = ({ offlineToken, onValueChanged, validationFailed }) => {
-    const validationStateToken = validationFailed.offlineToken ? 'error' : 'default';
+// This method needs to be outside of component as re-render would create a new instance of debounce
+// Debounce will trigger "getAccessToken" only if >500ms has passed since user changed offlineToken
+// Since "getAccessToken" basically triggers HTTP request, this prevents user from triggering dozens of HTTP requests
+// while typing an offline token
+const getAccessTokenDebounce = debounce(500, (offlineToken, onValueChanged, setValidationState, validationStates) => {
+    getAccessToken(offlineToken)
+            .then(out => {
+                const accessToken = out.trim();
+                onValueChanged("accessToken", accessToken);
+                setValidationState(validationStates.SUCCESS);
+            })
+            .catch(ex => {
+                console.error(`Offline token validation failed: "${JSON.stringify(ex)}"`);
+                onValueChanged("accessToken", "");
+                setValidationState(validationStates.FAILED);
+            });
+});
+
+const OfflineTokenRow = ({ offlineToken, onValueChanged, formValidationFailed }) => {
+    const link = <a href="https://access.redhat.com/management/api" target="_blank" rel="noopener noreferrer">
+        <ExternalLinkAltIcon className="pf-u-mr-xs" />
+        {_("Get a new RHSM token.")}
+    </a>;
+    const validationStates = {
+        DEFAULT: {
+            option: "default",
+            message: <span id="token-helper-message">
+                { link }
+                {" " + _("Then copy and paste it above.")}
+            </span>,
+        },
+        INPROGRESS: {
+            option: "default",
+            message: <span id="token-helper-message"><Spinner isSVG size="md" /> {_("Checking token validity...")}</span>,
+        },
+        FAILED: {
+            option: "error",
+            message: <Flex id="token-helper-message">
+                <FlexItem className="invalid-token-helper" grow={{ default: 'grow' }}>{_("Error checking token") + " "}</FlexItem>
+                <FlexItem>
+                    { link }
+                    {" " + _("Then copy and paste it above.")}
+                </FlexItem>
+            </Flex>,
+        },
+        SUCCESS: {
+            option: "success",
+            message: _("Valid token"),
+        },
+    };
+
+    const [validationState, setValidationState] = useState(validationStates.DEFAULT);
+
+    const setOfflineTokenHelper = (offlineToken) => {
+        onValueChanged("offlineToken", offlineToken);
+        // Reset accessToken to prevent race conditions where state could still have access token paired with an old offline token
+        // e.g. user inputs offline token, we obtain an access token, then they change offline token and quickly click on "Create" before new access token can be obtained
+        onValueChanged("accessToken", "");
+
+        if (isEmpty(offlineToken)) {
+            setValidationState(validationStates.DEFAULT);
+            onValueChanged("accessToken", "");
+        } else {
+            setValidationState(validationStates.INPROGRESS);
+            getAccessTokenDebounce(offlineToken, onValueChanged, setValidationState, validationStates);
+        }
+    };
 
     return (
         <FormGroup label={_("Offline token")} fieldId="offline-token"
                    id="offline-token-group"
-                   helperTextInvalid={validationFailed.offlineToken}
-                   validated={validationStateToken}
-                   helperText={<span>
-                       <a href="https://access.redhat.com/management/api" target="_blank" rel="noopener noreferrer">
-                           <ExternalLinkAltIcon className="pf-u-mr-xs" />
-                           {_("Get a new RHSM token.")}
-                       </a>
-                       {" " + _(" Then copy the token and paste it above.")}
-                   </span>}>
-            <TextArea id='offline-token'
-                      validated={validationStateToken}
+                   validated={formValidationFailed.offlineToken ? "error" : validationState.option}
+                   helperText={validationState.option !== "error" && validationState.message}
+                   helperTextInvalid={formValidationFailed.offlineToken || (validationState.option === "error" && validationState.message)}>
+            <TextArea id="offline-token"
+                      validated={formValidationFailed.offlineToken ? "error" : validationState.option}
                       minLength={1}
-                      value={offlineToken || ''}
-                      onChange={value => onValueChanged('offlineToken', value)} />
+                      value={offlineToken || ""}
+                      onChange={setOfflineTokenHelper} />
         </FormGroup>
     );
 };
@@ -825,6 +890,7 @@ class CreateVmModal extends React.Component {
             userPassword: '',
             rootPassword: '',
             userLogin: '',
+            accessToken: '',
             offlineToken: '',
         };
         this.onCreateClicked = this.onCreateClicked.bind(this);
@@ -1020,7 +1086,7 @@ class CreateVmModal extends React.Component {
                 rootPassword: this.state.rootPassword,
                 userLogin: this.state.userLogin,
                 startVm,
-                offlineToken: this.state.offlineToken,
+                accessToken: this.state.accessToken,
                 loggedUser
             };
 
@@ -1092,8 +1158,8 @@ class CreateVmModal extends React.Component {
                 source={this.state.source}
                 sourceType={this.state.sourceType}
                 os={this.state.os}
-                osInfoList={this.props.osInfoList}
                 offlineToken={this.state.offlineToken}
+                osInfoList={this.props.osInfoList}
                 cloudInitSupported={this.props.cloudInitSupported}
                 downloadOSSupported={this.props.downloadOSSupported}
                 onValueChanged={this.onValueChanged}
@@ -1184,6 +1250,8 @@ class CreateVmModal extends React.Component {
         );
 
         const unattendedInstallation = this.state.rootPassword || this.state.userLogin || this.state.userPassword;
+        // This happens if offlineToken was supplied and we are either still obtaining access token (validating offline token) or failed to obtain one
+        const downloadingRhelDisabled = !isEmpty(this.state.offlineToken) && isEmpty(this.state.accessToken);
         let createAndEdit = (
             <Button variant="secondary"
                     key="secondary-button"
@@ -1193,7 +1261,8 @@ class CreateVmModal extends React.Component {
                         this.state.createMode === EDIT ||
                         Object.getOwnPropertyNames(validationFailed).length > 0 ||
                         this.state.sourceType === CLOUD_IMAGE ||
-                        unattendedInstallation
+                        unattendedInstallation ||
+                        downloadingRhelDisabled
                     }
                     onClick={() => this.onCreateClicked(false)}>
                 {this.props.mode == 'create' ? _("Create and edit") : _("Import and edit")}
@@ -1218,7 +1287,8 @@ class CreateVmModal extends React.Component {
                             isLoading={this.state.createMode === RUN}
                             isDisabled={
                                 this.state.createMode === RUN ||
-                                Object.getOwnPropertyNames(validationFailed).length > 0
+                                Object.getOwnPropertyNames(validationFailed).length > 0 ||
+                                downloadingRhelDisabled
                             }
                             onClick={() => this.onCreateClicked(true)}>
                         {this.props.mode == 'create' ? _("Create and run") : _("Import and run")}

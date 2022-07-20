@@ -72,7 +72,7 @@ import {
 } from '../libvirt-xml-update.js';
 import { storagePoolRefresh } from './storagePool.js';
 import { snapshotGetAll } from './snapshot.js';
-import { downloadRhelImage, getAccessToken, getRhelImageUrl } from './rhel-images.js';
+import { downloadRhelImage, getRhelImageUrl } from './rhel-images.js';
 import { call, Enum, timeout, resolveUiState } from './helpers.js';
 import { DOWNLOAD_AN_OS, LOCAL_INSTALL_MEDIA_SOURCE, needsRHToken } from '../components/create-vm-dialog/createVmDialogUtils.js';
 
@@ -267,7 +267,7 @@ export function domainCreate({
     userLogin,
     userPassword,
     vmName,
-    offlineToken,
+    accessToken,
     loggedUser
 }) {
     // shows dummy vm  until we get vm from virsh (cleans up inProgress)
@@ -304,20 +304,14 @@ export function domainCreate({
 
     const tryDownloadRhelImage = () => {
         if (sourceType == DOWNLOAD_AN_OS && needsRHToken(os)) {
-            let arch;
-            let accessToken;
             const options = { err: "message" };
             if (connectionName === "system")
                 options.superuser = "try";
 
             return cockpit.spawn(['uname', '-m'], options)
                     .then(out => {
-                        arch = out.trim();
+                        const arch = out.trim();
 
-                        return getAccessToken(offlineToken);
-                    })
-                    .then(out => {
-                        accessToken = out.trim();
                         return getRhelImageUrl(accessToken, osVersion, arch);
                     })
                     .then(out => {
