@@ -36,8 +36,6 @@ import { domainAttachDisk, domainGet, domainIsRunning, domainUpdateDiskAttribute
 import { storagePoolGetAll } from '../../../libvirtApi/storagePool.js';
 import { storageVolumeCreateAndAttach } from '../../../libvirtApi/storageVolume.js';
 
-import './diskAdd.scss';
-
 const _ = cockpit.gettext;
 
 const CREATE_NEW = 'create-new';
