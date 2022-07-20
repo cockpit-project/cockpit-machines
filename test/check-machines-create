@@ -1191,6 +1191,7 @@ vnc_password= "{vnc_passwd}"
             return self
 
         def createAndExpectInlineValidationErrors(self, errors):
+
             b = self.browser
 
             if self.sourceType == 'disk_image':
@@ -1681,6 +1682,24 @@ vnc_password= "{vnc_passwd}"
             b.wait_in_text("#create-button-tooltip", "medium")
             b.mouse("#create-new-vm", "mouseleave")
 
+        def checkDialogInvalidOfflineToken(self, dialog, error_msg, create_disabled):
+            b = self.browser
+            dialog.open() \
+
+            b.select_from_dropdown("#source-type", dialog.sourceType)
+            b.click("#os-select-group > div button")
+            b.click(f"#os-select li:contains('{dialog.os_name}') button")
+            b.wait_attr("#os-select-group input", "value", dialog.os_name)
+            b.set_input_text("#offline-token", dialog.offline_token)
+
+            b.wait_visible("#token-helper-message")
+            b.wait_in_text("#token-helper-message", error_msg)
+            if create_disabled:
+                b.wait_visible(".pf-c-modal-box__footer button:contains(Create and run)[aria-disabled=true]")
+                b.wait_visible(".pf-c-modal-box__footer button:contains(Create and edit)[aria-disabled=true]")
+
+            dialog.cancel()
+
         def cancelDialogTest(self, dialog):
             dialog.open() \
                 .fill() \
@@ -1956,12 +1975,13 @@ vnc_password= "{vnc_passwd}"
 
         m.execute(f"qemu-img create {TestMachinesCreate.TestCreateConfig.VALID_DISK_IMAGE_PATH} 500M")
 
-        runner.checkDialogErrorTest(TestMachinesCreate.VmDialog(self, sourceType='os',
-                                                                os_name=config.RHEL_8_1,
-                                                                os_short_id=config.RHEL_8_1_SHORTID,
-                                                                offline_token="invalid_token",
-                                                                create_and_run=True),
-                                    ["404"])
+        runner.checkDialogInvalidOfflineToken(TestMachinesCreate.VmDialog(self, sourceType='os',
+                                                                          os_name=config.RHEL_8_1,
+                                                                          os_short_id=config.RHEL_8_1_SHORTID,
+                                                                          offline_token="invalid_token",
+                                                                          create_and_run=True),
+                                              "Error",
+                                              True)
 
         runner.checkDialogErrorTest(TestMachinesCreate.VmDialog(self, sourceType='os',
                                                                 os_name=config.RHEL_8_2,
