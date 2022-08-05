@@ -296,23 +296,20 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                            storage_pool="NoStorage",
                                                                            connection="session"))
 
-        self.machine.execute("virsh net-destroy default && virsh net-undefine default")
+        self.machine.execute("set -e; virsh net-destroy default; virsh net-undefine default")
 
         # Set up the PXE server configuration files
         cmds = [
+            "set -e",
             "mkdir -p /var/lib/libvirt/pxe-config",
             f"echo \"{PXE_SERVER_CFG}\" > /var/lib/libvirt/pxe-config/pxe.cfg",
             "chmod 666 /var/lib/libvirt/pxe-config/pxe.cfg"
         ]
-        self.machine.execute(" && ".join(cmds))
+        self.machine.execute("; ".join(cmds))
 
         # Define and start a NAT network with tftp server configuration
-        cmds = [
-            f"echo \"{NETWORK_XML_PXE}\" > /tmp/pxe-nat.xml",
-            "virsh net-define /tmp/pxe-nat.xml",
-            "virsh net-start pxe-nat"
-        ]
-        self.machine.execute(" && ".join(cmds))
+        self.machine.write("/tmp/pxe-nat.xml", NETWORK_XML_PXE)
+        self.machine.execute("set -e; virsh net-define /tmp/pxe-nat.xml; virsh net-start pxe-nat")
 
         # Add an extra network interface that should appear in the PXE source dropdown
         iface = "eth42"
@@ -384,7 +381,8 @@ class TestMachinesCreate(VirtualMachinesCase):
         wait(lambda: self.machine.execute(r"sed 's,\x1B\[[0-9;]*[a-zA-Z],,g' /tmp/serial.txt | grep 'Rebooting in 60'"), delay=3)
         self.goToMainPage()
 
-        self.machine.execute("virsh destroy pxe-guest && virsh undefine pxe-guest")
+        self.machine.execute("virsh destroy pxe-guest")
+        self.machine.execute("virsh undefine pxe-guest")
         runner.checkEnvIsEmpty()
 
         # Check that host network devices are appearing in the options for PXE boot sources
@@ -442,12 +440,13 @@ vnc_password= "{vnc_passwd}"
         dev = self.add_ram_disk(1)
         partition = dev.split('/')[2] + "1"
         cmds = [
+            "set -e",
             f"virsh pool-define-as poolDisk disk - - {dev} - {os.path.join(self.vm_tmpdir, 'poolDiskImages')}",
             "virsh pool-build poolDisk --overwrite",
             "virsh pool-start poolDisk",
             f"virsh vol-create-as poolDisk {partition} 1024"
         ]
-        self.machine.execute(" && ".join(cmds))
+        self.machine.execute("; ".join(cmds))
 
         self.login_and_go("/machines")
         self.browser.wait_in_text("body", "Virtual machines")
@@ -464,11 +463,12 @@ vnc_password= "{vnc_passwd}"
             target_iqn = "iqn.2019-09.cockpit.lan"
             self.prepareStorageDeviceOnISCSI(target_iqn)
             cmd = [
+                "set -e",
                 "virsh pool-define-as iscsi-pool --type iscsi --target /dev/disk/by-id --source-host 127.0.0.1 --source-dev {0}",
                 "ls -la /dev/disk/by-id",
                 "virsh pool-start iscsi-pool"
             ]
-            print(self.machine.execute("&& ".join(cmd).format(target_iqn)))
+            print(self.machine.execute("; ".join(cmd).format(target_iqn)))
             wait(lambda: "unit:0:0:0" in self.machine.execute("virsh pool-refresh iscsi-pool && virsh vol-list iscsi-pool"), delay=3)
 
             self.addCleanup(self.machine.execute, "virsh pool-destroy iscsi-pool; virsh pool-delete iscsi-pool; virsh pool-undefine iscsi-pool")
@@ -526,11 +526,8 @@ vnc_password= "{vnc_passwd}"
 
         # define again the default storage pool for system connection
         # we need so that the UI will know the remaining available space when we use that pool's path
-        cmds = [
-            "virsh pool-define-as default --type dir --target /var/lib/libvirt/images",
-            "virsh pool-start default"
-        ]
-        self.machine.execute(" && ".join(cmds))
+        self.machine.execute("virsh pool-define-as default --type dir --target /var/lib/libvirt/images")
+        self.machine.execute("virsh pool-start default")
 
         self.browser.reload()
         self.browser.enter_page('/machines')
@@ -543,13 +540,14 @@ vnc_password= "{vnc_passwd}"
                                                       create_and_run=False,
                                                       connection='session'))
         cmds = [
+            "set -e",
             "mkdir -p '/var/lib/libvirt/pools/tmp pool'; chmod a+rwx '/var/lib/libvirt/pools/tmp pool'",
             "virsh pool-define-as 'tmp pool' --type dir --target '/var/lib/libvirt/pools/tmp pool'",
             "virsh pool-start 'tmp pool'",
             "qemu-img create -f qcow2 '/var/lib/libvirt/pools/tmp pool/vmTmpDestination.qcow2' 128M",
             "virsh pool-refresh 'tmp pool'"
         ]
-        self.machine.execute(" && ".join(cmds))
+        self.machine.execute("; ".join(cmds))
 
         self.browser.reload()
         self.browser.enter_page('/machines')
@@ -598,7 +596,7 @@ vnc_password= "{vnc_passwd}"
         # This is applicable for all tests that we want to really successfully run a nested VM.
         # in order to allow the rest of the tests to run faster with QEMU KVM
         # Stop pmcd service if available which is invoking pmdakvm and is keeping KVM module used
-        self.machine.execute("(systemctl stop pmcd || true) && modprobe -r kvm_intel && modprobe -r kvm_amd && modprobe -r kvm")
+        self.machine.execute("systemctl stop pmcd; modprobe -r kvm_intel kvm_amd kvm")
 
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='disk_image',
                                                       location=config.VALID_DISK_IMAGE_PATH,
@@ -1267,11 +1265,8 @@ vnc_password= "{vnc_passwd}"
 
             # define default storage pool for system connection
             # we need so that the UI will know the remaining available space when we use that pool's path
-            cmds = [
-                "virsh pool-define-as default --type dir --target /var/lib/libvirt/images",
-                "virsh pool-start default"
-            ]
-            self.machine.execute(" && ".join(cmds))
+            self.machine.execute("virsh pool-define-as default --type dir --target /var/lib/libvirt/images")
+            self.machine.execute("virsh pool-start default")
 
         def _fakeOsDBInfoFedora(self):
             # Fake the osinfo-db data in order that it will allow spawn the installation - of course we don't expect it to succeed -
