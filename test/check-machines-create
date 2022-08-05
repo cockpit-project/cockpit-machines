@@ -1426,6 +1426,10 @@ vnc_password= "{vnc_passwd}"
                 b.wait_in_text(f"#vm-{name}-{connection}-state", "Shut off")
                 b.wait_visible(f"#vm-{name}-{connection}-install")
                 b.wait_in_text(".pf-c-alert", "failed to get installed")
+                # can reattempt installation
+                b.wait_visible(f"#vm-{name}-{connection}-install")
+                # can't run, as it is still in install phase
+                b.wait_not_present(f"#vm-{name}-{connection}-run")
             else:
                 b.wait_in_text(f"#vm-{name}-{connection}-state", "Running")
                 self._assertCorrectConfiguration(dialog)
@@ -1436,6 +1440,9 @@ vnc_password= "{vnc_passwd}"
                 # unfinished install script runs indefinitely, so we need to force it off
                 self.test_obj.performAction(name, "forceOff", checkExpectedState=False)
                 b.wait_in_text(f"#vm-{name}-{connection}-state", "Shut off")
+                # install phase got cleared
+                b.wait_visible(f"#vm-{name}-{connection}-run")
+                b.wait_not_present(f"#vm-{name}-{connection}-install")
 
             return self
 
@@ -1520,12 +1527,12 @@ vnc_password= "{vnc_passwd}"
             self.machine.execute("while pgrep virt-install; do sleep 1; done", timeout=20)
             return self
 
-        def _assertDomainDefined(self, name, connection):
+        def _assertDomainDefined(self, name, connection, install_phase=""):
             for retry in range(5):
                 dumpxml = self.run_admin(f"virsh -c qemu:///system dumpxml --inactive {name}", connection)
                 try:
                     # has cockpit-machines specific metadata
-                    self.test_obj.assertIn("<cockpit_machines:has_install_phase>", dumpxml)
+                    self.test_obj.assertIn(f"<cockpit_machines:has_install_phase>{install_phase}", dumpxml)
                     self.test_obj.assertIn("<cockpit_machines:install_source>", dumpxml)
                     # The running XML has always substituted port
                     # This checks that the defined domain is using the proper inactive XML
@@ -1661,7 +1668,7 @@ vnc_password= "{vnc_passwd}"
         def createThenInstallTest(self, dialog, installFromVmDetails=False, tryWithFailInstall=False):
             self._tryCreateThenInstall(dialog, installFromVmDetails, tryWithFailInstall) \
                 ._assertScriptFinished() \
-                ._assertDomainDefined(dialog.name, dialog.connection) \
+                ._assertDomainDefined(dialog.name, dialog.connection, install_phase="true" if tryWithFailInstall else "false") \
                 ._deleteVm(dialog) \
                 .checkEnvIsEmpty()
 
