@@ -171,7 +171,7 @@ print-vm:
 	@echo $(VM_IMAGE)
 
 codecheck: test/static-code
-	test/static-code
+	test/static-code --tap
 
 # convenience target to setup all the bits needed for the integration tests
 # without actually running them
