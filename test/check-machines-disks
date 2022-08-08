@@ -536,7 +536,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             m.execute(f"virsh pool-define-as iscsi-pool --type iscsi --target /dev/disk/by-id --source-host 127.0.0.1 --source-dev {target_iqn} && virsh pool-start iscsi-pool")
             wait(lambda: "unit:0:0:0" in self.machine.execute("virsh pool-refresh iscsi-pool && virsh vol-list iscsi-pool"), delay=3)
 
-            self.addCleanup(self.machine.execute, "virsh pool-destroy iscsi-pool; virsh pool-delete iscsi-pool; virsh pool-undefine iscsi-pool")
+            self.addCleanup(self.machine.execute, "virsh pool-destroy iscsi-pool; virsh pool-undefine iscsi-pool")
 
         args = self.createVm("subVmTest1")
 
