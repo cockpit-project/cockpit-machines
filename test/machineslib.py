@@ -324,7 +324,7 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
 
         # user libvirtd instance tends to SIGABRT with "Failed to find user record for uid .." on shutdown during cleanup
         # so make sure that there are no leftover user processes that bleed into the next test
-        self.addCleanup(self.machine.execute, '''pkill -u admin; while [ -n "$(pgrep -au admin | grep -v 'systemd --user')" ]; do sleep 0.5; done''')
+        self.addCleanup(self.machine.execute, '''pkill -u admin || true; while [ -n "$(pgrep -au admin | grep -v 'systemd --user')" ]; do sleep 0.5; done''')
 
         # FIXME: report downstream; AppArmor noisily denies some operations, but they are not required for us
         self.allow_journal_messages(r'.* type=1400 .* apparmor="DENIED" operation="capable" profile="\S*libvirtd.* capname="sys_rawio".*')
