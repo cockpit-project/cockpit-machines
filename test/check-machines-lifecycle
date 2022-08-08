@@ -42,7 +42,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         self.machine.execute(f"useradd{' -G ' + user_group if user_group else '' } {user_name} && echo '{user_name}:foobar' | chpasswd")
         # user libvirtd instance tends to SIGABRT with "Failed to find user record for uid .." on shutdown during cleanup
         # so make sure that there are no leftover user processes that bleed into the next test
-        self.addCleanup(self.machine.execute, "pkill -u {0}; while pgrep -u {0}; do sleep 0.5; done".format(user_name))
+        self.addCleanup(self.machine.execute, f"pkill -u {user_name} || true; while pgrep -u {user_name}; do sleep 0.5; done")
         # HACK: ...but it still tends to crash during shutdown (without known stack trace)
         self.allow_journal_messages('Process .*libvirtd.* of user 10.* dumped core.*')
 
@@ -324,7 +324,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         m.execute("useradd nonadmin; echo nonadmin:foobar | chpasswd")
         # user libvirtd instance tends to SIGABRT with "Failed to find user record for uid .." on shutdown during cleanup
         # so make sure that there are no leftover user processes that bleed into the next test
-        self.addCleanup(self.machine.execute, "pkill -u nonadmin; while pgrep -u nonadmin; do sleep 0.5; done")
+        self.addCleanup(self.machine.execute, "pkill -u nonadmin || true; while pgrep -u nonadmin; do sleep 0.5; done")
         self.login_and_go("/machines", user="nonadmin", superuser=False)
         b.wait_in_text("body", "Virtual machines")
         b.wait_in_text("#virtual-machines-listing .pf-c-empty-state", "No VM is running")
