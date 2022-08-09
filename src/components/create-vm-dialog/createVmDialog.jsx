@@ -1000,7 +1000,7 @@ class CreateVmModal extends React.Component {
             // then show errors in the notification area
             this.setState({ createMode: startVm ? RUN : EDIT, validate: false });
 
-            const unattendedInstallation = this.state.rootPassword || this.state.userLogin || this.state.userPassword;
+            const unattendedInstallation = !(this.state.sourceType === CLOUD_IMAGE) && (this.state.rootPassword || this.state.userLogin || this.state.userPassword);
             const vmParams = {
                 connectionName: this.state.connectionName,
                 vmName,

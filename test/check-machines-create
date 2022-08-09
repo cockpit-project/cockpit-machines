@@ -746,6 +746,7 @@ vnc_password= "{vnc_passwd}"
             self.assertTrue = test_obj.assertTrue
             self.assertFalse = test_obj.assertFalse
             self.assertIn = test_obj.assertIn
+            self.assertNotIn = test_obj.assertNotIn
             self.assertEqual = test_obj.assertEqual
             self.goToVmPage = test_obj.goToVmPage
             self.goToMainPage = test_obj.goToMainPage
@@ -949,6 +950,10 @@ vnc_password= "{vnc_passwd}"
                 user_data = self.machine.execute("cat " + user_data_path)
 
                 self.assertIn("\nssh_pwauth: true", user_data)
+
+            # --unattended option is conflicting with --cloud-init option, resulting --cloud-init user_data being ignored
+            # https://bugzilla.redhat.com/show_bug.cgi?id=2096200#c14
+            self.assertNotIn("--unattended", virt_install_cmd_out)
 
             self.browser.wait_text(f"#vm-{self.name}-{self.connection}-state", "Running")
 
