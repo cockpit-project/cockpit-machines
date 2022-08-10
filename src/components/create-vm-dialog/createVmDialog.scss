@@ -9,3 +9,10 @@
 .invalid-token-helper {
     color: var(--pf-c-form__helper-text--m-error--Color);
 }
+
+// Move position of icon so it doens't get covered by scrollbar.
+// Autoresize would also work, but in certain cases autoresize is buggy: https://github.com/patternfly/patternfly-react/issues/7834
+// Use this workaround until patternfly-react#7834 is fixed
+#offline-token {
+    background-position-x: right 1rem;
+}

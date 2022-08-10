@@ -594,7 +594,8 @@ const OfflineTokenRow = ({ offlineToken, onValueChanged, formValidationFailed })
                       disabled={disabled}
                       minLength={1}
                       value={offlineToken || ""}
-                      onChange={setOfflineTokenHelper} />
+                      onChange={setOfflineTokenHelper}
+                      rows="4" />
         </FormGroup>
     );
 };
