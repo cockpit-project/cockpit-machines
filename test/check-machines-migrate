@@ -59,7 +59,8 @@ class TestMachinesMigration(VirtualMachinesCase):
             # Setup the default storage pool on the destination host
             # This is normally automatically created when creating the first VM but in this case our dest VM was never populated
             xml = POOL_XML.format(path="/var/lib/libvirt/images")
-            machine2.execute(f"echo \"{xml}\" > /tmp/xml && virsh pool-define /tmp/xml && virsh pool-start images")
+            machine2.write("/tmp/xml", xml)
+            machine2.execute("virsh pool-define /tmp/xml; virsh pool-start images")
         if fail == "volume":
             machine2.execute("virsh vol-create-as images subVmTest1-2.img --capacity 1M --format qcow2")
 
@@ -81,9 +82,10 @@ class TestMachinesMigration(VirtualMachinesCase):
 </disk>'''
         machine1.execute(f"echo \"{disk_xml.format(dev)}\" > /tmp/disk_xml")
         machine1.execute("virsh destroy subVmTest1")
-        machine1.execute("virt-xml --remove-device --disk 1 subVmTest1 && "
-                         "virsh attach-device --domain subVmTest1 --file /tmp/disk_xml --config && "
-                         "virsh start subVmTest1")
+        machine1.execute("""
+            virt-xml --remove-device --disk 1 subVmTest1
+            virsh attach-device --domain subVmTest1 --file /tmp/disk_xml --config
+            virsh start subVmTest1""")
 
         self.add_ram_disk(2, machine2)
 

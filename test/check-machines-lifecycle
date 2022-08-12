@@ -39,7 +39,8 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
     def createUser(self, user_group):
         user_name = f"test_{user_group if user_group else 'none'}_user"
-        self.machine.execute(f"useradd{' -G ' + user_group if user_group else '' } {user_name} && echo '{user_name}:foobar' | chpasswd")
+        self.machine.execute(f"useradd{' -G ' + user_group if user_group else '' } {user_name}")
+        self.machine.execute(f"echo '{user_name}:foobar' | chpasswd")
         # user libvirtd instance tends to SIGABRT with "Failed to find user record for uid .." on shutdown during cleanup
         # so make sure that there are no leftover user processes that bleed into the next test
         self.addCleanup(self.machine.execute, f"pkill -u {user_name} || true; while pgrep -u {user_name}; do sleep 0.5; done")
@@ -69,7 +70,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
         # Check NON-PRIVILEGED user won't see any VMs even though they are in wheel group
         self._testBasic(user, False, True)
-        self.machine.execute("virsh destroy subVmTest1 && virsh undefine subVmTest1")
+        self.machine.execute("virsh destroy subVmTest1; virsh undefine subVmTest1")
         # Check wheel group PRIVILEGED user will see VMs and can do operations on them
         self._testBasic(user, True, False)
 
@@ -112,7 +113,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         m.execute("virsh suspend subVmTest1")
         b.wait_in_text("#vm-subVmTest1-system-state", "Paused")
         # resume sometimes fails with "unable to execute QEMU command 'cont': Resetting the Virtual Machine is required"
-        m.execute('virsh resume subVmTest1 || { virsh destroy subVmTest1 && virsh start subVmTest1; }')
+        m.execute('virsh resume subVmTest1 || { virsh destroy subVmTest1; virsh start subVmTest1; }')
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # Wait for the system to completely start
@@ -153,7 +154,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
         # shut off of a transient VM will redirect us to the main page
         m.execute("virsh dumpxml subVmTest1 > /tmp/subVmTest1.xml")
-        m.execute("virsh start {0} && virsh undefine {0}".format("subVmTest1"))
+        m.execute("virsh start {0}; virsh undefine {0}".format("subVmTest1"))
         b.wait_visible("div[data-vm-transient=\"true\"]")
         self.performAction("subVmTest1", "forceOff", checkExpectedState=False)
         b.wait_in_text("#virtual-machines-listing .pf-c-empty-state", "No VM is running")
@@ -198,7 +199,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         # Check correctness of the toast notifications list
         # We 'll create errors by starting to start domains when the default network in inactive
         self.createVm("subVmTest3")
-        m.execute("virsh destroy subVmTest2 && virsh destroy subVmTest3 && virsh net-destroy default")
+        m.execute("virsh destroy subVmTest2; virsh destroy subVmTest3; virsh net-destroy default")
 
         def tryRunDomain(index, name, connection):
             self.waitVmRow(name)

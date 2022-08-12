@@ -176,8 +176,10 @@ class TestMachinesNICs(VirtualMachinesCase):
         b = self.browser
         m = self.machine
 
-        m.execute(f"echo \"{TEST_NETWORK_XML}\" > /tmp/xml && virsh net-define /tmp/xml && virsh net-start test_network")
-        m.execute(f"echo \"{TEST_NETWORK4_XML}\" > /tmp/xml2 && virsh net-define /tmp/xml2")
+        m.write("/tmp/xml", TEST_NETWORK_XML)
+        m.write("/tmp/xml2", TEST_NETWORK4_XML)
+        m.execute("virsh net-define /tmp/xml; virsh net-start test_network")
+        m.execute("virsh net-define /tmp/xml2")
 
         args = self.createVm("subVmTest1")
 

@@ -276,7 +276,7 @@ class TestMachinesDisks(VirtualMachinesCase):
 
         # Check when no storage pool and adding existed disk
         # delete the default pool
-        m.execute("virsh pool-destroy images && virsh pool-undefine images")
+        m.execute("virsh pool-destroy images; virsh pool-undefine images")
         # Open "add disk" dialog
         b.click(f"{prefix}")
         b.click(f"{prefix}-useexisting")
@@ -533,15 +533,16 @@ class TestMachinesDisks(VirtualMachinesCase):
             target_iqn = "iqn.2019-09.cockpit.lan"
             self.prepareStorageDeviceOnISCSI(target_iqn)
 
-            m.execute(f"virsh pool-define-as iscsi-pool --type iscsi --target /dev/disk/by-id --source-host 127.0.0.1 --source-dev {target_iqn} && virsh pool-start iscsi-pool")
-            wait(lambda: "unit:0:0:0" in self.machine.execute("virsh pool-refresh iscsi-pool && virsh vol-list iscsi-pool"), delay=3)
+            m.execute(f"virsh pool-define-as iscsi-pool --type iscsi --target /dev/disk/by-id --source-host 127.0.0.1 --source-dev {target_iqn}")
+            m.execute("virsh pool-start iscsi-pool")
+            wait(lambda: "unit:0:0:0" in self.machine.execute("virsh pool-refresh iscsi-pool; virsh vol-list iscsi-pool"), delay=3)
 
             self.addCleanup(self.machine.execute, "virsh pool-destroy iscsi-pool; virsh pool-undefine iscsi-pool")
 
         args = self.createVm("subVmTest1")
 
         # Remove images pool so that we get the iscsi-pool pool first on the list
-        m.execute("virsh pool-destroy images && virsh pool-undefine images")
+        m.execute("virsh pool-destroy images; virsh pool-undefine images")
 
         # Wait for the system to completely start
         wait(lambda: "login as 'cirros' user." in self.machine.execute(f"cat {args['logfile']}"), delay=3)
@@ -589,9 +590,11 @@ class TestMachinesDisks(VirtualMachinesCase):
         self.restore_file("/etc/exports")
         nfs_pool = os.path.join(self.vm_tmpdir, "nfs_pool")
         mnt_exports = os.path.join(self.vm_tmpdir, "mnt_exports")
-        m.execute("mkdir {0} {1} && echo '{1} 127.0.0.1/24(rw,sync,no_root_squash,no_subtree_check,fsid=0)' > /etc/exports".format(nfs_pool, mnt_exports))
+        m.execute(f"mkdir {nfs_pool} {mnt_exports}")
+        m.write("/etc/exports", f"{mnt_exports} 127.0.0.1/24(rw,sync,no_root_squash,no_subtree_check,fsid=0)")
         m.execute("systemctl restart nfs-server")
-        m.execute(f"virsh pool-define-as nfs-pool --type netfs --target {nfs_pool} --source-host 127.0.0.1 --source-path {mnt_exports} && virsh pool-start nfs-pool")
+        m.execute(f"virsh pool-define-as nfs-pool --type netfs --target {nfs_pool} --source-host 127.0.0.1 --source-path {mnt_exports}")
+        m.execute("virsh pool-start nfs-pool")
         # And create a volume on it in order to test use existing volume dialog
         m.execute("virsh vol-create-as --pool nfs-pool --name nfs-volume-0 --capacity 1M --format qcow2")
 
@@ -638,24 +641,20 @@ class TestMachinesDisks(VirtualMachinesCase):
         dev = self.add_ram_disk(2)
         used_targets = ['vda']
 
-        cmds = [
-            f"virsh pool-define-as pool-disk disk - - {dev} - {os.path.join(self.vm_tmpdir, 'poolDiskImages')}",
-            "virsh pool-build pool-disk --overwrite",
-            "virsh pool-start pool-disk",
-        ]
-        self.machine.execute(" && ".join(cmds))
+        self.machine.execute(f"""
+            virsh pool-define-as pool-disk disk - - {dev} - {os.path.join(self.vm_tmpdir, 'poolDiskImages')}
+            virsh pool-build pool-disk --overwrite
+            virsh pool-start pool-disk""")
 
         loop_dev = self.add_loop_disk()
         existing_disk = os.path.basename(loop_dev) + "p1"
         existing_disk2 = os.path.basename(loop_dev) + "p2"
-        cmds = [
-            f"virsh pool-define-as loop-disk disk - - {loop_dev} - {os.path.join(self.vm_tmpdir, 'poolLoopImages')}",
-            "virsh pool-build loop-disk --overwrite",
-            "virsh pool-start loop-disk",
-            f"virsh vol-create-as loop-disk {existing_disk} 1M",
-            f"virsh vol-create-as loop-disk {existing_disk2} 1M",
-        ]
-        self.machine.execute(" && ".join(cmds))
+        self.machine.execute(f"""
+            virsh pool-define-as loop-disk disk - - {loop_dev} - {os.path.join(self.vm_tmpdir, 'poolLoopImages')}
+            virsh pool-build loop-disk --overwrite
+            virsh pool-start loop-disk
+            virsh vol-create-as loop-disk {existing_disk} 1M
+            virsh vol-create-as loop-disk {existing_disk2} 1M""")
 
         args = self.createVm("subVmTest1")
 
@@ -732,9 +731,9 @@ class TestMachinesDisks(VirtualMachinesCase):
         v2 = os.path.join(self.vm_tmpdir, "vm_two")
         default_tmp = os.path.join(self.vm_tmpdir, "default_tmp")
         m.execute(f"mkdir --mode 777 {v1} {v2} {default_tmp}")
-        m.execute(f"virsh pool-define-as default_tmp --type dir --target {default_tmp} && virsh pool-start default_tmp")
-        m.execute(f"virsh pool-define-as myPoolOne --type dir --target {v1} && virsh pool-start myPoolOne")
-        m.execute(f"virsh pool-define-as myPoolTwo --type dir --target {v2} && virsh pool-start myPoolTwo")
+        m.execute(f"virsh pool-define-as default_tmp --type dir --target {default_tmp}; virsh pool-start default_tmp")
+        m.execute(f"virsh pool-define-as myPoolOne --type dir --target {v1}; virsh pool-start myPoolOne")
+        m.execute(f"virsh pool-define-as myPoolTwo --type dir --target {v2}; virsh pool-start myPoolTwo")
 
         m.upload([os.path.join(BOTS_DIR, "machine/cloud-init.iso")], os.path.join(default_tmp, "defaultVol.iso"))
         m.execute("virsh vol-create-as default_tmp defaultVol --capacity 10M --format raw")
@@ -983,7 +982,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         # prepare libvirt storage pools
         v1 = os.path.join(self.vm_tmpdir, "vm_one")
         m.execute(f"mkdir --mode 777 {v1}")
-        m.execute(f"virsh pool-define-as myPoolOne --type dir --target {v1} && virsh pool-start myPoolOne")
+        m.execute(f"virsh pool-define-as myPoolOne --type dir --target {v1}; virsh pool-start myPoolOne")
 
         self.createVm("subVmTest1", running=False)
 

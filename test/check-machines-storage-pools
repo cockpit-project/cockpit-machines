@@ -473,7 +473,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
                 b.wait_not_present("#create-storage-pool-dialog")
 
         # Prepare a Volume Group to be used as source for the LVM pool
-        m.execute("wipefs -a {0} && pvcreate {0} && vgcreate vol_grp1 {0}".format(dev))
+        m.execute("wipefs -a {0}; pvcreate {0}; vgcreate vol_grp1 {0}".format(dev))
         b.go("/machines#/storages")
         b.enter_page("/machines")
 
@@ -491,25 +491,25 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         # Prepare dir pool
         dir_pool = os.path.join(self.vm_tmpdir, "dir_pool")
         m.execute(f"mkdir --mode 777 {dir_pool}")
-        m.execute(f"virsh pool-define-as dir-pool --type dir --target {dir_pool} && virsh pool-start dir-pool")
+        m.execute(f"virsh pool-define-as dir-pool --type dir --target {dir_pool}; virsh pool-start dir-pool")
 
         # Prepare net-fs pool
         nfs_pool = os.path.join(self.vm_tmpdir, "nfs_pool")
         mnt_exports = os.path.join(self.vm_tmpdir, "mnt_exports")
         self.restore_file("/etc/exports")
-        m.execute("mkdir {0} {1} && echo '{1} 127.0.0.1/24(rw,sync,no_root_squash,no_subtree_check,fsid=0)' > /etc/exports".format(nfs_pool, mnt_exports))
+        m.execute(f"mkdir {nfs_pool} {mnt_exports}")
+        m.write("/etc/exports", f"{mnt_exports} 127.0.0.1/24(rw,sync,no_root_squash,no_subtree_check,fsid=0)")
         m.execute("systemctl restart nfs-server")
-        m.execute(f"virsh pool-define-as nfs-pool --type netfs --target {nfs_pool} --source-host 127.0.0.1 --source-path {mnt_exports} && virsh pool-start nfs-pool")
+        m.execute(f"virsh pool-define-as nfs-pool --type netfs --target {nfs_pool} --source-host 127.0.0.1 --source-path {mnt_exports}")
+        m.execute("virsh pool-start nfs-pool")
         self.addCleanup(m.execute, "virsh pool-destroy nfs-pool || true")  # Destroy pool as it block removal of `nfs_pool`
 
         # Prepare disk/block pool
         dev = self.add_ram_disk(10)
-        cmds = [
-            f"virsh pool-define-as disk-pool disk - - {dev} - {os.path.join(self.vm_tmpdir, 'poolDiskImages')}",
-            "virsh pool-build disk-pool --overwrite",
-            "virsh pool-start disk-pool",
-        ]
-        self.machine.execute(" && ".join(cmds))
+        self.machine.execute(f"""
+            virsh pool-define-as disk-pool disk - - {dev} - {os.path.join(self.vm_tmpdir, 'poolDiskImages')}
+            virsh pool-build disk-pool --overwrite
+            virsh pool-start disk-pool""")
 
         self.login_and_go("/machines")
         b.wait_in_text("body", "Virtual machines")
@@ -605,7 +605,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
                 self.test_obj.assertEqual(size, int(self.size))
 
             def cleanup(self):
-                m.execute("virsh pool-destroy {0} && virsh pool-undefine {0}".format(self.pool_name))
+                m.execute("virsh pool-destroy {0}; virsh pool-undefine {0}".format(self.pool_name))
 
             def close(self):
                 self.test_obj.gotoOverviewTab(self.pool_name)
@@ -682,8 +682,8 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         ).execute()
 
         # create disk for lvm-pool
-        m.execute("wipefs -a {0} && pvcreate {0} && vgcreate vol_grp1 {0}".format(dev))
-        m.execute("virsh pool-define-as lvm-pool --type logical --source-name vol_grp1 && virsh pool-start lvm-pool")
+        m.execute("wipefs -a {0}; pvcreate {0}; vgcreate vol_grp1 {0}".format(dev))
+        m.execute("virsh pool-define-as lvm-pool --type logical --source-name vol_grp1; virsh pool-start lvm-pool")
 
         StorageVolumeCreateDialog(
             self,
@@ -718,7 +718,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         dev = self.add_ram_disk(2)
         target_path = os.path.join(self.vm_tmpdir, "mnt")
         # Create mount path and parted the physical disk device
-        m.execute(f"mkdir {target_path} && parted {dev} mklabel msdos")
+        m.execute(f"mkdir {target_path}; parted {dev} mklabel msdos")
 
         # ISCSI
         # TODO: no iscsid in arch
@@ -789,7 +789,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
                     b.wait_text(f"#pool-{self.name}-{self.connection}-state", "active")
 
                     if self.pool_type == "iscsi":
-                        wait(lambda: "unit:0:0:0" in m.execute(f"virsh pool-refresh {self.name} && virsh vol-list {self.name}"))
+                        wait(lambda: "unit:0:0:0" in m.execute(f"virsh pool-refresh {self.name}; virsh vol-list {self.name}"))
                     elif self.vol_name:
                         if self.vol_name not in m.execute(f"virsh vol-list {self.name}"):
                             m.execute(f"virsh vol-create-as {self.name} {self.vol_name} 1M")

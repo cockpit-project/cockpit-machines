@@ -59,10 +59,10 @@ class TestMachinesNetworks(VirtualMachinesCase):
         b.wait_in_text("#card-pf-networks .card-pf-title-link", "1 Network")
 
         # Create dummy network
-        m.execute(f"echo \"{TEST_NETWORK2_XML}\" > /tmp/xml && virsh net-define /tmp/xml")
+        m.execute(f"echo \"{TEST_NETWORK2_XML}\" > /tmp/xml; virsh net-define /tmp/xml")
         b.wait_in_text("#card-pf-networks .card-pf-title-link", "2 Networks")
-        m.execute(f"echo \"{TEST_NETWORK3_XML}\" > /tmp/xml && virsh net-define /tmp/xml")
-        m.execute(f"echo \"{TEST_NETWORK4_XML}\" > /tmp/xml && virsh net-create /tmp/xml")
+        m.execute(f"echo \"{TEST_NETWORK3_XML}\" > /tmp/xml; virsh net-define /tmp/xml")
+        m.execute(f"echo \"{TEST_NETWORK4_XML}\" > /tmp/xml; virsh net-create /tmp/xml")
 
         # Click on Networks card
         b.click(".pf-c-card .pf-c-card__header button:contains(Networks)")
@@ -505,7 +505,8 @@ class TestMachinesNetworks(VirtualMachinesCase):
         self.createVm("subVmTest1")
 
         # Create dummy network
-        m.execute(f"echo \"{TEST_NETWORK_XML}\" > /tmp/xml && virsh net-define /tmp/xml && virsh net-start test_network")
+        m.write("/tmp/xml", TEST_NETWORK_XML)
+        m.execute("virsh net-define /tmp/xml; virsh net-start test_network")
 
         # Create a second bridge to LAN NIC, virbr0 does not make sense but let's use it for test purposes
         self.login_and_go("/machines")
@@ -642,13 +643,13 @@ class TestMachinesNetworks(VirtualMachinesCase):
         # Virtual Networks type for a NIC disables the save button
         m.execute("virsh net-dumpxml default > /tmp/net-default.xml")
         m.execute("virsh net-dumpxml test_network > /tmp/net-test-network.xml")
-        m.execute("virsh net-destroy test_network && virsh net-destroy default")
-        self.addCleanup(m.execute, "virsh net-define /tmp/net-default.xml && virsh net-autostart default")
+        m.execute("virsh net-destroy test_network; virsh net-destroy default")
+        self.addCleanup(m.execute, "virsh net-define /tmp/net-default.xml; virsh net-autostart default")
 
         self.goToMainPage()
 
         b.wait_in_text("#card-pf-networks .active-resources:nth-of-type(1)", "0")
-        m.execute("virsh net-undefine test_network && virsh net-undefine default")
+        m.execute("virsh net-undefine test_network; virsh net-undefine default")
         b.wait_in_text("#card-pf-networks .active-resources:nth-of-type(2)", "0")
         b.wait_in_text("#card-pf-networks .card-pf-title-link", "0 Networks")
 
@@ -656,7 +657,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
 
         # Create a second bridge to LAN NIC
         next_mac = self.get_next_mac(next_mac)
-        m.execute(f"ip link add name br1 type bridge && virsh attach-interface --current subVmTest1 bridge br1 --mac {next_mac}")
+        m.execute(f"ip link add name br1 type bridge; virsh attach-interface --current subVmTest1 bridge br1 --mac {next_mac}")
         self.addCleanup(m.execute, "ip link delete br1")
 
         m.execute("virsh start subVmTest1")
@@ -675,9 +676,12 @@ class TestMachinesNetworks(VirtualMachinesCase):
 
         # Redefine deleted networks and attach an interface with source a deleted network
         next_mac = self.get_next_mac(next_mac)
-        m.execute(f"virsh net-define /tmp/net-default.xml && virsh net-start default && virsh attach-interface --persistent --type network --source default --mac {next_mac} --domain subVmTest1")
-        m.execute("virsh net-destroy default && virsh net-undefine default")
-        m.execute("virsh net-define /tmp/net-test-network.xml && virsh net-start test_network")
+        m.execute(f"""
+            virsh net-define /tmp/net-default.xml
+            virsh net-start default
+            virsh attach-interface --persistent --type network --source default --mac {next_mac} --domain subVmTest1
+            virsh net-destroy default; virsh net-undefine default
+            virsh net-define /tmp/net-test-network.xml; virsh net-start test_network""")
 
         # First shut of the VM otherwise the interface will not be the same in the live and config XML https://www.redhat.com/archives/libvir-list/2019-August/msg01034.html
         self.performAction("subVmTest1", "forceOff")
@@ -698,7 +702,8 @@ class TestMachinesNetworks(VirtualMachinesCase):
         m = self.machine
 
         # Create dummy network
-        m.execute(f"echo \"{TEST_NETWORK2_XML}\" > /tmp/xml && virsh net-define /tmp/xml")
+        m.write("/tmp/xml", TEST_NETWORK2_XML)
+        m.execute("virsh net-define /tmp/xml")
 
         connectionName = m.execute("virsh uri | head -1 | cut -d/ -f4").strip()
 
@@ -744,7 +749,8 @@ class TestMachinesNetworks(VirtualMachinesCase):
         m = self.machine
 
         # Create dummy network
-        m.execute(f"echo \"{TEST_NETWORK2_XML}\" > /tmp/xml && virsh net-define /tmp/xml")
+        m.write("/tmp/xml", TEST_NETWORK2_XML)
+        m.execute("virsh net-define /tmp/xml")
 
         connectionName = m.execute("virsh uri | head -1 | cut -d/ -f4").strip()
 
@@ -789,7 +795,8 @@ class TestMachinesNetworks(VirtualMachinesCase):
         self.waitNetworkRow("test_network2", connectionName, False)
 
         # Delete an active network
-        m.execute(f"echo \"{TEST_NETWORK2_XML}\" > /tmp/xml && virsh net-define /tmp/xml && virsh net-start test_network2")
+        m.write("/tmp/xml", TEST_NETWORK2_XML)
+        m.execute("virsh net-define /tmp/xml; virsh net-start test_network2")
         b.wait_in_text(f"#network-test_network2-{connectionName}-state", "active")
         self.toggleNetworkRow("test_network2", connectionName)
         b.click(f"#network-test_network2-{connectionName}-action-kebab button")
