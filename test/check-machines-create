@@ -296,11 +296,10 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                            storage_pool="NoStorage",
                                                                            connection="session"))
 
-        self.machine.execute("set -e; virsh net-destroy default; virsh net-undefine default")
+        self.machine.execute("virsh net-destroy default; virsh net-undefine default")
 
         # Set up the PXE server configuration files
         cmds = [
-            "set -e",
             "mkdir -p /var/lib/libvirt/pxe-config",
             f"echo \"{PXE_SERVER_CFG}\" > /var/lib/libvirt/pxe-config/pxe.cfg",
             "chmod 666 /var/lib/libvirt/pxe-config/pxe.cfg"
@@ -309,7 +308,7 @@ class TestMachinesCreate(VirtualMachinesCase):
 
         # Define and start a NAT network with tftp server configuration
         self.machine.write("/tmp/pxe-nat.xml", NETWORK_XML_PXE)
-        self.machine.execute("set -e; virsh net-define /tmp/pxe-nat.xml; virsh net-start pxe-nat")
+        self.machine.execute("virsh net-define /tmp/pxe-nat.xml; virsh net-start pxe-nat")
 
         # Add an extra network interface that should appear in the PXE source dropdown
         iface = "eth42"
@@ -440,7 +439,6 @@ vnc_password= "{vnc_passwd}"
         dev = self.add_ram_disk(1)
         partition = dev.split('/')[2] + "1"
         cmds = [
-            "set -e",
             f"virsh pool-define-as poolDisk disk - - {dev} - {os.path.join(self.vm_tmpdir, 'poolDiskImages')}",
             "virsh pool-build poolDisk --overwrite",
             "virsh pool-start poolDisk",
@@ -463,7 +461,6 @@ vnc_password= "{vnc_passwd}"
             target_iqn = "iqn.2019-09.cockpit.lan"
             self.prepareStorageDeviceOnISCSI(target_iqn)
             cmd = [
-                "set -e",
                 "virsh pool-define-as iscsi-pool --type iscsi --target /dev/disk/by-id --source-host 127.0.0.1 --source-dev {0}",
                 "ls -la /dev/disk/by-id",
                 "virsh pool-start iscsi-pool"
@@ -540,7 +537,6 @@ vnc_password= "{vnc_passwd}"
                                                       create_and_run=False,
                                                       connection='session'))
         cmds = [
-            "set -e",
             "mkdir -p '/var/lib/libvirt/pools/tmp pool'; chmod a+rwx '/var/lib/libvirt/pools/tmp pool'",
             "virsh pool-define-as 'tmp pool' --type dir --target '/var/lib/libvirt/pools/tmp pool'",
             "virsh pool-start 'tmp pool'",
