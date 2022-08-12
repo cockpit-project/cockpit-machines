@@ -109,7 +109,7 @@ class VirtualMachinesCaseHelpers:
         if m.image not in distrosWithMonolithicDaemon:
             # HACK for missing deps on virtlockd/virtlogd sockets - needed till f-35 uses libvirt v7.7.0
             # https://github.com/libvirt/libvirt/commit/88c5b9f827779ae6fe5a6f08100a4b6184492a1c
-            m.execute("systemctl start virtlockd.socket && systemctl start virtlogd.socket")
+            m.execute("systemctl start virtlockd.socket; systemctl start virtlogd.socket")
 
         # Wait until we can get a list of domains
         m.execute("until virsh list; do sleep 1; done")
@@ -163,7 +163,7 @@ class VirtualMachinesCaseHelpers:
             command.append(
                 f'[ "$(virsh -c qemu:///{connection} domstate {name})" = {state} ] || \
                 {{ virsh -c qemu:///{connection} dominfo {name} >&2; cat /var/log/libvirt/qemu/{name}.log >&2; exit 1; }}')
-        self.run_admin(" && ".join(command), connection)
+        self.run_admin("; ".join(command), connection)
 
         # TODO check if kernel is booted
         # Ideally we would like to check guest agent event for that
@@ -199,7 +199,7 @@ class VirtualMachinesCaseHelpers:
 
         # targetcli throws an error but succeeds https://bugzilla.redhat.com/show_bug.cgi?id=2093976
         self.addCleanup(m.execute, "targetcli /backstores/ramdisk delete test" + (" || true" if m.image.startswith("fedora") else ""))
-        self.addCleanup(m.execute, "targetcli /iscsi delete %s && (iscsiadm -m node -o delete || true)" % target_iqn)
+        self.addCleanup(m.execute, "targetcli /iscsi delete %s; iscsiadm -m node -o delete || true" % target_iqn)
         return orig_iqn
 
     def run_admin(self, cmd, connectionName='system'):
@@ -257,7 +257,7 @@ class VirtualMachinesCaseHelpers:
                 f"cp {self.vm_tmpdir}/server.crt /etc/pki/ca-trust/source/anchors/server.crt",
                 "update-ca-trust"
             ]
-        self.machine.execute(" && ".join(cmds))
+        self.machine.execute("; ".join(cmds))
 
         # Run https server with range option support. QEMU uses range option
         # see: https://lists.gnu.org/archive/html/qemu-devel/2013-06/msg02661.html
@@ -266,7 +266,7 @@ class VirtualMachinesCaseHelpers:
         #
         # and on certain distribution supports only https (not http)
         # see: block-drv-ro-whitelist option in qemu-kvm.spec for certain distribution
-        return self.machine.spawn(f"cd /var/lib/libvirt && exec python3 {self.vm_tmpdir}/{mock_server_filename} {self.vm_tmpdir}/server.crt {self.vm_tmpdir}/server.key", "httpsserver")
+        return self.machine.spawn(f"cd /var/lib/libvirt; exec python3 {self.vm_tmpdir}/{mock_server_filename} {self.vm_tmpdir}/server.crt {self.vm_tmpdir}/server.key", "httpsserver")
 
 
 class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelpers, NetworkHelpers):

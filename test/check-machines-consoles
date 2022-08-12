@@ -74,7 +74,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
         args = self.createVm("subVmTest1", "vnc")
 
         if urlroot != "":
-            self.machine.execute(f'mkdir -p /etc/cockpit/ && echo "[WebService]\nUrlRoot={urlroot}" > /etc/cockpit/cockpit.conf')
+            self.machine.write("/etc/cockpit/cockpit.conf", f"[WebService]\nUrlRoot={urlroot}")
 
         self.login_and_go("/machines", urlroot=urlroot)
         b.wait_in_text("body", "Virtual machines")
@@ -136,7 +136,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
                         ignore=[".pf-c-console__vnc"])
 
         # Add a second serial console
-        m.execute("virsh destroy vmWithSerialConsole && virt-xml --add-device vmWithSerialConsole --console pty,target_type=virtio && virsh start vmWithSerialConsole")
+        m.execute("virsh destroy vmWithSerialConsole; virt-xml --add-device vmWithSerialConsole --console pty,target_type=virtio; virsh start vmWithSerialConsole")
         b.click("#pf-c-console__type-selector")
         b.wait_visible("#pf-c-console__type-selector + .pf-c-select__menu")
         b.click("li:contains('Serial console (console0)') button")

@@ -466,7 +466,7 @@ vnc_password= "{vnc_passwd}"
                 "virsh pool-start iscsi-pool"
             ]
             print(self.machine.execute("; ".join(cmd).format(target_iqn)))
-            wait(lambda: "unit:0:0:0" in self.machine.execute("virsh pool-refresh iscsi-pool && virsh vol-list iscsi-pool"), delay=3)
+            wait(lambda: "unit:0:0:0" in self.machine.execute("virsh pool-refresh iscsi-pool; virsh vol-list iscsi-pool"), delay=3)
 
             self.addCleanup(self.machine.execute, "virsh pool-destroy iscsi-pool; virsh pool-undefine iscsi-pool")
 
