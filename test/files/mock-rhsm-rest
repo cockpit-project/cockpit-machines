@@ -32,7 +32,7 @@ class handler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.end_headers()
             self.wfile.write(b'{ "body": [\
-                {"imageName": "RHEL 5.0 Boot ISO", "filename": "rhel-5-0-boot.iso",\
+                {"imageName": "RHEL 8.1 Boot ISO", "filename": "rhel-8-1-boot.iso",\
                 "downloadHref": "https://api.access.redhat.com/management/v1/images/my_image_checksum/download"}\
             ] }\n')
             return
