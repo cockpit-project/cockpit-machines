@@ -145,3 +145,11 @@ export function correctSpecialCases(os) {
 export function needsRHToken(osName) {
     return osName.startsWith("rhel");
 }
+
+export function isDownloadableOs(os) {
+    return os.treeInstallable ||
+        (needsRHToken(os.shortId) &&
+        !os.version.endsWith("unknown") &&
+        // RHSM API supports only rhel versions >= 8: https://access.redhat.com/management/api/rhsm#/images/listImageDownloadsByVersionArch
+        (os.version.localeCompare("8.0", undefined, { numeric: true, sensitivity: 'base' }) >= 0));
+}

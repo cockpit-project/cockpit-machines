@@ -71,6 +71,7 @@ import {
     filterReleaseEolDates,
     getOSStringRepresentation,
     needsRHToken,
+    isDownloadableOs,
 } from "./createVmDialogUtils.js";
 import { domainCreate } from '../../libvirtApi/domain.js';
 import { storagePoolRefresh } from '../../libvirtApi/storagePool.js';
@@ -368,7 +369,7 @@ const SourceRow = ({ connectionName, source, sourceType, networks, nodeDevices, 
                 </FormGroup>
                 : <>
                     <OSRow os={os}
-                         osInfoList={osInfoList.filter(os => os.treeInstallable || (needsRHToken(os.shortId) && !os.version.endsWith("unknown")))}
+                         osInfoList={osInfoList.filter(isDownloadableOs)}
                          onValueChanged={onValueChanged}
                          isLoading={false}
                          validationFailed={validationFailed} />
