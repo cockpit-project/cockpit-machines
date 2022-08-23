@@ -696,9 +696,11 @@ vnc_password= "{vnc_passwd}"
         FEDORA_29_SHORTID = 'fedora29'
 
         RHEL_8_1 = 'Red Hat Enterprise Linux 8.1 (Ootpa)'
-        RHEL_8_1_SHORTID = 'rhel8.test'
+        RHEL_8_1_SHORTID = 'rhel8.1'
+        RHEL_8_2 = 'Red Hat Enterprise Linux 8.2 (Ootpa)'
+        RHEL_8_2_SHORTID = 'rhel8.2'
         RHEL_7_1 = 'Red Hat Enterprise Linux 7.1'
-        RHEL_7_1_SHORTID = 'rhel7.test'
+        RHEL_7_1_SHORTID = 'rhel7.1'
 
         CENTOS_7 = 'CentOS 7'
 
@@ -1079,7 +1081,7 @@ vnc_password= "{vnc_passwd}"
             if self.expected_os_name:
                 b.wait_attr("#os-select-group input", "value", self.expected_os_name)
 
-            if self.sourceType == "os" and self.os_name == TestMachinesCreate.TestCreateConfig.RHEL_8_1:
+            if self.sourceType == "os" and self.os_name in [TestMachinesCreate.TestCreateConfig.RHEL_8_1, TestMachinesCreate.TestCreateConfig.RHEL_8_2]:
                 b.set_input_text("#offline-token", self.offline_token)
 
             if self.sourceType != 'disk_image':
@@ -1309,7 +1311,7 @@ vnc_password= "{vnc_passwd}"
             self.test_obj.addCleanup(self.machine.execute, "umount /usr/share/osinfo/os/fedoraproject.org/fedora-29.xml || true")
 
         def _fakeOsDBInfoRhel(self):
-            # Fake rhel 8 image
+            # Fake rhel 8 images
             rhel_8_1_xml = self.machine.execute("cat /usr/share/osinfo/os/redhat.com/rhel-8.1.xml")
             root = ET.fromstring(rhel_8_1_xml)
             root.find('os').find('resources').find('minimum').find('ram').text = '134217728'
@@ -1318,6 +1320,15 @@ vnc_password= "{vnc_passwd}"
             self.machine.execute(f"echo '{str(new_rhel_8_1_xml, 'utf-8')}' > {self.test_obj.vm_tmpdir}/rhel-8.1.xml")
             self.machine.execute(f"mount -o bind  {self.test_obj.vm_tmpdir}/rhel-8.1.xml /usr/share/osinfo/os/redhat.com/rhel-8.1.xml")
             self.test_obj.addCleanup(self.machine.execute, "umount /usr/share/osinfo/os/redhat.com/rhel-8.1.xml || true")
+
+            rhel_8_2_xml = self.machine.execute("cat /usr/share/osinfo/os/redhat.com/rhel-8.2.xml")
+            root = ET.fromstring(rhel_8_2_xml)
+            root.find('os').find('resources').find('minimum').find('ram').text = '134217728'
+            root.find('os').find('resources').find('minimum').find('storage').text = '134217728'
+            new_rhel_8_2_xml = ET.tostring(root)
+            self.machine.execute(f"echo '{str(new_rhel_8_2_xml, 'utf-8')}' > {self.test_obj.vm_tmpdir}/rhel-8.2.xml")
+            self.machine.execute(f"mount -o bind  {self.test_obj.vm_tmpdir}/rhel-8.2.xml /usr/share/osinfo/os/redhat.com/rhel-8.2.xml")
+            self.test_obj.addCleanup(self.machine.execute, "umount /usr/share/osinfo/os/redhat.com/rhel-8.2.xml || true")
 
             # Fake rhel 7 image
             rhel_7_1_xml = self.machine.execute("cat /usr/share/osinfo/os/redhat.com/rhel-7.1.xml")
@@ -1902,6 +1913,13 @@ vnc_password= "{vnc_passwd}"
                                                                 offline_token="invalid_token",
                                                                 create_and_run=True),
                                     ["404"])
+
+        runner.checkDialogErrorTest(TestMachinesCreate.VmDialog(self, sourceType='os',
+                                                                os_name=config.RHEL_8_2,
+                                                                os_short_id=config.RHEL_8_2_SHORTID,
+                                                                offline_token="my_offline_token",
+                                                                create_and_run=True),
+                                    ["No image available for RHEL 8.2"])
 
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='os',
                                                       os_name=config.RHEL_8_1,
