@@ -16,6 +16,12 @@ except urllib.error.URLError as error:
 if "error" in ret_obj:
     sys.exit(ret_obj["error"])
 
+# If certain version of RHEL is not available for download through RHSM API (e.g. it's not released yet),
+# RHSM just returns an empty object: { body: [] }.
+# Show appropriate error message in such situation
+if len(ret_obj["body"]) == 0:
+    sys.exit(f"No image available for RHEL {args['rhelVersion']} ({args['arch']}).")
+
 for downloadable_content in ret_obj["body"]:
     if downloadable_content["filename"].endswith("boot.iso"):
         download_url = downloadable_content["downloadHref"]
