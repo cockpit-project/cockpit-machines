@@ -695,14 +695,9 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         # Prepare a shutoff VM and a disk attached to the VM
         args = self.createVm("subVmTest1", running=False)
 
-        disk_xml = '''
-<disk type='volume' device='disk'>
-    <driver name='qemu' type='qcow2'/>
-    <source pool='images' volume='forDeletion'/>
-    <target dev='vdb' bus='virtio'/>
-</disk>'''
-        m.execute("virsh vol-create-as images forDeletion 1M")
-        m.execute(f'echo "{disk_xml}" > /tmp/diskXML; virsh attach-device --current subVmTest1 /tmp/diskXML')
+        # Volumes for deletion
+        m.execute("virsh vol-create-as images a 1M")
+        m.execute("virsh vol-create-as images z 1M")
 
         # Prepare dir pool
         dir_pool = os.path.join(self.vm_tmpdir, "dir_pool")
@@ -738,6 +733,69 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         b.wait_in_text("#card-pf-storage-pools .pf-v5-c-card__header button", "Storage pool")
         b.click(".pf-v5-c-card .pf-v5-c-card__header button:contains(Storage pool)")
         b.wait_visible("#storage-pools-listing")
+
+        # Check for deleting a pool whose disk is used by a VM
+        b.click("#pool-images-system-action-kebab button")
+        b.click("#delete-pool-images-system")
+        b.set_checked("#storage-pool-delete-volumes", True)
+        b.wait_in_text(".pf-v5-c-backdrop .pf-v5-c-helper-text__item-text", "Pool's volumes are used by")
+        b.wait_visible(".pf-v5-c-backdrop footer button[aria-disabled=true]:contains(Delete)")
+
+        # Check "Cancel" button
+        b.click(".pf-v5-c-backdrop footer button:contains(Cancel)")
+        b.wait_not_present(".pf-v5-c-backdrop")
+
+        # Check "X" button of the dialog
+        b.click("#pool-images-system-action-kebab button")
+        b.click("#delete-pool-images-system")
+        b.click(".pf-v5-c-backdrop button[aria-label=Close]")
+        b.wait_not_present(".pf-v5-c-backdrop")
+
+        # Check error shown beside the title, not in the footer
+        # Delete the VM, or the deletion button will be disabled
+        m.execute("virsh dumpxml subVmTest1 > /tmp/subVmTest1.xml")
+        m.execute("virsh undefine subVmTest1")
+        m.execute(f'chattr +a {args["image"]}')
+        self.addCleanup(m.execute, f'chattr -a {args["image"]}')
+
+        b.click("#pool-images-system-action-kebab button")
+        b.click("#delete-pool-images-system")
+        b.set_checked("#storage-pool-delete-volumes", True)
+        b.click("#storage-pool-delete-modal .pf-v5-c-modal-box__footer button:nth-child(1)")
+        b.wait_in_text(".pf-v5-c-backdrop header + div .pf-v5-c-alert__description", "cannot unlink file")
+        m.execute("! test -f /var/lib/libvirt/images/a; ! test -f /var/lib/libvirt/images/z")
+        b.click("#storage-pool-delete-modal .pf-v5-c-modal-box__footer button:nth-child(2)")
+        b.wait_not_present(".pf-v5-c-backdrop")
+
+        # Check the hint of a transient storage pool
+        m.execute("virsh pool-dumpxml images > /tmp/poolImages")
+        m.execute("virsh pool-destroy images; virsh pool-undefine images; virsh pool-create /tmp/poolImages")
+        # self.addCleanup(m.execute, "virsh pool-define /tmp/poolImages")
+        # The pool will not be shown if creating a transient storage pool without defining
+        b.reload()
+        b.enter_page('/machines')
+        b.wait_in_text("body", "Virtual machines")
+
+        b.click("#pool-images-system-action-kebab button")
+        b.wait_visible("#delete-pool-images-system a[aria-disabled=true]")
+        b.mouse("#delete-pool-images-system a", "mouseenter")
+        b.wait_in_text(
+            ".pf-v5-c-tooltip__content",
+            "Non-persistent storage pool cannot be deleted. It ceases to exists when it's deactivated.")
+
+        # Re-define the VM and the pool
+        m.execute("virsh define /tmp/subVmTest1.xml")
+        m.execute("virsh pool-define /tmp/poolImages")
+
+        # Attach the disk
+        disk_xml = '''
+<disk type='volume' device='disk'>
+    <driver name='qemu' type='qcow2'/>
+    <source pool='images' volume='forDeletion'/>
+    <target dev='vdb' bus='virtio'/>
+</disk>'''
+        m.execute("virsh vol-create-as images forDeletion 1M")
+        m.execute(f'echo "{disk_xml}" > /tmp/diskXML; virsh attach-device --current subVmTest1 /tmp/diskXML')
 
         class StoragePoolsCreationAndDeletion:
             def __init__(self,
@@ -813,6 +871,10 @@ class TestMachinesStoragePools(VirtualMachinesCase):
                 b.click(f"#delete-pool-{self.name}-{self.connection}")
                 # Check if deletion dialog is shown
                 b.wait_visible("div.pf-v5-c-modal-box")
+                # Checks for the deletion dialog
+                b.wait_in_text("#storage-pool-delete-modal .pf-v5-c-modal-box__title-text", f"Delete {self.name} storage pool?")
+                # Checks for the icon in the dialog title
+                b.wait_visible('#storage-pool-delete-modal svg[color=orange]')
 
                 if self.activate:
                     if self.vol_name or self.pool_type == "iscsi":
