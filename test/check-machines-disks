@@ -646,7 +646,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             virsh pool-build pool-disk --overwrite
             virsh pool-start pool-disk""")
 
-        loop_dev = self.add_loop_disk()
+        loop_dev = self.add_loopback_disk()
         existing_disk = os.path.basename(loop_dev) + "p1"
         existing_disk2 = os.path.basename(loop_dev) + "p2"
         self.machine.execute(f"""

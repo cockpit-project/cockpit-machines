@@ -35,7 +35,7 @@ COCKPIT_REPO_FILES = \
 	$(NULL)
 
 COCKPIT_REPO_URL = https://github.com/cockpit-project/cockpit.git
-COCKPIT_REPO_COMMIT = 49a7122df205ab434bab884eb3a7be94d1a8e255 # 273 + PR#17577
+COCKPIT_REPO_COMMIT = 1e5f74b9f5e486fca7aa87670983254a2288f37a # 275 + test/common/{net,storage}lib.py
 
 $(COCKPIT_REPO_FILES): $(COCKPIT_REPO_STAMP)
 COCKPIT_REPO_TREE = '$(strip $(COCKPIT_REPO_COMMIT))^{tree}'
