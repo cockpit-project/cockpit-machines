@@ -87,7 +87,10 @@ class TestMachinesMigration(VirtualMachinesCase):
             virsh attach-device --domain subVmTest1 --file /tmp/disk_xml --config
             virsh start subVmTest1""")
 
-        self.add_ram_disk(2, machine2)
+        orig_machine = self.machine
+        self.machine = machine2
+        self.add_ram_disk(2)
+        self.machine = orig_machine
 
     def testSharedStorageMigration(self):
         self._testMigrationGeneric(False, False, None)
