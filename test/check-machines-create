@@ -164,6 +164,10 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                          create_and_run=True),
                                              {"create-vm-dialog-user-login": "User login must not be empty when user password is set"})
 
+        # Check swithing from "os" to "cloud" source type doesn't reset passwords
+        # https://bugzilla.redhat.com/show_bug.cgi?id=2109986
+        runner.checkPasswordsAreNotResetTest(TestMachinesCreate.VmDialog(self))
+
     def testCreateNameGeneration(self):
         config = TestMachinesCreate.TestCreateConfig
         runner = TestMachinesCreate.CreateVmRunner(self)
@@ -909,6 +913,30 @@ vnc_password= "{vnc_passwd}"
 
             return self
 
+        def checkPasswordsAreNotReset(self):
+            b = self.browser
+
+            b.select_from_dropdown("#source-type", "os")
+            b.set_input_text("#os-select-group input", "Fedora")
+            b.click(f"#os-select li button:contains('{TestMachinesCreate.TestCreateConfig.FEDORA_28}')")
+            b.wait_attr_contains("#os-select-group input", "value", TestMachinesCreate.TestCreateConfig.FEDORA_28)
+            b.wait_not_present("#navbar-oops")
+
+            b.click("#pf-tab-1-automation")
+            b.set_input_text("#create-vm-dialog-user-password-pw1", "foobaruser")
+            b.set_input_text("#create-vm-dialog-root-password-pw1", "foobarroot")
+
+            b.click("#pf-tab-0-details-tab")
+            b.select_from_dropdown("#source-type", "cloud")
+
+            b.click("#pf-tab-1-automation")
+
+            # Check swithing from "os" to "cloud" sourcetype did not reset passwords
+            b.wait_attr("#create-vm-dialog-user-password-pw1", "value", "foobaruser")
+            b.wait_attr("#create-vm-dialog-root-password-pw1", "value", "foobarroot")
+
+            return self
+
         def checkOsFiltered(self, present=False):
             b = self.browser
 
@@ -1607,6 +1635,11 @@ vnc_password= "{vnc_passwd}"
 
         def checkOsInputTest(self, dialog):
             dialog.open().checkOsInput().cancel(True)
+
+            self._assertScriptFinished().checkEnvIsEmpty()
+
+        def checkPasswordsAreNotResetTest(self, dialog):
+            dialog.open().checkPasswordsAreNotReset().cancel(True)
 
             self._assertScriptFinished().checkEnvIsEmpty()
 

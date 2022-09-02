@@ -595,7 +595,7 @@ const UsersConfigurationRow = ({
 
     return (
         <>
-            <PasswordFormFields password={rootPassword}
+            <PasswordFormFields initial_password={rootPassword}
                                 password_label={_("Root password")}
                                 password_strength={root_pwd_strength}
                                 idPrefix="create-vm-dialog-root-password"
@@ -615,7 +615,7 @@ const UsersConfigurationRow = ({
                                value={userLogin || ''}
                                onChange={value => onValueChanged('userLogin', value)} />
                 </FormGroup>
-                <PasswordFormFields password={userPassword}
+                <PasswordFormFields initial_password={userPassword}
                                     password_label={_("User password")}
                                     password_strength={user_pwd_strength}
                                     idPrefix="create-vm-dialog-user-password"

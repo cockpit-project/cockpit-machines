@@ -35,7 +35,7 @@ COCKPIT_REPO_FILES = \
 	$(NULL)
 
 COCKPIT_REPO_URL = https://github.com/cockpit-project/cockpit.git
-COCKPIT_REPO_COMMIT = 1e5f74b9f5e486fca7aa87670983254a2288f37a # 275 + test/common/{net,storage}lib.py
+COCKPIT_REPO_COMMIT = 47642abc13e3d93e73cea5acca2c08237afb8142 # 275 + test/common/{net,storage}lib.py + PasswordFormFields
 
 $(COCKPIT_REPO_FILES): $(COCKPIT_REPO_STAMP)
 COCKPIT_REPO_TREE = '$(strip $(COCKPIT_REPO_COMMIT))^{tree}'
