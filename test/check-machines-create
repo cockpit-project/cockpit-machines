@@ -164,6 +164,15 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                          create_and_run=True),
                                              {"create-vm-dialog-user-login": "User login must not be empty when user password is set"})
 
+        # user login
+        runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
+                                                                         storage_size=10, storage_size_unit='MiB',
+                                                                         location=config.VALID_DISK_IMAGE_PATH,
+                                                                         root_password="foo",
+                                                                         create_and_run=True),
+                                             {"create-vm-dialog-root-password-pw1": "Password quality check failed"},
+                                             False)
+
         # Check swithing from "os" to "cloud" source type doesn't reset passwords
         # https://bugzilla.redhat.com/show_bug.cgi?id=2109986
         runner.checkPasswordsAreNotResetTest(TestMachinesCreate.VmDialog(self))
@@ -1198,20 +1207,20 @@ vnc_password= "{vnc_passwd}"
                 raise Exception("There is no dialog to cancel")
             return self
 
-        def createAndExpectInlineValidationErrors(self, errors):
-
+        def createAndExpectInlineValidationErrors(self, errors, create):
             b = self.browser
 
-            if self.sourceType == 'disk_image':
-                if self.create_and_run:
-                    b.click(".pf-c-modal-box__footer button:contains(Import and run)")
+            if create:
+                if self.sourceType == 'disk_image':
+                    if self.create_and_run:
+                        b.click(".pf-c-modal-box__footer button:contains(Import and run)")
+                    else:
+                        b.click(".pf-c-modal-box__footer button:contains(Import and edit)")
                 else:
-                    b.click(".pf-c-modal-box__footer button:contains(Import and edit)")
-            else:
-                if self.create_and_run:
-                    b.click(".pf-c-modal-box__footer button:contains(Create and run)")
-                else:
-                    b.click(".pf-c-modal-box__footer button:contains(Create and edit)")
+                    if self.create_and_run:
+                        b.click(".pf-c-modal-box__footer button:contains(Create and run)")
+                    else:
+                        b.click(".pf-c-modal-box__footer button:contains(Create and edit)")
 
             for error, error_msg in errors.items():
                 error_location = f".pf-c-modal-box__body #{error}-group .pf-c-form__helper-text.pf-m-error"
@@ -1219,12 +1228,13 @@ vnc_password= "{vnc_passwd}"
                 if (error_msg):
                     b.wait_in_text(error_location, error_msg)
 
-            if self.sourceType == 'disk_image':
-                b.wait_visible(".pf-c-modal-box__footer button:contains(Import and run)[aria-disabled=true]")
-                b.wait_visible(".pf-c-modal-box__footer button:contains(Import and edit)[aria-disabled=true]")
-            else:
-                b.wait_visible(".pf-c-modal-box__footer button:contains(Create and run)[aria-disabled=true]")
-                b.wait_visible(".pf-c-modal-box__footer button:contains(Create and edit)[aria-disabled=true]")
+            if create:
+                if self.sourceType == 'disk_image':
+                    b.wait_visible(".pf-c-modal-box__footer button:contains(Import and run)[aria-disabled=true]")
+                    b.wait_visible(".pf-c-modal-box__footer button:contains(Import and edit)[aria-disabled=true]")
+                else:
+                    b.wait_visible(".pf-c-modal-box__footer button:contains(Create and run)[aria-disabled=true]")
+                    b.wait_visible(".pf-c-modal-box__footer button:contains(Create and edit)[aria-disabled=true]")
 
             return self
 
@@ -1651,10 +1661,10 @@ vnc_password= "{vnc_passwd}"
             self._assertScriptFinished().checkEnvIsEmpty()
 
         # Many of testCreate* tests use these helpers - let's keep them here to avoid repetition
-        def checkDialogFormValidationTest(self, dialog, errors):
+        def checkDialogFormValidationTest(self, dialog, errors, create=True):
             dialog.open() \
                 .fill() \
-                .createAndExpectInlineValidationErrors(errors) \
+                .createAndExpectInlineValidationErrors(errors, create) \
                 .cancel(True)
             if dialog.check_script_finished:
                 self._assertScriptFinished()
