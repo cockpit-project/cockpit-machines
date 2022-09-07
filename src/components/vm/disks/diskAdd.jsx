@@ -609,7 +609,7 @@ export class AddDiskModalBody extends React.Component {
             vmName: vm.name,
             vmId: vm.id,
             cacheMode: this.state.cacheMode,
-            shareable: volume && volume.format === "raw" && isVolumeUsed[this.state.existingVolumeName],
+            shareable: volume && volume.format === "raw" && isVolumeUsed[this.state.existingVolumeName].length > 0,
             busType: this.state.busType,
             serial: this.state.serial
         })
