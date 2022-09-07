@@ -298,6 +298,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             bus_type=None, pool_type=None,
             volume_format=None, expected_volume_format=None,
             persistent_vm=True,
+            expected_access=None,  # options: "Read-only", "Writeable", "Writeable and shared"
             pixel_test_tag=None,
             xfail=False, xfail_object=None,
             xfail_error_message=None, xfail_error_title=None,
@@ -323,6 +324,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             self.volume_format = volume_format
             self.expected_volume_format = expected_volume_format
             self.persistent_vm = persistent_vm
+            self.expected_access = expected_access
 
             self.pixel_test_tag = pixel_test_tag
             self.pixel_test_ignore = pixel_test_ignore
@@ -349,7 +351,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         def execute(self):
             self.open()
             self.fill()
-            prefix = "#vm-subVmTest1-disks-adddisk"
+            prefix = f"#vm-{self.vm_name}-disks-adddisk"
 
             if self.pixel_test_tag:
                 self.test_obj.browser.wait_visible(f"{prefix}-dialog-add[aria-disabled=false]")
@@ -478,6 +480,8 @@ class TestMachinesDisks(VirtualMachinesCase):
                 expected_device = self.device or "disk"
 
             b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.expected_target}-bus", expected_bus_type)
+            if self.expected_access:
+                b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.expected_target}-access", self.expected_access)
             b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.expected_target}-device", expected_device)
 
             # Check volume was added to pool's volume list
@@ -492,7 +496,7 @@ class TestMachinesDisks(VirtualMachinesCase):
                 b.wait_visible(f"#pool-{self.pool_name}-system-volume-{self.volume_name}-name")
 
                 b.click(".machines-listing-breadcrumb li a:contains(Virtual machines)")
-                self.test_obj.goToVmPage("subVmTest1")
+                self.test_obj.goToVmPage(self.vm_name)
 
             # Detect volume format
             if self.mode != "custom-path":
@@ -983,6 +987,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         v1 = os.path.join(self.vm_tmpdir, "vm_one")
         m.execute(f"mkdir --mode 777 {v1}")
         m.execute(f"virsh pool-define-as myPoolOne --type dir --target {v1}; virsh pool-start myPoolOne")
+        m.execute("virsh vol-create-as myPoolOne qcowVol --capacity 10M --format qcow2")
 
         self.createVm("subVmTest1", running=False)
 
@@ -1067,6 +1072,60 @@ class TestMachinesDisks(VirtualMachinesCase):
             expected_target='vde',
             xwarning_object="serial-length",
             xwarning_message="Identifier may be silently truncated to 20 characters (serial_so_long_its_l)"
+        ).execute()
+
+        m.execute("touch /var/lib/libvirt/novell.iso")
+        m.execute("virsh vol-create-as myPoolOne rawVol --capacity 10M --format raw")
+        # CDROM (ISO) disk can only be read-only
+        self.VMAddDiskDialog(
+            self,
+            device='cdrom',
+            bus_type='scsi',
+            expected_target='sdd',
+            file_path='/var/lib/libvirt/novell.iso',
+            expected_access='Read-only',
+            mode='custom-path'
+        ).execute()
+
+        # Raw disk should be Writeable
+        self.VMAddDiskDialog(
+            self,
+            vm_name="subVmTest1",
+            pool_name='myPoolOne',
+            volume_name='rawVol',
+            mode='use-existing',
+            expected_target='vdf',
+            expected_access="Writeable",
+            volume_format='raw',
+        ).execute()
+
+        self.createVm("subVmTest2")
+        self.goToMainPage()
+        self.waitVmRow("subVmTest2")
+        self.goToVmPage("subVmTest2")
+        # Adding a raw disk to multiple VMs should make it 'shared'
+        self.VMAddDiskDialog(
+            self,
+            vm_name="subVmTest2",
+            pool_name='myPoolOne',
+            volume_name='rawVol',
+            mode='use-existing',
+            expected_target='vdb',
+            expected_access="Writeable and shared",
+            volume_format='raw',
+        ).execute()
+
+        # QCOW2 disks cannot be 'shared', so even after adding it to multiple VMs, it's access should be only "writeable"
+        m.execute("virsh attach-disk --domain subVmTest1 --source myPoolOne/qcowVol --target vdg --targetbus virtio --config")
+        self.VMAddDiskDialog(
+            self,
+            vm_name="subVmTest2",
+            pool_name='myPoolOne',
+            volume_name='qcowVol',
+            mode='use-existing',
+            expected_target='vdc',
+            expected_access="Writeable",
+            volume_format='qcow2',
         ).execute()
 
     def testDetachDisk(self):
