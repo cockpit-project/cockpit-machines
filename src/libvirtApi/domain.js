@@ -39,6 +39,7 @@ import {
 } from '../components/create-vm-dialog/uiState.js';
 import {
     DOMAINSTATE,
+    getNextAvailableTarget,
     fileDownload,
     getHostDevSourceObject,
     getNodeDevSource,
@@ -60,7 +61,6 @@ import {
 import {
     changeMedia,
     updateBootOrder,
-    updateDisk,
     updateMaxMemory,
 } from '../libvirt-xml-update.js';
 import { storagePoolRefresh } from './storagePool.js';
@@ -1108,10 +1108,45 @@ export function domainStart({ connectionName, id: objPath }) {
     return call(connectionName, objPath, 'org.libvirt.Domain', 'Create', [0], { timeout, type: 'u' });
 }
 
-export function domainUpdateDiskAttributes({ connectionName, objPath, target, readonly, shareable, busType, existingTargets, cache }) {
-    return call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' })
-            .then(domXml => {
-                const updatedXML = updateDisk({ diskTarget: target, domXml, readonly, shareable, busType, existingTargets, cache });
-                return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [updatedXML], { timeout, type: 's' });
-            });
+export function domainUpdateDiskAttributes({ connectionName, vmName, target, readonly, shareable, busType, oldBusType, existingTargets, cache }) {
+    const options = { err: "message" };
+    if (connectionName === "system")
+        options.superuser = "try";
+
+    const shareableOption = shareable ? "yes" : "no";
+    const readonlyOption = readonly ? "yes" : "no";
+    let newTarget = target;
+    let addressBus;
+    let addressType;
+    if (busType !== oldBusType) {
+        newTarget = getNextAvailableTarget(existingTargets, busType);
+        // Workaround for https://github.com/virt-manager/virt-manager/issues/430
+        // Until that issue is fixed, we have to change address type and address bus manually
+        if (busType === "virtio")
+            addressType = "pci";
+        if (busType === "usb" || busType === "scsi" || busType === "sata") {
+            // The only allowed bus value is '0' as defined in function qemuValidateDomainDeviceDefAddressDrive at
+            // https://gitlab.com/libvirt/libvirt/-/blob/master/src/qemu/qemu_validate.c
+            addressBus = 0;
+            if (busType === "usb")
+                addressType = "usb";
+            else
+                addressType = "drive";
+        }
+    }
+    let cacheMode = "";
+    if (cache)
+        cacheMode = `,cache=${cache}`;
+
+    const args = [
+        "virt-xml", "-c", `qemu:///${connectionName}`,
+        vmName, "--edit", `target.dev=${target}`, "--disk",
+        `shareable=${shareableOption},readonly=${readonlyOption},target.bus=${busType},target.dev=${newTarget}${cacheMode}`
+    ];
+    if (addressType)
+        args[args.length - 1] += (`,address.type=${addressType}`);
+    if (!isNaN(addressBus)) // addressBus can also be 0
+        args[args.length - 1] += (`,address.bus=${addressBus}`);
+
+    return cockpit.spawn(args, options);
 }

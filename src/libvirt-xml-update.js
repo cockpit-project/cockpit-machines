@@ -1,5 +1,4 @@
 import { getDoc, getSingleOptionalElem } from './libvirt-xml-parse.js';
-import { getNextAvailableTarget } from './helpers.js';
 
 export function changeMedia({ domXml, target, eject, file, pool, volume }) {
     const s = new XMLSerializer();
@@ -40,56 +39,6 @@ export function changeMedia({ domXml, target, eject, file, pool, volume }) {
     }
 
     return s.serializeToString(deviceXml);
-}
-
-export function updateDisk({ domXml, diskTarget, readonly, shareable, busType, existingTargets, cache }) {
-    const s = new XMLSerializer();
-    const doc = getDoc(domXml);
-    const domainElem = doc.firstElementChild;
-    if (!domainElem)
-        return Promise.reject(new Error("updateBootOrder: domXML has no domain element"));
-
-    const deviceElem = domainElem.getElementsByTagName("devices")[0];
-    const disks = deviceElem.getElementsByTagName("disk");
-
-    for (let i = 0; i < disks.length; i++) {
-        const disk = disks[i];
-        const target = disk.getElementsByTagName("target")[0].getAttribute("dev");
-        if (target == diskTarget) {
-            let shareAbleElem = getSingleOptionalElem(disk, "shareable");
-            if (!shareAbleElem && shareable) {
-                shareAbleElem = doc.createElement("shareable");
-                disk.appendChild(shareAbleElem);
-            } else if (shareAbleElem && !shareable) {
-                shareAbleElem.remove();
-            }
-
-            let readOnlyElem = getSingleOptionalElem(disk, "readonly");
-            if (!readOnlyElem && readonly) {
-                readOnlyElem = doc.createElement("readonly");
-                disk.appendChild(readOnlyElem);
-            } else if (readOnlyElem && !readonly) {
-                readOnlyElem.remove();
-            }
-
-            const targetElem = disk.getElementsByTagName("target")[0];
-            const oldBusType = targetElem.getAttribute("bus");
-            if (busType && oldBusType !== busType) {
-                targetElem.setAttribute("bus", busType);
-                const newTarget = getNextAvailableTarget(existingTargets, busType);
-                targetElem.setAttribute("dev", newTarget);
-
-                const addressElem = getSingleOptionalElem(disk, "address");
-                addressElem.remove();
-            }
-
-            const driverElem = disk.getElementsByTagName("driver")[0];
-            if (cache)
-                driverElem.setAttribute("cache", cache);
-        }
-    }
-
-    return s.serializeToString(doc);
 }
 
 export function updateBootOrder(domXml, devices) {
