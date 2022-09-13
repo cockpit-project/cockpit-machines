@@ -102,27 +102,29 @@ export const VmDetailsPage = ({
 
     if (cockpit.location.path[1] == "console") {
         return (
-            <Page groupProps={{ sticky: 'top' }}
-                  id={"vm-" + vm.name + "-consoles-page"}
-                  isBreadcrumbGrouped
-                  breadcrumb={
-                      <Breadcrumb className='machines-listing-breadcrumb'>
-                          <BreadcrumbItem to='#'>
-                              {_("Virtual machines")}
-                          </BreadcrumbItem>
-                          <BreadcrumbItem to={'#' + cockpit.format("vm?name=$0&connection=$1", encodeURIComponent(vm.name), vm.connectionName)}>
-                              {vm.name}
-                          </BreadcrumbItem>
-                          <BreadcrumbItem isActive>
-                              {_("Console")}
-                          </BreadcrumbItem>
-                      </Breadcrumb>}>
-                {vmActionsPageSection}
-                <PageSection variant={PageSectionVariants.light}>
-                    <Consoles vm={vm} config={config}
-                        onAddErrorNotification={onAddErrorNotification} />
-                </PageSection>
-            </Page>
+            <WithDialogs>
+                <Page groupProps={{ sticky: 'top' }}
+                      id={"vm-" + vm.name + "-consoles-page"}
+                      isBreadcrumbGrouped
+                      breadcrumb={
+                          <Breadcrumb className='machines-listing-breadcrumb'>
+                              <BreadcrumbItem to='#'>
+                                  {_("Virtual machines")}
+                              </BreadcrumbItem>
+                              <BreadcrumbItem to={'#' + cockpit.format("vm?name=$0&connection=$1", encodeURIComponent(vm.name), vm.connectionName)}>
+                                  {vm.name}
+                              </BreadcrumbItem>
+                              <BreadcrumbItem isActive>
+                                  {_("Console")}
+                              </BreadcrumbItem>
+                          </Breadcrumb>}>
+                    {vmActionsPageSection}
+                    <PageSection variant={PageSectionVariants.light}>
+                        <Consoles vm={vm} config={config}
+                            onAddErrorNotification={onAddErrorNotification} />
+                    </PageSection>
+                </Page>
+            </WithDialogs>
         );
     }
 

@@ -55,7 +55,7 @@ EXCLUDES="$EXCLUDES
           TestMachinesConsoles.testInlineConsole
           TestMachinesConsoles.testInlineConsoleWithUrlRoot
           TestMachinesConsoles.testSerialConsole
-          TestMachinesConsoles.testSwitchConsoleFromSerialToGraphical
+          TestMachinesConsoles.testBasic
 
           TestMachinesDisks.testAddDiskAdditionalOptions
           TestMachinesDisks.testAddDiskCustomPath
