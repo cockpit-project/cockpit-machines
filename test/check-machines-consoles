@@ -152,9 +152,9 @@ class TestMachinesConsoles(VirtualMachinesCase):
         self.allow_journal_messages(".* couldn't shutdown fd: Transport endpoint is not connected")
         self.allow_journal_messages("127.0.0.1:5900: couldn't read: Connection refused")
 
-    def testSwitchConsoleFromSerialToGraphical(self):
+    def testBasic(self):
         b = self.browser
-        name = "vmForSwitching"
+        name = "subVmTest1"
 
         self.createVm(name, graphics="vnc", ptyconsole=True)
 
@@ -165,6 +165,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
         self.goToVmPage(name)
         b.wait_in_text(f"#vm-{name}-system-state", "Running")
 
+        # test switching console from serial to graphical
         b.wait_visible(f"#vm-{name}-consoles")
         b.wait_visible(".pf-c-console__vnc canvas")
 
@@ -175,6 +176,23 @@ class TestMachinesConsoles(VirtualMachinesCase):
 
         b.wait_not_present(".pf-c-console__vnc canvas")
         b.wait_visible(f"#{name}-terminal")
+
+        # Go back to Vnc console
+        b.click("#pf-c-console__type-selector")
+        b.wait_visible("#pf-c-console__type-selector + .pf-c-select__menu")
+        b.click("#VncConsole button")
+        b.wait_not_present("#pf-c-console__type-selector + .pf-c-select__menu")
+        b.wait_visible(".pf-c-console__vnc canvas")
+
+        # Go to the expanded console view
+        b.click("button:contains(Expand)")
+
+        # Test deleting VM from console page will not trigger any error
+        self.performAction(name, "delete")
+        b.wait_visible(f"#vm-{name}-delete-modal-dialog")
+        b.click(f"#vm-{name}-delete-modal-dialog button:contains(Delete)")
+        b.wait_in_text("body", "Virtual machines")
+        self.waitVmRow(name, present=False)
 
         b.wait_not_present("#navbar-oops")
 
