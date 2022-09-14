@@ -36,7 +36,7 @@ const _ = cockpit.gettext;
 
 const VmNotRunning = () => {
     return (
-        <div>
+        <div id="vm-not-running-message">
             {_("Please start the virtual machine to access its console.")}
         </div>
     );
