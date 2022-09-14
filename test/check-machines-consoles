@@ -187,6 +187,11 @@ class TestMachinesConsoles(VirtualMachinesCase):
         # Go to the expanded console view
         b.click("button:contains(Expand)")
 
+        # Test message is present if VM is not running
+        self.performAction(name, "forceOff", checkExpectedState=False)
+
+        b.wait_in_text("#vm-not-running-message", "start the virtual machine")
+
         # Test deleting VM from console page will not trigger any error
         self.performAction(name, "delete")
         b.wait_visible(f"#vm-{name}-delete-modal-dialog")
