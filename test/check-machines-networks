@@ -767,6 +767,13 @@ class TestMachinesNetworks(VirtualMachinesCase):
         # check virsh state
         wait(lambda: "no" == m.execute("virsh net-info test_network2 | grep 'Active:' | awk '{print $2}'").strip(), tries=5)
 
+        # check "X" button of the deletion dialog
+        b.click(f"#network-test_network2-{connectionName}-action-kebab button")
+        b.click(f'#delete-network-test_network2-{connectionName}')
+        b.wait_visible("#delete-resource-modal")
+        b.click("#delete-resource-modal button[aria-label=Close]")
+        b.wait_not_present("#delete-resource-modal")
+
         # Delete an inactive network
         b.click(f"#network-test_network2-{connectionName}-action-kebab button")
         b.click(f'#delete-network-test_network2-{connectionName}')
