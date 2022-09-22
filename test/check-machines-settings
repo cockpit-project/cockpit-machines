@@ -461,12 +461,13 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         # Change CPU model setting
         b.click("#vm-subVmTest1-cpu-model button")
+        b.wait_visible("#machines-cpu-type-modal")
         cpu_model = "host-model"
         if m.image in distrosWithDefaultHostModel:
             cpu_model = "host-passthrough"
         b.select_from_dropdown("#cpu-model-select-group select", cpu_model)
         b.click("#cpu-config-dialog-apply")
-        b.wait_not_present("#machines-vcpu-modal-dialog")
+        b.wait_not_present("#machines-cpu-type-modal")
         b.wait_visible("#cpu-tooltip")
 
         # Change vCPUs setting
