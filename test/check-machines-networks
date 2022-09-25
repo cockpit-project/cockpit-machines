@@ -28,7 +28,7 @@ sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
 
 from machineslib import VirtualMachinesCase  # noqa
 from testlib import nondestructive, test_main, wait  # noqa
-from machinesxmls import TEST_NETWORK2_XML, TEST_NETWORK3_XML, TEST_NETWORK4_XML, TEST_NETWORK_XML  # noqa
+from machinesxmls import TEST_NETWORK2_XML, TEST_NETWORK3_XML, TEST_NETWORK4_XML, TEST_NETWORK_XML, TEST_NETWORK_IPV6_XML  # noqa
 
 
 def getNetworkDevice(m):
@@ -810,7 +810,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
         class NetworkAddStaticDCHPHostsDialog(object):
             def __init__(
                 self, test_obj=None, network_name="default", connection_name="system", mac=None, ip=None, entry_id=0,
-                xfail=None, remove=True
+                xfail=None, close_dialog=True, remove=True
             ):
                 self.test_obj = test_obj
                 self.network_name = network_name
@@ -820,6 +820,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
                 self.entry_id = entry_id
                 self.xfail = xfail
                 self.remove = remove
+                self.close_dialog = close_dialog
 
             def execute(self):
                 self.open()
@@ -835,6 +836,8 @@ class TestMachinesNetworks(VirtualMachinesCase):
                 b.click(f"#network-{self.network_name}-{self.connection_name}-static-host-entries-add")
                 b.wait_visible("#add-new-static-entry-mac-address")
                 b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Add a DHCP static host entry")
+                b.wait_in_text("div.pf-c-modal-box__body label[for=add-new-static-entry-mac-address]", "MAC address")
+                b.wait_in_text("div.pf-c-modal-box__body label[for=add-new-static-entry-ip-address]", "IP address")
 
             def fill(self):
                 b.set_input_text("#add-new-static-entry-mac-address", self.mac)
@@ -847,10 +850,17 @@ class TestMachinesNetworks(VirtualMachinesCase):
             def add(self):
                 b.click(".pf-c-modal-box__footer button:contains(Add)")
 
-                if (self.xfail):
+                if self.xfail:
                     # Check incomplete dialog
-                    b.wait_in_text(".pf-c-modal-box .pf-c-alert.pf-m-danger", self.xfail)
-                    self.cancel()
+                    for k, v in self.xfail.items():
+                        if k == "header":
+                            b.wait_in_text(".pf-c-modal-box .pf-c-alert.pf-m-danger", v)
+                            break
+                        else:
+                            b.wait_in_text(k, v)
+
+                    if self.close_dialog:
+                        self.cancel()
                 else:
                     b.wait_not_present("#add-new-static-entry")
 
@@ -882,6 +892,10 @@ class TestMachinesNetworks(VirtualMachinesCase):
         b = self.browser
         m = self.machine
 
+        # Create an IPv6 network
+        m.write("/tmp/xml", TEST_NETWORK_IPV6_XML)
+        m.execute("virsh net-define /tmp/xml; virsh net-start test_network_ipv6")
+
         self.createVm("subVmTest1", running=False)
 
         self.login_and_go("/machines")
@@ -893,9 +907,55 @@ class TestMachinesNetworks(VirtualMachinesCase):
         # Check that all networks are there
         b.wait_in_text("body", "Networks")
         self.waitNetworkRow("default")
+        self.waitNetworkRow("test_network_ipv6")
 
         # Expand row for first network
         self.toggleNetworkRow("default")
+        # Expand the network created above
+        self.toggleNetworkRow("test_network_ipv6")
+
+        # "Add entry" is not supported for IPv6 network
+        b.wait_not_present("#network-test_network_ipv6-system-static-host-entries-add")
+        b.wait_in_text("#network-test_network_ipv6-system-ipv6-dhcp-static", "none")
+
+        # Check "X" button of the dialog, "Cancel" is checked when xfail set
+        b.click("#network-default-system-static-host-entries-add")
+        b.wait_visible("#add-new-static-entry")
+
+        b.click("#add-new-static-entry button[aria-label=Close]")
+        b.wait_not_present("#add-new-static-entry")
+
+        # Check the errors when the all inputs are empty
+        d = NetworkAddStaticDCHPHostsDialog(
+            self,
+            xfail={"#add-new-static-entry-mac-address-helper": "MAC address must not be empty",
+                   "#add-new-static-entry-ip-address-helper": "IP address must not be empty"},
+            close_dialog=False)
+        d.open()
+        d.add()
+
+        # Keep "IP address" empty, fill in "MAC address"
+        b.set_input_text("#add-new-static-entry-mac-address", "test")
+        b.wait_not_present("#add-new-static-entry-mac-address-helper")
+        b.wait_visible("#add-new-static-entry-ip-address-helper")
+
+        # Keep "MAC address" empty, fill in "IP address"
+        b.set_input_text("#add-new-static-entry-mac-address", "")
+        b.set_input_text("#add-new-static-entry-ip-address", "test")
+        b.wait_visible("#add-new-static-entry-mac-address-helper")
+        b.wait_not_present("#add-new-static-entry-ip-address-helper")
+
+        # Fill in "MAC address" and "IP address"
+        b.set_input_text("#add-new-static-entry-mac-address", "test")
+        b.set_input_text("#add-new-static-entry-ip-address", "test")
+        b.wait_not_present("#add-new-static-entry-mac-address-helper")
+        b.wait_not_present("#add-new-static-entry-ip-address-helper")
+
+        # An error should be raised if "MAC address" and "IP address" is invaild
+        b.click("#add-new-static-entry-save")
+        b.wait_in_text(
+            ".pf-m-danger .pf-c-alert__description",
+            "XML error: Cannot parse MAC address")
 
         # Attach basic static DHCP host and try to remove it
         NetworkAddStaticDCHPHostsDialog(
@@ -917,7 +977,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
             self,
             mac=self.getDomainMacAddress("subVmTest1"),
             ip="192.168.122.222",
-            xfail="there is an existing dhcp host entry",
+            xfail={"header": "there is an existing dhcp host entry"},
         ).execute()
 
         # Check that the static IP is correctly assigned to the VM

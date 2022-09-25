@@ -70,6 +70,17 @@ TEST_NETWORK4_XML = """
 </network>
 """
 
+TEST_NETWORK_IPV6_XML = """
+<network>
+  <name>test_network_ipv6</name>
+  <ip family='ipv6' address='fd00:e81d:a6d7:55::1' prefix='64'>
+    <dhcp>
+      <range start='fd00:e81d:a6d7:55::100' end='fd00:e81d:a6d7:55::1ff'/>
+    </dhcp>
+  </ip>
+</network>
+"""
+
 POOL_XML = """
 <pool type='dir'>
   <name>images</name>
