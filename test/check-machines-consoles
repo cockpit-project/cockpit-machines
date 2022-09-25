@@ -19,6 +19,7 @@
 
 import os
 import sys
+import time
 
 # import Cockpit's machinery for test VMs and its browser test API
 TEST_DIR = os.path.dirname(__file__)
@@ -118,12 +119,16 @@ class TestMachinesConsoles(VirtualMachinesCase):
 
         b.wait_in_text(f"#{name}-terminal .xterm-accessibility-tree", f"Connected to domain '{name}'")
 
-        # in case the OS already finished booting, press Enter into the console to re-trigger the login prompt
-        b.focus(f"#{name}-terminal .xterm-accessibility-tree")
-        b.key_press("\r")
-
-        with b.wait_timeout(60):
-            b.wait_in_text(f"#{name}-terminal .xterm-accessibility-tree", "cirros login")
+        # In case the OS already finished booting, press Enter into the console to re-trigger the login prompt
+        # Sometimes, pressing Enter one time doesn't take effect, so loop to press Enter to make sure the console has accepted it
+        for _ in range(0, 60):
+            b.focus(f"#{name}-terminal .xterm-accessibility-tree")
+            b.key_press("\r")
+            if "cirros login" in b.text(f"#{name}-terminal .xterm-accessibility-tree"):
+                break
+            time.sleep(1)
+        # Make sure the content of console is expected
+        wait(lambda: "cirros login" in b.text(f"#{name}-terminal .xterm-accessibility-tree"))
 
         b.click(f"#{name}-serialconsole-disconnect")
         b.wait_text(f"#{name}-terminal", "Disconnected from serial console. Click the connect button.")
