@@ -181,6 +181,11 @@ class VmOverviewCard extends React.Component {
                         </Text>
 
                         <DescriptionListGroup>
+                            <DescriptionListTerm>{_("Connection")}</DescriptionListTerm>
+                            <DescriptionListDescription id={`${idPrefix}-connection`}>{rephraseUI('connections', vm.connectionName)}</DescriptionListDescription>
+                        </DescriptionListGroup>
+
+                        <DescriptionListGroup>
                             <DescriptionListTerm>{_("State")}</DescriptionListTerm>
                             <DescriptionListDescription>
                                 <StateIcon error={vm.error}

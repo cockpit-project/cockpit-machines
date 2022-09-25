@@ -1545,6 +1545,11 @@ vnc_password= "{vnc_passwd}"
             if not (b.is_present("#vm-details") and b.is_visible("#vm-details")):
                 self.test_obj.goToVmPage(name, dialog.connection or "system")
 
+            # Check connection information in the details page
+            b.wait_in_text(
+                f"#vm-{dialog.name}-connection",
+                "System" if connection == "system" else "User session")
+
             vm_state = b.text(f"#vm-{name}-{connection}-state")
 
             # check firmware configuration is available after importing and/or before installing VM
