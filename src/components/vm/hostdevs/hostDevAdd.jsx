@@ -173,6 +173,7 @@ const AddHostDev = ({ idPrefix, vm }) => {
     const [selectableDevices, setSelectableDevices] = useState([]);
     const [dialogError, setDialogError] = useState("");
     const [dialogErrorDetail, setDialogErrorDetail] = useState("");
+    const [addHostDevInProgress, setAddHostDevInProgress] = useState(false);
 
     const { nodeDevices } = store.getState();
     const allDevices = devicesHaveAChild([...nodeDevices]);
@@ -190,6 +191,7 @@ const AddHostDev = ({ idPrefix, vm }) => {
         const devicesToAttach = selectableDevices.flatMap(device => device.selected ? [device.nodeDev] : []);
 
         if (devicesToAttach.length > 0) {
+            setAddHostDevInProgress(true);
             return domainAttachHostDevices({ connectionName: vm.connectionName, vmName: vm.name, live: vm.state !== "shut off", devices: devicesToAttach })
                     .then(() => {
                         domainGet({ connectionName: vm.connectionName, id: vm.id });
@@ -198,7 +200,8 @@ const AddHostDev = ({ idPrefix, vm }) => {
                     .catch(exc => {
                         setDialogError(_("Host device could not be attached"));
                         setDialogErrorDetail(exc.message);
-                    });
+                    })
+                    .finally(() => setAddHostDevInProgress(false));
         } else {
             setDialogError(_("No host device selected"));
         }
@@ -217,6 +220,8 @@ const AddHostDev = ({ idPrefix, vm }) => {
                 <ModalError dialogError={dialogError}
                             dialogErrorDetail={dialogErrorDetail} />}
             <Button id={`${idPrefix}-attach`}
+                    isLoading={addHostDevInProgress}
+                    isDisabled={addHostDevInProgress}
                     variant="primary"
                     onClick={attach}>
                 {_("Add")}
