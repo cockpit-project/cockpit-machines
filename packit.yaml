@@ -30,11 +30,6 @@ jobs:
     owner: "@cockpit"
     project: "cockpit-preview"
     preserve_project: True
-    targets:
-      - fedora-36
-      - fedora-37
-      - centos-stream-8-x86_64
-      - centos-stream-9-x86_64
     actions:
       post-upstream-clone: make cockpit-machines.spec
       # HACK: tarball for releases (copr_build, koji, etc.), copying spec's Source0; this
