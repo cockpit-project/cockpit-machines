@@ -107,6 +107,7 @@ export class AddNIC extends React.Component {
             networkMac: "",
             permanent: false,
             availableSources: props.availableSources,
+            addVNicInProgress: false,
         };
         this.add = this.add.bind(this);
         this.onValueChanged = this.onValueChanged.bind(this);
@@ -140,6 +141,7 @@ export class AddNIC extends React.Component {
         const Dialogs = this.context;
         const { vm, vms } = this.props;
 
+        this.setState({ addVNicInProgress: true });
         domainAttachIface({
             connectionName: vm.connectionName,
             vmName: vm.name,
@@ -156,7 +158,8 @@ export class AddNIC extends React.Component {
                     domainGet({ connectionName: vm.connectionName, id: vm.id });
                     Dialogs.close();
                 })
-                .catch(exc => this.dialogErrorSet(_("Network interface settings could not be saved"), exc.message));
+                .catch(exc => this.dialogErrorSet(_("Network interface settings could not be saved"), exc.message))
+                .finally(() => this.setState({ addVNicInProgress: false }));
     }
 
     render() {
@@ -194,7 +197,11 @@ export class AddNIC extends React.Component {
                 footer={
                     <>
                         {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
-                        <Button isDisabled={["network", "direct", "bridge"].includes(this.state.networkType) && this.state.networkSource === undefined}
+                        <Button isLoading={this.state.addVNicInProgress}
+                                isDisabled={
+                                    (["network", "direct", "bridge"].includes(this.state.networkType) && this.state.networkSource === undefined) ||
+                                    this.state.addVNicInProgress
+                                }
                                 id={`${idPrefix}-add`}
                                 variant='primary'
                                 onClick={this.add}>
