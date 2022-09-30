@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 
@@ -25,6 +25,8 @@ import {
     DescriptionListTerm,
     DescriptionListGroup,
     DescriptionListDescription,
+    Dropdown,
+    KebabToggle,
 } from '@patternfly/react-core';
 
 import { domainDetachDisk, domainGet } from '../../../libvirtApi/domain.js';
@@ -111,6 +113,8 @@ DiskExtras.propTypes = {
 };
 
 export const DiskActions = ({ vm, disk, supportedDiskBusTypes, idPrefixRow }) => {
+    const [isActionOpen, setIsActionOpen] = useState(false);
+
     const onRemoveDisk = () => {
         return domainDetachDisk({ connectionName: vm.connectionName, id: vm.id, name: vm.name, target: disk.target, live: vm.state === 'running', persistent: vm.persistent })
                 .then(() => domainGet({ connectionName: vm.connectionName, id: vm.id }));
@@ -132,16 +136,27 @@ export const DiskActions = ({ vm, disk, supportedDiskBusTypes, idPrefixRow }) =>
 
     return (
         <div className='machines-listing-actions'>
-            <DeleteResourceButton objectId={vm.name + "-disk-" + disk.target}
-                                  disabled={vm.state != 'shut off' && vm.state != 'running'}
-                                  dialogProps={deleteDialogProps}
-                                  overlayText={_("The VM needs to be running or shut off to detach this device")}
-                                  actionName={_("Remove")} />
             { vm.persistent && vm.inactiveXML.disks[disk.target] && // supported only  for persistent disks
             <EditDiskAction disk={disk}
                             vm={vm}
                             idPrefix={`${idPrefixRow}-edit`}
                             supportedDiskBusTypes={supportedDiskBusTypes} />}
+            <Dropdown onSelect={() => setIsActionOpen(!isActionOpen)}
+                      key={idPrefixRow + "-action-kebab"}
+                      id={idPrefixRow + "-action-kebab"}
+                      toggle={<KebabToggle onToggle={(isOpen) => setIsActionOpen(isOpen)} />}
+                      isPlain
+                      isOpen={isActionOpen}
+                      position='right'
+                      dropdownItems={[
+                          <DeleteResourceButton objectId={idPrefixRow}
+                                                key={idPrefixRow}
+                                                disabled={vm.state != 'shut off' && vm.state != 'running'}
+                                                dialogProps={deleteDialogProps}
+                                                overlayText={_("The VM needs to be running or shut off to detach this device")}
+                                                actionName={_("Remove")}
+                                                isDropdownItem />
+                      ]} />
         </div>
     );
 };

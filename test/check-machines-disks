@@ -1163,8 +1163,10 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
 
+        b.wait_visible("#vm-subVmTest1-disks-vdc-action-kebab")
+        b.click("#vm-subVmTest1-disks-vdc-action-kebab button")
         b.wait_visible("#vm-subVmTest1-disks-vdc-device")
-        b.click("#delete-subVmTest1-disk-vdc")
+        b.click("#delete-vm-subVmTest1-disks-vdc")
         b.wait_visible(".pf-c-modal-box")
         b.wait_in_text(".pf-c-modal-box__body .pf-c-description-list", "subVmTest1")
         b.wait_in_text("#delete-resource-modal-target", "vdc")
@@ -1185,8 +1187,10 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_not_present("#vm-subVmTest1-disks-vdc-device")
 
         # Test detaching permanent disk of a stopped domain
+        b.wait_visible("#vm-subVmTest1-disks-vdd-action-kebab")
+        b.click("#vm-subVmTest1-disks-vdd-action-kebab button")
         b.wait_visible("#vm-subVmTest1-disks-vdd-device")
-        b.click("#delete-subVmTest1-disk-vdd")
+        b.click("#delete-vm-subVmTest1-disks-vdd")
         b.wait_in_text("#delete-resource-modal-target", "vdd")
         b.wait_in_text("#delete-resource-modal-file", vdd_path)
         b.wait_visible(".pf-c-modal-box")
@@ -1212,7 +1216,10 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_visible("#vm-subVmTest1-disks-vdf-device")
 
         def removeDiskAndChecks(target, path):
-            b.click(f"#delete-subVmTest1-disk-{target}")
+            b.wait_visible(f"#vm-subVmTest1-disks-{target}-action-kebab")
+            b.click(f"#vm-subVmTest1-disks-{target}-action-kebab button")
+            b.wait_visible(f"#delete-vm-subVmTest1-disks-{target}")
+            b.click(f"#delete-vm-subVmTest1-disks-{target}")
             b.wait_in_text("div[role=dialog]:contains(\"Remove disk\")", target)
             b.wait_in_text("#delete-resource-modal-target", target)
             b.wait_in_text("#delete-resource-modal-file", path)
@@ -1233,15 +1240,19 @@ class TestMachinesDisks(VirtualMachinesCase):
         wait(lambda: "login as 'cirros' user" in m.execute(f"cat {args['logfile']}"), delay=3)
         m.execute("virsh suspend subVmTest1")
         b.wait_in_text("#vm-subVmTest1-system-state", "Paused")
-        b.wait_attr("#delete-subVmTest1-disk-vde", "disabled", "")
+        b.wait_visible("#vm-subVmTest1-disks-vde-action-kebab")
+        b.click("#vm-subVmTest1-disks-vde-action-kebab button")
+        b.wait_visible("#delete-vm-subVmTest1-disks-vde a[aria-disabled=true]")
         m.execute("virsh resume subVmTest1")
         wait(lambda: "login as 'cirros' user." in self.machine.execute(f"cat {args['logfile']}"), delay=3)
 
         # Test detaching of disk on non-persistent VM
         m.execute("virsh undefine subVmTest1")
         m.execute(f"virsh attach-disk --domain subVmTest1 --source {p1}/mydiskofpoolone_1 --target vdc --targetbus virtio")
+        b.wait_visible("#vm-subVmTest1-disks-vdc-action-kebab")
+        b.click("#vm-subVmTest1-disks-vdc-action-kebab button")
         b.wait_visible("#vm-subVmTest1-disks-vdc-device")
-        b.click("#delete-subVmTest1-disk-vdc")
+        b.click("#delete-vm-subVmTest1-disks-vdc")
         b.wait_visible(".pf-c-modal-box")
         b.click(".pf-c-modal-box__footer button:contains(Remove)")
         b.wait_not_present("#vm-subVmTest1-disks-vdc-device")
