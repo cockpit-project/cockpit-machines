@@ -1546,9 +1546,7 @@ vnc_password= "{vnc_passwd}"
                 self.test_obj.goToVmPage(name, dialog.connection or "system")
 
             # Check connection information in the details page
-            b.wait_in_text(
-                f"#vm-{dialog.name}-connection",
-                "System" if connection == "system" else "User session")
+            b.wait_in_text(f"#vm-{dialog.name}-connection", "System" if connection == "system" else "User session")
 
             vm_state = b.text(f"#vm-{name}-{connection}-state")
 
