@@ -27,6 +27,10 @@ import {
     DescriptionListDescription,
 } from '@patternfly/react-core';
 
+import { domainDetachDisk, domainGet } from '../../../libvirtApi/domain.js';
+import { EditDiskAction } from './diskEdit.jsx';
+import { DeleteResourceButton } from '../../common/deleteResource.jsx';
+
 const _ = cockpit.gettext;
 
 export const DISK_SOURCE_LIST = [
@@ -104,4 +108,40 @@ DiskExtras.propTypes = {
     discard: PropTypes.string,
     errorPolicy: PropTypes.string,
     idPrefix: PropTypes.string.isRequired,
+};
+
+export const DiskActions = ({ vm, disk, supportedDiskBusTypes, idPrefixRow }) => {
+    const onRemoveDisk = () => {
+        return domainDetachDisk({ connectionName: vm.connectionName, id: vm.id, name: vm.name, target: disk.target, live: vm.state === 'running', persistent: vm.persistent })
+                .then(() => domainGet({ connectionName: vm.connectionName, id: vm.id }));
+    };
+
+    const deleteDialogProps = {
+        title: _("Remove disk from VM?"),
+        actionName: _("Remove"),
+        errorMessage: cockpit.format(_("Disk $0 could not be removed"), disk.target),
+        actionDescription: cockpit.format(_("This disk will be removed from $0:"), vm.name),
+        objectDescription: [
+            { name: _("Target"), value: <span className="ct-monospace">{disk.target}</span> },
+            ...DISK_SOURCE_LIST.flatMap(entry => getDiskSourceValue(disk.source, entry.name)
+                ? { name: entry.label, value: <span className="ct-monospace">{getDiskSourceValue(disk.source, entry.name)}</span> }
+                : [])
+        ],
+        deleteHandler: onRemoveDisk,
+    };
+
+    return (
+        <div className='machines-listing-actions'>
+            <DeleteResourceButton objectId={vm.name + "-disk-" + disk.target}
+                                  disabled={vm.state != 'shut off' && vm.state != 'running'}
+                                  dialogProps={deleteDialogProps}
+                                  overlayText={_("The VM needs to be running or shut off to detach this device")}
+                                  actionName={_("Remove")} />
+            { vm.persistent && vm.inactiveXML.disks[disk.target] && // supported only  for persistent disks
+            <EditDiskAction disk={disk}
+                            vm={vm}
+                            idPrefix={`${idPrefixRow}-edit`}
+                            supportedDiskBusTypes={supportedDiskBusTypes} />}
+        </div>
+    );
 };
