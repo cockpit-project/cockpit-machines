@@ -22,6 +22,7 @@ import PropTypes from 'prop-types';
 import {
     Button,
     DescriptionList, DescriptionListGroup, DescriptionListTerm, DescriptionListDescription,
+    DropdownItem,
     Modal,
     Tooltip
 } from '@patternfly/react-core';
@@ -102,17 +103,24 @@ DeleteResourceModal.propTypes = {
     deleteHandler: PropTypes.func.isRequired
 };
 
-export const DeleteResourceButton = ({ objectId, disabled, overlayText, actionName, dialogProps, isLink, isInline, className }) => {
+export const DeleteResourceButton = ({ objectId, disabled, overlayText, actionName, dialogProps, isLink, isInline, className, isDropdownItem }) => {
     const Dialogs = useDialogs();
 
-    const button = (
-        <Button id={`delete-${objectId}`}
-                className={className}
-                variant={isLink ? 'link' : 'danger'}
-                isDanger={isLink}
-                isInline={isInline}
-                onClick={() => Dialogs.show(<DeleteResourceModal {...dialogProps} />)}
-                isDisabled={disabled}>
+    const button = (isDropdownItem
+        ? <DropdownItem className={className ? `pf-m-danger ${className}` : "pf-m-danger"}
+                        id={`delete-${objectId}`}
+                        key={`delete-${objectId}`}
+                        isDisabled={disabled}
+                        onClick={() => Dialogs.show(<DeleteResourceModal {...dialogProps} />)}>
+            {actionName || _("Delete")}
+        </DropdownItem>
+        : <Button id={`delete-${objectId}`}
+                  className={className}
+                  variant={isLink ? 'link' : 'danger'}
+                  isDanger={isLink}
+                  isInline={isInline}
+                  onClick={() => Dialogs.show(<DeleteResourceModal {...dialogProps} />)}
+                  isDisabled={disabled}>
             {actionName || _("Delete")}
         </Button>
     );
