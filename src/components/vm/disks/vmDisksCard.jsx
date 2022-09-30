@@ -165,125 +165,123 @@ VmDisksCardLibvirt.propTypes = {
     vm: PropTypes.object.isRequired,
 };
 
-export class VmDisksCard extends React.Component {
-    render() {
-        const { vm, disks, renderCapacity, supportedDiskBusTypes } = this.props;
-        let renderCapacityUsed, renderAccess, renderAdditional;
-        const columnTitles = [_("Device")];
-        const idPrefix = `${vmId(vm.name)}-disks`;
+export const VmDisksCard = ({ vm, disks, renderCapacity, supportedDiskBusTypes }) => {
+    let renderCapacityUsed, renderAccess, renderAdditional;
+    const columnTitles = [_("Device")];
+    const idPrefix = `${vmId(vm.name)}-disks`;
 
-        if (disks && disks.length > 0) {
-            renderCapacityUsed = disks.some(disk => (!!disk.used));
-            renderAccess = disks.some(disk => (typeof disk.readonly !== "undefined") || (typeof disk.shareable !== "undefined"));
-            renderAdditional = disks.some(disk => (disk.driver.cache || disk.driver.io || disk.driver.discard || disk.driver.errorPolicy || disk.serial));
+    if (disks && disks.length > 0) {
+        renderCapacityUsed = disks.some(disk => (!!disk.used));
+        renderAccess = disks.some(disk => (typeof disk.readonly !== "undefined") || (typeof disk.shareable !== "undefined"));
+        renderAdditional = disks.some(disk => (disk.driver.cache || disk.driver.io || disk.driver.discard || disk.driver.errorPolicy || disk.serial));
 
-            if (renderCapacity) {
-                if (renderCapacityUsed) {
-                    columnTitles.push(_("Used"));
-                }
-                columnTitles.push(_("Capacity"));
+        if (renderCapacity) {
+            if (renderCapacityUsed) {
+                columnTitles.push(_("Used"));
             }
-            columnTitles.push(_("Bus"));
-            if (renderAccess) {
-                columnTitles.push(_("Access"));
-            }
-            columnTitles.push(_("Source"));
-            if (renderAdditional)
-                columnTitles.push(_("Additional"));
+            columnTitles.push(_("Capacity"));
+        }
+        columnTitles.push(_("Bus"));
+        if (renderAccess) {
+            columnTitles.push(_("Access"));
+        }
+        columnTitles.push(_("Source"));
+        if (renderAdditional)
+            columnTitles.push(_("Additional"));
 
-            columnTitles.push('');
+        columnTitles.push('');
+    }
+
+    const rows = disks.map(disk => {
+        const idPrefixRow = `${idPrefix}-${(disk.target || disk.device)}`;
+        const columns = [
+            { title: <VmDiskCell value={disk.device} id={`${idPrefixRow}-device`} key={`${idPrefixRow}-device`} /> },
+
+        ];
+
+        if (renderCapacity) {
+            if (renderCapacityUsed) {
+                columns.push({ title: <StorageUnit value={disk.used} id={`${idPrefixRow}-used`} key={`${idPrefixRow}-used`} /> });
+            }
+            columns.push({ title: <StorageUnit value={disk.capacity} id={`${idPrefixRow}-capacity`} key={`${idPrefixRow}-capacity`} /> });
         }
 
-        const rows = disks.map(disk => {
-            const idPrefixRow = `${idPrefix}-${(disk.target || disk.device)}`;
-            const columns = [
-                { title: <VmDiskCell value={disk.device} id={`${idPrefixRow}-device`} key={`${idPrefixRow}-device`} /> },
+        columns.push({ title: <VmDiskCell value={disk.bus} id={`${idPrefixRow}-bus`} key={`${idPrefixRow}-bus`} /> });
 
-            ];
-
-            if (renderCapacity) {
-                if (renderCapacityUsed) {
-                    columns.push({ title: <StorageUnit value={disk.used} id={`${idPrefixRow}-used`} key={`${idPrefixRow}-used`} /> });
-                }
-                columns.push({ title: <StorageUnit value={disk.capacity} id={`${idPrefixRow}-capacity`} key={`${idPrefixRow}-capacity`} /> });
-            }
-
-            columns.push({ title: <VmDiskCell value={disk.bus} id={`${idPrefixRow}-bus`} key={`${idPrefixRow}-bus`} /> });
-
-            if (renderAccess) {
-                const access = (
-                    <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${idPrefixRow}-access`}>
-                        <FlexItem>{ disk.readonly ? _("Read-only") : disk.shareable ? _("Writeable and shared") : _("Writeable") }</FlexItem>
-                        { vm.state === "running" &&
-                        (diskPropertyChanged(vm, disk.target, "readonly") || diskPropertyChanged(vm, disk.target, "shareable")) &&
-                            <WarningInactive iconId={`${idPrefixRow}-access-tooltip`} tooltipId={`tip-${idPrefixRow}-access`} /> }
-                    </Flex>
-                );
-                columns.push({ title: access });
-            }
-
-            columns.push({ title: <DiskSourceCell diskSource={disk.source} idPrefix={idPrefixRow} /> });
-
-            if (renderAdditional) {
-                columns.push({
-                    title: <DiskExtras idPrefix={idPrefixRow}
-                                       cache={disk.driver.cache}
-                                       io={disk.driver.io}
-                                       discard={disk.driver.discard}
-                                       serial={disk.serial}
-                                       errorPolicy={disk.driver.errorPolicy} />
-                });
-            }
-
-            const onRemoveDisk = () => {
-                return domainDetachDisk({ connectionName: vm.connectionName, id: vm.id, name: vm.name, target: disk.target, live: vm.state === 'running', persistent: vm.persistent })
-                        .then(() => domainGet({ connectionName: vm.connectionName, id:vm.id }));
-            };
-
-            const deleteDialogProps = {
-                title: _("Remove disk from VM?"),
-                actionName: _("Remove"),
-                errorMessage: cockpit.format(_("Disk $0 could not be removed"), disk.target),
-                actionDescription: cockpit.format(_("This disk will be removed from $0:"), vm.name),
-                objectDescription: [
-                    { name: _("Target"), value: <span className="ct-monospace">{disk.target}</span> },
-                    ...DISK_SOURCE_LIST.flatMap(entry => getDiskSourceValue(disk.source, entry.name)
-                        ? { name: entry.label, value: <span className="ct-monospace">{getDiskSourceValue(disk.source, entry.name)}</span> }
-                        : [])
-                ],
-                deleteHandler: () => onRemoveDisk(),
-            };
-
-            const diskActions = (
-                <div className='machines-listing-actions'>
-                    <DeleteResourceButton objectId={vm.name + "-disk-" + disk.target}
-                                          disabled={vm.state != 'shut off' && vm.state != 'running'}
-                                          dialogProps={deleteDialogProps}
-                                          overlayText={_("The VM needs to be running or shut off to detach this device")}
-                                          actionName={_("Remove")} />
-                    { vm.persistent && vm.inactiveXML.disks[disk.target] && // supported only  for persistent disks
-                    <EditDiskAction disk={disk}
-                                    vm={vm}
-                                    idPrefix={`${idPrefixRow}-edit`}
-                                    supportedDiskBusTypes={supportedDiskBusTypes} />}
-                </div>
+        if (renderAccess) {
+            const access = (
+                <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${idPrefixRow}-access`}>
+                    <FlexItem>{ disk.readonly ? _("Read-only") : disk.shareable ? _("Writeable and shared") : _("Writeable") }</FlexItem>
+                    { vm.state === "running" &&
+                    (diskPropertyChanged(vm, disk.target, "readonly") || diskPropertyChanged(vm, disk.target, "shareable")) &&
+                        <WarningInactive iconId={`${idPrefixRow}-access-tooltip`} tooltipId={`tip-${idPrefixRow}-access`} /> }
+                </Flex>
             );
-            columns.push({ title: diskActions });
-            return { columns, props: { key: idPrefixRow } };
-        });
+            columns.push({ title: access });
+        }
 
-        return (
-            <>
-                <ListingTable variant='compact'
-                    gridBreakPoint='grid-xl'
-                    emptyCaption={_("No disks defined for this VM")}
-                    aria-label={`VM ${vm.name} Disks`}
-                    columns={columnTitles}
-                    rows={rows} />
-            </>
+        columns.push({ title: <DiskSourceCell diskSource={disk.source} idPrefix={idPrefixRow} /> });
+
+        if (renderAdditional) {
+            columns.push({
+                title: <DiskExtras idPrefix={idPrefixRow}
+                                   cache={disk.driver.cache}
+                                   io={disk.driver.io}
+                                   discard={disk.driver.discard}
+                                   serial={disk.serial}
+                                   errorPolicy={disk.driver.errorPolicy} />
+            });
+        }
+
+        const onRemoveDisk = () => {
+            return domainDetachDisk({ connectionName: vm.connectionName, id: vm.id, name: vm.name, target: disk.target, live: vm.state === 'running', persistent: vm.persistent })
+                    .then(() => domainGet({ connectionName: vm.connectionName, id:vm.id }));
+        };
+
+        const deleteDialogProps = {
+            title: _("Remove disk from VM?"),
+            actionName: _("Remove"),
+            errorMessage: cockpit.format(_("Disk $0 could not be removed"), disk.target),
+            actionDescription: cockpit.format(_("This disk will be removed from $0:"), vm.name),
+            objectDescription: [
+                { name: _("Target"), value: <span className="ct-monospace">{disk.target}</span> },
+                ...DISK_SOURCE_LIST.flatMap(entry => getDiskSourceValue(disk.source, entry.name)
+                    ? { name: entry.label, value: <span className="ct-monospace">{getDiskSourceValue(disk.source, entry.name)}</span> }
+                    : [])
+            ],
+            deleteHandler: () => onRemoveDisk(),
+        };
+
+        const diskActions = (
+            <div className='machines-listing-actions'>
+                <DeleteResourceButton objectId={vm.name + "-disk-" + disk.target}
+                                      disabled={vm.state != 'shut off' && vm.state != 'running'}
+                                      dialogProps={deleteDialogProps}
+                                      overlayText={_("The VM needs to be running or shut off to detach this device")}
+                                      actionName={_("Remove")} />
+                { vm.persistent && vm.inactiveXML.disks[disk.target] && // supported only  for persistent disks
+                <EditDiskAction disk={disk}
+                                vm={vm}
+                                idPrefix={`${idPrefixRow}-edit`}
+                                supportedDiskBusTypes={supportedDiskBusTypes} />}
+            </div>
         );
-    }
-}
+        columns.push({ title: diskActions });
+        return { columns, props: { key: idPrefixRow } };
+    });
+
+    return (
+        <>
+            <ListingTable variant='compact'
+                gridBreakPoint='grid-xl'
+                emptyCaption={_("No disks defined for this VM")}
+                aria-label={`VM ${vm.name} Disks`}
+                columns={columnTitles}
+                rows={rows} />
+        </>
+    );
+};
+
 VmDisksCard.propTypes = {
     disks: PropTypes.array.isRequired,
     renderCapacity: PropTypes.bool,
