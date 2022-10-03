@@ -1,6 +1,47 @@
 import { getDoc, getSingleOptionalElem } from './libvirt-xml-parse.js';
 import { getNextAvailableTarget } from './helpers.js';
 
+export function changeMedia({ domXml, target, eject, file, pool, volume }) {
+    const s = new XMLSerializer();
+    const doc = getDoc(domXml);
+    const domainElem = doc.firstElementChild;
+    if (!domainElem)
+        throw new Error("updateBootOrder: domXML has no domain element");
+
+    const deviceElem = domainElem.getElementsByTagName("devices")[0];
+    const disks = deviceElem.getElementsByTagName("disk");
+
+    let deviceXml;
+    for (let i = 0; i < disks.length; i++) {
+        const disk = disks[i];
+        const diskTarget = disk.getElementsByTagName("target")[0].getAttribute("dev");
+        if (diskTarget == target) {
+            let sourceElem = getSingleOptionalElem(disk, "source");
+
+            if (eject) {
+                if (sourceElem)
+                    sourceElem.remove();
+            } else {
+                if (!sourceElem) {
+                    sourceElem = doc.createElement("source");
+                    disk.appendChild(sourceElem);
+                }
+
+                if (file) {
+                    sourceElem.setAttribute("file", file);
+                } else if (pool && volume) {
+                    sourceElem.setAttribute("pool", pool);
+                    sourceElem.setAttribute("volume", volume);
+                }
+            }
+
+            deviceXml = disk;
+        }
+    }
+
+    return s.serializeToString(deviceXml);
+}
+
 export function updateDisk({ domXml, diskTarget, readonly, shareable, busType, existingTargets, cache }) {
     const s = new XMLSerializer();
     const doc = getDoc(domXml);
