@@ -66,6 +66,7 @@ import {
     getHostDevElemBySource,
 } from '../libvirt-xml-parse.js';
 import {
+    changeMedia,
     updateBootOrder,
     updateDisk,
     updateMaxMemory,
@@ -549,6 +550,42 @@ export function domainDetachIface({ connectionName, index, vmName, live, persist
     }
 
     return cockpit.spawn(args, options);
+}
+
+export function domainEjectDisk({
+    connectionName,
+    id: vmPath,
+    target,
+    eject,
+    file,
+    pool,
+    volume,
+    live = false,
+    persistent,
+    force
+}) {
+    let diskXML;
+    let updateFlags = Enum.VIR_DOMAIN_AFFECT_CURRENT;
+    if (live)
+        updateFlags |= Enum.VIR_DOMAIN_AFFECT_LIVE;
+    if (force)
+        updateFlags |= Enum.VIR_DOMAIN_DEVICE_MODIFY_FORCE;
+
+    // Switch to using virt-xml once 'force' flag is implemented: https://github.com/virt-manager/virt-manager/issues/442
+    return call(connectionName, vmPath, 'org.libvirt.Domain', 'GetXMLDesc', [0], { timeout, type: 'u' })
+            .then(domXml => {
+                const getXMLFlags = Enum.VIR_DOMAIN_XML_INACTIVE;
+                diskXML = changeMedia({ domXml: domXml[0], target, eject, file, pool, volume });
+
+                return call(connectionName, vmPath, 'org.libvirt.Domain', 'GetXMLDesc', [getXMLFlags], { timeout, type: 'u' });
+            })
+            .then(domInactiveXml => {
+                const diskInactiveXML = getDiskElemByTarget(domInactiveXml[0], target);
+                if (diskInactiveXML && persistent)
+                    updateFlags |= Enum.VIR_DOMAIN_AFFECT_CONFIG;
+
+                return call(connectionName, vmPath, 'org.libvirt.Domain', 'UpdateDevice', [diskXML, updateFlags], { timeout, type: 'su' });
+            });
 }
 
 export function domainForceOff({

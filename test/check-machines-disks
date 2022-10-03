@@ -30,6 +30,16 @@ from machineslib import VirtualMachinesCase  # noqa
 from testlib import nondestructive, test_main, wait, Error, skipImage, timeout  # noqa
 from parent import BOTS_DIR  # noqa
 
+SYSTEM_LOCAL_CONF = '''<!DOCTYPE busconfig PUBLIC
+"-//freedesktop//DTD D-Bus Bus Configuration 1.0//EN"
+"http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
+<busconfig>
+    <policy user="root">
+        <allow eavesdrop="true"/>
+        <allow eavesdrop="true" send_destination="*"/>
+    </policy>
+</busconfig>'''
+
 
 def get_next_free_target(used_targets):
     i = 0
@@ -293,6 +303,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             mode="custom-path", target='sda',
             pool_name=None, volume_name=None,
             file_path=None,
+            force=False,
         ):
             self.test_obj = test_obj
             self.mode = mode
@@ -301,6 +312,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             self.pool_name = pool_name
             self.volume_name = volume_name
             self.target = target
+            self.force = force
 
         def _get_disks(self):
             m = self.test_obj.machine
@@ -324,6 +336,12 @@ class TestMachinesDisks(VirtualMachinesCase):
                 .fill() \
                 .insert() \
                 .verify()
+
+            if not self.force:
+                self.eject()
+            else:
+                self.force_eject()
+            self.verify_eject()
 
         def open(self):
             b = self.test_obj.browser
@@ -381,6 +399,79 @@ class TestMachinesDisks(VirtualMachinesCase):
                 self.test_obj.assertEqual(disks[self.target]['source'], self.volume_name)
 
             return self
+
+        def eject(self):
+            b = self.test_obj.browser
+            b.click(f"#vm-{self.vm_name}-disks-{self.target}-eject-button")  # button
+            b.wait_in_text(".pf-c-modal-box__title", "Eject disc from VM")
+
+            if self.mode == "custom-path":
+                b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.target}-modal-description-file", self.file_path)
+            elif self.mode == "use-existing":
+                b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.target}-modal-description-pool dd", self.pool_name)
+                b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.target}-modal-description-volume dd", self.volume_name)
+
+            b.click(".pf-c-modal-box__footer button:contains(Eject)")
+            b.wait_not_present(".pf-c-modal-box")
+
+            return self
+
+        def force_eject(self):
+            b = self.test_obj.browser
+            m = self.test_obj.machine
+
+            b.click(f"#vm-{self.vm_name}-disks-{self.target}-eject-button")  # button
+            b.wait_in_text(".pf-c-modal-box__title", "Eject disc from VM")
+
+            # "Force eject" button is only shown if regular ejection fail
+            # This might be a bit dirty, but one easy way to cause regular ejection to
+            # fail is to poweroff virtual machine just before "Eject" button is clicked
+            # This will return "domain is not running" failure, but that's fine, as we
+            # offer "Force eject" option after any kind of failure
+            m.execute(f"virsh destroy {self.vm_name}")
+            b.click(".pf-c-modal-box__footer button:contains(Eject)")
+
+            # Check "Force eject" is present and Regular eject is disabled
+            b.wait_visible(".pf-c-modal-box__footer button:contains(Eject):disabled")
+            b.wait_visible(".pf-c-modal-box__footer button:contains(Force eject)")
+
+            # Start the VM again so "Force eject" will work
+            m.execute(f"virsh start {self.vm_name}")
+            # Watch D-BUS system calls
+            # https://piware.de/2013/09/how-to-watch-system-d-bus-method-calls/
+            m.write("/usr/share/dbus-1/system-local.conf", SYSTEM_LOCAL_CONF)
+            # Setup dbus monitor to watch for disk ejection call
+            m.spawn("dbus-monitor --system \"interface='org.libvirt.Domain',member='UpdateDevice'\" > /tmp/dbus_monitor_logs", "dbusmonitor")
+
+            # Force eject the disc
+            b.click(".pf-c-modal-box__footer button:contains(Force eject)")
+            b.wait_not_present(".pf-c-modal-box")
+
+            # Check dbus call was called with "VIR_DOMAIN_DEVICE_MODIFY_FORCE" flag
+            # Flag 'uint32 7' is a logical OR of flags:
+            # VIR_DOMAIN_DEVICE_MODIFY_CURRENT = 0
+            # VIR_DOMAIN_DEVICE_MODIFY_LIVE = 1
+            # VIR_DOMAIN_DEVICE_MODIFY_CONFIG = 2
+            # VIR_DOMAIN_DEVICE_MODIFY_FORCE = 4 <- is only used with 'Force eject'
+            # https://libvirt.org/html/libvirt-libvirt-domain.html
+            monitor_logs = m.execute("cat /tmp/dbus_monitor_logs")
+            self.test_obj.assertTrue("uint32 7" in monitor_logs)
+
+            return self
+
+        def verify_eject(self):
+            b = self.test_obj.browser
+
+            if self.mode == "custom-path":
+                b.wait_not_present(f'#vm-{self.vm_name}-disks-{self.target}-source-file')
+            else:
+                b.wait_not_present(f'#vm-{self.vm_name}-disks-{self.target}-source-pool')
+                b.wait_not_present(f'#vm-{self.vm_name}-disks-{self.target}-source-volume')
+
+            disks = self._get_disks()
+
+            # Empty cdrom should have no source
+            self.test_obj.assertEqual(disks[self.target]['source'], '-')
 
     class VMAddDiskDialog(object):
         def __init__(
@@ -1359,7 +1450,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         m = self.machine
 
         # Prepare storage pool with an ISO file in it to be used with "Use existing" option
-        m.execute(f"virsh pool-define-as images --type dir --target /var/lib/libvirt/images; virsh pool-start images")
+        m.execute("virsh pool-define-as images --type dir --target /var/lib/libvirt/images; virsh pool-start images")
         m.upload([os.path.join(BOTS_DIR, "machine/cloud-init.iso")], "/var/lib/libvirt/images/cd.iso")
 
         # Prepare ISO file to be used with "Custom path" option
@@ -1383,8 +1474,6 @@ class TestMachinesDisks(VirtualMachinesCase):
             file_path='/var/lib/libvirt/novell.iso',
         ).execute()
 
-        m.execute("virsh change-media --domain subVmTest1 --path sda --eject")
-
         self.VMInsertMediaDialog(
             self,
             mode='use-existing',
@@ -1392,6 +1481,18 @@ class TestMachinesDisks(VirtualMachinesCase):
             pool_name='images',
             volume_name='cd.iso',
         ).execute()
+
+        # On Ubuntu and Debian ejecting CDROM disc after rebooting VM will lead to the failure:
+        # "unable to execute QEMU command 'blockdev-remove-medium': Tray of device 'ide0-1-0' is not open"
+        # https://bugs.launchpad.net/ubuntu/+source/libvirt/+bug/1930398
+        if "debian" not in m.image and "ubuntu" not in m.image:
+            self.VMInsertMediaDialog(
+                self,
+                mode='custom-path',
+                target='sda',
+                file_path='/var/lib/libvirt/novell.iso',
+                force=True,
+            ).execute()
 
 
 if __name__ == '__main__':

@@ -21,6 +21,7 @@ import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 
 import {
+    Button,
     DescriptionList,
     DescriptionListTerm,
     DescriptionListGroup,
@@ -29,7 +30,9 @@ import {
     KebabToggle,
 } from '@patternfly/react-core';
 
+import { useDialogs } from 'dialogs.jsx';
 import { domainDetachDisk, domainGet } from '../../../libvirtApi/domain.js';
+import { MediaEjectModal } from './mediaEject.jsx';
 import { EditDiskAction } from './diskEdit.jsx';
 import { AddDiskModalBody } from './diskAdd.jsx';
 import { DeleteResourceButton } from '../../common/deleteResource.jsx';
@@ -116,6 +119,8 @@ DiskExtras.propTypes = {
 export const DiskActions = ({ vm, vms, disk, supportedDiskBusTypes, idPrefixRow }) => {
     const [isActionOpen, setIsActionOpen] = useState(false);
 
+    const Dialogs = useDialogs();
+
     const onRemoveDisk = () => {
         return domainDetachDisk({ connectionName: vm.connectionName, id: vm.id, name: vm.name, target: disk.target, live: vm.state === 'running', persistent: vm.persistent })
                 .then(() => domainGet({ connectionName: vm.connectionName, id: vm.id }));
@@ -151,6 +156,12 @@ export const DiskActions = ({ vm, vms, disk, supportedDiskBusTypes, idPrefixRow 
                               onClick={openMediaInsertionDialog}
                               isDisabled={!supportedDiskBusTypes || supportedDiskBusTypes.length == 0}>
                 {_("Insert")}
+            </Button>;
+        } else {
+            cdromAction = <Button id={`${idPrefixRow}-eject-button`}
+                    variant="secondary"
+                    onClick={() => Dialogs.show(<MediaEjectModal idPrefix={idPrefixRow} vm={vm} disk={disk} />)}>
+                {_("Eject")}
             </Button>;
         }
     }
