@@ -165,7 +165,7 @@ export const VmDetailsPage = ({
             className: "disks-card",
             title: _("Disks"),
             actions: <VmDisksActions vm={vm} vms={vms} supportedDiskBusTypes={supportedDiskBusTypes} />,
-            body: <VmDisksCardLibvirt vm={vm} config={config} storagePools={storagePools}
+            body: <VmDisksCardLibvirt vm={vm} vms={vms} config={config} storagePools={storagePools}
                                       supportedDiskBusTypes={supportedDiskBusTypes} />,
         },
         {

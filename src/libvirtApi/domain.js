@@ -683,6 +683,40 @@ export function domainInstall({ vm }) {
             .finally(() => clearVmUiState(vm.name, vm.connectionName));
 }
 
+export function domainInsertDisk({
+    connectionName,
+    vmName,
+    target,
+    diskType,
+    file,
+    poolName,
+    volumeName,
+    live = false,
+}) {
+    const options = { err: "message" };
+    if (connectionName === "system")
+        options.superuser = "try";
+
+    let source;
+    if (diskType === "file")
+        source = `source.file=${file},type=file`;
+    else if (diskType === "volume")
+        source = `source.pool=${poolName},source.volume=${volumeName},type=volume`;
+    else
+        throw new Error(`Disk insertion is not supported for ${diskType} disks`);
+
+    const args = [
+        "virt-xml", "-c", `qemu:///${connectionName}`,
+        vmName, "--edit", `target.dev=${target}`,
+        "--disk", source,
+    ];
+
+    if (live)
+        args.push("--update");
+
+    return cockpit.spawn(args, options);
+}
+
 export function domainInterfaceAddresses({ connectionName, objPath }) {
     return Promise.allSettled([
         call(connectionName, objPath, 'org.libvirt.Domain', 'InterfaceAddresses', [Enum.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_LEASE, 0], { timeout, type: 'uu' }),

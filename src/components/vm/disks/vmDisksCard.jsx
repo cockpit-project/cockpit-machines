@@ -136,7 +136,7 @@ export class VmDisksCardLibvirt extends React.Component {
     }
 
     render() {
-        const { vm, storagePools, supportedDiskBusTypes } = this.props;
+        const { vm, vms, storagePools, supportedDiskBusTypes } = this.props;
 
         const idPrefix = `${vmId(vm.name)}-disks`;
         const areDiskStatsSupported = this.getDiskStatsSupport(vm);
@@ -150,6 +150,7 @@ export class VmDisksCardLibvirt extends React.Component {
         return (
             <VmDisksCard
                 vm={vm}
+                vms={vms}
                 disks={disks}
                 renderCapacity={areDiskStatsSupported}
                 supportedDiskBusTypes={supportedDiskBusTypes} />
@@ -162,7 +163,7 @@ VmDisksCardLibvirt.propTypes = {
     vm: PropTypes.object.isRequired,
 };
 
-export const VmDisksCard = ({ vm, disks, renderCapacity, supportedDiskBusTypes }) => {
+export const VmDisksCard = ({ vm, vms, disks, renderCapacity, supportedDiskBusTypes }) => {
     let renderCapacityUsed, renderAccess, renderAdditional;
     const columnTitles = [_("Device")];
     const idPrefix = `${vmId(vm.name)}-disks`;
@@ -232,6 +233,7 @@ export const VmDisksCard = ({ vm, disks, renderCapacity, supportedDiskBusTypes }
 
         columns.push({
             title: <DiskActions vm={vm}
+                                vms={vms}
                                 disk={disk}
                                 supportedDiskBusTypes={supportedDiskBusTypes}
                                 idPrefixRow={idPrefixRow} />
