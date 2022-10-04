@@ -32,7 +32,7 @@ import { FileAutoComplete } from 'cockpit-components-file-autocomplete.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { diskBusTypes, diskCacheModes, units, convertToUnit, getDefaultVolumeFormat, getNextAvailableTarget, getStorageVolumesUsage, getStorageVolumeDiskTarget, getVmStoragePools } from '../../../helpers.js';
 import { VolumeCreateBody } from '../../storagePools/storageVolumeCreateBody.jsx';
-import { domainAttachDisk, domainGet, domainIsRunning, domainUpdateDiskAttributes } from '../../../libvirtApi/domain.js';
+import { domainAttachDisk, domainGet, domainInsertDisk, domainIsRunning, domainUpdateDiskAttributes } from '../../../libvirtApi/domain.js';
 import { storagePoolGetAll } from '../../../libvirtApi/storagePool.js';
 import { storageVolumeCreateAndAttach } from '../../../libvirtApi/storageVolume.js';
 
@@ -76,6 +76,12 @@ function getDiskUsageMessage(vms, storagePool, volumeName) {
         message += " " + _("Attaching it will make this disk shareable for every VM using it.");
 
     return message;
+}
+
+function getDefaultVolumeName(poolName, storagePools, vm) {
+    const vmStoragePool = storagePools.find(pool => pool.name == poolName);
+    const filteredVolumes = getFilteredVolumes(vmStoragePool, vm.disks);
+    return filteredVolumes[0] && filteredVolumes[0].name;
 }
 
 const SelectExistingVolume = ({ idPrefix, storagePoolName, existingVolumeName, onValueChanged, vmStoragePools, vmDisks, vms }) => {
@@ -320,7 +326,7 @@ const UseExistingDisk = ({
     );
 };
 
-const CustomPath = ({ idPrefix, onValueChanged, device }) => {
+const CustomPath = ({ idPrefix, onValueChanged, device, hideDeviceRow }) => {
     return (<>
         <FormGroup id={`${idPrefix}-file`}
                    fieldId={`${idPrefix}-file-autocomplete`}
@@ -330,7 +336,7 @@ const CustomPath = ({ idPrefix, onValueChanged, device }) => {
                 onChange={value => onValueChanged("file", value)}
                 superuser="try" />
         </FormGroup>
-        <FormGroup id={`${idPrefix}-device`}
+        {!hideDeviceRow && <FormGroup id={`${idPrefix}-device`}
                    fieldId={`${idPrefix}-select-device`}
                    label={_("Device")}>
             <FormSelect id={`${idPrefix}-select-device`}
@@ -341,7 +347,7 @@ const CustomPath = ({ idPrefix, onValueChanged, device }) => {
                 <FormSelectOption value="cdrom" key="cdrom"
                                   label={_("CD/DVD disc")} />
             </FormSelect>
-        </FormGroup>
+        </FormGroup>}
     </>);
 };
 
@@ -357,13 +363,13 @@ export class AddDiskModalBody extends React.Component {
         this.onValueChanged = this.onValueChanged.bind(this);
         this.dialogErrorSet = this.dialogErrorSet.bind(this);
         this.onAddClicked = this.onAddClicked.bind(this);
-        this.getDefaultVolumeName = this.getDefaultVolumeName.bind(this);
+        this.onInsertClicked = this.onInsertClicked.bind(this);
         this.existingVolumeNameDelta = this.existingVolumeNameDelta.bind(this);
         this.validateParams = this.validateParams.bind(this);
     }
 
     get initialState() {
-        const { vm, vms } = this.props;
+        const { vm, vms, isMediaInsertion } = this.props;
         const storagePools = getVmStoragePools(vm);
         const defaultBus = 'virtio';
         const existingTargets = Object.getOwnPropertyNames(vm.disks);
@@ -382,7 +388,7 @@ export class AddDiskModalBody extends React.Component {
             device: "disk",
             storagePoolName: defaultPool && defaultPool.name,
             storagePoolType: defaultPool && defaultPool.type,
-            mode: CREATE_NEW,
+            mode: isMediaInsertion ? CUSTOM_PATH : CREATE_NEW,
             volumeName: "",
             existingVolumeName: undefined,
             size: 1,
@@ -456,13 +462,6 @@ export class AddDiskModalBody extends React.Component {
         return stateDelta;
     }
 
-    getDefaultVolumeName(poolName) {
-        const { storagePools, vm } = this.state;
-        const vmStoragePool = storagePools.find(pool => pool.name == poolName);
-        const filteredVolumes = getFilteredVolumes(vmStoragePool, vm.disks);
-        return filteredVolumes[0] && filteredVolumes[0].name;
-    }
-
     onValueChanged(key, value) {
         let stateDelta = {};
         const { storagePools, vm } = this.state;
@@ -481,7 +480,7 @@ export class AddDiskModalBody extends React.Component {
 
             if (this.state.mode === USE_EXISTING) { // user changed pool
                 // use onValueChange instead of setState in order to perform subsequent state change logic
-                this.onValueChanged('existingVolumeName', this.getDefaultVolumeName(value));
+                this.onValueChanged('existingVolumeName', getDefaultVolumeName(value, storagePools, vm));
             }
             break;
         }
@@ -499,7 +498,7 @@ export class AddDiskModalBody extends React.Component {
                 if (value === USE_EXISTING) { // user moved to USE_EXISTING subtab
                     const poolName = stateDelta.storagePoolName;
                     if (poolName)
-                        stateDelta = { ...stateDelta, ...this.existingVolumeNameDelta(this.getDefaultVolumeName(poolName), prevState.storagePoolName) };
+                        stateDelta = { ...stateDelta, ...this.existingVolumeNameDelta(getDefaultVolumeName(poolName, storagePools, vm), prevState.storagePoolName) };
                 }
 
                 return stateDelta;
@@ -550,6 +549,37 @@ export class AddDiskModalBody extends React.Component {
 
     dialogErrorSet(text, detail) {
         this.setState({ dialogError: text, dialogErrorDetail: detail });
+    }
+
+    onInsertClicked() {
+        const Dialogs = this.context;
+        const close = Dialogs.close;
+        const { vm } = this.state;
+        const { disk } = this.props;
+
+        const validation = this.validateParams();
+        if (Object.getOwnPropertyNames(validation).length > 0)
+            return this.setState({ addDiskInProgress: false, validate: true });
+
+        this.setState({ addDiskInProgress: true, validate: false });
+        return domainInsertDisk({
+            connectionName: vm.connectionName,
+            vmName: vm.name,
+            target: disk.target,
+            diskType: this.state.mode === CUSTOM_PATH ? "file" : "volume",
+            file: this.state.file,
+            poolName: this.state.storagePoolName,
+            volumeName: this.state.existingVolumeName,
+            live: vm.state === "running",
+        })
+                .then(() => { // force reload of VM data, events are not reliable (i.e. for a down VM)
+                    close();
+                    return domainGet({ connectionName: vm.connectionName, name: vm.name, id: vm.id });
+                })
+                .catch(exc => {
+                    this.setState({ addDiskInProgress: false });
+                    this.dialogErrorSet(_("Disk failed to be created"), exc.message);
+                });
     }
 
     onAddClicked() {
@@ -643,6 +673,7 @@ export class AddDiskModalBody extends React.Component {
     render() {
         const Dialogs = this.context;
         const { dialogLoading, vm, storagePools, vms } = this.state;
+        const { isMediaInsertion } = this.props;
         const idPrefix = `${this.props.idPrefix}-adddisk`;
         const validationFailed = this.state.validate ? this.validateParams() : {};
 
@@ -652,6 +683,40 @@ export class AddDiskModalBody extends React.Component {
                 <Bullseye>
                     <Spinner isSVG />
                 </Bullseye>
+            );
+        } else if (isMediaInsertion) {
+            defaultBody = (
+                <Form onSubmit={e => e.preventDefault()} isHorizontal>
+                    <FormGroup fieldId={`${idPrefix}-source`}
+                               id={`${idPrefix}-source-group`}
+                               label={_("Source")} isInline hasNoPaddingTop>
+                        <Radio id={`${idPrefix}-custompath`}
+                               name="source"
+                               label={_("Custom path")}
+                               isChecked={this.state.mode === CUSTOM_PATH}
+                               onChange={() => this.onValueChanged('mode', CUSTOM_PATH)} />
+                        <Radio id={`${idPrefix}-useexisting`}
+                               name="source"
+                               label={_("Use existing")}
+                               isChecked={this.state.mode === USE_EXISTING}
+                               onChange={() => this.onValueChanged('mode', USE_EXISTING)} />
+                    </FormGroup>
+                    {this.state.mode === USE_EXISTING && (
+                        <UseExistingDisk idPrefix={`${idPrefix}-existing`}
+                                         onValueChanged={this.onValueChanged}
+                                         storagePoolName={this.state.storagePoolName}
+                                         existingVolumeName={this.state.existingVolumeName}
+                                         validationFailed={validationFailed}
+                                         vmStoragePools={storagePools}
+                                         vms={vms}
+                                         vm={vm} />
+                    )}
+                    {this.state.mode === CUSTOM_PATH && (
+                        <CustomPath idPrefix={idPrefix}
+                                    onValueChanged={this.onValueChanged}
+                                    hideDeviceRow />
+                    )}
+                </Form>
             );
         } else {
             defaultBody = (
@@ -722,7 +787,7 @@ export class AddDiskModalBody extends React.Component {
 
         return (
             <Modal position="top" variant="medium" id={`${idPrefix}-dialog-modal-window`} isOpen onClose={Dialogs.close}
-                   title={_("Add disk")}
+                   title={isMediaInsertion ? _("Insert disc media") : _("Add disk")}
                    footer={
                        <>
                            {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
@@ -730,8 +795,8 @@ export class AddDiskModalBody extends React.Component {
                                    variant='primary'
                                    isLoading={this.state.addDiskInProgress}
                                    isDisabled={this.state.addDiskInProgress || dialogLoading || (storagePools.length == 0 && this.state.mode != CUSTOM_PATH)}
-                                   onClick={this.onAddClicked}>
-                               {_("Add")}
+                                   onClick={isMediaInsertion ? this.onInsertClicked : this.onAddClicked}>
+                               {isMediaInsertion ? _("Insert") : _("Add")}
                            </Button>
                            <Button id={`${idPrefix}-dialog-cancel`} variant='link' className='btn-cancel' onClick={Dialogs.close}>
                                {_("Cancel")}

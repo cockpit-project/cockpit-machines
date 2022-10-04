@@ -31,6 +31,7 @@ import {
 
 import { domainDetachDisk, domainGet } from '../../../libvirtApi/domain.js';
 import { EditDiskAction } from './diskEdit.jsx';
+import { AddDiskModalBody } from './diskAdd.jsx';
 import { DeleteResourceButton } from '../../common/deleteResource.jsx';
 
 const _ = cockpit.gettext;
@@ -112,7 +113,7 @@ DiskExtras.propTypes = {
     idPrefix: PropTypes.string.isRequired,
 };
 
-export const DiskActions = ({ vm, disk, supportedDiskBusTypes, idPrefixRow }) => {
+export const DiskActions = ({ vm, vms, disk, supportedDiskBusTypes, idPrefixRow }) => {
     const [isActionOpen, setIsActionOpen] = useState(false);
 
     const onRemoveDisk = () => {
@@ -134,8 +135,29 @@ export const DiskActions = ({ vm, disk, supportedDiskBusTypes, idPrefixRow }) =>
         deleteHandler: onRemoveDisk,
     };
 
+    function openMediaInsertionDialog() {
+        Dialogs.show(<AddDiskModalBody idPrefix={idPrefixRow + "-insert-dialog"}
+                                       vm={vm} vms={vms}
+                                       disk={disk}
+                                       supportedDiskBusTypes={supportedDiskBusTypes}
+                                       isMediaInsertion />);
+    }
+
+    let cdromAction;
+    if (disk.device === "cdrom" && ["file", "volume"].includes(disk.type)) {
+        if (!disk.source.file && !(disk.source.pool && disk.source.volume)) {
+            cdromAction = <Button id={`${idPrefixRow}-insert`}
+                              variant='secondary'
+                              onClick={openMediaInsertionDialog}
+                              isDisabled={!supportedDiskBusTypes || supportedDiskBusTypes.length == 0}>
+                {_("Insert")}
+            </Button>;
+        }
+    }
+
     return (
         <div className='machines-listing-actions'>
+            { cdromAction }
             { vm.persistent && vm.inactiveXML.disks[disk.target] && // supported only  for persistent disks
             <EditDiskAction disk={disk}
                             vm={vm}

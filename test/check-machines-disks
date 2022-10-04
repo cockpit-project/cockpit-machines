@@ -286,6 +286,102 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_in_text(f"{prefix}-existing-select-pool:disabled", "No storage pools available")
         b.wait_visible(f"{prefix}-dialog-add:disabled")
 
+    class VMInsertMediaDialog(object):
+        def __init__(
+            self, test_obj,
+            vm_name='subVmTest1',
+            mode="custom-path", target='sda',
+            pool_name=None, volume_name=None,
+            file_path=None,
+        ):
+            self.test_obj = test_obj
+            self.mode = mode
+            self.vm_name = vm_name
+            self.file_path = file_path
+            self.pool_name = pool_name
+            self.volume_name = volume_name
+            self.target = target
+
+        def _get_disks(self):
+            m = self.test_obj.machine
+
+            virsh_output = m.execute(f"virsh -c qemu:///system domblklist {self.vm_name} --details").rstrip('\n')
+            lines = virsh_output.splitlines()[2:]
+            disks = {}
+            for line in lines:
+                cells = line.split()
+                # use disk's target (3rd column in table) as key
+                disks[cells[2]] = {
+                    'type': cells[0],
+                    'device': cells[1],
+                    'source': cells[3],
+                }
+
+            return disks
+
+        def execute(self):
+            self.open() \
+                .fill() \
+                .insert() \
+                .verify()
+
+        def open(self):
+            b = self.test_obj.browser
+            prefix = f"#vm-{self.vm_name}-disks-{self.target}-insert"
+            b.click(prefix)  # button
+            b.wait_in_text(".pf-c-modal-box__title", "Insert disc media")
+
+            b.wait_visible(f"{prefix}-dialog-adddisk-custompath:checked")
+            if self.mode == "use-existing":
+                b.click(f"{prefix}-dialog-adddisk-useexisting")
+
+            return self
+
+        def fill(self):
+            b = self.test_obj.browser
+            if self.mode == "custom-path":
+                b.wait_visible(f"#vm-{self.vm_name}-disks-{self.target}-insert-dialog-adddisk-file")
+                # Type in file path
+                b.set_file_autocomplete_val(f"#vm-{self.vm_name}-disks-{self.target}-insert-dialog-adddisk-file", self.file_path)
+            elif self.mode == "use-existing":
+                b.wait_visible(f"#vm-{self.vm_name}-disks-{self.target}-insert-dialog-adddisk-existing-select-pool:enabled")
+                # Choose storage pool
+                b.select_from_dropdown(f"#vm-{self.vm_name}-disks-{self.target}-insert-dialog-adddisk-existing-select-pool", self.pool_name)
+                # Select from the available volumes
+                b.select_from_dropdown(f"#vm-{self.vm_name}-disks-{self.target}-insert-dialog-adddisk-existing-select-volume", self.volume_name)
+
+            return self
+
+        def insert(self):
+            b = self.test_obj.browser
+            b.click(".pf-c-modal-box__footer button:contains(Insert)")
+
+            return self
+
+        def verify(self):
+            b = self.test_obj.browser
+            b.wait_not_present(".pf-c-modal-box")
+
+            disks = self._get_disks()
+
+            if self.mode == "custom-path":
+                # verify UI shows correct media
+                b.wait_in_text(f'#vm-{self.vm_name}-disks-{self.target}-source-file', self.file_path)
+                # verify virsh shows correct media
+                self.test_obj.assertEqual(disks[self.target]['type'], "file")
+                self.test_obj.assertEqual(disks[self.target]['device'], "cdrom")
+                self.test_obj.assertEqual(disks[self.target]['source'], self.file_path)
+            else:
+                # verify UI shows correct media
+                b.wait_in_text(f'#vm-{self.vm_name}-disks-{self.target}-source-pool', self.pool_name)
+                b.wait_in_text(f'#vm-{self.vm_name}-disks-{self.target}-source-volume', self.volume_name)
+                # verify virsh shows correct media
+                self.test_obj.assertEqual(disks[self.target]['type'], "volume")
+                self.test_obj.assertEqual(disks[self.target]['device'], "cdrom")
+                self.test_obj.assertEqual(disks[self.target]['source'], self.volume_name)
+
+            return self
+
     class VMAddDiskDialog(object):
         def __init__(
             self, test_obj, pool_name=None, volume_name=None,
@@ -1257,6 +1353,45 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.click(".pf-c-modal-box__footer button:contains(Remove)")
         b.wait_not_present("#vm-subVmTest1-disks-vdc-device")
         b.wait_not_present(".pf-c-modal-box")
+
+    def testInsertDiscCDROM(self):
+        b = self.browser
+        m = self.machine
+
+        # Prepare storage pool with an ISO file in it to be used with "Use existing" option
+        m.execute(f"virsh pool-define-as images --type dir --target /var/lib/libvirt/images; virsh pool-start images")
+        m.upload([os.path.join(BOTS_DIR, "machine/cloud-init.iso")], "/var/lib/libvirt/images/cd.iso")
+
+        # Prepare ISO file to be used with "Custom path" option
+        m.execute("touch /var/lib/libvirt/novell.iso")
+
+        self.createVm("subVmTest1", running=False)
+        # Add empty CDROM device to the VM
+        m.execute("virt-xml subVmTest1 --add-device --disk target.dev=sda,device=cdrom")
+        m.execute("virsh start subVmTest1")
+
+        self.login_and_go("/machines")
+        b.wait_in_text("body", "Virtual machines")
+
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
+        self.goToVmPage("subVmTest1")
+
+        self.VMInsertMediaDialog(
+            self,
+            mode='custom-path',
+            target='sda',
+            file_path='/var/lib/libvirt/novell.iso',
+        ).execute()
+
+        m.execute("virsh change-media --domain subVmTest1 --path sda --eject")
+
+        self.VMInsertMediaDialog(
+            self,
+            mode='use-existing',
+            target='sda',
+            pool_name='images',
+            volume_name='cd.iso',
+        ).execute()
 
 
 if __name__ == '__main__':
