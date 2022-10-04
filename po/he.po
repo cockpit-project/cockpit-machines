@@ -24,7 +24,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-09-05 04:31+0000\n"
+"POT-Creation-Date: 2022-10-04 04:01+0000\n"
 "PO-Revision-Date: 2021-03-28 14:01+0000\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language-Team: Hebrew <https://translate.fedoraproject.org/projects/cockpit-"
@@ -37,18 +37,14 @@ msgstr ""
 "n % 10 == 0) ? 2 : 3));\n"
 "X-Generator: Weblate 4.5.2\n"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:482
-msgid " Then copy the token and paste it above."
-msgstr ""
-
-#: src/components/create-vm-dialog/createVmDialog.jsx:702
+#: src/components/create-vm-dialog/createVmDialog.jsx:812
 #, fuzzy
 #| msgid "Up to $0 $1 available on the default location"
 msgid "$0 $1 available at default location"
 msgstr "עד $0 $1 זמינים במיקום בררת המחדל"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:229
-#: src/components/create-vm-dialog/createVmDialog.jsx:653
+#: src/components/create-vm-dialog/createVmDialog.jsx:238
+#: src/components/create-vm-dialog/createVmDialog.jsx:763
 #, fuzzy
 #| msgid "Up to $0 $1 available on the host"
 msgid "$0 $1 available on host"
@@ -74,7 +70,7 @@ msgstr[1] "$0 מאגרי אחסון"
 msgstr[2] "$0 מאגרי אחסון"
 msgstr[3] "$0 מאגרי אחסון"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1061
+#: src/components/create-vm-dialog/createVmDialog.jsx:1172
 #, fuzzy
 #| msgid ""
 #| "The selected operating system does not support unattended installation"
@@ -119,13 +115,13 @@ msgid ""
 "shut off. Meanwhile, the origin host keeps its copy of the VM configuration."
 msgstr ""
 
-#: src/components/vm/disks/vmDisksCard.jsx:188
 #: src/components/vm/disks/diskEdit.jsx:113
+#: src/components/vm/disks/vmDisksCard.jsx:188
 msgid "Access"
 msgstr "גישה"
 
-#: src/components/storagePools/storagePool.jsx:170
 #: src/components/networks/network.jsx:166
+#: src/components/storagePools/storagePool.jsx:170
 msgid "Activate"
 msgstr "הפעלה"
 
@@ -133,10 +129,10 @@ msgstr "הפעלה"
 msgid "Activate the storage pool to administer volumes"
 msgstr "יש להפעיל את מאגר האחסון כדי לנהל כרכים"
 
-#: src/components/networks/networkOverviewTab.jsx:237
-#: src/components/vm/hostdevs/hostDevAdd.jsx:222
+#: src/components/vm/nics/nicAdd.jsx:208
 #: src/components/vm/disks/diskAdd.jsx:734
-#: src/components/vm/nics/nicAdd.jsx:201
+#: src/components/vm/hostdevs/hostDevAdd.jsx:227
+#: src/components/networks/networkOverviewTab.jsx:237
 msgid "Add"
 msgstr "הוספה"
 
@@ -144,13 +140,13 @@ msgstr "הוספה"
 msgid "Add a DHCP static host entry"
 msgstr ""
 
-#: src/components/vm/disks/diskAdd.jsx:725
 #: src/components/vm/disks/vmDisksCard.jsx:77
+#: src/components/vm/disks/diskAdd.jsx:725
 msgid "Add disk"
 msgstr "הוספת כונן"
 
+#: src/components/vm/hostdevs/hostDevAdd.jsx:243
 #: src/components/vm/hostdevs/hostDevCard.jsx:153
-#: src/components/vm/hostdevs/hostDevAdd.jsx:238
 #, fuzzy
 #| msgid "host device"
 msgid "Add host device"
@@ -166,7 +162,7 @@ msgstr "הוספת מנשק רשת"
 msgid "Add shared directory"
 msgstr "אין קובץ או תיקייה בשם הזה"
 
-#: src/components/vm/nics/nicAdd.jsx:193
+#: src/components/vm/nics/nicAdd.jsx:196
 msgid "Add virtual network interface"
 msgstr "הוספת מנשק רשת וירטואלי"
 
@@ -180,10 +176,10 @@ msgstr "ניתן לעריכה רק כאשר האורח כבוי"
 msgid "Additional"
 msgstr "נוסף"
 
+#: src/components/vm/nics/vmNicsCard.jsx:281
+#: src/components/vm/consoles/desktopConsole.jsx:47
 #: src/components/networks/networkOverviewTab.jsx:142
 #: src/components/networks/networkOverviewTab.jsx:162
-#: src/components/vm/consoles/desktopConsole.jsx:47
-#: src/components/vm/nics/vmNicsCard.jsx:281
 msgid "Address"
 msgstr "כתובת"
 
@@ -216,7 +212,7 @@ msgstr ""
 msgid "Also delete all volumes inside this pool:"
 msgstr "מחיקת הכרכים שבתוך המאגר הזה"
 
-#: src/components/vm/disks/diskAdd.jsx:130 src/components/vm/nics/nicAdd.jsx:89
+#: src/components/vm/nics/nicAdd.jsx:89 src/components/vm/disks/diskAdd.jsx:130
 msgid "Always attach"
 msgstr "להצמיד תמיד"
 
@@ -229,7 +225,7 @@ msgstr "החלה"
 msgid "Attaching it will make this disk shareable for every VM using it."
 msgstr "חיבורו יהפוך את הכונן למשותף לכל מכונה וירטואלית שמשתמשת בו."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1060
+#: src/components/create-vm-dialog/createVmDialog.jsx:1171
 msgid ""
 "Automated installs are only available when downloading an image or using "
 "cloud-init."
@@ -239,15 +235,15 @@ msgstr ""
 msgid "Automatic"
 msgstr "אוטומטית"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1174
+#: src/components/create-vm-dialog/createVmDialog.jsx:1285
 #, fuzzy
 #| msgid "Automatic"
 msgid "Automation"
 msgstr "אוטומטית"
 
-#: src/components/storagePools/storagePoolOverviewTab.jsx:71
-#: src/components/networks/networkOverviewTab.jsx:119
 #: src/components/vm/overview/vmOverviewCard.jsx:221
+#: src/components/networks/networkOverviewTab.jsx:119
+#: src/components/storagePools/storagePoolOverviewTab.jsx:71
 msgid "Autostart"
 msgstr "התחלה אוטומטית"
 
@@ -263,13 +259,13 @@ msgstr "סדר עלייה"
 msgid "Boot order settings could not be saved"
 msgstr "לא ניתן לשמור הגדרות סדר עלייה"
 
+#: src/components/vm/disks/diskEdit.jsx:88
+#: src/components/vm/disks/vmDisksCard.jsx:186
+#: src/components/vm/disks/diskAdd.jsx:217
+#: src/components/vm/hostdevs/hostDevAdd.jsx:92
 #: src/components/vm/hostdevs/hostDevCard.jsx:104
 #: src/components/vm/hostdevs/hostDevCard.jsx:112
 #: src/components/vm/hostdevs/hostDevCard.jsx:246
-#: src/components/vm/hostdevs/hostDevAdd.jsx:92
-#: src/components/vm/disks/diskAdd.jsx:217
-#: src/components/vm/disks/vmDisksCard.jsx:186
-#: src/components/vm/disks/diskEdit.jsx:88
 #: src/components/vm/overview/bootOrder.jsx:118
 #: src/components/vm/overview/bootOrder.jsx:130
 #: src/components/vm/overview/bootOrder.jsx:148
@@ -294,35 +290,35 @@ msgstr "לא ניתן לשמור את הגדרות המעבד"
 msgid "CPU type"
 msgstr "סוג מעבד"
 
-#: src/components/vm/disks/diskAdd.jsx:206
 #: src/components/vm/disks/vmDiskColumns.jsx:95
 #: src/components/vm/disks/diskEdit.jsx:58
+#: src/components/vm/disks/diskAdd.jsx:206
 msgid "Cache"
 msgstr "מכלא"
 
-#: src/components/common/deleteResource.jsx:79
-#: src/components/create-vm-dialog/createVmDialog.jsx:1230
+#: src/components/vm/vmMigrateDialog.jsx:219
+#: src/components/vm/nics/nicAdd.jsx:211 src/components/vm/nics/nicEdit.jsx:180
+#: src/components/vm/disks/diskEdit.jsx:268
+#: src/components/vm/disks/diskAdd.jsx:737
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:170
+#: src/components/vm/hostdevs/hostDevAdd.jsx:233
+#: src/components/vm/vmRenameDialog.jsx:68
+#: src/components/vm/deleteDialog.jsx:178
+#: src/components/vm/overview/bootOrder.jsx:330
+#: src/components/vm/overview/cpuTypeModal.jsx:70
+#: src/components/vm/overview/firmware.jsx:70
+#: src/components/vm/overview/vcpuModal.jsx:266
+#: src/components/vm/overview/memoryModal.jsx:158
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:76
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:150
+#: src/components/vm/vmCloneDialog.jsx:80
+#: src/components/networks/createNetworkDialog.jsx:417
+#: src/components/networks/networkOverviewTab.jsx:240
+#: src/components/create-vm-dialog/createVmDialog.jsx:1345
 #: src/components/storagePools/storageVolumeCreate.jsx:108
 #: src/components/storagePools/storagePoolDelete.jsx:202
 #: src/components/storagePools/createStoragePoolDialog.jsx:445
-#: src/components/networks/createNetworkDialog.jsx:417
-#: src/components/networks/networkOverviewTab.jsx:240
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:170
-#: src/components/vm/hostdevs/hostDevAdd.jsx:228
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:76
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:150
-#: src/components/vm/deleteDialog.jsx:178
-#: src/components/vm/vmMigrateDialog.jsx:219
-#: src/components/vm/vmRenameDialog.jsx:68
-#: src/components/vm/disks/diskAdd.jsx:737
-#: src/components/vm/disks/diskEdit.jsx:268
-#: src/components/vm/vmCloneDialog.jsx:80
-#: src/components/vm/overview/bootOrder.jsx:330
-#: src/components/vm/overview/cpuTypeModal.jsx:70
-#: src/components/vm/overview/vcpuModal.jsx:266
-#: src/components/vm/overview/firmware.jsx:70
-#: src/components/vm/overview/memoryModal.jsx:158
-#: src/components/vm/nics/nicAdd.jsx:204 src/components/vm/nics/nicEdit.jsx:180
+#: src/components/common/deleteResource.jsx:79
 msgid "Cancel"
 msgstr "ביטול"
 
@@ -340,15 +336,19 @@ msgstr "סדר עלייה"
 msgid "Change firmware"
 msgstr "החלפת קושחה"
 
-#: src/components/common/warningInactive.jsx:11
+#: src/components/vm/nics/nicEdit.jsx:166
 #: src/components/vm/disks/diskEdit.jsx:252
 #: src/components/vm/overview/vcpuModal.jsx:188
-#: src/components/vm/nics/nicEdit.jsx:166
+#: src/components/common/warningInactive.jsx:11
 msgid "Changes will take effect after shutting down the VM"
 msgstr "השינויים יחולו לאחר הפעלת המכונה הווירטואלית מחדש"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:446
-#: src/components/create-vm-dialog/createVmDialog.jsx:447
+#: src/components/create-vm-dialog/createVmDialog.jsx:512
+msgid "Checking token validity..."
+msgstr ""
+
+#: src/components/create-vm-dialog/createVmDialog.jsx:455
+#: src/components/create-vm-dialog/createVmDialog.jsx:456
 msgid "Choose an operating system"
 msgstr "נא לבחור מערכת הפעלה"
 
@@ -369,7 +369,7 @@ msgstr "שכפול"
 msgid "Close"
 msgstr "סגירה"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:351
+#: src/components/create-vm-dialog/createVmDialog.jsx:360
 msgid "Cloud base image"
 msgstr "דמויות בסיס לענן"
 
@@ -391,16 +391,16 @@ msgstr "ניתן להתחבר עם כל יישום שמציג עבור הפרו�
 msgid "Connecting"
 msgstr "התחברות"
 
-#: src/components/vms/hostvmslist.jsx:141
-#: src/components/common/machinesConnectionSelector.jsx:33
-#: src/components/storagePools/storagePoolList.jsx:77
-#: src/components/networks/networkList.jsx:75
 #: src/components/networks/createNetworkDialog.jsx:41
+#: src/components/networks/networkList.jsx:75
+#: src/components/vms/hostvmslist.jsx:141
+#: src/components/storagePools/storagePoolList.jsx:77
+#: src/components/common/machinesConnectionSelector.jsx:33
 msgid "Connection"
 msgstr "התחברות"
 
-#: src/components/vm/vmDetailsPage.jsx:117
-#: src/components/vm/vmDetailsPage.jsx:149
+#: src/components/vm/vmDetailsPage.jsx:118
+#: src/components/vm/vmDetailsPage.jsx:151
 msgid "Console"
 msgstr "מסוף"
 
@@ -435,22 +435,22 @@ msgstr "לא ניתן להחזיר לתמונת המצב"
 msgid "Crashed"
 msgstr "קרס"
 
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:147
+#: src/components/networks/createNetworkDialog.jsx:414
 #: src/components/storagePools/storageVolumeCreate.jsx:105
 #: src/components/storagePools/createStoragePoolDialog.jsx:442
-#: src/components/networks/createNetworkDialog.jsx:414
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:147
 msgid "Create"
 msgstr "יצירה"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1276
+#: src/components/create-vm-dialog/createVmDialog.jsx:1391
 msgid "Create VM"
 msgstr "יצירת מכונה וירטואלית"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1295
+#: src/components/create-vm-dialog/createVmDialog.jsx:1410
 msgid "Create VM by importing a disk image of an existing VM installation"
 msgstr ""
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1294
+#: src/components/create-vm-dialog/createVmDialog.jsx:1409
 msgid "Create VM from local or network installation medium"
 msgstr ""
 
@@ -458,13 +458,13 @@ msgstr ""
 msgid "Create a clone VM based on $0"
 msgstr "יצירת שכפול של מכונה וירטואלית על בסיס $0"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1199
+#: src/components/create-vm-dialog/createVmDialog.jsx:1313
 #, fuzzy
 #| msgid "Create new"
 msgid "Create and edit"
 msgstr "יצירת חדש"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1224
+#: src/components/create-vm-dialog/createVmDialog.jsx:1339
 #, fuzzy
 #| msgid "Create new"
 msgid "Create and run"
@@ -474,16 +474,16 @@ msgstr "יצירת חדש"
 msgid "Create new"
 msgstr "יצירת חדש"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1213
+#: src/components/create-vm-dialog/createVmDialog.jsx:1327
 msgid "Create new virtual machine"
 msgstr "יצירת מכונה וירטואלית חדשה"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:739
+#: src/components/create-vm-dialog/createVmDialog.jsx:849
 msgid "Create new volume"
 msgstr "יצירת כרך חדש"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:47
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:142
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:47
 msgid "Create snapshot"
 msgstr "יצירת תמונת מצב"
 
@@ -520,7 +520,7 @@ msgstr "יצירת מכונה וירטואלית"
 msgid "Creating VM installation"
 msgstr "יצירת התקנת מכונה וירטואלית"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1036
+#: src/components/create-vm-dialog/createVmDialog.jsx:1147
 msgid "Creation of VM $0 failed"
 msgstr "היצירה של המכונה הווירטואלית $0 נכשלה"
 
@@ -555,20 +555,20 @@ msgstr "נתיב מותאם אישית"
 msgid "DHCP Settings"
 msgstr "טווח DHCP"
 
-#: src/components/storagePools/storagePool.jsx:161
 #: src/components/networks/network.jsx:162
+#: src/components/storagePools/storagePool.jsx:161
 msgid "Deactivate"
 msgstr "השבתה"
 
-#: src/components/common/deleteResource.jsx:76
-#: src/components/common/deleteResource.jsx:116
+#: src/components/vm/vmActions.jsx:351 src/components/vm/vmActions.jsx:359
+#: src/components/vm/deleteDialog.jsx:175
+#: src/components/networks/network.jsx:144
+#: src/components/networks/network.jsx:146
 #: src/components/storagePools/storagePoolDelete.jsx:199
 #: src/components/storagePools/storagePoolDelete.jsx:236
 #: src/components/storagePools/storagePoolDelete.jsx:246
-#: src/components/networks/network.jsx:144
-#: src/components/networks/network.jsx:146
-#: src/components/vm/deleteDialog.jsx:175 src/components/vm/vmActions.jsx:351
-#: src/components/vm/vmActions.jsx:359
+#: src/components/common/deleteResource.jsx:76
+#: src/components/common/deleteResource.jsx:116
 msgid "Delete"
 msgstr "מחיקה"
 
@@ -621,8 +621,8 @@ msgstr "מחיקת מאגר אחסון בלתי פעיל תסיר את הגדר�
 msgid "Deleting shared directories is possible only when the guest is shut off"
 msgstr "ניתן לעריכה רק כאשר האורח כבוי"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:89
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:52
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:89
 msgid "Description"
 msgstr "תיאור"
 
@@ -649,23 +649,23 @@ msgstr ""
 "יש לנתק את הכוננים שמשתמשים במאגר הזה מכל מכונה וירטואלית בטרם ביצוע ניסיון "
 "מחיקה."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1170
+#: src/components/create-vm-dialog/createVmDialog.jsx:1281
 msgid "Details"
 msgstr ""
 
-#: src/components/networks/networkList.jsx:74
-#: src/components/networks/createNetworkDialog.jsx:161
-#: src/components/vm/hostdevs/hostDevCard.jsx:103
-#: src/components/vm/hostdevs/hostDevCard.jsx:245
-#: src/components/vm/hostdevs/hostDevAdd.jsx:91
-#: src/components/vm/hostdevs/hostDevAdd.jsx:126
-#: src/components/vm/disks/diskAdd.jsx:335
 #: src/components/vm/disks/vmDiskColumns.jsx:34
 #: src/components/vm/disks/vmDisksCard.jsx:172
+#: src/components/vm/disks/diskAdd.jsx:335
+#: src/components/vm/hostdevs/hostDevAdd.jsx:91
+#: src/components/vm/hostdevs/hostDevAdd.jsx:126
+#: src/components/vm/hostdevs/hostDevCard.jsx:103
+#: src/components/vm/hostdevs/hostDevCard.jsx:245
 #: src/components/vm/overview/bootOrder.jsx:110
 #: src/components/vm/overview/bootOrder.jsx:117
 #: src/components/vm/overview/bootOrder.jsx:149
 #: src/components/vm/overview/bootOrder.jsx:152
+#: src/components/networks/createNetworkDialog.jsx:161
+#: src/components/networks/networkList.jsx:74
 msgid "Device"
 msgstr "התקן"
 
@@ -708,7 +708,7 @@ msgstr "יצירת הכונן נכשלה"
 msgid "Disk identifier"
 msgstr "קובץ דמות כונן"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:363
+#: src/components/create-vm-dialog/createVmDialog.jsx:372
 #, fuzzy
 #| msgid "Disk image file"
 msgid "Disk image"
@@ -718,14 +718,14 @@ msgstr "קובץ דמות כונן"
 msgid "Disk image file"
 msgstr "קובץ דמות כונן"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:214
+#: src/components/create-vm-dialog/createVmDialog.jsx:220
 #, fuzzy
 #| msgid "Name must not be empty"
 msgid "Disk image path must not be empty"
 msgstr "השם לא יכול להישאר ריק"
 
-#: src/components/vm/disks/diskAdd.jsx:625
 #: src/components/vm/disks/diskEdit.jsx:215
+#: src/components/vm/disks/diskAdd.jsx:625
 msgid "Disk settings could not be saved"
 msgstr "לא ניתן לשמור את הגדרות הכונן"
 
@@ -733,7 +733,7 @@ msgstr "לא ניתן לשמור את הגדרות הכונן"
 msgid "Disk-only snapshot"
 msgstr "תמונת מצב בכונן בלבד"
 
-#: src/components/vm/vmDetailsPage.jsx:164
+#: src/components/vm/vmDetailsPage.jsx:166
 msgid "Disks"
 msgstr "כוננים"
 
@@ -750,7 +750,7 @@ msgstr "שם התחום קרס"
 msgid "Domain is blocked on resource"
 msgstr "שם התחום חסום במשאב"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:349
+#: src/components/create-vm-dialog/createVmDialog.jsx:358
 msgid "Download an OS"
 msgstr "הורדת מערכת הפעלה"
 
@@ -780,8 +780,8 @@ msgstr "תיאור"
 msgid "Dying"
 msgstr "גוסס"
 
-#: src/components/vm/disks/diskEdit.jsx:164
 #: src/components/vm/nics/vmNicsCard.jsx:364
+#: src/components/vm/disks/diskEdit.jsx:164
 msgid "Edit"
 msgstr "עריכה"
 
@@ -810,19 +810,23 @@ msgstr "סוף"
 msgid "End should not be empty"
 msgstr "הסוף אמור להיות ריק"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1059
+#: src/components/create-vm-dialog/createVmDialog.jsx:1170
 msgid "Enter root and/or user information to enable unattended installation."
+msgstr ""
+
+#: src/components/create-vm-dialog/createVmDialog.jsx:517
+msgid "Error checking token"
 msgstr ""
 
 #: src/components/vm/vmMigrateDialog.jsx:54
 msgid "Example, $0"
 msgstr ""
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:292
+#: src/components/create-vm-dialog/createVmDialog.jsx:301
 msgid "Existing disk image on host's file system"
 msgstr "תמונת כונן קיימת במערכת הקבצים של המארח"
 
-#: src/components/vm/vmDetailsPage.jsx:157
+#: src/components/vm/vmDetailsPage.jsx:159
 msgid "Expand"
 msgstr "הרחבה"
 
@@ -897,8 +901,8 @@ msgstr "תיקיית מערכת קבצים"
 msgid "Filter by name"
 msgstr "סינון לפי שם"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:239
 #: src/components/vm/overview/firmware.jsx:75
+#: src/components/vm/overview/vmOverviewCard.jsx:239
 msgid "Firmware"
 msgstr "קושחה"
 
@@ -930,8 +934,8 @@ msgid ""
 "origin after migration."
 msgstr ""
 
-#: src/components/networks/networkOverviewTab.jsx:110
 #: src/components/vm/overview/vmOverviewCard.jsx:180
+#: src/components/networks/networkOverviewTab.jsx:110
 msgid "General"
 msgstr "כללי"
 
@@ -939,15 +943,15 @@ msgstr "כללי"
 msgid "Generate automatically"
 msgstr "לייצר אוטומטית"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:480
+#: src/components/create-vm-dialog/createVmDialog.jsx:500
 msgid "Get a new RHSM token."
 msgstr ""
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:688
-#: src/components/create-vm-dialog/createVmDialog.jsx:784
-#: src/components/storagePools/storageVolumeCreateBody.jsx:104
 #: src/components/vm/disks/vmDisksCard.jsx:51
 #: src/components/vm/overview/memorySelectRow.jsx:89
+#: src/components/create-vm-dialog/createVmDialog.jsx:798
+#: src/components/create-vm-dialog/createVmDialog.jsx:894
+#: src/components/storagePools/storageVolumeCreateBody.jsx:104
 msgid "GiB"
 msgstr "GiB"
 
@@ -955,15 +959,15 @@ msgstr "GiB"
 msgid "Go to VMs list"
 msgstr "מעבר לרשימת המכונות הווירטואליות"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:238
 #: src/components/vm/disks/diskAdd.jsx:202
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:238
 msgid "Hide additional options"
 msgstr "הסתרת אפשרויות נוספות"
 
-#: src/components/storagePools/storagePoolOverviewTab.jsx:34
-#: src/components/storagePools/createStoragePoolDialog.jsx:122
 #: src/components/vm/disks/vmDiskColumns.jsx:38
 #: src/components/vm/overview/bootOrder.jsx:114
+#: src/components/storagePools/storagePoolOverviewTab.jsx:34
+#: src/components/storagePools/createStoragePoolDialog.jsx:122
 msgid "Host"
 msgstr "מארח"
 
@@ -971,7 +975,7 @@ msgstr "מארח"
 msgid "Host device"
 msgstr "התקן מארח"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:199
+#: src/components/vm/hostdevs/hostDevAdd.jsx:201
 #, fuzzy
 #| msgid "Boot order settings could not be saved"
 msgid "Host device could not be attached"
@@ -981,7 +985,7 @@ msgstr "לא ניתן לשמור הגדרות סדר עלייה"
 msgid "Host device will be removed from $0:"
 msgstr ""
 
-#: src/components/vm/vmDetailsPage.jsx:181
+#: src/components/vm/vmDetailsPage.jsx:183
 #, fuzzy
 #| msgid "Host device"
 msgid "Host devices"
@@ -1007,8 +1011,8 @@ msgstr "מזהה"
 msgid "IP"
 msgstr ""
 
-#: src/components/networks/networkOverviewTab.jsx:255
 #: src/components/vm/nics/vmNicsCard.jsx:252
+#: src/components/networks/networkOverviewTab.jsx:255
 msgid "IP address"
 msgstr "כתובת IP"
 
@@ -1068,25 +1072,25 @@ msgstr ""
 msgid "Idle"
 msgstr "בהמתנה"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1276
+#: src/components/create-vm-dialog/createVmDialog.jsx:1391
 msgid "Import VM"
 msgstr "ייבוא מכונה וירטואלית"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1213
+#: src/components/create-vm-dialog/createVmDialog.jsx:1327
 msgid "Import a virtual machine"
 msgstr "ייבוא מכונה וירטואלית"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1199
+#: src/components/create-vm-dialog/createVmDialog.jsx:1313
 msgid "Import and edit"
 msgstr ""
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1224
+#: src/components/create-vm-dialog/createVmDialog.jsx:1339
 #, fuzzy
 #| msgid "Import a virtual machine"
 msgid "Import and run"
 msgstr "ייבוא מכונה וירטואלית"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:300
+#: src/components/create-vm-dialog/createVmDialog.jsx:309
 msgid ""
 "In most configurations, macvtap does not work for host to guest network "
 "communication."
@@ -1111,15 +1115,15 @@ msgstr "ה־IQN של המפעיל לא אמור להיות ריק"
 msgid "Install"
 msgstr "התקנה"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:363
+#: src/components/create-vm-dialog/createVmDialog.jsx:372
 msgid "Installation source"
 msgstr "מקור התקנה"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:216
+#: src/components/create-vm-dialog/createVmDialog.jsx:222
 msgid "Installation source must not be empty"
 msgstr "חובה למלא את מקור ההתקנה"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:341
+#: src/components/create-vm-dialog/createVmDialog.jsx:350
 msgid "Installation type"
 msgstr "סוג התקנה"
 
@@ -1159,7 +1163,7 @@ msgstr "כתובת IPv6 שגויה"
 msgid "Invalid IPv6 prefix"
 msgstr "קידומת IPv6 שגויה"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:200
+#: src/components/create-vm-dialog/createVmDialog.jsx:206
 msgid "Invalid filename"
 msgstr "שם הקובץ שגוי"
 
@@ -1175,17 +1179,17 @@ msgstr "קבוצת כרכים LVM"
 msgid "Launch remote viewer"
 msgstr "הפעלת מציג מרחוק"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:526
+#: src/components/create-vm-dialog/createVmDialog.jsx:636
 msgid ""
 "Leave the password blank if you do not wish to have a root account created"
 msgstr "ניתן להשאיר את הססמה ריקה אם בחירתך היא שלא ליצור חשבון על (root)"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:623
+#: src/components/create-vm-dialog/createVmDialog.jsx:733
 msgid ""
 "Leave the password blank if you do not wish to have a user account created"
 msgstr "ניתן להשאיר את הססמה ריקה אם בחירתך היא שלא ליצור חשבון משתמש"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:639
+#: src/components/create-vm-dialog/createVmDialog.jsx:749
 msgid "Leave the password blank if you do not wish to set a root password"
 msgstr ""
 "ניתן להשאיר את הססמה ריקה אם בחירתך היא שלא להגדיר את הססמה של חשבון העל "
@@ -1214,7 +1218,7 @@ msgstr "משאבים נטענים"
 msgid "Loading..."
 msgstr "בטעינה…"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:353
+#: src/components/create-vm-dialog/createVmDialog.jsx:362
 msgid "Local install media (ISO image or distro install tree)"
 msgstr "מדיה להתקנה מקומית (דמות ISO או עץ התקנת הפצה)"
 
@@ -1224,14 +1228,15 @@ msgstr "מדיה להתקנה מקומית (דמות ISO או עץ התקנת ה
 msgid "Location"
 msgstr "התחברות"
 
-#: src/components/networks/networkOverviewTab.jsx:68
 #: src/components/vm/overview/bootOrder.jsx:124
+#: src/components/networks/networkOverviewTab.jsx:68
 msgid "MAC"
 msgstr "MAC"
 
-#: src/components/networks/networkOverviewTab.jsx:247
+#: src/components/vm/nics/nicAdd.jsx:63
 #: src/components/vm/nics/vmNicsCard.jsx:250
-#: src/components/vm/nics/nicAdd.jsx:63 src/components/vm/nics/nicEdit.jsx:42
+#: src/components/vm/nics/nicEdit.jsx:42
+#: src/components/networks/networkOverviewTab.jsx:247
 msgid "MAC address"
 msgstr "כתובת MAC"
 
@@ -1301,9 +1306,9 @@ msgstr ""
 msgid "Maximum transmission unit"
 msgstr "יחידת העברה מרבית"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:671
 #: src/components/vm/vmUsageCard.jsx:60
 #: src/components/vm/overview/vmOverviewCard.jsx:198
+#: src/components/create-vm-dialog/createVmDialog.jsx:781
 msgid "Memory"
 msgstr "זיכרון"
 
@@ -1312,14 +1317,14 @@ msgstr "זיכרון"
 msgid "Memory could not be saved"
 msgstr "לא ניתן לשמור את הזיכרון"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:220
+#: src/components/create-vm-dialog/createVmDialog.jsx:229
 msgid "Memory must not be 0"
 msgstr "אסור שהזיכרון יהיה 0"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:686
-#: src/components/create-vm-dialog/createVmDialog.jsx:782
-#: src/components/storagePools/storageVolumeCreateBody.jsx:102
 #: src/components/vm/overview/memorySelectRow.jsx:87
+#: src/components/create-vm-dialog/createVmDialog.jsx:796
+#: src/components/create-vm-dialog/createVmDialog.jsx:892
+#: src/components/storagePools/storageVolumeCreateBody.jsx:102
 msgid "MiB"
 msgstr "MiB"
 
@@ -1343,8 +1348,8 @@ msgstr "היצירה של המכונה הווירטואלית $0 נכשלה"
 msgid "Mode"
 msgstr "מצב"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:202
 #: src/components/vm/nics/nicBody.jsx:50
+#: src/components/vm/hostdevs/hostDevCard.jsx:202
 msgid "Model"
 msgstr "דגם"
 
@@ -1380,17 +1385,17 @@ msgstr "NAT אל $0"
 msgid "NIC $0 of VM $1 failed to change state"
 msgstr "החלפת מצב מתאם הרשת $0 של המכונה הווירטואלית $0 נכשלה"
 
-#: src/components/vms/hostvmslist.jsx:140
-#: src/components/create-vm-dialog/createVmDialog.jsx:249
-#: src/components/storagePools/storageVolumeCreateBody.jsx:40
-#: src/components/storagePools/storagePoolList.jsx:75
-#: src/components/storagePools/storagePoolVolumesTab.jsx:79
-#: src/components/storagePools/createStoragePoolDialog.jsx:44
-#: src/components/networks/networkList.jsx:73
-#: src/components/networks/createNetworkDialog.jsx:126
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:80
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:39
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:80
 #: src/components/vm/vmCloneDialog.jsx:89
+#: src/components/networks/createNetworkDialog.jsx:126
+#: src/components/networks/networkList.jsx:73
+#: src/components/create-vm-dialog/createVmDialog.jsx:258
+#: src/components/vms/hostvmslist.jsx:140
+#: src/components/storagePools/storagePoolVolumesTab.jsx:79
+#: src/components/storagePools/storagePoolList.jsx:75
+#: src/components/storagePools/storageVolumeCreateBody.jsx:40
+#: src/components/storagePools/createStoragePoolDialog.jsx:44
 msgid "Name"
 msgstr "שם"
 
@@ -1404,15 +1409,15 @@ msgstr "המכונה הווירטואלית $0 כבר קיימת"
 msgid "Name contains invalid characters"
 msgstr "השם מכיל תווים שגויים"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:183
-#: src/components/storagePools/storageVolumeCreate.jsx:64
 #: src/components/vm/vmCloneDialog.jsx:41
+#: src/components/create-vm-dialog/createVmDialog.jsx:189
+#: src/components/storagePools/storageVolumeCreate.jsx:64
 msgid "Name must not be empty"
 msgstr "השם לא יכול להישאר ריק"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:45
-#: src/components/networks/createNetworkDialog.jsx:53
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:99
+#: src/components/networks/createNetworkDialog.jsx:53
+#: src/components/storagePools/createStoragePoolDialog.jsx:45
 msgid "Name should not be empty"
 msgstr "השם לא אמור להיות ריק"
 
@@ -1444,7 +1449,7 @@ msgstr "השבתת הרשת $0 נכשלה"
 msgid "Network $0 will be permanently deleted."
 msgstr "לא ניתן למחוק את ה־$0"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:358
+#: src/components/create-vm-dialog/createVmDialog.jsx:367
 msgid "Network boot (PXE)"
 msgstr "עלייה מהרשת (PXE)"
 
@@ -1464,17 +1469,17 @@ msgstr "לא ניתן לשמור את הגדרות מנשק הרשת"
 msgid "Network interface $0 will be removed from $1"
 msgstr "לא ניתן לשמור את הגדרות מנשק הרשת"
 
-#: src/components/vm/nics/nicAdd.jsx:159 src/components/vm/nics/nicEdit.jsx:135
+#: src/components/vm/nics/nicAdd.jsx:161 src/components/vm/nics/nicEdit.jsx:135
 msgid "Network interface settings could not be saved"
 msgstr "לא ניתן לשמור את הגדרות מנשק הרשת"
 
-#: src/components/vm/vmDetailsPage.jsx:172
+#: src/components/vm/vmDetailsPage.jsx:174
 #, fuzzy
 #| msgid "Add network interface"
 msgid "Network interfaces"
 msgstr "הוספת מנשק רשת"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:308
+#: src/components/create-vm-dialog/createVmDialog.jsx:317
 msgid "Network selection does not support PXE."
 msgstr "בחירת הרשת לא תומכת ב־PXE."
 
@@ -1524,7 +1529,7 @@ msgstr ""
 msgid "No disks defined for this VM"
 msgstr "לא מוגדרים כוננים למכונה הווירטואלית הזאת"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:203
+#: src/components/vm/hostdevs/hostDevAdd.jsx:206
 #, fuzzy
 #| msgid "No boot device found"
 msgid "No host device selected"
@@ -1564,7 +1569,7 @@ msgstr "לא מוגדרות תמונות מצב למכונה הווירטואל�
 msgid "No state"
 msgstr "אין מצב"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:740
+#: src/components/create-vm-dialog/createVmDialog.jsx:850
 msgid "No storage"
 msgstr "אין אחסון"
 
@@ -1612,8 +1617,18 @@ msgstr "אין"
 msgid "None (isolated network)"
 msgstr "אין (רשת מבודדת)"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:473
+#: src/components/create-vm-dialog/createVmDialog.jsx:587
 msgid "Offline token"
+msgstr ""
+
+#: src/components/create-vm-dialog/createVmDialog.jsx:226
+#, fuzzy
+#| msgid "Name must not be empty"
+msgid "Offline token must not be empty"
+msgstr "השם לא יכול להישאר ריק"
+
+#: src/components/create-vm-dialog/createVmDialog.jsx:527
+msgid "Old token expired"
 msgstr ""
 
 #: src/components/storagePools/storageVolumeDelete.jsx:70
@@ -1624,9 +1639,9 @@ msgstr ""
 "אחד או יותר מהכרכים שנבחרו משמשים את שם התחום. יש לנתק את הכוננים תחילה כדי "
 "לאפשר מחיקת כרכים."
 
+#: src/components/vm/nics/nicEdit.jsx:39
 #: src/components/vm/overview/bootOrder.jsx:379
 #: src/components/vm/overview/memoryModal.jsx:143
-#: src/components/vm/nics/nicEdit.jsx:39
 msgid "Only editable when the guest is shut off"
 msgstr "ניתן לעריכה רק כאשר האורח כבוי"
 
@@ -1634,7 +1649,7 @@ msgstr "ניתן לעריכה רק כאשר האורח כבוי"
 msgid "Open"
 msgstr "פתיחה"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:439
+#: src/components/create-vm-dialog/createVmDialog.jsx:448
 msgid "Operating system"
 msgstr "מערכת הפעלה"
 
@@ -1643,8 +1658,8 @@ msgstr "מערכת הפעלה"
 msgid "Operation is in progress"
 msgstr "המשימה בתהליך"
 
+#: src/components/vm/vmDetailsPage.jsx:134
 #: src/components/storagePools/storagePool.jsx:75
-#: src/components/vm/vmDetailsPage.jsx:132
 msgid "Overview"
 msgstr "סקירה"
 
@@ -1656,10 +1671,10 @@ msgstr ""
 msgid "Parent snapshot"
 msgstr "תמונת מצב הורה"
 
+#: src/components/vm/disks/diskEdit.jsx:40
 #: src/components/vm/hostdevs/hostDevCard.jsx:128
 #: src/components/vm/hostdevs/hostDevCard.jsx:132
 #: src/components/vm/deleteDialog.jsx:63
-#: src/components/vm/disks/diskEdit.jsx:40
 msgid "Path"
 msgstr "נתיב"
 
@@ -1667,11 +1682,11 @@ msgstr "נתיב"
 msgid "Path on host's filesystem"
 msgstr "הנתיב במערכת הקבצים של המארח"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:274
+#: src/components/create-vm-dialog/createVmDialog.jsx:283
 msgid "Path to ISO file on host's file system"
 msgstr "הנתיב לקובץ ISO על מערכת הקבצים של המארח"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:283
+#: src/components/create-vm-dialog/createVmDialog.jsx:292
 msgid "Path to cloud image file on host's file system"
 msgstr "הנתיב לקובץ דמות הענן במערכת הקבצים של המארח"
 
@@ -1691,12 +1706,12 @@ msgstr "מושהה"
 msgid "Permanent (default)"
 msgstr ""
 
-#: src/components/vm/disks/diskAdd.jsx:127 src/components/vm/nics/nicAdd.jsx:86
+#: src/components/vm/nics/nicAdd.jsx:86 src/components/vm/disks/diskAdd.jsx:127
 msgid "Persistence"
 msgstr "עקביות"
 
-#: src/components/storagePools/storagePoolOverviewTab.jsx:66
 #: src/components/networks/networkOverviewTab.jsx:114
+#: src/components/storagePools/storagePoolOverviewTab.jsx:66
 msgid "Persistent"
 msgstr "עקבי"
 
@@ -1724,9 +1739,9 @@ msgstr "נא להקליד את שם הכרך החדש"
 msgid "Please start the virtual machine to access its console."
 msgstr "נא להפעיל את המכונה הווירטואלית כדי לגשת למסוף שלה."
 
-#: src/components/vm/deleteDialog.jsx:71
-#: src/components/vm/disks/diskAdd.jsx:143
 #: src/components/vm/disks/vmDiskColumns.jsx:36
+#: src/components/vm/disks/diskAdd.jsx:143
+#: src/components/vm/deleteDialog.jsx:71
 #: src/components/vm/overview/bootOrder.jsx:112
 msgid "Pool"
 msgstr "מאגר"
@@ -1749,10 +1764,10 @@ msgstr "סוג המאגר לא תומך ביצירת כרכים"
 msgid "Pool's volumes are used by VMs "
 msgstr "כרכי המאגר משמשים מכונות וירטואליות "
 
+#: src/components/vm/nics/vmNicsCard.jsx:282
 #: src/components/vm/disks/vmDiskColumns.jsx:39
 #: src/components/vm/overview/bootOrder.jsx:115
 #: src/components/vm/overview/bootOrder.jsx:131
-#: src/components/vm/nics/vmNicsCard.jsx:282
 msgid "Port"
 msgstr "פתחה"
 
@@ -1782,20 +1797,20 @@ msgstr "תמונות מצב שנלכדו בעבר מאפשרות לך לחזור
 msgid "Private"
 msgstr "פרטי"
 
+#: src/components/vm/hostdevs/hostDevAdd.jsx:132
 #: src/components/vm/hostdevs/hostDevCard.jsx:236
 #: src/components/vm/hostdevs/hostDevCard.jsx:242
-#: src/components/vm/hostdevs/hostDevAdd.jsx:132
 #: src/components/vm/overview/bootOrder.jsx:144
 #: src/components/vm/overview/bootOrder.jsx:159
 msgid "Product"
 msgstr "מוצר"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:505
+#: src/components/create-vm-dialog/createVmDialog.jsx:615
 msgid "Profile"
 msgstr "פרופיל"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:119
 #: src/components/vm/disks/vmDiskColumns.jsx:35
+#: src/components/vm/hostdevs/hostDevCard.jsx:119
 #: src/components/vm/overview/bootOrder.jsx:111
 #: src/components/vm/overview/bootOrder.jsx:172
 msgid "Protocol"
@@ -1823,8 +1838,8 @@ msgstr ""
 msgid "Range"
 msgstr "החלפה"
 
-#: src/components/vm/disks/vmDisksCard.jsx:216
 #: src/components/vm/disks/diskEdit.jsx:121
+#: src/components/vm/disks/vmDisksCard.jsx:216
 msgid "Read-only"
 msgstr "קריאה בלבד"
 
@@ -1832,7 +1847,7 @@ msgstr "קריאה בלבד"
 msgid "Reboot"
 msgstr "הפעלה מחדש"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:329
+#: src/components/create-vm-dialog/createVmDialog.jsx:338
 msgid "Remote URL"
 msgstr "כתובת מרוחקת"
 
@@ -1840,15 +1855,15 @@ msgstr "כתובת מרוחקת"
 msgid "Remote viewer details"
 msgstr "פרטי המציג מרחוק"
 
-#: src/components/networks/networkOverviewTab.jsx:70
+#: src/components/vm/nics/vmNicsCard.jsx:382
+#: src/components/vm/nics/vmNicsCard.jsx:389
+#: src/components/vm/disks/vmDisksCard.jsx:245
+#: src/components/vm/disks/vmDisksCard.jsx:263
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:59
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:68
 #: src/components/vm/hostdevs/hostDevCard.jsx:252
 #: src/components/vm/hostdevs/hostDevCard.jsx:258
-#: src/components/vm/disks/vmDisksCard.jsx:245
-#: src/components/vm/disks/vmDisksCard.jsx:263
-#: src/components/vm/nics/vmNicsCard.jsx:382
-#: src/components/vm/nics/vmNicsCard.jsx:389
+#: src/components/networks/networkOverviewTab.jsx:70
 msgid "Remove"
 msgstr "הסרה"
 
@@ -1880,7 +1895,7 @@ msgstr "הוספת מנשק רשת"
 msgid "Remove static host from DHCP"
 msgstr ""
 
-#: src/components/vm/vmRenameDialog.jsx:65 src/components/vm/vmActions.jsx:338
+#: src/components/vm/vmActions.jsx:338 src/components/vm/vmRenameDialog.jsx:65
 msgid "Rename"
 msgstr ""
 
@@ -1910,7 +1925,7 @@ msgstr ""
 "החזרה לתמונת המצב הזו תחזיר את המכונה הווירטואלית אחורה לזמן תמונת המצב "
 "והמצב הנוכחי יאבד לצד כל הנתונים שלא נלכדו קודם לכן בתמונת המצב"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:599
+#: src/components/create-vm-dialog/createVmDialog.jsx:709
 msgid "Root password"
 msgstr "ססמת משתמש על (root)"
 
@@ -1926,8 +1941,8 @@ msgstr "רשת מנותבת"
 msgid "Run"
 msgstr "הפעלה"
 
-#: src/components/networks/networkOverviewTab.jsx:124
 #: src/components/vm/overview/vmOverviewCard.jsx:123
+#: src/components/networks/networkOverviewTab.jsx:124
 msgid "Run when host boots"
 msgstr "הפעלה עם עליית המארח"
 
@@ -1947,11 +1962,11 @@ msgstr "כתובת SPICE"
 msgid "SPICE port"
 msgstr "פתחת SPICE"
 
+#: src/components/vm/nics/nicEdit.jsx:177
 #: src/components/vm/disks/diskEdit.jsx:265
 #: src/components/vm/overview/bootOrder.jsx:327
 #: src/components/vm/overview/firmware.jsx:67
 #: src/components/vm/overview/memoryModal.jsx:155
-#: src/components/vm/nics/nicEdit.jsx:177
 msgid "Save"
 msgstr "שמירה"
 
@@ -1991,7 +2006,7 @@ msgstr "הגדרת טווח DHCP"
 msgid "Set manually"
 msgstr "הגדרה ידנית"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1205
+#: src/components/create-vm-dialog/createVmDialog.jsx:1319
 msgid ""
 "Setting the user passwords for unattended installation requires starting the "
 "VM when creating it"
@@ -2006,12 +2021,12 @@ msgstr ""
 msgid "Share a host directory with the guest"
 msgstr ""
 
-#: src/components/vm/vmDetailsPage.jsx:202
+#: src/components/vm/vmDetailsPage.jsx:204
 msgid "Shared directories"
 msgstr ""
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:176
-#: src/components/vm/vmDetailsPage.jsx:204
+#: src/components/vm/vmDetailsPage.jsx:206
 msgid "Shared host directories need to be manually mounted inside the VM"
 msgstr ""
 
@@ -2021,8 +2036,8 @@ msgstr ""
 msgid "Shared storage"
 msgstr "אין אחסון"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:238
 #: src/components/vm/disks/diskAdd.jsx:202
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:238
 msgid "Show additional options"
 msgstr "הצגת אפשרויות נוספות"
 
@@ -2042,16 +2057,16 @@ msgstr "יש לכבות את המכונה הווירטואלית כדי לערו
 msgid "Shutting down"
 msgstr "מתבצע כיבוי"
 
-#: src/components/storagePools/storageVolumeCreateBody.jsx:86
-#: src/components/storagePools/storagePoolList.jsx:76
 #: src/components/storagePools/storagePoolVolumesTab.jsx:79
+#: src/components/storagePools/storagePoolList.jsx:76
+#: src/components/storagePools/storageVolumeCreateBody.jsx:86
 msgid "Size"
 msgstr "גודל"
 
+#: src/components/vm/hostdevs/hostDevAdd.jsx:104
 #: src/components/vm/hostdevs/hostDevCard.jsx:106
 #: src/components/vm/hostdevs/hostDevCard.jsx:113
 #: src/components/vm/hostdevs/hostDevCard.jsx:237
-#: src/components/vm/hostdevs/hostDevAdd.jsx:104
 #: src/components/vm/overview/bootOrder.jsx:160
 msgid "Slot"
 msgstr ""
@@ -2074,7 +2089,7 @@ msgstr "לאחר מחיקת תמונת המצב, כל התוכן שנלכד בה
 msgid "Snapshot failed to be created"
 msgstr "יצירת תמונת המצב נכשלה"
 
-#: src/components/vm/vmDetailsPage.jsx:190
+#: src/components/vm/vmDetailsPage.jsx:192
 msgid "Snapshots"
 msgstr "תמונות מצב"
 
@@ -2082,12 +2097,12 @@ msgstr "תמונות מצב"
 msgid "Sockets"
 msgstr "שקעים"
 
-#: src/components/storagePools/storagePoolOverviewTab.jsx:51
-#: src/components/vm/hostdevs/hostDevCard.jsx:220
-#: src/components/vm/disks/diskAdd.jsx:662
-#: src/components/vm/disks/vmDisksCard.jsx:190
 #: src/components/vm/nics/vmNicsCard.jsx:277
 #: src/components/vm/nics/nicBody.jsx:197
+#: src/components/vm/disks/vmDisksCard.jsx:190
+#: src/components/vm/disks/diskAdd.jsx:662
+#: src/components/vm/hostdevs/hostDevCard.jsx:220
+#: src/components/storagePools/storagePoolOverviewTab.jsx:51
 msgid "Source"
 msgstr "מקור"
 
@@ -2101,13 +2116,13 @@ msgstr "תצורת מקור"
 msgid "Source must not be empty"
 msgstr "השם לא יכול להישאר ריק"
 
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:48
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:65
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:199
 #: src/components/storagePools/storagePoolOverviewTab.jsx:41
 #: src/components/storagePools/storagePoolOverviewTab.jsx:46
 #: src/components/storagePools/createStoragePoolDialog.jsx:174
 #: src/components/storagePools/createStoragePoolDialog.jsx:192
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:48
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:65
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:199
 msgid "Source path"
 msgstr "נתיב מקור"
 
@@ -2116,7 +2131,7 @@ msgstr "נתיב מקור"
 msgid "Source path should not be empty"
 msgstr "נתיב המקור לא אמור להיות ריק"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:208
+#: src/components/create-vm-dialog/createVmDialog.jsx:214
 msgid "Source should start with http, ftp or nfs protocol"
 msgstr "המקור אמור להיפתח בפרוטוקולי http,‏ ftp או nfs"
 
@@ -2141,11 +2156,11 @@ msgstr "ההתחלה לא אמורה להיות ריקה"
 msgid "Startup"
 msgstr "בהתחלה"
 
+#: src/components/vm/nics/vmNicsCard.jsx:325
+#: src/components/vm/overview/vmOverviewCard.jsx:184
+#: src/components/networks/networkList.jsx:77
 #: src/components/vms/hostvmslist.jsx:99 src/components/vms/hostvmslist.jsx:142
 #: src/components/storagePools/storagePoolList.jsx:78
-#: src/components/networks/networkList.jsx:77
-#: src/components/vm/overview/vmOverviewCard.jsx:184
-#: src/components/vm/nics/vmNicsCard.jsx:325
 msgid "State"
 msgstr "מצב"
 
@@ -2159,12 +2174,12 @@ msgstr ""
 msgid "Static host from DHCP could not be removed"
 msgstr "לא ניתן למחוק את כרכי האחסון"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:735
 #: src/components/vm/vmMigrateDialog.jsx:95
+#: src/components/create-vm-dialog/createVmDialog.jsx:845
 msgid "Storage"
 msgstr "אחסון"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:766
+#: src/components/create-vm-dialog/createVmDialog.jsx:876
 #, fuzzy
 #| msgid "Storage"
 msgid "Storage Limit"
@@ -2190,7 +2205,7 @@ msgstr "יצירת מאגר האחסון נכשלה"
 msgid "Storage pool name"
 msgstr "שם מאגר אחסון"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:741
+#: src/components/create-vm-dialog/createVmDialog.jsx:851
 #: src/components/storagePools/storagePoolList.jsx:58
 #: src/components/storagePools/storagePoolList.jsx:65
 #: src/components/storagePools/storagePoolList.jsx:72
@@ -2203,7 +2218,7 @@ msgstr "מאגרי אחסון"
 msgid "Storage pools could not be fetched"
 msgstr "לא ניתן למחוק את כרכי האחסון"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:224
+#: src/components/create-vm-dialog/createVmDialog.jsx:233
 msgid "Storage size must not be 0"
 msgstr "אסור שגודל האחסון יהיה 0"
 
@@ -2211,8 +2226,8 @@ msgstr "אסור שגודל האחסון יהיה 0"
 msgid "Storage volume"
 msgstr "כרך אחסון"
 
-#: src/components/storagePools/storageVolumeCreate.jsx:67
 #: src/components/vm/disks/diskAdd.jsx:426
+#: src/components/storagePools/storageVolumeCreate.jsx:67
 msgid "Storage volume size must not exceed the storage pool's capacity ($0 $1)"
 msgstr "גודל כרך האחסון לא יכול לחרוג מקיבולת מאגר האחסון ($0 $1)"
 
@@ -2241,8 +2256,8 @@ msgstr "מערכת"
 msgid "Table of selectable host devices"
 msgstr ""
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:114
 #: src/components/vm/disks/vmDisksCard.jsx:249
+#: src/components/vm/hostdevs/hostDevCard.jsx:114
 #: src/components/vm/overview/bootOrder.jsx:166
 msgid "Target"
 msgstr "יעד"
@@ -2270,8 +2285,8 @@ msgstr ""
 msgid "The VM $0 is running and will be forced off before deletion."
 msgstr "המכונה הווירטואלית פועלת ויהיה עליך לכבות אותה לפני המחיקה."
 
-#: src/components/vm/disks/vmDisksCard.jsx:262
 #: src/components/vm/nics/vmNicsCard.jsx:390
+#: src/components/vm/disks/vmDisksCard.jsx:262
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr "על המכונה הווירטואלית להיות פעילה או כבויה כדי לנתק את ההתקן הזה"
 
@@ -2293,11 +2308,11 @@ msgstr ""
 msgid "The pool is empty"
 msgstr "המאגר ריק"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:663
+#: src/components/create-vm-dialog/createVmDialog.jsx:773
 msgid "The selected operating system has minimum memory requirement of $0 $1"
 msgstr "למערכת ההפעלה הנוכחית יש דרישות סף מבחינת זיכרון של $0 $1"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:713
+#: src/components/create-vm-dialog/createVmDialog.jsx:823
 msgid ""
 "The selected operating system has minimum storage size requirement of $0 $1"
 msgstr "למערכת ההפעלה הנוכחית יש דרישות סף מבחינת אחסון של $0 $1"
@@ -2313,6 +2328,12 @@ msgstr "לא ניתן למחוק את מאגר האחסון"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:221
 msgid "The tag name to be used by the guest to mount this export point."
+msgstr ""
+
+#: src/components/create-vm-dialog/createVmDialog.jsx:507
+#: src/components/create-vm-dialog/createVmDialog.jsx:520
+#: src/components/create-vm-dialog/createVmDialog.jsx:530
+msgid "Then copy and paste it above."
 msgstr ""
 
 #: src/components/vm/vmActions.jsx:347
@@ -2356,7 +2377,7 @@ msgstr ""
 msgid "This volume is already used by $0."
 msgstr "כרך זה כבר בשימוש על ידי: "
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:754
+#: src/components/create-vm-dialog/createVmDialog.jsx:864
 msgid "This volume is already used by another VM."
 msgstr "כרך זה כבר בשימוש על ידי מכונה וירטואלית אחרת."
 
@@ -2372,17 +2393,17 @@ msgstr "מכונות וירטואליות זמניות לא תומכות בער�
 msgid "Troubleshoot"
 msgstr "איתור תקלות"
 
-#: src/components/storagePools/storagePoolOverviewTab.jsx:76
-#: src/components/storagePools/createStoragePoolDialog.jsx:81
-#: src/components/vm/hostdevs/hostDevCard.jsx:184
+#: src/components/vm/nics/vmNicsCard.jsx:227
 #: src/components/vm/hostdevs/hostDevAdd.jsx:50
+#: src/components/vm/hostdevs/hostDevCard.jsx:184
 #: src/components/vm/overview/bootOrder.jsx:129
 #: src/components/vm/overview/bootOrder.jsx:142
 #: src/components/vm/overview/bootOrder.jsx:157
 #: src/components/vm/overview/bootOrder.jsx:164
 #: src/components/vm/overview/bootOrder.jsx:171
 #: src/components/vm/overview/bootOrder.jsx:177
-#: src/components/vm/nics/vmNicsCard.jsx:227
+#: src/components/storagePools/storagePoolOverviewTab.jsx:76
+#: src/components/storagePools/createStoragePoolDialog.jsx:81
 msgid "Type"
 msgstr "סוג"
 
@@ -2390,7 +2411,7 @@ msgstr "סוג"
 msgid "Type ID"
 msgstr "מזהה סוג"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:355
+#: src/components/create-vm-dialog/createVmDialog.jsx:364
 msgid "URL (ISO image or distro install tree)"
 msgstr "כתובת (דמות ISO או עץ התקנת הפצה)"
 
@@ -2406,11 +2427,11 @@ msgstr ""
 msgid "Undefined"
 msgstr ""
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:257
+#: src/components/create-vm-dialog/createVmDialog.jsx:266
 msgid "Unique name"
 msgstr "שם ייחודי"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:257
+#: src/components/create-vm-dialog/createVmDialog.jsx:266
 #, fuzzy
 #| msgid "Unique name"
 msgid "Unique name, default: $0"
@@ -2443,7 +2464,7 @@ msgstr ""
 msgid "Url"
 msgstr "כתובת"
 
-#: src/components/vm/vmDetailsPage.jsx:143
+#: src/components/vm/vmDetailsPage.jsx:145
 msgid "Usage"
 msgstr "שימוש"
 
@@ -2470,19 +2491,19 @@ msgstr "בשימוש"
 msgid "Used by"
 msgstr "בשימוש על ידי"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:612
+#: src/components/create-vm-dialog/createVmDialog.jsx:722
 msgid "User login"
 msgstr "שם המשתמש"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:239
+#: src/components/create-vm-dialog/createVmDialog.jsx:248
 msgid "User login must not be empty when user password is set"
 msgstr "שם המשתמש לא יכול להיות ריק כשמוגדרת ססמה"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:619
+#: src/components/create-vm-dialog/createVmDialog.jsx:729
 msgid "User password"
 msgstr "ססמת משתמש"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:236
+#: src/components/create-vm-dialog/createVmDialog.jsx:245
 msgid "User password must not be empty when user login is set"
 msgstr "ססמת המשתמש לא יכולה להיות ריקה כשמוגדר שם משתמש"
 
@@ -2502,7 +2523,7 @@ msgstr "לא ניתן לשמור את הגדרות המעבד הווירטואל
 msgid "VM $0 Host Devices"
 msgstr "התקן מארח"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:185
+#: src/components/create-vm-dialog/createVmDialog.jsx:191
 msgid "VM $0 already exists"
 msgstr "המכונה הווירטואלית $0 כבר קיימת"
 
@@ -2566,21 +2587,25 @@ msgstr "מסוף VNC"
 msgid "VNC port"
 msgstr "פתחת VNC"
 
+#: src/components/create-vm-dialog/createVmDialog.jsx:536
+msgid "Valid token"
+msgstr ""
+
+#: src/components/vm/hostdevs/hostDevAdd.jsx:132
 #: src/components/vm/hostdevs/hostDevCard.jsx:211
 #: src/components/vm/hostdevs/hostDevCard.jsx:235
 #: src/components/vm/hostdevs/hostDevCard.jsx:241
-#: src/components/vm/hostdevs/hostDevAdd.jsx:132
 #: src/components/vm/overview/bootOrder.jsx:143
 #: src/components/vm/overview/bootOrder.jsx:158
 msgid "Vendor"
 msgstr "ספק"
 
+#: src/components/vm/vmDetailsPage.jsx:112
+#: src/components/vm/vmDetailsPage.jsx:264
+#: src/components/networks/networkList.jsx:53
 #: src/components/vms/hostvmslist.jsx:130
 #: src/components/vms/hostvmslist.jsx:137
-#: src/components/storagePools/storagePoolList.jsx:55
-#: src/components/networks/networkList.jsx:53
-#: src/components/vm/vmDetailsPage.jsx:111
-#: src/components/vm/vmDetailsPage.jsx:262 src/manifest.json:0
+#: src/components/storagePools/storagePoolList.jsx:55 src/manifest.json:0
 msgid "Virtual machines"
 msgstr "מכונות וירטואליות"
 
@@ -2600,11 +2625,11 @@ msgstr "יצירת הרשת הווירטואלית נכשלה"
 msgid "Virtualization service (libvirt) is not active"
 msgstr "שירות הווירטואליזציה (libvirt) אינו פעיל"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:752
-#: src/components/vm/deleteDialog.jsx:68
-#: src/components/vm/disks/diskAdd.jsx:106
 #: src/components/vm/disks/vmDiskColumns.jsx:37
+#: src/components/vm/disks/diskAdd.jsx:106
+#: src/components/vm/deleteDialog.jsx:68
 #: src/components/vm/overview/bootOrder.jsx:113
+#: src/components/create-vm-dialog/createVmDialog.jsx:862
 msgid "Volume"
 msgstr "כרך"
 
@@ -2625,13 +2650,13 @@ msgstr "שם קבוצת הכרכים לא אמור להיות ריק"
 msgid "WWPN"
 msgstr "WWPN"
 
-#: src/components/vm/disks/vmDisksCard.jsx:216
 #: src/components/vm/disks/diskEdit.jsx:130
+#: src/components/vm/disks/vmDisksCard.jsx:216
 msgid "Writeable"
 msgstr "ניתן לכתיבה"
 
-#: src/components/vm/disks/vmDisksCard.jsx:216
 #: src/components/vm/disks/diskEdit.jsx:139
+#: src/components/vm/disks/vmDisksCard.jsx:216
 msgid "Writeable and shared"
 msgstr "ניתן לכתיבה ומשותף"
 
@@ -2639,12 +2664,12 @@ msgstr "ניתן לכתיבה ומשותף"
 msgid "You can mount the shared folder using:"
 msgstr ""
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:188
+#: src/components/create-vm-dialog/createVmDialog.jsx:194
 msgid "You need to select the most closely matching operating system"
 msgstr "עליך לבחור את מערכת ההפעלה שהכי מתאימה"
 
-#: src/components/storagePools/storagePool.jsx:64
 #: src/components/networks/network.jsx:57
+#: src/components/storagePools/storagePool.jsx:64
 msgid "active"
 msgstr "פעיל"
 
@@ -2727,8 +2752,8 @@ msgstr "יעד iSCSI"
 msgid "iSCSI target IQN"
 msgstr "יעד IQN של iSCSI"
 
-#: src/components/storagePools/storagePool.jsx:64
 #: src/components/networks/network.jsx:57
+#: src/components/storagePools/storagePool.jsx:64
 #, fuzzy
 #| msgid "active"
 msgid "inactive"
@@ -2746,18 +2771,18 @@ msgstr "libvirt"
 msgid "mcast"
 msgstr "mcast"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:190
-#: src/components/vm/vmDetailsPage.jsx:217
 #: src/components/vm/nics/nicBody.jsx:112
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:190
+#: src/components/vm/vmDetailsPage.jsx:219
 msgid "more info"
 msgstr ""
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:186
-#: src/components/vm/vmDetailsPage.jsx:213
+#: src/components/vm/vmDetailsPage.jsx:215
 msgid "mount point: The mount point inside the guest"
 msgstr ""
 
-#: src/components/vm/vmDetailsPage.jsx:212
+#: src/components/vm/vmDetailsPage.jsx:214
 msgid "mount tag: The tag associated to the exported mount point"
 msgstr ""
 
@@ -2765,9 +2790,9 @@ msgstr ""
 msgid "network"
 msgstr "רשת"
 
-#: src/helpers.js:273 src/components/storagePools/storagePoolOverviewTab.jsx:67
+#: src/helpers.js:273 src/components/networks/networkOverviewTab.jsx:115
+#: src/components/storagePools/storagePoolOverviewTab.jsx:67
 #: src/components/storagePools/storagePoolOverviewTab.jsx:72
-#: src/components/networks/networkOverviewTab.jsx:115
 msgid "no"
 msgstr "לא"
 
@@ -2847,7 +2872,7 @@ msgid ""
 "VMs"
 msgstr "יש להתקין את החבילה virt-install במערכת כדי לשכפל מכונות וירטואליות"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1282
+#: src/components/create-vm-dialog/createVmDialog.jsx:1397
 msgid ""
 "virt-install package needs to be installed on the system in order to create "
 "new VMs"
@@ -2864,9 +2889,9 @@ msgstr "יש להתקין את החבילה virt-install במערכת כדי ל�
 msgid "vm"
 msgstr "מכונה וירטואלית"
 
-#: src/helpers.js:272 src/components/storagePools/storagePoolOverviewTab.jsx:67
+#: src/helpers.js:272 src/components/networks/networkOverviewTab.jsx:115
+#: src/components/storagePools/storagePoolOverviewTab.jsx:67
 #: src/components/storagePools/storagePoolOverviewTab.jsx:72
-#: src/components/networks/networkOverviewTab.jsx:115
 msgid "yes"
 msgstr "כן"
 
