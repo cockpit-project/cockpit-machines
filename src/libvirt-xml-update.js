@@ -6,7 +6,7 @@ export function updateDisk({ domXml, diskTarget, readonly, shareable, busType, e
     const doc = getDoc(domXml);
     const domainElem = doc.firstElementChild;
     if (!domainElem)
-        throw new Error("updateBootOrder: domXML has no domain element");
+        return Promise.reject(new Error("updateBootOrder: domXML has no domain element"));
 
     const deviceElem = domainElem.getElementsByTagName("devices")[0];
     const disks = deviceElem.getElementsByTagName("disk");
@@ -56,7 +56,7 @@ export function updateBootOrder(domXml, devices) {
     const doc = getDoc(domXml);
     const domainElem = doc.firstElementChild;
     if (!domainElem)
-        throw new Error("updateBootOrder: domXML has no domain element");
+        return Promise.reject(new Error("updateBootOrder: domXML has no domain element"));
 
     const deviceElem = domainElem.getElementsByTagName("devices")[0];
     const disks = deviceElem.getElementsByTagName("disk");
