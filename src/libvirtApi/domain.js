@@ -150,7 +150,7 @@ export function domainAttachHostDevices({ connectionName, vmName, live, devices 
     devices.forEach(dev => {
         const source = getNodeDevSource(dev);
         if (!source)
-            throw new Error(`domainAttachHostDevices: could not determine device's source identifier`);
+            return Promise.reject(new Error(`domainAttachHostDevices: could not determine device's source identifier`));
 
         args.push("--add-device", "--hostdev", source);
     });
@@ -502,7 +502,7 @@ export function domainDetachDisk({
 export function domainDetachHostDevice({ connectionName, vmId, live, dev }) {
     const source = getHostDevSourceObject(dev);
     if (!source)
-        throw new Error(`domainDetachHostDevice: could not determine device's source identifier`);
+        return Promise.reject(new Error(`domainDetachHostDevice: could not determine device's source identifier`));
 
     const hostDevPromises = [];
 
@@ -811,7 +811,7 @@ export function domainSetOSFirmware({ connectionName, objPath, loaderType }) {
                 const domainElem = doc.firstElementChild;
 
                 if (!domainElem)
-                    throw new Error("setOSFirmware: domXML has no domain element");
+                    return Promise.reject(new Error("setOSFirmware: domXML has no domain element"));
 
                 const osElem = domainElem.getElementsByTagNameNS("", "os")[0];
                 const loaderElem = getSingleOptionalElem(osElem, "loader");
