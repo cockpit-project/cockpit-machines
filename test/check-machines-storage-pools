@@ -699,6 +699,18 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         b = self.browser
         m = self.machine
 
+        # Prepare a shutoff VM and a disk attached to the VM
+        self.createVm("subVmTest1", running=False)
+
+        disk_xml = '''
+<disk type='volume' device='disk'>
+    <driver name='qemu' type='qcow2'/>
+    <source pool='images' volume='forDeletion'/>
+    <target dev='vdb' bus='virtio'/>
+</disk>'''
+        m.execute("virsh vol-create-as images forDeletion 1M")
+        m.execute(f'echo "{disk_xml}" > /tmp/diskXML; virsh attach-device --current subVmTest1 /tmp/diskXML')
+
         # Prepare dir pool
         dir_pool = os.path.join(self.vm_tmpdir, "dir_pool")
         m.execute(f"mkdir --mode 777 {dir_pool}")
@@ -730,8 +742,8 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         self.login_and_go("/machines")
         self.waitPageInit()
 
-        b.wait_in_text("#card-pf-storage-pools .pf-c-card__header button", "Storage pools")
-        b.click(".pf-c-card .pf-c-card__header button:contains(Storage pools)")
+        b.wait_in_text("#card-pf-storage-pools .pf-c-card__header button", "Storage pool")
+        b.click(".pf-c-card .pf-c-card__header button:contains(Storage pool)")
         b.wait_visible("#storage-pools-listing")
 
         class StoragePoolsCreationAndDeletion:
@@ -953,6 +965,18 @@ class TestMachinesStoragePools(VirtualMachinesCase):
                                             target="/dev/disk/by-id/",
                                             source_dev=target_iqn,
                                             activate=True).execute()
+
+        # Check storage pool deletion when disk is attached
+        self.waitPoolRow("images")
+        self.togglePoolRow("images")
+        self.gotoVolumesTab("images")
+
+        b.wait_in_text("#pool-images-system-volume-forDeletion-usedby", "subVmTest1")
+
+        b.click("#pool-images-system-action-kebab button")
+        b.mouse("#delete-pool-images-system a[aria-disabled=true]", "mouseenter")
+        b.wait_in_text("#delete-tooltip", "Pool's volumes are used by VMs")
+        b.mouse("#delete-pool-images-system a[aria-disabled=true]", "mouseleave")
 
 
 if __name__ == '__main__':
