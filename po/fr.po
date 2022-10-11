@@ -21,9 +21,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-04 04:01+0000\n"
-"PO-Revision-Date: 2022-05-02 20:18+0000\n"
-"Last-Translator: Alain Nussbaumer <alain.nussbaumer@alleluia.ch>\n"
+"POT-Creation-Date: 2022-10-09 04:16+0000\n"
+"PO-Revision-Date: 2022-10-06 07:19+0000\n"
+"Last-Translator: Ludek Janda <ljanda@redhat.com>\n"
 "Language-Team: French <https://translate.fedoraproject.org/projects/cockpit-"
 "machines/main/fr/>\n"
 "Language: fr\n"
@@ -31,7 +31,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1\n"
-"X-Generator: Weblate 4.12.1\n"
+"X-Generator: Weblate 4.14.1\n"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:812
 msgid "$0 $1 available at default location"
@@ -194,10 +194,8 @@ msgstr ""
 "limité de caractères de ponctuation (-, _, +, .)"
 
 #: src/components/storagePools/storagePoolDelete.jsx:175
-#, fuzzy
-#| msgid "Delete the volumes inside this pool"
 msgid "Also delete all volumes inside this pool:"
-msgstr "Supprimer les volumes de ce pool"
+msgstr "Supprimez également tous les volumes de ce pool :"
 
 #: src/components/vm/nics/nicAdd.jsx:89 src/components/vm/disks/diskAdd.jsx:130
 msgid "Always attach"
@@ -230,7 +228,7 @@ msgstr "Automatique"
 msgid "Automation"
 msgstr "Automatisation"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:221
+#: src/components/vm/overview/vmOverviewCard.jsx:226
 #: src/components/networks/networkOverviewTab.jsx:119
 #: src/components/storagePools/storagePoolOverviewTab.jsx:71
 msgid "Autostart"
@@ -240,7 +238,7 @@ msgstr "Démarrage automatique"
 msgid "Blocked"
 msgstr "Bloqué"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:213
+#: src/components/vm/overview/vmOverviewCard.jsx:218
 msgid "Boot order"
 msgstr "Ordre d’amorçage"
 
@@ -275,7 +273,7 @@ msgstr "CPU"
 msgid "CPU configuration could not be saved"
 msgstr "La configuration du CPU n’a pas pu être sauvegardée"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:208
+#: src/components/vm/overview/vmOverviewCard.jsx:213
 msgid "CPU type"
 msgstr "Type de CPU"
 
@@ -381,6 +379,7 @@ msgstr ""
 msgid "Connecting"
 msgstr "Connexion en cours"
 
+#: src/components/vm/overview/vmOverviewCard.jsx:184
 #: src/components/networks/createNetworkDialog.jsx:41
 #: src/components/networks/networkList.jsx:75
 #: src/components/vms/hostvmslist.jsx:141
@@ -404,16 +403,12 @@ msgid "Cores per socket"
 msgstr "Cœurs par prise"
 
 #: src/components/vm/deleteDialog.jsx:151
-#, fuzzy
-#| msgid "Network $0 could not be deleted"
 msgid "Could not delete $0"
-msgstr "Le réseau $0 n’a pas pu être supprimé"
+msgstr "Impossible de supprimer $0"
 
 #: src/components/vm/deleteDialog.jsx:156
-#, fuzzy
-#| msgid "Could not revert to snapshot"
 msgid "Could not delete storage for $0"
-msgstr "N’a pas pu revenir à l’instantané"
+msgstr "Impossible de supprimer le stockage pour $0"
 
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:54
 msgid "Could not revert to snapshot"
@@ -437,10 +432,11 @@ msgstr "Créer une machine virtuelle"
 #: src/components/create-vm-dialog/createVmDialog.jsx:1410
 msgid "Create VM by importing a disk image of an existing VM installation"
 msgstr ""
+"Créer une VM en important une image disque d'une installation VM existante"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:1409
 msgid "Create VM from local or network installation medium"
-msgstr ""
+msgstr "Créer une VM à partir d'un support d'installation local ou en réseau"
 
 #: src/components/vm/vmCloneDialog.jsx:68
 msgid "Create a clone VM based on $0"
@@ -553,17 +549,12 @@ msgid "Delete"
 msgstr "Supprimer"
 
 #: src/components/vm/deleteDialog.jsx:170
-#, fuzzy
-#| msgid "Delete $0 volume"
-#| msgid_plural "Delete $0 volumes"
 msgid "Delete $0 VM?"
-msgstr "Supprimer le volume $0"
+msgstr "Supprimer $0 VM ?"
 
 #: src/components/storagePools/storagePoolDelete.jsx:191
-#, fuzzy
-#| msgid "Delete storage pool $0"
 msgid "Delete $0 storage pool?"
-msgstr "Supprimer le pool de stockage $0"
+msgstr "Supprimer le pool de stockage $0 ?"
 
 #: src/components/storagePools/storageVolumeDelete.jsx:62
 msgid "Delete $0 volume"
@@ -576,16 +567,12 @@ msgid "Delete associated storage files:"
 msgstr "Supprimer les fichiers de stockage associés :"
 
 #: src/components/networks/network.jsx:135
-#, fuzzy
-#| msgid "Delete network $0"
 msgid "Delete network?"
-msgstr "Supprimer le réseau $0"
+msgstr "Supprimer le réseau ?"
 
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:162
-#, fuzzy
-#| msgid "Delete snapshot $0"
 msgid "Delete snapshot?"
-msgstr "Supprimer l’instantané $0"
+msgstr "Supprimer l'instantané ?"
 
 #: src/components/storagePools/storagePoolDelete.jsx:182
 msgid ""
@@ -725,19 +712,15 @@ msgstr "Télécharger un OS"
 
 #: src/app.jsx:254
 msgid "Download progress"
-msgstr ""
+msgstr "Progression du téléchargement"
 
 #: src/app.jsx:247
-#, fuzzy
-#| msgid "Downloading $0"
 msgid "Downloading image for VM $0"
-msgstr "Téléchargement $0"
+msgstr "Téléchargement de l'image pour VM $0"
 
 #: src/components/vms/hostvmslist.jsx:49
-#, fuzzy
-#| msgid "Downloading $0"
 msgid "Downloading: $0%"
-msgstr "Téléchargement $0"
+msgstr "Téléchargement : $0%"
 
 #: src/components/vm/vmMigrateDialog.jsx:64
 msgid "Duration"
@@ -766,7 +749,7 @@ msgstr ""
 msgid "Editing transient network interfaces is not allowed"
 msgstr "La modification des interfaces réseau transitoires n’est pas autorisée"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:233
+#: src/components/vm/overview/vmOverviewCard.jsx:238
 msgid "Emulated machine"
 msgstr "Machine émulée"
 
@@ -866,7 +849,7 @@ msgid "Filter by name"
 msgstr "Filtrer par nom"
 
 #: src/components/vm/overview/firmware.jsx:75
-#: src/components/vm/overview/vmOverviewCard.jsx:239
+#: src/components/vm/overview/vmOverviewCard.jsx:244
 msgid "Firmware"
 msgstr "Micrologiciel"
 
@@ -912,7 +895,7 @@ msgstr "Générer automatiquement"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:500
 msgid "Get a new RHSM token."
-msgstr ""
+msgstr "Obtenez un nouveau jeton RHSM."
 
 #: src/components/vm/disks/vmDisksCard.jsx:51
 #: src/components/vm/overview/memorySelectRow.jsx:89
@@ -948,7 +931,7 @@ msgstr "Le dispositif hôte n’a pas pu être attaché"
 
 #: src/components/vm/hostdevs/hostDevCard.jsx:256
 msgid "Host device will be removed from $0:"
-msgstr ""
+msgstr "Le dispositif hôte sera retiré de $0 :"
 
 #: src/components/vm/vmDetailsPage.jsx:183
 msgid "Host devices"
@@ -962,7 +945,7 @@ msgstr "Nom de l’hôte"
 msgid "Host should not be empty"
 msgstr "Le nom d’hôte n’est peut-être pas vide"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:229
+#: src/components/vm/overview/vmOverviewCard.jsx:234
 msgid "Hypervisor details"
 msgstr "Détails sur l’hyperviseur"
 
@@ -1268,7 +1251,7 @@ msgid "Maximum transmission unit"
 msgstr "Unité maximale de transmission (MTU)"
 
 #: src/components/vm/vmUsageCard.jsx:60
-#: src/components/vm/overview/vmOverviewCard.jsx:198
+#: src/components/vm/overview/vmOverviewCard.jsx:203
 #: src/components/create-vm-dialog/createVmDialog.jsx:781
 msgid "Memory"
 msgstr "Mémoire"
@@ -1397,10 +1380,8 @@ msgid "Network $0 failed to get deactivated"
 msgstr "Échec de la désactivation du réseau $0"
 
 #: src/components/networks/network.jsx:137
-#, fuzzy
-#| msgid "Network $0 could not be deleted"
 msgid "Network $0 will be permanently deleted."
-msgstr "Le réseau $0 n’a pas pu être supprimé"
+msgstr "Le réseau $0 sera définitivement supprimé."
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:367
 msgid "Network boot (PXE)"
@@ -1411,16 +1392,12 @@ msgid "Network file system"
 msgstr "Système de fichiers par réseau (NFS)"
 
 #: src/components/vm/nics/vmNicsCard.jsx:380
-#, fuzzy
-#| msgid "Network interface $0 could not be deleted"
 msgid "Network interface $0 could not be removed"
-msgstr "L’interface réseau n’a pas pu être supprimée"
+msgstr "L'interface réseau $0 n'a pas pu être supprimée"
 
 #: src/components/vm/nics/vmNicsCard.jsx:381
-#, fuzzy
-#| msgid "Network interface $0 could not be deleted"
 msgid "Network interface $0 will be removed from $1"
-msgstr "L’interface réseau n’a pas pu être supprimée"
+msgstr "L'interface réseau $0 sera supprimée de $1"
 
 #: src/components/vm/nics/nicAdd.jsx:161 src/components/vm/nics/nicEdit.jsx:135
 msgid "Network interface settings could not be saved"
@@ -1534,10 +1511,8 @@ msgid "No virtual networks"
 msgstr "Aucun réseau virtuel"
 
 #: src/components/storagePools/storagePoolDelete.jsx:181
-#, fuzzy
-#| msgid "No storage volumes defined for this storage pool"
 msgid "No volumes exist in this storage pool."
-msgstr "Aucun volume de stockage n’a été défini pour ce pool de stockage"
+msgstr "Aucun volume n'existe dans ce pool de stockage."
 
 #: src/components/networks/network.jsx:143
 msgid ""
@@ -1565,7 +1540,7 @@ msgstr "Aucune (réseau isolé)"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:587
 msgid "Offline token"
-msgstr ""
+msgstr "Jeton hors ligne"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:226
 #, fuzzy
@@ -1818,28 +1793,20 @@ msgid "Remove"
 msgstr "Retirer"
 
 #: src/components/vm/disks/vmDisksCard.jsx:244
-#, fuzzy
-#| msgid "Remove disk $0"
 msgid "Remove disk from VM?"
-msgstr "Supprimer le disque $0"
+msgstr "Retirer le disque de la VM ?"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:61
-#, fuzzy
-#| msgid "Remove filesystem $0"
 msgid "Remove filesystem?"
-msgstr "Supprimer le système de fichiers $0"
+msgstr "Supprimer le système de fichiers ?"
 
 #: src/components/vm/hostdevs/hostDevCard.jsx:254
-#, fuzzy
-#| msgid "Remove host device"
 msgid "Remove host device from VM?"
-msgstr "Supprimer le périphérique hôte"
+msgstr "Retirer le dispositif hôte de la VM ?"
 
 #: src/components/vm/nics/vmNicsCard.jsx:379
-#, fuzzy
-#| msgid "Add network interface"
 msgid "Remove network interface?"
-msgstr "Ajouter une interface réseau"
+msgstr "Supprimer l'interface réseau ?"
 
 #: src/components/networks/networkOverviewTab.jsx:63
 msgid "Remove static host from DHCP"
@@ -2027,13 +1994,11 @@ msgid "Snapshot $0 could not be deleted"
 msgstr "L’instantané $0 n’a pas pu être supprimé"
 
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:164
-#, fuzzy
-#| msgid "After deleting the snapshot, all its captured content will be lost."
 msgid ""
 "Snapshot $0 will be deleted from $1. All of its captured content will be "
 "lost."
 msgstr ""
-"Après la suppression de l’instantané, tout son contenu capturé sera perdu."
+"L'instantané $0 sera supprimé de $1. Tout son contenu capturé sera perdu."
 
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:122
 msgid "Snapshot failed to be created"
@@ -2105,7 +2070,7 @@ msgid "Startup"
 msgstr "Démarrage"
 
 #: src/components/vm/nics/vmNicsCard.jsx:325
-#: src/components/vm/overview/vmOverviewCard.jsx:184
+#: src/components/vm/overview/vmOverviewCard.jsx:189
 #: src/components/networks/networkList.jsx:77
 #: src/components/vms/hostvmslist.jsx:99 src/components/vms/hostvmslist.jsx:142
 #: src/components/storagePools/storagePoolList.jsx:78
@@ -2226,12 +2191,9 @@ msgid "Temporary migration"
 msgstr "Migration temporaire"
 
 #: src/components/vm/deleteDialog.jsx:84
-#, fuzzy
-#| msgid "The VM is running and will be forced off before deletion."
 msgid "The VM $0 is running and will be forced off before deletion."
 msgstr ""
-"La machine virtuelle est en cours d’exécution, son arrêt sera forcé avant la "
-"suppression."
+"La VM $0 est en cours d'exécution et sera désactivée avant d'être supprimée."
 
 #: src/components/vm/nics/vmNicsCard.jsx:390
 #: src/components/vm/disks/vmDisksCard.jsx:262
@@ -2300,11 +2262,11 @@ msgstr ""
 
 #: src/components/vm/disks/vmDisksCard.jsx:247
 msgid "This disk will be removed from $0:"
-msgstr ""
+msgstr "Ce disque sera retiré de $0 :"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:63
 msgid "This filesystem will be removed from $0:"
-msgstr ""
+msgstr "Ce système de fichiers sera supprimé de $0 :"
 
 #: src/components/vm/nics/nicBody.jsx:86
 msgid ""
@@ -2338,10 +2300,8 @@ msgstr ""
 "contrôler les machines virtuelles du sous-système libvirt."
 
 #: src/components/vm/disks/diskAdd.jsx:74
-#, fuzzy
-#| msgid "This volume is already used by: "
 msgid "This volume is already used by $0."
-msgstr "Ce volume est déjà utilisé par : "
+msgstr "Ce volume est déjà utilisé par $0."
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:864
 msgid "This volume is already used by another VM."
@@ -2400,10 +2360,8 @@ msgid "Unique name"
 msgstr "Nom unique"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:266
-#, fuzzy
-#| msgid "Unique name"
 msgid "Unique name, default: $0"
-msgstr "Nom unique"
+msgstr "Nom unique, par défaut : $0"
 
 #: src/components/networks/createNetworkDialog.jsx:130
 msgid "Unique network name"
@@ -2821,7 +2779,7 @@ msgstr "Nombre de vCPU"
 msgid "vCPU maximum"
 msgstr "vCPU Maximum"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:203
+#: src/components/vm/overview/vmOverviewCard.jsx:208
 msgid "vCPUs"
 msgstr "vCPU"
 
