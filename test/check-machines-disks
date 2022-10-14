@@ -549,7 +549,11 @@ class TestMachinesDisks(VirtualMachinesCase):
         m.execute("virsh pool-destroy images; virsh pool-undefine images")
 
         # Wait for the system to completely start
-        wait(lambda: "login as 'cirros' user" in self.machine.execute(f"cat {args['logfile']}"), delay=6)
+        try:
+            wait(lambda: "login as 'cirros' user" in self.machine.execute(f"cat {args['logfile']}"), delay=6)
+        except Error:
+            print(self.machine.execute(f"cat {args['logfile']}"))
+            raise
 
         self.login_and_go("/machines")
         b.wait_in_text("body", "Virtual machines")
@@ -605,7 +609,11 @@ class TestMachinesDisks(VirtualMachinesCase):
         args = self.createVm("subVmTest1")
 
         # Wait for the system to completely start
-        wait(lambda: "login as 'cirros' user" in self.machine.execute(f"cat {args['logfile']}"), delay=6)
+        try:
+            wait(lambda: "login as 'cirros' user" in self.machine.execute(f"cat {args['logfile']}"), delay=6)
+        except Error:
+            print(self.machine.execute(f"cat {args['logfile']}"))
+            raise
 
         self.login_and_go("/machines")
         b.wait_in_text("body", "Virtual machines")
@@ -663,7 +671,11 @@ class TestMachinesDisks(VirtualMachinesCase):
         args = self.createVm("subVmTest1")
 
         # Wait for the system to completely start
-        wait(lambda: "login as 'cirros' user" in self.machine.execute(f"cat {args['logfile']}"), delay=6)
+        try:
+            wait(lambda: "login as 'cirros' user" in self.machine.execute(f"cat {args['logfile']}"), delay=6)
+        except Error:
+            print(self.machine.execute(f"cat {args['logfile']}"))
+            raise
 
         self.login_and_go("/machines")
         b.wait_in_text("body", "Virtual machines")
@@ -1157,7 +1169,11 @@ class TestMachinesDisks(VirtualMachinesCase):
         self.waitVmRow("subVmTest1")
 
         # Wait for the login prompt before we try detaching disks - we need the OS to be fully responsive
-        wait(lambda: "login as 'cirros' user" in self.machine.execute(f"cat {args['logfile']}"), delay=6)
+        try:
+            wait(lambda: "login as 'cirros' user" in self.machine.execute(f"cat {args['logfile']}"), delay=6)
+        except Error:
+            print(self.machine.execute(f"cat {args['logfile']}"))
+            raise
 
         # Test detaching non permanent disk of a running domain
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
@@ -1230,12 +1246,20 @@ class TestMachinesDisks(VirtualMachinesCase):
         m.execute(f"> {args['logfile']}")  # clear logfile
         m.execute("virsh start subVmTest1")
         # Make sure that the VM booted normally before attempting to suspend it
-        wait(lambda: "login as 'cirros' user" in self.machine.execute(f"cat {args['logfile']}"), delay=6)
+        try:
+            wait(lambda: "login as 'cirros' user" in self.machine.execute(f"cat {args['logfile']}"), delay=6)
+        except Error:
+            print(self.machine.execute(f"cat {args['logfile']}"))
+            raise
         m.execute("virsh suspend subVmTest1")
         b.wait_in_text("#vm-subVmTest1-system-state", "Paused")
         b.wait_attr("#delete-subVmTest1-disk-vde", "disabled", "")
         m.execute("virsh resume subVmTest1")
-        wait(lambda: "login as 'cirros' user" in self.machine.execute(f"cat {args['logfile']}"), delay=6)
+        try:
+            wait(lambda: "login as 'cirros' user" in self.machine.execute(f"cat {args['logfile']}"), delay=6)
+        except Error:
+            print(self.machine.execute(f"cat {args['logfile']}"))
+            raise
 
         # Test detaching of disk on non-persistent VM
         m.execute("virsh undefine subVmTest1")
