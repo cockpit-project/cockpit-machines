@@ -65,8 +65,7 @@ firewall-cmd --add-service=cockpit
 
 . /usr/lib/os-release
 
-if [ "${PLATFORM_ID:-}" != "platform:f34" ] && [ "${PLATFORM_ID:-}" != "platform:el8" ]; then
-    # HACK: new modular libvirt sockets are not running by default in f35
+if [ "${PLATFORM_ID:-}" != "platform:el8" ]; then
     # https://gitlab.com/libvirt/libvirt/-/issues/219
     systemctl start virtinterfaced.socket
     systemctl start virtnetworkd.socket

@@ -106,10 +106,6 @@ class VirtualMachinesCaseHelpers:
 
         # Ensure everything has started correctly
         m.execute(f"systemctl start {self.getLibvirtServiceName()}.service")
-        if m.image not in distrosWithMonolithicDaemon:
-            # HACK for missing deps on virtlockd/virtlogd sockets - needed till f-35 uses libvirt v7.7.0
-            # https://github.com/libvirt/libvirt/commit/88c5b9f827779ae6fe5a6f08100a4b6184492a1c
-            m.execute("systemctl start virtlockd.socket; systemctl start virtlogd.socket")
 
         # Wait until we can get a list of domains
         m.execute("until virsh list; do sleep 1; done")
@@ -197,14 +193,7 @@ class VirtualMachinesCaseHelpers:
                   targetcli /iscsi/%(tgt)s/tpg1/acls create %(ini)s
                   """ % {"tgt": target_iqn, "ini": orig_iqn})
 
-        if m.image == 'fedora-35':
-            # HACK: targetcli fails in F35: https://bugzilla.redhat.com/show_bug.cgi?id=2093976
-            self.addCleanup(m.execute, """
-                mount -o bind /mnt /sys/kernel/config/target/iscsi
-                targetcli /backstores/ramdisk delete test
-                umount /sys/kernel/config/target/iscsi""")
-        else:
-            self.addCleanup(m.execute, "targetcli /backstores/ramdisk delete test")
+        self.addCleanup(m.execute, "targetcli /backstores/ramdisk delete test")
         self.addCleanup(m.execute, "targetcli /iscsi delete %s; iscsiadm -m node -o delete || true" % target_iqn)
         return orig_iqn
 
