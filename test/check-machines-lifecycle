@@ -91,7 +91,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
-        b.wait_in_text("#vm-subVmTest1-vcpus-count", "1")
+        b.wait_in_text("#vm-subVmTest1-vcpus-count", "4")
 
         b.wait_in_text("#vm-subVmTest1-boot-order", "disk,network")
         emulated_machine = b.text("#vm-subVmTest1-emulated-machine")
@@ -104,8 +104,8 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         usage = b.text(".memory-usage-chart .pf-c-progress__status > .pf-c-progress__measure").split("/ 128 MiB")[0]
         wait(lambda: float(usage) > 0.0, delay=3)
 
-        b.wait_in_text(".vcpu-usage-chart .pf-c-progress__status > .pf-c-progress__measure", "1 vCPU")
-        usage = b.text(".vcpu-usage-chart .pf-c-progress__status > .pf-c-progress__measure").split("% of 1 vCPU")[0]
+        b.wait_in_text(".vcpu-usage-chart .pf-c-progress__status > .pf-c-progress__measure", "4 vCPU")
+        usage = b.text(".vcpu-usage-chart .pf-c-progress__status > .pf-c-progress__measure").split("% of 4 vCPU")[0]
         # CPU usage cannot be nonzero with blank image, so just ensure it's a percentage
         wait(lambda: float(usage) <= 100.0, delay=3)
 
@@ -179,7 +179,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         self.createVm("subVmTest2")
         b.wait_in_text("#vm-subVmTest2-system-state", "Running")
         self.goToVmPage("subVmTest2")
-        b.wait_in_text("#vm-subVmTest2-vcpus-count", "1")
+        b.wait_in_text("#vm-subVmTest2-vcpus-count", "4")
         b.wait_in_text("#vm-subVmTest2-boot-order", "disk,network")
 
         self.goToMainPage()

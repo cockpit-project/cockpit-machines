@@ -59,8 +59,8 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.wait_visible("#machines-vcpu-modal-dialog")
 
         # Test basic vCPU properties
-        b.wait_val("#machines-vcpu-count-field", "1")
-        b.wait_val("#machines-vcpu-max-field", "1")
+        b.wait_val("#machines-vcpu-count-field", "4")
+        b.wait_val("#machines-vcpu-max-field", "4")
 
         # Set new values
         b.set_input_text("#machines-vcpu-max-field", "4")
