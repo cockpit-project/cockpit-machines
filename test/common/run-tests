@@ -317,7 +317,7 @@ def detect_tests(test_files, image, opts):
                     continue
                 nd = getattr(test_method, "_testlib__non_destructive", False)
                 rwa = getattr(test_method, "_testlib__retry_when_affected", True)
-                cost = 2
+                cost = 4
                 test = Test(test_id, build_command(filename, test_str, opts), test_timeout, nd, rwa, cost=cost)
                 if nd:
                     serial_tests.append(test)

@@ -147,7 +147,7 @@ class VirtualMachinesCaseHelpers:
         command = ["virt-install --connect qemu:///{5} --name {0} "
                    "--os-variant cirros0.4.0 "
                    "--boot hd,network "
-                   "--vcpus 4 "
+                   "--vcpus 2 "
                    "--memory {1} "
                    "--import --disk {2} "
                    "--graphics {3} "
