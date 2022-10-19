@@ -117,7 +117,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # Wait for the system to completely start
-        wait(lambda: "login as 'cirros' user." in self.machine.execute(f"cat {args['logfile']}"), delay=3)
+        wait(lambda: "login as 'cirros' user." in self.machine.execute(f"cat {args['logfile']}"), delay=6)
 
         # Send Non-Maskable Interrupt (no change in VM state is expected)
         self.performAction("subVmTest1", "sendNMI")
@@ -146,7 +146,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # the shut off button beside the VM name
-        wait(lambda: "login as 'cirros' user." in self.machine.execute(f"cat {args['logfile']}"), delay=3)
+        wait(lambda: "login as 'cirros' user." in self.machine.execute(f"cat {args['logfile']}"), delay=6)
         b.click("#vm-subVmTest1-system-shutdown-button")
         b.wait_in_text("#vm-subVmTest1-system-state", "Shut off")
         b.wait_visible("#vm-subVmTest1-system-run")
@@ -155,7 +155,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         self.machine.execute(f"echo '' > {args['logfile']}")
         b.click("#vm-subVmTest1-system-run")
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
-        wait(lambda: "login as 'cirros' user." in self.machine.execute(f"cat {args['logfile']}"), delay=3)
+        wait(lambda: "login as 'cirros' user." in self.machine.execute(f"cat {args['logfile']}"), delay=6)
         self.performAction("subVmTest1", "off")
 
         # force shut off
@@ -412,7 +412,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         self.goToVmPage(name)
 
         # Make sure that the VM booted normally before attempting to suspend it
-        wait(lambda: "login as 'cirros' user" in self.machine.execute(f"cat {args['logfile']}"), delay=3)
+        wait(lambda: "login as 'cirros' user" in self.machine.execute(f"cat {args['logfile']}"), delay=6)
 
         self.machine.execute(f"virsh -c qemu:///system suspend {name}")
         b.wait_in_text(f"#vm-{name}-system-state", "Paused")

@@ -87,7 +87,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
         b.wait_visible(".pf-c-console__vnc canvas")
 
         # make sure the log file is full - then empty it and reboot the VM - the log file should fill up again
-        wait(lambda: "login as 'cirros' user." in self.machine.execute(f"cat {args['logfile']}"), delay=3)
+        wait(lambda: "login as 'cirros' user." in self.machine.execute(f"cat {args['logfile']}"), delay=6)
 
         self.machine.execute(f"echo '' > {args['logfile']}")
         b.click("#subVmTest1-system-vnc-sendkey button")
@@ -122,7 +122,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
         b.focus(f"#{name}-terminal .xterm-accessibility-tree")
         b.key_press("\r")
 
-        with b.wait_timeout(60):
+        with b.wait_timeout(90):
             b.wait_in_text(f"#{name}-terminal .xterm-accessibility-tree", "cirros login")
 
         b.click(f"#{name}-serialconsole-disconnect")

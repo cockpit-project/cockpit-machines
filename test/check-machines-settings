@@ -405,7 +405,7 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         # Check memory hotunplugging
         # The balloon driver needs to be loaded to descrease memory
-        wait(lambda: "login as 'cirros' user" in self.machine.execute(f"cat {args['logfile']}"), delay=3)
+        wait(lambda: "login as 'cirros' user" in self.machine.execute(f"cat {args['logfile']}"), delay=6)
 
         b.set_input_text("#vm-subVmTest1-memory-modal-memory", str(current_memory - 10))
         b.blur("#vm-subVmTest1-memory-modal-memory")
@@ -457,7 +457,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
 
-        wait(lambda: "login as 'cirros' user" in m.execute(f"cat {args['logfile']}"), delay=3)
+        wait(lambda: "login as 'cirros' user" in m.execute(f"cat {args['logfile']}"), delay=6)
 
         # Change CPU model setting
         b.click("#vm-subVmTest1-cpu-model button")
