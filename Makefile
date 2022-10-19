@@ -27,7 +27,6 @@ all: $(WEBPACK_TEST)
 # a new project, use the latest release, and update it from time to time
 COCKPIT_REPO_FILES = \
 	pkg/lib \
-	test/static-code \
 	tools/git-utils.sh \
 	tools/make-bots \
 	tools/node-modules \
