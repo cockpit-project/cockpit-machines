@@ -1,4 +1,4 @@
-# cockpit-machines
+# cockpwn-machines
 
 This is the [Cockpit](https://cockpit-project.org/) user interface for virtual machines.
 
