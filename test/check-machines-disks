@@ -469,6 +469,10 @@ class TestMachinesDisks(VirtualMachinesCase):
             return self
 
         def verify_disk_added(self):
+            def _get_disk_prop(target, vm_name, prop):
+                x_path = f"/domain/devices/disk[target/@dev='{target}']/{prop}"
+                return m.execute(f"virsh dumpxml {self.vm_name} | xmllint --xpath \"{x_path}\" -").strip()
+
             b = self.test_obj.browser
             m = self.test_obj.machine
             b.wait_not_present(f"#vm-{self.vm_name}-disks-adddisk-dialog-modal-window")
@@ -520,6 +524,12 @@ class TestMachinesDisks(VirtualMachinesCase):
 
             if self.expected_serial:
                 b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.expected_target}-serial", self.expected_serial)
+
+            # Check we set unmap by default
+            self.test_obj.assertEqual(
+                'discard="unmap"',
+                _get_disk_prop(self.expected_target, self.vm_name, "driver/@discard")
+            )
 
             return self
 

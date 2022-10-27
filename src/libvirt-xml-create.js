@@ -10,6 +10,7 @@ export function getDiskXML(type, file, device, poolName, volumeName, format, tar
     if (format && ['qcow2', 'raw'].includes(format))
         driverElem.setAttribute('type', format);
     driverElem.setAttribute('cache', cacheMode);
+    driverElem.setAttribute('discard', 'unmap');
     diskElem.appendChild(driverElem);
 
     const sourceElem = doc.createElement('source');
