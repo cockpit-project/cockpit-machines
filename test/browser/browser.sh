@@ -1,6 +1,9 @@
 #!/bin/sh
 set -eux
 
+# like "basic", passed on to run-test.sh
+PLAN="$1"
+
 TESTS="$(realpath $(dirname "$0"))"
 if [ -d source ]; then
     # path for standard-test-source
@@ -80,7 +83,7 @@ if [ "$ID" = fedora ] && [ "$VERSION_ID" -ge "36" ]; then
 fi
 
 # Run tests as unprivileged user
-su - -c "env TEST_BROWSER=firefox SOURCE=$SOURCE LOGS=$LOGS $TESTS/run-test.sh" runtest
+su - -c "env TEST_BROWSER=firefox SOURCE=$SOURCE LOGS=$LOGS $TESTS/run-test.sh $PLAN" runtest
 
 RC=$(cat $LOGS/exitcode)
 exit ${RC:-1}
