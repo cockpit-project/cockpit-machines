@@ -1,22 +1,64 @@
-summary:
-    Run browser integration tests on the host
-require:
-  - cockpit-system
-  - cockpit-ws
-  # build/test infra dependencies
-  - virt-install
-  - bzip2
-  - git-core
-  - libvirt-python3
-  - make
-  - nodejs
-  - python3
-  - python3-yaml
-  # required by tests
-  - dbus-tools
-  - firewalld
-  - libvirt-daemon-driver-storage-iscsi
-  - libvirt-daemon-driver-storage-logical
-  - targetcli
-test: ./browser.sh
-duration: 60m
+/basic:
+  summary: Run browser integration for basic functionality
+  require:
+    - cockpit-system
+    - cockpit-ws
+    # build/test infra dependencies
+    - virt-install
+    - bzip2
+    - git-core
+    - libvirt-python3
+    - make
+    - nodejs
+    - python3
+    - python3-yaml
+    # required by tests
+    - dbus-tools
+    - firewalld
+    - libvirt-daemon-driver-storage-iscsi
+    - targetcli
+  test: ./browser.sh basic
+  duration: 60m
+
+/network:
+  summary: Run browser integration for network functionality
+  require:
+    - cockpit-system
+    - cockpit-ws
+    # build/test infra dependencies
+    - virt-install
+    - bzip2
+    - git-core
+    - libvirt-python3
+    - make
+    - nodejs
+    - python3
+    - python3-yaml
+    # required by tests
+    - dbus-tools
+    - firewalld
+  test: ./browser.sh network
+  duration: 60m
+
+/storage:
+  summary: Run browser integration for storage functionality
+  require:
+    - cockpit-system
+    - cockpit-ws
+    # build/test infra dependencies
+    - virt-install
+    - bzip2
+    - git-core
+    - libvirt-python3
+    - make
+    - nodejs
+    - python3
+    - python3-yaml
+    # required by tests
+    - dbus-tools
+    - firewalld
+    - libvirt-daemon-driver-storage-iscsi
+    - libvirt-daemon-driver-storage-logical
+    - targetcli
+  test: ./browser.sh storage
+  duration: 60m

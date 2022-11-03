@@ -1,6 +1,8 @@
 #!/bin/sh
 set -eux
 
+PLAN="$1"
+
 # tests need cockpit's bots/ libraries and test infrastructure
 cd $SOURCE
 rm -f bots  # common local case: existing bots symlink
@@ -40,7 +42,7 @@ if [ "$ID" = "rhel" ]; then
     "
 fi
 
-# We only have one VM and tests should take at most one hour. So run those tests which exercise external API
+# We only have few VMs and tests should take at most one hour. So run those tests which exercise external API
 # (and thus are useful for reverse dependency testing and gating), and exclude those which test internal
 # functionality -- upstream CI covers that.
 EXCLUDES="$EXCLUDES
@@ -50,12 +52,6 @@ EXCLUDES="$EXCLUDES
           TestMachinesCreate.testCreateNameGeneration
           TestMachinesCreate.testCreateDownloadRhel
           TestMachinesCreate.testDisabledCreate
-
-          TestMachinesConsoles.testExternalConsole
-          TestMachinesConsoles.testInlineConsole
-          TestMachinesConsoles.testInlineConsoleWithUrlRoot
-          TestMachinesConsoles.testSerialConsole
-          TestMachinesConsoles.testBasic
 
           TestMachinesDisks.testAddDiskAdditionalOptions
           TestMachinesDisks.testAddDiskCustomPath
@@ -73,9 +69,6 @@ EXCLUDES="$EXCLUDES
 
           TestMachinesHostDevs.testHostDevAddMultipleDevices
 
-          TestMachinesMigration.testFailMigrationUriIncorrect
-          TestMachinesMigration.testFailMigrationDomainUnknown
-
           TestMachinesNetworks.testNetworkSettings
           TestMachinesNetworks.testNICPlugingAndUnpluging
 
@@ -83,6 +76,32 @@ EXCLUDES="$EXCLUDES
 
           TestMachinesSettings.testMultipleSettings
           "
+
+case "$PLAN" in
+    basic)
+        TESTS="TestMachinesCreate
+               TestMachinesHostDevs
+               TestMachinesLifecycle
+               ";;
+
+    network)
+        # Settings is not really networking specific, but let's balance the tests
+        TESTS="TestMachinesNICs
+               TestMachinesNetworks
+               TestMachinesSettings
+               ";;
+
+    storage)
+        TESTS="TestMachinesDisks
+               TestMachinesFilesystems
+               TestMachinesSnapshots
+               TestMachinesStoragePools
+               ";;
+
+    *)
+        echo "Unknown plan $PLAN" >&2
+        exit 1 ;;
+esac
 
 if [ "$ID" = "fedora" ]; then
     # Testing Farm machines are really slow in European evenings
@@ -100,7 +119,7 @@ done
 # execute run-tests
 RC=0
 test/common/run-tests --nondestructive $exclude_options \
-    --machine localhost:22 --browser localhost:9090 || RC=$?
+    --machine localhost:22 --browser localhost:9090 $TESTS || RC=$?
 
 echo $RC > "$LOGS/exitcode"
 cp --verbose Test* "$LOGS" || true
