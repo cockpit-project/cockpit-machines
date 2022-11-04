@@ -44,7 +44,7 @@ export const StateIcon = ({ state, valueId, error, dismissError }) => {
         'Creating VM installation': { icon: <PendingIcon /> },
 
         /* Storage Pool/Network States  */
-        active : { color: "green" },
+        active: { color: "green" },
     };
 
     const label = (

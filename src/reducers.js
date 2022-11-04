@@ -298,7 +298,7 @@ function systemInfo(state, action) {
         return state;
     }
     case UPDATE_LIBVIRT_VERSION: {
-        return Object.assign({}, state, { libvirtVersion:  action.libvirtVersion });
+        return Object.assign({}, state, { libvirtVersion: action.libvirtVersion });
     }
     case SET_LOGGED_IN_USER: {
         return Object.assign({}, state, { loggedUser: action.payload.loggedUser });

@@ -173,7 +173,7 @@ class VmOverviewCard extends React.Component {
         );
 
         return (
-            <Flex className="overview-tab" direction={{ default:"column", "2xl": "row" }}>
+            <Flex className="overview-tab" direction={{ default: "column", "2xl": "row" }}>
                 <FlexItem>
                     <DescriptionList isHorizontal>
                         <Text component={TextVariants.h4}>

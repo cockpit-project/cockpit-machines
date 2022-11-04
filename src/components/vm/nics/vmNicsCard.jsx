@@ -210,7 +210,7 @@ export class VmNetworkTab extends React.Component {
                 e.stopPropagation();
                 if (network.mac) {
                     domainChangeInterfaceSettings({ vmName: vm.name, connectionName: vm.connectionName, macAddress: network.mac, state: network.state === 'up' ? 'down' : 'up', hotplug: vm.state === "running" })
-                            .then(() => domainGet({ connectionName: vm.connectionName, id:vm.id, name: vm.name }))
+                            .then(() => domainGet({ connectionName: vm.connectionName, id: vm.id, name: vm.name }))
                             .catch(ex => {
                                 onAddErrorNotification({
                                     text: cockpit.format(_("NIC $0 of VM $1 failed to change state"), network.mac, vm.name),

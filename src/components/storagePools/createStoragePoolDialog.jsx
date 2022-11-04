@@ -56,7 +56,7 @@ const StoragePoolNameRow = ({ onValueChanged, dialogValues }) => {
 const StoragePoolTypeRow = ({ onValueChanged, dialogValues, libvirtVersion, poolCapabilities }) => {
     const poolTypes = [
         { type: 'dir', detail: _("Filesystem directory") },
-        { type: 'netfs', detail:_("Network file system") },
+        { type: 'netfs', detail: _("Network file system") },
         { type: 'iscsi', detail: _("iSCSI target") },
         { type: 'disk', detail: _("Physical disk device") },
         { type: 'logical', detail: _("LVM volume group") },
