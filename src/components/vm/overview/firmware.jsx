@@ -38,7 +38,7 @@ class FirmwareModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            dialogError:  null,
+            dialogError: null,
             firmware: props.firmware == 'efi' ? props.firmware : 'bios',
         };
         this.dialogErrorSet = this.dialogErrorSet.bind(this);

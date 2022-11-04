@@ -462,7 +462,7 @@ export function parseDumpxmlForFilesystems(devicesElem) {
                     socket: sourceElem.getAttribute('socket'),
                     file: sourceElem.getAttribute('file'),
                 },
-                target : {
+                target: {
                     dir: targetElem.getAttribute('dir'),
                 },
             };
@@ -826,10 +826,10 @@ function parseNetDumpxmlForIp(ipElems) {
 
             for (let i = 0; i < hostElems.length; i++) {
                 const host = {
-                    ip : hostElems[i].getAttribute("ip"),
-                    name : hostElems[i].getAttribute("name"),
-                    mac : hostElems[i].getAttribute("mac"),
-                    id : hostElems[i].getAttribute("id"),
+                    ip: hostElems[i].getAttribute("ip"),
+                    name: hostElems[i].getAttribute("name"),
+                    mac: hostElems[i].getAttribute("mac"),
+                    id: hostElems[i].getAttribute("id"),
                 };
                 dhcpHosts.push(host);
             }
@@ -844,10 +844,10 @@ function parseNetDumpxmlForIp(ipElems) {
             family: family,
             netmask: netmask,
             prefix: prefix,
-            dhcp : {
-                range : {
-                    start : rangeElem ? rangeElem.getAttribute("start") : undefined,
-                    end : rangeElem ? rangeElem.getAttribute("end") : undefined,
+            dhcp: {
+                range: {
+                    start: rangeElem ? rangeElem.getAttribute("start") : undefined,
+                    end: rangeElem ? rangeElem.getAttribute("end") : undefined,
                 },
                 hosts: dhcpHosts,
                 bootp,

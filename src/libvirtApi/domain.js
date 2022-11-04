@@ -672,7 +672,7 @@ export function domainGetAll({ connectionName }) {
     return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListDomains', [0], { timeout, type: 'u' })
             .then(objPaths => {
                 store.dispatch(deleteUnlistedVMs(connectionName, [], objPaths[0]));
-                return Promise.all(objPaths[0].map(path => domainGet({ connectionName, id:path })));
+                return Promise.all(objPaths[0].map(path => domainGet({ connectionName, id: path })));
             })
             .catch(ex => {
                 console.warn('GET_ALL_VMS action failed:', ex.toString());

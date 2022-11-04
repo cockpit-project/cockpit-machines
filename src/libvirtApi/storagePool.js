@@ -118,7 +118,7 @@ export function storagePoolGetAll({
                                 if (active[0].v)
                                     return storagePoolRefresh({ connectionName, objPath: path });
                                 else
-                                    return storagePoolGet({ connectionName, id:path });
+                                    return storagePoolGet({ connectionName, id: path });
                             });
                 }));
             })

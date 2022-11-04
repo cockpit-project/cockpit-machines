@@ -69,7 +69,7 @@ export function nodeDeviceGetAll({
     connectionName,
 }) {
     return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListNodeDevices', [0], { timeout, type: 'u' })
-            .then(objPaths => Promise.all(objPaths[0].map(path => nodeDeviceGet({ connectionName, id:path }))))
+            .then(objPaths => Promise.all(objPaths[0].map(path => nodeDeviceGet({ connectionName, id: path }))))
             .catch(ex => {
                 console.warn('GET_ALL_NODE_DEVICES action failed:', ex.toString());
                 return Promise.reject(ex);

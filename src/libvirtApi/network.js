@@ -58,7 +58,7 @@ export function networkGetAll({
 }) {
     return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListNetworks', [0], { timeout, type: 'u' })
             .then(objPaths => {
-                return Promise.all(objPaths[0].map((path) => networkGet({ connectionName, id:path })));
+                return Promise.all(objPaths[0].map((path) => networkGet({ connectionName, id: path })));
             })
             .catch(ex => {
                 console.warn('GET_ALL_NETWORKS action failed:', ex.toString());

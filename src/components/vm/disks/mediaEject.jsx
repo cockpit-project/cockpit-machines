@@ -67,7 +67,7 @@ export const MediaEjectModal = ({ idPrefix, vm, disk }) => {
         }
 
         return domainEjectDisk(params)
-                .then(() => domainGet({ connectionName: vm.connectionName, id:vm.id }))
+                .then(() => domainGet({ connectionName: vm.connectionName, id: vm.id }))
                 .then(Dialogs.close)
                 .catch(exc => {
                     setInProgress(false);

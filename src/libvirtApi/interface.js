@@ -66,7 +66,7 @@ export function interfaceGetAll({ connectionName }) {
     const flags = Enum.VIR_CONNECT_LIST_INTERFACES_ACTIVE | Enum.VIR_CONNECT_LIST_INTERFACES_INACTIVE;
 
     return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListInterfaces', [flags], { timeout, type: 'u' })
-            .then(ifaces => Promise.all(ifaces[0].map(path => interfaceGet({ connectionName, id:path }))))
+            .then(ifaces => Promise.all(ifaces[0].map(path => interfaceGet({ connectionName, id: path }))))
             .catch(ex => {
                 console.warn('getAllInterfaces action failed:', ex.toString());
                 return Promise.reject(ex);

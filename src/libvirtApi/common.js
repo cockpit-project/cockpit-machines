@@ -235,9 +235,9 @@ function networkUpdateOrDelete(connectionName, netPath) {
     call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "ListNetworks", [0], { timeout, type: "u" })
             .then(objPaths => {
                 if (objPaths[0].includes(netPath))
-                    networkGet({ connectionName, id:netPath, updateOnly: true });
+                    networkGet({ connectionName, id: netPath, updateOnly: true });
                 else // Transient network which got undefined when stopped
-                    store.dispatch(undefineNetwork({ connectionName, id:netPath }));
+                    store.dispatch(undefineNetwork({ connectionName, id: netPath }));
             })
             .catch(ex => console.warn("networkUpdateOrDelete action failed:", ex.toString()));
 }
@@ -281,7 +281,7 @@ function startEventMonitorDomains(connectionName) {
             case Enum.VIR_DOMAIN_EVENT_UNDEFINED:
             case Enum.VIR_DOMAIN_EVENT_STARTED:
             case Enum.VIR_DOMAIN_EVENT_STOPPED:
-                domainGet({ connectionName, id:objPath });
+                domainGet({ connectionName, id: objPath });
                 break;
 
             case Enum.VIR_DOMAIN_EVENT_SUSPENDED:
@@ -322,7 +322,7 @@ function startEventMonitorDomains(connectionName) {
             case "MetadataChanged":
             case "TrayChange":
             /* These signals imply possible changes in what we display, so re-read the state */
-                domainGet({ connectionName, id:path });
+                domainGet({ connectionName, id: path });
                 break;
 
             default:
@@ -341,13 +341,13 @@ function startEventMonitorNetworks(connectionName) {
             switch (eventType) {
             case Enum.VIR_NETWORK_EVENT_DEFINED:
             case Enum.VIR_NETWORK_EVENT_STARTED:
-                networkGet({ connectionName, id:objPath });
+                networkGet({ connectionName, id: objPath });
                 break;
             case Enum.VIR_NETWORK_EVENT_STOPPED:
                 networkUpdateOrDelete(connectionName, objPath);
                 break;
             case Enum.VIR_NETWORK_EVENT_UNDEFINED:
-                store.dispatch(undefineNetwork({ connectionName, id:objPath }));
+                store.dispatch(undefineNetwork({ connectionName, id: objPath }));
                 break;
             default:
                 logDebug(`handle Network on ${connectionName}: ignoring event ${signal}`);
@@ -362,7 +362,7 @@ function startEventMonitorNetworks(connectionName) {
             switch (signal) {
             case "Refresh":
             /* These signals imply possible changes in what we display, so re-read the state */
-                networkGet({ connectionName, id:path });
+                networkGet({ connectionName, id: path });
                 break;
             default:
                 logDebug(`handleEvent Network on ${connectionName} : ignoring event ${signal}`);
@@ -380,16 +380,16 @@ function startEventMonitorStoragePools(connectionName) {
             switch (eventType) {
             case Enum.VIR_STORAGE_POOL_EVENT_DEFINED:
             case Enum.VIR_STORAGE_POOL_EVENT_CREATED:
-                storagePoolGet({ connectionName, id:objPath });
+                storagePoolGet({ connectionName, id: objPath });
                 break;
             case Enum.VIR_STORAGE_POOL_EVENT_STOPPED:
                 storagePoolUpdateOrDelete(connectionName, objPath);
                 break;
             case Enum.VIR_STORAGE_POOL_EVENT_STARTED:
-                storagePoolGet({ connectionName, id:objPath, updateOnly: true });
+                storagePoolGet({ connectionName, id: objPath, updateOnly: true });
                 break;
             case Enum.VIR_STORAGE_POOL_EVENT_UNDEFINED:
-                store.dispatch(undefineStoragePool({ connectionName, id:objPath }));
+                store.dispatch(undefineStoragePool({ connectionName, id: objPath }));
                 break;
             case Enum.VIR_STORAGE_POOL_EVENT_DELETED:
             default:
@@ -405,7 +405,7 @@ function startEventMonitorStoragePools(connectionName) {
             switch (signal) {
             case "Refresh":
             /* These signals imply possible changes in what we display, so re-read the state */
-                storagePoolGet({ connectionName, id:path });
+                storagePoolGet({ connectionName, id: path });
                 break;
             default:
                 logDebug(`handleEvent StoragePoolEvent on ${connectionName} : ignoring event ${signal}`);
@@ -417,9 +417,9 @@ function storagePoolUpdateOrDelete(connectionName, poolPath) {
     call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "ListStoragePools", [0], { timeout, type: "u" })
             .then(objPaths => {
                 if (objPaths[0].includes(poolPath))
-                    storagePoolGet({ connectionName, id:poolPath, updateOnly: true });
+                    storagePoolGet({ connectionName, id: poolPath, updateOnly: true });
                 else // Transient pool which got undefined when stopped
-                    store.dispatch(undefineStoragePool({ connectionName, id:poolPath }));
+                    store.dispatch(undefineStoragePool({ connectionName, id: poolPath }));
             })
             .catch(ex => console.warn("storagePoolUpdateOrDelete action failed:", ex.toString()));
 }
