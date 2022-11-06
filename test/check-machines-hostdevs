@@ -56,7 +56,7 @@ class TestMachinesHostDevs(VirtualMachinesCase):
 
         b.wait_in_text("#vm-subVmTest1-hostdevs .pf-c-empty-state__body", "No host devices assigned to this VM")
 
-        # Test hostplug of USB host device
+        # Test hot plug of USB host device
         # A usb device might not always be present
         nodedev_list = m.execute("virsh nodedev-list")
         lines = nodedev_list.partition('\n')
