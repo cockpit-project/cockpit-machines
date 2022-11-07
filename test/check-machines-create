@@ -1366,6 +1366,7 @@ vnc_password= "{vnc_passwd}"
             root = ET.fromstring(rhel_8_1_xml)
             root.find('os').find('resources').find('minimum').find('ram').text = '134217728'
             root.find('os').find('resources').find('minimum').find('storage').text = '134217728'
+            root.find('os').find('release-date').text = datetime.today().strftime('%Y-%m-%d')
             new_rhel_8_1_xml = ET.tostring(root)
             self.machine.execute(f"echo '{str(new_rhel_8_1_xml, 'utf-8')}' > {self.test_obj.vm_tmpdir}/rhel-8.1.xml")
             self.machine.execute(f"mount -o bind  {self.test_obj.vm_tmpdir}/rhel-8.1.xml /usr/share/osinfo/os/redhat.com/rhel-8.1.xml")
@@ -1375,6 +1376,7 @@ vnc_password= "{vnc_passwd}"
             root = ET.fromstring(rhel_8_2_xml)
             root.find('os').find('resources').find('minimum').find('ram').text = '134217728'
             root.find('os').find('resources').find('minimum').find('storage').text = '134217728'
+            root.find('os').find('release-date').text = datetime.today().strftime('%Y-%m-%d')
             new_rhel_8_2_xml = ET.tostring(root)
             self.machine.execute(f"echo '{str(new_rhel_8_2_xml, 'utf-8')}' > {self.test_obj.vm_tmpdir}/rhel-8.2.xml")
             self.machine.execute(f"mount -o bind  {self.test_obj.vm_tmpdir}/rhel-8.2.xml /usr/share/osinfo/os/redhat.com/rhel-8.2.xml")
