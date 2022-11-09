@@ -222,7 +222,7 @@ function validateParams(vmParams) {
             validationFailed.source = _("Installation source must not be empty");
     }
 
-    if (vmParams.os && needsRHToken(vmParams.os.shortId) && isEmpty(vmParams.offlineToken))
+    if (vmParams.sourceType == DOWNLOAD_AN_OS && vmParams.os && needsRHToken(vmParams.os.shortId) && isEmpty(vmParams.offlineToken))
         validationFailed.offlineToken = _("Offline token must not be empty");
 
     if (vmParams.memorySize === 0) {
