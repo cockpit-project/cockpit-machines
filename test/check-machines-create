@@ -1995,6 +1995,17 @@ vnc_password= "{vnc_passwd}"
                                               "Error",
                                               True)
 
+        # Check create buttons do not get disabled when RHEL is selected for sourceType != 'os' (Download an OS)
+        dialog = TestMachinesCreate.VmDialog(self, sourceType='url',
+                                             location=config.VALID_URL,
+                                             os_name=config.RHEL_8_1,
+                                             os_short_id=config.RHEL_8_1_SHORTID) \
+            .open() \
+            .fill()
+        b.wait_visible(".pf-c-modal-box__footer button:contains(Create and run)[aria-disabled=false]")
+        b.wait_visible(".pf-c-modal-box__footer button:contains(Create and edit)[aria-disabled=false]")
+        dialog.cancel()
+
         runner.checkDialogErrorTest(TestMachinesCreate.VmDialog(self, sourceType='os',
                                                                 os_name=config.RHEL_8_2,
                                                                 os_short_id=config.RHEL_8_2_SHORTID,
