@@ -214,7 +214,8 @@ export class VmNetworkTab extends React.Component {
                             .catch(ex => {
                                 onAddErrorNotification({
                                     text: cockpit.format(_("NIC $0 of VM $1 failed to change state"), network.mac, vm.name),
-                                    detail: ex.message, resourceId: vm.id,
+                                    detail: ex.message,
+                                    resourceId: vm.id,
                                 });
                             });
                 }
@@ -224,7 +225,8 @@ export class VmNetworkTab extends React.Component {
         // Network data mapping to rows
         let detailMap = [
             {
-                name: _("Type"), value: (network, networkId) => {
+                name: _("Type"),
+                value: (network, networkId) => {
                     const inactiveNIC = nicLookupByMAC(vm.inactiveXML.interfaces, network.mac);
                     return (
                         <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${id}-network-${networkId}-type`}>
@@ -236,7 +238,8 @@ export class VmNetworkTab extends React.Component {
                 props: { width: 10 }
             },
             {
-                name: _("Model type"), value: (network, networkId) => {
+                name: _("Model type"),
+                value: (network, networkId) => {
                     const inactiveNIC = nicLookupByMAC(vm.inactiveXML.interfaces, network.mac);
                     return (
                         <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${id}-network-${networkId}-model`}>
@@ -249,7 +252,8 @@ export class VmNetworkTab extends React.Component {
             },
             { name: _("MAC address"), value: 'mac', props: { width: 20 } },
             {
-                name: _("IP address"), value: () => {
+                name: _("IP address"),
+                value: () => {
                     if (this.props.vm.state != 'running' && this.props.vm.state != 'paused')
                         return '';
 
@@ -274,7 +278,8 @@ export class VmNetworkTab extends React.Component {
                 props: { width: 20 }
             },
             {
-                name: _("Source"), value: (network, networkId) => {
+                name: _("Source"),
+                value: (network, networkId) => {
                     const singleSourceElem = source => checkDeviceAviability(source) ? <Button variant="link" isInline onClick={sourceJump(source)}>{source}</Button> : source;
                     const addressPortSourceElem = (source, networkId) => (<table id={`${id}-network-${networkId}-source`}>
                         <tbody>
@@ -322,13 +327,15 @@ export class VmNetworkTab extends React.Component {
                 props: { width: 10 }
             },
             {
-                name: _("State"), value: (network, networkId) => {
+                name: _("State"),
+                value: (network, networkId) => {
                     return <span className='machines-network-state' id={`${id}-network-${networkId}-state`}>{rephraseUI('networkState', network.state)}</span>;
                 },
                 props: { width: 10 }
             },
             {
-                name: "", value: (network, networkId) => {
+                name: "",
+                value: (network, networkId) => {
                     const isUp = network.state === 'up';
                     const nicPersistent = !!vm.inactiveXML.interfaces.filter(iface => iface.mac == network.mac).length;
                     const editNICAction = () => {

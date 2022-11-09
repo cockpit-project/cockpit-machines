@@ -204,7 +204,8 @@ export class EditDiskModal extends React.Component {
 
         domainUpdateDiskAttributes({
             connectionName: vm.connectionName,
-            objPath: vm.id, target: disk.target,
+            objPath: vm.id,
+            target: disk.target,
             readonly: this.state.access == "readonly",
             shareable: this.state.access == "shareable",
             busType: this.state.busType,

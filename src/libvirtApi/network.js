@@ -42,8 +42,17 @@ export function networkCreate({
     ipv4DhcpRangeStart, ipv4DhcpRangeEnd, ipv6DhcpRangeStart, ipv6DhcpRangeEnd
 }) {
     const netXmlDesc = getNetworkXML({
-        name, forwardMode, ipv4, netmask, ipv6, prefix, device,
-        ipv4DhcpRangeStart, ipv4DhcpRangeEnd, ipv6DhcpRangeStart, ipv6DhcpRangeEnd
+        name,
+        forwardMode,
+        ipv4,
+        netmask,
+        ipv6,
+        prefix,
+        device,
+        ipv4DhcpRangeStart,
+        ipv4DhcpRangeEnd,
+        ipv6DhcpRangeStart,
+        ipv6DhcpRangeEnd
     });
 
     return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'NetworkDefineXML', [netXmlDesc], { timeout, type: 's' });

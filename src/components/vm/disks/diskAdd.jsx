@@ -383,7 +383,8 @@ export class AddDiskModalBody extends React.Component {
 
         return {
             storagePools,
-            vm, vms,
+            vm,
+            vms,
             file: "",
             device: "disk",
             storagePoolName: defaultPool && defaultPool.name,

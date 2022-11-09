@@ -64,7 +64,8 @@ export class VmSnapshotsCard extends React.Component {
 
         let detailMap = [
             {
-                name: _("Creation time"), value: (snap, snapId) => {
+                name: _("Creation time"),
+                value: (snap, snapId) => {
                     const date = localize_datetime(snap.creationTime * 1000);
                     return (<Flex className="snap-creation-time">
                         <FlexItem id={`${id}-snapshot-${snapId}-date`} spacer={{ default: 'spacerSm' }}>
@@ -77,7 +78,8 @@ export class VmSnapshotsCard extends React.Component {
                 }
             },
             {
-                name: _("Name"), value: (snap, snapId) => {
+                name: _("Name"),
+                value: (snap, snapId) => {
                     return (
                         <div id={`${id}-snapshot-${snapId}-name`}>
                             {snap.name}
@@ -86,7 +88,8 @@ export class VmSnapshotsCard extends React.Component {
                 }
             },
             {
-                name: _("Description"), value: (snap, snapId) => {
+                name: _("Description"),
+                value: (snap, snapId) => {
                     let desc = snap.description;
                     if (!desc)
                         desc = (<span className="snap-greyed-out">{_("No description")}</span>);
@@ -100,7 +103,8 @@ export class VmSnapshotsCard extends React.Component {
                 props: { modifier: 'breakWord' }
             },
             {
-                name: _("VM state"), value: (snap, snapId) => {
+                name: _("VM state"),
+                value: (snap, snapId) => {
                     const statesMap = {
                         shutoff: "shut off",
                         "disk-snapshot": <span className="snap-greyed-out">{_("no state saved")}</span>,
@@ -130,7 +134,8 @@ export class VmSnapshotsCard extends React.Component {
                 }
             },
             {
-                name: _("Parent snapshot"), value: (snap, snapId) => {
+                name: _("Parent snapshot"),
+                value: (snap, snapId) => {
                     const parentName = snap.parentName || (<span className="snap-greyed-out">{_("No parent")}</span>);
 
                     return (
@@ -141,7 +146,8 @@ export class VmSnapshotsCard extends React.Component {
                 }
             },
             {
-                name: "", value: (snap, snapId) => {
+                name: "",
+                value: (snap, snapId) => {
                     const revertSnapshotHelper = () => {
                         const revertDialogProps = {
                             idPrefix: `${id}-snapshot-${snapId}-revert`,
