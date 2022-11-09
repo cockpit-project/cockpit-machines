@@ -139,12 +139,16 @@ const VmFilesystemAddModal = ({ connectionName, objPath, vmName, vmState }) => {
 
         if (Object.getOwnPropertyNames(validationFailed).length == 0) {
             domainSetMemoryBacking({
-                connectionName, vmName,
+                connectionName,
+                vmName,
                 type: "memfd",
             })
                     .then(() => domainCreateFilesystem({
-                        connectionName, objPath, vmName,
-                        source, target: mountTag,
+                        connectionName,
+                        objPath,
+                        vmName,
+                        source,
+                        target: mountTag,
                         xattr,
                     }))
                     .then(

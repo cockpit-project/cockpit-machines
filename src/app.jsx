@@ -210,7 +210,8 @@ class AppActive extends React.Component {
         const properties = {
             nodeMaxMemory: config.nodeMaxMemory,
             onAddErrorNotification: this.onAddErrorNotification,
-            systemInfo, vms: combinedVms,
+            systemInfo,
+            vms: combinedVms,
             cloudInitSupported,
             downloadOSSupported,
             unattendedSupported,

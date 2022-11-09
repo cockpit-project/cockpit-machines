@@ -132,7 +132,9 @@ const DevRow = ({ idPrefix, type, selectableDevices, setSelectableDevices }) => 
                    cells={[_("Product"), _("Vendor"), _("Location")]}
                    rows={selectableDevices.map((dev, idx) => {
                        return {
-                           selected: dev.selected, disableSelection: dev.nodeDev.hasChildren, cells: [
+                           selected: dev.selected,
+                           disableSelection: dev.nodeDev.hasChildren,
+                           cells: [
                                dev.nodeDev.capability.product._value || "(" + _("Undefined") + ")",
                                dev.nodeDev.capability.vendor._value,
                                { title: <DescriptionList key='source' isHorizontal>{getSource(dev.nodeDev, idx)}</DescriptionList> }

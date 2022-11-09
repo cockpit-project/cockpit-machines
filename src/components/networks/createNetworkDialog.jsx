@@ -364,8 +364,18 @@ class CreateNetworkModal extends React.Component {
 
             this.setState({ createInProgress: true });
             networkCreate({
-                connectionName: LIBVIRT_SYSTEM_CONNECTION, name, forwardMode, device, ipv4, netmask, ipv6, prefix,
-                ipv4DhcpRangeStart, ipv4DhcpRangeEnd, ipv6DhcpRangeStart, ipv6DhcpRangeEnd
+                connectionName: LIBVIRT_SYSTEM_CONNECTION,
+                name,
+                forwardMode,
+                device,
+                ipv4,
+                netmask,
+                ipv6,
+                prefix,
+                ipv4DhcpRangeStart,
+                ipv4DhcpRangeEnd,
+                ipv6DhcpRangeStart,
+                ipv6DhcpRangeEnd
             })
                     .fail(exc => {
                         this.setState({ createInProgress: false });

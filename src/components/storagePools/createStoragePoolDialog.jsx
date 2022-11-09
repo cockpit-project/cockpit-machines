@@ -255,8 +255,12 @@ class CreateStoragePoolModal extends React.Component {
             connectionName: LIBVIRT_SYSTEM_CONNECTION,
             type: 'dir',
             source: {
-                host: '', dir: '', device: '', name: '',
-                initiator: '', format: undefined
+                host: '',
+                dir: '',
+                device: '',
+                name: '',
+                initiator: '',
+                format: undefined
             },
             target: '',
             autostart: true,

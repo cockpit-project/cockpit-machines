@@ -181,7 +181,8 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
     // Hostdev data mapping to rows
     const detailMap = [
         {
-            name: _("Type"), value: (hostdev, hostdevId) => {
+            name: _("Type"),
+            value: (hostdev, hostdevId) => {
                 return (
                     <span id={`${id}-hostdev-${hostdevId}-type`}>
                         {hostdev.type}
@@ -190,7 +191,8 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
             }
         },
         {
-            name: _("Class"), value: (hostdev, hostdevId) => {
+            name: _("Class"),
+            value: (hostdev, hostdevId) => {
                 return (
                     <span id={`${id}-hostdev-${hostdevId}-class`}>
                         {getClass(hostdev, nodeDevices)}
@@ -199,7 +201,8 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
             }
         },
         {
-            name: _("Model"), value: (hostdev, hostdevId) => {
+            name: _("Model"),
+            value: (hostdev, hostdevId) => {
                 return (
                     <div id={`${id}-hostdev-${hostdevId}-product`}>
                         {getProduct(hostdev, nodeDevices)}
@@ -208,7 +211,8 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
             }
         },
         {
-            name: _("Vendor"), value: (hostdev, hostdevId) => {
+            name: _("Vendor"),
+            value: (hostdev, hostdevId) => {
                 return (
                     <div id={`${id}-hostdev-${hostdevId}-vendor`}>
                         {getVendor(hostdev, nodeDevices)}
@@ -217,7 +221,8 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
             }
         },
         {
-            name: _("Source"), value: (hostdev, hostdevId) => {
+            name: _("Source"),
+            value: (hostdev, hostdevId) => {
                 return (
                     <div id={`${id}-hostdev-${hostdevId}-source`}>
                         {getSource(hostdev, nodeDevices, hostdevId)}
@@ -226,7 +231,8 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
             }
         },
         {
-            name: "", value: (hostdev, hostdevId) => {
+            name: "",
+            value: (hostdev, hostdevId) => {
                 const source = getHostDevSourceObject(hostdev);
 
                 let objectDescription = [];
