@@ -218,7 +218,7 @@ export const VmDisksCard = ({ vm, vms, disks, renderCapacity, supportedDiskBusTy
             columns.push({ title: access });
         }
 
-        columns.push({ title: <DiskSourceCell diskSource={disk.source} idPrefix={idPrefixRow} /> });
+        columns.push({ title: <DiskSourceCell diskSource={disk.source} idPrefix={idPrefixRow} />, props: { width: 25 } });
 
         if (renderAdditional) {
             columns.push({
