@@ -1463,6 +1463,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         def removeDiskAndChecks(target, path):
             b.wait_visible(f"#vm-subVmTest1-disks-{target}-action-kebab")
             b.click(f"#vm-subVmTest1-disks-{target}-action-kebab button")
+            b.wait_visible(f"#vm-subVmTest1-disks-{target}-action-kebab button[aria-expanded=true]")
             b.wait_visible(f"#delete-vm-subVmTest1-disks-{target}")
             b.click(f"#delete-vm-subVmTest1-disks-{target}")
             b.wait_in_text("div[role=dialog]:contains(\"Remove disk\")", target)
