@@ -22,14 +22,15 @@ import cockpit from 'cockpit';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
 import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList/index.js";
-import { Dropdown, KebabToggle } from "@patternfly/react-core/dist/esm/components/Dropdown/index.js";
+import { Dropdown, DropdownItem, KebabToggle } from "@patternfly/react-core/dist/esm/components/Dropdown/index.js";
+import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip/index.js";
 
 import { useDialogs } from 'dialogs.jsx';
 import { domainDetachDisk, domainGet } from '../../../libvirtApi/domain.js';
 import { MediaEjectModal } from './mediaEject.jsx';
 import { EditDiskAction } from './diskEdit.jsx';
 import { AddDiskModalBody } from './diskAdd.jsx';
-import { DeleteResourceButton } from '../../common/deleteResource.jsx';
+import { DeleteResourceModal } from '../../common/deleteResource.jsx';
 
 const _ = cockpit.gettext;
 
@@ -110,15 +111,20 @@ DiskExtras.propTypes = {
     idPrefix: PropTypes.string.isRequired,
 };
 
-export const DiskActions = ({ vm, vms, disk, supportedDiskBusTypes, idPrefixRow, isActionOpen, setIsActionOpen }) => {
-    const Dialogs = useDialogs();
-
+export const RemoveDiskModal = ({ vm, disk }) => {
     const onRemoveDisk = () => {
-        return domainDetachDisk({ connectionName: vm.connectionName, id: vm.id, name: vm.name, target: disk.target, live: vm.state === 'running', persistent: vm.persistent })
+        return domainDetachDisk({
+            connectionName: vm.connectionName,
+            id: vm.id,
+            name: vm.name,
+            target: disk.target,
+            live: vm.state === 'running',
+            persistent: vm.persistent,
+        })
                 .then(() => domainGet({ connectionName: vm.connectionName, id: vm.id }));
     };
 
-    const deleteDialogProps = {
+    const dialogProps = {
         title: _("Remove disk from VM?"),
         actionName: _("Remove"),
         errorMessage: cockpit.format(_("Disk $0 could not be removed"), disk.target),
@@ -131,6 +137,12 @@ export const DiskActions = ({ vm, vms, disk, supportedDiskBusTypes, idPrefixRow,
         ],
         deleteHandler: onRemoveDisk,
     };
+
+    return <DeleteResourceModal {...dialogProps} />;
+};
+
+export const DiskActions = ({ vm, vms, disk, supportedDiskBusTypes, idPrefixRow, isActionOpen, setIsActionOpen }) => {
+    const Dialogs = useDialogs();
 
     function openMediaInsertionDialog() {
         Dialogs.show(<AddDiskModalBody idPrefix={idPrefixRow + "-insert-dialog"}
@@ -162,6 +174,35 @@ export const DiskActions = ({ vm, vms, disk, supportedDiskBusTypes, idPrefixRow,
         }
     }
 
+    const disabled = vm.state != 'shut off' && vm.state != 'running';
+
+    let button = (
+        <DropdownItem className="pf-m-danger"
+                      id={`delete-${idPrefixRow}`}
+                      key={`delete-${idPrefixRow}`}
+                      isDisabled={disabled}
+                      onClick={() => {
+                          Dialogs.show(<RemoveDiskModal vm={vm}
+                                                        disk={disk} />);
+                      }}>
+            {_("Remove")}
+        </DropdownItem>
+    );
+
+    if (disabled) {
+        button = (
+            <Tooltip id={`delete-${idPrefixRow}-tooltip`}
+                     key={`delete-${idPrefixRow}-tooltip`}
+                     content={_("The VM needs to be running or shut off to detach this device")}>
+                <span>{button}</span>
+            </Tooltip>
+        );
+    }
+
+    const dropdownItems = [
+        button,
+    ];
+
     return (
         <div className='machines-listing-actions'>
             { cdromAction }
@@ -170,22 +211,14 @@ export const DiskActions = ({ vm, vms, disk, supportedDiskBusTypes, idPrefixRow,
                             vm={vm}
                             idPrefix={`${idPrefixRow}-edit`}
                             supportedDiskBusTypes={supportedDiskBusTypes} />}
-            <Dropdown onSelect={() => setIsActionOpen(!isActionOpen)}
+            <Dropdown onSelect={() => setIsActionOpen(false)}
                       key={idPrefixRow + "-action-kebab"}
                       id={idPrefixRow + "-action-kebab"}
                       toggle={<KebabToggle onToggle={(isOpen) => setIsActionOpen(isOpen)} />}
                       isPlain
                       isOpen={isActionOpen}
                       position='right'
-                      dropdownItems={[
-                          <DeleteResourceButton objectId={idPrefixRow}
-                                                key={idPrefixRow}
-                                                disabled={vm.state != 'shut off' && vm.state != 'running'}
-                                                dialogProps={deleteDialogProps}
-                                                overlayText={_("The VM needs to be running or shut off to detach this device")}
-                                                actionName={_("Remove")}
-                                                isDropdownItem />
-                      ]} />
+                      dropdownItems={dropdownItems} />
         </div>
     );
 };
