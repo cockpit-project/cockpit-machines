@@ -26,11 +26,12 @@ import { Dropdown, DropdownItem, KebabToggle } from "@patternfly/react-core/dist
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip/index.js";
 
 import { useDialogs } from 'dialogs.jsx';
-import { domainDetachDisk, domainGet } from '../../../libvirtApi/domain.js';
+import { domainDeleteStorage, domainDetachDisk, domainGet } from '../../../libvirtApi/domain.js';
 import { MediaEjectModal } from './mediaEject.jsx';
 import { EditDiskAction } from './diskEdit.jsx';
 import { AddDiskModalBody } from './diskAdd.jsx';
 import { DeleteResourceModal } from '../../common/deleteResource.jsx';
+import { canDeleteDiskFile } from '../../../helpers.js';
 
 const _ = cockpit.gettext;
 
@@ -111,8 +112,8 @@ DiskExtras.propTypes = {
     idPrefix: PropTypes.string.isRequired,
 };
 
-export const RemoveDiskModal = ({ vm, disk }) => {
-    const onRemoveDisk = () => {
+export const RemoveDiskModal = ({ vm, disk, storagePools, onAddErrorNotification }) => {
+    const onRemoveDisk = (deleteFile) => {
         return domainDetachDisk({
             connectionName: vm.connectionName,
             id: vm.id,
@@ -121,7 +122,22 @@ export const RemoveDiskModal = ({ vm, disk }) => {
             live: vm.state === 'running',
             persistent: vm.persistent,
         })
-                .then(() => domainGet({ connectionName: vm.connectionName, id: vm.id }));
+                .then(() => domainGet({ connectionName: vm.connectionName, id: vm.id }))
+                .then(() => { // Cleanup operations
+                    if (deleteFile) {
+                        return domainDeleteStorage({ connectionName: vm.connectionName, storage: [disk], storagePools })
+                                .catch(exc => {
+                                    onAddErrorNotification({
+                                        resourceId: vm.id,
+                                        text: cockpit.format(_("Could not delete disk's storage")),
+                                        detail: exc.message,
+                                        type: "warning"
+                                    });
+                                });
+                    } else {
+                        return Promise.resolve();
+                    }
+                });
     };
 
     const dialogProps = {
@@ -135,13 +151,18 @@ export const RemoveDiskModal = ({ vm, disk }) => {
                 ? { name: entry.label, value: <span className="ct-monospace">{getDiskSourceValue(disk.source, entry.name)}</span> }
                 : [])
         ],
-        deleteHandler: onRemoveDisk,
+        deleteHandler: () => onRemoveDisk(false),
     };
+
+    if (canDeleteDiskFile(disk)) {
+        dialogProps.actionNameSecondary = _("Remove and delete file");
+        dialogProps.deleteHandlerSecondary = () => onRemoveDisk(true);
+    }
 
     return <DeleteResourceModal {...dialogProps} />;
 };
 
-export const DiskActions = ({ vm, vms, disk, supportedDiskBusTypes, idPrefixRow, isActionOpen, setIsActionOpen }) => {
+export const DiskActions = ({ vm, vms, disk, supportedDiskBusTypes, idPrefixRow, storagePools, onAddErrorNotification, isActionOpen, setIsActionOpen }) => {
     const Dialogs = useDialogs();
 
     function openMediaInsertionDialog() {
@@ -183,7 +204,9 @@ export const DiskActions = ({ vm, vms, disk, supportedDiskBusTypes, idPrefixRow,
                       isDisabled={disabled}
                       onClick={() => {
                           Dialogs.show(<RemoveDiskModal vm={vm}
-                                                        disk={disk} />);
+                                                        disk={disk}
+                                                        storagePools={storagePools}
+                                                        onAddErrorNotification={onAddErrorNotification} />);
                       }}>
             {_("Remove")}
         </DropdownItem>

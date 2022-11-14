@@ -431,7 +431,7 @@ export function domainDeleteStorage({
                 call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StorageVolLookupByPath', [disk.source.file], { timeout, type: 's' })
                         .then(volPath => call(connectionName, volPath[0], 'org.libvirt.StorageVol', 'Delete', [0], { timeout, type: 'u' }))
                         .catch(ex => {
-                            if (!ex.message.includes("no storage vol with matching path"))
+                            if (!ex.message.includes("no storage vol with matching"))
                                 return Promise.reject(ex);
                             else
                                 return cockpit.file(disk.source.file, { superuser: "try" }).replace(null); // delete key file
@@ -458,6 +458,9 @@ export function domainDeleteStorage({
             logDebug("Disks of type $0 are currently ignored during VM deletion".format(disk.type));
         }
     }
+
+    if (storage.length > 0 && storageVolPromises.length == 0)
+        return Promise.reject(new Error("Could not find storage file to delete."));
 
     return Promise.allSettled(storageVolPromises).then(results => {
         const rejectedMsgs = results.filter(result => result.status == "rejected").map(result => result.reason?.message);
