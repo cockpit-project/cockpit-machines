@@ -137,7 +137,7 @@ export class VmDisksCardLibvirt extends React.Component {
     }
 
     render() {
-        const { vm, vms, storagePools, supportedDiskBusTypes } = this.props;
+        const { vm, vms, storagePools, supportedDiskBusTypes, onAddErrorNotification } = this.props;
 
         const idPrefix = `${vmId(vm.name)}-disks`;
         const areDiskStatsSupported = this.getDiskStatsSupport(vm);
@@ -153,6 +153,8 @@ export class VmDisksCardLibvirt extends React.Component {
                 vm={vm}
                 vms={vms}
                 disks={disks}
+                storagePools={storagePools}
+                onAddErrorNotification={onAddErrorNotification}
                 renderCapacity={areDiskStatsSupported}
                 supportedDiskBusTypes={supportedDiskBusTypes} />
         );
@@ -164,7 +166,7 @@ VmDisksCardLibvirt.propTypes = {
     vm: PropTypes.object.isRequired,
 };
 
-export const VmDisksCard = ({ vm, vms, disks, renderCapacity, supportedDiskBusTypes }) => {
+export const VmDisksCard = ({ vm, vms, disks, renderCapacity, supportedDiskBusTypes, storagePools, onAddErrorNotification }) => {
     const [openActions, setOpenActions] = useState(new Set());
     let renderCapacityUsed, renderAccess, renderAdditional;
     const columnTitles = [_("Device")];
@@ -235,6 +237,8 @@ export const VmDisksCard = ({ vm, vms, disks, renderCapacity, supportedDiskBusTy
             title: <DiskActions vm={vm}
                                 vms={vms}
                                 disk={disk}
+                                storagePools={storagePools}
+                                onAddErrorNotification={onAddErrorNotification}
                                 supportedDiskBusTypes={supportedDiskBusTypes}
                                 idPrefixRow={idPrefixRow}
                                 isActionOpen={openActions.has(disk.target)}
@@ -267,4 +271,6 @@ VmDisksCard.propTypes = {
     disks: PropTypes.array.isRequired,
     renderCapacity: PropTypes.bool,
     supportedDiskBusTypes: PropTypes.array,
+    storagePools: PropTypes.array.isRequired,
+    onAddErrorNotification: PropTypes.func.isRequired,
 };

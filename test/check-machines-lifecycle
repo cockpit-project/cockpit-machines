@@ -462,7 +462,10 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         wait(lambda: name in m.execute("virsh list --all --name"))
         addDisk(secondDiskVolName, poolName, name)
         # Remove VM's disk from command line
-        m.execute(f"rm {args['image']} {(secondDiskPoolPath + secondDiskVolName)}")
+        m.execute(f"rm {(secondDiskPoolPath + secondDiskVolName)}")
+        # Prevent file from being deleting to test handling of unsuccessful storage deletion
+        m.execute(f"chattr +i {args['image']}")
+        self.addCleanup(m.execute, f"chattr -i {args['image']}")
 
         self.performAction(name, "delete")
         b.set_checked(f"#vm-{name}-delete-modal-dialog li:nth-child(1) input[type=checkbox]", True)

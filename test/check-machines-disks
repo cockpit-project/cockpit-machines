@@ -1408,23 +1408,20 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
 
+        b.wait_visible("#vm-subVmTest1-disks-vdc-device")
         b.wait_visible("#vm-subVmTest1-disks-vdc-action-kebab")
         b.click("#vm-subVmTest1-disks-vdc-action-kebab button")
-        b.wait_visible("#vm-subVmTest1-disks-vdc-device")
+        b.wait_visible("#delete-vm-subVmTest1-disks-vdc")
         b.click("#delete-vm-subVmTest1-disks-vdc")
         b.wait_visible(".pf-c-modal-box")
         b.wait_in_text(".pf-c-modal-box__body .pf-c-description-list", "subVmTest1")
         b.wait_in_text("#delete-resource-modal-target", "vdc")
         b.wait_in_text("#delete-resource-modal-file", vdc_path)
-        b.click(".pf-c-modal-box__footer button:contains(Remove)")
-        b.wait_visible(".pf-c-modal-box__footer button.pf-m-in-progress")
-        # When live-detaching disks the guest OS needs to cooperate so that we can
-        # see the disk getting detached in the UI.
-        # Wait until we see the login prompt before attempting operation that need
-        # the OS for fully respond
-        with b.wait_timeout(180):
-            b.wait_not_present("#vm-subVmTest1-disks-vdc-device")
+        b.click("#delete-resource-modal-primary")
         b.wait_not_present(".pf-c-modal-box")
+        # Wait for underlying VM's OS to detach the disk
+        wait(lambda: "vdc" not in m.execute("virsh domblklist subVmTest1"), delay=1)
+        b.wait_not_present("#vm-subVmTest1-disks-vdc-device")
 
         # Test that detaching disk of a running domain will affect the
         # inactive configuration as well
@@ -1439,28 +1436,40 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_in_text("#delete-resource-modal-target", "vdd")
         b.wait_in_text("#delete-resource-modal-file", vdd_path)
         b.wait_visible(".pf-c-modal-box")
-        b.click(".pf-c-modal-box__footer button:contains(Remove)")
+        b.click("#delete-resource-modal-primary")
         b.wait_not_present("#vm-subVmTest1-disks-vdd-device")
         b.wait_not_present(".pf-c-modal-box")
 
         # Test detaching several disks and the deletion dialog can be closed correctly
         m.execute("virsh vol-create-as myPoolOne diskVirtio --capacity 1M --format qcow2")
         m.execute("virsh vol-create-as myPoolOne diskSata --capacity 1M --format qcow2")
+        m.execute("virsh vol-create-as myPoolOne diskSata2 --capacity 1M --format qcow2")
+        m.execute("virsh vol-create-as myPoolOne diskSata3 --capacity 1M --format qcow2")
         wait(lambda: "diskVirtio" in m.execute("virsh vol-list myPoolOne"))
         wait(lambda: "diskSata" in m.execute("virsh vol-list myPoolOne"))
+        wait(lambda: "diskSata2" in m.execute("virsh vol-list myPoolOne"))
+        wait(lambda: "diskSata3" in m.execute("virsh vol-list myPoolOne"))
         vdf_path = f"{p1}/diskVirtio"
         sda_path = f"{p1}/diskSata"
+        sdb_path = f"{p1}/diskSata2"
+        sdc_path = f"{p1}/diskSata3"
         m.execute(f"virsh attach-disk --domain subVmTest1 --source {vdf_path} --target vdf --targetbus virtio --persistent")
         m.execute(f"virsh attach-disk --domain subVmTest1 --source {sda_path} --target sda --targetbus sata --persistent")
+        m.execute(f"virsh attach-disk --domain subVmTest1 --source {sdb_path} --target sdb --targetbus sata --persistent")
+        m.execute(f"virsh attach-disk --domain subVmTest1 --source {sdc_path} --target sdc --targetbus sata --persistent")
+        m.execute("virsh attach-disk --domain subVmTest1 --config --target sdd --type cdrom --source ''")  # attach disk with no file (empty cd-rom)
+        m.execute("virt-xml subVmTest1 --add-device --disk type='block',source.dev='/dev/null',target.dev=sde")
 
         # Need to refresh when attaching disk for shutoff VM
         b.reload()
         b.enter_page('/machines')
         self.waitPageInit()
         b.wait_visible("#vm-subVmTest1-disks-sda-device")
-        b.wait_visible("#vm-subVmTest1-disks-vdf-device")
+        b.wait_visible("#vm-subVmTest1-disks-sdb-device")
+        b.wait_visible("#vm-subVmTest1-disks-sdc-device")
+        b.wait_visible("#vm-subVmTest1-disks-vda-device")
 
-        def removeDiskAndChecks(target, path):
+        def removeDiskAndChecks(target, path, removeFile=False, removeFileFail=False, removeFileNotPresent=False):
             b.wait_visible(f"#vm-subVmTest1-disks-{target}-action-kebab")
             b.click(f"#vm-subVmTest1-disks-{target}-action-kebab button")
             b.wait_visible(f"#vm-subVmTest1-disks-{target}-action-kebab button[aria-expanded=true]")
@@ -1468,16 +1477,54 @@ class TestMachinesDisks(VirtualMachinesCase):
             b.click(f"#delete-vm-subVmTest1-disks-{target}")
             b.wait_in_text("div[role=dialog]:contains(\"Remove disk\")", target)
             b.wait_in_text("#delete-resource-modal-target", target)
-            b.wait_in_text("#delete-resource-modal-file", path)
-            b.click("div[role=dialog] button:contains(Remove)")
+            if path:
+                b.wait_in_text("#delete-resource-modal-file", path)
+
+            # "Remove and delete file" is not present
+            if removeFileNotPresent:
+                b.wait_not_present("#delete-resource-modal-secondary")
+                b.click("#delete-resource-modal-primary")
+            else:
+                # Remove disk and delete file
+                if removeFile:
+                    b.click("#delete-resource-modal-secondary")
+                # Remove disk but don't delete file
+                else:
+                    b.click("#delete-resource-modal-primary")
+
             # The deletion dialog should be closed
             b.wait_not_present("div[role=dialog]:contains(\"Remove disk\")")
-            # No error shown
+            # No modal error
             b.wait_not_present("div[aria-label=\"Danger Alert\"]")
             b.wait_not_present(f"#vm-subVmTest1-disks-{target}-device")
 
+            if removeFileFail:
+                # Check Toast notification is present
+                b.wait_visible(".pf-c-alert.pf-m-warning")
+                b.wait_in_text(".pf-c-alert.pf-m-warning .pf-c-alert__title", "Could not delete")
+                # Cleanup Toast notification
+                b.click(".pf-c-alert-group li:first-of-type .pf-c-alert button.pf-m-plain")
+
+            b.wait_not_present(".pf-c-alert.pf-m-warning")
+
+            # Verify correctness of disk file
+            if path:
+                if removeFile and not removeFileFail:
+                    m.execute(f"! test -f {path}")
+                else:
+                    m.execute(f"test -f {path}")
+
         removeDiskAndChecks("sda", sda_path)
         removeDiskAndChecks("vdf", vdf_path)
+        removeDiskAndChecks("sdb", sdb_path, True, False)
+        # Prevent user from deleting the file
+        m.execute(f"chattr +i {sdc_path}")
+        self.addCleanup(m.execute, f"chattr -i {sdc_path}")
+        removeDiskAndChecks("sdc", sdc_path, True, True)
+        # Disk with no source file should not have "Remove and delete file" option present
+        removeDiskAndChecks("sdd", None, False, False, True)
+        # Non-file and non-volume disk should not have "Remove and delete file" option present
+        removeDiskAndChecks("sde", None, False, False, True)
 
         # Test detaching disk of a paused domain
         m.execute(f"> {args['logfile']}")  # clear logfile
@@ -1500,10 +1547,10 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_visible("#vm-subVmTest1-disks-vdc-device")
         b.click("#delete-vm-subVmTest1-disks-vdc")
         b.wait_visible(".pf-c-modal-box")
-        b.click(".pf-c-modal-box__footer button:contains(Remove)")
+        b.click("#delete-resource-modal-primary")
+        b.wait_not_present(".pf-c-modal-box")
         wait(lambda: "vdc" not in m.execute("virsh domblklist subVmTest1"), delay=1)
         b.wait_not_present("#vm-subVmTest1-disks-vdc-device")
-        b.wait_not_present(".pf-c-modal-box")
 
     def testInsertDiscCDROM(self):
         b = self.browser
