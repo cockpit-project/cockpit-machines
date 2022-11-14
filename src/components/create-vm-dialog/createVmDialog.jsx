@@ -873,7 +873,7 @@ const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit,
 
             { storagePoolName === "NewVolume" &&
             <>
-                <FormGroup label={_("Storage Limit")} fieldId='storage-limit'
+                <FormGroup label={_("Storage limit")} fieldId='storage-limit'
                            id='storage-group'
                            validated={validationStateStorage}
                            helperText={helperTextNewVolume}
