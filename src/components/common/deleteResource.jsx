@@ -46,10 +46,11 @@ export class DeleteResourceModal extends React.Component {
         this.dialogErrorSet = this.dialogErrorSet.bind(this);
     }
 
-    delete() {
+    delete(primaryAction = true) {
         const Dialogs = this.context;
         this.setState({ inProgress: true });
-        this.props.deleteHandler()
+        const handler = primaryAction ? this.props.deleteHandler : this.props.deleteHandlerSecondary;
+        handler()
                 .then(Dialogs.close, exc => {
                     this.setState({ inProgress: false });
                     this.dialogErrorSet(this.props.errorMessage, exc.message);
@@ -62,7 +63,7 @@ export class DeleteResourceModal extends React.Component {
 
     render() {
         const Dialogs = this.context;
-        const { title, objectDescription, actionName, actionDescription } = this.props;
+        const { title, objectDescription, actionName, actionDescription, actionNameSecondary } = this.props;
 
         return (
             <Modal position="top" variant="small" isOpen onClose={Dialogs.close}
@@ -71,9 +72,13 @@ export class DeleteResourceModal extends React.Component {
                    titleIconVariant="warning"
                    footer={
                        <>
-                           <Button variant='danger' isLoading={this.state.inProgress} isDisabled={this.state.inProgress} onClick={this.delete}>
+                           <Button variant='danger' id="delete-resource-modal-primary" isLoading={this.state.inProgress} isDisabled={this.state.inProgress} onClick={this.delete}>
                                {actionName || _("Delete")}
                            </Button>
+                           {actionNameSecondary &&
+                           <Button variant='secondary' id="delete-resource-modal-secondary" isLoading={this.state.inProgress} isDisabled={this.state.inProgress} onClick={() => this.delete(false)} isDanger>
+                               {actionNameSecondary}
+                           </Button>}
                            <Button variant='link' className='btn-cancel' onClick={Dialogs.close}>
                                {_("Cancel")}
                            </Button>
