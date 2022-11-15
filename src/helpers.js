@@ -276,6 +276,15 @@ const transform = {
         up: _("up"),
         down: _("down"),
     },
+    watchdogAction: {
+        reset: _("Reset"),
+        shutdown: _("Gracefully shutdown"),
+        poweroff: _("Power off"),
+        pause: _("Pause"),
+        none: _("Do nothing"),
+        dump: _("Dump core"),
+        "inject-nmi": _("Inject a non-maskable interrupt"),
+    },
 };
 
 export function rephraseUI(key, original) {
