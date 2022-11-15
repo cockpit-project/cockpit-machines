@@ -26,7 +26,7 @@ import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { DialogsContext } from 'dialogs.jsx';
 
-import { vmId, getVmStoragePools } from '../../helpers.js';
+import { canDeleteDiskFile, vmId, getVmStoragePools } from '../../helpers.js';
 import { domainDelete, domainDeleteStorage } from '../../libvirtApi/domain.js';
 import { snapshotDelete } from '../../libvirtApi/snapshot.js';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
@@ -107,7 +107,7 @@ export class DeleteDialog extends React.Component {
                 .forEach(t => {
                     const d = vm.disks[t];
 
-                    if ((d.type == 'file' && d.source.file) || d.type == 'volume')
+                    if (canDeleteDiskFile(d))
                         disks.push(Object.assign(d, { checked: !d.readonly }));
                 });
         this.state = { disks };

@@ -869,3 +869,7 @@ export function getIfaceSourceName(iface) {
 
     return mapper[iface.type] && mapper[iface.type](iface.source);
 }
+
+export function canDeleteDiskFile(disk) {
+    return disk.type === "volume" || (disk.type === "file" && disk.source.file);
+}
