@@ -482,6 +482,138 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-cpu-model", "host passthrough" if m.image in distrosWithDefaultHostModel else "host")
         b.wait_in_text("#vm-subVmTest1-vcpus-count", "3")
 
+    def testWatchdog(self):
+        b = self.browser
+        m = self.machine
+        action_strings = {
+            "reset": "Reset",
+            "shutdown": "Gracefully shutdown",
+            "poweroff": "Power off",
+            "pause": "Pause",
+            "none": "Do nothing",
+            "dump": "Dump",
+            "inject-nmi": "Inject a non-maskable interrupt",
+        }
+
+        def setWatchdogAction(action, machine_has_no_watchdog=False, pixel_test_tag=None, reboot_machine=False):
+            # If no watchdog action is set, we are attaching a new watchdog device. If watchdog already is set, we are editing an exiting watchdog device
+            if machine_has_no_watchdog:
+                b.wait_in_text("#vm-subVmTest1-watchdog-button", "add")
+            else:
+                b.wait_in_text("#vm-subVmTest1-watchdog-button", "edit")
+
+            b.click("#vm-subVmTest1-watchdog-button")
+            b.wait_visible("#vm-subVmTest1-watchdog-modal")
+
+            if pixel_test_tag:
+                b.assert_pixels("#vm-subVmTest1-watchdog-modal", pixel_test_tag)
+
+            b.click(f"#{action}")
+
+            if machine_has_no_watchdog:
+                b.wait_in_text("#watchdog-dialog-apply", "Add")
+            else:
+                b.wait_in_text("#watchdog-dialog-apply", "Save")
+
+            b.click("#watchdog-dialog-apply")
+            b.wait_not_present("#vm-subVmTest1-watchdog-modal")
+
+            b.wait_in_text("#vm-subVmTest1-watchdog-state", action_strings[action])
+
+            virsh_output = m.execute("virsh dumpxml subVmTest1 | xmllint --xpath '/domain/devices/watchdog/@action' -").strip()
+            self.assertEqual(virsh_output, f'action="{action}"')
+
+        def setWatchdogActionLive(action, previous_action=None, reboot_machine=False):
+            b.click("#vm-subVmTest1-watchdog-button")
+            b.wait_visible("#vm-subVmTest1-watchdog-modal")
+
+            b.click(f"#{action}")
+            if previous_action:
+                # When editing an exiting watchdog, message warning user that changes will take effect after reboot should be present
+                b.wait_visible("#vm-subVmTest1-watchdog-modal #vm-subVmTest1-idle-message")
+            else:
+                # When attaching adding a new watchdog, no message should be present
+                b.wait_not_present("#vm-subVmTest1-watchdog-modal #vm-subVmTest1-idle-message")
+
+            b.click("#watchdog-dialog-apply")
+            b.wait_not_present("#vm-subVmTest1-watchdog-modal")
+
+            if previous_action:
+                # When editing an exiting watchdog, tooltip should be present on overview card warning user that changes will take effect after reboot
+                b.wait_visible("#watchdog-tooltip")
+            else:
+                # When attaching adding a new watchdog, no tooltip should be present
+                b.wait_not_present("#watchdog-tooltip")
+
+            # Libvirt doesn't support editing wathdog device on RUNNING vm, so a live VM config will persist the previously configured watchdog action until reboot
+            # On the other hand, libvirt does support attaching a watchdog to a RUNNING VM
+            # So in summary:
+            # - if no previous watchdog action is configured on a VM (meaning VM has no watchdog device), we are attaching a new wathdog device
+            #   and live VM config have new action set
+            # - if watchdog action is configured on a VM (meaning VM has a watchdog device), we are editing an editing wathdog device
+            #   and live VM config will persist the old setting until VM is rebooted
+            expected_action = previous_action if previous_action else action
+            b.wait_in_text("#vm-subVmTest1-watchdog-state", action_strings[expected_action])
+            virsh_output_offline = m.execute("virsh dumpxml subVmTest1 | xmllint --xpath '/domain/devices/watchdog/@action' -").strip()
+            self.assertEqual(virsh_output_offline, f'action="{expected_action}"')
+
+            # Offline VM config will always have newly configured watchdog action, no matter if we are attaching a new watchdog device or editing an existing one
+            virsh_output_offline = m.execute("virsh dumpxml subVmTest1 --inactive | xmllint --xpath '/domain/devices/watchdog/@action' -").strip()
+            self.assertEqual(virsh_output_offline, f'action="{action}"')
+
+            if reboot_machine:
+                # Check that after rebooting machine, live VM config will have new watchdog condiguration
+                self.performAction("subVmTest1", "forceOff")
+                b.click("#vm-subVmTest1-system-run")
+                b.wait_in_text("#vm-subVmTest1-system-state", "Running")
+
+                b.wait_in_text("#vm-subVmTest1-watchdog-state", action_strings[action])
+                virsh_output_current = m.execute("virsh dumpxml subVmTest1 | xmllint --xpath '/domain/devices/watchdog/@action' -").strip()
+                self.assertEqual(virsh_output_current, f'action="{action}"')
+
+        def removeWatchdogDevice(live=True):
+            b.click("#vm-subVmTest1-watchdog-button")
+            b.wait_visible("#vm-subVmTest1-watchdog-modal")
+
+            b.click("#watchdog-dialog-detach")
+            b.wait_not_present("#vm-subVmTest1-watchdog-modal")
+
+            b.wait_in_text("#vm-subVmTest1-watchdog-state", "none")
+            # check no watchdog is present in VM's xml (also xmllint is expected to return non-zero code)
+            virsh_output = m.execute("virsh dumpxml subVmTest1 | xmllint --xpath '/domain/devices/watchdog' - 2>&1 || true").strip()
+            self.assertEqual(virsh_output, 'XPath set is empty')
+
+            if live:
+                # check no watchdog is present in VM's xml (also xmllint is expected to return non-zero code)
+                virsh_output = m.execute("virsh dumpxml subVmTest1 --inactive | xmllint --xpath '/domain/devices/watchdog' - 2>&1 || true").strip()
+                self.assertEqual(virsh_output, 'XPath set is empty')
+
+        args = self.createVm("subVmTest1", running=False)
+
+        self.login_and_go("/machines")
+        b.wait_in_text("body", "Virtual machines")
+        self.goToVmPage("subVmTest1")
+
+        b.wait_in_text("#vm-subVmTest1-watchdog-state", "none")
+
+        # Test configuring watchdog for shutoff VM
+        setWatchdogAction(action="reset", machine_has_no_watchdog=True)
+        setWatchdogAction(action="poweroff", pixel_test_tag="watchdog")
+        setWatchdogAction(action="inject-nmi")
+        removeWatchdogDevice()
+
+        b.click("#vm-subVmTest1-system-run")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
+
+        # Test configuring watchdog for running VM
+        setWatchdogActionLive(action="reset")
+        setWatchdogActionLive(action="pause", previous_action="reset")
+        # Make sure that the VM booted normally before attempting to hotunplug
+        wait(lambda: "login as 'cirros' user" in m.execute(f"cat {args['logfile']}"), delay=3)
+        removeWatchdogDevice(live=True)
+        # Check rebooting machine will not unexpectedly affect watchdog configuration
+        setWatchdogActionLive(action="poweroff", reboot_machine=True)
+
 
 if __name__ == '__main__':
     test_main()

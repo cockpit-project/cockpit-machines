@@ -39,6 +39,7 @@ import {
 import { updateVm } from '../../../actions/store-actions.js';
 import { BootOrderLink } from './bootOrder.jsx';
 import { FirmwareLink } from './firmware.jsx';
+import { WatchdogLink } from './watchdog.jsx';
 import { WarningInactiveTooltip } from '../../common/warningInactive.jsx';
 import { StateIcon } from '../../common/stateIcon.jsx';
 import { domainChangeAutostart, domainGet } from '../../../libvirtApi/domain.js';
@@ -229,6 +230,13 @@ class VmOverviewCard extends React.Component {
                             <DescriptionListTerm>{_("Autostart")}</DescriptionListTerm>
                             {autostart}
                         </DescriptionListGroup>}
+
+                        <DescriptionListGroup>
+                            <DescriptionListTerm>{_("Watchdog")}</DescriptionListTerm>
+                            <DescriptionListDescription id={`${idPrefix}-watchdog`}>
+                                <WatchdogLink vm={vm} idPrefix={idPrefix} />
+                            </DescriptionListDescription>
+                        </DescriptionListGroup>
                     </DescriptionList>
                 </FlexItem>
                 <FlexItem>

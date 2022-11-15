@@ -244,6 +244,7 @@ export function parseDomainDumpxml(connectionName, domXml, objPath) {
     const redirectedDevices = parseDumpxmlForRedirectedDevices(devicesElem);
     const hostDevices = parseDumpxmlForHostDevices(devicesElem);
     const filesystems = parseDumpxmlForFilesystems(devicesElem);
+    const watchdog = parseDumpxmlForWatchdog(devicesElem);
 
     const hasInstallPhase = parseDumpxmlMachinesMetadataElement(metadataElem, 'has_install_phase') === 'true';
     const installSourceType = parseDumpxmlMachinesMetadataElement(metadataElem, 'install_source_type');
@@ -278,6 +279,7 @@ export function parseDomainDumpxml(connectionName, domXml, objPath) {
         redirectedDevices,
         hostDevices,
         filesystems,
+        watchdog,
         metadata,
     };
 }
@@ -439,6 +441,19 @@ export function parseDumpxmlForDisks(devicesElem) {
     }
 
     return disks;
+}
+
+export function parseDumpxmlForWatchdog(devicesElem) {
+    const watchdogElem = getSingleOptionalElem(devicesElem, 'watchdog');
+
+    if (watchdogElem) {
+        return { // https://libvirt.org/formatdomain.html#watchdog-device
+            model: watchdogElem.getAttribute('model'),
+            action: watchdogElem.getAttribute('action'),
+        };
+    } else {
+        return {};
+    }
 }
 
 export function parseDumpxmlForFilesystems(devicesElem) {
