@@ -177,7 +177,8 @@ export class VmSnapshotsCard extends React.Component {
 
                         return (
                             <DeleteResourceButton objectId={`${id}-snapshot-${snapId}`}
-                                                  dialogProps={deleteDialogProps} />
+                                                  dialogProps={deleteDialogProps}
+                                                  isSecondary />
                         );
                     };
 
