@@ -86,7 +86,7 @@ export const VmFilesystemsCard = ({ connectionName, vmName, vmState, filesystems
     return (
         <>
             <ListingTable variant='compact'
-                          gridBreakPoint='grid-xl'
+                          gridBreakPoint='grid-lg'
                           emptyCaption={_("No directories shared between the host and this VM")}
                           columns={columnTitles}
                           rows={rows} />

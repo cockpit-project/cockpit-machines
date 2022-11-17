@@ -244,7 +244,7 @@ export const VmDisksCard = ({ vm, vms, disks, renderCapacity, supportedDiskBusTy
     return (
         <>
             <ListingTable variant='compact'
-                gridBreakPoint='grid-xl'
+                gridBreakPoint='grid-lg'
                 emptyCaption={_("No disks defined for this VM")}
                 aria-label={`VM ${vm.name} Disks`}
                 columns={columnTitles}
