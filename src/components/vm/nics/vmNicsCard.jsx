@@ -394,7 +394,8 @@ export class VmNetworkTab extends React.Component {
                                               disabled={vm.state != 'shut off' && vm.state != 'running'}
                                               dialogProps={deleteDialogProps}
                                               actionName={_("Remove")}
-                                              overlayText={_("The VM needs to be running or shut off to detach this device")} />
+                                              overlayText={_("The VM needs to be running or shut off to detach this device")}
+                                              isSecondary />
                     );
 
                     return (

@@ -68,7 +68,8 @@ export const VmFilesystemsCard = ({ connectionName, vmName, vmState, filesystems
                                           actionName: _("Remove"),
                                           deleteHandler: () => domainDeleteFilesystem({ connectionName, vmName, target: filesystemTarget }),
                                       }}
-                                      overlayText={_("Deleting shared directories is possible only when the guest is shut off")} />
+                                      overlayText={_("Deleting shared directories is possible only when the guest is shut off")}
+                                      isSecondary />
             </div>
         );
         const columns = [

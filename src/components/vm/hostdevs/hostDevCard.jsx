@@ -268,7 +268,8 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
                                                           .then(() => nodeDeviceGetAll({ connectionName: vm.connectionName }))
                                                           .then(() => domainGet({ connectionName: vm.connectionName, id: vm.id }));
                                               }
-                                          }} />
+                                          }}
+                                          isSecondary />
                 );
 
                 return ["usb", "pci"].includes(hostdev.type)
