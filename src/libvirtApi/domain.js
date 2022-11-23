@@ -157,7 +157,7 @@ export function domainAttachHostDevices({ connectionName, vmName, live, devices 
 
 export function domainAttachIface({ connectionName, vmName, mac, permanent, hotplug, sourceType, source, model }) {
     const macArg = mac ? "mac=" + mac + "," : "";
-    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--add-device', '--network', `${macArg}type=${sourceType},source=${source},model=${model}`];
+    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--add-device', '--network', `${macArg}type=${sourceType},source=${source},source.mode=bridge,model=${model}`];
     const options = { err: "message" };
 
     if (connectionName === "system")
