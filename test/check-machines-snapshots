@@ -30,7 +30,8 @@ sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
 from machineslib import VirtualMachinesCase  # noqa
 from testlib import nondestructive, test_main  # noqa
 
-distrosWithoutSnapshot = ["centos-8-stream", "rhel-8-6", "rhel-8-7"]
+# libvirt-dbus nnapshot APIs are available since 1.4.0, see https://github.com/libvirt/libvirt-dbus/commit/642b1b71
+distrosWithoutSnapshot = ["centos-8-stream", "rhel-8-6", "rhel-8-7", "rhel-8-8"]
 
 
 @nondestructive

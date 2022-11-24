@@ -95,7 +95,7 @@ class TestMachinesMigration(VirtualMachinesCase):
     def testSharedStorageMigration(self):
         self._testMigrationGeneric(False, False, None)
 
-    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-6", "rhel-8-7", "rhel-9-0", "rhel-9-1", "centos-9-stream")
+    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-6", "rhel-8-7", "rhel-8-8", "rhel-9-0", "rhel-9-1", "centos-9-stream")
     def testCopyStorageMigration(self):
         self._testMigrationGeneric(True, False, None)
 
