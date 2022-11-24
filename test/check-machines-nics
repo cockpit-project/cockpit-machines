@@ -60,8 +60,12 @@ class TestMachinesNICs(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-network-1-source", "default")
         b.wait_in_text("#vm-subVmTest1-network-1-ipv4-address", "192.168.122.")
         b.wait_in_text("#vm-subVmTest1-network-1-state", "up")
-
-        b.assert_pixels("#vm-subVmTest1-networks", "vm-details-nics-card", ignore=["#vm-subVmTest1-network-1-mac", "#vm-subVmTest1-network-1-ipv4-address"])
+        b.assert_pixels("#vm-subVmTest1-networks",
+                        "vm-details-nics-card",
+                        ignore=["#vm-subVmTest1-network-1-mac", "#vm-subVmTest1-network-1-ipv4-address"],
+                        # MAC and IP address values are not static, and their values affect the width of their columns and neighbouring columns
+                        # With medium layout this variable width of the columns makes pixel tests references of the table different each test run
+                        skip_layouts=["medium"])
 
         # Remove default interface
         self.deleteIface(1)
