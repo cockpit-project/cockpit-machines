@@ -19,7 +19,7 @@ from testlib import MachineCase
 from netlib import NetworkHelpers
 from storagelib import StorageHelpers
 
-distrosWithMonolithicDaemon = ["rhel-8-6", "rhel-8-7", "ubuntu-stable", "ubuntu-2204", "debian-testing", "debian-stable", "centos-8-stream", "arch"]
+distrosWithMonolithicDaemon = ["rhel-8-6", "rhel-8-7", "rhel-8-8", "ubuntu-stable", "ubuntu-2204", "debian-testing", "debian-stable", "centos-8-stream", "arch"]
 
 
 class VirtualMachinesCaseHelpers:
