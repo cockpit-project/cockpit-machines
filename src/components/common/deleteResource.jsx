@@ -103,8 +103,14 @@ DeleteResourceModal.propTypes = {
     deleteHandler: PropTypes.func.isRequired
 };
 
-export const DeleteResourceButton = ({ objectId, disabled, overlayText, actionName, dialogProps, isLink, isInline, className, isDropdownItem }) => {
+export const DeleteResourceButton = ({ objectId, disabled, overlayText, actionName, dialogProps, isLink, isInline, isSecondary, className, isDropdownItem }) => {
     const Dialogs = useDialogs();
+
+    let variant = "danger";
+    if (isSecondary)
+        variant = "secondary";
+    if (isLink)
+        variant = "link";
 
     const button = (isDropdownItem
         ? <DropdownItem className={className ? `pf-m-danger ${className}` : "pf-m-danger"}
@@ -116,8 +122,8 @@ export const DeleteResourceButton = ({ objectId, disabled, overlayText, actionNa
         </DropdownItem>
         : <Button id={`delete-${objectId}`}
                   className={className}
-                  variant={isLink ? 'link' : 'danger'}
-                  isDanger={isLink}
+                  variant={variant}
+                  isDanger={isLink || isSecondary}
                   isInline={isInline}
                   onClick={() => Dialogs.show(<DeleteResourceModal {...dialogProps} />)}
                   isDisabled={disabled}>
