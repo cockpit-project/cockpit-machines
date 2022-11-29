@@ -31,8 +31,10 @@ import { VCPUModal } from './vcpuModal.jsx';
 import { CPUTypeModal } from './cpuTypeModal.jsx';
 import MemoryModal from './memoryModal.jsx';
 import {
+    convertToBestUnit,
     rephraseUI,
-    vmId
+    units,
+    vmId,
 } from '../../../helpers.js';
 import { updateVm } from '../../../actions/store-actions.js';
 import { BootOrderLink } from './bootOrder.jsx';
@@ -123,11 +125,12 @@ class VmOverviewCard extends React.Component {
                         label={_("Run when host boots")} />
             </DescriptionListDescription>
         );
+        const memory = convertToBestUnit(vm.currentMemory, units.KiB);
         const memoryLink = (
             <DescriptionListDescription id={`${idPrefix}-memory-count`}>
                 <Flex spaceItems={{ default: 'spaceItemsSm' }}>
                     <FlexItem>
-                        {cockpit.format_bytes(vm.currentMemory * 1024)}
+                        {cockpit.format("$0 $1", parseFloat(memory.value).toFixed(1), memory.unit)}
                     </FlexItem>
                     <Button variant="link" isInline isDisabled={!vm.persistent} onClick={this.openMemory}>
                         {_("edit")}

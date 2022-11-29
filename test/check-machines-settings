@@ -395,10 +395,6 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.wait_attr("#vm-subVmTest1-memory-modal-memory-slider  div[role=slider]", "aria-valuemin", "128")
         b.wait_attr("#vm-subVmTest1-memory-modal-max-memory-slider  div[role=slider]", "aria-valuemin", "128")
 
-        # VM initially should have 256MiB
-        def mib_to_mb(memory):
-            return round(memory * (1024 * 1024) / 1000 / 1000)
-
         current_memory = int(b.attr("#vm-subVmTest1-memory-modal-memory", "value"))
         self.assertEqual(current_memory, 256)
         b.wait_attr("#vm-subVmTest1-memory-modal-max-memory", "disabled", "")
@@ -413,11 +409,11 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.click("#vm-subVmTest1-memory-modal-save")
         b.wait_not_present("#vm-memory-modal")
 
-        b.wait_in_text("#vm-subVmTest1-memory-count", f"{mib_to_mb(current_memory - 10)} MB")
+        b.wait_in_text("#vm-subVmTest1-memory-count", f"{'{:.1f}'.format(current_memory - 10)} MiB")
 
         # Shut off domain and check changes are  still there
         self.performAction("subVmTest1", "forceOff")
-        b.wait_in_text("#vm-subVmTest1-memory-count", f"{mib_to_mb(current_memory - 10)} MB")
+        b.wait_in_text("#vm-subVmTest1-memory-count", f"{'{:.1f}'.format(current_memory - 10)} MiB")
 
         # Click for the edit link
         b.click("#vm-subVmTest1-memory-count button")
