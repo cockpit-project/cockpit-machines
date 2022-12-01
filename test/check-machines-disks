@@ -558,7 +558,7 @@ class TestMachinesDisks(VirtualMachinesCase):
                 if self.xfail_object:
                     self.test_obj.browser.wait_in_text(f"{prefix}-{self.xfail_object}-helper.pf-m-error", self.xfail_error_message)
                 else:
-                    self.test_obj.browser.wait_in_text(".pf-c-modal-box__footer .pf-c-alert__title", self.xfail_error_title)
+                    self.test_obj.browser.wait_in_text(".pf-c-modal-box__body .pf-c-alert__title", self.xfail_error_title)
                     self.test_obj.browser.click(f"{prefix}-dialog-cancel")
 
         def open(self):

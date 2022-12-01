@@ -142,7 +142,6 @@ export class CreateSnapshotModal extends React.Component {
                    title={_("Create snapshot")}
                    footer={
                        <>
-                           {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                            <Button variant="primary" isLoading={this.state.inProgress} isDisabled={this.state.inProgress} onClick={this.onCreate}>
                                {_("Create")}
                            </Button>
@@ -151,6 +150,7 @@ export class CreateSnapshotModal extends React.Component {
                            </Button>
                        </>
                    }>
+                {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                 {body}
             </Modal>
         );

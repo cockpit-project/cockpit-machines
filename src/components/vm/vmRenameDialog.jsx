@@ -57,7 +57,6 @@ export const RenameDialog = ({ vmName, vmId, connectionName }) => {
            title={cockpit.format(_("Rename VM $0"), vmName)}
            footer={
                <>
-                   {!isObjectEmpty(error) && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.dialogErrorDetail} />}
                    <Button variant='primary'
                            id="rename-dialog-confirm"
                            isDisabled={!newName}
@@ -74,6 +73,7 @@ export const RenameDialog = ({ vmName, vmId, connectionName }) => {
                 onRename();
             }}
             isHorizontal>
+                {!isObjectEmpty(error) && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.dialogErrorDetail} />}
                 <FormGroup label={_("New name")}
                            fieldId="rename-dialog-new-name"
                            helperTextInvalid={_("New name must not be empty")}

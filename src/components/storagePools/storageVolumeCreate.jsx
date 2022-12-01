@@ -100,7 +100,6 @@ class CreateStorageVolumeModal extends React.Component {
                    title={_("Create storage volume")}
                    footer={
                        <>
-                           {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                            <Button variant="primary" onClick={this.onCreateClicked} isLoading={this.state.createInProgress} isDisabled={this.state.createInProgress}>
                                {_("Create")}
                            </Button>
@@ -110,6 +109,7 @@ class CreateStorageVolumeModal extends React.Component {
                        </>
                    }>
                 <Form isHorizontal>
+                    {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                     <VolumeCreateBody format={this.state.format}
                                       idPrefix={idPrefix}
                                       onValueChanged={this.onValueChanged}

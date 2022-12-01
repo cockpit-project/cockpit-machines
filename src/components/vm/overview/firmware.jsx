@@ -65,7 +65,6 @@ class FirmwareModal extends React.Component {
                    title={_("Change firmware")}
                    footer={
                        <>
-                           {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                            <Button variant='primary' id="firmware-dialog-apply" onClick={this.save}>
                                {_("Save")}
                            </Button>
@@ -75,6 +74,7 @@ class FirmwareModal extends React.Component {
                        </>
                    }>
                 <Form isHorizontal>
+                    {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                     <FormGroup label={_("Firmware")} fieldId="firmware-dialog-select">
                         <FormSelect onChange={value => this.setState({ firmware: value })}
                                     id='firmware-dialog-select'

@@ -412,6 +412,7 @@ class CreateStoragePoolModal extends React.Component {
 
         const defaultBody = (
             <Form isHorizontal>
+                {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                 <MachinesConnectionSelector id='storage-pool-dialog-connection'
                     connectionName={this.state.connectionName}
                     onValueChanged={this.onValueChanged}
@@ -441,7 +442,6 @@ class CreateStoragePoolModal extends React.Component {
                    title={_("Create storage pool")}
                    footer={
                        <>
-                           {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                            <Button variant='primary' isLoading={this.state.createInProgress} isDisabled={this.state.createInProgress} onClick={this.onCreateClicked}>
                                {_("Create")}
                            </Button>

@@ -416,7 +416,6 @@ class CreateNetworkModal extends React.Component {
                    title={_("Create virtual network")}
                    footer={
                        <>
-                           {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                            <Button variant='primary'
                                    isLoading={ this.state.createInProgress }
                                    isDisabled={ this.state.createInProgress || Object.getOwnPropertyNames(validationFailed).length > 0 }
@@ -428,6 +427,7 @@ class CreateNetworkModal extends React.Component {
                            </Button>
                        </>
                    }>
+                {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                 {body}
             </Modal>
         );

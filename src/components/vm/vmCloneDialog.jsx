@@ -68,7 +68,6 @@ export const CloneDialog = ({ name, connectionName }) => {
            title={cockpit.format(_("Create a clone VM based on $0"), name)}
            footer={
                <>
-                   {!isObjectEmpty(error) && <ModalError dialogError={error.dialogError} dialogErrorDetail={virtCloneOutput} />}
                    {isObjectEmpty(error) && virtCloneOutput && <code className="vm-clone-virt-clone-output">{virtCloneOutput}</code>}
                    <Button variant='primary'
                            isDisabled={inProgress || !isObjectEmpty(validationFailed)}
@@ -86,6 +85,7 @@ export const CloneDialog = ({ name, connectionName }) => {
                 onClone();
             }}
             isHorizontal>
+                {!isObjectEmpty(error) && <ModalError dialogError={error.dialogError} dialogErrorDetail={virtCloneOutput} />}
                 <FormGroup label={_("Name")} fieldId="vm-name"
                            id="vm-name-group"
                            helperTextInvalid={validationFailed.name}

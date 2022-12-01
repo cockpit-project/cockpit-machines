@@ -163,7 +163,6 @@ const VmFilesystemAddModal = ({ connectionName, objPath, vmName, vmState }) => {
                title={_("Share a host directory with the guest")}
                footer={
                    <>
-                       {dialogError && <ModalError dialogError={_("Failed to add shared directory")} dialogErrorDetail={dialogError} />}
                        <Button id={`${idPrefix}-modal-add`}
                                variant='primary'
                                onClick={onAddClicked}>
@@ -199,6 +198,7 @@ const VmFilesystemAddModal = ({ connectionName, objPath, vmName, vmState }) => {
                    </>
                }>
             <Form isHorizontal>
+                {dialogError && <ModalError dialogError={_("Failed to add shared directory")} dialogErrorDetail={dialogError} />}
                 <FormGroup fieldId={`${idPrefix}-modal-source`}
                            id={`${idPrefix}-modal-source-group`}
                            label={_("Source path")}

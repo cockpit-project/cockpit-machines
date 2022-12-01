@@ -232,7 +232,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
                     if "ipv6_dhcp_end" in self.xfail_objects:
                         b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #network-ipv6-dhcp-range-end + .pf-c-form__helper-text.pf-m-error", self.xfail_error)
                     if "footer" in self.xfail_objects:
-                        error_location = "#create-network-dialog .pf-c-modal-box__footer .pf-m-danger"
+                        error_location = "#create-network-dialog .pf-c-modal-box__body .pf-m-danger"
                         b.wait_visible(error_location)
                         error_message = b.text(error_location)
                         self.test_obj.assertIn(self.xfail_error, error_message)

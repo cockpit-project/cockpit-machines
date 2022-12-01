@@ -206,7 +206,6 @@ export const MigrateDialog = ({ vm, connectionName }) => {
 
     const footer = (
         <>
-            {!isObjectEmpty(error) && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.message} />}
             {dataCorruptionWarning()}
             <Button variant='primary'
                     id="migrate-button"
@@ -226,6 +225,7 @@ export const MigrateDialog = ({ vm, connectionName }) => {
                description={copyStorageHidden && _("Storage volumes must be shared between this host and the destination host.")}
                title={_("Migrate VM to another host")}
                footer={footer}>
+            {!isObjectEmpty(error) && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.message} />}
             {body}
         </Modal>
     );

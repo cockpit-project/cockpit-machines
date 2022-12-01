@@ -843,7 +843,6 @@ export class AddDiskModalBody extends React.Component {
                    title={isMediaInsertion ? _("Insert disc media") : _("Add disk")}
                    footer={
                        <>
-                           {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                            <Button id={`${idPrefix}-dialog-add`}
                                    variant='primary'
                                    isLoading={this.state.addDiskInProgress}
@@ -858,6 +857,7 @@ export class AddDiskModalBody extends React.Component {
                            </Button>
                        </>
                    }>
+                {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                 {defaultBody}
             </Modal>
         );

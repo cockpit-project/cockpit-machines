@@ -196,7 +196,6 @@ export class AddNIC extends React.Component {
                 title={_("Add virtual network interface")}
                 footer={
                     <>
-                        {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                         <Button isLoading={this.state.addVNicInProgress}
                                 isDisabled={
                                     (["network", "direct", "bridge"].includes(this.state.networkType) && this.state.networkSource === undefined) ||
@@ -212,6 +211,7 @@ export class AddNIC extends React.Component {
                         </Button>
                     </>
                 }>
+                {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                 {defaultBody}
             </Modal>
         );

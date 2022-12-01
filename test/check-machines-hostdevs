@@ -181,7 +181,7 @@ class TestMachinesHostDevs(VirtualMachinesCase):
                 self.run_admin(f"virsh -c qemu:///{connectionName} dumpxml subVmTest1 > /tmp/vmdir/vmxml1", connectionName)
                 b.click(".pf-c-modal-box__footer button:contains(Add)")
                 if self.fail_message:
-                    b.wait_in_text(".pf-c-modal-box__footer .pf-c-alert__title", self.fail_message)
+                    b.wait_in_text(".pf-c-modal-box__body .pf-c-alert__title", self.fail_message)
                     b.click(".pf-c-modal-box__footer button:contains(Cancel)")
                 b.wait_not_present("#vm-subVmTest1-hostdevs-dialog")
 
