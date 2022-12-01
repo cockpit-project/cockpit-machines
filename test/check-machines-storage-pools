@@ -300,7 +300,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
                         b.wait_visible("#create-storage-pool-dialog .pf-c-modal-box__body #storage-pool-dialog-target-group .pf-c-form__helper-text.pf-m-error")
                     # Check errors from backend
                     if self.xfail_error:
-                        error_location = "#create-storage-pool-dialog .pf-c-modal-box__footer .pf-m-danger"
+                        error_location = "#create-storage-pool-dialog .pf-c-modal-box__body .pf-m-danger"
                         b.wait_visible(error_location)
                         error_message = b.text(error_location)
                         self.test_obj.assertIn(self.xfail_error, error_message)

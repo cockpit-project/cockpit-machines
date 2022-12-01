@@ -261,7 +261,6 @@ export class EditDiskModal extends React.Component {
                    title={cockpit.format(_("Edit $0 attributes"), getDiskPrettyName(vm.disks[disk.target]))}
                    footer={
                        <>
-                           {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                            <Button id={`${idPrefix}-dialog-save`} variant='primary' onClick={this.onSaveClicked}>
                                {_("Save")}
                            </Button>
@@ -273,6 +272,7 @@ export class EditDiskModal extends React.Component {
             >
                 <>
                     {showWarning()}
+                    {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                     {defaultBody}
                 </>
             </Modal>

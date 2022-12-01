@@ -258,7 +258,6 @@ export class VCPUModal extends React.Component {
                    title={cockpit.format(_("$0 vCPU details"), vm.name)}
                    footer={
                        <>
-                           {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                            <Button id='machines-vcpu-modal-dialog-apply' variant='primary' onClick={this.save}>
                                {_("Apply")}
                            </Button>
@@ -269,6 +268,7 @@ export class VCPUModal extends React.Component {
                    }>
                 <>
                     { caution }
+                    {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                     { defaultBody }
                 </>
             </Modal>

@@ -218,9 +218,6 @@ const AddHostDev = ({ idPrefix, vm }) => {
 
     const footer = (
         <>
-            {dialogError &&
-                <ModalError dialogError={dialogError}
-                            dialogErrorDetail={dialogErrorDetail} />}
             <Button id={`${idPrefix}-attach`}
                     isLoading={addHostDevInProgress}
                     isDisabled={addHostDevInProgress}
@@ -245,6 +242,10 @@ const AddHostDev = ({ idPrefix, vm }) => {
                title={_("Add host device")}
                footer={footer}
                isOpen>
+
+            {dialogError &&
+                <ModalError dialogError={dialogError}
+                            dialogErrorDetail={dialogErrorDetail} />}
             {body}
         </Modal>
     );

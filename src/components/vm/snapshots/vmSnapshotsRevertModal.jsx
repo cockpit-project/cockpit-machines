@@ -19,7 +19,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Modal } from '@patternfly/react-core';
+import { Button, Modal, Stack, StackItem } from '@patternfly/react-core';
 
 import cockpit from 'cockpit';
 import { DialogsContext } from 'dialogs.jsx';
@@ -68,7 +68,6 @@ export class RevertSnapshotModal extends React.Component {
                    title={cockpit.format(_("Revert to snapshot $0"), snap.name)}
                    footer={
                        <>
-                           {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                            <Button variant='primary' isLoading={this.state.inProgress} isDisabled={this.state.inProgress} onClick={this.revert}>
                                {_("Revert")}
                            </Button>
@@ -77,9 +76,10 @@ export class RevertSnapshotModal extends React.Component {
                            </Button>
                        </>
                    }>
-                <>
-                    { cockpit.format(_("Reverting to this snapshot will take the VM back to the time of the snapshot and the current state will be lost, along with any data not captured in a snapshot")) }
-                </>
+                <Stack hasGutter>
+                    {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
+                    <StackItem>{ cockpit.format(_("Reverting to this snapshot will take the VM back to the time of the snapshot and the current state will be lost, along with any data not captured in a snapshot")) }</StackItem>
+                </Stack>
             </Modal>
         );
     }

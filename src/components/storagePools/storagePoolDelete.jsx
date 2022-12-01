@@ -167,6 +167,7 @@ class StoragePoolDelete extends React.Component {
 
         const defaultBody = (
             <Stack hasGutter>
+                {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                 { storagePool.active
                     ? (volumes.length > 0
                         ? <Checkbox id='storage-pool-delete-volumes'
@@ -203,7 +204,6 @@ class StoragePoolDelete extends React.Component {
                            </Button>
                        </>
                    }>
-                {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                 {defaultBody}
             </Modal>
         );

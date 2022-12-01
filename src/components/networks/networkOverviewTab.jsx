@@ -232,7 +232,6 @@ const NetworkAddStaticHostEntries = ({ idPrefix, network, parentIndex, setIsOpen
                 title={_("Add a DHCP static host entry")}
                 footer={
                     <>
-                        {error && <ModalError dialogError={_("Failed to save network settings")} dialogErrorDetail={error} />}
                         <Button variant='primary' onClick={add} id="add-new-static-entry-save">
                             {_("Add")}
                         </Button>
@@ -244,6 +243,7 @@ const NetworkAddStaticHostEntries = ({ idPrefix, network, parentIndex, setIsOpen
                 <Form onSubmit={e => {
                     e.preventDefault();
                 }} isHorizontal>
+                    {error && <ModalError dialogError={_("Failed to save network settings")} dialogErrorDetail={error} />}
                     <FormGroup label={_("MAC address")} fieldId="add-new-static-entry-mac-address"
                                helperTextInvalid={_("MAC address must not be empty")}
                                validated={isSubmitted && !macAddress ? "error" : "default"}>

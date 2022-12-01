@@ -322,7 +322,6 @@ class BootOrderModal extends React.Component {
                    title={_("Change boot order")}
                    footer={
                        <>
-                           {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                            <Button id={`${idPrefix}-save`} variant='primary' onClick={this.save}>
                                {_("Save")}
                            </Button>
@@ -332,6 +331,7 @@ class BootOrderModal extends React.Component {
                        </>
                    }>
                 <>
+                    {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                     {defaultBody}
                 </>
             </Modal>

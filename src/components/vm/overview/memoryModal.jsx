@@ -150,7 +150,6 @@ export class MemoryModal extends React.Component {
                    title={cockpit.format(_("$0 memory adjustment"), vm.name)}
                    footer={
                        <>
-                           {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                            <Button id={`${idPrefix}-save`} variant='primary' onClick={this.save}>
                                {_("Save")}
                            </Button>
@@ -159,6 +158,7 @@ export class MemoryModal extends React.Component {
                            </Button>
                        </>
                    }>
+                {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                 {defaultBody}
             </Modal>
         );

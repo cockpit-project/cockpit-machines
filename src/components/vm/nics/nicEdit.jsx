@@ -172,7 +172,6 @@ export class EditNICModal extends React.Component {
                    title={cockpit.format(_("$0 virtual network interface settings"), network.mac)}
                    footer={
                        <>
-                           {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                            <Button isDisabled={this.state.saveDisabled} id={`${idPrefix}-save`} variant='primary' onClick={this.save}>
                                {_("Save")}
                            </Button>
@@ -183,6 +182,7 @@ export class EditNICModal extends React.Component {
                    }>
                 <>
                     { showWarning() }
+                    {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                     {defaultBody}
                 </>
             </Modal>

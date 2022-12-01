@@ -62,7 +62,6 @@ export const CPUTypeModal = ({ vm, models }) => {
                title={cockpit.format(_("$0 CPU configuration"), vm.name)}
                footer={
                    <>
-                       {error && error.dialogError && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.dialogErrorDetail} />}
                        <Button variant='primary' isDisabled={isLoading} isLoading={isLoading} id="cpu-config-dialog-apply" onClick={save}>
                            {_("Apply")}
                        </Button>
@@ -72,6 +71,7 @@ export const CPUTypeModal = ({ vm, models }) => {
                    </>
                }>
             <>
+                {error && error.dialogError && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.dialogErrorDetail} />}
                 { defaultBody }
             </>
         </Modal>
