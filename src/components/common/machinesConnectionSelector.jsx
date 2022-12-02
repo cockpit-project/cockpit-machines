@@ -20,17 +20,66 @@
 import React from 'react';
 
 import { LIBVIRT_SYSTEM_CONNECTION, LIBVIRT_SESSION_CONNECTION, rephraseUI } from '../../helpers.js';
-import { FormGroup, Radio } from '@patternfly/react-core';
+import { Button, FormGroup, Radio, Popover, Text, TextContent, TextList, TextListItem, TextVariants } from '@patternfly/react-core';
+import { HelpIcon } from "@patternfly/react-icons";
 import cockpit from 'cockpit';
+import './machinesConnectionSelector.scss';
 
 const _ = cockpit.gettext;
 
-export const MachinesConnectionSelector = ({ onValueChanged, loggedUser, connectionName, id }) => {
+export const MachinesConnectionSelector = ({ onValueChanged, loggedUser, connectionName, id, showInfoHelper }) => {
     if (loggedUser.id == 0)
         return null;
 
     return (
-        <FormGroup label={_("Connection")} isInline hasNoPaddingTop id={id} className="machines-connection-selector">
+        <FormGroup label={_("Connection")}
+                   isInline hasNoPaddingTop
+                   id={id}
+                   className="machines-connection-selector"
+                   labelIcon={
+                       showInfoHelper && <Popover id="machines-connection-selector-popover"
+                           bodyContent={<>
+                               <TextContent>
+                                   <Text component={TextVariants.h4}>{rephraseUI("connections", LIBVIRT_SYSTEM_CONNECTION)}</Text>
+                                   <TextList>
+                                       <TextListItem>
+                                           {_("Ideal for server VMs")}
+                                       </TextListItem>
+                                       <TextListItem>
+                                           {_("VM will launch with root permissions")}
+                                       </TextListItem>
+                                       <TextListItem>
+                                           {_("Ideal networking support")}
+                                       </TextListItem>
+                                       <TextListItem>
+                                           {_("Permissions denied for disk images in home directories")}
+                                       </TextListItem>
+                                   </TextList>
+                               </TextContent>
+                               <TextContent>
+                                   <Text component={TextVariants.h4}>{rephraseUI("connections", LIBVIRT_SESSION_CONNECTION)}</Text>
+                                   <TextList>
+                                       <TextListItem>
+                                           {_("Good choice for desktop virtualization")}
+                                       </TextListItem>
+                                       <TextListItem>
+                                           {_("VM launched with unprivileged limited access, with the process and PTY owned by your user account")}
+                                       </TextListItem>
+                                       <TextListItem>
+                                           {_("Restrictions in networking (SLIRP-based emulation) and PCI device assignment")}
+                                       </TextListItem>
+                                       <TextListItem>
+                                           {_("Disk images can be stored in user home directory")}
+                                       </TextListItem>
+                                   </TextList>
+                               </TextContent>
+                           </>}
+                       >
+                           <Button variant="plain" aria-label={_("more info")} className="pf-c-form__group-label-help">
+                               <HelpIcon noVerticalAlign />
+                           </Button>
+                       </Popover>
+                   }>
             <Radio isChecked={connectionName === LIBVIRT_SYSTEM_CONNECTION}
                    onChange={() => onValueChanged('connectionName', LIBVIRT_SYSTEM_CONNECTION)}
                    name="connectionName"

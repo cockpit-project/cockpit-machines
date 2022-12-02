@@ -1195,7 +1195,8 @@ class CreateVmModal extends React.Component {
             <MachinesConnectionSelector id='connection'
                 connectionName={this.state.connectionName}
                 onValueChanged={this.onValueChanged}
-                loggedUser={loggedUser} />
+                loggedUser={loggedUser}
+                showInfoHelper />
             <SourceRow
                 connectionName={this.state.connectionName}
                 networks={networks.filter(network => network.connectionName == this.state.connectionName)}
