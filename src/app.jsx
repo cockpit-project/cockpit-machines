@@ -79,7 +79,7 @@ export const App = () => {
                     return Promise.allSettled(connectionNames.map(conn => {
                         return getLibvirtVersion({ connectionName: conn })
                                 .then(() => {
-                                    getApiData({ connectionName: conn })
+                                    return getApiData({ connectionName: conn })
                                             .then(promises => {
                                                 const errorMsgs = [];
                                                 promises.forEach(promise => {
