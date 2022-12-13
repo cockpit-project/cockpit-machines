@@ -74,7 +74,7 @@ function getDiskUsageMessage(vms, storagePool, volumeName) {
 
     let message = cockpit.format(_("This volume is already used by $0."), vmsUsing);
     if (volume.format === "raw")
-        message += " " + _("Attaching it will make this disk shareable for every VM using it.");
+        message += " " + _("Adding this disk will change its access mode to shared.");
 
     return message;
 }
