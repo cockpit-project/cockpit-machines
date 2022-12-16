@@ -169,6 +169,7 @@ class Vnc extends React.Component {
                         textConnecting={_("Connecting")}
                         textDisconnected={_("Disconnected")}
                         textDisconnect={_("Disconnect")}
+                        consoleContainerId="vnc-display-container"
             />
         );
     }
