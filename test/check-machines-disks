@@ -510,6 +510,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             xfail_error_message=None, xfail_error_title=None,
             xwarning_object=None, xwarning_message=None,
             pixel_test_ignore=None,
+            skip_add=False,
+            remove=False,
         ):
             self.test_obj = test_obj
             self.vm_name = vm_name
@@ -543,6 +545,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             self.xwarning_object = xwarning_object
             self.xwarning_message = xwarning_message
 
+            self.remove = remove
+
         @staticmethod
         def getExpectedFormat(pool_type, expected_volume_format):
             # Guess by the name of the pool it's format to avoid passing more parameters
@@ -569,6 +573,13 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             self.add_disk()
             if not self.xfail:
                 self.verify_disk_added()
+                if self.remove:
+                    self.test_obj.browser.click(f"#vm-{self.vm_name}-disks-{self.expected_target}-action-kebab button")
+                    self.test_obj.browser.click(f"#delete-vm-{self.vm_name}-disks-{self.expected_target} a")
+                    self.test_obj.browser.wait_visible("#delete-resource-modal")
+                    self.test_obj.browser.click('#delete-resource-modal #delete-resource-modal-primary')
+                    self.test_obj.browser.wait_not_present("#delete-resource-modal")
+                    self.test_obj.browser.wait_not_present(f"#vm-{self.vm_name}-disks-{self.expected_target}-device")
             else:
                 if self.xfail_object:
                     self.test_obj.browser.wait_in_text(f"{prefix}-{self.xfail_object}-helper.pf-m-error", self.xfail_error_message)
@@ -583,6 +594,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             b.click(prefix)  # button
             b.wait_in_text(".pf-v5-c-modal-box__title", "Add disk")
 
+            testlib.wait(lambda: "Create new" in b.text(f"#vm-{self.vm_name}-disks-adddisk-source-group"))
             b.wait_visible(f"{prefix}-createnew:checked")
             if self.mode == "use-existing":
                 b.click(f"{prefix}-useexisting")
@@ -676,6 +688,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
         def add_disk(self):
             b = self.test_obj.browser
+
+            b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Add)")
             b.click(".pf-v5-c-modal-box__footer button:contains(Add)")
 
             return self
@@ -749,6 +763,14 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
             if self.cache_mode:
                 b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.expected_target}-cache", self.cache_mode)
+                self.test_obj.assertEqual(
+                    f'cache="{self.cache_mode}"',
+                    _get_disk_prop(self.expected_target, self.vm_name, "driver/@cache"))
+
+            if self.bus_type:
+                self.test_obj.assertEqual(
+                    f'bus="{self.bus_type}"',
+                    _get_disk_prop(self.expected_target, self.vm_name, "target/@bus"))
 
             if self.expected_serial:
                 b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.expected_target}-serial", self.expected_serial)
@@ -1699,6 +1721,98 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
         if "debian" in m.image or "ubuntu" in m.image:
             self.allow_journal_messages(f'.* type=1400 .* apparmor="DENIED" operation="open".*profile="virt-aa-helper" name="{loop_dev}".*')
+
+    def testAddDisksWithAllCombinations(self):
+        b = self.browser
+        m = self.machine
+
+        # # Increase max_match_rules_per_connection for dbus service
+        # conf = '''"<?xml version="1.0" encoding="UTF-8"?>
+        # <!DOCTYPE busconfig PUBLIC
+        #           "-//freedesktop//DTD D-BUS Bus Configuration 1.0//EN"
+        #           "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">
+        # <busconfig>
+        # <limit name="max_match_rules_per_connection">10000</limit>
+        # </busconfig>"'''
+        # m.write("/etc/dbus-1/system-local.conf", conf)
+        # m.execute("systemctl restart dbus-broker.service")
+
+        m.execute("virsh pool-define-as images --type dir --target /var/lib/libvirt/images; virsh pool-start images")
+
+        self.login_and_go("/machines")
+        b.wait_in_text("body", "Virtual machines")
+
+        self.createVm("subVmTest1", running=False)
+        self.goToVmPage("subVmTest1")
+
+        b.click("#vm-subVmTest1-disks-adddisk")
+        b.click('#vm-subVmTest1-disks-adddisk-dialog-modal-window span:contains("Show additional options")')
+
+        queryEleAnonymous = """(function (sel) {
+                    var el = ph_find(sel).querySelectorAll('option');
+                    var result = [];
+                    for (i = 0; i < el.length; ++i)
+                        result.push(el[i].textContent);
+                    return result;})"""
+        disk_formats = b.call_js_func(queryEleAnonymous,
+                                      "#vm-subVmTest1-disks-adddisk-new-format")
+        cache_modes = b.call_js_func(queryEleAnonymous,
+                                     "#cache-mode")
+        bus_types = b.call_js_func(queryEleAnonymous,
+                                   "#vm-subVmTest1-disks-adddisk-bus-type")
+
+        b.click("#vm-subVmTest1-disks-adddisk-dialog-cancel")
+        b.wait_not_present("#vm-subVmTest1-disks-adddisk-dialog-modal-window")
+
+        count = 0
+        for d_format in disk_formats:
+            for mode in cache_modes:
+                for bus in bus_types:
+                    volName = "test" + str(count)
+                    target = "vdb" if bus == "virtio" else "sda"
+
+                    print(f"{volName}, {target}, {bus}, {mode}, {d_format}")
+
+                    self.VMAddDiskDialog(
+                            self,
+                            pool_name="images",
+                            volume_name=volName,
+                            volume_size=1,
+                            volume_format=d_format,
+                            cache_mode=None if mode == "default" else mode,
+                            bus_type=bus,
+                            serial="test",
+                            expected_target=target,
+                            remove=True,
+                    ).execute()
+
+                    self.VMAddDiskDialog(
+                            self,
+                            mode="use-existing",
+                            pool_name="images",
+                            volume_name=volName,
+                            volume_format=d_format,
+                            cache_mode=None if mode == "default" else mode,
+                            bus_type=bus,
+                            serial="test",
+                            expected_target=target,
+                            remove=True,
+                    ).execute()
+
+                    self.VMAddDiskDialog(
+                            self,
+                            mode='custom-path',
+                            device='disk',
+                            bus_type=bus,
+                            cache_mode=None if mode == "default" else mode,
+                            file_path='/var/lib/libvirt/images/' + volName,
+                            serial="test",
+                            expected_target=target,
+                            expected_format=d_format,
+                            remove=True,
+                    ).execute()
+
+                    count += 1
 
 
 if __name__ == '__main__':
