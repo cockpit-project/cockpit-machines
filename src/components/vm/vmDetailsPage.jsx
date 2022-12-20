@@ -121,7 +121,8 @@ export const VmDetailsPage = ({
                     {vmActionsPageSection}
                     <PageSection variant={PageSectionVariants.light}>
                         <Consoles vm={vm} config={config}
-                            onAddErrorNotification={onAddErrorNotification} />
+                            onAddErrorNotification={onAddErrorNotification}
+                            isExpanded />
                     </PageSection>
                 </Page>
             </WithDialogs>

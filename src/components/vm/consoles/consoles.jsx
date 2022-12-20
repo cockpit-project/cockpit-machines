@@ -93,7 +93,7 @@ class Consoles extends React.Component {
     }
 
     render () {
-        const { vm, onAddErrorNotification } = this.props;
+        const { vm, onAddErrorNotification, isExpanded } = this.props;
         const { serial } = this.state;
         const spice = vm.displays && vm.displays.find(display => display.type == 'spice');
         const vnc = vm.displays && vm.displays.find(display => display.type == 'vnc');
@@ -123,7 +123,8 @@ class Consoles extends React.Component {
                      vmId={vm.id}
                      connectionName={vm.connectionName}
                      consoleDetail={vnc}
-                     onAddErrorNotification={onAddErrorNotification} />}
+                     onAddErrorNotification={onAddErrorNotification}
+                     isExpanded={isExpanded} />}
                 {(vnc || spice) &&
                 <DesktopConsole type="DesktopViewer"
                                 onDesktopConsole={onDesktopConsole}
