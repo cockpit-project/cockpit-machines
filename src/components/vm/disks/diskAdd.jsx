@@ -845,8 +845,8 @@ export class AddDiskModalBody extends React.Component {
                        <>
                            <Button id={`${idPrefix}-dialog-add`}
                                    variant='primary'
-                                   isLoading={this.state.addDiskInProgress}
-                                   isDisabled={this.state.addDiskInProgress || dialogLoading ||
+                                   isLoading={this.state.addDiskInProgress || this.state.verificationInProgress}
+                                   isDisabled={this.state.addDiskInProgress || this.state.verificationInProgress || dialogLoading ||
                                                (storagePools.length == 0 && this.state.mode != CUSTOM_PATH) ||
                                                (this.state.mode == CUSTOM_PATH && this.state.device === "disk" && this.state.customDiskVerificationFailed)}
                                    onClick={isMediaInsertion ? this.onInsertClicked : this.onAddClicked}>
