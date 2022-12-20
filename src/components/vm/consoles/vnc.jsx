@@ -111,7 +111,7 @@ class Vnc extends React.Component {
     }
 
     render() {
-        const { consoleDetail, connectionName, vmName, vmId, onAddErrorNotification } = this.props;
+        const { consoleDetail, connectionName, vmName, vmId, onAddErrorNotification, isExpanded } = this.props;
         const { path, isActionOpen } = this.state;
         if (!consoleDetail || !path) {
             // postpone rendering until consoleDetail is known and channel ready
@@ -169,7 +169,7 @@ class Vnc extends React.Component {
                         textConnecting={_("Connecting")}
                         textDisconnected={_("Disconnected")}
                         textDisconnect={_("Disconnect")}
-                        consoleContainerId="vnc-display-container"
+                        consoleContainerId={isExpanded ? "vnc-display-container-expanded" : "vnc-display-container-minimized"}
             />
         );
     }
