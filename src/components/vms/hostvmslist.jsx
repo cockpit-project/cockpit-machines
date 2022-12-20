@@ -67,7 +67,8 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
     const [statusIsExpanded, setStatusIsExpanded] = useState(false);
     const combinedVms = [...vms, ...dummyVmsFilter(vms, ui.vms)];
     const combinedVmsFiltered = combinedVms
-            .filter(vm => vm.name.indexOf(currentTextFilter) != -1 && (!statusSelected.apiState || statusSelected.apiState == vm.state));
+            // searching VM should be case insensitive
+            .filter(vm => vm.name.toUpperCase().indexOf(currentTextFilter.toUpperCase()) != -1 && (!statusSelected.apiState || statusSelected.apiState == vm.state));
 
     const sortFunction = (vmA, vmB) => vmA.name.localeCompare(vmB.name);
 
