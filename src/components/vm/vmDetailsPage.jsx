@@ -104,6 +104,7 @@ export const VmDetailsPage = ({
             <WithDialogs>
                 <Page groupProps={{ sticky: 'top' }}
                       id={"vm-" + vm.name + "-consoles-page"}
+                      className="consoles-page-expanded"
                       isBreadcrumbGrouped
                       breadcrumb={
                           <Breadcrumb className='machines-listing-breadcrumb'>
