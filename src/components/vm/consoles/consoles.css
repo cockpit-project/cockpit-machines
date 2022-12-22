@@ -1,17 +1,27 @@
 @import "@patternfly/react-styles/css/components/Consoles/SerialConsole.css";
 
-/* Make the VNC canvas scale down to available width */
-.pf-c-console__vnc canvas {
-    max-width: 100%;
-    height: auto !important;
+.pf-c-console,
+.pf-c-console__vnc,
+.pf-c-console__vnc > div,
+.pf-c-console__vnc > div > div {
+    width: 100%;
+    height: 100%;
 }
 
-#vnc-display-container-minimized {
-    min-height: 480px;
+.pf-c-console__actions {
+    max-width: 25ch;
 }
 
-#vnc-display-container-expanded {
-    min-height: 68vh;
+.pf-c-console {
+     /* auto minimum width, causing problem */
+     grid-template-columns: 1fr;
+     grid-template-rows: min-content 1fr;
+}
+
+.consoles-page-expanded .pf-c-page__main {
+    .actions-pagesection {
+        padding-bottom: 0;
+    }
 }
 
 /* Hide send key button - there is not way to do that from the JS
@@ -19,9 +29,4 @@
  */
 #pf-c-console__send-shortcut {
     display: none;
-}
-
-/* Add spacing between action buttons */
-.pf-c-console__actions-vnc {
-    gap: var(--pf-global--spacer--sm);
 }

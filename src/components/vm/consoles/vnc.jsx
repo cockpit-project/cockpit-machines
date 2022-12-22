@@ -169,7 +169,8 @@ class Vnc extends React.Component {
                         textDisconnected={_("Disconnected")}
                         textDisconnect={_("Disconnect")}
                         consoleContainerId={isExpanded ? "vnc-display-container-expanded" : "vnc-display-container-minimized"}
-                        resizeSession={!isExpanded}
+                        resizeSession
+                        scaleViewport
             />
         );
     }
