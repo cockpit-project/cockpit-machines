@@ -19,12 +19,13 @@
 import React from 'react';
 import cockpit from 'cockpit';
 import PropTypes from 'prop-types';
-import { Button, Alert, Form, FormGroup, Modal, TextInput, Tooltip } from '@patternfly/react-core';
+import { Button, Form, FormGroup, Modal, TextInput, Tooltip } from '@patternfly/react-core';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { DialogsContext } from 'dialogs.jsx';
 import { NetworkTypeAndSourceRow, NetworkModelRow } from './nicBody.jsx';
 import { domainChangeInterfaceSettings, domainGet } from '../../../libvirtApi/domain.js';
+import { WarningInactiveAlert } from '../../common/warningInactive.jsx';
 
 const _ = cockpit.gettext;
 
@@ -163,7 +164,7 @@ export class EditNICModal extends React.Component {
                 this.state.networkSource !== this.getNetworkSource(network) ||
                 this.state.networkModel !== network.model)
             ) {
-                return <Alert isInline variant='warning' id={`${idPrefix}-idle-message`} title={_("Changes will take effect after shutting down the VM")} />;
+                return <WarningInactiveAlert idPrefix={idPrefix} />;
             }
         };
 

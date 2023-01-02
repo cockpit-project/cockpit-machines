@@ -20,7 +20,7 @@
 import React from 'react';
 import cockpit from 'cockpit';
 import {
-    Alert, Button, Form, FormGroup,
+    Button, Form, FormGroup,
     FormSelect, FormSelectOption,
     Modal, Popover, Radio,
 } from '@patternfly/react-core';
@@ -31,6 +31,7 @@ import { useDialogs, DialogsContext } from 'dialogs.jsx';
 
 import { domainUpdateDiskAttributes } from '../../../libvirtApi/domain.js';
 import { diskBusTypes, diskCacheModes, getDiskPrettyName, getDiskFullName } from '../../../helpers.js';
+import { WarningInactiveAlert } from '../../common/warningInactive.jsx';
 
 const _ = cockpit.gettext;
 
@@ -250,7 +251,7 @@ export class EditDiskModal extends React.Component {
             if (vm.state === 'running' && (
                 (this.state.access == 'readonly' && !disk.readonly) ||
                 (this.state.access == 'shareable' && !disk.shareable))) {
-                return <Alert isInline variant='warning' id={`${idPrefix}-idle-message`} title={_("Changes will take effect after shutting down the VM")} />;
+                return <WarningInactiveAlert idPrefix={idPrefix} />;
             }
         };
 

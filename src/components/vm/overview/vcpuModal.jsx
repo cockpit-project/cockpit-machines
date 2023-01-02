@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 import {
-    Alert, Button,
+    Button,
     Form, FormGroup,
     Flex, FormSelect, FormSelectOption,
     Modal, Popover, TextInput
@@ -13,6 +13,7 @@ import { DialogsContext } from 'dialogs.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { domainSetVCPUSettings } from "../../../libvirtApi/domain.js";
 import { digitFilter } from "../../../helpers.js";
+import { WarningInactiveAlert } from '../../common/warningInactive.jsx';
 
 const _ = cockpit.gettext;
 
@@ -182,9 +183,8 @@ export class VCPUModal extends React.Component {
             this.state.cores != (vm.cpu.topology.cores || 1) ||
             this.state.max != vm.vcpus.max ||
             this.state.count != vm.vcpus.count)
-        ) {
-            caution = <Alert isInline variant='warning' title={_("Changes will take effect after shutting down the VM")} />;
-        }
+        )
+            caution = <WarningInactiveAlert idPrefix="vcpu-modal" />;
 
         const defaultBody = (
             <Form isHorizontal className="vcpu-modal">

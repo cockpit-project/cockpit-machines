@@ -24,7 +24,7 @@ import { useDialogs } from 'dialogs.jsx';
 
 import { convertToUnit, diskPropertyChanged, toReadableNumber, units, vmId } from "../../../helpers.js";
 import { AddDiskModalBody } from './diskAdd.jsx';
-import WarningInactive from '../../common/warningInactive.jsx';
+import { WarningInactiveTooltip } from '../../common/warningInactive.jsx';
 import { ListingTable } from "cockpit-components-table.jsx";
 import { DiskSourceCell, DiskExtras, DiskActions } from './vmDiskColumns.jsx';
 
@@ -212,7 +212,7 @@ export const VmDisksCard = ({ vm, vms, disks, renderCapacity, supportedDiskBusTy
                     <FlexItem>{ disk.readonly ? _("Read-only") : disk.shareable ? _("Writeable and shared") : _("Writeable") }</FlexItem>
                     { vm.state === "running" &&
                     (diskPropertyChanged(vm, disk.target, "readonly") || diskPropertyChanged(vm, disk.target, "shareable")) &&
-                        <WarningInactive iconId={`${idPrefixRow}-access-tooltip`} tooltipId={`tip-${idPrefixRow}-access`} /> }
+                        <WarningInactiveTooltip iconId={`${idPrefixRow}-access-tooltip`} tooltipId={`tip-${idPrefixRow}-access`} /> }
                 </Flex>
             );
             columns.push({ title: access });
