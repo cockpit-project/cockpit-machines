@@ -6,6 +6,11 @@ set -eu
 
 export RUN_TESTS_OPTIONS=--track-naughties
 
+# for correct naughty matching
+if [ "$TEST_OS" = "fedora-rawhide" ]; then
+    TEST_OS=fedora-38
+fi
+
 make codecheck
 make check
 make po/machines.pot
