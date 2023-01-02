@@ -39,7 +39,7 @@ import {
 import { updateVm } from '../../../actions/store-actions.js';
 import { BootOrderLink } from './bootOrder.jsx';
 import { FirmwareLink } from './firmware.jsx';
-import WarningInactive from '../../common/warningInactive.jsx';
+import { WarningInactiveTooltip } from '../../common/warningInactive.jsx';
 import { StateIcon } from '../../common/stateIcon.jsx';
 import { domainChangeAutostart, domainGet } from '../../../libvirtApi/domain.js';
 import store from '../../../store.js';
@@ -142,7 +142,7 @@ class VmOverviewCard extends React.Component {
             <DescriptionListDescription id={`${idPrefix}-vcpus-count`}>
                 <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }}>
                     <FlexItem>{vm.vcpus.count}</FlexItem>
-                    { vm.persistent && vm.state === "running" && vcpusChanged && <WarningInactive iconId="vcpus-tooltip" tooltipId="tip-vcpus" /> }
+                    { vm.persistent && vm.state === "running" && vcpusChanged && <WarningInactiveTooltip iconId="vcpus-tooltip" tooltipId="tip-vcpus" /> }
                     <Button variant="link" isInline isDisabled={!vm.persistent} onClick={this.openVcpu}>
                         {_("edit")}
                     </Button>
@@ -169,7 +169,7 @@ class VmOverviewCard extends React.Component {
                     <FlexItem>
                         {rephraseUI('cpuMode', vm.cpu.mode) + (vm.cpu.model ? ` (${vm.cpu.model})` : '')}
                     </FlexItem>
-                    { vm.persistent && vm.state === "running" && cpuModeChanged && <WarningInactive iconId="cpu-tooltip" tooltipId="tip-cpu" /> }
+                    { vm.persistent && vm.state === "running" && cpuModeChanged && <WarningInactiveTooltip iconId="cpu-tooltip" tooltipId="tip-cpu" /> }
                     { cpuEditButton }
                 </Flex>
             </DescriptionListDescription>

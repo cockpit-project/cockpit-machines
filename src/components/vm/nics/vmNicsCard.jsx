@@ -25,7 +25,7 @@ import cockpit from 'cockpit';
 import { rephraseUI, vmId } from "../../../helpers.js";
 import AddNIC from './nicAdd.jsx';
 import { EditNICModal } from './nicEdit.jsx';
-import WarningInactive from '../../common/warningInactive.jsx';
+import { WarningInactiveTooltip } from '../../common/warningInactive.jsx';
 import './nic.css';
 import { domainChangeInterfaceSettings, domainDetachIface, domainInterfaceAddresses, domainGet } from '../../../libvirtApi/domain.js';
 import { ListingTable } from "cockpit-components-table.jsx";
@@ -231,7 +231,7 @@ export class VmNetworkTab extends React.Component {
                     return (
                         <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${id}-network-${networkId}-type`}>
                             <FlexItem>{network.type}</FlexItem>
-                            {inactiveNIC && inactiveNIC.type !== network.type && <WarningInactive iconId={`${id}-network-${networkId}-type-tooltip`} tooltipId="tip-network" />}
+                            {inactiveNIC && inactiveNIC.type !== network.type && <WarningInactiveTooltip iconId={`${id}-network-${networkId}-type-tooltip`} tooltipId="tip-network" />}
                         </Flex>
                     );
                 },
@@ -244,7 +244,7 @@ export class VmNetworkTab extends React.Component {
                     return (
                         <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${id}-network-${networkId}-model`}>
                             <FlexItem>{network.model}</FlexItem>
-                            {inactiveNIC && inactiveNIC.model !== network.model && <WarningInactive iconId={`${id}-network-${networkId}-model-tooltip`} tooltipId="tip-network" />}
+                            {inactiveNIC && inactiveNIC.model !== network.model && <WarningInactiveTooltip iconId={`${id}-network-${networkId}-model-tooltip`} tooltipId="tip-network" />}
                         </Flex>
                     );
                 },
@@ -317,7 +317,7 @@ export class VmNetworkTab extends React.Component {
                         return (
                             <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${id}-network-${networkId}-source`}>
                                 <FlexItem>{getSourceElem[network.type](getIfaceSourceName(network), networkId)}</FlexItem>
-                                {inactiveNIC && getIfaceSourceName(inactiveNIC) !== getIfaceSourceName(network) && <WarningInactive iconId={`${id}-network-${networkId}-source-tooltip`} tooltipId="tip-network" />}
+                                {inactiveNIC && getIfaceSourceName(inactiveNIC) !== getIfaceSourceName(network) && <WarningInactiveTooltip iconId={`${id}-network-${networkId}-source-tooltip`} tooltipId="tip-network" />}
                             </Flex>
                         );
                     } else {
