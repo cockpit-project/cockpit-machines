@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-01 03:06+0000\n"
+"POT-Creation-Date: 2023-01-09 02:57+0000\n"
 "PO-Revision-Date: 2023-01-01 08:20+0000\n"
 "Last-Translator: 김인수 <simmon@nplob.com>\n"
 "Language-Team: Korean <https://translate.fedoraproject.org/projects/cockpit-"
@@ -141,6 +141,10 @@ msgstr "가상 네트워크 연결장치 추가"
 msgid "Adding shared directories is possible only when the guest is shut off"
 msgstr "공유 디렉토리 추가는 게스트가 종료된 경우에만 편집 할 수 있습니다"
 
+#: src/components/vm/disks/diskAdd.jsx:77
+msgid "Adding this disk will change its access mode to shared."
+msgstr ""
+
 #: src/components/vm/disks/vmDisksCard.jsx:188
 msgid "Additional"
 msgstr "추가"
@@ -190,10 +194,6 @@ msgstr "항상 연결"
 msgid "Apply"
 msgstr "적용"
 
-#: src/components/vm/disks/diskAdd.jsx:77
-msgid "Attaching it will make this disk shareable for every VM using it."
-msgstr "연결하면 이를 사용하는 모든 VM에서 이 디스크를 공유 할 수 있습니다."
-
 #: src/components/create-vm-dialog/createVmDialog.jsx:1171
 msgid ""
 "Automated installs are only available when downloading an image or using "
@@ -206,7 +206,7 @@ msgstr ""
 msgid "Automatic"
 msgstr "자동"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1285
+#: src/components/create-vm-dialog/createVmDialog.jsx:1286
 msgid "Automation"
 msgstr "자동화"
 
@@ -265,7 +265,7 @@ msgstr "CPU 유형"
 msgid "Cache"
 msgstr "캐쉬"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1345
+#: src/components/create-vm-dialog/createVmDialog.jsx:1346
 #: src/components/common/deleteResource.jsx:80
 #: src/components/networks/createNetworkDialog.jsx:426
 #: src/components/networks/networkOverviewTab.jsx:239
@@ -359,7 +359,7 @@ msgid "Connecting"
 msgstr "연결 중"
 
 # ctx::sourcefile::Navigation Menu
-#: src/components/common/machinesConnectionSelector.jsx:33
+#: src/components/common/machinesConnectionSelector.jsx:35
 #: src/components/vms/hostvmslist.jsx:140
 #: src/components/networks/createNetworkDialog.jsx:41
 #: src/components/networks/networkList.jsx:75
@@ -369,7 +369,7 @@ msgid "Connection"
 msgstr "연결"
 
 #: src/components/vm/vmDetailsPage.jsx:118
-#: src/components/vm/vmDetailsPage.jsx:151
+#: src/components/vm/vmDetailsPage.jsx:152
 msgid "Console"
 msgstr "콘솔"
 
@@ -405,15 +405,15 @@ msgstr "충돌"
 msgid "Create"
 msgstr "생성"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1391
+#: src/components/create-vm-dialog/createVmDialog.jsx:1392
 msgid "Create VM"
 msgstr "가상 머신 만들기"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1410
+#: src/components/create-vm-dialog/createVmDialog.jsx:1411
 msgid "Create VM by importing a disk image of an existing VM installation"
 msgstr "기존 VM 설치의 가져온 디스크 이미지에 의해 VM을 생성합니다"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1409
+#: src/components/create-vm-dialog/createVmDialog.jsx:1410
 msgid "Create VM from local or network installation medium"
 msgstr "로컬 또는 네트워크 설치 환경에서 VM을 생성합니다"
 
@@ -421,11 +421,11 @@ msgstr "로컬 또는 네트워크 설치 환경에서 VM을 생성합니다"
 msgid "Create a clone VM based on $0"
 msgstr "$0을 기반으로 복제 VM 만들기"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1313
+#: src/components/create-vm-dialog/createVmDialog.jsx:1314
 msgid "Create and edit"
 msgstr "생성과 편집"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1339
+#: src/components/create-vm-dialog/createVmDialog.jsx:1340
 msgid "Create and run"
 msgstr "생성과 동작"
 
@@ -433,7 +433,7 @@ msgstr "생성과 동작"
 msgid "Create new"
 msgstr "새로 만들기"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1327
+#: src/components/create-vm-dialog/createVmDialog.jsx:1328
 msgid "Create new virtual machine"
 msgstr "새로운 가상 머신 만들기"
 
@@ -583,7 +583,7 @@ msgid ""
 "Detach the disks using this pool from any VMs before attempting deletion."
 msgstr "삭제를 시도하기 전에 VM에서 이 풀을 사용하는 디스크를 분리하십시오."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1281
+#: src/components/create-vm-dialog/createVmDialog.jsx:1282
 msgid "Details"
 msgstr "상세정보"
 
@@ -649,6 +649,10 @@ msgstr "디스크 이미지 파일"
 msgid "Disk image path must not be empty"
 msgstr "디스크 이름 경로는 비워두면 안됩니다"
 
+#: src/components/common/machinesConnectionSelector.jsx:72
+msgid "Disk images can be stored in user home directory"
+msgstr ""
+
 #: src/components/vm/disks/diskEdit.jsx:216
 #: src/components/vm/disks/diskAdd.jsx:706
 msgid "Disk settings could not be saved"
@@ -658,7 +662,7 @@ msgstr "디스크 설정을 저장 할 수 없습니다"
 msgid "Disk-only snapshot"
 msgstr "디스크-전용 스냅샷"
 
-#: src/components/vm/vmDetailsPage.jsx:166
+#: src/components/vm/vmDetailsPage.jsx:167
 msgid "Disks"
 msgstr "디스크"
 
@@ -754,7 +758,7 @@ msgstr "예제, $0"
 msgid "Existing disk image on host's file system"
 msgstr "호스트의 파일 시스템에서 기존 디스크 이미지"
 
-#: src/components/vm/vmDetailsPage.jsx:159
+#: src/components/vm/vmDetailsPage.jsx:160
 msgid "Expand"
 msgstr "확장"
 
@@ -884,6 +888,10 @@ msgstr "GiB"
 msgid "Go to VMs list"
 msgstr "VM 목록으로 이동"
 
+#: src/components/common/machinesConnectionSelector.jsx:63
+msgid "Good choice for desktop virtualization"
+msgstr ""
+
 #: src/components/vm/disks/diskAdd.jsx:209
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:243
 msgid "Hide additional options"
@@ -908,7 +916,7 @@ msgstr "호스트 장치는 추가 할 수 없습니다"
 msgid "Host device will be removed from $0:"
 msgstr "호스트 장치는 $0에서 제거됩니다:"
 
-#: src/components/vm/vmDetailsPage.jsx:183
+#: src/components/vm/vmDetailsPage.jsx:184
 msgid "Host devices"
 msgstr "호스트 장치"
 
@@ -983,6 +991,14 @@ msgstr "IPv6 네트워크는 비워둘 수 없습니다"
 msgid "IPv6 only"
 msgstr "IPv6만"
 
+#: src/components/common/machinesConnectionSelector.jsx:46
+msgid "Ideal for server VMs"
+msgstr ""
+
+#: src/components/common/machinesConnectionSelector.jsx:52
+msgid "Ideal networking support"
+msgstr ""
+
 #: src/components/vm/disks/diskAdd.jsx:249
 msgid "Identifier may be silently truncated to $0 characters "
 msgstr "식별자는 $0 문자로 자동으로 잘릴 수 있습니다 "
@@ -991,19 +1007,19 @@ msgstr "식별자는 $0 문자로 자동으로 잘릴 수 있습니다 "
 msgid "Idle"
 msgstr "유휴"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1391
+#: src/components/create-vm-dialog/createVmDialog.jsx:1392
 msgid "Import VM"
 msgstr "VM 가져 오기"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1327
+#: src/components/create-vm-dialog/createVmDialog.jsx:1328
 msgid "Import a virtual machine"
 msgstr "가상 머신 가져 오기"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1313
+#: src/components/create-vm-dialog/createVmDialog.jsx:1314
 msgid "Import and edit"
 msgstr "가져오기와 편집"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1339
+#: src/components/create-vm-dialog/createVmDialog.jsx:1340
 msgid "Import and run"
 msgstr "가져 오기와 실행"
 
@@ -1391,7 +1407,7 @@ msgstr "네트워크 연결장치 $1에서 제거됩니다"
 msgid "Network interface settings could not be saved"
 msgstr "네트워크 연결장치 설정을 저장하지 못했습니다"
 
-#: src/components/vm/vmDetailsPage.jsx:174
+#: src/components/vm/vmDetailsPage.jsx:175
 msgid "Network interfaces"
 msgstr "네트워크 연결장치"
 
@@ -1564,7 +1580,7 @@ msgstr "실행 중인 작업"
 
 # translation auto-copied from project virt-manager, version 0.10.0, document
 # virt-manager
-#: src/components/vm/vmDetailsPage.jsx:134
+#: src/components/vm/vmDetailsPage.jsx:135
 #: src/components/storagePools/storagePool.jsx:75
 msgid "Overview"
 msgstr "개요"
@@ -1611,6 +1627,10 @@ msgstr "일시정지"
 #: src/components/vm/vmMigrateDialog.jsx:71
 msgid "Permanent (default)"
 msgstr "매개변수(기본값)"
+
+#: src/components/common/machinesConnectionSelector.jsx:55
+msgid "Permissions denied for disk images in home directories"
+msgstr ""
 
 #: src/components/vm/nics/nicAdd.jsx:86 src/components/vm/disks/diskAdd.jsx:134
 msgid "Persistence"
@@ -1803,6 +1823,11 @@ msgstr "이름변경"
 msgid "Rename VM $0"
 msgstr "VM $0 이름변경"
 
+#: src/components/common/machinesConnectionSelector.jsx:69
+msgid ""
+"Restrictions in networking (SLIRP-based emulation) and PCI device assignment"
+msgstr ""
+
 #: src/components/vm/vmActions.jsx:211
 msgid "Resume"
 msgstr "다시 시작"
@@ -1902,7 +1927,7 @@ msgstr "DHCP 범위 설정"
 msgid "Set manually"
 msgstr "수동 설정"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1319
+#: src/components/create-vm-dialog/createVmDialog.jsx:1320
 msgid ""
 "Setting the user passwords for unattended installation requires starting the "
 "VM when creating it"
@@ -1917,12 +1942,12 @@ msgstr "공유"
 msgid "Share a host directory with the guest"
 msgstr "게스트와 호스트 디텍토리를 공유합니다"
 
-#: src/components/vm/vmDetailsPage.jsx:204
+#: src/components/vm/vmDetailsPage.jsx:205
 msgid "Shared directories"
 msgstr "공유 디렉토리"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:180
-#: src/components/vm/vmDetailsPage.jsx:206
+#: src/components/vm/vmDetailsPage.jsx:207
 msgid "Shared host directories need to be manually mounted inside the VM"
 msgstr "공유 호스트 디렉토리는 VM 안에세 수동으로 적재가 필요합니다"
 
@@ -1981,7 +2006,7 @@ msgstr "스냅샷 $0는 $1에서 삭제됩니다. 캡춰된 모든 내용이 손
 msgid "Snapshot failed to be created"
 msgstr "스냅샷을 만들지 못했습니다"
 
-#: src/components/vm/vmDetailsPage.jsx:192
+#: src/components/vm/vmDetailsPage.jsx:193
 msgid "Snapshots"
 msgstr "스냅샷"
 
@@ -2357,7 +2382,7 @@ msgstr "URL"
 
 # translation auto-copied from project subscription-manager, version 1.11.X,
 # document keys
-#: src/components/vm/vmDetailsPage.jsx:145
+#: src/components/vm/vmDetailsPage.jsx:146
 msgid "Usage"
 msgstr "사용량"
 
@@ -2460,9 +2485,19 @@ msgstr "VM $0 종료에 실패했습니다"
 msgid "VM $0 failed to start"
 msgstr "VM $0 시작에 실패했습니다"
 
+#: src/components/common/machinesConnectionSelector.jsx:66
+msgid ""
+"VM launched with unprivileged limited access, with the process and PTY owned "
+"by your user account"
+msgstr ""
+
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:106
 msgid "VM state"
 msgstr "VM 상태"
+
+#: src/components/common/machinesConnectionSelector.jsx:49
+msgid "VM will launch with root permissions"
+msgstr ""
 
 #: src/components/vm/consoles/desktopConsole.jsx:53
 msgid "VNC TLS port"
@@ -2499,7 +2534,7 @@ msgstr "제조사"
 #: src/components/vms/hostvmslist.jsx:136
 #: src/components/networks/networkList.jsx:53
 #: src/components/vm/vmDetailsPage.jsx:112
-#: src/components/vm/vmDetailsPage.jsx:264
+#: src/components/vm/vmDetailsPage.jsx:265
 #: src/components/storagePools/storagePoolList.jsx:55 src/manifest.json:0
 msgid "Virtual machines"
 msgstr "가상 머신"
@@ -2665,18 +2700,19 @@ msgstr "libvirt"
 msgid "mcast"
 msgstr "mcast"
 
+#: src/components/common/machinesConnectionSelector.jsx:78
 #: src/components/vm/nics/nicBody.jsx:112
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:194
-#: src/components/vm/vmDetailsPage.jsx:219
+#: src/components/vm/vmDetailsPage.jsx:220
 msgid "more info"
 msgstr "더 많은 정보"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:190
-#: src/components/vm/vmDetailsPage.jsx:215
+#: src/components/vm/vmDetailsPage.jsx:216
 msgid "mount point: The mount point inside the guest"
 msgstr "적재점: 게스트 안에서 적재점"
 
-#: src/components/vm/vmDetailsPage.jsx:214
+#: src/components/vm/vmDetailsPage.jsx:215
 msgid "mount tag: The tag associated to the exported mount point"
 msgstr "적재 태그: 내보낸 적재점과 연결된 태그"
 
@@ -2767,7 +2803,7 @@ msgid ""
 "VMs"
 msgstr "VM을 복제하려면 시스템에 virt-install 꾸러미를 설치해야 합니다"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1397
+#: src/components/create-vm-dialog/createVmDialog.jsx:1398
 msgid ""
 "virt-install package needs to be installed on the system in order to create "
 "new VMs"
@@ -2789,6 +2825,9 @@ msgstr "vm"
 #: src/components/storagePools/storagePoolOverviewTab.jsx:72
 msgid "yes"
 msgstr "예"
+
+#~ msgid "Attaching it will make this disk shareable for every VM using it."
+#~ msgstr "연결하면 이를 사용하는 모든 VM에서 이 디스크를 공유 할 수 있습니다."
 
 #~ msgid "Creating VM installation"
 #~ msgstr "VM 설치 생성 중"

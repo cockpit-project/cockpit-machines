@@ -21,9 +21,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-01-01 03:06+0000\n"
-"PO-Revision-Date: 2022-10-06 07:19+0000\n"
-"Last-Translator: Ludek Janda <ljanda@redhat.com>\n"
+"POT-Creation-Date: 2023-01-09 02:57+0000\n"
+"PO-Revision-Date: 2023-01-09 22:20+0000\n"
+"Last-Translator: Sylvain RUMEU <mioux-fedora@insertcoins.net>\n"
 "Language-Team: French <https://translate.fedoraproject.org/projects/cockpit-"
 "machines/main/fr/>\n"
 "Language: fr\n"
@@ -31,7 +31,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1\n"
-"X-Generator: Weblate 4.14.1\n"
+"X-Generator: Weblate 4.15\n"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:812
 msgid "$0 $1 available at default location"
@@ -155,6 +155,10 @@ msgstr ""
 "L’ajout de répertoires partagés n’est possible que lorsque la machine "
 "virtuelle de l’invité est fermée"
 
+#: src/components/vm/disks/diskAdd.jsx:77
+msgid "Adding this disk will change its access mode to shared."
+msgstr ""
+
 #: src/components/vm/disks/vmDisksCard.jsx:188
 msgid "Additional"
 msgstr "Additionnel"
@@ -206,12 +210,6 @@ msgstr "Toujours attacher"
 msgid "Apply"
 msgstr "Appliquer"
 
-#: src/components/vm/disks/diskAdd.jsx:77
-msgid "Attaching it will make this disk shareable for every VM using it."
-msgstr ""
-"Le fait de l’attacher rendra ce disque partageable pour chaque machine "
-"virtuelle qui l’utilise."
-
 #: src/components/create-vm-dialog/createVmDialog.jsx:1171
 msgid ""
 "Automated installs are only available when downloading an image or using "
@@ -224,7 +222,7 @@ msgstr ""
 msgid "Automatic"
 msgstr "Automatique"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1285
+#: src/components/create-vm-dialog/createVmDialog.jsx:1286
 msgid "Automation"
 msgstr "Automatisation"
 
@@ -283,7 +281,7 @@ msgstr "Type de CPU"
 msgid "Cache"
 msgstr "Cache"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1345
+#: src/components/create-vm-dialog/createVmDialog.jsx:1346
 #: src/components/common/deleteResource.jsx:80
 #: src/components/networks/createNetworkDialog.jsx:426
 #: src/components/networks/networkOverviewTab.jsx:239
@@ -331,8 +329,9 @@ msgstr ""
 "Ces modifications prendront effet après l’extinction de la machine virtuelle"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:512
+#, fuzzy
 msgid "Checking token validity..."
-msgstr ""
+msgstr "Contrôle de validité du jeton"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:455
 #: src/components/create-vm-dialog/createVmDialog.jsx:456
@@ -380,7 +379,7 @@ msgstr ""
 msgid "Connecting"
 msgstr "Connexion en cours"
 
-#: src/components/common/machinesConnectionSelector.jsx:33
+#: src/components/common/machinesConnectionSelector.jsx:35
 #: src/components/vms/hostvmslist.jsx:140
 #: src/components/networks/createNetworkDialog.jsx:41
 #: src/components/networks/networkList.jsx:75
@@ -390,7 +389,7 @@ msgid "Connection"
 msgstr "Connexion"
 
 #: src/components/vm/vmDetailsPage.jsx:118
-#: src/components/vm/vmDetailsPage.jsx:151
+#: src/components/vm/vmDetailsPage.jsx:152
 msgid "Console"
 msgstr "Console"
 
@@ -426,16 +425,16 @@ msgstr "Échoué"
 msgid "Create"
 msgstr "Créer"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1391
+#: src/components/create-vm-dialog/createVmDialog.jsx:1392
 msgid "Create VM"
 msgstr "Créer une machine virtuelle"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1410
+#: src/components/create-vm-dialog/createVmDialog.jsx:1411
 msgid "Create VM by importing a disk image of an existing VM installation"
 msgstr ""
 "Créer une VM en important une image disque d'une installation VM existante"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1409
+#: src/components/create-vm-dialog/createVmDialog.jsx:1410
 msgid "Create VM from local or network installation medium"
 msgstr "Créer une VM à partir d'un support d'installation local ou en réseau"
 
@@ -443,11 +442,11 @@ msgstr "Créer une VM à partir d'un support d'installation local ou en réseau"
 msgid "Create a clone VM based on $0"
 msgstr "Créer un clone de la machine virtuelle basé sur $0"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1313
+#: src/components/create-vm-dialog/createVmDialog.jsx:1314
 msgid "Create and edit"
 msgstr "Créer nouveau et éditer"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1339
+#: src/components/create-vm-dialog/createVmDialog.jsx:1340
 msgid "Create and run"
 msgstr "Créer nouveau et exécuter"
 
@@ -455,7 +454,7 @@ msgstr "Créer nouveau et exécuter"
 msgid "Create new"
 msgstr "Créer Nouveau"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1327
+#: src/components/create-vm-dialog/createVmDialog.jsx:1328
 msgid "Create new virtual machine"
 msgstr "Créer une nouvelle machine virtuelle"
 
@@ -610,7 +609,7 @@ msgstr ""
 "Détachez les disques utilisant ce pool de toutes les machines virtuelles "
 "avant de tenter la suppression."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1281
+#: src/components/create-vm-dialog/createVmDialog.jsx:1282
 msgid "Details"
 msgstr "Détails"
 
@@ -676,6 +675,10 @@ msgstr "Fichier image disque"
 msgid "Disk image path must not be empty"
 msgstr "Le chemin de l’image disque ne doit pas être vide"
 
+#: src/components/common/machinesConnectionSelector.jsx:72
+msgid "Disk images can be stored in user home directory"
+msgstr ""
+
 #: src/components/vm/disks/diskEdit.jsx:216
 #: src/components/vm/disks/diskAdd.jsx:706
 msgid "Disk settings could not be saved"
@@ -686,7 +689,7 @@ msgstr ""
 msgid "Disk-only snapshot"
 msgstr "Instantané du disque uniquement"
 
-#: src/components/vm/vmDetailsPage.jsx:166
+#: src/components/vm/vmDetailsPage.jsx:167
 msgid "Disks"
 msgstr "Disques"
 
@@ -751,7 +754,7 @@ msgstr "La modification des interfaces réseau transitoires n’est pas autoris�
 #: src/components/vm/disks/mediaEject.jsx:103
 #: src/components/vm/disks/vmDiskColumns.jsx:164
 msgid "Eject"
-msgstr ""
+msgstr "Éjecter"
 
 #: src/components/vm/disks/mediaEject.jsx:99
 #, fuzzy
@@ -779,8 +782,9 @@ msgstr ""
 "activer l’installation sans surveillance."
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:517
+#, fuzzy
 msgid "Error checking token"
-msgstr ""
+msgstr "Erreur de contrôle du jeton"
 
 #: src/components/vm/vmMigrateDialog.jsx:54
 msgid "Example, $0"
@@ -790,7 +794,7 @@ msgstr "Exemple, $0"
 msgid "Existing disk image on host's file system"
 msgstr "Image disque existante sur le système de fichiers de l’hôte"
 
-#: src/components/vm/vmDetailsPage.jsx:159
+#: src/components/vm/vmDetailsPage.jsx:160
 msgid "Expand"
 msgstr "Développer"
 
@@ -867,7 +871,7 @@ msgstr "Micrologiciel"
 #, fuzzy
 #| msgid "Force reboot"
 msgid "Force eject"
-msgstr "Redémarrage forcé"
+msgstr "Forcer éjection"
 
 #: src/components/vm/vmActions.jsx:265
 msgid "Force reboot"
@@ -925,6 +929,10 @@ msgstr "Go"
 msgid "Go to VMs list"
 msgstr "Aller à la liste des machines virtuelles"
 
+#: src/components/common/machinesConnectionSelector.jsx:63
+msgid "Good choice for desktop virtualization"
+msgstr ""
+
 #: src/components/vm/disks/diskAdd.jsx:209
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:243
 msgid "Hide additional options"
@@ -949,7 +957,7 @@ msgstr "Le dispositif hôte n’a pas pu être attaché"
 msgid "Host device will be removed from $0:"
 msgstr "Le dispositif hôte sera retiré de $0 :"
 
-#: src/components/vm/vmDetailsPage.jsx:183
+#: src/components/vm/vmDetailsPage.jsx:184
 msgid "Host devices"
 msgstr "Périphériques hôtes"
 
@@ -1025,6 +1033,14 @@ msgstr "Le réseau IPv6 ne doit pas être vide"
 msgid "IPv6 only"
 msgstr "IPv6 seulement"
 
+#: src/components/common/machinesConnectionSelector.jsx:46
+msgid "Ideal for server VMs"
+msgstr ""
+
+#: src/components/common/machinesConnectionSelector.jsx:52
+msgid "Ideal networking support"
+msgstr ""
+
 #: src/components/vm/disks/diskAdd.jsx:249
 msgid "Identifier may be silently truncated to $0 characters "
 msgstr "L’identifiant peut être tronqué silencieusement à $0 caractères "
@@ -1033,25 +1049,26 @@ msgstr "L’identifiant peut être tronqué silencieusement à $0 caractères "
 msgid "Idle"
 msgstr "inactif"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1391
+#: src/components/create-vm-dialog/createVmDialog.jsx:1392
 msgid "Import VM"
 msgstr "Importer une machine virtuelle"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1327
+#: src/components/create-vm-dialog/createVmDialog.jsx:1328
 msgid "Import a virtual machine"
 msgstr "Importer une machine virtuelle"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1313
+#: src/components/create-vm-dialog/createVmDialog.jsx:1314
 msgid "Import and edit"
 msgstr "Importer et éditer"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1339
+#: src/components/create-vm-dialog/createVmDialog.jsx:1340
 msgid "Import and run"
 msgstr "Importer et démarrer"
 
 #: src/components/vm/disks/diskAdd.jsx:551
+#, fuzzy
 msgid "Importing an image with a backing file is unsupported"
-msgstr ""
+msgstr "L'import d'image avec un fichier de sauvegarde non géré"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:309
 msgid ""
@@ -1085,11 +1102,12 @@ msgstr "L’initiateur IQN ne doit pas rester vide"
 #, fuzzy
 #| msgid "Ctrl+Insert"
 msgid "Insert"
-msgstr "Ctrl+Inser"
+msgstr "Inser"
 
 #: src/components/vm/disks/diskAdd.jsx:843
+#, fuzzy
 msgid "Insert disc media"
-msgstr ""
+msgstr "Insérer un média"
 
 #: src/components/vm/vmActions.jsx:291
 msgid "Install"
@@ -1445,7 +1463,7 @@ msgstr "L'interface réseau $0 sera supprimée de $1"
 msgid "Network interface settings could not be saved"
 msgstr "Les paramètres de l’interface réseau n’ont pas pu être enregistrés"
 
-#: src/components/vm/vmDetailsPage.jsx:174
+#: src/components/vm/vmDetailsPage.jsx:175
 msgid "Network interfaces"
 msgstr "Interfaces réseau"
 
@@ -1591,8 +1609,9 @@ msgid "Offline token must not be empty"
 msgstr "Le nouveau nom ne doit pas être vide"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:527
+#, fuzzy
 msgid "Old token expired"
-msgstr ""
+msgstr "Ancien jeton expiré"
 
 #: src/components/storagePools/storageVolumeDelete.jsx:70
 msgid ""
@@ -1621,7 +1640,7 @@ msgstr "Système d’exploitation"
 msgid "Operation is in progress"
 msgstr "Opération en cours"
 
-#: src/components/vm/vmDetailsPage.jsx:134
+#: src/components/vm/vmDetailsPage.jsx:135
 #: src/components/storagePools/storagePool.jsx:75
 msgid "Overview"
 msgstr "Aperçu"
@@ -1669,6 +1688,10 @@ msgstr "Mis en pause"
 #: src/components/vm/vmMigrateDialog.jsx:71
 msgid "Permanent (default)"
 msgstr "Permanent (par défaut)"
+
+#: src/components/common/machinesConnectionSelector.jsx:55
+msgid "Permissions denied for disk images in home directories"
+msgstr ""
 
 #: src/components/vm/nics/nicAdd.jsx:86 src/components/vm/disks/diskAdd.jsx:134
 msgid "Persistence"
@@ -1863,6 +1886,11 @@ msgstr "Renommer"
 msgid "Rename VM $0"
 msgstr "Renommer la machine virtuelle $0"
 
+#: src/components/common/machinesConnectionSelector.jsx:69
+msgid ""
+"Restrictions in networking (SLIRP-based emulation) and PCI device assignment"
+msgstr ""
+
 #: src/components/vm/vmActions.jsx:211
 msgid "Resume"
 msgstr "Reprendre"
@@ -1936,8 +1964,9 @@ msgid "Select console type"
 msgstr "Sélectionnez le type de console"
 
 #: src/components/vm/consoles/vnc.jsx:150
+#, fuzzy
 msgid "Send key"
-msgstr "Envoi de la clé"
+msgstr "Envoi des touches"
 
 #: src/components/vm/vmActions.jsx:247
 msgid "Send non-maskable interrupt"
@@ -1963,7 +1992,7 @@ msgstr "Définir plage DHCP"
 msgid "Set manually"
 msgstr "Définir manuellement"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1319
+#: src/components/create-vm-dialog/createVmDialog.jsx:1320
 msgid ""
 "Setting the user passwords for unattended installation requires starting the "
 "VM when creating it"
@@ -1980,12 +2009,12 @@ msgstr "Partage"
 msgid "Share a host directory with the guest"
 msgstr "Partager un répertoire hôte avec l’invité"
 
-#: src/components/vm/vmDetailsPage.jsx:204
+#: src/components/vm/vmDetailsPage.jsx:205
 msgid "Shared directories"
 msgstr "Répertoires partagés"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:180
-#: src/components/vm/vmDetailsPage.jsx:206
+#: src/components/vm/vmDetailsPage.jsx:207
 msgid "Shared host directories need to be manually mounted inside the VM"
 msgstr ""
 "Les répertoires hôtes partagés doivent être montés manuellement à "
@@ -2047,7 +2076,7 @@ msgstr ""
 msgid "Snapshot failed to be created"
 msgstr "L’instantané n’a pas été créé"
 
-#: src/components/vm/vmDetailsPage.jsx:192
+#: src/components/vm/vmDetailsPage.jsx:193
 msgid "Snapshots"
 msgstr "Instantanés"
 
@@ -2297,8 +2326,9 @@ msgstr ""
 #: src/components/create-vm-dialog/createVmDialog.jsx:507
 #: src/components/create-vm-dialog/createVmDialog.jsx:520
 #: src/components/create-vm-dialog/createVmDialog.jsx:530
+#, fuzzy
 msgid "Then copy and paste it above."
-msgstr ""
+msgstr "Puis copiez et collez au-dessus."
 
 #: src/components/vm/vmActions.jsx:347
 msgid "This VM is transient. Shut it down if you wish to delete it."
@@ -2436,7 +2466,7 @@ msgstr "Non-spécifié"
 msgid "Url"
 msgstr "Url"
 
-#: src/components/vm/vmDetailsPage.jsx:145
+#: src/components/vm/vmDetailsPage.jsx:146
 msgid "Usage"
 msgstr "Utilisation"
 
@@ -2543,9 +2573,19 @@ msgstr "Échec de l’arrêt de la machine virtuelle $0"
 msgid "VM $0 failed to start"
 msgstr "Échec du démarrage de la machine virtuelle $0"
 
+#: src/components/common/machinesConnectionSelector.jsx:66
+msgid ""
+"VM launched with unprivileged limited access, with the process and PTY owned "
+"by your user account"
+msgstr ""
+
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:106
 msgid "VM state"
 msgstr "État de la machine virtuelle"
+
+#: src/components/common/machinesConnectionSelector.jsx:49
+msgid "VM will launch with root permissions"
+msgstr ""
 
 #: src/components/vm/consoles/desktopConsole.jsx:53
 msgid "VNC TLS port"
@@ -2564,8 +2604,9 @@ msgid "VNC port"
 msgstr "Port VNC"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:536
+#, fuzzy
 msgid "Valid token"
-msgstr ""
+msgstr "Jeton validé"
 
 #: src/components/vm/hostdevs/hostDevAdd.jsx:132
 #: src/components/vm/hostdevs/hostDevCard.jsx:214
@@ -2580,7 +2621,7 @@ msgstr "Fournisseur"
 #: src/components/vms/hostvmslist.jsx:136
 #: src/components/networks/networkList.jsx:53
 #: src/components/vm/vmDetailsPage.jsx:112
-#: src/components/vm/vmDetailsPage.jsx:264
+#: src/components/vm/vmDetailsPage.jsx:265
 #: src/components/storagePools/storagePoolList.jsx:55 src/manifest.json:0
 msgid "Virtual machines"
 msgstr "Machines virtuelles"
@@ -2746,18 +2787,19 @@ msgstr "libvirt"
 msgid "mcast"
 msgstr "mcast"
 
+#: src/components/common/machinesConnectionSelector.jsx:78
 #: src/components/vm/nics/nicBody.jsx:112
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:194
-#: src/components/vm/vmDetailsPage.jsx:219
+#: src/components/vm/vmDetailsPage.jsx:220
 msgid "more info"
 msgstr "plus d’informations"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:190
-#: src/components/vm/vmDetailsPage.jsx:215
+#: src/components/vm/vmDetailsPage.jsx:216
 msgid "mount point: The mount point inside the guest"
 msgstr "point de montage : point de montage à l’intérieur de l’invité"
 
-#: src/components/vm/vmDetailsPage.jsx:214
+#: src/components/vm/vmDetailsPage.jsx:215
 msgid "mount tag: The tag associated to the exported mount point"
 msgstr "balise de montage : la balise associée au point de montage exporté"
 
@@ -2847,7 +2889,7 @@ msgstr ""
 "Le paquet virt-install doit être installé sur le système pour pouvoir cloner "
 "des machines virtuelles"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1397
+#: src/components/create-vm-dialog/createVmDialog.jsx:1398
 msgid ""
 "virt-install package needs to be installed on the system in order to create "
 "new VMs"
@@ -2872,6 +2914,11 @@ msgstr "machine virtuelle"
 #: src/components/storagePools/storagePoolOverviewTab.jsx:72
 msgid "yes"
 msgstr "oui"
+
+#~ msgid "Attaching it will make this disk shareable for every VM using it."
+#~ msgstr ""
+#~ "Le fait de l’attacher rendra ce disque partageable pour chaque machine "
+#~ "virtuelle qui l’utilise."
 
 #~ msgid "Creating VM installation"
 #~ msgstr "Création de l’installation de la machine virtuelle"
