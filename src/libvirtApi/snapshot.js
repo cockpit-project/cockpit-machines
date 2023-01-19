@@ -26,7 +26,7 @@ import store from '../store.js';
 import { updateDomainSnapshots } from '../actions/store-actions.js';
 import { getSnapshotXML } from '../libvirt-xml-create.js';
 import { parseDomainSnapshotDumpxml } from '../libvirt-xml-parse.js';
-import { call, timeout } from './helpers.js';
+import { call, Enum, timeout } from './helpers.js';
 import { logDebug } from '../helpers.js';
 
 export function snapshotCreate({ connectionName, vmId, name, description }) {
@@ -104,9 +104,13 @@ export function snapshotGetAll({ connectionName, domainPath }) {
             });
 }
 
-export function snapshotRevert({ connectionName, domainPath, snapshotName }) {
+export function snapshotRevert({ connectionName, domainPath, snapshotName, force }) {
+    let flags = 0;
+    if (force)
+        flags |= Enum.VIR_DOMAIN_SNAPSHOT_REVERT_FORCE;
+
     return call(connectionName, domainPath, 'org.libvirt.Domain', 'SnapshotLookupByName', [snapshotName, 0], { timeout, type: 'su' })
             .then((objPath) => {
-                return call(connectionName, objPath[0], 'org.libvirt.DomainSnapshot', 'Revert', [0], { timeout, type: 'u' });
+                return call(connectionName, objPath[0], 'org.libvirt.DomainSnapshot', 'Revert', [flags], { timeout, type: 'u' });
             });
 }

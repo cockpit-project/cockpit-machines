@@ -37,6 +37,8 @@ export class RevertSnapshotModal extends React.Component {
         this.state = {
             dialogError: undefined,
             inProgress: false,
+            inProgressForce: false,
+            defaultRevertFailed: false,
         };
 
         this.revert = this.revert.bind(this);
@@ -47,10 +49,23 @@ export class RevertSnapshotModal extends React.Component {
         const Dialogs = this.context;
         const { vm, snap } = this.props;
 
-        this.setState({ inProgress: true });
-        snapshotRevert({ connectionName: vm.connectionName, domainPath: vm.id, snapshotName: snap.name })
+        if (!this.state.defaultRevertFailed)
+            this.setState({ inProgress: true });
+        else
+            this.setState({ inProgressForce: true, dialogError: undefined });
+
+        snapshotRevert({
+            connectionName: vm.connectionName,
+            domainPath: vm.id,
+            snapshotName: snap.name,
+            force: this.state.defaultRevertFailed
+        })
                 .then(Dialogs.close, exc => {
-                    this.setState({ inProgress: false });
+                    this.setState({
+                        defaultRevertFailed: true,
+                        inProgress: false,
+                        inProgressForce: false
+                    });
                     this.dialogErrorSet(_("Could not revert to snapshot"), exc.message);
                 });
     }
@@ -68,9 +83,19 @@ export class RevertSnapshotModal extends React.Component {
                    title={cockpit.format(_("Revert to snapshot $0"), snap.name)}
                    footer={
                        <>
-                           <Button variant='primary' isLoading={this.state.inProgress} isDisabled={this.state.inProgress} onClick={this.revert}>
+                           <Button variant='primary'
+                                   isLoading={this.state.inProgress}
+                                   isDisabled={this.state.inProgress || this.state.defaultRevertFailed}
+                                   onClick={this.revert}>
                                {_("Revert")}
                            </Button>
+                           { this.state.defaultRevertFailed &&
+                           <Button variant='danger'
+                                   isLoading={this.state.inProgressForce}
+                                   isDisabled={this.state.inProgress || this.state.inProgressForce}
+                                   onClick={this.revert}>
+                               {_("Force revert")}
+                           </Button>}
                            <Button variant='link' className='btn-cancel' onClick={Dialogs.close}>
                                {_("Cancel")}
                            </Button>
