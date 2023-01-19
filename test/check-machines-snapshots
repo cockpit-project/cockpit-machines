@@ -289,6 +289,38 @@ class TestMachinesSnapshots(VirtualMachinesCase):
         self.assertEqual("no", m.execute("virsh snapshot-info --domain subVmTest1 --snapshotname snapshotA | grep 'Current:' | awk '{print $2}'").strip())
         self.assertEqual("yes", m.execute("virsh snapshot-info --domain subVmTest1 --snapshotname snapshotB | grep 'Current:' | awk '{print $2}'").strip())
 
+        # Test force revert
+        # Create snapshot of shut off VM
+        self.performAction("subVmTest1", "forceOff")
+        m.execute("virsh snapshot-create-as --domain subVmTest1 --name snapshotC")
+
+        # Create managed save of a running VM
+        b.click("#vm-subVmTest1-system-run")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
+        m.execute("virsh managedsave subVmTest1")
+
+        # When reverting to a snapshot with shut off VM state, but VM also has saved managed state of it's runtime memory,
+        # libvirt will require using force options since there is a risk of memory corruption
+        b.wait_in_text("#vm-subVmTest1-snapshot-0-name", "snapshotC")
+        b.click("#vm-subVmTest1-snapshot-0-revert")
+        b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Revert to snapshot snapshotC")
+        b.click('.pf-c-modal-box__footer button:contains("Revert")')
+        # Check "Force revert" is present and Regular revert is disabled
+        b.wait_in_text(".pf-c-modal-box .pf-c-alert__description", "revert requires force")
+        b.wait_visible(".pf-c-modal-box__footer button:contains(Revert):disabled")
+        b.wait_visible(".pf-c-modal-box__footer button:contains(Force revert)")
+
+        b.click(".pf-c-modal-box__footer button:contains(Force revert)")
+        b.wait_not_present(".pf-c-modal-box")
+
+        # Check VM was reverted to a correct snapshot
+        b.wait_not_present("#vm-subVmTest1-snapshot-1-current")
+        b.wait_not_present("#vm-subVmTest1-snapshot-2-current")
+        b.wait_visible("#vm-subVmTest1-snapshot-0-current")
+        self.assertEqual("no", m.execute("virsh snapshot-info --domain subVmTest1 --snapshotname snapshotA | grep 'Current:' | awk '{print $2}'").strip())
+        self.assertEqual("no", m.execute("virsh snapshot-info --domain subVmTest1 --snapshotname snapshotB | grep 'Current:' | awk '{print $2}'").strip())
+        self.assertEqual("yes", m.execute("virsh snapshot-info --domain subVmTest1 --snapshotname snapshotC | grep 'Current:' | awk '{print $2}'").strip())
+
 
 if __name__ == '__main__':
     test_main()
