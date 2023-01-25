@@ -1701,6 +1701,7 @@ vnc_password= "{vnc_passwd}"
 
             b.wait_visible("#token-helper-message")
             b.wait_in_text("#token-helper-message", error_msg)
+            b.wait_in_text("#token-helper-message", "Get a new RHSM token")
             if create_disabled:
                 b.wait_visible(".pf-c-modal-box__footer button:contains(Create and run)[aria-disabled=true]")
                 b.wait_visible(".pf-c-modal-box__footer button:contains(Create and edit)[aria-disabled=true]")
