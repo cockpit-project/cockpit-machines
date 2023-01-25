@@ -387,7 +387,7 @@ export class VmNetworkTab extends React.Component {
                         errorMessage: cockpit.format(_("Network interface $0 could not be removed"), network.mac),
                         actionDescription: cockpit.format(_("Network interface $0 will be removed from $1"), network.mac, vm.name),
                         actionName: _("Remove"),
-                        deleteHandler: () => domainDetachIface({ connectionName: vm.connectionName, index: network.index, vmName: vm.name, live: vm.state === 'running', persistent: nicPersistent }),
+                        deleteHandler: () => domainDetachIface({ connectionName: vm.connectionName, index: network.index, vmName: vm.name, live: vm.state === 'running', persistent: vm.persistent && nicPersistent }),
                     };
                     const deleteNICAction = (
                         <DeleteResourceButton objectId={`${id}-iface-${networkId}`}
