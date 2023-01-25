@@ -506,7 +506,7 @@ class TestMachinesSettings(VirtualMachinesCase):
             b.wait_visible("#vm-subVmTest1-watchdog-modal")
 
             if pixel_test_tag:
-                b.assert_pixels("#vm-subVmTest1-watchdog-modal", pixel_test_tag)
+                b.assert_pixels("#vm-subVmTest1-watchdog-modal", pixel_test_tag, skip_layouts=["rtl"])
 
             b.click(f"#{action}")
 

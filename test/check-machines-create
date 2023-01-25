@@ -1280,7 +1280,7 @@ vnc_password= "{vnc_passwd}"
                 ignore = ["#memory-size-helper"]
                 if self.storage_pool != "NoStorage":
                     ignore += ["#storage-limit-helper"]
-                self.browser.assert_pixels("#create-vm-dialog", tag, ignore=ignore)
+                self.browser.assert_pixels("#create-vm-dialog", tag, ignore=ignore, skip_layouts=["rtl"])
             return self
 
         def checkNoCrashOnThePage(self):

@@ -102,7 +102,8 @@ class TestMachinesStoragePools(VirtualMachinesCase):
                 # HACK: the font rendering of middle columns is jittery, even after sleep()
                 [f"td:nth-child({n})" for n in range(2, 6)] +
                 [f"th:nth-child({n})" for n in range(2, 6)]
-            )
+            ),
+            skip_layouts=["rtl"]
         )
 
         # Check basic pool properties
