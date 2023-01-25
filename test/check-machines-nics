@@ -176,6 +176,16 @@ class TestMachinesNICs(VirtualMachinesCase):
         b.wait_text("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:5f")
         b.wait_text("#vm-subVmTest1-network-2-model", "e1000e")
 
+        # Test for bugzilla #2030948
+        b.click("#vm-subVmTest1-system-run")
+        m.execute("virsh undefine subVmTest1")
+        b.click(".machines-listing-breadcrumb li a:contains(Virtual machines)")
+        b.wait_visible("tr[data-row-id=vm-subVmTest1-system][data-vm-transient=true]")
+        self.goToVmPage("subVmTest1")
+        self.deleteIface(1)
+        self.performAction("subVmTest1", "forceOff", checkExpectedState=False)
+        self.waitVmRow("subVmTest1", "system", False)
+
     def testNICAdd(self):
         b = self.browser
         m = self.machine
