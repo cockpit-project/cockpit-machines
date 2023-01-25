@@ -67,7 +67,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
         b.wait_in_text('.pf-c-expandable-section__content',
                        'Clicking "Launch remote viewer" will download')
 
-        b.assert_pixels("#vm-subVmTest1-consoles-page", "vm-details-console-external")
+        b.assert_pixels("#vm-subVmTest1-consoles-page", "vm-details-console-external", skip_layouts=["rtl"])
 
     def testInlineConsole(self, urlroot=""):
         b = self.browser
@@ -138,7 +138,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
 
         b.click("button:contains(Expand)")
         b.assert_pixels("#vm-vmWithSerialConsole-consoles-page", "vm-details-console-serial",
-                        ignore=[".pf-c-console__vnc"])
+                        ignore=[".pf-c-console__vnc"], skip_layouts=["rtl"])
 
         # Add a second serial console
         m.execute("virsh destroy vmWithSerialConsole; virt-xml --add-device vmWithSerialConsole --console pty,target_type=virtio; virsh start vmWithSerialConsole")

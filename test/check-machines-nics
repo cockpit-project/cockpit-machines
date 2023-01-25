@@ -65,7 +65,7 @@ class TestMachinesNICs(VirtualMachinesCase):
                         ignore=["#vm-subVmTest1-network-1-mac", "#vm-subVmTest1-network-1-ipv4-address"],
                         # MAC and IP address values are not static, and their values affect the width of their columns and neighbouring columns
                         # With medium layout this variable width of the columns makes pixel tests references of the table different each test run
-                        skip_layouts=["medium"])
+                        skip_layouts=["medium", "rtl"])
 
         # Remove default interface
         self.deleteIface(1)
@@ -473,7 +473,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         dialog.open()
         b.wait_in_text("#vm-subVmTest1-network-1-edit-dialog-source", "eth42")
         b.wait_val("#vm-subVmTest1-network-1-edit-dialog-mac", "52:54:00:f0:eb:63")
-        b.assert_pixels("#vm-subVmTest1-network-1-edit-dialog-modal-window", "vm-edit-nic-modal")
+        b.assert_pixels("#vm-subVmTest1-network-1-edit-dialog-modal-window", "vm-edit-nic-modal", skip_layouts=["rtl"])
         dialog.cancel()
 
         # Changing the NIC configuration for a shut off VM should not display any warning
@@ -569,7 +569,7 @@ class TestMachinesNICs(VirtualMachinesCase):
 
         def assert_pixels(self):
             if self.pixel_test_tag:
-                self.browser.assert_pixels("#vm-subVmTest1-add-iface-dialog", self.pixel_test_tag)
+                self.browser.assert_pixels("#vm-subVmTest1-add-iface-dialog", self.pixel_test_tag, skip_layouts=["rtl"])
 
         def cancel(self):
             self.browser.click(".pf-c-modal-box__footer button:contains(Cancel)")

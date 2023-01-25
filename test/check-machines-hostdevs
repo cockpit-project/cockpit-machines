@@ -99,7 +99,7 @@ class TestMachinesHostDevs(VirtualMachinesCase):
             m.execute("test -d /sys/devices/pci0000\\:00/0000\\:00\\:0f.0/")
             b.wait_in_text("#vm-subVmTest1-hostdev-1-vendor", "Red Hat, Inc")
             b.wait_in_text("#vm-subVmTest1-hostdev-1-product", "Virtio network device")
-            b.assert_pixels("#vm-subVmTest1-hostdevs", "vm-details-hostdevs-card")
+            b.assert_pixels("#vm-subVmTest1-hostdevs", "vm-details-hostdevs-card", skip_layouts=["rtl"])
         except subprocess.CalledProcessError:
             pass
 
@@ -163,7 +163,7 @@ class TestMachinesHostDevs(VirtualMachinesCase):
                 b.click("button#vm-subVmTest1-hostdevs-add")
                 b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Add host device")
                 if connectionName != "session":
-                    b.assert_pixels(".pf-c-modal-box", "vm-hostdevs-add-dialog")
+                    b.assert_pixels(".pf-c-modal-box", "vm-hostdevs-add-dialog", skip_layouts=["rtl"])
 
             def fill(self):
                 b.click(f"input#{self.dev_type}")

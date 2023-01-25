@@ -35,7 +35,7 @@ COCKPIT_REPO_FILES = \
 	$(NULL)
 
 COCKPIT_REPO_URL = https://github.com/cockpit-project/cockpit.git
-COCKPIT_REPO_COMMIT = 69aac32ebe3e23384a00321b9570f64f4ac07583 # 282.1
+COCKPIT_REPO_COMMIT = 736e2369118015ff1da352a790d1a92168439c7a # 284 minus "Disable file watching in FileAutoComplete"
 
 $(COCKPIT_REPO_FILES): $(COCKPIT_REPO_STAMP)
 COCKPIT_REPO_TREE = '$(strip $(COCKPIT_REPO_COMMIT))^{tree}'

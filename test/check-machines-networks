@@ -770,7 +770,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
         b.wait_visible("#network-test_network2-system-autostart-off")
         b.wait_in_text("#network-test_network2-system-ipv6-dhcp-host-0", "simon")
 
-        b.assert_pixels("#app", "networks-page")
+        b.assert_pixels("#app", "networks-page", skip_layouts=["rtl"])
 
         # activate network
         b.wait_visible(f"#activate-network-test_network2-{connectionName}")

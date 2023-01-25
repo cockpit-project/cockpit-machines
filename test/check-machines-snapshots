@@ -104,7 +104,8 @@ class TestMachinesSnapshots(VirtualMachinesCase):
             ignore=[
                 "tr:nth-child(1) .snap-creation-time",
                 "tr:nth-child(2) .snap-creation-time",
-            ]
+            ],
+            skip_layouts=["rtl"]
         )
 
     def testSnapshotCreate(self):
@@ -160,7 +161,7 @@ class TestMachinesSnapshots(VirtualMachinesCase):
 
             def assert_pixels(self):
                 if self.name == 'test_snap_1':
-                    b.assert_pixels("#vm-subVmTest1-create-snapshot-modal", "create-snapshot-dialog" + ("" if not self.xfail else "-error"))
+                    b.assert_pixels("#vm-subVmTest1-create-snapshot-modal", "create-snapshot-dialog" + ("" if not self.xfail else "-error"), skip_layouts=["rtl"])
 
             def cancel(self):
                 b.click(".pf-c-modal-box__footer button:contains(Cancel)")
