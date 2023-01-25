@@ -588,7 +588,16 @@ const OfflineTokenRow = ({ offlineToken, onValueChanged, formValidationFailed })
                    id="offline-token-group"
                    validated={formValidationFailed.offlineToken ? "error" : validationState.option}
                    helperText={validationState.option !== "error" && validationState.message}
-                   helperTextInvalid={formValidationFailed.offlineToken || (validationState.option === "error" && validationState.message)}>
+                   helperTextInvalid={
+                       formValidationFailed.offlineToken
+                           ? <Flex id="token-helper-message">
+                               <FlexItem className="invalid-token-helper" grow={{ default: 'grow' }}>{formValidationFailed.offlineToken}</FlexItem>
+                               <FlexItem>
+                                   { link }
+                                   {" " + _("Then copy and paste it above.")}
+                               </FlexItem>
+                           </Flex>
+                           : (validationState.option === "error" && validationState.message)}>
             <TextArea id="offline-token"
                       validated={formValidationFailed.offlineToken ? "error" : validationState.option}
                       disabled={disabled}
