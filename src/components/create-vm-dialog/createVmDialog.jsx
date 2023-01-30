@@ -494,18 +494,28 @@ const getAccessTokenDebounce = debounce(500, (offlineToken, onValueChanged, setV
             });
 });
 
-const OfflineTokenRow = ({ offlineToken, onValueChanged, formValidationFailed }) => {
+const HelperMessageToken = ({ message }) => {
     const link = <a href="https://access.redhat.com/management/api" target="_blank" rel="noopener noreferrer">
         <ExternalLinkAltIcon className="pf-u-mr-xs" />
         {_("Get a new RHSM token.")}
     </a>;
+
+    return (
+        <Flex id="token-helper-message">
+            {message && <FlexItem className="invalid-token-helper" grow={{ default: 'grow' }}>{message + " "}</FlexItem>}
+            <FlexItem>
+                { link }
+                {" " + _("Then copy and paste it above.")}
+            </FlexItem>
+        </Flex>
+    );
+};
+
+const OfflineTokenRow = ({ offlineToken, onValueChanged, formValidationFailed }) => {
     const validationStates = {
         DEFAULT: {
             option: "default",
-            message: <span id="token-helper-message">
-                { link }
-                {" " + _("Then copy and paste it above.")}
-            </span>,
+            message: <HelperMessageToken />,
         },
         INPROGRESS: {
             option: "default",
@@ -513,23 +523,11 @@ const OfflineTokenRow = ({ offlineToken, onValueChanged, formValidationFailed })
         },
         FAILED: {
             option: "error",
-            message: <Flex id="token-helper-message">
-                <FlexItem className="invalid-token-helper" grow={{ default: 'grow' }}>{_("Error checking token") + " "}</FlexItem>
-                <FlexItem>
-                    { link }
-                    {" " + _("Then copy and paste it above.")}
-                </FlexItem>
-            </Flex>,
+            message: <HelperMessageToken message={_("Error checking token")} />,
         },
         EXPIRED: {
             option: "default",
-            message: <Flex id="token-helper-message">
-                <FlexItem grow={{ default: 'grow' }}>{_("Old token expired") + " "}</FlexItem>
-                <FlexItem>
-                    { link }
-                    {" " + _("Then copy and paste it above.")}
-                </FlexItem>
-            </Flex>,
+            message: <HelperMessageToken message={_("Old token expired")} />,
         },
         SUCCESS: {
             option: "success",
@@ -590,13 +588,7 @@ const OfflineTokenRow = ({ offlineToken, onValueChanged, formValidationFailed })
                    helperText={validationState.option !== "error" && validationState.message}
                    helperTextInvalid={
                        formValidationFailed.offlineToken
-                           ? <Flex id="token-helper-message">
-                               <FlexItem className="invalid-token-helper" grow={{ default: 'grow' }}>{formValidationFailed.offlineToken}</FlexItem>
-                               <FlexItem>
-                                   { link }
-                                   {" " + _("Then copy and paste it above.")}
-                               </FlexItem>
-                           </Flex>
+                           ? <HelperMessageToken message={formValidationFailed.offlineToken} />
                            : (validationState.option === "error" && validationState.message)}>
             <TextArea id="offline-token"
                       validated={formValidationFailed.offlineToken ? "error" : validationState.option}
