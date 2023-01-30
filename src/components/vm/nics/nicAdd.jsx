@@ -106,7 +106,6 @@ export class AddNIC extends React.Component {
             setNetworkMac: false,
             networkMac: "",
             permanent: false,
-            availableSources: props.availableSources,
             addVNicInProgress: false,
         };
         this.add = this.add.bind(this);
@@ -122,9 +121,11 @@ export class AddNIC extends React.Component {
         if (key == 'networkType' && ['network', 'direct', 'bridge'].includes(value)) {
             let sources;
             if (value === "network")
-                sources = this.state.availableSources.network;
-            else
-                sources = this.state.availableSources.device;
+                sources = this.props.availableSources.network;
+            else if (value === "direct")
+                sources = Object.keys(this.props.availableSources.device).filter(dev => this.props.availableSources.device[dev].type != "bridge");
+            else if (value === "bridge")
+                sources = Object.keys(this.props.availableSources.device).filter(dev => this.props.availableSources.device[dev].type == "bridge");
 
             if (sources && sources.length > 0)
                 this.setState({ networkSource: sources[0], saveDisabled: false });
@@ -169,7 +170,7 @@ export class AddNIC extends React.Component {
         const defaultBody = (
             <Form onSubmit={e => e.preventDefault()} isHorizontal>
                 <NetworkTypeAndSourceRow idPrefix={idPrefix}
-                                         dialogValues={this.state}
+                                         dialogValues={{ ...this.state, availableSources: this.props.availableSources }}
                                          onValueChanged={this.onValueChanged}
                                          connectionName={vm.connectionName} />
 

@@ -19,6 +19,7 @@
 
 import os
 import sys
+import json
 
 # import Cockpit's machinery for test VMs and its browser test API
 TEST_DIR = os.path.dirname(__file__)
@@ -473,7 +474,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         self.NICAddDialog(
             self,
             source_type="bridge",
-            source="eth42",
+            source="virbr0",
             mac="52:54:00:f0:eb:63",
             remove=False
         ).execute()
@@ -481,7 +482,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         # The dialog fields should reflect the permanent configuration
         dialog = self.NICEditDialog(self)
         dialog.open()
-        b.wait_in_text("#vm-subVmTest1-network-1-edit-dialog-source", "eth42")
+        b.wait_in_text("#vm-subVmTest1-network-1-edit-dialog-source", "virbr0")
         b.wait_val("#vm-subVmTest1-network-1-edit-dialog-mac", "52:54:00:f0:eb:63")
         b.assert_pixels("#vm-subVmTest1-network-1-edit-dialog-modal-window", "vm-edit-nic-modal", skip_layouts=["rtl"])
         dialog.cancel()
@@ -499,7 +500,8 @@ class TestMachinesNICs(VirtualMachinesCase):
         # Test a warning shows up when editing a vNIC for a running VM
         self.NICEditDialog(
             self,
-            source="eth42",
+            source_type="direct",
+            source="eth43",
         ).execute()
 
         # Change source type from direct to virtual network - https://bugzilla.redhat.com/show_bug.cgi?id=1977669
@@ -527,6 +529,7 @@ class TestMachinesNICs(VirtualMachinesCase):
             permanent=False, mac=None, remove=True, persistent_vm=True,
             xfail=False, xfail_error=None, pixel_test_tag=None
         ):
+            self.bridge_devices = map(lambda entry: entry['ifname'], json.loads(test_obj.machine.execute("ip -j link show type bridge")))
             self.source_type = source_type
             self.source = source
             self.model = model
@@ -562,6 +565,14 @@ class TestMachinesNICs(VirtualMachinesCase):
 
         def fill(self):
             self.browser.select_from_dropdown("#vm-subVmTest1-add-iface-type", self.source_type)
+
+            # Ensure that Bridge to LAN option offers only bridge devices for selection and vice versa
+            for bridge in self.bridge_devices:
+                if self.source_type != "bridge":
+                    self.browser.wait_not_present(f"#vm-subVmTest1-add-iface-source option[value={bridge}]")
+                else:
+                    self.browser._wait_present(f"#vm-subVmTest1-add-iface-source option[value={bridge}]")
+
             if self.source:
                 self.browser.select_from_dropdown("#vm-subVmTest1-add-iface-source", self.source)
             if self.model:

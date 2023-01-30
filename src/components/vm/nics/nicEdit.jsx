@@ -59,9 +59,9 @@ export class EditNICModal extends React.Component {
         if (props.network.type === "network")
             availableSources = props.availableSources.network;
         else if (props.network.type === "direct")
-            availableSources = props.availableSources.device;
+            availableSources = Object.keys(props.availableSources.device).filter(dev => props.availableSources.device[dev].type != "bridge");
         else if (props.network.type === "bridge")
-            availableSources = props.availableSources.device;
+            availableSources = Object.keys(props.availableSources.device).filter(dev => props.availableSources.device[dev].type == "bridge");
 
         if (availableSources.includes(currentSource))
             defaultNetworkSource = currentSource;
@@ -75,7 +75,6 @@ export class EditNICModal extends React.Component {
             networkModel: props.network.model,
             networkMac: props.network.mac,
             saveDisabled: false,
-            availableSources: props.availableSources,
         };
         this.save = this.save.bind(this);
         this.onValueChanged = this.onValueChanged.bind(this);
@@ -99,9 +98,11 @@ export class EditNICModal extends React.Component {
         if (key == 'networkType' && ['network', 'direct', 'bridge'].includes(value)) {
             let sources;
             if (value === "network")
-                sources = this.state.availableSources.network;
-            else
-                sources = this.state.availableSources.device;
+                sources = this.props.availableSources.network;
+            else if (value === "direct")
+                sources = Object.keys(this.props.availableSources.device).filter(dev => this.props.availableSources.device[dev].type != "bridge");
+            else if (value === "bridge")
+                sources = Object.keys(this.props.availableSources.device).filter(dev => this.props.availableSources.device[dev].type == "bridge");
 
             if (sources && sources.length > 0)
                 this.setState({ networkSource: sources[0], saveDisabled: false });
@@ -144,7 +145,7 @@ export class EditNICModal extends React.Component {
         const defaultBody = (
             <Form onSubmit={e => e.preventDefault()} isHorizontal>
                 <NetworkTypeAndSourceRow idPrefix={idPrefix}
-                                         dialogValues={this.state}
+                                         dialogValues={{ ...this.state, availableSources: this.props.availableSources }}
                                          onValueChanged={this.onValueChanged}
                                          connectionName={vm.connectionName} />
                 <NetworkModelRow idPrefix={idPrefix}

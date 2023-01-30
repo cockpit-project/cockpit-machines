@@ -132,8 +132,10 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
         let sources;
         if (dialogValues.networkType === "network")
             sources = dialogValues.availableSources.network;
-        else
-            sources = dialogValues.availableSources.device;
+        else if (dialogValues.networkType === "direct")
+            sources = Object.keys(dialogValues.availableSources.device).filter(dev => dialogValues.availableSources.device[dev].type != "bridge");
+        else if (dialogValues.networkType === "bridge")
+            sources = Object.keys(dialogValues.availableSources.device).filter(dev => dialogValues.availableSources.device[dev].type == "bridge");
 
         if (sources.length > 0) {
             networkSourcesContent = sources.map(networkSource => {
