@@ -33,11 +33,20 @@ import { DeleteResourceButton } from '../../common/deleteResource.jsx';
 
 const _ = cockpit.gettext;
 
-const getNetworkDevices = (updateState) => {
-    cockpit.spawn(["find", "/sys/class/net", "-type", "l", "-printf", '%f\n'], { err: "message" })
+const getNetworkDevices = () => {
+    const devs = {};
+    return cockpit.spawn(["find", "/sys/class/net", "-type", "l", "-printf", '%f\n'], { err: "message" })
             .then(output => {
-                const devs = output.trim().split('\n');
-                updateState(devs);
+                output.trim().split('\n')
+                        .forEach(dev => { devs[dev] = {} });
+                return cockpit.spawn(["ip", "-j", "link", "show", "type", "bridge"], { err: "message" });
+            })
+            .then(bridges => {
+                const bridgeNames = JSON.parse(bridges).map(br => br.ifname);
+                bridgeNames.forEach(br => { devs[br].type = "bridge" });
+            })
+            .then(() => {
+                return Promise.resolve(devs);
             })
             .catch(e => console.warn("could not read /sys/class/net:", e.toString()));
 };
@@ -55,7 +64,7 @@ export class VmNetworkActions extends React.Component {
 
     componentDidMount() {
         // only consider symlinks -- there might be other stuff like "bonding_masters" which we don't want
-        getNetworkDevices(devs => this.setState({ networkDevices: devs }));
+        getNetworkDevices().then(devs => this.setState({ networkDevices: devs }));
     }
 
     render() {
@@ -162,7 +171,7 @@ export class VmNetworkTab extends React.Component {
 
     componentDidMount() {
         // only consider symlinks -- there might be other stuff like "bonding_masters" which we don't want
-        getNetworkDevices(devs => this.setState({ networkDevices: devs }));
+        getNetworkDevices().then(devs => this.setState({ networkDevices: devs }));
         this.getIpAddr();
     }
 
