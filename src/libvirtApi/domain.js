@@ -66,7 +66,7 @@ import { storagePoolRefresh } from './storagePool.js';
 import { snapshotGetAll } from './snapshot.js';
 import { downloadRhelImage, getRhelImageUrl } from './rhel-images.js';
 import { call, Enum, timeout, resolveUiState } from './helpers.js';
-import { DOWNLOAD_AN_OS, LOCAL_INSTALL_MEDIA_SOURCE, needsRHToken } from '../components/create-vm-dialog/createVmDialogUtils.js';
+import { CLOUD_IMAGE, DOWNLOAD_AN_OS, LOCAL_INSTALL_MEDIA_SOURCE, needsRHToken } from "../components/create-vm-dialog/createVmDialogUtils.js";
 
 export const domainCanConsole = (vmState) => vmState == 'running';
 export const domainCanDelete = (vmState, vmId) => true;
@@ -294,6 +294,29 @@ export function domainCreate({
 
     logDebug(`CREATE_VM(${vmName}): install_machine.py '${args}'`);
 
+    const hashPasswords = (args) => {
+        if (args.sourceType === CLOUD_IMAGE) {
+            const promises = [];
+            const options = { err: "message" };
+            if (args.userPassword)
+                promises.push(cockpit.spawn(['openssl', 'passwd', '-5', args.userPassword], options));
+            if (args.rootPassword)
+                promises.push(cockpit.spawn(['openssl', 'passwd', '-5', args.rootPassword], options));
+
+            return Promise.all(promises).then(ret => {
+                if (args.userPassword)
+                    args.userPassword = ret.shift().trim();
+
+                if (args.rootPassword)
+                    args.rootPassword = ret.shift().trim();
+
+                return Promise.resolve(args);
+            });
+        } else {
+            return Promise.resolve(args);
+        }
+    };
+
     const tryDownloadRhelImage = () => {
         if (sourceType == DOWNLOAD_AN_OS && needsRHToken(os)) {
             const options = { err: "message" };
@@ -332,7 +355,8 @@ export function domainCreate({
     };
 
     return tryDownloadRhelImage()
-            .then(() => cockpit.spawn([pythonPath, "--", "-", JSON.stringify(args)], opts).input(installVmScript))
+            .then(() => hashPasswords(args))
+            .then(args => cockpit.spawn([pythonPath, "--", "-", JSON.stringify(args)], opts).input(installVmScript))
             .then(() => finishVmCreateInProgress(vmName, connectionName))
             .finally(() => clearVmUiState(vmName, connectionName));
 }
