@@ -23,6 +23,11 @@ TAR_ARGS = --sort=name --mtime "@$(shell git show --no-patch --format='%at')" --
 
 all: $(DIST_TEST)
 
+ifeq ($(TEST_COVERAGE),yes)
+RUN_TESTS_OPTIONS+=--coverage
+NODE_ENV=development
+endif
+
 # checkout common files from Cockpit repository required to build this project;
 # this has no API stability guarantee, so check out a stable tag when you start
 # a new project, use the latest release, and update it from time to time
@@ -135,7 +140,7 @@ dist: $(TARFILE)
 # when building a distribution tarball, call bundler with a 'production' environment
 # we don't ship most node_modules for license and compactness reasons, only the ones necessary for running tests
 # we ship a pre-built dist/ (so it's not necessary) and ship package-lock.json (so that node_modules/ can be reconstructed if necessary)
-$(TARFILE): export NODE_ENV=production
+$(TARFILE): export NODE_ENV ?= production
 $(TARFILE): $(DIST_TEST) $(SPEC) packaging/arch/PKGBUILD packaging/debian/changelog
 	if type appstream-util >/dev/null 2>&1; then appstream-util validate-relax --nonet *.metainfo.xml; fi
 	tar --xz $(TAR_ARGS) -cf $(TARFILE) --transform 's,^,$(RPM_NAME)/,' \
