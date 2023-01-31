@@ -11,6 +11,12 @@ export RUN_TESTS_OPTIONS=--track-naughties
 # linters are off by default for production builds, but we want to run them in CI
 export LINT=1
 
+TEST_SCENARIO=${TEST_SCENARIO:-}
+
+if [ "$TEST_SCENARIO" == "devel" ]; then
+    export TEST_COVERAGE=yes
+fi
+
 make codecheck
 make check
 make po/machines.pot
