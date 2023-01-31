@@ -501,7 +501,7 @@ const HelperMessageToken = ({ message }) => {
     </a>;
 
     return (
-        <Flex id="token-helper-message">
+        <Flex id="token-helper-message" className="pf-c-form__helper-text">
             {message && <FlexItem className="invalid-token-helper" grow={{ default: 'grow' }}>{message + " "}</FlexItem>}
             <FlexItem>
                 { link }
@@ -519,7 +519,7 @@ const OfflineTokenRow = ({ offlineToken, onValueChanged, formValidationFailed })
         },
         INPROGRESS: {
             option: "default",
-            message: <span id="token-helper-message"><Spinner isSVG size="md" /> {_("Checking token validity...")}</span>,
+            message: <span id="token-helper-message" className="pf-c-form__helper-text"><Spinner isSVG size="md" /> {_("Checking token validity...")}</span>,
         },
         FAILED: {
             option: "error",
