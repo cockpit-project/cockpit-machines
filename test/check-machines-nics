@@ -46,7 +46,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         self.createVm("subVmTest1")
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
         self.waitVmRow("subVmTest1")
 
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
@@ -96,7 +96,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         self.createVm("subVmTest1")
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         self.waitVmRow("subVmTest1")
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
@@ -137,7 +137,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         args = self.createVm("subVmTest1")
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
         self.waitVmRow("subVmTest1")
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         wait(lambda: "login as 'cirros' user." in self.machine.execute(f"cat {args['logfile']}"), delay=3)
@@ -157,7 +157,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         # Refresh for getting new added NIC
         b.reload()
         b.enter_page('/machines')
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
         # Check NIC MAC addresses
         b.wait_text("#vm-subVmTest1-network-1-mac", "52:54:00:4b:73:6f")
         b.wait_text("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:4f")
@@ -199,7 +199,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         args = self.createVm("subVmTest1")
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         self.goToVmPage("subVmTest1")
         self.deleteIface(1)  # Remove default vNIC
@@ -463,7 +463,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         self.createVm("subVmTest1", running=False)
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         self.goToVmPage("subVmTest1")
 

@@ -54,7 +54,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
         connectionName = m.execute("virsh uri | head -1 | cut -d/ -f4").strip()
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         b.wait_in_text("#card-pf-networks .card-pf-title-link", "1 Network")
 
@@ -130,7 +130,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
         m = self.machine
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         # Click on Networks card
         b.wait_in_text("#card-pf-networks .pf-c-card__header button", "Network")
@@ -510,7 +510,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
 
         # Create a second bridge to LAN NIC, virbr0 does not make sense but let's use it for test purposes
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
         self.waitVmRow("subVmTest1")
 
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
@@ -573,7 +573,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
         # We don't get events for shut off VMs so reload the page
         b.reload()
         b.enter_page('/machines')
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         self.goToMainPage()
 
@@ -708,7 +708,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
         connectionName = m.execute("virsh uri | head -1 | cut -d/ -f4").strip()
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         # Click on Networks card
         b.wait_in_text("#card-pf-networks .pf-c-card__header button", "Network")
@@ -755,7 +755,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
         connectionName = m.execute("virsh uri | head -1 | cut -d/ -f4").strip()
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         # Click on Networks card
         b.click(".pf-c-card .pf-c-card__header button:contains(Network)")
@@ -884,7 +884,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
         self.createVm("subVmTest1", running=False)
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         # Click on Networks card
         b.click(".pf-c-card .pf-c-card__header button:contains(Network)")

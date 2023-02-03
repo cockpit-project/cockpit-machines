@@ -47,7 +47,7 @@ class TestMachinesHostDevs(VirtualMachinesCase):
         self.createVm("subVmTest1")
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
         self.waitVmRow("subVmTest1")
 
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
@@ -127,7 +127,7 @@ class TestMachinesHostDevs(VirtualMachinesCase):
         self.addCleanup(self.run_admin, "rm -rf /tmp/vmdir/", connectionName)
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         self.createVm("subVmTest1", running=False, connection=connectionName)
 
@@ -267,7 +267,7 @@ class TestMachinesHostDevs(VirtualMachinesCase):
         self.addCleanup(self.run_admin, "rm -rf /tmp/vmdir/", connectionName)
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
         self.createVm("subVmTest1", running=False, connection=connectionName)
         self.goToVmPage("subVmTest1", connectionName)
 
