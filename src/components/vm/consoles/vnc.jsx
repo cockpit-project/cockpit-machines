@@ -75,7 +75,6 @@ class Vnc extends React.Component {
             const prefix = (new URL(cockpit.transport.uri("channel/" + cockpit.transport.csrf_token))).pathname;
             const query = JSON.stringify({
                 payload: "stream",
-                protocol: "binary",
                 binary: "raw",
                 address: consoleDetail.address,
                 port: parseInt(consoleDetail.tlsPort || consoleDetail.port, 10),
