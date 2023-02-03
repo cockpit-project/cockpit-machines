@@ -25,6 +25,9 @@ distrosWithMonolithicDaemon = ["rhel-8-6", "rhel-8-7", "rhel-8-8", "ubuntu-stabl
 class VirtualMachinesCaseHelpers:
     created_pool = False
 
+    def waitPageInit(self):
+        self.browser.wait_in_text("body", "Virtual machines")
+
     def performAction(self, vmName, action, checkExpectedState=True, connectionName="system"):
         b = self.browser
         b.click("#vm-{0}-{1}-action-kebab button".format(vmName, connectionName))

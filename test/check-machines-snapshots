@@ -53,7 +53,7 @@ class TestMachinesSnapshots(VirtualMachinesCase):
         self.createVm("subVmTest1")
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
         self.waitVmRow("subVmTest1")
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
@@ -115,7 +115,7 @@ class TestMachinesSnapshots(VirtualMachinesCase):
         self.createVm("subVmTest1")
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         if m.image in distrosWithoutSnapshot:
             b.wait_not_present("#vm-subVmTest1-snapshots")
@@ -269,7 +269,7 @@ class TestMachinesSnapshots(VirtualMachinesCase):
         m.execute("virsh snapshot-current --domain subVmTest1 --snapshotname snapshotA")
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
         self.waitVmRow("subVmTest1")
         self.goToVmPage("subVmTest1")
         if m.image in distrosWithoutSnapshot:

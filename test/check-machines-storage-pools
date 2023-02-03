@@ -49,7 +49,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         self.createVm("subVmTest1")
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
         self.waitVmRow("subVmTest1")
 
         b.wait_in_text("#card-pf-storage-pools .card-pf-title-link", "1 Storage pool")
@@ -216,7 +216,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         m.execute("systemctl restart nfs-server")
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         # Click on Storage pools card
         b.wait_in_text("#card-pf-storage-pools .pf-c-card__header button", "Storage pools")
@@ -513,7 +513,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
             virsh pool-start disk-pool""")
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         # Click on Storage pools card
         b.wait_in_text("#card-pf-storage-pools .pf-c-card__header button", "Storage pools")
@@ -728,7 +728,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
             self.prepareStorageDeviceOnISCSI(target_iqn)
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         b.wait_in_text("#card-pf-storage-pools .pf-c-card__header button", "Storage pools")
         b.click(".pf-c-card .pf-c-card__header button:contains(Storage pools)")

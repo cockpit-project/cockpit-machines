@@ -40,7 +40,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
         self.createVm("subVmTest1", graphics="spice")
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
         self.waitVmRow("subVmTest1")
 
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")  # running or paused
@@ -78,7 +78,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
             self.machine.write("/etc/cockpit/cockpit.conf", f"[WebService]\nUrlRoot={urlroot}")
 
         self.login_and_go("/machines", urlroot=urlroot)
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
         self.waitVmRow("subVmTest1")
 
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")  # running or paused
@@ -106,7 +106,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
         self.createVm(name, graphics='vnc', ptyconsole=True)
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
         self.waitVmRow(name)
 
         self.goToVmPage(name)
@@ -179,7 +179,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
         self.createVm(name, graphics="vnc", ptyconsole=True)
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         self.waitVmRow(name)
         self.goToVmPage(name)
@@ -216,7 +216,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
         self.performAction(name, "delete")
         b.wait_visible(f"#vm-{name}-delete-modal-dialog")
         b.click(f"#vm-{name}-delete-modal-dialog button:contains(Delete)")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
         self.waitVmRow(name, present=False)
 
         b.wait_not_present("#navbar-oops")

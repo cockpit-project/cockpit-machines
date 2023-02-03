@@ -47,7 +47,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         self.createVm("subVmTest1")
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
         self.waitVmRow("subVmTest1")
 
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
@@ -167,7 +167,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         m = self.machine
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         def checkAutostart(vm_name, running):
             self.createVm(vm_name, running=running)
@@ -213,7 +213,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         self.createVm("subVmTest1")
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
         self.waitVmRow("subVmTest1")
 
         self.goToVmPage("subVmTest1")
@@ -270,7 +270,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         m.execute("touch /var/lib/libvirt/images/phonycdrom; virsh attach-disk subVmTest1 /var/lib/libvirt/images/phonycdrom sdb --type cdrom --config")
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
         self.waitVmRow("subVmTest1")
 
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
@@ -379,7 +379,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         args = self.createVm("subVmTest1", memory=256)
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
         self.waitVmRow("subVmTest1")
 
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
@@ -440,7 +440,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         args = self.createVm("subVmTest1")
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
         self.waitVmRow("subVmTest1")
 
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
@@ -591,7 +591,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         args = self.createVm("subVmTest1", running=False)
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
         self.goToVmPage("subVmTest1")
 
         b.wait_in_text("#vm-subVmTest1-watchdog-state", "none")

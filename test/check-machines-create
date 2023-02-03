@@ -49,7 +49,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         self.add_veth(iface)
 
         self.login_and_go("/machines")
-        self.browser.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         # test create and import [VM] buttons show appropriate tooltips when hovered over
         runner.createAndImportTooltipsTest()
@@ -173,7 +173,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         runner = TestMachinesCreate.CreateVmRunner(self)
 
         self.login_and_go("/machines")
-        self.browser.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         runner.checkEnvIsEmpty()
 
@@ -225,7 +225,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         config = TestMachinesCreate.TestCreateConfig
 
         self.login_and_go("/machines")
-        self.browser.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         # try to CREATE few machines
         # --cloud-init user-data option exists since virt-install >= 3.0.0
@@ -253,7 +253,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         config = TestMachinesCreate.TestCreateConfig
 
         self.login_and_go("/machines")
-        self.browser.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         # try to CREATE few machines
         runner.createDownloadAnOSTest(TestMachinesCreate.VmDialog(self, sourceType='os',
@@ -307,7 +307,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         self.login_and_go("/machines")
 
         b = self.browser
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         # test PXE Source
         # check that the pxe booting is not available on session connection
@@ -337,7 +337,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         # We don't handle events for networks yet, so reload the page to refresh the state
         b.reload()
         b.enter_page('/machines')
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         # Create with immediate starting
         runner.createTest(TestMachinesCreate.VmDialog(self, name='pxe-guest', sourceType='pxe',
@@ -428,7 +428,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         self.restore_file("/etc/libvirt/qemu.conf")
 
         self.login_and_go("/machines")
-        self.browser.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         vnc_listen = "192.168.2.6"
         vnc_passwd = "mypass"
@@ -467,7 +467,7 @@ vnc_password= "{vnc_passwd}"
         self.machine.execute("; ".join(cmds))
 
         self.login_and_go("/machines")
-        self.browser.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         # Test create VM with disk of type "block"
         # Check choosing existing volume as destination storage
@@ -492,7 +492,7 @@ vnc_password= "{vnc_passwd}"
 
             self.browser.reload()
             self.browser.enter_page('/machines')
-            self.browser.wait_in_text("body", "Virtual machines")
+            self.waitPageInit()
 
             # Check choosing existing volume as destination storage
             runner.createThenInstallTest(TestMachinesCreate.VmDialog(self, sourceType='file',
@@ -527,7 +527,7 @@ vnc_password= "{vnc_passwd}"
         self.machine.execute("virsh pool-destroy default; virsh pool-undefine default")
 
         self.login_and_go("/machines")
-        self.browser.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         # Check that when there is no storage pool defined a VM can still be created
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='file',
@@ -548,7 +548,7 @@ vnc_password= "{vnc_passwd}"
 
         self.browser.reload()
         self.browser.enter_page('/machines')
-        self.browser.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='file',
                                                       location=config.NOVELL_MOCKUP_ISO_PATH,
@@ -567,7 +567,7 @@ vnc_password= "{vnc_passwd}"
 
         self.browser.reload()
         self.browser.enter_page('/machines')
-        self.browser.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         # Check choosing existing volume as destination storage
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='file',
@@ -597,7 +597,7 @@ vnc_password= "{vnc_passwd}"
         config = TestMachinesCreate.TestCreateConfig
 
         self.login_and_go("/machines")
-        self.browser.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='disk_image',
                                                       location=config.VALID_DISK_IMAGE_PATH,
@@ -625,7 +625,7 @@ vnc_password= "{vnc_passwd}"
         config = TestMachinesCreate.TestCreateConfig
 
         self.login_and_go("/machines")
-        self.browser.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         runner.checkEnvIsEmpty()
 
@@ -686,7 +686,7 @@ vnc_password= "{vnc_passwd}"
 
     def testDisabledCreate(self):
         self.login_and_go("/machines")
-        self.browser.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
         self.browser.wait_visible("#create-new-vm:not(:disabled)")
         self.browser.wait_attr("#create-new-vm", "testdata", None)
 
@@ -1796,7 +1796,7 @@ vnc_password= "{vnc_passwd}"
         m = self.machine
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         dialog = TestMachinesCreate.VmDialog(self, sourceType='file',
                                              name="VmNotInstalled",
@@ -1945,7 +1945,7 @@ vnc_password= "{vnc_passwd}"
         b = self.browser
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         dialog = TestMachinesCreate.VmDialog(self, sourceType='file',
                                              name="VmNotInstalledBios",
@@ -1986,7 +1986,7 @@ vnc_password= "{vnc_passwd}"
         m = self.machine
 
         self.login_and_go("/machines")
-        b.wait_in_text("body", "Virtual machines")
+        self.waitPageInit()
 
         m.execute(f"qemu-img create {TestMachinesCreate.TestCreateConfig.VALID_DISK_IMAGE_PATH} 500M")
 
