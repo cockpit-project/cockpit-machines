@@ -26,7 +26,8 @@ class VirtualMachinesCaseHelpers:
     created_pool = False
 
     def waitPageInit(self):
-        self.browser.wait_in_text("body", "Virtual machines")
+        with self.browser.wait_timeout(30):
+            self.browser.wait_in_text("body", "Virtual machines")
 
     def performAction(self, vmName, action, checkExpectedState=True, connectionName="system"):
         b = self.browser
