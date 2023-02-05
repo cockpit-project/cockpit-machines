@@ -89,6 +89,22 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         self.waitPageInit()
         self.waitVmRow("subVmTest1")
 
+        def checkConnectionDescription(button: str, text: str):
+            b.click(button)
+            b.wait_visible("#create-vm-dialog")
+            b.click('#create-vm-dialog button[aria-label="more info"]')
+            b.wait_in_text("#popover-machines-connection-selector-popover-body", text)
+
+            # Close the connection description dialog
+            b.click("div[aria-describedby=popover-machines-connection-selector-popover-body] button[aria-label=Close]")
+            b.wait_not_present("#popover-machines-connection-selector-popover-body")
+            # Close the VM creation dialog
+            b.click('#create-vm-dialog button:contains("Cancel")')
+            b.wait_not_present("#create-vm-dialog")
+
+        checkConnectionDescription("#import-existing-vm", "Ideal for server VMs")
+        checkConnectionDescription("#create-new-vm", "Good choice for desktop virtualization")
+
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
         b.wait_in_text("#vm-subVmTest1-vcpus-count", "1")
