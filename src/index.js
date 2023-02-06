@@ -21,25 +21,23 @@ import 'patternfly/patternfly-4-cockpit.scss';
 import 'polyfills'; // once per application
 
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import store from './store.js';
 import App from './app.jsx';
 import { logDebug } from './helpers.js';
 
-function render() {
-    ReactDOM.render(
-        <App />,
-        document.getElementById('app')
-    );
+function render(root) {
+    // do initial render
+    root.render(<App />);
 }
 
 function renderApp() {
     // re-render app every time the state changes
-    store.subscribe(() => render());
+    const root = createRoot(document.getElementById('app'));
+    store.subscribe(() => render(root));
 
-    // do initial render
-    render();
+    render(root);
 }
 
 /**
