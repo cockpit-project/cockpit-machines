@@ -205,6 +205,7 @@ export const DiskActions = ({ vm, vms, disk, supportedDiskBusTypes, idPrefixRow 
         button,
     ];
 
+    console.log("root isAction is: " + isActionOpen);
     return (
         <div className='machines-listing-actions'>
             { cdromAction }
@@ -213,10 +214,17 @@ export const DiskActions = ({ vm, vms, disk, supportedDiskBusTypes, idPrefixRow 
                             vm={vm}
                             idPrefix={`${idPrefixRow}-edit`}
                             supportedDiskBusTypes={supportedDiskBusTypes} />}
-            <Dropdown onSelect={() => setIsActionOpen(false)}
+            <Dropdown onSelect={
+                () => {
+                    // console.log("HERE1");
+                    // setIsActionOpen(false);
+                }}
                       key={idPrefixRow + "-action-kebab"}
                       id={idPrefixRow + "-action-kebab"}
-                      toggle={<KebabToggle onToggle={(isOpen) => setIsActionOpen(isOpen)} />}
+                      toggle={<KebabToggle onToggle={(isOpen) => {
+                          console.log("isOpen from toggle is: " + isOpen);
+                          setIsActionOpen(isOpen);
+                      }} />}
                       isPlain
                       isOpen={isActionOpen}
                       position='right'
