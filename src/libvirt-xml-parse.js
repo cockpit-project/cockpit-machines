@@ -250,12 +250,18 @@ export function parseDomainDumpxml(connectionName, domXml, objPath) {
     const installSourceType = parseDumpxmlMachinesMetadataElement(metadataElem, 'install_source_type');
     const installSource = parseDumpxmlMachinesMetadataElement(metadataElem, 'install_source');
     const osVariant = parseDumpxmlMachinesMetadataElement(metadataElem, 'os_variant');
+    const rootPassword = parseDumpxmlMachinesMetadataElement(metadataElem, 'root_password');
+    const userLogin = parseDumpxmlMachinesMetadataElement(metadataElem, 'user_login');
+    const userPassword = parseDumpxmlMachinesMetadataElement(metadataElem, 'user_password');
 
     const metadata = {
         hasInstallPhase,
         installSourceType,
         installSource,
         osVariant,
+        rootPassword,
+        userLogin,
+        userPassword,
     };
 
     return {

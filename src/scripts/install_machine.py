@@ -121,7 +121,7 @@ def prepare_unattended(args):
 @contextmanager
 def prepare_cloud_init(args):
     params = []
-    if args['type'] == 'create' and args['sourceType'] == 'cloud':
+    if args['sourceType'] == 'cloud' and (args['type'] == 'install' or args['startVm']):
         params.append("--cloud-init")
         user_data_file = tempfile.NamedTemporaryFile(
             prefix="cockpit-machines-",
@@ -222,8 +222,7 @@ def prepare_virt_install_params(args):
             params += prepare_graphics_params(args['connectionName'])
 
         # Installation media
-        if args['sourceType'] != "cloud":
-            params += prepare_installation_source(args)
+        params += prepare_installation_source(args)
 
         # VCPUs
         if 'vcpu' in args:
@@ -312,8 +311,15 @@ def inject_metadata(xml):
   <cockpit_machines:install_source_type>{args['sourceType']}</cockpit_machines:install_source_type> \
   <cockpit_machines:install_source>{args['source']}</cockpit_machines:install_source> \
   <cockpit_machines:os_variant>{args['os']}</cockpit_machines:os_variant> \
-</cockpit_machines:data>
 '''
+    if has_install_phase == "true" and args['sourceType'] == 'cloud':
+        if args['rootPassword']:
+            METADATA += f"<cockpit_machines:root_password>{args['rootPassword']}</cockpit_machines:root_password>"
+        if args['userLogin']:
+            METADATA += f"<cockpit_machines:user_login>{args['userLogin']}</cockpit_machines:user_login>"
+        if args['userPassword']:
+            METADATA += f"<cockpit_machines:user_password>{args['userPassword']}</cockpit_machines:user_password>"
+    METADATA += "</cockpit_machines:data>"
 
     cockpit_machines_metadata_new = ET.fromstring(METADATA)
     metadata.append(cockpit_machines_metadata_new)
