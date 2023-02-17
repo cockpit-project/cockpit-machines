@@ -1,18 +1,15 @@
-const fs = require("fs");
-const path = require("path");
+import fs from "fs";
 
-const copy = require("copy-webpack-plugin");
-const extract = require("mini-css-extract-plugin");
-const TerserJSPlugin = require('terser-webpack-plugin');
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
-const CompressionPlugin = require("compression-webpack-plugin");
-const ESLintPlugin = require('eslint-webpack-plugin');
-const CockpitPoPlugin = require("./pkg/lib/cockpit-po-plugin");
-const CockpitRsyncPlugin = require("./pkg/lib/cockpit-rsync-plugin");
-const StylelintPlugin = require('stylelint-webpack-plugin');
+import copy from "copy-webpack-plugin";
+import extract from "mini-css-extract-plugin";
+import TerserJSPlugin from 'terser-webpack-plugin';
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
+import CompressionPlugin from "compression-webpack-plugin";
+import ESLintPlugin from 'eslint-webpack-plugin';
+import StylelintPlugin from 'stylelint-webpack-plugin';
 
-// absolute path disables recursive module resolution, so build a relative one
-const nodedir = path.relative(process.cwd(), path.resolve((process.env.SRCDIR || __dirname), "node_modules"));
+import CockpitPoPlugin from "./pkg/lib/cockpit-po-plugin.js";
+import CockpitRsyncPlugin from "./pkg/lib/cockpit-rsync-plugin.js";
 
 // Obtain package name from package.json
 const packageJson = JSON.parse(fs.readFileSync('package.json'));
@@ -31,7 +28,7 @@ const copy_files = [
 
 const plugins = [
     new copy({ patterns: copy_files }),
-    new extract({filename: "[name].css"}),
+    new extract({ filename: "[name].css" }),
     new ESLintPlugin({
         extensions: ["js", "jsx"],
         failOnWarning: true,
@@ -42,7 +39,7 @@ const plugins = [
 
 if (stylelint) {
     plugins.push(new StylelintPlugin({
-      context: "src/",
+        context: "src/",
     }));
 }
 
@@ -54,20 +51,20 @@ if (production) {
     }));
 }
 
-module.exports = {
+const config = {
     mode: production ? 'production' : 'development',
     resolve: {
-        modules: [ nodedir, path.resolve(__dirname, 'pkg/lib') ],
-        alias: { 'font-awesome': path.resolve(nodedir, 'font-awesome-sass/assets/stylesheets') },
+        modules: ['node_modules', 'pkg/lib'],
+        alias: { 'font-awesome': 'font-awesome-sass/assets/stylesheets' },
         // TODO: The following fallbacks are needed for ip module - replace this module with one better maintained
         fallback: {
-            "browser": false,
-            "os": false,
-            "buffer": require.resolve("buffer"),
+            browser: false,
+            os: false,
+            buffer: "buffer",
         }
     },
     resolveLoader: {
-        modules: [ nodedir, path.resolve(__dirname, 'pkg/lib') ],
+        modules: ['node_modules', 'pkg/lib'],
     },
     watchOptions: {
         ignored: /node_modules/,
@@ -171,7 +168,6 @@ module.exports = {
                         },
                     },
 
-
                 ]
             },
             {
@@ -192,4 +188,6 @@ module.exports = {
         ]
     },
     plugins: plugins
-}
+};
+
+export default config;

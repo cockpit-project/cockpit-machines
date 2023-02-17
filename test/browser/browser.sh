@@ -24,6 +24,11 @@ DNF="dnf install --disablerepo=fedora-cisco-openh264 -y"
 # we don't need the H.264 codec, and it is sometimes not available (rhbz#2005760)
 $DNF --setopt=install_weak_deps=False firefox
 
+# nodejs 10 is too old for current Cockpit test API
+if grep -q platform:el8 /etc/os-release; then
+    dnf module switch-to -y nodejs:16
+fi
+
 # RHEL/CentOS 8 and Fedora have this, but not RHEL 9; tests check this more precisely
 $DNF libvirt-daemon-driver-storage-iscsi-direct || true
 
