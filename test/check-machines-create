@@ -21,6 +21,7 @@ import contextlib
 import math
 import os
 import re
+import string
 import time
 import xml.etree.ElementTree as ET
 from datetime import datetime
@@ -277,6 +278,9 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         dialog.cancel()
 
     def testCreateNameGeneration(self):
+        m = self.machine
+        b = self.browser
+
         config = TestMachinesCreate.TestCreateConfig
         runner = TestMachinesCreate.CreateVmRunner(self)
 
@@ -327,6 +331,31 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                                       delete=True,
                                                       create_and_run=False),
                           check_env_empty=False)
+
+        # Create VMs until no default generated name
+        m.execute("touch /tmp/disk")
+        m.execute(
+            "virt-install --connect qemu:///system"
+            f" --name NAME"
+            f" --os-variant {config.FEDORA_28_SHORTID}"
+            f" --disk /tmp/disk"
+            " --memory 1 --wait -1 --print-xml >/tmp/xml")
+
+        for v in string.ascii_uppercase:
+            vm_name = predicted_name + "-" + v
+            m.execute(f"sed -e 's/NAME/{vm_name}/' </tmp/xml | grep -v uuid >/tmp/xml2; virsh define /tmp/xml2")
+            b.wait_visible(f"#vm-{vm_name}-system-name")
+
+        b.click("#create-new-vm")
+        b.wait_visible("#create-vm-dialog")
+        b.wait_attr("#vm-name", "placeholder", "Unique name")
+
+        b.set_input_text("#os-select-group input", config.FEDORA_28)
+
+        b.click("#create-and-edit")
+        b.wait_text("#vm-name-group .pf-v6-c-helper-text__item-text", "Name must not be empty")
+        b.wait_visible("#create-and-run[disabled]")
+        b.wait_visible("#create-and-edit[aria-disabled=true]")
 
     def testCreateCloudBaseImage(self):
         runner = TestMachinesCreate.CreateVmRunner(self)
