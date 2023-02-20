@@ -126,9 +126,11 @@ class VirtualMachinesCaseHelpers:
 
         if connection == "system":
             img = "/var/lib/libvirt/images/{0}-2.img".format(name)
+            logPath = f"/var/log/libvirt/console-{name}.log"
         else:
             m.execute("runuser -l admin -c 'mkdir -p /home/admin/.local/share/libvirt/images'")
             img = "/home/admin/.local/share/libvirt/images/{0}-2.img".format(name)
+            logPath = f"/home/admin/.local/share/libvirt/console-{name}.log"
 
         m.upload([image_file], img)
         m.execute("chmod 777 {0}".format(img))
@@ -136,7 +138,7 @@ class VirtualMachinesCaseHelpers:
         args = {
             "name": name,
             "image": img,
-            "logfile": "/var/log/libvirt/console-{0}.log".format(name),
+            "logfile": logPath,
             "memory": memory,
         }
         if ptyconsole:
