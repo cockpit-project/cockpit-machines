@@ -106,7 +106,6 @@ export class VmNetworkTab extends React.Component {
         super(props);
 
         this.state = {
-            domifaddressAllSources: [],
             networkDevices: undefined,
             ips: {},
         };

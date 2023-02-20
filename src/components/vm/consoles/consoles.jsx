@@ -47,7 +47,6 @@ class Consoles extends React.Component {
         super(props);
 
         this.state = {
-            consoleDetail: undefined,
             serial: props.vm.displays && props.vm.displays.filter(display => display.type == 'pty'),
         };
 

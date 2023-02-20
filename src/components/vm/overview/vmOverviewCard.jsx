@@ -56,7 +56,6 @@ class VmOverviewCard extends React.Component {
         super(props);
 
         this.state = {
-            runningVmUpdated: false,
             virtXMLAvailable: undefined,
         };
         this.openVcpu = this.openVcpu.bind(this);

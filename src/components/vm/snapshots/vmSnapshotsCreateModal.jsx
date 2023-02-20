@@ -70,7 +70,6 @@ export class CreateSnapshotModal extends React.Component {
         this.state = {
             name: props.vm.name + '_' + now,
             description: "",
-            validationError: {},
             inProgress: false,
         };
 
