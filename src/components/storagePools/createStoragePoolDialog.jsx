@@ -276,19 +276,19 @@ class CreateStoragePoolModal extends React.Component {
         if (key == 'source') {
             const property = Object.keys(value)[0];
             const propertyValue = value[Object.keys(value)[0]];
-            this.setState({
-                source: Object.assign({}, this.state.source, { [property]: propertyValue })
-            });
+            this.setState(prevState => ({
+                source: Object.assign({}, prevState.source, { [property]: propertyValue })
+            }));
         } else if (key == 'type') {
             if (value == 'disk') {
                 // When switching to disk type select the default format which is 'dos'
-                this.setState({
-                    source: Object.assign({}, this.state.source, { format: 'dos' })
-                });
+                this.setState(prevState => ({
+                    source: Object.assign({}, prevState.source, { format: 'dos' })
+                }));
             } else {
-                this.setState({
-                    source: Object.assign({}, this.state.source, { format: undefined })
-                });
+                this.setState(prevState => ({
+                    source: Object.assign({}, prevState.source, { format: undefined })
+                }));
             }
             this.setState({ [key]: value });
         } else {

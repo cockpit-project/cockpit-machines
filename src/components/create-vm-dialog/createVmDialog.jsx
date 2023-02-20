@@ -1054,7 +1054,7 @@ class CreateVmModal extends React.Component {
             // For different connections the generated VM names might differ
             // try to regenerate it
             if (this.state.os)
-                this.setState({ suggestedVmName: getVmName(value, this.props.vms, this.state.os) });
+                this.setState((prevState, prevProps) => ({ suggestedVmName: getVmName(value, prevProps.vms, prevState.os) }));
 
             break;
         case 'os': {
@@ -1072,7 +1072,7 @@ class CreateVmModal extends React.Component {
                 const converted = convertToUnit(stateDelta.minimumMemory, units.B, bestUnit);
                 this.setState({ memorySizeUnit: bestUnit.name }, () => this.onValueChanged("memorySize", converted));
             } else {
-                this.setState(getMemoryDefaults(this.props.nodeMaxMemory));
+                this.setState((_, prevProps) => getMemoryDefaults(prevProps.nodeMaxMemory));
             }
 
             if (value && value.minimumResources.storage) {
