@@ -36,7 +36,6 @@ export class StoragePoolVolumesTab extends React.Component {
         super(props);
 
         this.state = {
-            volumeUsed: {},
             rows: (props.storagePool.volumes || []).map(row => {
                 row.selected = false;
                 return row;
