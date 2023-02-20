@@ -193,7 +193,7 @@ function doUsagePolling(name, connectionName, objPath) {
                 }
             })
             .catch(ex => console.warn(`GetStats(${name}, ${connectionName}) failed: ${ex.toString()}`))
-            .finally(() => delayPolling(() => doUsagePolling(name, connectionName, objPath), null, name, connectionName));
+            .finally(() => delayPolling(() => doUsagePolling(name, connectionName, objPath), null));
 }
 
 function getLoggedInUser() {
