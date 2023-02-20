@@ -53,7 +53,7 @@ export function storagePoolCreate({
                 return call(connectionName, storagePoolPath, 'org.freedesktop.DBus.Properties', 'Set', args, { timeout, type: 'ssv' });
             }, exc => {
                 if (storagePoolPath)
-                    storagePoolUndefine(connectionName, storagePoolPath);
+                    storagePoolUndefine({ connectionName, objPath: storagePoolPath });
                 return Promise.reject(exc);
             });
 }
