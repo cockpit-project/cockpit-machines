@@ -170,10 +170,10 @@ class AppActive extends React.Component {
         else
             resourceHasError[notification.resourceId] = 1;
 
-        this.setState({
-            notifications: this.state.notifications.concat([notification]), // append new notification to the end of array
+        this.setState(prevState => ({
+            notifications: prevState.notifications.concat([notification]), // append new notification to the end of array
             resourceHasError,
-        });
+        }));
     }
 
     /*
