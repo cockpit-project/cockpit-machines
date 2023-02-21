@@ -119,7 +119,7 @@ export class DeleteDialog extends React.Component {
     }
 
     onDiskCheckedChanged(index, value) {
-        const disks = this.state.disks;
+        const disks = this.state.disks.slice();
 
         disks[index].checked = value;
         this.setState(disks);
