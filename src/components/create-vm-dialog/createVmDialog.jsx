@@ -671,7 +671,7 @@ const UsersConfigurationRow = ({
                     .catch(ex => {
                         if (validationFailed !== undefined) {
                             const errors = {};
-                            errors.password = (ex.message || ex.toString()).replace("\n", " ");
+                            errors.password = (ex.message || ex.toString()).replace(/\n/g, " ");
                             setRootPasswordErrors(errors);
                         }
                         setRootPasswordStrength(0);
@@ -695,7 +695,7 @@ const UsersConfigurationRow = ({
                     .catch(ex => {
                         if (validationFailed !== undefined) {
                             const errors = {};
-                            errors.password = (ex.message || ex.toString()).replace("\n", " ");
+                            errors.password = (ex.message || ex.toString()).replace(/\n/g, " ");
                             setUserPasswordErrors(errors);
                         }
                         setUserPasswordStrength(0);
