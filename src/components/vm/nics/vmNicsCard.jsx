@@ -352,7 +352,6 @@ export class VmNetworkTab extends React.Component {
                             vm,
                             network,
                             availableSources,
-                            onClose: () => this.setState({ editNICDialogProps: undefined }),
                         };
 
                         function open() {
