@@ -51,6 +51,10 @@ Recommends: qemu-block-curl
 Recommends: qemu-char-spice
 Recommends: qemu-device-usb-host
 Recommends: qemu-device-usb-redirect
+# HACK: https://bugzilla.redhat.com/show_bug.cgi?id=2170110
+%if 0%{?fedora} >= 38
+Requires: (qemu-audio-spice if qemu-char-spice)
+%endif
 %endif
 %endif
 Requires: libvirt-client
