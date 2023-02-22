@@ -1058,11 +1058,6 @@ vnc_password= "{vnc_passwd}"
             root = ET.fromstring(domainXML)
 
             expect_spice = not m.image.startswith("rhel-9") and m.image not in ["centos-9-stream"]
-            if m.image.startswith("fedora"):
-                # HACK: Fedora splits out the driver into a separate package, which we don't depend on
-                # spice currently requires this, but shouldn't: https://bugzilla.redhat.com/show_bug.cgi?id=2064594
-                expect_spice = m.execute("if rpm -q qemu-device-display-qxl >/dev/null; then echo yes; fi").strip() == "yes"
-
             spice = root.findall(".//graphics[@type='spice']")
             if expect_spice:
                 self.assertEqual(spice_listen, spice[0].attrib['listen'])
