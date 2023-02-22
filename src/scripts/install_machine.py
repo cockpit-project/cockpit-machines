@@ -39,21 +39,6 @@ def get_graphics_capabilies(connection):
         for value in graphics.find('enum').findall('value'):
             consoles.append(value.text)
 
-    # HACK: spice requires QXL driver which is modular in Fedora https://bugzilla.redhat.com/show_bug.cgi?id=2064594
-    if 'spice' in consoles:
-        try:
-            out = subprocess.check_output(['qemu-system-x86_64', '-vga', 'help'])
-            for line in out.splitlines():
-                if line.startswith(b'qxl'):
-                    logging.debug('get_graphics_capabilies: qemu-system-x86_84 -vga help confirmed QXL support')
-                    break
-            else:
-                logging.debug('get_graphics_capabilies: qemu-system-x86_84 -vga help shows no QXL support, disabling spice')
-                consoles.remove('spice')
-        except (FileNotFoundError, subprocess.CalledProcessError) as e:
-            # non-x86 architectures/weird setups
-            logging.debug('get_graphics_capabilies: Querying qemu-system-x86_84 -vga help failed: %s', str(e))
-
     logging.debug('get_graphics_capabilies: ' + ', '.join(consoles))
 
     return [c for c in consoles if c in ['vnc', 'spice']]
