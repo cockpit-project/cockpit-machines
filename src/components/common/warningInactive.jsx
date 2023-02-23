@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
-import { Alert, Tooltip } from "@patternfly/react-core";
+import { Alert } from "@patternfly/react-core/dist/esm/components/Alert/index.js";
+import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip/index.js";
 import { PendingIcon } from "@patternfly/react-icons";
 
 const _ = cockpit.gettext;

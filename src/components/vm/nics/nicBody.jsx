@@ -19,14 +19,12 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-    Button,
-    Flex,
-    FormGroup,
-    FormSelect, FormSelectOption,
-    Popover, PopoverPosition,
-    Text, TextContent, TextVariants,
-} from '@patternfly/react-core';
+import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
+import { Flex } from "@patternfly/react-core/dist/esm/layouts/Flex/index.js";
+import { FormGroup } from "@patternfly/react-core/dist/esm/components/Form/index.js";
+import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect/index.js";
+import { Popover, PopoverPosition } from "@patternfly/react-core/dist/esm/components/Popover/index.js";
+import { Text, TextContent, TextVariants } from "@patternfly/react-core/dist/esm/components/Text/index.js";
 import { ExternalLinkSquareAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 
 import cockpit from 'cockpit';

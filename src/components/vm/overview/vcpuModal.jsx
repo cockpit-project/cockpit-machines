@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
-import {
-    Button,
-    Form, FormGroup,
-    Flex, FormSelect, FormSelectOption,
-    Modal, Popover, TextInput
-} from '@patternfly/react-core';
+import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
+import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form/index.js";
+import { Flex } from "@patternfly/react-core/dist/esm/layouts/Flex/index.js";
+import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect/index.js";
+import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js";
+import { Popover } from "@patternfly/react-core/dist/esm/components/Popover/index.js";
+import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput/index.js";
 import { InfoAltIcon } from '@patternfly/react-icons';
 
 import { DialogsContext } from 'dialogs.jsx';

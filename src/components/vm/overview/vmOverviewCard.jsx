@@ -19,12 +19,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
-import {
-    Button, Text, TextVariants, Tooltip,
-    DescriptionList, DescriptionListGroup, DescriptionListTerm, DescriptionListDescription,
-    Flex, FlexItem,
-    Switch,
-} from "@patternfly/react-core";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
+import { Text, TextVariants } from "@patternfly/react-core/dist/esm/components/Text/index.js";
+import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip/index.js";
+import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList/index.js";
+import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex/index.js";
+import { Switch } from "@patternfly/react-core/dist/esm/components/Switch/index.js";
 import { DialogsContext } from 'dialogs.jsx';
 
 import { VCPUModal } from './vcpuModal.jsx';

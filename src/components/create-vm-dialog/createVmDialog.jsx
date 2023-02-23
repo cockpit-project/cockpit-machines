@@ -20,18 +20,18 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { debounce } from 'throttle-debounce';
-import {
-    Flex, FlexItem,
-    Form, FormGroup,
-    FormSelect, FormSelectOption, FormSelectOptionGroup,
-    InputGroup,
-    Modal,
-    Select as PFSelect, SelectOption, SelectVariant,
-    Tabs, Tab, TabTitleText,
-    TextInput,
-    Button, Tooltip, TextArea,
-    Spinner,
-} from '@patternfly/react-core';
+import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex/index.js";
+import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form/index.js";
+import { FormSelect, FormSelectOption, FormSelectOptionGroup } from "@patternfly/react-core/dist/esm/components/FormSelect/index.js";
+import { InputGroup } from "@patternfly/react-core/dist/esm/components/InputGroup/index.js";
+import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js";
+import { Select as PFSelect, SelectOption, SelectVariant } from "@patternfly/react-core/dist/esm/components/Select/index.js";
+import { Tab, TabTitleText, Tabs } from "@patternfly/react-core/dist/esm/components/Tabs/index.js";
+import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput/index.js";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
+import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip/index.js";
+import { TextArea } from "@patternfly/react-core/dist/esm/components/TextArea/index.js";
+import { Spinner } from "@patternfly/react-core/dist/esm/components/Spinner/index.js";
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import { DialogsContext } from 'dialogs.jsx';

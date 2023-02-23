@@ -18,7 +18,9 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button, Flex, FlexItem, Tooltip } from '@patternfly/react-core';
+import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
+import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex/index.js";
+import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip/index.js";
 import { DialogsContext } from 'dialogs.jsx';
 
 import cockpit from 'cockpit';

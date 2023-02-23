@@ -17,12 +17,10 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import {
-    Button,
-    Dropdown,
-    KebabToggle, Progress,
-    Tooltip
-} from '@patternfly/react-core';
+import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
+import { Dropdown, KebabToggle } from "@patternfly/react-core/dist/esm/components/Dropdown/index.js";
+import { Progress } from "@patternfly/react-core/dist/esm/components/Progress/index.js";
+import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip/index.js";
 
 import { ListingPanel } from 'cockpit-components-listing-panel.jsx';
 import {

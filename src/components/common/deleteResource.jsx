@@ -19,13 +19,11 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-    Button,
-    DescriptionList, DescriptionListGroup, DescriptionListTerm, DescriptionListDescription,
-    DropdownItem,
-    Modal,
-    Tooltip
-} from '@patternfly/react-core';
+import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
+import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList/index.js";
+import { DropdownItem } from "@patternfly/react-core/dist/esm/components/Dropdown/index.js";
+import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js";
+import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip/index.js";
 
 import cockpit from 'cockpit';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';

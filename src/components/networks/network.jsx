@@ -17,7 +17,9 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { useState } from 'react';
-import { Button, DropdownItem, Dropdown, KebabToggle, Tooltip } from '@patternfly/react-core';
+import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
+import { Dropdown, DropdownItem, KebabToggle } from "@patternfly/react-core/dist/esm/components/Dropdown/index.js";
+import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip/index.js";
 import { useDialogs } from 'dialogs.jsx';
 
 import {

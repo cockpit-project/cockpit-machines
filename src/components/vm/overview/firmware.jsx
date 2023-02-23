@@ -19,11 +19,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
-import {
-    Button,
-    Form, FormGroup, FormSelect, FormSelectOption,
-    Modal, Tooltip
-} from '@patternfly/react-core';
+import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
+import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form/index.js";
+import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect/index.js";
+import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js";
+import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip/index.js";
 import { useDialogs, DialogsContext } from 'dialogs.jsx';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';

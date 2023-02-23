@@ -17,7 +17,9 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { useState, useEffect } from 'react';
-import { AlertGroup, Button, Progress, ProgressMeasureLocation } from '@patternfly/react-core';
+import { AlertGroup } from "@patternfly/react-core/dist/esm/components/AlertGroup/index.js";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
+import { Progress, ProgressMeasureLocation } from "@patternfly/react-core/dist/esm/components/Progress/index.js";
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import { superuser } from "superuser.js";
 import cockpit from 'cockpit';

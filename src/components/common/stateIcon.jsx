@@ -20,7 +20,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 
-import { Button, Flex, Label, Popover } from '@patternfly/react-core';
+import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
+import { Flex } from "@patternfly/react-core/dist/esm/layouts/Flex/index.js";
+import { Label } from "@patternfly/react-core/dist/esm/components/Label/index.js";
+import { Popover } from "@patternfly/react-core/dist/esm/components/Popover/index.js";
 import { ErrorCircleOIcon, PendingIcon } from '@patternfly/react-icons';
 
 import {

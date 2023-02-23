@@ -19,7 +19,10 @@
 
 import cockpit from 'cockpit';
 import React, { useState } from 'react';
-import { Button, Form, FormGroup, Modal, TextInput } from '@patternfly/react-core';
+import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
+import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form/index.js";
+import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js";
+import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput/index.js";
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { useDialogs } from 'dialogs.jsx';

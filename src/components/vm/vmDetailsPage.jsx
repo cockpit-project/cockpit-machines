@@ -20,15 +20,14 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import cockpit from 'cockpit';
 
-import {
-    Breadcrumb, BreadcrumbItem,
-    CodeBlock, CodeBlockCode,
-    Gallery, Button,
-    List, ListItem,
-    Card, CardTitle, CardActions, CardHeader, CardBody, CardFooter,
-    Page, PageSection, PageSectionVariants,
-    Popover,
-} from '@patternfly/react-core';
+import { Breadcrumb, BreadcrumbItem } from "@patternfly/react-core/dist/esm/components/Breadcrumb/index.js";
+import { CodeBlock, CodeBlockCode } from "@patternfly/react-core/dist/esm/components/CodeBlock/index.js";
+import { Gallery } from "@patternfly/react-core/dist/esm/layouts/Gallery/index.js";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
+import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List/index.js";
+import { Card, CardActions, CardBody, CardFooter, CardHeader, CardTitle } from "@patternfly/react-core/dist/esm/components/Card/index.js";
+import { Page, PageSection, PageSectionVariants } from "@patternfly/react-core/dist/esm/components/Page/index.js";
+import { Popover } from "@patternfly/react-core/dist/esm/components/Popover/index.js";
 import { ExpandIcon, HelpIcon } from '@patternfly/react-icons';
 import { WithDialogs } from 'dialogs.jsx';
 

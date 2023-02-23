@@ -19,13 +19,13 @@
  */
 
 import React from 'react';
-import {
-    Button, Checkbox,
-    Form, FormGroup,
-    FormSelect, FormSelectOption, FormSelectOptionGroup,
-    Grid,
-    Modal, TextInput
-} from '@patternfly/react-core';
+import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
+import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox/index.js";
+import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form/index.js";
+import { FormSelect, FormSelectOption, FormSelectOptionGroup } from "@patternfly/react-core/dist/esm/components/FormSelect/index.js";
+import { Grid } from "@patternfly/react-core/dist/esm/layouts/Grid/index.js";
+import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js";
+import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput/index.js";
 import { useDialogs, DialogsContext } from 'dialogs.jsx';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';

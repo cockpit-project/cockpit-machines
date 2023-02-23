@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import cockpit from 'cockpit';
-import { Button, Form, FormGroup, FormSelect, FormSelectOption, FormSelectOptionGroup, Modal } from '@patternfly/react-core';
+import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
+import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form/index.js";
+import { FormSelect, FormSelectOption, FormSelectOptionGroup } from "@patternfly/react-core/dist/esm/components/FormSelect/index.js";
+import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js";
 import { useDialogs } from 'dialogs.jsx';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';

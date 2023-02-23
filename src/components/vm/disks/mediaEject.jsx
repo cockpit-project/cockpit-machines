@@ -18,11 +18,9 @@
  */
 
 import React, { useState } from 'react';
-import {
-    Button,
-    DescriptionList, DescriptionListGroup, DescriptionListTerm, DescriptionListDescription,
-    Modal,
-} from '@patternfly/react-core';
+import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
+import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList/index.js";
+import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js";
 
 import { domainEjectDisk, domainGet } from '../../../libvirtApi/domain.js';
 import cockpit from 'cockpit';
