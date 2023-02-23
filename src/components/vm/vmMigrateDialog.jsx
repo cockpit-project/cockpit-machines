@@ -19,19 +19,14 @@
 
 import cockpit from 'cockpit';
 import React, { useState } from 'react';
-import {
-    Button,
-    Checkbox,
-    Flex,
-    FlexItem,
-    Form,
-    FormGroup,
-    Modal,
-    Radio,
-    TextInput,
-    Popover,
-    PopoverPosition
-} from '@patternfly/react-core';
+import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
+import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox/index.js";
+import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex/index.js";
+import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form/index.js";
+import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js";
+import { Radio } from "@patternfly/react-core/dist/esm/components/Radio/index.js";
+import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput/index.js";
+import { Popover, PopoverPosition } from "@patternfly/react-core/dist/esm/components/Popover/index.js";
 import { OutlinedQuestionCircleIcon } from "@patternfly/react-icons";
 
 import { domainGetAll, domainMigrateToUri } from '../../libvirtApi/domain.js';

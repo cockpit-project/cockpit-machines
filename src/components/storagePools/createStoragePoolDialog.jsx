@@ -19,13 +19,13 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-    Button, Checkbox,
-    Form, FormGroup,
-    FormSelect, FormSelectOption,
-    Grid,
-    Modal, TextInput
-} from '@patternfly/react-core';
+import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
+import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox/index.js";
+import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form/index.js";
+import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect/index.js";
+import { Grid } from "@patternfly/react-core/dist/esm/layouts/Grid/index.js";
+import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js";
+import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput/index.js";
 import { DialogsContext } from 'dialogs.jsx';
 
 import { LIBVIRT_SYSTEM_CONNECTION } from '../../helpers.js';

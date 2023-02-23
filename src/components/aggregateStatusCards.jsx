@@ -20,12 +20,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 
-import {
-    Button,
-    Card, CardHeader,
-    Divider,
-    Flex, FlexItem,
-} from '@patternfly/react-core';
+import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
+import { Card, CardHeader } from "@patternfly/react-core/dist/esm/components/Card/index.js";
+import { Divider } from "@patternfly/react-core/dist/esm/components/Divider/index.js";
+import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex/index.js";
 import { ServerIcon, NetworkIcon, ArrowCircleUpIcon, ArrowCircleDownIcon } from '@patternfly/react-icons';
 
 import './aggregateStatusCards.scss';

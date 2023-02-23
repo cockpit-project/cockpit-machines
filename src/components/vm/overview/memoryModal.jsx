@@ -1,5 +1,7 @@
 import React from 'react';
-import { Button, Form, Modal } from '@patternfly/react-core';
+import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
+import { Form } from "@patternfly/react-core/dist/esm/components/Form/index.js";
+import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js";
 import PropTypes from 'prop-types';
 
 import cockpit from 'cockpit';

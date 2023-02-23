@@ -19,11 +19,9 @@
 import cockpit from 'cockpit';
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import {
-    Button,
-    Dropdown, DropdownItem, DropdownSeparator, KebabToggle,
-    Tooltip,
-} from '@patternfly/react-core';
+import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
+import { Dropdown, DropdownItem, DropdownSeparator, KebabToggle } from "@patternfly/react-core/dist/esm/components/Dropdown/index.js";
+import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip/index.js";
 import { useDialogs } from 'dialogs.jsx';
 
 import { updateVm } from '../../actions/store-actions.js';

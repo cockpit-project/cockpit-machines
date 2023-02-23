@@ -20,7 +20,11 @@
 import React from 'react';
 
 import { LIBVIRT_SYSTEM_CONNECTION, LIBVIRT_SESSION_CONNECTION, rephraseUI } from '../../helpers.js';
-import { Button, FormGroup, Radio, Popover, Text, TextContent, TextList, TextListItem, TextVariants } from '@patternfly/react-core';
+import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
+import { FormGroup } from "@patternfly/react-core/dist/esm/components/Form/index.js";
+import { Radio } from "@patternfly/react-core/dist/esm/components/Radio/index.js";
+import { Popover } from "@patternfly/react-core/dist/esm/components/Popover/index.js";
+import { Text, TextContent, TextList, TextListItem, TextVariants } from "@patternfly/react-core/dist/esm/components/Text/index.js";
 import { HelpIcon } from "@patternfly/react-icons";
 import cockpit from 'cockpit';
 import './machinesConnectionSelector.scss';

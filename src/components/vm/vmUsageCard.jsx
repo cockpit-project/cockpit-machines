@@ -20,10 +20,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 
-import {
-    Flex, FlexItem,
-    Progress, ProgressVariant,
-} from '@patternfly/react-core';
+import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex/index.js";
+import { Progress, ProgressVariant } from "@patternfly/react-core/dist/esm/components/Progress/index.js";
 
 import {
     logDebug,

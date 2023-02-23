@@ -18,14 +18,14 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import {
-    Button, Checkbox,
-    DropdownItem,
-    HelperText, HelperTextItem,
-    List, ListItem,
-    Modal,
-    Stack, Tooltip
-} from '@patternfly/react-core';
+import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
+import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox/index.js";
+import { DropdownItem } from "@patternfly/react-core/dist/esm/components/Dropdown/index.js";
+import { HelperText, HelperTextItem } from "@patternfly/react-core/dist/esm/components/HelperText/index.js";
+import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List/index.js";
+import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js";
+import { Stack } from "@patternfly/react-core/dist/esm/layouts/Stack/index.js";
+import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip/index.js";
 import { ExclamationTriangleIcon, InfoIcon } from '@patternfly/react-icons';
 import { useDialogs, DialogsContext } from 'dialogs.jsx';
 

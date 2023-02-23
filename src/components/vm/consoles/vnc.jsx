@@ -20,7 +20,7 @@ import React from 'react';
 import cockpit from 'cockpit';
 
 import { VncConsole } from '@patternfly/react-console';
-import { Dropdown, DropdownToggle, DropdownItem, DropdownSeparator } from '@patternfly/react-core';
+import { Dropdown, DropdownItem, DropdownSeparator, DropdownToggle } from "@patternfly/react-core/dist/esm/components/Dropdown/index.js";
 
 import { logDebug } from '../../../helpers.js';
 import { domainSendKey } from '../../../libvirtApi/domain.js';

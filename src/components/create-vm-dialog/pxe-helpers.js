@@ -19,7 +19,7 @@
 import React from 'react';
 import cockpit from 'cockpit';
 
-import { FormSelectOption } from '@patternfly/react-core';
+import { FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect/index.js";
 
 const _ = cockpit.gettext;
 
