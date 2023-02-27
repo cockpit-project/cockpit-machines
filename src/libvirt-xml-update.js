@@ -154,10 +154,7 @@ export function updateBootOrder(domXml, devices) {
     for (let i = 0; i < redirdevs.length; i++) {
         const redirdev = redirdevs[i];
         const port = redirdev.getElementsByTagName("address")[0].getAttribute("port");
-        const index = devices.findIndex(t => {
-            if (t.device.address)
-                return t.device.address.port === port;
-        });
+        const index = devices.findIndex(t => t.device.address?.port === port);
 
         let bootElem = getSingleOptionalElem(redirdev, "boot");
         if (index >= 0) { // it will have bootorder

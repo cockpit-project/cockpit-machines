@@ -382,6 +382,7 @@ export function findMatchingNodeDevices(hostdev, nodeDevices) {
                     (bus && device && d.capability.bus == bus && d.capability.device == device))
                     return true;
             }
+            return false;
         });
         break;
     }
@@ -403,6 +404,7 @@ export function findMatchingNodeDevices(hostdev, nodeDevices) {
                 d.capability.function == func &&
                 d.capability.domain == domain)
                 return true;
+            return false;
         });
         break;
     }
@@ -420,6 +422,7 @@ export function findMatchingNodeDevices(hostdev, nodeDevices) {
                 d.capability.lun._value == unit &&
                 d.capability.target._value == target)
                 return true;
+            return false;
         });
         break;
     }
@@ -434,6 +437,7 @@ export function findMatchingNodeDevices(hostdev, nodeDevices) {
             if ((uuid) &&
                 d.capability.uuid == uuid)
                 return true;
+            return false;
         });
         break;
     }
@@ -444,6 +448,7 @@ export function findMatchingNodeDevices(hostdev, nodeDevices) {
             if ((block) &&
                 d.capability.block == block)
                 return true;
+            return false;
         });
         break;
     }
@@ -454,6 +459,7 @@ export function findMatchingNodeDevices(hostdev, nodeDevices) {
             if ((ch) &&
                 d.capability.char == ch)
                 return true;
+            return false;
         });
         break;
     }
@@ -464,6 +470,7 @@ export function findMatchingNodeDevices(hostdev, nodeDevices) {
             if ((iface) &&
                 d.capability.interface == iface)
                 return true;
+            return false;
         });
         break;
     }

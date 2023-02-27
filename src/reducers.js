@@ -131,7 +131,8 @@ function networks(state, action) {
             return [...state, network]; // initialize network to empty object
 
         const connectionName = network.connectionName;
-        const index = network.id ? getFirstIndexOfResource(state, 'id', network.id, connectionName)
+        const index = network.id
+            ? getFirstIndexOfResource(state, 'id', network.id, connectionName)
             : getFirstIndexOfResource(state, 'name', network.name, connectionName);
         if (index < 0) {
             if (!updateOnly) {
@@ -185,7 +186,8 @@ function vms(state, action) {
     logDebug('reducer vms: action=' + JSON.stringify(action));
 
     function findVmToUpdate(state, { connectionName, id, name }) {
-        const index = id ? getFirstIndexOfResource(state, 'id', id, connectionName)
+        const index = id
+            ? getFirstIndexOfResource(state, 'id', id, connectionName)
             : getFirstIndexOfResource(state, 'name', name, connectionName);
         if (index < 0) {
             if (id)
@@ -206,7 +208,8 @@ function vms(state, action) {
             return [...state, action.vm]; // initialize vm to empty object
 
         const connectionName = action.vm.connectionName;
-        const index = action.vm.id ? getFirstIndexOfResource(state, 'id', action.vm.id, connectionName)
+        const index = action.vm.id
+            ? getFirstIndexOfResource(state, 'id', action.vm.id, connectionName)
             : getFirstIndexOfResource(state, 'name', action.vm.name, connectionName);
         if (index < 0) { // add
             const initObjIndex = state.findIndex(obj => isObjectEmpty(obj));
@@ -325,7 +328,8 @@ function storagePools(state, action) {
             return [...state, storagePool]; // initialize pool to empty object
 
         const connectionName = storagePool.connectionName;
-        const index = storagePool.id ? getFirstIndexOfResource(state, 'id', storagePool.id, connectionName)
+        const index = storagePool.id
+            ? getFirstIndexOfResource(state, 'id', storagePool.id, connectionName)
             : getFirstIndexOfResource(state, 'name', storagePool.name, connectionName);
         if (index < 0) {
             if (!updateOnly) {

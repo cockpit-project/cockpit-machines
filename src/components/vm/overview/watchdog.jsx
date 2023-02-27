@@ -112,12 +112,13 @@ export const WatchdogModal = ({ vm, isWatchdogAttached, idPrefix }) => {
                            fieldId="watchdog-action"
                            hasNoPaddingTop
                            isStack>
-                    {supportedActions.map(action => <Radio label={rephraseUI("watchdogAction", action)}
-                                                           key={action}
-                                                           id={action}
-                                                           isChecked={watchdogAction === action}
-                                                           onChange={() => setWatchdogAction(action)}
-                                                           isLabelWrapped />
+                    {supportedActions.map(action => (
+                        <Radio label={rephraseUI("watchdogAction", action)}
+                               key={action}
+                               id={action}
+                               isChecked={watchdogAction === action}
+                               onChange={() => setWatchdogAction(action)}
+                               isLabelWrapped />)
                     )}
                 </FormGroup>
             </Form>

@@ -145,18 +145,22 @@ export const DiskActions = ({ vm, vms, disk, supportedDiskBusTypes, idPrefixRow 
     let cdromAction;
     if (disk.device === "cdrom" && ["file", "volume"].includes(disk.type)) {
         if (!disk.source.file && !(disk.source.pool && disk.source.volume)) {
-            cdromAction = <Button id={`${idPrefixRow}-insert`}
+            cdromAction = (
+                <Button id={`${idPrefixRow}-insert`}
                               variant='secondary'
                               onClick={openMediaInsertionDialog}
                               isDisabled={!supportedDiskBusTypes || supportedDiskBusTypes.length == 0}>
-                {_("Insert")}
-            </Button>;
+                    {_("Insert")}
+                </Button>
+            );
         } else {
-            cdromAction = <Button id={`${idPrefixRow}-eject-button`}
+            cdromAction = (
+                <Button id={`${idPrefixRow}-eject-button`}
                     variant="secondary"
                     onClick={() => Dialogs.show(<MediaEjectModal idPrefix={idPrefixRow} vm={vm} disk={disk} />)}>
-                {_("Eject")}
-            </Button>;
+                    {_("Eject")}
+                </Button>
+            );
         }
     }
 

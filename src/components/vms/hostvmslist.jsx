@@ -86,55 +86,58 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                     .map(state => { return { value: rephraseUI('resourceStates', state), apiState: state } })
                     .sort((a, b) => (prioritySorting[a.apiState] || 0) - (prioritySorting[b.apiState] || 0) || a.value.localeCompare(b.value)));
 
-    const toolBar = <Toolbar>
-        <ToolbarContent>
-            <ToolbarItem>
-                <TextInput name="text-search" id="text-search" type="search"
+    const toolBar = (
+        <Toolbar>
+            <ToolbarContent>
+                <ToolbarItem>
+                    <TextInput name="text-search" id="text-search" type="search"
                     value={currentTextFilter}
                     onChange={currentTextFilter => setCurrentTextFilter(currentTextFilter)}
                     placeholder={_("Filter by name")} />
-            </ToolbarItem>
-            {domainStates.length > 1 && <>
-                <ToolbarItem variant="label" id="vm-state-select">
-                    {_("State")}
                 </ToolbarItem>
-                <ToolbarItem>
-                    <Select variant={SelectVariant.single}
-                            toggleId="vm-state-select-toggle"
-                            onToggle={statusIsExpanded => setStatusIsExpanded(statusIsExpanded)}
-                            onSelect={(event, selection) => { setStatusIsExpanded(false); setStatusSelected(selection) }}
-                            selections={statusSelected}
-                            isOpen={statusIsExpanded}
-                            aria-labelledby="vm-state-select">
-                        {sortOptions.map((option, index) => (
-                            option.apiState === "_divider"
-                                ? <Divider component="li" key={index} />
-                                : <SelectOption key={index} value={{ ...option, toString: function() { return this.value } }} />
-                        ))}
-                    </Select>
-                </ToolbarItem>
-            </>}
-            <ToolbarItem variant="separator" />
-            <ToolbarItem>{actions}</ToolbarItem>
-        </ToolbarContent>
-    </Toolbar>;
+                {domainStates.length > 1 && <>
+                    <ToolbarItem variant="label" id="vm-state-select">
+                        {_("State")}
+                    </ToolbarItem>
+                    <ToolbarItem>
+                        <Select variant={SelectVariant.single}
+                                toggleId="vm-state-select-toggle"
+                                onToggle={statusIsExpanded => setStatusIsExpanded(statusIsExpanded)}
+                                onSelect={(event, selection) => { setStatusIsExpanded(false); setStatusSelected(selection) }}
+                                selections={statusSelected}
+                                isOpen={statusIsExpanded}
+                                aria-labelledby="vm-state-select">
+                            {sortOptions.map((option, index) => (
+                                option.apiState === "_divider"
+                                    ? <Divider component="li" key={index} />
+                                    : <SelectOption key={index} value={{ ...option, toString: function() { return this.value } }} />
+                            ))}
+                        </Select>
+                    </ToolbarItem>
+                </>}
+                <ToolbarItem variant="separator" />
+                <ToolbarItem>{actions}</ToolbarItem>
+            </ToolbarContent>
+        </Toolbar>
+    );
 
-    return (<WithDialogs>
-        <Page>
-            <PageSection>
-                <Gallery className="ct-cards-grid" hasGutter>
-                    <AggregateStatusCards networks={networks} storagePools={storagePools} />
-                    <Card id='virtual-machines-listing'>
-                        <CardHeader>
-                            <CardTitle>
-                                <Text component={TextVariants.h2}>{_("Virtual machines")}</Text>
-                            </CardTitle>
-                            <CardActions>
-                                {toolBar}
-                            </CardActions>
-                        </CardHeader>
-                        <CardBody className="contains-list">
-                            <ListingTable aria-label={_("Virtual machines")}
+    return (
+        <WithDialogs>
+            <Page>
+                <PageSection>
+                    <Gallery className="ct-cards-grid" hasGutter>
+                        <AggregateStatusCards networks={networks} storagePools={storagePools} />
+                        <Card id='virtual-machines-listing'>
+                            <CardHeader>
+                                <CardTitle>
+                                    <Text component={TextVariants.h2}>{_("Virtual machines")}</Text>
+                                </CardTitle>
+                                <CardActions>
+                                    {toolBar}
+                                </CardActions>
+                            </CardHeader>
+                            <CardBody className="contains-list">
+                                <ListingTable aria-label={_("Virtual machines")}
                             variant='compact'
                             columns={[
                                 { title: _("Name"), header: true, props: { width: 25 } },
@@ -146,12 +149,14 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                             rows={ combinedVmsFiltered
                                     .sort(sortFunction)
                                     .map(vm => {
-                                        const vmActions = <VmActions
-                                            vm={vm}
-                                            config={config}
-                                            storagePools={storagePools}
-                                            onAddErrorNotification={onAddErrorNotification}
-                                        />;
+                                        const vmActions = (
+                                            <VmActions
+                                                vm={vm}
+                                                config={config}
+                                                storagePools={storagePools}
+                                                onAddErrorNotification={onAddErrorNotification}
+                                            />
+                                        );
 
                                         return {
                                             columns: [
@@ -184,13 +189,14 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                                             },
                                         };
                                     }) }
-                            />
-                        </CardBody>
-                    </Card>
-                </Gallery>
-            </PageSection>
-        </Page>
-    </WithDialogs>);
+                                />
+                            </CardBody>
+                        </Card>
+                    </Gallery>
+                </PageSection>
+            </Page>
+        </WithDialogs>
+    );
 };
 HostVmsList.propTypes = {
     vms: PropTypes.array.isRequired,

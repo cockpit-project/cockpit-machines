@@ -545,8 +545,8 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                     productElem = sourceElem.getElementsByTagName('product')[0];
                 }
                 dev = {
-                    type: type,
-                    mode: mode,
+                    type,
+                    mode,
                     bootOrder: bootElem?.getAttribute('order'),
                     address: {
                         port: addressElem?.getAttribute('port'),
@@ -575,8 +575,8 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                     productElem = sourceElem.getElementsByTagName('product')[0];
                 }
                 dev = {
-                    type: type,
-                    mode: mode,
+                    type,
+                    mode,
                     bootOrder: bootElem?.getAttribute('order'),
                     source: {
                         address: {
@@ -606,12 +606,12 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                     name = sourceElem.getAttribute('name');
 
                 dev = {
-                    type: type,
-                    mode: mode,
+                    type,
+                    mode,
                     bootOrder: bootElem?.getAttribute('order'),
                     source: {
-                        protocol: protocol,
-                        name: name,
+                        protocol,
+                        name,
                         address: {
                             bus: addressElem?.getAttribute('bus'),
                             target: addressElem?.getAttribute('target'),
@@ -629,8 +629,8 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                 const sourceElem = hostdevElem.getElementsByTagName('source')[0];
 
                 dev = {
-                    type: type,
-                    mode: mode,
+                    type,
+                    mode,
                     bootOrder: bootElem?.getAttribute('order'),
                     source: {
                         protocol: sourceElem.getAttribute('protocol'),
@@ -645,8 +645,8 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                 const addressElem = sourceElem.getElementsByTagName('address')[0];
 
                 dev = {
-                    type: type,
-                    mode: mode,
+                    type,
+                    mode,
                     bootOrder: bootElem?.getAttribute('order'),
                     source: {
                         address: {
@@ -662,8 +662,8 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                 const blockElem = sourceElem.getElementsByTagName('block')[0];
 
                 dev = {
-                    type: type,
-                    mode: mode,
+                    type,
+                    mode,
                     bootOrder: bootElem?.getAttribute('order'),
                     source: {
                         block: blockElem.childNodes[0].nodeValue
@@ -677,8 +677,8 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                 const charElem = sourceElem.getElementsByTagName('char')[0];
 
                 dev = {
-                    type: type,
-                    mode: mode,
+                    type,
+                    mode,
                     bootOrder: bootElem?.getAttribute('order'),
                     source: {
                         char: charElem.childNodes[0].nodeValue
@@ -692,8 +692,8 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                 const interfaceElem = sourceElem.getElementsByTagName('interface')[0];
 
                 dev = {
-                    type: type,
-                    mode: mode,
+                    type,
+                    mode,
                     bootOrder: bootElem?.getAttribute('order'),
                     source: {
                         interface: interfaceElem.childNodes[0].nodeValue
@@ -855,10 +855,10 @@ function parseNetDumpxmlForIp(ipElems) {
         }
 
         const tmp = {
-            address: address,
-            family: family,
-            netmask: netmask,
-            prefix: prefix,
+            address,
+            family,
+            netmask,
+            prefix,
             dhcp: {
                 range: {
                     start: rangeElem?.getAttribute("start"),

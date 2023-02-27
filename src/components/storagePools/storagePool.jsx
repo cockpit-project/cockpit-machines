@@ -46,7 +46,8 @@ export const getStoragePoolRow = ({ storagePool, vms, onAddErrorNotification }) 
     const name = (
         <span id={`${idPrefix}-name`}>
             { storagePool.name }
-        </span>);
+        </span>
+    );
     const allocation = parseFloat(convertToUnit(storagePool.allocation, units.B, units.GiB).toFixed(2));
     const capacity = parseFloat(convertToUnit(storagePool.capacity, units.B, units.GiB).toFixed(2));
     const sizeLabel = String(cockpit.format("$0 / $1 GiB", allocation, capacity));

@@ -34,7 +34,8 @@ const LibvirtSlate = ({ loadingResources }) => {
     const troubleshoot_btn = (
         <Button variant="link" onClick={() => cockpit.jump("/system/services")}>
             { _("Troubleshoot") }
-        </Button>);
+        </Button>
+    );
 
     return (
         <EmptyStatePanel icon={ ExclamationCircleIcon }

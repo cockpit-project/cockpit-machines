@@ -248,7 +248,7 @@ class BootOrderModal extends React.Component {
 
         devices[devices.indexOf(device)].checked = !devices[devices.indexOf(device)].checked;
 
-        this.setState({ devices: devices });
+        this.setState({ devices });
     }
 
     moveUp(device) {
@@ -261,7 +261,7 @@ class BootOrderModal extends React.Component {
         devices[index + direction] = devices[index];
         devices[index] = tmp;
 
-        this.setState({ devices: devices });
+        this.setState({ devices });
     }
 
     moveDown(device) {
@@ -274,7 +274,7 @@ class BootOrderModal extends React.Component {
         devices[index + direction] = devices[index];
         devices[index] = tmp;
 
-        this.setState({ devices: devices });
+        this.setState({ devices });
     }
 
     render() {
@@ -287,19 +287,21 @@ class BootOrderModal extends React.Component {
                           className="boot-order-list-view">
                 {this.state.devices.map((device, index) => {
                     const nextDevice = this.state.devices[index + 1];
-                    return <DeviceRow
-                                    key={index}
-                                    idPrefix={idPrefix}
-                                    index={index}
-                                    device={device}
-                                    onClick={() => this.onToggleDevice(device)}
-                                    onToggle={() => this.onToggleDevice(device)}
-                                    upDisabled={!index || !device.checked}
-                                    downDisabled={index + 1 == this.state.devices.length || !nextDevice.checked}
-                                    moveUp={() => this.moveUp(device)}
-                                    moveDown={() => this.moveDown(device)}
-                                    nodeDevices={nodeDevices}
-                    />;
+                    return (
+                        <DeviceRow
+                            key={index}
+                            idPrefix={idPrefix}
+                            index={index}
+                            device={device}
+                            onClick={() => this.onToggleDevice(device)}
+                            onToggle={() => this.onToggleDevice(device)}
+                            upDisabled={!index || !device.checked}
+                            downDisabled={index + 1 == this.state.devices.length || !nextDevice.checked}
+                            moveUp={() => this.moveUp(device)}
+                            moveDown={() => this.moveDown(device)}
+                            nodeDevices={nodeDevices}
+                        />
+                    );
                 })}
             </DataList>
         );

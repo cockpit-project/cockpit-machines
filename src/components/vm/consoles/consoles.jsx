@@ -111,11 +111,11 @@ class Consoles extends React.Component {
                             textSerialConsole={_("Serial console")}
                             textVncConsole={_("VNC console")}
                             textDesktopViewerConsole={_("Desktop viewer")}>
-                {serial.map((pty, idx) => <SerialConsole type={serial.length == 1 ? "SerialConsole" : cockpit.format(_("Serial console ($0)"), pty.alias || idx)}
+                {serial.map((pty, idx) => (<SerialConsole type={serial.length == 1 ? "SerialConsole" : cockpit.format(_("Serial console ($0)"), pty.alias || idx)}
                                                   key={"pty-" + idx}
                                                   connectionName={vm.connectionName}
                                                   vmName={vm.name}
-                                                  spawnArgs={domainSerialConsoleCommand({ vm, alias: pty.alias })} />)}
+                                                  spawnArgs={domainSerialConsoleCommand({ vm, alias: pty.alias })} />))}
                 {vnc &&
                 <Vnc type="VncConsole"
                      vmName={vm.name}
