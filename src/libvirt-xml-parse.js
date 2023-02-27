@@ -147,19 +147,19 @@ export function parsePoolCapabilities(capsXML) {
 
 export function getDomainCapMaxVCPU(capsXML) {
     const domainCapsElem = getElem(capsXML);
-    const vcpuElem = domainCapsElem.getElementsByTagName("vcpu") && domainCapsElem.getElementsByTagName("vcpu")[0];
+    const vcpuElem = domainCapsElem.getElementsByTagName("vcpu")?.[0];
     return vcpuElem && vcpuElem.getAttribute('max');
 }
 
 export function getDomainCapLoader(capsXML) {
     const domainCapsElem = getElem(capsXML);
-    const osElem = domainCapsElem.getElementsByTagName("os") && domainCapsElem.getElementsByTagName("os")[0];
+    const osElem = domainCapsElem.getElementsByTagName("os")?.[0];
     return osElem && osElem.getElementsByTagName("loader");
 }
 
 export function getDomainCapCPUCustomModels(capsXML) {
     const domainCapsElem = getElem(capsXML);
-    const cpuElem = domainCapsElem.getElementsByTagName("cpu") && domainCapsElem.getElementsByTagName("cpu")[0];
+    const cpuElem = domainCapsElem.getElementsByTagName("cpu")?.[0];
     const modeElems = cpuElem && cpuElem.getElementsByTagName("mode");
     const customModeElem = modeElems && Array.prototype.find.call(modeElems, modeElem => modeElem.getAttribute("name") == "custom");
     return customModeElem && Array.prototype.map.call(customModeElem.getElementsByTagName("model"), modelElem => modelElem.textContent);
@@ -167,7 +167,7 @@ export function getDomainCapCPUCustomModels(capsXML) {
 
 export function getDomainCapCPUHostModel(capsXML) {
     const domainCapsElem = getElem(capsXML);
-    const cpuElem = domainCapsElem.getElementsByTagName("cpu") && domainCapsElem.getElementsByTagName("cpu")[0];
+    const cpuElem = domainCapsElem.getElementsByTagName("cpu")?.[0];
     const modeElems = cpuElem && cpuElem.getElementsByTagName("mode");
     const hostModelModeElem = modeElems && Array.prototype.find.call(modeElems, modeElem => modeElem.getAttribute("name") == "host-model");
     return hostModelModeElem && Array.prototype.map.call(hostModelModeElem.getElementsByTagName("model"), modelElem => modelElem.textContent)[0];
@@ -175,8 +175,8 @@ export function getDomainCapCPUHostModel(capsXML) {
 
 export function getDomainCapDiskBusTypes(capsXML) {
     const domainCapsElem = getElem(capsXML);
-    const devicesCapsElem = domainCapsElem.getElementsByTagName("devices") && domainCapsElem.getElementsByTagName("devices")[0];
-    const diskCapsElem = devicesCapsElem.getElementsByTagName("disk") && devicesCapsElem.getElementsByTagName("disk")[0];
+    const devicesCapsElem = domainCapsElem.getElementsByTagName("devices")?.[0];
+    const diskCapsElem = devicesCapsElem.getElementsByTagName("disk")?.[0];
     const enumElems = diskCapsElem && diskCapsElem.getElementsByTagName("enum");
     const busElem = enumElems && Array.prototype.find.call(enumElems, enumElem => enumElem.getAttribute("name") == "bus");
     return busElem && Array.prototype.map.call(busElem.getElementsByTagName("value"), valueElem => valueElem.textContent);
@@ -194,9 +194,9 @@ export function parseDomainSnapshotDumpxml(snapshot) {
     const descElem = getSingleOptionalElem(snapElem, 'description');
     const parentElem = getSingleOptionalElem(snapElem, 'parent');
 
-    const name = nameElem ? nameElem.childNodes[0].nodeValue : undefined;
-    const description = descElem ? descElem.childNodes[0].nodeValue : undefined;
-    const parentName = parentElem ? parentElem.getElementsByTagName("name")[0].childNodes[0].nodeValue : undefined;
+    const name = nameElem?.childNodes[0].nodeValue;
+    const description = descElem?.childNodes[0].nodeValue;
+    const parentName = parentElem?.getElementsByTagName("name")[0].childNodes[0].nodeValue;
     const state = snapElem.getElementsByTagName("state")[0].childNodes[0].nodeValue;
     const creationTime = snapElem.getElementsByTagName("creationTime")[0].childNodes[0].nodeValue;
 
@@ -265,7 +265,7 @@ export function parseDomainDumpxml(connectionName, domXml, objPath) {
         osType,
         osBoot,
         firmware,
-        loader: loaderElem ? loaderElem.textContent : undefined,
+        loader: loaderElem?.textContent,
         arch,
         currentMemory,
         memory,
@@ -369,7 +369,7 @@ export function parseDumpxmlForConsoles(devicesElem) {
             const consoleElem = consoleElems[i];
             if (consoleElem.getAttribute('type') === 'pty') {
                 const aliasElem = getSingleOptionalElem(consoleElem, 'alias');
-                displays.push({ type: 'pty', alias: aliasElem ? aliasElem.getAttribute('name') : undefined });
+                displays.push({ type: 'pty', alias: aliasElem?.getAttribute('name') });
             }
         }
     }
@@ -399,33 +399,33 @@ export function parseDumpxmlForDisks(devicesElem) {
             const disk = { // see https://libvirt.org/formatdomain.html#elementsDisks
                 target: targetElem.getAttribute('dev'), // identifier of the disk, i.e. sda, hdc
                 driver: {
-                    name: driverElem ? driverElem.getAttribute('name') : undefined, // optional
-                    type: driverElem ? driverElem.getAttribute('type') : undefined,
-                    cache: driverElem ? driverElem.getAttribute('cache') : undefined, // optional
-                    discard: driverElem ? driverElem.getAttribute('discard') : undefined, // optional
-                    io: driverElem ? driverElem.getAttribute('io') : undefined, // optional
-                    errorPolicy: driverElem ? driverElem.getAttribute('error_policy') : undefined, // optional
+                    name: driverElem?.getAttribute('name'), // optional
+                    type: driverElem?.getAttribute('type'),
+                    cache: driverElem?.getAttribute('cache'), // optional
+                    discard: driverElem?.getAttribute('discard'), // optional
+                    io: driverElem?.getAttribute('io'), // optional
+                    errorPolicy: driverElem?.getAttribute('error_policy'), // optional
                 },
-                bootOrder: bootElem ? bootElem.getAttribute('order') : undefined,
+                bootOrder: bootElem?.getAttribute('order'),
                 type: diskElem.getAttribute('type'), // i.e.: file
                 device: diskElem.getAttribute('device'), // i.e. cdrom, disk
                 source: {
-                    file: sourceElem ? sourceElem.getAttribute('file') : undefined, // optional file name of the disk
-                    dev: sourceElem ? sourceElem.getAttribute('dev') : undefined,
-                    pool: sourceElem ? sourceElem.getAttribute('pool') : undefined,
-                    volume: sourceElem ? sourceElem.getAttribute('volume') : undefined,
-                    protocol: sourceElem ? sourceElem.getAttribute('protocol') : undefined,
-                    name: sourceElem ? sourceElem.getAttribute('name') : undefined,
+                    file: sourceElem?.getAttribute('file'), // optional file name of the disk
+                    dev: sourceElem?.getAttribute('dev'),
+                    pool: sourceElem?.getAttribute('pool'),
+                    volume: sourceElem?.getAttribute('volume'),
+                    protocol: sourceElem?.getAttribute('protocol'),
+                    name: sourceElem?.getAttribute('name'),
                     host: {
-                        name: sourceHostElem ? sourceHostElem.getAttribute('name') : undefined,
-                        port: sourceHostElem ? sourceHostElem.getAttribute('port') : undefined,
+                        name: sourceHostElem?.getAttribute('name'),
+                        port: sourceHostElem?.getAttribute('port'),
                     },
-                    startupPolicy: sourceElem ? sourceElem.getAttribute('startupPolicy') : undefined, // optional startupPolicy of the disk
+                    startupPolicy: sourceElem?.getAttribute('startupPolicy'), // optional startupPolicy of the disk
 
                 },
                 bus: targetElem.getAttribute('bus'), // i.e. scsi, ide
-                serial: serialElem ? serialElem.childNodes[0].nodeValue : undefined, // optional serial number
-                aliasName: aliasElem ? aliasElem.getAttribute('name') : undefined, // i.e. scsi0-0-0-0, ide0-1-0
+                serial: serialElem?.childNodes[0].nodeValue, // optional serial number
+                aliasName: aliasElem?.getAttribute('name'), // i.e. scsi0-0-0-0, ide0-1-0
                 readonly: !!readonlyElem,
                 shareable: !!shareableElem,
                 removable: targetElem.getAttribute('removable'),
@@ -502,16 +502,16 @@ export function parseDumpxmlForRedirectedDevices(devicesElem) {
             const dev = { // see https://libvirt.org/formatdomain.html#elementsRedir
                 bus: redirdevElem.getAttribute('bus'),
                 type: redirdevElem.getAttribute('type'),
-                bootOrder: bootElem ? bootElem.getAttribute('order') : undefined,
+                bootOrder: bootElem?.getAttribute('order'),
                 address: {
                     type: addressElem.getAttribute('type'),
                     bus: addressElem.getAttribute('bus'),
                     port: addressElem.getAttribute('port'),
                 },
                 source: {
-                    mode: sourceElem ? sourceElem.getAttribute('mode') : undefined,
-                    host: sourceElem ? sourceElem.getAttribute('host') : undefined,
-                    service: sourceElem ? sourceElem.getAttribute('service') : undefined,
+                    mode: sourceElem?.getAttribute('mode'),
+                    host: sourceElem?.getAttribute('host'),
+                    service: sourceElem?.getAttribute('service'),
                 },
             };
             redirdevs.push(dev);
@@ -547,19 +547,19 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                 dev = {
                     type: type,
                     mode: mode,
-                    bootOrder: bootElem ? bootElem.getAttribute('order') : undefined,
+                    bootOrder: bootElem?.getAttribute('order'),
                     address: {
-                        port: addressElem ? addressElem.getAttribute('port') : undefined,
+                        port: addressElem?.getAttribute('port'),
                     },
                     source: {
                         vendor: {
-                            id: vendorElem ? vendorElem.getAttribute('id') : undefined,
+                            id: vendorElem?.getAttribute('id'),
                         },
                         product: {
-                            id: productElem ? productElem.getAttribute('id') : undefined,
+                            id: productElem?.getAttribute('id'),
                         },
-                        device: sourceAddressElem ? sourceAddressElem.getAttribute('device') : undefined,
-                        bus: sourceAddressElem ? sourceAddressElem.getAttribute('bus') : undefined,
+                        device: sourceAddressElem?.getAttribute('device'),
+                        bus: sourceAddressElem?.getAttribute('bus'),
                     },
                 };
                 hostdevs.push(dev);
@@ -577,14 +577,14 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                 dev = {
                     type: type,
                     mode: mode,
-                    bootOrder: bootElem ? bootElem.getAttribute('order') : undefined,
+                    bootOrder: bootElem?.getAttribute('order'),
                     source: {
                         address: {
                             vendor: {
-                                id: vendorElem ? vendorElem.getAttribute('id') : undefined,
+                                id: vendorElem?.getAttribute('id'),
                             },
                             product: {
-                                id: productElem ? productElem.getAttribute('id') : undefined,
+                                id: productElem?.getAttribute('id'),
                             },
                             domain: addressElem.getAttribute('domain'),
                             bus: addressElem.getAttribute('bus'),
@@ -608,17 +608,17 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                 dev = {
                     type: type,
                     mode: mode,
-                    bootOrder: bootElem ? bootElem.getAttribute('order') : undefined,
+                    bootOrder: bootElem?.getAttribute('order'),
                     source: {
                         protocol: protocol,
                         name: name,
                         address: {
-                            bus: addressElem ? addressElem.getAttribute('bus') : undefined,
-                            target: addressElem ? addressElem.getAttribute('target') : undefined,
-                            unit: addressElem ? addressElem.getAttribute('unit') : undefined,
+                            bus: addressElem?.getAttribute('bus'),
+                            target: addressElem?.getAttribute('target'),
+                            unit: addressElem?.getAttribute('unit'),
                         },
                         adapter: {
-                            name: adapterElem ? adapterElem.getAttribute('name') : undefined,
+                            name: adapterElem?.getAttribute('name'),
                         },
                     },
                 };
@@ -631,7 +631,7 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                 dev = {
                     type: type,
                     mode: mode,
-                    bootOrder: bootElem ? bootElem.getAttribute('order') : undefined,
+                    bootOrder: bootElem?.getAttribute('order'),
                     source: {
                         protocol: sourceElem.getAttribute('protocol'),
                         wwpn: sourceElem.getAttribute('wwpn'),
@@ -647,7 +647,7 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                 dev = {
                     type: type,
                     mode: mode,
-                    bootOrder: bootElem ? bootElem.getAttribute('order') : undefined,
+                    bootOrder: bootElem?.getAttribute('order'),
                     source: {
                         address: {
                             uuid: addressElem.getAttribute('uuid'),
@@ -664,7 +664,7 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                 dev = {
                     type: type,
                     mode: mode,
-                    bootOrder: bootElem ? bootElem.getAttribute('order') : undefined,
+                    bootOrder: bootElem?.getAttribute('order'),
                     source: {
                         block: blockElem.childNodes[0].nodeValue
                     },
@@ -679,7 +679,7 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                 dev = {
                     type: type,
                     mode: mode,
-                    bootOrder: bootElem ? bootElem.getAttribute('order') : undefined,
+                    bootOrder: bootElem?.getAttribute('order'),
                     source: {
                         char: charElem.childNodes[0].nodeValue
                     },
@@ -694,7 +694,7 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                 dev = {
                     type: type,
                     mode: mode,
-                    bootOrder: bootElem ? bootElem.getAttribute('order') : undefined,
+                    bootOrder: bootElem?.getAttribute('order'),
                     source: {
                         interface: interfaceElem.childNodes[0].nodeValue
                     },
@@ -729,36 +729,36 @@ export function parseDumpxmlForInterfaces(devicesElem) {
             const bootElem = getSingleOptionalElem(interfaceElem, 'boot');
 
             const networkInterface = { // see https://libvirt.org/formatdomain.html#elementsNICS
-                type: interfaceElem.getAttribute('type'), // Only one required parameter
-                managed: interfaceElem.getAttribute('managed'),
-                name: interfaceElem.getAttribute('name') ? interfaceElem.getAttribute('name') : undefined, // Name of interface
-                target: targetElem ? targetElem.getAttribute('dev') : undefined,
-                mac: macElem.getAttribute('address'), // MAC address
-                model: modelElem ? modelElem.getAttribute('type') : undefined, // Device model
-                aliasName: aliasElem ? aliasElem.getAttribute('name') : undefined,
-                virtualportType: virtualportElem ? virtualportElem.getAttribute('type') : undefined,
-                driverName: driverElem ? driverElem.getAttribute('name') : undefined,
+                type: interfaceElem?.getAttribute('type'), // Only one required parameter
+                managed: interfaceElem?.getAttribute('managed'),
+                name: interfaceElem?.getAttribute('name'), // Name of interface
+                target: targetElem?.getAttribute('dev'),
+                mac: macElem?.getAttribute('address'), // MAC address
+                model: modelElem?.getAttribute('type'), // Device model
+                aliasName: aliasElem?.getAttribute('name'),
+                virtualportType: virtualportElem?.getAttribute('type'),
+                driverName: driverElem?.getAttribute('name'),
                 state: linkElem ? linkElem.getAttribute('state') : 'up', // State of interface, up/down (plug/unplug)
-                mtu: mtuElem ? mtuElem.getAttribute('size') : undefined,
-                bootOrder: bootElem ? bootElem.getAttribute('order') : undefined,
+                mtu: mtuElem?.getAttribute('size'),
+                bootOrder: bootElem?.getAttribute('order'),
                 source: {
-                    bridge: sourceElem ? sourceElem.getAttribute('bridge') : undefined,
-                    network: sourceElem ? sourceElem.getAttribute('network') : undefined,
-                    portgroup: sourceElem ? sourceElem.getAttribute('portgroup') : undefined,
-                    dev: sourceElem ? sourceElem.getAttribute('dev') : undefined,
-                    mode: sourceElem ? sourceElem.getAttribute('mode') : undefined,
-                    address: sourceElem ? sourceElem.getAttribute('address') : undefined,
-                    port: sourceElem ? sourceElem.getAttribute('port') : undefined,
+                    bridge: sourceElem?.getAttribute('bridge'),
+                    network: sourceElem?.getAttribute('network'),
+                    portgroup: sourceElem?.getAttribute('portgroup'),
+                    dev: sourceElem?.getAttribute('dev'),
+                    mode: sourceElem?.getAttribute('mode'),
+                    address: sourceElem?.getAttribute('address'),
+                    port: sourceElem?.getAttribute('port'),
                     local: {
-                        address: localElem ? localElem.getAttribute('address') : undefined,
-                        port: localElem ? localElem.getAttribute('port') : undefined,
+                        address: localElem?.getAttribute('address'),
+                        port: localElem?.getAttribute('port'),
                     },
                 },
                 address: {
-                    bus: addressElem ? addressElem.getAttribute('bus') : undefined,
-                    function: addressElem ? addressElem.getAttribute('function') : undefined,
-                    slot: addressElem ? addressElem.getAttribute('slot') : undefined,
-                    domain: addressElem ? addressElem.getAttribute('domain') : undefined,
+                    bus: addressElem?.getAttribute('bus'),
+                    function: addressElem?.getAttribute('function'),
+                    slot: addressElem?.getAttribute('slot'),
+                    domain: addressElem?.getAttribute('domain'),
                 },
             };
             interfaces.push(networkInterface);
@@ -804,7 +804,7 @@ export function parseNetDumpxml(netXml) {
     retObj.ip = parseNetDumpxmlForIp(ipElems);
 
     const mtuElem = netElem.getElementsByTagName("mtu")[0];
-    retObj.mtu = mtuElem ? mtuElem.getAttribute("size") : undefined;
+    retObj.mtu = mtuElem?.getAttribute("size");
 
     // if mode is not specified, "nat" is assumed, see https://libvirt.org/formatnetwork.html#elementsConnect
     if (forwardElem) {
@@ -861,8 +861,8 @@ function parseNetDumpxmlForIp(ipElems) {
             prefix: prefix,
             dhcp: {
                 range: {
-                    start: rangeElem ? rangeElem.getAttribute("start") : undefined,
-                    end: rangeElem ? rangeElem.getAttribute("end") : undefined,
+                    start: rangeElem?.getAttribute("start"),
+                    end: rangeElem?.getAttribute("end"),
                 },
                 hosts: dhcpHosts,
                 bootp,
@@ -883,9 +883,9 @@ export function parseNodeDeviceDumpxml(nodeDevice) {
 
     const name = deviceElem.getElementsByTagName("name")[0].childNodes[0].nodeValue;
     const pathElem = getSingleOptionalElem(deviceElem, 'path');
-    const path = pathElem ? pathElem.childNodes[0].nodeValue : undefined;
+    const path = pathElem?.childNodes[0].nodeValue;
     const parentElem = getSingleOptionalElem(deviceElem, 'parent');
-    const parentName = parentElem ? parentElem.childNodes[0].nodeValue : undefined;
+    const parentName = parentElem?.childNodes[0].nodeValue;
     const capabilityElem = deviceElem.getElementsByTagName("capability")[0];
 
     const capability = {};
@@ -905,11 +905,11 @@ export function parseNodeDeviceDumpxml(nodeDevice) {
         const vendorElem = capabilityElem.getElementsByTagName("vendor")[0];
         if (productElem) {
             capability.product.id = productElem.getAttribute("id");
-            capability.product._value = productElem.childNodes[0] ? productElem.childNodes[0].nodeValue : undefined;
+            capability.product._value = productElem.childNodes[0]?.nodeValue;
         }
         if (vendorElem) {
             capability.vendor.id = vendorElem.getAttribute("id");
-            capability.vendor._value = vendorElem.childNodes[0] ? vendorElem.childNodes[0].nodeValue : undefined;
+            capability.vendor._value = vendorElem.childNodes[0]?.nodeValue;
         }
 
         if (capability.type == "pci") {
@@ -918,16 +918,16 @@ export function parseNodeDeviceDumpxml(nodeDevice) {
             const functionElem = capabilityElem.getElementsByTagName("function")[0];
             const slotElem = capabilityElem.getElementsByTagName("slot")[0];
 
-            capability.domain = domainElem.childNodes[0] ? domainElem.childNodes[0].nodeValue : undefined;
-            capability.bus = busElem.childNodes[0] ? busElem.childNodes[0].nodeValue : undefined;
-            capability.function = functionElem.childNodes[0] ? functionElem.childNodes[0].nodeValue : undefined;
-            capability.slot = slotElem.childNodes[0] ? slotElem.childNodes[0].nodeValue : undefined;
+            capability.domain = domainElem.childNodes[0]?.nodeValue;
+            capability.bus = busElem.childNodes[0]?.nodeValue;
+            capability.function = functionElem.childNodes[0]?.nodeValue;
+            capability.slot = slotElem.childNodes[0]?.nodeValue;
         } else if (capability.type == "usb_device") {
             const deviceElem = capabilityElem.getElementsByTagName("device")[0];
             const busElem = capabilityElem.getElementsByTagName("bus")[0];
 
-            capability.device = deviceElem.childNodes[0] ? deviceElem.childNodes[0].nodeValue : undefined;
-            capability.bus = busElem.childNodes[0] ? busElem.childNodes[0].nodeValue : undefined;
+            capability.device = deviceElem.childNodes[0]?.nodeValue;
+            capability.bus = busElem.childNodes[0]?.nodeValue;
         }
     } else if (capability.type == 'scsi') {
         capability.bus = {};
@@ -939,11 +939,11 @@ export function parseNodeDeviceDumpxml(nodeDevice) {
         const targetElem = capabilityElem.getElementsByTagName("target")[0];
 
         if (busElem)
-            capability.bus._value = busElem.childNodes[0] ? busElem.childNodes[0].nodeValue : undefined;
+            capability.bus._value = busElem.childNodes[0]?.nodeValue;
         if (lunElem)
-            capability.lun._value = lunElem.childNodes[0] ? lunElem.childNodes[0].nodeValue : undefined;
+            capability.lun._value = lunElem.childNodes[0]?.nodeValue;
         if (targetElem)
-            capability.target._value = targetElem.childNodes[0] ? targetElem.childNodes[0].nodeValue : undefined;
+            capability.target._value = targetElem.childNodes[0]?.nodeValue;
     } else if (capability.type == 'scsi_host') {
         capability.host = {};
         capability.uniqueId = {};
@@ -952,14 +952,14 @@ export function parseNodeDeviceDumpxml(nodeDevice) {
         const unique_idElem = capabilityElem.getElementsByTagName("unique_id")[0];
 
         if (hostElem)
-            capability.host._value = hostElem.childNodes[0] ? hostElem.childNodes[0].nodeValue : undefined;
+            capability.host._value = hostElem.childNodes[0]?.nodeValue;
         if (unique_idElem)
-            capability.uniqueId._value = unique_idElem.childNodes[0] ? unique_idElem.childNodes[0].nodeValue : undefined;
+            capability.uniqueId._value = unique_idElem.childNodes[0]?.nodeValue;
     } else if (capability.type == 'mdev') {
         const uuidElem = capabilityElem.getElementsByTagName("uuid")[0];
 
         if (uuidElem)
-            capability.uuid = uuidElem.childNodes[0] ? uuidElem.childNodes[0].nodeValue : undefined;
+            capability.uuid = uuidElem.childNodes[0]?.nodeValue;
     }
 
     return { name, path, parent: parentName, capability };
@@ -1028,7 +1028,7 @@ export function parseStorageVolumeDumpxml(connectionName, storageVolumeXml, objP
     const physicalElem = storageVolumeElem.getElementsByTagName('physical')[0];
     const physical = physicalElem ? physicalElem.childNodes[0].nodeValue : NaN;
     const formatElem = storageVolumeElem.getElementsByTagName('format')[0];
-    const format = formatElem ? formatElem.getAttribute('type') : undefined;
+    const format = formatElem?.getAttribute('type');
     return {
         connectionName,
         name,
