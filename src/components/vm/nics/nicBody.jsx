@@ -165,14 +165,14 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
                                     position={PopoverPosition.bottom}
                                     enableFlip={false}
                                     bodyContent={<Flex direction={{ default: 'column' }}>
-                                        {availableNetworkTypes.map(type => <TextContent key={type.name}>
+                                        {availableNetworkTypes.map(type => (<TextContent key={type.name}>
                                             <Text component={TextVariants.h4}>{type.desc}</Text>
                                             <strong>{type.detailHeadline}</strong>
                                             <p>
                                                 {type.detailParagraph}
                                                 {type.externalDocs}
                                             </p>
-                                        </TextContent>)}
+                                        </TextContent>))}
                                     </Flex>}>
                                <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
                                    <OutlinedQuestionCircleIcon />

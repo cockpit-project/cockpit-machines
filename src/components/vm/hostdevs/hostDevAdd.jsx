@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { useState, useEffect } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import cockpit from "cockpit";
 import {
     Table,
@@ -174,12 +174,12 @@ const AddHostDev = ({ idPrefix, vm }) => {
     const [dialogErrorDetail, setDialogErrorDetail] = useState("");
     const [addHostDevInProgress, setAddHostDevInProgress] = useState(false);
 
-    const { nodeDevices } = store.getState();
-    const allDevices = devicesHaveAChild([...nodeDevices]);
+    const { nodeDevices } = useMemo(() => store.getState(), []);
+    const allDevices = useMemo(() => devicesHaveAChild([...nodeDevices]), [nodeDevices]);
 
     useEffect(() => {
         setSelectableDevices(getSelectableDevices(allDevices, vm, type));
-    }, []);
+    }, [allDevices, vm, type]);
 
     const setTypeWrapper = (newType) => {
         setSelectableDevices(getSelectableDevices(allDevices, vm, newType));

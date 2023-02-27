@@ -156,7 +156,8 @@ export const VmDetailsPage = ({
                               return cockpit.location.go(["vm", "console"], { ...cockpit.location.options, ...urlOptions });
                           }}
                           icon={<ExpandIcon />}
-                          iconPosition="right">{_("Expand")}</Button> : null,
+                          iconPosition="right">{_("Expand")}</Button>
+                : null,
             body: <Consoles vm={vm} config={config}
                             onAddErrorNotification={onAddErrorNotification} />,
         },

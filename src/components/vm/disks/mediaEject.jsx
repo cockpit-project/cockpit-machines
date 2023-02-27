@@ -79,16 +79,18 @@ export const MediaEjectModal = ({ idPrefix, vm, disk }) => {
     if (disk.type === "file") {
         description = <DescriptionListDescription id={`${idPrefix}-modal-description-file`} className="ct-monospace">{disk.source.file}</DescriptionListDescription>;
     } else if (disk.type === "volume") {
-        description = <>
-            <DescriptionListGroup id={`${idPrefix}-modal-description-pool`} key={disk.source.pool}>
-                <DescriptionListTerm>{_("Pool")}</DescriptionListTerm>
-                <DescriptionListDescription>{disk.source.pool}</DescriptionListDescription>
-            </DescriptionListGroup>
-            <DescriptionListGroup id={`${idPrefix}-modal-description-volume`} key={disk.source.volume}>
-                <DescriptionListTerm>{_("Volume")}</DescriptionListTerm>
-                <DescriptionListDescription>{disk.source.volume}</DescriptionListDescription>
-            </DescriptionListGroup>
-        </>;
+        description = (
+            <>
+                <DescriptionListGroup id={`${idPrefix}-modal-description-pool`} key={disk.source.pool}>
+                    <DescriptionListTerm>{_("Pool")}</DescriptionListTerm>
+                    <DescriptionListDescription>{disk.source.pool}</DescriptionListDescription>
+                </DescriptionListGroup>
+                <DescriptionListGroup id={`${idPrefix}-modal-description-volume`} key={disk.source.volume}>
+                    <DescriptionListTerm>{_("Volume")}</DescriptionListTerm>
+                    <DescriptionListDescription>{disk.source.volume}</DescriptionListDescription>
+                </DescriptionListGroup>
+            </>
+        );
     }
 
     return (

@@ -195,14 +195,14 @@ class AppActive extends React.Component {
     }
 
     getInlineNotifications(notifications) {
-        return notifications.map((notification, index) =>
+        return notifications.map((notification, index) => (
             <InlineNotification type={notification.type || 'danger'} key={index}
                 isLiveRegion
                 isInline={false}
                 onDismiss={() => this.onDismissErrorNotification(index)}
                 text={notification.text}
                 detail={notification.detail} />
-        );
+        ));
     }
 
     render() {
@@ -233,56 +233,64 @@ class AppActive extends React.Component {
         if (path.length > 0 && path[0] == 'vm') {
             const vm = combinedVms.find(vm => vm.name == cockpit.location.options.name && vm.connectionName == cockpit.location.options.connection);
             if (!vm) {
-                return (<>
-                    {allNotifications}
-                    <EmptyStatePanel title={ cockpit.format(_("VM $0 does not exist on $1 connection"), cockpit.location.options.name, cockpit.location.options.connection) }
-                                     action={
-                                         <Button variant="link"
-                                                 onClick={() => cockpit.location.go(["vms"])}>
-                                             {_("Go to VMs list")}
-                                         </Button>
-                                     }
-                                     icon={ExclamationCircleIcon} />
-                </>);
+                return (
+                    <>
+                        {allNotifications}
+                        <EmptyStatePanel title={ cockpit.format(_("VM $0 does not exist on $1 connection"), cockpit.location.options.name, cockpit.location.options.connection) }
+                                         action={
+                                             <Button variant="link"
+                                                     onClick={() => cockpit.location.go(["vms"])}>
+                                                 {_("Go to VMs list")}
+                                             </Button>
+                                         }
+                                         icon={ExclamationCircleIcon} />
+                    </>
+                );
             } else if (vm.createInProgress) {
-                return (<>
-                    {allNotifications}
-                    <EmptyStatePanel title={cockpit.format(vm.downloadProgress ? _("Downloading image for VM $0") : _("Creating VM $0"), cockpit.location.options.name)}
-                                     action={
-                                         <Button variant="link"
-                                                 onClick={() => cockpit.location.go(["vms"])}>
-                                             {_("Go to VMs list")}
-                                         </Button>
-                                     }
-                                     paragraph={vm.downloadProgress && <Progress aria-label={_("Download progress")}
-                                                                                 value={Number(vm.downloadProgress)}
-                                                                                 measureLocation={ProgressMeasureLocation.outside} />}
-                                     loading />
-                </>);
+                return (
+                    <>
+                        {allNotifications}
+                        <EmptyStatePanel title={cockpit.format(vm.downloadProgress ? _("Downloading image for VM $0") : _("Creating VM $0"), cockpit.location.options.name)}
+                                         action={
+                                             <Button variant="link"
+                                                     onClick={() => cockpit.location.go(["vms"])}>
+                                                 {_("Go to VMs list")}
+                                             </Button>
+                                         }
+                                         paragraph={vm.downloadProgress && <Progress aria-label={_("Download progress")}
+                                                                                     value={Number(vm.downloadProgress)}
+                                                                                     measureLocation={ProgressMeasureLocation.outside} />}
+                                         loading />
+                    </>
+                );
             }
 
             const connectionName = vm.connectionName;
             const vmNotifications = this.state.resourceHasError[vm.id]
-                ? <AlertGroup isToast>
-                    {this.getInlineNotifications(this.state.notifications.filter(notification => notification.resourceId == vm.id))}
-                </AlertGroup>
+                ? (
+                    <AlertGroup isToast>
+                        {this.getInlineNotifications(this.state.notifications.filter(notification => notification.resourceId == vm.id))}
+                    </AlertGroup>
+                )
                 : undefined;
             // If vm.isUi is set we show a dummy placeholder until libvirt gets a real domain object for newly created V
-            const expandedContent = (vm.isUi && !vm.id) ? null : (
-                <>
-                    {vmNotifications}
-                    <VmDetailsPage vm={vm} vms={combinedVms} config={config}
-                        libvirtVersion={systemInfo.libvirtVersion}
-                        onAddErrorNotification={this.onAddErrorNotification}
-                        storagePools={(storagePools || []).filter(pool => pool && pool.connectionName == connectionName)}
-                        onUsageStartPolling={() => usageStartPolling({ name: vm.name, id: vm.id, connectionName: vm.connectionName })}
-                        onUsageStopPolling={() => usageStopPolling({ name: vm.name, id: vm.id, connectionName: vm.connectionName })}
-                        networks={(networks || []).filter(network => network && network.connectionName == connectionName)}
-                        nodeDevices={(nodeDevices || []).filter(device => device && device.connectionName == connectionName)}
-                        key={vmId(vm.name)}
-                    />
-                </>
-            );
+            const expandedContent = (vm.isUi && !vm.id)
+                ? null
+                : (
+                    <>
+                        {vmNotifications}
+                        <VmDetailsPage vm={vm} vms={combinedVms} config={config}
+                            libvirtVersion={systemInfo.libvirtVersion}
+                            onAddErrorNotification={this.onAddErrorNotification}
+                            storagePools={(storagePools || []).filter(pool => pool && pool.connectionName == connectionName)}
+                            onUsageStartPolling={() => usageStartPolling({ name: vm.name, id: vm.id, connectionName: vm.connectionName })}
+                            onUsageStopPolling={() => usageStopPolling({ name: vm.name, id: vm.id, connectionName: vm.connectionName })}
+                            networks={(networks || []).filter(network => network && network.connectionName == connectionName)}
+                            nodeDevices={(nodeDevices || []).filter(device => device && device.connectionName == connectionName)}
+                            key={vmId(vm.name)}
+                        />
+                    </>
+                );
             return expandedContent;
         }
 

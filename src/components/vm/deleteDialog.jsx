@@ -76,17 +76,19 @@ const DeleteDialogBody = ({ disks, vmName, destroy, onChange }) => {
         );
     }
 
-    return (<Form onSubmit={e => e.preventDefault()}>
-        <FormGroup>
-            {destroy && <p>{cockpit.format(_("The VM $0 is running and will be forced off before deletion."), vmName)}</p>}
-            {disks.length > 0 && <>
-                <p className="pf-u-mb-sm">{_("Delete associated storage files:")}</p>
-                <DataList isCompact>
-                    { disks.map(disk_row) }
-                </DataList>
-            </>}
-        </FormGroup>
-    </Form>);
+    return (
+        <Form onSubmit={e => e.preventDefault()}>
+            <FormGroup>
+                {destroy && <p>{cockpit.format(_("The VM $0 is running and will be forced off before deletion."), vmName)}</p>}
+                {disks.length > 0 && <>
+                    <p className="pf-u-mb-sm">{_("Delete associated storage files:")}</p>
+                    <DataList isCompact>
+                        { disks.map(disk_row) }
+                    </DataList>
+                </>}
+            </FormGroup>
+        </Form>
+    );
 };
 
 export class DeleteDialog extends React.Component {
@@ -108,7 +110,7 @@ export class DeleteDialog extends React.Component {
                     if ((d.type == 'file' && d.source.file) || d.type == 'volume')
                         disks.push(Object.assign(d, { checked: !d.readonly }));
                 });
-        this.state = { disks: disks };
+        this.state = { disks };
     }
 
     dialogErrorSet(text, detail) {

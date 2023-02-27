@@ -111,22 +111,26 @@ export const DeleteResourceButton = ({ objectId, disabled, overlayText, actionNa
         variant = "link";
 
     const button = (isDropdownItem
-        ? <DropdownItem className={className ? `pf-m-danger ${className}` : "pf-m-danger"}
-                        id={`delete-${objectId}`}
-                        key={`delete-${objectId}`}
-                        isDisabled={disabled}
-                        onClick={() => Dialogs.show(<DeleteResourceModal {...dialogProps} />)}>
-            {actionName || _("Delete")}
-        </DropdownItem>
-        : <Button id={`delete-${objectId}`}
-                  className={className}
-                  variant={variant}
-                  isDanger={isLink || isSecondary}
-                  isInline={isInline}
-                  onClick={() => Dialogs.show(<DeleteResourceModal {...dialogProps} />)}
-                  isDisabled={disabled}>
-            {actionName || _("Delete")}
-        </Button>
+        ? (
+            <DropdownItem className={className ? `pf-m-danger ${className}` : "pf-m-danger"}
+                          id={`delete-${objectId}`}
+                          key={`delete-${objectId}`}
+                          isDisabled={disabled}
+                          onClick={() => Dialogs.show(<DeleteResourceModal {...dialogProps} />)}>
+                {actionName || _("Delete")}
+            </DropdownItem>
+        )
+        : (
+            <Button id={`delete-${objectId}`}
+                    className={className}
+                    variant={variant}
+                    isDanger={isLink || isSecondary}
+                    isInline={isInline}
+                    onClick={() => Dialogs.show(<DeleteResourceModal {...dialogProps} />)}
+                    isDisabled={disabled}>
+                {actionName || _("Delete")}
+            </Button>
+        )
     );
 
     if (disabled) {

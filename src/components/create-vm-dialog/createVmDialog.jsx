@@ -355,9 +355,12 @@ const SourceRow = ({ connectionName, source, sourceType, networks, nodeDevices, 
                             onChange={value => onValueChanged('sourceType', value)}>
                     {downloadOSSupported
                         ? <FormSelectOption value={DOWNLOAD_AN_OS}
-                                            label={_("Download an OS")} /> : null}
-                    {cloudInitSupported ? <FormSelectOption value={CLOUD_IMAGE}
-                                      label={_("Cloud base image")} /> : null}
+                                            label={_("Download an OS")} />
+                        : null}
+                    {cloudInitSupported
+                        ? <FormSelectOption value={CLOUD_IMAGE}
+                                            label={_("Cloud base image")} />
+                        : null}
                     <FormSelectOption value={LOCAL_INSTALL_MEDIA_SOURCE}
                                       label={_("Local install media (ISO image or distro install tree)")} />
                     <FormSelectOption value={URL_SOURCE}
@@ -378,10 +381,10 @@ const SourceRow = ({ connectionName, source, sourceType, networks, nodeDevices, 
                 </FormGroup>
                 : <>
                     <OSRow os={os}
-                         osInfoList={osInfoList.filter(isDownloadableOs)}
-                         onValueChanged={onValueChanged}
-                         isLoading={false}
-                         validationFailed={validationFailed} />
+                           osInfoList={osInfoList.filter(isDownloadableOs)}
+                           onValueChanged={onValueChanged}
+                           isLoading={false}
+                           validationFailed={validationFailed} />
                     {os && needsRHToken(os.shortId) &&
                         <OfflineTokenRow
                             offlineToken={offlineToken}
@@ -467,8 +470,8 @@ class OSRow extends React.Component {
                     onToggle={isOpen => this.setState({ isOpen })}
                     isOpen={this.state.isOpen}
                     menuAppendTo="parent">
-                    {this.state.osEntries.map(os => <SelectOption key={os.shortId}
-                                                                  value={this.createValue(os)} />)}
+                    {this.state.osEntries.map(os => (<SelectOption key={os.shortId}
+                                                                  value={this.createValue(os)} />))}
                 </PFSelect>
             </FormGroup>
         );
@@ -495,10 +498,12 @@ const getAccessTokenDebounce = debounce(500, (offlineToken, onValueChanged, setV
 });
 
 const HelperMessageToken = ({ message }) => {
-    const link = <a href="https://access.redhat.com/management/api" target="_blank" rel="noopener noreferrer">
-        <ExternalLinkAltIcon className="pf-u-mr-xs" />
-        {_("Get a new RHSM token.")}
-    </a>;
+    const link = (
+        <a href="https://access.redhat.com/management/api" target="_blank" rel="noopener noreferrer">
+            <ExternalLinkAltIcon className="pf-u-mr-xs" />
+            {_("Get a new RHSM token.")}
+        </a>
+    );
 
     return (
         <Flex id="token-helper-message" className="pf-c-form__helper-text">
@@ -511,30 +516,30 @@ const HelperMessageToken = ({ message }) => {
     );
 };
 
-const OfflineTokenRow = ({ offlineToken, onValueChanged, formValidationFailed }) => {
-    const validationStates = {
-        DEFAULT: {
-            option: "default",
-            message: <HelperMessageToken />,
-        },
-        INPROGRESS: {
-            option: "default",
-            message: <span id="token-helper-message" className="pf-c-form__helper-text"><Spinner isSVG size="md" /> {_("Checking token validity...")}</span>,
-        },
-        FAILED: {
-            option: "error",
-            message: <HelperMessageToken message={_("Error checking token")} />,
-        },
-        EXPIRED: {
-            option: "default",
-            message: <HelperMessageToken message={_("Old token expired")} />,
-        },
-        SUCCESS: {
-            option: "success",
-            message: _("Valid token"),
-        },
-    };
+const validationStates = {
+    DEFAULT: {
+        option: "default",
+        message: <HelperMessageToken />,
+    },
+    INPROGRESS: {
+        option: "default",
+        message: <span id="token-helper-message" className="pf-c-form__helper-text"><Spinner isSVG size="md" /> {_("Checking token validity...")}</span>,
+    },
+    FAILED: {
+        option: "error",
+        message: <HelperMessageToken message={_("Error checking token")} />,
+    },
+    EXPIRED: {
+        option: "default",
+        message: <HelperMessageToken message={_("Old token expired")} />,
+    },
+    SUCCESS: {
+        option: "success",
+        message: _("Valid token"),
+    },
+};
 
+const OfflineTokenRow = ({ offlineToken, onValueChanged, formValidationFailed }) => {
     const [validationState, setValidationState] = useState(validationStates.DEFAULT);
     const [disabled, setDisabled] = useState(false);
 
@@ -564,7 +569,7 @@ const OfflineTokenRow = ({ offlineToken, onValueChanged, formValidationFailed })
                         });
             }
         });
-    }, []);
+    }, [onValueChanged]);
 
     const setOfflineTokenHelper = (offlineToken) => {
         onValueChanged("offlineToken", offlineToken);
@@ -627,9 +632,11 @@ const UnattendedRow = ({
                                     profileName = 'Workstation';
                                 else
                                     profileName = profile;
-                                return <FormSelectOption value={profile}
-                                                         key={profile}
-                                                         label={profileName} />;
+                                return (
+                                    <FormSelectOption value={profile}
+                                                      key={profile}
+                                                      label={profileName} />
+                                );
                             }) }
                 </FormSelect>
             </FormGroup>}
@@ -768,7 +775,8 @@ const MemoryRow = ({ memorySize, memorySizeUnit, nodeMaxMemory, minimumMemory, o
                 _("$0 $1 available on host"),
                 toReadableNumber(convertToUnit(nodeMaxMemory, units.KiB, memorySizeUnit)),
                 memorySizeUnit
-            ) : ""
+            )
+            : ""
     );
 
     if (validationStateMemory != 'error' && minimumMemory && convertToUnit(memorySize, memorySizeUnit, units.B) < minimumMemory) {
@@ -839,9 +847,9 @@ const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit,
 
         isVolumeUsed = getStorageVolumesUsage(vms, storagePool);
         volumeEntries = (
-            storagePool.volumes.map(vol => <FormSelectOption value={vol.name}
+            storagePool.volumes.map(vol => (<FormSelectOption value={vol.name}
                                                              key={vol.name}
-                                                             label={vol.name} />)
+                                                             label={vol.name} />))
         );
     }
 
@@ -854,10 +862,9 @@ const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit,
                     <FormSelectOption value="NewVolume" key="NewVolume" label={_("Create new volume")} />
                     { allowNoDisk && <FormSelectOption value="NoStorage" key="NoStorage" label={_("No storage")} />}
                     <FormSelectOptionGroup key="Storage pools" label={_("Storage pools")}>
-                        { storagePools.map(pool => {
-                            if (pool.volumes && pool.volumes.length)
-                                return <FormSelectOption value={pool.name} key={pool.name} label={pool.name} />;
-                        })}
+                        { storagePools
+                                .filter(pool => pool.volumes?.length)
+                                .map(pool => <FormSelectOption value={pool.name} key={pool.name} label={pool.name} />)}
                     </FormSelectOptionGroup>
                 </FormSelect>
             </FormGroup>
@@ -1196,65 +1203,69 @@ class CreateVmModal extends React.Component {
             }
         }
 
-        const detailsTab = <>
-            <MachinesConnectionSelector id='connection'
-                connectionName={this.state.connectionName}
-                onValueChanged={this.onValueChanged}
-                loggedUser={loggedUser}
-                showInfoHelper />
-            <SourceRow
-                connectionName={this.state.connectionName}
-                networks={networks.filter(network => network.connectionName == this.state.connectionName)}
-                nodeDevices={nodeDevices.filter(nodeDevice => nodeDevice.connectionName == this.state.connectionName)}
-                source={this.state.source}
-                sourceType={this.state.sourceType}
-                os={this.state.os}
-                offlineToken={this.state.offlineToken}
-                osInfoList={this.props.osInfoList}
-                cloudInitSupported={this.props.cloudInitSupported}
-                downloadOSSupported={this.props.downloadOSSupported}
-                onValueChanged={this.onValueChanged}
-                validationFailed={validationFailed} />
-
-            {this.state.sourceType != DOWNLOAD_AN_OS &&
+        const detailsTab = (
             <>
-                <OSRow
-                    os={this.state.os}
-                    osInfoList={this.props.osInfoList}
+                <MachinesConnectionSelector
+                    id='connection'
+                    connectionName={this.state.connectionName}
                     onValueChanged={this.onValueChanged}
-                    isLoading={this.state.autodetectOSInProgress}
+                    loggedUser={loggedUser}
+                    showInfoHelper />
+                <SourceRow
+                    connectionName={this.state.connectionName}
+                    networks={networks.filter(network => network.connectionName == this.state.connectionName)}
+                    nodeDevices={nodeDevices.filter(nodeDevice => nodeDevice.connectionName == this.state.connectionName)}
+                    source={this.state.source}
+                    sourceType={this.state.sourceType}
+                    os={this.state.os}
+                    offlineToken={this.state.offlineToken}
+                    osInfoList={this.props.osInfoList}
+                    cloudInitSupported={this.props.cloudInitSupported}
+                    downloadOSSupported={this.props.downloadOSSupported}
+                    onValueChanged={this.onValueChanged}
                     validationFailed={validationFailed} />
 
-            </>}
-            { this.state.sourceType != EXISTING_DISK_IMAGE_SOURCE &&
-            <StorageRow
-                allowNoDisk={this.state.sourceType !== CLOUD_IMAGE}
-                connectionName={this.state.connectionName}
-                storageSize={this.state.storageSize}
-                storageSizeUnit={this.state.storageSizeUnit}
-                onValueChanged={this.onValueChanged}
-                storagePoolName={this.state.storagePool}
-                storagePools={storagePools.filter(pool => pool.connectionName === this.state.connectionName)}
-                storageVolume={this.state.storageVolume}
-                vms={vms}
-                minimumStorage={this.state.minimumStorage}
-                validationFailed={validationFailed}
-                createMode={this.state.createMode}
-            />}
+                {this.state.sourceType != DOWNLOAD_AN_OS &&
+                <>
+                    <OSRow
+                        os={this.state.os}
+                        osInfoList={this.props.osInfoList}
+                        onValueChanged={this.onValueChanged}
+                        isLoading={this.state.autodetectOSInProgress}
+                        validationFailed={validationFailed} />
 
-            <MemoryRow
-                memorySize={this.state.memorySize}
-                memorySizeUnit={this.state.memorySizeUnit}
-                nodeMaxMemory={nodeMaxMemory}
-                onValueChanged={this.onValueChanged}
-                validationFailed={validationFailed}
-                minimumMemory={this.state.minimumMemory}
-            />
-        </>;
+                </>}
+                { this.state.sourceType != EXISTING_DISK_IMAGE_SOURCE &&
+                <StorageRow
+                    allowNoDisk={this.state.sourceType !== CLOUD_IMAGE}
+                    connectionName={this.state.connectionName}
+                    storageSize={this.state.storageSize}
+                    storageSizeUnit={this.state.storageSizeUnit}
+                    onValueChanged={this.onValueChanged}
+                    storagePoolName={this.state.storagePool}
+                    storagePools={storagePools.filter(pool => pool.connectionName === this.state.connectionName)}
+                    storageVolume={this.state.storageVolume}
+                    vms={vms}
+                    minimumStorage={this.state.minimumStorage}
+                    validationFailed={validationFailed}
+                    createMode={this.state.createMode}
+                />}
 
-        const automationTab = <>
-            {unattendedInstructionsMessage}
-            {this.state.os && this.state.sourceType === DOWNLOAD_AN_OS && this.props.unattendedSupported &&
+                <MemoryRow
+                    memorySize={this.state.memorySize}
+                    memorySizeUnit={this.state.memorySizeUnit}
+                    nodeMaxMemory={nodeMaxMemory}
+                    onValueChanged={this.onValueChanged}
+                    validationFailed={validationFailed}
+                    minimumMemory={this.state.minimumMemory}
+                />
+            </>
+        );
+
+        const automationTab = (
+            <>
+                {unattendedInstructionsMessage}
+                {this.state.os && this.state.sourceType === DOWNLOAD_AN_OS && this.props.unattendedSupported &&
                 <UnattendedRow
                     validationFailed={validationFailed}
                     rootPassword={this.state.rootPassword}
@@ -1264,15 +1275,16 @@ class CreateVmModal extends React.Component {
                     os={this.state.os}
                     profile={this.state.profile}
                     onValueChanged={this.onValueChanged} />
-            }
-            {this.state.sourceType === CLOUD_IMAGE && this.props.cloudInitSupported &&
+                }
+                {this.state.sourceType === CLOUD_IMAGE && this.props.cloudInitSupported &&
                 <CloudInitOptionsRow validationFailed={validationFailed}
                                      rootPassword={this.state.rootPassword}
                                      userLogin={this.state.userLogin}
                                      userPassword={this.state.userPassword}
                                      onValueChanged={this.onValueChanged} />
-            }
-        </>;
+                }
+            </>
+        );
 
         const dialogBody = (
             <Form isHorizontal>

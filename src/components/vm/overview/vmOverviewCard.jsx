@@ -75,7 +75,7 @@ class VmOverviewCard extends React.Component {
         const { vm } = this.props;
         const autostart = !vm.autostart;
 
-        domainChangeAutostart({ connectionName: vm.connectionName, vmName: vm.name, autostart: autostart })
+        domainChangeAutostart({ connectionName: vm.connectionName, vmName: vm.name, autostart })
                 .then(() => {
                     domainGet({ connectionName: vm.connectionName, id: vm.id });
                 });

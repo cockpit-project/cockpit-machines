@@ -46,15 +46,18 @@ export const getNetworkRow = ({ network }) => {
     const name = (
         <span id={`${idPrefix}-name`}>
             { network.name }
-        </span>);
+        </span>
+    );
     const device = (
         <span id={`${idPrefix}-device`}>
             { network.bridge && network.bridge.name }
-        </span>);
+        </span>
+    );
     const forwarding = (
         <span id={`${idPrefix}-forwarding`}>
             { rephraseUI('networkForward', network.forward ? network.forward.mode : "none") }
-        </span>);
+        </span>
+    );
     const state = (
         <StateIcon error={network.error} state={network.active ? _("active") : _("inactive") }
                    valueId={`${idPrefix}-state`}
@@ -78,7 +81,7 @@ export const getNetworkRow = ({ network }) => {
     return {
         columns: cols,
         props: { key: network.uuid, 'data-row-id': idPrefix },
-        expandedContent: expandedContent,
+        expandedContent,
         hasPadding: true,
     };
 };
@@ -142,9 +145,11 @@ const NetworkActions = ({ network }) => {
 
     const dropdownItemContent = (
         !network.persistent
-            ? <Tooltip content={_("Non-persistent network cannot be deleted. It ceases to exists when it's deactivated.")}>
-                <span>{_("Delete")}</span>
-            </Tooltip>
+            ? (
+                <Tooltip content={_("Non-persistent network cannot be deleted. It ceases to exists when it's deactivated.")}>
+                    <span>{_("Delete")}</span>
+                </Tooltip>
+            )
             : _("Delete")
     );
     const dropdownItems = [

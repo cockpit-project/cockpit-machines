@@ -76,11 +76,13 @@ class SerialConsoleCockpit extends React.Component {
         const pid = this.props.vmName + "-terminal";
         let t = <span>{_("Loading...")}</span>;
         if (this.state.channel) {
-            t = <Terminal
-             refName={this.props.vmName}
-             channel={this.state.channel}
-             parentId={pid}
-            />;
+            t = (
+                <Terminal
+                    refName={this.props.vmName}
+                    channel={this.state.channel}
+                    parentId={pid}
+                />
+            );
         } else if (this.state.channel === null) {
             t = <span>{_("Disconnected from serial console. Click the connect button.")}</span>;
         }

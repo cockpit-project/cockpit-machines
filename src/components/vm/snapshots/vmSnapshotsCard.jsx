@@ -69,14 +69,16 @@ export class VmSnapshotsCard extends React.Component {
                 name: _("Creation time"),
                 value: (snap, snapId) => {
                     const date = localize_datetime(snap.creationTime * 1000);
-                    return (<Flex className="snap-creation-time">
-                        <FlexItem id={`${id}-snapshot-${snapId}-date`} spacer={{ default: 'spacerSm' }}>
-                            {date}
-                        </FlexItem>
-                        { snap.isCurrent && <FlexItem><Tooltip content={_("Current")}>
-                            <CheckIcon id={`${id}-snapshot-${snapId}-current`} />
-                        </Tooltip></FlexItem> }
-                    </Flex>);
+                    return (
+                        <Flex className="snap-creation-time">
+                            <FlexItem id={`${id}-snapshot-${snapId}-date`} spacer={{ default: 'spacerSm' }}>
+                                {date}
+                            </FlexItem>
+                            { snap.isCurrent && <FlexItem><Tooltip content={_("Current")}>
+                                <CheckIcon id={`${id}-snapshot-${snapId}-current`} />
+                            </Tooltip></FlexItem> }
+                        </Flex>
+                    );
                 }
             },
             {
@@ -121,11 +123,14 @@ export class VmSnapshotsCard extends React.Component {
                     };
                     const tooltipMessage = infoTips[snap.state];
                     const tooltip = tooltipMessage
-                        ? (<span className="tooltip-circle">
-                            <Tooltip entryDelay={0} exitDelay={0} content={tooltipMessage}>
-                                <InfoAltIcon />
-                            </Tooltip>
-                        </span>) : null;
+                        ? (
+                            <span className="tooltip-circle">
+                                <Tooltip entryDelay={0} exitDelay={0} content={tooltipMessage}>
+                                    <InfoAltIcon />
+                                </Tooltip>
+                            </span>
+                        )
+                        : null;
 
                     return (
                         <div id={`${id}-snapshot-${snapId}-type`}>

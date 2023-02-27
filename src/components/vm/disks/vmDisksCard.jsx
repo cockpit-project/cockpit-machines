@@ -131,8 +131,8 @@ export class VmDisksCardLibvirt extends React.Component {
 
         return {
             ...disk,
-            used: used,
-            capacity: capacity,
+            used,
+            capacity,
         };
     }
 

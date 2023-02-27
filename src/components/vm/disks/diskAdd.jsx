@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { Bullseye } from "@patternfly/react-core/dist/esm/layouts/Bullseye/index.js";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
 import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox/index.js";
@@ -157,14 +157,15 @@ const PoolRow = ({ idPrefix, onValueChanged, storagePoolName, validationFailed, 
                            onChange={value => onValueChanged('storagePoolName', value)}
                            validated={validationStatePool}
                            value={storagePoolName || 'no-resource'}>
-                {vmStoragePools.length > 0 ? vmStoragePools
-                        .sort((a, b) => a.name.localeCompare(b.name))
-                        .map(pool => {
-                            return (
-                                <FormSelectOption isDisabled={pool.disabled} value={pool.name} key={pool.name}
+                {vmStoragePools.length > 0
+                    ? vmStoragePools
+                            .sort((a, b) => a.name.localeCompare(b.name))
+                            .map(pool => {
+                                return (
+                                    <FormSelectOption isDisabled={pool.disabled} value={pool.name} key={pool.name}
                                                   label={pool.name} />
-                            );
-                        })
+                                );
+                            })
                     : [<FormSelectOption value='no-resource' key='no-resource'
                                          label={_("No storage pools available")} />]}
             </FormSelect>
@@ -178,22 +179,12 @@ const AdditionalOptions = ({ cacheMode, device, idPrefix, onValueChanged, busTyp
     const [showMaxLengthMessage, setShowMaxLengthMessage] = useState(false);
     const [truncatedSerial, setTruncatedSerial] = useState("");
 
-    useEffect(() => {
-        setSerialHelper(serial);
-    }, [busType]);
-
-    const displayBusTypes = diskBusTypes[device]
-            .filter(bus => supportedDiskBusTypes.includes(bus))
-            .map(type => ({ value: type }));
-    if (!displayBusTypes.find(displayBusType => busType.value === displayBusType.busType))
-        displayBusTypes.push({ value: busType, disabled: true });
-
     // Many disk types have serial length limitations.
     // libvirt docs: "IDE/SATA devices are commonly limited to 20 characters. SCSI devices depending on hypervisor version are limited to 20, 36 or 247 characters."
     // https://libvirt.org/formatdomain.html#hard-drives-floppy-disks-cdroms
     const serialLength = busType === "scsi" ? 36 : 20;
 
-    const setSerialHelper = value => {
+    const setSerialHelper = useCallback(value => {
         const clearedSerial = clearSerial(value);
 
         if (value !== clearedSerial)
@@ -207,7 +198,17 @@ const AdditionalOptions = ({ cacheMode, device, idPrefix, onValueChanged, busTyp
         }
 
         onValueChanged('serial', clearedSerial);
-    };
+    }, [onValueChanged, serialLength]);
+
+    useEffect(() => {
+        setSerialHelper(serial);
+    }, [setSerialHelper, serial, busType]);
+
+    const displayBusTypes = diskBusTypes[device]
+            .filter(bus => supportedDiskBusTypes.includes(bus))
+            .map(type => ({ value: type }));
+    if (!displayBusTypes.find(displayBusType => busType.value === displayBusType.busType))
+        displayBusTypes.push({ value: busType, disabled: true });
 
     return (
         <ExpandableSection toggleText={ expanded ? _("Hide additional options") : _("Show additional options")}
@@ -219,8 +220,8 @@ const AdditionalOptions = ({ cacheMode, device, idPrefix, onValueChanged, busTyp
                             onChange={value => onValueChanged('cacheMode', value)}
                             value={cacheMode}>
                             {diskCacheModes.map(cacheMode =>
-                                <FormSelectOption value={cacheMode} key={cacheMode}
-                                                  label={cacheMode} />
+                                (<FormSelectOption value={cacheMode} key={cacheMode}
+                                                  label={cacheMode} />)
                             )}
                         </FormSelect>
                     </FormGroup>
@@ -231,10 +232,10 @@ const AdditionalOptions = ({ cacheMode, device, idPrefix, onValueChanged, busTyp
                             onChange={value => onValueChanged('busType', value)}
                             value={busType}>
                             {displayBusTypes.map(busType =>
-                                <FormSelectOption value={busType.value}
+                                (<FormSelectOption value={busType.value}
                                                   key={busType.value}
                                                   isDisabled={busType.disabled}
-                                                  label={busType.value} />
+                                                  label={busType.value} />)
                             )}
                         </FormSelect>
                     </FormGroup>
@@ -332,31 +333,35 @@ const UseExistingDisk = ({
 };
 
 const CustomPath = ({ idPrefix, onValueChanged, device, validationFailed, hideDeviceRow }) => {
-    return (<>
-        <FormGroup id={`${idPrefix}-file`}
-                   fieldId={`${idPrefix}-file-autocomplete`}
-                   helperTextInvalid={validationFailed.customPath}
-                   helperTextInvalidIcon={<ExclamationCircleIcon />}
-                   validated={validationFailed.customPath && "error"}
-                   label={_("Custom path")}>
-            <FileAutoComplete id={`${idPrefix}-file-autocomplete`}
-                placeholder={_("Path to file on host's file system")}
-                onChange={value => onValueChanged("file", value)}
-                superuser="try" />
-        </FormGroup>
-        {!hideDeviceRow && <FormGroup id={`${idPrefix}-device`}
+    return (
+        <>
+            <FormGroup
+                id={`${idPrefix}-file`}
+                fieldId={`${idPrefix}-file-autocomplete`}
+                helperTextInvalid={validationFailed.customPath}
+                helperTextInvalidIcon={<ExclamationCircleIcon />}
+                validated={validationFailed.customPath && "error"}
+                label={_("Custom path")}>
+                <FileAutoComplete
+                    id={`${idPrefix}-file-autocomplete`}
+                    placeholder={_("Path to file on host's file system")}
+                    onChange={value => onValueChanged("file", value)}
+                    superuser="try" />
+            </FormGroup>
+            {!hideDeviceRow && <FormGroup id={`${idPrefix}-device`}
                    fieldId={`${idPrefix}-select-device`}
                    label={_("Device")}>
-            <FormSelect id={`${idPrefix}-select-device`}
+                <FormSelect id={`${idPrefix}-select-device`}
                         onChange={value => onValueChanged('device', value)}
                         value={device}>
-                <FormSelectOption value="disk" key="disk"
+                    <FormSelectOption value="disk" key="disk"
                                   label={_("Disk image file")} />
-                <FormSelectOption value="cdrom" key="cdrom"
+                    <FormSelectOption value="cdrom" key="cdrom"
                                   label={_("CD/DVD disc")} />
-            </FormSelect>
-        </FormGroup>}
-    </>);
+                </FormSelect>
+            </FormGroup>}
+        </>
+    );
 };
 
 export class AddDiskModalBody extends React.Component {
@@ -547,10 +552,10 @@ export class AddDiskModalBody extends React.Component {
                                 format = "qcow2";
                                 // All zeros, no backing file offset
                                 if (file_header.slice(8).every(bytes => bytes === 0)) {
-                                    this.setState({ customDiskVerificationFailed: false, format: format });
+                                    this.setState({ customDiskVerificationFailed: false, format });
                                 } else {
                                     this.setState({
-                                        format: format,
+                                        format,
                                         customDiskVerificationFailed: true,
                                         customDiskVerificationMessage: _("Importing an image with a backing file is unsupported"),
                                         validate: true
@@ -558,7 +563,7 @@ export class AddDiskModalBody extends React.Component {
                                 }
                             } else {
                                 format = "raw";
-                                this.setState({ customDiskVerificationFailed: false, format: format });
+                                this.setState({ customDiskVerificationFailed: false, format });
                             }
                             this.setState({ verificationInProgress: false });
                         })

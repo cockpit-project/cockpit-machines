@@ -44,7 +44,7 @@ export const RenameDialog = ({ vmName, vmId, connectionName }) => {
         if (!newName)
             return;
 
-        return domainRename({ connectionName, id: vmId, newName: newName })
+        return domainRename({ connectionName, id: vmId, newName })
                 .then(() => {
                     Dialogs.close();
                     // If we are on the VMs details page change the URL to reflect the new name after the rename operation succeeded
