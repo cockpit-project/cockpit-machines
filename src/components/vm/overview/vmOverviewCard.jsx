@@ -20,10 +20,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { Icon } from "@patternfly/react-core/dist/esm/components/Icon";
 import { Text, TextVariants } from "@patternfly/react-core/dist/esm/components/Text";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
+import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
 import { Switch } from "@patternfly/react-core/dist/esm/components/Switch";
 import { DialogsContext } from 'dialogs.jsx';
 import { HelpIcon } from '@patternfly/react-icons';
@@ -41,10 +43,16 @@ import { BootOrderLink } from './bootOrder.jsx';
 import { FirmwareLink } from './firmware.jsx';
 import { WatchdogLink } from './watchdog.jsx';
 import { needsShutdownCpuModel, NeedsShutdownTooltip, needsShutdownVcpu } from '../../common/needsShutdown.jsx';
+import { VsockLink } from './vsock.jsx';
 import { StateIcon } from '../../common/stateIcon.jsx';
 import { domainChangeAutostart, domainGet } from '../../../libvirtApi/domain.js';
 import store from '../../../store.js';
-import { WATCHDOG_INFO_MESSAGE } from './helpers.js';
+import {
+    SOCAT_EXAMPLE,
+    SOCAT_EXAMPLE_HEADER,
+    VSOCK_INFO_MESSAGE,
+    WATCHDOG_INFO_MESSAGE,
+} from './helpers.jsx';
 
 import '../../common/overviewCard.css';
 
@@ -92,7 +100,7 @@ class VmOverviewCard extends React.Component {
     }
 
     render() {
-        const { vm, nodeDevices, libvirtVersion } = this.props;
+        const { vm, vms, nodeDevices, libvirtVersion } = this.props;
         const idPrefix = vmId(vm.name);
 
         const autostart = (
@@ -216,6 +224,38 @@ class VmOverviewCard extends React.Component {
                                 <WatchdogLink vm={vm} idPrefix={idPrefix} />
                             </DescriptionListDescription>
                         </DescriptionListGroup>
+
+                        <DescriptionListGroup>
+                            <Flex spaceItems={{ default: 'spaceItemsXs' }} alignItems={{ default: 'alignItemsCenter' }}>
+                                <FlexItem>
+                                    <DescriptionListTerm>
+                                        {_("Vsock")}
+                                    </DescriptionListTerm>
+                                </FlexItem>
+                                <FlexItem>
+                                    <Popover alertSeverityVariant="info"
+                                        position="right"
+                                        headerContent={_("vsock requires special software")}
+                                        bodyContent={VSOCK_INFO_MESSAGE}
+                                        footerContent={
+                                            <Flex direction={{ default: 'column' }}>
+                                                <FlexItem>{SOCAT_EXAMPLE_HEADER}</FlexItem>
+                                                {SOCAT_EXAMPLE}
+                                            </Flex>
+                                        }
+                                        hasAutoWidth>
+                                        <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
+                                            <Icon className="overview-icon" status="info">
+                                                <HelpIcon noVerticalAlign />
+                                            </Icon>
+                                        </button>
+                                    </Popover>
+                                </FlexItem>
+                            </Flex>
+                            <DescriptionListDescription id={`${idPrefix}-vsock`}>
+                                <VsockLink vm={vm} vms={vms} idPrefix={idPrefix} infoMessage={VSOCK_INFO_MESSAGE} socatMessage={SOCAT_EXAMPLE} />
+                            </DescriptionListDescription>
+                        </DescriptionListGroup>
                     </DescriptionList>
                 </FlexItem>
                 <FlexItem>
@@ -246,6 +286,7 @@ class VmOverviewCard extends React.Component {
 
 VmOverviewCard.propTypes = {
     vm: PropTypes.object.isRequired,
+    vms: PropTypes.array.isRequired,
     config: PropTypes.object.isRequired,
     libvirtVersion: PropTypes.number.isRequired,
     nodeDevices: PropTypes.array.isRequired,

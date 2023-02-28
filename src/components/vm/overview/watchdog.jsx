@@ -32,7 +32,7 @@ import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { domainRemoveWatchdog, domainSetWatchdog } from "../../../libvirtApi/domain.js";
 import { rephraseUI } from "../../../helpers.js";
 import { NeedsShutdownAlert, NeedsShutdownTooltip, needsShutdownWatchdog } from "../../common/needsShutdown.jsx";
-import { WATCHDOG_INFO_MESSAGE } from './helpers.js';
+import { WATCHDOG_INFO_MESSAGE } from './helpers.jsx';
 
 const _ = cockpit.gettext;
 

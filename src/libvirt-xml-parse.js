@@ -245,6 +245,7 @@ export function parseDomainDumpxml(connectionName, domXml, objPath) {
     const hostDevices = parseDumpxmlForHostDevices(devicesElem);
     const filesystems = parseDumpxmlForFilesystems(devicesElem);
     const watchdog = parseDumpxmlForWatchdog(devicesElem);
+    const vsock = parseDumpxmlForVsock(devicesElem);
 
     const hasInstallPhase = parseDumpxmlMachinesMetadataElement(metadataElem, 'has_install_phase') === 'true';
     const installSourceType = parseDumpxmlMachinesMetadataElement(metadataElem, 'install_source_type');
@@ -286,6 +287,7 @@ export function parseDomainDumpxml(connectionName, domXml, objPath) {
         hostDevices,
         filesystems,
         watchdog,
+        vsock,
         metadata,
     };
 }
@@ -460,6 +462,23 @@ export function parseDumpxmlForWatchdog(devicesElem) {
     } else {
         return {};
     }
+}
+
+export function parseDumpxmlForVsock(devicesElem) {
+    const vsockElem = getSingleOptionalElem(devicesElem, 'vsock');
+    const cid = {};
+
+    if (vsockElem) {
+        const cidElem = getSingleOptionalElem(devicesElem, 'cid');
+
+        if (cidElem) {
+            // https://libvirt.org/formatdomain.html#vsock
+            cid.auto = cidElem.getAttribute('auto');
+            cid.address = cidElem.getAttribute('address');
+        }
+    }
+
+    return { cid };
 }
 
 export function parseDumpxmlForFilesystems(devicesElem) {

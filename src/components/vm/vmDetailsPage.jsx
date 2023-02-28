@@ -109,7 +109,9 @@ export const VmDetailsPage = ({
         {
             id: `${vmId(vm.name)}-overview`,
             title: _("Overview"),
-            body: <VmOverviewCard vm={vm} config={config}
+            body: <VmOverviewCard vm={vm}
+                                  vms={vms}
+                                  config={config}
                                   loaderElems={vm.capabilities.loaderElems}
                                   maxVcpu={vm.capabilities.maxVcpu}
                                   cpuModels={vm.capabilities.cpuModels}
