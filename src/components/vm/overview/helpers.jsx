@@ -16,12 +16,33 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-
+import React from 'react';
 import cockpit from 'cockpit';
+
+import { CodeBlock, CodeBlockCode } from "@patternfly/react-core/dist/esm/components/CodeBlock";
+import { FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 
 const _ = cockpit.gettext;
 
 export const WATCHDOG_INFO_MESSAGE = _("Watchdogs act when systems stop responding. To use this virtual watchdog device, the guest system also needs to have an additional driver and a running watchdog service.");
+export const VSOCK_INFO_MESSAGE = _("Virtual socket support enables communication between the host and guest over a socket. It still requires special vsock-aware software to communicate over the socket.");
+export const SOCAT_EXAMPLE_HEADER = _("An example of vsock-aware software is socat");
+export const SOCAT_EXAMPLE = (
+    <>
+        <FlexItem>
+            {_("On the host")}
+            <CodeBlock>
+                <CodeBlockCode>socat VSOCK-LISTEN:1234 VSOCK-CONNECT:[vsock_identifier]:1234</CodeBlockCode>
+            </CodeBlock>
+        </FlexItem>
+        <FlexItem>
+            {_("Inside the VM")}
+            <CodeBlock>
+                <CodeBlockCode>nc --vsock -l 1234</CodeBlockCode>
+            </CodeBlock>
+        </FlexItem>
+    </>
+);
 
 export function labelForFirmwarePath(path, guest_arch) {
     /* Copied from virt-manager code:

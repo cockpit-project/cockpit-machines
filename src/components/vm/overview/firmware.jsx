@@ -28,7 +28,7 @@ import { useDialogs, DialogsContext } from 'dialogs.jsx';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { domainSetOSFirmware, domainCanInstall } from "../../../libvirtApi/domain.js";
-import { supportsUefiXml, labelForFirmwarePath } from './helpers.js';
+import { supportsUefiXml, labelForFirmwarePath } from './helpers.jsx';
 
 const _ = cockpit.gettext;
 

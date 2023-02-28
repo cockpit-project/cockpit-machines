@@ -583,6 +583,23 @@ export function domainDetachIface({ connectionName, index, vmName, live, persist
     return cockpit.spawn(args, options);
 }
 
+export function domainRemoveVsock({ connectionName, vmName, permanent, hotplug }) {
+    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--remove-device', '--vsock', '1'];
+
+    const options = { err: "message" };
+
+    if (connectionName === "system")
+        options.superuser = "try";
+
+    if (hotplug) {
+        args.push("--update");
+        if (!permanent)
+            args.push("--no-define");
+    }
+
+    return cockpit.spawn(args, options);
+}
+
 export function domainRemoveWatchdog({ connectionName, vmName, permanent, hotplug, model }) {
     const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--remove-device', '--watchdog', `model=${model}`];
     const options = { err: "message" };
@@ -978,6 +995,25 @@ export function domainSetVCPUSettings ({
     return cockpit.spawn([
         'virt-xml', '-c', `qemu:///${connectionName}`, '--vcpu', `${max},vcpu.current=${count},sockets=${sockets},cores=${cores},threads=${threads}`, name, '--edit'
     ], opts);
+}
+
+export function domainSetVsock({ connectionName, vmName, permanent, hotplug, auto, address, isVsockAttached }) {
+    const cidAddressStr = address ? `,cid.address=${address}` : "";
+    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, isVsockAttached ? '--edit' : '--add-device', '--vsock', `cid.auto=${auto}${cidAddressStr}`];
+    const options = { err: "message" };
+
+    if (connectionName === "system")
+        options.superuser = "try";
+
+    // Only attaching new vsock device to running VM works
+    // Editing existing vsock device on running VM (live XML config) is not possible, in such situation we only change offline XML config
+    if (hotplug && !isVsockAttached) {
+        args.push("--update");
+        if (!permanent)
+            args.push("--no-define");
+    }
+
+    return cockpit.spawn(args, options);
 }
 
 export function domainSetWatchdog({ connectionName, vmName, defineOffline, hotplug, action, isWatchdogAttached }) {

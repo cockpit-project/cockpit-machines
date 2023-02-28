@@ -19,6 +19,7 @@
 
 import os
 import sys
+import subprocess
 
 # import Cockpit's machinery for test VMs and its browser test API
 TEST_DIR = os.path.dirname(__file__)
@@ -673,6 +674,166 @@ class TestMachinesSettings(VirtualMachinesCase):
             # Destroy and start a VM so libvirt reloads updated XML
             m.execute("virsh destroy subVmTest1; virsh start subVmTest1")
             b.wait_not_present("#watchdog-tooltip")
+
+    def testVsock(self):
+        b = self.browser
+        m = self.machine
+
+        default_libvirt_vsock_address = "3"  # When we don't specify address, libvit will choose lowest available (3 in case of clean VM)
+
+        def setVsock(auto, address=None, machine_has_no_vsock=False, pixel_test_tag=None, reboot_machine=False):
+            # If no vsock configured, we are attaching a new vsock device. If vsock already is set, we are editing an exiting vsock device
+            if machine_has_no_vsock:
+                b.wait_in_text("#vm-subVmTest1-vsock-button", "add")
+            else:
+                b.wait_in_text("#vm-subVmTest1-vsock-button", "edit")
+
+            b.click("#vm-subVmTest1-vsock-button")
+            b.wait_visible("#vm-subVmTest1-vsock-modal")
+
+            if pixel_test_tag:
+                b.assert_pixels("#vm-subVmTest1-vsock-modal", pixel_test_tag)
+
+            b.set_checked("#vsock-cid-generate", not auto)
+            if not auto:
+                b.set_input_text("#vsock-context-identifier input", address)
+
+            if machine_has_no_vsock:
+                b.wait_in_text("#vsock-dialog-apply", "Add")
+            else:
+                b.wait_in_text("#vsock-dialog-apply", "Save")
+
+            b.click("#vsock-dialog-apply")
+            b.wait_not_present("#vm-subVmTest1-vsock-modal")
+
+            b.wait_in_text("#vm-subVmTest1-vsock-address", "assign automatically" if auto else address)
+
+            virsh_output_auto = m.execute("virsh dumpxml subVmTest1 | xmllint --xpath '/domain/devices/vsock/cid/@auto' -").strip()
+            virsh_output_address = m.execute("virsh dumpxml subVmTest1 | xmllint --xpath '/domain/devices/vsock/cid/@address' -").strip()
+            self.assertEqual(virsh_output_auto, 'auto="yes"' if auto else 'auto="no"')
+            if not auto:
+                self.assertEqual(virsh_output_address, f'address="{address}"')
+
+        def setVsockLive(new_auto, new_address=None, previous_address=None, previous_auto=None, reboot_machine=False):
+            b.click("#vm-subVmTest1-vsock-button")
+            b.wait_visible("#vm-subVmTest1-vsock-modal")
+
+            b.set_checked("#vsock-cid-generate", not new_auto)
+            if not new_auto:
+                b.set_input_text("#vsock-context-identifier input", new_address)
+
+            if previous_address or previous_auto:
+                # When editing an exiting vsock, message warning user that changes will take effect after reboot should be present
+                b.wait_visible("#vm-subVmTest1-vsock-modal #vm-subVmTest1-idle-message")
+            else:
+                # When attaching adding a new vsock, no message should be present
+                b.wait_not_present("#vm-subVmTest1-vsock-modal #vm-subVmTest1-idle-message")
+
+            b.click("#vsock-dialog-apply")
+            b.wait_not_present("#vm-subVmTest1-vsock-modal")
+
+            if previous_address or previous_auto:
+                # When editing an exiting vsock, tooltip should be present on overview card warning user that changes will take effect after reboot
+                b.wait_visible("#vsock-tooltip")
+            else:
+                # When attaching adding a new vsock, no tooltip should be present
+                b.wait_not_present("#vsock-tooltip")
+
+            # Libvirt doesn't support editing vsock device on RUNNING vm, so a live VM config will persist the previously configured vsock action until reboot
+            # On the other hand, libvirt does support attaching a vsock to a RUNNING VM
+            # So in summary:
+            # - if no previous vsock is configured on a VM, we are attaching a new vsock device and live VM config will get updated
+            # - if vsock action is configured on a VM, and we are editing an editing vsock device, the live VM config will persist the old setting until VM is rebooted
+            virsh_output_auto = m.execute("virsh dumpxml subVmTest1 | xmllint --xpath '/domain/devices/vsock/cid/@auto' -").strip()
+            if previous_auto is not None:  # Editing exiting vsock
+                expected_auto = "yes" if previous_auto else "no"
+            else:  # Attaching new vsock
+                expected_auto = "yes" if new_auto else "no"
+            self.assertEqual(virsh_output_auto, f'auto="{expected_auto}"')
+
+            if previous_address is not None:
+                expected_address = previous_address  # Editing exiting vsock, old vsock is still present in live XML
+            else:
+                if new_address is not None:
+                    expected_address = new_address   # Attaching new vsock, new vsock is already present in live VM
+                else:
+                    expected_address = default_libvirt_vsock_address  # When we don't specify address, libvit will choose
+            b.wait_in_text("#vm-subVmTest1-vsock-address", expected_address)
+            virsh_output_address = m.execute("virsh dumpxml subVmTest1 | xmllint --xpath '/domain/devices/vsock/cid/@address' -").strip()
+            self.assertEqual(virsh_output_address, f'address="{expected_address}"')
+
+            # Offline VM config will always have newly configured vsock, no matter if we are attaching a new vsock device or editing an existing one
+            expected_auto_offline = "yes" if new_auto else "no"
+            virsh_output_offline_auto = m.execute("virsh dumpxml subVmTest1 --inactive | xmllint --xpath '/domain/devices/vsock/cid/@auto' -").strip()
+            self.assertEqual(virsh_output_offline_auto, f'auto="{expected_auto_offline}"')
+
+            expected_address_offline = new_address
+            virsh_output_offline_address = m.execute("virsh dumpxml subVmTest1 --inactive | xmllint --xpath '/domain/devices/vsock/cid/@address' -").strip()
+            if expected_address_offline:
+                self.assertEqual(virsh_output_offline_address, f'address="{expected_address_offline}"')
+
+            if reboot_machine:
+                # Check that after rebooting machine, live VM config will have new vsock condiguration
+                self.performAction("subVmTest1", "forceOff")
+                b.click("#vm-subVmTest1-system-run")
+                b.wait_in_text("#vm-subVmTest1-system-state", "Running")
+
+                expected_after_reboot_auto = "yes" if new_auto else "no"
+                virsh_output_auto = m.execute("virsh dumpxml subVmTest1 | xmllint --xpath '/domain/devices/vsock/cid/@auto' -").strip()
+                self.assertEqual(virsh_output_auto, f'auto="{expected_after_reboot_auto}"')
+
+                expected_after_reboot_address = new_address if new_address else default_libvirt_vsock_address
+                b.wait_in_text("#vm-subVmTest1-vsock-address", expected_after_reboot_address)
+                virsh_output_address = m.execute("virsh dumpxml subVmTest1 | xmllint --xpath '/domain/devices/vsock/cid/@address' -").strip()
+                self.assertEqual(virsh_output_address, f'address="{expected_after_reboot_address}"')
+
+        def removeVsockDevice(live=True):
+            b.click("#vm-subVmTest1-vsock-button")
+            b.wait_visible("#vm-subVmTest1-vsock-modal")
+
+            b.click("#vsock-dialog-detach")
+            b.wait_not_present("#vm-subVmTest1-vsock-modal")
+
+            b.wait_in_text("#vm-subVmTest1-vsock-address", "none")
+            # check no vsock is present in VM's xml (also xmllint is expected to return non-zero code)
+            virsh_output = m.execute("virsh dumpxml subVmTest1 | xmllint --xpath '/domain/devices/vsock' - 2>&1 || true").strip()
+            self.assertEqual(virsh_output, 'XPath set is empty')
+
+            if live:
+                # check no vsock is present in VM's xml (also xmllint is expected to return non-zero code)
+                virsh_output = m.execute("virsh dumpxml subVmTest1 --inactive | xmllint --xpath '/domain/devices/vsock' - 2>&1 || true").strip()
+                self.assertEqual(virsh_output, 'XPath set is empty')
+
+        self.createVm("subVmTest1", running=False)
+
+        self.login_and_go("/machines")
+        self.waitPageInit()
+        self.goToVmPage("subVmTest1")
+
+        b.wait_in_text("#vm-subVmTest1-vsock-address", "none")
+
+        # The whole UI is based around expectation that libvirt allows maximum 1 vsock per VM
+        # Have a canary here which will let us know once this is no longer true
+        m.execute("virt-xml subVmTest1 --add-device --vsock cid.auto=yes")
+        # Attaching second vsock is expected to fail
+        self.assertRaises(subprocess.CalledProcessError, m.execute, "virt-xml subVmTest1 --add-device --vsock cid.auto=no,cid.address=8")
+        m.execute("virt-xml subVmTest1 --remove-device --vsock 1")
+
+        # Test configuring vsock for shutoff VM
+        setVsock(auto=True, machine_has_no_vsock=True)
+        setVsock(auto=False, address="5", pixel_test_tag="vsock")
+        removeVsockDevice()
+
+        # Because of bug in debian-testing, hotplug of vsock device fails
+        # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1033872
+        if m.image not in ["debian-testing", "debian-stable"]:
+            b.click("#vm-subVmTest1-system-run")
+            b.wait_in_text("#vm-subVmTest1-system-state", "Running")
+
+            # Test configuring vsock for running VM
+            setVsockLive(new_auto=False, new_address="5")
+            setVsockLive(new_auto=True, previous_auto=False, previous_address="5", reboot_machine=True)
+            setVsockLive(new_auto=False, new_address="4", previous_auto=True, previous_address=default_libvirt_vsock_address)
 
 
 if __name__ == '__main__':
