@@ -10,9 +10,18 @@ This is the [Cockpit](https://cockpit-project.org/) user interface for virtual m
   for creating and modifying machine definitions; both part of the
   [virt-manager](https://virt-manager.org/) project
 
+# Development dependencies
+
+On Debian/Ubuntu:
+
+    $ sudo apt install gettext nodejs make
+
+On Fedora:
+
+    $ sudo dnf install gettext nodejs make
+
 # Getting and building the source
 
-Make sure you have `npm` available (usually from your distribution package).
 These commands check out the source and build it into the `dist/` directory:
 
 ```
