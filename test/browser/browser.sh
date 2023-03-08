@@ -78,7 +78,6 @@ if [ "${PLATFORM_ID:-}" != "platform:el8" ]; then
     systemctl start virtinterfaced.socket
     systemctl start virtnetworkd.socket
     systemctl start virtnodedevd.socket
-    systemctl start virtproxyd.socket
     systemctl start virtstoraged.socket
 fi
 
