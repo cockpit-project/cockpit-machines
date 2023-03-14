@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 
@@ -42,6 +42,7 @@ import { AggregateStatusCards } from "../aggregateStatusCards.jsx";
 import store from "../../store.js";
 
 import "./hostvmslist.scss";
+import { Alert, List, ListComponent, ListItem, OrderType } from '@patternfly/react-core';
 
 const VmState = ({ vm, dismissError }) => {
     let state = null;
@@ -63,9 +64,23 @@ const _ = cockpit.gettext;
  * List of all VMs defined on this host
  */
 const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddErrorNotification }) => {
+    const [virtualizationEnabled, setVirtualizationEnabled] = useState(true);
     const [statusSelected, setStatusSelected] = useState({ value: _("All"), toString: function() { return this.value } });
     const [currentTextFilter, setCurrentTextFilter] = useState("");
     const [statusIsExpanded, setStatusIsExpanded] = useState(false);
+
+    useEffect(() => {
+        async function checkVirtualization() {
+            try {
+                await cockpit.script("grep -E 'vmx|svm|0xc0f' --color=auto /proc/cpuinfo");
+            } catch (e) {
+                setVirtualizationEnabled(false);
+            }
+        }
+
+        checkVirtualization();
+    }, []);
+
     const combinedVms = [...vms, ...dummyVmsFilter(vms, ui.vms)];
     const combinedVmsFiltered = combinedVms
             // searching VM should be case insensitive
@@ -126,6 +141,13 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
             <Page>
                 <PageSection>
                     <Gallery className="ct-cards-grid" hasGutter>
+                        {!virtualizationEnabled && <Alert variant="warning" title="Warning: Virtualization is disabled in the firmware" component="h5">
+                            <List component={ListComponent.ol} type={OrderType.number}>
+                                <ListItem>Restart the computer running Cockpit and enter the BIOS/EFI settings by pressing the appropriate key.</ListItem>
+                                <ListItem>In the BIOS / EFI settings, enable virtualization and save changes before exiting.</ListItem>
+                                <ListItem>Finally, restart the computer and try starting a VM in Cockpit.</ListItem>
+                            </List>
+                        </Alert>}
                         <AggregateStatusCards networks={networks} storagePools={storagePools} />
                         <Card id='virtual-machines-listing'>
                             <CardHeader>
