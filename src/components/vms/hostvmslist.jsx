@@ -29,6 +29,7 @@ import { Toolbar, ToolbarContent, ToolbarItem } from "@patternfly/react-core/dis
 import { Select, SelectOption, SelectVariant } from "@patternfly/react-core/dist/esm/components/Select/index.js";
 import { Page, PageSection } from "@patternfly/react-core/dist/esm/components/Page/index.js";
 import { Text, TextVariants } from "@patternfly/react-core/dist/esm/components/Text/index.js";
+import { Alert } from '@patternfly/react-core/dist/esm/components/Alert/index.js';
 import { WithDialogs } from 'dialogs.jsx';
 
 import VmActions from '../vm/vmActions.jsx';
@@ -42,7 +43,6 @@ import { AggregateStatusCards } from "../aggregateStatusCards.jsx";
 import store from "../../store.js";
 
 import "./hostvmslist.scss";
-import { Alert, List, ListComponent, ListItem, OrderType } from '@patternfly/react-core';
 
 const VmState = ({ vm, dismissError }) => {
     let state = null;
@@ -71,11 +71,10 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
 
     useEffect(() => {
         async function checkVirtualization() {
-            try {
-                await cockpit.script("grep -E 'vmx|svm|0xc0f' --color=auto /proc/cpuinfo");
-            } catch (e) {
-                setVirtualizationEnabled(false);
-            }
+            const cpuinfo = await cockpit.file("/proc/cpuinfo").read();
+            const flags = /vmx|svm|0xc0f/;
+
+            setVirtualizationEnabled(flags.test(cpuinfo));
         }
 
         checkVirtualization();
@@ -141,13 +140,14 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
             <Page>
                 <PageSection>
                     <Gallery className="ct-cards-grid" hasGutter>
-                        {!virtualizationEnabled && <Alert variant="warning" title="Warning: Virtualization is disabled in the firmware" component="h5">
-                            <List component={ListComponent.ol} type={OrderType.number}>
-                                <ListItem>Restart the computer running Cockpit and enter the BIOS/EFI settings by pressing the appropriate key.</ListItem>
-                                <ListItem>In the BIOS / EFI settings, enable virtualization and save changes before exiting.</ListItem>
-                                <ListItem>Finally, restart the computer and try starting a VM in Cockpit.</ListItem>
-                            </List>
-                        </Alert>}
+                        {!virtualizationEnabled &&
+                        (<Alert variant="warning" title={_("Hardware virtualization extensions are disabled in BIOS")} component="h5">
+                            <Text>
+                                {_("For instructions on how to enable virtualization, please take a look ")}
+                                <a href='https://cockpit-project.org/faq.html#virtual-machines'>here</a>
+                                {_(" if your virtual machines fail to start or operate too slowly.")}
+                            </Text>
+                        </Alert>)}
                         <AggregateStatusCards networks={networks} storagePools={storagePools} />
                         <Card id='virtual-machines-listing'>
                             <CardHeader>
