@@ -19,7 +19,9 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
+import { Alert } from '@patternfly/react-core/dist/esm/components/Alert';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { ExpandableSection, ExpandableSectionToggle } from "@patternfly/react-core/dist/esm/components/ExpandableSection";
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
@@ -33,24 +35,87 @@ import { NeedsShutdownAlert, NeedsShutdownTooltip, needsShutdownWatchdog } from 
 
 const _ = cockpit.gettext;
 
+const WatchdogModalAlert = ({ dialogError }) => {
+    const [isExpanded, setIsExpanded] = useState(false);
+
+    if (!dialogError)
+        return;
+
+    if (dialogError.variant === "warning") {
+        return (
+            <Alert variant="warning"
+                title={dialogError.text}
+                actionLinks={<>
+                    <ExpandableSectionToggle onToggle={() => setIsExpanded(!isExpanded)}
+                        isExpanded={isExpanded}>
+                        {isExpanded ? _("Show less") : _("Show more")}
+                    </ExpandableSectionToggle>
+                    <ExpandableSection isExpanded={isExpanded}
+                        isDetached>
+                        {dialogError.expandableDetail}
+                    </ExpandableSection>
+                </>}
+                isInline>
+                {dialogError.detail}
+            </Alert>
+        );
+    }
+
+    return <ModalError dialogError={dialogError.text} dialogErrorDetail={dialogError.detail} />;
+};
+
 export const WatchdogModal = ({ vm, isWatchdogAttached, idPrefix }) => {
     const [dialogError, setDialogError] = useState();
     const [watchdogAction, setWatchdogAction] = useState(vm.watchdog.action || "no-device");
     const [inProgress, setInProgress] = useState(false);
+    const [offerColdplug, setOfferColdplug] = useState(false);
 
     const Dialogs = useDialogs();
 
-    const save = () => {
-        setInProgress(true);
+    const setWatchdogColdplug = () => {
         return domainSetWatchdog({
             connectionName: vm.connectionName,
             vmName: vm.name,
-            hotplug: vm.state === "running",
-            permanent: vm.persistent,
             action: watchdogAction,
+            defineOffline: true,
+            hotplug: false,
             isWatchdogAttached,
         })
-                .then(Dialogs.close, exc => setDialogError({ text: _("Failed to configure watchdog"), detail: exc.message }))
+                .then(Dialogs.close, exc => setDialogError({ text: _("Failed to configure watchdog"), detail: exc.message, variant: "danger" }));
+    };
+
+    const setWatchdogHotplug = () => {
+        return domainSetWatchdog({
+            connectionName: vm.connectionName,
+            vmName: vm.name,
+            action: watchdogAction,
+            defineOffline: false,
+            hotplug: true,
+            isWatchdogAttached,
+        })
+                .then(vm.persistent ? setWatchdogColdplug : Promise.resolve)
+                .catch(exc => {
+                    if (vm.persistent)
+                        setOfferColdplug(true);
+
+                    setDialogError({
+                        text: _("Could not dynamically add watchdog"),
+                        detail: _("Adding a watchdog will require a reboot to take effect."),
+                        expandableDetail: exc.message,
+                        variant: vm.persistent ? "warning" : "danger"
+                    });
+                });
+    };
+
+    const save = (coldplug) => {
+        setInProgress(true);
+
+        let handler = setWatchdogHotplug;
+
+        if ((coldplug || vm.state !== "running") && vm.persistent)
+            handler = setWatchdogColdplug;
+
+        return handler()
                 .finally(() => setInProgress(false));
     };
 
@@ -63,13 +128,13 @@ export const WatchdogModal = ({ vm, isWatchdogAttached, idPrefix }) => {
             permanent: vm.persistent,
             model: vm.watchdog.model,
         })
-                .then(Dialogs.close, exc => setDialogError({ text: _("Failed to detach watchdog"), detail: exc.message }))
+                .then(Dialogs.close, exc => setDialogError({ text: _("Failed to detach watchdog"), detail: exc.message, variant: "danger" }))
                 .finally(() => setInProgress(false));
     };
 
     const supportedActions = ["reset", "poweroff", "inject-nmi", "pause"];
 
-    const showWarning = () => {
+    const needsShutdown = () => {
         if (vm.state === 'running' && isWatchdogAttached && vm.watchdog.action !== watchdogAction)
             return <NeedsShutdownAlert idPrefix={idPrefix} />;
     };
@@ -86,11 +151,18 @@ export const WatchdogModal = ({ vm, isWatchdogAttached, idPrefix }) => {
                    <>
                        <Button variant='primary'
                                id="watchdog-dialog-apply"
-                               onClick={save}
-                               isLoading={inProgress}
-                               isDisabled={inProgress}>
+                               onClick={() => save(false)}
+                               isLoading={inProgress && !offerColdplug}
+                               isDisabled={inProgress || offerColdplug}>
                            {isWatchdogAttached ? _("Save") : _("Add")}
                        </Button>
+                       {offerColdplug && <Button variant='secondary'
+                               id="watchdog-dialog-apply-next-boot"
+                               onClick={() => save(true)}
+                               isLoading={inProgress}
+                               isDisabled={inProgress}>
+                           {_("Apply on next boot")}
+                       </Button>}
                        {isWatchdogAttached &&
                        <Button variant='secondary'
                                id="watchdog-dialog-detach"
@@ -104,8 +176,8 @@ export const WatchdogModal = ({ vm, isWatchdogAttached, idPrefix }) => {
                        </Button>
                    </>
                }>
-            {showWarning()}
-            {dialogError && <ModalError dialogError={dialogError.text} dialogErrorDetail={dialogError.detail} />}
+            {needsShutdown()}
+            <WatchdogModalAlert dialogError={dialogError} />
             <Form onSubmit={e => e.preventDefault()} isHorizontal>
                 <FormGroup role="radiogroup"
                            label={_("Action")}
@@ -132,13 +204,13 @@ WatchdogModal.propTypes = {
     idPrefix: PropTypes.string.isRequired,
 };
 
-export const WatchdogLink = ({ vm, idPrefix }) => {
+export const WatchdogLink = ({ vm, idPrefix, onAddErrorNotification }) => {
     const Dialogs = useDialogs();
 
     const isWatchdogAttached = Object.keys(vm.watchdog).length > 0;
 
     function open() {
-        Dialogs.show(<WatchdogModal vm={vm} isWatchdogAttached={isWatchdogAttached} idPrefix={idPrefix} />);
+        Dialogs.show(<WatchdogModal vm={vm} isWatchdogAttached={isWatchdogAttached} idPrefix={idPrefix} onAddErrorNotification={onAddErrorNotification} />);
     }
 
     return (

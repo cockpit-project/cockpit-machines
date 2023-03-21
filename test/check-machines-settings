@@ -644,6 +644,31 @@ class TestMachinesSettings(VirtualMachinesCase):
         # Check rebooting machine will not unexpectedly affect watchdog configuration
         setWatchdogActionLive(action="poweroff", reboot_machine=True)
 
+        # Older libvirt in rhel-8-9 and centos-8-stream doesn't support target.hotplug=off
+        if not m.image.startswith("rhel-8") and m.image != "centos-8-stream":
+            # Disable hotplugging for subVmTest1
+            m.execute("virsh destroy subVmTest1")
+            m.execute("virt-xml subVmTest1 --edit model=pci-root --controller target.hotplug=off")
+            # Cleanup watchdog configuration
+            m.execute("virt-xml subVmTest1 --remove-device --watchdog 1")
+            m.execute("virsh start subVmTest1")
+
+            # Test hotplug will fail and warning is shown
+            openWatchDogDialog()
+            b.wait_not_present("#watchdog-dialog-apply-next-boot")
+            b.click("#reset")
+            b.click("#watchdog-dialog-apply")
+            b.wait_in_text("#vm-subVmTest1-watchdog-modal .pf-m-warning", "Could not dynamically add watchdog")
+            b.wait_visible("#watchdog-dialog-apply:disabled")
+            # Apply coldplug
+            closeWatchDogDialog("#watchdog-dialog-apply-next-boot")
+            # Watchdog requires fresh boot
+            b.wait_visible("#watchdog-tooltip")
+
+            # Destroy and start a VM so libvirt reloads updated XML
+            m.execute("virsh destroy subVmTest1; virsh start subVmTest1")
+            b.wait_not_present("#watchdog-tooltip")
+
 
 if __name__ == '__main__':
     test_main()
