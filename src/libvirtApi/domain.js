@@ -980,7 +980,7 @@ export function domainSetVCPUSettings ({
     ], opts);
 }
 
-export function domainSetWatchdog({ connectionName, vmName, permanent, hotplug, action, isWatchdogAttached }) {
+export function domainSetWatchdog({ connectionName, vmName, defineOffline, hotplug, action, isWatchdogAttached }) {
     const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, isWatchdogAttached ? '--edit' : '--add-device', '--watchdog', `action=${action}`];
     const options = { err: "message" };
 
@@ -991,7 +991,7 @@ export function domainSetWatchdog({ connectionName, vmName, permanent, hotplug, 
     // Editing existing watchdog device on running VM (live XML config) is not possible, in such situation we only change offline XML config
     if (hotplug && !isWatchdogAttached) {
         args.push("--update");
-        if (!permanent)
+        if (!defineOffline)
             args.push("--no-define");
     }
 
