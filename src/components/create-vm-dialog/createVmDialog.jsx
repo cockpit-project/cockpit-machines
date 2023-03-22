@@ -1320,18 +1320,17 @@ class CreateVmModal extends React.Component {
                     key="secondary-button"
                     id="create-and-edit"
                     isLoading={this.state.createMode === EDIT}
-                    isAriaDisabled={
+                    isAriaDisabled={!!(
                         this.state.createMode === EDIT ||
                         Object.getOwnPropertyNames(validationFailed).length > 0 ||
-                        this.state.sourceType === CLOUD_IMAGE ||
-                        unattendedInstallation ||
+                        (this.state.sourceType === DOWNLOAD_AN_OS && unattendedInstallation) ||
                         downloadingRhelDisabled
-                    }
+                    )}
                     onClick={() => this.onCreateClicked(false)}>
                 {this.props.mode == 'create' ? _("Create and edit") : _("Import and edit")}
             </Button>
         );
-        if (unattendedInstallation || this.state.sourceType === CLOUD_IMAGE) {
+        if (unattendedInstallation) {
             createAndEdit = (
                 <Tooltip id='create-and-edit-disabled-tooltip'
                          content={_("Setting the user passwords for unattended installation requires starting the VM when creating it")}>

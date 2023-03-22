@@ -730,6 +730,9 @@ export function domainInstall({ vm }) {
         os: vm.metadata.osVariant,
         source: vm.metadata.installSource,
         sourceType: vm.metadata.installSourceType,
+        rootPassword: vm.metadata.rootPassword,
+        userLogin: vm.metadata.userLogin,
+        userPassword: vm.metadata.userPassword,
         type: "install",
         vmName: vm.name,
     });

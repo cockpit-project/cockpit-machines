@@ -248,6 +248,17 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                     root_password="dogsaremybestfr13nds",
                                                                     create_and_run=True))
 
+        # Create and Edit + Install
+        runner.createCloudBaseImageTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
+                                                                    storage_size=10, storage_size_unit='MiB',
+                                                                    location=config.VALID_DISK_IMAGE_PATH,
+                                                                    os_name=config.FEDORA_28,
+                                                                    os_short_id=config.FEDORA_28_SHORTID,
+                                                                    user_password="catsaremybestfr13nds",
+                                                                    user_login="foo",
+                                                                    root_password="dogsaremybestfr13nds",
+                                                                    create_and_run=False))
+
         # Test using a cloud image without setting the cloud init options
         # https://bugzilla.redhat.com/show_bug.cgi?id=1978206
         runner.createCloudBaseImageTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
@@ -806,7 +817,7 @@ vnc_password= "{vnc_passwd}"
             self.root_password = root_password
             self.user_password = user_password
             self.user_login = user_login
-            self.create_and_run = create_and_run or is_unattended or sourceType == "cloud"
+            self.create_and_run = create_and_run or is_unattended
             self.storage_pool = storage_pool
             self.storage_volume = storage_volume
             self.delete = delete
@@ -1007,6 +1018,10 @@ vnc_password= "{vnc_passwd}"
 
             if self.create_and_run:
                 self.goToVmPage(self.name)
+            else:
+                # Install the VM
+                self.browser.click(f"#vm-{self.name}-system-install")
+
             self.browser.wait_text(f"#vm-{self.name}-disks-vda-bus", "virtio")
             # A cloud-init NoCloud ISO file is generated, and attached to the VM as a CDROM device.
             self.browser.wait_text(f"#vm-{self.name}-disks-sda-device", "cdrom")
@@ -1168,13 +1183,6 @@ vnc_password= "{vnc_passwd}"
             else:
                 b.wait_val("#memory-size", self.expected_memory_size)
 
-            if self.sourceType == "cloud":
-                b.wait_visible("#create-and-edit[aria-disabled=true]")
-                b.mouse("#create-and-edit", "mouseenter")
-                b.wait_visible("#create-and-edit-disabled-tooltip")
-            else:
-                b.wait_visible("#create-and-run[aria-disabled=false]")
-
             if (self.connection):
                 b.set_checked(f"#connectionName-{self.connection}", True)
 
@@ -1190,6 +1198,13 @@ vnc_password= "{vnc_passwd}"
                     b.set_input_text("#user-login", self.user_login)
                 if self.root_password:
                     b.set_input_text("#create-vm-dialog-root-password-pw1", self.root_password)
+
+                if self.is_unattended:
+                    b.wait_visible("#create-and-edit[aria-disabled=true]")
+                    b.mouse("#create-and-edit", "mouseenter")
+                    b.wait_visible("#create-and-edit-disabled-tooltip")
+                else:
+                    b.wait_visible("#create-and-run[aria-disabled=false]")
 
             return self
 
