@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 
@@ -29,7 +29,6 @@ import { Toolbar, ToolbarContent, ToolbarItem } from "@patternfly/react-core/dis
 import { Select, SelectOption, SelectVariant } from "@patternfly/react-core/dist/esm/components/Select/index.js";
 import { Page, PageSection } from "@patternfly/react-core/dist/esm/components/Page/index.js";
 import { Text, TextVariants } from "@patternfly/react-core/dist/esm/components/Text/index.js";
-import { Alert } from '@patternfly/react-core/dist/esm/components/Alert/index.js';
 import { WithDialogs } from 'dialogs.jsx';
 
 import VmActions from '../vm/vmActions.jsx';
@@ -64,21 +63,9 @@ const _ = cockpit.gettext;
  * List of all VMs defined on this host
  */
 const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddErrorNotification }) => {
-    const [virtualizationEnabled, setVirtualizationEnabled] = useState(true);
     const [statusSelected, setStatusSelected] = useState({ value: _("All"), toString: function() { return this.value } });
     const [currentTextFilter, setCurrentTextFilter] = useState("");
     const [statusIsExpanded, setStatusIsExpanded] = useState(false);
-
-    useEffect(() => {
-        async function checkVirtualization() {
-            const cpuinfo = await cockpit.file("/proc/cpuinfo").read();
-            const flags = /vmx|svm|0xc0f/;
-
-            setVirtualizationEnabled(flags.test(cpuinfo));
-        }
-
-        checkVirtualization();
-    }, []);
 
     const combinedVms = [...vms, ...dummyVmsFilter(vms, ui.vms)];
     const combinedVmsFiltered = combinedVms
@@ -140,14 +127,6 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
             <Page>
                 <PageSection>
                     <Gallery className="ct-cards-grid" hasGutter>
-                        {!virtualizationEnabled &&
-                        (<Alert variant="warning" title={_("Hardware virtualization extensions are disabled in BIOS")} component="h5">
-                            <Text>
-                                {_("For instructions on how to enable virtualization, please take a look ")}
-                                <a href='https://cockpit-project.org/faq.html#virtual-machines'>here</a>
-                                {_(" if your virtual machines fail to start or operate too slowly.")}
-                            </Text>
-                        </Alert>)}
                         <AggregateStatusCards networks={networks} storagePools={storagePools} />
                         <Card id='virtual-machines-listing'>
                             <CardHeader>

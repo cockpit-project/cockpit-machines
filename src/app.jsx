@@ -19,8 +19,11 @@
 import React, { useState, useEffect } from 'react';
 import { AlertGroup } from "@patternfly/react-core/dist/esm/components/AlertGroup/index.js";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
+import { EmptyState, EmptyStateIcon, EmptyStateBody, EmptyStatePrimary } from "@patternfly/react-core/dist/esm/components/EmptyState/index.js";
 import { Progress, ProgressMeasureLocation } from "@patternfly/react-core/dist/esm/components/Progress/index.js";
-import { ExclamationCircleIcon } from '@patternfly/react-icons';
+import { Text } from "@patternfly/react-core/dist/esm/components/Text/index.js";
+import { Title } from "@patternfly/react-core/dist/esm/components/Title/index.js";
+import { ExclamationCircleIcon, WrenchIcon } from '@patternfly/react-icons';
 import { superuser } from "superuser.js";
 import cockpit from 'cockpit';
 
@@ -69,6 +72,8 @@ export const App = () => {
     const [loadingResources, setLoadingResources] = useState(false);
     const [error, setError] = useState('');
     const [systemSocketInactive, setSystemSocketInactive] = useState(false);
+    const [virtualizationEnabled, setVirtualizationEnabled] = useState(true);
+    const [emptyStateIgnored, setEmptyStateIgnored] = useState(false);
 
     useEvent(superuser, "changed");
     useEffect(() => {
@@ -101,7 +106,38 @@ export const App = () => {
                 .finally(() => setLoadingResources(false));
     }, []);
 
-    if ((superuser.allowed && systemSocketInactive) || loadingResources) {
+    useEffect(() => {
+        async function checkVirtualization() {
+            const hardwareVirtCheck = await cockpit.script("virt-host-validate | grep 'Checking for hardware virtualization'");
+            console.log('cpuinfo => ', hardwareVirtCheck.includes('PASS'));
+
+            setVirtualizationEnabled(hardwareVirtCheck.includes('PASS'));
+        }
+
+        checkVirtualization();
+    }, []);
+
+    if (!virtualizationEnabled && !emptyStateIgnored) {
+        return (
+            <EmptyState>
+                <EmptyStateIcon icon={WrenchIcon} />
+                <Title headingLevel="h4" size="lg">
+                    Virtualization support is not available
+                </Title>
+                <EmptyStateBody>
+                    <Text>Enable virtualization support in BIOS/EFI settings.</Text>
+                    <Text>
+                        Instructions vary per manufacturer, but usually involves pressing a hot key such as ESC, F1, F12, or Del during boot.
+                        In the settings screen, look for "virtualization", "VM", "VMX', "SVM", "VTX", "VTD". It will be different on every computer.
+                        Enable any of these options. Consult your computer's manual for details.
+                    </Text>
+                </EmptyStateBody>
+                <EmptyStatePrimary>
+                    <Button variant="link" onClick={() => setEmptyStateIgnored(true)}>Ignore</Button>
+                </EmptyStatePrimary>
+            </EmptyState>
+        );
+    } else if ((superuser.allowed && systemSocketInactive) || loadingResources) {
         return (
             <LibvirtSlate loadingResources={loadingResources} />
         );
