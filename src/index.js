@@ -27,6 +27,8 @@ import store from './store.js';
 import App from './app.jsx';
 import { logDebug } from './helpers.js';
 
+import "./machines.scss";
+
 function render(root) {
     // do initial render
     root.render(<App />);

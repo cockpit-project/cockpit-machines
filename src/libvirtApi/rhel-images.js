@@ -19,9 +19,9 @@
 
 import * as python from "python.js";
 
-import downloadRhelImageScript from 'raw-loader!../scripts/rhsm/download_file_and_report_progress.py';
-import getRhelImageUrlScript from 'raw-loader!../scripts/rhsm/get_rhel_image_url.py';
-import getAccessTokenScript from 'raw-loader!../scripts/rhsm/get_access_token.py';
+import downloadRhelImageScript from '../scripts/rhsm/download_file_and_report_progress.py';
+import getRhelImageUrlScript from '../scripts/rhsm/get_rhel_image_url.py';
+import getAccessTokenScript from '../scripts/rhsm/get_access_token.py';
 
 import {
     logDebug,

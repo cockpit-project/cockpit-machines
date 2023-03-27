@@ -25,7 +25,7 @@ import cockpit from 'cockpit';
 import store from '../store.js';
 import VMS_CONFIG from '../config.js';
 
-import installVmScript from 'raw-loader!../scripts/install_machine.py';
+import installVmScript from '../scripts/install_machine.py';
 import {
     deleteUnlistedVMs,
     undefineVm,

@@ -35,7 +35,7 @@ COCKPIT_REPO_FILES = \
 	$(NULL)
 
 COCKPIT_REPO_URL = https://github.com/cockpit-project/cockpit.git
-COCKPIT_REPO_COMMIT = c35de4acece2ecc75892d801f6dba8639b284f16 # 288 + Patternfly override fix for modal footer buttons
+COCKPIT_REPO_COMMIT = 6073b2703acd68e216bd9dbc116c30d2d7a9701c # 288 + esbuild-common
 
 $(COCKPIT_REPO_FILES): $(COCKPIT_REPO_STAMP)
 COCKPIT_REPO_TREE = '$(strip $(COCKPIT_REPO_COMMIT))^{tree}'
@@ -87,11 +87,11 @@ packaging/arch/PKGBUILD: packaging/arch/PKGBUILD.in
 packaging/debian/changelog: packaging/debian/changelog.in
 	sed 's/VERSION/$(VERSION)/' $< > $@
 
-$(DIST_TEST): $(COCKPIT_REPO_STAMP) $(shell find src/ -type f) package.json webpack.config.js
-	$(MAKE) package-lock.json && NODE_ENV=$(NODE_ENV) node_modules/.bin/webpack
+$(DIST_TEST): $(COCKPIT_REPO_STAMP) $(shell find src/ -type f) package.json build.js
+	$(MAKE) package-lock.json && NODE_ENV=$(NODE_ENV) node build.js
 
 watch:
-	NODE_ENV=$(NODE_ENV) npm run watch
+	NODE_ENV=$(NODE_ENV) ESBUILD_WATCH=true node build.js
 
 clean:
 	rm -rf dist/
