@@ -22,7 +22,7 @@ import {
 } from "../../helpers.js";
 
 import * as python from "python.js";
-import autoDetectOSScript from 'raw-loader!./autoDetectOS.py';
+import autoDetectOSScript from './autoDetectOS.py';
 
 const ACCEPT_RELEASE_DATES_AFTER = getTodayYearShifted(-3);
 const ACCEPT_EOL_DATES_AFTER = getTodayYearShifted(-1);

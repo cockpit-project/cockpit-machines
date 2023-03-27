@@ -25,7 +25,7 @@ import cockpit from "cockpit";
 import store from "../store.js";
 import * as python from "python.js";
 
-import getOSListScript from "raw-loader!../getOSList.py";
+import getOSListScript from "../getOSList.py";
 
 import {
     undefineNetwork,
