@@ -8,8 +8,8 @@ import CompressionPlugin from "compression-webpack-plugin";
 import ESLintPlugin from 'eslint-webpack-plugin';
 import StylelintPlugin from 'stylelint-webpack-plugin';
 
-import CockpitPoPlugin from "./pkg/lib/cockpit-po-plugin.js";
-import CockpitRsyncPlugin from "./pkg/lib/cockpit-rsync-plugin.js";
+import { CockpitPoWebpackPlugin } from "./pkg/lib/cockpit-po-plugin.js";
+import { CockpitRsyncWebpackPlugin } from "./pkg/lib/cockpit-rsync-plugin.js";
 
 // Obtain package name from package.json
 const packageJson = JSON.parse(fs.readFileSync('package.json'));
@@ -33,8 +33,8 @@ const plugins = [
         extensions: ["js", "jsx"],
         failOnWarning: true,
     }),
-    new CockpitPoPlugin(),
-    new CockpitRsyncPlugin({ dest: packageJson.name }),
+    new CockpitPoWebpackPlugin(),
+    new CockpitRsyncWebpackPlugin({ dest: packageJson.name }),
 ];
 
 if (stylelint) {
