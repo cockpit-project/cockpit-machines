@@ -37,6 +37,7 @@ class TestMachinesVirtualization(VirtualMachinesCase):
         m = self.machine
 
         m.execute("touch /tmp/cpuinfo.txt && mount --bind /tmp/cpuinfo.txt /proc/cpuinfo")
+        self.addCleanup(m.execute, "umount /proc/cpuinfo || true")
 
         self.login_and_go("/machines")
 
@@ -53,9 +54,6 @@ class TestMachinesVirtualization(VirtualMachinesCase):
 
     def testVirtualizationEnabled(self):
         b = self.browser
-        m = self.machine
-
-        m.execute("umount /proc/cpuinfo")
 
         self.login_and_go("/machines")
 
