@@ -109,7 +109,6 @@ export const App = () => {
     useEffect(() => {
         async function checkVirtualization() {
             const hardwareVirtCheck = await cockpit.script("virt-host-validate | grep 'Checking for hardware virtualization'");
-            console.log('cpuinfo => ', hardwareVirtCheck.includes('PASS'));
 
             setVirtualizationEnabled(hardwareVirtCheck.includes('PASS'));
         }
