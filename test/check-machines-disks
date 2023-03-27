@@ -1046,6 +1046,19 @@ class TestMachinesDisks(VirtualMachinesCase):
             expected_volume_format='iso',
         ).execute()
 
+        # Add a new raw disk for a shut off VM
+        self.VMAddDiskDialog(
+            self,
+            pool_name='myPoolOne',
+            volume_name='mydiskofpoolone_raw',
+            mode='create-new',
+            volume_format='raw',
+            volume_size=10,
+            volume_size_unit='MiB',
+            expected_target=get_next_free_target(used_targets)[-1],
+            bus_type="virtio",
+        ).execute()
+
         # Apparmor on debian and ubuntu may prevent access to /dev/sdb1 when starting VM,
         # https://bugs.launchpad.net/ubuntu/+source/libvirt/+bug/1677398
         if "debian" not in m.image and "ubuntu" not in m.image:
