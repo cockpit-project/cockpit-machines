@@ -290,9 +290,6 @@ class TestMachinesSettings(VirtualMachinesCase):
         # No host device is attached to VM by default, so attach a PCI device to have at least 1 host device in boot order
         # Take a device from the end of the list, since first device might be a root pci device
         pci_output = m.execute("virsh nodedev-list --cap pci").strip().splitlines()[-1]
-        m.execute("virsh nodedev-list --cap pci").strip()
-        m.execute("virsh nodedev-list --cap pci").strip().splitlines()
-        m.execute("virsh nodedev-list --cap pci").strip().splitlines()[-1]
         # Turn 'pci_0123_45_67_8' into '0123:45:67.8'
         split = pci_output[len("pci_"):].split('_')
         pci_slot = f"{split[0]}:{split[1]}:{split[2]}.{split[3]}"
