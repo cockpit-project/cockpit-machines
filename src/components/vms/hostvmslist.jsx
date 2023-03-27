@@ -66,7 +66,6 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
     const [statusSelected, setStatusSelected] = useState({ value: _("All"), toString: function() { return this.value } });
     const [currentTextFilter, setCurrentTextFilter] = useState("");
     const [statusIsExpanded, setStatusIsExpanded] = useState(false);
-
     const combinedVms = [...vms, ...dummyVmsFilter(vms, ui.vms)];
     const combinedVmsFiltered = combinedVms
             // searching VM should be case insensitive

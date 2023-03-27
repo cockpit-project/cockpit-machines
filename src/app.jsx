@@ -122,18 +122,18 @@ export const App = () => {
             <EmptyState>
                 <EmptyStateIcon icon={WrenchIcon} />
                 <Title headingLevel="h4" size="lg">
-                    Virtualization support is not available
+                    {_("Virtualization support is not available")}
                 </Title>
                 <EmptyStateBody>
-                    <Text>Enable virtualization support in BIOS/EFI settings.</Text>
+                    <Text>{_("Enable virtualization support in BIOS/EFI settings.")}</Text>
                     <Text>
-                        Instructions vary per manufacturer, but usually involves pressing a hot key such as ESC, F1, F12, or Del during boot.
+                        {_(`Instructions vary per manufacturer, but usually involves pressing a hot key such as ESC, F1, F12, or Del during boot.
                         In the settings screen, look for "virtualization", "VM", "VMX', "SVM", "VTX", "VTD". It will be different on every computer.
-                        Enable any of these options. Consult your computer's manual for details.
+                        Enable any of these options. Consult your computer's manual for details.`)}
                     </Text>
                 </EmptyStateBody>
                 <EmptyStatePrimary>
-                    <Button variant="link" onClick={() => setEmptyStateIgnored(true)}>Ignore</Button>
+                    <Button variant="link" onClick={() => setEmptyStateIgnored(true)}>{_("Ignore")}</Button>
                 </EmptyStatePrimary>
             </EmptyState>
         );
