@@ -63,7 +63,7 @@ export class NetworkList extends React.Component {
                                     <Text component={TextVariants.h2}>{_("Networks")}</Text>
                                 </CardTitle>
                                 <CardActions>
-                                    { unlocked ? <CreateNetworkAction /> : <></> }
+                                    { unlocked && <CreateNetworkAction /> }
                                 </CardActions>
                             </CardHeader>
                             <CardBody className="contains-list">
