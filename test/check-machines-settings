@@ -599,6 +599,34 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         b.wait_in_text("#vm-subVmTest1-watchdog-state", "none")
 
+        # General checks for watchdog
+        def openWatchDogDialog():
+            b.click("#vm-subVmTest1-watchdog-button")
+            b.wait_visible("#vm-subVmTest1-watchdog-modal")
+
+        def closeWatchDogDialog(selector):
+            b.click(selector)
+            b.wait_not_present("#vm-subVmTest1-watchdog-modal")
+
+        # Cancel
+        openWatchDogDialog()
+        closeWatchDogDialog("#watchdog-dialog-apply + button")
+
+        # "X" of the dialog
+        openWatchDogDialog()
+        closeWatchDogDialog("#vm-subVmTest1-watchdog-modal button[aria-label=Close]")
+
+        openWatchDogDialog()
+        # Check no default watchdog device is selected
+        self.assertFalse(b.get_checked("#reset"))
+        self.assertFalse(b.get_checked("#poweroff"))
+        self.assertFalse(b.get_checked("#inject-nmi"))
+        self.assertFalse(b.get_checked("#pause"))
+        # Click "Add" without selecting action
+        b.click("#watchdog-dialog-apply")
+        b.wait_in_text("#vm-subVmTest1-watchdog-modal .pf-m-danger", "unsupported configuration")
+        closeWatchDogDialog("#vm-subVmTest1-watchdog-modal button[aria-label=Close]")
+
         # Test configuring watchdog for shutoff VM
         setWatchdogAction(action="reset", machine_has_no_watchdog=True)
         setWatchdogAction(action="poweroff", pixel_test_tag="watchdog")
