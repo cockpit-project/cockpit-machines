@@ -1334,7 +1334,9 @@ class TestMachinesDisks(VirtualMachinesCase):
             expected_target='sdd',
             file_path='/var/lib/libvirt/novell.iso',
             expected_access='Read-only',
-            mode='custom-path'
+            mode='custom-path',
+            serial="customPath",
+            expected_serial="customPath",
         ).execute()
 
         # Raw disk should be Writeable
@@ -1376,6 +1378,8 @@ class TestMachinesDisks(VirtualMachinesCase):
             expected_target='vdc',
             expected_access="Writeable",
             volume_format='qcow2',
+            serial="UseExisting",
+            expected_serial="UseExisting",
         ).execute()
 
     def testDetachDisk(self):
