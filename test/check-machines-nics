@@ -527,6 +527,11 @@ class TestMachinesNICs(VirtualMachinesCase):
         b.assert_pixels("#vm-subVmTest1-network-1-edit-dialog-modal-window", "vm-edit-nic-modal", skip_layouts=["rtl"])
         dialog.cancel()
 
+        # Check "X" of the dialog
+        dialog.open()
+        b.click("#vm-subVmTest1-network-1-edit-dialog-modal-window button[aria-label=Close]")
+        b.wait_not_present("#vm-subVmTest1-network-1-edit-dialog-modal-window")
+
         # Changing the NIC configuration for a shut off VM should not display any warning
         self.NICEditDialog(
             self,
