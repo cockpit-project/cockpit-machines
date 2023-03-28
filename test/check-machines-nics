@@ -380,6 +380,25 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
                 remove=False,
             ).execute()
 
+        # https://bugzilla.redhat.com/show_bug.cgi?id=2129845
+        nic_num_temp = 3 if m.image not in ["debian-stable", "debian-testing"] else 1
+        mac_address = self.get_next_mac(mac_address)
+        dialog = self.NICAddDialog(
+            self,
+            nic_num=nic_num_temp,
+            mac=mac_address,
+            source_type="network",
+            source="test_network",
+        )
+        dialog.open()
+        dialog.fill()
+
+        # Check the disabled button
+        self.browser.click("#vm-subVmTest1-add-iface-add")
+        self.browser.wait_visible("#vm-subVmTest1-add-iface-add:disabled")
+        self.browser.wait_not_present("#vm-subVmTest1-add-iface-dialog")
+        self.browser.wait_in_text(f"#vm-subVmTest1-network-{nic_num_temp}-type", dialog.source_type)
+
     class NICEditDialog:
 
         def __init__(
