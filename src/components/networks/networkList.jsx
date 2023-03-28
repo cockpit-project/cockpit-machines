@@ -25,6 +25,7 @@ import { Text, TextVariants } from "@patternfly/react-core/dist/esm/components/T
 import { WithDialogs } from 'dialogs.jsx';
 
 import cockpit from 'cockpit';
+import { superuser } from 'superuser';
 import { ListingTable } from 'cockpit-components-table.jsx';
 import { getNetworkRow } from './network.jsx';
 import { CreateNetworkAction } from './createNetworkDialog.jsx';
@@ -40,6 +41,7 @@ export class NetworkList extends React.Component {
     render() {
         const { networks, resourceHasError } = this.props;
         const sortFunction = (networkA, networkB) => networkA.name.localeCompare(networkB.name);
+        const unlocked = superuser.allowed;
 
         return (
             <WithDialogs>
@@ -61,7 +63,7 @@ export class NetworkList extends React.Component {
                                     <Text component={TextVariants.h2}>{_("Networks")}</Text>
                                 </CardTitle>
                                 <CardActions>
-                                    <CreateNetworkAction />
+                                    { unlocked && <CreateNetworkAction /> }
                                 </CardActions>
                             </CardHeader>
                             <CardBody className="contains-list">
