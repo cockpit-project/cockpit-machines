@@ -48,9 +48,24 @@ class TestMachinesFilesystems(machineslib.VirtualMachinesCase):
 
         # Form validation
         b.click("#vm-subVmTest1-filesystems-add")
+
         b.click("#vm-subVmTest1-filesystems-modal-add")
         b.wait_visible("#vm-subVmTest1-filesystems-modal-source-helper")
         b.wait_visible("#vm-subVmTest1-filesystems-modal-mountTag-helper")
+
+        b.set_input_text("#vm-subVmTest1-filesystems-modal-mountTag", "test")
+        b.click("#vm-subVmTest1-filesystems-modal-add")
+        b.wait_visible("#vm-subVmTest1-filesystems-modal-source-helper")
+        b.wait_not_present("#vm-subVmTest1-filesystems-modal-mountTag-helper")
+
+        b.set_input_text("#vm-subVmTest1-filesystems-modal-mountTag", "")
+        b.set_input_text("#vm-subVmTest1-filesystems-modal-source-group input", "/tmp")
+        b.wait_visible("#vm-subVmTest1-filesystems-modal-source")
+        b.click("#vm-subVmTest1-filesystems-modal-source button:nth-child(1)")
+        b.click("#vm-subVmTest1-filesystems-modal-add")
+        b.wait_not_present("#vm-subVmTest1-filesystems-modal-source-helper")
+        b.wait_visible("#vm-subVmTest1-filesystems-modal-mountTag-helper")
+
         b.click("#vm-subVmTest1-filesystems-modal-cancel")
 
         # Add a new shared filesystem
