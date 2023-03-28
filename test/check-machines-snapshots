@@ -305,6 +305,16 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
             expect_external=supports_external,
             xfail="name",
         ).execute()
+
+        # Test create the same description and different name
+        SnapshotCreateDialog(
+            self,
+            name="test_snap_des",
+            description="Description of test_snap_1",
+            expect_external=supports_external,
+            state="shutoff",
+        ).execute()
+
         m.execute("virsh snapshot-delete subVmTest1 test_snap_1")
 
         # With disk in a pool.
