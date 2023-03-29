@@ -77,12 +77,14 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         # Make sure warning next to vcpus appears
         b.wait_visible("#vcpus-tooltip")
+        b.wait_visible("#vm-subVmTest1-needs-shutdown")
 
         # Shut off VM for applying changes after save
         self.performAction("subVmTest1", "forceOff")
 
         # Make sure warning is gone after shut off
         b.wait_not_present("#vcpus-tooltip")
+        b.wait_not_present("#vm-subVmTest1-needs-shutdown")
 
         # Check changes
         b.wait_in_text("#vm-subVmTest1-vcpus-count", "3")
@@ -232,9 +234,11 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         # Warning about about difference in persistent and non-persitent XML should appear
         b.wait_visible("#cpu-tooltip")
+        b.wait_visible("#vm-subVmTest1-needs-shutdown")
         self.performAction("subVmTest1", "forceOff")
         # Warning should disappear and changes should be visible in the UI
         b.wait_not_present("#cpu-tooltip")
+        b.wait_not_present("#vm-subVmTest1-needs-shutdown")
         b.wait_in_text("#vm-subVmTest1-cpu-model .pf-c-description-list__text", "host")
 
         # Choose manually a CPU model
@@ -541,9 +545,11 @@ class TestMachinesSettings(VirtualMachinesCase):
             if previous_action:
                 # When editing an exiting watchdog, tooltip should be present on overview card warning user that changes will take effect after reboot
                 b.wait_visible("#watchdog-tooltip")
+                b.wait_visible("#vm-subVmTest1-needs-shutdown")
             else:
                 # When attaching adding a new watchdog, no tooltip should be present
                 b.wait_not_present("#watchdog-tooltip")
+                b.wait_not_present("#vm-subVmTest1-needs-shutdown")
 
             # Libvirt doesn't support editing wathdog device on RUNNING vm, so a live VM config will persist the previously configured watchdog action until reboot
             # On the other hand, libvirt does support attaching a watchdog to a RUNNING VM

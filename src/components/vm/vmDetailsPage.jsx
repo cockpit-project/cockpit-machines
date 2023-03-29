@@ -42,6 +42,7 @@ import VmOverviewCard from './overview/vmOverviewCard.jsx';
 import VmUsageTab from './vmUsageCard.jsx';
 import { VmSnapshotsCard, VmSnapshotsActions } from './snapshots/vmSnapshotsCard.jsx';
 import VmActions from './vmActions.jsx';
+import { VmNeedsShutdown } from '../common/needsShutdown.jsx';
 
 import './vmDetailsPage.scss';
 
@@ -70,6 +71,7 @@ export const VmDetailsPage = ({
                            config={config}
                            onAddErrorNotification={onAddErrorNotification}
                            isDetailsPage />
+                <VmNeedsShutdown vm={vm} />
             </div>
         </PageSection>
     );

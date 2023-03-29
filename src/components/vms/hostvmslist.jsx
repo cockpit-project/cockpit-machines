@@ -38,6 +38,7 @@ import { vmId, rephraseUI, dummyVmsFilter, DOMAINSTATE } from "../../helpers.js"
 
 import { ListingTable } from "cockpit-components-table.jsx";
 import StateIcon from '../common/stateIcon.jsx';
+import { VmNeedsShutdown } from '../common/needsShutdown.jsx';
 import { AggregateStatusCards } from "../aggregateStatusCards.jsx";
 import store from "../../store.js";
 
@@ -54,7 +55,13 @@ const VmState = ({ vm, dismissError }) => {
         state = vm.state;
     }
 
-    return <StateIcon dismissError={dismissError} error={vm.error} state={state} valueId={`${vmId(vm.name)}-${vm.connectionName}-state`} />;
+    return (
+        <StateIcon dismissError={dismissError}
+            error={vm.error}
+            state={state}
+            valueId={`${vmId(vm.name)}-${vm.connectionName}-state`}
+            additionalState={<VmNeedsShutdown vm={vm} />} />
+    );
 };
 
 const _ = cockpit.gettext;

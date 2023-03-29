@@ -2,6 +2,9 @@ import React from 'react';
 import cockpit from 'cockpit';
 import { Alert } from "@patternfly/react-core/dist/esm/components/Alert/index.js";
 import { Icon } from "@patternfly/react-core/dist/esm/components/Icon/index.js";
+import { Label } from "@patternfly/react-core/dist/esm/components/Label/index.js";
+import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List/index.js";
+import { Popover } from "@patternfly/react-core/dist/esm/components/Popover/index.js";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip/index.js";
 import { PendingIcon } from "@patternfly/react-icons";
 
@@ -9,6 +12,8 @@ import {
     getIfaceSourceName,
     nicLookupByMAC
 } from "../../helpers.js";
+
+import "./needsShutdown.scss";
 
 const _ = cockpit.gettext;
 
@@ -72,6 +77,45 @@ export function needsShutdownWatchdog(vm) {
     return vm.persistent && vm.state === "running" && vm.inactiveXML.watchdog.action !== vm.watchdog.action;
 }
 
+export function getDevicesRequiringShutdown(vm) {
+    if (!vm.persistent)
+        return [];
+
+    const devices = [];
+
+    // DISKS
+    for (const target in vm.disks) {
+        if (needsShutdownDiskAccess(vm, target)) {
+            devices.push(_("Disk"));
+            break;
+        }
+    }
+
+    // INTERFACES
+    for (const iface of vm.interfaces) {
+        if (needsShutdownIfaceType(vm, iface) ||
+            needsShutdownIfaceModel(vm, iface) ||
+            needsShutdownIfaceSource(vm, iface)) {
+            devices.push(_("Network interface"));
+            break;
+        }
+    }
+
+    // VCPU
+    if (needsShutdownVcpu(vm))
+        devices.push(_("vCPUs"));
+
+    // CPU
+    if (needsShutdownCpuModel(vm))
+        devices.push(_("CPU"));
+
+    // Watchdog
+    if (needsShutdownWatchdog(vm))
+        devices.push(_("Watchdog"));
+
+    return devices;
+}
+
 export const NeedsShutdownTooltip = ({ iconId, tooltipId }) => {
     return (
         <Tooltip id={tooltipId} content={NEEDS_SHUTDOWN_MESSAGE}>
@@ -84,3 +128,38 @@ export const NeedsShutdownTooltip = ({ iconId, tooltipId }) => {
 
 export const NeedsShutdownAlert = ({ idPrefix }) =>
     <Alert isInline variant='warning' id={`${idPrefix}-idle-message`} title={NEEDS_SHUTDOWN_MESSAGE} />;
+
+export const VmNeedsShutdown = ({ vm }) => {
+    const devices = getDevicesRequiringShutdown(vm);
+
+    if (devices.length === 0)
+        return;
+
+    const body = (
+        <>
+            {_("Some configuration changes only take effect after a fresh boot:")}
+            <List className="configuration-changes-list">
+                { devices.map(device => {
+                    return (
+                        <ListItem key={device}>
+                            {device}
+                        </ListItem>
+                    );
+                }) }
+            </List>
+        </>
+    );
+
+    const header = _("VM needs shutdown");
+    return (
+        <Popover aria-label={header}
+            alertSeverityVariant="info"
+            headerContent={header}
+            headerIcon={<PendingIcon />}
+            position="bottom"
+            hasAutoWidth
+            bodyContent={body}>
+            <Label className="resource-state-text" href="javascript:null" color="blue" id={`vm-${vm.name}-needs-shutdown`} icon={<PendingIcon />}>{_("Changes pending")}</Label>
+        </Popover>
+    );
+};

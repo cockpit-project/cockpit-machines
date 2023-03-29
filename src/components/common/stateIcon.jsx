@@ -34,7 +34,7 @@ import "./stateIcon.scss";
 
 const _ = cockpit.gettext;
 
-export const StateIcon = ({ state, valueId, error, dismissError }) => {
+export const StateIcon = ({ state, valueId, error, dismissError, additionalState }) => {
     if (state === undefined) {
         return (<div />);
     }
@@ -49,7 +49,7 @@ export const StateIcon = ({ state, valueId, error, dismissError }) => {
     };
 
     const label = (
-        <Flex className="resource-state-text-cell">
+        <Flex spaceItems={{ default: "spaceItemsXs" }}>
             {error &&
             <Label color="red"
                 icon={<ErrorCircleOIcon />}
@@ -70,6 +70,7 @@ export const StateIcon = ({ state, valueId, error, dismissError }) => {
                     {rephraseUI('resourceStates', state)}
                 </>
             </Label>
+            {additionalState}
         </Flex>
     );
 
