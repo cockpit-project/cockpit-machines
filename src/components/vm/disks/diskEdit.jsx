@@ -32,7 +32,7 @@ import { useDialogs, DialogsContext } from 'dialogs.jsx';
 
 import { domainUpdateDiskAttributes } from '../../../libvirtApi/domain.js';
 import { diskBusTypes, diskCacheModes, getDiskPrettyName, getDiskFullName } from '../../../helpers.js';
-import { WarningInactiveAlert } from '../../common/warningInactive.jsx';
+import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
 
 const _ = cockpit.gettext;
 
@@ -252,7 +252,7 @@ export class EditDiskModal extends React.Component {
             if (vm.state === 'running' && (
                 (this.state.access == 'readonly' && !disk.readonly) ||
                 (this.state.access == 'shareable' && !disk.shareable))) {
-                return <WarningInactiveAlert idPrefix={idPrefix} />;
+                return <NeedsShutdownAlert idPrefix={idPrefix} />;
             }
         };
 

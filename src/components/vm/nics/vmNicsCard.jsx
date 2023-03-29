@@ -24,10 +24,10 @@ import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip/inde
 import { DialogsContext } from 'dialogs.jsx';
 
 import cockpit from 'cockpit';
-import { rephraseUI, vmId } from "../../../helpers.js";
+import { getIfaceSourceName, rephraseUI, vmId } from "../../../helpers.js";
 import AddNIC from './nicAdd.jsx';
 import { EditNICModal } from './nicEdit.jsx';
-import { WarningInactiveTooltip } from '../../common/warningInactive.jsx';
+import { needsShutdownIfaceModel, needsShutdownIfaceSource, needsShutdownIfaceType, NeedsShutdownTooltip } from '../../common/needsShutdown.jsx';
 import './nic.css';
 import { domainChangeInterfaceSettings, domainDetachIface, domainInterfaceAddresses, domainGet } from '../../../libvirtApi/domain.js';
 import { ListingTable } from "cockpit-components-table.jsx";
@@ -194,10 +194,6 @@ export class VmNetworkTab extends React.Component {
             device: this.state.networkDevices,
         };
 
-        const nicLookupByMAC = (interfacesList, mac) => {
-            return interfacesList.filter(iface => iface.mac == mac)[0];
-        };
-
         const checkDeviceAviability = (network) => {
             for (const i in this.hostDevices) {
                 if (this.hostDevices[i].valid && this.hostDevices[i].Interface == network) {
@@ -237,11 +233,10 @@ export class VmNetworkTab extends React.Component {
             {
                 name: _("Type"),
                 value: (network, networkId) => {
-                    const inactiveNIC = nicLookupByMAC(vm.inactiveXML.interfaces, network.mac);
                     return (
                         <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${id}-network-${networkId}-type`}>
                             <FlexItem>{network.type}</FlexItem>
-                            {inactiveNIC && inactiveNIC.type !== network.type && <WarningInactiveTooltip iconId={`${id}-network-${networkId}-type-tooltip`} tooltipId="tip-network" />}
+                            {needsShutdownIfaceType(vm, network) && <NeedsShutdownTooltip iconId={`${id}-network-${networkId}-type-tooltip`} tooltipId="tip-network" />}
                         </Flex>
                     );
                 },
@@ -250,11 +245,10 @@ export class VmNetworkTab extends React.Component {
             {
                 name: _("Model type"),
                 value: (network, networkId) => {
-                    const inactiveNIC = nicLookupByMAC(vm.inactiveXML.interfaces, network.mac);
                     return (
                         <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${id}-network-${networkId}-model`}>
                             <FlexItem>{network.model}</FlexItem>
-                            {inactiveNIC && inactiveNIC.model !== network.model && <WarningInactiveTooltip iconId={`${id}-network-${networkId}-model-tooltip`} tooltipId="tip-network" />}
+                            {needsShutdownIfaceModel(vm, network) && <NeedsShutdownTooltip iconId={`${id}-network-${networkId}-model-tooltip`} tooltipId="tip-network" />}
                         </Flex>
                     );
                 },
@@ -298,20 +292,6 @@ export class VmNetworkTab extends React.Component {
                         </tbody>
                     </table>);
 
-                    const getIfaceSourceName = (iface) => {
-                        const mapper = {
-                            direct: source => source.dev,
-                            network: source => source.network,
-                            bridge: source => source.bridge,
-                            mcast: source => ({ address: source.address, port: source.port }),
-                            server: source => ({ address: source.address, port: source.port }),
-                            client: source => ({ address: source.address, port: source.port }),
-                            udp: source => ({ address: source.address, port: source.port }),
-                        };
-
-                        return mapper[iface.type](iface.source);
-                    };
-
                     const getSourceElem = {
                         direct: singleSourceElem,
                         network: singleSourceElem,
@@ -323,11 +303,10 @@ export class VmNetworkTab extends React.Component {
                     };
 
                     if (getSourceElem[network.type] !== undefined) {
-                        const inactiveNIC = nicLookupByMAC(vm.inactiveXML.interfaces, network.mac);
                         return (
                             <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${id}-network-${networkId}-source`}>
                                 <FlexItem>{getSourceElem[network.type](getIfaceSourceName(network), networkId)}</FlexItem>
-                                {inactiveNIC && getIfaceSourceName(inactiveNIC) !== getIfaceSourceName(network) && <WarningInactiveTooltip iconId={`${id}-network-${networkId}-source-tooltip`} tooltipId="tip-network" />}
+                                {needsShutdownIfaceSource(vm, network) && <NeedsShutdownTooltip iconId={`${id}-network-${networkId}-source-tooltip`} tooltipId="tip-network" />}
                             </Flex>
                         );
                     } else {

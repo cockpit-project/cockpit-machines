@@ -23,9 +23,9 @@ import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex/index.js";
 import { useDialogs } from 'dialogs.jsx';
 
-import { convertToUnit, diskPropertyChanged, toReadableNumber, units, vmId } from "../../../helpers.js";
+import { convertToUnit, toReadableNumber, units, vmId } from "../../../helpers.js";
 import { AddDiskModalBody } from './diskAdd.jsx';
-import { WarningInactiveTooltip } from '../../common/warningInactive.jsx';
+import { needsShutdownDiskAccess, NeedsShutdownTooltip } from '../../common/needsShutdown.jsx';
 import { ListingTable } from "cockpit-components-table.jsx";
 import { DiskSourceCell, DiskExtras, DiskActions } from './vmDiskColumns.jsx';
 
@@ -211,9 +211,7 @@ export const VmDisksCard = ({ vm, vms, disks, renderCapacity, supportedDiskBusTy
             const access = (
                 <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${idPrefixRow}-access`}>
                     <FlexItem>{ disk.readonly ? _("Read-only") : disk.shareable ? _("Writeable and shared") : _("Writeable") }</FlexItem>
-                    { vm.state === "running" &&
-                    (diskPropertyChanged(vm, disk.target, "readonly") || diskPropertyChanged(vm, disk.target, "shareable")) &&
-                        <WarningInactiveTooltip iconId={`${idPrefixRow}-access-tooltip`} tooltipId={`tip-${idPrefixRow}-access`} /> }
+                    { needsShutdownDiskAccess(vm, disk.target) && <NeedsShutdownTooltip iconId={`${idPrefixRow}-access-tooltip`} tooltipId={`tip-${idPrefixRow}-access`} /> }
                 </Flex>
             );
             columns.push({ title: access });

@@ -726,26 +726,6 @@ export function getDefaultVolumeFormat(pool) {
 }
 
 /**
- * Returns whetever disk property of VM's inactive XML has changed
- * compared to live XML.
- * Mainly used for readonly and shareable properties.
- *
- * @param {object} vm
- * @param {string} diskTarget
- * @param {string} property
- * @returns {boolean}
- */
-export function diskPropertyChanged(vm, diskTarget, property) {
-    const disk = vm.disks[diskTarget];
-    const inactiveDisk = vm.inactiveXML.disks[diskTarget];
-
-    if (disk && inactiveDisk) // only persistent disks
-        return disk[property] !== inactiveDisk[property];
-    else
-        return false;
-}
-
-/**
  * Returns an identifying value which can be used as disk name.
  * Can be file path, url, pool/volume or disk device type (fallback)
  *
@@ -870,4 +850,22 @@ export function getHostDevSourceObject(dev) {
 export function getVmStoragePools(vm) {
     const { storagePools } = store.getState();
     return storagePools.filter(sp => sp && sp.name && sp.connectionName == vm.connectionName && sp.active);
+}
+
+export function nicLookupByMAC(interfacesList, mac) {
+    return interfacesList.filter(iface => iface.mac == mac)[0];
+}
+
+export function getIfaceSourceName(iface) {
+    const mapper = {
+        direct: source => source.dev,
+        network: source => source.network,
+        bridge: source => source.bridge,
+        mcast: source => ({ address: source.address, port: source.port }),
+        server: source => ({ address: source.address, port: source.port }),
+        client: source => ({ address: source.address, port: source.port }),
+        udp: source => ({ address: source.address, port: source.port }),
+    };
+
+    return mapper[iface.type] && mapper[iface.type](iface.source);
 }

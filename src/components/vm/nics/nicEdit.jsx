@@ -29,7 +29,7 @@ import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { DialogsContext } from 'dialogs.jsx';
 import { NetworkTypeAndSourceRow, NetworkModelRow } from './nicBody.jsx';
 import { domainChangeInterfaceSettings, domainGet } from '../../../libvirtApi/domain.js';
-import { WarningInactiveAlert } from '../../common/warningInactive.jsx';
+import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
 
 const _ = cockpit.gettext;
 
@@ -169,7 +169,7 @@ export class EditNICModal extends React.Component {
                 this.state.networkSource !== this.getNetworkSource(network) ||
                 this.state.networkModel !== network.model)
             ) {
-                return <WarningInactiveAlert idPrefix={idPrefix} />;
+                return <NeedsShutdownAlert idPrefix={idPrefix} />;
             }
         };
 
