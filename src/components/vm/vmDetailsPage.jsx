@@ -17,7 +17,7 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import PropTypes from 'prop-types';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import cockpit from 'cockpit';
 
 import { Breadcrumb, BreadcrumbItem } from "@patternfly/react-core/dist/esm/components/Breadcrumb/index.js";
@@ -43,15 +43,6 @@ import VmUsageTab from './vmUsageCard.jsx';
 import { VmSnapshotsCard, VmSnapshotsActions } from './snapshots/vmSnapshotsCard.jsx';
 import VmActions from './vmActions.jsx';
 
-import { domainGetCapabilities } from '../..//libvirtApi/domain.js';
-import {
-    getDomainCapLoader,
-    getDomainCapMaxVCPU,
-    getDomainCapCPUCustomModels,
-    getDomainCapCPUHostModel,
-    getDomainCapDiskBusTypes,
-} from '../../libvirt-xml-parse.js';
-
 import './vmDetailsPage.scss';
 
 const _ = cockpit.gettext;
@@ -61,23 +52,7 @@ export const VmDetailsPage = ({
     onUsageStartPolling, onUsageStopPolling, networks,
     nodeDevices, onAddErrorNotification
 }) => {
-    const [loaderElems, setLoaderElems] = useState();
-    const [maxVcpu, setMaxVcpu] = useState();
-    const [cpuModels, setCpuModels] = useState([]);
-    const [cpuHostModel, setCpuHostModel] = useState();
-    const [supportedDiskBusTypes, setSupportedDiskBusTypes] = useState([]);
-
     useEffect(() => {
-        domainGetCapabilities({ connectionName: vm.connectionName, arch: vm.arch, model: vm.emulatedMachine })
-                .then(domCaps => {
-                    setLoaderElems(getDomainCapLoader(domCaps));
-                    setMaxVcpu(getDomainCapMaxVCPU(domCaps));
-                    setCpuModels(getDomainCapCPUCustomModels(domCaps));
-                    setCpuHostModel(getDomainCapCPUHostModel(domCaps));
-                    setSupportedDiskBusTypes(getDomainCapDiskBusTypes(domCaps));
-                })
-                .catch(() => console.warn("getDomainCapabilities failed"));
-
         // Anything in here is fired on component mount.
         onUsageStartPolling();
         return () => {
@@ -134,10 +109,10 @@ export const VmDetailsPage = ({
             id: `${vmId(vm.name)}-overview`,
             title: _("Overview"),
             body: <VmOverviewCard vm={vm} config={config}
-                                  loaderElems={loaderElems}
-                                  maxVcpu={maxVcpu}
-                                  cpuModels={cpuModels}
-                                  cpuHostModel={cpuHostModel}
+                                  loaderElems={vm.capabilities.loaderElems}
+                                  maxVcpu={vm.capabilities.maxVcpu}
+                                  cpuModels={vm.capabilities.cpuModels}
+                                  cpuHostModel={vm.capabilities.cpuHostModel}
                                   nodeDevices={nodeDevices} libvirtVersion={libvirtVersion} />,
         },
         {
@@ -166,9 +141,9 @@ export const VmDetailsPage = ({
             id: `${vmId(vm.name)}-disks`,
             className: "disks-card",
             title: _("Disks"),
-            actions: <VmDisksActions vm={vm} vms={vms} supportedDiskBusTypes={supportedDiskBusTypes} />,
+            actions: <VmDisksActions vm={vm} vms={vms} supportedDiskBusTypes={vm.capabilities.supportedDiskBusTypes} />,
             body: <VmDisksCardLibvirt vm={vm} vms={vms} config={config} storagePools={storagePools}
-                                      supportedDiskBusTypes={supportedDiskBusTypes} />,
+                                      supportedDiskBusTypes={vm.capabilities.supportedDiskBusTypes} />,
         },
         {
             id: `${vmId(vm.name)}-networks`,

@@ -52,6 +52,11 @@ import {
 import {
     getDiskElemByTarget,
     getDoc,
+    getDomainCapLoader,
+    getDomainCapMaxVCPU,
+    getDomainCapCPUCustomModels,
+    getDomainCapCPUHostModel,
+    getDomainCapDiskBusTypes,
     getSingleOptionalElem,
     parseDomainDumpxml,
     getHostDevElemBySource,
@@ -652,6 +657,7 @@ export function domainGet({
 }) {
     let props = {};
     let domainXML;
+    let dumpxmlParams;
 
     return call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_SECURE], { timeout, type: 'u' })
             .then(domXml => {
@@ -690,7 +696,19 @@ export function domainGet({
 
                 logDebug(`${props.name}.GET_VM(${objPath}, ${connectionName}): update props ${JSON.stringify(props)}`);
 
-                const dumpxmlParams = parseDomainDumpxml(connectionName, domainXML, objPath);
+                dumpxmlParams = parseDomainDumpxml(connectionName, domainXML, objPath);
+
+                return domainGetCapabilities({ connectionName, arch: dumpxmlParams.arch, model: dumpxmlParams.emulatedMachine });
+            })
+            .then(domCaps => {
+                props.capabilities = {
+                    loaderElems: getDomainCapLoader(domCaps),
+                    maxVcpu: getDomainCapMaxVCPU(domCaps),
+                    cpuModels: getDomainCapCPUCustomModels(domCaps),
+                    cpuHostModel: getDomainCapCPUHostModel(domCaps),
+                    supportedDiskBusTypes: getDomainCapDiskBusTypes(domCaps),
+                };
+
                 store.dispatch(updateOrAddVm(Object.assign({}, props, dumpxmlParams)));
 
                 return snapshotGetAll({ connectionName, domainPath: objPath });
