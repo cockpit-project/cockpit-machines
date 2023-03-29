@@ -385,25 +385,25 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
         self.goToVmPage("subVmTest1")
 
-        def addDisk(volName, poolName):
+        def addDisk(volName, poolName, vmName='subVmTest1'):
             # Virsh does not offer some option to create disks of type volume
             # We have to do this from cockpit UI
-            b.click("#vm-subVmTest1-disks-adddisk")  # button
-            b.wait_visible("#vm-subVmTest1-disks-adddisk-dialog-modal-window")
+            b.click(f"#vm-{vmName}-disks-adddisk")  # button
+            b.wait_visible(f"#vm-{vmName}-disks-adddisk-dialog-modal-window")
             b.wait_visible("label:contains(Create new)")  # radio button label in the modal dialog
 
-            b.select_from_dropdown("#vm-subVmTest1-disks-adddisk-new-select-pool", poolName)
-            b.set_input_text("#vm-subVmTest1-disks-adddisk-new-name", volName)
-            b.set_input_text("#vm-subVmTest1-disks-adddisk-new-size", "10")
-            b.select_from_dropdown("#vm-subVmTest1-disks-adddisk-new-unit", "MiB")
-            b.click("#vm-subVmTest1-disks-adddisk-permanent")
+            b.select_from_dropdown(f"#vm-{vmName}-disks-adddisk-new-select-pool", poolName)
+            b.set_input_text(f"#vm-{vmName}-disks-adddisk-new-name", volName)
+            b.set_input_text(f"#vm-{vmName}-disks-adddisk-new-size", "10")
+            b.select_from_dropdown(f"#vm-{vmName}-disks-adddisk-new-unit", "MiB")
+            b.click(f"#vm-{vmName}-disks-adddisk-permanent")
 
-            b.click("#vm-subVmTest1-disks-adddisk-dialog-add")
+            b.click(f"#vm-{vmName}-disks-adddisk-dialog-add")
             with b.wait_timeout(30):
-                b.wait_not_present("#vm-subVmTest1-disks-adddisk-dialog-modal-window")
+                b.wait_not_present(f"#vm-{vmName}-disks-adddisk-dialog-modal-window")
 
-            b.wait_visible("#vm-subVmTest1-disks-vdb-source-volume")
-            b.wait_visible("#vm-subVmTest1-disks-vdb-source-pool")
+            b.wait_visible(f"#vm-{vmName}-disks-vdb-source-volume")
+            b.wait_visible(f"#vm-{vmName}-disks-vdb-source-pool")
 
         secondDiskVolName = "mydisk"
         poolName = "images"
@@ -499,21 +499,25 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         name = "vm-fail-storage-deletion"
         args = self.createVm(name)
         self.waitVmRow(name)
+        self.goToVmPage(name)
         wait(lambda: name in m.execute("virsh list --all --name"))
+        addDisk(secondDiskVolName, poolName, name)
         # Remove VM's disk from command line
-        m.execute(f"rm {args['image']}")
+        m.execute(f"rm {args['image']} {(secondDiskPoolPath + secondDiskVolName)}")
 
         self.performAction(name, "delete")
-        b.set_checked(f"#vm-{name}-delete-modal-dialog input[type=checkbox]", True)
+        b.set_checked(f"#vm-{name}-delete-modal-dialog li:nth-child(1) input[type=checkbox]", True)
+        b.set_checked(f"#vm-{name}-delete-modal-dialog li:nth-child(2) input[type=checkbox]", True)
         b.click(f"#vm-{name}-delete-modal-dialog button:contains(Delete)")
 
         # Check VM got deleted, but there is a warning about unsuccessful storage deletion
         self.waitVmRow(name, present=False)
         wait(lambda: name not in m.execute("virsh list --all --name"))
         b.wait_visible(".pf-c-alert-group li .pf-c-alert")
-        b.wait_in_text(".pf-c-alert-group li .pf-c-alert .pf-c-alert__title", f"Could not delete storage for {name}")
+        b.wait_in_text(".pf-c-alert-group li .pf-c-alert .pf-c-alert__title", f"Could not delete all storage for {name}")
         b.click("button.alert-link.more-button")
         b.wait_in_text(".pf-c-alert-group li .pf-c-alert .pf-c-alert__description", args['image'])
+        b.wait_in_text(".pf-c-alert-group li .pf-c-alert .pf-c-alert__description", secondDiskVolName)
         # Close the notification
         b.click(".pf-c-alert-group li .pf-c-alert button.pf-m-plain")
 

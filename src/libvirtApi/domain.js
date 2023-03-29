@@ -453,7 +453,14 @@ export function domainDeleteStorage({
         }
     }
 
-    return Promise.all(storageVolPromises);
+    return Promise.allSettled(storageVolPromises).then(results => {
+        const rejectedMsgs = results.filter(result => result.status == "rejected").map(result => result.reason?.message);
+        if (rejectedMsgs.length > 0) {
+            return Promise.reject(rejectedMsgs.join(", "));
+        } else {
+            return Promise.resolve();
+        }
+    });
 }
 
 export function domainDeleteFilesystem({ connectionName, vmName, target }) {
