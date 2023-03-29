@@ -73,7 +73,12 @@ export const App = () => {
     const [error, setError] = useState('');
     const [systemSocketInactive, setSystemSocketInactive] = useState(false);
     const [virtualizationEnabled, setVirtualizationEnabled] = useState(true);
-    const [emptyStateIgnored, setEmptyStateIgnored] = useState(false);
+    const [emptyStateIgnored, setEmptyStateIgnored] = useState(() => {
+        const ignored = localStorage.getItem('virtualization-disabled-ignored');
+        const defaultValue = false;
+
+        return ignored !== null ? JSON.parse(ignored) : defaultValue;
+    });
 
     useEvent(superuser, "changed");
     useEffect(() => {
@@ -116,12 +121,16 @@ export const App = () => {
         checkVirtualization();
     }, []);
 
+    useEffect(() => {
+        localStorage.setItem('virtualization-disabled-ignored', emptyStateIgnored);
+    }, [emptyStateIgnored]);
+
     if (!virtualizationEnabled && !emptyStateIgnored) {
         return (
             <EmptyState>
                 <EmptyStateIcon icon={WrenchIcon} />
                 <Title headingLevel="h4" size="lg">
-                    {_("Virtualization support is not available")}
+                    {_("Hardware virtualization is disabled")}
                 </Title>
                 <EmptyStateBody>
                     <Text>{_("Enable virtualization support in BIOS/EFI settings.")}</Text>

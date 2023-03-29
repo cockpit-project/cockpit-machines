@@ -26,7 +26,7 @@ sys.path.append(os.path.join(TEST_DIR, "common"))
 sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
 
 from machineslib import VirtualMachinesCase  # noqa
-from testlib import nondestructive, test_main, wait  # noqa
+from testlib import nondestructive, test_main  # noqa
 
 
 @nondestructive
@@ -51,17 +51,62 @@ class TestMachinesVirtualization(VirtualMachinesCase):
 
         b.wait_visible(".pf-c-page .pf-c-card__title:contains('Virtual machines')")
 
-
-    def testVirtualizationEnabled(self):
+    def testLibvirt(self):
         b = self.browser
+        m = self.machine
 
+        self.allow_restart_journal_messages()
+
+        libvirtServiceName = self.getLibvirtServiceName()
+
+        # disable journal core dumps and traces for this test -- libvirt tends to crash on stopping
+        core_pattern = m.execute("cat /proc/sys/kernel/core_pattern").strip()
+        m.execute("echo core > /proc/sys/kernel/core_pattern")
+        self.addCleanup(m.execute, f"echo '{core_pattern}' > /proc/sys/kernel/core_pattern")
+
+        def stopLibvirtSocket():
+            m.execute(f"systemctl stop {self.getLibvirtServiceName()}-ro.socket {self.getLibvirtServiceName()}.socket {self.getLibvirtServiceName()}-admin.socket")
+            self.addCleanup(m.execute, f"systemctl start {self.getLibvirtServiceName()}-ro.socket {self.getLibvirtServiceName()}.socket {self.getLibvirtServiceName()}-admin.socket")
+
+        def stopLibvirtService():
+            m.execute(f"systemctl stop {libvirtServiceName}")
+
+        def startLibvirtSocket():
+            m.execute(f"systemctl start {libvirtServiceName}")
+
+        def hack_libvirtd_crash():
+            # work around libvirtd crashing when stopped too quickly; https://bugzilla.redhat.com/show_bug.cgi?id=1828207
+            m.execute("virsh domifaddr 1")
+
+        def waitEmptyState():
+            with b.wait_timeout(15):
+                b.wait_in_text(".pf-c-empty-state", "Virtualization service (libvirt) is not active")
+
+        # Check initial state
+        self.createVm("subVmTest1")
         self.login_and_go("/machines")
-
         self.waitPageInit()
+        self.waitVmRow("subVmTest1")
 
-        b.wait_visible("#card-pf-storage-pools")
-        b.wait_visible("#card-pf-networks")
-        b.wait_visible("#virtual-machines-listing")
+        # Check that empty state screen appears for privileged users when both the service and the socket are not running
+        hack_libvirtd_crash()
+        stopLibvirtSocket()
+        stopLibvirtService()
+        b.reload()
+        b.enter_page('/machines')
+        waitEmptyState()
+        b.click(".pf-c-empty-state button.pf-m-link")  # Troubleshoot
+        b.leave_page()
+        b.wait(lambda: "system/services" in b.eval_js("window.location.href"))
+
+        # Make sure that unprivileged users can see the VM list when libvirtd is not running
+        m.execute("useradd nonadmin; echo nonadmin:foobar | chpasswd")
+        # user libvirtd instance tends to SIGABRT with "Failed to find user record for uid .." on shutdown during cleanup
+        # so make sure that there are no leftover user processes that bleed into the next test
+        self.addCleanup(self.machine.execute, "pkill -u nonadmin || true; while pgrep -u nonadmin; do sleep 0.5; done")
+        self.login_and_go("/machines", user="nonadmin", superuser=False)
+        self.waitPageInit()
+        b.wait_in_text("#virtual-machines-listing .pf-c-empty-state", "No VM is running")
 
 
 if __name__ == '__main__':
