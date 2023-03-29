@@ -29,7 +29,7 @@ import { useDialogs } from 'dialogs.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { domainRemoveWatchdog, domainSetWatchdog } from "../../../libvirtApi/domain.js";
 import { rephraseUI } from "../../../helpers.js";
-import { WarningInactiveAlert, WarningInactiveTooltip } from "../../common/warningInactive.jsx";
+import { NeedsShutdownAlert, NeedsShutdownTooltip, needsShutdownWatchdog } from "../../common/needsShutdown.jsx";
 
 const _ = cockpit.gettext;
 
@@ -71,7 +71,7 @@ export const WatchdogModal = ({ vm, isWatchdogAttached, idPrefix }) => {
 
     const showWarning = () => {
         if (vm.state === 'running' && isWatchdogAttached && vm.watchdog.action !== watchdogAction)
-            return <WarningInactiveAlert idPrefix={idPrefix} />;
+            return <NeedsShutdownAlert idPrefix={idPrefix} />;
     };
 
     return (
@@ -141,14 +141,12 @@ export const WatchdogLink = ({ vm, idPrefix }) => {
         Dialogs.show(<WatchdogModal vm={vm} isWatchdogAttached={isWatchdogAttached} idPrefix={idPrefix} />);
     }
 
-    const watchdogActionChanged = isWatchdogAttached && vm.persistent && vm.state === "running" && vm.inactiveXML.watchdog.action !== vm.watchdog.action;
-
     return (
         <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }}>
             <FlexItem id={`${idPrefix}-watchdog-state`}>
                 {isWatchdogAttached ? rephraseUI("watchdogAction", vm.watchdog.action) : _("none")}
             </FlexItem>
-            { watchdogActionChanged && <WarningInactiveTooltip iconId="watchdog-tooltip" tooltipId="tip-watchdog" /> }
+            { needsShutdownWatchdog(vm) && <NeedsShutdownTooltip iconId="watchdog-tooltip" tooltipId="tip-watchdog" /> }
             <Button variant="link" isInline id={`${idPrefix}-watchdog-button`} onClick={open}>
                 {isWatchdogAttached ? _("edit") : _("add")}
             </Button>

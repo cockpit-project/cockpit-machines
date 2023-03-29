@@ -14,7 +14,7 @@ import { DialogsContext } from 'dialogs.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { domainSetVCPUSettings } from "../../../libvirtApi/domain.js";
 import { digitFilter } from "../../../helpers.js";
-import { WarningInactiveAlert } from '../../common/warningInactive.jsx';
+import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
 
 const _ = cockpit.gettext;
 
@@ -185,7 +185,7 @@ export class VCPUModal extends React.Component {
             this.state.max != vm.vcpus.max ||
             this.state.count != vm.vcpus.count)
         )
-            caution = <WarningInactiveAlert idPrefix="vcpu-modal" />;
+            caution = <NeedsShutdownAlert idPrefix="vcpu-modal" />;
 
         const defaultBody = (
             <Form isHorizontal className="vcpu-modal">

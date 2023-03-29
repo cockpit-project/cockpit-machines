@@ -40,7 +40,7 @@ import { updateVm } from '../../../actions/store-actions.js';
 import { BootOrderLink } from './bootOrder.jsx';
 import { FirmwareLink } from './firmware.jsx';
 import { WatchdogLink } from './watchdog.jsx';
-import { WarningInactiveTooltip } from '../../common/warningInactive.jsx';
+import { needsShutdownCpuModel, NeedsShutdownTooltip, needsShutdownVcpu } from '../../common/needsShutdown.jsx';
 import { StateIcon } from '../../common/stateIcon.jsx';
 import { domainChangeAutostart, domainGet } from '../../../libvirtApi/domain.js';
 import store from '../../../store.js';
@@ -100,23 +100,6 @@ class VmOverviewCard extends React.Component {
         const { vm, nodeDevices, libvirtVersion } = this.props;
         const idPrefix = vmId(vm.name);
 
-        const vcpusChanged = (vm.vcpus.count !== vm.inactiveXML.vcpus.count) ||
-                             (vm.vcpus.max !== vm.inactiveXML.vcpus.max) ||
-                             (vm.cpu.sockets !== vm.inactiveXML.cpu.sockets) ||
-                             (vm.cpu.threads !== vm.inactiveXML.cpu.threads) ||
-                             (vm.cpu.cores !== vm.inactiveXML.cpu.cores);
-
-        /* The live xml shows what host-model expanded to when started
-         * This is important since the expansion varies depending on the host and so needs to be tracked across migration
-         */
-        let cpuModeChanged = false;
-        if (vm.inactiveXML.cpu.mode == 'host-model')
-            cpuModeChanged = !(vm.cpu.mode == 'host-model' || vm.cpu.model == this.props.cpuHostModel);
-        else if (vm.inactiveXML.cpu.mode == 'host-passthrough')
-            cpuModeChanged = vm.cpu.mode != 'host-passthrough';
-        else if (vm.inactiveXML.cpu.mode == 'custom')
-            cpuModeChanged = vm.cpu.mode !== 'custom' || vm.cpu.model !== vm.inactiveXML.cpu.model;
-
         const autostart = (
             <DescriptionListDescription>
                 <Switch id={`${idPrefix}-autostart-switch`}
@@ -142,7 +125,7 @@ class VmOverviewCard extends React.Component {
             <DescriptionListDescription id={`${idPrefix}-vcpus-count`}>
                 <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }}>
                     <FlexItem>{vm.vcpus.count}</FlexItem>
-                    { vm.persistent && vm.state === "running" && vcpusChanged && <WarningInactiveTooltip iconId="vcpus-tooltip" tooltipId="tip-vcpus" /> }
+                    { needsShutdownVcpu(vm) && <NeedsShutdownTooltip iconId="vcpus-tooltip" tooltipId="tip-vcpus" /> }
                     <Button variant="link" isInline isDisabled={!vm.persistent} onClick={this.openVcpu}>
                         {_("edit")}
                     </Button>
@@ -169,7 +152,7 @@ class VmOverviewCard extends React.Component {
                     <FlexItem>
                         {rephraseUI('cpuMode', vm.cpu.mode) + (vm.cpu.model ? ` (${vm.cpu.model})` : '')}
                     </FlexItem>
-                    { vm.persistent && vm.state === "running" && cpuModeChanged && <WarningInactiveTooltip iconId="cpu-tooltip" tooltipId="tip-cpu" /> }
+                    { needsShutdownCpuModel(vm) && <NeedsShutdownTooltip iconId="cpu-tooltip" tooltipId="tip-cpu" /> }
                     { cpuEditButton }
                 </Flex>
             </DescriptionListDescription>
