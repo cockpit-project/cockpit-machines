@@ -135,9 +135,9 @@ export const App = () => {
                 <EmptyStateBody>
                     <Text>{_("Enable virtualization support in BIOS/EFI settings.")}</Text>
                     <Text>
-                        {_(`Instructions vary per manufacturer, but usually involves pressing a hot key such as ESC, F1, F12, or Del during boot.
-                        In the settings screen, look for "virtualization", "VM", "VMX', "SVM", "VTX", "VTD". It will be different on every computer.
-                        Enable any of these options. Consult your computer's manual for details.`)}
+                        {_(`Changing BIOS/EFI settings is specific to each manufacturer. It involves pressing a hotkey during boot (ESC, F1, F12, Del).
+                        Enable a setting called "virtualization", "VM", "VMX', "SVM", "VTX", "VTD".
+                        Consult your computer's manual for details.`)}
                     </Text>
                 </EmptyStateBody>
                 <EmptyStatePrimary>
