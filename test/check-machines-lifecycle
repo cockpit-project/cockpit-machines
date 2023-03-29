@@ -102,13 +102,27 @@ class TestMachinesLifecycle(VirtualMachinesCase):
             b.click('#create-vm-dialog button:contains("Cancel")')
             b.wait_not_present("#create-vm-dialog")
 
+        def checkNeedsShutdownLabel(message):
+            b.wait_not_present("#vm-subVmTest1-needs-shutdown")
+            m.execute("virt-xml subVmTest1 --add-device --watchdog action=reset --update")
+            m.execute("virt-xml subVmTest1 --edit --watchdog action=pause")
+            b.wait_visible("#vm-subVmTest1-needs-shutdown")
+            b.click("#vm-subVmTest1-needs-shutdown")
+            b.wait_in_text(".pf-c-popover__body", message)
+            m.execute("virt-xml subVmTest1 --remove-device --watchdog 1 --update")
+
         checkConnectionDescription("#import-existing-vm", "Ideal for server VMs")
         checkConnectionDescription("#create-new-vm", "Good choice for desktop virtualization")
+        checkNeedsShutdownLabel("Watchdog")
 
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
         if run_pixel_tests:
-            b.assert_pixels("#vm-details", "vm-details", ignore=[".memory-usage-chart", "#vm-subVmTest1-disks .pf-c-card__body", "#vm-subVmTest1-network-1-mac"])
+            b.assert_pixels("#vm-details", "vm-details", ignore=[
+                ".memory-usage-chart",
+                "#vm-subVmTest1-disks .pf-c-card__body",
+                "#vm-subVmTest1-networks .pf-c-card__body"
+                ])
         b.wait_in_text("#vm-subVmTest1-vcpus-count", "1")
 
         b.wait_in_text("#vm-subVmTest1-boot-order", "disk,network")

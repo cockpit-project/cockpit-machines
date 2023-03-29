@@ -566,6 +566,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
         b.wait_not_present("#vm-subVmTest1-network-2-type-tooltip")
         b.wait_in_text("#vm-subVmTest1-network-2-source", "test_network")
         b.wait_not_present("#vm-subVmTest1-network-2-source-tooltip")
+        b.wait_not_present("#vm-subVmTest1-needs-shutdown")
 
         # Remove the network interface
         m.execute("virsh detach-interface --persistent --type network --domain subVmTest1")

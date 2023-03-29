@@ -1,5 +1,5 @@
 .resource-state-text {
-  margin-right: 1rem;
+  margin-right: var(--pf-c-label--PaddingRight);
 
   // In definition lists (for Overview),
   // match text size and alignment
@@ -12,13 +12,7 @@
     // Using margin to remove the extra padded space,
     // instead of keeping the space and moving contents w/ just left/top
     margin-left: calc(-1 * var(--pf-c-label--PaddingLeft));
-    margin-top: calc(-1 * var(--pf-c-label--PaddingTop));
   }
-}
-
-.resource-state-text-cell {
-  // Add some spacer if multiple labels exist
-  row-gap: var(--pf-global--spacer--sm);
 }
 
 .pf-c-label.resource-state--shut-off, .pf-c-label.resource-state--inactive {
