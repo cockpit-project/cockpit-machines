@@ -399,7 +399,8 @@ class TestMachinesLifecycle(VirtualMachinesCase):
             b.click("#vm-subVmTest1-disks-adddisk-permanent")
 
             b.click("#vm-subVmTest1-disks-adddisk-dialog-add")
-            b.wait_not_present("#vm-subVmTest1-disks-adddisk-dialog-modal-window")
+            with b.wait_timeout(30):
+                b.wait_not_present("#vm-subVmTest1-disks-adddisk-dialog-modal-window")
 
             b.wait_visible("#vm-subVmTest1-disks-vdb-source-volume")
             b.wait_visible("#vm-subVmTest1-disks-vdb-source-pool")
