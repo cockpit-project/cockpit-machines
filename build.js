@@ -4,7 +4,6 @@ import path from 'path';
 
 import copy from 'esbuild-plugin-copy';
 import esbuild from "esbuild";
-import { sassPlugin } from 'esbuild-sass-plugin';
 
 import { cockpitCompressPlugin } from './pkg/lib/esbuild-compress-plugin.js';
 import { cockpitPoEsbuildPlugin } from './pkg/lib/cockpit-po-plugin.js';
@@ -70,10 +69,12 @@ const context = await esbuild.context({
     target: ['es2020'],
     plugins: [
         cleanPlugin(),
-        ...lint ? [
-            stylelintPlugin({ filter: new RegExp(cwd + '\/src\/.*\.(css?|scss?)$') }),
-            eslintPlugin({ filter: new RegExp(cwd + '\/src\/.*\.(jsx?|js?)$') })
-        ] : [],
+        ...lint
+            ? [
+                stylelintPlugin({ filter: new RegExp(cwd + '\/src\/.*\.(css?|scss?)$') }),
+                eslintPlugin({ filter: new RegExp(cwd + '\/src\/.*\.(jsx?|js?)$') })
+            ]
+            : [],
         // Esbuild will only copy assets that are explicitly imported and used
         // in the code. This is a problem for index.html and manifest.json which are not imported
         copy({
