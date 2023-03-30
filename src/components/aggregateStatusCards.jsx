@@ -55,7 +55,7 @@ export class AggregateStatusCards extends React.Component {
                                 <ArrowCircleUpIcon />
                                 { this.props.storagePools.filter(pool => pool && pool.active).length }
                             </FlexItem>
-                            <Divider isVertical />
+                            <Divider orientation={{ default: "vertical" }} />
                             <FlexItem className="active-resources">
                                 <ArrowCircleDownIcon />
                                 { this.props.storagePools.filter(pool => pool && !pool.active).length }
@@ -80,7 +80,7 @@ export class AggregateStatusCards extends React.Component {
                                 <ArrowCircleUpIcon />
                                 { this.props.networks.filter(network => network && network.active).length }
                             </FlexItem>
-                            <Divider isVertical />
+                            <Divider orientation={{ default: "vertical" }} />
                             <FlexItem className="active-resources">
                                 <ArrowCircleDownIcon />
                                 { this.props.networks.filter(network => network && !network.active).length }
