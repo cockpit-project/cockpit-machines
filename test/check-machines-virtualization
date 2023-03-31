@@ -41,7 +41,7 @@ class TestMachinesVirtualization(VirtualMachinesCase):
 
         self.login_and_go("/machines")
 
-        b.wait_visible("div.pf-c-empty-state .pf-c-title:contains('Virtualization support is not available')")
+        b.wait_visible("div.pf-c-empty-state .pf-c-title:contains('Hardware virtualization is disabled')")
 
         b.click(".pf-c-empty-state__primary .pf-c-button")
 
