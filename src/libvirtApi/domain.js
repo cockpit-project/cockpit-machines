@@ -865,6 +865,36 @@ export function domainSetCpuMode({
     ], opts);
 }
 
+export function domainSetTitle({
+    name,
+    id: objPath,
+    connectionName,
+    title,
+}) {
+    const opts = { err: "message", environ: ['LC_ALL=C'] };
+    if (connectionName === 'system')
+        opts.superuser = 'try';
+
+    return cockpit.spawn([
+        'virt-xml', '-c', `qemu:///${connectionName}`, '--metadata', `title="${title}"`, name, '--edit'
+    ], opts);
+}
+
+export function domainSetDescription({
+    name,
+    id: objPath,
+    connectionName,
+    description,
+}) {
+    const opts = { err: "message", environ: ['LC_ALL=C'] };
+    if (connectionName === 'system')
+        opts.superuser = 'try';
+
+    return cockpit.spawn([
+        'virt-xml', '-c', `qemu:///${connectionName}`, '--metadata', `description="${description}"`, name, '--edit'
+    ], opts);
+}
+
 export function domainSetMemoryBacking({ connectionName, vmName, type }) {
     const options = { err: "message" };
     if (connectionName === "system")

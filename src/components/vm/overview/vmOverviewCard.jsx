@@ -27,6 +27,9 @@ import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex/ind
 import { Switch } from "@patternfly/react-core/dist/esm/components/Switch/index.js";
 import { DialogsContext } from 'dialogs.jsx';
 
+import { RenameDialog } from '../vmRenameDialog.jsx';
+import { TitleModal } from './titleModal.jsx';
+import { DescriptionModal } from './descriptionModal.jsx';
 import { VCPUModal } from './vcpuModal.jsx';
 import { CPUTypeModal } from './cpuTypeModal.jsx';
 import MemoryModal from './memoryModal.jsx';
@@ -58,6 +61,9 @@ class VmOverviewCard extends React.Component {
         this.state = {
             virtXMLAvailable: undefined,
         };
+        this.openName = this.openName.bind(this);
+        this.openTitle = this.openTitle.bind(this);
+        this.openDescription = this.openDescription.bind(this);
         this.openVcpu = this.openVcpu.bind(this);
         this.openCpuType = this.openCpuType.bind(this);
         this.openMemory = this.openMemory.bind(this);
@@ -79,6 +85,23 @@ class VmOverviewCard extends React.Component {
                 .then(() => {
                     domainGet({ connectionName: vm.connectionName, id: vm.id });
                 });
+    }
+
+    openName() {
+        const Dialogs = this.context;
+        Dialogs.show(<RenameDialog vmName={this.props.vm.name}
+                                    vmId={this.props.vm.id}
+                                    connectionName={this.props.vm.connectionName} />);
+    }
+
+    openTitle() {
+        const Dialogs = this.context;
+        Dialogs.show(<TitleModal vm={this.props.vm} />);
+    }
+
+    openDescription() {
+        const Dialogs = this.context;
+        Dialogs.show(<DescriptionModal vm={this.props.vm} />);
     }
 
     openVcpu() {
@@ -125,6 +148,46 @@ class VmOverviewCard extends React.Component {
                         label={_("Run when host boots")} />
             </DescriptionListDescription>
         );
+        const nameLinkButton = (
+            <Button variant="link" isInline isAriaDisabled={vm.state != 'shut off'} onClick={this.openName}>
+                {_("edit")}
+            </Button>
+        );
+        const nameLink = (
+            <DescriptionListDescription id={`${idPrefix}-name`}>
+                <Flex spaceItems={{ default: 'spaceItemsSm' }}>
+                    <FlexItem>
+                        {vm.name}
+                    </FlexItem>
+                    {vm.state == 'shut off' ? nameLinkButton : <Tooltip content={_("Only editable when the guest is shut off")}>{nameLinkButton}</Tooltip>}
+                </Flex>
+            </DescriptionListDescription>
+        );
+        const titleLink = (
+            <DescriptionListDescription id={`${idPrefix}-title`}>
+                <Flex spaceItems={{ default: 'spaceItemsSm' }}>
+                    <FlexItem>
+                        {vm.title}
+                    </FlexItem>
+                    <Button variant="link" isInline isDisabled={!vm.persistent} onClick={this.openTitle}>
+                        {_("edit")}
+                    </Button>
+                </Flex>
+            </DescriptionListDescription>
+        );
+        const descriptionLink = (
+            <DescriptionListDescription id={`${idPrefix}-description`}>
+                <Flex spaceItems={{ default: 'spaceItemsSm' }}>
+                    <FlexItem>
+                        {vm.description}
+                    </FlexItem>
+                    <Button variant="link" isInline isDisabled={!vm.persistent} onClick={this.openDescription}>
+                        {_("edit")}
+                    </Button>
+                </Flex>
+            </DescriptionListDescription>
+        );
+
         const memory = convertToBestUnit(vm.currentMemory, units.KiB);
         const memoryLink = (
             <DescriptionListDescription id={`${idPrefix}-memory-count`}>
@@ -176,10 +239,33 @@ class VmOverviewCard extends React.Component {
         );
 
         return (
-            <Flex className="overview-tab" direction={{ default: "column", "2xl": "row" }}>
+            <Flex className="overview-tab" direction={{ default: "column" }}>
                 <FlexItem>
                     <DescriptionList isHorizontal>
-                        <Text component={TextVariants.h4}>
+                        { // Only show the name, if the title is set
+                            vm.title &&
+                            (
+                                <DescriptionListGroup>
+                                    <DescriptionListTerm>{_("Name")}</DescriptionListTerm>
+                                    {nameLink}
+                                </DescriptionListGroup>
+                            )
+                        }
+
+                        <DescriptionListGroup>
+                            <DescriptionListTerm>{_("Title")}</DescriptionListTerm>
+                            {titleLink}
+                        </DescriptionListGroup>
+
+                        <DescriptionListGroup>
+                            <DescriptionListTerm>{_("Description")}</DescriptionListTerm>
+                            {descriptionLink}
+                        </DescriptionListGroup>
+                    </DescriptionList>
+                </FlexItem>
+                <FlexItem>
+                    <DescriptionList isHorizontal>
+                        <Text component={TextVariants.h3}>
                             {_("General")}
                         </Text>
 
@@ -240,7 +326,7 @@ class VmOverviewCard extends React.Component {
                 </FlexItem>
                 <FlexItem>
                     <DescriptionList isHorizontal>
-                        <Text component={TextVariants.h4}>
+                        <Text component={TextVariants.h3}>
                             {_("Hypervisor details")}
                         </Text>
 
