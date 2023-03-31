@@ -175,7 +175,10 @@ class StoragePoolDelete extends React.Component {
                                     label={<>
                                         { _("Also delete all volumes inside this pool:")}
                                         <List className="pool-volumes-delete-list">
-                                            {volumes.map(vol => <ListItem key={storagePool.name + vol.name}>{vol.name}</ListItem>)}
+                                            {volumes
+                                                    .sort((a, b) => a.name.localeCompare(b.name))
+                                                    .map(vol => <ListItem key={storagePool.name + vol.name}>{vol.name}</ListItem>)
+                                            }
                                         </List>
                                     </>}
                                     onChange={checked => this.onValueChanged('deleteVolumes', checked)} />
