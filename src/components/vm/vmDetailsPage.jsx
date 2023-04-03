@@ -25,6 +25,7 @@ import { CodeBlock, CodeBlockCode } from "@patternfly/react-core/dist/esm/compon
 import { Gallery } from "@patternfly/react-core/dist/esm/layouts/Gallery/index.js";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
 import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List/index.js";
+import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex/index.js";
 import { Card, CardActions, CardBody, CardFooter, CardHeader, CardTitle } from "@patternfly/react-core/dist/esm/components/Card/index.js";
 import { Page, PageSection, PageSectionVariants } from "@patternfly/react-core/dist/esm/components/Page/index.js";
 import { Popover } from "@patternfly/react-core/dist/esm/components/Popover/index.js";
@@ -87,27 +88,21 @@ export const VmDetailsPage = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const vmNameHeadline = (
-        <h2 className="vm-name">{vm.name}</h2>
-    );
-
-    const vmTitleHeadline = (
-        <h2 className="vm-name">
-            {vm.title}
-            <span style={{ fontSize: "var(--pf-global--FontSize--xl)", paddingLeft: "0.83em" }}>
-                ({vm.name})
-            </span>
-        </h2>
-    );
-
     const vmActionsPageSection = (
         <PageSection className="actions-pagesection" variant={PageSectionVariants.light}>
             <div className="vm-top-panel" data-vm-transient={!vm.persistent}>
-                {vm.title ? vmTitleHeadline : vmNameHeadline}
-                <VmActions vm={vm}
-                           config={config}
-                           onAddErrorNotification={onAddErrorNotification}
-                           isDetailsPage />
+                <Flex spaceItems={{ default: 'spaceItemsMd' }}>
+                    <FlexItem component='h2'>{vm.title ? vm.title : vm.name}</FlexItem>
+                    {vm.title &&
+                        <FlexItem component='h3'>
+                            ({vm.name})
+                        </FlexItem>
+                    }
+                    <VmActions vm={vm}
+                               config={config}
+                               onAddErrorNotification={onAddErrorNotification}
+                               isDetailsPage />
+                </Flex>
             </div>
             { vm.description && <h4>{vm.description}</h4> }
         </PageSection>
