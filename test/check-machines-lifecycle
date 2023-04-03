@@ -35,7 +35,7 @@ distrosWithoutSnapshot = ["centos-8-stream", "rhel-8-6", "rhel-8-7", "rhel-8-8",
 class TestMachinesLifecycle(VirtualMachinesCase):
 
     def testBasic(self):
-        self._testBasic()
+        self._testBasic(run_pixel_tests=True)
 
     def createUser(self, user_group):
         user_name = f"test_{user_group if user_group else 'none'}_user"
@@ -74,7 +74,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         # Check wheel group PRIVILEGED user will see VMs and can do operations on them
         self._testBasic(user, True, False)
 
-    def _testBasic(self, user=None, superuser=True, expect_empty_list=False):
+    def _testBasic(self, user=None, superuser=True, expect_empty_list=False, run_pixel_tests=False):
         b = self.browser
         m = self.machine
 
@@ -107,6 +107,8 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
+        if run_pixel_tests:
+            b.assert_pixels("#vm-details", "vm-details", ignore=[".memory-usage-chart", "#vm-subVmTest1-disks .pf-c-card__body", "#vm-subVmTest1-network-1-mac"])
         b.wait_in_text("#vm-subVmTest1-vcpus-count", "1")
 
         b.wait_in_text("#vm-subVmTest1-boot-order", "disk,network")
