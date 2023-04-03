@@ -14,7 +14,7 @@ const _ = cockpit.gettext;
 export const TitleModal = ({ vm }) => {
     const Dialogs = useDialogs();
     const [error, setError] = useState({});
-    const [newTitle, setTitle] = useState(vm.title);
+    const [newTitle, setNewTitle] = useState(vm.title);
     const [isLoading, setIsLoading] = useState(false);
 
     function save() {
@@ -32,12 +32,12 @@ export const TitleModal = ({ vm }) => {
 
     const defaultBody = (
         <Form isHorizontal>
-            <FormGroup id="title-model-select-group" label={_("New title")}
-                fieldId="rename-dialog-new-title"
+            <FormGroup id="title-modal-select-group" label={_("New title")}
+                fieldId="set-title-dialog"
             >
-                <TextInput id='rename-dialog-new-title'
+                <TextInput id='set-title-dialog'
                     value={newTitle}
-                    onChange={setTitle} />
+                    onChange={setNewTitle} />
             </FormGroup>
         </Form>
     );
@@ -47,7 +47,7 @@ export const TitleModal = ({ vm }) => {
             title={cockpit.format(_("Set title of $0"), vm.name)}
             footer={
                 <>
-                    <Button variant='primary' isDisabled={isLoading} isLoading={isLoading} id="title-config-dialog-apply" onClick={save}>
+                    <Button variant='primary' isDisabled={isLoading} isLoading={isLoading} id="set-title-dialog-apply" onClick={save}>
                         {_("Save")}
                     </Button>
                     <Button variant='link' onClick={Dialogs.close}>

@@ -14,7 +14,7 @@ const _ = cockpit.gettext;
 export const DescriptionModal = ({ vm }) => {
     const Dialogs = useDialogs();
     const [error, setError] = useState({});
-    const [newDescription, setDescription] = useState(vm.description);
+    const [newDescription, setNewDescription] = useState(vm.description);
     const [isLoading, setIsLoading] = useState(false);
 
     function save() {
@@ -32,12 +32,12 @@ export const DescriptionModal = ({ vm }) => {
 
     const defaultBody = (
         <Form isHorizontal>
-            <FormGroup id="description-model-select-group" label={_("New description")}
-                fieldId="rename-dialog-new-description"
+            <FormGroup id="description-modal-select-group" label={_("New description")}
+                fieldId="set-description-dialog"
             >
-                <TextInput id='rename-dialog-new-description'
+                <TextInput id='set-description-dialog'
                     value={newDescription}
-                    onChange={setDescription} />
+                    onChange={setNewDescription} />
             </FormGroup>
         </Form>
     );
@@ -47,7 +47,7 @@ export const DescriptionModal = ({ vm }) => {
             title={cockpit.format(_("Set description of $0"), vm.name)}
             footer={
                 <>
-                    <Button variant='primary' isDisabled={isLoading} isLoading={isLoading} id="description-config-dialog-apply" onClick={save}>
+                    <Button variant='primary' isDisabled={isLoading} isLoading={isLoading} id="set-description-dialog-apply" onClick={save}>
                         {_("Save")}
                     </Button>
                     <Button variant='link' onClick={Dialogs.close}>
