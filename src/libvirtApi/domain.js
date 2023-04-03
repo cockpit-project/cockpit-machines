@@ -865,19 +865,40 @@ export function domainSetCpuMode({
     ], opts);
 }
 
-export function domainSetTitle({
+export function domainSetXML({
     name,
     id: objPath,
     connectionName,
-    title,
+    xmlOption,
+    change
 }) {
     const opts = { err: "message", environ: ['LC_ALL=C'] };
     if (connectionName === 'system')
         opts.superuser = 'try';
 
     return cockpit.spawn([
-        'virt-xml', '-c', `qemu:///${connectionName}`, '--metadata', `title="${title}"`, name, '--edit'
+        'virt-xml', '-c', `qemu:///${connectionName}`, xmlOption, change, name, '--edit'
     ], opts);
+}
+
+export function domainSetMetadata({
+    name,
+    id: objPath,
+    connectionName,
+    change
+}) {
+    const xmlOption = '--metadata';
+    return domainSetXML({ name, id: objPath, connectionName, xmlOption, change });
+}
+
+export function domainSetTitle({
+    name,
+    id: objPath,
+    connectionName,
+    title,
+}) {
+    const change = `title="${title}"`;
+    return domainSetMetadata({ name, id: objPath, connectionName, change });
 }
 
 export function domainSetDescription({
@@ -886,13 +907,8 @@ export function domainSetDescription({
     connectionName,
     description,
 }) {
-    const opts = { err: "message", environ: ['LC_ALL=C'] };
-    if (connectionName === 'system')
-        opts.superuser = 'try';
-
-    return cockpit.spawn([
-        'virt-xml', '-c', `qemu:///${connectionName}`, '--metadata', `description="${description}"`, name, '--edit'
-    ], opts);
+    const change = `description="${description}"`;
+    return domainSetMetadata({ name, id: objPath, connectionName, change });
 }
 
 export function domainSetMemoryBacking({ connectionName, vmName, type }) {
