@@ -1,6 +1,7 @@
 import React from 'react';
 import cockpit from 'cockpit';
 import { Alert } from "@patternfly/react-core/dist/esm/components/Alert/index.js";
+import { Icon } from "@patternfly/react-core/dist/esm/components/Icon/index.js";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip/index.js";
 import { PendingIcon } from "@patternfly/react-icons";
 
@@ -74,7 +75,9 @@ export function needsShutdownWatchdog(vm) {
 export const NeedsShutdownTooltip = ({ iconId, tooltipId }) => {
     return (
         <Tooltip id={tooltipId} content={NEEDS_SHUTDOWN_MESSAGE}>
-            <PendingIcon color="orange" id={iconId} />
+            <Icon status="info">
+                <PendingIcon id={iconId} />
+            </Icon>
         </Tooltip>
     );
 };
