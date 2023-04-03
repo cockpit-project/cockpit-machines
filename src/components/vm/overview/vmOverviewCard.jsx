@@ -68,6 +68,7 @@ class VmOverviewCard extends React.Component {
         this.openCpuType = this.openCpuType.bind(this);
         this.openMemory = this.openMemory.bind(this);
         this.onAutostartChanged = this.onAutostartChanged.bind(this);
+        this.guestOffEditButton = this.guestOffEditButton.bind(this);
     }
 
     componentDidMount() {
@@ -119,6 +120,15 @@ class VmOverviewCard extends React.Component {
         Dialogs.show(<MemoryModal vm={this.props.vm} config={this.props.config} />);
     }
 
+    guestOffEditButton(vm, action) {
+        const editButton = (
+            <Button variant="link" isInline isAriaDisabled={vm.state != 'shut off'} onClick={action}>
+                {_("edit")}
+            </Button>
+        );
+        return vm.state == 'shut off' ? editButton : (<Tooltip content={_("Only editable when the guest is shut off")}>{editButton}</Tooltip>);
+    }
+
     render() {
         const { vm, nodeDevices, libvirtVersion } = this.props;
         const idPrefix = vmId(vm.name);
@@ -148,18 +158,14 @@ class VmOverviewCard extends React.Component {
                         label={_("Run when host boots")} />
             </DescriptionListDescription>
         );
-        const nameLinkButton = (
-            <Button variant="link" isInline isAriaDisabled={vm.state != 'shut off'} onClick={this.openName}>
-                {_("edit")}
-            </Button>
-        );
+
         const nameLink = (
             <DescriptionListDescription id={`${idPrefix}-name`}>
                 <Flex spaceItems={{ default: 'spaceItemsSm' }}>
                     <FlexItem>
                         {vm.name}
                     </FlexItem>
-                    {vm.state == 'shut off' ? nameLinkButton : <Tooltip content={_("Only editable when the guest is shut off")}>{nameLinkButton}</Tooltip>}
+                    {this.guestOffEditButton(vm, this.openName)}
                 </Flex>
             </DescriptionListDescription>
         );
@@ -169,9 +175,7 @@ class VmOverviewCard extends React.Component {
                     <FlexItem>
                         {vm.title}
                     </FlexItem>
-                    <Button variant="link" isInline isDisabled={!vm.persistent} onClick={this.openTitle}>
-                        {_("edit")}
-                    </Button>
+                    {this.guestOffEditButton(vm, this.openTitle)}
                 </Flex>
             </DescriptionListDescription>
         );
@@ -181,9 +185,7 @@ class VmOverviewCard extends React.Component {
                     <FlexItem>
                         {vm.description}
                     </FlexItem>
-                    <Button variant="link" isInline isDisabled={!vm.persistent} onClick={this.openDescription}>
-                        {_("edit")}
-                    </Button>
+                    {this.guestOffEditButton(vm, this.openDescription)}
                 </Flex>
             </DescriptionListDescription>
         );
