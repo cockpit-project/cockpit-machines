@@ -42,7 +42,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         self.browser.click(selector + " > button")
         self.browser.wait_attr(selector, "class", "pf-c-tabs__item pf-m-current")
 
-    def testStoragePools(self):
+    def testStoragePoolsBasic(self):
         b = self.browser
         m = self.machine
 
