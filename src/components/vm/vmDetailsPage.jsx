@@ -88,7 +88,7 @@ export const VmDetailsPage = ({
     }, []);
 
     const vmActionsPageSection = (
-        <PageSection className="actions-pagesection" variant={PageSectionVariants.light}>
+        <PageSection className="actions-pagesection" variant={PageSectionVariants.light} isWidthLimited>
             <div className="vm-top-panel" data-vm-transient={!vm.persistent}>
                 <h2 className="vm-name">{vm.name}</h2>
                 <VmActions vm={vm}
