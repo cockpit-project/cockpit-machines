@@ -19,8 +19,11 @@
 import React, { useState, useEffect } from 'react';
 import { AlertGroup } from "@patternfly/react-core/dist/esm/components/AlertGroup/index.js";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
+import { EmptyState, EmptyStateIcon, EmptyStateBody, EmptyStatePrimary } from "@patternfly/react-core/dist/esm/components/EmptyState/index.js";
 import { Progress, ProgressMeasureLocation } from "@patternfly/react-core/dist/esm/components/Progress/index.js";
-import { ExclamationCircleIcon } from '@patternfly/react-icons';
+import { Text, TextContent } from "@patternfly/react-core/dist/esm/components/Text/index.js";
+import { Title } from "@patternfly/react-core/dist/esm/components/Title/index.js";
+import { ExclamationCircleIcon, WrenchIcon } from '@patternfly/react-icons';
 import { superuser } from "superuser.js";
 import cockpit from 'cockpit';
 
@@ -69,6 +72,13 @@ export const App = () => {
     const [loadingResources, setLoadingResources] = useState(false);
     const [error, setError] = useState('');
     const [systemSocketInactive, setSystemSocketInactive] = useState(false);
+    const [virtualizationEnabled, setVirtualizationEnabled] = useState(true);
+    const [emptyStateIgnored, setEmptyStateIgnored] = useState(() => {
+        const ignored = localStorage.getItem('virtualization-disabled-ignored');
+        const defaultValue = false;
+
+        return ignored !== null ? JSON.parse(ignored) : defaultValue;
+    });
 
     useEvent(superuser, "changed");
     useEffect(() => {
@@ -101,7 +111,41 @@ export const App = () => {
                 .finally(() => setLoadingResources(false));
     }, []);
 
-    if ((superuser.allowed && systemSocketInactive) || loadingResources) {
+    useEffect(() => {
+        async function checkVirtualization() {
+            const hardwareVirtCheck = await cockpit.script("virt-host-validate | grep 'Checking for hardware virtualization'");
+
+            setVirtualizationEnabled(hardwareVirtCheck.includes('PASS'));
+        }
+
+        checkVirtualization();
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem('virtualization-disabled-ignored', emptyStateIgnored);
+    }, [emptyStateIgnored]);
+
+    if (!virtualizationEnabled && !emptyStateIgnored) {
+        return (
+            <EmptyState className="virtualization-disabled-empty-state">
+                <EmptyStateIcon icon={WrenchIcon} />
+                <Title headingLevel="h4" size="lg">
+                    {_("Hardware virtualization is disabled")}
+                </Title>
+                <EmptyStateBody>
+                    <TextContent>
+                        <Text>{_("Enable virtualization support in BIOS/EFI settings.")}</Text>
+                        <Text>
+                            {_("Changing BIOS/EFI settings is specific to each manufacturer. It involves pressing a hotkey during boot (ESC, F1, F12, Del). Enable a setting called \"virtualization\", \"VM\", \"VMX\", \"SVM\", \"VTX\", \"VTD\". Consult your computer's manual for details.")}
+                        </Text>
+                    </TextContent>
+                </EmptyStateBody>
+                <EmptyStatePrimary>
+                    <Button id="ignore-hw-virtualization-disabled-btn" variant="secondary" onClick={() => setEmptyStateIgnored(true)}>{_("Ignore")}</Button>
+                </EmptyStatePrimary>
+            </EmptyState>
+        );
+    } else if ((superuser.allowed && systemSocketInactive) || loadingResources) {
         return (
             <LibvirtSlate loadingResources={loadingResources} />
         );
