@@ -139,7 +139,7 @@ export const App = () => {
                     </Text>
                 </EmptyStateBody>
                 <EmptyStatePrimary>
-                    <Button id="ignore-hw-virtualization-disabled-btn" variant="link" onClick={() => setEmptyStateIgnored(true)}>{_("Ignore")}</Button>
+                    <Button id="ignore-hw-virtualization-disabled-btn" variant="secondary" onClick={() => setEmptyStateIgnored(true)}>{_("Ignore")}</Button>
                 </EmptyStatePrimary>
             </EmptyState>
         );
