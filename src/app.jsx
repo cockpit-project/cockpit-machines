@@ -21,7 +21,7 @@ import { AlertGroup } from "@patternfly/react-core/dist/esm/components/AlertGrou
 import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
 import { EmptyState, EmptyStateIcon, EmptyStateBody, EmptyStatePrimary } from "@patternfly/react-core/dist/esm/components/EmptyState/index.js";
 import { Progress, ProgressMeasureLocation } from "@patternfly/react-core/dist/esm/components/Progress/index.js";
-import { Text } from "@patternfly/react-core/dist/esm/components/Text/index.js";
+import { Text, TextContent } from "@patternfly/react-core/dist/esm/components/Text/index.js";
 import { Title } from "@patternfly/react-core/dist/esm/components/Title/index.js";
 import { ExclamationCircleIcon, WrenchIcon } from '@patternfly/react-icons';
 import { superuser } from "superuser.js";
@@ -127,16 +127,18 @@ export const App = () => {
 
     if (!virtualizationEnabled && !emptyStateIgnored) {
         return (
-            <EmptyState>
+            <EmptyState className="virtualization-disabled-empty-state">
                 <EmptyStateIcon icon={WrenchIcon} />
                 <Title headingLevel="h4" size="lg">
                     {_("Hardware virtualization is disabled")}
                 </Title>
                 <EmptyStateBody>
-                    <Text>{_("Enable virtualization support in BIOS/EFI settings.")}</Text>
-                    <Text>
-                        {_("Changing BIOS/EFI settings is specific to each manufacturer. It involves pressing a hotkey during boot (ESC, F1, F12, Del). Enable a setting called \"virtualization\", \"VM\", \"VMX\", \"SVM\", \"VTX\", \"VTD\". Consult your computer's manual for details.")}
-                    </Text>
+                    <TextContent>
+                        <Text>{_("Enable virtualization support in BIOS/EFI settings.")}</Text>
+                        <Text>
+                            {_("Changing BIOS/EFI settings is specific to each manufacturer. It involves pressing a hotkey during boot (ESC, F1, F12, Del). Enable a setting called \"virtualization\", \"VM\", \"VMX\", \"SVM\", \"VTX\", \"VTD\". Consult your computer's manual for details.")}
+                        </Text>
+                    </TextContent>
                 </EmptyStateBody>
                 <EmptyStatePrimary>
                     <Button id="ignore-hw-virtualization-disabled-btn" variant="secondary" onClick={() => setEmptyStateIgnored(true)}>{_("Ignore")}</Button>
