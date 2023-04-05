@@ -136,11 +136,9 @@ export class DeleteDialog extends React.Component {
         )
                 .then(() => {
                     return domainDelete({
-                        name: vm.name,
                         id: vm.id,
                         connectionName: vm.connectionName,
                         live: this.props.vm.state != 'shut off',
-                        storagePools
                     })
                             .then(() => {
                                 Dialogs.close();
@@ -152,8 +150,8 @@ export class DeleteDialog extends React.Component {
                 .then(() => { // Cleanup operations
                     return domainDeleteStorage({ connectionName: vm.connectionName, storage, storagePools })
                             .catch(exc => onAddErrorNotification({
-                                text: cockpit.format(_("Could not delete storage for $0"), vm.name),
-                                detail: exc.message,
+                                text: cockpit.format(_("Could not delete all storage for $0"), vm.name),
+                                detail: exc,
                                 type: "warning"
                             }));
                 });

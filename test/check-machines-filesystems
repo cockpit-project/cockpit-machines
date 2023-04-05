@@ -44,6 +44,7 @@ class TestMachinesFilesystems(VirtualMachinesCase):
         m.execute("mkdir -p /tmp/dir1 /tmp/dir2")
 
         self.login_and_go("/machines")
+        self.waitPageInit()
         self.createVm("subVmTest1", running=False, connection=connection)
         self.goToVmPage("subVmTest1", connectionName=connection)
         # wait until page initialized
@@ -133,6 +134,7 @@ class TestMachinesFilesystems(VirtualMachinesCase):
 
         self.createVm("subVmTest1", running=False)
         self.login_and_go("/machines")
+        self.waitPageInit()
         self.goToVmPage("subVmTest1")
 
         m.execute("virt-xml subVmTest1 --add-device --filesystem source=/tmp/dir1/,target=dir1")

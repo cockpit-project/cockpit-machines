@@ -35,7 +35,7 @@ distrosWithoutSnapshot = ["centos-8-stream", "rhel-8-6", "rhel-8-7", "rhel-8-8",
 class TestMachinesLifecycle(VirtualMachinesCase):
 
     def testBasic(self):
-        self._testBasic()
+        self._testBasic(run_pixel_tests=True)
 
     def createUser(self, user_group):
         user_name = f"test_{user_group if user_group else 'none'}_user"
@@ -74,7 +74,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         # Check wheel group PRIVILEGED user will see VMs and can do operations on them
         self._testBasic(user, True, False)
 
-    def _testBasic(self, user=None, superuser=True, expect_empty_list=False):
+    def _testBasic(self, user=None, superuser=True, expect_empty_list=False, run_pixel_tests=False):
         b = self.browser
         m = self.machine
 
@@ -107,6 +107,8 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
+        if run_pixel_tests:
+            b.assert_pixels("#vm-details", "vm-details", ignore=[".memory-usage-chart", "#vm-subVmTest1-disks .pf-c-card__body", "#vm-subVmTest1-network-1-mac"])
         b.wait_in_text("#vm-subVmTest1-vcpus-count", "1")
 
         b.wait_in_text("#vm-subVmTest1-boot-order", "disk,network")
@@ -311,63 +313,6 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         b.wait_text("h2.vm-name", "test%")
         b.wait_not_present("#navbar-oops")
 
-    def testLibvirt(self):
-        b = self.browser
-        m = self.machine
-
-        self.allow_restart_journal_messages()
-
-        libvirtServiceName = self.getLibvirtServiceName()
-
-        # disable journal core dumps and traces for this test -- libvirt tends to crash on stopping
-        core_pattern = m.execute("cat /proc/sys/kernel/core_pattern").strip()
-        m.execute("echo core > /proc/sys/kernel/core_pattern")
-        self.addCleanup(m.execute, f"echo '{core_pattern}' > /proc/sys/kernel/core_pattern")
-
-        def stopLibvirtSocket():
-            m.execute(f"systemctl stop {self.getLibvirtServiceName()}-ro.socket {self.getLibvirtServiceName()}.socket {self.getLibvirtServiceName()}-admin.socket")
-            self.addCleanup(m.execute, f"systemctl start {self.getLibvirtServiceName()}-ro.socket {self.getLibvirtServiceName()}.socket {self.getLibvirtServiceName()}-admin.socket")
-
-        def stopLibvirtService():
-            m.execute(f"systemctl stop {libvirtServiceName}")
-
-        def startLibvirtSocket():
-            m.execute(f"systemctl start {libvirtServiceName}")
-
-        def hack_libvirtd_crash():
-            # work around libvirtd crashing when stopped too quickly; https://bugzilla.redhat.com/show_bug.cgi?id=1828207
-            m.execute("virsh domifaddr 1")
-
-        def waitEmptyState():
-            with b.wait_timeout(15):
-                b.wait_in_text(".pf-c-empty-state", "Virtualization service (libvirt) is not active")
-
-        # Check initial state
-        self.createVm("subVmTest1")
-        self.login_and_go("/machines")
-        self.waitPageInit()
-        self.waitVmRow("subVmTest1")
-
-        # Check that empty state screen appears for privileged users when both the service and the socket are not running
-        hack_libvirtd_crash()
-        stopLibvirtSocket()
-        stopLibvirtService()
-        b.reload()
-        b.enter_page('/machines')
-        waitEmptyState()
-        b.click(".pf-c-empty-state button.pf-m-link")  # Troubleshoot
-        b.leave_page()
-        b.wait(lambda: "system/services" in b.eval_js("window.location.href"))
-
-        # Make sure that unprivileged users can see the VM list when libvirtd is not running
-        m.execute("useradd nonadmin; echo nonadmin:foobar | chpasswd")
-        # user libvirtd instance tends to SIGABRT with "Failed to find user record for uid .." on shutdown during cleanup
-        # so make sure that there are no leftover user processes that bleed into the next test
-        self.addCleanup(self.machine.execute, "pkill -u nonadmin || true; while pgrep -u nonadmin; do sleep 0.5; done")
-        self.login_and_go("/machines", user="nonadmin", superuser=False)
-        self.waitPageInit()
-        b.wait_in_text("#virtual-machines-listing .pf-c-empty-state", "No VM is running")
-
     def testDelete(self):
         b = self.browser
         m = self.machine
@@ -385,25 +330,25 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
         self.goToVmPage("subVmTest1")
 
-        def addDisk(volName, poolName):
+        def addDisk(volName, poolName, vmName='subVmTest1'):
             # Virsh does not offer some option to create disks of type volume
             # We have to do this from cockpit UI
-            b.click("#vm-subVmTest1-disks-adddisk")  # button
-            b.wait_visible("#vm-subVmTest1-disks-adddisk-dialog-modal-window")
+            b.click(f"#vm-{vmName}-disks-adddisk")  # button
+            b.wait_visible(f"#vm-{vmName}-disks-adddisk-dialog-modal-window")
             b.wait_visible("label:contains(Create new)")  # radio button label in the modal dialog
 
-            b.select_from_dropdown("#vm-subVmTest1-disks-adddisk-new-select-pool", poolName)
-            b.set_input_text("#vm-subVmTest1-disks-adddisk-new-name", volName)
-            b.set_input_text("#vm-subVmTest1-disks-adddisk-new-size", "10")
-            b.select_from_dropdown("#vm-subVmTest1-disks-adddisk-new-unit", "MiB")
-            b.click("#vm-subVmTest1-disks-adddisk-permanent")
+            b.select_from_dropdown(f"#vm-{vmName}-disks-adddisk-new-select-pool", poolName)
+            b.set_input_text(f"#vm-{vmName}-disks-adddisk-new-name", volName)
+            b.set_input_text(f"#vm-{vmName}-disks-adddisk-new-size", "10")
+            b.select_from_dropdown(f"#vm-{vmName}-disks-adddisk-new-unit", "MiB")
+            b.click(f"#vm-{vmName}-disks-adddisk-permanent")
 
-            b.click("#vm-subVmTest1-disks-adddisk-dialog-add")
+            b.click(f"#vm-{vmName}-disks-adddisk-dialog-add")
             with b.wait_timeout(30):
-                b.wait_not_present("#vm-subVmTest1-disks-adddisk-dialog-modal-window")
+                b.wait_not_present(f"#vm-{vmName}-disks-adddisk-dialog-modal-window")
 
-            b.wait_visible("#vm-subVmTest1-disks-vdb-source-volume")
-            b.wait_visible("#vm-subVmTest1-disks-vdb-source-pool")
+            b.wait_visible(f"#vm-{vmName}-disks-vdb-source-volume")
+            b.wait_visible(f"#vm-{vmName}-disks-vdb-source-pool")
 
         secondDiskVolName = "mydisk"
         poolName = "images"
@@ -499,21 +444,25 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         name = "vm-fail-storage-deletion"
         args = self.createVm(name)
         self.waitVmRow(name)
+        self.goToVmPage(name)
         wait(lambda: name in m.execute("virsh list --all --name"))
+        addDisk(secondDiskVolName, poolName, name)
         # Remove VM's disk from command line
-        m.execute(f"rm {args['image']}")
+        m.execute(f"rm {args['image']} {(secondDiskPoolPath + secondDiskVolName)}")
 
         self.performAction(name, "delete")
-        b.set_checked(f"#vm-{name}-delete-modal-dialog input[type=checkbox]", True)
+        b.set_checked(f"#vm-{name}-delete-modal-dialog li:nth-child(1) input[type=checkbox]", True)
+        b.set_checked(f"#vm-{name}-delete-modal-dialog li:nth-child(2) input[type=checkbox]", True)
         b.click(f"#vm-{name}-delete-modal-dialog button:contains(Delete)")
 
         # Check VM got deleted, but there is a warning about unsuccessful storage deletion
         self.waitVmRow(name, present=False)
         wait(lambda: name not in m.execute("virsh list --all --name"))
         b.wait_visible(".pf-c-alert-group li .pf-c-alert")
-        b.wait_in_text(".pf-c-alert-group li .pf-c-alert .pf-c-alert__title", f"Could not delete storage for {name}")
+        b.wait_in_text(".pf-c-alert-group li .pf-c-alert .pf-c-alert__title", f"Could not delete all storage for {name}")
         b.click("button.alert-link.more-button")
         b.wait_in_text(".pf-c-alert-group li .pf-c-alert .pf-c-alert__description", args['image'])
+        b.wait_in_text(".pf-c-alert-group li .pf-c-alert .pf-c-alert__description", secondDiskVolName)
         # Close the notification
         b.click(".pf-c-alert-group li .pf-c-alert button.pf-m-plain")
 

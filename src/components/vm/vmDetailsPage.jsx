@@ -89,7 +89,7 @@ export const VmDetailsPage = ({
     }, []);
 
     const vmActionsPageSection = (
-        <PageSection className="actions-pagesection" variant={PageSectionVariants.light}>
+        <PageSection className="actions-pagesection" variant={PageSectionVariants.light} isWidthLimited>
             <div className="vm-top-panel" data-vm-transient={!vm.persistent}>
                 <Flex spaceItems={{ default: 'spaceItemsMd' }}>
                     <FlexItem component='h2'>{vm.title ? vm.title : vm.name}</FlexItem>

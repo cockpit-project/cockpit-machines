@@ -175,7 +175,10 @@ class StoragePoolDelete extends React.Component {
                                     label={<>
                                         { _("Also delete all volumes inside this pool:")}
                                         <List className="pool-volumes-delete-list">
-                                            {volumes.map(vol => <ListItem key={storagePool.name + vol.name}>{vol.name}</ListItem>)}
+                                            {volumes
+                                                    .sort((a, b) => a.name.localeCompare(b.name))
+                                                    .map(vol => <ListItem key={storagePool.name + vol.name}>{vol.name}</ListItem>)
+                                            }
                                         </List>
                                     </>}
                                     onChange={checked => this.onValueChanged('deleteVolumes', checked)} />
@@ -186,7 +189,7 @@ class StoragePoolDelete extends React.Component {
         );
 
         return (
-            <Modal position="top" variant="small" isOpen onClose={Dialogs.close}
+            <Modal id="storage-pool-delete-modal" position="top" variant="small" isOpen onClose={Dialogs.close}
                 title={<>
                     <ExclamationTriangleIcon color="orange" className="pf-u-mr-sm" />
                     { cockpit.format(_("Delete $0 storage pool?"), storagePool.name) }

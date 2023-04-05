@@ -42,7 +42,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         self.browser.click(selector + " > button")
         self.browser.wait_attr(selector, "class", "pf-c-tabs__item pf-m-current")
 
-    def testStoragePools(self):
+    def testStoragePoolsBasic(self):
         b = self.browser
         m = self.machine
 
@@ -700,7 +700,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         m = self.machine
 
         # Prepare a shutoff VM and a disk attached to the VM
-        self.createVm("subVmTest1", running=False)
+        args = self.createVm("subVmTest1", running=False)
 
         disk_xml = '''
 <disk type='volume' device='disk'>
@@ -977,6 +977,56 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         b.mouse("#delete-pool-images-system a[aria-disabled=true]", "mouseenter")
         b.wait_in_text("#delete-tooltip", "Pool's volumes are used by VMs")
         b.mouse("#delete-pool-images-system a[aria-disabled=true]", "mouseleave")
+
+        # Detach the disk
+        m.execute("virsh detach-disk subVmTest1 vdb --config")
+        # Need to reload to update the disk usedby field
+        b.reload()
+        b.enter_page("/machines")
+
+        self.waitPoolRow("images")
+        self.togglePoolRow("images")
+        self.gotoVolumesTab("images")
+
+        b.wait_not_in_text("#pool-images-system-volume-forDeletion-usedby", "subVmTest1")
+
+        # Check for deleting a pool whose disk is used by a VM
+        b.click("#pool-images-system-action-kebab button")
+        b.click("#pool-images-system-action-kebab a:contains(Delete)")
+        b.set_checked("#storage-pool-delete-volumes", True)
+        b.wait_in_text(".pf-c-backdrop .pf-c-helper-text__item-text", "Pool's volumes are used by")
+        b.wait_visible(".pf-c-backdrop footer button[aria-disabled=true]:contains(Delete)")
+
+        # Check "Cancel" button
+        b.click(".pf-c-backdrop footer button:contains(Cancel)")
+        b.wait_not_present(".pf-c-backdrop")
+
+        # Check "X" button of the dialog
+        b.click("#pool-images-system-action-kebab button")
+        b.click("#pool-images-system-action-kebab a:contains(Delete)")
+        b.click(".pf-c-backdrop button[aria-label=Close]")
+        b.wait_not_present(".pf-c-backdrop")
+
+        # Check that the error shown after the title, not the footer
+        # Delete the VM, or the deletion button will be disabled
+        m.execute("virsh undefine subVmTest1")
+        # Check both command and UI that the VM is not shown
+        wait(lambda: "subVmTest1" not in m.execute("virsh list --all"))
+        b.click(".machines-listing-breadcrumb li a:contains(Virtual machines)")
+        b.wait_not_present("#vm-subVmTest1-system-name")
+        # Go back to the storage pool list
+        b.wait_in_text("#card-pf-storage-pools button .card-pf-title-link", "Storage pool")
+        b.click("#card-pf-storage-pools .pf-c-card__header button")
+        b.wait_visible("#storage-pools-listing")
+
+        m.execute(f'chattr +a {args["image"]}')
+        self.addCleanup(m.execute, f'chattr -a {args["image"]}')
+        b.click("#pool-images-system-action-kebab button")
+        b.click("#pool-images-system-action-kebab a:contains(Delete)")
+        b.set_checked("#storage-pool-delete-volumes", True)
+        b.click(".pf-c-backdrop footer button[aria-disabled=false]:contains(Delete)")
+        b.assert_pixels("#storage-pool-delete-modal", "storage-pool-delete-modal-error")
+        wait(lambda: "forDeletion" not in m.execute("ls /var/lib/libvirt/images/"))
 
 
 if __name__ == '__main__':
