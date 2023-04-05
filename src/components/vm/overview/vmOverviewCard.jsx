@@ -27,6 +27,9 @@ import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex/ind
 import { Switch } from "@patternfly/react-core/dist/esm/components/Switch/index.js";
 import { DialogsContext } from 'dialogs.jsx';
 
+import { RenameDialog } from '../vmRenameDialog.jsx';
+import { TitleModal } from './titleModal.jsx';
+import { DescriptionModal } from './descriptionModal.jsx';
 import { VCPUModal } from './vcpuModal.jsx';
 import { CPUTypeModal } from './cpuTypeModal.jsx';
 import MemoryModal from './memoryModal.jsx';
@@ -58,10 +61,14 @@ class VmOverviewCard extends React.Component {
         this.state = {
             virtXMLAvailable: undefined,
         };
+        this.openName = this.openName.bind(this);
+        this.openTitle = this.openTitle.bind(this);
+        this.openDescription = this.openDescription.bind(this);
         this.openVcpu = this.openVcpu.bind(this);
         this.openCpuType = this.openCpuType.bind(this);
         this.openMemory = this.openMemory.bind(this);
         this.onAutostartChanged = this.onAutostartChanged.bind(this);
+        this.guestOffEditButton = this.guestOffEditButton.bind(this);
     }
 
     componentDidMount() {
@@ -81,6 +88,23 @@ class VmOverviewCard extends React.Component {
                 });
     }
 
+    openName() {
+        const Dialogs = this.context;
+        Dialogs.show(<RenameDialog vmName={this.props.vm.name}
+                                    vmId={this.props.vm.id}
+                                    connectionName={this.props.vm.connectionName} />);
+    }
+
+    openTitle() {
+        const Dialogs = this.context;
+        Dialogs.show(<TitleModal vm={this.props.vm} />);
+    }
+
+    openDescription() {
+        const Dialogs = this.context;
+        Dialogs.show(<DescriptionModal vm={this.props.vm} />);
+    }
+
     openVcpu() {
         const Dialogs = this.context;
         Dialogs.show(<VCPUModal vm={this.props.vm} maxVcpu={this.props.maxVcpu} />);
@@ -94,6 +118,15 @@ class VmOverviewCard extends React.Component {
     openMemory() {
         const Dialogs = this.context;
         Dialogs.show(<MemoryModal vm={this.props.vm} config={this.props.config} />);
+    }
+
+    guestOffEditButton(vm, action) {
+        const editButton = (
+            <Button variant="link" isInline isAriaDisabled={vm.state != 'shut off'} onClick={action}>
+                {_("edit")}
+            </Button>
+        );
+        return vm.state == 'shut off' ? editButton : (<Tooltip content={_("Only editable when the guest is shut off")}>{editButton}</Tooltip>);
     }
 
     render() {
@@ -125,6 +158,38 @@ class VmOverviewCard extends React.Component {
                         label={_("Run when host boots")} />
             </DescriptionListDescription>
         );
+
+        const nameLink = (
+            <DescriptionListDescription id={`${idPrefix}-name`}>
+                <Flex spaceItems={{ default: 'spaceItemsSm' }}>
+                    <FlexItem>
+                        {vm.name}
+                    </FlexItem>
+                    {this.guestOffEditButton(vm, this.openName)}
+                </Flex>
+            </DescriptionListDescription>
+        );
+        const titleLink = (
+            <DescriptionListDescription id={`${idPrefix}-title`}>
+                <Flex spaceItems={{ default: 'spaceItemsSm' }}>
+                    <FlexItem>
+                        {vm.title}
+                    </FlexItem>
+                    {this.guestOffEditButton(vm, this.openTitle)}
+                </Flex>
+            </DescriptionListDescription>
+        );
+        const descriptionLink = (
+            <DescriptionListDescription id={`${idPrefix}-description`}>
+                <Flex spaceItems={{ default: 'spaceItemsSm' }}>
+                    <FlexItem>
+                        {vm.description}
+                    </FlexItem>
+                    {this.guestOffEditButton(vm, this.openDescription)}
+                </Flex>
+            </DescriptionListDescription>
+        );
+
         const memory = convertToBestUnit(vm.currentMemory, units.KiB);
         const memoryLink = (
             <DescriptionListDescription id={`${idPrefix}-memory-count`}>
@@ -176,10 +241,33 @@ class VmOverviewCard extends React.Component {
         );
 
         return (
-            <Flex className="overview-tab" direction={{ default: "column", "2xl": "row" }}>
+            <Flex className="overview-tab" direction={{ default: "column" }}>
                 <FlexItem>
                     <DescriptionList isHorizontal>
-                        <Text component={TextVariants.h4}>
+                        { // Only show the name, if the title is set
+                            vm.title &&
+                            (
+                                <DescriptionListGroup>
+                                    <DescriptionListTerm>{_("Name")}</DescriptionListTerm>
+                                    {nameLink}
+                                </DescriptionListGroup>
+                            )
+                        }
+
+                        <DescriptionListGroup>
+                            <DescriptionListTerm>{_("Title")}</DescriptionListTerm>
+                            {titleLink}
+                        </DescriptionListGroup>
+
+                        <DescriptionListGroup>
+                            <DescriptionListTerm>{_("Description")}</DescriptionListTerm>
+                            {descriptionLink}
+                        </DescriptionListGroup>
+                    </DescriptionList>
+                </FlexItem>
+                <FlexItem>
+                    <DescriptionList isHorizontal>
+                        <Text component={TextVariants.h3}>
                             {_("General")}
                         </Text>
 
@@ -240,7 +328,7 @@ class VmOverviewCard extends React.Component {
                 </FlexItem>
                 <FlexItem>
                     <DescriptionList isHorizontal>
-                        <Text component={TextVariants.h4}>
+                        <Text component={TextVariants.h3}>
                             {_("Hypervisor details")}
                         </Text>
 

@@ -872,6 +872,52 @@ export function domainSetCpuMode({
     ], opts);
 }
 
+export function domainSetXML({
+    name,
+    id: objPath,
+    connectionName,
+    xmlOption,
+    change
+}) {
+    const opts = { err: "message", environ: ['LC_ALL=C'] };
+    if (connectionName === 'system')
+        opts.superuser = 'try';
+
+    return cockpit.spawn([
+        'virt-xml', '-c', `qemu:///${connectionName}`, xmlOption, change, name, '--edit'
+    ], opts);
+}
+
+export function domainSetMetadata({
+    name,
+    id: objPath,
+    connectionName,
+    change
+}) {
+    const xmlOption = '--metadata';
+    return domainSetXML({ name, id: objPath, connectionName, xmlOption, change });
+}
+
+export function domainSetTitle({
+    name,
+    id: objPath,
+    connectionName,
+    title,
+}) {
+    const change = `title="${title}"`;
+    return domainSetMetadata({ name, id: objPath, connectionName, change });
+}
+
+export function domainSetDescription({
+    name,
+    id: objPath,
+    connectionName,
+    description,
+}) {
+    const change = `description="${description}"`;
+    return domainSetMetadata({ name, id: objPath, connectionName, change });
+}
+
 export function domainSetMemoryBacking({ connectionName, vmName, type }) {
     const options = { err: "message" };
     if (connectionName === "system")
