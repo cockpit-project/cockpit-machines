@@ -23,7 +23,7 @@ import { EmptyState, EmptyStateIcon, EmptyStateBody, EmptyStatePrimary } from "@
 import { Progress, ProgressMeasureLocation } from "@patternfly/react-core/dist/esm/components/Progress/index.js";
 import { Text, TextContent } from "@patternfly/react-core/dist/esm/components/Text/index.js";
 import { Title } from "@patternfly/react-core/dist/esm/components/Title/index.js";
-import { ExclamationCircleIcon, WrenchIcon } from '@patternfly/react-icons';
+import { ExclamationCircleIcon, VirtualMachineIcon } from '@patternfly/react-icons';
 import { superuser } from "superuser.js";
 import cockpit from 'cockpit';
 
@@ -128,7 +128,7 @@ export const App = () => {
     if (!virtualizationEnabled && !emptyStateIgnored) {
         return (
             <EmptyState className="virtualization-disabled-empty-state">
-                <EmptyStateIcon icon={WrenchIcon} />
+                <EmptyStateIcon icon={VirtualMachineIcon} />
                 <Title headingLevel="h4" size="lg">
                     {_("Hardware virtualization is disabled")}
                 </Title>
