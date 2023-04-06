@@ -43,6 +43,8 @@ class TestMachinesVirtualization(VirtualMachinesCase):
 
         b.wait_visible("div.pf-c-empty-state .pf-c-title:contains('Hardware virtualization is disabled')")
 
+        b.assert_pixels(".pf-c-empty-state", "virtualization-disabled-warning")
+
         b.click("#ignore-hw-virtualization-disabled-btn")
 
         b.wait_visible("#card-pf-storage-pools")
