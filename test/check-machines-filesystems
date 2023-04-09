@@ -59,6 +59,8 @@ class TestMachinesFilesystems(machineslib.VirtualMachinesCase):
         b.set_input_text("#vm-subVmTest1-filesystems-modal-mountTag", "dir1")
         b.click(".pf-v5-c-expandable-section__toggle")
         b.wait_visible("#vm-subVmTest1-filesystems-modal-xattr:not(:checked)")
+        # Check "Extended attributes" text
+        b.wait_text('#vm-subVmTest1-filesystems-modal-xattr + label', "Use extended attributes on files and directories")
         b.set_checked("#vm-subVmTest1-filesystems-modal-xattr", True)
 
         b.click("#vm-subVmTest1-filesystems-modal-add")
