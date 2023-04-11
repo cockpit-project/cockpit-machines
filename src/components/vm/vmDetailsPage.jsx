@@ -31,6 +31,8 @@ import { Popover } from "@patternfly/react-core/dist/esm/components/Popover/inde
 import { ExpandIcon, HelpIcon } from '@patternfly/react-icons';
 import { WithDialogs } from 'dialogs.jsx';
 
+import { EmptyStatePanel } from "cockpit-components-empty-state.jsx";
+
 import { vmId } from "../../helpers.js";
 
 import { VmFilesystemsCard, VmFilesystemActions } from './filesystems/vmFilesystemsCard.jsx';
@@ -62,6 +64,10 @@ export const VmDetailsPage = ({
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    // not initialized yet?
+    if (!vm.capabilities)
+        return <EmptyStatePanel title={ _("Loading...") } loading />;
 
     const vmActionsPageSection = (
         <PageSection className="actions-pagesection" variant={PageSectionVariants.light} isWidthLimited>
