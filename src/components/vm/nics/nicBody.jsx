@@ -136,7 +136,7 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
             sources = Object.keys(dialogValues.availableSources.device).filter(dev => dialogValues.availableSources.device[dev].type == "bridge");
 
         if (sources.length > 0) {
-            networkSourcesContent = sources.map(networkSource => {
+            networkSourcesContent = sources.sort().map(networkSource => {
                 return (
                     <FormSelectOption value={networkSource} key={networkSource}
                                       label={networkSource} />
