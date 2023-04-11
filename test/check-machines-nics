@@ -89,6 +89,27 @@ class TestMachinesNICs(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-network-1-source", "virbr0")
         b.wait_in_text("#vm-subVmTest1-network-1-ipv4-address", "192.168.122.")
 
+        # Sources in  Add vNIC dialog should be alphabetically sorted
+        m.execute("ip link add name abridge type bridge")
+        m.execute("ip link add name 0bridge type bridge")
+        m.execute("ip link add name xbridge type bridge")
+        self.addCleanup(m.execute, "ip link delete abridge")
+        self.addCleanup(m.execute, "ip link delete 0bridge")
+        self.addCleanup(m.execute, "ip link delete xbridge")
+        b.reload()
+        b.enter_page('/machines')
+        self.waitPageInit()
+        b.click("#vm-subVmTest1-add-iface-button")  # open the Network Interfaces subtab
+        b.wait_visible("#vm-subVmTest1-add-iface-dialog")
+        b.select_from_dropdown("#vm-subVmTest1-add-iface-type", "bridge")
+        # dropdown options are not visible, but still part of DOM tree, so let's use _wait_present
+        b._wait_present("#vm-subVmTest1-add-iface-source option:nth-of-type(1):contains(0bridge)")
+        b._wait_present("#vm-subVmTest1-add-iface-source option:nth-of-type(2):contains(abridge)")
+        b._wait_present("#vm-subVmTest1-add-iface-source option:nth-of-type(3):contains(virbr0)")
+        b._wait_present("#vm-subVmTest1-add-iface-source option:nth-of-type(4):contains(xbridge)")
+        b.click(".pf-c-modal-box__footer button:contains(Cancel)")
+        b.wait_not_present("#vm-subVmTest1-add-iface-dialog")
+
     def testNICPlugingAndUnpluging(self):
         b = self.browser
         m = self.machine
