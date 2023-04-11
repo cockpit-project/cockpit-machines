@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
@@ -165,6 +165,7 @@ VmDisksCardLibvirt.propTypes = {
 };
 
 export const VmDisksCard = ({ vm, vms, disks, renderCapacity, supportedDiskBusTypes }) => {
+    const [openActions, setOpenActions] = useState(new Set());
     let renderCapacityUsed, renderAccess, renderAdditional;
     const columnTitles = [_("Device")];
     const idPrefix = `${vmId(vm.name)}-disks`;
@@ -235,7 +236,17 @@ export const VmDisksCard = ({ vm, vms, disks, renderCapacity, supportedDiskBusTy
                                 vms={vms}
                                 disk={disk}
                                 supportedDiskBusTypes={supportedDiskBusTypes}
-                                idPrefixRow={idPrefixRow} />
+                                idPrefixRow={idPrefixRow}
+                                isActionOpen={openActions.has(disk.target)}
+                                setIsActionOpen={open => setOpenActions(prev => {
+                                    const next = new Set(prev);
+                                    if (open)
+                                        next.add(disk.target);
+                                    else
+                                        next.delete(disk.target);
+                                    return next;
+                                })
+                                } />
         });
         return { columns, props: { key: idPrefixRow } };
     });
