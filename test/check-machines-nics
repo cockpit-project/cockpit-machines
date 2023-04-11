@@ -631,7 +631,8 @@ class TestMachinesNICs(VirtualMachinesCase):
             self.browser.click(".pf-c-modal-box__footer button:contains(Add)")
 
             if not self.xfail:
-                self.browser.wait_not_present("#vm-subVmTest1-add-iface-dialog")
+                with self.browser.wait_timeout(60):
+                    self.browser.wait_not_present("#vm-subVmTest1-add-iface-dialog")
             else:
                 self.browser.wait_in_text(".pf-c-modal-box__body .pf-c-alert__title", self.xfail_error)
                 self.browser.click(".pf-c-modal-box__footer button:contains(Cancel)")
