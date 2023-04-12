@@ -11,6 +11,11 @@ export RUN_TESTS_OPTIONS=--track-naughties
 # linters are off by default for production builds, but we want to run them in CI
 export LINT=1
 
+make bots
+sed 's/0.4.0/0.5.2/g' bots/images/scripts/cirros.bootstrap > cirros.bootstrap
+sh -ex cirros.bootstrap `pwd`/cirros.img
+rm cirros.bootstrap
+
 make codecheck
 make check
 make po/machines.pot

@@ -126,7 +126,8 @@ class VirtualMachinesCaseHelpers:
     def createVm(self, name, graphics='none', ptyconsole=False, running=True, memory=160, connection='system'):
         m = self.machine
 
-        image_file = m.pull("cirros")
+        import os
+        image_file = os.path.abspath("cirros.img")
 
         if connection == "system":
             img = "/var/lib/libvirt/images/{0}-2.img".format(name)
