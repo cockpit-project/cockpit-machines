@@ -35,7 +35,6 @@ import {
     getDiskXML,
 } from '../libvirt-xml-create.js';
 import {
-    finishVmCreateInProgress,
     setVmCreateInProgress,
     setVmInstallInProgress,
     updateImageDownloadProgress,
@@ -362,7 +361,6 @@ export function domainCreate({
     return tryDownloadRhelImage()
             .then(() => hashPasswords(args))
             .then(args => cockpit.spawn([pythonPath, "--", "-", JSON.stringify(args)], opts).input(installVmScript))
-            .then(() => finishVmCreateInProgress(vmName, connectionName))
             .finally(() => clearVmUiState(vmName, connectionName));
 }
 
