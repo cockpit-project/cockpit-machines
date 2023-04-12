@@ -361,7 +361,10 @@ export function domainCreate({
     return tryDownloadRhelImage()
             .then(() => hashPasswords(args))
             .then(args => cockpit.spawn([pythonPath, "--", "-", JSON.stringify(args)], opts).input(installVmScript))
-            .finally(() => clearVmUiState(vmName, connectionName));
+            .catch(ex => {
+                clearVmUiState(vmName, connectionName);
+                return Promise.reject(ex);
+            });
 }
 
 export function domainCreateFilesystem({ connectionName, objPath, vmName, source, target, xattr }) {
@@ -708,6 +711,7 @@ export function domainGet({
                 };
 
                 store.dispatch(updateOrAddVm(Object.assign({}, props, dumpxmlParams)));
+                clearVmUiState(props.name, connectionName);
 
                 return snapshotGetAll({ connectionName, domainPath: objPath });
             })
