@@ -1501,6 +1501,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.click("#delete-vm-subVmTest1-disks-vdc")
         b.wait_visible(".pf-c-modal-box")
         b.click(".pf-c-modal-box__footer button:contains(Remove)")
+        wait(lambda: "vdc" not in m.execute("virsh domblklist subVmTest1"), delay=1)
         b.wait_not_present("#vm-subVmTest1-disks-vdc-device")
         b.wait_not_present(".pf-c-modal-box")
 
