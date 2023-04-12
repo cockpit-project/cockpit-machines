@@ -176,7 +176,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         # force reboot
         self.machine.execute(f"echo '' > {args['logfile']}")
         self.performAction("subVmTest1", "forceReboot")
-        self.waitLogFile(args['logfile'], "Initializing cgroup subsys")
+        self.waitCirrOSBooted(args['logfile'])
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # the shut off button beside the VM name
