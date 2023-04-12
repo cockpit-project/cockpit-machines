@@ -88,12 +88,12 @@ class TestMachinesConsoles(VirtualMachinesCase):
         b.wait_visible(".pf-c-console__vnc canvas")
 
         # make sure the log file is full - then empty it and reboot the VM - the log file should fill up again
-        wait(lambda: "login as 'cirros' user." in self.machine.execute(f"cat {args['logfile']}"), delay=3)
+        self.waitCirrOSBooted(args['logfile'])
 
         self.machine.execute(f"echo '' > {args['logfile']}")
         b.click("#subVmTest1-system-vnc-sendkey button")
         b.click("#ctrl-alt-Delete")
-        wait(lambda: "Requesting system reboot" in self.machine.execute(f"cat {args['logfile']}"), delay=3)
+        self.waitLogFile(args['logfile'], "Requesting system reboot")
 
     def testInlineConsoleWithUrlRoot(self, urlroot=""):
         self.testInlineConsole(urlroot="/webcon")

@@ -149,12 +149,12 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # Wait for the system to completely start
-        wait(lambda: "login as 'cirros' user." in self.machine.execute(f"cat {args['logfile']}"), delay=3)
+        self.waitCirrOSBooted(args['logfile'])
 
         # Send Non-Maskable Interrupt (no change in VM state is expected)
         self.performAction("subVmTest1", "sendNMI")
 
-        b.wait(lambda: "NMI received" in self.machine.execute(f"cat {args['logfile']}"))
+        self.waitLogFile(args['logfile'], "NMI received")
 
         # pause
         self.performAction("subVmTest1", "pause")
@@ -170,17 +170,17 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         # reboot
         self.machine.execute(f"echo '' > {args['logfile']}")
         self.performAction("subVmTest1", "reboot")
-        wait(lambda: "reboot: Power down" in self.machine.execute(f"cat {args['logfile']}"), delay=3)
+        self.waitLogFile(args['logfile'], "reboot: Power down")
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # force reboot
         self.machine.execute(f"echo '' > {args['logfile']}")
         self.performAction("subVmTest1", "forceReboot")
-        wait(lambda: "Initializing cgroup subsys" in self.machine.execute(f"cat {args['logfile']}"), delay=3)
+        self.waitLogFile(args['logfile'], "Initializing cgroup subsys")
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # the shut off button beside the VM name
-        wait(lambda: "login as 'cirros' user." in self.machine.execute(f"cat {args['logfile']}"), delay=3)
+        self.waitCirrOSBooted(args['logfile'])
         b.click("#vm-subVmTest1-system-shutdown-button")
         b.wait_in_text("#vm-subVmTest1-system-state", "Shut off")
         b.wait_visible("#vm-subVmTest1-system-run")
@@ -189,7 +189,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         self.machine.execute(f"echo '' > {args['logfile']}")
         b.click("#vm-subVmTest1-system-run")
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
-        wait(lambda: "login as 'cirros' user." in self.machine.execute(f"cat {args['logfile']}"), delay=3)
+        self.waitCirrOSBooted(args['logfile'])
         self.performAction("subVmTest1", "off")
 
         # force shut off
@@ -395,7 +395,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         self.goToVmPage(name)
 
         # Make sure that the VM booted normally before attempting to suspend it
-        wait(lambda: "login as 'cirros' user" in self.machine.execute(f"cat {args['logfile']}"), delay=3)
+        self.waitCirrOSBooted(args['logfile'])
 
         self.machine.execute(f"virsh -c qemu:///system suspend {name}")
         b.wait_in_text(f"#vm-{name}-system-state", "Paused")

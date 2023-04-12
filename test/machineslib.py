@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
 
-from testlib import MachineCase
+from testlib import MachineCase, wait, Error
 from netlib import NetworkHelpers
 from storagelib import StorageHelpers
 
@@ -272,6 +272,17 @@ class VirtualMachinesCaseHelpers:
         # and on certain distribution supports only https (not http)
         # see: block-drv-ro-whitelist option in qemu-kvm.spec for certain distribution
         return self.machine.spawn(f"cd /var/lib/libvirt; exec python3 {self.vm_tmpdir}/{mock_server_filename} {self.vm_tmpdir}/server.crt {self.vm_tmpdir}/server.key", "httpsserver")
+
+    def waitLogFile(self, logfile, expected_text):
+        try:
+            wait(lambda: expected_text in self.machine.execute(f"cat {logfile}"), delay=3)
+        except Error:
+            log = self.machine.execute(f"cat {logfile}")
+            print(f"----- log of failed VM ------\n{log}\n---------")
+            raise
+
+    def waitCirrOSBooted(self, logfile):
+        self.waitLogFile(logfile, "login as 'cirros' user.")
 
 
 class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelpers, NetworkHelpers):
