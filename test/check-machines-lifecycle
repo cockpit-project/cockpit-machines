@@ -430,6 +430,30 @@ class TestMachinesLifecycle(VirtualMachinesCase):
             qemu_img_info = m.execute(f"qemu-img info /var/lib/libvirt/images/{name}-2.img")
             self.assertNotIn("snapshotA", qemu_img_info)
 
+            # Snapshot deletion was failing for VMs with file-directory storage-pool volumes as disks.
+            # It was fixed since libvirt 7.1.0 at https://gitlab.com/libvirt/libvirt/-/commit/6423e3082835db932dd285f3ae75b5dad9d91c83
+            # Only debian-stable has libvirt lesser than 7.1.0
+            # Add this condition to notify us when the condition below is no longer needed
+            if m.image == "debian-stable":
+                self.assertLess(m.execute("virsh --version"), "7.1.0")
+            else:
+                # Check deleting VM fails if deleting snapshot is not possible and error message is shown
+                name = "vm-with-failed-snapshots"
+                self.createVm(name, running=False)
+
+                m.execute("virsh vol-create-as --pool images --name tmpdisk --capacity 1 --format qcow2")
+                m.execute(f"virt-xml {name} --add-device --disk source.pool=images,source.volume=tmpdisk,target.dev=sdb,driver.type=qcow2")
+                m.execute(f"virsh snapshot-create-as --domain {name} --name snapshotFails")
+                b.reload()
+                b.enter_page('/machines')
+                self.performAction(name, "delete")
+                b.wait_visible(f"#vm-{name}-delete-modal-dialog")
+                m.execute(f"virsh snapshot-delete --domain {name} --snapshotname snapshotFails")
+                b.click(f"#vm-{name}-delete-modal-dialog button:contains(Delete)")
+                b.wait_in_text(f"#vm-{name}-delete-modal-dialog .pf-c-alert__description", "Domain snapshot not found")
+                b.click(f"#vm-{name}-delete-modal-dialog button:contains(Cancel)")
+                m.execute(f"virsh undefine {name}")
+
         # Try to delete a VM and keep its volume
         name = "vm-keep-vol"
         args = self.createVm(name)
