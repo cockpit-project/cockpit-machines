@@ -143,9 +143,7 @@ export class DeleteDialog extends React.Component {
                             .then(() => {
                                 Dialogs.close();
                                 cockpit.location.go(["vms"]);
-                            })
-                            // Fail implicitly returns the exception, which is useful so that cleanup operation doesn't get invoked
-                            .fail(exc => this.dialogErrorSet(cockpit.format(_("Could not delete $0"), vm.name), exc.message));
+                            });
                 })
                 .then(() => { // Cleanup operations
                     return domainDeleteStorage({ connectionName: vm.connectionName, storage, storagePools })
@@ -154,7 +152,8 @@ export class DeleteDialog extends React.Component {
                                 detail: exc,
                                 type: "warning"
                             }));
-                });
+                })
+                .catch(exc => this.dialogErrorSet(cockpit.format(_("Could not delete $0"), vm.name), exc.message));
     }
 
     render() {
