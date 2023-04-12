@@ -228,7 +228,7 @@ class VirtualMachinesCaseHelpers:
     def get_next_mac(self, last_mac):
         parts = last_mac.split(':')
         suffix = parts[-1]
-        new_suffix = format(int(suffix, 16) + 1, "x").zfill(2)
+        new_suffix = format((int(suffix, 16) + 1) & 0xFF, "x").zfill(2)
         parts[-1] = new_suffix
         new_mac = ':'.join(parts)
         return new_mac
