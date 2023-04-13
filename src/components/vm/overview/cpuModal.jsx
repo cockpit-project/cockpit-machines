@@ -21,7 +21,6 @@ import React, { useState } from 'react';
 import cockpit from 'cockpit';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
-import { Flex } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { FormSelect, FormSelectOption, FormSelectOptionGroup } from "@patternfly/react-core/dist/esm/components/FormSelect";
 import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
 import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
@@ -212,67 +211,61 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
         <Form isHorizontal className="cpu-modal">
             { caution }
             { error && error.dialogError && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.dialogErrorDetail} /> }
-            <Flex flexWrap={{ default: "wrap" }}>
-                <Flex direction={{ default: "column" }}>
-                    <FormGroup fieldId="machines-vcpu-count-field" label={_("vCPU count")}
-                               labelIcon={
-                                   <Popover bodyContent={_("Fewer than the maximum number of virtual CPUs should be enabled.")}>
-                                       <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
-                                           <InfoAltIcon noVerticalAlign />
-                                       </button>
-                                   </Popover>}>
-                        <TextInput id="machines-vcpu-count-field"
-                                   type="number" inputMode="numeric" pattern="[0-9]*" value={count}
-                                   onKeyPress={digitFilter}
-                                   onChange={onCountSelect} />
-                    </FormGroup>
+            <FormGroup fieldId="machines-vcpu-max-field" label={_("vCPU maximum")}
+                       labelIcon={
+                           <Popover bodyContent={maxVcpu
+                               ? cockpit.format(_("Maximum number of virtual CPUs allocated for the guest OS, which must be between 1 and $0"), parseInt(maxVcpu))
+                               : _("Maximum number of virtual CPUs allocated for the guest OS")}>
+                               <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
+                                   <InfoAltIcon noVerticalAlign />
+                               </button>
+                           </Popover>}>
+                <TextInput id="machines-vcpu-max-field"
+                           type="number" inputMode="numeric" pattern="[0-9]*"
+                           onKeyPress={digitFilter}
+                           onChange={onMaxChange} value={max} />
+            </FormGroup>
+            <FormGroup fieldId="machines-vcpu-count-field" label={_("vCPU count")}
+                       labelIcon={
+                           <Popover bodyContent={_("Fewer than the maximum number of virtual CPUs should be enabled.")}>
+                               <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
+                                   <InfoAltIcon noVerticalAlign />
+                               </button>
+                           </Popover>}>
+                <TextInput id="machines-vcpu-count-field"
+                           type="number" inputMode="numeric" pattern="[0-9]*" value={count}
+                           onKeyPress={digitFilter}
+                           onChange={onCountSelect} />
+            </FormGroup>
+            <FormGroup fieldId="sockets" label={_("Sockets")}
+                       labelIcon={
+                           <Popover bodyContent={_("Preferred number of sockets to expose to the guest.")}>
+                               <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
+                                   <InfoAltIcon noVerticalAlign />
+                               </button>
+                           </Popover>}>
+                <FormSelect id="socketsSelect"
+                            value={sockets.toString()}
+                            onChange={onSocketChange}>
+                    {dividers(max).map((t) => <FormSelectOption key={t.toString()} value={t.toString()} label={t.toString()} />)}
+                </FormSelect>
+            </FormGroup>
+            <FormGroup fieldId="coresSelect" label={_("Cores per socket")}>
+                <FormSelect id="coresSelect"
+                            value={cores.toString()}
+                            onChange={onCoresChange}>
+                    {dividers(max).map((t) => <FormSelectOption key={t.toString()} value={t.toString()} label={t.toString()} />)}
+                </FormSelect>
+            </FormGroup>
 
-                    <FormGroup fieldId="machines-vcpu-max-field" label={_("vCPU maximum")}
-                               labelIcon={
-                                   <Popover bodyContent={maxVcpu
-                                       ? cockpit.format(_("Maximum number of virtual CPUs allocated for the guest OS, which must be between 1 and $0"), parseInt(maxVcpu))
-                                       : _("Maximum number of virtual CPUs allocated for the guest OS")}>
-                                       <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
-                                           <InfoAltIcon noVerticalAlign />
-                                       </button>
-                                   </Popover>}>
-                        <TextInput id="machines-vcpu-max-field"
-                                   type="number" inputMode="numeric" pattern="[0-9]*"
-                                   onKeyPress={digitFilter}
-                                   onChange={onMaxChange} value={max} />
-                    </FormGroup>
-                </Flex>
-                <Flex direction={{ default: "column" }}>
-                    <FormGroup fieldId="sockets" label={_("Sockets")}
-                               labelIcon={
-                                   <Popover bodyContent={_("Preferred number of sockets to expose to the guest.")}>
-                                       <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
-                                           <InfoAltIcon noVerticalAlign />
-                                       </button>
-                                   </Popover>}>
-                        <FormSelect id="socketsSelect"
-                                    value={sockets.toString()}
-                                    onChange={onSocketChange}>
-                            {dividers(max).map((t) => <FormSelectOption key={t.toString()} value={t.toString()} label={t.toString()} />)}
-                        </FormSelect>
-                    </FormGroup>
-                    <FormGroup fieldId="coresSelect" label={_("Cores per socket")}>
-                        <FormSelect id="coresSelect"
-                                    value={cores.toString()}
-                                    onChange={onCoresChange}>
-                            {dividers(max).map((t) => <FormSelectOption key={t.toString()} value={t.toString()} label={t.toString()} />)}
-                        </FormSelect>
-                    </FormGroup>
+            <FormGroup fieldId="threadsSelect" label={_("Threads per core")}>
+                <FormSelect id="threadsSelect"
+                            value={threads.toString()}
+                            onChange={onThreadsChange}>
+                    {dividers(max).map((t) => <FormSelectOption key={t.toString()} value={t.toString()} label={t.toString()} />)}
+                </FormSelect>
+            </FormGroup>
 
-                    <FormGroup fieldId="threadsSelect" label={_("Threads per core")}>
-                        <FormSelect id="threadsSelect"
-                                    value={threads.toString()}
-                                    onChange={onThreadsChange}>
-                            {dividers(max).map((t) => <FormSelectOption key={t.toString()} value={t.toString()} label={t.toString()} />)}
-                        </FormSelect>
-                    </FormGroup>
-                </Flex>
-            </Flex>
             <FormGroup id="cpu-model-select-group" label={_("Mode")}>
                 <FormSelect value={cpuModel || cpuMode}
                             aria-label={_("Mode")}
