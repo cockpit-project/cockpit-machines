@@ -58,12 +58,12 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.wait_visible("#machines-cpu-modal-dialog")
 
         # Test basic vCPU properties
-        b.wait_val("#machines-vcpu-count-field", "1")
-        b.wait_val("#machines-vcpu-max-field", "1")
+        b.wait_val("#machines-vcpu-count-field input", "1")
+        b.wait_val("#machines-vcpu-max-field input", "1")
 
         # Set new values
-        b.set_input_text("#machines-vcpu-max-field", "4")
-        b.set_input_text("#machines-vcpu-count-field", "3")
+        b.set_input_text("#machines-vcpu-max-field input", "4")
+        b.set_input_text("#machines-vcpu-count-field input", "3")
 
         # Set new socket value
         b.wait_val("#socketsSelect", "4")
@@ -102,8 +102,8 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.wait_visible(".pf-c-modal-box__body")
 
         # Check basic values
-        b.wait_val("#machines-vcpu-count-field", "3")
-        b.wait_val("#machines-vcpu-max-field", "4")
+        b.wait_val("#machines-vcpu-count-field input", "3")
+        b.wait_val("#machines-vcpu-max-field input", "4")
 
         # Check sockets, cores and threads
         b.wait_val("#socketsSelect", "2")
@@ -121,7 +121,7 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         b.wait_visible(".pf-c-modal-box__body")
 
-        b.set_input_text("#machines-vcpu-count-field", "2")
+        b.set_input_text("#machines-vcpu-count-field input", "2")
 
         # Set new socket value
         b.set_val("#coresSelect", "2")
@@ -456,8 +456,8 @@ class TestMachinesSettings(VirtualMachinesCase):
         if m.image in distrosWithDefaultHostModel:
             cpu_model = "host-passthrough"
         b.select_from_dropdown("#cpu-model-select-group select", cpu_model)
-        b.set_input_text("#machines-vcpu-max-field", "3")  # Change values
-        b.set_input_text("#machines-vcpu-count-field", "3")
+        b.set_input_text("#machines-vcpu-max-field input", "3")  # Change values
+        b.set_input_text("#machines-vcpu-count-field input", "3")
         b.click("#machines-cpu-modal-dialog-apply")  # Save
         b.wait_not_present("#machines-cpu-modal-dialog")
 
