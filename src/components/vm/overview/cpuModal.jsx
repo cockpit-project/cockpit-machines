@@ -1,10 +1,28 @@
+/*
+ * This file is part of Cockpit.
+ *
+ * Copyright (C) 2023 Red Hat, Inc.
+ *
+ * Cockpit is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * Cockpit is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { Flex } from "@patternfly/react-core/dist/esm/layouts/Flex";
-import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
+import { FormSelect, FormSelectOption, FormSelectOptionGroup } from "@patternfly/react-core/dist/esm/components/FormSelect";
 import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
 import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
@@ -12,7 +30,7 @@ import { InfoAltIcon } from '@patternfly/react-icons';
 
 import { useDialogs } from 'dialogs.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
-import { domainSetVCPUSettings } from "../../../libvirtApi/domain.js";
+import { domainSetVCPUSettings, domainSetCpuMode } from "../../../libvirtApi/domain.js";
 import { digitFilter } from "../../../helpers.js";
 import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
 
@@ -38,7 +56,7 @@ const clamp = (value, max, min) => {
     return value < min || isNaN(value) ? min : (value > max ? max : value);
 };
 
-export const VCPUModal = ({ vm, maxVcpu }) => {
+export const CPUModal = ({ vm, maxVcpu, models }) => {
     const Dialogs = useDialogs();
 
     const [error, setError] = useState(undefined);
@@ -47,6 +65,9 @@ export const VCPUModal = ({ vm, maxVcpu }) => {
     const [cores, setCores] = useState(vm.cpu.topology.cores || 1);
     const [max, setMax] = useState(vm.vcpus.max || 1);
     const [count, setCount] = useState(parseInt(vm.vcpus.count) || 1);
+    const [cpuMode, setCpuMode] = useState(vm.cpu.mode);
+    const [cpuModel, setCpuModel] = useState(vm.cpu.model);
+    const [isLoading, setIsLoading] = useState(false);
 
     function onMaxChange (value) {
         const maxHypervisor = parseInt(maxVcpu);
@@ -149,7 +170,7 @@ export const VCPUModal = ({ vm, maxVcpu }) => {
         setThreads(stateDelta.threads);
     }
 
-    function save() {
+    function saveTopology() {
         return domainSetVCPUSettings({
             name: vm.name,
             connectionName: vm.connectionName,
@@ -159,9 +180,22 @@ export const VCPUModal = ({ vm, maxVcpu }) => {
             sockets,
             threads,
             cores,
-        })
-                .then(Dialogs.close)
-                .catch(exc => setError({ dialogError: _("VCPU settings could not be saved"), dialogErrorDetail: exc.message }));
+        }).then(Dialogs.close, exc => setError({ dialogError: _("vCPU and CPU topology settings could not be saved"), dialogErrorDetail: exc.message }));
+    }
+
+    // First we need to update CPU mode, since libvirt resets topology upon mode/model change
+    function saveCPUMode() {
+        setIsLoading(true);
+        domainSetCpuMode({
+            name: vm.name,
+            id: vm.id,
+            connectionName: vm.connectionName,
+            mode: cpuMode,
+            model: cpuModel
+        }).then(saveTopology, exc => {
+            setIsLoading(false);
+            setError({ dialogError: _("CPU mode could not be saved"), dialogErrorDetail: exc.message });
+        });
     }
 
     let caution = null;
@@ -172,12 +206,12 @@ export const VCPUModal = ({ vm, maxVcpu }) => {
         max != vm.vcpus.max ||
         count != vm.vcpus.count)
     )
-        caution = <NeedsShutdownAlert idPrefix="vcpu-modal" />;
+        caution = <NeedsShutdownAlert idPrefix="cpu-modal" />;
 
     const defaultBody = (
-        <Form isHorizontal className="vcpu-modal">
+        <Form isHorizontal className="cpu-modal">
             { caution }
-            { error && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.dialogErrorDetail} /> }
+            { error && error.dialogError && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.dialogErrorDetail} /> }
             <Flex flexWrap={{ default: "wrap" }}>
                 <Flex direction={{ default: "column" }}>
                     <FormGroup fieldId="machines-vcpu-count-field" label={_("vCPU count")}
@@ -239,18 +273,41 @@ export const VCPUModal = ({ vm, maxVcpu }) => {
                     </FormGroup>
                 </Flex>
             </Flex>
+            <FormGroup id="cpu-model-select-group" label={_("Mode")}>
+                <FormSelect value={cpuModel || cpuMode}
+                            aria-label={_("Mode")}
+                            onChange={value => {
+                                if ((value == "host-model" || value == "host-passthrough")) {
+                                    setCpuMode(value);
+                                    setCpuModel(undefined);
+                                } else {
+                                    setCpuModel(value);
+                                    setCpuMode("custom");
+                                }
+                            }}>
+                    <FormSelectOption key="host-model"
+                                      value="host-model"
+                                      label="host-model" />
+                    <FormSelectOption key="host-passthrough"
+                                      value="host-passthrough"
+                                      label="host-passthrough" />
+                    <FormSelectOptionGroup key="custom" label={_("custom")}>
+                        {models.map(model => <FormSelectOption key={model} value={model} label={model} />)}
+                    </FormSelectOptionGroup>
+                </FormSelect>
+            </FormGroup>
         </Form>
     );
 
     return (
-        <Modal position="top" variant="medium" id='machines-vcpu-modal-dialog' isOpen onClose={Dialogs.close}
-               title={cockpit.format(_("$0 vCPU details"), vm.name)}
+        <Modal position="top" variant="medium" id='machines-cpu-modal-dialog' isOpen onClose={Dialogs.close}
+               title={cockpit.format(_("$0 CPU details"), vm.name)}
                footer={
                    <>
-                       <Button id='machines-vcpu-modal-dialog-apply' variant='primary' onClick={save}>
+                       <Button id='machines-cpu-modal-dialog-apply' variant='primary' onClick={saveCPUMode} isDisabled={isLoading} isLoading={isLoading}>
                            {_("Apply")}
                        </Button>
-                       <Button id='machines-vcpu-modal-dialog-cancel' variant='link' className='btn-cancel' onClick={Dialogs.close}>
+                       <Button id='machines-cpu-modal-dialog-cancel' variant='link' className='btn-cancel' onClick={Dialogs.close}>
                            {_("Cancel")}
                        </Button>
                    </>
@@ -258,9 +315,4 @@ export const VCPUModal = ({ vm, maxVcpu }) => {
             { defaultBody }
         </Modal>
     );
-};
-
-VCPUModal.propTypes = {
-    vm: PropTypes.object.isRequired,
-    maxVcpu: PropTypes.string.isRequired,
 };
