@@ -1,9 +1,11 @@
 #!/usr/bin/env node
-import fs from 'fs';
-import path from 'path';
+
+import fs from 'node:fs';
+import path from 'node:path';
+import os from 'node:os';
 
 import copy from 'esbuild-plugin-copy';
-import esbuild from "esbuild";
+import { replace } from 'esbuild-plugin-replace';
 
 import { cockpitCompressPlugin } from './pkg/lib/esbuild-compress-plugin.js';
 import { cockpitPoEsbuildPlugin } from './pkg/lib/cockpit-po-plugin.js';
@@ -11,8 +13,10 @@ import { cockpitRsyncEsbuildPlugin } from './pkg/lib/cockpit-rsync-plugin.js';
 import { cleanPlugin } from './pkg/lib/esbuild-cleanup-plugin.js';
 import { eslintPlugin } from './pkg/lib/esbuild-eslint-plugin.js';
 import { stylelintPlugin } from './pkg/lib/esbuild-stylelint-plugin.js';
-import { replace } from 'esbuild-plugin-replace';
 import { esbuildStylesPlugins } from './pkg/lib/esbuild-common.js';
+
+const useWasm = os.arch() !== 'x64';
+const esbuild = (await import(useWasm ? 'esbuild-wasm' : 'esbuild'));
 
 const production = process.env.NODE_ENV === 'production';
 const watchMode = process.env.ESBUILD_WATCH === "true" || false;
@@ -25,8 +29,24 @@ const outdir = 'dist';
 // Obtain package name from package.json
 const packageJson = JSON.parse(fs.readFileSync('package.json'));
 
-const getTime = () => new Date().toTimeString()
-        .split(' ')[0];
+function notifyEndPlugin() {
+    return {
+        name: 'notify-end',
+        setup(build) {
+            let startTime;
+
+            build.onStart(() => {
+                startTime = new Date();
+            });
+
+            build.onEnd(() => {
+                const endTime = new Date();
+                const timeStamp = endTime.toTimeString().split(' ')[0];
+                console.log(`${timeStamp}: Build finished in ${endTime - startTime} ms`);
+            });
+        }
+    };
+}
 
 const cwd = process.cwd();
 
@@ -54,7 +74,7 @@ function watch_dirs(dir, on_change) {
 }
 
 const context = await esbuild.context({
-    ...!production ? { sourcemap: "external" } : {},
+    ...!production ? { sourcemap: "linked" } : {},
     bundle: true,
     entryPoints: ["./src/index.js"],
     external: ['*.woff', '*.woff2', '*.jpg', '*.svg', '../../assets*'], // Allow external font files which live in ../../static/fonts
@@ -98,12 +118,7 @@ const context = await esbuild.context({
         ...production ? [cockpitCompressPlugin()] : [],
         cockpitRsyncEsbuildPlugin({ dest: packageJson.name }),
 
-        {
-            name: 'notify-end',
-            setup(build) {
-                build.onEnd(() => console.log(`${getTime()}: Build finished`));
-            }
-        },
+        notifyEndPlugin(),
     ]
 });
 
