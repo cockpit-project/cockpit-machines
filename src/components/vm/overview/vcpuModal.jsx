@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -10,7 +10,7 @@ import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { InfoAltIcon } from '@patternfly/react-icons';
 
-import { DialogsContext } from 'dialogs.jsx';
+import { useDialogs } from 'dialogs.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { domainSetVCPUSettings } from "../../../libvirtApi/domain.js";
 import { digitFilter } from "../../../helpers.js";
@@ -38,36 +38,18 @@ const clamp = (value, max, min) => {
     return value < min || isNaN(value) ? min : (value > max ? max : value);
 };
 
-export class VCPUModal extends React.Component {
-    static contextType = DialogsContext;
+export const VCPUModal = ({ vm, maxVcpu }) => {
+    const Dialogs = useDialogs();
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            dialogError: undefined,
-            dialogErrorDetail: undefined,
-            sockets: props.vm.cpu.topology.sockets || 1,
-            threads: props.vm.cpu.topology.threads || 1,
-            cores: props.vm.cpu.topology.cores || 1,
-            max: props.vm.vcpus.max || 1,
-            count: parseInt(props.vm.vcpus.count) || 1
-        };
-        this.onMaxChange = this.onMaxChange.bind(this);
-        this.onCountSelect = this.onCountSelect.bind(this);
-        this.onSocketChange = this.onSocketChange.bind(this);
-        this.onThreadsChange = this.onThreadsChange.bind(this);
-        this.onCoresChange = this.onCoresChange.bind(this);
+    const [error, setError] = useState(undefined);
+    const [sockets, setSockets] = useState(vm.cpu.topology.sockets || 1);
+    const [threads, setThreads] = useState(vm.cpu.topology.threads || 1);
+    const [cores, setCores] = useState(vm.cpu.topology.cores || 1);
+    const [max, setMax] = useState(vm.vcpus.max || 1);
+    const [count, setCount] = useState(parseInt(vm.vcpus.count) || 1);
 
-        this.dialogErrorSet = this.dialogErrorSet.bind(this);
-        this.save = this.save.bind(this);
-    }
-
-    dialogErrorSet(text, detail) {
-        this.setState({ dialogError: text, dialogErrorDetail: detail });
-    }
-
-    onMaxChange (value) {
-        const maxHypervisor = parseInt(this.props.maxVcpu);
+    function onMaxChange (value) {
+        const maxHypervisor = parseInt(maxVcpu);
         let maxValue = parseInt(value);
 
         // Check new value for limits
@@ -75,204 +57,209 @@ export class VCPUModal extends React.Component {
 
         // Recalculate new values for sockets, cores and threads according to new max value
         // Max value = Sockets * Cores * Threads
-        const state = { max: maxValue, sockets: this.state.sockets, cores: this.state.cores };
+        const stateDelta = { max: maxValue, sockets, cores };
 
         // If count of used VCPU greater then new max value, then change it to new max value
-        if (maxValue < this.state.count) {
-            state.count = maxValue;
+        if (maxValue < count) {
+            stateDelta.count = maxValue;
         }
 
         // Recalculate sockets first, and get array of all divisors of new max values
-        let divs = dividers(state.max);
+        let divs = dividers(stateDelta.max);
 
         // If current sockets value is not in divisors array, then change it to max divisor
-        if (divs.indexOf(this.state.sockets) === -1 || (this.props.vm.cpu.topology.sockets || 1) === this.state.sockets) {
-            state.sockets = divs[divs.length - 1];
+        if (divs.indexOf(sockets) === -1 || (vm.cpu.topology.sockets || 1) === sockets) {
+            stateDelta.sockets = divs[divs.length - 1];
         }
 
         // Get next divisors
-        divs = dividers(state.max / state.sockets);
-        if (divs.indexOf(this.state.cores) === -1) {
-            state.cores = divs[divs.length - 1];
+        divs = dividers(stateDelta.max / stateDelta.sockets);
+        if (divs.indexOf(cores) === -1) {
+            stateDelta.cores = divs[divs.length - 1];
         }
 
         // According to: Max value = Sockets * Cores * Threads. Threads = Max value / ( Sockets * Cores )
-        state.threads = state.max / (state.cores * state.sockets);
-        this.setState(state);
+        stateDelta.threads = stateDelta.max / (stateDelta.cores * stateDelta.sockets);
+        setSockets(stateDelta.sockets);
+        setCores(stateDelta.cores);
+        setThreads(stateDelta.threads);
+        if (stateDelta.count)
+            setCount(stateDelta.count);
+        setMax(stateDelta.max);
     }
 
-    onCountSelect (value) {
-        const newValue = clamp(value, this.state.max, 1);
-        this.setState({ count: parseInt(newValue) });
+    function onCountSelect (value) {
+        const newValue = clamp(value, max, 1);
+        setCount(parseInt(newValue));
     }
 
-    onSocketChange (value) {
-        const state = { sockets: this.state.sockets, cores: this.state.cores };
-        state.sockets = parseInt(value);
+    function onSocketChange (value) {
+        const stateDelta = { sockets, cores };
+        stateDelta.sockets = parseInt(value);
 
         // Get divisors of Max VCPU number divided by number of sockets
-        const divs = dividers(this.state.max / state.sockets);
+        const divs = dividers(max / stateDelta.sockets);
 
         // If current cores value is not in divisors array, then change it to max divisor
-        if (divs.indexOf(this.state.cores) === -1) {
-            state.cores = divs[divs.length - 1];
+        if (divs.indexOf(cores) === -1) {
+            stateDelta.cores = divs[divs.length - 1];
         }
 
         // Likewise: Max value = Sockets * Cores * Threads. Sockets = Max value / ( Threads * Cores )
-        state.threads = (this.state.max / (state.sockets * state.cores));
-        this.setState(state);
+        stateDelta.threads = (max / (stateDelta.sockets * stateDelta.cores));
+        setSockets(stateDelta.sockets);
+        setCores(stateDelta.cores);
+        setThreads(stateDelta.threads);
     }
 
-    onThreadsChange (value) {
-        const state = { sockets: this.state.sockets, threads: this.state.threads };
-        state.threads = parseInt(value);
-        const divs = dividers(this.state.max / state.threads);
+    function onThreadsChange (value) {
+        const stateDelta = { sockets, threads };
+        stateDelta.threads = parseInt(value);
+        const divs = dividers(max / stateDelta.threads);
 
         // If current sockets value is not in divisors array, then change it to max divisor
-        if (divs.indexOf(state.sockets) === -1) {
-            state.sockets = divs[divs.length - 1];
+        if (divs.indexOf(stateDelta.sockets) === -1) {
+            stateDelta.sockets = divs[divs.length - 1];
         }
 
         // Likewise: Max value = Sockets * Cores * Threads. Cores = Max value / ( Threads * Sockets )
-        state.cores = (this.state.max / (state.sockets * state.threads));
+        stateDelta.cores = (max / (stateDelta.sockets * stateDelta.threads));
 
-        this.setState(state);
+        setSockets(stateDelta.sockets);
+        setCores(stateDelta.cores);
+        setThreads(stateDelta.threads);
     }
 
-    onCoresChange (value) {
-        const state = { sockets: this.state.sockets, threads: this.state.threads };
-        state.cores = parseInt(value);
+    function onCoresChange (value) {
+        const stateDelta = { sockets, threads };
+        stateDelta.cores = parseInt(value);
 
-        const divs = dividers(this.state.max / state.cores);
+        const divs = dividers(max / stateDelta.cores);
 
         // If current sockets value is not in divisors array, then change it to max divisor
-        if (divs.indexOf(state.sockets) === -1) {
-            state.sockets = divs[divs.length - 1];
+        if (divs.indexOf(stateDelta.sockets) === -1) {
+            stateDelta.sockets = divs[divs.length - 1];
         }
 
         // Likewise: Max value = Sockets * Cores * Threads. Threads = Max value / ( Cores * Sockets )
-        state.threads = (this.state.max / (state.sockets * state.cores));
-        this.setState(state);
+        stateDelta.threads = (max / (stateDelta.sockets * stateDelta.cores));
+
+        setSockets(stateDelta.sockets);
+        setCores(stateDelta.cores);
+        setThreads(stateDelta.threads);
     }
 
-    save() {
-        const Dialogs = this.context;
-        const { vm } = this.props;
-
+    function save() {
         return domainSetVCPUSettings({
             name: vm.name,
             connectionName: vm.connectionName,
-            max: this.state.max,
-            count: this.state.count,
-            sockets: this.state.sockets,
-            threads: this.state.threads,
-            cores: this.state.cores,
-            isRunning: vm.state == 'running'
+            isRunning: vm.state == 'running',
+            max,
+            count,
+            sockets,
+            threads,
+            cores,
         })
                 .then(Dialogs.close)
-                .catch(exc => this.dialogErrorSet(_("VCPU settings could not be saved"), exc.message));
+                .catch(exc => setError({ dialogError: _("VCPU settings could not be saved"), dialogErrorDetail: exc.message }));
     }
 
-    render() {
-        const Dialogs = this.context;
-        const { vm } = this.props;
-        let caution = null;
+    let caution = null;
+    if (vm.state === 'running' && (
+        sockets != (vm.cpu.topology.sockets || 1) ||
+        threads != (vm.cpu.topology.threads || 1) ||
+        cores != (vm.cpu.topology.cores || 1) ||
+        max != vm.vcpus.max ||
+        count != vm.vcpus.count)
+    )
+        caution = <NeedsShutdownAlert idPrefix="vcpu-modal" />;
 
-        if (vm.state === 'running' && (
-            this.state.sockets != (vm.cpu.topology.sockets || 1) ||
-            this.state.threads != (vm.cpu.topology.threads || 1) ||
-            this.state.cores != (vm.cpu.topology.cores || 1) ||
-            this.state.max != vm.vcpus.max ||
-            this.state.count != vm.vcpus.count)
-        )
-            caution = <NeedsShutdownAlert idPrefix="vcpu-modal" />;
+    const defaultBody = (
+        <Form isHorizontal className="vcpu-modal">
+            { caution }
+            { error && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.dialogErrorDetail} /> }
+            <Flex flexWrap={{ default: "wrap" }}>
+                <Flex direction={{ default: "column" }}>
+                    <FormGroup fieldId="machines-vcpu-count-field" label={_("vCPU count")}
+                               labelIcon={
+                                   <Popover bodyContent={_("Fewer than the maximum number of virtual CPUs should be enabled.")}>
+                                       <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
+                                           <InfoAltIcon noVerticalAlign />
+                                       </button>
+                                   </Popover>}>
+                        <TextInput id="machines-vcpu-count-field"
+                                   type="number" inputMode="numeric" pattern="[0-9]*" value={count}
+                                   onKeyPress={digitFilter}
+                                   onChange={onCountSelect} />
+                    </FormGroup>
 
-        const defaultBody = (
-            <Form isHorizontal className="vcpu-modal">
-                { caution }
-                {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
-                <Flex flexWrap={{ default: "wrap" }}>
-                    <Flex direction={{ default: "column" }}>
-                        <FormGroup fieldId="machines-vcpu-count-field" label={_("vCPU count")}
-                                   labelIcon={
-                                       <Popover bodyContent={_("Fewer than the maximum number of virtual CPUs should be enabled.")}>
-                                           <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
-                                               <InfoAltIcon noVerticalAlign />
-                                           </button>
-                                       </Popover>}>
-                            <TextInput id="machines-vcpu-count-field"
-                                       type="number" inputMode="numeric" pattern="[0-9]*" value={this.state.count}
-                                       onKeyPress={digitFilter}
-                                       onChange={this.onCountSelect} />
-                        </FormGroup>
-
-                        <FormGroup fieldId="machines-vcpu-max-field" label={_("vCPU maximum")}
-                                   labelIcon={
-                                       <Popover bodyContent={this.props.maxVcpu
-                                           ? cockpit.format(_("Maximum number of virtual CPUs allocated for the guest OS, which must be between 1 and $0"), parseInt(this.props.maxVcpu))
-                                           : _("Maximum number of virtual CPUs allocated for the guest OS")}>
-                                           <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
-                                               <InfoAltIcon noVerticalAlign />
-                                           </button>
-                                       </Popover>}>
-                            <TextInput id="machines-vcpu-max-field"
-                                       type="number" inputMode="numeric" pattern="[0-9]*"
-                                       onKeyPress={digitFilter}
-                                       onChange={this.onMaxChange} value={this.state.max} />
-                        </FormGroup>
-                    </Flex>
-                    <Flex direction={{ default: "column" }}>
-                        <FormGroup fieldId="sockets" label={_("Sockets")}
-                                   labelIcon={
-                                       <Popover bodyContent={_("Preferred number of sockets to expose to the guest.")}>
-                                           <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
-                                               <InfoAltIcon noVerticalAlign />
-                                           </button>
-                                       </Popover>}>
-                            <FormSelect id="socketsSelect"
-                                        value={this.state.sockets.toString()}
-                                        onChange={this.onSocketChange}>
-                                {dividers(this.state.max).map((t) => <FormSelectOption key={t.toString()} value={t.toString()} label={t.toString()} />)}
-                            </FormSelect>
-                        </FormGroup>
-                        <FormGroup fieldId="coresSelect" label={_("Cores per socket")}>
-                            <FormSelect id="coresSelect"
-                                        value={this.state.cores.toString()}
-                                        onChange={this.onCoresChange}>
-                                {dividers(this.state.max).map((t) => <FormSelectOption key={t.toString()} value={t.toString()} label={t.toString()} />)}
-                            </FormSelect>
-                        </FormGroup>
-
-                        <FormGroup fieldId="threadsSelect" label={_("Threads per core")}>
-                            <FormSelect id="threadsSelect"
-                                        value={this.state.threads.toString()}
-                                        onChange={this.onThreadsChange}>
-                                {dividers(this.state.max).map((t) => <FormSelectOption key={t.toString()} value={t.toString()} label={t.toString()} />)}
-                            </FormSelect>
-                        </FormGroup>
-                    </Flex>
+                    <FormGroup fieldId="machines-vcpu-max-field" label={_("vCPU maximum")}
+                               labelIcon={
+                                   <Popover bodyContent={maxVcpu
+                                       ? cockpit.format(_("Maximum number of virtual CPUs allocated for the guest OS, which must be between 1 and $0"), parseInt(maxVcpu))
+                                       : _("Maximum number of virtual CPUs allocated for the guest OS")}>
+                                       <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
+                                           <InfoAltIcon noVerticalAlign />
+                                       </button>
+                                   </Popover>}>
+                        <TextInput id="machines-vcpu-max-field"
+                                   type="number" inputMode="numeric" pattern="[0-9]*"
+                                   onKeyPress={digitFilter}
+                                   onChange={onMaxChange} value={max} />
+                    </FormGroup>
                 </Flex>
-            </Form>
-        );
+                <Flex direction={{ default: "column" }}>
+                    <FormGroup fieldId="sockets" label={_("Sockets")}
+                               labelIcon={
+                                   <Popover bodyContent={_("Preferred number of sockets to expose to the guest.")}>
+                                       <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
+                                           <InfoAltIcon noVerticalAlign />
+                                       </button>
+                                   </Popover>}>
+                        <FormSelect id="socketsSelect"
+                                    value={sockets.toString()}
+                                    onChange={onSocketChange}>
+                            {dividers(max).map((t) => <FormSelectOption key={t.toString()} value={t.toString()} label={t.toString()} />)}
+                        </FormSelect>
+                    </FormGroup>
+                    <FormGroup fieldId="coresSelect" label={_("Cores per socket")}>
+                        <FormSelect id="coresSelect"
+                                    value={cores.toString()}
+                                    onChange={onCoresChange}>
+                            {dividers(max).map((t) => <FormSelectOption key={t.toString()} value={t.toString()} label={t.toString()} />)}
+                        </FormSelect>
+                    </FormGroup>
 
-        return (
-            <Modal position="top" variant="medium" id='machines-vcpu-modal-dialog' isOpen onClose={Dialogs.close}
-                   title={cockpit.format(_("$0 vCPU details"), vm.name)}
-                   footer={
-                       <>
-                           <Button id='machines-vcpu-modal-dialog-apply' variant='primary' onClick={this.save}>
-                               {_("Apply")}
-                           </Button>
-                           <Button id='machines-vcpu-modal-dialog-cancel' variant='link' className='btn-cancel' onClick={Dialogs.close}>
-                               {_("Cancel")}
-                           </Button>
-                       </>
-                   }>
-                { defaultBody }
-            </Modal>
-        );
-    }
-}
+                    <FormGroup fieldId="threadsSelect" label={_("Threads per core")}>
+                        <FormSelect id="threadsSelect"
+                                    value={threads.toString()}
+                                    onChange={onThreadsChange}>
+                            {dividers(max).map((t) => <FormSelectOption key={t.toString()} value={t.toString()} label={t.toString()} />)}
+                        </FormSelect>
+                    </FormGroup>
+                </Flex>
+            </Flex>
+        </Form>
+    );
+
+    return (
+        <Modal position="top" variant="medium" id='machines-vcpu-modal-dialog' isOpen onClose={Dialogs.close}
+               title={cockpit.format(_("$0 vCPU details"), vm.name)}
+               footer={
+                   <>
+                       <Button id='machines-vcpu-modal-dialog-apply' variant='primary' onClick={save}>
+                           {_("Apply")}
+                       </Button>
+                       <Button id='machines-vcpu-modal-dialog-cancel' variant='link' className='btn-cancel' onClick={Dialogs.close}>
+                           {_("Cancel")}
+                       </Button>
+                   </>
+               }>
+            { defaultBody }
+        </Modal>
+    );
+};
+
 VCPUModal.propTypes = {
     vm: PropTypes.object.isRequired,
     maxVcpu: PropTypes.string.isRequired,
