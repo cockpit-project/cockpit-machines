@@ -53,9 +53,9 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
 
-        b.click("#vm-subVmTest1-vcpus-count button")  # open VCPU modal detail window
+        b.click("#vm-subVmTest1-cpu button")  # open VCPU modal detail window
 
-        b.wait_visible("#machines-vcpu-modal-dialog")
+        b.wait_visible("#machines-cpu-modal-dialog")
 
         # Test basic vCPU properties
         b.wait_val("#machines-vcpu-count-field", "1")
@@ -72,22 +72,22 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.wait_val("#threadsSelect", "2")
 
         # Save
-        b.click("#machines-vcpu-modal-dialog-apply")
-        b.wait_not_present("#machines-vcpu-modal-dialog")
+        b.click("#machines-cpu-modal-dialog-apply")
+        b.wait_not_present("#machines-cpu-modal-dialog")
 
         # Make sure warning next to vcpus appears
-        b.wait_visible("#vcpus-tooltip")
+        b.wait_visible("#cpu-tooltip")
         b.wait_visible("#vm-subVmTest1-needs-shutdown")
 
         # Shut off VM for applying changes after save
         self.performAction("subVmTest1", "forceOff")
 
         # Make sure warning is gone after shut off
-        b.wait_not_present("#vcpus-tooltip")
+        b.wait_not_present("#cpu-tooltip")
         b.wait_not_present("#vm-subVmTest1-needs-shutdown")
 
         # Check changes
-        b.wait_in_text("#vm-subVmTest1-vcpus-count", "3")
+        b.wait_in_text("#vm-subVmTest1-cpu", "3 vCPUs")
 
         # Check after boot
         # Run VM
@@ -95,10 +95,10 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # Check VCPU count
-        b.wait_in_text("#vm-subVmTest1-vcpus-count", "3")
+        b.wait_in_text("#vm-subVmTest1-cpu", "3 vCPUs")
 
         # Open dialog window
-        b.click("#vm-subVmTest1-vcpus-count button")
+        b.click("#vm-subVmTest1-cpu button")
         b.wait_visible(".pf-c-modal-box__body")
 
         # Check basic values
@@ -110,14 +110,14 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.wait_val("#coresSelect", "1")
         b.wait_val("#threadsSelect", "2")
 
-        b.click("#machines-vcpu-modal-dialog-cancel")
-        b.wait_not_present("#machines-vcpu-modal-dialog")
+        b.click("#machines-cpu-modal-dialog-cancel")
+        b.wait_not_present("#machines-cpu-modal-dialog")
 
         # Shut off VM
         self.performAction("subVmTest1", "forceOff")
 
         # Open dialog
-        b.click("#vm-subVmTest1-vcpus-count button")
+        b.click("#vm-subVmTest1-cpu button")
 
         b.wait_visible(".pf-c-modal-box__body")
 
@@ -129,8 +129,8 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.wait_val("#threadsSelect", "1")
 
         # Save
-        b.click("#machines-vcpu-modal-dialog-apply")
-        b.wait_not_present("#machines-vcpu-modal-dialog")
+        b.click("#machines-cpu-modal-dialog-apply")
+        b.wait_not_present("#machines-cpu-modal-dialog")
 
         wait(lambda: m.execute(
             "virsh dumpxml subVmTest1 | tee /tmp/subVmTest1.xml | xmllint --xpath '/domain/cpu/topology[@sockets=\"2\"][@threads=\"1\"][@cores=\"2\"]' -"))
@@ -141,11 +141,11 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # Wait for the VCPUs link to get new values before opening the dialog
-        b.wait_visible("#vm-subVmTest1-vcpus-count")
-        b.wait_in_text("#vm-subVmTest1-vcpus-count", "2")
+        b.wait_visible("#vm-subVmTest1-cpu")
+        b.wait_in_text("#vm-subVmTest1-cpu", "2 vCPUs")
 
         # Open dialog
-        b.click("#vm-subVmTest1-vcpus-count button")
+        b.click("#vm-subVmTest1-cpu button")
 
         b.wait_visible(".pf-c-modal-box__body")
 
@@ -154,7 +154,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.wait_val("#socketsSelect", "2")
         b.wait_val("#threadsSelect", "1")
 
-        b.wait_in_text("#vm-subVmTest1-vcpus-count", "2")
+        b.wait_in_text("#vm-subVmTest1-cpu", "2 vCPUs")
 
         # Check value of sockets, threads and cores from VM dumpxml
         m.execute(
@@ -162,7 +162,7 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         # non-persistent VM doesn't have configurable vcpu
         m.execute("virsh undefine subVmTest1")
-        b.wait_visible("#vm-subVmTest1-vcpus-count button:disabled")
+        b.wait_visible("#vm-subVmTest1-cpu button:disabled")
 
     def testAutostart(self):
         b = self.browser
@@ -226,11 +226,11 @@ class TestMachinesSettings(VirtualMachinesCase):
             cpu_model = "host-passthrough"
 
         # Copy host CPU configuration
-        b.click("#vm-subVmTest1-cpu-model button")
-        b.wait_visible("#machines-cpu-type-modal")
+        b.click("#vm-subVmTest1-cpu button")
+        b.wait_visible("#machines-cpu-modal-dialog")
         b.select_from_dropdown("#cpu-model-select-group select", cpu_model)
-        b.click("#cpu-config-dialog-apply")
-        b.wait_not_present("#machines-cpu-type-modal")
+        b.click("#machines-cpu-modal-dialog-apply")
+        b.wait_not_present("#machines-cpu-modal-dialog")
 
         # Warning about about difference in persistent and non-persitent XML should appear
         b.wait_visible("#cpu-tooltip")
@@ -239,15 +239,15 @@ class TestMachinesSettings(VirtualMachinesCase):
         # Warning should disappear and changes should be visible in the UI
         b.wait_not_present("#cpu-tooltip")
         b.wait_not_present("#vm-subVmTest1-needs-shutdown")
-        b.wait_in_text("#vm-subVmTest1-cpu-model .pf-c-description-list__text", "host")
+        b.wait_in_text("#vm-subVmTest1-cpu .pf-c-description-list__text", "host")
 
         # Choose manually a CPU model
-        b.click("#vm-subVmTest1-cpu-model button")
-        b.wait_visible("#machines-cpu-type-modal")
+        b.click("#vm-subVmTest1-cpu button")
+        b.wait_visible("#machines-cpu-modal-dialog")
         b.select_from_dropdown("#cpu-model-select-group select", "coreduo")
-        b.click("#cpu-config-dialog-apply")
-        b.wait_not_present("#machines-cpu-type-modal")
-        b.wait_in_text("#vm-subVmTest1-cpu-model .pf-c-description-list__text", "custom (coreduo)")
+        b.click("#machines-cpu-modal-dialog-apply")
+        b.wait_not_present("#machines-cpu-modal-dialog")
+        b.wait_in_text("#vm-subVmTest1-cpu .pf-c-description-list__text", "custom (coreduo)")
 
         # Verify libvirt XML
         dom_xml = "virsh dumpxml subVmTest1"
@@ -255,14 +255,14 @@ class TestMachinesSettings(VirtualMachinesCase):
         self.assertEqual("coreduo", m.execute(xmllint_element.format(prop='cpu/model')).strip())
 
         # Host-model gets expanded  to custom mode when the VM is running
-        b.click("#vm-subVmTest1-cpu-model button")
-        b.wait_visible("#machines-cpu-type-modal")
+        b.click("#vm-subVmTest1-cpu button")
+        b.wait_visible("#machines-cpu-modal-dialog")
         b.select_from_dropdown("#cpu-model-select-group select", "host-model")
-        b.click("#cpu-config-dialog-apply")
-        b.wait_not_present("#machines-cpu-type-modal")
-        b.wait_in_text("#vm-subVmTest1-cpu-model .pf-c-description-list__text", "host")
+        b.click("#machines-cpu-modal-dialog-apply")
+        b.wait_not_present("#machines-cpu-modal-dialog")
+        b.wait_in_text("#vm-subVmTest1-cpu .pf-c-description-list__text", "host")
         b.click("#vm-subVmTest1-system-run")
-        b.wait_in_text("#vm-subVmTest1-cpu-model .pf-c-description-list__text", "custom")
+        b.wait_in_text("#vm-subVmTest1-cpu .pf-c-description-list__text", "custom")
         # In the test ENV libvirt does not properly set the CPU model so we see a tooltip https://bugzilla.redhat.com/show_bug.cgi?id=1913337
         # b.wait_not_present("#cpu-tooltip")
 
@@ -450,23 +450,23 @@ class TestMachinesSettings(VirtualMachinesCase):
         self.waitCirrOSBooted(args['logfile'])
 
         # Change CPU model setting
-        b.click("#vm-subVmTest1-cpu-model button")
-        b.wait_visible("#machines-cpu-type-modal")
+        b.click("#vm-subVmTest1-cpu button")
+        b.wait_visible("#machines-cpu-modal-dialog")
         cpu_model = "host-model"
         if m.image in distrosWithDefaultHostModel:
             cpu_model = "host-passthrough"
         b.select_from_dropdown("#cpu-model-select-group select", cpu_model)
-        b.click("#cpu-config-dialog-apply")
-        b.wait_not_present("#machines-cpu-type-modal")
+        b.click("#machines-cpu-modal-dialog-apply")
+        b.wait_not_present("#machines-cpu-modal-dialog")
         b.wait_visible("#cpu-tooltip")
 
         # Change vCPUs setting
-        b.click("#vm-subVmTest1-vcpus-count button")  # Open dialog
-        b.wait_visible("#machines-vcpu-modal-dialog")
+        b.click("#vm-subVmTest1-cpu button")  # Open dialog
+        b.wait_visible("#machines-cpu-modal-dialog")
         b.set_input_text("#machines-vcpu-max-field", "3")  # Change values
         b.set_input_text("#machines-vcpu-count-field", "3")
-        b.click("#machines-vcpu-modal-dialog-apply")  # Save
-        b.wait_not_present("#machines-vcpu-modal-dialog")
+        b.click("#machines-cpu-modal-dialog-apply")  # Save
+        b.wait_not_present("#machines-cpu-modal-dialog")
 
         # Shut off domain
         self.performAction("subVmTest1", "forceOff")
@@ -480,8 +480,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         wait(lambda: "3" in m.execute(xmllint_elem).strip())
 
         # Check both changes have been applied
-        b.wait_in_text("#vm-subVmTest1-cpu-model", "host passthrough" if m.image in distrosWithDefaultHostModel else "host")
-        b.wait_in_text("#vm-subVmTest1-vcpus-count", "3")
+        b.wait_in_text("#vm-subVmTest1-cpu", "3 vCPUs, host passthrough" if m.image in distrosWithDefaultHostModel else "3 vCPUs, host")
 
     def testWatchdog(self):
         b = self.browser

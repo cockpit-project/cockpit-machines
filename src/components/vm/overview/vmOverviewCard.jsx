@@ -27,8 +27,7 @@ import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { Switch } from "@patternfly/react-core/dist/esm/components/Switch";
 import { DialogsContext } from 'dialogs.jsx';
 
-import { VCPUModal } from './vcpuModal.jsx';
-import { CPUTypeModal } from './cpuTypeModal.jsx';
+import { CPUModal } from './cpuModal.jsx';
 import MemoryModal from './memoryModal.jsx';
 import {
     convertToBestUnit,
@@ -58,8 +57,7 @@ class VmOverviewCard extends React.Component {
         this.state = {
             virtXMLAvailable: undefined,
         };
-        this.openVcpu = this.openVcpu.bind(this);
-        this.openCpuType = this.openCpuType.bind(this);
+        this.openCpu = this.openCpu.bind(this);
         this.openMemory = this.openMemory.bind(this);
         this.onAutostartChanged = this.onAutostartChanged.bind(this);
     }
@@ -81,14 +79,9 @@ class VmOverviewCard extends React.Component {
                 });
     }
 
-    openVcpu() {
+    openCpu() {
         const Dialogs = this.context;
-        Dialogs.show(<VCPUModal vm={this.props.vm} maxVcpu={this.props.maxVcpu} />);
-    }
-
-    openCpuType() {
-        const Dialogs = this.context;
-        Dialogs.show(<CPUTypeModal vm={this.props.vm} models={this.props.cpuModels} />);
+        Dialogs.show(<CPUModal vm={this.props.vm} maxVcpu={this.props.maxVcpu} models={this.props.cpuModels} />);
     }
 
     openMemory() {
@@ -121,20 +114,9 @@ class VmOverviewCard extends React.Component {
                 </Flex>
             </DescriptionListDescription>
         );
-        const vcpuLink = (
-            <DescriptionListDescription id={`${idPrefix}-vcpus-count`}>
-                <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }}>
-                    <FlexItem>{vm.vcpus.count}</FlexItem>
-                    { needsShutdownVcpu(vm) && <NeedsShutdownTooltip iconId="vcpus-tooltip" tooltipId="tip-vcpus" /> }
-                    <Button variant="link" isInline isDisabled={!vm.persistent} onClick={this.openVcpu}>
-                        {_("edit")}
-                    </Button>
-                </Flex>
-            </DescriptionListDescription>
-        );
 
         let cpuEditButton = (
-            <Button variant="link" isInline isAriaDisabled={!vm.persistent || !this.state.virtXMLAvailable} onClick={this.openCpuType}>
+            <Button variant="link" isInline isDisabled={!vm.persistent || !this.state.virtXMLAvailable} onClick={this.openCpu}>
                 {_("edit")}
             </Button>
         );
@@ -146,13 +128,14 @@ class VmOverviewCard extends React.Component {
                 </Tooltip>
             );
         }
-        const vmCpuType = (
-            <DescriptionListDescription id={`${idPrefix}-cpu-model`}>
+        const cpuLink = (
+            <DescriptionListDescription id={`${idPrefix}-cpu`}>
                 <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }}>
                     <FlexItem>
-                        {rephraseUI('cpuMode', vm.cpu.mode) + (vm.cpu.model ? ` (${vm.cpu.model})` : '')}
+                        {cockpit.format(cockpit.ngettext("$0 vCPU", "$0 vCPUs", vm.vcpus.count), vm.vcpus.count) + ", " +
+                        rephraseUI('cpuMode', vm.cpu.mode) + (vm.cpu.model ? ` (${vm.cpu.model})` : '')}
                     </FlexItem>
-                    { needsShutdownCpuModel(vm) && <NeedsShutdownTooltip iconId="cpu-tooltip" tooltipId="tip-cpu" /> }
+                    { (needsShutdownCpuModel(vm) || needsShutdownVcpu(vm)) && <NeedsShutdownTooltip iconId="cpu-tooltip" tooltipId="tip-cpu" /> }
                     { cpuEditButton }
                 </Flex>
             </DescriptionListDescription>
@@ -191,13 +174,8 @@ class VmOverviewCard extends React.Component {
                         </DescriptionListGroup>
 
                         <DescriptionListGroup>
-                            <DescriptionListTerm>{_("vCPUs")}</DescriptionListTerm>
-                            {vcpuLink}
-                        </DescriptionListGroup>
-
-                        <DescriptionListGroup>
-                            <DescriptionListTerm>{_("CPU type")}</DescriptionListTerm>
-                            {vmCpuType}
+                            <DescriptionListTerm>{_("CPU")}</DescriptionListTerm>
+                            {cpuLink}
                         </DescriptionListGroup>
 
                         <DescriptionListGroup>

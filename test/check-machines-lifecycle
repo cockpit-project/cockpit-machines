@@ -123,7 +123,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
                 "#vm-subVmTest1-disks .pf-c-card__body",
                 "#vm-subVmTest1-networks .pf-c-card__body"
                 ])
-        b.wait_in_text("#vm-subVmTest1-vcpus-count", "1")
+        b.wait_in_text("#vm-subVmTest1-cpu", "1 vCPU")
 
         b.wait_in_text("#vm-subVmTest1-boot-order", "disk,network")
         emulated_machine = b.text("#vm-subVmTest1-emulated-machine")
@@ -213,7 +213,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         self.createVm("subVmTest2")
         b.wait_in_text("#vm-subVmTest2-system-state", "Running")
         self.goToVmPage("subVmTest2")
-        b.wait_in_text("#vm-subVmTest2-vcpus-count", "1")
+        b.wait_in_text("#vm-subVmTest2-cpu", "1 vCPU")
         b.wait_in_text("#vm-subVmTest2-boot-order", "disk,network")
 
         self.goToMainPage()
