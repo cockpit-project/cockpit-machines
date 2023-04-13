@@ -193,7 +193,7 @@ prepare-check: $(NODE_MODULES_TEST) $(VM_IMAGE) test/common test/reference
 # run the browser integration tests
 # this will run all tests/check-* and format them as TAP
 check: prepare-check
-	test/common/run-tests ${RUN_TESTS_OPTIONS}
+	test/common/run-tests --nondestructive-memory-mb=1400 ${RUN_TESTS_OPTIONS}
 
 bots: tools/make-bots
 	tools/make-bots
