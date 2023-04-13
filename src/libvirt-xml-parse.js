@@ -176,8 +176,8 @@ export function getDomainCapCPUHostModel(capsXML) {
 export function getDomainCapDiskBusTypes(capsXML) {
     const domainCapsElem = getElem(capsXML);
     const devicesCapsElem = domainCapsElem.getElementsByTagName("devices")?.[0];
-    const diskCapsElem = devicesCapsElem.getElementsByTagName("disk")?.[0];
-    const enumElems = diskCapsElem && diskCapsElem.getElementsByTagName("enum");
+    const diskCapsElem = devicesCapsElem?.getElementsByTagName("disk")?.[0];
+    const enumElems = diskCapsElem?.getElementsByTagName("enum");
     const busElem = enumElems && Array.prototype.find.call(enumElems, enumElem => enumElem.getAttribute("name") == "bus");
     return busElem && Array.prototype.map.call(busElem.getElementsByTagName("value"), valueElem => valueElem.textContent);
 }
