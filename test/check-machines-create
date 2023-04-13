@@ -1880,9 +1880,9 @@ vnc_password= "{vnc_passwd}"
         # Change vCPUs setting
         b.click("#vm-VmNotInstalled-cpu button")
         b.wait_visible(".pf-c-modal-box__body")
-        b.set_input_text("#machines-vcpu-max-field", "8")
+        b.set_input_text("#machines-vcpu-max-field input", "8")
         b.blur("#machines-vcpu-max-field")
-        b.set_input_text("#machines-vcpu-count-field", "2")
+        b.set_input_text("#machines-vcpu-count-field input", "2")
         b.blur("#machines-vcpu-count-field")
         b.select_from_dropdown("#socketsSelect", "2")
         b.select_from_dropdown("#coresSelect", "2")
@@ -1959,8 +1959,8 @@ vnc_password= "{vnc_passwd}"
         # Check vCPU settings have persisted
         b.click("#vm-VmNotInstalled-cpu button")
         b.wait_visible(".pf-c-modal-box__body")
-        b.wait_val("#machines-vcpu-max-field", "8")
-        b.wait_val("#machines-vcpu-count-field", "2")
+        b.wait_val("#machines-vcpu-max-field input", "8")
+        b.wait_val("#machines-vcpu-count-field input", "2")
         b.wait_val("#socketsSelect", "2")
         b.wait_val("#coresSelect", "2")
         b.wait_val("#threadsSelect", "2")

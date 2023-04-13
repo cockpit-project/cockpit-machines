@@ -23,15 +23,16 @@ import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { FormSelect, FormSelectOption, FormSelectOptionGroup } from "@patternfly/react-core/dist/esm/components/FormSelect";
 import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import { NumberInput } from "@patternfly/react-core/dist/esm/components/NumberInput";
 import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
-import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
-import { InfoAltIcon } from '@patternfly/react-icons';
+import { HelpIcon } from '@patternfly/react-icons';
 
 import { useDialogs } from 'dialogs.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { domainSetVCPUSettings, domainSetCpuMode } from "../../../libvirtApi/domain.js";
-import { digitFilter } from "../../../helpers.js";
 import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
+
+import "./vcpuModal.scss";
 
 const _ = cockpit.gettext;
 
@@ -62,13 +63,19 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
     const [sockets, setSockets] = useState(vm.cpu.topology.sockets || 1);
     const [threads, setThreads] = useState(vm.cpu.topology.threads || 1);
     const [cores, setCores] = useState(vm.cpu.topology.cores || 1);
-    const [max, setMax] = useState(vm.vcpus.max || 1);
+    const [max, setMax] = useState(parseInt(vm.vcpus.max) || 1);
     const [count, setCount] = useState(parseInt(vm.vcpus.count) || 1);
     const [cpuMode, setCpuMode] = useState(vm.cpu.mode);
     const [cpuModel, setCpuModel] = useState(vm.cpu.model);
     const [isLoading, setIsLoading] = useState(false);
 
-    function onMaxChange (value) {
+    function onMaxChange(value) {
+        // Allow empty string
+        if (value == "") {
+            setMax("");
+            return;
+        }
+
         const maxHypervisor = parseInt(maxVcpu);
         let maxValue = parseInt(value);
 
@@ -109,6 +116,12 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
     }
 
     function onCountSelect (value) {
+        // Allow empty string
+        if (value == "") {
+            setCount("");
+            return;
+        }
+
         const newValue = clamp(value, max, 1);
         setCount(parseInt(newValue));
     }
@@ -217,34 +230,55 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
                                ? cockpit.format(_("Maximum number of virtual CPUs allocated for the guest OS, which must be between 1 and $0"), parseInt(maxVcpu))
                                : _("Maximum number of virtual CPUs allocated for the guest OS")}>
                                <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
-                                   <InfoAltIcon noVerticalAlign />
+                                   <HelpIcon noVerticalAlign />
                                </button>
                            </Popover>}>
-                <TextInput id="machines-vcpu-max-field"
-                           type="number" inputMode="numeric" pattern="[0-9]*"
-                           onKeyPress={digitFilter}
-                           onChange={onMaxChange} value={max} />
+                <NumberInput
+                    id="machines-vcpu-max-field"
+                    value={max}
+                    onMinus={() => onMaxChange(max - 1)}
+                    onPlus={() => onMaxChange(max + 1)}
+                    onChange={event => onMaxChange(event.target.value)}
+                    inputAriaLabel={_("vCPU maximum")}
+                    minusBtnAriaLabel="minus"
+                    plusBtnAriaLabel="plus"
+                    max={parseInt(maxVcpu)}
+                    min={1}
+                    widthChars={3}
+                    allowEmptyInput
+                />
             </FormGroup>
             <FormGroup fieldId="machines-vcpu-count-field" label={_("vCPU count")}
                        labelIcon={
                            <Popover bodyContent={_("Fewer than the maximum number of virtual CPUs should be enabled.")}>
                                <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
-                                   <InfoAltIcon noVerticalAlign />
+                                   <HelpIcon noVerticalAlign />
                                </button>
                            </Popover>}>
-                <TextInput id="machines-vcpu-count-field"
-                           type="number" inputMode="numeric" pattern="[0-9]*" value={count}
-                           onKeyPress={digitFilter}
-                           onChange={onCountSelect} />
+                <NumberInput
+                    id="machines-vcpu-count-field"
+                    value={count}
+                    onMinus={() => onCountSelect(count - 1)}
+                    onPlus={() => onCountSelect(count + 1)}
+                    onChange={event => onCountSelect(event.target.value)}
+                    inputAriaLabel={_("vCPU count")}
+                    minusBtnAriaLabel="minus"
+                    plusBtnAriaLabel="plus"
+                    max={parseInt(max)}
+                    min={1}
+                    widthChars={3}
+                    allowEmptyInput
+                />
             </FormGroup>
             <FormGroup fieldId="sockets" label={_("Sockets")}
                        labelIcon={
                            <Popover bodyContent={_("Preferred number of sockets to expose to the guest.")}>
                                <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
-                                   <InfoAltIcon noVerticalAlign />
+                                   <HelpIcon noVerticalAlign />
                                </button>
                            </Popover>}>
                 <FormSelect id="socketsSelect"
+                            className="cpu-numeric-dropdown"
                             value={sockets.toString()}
                             onChange={onSocketChange}>
                     {dividers(max).map((t) => <FormSelectOption key={t.toString()} value={t.toString()} label={t.toString()} />)}
@@ -253,6 +287,7 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
             <FormGroup fieldId="coresSelect" label={_("Cores per socket")}>
                 <FormSelect id="coresSelect"
                             value={cores.toString()}
+                            className="cpu-numeric-dropdown"
                             onChange={onCoresChange}>
                     {dividers(max).map((t) => <FormSelectOption key={t.toString()} value={t.toString()} label={t.toString()} />)}
                 </FormSelect>
@@ -261,6 +296,7 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
             <FormGroup fieldId="threadsSelect" label={_("Threads per core")}>
                 <FormSelect id="threadsSelect"
                             value={threads.toString()}
+                            className="cpu-numeric-dropdown"
                             onChange={onThreadsChange}>
                     {dividers(max).map((t) => <FormSelectOption key={t.toString()} value={t.toString()} label={t.toString()} />)}
                 </FormSelect>
@@ -293,7 +329,7 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
     );
 
     return (
-        <Modal position="top" variant="medium" id='machines-cpu-modal-dialog' isOpen onClose={Dialogs.close}
+        <Modal position="top" variant="small" id='machines-cpu-modal-dialog' isOpen onClose={Dialogs.close}
                title={cockpit.format(_("$0 CPU details"), vm.name)}
                footer={
                    <>
