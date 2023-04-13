@@ -184,7 +184,7 @@ print-vm:
 	@echo $(VM_IMAGE)
 
 codecheck: test/static-code $(NODE_MODULES_TEST)
-	test/static-code --tap
+	test/static-code
 
 # convenience target to setup all the bits needed for the integration tests
 # without actually running them
