@@ -735,9 +735,9 @@ export function parseDumpxmlForInterfaces(devicesElem) {
             const bootElem = getSingleOptionalElem(interfaceElem, 'boot');
 
             const networkInterface = { // see https://libvirt.org/formatdomain.html#elementsNICS
-                type: interfaceElem?.getAttribute('type'), // Only one required parameter
-                managed: interfaceElem?.getAttribute('managed'),
-                name: interfaceElem?.getAttribute('name'), // Name of interface
+                type: interfaceElem.getAttribute('type'), // Only one required parameter
+                managed: interfaceElem.getAttribute('managed'),
+                name: interfaceElem.getAttribute('name'), // Name of interface
                 target: targetElem?.getAttribute('dev'),
                 mac: macElem?.getAttribute('address'), // MAC address
                 model: modelElem?.getAttribute('type'), // Device model
