@@ -1233,7 +1233,10 @@ vnc_password= "{vnc_passwd}"
                         b.click(".pf-c-modal-box__footer button:contains(Create and edit)")
 
             for error, error_msg in errors.items():
-                error_location = f".pf-c-modal-box__body #{error}-group .pf-c-form__helper-text.pf-m-error"
+                if "pw1" in error:
+                    error_location = f".pf-c-modal-box__body #{error}-group .pf-c-form__helper-text .pf-m-warning"
+                else:
+                    error_location = f".pf-c-modal-box__body #{error}-group .pf-c-form__helper-text .pf-m-error"
                 b.wait_visible(error_location)
                 if (error_msg):
                     b.wait_in_text(error_location, error_msg)

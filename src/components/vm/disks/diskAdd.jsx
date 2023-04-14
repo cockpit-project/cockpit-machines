@@ -21,7 +21,7 @@ import { Bullseye } from "@patternfly/react-core/dist/esm/layouts/Bullseye/index
 import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
 import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox/index.js";
 import { ExpandableSection } from "@patternfly/react-core/dist/esm/components/ExpandableSection/index.js";
-import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form/index.js";
+import { Form, FormGroup, FormHelperText } from "@patternfly/react-core/dist/esm/components/Form/index.js";
 import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect/index.js";
 import { Grid } from "@patternfly/react-core/dist/esm/layouts/Grid/index.js";
 import { HelperText, HelperTextItem } from "@patternfly/react-core/dist/esm/components/HelperText/index.js";
@@ -29,9 +29,9 @@ import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js
 import { Radio } from "@patternfly/react-core/dist/esm/components/Radio/index.js";
 import { Spinner } from "@patternfly/react-core/dist/esm/components/Spinner/index.js";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput/index.js";
-import ExclamationCircleIcon from '@patternfly/react-icons/dist/esm/icons/exclamation-circle-icon';
 import cockpit from 'cockpit';
 import { DialogsContext } from 'dialogs.jsx';
+import { FormHelper } from 'cockpit-components-form-helper.jsx';
 
 import { FileAutoComplete } from 'cockpit-components-file-autocomplete.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
@@ -114,9 +114,7 @@ const SelectExistingVolume = ({ idPrefix, storagePoolName, existingVolumeName, o
     const diskUsageMessage = getDiskUsageMessage(vms, vmStoragePools.find(pool => pool.name === storagePoolName), existingVolumeName);
     return (
         <FormGroup fieldId={`${idPrefix}-select-volume`}
-                   label={_("Volume")}
-                   helperText={diskUsageMessage}
-                   validated="warning">
+                   label={_("Volume")}>
             <FormSelect id={`${idPrefix}-select-volume`}
                         onChange={value => onValueChanged('existingVolumeName', value)}
                         value={initiallySelected}
@@ -124,6 +122,7 @@ const SelectExistingVolume = ({ idPrefix, storagePoolName, existingVolumeName, o
                         isDisabled={!filteredVolumes.length}>
                 {content}
             </FormSelect>
+            <FormHelper fieldId={`${idPrefix}-select-volume`} variant="warning" helperText={diskUsageMessage} />
         </FormGroup>
     );
 };
@@ -149,8 +148,6 @@ const PoolRow = ({ idPrefix, onValueChanged, storagePoolName, validationFailed, 
 
     return (
         <FormGroup fieldId={`${idPrefix}-select-pool`}
-                   helperTextInvalid={validationFailed.storagePool}
-                   validated={validationStatePool}
                    label={_("Pool")}>
             <FormSelect id={`${idPrefix}-select-pool`}
                            isDisabled={!vmStoragePools.length || !vmStoragePools.every(pool => pool.volumes !== undefined)}
@@ -169,6 +166,7 @@ const PoolRow = ({ idPrefix, onValueChanged, storagePoolName, validationFailed, 
                     : [<FormSelectOption value='no-resource' key='no-resource'
                                          label={_("No storage pools available")} />]}
             </FormSelect>
+            <FormHelper fieldId={`${idPrefix}-select-pool`} helperTextInvalid={validationFailed.storagePool} />
         </FormGroup>
     );
 };
@@ -241,29 +239,34 @@ const AdditionalOptions = ({ cacheMode, device, idPrefix, onValueChanged, busTyp
                     </FormGroup>
                 </Grid>
                 <FormGroup fieldId={idPrefix + "-serial"}
-                    helperTextInvalid={validationFailed.serial}
-                    helperText={
-                        <HelperText component="ul">
-                            { showAllowedCharactersMessage &&
-                                <HelperTextItem id="serial-characters-message" key="regex" variant="indeterminate" hasIcon>
-                                    {_("Allowed characters: basic Latin alphabet, numbers, and limited punctuation (-, _, +, .)")}
-                                </HelperTextItem>
-                            }
-                            { showMaxLengthMessage &&
-                                <HelperTextItem id="serial-length-message" key="length" variant="warning" hasIcon>
-                                    {cockpit.format(_("Identifier may be silently truncated to $0 characters "), serialLength)}
-                                    <span className="ct-monospace">{`(${truncatedSerial})`}</span>
-                                </HelperTextItem>
-                            }
-                        </HelperText>
-                    }
-                    validated={validationFailed.serial ? 'error' : 'default'}
                     label={_("Disk identifier")}>
                     <TextInput id={idPrefix + "-serial"}
                         aria-label={_("serial number")}
                         className="ct-monospace"
                         value={serial}
                         onChange={value => setSerialHelper(value)} />
+                    <FormHelperText isHidden={false}>
+                        {validationFailed.serial
+                            ? <HelperText>
+                                <HelperTextItem variant="error" hasIcon>
+                                    {validationFailed.serial}
+                                </HelperTextItem>
+                            </HelperText>
+                            : <HelperText component="ul">
+                                { showAllowedCharactersMessage &&
+                                <HelperTextItem id="serial-characters-message" key="regex" variant="indeterminate" hasIcon>
+                                    {_("Allowed characters: basic Latin alphabet, numbers, and limited punctuation (-, _, +, .)")}
+                                </HelperTextItem>
+                                }
+                                { showMaxLengthMessage &&
+                                <HelperTextItem id="serial-length-message" key="length" variant="warning" hasIcon>
+                                    {cockpit.format(_("Identifier may be silently truncated to $0 characters "), serialLength)}
+                                    <span className="ct-monospace">{`(${truncatedSerial})`}</span>
+                                </HelperTextItem>
+                                }
+                            </HelperText>
+                        }
+                    </FormHelperText>
                 </FormGroup>
             </Form>
         </ExpandableSection>
@@ -338,15 +341,13 @@ const CustomPath = ({ idPrefix, onValueChanged, device, validationFailed, hideDe
             <FormGroup
                 id={`${idPrefix}-file`}
                 fieldId={`${idPrefix}-file-autocomplete`}
-                helperTextInvalid={validationFailed.customPath}
-                helperTextInvalidIcon={<ExclamationCircleIcon />}
-                validated={validationFailed.customPath && "error"}
                 label={_("Custom path")}>
                 <FileAutoComplete
                     id={`${idPrefix}-file-autocomplete`}
                     placeholder={_("Path to file on host's file system")}
                     onChange={value => onValueChanged("file", value)}
                     superuser="try" />
+                <FormHelper fieldId={`${idPrefix}-file-autocomplete`} helperTextInvalid={validationFailed.customPath} />
             </FormGroup>
             {!hideDeviceRow && <FormGroup id={`${idPrefix}-device`}
                    fieldId={`${idPrefix}-select-device`}

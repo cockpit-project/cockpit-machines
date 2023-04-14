@@ -214,23 +214,23 @@ class TestMachinesNetworks(VirtualMachinesCase):
                 if (self.xfail):
                     # Check incomplete dialog
                     if "name" in self.xfail_objects:
-                        b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #create-network-name + .pf-c-form__helper-text.pf-m-error", self.xfail_error)
+                        b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #create-network-name + .pf-c-form__helper-text .pf-m-error", self.xfail_error)
                     if "ipv4_address" in self.xfail_objects:
-                        b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #network-ipv4-address + .pf-c-form__helper-text.pf-m-error", self.xfail_error)
+                        b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #network-ipv4-address + .pf-c-form__helper-text .pf-m-error", self.xfail_error)
                     if "ipv4_netmask" in self.xfail_objects:
-                        b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #network-ipv4-netmask + .pf-c-form__helper-text.pf-m-error", self.xfail_error)
+                        b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #network-ipv4-netmask + .pf-c-form__helper-text .pf-m-error", self.xfail_error)
                     if "ipv4_dhcp_start" in self.xfail_objects:
-                        b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #network-ipv4-dhcp-range-start + .pf-c-form__helper-text.pf-m-error", self.xfail_error)
+                        b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #network-ipv4-dhcp-range-start + .pf-c-form__helper-text .pf-m-error", self.xfail_error)
                     if "ipv4_dhcp_end" in self.xfail_objects:
-                        b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #network-ipv4-dhcp-range-end + .pf-c-form__helper-text.pf-m-error", self.xfail_error)
+                        b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #network-ipv4-dhcp-range-end + .pf-c-form__helper-text .pf-m-error", self.xfail_error)
                     if "ipv6_address" in self.xfail_objects:
-                        b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #network-ipv6-address + .pf-c-form__helper-text.pf-m-error", self.xfail_error)
+                        b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #network-ipv6-address + .pf-c-form__helper-text .pf-m-error", self.xfail_error)
                     if "ipv6_prefix" in self.xfail_objects:
-                        b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #network-ipv6-prefix + .pf-c-form__helper-text.pf-m-error", self.xfail_error)
+                        b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #network-ipv6-prefix + .pf-c-form__helper-text .pf-m-error", self.xfail_error)
                     if "ipv6_dhcp_start" in self.xfail_objects:
-                        b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #network-ipv6-dhcp-range-start + .pf-c-form__helper-text.pf-m-error", self.xfail_error)
+                        b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #network-ipv6-dhcp-range-start + .pf-c-form__helper-text .pf-m-error", self.xfail_error)
                     if "ipv6_dhcp_end" in self.xfail_objects:
-                        b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #network-ipv6-dhcp-range-end + .pf-c-form__helper-text.pf-m-error", self.xfail_error)
+                        b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #network-ipv6-dhcp-range-end + .pf-c-form__helper-text .pf-m-error", self.xfail_error)
                     if "footer" in self.xfail_objects:
                         error_location = "#create-network-dialog .pf-c-modal-box__body .pf-m-danger"
                         b.wait_visible(error_location)

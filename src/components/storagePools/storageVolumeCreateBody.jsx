@@ -25,6 +25,7 @@ import { Grid } from "@patternfly/react-core/dist/esm/layouts/Grid/index.js";
 import { InputGroup } from "@patternfly/react-core/dist/esm/components/InputGroup/index.js";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput/index.js";
 
+import { FormHelper } from 'cockpit-components-form-helper.jsx';
 import { convertToUnit, units, digitFilter } from '../../helpers.js';
 import cockpit from 'cockpit';
 
@@ -34,8 +35,6 @@ const VolumeName = ({ idPrefix, volumeName, validationFailed, onValueChanged }) 
     const validationStateName = validationFailed.volumeName ? 'error' : 'default';
     return (
         <FormGroup fieldId={`${idPrefix}-name`}
-                   validated={validationStateName}
-                   helperTextInvalid={validationFailed.volumeName}
                    label={_("Name")}>
             <TextInput id={`${idPrefix}-name`}
                         minLength={1}
@@ -43,6 +42,7 @@ const VolumeName = ({ idPrefix, volumeName, validationFailed, onValueChanged }) 
                         value={volumeName || ""}
                         validated={validationStateName}
                         onChange={value => onValueChanged('volumeName', value)} />
+            <FormHelper fieldId={`${idPrefix}-name`} helperTextInvalid={validationStateName == "error" && validationFailed.volumeName} />
         </FormGroup>
     );
 };
@@ -80,8 +80,6 @@ const VolumeDetails = ({ idPrefix, size, unit, format, storagePoolCapacity, stor
         <Grid hasGutter md={6}>
             <FormGroup fieldId={`${idPrefix}-size`}
                        id={`${idPrefix}-size-group`}
-                       validated={validationStateSize}
-                       helperTextInvalid={validationFailed.size}
                        label={_("Size")}>
                 <InputGroup>
                     <TextInput id={`${idPrefix}-size`}
@@ -103,6 +101,7 @@ const VolumeDetails = ({ idPrefix, size, unit, format, storagePoolCapacity, stor
                                           label={_("GiB")} />
                     </FormSelect>
                 </InputGroup>
+                <FormHelper fieldId={`${idPrefix}-size`} helperTextInvalid={validationStateSize == "error" && validationFailed.size} />
             </FormGroup>
             {formatRow}
         </Grid>
