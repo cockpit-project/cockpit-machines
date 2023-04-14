@@ -34,6 +34,10 @@ from machineslib import VirtualMachinesCase  # noqa
 from testlib import nondestructive, skipImage, test_main, wait, Error  # noqa
 from machinesxmls import NETWORK_XML_PXE, PXE_SERVER_CFG  # noqa
 
+NO_STORAGE = "No storage"
+NEW_VOLUME_QCOW2 = "Create new qcow2 volume"
+NEW_VOLUME_RAW = "Create new raw volume"
+
 
 @nondestructive
 class TestMachinesCreate(VirtualMachinesCase):
@@ -82,7 +86,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         runner.cancelDialogTest(TestMachinesCreate.VmDialog(self, sourceType='url',
                                                             location=config.TREE_URL,
                                                             memory_size=128, memory_size_unit='MiB',
-                                                            storage_pool="NoStorage",
+                                                            storage_pool=NO_STORAGE,
                                                             os_name=config.CENTOS_7,
                                                             create_and_run=False,
                                                             expected_os_name=config.FEDORA_28,
@@ -125,7 +129,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, sourceType='file',
                                                                          location=config.NOVELL_MOCKUP_ISO_PATH,
                                                                          memory_size=100000, memory_size_unit='MiB',
-                                                                         storage_pool="NoStorage",
+                                                                         storage_pool=NO_STORAGE,
                                                                          create_and_run=False),
                                              {"memory": "available on host"})
 
@@ -333,7 +337,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         # check that the pxe booting is not available on session connection
         runner.checkPXENotAvailableSessionTest(TestMachinesCreate.VmDialog(self, name='pxe-guest',
                                                                            sourceType='pxe',
-                                                                           storage_pool="NoStorage",
+                                                                           storage_pool=NO_STORAGE,
                                                                            connection="session"))
 
         self.machine.execute("virsh net-destroy default; virsh net-undefine default")
@@ -363,7 +367,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         runner.createTest(TestMachinesCreate.VmDialog(self, name='pxe-guest', sourceType='pxe',
                                                       location="network=pxe-nat",
                                                       memory_size=128, memory_size_unit='MiB',
-                                                      storage_pool="NoStorage",
+                                                      storage_pool=NO_STORAGE,
                                                       create_and_run=True, delete=False))
 
         # Stop it, tweak the XML to have serial console at bios and also redirect serial console to a file
@@ -459,7 +463,7 @@ vnc_password= "{vnc_passwd}"
 
         runner.createAndVerifyQemuConfParsedTest(
             TestMachinesCreate.VmDialog(self, sourceType='file',
-                                        storage_pool="NoStorage",
+                                        storage_pool=NO_STORAGE,
                                         location=config.NOVELL_MOCKUP_ISO_PATH),
             vnc_listen, "127.0.0.1", vnc_passwd, None)
 
@@ -467,7 +471,7 @@ vnc_password= "{vnc_passwd}"
         m.execute("rm /etc/libvirt/qemu.conf")
         runner.createAndVerifyQemuConfParsedTest(
             TestMachinesCreate.VmDialog(self, sourceType='file',
-                                        storage_pool="NoStorage",
+                                        storage_pool=NO_STORAGE,
                                         location=config.NOVELL_MOCKUP_ISO_PATH),
             "127.0.0.1", "127.0.0.1", None, None)
 
@@ -525,19 +529,19 @@ vnc_password= "{vnc_passwd}"
         runner.createThenInstallTest(TestMachinesCreate.VmDialog(self, sourceType='file',
                                                                  location=config.NOVELL_MOCKUP_ISO_PATH,
                                                                  memory_size=128, memory_size_unit='MiB',
-                                                                 storage_pool="NoStorage"), True)
+                                                                 storage_pool=NO_STORAGE), True)
 
         # Check PXE boot with separate install phase
         runner.createThenInstallTest(TestMachinesCreate.VmDialog(self, sourceType='pxe',
                                                                  location="network=default",
                                                                  memory_size=128, memory_size_unit='MiB',
-                                                                 storage_pool="NoStorage"))
+                                                                 storage_pool=NO_STORAGE))
 
         # Try performing an installation which will fail and ensure that the 'Install' button is still available
         runner.createThenInstallTest(TestMachinesCreate.VmDialog(self, sourceType='file',
                                                                  location=config.NOVELL_MOCKUP_ISO_PATH,
                                                                  memory_size=128, memory_size_unit='MiB',
-                                                                 storage_pool="NoStorage"), True, True)
+                                                                 storage_pool=NO_STORAGE), True, True)
 
     def testCreateFileSource(self):
         runner = TestMachinesCreate.CreateVmRunner(self)
@@ -552,7 +556,7 @@ vnc_password= "{vnc_passwd}"
         # Check that when there is no storage pool defined a VM can still be created
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='file',
                                                       location=config.NOVELL_MOCKUP_ISO_PATH,
-                                                      storage_pool="NoStorage",
+                                                      storage_pool=NO_STORAGE,
                                                       create_and_run=True))
 
         self.browser.switch_to_top()
@@ -573,7 +577,7 @@ vnc_password= "{vnc_passwd}"
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='file',
                                                       location=config.NOVELL_MOCKUP_ISO_PATH,
                                                       memory_size=128, memory_size_unit='MiB',
-                                                      storage_pool="NoStorage",
+                                                      storage_pool=NO_STORAGE,
                                                       create_and_run=False,
                                                       connection='session'))
         cmds = [
@@ -597,11 +601,11 @@ vnc_password= "{vnc_passwd}"
                                                       storage_volume="vmTmpDestination.qcow2",
                                                       create_and_run=True,))
 
-        # Check "NoStorage" option (only define VM)
+        # Check NO_STORAGE option (only define VM)
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='file',
                                                       location=config.NOVELL_MOCKUP_ISO_PATH,
                                                       memory_size=128, memory_size_unit='MiB',
-                                                      storage_pool="NoStorage",
+                                                      storage_pool=NO_STORAGE,
                                                       create_and_run=True,))
 
         self.machine.execute(f"touch '{config.PATH_WITH_SPACE}'")
@@ -609,7 +613,23 @@ vnc_password= "{vnc_passwd}"
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='file',
                                                       location=config.PATH_WITH_SPACE,
                                                       memory_size=128, memory_size_unit='MiB',
-                                                      storage_pool="NoStorage",
+                                                      storage_pool=NO_STORAGE,
+                                                      create_and_run=True,))
+
+        # Check Create new QCOW2 volume
+        runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='file',
+                                                      location=config.PATH_WITH_SPACE,
+                                                      memory_size=128, memory_size_unit='MiB',
+                                                      storage_size=128, storage_size_unit='MiB',
+                                                      storage_pool=NEW_VOLUME_QCOW2,
+                                                      create_and_run=True,))
+
+        # Check Create new RAW volume
+        runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='file',
+                                                      location=config.PATH_WITH_SPACE,
+                                                      memory_size=128, memory_size_unit='MiB',
+                                                      storage_size=128, storage_size_unit='MiB',
+                                                      storage_pool=NEW_VOLUME_RAW,
                                                       create_and_run=True,))
 
     def testCreateImportDisk(self):
@@ -667,13 +687,13 @@ vnc_password= "{vnc_passwd}"
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='url',
                                                       location=config.TREE_URL,
                                                       memory_size=128, memory_size_unit='MiB',
-                                                      storage_pool="NoStorage",
+                                                      storage_pool=NO_STORAGE,
                                                       os_name=config.FEDORA_28))
 
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='url',
                                                       location=config.TREE_URL,
                                                       memory_size=128, memory_size_unit='MiB',
-                                                      storage_pool="NoStorage",
+                                                      storage_pool=NO_STORAGE,
                                                       os_name=config.FEDORA_28,
                                                       create_and_run=False))
 
@@ -691,7 +711,7 @@ vnc_password= "{vnc_passwd}"
                 runner.checkDialogErrorTest(TestMachinesCreate.VmDialog(self, sourceType='url',
                                                                         location=config.ISO_URL,
                                                                         memory_size=128, memory_size_unit='MiB',
-                                                                        storage_pool="NoStorage",
+                                                                        storage_pool=NO_STORAGE,
                                                                         create_and_run=True), ["qemu", "protocol"])
             finally:
                 m.execute("umount /usr/lib/x86_64-linux-gnu/qemu/block-curl.so")
@@ -701,7 +721,7 @@ vnc_password= "{vnc_passwd}"
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='url',
                                                       location=config.ISO_URL,
                                                       memory_size=128, memory_size_unit='MiB',
-                                                      storage_pool="NoStorage",
+                                                      storage_pool=NO_STORAGE,
                                                       create_and_run=True))
 
     def testDisabledCreate(self):
@@ -772,7 +792,7 @@ vnc_password= "{vnc_passwd}"
                      root_password=None,
                      user_password=None,
                      user_login=None,
-                     storage_pool='NewVolume', storage_volume='',
+                     storage_pool=NEW_VOLUME_QCOW2, storage_volume='',
                      create_and_run=False,
                      delete=True,
                      env_is_empty=True,
@@ -1090,7 +1110,7 @@ vnc_password= "{vnc_passwd}"
             else:
                 self.browser.click(".pf-c-modal-box__footer button:contains(Create and edit)")
             self.browser.wait_not_present("#create-vm-dialog")
-            if self.storage_pool != "NoStorage":
+            if self.storage_pool != NO_STORAGE:
                 self.goToVmPage(self.name)
                 self.browser.wait_text(f"#vm-{self.name}-disks-vda-bus", "virtio")
                 self.goToMainPage()
@@ -1157,16 +1177,17 @@ vnc_password= "{vnc_passwd}"
 
             if self.sourceType != 'disk_image':
                 if not self.expected_storage_size:
-                    b.wait_visible("#storage-pool-select")
-                    b.select_from_dropdown("#storage-pool-select", self.storage_pool)
+                    b.wait_visible("#storage-select")
+                    b.click("#storage-select")
+                    b.click(f"#storage-select-group li button:contains('{self.storage_pool}')")
 
-                    if self.storage_pool == 'NewVolume' or self.storage_pool == 'NoStorage':
+                    if self.storage_pool in [NEW_VOLUME_QCOW2, NEW_VOLUME_RAW] or self.storage_pool == NO_STORAGE:
                         b.wait_not_present("#storage-volume-select")
                     else:
                         b.wait_visible("#storage-volume-select")
                         b.select_from_dropdown("#storage-volume-select", self.storage_volume)
 
-                    if self.storage_pool != 'NewVolume':
+                    if self.storage_pool not in [NEW_VOLUME_QCOW2, NEW_VOLUME_RAW]:
                         b.wait_not_present("#storage-limit")
                     else:
                         b.select_from_dropdown("#storage-limit-unit-select", self.storage_size_unit)
@@ -1301,7 +1322,7 @@ vnc_password= "{vnc_passwd}"
             if self.pixel_test_tag:
                 tag = self.pixel_test_tag + ("-" + subtag if subtag else "")
                 ignore = ["#memory-size-helper"]
-                if self.storage_pool != "NoStorage":
+                if self.storage_pool != NO_STORAGE:
                     ignore += ["#storage-limit-helper"]
                 self.browser.assert_pixels("#create-vm-dialog", tag, ignore=ignore, skip_layouts=["rtl"])
             return self
@@ -1577,7 +1598,7 @@ vnc_password= "{vnc_passwd}"
                 b.wait_not_present(f"button#vm-{name}-firmware")
 
             # check bus type
-            if dialog.storage_pool != "NoStorage":
+            if dialog.storage_pool != NO_STORAGE:
                 b.wait_in_text(f"#vm-{name}-disks-vda-bus", "virtio")
             # check memory
             # adjust to how cockpit_format_bytes() formats sizes > 1024 MiB -- this depends on how much RAM
@@ -1599,7 +1620,7 @@ vnc_password= "{vnc_passwd}"
                 else:
                     raise AssertionError("Unknown disk device")
             # New volume was created or existing volume was already chosen as destination
-            elif (dialog.storage_size is not None and dialog.storage_size > 0) or dialog.storage_pool not in ["NoStorage", "NewVolume"]:
+            elif (dialog.storage_size is not None and dialog.storage_size > 0) or dialog.storage_pool not in [NO_STORAGE, NEW_VOLUME_QCOW2, NEW_VOLUME_RAW]:
                 b.wait_visible(".disks-card table tbody > tr:first-child")
                 if b.is_present(f"#vm-{name}-disks-vda-device"):
                     b.wait_in_text(f"#vm-{name}-disks-vda-device", "disk")
@@ -1609,7 +1630,12 @@ vnc_password= "{vnc_passwd}"
                     b.wait_in_text(f"#vm-{name}-disks-sda-device", "disk")
                 else:
                     raise AssertionError("Unknown disk device")
-            elif (vm_state == "Running" and (((dialog.storage_pool == 'NoStorage' or dialog.storage_size == 0) and dialog.sourceType == 'file') or dialog.sourceType == 'url')):
+
+                if dialog.storage_pool == NEW_VOLUME_QCOW2:
+                    b.wait_in_text(f"#vm-{name}-disks-vda-type", "qcow2")
+                elif dialog.storage_pool == NEW_VOLUME_RAW:
+                    b.wait_in_text(f"#vm-{name}-disks-vda-type", "raw")
+            elif (vm_state == "Running" and (((dialog.storage_pool == NO_STORAGE or dialog.storage_size == 0) and dialog.sourceType == 'file') or dialog.sourceType == 'url')):
                 b.wait_visible(".disks-card table tbody > tr:first-child")
                 if b.is_present(f"#vm-{name}-disks-sda-device"):
                     b.wait_in_text(f"#vm-{name}-disks-sda-device", "cdrom")

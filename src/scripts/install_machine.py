@@ -191,7 +191,7 @@ def prepare_virt_install_params(args):
                 "--name", args['vmName']
             ]
 
-        if 'storagePool' in args and args['storagePool'] != 'NewVolume':
+        if 'storagePool' in args and args['storagePool'] not in ['NewVolumeQCOW2', 'NewVolumeRAW']:
             params += ["--check", "path_in_use=off"]
 
         if args['sourceType'] != 'disk_image':
@@ -209,10 +209,14 @@ def prepare_virt_install_params(args):
             elif args['storagePool'] == 'NoStorage':
                 disk = "none"
             else:
-                if args['storagePool'] != 'NewVolume':
+                if args['storagePool'] not in ['NewVolumeQCOW2', 'NewVolumeRAW']:
                     disk = f"vol={args['storagePool']}/{args['storageVolume']}"
                 else:
-                    disk = f"size={args['storageSize']},format=qcow2"
+                    disk = f"size={args['storageSize']}"
+                    if args['storagePool'] == 'NewVolumeQCOW2':
+                        disk += ",format=qcow2"
+                    elif args['storagePool'] == 'NewVolumeRAW':
+                        disk += ",format=raw"
                 if args['sourceType'] == "cloud":
                     disk += f",backing_store={args['source']}"
             params.append(disk)
