@@ -715,6 +715,12 @@ class TestMachinesDisks(VirtualMachinesCase):
                 else:
                     vol_xml = m.execute(detect_format_cmd.format(volume_xml, "/volume/target/format")).rstrip()
                     self.test_obj.assertEqual(vol_xml, f'<format type="{self.volume_format or expected_format}"/>')
+                    if self.pool_type == "disk":
+                        # Disks of disk type pools have raw as driver.type
+                        b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.expected_target}-type", "raw")
+                    elif self.expected_volume_format != "iso":
+                        # If volume is ISO file, libvirt doesn't assign drive.type to a disk
+                        b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.expected_target}-type", self.volume_format or expected_format)
             else:
                 b.wait_in_text(f'#vm-{self.vm_name}-disks-{self.expected_target}-source-file', self.file_path)
                 domainXML = self.test_obj.machine.execute(f"virsh dumpxml {self.vm_name}")
