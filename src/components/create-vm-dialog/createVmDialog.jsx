@@ -20,12 +20,13 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { debounce } from 'throttle-debounce';
+import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
-import { FormSelect, FormSelectOption, FormSelectOptionGroup } from "@patternfly/react-core/dist/esm/components/FormSelect";
+import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
 import { InputGroup } from "@patternfly/react-core/dist/esm/components/InputGroup";
 import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
-import { Select as PFSelect, SelectOption, SelectVariant } from "@patternfly/react-core/dist/esm/components/Select";
+import { Select as PFSelect, SelectGroup, SelectOption, SelectVariant } from "@patternfly/react-core/dist/esm/components/Select";
 import { Tab, TabTitleText, Tabs } from "@patternfly/react-core/dist/esm/components/Tabs";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -230,7 +231,7 @@ function validateParams(vmParams) {
         validationFailed.memory = _("Memory must not be 0");
     }
 
-    if (vmParams.storagePool == 'NewVolume' && vmParams.storageSize === 0) {
+    if ((vmParams.storagePool == 'NewVolumeQCOW2' || vmParams.storagePool == 'NewVolumeRAW') && vmParams.storageSize === 0) {
         validationFailed.storage = _("Storage size must not be 0");
     }
 
@@ -814,6 +815,8 @@ const MemoryRow = ({ memorySize, memorySizeUnit, nodeMaxMemory, minimumMemory, o
 };
 
 const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit, onValueChanged, minimumStorage, storagePoolName, storagePools, storageVolume, vms, validationFailed, createMode }) => {
+    const [isStorageOpen, setIsStorageOpen] = useState(false);
+
     let validationStateStorage = validationFailed.storage ? 'error' : 'default';
     const poolSpaceAvailable = getSpaceAvailable(storagePools, connectionName);
     let helperTextNewVolume = (
@@ -839,35 +842,58 @@ const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit,
     let volumeEntries;
     let isVolumeUsed = {};
     // Existing storage pool is chosen
-    if (storagePoolName !== "NewVolume" && storagePoolName !== "NoStorage") {
+    if (storagePoolName !== "NewVolumeQCOW2" && storagePoolName !== "NewVolumeRAW" && storagePoolName !== "NoStorage") {
         const storagePool = storagePools.find(pool => pool.name === storagePoolName);
 
         isVolumeUsed = getStorageVolumesUsage(vms, storagePool);
         volumeEntries = (
             storagePool.volumes.map(vol => (<FormSelectOption value={vol.name}
-                                                             key={vol.name}
-                                                             label={vol.name} />))
+                                                              label={vol.name}
+                                                              key={vol.name} />))
         );
     }
     const helperTextVariant = createMode == NONE && (isVolumeUsed[storageVolume] && isVolumeUsed[storageVolume].length > 0) ? "warning" : "default";
 
+    const StorageSelectOptions = [
+        <SelectOption key="NewVolumeQCOW2" value="NewVolumeQCOW2">{_("Create new qcow2 volume")}</SelectOption>,
+        <SelectOption key="NewVolumeRAW" value="NewVolumeRAW">{_("Create new raw volume")}</SelectOption>
+    ];
+    if (allowNoDisk) {
+        StorageSelectOptions.push(<>
+            <Divider key="dividerNoStorage" />
+            <SelectOption value="NoStorage" key="NoStorage">{_("No storage")}</SelectOption>
+        </>);
+    }
+    const nonEmptyStoragePools = storagePools.filter(pool => pool.volumes?.length);
+    if (nonEmptyStoragePools.length > 0) {
+        StorageSelectOptions.push(<>
+            <Divider key="dividerPools" />
+            <SelectGroup key="Storage pools" label={_("Storage pools")}>
+                { nonEmptyStoragePools.map(pool => <SelectOption value={pool.name} key={pool.name} />) }
+            </SelectGroup>
+        </>);
+    }
     return (
         <>
-            <FormGroup label={_("Storage")} fieldId="storage-pool-select">
-                <FormSelect id="storage-pool-select"
-                            value={storagePoolName}
-                            onChange={e => onValueChanged('storagePool', e)}>
-                    <FormSelectOption value="NewVolume" key="NewVolume" label={_("Create new volume")} />
-                    { allowNoDisk && <FormSelectOption value="NoStorage" key="NoStorage" label={_("No storage")} />}
-                    <FormSelectOptionGroup key="Storage pools" label={_("Storage pools")}>
-                        { storagePools
-                                .filter(pool => pool.volumes?.length)
-                                .map(pool => <FormSelectOption value={pool.name} key={pool.name} label={pool.name} />)}
-                    </FormSelectOptionGroup>
-                </FormSelect>
+            <FormGroup label={_("Storage")} id="storage-select-group">
+                <PFSelect
+                    toggleId="storage-select"
+                    selections={storagePoolName}
+                    typeAheadAriaLabel={_("Choose an operating system")}
+                    placeholderText={_("Choose an operating system")}
+                    onSelect={(event, value) => {
+                        setIsStorageOpen(false);
+                        onValueChanged('storagePool', value);
+                    }}
+                    onToggle={isOpen => setIsStorageOpen(isOpen)}
+                    isOpen={isStorageOpen}
+                    menuAppendTo="parent">
+                    {StorageSelectOptions}
+                </PFSelect>
             </FormGroup>
 
-            { storagePoolName !== "NewVolume" &&
+            { storagePoolName !== "NewVolumeQCOW2" &&
+            storagePoolName !== "NewVolumeRAW" &&
             storagePoolName !== "NoStorage" &&
             <FormGroup label={_("Volume")}
                        fieldId="storage-volume-select">
@@ -883,7 +909,7 @@ const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit,
                     helperText={_("This volume is already used by another VM.")} />}
             </FormGroup>}
 
-            { storagePoolName === "NewVolume" &&
+            { (storagePoolName === "NewVolumeQCOW2" || storagePoolName === "NewVolumeRAW") &&
             <>
                 <FormGroup label={_("Storage limit")} fieldId='storage-limit'
                            id='storage-group'>
@@ -939,7 +965,7 @@ class CreateVmModal extends React.Component {
             os: undefined,
             ...getMemoryDefaults(props.nodeMaxMemory),
             ...getStorageDefaults(),
-            storagePool: 'NewVolume',
+            storagePool: 'NewVolumeQCOW2',
             storageVolume: '',
             startVm: true,
 
@@ -1054,9 +1080,9 @@ class CreateVmModal extends React.Component {
             }
 
             // specific storage pool is selected
-            if (this.state.storagePool !== "NewVolume" && this.state.storagePool !== "NoStorage") {
+            if (this.state.storagePool !== "NewVolumeQCOW2" && this.state.storagePool !== "NewVolumeRAW" && this.state.storagePool !== "NoStorage") {
                 // storage pools are different for each connection, so we set storagePool value to default (newVolume)
-                this.setState({ storagePool: "NewVolume" });
+                this.setState({ storagePool: "NewVolumeQCOW2" });
             }
 
             // For different connections the generated VM names might differ
@@ -1149,7 +1175,7 @@ class CreateVmModal extends React.Component {
             };
 
             domainCreate(vmParams).then(() => {
-                if (this.state.storagePool === "NewVolume") {
+                if (this.state.storagePool === "NewVolumeQCOW2" || this.state.storagePool === "NewVolumeRAW") {
                     const storagePool = storagePools.find(pool => pool.connectionName === this.state.connectionName && pool.name === "default");
                     if (storagePool)
                         storagePoolRefresh({ connectionName: storagePool.connectionName, objPath: storagePool.id });
