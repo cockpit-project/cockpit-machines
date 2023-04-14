@@ -27,6 +27,7 @@ import { Grid } from "@patternfly/react-core/dist/esm/layouts/Grid/index.js";
 import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput/index.js";
 import { DialogsContext } from 'dialogs.jsx';
+import { FormHelper } from 'cockpit-components-form-helper.jsx';
 
 import { LIBVIRT_SYSTEM_CONNECTION } from '../../helpers.js';
 import { MachinesConnectionSelector } from '../common/machinesConnectionSelector.jsx';
@@ -41,14 +42,13 @@ const StoragePoolNameRow = ({ onValueChanged, dialogValues }) => {
     const validationState = dialogValues.validationFailed.name ? 'error' : 'default';
 
     return (
-        <FormGroup fieldId='storage-pool-dialog-name' label={_("Name")}
-                   helperTextInvalid={dialogValues.name.length == 0 ? _("Name should not be empty") : _("Name contains invalid characters")}
-                   validated={validationState}>
+        <FormGroup fieldId='storage-pool-dialog-name' label={_("Name")}>
             <TextInput id='storage-pool-dialog-name'
                        placeholder={_("Storage pool name")}
                        value={dialogValues.name || ''}
                        validated={validationState}
                        onChange={value => onValueChanged('name', value)} />
+            <FormHelper fieldId="storage-pool-dialog-name" helperTextInvalid={validationState == "error" && (dialogValues.name.length == 0 ? _("Name should not be empty") : _("Name contains invalid characters"))} />
         </FormGroup>
     );
 };
@@ -101,13 +101,12 @@ const StoragePoolTargetRow = ({ onValueChanged, dialogValues }) => {
     if (['dir', 'netfs', 'iscsi', 'disk'].includes(dialogValues.type)) {
         return (
             <FormGroup fieldId='storage-pool-dialog-target' label={_("Target path")}
-                       id="storage-pool-dialog-target-group"
-                       helperTextInvalid={_("Target path should not be empty")}
-                       validated={validationState}>
+                       id="storage-pool-dialog-target-group">
                 <FileAutoComplete id='storage-pool-dialog-target'
                                   superuser='try'
                                   placeholder={_("Path on host's filesystem")}
                                   onChange={value => onValueChanged('target', value)} />
+                <FormHelper fieldId="storage-pool-dialog-target" helperTextInvalid={validationState == "error" && _("Target path should not be empty")} />
             </FormGroup>
         );
     }
@@ -119,14 +118,13 @@ const StoragePoolHostRow = ({ onValueChanged, dialogValues }) => {
 
     if (['netfs', 'iscsi', 'iscsi-direct'].includes(dialogValues.type))
         return (
-            <FormGroup fieldId='storage-pool-dialog-host' label={_("Host")}
-                       helperTextInvalid={_("Host should not be empty")}
-                       validated={validationState}>
+            <FormGroup fieldId='storage-pool-dialog-host' label={_("Host")}>
                 <TextInput id='storage-pool-dialog-host'
                            validated={validationState}
                            placeholder={_("Host name")}
                            value={dialogValues.source.host || ''}
                            onChange={value => onValueChanged('source', { host: value })} />
+                <FormHelper fieldId="storage-pool-dialog-host" helperTextInvalid={validationState == "error" && _("Host should not be empty")} />
             </FormGroup>
         );
     return null;
@@ -137,14 +135,13 @@ const StoragePoolInitiatorRow = ({ onValueChanged, dialogValues }) => {
 
     if (['iscsi-direct'].includes(dialogValues.type))
         return (
-            <FormGroup label={_("Initiator")} fieldId='storage-pool-dialog-initiator'
-                       helperTextInvalid={_("Initiator IQN should not be empty")}
-                       validated={validationState}>
+            <FormGroup label={_("Initiator")} fieldId='storage-pool-dialog-initiator'>
                 <TextInput id='storage-pool-dialog-initiator'
                            placeholder={_("iSCSI initiator IQN")}
                            validated={validationState}
                            value={dialogValues.source.initiator || ''}
                            onChange={value => onValueChanged('source', { initiator: value })} />
+                <FormHelper fieldId="storage-pool-dialog-initiator" helperTextInvalid={validationState == "error" && _("Initiator should not be empty")} />
             </FormGroup>
         );
     return null;
@@ -171,9 +168,7 @@ const StoragePoolSourceRow = ({ onValueChanged, dialogValues }) => {
 
     if (['netfs', 'iscsi', 'iscsi-direct'].includes(dialogValues.type))
         return (
-            <FormGroup label={_("Source path")} fieldId='storage-pool-dialog-source'
-                       helperTextInvalid={_("Source path should not be empty")}
-                       validated={validationState}>
+            <FormGroup label={_("Source path")} fieldId='storage-pool-dialog-source'>
                 <TextInput id='storage-pool-dialog-source'
                            minLength={1}
                            value={dialogValues.source.dir || dialogValues.source.device || ''}
@@ -184,6 +179,7 @@ const StoragePoolSourceRow = ({ onValueChanged, dialogValues }) => {
                                    return onValueChanged('source', { device: value });
                            }}
                            placeholder={placeholder} />
+                <FormHelper fieldId="storage-pool-dialog-source" helperTextInvalid={validationState == "error" && _("Source path should not be empty")} />
             </FormGroup>
         );
     else if (dialogValues.type == 'disk')
@@ -191,13 +187,12 @@ const StoragePoolSourceRow = ({ onValueChanged, dialogValues }) => {
             <Grid hasGutter>
                 <FormGroup fieldId='storage-pool-dialog-source' label={_("Source path")}
                            className="pf-m-8-col"
-                           id="storage-pool-dialog-source-group"
-                           helperTextInvalid={_("Source path should not be empty")}
-                           validated={validationState}>
+                           id="storage-pool-dialog-source-group">
                     <FileAutoComplete id='storage-pool-dialog-source'
                                       superuser='try'
                                       placeholder={placeholder}
                                       onChange={value => onValueChanged('source', { device: value })} />
+                    <FormHelper fieldId="storage-pool-dialog-source" helperTextInvalid={validationState == "error" && _("Source path should not be empty")} />
                 </FormGroup>
                 <FormGroup fieldId='storage-pool-dialog-source-format' label={_("Format")}
                            className="pf-m-4-col">
@@ -218,15 +213,14 @@ const StoragePoolSourceRow = ({ onValueChanged, dialogValues }) => {
         );
     else if (dialogValues.type == 'logical')
         return (
-            <FormGroup fieldId='storage-pool-dialog-source' label={_("Source volume group")}
-                       helperTextInvalid={_("Volume group name should not be empty")}
-                       validated={validationState}>
+            <FormGroup fieldId='storage-pool-dialog-source' label={_("Source volume group")}>
                 <TextInput id='storage-pool-dialog-source'
                            validated={validationState}
                            minLength={1}
                            value={dialogValues.source.name || ''}
                            onChange={value => onValueChanged('source', { name: value })}
                            placeholder={placeholder} />
+                <FormHelper fieldId="storage-pool-dialog-source" helperTextInvalid={validationState == "error" && _("Volume group name should not be empty")} />
             </FormGroup>
         );
     return null;

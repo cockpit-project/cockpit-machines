@@ -24,6 +24,7 @@ import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form
 import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput/index.js";
 
+import { FormHelper } from 'cockpit-components-form-helper.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { useDialogs } from 'dialogs.jsx';
 
@@ -78,13 +79,12 @@ export const RenameDialog = ({ vmName, vmId, connectionName }) => {
             isHorizontal>
                 {!isObjectEmpty(error) && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.dialogErrorDetail} />}
                 <FormGroup label={_("New name")}
-                           fieldId="rename-dialog-new-name"
-                           helperTextInvalid={_("New name must not be empty")}
-                           validated={submitted && !newName ? "error" : "default"}>
+                           fieldId="rename-dialog-new-name">
                     <TextInput id='rename-dialog-new-name'
                                validated={submitted && !newName ? "error" : "default"}
                                value={newName}
                                onChange={setNewName} />
+                    <FormHelper helperTextInvalid={submitted && !newName && _("New name must not be empty")} />
                 </FormGroup>
             </Form>
         </Modal>

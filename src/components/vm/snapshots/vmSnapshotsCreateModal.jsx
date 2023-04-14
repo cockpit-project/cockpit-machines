@@ -25,6 +25,7 @@ import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js
 import { TextArea } from "@patternfly/react-core/dist/esm/components/TextArea/index.js";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput/index.js";
 
+import { FormHelper } from 'cockpit-components-form-helper.jsx';
 import { DialogsContext } from 'dialogs.jsx';
 import { ModalError } from "cockpit-components-inline-notification.jsx";
 import { snapshotCreate, snapshotGetAll } from "../../../libvirtApi/snapshot.js";
@@ -33,14 +34,14 @@ const _ = cockpit.gettext;
 
 const NameRow = ({ onValueChanged, name, validationError }) => {
     return (
-        <FormGroup validated={validationError.name ? "error" : "default"}
+        <FormGroup
             label={_("Name")}
-            fieldId="snapshot-create-dialog-name"
-            helperTextInvalid={validationError.name}>
+            fieldId="snapshot-create-dialog-name">
             <TextInput value={name}
                 validated={validationError.name ? "error" : "default"}
                 id="snapshot-create-dialog-name"
                 onChange={(value) => onValueChanged("name", value)} />
+            <FormHelper helperTextInvalid={validationError.name} />
         </FormGroup>
     );
 };

@@ -295,10 +295,10 @@ class TestMachinesStoragePools(VirtualMachinesCase):
                 else:
                     # Check incomplete dialog
                     if (not self.name):
-                        b.wait_visible("#create-storage-pool-dialog .pf-c-modal-box__body #storage-pool-dialog-name + .pf-c-form__helper-text.pf-m-error")
+                        b.wait_visible("#storage-pool-dialog-name-helper")
 
                     if (not self.target):
-                        b.wait_visible("#create-storage-pool-dialog .pf-c-modal-box__body #storage-pool-dialog-target-group .pf-c-form__helper-text.pf-m-error")
+                        b.wait_visible("#storage-pool-dialog-target-helper")
                     # Check errors from backend
                     if self.xfail_error:
                         error_location = "#create-storage-pool-dialog .pf-c-modal-box__body .pf-m-danger"
@@ -583,7 +583,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
                     b.wait_not_present("#create-volume-dialog-modal")
                 else:
                     if "size" == self.xfail_object:
-                        b.wait_in_text("#create-volume-dialog-size-group .pf-c-form__helper-text.pf-m-error", self.xfail_error)
+                        b.wait_in_text("#create-volume-dialog-size-group .pf-c-form__helper-text .pf-m-error", self.xfail_error)
 
             def verify(self):
                 # Check that the defined volume is now visible

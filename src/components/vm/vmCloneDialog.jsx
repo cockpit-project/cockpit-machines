@@ -24,6 +24,7 @@ import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form
 import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput/index.js";
 
+import { FormHelper } from 'cockpit-components-form-helper.jsx';
 import { isEmpty, isObjectEmpty } from '../../helpers.js';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { useDialogs } from 'dialogs.jsx';
@@ -90,13 +91,12 @@ export const CloneDialog = ({ name, connectionName }) => {
             isHorizontal>
                 {!isObjectEmpty(error) && <ModalError dialogError={error.dialogError} dialogErrorDetail={virtCloneOutput} />}
                 <FormGroup label={_("Name")} fieldId="vm-name"
-                           id="vm-name-group"
-                           helperTextInvalid={validationFailed.name}
-                           validated={validationFailed.name ? "error" : "default"}>
+                           id="vm-name-group">
                     <TextInput id='vm-name'
                                validated={validationFailed.name ? "error" : "default"}
                                value={newVmName}
                                onChange={setNewVmName} />
+                    <FormHelper helperTextInvalid={validationFailed.name} />
                 </FormGroup>
             </Form>
         </Modal>

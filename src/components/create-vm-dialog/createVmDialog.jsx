@@ -38,6 +38,7 @@ import { DialogsContext } from 'dialogs.jsx';
 import cockpit from 'cockpit';
 import store from "../../store.js";
 import { MachinesConnectionSelector } from '../common/machinesConnectionSelector.jsx';
+import { FormHelper } from "cockpit-components-form-helper.jsx";
 import { FileAutoComplete } from "cockpit-components-file-autocomplete.jsx";
 import {
     isEmpty,
@@ -256,15 +257,14 @@ const NameRow = ({ vmName, suggestedVmName, onValueChanged, validationFailed }) 
 
     return (
         <FormGroup label={_("Name")} fieldId="vm-name"
-                   id="vm-name-group"
-                   helperTextInvalid={validationFailed.vmName}
-                   validated={validationStateName}>
+                   id="vm-name-group">
             <TextInput id='vm-name'
                        validated={validationStateName}
                        minLength={1}
                        value={vmName || ''}
                        placeholder={isEmpty(suggestedVmName.trim()) ? _("Unique name") : cockpit.format(_("Unique name, default: $0"), suggestedVmName)}
                        onChange={value => onValueChanged('vmName', value)} />
+            <FormHelper helperTextInvalid={validationStateName && validationFailed.vmName} />
         </FormGroup>
     );
 };
@@ -373,11 +373,11 @@ const SourceRow = ({ connectionName, source, sourceType, networks, nodeDevices, 
 
             {sourceType != DOWNLOAD_AN_OS
                 ? <FormGroup label={sourceType != EXISTING_DISK_IMAGE_SOURCE ? _("Installation source") : _("Disk image")}
-                             id={installationSourceId + "-group"} fieldId={installationSourceId}
-                             helperText={installationSourceWarning}
-                             helperTextInvalid={validationFailed.source}
-                             validated={validationStateSource}>
+                             id={installationSourceId + "-group"} fieldId={installationSourceId}>
                     {installationSource}
+                    <FormHelper
+                        helperTextInvalid={validationStateSource == "error" && validationFailed.source}
+                        helperText={installationSourceWarning} />
                 </FormGroup>
                 : <>
                     <OSRow os={os}
@@ -446,8 +446,6 @@ class OSRow extends React.Component {
             <FormGroup fieldId='os-select'
                        data-loading={!!isLoading}
                        id="os-select-group"
-                       validated={validationStateOS}
-                       helperTextInvalid={validationFailed.os}
                        label={_("Operating system")}>
                 <PFSelect
                     variant={SelectVariant.typeahead}
@@ -473,6 +471,7 @@ class OSRow extends React.Component {
                     {this.state.osEntries.map(os => (<SelectOption key={os.id}
                                                                   value={this.createValue(os)} />))}
                 </PFSelect>
+                <FormHelper helperTextInvalid={validationStateOS == "error" && validationFailed.os} />
             </FormGroup>
         );
     }
@@ -586,22 +585,20 @@ const OfflineTokenRow = ({ offlineToken, onValueChanged, formValidationFailed })
         }
     };
 
+    const helperTextVariant = formValidationFailed.offlineToken ? "error" : validationState.option;
     return (
         <FormGroup label={_("Offline token")} fieldId="offline-token"
-                   id="offline-token-group"
-                   validated={formValidationFailed.offlineToken ? "error" : validationState.option}
-                   helperText={validationState.option !== "error" && validationState.message}
-                   helperTextInvalid={
-                       formValidationFailed.offlineToken
-                           ? <HelperMessageToken message={formValidationFailed.offlineToken} />
-                           : (validationState.option === "error" && validationState.message)}>
+                   id="offline-token-group">
             <TextArea id="offline-token"
-                      validated={formValidationFailed.offlineToken ? "error" : validationState.option}
+                      validated={helperTextVariant}
                       disabled={disabled}
                       minLength={1}
                       value={offlineToken || ""}
                       onChange={setOfflineTokenHelper}
                       rows="4" />
+            <FormHelper fieldId="offline-token"
+                        helperTextInvalid={formValidationFailed.offlineToken && <HelperMessageToken message={formValidationFailed.offlineToken} />}
+                        helperText={validationState.message} />
         </FormGroup>
     );
 };
@@ -729,13 +726,12 @@ const UsersConfigurationRow = ({
             <>
                 <FormGroup fieldId="user-login"
                            id="create-vm-dialog-user-login-group"
-                           helperTextInvalid={validationFailed.userLogin}
-                           validated={validationFailed.userLogin ? "error" : "default"}
                            label={_("User login")}>
                     <TextInput id='user-login'
                                validated={validationFailed.userLogin ? "error" : "default"}
                                value={userLogin || ''}
                                onChange={value => onValueChanged('userLogin', value)} />
+                    <FormHelper helperTextInvalid={validationFailed.userLogin} />
                 </FormGroup>
                 <PasswordFormFields initial_password={userPassword}
                                     password_label={_("User password")}
@@ -791,9 +787,7 @@ const MemoryRow = ({ memorySize, memorySizeUnit, nodeMaxMemory, minimumMemory, o
 
     return (
         <>
-            <FormGroup label={_("Memory")} validated={validationStateMemory}
-                       helperText={helperText}
-                       helperTextInvalid={validationFailed.memory}
+            <FormGroup label={_("Memory")}
                        fieldId='memory-size' id='memory-group'>
                 <InputGroup>
                     <TextInput id='memory-size' value={memorySize}
@@ -810,6 +804,9 @@ const MemoryRow = ({ memorySize, memorySizeUnit, nodeMaxMemory, minimumMemory, o
                         <FormSelectOption value={units.GiB.name} key={units.GiB.name}
                                           label={_("GiB")} />
                     </FormSelect>
+                    <FormHelper fieldId="memory-size"
+                                helperTextInvalid={validationStateMemory == "error" && validationFailed.memory}
+                                helperText={helperText} />
                 </InputGroup>
             </FormGroup>
         </>
@@ -852,6 +849,7 @@ const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit,
                                                              label={vol.name} />))
         );
     }
+    const helperTextVariant = createMode == NONE && (isVolumeUsed[storageVolume] && isVolumeUsed[storageVolume].length > 0) ? "warning" : "default";
 
     return (
         <>
@@ -872,24 +870,23 @@ const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit,
             { storagePoolName !== "NewVolume" &&
             storagePoolName !== "NoStorage" &&
             <FormGroup label={_("Volume")}
-                       fieldId="storage-volume-select"
-                       helperText={createMode == NONE && (isVolumeUsed[storageVolume] && isVolumeUsed[storageVolume].length > 0) && _("This volume is already used by another VM.")}
-                       validated={createMode == NONE && (isVolumeUsed[storageVolume] && isVolumeUsed[storageVolume].length > 0) ? "warning" : "default"}>
+                       fieldId="storage-volume-select">
                 <FormSelect id="storage-volume-select"
                             value={storageVolume}
-                            validated={createMode == NONE && (isVolumeUsed[storageVolume] && isVolumeUsed[storageVolume].length > 0) ? "warning" : "default"}
+                            validated={helperTextVariant}
                             onChange={value => onValueChanged('storageVolume', value)}>
                     {volumeEntries}
                 </FormSelect>
+                {helperTextVariant == "warning" &&
+                <FormHelper
+                    variant={helperTextVariant}
+                    helperText={_("This volume is already used by another VM.")} />}
             </FormGroup>}
 
             { storagePoolName === "NewVolume" &&
             <>
                 <FormGroup label={_("Storage limit")} fieldId='storage-limit'
-                           id='storage-group'
-                           validated={validationStateStorage}
-                           helperText={helperTextNewVolume}
-                           helperTextInvalid={validationFailed.storage}>
+                           id='storage-group'>
                     <InputGroup>
                         <TextInput id='storage-limit' value={storageSize}
                                    className="size-input"
@@ -906,6 +903,10 @@ const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit,
                                                label={_("GiB")} />
                         </FormSelect>
                     </InputGroup>
+                    <FormHelper
+                        fieldId="storage-limit"
+                        helperTextInvalid={validationStateStorage == "error" && validationFailed.storage}
+                        helperText={helperTextNewVolume} />
                 </FormGroup>
             </>}
         </>

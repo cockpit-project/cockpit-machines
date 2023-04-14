@@ -30,6 +30,7 @@ import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput/
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip/index.js";
 import { HelpIcon } from "@patternfly/react-icons";
 
+import { FormHelper } from 'cockpit-components-form-helper.jsx';
 import { ListingTable } from "cockpit-components-table.jsx";
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { FileAutoComplete } from "cockpit-components-file-autocomplete.jsx";
@@ -210,14 +211,13 @@ const VmFilesystemAddModal = ({ connectionName, objPath, vmName, vmState }) => {
                                        <HelpIcon noVerticalAlign />
                                    </button>
                                </Popover>
-                           }
-                           helperTextInvalid={validationFailed.source}
-                           validated={validationFailed.source ? "error" : "default"}>
+                           }>
                     <FileAutoComplete id={`${idPrefix}-modal-source`}
                                       onChange={value => setSource(value)}
                                       placeholder="/export/to/guest"
                                       superuser="try"
                                       value={source} />
+                    <FormHelper fieldId={`${idPrefix}-modal-source`} helperTextInvalid={validationFailed.source} />
                 </FormGroup>
                 <FormGroup fieldId={`${idPrefix}-modal-mountTag`}
                            label={_("Mount tag")}

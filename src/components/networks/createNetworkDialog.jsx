@@ -27,6 +27,7 @@ import { Grid } from "@patternfly/react-core/dist/esm/layouts/Grid/index.js";
 import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput/index.js";
 import { useDialogs, DialogsContext } from 'dialogs.jsx';
+import { FormHelper } from 'cockpit-components-form-helper.jsx';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { networkCreate } from '../../libvirtApi/network.js';
@@ -123,14 +124,13 @@ const NetworkNameRow = ({ onValueChanged, dialogValues, validationFailed }) => {
     const validationState = validationFailed.name ? 'error' : 'default';
 
     return (
-        <FormGroup fieldId='create-network-name' label={_("Name")}
-                   helperTextInvalid={validationFailed.name}
-                   validated={validationState}>
+        <FormGroup fieldId='create-network-name' label={_("Name")}>
             <TextInput id='create-network-name'
                        placeholder={_("Unique network name")}
                        value={dialogValues.name}
                        validated={validationState}
                        onChange={value => onValueChanged('name', value)} />
+            <FormHelper helperTextInvalid={validationFailed.name} />
         </FormGroup>
     );
 };
@@ -216,19 +216,17 @@ const DhcpRow = ({ ipVersion, rangeStart, rangeEnd, expanded, onValueChanged, va
                           onChange={() => onValueChanged('ipv' + ipVersion + 'DhcpEnabled', !expanded)} />
             </FormGroup>
             {expanded && <Grid hasGutter md={6}>
-                <FormGroup fieldId={'network-ipv' + ipVersion + '-dhcp-range-start'} label={_("Start")}
-                           helperTextInvalid={validationFailed['ipv' + ipVersion + 'DhcpRangeStart']}
-                           validated={validationStart}>
+                <FormGroup fieldId={'network-ipv' + ipVersion + '-dhcp-range-start'} label={_("Start")}>
                     <TextInput id={'network-ipv' + ipVersion + '-dhcp-range-start'}
                                value={rangeStart}
                                onChange={value => onValueChanged('ipv' + ipVersion + 'DhcpRangeStart', value)} />
+                    <FormHelper helperTextInvalid={validationStart == "error" && validationFailed['ipv' + ipVersion + 'DhcpRangeStart']} />
                 </FormGroup>
-                <FormGroup fieldId={'network-ipv' + ipVersion + '-dhcp-range-end'} label={_("End")}
-                           helperTextInvalid={validationFailed['ipv' + ipVersion + 'DhcpRangeEnd']}
-                           validated={validationEnd}>
+                <FormGroup fieldId={'network-ipv' + ipVersion + '-dhcp-range-end'} label={_("End")}>
                     <TextInput id={'network-ipv' + ipVersion + '-dhcp-range-end'}
                                value={rangeEnd}
                                onChange={value => onValueChanged('ipv' + ipVersion + 'DhcpRangeEnd', value)} />
+                    <FormHelper helperTextInvalid={validationEnd == "error" && validationFailed['ipv' + ipVersion + 'DhcpRangeEnd']} />
                 </FormGroup>
             </Grid>}
         </>
@@ -241,21 +239,19 @@ const Ipv4Row = ({ validationFailed, dialogValues, onValueChanged }) => {
 
     return (
         <>
-            <FormGroup fieldId='network-ipv4-address' label={_("IPv4 address")}
-                       helperTextInvalid={validationFailed.ipv4}
-                       validated={validationAddress}>
+            <FormGroup fieldId='network-ipv4-address' label={_("IPv4 address")}>
                 <TextInput id='network-ipv4-address'
                            value={dialogValues.ipv4}
                            validated={validationAddress}
                            onChange={value => onValueChanged('ipv4', value)} />
+                <FormHelper helperTextInvalid={validationAddress == "error" && validationFailed.ipv4} />
             </FormGroup>
-            <FormGroup fieldId='network-ipv4-netmask' label={_("Mask or prefix length")}
-                       helperTextInvalid={validationFailed.netmask}
-                       validated={validationNetmask}>
+            <FormGroup fieldId='network-ipv4-netmask' label={_("Mask or prefix length")}>
                 <TextInput id='network-ipv4-netmask'
                            value={dialogValues.netmask}
                            validated={validationNetmask}
                            onChange={value => onValueChanged('netmask', value)} />
+                <FormHelper helperTextInvalid={validationNetmask == "error" && validationFailed.netmask} />
             </FormGroup>
             <DhcpRow ipVersion='4'
                 rangeStart={dialogValues.ipv4DhcpRangeStart}
@@ -273,21 +269,19 @@ const Ipv6Row = ({ validationFailed, dialogValues, onValueChanged }) => {
 
     return (
         <>
-            <FormGroup fieldId='network-ipv6-address' label={_("IPv6 address")}
-                       helperTextInvalid={validationFailed.ipv6}
-                       validated={validationAddress}>
+            <FormGroup fieldId='network-ipv6-address' label={_("IPv6 address")}>
                 <TextInput id='network-ipv6-address'
                            value={dialogValues.ipv6}
                            validated={validationAddress}
                            onChange={value => onValueChanged('ipv6', value)} />
+                <FormHelper helperTextInvalid={validationAddress == "error" && validationFailed.ipv6} />
             </FormGroup>
-            <FormGroup fieldId='network-ipv6-prefix' label={_("Prefix length")}
-                       helperTextInvalid={validationFailed.prefix}
-                       validated={validationPrefix}>
+            <FormGroup fieldId='network-ipv6-prefix' label={_("Prefix length")}>
                 <TextInput id='network-ipv6-prefix'
                            value={dialogValues.prefix}
                            validated={validationPrefix}
                            onChange={value => onValueChanged('prefix', value)} />
+                <FormHelper helperTextInvalid={validationPrefix == "error" && validationFailed.prefix} />
             </FormGroup>
             <DhcpRow ipVersion='6'
                 rangeStart={dialogValues.ipv6DhcpRangeStart}

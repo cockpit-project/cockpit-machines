@@ -29,6 +29,7 @@ import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput/
 import { Popover, PopoverPosition } from "@patternfly/react-core/dist/esm/components/Popover/index.js";
 import { OutlinedQuestionCircleIcon } from "@patternfly/react-icons";
 
+import { FormHelper } from 'cockpit-components-form-helper.jsx';
 import { domainGetAll, domainMigrateToUri } from '../../libvirtApi/domain.js';
 import { isEmpty, isObjectEmpty } from '../../helpers.js';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
@@ -40,14 +41,13 @@ const _ = cockpit.gettext;
 
 const DestUriRow = ({ validationFailed, destUri, setDestUri }) => {
     return (
-        <FormGroup label={_("Destination URI")} fieldId="dest-uri-input"
-                   helperTextInvalid={validationFailed.destUri}
-                   validated={validationFailed.destUri ? "error" : "default"}>
+        <FormGroup label={_("Destination URI")} fieldId="dest-uri-input">
             <TextInput id='dest-uri-input'
                        validated={validationFailed.destUri ? "error" : "default"}
                        value={destUri}
                        placeholder={cockpit.format(_("Example, $0"), "qemu+ssh://192.0.2.16/system")}
                        onChange={setDestUri} />
+            <FormHelper helperTextInvalid={validationFailed.destUri} />
         </FormGroup>
     );
 };
