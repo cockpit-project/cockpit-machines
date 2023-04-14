@@ -175,7 +175,7 @@ export const VmDisksCard = ({ vm, vms, disks, renderCapacity, supportedDiskBusTy
     if (disks && disks.length > 0) {
         renderCapacityUsed = disks.some(disk => (!!disk.used));
         renderAccess = disks.some(disk => (typeof disk.readonly !== "undefined") || (typeof disk.shareable !== "undefined"));
-        renderAdditional = disks.some(disk => (disk.driver.cache || disk.driver.io || disk.driver.discard || disk.driver.errorPolicy || disk.serial));
+        renderAdditional = disks.some(disk => (disk.driver.cache || disk.driver.io || disk.driver.discard || disk.driver.errorPolicy || disk.driver.type || disk.serial));
 
         if (renderCapacity) {
             if (renderCapacityUsed) {
@@ -226,6 +226,7 @@ export const VmDisksCard = ({ vm, vms, disks, renderCapacity, supportedDiskBusTy
             columns.push({
                 title: <DiskExtras idPrefix={idPrefixRow}
                                    cache={disk.driver.cache}
+                                   type={disk.driver.type}
                                    io={disk.driver.io}
                                    discard={disk.driver.discard}
                                    serial={disk.serial}
