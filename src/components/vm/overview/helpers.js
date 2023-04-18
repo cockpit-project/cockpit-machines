@@ -17,6 +17,12 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
+import cockpit from 'cockpit';
+
+const _ = cockpit.gettext;
+
+export const WATCHDOG_INFO_MESSAGE = _("Watchdogs act when systems stop responding. To use this virtual watchdog device, the guest system also needs to have an additional driver and a running watchdog service.");
+
 export function labelForFirmwarePath(path, guest_arch) {
     /* Copied from virt-manager code:
      * Mapping of UEFI binary names to their associated architectures.
