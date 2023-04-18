@@ -19,11 +19,11 @@
 import cockpit from "cockpit";
 import React from "react";
 
-import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
-import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form/index.js";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js";
-import { TextArea } from "@patternfly/react-core/dist/esm/components/TextArea/index.js";
-import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput/index.js";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
+import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import { TextArea } from "@patternfly/react-core/dist/esm/components/TextArea";
+import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 
 import { FormHelper } from 'cockpit-components-form-helper.jsx';
 import { DialogsContext } from 'dialogs.jsx';

@@ -19,8 +19,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
-import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList/index.js";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
 import { useDialogs } from 'dialogs.jsx';
 
 import cockpit from 'cockpit';

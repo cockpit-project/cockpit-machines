@@ -17,12 +17,12 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { useState, useEffect } from 'react';
-import { AlertGroup } from "@patternfly/react-core/dist/esm/components/AlertGroup/index.js";
-import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
-import { EmptyState, EmptyStateIcon, EmptyStateBody, EmptyStatePrimary } from "@patternfly/react-core/dist/esm/components/EmptyState/index.js";
-import { Progress, ProgressMeasureLocation } from "@patternfly/react-core/dist/esm/components/Progress/index.js";
-import { Text, TextContent } from "@patternfly/react-core/dist/esm/components/Text/index.js";
-import { Title } from "@patternfly/react-core/dist/esm/components/Title/index.js";
+import { AlertGroup } from "@patternfly/react-core/dist/esm/components/AlertGroup";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { EmptyState, EmptyStateIcon, EmptyStateBody, EmptyStatePrimary } from "@patternfly/react-core/dist/esm/components/EmptyState";
+import { Progress, ProgressMeasureLocation } from "@patternfly/react-core/dist/esm/components/Progress";
+import { Text, TextContent } from "@patternfly/react-core/dist/esm/components/Text";
+import { Title } from "@patternfly/react-core/dist/esm/components/Title";
 import { ExclamationCircleIcon, VirtualMachineIcon } from '@patternfly/react-icons';
 import { superuser } from "superuser.js";
 import cockpit from 'cockpit';

@@ -1,11 +1,11 @@
 import React from 'react';
 import cockpit from 'cockpit';
-import { Alert } from "@patternfly/react-core/dist/esm/components/Alert/index.js";
-import { Icon } from "@patternfly/react-core/dist/esm/components/Icon/index.js";
-import { Label } from "@patternfly/react-core/dist/esm/components/Label/index.js";
-import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List/index.js";
-import { Popover } from "@patternfly/react-core/dist/esm/components/Popover/index.js";
-import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip/index.js";
+import { Alert } from "@patternfly/react-core/dist/esm/components/Alert";
+import { Icon } from "@patternfly/react-core/dist/esm/components/Icon";
+import { Label } from "@patternfly/react-core/dist/esm/components/Label";
+import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List";
+import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
+import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { PendingIcon } from "@patternfly/react-icons";
 
 import {

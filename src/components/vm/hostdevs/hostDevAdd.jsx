@@ -24,11 +24,11 @@ import {
     TableHeader,
     TableVariant,
 } from '@patternfly/react-table';
-import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
-import { DescriptionList } from "@patternfly/react-core/dist/esm/components/DescriptionList/index.js";
-import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form/index.js";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js";
-import { Radio } from "@patternfly/react-core/dist/esm/components/Radio/index.js";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { DescriptionList } from "@patternfly/react-core/dist/esm/components/DescriptionList";
+import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
+import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 import { useDialogs } from 'dialogs.jsx';
 
 import { ModalError } from "cockpit-components-inline-notification.jsx";

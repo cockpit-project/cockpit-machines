@@ -17,18 +17,18 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { useCallback, useState, useEffect } from 'react';
-import { Bullseye } from "@patternfly/react-core/dist/esm/layouts/Bullseye/index.js";
-import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
-import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox/index.js";
-import { ExpandableSection } from "@patternfly/react-core/dist/esm/components/ExpandableSection/index.js";
-import { Form, FormGroup, FormHelperText } from "@patternfly/react-core/dist/esm/components/Form/index.js";
-import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect/index.js";
-import { Grid } from "@patternfly/react-core/dist/esm/layouts/Grid/index.js";
-import { HelperText, HelperTextItem } from "@patternfly/react-core/dist/esm/components/HelperText/index.js";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js";
-import { Radio } from "@patternfly/react-core/dist/esm/components/Radio/index.js";
-import { Spinner } from "@patternfly/react-core/dist/esm/components/Spinner/index.js";
-import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput/index.js";
+import { Bullseye } from "@patternfly/react-core/dist/esm/layouts/Bullseye";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
+import { ExpandableSection } from "@patternfly/react-core/dist/esm/components/ExpandableSection";
+import { Form, FormGroup, FormHelperText } from "@patternfly/react-core/dist/esm/components/Form";
+import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
+import { Grid } from "@patternfly/react-core/dist/esm/layouts/Grid";
+import { HelperText, HelperTextItem } from "@patternfly/react-core/dist/esm/components/HelperText";
+import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
+import { Spinner } from "@patternfly/react-core/dist/esm/components/Spinner";
+import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import cockpit from 'cockpit';
 import { DialogsContext } from 'dialogs.jsx';
 import { FormHelper } from 'cockpit-components-form-helper.jsx';

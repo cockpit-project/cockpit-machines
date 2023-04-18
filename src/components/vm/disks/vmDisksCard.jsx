@@ -19,8 +19,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
-import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
-import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex/index.js";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { useDialogs } from 'dialogs.jsx';
 
 import { convertToUnit, toReadableNumber, units, vmId } from "../../../helpers.js";

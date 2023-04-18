@@ -18,16 +18,16 @@
  */
 import React, { useState } from 'react';
 import cockpit from 'cockpit';
-import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
-import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox/index.js";
-import { CodeBlock, CodeBlockCode } from "@patternfly/react-core/dist/esm/components/CodeBlock/index.js";
-import { ExpandableSection } from "@patternfly/react-core/dist/esm/components/ExpandableSection/index.js";
-import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form/index.js";
-import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List/index.js";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js";
-import { Popover } from "@patternfly/react-core/dist/esm/components/Popover/index.js";
-import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput/index.js";
-import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip/index.js";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
+import { CodeBlock, CodeBlockCode } from "@patternfly/react-core/dist/esm/components/CodeBlock";
+import { ExpandableSection } from "@patternfly/react-core/dist/esm/components/ExpandableSection";
+import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
+import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List";
+import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
+import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
+import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { HelpIcon } from "@patternfly/react-icons";
 
 import { FormHelper } from 'cockpit-components-form-helper.jsx';

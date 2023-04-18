@@ -19,13 +19,13 @@
  */
 
 import React from 'react';
-import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
-import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox/index.js";
-import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form/index.js";
-import { FormSelect, FormSelectOption, FormSelectOptionGroup } from "@patternfly/react-core/dist/esm/components/FormSelect/index.js";
-import { Grid } from "@patternfly/react-core/dist/esm/layouts/Grid/index.js";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js";
-import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput/index.js";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
+import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
+import { FormSelect, FormSelectOption, FormSelectOptionGroup } from "@patternfly/react-core/dist/esm/components/FormSelect";
+import { Grid } from "@patternfly/react-core/dist/esm/layouts/Grid";
+import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { useDialogs, DialogsContext } from 'dialogs.jsx';
 import { FormHelper } from 'cockpit-components-form-helper.jsx';
 

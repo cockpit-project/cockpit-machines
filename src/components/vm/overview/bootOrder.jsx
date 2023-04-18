@@ -20,12 +20,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 
-import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
-import { DataList, DataListAction, DataListCell, DataListCheck, DataListControl, DataListItem, DataListItemCells, DataListItemRow } from "@patternfly/react-core/dist/esm/components/DataList/index.js";
-import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex/index.js";
-import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList/index.js";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js";
-import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip/index.js";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { DataList, DataListAction, DataListCell, DataListCheck, DataListControl, DataListItem, DataListItemCells, DataListItemRow } from "@patternfly/react-core/dist/esm/components/DataList";
+import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
+import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
+import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 
 import {
     AngleDownIcon,

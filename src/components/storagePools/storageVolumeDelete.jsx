@@ -19,8 +19,8 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
-import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip/index.js";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 
 import { storageVolumeDelete } from '../../libvirtApi/storageVolume.js';
 import { storagePoolRefresh } from '../../libvirtApi/storagePool.js';
