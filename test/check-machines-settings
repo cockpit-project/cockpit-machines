@@ -456,17 +456,17 @@ class TestMachinesSettings(VirtualMachinesCase):
         if m.image in distrosWithDefaultHostModel:
             cpu_model = "host-passthrough"
         b.select_from_dropdown("#cpu-model-select-group select", cpu_model)
-        b.click("#machines-cpu-modal-dialog-apply")
-        b.wait_not_present("#machines-cpu-modal-dialog")
-        b.wait_visible("#cpu-tooltip")
-
-        # Change vCPUs setting
-        b.click("#vm-subVmTest1-cpu button")  # Open dialog
-        b.wait_visible("#machines-cpu-modal-dialog")
         b.set_input_text("#machines-vcpu-max-field", "3")  # Change values
         b.set_input_text("#machines-vcpu-count-field", "3")
         b.click("#machines-cpu-modal-dialog-apply")  # Save
         b.wait_not_present("#machines-cpu-modal-dialog")
+
+        # Change watchdog
+        b.click("#vm-subVmTest1-watchdog-button")
+        b.wait_visible("#vm-subVmTest1-watchdog-modal")
+        b.click("#reset")
+        b.click("#watchdog-dialog-apply")
+        b.wait_not_present("#vm-subVmTest1-watchdog-modal")
 
         # Shut off domain
         self.performAction("subVmTest1", "forceOff")
@@ -479,8 +479,12 @@ class TestMachinesSettings(VirtualMachinesCase):
         xmllint_elem = f"{dom_xml} | xmllint --xpath 'string(//domain/vcpu)' - 2>&1 || true"
         wait(lambda: "3" in m.execute(xmllint_elem).strip())
 
+        virsh_output = m.execute("virsh dumpxml subVmTest1 | xmllint --xpath '/domain/devices/watchdog/@action' -").strip()
+        self.assertEqual(virsh_output, 'action="reset"')
+
         # Check both changes have been applied
         b.wait_in_text("#vm-subVmTest1-cpu", "3 vCPUs, host passthrough" if m.image in distrosWithDefaultHostModel else "3 vCPUs, host")
+        b.wait_in_text("#vm-subVmTest1-watchdog-state", "Reset")
 
     def testWatchdog(self):
         b = self.browser
