@@ -18,10 +18,10 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Breadcrumb, BreadcrumbItem } from "@patternfly/react-core/dist/esm/components/Breadcrumb/index.js";
-import { Card, CardActions, CardBody, CardHeader, CardTitle } from "@patternfly/react-core/dist/esm/components/Card/index.js";
-import { Page, PageSection } from "@patternfly/react-core/dist/esm/components/Page/index.js";
-import { Text, TextVariants } from "@patternfly/react-core/dist/esm/components/Text/index.js";
+import { Breadcrumb, BreadcrumbItem } from "@patternfly/react-core/dist/esm/components/Breadcrumb";
+import { Card, CardActions, CardBody, CardHeader, CardTitle } from "@patternfly/react-core/dist/esm/components/Card";
+import { Page, PageSection } from "@patternfly/react-core/dist/esm/components/Page";
+import { Text, TextVariants } from "@patternfly/react-core/dist/esm/components/Text";
 import { WithDialogs } from 'dialogs.jsx';
 
 import cockpit from 'cockpit';

@@ -19,12 +19,12 @@
 
 import React from 'react';
 import cockpit from 'cockpit';
-import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
-import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form/index.js";
-import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect/index.js";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js";
-import { Popover } from "@patternfly/react-core/dist/esm/components/Popover/index.js";
-import { Radio } from "@patternfly/react-core/dist/esm/components/Radio/index.js";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
+import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
+import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
+import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 import { InfoAltIcon } from '@patternfly/react-icons';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';

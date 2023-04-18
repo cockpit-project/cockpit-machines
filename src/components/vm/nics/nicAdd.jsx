@@ -19,12 +19,12 @@
 import React from 'react';
 import cockpit from 'cockpit';
 import PropTypes from 'prop-types';
-import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
-import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox/index.js";
-import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form/index.js";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js";
-import { Radio } from "@patternfly/react-core/dist/esm/components/Radio/index.js";
-import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput/index.js";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
+import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
+import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
+import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { DialogsContext } from 'dialogs.jsx';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';

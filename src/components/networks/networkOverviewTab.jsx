@@ -18,15 +18,15 @@
  */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
-import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList/index.js";
-import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex/index.js";
-import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form/index.js";
-import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List/index.js";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js";
-import { Switch } from "@patternfly/react-core/dist/esm/components/Switch/index.js";
-import { Text, TextVariants } from "@patternfly/react-core/dist/esm/components/Text/index.js";
-import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput/index.js";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
+import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
+import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
+import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List";
+import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import { Switch } from "@patternfly/react-core/dist/esm/components/Switch";
+import { Text, TextVariants } from "@patternfly/react-core/dist/esm/components/Text";
+import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import cockpit from 'cockpit';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';

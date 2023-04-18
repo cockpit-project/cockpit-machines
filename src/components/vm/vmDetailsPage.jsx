@@ -20,14 +20,14 @@ import PropTypes from 'prop-types';
 import React, { useEffect } from 'react';
 import cockpit from 'cockpit';
 
-import { Breadcrumb, BreadcrumbItem } from "@patternfly/react-core/dist/esm/components/Breadcrumb/index.js";
-import { CodeBlock, CodeBlockCode } from "@patternfly/react-core/dist/esm/components/CodeBlock/index.js";
-import { Gallery } from "@patternfly/react-core/dist/esm/layouts/Gallery/index.js";
-import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
-import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List/index.js";
-import { Card, CardActions, CardBody, CardFooter, CardHeader, CardTitle } from "@patternfly/react-core/dist/esm/components/Card/index.js";
-import { Page, PageSection, PageSectionVariants } from "@patternfly/react-core/dist/esm/components/Page/index.js";
-import { Popover } from "@patternfly/react-core/dist/esm/components/Popover/index.js";
+import { Breadcrumb, BreadcrumbItem } from "@patternfly/react-core/dist/esm/components/Breadcrumb";
+import { CodeBlock, CodeBlockCode } from "@patternfly/react-core/dist/esm/components/CodeBlock";
+import { Gallery } from "@patternfly/react-core/dist/esm/layouts/Gallery";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List";
+import { Card, CardActions, CardBody, CardFooter, CardHeader, CardTitle } from "@patternfly/react-core/dist/esm/components/Card";
+import { Page, PageSection, PageSectionVariants } from "@patternfly/react-core/dist/esm/components/Page";
+import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
 import { ExpandIcon, HelpIcon } from '@patternfly/react-icons';
 import { WithDialogs } from 'dialogs.jsx';
 

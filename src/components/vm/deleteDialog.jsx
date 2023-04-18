@@ -19,10 +19,10 @@
 
 import cockpit from 'cockpit';
 import React from 'react';
-import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
-import { DataList, DataListCell, DataListCheck, DataListItem, DataListItemCells, DataListItemRow } from "@patternfly/react-core/dist/esm/components/DataList/index.js";
-import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form/index.js";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal/index.js";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { DataList, DataListCell, DataListCheck, DataListItem, DataListItemCells, DataListItemRow } from "@patternfly/react-core/dist/esm/components/DataList";
+import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
+import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { DialogsContext } from 'dialogs.jsx';
 

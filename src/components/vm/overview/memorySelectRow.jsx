@@ -18,12 +18,12 @@
  */
 import React from 'react';
 import cockpit from 'cockpit';
-import { InputGroup } from "@patternfly/react-core/dist/esm/components/InputGroup/index.js";
-import { FormGroup } from "@patternfly/react-core/dist/esm/components/Form/index.js";
-import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect/index.js";
-import { Grid, GridItem } from "@patternfly/react-core/dist/esm/layouts/Grid/index.js";
-import { Slider } from "@patternfly/react-core/dist/esm/components/Slider/index.js";
-import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput/index.js";
+import { InputGroup } from "@patternfly/react-core/dist/esm/components/InputGroup";
+import { FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
+import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
+import { Grid, GridItem } from "@patternfly/react-core/dist/esm/layouts/Grid";
+import { Slider } from "@patternfly/react-core/dist/esm/components/Slider";
+import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 
 import { digitFilter, units } from "../../../helpers.js";
 

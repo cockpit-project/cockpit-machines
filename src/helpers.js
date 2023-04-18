@@ -17,7 +17,7 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as dfnlocales from 'date-fns/locale/index.js';
+import * as dfnlocales from 'date-fns/locale';
 import { formatRelative } from 'date-fns';
 
 import cockpit from 'cockpit';

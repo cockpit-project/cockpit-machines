@@ -20,10 +20,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 
-import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
-import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList/index.js";
-import { Dropdown, DropdownItem, KebabToggle } from "@patternfly/react-core/dist/esm/components/Dropdown/index.js";
-import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip/index.js";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
+import { Dropdown, DropdownItem, KebabToggle } from "@patternfly/react-core/dist/esm/components/Dropdown";
+import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 
 import { useDialogs } from 'dialogs.jsx';
 import { domainDeleteStorage, domainDetachDisk, domainGet } from '../../../libvirtApi/domain.js';

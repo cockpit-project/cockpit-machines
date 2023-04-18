@@ -19,11 +19,11 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup } from "@patternfly/react-core/dist/esm/components/Form/index.js";
-import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect/index.js";
-import { Grid } from "@patternfly/react-core/dist/esm/layouts/Grid/index.js";
-import { InputGroup } from "@patternfly/react-core/dist/esm/components/InputGroup/index.js";
-import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput/index.js";
+import { FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
+import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
+import { Grid } from "@patternfly/react-core/dist/esm/layouts/Grid";
+import { InputGroup } from "@patternfly/react-core/dist/esm/components/InputGroup";
+import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 
 import { FormHelper } from 'cockpit-components-form-helper.jsx';
 import { convertToUnit, units, digitFilter } from '../../helpers.js';

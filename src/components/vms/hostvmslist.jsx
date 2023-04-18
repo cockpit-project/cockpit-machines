@@ -20,15 +20,15 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 
-import { Button } from "@patternfly/react-core/dist/esm/components/Button/index.js";
-import { Card, CardActions, CardBody, CardHeader, CardTitle } from "@patternfly/react-core/dist/esm/components/Card/index.js";
-import { Divider } from "@patternfly/react-core/dist/esm/components/Divider/index.js";
-import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput/index.js";
-import { Gallery } from "@patternfly/react-core/dist/esm/layouts/Gallery/index.js";
-import { Toolbar, ToolbarContent, ToolbarItem } from "@patternfly/react-core/dist/esm/components/Toolbar/index.js";
-import { Select, SelectOption, SelectVariant } from "@patternfly/react-core/dist/esm/components/Select/index.js";
-import { Page, PageSection } from "@patternfly/react-core/dist/esm/components/Page/index.js";
-import { Text, TextVariants } from "@patternfly/react-core/dist/esm/components/Text/index.js";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { Card, CardActions, CardBody, CardHeader, CardTitle } from "@patternfly/react-core/dist/esm/components/Card";
+import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
+import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
+import { Gallery } from "@patternfly/react-core/dist/esm/layouts/Gallery";
+import { Toolbar, ToolbarContent, ToolbarItem } from "@patternfly/react-core/dist/esm/components/Toolbar";
+import { Select, SelectOption, SelectVariant } from "@patternfly/react-core/dist/esm/components/Select";
+import { Page, PageSection } from "@patternfly/react-core/dist/esm/components/Page";
+import { Text, TextVariants } from "@patternfly/react-core/dist/esm/components/Text";
 import { WithDialogs } from 'dialogs.jsx';
 
 import VmActions from '../vm/vmActions.jsx';
