@@ -32,6 +32,7 @@ import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { domainRemoveWatchdog, domainSetWatchdog } from "../../../libvirtApi/domain.js";
 import { rephraseUI } from "../../../helpers.js";
 import { NeedsShutdownAlert, NeedsShutdownTooltip, needsShutdownWatchdog } from "../../common/needsShutdown.jsx";
+import { WATCHDOG_INFO_MESSAGE } from './helpers.js';
 
 const _ = cockpit.gettext;
 
@@ -145,7 +146,7 @@ export const WatchdogModal = ({ vm, isWatchdogAttached, idPrefix }) => {
                variant="small"
                onClose={Dialogs.close}
                title={isWatchdogAttached ? _("Edit watchdog device type") : _("Add watchdog device type")}
-               description={_("Watchdogs act when systems stop responding. To use this virtual watchdog device, the guest system also needs to have an additional driver and a running watchdog service.")}
+               description={WATCHDOG_INFO_MESSAGE}
                isOpen
                footer={
                    <>

@@ -26,6 +26,7 @@ import { DescriptionList, DescriptionListDescription, DescriptionListGroup, Desc
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { Switch } from "@patternfly/react-core/dist/esm/components/Switch";
 import { DialogsContext } from 'dialogs.jsx';
+import { HelpIcon } from '@patternfly/react-icons';
 
 import { CPUModal } from './cpuModal.jsx';
 import MemoryModal from './memoryModal.jsx';
@@ -43,6 +44,7 @@ import { needsShutdownCpuModel, NeedsShutdownTooltip, needsShutdownVcpu } from '
 import { StateIcon } from '../../common/stateIcon.jsx';
 import { domainChangeAutostart, domainGet } from '../../../libvirtApi/domain.js';
 import store from '../../../store.js';
+import { WATCHDOG_INFO_MESSAGE } from './helpers.js';
 
 import '../../common/overviewCard.css';
 
@@ -192,7 +194,24 @@ class VmOverviewCard extends React.Component {
                         </DescriptionListGroup>}
 
                         <DescriptionListGroup>
-                            <DescriptionListTerm>{_("Watchdog")}</DescriptionListTerm>
+                            <Flex spaceItems={{ default: 'spaceItemsXs' }} alignItems={{ default: 'alignItemsCenter' }}>
+                                <FlexItem>
+                                    <DescriptionListTerm>
+                                        {_("Watchdog")}
+                                    </DescriptionListTerm>
+                                </FlexItem>
+                                <FlexItem>
+                                    <Popover alertSeverityVariant="info"
+                                        position="right"
+                                        bodyContent={WATCHDOG_INFO_MESSAGE}>
+                                        <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
+                                            <Icon className="overview-icon" status="info">
+                                                <HelpIcon noVerticalAlign />
+                                            </Icon>
+                                        </button>
+                                    </Popover>
+                                </FlexItem>
+                            </Flex>
                             <DescriptionListDescription id={`${idPrefix}-watchdog`}>
                                 <WatchdogLink vm={vm} idPrefix={idPrefix} />
                             </DescriptionListDescription>
