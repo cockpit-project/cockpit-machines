@@ -48,7 +48,7 @@ export class StoragePoolList extends React.Component {
                 <Page>
                     <PageBreadcrumb stickyOnBreakpoint={{ default: "top" }}>
                         <Breadcrumb className='machines-listing-breadcrumb'>
-                            <BreadcrumbItem to='#'>
+                            <BreadcrumbItem to={'#' + cockpit.location.encode('/', cockpit.location.options.status ? { status: cockpit.location.options.status } : {})}>
                                 {_("Virtual machines")}
                             </BreadcrumbItem>
                             <BreadcrumbItem isActive>

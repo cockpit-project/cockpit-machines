@@ -47,7 +47,7 @@ export class NetworkList extends React.Component {
                 <Page>
                     <PageBreadcrumb stickyOnBreakpoint={{ default: "top" }}>
                         <Breadcrumb variant={PageSectionVariants.light} className='machines-listing-breadcrumb'>
-                            <BreadcrumbItem to='#'>
+                            <BreadcrumbItem to={'#' + cockpit.location.encode('/', cockpit.location.options.status ? { status: cockpit.location.options.status } : {})}>
                                 {_("Virtual machines")}
                             </BreadcrumbItem>
                             <BreadcrumbItem isActive>

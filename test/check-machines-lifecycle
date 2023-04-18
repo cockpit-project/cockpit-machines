@@ -278,6 +278,36 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         b.wait_in_text(".pf-c-popover", "VM subVmTest2 failed to start")
         b.click('#vm-subVmTest2-system-state button[aria-label=Close]')
 
+    def testVmFilterSettingsOnNavigate(self):
+        b = self.browser
+
+        self.createVm("subVmTest1")
+        self.createVm("subVmTest2", running=False)
+
+        self.login_and_go("/machines")
+        self.waitPageInit()
+
+        b.select_PF4("#vm-state-select-toggle", "Running")
+        b.wait(lambda: "status=running" in b.eval_js("window.location.href"))
+        b.reload()
+        b.enter_page("/machines")
+        b.wait_in_text("#vm-state-select-toggle .pf-c-select__toggle-text", "Running")
+
+        self.goToVmPage("subVmTest1")
+        b.wait(lambda: "vm?name=subVmTest1&connection=system&status=running" in b.eval_js("window.location.href"))
+        self.goToMainPage()
+        b.wait(lambda: "status=running" in b.eval_js("window.location.href"))
+
+        b.click("#card-pf-storage-pools")
+        b.wait(lambda: "storages?status=running" in b.eval_js("window.location.href"))
+        self.goToMainPage()
+        b.wait(lambda: "status=running" in b.eval_js("window.location.href"))
+
+        b.click("#card-pf-networks")
+        b.wait(lambda: "networks?status=running" in b.eval_js("window.location.href"))
+        self.goToMainPage()
+        b.wait(lambda: "status=running" in b.eval_js("window.location.href"))
+
     def testCloneSessionConnection(self):
         self.testClone(connectionName='session')
 

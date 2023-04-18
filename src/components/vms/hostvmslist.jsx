@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 
@@ -29,6 +29,7 @@ import { Toolbar, ToolbarContent, ToolbarItem } from "@patternfly/react-core/dis
 import { Select, SelectOption } from "@patternfly/react-core/dist/esm/deprecated/components/Select";
 import { Page, PageSection } from "@patternfly/react-core/dist/esm/components/Page";
 import { WithDialogs } from 'dialogs.jsx';
+import { usePageLocation } from 'hooks';
 
 import VmActions from '../vm/vmActions.jsx';
 import { updateVm } from '../../actions/store-actions.js';
@@ -65,11 +66,22 @@ const VmState = ({ vm, dismissError }) => {
 
 const _ = cockpit.gettext;
 
+function getStatusFilterOption(options) {
+    if (!options.status) {
+        const defaultSelection = { value: _("All"), toString: function() { return this.value } };
+        return defaultSelection;
+    }
+
+    return { value: rephraseUI('resourceStates', options.status), apiState: options.status, toString: function() { return this.value } };
+}
+
 /**
  * List of all VMs defined on this host
  */
 const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddErrorNotification }) => {
-    const [statusSelected, setStatusSelected] = useState({ value: _("All"), toString: function() { return this.value } });
+    const { options } = usePageLocation();
+
+    const [statusSelected, setStatusSelected] = useState(getStatusFilterOption(options));
     const [currentTextFilter, setCurrentTextFilter] = useState("");
     const [statusIsExpanded, setStatusIsExpanded] = useState(false);
     const combinedVms = [...vms, ...dummyVmsFilter(vms, ui.vms)];
@@ -92,6 +104,19 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                     .map(state => { return { value: rephraseUI('resourceStates', state), apiState: state } })
                     .sort((a, b) => (prioritySorting[a.apiState] || 0) - (prioritySorting[b.apiState] || 0) || a.value.localeCompare(b.value)));
 
+    useEffect(() => {
+        setStatusSelected(getStatusFilterOption(options));
+    }, [options]);
+
+    const onStatusFilterChange = (selection) => {
+        if (selection.value === _("All")) {
+            delete options.status;
+            cockpit.location.go([], { ...options });
+        } else {
+            cockpit.location.go([], { ...options, status: selection.apiState });
+        }
+    };
+
     const toolBar = (
         <Toolbar>
             <ToolbarContent>
@@ -109,7 +134,10 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                         <Select variant="single"
                                 toggleId="vm-state-select-toggle"
                                 onToggle={(_event, statusIsExpanded) => setStatusIsExpanded(statusIsExpanded)}
-                                onSelect={(event, selection) => { setStatusIsExpanded(false); setStatusSelected(selection) }}
+                                onSelect={(event, selection) => {
+                                    setStatusIsExpanded(false);
+                                    onStatusFilterChange(selection);
+                                }}
                                 selections={statusSelected}
                                 isOpen={statusIsExpanded}
                                 aria-labelledby="vm-state-select">
@@ -167,7 +195,7 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                                                               isInline
                                                               isDisabled={vm.isUi && !vm.createInProgress}
                                                               component="a"
-                                                              href={'#' + cockpit.format("vm?name=$0&connection=$1", encodeURIComponent(vm.name), vm.connectionName)}
+                                                              href={'#' + cockpit.format(`vm?name=$0&connection=$1${options.status ? '&status=$2' : ''}`, encodeURIComponent(vm.name), vm.connectionName, options.status)}
                                                               className="vm-list-item-name">{vm.name}</Button>
                                                 },
                                                 { title: rephraseUI('connections', vm.connectionName) },

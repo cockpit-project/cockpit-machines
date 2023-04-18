@@ -42,11 +42,11 @@ export class AggregateStatusCards extends React.Component {
                       className='ct-card-info'
                       isSelectable
                       onKeyDown={event => this.onCardSelect(event, 'storages')}
-                      onClick={() => cockpit.location.go(['storages'])}>
+                      onClick={() => cockpit.location.go(['storages'], cockpit.location.options)}>
                     <CardHeader>
                         <Flex alignItems={{ default: 'alignItemsCenter' }}>
                             <ServerIcon size="md" />
-                            <Button onClick={() => cockpit.location.go(['storages'])} variant="link">
+                            <Button variant="link">
                                 {cockpit.format(cockpit.ngettext("$0 Storage pool", "$0 Storage pools", this.props.storagePools.length), this.props.storagePools.length)}
                             </Button>
                         </Flex>
@@ -67,11 +67,11 @@ export class AggregateStatusCards extends React.Component {
                       className='ct-card-info'
                       isSelectable
                       onKeyDown={event => this.onCardSelect(event, 'networks')}
-                      onClick={() => cockpit.location.go(['networks'])}>
+                      onClick={() => cockpit.location.go(['networks'], cockpit.location.options)}>
                     <CardHeader>
                         <Flex alignItems={{ default: 'alignItemsCenter' }}>
                             <NetworkIcon size="md" />
-                            <Button onClick={() => cockpit.location.go(['networks'])} variant="link">
+                            <Button variant="link">
                                 {cockpit.format(cockpit.ngettext("$0 Network", "$0 Networks", this.props.networks.length), this.props.networks.length)}
                             </Button>
                         </Flex>
