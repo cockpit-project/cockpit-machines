@@ -804,10 +804,10 @@ const MemoryRow = ({ memorySize, memorySizeUnit, nodeMaxMemory, minimumMemory, o
                         <FormSelectOption value={units.GiB.name} key={units.GiB.name}
                                           label={_("GiB")} />
                     </FormSelect>
-                    <FormHelper fieldId="memory-size"
-                                helperTextInvalid={validationStateMemory == "error" && validationFailed.memory}
-                                helperText={helperText} />
                 </InputGroup>
+                <FormHelper fieldId="memory-size"
+                            helperTextInvalid={validationStateMemory == "error" && validationFailed.memory}
+                            helperText={helperText} />
             </FormGroup>
         </>
     );
