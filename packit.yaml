@@ -16,6 +16,15 @@ actions:
   create-archive: make dist
 
 jobs:
+  - job: copr_build
+    trigger: pull_request
+    targets:
+    - fedora-37
+    - fedora-38
+    - fedora-development
+    - centos-stream-8
+    - centos-stream-9
+  
   - job: tests
     trigger: pull_request
     targets:
