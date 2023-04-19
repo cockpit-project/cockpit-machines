@@ -26,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-11 02:51+0000\n"
+"POT-Creation-Date: 2023-04-18 02:51+0000\n"
 "PO-Revision-Date: 2021-03-16 19:21+0000\n"
 "Last-Translator: Stein-Aksel Basma <stabasm@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translate.fedoraproject.org/"
@@ -107,7 +107,7 @@ msgid ""
 msgstr ""
 
 #: src/components/vm/disks/diskEdit.jsx:115
-#: src/components/vm/disks/vmDisksCard.jsx:185
+#: src/components/vm/disks/vmDisksCard.jsx:188
 msgid "Access"
 msgstr "Tilgang"
 
@@ -180,7 +180,7 @@ msgstr "Bare redigerbar når gjesten er slått av"
 msgid "Adding this disk will change its access mode to shared."
 msgstr ""
 
-#: src/components/vm/disks/vmDisksCard.jsx:189
+#: src/components/vm/disks/vmDisksCard.jsx:192
 msgid "Additional"
 msgstr ""
 
@@ -274,7 +274,7 @@ msgstr "Innstillinger for oppstartsrekkefølge kunne ikke lagres"
 #: src/components/vm/overview/bootOrder.jsx:152
 #: src/components/vm/disks/diskAdd.jsx:229
 #: src/components/vm/disks/diskEdit.jsx:90
-#: src/components/vm/disks/vmDisksCard.jsx:183
+#: src/components/vm/disks/vmDisksCard.jsx:186
 msgid "Bus"
 msgstr "Buss"
 
@@ -297,11 +297,11 @@ msgstr "CPU type"
 
 #: src/components/vm/disks/diskAdd.jsx:218
 #: src/components/vm/disks/diskEdit.jsx:60
-#: src/components/vm/disks/vmDiskColumns.jsx:99
+#: src/components/vm/disks/vmDiskColumns.jsx:101
 msgid "Cache"
 msgstr "Hurtigbuffer"
 
-#: src/components/common/deleteResource.jsx:78
+#: src/components/common/deleteResource.jsx:91
 #: src/components/networks/createNetworkDialog.jsx:426
 #: src/components/networks/networkOverviewTab.jsx:238
 #: src/components/storagePools/createStoragePoolDialog.jsx:449
@@ -329,7 +329,7 @@ msgstr "Hurtigbuffer"
 msgid "Cancel"
 msgstr "Avbryt"
 
-#: src/components/vm/disks/vmDisksCard.jsx:181
+#: src/components/vm/disks/vmDisksCard.jsx:184
 msgid "Capacity"
 msgstr "Kapasitet"
 
@@ -391,7 +391,7 @@ msgstr "Lukk"
 msgid "Cloud base image"
 msgstr ""
 
-#: src/components/common/deleteResource.jsx:84
+#: src/components/common/deleteResource.jsx:97
 msgid "Confirm this action"
 msgstr "Bekreft denne handlingen"
 
@@ -445,6 +445,12 @@ msgstr "$0 kunne ikke slettes"
 #, fuzzy
 #| msgid "Could not revert to snapshot"
 msgid "Could not delete all storage for $0"
+msgstr "Kunne ikke gå tilbake til øyeblikksbildet"
+
+#: src/components/vm/disks/vmDiskColumns.jsx:132
+#, fuzzy
+#| msgid "Could not revert to snapshot"
+msgid "Could not delete disk's storage"
 msgstr "Kunne ikke gå tilbake til øyeblikksbildet"
 
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:71
@@ -577,9 +583,9 @@ msgstr "DHCP-område"
 msgid "Deactivate"
 msgstr "Deaktiver"
 
-#: src/components/common/deleteResource.jsx:75
-#: src/components/common/deleteResource.jsx:120
-#: src/components/common/deleteResource.jsx:131
+#: src/components/common/deleteResource.jsx:79
+#: src/components/common/deleteResource.jsx:133
+#: src/components/common/deleteResource.jsx:144
 #: src/components/networks/network.jsx:150
 #: src/components/networks/network.jsx:153
 #: src/components/storagePools/storagePoolDelete.jsx:203
@@ -682,8 +688,8 @@ msgstr ""
 #: src/components/vm/overview/bootOrder.jsx:136
 #: src/components/vm/overview/bootOrder.jsx:139
 #: src/components/vm/disks/diskAdd.jsx:353
-#: src/components/vm/disks/vmDiskColumns.jsx:38
-#: src/components/vm/disks/vmDisksCard.jsx:169
+#: src/components/vm/disks/vmDiskColumns.jsx:40
+#: src/components/vm/disks/vmDisksCard.jsx:172
 msgid "Device"
 msgstr "Enhet"
 
@@ -712,7 +718,7 @@ msgstr "Koblet fra seriekonsollet. Klikk på tilkoblingsknappen."
 msgid "Disk"
 msgstr "Disker"
 
-#: src/components/vm/disks/vmDiskColumns.jsx:126
+#: src/components/vm/disks/vmDiskColumns.jsx:146
 #, fuzzy
 #| msgid "Disk settings could not be saved"
 msgid "Disk $0 could not be removed"
@@ -834,7 +840,7 @@ msgstr ""
 msgid "Editing transient network interfaces is not allowed"
 msgstr ""
 
-#: src/components/vm/disks/vmDiskColumns.jsx:161
+#: src/components/vm/disks/vmDiskColumns.jsx:192
 #: src/components/vm/disks/mediaEject.jsx:103
 msgid "Eject"
 msgstr ""
@@ -947,7 +953,7 @@ msgid "Fewer than the maximum number of virtual CPUs should be enabled."
 msgstr ""
 
 #: src/components/vm/overview/bootOrder.jsx:96
-#: src/components/vm/disks/vmDiskColumns.jsx:37
+#: src/components/vm/disks/vmDiskColumns.jsx:39
 msgid "File"
 msgstr "Fil"
 
@@ -1059,7 +1065,7 @@ msgstr ""
 #: src/components/storagePools/createStoragePoolDialog.jsx:122
 #: src/components/storagePools/storagePoolOverviewTab.jsx:34
 #: src/components/vm/overview/bootOrder.jsx:101
-#: src/components/vm/disks/vmDiskColumns.jsx:42
+#: src/components/vm/disks/vmDiskColumns.jsx:44
 msgid "Host"
 msgstr "Vert"
 
@@ -1077,7 +1083,7 @@ msgstr "Innstillinger for oppstartsrekkefølge kunne ikke lagres"
 msgid "Host device will be removed from $0:"
 msgstr ""
 
-#: src/components/vm/vmDetailsPage.jsx:162
+#: src/components/vm/vmDetailsPage.jsx:163
 #, fuzzy
 #| msgid "No network devices"
 msgid "Host devices"
@@ -1224,7 +1230,7 @@ msgid "Inject a non-maskable interrupt"
 msgstr ""
 
 #: src/components/vm/disks/diskAdd.jsx:862
-#: src/components/vm/disks/vmDiskColumns.jsx:153
+#: src/components/vm/disks/vmDiskColumns.jsx:184
 #, fuzzy
 #| msgid "Ctrl+Insert"
 msgid "Insert"
@@ -1611,7 +1617,7 @@ msgstr "Innstillinger for nettverksgrensesnitt kunne ikke lagres"
 msgid "Network interface settings could not be saved"
 msgstr "Innstillinger for nettverksgrensesnitt kunne ikke lagres"
 
-#: src/components/vm/vmDetailsPage.jsx:153
+#: src/components/vm/vmDetailsPage.jsx:154
 #, fuzzy
 #| msgid "Add network interface"
 msgid "Network interfaces"
@@ -1663,7 +1669,7 @@ msgstr "Ingen beskrivelse"
 msgid "No directories shared between the host and this VM"
 msgstr ""
 
-#: src/components/vm/disks/vmDisksCard.jsx:247
+#: src/components/vm/disks/vmDisksCard.jsx:262
 msgid "No disks defined for this VM"
 msgstr "Ingen disker definert for denne VMen"
 
@@ -1881,7 +1887,7 @@ msgstr "Start den virtuelle maskinen for å få tilgang til konsollen."
 #: src/components/vm/deleteDialog.jsx:68
 #: src/components/vm/overview/bootOrder.jsx:99
 #: src/components/vm/disks/diskAdd.jsx:154
-#: src/components/vm/disks/vmDiskColumns.jsx:40
+#: src/components/vm/disks/vmDiskColumns.jsx:42
 #: src/components/vm/disks/mediaEject.jsx:85
 msgid "Pool"
 msgstr ""
@@ -1907,7 +1913,7 @@ msgstr ""
 #: src/components/vm/nics/vmNicsCard.jsx:291
 #: src/components/vm/overview/bootOrder.jsx:102
 #: src/components/vm/overview/bootOrder.jsx:118
-#: src/components/vm/disks/vmDiskColumns.jsx:43
+#: src/components/vm/disks/vmDiskColumns.jsx:45
 msgid "Port"
 msgstr "Port"
 
@@ -1956,7 +1962,7 @@ msgstr "Profil"
 #: src/components/vm/hostdevs/hostDevCard.jsx:114
 #: src/components/vm/overview/bootOrder.jsx:98
 #: src/components/vm/overview/bootOrder.jsx:159
-#: src/components/vm/disks/vmDiskColumns.jsx:39
+#: src/components/vm/disks/vmDiskColumns.jsx:41
 msgid "Protocol"
 msgstr "Protokoll"
 
@@ -1983,7 +1989,7 @@ msgid "Range"
 msgstr "Endre"
 
 #: src/components/vm/disks/diskEdit.jsx:123
-#: src/components/vm/disks/vmDisksCard.jsx:213
+#: src/components/vm/disks/vmDisksCard.jsx:216
 msgid "Read-only"
 msgstr ""
 
@@ -2007,12 +2013,16 @@ msgstr ""
 #: src/components/vm/overview/watchdog.jsx:100
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:58
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:67
-#: src/components/vm/disks/vmDiskColumns.jsx:125
-#: src/components/vm/disks/vmDiskColumns.jsx:188
+#: src/components/vm/disks/vmDiskColumns.jsx:145
+#: src/components/vm/disks/vmDiskColumns.jsx:211
 msgid "Remove"
 msgstr "Fjern"
 
-#: src/components/vm/disks/vmDiskColumns.jsx:124
+#: src/components/vm/disks/vmDiskColumns.jsx:158
+msgid "Remove and delete file"
+msgstr ""
+
+#: src/components/vm/disks/vmDiskColumns.jsx:144
 #, fuzzy
 #| msgid "Removing $0"
 msgid "Remove disk from VM?"
@@ -2138,7 +2148,7 @@ msgstr "Send nøkkel"
 msgid "Send non-maskable interrupt"
 msgstr ""
 
-#: src/components/vm/disks/vmDiskColumns.jsx:100
+#: src/components/vm/disks/vmDiskColumns.jsx:102
 #, fuzzy
 #| msgid "Serial console"
 msgid "Serial"
@@ -2178,11 +2188,11 @@ msgstr ""
 msgid "Share a host directory with the guest"
 msgstr ""
 
-#: src/components/vm/vmDetailsPage.jsx:183
+#: src/components/vm/vmDetailsPage.jsx:184
 msgid "Shared directories"
 msgstr ""
 
-#: src/components/vm/vmDetailsPage.jsx:185
+#: src/components/vm/vmDetailsPage.jsx:186
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:179
 msgid "Shared host directories need to be manually mounted inside the VM"
 msgstr ""
@@ -2246,7 +2256,7 @@ msgstr "Etter å ha slettet øyeblikksbildet, vil alt innfanget innhold gå tapt
 msgid "Snapshot failed to be created"
 msgstr "Øyeblikksbilde kunne ikke opprettes"
 
-#: src/components/vm/vmDetailsPage.jsx:171
+#: src/components/vm/vmDetailsPage.jsx:172
 msgid "Snapshots"
 msgstr "Øyeblikksbilder"
 
@@ -2264,7 +2274,7 @@ msgstr ""
 #: src/components/vm/nics/nicBody.jsx:197
 #: src/components/vm/disks/diskAdd.jsx:752
 #: src/components/vm/disks/diskAdd.jsx:788
-#: src/components/vm/disks/vmDisksCard.jsx:187
+#: src/components/vm/disks/vmDisksCard.jsx:190
 msgid "Source"
 msgstr "Kilde"
 
@@ -2423,7 +2433,7 @@ msgstr ""
 
 #: src/components/vm/hostdevs/hostDevCard.jsx:109
 #: src/components/vm/overview/bootOrder.jsx:153
-#: src/components/vm/disks/vmDiskColumns.jsx:129
+#: src/components/vm/disks/vmDiskColumns.jsx:149
 msgid "Target"
 msgstr "Mål"
 
@@ -2451,7 +2461,7 @@ msgid "The VM $0 is running and will be forced off before deletion."
 msgstr "VM kjører og vil bli tvunget avslått før sletting."
 
 #: src/components/vm/nics/vmNicsCard.jsx:385
-#: src/components/vm/disks/vmDiskColumns.jsx:187
+#: src/components/vm/disks/vmDiskColumns.jsx:219
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr "VM må kjøre eller slås av for å koble fra denne enheten"
 
@@ -2504,7 +2514,7 @@ msgstr ""
 msgid "This VM is transient. Shut it down if you wish to delete it."
 msgstr ""
 
-#: src/components/vm/disks/vmDiskColumns.jsx:127
+#: src/components/vm/disks/vmDiskColumns.jsx:147
 msgid "This disk will be removed from $0:"
 msgstr ""
 
@@ -2648,7 +2658,7 @@ msgid ""
 "sharing storage."
 msgstr ""
 
-#: src/components/vm/disks/vmDisksCard.jsx:179
+#: src/components/vm/disks/vmDisksCard.jsx:182
 msgid "Used"
 msgstr "Brukt"
 
@@ -2786,7 +2796,7 @@ msgstr "Leverandør"
 #: src/components/networks/networkList.jsx:53
 #: src/components/storagePools/storagePoolList.jsx:54
 #: src/components/vm/vmDetailsPage.jsx:89
-#: src/components/vm/vmDetailsPage.jsx:243 src/manifest.json:0
+#: src/components/vm/vmDetailsPage.jsx:244 src/manifest.json:0
 msgid "Virtual machines"
 msgstr "Virtuelle maskiner"
 
@@ -2810,7 +2820,7 @@ msgstr "Virtualiseringstjeneste (libvirt) er ikke aktiv"
 #: src/components/vm/deleteDialog.jsx:65
 #: src/components/vm/overview/bootOrder.jsx:100
 #: src/components/vm/disks/diskAdd.jsx:117
-#: src/components/vm/disks/vmDiskColumns.jsx:41
+#: src/components/vm/disks/vmDiskColumns.jsx:43
 #: src/components/vm/disks/mediaEject.jsx:89
 msgid "Volume"
 msgstr "Volum"
@@ -2845,12 +2855,12 @@ msgid ""
 msgstr ""
 
 #: src/components/vm/disks/diskEdit.jsx:132
-#: src/components/vm/disks/vmDisksCard.jsx:213
+#: src/components/vm/disks/vmDisksCard.jsx:216
 msgid "Writeable"
 msgstr "Skrivbar"
 
 #: src/components/vm/disks/diskEdit.jsx:141
-#: src/components/vm/disks/vmDisksCard.jsx:213
+#: src/components/vm/disks/vmDisksCard.jsx:216
 msgid "Writeable and shared"
 msgstr "Skrivbar og delt"
 
@@ -2974,17 +2984,17 @@ msgstr "mcast"
 
 #: src/components/common/machinesConnectionSelector.jsx:82
 #: src/components/vm/nics/nicBody.jsx:110
-#: src/components/vm/vmDetailsPage.jsx:198
+#: src/components/vm/vmDetailsPage.jsx:199
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:193
 msgid "more info"
 msgstr ""
 
-#: src/components/vm/vmDetailsPage.jsx:194
+#: src/components/vm/vmDetailsPage.jsx:195
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:189
 msgid "mount point: The mount point inside the guest"
 msgstr ""
 
-#: src/components/vm/vmDetailsPage.jsx:193
+#: src/components/vm/vmDetailsPage.jsx:194
 msgid "mount tag: The tag associated to the exported mount point"
 msgstr ""
 
