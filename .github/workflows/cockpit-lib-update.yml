@@ -2,11 +2,15 @@ name: cockpit-lib-update
 on:
   schedule:
     - cron: '0 2 * * 4'
-  # can be run manually on https://github.com/cockpit-project/starter-kit/actions
+  # can be run manually on https://github.com/cockpit-project/cockpit-machines/actions
   workflow_dispatch:
 jobs:
   cockpit-lib-update:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      statuses: write
     steps:
       - name: Set up dependencies
         run: |
