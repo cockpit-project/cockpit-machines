@@ -377,6 +377,7 @@ const SourceRow = ({ connectionName, source, sourceType, networks, nodeDevices, 
                              id={installationSourceId + "-group"} fieldId={installationSourceId}>
                     {installationSource}
                     <FormHelper
+                        variant={validationStateSource}
                         helperTextInvalid={validationStateSource == "error" && validationFailed.source}
                         helperText={installationSourceWarning} />
                 </FormGroup>
