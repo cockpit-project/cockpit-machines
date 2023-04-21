@@ -907,9 +907,12 @@ vnc_password= "{vnc_passwd}"
 
             # Check minimum requirement warnings are present
             b.set_input_text("#memory-size", "127")
-            b.wait_in_text("#memory-size-helper", "The selected operating system has minimum memory requirement of 128 MiB")
+            # memory limit must be a warning, not an error
+            b.wait_in_text("#memory-size-helper.pf-m-warning", "The selected operating system has minimum memory requirement of 128 MiB")
+
             b.set_input_text("#storage-limit", "127")
-            b.wait_in_text("#storage-limit-helper", "The selected operating system has minimum storage size requirement of 128 MiB")
+            # storage limit must be a warning, not an error
+            b.wait_in_text("#storage-limit-helper.pf-m-warning", "The selected operating system has minimum storage size requirement of 128 MiB")
 
             b.set_input_text("#os-select-group input", suse)
             b.click(f"#os-select li button:contains('{suse}')")

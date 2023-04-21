@@ -808,6 +808,7 @@ const MemoryRow = ({ memorySize, memorySizeUnit, nodeMaxMemory, minimumMemory, o
                     </FormSelect>
                 </InputGroup>
                 <FormHelper fieldId="memory-size"
+                            variant={validationStateMemory}
                             helperTextInvalid={validationStateMemory == "error" && validationFailed.memory}
                             helperText={helperText} />
             </FormGroup>
@@ -932,6 +933,7 @@ const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit,
                     </InputGroup>
                     <FormHelper
                         fieldId="storage-limit"
+                        variant={validationStateStorage}
                         helperTextInvalid={validationStateStorage == "error" && validationFailed.storage}
                         helperText={helperTextNewVolume} />
                 </FormGroup>
