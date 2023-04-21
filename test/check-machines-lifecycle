@@ -120,6 +120,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         if run_pixel_tests:
             b.assert_pixels("#vm-details", "vm-details", ignore=[
                 ".memory-usage-chart",
+                ".vcpu-usage-chart",
                 "#vm-subVmTest1-disks .pf-c-card__body",
                 "#vm-subVmTest1-networks .pf-c-card__body"
                 ])
