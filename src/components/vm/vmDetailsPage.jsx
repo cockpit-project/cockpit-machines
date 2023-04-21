@@ -26,7 +26,7 @@ import { Gallery } from "@patternfly/react-core/dist/esm/layouts/Gallery";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List";
 import { Card, CardActions, CardBody, CardFooter, CardHeader, CardTitle } from "@patternfly/react-core/dist/esm/components/Card";
-import { Page, PageSection, PageSectionVariants } from "@patternfly/react-core/dist/esm/components/Page";
+import { Page, PageGroup, PageBreadcrumb, PageSection, PageSectionVariants } from "@patternfly/react-core/dist/esm/components/Page";
 import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
 import { ExpandIcon, HelpIcon } from '@patternfly/react-icons';
 import { WithDialogs } from 'dialogs.jsx';
@@ -79,22 +79,21 @@ export const VmDetailsPage = ({
     if (cockpit.location.path[1] == "console") {
         return (
             <WithDialogs>
-                <Page groupProps={{ sticky: 'top' }}
-                      id={"vm-" + vm.name + "-consoles-page"}
-                      className="consoles-page-expanded"
-                      isBreadcrumbGrouped
-                      breadcrumb={
-                          <Breadcrumb className='machines-listing-breadcrumb'>
-                              <BreadcrumbItem to='#'>
-                                  {_("Virtual machines")}
-                              </BreadcrumbItem>
-                              <BreadcrumbItem to={'#' + cockpit.format("vm?name=$0&connection=$1", encodeURIComponent(vm.name), vm.connectionName)}>
-                                  {vm.name}
-                              </BreadcrumbItem>
-                              <BreadcrumbItem isActive>
-                                  {_("Console")}
-                              </BreadcrumbItem>
-                          </Breadcrumb>}>
+                <Page id={"vm-" + vm.name + "-consoles-page"}
+                      className="consoles-page-expanded">
+                    <PageBreadcrumb stickyOnBreakpoint={{ default: "top" }}>
+                        <Breadcrumb className='machines-listing-breadcrumb'>
+                            <BreadcrumbItem to='#'>
+                                {_("Virtual machines")}
+                            </BreadcrumbItem>
+                            <BreadcrumbItem to={'#' + cockpit.format("vm?name=$0&connection=$1", encodeURIComponent(vm.name), vm.connectionName)}>
+                                {vm.name}
+                            </BreadcrumbItem>
+                            <BreadcrumbItem isActive>
+                                {_("Console")}
+                            </BreadcrumbItem>
+                        </Breadcrumb>
+                    </PageBreadcrumb>
                     {vmActionsPageSection}
                     <PageSection variant={PageSectionVariants.light}>
                         <Consoles vm={vm} config={config}
@@ -237,17 +236,20 @@ export const VmDetailsPage = ({
         <WithDialogs>
             <Page id="vm-details"
                   className="vm-details"
-                  data-pools-count={storagePools.length}
-                  breadcrumb={
-                      <Breadcrumb className='machines-listing-breadcrumb'>
-                          <BreadcrumbItem to='#'>
-                              {_("Virtual machines")}
-                          </BreadcrumbItem>
-                          <BreadcrumbItem isActive>
-                              {vm.name}
-                          </BreadcrumbItem>
-                      </Breadcrumb>}>
-                {vmActionsPageSection}
+                  data-pools-count={storagePools.length}>
+                <PageGroup>
+                    <PageBreadcrumb>
+                        <Breadcrumb className='machines-listing-breadcrumb'>
+                            <BreadcrumbItem to='#'>
+                                {_("Virtual machines")}
+                            </BreadcrumbItem>
+                            <BreadcrumbItem isActive>
+                                {vm.name}
+                            </BreadcrumbItem>
+                        </Breadcrumb>
+                    </PageBreadcrumb>
+                    {vmActionsPageSection}
+                </PageGroup>
                 <PageSection>
                     <Gallery className='ct-vm-overview' hasGutter>
                         {cards}
