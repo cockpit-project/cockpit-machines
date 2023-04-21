@@ -20,7 +20,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Breadcrumb, BreadcrumbItem } from "@patternfly/react-core/dist/esm/components/Breadcrumb";
 import { Card, CardActions, CardBody, CardHeader, CardTitle } from "@patternfly/react-core/dist/esm/components/Card";
-import { Page, PageSection } from "@patternfly/react-core/dist/esm/components/Page";
+import { Page, PageBreadcrumb, PageSection } from "@patternfly/react-core/dist/esm/components/Page";
 import { Text, TextVariants } from "@patternfly/react-core/dist/esm/components/Text";
 import { WithDialogs } from 'dialogs.jsx';
 
@@ -46,17 +46,17 @@ export class StoragePoolList extends React.Component {
 
         return (
             <WithDialogs>
-                <Page groupProps={{ sticky: 'top' }}
-                      isBreadcrumbGrouped
-                      breadcrumb={
-                          <Breadcrumb className='machines-listing-breadcrumb'>
-                              <BreadcrumbItem to='#'>
-                                  {_("Virtual machines")}
-                              </BreadcrumbItem>
-                              <BreadcrumbItem isActive>
-                                  {_("Storage pools")}
-                              </BreadcrumbItem>
-                          </Breadcrumb>}>
+                <Page>
+                    <PageBreadcrumb stickyOnBreakpoint={{ default: "top" }}>
+                        <Breadcrumb className='machines-listing-breadcrumb'>
+                            <BreadcrumbItem to='#'>
+                                {_("Virtual machines")}
+                            </BreadcrumbItem>
+                            <BreadcrumbItem isActive>
+                                {_("Storage pools")}
+                            </BreadcrumbItem>
+                        </Breadcrumb>
+                    </PageBreadcrumb>
                     <PageSection id='storage-pools-listing'>
                         <Card>
                             <CardHeader>

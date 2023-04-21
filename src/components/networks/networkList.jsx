@@ -20,7 +20,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Breadcrumb, BreadcrumbItem } from "@patternfly/react-core/dist/esm/components/Breadcrumb";
 import { Card, CardActions, CardBody, CardHeader, CardTitle } from "@patternfly/react-core/dist/esm/components/Card";
-import { Page, PageSection, PageSectionVariants } from "@patternfly/react-core/dist/esm/components/Page";
+import { Page, PageBreadcrumb, PageSection, PageSectionVariants } from "@patternfly/react-core/dist/esm/components/Page";
 import { Text, TextVariants } from "@patternfly/react-core/dist/esm/components/Text";
 import { WithDialogs } from 'dialogs.jsx';
 
@@ -45,17 +45,17 @@ export class NetworkList extends React.Component {
 
         return (
             <WithDialogs>
-                <Page groupProps={{ sticky: 'top' }}
-                  isBreadcrumbGrouped
-                  breadcrumb={
-                      <Breadcrumb variant={PageSectionVariants.light} className='machines-listing-breadcrumb'>
-                          <BreadcrumbItem to='#'>
-                              {_("Virtual machines")}
-                          </BreadcrumbItem>
-                          <BreadcrumbItem isActive>
-                              {_("Networks")}
-                          </BreadcrumbItem>
-                      </Breadcrumb>}>
+                <Page>
+                    <PageBreadcrumb stickyOnBreakpoint={{ default: "top" }}>
+                        <Breadcrumb variant={PageSectionVariants.light} className='machines-listing-breadcrumb'>
+                            <BreadcrumbItem to='#'>
+                                {_("Virtual machines")}
+                            </BreadcrumbItem>
+                            <BreadcrumbItem isActive>
+                                {_("Networks")}
+                            </BreadcrumbItem>
+                        </Breadcrumb>
+                    </PageBreadcrumb>
                     <PageSection id='networks-listing'>
                         <Card>
                             <CardHeader>

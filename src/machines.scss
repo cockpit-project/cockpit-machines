@@ -102,3 +102,11 @@
   // Use a max width of 60 0-characters across and let it size for mobile too
    --pf-c-empty-state__content--MaxWidth: min(60ch, 100%);
 }
+
+// Can be removed once https://github.com/cockpit-project/cockpit/pull/18694 is included in the used pkg/lib
+.pf-theme-dark {
+  .pf-c-page__main-group section {
+    --pf-c-page__main-breadcrumb--BackgroundColor: var(--pf-global--BackgroundColor--dark-100);
+    background-color: var(--pf-global--BackgroundColor--dark-100);
+  }
+}
