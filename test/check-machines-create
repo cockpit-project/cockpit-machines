@@ -1161,9 +1161,9 @@ vnc_password= "{vnc_passwd}"
             else:
                 b.wait_not_present("#source-type")
             if self.sourceType == 'file' or self.sourceType == 'cloud':
-                b.set_file_autocomplete_val("#source-file-group", self.location)
+                b.set_file_autocomplete_val("#source-file-group", self.location or " ")
             elif self.sourceType == 'disk_image':
-                b.set_file_autocomplete_val("#source-disk-group", self.location)
+                b.set_file_autocomplete_val("#source-disk-group", self.location or " ")
             elif self.sourceType == 'pxe':
                 b.select_from_dropdown("#network-select", self.location)
             elif self.sourceType == 'url':
@@ -1627,9 +1627,9 @@ vnc_password= "{vnc_passwd}"
             if dialog.sourceType == 'disk_image' or (dialog.os_name == TestMachinesCreate.TestCreateConfig.RHEL_8_1):
                 b.wait_visible(".disks-card table tbody > tr:first-child")
                 if b.is_present(f"#vm-{name}-disks-vda-device"):
-                    b.wait_in_text(f"#vm-{name}-disks-vda-source-file", dialog.location)
+                    b.wait_in_text(f"#vm-{name}-disks-vda-source-file", dialog.location.strip())
                 elif b.is_present(f"#vm-{name}-disks-hda-device"):
-                    b.wait_in_text(f"#vm-{name}-disks-hda-source-file", dialog.location)
+                    b.wait_in_text(f"#vm-{name}-disks-hda-source-file", dialog.location.strip())
                 else:
                     raise AssertionError("Unknown disk device")
             # New volume was created or existing volume was already chosen as destination
