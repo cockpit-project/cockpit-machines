@@ -140,6 +140,14 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                          create_and_run=False, os_name=None),
                                              {"os-select": "You need to select the most closely matching operating system"})
 
+        # Check PXE warning about macvtap is present
+        runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self,
+                                                                         sourceType='pxe',
+                                                                         location=f"type=direct,source={iface}"),
+                                             {"network": "macvtap does not work for host to guest network communication"},
+                                             create=False,
+                                             is_warning=True)
+
         # When switching from PXE mode to anything else make sure that the source input is empty
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, storage_size=1,
                                                                          sourceType='pxe',
