@@ -499,6 +499,14 @@ class TestMachinesSettings(VirtualMachinesCase):
             "inject-nmi": "Inject a non-maskable interrupt",
         }
 
+        def openWatchDogDialog():
+            b.click("#vm-subVmTest1-watchdog-button")
+            b.wait_visible("#vm-subVmTest1-watchdog-modal")
+
+        def closeWatchDogDialog(selector):
+            b.click(selector)
+            b.wait_not_present("#vm-subVmTest1-watchdog-modal")
+
         def setWatchdogAction(action, machine_has_no_watchdog=False, pixel_test_tag=None, reboot_machine=False):
             # If no watchdog action is set, we are attaching a new watchdog device. If watchdog already is set, we are editing an exiting watchdog device
             if machine_has_no_watchdog:
@@ -506,8 +514,7 @@ class TestMachinesSettings(VirtualMachinesCase):
             else:
                 b.wait_in_text("#vm-subVmTest1-watchdog-button", "edit")
 
-            b.click("#vm-subVmTest1-watchdog-button")
-            b.wait_visible("#vm-subVmTest1-watchdog-modal")
+            openWatchDogDialog()
 
             if pixel_test_tag:
                 b.assert_pixels("#vm-subVmTest1-watchdog-modal", pixel_test_tag, skip_layouts=["rtl"])
@@ -519,8 +526,7 @@ class TestMachinesSettings(VirtualMachinesCase):
             else:
                 b.wait_in_text("#watchdog-dialog-apply", "Save")
 
-            b.click("#watchdog-dialog-apply")
-            b.wait_not_present("#vm-subVmTest1-watchdog-modal")
+            closeWatchDogDialog("#watchdog-dialog-apply")
 
             b.wait_in_text("#vm-subVmTest1-watchdog-state", action_strings[action])
 
@@ -528,8 +534,7 @@ class TestMachinesSettings(VirtualMachinesCase):
             self.assertEqual(virsh_output, f'action="{action}"')
 
         def setWatchdogActionLive(action, previous_action=None, reboot_machine=False):
-            b.click("#vm-subVmTest1-watchdog-button")
-            b.wait_visible("#vm-subVmTest1-watchdog-modal")
+            openWatchDogDialog()
 
             b.click(f"#{action}")
             if previous_action:
@@ -539,8 +544,7 @@ class TestMachinesSettings(VirtualMachinesCase):
                 # When attaching adding a new watchdog, no message should be present
                 b.wait_not_present("#vm-subVmTest1-watchdog-modal #vm-subVmTest1-idle-message")
 
-            b.click("#watchdog-dialog-apply")
-            b.wait_not_present("#vm-subVmTest1-watchdog-modal")
+            closeWatchDogDialog("#watchdog-dialog-apply")
 
             if previous_action:
                 # When editing an exiting watchdog, tooltip should be present on overview card warning user that changes will take effect after reboot
@@ -603,14 +607,6 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-watchdog-state", "none")
 
         # General checks for watchdog
-        def openWatchDogDialog():
-            b.click("#vm-subVmTest1-watchdog-button")
-            b.wait_visible("#vm-subVmTest1-watchdog-modal")
-
-        def closeWatchDogDialog(selector):
-            b.click(selector)
-            b.wait_not_present("#vm-subVmTest1-watchdog-modal")
-
         # Cancel
         openWatchDogDialog()
         closeWatchDogDialog("#watchdog-dialog-apply + button")
