@@ -185,18 +185,17 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_not_present("#vm-subVmTest1-needs-shutdown")
         b.wait_in_text("#vm-subVmTest1-disks-vdg-access", "Read-only")
 
-        if m.execute("virsh --version") >= "6.10.0":
-            # Check that errors appear correctly and disappear when closing the dialog and reopening
-            m.execute(f"virsh attach-disk --domain subVmTest1 --source {p1}/mydisk4 --target sdb --targetbus sata --persistent")
-            b.reload()
-            b.enter_page('/machines')
-            open("sdb")
-            b.set_checked("#vm-subVmTest1-disks-sdb-edit-readonly", True)
-            save("sdb", "readonly sata disks are not supported")
-            cancel("sdb")
-            open("sdb")
-            b.wait_not_present("#vm-subVmTest1-disks-sdb-edit-dialog .pf-c-alert")
-            cancel("sdb")
+        # Check that errors appear correctly and disappear when closing the dialog and reopening
+        m.execute(f"virsh attach-disk --domain subVmTest1 --source {p1}/mydisk4 --target sdb --targetbus sata --persistent")
+        b.reload()
+        b.enter_page('/machines')
+        open("sdb")
+        b.set_checked("#vm-subVmTest1-disks-sdb-edit-readonly", True)
+        save("sdb", "readonly sata disks are not supported")
+        cancel("sdb")
+        open("sdb")
+        b.wait_not_present("#vm-subVmTest1-disks-sdb-edit-dialog .pf-c-alert")
+        cancel("sdb")
 
         # Virtio bus type should not be shown for CDROM devices
         m.execute("touch /var/lib/libvirt/novell.iso")
@@ -710,7 +709,7 @@ class TestMachinesDisks(VirtualMachinesCase):
 
                 expected_format = self.getExpectedFormat(self.pool_type, self.expected_volume_format)
                 # Unknown pool format isn't present in xml anymore
-                if expected_format == "unknown" and m.execute("virsh --version") >= "5.6.0":
+                if expected_format == "unknown":
                     m.execute(detect_format_cmd.format(volume_xml, "/volume/target") + " | grep -qv format")
                 else:
                     vol_xml = m.execute(detect_format_cmd.format(volume_xml, "/volume/target/format")).rstrip()
