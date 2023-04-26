@@ -452,9 +452,8 @@ class TestMachinesStoragePools(VirtualMachinesCase):
                 source={"host": "127.0.0.1", "source_path": target_iqn}
             ).execute()
 
-            if ("debian" not in m.image and "ubuntu" not in m.image and "rhel-9" not in m.image and "centos-9" not in m.image and
-                    float(m.execute("virsh --version").strip()[:3]) >= 4.7):
-                # iscsi-direct pool type is available since libvirt 4.7, but not in Debian/Ubuntu (https://bugs.debian.org/918728)
+            if "debian" not in m.image and "ubuntu" not in m.image and "rhel-9" not in m.image and "centos-9" not in m.image:
+                # iscsi-direct pool type is not available in Debian/Ubuntu (https://bugs.debian.org/918728)
                 StoragePoolCreateDialog(
                     self,
                     name="my_iscsi_direct_pool",
