@@ -29,6 +29,7 @@ import { Text, TextVariants } from "@patternfly/react-core/dist/esm/components/T
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import cockpit from 'cockpit';
 
+import { FormHelper } from 'cockpit-components-form-helper.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { networkId } from '../../helpers.js';
 import { networkGet, networkAddStaticHostEntries, networkChangeAutostart, networkRemoveStaticHostEntries } from '../../libvirtApi/network.js';
@@ -243,21 +244,19 @@ const NetworkAddStaticHostEntries = ({ idPrefix, network, parentIndex, setIsOpen
                     e.preventDefault();
                 }} isHorizontal>
                     {error && <ModalError dialogError={_("Failed to save network settings")} dialogErrorDetail={error} />}
-                    <FormGroup label={_("MAC address")} fieldId="add-new-static-entry-mac-address"
-                               helperTextInvalid={_("MAC address must not be empty")}
-                               validated={isSubmitted && !macAddress ? "error" : "default"}>
+                    <FormGroup label={_("MAC address")} fieldId="add-new-static-entry-mac-address">
                         <TextInput id="add-new-static-entry-mac-address"
                                    validated={isSubmitted && !macAddress ? "error" : "default"}
                                    value={macAddress}
                                    onChange={setMacAddress} />
+                        <FormHelper fieldId="add-new-static-entry-mac-address" helperTextInvalid={isSubmitted && !macAddress && _("MAC address must not be empty")} />
                     </FormGroup>
-                    <FormGroup label={_("IP address")} fieldId="add-new-static-entry-ip-address"
-                               helperTextInvalid={_("IP address must not be empty")}
-                               validated={isSubmitted && !ipAddress ? "error" : "default"}>
+                    <FormGroup label={_("IP address")} fieldId="add-new-static-entry-ip-address">
                         <TextInput id="add-new-static-entry-ip-address"
                                    validated={isSubmitted && !ipAddress ? "error" : "default"}
                                    value={ipAddress}
                                    onChange={setIpAddress} />
+                        <FormHelper fieldId="add-new-static-entry-ip-address" helperTextInvalid={isSubmitted && !ipAddress && _("IP address must not be empty")} />
                     </FormGroup>
                 </Form>
             </Modal>
