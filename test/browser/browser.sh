@@ -81,8 +81,8 @@ if [ "${PLATFORM_ID:-}" != "platform:el8" ]; then
     systemctl start virtstoraged.socket
 fi
 
-# Fedora 36+ split out qemu-virtiofsd
-if [ "$ID" = fedora ] && [ "$VERSION_ID" -ge "36" ]; then
+# Fedora 36, 37, 38 split out qemu-virtiofsd; Fedora 39 merged it again
+if [ "$ID" = fedora ] && [ "$VERSION_ID" -ge "36" -a "$VERSION_ID" -le "38" ]; then
     dnf install -y qemu-virtiofsd
 fi
 
