@@ -230,14 +230,13 @@ const VmFilesystemAddModal = ({ connectionName, objPath, vmName, vmState }) => {
                                        <HelpIcon noVerticalAlign />
                                    </button>
                                </Popover>
-                           }
-                           helperTextInvalid={validationFailed.mountTag}
-                           validated={validationFailed.mountTag ? "error" : "default"}>
+                           }>
                     <TextInput id={`${idPrefix}-modal-mountTag`}
                                onChange={value => setMountTag(value)}
                                placeholder="hostshare"
                                value={mountTag}
                                validated={validationFailed.mountTag ? "error" : "default"} />
+                    <FormHelper fieldId={`${idPrefix}-modal-mountTag`} helperTextInvalid={validationFailed.mountTag} />
                 </FormGroup>
                 <ExpandableSection toggleText={ additionalOptionsExpanded ? _("Hide additional options") : _("Show additional options")}
                                    onToggle={() => setAdditionalOptionsExpanded(!additionalOptionsExpanded)}
