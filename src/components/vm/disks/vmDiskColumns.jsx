@@ -22,7 +22,7 @@ import cockpit from 'cockpit';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
-import { Dropdown, DropdownItem, KebabToggle } from "@patternfly/react-core/dist/esm/components/Dropdown";
+import { Dropdown, DropdownItem, KebabToggle } from "@patternfly/react-core/dist/esm/deprecated/components/Dropdown";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 
 import { useDialogs } from 'dialogs.jsx';

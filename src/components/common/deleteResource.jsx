@@ -21,7 +21,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
-import { DropdownItem } from "@patternfly/react-core/dist/esm/components/Dropdown";
+import { DropdownItem } from "@patternfly/react-core/dist/esm/deprecated/components/Dropdown";
 import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 

@@ -26,7 +26,7 @@ import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { Gallery } from "@patternfly/react-core/dist/esm/layouts/Gallery";
 import { Toolbar, ToolbarContent, ToolbarItem } from "@patternfly/react-core/dist/esm/components/Toolbar";
-import { Select, SelectOption, SelectVariant } from "@patternfly/react-core/dist/esm/components/Select";
+import { Select, SelectOption } from "@patternfly/react-core/dist/esm/deprecated/components/Select";
 import { Page, PageSection } from "@patternfly/react-core/dist/esm/components/Page";
 import { Text, TextVariants } from "@patternfly/react-core/dist/esm/components/Text";
 import { WithDialogs } from 'dialogs.jsx';
@@ -107,7 +107,7 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                         {_("State")}
                     </ToolbarItem>
                     <ToolbarItem>
-                        <Select variant={SelectVariant.single}
+                        <Select variant="single"
                                 toggleId="vm-state-select-toggle"
                                 onToggle={(_event, statusIsExpanded) => setStatusIsExpanded(statusIsExpanded)}
                                 onSelect={(event, selection) => { setStatusIsExpanded(false); setStatusSelected(selection) }}

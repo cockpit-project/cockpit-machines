@@ -26,7 +26,7 @@ import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form
 import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
 import { InputGroup } from "@patternfly/react-core/dist/esm/components/InputGroup";
 import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
-import { Select as PFSelect, SelectGroup, SelectOption, SelectVariant } from "@patternfly/react-core/dist/esm/components/Select";
+import { Select as PFSelect, SelectGroup, SelectOption } from "@patternfly/react-core/dist/esm/deprecated/components/Select";
 import { Tab, TabTitleText, Tabs } from "@patternfly/react-core/dist/esm/components/Tabs";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -450,7 +450,7 @@ class OSRow extends React.Component {
                        id="os-select-group"
                        label={_("Operating system")}>
                 <PFSelect
-                    variant={SelectVariant.typeahead}
+                    variant="typeahead"
                     key={this.state.typeAheadKey}
                     id='os-select'
                     isDisabled={isLoading}
