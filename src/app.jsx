@@ -17,12 +17,11 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { useState, useEffect } from 'react';
-import { AlertGroup } from "@patternfly/react-core/dist/esm/components/AlertGroup";
+import { AlertGroup } from "@patternfly/react-core/dist/esm/components/Alert";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
-import { EmptyState, EmptyStateIcon, EmptyStateBody, EmptyStatePrimary } from "@patternfly/react-core/dist/esm/components/EmptyState";
+import { EmptyState, EmptyStateIcon, EmptyStateBody, EmptyStateActions, EmptyStateHeader, EmptyStateFooter } from "@patternfly/react-core/dist/esm/components/EmptyState";
 import { Progress, ProgressMeasureLocation } from "@patternfly/react-core/dist/esm/components/Progress";
 import { Text, TextContent } from "@patternfly/react-core/dist/esm/components/Text";
-import { Title } from "@patternfly/react-core/dist/esm/components/Title";
 import { ExclamationCircleIcon, VirtualMachineIcon } from '@patternfly/react-icons';
 import { superuser } from "superuser.js";
 import cockpit from 'cockpit';
@@ -128,10 +127,7 @@ export const App = () => {
     if (!virtualizationEnabled && !emptyStateIgnored) {
         return (
             <EmptyState className="virtualization-disabled-empty-state">
-                <EmptyStateIcon icon={VirtualMachineIcon} />
-                <Title headingLevel="h4" size="lg">
-                    {_("Hardware virtualization is disabled")}
-                </Title>
+                <EmptyStateHeader titleText={_("Hardware virtualization is disabled")} icon={<EmptyStateIcon icon={VirtualMachineIcon} />} headingLevel="h4" />
                 <EmptyStateBody>
                     <TextContent>
                         <Text>{_("Enable virtualization support in BIOS/EFI settings.")}</Text>
@@ -139,11 +135,11 @@ export const App = () => {
                             {_("Changing BIOS/EFI settings is specific to each manufacturer. It involves pressing a hotkey during boot (ESC, F1, F12, Del). Enable a setting called \"virtualization\", \"VM\", \"VMX\", \"SVM\", \"VTX\", \"VTD\". Consult your computer's manual for details.")}
                         </Text>
                     </TextContent>
-                </EmptyStateBody>
-                <EmptyStatePrimary>
-                    <Button id="ignore-hw-virtualization-disabled-btn" variant="secondary" onClick={() => setEmptyStateIgnored(true)}>{_("Ignore")}</Button>
-                </EmptyStatePrimary>
-            </EmptyState>
+                </EmptyStateBody><EmptyStateFooter>
+                    <EmptyStateActions>
+                        <Button id="ignore-hw-virtualization-disabled-btn" variant="secondary" onClick={() => setEmptyStateIgnored(true)}>{_("Ignore")}</Button>
+                    </EmptyStateActions>
+                </EmptyStateFooter></EmptyState>
         );
     } else if ((superuser.allowed && systemSocketInactive) || loadingResources) {
         return (

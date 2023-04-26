@@ -215,7 +215,7 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
     if (domainCanShutdown(state)) {
         shutdown = (
             <Button key='action-shutdown'
-                    isSmall
+                    size="sm"
                     variant={isDetailsPage ? 'primary' : 'secondary'}
                     isLoading={operationInProgress}
                     isDisabled={operationInProgress}
@@ -270,7 +270,7 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
     if (domainCanRun(state, hasInstallPhase)) {
         run = (
             <Button key='action-run'
-                    isSmall
+                    size="sm"
                     variant={isDetailsPage ? 'primary' : 'secondary'}
                     isLoading={operationInProgress}
                     isDisabled={operationInProgress}
@@ -369,7 +369,7 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
             {install}
             <Dropdown onSelect={() => setIsActionOpen(!isActionOpen)}
                       id={`${id}-action-kebab`}
-                      toggle={<KebabToggle isDisabled={vm.isUi} onToggle={isOpen => setIsActionOpen(isOpen)} />}
+                      toggle={<KebabToggle isDisabled={vm.isUi} onToggle={(_event, isOpen) => setIsActionOpen(isOpen)} />}
                       isPlain
                       isOpen={isActionOpen}
                       position='right'

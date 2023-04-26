@@ -19,7 +19,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Breadcrumb, BreadcrumbItem } from "@patternfly/react-core/dist/esm/components/Breadcrumb";
-import { Card, CardActions, CardBody, CardHeader, CardTitle } from "@patternfly/react-core/dist/esm/components/Card";
+import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core/dist/esm/components/Card';
 import { Page, PageBreadcrumb, PageSection } from "@patternfly/react-core/dist/esm/components/Page";
 import { Text, TextVariants } from "@patternfly/react-core/dist/esm/components/Text";
 import { WithDialogs } from 'dialogs.jsx';
@@ -59,13 +59,10 @@ export class StoragePoolList extends React.Component {
                     </PageBreadcrumb>
                     <PageSection id='storage-pools-listing'>
                         <Card>
-                            <CardHeader>
+                            <CardHeader actions={{ actions }}>
                                 <CardTitle>
                                     <Text component={TextVariants.h2}>{_("Storage pools")}</Text>
                                 </CardTitle>
-                                <CardActions>
-                                    {actions}
-                                </CardActions>
                             </CardHeader>
                             <CardBody className="contains-list">
                                 <ListingTable aria-label={_("Storage pools")}

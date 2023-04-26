@@ -41,7 +41,7 @@ class TestMachinesVirtualization(VirtualMachinesCase):
 
         self.login_and_go("/machines")
 
-        b.wait_visible("div.pf-c-empty-state .pf-c-title:contains('Hardware virtualization is disabled')")
+        b.wait_visible("div.pf-c-empty-state:contains('Hardware virtualization is disabled')")
 
         b.assert_pixels(".pf-c-empty-state", "virtualization-disabled-warning")
 

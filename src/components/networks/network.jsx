@@ -175,7 +175,7 @@ const NetworkActions = ({ network }) => {
             }
             <Dropdown onSelect={() => setIsActionOpen(!isActionOpen)}
                       id={`${id}-action-kebab`}
-                      toggle={<KebabToggle onToggle={isOpen => setIsActionOpen(isOpen)} />}
+                      toggle={<KebabToggle onToggle={(_event, isOpen) => setIsActionOpen(isOpen)} />}
                       isPlain
                       isOpen={isActionOpen}
                       position='right'

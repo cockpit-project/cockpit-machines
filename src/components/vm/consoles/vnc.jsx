@@ -145,7 +145,7 @@ class Vnc extends React.Component {
                 id={cockpit.format("$0-$1-vnc-sendkey", vmName, connectionName)}
                 key={cockpit.format("$0-$1-vnc-sendkey", vmName, connectionName)}
                 toggle={
-                    <DropdownToggle onToggle={isOpen => this.setState({ isActionOpen: isOpen })}>
+                    <DropdownToggle onToggle={(_event, isOpen) => this.setState({ isActionOpen: isOpen })}>
                         {_("Send key")}
                     </DropdownToggle>
                 }

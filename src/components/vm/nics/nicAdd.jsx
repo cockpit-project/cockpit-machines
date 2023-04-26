@@ -92,7 +92,7 @@ const PermanentChange = ({ idPrefix, onValueChanged, dialogValues, vm }) => {
             <Checkbox id={`${idPrefix}-permanent`}
                       isChecked={dialogValues.permanent}
                       label={_("Always attach")}
-                      onChange={checked => onValueChanged('permanent', checked)} />
+                      onChange={(_event, checked) => onValueChanged('permanent', checked)} />
         </FormGroup>
     );
 };

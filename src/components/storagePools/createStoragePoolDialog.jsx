@@ -232,7 +232,7 @@ const StoragePoolAutostartRow = ({ onValueChanged, dialogValues }) => {
             <Checkbox id='storage-pool-dialog-autostart'
                       label={_("Start pool when host boots")}
                       isChecked={dialogValues.autostart}
-                      onChange={checked => onValueChanged('autostart', checked)} />
+                      onChange={(_event, checked) => onValueChanged('autostart', checked)} />
         </FormGroup>
     );
 };

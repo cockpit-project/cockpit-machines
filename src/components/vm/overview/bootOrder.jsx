@@ -171,8 +171,8 @@ const DeviceRow = ({ idPrefix, device, index, onToggle, upDisabled, downDisabled
     }
     }
 
-    const upArrow = <Button isSmall isDisabled={upDisabled} onClick={moveUp} icon={<AngleUpIcon />} id={`${idPrefix}-up`} />;
-    const downArrow = <Button isSmall isDisabled={downDisabled} onClick={moveDown} icon={<AngleDownIcon />} id={`${idPrefix}-down`} />;
+    const upArrow = <Button size="sm" isDisabled={upDisabled} onClick={moveUp} icon={<AngleUpIcon />} id={`${idPrefix}-up`} />;
+    const downArrow = <Button size="sm" isDisabled={downDisabled} onClick={moveDown} icon={<AngleDownIcon />} id={`${idPrefix}-down`} />;
 
     return (
         <DataListItem
@@ -184,7 +184,7 @@ const DeviceRow = ({ idPrefix, device, index, onToggle, upDisabled, downDisabled
                     <DataListCheck id={`${idPrefix}-device-${index}-checkbox`}
                                        name={`${idPrefix}-device-${index}-checkbox`}
                                        otherControls
-                                       onChange={onToggle}
+                                       onChange={(_, dev) => onToggle(dev)}
                                        isChecked={!!device.checked} />
                 </DataListControl>
                 <DataListItemCells dataListCells={[

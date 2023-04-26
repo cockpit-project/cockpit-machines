@@ -21,7 +21,7 @@ import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
-import { Card, CardActions, CardBody, CardHeader, CardTitle } from "@patternfly/react-core/dist/esm/components/Card";
+import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core/dist/esm/components/Card';
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { Gallery } from "@patternfly/react-core/dist/esm/layouts/Gallery";
@@ -109,7 +109,7 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                     <ToolbarItem>
                         <Select variant={SelectVariant.single}
                                 toggleId="vm-state-select-toggle"
-                                onToggle={statusIsExpanded => setStatusIsExpanded(statusIsExpanded)}
+                                onToggle={(_event, statusIsExpanded) => setStatusIsExpanded(statusIsExpanded)}
                                 onSelect={(event, selection) => { setStatusIsExpanded(false); setStatusSelected(selection) }}
                                 selections={statusSelected}
                                 isOpen={statusIsExpanded}
@@ -135,13 +135,10 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                     <Gallery className="ct-cards-grid" hasGutter>
                         <AggregateStatusCards networks={networks} storagePools={storagePools} />
                         <Card id='virtual-machines-listing'>
-                            <CardHeader>
+                            <CardHeader actions={{ actions: toolBar }}>
                                 <CardTitle>
                                     <Text component={TextVariants.h2}>{_("Virtual machines")}</Text>
                                 </CardTitle>
-                                <CardActions>
-                                    {toolBar}
-                                </CardActions>
                             </CardHeader>
                             <CardBody className="contains-list">
                                 <ListingTable aria-label={_("Virtual machines")}

@@ -181,7 +181,7 @@ class StoragePoolDelete extends React.Component {
                                             }
                                         </List>
                                     </>}
-                                    onChange={checked => this.onValueChanged('deleteVolumes', checked)} />
+                                    onChange={(_event, checked) => this.onValueChanged('deleteVolumes', checked)} />
                         : _("No volumes exist in this storage pool."))
                     : _("Deleting an inactive storage pool will only undefine the pool. Its content will not be deleted.")
                 }

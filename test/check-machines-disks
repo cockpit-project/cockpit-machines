@@ -117,7 +117,7 @@ class TestMachinesDisks(VirtualMachinesCase):
 
         # Test close button
         open("vdg")
-        b.click("#vm-subVmTest1-disks-vdg-edit-dialog > button:first-child")
+        b.click("#vm-subVmTest1-disks-vdg-edit-dialog > .pf-c-modal-box__close button")
         b.wait_not_present("#vm-subVmTest1-disks-vdg-edit-dialog")
 
         # Test qcow2 disk has only readonly attribute configurable

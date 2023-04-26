@@ -467,7 +467,7 @@ class OSRow extends React.Component {
                         this.setState({ isOpen: false });
                         onValueChanged('os', null);
                     }}
-                    onToggle={isOpen => this.setState({ isOpen })}
+                    onToggle={(_event, isOpen) => this.setState({ isOpen })}
                     isOpen={this.state.isOpen}
                     menuAppendTo="parent">
                     {this.state.osEntries.map(os => (<SelectOption key={os.id}
@@ -524,7 +524,7 @@ const validationStates = {
     },
     INPROGRESS: {
         option: "default",
-        message: <span id="token-helper-message" className="pf-c-form__helper-text"><Spinner isSVG size="md" /> {_("Checking token validity...")}</span>,
+        message: <span id="token-helper-message" className="pf-c-form__helper-text"><Spinner size="md" /> {_("Checking token validity...")}</span>,
     },
     FAILED: {
         option: "error",
@@ -887,7 +887,7 @@ const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit,
                         setIsStorageOpen(false);
                         onValueChanged('storagePool', value);
                     }}
-                    onToggle={isOpen => setIsStorageOpen(isOpen)}
+                    onToggle={(_event, isOpen) => setIsStorageOpen(isOpen)}
                     isOpen={isStorageOpen}
                     menuAppendTo="parent">
                     {StorageSelectOptions}

@@ -25,7 +25,7 @@ import { CodeBlock, CodeBlockCode } from "@patternfly/react-core/dist/esm/compon
 import { Gallery } from "@patternfly/react-core/dist/esm/layouts/Gallery";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List";
-import { Card, CardActions, CardBody, CardFooter, CardHeader, CardTitle } from "@patternfly/react-core/dist/esm/components/Card";
+import { Card, CardBody, CardFooter, CardHeader, CardTitle } from '@patternfly/react-core/dist/esm/components/Card';
 import { Page, PageGroup, PageBreadcrumb, PageSection, PageSectionVariants } from "@patternfly/react-core/dist/esm/components/Page";
 import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
 import { ExpandIcon, HelpIcon } from '@patternfly/react-icons';
@@ -220,9 +220,8 @@ export const VmDetailsPage = ({
             <Card key={card.id}
                   className={card.className}
                   id={card.id}>
-                <CardHeader>
+                <CardHeader actions={{ actions: card.actions }}>
                     <CardTitle><h2>{card.title}</h2></CardTitle>
-                    {card.actions && <CardActions>{card.actions}</CardActions>}
                 </CardHeader>
                 <CardBody className={["disks-card", "hostdevs-card", "networks-card", "snapshots-card", "filesystems-card"].includes(card.className) ? "contains-list" : ""}>
                     {card.body}

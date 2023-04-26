@@ -247,7 +247,7 @@ const VmFilesystemAddModal = ({ connectionName, objPath, vmName, vmState }) => {
                         <Checkbox id={`${idPrefix}-modal-xattr`}
                                   isChecked={xattr}
                                   label={_("Use extended attributes on files and directories")}
-                                  onChange={xattr => setXattr(xattr)} />
+                                  onChange={(_event, xattr) => setXattr(xattr)} />
                     </FormGroup>
                 </ExpandableSection>
             </Form>
