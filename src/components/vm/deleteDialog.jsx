@@ -44,7 +44,7 @@ const DeleteDialogBody = ({ disks, vmName, destroy, onChange }) => {
                     <DataListCheck
                             aria-labelledby={disk.target}
                             name={"check-action-" + disk.target}
-                            onChange={checked => {
+                            onChange={(_event, checked) => {
                                 onChange(index, checked);
                             }}
                             checked={!!disk.checked} // https://github.com/patternfly/patternfly-react/issues/6762

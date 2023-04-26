@@ -25,6 +25,8 @@ import { Grid, GridItem } from "@patternfly/react-core/dist/esm/layouts/Grid";
 import { Slider } from "@patternfly/react-core/dist/esm/components/Slider";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 
+import { FormHelper } from 'cockpit-components-form-helper.jsx';
+
 import { digitFilter, units } from "../../../helpers.js";
 
 import './memorySelectRow.css';
@@ -48,7 +50,6 @@ class MemorySelectRow extends React.Component {
 
         return (
             <FormGroup fieldId={id}
-                       helperText={helperText}
                        label={label}>
                 <Grid hasGutter>
                     <GridItem span={12} sm={8}>
@@ -90,6 +91,7 @@ class MemorySelectRow extends React.Component {
                         </InputGroup>
                     </GridItem>
                 </Grid>
+                <FormHelper helperText={helperText} />
             </FormGroup>
         );
     }

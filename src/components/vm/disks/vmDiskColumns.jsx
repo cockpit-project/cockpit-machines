@@ -238,7 +238,7 @@ export const DiskActions = ({ vm, vms, disk, supportedDiskBusTypes, idPrefixRow,
             <Dropdown onSelect={() => setIsActionOpen(false)}
                       key={idPrefixRow + "-action-kebab"}
                       id={idPrefixRow + "-action-kebab"}
-                      toggle={<KebabToggle onToggle={(isOpen) => setIsActionOpen(isOpen)} />}
+                      toggle={<KebabToggle onToggle={(_event, isOpen) => setIsActionOpen(isOpen)} />}
                       isPlain
                       isOpen={isActionOpen}
                       position='right'

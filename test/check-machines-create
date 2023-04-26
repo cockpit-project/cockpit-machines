@@ -1504,7 +1504,7 @@ vnc_password= "{vnc_passwd}"
                     # Progress is shown in VM state in VMs list
                     self.assertRegex(b.text(f"#vm-{dialog.name}-{dialog.connection}-state"), r"^.*[0-9][0-9]?%$|^100%$")
                 else:
-                    b.wait_in_text(".pf-c-empty-state__content .pf-c-title", "Downloading image")
+                    b.wait_in_text(".pf-c-empty-state__content", "Downloading image")
                     # Progress is shown at VM page empty state
                     self.assertRegex(b.text(".pf-c-empty-state__body .pf-c-progress__status"), r"^[0-9][0-9]?%$|^100%$")
 

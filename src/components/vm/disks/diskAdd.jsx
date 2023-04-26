@@ -138,7 +138,7 @@ const PermanentChange = ({ idPrefix, onValueChanged, permanent, vm }) => {
             <Checkbox id={`${idPrefix}-permanent`}
                       isChecked={permanent}
                       label={_("Always attach")}
-                      onChange={checked => onValueChanged('permanent', checked)} />
+                      onChange={(_event, checked) => onValueChanged('permanent', checked)} />
         </FormGroup>
     );
 };
@@ -245,7 +245,7 @@ const AdditionalOptions = ({ cacheMode, device, idPrefix, onValueChanged, busTyp
                         className="ct-monospace"
                         value={serial}
                         onChange={value => setSerialHelper(value)} />
-                    <FormHelperText isHidden={false}>
+                    <FormHelperText>
                         {validationFailed.serial
                             ? <HelperText>
                                 <HelperTextItem variant="error" hasIcon>
@@ -742,7 +742,7 @@ export class AddDiskModalBody extends React.Component {
         if (dialogLoading) {
             defaultBody = (
                 <Bullseye>
-                    <Spinner isSVG />
+                    <Spinner />
                 </Bullseye>
             );
         } else if (isMediaInsertion) {

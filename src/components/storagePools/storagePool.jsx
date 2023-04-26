@@ -198,7 +198,7 @@ class StoragePoolActions extends React.Component {
                 { !storagePool.active && activateButton }
                 <Dropdown onSelect={() => this.setState(prevState => ({ isActionOpen: !prevState.isActionOpen }))}
                           id={`${id}-action-kebab`}
-                          toggle={<KebabToggle onToggle={isActionOpen => this.setState({ isActionOpen })} />}
+                          toggle={<KebabToggle onToggle={(_event, isActionOpen) => this.setState({ isActionOpen })} />}
                           isPlain
                           isOpen={this.state.isActionOpen}
                           position='right'

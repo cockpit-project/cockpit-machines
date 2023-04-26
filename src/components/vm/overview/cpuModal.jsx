@@ -245,7 +245,6 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
                     max={parseInt(maxVcpu)}
                     min={1}
                     widthChars={3}
-                    allowEmptyInput
                 />
             </FormGroup>
             <FormGroup fieldId="machines-vcpu-count-field" label={_("vCPU count")}
@@ -267,7 +266,6 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
                     max={parseInt(max)}
                     min={1}
                     widthChars={3}
-                    allowEmptyInput
                 />
             </FormGroup>
             <FormGroup fieldId="sockets" label={_("Sockets")}
