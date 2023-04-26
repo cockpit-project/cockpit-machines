@@ -20,7 +20,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
-import { DropdownItem } from "@patternfly/react-core/dist/esm/components/Dropdown";
+import { DropdownItem } from "@patternfly/react-core/dist/esm/deprecated/components/Dropdown";
 import { HelperText, HelperTextItem } from "@patternfly/react-core/dist/esm/components/HelperText";
 import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List";
 import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";

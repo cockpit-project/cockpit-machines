@@ -18,7 +18,7 @@
  */
 import React from 'react';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
-import { Dropdown, KebabToggle } from "@patternfly/react-core/dist/esm/components/Dropdown";
+import { Dropdown, KebabToggle } from "@patternfly/react-core/dist/esm/deprecated/components/Dropdown";
 import { Progress } from "@patternfly/react-core/dist/esm/components/Progress";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 
