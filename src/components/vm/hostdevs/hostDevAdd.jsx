@@ -20,8 +20,8 @@ import React, { useMemo, useState, useEffect } from "react";
 import cockpit from "cockpit";
 import {
     Table,
-    TableBody,
-    TableHeader,
+    Tbody,
+    Thead, Th, Td, Tr,
     TableVariant,
 } from '@patternfly/react-table';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -121,25 +121,31 @@ const DevRow = ({ idPrefix, type, selectableDevices, setSelectableDevices }) => 
 
     return (
         <FormGroup fieldId={`${idPrefix}-dev`} label={_("Device")} hasNoPaddingTop isInline>
-            <Table onSelect={onSelect}
-                   variant={TableVariant.compact}
-                   canSelectAll={false}
+            <Table variant={TableVariant.compact}
                    className="vm-device-table"
-                   aria-label={_("Table of selectable host devices")}
-                   cells={[_("Product"), _("Vendor"), _("Location")]}
-                   rows={selectableDevices.map((dev, idx) => {
-                       return {
-                           selected: dev.selected,
-                           disableSelection: dev.nodeDev.hasChildren,
-                           cells: [
-                               dev.nodeDev.capability.product._value || "(" + _("Undefined") + ")",
-                               dev.nodeDev.capability.vendor._value,
-                               { title: <DescriptionList key='source' isHorizontal>{getSource(dev.nodeDev, idx)}</DescriptionList> }
-                           ]
-                       };
-                   })}>
-                <TableHeader />
-                <TableBody />
+                   aria-label={_("Table of selectable host devices")}>
+                <Thead>
+                    <Tr><Th />{[_("Product"), _("Vendor"), _("Location")].map(col => <Th key={col}>{col}</Th>)}</Tr>
+                </Thead>
+                <Tbody>
+                    {selectableDevices.map((dev, rowIndex) => {
+                        return (
+                            <Tr key={"row-" + rowIndex}>
+                                <Td
+                                    select={{
+                                        rowIndex,
+                                        onSelect: (_event, isSelecting) => onSelect(event, isSelecting, rowIndex),
+                                        isSelected: dev.selected,
+                                        isDisabled: dev.nodeDev.hasChildren
+                                    }}
+                                />
+                                <Td>{dev.nodeDev.capability.product._value || "(" + _("Undefined") + ")"}</Td>
+                                <Td>{dev.nodeDev.capability.vendor._value}</Td>
+                                <Td><DescriptionList key='source' isHorizontal>{getSource(dev.nodeDev, rowIndex)}</DescriptionList></Td>
+                            </Tr>
+                        );
+                    })}
+                </Tbody>
             </Table>
         </FormGroup>
     );
