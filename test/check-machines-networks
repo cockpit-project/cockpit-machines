@@ -107,14 +107,8 @@ class TestMachinesNetworks(VirtualMachinesCase):
         b.wait_visible(f"#network-test_network3-{connectionName}-autostart:not(:checked)")
 
         # Check overview network properties are not present
-        b.wait_not_present(f"#network-test_network3-{connectionName}-ipv4-address")
-        b.wait_not_present(f"#network-test_network3-{connectionName}-ipv4-netmask")
-        b.wait_not_present(f"#network-test_network3-{connectionName}-ipv4-dhcp-range")
-        b.wait_not_present(f"#network-test_network3-{connectionName}-ipv4-dhcp-host-0")
-        b.wait_not_present(f"#network-test_network3-{connectionName}-ipv6-address")
-        b.wait_not_present(f"#network-test_network3-{connectionName}-ipv6-prefix")
-        b.wait_not_present(f"#network-test_network3-{connectionName}-ipv6-dhcp-range")
-        b.wait_not_present(f"#network-test_network3-{connectionName}-ipv6-dhcp-host-0")
+        for el in ["ipv4-address", "ipv4-netmask", "ipv4-dhcp-range", "ipv4-dhcp-host-0", "ipv6-address", "ipv6-prefix", "ipv6-dhcp-range", "ipv6-dhcp-host-0"]:
+            b.wait_not_present(f"#network-test_network3-{connectionName}-{el}")
 
         # Transient network
         self.toggleNetworkRow("test_network4", connectionName)
