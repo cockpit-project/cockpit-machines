@@ -45,7 +45,11 @@ const getNetworkDevices = () => {
             })
             .then(bridges => {
                 const bridgeNames = JSON.parse(bridges).map(br => br.ifname);
-                bridgeNames.forEach(br => { devs[br].type = "bridge" });
+                bridgeNames.forEach(br => {
+                    if (devs[br]) {
+                        devs[br].type = "bridge";
+                    }
+                });
             })
             .then(() => {
                 return Promise.resolve(devs);
