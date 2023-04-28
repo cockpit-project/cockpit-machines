@@ -225,7 +225,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
                         b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #network-ipv6-dhcp-range-start + .pf-c-form__helper-text .pf-m-error", self.xfail_error)
                     if "ipv6_dhcp_end" in self.xfail_objects:
                         b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #network-ipv6-dhcp-range-end + .pf-c-form__helper-text .pf-m-error", self.xfail_error)
-                    if "footer" in self.xfail_objects:
+                    if "body" in self.xfail_objects:
                         error_location = "#create-network-dialog .pf-c-modal-box__body .pf-m-danger"
                         b.wait_visible(error_location)
                         error_message = b.text(error_location)
@@ -370,12 +370,12 @@ class TestMachinesNetworks(VirtualMachinesCase):
         )
         tmp.execute()
 
-        # Try footer error
+        # Try body error
         NetworkCreateDialog(
             self,
             name="test_network",
             xfail=True,
-            xfail_objects=["footer"],
+            xfail_objects=["body"],
             xfail_error="network 'test_network' already exists",
         ).execute()
 
@@ -521,7 +521,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
         # Wait for the edit button
         b.click("#vm-subVmTest1-network-1-edit-dialog")
 
-        # Make sure the footer warning does not appear until we change something
+        # Make sure the dialog warning does not appear until we change something
         b.wait_not_present("#vm-subVmTest1-network-1-edit-dialog-idle-message")
 
         # Cancel dialog
@@ -536,7 +536,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
 
         # Change network model type of a running domain
         b.select_from_dropdown("#vm-subVmTest1-network-2-edit-dialog-model", "e1000e")
-        # Wait for the footer warning to appear
+        # Wait for the dialog warning to appear
         b.wait_visible("#vm-subVmTest1-network-2-edit-dialog-idle-message")
         # Change network type and source of a running domain
         b.wait_val("#vm-subVmTest1-network-2-edit-dialog-type", "network")
