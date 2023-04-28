@@ -143,7 +143,7 @@ export class CreateSnapshotModal extends React.Component {
                            <Button variant="primary" isLoading={this.state.inProgress} isDisabled={this.state.inProgress} onClick={this.onCreate}>
                                {_("Create")}
                            </Button>
-                           <Button variant="link" className="btn-cancel" onClick={Dialogs.close}>
+                           <Button variant="link" onClick={Dialogs.close}>
                                {_("Cancel")}
                            </Button>
                        </>

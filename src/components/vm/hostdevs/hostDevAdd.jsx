@@ -230,7 +230,6 @@ const AddHostDev = ({ idPrefix, vm }) => {
             </Button>
             <Button id={`${idPrefix}-cancel`}
                     variant="link"
-                    className="btn-cancel"
                     onClick={Dialogs.close}>
                 {_("Cancel")}
             </Button>

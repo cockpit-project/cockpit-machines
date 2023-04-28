@@ -106,7 +106,7 @@ export const MediaEjectModal = ({ idPrefix, vm, disk }) => {
                        <Button variant='danger' isLoading={inProgressForce} isDisabled={inProgress} onClick={onDelete}>
                            { _("Force eject")}
                        </Button>}
-                       <Button variant='link' className='btn-cancel' onClick={Dialogs.close}>
+                       <Button variant='link' onClick={Dialogs.close}>
                            {_("Cancel")}
                        </Button>
                    </>

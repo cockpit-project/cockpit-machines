@@ -416,7 +416,7 @@ class CreateNetworkModal extends React.Component {
                                    onClick={ this.onCreate }>
                                {_("Create")}
                            </Button>
-                           <Button variant='link' className='btn-cancel' onClick={ Dialogs.close }>
+                           <Button variant='link' onClick={ Dialogs.close }>
                                {_("Cancel")}
                            </Button>
                        </>

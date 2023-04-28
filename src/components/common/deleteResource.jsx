@@ -87,7 +87,7 @@ export class DeleteResourceModal extends React.Component {
                                isDanger>
                                {actionNameSecondary}
                            </Button>}
-                           <Button variant='link' className='btn-cancel' onClick={Dialogs.close}>
+                           <Button variant='link' onClick={Dialogs.close}>
                                {_("Cancel")}
                            </Button>
                        </>
