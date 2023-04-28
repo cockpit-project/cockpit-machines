@@ -210,20 +210,20 @@ const DhcpRow = ({ ipVersion, rangeStart, rangeEnd, expanded, onValueChanged, va
     return (
         <>
             <FormGroup>
-                <Checkbox id={'network-ipv' + ipVersion + '-dhcp'}
+                <Checkbox id={'create-network-ipv' + ipVersion + '-dhcp'}
                           isChecked={expanded}
                           label={_("Set DHCP range")}
                           onChange={() => onValueChanged('ipv' + ipVersion + 'DhcpEnabled', !expanded)} />
             </FormGroup>
             {expanded && <Grid hasGutter md={6}>
-                <FormGroup fieldId={'network-ipv' + ipVersion + '-dhcp-range-start'} label={_("Start")}>
-                    <TextInput id={'network-ipv' + ipVersion + '-dhcp-range-start'}
+                <FormGroup fieldId={'create-network-ipv' + ipVersion + '-dhcp-range-start'} label={_("Start")}>
+                    <TextInput id={'create-network-ipv' + ipVersion + '-dhcp-range-start'}
                                value={rangeStart}
                                onChange={value => onValueChanged('ipv' + ipVersion + 'DhcpRangeStart', value)} />
                     <FormHelper helperTextInvalid={validationStart == "error" && validationFailed['ipv' + ipVersion + 'DhcpRangeStart']} />
                 </FormGroup>
-                <FormGroup fieldId={'network-ipv' + ipVersion + '-dhcp-range-end'} label={_("End")}>
-                    <TextInput id={'network-ipv' + ipVersion + '-dhcp-range-end'}
+                <FormGroup fieldId={'create-network-ipv' + ipVersion + '-dhcp-range-end'} label={_("End")}>
+                    <TextInput id={'create-network-ipv' + ipVersion + '-dhcp-range-end'}
                                value={rangeEnd}
                                onChange={value => onValueChanged('ipv' + ipVersion + 'DhcpRangeEnd', value)} />
                     <FormHelper helperTextInvalid={validationEnd == "error" && validationFailed['ipv' + ipVersion + 'DhcpRangeEnd']} />
@@ -239,15 +239,15 @@ const Ipv4Row = ({ validationFailed, dialogValues, onValueChanged }) => {
 
     return (
         <>
-            <FormGroup fieldId='network-ipv4-address' label={_("IPv4 address")}>
-                <TextInput id='network-ipv4-address'
+            <FormGroup fieldId='create-network-ipv4-address' label={_("IPv4 address")}>
+                <TextInput id='create-network-ipv4-address'
                            value={dialogValues.ipv4}
                            validated={validationAddress}
                            onChange={value => onValueChanged('ipv4', value)} />
                 <FormHelper helperTextInvalid={validationAddress == "error" && validationFailed.ipv4} />
             </FormGroup>
-            <FormGroup fieldId='network-ipv4-netmask' label={_("Mask or prefix length")}>
-                <TextInput id='network-ipv4-netmask'
+            <FormGroup fieldId='create-network-ipv4-netmask' label={_("Mask or prefix length")}>
+                <TextInput id='create-network-ipv4-netmask'
                            value={dialogValues.netmask}
                            validated={validationNetmask}
                            onChange={value => onValueChanged('netmask', value)} />
@@ -269,15 +269,15 @@ const Ipv6Row = ({ validationFailed, dialogValues, onValueChanged }) => {
 
     return (
         <>
-            <FormGroup fieldId='network-ipv6-address' label={_("IPv6 address")}>
-                <TextInput id='network-ipv6-address'
+            <FormGroup fieldId='create-network-ipv6-address' label={_("IPv6 address")}>
+                <TextInput id='create-network-ipv6-address'
                            value={dialogValues.ipv6}
                            validated={validationAddress}
                            onChange={value => onValueChanged('ipv6', value)} />
                 <FormHelper helperTextInvalid={validationAddress == "error" && validationFailed.ipv6} />
             </FormGroup>
-            <FormGroup fieldId='network-ipv6-prefix' label={_("Prefix length")}>
-                <TextInput id='network-ipv6-prefix'
+            <FormGroup fieldId='create-network-ipv6-prefix' label={_("Prefix length")}>
+                <TextInput id='create-network-ipv6-prefix'
                            value={dialogValues.prefix}
                            validated={validationPrefix}
                            onChange={value => onValueChanged('prefix', value)} />

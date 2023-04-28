@@ -183,20 +183,20 @@ class TestMachinesNetworks(VirtualMachinesCase):
                     b.select_from_dropdown("#create-network-ip-configuration", self.ip_conf)
 
                     if "4" in self.ip_conf:
-                        b.set_input_text("#network-ipv4-address", self.ipv4_address)
-                        b.set_input_text("#network-ipv4-netmask", self.ipv4_netmask)
+                        b.set_input_text("#create-network-ipv4-address", self.ipv4_address)
+                        b.set_input_text("#create-network-ipv4-netmask", self.ipv4_netmask)
                         if self.ipv4_dhcp_start is not None and self.ipv4_dhcp_end is not None:
-                            b.set_checked("#network-ipv4-dhcp", True)
-                            b.set_input_text("#network-ipv4-dhcp-range-start", self.ipv4_dhcp_start)
-                            b.set_input_text("#network-ipv4-dhcp-range-end", self.ipv4_dhcp_end)
+                            b.set_checked("#create-network-ipv4-dhcp", True)
+                            b.set_input_text("#create-network-ipv4-dhcp-range-start", self.ipv4_dhcp_start)
+                            b.set_input_text("#create-network-ipv4-dhcp-range-end", self.ipv4_dhcp_end)
 
                     if "6" in self.ip_conf:
-                        b.set_input_text("#network-ipv6-address", self.ipv6_address)
-                        b.set_input_text("#network-ipv6-prefix", self.ipv6_prefix)
+                        b.set_input_text("#create-network-ipv6-address", self.ipv6_address)
+                        b.set_input_text("#create-network-ipv6-prefix", self.ipv6_prefix)
                         if self.ipv6_dhcp_start is not None and self.ipv6_dhcp_end is not None:
-                            b.set_checked("#network-ipv6-dhcp", True)
-                            b.set_input_text("#network-ipv6-dhcp-range-start", self.ipv6_dhcp_start)
-                            b.set_input_text("#network-ipv6-dhcp-range-end", self.ipv6_dhcp_end)
+                            b.set_checked("#create-network-ipv6-dhcp", True)
+                            b.set_input_text("#create-network-ipv6-dhcp-range-start", self.ipv6_dhcp_start)
+                            b.set_input_text("#create-network-ipv6-dhcp-range-end", self.ipv6_dhcp_end)
 
             def cancel(self):
                 b.click(".pf-c-modal-box__footer button:contains(Cancel)")
@@ -207,29 +207,14 @@ class TestMachinesNetworks(VirtualMachinesCase):
 
                 if (self.xfail):
                     # Check incomplete dialog
-                    if "name" in self.xfail_objects:
-                        b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #create-network-name + .pf-c-form__helper-text .pf-m-error", self.xfail_error)
-                    if "ipv4_address" in self.xfail_objects:
-                        b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #network-ipv4-address + .pf-c-form__helper-text .pf-m-error", self.xfail_error)
-                    if "ipv4_netmask" in self.xfail_objects:
-                        b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #network-ipv4-netmask + .pf-c-form__helper-text .pf-m-error", self.xfail_error)
-                    if "ipv4_dhcp_start" in self.xfail_objects:
-                        b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #network-ipv4-dhcp-range-start + .pf-c-form__helper-text .pf-m-error", self.xfail_error)
-                    if "ipv4_dhcp_end" in self.xfail_objects:
-                        b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #network-ipv4-dhcp-range-end + .pf-c-form__helper-text .pf-m-error", self.xfail_error)
-                    if "ipv6_address" in self.xfail_objects:
-                        b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #network-ipv6-address + .pf-c-form__helper-text .pf-m-error", self.xfail_error)
-                    if "ipv6_prefix" in self.xfail_objects:
-                        b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #network-ipv6-prefix + .pf-c-form__helper-text .pf-m-error", self.xfail_error)
-                    if "ipv6_dhcp_start" in self.xfail_objects:
-                        b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #network-ipv6-dhcp-range-start + .pf-c-form__helper-text .pf-m-error", self.xfail_error)
-                    if "ipv6_dhcp_end" in self.xfail_objects:
-                        b.wait_in_text("#create-network-dialog .pf-c-modal-box__body #network-ipv6-dhcp-range-end + .pf-c-form__helper-text .pf-m-error", self.xfail_error)
                     if "body" in self.xfail_objects:
                         error_location = "#create-network-dialog .pf-c-modal-box__body .pf-m-danger"
                         b.wait_visible(error_location)
                         error_message = b.text(error_location)
                         self.test_obj.assertIn(self.xfail_error, error_message)
+                    else:
+                        for xfo in self.xfail_objects:
+                            b.wait_in_text(f"#create-network-dialog .pf-c-modal-box__body #create-network-{xfo} + .pf-c-form__helper-text .pf-m-error", self.xfail_error)
 
                     self.cancel()
                 else:
@@ -412,8 +397,8 @@ class TestMachinesNetworks(VirtualMachinesCase):
             ipv6_dhcp_start="",
             ipv6_dhcp_end="",
             xfail=True,
-            xfail_objects=["name", "ipv4_address", "ipv4_netmask", "ipv4_dhcp_start", "ipv4_dhcp_end",
-                            "ipv6_address", "ipv6_prefix", "ipv6_dhcp_start", "ipv6_dhcp_end"],
+            xfail_objects=["name", "ipv4-address", "ipv4-netmask", "ipv4-dhcp-range-start", "ipv4-dhcp-range-end",
+                            "ipv6-address", "ipv6-prefix", "ipv6-dhcp-range-start", "ipv6-dhcp-range-end"],
             xfail_error="should not be empty",
         ).execute()
 
@@ -432,8 +417,8 @@ class TestMachinesNetworks(VirtualMachinesCase):
             ipv6_dhcp_start="fd00:e81d.a6d7:55:::100",
             ipv6_dhcp_end="fd00:e81d:a6d7:55::1:1:1:1:1:1:1:1",
             xfail=True,
-            xfail_objects=["ipv4_address", "ipv4_netmask", "ipv4_dhcp_start", "ipv4_dhcp_end",
-                            "ipv6_address", "ipv6_prefix", "ipv6_dhcp_start", "ipv6_dhcp_end"],
+            xfail_objects=["ipv4-address", "ipv4-netmask", "ipv4-dhcp-range-start", "ipv4-dhcp-range-end",
+                            "ipv6-address", "ipv6-prefix", "ipv6-dhcp-range-start", "ipv6-dhcp-range-end"],
             xfail_error="Invalid",
         ).execute()
 
@@ -452,7 +437,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
             ipv6_dhcp_start="fd00:e81d:a6d7:54::100",
             ipv6_dhcp_end="ad00:e81d:a6d7:55::100",
             xfail=True,
-            xfail_objects=["ipv4_dhcp_start", "ipv4_dhcp_end", "ipv6_dhcp_start", "ipv6_dhcp_end"],
+            xfail_objects=["ipv4-dhcp-range-start", "ipv4-dhcp-range-end", "ipv6-dhcp-range-start", "ipv6-dhcp-range-end"],
             xfail_error="Address not within subnet",
         ).execute()
 
@@ -464,7 +449,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
             ipv4_address="192.168.100.0",
             ipv4_netmask="24",
             xfail=True,
-            xfail_objects=["ipv4_address"],
+            xfail_objects=["ipv4-address"],
             xfail_error="IPv4 address cannot be same as the network identifier",
         ).execute()
 
@@ -476,7 +461,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
             ipv4_address="192.168.100.255",
             ipv4_netmask="24",
             xfail=True,
-            xfail_objects=["ipv4_address"],
+            xfail_objects=["ipv4-address"],
             xfail_error="IPv4 address cannot be same as the network's broadcast address",
         ).execute()
 
