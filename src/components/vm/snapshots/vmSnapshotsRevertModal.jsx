@@ -98,7 +98,7 @@ export class RevertSnapshotModal extends React.Component {
                                    onClick={this.revert}>
                                {_("Force revert")}
                            </Button>}
-                           <Button variant='link' className='btn-cancel' onClick={Dialogs.close}>
+                           <Button variant='link' onClick={Dialogs.close}>
                                {_("Cancel")}
                            </Button>
                        </>

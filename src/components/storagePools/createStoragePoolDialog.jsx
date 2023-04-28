@@ -439,7 +439,7 @@ class CreateStoragePoolModal extends React.Component {
                            <Button variant='primary' isLoading={this.state.createInProgress} isDisabled={this.state.createInProgress} onClick={this.onCreateClicked}>
                                {_("Create")}
                            </Button>
-                           <Button variant='link' className='btn-cancel' onClick={ Dialogs.close }>
+                           <Button variant='link' onClick={ Dialogs.close }>
                                {_("Cancel")}
                            </Button>
                        </>

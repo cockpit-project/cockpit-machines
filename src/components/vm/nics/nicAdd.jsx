@@ -212,7 +212,7 @@ export class AddNIC extends React.Component {
                                 onClick={this.add}>
                             {_("Add")}
                         </Button>
-                        <Button id={`${idPrefix}-cancel`} variant='link' className='btn-cancel' onClick={Dialogs.close}>
+                        <Button id={`${idPrefix}-cancel`} variant='link' onClick={Dialogs.close}>
                             {_("Cancel")}
                         </Button>
                     </>

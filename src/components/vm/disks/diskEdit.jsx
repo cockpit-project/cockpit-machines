@@ -266,7 +266,7 @@ export class EditDiskModal extends React.Component {
                            <Button id={`${idPrefix}-dialog-save`} variant='primary' onClick={this.onSaveClicked}>
                                {_("Save")}
                            </Button>
-                           <Button id={`${idPrefix}-dialog-cancel`} variant='link' className='btn-cancel' onClick={Dialogs.close}>
+                           <Button id={`${idPrefix}-dialog-cancel`} variant='link' onClick={Dialogs.close}>
                                {_("Cancel")}
                            </Button>
                        </>

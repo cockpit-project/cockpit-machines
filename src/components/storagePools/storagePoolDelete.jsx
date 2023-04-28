@@ -202,7 +202,7 @@ class StoragePoolDelete extends React.Component {
                                isDisabled={canDeleteOnlyWithoutVolumes(storagePool, vms) && this.state.deleteVolumes}>
                                {_("Delete")}
                            </Button>
-                           <Button variant='link' className='btn-cancel' onClick={Dialogs.close}>
+                           <Button variant='link' onClick={Dialogs.close}>
                                {_("Cancel")}
                            </Button>
                        </>

@@ -334,7 +334,7 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
                        <Button id='machines-cpu-modal-dialog-apply' variant='primary' onClick={saveCPUMode} isDisabled={isLoading} isLoading={isLoading}>
                            {_("Apply")}
                        </Button>
-                       <Button id='machines-cpu-modal-dialog-cancel' variant='link' className='btn-cancel' onClick={Dialogs.close}>
+                       <Button id='machines-cpu-modal-dialog-cancel' variant='link' onClick={Dialogs.close}>
                            {_("Cancel")}
                        </Button>
                    </>

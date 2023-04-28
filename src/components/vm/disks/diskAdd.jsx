@@ -862,7 +862,7 @@ export class AddDiskModalBody extends React.Component {
                                    onClick={isMediaInsertion ? this.onInsertClicked : this.onAddClicked}>
                                {isMediaInsertion ? _("Insert") : _("Add")}
                            </Button>
-                           <Button id={`${idPrefix}-dialog-cancel`} variant='link' className='btn-cancel' onClick={Dialogs.close}>
+                           <Button id={`${idPrefix}-dialog-cancel`} variant='link' onClick={Dialogs.close}>
                                {_("Cancel")}
                            </Button>
                        </>

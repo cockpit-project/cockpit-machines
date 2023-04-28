@@ -1388,7 +1388,7 @@ class CreateVmModal extends React.Component {
                     createAndEdit,
                     <Button variant='link'
                             key="cancel-button"
-                            className='btn-cancel' onClick={Dialogs.close}>
+                            onClick={Dialogs.close}>
                         {_("Cancel")}
                     </Button>
                 ]}>

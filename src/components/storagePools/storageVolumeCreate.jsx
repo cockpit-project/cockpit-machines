@@ -106,7 +106,7 @@ class CreateStorageVolumeModal extends React.Component {
                            <Button variant="primary" onClick={this.onCreateClicked} isLoading={this.state.createInProgress} isDisabled={this.state.createInProgress}>
                                {_("Create")}
                            </Button>
-                           <Button variant='link' className='btn-cancel' onClick={Dialogs.close}>
+                           <Button variant='link' onClick={Dialogs.close}>
                                {_("Cancel")}
                            </Button>
                        </>

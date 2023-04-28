@@ -181,7 +181,7 @@ export class EditNICModal extends React.Component {
                            <Button isDisabled={this.state.saveDisabled} id={`${idPrefix}-save`} variant='primary' onClick={this.save}>
                                {_("Save")}
                            </Button>
-                           <Button id={`${idPrefix}-cancel`} variant='link' className='btn-cancel' onClick={Dialogs.close}>
+                           <Button id={`${idPrefix}-cancel`} variant='link' onClick={Dialogs.close}>
                                {_("Cancel")}
                            </Button>
                        </>
