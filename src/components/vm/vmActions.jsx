@@ -56,6 +56,124 @@ import store from "../../store.js";
 
 const _ = cockpit.gettext;
 
+const onStart = (vm, setOperationInProgress) => domainStart({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
+    setOperationInProgress(false);
+    store.dispatch(
+        updateVm({
+            connectionName: vm.connectionName,
+            name: vm.name,
+            error: {
+                text: cockpit.format(_("VM $0 failed to start"), vm.name),
+                detail: ex.message,
+            }
+        })
+    );
+});
+
+const onInstall = (vm, onAddErrorNotification) => domainInstall({ vm, onAddErrorNotification }).catch(ex => {
+    onAddErrorNotification({
+        text: cockpit.format(_("VM $0 failed to get installed"), vm.name),
+        detail: ex.message.split(/Traceback(.+)/)[0],
+        resourceId: vm.id,
+    });
+});
+
+const onReboot = (vm) => domainReboot({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
+    store.dispatch(
+        updateVm({
+            connectionName: vm.connectionName,
+            name: vm.name,
+            error: {
+                text: cockpit.format(_("VM $0 failed to reboot"), vm.name),
+                detail: ex.message,
+            }
+        })
+    );
+});
+
+const onForceReboot = (vm) => domainForceReboot({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
+    store.dispatch(
+        updateVm({
+            connectionName: vm.connectionName,
+            name: vm.name,
+            error: {
+                text: cockpit.format(_("VM $0 failed to force reboot"), vm.name),
+                detail: ex.message,
+            }
+        })
+    );
+});
+
+const onShutdown = (vm, setOperationInProgress) => domainShutdown({ name: vm.name, id: vm.id, connectionName: vm.connectionName })
+        .then(() => !vm.persistent && cockpit.location.go(["vms"]))
+        .catch(ex => {
+            setOperationInProgress(false);
+            store.dispatch(
+                updateVm({
+                    connectionName: vm.connectionName,
+                    name: vm.name,
+                    error: {
+                        text: cockpit.format(_("VM $0 failed to shutdown"), vm.name),
+                        detail: ex.message,
+                    }
+                })
+            );
+        });
+
+const onPause = (vm) => domainPause({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
+    store.dispatch(
+        updateVm({
+            connectionName: vm.connectionName,
+            name: vm.name,
+            error: {
+                text: cockpit.format(_("VM $0 failed to pause"), vm.name),
+                detail: ex.message,
+            }
+        })
+    );
+});
+
+const onResume = (vm) => domainResume({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
+    store.dispatch(
+        updateVm({
+            connectionName: vm.connectionName,
+            name: vm.name,
+            error: {
+                text: cockpit.format(_("VM $0 failed to resume"), vm.name),
+                detail: ex.message,
+            }
+        })
+    );
+});
+
+const onForceoff = (vm) => domainForceOff({ name: vm.name, id: vm.id, connectionName: vm.connectionName })
+        .then(() => !vm.persistent && cockpit.location.go(["vms"]))
+        .catch(ex => {
+            store.dispatch(
+                updateVm({
+                    connectionName: vm.connectionName,
+                    name: vm.name,
+                    error: {
+                        text: cockpit.format(_("VM $0 failed to force shutdown"), vm.name),
+                        detail: ex.message,
+                    }
+                })
+            );
+        });
+
+const onSendNMI = (vm) => domainSendNMI({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
+    store.dispatch(
+        updateVm({
+            connectionName: vm.connectionName,
+            name: vm.name,
+            error: {
+                text: cockpit.format(_("VM $0 failed to send NMI"), vm.name),
+                detail: ex.message,
+            }
+        })
+    );
+});
+
 const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
     const Dialogs = useDialogs();
     const [isActionOpen, setIsActionOpen] = useState(false);
@@ -78,123 +196,13 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
     const hasInstallPhase = vm.metadata && vm.metadata.hasInstallPhase;
     const dropdownItems = [];
 
-    const onStart = () => domainStart({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
-        setOperationInProgress(false);
-        store.dispatch(
-            updateVm({
-                connectionName: vm.connectionName,
-                name: vm.name,
-                error: {
-                    text: cockpit.format(_("VM $0 failed to start"), vm.name),
-                    detail: ex.message,
-                }
-            })
-        );
-    });
-    const onInstall = () => domainInstall({ vm, onAddErrorNotification }).catch(ex => {
-        onAddErrorNotification({
-            text: cockpit.format(_("VM $0 failed to get installed"), vm.name),
-            detail: ex.message.split(/Traceback(.+)/)[0],
-            resourceId: vm.id,
-        });
-    });
-    const onReboot = () => domainReboot({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
-        store.dispatch(
-            updateVm({
-                connectionName: vm.connectionName,
-                name: vm.name,
-                error: {
-                    text: cockpit.format(_("VM $0 failed to reboot"), vm.name),
-                    detail: ex.message,
-                }
-            })
-        );
-    });
-    const onForceReboot = () => domainForceReboot({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
-        store.dispatch(
-            updateVm({
-                connectionName: vm.connectionName,
-                name: vm.name,
-                error: {
-                    text: cockpit.format(_("VM $0 failed to force reboot"), vm.name),
-                    detail: ex.message,
-                }
-            })
-        );
-    });
-    const onShutdown = () => domainShutdown({ name: vm.name, id: vm.id, connectionName: vm.connectionName })
-            .then(() => !vm.persistent && cockpit.location.go(["vms"]))
-            .catch(ex => {
-                setOperationInProgress(false);
-                store.dispatch(
-                    updateVm({
-                        connectionName: vm.connectionName,
-                        name: vm.name,
-                        error: {
-                            text: cockpit.format(_("VM $0 failed to shutdown"), vm.name),
-                            detail: ex.message,
-                        }
-                    })
-                );
-            });
-    const onPause = () => domainPause({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
-        store.dispatch(
-            updateVm({
-                connectionName: vm.connectionName,
-                name: vm.name,
-                error: {
-                    text: cockpit.format(_("VM $0 failed to pause"), vm.name),
-                    detail: ex.message,
-                }
-            })
-        );
-    });
-    const onResume = () => domainResume({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
-        store.dispatch(
-            updateVm({
-                connectionName: vm.connectionName,
-                name: vm.name,
-                error: {
-                    text: cockpit.format(_("VM $0 failed to resume"), vm.name),
-                    detail: ex.message,
-                }
-            })
-        );
-    });
-    const onForceoff = () => domainForceOff({ name: vm.name, id: vm.id, connectionName: vm.connectionName })
-            .then(() => !vm.persistent && cockpit.location.go(["vms"]))
-            .catch(ex => {
-                store.dispatch(
-                    updateVm({
-                        connectionName: vm.connectionName,
-                        name: vm.name,
-                        error: {
-                            text: cockpit.format(_("VM $0 failed to force shutdown"), vm.name),
-                            detail: ex.message,
-                        }
-                    })
-                );
-            });
-    const onSendNMI = () => domainSendNMI({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
-        store.dispatch(
-            updateVm({
-                connectionName: vm.connectionName,
-                name: vm.name,
-                error: {
-                    text: cockpit.format(_("VM $0 failed to send NMI"), vm.name),
-                    detail: ex.message,
-                }
-            })
-        );
-    });
-
     let shutdown;
 
     if (domainCanPause(state)) {
         dropdownItems.push(
             <DropdownItem key={`${id}-pause`}
                           id={`${id}-pause`}
-                          onClick={() => onPause()}>
+                          onClick={() => onPause(vm)}>
                 {_("Pause")}
             </DropdownItem>
         );
@@ -205,7 +213,7 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
         dropdownItems.push(
             <DropdownItem key={`${id}-resume`}
                           id={`${id}-resume`}
-                          onClick={() => onResume()}>
+                          onClick={() => onResume(vm)}>
                 {_("Resume")}
             </DropdownItem>
         );
@@ -219,21 +227,21 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
                     variant={isDetailsPage ? 'primary' : 'secondary'}
                     isLoading={operationInProgress}
                     isDisabled={operationInProgress}
-                    onClick={() => { setOperationInProgress(true); onShutdown() }} id={`${id}-shutdown-button`}>
+                    onClick={() => { setOperationInProgress(true); onShutdown(vm, setOperationInProgress) }} id={`${id}-shutdown-button`}>
                 {_("Shut down")}
             </Button>
         );
         dropdownItems.push(
             <DropdownItem key={`${id}-off`}
                           id={`${id}-off`}
-                          onClick={() => onShutdown()}>
+                          onClick={() => onShutdown(vm)}>
                 {_("Shut down")}
             </DropdownItem>
         );
         dropdownItems.push(
             <DropdownItem key={`${id}-forceOff`}
                           id={`${id}-forceOff`}
-                          onClick={() => onForceoff()}>
+                          onClick={() => onForceoff(vm)}>
                 {_("Force shut down")}
             </DropdownItem>
         );
@@ -241,7 +249,7 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
         dropdownItems.push(
             <DropdownItem key={`${id}-sendNMI`}
                           id={`${id}-sendNMI`}
-                          onClick={() => onSendNMI()}>
+                          onClick={() => onSendNMI(vm)}>
                 {_("Send non-maskable interrupt")}
             </DropdownItem>
         );
@@ -252,14 +260,14 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
         dropdownItems.push(
             <DropdownItem key={`${id}-reboot`}
                           id={`${id}-reboot`}
-                          onClick={() => onReboot()}>
+                          onClick={() => onReboot(vm)}>
                 {_("Reboot")}
             </DropdownItem>
         );
         dropdownItems.push(
             <DropdownItem key={`${id}-forceReboot`}
                           id={`${id}-forceReboot`}
-                          onClick={() => onForceReboot()}>
+                          onClick={() => onForceReboot(vm)}>
                 {_("Force reboot")}
             </DropdownItem>
         );
@@ -274,7 +282,7 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
                     variant={isDetailsPage ? 'primary' : 'secondary'}
                     isLoading={operationInProgress}
                     isDisabled={operationInProgress}
-                    onClick={() => { setOperationInProgress(true); onStart() }} id={`${id}-run`}>
+                    onClick={() => { setOperationInProgress(true); onStart(vm, setOperationInProgress) }} id={`${id}-run`}>
                 {_("Run")}
             </Button>
         );
@@ -286,7 +294,7 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
             <Button key='action-install' variant="secondary"
                            isLoading={vm.installInProgress}
                            isDisabled={vm.installInProgress}
-                           onClick={() => onInstall()} id={`${id}-install`}>
+                           onClick={() => onInstall(vm, onAddErrorNotification)} id={`${id}-install`}>
                 {_("Install")}
             </Button>
         );
