@@ -39,6 +39,12 @@ class VirtualMachinesCaseHelpers:
         b.wait_visible("#vm-{0}-{1}-action-kebab > .pf-c-dropdown__menu".format(vmName, connectionName))
         b.click("#vm-{0}-{1}-{2} a".format(vmName, connectionName, action))
 
+        # Some actions, which can cause expensive downtime when clicked accidentally, have confirmation dialog
+        if action in ["off", "forceOff", "reboot", "forceReboot", "sendNMI"]:
+            b.wait_visible("#vm-{0}-{1}-confirm-action-modal".format(vmName, connectionName))
+            b.click(".pf-c-modal-box__footer #vm-{0}-{1}-{2}".format(vmName, connectionName, action))
+            b.wait_not_present("#vm-{0}-{1}-confirm-action-modal".format(vmName, connectionName))
+
         if not checkExpectedState:
             return
 

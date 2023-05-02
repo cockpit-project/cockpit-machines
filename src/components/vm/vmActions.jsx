@@ -22,7 +22,9 @@ import PropTypes from 'prop-types';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Dropdown, DropdownItem, DropdownSeparator, KebabToggle } from "@patternfly/react-core/dist/esm/deprecated/components/Dropdown";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
+import { PowerOffIcon, RedoIcon } from '@patternfly/react-icons';
 import { useDialogs } from 'dialogs.jsx';
+import { fmt_to_fragments } from 'utils.jsx';
 
 import { updateVm } from '../../actions/store-actions.js';
 import {
@@ -30,6 +32,7 @@ import {
 } from "../../helpers.js";
 
 import { CloneDialog } from './vmCloneDialog.jsx';
+import { ConfirmDialog } from './confirmDialog.jsx';
 import { DeleteDialog } from "./deleteDialog.jsx";
 import { MigrateDialog } from './vmMigrateDialog.jsx';
 import { RenameDialog } from './vmRenameDialog.jsx';
@@ -227,21 +230,72 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
                     variant={isDetailsPage ? 'primary' : 'secondary'}
                     isLoading={operationInProgress}
                     isDisabled={operationInProgress}
-                    onClick={() => { setOperationInProgress(true); onShutdown(vm, setOperationInProgress) }} id={`${id}-shutdown-button`}>
+                    id={`${id}-shutdown-button`}
+                    onClick={() => Dialogs.show(
+                        <ConfirmDialog idPrefix={id}
+                            title={fmt_to_fragments(_("Shut down $0?"), <b>{vm.name}</b>)}
+                            titleIcon={PowerOffIcon}
+                            vm={vm}
+                            actionsList={[
+                                {
+                                    variant: "primary",
+                                    handler: () => {
+                                        setOperationInProgress(true);
+                                        onShutdown(vm, setOperationInProgress);
+                                    },
+                                    name: _("Shut down"),
+                                    id: "off",
+                                },
+                                {
+                                    variant: "secondary",
+                                    handler: () => {
+                                        onReboot(vm);
+                                    },
+                                    name: _("Reboot"),
+                                    id: "reboot",
+                                },
+                            ]} />
+                    )}>
                 {_("Shut down")}
             </Button>
         );
         dropdownItems.push(
             <DropdownItem key={`${id}-off`}
                           id={`${id}-off`}
-                          onClick={() => onShutdown(vm)}>
+                          onClick={() => Dialogs.show(
+                              <ConfirmDialog idPrefix={id}
+                                  title={fmt_to_fragments(_("Shut down $0?"), <b>{vm.name}</b>)}
+                                  titleIcon={PowerOffIcon}
+                                  vm={vm}
+                                  actionsList={[
+                                      {
+                                          variant: "primary",
+                                          handler: () => onShutdown(vm),
+                                          name: _("Shut down"),
+                                          id: "off",
+                                      },
+                                  ]} />
+                          )}>
                 {_("Shut down")}
             </DropdownItem>
         );
         dropdownItems.push(
             <DropdownItem key={`${id}-forceOff`}
                           id={`${id}-forceOff`}
-                          onClick={() => onForceoff(vm)}>
+                          onClick={() => Dialogs.show(
+                              <ConfirmDialog idPrefix={id}
+                                  title={fmt_to_fragments(_("Force shut down $0?"), <b>{vm.name}</b>)}
+                                  titleIcon={PowerOffIcon}
+                                  vm={vm}
+                                  actionsList={[
+                                      {
+                                          variant: "primary",
+                                          handler: () => onForceoff(vm),
+                                          name: _("Force shut down"),
+                                          id: "forceOff",
+                                      },
+                                  ]} />
+                          )}>
                 {_("Force shut down")}
             </DropdownItem>
         );
@@ -249,7 +303,19 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
         dropdownItems.push(
             <DropdownItem key={`${id}-sendNMI`}
                           id={`${id}-sendNMI`}
-                          onClick={() => onSendNMI(vm)}>
+                          onClick={() => Dialogs.show(
+                              <ConfirmDialog idPrefix={id}
+                                  title={fmt_to_fragments(_("Send non-maskable interrupt to $0?"), <b>{vm.name}</b>)}
+                                  vm={vm}
+                                  actionsList={[
+                                      {
+                                          variant: "primary",
+                                          handler: () => onSendNMI(vm),
+                                          name: _("Send non-maskable interrupt"),
+                                          id: "sendNMI",
+                                      },
+                                  ]} />
+                          )}>
                 {_("Send non-maskable interrupt")}
             </DropdownItem>
         );
@@ -260,14 +326,40 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
         dropdownItems.push(
             <DropdownItem key={`${id}-reboot`}
                           id={`${id}-reboot`}
-                          onClick={() => onReboot(vm)}>
+                          onClick={() => Dialogs.show(
+                              <ConfirmDialog idPrefix={id}
+                                  title={fmt_to_fragments(_("Reboot $0?"), <b>{vm.name}</b>)}
+                                  titleIcon={RedoIcon}
+                                  vm={vm}
+                                  actionsList={[
+                                      {
+                                          variant: "primary",
+                                          handler: onReboot(vm),
+                                          name: _("Reboot"),
+                                          id: "reboot",
+                                      },
+                                  ]} />
+                          )}>
                 {_("Reboot")}
             </DropdownItem>
         );
         dropdownItems.push(
             <DropdownItem key={`${id}-forceReboot`}
                           id={`${id}-forceReboot`}
-                          onClick={() => onForceReboot(vm)}>
+                          onClick={() => Dialogs.show(
+                              <ConfirmDialog idPrefix={id}
+                                  title={fmt_to_fragments(_("Force reboot $0?"), <b>{vm.name}</b>)}
+                                  vm={vm}
+                                  titleIcon={RedoIcon}
+                                  actionsList={[
+                                      {
+                                          variant: "primary",
+                                          handler: onForceReboot(vm),
+                                          name: _("Force reboot"),
+                                          id: "forceReboot",
+                                      },
+                                  ]} />
+                          )}>
                 {_("Force reboot")}
             </DropdownItem>
         );
