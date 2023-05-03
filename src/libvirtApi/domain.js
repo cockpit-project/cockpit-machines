@@ -671,18 +671,10 @@ export function domainGet({
             .then(domInactiveXml => {
                 const dumpInactiveXmlParams = parseDomainDumpxml(connectionName, domInactiveXml[0], objPath);
                 props.inactiveXML = dumpInactiveXmlParams;
-                return call(connectionName, objPath, 'org.libvirt.Domain', 'GetState', [0], { timeout, type: 'u' });
-            })
-            .then(state => {
-                const stateStr = DOMAINSTATE[state[0][0]];
                 props = Object.assign(props, {
                     connectionName,
                     id: objPath,
-                    state: stateStr,
                 });
-
-                if (!domainIsRunning(stateStr))
-                    props.actualTimeInMs = -1;
 
                 return call(connectionName, objPath, "org.freedesktop.DBus.Properties", "GetAll", ["org.libvirt.Domain"], { timeout, type: 's' });
             })
@@ -702,6 +694,8 @@ export function domainGet({
 
                 dumpxmlParams = parseDomainDumpxml(connectionName, domainXML, objPath);
 
+                Object.assign(props, dumpxmlParams);
+
                 return domainGetCapabilities({ connectionName, arch: dumpxmlParams.arch, model: dumpxmlParams.emulatedMachine });
             })
             .then(domCaps => {
@@ -713,7 +707,15 @@ export function domainGet({
                     supportedDiskBusTypes: getDomainCapDiskBusTypes(domCaps),
                 };
 
-                store.dispatch(updateOrAddVm(Object.assign({}, props, dumpxmlParams)));
+                return call(connectionName, objPath, 'org.libvirt.Domain', 'GetState', [0], { timeout, type: 'u' });
+            })
+            .then(state => {
+                const stateStr = DOMAINSTATE[state[0][0]];
+
+                if (!domainIsRunning(stateStr))
+                    props.actualTimeInMs = -1;
+
+                store.dispatch(updateOrAddVm({ state: stateStr, ...props }));
                 clearVmUiState(props.name, connectionName);
 
                 return snapshotGetAll({ connectionName, domainPath: objPath });
