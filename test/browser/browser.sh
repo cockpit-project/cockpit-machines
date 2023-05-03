@@ -29,6 +29,12 @@ if grep -q platform:el8 /etc/os-release; then
     dnf module switch-to -y nodejs:16
 fi
 
+# HACK: nodejs 20 is very segfaulty: https://bugzilla.redhat.com/show_bug.cgi?id=2190075
+if grep -q VERSION_ID=39 /etc/os-release; then
+    dnf install -y nodejs18
+    ln -sfn node-18 /usr/bin/node
+fi
+
 # RHEL/CentOS 8 and Fedora have this, but not RHEL 9; tests check this more precisely
 $DNF libvirt-daemon-driver-storage-iscsi-direct || true
 
