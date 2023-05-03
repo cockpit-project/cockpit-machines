@@ -37,6 +37,18 @@ class TestMachinesLifecycle(VirtualMachinesCase):
     def testBasic(self):
         self._testBasic(run_pixel_tests=True)
 
+    def testBasic2(self):
+        self.testBasic()
+
+    def testBasic3(self):
+        self.testBasic()
+
+    def testBasic4(self):
+        self.testBasic()
+
+    def testBasic5(self):
+        self.testBasic()
+
     def createUser(self, user_group):
         user_name = f"test_{user_group if user_group else 'none'}_user"
         self.machine.execute(f"useradd{' -G ' + user_group if user_group else '' } {user_name}")
@@ -143,11 +155,16 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         wait(lambda: float(usage) <= 100.0, delay=3)
 
         # suspend/resume
+        b.eval_js('window.debugging = "machines"')
+        b.cdp.trace = True
+        m.verbose = True
         m.execute("virsh suspend subVmTest1")
         b.wait_in_text("#vm-subVmTest1-system-state", "Paused")
         # resume sometimes fails with "unable to execute QEMU command 'cont': Resetting the Virtual Machine is required"
         m.execute('virsh resume subVmTest1 || { virsh destroy subVmTest1; virsh start subVmTest1; }')
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
+        b.eval_js('window.debugging = null')
+        b.cdp.trace = False
 
         # Wait for the system to completely start
         self.waitCirrOSBooted(args['logfile'])
