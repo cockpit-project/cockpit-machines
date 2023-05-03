@@ -676,8 +676,9 @@ class TestMachinesNICs(VirtualMachinesCase):
             else:
                 self.deleteIface(self.nic_num)
 
-                # Check NIC is no longer in list
-                self.browser.wait_not_present(f"#vm-subVmTest1-network-{self.nic_num}-mac")
+                # Check NIC is no longer in list; the device-removed signal can take *very* long to arrive
+                with self.browser.wait_timeout(90):
+                    self.browser.wait_not_present(f"#vm-subVmTest1-network-{self.nic_num}-mac")
                 self.browser.wait_not_present(".pf-c-modal-box")
 
 
