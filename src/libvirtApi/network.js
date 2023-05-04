@@ -87,7 +87,7 @@ export function networkGet({
 }) {
     const props = {};
 
-    call(connectionName, objPath, 'org.freedesktop.DBus.Properties', 'GetAll', ['org.libvirt.Network'], { timeout, type: 's' })
+    return call(connectionName, objPath, 'org.freedesktop.DBus.Properties', 'GetAll', ['org.libvirt.Network'], { timeout, type: 's' })
             .then(resultProps => {
                 /* Sometimes not all properties are returned; for example when some network got deleted while part
                  * of the properties got fetched from libvirt. Make sure that there is check before reading the attributes.

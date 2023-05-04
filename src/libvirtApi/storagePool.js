@@ -76,7 +76,7 @@ export function storagePoolGet({
     let dumpxmlParams;
     const props = {};
 
-    call(connectionName, objPath, 'org.libvirt.StoragePool', 'GetXMLDesc', [0], { timeout, type: 'u' })
+    return call(connectionName, objPath, 'org.libvirt.StoragePool', 'GetXMLDesc', [0], { timeout, type: 'u' })
             .then(poolXml => {
                 dumpxmlParams = parseStoragePoolDumpxml(connectionName, poolXml[0], objPath);
 
