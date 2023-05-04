@@ -28,7 +28,6 @@ import { Gallery } from "@patternfly/react-core/dist/esm/layouts/Gallery";
 import { Toolbar, ToolbarContent, ToolbarItem } from "@patternfly/react-core/dist/esm/components/Toolbar";
 import { Select, SelectOption } from "@patternfly/react-core/dist/esm/deprecated/components/Select";
 import { Page, PageSection } from "@patternfly/react-core/dist/esm/components/Page";
-import { Text, TextVariants } from "@patternfly/react-core/dist/esm/components/Text";
 import { WithDialogs } from 'dialogs.jsx';
 
 import VmActions from '../vm/vmActions.jsx';
@@ -136,9 +135,7 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                         <AggregateStatusCards networks={networks} storagePools={storagePools} />
                         <Card id='virtual-machines-listing'>
                             <CardHeader actions={{ actions: toolBar }}>
-                                <CardTitle>
-                                    <Text component={TextVariants.h2}>{_("Virtual machines")}</Text>
-                                </CardTitle>
+                                <CardTitle component="h2">{_("Virtual machines")}</CardTitle>
                             </CardHeader>
                             <CardBody className="contains-list">
                                 <ListingTable aria-label={_("Virtual machines")}

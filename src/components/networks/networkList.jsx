@@ -21,7 +21,6 @@ import PropTypes from 'prop-types';
 import { Breadcrumb, BreadcrumbItem } from "@patternfly/react-core/dist/esm/components/Breadcrumb";
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core/dist/esm/components/Card';
 import { Page, PageBreadcrumb, PageSection, PageSectionVariants } from "@patternfly/react-core/dist/esm/components/Page";
-import { Text, TextVariants } from "@patternfly/react-core/dist/esm/components/Text";
 import { WithDialogs } from 'dialogs.jsx';
 
 import cockpit from 'cockpit';
@@ -59,9 +58,7 @@ export class NetworkList extends React.Component {
                     <PageSection id='networks-listing'>
                         <Card>
                             <CardHeader actions={{ actions: unlocked && <CreateNetworkAction /> }}>
-                                <CardTitle>
-                                    <Text component={TextVariants.h2}>{_("Networks")}</Text>
-                                </CardTitle>
+                                <CardTitle component="h2">{_("Networks")}</CardTitle>
                             </CardHeader>
                             <CardBody className="contains-list">
                                 <ListingTable aria-label={_("Networks")}
