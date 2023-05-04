@@ -46,9 +46,7 @@ export class AggregateStatusCards extends React.Component {
                     <CardHeader>
                         <ServerIcon size="md" />
                         <Button onClick={() => cockpit.location.go(['storages'])} variant="link">
-                            <span className="card-pf-title-link">
-                                {cockpit.format(cockpit.ngettext("$0 Storage pool", "$0 Storage pools", this.props.storagePools.length), this.props.storagePools.length)}
-                            </span>
+                            {cockpit.format(cockpit.ngettext("$0 Storage pool", "$0 Storage pools", this.props.storagePools.length), this.props.storagePools.length)}
                         </Button>
                         <Flex>
                             <FlexItem className="active-resources">
@@ -71,9 +69,7 @@ export class AggregateStatusCards extends React.Component {
                     <CardHeader>
                         <NetworkIcon size="md" />
                         <Button onClick={() => cockpit.location.go(['networks'])} variant="link">
-                            <span className="card-pf-title-link">
-                                {cockpit.format(cockpit.ngettext("$0 Network", "$0 Networks", this.props.networks.length), this.props.networks.length)}
-                            </span>
+                            {cockpit.format(cockpit.ngettext("$0 Network", "$0 Networks", this.props.networks.length), this.props.networks.length)}
                         </Button>
                         <Flex>
                             <FlexItem className="active-resources">

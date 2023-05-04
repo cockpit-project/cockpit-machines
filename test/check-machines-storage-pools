@@ -52,7 +52,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         self.waitPageInit()
         self.waitVmRow("subVmTest1")
 
-        b.wait_in_text("#card-pf-storage-pools .card-pf-title-link", "1 Storage pool")
+        b.wait_in_text("#card-pf-storage-pools", "1 Storage pool")
         b.wait_in_text("#card-pf-storage-pools .pf-c-card__header button", "Storage pool")
 
         # prepare libvirt storage pools
@@ -64,7 +64,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         m.execute(f"virsh pool-define-as myPoolTwo --type dir --target {p2}; virsh pool-start myPoolTwo")
         m.execute(f"virsh pool-create-as myPoolThree --type dir --target {p3}")  # Transient pool
 
-        b.wait_in_text("#card-pf-storage-pools .card-pf-title-link", "3 Storage pools")
+        b.wait_in_text("#card-pf-storage-pools", "3 Storage pools")
 
         m.execute("virsh vol-create-as myPoolTwo VolumeOne --capacity 1G --format qcow2")
         m.execute("virsh vol-create-as myPoolTwo VolumeTwo --capacity 1G --format qcow2")
@@ -1014,7 +1014,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         b.click(".machines-listing-breadcrumb li a:contains(Virtual machines)")
         b.wait_not_present("#vm-subVmTest1-system-name")
         # Go back to the storage pool list
-        b.wait_in_text("#card-pf-storage-pools button .card-pf-title-link", "Storage pool")
+        b.wait_in_text("#card-pf-storage-pools button", "Storage pool")
         b.click("#card-pf-storage-pools .pf-c-card__header button")
         b.wait_visible("#storage-pools-listing")
 
