@@ -44,11 +44,13 @@ export class AggregateStatusCards extends React.Component {
                       onKeyDown={event => this.onCardSelect(event, 'storages')}
                       onClick={() => cockpit.location.go(['storages'])}>
                     <CardHeader>
-                        <ServerIcon size="md" />
-                        <Button onClick={() => cockpit.location.go(['storages'])} variant="link">
-                            {cockpit.format(cockpit.ngettext("$0 Storage pool", "$0 Storage pools", this.props.storagePools.length), this.props.storagePools.length)}
-                        </Button>
-                        <Flex>
+                        <Flex alignItems={{ default: 'alignItemsCenter' }}>
+                            <ServerIcon size="md" />
+                            <Button onClick={() => cockpit.location.go(['storages'])} variant="link">
+                                {cockpit.format(cockpit.ngettext("$0 Storage pool", "$0 Storage pools", this.props.storagePools.length), this.props.storagePools.length)}
+                            </Button>
+                        </Flex>
+                        <Flex alignItems={{ default: 'alignItemsCenter' }}>
                             <FlexItem className="active-resources">
                                 <ArrowCircleUpIcon />
                                 { this.props.storagePools.filter(pool => pool && pool.active).length }
@@ -67,11 +69,13 @@ export class AggregateStatusCards extends React.Component {
                       onKeyDown={event => this.onCardSelect(event, 'networks')}
                       onClick={() => cockpit.location.go(['networks'])}>
                     <CardHeader>
-                        <NetworkIcon size="md" />
-                        <Button onClick={() => cockpit.location.go(['networks'])} variant="link">
-                            {cockpit.format(cockpit.ngettext("$0 Network", "$0 Networks", this.props.networks.length), this.props.networks.length)}
-                        </Button>
-                        <Flex>
+                        <Flex alignItems={{ default: 'alignItemsCenter' }}>
+                            <NetworkIcon size="md" />
+                            <Button onClick={() => cockpit.location.go(['networks'])} variant="link">
+                                {cockpit.format(cockpit.ngettext("$0 Network", "$0 Networks", this.props.networks.length), this.props.networks.length)}
+                            </Button>
+                        </Flex>
+                        <Flex alignItems={{ default: 'alignItemsCenter' }}>
                             <FlexItem className="active-resources">
                                 <ArrowCircleUpIcon />
                                 { this.props.networks.filter(network => network && network.active).length }
