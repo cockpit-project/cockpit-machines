@@ -91,7 +91,7 @@ packaging/debian/changelog: packaging/debian/changelog.in
 $(DIST_TEST): $(COCKPIT_REPO_STAMP) $(shell find src/ -type f) package.json build.js
 	$(MAKE) package-lock.json && NODE_ENV=$(NODE_ENV) ./build.js
 
-watch:
+watch: $(NODE_MODULES_TEST) $(COCKPIT_REPO_STAMP)
 	NODE_ENV=$(NODE_ENV) ESBUILD_WATCH=true ./build.js
 
 clean:
