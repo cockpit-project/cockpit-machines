@@ -189,7 +189,7 @@ function doUsagePolling(name, connectionName, objPath) {
                     });
 
                     logDebug(`doUsagePolling: ${JSON.stringify(props)}`);
-                    store.dispatch(updateVm(props));
+                    return store.dispatch(updateVm(props));
                 }
             })
             .catch(ex => console.warn(`GetStats(${name}, ${connectionName}) failed: ${ex.toString()}`))
@@ -198,9 +198,7 @@ function doUsagePolling(name, connectionName, objPath) {
 
 function getLoggedInUser() {
     logDebug(`GET_LOGGED_IN_USER:`);
-    return cockpit.user().then(loggedUser => {
-        store.dispatch(setLoggedInUser({ loggedUser }));
-    });
+    return cockpit.user().then(loggedUser => store.dispatch(setLoggedInUser({ loggedUser })));
 }
 
 export function getLibvirtVersion({ connectionName }) {
@@ -235,9 +233,9 @@ function networkUpdateOrDelete(connectionName, netPath) {
     call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "ListNetworks", [0], { timeout, type: "u" })
             .then(objPaths => {
                 if (objPaths[0].includes(netPath))
-                    networkGet({ connectionName, id: netPath, updateOnly: true });
+                    return networkGet({ connectionName, id: netPath, updateOnly: true });
                 else // Transient network which got undefined when stopped
-                    store.dispatch(undefineNetwork({ connectionName, id: netPath }));
+                    return store.dispatch(undefineNetwork({ connectionName, id: netPath }));
             })
             .catch(ex => console.warn("networkUpdateOrDelete action failed:", ex.toString()));
 }
@@ -245,7 +243,7 @@ function networkUpdateOrDelete(connectionName, netPath) {
 function parseOsInfoList(osList) {
     const osinfodata = JSON.parse(osList);
 
-    store.dispatch(updateOsInfoList(osinfodata.filter(os => os.shortId)));
+    return store.dispatch(updateOsInfoList(osinfodata.filter(os => os.shortId)));
 }
 
 /**
@@ -414,12 +412,12 @@ function startEventMonitorStoragePools(connectionName) {
 }
 
 function storagePoolUpdateOrDelete(connectionName, poolPath) {
-    call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "ListStoragePools", [0], { timeout, type: "u" })
+    return call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "ListStoragePools", [0], { timeout, type: "u" })
             .then(objPaths => {
                 if (objPaths[0].includes(poolPath))
-                    storagePoolGet({ connectionName, id: poolPath, updateOnly: true });
+                    return storagePoolGet({ connectionName, id: poolPath, updateOnly: true });
                 else // Transient pool which got undefined when stopped
-                    store.dispatch(undefineStoragePool({ connectionName, id: poolPath }));
+                    return store.dispatch(undefineStoragePool({ connectionName, id: poolPath }));
             })
             .catch(ex => console.warn("storagePoolUpdateOrDelete action failed:", ex.toString()));
 }

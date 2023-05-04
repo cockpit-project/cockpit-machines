@@ -72,7 +72,7 @@ export function snapshotGetAll({ connectionName, domainPath }) {
                             .catch(error => ({ success: false, error }));
                 };
 
-                Promise.all(promises.map(toResultObject))
+                return Promise.all(promises.map(toResultObject))
                         .then(snapXmlList => {
                             snapXmlList.forEach(snap => {
                                 if (snap.success) {
@@ -96,7 +96,7 @@ export function snapshotGetAll({ connectionName, domainPath }) {
                     logDebug("LIST_DOMAIN_SNAPSHOTS action failed for domain", domainPath, ", not supported by libvirt-dbus");
                 else
                     console.warn("LIST_DOMAIN_SNAPSHOTS action failed for domain", domainPath, ":", JSON.stringify(ex), "name:", ex.name);
-                store.dispatch(updateDomainSnapshots({
+                return store.dispatch(updateDomainSnapshots({
                     connectionName,
                     domainPath,
                     snaps: -1

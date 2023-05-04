@@ -95,13 +95,13 @@ export function storagePoolGet({
 
                 props.volumes = [];
                 if (props.active) {
-                    storageVolumeGetAll({ connectionName, poolName: dumpxmlParams.name })
+                    return storageVolumeGetAll({ connectionName, poolName: dumpxmlParams.name })
                             .then(volumes => {
                                 props.volumes = volumes;
                             })
                             .finally(() => store.dispatch(updateOrAddStoragePool(Object.assign({}, dumpxmlParams, props), updateOnly)));
                 } else {
-                    store.dispatch(updateOrAddStoragePool(Object.assign({}, dumpxmlParams, props), updateOnly));
+                    return store.dispatch(updateOrAddStoragePool(Object.assign({}, dumpxmlParams, props), updateOnly));
                 }
             })
             .catch(ex => console.warn('GET_STORAGE_POOL action failed for path', objPath, ex.toString()));

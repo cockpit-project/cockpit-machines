@@ -39,7 +39,7 @@ export function interfaceGet({
 }) {
     const props = {};
 
-    call(connectionName, objPath, 'org.freedesktop.DBus.Properties', 'GetAll', ['org.libvirt.Interface'], { timeout, type: 's' })
+    return call(connectionName, objPath, 'org.freedesktop.DBus.Properties', 'GetAll', ['org.libvirt.Interface'], { timeout, type: 's' })
             .then(resultProps => {
                 /* Sometimes not all properties are returned; for example when some network got deleted while part
                  * of the properties got fetched from libvirt. Make sure that there is check before reading the attributes.
@@ -57,7 +57,7 @@ export function interfaceGet({
             })
             .then(xml => {
                 const iface = parseIfaceDumpxml(xml);
-                store.dispatch(updateOrAddInterface(Object.assign({}, props, iface)));
+                return store.dispatch(updateOrAddInterface(Object.assign({}, props, iface)));
             })
             .catch(ex => console.log('listInactiveInterfaces action for path', objPath, ex.toString()));
 }
