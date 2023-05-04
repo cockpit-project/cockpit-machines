@@ -221,7 +221,7 @@ export const VmDetailsPage = ({
                   className={card.className}
                   id={card.id}>
                 <CardHeader actions={{ actions: card.actions }}>
-                    <CardTitle><h2>{card.title}</h2></CardTitle>
+                    <CardTitle component="h2">{card.title}</CardTitle>
                 </CardHeader>
                 <CardBody className={["disks-card", "hostdevs-card", "networks-card", "snapshots-card", "filesystems-card"].includes(card.className) ? "contains-list" : ""}>
                     {card.body}
