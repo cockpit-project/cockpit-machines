@@ -107,7 +107,7 @@ export function networkGet({
             })
             .then(xml => {
                 const network = parseNetDumpxml(xml);
-                store.dispatch(updateOrAddNetwork(Object.assign({}, props, network), updateOnly));
+                return store.dispatch(updateOrAddNetwork(Object.assign({}, props, network), updateOnly));
             })
             .catch(ex => console.warn('GET_NETWORK action failed for path', objPath, ex.toString()));
 }

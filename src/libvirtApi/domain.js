@@ -715,9 +715,10 @@ export function domainGet({
                 if (!domainIsRunning(stateStr))
                     props.actualTimeInMs = -1;
 
-                store.dispatch(updateOrAddVm({ state: stateStr, ...props }));
+                return store.dispatch(updateOrAddVm({ state: stateStr, ...props }));
+            })
+            .then(() => {
                 clearVmUiState(props.name, connectionName);
-
                 return snapshotGetAll({ connectionName, domainPath: objPath });
             })
             .catch(ex => {
