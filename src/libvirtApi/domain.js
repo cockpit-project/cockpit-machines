@@ -765,6 +765,39 @@ export function domainGetCapabilities({ connectionName, arch, model }) {
     return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'GetDomainCapabilities', ['', arch, model, '', 0], { timeout, type: 'ssssu' });
 }
 
+export function domainGetStartTime({
+    connectionName,
+    vmName,
+}) {
+    return cockpit.user().then(loggedUser => {
+        const options = { err: "message" };
+        if (connectionName === "system")
+            options.superuser = "try";
+
+        /* The possible paths of logfiles path, as of libvirt 9.3.0 are defined in:
+         * https://gitlab.com/libvirt/libvirt/-/blob/v9.3.0/src/qemu/qemu_conf.c#L153
+         * There libvirt defines 3 possible directories where they can be located
+         * - /root/log/qemu/ - That is however only relevant for "qemu:///embed", and not cockpit's use case
+         * - /var/log/libvirt/qemu/ - For privileged (qemu:///system) VMs
+         * - ~/.cache/libvirt/qemu/logs - For non-privileged  (qemu:///session) VMs
+         */
+        const logFile = connectionName === "system" ? `/var/log/libvirt/qemu/${vmName}.log` : `${loggedUser.home}/.cache/libvirt/qemu/log/${vmName}.log`;
+
+        // Use libvirt APIs for getting VM start up time when it's implemented:
+        // https://gitlab.com/libvirt/libvirt/-/issues/481
+        return cockpit.script(`grep 'starting up' '${logFile}' | tail -1`, options);
+    })
+            .then(line => {
+                // Line from a log with a start up time is expected to look like this:
+                // 2023-05-05 11:22:03.043+0000: starting up libvirt version: 8.6.0, package: 3.fc37 (Fedora Project, 2022-08-09-13:54:03, ), qemu version: 7.0.0qemu-7.0.0-9.fc37, kernel: 6.0.6-300.fc37.x86_64, hostname: fedora
+
+                // Alternatively regex line.match(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/g) can be used
+                const timeStr = line.split(': starting')[0];
+
+                return Promise.resolve(timeStr);
+            });
+}
+
 export function domainInstall({ vm }) {
     logDebug(`INSTALL_VM(${vm.name}):`);
     // shows dummy vm until we get vm from virsh (cleans up inProgress)
