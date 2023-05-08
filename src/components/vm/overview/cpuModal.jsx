@@ -126,7 +126,7 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
         setCount(parseInt(newValue));
     }
 
-    function onSocketChange (value) {
+    function onSocketChange (_event, value) {
         const stateDelta = { sockets, cores };
         stateDelta.sockets = parseInt(value);
 
@@ -145,7 +145,7 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
         setThreads(stateDelta.threads);
     }
 
-    function onThreadsChange (value) {
+    function onThreadsChange (_event, value) {
         const stateDelta = { sockets, threads };
         stateDelta.threads = parseInt(value);
         const divs = dividers(max / stateDelta.threads);
@@ -163,7 +163,7 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
         setThreads(stateDelta.threads);
     }
 
-    function onCoresChange (value) {
+    function onCoresChange (_event, value) {
         const stateDelta = { sockets, threads };
         stateDelta.cores = parseInt(value);
 
@@ -303,7 +303,7 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
             <FormGroup id="cpu-model-select-group" label={_("Mode")}>
                 <FormSelect value={cpuModel || cpuMode}
                             aria-label={_("Mode")}
-                            onChange={value => {
+                            onChange={(_event, value) => {
                                 if ((value == "host-model" || value == "host-passthrough")) {
                                     setCpuMode(value);
                                     setCpuModel(undefined);

@@ -132,7 +132,7 @@ export class MemoryModal extends React.Component {
                     maxValue={Math.floor(convertToUnit(this.state.maxMemory, 'KiB', this.state.memoryUnit))}
                     initialUnit={this.state.memoryUnit}
                     onValueChange={value => this.onValueChanged('memory', value)}
-                    onUnitChange={value => this.onValueChanged('memoryUnit', value)} />
+                    onUnitChange={(_event, value) => this.onValueChanged('memoryUnit', value)} />
 
                 <MemorySelectRow id={`${idPrefix}-max-memory`}
                     label={_("Maximum allocation")}
@@ -141,7 +141,7 @@ export class MemoryModal extends React.Component {
                     maxValue={Math.floor(convertToUnit(this.state.nodeMaxMemory, 'KiB', this.state.maxMemoryUnit))}
                     initialUnit={this.state.maxMemoryUnit}
                     onValueChange={value => this.onValueChanged('maxMemory', value)}
-                    onUnitChange={value => this.onValueChanged('maxMemoryUnit', value)}
+                    onUnitChange={(_event, value) => this.onValueChanged('maxMemoryUnit', value)}
                     helperText={vm.state === 'running' && _("Only editable when the guest is shut off")}
                     isDisabled={vm.state != 'shut off'} />
             </Form>

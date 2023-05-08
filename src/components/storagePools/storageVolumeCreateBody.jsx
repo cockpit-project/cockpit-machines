@@ -68,7 +68,7 @@ const VolumeDetails = ({ idPrefix, size, unit, format, storagePoolCapacity, stor
         formatRow = (
             <FormGroup fieldId={`${idPrefix}-fileformat`} label={_("Format")}>
                 <FormSelect id={`${idPrefix}-format`}
-                    onChange={value => onValueChanged('format', value)}
+                    onChange={(_event, value) => onValueChanged('format', value)}
                     value={format}>
                     { validVolumeFormats.map(format => <FormSelectOption value={format} key={format} label={format} />) }
                 </FormSelect>
@@ -94,7 +94,7 @@ const VolumeDetails = ({ idPrefix, size, unit, format, storagePoolCapacity, stor
                     <FormSelect id={`${idPrefix}-unit`}
                                 className="ct-machines-select-unit"
                                 value={unit}
-                                onChange={value => onValueChanged('unit', value)}>
+                                onChange={(_event, value) => onValueChanged('unit', value)}>
                         <FormSelectOption value={units.MiB.name} key={units.MiB.name}
                                           label={_("MiB")} />
                         <FormSelectOption value={units.GiB.name} key={units.GiB.name}

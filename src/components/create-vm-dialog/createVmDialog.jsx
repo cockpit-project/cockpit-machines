@@ -325,7 +325,7 @@ const SourceRow = ({ connectionName, source, sourceType, networks, nodeDevices, 
             <FormSelect id="network-select"
                         validated={validationStateSource}
                         value={source || 'no-resource'}
-                        onChange={value => onValueChanged('source', value)}>
+                        onChange={(_event, value) => onValueChanged('source', value)}>
                 {getPXENetworkRows(nodeDevices, networks)}
             </FormSelect>
         );
@@ -353,7 +353,7 @@ const SourceRow = ({ connectionName, source, sourceType, networks, nodeDevices, 
                        fieldId="source-type">
                 <FormSelect id="source-type"
                             value={sourceType}
-                            onChange={value => onValueChanged('sourceType', value)}>
+                            onChange={(_evnet, value) => onValueChanged('sourceType', value)}>
                     {downloadOSSupported
                         ? <FormSelectOption value={DOWNLOAD_AN_OS}
                                             label={_("Download an OS")} />
@@ -620,7 +620,7 @@ const UnattendedRow = ({
                        label={_("Profile")}>
                 <FormSelect id="profile-select"
                             value={profile || (os.profiles && os.profiles[0])}
-                            onChange={e => onValueChanged('profile', e)}>
+                            onChange={(_event, e) => onValueChanged('profile', e)}>
                     { (os.profiles || []).sort()
                             .reverse() // Let jeos (Server) appear always first on the list since in osinfo-db it's not consistent
                             .map(profile => {
@@ -800,7 +800,7 @@ const MemoryRow = ({ memorySize, memorySizeUnit, nodeMaxMemory, minimumMemory, o
                                 className="unit-select"
                                 data-value={memorySizeUnit}
                                 value={memorySizeUnit}
-                                onChange={value => onValueChanged('memorySizeUnit', value)}>
+                                onChange={(_event, value) => onValueChanged('memorySizeUnit', value)}>
                         <FormSelectOption value={units.MiB.name} key={units.MiB.name}
                                           label={_("MiB")} />
                         <FormSelectOption value={units.GiB.name} key={units.GiB.name}
@@ -902,7 +902,7 @@ const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit,
                 <FormSelect id="storage-volume-select"
                             value={storageVolume}
                             validated={helperTextVariant}
-                            onChange={value => onValueChanged('storageVolume', value)}>
+                            onChange={(_event, value) => onValueChanged('storageVolume', value)}>
                     {volumeEntries}
                 </FormSelect>
                 {helperTextVariant == "warning" &&
@@ -924,7 +924,7 @@ const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit,
                                     data-value={storageSizeUnit}
                                     className="unit-select"
                                     value={storageSizeUnit}
-                                    onChange={value => onValueChanged('storageSizeUnit', value)}>
+                                    onChange={(_event, value) => onValueChanged('storageSizeUnit', value)}>
                             <FormSelectOption value={units.MiB.name} key={units.MiB.name}
                                                label={_("MiB")} />
                             <FormSelectOption value={units.GiB.name} key={units.GiB.name}
