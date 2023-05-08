@@ -20,6 +20,7 @@ import React, { useState, useEffect } from 'react';
 import { AlertGroup } from "@patternfly/react-core/dist/esm/components/Alert";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { EmptyState, EmptyStateIcon, EmptyStateBody, EmptyStateActions, EmptyStateHeader, EmptyStateFooter } from "@patternfly/react-core/dist/esm/components/EmptyState";
+import { Page, PageSection, PageSectionVariants } from "@patternfly/react-core/dist/esm/components/Page";
 import { Progress, ProgressMeasureLocation } from "@patternfly/react-core/dist/esm/components/Progress";
 import { Text, TextContent } from "@patternfly/react-core/dist/esm/components/Text";
 import { ExclamationCircleIcon, VirtualMachineIcon } from '@patternfly/react-icons';
@@ -126,24 +127,34 @@ export const App = () => {
 
     if (!virtualizationEnabled && !emptyStateIgnored) {
         return (
-            <EmptyState className="virtualization-disabled-empty-state">
-                <EmptyStateHeader titleText={_("Hardware virtualization is disabled")} icon={<EmptyStateIcon icon={VirtualMachineIcon} />} headingLevel="h4" />
-                <EmptyStateBody>
-                    <TextContent>
-                        <Text>{_("Enable virtualization support in BIOS/EFI settings.")}</Text>
-                        <Text>
-                            {_("Changing BIOS/EFI settings is specific to each manufacturer. It involves pressing a hotkey during boot (ESC, F1, F12, Del). Enable a setting called \"virtualization\", \"VM\", \"VMX\", \"SVM\", \"VTX\", \"VTD\". Consult your computer's manual for details.")}
-                        </Text>
-                    </TextContent>
-                </EmptyStateBody><EmptyStateFooter>
-                    <EmptyStateActions>
-                        <Button id="ignore-hw-virtualization-disabled-btn" variant="secondary" onClick={() => setEmptyStateIgnored(true)}>{_("Ignore")}</Button>
-                    </EmptyStateActions>
-                </EmptyStateFooter></EmptyState>
+            <Page>
+                <PageSection variant={PageSectionVariants.light}>
+                    <EmptyState className="virtualization-disabled-empty-state">
+                        <EmptyStateHeader titleText={_("Hardware virtualization is disabled")} icon={<EmptyStateIcon icon={VirtualMachineIcon} />} headingLevel="h4" />
+                        <EmptyStateBody>
+                            <TextContent>
+                                <Text>{_("Enable virtualization support in BIOS/EFI settings.")}</Text>
+                                <Text>
+                                    {_("Changing BIOS/EFI settings is specific to each manufacturer. It involves pressing a hotkey during boot (ESC, F1, F12, Del). Enable a setting called \"virtualization\", \"VM\", \"VMX\", \"SVM\", \"VTX\", \"VTD\". Consult your computer's manual for details.")}
+                                </Text>
+                            </TextContent>
+                        </EmptyStateBody>
+                        <EmptyStateFooter>
+                            <EmptyStateActions>
+                                <Button id="ignore-hw-virtualization-disabled-btn" variant="secondary" onClick={() => setEmptyStateIgnored(true)}>{_("Ignore")}</Button>
+                            </EmptyStateActions>
+                        </EmptyStateFooter>
+                    </EmptyState>
+                </PageSection>
+            </Page>
         );
     } else if ((superuser.allowed && systemSocketInactive) || loadingResources) {
         return (
-            <LibvirtSlate loadingResources={loadingResources} />
+            <Page>
+                <PageSection variant={PageSectionVariants.light}>
+                    <LibvirtSlate loadingResources={loadingResources} />
+                </PageSection>
+            </Page>
         );
     } else return (
         <AppActive error={error} />
