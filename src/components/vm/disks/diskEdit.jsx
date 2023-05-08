@@ -65,7 +65,7 @@ const CacheRow = ({ onValueChanged, dialogValues, idPrefix, shutoff }) => {
                            </button>
                        </Popover>}>
             <FormSelect id={`${idPrefix}-cache-mode`}
-                        onChange={value => onValueChanged('cacheMode', value)}
+                        onChange={(_event, value) => onValueChanged('cacheMode', value)}
                         isDisabled={!shutoff}
                         value={dialogValues.cacheMode}>
                 {diskCacheModes.map(cacheMode => {
@@ -95,7 +95,7 @@ const BusRow = ({ onValueChanged, dialogValues, diskDevice, idPrefix, shutoff, s
                            </button>
                        </Popover>}>
             <FormSelect id={`${idPrefix}-bus-type`}
-                onChange={value => onValueChanged('busType', value)}
+                onChange={(_event, value) => onValueChanged('busType', value)}
                 value={dialogValues.busType}
                 isDisabled={!shutoff}>
                 {busTypes.map(busType => {
@@ -117,7 +117,7 @@ const AccessRow = ({ onValueChanged, dialogValues, diskDevice, driverType, idPre
                    name="access"
                    value="readonly"
                    isChecked={dialogValues.access == "readonly" }
-                   onChange={(_, event) => {
+                   onChange={event => {
                        onValueChanged("access", event.currentTarget.value);
                    }}
                    label={_("Read-only")} />
@@ -126,7 +126,7 @@ const AccessRow = ({ onValueChanged, dialogValues, diskDevice, driverType, idPre
                        name="access"
                        value="writable"
                        isChecked={dialogValues.access == "writable" }
-                       onChange={(_, event) => {
+                       onChange={event => {
                            onValueChanged("access", event.currentTarget.value);
                        }}
                        label={_("Writeable")} />
@@ -135,7 +135,7 @@ const AccessRow = ({ onValueChanged, dialogValues, diskDevice, driverType, idPre
                        name="access"
                        value="shareable"
                        isChecked={dialogValues.access == "shareable" }
-                       onChange={(_, event) => {
+                       onChange={event => {
                            onValueChanged("access", event.currentTarget.value);
                        }}
                        label={_("Writeable and shared")} />}

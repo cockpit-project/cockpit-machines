@@ -81,7 +81,7 @@ const StoragePoolTypeRow = ({ onValueChanged, dialogValues, libvirtVersion, pool
         <FormGroup fieldId='storage-pool-dialog-type' label={_("Type")}>
             <FormSelect id='storage-pool-dialog-type'
                         value={dialogValues.type}
-                        onChange={value => onValueChanged('type', value)}>
+                        onChange={(_event, value) => onValueChanged('type', value)}>
                 { supportedPoolTypes
                         .map(pool => {
                             return (
@@ -198,7 +198,7 @@ const StoragePoolSourceRow = ({ onValueChanged, dialogValues }) => {
                            className="pf-m-4-col">
                     <FormSelect id='storage-pool-dialog-source-format'
                                 value={dialogValues.source.format}
-                                onChange={value => onValueChanged('source', { format: value })}>
+                                onChange={(_event, value) => onValueChanged('source', { format: value })}>
                         { diskPoolSourceFormatTypes
                                 .map(format => {
                                     return (

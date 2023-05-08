@@ -116,7 +116,7 @@ const SelectExistingVolume = ({ idPrefix, storagePoolName, existingVolumeName, o
         <FormGroup fieldId={`${idPrefix}-select-volume`}
                    label={_("Volume")}>
             <FormSelect id={`${idPrefix}-select-volume`}
-                        onChange={value => onValueChanged('existingVolumeName', value)}
+                        onChange={(_event, value) => onValueChanged('existingVolumeName', value)}
                         value={initiallySelected}
                         validated={diskUsageMessage && "warning"}
                         isDisabled={!filteredVolumes.length}>
@@ -151,7 +151,7 @@ const PoolRow = ({ idPrefix, onValueChanged, storagePoolName, validationFailed, 
                    label={_("Pool")}>
             <FormSelect id={`${idPrefix}-select-pool`}
                            isDisabled={!vmStoragePools.length || !vmStoragePools.every(pool => pool.volumes !== undefined)}
-                           onChange={value => onValueChanged('storagePoolName', value)}
+                           onChange={(_event, value) => onValueChanged('storagePoolName', value)}
                            validated={validationStatePool}
                            value={storagePoolName || 'no-resource'}>
                 {vmStoragePools.length > 0
@@ -215,7 +215,7 @@ const AdditionalOptions = ({ cacheMode, device, idPrefix, onValueChanged, busTyp
                 <Grid hasGutter md={6}>
                     <FormGroup fieldId='cache-mode' label={_("Cache")}>
                         <FormSelect id='cache-mode'
-                            onChange={value => onValueChanged('cacheMode', value)}
+                            onChange={(_event, value) => onValueChanged('cacheMode', value)}
                             value={cacheMode}>
                             {diskCacheModes.map(cacheMode =>
                                 (<FormSelectOption value={cacheMode} key={cacheMode}
@@ -227,7 +227,7 @@ const AdditionalOptions = ({ cacheMode, device, idPrefix, onValueChanged, busTyp
                     <FormGroup fieldId={idPrefix + '-bus-type'} label={_("Bus")}>
                         <FormSelect id={idPrefix + '-bus-type'}
                             data-value={busType}
-                            onChange={value => onValueChanged('busType', value)}
+                            onChange={(_event, value) => onValueChanged('busType', value)}
                             value={busType}>
                             {displayBusTypes.map(busType =>
                                 (<FormSelectOption value={busType.value}
@@ -353,7 +353,7 @@ const CustomPath = ({ idPrefix, onValueChanged, device, validationFailed, hideDe
                    fieldId={`${idPrefix}-select-device`}
                    label={_("Device")}>
                 <FormSelect id={`${idPrefix}-select-device`}
-                        onChange={value => onValueChanged('device', value)}
+                        onChange={(_event, value) => onValueChanged('device', value)}
                         value={device}>
                     <FormSelectOption value="disk" key="disk"
                                   label={_("Disk image file")} />

@@ -142,7 +142,7 @@ const NetworkForwardModeRow = ({ onValueChanged, dialogValues }) => {
         <FormGroup fieldId='create-network-forward-mode' label={_("Forward mode")}>
             <FormSelect id='create-network-forward-mode'
                         value={dialogValues.forwardMode}
-                        onChange={value => onValueChanged('forwardMode', value)}>
+                        onChange={(_event, value) => onValueChanged('forwardMode', value)}>
                 { forwardModes.map(mode => {
                     return (
                         <FormSelectOption value={mode} key={mode}
@@ -162,7 +162,7 @@ const NetworkDeviceRow = ({ onValueChanged, dialogValues }) => {
             <FormSelect id='create-network-device'
                         isDisabled={!devices.length}
                         value={dialogValues.device}
-                        onChange={value => onValueChanged('device', value)}>
+                        onChange={(_event, value) => onValueChanged('device', value)}>
                 <FormSelectOption value='automatic' key='automatic'
                                   label={_("Automatic")} />
                 <FormSelectOptionGroup key="Devices" label={_("Devices")}>
@@ -183,7 +183,7 @@ const IpRow = ({ onValueChanged, dialogValues, validationFailed }) => {
         <FormGroup fieldId='create-network-ip-configuration' label={_("IP configuration")} isStack>
             <FormSelect id='create-network-ip-configuration'
                         value={dialogValues.ip}
-                        onChange={value => onValueChanged('ip', value)}>
+                        onChange={(_event, value) => onValueChanged('ip', value)}>
                 {dialogValues.forwardMode === "none" &&
                 <FormSelectOption value='None' key='None' label={_("None")} />}
                 <FormSelectOption value='IPv4 only' key='IPv4 only' label={_("IPv4 only")} />

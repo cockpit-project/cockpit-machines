@@ -47,7 +47,7 @@ export const NetworkModelRow = ({ idPrefix, onValueChanged, dialogValues, osType
     return (
         <FormGroup fieldId={`${idPrefix}-model`} label={_("Model")}>
             <FormSelect id={`${idPrefix}-model`}
-                        onChange={value => onValueChanged('networkModel', value)}
+                        onChange={(_event, value) => onValueChanged('networkModel', value)}
                         data-value={defaultModelType}
                         value={defaultModelType}>
                 {availableModelTypes
@@ -180,7 +180,7 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
                            </Popover>
                        }>
                 <FormSelect id={`${idPrefix}-type`}
-                            onChange={value => onValueChanged('networkType', value)}
+                            onChange={(_event, value) => onValueChanged('networkType', value)}
                             data-value={defaultNetworkType}
                             value={defaultNetworkType}>
                     {availableNetworkTypes
@@ -196,7 +196,7 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
             {["network", "direct", "bridge"].includes(dialogValues.networkType) && (
                 <FormGroup fieldId={`${idPrefix}-source`} label={_("Source")}>
                     <FormSelect id={`${idPrefix}-source`}
-                                onChange={value => onValueChanged('networkSource', value)}
+                                onChange={(_event, value) => onValueChanged('networkSource', value)}
                                 isDisabled={!networkSourceEnabled}
                                 data-value={defaultNetworkSource}
                                 value={defaultNetworkSource}>
