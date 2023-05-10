@@ -63,7 +63,7 @@ class VmOverviewCard extends React.Component {
     }
 
     componentDidMount() {
-        cockpit.spawn(['which', 'virt-xml'], { err: 'ignore' })
+        cockpit.script('type virt-xml', { err: 'ignore' })
                 .then(() => {
                     this.setState({ virtXMLAvailable: true });
                 }, () => this.setState({ virtXMLAvailable: false }));
