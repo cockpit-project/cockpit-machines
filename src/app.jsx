@@ -188,7 +188,7 @@ class AppActive extends React.Component {
         if (this.props.error)
             this.onAddErrorNotification({ text: _("Failed to fetch some resources"), detail: this.props.error });
 
-        cockpit.spawn(['which', 'virt-install'], { err: 'ignore' })
+        cockpit.script('type virt-install', { err: 'ignore' })
                 .then(() => {
                     this.setState({ virtInstallAvailable: true });
                     cockpit.spawn(['virt-install', '--install=?'], { err: 'ignore' })

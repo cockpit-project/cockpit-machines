@@ -64,7 +64,7 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
     const [virtCloneAvailable, setVirtCloneAvailable] = useState(false);
 
     useEffect(() => {
-        cockpit.spawn(['which', 'virt-clone'], { err: 'ignore' })
+        cockpit.script('type virt-clone', { err: 'ignore' })
                 .then(() => setVirtCloneAvailable(true));
     }, []);
 
