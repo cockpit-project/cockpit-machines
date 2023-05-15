@@ -644,10 +644,15 @@ class TestMachinesSettings(VirtualMachinesCase):
         # Check rebooting machine will not unexpectedly affect watchdog configuration
         setWatchdogActionLive(action="poweroff", reboot_machine=True)
 
-        # Older libvirt in rhel-8-9 and centos-8-stream doesn't support target.hotplug=off
-        if not m.image.startswith("rhel-8") and m.image != "centos-8-stream":
+        m.execute("virsh destroy subVmTest1")
+
+        # Some OSes don't support target.hotplug=off
+        if m.image.startswith("rhel-8") or m.image in ["centos-8-stream", "debian-stable"]:
+            self.assertIn("Unknown --controller options", m.execute(
+                "! virt-xml subVmTest1 --edit model=pci-root --controller target.hotplug=off 2>&1")
+            )
+        else:
             # Disable hotplugging for subVmTest1
-            m.execute("virsh destroy subVmTest1")
             m.execute("virt-xml subVmTest1 --edit model=pci-root --controller target.hotplug=off")
             # Cleanup watchdog configuration
             m.execute("virt-xml subVmTest1 --remove-device --watchdog 1")
