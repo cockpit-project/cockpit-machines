@@ -18,6 +18,8 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
 import { Dropdown, KebabToggle } from "@patternfly/react-core/dist/esm/deprecated/components/Dropdown";
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
@@ -107,7 +109,7 @@ VmNetworkActions.propTypes = {
 
 const NetworkSource = ({ network, networkId, vm, hostDevices }) => {
     const id = vmId(vm.name);
-    const checkDeviceAviability = (network) => {
+    const checkDeviceAvailability = (network) => {
         for (const i in hostDevices) {
             if (hostDevices[i].valid && hostDevices[i].Interface == network) {
                 return true;
@@ -118,19 +120,52 @@ const NetworkSource = ({ network, networkId, vm, hostDevices }) => {
 
     const sourceJump = (source) => {
         return () => {
-            if (source !== null && checkDeviceAviability(source)) {
+            if (source !== null && checkDeviceAvailability(source)) {
                 cockpit.jump(`/network#/${source}`, cockpit.transport.host);
             }
         };
     };
 
-    const singleSourceElem = source => checkDeviceAviability(source) ? <Button variant="link" isInline onClick={sourceJump(source)}>{source}</Button> : source;
-    const addressPortSourceElem = (source, networkId) => (<table id={`${id}-network-${networkId}-source`}>
-        <tbody>
-            <tr><td className='machines-network-source-descr'>{_("Address")}</td><td className='machines-network-source-value'>{source.address}</td></tr>
-            <tr><td className='machines-network-source-descr'>{_("Port")}</td><td className='machines-network-source-value'>{source.port}</td></tr>
-        </tbody>
-    </table>);
+    const singleSourceElem = source => {
+        let label = rephraseUI("networkType", network.type);
+        label = label.charAt(0).toUpperCase() + label.slice(1);
+
+        return (
+            <DescriptionListGroup>
+                <DescriptionListTerm>
+                    {label}
+                </DescriptionListTerm>
+                <DescriptionListDescription>
+                    <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${id}-network-${networkId}-source`}>
+                        <FlexItem>
+                            {checkDeviceAvailability(source)
+                                ? <Button variant="link" isInline onClick={sourceJump(source)}>{source}</Button>
+                                : source}
+                        </FlexItem>
+                        {needsShutdownIfaceSource(vm, network) && <NeedsShutdownTooltip iconId={`${id}-network-${networkId}-source-tooltip`} tooltipId="tip-network" />}
+                    </Flex>
+                </DescriptionListDescription>
+            </DescriptionListGroup>
+        );
+    };
+    const addressPortSourceElem = source => (<>
+        <DescriptionListGroup>
+            <DescriptionListTerm>
+                {_("Address")}
+            </DescriptionListTerm>
+            <DescriptionListDescription id={`${id}-network-${networkId}-address`}>
+                {source.address}
+            </DescriptionListDescription>
+        </DescriptionListGroup>
+        <DescriptionListGroup>
+            <DescriptionListTerm>
+                {_("Port")}
+            </DescriptionListTerm>
+            <DescriptionListDescription id={`${id}-network-${networkId}-port`}>
+                {source.port}
+            </DescriptionListDescription>
+        </DescriptionListGroup>
+    </>);
 
     const getSourceElem = {
         direct: singleSourceElem,
@@ -142,16 +177,23 @@ const NetworkSource = ({ network, networkId, vm, hostDevices }) => {
         udp: addressPortSourceElem,
     };
 
-    if (getSourceElem[network.type] !== undefined) {
-        return (
-            <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${id}-network-${networkId}-source`}>
-                <FlexItem>{getSourceElem[network.type](getIfaceSourceName(network), networkId)}</FlexItem>
-                {needsShutdownIfaceSource(vm, network) && <NeedsShutdownTooltip iconId={`${id}-network-${networkId}-source-tooltip`} tooltipId="tip-network" />}
-            </Flex>
-        );
-    } else {
-        return null;
-    }
+    let source;
+    if (getSourceElem[network.type] !== undefined)
+        source = getSourceElem[network.type](getIfaceSourceName(network), networkId);
+
+    return (
+        <DescriptionList isHorizontal isFluid>
+            {source}
+            {network.target && <DescriptionListGroup>
+                <DescriptionListTerm>
+                    {_("TAP device")}
+                </DescriptionListTerm>
+                <DescriptionListDescription id={`${id}-network-${networkId}-tapdevice`}>
+                    {network.target}
+                </DescriptionListDescription>
+            </DescriptionListGroup>}
+        </DescriptionList>
+    );
 };
 
 export class VmNetworkTab extends React.Component {
