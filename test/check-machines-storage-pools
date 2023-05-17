@@ -1027,6 +1027,46 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         b.assert_pixels("#storage-pool-delete-modal", "storage-pool-delete-modal-error")
         wait(lambda: "forDeletion" not in m.execute("ls /var/lib/libvirt/images/"))
 
+    def testStorageVolumeRefresh(self):
+        b = self.browser
+        m = self.machine
+
+        self.createVm("subVmTest1")
+
+        # prepare libvirt storage pools
+        path = os.path.join(self.vm_tmpdir, "vm_one")
+        m.execute(f"mkdir --mode 777 {path}")
+        m.execute(f"virsh pool-define-as dirPool --type dir --target {path}; virsh pool-start dirPool")
+
+        self.login_and_go("/machines")
+
+        # Check volumes list gets refreshed when entering Volumes tab
+        b.click(".pf-c-card .pf-c-card__header button:contains(Storage pools)")
+        m.execute(f"touch {path}/VolumeOne")
+        self.waitPoolRow("dirPool", "system")
+        self.togglePoolRow("dirPool", "system")
+        self.gotoVolumesTab("dirPool")
+        b.wait_in_text("#pool-dirPool-system-volume-VolumeOne-name", "VolumeOne")
+
+        # Check volumes list gets refreshed when opening Create VM dialog
+        self.goToMainPage()
+        m.execute(f"touch {path}/VolumeTwo")
+        b.click("#create-new-vm")
+        b.wait_visible("#create-vm-dialog")
+        b.click("#storage-select")
+        b.click("#storage-select-group li button:contains('dirPool')")
+        b._wait_present("#storage-volume-select option[value='VolumeTwo']")
+        b.click(".pf-c-modal-box__footer button:contains(Cancel)")
+        b.wait_not_present("#create-vm-dialog")
+
+        # Check volumes list gets refreshed when opening Add Disk dialog
+        self.goToVmPage("subVmTest1")
+        m.execute(f"touch {path}/VolumeThree")
+        b.click("#vm-subVmTest1-disks-adddisk")
+        b.click("#vm-subVmTest1-disks-adddisk-useexisting")
+        b.select_from_dropdown("#vm-subVmTest1-disks-adddisk-existing-select-pool", "dirPool")
+        b._wait_present("#vm-subVmTest1-disks-adddisk-existing-select-volume option[value='VolumeThree']")
+
 
 if __name__ == '__main__':
     test_main()

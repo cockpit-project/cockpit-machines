@@ -25,6 +25,7 @@ import { InlineNotification } from 'cockpit-components-inline-notification.jsx';
 import { StorageVolumeDelete } from './storageVolumeDelete.jsx';
 import { StorageVolumeCreate } from './storageVolumeCreate.jsx';
 import { storagePoolId, convertToUnit, units, getStorageVolumesUsage } from '../../helpers.js';
+import { storagePoolRefresh } from '../../libvirtApi/storagePool.js';
 import cockpit from 'cockpit';
 
 import './storagePoolVolumesTab.css';
@@ -50,6 +51,17 @@ export class StoragePoolVolumesTab extends React.Component {
             return { rows: props.storagePool.volumes || [] };
         }
         return null;
+    }
+
+    componentDidMount() {
+        console.log("componentDidMount");
+        const { storagePool } = this.props;
+        if (storagePool.active) {
+            // Refresh storage volume list before displaying the list.
+            // Also fixes https://bugzilla.redhat.com/show_bug.cgi?id=2185235
+            storagePoolRefresh({ connectionName: storagePool.connectionName, objPath: storagePool.id })
+                    .catch(exc => console.log("Storage pool could not be refreshed: ", exc.message));
+        }
     }
 
     deleteErrorHandler(deleteError, deleteErrorDetail) {

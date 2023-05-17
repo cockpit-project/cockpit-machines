@@ -116,7 +116,8 @@ export function storagePoolGetAll({
                     return call(connectionName, path, 'org.freedesktop.DBus.Properties', 'Get', ['org.libvirt.StoragePool', 'Active'], { timeout, type: 'ss' })
                             .then(active => {
                                 if (active[0].v)
-                                    return storagePoolRefresh({ connectionName, objPath: path });
+                                    return storagePoolRefresh({ connectionName, objPath: path })
+                                            .then(() => storagePoolGet({ connectionName, id: path }));
                                 else
                                     return storagePoolGet({ connectionName, id: path });
                             });

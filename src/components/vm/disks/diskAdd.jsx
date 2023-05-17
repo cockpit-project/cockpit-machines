@@ -428,6 +428,7 @@ export class AddDiskModalBody extends React.Component {
         // Refresh storage volume list before displaying the dialog.
         // There are recently no Libvirt events for storage volumes and polling is ugly.
         // https://bugzilla.redhat.com/show_bug.cgi?id=1578836
+        // Also fixes https://bugzilla.redhat.com/show_bug.cgi?id=2185235
         storagePoolGetAll({ connectionName: this.props.vm.connectionName })
                 .then(() => this.setState({ dialogLoading: false, ...this.initialState }))
                 .catch(exc => this.dialogErrorSet(_("Storage pools could not be fetched"), exc.message));

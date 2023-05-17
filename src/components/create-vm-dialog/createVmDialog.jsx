@@ -20,6 +20,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { debounce } from 'throttle-debounce';
+import { Bullseye } from "@patternfly/react-core/dist/esm/layouts/Bullseye";
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
@@ -81,7 +82,7 @@ import {
     saveOfflineToken,
 } from "./createVmDialogUtils.js";
 import { domainCreate } from '../../libvirtApi/domain.js';
-import { storagePoolRefresh } from '../../libvirtApi/storagePool.js';
+import { storagePoolRefresh, storagePoolGetAll } from '../../libvirtApi/storagePool.js';
 import { getAccessToken } from '../../libvirtApi/rhel-images.js';
 import { PasswordFormFields, password_quality } from 'cockpit-components-password.jsx';
 
@@ -123,7 +124,6 @@ function getPoolSpaceAvailable({ storagePools, poolName, poolPath, connectionNam
  * @param {string} connectionName
  * @returns {number}
  */
-
 let current_user = null;
 cockpit.user().then(user => { current_user = user });
 
@@ -957,6 +957,7 @@ class CreateVmModal extends React.Component {
         }
         super(props);
         this.state = {
+            dialogLoading: true,
             createMode: NONE,
             activeTabKey: 0,
             validate: false,
@@ -1140,6 +1141,19 @@ class CreateVmModal extends React.Component {
         }
     }
 
+    componentDidMount() {
+        // Refresh storage volume list before displaying the dialog.
+        // There are recently no Libvirt events for storage volumes and polling is ugly.
+        // https://bugzilla.redhat.com/show_bug.cgi?id=1578836
+        // Also fixes https://bugzilla.redhat.com/show_bug.cgi?id=2185235
+        Promise.all([
+            storagePoolGetAll({ connectionName: LIBVIRT_SYSTEM_CONNECTION }),
+            storagePoolGetAll({ connectionName: LIBVIRT_SESSION_CONNECTION })
+        ])
+                .then(() => this.setState({ dialogLoading: false }))
+                .catch(exc => console.log("Storage pools could not be fetched: ", exc.message));
+    }
+
     onCreateClicked(startVm) {
         const Dialogs = this.context;
         const { onAddErrorNotification, osInfoList, nodeMaxMemory, vms, loggedUser } = this.props;
@@ -1316,31 +1330,40 @@ class CreateVmModal extends React.Component {
             </>
         );
 
-        const dialogBody = (
-            <Form isHorizontal>
-                <NameRow
-                    vmName={this.state.vmName}
-                    suggestedVmName={this.state.suggestedVmName}
-                    os={this.state.os}
-                    onValueChanged={this.onValueChanged}
-                    validationFailed={validationFailed} />
-                { this.props.mode === "create"
-                    ? <Tabs activeKey={this.state.activeTabKey} onSelect={this.handleTabClick}>
-                        <Tab eventKey={0} title={<TabTitleText>{_("Details")}</TabTitleText>} id="details-tab" className="pf-c-form">
-                            {detailsTab}
-                        </Tab>
-                        <Tab eventKey={1}
-                             title={<TabTitleText>{_("Automation")}</TabTitleText>}
-                             id="automation"
-                             className="pf-c-form"
-                             tooltip={automationTabTooltip}
-                             isAriaDisabled={!!automationTabTooltip}>
-                            {automationTab}
-                        </Tab>
-                    </Tabs>
-                    : detailsTab }
-            </Form>
-        );
+        let dialogBody;
+        if (this.state.dialogLoading) {
+            dialogBody = (
+                <Bullseye>
+                    <Spinner />
+                </Bullseye>
+            );
+        } else {
+            dialogBody = (
+                <Form isHorizontal>
+                    <NameRow
+                        vmName={this.state.vmName}
+                        suggestedVmName={this.state.suggestedVmName}
+                        os={this.state.os}
+                        onValueChanged={this.onValueChanged}
+                        validationFailed={validationFailed} />
+                    { this.props.mode === "create"
+                        ? <Tabs activeKey={this.state.activeTabKey} onSelect={this.handleTabClick}>
+                            <Tab eventKey={0} title={<TabTitleText>{_("Details")}</TabTitleText>} id="details-tab" className="pf-c-form">
+                                {detailsTab}
+                            </Tab>
+                            <Tab eventKey={1}
+                                 title={<TabTitleText>{_("Automation")}</TabTitleText>}
+                                 id="automation"
+                                 className="pf-c-form"
+                                 tooltip={automationTabTooltip}
+                                 isAriaDisabled={!!automationTabTooltip}>
+                                {automationTab}
+                            </Tab>
+                        </Tabs>
+                        : detailsTab }
+                </Form>
+            );
+        }
 
         const unattendedInstallation = this.state.rootPassword || this.state.userLogin || this.state.userPassword;
         // This happens if offlineToken was supplied and we are either still obtaining access token (validating offline token) or failed to obtain one
@@ -1354,7 +1377,8 @@ class CreateVmModal extends React.Component {
                         this.state.createMode === EDIT ||
                         Object.getOwnPropertyNames(validationFailed).length > 0 ||
                         (this.state.sourceType === DOWNLOAD_AN_OS && unattendedInstallation) ||
-                        downloadingRhelDisabled
+                        downloadingRhelDisabled ||
+                        this.state.dialogLoading
                     )}
                     onClick={() => this.onCreateClicked(false)}>
                 {this.props.mode == 'create' ? _("Create and edit") : _("Import and edit")}
@@ -1380,7 +1404,8 @@ class CreateVmModal extends React.Component {
                             isDisabled={
                                 this.state.createMode === RUN ||
                                 Object.getOwnPropertyNames(validationFailed).length > 0 ||
-                                downloadingRhelDisabled
+                                downloadingRhelDisabled ||
+                                this.state.dialogLoading
                             }
                             onClick={() => this.onCreateClicked(true)}>
                         {this.props.mode == 'create' ? _("Create and run") : _("Import and run")}
