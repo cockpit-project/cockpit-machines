@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-15 02:50+0000\n"
+"POT-Creation-Date: 2023-05-23 02:51+0000\n"
 "PO-Revision-Date: 2021-05-31 20:02+0000\n"
 "Last-Translator: Igor Gorbounov <igor.gorbounov@gmail.com>\n"
 "Language-Team: Russian <https://translate.fedoraproject.org/projects/cockpit-"
@@ -18,8 +18,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.6.2\n"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:827
@@ -79,7 +79,7 @@ msgid "$0 network"
 msgstr "$0 сеть"
 
 # ctx::sourcefile::/rhn/systems/details/virtualization/VirtualGuestsList.do
-#: src/components/vm/overview/vmOverviewCard.jsx:135
+#: src/components/vm/overview/vmOverviewCard.jsx:145
 #: src/components/vm/vmUsageCard.jsx:47
 msgid "$0 vCPU"
 msgid_plural "$0 vCPUs"
@@ -103,7 +103,7 @@ msgid "Access"
 msgstr "Доступ"
 
 # ctx::sourcefile::Navigation Menu
-#: src/components/vm/overview/watchdog.jsx:183
+#: src/components/vm/overview/watchdog.jsx:184
 #, fuzzy
 #| msgid "Connection"
 msgid "Action"
@@ -121,7 +121,8 @@ msgstr "Активировать пул хранения для админист
 #: src/components/vm/disks/diskAdd.jsx:863
 #: src/components/vm/nics/nicAdd.jsx:213
 #: src/components/vm/hostdevs/hostDevAdd.jsx:229
-#: src/components/vm/overview/watchdog.jsx:157
+#: src/components/vm/overview/watchdog.jsx:158
+#: src/components/vm/overview/vsock.jsx:215
 #: src/components/networks/networkOverviewTab.jsx:236
 msgid "Add"
 msgstr "Добавить"
@@ -156,13 +157,19 @@ msgstr "Нет такого файла или каталога"
 msgid "Add virtual network interface"
 msgstr "Добавление виртуального сетевого интерфейса"
 
-#: src/components/vm/overview/watchdog.jsx:147
+#: src/components/vm/overview/vsock.jsx:190
+#, fuzzy
+#| msgid "Add network interface"
+msgid "Add vsock interface"
+msgstr "Добавить сетевой интерфейс"
+
+#: src/components/vm/overview/watchdog.jsx:148
 #, fuzzy
 #| msgid "host device"
 msgid "Add watchdog device type"
 msgstr "главное устройство"
 
-#: src/components/vm/overview/watchdog.jsx:103
+#: src/components/vm/overview/watchdog.jsx:104
 msgid "Adding a watchdog will require a reboot to take effect."
 msgstr ""
 
@@ -220,13 +227,23 @@ msgstr "Удалить тома в этом пуле"
 msgid "Always attach"
 msgstr "Всегда присоединять"
 
+#: src/components/vm/overview/helpers.jsx:29
+msgid "An example of vsock-aware software is socat"
+msgstr ""
+
 #: src/components/vm/overview/cpuModal.jsx:335
 msgid "Apply"
 msgstr "Применить"
 
-#: src/components/vm/overview/watchdog.jsx:164
+#: src/components/vm/overview/watchdog.jsx:165
 msgid "Apply on next boot"
 msgstr ""
+
+#: src/components/vm/overview/vsock.jsx:47
+#, fuzzy
+#| msgid "Generate automatically"
+msgid "Assign automatically"
+msgstr "Создать автоматически"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:1213
 msgid ""
@@ -244,7 +261,7 @@ msgstr "Автоматически"
 msgid "Automation"
 msgstr "Автоматически"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:190
+#: src/components/vm/overview/vmOverviewCard.jsx:200
 #: src/components/networks/networkOverviewTab.jsx:119
 #: src/components/storagePools/storagePoolOverviewTab.jsx:71
 msgid "Autostart"
@@ -254,7 +271,7 @@ msgstr "Автозапуск"
 msgid "Blocked"
 msgstr "Заблокировано"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:182
+#: src/components/vm/overview/vmOverviewCard.jsx:192
 msgid "Boot order"
 msgstr "Порядок загрузки"
 
@@ -282,7 +299,7 @@ msgid "CD/DVD disc"
 msgstr "Диск CD/DVD"
 
 #: src/components/common/needsShutdown.jsx:110
-#: src/components/vm/overview/vmOverviewCard.jsx:177
+#: src/components/vm/overview/vmOverviewCard.jsx:187
 #: src/components/vm/vmUsageCard.jsx:69
 msgid "CPU"
 msgstr "ЦП"
@@ -309,10 +326,11 @@ msgstr "Кэш"
 #: src/components/vm/hostdevs/hostDevAdd.jsx:234
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:147
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:102
-#: src/components/vm/overview/watchdog.jsx:175
+#: src/components/vm/overview/watchdog.jsx:176
 #: src/components/vm/overview/firmware.jsx:72
 #: src/components/vm/overview/memoryModal.jsx:159
 #: src/components/vm/overview/bootOrder.jsx:318
+#: src/components/vm/overview/vsock.jsx:226
 #: src/components/vm/overview/cpuModal.jsx:338
 #: src/components/vm/vmRenameDialog.jsx:71
 #: src/components/vm/deleteDialog.jsx:174
@@ -414,7 +432,7 @@ msgstr "Подключение"
 # ctx::sourcefile::Navigation Menu
 #: src/components/common/machinesConnectionSelector.jsx:39
 #: src/components/vms/hostvmslist.jsx:145
-#: src/components/vm/overview/vmOverviewCard.jsx:153
+#: src/components/vm/overview/vmOverviewCard.jsx:163
 #: src/components/networks/networkList.jsx:69
 #: src/components/networks/createNetworkDialog.jsx:42
 #: src/components/storagePools/storagePoolList.jsx:70
@@ -422,7 +440,7 @@ msgid "Connection"
 msgstr "Подключение"
 
 #: src/components/vm/vmDetailsPage.jsx:93
-#: src/components/vm/vmDetailsPage.jsx:128
+#: src/components/vm/vmDetailsPage.jsx:131
 msgid "Console"
 msgstr "Консоль"
 
@@ -455,7 +473,7 @@ msgstr "Не удалось вернуться к снимку"
 msgid "Could not delete disk's storage"
 msgstr "Не удалось вернуться к снимку"
 
-#: src/components/vm/overview/watchdog.jsx:102
+#: src/components/vm/overview/watchdog.jsx:103
 msgid "Could not dynamically add watchdog"
 msgstr ""
 
@@ -579,6 +597,12 @@ msgstr "Текущее распределение"
 #: src/components/vm/overview/firmware.jsx:125
 msgid "Custom firmware: $0"
 msgstr "Специализированная микропрограмма: $0"
+
+#: src/components/vm/overview/vsock.jsx:158
+#, fuzzy
+#| msgid "Disk image file"
+msgid "Custom identifier"
+msgstr "Файл образа диска"
 
 #: src/components/vm/disks/diskAdd.jsx:344
 #: src/components/vm/disks/diskAdd.jsx:756
@@ -782,7 +806,7 @@ msgstr "Не удалось сохранить параметры диска"
 msgid "Disk-only snapshot"
 msgstr "Снимок только для диска"
 
-#: src/components/vm/vmDetailsPage.jsx:144
+#: src/components/vm/vmDetailsPage.jsx:148
 msgid "Disks"
 msgstr "Диски"
 
@@ -846,7 +870,13 @@ msgstr "Изменить"
 msgid "Edit $0 attributes"
 msgstr "Редактировать атрибуты $0"
 
-#: src/components/vm/overview/watchdog.jsx:147
+#: src/components/vm/overview/vsock.jsx:190
+#, fuzzy
+#| msgid "Add network interface"
+msgid "Edit vsock interface"
+msgstr "Добавить сетевой интерфейс"
+
+#: src/components/vm/overview/watchdog.jsx:148
 msgid "Edit watchdog device type"
 msgstr ""
 
@@ -869,7 +899,7 @@ msgstr ""
 msgid "Eject disc from VM?"
 msgstr "Удаление $0"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:209
+#: src/components/vm/overview/vmOverviewCard.jsx:268
 msgid "Emulated machine"
 msgstr "Эмулированный компьютер"
 
@@ -902,7 +932,7 @@ msgstr ""
 msgid "Existing disk image on host's file system"
 msgstr "Существующий образ диска в файловой системе узла"
 
-#: src/components/vm/vmDetailsPage.jsx:136
+#: src/components/vm/vmDetailsPage.jsx:139
 msgid "Expand"
 msgstr "Расширить"
 
@@ -930,13 +960,25 @@ msgstr "Не удалось изменить микропрограмму"
 msgid "Failed to clone VM $0"
 msgstr "Не удалось клонировать ВМ $0"
 
-#: src/components/vm/overview/watchdog.jsx:84
+#: src/components/vm/overview/vsock.jsx:128
+#, fuzzy
+#| msgid "Failed to change firmware"
+msgid "Failed to configure vsock"
+msgstr "Не удалось изменить микропрограмму"
+
+#: src/components/vm/overview/watchdog.jsx:85
 #, fuzzy
 #| msgid "Failed to change firmware"
 msgid "Failed to configure watchdog"
 msgstr "Не удалось изменить микропрограмму"
 
-#: src/components/vm/overview/watchdog.jsx:131
+#: src/components/vm/overview/vsock.jsx:140
+#, fuzzy
+#| msgid "Disk failed to be attached"
+msgid "Failed to detach vsock"
+msgstr "Не удалось присоединить диск"
+
+#: src/components/vm/overview/watchdog.jsx:132
 #, fuzzy
 #| msgid "Disk failed to be attached"
 msgid "Failed to detach watchdog"
@@ -994,7 +1036,7 @@ msgstr "Фильтровать по имени"
 # translation auto-copied from project subscription-manager, version 1.11.X,
 # document keys
 #: src/components/vm/overview/firmware.jsx:78
-#: src/components/vm/overview/vmOverviewCard.jsx:215
+#: src/components/vm/overview/vmOverviewCard.jsx:274
 msgid "Firmware"
 msgstr "Микропрограмма"
 
@@ -1039,7 +1081,7 @@ msgid ""
 "origin after migration."
 msgstr ""
 
-#: src/components/vm/overview/vmOverviewCard.jsx:149
+#: src/components/vm/overview/vmOverviewCard.jsx:159
 #: src/components/networks/networkOverviewTab.jsx:110
 msgid "General"
 msgstr "Общее"
@@ -1106,7 +1148,7 @@ msgstr "Не удалось сохранить параметры порядка
 msgid "Host device will be removed from $0:"
 msgstr ""
 
-#: src/components/vm/vmDetailsPage.jsx:162
+#: src/components/vm/vmDetailsPage.jsx:166
 #, fuzzy
 #| msgid "Host device"
 msgid "Host devices"
@@ -1120,7 +1162,7 @@ msgstr "Имя узла"
 msgid "Host should not be empty"
 msgstr "Имя узла не должно быть пустым"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:205
+#: src/components/vm/overview/vmOverviewCard.jsx:264
 msgid "Hypervisor details"
 msgstr "Сведения о гипервизоре"
 
@@ -1191,6 +1233,12 @@ msgstr ""
 
 #: src/components/common/machinesConnectionSelector.jsx:56
 msgid "Ideal networking support"
+msgstr ""
+
+#: src/components/vm/overview/vsock.jsx:69
+msgid ""
+"Identifier in use by $0. VMs with an identical identifier cannot run at the "
+"same time."
 msgstr ""
 
 #: src/components/vm/disks/diskAdd.jsx:263
@@ -1267,6 +1315,10 @@ msgstr "Ctrl+Insert"
 
 #: src/components/vm/disks/diskAdd.jsx:853
 msgid "Insert disc media"
+msgstr ""
+
+#: src/components/vm/overview/helpers.jsx:39
+msgid "Inside the VM"
 msgstr ""
 
 #: src/components/vm/vmActions.jsx:290
@@ -1487,7 +1539,7 @@ msgid "Media will be ejected from $0:"
 msgstr ""
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:792
-#: src/components/vm/overview/vmOverviewCard.jsx:172
+#: src/components/vm/overview/vmOverviewCard.jsx:182
 #: src/components/vm/vmUsageCard.jsx:58
 msgid "Memory"
 msgstr "Память"
@@ -1661,7 +1713,7 @@ msgstr "Не удалось сохранить параметры сетевог
 msgid "Network interface settings could not be saved"
 msgstr "Не удалось сохранить параметры сетевого интерфейса"
 
-#: src/components/vm/vmDetailsPage.jsx:153
+#: src/components/vm/vmDetailsPage.jsx:157
 #, fuzzy
 #| msgid "Add network interface"
 msgid "Network interfaces"
@@ -1825,6 +1877,12 @@ msgstr "Имя не должно быть пустым"
 #: src/components/create-vm-dialog/createVmDialog.jsx:535
 msgid "Old token expired"
 msgstr ""
+
+#: src/components/vm/overview/helpers.jsx:33
+#, fuzzy
+#| msgid "Run when host boots"
+msgid "On the host"
+msgstr "Выполнять при загрузке узла"
 
 #: src/components/storagePools/storageVolumeDelete.jsx:71
 msgid ""
@@ -2074,7 +2132,8 @@ msgstr "Сведения о гипервизоре"
 #: src/components/vm/nics/vmNicsCard.jsx:388
 #: src/components/vm/hostdevs/hostDevCard.jsx:253
 #: src/components/vm/hostdevs/hostDevCard.jsx:259
-#: src/components/vm/overview/watchdog.jsx:172
+#: src/components/vm/overview/watchdog.jsx:173
+#: src/components/vm/overview/vsock.jsx:223
 #: src/components/networks/networkOverviewTab.jsx:70
 msgid "Remove"
 msgstr "Удалить"
@@ -2166,7 +2225,7 @@ msgstr "Сеть с маршрутизацией"
 msgid "Run"
 msgstr "Запуск"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:101
+#: src/components/vm/overview/vmOverviewCard.jsx:111
 #: src/components/networks/networkOverviewTab.jsx:124
 msgid "Run when host boots"
 msgstr "Выполнять при загрузке узла"
@@ -2192,10 +2251,11 @@ msgstr "Порт SPICE:"
 
 #: src/components/vm/disks/diskEdit.jsx:267
 #: src/components/vm/nics/nicEdit.jsx:182
-#: src/components/vm/overview/watchdog.jsx:157
+#: src/components/vm/overview/watchdog.jsx:158
 #: src/components/vm/overview/firmware.jsx:69
 #: src/components/vm/overview/memoryModal.jsx:156
 #: src/components/vm/overview/bootOrder.jsx:315
+#: src/components/vm/overview/vsock.jsx:215
 msgid "Save"
 msgstr "Сохранить"
 
@@ -2252,12 +2312,12 @@ msgstr ""
 msgid "Share a host directory with the guest"
 msgstr ""
 
-#: src/components/vm/vmDetailsPage.jsx:183
+#: src/components/vm/vmDetailsPage.jsx:187
 msgid "Shared directories"
 msgstr ""
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:180
-#: src/components/vm/vmDetailsPage.jsx:185
+#: src/components/vm/vmDetailsPage.jsx:189
 msgid "Shared host directories need to be manually mounted inside the VM"
 msgstr ""
 
@@ -2272,13 +2332,13 @@ msgstr "Нет хранилища"
 msgid "Show additional options"
 msgstr "Показать дополнительные параметры"
 
-#: src/components/vm/overview/watchdog.jsx:51
+#: src/components/vm/overview/watchdog.jsx:52
 #, fuzzy
 #| msgid "show less"
 msgid "Show less"
 msgstr "показать меньше"
 
-#: src/components/vm/overview/watchdog.jsx:51
+#: src/components/vm/overview/watchdog.jsx:52
 #, fuzzy
 #| msgid "show more"
 msgid "Show more"
@@ -2337,7 +2397,7 @@ msgstr "После удаления снимка все захваченное �
 msgid "Snapshot failed to be created"
 msgstr "Не удалось создать диск"
 
-#: src/components/vm/vmDetailsPage.jsx:171
+#: src/components/vm/vmDetailsPage.jsx:175
 #, fuzzy
 msgid "Snapshots"
 msgstr "Создание моментального снимка"
@@ -2415,7 +2475,7 @@ msgstr "Запуск"
 #: src/components/vms/hostvmslist.jsx:106
 #: src/components/vms/hostvmslist.jsx:146
 #: src/components/vm/nics/vmNicsCard.jsx:323
-#: src/components/vm/overview/vmOverviewCard.jsx:158
+#: src/components/vm/overview/vmOverviewCard.jsx:168
 #: src/components/networks/networkList.jsx:71
 #: src/components/storagePools/storagePoolList.jsx:71
 msgid "State"
@@ -2731,7 +2791,7 @@ msgstr "URL-адрес"
 
 # translation auto-copied from project subscription-manager, version 1.11.X,
 # document keys
-#: src/components/vm/vmDetailsPage.jsx:122
+#: src/components/vm/vmDetailsPage.jsx:124
 msgid "Usage"
 msgstr "Использование"
 
@@ -2891,7 +2951,7 @@ msgstr "Производитель"
 #: src/components/vms/hostvmslist.jsx:138
 #: src/components/vms/hostvmslist.jsx:141
 #: src/components/vm/vmDetailsPage.jsx:87
-#: src/components/vm/vmDetailsPage.jsx:243
+#: src/components/vm/vmDetailsPage.jsx:247
 #: src/components/networks/networkList.jsx:51
 #: src/components/storagePools/storagePoolList.jsx:52 src/manifest.json:0
 msgid "Virtual machines"
@@ -2908,6 +2968,13 @@ msgstr "Виртуальная сеть"
 #: src/components/networks/createNetworkDialog.jsx:376
 msgid "Virtual network failed to be created"
 msgstr "Не удалось создать виртуальную сеть"
+
+#: src/components/vm/overview/helpers.jsx:28
+msgid ""
+"Virtual socket support enables communication between the host and guest over "
+"a socket. It still requires special vsock-aware software to communicate over "
+"the socket."
+msgstr ""
 
 #: src/components/libvirtSlate.jsx:42
 msgid "Virtualization service (libvirt) is not active"
@@ -2934,17 +3001,21 @@ msgstr "Имя группы томов"
 msgid "Volume group name should not be empty"
 msgstr "Имя группы томов не должно быть пустым"
 
+#: src/components/vm/overview/vmOverviewCard.jsx:232
+msgid "Vsock"
+msgstr ""
+
 #: src/components/vm/hostdevs/hostDevCard.jsx:115
 #: src/components/vm/overview/bootOrder.jsx:160
 msgid "WWPN"
 msgstr "WWPN"
 
 #: src/components/common/needsShutdown.jsx:114
-#: src/components/vm/overview/vmOverviewCard.jsx:195
+#: src/components/vm/overview/vmOverviewCard.jsx:208
 msgid "Watchdog"
 msgstr ""
 
-#: src/components/vm/overview/watchdog.jsx:148
+#: src/components/vm/overview/helpers.jsx:27
 msgid ""
 "Watchdogs act when systems stop responding. To use this virtual watchdog "
 "device, the guest system also needs to have an additional driver and a "
@@ -2974,7 +3045,8 @@ msgstr "Необходимо выбрать наиболее соответст�
 msgid "active"
 msgstr "активно"
 
-#: src/components/vm/overview/watchdog.jsx:223
+#: src/components/vm/overview/watchdog.jsx:224
+#: src/components/vm/overview/vsock.jsx:275
 #, fuzzy
 #| msgid "Add"
 msgid "add"
@@ -3012,10 +3084,11 @@ msgstr "диск"
 msgid "down"
 msgstr "не работает"
 
-#: src/components/vm/overview/watchdog.jsx:223
+#: src/components/vm/overview/watchdog.jsx:224
 #: src/components/vm/overview/bootOrder.jsx:361
-#: src/components/vm/overview/vmOverviewCard.jsx:112
-#: src/components/vm/overview/vmOverviewCard.jsx:120
+#: src/components/vm/overview/vmOverviewCard.jsx:122
+#: src/components/vm/overview/vmOverviewCard.jsx:130
+#: src/components/vm/overview/vsock.jsx:275
 msgid "edit"
 msgstr "редактировать"
 
@@ -3082,16 +3155,17 @@ msgstr "mcast"
 #: src/components/common/machinesConnectionSelector.jsx:82
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:194
 #: src/components/vm/nics/nicBody.jsx:110
-#: src/components/vm/vmDetailsPage.jsx:198
+#: src/components/vm/vmDetailsPage.jsx:202
+#: src/components/vm/overview/vsock.jsx:202
 msgid "more info"
 msgstr ""
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:190
-#: src/components/vm/vmDetailsPage.jsx:194
+#: src/components/vm/vmDetailsPage.jsx:198
 msgid "mount point: The mount point inside the guest"
 msgstr ""
 
-#: src/components/vm/vmDetailsPage.jsx:193
+#: src/components/vm/vmDetailsPage.jsx:197
 msgid "mount tag: The tag associated to the exported mount point"
 msgstr ""
 
@@ -3109,7 +3183,8 @@ msgstr "нет"
 msgid "no state saved"
 msgstr ""
 
-#: src/components/vm/overview/watchdog.jsx:219
+#: src/components/vm/overview/watchdog.jsx:220
+#: src/components/vm/overview/vsock.jsx:257
 #: src/components/networks/networkOverviewTab.jsx:293
 msgid "none"
 msgstr ""
@@ -3203,7 +3278,7 @@ msgstr ""
 "Для создания новых виртуальных машин в системе должен быть установлен пакет "
 "virt-install"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:126
+#: src/components/vm/overview/vmOverviewCard.jsx:136
 #, fuzzy
 msgid ""
 "virt-install package needs to be installed on the system in order to edit "
@@ -3215,6 +3290,10 @@ msgstr ""
 #: src/manifest.json:0
 msgid "vm"
 msgstr "ВМ"
+
+#: src/components/vm/overview/vmOverviewCard.jsx:238
+msgid "vsock requires special software"
+msgstr ""
 
 #: src/components/networks/networkOverviewTab.jsx:115
 #: src/components/storagePools/storagePoolOverviewTab.jsx:67
