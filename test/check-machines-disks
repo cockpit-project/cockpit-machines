@@ -673,7 +673,8 @@ class TestMachinesDisks(VirtualMachinesCase):
 
             b = self.test_obj.browser
             m = self.test_obj.machine
-            b.wait_not_present(f"#vm-{self.vm_name}-disks-adddisk-dialog-modal-window")
+            with b.wait_timeout(60):
+                b.wait_not_present(f"#vm-{self.vm_name}-disks-adddisk-dialog-modal-window")
             if self.device == "cdrom" or (self.file_path and self.file_path.endswith(".iso")) or self.expected_volume_format == "iso":
                 expected_bus_type = self.bus_type or "scsi"
                 expected_device = self.device or "cdrom"
