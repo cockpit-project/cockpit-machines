@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-15 02:50+0000\n"
+"POT-Creation-Date: 2023-05-23 02:51+0000\n"
 "PO-Revision-Date: 2023-02-01 19:11+0000\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language-Team: Turkish <https://translate.fedoraproject.org/projects/cockpit-"
@@ -69,7 +69,7 @@ msgstr "$0 bellek ayarlaması"
 msgid "$0 network"
 msgstr "$0 ağ"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:135
+#: src/components/vm/overview/vmOverviewCard.jsx:145
 #: src/components/vm/vmUsageCard.jsx:47
 msgid "$0 vCPU"
 msgid_plural "$0 vCPUs"
@@ -94,7 +94,7 @@ msgstr ""
 msgid "Access"
 msgstr "Erişim"
 
-#: src/components/vm/overview/watchdog.jsx:183
+#: src/components/vm/overview/watchdog.jsx:184
 msgid "Action"
 msgstr "Eylem"
 
@@ -110,7 +110,8 @@ msgstr "Birimleri yönetmek için depolama havuzunu etkinleştir"
 #: src/components/vm/disks/diskAdd.jsx:863
 #: src/components/vm/nics/nicAdd.jsx:213
 #: src/components/vm/hostdevs/hostDevAdd.jsx:229
-#: src/components/vm/overview/watchdog.jsx:157
+#: src/components/vm/overview/watchdog.jsx:158
+#: src/components/vm/overview/vsock.jsx:215
 #: src/components/networks/networkOverviewTab.jsx:236
 msgid "Add"
 msgstr "Ekle"
@@ -141,11 +142,17 @@ msgstr "Paylaşılan dizin ekle"
 msgid "Add virtual network interface"
 msgstr "Sanal ağ arayüzü ekle"
 
-#: src/components/vm/overview/watchdog.jsx:147
+#: src/components/vm/overview/vsock.jsx:190
+#, fuzzy
+#| msgid "Add network interface"
+msgid "Add vsock interface"
+msgstr "Ağ arayüzü ekle"
+
+#: src/components/vm/overview/watchdog.jsx:148
 msgid "Add watchdog device type"
 msgstr "Gözlemci aygıt türü ekle"
 
-#: src/components/vm/overview/watchdog.jsx:103
+#: src/components/vm/overview/watchdog.jsx:104
 msgid "Adding a watchdog will require a reboot to take effect."
 msgstr ""
 
@@ -203,13 +210,23 @@ msgstr "Ayrıca bu havuzun içindeki tüm birimleri sil:"
 msgid "Always attach"
 msgstr "Her zaman bağla"
 
+#: src/components/vm/overview/helpers.jsx:29
+msgid "An example of vsock-aware software is socat"
+msgstr ""
+
 #: src/components/vm/overview/cpuModal.jsx:335
 msgid "Apply"
 msgstr "Uygula"
 
-#: src/components/vm/overview/watchdog.jsx:164
+#: src/components/vm/overview/watchdog.jsx:165
 msgid "Apply on next boot"
 msgstr ""
+
+#: src/components/vm/overview/vsock.jsx:47
+#, fuzzy
+#| msgid "Generate automatically"
+msgid "Assign automatically"
+msgstr "Otomatik olarak oluştur"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:1213
 msgid ""
@@ -227,7 +244,7 @@ msgstr "Otomatik"
 msgid "Automation"
 msgstr "Otomasyon"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:190
+#: src/components/vm/overview/vmOverviewCard.jsx:200
 #: src/components/networks/networkOverviewTab.jsx:119
 #: src/components/storagePools/storagePoolOverviewTab.jsx:71
 msgid "Autostart"
@@ -237,7 +254,7 @@ msgstr "Otomatik başlat"
 msgid "Blocked"
 msgstr "Engellendi"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:182
+#: src/components/vm/overview/vmOverviewCard.jsx:192
 msgid "Boot order"
 msgstr "Önyükleme sırası"
 
@@ -265,7 +282,7 @@ msgid "CD/DVD disc"
 msgstr "CD/DVD disk"
 
 #: src/components/common/needsShutdown.jsx:110
-#: src/components/vm/overview/vmOverviewCard.jsx:177
+#: src/components/vm/overview/vmOverviewCard.jsx:187
 #: src/components/vm/vmUsageCard.jsx:69
 msgid "CPU"
 msgstr "CPU"
@@ -292,10 +309,11 @@ msgstr "Önbellek"
 #: src/components/vm/hostdevs/hostDevAdd.jsx:234
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:147
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:102
-#: src/components/vm/overview/watchdog.jsx:175
+#: src/components/vm/overview/watchdog.jsx:176
 #: src/components/vm/overview/firmware.jsx:72
 #: src/components/vm/overview/memoryModal.jsx:159
 #: src/components/vm/overview/bootOrder.jsx:318
+#: src/components/vm/overview/vsock.jsx:226
 #: src/components/vm/overview/cpuModal.jsx:338
 #: src/components/vm/vmRenameDialog.jsx:71
 #: src/components/vm/deleteDialog.jsx:174
@@ -390,7 +408,7 @@ msgstr "Bağlanıyor"
 
 #: src/components/common/machinesConnectionSelector.jsx:39
 #: src/components/vms/hostvmslist.jsx:145
-#: src/components/vm/overview/vmOverviewCard.jsx:153
+#: src/components/vm/overview/vmOverviewCard.jsx:163
 #: src/components/networks/networkList.jsx:69
 #: src/components/networks/createNetworkDialog.jsx:42
 #: src/components/storagePools/storagePoolList.jsx:70
@@ -398,7 +416,7 @@ msgid "Connection"
 msgstr "Bağlantı"
 
 #: src/components/vm/vmDetailsPage.jsx:93
-#: src/components/vm/vmDetailsPage.jsx:128
+#: src/components/vm/vmDetailsPage.jsx:131
 msgid "Console"
 msgstr "Konsol"
 
@@ -427,7 +445,7 @@ msgstr "$0 için depolama alanı silinemedi"
 msgid "Could not delete disk's storage"
 msgstr "$0 için depolama alanı silinemedi"
 
-#: src/components/vm/overview/watchdog.jsx:102
+#: src/components/vm/overview/watchdog.jsx:103
 msgid "Could not dynamically add watchdog"
 msgstr ""
 
@@ -547,6 +565,12 @@ msgstr "Şu anki ayırma"
 #: src/components/vm/overview/firmware.jsx:125
 msgid "Custom firmware: $0"
 msgstr "Özel aygıt yazılımı: $0"
+
+#: src/components/vm/overview/vsock.jsx:158
+#, fuzzy
+#| msgid "Disk identifier"
+msgid "Custom identifier"
+msgstr "Disk tanımlayıcısı"
 
 #: src/components/vm/disks/diskAdd.jsx:344
 #: src/components/vm/disks/diskAdd.jsx:756
@@ -723,7 +747,7 @@ msgstr "Disk ayarları kaydedilemedi"
 msgid "Disk-only snapshot"
 msgstr "Sadece disk anlık görüntüsü"
 
-#: src/components/vm/vmDetailsPage.jsx:144
+#: src/components/vm/vmDetailsPage.jsx:148
 msgid "Disks"
 msgstr "Diskler"
 
@@ -782,7 +806,13 @@ msgstr "Düzenle"
 msgid "Edit $0 attributes"
 msgstr "$0 özniteliklerini düzenle"
 
-#: src/components/vm/overview/watchdog.jsx:147
+#: src/components/vm/overview/vsock.jsx:190
+#, fuzzy
+#| msgid "Network interfaces"
+msgid "Edit vsock interface"
+msgstr "Ağ arayüzleri"
+
+#: src/components/vm/overview/watchdog.jsx:148
 msgid "Edit watchdog device type"
 msgstr "Gözlemci aygıt türünü düzenle"
 
@@ -803,7 +833,7 @@ msgstr "Çıkar"
 msgid "Eject disc from VM?"
 msgstr "Disk sanal makineden çıkarılsın mı?"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:209
+#: src/components/vm/overview/vmOverviewCard.jsx:268
 msgid "Emulated machine"
 msgstr "Benzetilmiş makine"
 
@@ -838,7 +868,7 @@ msgstr "Örneğin, $0"
 msgid "Existing disk image on host's file system"
 msgstr "Anamakinenin dosya sisteminde varolan disk kalıbı"
 
-#: src/components/vm/vmDetailsPage.jsx:136
+#: src/components/vm/vmDetailsPage.jsx:139
 msgid "Expand"
 msgstr "Genişlet"
 
@@ -862,11 +892,23 @@ msgstr "Aygıt yazılımını değiştirme başarısız oldu"
 msgid "Failed to clone VM $0"
 msgstr "$0 sanal makinesini çoğaltma başarısız oldu"
 
-#: src/components/vm/overview/watchdog.jsx:84
+#: src/components/vm/overview/vsock.jsx:128
+#, fuzzy
+#| msgid "Failed to configure watchdog"
+msgid "Failed to configure vsock"
+msgstr "Gözlemci yapılandırma başarısız oldu"
+
+#: src/components/vm/overview/watchdog.jsx:85
 msgid "Failed to configure watchdog"
 msgstr "Gözlemci yapılandırma başarısız oldu"
 
-#: src/components/vm/overview/watchdog.jsx:131
+#: src/components/vm/overview/vsock.jsx:140
+#, fuzzy
+#| msgid "Failed to detach watchdog"
+msgid "Failed to detach vsock"
+msgstr "Gözlemci ayırma başarısız oldu"
+
+#: src/components/vm/overview/watchdog.jsx:132
 msgid "Failed to detach watchdog"
 msgstr "Gözlemci ayırma başarısız oldu"
 
@@ -913,7 +955,7 @@ msgid "Filter by name"
 msgstr "Ada göre süz"
 
 #: src/components/vm/overview/firmware.jsx:78
-#: src/components/vm/overview/vmOverviewCard.jsx:215
+#: src/components/vm/overview/vmOverviewCard.jsx:274
 msgid "Firmware"
 msgstr "Aygıt yazılımı"
 
@@ -957,7 +999,7 @@ msgstr ""
 "paylaşılmayan, yazılabilir disk kalıpları aktarılacaktır. Kullanılmayan "
 "depolama, taşınmadan sonra kaynakta kalacaktır."
 
-#: src/components/vm/overview/vmOverviewCard.jsx:149
+#: src/components/vm/overview/vmOverviewCard.jsx:159
 #: src/components/networks/networkOverviewTab.jsx:110
 msgid "General"
 msgstr "Genel"
@@ -1020,7 +1062,7 @@ msgstr "Anamakine aygıtı eklenemedi"
 msgid "Host device will be removed from $0:"
 msgstr "Ana makine $0 sanal makinesinden kaldırılacak:"
 
-#: src/components/vm/vmDetailsPage.jsx:162
+#: src/components/vm/vmDetailsPage.jsx:166
 msgid "Host devices"
 msgstr "Ana makine aygıtları"
 
@@ -1032,7 +1074,7 @@ msgstr "Anamakine adı"
 msgid "Host should not be empty"
 msgstr "Anamakine boş olmamalıdır"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:205
+#: src/components/vm/overview/vmOverviewCard.jsx:264
 msgid "Hypervisor details"
 msgstr "Hipervizör ayrıntıları"
 
@@ -1102,6 +1144,12 @@ msgstr "Sunucu sanal makineleri için uygun"
 #: src/components/common/machinesConnectionSelector.jsx:56
 msgid "Ideal networking support"
 msgstr "Uygun ağ desteği"
+
+#: src/components/vm/overview/vsock.jsx:69
+msgid ""
+"Identifier in use by $0. VMs with an identical identifier cannot run at the "
+"same time."
+msgstr ""
 
 #: src/components/vm/disks/diskAdd.jsx:263
 msgid "Identifier may be silently truncated to $0 characters "
@@ -1174,6 +1222,10 @@ msgstr "Tak"
 #: src/components/vm/disks/diskAdd.jsx:853
 msgid "Insert disc media"
 msgstr "Disk ortamını tak"
+
+#: src/components/vm/overview/helpers.jsx:39
+msgid "Inside the VM"
+msgstr ""
 
 #: src/components/vm/vmActions.jsx:290
 msgid "Install"
@@ -1366,7 +1418,7 @@ msgid "Media will be ejected from $0:"
 msgstr "Ortam $0 sanal makinesinden çıkarılacak:"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:792
-#: src/components/vm/overview/vmOverviewCard.jsx:172
+#: src/components/vm/overview/vmOverviewCard.jsx:182
 #: src/components/vm/vmUsageCard.jsx:58
 msgid "Memory"
 msgstr "Bellek"
@@ -1524,7 +1576,7 @@ msgstr "$0 ağ arayüzü $1 sanal makinesinden kaldırılacak"
 msgid "Network interface settings could not be saved"
 msgstr "Ağ arayüzü ayarları kaydedilemedi"
 
-#: src/components/vm/vmDetailsPage.jsx:153
+#: src/components/vm/vmDetailsPage.jsx:157
 msgid "Network interfaces"
 msgstr "Ağ arayüzleri"
 
@@ -1668,6 +1720,12 @@ msgstr "Çevrim dışı belirteç boş olmamalıdır"
 #: src/components/create-vm-dialog/createVmDialog.jsx:535
 msgid "Old token expired"
 msgstr "Eski belirtecin süresi doldu"
+
+#: src/components/vm/overview/helpers.jsx:33
+#, fuzzy
+#| msgid "Run when host boots"
+msgid "On the host"
+msgstr "Anamakine önyüklendiğinde çalıştır"
 
 #: src/components/storagePools/storageVolumeDelete.jsx:71
 msgid ""
@@ -1910,7 +1968,8 @@ msgstr "Uzak görüntüleyici ayrıntıları"
 #: src/components/vm/nics/vmNicsCard.jsx:388
 #: src/components/vm/hostdevs/hostDevCard.jsx:253
 #: src/components/vm/hostdevs/hostDevCard.jsx:259
-#: src/components/vm/overview/watchdog.jsx:172
+#: src/components/vm/overview/watchdog.jsx:173
+#: src/components/vm/overview/vsock.jsx:223
 #: src/components/networks/networkOverviewTab.jsx:70
 msgid "Remove"
 msgstr "Kaldır"
@@ -1996,7 +2055,7 @@ msgstr "Yönlendirilmiş ağ"
 msgid "Run"
 msgstr "Çalıştır"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:101
+#: src/components/vm/overview/vmOverviewCard.jsx:111
 #: src/components/networks/networkOverviewTab.jsx:124
 msgid "Run when host boots"
 msgstr "Anamakine önyüklendiğinde çalıştır"
@@ -2019,10 +2078,11 @@ msgstr "SPICE bağlantı noktası"
 
 #: src/components/vm/disks/diskEdit.jsx:267
 #: src/components/vm/nics/nicEdit.jsx:182
-#: src/components/vm/overview/watchdog.jsx:157
+#: src/components/vm/overview/watchdog.jsx:158
 #: src/components/vm/overview/firmware.jsx:69
 #: src/components/vm/overview/memoryModal.jsx:156
 #: src/components/vm/overview/bootOrder.jsx:315
+#: src/components/vm/overview/vsock.jsx:215
 msgid "Save"
 msgstr "Kaydet"
 
@@ -2074,12 +2134,12 @@ msgstr "Paylaş"
 msgid "Share a host directory with the guest"
 msgstr "Bir ana makine dizinini konuk ile paylaş"
 
-#: src/components/vm/vmDetailsPage.jsx:183
+#: src/components/vm/vmDetailsPage.jsx:187
 msgid "Shared directories"
 msgstr "Paylaşılan dizinler"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:180
-#: src/components/vm/vmDetailsPage.jsx:185
+#: src/components/vm/vmDetailsPage.jsx:189
 msgid "Shared host directories need to be manually mounted inside the VM"
 msgstr ""
 "Paylaşılan ana makine dizinlerinin sanal makine içinde elle bağlanması "
@@ -2094,13 +2154,13 @@ msgstr "Paylaşılan depolama"
 msgid "Show additional options"
 msgstr "Ek seçenekleri göster"
 
-#: src/components/vm/overview/watchdog.jsx:51
+#: src/components/vm/overview/watchdog.jsx:52
 #, fuzzy
 #| msgid "show less"
 msgid "Show less"
 msgstr "daha az göster"
 
-#: src/components/vm/overview/watchdog.jsx:51
+#: src/components/vm/overview/watchdog.jsx:52
 #, fuzzy
 #| msgid "show more"
 msgid "Show more"
@@ -2152,7 +2212,7 @@ msgstr ""
 msgid "Snapshot failed to be created"
 msgstr "Anlık görüntünün oluşturulması başarısız oldu"
 
-#: src/components/vm/vmDetailsPage.jsx:171
+#: src/components/vm/vmDetailsPage.jsx:175
 msgid "Snapshots"
 msgstr "Anlık görüntüler"
 
@@ -2225,7 +2285,7 @@ msgstr "Başlatma"
 #: src/components/vms/hostvmslist.jsx:106
 #: src/components/vms/hostvmslist.jsx:146
 #: src/components/vm/nics/vmNicsCard.jsx:323
-#: src/components/vm/overview/vmOverviewCard.jsx:158
+#: src/components/vm/overview/vmOverviewCard.jsx:168
 #: src/components/networks/networkList.jsx:71
 #: src/components/storagePools/storagePoolList.jsx:71
 msgid "State"
@@ -2538,7 +2598,7 @@ msgstr "Belirtilmedi"
 msgid "Url"
 msgstr "URL"
 
-#: src/components/vm/vmDetailsPage.jsx:122
+#: src/components/vm/vmDetailsPage.jsx:124
 msgid "Usage"
 msgstr "Kullanım"
 
@@ -2695,7 +2755,7 @@ msgstr "Satıcı"
 #: src/components/vms/hostvmslist.jsx:138
 #: src/components/vms/hostvmslist.jsx:141
 #: src/components/vm/vmDetailsPage.jsx:87
-#: src/components/vm/vmDetailsPage.jsx:243
+#: src/components/vm/vmDetailsPage.jsx:247
 #: src/components/networks/networkList.jsx:51
 #: src/components/storagePools/storagePoolList.jsx:52 src/manifest.json:0
 msgid "Virtual machines"
@@ -2712,6 +2772,13 @@ msgstr "Sanal ağ"
 #: src/components/networks/createNetworkDialog.jsx:376
 msgid "Virtual network failed to be created"
 msgstr "Sanal ağ oluşturulması başarısız oldu"
+
+#: src/components/vm/overview/helpers.jsx:28
+msgid ""
+"Virtual socket support enables communication between the host and guest over "
+"a socket. It still requires special vsock-aware software to communicate over "
+"the socket."
+msgstr ""
 
 #: src/components/libvirtSlate.jsx:42
 msgid "Virtualization service (libvirt) is not active"
@@ -2738,17 +2805,21 @@ msgstr "Birim grubu adı"
 msgid "Volume group name should not be empty"
 msgstr "Birim grubu adı boş olmamalıdır"
 
+#: src/components/vm/overview/vmOverviewCard.jsx:232
+msgid "Vsock"
+msgstr ""
+
 #: src/components/vm/hostdevs/hostDevCard.jsx:115
 #: src/components/vm/overview/bootOrder.jsx:160
 msgid "WWPN"
 msgstr "WWPN"
 
 #: src/components/common/needsShutdown.jsx:114
-#: src/components/vm/overview/vmOverviewCard.jsx:195
+#: src/components/vm/overview/vmOverviewCard.jsx:208
 msgid "Watchdog"
 msgstr "Gözlemci"
 
-#: src/components/vm/overview/watchdog.jsx:148
+#: src/components/vm/overview/helpers.jsx:27
 msgid ""
 "Watchdogs act when systems stop responding. To use this virtual watchdog "
 "device, the guest system also needs to have an additional driver and a "
@@ -2781,7 +2852,8 @@ msgstr "En yakından eşleşen işletim sistemini seçmeniz gerekli"
 msgid "active"
 msgstr "etkin"
 
-#: src/components/vm/overview/watchdog.jsx:223
+#: src/components/vm/overview/watchdog.jsx:224
+#: src/components/vm/overview/vsock.jsx:275
 msgid "add"
 msgstr "ekle"
 
@@ -2817,10 +2889,11 @@ msgstr "disk"
 msgid "down"
 msgstr "kapalı"
 
-#: src/components/vm/overview/watchdog.jsx:223
+#: src/components/vm/overview/watchdog.jsx:224
 #: src/components/vm/overview/bootOrder.jsx:361
-#: src/components/vm/overview/vmOverviewCard.jsx:112
-#: src/components/vm/overview/vmOverviewCard.jsx:120
+#: src/components/vm/overview/vmOverviewCard.jsx:122
+#: src/components/vm/overview/vmOverviewCard.jsx:130
+#: src/components/vm/overview/vsock.jsx:275
 msgid "edit"
 msgstr "düzenle"
 
@@ -2884,16 +2957,17 @@ msgstr "mcast"
 #: src/components/common/machinesConnectionSelector.jsx:82
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:194
 #: src/components/vm/nics/nicBody.jsx:110
-#: src/components/vm/vmDetailsPage.jsx:198
+#: src/components/vm/vmDetailsPage.jsx:202
+#: src/components/vm/overview/vsock.jsx:202
 msgid "more info"
 msgstr "daha fazla bilgi"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:190
-#: src/components/vm/vmDetailsPage.jsx:194
+#: src/components/vm/vmDetailsPage.jsx:198
 msgid "mount point: The mount point inside the guest"
 msgstr "bağlama noktası: Konuk içindeki bağlama noktası"
 
-#: src/components/vm/vmDetailsPage.jsx:193
+#: src/components/vm/vmDetailsPage.jsx:197
 msgid "mount tag: The tag associated to the exported mount point"
 msgstr "bağlama etiketi: Dışa aktarılan bağlama noktasıyla ilişkili etiket"
 
@@ -2911,7 +2985,8 @@ msgstr "hayır"
 msgid "no state saved"
 msgstr "kaydedilen durum yok"
 
-#: src/components/vm/overview/watchdog.jsx:219
+#: src/components/vm/overview/watchdog.jsx:220
+#: src/components/vm/overview/vsock.jsx:257
 #: src/components/networks/networkOverviewTab.jsx:293
 msgid "none"
 msgstr "yok"
@@ -3000,7 +3075,7 @@ msgstr ""
 "Yeni sanal makineler oluşturmak için sistemde virt-install paketinin "
 "yüklenmesi gerekir"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:126
+#: src/components/vm/overview/vmOverviewCard.jsx:136
 msgid ""
 "virt-install package needs to be installed on the system in order to edit "
 "this attribute"
@@ -3011,6 +3086,10 @@ msgstr ""
 #: src/manifest.json:0
 msgid "vm"
 msgstr "sanal makine"
+
+#: src/components/vm/overview/vmOverviewCard.jsx:238
+msgid "vsock requires special software"
+msgstr ""
 
 #: src/components/networks/networkOverviewTab.jsx:115
 #: src/components/storagePools/storagePoolOverviewTab.jsx:67

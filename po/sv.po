@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-15 02:50+0000\n"
-"PO-Revision-Date: 2023-04-24 11:20+0000\n"
-"Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
+"POT-Creation-Date: 2023-05-23 02:51+0000\n"
+"PO-Revision-Date: 2023-05-23 11:20+0000\n"
+"Last-Translator: Luna Jernberg <bittin@reimu.nl>\n"
 "Language-Team: Swedish <https://translate.fedoraproject.org/projects/cockpit-"
 "machines/main/sv/>\n"
 "Language: sv\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 4.17\n"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:827
 msgid "$0 $1 available at default location"
@@ -64,7 +64,7 @@ msgstr "$0 minnesjustering"
 msgid "$0 network"
 msgstr "$0 Nätverk"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:135
+#: src/components/vm/overview/vmOverviewCard.jsx:145
 #: src/components/vm/vmUsageCard.jsx:47
 msgid "$0 vCPU"
 msgid_plural "$0 vCPUs"
@@ -89,7 +89,7 @@ msgstr ""
 msgid "Access"
 msgstr "Åtkomst"
 
-#: src/components/vm/overview/watchdog.jsx:183
+#: src/components/vm/overview/watchdog.jsx:184
 msgid "Action"
 msgstr "Åtgärd"
 
@@ -105,7 +105,8 @@ msgstr "Aktivera lagringspoolen för att administrera volymer"
 #: src/components/vm/disks/diskAdd.jsx:863
 #: src/components/vm/nics/nicAdd.jsx:213
 #: src/components/vm/hostdevs/hostDevAdd.jsx:229
-#: src/components/vm/overview/watchdog.jsx:157
+#: src/components/vm/overview/watchdog.jsx:158
+#: src/components/vm/overview/vsock.jsx:215
 #: src/components/networks/networkOverviewTab.jsx:236
 msgid "Add"
 msgstr "Lägg till"
@@ -136,13 +137,20 @@ msgstr "Lägg till delad katalog"
 msgid "Add virtual network interface"
 msgstr "Lägg till virtuell nätverksport"
 
-#: src/components/vm/overview/watchdog.jsx:147
+#: src/components/vm/overview/vsock.jsx:190
+#, fuzzy
+#| msgid "Add network interface"
+msgid "Add vsock interface"
+msgstr "Lägg till nätverksport"
+
+#: src/components/vm/overview/watchdog.jsx:148
 msgid "Add watchdog device type"
 msgstr "Lägg till en vakthundsenhetstyp"
 
-#: src/components/vm/overview/watchdog.jsx:103
+#: src/components/vm/overview/watchdog.jsx:104
 msgid "Adding a watchdog will require a reboot to take effect."
 msgstr ""
+"Att lägga till en vakthund kommer att kräva en omstart för att träda i kraft."
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:118
 msgid "Adding shared directories is possible only when the guest is shut off"
@@ -199,13 +207,23 @@ msgstr "Ta också bort alla volymer i denna pool:"
 msgid "Always attach"
 msgstr "Anslut alltid"
 
+#: src/components/vm/overview/helpers.jsx:29
+msgid "An example of vsock-aware software is socat"
+msgstr ""
+
 #: src/components/vm/overview/cpuModal.jsx:335
 msgid "Apply"
 msgstr "Lägg på"
 
-#: src/components/vm/overview/watchdog.jsx:164
+#: src/components/vm/overview/watchdog.jsx:165
 msgid "Apply on next boot"
-msgstr ""
+msgstr "Applicera vid nästa uppstart"
+
+#: src/components/vm/overview/vsock.jsx:47
+#, fuzzy
+#| msgid "Generate automatically"
+msgid "Assign automatically"
+msgstr "Skapa automatiskt"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:1213
 msgid ""
@@ -223,7 +241,7 @@ msgstr "Automatisk"
 msgid "Automation"
 msgstr "Automatisering"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:190
+#: src/components/vm/overview/vmOverviewCard.jsx:200
 #: src/components/networks/networkOverviewTab.jsx:119
 #: src/components/storagePools/storagePoolOverviewTab.jsx:71
 msgid "Autostart"
@@ -233,7 +251,7 @@ msgstr "Starta automatiskt"
 msgid "Blocked"
 msgstr "Blockerat"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:182
+#: src/components/vm/overview/vmOverviewCard.jsx:192
 msgid "Boot order"
 msgstr "Uppstartsordning"
 
@@ -261,7 +279,7 @@ msgid "CD/DVD disc"
 msgstr "CD/DVD skiva"
 
 #: src/components/common/needsShutdown.jsx:110
-#: src/components/vm/overview/vmOverviewCard.jsx:177
+#: src/components/vm/overview/vmOverviewCard.jsx:187
 #: src/components/vm/vmUsageCard.jsx:69
 msgid "CPU"
 msgstr "CPU"
@@ -286,10 +304,11 @@ msgstr "Cache"
 #: src/components/vm/hostdevs/hostDevAdd.jsx:234
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:147
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:102
-#: src/components/vm/overview/watchdog.jsx:175
+#: src/components/vm/overview/watchdog.jsx:176
 #: src/components/vm/overview/firmware.jsx:72
 #: src/components/vm/overview/memoryModal.jsx:159
 #: src/components/vm/overview/bootOrder.jsx:318
+#: src/components/vm/overview/vsock.jsx:226
 #: src/components/vm/overview/cpuModal.jsx:338
 #: src/components/vm/vmRenameDialog.jsx:71
 #: src/components/vm/deleteDialog.jsx:174
@@ -386,7 +405,7 @@ msgstr "Ansluter"
 
 #: src/components/common/machinesConnectionSelector.jsx:39
 #: src/components/vms/hostvmslist.jsx:145
-#: src/components/vm/overview/vmOverviewCard.jsx:153
+#: src/components/vm/overview/vmOverviewCard.jsx:163
 #: src/components/networks/networkList.jsx:69
 #: src/components/networks/createNetworkDialog.jsx:42
 #: src/components/storagePools/storagePoolList.jsx:70
@@ -394,7 +413,7 @@ msgid "Connection"
 msgstr "Anslutning"
 
 #: src/components/vm/vmDetailsPage.jsx:93
-#: src/components/vm/vmDetailsPage.jsx:128
+#: src/components/vm/vmDetailsPage.jsx:131
 msgid "Console"
 msgstr "Konsol"
 
@@ -419,9 +438,9 @@ msgstr "Det gick inte att radera all lagring för $0"
 msgid "Could not delete disk's storage"
 msgstr "Kunde inte ta bort diskens lagring"
 
-#: src/components/vm/overview/watchdog.jsx:102
+#: src/components/vm/overview/watchdog.jsx:103
 msgid "Could not dynamically add watchdog"
-msgstr ""
+msgstr "Kunde inte lägga till vakthund dynamiskt"
 
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:71
 msgid "Could not revert to snapshot"
@@ -534,6 +553,12 @@ msgstr "Nuvarande indelning"
 #: src/components/vm/overview/firmware.jsx:125
 msgid "Custom firmware: $0"
 msgstr "Eget hårdvaruprogram: $0"
+
+#: src/components/vm/overview/vsock.jsx:158
+#, fuzzy
+#| msgid "Disk identifier"
+msgid "Custom identifier"
+msgstr "Diskidentifierare"
 
 #: src/components/vm/disks/diskAdd.jsx:344
 #: src/components/vm/disks/diskAdd.jsx:756
@@ -708,7 +733,7 @@ msgstr "Inställningarna för disken kunde inte sparas"
 msgid "Disk-only snapshot"
 msgstr "Endast diskögonblicksbild"
 
-#: src/components/vm/vmDetailsPage.jsx:144
+#: src/components/vm/vmDetailsPage.jsx:148
 msgid "Disks"
 msgstr "Diskar"
 
@@ -766,7 +791,13 @@ msgstr "Redigera"
 msgid "Edit $0 attributes"
 msgstr "Redigera $0 attribut"
 
-#: src/components/vm/overview/watchdog.jsx:147
+#: src/components/vm/overview/vsock.jsx:190
+#, fuzzy
+#| msgid "Network interface"
+msgid "Edit vsock interface"
+msgstr "Nätverksgränssnitt"
+
+#: src/components/vm/overview/watchdog.jsx:148
 msgid "Edit watchdog device type"
 msgstr "Redigera vakthundsenhetstypen"
 
@@ -787,7 +818,7 @@ msgstr "Mata ut"
 msgid "Eject disc from VM?"
 msgstr "Ta bort disk från VM?"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:209
+#: src/components/vm/overview/vmOverviewCard.jsx:268
 msgid "Emulated machine"
 msgstr "Emulerad maskin"
 
@@ -822,7 +853,7 @@ msgstr "Exempel, $0"
 msgid "Existing disk image on host's file system"
 msgstr "En annan disk på den här datorns filsystem"
 
-#: src/components/vm/vmDetailsPage.jsx:136
+#: src/components/vm/vmDetailsPage.jsx:139
 msgid "Expand"
 msgstr "Expandera"
 
@@ -846,11 +877,23 @@ msgstr "Misslyckades att ändra hårdvaruprogram"
 msgid "Failed to clone VM $0"
 msgstr "Misslyckades att klona VM $0"
 
-#: src/components/vm/overview/watchdog.jsx:84
+#: src/components/vm/overview/vsock.jsx:128
+#, fuzzy
+#| msgid "Failed to configure watchdog"
+msgid "Failed to configure vsock"
+msgstr "Misslyckades att konfigurera watchdog"
+
+#: src/components/vm/overview/watchdog.jsx:85
 msgid "Failed to configure watchdog"
 msgstr "Misslyckades att konfigurera watchdog"
 
-#: src/components/vm/overview/watchdog.jsx:131
+#: src/components/vm/overview/vsock.jsx:140
+#, fuzzy
+#| msgid "Failed to detach watchdog"
+msgid "Failed to detach vsock"
+msgstr "Misslyckades att koppla ifrån vakthunden"
+
+#: src/components/vm/overview/watchdog.jsx:132
 msgid "Failed to detach watchdog"
 msgstr "Misslyckades att koppla ifrån vakthunden"
 
@@ -896,7 +939,7 @@ msgid "Filter by name"
 msgstr "Filtrera efter namn"
 
 #: src/components/vm/overview/firmware.jsx:78
-#: src/components/vm/overview/vmOverviewCard.jsx:215
+#: src/components/vm/overview/vmOverviewCard.jsx:274
 msgid "Firmware"
 msgstr "Hårdvaruprogram"
 
@@ -940,7 +983,7 @@ msgstr ""
 "skrivbara diskbilder kommer att överföras. Oanvänd lagring kommer att finnas "
 "kvar på ursprunget efter migreringen."
 
-#: src/components/vm/overview/vmOverviewCard.jsx:149
+#: src/components/vm/overview/vmOverviewCard.jsx:159
 #: src/components/networks/networkOverviewTab.jsx:110
 msgid "General"
 msgstr "Allmänt"
@@ -1001,7 +1044,7 @@ msgstr "Värdenheten kunde inte anslutas"
 msgid "Host device will be removed from $0:"
 msgstr "Värdenheter kommer tas bort från $0:"
 
-#: src/components/vm/vmDetailsPage.jsx:162
+#: src/components/vm/vmDetailsPage.jsx:166
 msgid "Host devices"
 msgstr "Värdenheter"
 
@@ -1013,7 +1056,7 @@ msgstr "Värdnamn"
 msgid "Host should not be empty"
 msgstr "Värden får inte vara tom"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:205
+#: src/components/vm/overview/vmOverviewCard.jsx:264
 msgid "Hypervisor details"
 msgstr "Detaljer om hypervisorn"
 
@@ -1083,6 +1126,12 @@ msgstr "Idealis för server-VM:ar"
 #: src/components/common/machinesConnectionSelector.jsx:56
 msgid "Ideal networking support"
 msgstr "Idealisk för nätversstöd"
+
+#: src/components/vm/overview/vsock.jsx:69
+msgid ""
+"Identifier in use by $0. VMs with an identical identifier cannot run at the "
+"same time."
+msgstr ""
 
 #: src/components/vm/disks/diskAdd.jsx:263
 msgid "Identifier may be silently truncated to $0 characters "
@@ -1154,6 +1203,10 @@ msgstr "Insert"
 #: src/components/vm/disks/diskAdd.jsx:853
 msgid "Insert disc media"
 msgstr "Sätt i skivmedia"
+
+#: src/components/vm/overview/helpers.jsx:39
+msgid "Inside the VM"
+msgstr ""
 
 #: src/components/vm/vmActions.jsx:290
 msgid "Install"
@@ -1344,7 +1397,7 @@ msgid "Media will be ejected from $0:"
 msgstr "Media kommer att matas ut från $0:"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:792
-#: src/components/vm/overview/vmOverviewCard.jsx:172
+#: src/components/vm/overview/vmOverviewCard.jsx:182
 #: src/components/vm/vmUsageCard.jsx:58
 msgid "Memory"
 msgstr "Minne"
@@ -1500,7 +1553,7 @@ msgstr "Nätverksgränssnitt $0 kommer tas bort från $1"
 msgid "Network interface settings could not be saved"
 msgstr "Inställningar för nätverksgränssnitt kunde inte sparas"
 
-#: src/components/vm/vmDetailsPage.jsx:153
+#: src/components/vm/vmDetailsPage.jsx:157
 msgid "Network interfaces"
 msgstr "Nätverksgränssnitt"
 
@@ -1645,6 +1698,12 @@ msgstr "Offlinetoken får inte vara tom"
 #: src/components/create-vm-dialog/createVmDialog.jsx:535
 msgid "Old token expired"
 msgstr "Gammal token har gått ut"
+
+#: src/components/vm/overview/helpers.jsx:33
+#, fuzzy
+#| msgid "Run when host boots"
+msgid "On the host"
+msgstr "Kör när värd startar"
 
 #: src/components/storagePools/storageVolumeDelete.jsx:71
 msgid ""
@@ -1889,7 +1948,8 @@ msgstr "Detaljer om fjärrvisaren"
 #: src/components/vm/nics/vmNicsCard.jsx:388
 #: src/components/vm/hostdevs/hostDevCard.jsx:253
 #: src/components/vm/hostdevs/hostDevCard.jsx:259
-#: src/components/vm/overview/watchdog.jsx:172
+#: src/components/vm/overview/watchdog.jsx:173
+#: src/components/vm/overview/vsock.jsx:223
 #: src/components/networks/networkOverviewTab.jsx:70
 msgid "Remove"
 msgstr "Ta bort"
@@ -1977,7 +2037,7 @@ msgstr "Ruttlagt nätverk"
 msgid "Run"
 msgstr "Kör"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:101
+#: src/components/vm/overview/vmOverviewCard.jsx:111
 #: src/components/networks/networkOverviewTab.jsx:124
 msgid "Run when host boots"
 msgstr "Kör när värd startar"
@@ -2000,10 +2060,11 @@ msgstr "SPICE-port"
 
 #: src/components/vm/disks/diskEdit.jsx:267
 #: src/components/vm/nics/nicEdit.jsx:182
-#: src/components/vm/overview/watchdog.jsx:157
+#: src/components/vm/overview/watchdog.jsx:158
 #: src/components/vm/overview/firmware.jsx:69
 #: src/components/vm/overview/memoryModal.jsx:156
 #: src/components/vm/overview/bootOrder.jsx:315
+#: src/components/vm/overview/vsock.jsx:215
 msgid "Save"
 msgstr "Spara"
 
@@ -2055,12 +2116,12 @@ msgstr "Dela"
 msgid "Share a host directory with the guest"
 msgstr "Dela en värdkatalog med gäst"
 
-#: src/components/vm/vmDetailsPage.jsx:183
+#: src/components/vm/vmDetailsPage.jsx:187
 msgid "Shared directories"
 msgstr "Delade kataloger"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:180
-#: src/components/vm/vmDetailsPage.jsx:185
+#: src/components/vm/vmDetailsPage.jsx:189
 msgid "Shared host directories need to be manually mounted inside the VM"
 msgstr "Delade värdkataloger behöver monteras manuellt inuti VM:en"
 
@@ -2073,17 +2134,13 @@ msgstr "Delad lagring"
 msgid "Show additional options"
 msgstr "Visa ytterligare åtgärder"
 
-#: src/components/vm/overview/watchdog.jsx:51
-#, fuzzy
-#| msgid "show less"
+#: src/components/vm/overview/watchdog.jsx:52
 msgid "Show less"
-msgstr "visa mindre"
+msgstr "Visa mindre"
 
-#: src/components/vm/overview/watchdog.jsx:51
-#, fuzzy
-#| msgid "show more"
+#: src/components/vm/overview/watchdog.jsx:52
 msgid "Show more"
-msgstr "visa mer"
+msgstr "Visa mer"
 
 #: src/components/vm/vmActions.jsx:223 src/components/vm/vmActions.jsx:230
 msgid "Shut down"
@@ -2132,7 +2189,7 @@ msgstr ""
 msgid "Snapshot failed to be created"
 msgstr "Misslyckades att skapa ögonblicksbild"
 
-#: src/components/vm/vmDetailsPage.jsx:171
+#: src/components/vm/vmDetailsPage.jsx:175
 msgid "Snapshots"
 msgstr "Ögonblicksbilder"
 
@@ -2206,7 +2263,7 @@ msgstr "Uppstart"
 #: src/components/vms/hostvmslist.jsx:106
 #: src/components/vms/hostvmslist.jsx:146
 #: src/components/vm/nics/vmNicsCard.jsx:323
-#: src/components/vm/overview/vmOverviewCard.jsx:158
+#: src/components/vm/overview/vmOverviewCard.jsx:168
 #: src/components/networks/networkList.jsx:71
 #: src/components/storagePools/storagePoolList.jsx:71
 msgid "State"
@@ -2513,7 +2570,7 @@ msgstr "Ospecificerad"
 msgid "Url"
 msgstr "Url"
 
-#: src/components/vm/vmDetailsPage.jsx:122
+#: src/components/vm/vmDetailsPage.jsx:124
 msgid "Usage"
 msgstr "Användning"
 
@@ -2665,7 +2722,7 @@ msgstr "Leverantör"
 #: src/components/vms/hostvmslist.jsx:138
 #: src/components/vms/hostvmslist.jsx:141
 #: src/components/vm/vmDetailsPage.jsx:87
-#: src/components/vm/vmDetailsPage.jsx:243
+#: src/components/vm/vmDetailsPage.jsx:247
 #: src/components/networks/networkList.jsx:51
 #: src/components/storagePools/storagePoolList.jsx:52 src/manifest.json:0
 msgid "Virtual machines"
@@ -2682,6 +2739,13 @@ msgstr "Virtuellt nätverk"
 #: src/components/networks/createNetworkDialog.jsx:376
 msgid "Virtual network failed to be created"
 msgstr "Det gick inte att skapa ett virtuellt nätverk"
+
+#: src/components/vm/overview/helpers.jsx:28
+msgid ""
+"Virtual socket support enables communication between the host and guest over "
+"a socket. It still requires special vsock-aware software to communicate over "
+"the socket."
+msgstr ""
 
 #: src/components/libvirtSlate.jsx:42
 msgid "Virtualization service (libvirt) is not active"
@@ -2708,17 +2772,21 @@ msgstr "Volym gruppnamn"
 msgid "Volume group name should not be empty"
 msgstr "Volymgruppens namn ska inte vara tomt"
 
+#: src/components/vm/overview/vmOverviewCard.jsx:232
+msgid "Vsock"
+msgstr ""
+
 #: src/components/vm/hostdevs/hostDevCard.jsx:115
 #: src/components/vm/overview/bootOrder.jsx:160
 msgid "WWPN"
 msgstr "WWPN"
 
 #: src/components/common/needsShutdown.jsx:114
-#: src/components/vm/overview/vmOverviewCard.jsx:195
+#: src/components/vm/overview/vmOverviewCard.jsx:208
 msgid "Watchdog"
 msgstr "Vakthund"
 
-#: src/components/vm/overview/watchdog.jsx:148
+#: src/components/vm/overview/helpers.jsx:27
 msgid ""
 "Watchdogs act when systems stop responding. To use this virtual watchdog "
 "device, the guest system also needs to have an additional driver and a "
@@ -2751,7 +2819,8 @@ msgstr "Du behöver välja det operativsystem som stämmer bäst"
 msgid "active"
 msgstr "aktiv"
 
-#: src/components/vm/overview/watchdog.jsx:223
+#: src/components/vm/overview/watchdog.jsx:224
+#: src/components/vm/overview/vsock.jsx:275
 msgid "add"
 msgstr "lägg till"
 
@@ -2787,10 +2856,11 @@ msgstr "disk"
 msgid "down"
 msgstr "nere"
 
-#: src/components/vm/overview/watchdog.jsx:223
+#: src/components/vm/overview/watchdog.jsx:224
 #: src/components/vm/overview/bootOrder.jsx:361
-#: src/components/vm/overview/vmOverviewCard.jsx:112
-#: src/components/vm/overview/vmOverviewCard.jsx:120
+#: src/components/vm/overview/vmOverviewCard.jsx:122
+#: src/components/vm/overview/vmOverviewCard.jsx:130
+#: src/components/vm/overview/vsock.jsx:275
 msgid "edit"
 msgstr "redigera"
 
@@ -2854,16 +2924,17 @@ msgstr "mcast"
 #: src/components/common/machinesConnectionSelector.jsx:82
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:194
 #: src/components/vm/nics/nicBody.jsx:110
-#: src/components/vm/vmDetailsPage.jsx:198
+#: src/components/vm/vmDetailsPage.jsx:202
+#: src/components/vm/overview/vsock.jsx:202
 msgid "more info"
 msgstr "mer information"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:190
-#: src/components/vm/vmDetailsPage.jsx:194
+#: src/components/vm/vmDetailsPage.jsx:198
 msgid "mount point: The mount point inside the guest"
 msgstr "monteringspunkt: monteringspunkten inuti gästen"
 
-#: src/components/vm/vmDetailsPage.jsx:193
+#: src/components/vm/vmDetailsPage.jsx:197
 msgid "mount tag: The tag associated to the exported mount point"
 msgstr ""
 "monteringstagg: taggen associerad med den exporterade monteringspunkten"
@@ -2882,7 +2953,8 @@ msgstr "nej"
 msgid "no state saved"
 msgstr "inget tillstånd sparat"
 
-#: src/components/vm/overview/watchdog.jsx:219
+#: src/components/vm/overview/watchdog.jsx:220
+#: src/components/vm/overview/vsock.jsx:257
 #: src/components/networks/networkOverviewTab.jsx:293
 msgid "none"
 msgstr "inget"
@@ -2969,7 +3041,7 @@ msgstr ""
 "virt-install-paketet måste installeras på systemet för att kunna skapa nya "
 "virtuella datorer"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:126
+#: src/components/vm/overview/vmOverviewCard.jsx:136
 msgid ""
 "virt-install package needs to be installed on the system in order to edit "
 "this attribute"
@@ -2980,6 +3052,10 @@ msgstr ""
 #: src/manifest.json:0
 msgid "vm"
 msgstr "vm"
+
+#: src/components/vm/overview/vmOverviewCard.jsx:238
+msgid "vsock requires special software"
+msgstr ""
 
 #: src/components/networks/networkOverviewTab.jsx:115
 #: src/components/storagePools/storagePoolOverviewTab.jsx:67
