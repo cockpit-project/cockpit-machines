@@ -1,4 +1,3 @@
-
 /*
  * This file is part of Cockpit.
  *
@@ -129,7 +128,7 @@ const NetworkNameRow = ({ onValueChanged, dialogValues, validationFailed }) => {
                        placeholder={_("Unique network name")}
                        value={dialogValues.name}
                        validated={validationState}
-                       onChange={value => onValueChanged('name', value)} />
+                       onChange={(_, value) => onValueChanged('name', value)} />
             <FormHelper helperTextInvalid={validationFailed.name} />
         </FormGroup>
     );
@@ -219,13 +218,13 @@ const DhcpRow = ({ ipVersion, rangeStart, rangeEnd, expanded, onValueChanged, va
                 <FormGroup fieldId={'create-network-ipv' + ipVersion + '-dhcp-range-start'} label={_("Start")}>
                     <TextInput id={'create-network-ipv' + ipVersion + '-dhcp-range-start'}
                                value={rangeStart}
-                               onChange={value => onValueChanged('ipv' + ipVersion + 'DhcpRangeStart', value)} />
+                               onChange={(_, value) => onValueChanged('ipv' + ipVersion + 'DhcpRangeStart', value)} />
                     <FormHelper helperTextInvalid={validationStart == "error" && validationFailed['ipv' + ipVersion + 'DhcpRangeStart']} />
                 </FormGroup>
                 <FormGroup fieldId={'create-network-ipv' + ipVersion + '-dhcp-range-end'} label={_("End")}>
                     <TextInput id={'create-network-ipv' + ipVersion + '-dhcp-range-end'}
                                value={rangeEnd}
-                               onChange={value => onValueChanged('ipv' + ipVersion + 'DhcpRangeEnd', value)} />
+                               onChange={(_, value) => onValueChanged('ipv' + ipVersion + 'DhcpRangeEnd', value)} />
                     <FormHelper helperTextInvalid={validationEnd == "error" && validationFailed['ipv' + ipVersion + 'DhcpRangeEnd']} />
                 </FormGroup>
             </Grid>}
@@ -243,14 +242,14 @@ const Ipv4Row = ({ validationFailed, dialogValues, onValueChanged }) => {
                 <TextInput id='create-network-ipv4-address'
                            value={dialogValues.ipv4}
                            validated={validationAddress}
-                           onChange={value => onValueChanged('ipv4', value)} />
+                           onChange={(_, value) => onValueChanged('ipv4', value)} />
                 <FormHelper helperTextInvalid={validationAddress == "error" && validationFailed.ipv4} />
             </FormGroup>
             <FormGroup fieldId='create-network-ipv4-netmask' label={_("Mask or prefix length")}>
                 <TextInput id='create-network-ipv4-netmask'
                            value={dialogValues.netmask}
                            validated={validationNetmask}
-                           onChange={value => onValueChanged('netmask', value)} />
+                           onChange={(_, value) => onValueChanged('netmask', value)} />
                 <FormHelper helperTextInvalid={validationNetmask == "error" && validationFailed.netmask} />
             </FormGroup>
             <DhcpRow ipVersion='4'
@@ -273,14 +272,14 @@ const Ipv6Row = ({ validationFailed, dialogValues, onValueChanged }) => {
                 <TextInput id='create-network-ipv6-address'
                            value={dialogValues.ipv6}
                            validated={validationAddress}
-                           onChange={value => onValueChanged('ipv6', value)} />
+                           onChange={(_, value) => onValueChanged('ipv6', value)} />
                 <FormHelper helperTextInvalid={validationAddress == "error" && validationFailed.ipv6} />
             </FormGroup>
             <FormGroup fieldId='create-network-ipv6-prefix' label={_("Prefix length")}>
                 <TextInput id='create-network-ipv6-prefix'
                            value={dialogValues.prefix}
                            validated={validationPrefix}
-                           onChange={value => onValueChanged('prefix', value)} />
+                           onChange={(_, value) => onValueChanged('prefix', value)} />
                 <FormHelper helperTextInvalid={validationPrefix == "error" && validationFailed.prefix} />
             </FormGroup>
             <DhcpRow ipVersion='6'

@@ -7,31 +7,33 @@
 @import "@patternfly/patternfly/sass-utilities/colors.scss";
 @import "@patternfly/patternfly/sass-utilities/scss-variables.scss";
 @import "@patternfly/patternfly/sass-utilities/mixins.scss";
+ // for $alert
+@import "@patternfly/patternfly/sass-utilities/component-namespaces.scss";
 @import "@patternfly/patternfly/components/Alert/alert.scss";
 
 /* Utilities */
 @import "@patternfly/patternfly/utilities/Text/text.css";
 
 /* Style the list cards as ct-cards */
-.pf-c-page__main-section > .pf-c-card {
+.pf-v5-c-page__main-section > .pf-v5-c-card {
     @extend .ct-card;
 }
 
-.pf-c-form__group .pf-c-helper-text {
-    margin-top: var(--pf-c-form__helper-text--MarginTop);
+.pf-v5-c-form__group .pf-v5-c-helper-text {
+    margin-top: var(--pf-v5-c-form__helper-text--MarginTop);
 }
 
 /* Create a hybrid popover with an alert style */
-.ct-popover-alert .pf-c-popover__content {
-    @extend .pf-c-alert;
+.ct-popover-alert .pf-v5-c-popover__content {
+    @extend .pf-v5-c-alert;
     @extend .pf-m-danger;
     display: block;
     box-shadow: none;
 }
 
 /* Also style the hybrid popover alert title like an alert */
-.ct-popover-alert .pf-c-title {
-    @extend .pf-c-alert__title;
+.ct-popover-alert .pf-v5-c-title {
+    @extend .pf-v5-c-alert__title;
     font-size: inherit;
 }
 
@@ -45,28 +47,28 @@
     margin: 0.25rem 0 0.25rem 0.5rem;
 }
 
-.machines-listing-actions > .pf-c-dropdown {
+.machines-listing-actions > .pf-v5-c-dropdown {
     margin-top: 0.25rem;
 }
 
-.pf-c-dropdown__menu-item.pf-m-danger {
-    color: var(--pf-global--danger-color--200);
+.pf-v5-c-dropdown__menu-item.pf-m-danger {
+    color: var(--pf-v5-global--danger-color--200);
 }
 
-.pf-c-table {
+.pf-v5-c-table {
     .btn-group {
         align-items: center;
     }
 
-    > tbody > tr:not(.pf-c-table__expandable-row) > [data-label="Actions"] .pf-c-button {
+    > tbody > tr:not(.pf-v5-c-table__expandable-row) > [data-label="Actions"] .pf-v5-c-button {
         // vertical: compensate for padding; fixing alignment
         // horizontal: add some needed padding
         margin: -0.25rem 0.25rem;
     }
 }
 
-.machines-connection-selector > .pf-c-radio:first-child {
-    padding-right: var(--pf-global--spacer--md);
+.machines-connection-selector > .pf-v5-c-radio:first-child {
+    padding-right: var(--pf-v5-global--spacer--md);
 }
 
 // Limit width for GiB/MiB dropdowns and inputs
@@ -74,28 +76,28 @@
     max-width: 5rem;
 }
 
-.ct-external-docs-link.pf-c-button.pf-m-link.pf-m-inline {
-  padding-left: var(--pf-global--spacer--sm);
+.ct-external-docs-link.pf-v5-c-button.pf-m-link.pf-m-inline {
+  padding-left: var(--pf-v5-global--spacer--sm);
 }
 
 .ct-monospace {
-    font-family: var(--pf-global--FontFamily--redhat--monospace);
+    font-family: var(--pf-v5-global--FontFamily--redhat--monospace);
 }
 
 // Do not add a box-shadow to a "subsection", while it's technically correct it looks weird.
-.pf-c-page__main-section.pf-m-light.actions-pagesection {
+.pf-v5-c-page__main-section.pf-m-light.actions-pagesection {
     box-shadow: none;
 }
 
 .virtualization-disabled-empty-state {
   // Use a max width of 60 0-characters across and let it size for mobile too
-   --pf-c-empty-state__content--MaxWidth: min(60ch, 100%);
+   --pf-v5-c-empty-state__content--MaxWidth: min(60ch, 100%);
 }
 
 // Can be removed once https://github.com/cockpit-project/cockpit/pull/18694 is included in the used pkg/lib
-.pf-theme-dark {
-  .pf-c-page__main-group section {
-    --pf-c-page__main-breadcrumb--BackgroundColor: var(--pf-global--BackgroundColor--dark-100);
-    background-color: var(--pf-global--BackgroundColor--dark-100);
+.pf-v5-theme-dark {
+  .pf-v5-c-page__main-group section {
+    --pf-v5-c-page__main-breadcrumb--BackgroundColor: var(--pf-v5-global--BackgroundColor--dark-100);
+    background-color: var(--pf-v5-global--BackgroundColor--dark-100);
   }
 }

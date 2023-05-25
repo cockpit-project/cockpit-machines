@@ -98,7 +98,7 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                 <ToolbarItem>
                     <TextInput name="text-search" id="text-search" type="search"
                     value={currentTextFilter}
-                    onChange={currentTextFilter => setCurrentTextFilter(currentTextFilter)}
+                    onChange={(_, currentTextFilter) => setCurrentTextFilter(currentTextFilter)}
                     placeholder={_("Filter by name")} />
                 </ToolbarItem>
                 {domainStates.length > 1 && <>

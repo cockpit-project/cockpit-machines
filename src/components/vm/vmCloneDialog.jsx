@@ -95,7 +95,7 @@ export const CloneDialog = ({ name, connectionName }) => {
                     <TextInput id='vm-name'
                                validated={validationFailed.name ? "error" : "default"}
                                value={newVmName}
-                               onChange={setNewVmName} />
+                               onChange={(_, value) => setNewVmName(value)} />
                     <FormHelper helperTextInvalid={validationFailed.name} />
                 </FormGroup>
             </Form>

@@ -35,12 +35,12 @@ class TestMachinesStoragePools(VirtualMachinesCase):
     def gotoVolumesTab(self, poolName, connectionName="system"):
         selector = f"tr[data-row-id=pool-{poolName}-{connectionName}] + tr li:contains('Storage volumes')"
         self.browser.click(selector + " > button")
-        self.browser.wait_attr(selector, "class", "pf-c-tabs__item pf-m-current")
+        self.browser.wait_attr(selector, "class", "pf-v5-c-tabs__item pf-m-current")
 
     def gotoOverviewTab(self, poolName, connectionName="system"):
         selector = f"tr[data-row-id=pool-{poolName}-{connectionName}] + tr li:contains('Overview')"
         self.browser.click(selector + " > button")
-        self.browser.wait_attr(selector, "class", "pf-c-tabs__item pf-m-current")
+        self.browser.wait_attr(selector, "class", "pf-v5-c-tabs__item pf-m-current")
 
     def testStoragePoolsBasic(self):
         b = self.browser
@@ -53,7 +53,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         self.waitVmRow("subVmTest1")
 
         b.wait_in_text("#card-pf-storage-pools", "1 Storage pool")
-        b.wait_in_text("#card-pf-storage-pools .pf-c-card__header button", "Storage pool")
+        b.wait_in_text("#card-pf-storage-pools .pf-v5-c-card__header button", "Storage pool")
 
         # prepare libvirt storage pools
         p1 = os.path.join(self.vm_tmpdir, "vm_one")
@@ -88,7 +88,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         self.performAction("subVmTest1", "forceOff")
 
         # Click on Storage pools card
-        b.click(".pf-c-card .pf-c-card__header button:contains(Storage pools)")
+        b.click(".pf-v5-c-card .pf-v5-c-card__header button:contains(Storage pools)")
 
         # Check that all defined pools are there
         b.wait_in_text("body", "Storage pools")
@@ -113,7 +113,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
 
         # Check storage volumes of a pool
         self.gotoVolumesTab("myPoolOne")
-        b.wait_in_text(f"tr[data-row-id=pool-myPoolOne-{connectionName}] + tr .pf-c-empty-state",
+        b.wait_in_text(f"tr[data-row-id=pool-myPoolOne-{connectionName}] + tr .pf-v5-c-empty-state",
                        "No storage volumes defined for this storage pool")
 
         # Close expanded row for this pool
@@ -135,7 +135,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         b.click("tbody input[aria-label='Select row 0']")
         b.wait_in_text("#storage-volumes-delete", "Delete 1 volume")
         b.click("#storage-volumes-delete")
-        b.wait_in_text(".pf-c-alert .pf-c-alert__title", "Storage volumes could not be deleted")
+        b.wait_in_text(".pf-v5-c-alert .pf-v5-c-alert__title", "Storage volumes could not be deleted")
         b.reload()
         b.enter_page('/machines')
         self.togglePoolRow("myPoolTwo", connectionName)
@@ -170,7 +170,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         # Try deactivating and activating a pool
         b.click(f"#deactivate-pool-myPoolOne-{connectionName}")
         b.wait_in_text(f"#pool-myPoolOne-{connectionName}-state", "inactive")
-        b.wait_in_text(f"tr[data-row-id=pool-myPoolOne-{connectionName}] + tr .pf-c-empty-state", "Activate the storage pool to administer volumes")
+        b.wait_in_text(f"tr[data-row-id=pool-myPoolOne-{connectionName}] + tr .pf-v5-c-empty-state", "Activate the storage pool to administer volumes")
         b.wait_visible(f'#myPoolOne-{connectionName}-create-volume-button:disabled')
         b.click(f"#activate-pool-myPoolOne-{connectionName}")
         b.wait_in_text(f"#pool-myPoolOne-{connectionName}-state", "active")
@@ -219,8 +219,8 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         self.waitPageInit()
 
         # Click on Storage pools card
-        b.wait_in_text("#card-pf-storage-pools .pf-c-card__header button", "Storage pools")
-        b.click(".pf-c-card .pf-c-card__header button:contains(Storage pools)")
+        b.wait_in_text("#card-pf-storage-pools .pf-v5-c-card__header button", "Storage pools")
+        b.click(".pf-v5-c-card .pf-v5-c-card__header button:contains(Storage pools)")
 
         class StoragePoolCreateDialog(object):
             def __init__(
@@ -250,7 +250,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
             def open(self):
                 b.click("#create-storage-pool")
                 b.wait_visible("#create-storage-pool-dialog")
-                b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Create storage pool")
+                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Create storage pool")
 
             def fill(self):
                 b.set_input_text("#storage-pool-dialog-name", self.name)
@@ -284,11 +284,11 @@ class TestMachinesStoragePools(VirtualMachinesCase):
                     b.click("storage-pool-dialog-autostart")
 
             def cancel(self):
-                b.click(".pf-c-modal-box__footer button:contains(Cancel)")
+                b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
                 b.wait_not_present("#create-storage-pool-dialog")
 
             def create(self):
-                b.click(".pf-c-modal-box__footer button:contains(Create)")
+                b.click(".pf-v5-c-modal-box__footer button:contains(Create)")
 
                 if not self.xfail:
                     b.wait_not_present("#create-storage-pool-dialog")
@@ -301,7 +301,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
                         b.wait_visible("#storage-pool-dialog-target-helper")
                     # Check errors from backend
                     if self.xfail_error:
-                        error_location = "#create-storage-pool-dialog .pf-c-modal-box__body .pf-m-danger"
+                        error_location = "#create-storage-pool-dialog .pf-v5-c-modal-box__body .pf-m-danger"
                         b.wait_visible(error_location)
                         error_message = b.text(error_location)
                         self.test_obj.assertIn(self.xfail_error, error_message)
@@ -466,10 +466,10 @@ class TestMachinesStoragePools(VirtualMachinesCase):
                 # Ensure that iscsi-direct is absent from the types dropdown
                 b.click("#create-storage-pool")
                 b.wait_visible("#create-storage-pool-dialog")
-                b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Create storage pool")
+                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Create storage pool")
                 b.click("#storage-pool-dialog-type")
                 b.wait_not_present("#storage-pool-dialog-type option[value*='isci-direct']")
-                b.click(".pf-c-modal-box__footer button:contains(Cancel)")
+                b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
                 b.wait_not_present("#create-storage-pool-dialog")
 
         # Prepare a Volume Group to be used as source for the LVM pool
@@ -515,8 +515,8 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         self.waitPageInit()
 
         # Click on Storage pools card
-        b.wait_in_text("#card-pf-storage-pools .pf-c-card__header button", "Storage pools")
-        b.click(".pf-c-card .pf-c-card__header button:contains(Storage pools)")
+        b.wait_in_text("#card-pf-storage-pools .pf-v5-c-card__header button", "Storage pools")
+        b.click(".pf-v5-c-card .pf-v5-c-card__header button:contains(Storage pools)")
 
         class StorageVolumeCreateDialog(object):
             def __init__(
@@ -553,7 +553,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
                 b.click(f"#{self.pool_name}-system-create-volume-button")  # open the "Storage volumes" subtab
 
                 b.wait_visible("#create-volume-dialog-modal")
-                b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Create storage volume")
+                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Create storage volume")
 
             def fill(self):
                 b.set_input_text("#create-volume-dialog-name", self.vol_name)
@@ -568,21 +568,21 @@ class TestMachinesStoragePools(VirtualMachinesCase):
                     b.select_from_dropdown("#create-volume-dialog-format", self.format)
 
             def cancel(self):
-                b.click(".pf-c-modal-box__footer button:contains(Cancel)")
+                b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
                 b.wait_not_present("#create-storage-pool-dialog")
 
             def create(self):
-                b.click(".pf-c-modal-box__footer button:contains(Create)")
+                b.click(".pf-v5-c-modal-box__footer button:contains(Create)")
 
                 if not self.xfail:
                     # Creation of volumes might take longer for some pool types
                     if self.pool_type in ["disk", "netfs"]:
-                        b.wait_visible(".pf-c-modal-box__footer button.pf-m-in-progress")
-                        b.wait_visible(".pf-c-modal-box__footer button:contains(Create):disabled")
+                        b.wait_visible(".pf-v5-c-modal-box__footer button.pf-m-in-progress")
+                        b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Create):disabled")
                     b.wait_not_present("#create-volume-dialog-modal")
                 else:
                     for xfo in self.xfail_objects:
-                        b.wait_in_text(f"#create-volume-dialog-{xfo}-group .pf-c-form__helper-text .pf-m-error", self.xfail_error)
+                        b.wait_in_text(f"#create-volume-dialog-{xfo}-group .pf-v5-c-form__helper-text .pf-m-error", self.xfail_error)
 
             def verify(self):
                 # Check that the defined volume is now visible
@@ -741,8 +741,8 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         self.login_and_go("/machines")
         self.waitPageInit()
 
-        b.wait_in_text("#card-pf-storage-pools .pf-c-card__header button", "Storage pool")
-        b.click(".pf-c-card .pf-c-card__header button:contains(Storage pool)")
+        b.wait_in_text("#card-pf-storage-pools .pf-v5-c-card__header button", "Storage pool")
+        b.click(".pf-v5-c-card .pf-v5-c-card__header button:contains(Storage pool)")
         b.wait_visible("#storage-pools-listing")
 
         class StoragePoolsCreationAndDeletion:
@@ -818,7 +818,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
                 b.click(f"#pool-{self.name}-{self.connection}-action-kebab button")
                 b.click(f"#delete-pool-{self.name}-{self.connection}")
                 # Check if deletion dialog is shown
-                b.wait_visible("div.pf-c-modal-box")
+                b.wait_visible("div.pf-v5-c-modal-box")
 
                 if self.activate:
                     if self.vol_name or self.pool_type == "iscsi":
@@ -827,28 +827,28 @@ class TestMachinesStoragePools(VirtualMachinesCase):
                     else:
                         # Check when no volume
                         b.wait_not_present("#storage-pool-delete-volumes")
-                        b.wait_in_text(".pf-c-modal-box__body div",
+                        b.wait_in_text(".pf-v5-c-modal-box__body div",
                                        "No volumes exist in this storage pool.")
                 else:
                     # Check the content of inactive pool deletion dialog
-                    b.wait_text(".pf-c-modal-box__body div",
+                    b.wait_text(".pf-v5-c-modal-box__body div",
                                 "Deleting an inactive storage pool will only undefine the pool. Its content will not be deleted.")
 
-                b.click('.pf-c-modal-box__footer button:contains("Delete")')
+                b.click('.pf-v5-c-modal-box__footer button:contains("Delete")')
 
                 if self.xfail:
-                    b.wait_visible("div.pf-c-modal-box")
+                    b.wait_visible("div.pf-v5-c-modal-box")
                     if self.xfail_error:
                         # Check the error shown on the footer of the deletion of dialog
-                        b.wait_in_text("div.pf-c-modal-box .pf-c-alert__description", self.xfail_error)
+                        b.wait_in_text("div.pf-v5-c-modal-box .pf-v5-c-alert__description", self.xfail_error)
                     # Close the dialog
-                    b.click('.pf-c-modal-box__footer button:contains("Cancel")')
+                    b.click('.pf-v5-c-modal-box__footer button:contains("Cancel")')
                     # Clean the pool if pool deletion is failed
                     if self.activate:
                         m.execute(f"virsh pool-destroy {self.name}")
                     m.execute(f"virsh pool-undefine {self.name}")
 
-                b.wait_not_present("div.pf-c-modal-box")
+                b.wait_not_present("div.pf-v5-c-modal-box")
 
             def verify(self):
                 if self.activate and self.vol_name:
@@ -993,18 +993,18 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         b.click("#pool-images-system-action-kebab button")
         b.click("#pool-images-system-action-kebab a:contains(Delete)")
         b.set_checked("#storage-pool-delete-volumes", True)
-        b.wait_in_text(".pf-c-backdrop .pf-c-helper-text__item-text", "Pool's volumes are used by")
-        b.wait_visible(".pf-c-backdrop footer button[aria-disabled=true]:contains(Delete)")
+        b.wait_in_text(".pf-v5-c-backdrop .pf-v5-c-helper-text__item-text", "Pool's volumes are used by")
+        b.wait_visible(".pf-v5-c-backdrop footer button[aria-disabled=true]:contains(Delete)")
 
         # Check "Cancel" button
-        b.click(".pf-c-backdrop footer button:contains(Cancel)")
-        b.wait_not_present(".pf-c-backdrop")
+        b.click(".pf-v5-c-backdrop footer button:contains(Cancel)")
+        b.wait_not_present(".pf-v5-c-backdrop")
 
         # Check "X" button of the dialog
         b.click("#pool-images-system-action-kebab button")
         b.click("#pool-images-system-action-kebab a:contains(Delete)")
-        b.click(".pf-c-backdrop button[aria-label=Close]")
-        b.wait_not_present(".pf-c-backdrop")
+        b.click(".pf-v5-c-backdrop button[aria-label=Close]")
+        b.wait_not_present(".pf-v5-c-backdrop")
 
         # Check that the error shown after the title, not the footer
         # Delete the VM, or the deletion button will be disabled
@@ -1015,7 +1015,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         b.wait_not_present("#vm-subVmTest1-system-name")
         # Go back to the storage pool list
         b.wait_in_text("#card-pf-storage-pools button", "Storage pool")
-        b.click("#card-pf-storage-pools .pf-c-card__header button")
+        b.click("#card-pf-storage-pools .pf-v5-c-card__header button")
         b.wait_visible("#storage-pools-listing")
 
         m.execute(f'chattr +a {args["image"]}')
@@ -1023,7 +1023,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         b.click("#pool-images-system-action-kebab button")
         b.click("#pool-images-system-action-kebab a:contains(Delete)")
         b.set_checked("#storage-pool-delete-volumes", True)
-        b.click(".pf-c-backdrop footer button[aria-disabled=false]:contains(Delete)")
+        b.click(".pf-v5-c-backdrop footer button[aria-disabled=false]:contains(Delete)")
         b.assert_pixels("#storage-pool-delete-modal", "storage-pool-delete-modal-error")
         wait(lambda: "forDeletion" not in m.execute("ls /var/lib/libvirt/images/"))
 

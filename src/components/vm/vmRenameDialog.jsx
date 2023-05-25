@@ -83,7 +83,7 @@ export const RenameDialog = ({ vmName, vmId, connectionName }) => {
                     <TextInput id='rename-dialog-new-name'
                                validated={submitted && !newName ? "error" : "default"}
                                value={newName}
-                               onChange={setNewName} />
+                               onChange={(_, value) => setNewName(value)} />
                     <FormHelper helperTextInvalid={submitted && !newName && _("New name must not be empty")} />
                 </FormGroup>
             </Form>

@@ -60,7 +60,7 @@ const CacheRow = ({ onValueChanged, dialogValues, idPrefix, shutoff }) => {
                    label={_("Cache")}
                    labelIcon={!shutoff &&
                        <Popover bodyContent={_("Machine must be shut off before changing cache mode")}>
-                           <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
+                           <button onClick={e => e.preventDefault()} className="pf-v5-c-form__group-label-help">
                                <InfoAltIcon noVerticalAlign />
                            </button>
                        </Popover>}>
@@ -90,7 +90,7 @@ const BusRow = ({ onValueChanged, dialogValues, diskDevice, idPrefix, shutoff, s
         <FormGroup fieldId={`${idPrefix}-bus-type`} label={_("Bus")}
                    labelIcon={!shutoff &&
                        <Popover bodyContent={_("Machine must be shut off before changing bus type")}>
-                           <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
+                           <button onClick={e => e.preventDefault()} className="pf-v5-c-form__group-label-help">
                                <InfoAltIcon noVerticalAlign />
                            </button>
                        </Popover>}>
@@ -117,7 +117,7 @@ const AccessRow = ({ onValueChanged, dialogValues, diskDevice, driverType, idPre
                    name="access"
                    value="readonly"
                    isChecked={dialogValues.access == "readonly" }
-                   onChange={event => {
+                   onChange={(event, _) => {
                        onValueChanged("access", event.currentTarget.value);
                    }}
                    label={_("Read-only")} />
@@ -126,7 +126,7 @@ const AccessRow = ({ onValueChanged, dialogValues, diskDevice, driverType, idPre
                        name="access"
                        value="writable"
                        isChecked={dialogValues.access == "writable" }
-                       onChange={event => {
+                       onChange={(event, _) => {
                            onValueChanged("access", event.currentTarget.value);
                        }}
                        label={_("Writeable")} />
@@ -135,7 +135,7 @@ const AccessRow = ({ onValueChanged, dialogValues, diskDevice, driverType, idPre
                        name="access"
                        value="shareable"
                        isChecked={dialogValues.access == "shareable" }
-                       onChange={event => {
+                       onChange={(event, _) => {
                            onValueChanged("access", event.currentTarget.value);
                        }}
                        label={_("Writeable and shared")} />}

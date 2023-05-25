@@ -46,7 +46,7 @@ const DestUriRow = ({ validationFailed, destUri, setDestUri }) => {
                        validated={validationFailed.destUri ? "error" : "default"}
                        value={destUri}
                        placeholder={cockpit.format(_("Example, $0"), "qemu+ssh://192.0.2.16/system")}
-                       onChange={setDestUri} />
+                       onChange={(_, value) => setDestUri(value)} />
             <FormHelper helperTextInvalid={validationFailed.destUri} />
         </FormGroup>
     );
@@ -71,7 +71,7 @@ const DurationRow = ({ temporary, setTemporary }) => {
                                         <p>{_("A copy of the VM will run on the destination and will disappear when it is shut off. Meanwhile, the origin host keeps its copy of the VM configuration.")}</p>
                                     </FlexItem>
                                 </Flex>}>
-                           <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
+                           <button onClick={e => e.preventDefault()} className="pf-v5-c-form__group-label-help">
                                <OutlinedQuestionCircleIcon />
                            </button>
                        </Popover>
@@ -102,7 +102,7 @@ const StorageRow = ({ storage, setStorage }) => {
                                         <p>{_("Full disk images and the domain's memory will be migrated. Only non-shared, writable disk images will be transferred. Unused storage will remain on the origin after migration.")}</p>
                                     </FlexItem>
                                 </Flex>}>
-                           <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
+                           <button onClick={e => e.preventDefault()} className="pf-v5-c-form__group-label-help">
                                <OutlinedQuestionCircleIcon />
                            </button>
                        </Popover>

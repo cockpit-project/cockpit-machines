@@ -106,7 +106,7 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         # Open dialog window
         b.click("#vm-subVmTest1-cpu button")
-        b.wait_visible(".pf-c-modal-box__body")
+        b.wait_visible(".pf-v5-c-modal-box__body")
 
         # Check basic values
         b.wait_val("#machines-vcpu-count-field input", "3")
@@ -126,7 +126,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         # Open dialog
         b.click("#vm-subVmTest1-cpu button")
 
-        b.wait_visible(".pf-c-modal-box__body")
+        b.wait_visible(".pf-v5-c-modal-box__body")
 
         b.set_input_text("#machines-vcpu-count-field input", "2")
 
@@ -154,7 +154,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         # Open dialog
         b.click("#vm-subVmTest1-cpu button")
 
-        b.wait_visible(".pf-c-modal-box__body")
+        b.wait_visible(".pf-v5-c-modal-box__body")
 
         # Set new socket value
         b.wait_val("#coresSelect", "2")
@@ -316,7 +316,7 @@ class TestMachinesSettings(VirtualMachinesCase):
                        m.execute("virsh domblklist subVmTest1 | awk 'NR==3{print $2}'").strip())
         b.wait_in_text("#vm-subVmTest1-order-modal-device-row-1 .boot-order-additional-info",
                        m.execute("virsh domiflist subVmTest1 | awk 'NR==3{print $5}'").strip())
-        b.wait_visible(f".boot-order-additional-info .pf-c-description-list__description:contains('{pci_slot}')")
+        b.wait_visible(f".boot-order-additional-info .pf-v5-c-description-list__description:contains('{pci_slot}')")
         # Check a cdrom attributes are shown correctly
         cdrom_row = b.text(".boot-order-list-view li:nth-child(3) .boot-order-additional-info")
         self.assertTrue("cdrom" and "/var/lib/libvirt/images/phonycdrom" in cdrom_row)
@@ -370,7 +370,7 @@ class TestMachinesSettings(VirtualMachinesCase):
             # re-open and check the boot option is the disk
             b.click("#vm-subVmTest1-boot-order button")
             b.wait_visible("#vm-subVmTest1-order-modal-window")
-            b.wait_text("#vm-subVmTest1-order-modal-device-row-0 .pf-c-description-list__description .pf-c-description-list__text", args["image"])
+            b.wait_text("#vm-subVmTest1-order-modal-device-row-0 .pf-v5-c-description-list__description .pf-c-description-list__text", args["image"])
 
             b.click("#vm-subVmTest1-order-modal-cancel")
             b.wait_not_present("#vm-subVmTest1-order-modal-window")

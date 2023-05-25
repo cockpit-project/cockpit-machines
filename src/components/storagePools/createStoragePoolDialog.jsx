@@ -47,7 +47,7 @@ const StoragePoolNameRow = ({ onValueChanged, dialogValues }) => {
                        placeholder={_("Storage pool name")}
                        value={dialogValues.name || ''}
                        validated={validationState}
-                       onChange={value => onValueChanged('name', value)} />
+                       onChange={(_, value) => onValueChanged('name', value)} />
             <FormHelper fieldId="storage-pool-dialog-name" helperTextInvalid={validationState == "error" && (dialogValues.name.length == 0 ? _("Name should not be empty") : _("Name contains invalid characters"))} />
         </FormGroup>
     );
@@ -123,7 +123,7 @@ const StoragePoolHostRow = ({ onValueChanged, dialogValues }) => {
                            validated={validationState}
                            placeholder={_("Host name")}
                            value={dialogValues.source.host || ''}
-                           onChange={value => onValueChanged('source', { host: value })} />
+                           onChange={(_, value) => onValueChanged('source', { host: value })} />
                 <FormHelper fieldId="storage-pool-dialog-host" helperTextInvalid={validationState == "error" && _("Host should not be empty")} />
             </FormGroup>
         );
@@ -140,7 +140,7 @@ const StoragePoolInitiatorRow = ({ onValueChanged, dialogValues }) => {
                            placeholder={_("iSCSI initiator IQN")}
                            validated={validationState}
                            value={dialogValues.source.initiator || ''}
-                           onChange={value => onValueChanged('source', { initiator: value })} />
+                           onChange={(_, value) => onValueChanged('source', { initiator: value })} />
                 <FormHelper fieldId="storage-pool-dialog-initiator" helperTextInvalid={validationState == "error" && _("Initiator should not be empty")} />
             </FormGroup>
         );
@@ -172,7 +172,7 @@ const StoragePoolSourceRow = ({ onValueChanged, dialogValues }) => {
                 <TextInput id='storage-pool-dialog-source'
                            minLength={1}
                            value={dialogValues.source.dir || dialogValues.source.device || ''}
-                           onChange={value => {
+                           onChange={(_, value) => {
                                if (dialogValues.type == 'netfs')
                                    return onValueChanged('source', { dir: value });
                                else
@@ -218,7 +218,7 @@ const StoragePoolSourceRow = ({ onValueChanged, dialogValues }) => {
                            validated={validationState}
                            minLength={1}
                            value={dialogValues.source.name || ''}
-                           onChange={value => onValueChanged('source', { name: value })}
+                           onChange={(_, value) => onValueChanged('source', { name: value })}
                            placeholder={placeholder} />
                 <FormHelper fieldId="storage-pool-dialog-source" helperTextInvalid={validationState == "error" && _("Volume group name should not be empty")} />
             </FormGroup>

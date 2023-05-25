@@ -120,7 +120,7 @@ export const NetworkOverviewTab = ({ network }) => {
                         <DescriptionListDescription>
                             <Switch id={`${idPrefix}-autostart`}
                                     isChecked={network.autostart}
-                                    onChange={autostart => networkChangeAutostart({ network, autostart })}
+                                    onChange={(_, autostart) => networkChangeAutostart({ network, autostart })}
                                     label={_("Run when host boots")} />
                         </DescriptionListDescription>
                     </DescriptionListGroup>}
@@ -248,14 +248,14 @@ const NetworkAddStaticHostEntries = ({ idPrefix, network, parentIndex, setIsOpen
                         <TextInput id="add-new-static-entry-mac-address"
                                    validated={isSubmitted && !macAddress ? "error" : "default"}
                                    value={macAddress}
-                                   onChange={setMacAddress} />
+                                   onChange={(_, value) => setMacAddress(value)} />
                         <FormHelper fieldId="add-new-static-entry-mac-address" helperTextInvalid={isSubmitted && !macAddress && _("MAC address must not be empty")} />
                     </FormGroup>
                     <FormGroup label={_("IP address")} fieldId="add-new-static-entry-ip-address">
                         <TextInput id="add-new-static-entry-ip-address"
                                    validated={isSubmitted && !ipAddress ? "error" : "default"}
                                    value={ipAddress}
-                                   onChange={setIpAddress} />
+                                   onChange={(_, value) => setIpAddress(value)} />
                         <FormHelper fieldId="add-new-static-entry-ip-address" helperTextInvalid={isSubmitted && !ipAddress && _("IP address must not be empty")} />
                     </FormGroup>
                 </Form>

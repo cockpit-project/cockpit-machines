@@ -205,7 +205,7 @@ const VmFilesystemAddModal = ({ connectionName, objPath, vmName, vmState }) => {
                            labelIcon={
                                <Popover headerContent={_("The host path that is to be exported.")}>
                                    <button aria-label={_("More info for source path field")}
-                                           className="pf-c-form__group-label-help"
+                                           className="pf-v5-c-form__group-label-help"
                                            onClick={e => e.preventDefault()}
                                            type="button">
                                        <HelpIcon noVerticalAlign />
@@ -224,7 +224,7 @@ const VmFilesystemAddModal = ({ connectionName, objPath, vmName, vmState }) => {
                            labelIcon={
                                <Popover headerContent={_("The tag name to be used by the guest to mount this export point.")}>
                                    <button aria-label={_("More info for mount tag field")}
-                                           className="pf-c-form__group-label-help"
+                                           className="pf-v5-c-form__group-label-help"
                                            onClick={e => e.preventDefault()}
                                            type="button">
                                        <HelpIcon noVerticalAlign />
@@ -232,7 +232,7 @@ const VmFilesystemAddModal = ({ connectionName, objPath, vmName, vmState }) => {
                                </Popover>
                            }>
                     <TextInput id={`${idPrefix}-modal-mountTag`}
-                               onChange={value => setMountTag(value)}
+                               onChange={(_, value) => setMountTag(value)}
                                placeholder="hostshare"
                                value={mountTag}
                                validated={validationFailed.mountTag ? "error" : "default"} />

@@ -264,7 +264,7 @@ const NameRow = ({ vmName, suggestedVmName, onValueChanged, validationFailed }) 
                        minLength={1}
                        value={vmName || ''}
                        placeholder={isEmpty(suggestedVmName.trim()) ? _("Unique name") : cockpit.format(_("Unique name, default: $0"), suggestedVmName)}
-                       onChange={value => onValueChanged('vmName', value)} />
+                       onChange={(_, value) => onValueChanged('vmName', value)} />
             <FormHelper helperTextInvalid={validationStateName && validationFailed.vmName} />
         </FormGroup>
     );
@@ -338,7 +338,7 @@ const SourceRow = ({ connectionName, source, sourceType, networks, nodeDevices, 
                        minLength={1}
                        placeholder={_("Remote URL")}
                        value={source}
-                       onChange={value => onValueChanged('source', value)} />
+                       onChange={(_, value) => onValueChanged('source', value)} />
         );
         break;
     default:
@@ -501,13 +501,13 @@ const getAccessTokenDebounce = debounce(500, (offlineToken, onValueChanged, setV
 const HelperMessageToken = ({ message }) => {
     const link = (
         <a href="https://access.redhat.com/management/api" target="_blank" rel="noopener noreferrer">
-            <ExternalLinkAltIcon className="pf-u-mr-xs" />
+            <ExternalLinkAltIcon className="pf-v5-u-mr-xs" />
             {_("Get a new RHSM token.")}
         </a>
     );
 
     return (
-        <Flex id="token-helper-message" className="pf-c-form__helper-text">
+        <Flex id="token-helper-message" className="pf-v5-c-form__helper-text">
             {message && <FlexItem className="invalid-token-helper" grow={{ default: 'grow' }}>{message + " "}</FlexItem>}
             <FlexItem>
                 { link }
@@ -524,7 +524,7 @@ const validationStates = {
     },
     INPROGRESS: {
         option: "default",
-        message: <span id="token-helper-message" className="pf-c-form__helper-text"><Spinner size="md" /> {_("Checking token validity...")}</span>,
+        message: <span id="token-helper-message" className="pf-v5-c-form__helper-text"><Spinner size="md" /> {_("Checking token validity...")}</span>,
     },
     FAILED: {
         option: "error",
@@ -596,7 +596,7 @@ const OfflineTokenRow = ({ offlineToken, onValueChanged, formValidationFailed })
                       disabled={disabled}
                       minLength={1}
                       value={offlineToken || ""}
-                      onChange={setOfflineTokenHelper}
+                      onChange={(_, value) => setOfflineTokenHelper(value)}
                       rows="4" />
             <FormHelper fieldId="offline-token"
                         helperTextInvalid={formValidationFailed.offlineToken && <HelperMessageToken message={formValidationFailed.offlineToken} />}
@@ -732,7 +732,7 @@ const UsersConfigurationRow = ({
                     <TextInput id='user-login'
                                validated={validationFailed.userLogin ? "error" : "default"}
                                value={userLogin || ''}
-                               onChange={value => onValueChanged('userLogin', value)} />
+                               onChange={(_, value) => onValueChanged('userLogin', value)} />
                     <FormHelper helperTextInvalid={validationFailed.userLogin} />
                 </FormGroup>
                 <PasswordFormFields initial_password={userPassword}
@@ -795,7 +795,7 @@ const MemoryRow = ({ memorySize, memorySizeUnit, nodeMaxMemory, minimumMemory, o
                     <TextInput id='memory-size' value={memorySize}
                                className="size-input"
                                onKeyPress={digitFilter}
-                               onChange={value => onValueChanged('memorySize', Number(value))} />
+                               onChange={(_, value) => onValueChanged('memorySize', Number(value))} />
                     <FormSelect id="memory-size-unit-select"
                                 className="unit-select"
                                 data-value={memorySizeUnit}
@@ -919,7 +919,7 @@ const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit,
                         <TextInput id='storage-limit' value={storageSize}
                                    className="size-input"
                                    onKeyPress={digitFilter}
-                                   onChange={value => onValueChanged('storageSize', Number(value))} />
+                                   onChange={(_, value) => onValueChanged('storageSize', Number(value))} />
                         <FormSelect id="storage-limit-unit-select"
                                     data-value={storageSizeUnit}
                                     className="unit-select"
@@ -1326,13 +1326,13 @@ class CreateVmModal extends React.Component {
                     validationFailed={validationFailed} />
                 { this.props.mode === "create"
                     ? <Tabs activeKey={this.state.activeTabKey} onSelect={this.handleTabClick}>
-                        <Tab eventKey={0} title={<TabTitleText>{_("Details")}</TabTitleText>} id="details-tab" className="pf-c-form">
+                        <Tab eventKey={0} title={<TabTitleText>{_("Details")}</TabTitleText>} id="details-tab" className="pf-v5-c-form">
                             {detailsTab}
                         </Tab>
                         <Tab eventKey={1}
                              title={<TabTitleText>{_("Automation")}</TabTitleText>}
                              id="automation"
-                             className="pf-c-form"
+                             className="pf-v5-c-form"
                              tooltip={automationTabTooltip}
                              isAriaDisabled={!!automationTabTooltip}>
                             {automationTab}

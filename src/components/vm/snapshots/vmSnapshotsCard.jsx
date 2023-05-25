@@ -96,7 +96,7 @@ export class VmSnapshotsCard extends React.Component {
                 value: (snap, snapId) => {
                     let desc = snap.description;
                     if (!desc)
-                        desc = (<span className="pf-u-disabled-color-100">{_("No description")}</span>);
+                        desc = (<span className="pf-v5-u-disabled-color-100">{_("No description")}</span>);
 
                     return (
                         <div id={`${id}-snapshot-${snapId}-description`}>
@@ -111,7 +111,7 @@ export class VmSnapshotsCard extends React.Component {
                 value: (snap, snapId) => {
                     const statesMap = {
                         shutoff: "shut off",
-                        "disk-snapshot": <span className="pf-u-disabled-color-100">{_("no state saved")}</span>,
+                        "disk-snapshot": <span className="pf-v5-u-disabled-color-100">{_("no state saved")}</span>,
                     };
                     const state = statesMap[snap.state] || snap.state;
 
@@ -143,7 +143,7 @@ export class VmSnapshotsCard extends React.Component {
             {
                 name: _("Parent snapshot"),
                 value: (snap, snapId) => {
-                    const parentName = snap.parentName || (<span className="pf-u-disabled-color-100">{_("No parent")}</span>);
+                    const parentName = snap.parentName || (<span className="pf-v5-u-disabled-color-100">{_("No parent")}</span>);
 
                     return (
                         <div id={`${id}-snapshot-${snapId}-parent`}>

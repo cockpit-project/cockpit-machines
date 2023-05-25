@@ -2,14 +2,14 @@
 @import "@patternfly/patternfly/base/patternfly-variables.scss";
 
 /* Style the list cards as ct-cards */
-.pf-c-page__main-section .pf-c-card {
+.pf-v5-c-page__main-section .pf-v5-c-card {
     @extend .ct-card;
 }
 
 // PF4 issue https://github.com/patternfly/patternfly-react/issues/4612
-// Mimic .pf-c-table__action
+// Mimic .pf-v5-c-table__action
 #virtual-machines-listing td:last-child {
-    --pf-c-table--cell--Width: 1%;
+    --pf-v5-c-table--cell--Width: 1%;
 }
 
 // Expand the link to the container, for easier clickability
@@ -21,6 +21,6 @@
 /* Add  the missing space when the list's toolbar wraps
  * patternfly/patternfly#3348
  */
-.pf-c-toolbar__content-section {
-    gap: var(--pf-global--spacer--sm) 0;
+.pf-v5-c-toolbar__content-section {
+    gap: var(--pf-v5-global--spacer--sm) 0;
 }

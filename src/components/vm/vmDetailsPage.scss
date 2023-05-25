@@ -1,15 +1,15 @@
 @import "ct-card.scss";
 
-.vm-details .pf-c-card {
+.vm-details .pf-v5-c-card {
     @extend .ct-card;
 }
 
 .consoles-card h2 button {
-    font-size: var(--pf-global--FontSize--2xl);
+    font-size: var(--pf-v5-global--FontSize--2xl);
     padding: 0;
 
-    > .pf-c-button__icon {
-        font-size: var(--pf-c-button--FontSize);
+    > .pf-v5-c-button__icon {
+        font-size: var(--pf-v5-c-button--FontSize);
     }
 }
 
@@ -18,7 +18,7 @@
   flex-wrap: wrap;
 
   .vm-name {
-    font-weight: var(--pf-global--FontWeight--light);
+    font-weight: var(--pf-v5-global--FontWeight--light);
     margin-right: 1.5rem;
   }
 
@@ -28,15 +28,15 @@
   }
 }
 
-.pf-l-gallery.ct-vm-overview {
+.pf-v5-l-gallery.ct-vm-overview {
   $ctVmBreakpoint: 1000px;
 
   @media screen and (max-width: $ctVmBreakpoint) {
-    --pf-l-gallery--GridTemplateColumns: 1fr;
+    --pf-v5-l-gallery--GridTemplateColumns: 1fr;
   }
 
   @media screen and (min-width: $ctVmBreakpoint + 1) {
-    --pf-l-gallery--GridTemplateColumns: minmax(max-content, 20rem) 1fr;
+    --pf-v5-l-gallery--GridTemplateColumns: minmax(max-content, 20rem) 1fr;
 
     .consoles-card {
         grid-row: 1 / span 2;
@@ -48,9 +48,9 @@
     grid-column: 1 / -1;
   }
 
-  .pf-c-card {
+  .pf-v5-c-card {
     &__header {
-      font-size: var(--pf-global--FontSize--xl);
+      font-size: var(--pf-v5-global--FontSize--xl);
     }
 
     &__footer {
@@ -60,7 +60,7 @@
     }
   }
 
-  .pf-c-progress {
-    --pf-c-progress--GridGap: var(--pf-global--spacer--xs);
+  .pf-v5-c-progress {
+    --pf-v5-c-progress--GridGap: var(--pf-v5-global--spacer--xs);
   }
 }
