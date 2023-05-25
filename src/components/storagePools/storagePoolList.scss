@@ -1,11 +1,11 @@
 #storage-pools-listing {
-  .pf-c-table tbody > tr > * {
+  .pf-v5-c-table tbody > tr > * {
     // These tables are 1 row tall; progress bar does odd stuff for alignment;
     // vertical alignment makes text line up
     vertical-align: middle;
   }
 
-  .pf-c-table__toggle > .pf-c-button {
+  .pf-v5-c-table__toggle > .pf-v5-c-button {
     // Undo the PF alignment offset, as we're aligning to the middle (see above)
     margin-top: 0;
   }
@@ -17,11 +17,11 @@
   --progress-bar-max: 12vw;
 
   td[data-label="Size"] {
-    > .pf-c-progress {
+    > .pf-v5-c-progress {
       // Fix progress bar size
       grid-template-columns: minmax(var(--progress-bar-min), var(--progress-bar-max)) minmax(max-content, var(--progress-text));
 
-      > .pf-c-progress__status {
+      > .pf-v5-c-progress__status {
         // Align status text to the end (for GiB to align properly)
         justify-self: end;
       }

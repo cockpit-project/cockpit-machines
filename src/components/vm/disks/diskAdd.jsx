@@ -210,7 +210,7 @@ const AdditionalOptions = ({ cacheMode, device, idPrefix, onValueChanged, busTyp
 
     return (
         <ExpandableSection toggleText={ expanded ? _("Hide additional options") : _("Show additional options")}
-                           onToggle={() => setExpanded(!expanded)} isExpanded={expanded} className="pf-u-pt-lg">
+                           onToggle={() => setExpanded(!expanded)} isExpanded={expanded} className="pf-v5-u-pt-lg">
             <Form onSubmit={e => e.preventDefault()} isHorizontal>
                 <Grid hasGutter md={6}>
                     <FormGroup fieldId='cache-mode' label={_("Cache")}>
@@ -244,7 +244,7 @@ const AdditionalOptions = ({ cacheMode, device, idPrefix, onValueChanged, busTyp
                         aria-label={_("serial number")}
                         className="ct-monospace"
                         value={serial}
-                        onChange={value => setSerialHelper(value)} />
+                        onChange={(_, value) => setSerialHelper(value)} />
                     <FormHelperText>
                         {validationFailed.serial
                             ? <HelperText>

@@ -41,7 +41,7 @@ const VolumeName = ({ idPrefix, volumeName, validationFailed, onValueChanged }) 
                         placeholder={_("New volume name")}
                         value={volumeName || ""}
                         validated={validationStateName}
-                        onChange={value => onValueChanged('volumeName', value)} />
+                        onChange={(_, value) => onValueChanged('volumeName', value)} />
             <FormHelper fieldId={`${idPrefix}-name`} helperTextInvalid={validationStateName == "error" && validationFailed.volumeName} />
         </FormGroup>
     );
@@ -90,7 +90,7 @@ const VolumeDetails = ({ idPrefix, size, unit, format, storagePoolCapacity, stor
                                min={0}
                                max={volumeMaxSize}
                                validated={validationStateSize}
-                               onChange={value => onValueChanged('size', value)} />
+                               onChange={(_, value) => onValueChanged('size', value)} />
                     <FormSelect id={`${idPrefix}-unit`}
                                 className="ct-machines-select-unit"
                                 value={unit}

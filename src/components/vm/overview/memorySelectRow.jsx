@@ -77,7 +77,7 @@ class MemorySelectRow extends React.Component {
                                        isDisabled={isDisabled}
                                        onFocus={ () => this.setState({ inputHasFocus: true }) }
                                        onBlur={() => { onValueChange(Math.min(Math.max(minValue, this.state.memory), maxValue)); this.setState({ inputHasFocus: false }) }}
-                                       onChange={memory => this.setState({ memory })} />
+                                       onChange={(_, memory) => this.setState({ memory })} />
                             <FormSelect id={id + "-unit-select"}
                                         className="ct-machines-select-unit"
                                         value={initialUnit}

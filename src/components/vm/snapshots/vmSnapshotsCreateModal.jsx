@@ -40,7 +40,7 @@ const NameRow = ({ onValueChanged, name, validationError }) => {
             <TextInput value={name}
                 validated={validationError.name ? "error" : "default"}
                 id="snapshot-create-dialog-name"
-                onChange={(value) => onValueChanged("name", value)} />
+                onChange={(_, value) => onValueChanged("name", value)} />
             <FormHelper helperTextInvalid={validationError.name} />
         </FormGroup>
     );
@@ -51,7 +51,7 @@ const DescriptionRow = ({ onValueChanged, description }) => {
         <FormGroup fieldId="snapshot-create-dialog-description" label={_("Description")}>
             <TextArea value={description}
                 id="snapshot-create-dialog-description"
-                onChange={(value) => onValueChanged("description", value)}
+                onChange={(_, value) => onValueChanged("description", value)}
                 resizeOrientation="vertical"
             />
         </FormGroup>

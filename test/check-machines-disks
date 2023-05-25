@@ -85,7 +85,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         def save(target, xfail=None):
             b.click(f"#vm-subVmTest1-disks-{target}-edit-dialog-save")
             if xfail:
-                b.wait_in_text(f"#vm-subVmTest1-disks-{target}-edit-dialog .pf-c-alert", xfail)
+                b.wait_in_text(f"#vm-subVmTest1-disks-{target}-edit-dialog .pf-v5-c-alert", xfail)
             else:
                 b.wait_not_present(f"#vm-subVmTest1-disks-{target}-edit-dialog")
 
@@ -117,7 +117,7 @@ class TestMachinesDisks(VirtualMachinesCase):
 
         # Test close button
         open("vdg")
-        b.click("#vm-subVmTest1-disks-vdg-edit-dialog > .pf-c-modal-box__close button")
+        b.click("#vm-subVmTest1-disks-vdg-edit-dialog > .pf-v5-c-modal-box__close button")
         b.wait_not_present("#vm-subVmTest1-disks-vdg-edit-dialog")
 
         # Test qcow2 disk has only readonly attribute configurable
@@ -194,7 +194,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         save("sdb", "readonly sata disks are not supported")
         cancel("sdb")
         open("sdb")
-        b.wait_not_present("#vm-subVmTest1-disks-sdb-edit-dialog .pf-c-alert")
+        b.wait_not_present("#vm-subVmTest1-disks-sdb-edit-dialog .pf-v5-c-alert")
         cancel("sdb")
 
         # Virtio bus type should not be shown for CDROM devices
@@ -279,7 +279,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.select_from_dropdown("#vm-subVmTest1-disks-adddisk-existing-select-pool", "images")
         b.select_from_dropdown("#vm-subVmTest1-disks-adddisk-existing-select-volume", "subVmTest2-2.img")
         b.wait_in_text("#vm-subVmTest1-disks-adddisk-existing-select-volume-helper", "used by subVmTest2")
-        b.click(".pf-c-modal-box__footer button:contains(Cancel)")
+        b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
 
         # Test remove disk - by external action
         m.execute("virsh detach-disk subVmTest1 vdc")
@@ -352,7 +352,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             b = self.test_obj.browser
             prefix = f"#vm-{self.vm_name}-disks-{self.target}-insert"
             b.click(prefix)  # button
-            b.wait_in_text(".pf-c-modal-box__title", "Insert disc media")
+            b.wait_in_text(".pf-v5-c-modal-box__title", "Insert disc media")
 
             b.wait_visible(f"{prefix}-dialog-adddisk-custompath:checked")
             if self.mode == "use-existing":
@@ -377,13 +377,13 @@ class TestMachinesDisks(VirtualMachinesCase):
 
         def insert(self):
             b = self.test_obj.browser
-            b.click(".pf-c-modal-box__footer button:contains(Insert)")
+            b.click(".pf-v5-c-modal-box__footer button:contains(Insert)")
 
             return self
 
         def verify(self):
             b = self.test_obj.browser
-            b.wait_not_present(".pf-c-modal-box")
+            b.wait_not_present(".pf-v5-c-modal-box")
 
             disks = self._get_disks()
 
@@ -408,7 +408,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         def eject(self):
             b = self.test_obj.browser
             b.click(f"#vm-{self.vm_name}-disks-{self.target}-eject-button")  # button
-            b.wait_in_text(".pf-c-modal-box__title", "Eject disc from VM")
+            b.wait_in_text(".pf-v5-c-modal-box__title", "Eject disc from VM")
 
             if self.mode == "custom-path":
                 b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.target}-modal-description-file", self.file_path)
@@ -416,8 +416,8 @@ class TestMachinesDisks(VirtualMachinesCase):
                 b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.target}-modal-description-pool dd", self.pool_name)
                 b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.target}-modal-description-volume dd", self.volume_name)
 
-            b.click(".pf-c-modal-box__footer button:contains(Eject)")
-            b.wait_not_present(".pf-c-modal-box")
+            b.click(".pf-v5-c-modal-box__footer button:contains(Eject)")
+            b.wait_not_present(".pf-v5-c-modal-box")
 
             return self
 
@@ -426,7 +426,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             m = self.test_obj.machine
 
             b.click(f"#vm-{self.vm_name}-disks-{self.target}-eject-button")  # button
-            b.wait_in_text(".pf-c-modal-box__title", "Eject disc from VM")
+            b.wait_in_text(".pf-v5-c-modal-box__title", "Eject disc from VM")
 
             # "Force eject" button is only shown if regular ejection fail
             # This might be a bit dirty, but one easy way to cause regular ejection to
@@ -434,11 +434,11 @@ class TestMachinesDisks(VirtualMachinesCase):
             # This will return "domain is not running" failure, but that's fine, as we
             # offer "Force eject" option after any kind of failure
             m.execute(f"virsh destroy {self.vm_name}")
-            b.click(".pf-c-modal-box__footer button:contains(Eject)")
+            b.click(".pf-v5-c-modal-box__footer button:contains(Eject)")
 
             # Check "Force eject" is present and Regular eject is disabled
-            b.wait_visible(".pf-c-modal-box__footer button:contains(Eject):disabled")
-            b.wait_visible(".pf-c-modal-box__footer button:contains(Force eject)")
+            b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Eject):disabled")
+            b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Force eject)")
 
             # Start the VM again so "Force eject" will work
             m.execute(f"virsh start {self.vm_name}")
@@ -449,8 +449,8 @@ class TestMachinesDisks(VirtualMachinesCase):
             m.spawn("dbus-monitor --system \"interface='org.libvirt.Domain',member='UpdateDevice'\" > /tmp/dbus_monitor_logs", "dbusmonitor")
 
             # Force eject the disc
-            b.click(".pf-c-modal-box__footer button:contains(Force eject)")
-            b.wait_not_present(".pf-c-modal-box")
+            b.click(".pf-v5-c-modal-box__footer button:contains(Force eject)")
+            b.wait_not_present(".pf-v5-c-modal-box")
 
             # Check dbus call was called with "VIR_DOMAIN_DEVICE_MODIFY_FORCE" flag
             # Flag 'uint32 7' is a logical OR of flags:
@@ -563,14 +563,14 @@ class TestMachinesDisks(VirtualMachinesCase):
                 if self.xfail_object:
                     self.test_obj.browser.wait_in_text(f"{prefix}-{self.xfail_object}-helper.pf-m-error", self.xfail_error_message)
                 else:
-                    self.test_obj.browser.wait_in_text(".pf-c-modal-box__body .pf-c-alert__title", self.xfail_error_title)
+                    self.test_obj.browser.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-alert__title", self.xfail_error_title)
                     self.test_obj.browser.click(f"{prefix}-dialog-cancel")
 
         def open(self):
             b = self.test_obj.browser
             prefix = f"#vm-{self.vm_name}-disks-adddisk"
             b.click(prefix)  # button
-            b.wait_in_text(".pf-c-modal-box__title", "Add disk")
+            b.wait_in_text(".pf-v5-c-modal-box__title", "Add disk")
 
             b.wait_visible(f"{prefix}-createnew:checked")
             if self.mode == "use-existing":
@@ -590,7 +590,7 @@ class TestMachinesDisks(VirtualMachinesCase):
                 else:
                     b.click(f"#vm-{self.vm_name}-disks-adddisk-new-select-pool")
                     # Our custom select does not respond on the click function
-                    b._wait_present(f".pf-c-modal-box option[value={self.pool_name}]:disabled")
+                    b._wait_present(f".pf-v5-c-modal-box option[value={self.pool_name}]:disabled")
                     return self
 
                 # Insert name for the new volume
@@ -626,8 +626,8 @@ class TestMachinesDisks(VirtualMachinesCase):
 
             # Expand additional options
             if self.cache_mode or self.bus_type or self.serial:
-                b.click("div.pf-c-modal-box button:contains(Show additional options)")
-                b.wait_visible("div.pf-c-modal-box button[aria-expanded=true]:contains(Hide additional options)")
+                b.click("div.pf-v5-c-modal-box button:contains(Show additional options)")
+                b.wait_visible("div.pf-v5-c-modal-box button[aria-expanded=true]:contains(Hide additional options)")
 
                 # Configure performance options
                 if self.cache_mode:
@@ -635,7 +635,7 @@ class TestMachinesDisks(VirtualMachinesCase):
 
                 # Configure bus type
                 if self.bus_type:
-                    b.select_from_dropdown(f"div.pf-c-modal-box #vm-{self.vm_name}-disks-adddisk-bus-type", self.bus_type)
+                    b.select_from_dropdown(f"div.pf-v5-c-modal-box #vm-{self.vm_name}-disks-adddisk-bus-type", self.bus_type)
 
                 # Configure serial number
                 if self.serial:
@@ -647,22 +647,22 @@ class TestMachinesDisks(VirtualMachinesCase):
                         b.wait_val(f"#vm-{self.vm_name}-disks-adddisk-serial", self.expected_serial)
 
                     if self.xwarning_object == 'serial-characters':
-                        b.wait_in_text("#serial-characters-message .pf-c-helper-text__item-text", self.xwarning_message)
+                        b.wait_in_text("#serial-characters-message .pf-v5-c-helper-text__item-text", self.xwarning_message)
                     elif self.xwarning_object == 'serial-length':
-                        b.wait_in_text("#serial-length-message .pf-c-helper-text__item-text", self.xwarning_message)
+                        b.wait_in_text("#serial-length-message .pf-v5-c-helper-text__item-text", self.xwarning_message)
                     else:
                         b.wait_not_present("#serial-length-message")
                         b.wait_not_present("#serial-characters-message")
             else:
                 b.wait_not_visible("#cache-mode")
-                b.wait_not_visible(f"div.pf-c-modal-box #vm-{self.vm_name}-disks-adddisk-bus-type")
+                b.wait_not_visible(f"div.pf-v5-c-modal-box #vm-{self.vm_name}-disks-adddisk-bus-type")
                 b.wait_not_visible(f"#vm-{self.vm_name}-disks-adddisk-serial")
 
             return self
 
         def add_disk(self):
             b = self.test_obj.browser
-            b.click(".pf-c-modal-box__footer button:contains(Add)")
+            b.click(".pf-v5-c-modal-box__footer button:contains(Add)")
 
             return self
 
@@ -690,7 +690,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             # Check volume was added to pool's volume list
             if self.mode == "create-new":
                 self.test_obj.goToMainPage()
-                b.click(".pf-c-card .pf-c-card__header button:contains(Storage pool)")
+                b.click(".pf-v5-c-card .pf-v5-c-card__header button:contains(Storage pool)")
 
                 self.test_obj.waitPoolRow(self.pool_name)
                 self.test_obj.togglePoolRow(self.pool_name)
@@ -846,7 +846,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             volume_size_unit='MiB',
             expected_target=get_next_free_target(used_targets)[-1],
             pixel_test_tag='vm-add-disk-modal-nfs',
-            pixel_test_ignore='.pf-c-modal-box__footer',  # FIXME: The buttons size seems to change undeterministically
+            pixel_test_ignore='.pf-v5-c-modal-box__footer',  # FIXME: The buttons size seems to change undeterministically
         ).execute()
 
         self.VMAddDiskDialog(
@@ -905,7 +905,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             volume_size_unit='MiB',
             expected_target=get_next_free_target(used_targets)[-1],
             pixel_test_tag='vm-add-disk-modal-disk-pool',
-            pixel_test_ignore='.pf-c-modal-box__footer',  # FIXME: The buttons size seems to change undeterministically
+            pixel_test_ignore='.pf-v5-c-modal-box__footer',  # FIXME: The buttons size seems to change undeterministically
         ).execute()
 
         self.VMAddDiskDialog(
@@ -1164,7 +1164,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             xfail_error_message='Importing an image with a backing file is unsupported',
         ).execute()
         # Image can't be added, close dialog
-        b.click(".pf-c-modal-box__footer button:contains(Cancel)")
+        b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
 
         # non iso file
         self.VMAddDiskDialog(
@@ -1204,7 +1204,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             self,
             mode='custom-path'
         ).open()
-        b.click(f"{prefix}-file .pf-c-select__toggle-button")
+        b.click(f"{prefix}-file .pf-v5-c-select__toggle-button")
         b.wait_visible(f"{prefix}-file-autocomplete")
         b.key_press(chr(40), use_ord=True)
         b.focus(f"{prefix}-file-autocomplete li:first-child")
@@ -1240,7 +1240,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.click(prefix)
         b.click(f"{prefix}-custompath")
         b.select_from_dropdown(f"{prefix}-select-device", "disk")
-        b.click("div.pf-c-modal-box button:contains(Show additional options)")
+        b.click("div.pf-v5-c-modal-box button:contains(Show additional options)")
         b.wait_visible(f"{prefix}-bus-type[data-value=ide]")
 
     def testAddDiskAdditionalOptions(self):
@@ -1436,12 +1436,12 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.click("#vm-subVmTest1-disks-vdc-action-kebab button")
         b.wait_visible("#delete-vm-subVmTest1-disks-vdc")
         b.click("#delete-vm-subVmTest1-disks-vdc")
-        b.wait_visible(".pf-c-modal-box")
-        b.wait_in_text(".pf-c-modal-box__body .pf-c-description-list", "subVmTest1")
+        b.wait_visible(".pf-v5-c-modal-box")
+        b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-description-list", "subVmTest1")
         b.wait_in_text("#delete-resource-modal-target", "vdc")
         b.wait_in_text("#delete-resource-modal-file", vdc_path)
         b.click("#delete-resource-modal-primary")
-        b.wait_not_present(".pf-c-modal-box")
+        b.wait_not_present(".pf-v5-c-modal-box")
         # Wait for underlying VM's OS to detach the disk
         wait(lambda: "vdc" not in m.execute("virsh domblklist subVmTest1"), delay=1)
         b.wait_not_present("#vm-subVmTest1-disks-vdc-device")
@@ -1458,10 +1458,10 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.click("#delete-vm-subVmTest1-disks-vdd")
         b.wait_in_text("#delete-resource-modal-target", "vdd")
         b.wait_in_text("#delete-resource-modal-file", vdd_path)
-        b.wait_visible(".pf-c-modal-box")
+        b.wait_visible(".pf-v5-c-modal-box")
         b.click("#delete-resource-modal-primary")
         b.wait_not_present("#vm-subVmTest1-disks-vdd-device")
-        b.wait_not_present(".pf-c-modal-box")
+        b.wait_not_present(".pf-v5-c-modal-box")
 
         # Test detaching several disks and the deletion dialog can be closed correctly
         m.execute("virsh vol-create-as myPoolOne diskVirtio --capacity 1M --format qcow2")
@@ -1523,12 +1523,12 @@ class TestMachinesDisks(VirtualMachinesCase):
 
             if removeFileFail:
                 # Check Toast notification is present
-                b.wait_visible(".pf-c-alert.pf-m-warning")
-                b.wait_in_text(".pf-c-alert.pf-m-warning .pf-c-alert__title", "Could not delete")
+                b.wait_visible(".pf-v5-c-alert.pf-m-warning")
+                b.wait_in_text(".pf-v5-c-alert.pf-m-warning .pf-v5-c-alert__title", "Could not delete")
                 # Cleanup Toast notification
-                b.click(".pf-c-alert-group li:first-of-type .pf-c-alert button.pf-m-plain")
+                b.click(".pf-v5-c-alert-group li:first-of-type .pf-v5-c-alert button.pf-m-plain")
 
-            b.wait_not_present(".pf-c-alert.pf-m-warning")
+            b.wait_not_present(".pf-v5-c-alert.pf-m-warning")
 
             # Verify correctness of disk file
             if path:
@@ -1569,9 +1569,9 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.click("#vm-subVmTest1-disks-vdc-action-kebab button")
         b.wait_visible("#vm-subVmTest1-disks-vdc-device")
         b.click("#delete-vm-subVmTest1-disks-vdc")
-        b.wait_visible(".pf-c-modal-box")
+        b.wait_visible(".pf-v5-c-modal-box")
         b.click("#delete-resource-modal-primary")
-        b.wait_not_present(".pf-c-modal-box")
+        b.wait_not_present(".pf-v5-c-modal-box")
         wait(lambda: "vdc" not in m.execute("virsh domblklist subVmTest1"), delay=1)
         b.wait_not_present("#vm-subVmTest1-disks-vdc-device")
 

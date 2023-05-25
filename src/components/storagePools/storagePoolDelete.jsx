@@ -191,7 +191,7 @@ class StoragePoolDelete extends React.Component {
         return (
             <Modal id="storage-pool-delete-modal" position="top" variant="small" isOpen onClose={Dialogs.close}
                 title={<>
-                    <ExclamationTriangleIcon color="orange" className="pf-u-mr-sm" />
+                    <ExclamationTriangleIcon color="orange" className="pf-v5-u-mr-sm" />
                     { cockpit.format(_("Delete $0 storage pool?"), storagePool.name) }
                 </>}
                    footer={

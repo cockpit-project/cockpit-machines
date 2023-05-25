@@ -84,7 +84,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
         if expect_empty_list:
             with b.wait_timeout(20):
-                b.wait_in_text("#virtual-machines-listing .pf-c-empty-state", "No VM is running")
+                b.wait_in_text("#virtual-machines-listing .pf-v5-c-empty-state", "No VM is running")
                 return
         self.waitPageInit()
         self.waitVmRow("subVmTest1")
@@ -108,7 +108,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
             m.execute("virt-xml subVmTest1 --edit --watchdog action=pause")
             b.wait_visible("#vm-subVmTest1-needs-shutdown")
             b.click("#vm-subVmTest1-needs-shutdown")
-            b.wait_in_text(".pf-c-popover__body", message)
+            b.wait_in_text(".pf-v5-c-popover__body", message)
             m.execute("virt-xml subVmTest1 --remove-device --watchdog 1 --update")
 
         checkConnectionDescription("#import-existing-vm", "Ideal for server VMs")
@@ -121,8 +121,8 @@ class TestMachinesLifecycle(VirtualMachinesCase):
             b.assert_pixels("#vm-details", "vm-details", ignore=[
                 ".memory-usage-chart",
                 ".vcpu-usage-chart",
-                "#vm-subVmTest1-disks .pf-c-card__body",
-                "#vm-subVmTest1-networks .pf-c-card__body",
+                "#vm-subVmTest1-disks .pf-v5-c-card__body",
+                "#vm-subVmTest1-networks .pf-v5-c-card__body",
                 "#vm-subVmTest1-hostdevs",
                 ])
         b.wait_in_text("#vm-subVmTest1-cpu", "1 vCPU")
@@ -133,13 +133,13 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
         # switch to and check Usage
         b.click("#vm-subVmTest1-usage")
-        b.wait_in_text(".memory-usage-chart .pf-c-progress__status > .pf-c-progress__measure", "128 MiB")
-        b.wait_not_in_text(".memory-usage-chart .pf-c-progress__status > .pf-c-progress__measure", "0 /")
-        usage = b.text(".memory-usage-chart .pf-c-progress__status > .pf-c-progress__measure").split("/ 128 MiB")[0]
+        b.wait_in_text(".memory-usage-chart .pf-v5-c-progress__status > .pf-v5-c-progress__measure", "128 MiB")
+        b.wait_not_in_text(".memory-usage-chart .pf-v5-c-progress__status > .pf-v5-c-progress__measure", "0 /")
+        usage = b.text(".memory-usage-chart .pf-v5-c-progress__status > .pf-v5-c-progress__measure").split("/ 128 MiB")[0]
         wait(lambda: float(usage) > 0.0, delay=3)
 
-        b.wait_in_text(".vcpu-usage-chart .pf-c-progress__status > .pf-c-progress__measure", "1 vCPU")
-        usage = b.text(".vcpu-usage-chart .pf-c-progress__status > .pf-c-progress__measure").split("% of 1 vCPU")[0]
+        b.wait_in_text(".vcpu-usage-chart .pf-v5-c-progress__status > .pf-v5-c-progress__measure", "1 vCPU")
+        usage = b.text(".vcpu-usage-chart .pf-v5-c-progress__status > .pf-v5-c-progress__measure").split("% of 1 vCPU")[0]
         # CPU usage cannot be nonzero with blank image, so just ensure it's a percentage
         wait(lambda: float(usage) <= 100.0, delay=3)
 
@@ -187,7 +187,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         self.waitCirrOSBooted(args['logfile'])
         b.click("#vm-subVmTest1-system-shutdown-button")
         b.wait_visible("#vm-subVmTest1-system-confirm-action-modal")
-        b.click(".pf-c-modal-box__footer #vm-subVmTest1-system-off")
+        b.click(".pf-v5-c-modal-box__footer #vm-subVmTest1-system-off")
         b.wait_in_text("#vm-subVmTest1-system-state", "Shut off")
         b.wait_visible("#vm-subVmTest1-system-run")
 
@@ -204,15 +204,15 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         self.performAction("subVmTest1", "forceOff")
 
         # continue shut off validation - usage should drop to zero
-        b.wait_in_text(".memory-usage-chart .pf-c-progress__status > .pf-c-progress__measure", "0 /")
-        b.wait_in_text(".vcpu-usage-chart .pf-c-progress__status > .pf-c-progress__measure", "0%")
+        b.wait_in_text(".memory-usage-chart .pf-v5-c-progress__status > .pf-v5-c-progress__measure", "0 /")
+        b.wait_in_text(".vcpu-usage-chart .pf-v5-c-progress__status > .pf-v5-c-progress__measure", "0%")
 
         # shut off of a transient VM will redirect us to the main page
         m.execute("virsh dumpxml subVmTest1 > /tmp/subVmTest1.xml")
         m.execute("virsh start {0}; virsh undefine {0}".format("subVmTest1"))
         b.wait_visible("div[data-vm-transient=\"true\"]")
         self.performAction("subVmTest1", "forceOff", checkExpectedState=False)
-        b.wait_in_text("#virtual-machines-listing .pf-c-empty-state", "No VM is running")
+        b.wait_in_text("#virtual-machines-listing .pf-v5-c-empty-state", "No VM is running")
         m.execute("virsh define --file /tmp/subVmTest1.xml")
 
         # start another one, should appear automatically
@@ -240,7 +240,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         self.machine.execute(f"echo '' > {args2['logfile']}")
         b.click("#vm-subVmTest2-system-shutdown-button")
         b.wait_visible("#vm-subVmTest2-system-confirm-action-modal")
-        b.click(".pf-c-modal-box__footer button:contains(Reboot)")
+        b.click(".pf-v5-c-modal-box__footer button:contains(Reboot)")
         b.wait_not_present("#vm-subVmTest2-system-confirm-action-modal")
         b.wait_in_text("#vm-subVmTest2-system-state", "Running")
         self.waitCirrOSBooted(args2['logfile'])
@@ -250,7 +250,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         b.wait_visible("#vm-subVmTest2-system-confirm-action-modal")
         if run_pixel_tests:
             b.assert_pixels("#vm-subVmTest2-system-confirm-action-modal", "shutdown-confirm-dialog")
-        b.click(".pf-c-modal-box__footer button:contains(Cancel)")
+        b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
         b.wait_not_present("#vm-subVmTest2-system-confirm-action-modal")
 
         b.set_input_text("#text-search", "subVmTest2")
@@ -291,13 +291,13 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         # Try to run subVmTest1 - it will fail because of inactive default network
         tryRunDomain(1, 'subVmTest1', 'system')
         b.click('#vm-subVmTest1-system-state button:contains("view more")')
-        b.wait_in_text(".pf-c-popover", "VM subVmTest1 failed to start")
+        b.wait_in_text(".pf-v5-c-popover", "VM subVmTest1 failed to start")
         b.click('#vm-subVmTest1-system-state button[aria-label=Close]')
 
         # Try to run subVmTest2
         tryRunDomain(2, 'subVmTest2', 'system')
         b.click('#vm-subVmTest2-system-state button:contains("view more")')
-        b.wait_in_text(".pf-c-popover", "VM subVmTest2 failed to start")
+        b.wait_in_text(".pf-v5-c-popover", "VM subVmTest2 failed to start")
         b.click('#vm-subVmTest2-system-state button[aria-label=Close]')
 
     def testCloneSessionConnection(self):
@@ -318,9 +318,9 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
         self.performAction("subVmTest1", "clone", connectionName=connectionName)
 
-        b.wait_text(".pf-c-modal-box__title-text", "Create a clone VM based on subVmTest1")
+        b.wait_text(".pf-v5-c-modal-box__title-text", "Create a clone VM based on subVmTest1")
         b.click("footer button.pf-m-primary")
-        b.wait_not_present(".pf-c-modal-box")
+        b.wait_not_present(".pf-v5-c-modal-box")
         self.waitVmRow("subVmTest1-clone", connectionName=connectionName)
 
     def testRename(self):
@@ -344,7 +344,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
         b.set_input_text("#rename-dialog-new-name", "new")
         b.click("#rename-dialog-confirm")
-        b.wait_in_text(".pf-c-modal-box__body .pf-c-alert.pf-m-danger", "Can't rename domain to itself")
+        b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-alert.pf-m-danger", "Can't rename domain to itself")
 
         self.goToVmPage("new")
         self.performAction("new", "rename")
@@ -400,7 +400,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
         self.performAction(name, "delete")
 
-        b.wait_visible(f"#vm-{name}-delete-modal-dialog .pf-c-modal-box__body:contains(The VM {name} is running)")
+        b.wait_visible(f"#vm-{name}-delete-modal-dialog .pf-v5-c-modal-box__body:contains(The VM {name} is running)")
         b.wait_visible(f"#vm-{name}-delete-modal-dialog ul li:first-child .disk-source-file:contains({img2})")
         # virsh attach-disk does not create disks of type volume
         b.wait_visible(f"#vm-{name}-delete-modal-dialog .disk-source-volume:contains({secondDiskVolName})")
@@ -470,7 +470,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
             b.wait_visible(f"#vm-{name}-delete-modal-dialog")
             m.execute(f"virsh snapshot-delete --domain {name} --snapshotname snapshotFails")
             b.click(f"#vm-{name}-delete-modal-dialog button:contains(Delete)")
-            b.wait_in_text(f"#vm-{name}-delete-modal-dialog .pf-c-alert__description", "Domain snapshot not found")
+            b.wait_in_text(f"#vm-{name}-delete-modal-dialog .pf-v5-c-alert__description", "Domain snapshot not found")
             b.click(f"#vm-{name}-delete-modal-dialog button:contains(Cancel)")
             m.execute(f"virsh undefine {name}")
 
@@ -497,7 +497,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         b.wait_visible(f"#vm-{name}-system-delete a.pf-m-disabled")  # delete buton should be disabled
         b.click(f"#vm-{name}-system-forceOff")
         b.wait_visible(f"#vm-{name}-system-confirm-action-modal")
-        b.click(f".pf-c-modal-box__footer #vm-{name}-system-forceOff")
+        b.click(f".pf-v5-c-modal-box__footer #vm-{name}-system-forceOff")
         self.waitVmRow(name, 'system', False)
         b.wait_not_present(f'#vm-{name}-system-state button:contains("view more")')
 
@@ -522,13 +522,13 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         # Check VM got deleted, but there is a warning about unsuccessful storage deletion
         self.waitVmRow(name, present=False)
         wait(lambda: name not in m.execute("virsh list --all --name"))
-        b.wait_visible(".pf-c-alert-group li .pf-c-alert")
-        b.wait_in_text(".pf-c-alert-group li .pf-c-alert .pf-c-alert__title", f"Could not delete all storage for {name}")
+        b.wait_visible(".pf-v5-c-alert-group li .pf-v5-c-alert")
+        b.wait_in_text(".pf-v5-c-alert-group li .pf-v5-c-alert .pf-v5-c-alert__title", f"Could not delete all storage for {name}")
         b.click("button.alert-link.more-button")
-        b.wait_in_text(".pf-c-alert-group li .pf-c-alert .pf-c-alert__description", args['image'])
-        b.wait_in_text(".pf-c-alert-group li .pf-c-alert .pf-c-alert__description", secondDiskVolName)
+        b.wait_in_text(".pf-v5-c-alert-group li .pf-v5-c-alert .pf-v5-c-alert__description", args['image'])
+        b.wait_in_text(".pf-v5-c-alert-group li .pf-v5-c-alert .pf-v5-c-alert__description", secondDiskVolName)
         # Close the notification
-        b.click(".pf-c-alert-group li .pf-c-alert button.pf-m-plain")
+        b.click(".pf-v5-c-alert-group li .pf-v5-c-alert button.pf-m-plain")
 
         # Delete a shut-off guest and verify the storage was removed
         name = "vm-shutoff"

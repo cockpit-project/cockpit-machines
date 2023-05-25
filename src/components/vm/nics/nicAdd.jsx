@@ -80,7 +80,7 @@ const NetworkMacRow = ({ idPrefix, dialogValues, onValueChanged }) => {
                        className="nic-add-mac-setting-manual"
                        isDisabled={!dialogValues.setNetworkMac}
                        value={dialogValues.networkMac}
-                       onChange={value => onValueChanged('networkMac', value)} />
+                       onChange={(_, value) => onValueChanged('networkMac', value)} />
         </FormGroup>
     );
 };

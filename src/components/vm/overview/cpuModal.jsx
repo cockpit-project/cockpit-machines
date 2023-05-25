@@ -229,7 +229,7 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
                            <Popover bodyContent={maxVcpu
                                ? cockpit.format(_("Maximum number of virtual CPUs allocated for the guest OS, which must be between 1 and $0"), parseInt(maxVcpu))
                                : _("Maximum number of virtual CPUs allocated for the guest OS")}>
-                               <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
+                               <button onClick={e => e.preventDefault()} className="pf-v5-c-form__group-label-help">
                                    <HelpIcon noVerticalAlign />
                                </button>
                            </Popover>}>
@@ -250,7 +250,7 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
             <FormGroup fieldId="machines-vcpu-count-field" label={_("vCPU count")}
                        labelIcon={
                            <Popover bodyContent={_("Fewer than the maximum number of virtual CPUs should be enabled.")}>
-                               <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
+                               <button onClick={e => e.preventDefault()} className="pf-v5-c-form__group-label-help">
                                    <HelpIcon noVerticalAlign />
                                </button>
                            </Popover>}>
@@ -271,7 +271,7 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
             <FormGroup fieldId="sockets" label={_("Sockets")}
                        labelIcon={
                            <Popover bodyContent={_("Preferred number of sockets to expose to the guest.")}>
-                               <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
+                               <button onClick={e => e.preventDefault()} className="pf-v5-c-form__group-label-help">
                                    <HelpIcon noVerticalAlign />
                                </button>
                            </Popover>}>

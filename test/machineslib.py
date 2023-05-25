@@ -36,13 +36,13 @@ class VirtualMachinesCaseHelpers:
     def performAction(self, vmName, action, checkExpectedState=True, connectionName="system"):
         b = self.browser
         b.click("#vm-{0}-{1}-action-kebab button".format(vmName, connectionName))
-        b.wait_visible("#vm-{0}-{1}-action-kebab > .pf-c-dropdown__menu".format(vmName, connectionName))
+        b.wait_visible("#vm-{0}-{1}-action-kebab > .pf-v5-c-dropdown__menu".format(vmName, connectionName))
         b.click("#vm-{0}-{1}-{2} a".format(vmName, connectionName, action))
 
         # Some actions, which can cause expensive downtime when clicked accidentally, have confirmation dialog
         if action in ["off", "forceOff", "reboot", "forceReboot", "sendNMI"]:
             b.wait_visible("#vm-{0}-{1}-confirm-action-modal".format(vmName, connectionName))
-            b.click(".pf-c-modal-box__footer #vm-{0}-{1}-{2}".format(vmName, connectionName, action))
+            b.click(".pf-v5-c-modal-box__footer #vm-{0}-{1}-{2}".format(vmName, connectionName, action))
             b.wait_not_present("#vm-{0}-{1}-confirm-action-modal".format(vmName, connectionName))
 
         if not checkExpectedState:
@@ -74,7 +74,7 @@ class VirtualMachinesCaseHelpers:
 
     def togglePoolRow(self, poolName, connectionName="system"):
         isExpanded = 'pf-m-expanded' in self.browser.attr("tbody tr[data-row-id=pool-{0}-{1}] + tr".format(poolName, connectionName), "class")  # click on the row header
-        self.browser.click("tbody tr[data-row-id=pool-{0}-{1}] .pf-c-table__toggle button".format(poolName, connectionName))  # click on the row header
+        self.browser.click("tbody tr[data-row-id=pool-{0}-{1}] .pf-v5-c-table__toggle button".format(poolName, connectionName))  # click on the row header
         if isExpanded:
             self.browser.wait_not_present("tbody tr[data-row-id=pool-{0}-{1}] + tr.pf-m-expanded".format(poolName, connectionName))  # click on the row header
         else:
@@ -90,7 +90,7 @@ class VirtualMachinesCaseHelpers:
 
     def toggleNetworkRow(self, networkName, connectionName="system"):
         isExpanded = 'pf-m-expanded' in self.browser.attr("tbody tr[data-row-id=network-{0}-{1}] + tr".format(networkName, connectionName), "class")  # click on the row header
-        self.browser.click("tbody tr[data-row-id=network-{0}-{1}] .pf-c-table__toggle button".format(networkName, connectionName))  # click on the row header
+        self.browser.click("tbody tr[data-row-id=network-{0}-{1}] .pf-v5-c-table__toggle button".format(networkName, connectionName))  # click on the row header
         if isExpanded:
             self.browser.wait_not_present("tbody tr[data-row-id=network-{0}-{1}] + tr.pf-m-expanded".format(networkName, connectionName))  # click on the row header
         else:
@@ -228,11 +228,11 @@ class VirtualMachinesCaseHelpers:
         b.click(f"#vm-subVmTest1-iface-{iface}-action-kebab button")
         b.wait_visible(f"#delete-vm-subVmTest1-iface-{iface}")
         b.click(f"#delete-vm-subVmTest1-iface-{iface}")
-        b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Remove network interface?")
+        b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Remove network interface?")
         if mac and vm_name:
-            b.wait_in_text(".pf-c-modal-box__body .pf-c-description-list", f"{mac} will be removed from {vm_name}")
-        b.click(".pf-c-modal-box__footer button:contains(Remove)")
-        b.wait_not_present(".pf-c-modal-box")
+            b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-description-list", f"{mac} will be removed from {vm_name}")
+        b.click(".pf-v5-c-modal-box__footer button:contains(Remove)")
+        b.wait_not_present(".pf-v5-c-modal-box")
 
     def get_next_mac(self, last_mac):
         parts = last_mac.split(':')

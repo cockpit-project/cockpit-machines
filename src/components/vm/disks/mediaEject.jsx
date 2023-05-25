@@ -112,7 +112,7 @@ export const MediaEjectModal = ({ idPrefix, vm, disk }) => {
                    </>
                }>
             {dialogErrorDetail && <ModalError dialogError={cockpit.format(_("Media could not be ejected from $0"), vm.name)} dialogErrorDetail={dialogErrorDetail} />}
-            <DescriptionList className={dialogErrorDetail && "pf-u-pt-md"} isHorizontal>
+            <DescriptionList className={dialogErrorDetail && "pf-v5-u-pt-md"} isHorizontal>
                 {cockpit.format(_("Media will be ejected from $0:"), vm.name)}
                 {description}
             </DescriptionList>

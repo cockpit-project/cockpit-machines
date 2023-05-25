@@ -65,7 +65,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
         m.execute(f"echo \"{TEST_NETWORK4_XML}\" > /tmp/xml; virsh net-create /tmp/xml")
 
         # Click on Networks card
-        b.click(".pf-c-card .pf-c-card__header button:contains(Networks)")
+        b.click(".pf-v5-c-card .pf-v5-c-card__header button:contains(Networks)")
 
         # Check that all networks are there
         b.wait_in_text("body", "Networks")
@@ -127,8 +127,8 @@ class TestMachinesNetworks(VirtualMachinesCase):
         self.waitPageInit()
 
         # Click on Networks card
-        b.wait_in_text("#card-pf-networks .pf-c-card__header button", "Network")
-        b.click(".pf-c-card .pf-c-card__header button:contains(Network)")
+        b.wait_in_text("#card-pf-networks .pf-v5-c-card__header button", "Network")
+        b.click(".pf-v5-c-card .pf-v5-c-card__header button:contains(Network)")
 
         class NetworkCreateDialog(object):
             def __init__(
@@ -168,7 +168,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
             def open(self):
                 b.click("#create-network")
                 b.wait_visible("#create-network-dialog")
-                b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Create virtual network")
+                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Create virtual network")
 
             def fill(self):
                 b.set_input_text("#create-network-name", self.name)
@@ -199,22 +199,22 @@ class TestMachinesNetworks(VirtualMachinesCase):
                             b.set_input_text("#create-network-ipv6-dhcp-range-end", self.ipv6_dhcp_end)
 
             def cancel(self):
-                b.click(".pf-c-modal-box__footer button:contains(Cancel)")
+                b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
                 b.wait_not_present("#create-network-dialog")
 
             def create(self):
-                b.click(".pf-c-modal-box__footer button:contains(Create)")
+                b.click(".pf-v5-c-modal-box__footer button:contains(Create)")
 
                 if (self.xfail):
                     # Check incomplete dialog
                     if "body" in self.xfail_objects:
-                        error_location = "#create-network-dialog .pf-c-modal-box__body .pf-m-danger"
+                        error_location = "#create-network-dialog .pf-v5-c-modal-box__body .pf-m-danger"
                         b.wait_visible(error_location)
                         error_message = b.text(error_location)
                         self.test_obj.assertIn(self.xfail_error, error_message)
                     else:
                         for xfo in self.xfail_objects:
-                            b.wait_in_text(f"#create-network-dialog .pf-c-modal-box__body #create-network-{xfo} + .pf-c-form__helper-text .pf-m-error", self.xfail_error)
+                            b.wait_in_text(f"#create-network-dialog .pf-v5-c-modal-box__body #create-network-{xfo} + .pf-v5-c-form__helper-text .pf-m-error", self.xfail_error)
 
                     self.cancel()
                 else:
@@ -222,7 +222,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
 
             def verify_expected_error_on_head(self, error_message):
                 b.click(f'#network-{self.name}-system-state button:contains("view more")')
-                b.wait_in_text(".pf-c-popover", error_message)
+                b.wait_in_text(".pf-v5-c-popover", error_message)
                 b.click(f'#network-{self.name}-system-state button[aria-label=Close]')
 
             def verify_dialog(self):
@@ -650,7 +650,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
         b.wait_val("#vm-subVmTest1-network-1-edit-dialog-type", "bridge")
         b.select_from_dropdown("#vm-subVmTest1-network-1-edit-dialog-type", "network")
         b.wait_visible("#vm-subVmTest1-network-1-edit-dialog-save:disabled")
-        b.click(".pf-c-modal-box__footer button:contains(Cancel)")
+        b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
 
         # Ensure that when the source of a NIC was removed we can still change it
 
@@ -691,8 +691,8 @@ class TestMachinesNetworks(VirtualMachinesCase):
         self.waitPageInit()
 
         # Click on Networks card
-        b.wait_in_text("#card-pf-networks .pf-c-card__header button", "Network")
-        b.click(".pf-c-card .pf-c-card__header button:contains(Network)")
+        b.wait_in_text("#card-pf-networks .pf-v5-c-card__header button", "Network")
+        b.click(".pf-v5-c-card .pf-v5-c-card__header button:contains(Network)")
 
         # Check that all networks are there
         b.wait_in_text("body", "Networks")
@@ -738,7 +738,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
         self.waitPageInit()
 
         # Click on Networks card
-        b.click(".pf-c-card .pf-c-card__header button:contains(Network)")
+        b.click(".pf-v5-c-card .pf-v5-c-card__header button:contains(Network)")
 
         # Check that all networks are there
         b.wait_in_text("body", "Networks")
@@ -777,8 +777,8 @@ class TestMachinesNetworks(VirtualMachinesCase):
         # Delete an inactive network
         b.click(f"#network-test_network2-{connectionName}-action-kebab button")
         b.click(f'#delete-network-test_network2-{connectionName}')
-        b.wait_in_text(".pf-c-modal-box__body .pf-c-description-list", "test_network2")
-        b.click(".pf-c-modal-box__footer button:contains(Delete)")
+        b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-description-list", "test_network2")
+        b.click(".pf-v5-c-modal-box__footer button:contains(Delete)")
         self.waitNetworkRow("test_network2", connectionName, False)
 
         # Delete an active network
@@ -788,8 +788,8 @@ class TestMachinesNetworks(VirtualMachinesCase):
         self.toggleNetworkRow("test_network2", connectionName)
         b.click(f"#network-test_network2-{connectionName}-action-kebab button")
         b.click(f'#delete-network-test_network2-{connectionName}')
-        b.wait_in_text(".pf-c-modal-box__body .pf-c-description-list", "test_network2")
-        b.click(".pf-c-modal-box__footer button:contains(Delete)")
+        b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-description-list", "test_network2")
+        b.click(".pf-v5-c-modal-box__footer button:contains(Delete)")
         self.waitNetworkRow("test_network2", connectionName, False)
 
     def testNetworkAddStaticDCHPHosts(self):
@@ -821,26 +821,26 @@ class TestMachinesNetworks(VirtualMachinesCase):
             def open(self):
                 b.click(f"#network-{self.network_name}-{self.connection_name}-static-host-entries-add")
                 b.wait_visible("#add-new-static-entry-mac-address")
-                b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Add a DHCP static host entry")
-                b.wait_in_text("div.pf-c-modal-box__body label[for=add-new-static-entry-mac-address]", "MAC address")
-                b.wait_in_text("div.pf-c-modal-box__body label[for=add-new-static-entry-ip-address]", "IP address")
+                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Add a DHCP static host entry")
+                b.wait_in_text("div.pf-v5-c-modal-box__body label[for=add-new-static-entry-mac-address]", "MAC address")
+                b.wait_in_text("div.pf-v5-c-modal-box__body label[for=add-new-static-entry-ip-address]", "IP address")
 
             def fill(self):
                 b.set_input_text("#add-new-static-entry-mac-address", self.mac)
                 b.set_input_text("#add-new-static-entry-ip-address", self.ip)
 
             def cancel(self):
-                b.click(".pf-c-modal-box__footer button:contains(Cancel)")
+                b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
                 b.wait_not_present("#add-new-static-entry")
 
             def add(self):
-                b.click(".pf-c-modal-box__footer button:contains(Add)")
+                b.click(".pf-v5-c-modal-box__footer button:contains(Add)")
 
                 if self.xfail:
                     # Check incomplete dialog
                     for k, v in self.xfail.items():
                         if k == "header":
-                            b.wait_in_text(".pf-c-modal-box .pf-c-alert.pf-m-danger", v)
+                            b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-alert.pf-m-danger", v)
                             break
                         else:
                             b.wait_in_text(k, v)
@@ -869,10 +869,10 @@ class TestMachinesNetworks(VirtualMachinesCase):
 
             def cleanup(self):
                 b.click(f"#delete-network-{self.network_name}-{self.connection_name}-ipv4-dhcp-host-{self.entry_id}-button")
-                b.wait_in_text(".pf-c-modal-box__body .pf-c-description-list", self.ip)
+                b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-description-list", self.ip)
                 b.wait_in_text("#delete-resource-modal-ip", self.ip)
                 b.wait_in_text("#delete-resource-modal-mac", self.mac)
-                b.click(".pf-c-modal-box__footer button:contains(Remove)")
+                b.click(".pf-v5-c-modal-box__footer button:contains(Remove)")
                 b.wait_not_present(f"#network-{self.network_name}-{self.connection_name}-ipv4-dhcp-host-{self.entry_id}")
 
         b = self.browser
@@ -888,7 +888,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
         self.waitPageInit()
 
         # Click on Networks card
-        b.click(".pf-c-card .pf-c-card__header button:contains(Network)")
+        b.click(".pf-v5-c-card .pf-v5-c-card__header button:contains(Network)")
 
         # Check that all networks are there
         b.wait_in_text("body", "Networks")
@@ -940,7 +940,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
         # An error should be raised if "MAC address" and "IP address" is invaild
         b.click("#add-new-static-entry-save")
         b.wait_in_text(
-            ".pf-m-danger .pf-c-alert__description",
+            ".pf-m-danger .pf-v5-c-alert__description",
             "XML error: Cannot parse MAC address")
 
         # Attach basic static DHCP host and try to remove it

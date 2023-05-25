@@ -65,7 +65,7 @@ class TestMachinesFilesystems(VirtualMachinesCase):
         b.click("#vm-subVmTest1-filesystems-add")
         b.set_file_autocomplete_val("#vm-subVmTest1-filesystems-modal-source-group", "/tmp/dir1/")
         b.set_input_text("#vm-subVmTest1-filesystems-modal-mountTag", "dir1")
-        b.click(".pf-c-expandable-section__toggle")
+        b.click(".pf-v5-c-expandable-section__toggle")
         b.wait_visible("#vm-subVmTest1-filesystems-modal-xattr:not(:checked)")
         b.set_checked("#vm-subVmTest1-filesystems-modal-xattr", True)
 
@@ -87,7 +87,7 @@ class TestMachinesFilesystems(VirtualMachinesCase):
         b.click("#vm-subVmTest1-filesystems-add")
         b.set_file_autocomplete_val("#vm-subVmTest1-filesystems-modal-source-group", "/tmp/dir2/")
         b.set_input_text("#vm-subVmTest1-filesystems-modal-mountTag", "dir2")
-        b.click(".pf-c-expandable-section__toggle")
+        b.click(".pf-v5-c-expandable-section__toggle")
         b.set_checked("#vm-subVmTest1-filesystems-modal-xattr", False)
 
         b.click("#vm-subVmTest1-filesystems-modal-add")
@@ -105,8 +105,8 @@ class TestMachinesFilesystems(VirtualMachinesCase):
         b.set_file_autocomplete_val("#vm-subVmTest1-filesystems-modal-source-group", "/tmp/dir1/")
         b.set_input_text("#vm-subVmTest1-filesystems-modal-mountTag", "dir1")
         b.click("#vm-subVmTest1-filesystems-modal-add")
-        b.wait_in_text(".pf-c-alert", "Failed to add shared directory")
-        b.wait_in_text(".pf-c-alert", "filesystem target 'dir1' specified twice")
+        b.wait_in_text(".pf-v5-c-alert", "Failed to add shared directory")
+        b.wait_in_text(".pf-v5-c-alert", "filesystem target 'dir1' specified twice")
         b.click("#vm-subVmTest1-filesystems-modal-cancel")
 
         # Try to add a new shared filesystem with non existing source directory
@@ -134,7 +134,7 @@ class TestMachinesFilesystems(VirtualMachinesCase):
         m.execute("virt-xml subVmTest1 --add-device --filesystem source=/tmp/dir1/,target=dir1")
         b.wait_visible("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir1/-dir1']")
         b.click("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir1/-dir1'] button:contains(Remove)")
-        b.wait_in_text(".pf-c-modal-box__body .pf-c-description-list", "removed from subVmTest1")
+        b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-description-list", "removed from subVmTest1")
         b.wait_in_text("#delete-resource-modal-source-path", "/tmp/dir1/")
         b.wait_in_text("#delete-resource-modal-mount-tag", "dir1")
 

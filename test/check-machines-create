@@ -870,9 +870,9 @@ vnc_password= "{vnc_passwd}"
 
             b.wait_visible("#create-vm-dialog")
             if self.sourceType == 'disk_image':
-                b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Import a virtual machine")
+                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Import a virtual machine")
             else:
-                b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Create new virtual machine")
+                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Create new virtual machine")
 
             if self.os_name is not None:
                 # remove os codename from os name, e.g.: 'bullseye' in 'Debian 11 (bullseye)'
@@ -1028,7 +1028,7 @@ vnc_password= "{vnc_passwd}"
         def checkOsSorted(self, sorted_list):
             b = self.browser
 
-            b.click("#os-select-group .pf-c-select .pf-c-button")
+            b.click("#os-select-group .pf-v5-c-select .pf-v5-c-button")
 
             # Find the first OS from the sorted list, and get a text of it's next neighbour
             next_os = b.text(f"#os-select-group li:contains({sorted_list[0]}) + li")
@@ -1044,9 +1044,9 @@ vnc_password= "{vnc_passwd}"
 
         def createAndVerifyVirtInstallArgsCloudInit(self):
             if self.create_and_run:
-                self.browser.click(".pf-c-modal-box__footer button:contains(Create and run)")
+                self.browser.click(".pf-v5-c-modal-box__footer button:contains(Create and run)")
             else:
-                self.browser.click(".pf-c-modal-box__footer button:contains(Create and edit)")
+                self.browser.click(".pf-v5-c-modal-box__footer button:contains(Create and edit)")
             self.browser.wait_not_present("#create-vm-dialog")
 
             if self.create_and_run:
@@ -1096,9 +1096,9 @@ vnc_password= "{vnc_passwd}"
             m = self.machine
 
             if self.create_and_run:
-                self.browser.click(".pf-c-modal-box__footer button:contains(Create and run)")
+                self.browser.click(".pf-v5-c-modal-box__footer button:contains(Create and run)")
             else:
-                self.browser.click(".pf-c-modal-box__footer button:contains(Create and edit)")
+                self.browser.click(".pf-v5-c-modal-box__footer button:contains(Create and edit)")
             self.browser.wait_not_present("#create-vm-dialog")
             self.browser.wait_text(f"#vm-{self.name}-{self.connection}-state", "Shut off")
 
@@ -1119,9 +1119,9 @@ vnc_password= "{vnc_passwd}"
 
         def createAndVerifyVirtInstallArgsUnattended(self):
             if self.create_and_run:
-                self.browser.click(".pf-c-modal-box__footer button:contains(Create and run)")
+                self.browser.click(".pf-v5-c-modal-box__footer button:contains(Create and run)")
             else:
-                self.browser.click(".pf-c-modal-box__footer button:contains(Create and edit)")
+                self.browser.click(".pf-v5-c-modal-box__footer button:contains(Create and edit)")
             self.browser.wait_not_present("#create-vm-dialog")
             if self.storage_pool != NO_STORAGE:
                 self.goToVmPage(self.name)
@@ -1245,7 +1245,7 @@ vnc_password= "{vnc_passwd}"
         def cancel(self, force=False):
             b = self.browser
             if b.is_present("#create-vm-dialog"):
-                b.click(".pf-c-modal-box__footer button:contains(Cancel)")
+                b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
                 b.wait_not_present("#create-vm-dialog")
             elif force:
                 raise Exception("There is no dialog to cancel")
@@ -1257,31 +1257,31 @@ vnc_password= "{vnc_passwd}"
             if create:
                 if self.sourceType == 'disk_image':
                     if self.create_and_run:
-                        b.click(".pf-c-modal-box__footer button:contains(Import and run)")
+                        b.click(".pf-v5-c-modal-box__footer button:contains(Import and run)")
                     else:
-                        b.click(".pf-c-modal-box__footer button:contains(Import and edit)")
+                        b.click(".pf-v5-c-modal-box__footer button:contains(Import and edit)")
                 else:
                     if self.create_and_run:
-                        b.click(".pf-c-modal-box__footer button:contains(Create and run)")
+                        b.click(".pf-v5-c-modal-box__footer button:contains(Create and run)")
                     else:
-                        b.click(".pf-c-modal-box__footer button:contains(Create and edit)")
+                        b.click(".pf-v5-c-modal-box__footer button:contains(Create and edit)")
 
             for error, error_msg in errors.items():
                 if is_warning:
-                    error_location = f".pf-c-modal-box__body #{error}-group .pf-c-form__helper-text .pf-m-warning"
+                    error_location = f".pf-v5-c-modal-box__body #{error}-group .pf-v5-c-form__helper-text .pf-m-warning"
                 else:
-                    error_location = f".pf-c-modal-box__body #{error}-group .pf-c-form__helper-text .pf-m-error"
+                    error_location = f".pf-v5-c-modal-box__body #{error}-group .pf-v5-c-form__helper-text .pf-m-error"
                 b.wait_visible(error_location)
                 if (error_msg):
                     b.wait_in_text(error_location, error_msg)
 
             if create:
                 if self.sourceType == 'disk_image':
-                    b.wait_visible(".pf-c-modal-box__footer button:contains(Import and run)[aria-disabled=true]")
-                    b.wait_visible(".pf-c-modal-box__footer button:contains(Import and edit)[aria-disabled=true]")
+                    b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Import and run)[aria-disabled=true]")
+                    b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Import and edit)[aria-disabled=true]")
                 else:
-                    b.wait_visible(".pf-c-modal-box__footer button:contains(Create and run)[aria-disabled=true]")
-                    b.wait_visible(".pf-c-modal-box__footer button:contains(Create and edit)[aria-disabled=true]")
+                    b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Create and run)[aria-disabled=true]")
+                    b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Create and edit)[aria-disabled=true]")
 
             return self
 
@@ -1299,11 +1299,11 @@ vnc_password= "{vnc_passwd}"
                         ', '.join(errors), b.text(error_location)))
 
             if self.create_and_run:
-                b.click(".pf-c-modal-box__footer button:contains(Create and run)")
+                b.click(".pf-v5-c-modal-box__footer button:contains(Create and run)")
             else:
-                b.click(".pf-c-modal-box__footer button:contains(Create and edit)")
+                b.click(".pf-v5-c-modal-box__footer button:contains(Create and edit)")
 
-            error_location = ".pf-c-modal-box__footer div.pf-c-alert"
+            error_location = ".pf-v5-c-modal-box__footer div.pf-v5-c-alert"
 
             try:
                 with b.wait_timeout(10):
@@ -1318,7 +1318,7 @@ vnc_password= "{vnc_passwd}"
                     raise
                 else:
                     # then error should be shown in the notification area
-                    error_location = ".pf-c-alert-group li .pf-c-alert"
+                    error_location = ".pf-v5-c-alert-group li .pf-v5-c-alert"
                     with b.wait_timeout(20):
                         b.wait_visible(error_location)
                         b.wait_in_text("button.alert-link.more-button", "show more")
@@ -1326,8 +1326,8 @@ vnc_password= "{vnc_passwd}"
                         waitForError(errors, error_location)
 
             # Close the notification
-            b.click(".pf-c-alert-group li .pf-c-alert button.pf-m-plain")
-            b.wait_not_present(".pf-c-alert-group li .pf-c-alert")
+            b.click(".pf-v5-c-alert-group li .pf-v5-c-alert button.pf-m-plain")
+            b.wait_not_present(".pf-v5-c-alert-group li .pf-v5-c-alert")
 
             return self
 
@@ -1486,14 +1486,14 @@ vnc_password= "{vnc_passwd}"
             b = self.browser
             if dialog.sourceType == 'disk_image':
                 if dialog.create_and_run:
-                    b.click(".pf-c-modal-box__footer button:contains(Import and run)")
+                    b.click(".pf-v5-c-modal-box__footer button:contains(Import and run)")
                 else:
-                    b.click(".pf-c-modal-box__footer button:contains(Import and edit)")
+                    b.click(".pf-v5-c-modal-box__footer button:contains(Import and edit)")
             else:
                 if dialog.create_and_run:
-                    b.click(".pf-c-modal-box__footer button:contains(Create and run)")
+                    b.click(".pf-v5-c-modal-box__footer button:contains(Create and run)")
                 else:
-                    b.click(".pf-c-modal-box__footer button:contains(Create and edit)")
+                    b.click(".pf-v5-c-modal-box__footer button:contains(Create and edit)")
 
             final_state = "Running" if dialog.create_and_run else "Shut off"
             # Test dowloading RHEL image shows the progress of the download
@@ -1504,9 +1504,9 @@ vnc_password= "{vnc_passwd}"
                     # Progress is shown in VM state in VMs list
                     self.assertRegex(b.text(f"#vm-{dialog.name}-{dialog.connection}-state"), r"^.*[0-9][0-9]?%$|^100%$")
                 else:
-                    b.wait_in_text(".pf-c-empty-state__content", "Downloading image")
+                    b.wait_in_text(".pf-v5-c-empty-state__content", "Downloading image")
                     # Progress is shown at VM page empty state
-                    self.assertRegex(b.text(".pf-c-empty-state__body .pf-c-progress__status"), r"^[0-9][0-9]?%$|^100%$")
+                    self.assertRegex(b.text(".pf-v5-c-empty-state__body .pf-v5-c-progress__status"), r"^[0-9][0-9]?%$|^100%$")
 
                 b.wait_in_text(f"#vm-{dialog.name}-{dialog.connection}-state", final_state)
             b.wait_not_present("#create-vm-dialog")
@@ -1559,7 +1559,7 @@ vnc_password= "{vnc_passwd}"
                 m.execute("virsh net-destroy default")
                 b.wait_in_text(f"#vm-{name}-{connection}-state", "Shut off")
                 b.wait_visible(f"#vm-{name}-{connection}-install")
-                b.wait_in_text(".pf-c-alert", "failed to get installed")
+                b.wait_in_text(".pf-v5-c-alert", "failed to get installed")
                 # can reattempt installation
                 b.wait_visible(f"#vm-{name}-{connection}-install")
                 # can't run, as it is still in install phase
@@ -1620,7 +1620,7 @@ vnc_password= "{vnc_passwd}"
                 memory_text = "/ " + f"{dialog.memory_size / 1024:.1f}".rstrip('.0') + " GiB"
             else:
                 memory_text = "/ " + f"{dialog.memory_size:.1f}".rstrip('.0') + f" {dialog.memory_size_unit}"
-            b.wait_in_text(".memory-usage-chart .pf-c-progress__status > .pf-c-progress__measure", memory_text)
+            b.wait_in_text(".memory-usage-chart .pf-v5-c-progress__status > .pf-v5-c-progress__measure", memory_text)
 
             # check disks
             # Test disk got imported/created
@@ -1657,7 +1657,7 @@ vnc_password= "{vnc_passwd}"
                 else:
                     raise AssertionError("Unknown disk device")
             else:
-                b.wait_in_text(f"#vm-{name}-disks .pf-c-empty-state", "No disks defined")
+                b.wait_in_text(f"#vm-{name}-disks .pf-v5-c-empty-state", "No disks defined")
                 b.click(f"#vm-{name}-disks-adddisk")
                 b.click(f"#vm-{name}-disks-adddisk-dialog-cancel")
             return self
@@ -1690,15 +1690,15 @@ vnc_password= "{vnc_passwd}"
 
             # wait until virt-install process is finished
             wait(lambda: "virt-install" not in self.machine.execute("ps aux | grep '[v]irt-install --connect' || true"))
-            b.wait_in_text("#virtual-machines-listing .pf-c-empty-state", "No VM is running")
+            b.wait_in_text("#virtual-machines-listing .pf-v5-c-empty-state", "No VM is running")
             # wait for the vm and disks to be deleted
             self.machine.execute("until test -z $(virsh list --all --name); do sleep 1; done")
             self.machine.execute("until test -z $(ls /home/admin/.local/share/libvirt/images/ 2>/dev/null); do sleep 1; done")
 
             # When we delete a VM while virt-install is running there will be an error
-            while (b.is_present(".pf-c-alert-group li")):
-                b.click(".pf-c-alert-group li:first-of-type .pf-c-alert button.pf-m-plain")
-            b.wait_not_present(".pf-c-alert-group")
+            while (b.is_present(".pf-v5-c-alert-group li")):
+                b.click(".pf-v5-c-alert-group li:first-of-type .pf-v5-c-alert button.pf-m-plain")
+            b.wait_not_present(".pf-v5-c-alert-group")
 
             return self
 
@@ -1765,8 +1765,8 @@ vnc_password= "{vnc_passwd}"
             b.wait_in_text("#token-helper-message", error_msg)
             b.wait_in_text("#token-helper-message", "Get a new RHSM token")
             if create_disabled:
-                b.wait_visible(".pf-c-modal-box__footer button:contains(Create and run)[aria-disabled=true]")
-                b.wait_visible(".pf-c-modal-box__footer button:contains(Create and edit)[aria-disabled=true]")
+                b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Create and run)[aria-disabled=true]")
+                b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Create and edit)[aria-disabled=true]")
 
             dialog.cancel()
 
@@ -1869,7 +1869,7 @@ vnc_password= "{vnc_passwd}"
         dialog.open() \
             .fill() \
 
-        b.click(".pf-c-modal-box__footer button:contains(Create and edit)")
+        b.click(".pf-v5-c-modal-box__footer button:contains(Create and edit)")
         b.wait_not_present("#create-vm-dialog")
 
         wait(lambda: "<cockpit_machines:os_variant>fedora28</cockpit_machines:os_variant>" in m.execute("virsh dumpxml VmNotInstalled"), delay=3)
@@ -1888,11 +1888,11 @@ vnc_password= "{vnc_passwd}"
         b.set_input_text("#vm-VmNotInstalled-memory-modal-memory", "130")
         b.blur("#vm-VmNotInstalled-memory-modal-memory")
         b.click("#vm-VmNotInstalled-memory-modal-save")
-        b.wait_not_present(".pf-c-modal-box__body")
+        b.wait_not_present(".pf-v5-c-modal-box__body")
 
         # Change vCPUs setting
         b.click("#vm-VmNotInstalled-cpu button")
-        b.wait_visible(".pf-c-modal-box__body")
+        b.wait_visible(".pf-v5-c-modal-box__body")
         b.set_input_text("#machines-vcpu-max-field input", "8")
         b.blur("#machines-vcpu-max-field")
         b.set_input_text("#machines-vcpu-count-field input", "2")
@@ -1901,16 +1901,16 @@ vnc_password= "{vnc_passwd}"
         b.select_from_dropdown("#coresSelect", "2")
         b.select_from_dropdown("#threadsSelect", "2")
         b.click("#machines-cpu-modal-dialog-apply")
-        b.wait_not_present(".pf-c-modal-box__body")
+        b.wait_not_present(".pf-v5-c-modal-box__body")
 
         # Change Boot Order setting
         bootOrder = b.text("#vm-VmNotInstalled-boot-order")
         b.click("#vm-VmNotInstalled-boot-order button")
-        b.wait_visible(".pf-c-modal-box__body")
+        b.wait_visible(".pf-v5-c-modal-box__body")
         b.set_checked("#vm-VmNotInstalled-order-modal-device-1-checkbox", True)
         b.click("#vm-VmNotInstalled-order-modal-device-row-0 #vm-VmNotInstalled-order-modal-down")
         b.click("#vm-VmNotInstalled-order-modal-save")
-        b.wait_not_present(".pf-c-modal-box__body")
+        b.wait_not_present(".pf-v5-c-modal-box__body")
 
         # Attach some interface
         m.execute("virsh attach-interface --persistent VmNotInstalled bridge virbr0")
@@ -1918,10 +1918,10 @@ vnc_password= "{vnc_passwd}"
         # Change the os boot firmware configuration
         b.wait_in_text("#vm-VmNotInstalled-firmware", "BIOS")
         b.click("#vm-VmNotInstalled-firmware")
-        b.wait_visible(".pf-c-modal-box__body")
-        b.select_from_dropdown(".pf-c-modal-box__body select", "efi")
+        b.wait_visible(".pf-v5-c-modal-box__body")
+        b.select_from_dropdown(".pf-v5-c-modal-box__body select", "efi")
         b.click("#firmware-dialog-apply")
-        b.wait_not_present(".pf-c-modal-box__body")
+        b.wait_not_present(".pf-v5-c-modal-box__body")
         b.wait_in_text("#vm-VmNotInstalled-firmware", "UEFI")
 
         # Temporarily delete the OVMF binary and check the firmware options again
@@ -1942,7 +1942,7 @@ vnc_password= "{vnc_passwd}"
         b.enter_page('/machines')
 
         b.mouse("#vm-VmNotInstalled-firmware-tooltip", "mouseenter")
-        b.wait_in_text(".pf-c-tooltip", "Libvirt did not detect any UEFI/OVMF firmware image installed on the host")
+        b.wait_in_text(".pf-v5-c-tooltip", "Libvirt did not detect any UEFI/OVMF firmware image installed on the host")
         b.mouse("#vm-VmNotInstalled-firmware-tooltip", "mouseleave")
         b.wait_not_present("#missing-uefi-images")
         m.execute("umount " + ovmf_path)
@@ -1965,18 +1965,18 @@ vnc_password= "{vnc_passwd}"
         b.wait_val("#vm-VmNotInstalled-memory-modal-max-memory", "150")
         b.wait_val("#vm-VmNotInstalled-memory-modal-memory", "130")
         b.click("#vm-VmNotInstalled-memory-modal-cancel")
-        b.wait_not_present(".pf-c-modal-box__body")
+        b.wait_not_present(".pf-v5-c-modal-box__body")
 
         # Check vCPU settings have persisted
         b.click("#vm-VmNotInstalled-cpu button")
-        b.wait_visible(".pf-c-modal-box__body")
+        b.wait_visible(".pf-v5-c-modal-box__body")
         b.wait_val("#machines-vcpu-max-field input", "8")
         b.wait_val("#machines-vcpu-count-field input", "2")
         b.wait_val("#socketsSelect", "2")
         b.wait_val("#coresSelect", "2")
         b.wait_val("#threadsSelect", "2")
         b.click("#machines-cpu-modal-dialog-cancel")
-        b.wait_not_present(".pf-c-modal-box__body")
+        b.wait_not_present(".pf-v5-c-modal-box__body")
 
         # Check changed boot order have persisted
         b.wait_text_not("#vm-VmNotInstalled-boot-order", bootOrder)
@@ -2010,7 +2010,7 @@ vnc_password= "{vnc_passwd}"
                                              create_and_run=False)
         dialog.open().fill()
 
-        b.click(".pf-c-modal-box__footer #create-and-edit")
+        b.click(".pf-v5-c-modal-box__footer #create-and-edit")
         b.wait_not_present("#create-vm-dialog")
 
         self.waitVmPage("VmNotInstalledBios")
@@ -2018,10 +2018,10 @@ vnc_password= "{vnc_passwd}"
         # Show and keep the os boot firmware configuration
         b.wait_in_text("#vm-VmNotInstalledBios-firmware", "BIOS")
         b.click("#vm-VmNotInstalledBios-firmware")
-        b.wait_visible(".pf-c-modal-box__body")
-        b.wait_val(".pf-c-modal-box__body select", "bios")
+        b.wait_visible(".pf-v5-c-modal-box__body")
+        b.wait_val(".pf-v5-c-modal-box__body select", "bios")
         b.click("#firmware-dialog-apply")
-        b.wait_not_present(".pf-c-modal-box__body")
+        b.wait_not_present(".pf-v5-c-modal-box__body")
         b.wait_in_text("#vm-VmNotInstalledBios-firmware", "BIOS")
 
         # Install the VM
@@ -2061,8 +2061,8 @@ vnc_password= "{vnc_passwd}"
                                              os_short_id=config.RHEL_8_1_SHORTID) \
             .open() \
             .fill()
-        b.wait_visible(".pf-c-modal-box__footer button:contains(Create and run)[aria-disabled=false]")
-        b.wait_visible(".pf-c-modal-box__footer button:contains(Create and edit)[aria-disabled=false]")
+        b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Create and run)[aria-disabled=false]")
+        b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Create and edit)[aria-disabled=false]")
         dialog.cancel()
 
         runner.checkDialogErrorTest(TestMachinesCreate.VmDialog(self, sourceType='os',

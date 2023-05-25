@@ -93,7 +93,7 @@ export class DeleteResourceModal extends React.Component {
                        </>
                    }>
                 {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
-                <DescriptionList className={this.state.dialogError && "pf-u-pt-md"} isHorizontal>
+                <DescriptionList className={this.state.dialogError && "pf-v5-u-pt-md"} isHorizontal>
                     {actionDescription || cockpit.format(_("Confirm this action"))}
                     {objectDescription && objectDescription.flatMap(row => row.value
                         ? <DescriptionListGroup id={`delete-resource-modal-${row.name.toLowerCase().replace(/ /g, "-")}`} key={row.name}>

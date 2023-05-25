@@ -62,7 +62,7 @@ class TestMachinesSnapshots(VirtualMachinesCase):
             b.wait_not_present("#vm-subVmTest1-snapshots")
             return
 
-        b.wait_in_text("#vm-subVmTest1-snapshots .pf-c-empty-state", "No snapshots")
+        b.wait_in_text("#vm-subVmTest1-snapshots .pf-v5-c-empty-state", "No snapshots")
 
         # Check snapshot for running VM
         m.execute("virsh detach-disk --domain subVmTest1 --target vda --persistent")  # vda is raw disk, which are not supported by internal snapshots
@@ -152,7 +152,7 @@ class TestMachinesSnapshots(VirtualMachinesCase):
 
             def open(self):
                 b.click("#vm-subVmTest1-add-snapshot-button")
-                b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Create snapshot")
+                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Create snapshot")
 
             def fill(self):
                 if self.name:
@@ -165,21 +165,21 @@ class TestMachinesSnapshots(VirtualMachinesCase):
                     b.assert_pixels("#vm-subVmTest1-create-snapshot-modal", "create-snapshot-dialog" + ("" if not self.xfail else "-error"), skip_layouts=["rtl"])
 
             def cancel(self):
-                b.click(".pf-c-modal-box__footer button:contains(Cancel)")
+                b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
                 b.wait_not_present("#vm-subVmTest1-create-snapshot-modal")
 
             def create(self):
                 if not self.xfail:
                     self.assert_pixels()
 
-                b.click(".pf-c-modal-box__footer button:contains(Create)")
+                b.click(".pf-v5-c-modal-box__footer button:contains(Create)")
 
                 if not self.xfail:
                     b.wait_not_present("#vm-subVmTest1-create-snapshot-modal")
                 else:
                     self.assert_pixels()
                     b.wait_visible("#snapshot-create-dialog-name[aria-invalid=true]")
-                    b.click(".pf-c-modal-box__footer button:contains(Cancel)")
+                    b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
 
             def verify_frontend(self):
                 if self.name:
@@ -211,9 +211,9 @@ class TestMachinesSnapshots(VirtualMachinesCase):
 
             def cleanup(self):
                 b.click(f"#delete-vm-subVmTest1-snapshot-{self.snap_num}")
-                b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Delete snapshot?")
-                b.wait_in_text(".pf-c-modal-box__body .pf-c-description-list", f"{self.name} will be deleted from {self.vm_name}")
-                b.click('.pf-c-modal-box__footer button:contains("Delete")')
+                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Delete snapshot?")
+                b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-description-list", f"{self.name} will be deleted from {self.vm_name}")
+                b.click('.pf-v5-c-modal-box__footer button:contains("Delete")')
                 b.wait_not_present(f"#vm-subVmTest1-snapshot-{self.snap_num}-name:contains({self.name})")
 
         # No Snapshots present
@@ -283,8 +283,8 @@ class TestMachinesSnapshots(VirtualMachinesCase):
         self.assertEqual("no", m.execute("virsh snapshot-info --domain subVmTest1 --snapshotname snapshotB | grep 'Current:' | awk '{print $2}'").strip())
 
         b.click("#vm-subVmTest1-snapshot-0-revert")
-        b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Revert to snapshot snapshotB")
-        b.click('.pf-c-modal-box__footer button:contains("Revert")')
+        b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Revert to snapshot snapshotB")
+        b.click('.pf-v5-c-modal-box__footer button:contains("Revert")')
 
         b.wait_not_present("#vm-subVmTest1-snapshot-1-current")
         b.wait_visible("#vm-subVmTest1-snapshot-0-current")
@@ -305,15 +305,15 @@ class TestMachinesSnapshots(VirtualMachinesCase):
         # libvirt will require using force options since there is a risk of memory corruption
         b.wait_in_text("#vm-subVmTest1-snapshot-0-name", "snapshotC")
         b.click("#vm-subVmTest1-snapshot-0-revert")
-        b.wait_in_text(".pf-c-modal-box .pf-c-modal-box__header .pf-c-modal-box__title", "Revert to snapshot snapshotC")
-        b.click('.pf-c-modal-box__footer button:contains("Revert")')
+        b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Revert to snapshot snapshotC")
+        b.click('.pf-v5-c-modal-box__footer button:contains("Revert")')
         # Check "Force revert" is present and Regular revert is disabled
-        b.wait_in_text(".pf-c-modal-box .pf-c-alert__description", "revert requires force")
-        b.wait_visible(".pf-c-modal-box__footer button:contains(Revert):disabled")
-        b.wait_visible(".pf-c-modal-box__footer button:contains(Force revert)")
+        b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-alert__description", "revert requires force")
+        b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Revert):disabled")
+        b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Force revert)")
 
-        b.click(".pf-c-modal-box__footer button:contains(Force revert)")
-        b.wait_not_present(".pf-c-modal-box")
+        b.click(".pf-v5-c-modal-box__footer button:contains(Force revert)")
+        b.wait_not_present(".pf-v5-c-modal-box")
 
         # Check VM was reverted to a correct snapshot
         b.wait_not_present("#vm-subVmTest1-snapshot-1-current")

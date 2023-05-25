@@ -63,8 +63,8 @@ class TestMachinesConsoles(VirtualMachinesCase):
         b.click("button:contains(Expand)")
 
         # Check "More information"
-        b.click('.pf-c-console__remote-viewer .pf-c-expandable-section__toggle')
-        b.wait_in_text('.pf-c-expandable-section__content',
+        b.click('.pf-c-console__remote-viewer .pf-v5-c-expandable-section__toggle')
+        b.wait_in_text('.pf-v5-c-expandable-section__content',
                        'Clicking "Launch remote viewer" will download')
 
         b.assert_pixels("#vm-subVmTest1-consoles-page", "vm-details-console-external", skip_layouts=["rtl"])
@@ -113,9 +113,9 @@ class TestMachinesConsoles(VirtualMachinesCase):
         b.wait_in_text(f"#vm-{name}-system-state", "Running")
 
         b.click("#pf-c-console__type-selector")
-        b.wait_visible("#pf-c-console__type-selector + .pf-c-select__menu")
+        b.wait_visible("#pf-c-console__type-selector + .pf-v5-c-select__menu")
         b.click("#SerialConsole button")
-        b.wait_not_present("#pf-c-console__type-selector + .pf-c-select__menu")
+        b.wait_not_present("#pf-c-console__type-selector + .pf-v5-c-select__menu")
 
         b.wait_in_text(f"#{name}-terminal .xterm-accessibility-tree", f"Connected to domain '{name}'")
 
@@ -143,7 +143,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
         # Add a second serial console
         m.execute("virsh destroy vmWithSerialConsole; virt-xml --add-device vmWithSerialConsole --console pty,target_type=virtio; virsh start vmWithSerialConsole")
         b.click("#pf-c-console__type-selector")
-        b.wait_visible("#pf-c-console__type-selector + .pf-c-select__menu")
+        b.wait_visible("#pf-c-console__type-selector + .pf-v5-c-select__menu")
         b.click("li:contains('Serial console (console0)') button")
         b.wait(lambda: m.execute("ps aux | grep 'virsh -c qemu:///system console vmWithSerialConsole console0'"))
         b.click("#pf-c-console__type-selector")
@@ -161,7 +161,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
 
         for i in range(0, 6):
             b.click("#pf-c-console__type-selector")
-            b.wait_visible("#pf-c-console__type-selector + .pf-c-select__menu")
+            b.wait_visible("#pf-c-console__type-selector + .pf-v5-c-select__menu")
             b.click(f'li:contains(\'Serial console ({"serial" if i == 0 else "console"}{i})\') button')
             b.wait(lambda: m.execute(f'ps aux | grep \'virsh -c qemu:///system console vmWithSerialConsole {"serial" if i == 0 else "console"}{i}\''))
 
@@ -190,18 +190,18 @@ class TestMachinesConsoles(VirtualMachinesCase):
         b.wait_visible(".pf-c-console__vnc canvas")
 
         b.click("#pf-c-console__type-selector")
-        b.wait_visible("#pf-c-console__type-selector + .pf-c-select__menu")
+        b.wait_visible("#pf-c-console__type-selector + .pf-v5-c-select__menu")
         b.click("#SerialConsole button")
-        b.wait_not_present("#pf-c-console__type-selector + .pf-c-select__menu")
+        b.wait_not_present("#pf-c-console__type-selector + .pf-v5-c-select__menu")
 
         b.wait_not_present(".pf-c-console__vnc canvas")
         b.wait_visible(f"#{name}-terminal")
 
         # Go back to Vnc console
         b.click("#pf-c-console__type-selector")
-        b.wait_visible("#pf-c-console__type-selector + .pf-c-select__menu")
+        b.wait_visible("#pf-c-console__type-selector + .pf-v5-c-select__menu")
         b.click("#VncConsole button")
-        b.wait_not_present("#pf-c-console__type-selector + .pf-c-select__menu")
+        b.wait_not_present("#pf-c-console__type-selector + .pf-v5-c-select__menu")
         b.wait_visible(".pf-c-console__vnc canvas")
 
         # Go to the expanded console view

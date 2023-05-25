@@ -38,7 +38,7 @@ const NetworkMacRow = ({ mac, onValueChanged, idPrefix, isShutoff }) => {
         <TextInput id={`${idPrefix}-mac`}
                    value={mac}
                    {...(!isShutoff ? { readOnlyVariant: "plain" } : {})}
-                   onChange={value => onValueChanged("networkMac", value)} />
+                   onChange={(_, value) => onValueChanged("networkMac", value)} />
     );
     if (!isShutoff)
         macInput = <Tooltip content={_("Only editable when the guest is shut off")}>{macInput}</Tooltip>;

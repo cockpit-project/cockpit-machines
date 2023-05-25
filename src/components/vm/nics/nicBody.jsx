@@ -174,7 +174,7 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
                                             </p>
                                         </TextContent>))}
                                     </Flex>}>
-                               <button onClick={e => e.preventDefault()} className="pf-c-form__group-label-help">
+                               <button onClick={e => e.preventDefault()} className="pf-v5-c-form__group-label-help">
                                    <OutlinedQuestionCircleIcon />
                                </button>
                            </Popover>
