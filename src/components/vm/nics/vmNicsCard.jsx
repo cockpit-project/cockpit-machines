@@ -232,6 +232,11 @@ export class VmNetworkTab extends React.Component {
             };
         };
 
+        // Normally we should identify a vNIC to detach by a number of slot, bus, function and domain.
+        // Such detachment is however broken in virt-xml, so instead let's detach it by the index of <interface> in array of VM's XML <devices>
+        // This serves as workaround for https://github.com/virt-manager/virt-manager/issues/356
+        const ifaces = vm.interfaces.map((iface, index) => ({ ...iface, index }));
+
         // Network data mapping to rows
         let detailMap = [
             {
@@ -244,7 +249,8 @@ export class VmNetworkTab extends React.Component {
                         </Flex>
                     );
                 },
-                props: { width: 10 }
+                props: { width: 10 },
+                hidden: ifaces.every(i => !i.type),
             },
             {
                 name: _("Model type"),
@@ -256,15 +262,18 @@ export class VmNetworkTab extends React.Component {
                         </Flex>
                     );
                 },
-                props: { width: 10 }
+                props: { width: 10 },
+                hidden: ifaces.every(i => !i.model),
             },
-            { name: _("MAC address"), value: 'mac', props: { width: 20 } },
+            {
+                name: _("MAC address"),
+                value: 'mac',
+                props: { width: 20 },
+                hidden: ifaces.every(i => !i.mac),
+            },
             {
                 name: _("IP address"),
                 value: () => {
-                    if (this.props.vm.state != 'running' && this.props.vm.state != 'paused')
-                        return '';
-
                     const ips = this.state.ips;
 
                     if (!Object.keys(ips).length) {
@@ -283,7 +292,8 @@ export class VmNetworkTab extends React.Component {
                         );
                     }
                 },
-                props: { width: 20 }
+                props: { width: 20 },
+                hidden: this.props.vm.state != 'running' && this.props.vm.state != 'paused',
             },
             {
                 name: _("Source"),
@@ -324,7 +334,8 @@ export class VmNetworkTab extends React.Component {
                 value: (network, networkId) => {
                     return <span className='machines-network-state' id={`${id}-network-${networkId}-state`}>{rephraseUI('networkState', network.state)}</span>;
                 },
-                props: { width: 10 }
+                props: { width: 10 },
+                hidden: ifaces.every(i => !i.state),
             },
             {
                 name: "",
@@ -418,10 +429,6 @@ export class VmNetworkTab extends React.Component {
             else
                 return 0;
         };
-        // Normally we should identify a vNIC to detach by a number of slot, bus, function and domain.
-        // Such detachment is however broken in virt-xml, so instead let's detach it by the index of <interface> in array of VM's XML <devices>
-        // This serves as workaround for https://github.com/virt-manager/virt-manager/issues/356
-        const ifaces = vm.interfaces.map((iface, index) => ({ ...iface, index }));
         const rows = ifaces.sort(sortIfaces).map(target => {
             const columns = detailMap.map(d => {
                 let column = null;
