@@ -300,7 +300,7 @@ export class VmNetworkTab extends React.Component {
             {
                 name: _("MAC address"),
                 value: 'mac',
-                props: { width: 20 },
+                props: { width: 15 },
                 hidden: ifaces.every(i => !i.mac),
             },
             {
@@ -324,13 +324,13 @@ export class VmNetworkTab extends React.Component {
                         );
                     }
                 },
-                props: { width: 20 },
+                props: { width: Object.keys(this.state.ips).length ? 20 : 10 },
                 hidden: this.props.vm.state != 'running' && this.props.vm.state != 'paused',
             },
             {
                 name: _("Source"),
                 value: (network, networkId) => <NetworkSource network={network} networkId={networkId} vm={vm} hostDevices={this.hostDevices} />,
-                props: { width: 10 }
+                props: { width: 15 }
             },
             {
                 name: _("State"),
@@ -416,7 +416,7 @@ export class VmNetworkTab extends React.Component {
                         </div>
                     );
                 },
-                props: { width: 20 }
+                props: { width: 10 }
             },
         ];
 
