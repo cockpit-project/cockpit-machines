@@ -105,6 +105,55 @@ VmNetworkActions.propTypes = {
     networks: PropTypes.array.isRequired,
 };
 
+const NetworkSource = ({ network, networkId, vm, hostDevices }) => {
+    const id = vmId(vm.name);
+    const checkDeviceAviability = (network) => {
+        for (const i in hostDevices) {
+            if (hostDevices[i].valid && hostDevices[i].Interface == network) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    const sourceJump = (source) => {
+        return () => {
+            if (source !== null && checkDeviceAviability(source)) {
+                cockpit.jump(`/network#/${source}`, cockpit.transport.host);
+            }
+        };
+    };
+
+    const singleSourceElem = source => checkDeviceAviability(source) ? <Button variant="link" isInline onClick={sourceJump(source)}>{source}</Button> : source;
+    const addressPortSourceElem = (source, networkId) => (<table id={`${id}-network-${networkId}-source`}>
+        <tbody>
+            <tr><td className='machines-network-source-descr'>{_("Address")}</td><td className='machines-network-source-value'>{source.address}</td></tr>
+            <tr><td className='machines-network-source-descr'>{_("Port")}</td><td className='machines-network-source-value'>{source.port}</td></tr>
+        </tbody>
+    </table>);
+
+    const getSourceElem = {
+        direct: singleSourceElem,
+        network: singleSourceElem,
+        bridge: singleSourceElem,
+        mcast: addressPortSourceElem,
+        server: addressPortSourceElem,
+        client: addressPortSourceElem,
+        udp: addressPortSourceElem,
+    };
+
+    if (getSourceElem[network.type] !== undefined) {
+        return (
+            <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${id}-network-${networkId}-source`}>
+                <FlexItem>{getSourceElem[network.type](getIfaceSourceName(network), networkId)}</FlexItem>
+                {needsShutdownIfaceSource(vm, network) && <NeedsShutdownTooltip iconId={`${id}-network-${networkId}-source-tooltip`} tooltipId="tip-network" />}
+            </Flex>
+        );
+    } else {
+        return null;
+    }
+};
+
 export class VmNetworkTab extends React.Component {
     static contextType = DialogsContext;
 
@@ -198,23 +247,6 @@ export class VmNetworkTab extends React.Component {
             device: this.state.networkDevices,
         };
 
-        const checkDeviceAviability = (network) => {
-            for (const i in this.hostDevices) {
-                if (this.hostDevices[i].valid && this.hostDevices[i].Interface == network) {
-                    return true;
-                }
-            }
-            return false;
-        };
-
-        const sourceJump = (source) => {
-            return () => {
-                if (source !== null && checkDeviceAviability(source)) {
-                    cockpit.jump(`/network#/${source}`, cockpit.transport.host);
-                }
-            };
-        };
-
         const onChangeState = (network) => {
             return (e) => {
                 e.stopPropagation();
@@ -297,36 +329,7 @@ export class VmNetworkTab extends React.Component {
             },
             {
                 name: _("Source"),
-                value: (network, networkId) => {
-                    const singleSourceElem = source => checkDeviceAviability(source) ? <Button variant="link" isInline onClick={sourceJump(source)}>{source}</Button> : source;
-                    const addressPortSourceElem = (source, networkId) => (<table id={`${id}-network-${networkId}-source`}>
-                        <tbody>
-                            <tr><td className='machines-network-source-descr'>{_("Address")}</td><td className='machines-network-source-value'>{source.address}</td></tr>
-                            <tr><td className='machines-network-source-descr'>{_("Port")}</td><td className='machines-network-source-value'>{source.port}</td></tr>
-                        </tbody>
-                    </table>);
-
-                    const getSourceElem = {
-                        direct: singleSourceElem,
-                        network: singleSourceElem,
-                        bridge: singleSourceElem,
-                        mcast: addressPortSourceElem,
-                        server: addressPortSourceElem,
-                        client: addressPortSourceElem,
-                        udp: addressPortSourceElem,
-                    };
-
-                    if (getSourceElem[network.type] !== undefined) {
-                        return (
-                            <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${id}-network-${networkId}-source`}>
-                                <FlexItem>{getSourceElem[network.type](getIfaceSourceName(network), networkId)}</FlexItem>
-                                {needsShutdownIfaceSource(vm, network) && <NeedsShutdownTooltip iconId={`${id}-network-${networkId}-source-tooltip`} tooltipId="tip-network" />}
-                            </Flex>
-                        );
-                    } else {
-                        return null;
-                    }
-                },
+                value: (network, networkId) => <NetworkSource network={network} networkId={networkId} vm={vm} hostDevices={this.hostDevices} />,
                 props: { width: 10 }
             },
             {
