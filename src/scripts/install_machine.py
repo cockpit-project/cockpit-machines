@@ -46,7 +46,8 @@ def get_graphics_capabilies(connection):
 
 def prepare_graphics_params(connection):
     graphics_config = {
-        'spice': {'listen': '127.0.0.1'},
+        # Use ipv6 as workaround for https://bugs.launchpad.net/ubuntu/+source/qemu/+bug/1492621
+        'spice': {'listen': '::1'},
         'vnc': {'listen': '127.0.0.1'}
     }
     try:
@@ -57,7 +58,7 @@ def prepare_graphics_params(connection):
         config = configparser.ConfigParser()
         config.read_string(config_string)
 
-        graphics_config['spice']['listen'] = config['dummy_section'].get('spice_listen', '127.0.0.1')
+        graphics_config['spice']['listen'] = config['dummy_section'].get('spice_listen', '::1')
         spice_password = config['dummy_section'].get('spice_password', None)
         if spice_password is not None:
             graphics_config['spice']['password'] = spice_password
