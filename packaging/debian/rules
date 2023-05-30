@@ -8,3 +8,6 @@ override_dh_auto_clean:
 
 override_dh_auto_test:
 	# don't call `make check`, these are integration tests
+
+override_dh_auto_install:
+	make install DESTDIR=debian/cockpit-machines PREFIX=/usr
