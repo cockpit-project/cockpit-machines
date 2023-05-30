@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE_VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-23 02:51+0000\n"
-"PO-Revision-Date: 2023-05-15 05:20+0000\n"
+"POT-Creation-Date: 2023-05-25 02:51+0000\n"
+"PO-Revision-Date: 2023-05-25 05:20+0000\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translate.fedoraproject.org/projects/"
 "cockpit-machines/main/ka/>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 4.17\n"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:827
 msgid "$0 $1 available at default location"
@@ -138,10 +138,8 @@ msgid "Add virtual network interface"
 msgstr "ქსელის ვირტუალური ინტერფეისის დამატება"
 
 #: src/components/vm/overview/vsock.jsx:190
-#, fuzzy
-#| msgid "Add network interface"
 msgid "Add vsock interface"
-msgstr "ქსელის ინტერფეისის დამატება"
+msgstr "Vsock ინტერფეისის დამატება"
 
 #: src/components/vm/overview/watchdog.jsx:148
 msgid "Add watchdog device type"
@@ -210,7 +208,7 @@ msgstr "ყოველთვის მიბმა"
 
 #: src/components/vm/overview/helpers.jsx:29
 msgid "An example of vsock-aware software is socat"
-msgstr ""
+msgstr "VSock-ჩართული პროგრამების მაგალითია socket"
 
 #: src/components/vm/overview/cpuModal.jsx:335
 msgid "Apply"
@@ -221,10 +219,8 @@ msgid "Apply on next boot"
 msgstr "შემდეგ ჩატვირთვაზე გადატარება"
 
 #: src/components/vm/overview/vsock.jsx:47
-#, fuzzy
-#| msgid "Generate automatically"
 msgid "Assign automatically"
-msgstr "ავტომატური გენერაცია"
+msgstr "ავტომატური მინიჭება"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:1213
 msgid ""
@@ -556,10 +552,8 @@ msgid "Custom firmware: $0"
 msgstr "ხელით მითითებული მიკროკოდი: $0"
 
 #: src/components/vm/overview/vsock.jsx:158
-#, fuzzy
-#| msgid "Disk identifier"
 msgid "Custom identifier"
-msgstr "დისკის იდენტიფიკატორი"
+msgstr "ხელით მითითებული იდენტიფიკატორი"
 
 #: src/components/vm/disks/diskAdd.jsx:344
 #: src/components/vm/disks/diskAdd.jsx:756
@@ -794,10 +788,8 @@ msgid "Edit $0 attributes"
 msgstr "$0-ის ატრიბუტების ჩასწორება"
 
 #: src/components/vm/overview/vsock.jsx:190
-#, fuzzy
-#| msgid "Network interface"
 msgid "Edit vsock interface"
-msgstr "ქსელის ინტერფეისი"
+msgstr "Vsock ინტერფეისის ჩასწორება"
 
 #: src/components/vm/overview/watchdog.jsx:148
 msgid "Edit watchdog device type"
@@ -879,20 +871,16 @@ msgid "Failed to clone VM $0"
 msgstr "ვმ-ის ($0) ასლის შექმნის შეცდომა"
 
 #: src/components/vm/overview/vsock.jsx:128
-#, fuzzy
-#| msgid "Failed to configure watchdog"
 msgid "Failed to configure vsock"
-msgstr "Watchdog-ის მორგების შეცდომა"
+msgstr "Vsock-ის მორგების შეცდომა"
 
 #: src/components/vm/overview/watchdog.jsx:85
 msgid "Failed to configure watchdog"
 msgstr "Watchdog-ის მორგების შეცდომა"
 
 #: src/components/vm/overview/vsock.jsx:140
-#, fuzzy
-#| msgid "Failed to detach watchdog"
 msgid "Failed to detach vsock"
-msgstr "Watchdog-ის მოხსნის შეცდომა"
+msgstr "Vsock-ის მოხსნის შეცდომა"
 
 #: src/components/vm/overview/watchdog.jsx:132
 msgid "Failed to detach watchdog"
@@ -1133,6 +1121,8 @@ msgid ""
 "Identifier in use by $0. VMs with an identical identifier cannot run at the "
 "same time."
 msgstr ""
+"იდენტიფიკატორი $0ს-თვის. იგივე იდენტიფიკატორის მქონე ვმ-ებს ერთდროულად ვერ "
+"გაუშვებთ."
 
 #: src/components/vm/disks/diskAdd.jsx:263
 msgid "Identifier may be silently truncated to $0 characters "
@@ -1205,7 +1195,7 @@ msgstr "დისკის ჩადება"
 
 #: src/components/vm/overview/helpers.jsx:39
 msgid "Inside the VM"
-msgstr ""
+msgstr "ვმ-ის შიგნით"
 
 #: src/components/vm/vmActions.jsx:290
 msgid "Install"
@@ -1698,10 +1688,8 @@ msgid "Old token expired"
 msgstr "ძველი კოდის ვადა ამოიწურა"
 
 #: src/components/vm/overview/helpers.jsx:33
-#, fuzzy
-#| msgid "Run when host boots"
 msgid "On the host"
-msgstr "ჰოსტის ჩატვირთვისას გაშვება"
+msgstr "ჰოსტზე"
 
 #: src/components/storagePools/storageVolumeDelete.jsx:71
 msgid ""
@@ -2734,6 +2722,9 @@ msgid ""
 "a socket. It still requires special vsock-aware software to communicate over "
 "the socket."
 msgstr ""
+"ვირტუალური სოკეტის მხარდაჭერა ჰოსტსა და სტუმარს შორის სოკეტის საშუალებიტ "
+"საუბრის საშუალებას გაძლევთ. მას სჭირდება პროგრამები, რომლებმაც იციან, როგორ "
+"მოეპყრან vsock-ს."
 
 #: src/components/libvirtSlate.jsx:42
 msgid "Virtualization service (libvirt) is not active"
@@ -2762,7 +2753,7 @@ msgstr "ტომების ჯგუფის სახელი ცარი
 
 #: src/components/vm/overview/vmOverviewCard.jsx:232
 msgid "Vsock"
-msgstr ""
+msgstr "Vsock"
 
 #: src/components/vm/hostdevs/hostDevCard.jsx:115
 #: src/components/vm/overview/bootOrder.jsx:160
@@ -3036,7 +3027,7 @@ msgstr "ვმ"
 
 #: src/components/vm/overview/vmOverviewCard.jsx:238
 msgid "vsock requires special software"
-msgstr ""
+msgstr "vsock-ს სპეციალური პროგრამები სჭირდება"
 
 #: src/components/networks/networkOverviewTab.jsx:115
 #: src/components/storagePools/storagePoolOverviewTab.jsx:67

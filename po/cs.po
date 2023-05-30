@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-23 02:51+0000\n"
-"PO-Revision-Date: 2023-05-13 14:45+0000\n"
+"POT-Creation-Date: 2023-05-25 02:51+0000\n"
+"PO-Revision-Date: 2023-05-25 05:20+0000\n"
 "Last-Translator: Pavel Borecki <pavel.borecki@gmail.com>\n"
 "Language-Team: Czech <https://translate.fedoraproject.org/projects/cockpit-"
 "machines/main/cs/>\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 4.17\n"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:827
 msgid "$0 $1 available at default location"
@@ -151,10 +151,8 @@ msgid "Add virtual network interface"
 msgstr "Přidat virtuální síťové rozhraní"
 
 #: src/components/vm/overview/vsock.jsx:190
-#, fuzzy
-#| msgid "Add network interface"
 msgid "Add vsock interface"
-msgstr "Přidat síťové rozhraní"
+msgstr "Přidat vsock rozhraní"
 
 #: src/components/vm/overview/watchdog.jsx:148
 msgid "Add watchdog device type"
@@ -223,7 +221,7 @@ msgstr "Vždy připojit"
 
 #: src/components/vm/overview/helpers.jsx:29
 msgid "An example of vsock-aware software is socat"
-msgstr ""
+msgstr "Příkladem softwaru, který využívá vsock je nástroj socat"
 
 # auto translated by TM merge from project: FreeIPA, version: ipa-4-5, DocId:
 # po/ipa
@@ -236,10 +234,8 @@ msgid "Apply on next boot"
 msgstr "Použít při příštím startu"
 
 #: src/components/vm/overview/vsock.jsx:47
-#, fuzzy
-#| msgid "Generate automatically"
 msgid "Assign automatically"
-msgstr "Vytvořit automaticky"
+msgstr "Přiřadit automaticky"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:1213
 msgid ""
@@ -590,10 +586,8 @@ msgid "Custom firmware: $0"
 msgstr "Uživatelsky určený firmware: $0"
 
 #: src/components/vm/overview/vsock.jsx:158
-#, fuzzy
-#| msgid "Disk identifier"
 msgid "Custom identifier"
-msgstr "Identifikátor disku"
+msgstr "Uživatelsky určený identifikátor"
 
 #: src/components/vm/disks/diskAdd.jsx:344
 #: src/components/vm/disks/diskAdd.jsx:756
@@ -846,10 +840,8 @@ msgid "Edit $0 attributes"
 msgstr "Upravit atributy $0"
 
 #: src/components/vm/overview/vsock.jsx:190
-#, fuzzy
-#| msgid "Network interface"
 msgid "Edit vsock interface"
-msgstr "Síťové rozhraní"
+msgstr "Upravit vsock rozhraní"
 
 #: src/components/vm/overview/watchdog.jsx:148
 msgid "Edit watchdog device type"
@@ -934,20 +926,16 @@ msgid "Failed to clone VM $0"
 msgstr "Nepodařilo se naklonovat virt. stroj $0"
 
 #: src/components/vm/overview/vsock.jsx:128
-#, fuzzy
-#| msgid "Failed to configure watchdog"
 msgid "Failed to configure vsock"
-msgstr "Nepodařilo se nastavit resetátor"
+msgstr "Nepodařilo se nastavit vsock"
 
 #: src/components/vm/overview/watchdog.jsx:85
 msgid "Failed to configure watchdog"
 msgstr "Nepodařilo se nastavit resetátor"
 
 #: src/components/vm/overview/vsock.jsx:140
-#, fuzzy
-#| msgid "Failed to detach watchdog"
 msgid "Failed to detach vsock"
-msgstr "Nepodařilo se odpojit resetátor"
+msgstr "Nepodařilo se odpojit vsock"
 
 #: src/components/vm/overview/watchdog.jsx:132
 msgid "Failed to detach watchdog"
@@ -1206,6 +1194,8 @@ msgid ""
 "Identifier in use by $0. VMs with an identical identifier cannot run at the "
 "same time."
 msgstr ""
+"Identifikátor je využíván $0. Virt. stroje s identickým identifikátorem "
+"nemohou být spuštěné souběžně."
 
 #: src/components/vm/disks/diskAdd.jsx:263
 msgid "Identifier may be silently truncated to $0 characters "
@@ -1279,7 +1269,7 @@ msgstr "Vložit médium disku"
 
 #: src/components/vm/overview/helpers.jsx:39
 msgid "Inside the VM"
-msgstr ""
+msgstr "Uvnitř virt. stroje"
 
 # auto translated by TM merge from project: dnf, version: master, DocId: dnf
 #: src/components/vm/vmActions.jsx:290
@@ -1792,10 +1782,8 @@ msgid "Old token expired"
 msgstr "Platnost původního tokenu skončila"
 
 #: src/components/vm/overview/helpers.jsx:33
-#, fuzzy
-#| msgid "Run when host boots"
 msgid "On the host"
-msgstr "Spustit při startu hostitele"
+msgstr "Na hostiteli"
 
 #: src/components/storagePools/storageVolumeDelete.jsx:71
 msgid ""
@@ -2888,6 +2876,9 @@ msgid ""
 "a socket. It still requires special vsock-aware software to communicate over "
 "the socket."
 msgstr ""
+"Podpora virtuálních soketů umožňuje komunikaci mezi hostitelem a hostem přes "
+"soket. I tak ale komunikace přes soket ale vyžaduje speciální software, "
+"který toho využívá."
 
 #: src/components/libvirtSlate.jsx:42
 msgid "Virtualization service (libvirt) is not active"
@@ -2918,7 +2909,7 @@ msgstr "Název skupiny svazků je třeba vyplnit"
 
 #: src/components/vm/overview/vmOverviewCard.jsx:232
 msgid "Vsock"
-msgstr ""
+msgstr "Virt. soket"
 
 #: src/components/vm/hostdevs/hostDevCard.jsx:115
 #: src/components/vm/overview/bootOrder.jsx:160
@@ -3217,7 +3208,7 @@ msgstr "virt. stroj"
 
 #: src/components/vm/overview/vmOverviewCard.jsx:238
 msgid "vsock requires special software"
-msgstr ""
+msgstr "Virt. soket vyžaduje speciální software"
 
 # auto translated by TM merge from project: Pulseaudio, version: master,
 # DocId: pulseaudio.pot
