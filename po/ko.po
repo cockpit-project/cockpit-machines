@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-23 02:51+0000\n"
-"PO-Revision-Date: 2023-05-15 05:20+0000\n"
+"POT-Creation-Date: 2023-05-25 02:51+0000\n"
+"PO-Revision-Date: 2023-05-25 05:20+0000\n"
 "Last-Translator: 김인수 <simmon@nplob.com>\n"
 "Language-Team: Korean <https://translate.fedoraproject.org/projects/cockpit-"
 "machines/main/ko/>\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0\n"
-"X-Generator: Weblate 4.15.2\n"
+"X-Generator: Weblate 4.17\n"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:827
 msgid "$0 $1 available at default location"
@@ -142,10 +142,8 @@ msgid "Add virtual network interface"
 msgstr "가상 네트워크 연결장치 추가"
 
 #: src/components/vm/overview/vsock.jsx:190
-#, fuzzy
-#| msgid "Add network interface"
 msgid "Add vsock interface"
-msgstr "네트워크 연결장치 추가"
+msgstr "vsock 연결장치 추가"
 
 #: src/components/vm/overview/watchdog.jsx:148
 msgid "Add watchdog device type"
@@ -209,7 +207,7 @@ msgstr "항상 연결"
 
 #: src/components/vm/overview/helpers.jsx:29
 msgid "An example of vsock-aware software is socat"
-msgstr ""
+msgstr "vsock-aware 소프트웨어의 예는 socat입니다"
 
 #: src/components/vm/overview/cpuModal.jsx:335
 msgid "Apply"
@@ -220,10 +218,8 @@ msgid "Apply on next boot"
 msgstr "다음 부팅시에 적용합니다"
 
 #: src/components/vm/overview/vsock.jsx:47
-#, fuzzy
-#| msgid "Generate automatically"
 msgid "Assign automatically"
-msgstr "자동 생성"
+msgstr "자동 할당"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:1213
 msgid ""
@@ -555,10 +551,8 @@ msgid "Custom firmware: $0"
 msgstr "사용자 지정 펌웨어: $0"
 
 #: src/components/vm/overview/vsock.jsx:158
-#, fuzzy
-#| msgid "Disk identifier"
 msgid "Custom identifier"
-msgstr "디스크 식별자"
+msgstr "사용자정의 식별자"
 
 #: src/components/vm/disks/diskAdd.jsx:344
 #: src/components/vm/disks/diskAdd.jsx:756
@@ -789,10 +783,8 @@ msgid "Edit $0 attributes"
 msgstr "$0 속성 편집"
 
 #: src/components/vm/overview/vsock.jsx:190
-#, fuzzy
-#| msgid "Network interface"
 msgid "Edit vsock interface"
-msgstr "네트워크 연결장치"
+msgstr "vsock 연결장치 편집"
 
 #: src/components/vm/overview/watchdog.jsx:148
 msgid "Edit watchdog device type"
@@ -873,20 +865,16 @@ msgid "Failed to clone VM $0"
 msgstr "VM $0 복제에 실패하였습니다"
 
 #: src/components/vm/overview/vsock.jsx:128
-#, fuzzy
-#| msgid "Failed to configure watchdog"
 msgid "Failed to configure vsock"
-msgstr "와치독을 구성하는데 실패함"
+msgstr "vsock을 구성하는데 실패함"
 
 #: src/components/vm/overview/watchdog.jsx:85
 msgid "Failed to configure watchdog"
 msgstr "와치독을 구성하는데 실패함"
 
 #: src/components/vm/overview/vsock.jsx:140
-#, fuzzy
-#| msgid "Failed to detach watchdog"
 msgid "Failed to detach vsock"
-msgstr "와치독을 분리하는데 실패함"
+msgstr "vsock을 분리하는데 실패함"
 
 #: src/components/vm/overview/watchdog.jsx:132
 msgid "Failed to detach watchdog"
@@ -1127,6 +1115,8 @@ msgid ""
 "Identifier in use by $0. VMs with an identical identifier cannot run at the "
 "same time."
 msgstr ""
+"$0에서 사용 중인 식별자. 동일한 식별자를 가진 VMs는 동시에 실행 할 수 없습니"
+"다."
 
 #: src/components/vm/disks/diskAdd.jsx:263
 msgid "Identifier may be silently truncated to $0 characters "
@@ -1201,7 +1191,7 @@ msgstr "디스크 미디어 넣기"
 
 #: src/components/vm/overview/helpers.jsx:39
 msgid "Inside the VM"
-msgstr ""
+msgstr "VM 내부"
 
 #: src/components/vm/vmActions.jsx:290
 msgid "Install"
@@ -1698,10 +1688,8 @@ msgid "Old token expired"
 msgstr "오래된 토큰이 만료됨"
 
 #: src/components/vm/overview/helpers.jsx:33
-#, fuzzy
-#| msgid "Run when host boots"
 msgid "On the host"
-msgstr "호스트 부팅 시 실행"
+msgstr "호스트에서"
 
 #: src/components/storagePools/storageVolumeDelete.jsx:71
 msgid ""
@@ -2739,6 +2727,9 @@ msgid ""
 "a socket. It still requires special vsock-aware software to communicate over "
 "the socket."
 msgstr ""
+"가상 소켓 지원은 소켓을 통해서 호스트와 게스트 사이에서 통신 할 수 있도록 합"
+"니다. 이는 소켓을 통해 통신하려면 여전히 특별한 vsock-aware 소프트웨어가 필요"
+"합니다."
 
 #: src/components/libvirtSlate.jsx:42
 msgid "Virtualization service (libvirt) is not active"
@@ -2767,7 +2758,7 @@ msgstr "볼륨 그룹 이름은 비워둘 수 없습니다"
 
 #: src/components/vm/overview/vmOverviewCard.jsx:232
 msgid "Vsock"
-msgstr ""
+msgstr "Vsock"
 
 #: src/components/vm/hostdevs/hostDevCard.jsx:115
 #: src/components/vm/overview/bootOrder.jsx:160
@@ -3045,7 +3036,7 @@ msgstr "vm"
 
 #: src/components/vm/overview/vmOverviewCard.jsx:238
 msgid "vsock requires special software"
-msgstr ""
+msgstr "vsock은 특별한 소프트웨어가 필요합니다"
 
 #: src/components/networks/networkOverviewTab.jsx:115
 #: src/components/storagePools/storagePoolOverviewTab.jsx:67
