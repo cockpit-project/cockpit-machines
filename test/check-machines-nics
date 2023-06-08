@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python3 -cimport os, sys; os.execv(os.path.dirname(sys.argv[1]) + "/common/pywrap", sys.argv)
 
 # This file is part of Cockpit.
 #
@@ -18,17 +18,10 @@
 # along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
 
 import json
-import os
-import sys
 
-# import Cockpit's machinery for test VMs and its browser test API
-TEST_DIR = os.path.dirname(__file__)
-sys.path.append(os.path.join(TEST_DIR, "common"))
-sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
-
-from machineslib import VirtualMachinesCase  # noqa
-from testlib import no_retry_when_changed, nondestructive, test_main, wait  # noqa
-from machinesxmls import TEST_NETWORK_XML, TEST_NETWORK4_XML  # noqa
+from machineslib import VirtualMachinesCase
+from machinesxmls import TEST_NETWORK4_XML, TEST_NETWORK_XML
+from testlib import no_retry_when_changed, nondestructive, test_main, wait
 
 
 @nondestructive
