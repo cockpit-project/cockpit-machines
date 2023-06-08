@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/python3 -cimport os, sys; os.execv(os.path.dirname(sys.argv[1]) + "/common/pywrap", sys.argv)
 
 # This file is part of Cockpit.
 #
@@ -17,20 +17,13 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
 
-import os
 import re
 import subprocess
-import sys
 import xml.etree.ElementTree as ET
 
-# import Cockpit's machinery for test VMs and its browser test API
-TEST_DIR = os.path.dirname(__file__)
-sys.path.append(os.path.join(TEST_DIR, "common"))
-sys.path.append(os.path.join(os.path.dirname(TEST_DIR), "bots/machine"))
-
-from machineslib import VirtualMachinesCase  # noqa
-from testlib import nondestructive, test_main, wait  # noqa
-from machinesxmls import USB_HOSTDEV, USB_HOSTDEV_NONEXISTENT, PCI_HOSTDEV, SCSI_HOST_HOSTDEV  # noqa
+from machineslib import VirtualMachinesCase
+from machinesxmls import PCI_HOSTDEV, SCSI_HOST_HOSTDEV, USB_HOSTDEV, USB_HOSTDEV_NONEXISTENT
+from testlib import nondestructive, test_main, wait
 
 virt_xml_mock = """#!/usr/bin/python
 
