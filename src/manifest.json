@@ -3,6 +3,9 @@
   "requires": {
        "cockpit": "215"
   },
+  "conditions": [
+      {"path-exists": "/usr/share/dbus-1/system.d/org.libvirt.conf"}
+  ],
   "menu": {
      "vms": {
         "label": "Virtual machines",
