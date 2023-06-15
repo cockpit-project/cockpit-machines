@@ -113,7 +113,7 @@ function domainAttachDevice({ connectionName, vmId, permanent, hotplug, xmlDesc 
 }
 
 export function getPythonPath() {
-    return cockpit.spawn(["/bin/sh", "-c", "which /usr/libexec/platform-python 2>/dev/null || which python3 2>/dev/null || which python"]).then(pyexe => { pythonPath = pyexe.trim() });
+    return cockpit.spawn(["/bin/sh", "-c", "command -v /usr/libexec/platform-python || command -v python3 || command -v python"]).then(pyexe => { pythonPath = pyexe.trim() });
 }
 
 export function domainAttachDisk({

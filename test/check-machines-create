@@ -740,7 +740,7 @@ vnc_password= "{vnc_passwd}"
         self.browser.wait_visible("#create-new-vm:not(:disabled)")
         self.browser.wait_attr("#create-new-vm", "testdata", None)
 
-        virt_install_bin = self.machine.execute("which virt-install").strip()
+        virt_install_bin = self.machine.execute("command -v virt-install").strip()
         self.machine.execute(f'mount -o bind /dev/null {virt_install_bin}')
         self.addCleanup(self.machine.execute, f"umount {virt_install_bin}")
 
