@@ -1915,16 +1915,14 @@ vnc_password= "{vnc_passwd}"
         # Attach some interface
         m.execute("virsh attach-interface --persistent VmNotInstalled bridge virbr0")
 
-        # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1006324
-        if "debian-stable" != m.image:
-            # Change the os boot firmware configuration
-            b.wait_in_text("#vm-VmNotInstalled-firmware", "BIOS")
-            b.click("#vm-VmNotInstalled-firmware")
-            b.wait_visible(".pf-c-modal-box__body")
-            b.select_from_dropdown(".pf-c-modal-box__body select", "efi")
-            b.click("#firmware-dialog-apply")
-            b.wait_not_present(".pf-c-modal-box__body")
-            b.wait_in_text("#vm-VmNotInstalled-firmware", "UEFI")
+        # Change the os boot firmware configuration
+        b.wait_in_text("#vm-VmNotInstalled-firmware", "BIOS")
+        b.click("#vm-VmNotInstalled-firmware")
+        b.wait_visible(".pf-c-modal-box__body")
+        b.select_from_dropdown(".pf-c-modal-box__body select", "efi")
+        b.click("#firmware-dialog-apply")
+        b.wait_not_present(".pf-c-modal-box__body")
+        b.wait_in_text("#vm-VmNotInstalled-firmware", "UEFI")
 
         # Temporarily delete the OVMF binary and check the firmware options again
         if "fedora" in m.image or "rhel" in m.image or "centos" in m.image:
@@ -1983,10 +1981,8 @@ vnc_password= "{vnc_passwd}"
         # Check changed boot order have persisted
         b.wait_text_not("#vm-VmNotInstalled-boot-order", bootOrder)
 
-        # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1006324
-        if "debian-stable" != m.image:
-            # Check firmware changes persisted
-            b.wait_in_text("#vm-VmNotInstalled-firmware", "UEFI")
+        # Check firmware changes persisted
+        b.wait_in_text("#vm-VmNotInstalled-firmware", "UEFI")
 
         # Check autostart have persisted
         self.assertEqual(b.get_checked("#vm-VmNotInstalled-autostart-switch"), autostart)
@@ -1997,9 +1993,6 @@ vnc_password= "{vnc_passwd}"
         self.allow_browser_errors("Failed when connecting: Connection closed")
         self.allow_browser_errors("Tried changing state of a disconnected RFB object")
         self.allow_journal_messages(".* couldn't shutdown fd: Transport endpoint is not connected")
-        # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1006324
-        if "debian-stable" == m.image:
-            self.allow_journal_messages('.* apparmor="DENIED" operation="capable" profile="libvirtd" .*')
 
     def testConfigureBeforeInstallBios(self):
         TestMachinesCreate.CreateVmRunner(self)

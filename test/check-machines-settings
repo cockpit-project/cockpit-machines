@@ -35,7 +35,7 @@ from testlib import nondestructive, wait, test_main  # noqa
 
 # virt-install changed the default to "host-passthrough"
 # https://github.com/virt-manager/virt-manager/commit/2c477f330244e04614e174f50fbf37260c535705
-distrosWithDefaultHostModel = ["rhel-8-7", "centos-8-stream", "debian-stable"]
+distrosWithDefaultHostModel = ["rhel-8-7", "centos-8-stream"]
 
 
 @nondestructive
@@ -648,7 +648,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         m.execute("virsh destroy subVmTest1")
 
         # Some OSes don't support target.hotplug=off
-        if m.image.startswith("rhel-8") or m.image in ["centos-8-stream", "debian-stable"]:
+        if m.image.startswith("rhel-8") or m.image in ["centos-8-stream"]:
             self.assertIn("Unknown --controller options", m.execute(
                 "! virt-xml subVmTest1 --edit model=pci-root --controller target.hotplug=off 2>&1")
             )
