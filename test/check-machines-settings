@@ -849,16 +849,28 @@ class TestMachinesSettings(VirtualMachinesCase):
         setVsock(auto=False, address="5", pixel_test_tag="vsock")
         removeVsockDevice()
 
+        b.click("#vm-subVmTest1-system-run")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
+
         # Because of bug in debian-testing, hotplug of vsock device fails
         # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1033872
         if m.image not in ["debian-testing", "debian-stable"]:
-            b.click("#vm-subVmTest1-system-run")
-            b.wait_in_text("#vm-subVmTest1-system-state", "Running")
-
             # Test configuring vsock for running VM
             setVsockLive(new_auto=False, new_address="5")
             setVsockLive(new_auto=True, previous_auto=False, previous_address="5", reboot_machine=True)
             setVsockLive(new_auto=False, new_address="4", previous_auto=True, previous_address=default_libvirt_vsock_address)
+
+            m.execute("virsh undefine subVmTest1")
+            wait(lambda: "no" in m.execute("virsh dominfo subVmTest1 | grep ^Persistent"), delay=3)
+            # UI was notified that VM is transient
+            b.wait_visible("#vm-subVmTest1-memory-count button[aria-disabled=true]")
+
+            # Vsock of transient VM should not be editable
+            b.click("#vm-subVmTest1-vsock-button")
+            b.wait_visible("#vm-subVmTest1-vsock-modal")
+            b.wait_visible("#vsock-dialog-apply[aria-disabled=true]")
+            b.mouse("#vsock-dialog-apply", "mouseenter")
+            b.wait_visible("#vsock-live-edit-tooltip")
 
 
 if __name__ == '__main__':
