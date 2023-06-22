@@ -114,6 +114,23 @@ class TestMachinesNICs(VirtualMachinesCase):
         b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
         b.wait_not_present("#vm-subVmTest1-add-iface-dialog")
 
+        m.execute("virsh start subVmTest1")
+        # Attach vNIC only to live config
+        m.execute("virsh attach-interface --domain subVmTest1 --type network --source default --model virtio --mac 52:54:00:4b:73:6f --live")
+        b.wait_in_text("#vm-subVmTest1-network-3-mac", "52:54:00:4b:73:6f")
+        # vNIC which is only attached to live config cannot be edited
+        b.wait_visible("#vm-subVmTest1-network-3-edit-dialog[aria-disabled=true]")
+        # validate css is correct even if edit button is disabled
+        # https://bugzilla.redhat.com/show_bug.cgi?id=2215597
+        b.assert_pixels("#vm-subVmTest1-networks",
+                        "vm-details-nics-card-edit-disabled",
+                        ignore=["#vm-subVmTest1-network-1-mac", "#vm-subVmTest1-network-1-ipv4-address", "#vm-subVmTest1-network-1-source",
+                                "#vm-subVmTest1-network-2-mac", "#vm-subVmTest1-network-2-ipv4-address", "#vm-subVmTest1-network-2-source",
+                                "#vm-subVmTest1-network-3-mac", "#vm-subVmTest1-network-3-ipv4-address", "#vm-subVmTest1-network-3-source"],
+                        # MAC and IP address values are not static, and their values affect the width of their columns and neighbouring columns
+                        # With medium layout this variable width of the columns makes pixel tests references of the table different each test run
+                        skip_layouts=["medium", "rtl"])
+
     def testNICPlugingAndUnpluging(self):
         b = self.browser
         m = self.machine
