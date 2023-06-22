@@ -27,6 +27,7 @@ import { NumberInput } from "@patternfly/react-core/dist/esm/components/NumberIn
 import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
 import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
 import { HelpIcon } from '@patternfly/react-icons';
+import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { useDialogs } from 'dialogs.jsx';
 import { fmt_to_fragments } from 'utils.jsx';
 

@@ -26,6 +26,7 @@ import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
 import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
+import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { useDialogs } from 'dialogs.jsx';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
@@ -140,6 +141,29 @@ export const WatchdogModal = ({ vm, isWatchdogAttached, idPrefix }) => {
             return <NeedsShutdownAlert idPrefix={idPrefix} />;
     };
 
+    // Transient VM doesn't have offline config
+    // Libvirt doesn't allow live editing watchdog, so we should disallow such operation
+    // https://bugzilla.redhat.com/show_bug.cgi?id=2213740
+    const isEditingTransientVm = isWatchdogAttached && !vm.persistent;
+    let primaryButton = (
+        <Button variant='primary'
+            id="watchdog-dialog-apply"
+            onClick={() => save(false)}
+            isLoading={inProgress && !offerColdplug}
+            isAriaDisabled={inProgress || offerColdplug || isEditingTransientVm}>
+            {isWatchdogAttached ? _("Save") : _("Add")}
+        </Button>
+    );
+
+    if (isEditingTransientVm) {
+        primaryButton = (
+            <Tooltip id='watchdog-live-edit-tooltip'
+                content={_("Cannot edit watchdog device on a transient VM")}>
+                {primaryButton}
+            </Tooltip>
+        );
+    }
+
     return (
         <Modal id={`${idPrefix}-watchdog-modal`}
                position="top"
@@ -150,13 +174,7 @@ export const WatchdogModal = ({ vm, isWatchdogAttached, idPrefix }) => {
                isOpen
                footer={
                    <>
-                       <Button variant='primary'
-                               id="watchdog-dialog-apply"
-                               onClick={() => save(false)}
-                               isLoading={inProgress && !offerColdplug}
-                               isDisabled={inProgress || offerColdplug}>
-                           {isWatchdogAttached ? _("Save") : _("Add")}
-                       </Button>
+                       {primaryButton}
                        {offerColdplug && <Button variant='secondary'
                                id="watchdog-dialog-apply-next-boot"
                                onClick={() => save(true)}

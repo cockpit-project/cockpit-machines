@@ -652,6 +652,7 @@ class TestMachinesSettings(VirtualMachinesCase):
             self.assertIn("Unknown --controller options", m.execute(
                 "! virt-xml subVmTest1 --edit model=pci-root --controller target.hotplug=off 2>&1")
             )
+            m.execute("virsh start subVmTest1")
         else:
             # Disable hotplugging for subVmTest1
             m.execute("virt-xml subVmTest1 --edit model=pci-root --controller target.hotplug=off")
@@ -665,7 +666,7 @@ class TestMachinesSettings(VirtualMachinesCase):
             b.click("#reset")
             b.click("#watchdog-dialog-apply")
             b.wait_in_text("#vm-subVmTest1-watchdog-modal .pf-m-warning", "Could not dynamically add watchdog")
-            b.wait_visible("#watchdog-dialog-apply:disabled")
+            b.wait_visible("#watchdog-dialog-apply[aria-disabled=true]")
             # Apply coldplug
             closeWatchDogDialog("#watchdog-dialog-apply-next-boot")
             # Watchdog requires fresh boot
@@ -691,6 +692,13 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.click("#watchdog-dialog-apply")
         b.wait_not_present("#vm-subVmTest2-watchdog-modal")
         b.wait_in_text("#vm-subVmTest2-watchdog-state", action_strings["pause"])
+
+        # Watchdog of transient VM should not be editable
+        b.click("#vm-subVmTest2-watchdog-button")
+        b.wait_visible("#vm-subVmTest2-watchdog-modal")
+        b.wait_visible("#watchdog-dialog-apply[aria-disabled=true]")
+        b.mouse("#watchdog-dialog-apply", "mouseenter")
+        b.wait_visible("#watchdog-live-edit-tooltip")
 
     def testVsock(self):
         b = self.browser
