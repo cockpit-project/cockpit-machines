@@ -7,7 +7,7 @@ import gi
 # Libosinfo has to be imported with specifying the version first.
 gi.require_version('Libosinfo', '1.0')
 
-from gi.repository import Libosinfo  # noqa
+from gi.repository import Libosinfo  # noqa: E402
 
 
 def _getInstallScriptProfile(installScriptList):
