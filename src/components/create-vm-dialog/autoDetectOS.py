@@ -2,6 +2,7 @@
 
 import json
 import sys
+
 import gi
 
 # Libosinfo has to be imported with specifying the version first.

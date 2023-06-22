@@ -1,19 +1,19 @@
 #! /usr/bin/python3
 
-from contextlib import contextmanager
 import configparser
-import traceback
 import json
+import logging
+import os
 import subprocess
 import sys
-import os
-import xml.etree.ElementTree as ET
 import tempfile
-import logging
+import traceback
+import xml.etree.ElementTree as ET
+from contextlib import contextmanager
 
 
 def virsh(connection, *args):
-    cmd = ("virsh", "-c", f"qemu:///{connection}") + args
+    cmd = ("virsh", "-c", f"qemu:///{connection}", *args)
     logging.debug("Running virsh command :" + ' '.join(cmd))
     return subprocess.check_output(cmd)
 
@@ -76,7 +76,7 @@ def prepare_graphics_params(connection):
     if graphics_cap:
         for graphics in graphics_cap:
             config_options = graphics_config[graphics].keys()
-            graphics_options = map(lambda option: f"{option}={graphics_config[graphics][option]}", config_options)
+            graphics_options = (f"{option}={graphics_config[graphics][option]}" for option in config_options)
             params += ['--graphics', graphics + "," + ",".join(graphics_options)]
     else:
         params += ['--graphics', 'none']
