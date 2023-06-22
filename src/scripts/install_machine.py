@@ -14,7 +14,7 @@ from contextlib import contextmanager
 
 def virsh(connection, *args):
     cmd = ("virsh", "-c", f"qemu:///{connection}", *args)
-    logging.debug("Running virsh command :" + ' '.join(cmd))
+    logging.debug("Running virsh command: %s", ' '.join(cmd))
     return subprocess.check_output(cmd)
 
 
@@ -39,7 +39,7 @@ def get_graphics_capabilies(connection):
         for value in graphics.find('enum').findall('value'):
             consoles.append(value.text)
 
-    logging.debug('get_graphics_capabilies: ' + ', '.join(consoles))
+    logging.debug('get_graphics_capabilies: %s', ', '.join(consoles))
 
     return [c for c in consoles if c in ['vnc', 'spice']]
 
