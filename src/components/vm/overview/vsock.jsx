@@ -183,6 +183,29 @@ export const VsockModal = ({ vm, vms, vmVsockNormalized, isVsockAttached, idPref
         </Form>
     );
 
+    // Transient VM doesn't have offline config
+    // Libvirt doesn't allow live editing vsock, so we should disallow such operation
+    // Similar to https://bugzilla.redhat.com/show_bug.cgi?id=2213740
+    const isEditingTransientVm = isVsockAttached && !vm.persistent;
+    let primaryButton = (
+        <Button variant='primary'
+            id="vsock-dialog-apply"
+            onClick={save}
+            isLoading={actionInProgress == "save"}
+            isAriaDisabled={actionInProgress || isEditingTransientVm}>
+            {isVsockAttached ? _("Save") : _("Add")}
+        </Button>
+    );
+
+    if (isEditingTransientVm) {
+        primaryButton = (
+            <Tooltip id='vsock-live-edit-tooltip'
+                content={_("Cannot edit vsock device on a transient VM")}>
+                {primaryButton}
+            </Tooltip>
+        );
+    }
+
     return (
         <Modal id={`${idPrefix}-vsock-modal`}
                position="top"
@@ -208,13 +231,7 @@ export const VsockModal = ({ vm, vms, vmVsockNormalized, isVsockAttached, idPref
                isOpen
                footer={
                    <>
-                       <Button variant='primary'
-                               id="vsock-dialog-apply"
-                               onClick={save}
-                               isLoading={actionInProgress == "save"}
-                               isDisabled={actionInProgress}>
-                           {isVsockAttached ? _("Save") : _("Add")}
-                       </Button>
+                       {primaryButton}
                        {isVsockAttached &&
                        <Button variant='secondary'
                                id="vsock-dialog-detach"
