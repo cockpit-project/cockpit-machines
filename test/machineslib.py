@@ -15,9 +15,9 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
 
-from testlib import MachineCase, wait, Error
 from netlib import NetworkHelpers
 from storagelib import StorageHelpers
+from testlib import Error, MachineCase, wait
 
 distrosWithMonolithicDaemon = ["rhel-8-6", "rhel-8-7", "rhel-8-8", "rhel-8-9", "ubuntu-stable", "ubuntu-2204", "debian-testing", "debian-stable", "centos-8-stream", "arch"]
 

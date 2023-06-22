@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import json
+
 import gi
 
 # Libosinfo has to be imported with specifying the version first.

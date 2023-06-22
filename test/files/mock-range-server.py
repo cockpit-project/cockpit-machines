@@ -17,9 +17,9 @@
 # $python3 mock-range-server.py cert-and-key.pem
 
 import os
-import sys
-from http.server import SimpleHTTPRequestHandler, HTTPServer
 import ssl
+import sys
+from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 
 class RangeHTTPRequestHandler(SimpleHTTPRequestHandler):
