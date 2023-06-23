@@ -18,7 +18,7 @@
  */
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { Dropdown, KebabToggle } from "@patternfly/react-core/dist/esm/deprecated/components/Dropdown";
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { DialogsContext } from 'dialogs.jsx';
@@ -163,6 +163,7 @@ export class VmNetworkTab extends React.Component {
         this.state = {
             networkDevices: undefined,
             ips: {},
+            dropdownOpenActions: new Set(),
         };
 
         this.deviceProxyHandler = this.deviceProxyHandler.bind(this);
@@ -395,24 +396,57 @@ export class VmNetworkTab extends React.Component {
                         actionName: _("Remove"),
                         deleteHandler: () => domainDetachIface({ connectionName: vm.connectionName, index: network.index, vmName: vm.name, live: vm.state === 'running', persistent: vm.persistent && nicPersistent }),
                     };
-                    const deleteNICAction = (
+                    const disabled = vm.state != 'shut off' && vm.state != 'running';
+
+                    let button = (
                         <DeleteResourceButton objectId={`${id}-iface-${networkId}`}
-                                              disabled={vm.state != 'shut off' && vm.state != 'running'}
+                                              disabled={disabled}
                                               dialogProps={deleteDialogProps}
                                               actionName={_("Remove")}
                                               overlayText={_("The VM needs to be running or shut off to detach this device")}
-                                              isSecondary />
+                                              isDropdownItem />
                     );
 
+                    if (disabled) {
+                        button = (
+                            <Tooltip id={`delete-${id}-tooltip`}
+                                     key={`delete-${id}-tooltip`}
+                                     content={_("The VM needs to be running or shut off to detach this device")}>
+                                <span>{button}</span>
+                            </Tooltip>
+                        );
+                    }
+
+                    const dropdownItems = [
+                        button,
+                    ];
+
+                    const isOpen = this.state.dropdownOpenActions.has(network.mac);
+                    const setIsOpen = open => {
+                        const next = new Set(this.state.dropdownOpenActions);
+                        if (open)
+                            next.add(network.mac);
+                        else
+                            next.delete(network.mac);
+
+                        this.setState({ dropdownOpenActions: next });
+                    };
                     return (
                         <div className='machines-listing-actions'>
-                            {deleteNICAction}
                             <Button id={`${id}-iface-${networkId}-` + (isUp ? 'unplug' : 'plug')}
                                     variant='secondary'
                                     onClick={onChangeState(network)}>
                                 {isUp ? 'Unplug' : 'Plug'}
                             </Button>
                             {editNICAction()}
+                            <Dropdown onSelect={() => setIsOpen(false)}
+                                id={`${id}-iface-${networkId}-action-kebab`}
+                                key={`${id}-iface-${networkId}-action-kebab`}
+                                toggle={<KebabToggle onToggle={(_event, isDropdownOpen) => setIsOpen(isDropdownOpen)} />}
+                                isPlain
+                                isOpen={isOpen}
+                                position='right'
+                                dropdownItems={dropdownItems} />
                         </div>
                     );
                 },

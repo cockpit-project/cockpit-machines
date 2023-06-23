@@ -163,7 +163,9 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         b.wait_visible("#vm-subVmTest1-disks-vda-action-kebab")
         b.click("#vm-subVmTest1-disks-vda-action-kebab button")
         b.wait_visible("#delete-vm-subVmTest1-disks-vda a[aria-disabled=true]")
-        b.wait_visible("#delete-vm-subVmTest1-iface-1:disabled")
+        b.wait_visible("#vm-subVmTest1-iface-1-action-kebab")
+        b.click("#vm-subVmTest1-iface-1-action-kebab button")
+        b.wait_visible("#delete-vm-subVmTest1-iface-1 a[aria-disabled=true]")
 
         # resume
         self.performAction("subVmTest1", "resume")
