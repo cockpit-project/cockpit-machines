@@ -314,14 +314,24 @@ export class VmNetworkTab extends React.Component {
                         return _("Unknown");
                     } else {
                         return (
-                            <>
-                                {ips.inet && <div id={`${id}-network-${networkId}-ipv4-address`}>
-                                    {'inet ' + ips.inet}
-                                </div>}
-                                {ips.inet6 && <div id={`${id}-network-${networkId}-ipv6-address`}>
-                                    {'inet6 ' + ips.inet6}
-                                </div>}
-                            </>
+                            <DescriptionList isHorizontal isFluid>
+                                {ips.inet && <DescriptionListGroup>
+                                    <DescriptionListTerm>
+                                        {_("inet")}
+                                    </DescriptionListTerm>
+                                    <DescriptionListDescription id={`${id}-network-${networkId}-ipv4-address`}>
+                                        {ips.inet}
+                                    </DescriptionListDescription>
+                                </DescriptionListGroup>}
+                                {ips.inet6 && <DescriptionListGroup>
+                                    <DescriptionListTerm>
+                                        {_("inet6")}
+                                    </DescriptionListTerm>
+                                    <DescriptionListDescription id={`${id}-network-${networkId}-ipv6-address`}>
+                                        {ips.inet6}
+                                    </DescriptionListDescription>
+                                </DescriptionListGroup>}
+                            </DescriptionList>
                         );
                     }
                 },
