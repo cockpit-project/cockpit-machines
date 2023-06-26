@@ -45,12 +45,15 @@ class TestMachinesSettings(VirtualMachinesCase):
         b = self.browser
         m = self.machine
 
-        self.createVm("subVmTest1")
+        self.createVm("subVmTest1", running=False)
 
         self.login_and_go("/machines")
         self.waitPageInit()
         self.waitVmRow("subVmTest1")
 
+        m.execute("virt-xml subVmTest1 -c qemu:///system --vcpu 2 --edit")
+
+        b.click("#vm-subVmTest1-system-run")
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
 
@@ -59,8 +62,11 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.wait_visible("#machines-cpu-modal-dialog")
 
         # Test basic vCPU properties
-        b.wait_val("#machines-vcpu-count-field input", "1")
-        b.wait_val("#machines-vcpu-max-field input", "1")
+        b.wait_val("#machines-vcpu-count-field input", "2")
+        b.wait_val("#machines-vcpu-max-field input", "2")
+        b.wait_val("#socketsSelect", "1")
+        b.wait_val("#coresSelect", "2")
+        b.wait_val("#threadsSelect", "1")
 
         # Set new values
         b.set_input_text("#machines-vcpu-max-field input", "4")
