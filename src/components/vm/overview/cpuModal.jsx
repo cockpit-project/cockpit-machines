@@ -60,11 +60,11 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
     const Dialogs = useDialogs();
 
     const [error, setError] = useState(undefined);
-    const [sockets, setSockets] = useState(vm.cpu.topology.sockets || 1);
-    const [threads, setThreads] = useState(vm.cpu.topology.threads || 1);
-    const [cores, setCores] = useState(vm.cpu.topology.cores || 1);
     const [max, setMax] = useState(parseInt(vm.vcpus.max) || 1);
     const [count, setCount] = useState(parseInt(vm.vcpus.count) || 1);
+    const [sockets, setSockets] = useState(vm.cpu.topology.sockets || 1);
+    const [threads, setThreads] = useState(vm.cpu.topology.threads || 1);
+    const [cores, setCores] = useState(vm.cpu.topology.cores || max);
     const [cpuMode, setCpuMode] = useState(vm.cpu.mode);
     const [cpuModel, setCpuModel] = useState(vm.cpu.model);
     const [isLoading, setIsLoading] = useState(false);
