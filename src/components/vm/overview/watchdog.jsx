@@ -94,7 +94,7 @@ export const WatchdogModal = ({ vm, isWatchdogAttached, idPrefix }) => {
             hotplug: true,
             isWatchdogAttached,
         })
-                .then(vm.persistent ? setWatchdogColdplug : Promise.resolve)
+                .then(vm.persistent ? setWatchdogColdplug : Dialogs.close())
                 .catch(exc => {
                     if (vm.persistent)
                         setOfferColdplug(true);

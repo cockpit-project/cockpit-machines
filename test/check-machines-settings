@@ -675,6 +675,23 @@ class TestMachinesSettings(VirtualMachinesCase):
             m.execute("virsh destroy subVmTest1; virsh start subVmTest1")
             b.wait_not_present("#watchdog-tooltip")
 
+        args = self.createVm("subVmTest2")
+        self.goToMainPage()
+        self.waitPageInit()
+        self.goToVmPage("subVmTest2")
+        m.execute("virsh undefine subVmTest2")
+        wait(lambda: "no" in m.execute("virsh dominfo subVmTest2 | grep ^Persistent"), delay=3)
+        # UI was notified that VM is transient
+        b.wait_visible("#vm-subVmTest2-memory-count button[aria-disabled=true]")
+
+        # Watchdog can be attached to a transient VM
+        b.click("#vm-subVmTest2-watchdog-button")
+        b.wait_visible("#vm-subVmTest2-watchdog-modal")
+        b.click("#pause")
+        b.click("#watchdog-dialog-apply")
+        b.wait_not_present("#vm-subVmTest2-watchdog-modal")
+        b.wait_in_text("#vm-subVmTest2-watchdog-state", action_strings["pause"])
+
     def testVsock(self):
         b = self.browser
         m = self.machine
