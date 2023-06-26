@@ -122,7 +122,8 @@ class TestMachinesLifecycle(VirtualMachinesCase):
                 ".memory-usage-chart",
                 ".vcpu-usage-chart",
                 "#vm-subVmTest1-disks .pf-c-card__body",
-                "#vm-subVmTest1-networks .pf-c-card__body"
+                "#vm-subVmTest1-networks .pf-c-card__body",
+                "#vm-subVmTest1-hostdevs",
                 ])
         b.wait_in_text("#vm-subVmTest1-cpu", "1 vCPU")
 
