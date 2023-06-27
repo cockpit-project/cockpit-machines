@@ -40,10 +40,11 @@ class TestMachinesManifest(MachineCase):
         self.login_and_go(None)
         b.wait_in_text("#host-apps .pf-m-current", "Overview")
 
-        if self.is_pybridge():
-            self.assertIn("Machines", b.text("#host-apps .pf-m-current"))
+        # HACK: is_pybridge should also check TEST_SCENARIO
+        if self.is_pybridge() or os.getenv('TEST_SCENARIO') == 'pybridge':
+            self.assertNotIn("Virtual machines", b.text("#host-apps"))
         else:
-            self.assertNotIn("Machines", b.text("#host-apps .pf-m-current"))
+            self.assertIn("Virtual machines", b.text("#host-apps"))
 
 
 if __name__ == '__main__':
