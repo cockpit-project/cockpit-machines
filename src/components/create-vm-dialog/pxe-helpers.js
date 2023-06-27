@@ -136,7 +136,7 @@ export function getPXEInitialNetworkSource(nodeDevices, virtualNetworks) {
     );
 
     if (netNodeDevices.length > 0)
-        return cockpit.format('type=direct,source=$0', netNodeDevices[0].capability.interface);
+        return cockpit.format('type=direct,source=$0,source.mode=bridge', netNodeDevices[0].capability.interface);
 }
 
 /**
@@ -162,7 +162,7 @@ export function getPXENetworkRows(nodeDevices, virtualNetworks) {
 
     const netNodeDevicesRows = netNodeDevices.map(netNodeDevice => {
         const iface = netNodeDevice.capability.interface;
-        const data = cockpit.format('type=direct,source=$0', iface);
+        const data = cockpit.format('type=direct,source=$0,source.mode=bridge', iface);
         const label = cockpit.format("$0 $1: macvtap", _("Host device"), iface);
 
         return <FormSelectOption key={data} value={data} label={label} />;

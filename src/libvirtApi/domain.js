@@ -198,8 +198,11 @@ export function domainChangeInterfaceSettings({
     } else {
         if (newMacAddress)
             networkParams += `mac=${newMacAddress},`;
-        if (networkType)
+        if (networkType) {
             networkParams += `type=${networkType},`;
+            if (networkType == `direct`)
+                networkParams += `source.mode=bridge,`;
+        }
         if (networkSource)
             networkParams += `source=${networkSource},`;
         if (networkModel)
