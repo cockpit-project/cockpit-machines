@@ -1186,7 +1186,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         # https://bugzilla.redhat.com/show_bug.cgi?id=1977810
         self.VMAddDiskDialog(
             self,
-            expected_target='sda',
+            expected_target='sdb',
             file_path='/var/lib/libvirt/novell.iso',
             mode='custom-path'
         ).execute()
@@ -1221,7 +1221,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.click(f"{prefix}-dialog-cancel")
         self.VMAddDiskDialog(
             self,
-            expected_target='sda',
+            expected_target='sdc',
             file_path='/var/lib/libvirt/novell.iso',
             mode='custom-path'
         ).execute()
@@ -1235,6 +1235,43 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.select_from_dropdown(f"{prefix}-select-device", "disk")
         b.click("div.pf-v5-c-modal-box button:contains(Show additional options)")
         b.wait_visible(f"{prefix}-bus-type[data-value=ide]")
+        b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
+
+        # check CD/DVD discs correctly assumes raw format for raw file
+        m.execute("qemu-img create -f raw /var/lib/libvirt/images/foobar.raw 1M")
+        self.VMAddDiskDialog(
+            self,
+            device='cdrom',
+            bus_type='scsi',
+            expected_target='sdd',
+            expected_format='raw',
+            file_path='/var/lib/libvirt/images/foobar.raw',
+            mode='custom-path',
+        ).execute()
+
+        # check CD/DVD discs correctly assumes raw format for ISO file
+        m.upload([os.path.join(BOTS_DIR, "machine/cloud-init.iso")], "/var/lib/libvirt/images/isofile")
+        self.VMAddDiskDialog(
+            self,
+            device='disk',
+            bus_type='scsi',
+            expected_target='sde',
+            expected_format='raw',
+            file_path='/var/lib/libvirt/images/isofile',
+            mode='custom-path',
+        ).execute()
+
+        # check CD/DVD discs correctly assumes qcow2 format for qcow2 file
+        m.execute("qemu-img create -f qcow2 /var/lib/libvirt/images/foobar.qcow2 1M")
+        self.VMAddDiskDialog(
+            self,
+            device='disk',
+            bus_type='scsi',
+            expected_target='sdf',
+            expected_format='qcow2',
+            file_path='/var/lib/libvirt/images/foobar.qcow2',
+            mode='custom-path',
+        ).execute()
 
     def testAddDiskAdditionalOptions(self):
         m = self.machine
