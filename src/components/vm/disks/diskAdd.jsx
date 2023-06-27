@@ -541,7 +541,7 @@ export class AddDiskModalBody extends React.Component {
                 this.onValueChanged("device", "cdrom");
             }
 
-            if (value && this.state.device === "disk") {
+            if (value) {
                 this.setState({ verificationInProgress: true, validate: false });
                 cockpit.spawn(["head", "--bytes=16", value], { binary: true, err: "message", superuser: "try" })
                         .then(file_header => {
