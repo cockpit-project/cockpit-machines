@@ -11,8 +11,11 @@ export RUN_TESTS_OPTIONS=--track-naughties
 # linters are off by default for production builds, but we want to run them in CI
 export LINT=1
 
-# HACK: drop when we have updated COCKPIT_REPO_COMMIT to 43c3606ed4
-export TEST_ALLOW_JOURNAL_MESSAGES="[eE]xception ignored in:.*DBusChannel.setup_path_watch.*,Traceback .*most recent call last.*"
+# HACK: drop when we have updated COCKPIT_REPO_COMMIT to https://github.com/cockpit-project/cockpit/commit/3d789f473fd40cafc6eb5ffc2bbb6d1707a6ad72
+PYBRIDGE_MESSAGES="[eE]xception ignored in:.*DBusChannel.setup_path_watch.*,Traceback .*most recent call last.*,File .*,async with self.watch_processing_lock:"
+PYBRIDGE_MESSAGES="${PYBRIDGE_MESSAGES},self.release.*,self._wake_up_first.*,fut.set_result.*,self._check_closed.*,raise RuntimeError.*,RuntimeError: Event loop is closed"
+
+export TEST_ALLOW_JOURNAL_MESSAGES=$PYBRIDGE_MESSAGES
 
 TEST_SCENARIO=${TEST_SCENARIO:-}
 
