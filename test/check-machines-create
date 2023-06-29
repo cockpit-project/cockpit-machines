@@ -147,7 +147,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         # Check PXE warning about macvtap is present
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self,
                                                                          sourceType='pxe',
-                                                                         location=f"type=direct,source={iface}"),
+                                                                         location=f"type=direct,source={iface},source.mode=bridge"),
                                              {"network": "macvtap does not work for host to guest network communication"},
                                              create=False,
                                              is_warning=True)
@@ -155,7 +155,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         # When switching from PXE mode to anything else make sure that the source input is empty
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, storage_size=1,
                                                                          sourceType='pxe',
-                                                                         location=f"type=direct,source={iface}",
+                                                                         location=f"type=direct,source={iface},source.mode=bridge",
                                                                          sourceTypeSecondChoice='url',
                                                                          create_and_run=False),
                                              {"source-url": "Installation source must not be empty"})
@@ -352,6 +352,12 @@ class TestMachinesCreate(VirtualMachinesCase):
 
         self.machine.execute("virsh net-destroy default; virsh net-undefine default")
 
+        # Create when the default installation source is not virtual network
+        runner.createTest(TestMachinesCreate.VmDialog(self, name='pxe-guest',
+                                                      sourceType='pxe',
+                                                      storage_pool=NO_STORAGE,
+                                                      create_and_run=True))
+
         # Set up the PXE server configuration files
         cmds = [
             "mkdir -p /var/lib/libvirt/pxe-config",
@@ -441,7 +447,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         # Check that host network devices are appearing in the options for PXE boot sources
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='pxe',
                                                       name="pxe-guest",
-                                                      location=f"type=direct,source={iface}",
+                                                      location=f"type=direct,source={iface},source.mode=bridge",
                                                       storage_size=128, storage_size_unit='MiB',
                                                       create_and_run=True,
                                                       delete=False))
@@ -1160,12 +1166,14 @@ vnc_password= "{vnc_passwd}"
                 b.select_from_dropdown("#source-type", self.sourceType)
             else:
                 b.wait_not_present("#source-type")
+
             if self.sourceType == 'file' or self.sourceType == 'cloud':
                 b.set_file_autocomplete_val("#source-file-group", self.location or " ")
             elif self.sourceType == 'disk_image':
                 b.set_file_autocomplete_val("#source-disk-group", self.location or " ")
             elif self.sourceType == 'pxe':
-                b.select_from_dropdown("#network-select", self.location)
+                if self.location:
+                    b.select_from_dropdown("#network-select", self.location)
             elif self.sourceType == 'url':
                 b.set_input_text("#source-url", self.location)
 
@@ -1593,6 +1601,7 @@ vnc_password= "{vnc_passwd}"
 
         def _assertCorrectConfiguration(self, dialog):
             b = self.browser
+            m = self.machine
             name = dialog.name
             connection = dialog.connection
 
@@ -1660,6 +1669,10 @@ vnc_password= "{vnc_passwd}"
                 b.wait_in_text(f"#vm-{name}-disks .pf-c-empty-state", "No disks defined")
                 b.click(f"#vm-{name}-disks-adddisk")
                 b.click(f"#vm-{name}-disks-adddisk-dialog-cancel")
+
+            if dialog.sourceType == 'pxe' and "network" not in dialog.location:
+                wait(lambda: "mode='bridge'" in m.execute(f"virsh dumpxml {name}"))
+
             return self
 
         def _assertScriptFinished(self):
