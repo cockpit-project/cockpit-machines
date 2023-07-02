@@ -1412,6 +1412,8 @@ class TestMachinesDisks(VirtualMachinesCase):
             expected_target='vdf',
             expected_access="Writeable",
             volume_format='raw',
+            serial="useexisting",
+            expected_serial="useexisting"
         ).execute()
 
         self.createVm("subVmTest2")
