@@ -265,6 +265,10 @@ class TestMachinesCreate(VirtualMachinesCase):
         self.login_and_go("/machines")
         self.waitPageInit()
 
+        # Check the "Automation" tab
+        runner.checkAutomationTab(TestMachinesCreate.VmDialog(self,
+                                                              sourceType='cloud'))
+
         # try to CREATE few machines
         # --cloud-init user-data option exists since virt-install >= 3.0.0
         runner.createCloudBaseImageTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
@@ -382,6 +386,10 @@ class TestMachinesCreate(VirtualMachinesCase):
         self.login_and_go("/machines")
         self.waitPageInit()
 
+        # Check the "Automation" tab
+        runner.checkAutomationTab(TestMachinesCreate.VmDialog(self,
+                                                              sourceType='os'))
+
         # try to CREATE few machines
         runner.createDownloadAnOSTest(TestMachinesCreate.VmDialog(self, sourceType='os',
                                                                   expected_memory_size=128,
@@ -435,6 +443,10 @@ class TestMachinesCreate(VirtualMachinesCase):
 
         b = self.browser
         self.waitPageInit()
+
+        # Check the "Automation" tab
+        runner.checkAutomationTab(TestMachinesCreate.VmDialog(self,
+                                                              sourceType='pxe'))
 
         # test PXE Source
         # check that the pxe booting is not available on session connection
@@ -663,6 +675,10 @@ vnc_password= "{vnc_passwd}"
         self.login_and_go("/machines")
         self.waitPageInit()
 
+        # Check the "Automation" tab
+        runner.checkAutomationTab(TestMachinesCreate.VmDialog(self,
+                                                              sourceType='file'))
+
         # Check that when there is no storage pool defined a VM can still be created
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='file',
                                                       location=config.NOVELL_MOCKUP_ISO_PATH,
@@ -778,6 +794,10 @@ vnc_password= "{vnc_passwd}"
         self.waitPageInit()
 
         runner.checkEnvIsEmpty()
+
+        # Check the "Automation" tab
+        runner.checkAutomationTab(TestMachinesCreate.VmDialog(self,
+                                                              sourceType='url'))
 
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='url',
                                                       location=config.TREE_URL,
@@ -1983,6 +2003,20 @@ vnc_password= "{vnc_passwd}"
                 .cancel(False)
             self._assertScriptFinished() \
                 .checkEnvIsEmpty()
+
+        def checkAutomationTab(self, dialog):
+            dialog.open()
+
+            self.browser.select_from_dropdown("#source-type", dialog.sourceType)
+
+            if dialog.sourceType != 'cloud':
+                self.browser.mouse(".pf-v5-c-tabs__list button[aria-disabled=true]:contains(Automation)", "mouseenter")
+                self.browser.wait_in_text("div.pf-v5-c-tooltip__content", "Automated installs are only available when downloading an image or using cloud-init.")
+                self.browser.mouse(".pf-v5-c-tabs__list button[aria-disabled=true]:contains(Automation)", "mouseleave")
+            else:
+                self.browser.wait_visible(".pf-v5-c-tabs__list button[aria-disabled=false]:contains(Automation)")
+
+            dialog.cancel()
 
     # Check various configuration changes made before VM installation persist after installation
     def testConfigureBeforeInstall(self):
