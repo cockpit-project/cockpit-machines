@@ -67,20 +67,20 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b = self.browser
         m = self.machine
 
-        def openDialog(target):
-            b.click(f"#vm-subVmTest1-disks-{target}-edit")
-            b.wait_visible(f"#vm-subVmTest1-disks-{target}-edit-dialog")
+        def openDialog(target, name="subVmTest1"):
+            b.click(f"#vm-{name}-disks-{target}-edit")
+            b.wait_visible(f"#vm-{name}-disks-{target}-edit-dialog")
 
-        def cancel(target):
-            b.click(f"#vm-subVmTest1-disks-{target}-edit-dialog-cancel")
-            b.wait_not_present(f"#vm-subVmTest1-disks-{target}-edit-dialog")
+        def cancel(target, name="subVmTest1"):
+            b.click(f"#vm-{name}-disks-{target}-edit-dialog-cancel")
+            b.wait_not_present(f"#vm-{name}-disks-{target}-edit-dialog")
 
-        def save(target, xfail=None):
-            b.click(f"#vm-subVmTest1-disks-{target}-edit-dialog-save")
+        def save(target, name="subVmTest1", xfail=None):
+            b.click(f"#vm-{name}-disks-{target}-edit-dialog-save")
             if xfail:
-                b.wait_in_text(f"#vm-subVmTest1-disks-{target}-edit-dialog .pf-v5-c-alert", xfail)
+                b.wait_in_text(f"#vm-{name}-disks-{target}-edit-dialog .pf-v5-c-alert", xfail)
             else:
-                b.wait_not_present(f"#vm-subVmTest1-disks-{target}-edit-dialog")
+                b.wait_not_present(f"#vm-{name}-disks-{target}-edit-dialog")
 
         self.createVm("subVmTest1")
 
@@ -184,7 +184,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b.enter_page('/machines')
         openDialog("sdb")
         b.set_checked("#vm-subVmTest1-disks-sdb-edit-readonly", True)
-        save("sdb", "readonly sata disks are not supported")
+        save("sdb", xfail="readonly sata disks are not supported")
         cancel("sdb")
         openDialog("sdb")
         b.wait_not_present("#vm-subVmTest1-disks-sdb-edit-dialog .pf-v5-c-alert")
@@ -218,6 +218,21 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         # Disks on non-persistent VM cannot be edited
         m.execute("virsh undefine subVmTest1")
         b.wait_not_present("#vm-subVmTest1-disks-vde-edit")
+
+        self.goToMainPage()
+        self.createVm("subVmTest2", running=False, os="unknown")
+        self.goToVmPage("subVmTest2")
+
+        b.wait_in_text("#vm-subVmTest2-disks-hda-bus", "ide")
+
+        openDialog("hda", name="subVmTest2")
+        b._wait_present("#vm-subVmTest2-disks-hda-edit-bus-type option[value=ide]:disabled")
+        b.select_from_dropdown("#vm-subVmTest2-disks-hda-edit-bus-type", "sata")
+        save("hda", name="subVmTest2")
+
+        b.wait_in_text("#vm-subVmTest2-disks-sda-bus", "sata")
+        openDialog("sda", name="subVmTest2")
+        b.wait_not_present("#vm-subVmTest2-disks-hda-edit-bus-type option[value=ide]")
 
     def testDisks(self):
         b = self.browser
