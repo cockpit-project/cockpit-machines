@@ -4,7 +4,6 @@ select = [
     "B",       # flake8-bugbear
     "C4",      # flake8-comprehensions
     "D300",    # pydocstyle: Forbid ''' in docstrings
-    "DTZ",     # flake8-datetimez
     "E",       # pycodestyle
     "EXE",     # flake8-executable
     "F",       # pyflakes
@@ -33,6 +32,8 @@ ignore = [
     "B011",  # Do not `assert False` (`python -O` removes these calls), raise `AssertionError()`
     "E731",  # Do not assign a `lambda` expression, use a `def`
     "FBT002", # Boolean default value in function definition
+    "FBT003", # Boolean positional value in function call
+    "PT009", # Use a regular `assert` instead of unittest-style `assertEqual`
     "PT011", # `pytest.raises(OSError)` is too broad
 ]
 # FIXME: we want 118, but needs fixing tests first
