@@ -36,8 +36,8 @@ const _ = cockpit.gettext;
 const NetworkMacRow = ({ mac, onValueChanged, idPrefix, isShutoff }) => {
     let macInput = (
         <TextInput id={`${idPrefix}-mac`}
-                   isReadOnly={!isShutoff}
                    value={mac}
+                   {...(!isShutoff ? { readOnlyVariant: "plain" } : {})}
                    onChange={value => onValueChanged("networkMac", value)} />
     );
     if (!isShutoff)
