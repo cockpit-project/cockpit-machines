@@ -206,8 +206,8 @@ class TestMachinesHostDevs(VirtualMachinesCase):
                     for dev in devices:
                         if self.dev_type == "usb_device":
                             self.run_admin(f"virsh -c qemu:///{connectionName} nodedev-dumpxml --device {dev} > /tmp/vmdir/nodedevxml", connectionName)
-                            vendor = m.execute(f"cat /tmp/vmdir/nodedevxml | xmllint --xpath 'string(//device/capability/vendor[starts-with(@id, \"{vendor_id}\")])' - 2>&1 || true")
-                            product = m.execute(f"cat /tmp/vmdir/nodedevxml | xmllint --xpath 'string(//device/capability/product[starts-with(@id, \"{product_id}\")])' - 2>&1 || true")
+                            vendor = m.execute(f"xmllint --xpath 'string(//device/capability/vendor[starts-with(@id, \"{vendor_id}\")])' - 2>&1 < /tmp/vmdir/nodedevxml || true")
+                            product = m.execute(f"xmllint --xpath 'string(//device/capability/product[starts-with(@id, \"{product_id}\")])' < /tmp/vmdir/nodedevxml - 2>&1 || true")
 
                             if vendor.strip() == self._vendor and product.strip() == self._model:
                                 return

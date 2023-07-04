@@ -74,7 +74,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         b = self.browser
         m = self.machine
 
-        def open(target):
+        def openDialog(target):
             b.click(f"#vm-subVmTest1-disks-{target}-edit")
             b.wait_visible(f"#vm-subVmTest1-disks-{target}-edit-dialog")
 
@@ -116,19 +116,19 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_not_present("#vm-subVmTest1-disks-vdf-edit")
 
         # Test close button
-        open("vdg")
+        openDialog("vdg")
         b.click("#vm-subVmTest1-disks-vdg-edit-dialog > .pf-v5-c-modal-box__close button")
         b.wait_not_present("#vm-subVmTest1-disks-vdg-edit-dialog")
 
         # Test qcow2 disk has only readonly attribute configurable
-        open("vdg")
+        openDialog("vdg")
         b.wait_visible("#vm-subVmTest1-disks-vdg-edit-readonly")
         b.wait_visible("#vm-subVmTest1-disks-vdg-edit-writable")
         b.wait_not_present("#vm-subVmTest1-disks-vdg-edit-writable-shareable")
         cancel("vdg")
 
         # Test configuration of readonly and shareable attributes
-        open("vde")
+        openDialog("vde")
         # Changing readonly with running VM
         b.set_checked("#vm-subVmTest1-disks-vde-edit-readonly", True)
 
@@ -151,7 +151,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_not_present("#vm-subVmTest1-needs-shutdown")
 
         # Test configuration of readonly and shareable attributes for Shut off VM
-        open("vde")
+        openDialog("vde")
         # Changing readonly
         b.set_checked("#vm-subVmTest1-disks-vde-edit-writable-shareable", True)
         # Tooltip in dialog should not be present
@@ -166,7 +166,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-disks-vde-bus", "virtio")
         b.wait_not_present("#vm-subVmTest1-disks-vde-cache")
         # Change bus type to scsi and cache mode to writeback
-        open("vde")
+        openDialog("vde")
         b.select_from_dropdown("#vm-subVmTest1-disks-vde-edit-bus-type", "scsi")
         b.select_from_dropdown("#vm-subVmTest1-disks-vde-edit-cache-mode", "writeback")
 
@@ -177,7 +177,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-disks-sda-cache", "writeback")
 
         # Configure readonly for the qcow2 disk
-        open("vdg")
+        openDialog("vdg")
         b.set_checked("#vm-subVmTest1-disks-vdg-edit-readonly", True)
 
         save("vdg")
@@ -189,11 +189,11 @@ class TestMachinesDisks(VirtualMachinesCase):
         m.execute(f"virsh attach-disk --domain subVmTest1 --source {p1}/mydisk4 --target sdb --targetbus sata --persistent")
         b.reload()
         b.enter_page('/machines')
-        open("sdb")
+        openDialog("sdb")
         b.set_checked("#vm-subVmTest1-disks-sdb-edit-readonly", True)
         save("sdb", "readonly sata disks are not supported")
         cancel("sdb")
-        open("sdb")
+        openDialog("sdb")
         b.wait_not_present("#vm-subVmTest1-disks-sdb-edit-dialog .pf-v5-c-alert")
         cancel("sdb")
 
@@ -203,7 +203,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         # virsh attach-disk want send an event for offline VM changes
         b.reload()
         b.enter_page('/machines')
-        open("hda")
+        openDialog("hda")
         b._wait_present("#vm-subVmTest1-disks-hda-edit-bus-type option[value=sata]")
         self.assertFalse(b.is_present("#vm-subVmTest1-disks-hda-edit-bus-type option[value=virtio]"))
 
@@ -218,7 +218,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # Test disk's bus and cache cannot be changed on running VM
-        open("sda")
+        openDialog("sda")
         b.wait_visible("#vm-subVmTest1-disks-sda-edit-bus-type:disabled")
         b.wait_visible("#vm-subVmTest1-disks-sda-edit-cache-mode:disabled")
 
@@ -337,7 +337,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             return disks
 
         def execute(self):
-            self.open() \
+            self.openDialog() \
                 .fill() \
                 .insert() \
                 .verify()
@@ -348,7 +348,7 @@ class TestMachinesDisks(VirtualMachinesCase):
                 self.force_eject()
             self.verify_eject()
 
-        def open(self):
+        def openDialog(self):
             b = self.test_obj.browser
             prefix = f"#vm-{self.vm_name}-disks-{self.target}-insert"
             b.click(prefix)  # button
@@ -545,7 +545,7 @@ class TestMachinesDisks(VirtualMachinesCase):
                 return 'qcow2'
 
         def execute(self):
-            self.open()
+            self.openDialog()
             self.fill()
             prefix = f"#vm-{self.vm_name}-disks-adddisk"
 
@@ -566,7 +566,7 @@ class TestMachinesDisks(VirtualMachinesCase):
                     self.test_obj.browser.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-alert__title", self.xfail_error_title)
                     self.test_obj.browser.click(f"{prefix}-dialog-cancel")
 
-        def open(self):
+        def openDialog(self):
             b = self.test_obj.browser
             prefix = f"#vm-{self.vm_name}-disks-adddisk"
             b.click(prefix)  # button
@@ -930,7 +930,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             expected_target=get_next_free_target(used_targets)[-1],
             device="disk",
         )
-        dialog.open()
+        dialog.openDialog()
         b.wait_visible("#vm-subVmTest1-disks-adddisk-existing-select-pool:enabled")
         # First select some iso file, where disk type is set to "cdrom"
         b.select_from_dropdown("#vm-subVmTest1-disks-adddisk-existing-select-pool", "images")
@@ -993,7 +993,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             self,
             pool_name='myPoolOne',
             mode='use-existing',
-        ).open()
+        ).openDialog()
         b.select_from_dropdown(f"{prefix}-existing-select-pool", "myPoolOne")
         # since both disks are already attached
         b.wait_attr(f"{prefix}-existing-select-volume", "disabled", "")
@@ -1022,7 +1022,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             mode='use-existing',
             expected_target=transient_targets[-1],
             volume_format='raw',
-        ).open().add_disk().verify_disk_added()
+        ).openDialog().add_disk().verify_disk_added()
 
         # shut off
         self.performAction("subVmTest1", "forceOff")
@@ -1203,7 +1203,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         self.VMAddDiskDialog(
             self,
             mode='custom-path'
-        ).open()
+        ).openDialog()
         b.click(f"{prefix}-file .pf-v5-c-select__toggle-button")
         b.wait_visible(f"{prefix}-file-autocomplete")
         b.key_press(chr(40), use_ord=True)

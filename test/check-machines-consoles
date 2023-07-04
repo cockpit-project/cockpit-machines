@@ -163,7 +163,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
             b.click("#pf-c-console__type-selector")
             b.wait_visible("#pf-c-console__type-selector + .pf-v5-c-select__menu")
             b.click(f'li:contains(\'Serial console ({"serial" if i == 0 else "console"}{i})\') button')
-            b.wait(lambda: m.execute(f'ps aux | grep \'virsh -c qemu:///system console vmWithSerialConsole {"serial" if i == 0 else "console"}{i}\''))
+            b.wait(lambda: m.execute(f'ps aux | grep \'virsh -c qemu:///system console vmWithSerialConsole {"serial" if i == 0 else "console"}{i}\''))  # noqa: B023
 
         # disconnecting the serial console closes the pty channel
         self.allow_journal_messages("connection unexpectedly closed by peer",
