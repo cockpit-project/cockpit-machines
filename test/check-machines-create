@@ -1009,7 +1009,7 @@ vnc_password= "{vnc_passwd}"
                     return self
                 except AssertionError:
                     # os found which is not ok
-                    raise AssertionError(f"{self.os_name} was not filtered")
+                    self.fail(f"{self.os_name} was not filtered")
             else:
                 b.wait_visible(f"#os-select li button:contains({self.os_search_name})")
 

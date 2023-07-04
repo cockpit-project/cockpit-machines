@@ -224,14 +224,14 @@ class TestMachinesStoragePools(VirtualMachinesCase):
 
         class StoragePoolCreateDialog(object):
             def __init__(
-                self, test_obj, name, pool_type=None, target=None, source={},
+                self, test_obj, name, pool_type=None, target=None, source=None,
                 autostart=None, xfail=False, xfail_error=None, remove=True,
             ):
                 self.test_obj = test_obj
                 self.name = name
                 self.pool_type = pool_type
                 self.target = target
-                self.source = source
+                self.source = source or {}
                 self.autostart = autostart
                 self.xfail = xfail
                 self.xfail_error = xfail_error
@@ -520,8 +520,8 @@ class TestMachinesStoragePools(VirtualMachinesCase):
 
         class StorageVolumeCreateDialog(object):
             def __init__(
-                self, test_obj, pool_name, vol_name, size="128", unit="MiB", format='qcow2',
-                pool_type="dir", xfail=False, xfail_objects=[], xfail_error=None, remove=True,
+                self, test_obj, pool_name, vol_name, size="128", unit="MiB", fmt='qcow2',
+                pool_type="dir", xfail=False, xfail_objects=None, xfail_error=None, remove=True,
             ):
                 self.test_obj = test_obj
                 self.pool_name = pool_name
@@ -529,9 +529,9 @@ class TestMachinesStoragePools(VirtualMachinesCase):
                 self.vol_name = vol_name
                 self.size = size
                 self.unit = unit
-                self.format = format
+                self.fmt = fmt
                 self.xfail = xfail
-                self.xfail_objects = xfail_objects
+                self.xfail_objects = xfail_objects or []
                 self.xfail_error = xfail_error
                 self.remove = remove
 
@@ -564,8 +564,8 @@ class TestMachinesStoragePools(VirtualMachinesCase):
                 if self.unit:
                     b.select_from_dropdown("#create-volume-dialog-unit", self.unit)
 
-                if self.format:
-                    b.select_from_dropdown("#create-volume-dialog-format", self.format)
+                if self.fmt:
+                    b.select_from_dropdown("#create-volume-dialog-format", self.fmt)
 
             def cancel(self):
                 b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
@@ -594,8 +594,8 @@ class TestMachinesStoragePools(VirtualMachinesCase):
 
                 self.test_obj.assertEqual(self.vol_name, m.execute(xmllint_element.format(prop='name')).strip())
 
-                if (self.format):
-                    self.test_obj.assertEqual(self.format, m.execute(xmllint_element.format(prop='target/format/@type')).strip())
+                if (self.fmt):
+                    self.test_obj.assertEqual(self.fmt, m.execute(xmllint_element.format(prop='target/format/@type')).strip())
 
                 size = int(m.execute(xmllint_element.format(prop='capacity')).strip())
                 if self.unit == "GiB":
@@ -619,7 +619,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
             vol_name="volume_of_dir_pool",
             size="1000",
             unit="GiB",
-            format="qcow2",
+            fmt="qcow2",
             remove=True,
             xfail=True,
             xfail_objects=['size'],
@@ -633,7 +633,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
             vol_name="volume_of_dir_pool",
             size="256",
             unit="MiB",
-            format="qcow2",
+            fmt="qcow2",
             remove=True,
         ).execute()
 
@@ -644,7 +644,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
             vol_name="volume_of_nfs_dir",
             size="10",  # Creation of big nfs vol might take so long it will result in timetout
             unit="MiB",
-            format="raw",  # Creation of qcow2 nfs vol might take so long it will result in timetout
+            fmt="raw",  # Creation of qcow2 nfs vol might take so long it will result in timetout
             remove=True,
         ).execute()
 
@@ -655,7 +655,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
             vol_name=dev.split("/")[-1] + "1",  # Partition names must follow pattern of sda1, sda2...
             size="2",  # Only 10MiB available on disk-pool
             unit="MiB",
-            format="none",
+            fmt="none",
             remove=True,
         ).execute()
 
@@ -666,7 +666,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
             vol_name="unacceptable name",  # Partition names must follow pattern of sda1, sda2..., anything else will fail
             size="2",
             unit="MiB",
-            format="none",
+            fmt="none",
             xfail=True,
             xfail_error="invalid partition name",
             remove=True,
@@ -677,7 +677,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
             self,
             pool_name="dir-pool",
             vol_name="volume_of_dir_pool2",
-            format="raw",
+            fmt="raw",
             remove=True,
         ).execute()
 
@@ -690,7 +690,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
             pool_name="lvm-pool",
             vol_name="lvm_vol",
             size="4",
-            format="",
+            fmt="",
             remove=True,
         ).execute()
 
