@@ -576,7 +576,7 @@ class TestMachinesNICs(VirtualMachinesCase):
             permanent=False, mac=None, remove=True, persistent_vm=True,
             xfail=False, xfail_error=None, pixel_test_tag=None
         ):
-            self.bridge_devices = map(lambda entry: entry['ifname'], json.loads(test_obj.machine.execute("ip -j link show type bridge")))
+            self.bridge_devices = (entry['ifname'] for entry in json.loads(test_obj.machine.execute("ip -j link show type bridge")))
             self.source_type = source_type
             self.source = source
             self.model = model
