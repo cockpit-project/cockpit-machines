@@ -1289,7 +1289,7 @@ vnc_password= "{vnc_passwd}"
             b = self.browser
 
             def waitForError(errors, error_location):
-                for retry in range(0, 60):
+                for _retry in range(0, 60):
                     error_message = b.text(error_location)
                     if any(error in error_message for error in errors):
                         break
@@ -1667,7 +1667,7 @@ vnc_password= "{vnc_passwd}"
             return self
 
         def _assertDomainDefined(self, name, connection, install_phase=""):
-            for retry in range(5):
+            for _retry in range(5):
                 dumpxml = self.run_admin(f"virsh -c qemu:///system dumpxml --inactive {name}", connection)
                 try:
                     # has cockpit-machines specific metadata

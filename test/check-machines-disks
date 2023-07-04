@@ -1208,7 +1208,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_visible(f"{prefix}-file-autocomplete")
         b.key_press(chr(40), use_ord=True)
         b.focus(f"{prefix}-file-autocomplete li:first-child")
-        for retry in range(0, 10):
+        for _retry in range(0, 10):
             b.key_press(chr(40), use_ord=True)
             time.sleep(0.5)
         b.wait_not_present("#navbar-oops")
