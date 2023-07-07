@@ -73,7 +73,7 @@ class MemorySelectRow extends React.Component {
                                        inputMode="numeric"
                                        pattern="[0-9]*"
                                        value={this.state.memory}
-                                       onKeyPress={digitFilter}
+                                       onKeyDown={digitFilter}
                                        isDisabled={isDisabled}
                                        onFocus={ () => this.setState({ inputHasFocus: true }) }
                                        onBlur={() => { onValueChange(Math.min(Math.max(minValue, this.state.memory), maxValue)); this.setState({ inputHasFocus: false }) }}

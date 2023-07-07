@@ -794,7 +794,7 @@ const MemoryRow = ({ memorySize, memorySizeUnit, nodeMaxMemory, minimumMemory, o
                 <InputGroup>
                     <TextInput id='memory-size' value={memorySize}
                                className="size-input"
-                               onKeyPress={digitFilter}
+                               onKeyDown={digitFilter}
                                onChange={(_, value) => onValueChanged('memorySize', Number(value))} />
                     <FormSelect id="memory-size-unit-select"
                                 className="unit-select"
@@ -918,7 +918,7 @@ const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit,
                     <InputGroup>
                         <TextInput id='storage-limit' value={storageSize}
                                    className="size-input"
-                                   onKeyPress={digitFilter}
+                                   onKeyDown={digitFilter}
                                    onChange={(_, value) => onValueChanged('storageSize', Number(value))} />
                         <FormSelect id="storage-limit-unit-select"
                                     data-value={storageSizeUnit}

@@ -85,7 +85,7 @@ const VolumeDetails = ({ idPrefix, size, unit, format, storagePoolCapacity, stor
                     <TextInput id={`${idPrefix}-size`}
                                type="number" inputMode='numeric' pattern="[0-9]*"
                                value={parseFloat(size).toFixed(0)}
-                               onKeyPress={digitFilter}
+                               onKeyDown={digitFilter}
                                step={1}
                                min={0}
                                max={volumeMaxSize}
