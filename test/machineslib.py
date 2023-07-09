@@ -35,9 +35,19 @@ class VirtualMachinesCaseHelpers:
 
     def performAction(self, vmName, action, checkExpectedState=True, connectionName="system"):
         b = self.browser
+        m = self.machine
+
+        def getStartTime():
+            return m.execute(f"grep 'starting up' /var/log/libvirt/qemu/{vmName}.log | tail -1")
+
+        initialTime = getStartTime()
         b.click("#vm-{0}-{1}-action-kebab button".format(vmName, connectionName))
         b.wait_visible("#vm-{0}-{1}-action-kebab > .pf-v5-c-dropdown__menu".format(vmName, connectionName))
         b.click("#vm-{0}-{1}-{2} a".format(vmName, connectionName, action))
+        if (action == "reboot" or "forceReboot") and connectionName == "system":
+            # Check VM doesn't get rebooted after opening dialog
+            # https://bugzilla.redhat.com/show_bug.cgi?id=2221144
+            self.assertEqual(initialTime, getStartTime())
 
         # Some actions, which can cause expensive downtime when clicked accidentally, have confirmation dialog
         if action in ["off", "forceOff", "reboot", "forceReboot", "sendNMI"]:

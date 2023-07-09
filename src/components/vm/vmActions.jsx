@@ -334,7 +334,7 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
                                   actionsList={[
                                       {
                                           variant: "primary",
-                                          handler: onReboot(vm),
+                                          handler: () => onReboot(vm),
                                           name: _("Reboot"),
                                           id: "reboot",
                                       },
@@ -354,7 +354,7 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
                                   actionsList={[
                                       {
                                           variant: "primary",
-                                          handler: onForceReboot(vm),
+                                          handler: () => onForceReboot(vm),
                                           name: _("Force reboot"),
                                           id: "forceReboot",
                                       },
