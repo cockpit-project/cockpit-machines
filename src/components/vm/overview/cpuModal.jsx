@@ -230,7 +230,7 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
                                ? cockpit.format(_("Maximum number of virtual CPUs allocated for the guest OS, which must be between 1 and $0"), parseInt(maxVcpu))
                                : _("Maximum number of virtual CPUs allocated for the guest OS")}>
                                <button onClick={e => e.preventDefault()} className="pf-v5-c-form__group-label-help">
-                                   <HelpIcon noVerticalAlign />
+                                   <HelpIcon />
                                </button>
                            </Popover>}>
                 <NumberInput
@@ -251,7 +251,7 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
                        labelIcon={
                            <Popover bodyContent={_("Fewer than the maximum number of virtual CPUs should be enabled.")}>
                                <button onClick={e => e.preventDefault()} className="pf-v5-c-form__group-label-help">
-                                   <HelpIcon noVerticalAlign />
+                                   <HelpIcon />
                                </button>
                            </Popover>}>
                 <NumberInput
@@ -272,7 +272,7 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
                        labelIcon={
                            <Popover bodyContent={_("Preferred number of sockets to expose to the guest.")}>
                                <button onClick={e => e.preventDefault()} className="pf-v5-c-form__group-label-help">
-                                   <HelpIcon noVerticalAlign />
+                                   <HelpIcon />
                                </button>
                            </Popover>}>
                 <FormSelect id="socketsSelect"

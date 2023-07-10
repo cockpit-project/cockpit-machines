@@ -208,7 +208,7 @@ const VmFilesystemAddModal = ({ connectionName, objPath, vmName, vmState }) => {
                                            className="pf-v5-c-form__group-label-help"
                                            onClick={e => e.preventDefault()}
                                            type="button">
-                                       <HelpIcon noVerticalAlign />
+                                       <HelpIcon />
                                    </button>
                                </Popover>
                            }>
@@ -227,7 +227,7 @@ const VmFilesystemAddModal = ({ connectionName, objPath, vmName, vmState }) => {
                                            className="pf-v5-c-form__group-label-help"
                                            onClick={e => e.preventDefault()}
                                            type="button">
-                                       <HelpIcon noVerticalAlign />
+                                       <HelpIcon />
                                    </button>
                                </Popover>
                            }>

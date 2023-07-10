@@ -61,7 +61,7 @@ const CacheRow = ({ onValueChanged, dialogValues, idPrefix, shutoff }) => {
                    labelIcon={!shutoff &&
                        <Popover bodyContent={_("Machine must be shut off before changing cache mode")}>
                            <button onClick={e => e.preventDefault()} className="pf-v5-c-form__group-label-help">
-                               <InfoAltIcon noVerticalAlign />
+                               <InfoAltIcon />
                            </button>
                        </Popover>}>
             <FormSelect id={`${idPrefix}-cache-mode`}
@@ -91,7 +91,7 @@ const BusRow = ({ onValueChanged, dialogValues, diskDevice, idPrefix, shutoff, s
                    labelIcon={!shutoff &&
                        <Popover bodyContent={_("Machine must be shut off before changing bus type")}>
                            <button onClick={e => e.preventDefault()} className="pf-v5-c-form__group-label-help">
-                               <InfoAltIcon noVerticalAlign />
+                               <InfoAltIcon />
                            </button>
                        </Popover>}>
             <FormSelect id={`${idPrefix}-bus-type`}

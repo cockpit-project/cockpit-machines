@@ -80,7 +80,7 @@ export const MachinesConnectionSelector = ({ onValueChanged, loggedUser, connect
                            </>}
                        >
                            <Button variant="plain" aria-label={_("more info")} className="pf-v5-c-form__group-label-help">
-                               <HelpIcon noVerticalAlign />
+                               <HelpIcon />
                            </Button>
                        </Popover>
                    }>

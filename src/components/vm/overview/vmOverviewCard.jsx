@@ -214,7 +214,7 @@ class VmOverviewCard extends React.Component {
                                         bodyContent={WATCHDOG_INFO_MESSAGE}>
                                         <button onClick={e => e.preventDefault()} className="pf-v5-c-form__group-label-help">
                                             <Icon className="overview-icon" status="info">
-                                                <HelpIcon noVerticalAlign />
+                                                <HelpIcon />
                                             </Icon>
                                         </button>
                                     </Popover>
@@ -246,7 +246,7 @@ class VmOverviewCard extends React.Component {
                                         hasAutoWidth>
                                         <button onClick={e => e.preventDefault()} className="pf-v5-c-form__group-label-help">
                                             <Icon className="overview-icon" status="info">
-                                                <HelpIcon noVerticalAlign />
+                                                <HelpIcon />
                                             </Icon>
                                         </button>
                                     </Popover>
