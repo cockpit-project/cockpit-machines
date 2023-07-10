@@ -224,7 +224,7 @@ export const VsockModal = ({ vm, vms, vmVsockNormalized, isVsockAttached, idPref
                        }
                        hasAutoWidth>
                        <Button variant="plain" className="pf-v5-u-px-sm pf-v5-u-py-0" aria-label={_("more info")}>
-                           <HelpIcon noVerticalAlign />
+                           <HelpIcon />
                        </Button>
                    </Popover>
                </>}
