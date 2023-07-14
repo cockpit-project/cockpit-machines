@@ -267,7 +267,8 @@ export function domainCreate({
     userPassword,
     vmName,
     accessToken,
-    loggedUser
+    loggedUser,
+    sshKeys,
 }) {
     // shows dummy vm  until we get vm from virsh (cleans up inProgress)
     setVmCreateInProgress(vmName, connectionName, { openConsoleTab: startVm });
@@ -297,6 +298,7 @@ export function domainCreate({
         userLogin,
         userPassword,
         vmName,
+        sshKeys,
     };
 
     logDebug(`CREATE_VM(${vmName}): install_machine.py '${args}'`);

@@ -24,6 +24,7 @@ import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
+import { Grid, GridItem } from "@patternfly/react-core/dist/esm/layouts/Grid";
 import { InputGroup } from "@patternfly/react-core/dist/esm/components/InputGroup";
 import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
 import { Select as PFSelect, SelectGroup, SelectOption } from "@patternfly/react-core/dist/esm/deprecated/components/Select";
@@ -33,7 +34,7 @@ import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { TextArea } from "@patternfly/react-core/dist/esm/components/TextArea";
 import { Spinner } from "@patternfly/react-core/dist/esm/components/Spinner";
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { ExternalLinkAltIcon, TrashIcon } from '@patternfly/react-icons';
 
 import { DialogsContext } from 'dialogs.jsx';
 import cockpit from 'cockpit';
@@ -84,6 +85,7 @@ import { domainCreate } from '../../libvirtApi/domain.js';
 import { storagePoolRefresh } from '../../libvirtApi/storagePool.js';
 import { getAccessToken } from '../../libvirtApi/rhel-images.js';
 import { PasswordFormFields, password_quality } from 'cockpit-components-password.jsx';
+import { DynamicListForm } from 'DynamicListForm.jsx';
 
 import './createVmDialog.scss';
 
@@ -248,6 +250,8 @@ function validateParams(vmParams) {
     }
     if (vmParams.userPassword && !vmParams.userLogin) {
         validationFailed.userLogin = _("User login must not be empty when user password is set");
+    } else if (vmParams.sshKeys.length > 0 && !vmParams.userLogin) {
+        validationFailed.userLogin = _("User login must not be empty when SSH keys are set");
     }
 
     return validationFailed;
@@ -748,6 +752,80 @@ const UsersConfigurationRow = ({
     );
 };
 
+// This method needs to be outside of component as re-render would create a new instance of debounce
+const parseKey = debounce(500, (key, setKeyObject, setKeyInvalid) => {
+    if (isEmpty(key))
+        return;
+
+    // Validate correctness of the key
+    return cockpit.spawn(["ssh-keygen", "-l", "-f", "-"], { err: "message" })
+            .input(key)
+            .then(() => {
+                setKeyInvalid(false);
+                const parts = key.split(" ");
+                if (parts.length > 2) {
+                    setKeyObject({
+                        type: parts[0],
+                        data: parts[1],
+                        comment: parts[2], // comment is optional in SSH-format
+                    });
+                }
+            })
+            .catch(() => {
+                setKeyObject(undefined);
+                setKeyInvalid(true);
+                console.warn("Could not validate the public key");
+            });
+});
+
+const SshKeysRow = ({
+    id, item, onChange, idx, removeitem,
+}) => {
+    const [keyObject, setKeyObject] = useState();
+    const [keyInvalid, setKeyInvalid] = useState(false);
+
+    const onChangeHelper = (value) => {
+        // Some users might want to input multiple keys into the same field
+        // While handling that in the future might be a nice user experience, now we only parse one key out of input
+        value = value.split(/\r?\n/)[0];
+
+        onChange(idx, "value", value);
+        parseKey(value, setKeyObject, setKeyInvalid);
+    };
+
+    return (
+        <Grid id={id} key={id}>
+            <GridItem span={11}>
+                {keyObject
+                    ? <FlexItem id="validated">
+                        <strong>{keyObject.comment}</strong>
+                        <span>{keyObject.comment ? " - " + keyObject.type : keyObject.type}</span>
+                        <div>{keyObject.data}</div>
+                    </FlexItem>
+                    : <FormGroup label={_("Public key")}
+                        testdata={keyInvalid && "key-invalid"}
+                        fieldId='public-key'>
+                        <TextArea value={item.value || ""}
+                            aria-label={_("Public SSH key")}
+                            onChange={(_, value) => onChangeHelper(value)}
+                            rows="3" />
+                        <FormHelper helperText={_("Keys are located in ~/.ssh/ and have a \".pub\" extension.")} />
+                    </FormGroup>
+                }
+            </GridItem>
+            <GridItem span={1} className="pf-m-1-col-on-md remove-button-group">
+                <Button variant='plain'
+                    className="btn-close"
+                    id={id + "-btn-close"}
+                    isSmall
+                    aria-label={_("Remove item")}
+                    icon={<TrashIcon />}
+                    onClick={() => removeitem(idx)} />
+            </GridItem>
+        </Grid>
+    );
+};
+
 const CloudInitOptionsRow = ({
     onValueChanged,
     rootPassword,
@@ -755,13 +833,21 @@ const CloudInitOptionsRow = ({
     validationFailed,
 }) => {
     return (
-        <UsersConfigurationRow rootPassword={rootPassword}
-                               rootPasswordLabelInfo={_("Leave the password blank if you do not wish to set a root password")}
-                               showUserFields
-                               userLogin={userLogin}
-                               userPassword={userPassword}
-                               validationFailed={validationFailed}
-                               onValueChanged={onValueChanged} />
+        <>
+            <UsersConfigurationRow rootPassword={rootPassword}
+                                   rootPasswordLabelInfo={_("Leave the password blank if you do not wish to set a root password")}
+                                   showUserFields
+                                   userLogin={userLogin}
+                                   userPassword={userPassword}
+                                   validationFailed={validationFailed}
+                                   onValueChanged={onValueChanged} />
+            <DynamicListForm id="create-vm-dialog-ssh-key"
+                emptyStateString={_("No SSH keys specified")}
+                label={_("SSH keys")}
+                actionLabel={_("Add SSH keys")}
+                onChange={value => onValueChanged('sshKeys', value)}
+                itemcomponent={ <SshKeysRow />} />
+        </>
     );
 };
 
@@ -979,6 +1065,7 @@ class CreateVmModal extends React.Component {
             userLogin: '',
             accessToken: '',
             offlineToken: '',
+            sshKeys: [],
         };
         this.onCreateClicked = this.onCreateClicked.bind(this);
         this.onValueChanged = this.onValueChanged.bind(this);
@@ -1172,6 +1259,7 @@ class CreateVmModal extends React.Component {
                 userPassword: this.state.userPassword,
                 rootPassword: this.state.rootPassword,
                 userLogin: this.state.userLogin,
+                sshKeys: this.state.sshKeys.map(key => key.value),
                 startVm,
                 accessToken: this.state.accessToken,
                 loggedUser

@@ -185,6 +185,19 @@ class TestMachinesCreate(VirtualMachinesCase):
         # https://bugzilla.redhat.com/show_bug.cgi?id=2109986
         runner.checkPasswordsAreNotResetTest(TestMachinesCreate.VmDialog(self))
 
+        # Check user login has to be filled when SSH keys are provided
+        self.machine.execute("ssh-keygen -t rsa -N '' -f /tmp/rsakey")
+        rsakey = self.machine.execute("cat /tmp/rsakey.pub").strip()
+        self.addCleanup(self.machine.execute, "rm -f /tmp/rsakey*")
+        runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
+                                                                         storage_size=10, storage_size_unit='MiB',
+                                                                         location=config.VALID_DISK_IMAGE_PATH,
+                                                                         root_password="foobar",
+                                                                         user_login="",
+                                                                         ssh_keys=[rsakey],
+                                                                         create_and_run=True),
+                                             {"create-vm-dialog-user-login": "User login must not be empty when SSH keys are set"})
+
     def testCreateNameGeneration(self):
         config = TestMachinesCreate.TestCreateConfig
         runner = TestMachinesCreate.CreateVmRunner(self)
@@ -274,6 +287,62 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                     location=config.VALID_DISK_IMAGE_PATH,
                                                                     os_name=config.FEDORA_28,
                                                                     os_short_id=config.FEDORA_28_SHORTID,
+                                                                    create_and_run=True))
+        self.machine.execute("ssh-keygen -t rsa -N '' -f /tmp/rsakey")
+        rsakey = self.machine.execute("cat /tmp/rsakey.pub").strip()
+        self.addCleanup(self.machine.execute, "rm -f /tmp/rsakey*")
+        self.machine.execute("ssh-keygen -t dsa -N '' -C '' -f /tmp/dsakey")  # public key with empty comment
+        dsakey = self.machine.execute("cat /tmp/dsakey.pub")
+        self.addCleanup(self.machine.execute, "rm -f /tmp/dsakey*")
+
+        # Try to create VM with one SSH key
+        runner.createCloudBaseImageTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
+                                                                    storage_size=10, storage_size_unit='MiB',
+                                                                    location=config.VALID_DISK_IMAGE_PATH,
+                                                                    os_name=config.FEDORA_28,
+                                                                    os_short_id=config.FEDORA_28_SHORTID,
+                                                                    user_password="catsaremybestfr13nds",
+                                                                    user_login="foo",
+                                                                    root_password="dogsaremybestfr13nds",
+                                                                    ssh_keys=[rsakey],
+                                                                    create_and_run=True))
+
+        # try to create VM with multiple SSH keys
+        runner.createCloudBaseImageTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
+                                                                    storage_size=10, storage_size_unit='MiB',
+                                                                    location=config.VALID_DISK_IMAGE_PATH,
+                                                                    os_name=config.FEDORA_28,
+                                                                    os_short_id=config.FEDORA_28_SHORTID,
+                                                                    user_password="catsaremybestfr13nds",
+                                                                    user_login="foo",
+                                                                    root_password="dogsaremybestfr13nds",
+                                                                    ssh_keys=[rsakey, dsakey],
+                                                                    create_and_run=True))
+
+        # try to input multiple keys (separated by newline) into one text input, expect only first one to be used
+        runner.createCloudBaseImageTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
+                                                                    storage_size=10, storage_size_unit='MiB',
+                                                                    location=config.VALID_DISK_IMAGE_PATH,
+                                                                    os_name=config.FEDORA_28,
+                                                                    os_short_id=config.FEDORA_28_SHORTID,
+                                                                    user_password="catsaremybestfr13nds",
+                                                                    user_login="foo",
+                                                                    root_password="dogsaremybestfr13nds",
+                                                                    ssh_keys=[f"{rsakey} \n {dsakey}"],
+                                                                    expected_ssh_keys=[rsakey],
+                                                                    create_and_run=True))
+
+        # Try to create VM with invalid ssh key
+        runner.createCloudBaseImageTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
+                                                                    storage_size=10, storage_size_unit='MiB',
+                                                                    location=config.VALID_DISK_IMAGE_PATH,
+                                                                    os_name=config.FEDORA_28,
+                                                                    os_short_id=config.FEDORA_28_SHORTID,
+                                                                    user_password="catsaremybestfr13nds",
+                                                                    user_login="foo",
+                                                                    root_password="dogsaremybestfr13nds",
+                                                                    ssh_keys=["non-valid ssh key"],
+                                                                    ssh_key_invalid=True,
                                                                     create_and_run=True))
 
     def testCreateDownloadAnOS(self):
@@ -802,6 +871,9 @@ vnc_password= "{vnc_passwd}"
                      root_password=None,
                      user_password=None,
                      user_login=None,
+                     ssh_keys=None,
+                     ssh_key_invalid=False,
+                     expected_ssh_keys=None,
                      storage_pool=NEW_VOLUME_QCOW2, storage_volume='',
                      create_and_run=False,
                      delete=True,
@@ -847,6 +919,9 @@ vnc_password= "{vnc_passwd}"
             self.root_password = root_password
             self.user_password = user_password
             self.user_login = user_login
+            self.ssh_keys = ssh_keys
+            self.ssh_key_invalid = ssh_key_invalid
+            self.expected_ssh_keys = expected_ssh_keys
             self.create_and_run = create_and_run or is_unattended
             self.storage_pool = storage_pool
             self.storage_volume = storage_volume
@@ -1072,6 +1147,11 @@ vnc_password= "{vnc_passwd}"
 
                 self.assertIn("\nssh_pwauth: true", user_data)
 
+            ssh_keys = self.expected_ssh_keys or self.ssh_keys
+            if ssh_keys is not None:
+                for key in ssh_keys:
+                    self.assertIn(key, user_data)
+
             # --unattended option is conflicting with --cloud-init option, resulting --cloud-init user_data being ignored
             # https://bugzilla.redhat.com/show_bug.cgi?id=2096200#c14
             self.assertNotIn("--unattended", virt_install_cmd_out)
@@ -1233,6 +1313,15 @@ vnc_password= "{vnc_passwd}"
                     b.set_input_text("#user-login", self.user_login)
                 if self.root_password:
                     b.set_input_text("#create-vm-dialog-root-password-pw1", self.root_password)
+                if self.ssh_keys is not None:
+                    for idx, key in enumerate(self.ssh_keys):
+                        b.click("button:contains(Add SSH keys)")
+                        b.set_input_text(f"#create-vm-dialog-ssh-key-{idx} textarea", key, value_check=False, blur=False)
+                        # Check that ssh key was validated
+                        if self.ssh_key_invalid:
+                            self.browser.wait_attr(f"#create-vm-dialog-ssh-key-{idx} .pf-v5-c-form__group", "testdata", "key-invalid")
+                        else:
+                            b.wait_visible(f"#create-vm-dialog-ssh-key-{idx} #validated")
 
                 if self.is_unattended:
                     b.wait_visible("#create-and-edit[aria-disabled=true]")
