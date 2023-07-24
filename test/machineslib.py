@@ -15,9 +15,13 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
 
+import os
+import sys
+import traceback
+
 from netlib import NetworkHelpers
 from storagelib import StorageHelpers
-from testlib import Error, MachineCase, wait
+from testlib import Error, MachineCase, attach, wait
 
 distrosWithMonolithicDaemon = ["rhel-8-6", "rhel-8-7", "rhel-8-8", "rhel-8-9", "ubuntu-stable", "ubuntu-2204", "debian-testing", "debian-stable", "centos-8-stream", "arch"]
 
@@ -408,8 +412,50 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
         # HACK: older c-ws versions always log an assertion, fixed in PR cockpit#16765
         self.allow_journal_messages("json_object_get_string_member: assertion 'node != NULL' failed")
 
+    def downloadVmXml(self, vm):
+        m = self.machine
+
+        vms_xml = f"/var/lib/cockpittest/pkg_specific_artifacts/{vm}.xml"
+        m.execute(f"virsh dumpxml {vm} > {vms_xml}")
+        dest_file = f"{self.label()}-{m.label}-{vm}.xml"
+        dest = os.path.abspath(dest_file)
+        m.download(vms_xml, dest)
+        attach(dest, move=False)
+        print(f"Wrote {vm} XML to {dest_file}")
+
+    def downloadVmLog(self, vm):
+        m = self.machine
+
+        vms_log = f"/var/log/libvirt/qemu/{vm}.log"
+        # Log file may not exist, if VM was never started
+        if m.execute(f"! test -f {vms_log} || echo exists").strip() == "exists":
+            dest_file = f"{self.label()}-{m.label}-{vm}.log"
+            dest = os.path.abspath(dest_file)
+            m.download(vms_log, dest)
+            attach(dest, move=True)
+            print(f"Wrote {vm} log to {dest_file}")
+
+    def downloadVmsArtifacts(self):
+        m = self.machine
+
+        vms = m.execute("virsh list --all --name").strip().splitlines()
+        if len(vms) > 0:
+            m.execute("mkdir -p /var/lib/cockpittest/pkg_specific_artifacts")
+        for vm in vms:
+            self.downloadVmXml(vm)
+            self.downloadVmLog(vm)
+
     def tearDown(self):
         b = self.browser
         if b.cdp.valid and b.is_present("#button.alert-link.more-button"):
             b.click("button.alert-link.more-button")
+
+        if self.getError():
+            try:
+                self.downloadVmsArtifacts()
+            except (OSError, RuntimeError):
+                # failures in these debug artifacts should not skip cleanup actions
+                sys.stderr.write("Failed to generate debug artifact:\n")
+                traceback.print_exc(file=sys.stderr)
+
         super().tearDown()
