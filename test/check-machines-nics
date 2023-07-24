@@ -125,6 +125,19 @@ class TestMachinesNICs(VirtualMachinesCase):
                         # With medium layout this variable width of the columns makes pixel tests references of the table different each test run
                         skip_layouts=["medium", "rtl"])
 
+        # Start vm and wait until kernel is booted
+        wait(lambda: "1" in self.machine.execute("virsh domifaddr subVmTest1 | grep 192.168.122. | wc -l"), delay=3)
+        b.reload()
+        b.enter_page('/machines')
+        self.waitPageInit()
+
+        # Check interfaces have different IP addresses
+        # This tests a fix for a bug[1] where we used to show same IP address for every interface
+        # https://github.com/cockpit-project/cockpit-machines/issues/1142
+        b.wait_visible("#vm-subVmTest1-network-1-ip-unknown")
+        b.wait_in_text("#vm-subVmTest1-network-2-ipv4-address", "192.168.122.")
+        b.wait_visible("#vm-subVmTest1-network-3-ip-unknown")
+
     def testNICPlugingAndUnpluging(self):
         b = self.browser
         m = self.machine

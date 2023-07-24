@@ -204,7 +204,7 @@ export class VmNetworkTab extends React.Component {
 
         this.state = {
             networkDevices: undefined,
-            ips: {},
+            ips: [],
             dropdownOpenActions: new Set(),
         };
 
@@ -222,7 +222,7 @@ export class VmNetworkTab extends React.Component {
 
     getIpAddr() {
         if (this.props.vm.state != 'running' && this.props.vm.state != 'paused') {
-            this.setState({ ips: {} });
+            this.setState({ ips: [] });
             return;
         }
 
@@ -237,7 +237,7 @@ export class VmNetworkTab extends React.Component {
                             resourceId: this.props.vm.id,
                         });
                     else {
-                        const ipaddr = {};
+                        const ipaddresses = [];
 
                         domifaddressAllSources
                                 .filter(promise => promise.status == 'fulfilled')
@@ -249,19 +249,26 @@ export class VmNetworkTab extends React.Component {
                                         if (!iface.length || iface[0] == "lo")
                                             return;
 
+                                        const address = {
+                                            name: iface[0],
+                                            mac: iface[1],
+                                            ip: { },
+                                            source: promise.value.source,
+                                        };
                                         iface[2].forEach(ifAddress => {
                                             // type == 0 -> ipv4
                                             // type == 1 -> ipv6
                                             const type = ifAddress[0] == 0 ? 'inet' : 'inet6';
 
-                                            if (ifAddress.length && !ipaddr[type] && ifAddress[0] <= 1) {
+                                            if (ifAddress.length && ifAddress[0] <= 1) {
                                                 // 0 cell -> type, 1 cell -> address, 2 cell -> prefix
-                                                ipaddr[type] = ifAddress[1] + '/' + ifAddress[2];
+                                                address.ip[type] = ifAddress[1] + '/' + ifAddress[2];
                                             }
                                         });
+                                        ipaddresses.push(address);
                                     });
                                 });
-                        this.setState({ ips: ipaddr });
+                        this.setState({ ips: ipaddresses });
                     }
                 });
     }
@@ -348,29 +355,45 @@ export class VmNetworkTab extends React.Component {
             },
             {
                 name: _("IP address"),
-                value: () => {
-                    const ips = this.state.ips;
+                value: (network, networkId) => {
+                    const ips = this.state.ips.filter(ip => ip.mac === network.mac);
 
-                    if (!Object.keys(ips).length) {
+                    const ip = {};
+                    // If information from agent are available, it's preferred over lease/arp
+                    ips.sort((a, _) => a === "agent" ? -1 : 1).forEach(a => {
+                        // Various sources (agent,lease,arp) may have only partial information about interface
+                        // (e.g. one source may only know ipv4 address, the other may only know ipv6 address)
+                        // Therefore, look at each source to get all available information
+                        if (!ip.inet && a.ip.inet)
+                            ip.inet = a.ip.inet;
+                        if (!ip.inet6 && a.ip.inet6)
+                            ip.inet6 = a.ip.inet6;
+                    });
+
+                    if (Object.values(ip).length === 0) {
                         // There is not IP address associated with this NIC
-                        return _("Unknown");
+                        return (
+                            <span id={`${id}-network-${networkId}-ip-unknown`}>
+                                {_("Unknown")}
+                            </span>
+                        );
                     } else {
                         return (
                             <DescriptionList isHorizontal isFluid>
-                                {ips.inet && <DescriptionListGroup>
+                                {ip.inet && <DescriptionListGroup>
                                     <DescriptionListTerm>
                                         {_("inet")}
                                     </DescriptionListTerm>
                                     <DescriptionListDescription id={`${id}-network-${networkId}-ipv4-address`}>
-                                        {ips.inet}
+                                        {ip.inet}
                                     </DescriptionListDescription>
                                 </DescriptionListGroup>}
-                                {ips.inet6 && <DescriptionListGroup>
+                                {ip.inet6 && <DescriptionListGroup>
                                     <DescriptionListTerm>
                                         {_("inet6")}
                                     </DescriptionListTerm>
                                     <DescriptionListDescription id={`${id}-network-${networkId}-ipv6-address`}>
-                                        {ips.inet6}
+                                        {ip.inet6}
                                     </DescriptionListDescription>
                                 </DescriptionListGroup>}
                             </DescriptionList>
