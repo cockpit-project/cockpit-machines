@@ -59,7 +59,7 @@ class MemorySelectRow extends React.Component {
                                 key={id + '-slider-max-' + maxValue}
                                 max={maxValue}
                                 min={minValue}
-                                onChange={value => onValueChange(value)}
+                                onChange={(_, value) => onValueChange(value)}
                                 showBoundaries
                                 showTicks={false}
                                 step={1}

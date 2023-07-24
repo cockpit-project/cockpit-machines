@@ -418,6 +418,15 @@ class TestMachinesSettings(VirtualMachinesCase):
         # Click for the edit link
         b.click("#vm-subVmTest1-memory-count button")
 
+        # Test slider
+        current_max_memory = int(b.val("#vm-subVmTest1-memory-modal-max-memory"))
+        slider = "#vm-subVmTest1-memory-modal-max-memory-slider .pf-v5-c-slider__rail"
+        width = b.call_js_func('(function (sel) { return ph_find(sel).offsetWidth; })', slider)
+        about_half_way = width / 2 + 1
+
+        b.mouse(slider, "click", about_half_way, 0)
+        b.wait_not_val("#vm-subVmTest1-memory-modal-max-memory", current_max_memory)
+
         # Verify that limiting max memory in offline VMs below memory will decrease memory as well
         b.set_input_text("#vm-subVmTest1-memory-modal-max-memory", str(current_memory - 20))
         b.blur("#vm-subVmTest1-memory-modal-max-memory")
