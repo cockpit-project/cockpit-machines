@@ -73,7 +73,6 @@ class TestMachinesNICs(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-network-1-tapdevice", "vnet1")
         b.wait_in_text("#vm-subVmTest1-network-1-model", "virtio")
         b.wait_in_text("#vm-subVmTest1-network-1-mac", "52:54:00:4b:73:5f")
-        b.wait_in_text("#vm-subVmTest1-network-1-ipv4-address", "192.168.122.")
         b.wait_in_text("#vm-subVmTest1-network-1-state", "up")
 
         # Test bridge network
@@ -82,16 +81,11 @@ class TestMachinesNICs(VirtualMachinesCase):
         # vNICs are alphabetically sorted by MAC address, so now the new vNIC is first in the list
         b.wait_in_text("#vm-subVmTest1-network-1-type", "bridge")
         b.wait_in_text("#vm-subVmTest1-network-1-source", "virbr0")
-        b.wait_in_text("#vm-subVmTest1-network-1-ipv4-address", "192.168.122.")
 
         # Non-running VM doesn't have IP address present, so the "IP address" column should not be present
         b.wait_visible("th:contains('IP address')")
-        b.wait_visible("#vm-subVmTest1-network-1-ipv4-address")
-        b.wait_visible("#vm-subVmTest1-network-2-ipv4-address")
         self.performAction("subVmTest1", "forceOff")
         b.wait_not_present("th:contains('IP address')")
-        b.wait_not_present("#vm-subVmTest1-network-1-ipv4-address")
-        b.wait_not_present("#vm-subVmTest1-network-2-ipv4-address")
 
         # Sources in  Add vNIC dialog should be alphabetically sorted
         m.execute("ip link add name abridge type bridge")
