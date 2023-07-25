@@ -866,9 +866,27 @@ export function domainInsertDisk({
 
 export function domainInterfaceAddresses({ connectionName, objPath }) {
     return Promise.allSettled([
-        call(connectionName, objPath, 'org.libvirt.Domain', 'InterfaceAddresses', [Enum.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_LEASE, 0], { timeout, type: 'uu' }),
-        call(connectionName, objPath, 'org.libvirt.Domain', 'InterfaceAddresses', [Enum.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_ARP, 0], { timeout, type: 'uu' }),
+        call(connectionName, objPath, 'org.libvirt.Domain', 'InterfaceAddresses', [Enum.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_LEASE, 0], { timeout, type: 'uu' })
+                .then(res => {
+                    return {
+                        source: 'lease',
+                        ...res
+                    };
+                }),
+        call(connectionName, objPath, 'org.libvirt.Domain', 'InterfaceAddresses', [Enum.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_ARP, 0], { timeout, type: 'uu' })
+                .then(res => {
+                    return {
+                        source: 'arp',
+                        ...res
+                    };
+                }),
         call(connectionName, objPath, 'org.libvirt.Domain', 'InterfaceAddresses', [Enum.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_AGENT, 0], { timeout, type: 'uu' })
+                .then(res => {
+                    return {
+                        source: 'agent',
+                        ...res
+                    };
+                }),
     ]);
 }
 
