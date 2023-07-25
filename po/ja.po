@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-16 03:24+0000\n"
+"POT-Creation-Date: 2023-07-18 03:14+0000\n"
 "PO-Revision-Date: 2023-06-01 10:20+0000\n"
 "Last-Translator: Ludek Janda <ljanda@redhat.com>\n"
 "Language-Team: Japanese <https://translate.fedoraproject.org/projects/"
@@ -103,11 +103,11 @@ msgstr "有効化"
 msgid "Activate the storage pool to administer volumes"
 msgstr "ストレージプールをアクティベートしてボリュームを管理"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:229
-#: src/components/vm/nics/nicAdd.jsx:213
 #: src/components/vm/disks/diskAdd.jsx:863
-#: src/components/vm/overview/watchdog.jsx:154
 #: src/components/vm/overview/vsock.jsx:196
+#: src/components/vm/overview/watchdog.jsx:154
+#: src/components/vm/nics/nicAdd.jsx:213
+#: src/components/vm/hostdevs/hostDevAdd.jsx:229
 #: src/components/networks/networkOverviewTab.jsx:236
 msgid "Add"
 msgstr "追加する"
@@ -116,8 +116,8 @@ msgstr "追加する"
 msgid "Add a DHCP static host entry"
 msgstr "DHCP 静的ホストエントリーの追加"
 
-#: src/components/vm/disks/diskAdd.jsx:853
 #: src/components/vm/disks/vmDisksCard.jsx:75
+#: src/components/vm/disks/diskAdd.jsx:853
 msgid "Add disk"
 msgstr "ディスクの追加"
 
@@ -200,7 +200,7 @@ msgstr ""
 msgid "Also delete all volumes inside this pool:"
 msgstr "このプール内のボリュームをすべて削除します:"
 
-#: src/components/vm/nics/nicAdd.jsx:94 src/components/vm/disks/diskAdd.jsx:140
+#: src/components/vm/disks/diskAdd.jsx:140 src/components/vm/nics/nicAdd.jsx:94
 msgid "Always attach"
 msgstr "常に割り当てる"
 
@@ -254,18 +254,18 @@ msgstr "ブート順序"
 msgid "Boot order settings could not be saved"
 msgstr "ブート順序の設定は保存できませんでした"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:89
-#: src/components/vm/hostdevs/hostDevCard.jsx:99
-#: src/components/vm/hostdevs/hostDevCard.jsx:107
-#: src/components/vm/hostdevs/hostDevCard.jsx:247
-#: src/components/vm/disks/diskAdd.jsx:227
 #: src/components/vm/disks/vmDisksCard.jsx:186
+#: src/components/vm/disks/diskAdd.jsx:227
 #: src/components/vm/disks/diskEdit.jsx:90
 #: src/components/vm/overview/bootOrder.jsx:105
 #: src/components/vm/overview/bootOrder.jsx:117
 #: src/components/vm/overview/bootOrder.jsx:135
 #: src/components/vm/overview/bootOrder.jsx:138
 #: src/components/vm/overview/bootOrder.jsx:152
+#: src/components/vm/hostdevs/hostDevAdd.jsx:89
+#: src/components/vm/hostdevs/hostDevCard.jsx:99
+#: src/components/vm/hostdevs/hostDevCard.jsx:107
+#: src/components/vm/hostdevs/hostDevCard.jsx:247
 msgid "Bus"
 msgstr "バス"
 
@@ -273,9 +273,9 @@ msgstr "バス"
 msgid "CD/DVD disc"
 msgstr "CD/DVD ディスク"
 
+#: src/components/common/needsShutdown.jsx:110
 #: src/components/vm/overview/vmOverviewCard.jsx:187
 #: src/components/vm/vmUsageCard.jsx:69
-#: src/components/common/needsShutdown.jsx:110
 msgid "CPU"
 msgstr "CPU"
 
@@ -283,38 +283,38 @@ msgstr "CPU"
 msgid "CPU mode could not be saved"
 msgstr "CPU モードを保存できませんでした"
 
-#: src/components/vm/disks/diskAdd.jsx:216
 #: src/components/vm/disks/vmDiskColumns.jsx:101
+#: src/components/vm/disks/diskAdd.jsx:216
 #: src/components/vm/disks/diskEdit.jsx:60
 msgid "Cache"
 msgstr "キャッシュ"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:1392
-#: src/components/storagePools/storageVolumeCreate.jsx:110
-#: src/components/storagePools/createStoragePoolDialog.jsx:443
+#: src/components/common/deleteResource.jsx:91
 #: src/components/storagePools/storagePoolDelete.jsx:206
-#: src/components/vm/hostdevs/hostDevAdd.jsx:234
-#: src/components/vm/nics/nicEdit.jsx:185 src/components/vm/nics/nicAdd.jsx:216
-#: src/components/vm/disks/diskAdd.jsx:866
-#: src/components/vm/disks/mediaEject.jsx:110
-#: src/components/vm/disks/diskEdit.jsx:270
-#: src/components/vm/vmMigrateDialog.jsx:213
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:147
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:102
-#: src/components/vm/confirmDialog.jsx:54
-#: src/components/vm/overview/watchdog.jsx:194
-#: src/components/vm/overview/bootOrder.jsx:318
-#: src/components/vm/overview/firmware.jsx:72
-#: src/components/vm/overview/cpuModal.jsx:338
-#: src/components/vm/overview/vsock.jsx:244
-#: src/components/vm/overview/memoryModal.jsx:159
+#: src/components/storagePools/createStoragePoolDialog.jsx:443
+#: src/components/storagePools/storageVolumeCreate.jsx:110
 #: src/components/vm/vmCloneDialog.jsx:83
+#: src/components/vm/disks/mediaEject.jsx:110
+#: src/components/vm/disks/diskAdd.jsx:866
+#: src/components/vm/disks/diskEdit.jsx:270
+#: src/components/vm/overview/bootOrder.jsx:318
+#: src/components/vm/overview/vsock.jsx:244
+#: src/components/vm/overview/watchdog.jsx:194
+#: src/components/vm/overview/memoryModal.jsx:159
+#: src/components/vm/overview/cpuModal.jsx:338
+#: src/components/vm/overview/firmware.jsx:72
+#: src/components/vm/confirmDialog.jsx:54
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:174
 #: src/components/vm/vmRenameDialog.jsx:71
 #: src/components/vm/deleteDialog.jsx:174
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:147
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:102
+#: src/components/vm/vmMigrateDialog.jsx:213
+#: src/components/vm/nics/nicEdit.jsx:185 src/components/vm/nics/nicAdd.jsx:216
+#: src/components/vm/hostdevs/hostDevAdd.jsx:234
 #: src/components/networks/createNetworkDialog.jsx:419
 #: src/components/networks/networkOverviewTab.jsx:239
-#: src/components/common/deleteResource.jsx:91
 msgid "Cancel"
 msgstr "取り消し"
 
@@ -382,7 +382,7 @@ msgstr ""
 "\"リモートビューアーの起動\" をクリックすると、.vv ファイルをダウンロード"
 "し、$0 を起動します。"
 
-#: src/components/vm/vmActions.jsx:402 src/components/vm/vmCloneDialog.jsx:80
+#: src/components/vm/vmCloneDialog.jsx:80 src/components/vm/vmActions.jsx:402
 msgid "Clone"
 msgstr "クローン"
 
@@ -410,12 +410,12 @@ msgstr "以下のプロトコル用のビューアーアプリケーションへ
 msgid "Connecting"
 msgstr "接続中"
 
-#: src/components/storagePools/storagePoolList.jsx:70
-#: src/components/vm/overview/vmOverviewCard.jsx:163
-#: src/components/vms/hostvmslist.jsx:145
-#: src/components/networks/createNetworkDialog.jsx:41
-#: src/components/networks/networkList.jsx:69
 #: src/components/common/machinesConnectionSelector.jsx:39
+#: src/components/storagePools/storagePoolList.jsx:70
+#: src/components/vms/hostvmslist.jsx:145
+#: src/components/vm/overview/vmOverviewCard.jsx:163
+#: src/components/networks/networkList.jsx:69
+#: src/components/networks/createNetworkDialog.jsx:41
 msgid "Connection"
 msgstr "接続"
 
@@ -457,8 +457,8 @@ msgstr "スナップショットに戻すことができませんでした"
 msgid "Crashed"
 msgstr "クラッシュした"
 
-#: src/components/storagePools/storageVolumeCreate.jsx:107
 #: src/components/storagePools/createStoragePoolDialog.jsx:440
+#: src/components/storagePools/storageVolumeCreate.jsx:107
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:144
 #: src/components/networks/createNetworkDialog.jsx:416
 msgid "Create"
@@ -506,8 +506,8 @@ msgstr "raw ボリュームの新規作成"
 msgid "Create new virtual machine"
 msgstr "仮想マシンの新規作成"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:49
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:140
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:49
 msgid "Create snapshot"
 msgstr "スナップショットの作成"
 
@@ -581,16 +581,15 @@ msgstr "DHCP 設定"
 msgid "Deactivate"
 msgstr "非アクティブ化"
 
-#: src/components/storagePools/storagePoolDelete.jsx:203
-#: src/components/storagePools/storagePoolDelete.jsx:239
-#: src/components/storagePools/storagePoolDelete.jsx:249
-#: src/components/vm/vmActions.jsx:451 src/components/vm/vmActions.jsx:459
-#: src/components/vm/deleteDialog.jsx:171
-#: src/components/networks/network.jsx:150
-#: src/components/networks/network.jsx:153
 #: src/components/common/deleteResource.jsx:79
 #: src/components/common/deleteResource.jsx:133
 #: src/components/common/deleteResource.jsx:144
+#: src/components/storagePools/storagePoolDelete.jsx:203
+#: src/components/storagePools/storagePoolDelete.jsx:239
+#: src/components/storagePools/storagePoolDelete.jsx:249
+#: src/components/vm/deleteDialog.jsx:171 src/components/vm/vmActions.jsx:451
+#: src/components/vm/vmActions.jsx:459 src/components/networks/network.jsx:150
+#: src/components/networks/network.jsx:153
 msgid "Delete"
 msgstr "削除"
 
@@ -632,8 +631,8 @@ msgid "Deleting shared directories is possible only when the guest is shut off"
 msgstr ""
 "共有ディレクトリーの削除は、ゲストがシャットオフされた場合に限り可能です"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:95
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:51
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:95
 msgid "Description"
 msgstr "説明"
 
@@ -658,19 +657,19 @@ msgstr "削除を試みる前に、このプールを使用して VM からデ�
 msgid "Details"
 msgstr "詳細"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:88
-#: src/components/vm/hostdevs/hostDevAdd.jsx:123
-#: src/components/vm/hostdevs/hostDevCard.jsx:98
-#: src/components/vm/hostdevs/hostDevCard.jsx:246
-#: src/components/vm/disks/diskAdd.jsx:354
 #: src/components/vm/disks/vmDiskColumns.jsx:40
 #: src/components/vm/disks/vmDisksCard.jsx:172
+#: src/components/vm/disks/diskAdd.jsx:354
 #: src/components/vm/overview/bootOrder.jsx:97
 #: src/components/vm/overview/bootOrder.jsx:104
 #: src/components/vm/overview/bootOrder.jsx:136
 #: src/components/vm/overview/bootOrder.jsx:139
-#: src/components/networks/createNetworkDialog.jsx:160
+#: src/components/vm/hostdevs/hostDevAdd.jsx:88
+#: src/components/vm/hostdevs/hostDevAdd.jsx:123
+#: src/components/vm/hostdevs/hostDevCard.jsx:98
+#: src/components/vm/hostdevs/hostDevCard.jsx:246
 #: src/components/networks/networkList.jsx:68
+#: src/components/networks/createNetworkDialog.jsx:160
 msgid "Device"
 msgstr "デバイス"
 
@@ -678,8 +677,8 @@ msgstr "デバイス"
 msgid "Devices"
 msgstr "デバイス"
 
-#: src/components/vm/consoles/vnc.jsx:170
 #: src/components/vm/consoles/serialConsole.jsx:94
+#: src/components/vm/consoles/vnc.jsx:170
 msgid "Disconnect"
 msgstr "切断"
 
@@ -787,8 +786,8 @@ msgstr "期間"
 msgid "Dying"
 msgstr "終了中"
 
-#: src/components/vm/nics/vmNicsCard.jsx:430
 #: src/components/vm/disks/diskEdit.jsx:166
+#: src/components/vm/nics/vmNicsCard.jsx:430
 msgid "Edit"
 msgstr "編集"
 
@@ -1209,8 +1208,8 @@ msgstr "イニシエーターは空にできません"
 msgid "Inject a non-maskable interrupt"
 msgstr "マスク不可割り込みの挿入"
 
-#: src/components/vm/disks/diskAdd.jsx:863
 #: src/components/vm/disks/vmDiskColumns.jsx:185
+#: src/components/vm/disks/diskAdd.jsx:863
 msgid "Insert"
 msgstr "挿入"
 
@@ -1455,8 +1454,8 @@ msgstr "移行に失敗しました"
 msgid "Mode"
 msgstr "モード"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:199
 #: src/components/vm/nics/nicBody.jsx:48
+#: src/components/vm/hostdevs/hostDevCard.jsx:199
 msgid "Model"
 msgstr "モデル"
 
@@ -1491,16 +1490,16 @@ msgid "NIC $0 of VM $1 failed to change state"
 msgstr "仮想マシン $1 の NIC $0 は、状態の変更に失敗しました"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:260
-#: src/components/storagePools/storagePoolVolumesTab.jsx:78
 #: src/components/storagePools/storagePoolList.jsx:68
 #: src/components/storagePools/storageVolumeCreateBody.jsx:38
+#: src/components/storagePools/storagePoolVolumesTab.jsx:78
 #: src/components/storagePools/createStoragePoolDialog.jsx:45
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:85
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:38
-#: src/components/vm/vmCloneDialog.jsx:93
 #: src/components/vms/hostvmslist.jsx:144
-#: src/components/networks/createNetworkDialog.jsx:126
+#: src/components/vm/vmCloneDialog.jsx:93
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:38
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:85
 #: src/components/networks/networkList.jsx:67
+#: src/components/networks/createNetworkDialog.jsx:126
 msgid "Name"
 msgstr "名前"
 
@@ -1730,9 +1729,9 @@ msgstr ""
 "ひとつまたは複数の選択されたボリュームがドメインで使用されています。最初に"
 "ディスクを切断し、ボリュームが削除できるようにします。"
 
-#: src/components/vm/nics/nicEdit.jsx:44
 #: src/components/vm/overview/bootOrder.jsx:368
 #: src/components/vm/overview/memoryModal.jsx:145
+#: src/components/vm/nics/nicEdit.jsx:44
 msgid "Only editable when the guest is shut off"
 msgstr "ゲストがシャットオフされた場合のみ、編集可能です"
 
@@ -1762,10 +1761,10 @@ msgstr "PCI"
 msgid "Parent snapshot"
 msgstr "親のスナップショット"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:123
-#: src/components/vm/hostdevs/hostDevCard.jsx:127
 #: src/components/vm/disks/diskEdit.jsx:42
 #: src/components/vm/deleteDialog.jsx:60
+#: src/components/vm/hostdevs/hostDevCard.jsx:123
+#: src/components/vm/hostdevs/hostDevCard.jsx:127
 msgid "Path"
 msgstr "パス"
 
@@ -1802,7 +1801,7 @@ msgid "Permissions denied for disk images in home directories"
 msgstr ""
 "ホームディレクトリーのディスクイメージに対するパーミッションが拒否されました"
 
-#: src/components/vm/nics/nicAdd.jsx:91 src/components/vm/disks/diskAdd.jsx:137
+#: src/components/vm/disks/diskAdd.jsx:137 src/components/vm/nics/nicAdd.jsx:91
 msgid "Persistence"
 msgstr "永続"
 
@@ -1835,9 +1834,9 @@ msgstr "新しいボリューム名を入力してください"
 msgid "Please start the virtual machine to access its console."
 msgstr "仮想マシンを起動して、コンソールにアクセスしてください。"
 
-#: src/components/vm/disks/diskAdd.jsx:151
 #: src/components/vm/disks/vmDiskColumns.jsx:42
 #: src/components/vm/disks/mediaEject.jsx:85
+#: src/components/vm/disks/diskAdd.jsx:151
 #: src/components/vm/overview/bootOrder.jsx:99
 #: src/components/vm/deleteDialog.jsx:68
 msgid "Pool"
@@ -1859,10 +1858,10 @@ msgstr "プールタイプは、ボリューム作成をサポートしません
 msgid "Pool's volumes are used by VMs "
 msgstr "プールのボリュームは VM が使用します "
 
-#: src/components/vm/nics/vmNicsCard.jsx:162
 #: src/components/vm/disks/vmDiskColumns.jsx:45
 #: src/components/vm/overview/bootOrder.jsx:102
 #: src/components/vm/overview/bootOrder.jsx:118
+#: src/components/vm/nics/vmNicsCard.jsx:162
 msgid "Port"
 msgstr "ポート"
 
@@ -1898,11 +1897,11 @@ msgstr ""
 msgid "Private"
 msgstr "プライベート"
 
+#: src/components/vm/overview/bootOrder.jsx:131
+#: src/components/vm/overview/bootOrder.jsx:146
 #: src/components/vm/hostdevs/hostDevAdd.jsx:128
 #: src/components/vm/hostdevs/hostDevCard.jsx:237
 #: src/components/vm/hostdevs/hostDevCard.jsx:243
-#: src/components/vm/overview/bootOrder.jsx:131
-#: src/components/vm/overview/bootOrder.jsx:146
 msgid "Product"
 msgstr "製品"
 
@@ -1910,10 +1909,10 @@ msgstr "製品"
 msgid "Profile"
 msgstr "プロファイル"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:114
 #: src/components/vm/disks/vmDiskColumns.jsx:41
 #: src/components/vm/overview/bootOrder.jsx:98
 #: src/components/vm/overview/bootOrder.jsx:159
+#: src/components/vm/hostdevs/hostDevCard.jsx:114
 msgid "Protocol"
 msgstr "プロトコル"
 
@@ -1964,16 +1963,16 @@ msgstr "リモート URL"
 msgid "Remote viewer details"
 msgstr "リモートビューアーの詳細"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:253
-#: src/components/vm/hostdevs/hostDevCard.jsx:259
-#: src/components/vm/nics/vmNicsCard.jsx:448
-#: src/components/vm/nics/vmNicsCard.jsx:457
 #: src/components/vm/disks/vmDiskColumns.jsx:146
 #: src/components/vm/disks/vmDiskColumns.jsx:212
-#: src/components/vm/overview/watchdog.jsx:191
 #: src/components/vm/overview/vsock.jsx:241
+#: src/components/vm/overview/watchdog.jsx:191
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:59
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:68
+#: src/components/vm/nics/vmNicsCard.jsx:448
+#: src/components/vm/nics/vmNicsCard.jsx:457
+#: src/components/vm/hostdevs/hostDevCard.jsx:253
+#: src/components/vm/hostdevs/hostDevCard.jsx:259
 #: src/components/networks/networkOverviewTab.jsx:70
 msgid "Remove"
 msgstr "削除"
@@ -2002,7 +2001,7 @@ msgstr "ネットワークインターフェースを削除しますか?"
 msgid "Remove static host from DHCP"
 msgstr "DHCP から静的ホストを削除する"
 
-#: src/components/vm/vmActions.jsx:438 src/components/vm/vmRenameDialog.jsx:68
+#: src/components/vm/vmRenameDialog.jsx:68 src/components/vm/vmActions.jsx:438
 msgid "Rename"
 msgstr "名前変更"
 
@@ -2080,13 +2079,13 @@ msgstr "SPICE アドレス"
 msgid "SPICE port"
 msgstr "SPICE ポート"
 
-#: src/components/vm/nics/nicEdit.jsx:182
 #: src/components/vm/disks/diskEdit.jsx:267
-#: src/components/vm/overview/watchdog.jsx:154
 #: src/components/vm/overview/bootOrder.jsx:315
-#: src/components/vm/overview/firmware.jsx:69
 #: src/components/vm/overview/vsock.jsx:196
+#: src/components/vm/overview/watchdog.jsx:154
 #: src/components/vm/overview/memoryModal.jsx:156
+#: src/components/vm/overview/firmware.jsx:69
+#: src/components/vm/nics/nicEdit.jsx:182
 msgid "Save"
 msgstr "保存"
 
@@ -2148,8 +2147,8 @@ msgstr "ホストディレクトリーをゲストと共有"
 msgid "Shared directories"
 msgstr "共有ディレクトリー"
 
-#: src/components/vm/vmDetailsPage.jsx:189
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:180
+#: src/components/vm/vmDetailsPage.jsx:189
 msgid "Shared host directories need to be manually mounted inside the VM"
 msgstr ""
 "共有ホストのディレクトリーは、仮想マシン内に手動でマウントする必要があります"
@@ -2194,17 +2193,17 @@ msgstr "ファームウェア設定を編集するためにVMをシャットオ�
 msgid "Shutting down"
 msgstr "シャットダウン中"
 
-#: src/components/storagePools/storagePoolVolumesTab.jsx:78
 #: src/components/storagePools/storagePoolList.jsx:69
 #: src/components/storagePools/storageVolumeCreateBody.jsx:83
+#: src/components/storagePools/storagePoolVolumesTab.jsx:78
 msgid "Size"
 msgstr "サイズ"
 
+#: src/components/vm/overview/bootOrder.jsx:147
 #: src/components/vm/hostdevs/hostDevAdd.jsx:101
 #: src/components/vm/hostdevs/hostDevCard.jsx:101
 #: src/components/vm/hostdevs/hostDevCard.jsx:108
 #: src/components/vm/hostdevs/hostDevCard.jsx:238
-#: src/components/vm/overview/bootOrder.jsx:147
 msgid "Slot"
 msgstr "スロット"
 
@@ -2237,12 +2236,12 @@ msgid "Some configuration changes only take effect after a fresh boot:"
 msgstr "一部の設定変更は、再起動後にのみ有効になります:"
 
 #: src/components/storagePools/storagePoolOverviewTab.jsx:51
-#: src/components/vm/hostdevs/hostDevCard.jsx:219
-#: src/components/vm/nics/nicBody.jsx:197
-#: src/components/vm/nics/vmNicsCard.jsx:384
+#: src/components/vm/disks/vmDisksCard.jsx:190
 #: src/components/vm/disks/diskAdd.jsx:753
 #: src/components/vm/disks/diskAdd.jsx:789
-#: src/components/vm/disks/vmDisksCard.jsx:190
+#: src/components/vm/nics/vmNicsCard.jsx:384
+#: src/components/vm/nics/nicBody.jsx:197
+#: src/components/vm/hostdevs/hostDevCard.jsx:219
 msgid "Source"
 msgstr "ソース"
 
@@ -2295,10 +2294,10 @@ msgid "Startup"
 msgstr "起動"
 
 #: src/components/storagePools/storagePoolList.jsx:71
-#: src/components/vm/nics/vmNicsCard.jsx:389
-#: src/components/vm/overview/vmOverviewCard.jsx:168
 #: src/components/vms/hostvmslist.jsx:106
 #: src/components/vms/hostvmslist.jsx:146
+#: src/components/vm/overview/vmOverviewCard.jsx:168
+#: src/components/vm/nics/vmNicsCard.jsx:389
 #: src/components/networks/networkList.jsx:71
 msgid "State"
 msgstr "状態"
@@ -2399,9 +2398,9 @@ msgstr "ホストデバイス"
 msgid "Table of selectable host devices"
 msgstr "選択可能なホストデバイスの表"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:109
 #: src/components/vm/disks/vmDiskColumns.jsx:150
 #: src/components/vm/overview/bootOrder.jsx:153
+#: src/components/vm/hostdevs/hostDevCard.jsx:109
 msgid "Target"
 msgstr "ターゲット"
 
@@ -2426,9 +2425,9 @@ msgstr "一時的な移行"
 msgid "The VM $0 is running and will be forced off before deletion."
 msgstr "仮想マシン $0 が実行中で、削除前に強制的にオフになります。"
 
+#: src/components/vm/disks/vmDiskColumns.jsx:220
 #: src/components/vm/nics/vmNicsCard.jsx:458
 #: src/components/vm/nics/vmNicsCard.jsx:466
-#: src/components/vm/disks/vmDiskColumns.jsx:220
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr ""
 "このデバイスを切断するには、VM を実行するか、シャットオフする必要があります"
@@ -2545,15 +2544,15 @@ msgstr "トラブルシュート"
 
 #: src/components/storagePools/storagePoolOverviewTab.jsx:76
 #: src/components/storagePools/createStoragePoolDialog.jsx:81
-#: src/components/vm/hostdevs/hostDevAdd.jsx:47
-#: src/components/vm/hostdevs/hostDevCard.jsx:179
-#: src/components/vm/nics/vmNicsCard.jsx:318
 #: src/components/vm/overview/bootOrder.jsx:116
 #: src/components/vm/overview/bootOrder.jsx:129
 #: src/components/vm/overview/bootOrder.jsx:144
 #: src/components/vm/overview/bootOrder.jsx:151
 #: src/components/vm/overview/bootOrder.jsx:158
 #: src/components/vm/overview/bootOrder.jsx:164
+#: src/components/vm/nics/vmNicsCard.jsx:318
+#: src/components/vm/hostdevs/hostDevAdd.jsx:47
+#: src/components/vm/hostdevs/hostDevCard.jsx:179
 msgid "Type"
 msgstr "タイプ"
 
@@ -2601,10 +2600,10 @@ msgstr "不明"
 msgid "Unknown firmware"
 msgstr "不明なファームウェア"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:92
-#: src/components/vm/hostdevs/hostDevCard.jsx:93
 #: src/components/vm/overview/bootOrder.jsx:135
 #: src/components/vm/overview/bootOrder.jsx:136
+#: src/components/vm/hostdevs/hostDevCard.jsx:92
+#: src/components/vm/hostdevs/hostDevCard.jsx:93
 msgid "Unspecified"
 msgstr "指定なし"
 
@@ -2755,20 +2754,20 @@ msgstr "VNC ポート"
 msgid "Valid token"
 msgstr "有効なトークン"
 
+#: src/components/vm/overview/bootOrder.jsx:130
+#: src/components/vm/overview/bootOrder.jsx:145
 #: src/components/vm/hostdevs/hostDevAdd.jsx:128
 #: src/components/vm/hostdevs/hostDevCard.jsx:209
 #: src/components/vm/hostdevs/hostDevCard.jsx:236
 #: src/components/vm/hostdevs/hostDevCard.jsx:242
-#: src/components/vm/overview/bootOrder.jsx:130
-#: src/components/vm/overview/bootOrder.jsx:145
 msgid "Vendor"
 msgstr "ベンダー"
 
 #: src/components/storagePools/storagePoolList.jsx:52
-#: src/components/vm/vmDetailsPage.jsx:87
-#: src/components/vm/vmDetailsPage.jsx:247
 #: src/components/vms/hostvmslist.jsx:138
 #: src/components/vms/hostvmslist.jsx:141
+#: src/components/vm/vmDetailsPage.jsx:87
+#: src/components/vm/vmDetailsPage.jsx:247
 #: src/components/networks/networkList.jsx:51 src/manifest.json:0
 msgid "Virtual machines"
 msgstr "仮想マシン"
@@ -2800,9 +2799,9 @@ msgid "Virtualization service (libvirt) is not active"
 msgstr "仮想化サービス (libvirt) は有効ではありません"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:900
-#: src/components/vm/disks/diskAdd.jsx:117
 #: src/components/vm/disks/vmDiskColumns.jsx:43
 #: src/components/vm/disks/mediaEject.jsx:89
+#: src/components/vm/disks/diskAdd.jsx:117
 #: src/components/vm/overview/bootOrder.jsx:100
 #: src/components/vm/deleteDialog.jsx:65
 msgid "Volume"
@@ -2824,13 +2823,13 @@ msgstr "ボリュームグループ名は空欄にできません"
 msgid "Vsock"
 msgstr "Vsock"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:115
 #: src/components/vm/overview/bootOrder.jsx:160
+#: src/components/vm/hostdevs/hostDevCard.jsx:115
 msgid "WWPN"
 msgstr "WWPN"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:208
 #: src/components/common/needsShutdown.jsx:114
+#: src/components/vm/overview/vmOverviewCard.jsx:208
 msgid "Watchdog"
 msgstr "ウォッチドッグ"
 
@@ -2867,8 +2866,8 @@ msgstr "最も近いオペレーティングシステムを選択する必要が
 msgid "active"
 msgstr "アクティブ"
 
-#: src/components/vm/overview/watchdog.jsx:242
 #: src/components/vm/overview/vsock.jsx:293
+#: src/components/vm/overview/watchdog.jsx:242
 msgid "add"
 msgstr "追加"
 
@@ -2904,11 +2903,11 @@ msgstr "ディスク"
 msgid "down"
 msgstr "下へ"
 
-#: src/components/vm/overview/watchdog.jsx:242
 #: src/components/vm/overview/bootOrder.jsx:361
 #: src/components/vm/overview/vmOverviewCard.jsx:122
 #: src/components/vm/overview/vmOverviewCard.jsx:130
 #: src/components/vm/overview/vsock.jsx:293
+#: src/components/vm/overview/watchdog.jsx:242
 msgid "edit"
 msgstr "編集"
 
@@ -2977,16 +2976,16 @@ msgstr "libvirt"
 msgid "mcast"
 msgstr "mcast"
 
-#: src/components/vm/nics/nicBody.jsx:110
-#: src/components/vm/vmDetailsPage.jsx:202
+#: src/components/common/machinesConnectionSelector.jsx:82
 #: src/components/vm/overview/vsock.jsx:226
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:194
-#: src/components/common/machinesConnectionSelector.jsx:82
+#: src/components/vm/nics/nicBody.jsx:110
+#: src/components/vm/vmDetailsPage.jsx:202
 msgid "more info"
 msgstr "詳細情報"
 
-#: src/components/vm/vmDetailsPage.jsx:198
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:190
+#: src/components/vm/vmDetailsPage.jsx:198
 msgid "mount point: The mount point inside the guest"
 msgstr "マウントポイント: ゲスト内のマウントポイント"
 
@@ -3008,8 +3007,8 @@ msgstr "いいえ"
 msgid "no state saved"
 msgstr "保存されている状態がありません"
 
-#: src/components/vm/overview/watchdog.jsx:238
 #: src/components/vm/overview/vsock.jsx:275
+#: src/components/vm/overview/watchdog.jsx:238
 #: src/components/networks/networkOverviewTab.jsx:293
 msgid "none"
 msgstr "なし"
