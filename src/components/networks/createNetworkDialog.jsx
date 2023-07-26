@@ -215,13 +215,15 @@ const DhcpRow = ({ ipVersion, rangeStart, rangeEnd, expanded, onValueChanged, va
                           onChange={() => onValueChanged('ipv' + ipVersion + 'DhcpEnabled', !expanded)} />
             </FormGroup>
             {expanded && <Grid hasGutter md={6}>
-                <FormGroup fieldId={'create-network-ipv' + ipVersion + '-dhcp-range-start'} label={_("Start")}>
+                <FormGroup fieldId={'create-network-ipv' + ipVersion + '-dhcp-range-start'}
+                           className={`create-network-ipv${ipVersion}-dhcp-range-start`} label={_("Start")}>
                     <TextInput id={'create-network-ipv' + ipVersion + '-dhcp-range-start'}
                                value={rangeStart}
                                onChange={(_, value) => onValueChanged('ipv' + ipVersion + 'DhcpRangeStart', value)} />
                     <FormHelper helperTextInvalid={validationStart == "error" && validationFailed['ipv' + ipVersion + 'DhcpRangeStart']} />
                 </FormGroup>
-                <FormGroup fieldId={'create-network-ipv' + ipVersion + '-dhcp-range-end'} label={_("End")}>
+                <FormGroup fieldId={'create-network-ipv' + ipVersion + '-dhcp-range-end'}
+                           className={`create-network-ipv${ipVersion}-dhcp-range-end`} label={_("End")}>
                     <TextInput id={'create-network-ipv' + ipVersion + '-dhcp-range-end'}
                                value={rangeEnd}
                                onChange={(_, value) => onValueChanged('ipv' + ipVersion + 'DhcpRangeEnd', value)} />

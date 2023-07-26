@@ -2,3 +2,10 @@
     margin-top: var(--pf-v5-global--spacer--sm);
     --pf-v5-c-list--li--MarginTop: 0 !important;
 }
+
+// HACK: add contrast between alert and modal background
+.pf-v5-theme-dark {
+  .pf-v5-c-alert.pf-m-inline.pf-m-danger {
+      --pf-v5-c-alert--m-inline--BackgroundColor: var(--pf-v5-global--BackgroundColor--dark-400);
+  }
+}
