@@ -133,7 +133,7 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                 <PageSection>
                     <Gallery className="ct-cards-grid" hasGutter>
                         <AggregateStatusCards networks={networks} storagePools={storagePools} />
-                        <Card id='virtual-machines-listing'>
+                        <Card id='virtual-machines-listing' isSelectable isClickable>
                             <CardHeader actions={{ actions: toolBar }}>
                                 <CardTitle component="h2">{_("Virtual machines")}</CardTitle>
                             </CardHeader>

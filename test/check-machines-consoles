@@ -78,7 +78,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
         self.goToVmPage("subVmTest1")
 
         # since VNC is defined for this VM, the view for "In-Browser Viewer" is rendered by default
-        b.wait_visible(".pf-c-console__vnc canvas")
+        b.wait_visible(".pf-v5-c-console__vnc canvas")
 
         # make sure the log file is full - then empty it and reboot the VM - the log file should fill up again
         self.waitCirrOSBooted(args['logfile'])
@@ -131,7 +131,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
 
         b.click("button:contains(Expand)")
         b.assert_pixels("#vm-vmWithSerialConsole-consoles-page", "vm-details-console-serial",
-                        ignore=[".pf-c-console__vnc"], skip_layouts=["rtl"])
+                        ignore=[".pf-v5-c-console__vnc"], skip_layouts=["rtl"])
 
         # Add a second serial console
         m.execute("virsh destroy vmWithSerialConsole; virt-xml --add-device vmWithSerialConsole --console pty,target_type=virtio; virsh start vmWithSerialConsole")
@@ -180,14 +180,14 @@ class TestMachinesConsoles(VirtualMachinesCase):
 
         # test switching console from serial to graphical
         b.wait_visible(f"#vm-{name}-consoles")
-        b.wait_visible(".pf-c-console__vnc canvas")
+        b.wait_visible(".pf-v5-c-console__vnc canvas")
 
         b.click("#pf-c-console__type-selector")
         b.wait_visible("#pf-c-console__type-selector + .pf-v5-c-select__menu")
         b.click("#SerialConsole button")
         b.wait_not_present("#pf-c-console__type-selector + .pf-v5-c-select__menu")
 
-        b.wait_not_present(".pf-c-console__vnc canvas")
+        b.wait_not_present(".pf-v5-c-console__vnc canvas")
         b.wait_visible(f"#{name}-terminal")
 
         # Go back to Vnc console
@@ -195,7 +195,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
         b.wait_visible("#pf-c-console__type-selector + .pf-v5-c-select__menu")
         b.click("#VncConsole button")
         b.wait_not_present("#pf-c-console__type-selector + .pf-v5-c-select__menu")
-        b.wait_visible(".pf-c-console__vnc canvas")
+        b.wait_visible(".pf-v5-c-console__vnc canvas")
 
         # Go to the expanded console view
         b.click("button:contains(Expand)")

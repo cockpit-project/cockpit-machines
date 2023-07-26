@@ -101,3 +101,11 @@
     background-color: var(--pf-v5-global--BackgroundColor--dark-100);
   }
 }
+
+// radio buttons rendered vertically in pf-m-horizontal https://github.com/patternfly/patternfly/issues/5787
+.pf-v5-c-form__group-control.pf-m-inline {
+  .pf-v5-c-radio {
+    width: auto;
+    display: grid;
+  }
+}

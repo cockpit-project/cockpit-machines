@@ -239,7 +239,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         # Warning should disappear and changes should be visible in the UI
         b.wait_not_present("#cpu-tooltip")
         b.wait_not_present("#vm-subVmTest1-needs-shutdown")
-        b.wait_in_text("#vm-subVmTest1-cpu .pf-c-description-list__text", "host")
+        b.wait_in_text("#vm-subVmTest1-cpu .pf-v5-c-description-list__text", "host")
 
         # Choose manually a CPU model
         b.click("#vm-subVmTest1-cpu button")
@@ -247,7 +247,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.select_from_dropdown("#cpu-model-select-group select", "coreduo")
         b.click("#machines-cpu-modal-dialog-apply")
         b.wait_not_present("#machines-cpu-modal-dialog")
-        b.wait_in_text("#vm-subVmTest1-cpu .pf-c-description-list__text", "custom (coreduo)")
+        b.wait_in_text("#vm-subVmTest1-cpu .pf-v5-c-description-list__text", "custom (coreduo)")
 
         # Verify libvirt XML
         dom_xml = "virsh dumpxml subVmTest1"
@@ -260,9 +260,9 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.select_from_dropdown("#cpu-model-select-group select", "host-model")
         b.click("#machines-cpu-modal-dialog-apply")
         b.wait_not_present("#machines-cpu-modal-dialog")
-        b.wait_in_text("#vm-subVmTest1-cpu .pf-c-description-list__text", "host")
+        b.wait_in_text("#vm-subVmTest1-cpu .pf-v5-c-description-list__text", "host")
         b.click("#vm-subVmTest1-system-run")
-        b.wait_in_text("#vm-subVmTest1-cpu .pf-c-description-list__text", "custom")
+        b.wait_in_text("#vm-subVmTest1-cpu .pf-v5-c-description-list__text", "custom")
         # In the test ENV libvirt does not properly set the CPU model so we see a tooltip https://bugzilla.redhat.com/show_bug.cgi?id=1913337
         # b.wait_not_present("#cpu-tooltip")
 
@@ -363,7 +363,7 @@ class TestMachinesSettings(VirtualMachinesCase):
             # re-open and check the boot option is the disk
             b.click("#vm-subVmTest1-boot-order button")
             b.wait_visible("#vm-subVmTest1-order-modal-window")
-            b.wait_text("#vm-subVmTest1-order-modal-device-row-0 .pf-v5-c-description-list__description .pf-c-description-list__text", args["image"])
+            b.wait_text("#vm-subVmTest1-order-modal-device-row-0 .pf-v5-c-description-list__description .pf-v5-c-description-list__text", args["image"])
 
             b.click("#vm-subVmTest1-order-modal-cancel")
             b.wait_not_present("#vm-subVmTest1-order-modal-window")

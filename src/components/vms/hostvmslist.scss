@@ -18,9 +18,13 @@
     text-align: left;
 }
 
-/* Add  the missing space when the list's toolbar wraps
- * patternfly/patternfly#3348
- */
-.pf-v5-c-toolbar__content-section {
-    gap: var(--pf-v5-global--spacer--sm) 0;
+// Add spacing between buttons in the toolbar
+.pf-v5-c-toolbar__item {
+    gap: 0 var(--pf-v5-global--spacer--xs);
+}
+
+// HACK: the label has alig-self: flex-start which renders the State not in the middle.
+// Seems fixed in 5.0.0!
+.pf-v5-c-toolbar__item.pf-m-label {
+    align-self: normal;
 }

@@ -207,7 +207,10 @@ class TestMachinesNetworks(VirtualMachinesCase):
                         self.test_obj.assertIn(self.xfail_error, error_message)
                     else:
                         for xfo in self.xfail_objects:
-                            b.wait_in_text(f"#create-network-dialog .pf-v5-c-modal-box__body #create-network-{xfo} + .pf-v5-c-form__helper-text .pf-m-error", self.xfail_error)
+                            if "range" in xfo:
+                                b.wait_in_text(f"#create-network-dialog .create-network-{xfo} .pf-v5-c-form__helper-text .pf-v5-c-helper-text__item.pf-m-error", self.xfail_error)
+                            else:
+                                b.wait_in_text(f"#create-network-dialog .pf-v5-c-form-control:has(#create-network-{xfo}) + .pf-v5-c-form__helper-text .pf-m-error", self.xfail_error)
 
                     self.cancel()
                 else:

@@ -223,7 +223,9 @@ export const VmDetailsPage = ({
         return (
             <Card key={card.id}
                   className={card.className}
-                  id={card.id}>
+                  id={card.id}
+                  isSelectable
+                  isClickable>
                 <CardHeader actions={{ actions: card.actions }}>
                     <CardTitle component="h2">{card.title}</CardTitle>
                 </CardHeader>

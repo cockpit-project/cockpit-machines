@@ -56,7 +56,7 @@ export class NetworkList extends React.Component {
                         </Breadcrumb>
                     </PageBreadcrumb>
                     <PageSection id='networks-listing'>
-                        <Card>
+                        <Card isSelectable isClickable>
                             <CardHeader actions={{ actions: unlocked && <CreateNetworkAction /> }}>
                                 <CardTitle component="h2">{_("Networks")}</CardTitle>
                             </CardHeader>
