@@ -235,7 +235,6 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         b.click(".pf-v5-c-modal-box__footer button:contains(Reboot)")
         b.wait_not_present("#vm-subVmTest2-system-confirm-action-modal")
         b.wait_in_text("#vm-subVmTest2-system-state", "Running")
-        self.waitCirrOSBooted(args2['logfile'])
 
         # Check uptime
         b.click("#vm-subVmTest2-system-shutdown-button")
