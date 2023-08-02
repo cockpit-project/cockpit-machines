@@ -24,8 +24,6 @@ if [ "${TEST_OS#centos-}" != "$TEST_OS" ]; then
     TEST_OS="${TEST_OS}-stream"
 fi
 
-export TEST_AUDIT_NO_SELINUX=1
-
 #
 # exclude known-broken tests
 #
