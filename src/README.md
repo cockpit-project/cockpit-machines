@@ -13,7 +13,7 @@ In the vagrant:
     # systemctl start libvirtd.service
     # cd /tmp
     # NAME=subVmTest1 &amp;&amp; qemu-img create -f qcow2 ${NAME}.img 256M &amp; &amp; \
-        virt-install -r 128 --pxe --force --nographics --noautoconsole \
+        virt-install -r 128 --pxe --force --graphics none --noautoconsole \
         -f ${NAME}.img -n ${NAME}   # to create and start a dummy VM
 
 Log into Cockpit as the 'root' user (pwd 'foobar') and follow `Virtual machines` from the left-side menu.
