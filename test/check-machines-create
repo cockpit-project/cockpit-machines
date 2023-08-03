@@ -1228,11 +1228,11 @@ vnc_password= "{vnc_passwd}"
                     b.set_input_text("#create-vm-dialog-root-password-pw1", self.root_password)
 
                 if self.is_unattended:
-                    b.wait_visible("#create-and-edit[aria-disabled=true]")
+                    b.wait_visible("#create-and-edit[aria-disabled='true']")
                     b.mouse("#create-and-edit", "mouseenter")
                     b.wait_visible("#create-and-edit-disabled-tooltip")
                 else:
-                    b.wait_visible("#create-and-run[aria-disabled=false]")
+                    b.wait_visible("#create-and-run[aria-disabled='false']")
 
             return self
 
@@ -1271,11 +1271,11 @@ vnc_password= "{vnc_passwd}"
 
             if create:
                 if self.sourceType == 'disk_image':
-                    b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Import and run)[aria-disabled=true]")
-                    b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Import and edit)[aria-disabled=true]")
+                    b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Import and run)[aria-disabled='true']")
+                    b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Import and edit)[aria-disabled='true']")
                 else:
-                    b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Create and run)[aria-disabled=true]")
-                    b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Create and edit)[aria-disabled=true]")
+                    b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Create and run)[aria-disabled='true']")
+                    b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Create and edit)[aria-disabled='true']")
 
             return self
 
@@ -1759,8 +1759,8 @@ vnc_password= "{vnc_passwd}"
             b.wait_in_text("#token-helper-message", error_msg)
             b.wait_in_text("#token-helper-message", "Get a new RHSM token")
             if create_disabled:
-                b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Create and run)[aria-disabled=true]")
-                b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Create and edit)[aria-disabled=true]")
+                b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Create and run)[aria-disabled='true']")
+                b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Create and edit)[aria-disabled='true']")
 
             dialog.cancel()
 
@@ -2055,8 +2055,8 @@ vnc_password= "{vnc_passwd}"
                                              os_short_id=config.RHEL_8_1_SHORTID) \
             .open() \
             .fill()
-        b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Create and run)[aria-disabled=false]")
-        b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Create and edit)[aria-disabled=false]")
+        b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Create and run)[aria-disabled='false']")
+        b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Create and edit)[aria-disabled='false']")
         dialog.cancel()
 
         runner.checkDialogErrorTest(TestMachinesCreate.VmDialog(self, sourceType='os',
