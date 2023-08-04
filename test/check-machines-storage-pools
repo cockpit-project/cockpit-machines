@@ -27,12 +27,12 @@ from testlib import nondestructive, test_main, wait
 class TestMachinesStoragePools(VirtualMachinesCase):
 
     def gotoVolumesTab(self, poolName, connectionName="system"):
-        selector = f"tr[data-row-id=pool-{poolName}-{connectionName}] + tr li:contains('Storage volumes')"
+        selector = f"tr[data-row-id='pool-{poolName}-{connectionName}'] + tr li:contains('Storage volumes')"
         self.browser.click(selector + " > button")
         self.browser.wait_attr(selector, "class", "pf-v5-c-tabs__item pf-m-current")
 
     def gotoOverviewTab(self, poolName, connectionName="system"):
-        selector = f"tr[data-row-id=pool-{poolName}-{connectionName}] + tr li:contains('Overview')"
+        selector = f"tr[data-row-id='pool-{poolName}-{connectionName}'] + tr li:contains('Overview')"
         self.browser.click(selector + " > button")
         self.browser.wait_attr(selector, "class", "pf-v5-c-tabs__item pf-m-current")
 
@@ -107,7 +107,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
 
         # Check storage volumes of a pool
         self.gotoVolumesTab("myPoolOne")
-        b.wait_in_text(f"tr[data-row-id=pool-myPoolOne-{connectionName}] + tr .pf-v5-c-empty-state",
+        b.wait_in_text(f"tr[data-row-id='pool-myPoolOne-{connectionName}'] + tr .pf-v5-c-empty-state",
                        "No storage volumes defined for this storage pool")
 
         # Close expanded row for this pool
@@ -164,7 +164,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         # Try deactivating and activating a pool
         b.click(f"#deactivate-pool-myPoolOne-{connectionName}")
         b.wait_in_text(f"#pool-myPoolOne-{connectionName}-state", "inactive")
-        b.wait_in_text(f"tr[data-row-id=pool-myPoolOne-{connectionName}] + tr .pf-v5-c-empty-state", "Activate the storage pool to administer volumes")
+        b.wait_in_text(f"tr[data-row-id='pool-myPoolOne-{connectionName}'] + tr .pf-v5-c-empty-state", "Activate the storage pool to administer volumes")
         b.wait_visible(f'#myPoolOne-{connectionName}-create-volume-button:disabled')
         b.click(f"#activate-pool-myPoolOne-{connectionName}")
         b.wait_in_text(f"#pool-myPoolOne-{connectionName}-state", "active")

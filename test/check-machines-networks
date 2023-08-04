@@ -123,6 +123,13 @@ class TestMachinesNetworks(VirtualMachinesCase):
         b.wait_in_text("#card-pf-networks .pf-v5-c-card__header button", "Network")
         b.click(".pf-v5-c-card .pf-v5-c-card__header button:contains(Network)")
 
+        # HACK: Firefox 112 on centos-8-stream does not have `:has` yet, so for now use JavaScript to obtain the elements parent sibling.
+        b.inject_js("""
+           ph_input_form_helper_text = function(id) {
+              return document.getElementById(id).parentElement.parentElement.querySelector(".pf-v5-c-helper-text__item.pf-m-error").textContent
+
+        }""")
+
         class NetworkCreateDialog(object):
             def __init__(
                 self, test_obj, name, forward_mode=None, ip_conf=None, ipv4_address=None, ipv4_netmask=None, ipv6_address=None, ipv6_prefix=None, device=None,
@@ -210,7 +217,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
                             if "range" in xfo:
                                 b.wait_in_text(f"#create-network-dialog .create-network-{xfo} .pf-v5-c-form__helper-text .pf-v5-c-helper-text__item.pf-m-error", self.xfail_error)
                             else:
-                                b.wait_in_text(f"#create-network-dialog .pf-v5-c-form-control:has(#create-network-{xfo}) + .pf-v5-c-form__helper-text .pf-m-error", self.xfail_error)
+                                self.test_obj.assertIn(self.xfail_error, b.eval_js(f"ph_input_form_helper_text(\"create-network-{xfo}\")"))
 
                     self.cancel()
                 else:
