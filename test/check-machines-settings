@@ -472,7 +472,8 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         # Change watchdog
         b.click("#vm-subVmTest1-watchdog-button")
-        b.wait_visible("#vm-subVmTest1-watchdog-modal")
+        # HACK: PF modal with duplicate id's https://github.com/patternfly/patternfly-react/issues/9399
+        b.wait_visible("#vm-subVmTest1-watchdog-modal.pf-v5-c-modal-box")
         b.click("#reset")
         b.click("#watchdog-dialog-apply")
         b.wait_not_present("#vm-subVmTest1-watchdog-modal")
@@ -510,11 +511,12 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         def openWatchDogDialog():
             b.click("#vm-subVmTest1-watchdog-button")
-            b.wait_visible("#vm-subVmTest1-watchdog-modal")
+            # HACK: PF modal with duplicate id's https://github.com/patternfly/patternfly-react/issues/9399
+            b.wait_visible("#vm-subVmTest1-watchdog-modal.pf-v5-c-modal-box")
 
         def closeWatchDogDialog(selector):
             b.click(selector)
-            b.wait_not_present("#vm-subVmTest1-watchdog-modal")
+            b.wait_not_present("#vm-subVmTest1-watchdog-modal.pf-v5-c-modal-box")
 
         def setWatchdogAction(action, machine_has_no_watchdog=False, pixel_test_tag=None, reboot_machine=False):
             # If no watchdog action is set, we are attaching a new watchdog device. If watchdog already is set, we are editing an exiting watchdog device
@@ -526,7 +528,7 @@ class TestMachinesSettings(VirtualMachinesCase):
             openWatchDogDialog()
 
             if pixel_test_tag:
-                b.assert_pixels("#vm-subVmTest1-watchdog-modal", pixel_test_tag, skip_layouts=["rtl"])
+                b.assert_pixels("#vm-subVmTest1-watchdog-modal.pf-v5-c-modal-box", pixel_test_tag, skip_layouts=["rtl"])
 
             b.click(f"#{action}")
 
@@ -592,10 +594,11 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         def removeWatchdogDevice(live=True):
             b.click("#vm-subVmTest1-watchdog-button")
-            b.wait_visible("#vm-subVmTest1-watchdog-modal")
+            # HACK: PF modal with duplicate id's https://github.com/patternfly/patternfly-react/issues/9399
+            b.wait_visible("#vm-subVmTest1-watchdog-modal.pf-v5-c-modal-box")
 
             b.click("#watchdog-dialog-detach")
-            b.wait_not_present("#vm-subVmTest1-watchdog-modal")
+            b.wait_not_present("#vm-subVmTest1-watchdog-modal.pf-v5-c-modal-box")
 
             b.wait_in_text("#vm-subVmTest1-watchdog-state", "none")
             # check no watchdog is present in VM's xml (also xmllint is expected to return non-zero code)
@@ -695,7 +698,8 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         # Watchdog can be attached to a transient VM
         b.click("#vm-subVmTest2-watchdog-button")
-        b.wait_visible("#vm-subVmTest2-watchdog-modal")
+        # HACK: PF modal with duplicate id's https://github.com/patternfly/patternfly-react/issues/9399
+        b.wait_visible("#vm-subVmTest2-watchdog-modal.pf-v5-c-modal-box")
         b.click("#pause")
         b.click("#watchdog-dialog-apply")
         b.wait_not_present("#vm-subVmTest2-watchdog-modal")
@@ -703,7 +707,8 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         # Watchdog of transient VM should not be editable
         b.click("#vm-subVmTest2-watchdog-button")
-        b.wait_visible("#vm-subVmTest2-watchdog-modal")
+        # HACK: PF modal with duplicate id's https://github.com/patternfly/patternfly-react/issues/9399
+        b.wait_visible("#vm-subVmTest2-watchdog-modal.pf-v5-c-modal-box")
         b.wait_visible("#watchdog-dialog-apply[aria-disabled=true]")
         b.mouse("#watchdog-dialog-apply", "mouseenter")
         b.wait_visible("#watchdog-live-edit-tooltip")
@@ -722,10 +727,11 @@ class TestMachinesSettings(VirtualMachinesCase):
                 b.wait_in_text("#vm-subVmTest1-vsock-button", "edit")
 
             b.click("#vm-subVmTest1-vsock-button")
-            b.wait_visible("#vm-subVmTest1-vsock-modal")
+            # HACK: PF modal with duplicate id's https://github.com/patternfly/patternfly-react/issues/9399
+            b.wait_visible("#vm-subVmTest1-vsock-modal.pf-v5-c-modal-box")
 
             if pixel_test_tag:
-                b.assert_pixels("#vm-subVmTest1-vsock-modal", pixel_test_tag)
+                b.assert_pixels("#vm-subVmTest1-vsock-modal.pf-v5-c-modal-box", pixel_test_tag)
 
             b.set_checked("#vsock-cid-generate", not auto)
             if not auto:
@@ -749,7 +755,8 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         def setVsockLive(new_auto, new_address=None, previous_address=None, previous_auto=None, reboot_machine=False):
             b.click("#vm-subVmTest1-vsock-button")
-            b.wait_visible("#vm-subVmTest1-vsock-modal")
+            # HACK: PF modal with duplicate id's https://github.com/patternfly/patternfly-react/issues/9399
+            b.wait_visible("#vm-subVmTest1-vsock-modal.pf-v5-c-modal-box")
 
             b.set_checked("#vsock-cid-generate", not new_auto)
             if not new_auto:
@@ -822,10 +829,11 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         def removeVsockDevice(live=True):
             b.click("#vm-subVmTest1-vsock-button")
-            b.wait_visible("#vm-subVmTest1-vsock-modal")
+            # HACK: PF modal with duplicate id's https://github.com/patternfly/patternfly-react/issues/9399
+            b.wait_visible("#vm-subVmTest1-vsock-modal.pf-v5-c-modal-box")
 
             b.click("#vsock-dialog-detach")
-            b.wait_not_present("#vm-subVmTest1-vsock-modal")
+            b.wait_not_present("#vm-subVmTest1-vsock-modal.pf-v5-c-modal-box")
 
             b.wait_in_text("#vm-subVmTest1-vsock-address", "none")
             # check no vsock is present in VM's xml (also xmllint is expected to return non-zero code)
@@ -875,7 +883,7 @@ class TestMachinesSettings(VirtualMachinesCase):
 
             # Vsock of transient VM should not be editable
             b.click("#vm-subVmTest1-vsock-button")
-            b.wait_visible("#vm-subVmTest1-vsock-modal")
+            b.wait_visible("#vm-subVmTest1-vsock-modal.pf-v5-c-modal-box")
             b.wait_visible("#vsock-dialog-apply[aria-disabled=true]")
             b.mouse("#vsock-dialog-apply", "mouseenter")
             b.wait_visible("#vsock-live-edit-tooltip")
