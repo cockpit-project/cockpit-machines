@@ -61,8 +61,8 @@ class TestMachinesHostDevs(VirtualMachinesCase):
                 b.wait_in_text("#vm-subVmTest1-hostdev-1-type", "usb")
                 b.wait_in_text("#vm-subVmTest1-hostdev-1-vendor", "Linux Foundation")
                 b.wait_in_text("#vm-subVmTest1-hostdev-1-product", "1.1 root hub")
-                b.wait_in_text("#vm-subVmTest1-hostdev-1-source #1-device", "1")
-                b.wait_in_text("#vm-subVmTest1-hostdev-1-source #1-bus", "1")
+                b.wait_in_text("#vm-subVmTest1-hostdev-1-source #device-1", "1")
+                b.wait_in_text("#vm-subVmTest1-hostdev-1-source #bus-1", "1")
 
         m.execute("virsh destroy subVmTest1")
         b.wait_in_text("#vm-subVmTest1-system-state", "Shut off")
@@ -75,8 +75,8 @@ class TestMachinesHostDevs(VirtualMachinesCase):
 
         b.wait_in_text("#vm-subVmTest1-hostdev-1-vendor", "0xffff")
         b.wait_in_text("#vm-subVmTest1-hostdev-1-product", "0xffff")
-        b.wait_in_text("#vm-subVmTest1-hostdev-1-source #1-device", "Unspecified")
-        b.wait_in_text("#vm-subVmTest1-hostdev-1-source #1-bus", "Unspecified")
+        b.wait_in_text("#vm-subVmTest1-hostdev-1-source #device-1", "Unspecified")
+        b.wait_in_text("#vm-subVmTest1-hostdev-1-source #bus-1", "Unspecified")
 
         m.execute("virsh detach-device --domain subVmTest1 --file /tmp/usbnonexistenthostedxml --config")
 
@@ -96,7 +96,7 @@ class TestMachinesHostDevs(VirtualMachinesCase):
         except subprocess.CalledProcessError:
             pass
 
-        b.wait_in_text("#vm-subVmTest1-hostdev-1-source #1-slot", "0000:00:0f.0")
+        b.wait_in_text("#vm-subVmTest1-hostdev-1-source #slot-1", "0000:00:0f.0")
 
         # QEMU version on rhel and centos-8/9-stream doesn't support scsi-host devices yet
         if not m.image.startswith("rhel-8") and not m.image.startswith("rhel-9") and m.image != "centos-8-stream" and m.image != "centos-9-stream":
@@ -296,10 +296,10 @@ class TestMachinesHostDevs(VirtualMachinesCase):
         b.wait_not_present("#vm-subVmTest1-hostdevs-dialog")
 
         b.wait_visible("#vm-subVmTest1-hostdev-1-product")
-        b.wait_in_text("#1-slot", slot1)
+        b.wait_in_text("#slot-1", slot1)
 
         b.wait_visible("#vm-subVmTest1-hostdev-2-product")
-        b.wait_in_text("#2-slot", slot2)
+        b.wait_in_text("#slot-2", slot2)
 
         self.run_admin(f"virsh -c qemu:///{connectionName} dumpxml subVmTest1 > /tmp/vmdir/vmxml2", connectionName)
         vm_diff = m.execute("diff /tmp/vmdir/vmxml1 /tmp/vmdir/vmxml2 | sed -e 's/^>//;1d'")  # Print difference between XMLs before and after adding host devices

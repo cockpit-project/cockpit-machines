@@ -95,40 +95,40 @@ function getSource(hostDev, nodeDevices, hostdevId) {
 
         // If there are 2 usb devices without specified bus/device and same vendor/product,
         // it's impossible to identify which one is the one referred in VM's XML
-        cells.push(getOptionalValue(device, `${hostdevId}-device`, _("Device")));
-        cells.push(getOptionalValue(bus, `${hostdevId}-bus`, _("Bus")));
+        cells.push(getOptionalValue(device, `device-${hostdevId}`, _("Device")));
+        cells.push(getOptionalValue(bus, `bus-${hostdevId}`, _("Bus")));
     } else if (hostDev.type === "pci") {
-        cells.push(getOptionalValue(getPciSlot(hostDev), `${hostdevId}-slot`, _("Slot")));
+        cells.push(getOptionalValue(getPciSlot(hostDev), `slot-${hostdevId}`, _("Slot")));
     } else if (hostDev.type === "scsi") {
         const bus = hostDev.source.address.bus;
         const target = hostDev.source.address.target;
         const unit = hostDev.source.address.lun;
 
-        cells.push(getOptionalValue(bus, `${hostdevId}-bus`, _("Bus")));
-        cells.push(getOptionalValue(unit, `${hostdevId}-unit`, _("Slot")));
-        cells.push(getOptionalValue(target, `${hostdevId}-target`, _("Target")));
+        cells.push(getOptionalValue(bus, `bus-${hostdevId}`, _("Bus")));
+        cells.push(getOptionalValue(unit, `unit-${hostdevId}`, _("Slot")));
+        cells.push(getOptionalValue(target, `target-${hostdevId}`, _("Target")));
     } else if (hostDev.type === "scsi_host") {
         const protocol = hostDev.source.protocol;
         const wwpn = hostDev.source.wwpn;
 
-        cells.push(getOptionalValue(protocol, `${hostdevId}-protocol`, _("Protocol")));
-        cells.push(getOptionalValue(wwpn, `${hostdevId}-wwpn`, _("WWPN")));
+        cells.push(getOptionalValue(protocol, `protocol-${hostdevId}`, _("Protocol")));
+        cells.push(getOptionalValue(wwpn, `wwpn-${hostdevId}`, _("WWPN")));
     } else if (hostDev.type === "mdev") {
         const uuid = hostDev.source.address.uuid;
 
-        cells.push(getOptionalValue(uuid, `${hostdevId}-uuid`, _("UUID")));
+        cells.push(getOptionalValue(uuid, `uuid-${hostdevId}`, _("UUID")));
     } else if (hostDev.type === "storage") {
         const block = hostDev.source.block;
 
-        cells.push(getOptionalValue(block, `${hostdevId}-block`, _("Path")));
+        cells.push(getOptionalValue(block, `block-${hostdevId}`, _("Path")));
     } else if (hostDev.type === "misc") {
         const ch = hostDev.source.char;
 
-        cells.push(getOptionalValue(ch, `${hostdevId}-char`, _("Path")));
+        cells.push(getOptionalValue(ch, `char-${hostdevId}`, _("Path")));
     } else if (hostDev.type === "net") {
         const iface = hostDev.source.interface;
 
-        cells.push(getOptionalValue(iface, `${hostdevId}-interface`, _("Interface")));
+        cells.push(getOptionalValue(iface, `interface-${hostdevId}`, _("Interface")));
     }
 
     return <DescriptionList isHorizontal>{cells}</DescriptionList>;
