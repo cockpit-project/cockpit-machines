@@ -927,11 +927,13 @@ class TestMachinesStoragePools(VirtualMachinesCase):
                                         vol_name=dev.split("/")[-1] + "1",
                                         remove_volume=True).execute()
 
-        StoragePoolsCreationAndDeletion(self,
-                                        name="pdd-pool-3",
-                                        pool_type="disk",
-                                        target="/media/",
-                                        source_dev=dev).execute()
+        # Workaround Firefox on TF taking longer to find tr[data-row-id=\"pool-pdd-pool-3-system\"]
+        with b.wait_timeout(120):
+            StoragePoolsCreationAndDeletion(self,
+                                            name="pdd-pool-3",
+                                            pool_type="disk",
+                                            target="/media/",
+                                            source_dev=dev).execute()
 
         # iscsi pool deletion
         # TODO: Arch image has no iscsi yet
