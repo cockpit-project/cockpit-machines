@@ -56,7 +56,7 @@ export const StateIcon = ({ state, valueId, error, dismissError, additionalState
                 className="resource-state-text"
                 closeBtnAriaLabel={_("Close")}
                 onClose={dismissError}
-                id={valueId}>
+                id={`${valueId}-error`}>
                 <>
                     {_("Failed")}
                     <Button variant="link" isInline>{_("view more...")}</Button>
