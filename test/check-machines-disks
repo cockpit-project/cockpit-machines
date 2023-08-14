@@ -302,6 +302,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             pool_name=None, volume_name=None,
             file_path=None,
             force=False,
+            pixel_tag=None,
         ):
             self.test_obj = test_obj
             self.mode = mode
@@ -311,6 +312,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             self.volume_name = volume_name
             self.target = target
             self.force = force
+            self.pixel_tag = pixel_tag
 
         def _get_disks(self):
             m = self.test_obj.machine
@@ -402,6 +404,9 @@ class TestMachinesDisks(VirtualMachinesCase):
             b = self.test_obj.browser
             b.click(f"#vm-{self.vm_name}-disks-{self.target}-eject-button")  # button
             b.wait_in_text(".pf-v5-c-modal-box__title", "Eject disc from VM")
+
+            if self.pixel_tag:
+                b.assert_pixels(".pf-v5-c-modal-box", self.pixel_tag)
 
             if self.mode == "custom-path":
                 b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.target}-modal-description-file", self.file_path)
@@ -1632,6 +1637,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             mode='custom-path',
             target='sda',
             file_path='/var/lib/libvirt/novell.iso',
+            pixel_tag='vm-disc-eject-modal',
         ).execute()
 
         self.VMInsertMediaDialog(
