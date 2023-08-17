@@ -37,7 +37,7 @@ export const MachinesConnectionSelector = ({ onValueChanged, loggedUser, connect
 
     return (
         <FormGroup label={_("Connection")}
-                   isInline hasNoPaddingTop
+                   isInline
                    id={id}
                    className="machines-connection-selector"
                    labelIcon={

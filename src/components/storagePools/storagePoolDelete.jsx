@@ -172,15 +172,14 @@ class StoragePoolDelete extends React.Component {
                     ? (volumes.length > 0
                         ? <Checkbox id='storage-pool-delete-volumes'
                                     isChecked={this.state.deleteVolumes}
-                                    label={<>
-                                        { _("Also delete all volumes inside this pool:")}
+                                    label={_("Also delete all volumes inside this pool:")}
+                                    body={
                                         <List className="pool-volumes-delete-list">
-                                            {volumes
-                                                    .sort((a, b) => a.name.localeCompare(b.name))
+                                            {volumes.sort((a, b) => a.name.localeCompare(b.name))
                                                     .map(vol => <ListItem key={storagePool.name + vol.name}>{vol.name}</ListItem>)
                                             }
                                         </List>
-                                    </>}
+                                    }
                                     onChange={(_event, checked) => this.onValueChanged('deleteVolumes', checked)} />
                         : _("No volumes exist in this storage pool."))
                     : _("Deleting an inactive storage pool will only undefine the pool. Its content will not be deleted.")
