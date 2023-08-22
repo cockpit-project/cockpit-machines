@@ -24,7 +24,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-07-29 02:50+0000\n"
-"PO-Revision-Date: 2023-06-01 10:20+0000\n"
+"PO-Revision-Date: 2023-08-07 04:02+0000\n"
 "Last-Translator: Miguel Ángel Sánchez <maletils@gmail.com>\n"
 "Language-Team: Spanish <https://translate.fedoraproject.org/projects/cockpit-"
 "machines/main/es/>\n"
@@ -33,7 +33,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1\n"
-"X-Generator: Weblate 4.17\n"
+"X-Generator: Weblate 4.18.2\n"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:827
 msgid "$0 $1 available at default location"
@@ -163,7 +163,7 @@ msgstr "Añadir una interfaz vsock"
 
 #: src/components/vm/overview/watchdog.jsx:172
 msgid "Add watchdog device type"
-msgstr "Añadir tipo de dispositivo watchdog"
+msgstr "Añadir dispositivo de tipo watchdog"
 
 #: src/components/vm/overview/watchdog.jsx:105
 msgid "Adding a watchdog will require a reboot to take effect."
@@ -335,18 +335,17 @@ msgstr "Antememoria"
 #: src/components/vm/hostdevs/hostDevAdd.jsx:234
 #: src/components/networks/createNetworkDialog.jsx:419
 #: src/components/networks/networkOverviewTab.jsx:239
+#: src/components/networks/createNetworkDialog.jsx:421
 msgid "Cancel"
 msgstr "Cancelar"
 
 #: src/components/vm/overview/vsock.jsx:203
 msgid "Cannot edit vsock device on a transient VM"
-msgstr ""
+msgstr "No se puede editar el dispositivo vsock en una MV temporal"
 
 #: src/components/vm/overview/watchdog.jsx:161
-#, fuzzy
-#| msgid "Edit watchdog device type"
 msgid "Cannot edit watchdog device on a transient VM"
-msgstr "Editar tipo de dispositivo watchdog"
+msgstr "No se puede editar el dispositivo watchdog en una MV temporal"
 
 #: src/components/vm/disks/vmDisksCard.jsx:184
 msgid "Capacity"
@@ -487,6 +486,7 @@ msgstr "Colgado"
 #: src/components/storagePools/storageVolumeCreate.jsx:107
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:144
 #: src/components/networks/createNetworkDialog.jsx:416
+#: src/components/networks/createNetworkDialog.jsx:418
 msgid "Create"
 msgstr "Crear"
 
@@ -554,6 +554,8 @@ msgstr "Crear un volumen de almacenamiento"
 
 #: src/components/networks/createNetworkDialog.jsx:409
 #: src/components/networks/createNetworkDialog.jsx:437
+#: src/components/networks/createNetworkDialog.jsx:411
+#: src/components/networks/createNetworkDialog.jsx:439
 msgid "Create virtual network"
 msgstr "Crear una red virtual"
 
@@ -875,6 +877,7 @@ msgid "Enable virtualization support in BIOS/EFI settings."
 msgstr "Habilite el soporte de virtualización en la configuración de BIOS/EFI."
 
 #: src/components/networks/createNetworkDialog.jsx:224
+#: src/components/networks/createNetworkDialog.jsx:226
 msgid "End"
 msgstr "Terminar"
 
@@ -998,10 +1001,8 @@ msgid "Force reboot"
 msgstr "Forzar el reinicio"
 
 #: src/components/vm/vmActions.jsx:351
-#, fuzzy
-#| msgid "Force reboot"
 msgid "Force reboot $0?"
-msgstr "Forzar el reinicio"
+msgstr "¿Forzar el reinicio de $0?"
 
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:99
 msgid "Force revert"
@@ -1012,10 +1013,8 @@ msgid "Force shut down"
 msgstr "Forzar el apagado"
 
 #: src/components/vm/vmActions.jsx:287
-#, fuzzy
-#| msgid "Force shut down"
 msgid "Force shut down $0?"
-msgstr "Forzar el apagado"
+msgstr "¿Forzar el apagado de $0?"
 
 #: src/components/storagePools/storageVolumeCreateBody.jsx:69
 #: src/components/storagePools/createStoragePoolDialog.jsx:197
@@ -1141,6 +1140,7 @@ msgstr "Configuración de la IP"
 
 #: src/components/networks/createNetworkDialog.jsx:241
 #: src/components/networks/networkOverviewTab.jsx:138
+#: src/components/networks/createNetworkDialog.jsx:243
 msgid "IPv4 address"
 msgstr "Dirección IPv4"
 
@@ -1166,6 +1166,7 @@ msgstr "Solo IPv4"
 
 #: src/components/networks/createNetworkDialog.jsx:271
 #: src/components/networks/networkOverviewTab.jsx:158
+#: src/components/networks/createNetworkDialog.jsx:273
 msgid "IPv6 address"
 msgstr "Dirección IPv6"
 
@@ -1423,6 +1424,7 @@ msgid "Manual connection"
 msgstr "Conexión manual"
 
 #: src/components/networks/createNetworkDialog.jsx:248
+#: src/components/networks/createNetworkDialog.jsx:250
 msgid "Mask or prefix length"
 msgstr "Máscara o longitud del prefijo"
 
@@ -1891,7 +1893,7 @@ msgstr "Introduzca el nuevo nombre del volumen"
 
 #: src/components/vm/consoles/consoles.jsx:40
 msgid "Please start the virtual machine to access its console."
-msgstr "Por favor arranque la maquina virtual para acceder a su consola."
+msgstr "Por favor, arranque la máquina virtual para acceder a su consola."
 
 #: src/components/vm/disks/vmDiskColumns.jsx:42
 #: src/components/vm/disks/mediaEject.jsx:85
@@ -1938,6 +1940,7 @@ msgid "Prefix"
 msgstr "Prefijo"
 
 #: src/components/networks/createNetworkDialog.jsx:278
+#: src/components/networks/createNetworkDialog.jsx:280
 msgid "Prefix length"
 msgstr "Longitud del prefijo"
 
@@ -2011,10 +2014,8 @@ msgid "Reboot"
 msgstr "Reiniciar"
 
 #: src/components/vm/vmActions.jsx:331
-#, fuzzy
-#| msgid "Reboot"
 msgid "Reboot $0?"
-msgstr "Reiniciar"
+msgstr "¿Reiniciar $0?"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:339
 msgid "Remote URL"
@@ -2166,10 +2167,8 @@ msgid "Send non-maskable interrupt"
 msgstr "Enviar interrupción no enmascarable"
 
 #: src/components/vm/vmActions.jsx:308
-#, fuzzy
-#| msgid "Send non-maskable interrupt"
 msgid "Send non-maskable interrupt to $0?"
-msgstr "Enviar interrupción no enmascarable"
+msgstr "¿Enviar interrupción no enmascarable a $0?"
 
 #: src/components/vm/disks/vmDiskColumns.jsx:102
 msgid "Serial"
@@ -2240,10 +2239,8 @@ msgid "Shut down"
 msgstr "Apagar"
 
 #: src/components/vm/vmActions.jsx:236 src/components/vm/vmActions.jsx:267
-#, fuzzy
-#| msgid "Shut down"
 msgid "Shut down $0?"
-msgstr "Apagar"
+msgstr "¿Apagar $0?"
 
 #: src/helpers.js:228
 msgid "Shut off"
@@ -2341,6 +2338,7 @@ msgid "Source volume group"
 msgstr "Origen del grupo de volumen"
 
 #: src/components/networks/createNetworkDialog.jsx:218
+#: src/components/networks/createNetworkDialog.jsx:219
 msgid "Start"
 msgstr "Iniciar"
 
@@ -2453,10 +2451,8 @@ msgid "System"
 msgstr "Sistema"
 
 #: src/components/vm/nics/vmNicsCard.jsx:189
-#, fuzzy
-#| msgid "Host device"
 msgid "TAP device"
-msgstr "Dispositivo del anfitrión"
+msgstr "Dispositivo TAP"
 
 #: src/components/vm/hostdevs/hostDevAdd.jsx:126
 msgid "Table of selectable host devices"
@@ -2686,7 +2682,7 @@ msgstr "Desconocido"
 
 #: src/components/vm/confirmDialog.jsx:70
 msgid "Uptime"
-msgstr ""
+msgstr "Tiempo en línea"
 
 #: src/components/vm/disks/diskEdit.jsx:44
 msgid "Url"
@@ -2850,6 +2846,7 @@ msgstr "Proveedor"
 #: src/components/vm/vmDetailsPage.jsx:87
 #: src/components/vm/vmDetailsPage.jsx:247
 #: src/components/networks/networkList.jsx:51 src/manifest.json:0
+#: src/components/vm/vmDetailsPage.jsx:249
 msgid "Virtual machines"
 msgstr "Máquinas virtuales"
 
@@ -2862,6 +2859,7 @@ msgid "Virtual network"
 msgstr "Red virtual"
 
 #: src/components/networks/createNetworkDialog.jsx:375
+#: src/components/networks/createNetworkDialog.jsx:377
 msgid "Virtual network failed to be created"
 msgstr "La red virtual falló al crearse"
 
@@ -3035,17 +3033,16 @@ msgstr "Objetivo de iSCSI en IQN"
 #: src/components/storagePools/storagePool.jsx:63
 #: src/components/networks/network.jsx:62
 #, fuzzy
-#| msgid "active"
 msgid "inactive"
 msgstr "activa"
 
 #: src/components/vm/nics/vmNicsCard.jsx:385
 msgid "inet"
-msgstr ""
+msgstr "inet"
 
 #: src/components/vm/nics/vmNicsCard.jsx:393
 msgid "inet6"
-msgstr ""
+msgstr "inet6"
 
 #: src/manifest.json:0
 msgid "iso"
@@ -3262,7 +3259,6 @@ msgstr "sí"
 #~ msgstr "Conectándose al servicio de virtualización"
 
 #, fuzzy
-#~| msgid "Connecting to virtualization service"
 #~ msgid "Failed to enable virtualization service"
 #~ msgstr "Conectándose al servicio de virtualización"
 
@@ -3270,7 +3266,6 @@ msgstr "sí"
 #~ msgstr "Iniciar libvirt"
 
 #, fuzzy
-#~| msgid "Blocked"
 #~ msgid "Block"
 #~ msgstr "Bloqueado"
 
