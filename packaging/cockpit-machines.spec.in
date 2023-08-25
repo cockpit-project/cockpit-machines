@@ -59,11 +59,15 @@ Requires: (qemu-audio-spice if qemu-char-spice)
 %endif
 Requires: libvirt-client
 Requires: libvirt-dbus >= 1.2.0
+%if 0%{?fedora} >= 39
+Requires: virtiofsd
+%else
+Suggests: (qemu-virtiofsd or virtiofsd)
+%endif
 # Optional components
 Recommends: virt-install >= 3.0.0
 Recommends: libosinfo
 Recommends: python3-gobject-base
-Suggests: (qemu-virtiofsd or virtiofsd)
 
 %{NPM_PROVIDES}
 
