@@ -114,6 +114,10 @@ for t in $EXCLUDES; do
     exclude_options="$exclude_options --exclude $t"
 done
 
+# make it easy to check in logs
+echo "TEST_ALLOW_JOURNAL_MESSAGES: ${TEST_ALLOW_JOURNAL_MESSAGES:-}"
+echo "TEST_AUDIT_NO_SELINUX: ${TEST_AUDIT_NO_SELINUX:-}"
+
 # execute run-tests
 RC=0
 test/common/run-tests --nondestructive $exclude_options \
