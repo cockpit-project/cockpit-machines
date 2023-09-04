@@ -185,8 +185,18 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         b.wait_visible(f"#pool-myPoolTwo-{connectionName}-volume-VolumeOne-usedby")
         b.wait_in_text(f"#pool-myPoolTwo-{connectionName}-volume-VolumeOne-usedby", "subVmTest1")
 
-        m.execute("virsh detach-disk --config --target vdc subVmTest1")
-        b.wait_in_text(f"#pool-myPoolTwo-{connectionName}-volume-VolumeOne-usedby", "")
+        # Detach disk from VM
+        self.goToMainPage()
+        self.waitVmRow("subVmTest1")
+        self.goToVmPage("subVmTest1")
+        self.deleteDisk("vdc")
+        self.goToMainPage()
+        b.click(".pf-v5-c-card .pf-v5-c-card__header button:contains(Storage pools)")
+        self.togglePoolRow("myPoolTwo", connectionName)
+        self.gotoVolumesTab("myPoolTwo")
+
+        # Verify storage pool's "Used by [vms]" was updated
+        b.wait_text(f"#pool-myPoolTwo-{connectionName}-volume-VolumeOne-usedby", "")
 
         # Transient pool
         self.togglePoolRow("myPoolThree", connectionName)
