@@ -135,8 +135,11 @@ export function getPXEInitialNetworkSource(nodeDevices, virtualNetworks) {
         virtualNetworks
     );
 
+    // Don't use localhost as default PXE source
+    const source = netNodeDevices.find(dev => dev.capability.interface !== "lo");
+
     if (netNodeDevices.length > 0)
-        return cockpit.format('type=direct,source=$0,source.mode=bridge', netNodeDevices[0].capability.interface);
+        return cockpit.format('type=direct,source=$0,source.mode=bridge', source.capability.interface);
 }
 
 /**
