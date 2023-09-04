@@ -755,12 +755,16 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         # Delete the VM, or the deletion button will be disabled
         m.execute("virsh dumpxml subVmTest1 > /tmp/subVmTest1.xml")
         m.execute("virsh undefine subVmTest1")
+        b.click(".pf-v5-c-breadcrumb__link:contains(Virtual machines)")
+        b.wait_in_text("#virtual-machines-listing .pf-v5-c-empty-state", "No VM is running")
+        b.click(".pf-v5-c-card .pf-v5-c-card__header button:contains(Storage pool)")
         m.execute(f'chattr +a {args["image"]}')
         self.addCleanup(m.execute, f'chattr -a {args["image"]}')
 
         b.click("#pool-images-system-action-kebab button")
         b.click("#delete-pool-images-system")
         b.set_checked("#storage-pool-delete-volumes", True)
+        b.wait_visible("#storage-pool-delete-modal")
         b.click("#storage-pool-delete-modal .pf-v5-c-modal-box__footer button:nth-child(1)")
         b.wait_in_text(".pf-v5-c-backdrop header + div .pf-v5-c-alert__description", "cannot unlink file")
         m.execute("! test -f /var/lib/libvirt/images/a; ! test -f /var/lib/libvirt/images/z")
