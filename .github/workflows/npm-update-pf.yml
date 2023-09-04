@@ -17,7 +17,7 @@ jobs:
 
       - name: Run npm-update bot
         run: |
-          make test/common/make-bots tools/node-modules
+          make tools/node-modules
           test/common/make-bots
           git config --global user.name "GitHub Workflow"
           git config --global user.email "cockpituous@cockpit-project.org"
