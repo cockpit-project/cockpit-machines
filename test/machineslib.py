@@ -235,6 +235,19 @@ class VirtualMachinesCaseHelpers:
         else:
             return m.execute(cmd)
 
+    def deleteDisk(self, target, vm_name="subVmTest1"):
+        b = self.browser
+
+        b.wait_visible(f"#vm-{vm_name}-disks-{target}-device")
+        b.wait_visible(f"#vm-{vm_name}-disks-{target}-action-kebab")
+        b.click(f"#vm-{vm_name}-disks-{target}-action-kebab button")
+        b.wait_visible(f"#delete-vm-{vm_name}-disks-{target}")
+        b.click(f"#delete-vm-{vm_name}-disks-{target}")
+        b.wait_visible(".pf-v5-c-modal-box")
+        b.click("#delete-resource-modal-primary")
+        b.wait_not_present(".pf-v5-c-modal-box")
+        b.wait_not_present(f"#vm-{vm_name}-disks-{target}-device")
+
     def deleteIface(self, iface, mac=None, vm_name=None):
         b = self.browser
 
