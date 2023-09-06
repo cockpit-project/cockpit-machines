@@ -20,6 +20,8 @@ DIST_TEST=dist/manifest.json
 COCKPIT_REPO_STAMP=pkg/lib/cockpit-po-plugin.js
 # common arguments for tar, mostly to make the generated tarballs reproducible
 TAR_ARGS = --sort=name --mtime "@$(shell git show --no-patch --format='%at')" --mode=go=rX,u+rw,a-s --numeric-owner --owner=0 --group=0
+# default customize_flags
+VM_CUSTOMIZE_FLAGS = --no-network
 
 all: $(DIST_TEST)
 
@@ -172,12 +174,16 @@ $(COCKPIT_WHEEL):
 	pip wheel git+https://github.com/cockpit-project/cockpit.git@${COCKPIT_PYBRIDGE_REF}
 
 VM_DEPENDS = $(COCKPIT_WHEEL)
-VM_CUSTOMIZE_FLAGS = --install $(COCKPIT_WHEEL)
+VM_CUSTOMIZE_FLAGS += --install $(COCKPIT_WHEEL)
+endif
+
+ifeq ("$(TEST_SCENARIO)","updates-testing")
+VM_CUSTOMIZE_FLAGS = --run-command 'dnf -y update --enablerepo=updates-testing,updates-testing-modular >&2'
 endif
 
 # build a VM with locally built distro pkgs installed
 $(VM_IMAGE): $(TARFILE) packaging/debian/rules packaging/debian/control packaging/arch/PKGBUILD bots $(VM_DEPENDS)
-	bots/image-customize --no-network --fresh $(VM_CUSTOMIZE_FLAGS) --build $(TARFILE) --script $(CURDIR)/test/vm.install $(TEST_OS)
+	bots/image-customize --fresh $(VM_CUSTOMIZE_FLAGS) --build $(TARFILE) --script $(CURDIR)/test/vm.install $(TEST_OS)
 
 # convenience target for the above
 vm: $(VM_IMAGE)
