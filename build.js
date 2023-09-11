@@ -117,15 +117,6 @@ const context = await esbuild.context({
                 "var os": 'var os = {}; // HACK: os is not really used in our used functions from ip.js',
             }
         }),
-        // FIXME: Workaround incompatible version of react-core dependency from react-console with the installed react-core
-        // This is a fallout from the fact that alpha version can break the API within minor version updates
-        // https://github.com/patternfly/react-console/pull/35
-        replace({
-            include: /AccessConsoles.js/,
-            values: {
-                'react-core': 'react-core/deprecated',
-            }
-        }),
         ...esbuildStylesPlugins,
         cockpitPoEsbuildPlugin(),
 
