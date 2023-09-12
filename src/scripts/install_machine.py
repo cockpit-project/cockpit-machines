@@ -147,6 +147,7 @@ def prepare_cloud_init(args):
 
         user_data_file.flush()
         params.append(f"user-data={user_data_file.name}")
+        params.append("--tpm none")
 
     yield params
 
