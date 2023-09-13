@@ -14,7 +14,6 @@ select = [
     "ISC",     # flake8-implicit-str-concat
     "PLE",     # pylint errors
     "PGH",     # pygrep-hooks
-    "PT",      # flake8-pytest-style
     "RSE",     # flake8-raise
     "RUF",     # ruff rules
     "T10",     # flake8-debugger
@@ -33,8 +32,6 @@ ignore = [
     "E731",  # Do not assign a `lambda` expression, use a `def`
     "FBT002", # Boolean default value in function definition
     "FBT003", # Boolean positional value in function call
-    "PT009", # Use a regular `assert` instead of unittest-style `assertEqual`
-    "PT011", # `pytest.raises(OSError)` is too broad
 ]
 # FIXME: we want 118, but needs fixing tests first
 line-length = 183
