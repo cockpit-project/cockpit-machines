@@ -26,7 +26,7 @@ from testlib import nondestructive, skipImage, test_main, wait
 @nondestructive
 class TestMachinesConsoles(VirtualMachinesCase):
 
-    @skipImage('spice-server does not exist on RHEL 9', "rhel-9-1", "rhel-9-2", "rhel-9-3", "centos-9-stream")
+    @skipImage('spice-server does not exist on RHEL 9', "rhel-9*", "centos-9-stream")
     def testExternalConsole(self):
         b = self.browser
 
