@@ -45,9 +45,9 @@ class VirtualMachinesCaseHelpers:
             return m.execute(f"grep 'starting up' /var/log/libvirt/qemu/{vmName}.log | tail -1")
 
         initialTime = getStartTime()
-        b.click("#vm-{0}-{1}-action-kebab button".format(vmName, connectionName))
-        b.wait_visible("#vm-{0}-{1}-action-kebab > .pf-v5-c-dropdown__menu".format(vmName, connectionName))
-        b.click("#vm-{0}-{1}-{2} a".format(vmName, connectionName, action))
+        b.click(f"#vm-{vmName}-{connectionName}-action-kebab button")
+        b.wait_visible(f"#vm-{vmName}-{connectionName}-action-kebab > .pf-v5-c-dropdown__menu")
+        b.click(f"#vm-{vmName}-{connectionName}-{action} a")
         if (action == "reboot" or "forceReboot") and connectionName == "system":
             # Check VM doesn't get rebooted after opening dialog
             # https://bugzilla.redhat.com/show_bug.cgi?id=2221144
@@ -55,22 +55,22 @@ class VirtualMachinesCaseHelpers:
 
         # Some actions, which can cause expensive downtime when clicked accidentally, have confirmation dialog
         if action in ["off", "forceOff", "reboot", "forceReboot", "sendNMI"]:
-            b.wait_visible("#vm-{0}-{1}-confirm-action-modal".format(vmName, connectionName))
-            b.click(".pf-v5-c-modal-box__footer #vm-{0}-{1}-{2}".format(vmName, connectionName, action))
-            b.wait_not_present("#vm-{0}-{1}-confirm-action-modal".format(vmName, connectionName))
+            b.wait_visible(f"#vm-{vmName}-{connectionName}-confirm-action-modal")
+            b.click(f".pf-v5-c-modal-box__footer #vm-{vmName}-{connectionName}-{action}")
+            b.wait_not_present(f"#vm-{vmName}-{connectionName}-confirm-action-modal")
 
         if not checkExpectedState:
             return
 
         if action == "pause":
-            b.wait_in_text("#vm-{0}-{1}-state".format(vmName, connectionName), "Paused")
+            b.wait_in_text(f"#vm-{vmName}-{connectionName}-state", "Paused")
         if action == "resume" or action == "run":
-            b.wait_in_text("#vm-{0}-{1}-state".format(vmName, connectionName), "Running")
+            b.wait_in_text(f"#vm-{vmName}-{connectionName}-state", "Running")
         if action == "forceOff" or action == "off":
-            b.wait_in_text("#vm-{0}-{1}-state".format(vmName, connectionName), "Shut off")
+            b.wait_in_text(f"#vm-{vmName}-{connectionName}-state", "Shut off")
 
     def goToVmPage(self, vmName, connectionName='system'):
-        self.browser.click("tbody tr[data-row-id=\"vm-{0}-{1}\"] a.vm-list-item-name".format(vmName, connectionName))  # click on the row
+        self.browser.click(f"tbody tr[data-row-id=\"vm-{vmName}-{connectionName}\"] a.vm-list-item-name")  # click on the row
 
     def goToMainPage(self):
         self.browser.click(".machines-listing-breadcrumb li:first-of-type a")
@@ -80,39 +80,39 @@ class VirtualMachinesCaseHelpers:
 
     def waitVmRow(self, vmName, connectionName='system', present=True):
         b = self.browser
-        vm_row = "tbody tr[data-row-id=\"vm-{0}-{1}\"]".format(vmName, connectionName)
+        vm_row = f"tbody tr[data-row-id=\"vm-{vmName}-{connectionName}\"]"
         if present:
             b.wait_visible(vm_row)
         else:
             b.wait_not_present(vm_row)
 
     def togglePoolRow(self, poolName, connectionName="system"):
-        isExpanded = 'pf-m-expanded' in self.browser.attr("tbody tr[data-row-id=\"pool-{0}-{1}\"] + tr".format(poolName, connectionName), "class")  # click on the row header
-        self.browser.click("tbody tr[data-row-id=\"pool-{0}-{1}\"] .pf-v5-c-table__toggle button".format(poolName, connectionName))  # click on the row header
+        isExpanded = 'pf-m-expanded' in self.browser.attr(f"tbody tr[data-row-id=\"pool-{poolName}-{connectionName}\"] + tr", "class")  # click on the row header
+        self.browser.click(f"tbody tr[data-row-id=\"pool-{poolName}-{connectionName}\"] .pf-v5-c-table__toggle button")  # click on the row header
         if isExpanded:
-            self.browser.wait_not_present("tbody tr[data-row-id=\"pool-{0}-{1}\"] + tr.pf-m-expanded".format(poolName, connectionName))  # click on the row header
+            self.browser.wait_not_present(f"tbody tr[data-row-id=\"pool-{poolName}-{connectionName}\"] + tr.pf-m-expanded")  # click on the row header
         else:
-            self.browser.wait_visible("tbody tr[data-row-id=\"pool-{0}-{1}\"] + tr.pf-m-expanded".format(poolName, connectionName))  # click on the row header
+            self.browser.wait_visible(f"tbody tr[data-row-id=\"pool-{poolName}-{connectionName}\"] + tr.pf-m-expanded")  # click on the row header
 
     def waitPoolRow(self, poolName, connectionName="system", present="true"):
         b = self.browser
-        pool_row = "tbody tr[data-row-id=\"pool-{0}-{1}\"]".format(poolName, connectionName)
+        pool_row = f"tbody tr[data-row-id=\"pool-{poolName}-{connectionName}\"]"
         if present:
             b.wait_visible(pool_row)
         else:
             b.wait_not_present(pool_row)
 
     def toggleNetworkRow(self, networkName, connectionName="system"):
-        isExpanded = 'pf-m-expanded' in self.browser.attr("tbody tr[data-row-id=\"network-{0}-{1}\"] + tr".format(networkName, connectionName), "class")  # click on the row header
-        self.browser.click("tbody tr[data-row-id=\"network-{0}-{1}\"] .pf-v5-c-table__toggle button".format(networkName, connectionName))  # click on the row header
+        isExpanded = 'pf-m-expanded' in self.browser.attr(f"tbody tr[data-row-id=\"network-{networkName}-{connectionName}\"] + tr", "class")  # click on the row header
+        self.browser.click(f"tbody tr[data-row-id=\"network-{networkName}-{connectionName}\"] .pf-v5-c-table__toggle button")  # click on the row header
         if isExpanded:
-            self.browser.wait_not_present("tbody tr[data-row-id=\"network-{0}-{1}\"] + tr.pf-m-expanded".format(networkName, connectionName))  # click on the row header
+            self.browser.wait_not_present(f"tbody tr[data-row-id=\"network-{networkName}-{connectionName}\"] + tr.pf-m-expanded")  # click on the row header
         else:
-            self.browser.wait_visible("tbody tr[data-row-id=\"network-{0}-{1}\"] + tr.pf-m-expanded".format(networkName, connectionName))  # click on the row header
+            self.browser.wait_visible(f"tbody tr[data-row-id=\"network-{networkName}-{connectionName}\"] + tr.pf-m-expanded")  # click on the row header
 
     def waitNetworkRow(self, networkName, connectionName="system", present="true"):
         b = self.browser
-        network_row = "tbody tr[data-row-id=\"network-{0}-{1}\"]".format(networkName, connectionName)
+        network_row = f"tbody tr[data-row-id=\"network-{networkName}-{connectionName}\"]"
         if present:
             b.wait_visible(network_row)
         else:
@@ -149,15 +149,15 @@ class VirtualMachinesCaseHelpers:
         image_file = m.pull("cirros")
 
         if connection == "system":
-            img = "/var/lib/libvirt/images/{0}-2.img".format(name)
+            img = f"/var/lib/libvirt/images/{name}-2.img"
             logPath = f"/var/log/libvirt/console-{name}.log"
         else:
             m.execute("runuser -l admin -c 'mkdir -p /home/admin/.local/share/libvirt/images'")
-            img = "/home/admin/.local/share/libvirt/images/{0}-2.img".format(name)
+            img = f"/home/admin/.local/share/libvirt/images/{name}-2.img"
             logPath = f"/home/admin/.local/share/libvirt/console-{name}.log"
 
         m.upload([image_file], img)
-        m.execute("chmod 777 {0}".format(img))
+        m.execute(f"chmod 777 {img}")
 
         args = {
             "name": name,

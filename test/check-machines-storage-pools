@@ -477,7 +477,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
                 b.wait_not_present("#create-storage-pool-dialog")
 
         # Prepare a Volume Group to be used as source for the LVM pool
-        m.execute("wipefs -a {0}; pvcreate {0}; vgcreate vol_grp1 {0}".format(dev))
+        m.execute(f"wipefs -a {dev}; pvcreate {dev}; vgcreate vol_grp1 {dev}")
         b.go("/machines#/storages")
         b.enter_page("/machines")
 
@@ -609,7 +609,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
                 self.test_obj.assertEqual(size, int(self.size))
 
             def cleanup(self):
-                m.execute("virsh pool-destroy {0}; virsh pool-undefine {0}".format(self.pool_name))
+                m.execute(f"virsh pool-destroy {self.pool_name}; virsh pool-undefine {self.pool_name}")
 
             def close(self):
                 self.test_obj.gotoOverviewTab(self.pool_name)
@@ -686,7 +686,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         ).execute()
 
         # create disk for lvm-pool
-        m.execute("wipefs -a {0}; pvcreate {0}; vgcreate vol_grp1 {0}".format(dev))
+        m.execute(f"wipefs -a {dev}; pvcreate {dev}; vgcreate vol_grp1 {dev}")
         m.execute("virsh pool-define-as lvm-pool --type logical --source-name vol_grp1; virsh pool-start lvm-pool")
 
         StorageVolumeCreateDialog(
