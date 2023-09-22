@@ -881,8 +881,7 @@ vnc_password= "{vnc_passwd}"
                 # check if there is os present in osinfo-query because it can be filtered out in the UI
                 # throws exception if grep fails
                 self.machine.execute(
-                    r"osinfo-query os --fields=name | tail -n +3 | sed -e 's/\s*|\s*/|/g; s/^\s*//g; s/\s*$//g' | grep '{0}'".format(
-                        query_result))
+                    fr"osinfo-query os --fields=name | tail -n +3 | sed -e 's/\s*|\s*/|/g; s/^\s*//g; s/\s*$//g' | grep '{query_result}'")
 
             return self
 
