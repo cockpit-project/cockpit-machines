@@ -23,8 +23,10 @@ from datetime import datetime
 from machineslib import VirtualMachinesCase
 from testlib import nondestructive, test_main
 
-# libvirt-dbus nnapshot APIs are available since 1.4.0, see https://github.com/libvirt/libvirt-dbus/commit/642b1b71
-distrosWithoutSnapshot = ["centos-8-stream", "rhel-8-6", "rhel-8-7", "rhel-8-8", "rhel-8-9"]
+
+# libvirt-dbus snapshot APIs are available since 1.4.0, see https://github.com/libvirt/libvirt-dbus/commit/642b1b71
+def supportsSnapshot(image):
+    return image != "centos-8-stream" and not image.startswith("rhel-8")
 
 
 @nondestructive
@@ -51,7 +53,7 @@ class TestMachinesSnapshots(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         self.goToVmPage("subVmTest1")
-        if m.image in distrosWithoutSnapshot:
+        if not supportsSnapshot(m.image):
             b.wait_not_present("#vm-subVmTest1-snapshots")
             return
 
@@ -111,7 +113,7 @@ class TestMachinesSnapshots(VirtualMachinesCase):
         self.login_and_go("/machines")
         self.waitPageInit()
 
-        if m.image in distrosWithoutSnapshot:
+        if not supportsSnapshot(m.image):
             b.wait_not_present("#vm-subVmTest1-snapshots")
             return
         self.goToVmPage("subVmTest1")
@@ -266,7 +268,7 @@ class TestMachinesSnapshots(VirtualMachinesCase):
         self.waitPageInit()
         self.waitVmRow("subVmTest1")
         self.goToVmPage("subVmTest1")
-        if m.image in distrosWithoutSnapshot:
+        if not supportsSnapshot(m.image):
             b.wait_not_present("#vm-subVmTest1-snapshots")
             return
 

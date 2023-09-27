@@ -18,7 +18,7 @@
 # along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
 
 from machineslib import VirtualMachinesCase
-from testlib import nondestructive, skipImage, test_main
+from testlib import nondestructive, test_main
 
 
 @nondestructive
@@ -111,7 +111,6 @@ class TestMachinesFilesystems(VirtualMachinesCase):
         b.click("#vm-subVmTest1-system-run")
         b.wait_visible("#vm-subVmTest1-filesystems-add[aria-disabled=true]")
 
-    @skipImage("Older libvirt does not support virtiofs", "rhel-8-6", "centos-8-stream")
     def testDelete(self):
         b = self.browser
         m = self.machine
