@@ -23,7 +23,12 @@ from netlib import NetworkHelpers
 from storagelib import StorageHelpers
 from testlib import Error, MachineCase, attach, wait
 
-distrosWithMonolithicDaemon = ["rhel-8-6", "rhel-8-7", "rhel-8-8", "rhel-8-9", "ubuntu-stable", "ubuntu-2204", "debian-testing", "debian-stable", "centos-8-stream", "arch"]
+
+def hasMonolithicDaemon(image):
+    return (image.startswith("rhel-8-") or
+            image.startswith("debian") or
+            image.startswith("ubuntu") or
+            image in ["centos-8-stream", "arch"])
 
 
 class VirtualMachinesCaseHelpers:
@@ -124,11 +129,7 @@ class VirtualMachinesCaseHelpers:
 
     def getLibvirtServiceName(self):
         m = self.machine
-
-        if m.image not in distrosWithMonolithicDaemon:
-            return "virtqemud"
-        else:
-            return "libvirtd"
+        return "libvirtd" if hasMonolithicDaemon(m.image) else "virtqemud"
 
     def startLibvirt(self, m):
 
@@ -358,7 +359,7 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
         self.startLibvirt(m)
 
         self.addCleanup(m.execute, f"systemctl stop {self.getLibvirtServiceName()}")
-        if m.image not in distrosWithMonolithicDaemon:
+        if not hasMonolithicDaemon(m.image):
             self.addCleanup(m.execute, "systemctl stop virtstoraged.service virtnetworkd.service")
 
         # Stop all domains
@@ -392,7 +393,7 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
             self.addCleanup(m.execute, cmd)
 
         # we don't have configuration to open the firewall for local libvirt machines, so just stop firewalld
-        if m.image not in distrosWithMonolithicDaemon:
+        if not hasMonolithicDaemon(m.image):
             m.execute("systemctl stop firewalld; systemctl reset-failed virtnetworkd; systemctl try-restart virtnetworkd")
         else:
             m.execute("systemctl stop firewalld; systemctl reset-failed libvirtd; systemctl try-restart libvirtd")
