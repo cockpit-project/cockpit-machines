@@ -71,6 +71,9 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                                             create_and_run=False,
                                                             pixel_test_tag="url"))
 
+        # Creating new qcow2 and raw volume checks
+        runner.checkForNewQcow2OrRawDiskTest(TestMachinesCreate.VmDialog(self))
+
         # OS input check
         runner.checkOsInputTest(TestMachinesCreate.VmDialog(self))
 
@@ -1116,6 +1119,31 @@ vnc_password= "{vnc_passwd}"
 
             return self
 
+        def checkForNewQcow2OrRawDisk(self):
+            b = self.browser
+
+            # Default "Storage" is "Create new qcow2 volume", there is "Storage limit" and no "Volume"
+            b.wait_text("#storage-select", "Create new qcow2 volume")
+            b.wait_not_present("#storage-volume-select")
+            b.wait_visible("#storage-limit")
+
+            # Expand the drop-down list of "Storage", there should be "Create new qcow2 volume" and "Create new raw volume"
+            b.click("#storage-select")
+            b.wait_visible("ul.pf-v5-c-select__menu.pf-m-static")
+            b.wait_text("ul.pf-v5-c-select__menu.pf-m-static > li:nth-child(1)",
+                        "Create new qcow2 volume")
+            b.wait_text("ul.pf-v5-c-select__menu.pf-m-static > li:nth-child(2)",
+                        "Create new raw volume")
+
+            # Select "Create new raw volume", here is "Storage limit" and no "Volume"
+            b.click("ul.pf-v5-c-select__menu.pf-m-static > li:nth-child(2) button")
+            b.wait_not_present("ul.pf-v5-c-select__menu.pf-m-static")
+            b.wait_text("#storage-select", "Create new raw volume")
+            b.wait_not_present("#storage-volume-select")
+            b.wait_visible("#storage-limit")
+
+            return self
+
         def checkOsInput(self):
             b = self.browser
 
@@ -1900,6 +1928,11 @@ vnc_password= "{vnc_passwd}"
             b.wait_not_present(".pf-v5-c-alert-group")
 
             return self
+
+        def checkForNewQcow2OrRawDiskTest(self, dialog):
+            dialog.open().checkForNewQcow2OrRawDisk().cancel(True)
+
+            self._assertScriptFinished().checkEnvIsEmpty()
 
         def checkOsInputTest(self, dialog):
             dialog.open().checkOsInput().cancel(True)
