@@ -40,7 +40,8 @@ export class AggregateStatusCards extends React.Component {
             <>
                 <Card id='card-pf-storage-pools'
                       className='ct-card-info'
-                      isSelectableRaised
+                      isSelectable
+                      isClickable
                       onKeyDown={event => this.onCardSelect(event, 'storages')}
                       onClick={() => cockpit.location.go(['storages'])}>
                     <CardHeader>
@@ -65,7 +66,8 @@ export class AggregateStatusCards extends React.Component {
                 </Card>
                 <Card id='card-pf-networks'
                       className='ct-card-info'
-                      isSelectableRaised
+                      isSelectable
+                      isClickable
                       onKeyDown={event => this.onCardSelect(event, 'networks')}
                       onClick={() => cockpit.location.go(['networks'])}>
                     <CardHeader>
