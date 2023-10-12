@@ -160,14 +160,12 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         self.performAction("subVmTest1", "resume")
 
         # reboot
-        self.machine.execute(f"echo '' > {args['logfile']}")
-        self.performAction("subVmTest1", "reboot")
+        self.performAction("subVmTest1", "reboot", logPath=args['logfile'])
         self.waitLogFile(args['logfile'], "reboot: Power down")
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # force reboot
-        self.machine.execute(f"echo '' > {args['logfile']}")
-        self.performAction("subVmTest1", "forceReboot")
+        self.performAction("subVmTest1", "forceReboot", logPath=args['logfile'])
         self.waitCirrOSBooted(args['logfile'])
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 

@@ -17,6 +17,7 @@
 
 import os
 import sys
+import time
 import traceback
 
 import netlib
@@ -42,21 +43,21 @@ class VirtualMachinesCaseHelpers:
         with self.browser.wait_timeout(30):
             self.browser.wait_in_text("body", "Virtual machines")
 
-    def performAction(self, vmName, action, checkExpectedState=True, connectionName="system"):
+    def performAction(self, vmName, action, checkExpectedState=True, connectionName="system", logPath=None):
         b = self.browser
         m = self.machine
 
-        def getStartTime():
-            return m.execute(f"grep 'starting up' /var/log/libvirt/qemu/{vmName}.log | tail -1")
+        if logPath:
+            m.write(logPath, '')
 
-        initialTime = getStartTime()
         b.click(f"#vm-{vmName}-{connectionName}-action-kebab button")
         b.wait_visible(f"#vm-{vmName}-{connectionName}-action-kebab > .pf-v5-c-dropdown__menu")
         b.click(f"#vm-{vmName}-{connectionName}-{action} a")
-        if (action == "reboot" or "forceReboot") and connectionName == "system":
-            # Check VM doesn't get rebooted after opening dialog
+        if action in ["reboot", "forceReboot"] and logPath:
             # https://bugzilla.redhat.com/show_bug.cgi?id=2221144
-            self.assertEqual(initialTime, getStartTime())
+            # The VM should not be rebooted when the confirmation dialog is shown
+            time.sleep(5)
+            self.assertNotIn("Linux version", m.execute(f"cat {logPath}"))
 
         # Some actions, which can cause expensive downtime when clicked accidentally, have confirmation dialog
         if action in ["off", "forceOff", "reboot", "forceReboot", "sendNMI"]:
@@ -69,8 +70,10 @@ class VirtualMachinesCaseHelpers:
 
         if action == "pause":
             b.wait_in_text(f"#vm-{vmName}-{connectionName}-state", "Paused")
-        if action == "resume" or action == "run":
+        if action in ["resume", "run", "reboot", "forceReboot"]:
             b.wait_in_text(f"#vm-{vmName}-{connectionName}-state", "Running")
+            if logPath:
+                testlib.wait(lambda: "Linux version" in m.execute(f"cat {logPath}"))
         if action == "forceOff" or action == "off":
             b.wait_in_text(f"#vm-{vmName}-{connectionName}-state", "Shut off")
 
