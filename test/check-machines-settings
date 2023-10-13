@@ -629,13 +629,10 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         openWatchDogDialog()
         # Check no default watchdog device is selected
-        self.assertFalse(b.get_checked("#reset"))
+        self.assertTrue(b.get_checked("#reset"))  # Reset is pre-selected as default when no watchdog is attached
         self.assertFalse(b.get_checked("#poweroff"))
         self.assertFalse(b.get_checked("#inject-nmi"))
         self.assertFalse(b.get_checked("#pause"))
-        # Click "Add" without selecting action
-        b.click("#watchdog-dialog-apply")
-        b.wait_in_text("#vm-subVmTest1-watchdog-modal .pf-m-danger", "unsupported configuration")
         closeWatchDogDialog("#vm-subVmTest1-watchdog-modal button[aria-label=Close]")
 
         # Test configuring watchdog for shutoff VM
