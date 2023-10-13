@@ -58,6 +58,7 @@ export const getNetworkRow = ({ network }) => {
             { rephraseUI('networkForward', network.forward ? network.forward.mode : "none") }
         </span>
     );
+    console.log(JSON.stringify(network.error));
     const state = (
         <StateIcon error={network.error} state={network.active ? _("active") : _("inactive") }
                    valueId={`${idPrefix}-state`}

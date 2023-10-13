@@ -757,8 +757,11 @@ class TestMachinesNetworks(VirtualMachinesCase):
 
         # activate network
         b.wait_visible(f"#activate-network-test_network2-{connectionName}")
+        print(m.execute("virsh net-dumpxml test_network2"))
+        print(m.execute("virsh net-info test_network2"))
         b.click(f"#activate-network-test_network2-{connectionName}")
         b.wait_in_text(f"#network-test_network2-{connectionName}-state", "active")
+        print(m.execute("virsh net-info test_network2"))
         # check virsh state
         wait(lambda: "yes" == m.execute("virsh net-info test_network2 | grep 'Active:' | awk '{print $2}'").strip(), tries=5)
 

@@ -102,6 +102,7 @@ export function networkGet({
                     props.name = resultProps[0].Name.v.v;
                 props.id = objPath;
                 props.connectionName = connectionName;
+                console.log(JSON.stringify(props));
 
                 return call(connectionName, objPath, 'org.libvirt.Network', 'GetXMLDesc', [0], { timeout, type: 'u' });
             })
