@@ -277,6 +277,9 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
         # Try to run subVmTest1 - it will fail because of inactive default network
         tryRunDomain(1, 'subVmTest1', 'system')
+        b.wait_visible("#vm-subVmTest1-system-state-error")
+        if run_pixel_tests:
+            b.assert_pixels("tr[data-row-id=vm-subVmTest1-system]", "vm-state-error")
         b.click('#vm-subVmTest1-system-state-error button:contains("view more")')
         b.wait_in_text(".pf-v5-c-popover", "VM subVmTest1 failed to start")
         b.click('#vm-subVmTest1-system-state-error button[aria-label=Close]')
