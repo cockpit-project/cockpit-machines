@@ -37,6 +37,8 @@ import { WATCHDOG_INFO_MESSAGE } from './helpers.jsx';
 
 const _ = cockpit.gettext;
 
+const SUPPORTEDACTIONS = ["reset", "poweroff", "inject-nmi", "pause"];
+
 const WatchdogModalAlert = ({ dialogError }) => {
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -68,7 +70,7 @@ const WatchdogModalAlert = ({ dialogError }) => {
 
 export const WatchdogModal = ({ vm, isWatchdogAttached, idPrefix }) => {
     const [dialogError, setDialogError] = useState();
-    const [watchdogAction, setWatchdogAction] = useState(vm.watchdog.action || "no-device");
+    const [watchdogAction, setWatchdogAction] = useState(vm.watchdog.action || SUPPORTEDACTIONS[0]); // use first option as default
     const [inProgress, setInProgress] = useState(false);
     const [offerColdplug, setOfferColdplug] = useState(false);
 
@@ -133,8 +135,6 @@ export const WatchdogModal = ({ vm, isWatchdogAttached, idPrefix }) => {
                 .then(Dialogs.close, exc => setDialogError({ text: _("Failed to detach watchdog"), detail: exc.message, variant: "danger" }))
                 .finally(() => setInProgress(false));
     };
-
-    const supportedActions = ["reset", "poweroff", "inject-nmi", "pause"];
 
     const needsShutdown = () => {
         if (vm.state === 'running' && isWatchdogAttached && vm.watchdog.action !== watchdogAction)
@@ -203,7 +203,7 @@ export const WatchdogModal = ({ vm, isWatchdogAttached, idPrefix }) => {
                            fieldId="watchdog-action"
                            hasNoPaddingTop
                            isStack>
-                    {supportedActions.map(action => (
+                    {SUPPORTEDACTIONS.map(action => (
                         <Radio label={rephraseUI("watchdogAction", action)}
                                key={action}
                                id={action}
