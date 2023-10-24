@@ -34,6 +34,7 @@ import {
     updateOsInfoList,
     updateVm,
     setLoggedInUser,
+    setCapabilities,
     setNodeMaxMemory,
 } from "../actions/store-actions.js";
 
@@ -70,6 +71,9 @@ import {
     storagePoolGet,
     storagePoolGetAll,
 } from "../libvirtApi/storagePool.js";
+import {
+    parseDumpxmlForCapabilities
+} from "../libvirt-xml-parse.js";
 
 /**
  * Calculates disk statistics.
@@ -206,8 +210,20 @@ export async function getLibvirtVersion({ connectionName }) {
     store.dispatch(updateLibvirtVersion({ libvirtVersion: version.v }));
 }
 
+async function getCapabilities({ connectionName }) {
+    try {
+        const [capabilitiesXML] = await call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "GetCapabilities", [],
+                                             { timeout, type: "" });
+        const capabilities = parseDumpxmlForCapabilities(capabilitiesXML);
+        store.dispatch(setCapabilities({ capabilities }));
+    } catch (ex) {
+        console.warn("NodeGetMemoryStats failed:", ex.toString());
+        throw ex;
+    }
+}
+
 async function getNodeMaxMemory({ connectionName }) {
-    // Some nodes don"t return all memory in just one cell.
+    // Some nodes don't return all memory in just one cell.
     // Using -1 == VIR_NODE_MEMORY_STATS_ALL_CELLS will return memory across all cells
     try {
         const [stats] = await call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "NodeGetMemoryStats", [-1, 0], { timeout, type: "iu" });
@@ -443,6 +459,7 @@ export function getApiData({ connectionName }) {
         networkGetAll({ connectionName }),
         nodeDeviceGetAll({ connectionName }),
         getNodeMaxMemory({ connectionName }),
+        getCapabilities({ connectionName }),
     ]);
 }
 

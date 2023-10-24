@@ -23,6 +23,7 @@ import {
     ADD_UI_VM,
     DELETE_UI_VM,
     DELETE_UNLISTED_VMS,
+    SET_CAPABILITIES,
     SET_NODE_MAX_MEMORY,
     SET_LOGGED_IN_USER,
     UNDEFINE_NETWORK,
@@ -63,6 +64,11 @@ function config(state, action) {
     case SET_NODE_MAX_MEMORY: {
         const newState = Object.assign({}, state);
         newState.nodeMaxMemory = action.payload.memory;
+        return newState;
+    }
+    case SET_CAPABILITIES: {
+        const newState = Object.assign({}, state);
+        newState.capabilities = action.payload.capabilities;
         return newState;
     }
     default:

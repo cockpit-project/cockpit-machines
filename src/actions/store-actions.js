@@ -20,6 +20,7 @@ import {
     ADD_UI_VM,
     DELETE_UI_VM,
     DELETE_UNLISTED_VMS,
+    SET_CAPABILITIES,
     SET_NODE_MAX_MEMORY,
     SET_LOGGED_IN_USER,
     UNDEFINE_NETWORK,
@@ -73,6 +74,13 @@ export function setNodeMaxMemory({ memory }) {
     return {
         type: SET_NODE_MAX_MEMORY,
         payload: { memory }
+    };
+}
+
+export function setCapabilities({ capabilities }) {
+    return {
+        type: SET_CAPABILITIES,
+        payload: { capabilities }
     };
 }
 
