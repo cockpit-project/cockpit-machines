@@ -402,6 +402,41 @@ export function parseDumpxmlForConsoles(devicesElem) {
     return displays;
 }
 
+export function parseDumpxmlForCapabilities(capabilitiesXML) {
+    const capabilitiesElem = getElem(capabilitiesXML);
+    const capabilities = { guests: [] };
+
+    if (capabilitiesElem) {
+        const guestElems = capabilitiesElem.getElementsByTagName('guest');
+        for (let i = 0; i < guestElems.length; i++) {
+            const guestElem = guestElems[i];
+
+            const osTypeElem = getSingleOptionalElem(guestElem, 'os_type');
+            const archElem = getSingleOptionalElem(guestElem, 'arch');
+
+            const guestCapabilities = { // see https://libvirt.org/formatcaps.html#guest-capabilities
+                osType: osTypeElem?.childNodes[0].nodeValue,
+                arch: archElem.getAttribute('name'),
+            };
+
+            const featuresElem = getSingleOptionalElem(guestElem, 'features');
+            if (featuresElem) {
+                const diskSnapshotElem = getSingleOptionalElem(featuresElem, 'disksnapshot');
+                const externalSnapshotElem = getSingleOptionalElem(featuresElem, 'externalSnapshot');
+
+                guestCapabilities.features = {
+                    diskSnapshot: diskSnapshotElem.getAttribute('default') === "yes",
+                    externalSnapshot: !!externalSnapshotElem,
+                };
+            }
+
+            capabilities.guests.push(guestCapabilities);
+        }
+    }
+
+    return capabilities;
+}
+
 export function parseDumpxmlForDisks(devicesElem) {
     const disks = {};
     const diskElems = devicesElem.getElementsByTagName('disk');
