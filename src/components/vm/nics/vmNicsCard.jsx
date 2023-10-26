@@ -473,8 +473,9 @@ export class VmNetworkTab extends React.Component {
                     };
                     const disabled = vm.state != 'shut off' && vm.state != 'running';
 
-                    let button = (
+                    let deleteButton = (
                         <DeleteResourceButton objectId={`${id}-iface-${networkId}`}
+                                              key={`delete-${id}-button`}
                                               disabled={disabled}
                                               dialogProps={deleteDialogProps}
                                               actionName={_("Remove")}
@@ -483,18 +484,14 @@ export class VmNetworkTab extends React.Component {
                     );
 
                     if (disabled) {
-                        button = (
+                        deleteButton = (
                             <Tooltip id={`delete-${id}-tooltip`}
                                      key={`delete-${id}-tooltip`}
                                      content={_("The VM needs to be running or shut off to detach this device")}>
-                                <span>{button}</span>
+                                <span>{deleteButton}</span>
                             </Tooltip>
                         );
                     }
-
-                    const dropdownItems = [
-                        button,
-                    ];
 
                     const isOpen = this.state.dropdownOpenActions.has(network.mac);
                     const setIsOpen = open => {
@@ -521,7 +518,7 @@ export class VmNetworkTab extends React.Component {
                                 isPlain
                                 isOpen={isOpen}
                                 position='right'
-                                dropdownItems={dropdownItems} />
+                                dropdownItems={[deleteButton]} />
                         </div>
                     );
                 },
