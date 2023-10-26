@@ -1721,7 +1721,7 @@ vnc_password= "{vnc_passwd}"
             # check disks
             # Test disk got imported/created
             if dialog.sourceType == 'disk_image' or (dialog.os_name == TestMachinesCreate.TestCreateConfig.RHEL_8_1):
-                b.wait_visible(".disks-card table tbody > tr:first-child")
+                b.wait_visible(".disks-card table tbody:first-of-type")
                 if b.is_present(f"#vm-{name}-disks-vda-device"):
                     b.wait_in_text(f"#vm-{name}-disks-vda-source-file", dialog.location.strip())
                 elif b.is_present(f"#vm-{name}-disks-hda-device"):
@@ -1730,7 +1730,7 @@ vnc_password= "{vnc_passwd}"
                     raise AssertionError("Unknown disk device")
             # New volume was created or existing volume was already chosen as destination
             elif (dialog.storage_size is not None and dialog.storage_size > 0) or dialog.storage_pool not in [NO_STORAGE, NEW_VOLUME_QCOW2, NEW_VOLUME_RAW]:
-                b.wait_visible(".disks-card table tbody > tr:first-child")
+                b.wait_visible(".disks-card table tbody:first-of-type")
                 if b.is_present(f"#vm-{name}-disks-vda-device"):
                     b.wait_in_text(f"#vm-{name}-disks-vda-device", "disk")
                 elif b.is_present(f"#vm-{name}-disks-hda-device"):
@@ -1745,7 +1745,7 @@ vnc_password= "{vnc_passwd}"
                 elif dialog.storage_pool == NEW_VOLUME_RAW:
                     b.wait_in_text(f"#vm-{name}-disks-vda-type", "raw")
             elif (vm_state == "Running" and (((dialog.storage_pool == NO_STORAGE or dialog.storage_size == 0) and dialog.sourceType == 'file') or dialog.sourceType == 'url')):
-                b.wait_visible(".disks-card table tbody > tr:first-child")
+                b.wait_visible(".disks-card table tbody:first-of-type")
                 if b.is_present(f"#vm-{name}-disks-sda-device"):
                     b.wait_in_text(f"#vm-{name}-disks-sda-device", "cdrom")
                 elif b.is_present(f"#vm-{name}-disks-hda-device"):
