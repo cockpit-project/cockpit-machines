@@ -238,7 +238,7 @@ export function parseDomainDumpxml(connectionName, domXml, objPath) {
 
     const name = domainElem.getElementsByTagName("name")[0].childNodes[0].nodeValue;
     const id = objPath;
-    const osType = osTypeElem.nodeValue;
+    const osType = osTypeElem.childNodes[0].nodeValue;
     const osBoot = parseDumpxmlForOsBoot(osBootElems);
     const arch = osTypeElem.getAttribute("arch");
     const emulatedMachine = osTypeElem.getAttribute("machine");
