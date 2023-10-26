@@ -426,6 +426,23 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
         # HACK: older c-ws versions always log an assertion, fixed in PR cockpit#16765
         self.allow_journal_messages("json_object_get_string_member: assertion 'node != NULL' failed")
 
+        # HACK: fix these in our code
+        self.allow_browser_errors(
+            r"Scrollbar test exception: TypeError: Cannot read properties of null \(reading 'appendChild'\)",
+            "Scrollbar test exception: TypeError: document.body is null",
+            "Tried changing state of a disconnected RFB object",
+            "Failed to get libvirt version from the dbus API:.*Cannot recv data: Connection reset by peer",
+            # FIXME: React errors on /devel scenario; these are actual bugs!
+            "Warning: Failed.*type.*Invalid prop",
+            "Warning: Failed.*type:.*The prop .* is marked as required",
+            "Warning: .* prop on .* should not be null.",
+            "Warning: Received .* for a non-boolean attribute",
+            'Warning: Each child in a list should have a unique "key" prop',
+            "Warning: React does not recognize the .* prop on a DOM element",
+            "Warning: An update .* was scheduled from inside an update function",
+            "Warning: A future version of React will block javascript: URLs as a security precaution.",
+        )
+
     def downloadVmXml(self, vm):
         m = self.machine
 

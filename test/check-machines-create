@@ -1472,7 +1472,6 @@ vnc_password= "{vnc_passwd}"
             self.test_obj.allow_journal_messages('.*session closed.*')
 
             self.test_obj.allow_browser_errors("Failed when connecting: Connection closed")
-            self.test_obj.allow_browser_errors("Tried changing state of a disconnected RFB object")
 
             # Deleting a running guest will disconnect the serial console
             self.test_obj.allow_browser_errors("Disconnection timed out.")
@@ -2092,7 +2091,6 @@ vnc_password= "{vnc_passwd}"
         b.wait_visible("#vm-VmNotInstalled-network-1-type")
 
         self.allow_browser_errors("Failed when connecting: Connection closed")
-        self.allow_browser_errors("Tried changing state of a disconnected RFB object")
         self.allow_journal_messages(".* couldn't shutdown fd: Transport endpoint is not connected")
 
     def testConfigureBeforeInstallBios(self):
