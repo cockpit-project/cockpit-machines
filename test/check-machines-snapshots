@@ -124,22 +124,25 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
 
         class SnapshotCreateDialog(object):
             def __init__(
-                self, test_obj, name=None, description=None, state="shutoff", snap_num=0, vm_name="subVmTest1", xfail=False, remove=True
+                self, test_obj, name=None, description=None, memory_path=None, state="shutoff", snap_num=0,
+                vm_name="subVmTest1", expect_external=False, xfail=None, remove=True
             ):
                 self.test_obj = test_obj
                 self.name = name
                 self.description = description
+                self.memory_path = memory_path
                 self.state = state
                 self.snap_num = snap_num
                 self.vm_name = vm_name
                 self.remove = remove
                 self.xfail = xfail
+                self.expect_external = expect_external
 
             def execute(self):
                 self.open()
                 self.fill()
                 self.create()
-                if not self.xfail:
+                if self.xfail is None:
                     self.verify_frontend()
                     self.verify_backend()
                     if self.remove:
@@ -154,6 +157,8 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
                     b.set_input_text("#snapshot-create-dialog-name", self.name)
                 if self.description:
                     b.set_input_text("#snapshot-create-dialog-description", self.description)
+                if self.memory_path is not None:
+                    b.set_input_text("#snapshot-create-dialog-memory-path input", self.memory_path)
 
             def assert_pixels(self):
                 if self.name == 'test_snap_1':
@@ -167,14 +172,20 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
                 if not self.xfail:
                     self.assert_pixels()
 
-                b.click(".pf-v5-c-modal-box__footer button:contains(Create)")
-
-                if not self.xfail:
+                if self.xfail is None:
+                    b.click(".pf-v5-c-modal-box__footer button:contains(Create)")
                     b.wait_not_present("#vm-subVmTest1-create-snapshot-modal")
-                else:
+                    return
+
+                if self.xfail == 'name':
                     self.assert_pixels()
                     b.wait_visible("#snapshot-create-dialog-name[aria-invalid=true]")
-                    b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
+                elif self.xfail == 'memory-path':
+                    b.wait_visible("#snapshot-create-dialog-memory-path .pf-v5-c-helper-text__item-text")
+                else:
+                    raise ValueError(f"Unknown xfail: {self.xfail}")
+
+                self.cancel()
 
             def verify_frontend(self):
                 if self.name:
@@ -204,6 +215,26 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
                 if (self.state):
                     self.test_obj.assertEqual(self.state, m.execute(xmllint_element.format(prop='state')).strip())
 
+                try:
+                    memory_snapshot = m.execute(xmllint_element.format(prop='memory/@snapshot')).strip()
+                    ext_int = "external" if self.expect_external else "internal"
+
+                    if self.state == "running":
+                        self.test_obj.assertEqual(memory_snapshot, ext_int)
+                    else:
+                        self.test_obj.assertEqual(memory_snapshot, 'no')
+
+                    disk_snapshot = m.execute(xmllint_element.format(prop='disks/disk/@snapshot')).strip()
+                    self.test_obj.assertEqual(disk_snapshot, ext_int)
+                    if self.name and self.expect_external:
+                        disk_source = m.execute(xmllint_element.format(prop='disks/disk/source/@file')).strip()
+                        self.test_obj.assertIn(self.name, disk_source)
+                except AssertionError:
+                    print("------ snapshot XML -------")
+                    print(m.execute(snap_xml))
+                    print("------ end snapshot XML -------")
+                    raise
+
             def cleanup(self):
                 b.click(f"#delete-vm-subVmTest1-snapshot-{self.snap_num}")
                 b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Delete snapshot?")
@@ -214,9 +245,25 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         # No Snapshots present
         b.wait_visible("#vm-subVmTest1-add-snapshot-button")
 
+        # external memory snapshots introduced in libvirt 9.9.0
+        supports_external = not (
+            m.image.startswith("rhel-8") or
+            m.image.startswith("centos-8") or
+            m.image in ["debian-stable", "ubuntu-2204", "ubuntu-stable", "fedora-38", "fedora-39"])
+
+        # HACK: deleting external snapshots for non-running VMs is broken https://bugs.debian.org/bug=1061725
+        # Work around that by temporarily disabling libvirtd's AppArmor profile. AppArmor isn't installed by
+        # default in Debian, and we want the rest of the test to run, thus no naughty.
+        apparmor_hack = m.image in ["debian-testing"]
+        if apparmor_hack:
+            # we don't install apparmor-utils, so need to emulate aa-disable
+            m.execute("ln -s /etc/apparmor.d/usr.sbin.libvirtd /etc/apparmor.d/disable/usr.sbin.libvirtd")
+            m.execute("aa-teardown; systemctl restart apparmor libvirtd")
+
         # Test snapshot creation with pre-generated values
         SnapshotCreateDialog(
             self,
+            expect_external=supports_external,
         ).execute()
 
         # Test snapshot creation with predefined values
@@ -225,6 +272,7 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
             name="test_snap_1",
             description="Description of test_snap_1",
             state="shutoff",
+            expect_external=supports_external,
             remove=False,
         ).execute()
 
@@ -233,12 +281,18 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
             self,
             name="test_snap_1",
             state="shutoff",
-            xfail=True,
+            expect_external=supports_external,
+            xfail="name",
         ).execute()
         m.execute("virsh snapshot-delete subVmTest1 test_snap_1")
 
         b.click("#vm-subVmTest1-system-run")
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
+
+        if apparmor_hack:
+            # should work fine for running VMs, so re-enable AppArmor
+            m.execute("rm /etc/apparmor.d/disable/usr.sbin.libvirtd")
+            m.execute("aa-teardown; systemctl restart apparmor libvirtd")
 
         # Test snapshot creation on running VM
         SnapshotCreateDialog(
@@ -246,7 +300,18 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
             name="test_snap_2",
             description="Description of test_snap_2",
             state="running",
+            expect_external=supports_external,
         ).execute()
+
+        if supports_external:
+            SnapshotCreateDialog(
+                self,
+                name="test_snap_3",
+                state="running",
+                expect_external=True,
+                memory_path="",
+                xfail="memory-path",
+            ).execute()
 
     def testSnapshotRevert(self):
         b = self.browser

@@ -873,3 +873,42 @@ export function getIfaceSourceName(iface) {
 export function canDeleteDiskFile(disk) {
     return disk.type === "volume" || (disk.type === "file" && disk.source.file);
 }
+
+export function getStoragePoolPath(storagePools, poolName, connectionName) {
+    const pool = storagePools.find(pool => pool.name === poolName && pool.connectionName === connectionName);
+
+    return pool?.target?.path;
+}
+
+export function vmSupportsExternalSnapshots(config, vm, storagePools) {
+    // External snapshot should only be used if the VM's os types/architecture allow it
+    // and if snapshot features are present among guest capabilities:
+    // https://libvirt.org/formatcaps.html#guest-capabilities
+    if (!config.capabilities?.guests.some(guest => guest.osType === vm.osType &&
+                                                   guest.arch === vm.arch &&
+                                                   guest.features.externalSnapshot)) {
+        logDebug(`vmSupportsExternalSnapshots: vm ${vm.name} has no external snapshot support`);
+        return false;
+    }
+
+    // If at leat one disk has internal snapshot preference specified, use internal snapshot for all disk,
+    // as mixing internal and external is not allowed
+    const disks = Object.values(vm.disks);
+    if (disks.some(disk => disk.snapshot === "internal")) {
+        logDebug(`vmSupportsExternalSnapshots: vm ${vm.name} has internal snapshot preference specified`);
+        return false;
+    }
+
+    // Currently external snapshots works only for disks where we can specify a local path of a newly created disk snapshot file
+    // This rules out all disks which are not file-based, or pool-based where pool is of type "dir"
+    const supportedPools = storagePools.filter(pool => pool.type === "dir" && pool.connectionName === vm.connectionName);
+    if (!disks.every(disk =>
+        disk.type === "file" ||
+        (disk.type === "volume" && supportedPools.some(pool => pool.name === disk.source.pool))
+    )) {
+        logDebug(`vmSupportsExternalSnapshots: vm ${vm.name} has unsupported disk type`);
+        return false;
+    }
+
+    return true;
+}

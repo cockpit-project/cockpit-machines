@@ -1,3 +1,5 @@
+import { getStoragePoolPath } from "./helpers.js";
+
 export function getDiskXML(type, file, device, poolName, volumeName, format, target, cacheMode, shareable, busType, serial) {
     const doc = document.implementation.createDocument('', '', null);
 
@@ -216,7 +218,8 @@ export function getPoolXML({ name, type, source, target }) {
     return new XMLSerializer().serializeToString(doc.documentElement);
 }
 
-export function getSnapshotXML(name, description) {
+// see https://libvirt.org/formatsnapshot.html
+export function getSnapshotXML(name, description, disks, memoryPath, isExternal, storagePools, connectionName) {
     const doc = document.implementation.createDocument('', '', null);
 
     const snapElem = doc.createElement('domainsnapshot');
@@ -231,6 +234,39 @@ export function getSnapshotXML(name, description) {
         const descriptionElem = doc.createElement('description');
         descriptionElem.appendChild(doc.createTextNode(description));
         snapElem.appendChild(descriptionElem);
+    }
+
+    if (isExternal) {
+        if (memoryPath) {
+            const memoryElem = doc.createElement('memory');
+            memoryElem.setAttribute('snapshot', 'external');
+            memoryElem.setAttribute('file', memoryPath);
+            snapElem.appendChild(memoryElem);
+        }
+
+        const disksElem = doc.createElement('disks');
+        disks.forEach(disk => {
+            // Disk can have attribute "snapshot" set to "no", which means no snapshot should be created of the said disk
+            // This cannot be configured through cockpit, but we should uphold it nevertheless
+            // see "snapshot" attribute of <disk> element at https://libvirt.org/formatdomain.html#hard-drives-floppy-disks-cdroms
+            if (disk.snapshot !== "no") {
+                const diskElem = doc.createElement('disk');
+                diskElem.setAttribute('name', disk.target);
+                diskElem.setAttribute('snapshot', 'external');
+
+                if (disk.type === "volume") {
+                    const poolPath = getStoragePoolPath(storagePools, disk.source.pool, connectionName);
+                    if (poolPath) {
+                        const sourceElem = doc.createElement('source');
+                        sourceElem.setAttribute('file', `${poolPath}/${disk.source.volume}.snap`);
+                        diskElem.appendChild(sourceElem);
+                    }
+                }
+
+                disksElem.appendChild(diskElem);
+            }
+        });
+        snapElem.appendChild(disksElem);
     }
 
     doc.appendChild(snapElem);

@@ -28,9 +28,14 @@ import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput"
 import { FormHelper } from 'cockpit-components-form-helper.jsx';
 import { DialogsContext } from 'dialogs.jsx';
 import { ModalError } from "cockpit-components-inline-notification.jsx";
+import { FileAutoComplete } from "cockpit-components-file-autocomplete.jsx";
 import { snapshotCreate, snapshotGetAll } from "../../../libvirtApi/snapshot.js";
+import { getSortedBootOrderDevices, LIBVIRT_SYSTEM_CONNECTION } from "../../../helpers.js";
 
 const _ = cockpit.gettext;
+
+let current_user = null;
+cockpit.user().then(user => { current_user = user });
 
 const NameRow = ({ onValueChanged, name, validationError }) => {
     return (
@@ -38,10 +43,10 @@ const NameRow = ({ onValueChanged, name, validationError }) => {
             label={_("Name")}
             fieldId="snapshot-create-dialog-name">
             <TextInput value={name}
-                validated={validationError.name ? "error" : "default"}
+                validated={validationError ? "error" : "default"}
                 id="snapshot-create-dialog-name"
                 onChange={(_, value) => onValueChanged("name", value)} />
-            <FormHelper helperTextInvalid={validationError.name} />
+            <FormHelper helperTextInvalid={validationError} />
         </FormGroup>
     );
 };
@@ -58,6 +63,40 @@ const DescriptionRow = ({ onValueChanged, description }) => {
     );
 };
 
+function getDefaultMemoryPath(vm, snapName) {
+    // Choosing a default path where memory snapshot should be stored might be tricky. Ideally we want
+    // to store it in the same directory where the primary disk (the disk which is first booted) is stored
+    // If howver no such disk can be found, we should fallback to libvirt's default /var/lib/libvirt
+    const devices = getSortedBootOrderDevices(vm).filter(d => d.bootOrder &&
+                                                              d.device.device === "disk" &&
+                                                              d.device.type === "file" &&
+                                                              d.device.source.file);
+    if (devices.length > 0) {
+        const primaryDiskPath = devices[0].device.source.file;
+        const directory = primaryDiskPath.substring(0, primaryDiskPath.lastIndexOf("/") + 1);
+        return directory + snapName;
+    } else {
+        if (vm.connectionName === LIBVIRT_SYSTEM_CONNECTION)
+            return "/var/lib/libvirt/memory/" + snapName;
+        else if (current_user)
+            return current_user.home + "/.local/share/libvirt/memory/" + snapName;
+    }
+
+    return "";
+}
+
+const MemoryPathRow = ({ onValueChanged, memoryPath, validationError }) => {
+    return (
+        <FormGroup id="snapshot-create-dialog-memory-path" label={_("Memory file")}>
+            <FileAutoComplete
+                onChange={value => onValueChanged("memoryPath", value)}
+                superuser="try"
+                value={memoryPath} />
+            <FormHelper helperTextInvalid={validationError} />
+        </FormGroup>
+    );
+};
+
 export class CreateSnapshotModal extends React.Component {
     static contextType = DialogsContext;
 
@@ -66,9 +105,11 @@ export class CreateSnapshotModal extends React.Component {
         // cut off seconds, subseconds, and timezone
         const now = new Date().toISOString()
                 .replace(/:[^:]*$/, '');
+        const snapName = props.vm.name + '_' + now;
         this.state = {
-            name: props.vm.name + '_' + now,
+            name: snapName,
             description: "",
+            memoryPath: getDefaultMemoryPath(props.vm, snapName),
             inProgress: false,
         };
 
@@ -87,8 +128,8 @@ export class CreateSnapshotModal extends React.Component {
     }
 
     onValidate(submitted = false) {
-        const { name } = this.state;
-        const { vm } = this.props;
+        const { name, memoryPath } = this.state;
+        const { vm, isExternal } = this.props;
         const validationError = {};
 
         if (vm.snapshots.findIndex(snap => snap.name === name) > -1)
@@ -96,20 +137,33 @@ export class CreateSnapshotModal extends React.Component {
         else if (!name && submitted)
             validationError.name = _("Name should not be empty");
 
+        if (isExternal && vm.state === "running" && !memoryPath)
+            validationError.memory = _("Memory file can not be empty");
+
         return validationError;
     }
 
     onCreate() {
         const Dialogs = this.context;
-        const { vm } = this.props;
-        const { name, description } = this.state;
+        const { vm, isExternal, storagePools } = this.props;
+        const { name, description, memoryPath } = this.state;
+        const disks = Object.values(vm.disks);
         const validationError = this.onValidate(true);
 
         this.setState({ submitted: true });
 
         if (!Object.keys(validationError).length) {
             this.setState({ inProgress: true });
-            snapshotCreate({ connectionName: vm.connectionName, vmId: vm.id, name, description })
+            snapshotCreate({
+                connectionName: vm.connectionName,
+                vmId: vm.id,
+                name,
+                description,
+                memoryPath: vm.state === "running" && memoryPath,
+                disks,
+                isExternal,
+                storagePools
+            })
                     .then(() => {
                         // VM Snapshots do not trigger any events so we have to refresh them manually
                         snapshotGetAll({ connectionName: vm.connectionName, domainPath: vm.id });
@@ -124,14 +178,17 @@ export class CreateSnapshotModal extends React.Component {
 
     render() {
         const Dialogs = this.context;
-        const { idPrefix } = this.props;
-        const { name, description, submitted } = this.state;
+        const { idPrefix, isExternal, vm } = this.props;
+        const { name, description, memoryPath, submitted } = this.state;
         const validationError = this.onValidate(submitted);
 
         const body = (
             <Form onSubmit={e => e.preventDefault()} isHorizontal>
-                <NameRow name={name} validationError={validationError} onValueChanged={this.onValueChanged} />
+                <NameRow name={name} validationError={validationError.name} onValueChanged={this.onValueChanged} />
                 <DescriptionRow description={description} onValueChanged={this.onValueChanged} />
+                {isExternal && vm.state === 'running' &&
+                    <MemoryPathRow memoryPath={memoryPath} onValueChanged={this.onValueChanged}
+                                   validationError={validationError.memory} />}
             </Form>
         );
 

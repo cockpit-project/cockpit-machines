@@ -175,7 +175,7 @@ export const VmDetailsPage = ({
             id: cockpit.format("$0-snapshots", vmId(vm.name)),
             className: "snapshots-card",
             title: _("Snapshots"),
-            actions: <VmSnapshotsActions vm={vm} />,
+            actions: <VmSnapshotsActions vm={vm} config={config} storagePools={storagePools} />,
             body: <VmSnapshotsCard vm={vm} config={config} />
         });
     }
