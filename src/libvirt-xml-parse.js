@@ -468,6 +468,7 @@ export function parseDumpxmlForDisks(devicesElem) {
                 },
                 bootOrder: bootElem?.getAttribute('order'),
                 type: diskElem.getAttribute('type'), // i.e.: file
+                snapshot: diskElem.getAttribute('snapshot'), // i.e.: internal, external
                 device: diskElem.getAttribute('device'), // i.e. cdrom, disk
                 source: {
                     file: sourceElem?.getAttribute('file'), // optional file name of the disk

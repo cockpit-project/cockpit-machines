@@ -29,10 +29,11 @@ import { parseDomainSnapshotDumpxml } from '../libvirt-xml-parse.js';
 import { call, Enum, timeout } from './helpers.js';
 import { logDebug } from '../helpers.js';
 
-export function snapshotCreate({ connectionName, vmId, name, description }) {
-    const xmlDesc = getSnapshotXML(name, description);
-
-    return call(connectionName, vmId, 'org.libvirt.Domain', 'SnapshotCreateXML', [xmlDesc, 0], { timeout, type: 'su' });
+export function snapshotCreate({ connectionName, vmId, name, description, memoryPath, disks, isExternal, storagePools }) {
+    // that flag ought to be implicit for non-running VMs, see https://issues.redhat.com/browse/RHEL-22797
+    const flags = (!isExternal || memoryPath) ? 0 : Enum.VIR_DOMAIN_SNAPSHOT_CREATE_DISK_ONLY;
+    const xmlDesc = getSnapshotXML(name, description, disks, memoryPath, isExternal, storagePools, connectionName);
+    return call(connectionName, vmId, 'org.libvirt.Domain', 'SnapshotCreateXML', [xmlDesc, flags], { timeout, type: 'su' });
 }
 
 export function snapshotCurrent({ connectionName, objPath }) {
