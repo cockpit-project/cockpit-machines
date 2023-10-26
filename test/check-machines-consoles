@@ -161,7 +161,8 @@ class TestMachinesConsoles(VirtualMachinesCase):
         # disconnecting the serial console closes the pty channel
         self.allow_journal_messages("connection unexpectedly closed by peer",
                                     ".*Connection reset by peer")
-        self.allow_browser_errors("Disconnection timed out.")
+        self.allow_browser_errors("Disconnection timed out.",
+                                  "Failed when connecting: Connection closed")
         self.allow_journal_messages(".* couldn't shutdown fd: Transport endpoint is not connected")
         self.allow_journal_messages("127.0.0.1:5900: couldn't read: Connection refused")
 

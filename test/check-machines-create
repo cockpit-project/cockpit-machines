@@ -615,6 +615,7 @@ vnc_password= "{vnc_passwd}"
                                                                  location="network=default",
                                                                  memory_size=128, memory_size_unit='MiB',
                                                                  storage_pool=NO_STORAGE))
+        self.allow_browser_errors("Requested operation is not valid: network 'default' is not active")
 
         # Try performing an installation which will fail and ensure that the 'Install' button is still available
         runner.createThenInstallTest(TestMachinesCreate.VmDialog(self, sourceType='file',
@@ -802,6 +803,8 @@ vnc_password= "{vnc_passwd}"
                                                       memory_size=128, memory_size_unit='MiB',
                                                       storage_pool=NO_STORAGE,
                                                       create_and_run=True))
+        # lots of OSes don't have a qemu-block https driver
+        self.allow_browser_errors("spawn 'vm creation' returned error.*Unknown driver 'https'")
 
     def testDisabledCreate(self):
         self.login_and_go("/machines")
@@ -1474,6 +1477,9 @@ vnc_password= "{vnc_passwd}"
             # Deleting a running guest will disconnect the serial console
             self.test_obj.allow_browser_errors("Disconnection timed out.")
             self.test_obj.allow_journal_messages(".* couldn't shutdown fd: Transport endpoint is not connected")
+
+            # Deleting a running guest will abort virt-install
+            self.test_obj.allow_browser_errors("spawn 'vm creation' returned error:.*Domain not found")
 
             # See https://bugzilla.redhat.com/show_bug.cgi?id=1406979, this is a WONTFIX:
             # It suggests configure auditd to dontaudit these messages since selinux can't
@@ -2148,6 +2154,7 @@ vnc_password= "{vnc_passwd}"
                                                                           create_and_run=True),
                                               "Error",
                                               True)
+        self.allow_browser_errors("Offline token validation failed: .*HTTP Error 400: Bad Request")
 
         # Check create buttons do not get disabled when RHEL is selected for sourceType != 'os' (Download an OS)
         dialog = TestMachinesCreate.VmDialog(self, sourceType='url',
@@ -2167,6 +2174,7 @@ vnc_password= "{vnc_passwd}"
                                                                 offline_token_autofilled=False,
                                                                 create_and_run=True),
                                     ["No image available for RHEL 8.2"])
+        self.allow_browser_errors("spawn 'vm creation' returned error:.*No image available for RHEL 8.2")
 
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='os',
                                                       os_name=config.RHEL_8_1,
