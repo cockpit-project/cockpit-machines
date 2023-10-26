@@ -101,7 +101,9 @@ export const App = () => {
                                                 setError(errorMsgs.join(', '));
                                             });
                                 }, ex => {
-                                    console.error("Failed to get libvirt version from the dbus API:" + ex.message);
+                                    // access denied is expected for unprivileged session
+                                    if (conn !== 'system' || superuser.allowed || ex.name !== 'org.freedesktop.DBus.Error.AccessDenied')
+                                        console.error("Failed to get libvirt version from the dbus API:", ex);
                                     /* If the API call failed on system connection and the user has superuser privileges then show the Empty state screen */
                                     if (conn == "system")
                                         setSystemSocketInactive(true);
