@@ -92,6 +92,8 @@ class TestMachinesVirtualization(VirtualMachinesCase):
         b.click(".pf-v5-c-empty-state button.pf-m-link")  # Troubleshoot
         b.leave_page()
         b.wait(lambda: "system/services" in b.eval_js("window.location.href"))
+        self.allow_browser_errors("Failed to get libvirt version from the dbus API:.*"
+                                  "Failed to connect socket to '/var/run/libvirt")
 
         # Make sure that unprivileged users can see the VM list when libvirtd is not running
         m.execute("useradd nonadmin; echo nonadmin:foobar | chpasswd")
