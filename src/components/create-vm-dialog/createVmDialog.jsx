@@ -817,7 +817,7 @@ const SshKeysRow = ({
                 <Button variant='plain'
                     className="btn-close"
                     id={id + "-btn-close"}
-                    isSmall
+                    size="sm"
                     aria-label={_("Remove item")}
                     icon={<TrashIcon />}
                     onClick={() => removeitem(idx)} />
