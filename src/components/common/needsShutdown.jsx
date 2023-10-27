@@ -159,7 +159,10 @@ export const VmNeedsShutdown = ({ vm }) => {
             position="bottom"
             hasAutoWidth
             bodyContent={body}>
-            <Label className="resource-state-text" href="javascript:null" color="blue" id={`vm-${vm.name}-needs-shutdown`} icon={<PendingIcon />}>{_("Changes pending")}</Label>
+            <Label className="resource-state-text" color="blue" id={`vm-${vm.name}-needs-shutdown`}
+                   icon={<PendingIcon />} onClick={() => null}>
+                {_("Changes pending")}
+            </Label>
         </Popover>
     );
 };
