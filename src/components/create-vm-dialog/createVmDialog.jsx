@@ -803,7 +803,7 @@ const SshKeysRow = ({
                         <div>{keyObject.data}</div>
                     </FlexItem>
                     : <FormGroup label={_("Public key")}
-                        testdata={keyInvalid && "key-invalid"}
+                        testdata={keyInvalid ? "key-invalid" : undefined}
                         fieldId='public-key'>
                         <TextArea value={item.value || ""}
                             aria-label={_("Public SSH key")}

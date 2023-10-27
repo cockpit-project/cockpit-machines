@@ -433,7 +433,6 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
             "Tried changing state of a disconnected RFB object",
             "Failed to get libvirt version from the dbus API:.*Cannot recv data: Connection reset by peer",
             # FIXME: React errors on /devel scenario; these are actual bugs!
-            "Warning: Received .* for a non-boolean attribute",
             'Warning: Each child in a list should have a unique "key" prop',
             "Warning: React does not recognize the .* prop on a DOM element",
             "Warning: An update .* was scheduled from inside an update function",
