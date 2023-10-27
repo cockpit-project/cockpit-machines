@@ -436,7 +436,6 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
             'Warning: Each child in a list should have a unique "key" prop',
             "Warning: React does not recognize the .* prop on a DOM element",
             "Warning: An update .* was scheduled from inside an update function",
-            "Warning: A future version of React will block javascript: URLs as a security precaution.",
             # FIXME:: https://github.com/cockpit-project/cockpit-machines/issues/1272
             "Warning: Failed.*type:.*The prop `format` is marked as required in `VolumeCreateBody`, but its value is `undefined`",
             # FIXME: https://github.com/cockpit-project/cockpit-machines/issues/1273
