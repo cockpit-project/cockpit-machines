@@ -69,7 +69,7 @@ function unknownConnectionName() {
 }
 
 export const App = () => {
-    const [loadingResources, setLoadingResources] = useState(false);
+    const [loadingResources, setLoadingResources] = useState(true);
     const [error, setError] = useState('');
     const [systemSocketInactive, setSystemSocketInactive] = useState(false);
     const [virtualizationEnabled, setVirtualizationEnabled] = useState(true);
@@ -82,12 +82,8 @@ export const App = () => {
 
     useEvent(superuser, "changed");
     useEffect(() => {
-        initState();
-
-        setLoadingResources(true);
-
-        return unknownConnectionName()
-                .then(connectionNames => {
+        Promise.all([initState(), unknownConnectionName()])
+                .then(([_init, connectionNames]) => {
                     return Promise.allSettled(connectionNames.map(conn => {
                         return getLibvirtVersion({ connectionName: conn })
                                 .then(() => {

@@ -435,11 +435,11 @@ export function getApiData({ connectionName }) {
     ]);
 }
 
-export function initState() {
-    getPythonPath();
-    getLoggedInUser();
-    getOsInfoList();
-}
+export const initState = () => Promise.all([
+    getPythonPath(),
+    getLoggedInUser(),
+    getOsInfoList(),
+]);
 
 export function usageStartPolling({
     name,
