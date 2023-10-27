@@ -67,7 +67,7 @@ const CacheRow = ({ onValueChanged, dialogValues, idPrefix, shutoff }) => {
             <FormSelect id={`${idPrefix}-cache-mode`}
                         onChange={(_event, value) => onValueChanged('cacheMode', value)}
                         isDisabled={!shutoff}
-                        value={dialogValues.cacheMode}>
+                        value={dialogValues.cacheMode ?? "default"}>
                 {diskCacheModes.map(cacheMode => {
                     return (
                         <FormSelectOption value={cacheMode} key={cacheMode}
