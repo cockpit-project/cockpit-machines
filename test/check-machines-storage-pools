@@ -340,7 +340,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
                 source_path_device = m.execute(xmllint_element.format(prop="source/device/@path")).strip()
                 source_name = m.execute(xmllint_element.format(prop="source/name")).strip()
                 if "source_path" in self.source:
-                    self.test_obj.assertTrue(self.source["source_path"] in [source_path_dir, source_path_device, source_name])
+                    self.test_obj.assertIn(self.source["source_path"], [source_path_dir, source_path_device, source_name])
                 else:
                     self.test_obj.assertEqual("", host.rstrip())
 
