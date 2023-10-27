@@ -433,7 +433,6 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
             "Tried changing state of a disconnected RFB object",
             "Failed to get libvirt version from the dbus API:.*Cannot recv data: Connection reset by peer",
             # FIXME: React errors on /devel scenario; these are actual bugs!
-            "Warning: Failed.*type.*Invalid prop",
             "Warning: .* prop on .* should not be null.",
             "Warning: Received .* for a non-boolean attribute",
             'Warning: Each child in a list should have a unique "key" prop',
@@ -442,6 +441,8 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
             "Warning: A future version of React will block javascript: URLs as a security precaution.",
             # FIXME:: https://github.com/cockpit-project/cockpit-machines/issues/1272
             "Warning: Failed.*type:.*The prop `format` is marked as required in `VolumeCreateBody`, but its value is `undefined`",
+            # FIXME: https://github.com/cockpit-project/cockpit-machines/issues/1273
+            " Warning: Failed.*type:.* Invalid prop `size` of type `string` supplied to `VolumeCreateBody`, expected `number`",
         )
 
     def downloadVmXml(self, vm):
