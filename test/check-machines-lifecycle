@@ -116,7 +116,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
         b.wait_in_text("#vm-subVmTest1-boot-order", "disk,network")
         emulated_machine = b.text("#vm-subVmTest1-emulated-machine")
-        self.assertTrue(len(emulated_machine) > 0)  # emulated machine varies across test machines
+        self.assertGreater(len(emulated_machine), 0)  # emulated machine varies across test machines
 
         # switch to and check Usage
         b.click("#vm-subVmTest1-usage")

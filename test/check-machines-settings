@@ -312,7 +312,8 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.wait_visible(f".boot-order-additional-info .pf-v5-c-description-list__description:contains('{pci_slot}')")
         # Check a cdrom attributes are shown correctly
         cdrom_row = b.text(".boot-order-list-view li:nth-child(3) .boot-order-additional-info")
-        self.assertTrue("cdrom" and "/var/lib/libvirt/images/phonycdrom" in cdrom_row)
+        self.assertIn("cdrom", cdrom_row)
+        self.assertIn("/var/lib/libvirt/images/phonycdrom", cdrom_row)
         # Move first device down and check whether succeeded
         row = b.text("#vm-subVmTest1-order-modal-device-row-1 .boot-order-additional-info")
         b.click("#vm-subVmTest1-order-modal-device-row-0 #vm-subVmTest1-order-modal-down")

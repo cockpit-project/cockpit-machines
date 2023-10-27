@@ -453,7 +453,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             # VIR_DOMAIN_DEVICE_MODIFY_FORCE = 4 <- is only used with 'Force eject'
             # https://libvirt.org/html/libvirt-libvirt-domain.html
             monitor_logs = m.execute("cat /tmp/dbus_monitor_logs")
-            self.test_obj.assertTrue("uint32 7" in monitor_logs)
+            self.test_obj.assertIn("uint32 7", monitor_logs)
 
             return self
 
