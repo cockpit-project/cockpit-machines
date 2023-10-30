@@ -1451,6 +1451,7 @@ class CreateVmModal extends React.Component {
         if (unattendedInstallation) {
             createAndEdit = (
                 <Tooltip id='create-and-edit-disabled-tooltip'
+                         key="create-and-edit-tooltip"
                          content={_("Setting the user passwords for unattended installation requires starting the VM when creating it")}>
                     {createAndEdit}
                 </Tooltip>
