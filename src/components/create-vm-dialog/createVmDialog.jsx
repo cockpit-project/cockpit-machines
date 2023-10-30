@@ -947,19 +947,15 @@ const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit,
         <SelectOption key="NewVolumeRAW" value="NewVolumeRAW">{_("Create new raw volume")}</SelectOption>
     ];
     if (allowNoDisk) {
-        StorageSelectOptions.push(<>
-            <Divider key="dividerNoStorage" />
-            <SelectOption value="NoStorage" key="NoStorage">{_("No storage")}</SelectOption>
-        </>);
+        StorageSelectOptions.push(<Divider key="dividerNoStorage" />);
+        StorageSelectOptions.push(<SelectOption value="NoStorage" key="NoStorage">{_("No storage")}</SelectOption>);
     }
     const nonEmptyStoragePools = storagePools.filter(pool => pool.volumes?.length);
     if (nonEmptyStoragePools.length > 0) {
-        StorageSelectOptions.push(<>
-            <Divider key="dividerPools" />
-            <SelectGroup key="Storage pools" label={_("Storage pools")}>
-                { nonEmptyStoragePools.map(pool => <SelectOption value={pool.name} key={pool.name} />) }
-            </SelectGroup>
-        </>);
+        StorageSelectOptions.push(<Divider key="dividerPools" />);
+        StorageSelectOptions.push(<SelectGroup key="Storage pools" label={_("Storage pools")}>
+            { nonEmptyStoragePools.map(pool => <SelectOption value={pool.name} key={pool.name} />) }
+        </SelectGroup>);
     }
     return (
         <>
