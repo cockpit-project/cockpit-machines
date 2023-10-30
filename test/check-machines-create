@@ -1428,7 +1428,9 @@ vnc_password= "{vnc_passwd}"
             if self.pixel_test_tag:
                 tag = self.pixel_test_tag + ("-" + subtag if subtag else "")
                 ignore = ["#memory-size-helper"]
-                if self.storage_pool != NO_STORAGE:
+                if self.storage_pool == NO_STORAGE:
+                    self.browser.wait_text("#storage-select", "No storage")
+                else:
                     ignore += ["#storage-limit-helper"]
                 self.browser.assert_pixels("#create-vm-dialog", tag, ignore=ignore, skip_layouts=["rtl"])
             return self
