@@ -178,7 +178,7 @@ VM_CUSTOMIZE_FLAGS += --install $(COCKPIT_WHEEL)
 endif
 
 ifeq ("$(TEST_SCENARIO)","updates-testing")
-VM_CUSTOMIZE_FLAGS = --run-command 'dnf -y update --enablerepo=updates-testing >&2'
+VM_CUSTOMIZE_FLAGS = --run-command 'dnf -y update --setopt=install_weak_deps=False --enablerepo=updates-testing >&2'
 endif
 
 # build a VM with locally built distro pkgs installed
