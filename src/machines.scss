@@ -20,7 +20,7 @@
 }
 
 .pf-v5-c-form__group .pf-v5-c-helper-text {
-    margin-top: var(--pf-v5-c-form__helper-text--MarginTop);
+    margin-block-start: var(--pf-v5-c-form__helper-text--MarginTop);
 }
 
 /* Create a hybrid popover with an alert style */
@@ -40,15 +40,17 @@
 .machines-listing-actions {
     display: flex;
     justify-content: flex-end;
-    margin: -0.25rem 0;
+    margin-block: -0.25rem;
+    margin-inline: 0;
 }
 
 .machines-listing-actions button:not(.pf-v5-c-dropdown__toggle) {
-    margin: 0.25rem 0 0.25rem 0.5rem;
+    margin-block: 0.25rem;
+    margin-inline: 0.5rem 0;
 }
 
 .machines-listing-actions > .pf-v5-c-dropdown {
-    margin-top: 0.25rem;
+    margin-block-start: 0.25rem;
 }
 
 .pf-v5-c-dropdown__menu-item.pf-m-danger {
@@ -63,21 +65,22 @@
     > tbody > tr:not(.pf-v5-c-table__expandable-row) > [data-label="Actions"] .pf-v5-c-button {
         // vertical: compensate for padding; fixing alignment
         // horizontal: add some needed padding
-        margin: -0.25rem 0.25rem;
+        margin-block: -0.25rem;
+        margin-inline: 0.25rem;
     }
 }
 
 .machines-connection-selector > .pf-v5-c-radio:first-child {
-    padding-right: var(--pf-v5-global--spacer--md);
+    padding-inline-end: var(--pf-v5-global--spacer--md);
 }
 
 // Limit width for GiB/MiB dropdowns and inputs
 .ct-machines-select-unit, .ct-machines-size-input {
-    max-width: 5rem;
+    max-inline-size: 5rem;
 }
 
 .ct-external-docs-link.pf-v5-c-button.pf-m-link.pf-m-inline {
-  padding-left: var(--pf-v5-global--spacer--sm);
+  padding-inline-start: var(--pf-v5-global--spacer--sm);
 }
 
 .ct-monospace {
@@ -104,5 +107,5 @@
 
 // remove oversized gap between checkbox label and checkbox body
 #storage-pool-delete-modal span.pf-v5-c-check__body {
-    margin-top: 0;
+    margin-block-start: 0;
 }
