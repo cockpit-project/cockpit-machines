@@ -99,7 +99,7 @@ class VirtualMachinesCaseHelpers:
         else:
             self.browser.wait_visible(f"tbody tr[data-row-id=\"pool-{poolName}-{connectionName}\"] + tr.pf-m-expanded")  # click on the row header
 
-    def waitPoolRow(self, poolName, connectionName="system", present="true"):
+    def waitPoolRow(self, poolName, connectionName="system", present=True):
         b = self.browser
         pool_row = f"tbody tr[data-row-id=\"pool-{poolName}-{connectionName}\"]"
         if present:
@@ -115,7 +115,7 @@ class VirtualMachinesCaseHelpers:
         else:
             self.browser.wait_visible(f"tbody tr[data-row-id=\"network-{networkName}-{connectionName}\"] + tr.pf-m-expanded")  # click on the row header
 
-    def waitNetworkRow(self, networkName, connectionName="system", present="true"):
+    def waitNetworkRow(self, networkName, connectionName="system", present=True):
         b = self.browser
         network_row = f"tbody tr[data-row-id=\"network-{networkName}-{connectionName}\"]"
         if present:
