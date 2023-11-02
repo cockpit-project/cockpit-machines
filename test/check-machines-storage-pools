@@ -867,7 +867,8 @@ class TestMachinesStoragePools(VirtualMachinesCase):
                     b.wait_text(f"#pool-{self.name}-{self.connection}-state", "active")
 
                     if self.pool_type == "iscsi":
-                        wait(lambda: "unit:0:0:0" in m.execute(f"virsh pool-refresh {self.name}; virsh vol-list {self.name}"))
+                        # these should get picked up through StoragePoolEvent CREATED
+                        wait(lambda: "unit:0:0:0" in m.execute(f"virsh vol-list {self.name}"))
                     elif self.vol_name:
                         if self.vol_name not in m.execute(f"virsh vol-list {self.name}"):
                             m.execute(f"virsh vol-create-as {self.name} {self.vol_name} 1M")
