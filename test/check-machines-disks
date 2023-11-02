@@ -746,24 +746,22 @@ class TestMachinesDisks(VirtualMachinesCase):
             return self
 
     @skipImage("TODO: scsi support missing on arch image", "arch")
+    @skipImage("Debian images' -cloud kernel don't have target-cli-mod kmod", "debian*")
     def testAddDiskSCSI(self):
         b = self.browser
         m = self.machine
 
         used_targets = ['vda']
 
-        # Prepare an iscsi pool
-        # Debian images' -cloud kernel don't have target-cli-mod kmod
-        if "debian" not in m.image:
-            # Preparations for testing ISCSI pools
-            target_iqn = "iqn.2019-09.cockpit.lan"
-            self.prepareStorageDeviceOnISCSI(target_iqn)
+        # Preparations for testing ISCSI pools
+        target_iqn = "iqn.2019-09.cockpit.lan"
+        self.prepareStorageDeviceOnISCSI(target_iqn)
 
-            m.execute(f"virsh pool-define-as iscsi-pool --type iscsi --target /dev/disk/by-id --source-host 127.0.0.1 --source-dev {target_iqn}")
-            m.execute("virsh pool-start iscsi-pool")
-            wait(lambda: "unit:0:0:0" in self.machine.execute("virsh pool-refresh iscsi-pool; virsh vol-list iscsi-pool"), delay=3)
+        m.execute(f"virsh pool-define-as iscsi-pool --type iscsi --target /dev/disk/by-id --source-host 127.0.0.1 --source-dev {target_iqn}")
+        m.execute("virsh pool-start iscsi-pool")
+        wait(lambda: "unit:0:0:0" in self.machine.execute("virsh pool-refresh iscsi-pool; virsh vol-list iscsi-pool"), delay=3)
 
-            self.addCleanup(self.machine.execute, "virsh pool-destroy iscsi-pool; virsh pool-undefine iscsi-pool")
+        self.addCleanup(self.machine.execute, "virsh pool-destroy iscsi-pool; virsh pool-undefine iscsi-pool")
 
         args = self.createVm("subVmTest1")
 
@@ -779,26 +777,25 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
 
-        if "debian" not in m.image and "ubuntu" not in m.image:
-            # ISCSI driver does not support virStorageVolCreate API
-            self.VMAddDiskDialog(
-                self,
-                pool_name='iscsi-pool',
-                pool_type='iscsi',
-                xfail=True, xfail_object='new-select-pool', xfail_error_message='Pool type iscsi does not support volume creation',
-            ).execute()
+        # ISCSI driver does not support virStorageVolCreate API
+        self.VMAddDiskDialog(
+            self,
+            pool_name='iscsi-pool',
+            pool_type='iscsi',
+            xfail=True, xfail_object='new-select-pool', xfail_error_message='Pool type iscsi does not support volume creation',
+        ).execute()
 
-            self.VMAddDiskDialog(
-                self,
-                pool_name='iscsi-pool',
-                pool_type='iscsi',
-                volume_name='unit:0:0:0',
-                expected_target=get_next_free_target(used_targets)[-1],
-                mode='use-existing',
-            ).execute()
+        self.VMAddDiskDialog(
+            self,
+            pool_name='iscsi-pool',
+            pool_type='iscsi',
+            volume_name='unit:0:0:0',
+            expected_target=get_next_free_target(used_targets)[-1],
+            mode='use-existing',
+        ).execute()
 
-            # Detach the iscsi disk before reaching teardown because shutting of the domains would sometimes hang when iscsi disks are attached
-            m.execute("virsh detach-disk subVmTest1 --target vdb")
+        # Detach the iscsi disk before reaching teardown because shutting of the domains would sometimes hang when iscsi disks are attached
+        m.execute("virsh detach-disk subVmTest1 --target vdb")
 
         # AppArmor doesn't like the non-standard path for our storage pools
         if m.image in ["debian-testing"]:
