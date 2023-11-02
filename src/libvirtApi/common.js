@@ -383,7 +383,7 @@ function startEventMonitorStoragePools(connectionName) {
                 break;
             case Enum.VIR_STORAGE_POOL_EVENT_STOPPED:
                 logDebug(`StoragePoolEvent on ${connectionName} ${objPath}: STOPPED`);
-                storagePoolUpdateOrDelete(connectionName, objPath);
+                storagePoolStopOrUndefine(connectionName, objPath);
                 break;
             case Enum.VIR_STORAGE_POOL_EVENT_STARTED:
                 logDebug(`StoragePoolEvent on ${connectionName} ${objPath}: STARTED`);
@@ -419,7 +419,7 @@ function startEventMonitorStoragePools(connectionName) {
         });
 }
 
-function storagePoolUpdateOrDelete(connectionName, poolPath) {
+function storagePoolStopOrUndefine(connectionName, poolPath) {
     return call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "ListStoragePools", [0], { timeout, type: "u" })
             .then(objPaths => {
                 if (objPaths[0].includes(poolPath))
@@ -427,7 +427,7 @@ function storagePoolUpdateOrDelete(connectionName, poolPath) {
                 else // Transient pool which got undefined when stopped
                     return store.dispatch(undefineStoragePool({ connectionName, id: poolPath }));
             })
-            .catch(ex => console.warn("storagePoolUpdateOrDelete action failed:", ex.toString()));
+            .catch(ex => console.warn("storagePoolStopOrUndefine action failed:", ex.toString()));
 }
 
 export function getApiData({ connectionName }) {
