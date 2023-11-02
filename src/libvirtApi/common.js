@@ -378,20 +378,27 @@ function startEventMonitorStoragePools(connectionName) {
             switch (eventType) {
             case Enum.VIR_STORAGE_POOL_EVENT_DEFINED:
             case Enum.VIR_STORAGE_POOL_EVENT_CREATED:
+                logDebug(`StoragePoolEvent on ${connectionName} ${objPath}: DEFINED|CREATED`);
                 storagePoolGet({ connectionName, id: objPath });
                 break;
             case Enum.VIR_STORAGE_POOL_EVENT_STOPPED:
+                logDebug(`StoragePoolEvent on ${connectionName} ${objPath}: STOPPED`);
                 storagePoolUpdateOrDelete(connectionName, objPath);
                 break;
             case Enum.VIR_STORAGE_POOL_EVENT_STARTED:
+                logDebug(`StoragePoolEvent on ${connectionName} ${objPath}: STARTED`);
                 storagePoolGet({ connectionName, id: objPath, updateOnly: true });
                 break;
             case Enum.VIR_STORAGE_POOL_EVENT_UNDEFINED:
+                logDebug(`StoragePoolEvent on ${connectionName} ${objPath}: UNDEFINED`);
                 store.dispatch(undefineStoragePool({ connectionName, id: objPath }));
                 break;
             case Enum.VIR_STORAGE_POOL_EVENT_DELETED:
+                logDebug(`StoragePoolEvent on ${connectionName} ${objPath}: DELETED`);
+                // no need to handle
+                break;
             default:
-                logDebug(`handle StoragePoolEvent on ${connectionName}: ignoring event ${signal}`);
+                logDebug(`handle StoragePoolEvent on ${connectionName}: ignoring event ${eventType}`);
             }
         }
     );
@@ -403,6 +410,7 @@ function startEventMonitorStoragePools(connectionName) {
             switch (signal) {
             case "Refresh":
             /* These signals imply possible changes in what we display, so re-read the state */
+                logDebug(`StoragePool.Refresh on ${connectionName}`);
                 storagePoolGet({ connectionName, id: path });
                 break;
             default:
