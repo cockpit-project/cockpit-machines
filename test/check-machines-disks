@@ -771,9 +771,12 @@ class TestMachinesDisks(VirtualMachinesCase):
         # Wait for the system to completely start
         self.waitCirrOSBooted(args['logfile'])
 
-        self.login_and_go("/machines")
+        self.login_and_go("/machines#/storages")
         self.waitPageInit()
+        # Wait until we see the iscsi pool
+        b.wait_text("#pool-iscsi-pool-system-state", "active")
 
+        b.go("/machines")
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
 
