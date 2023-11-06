@@ -1986,9 +1986,7 @@ vnc_password= "{vnc_passwd}"
         b.click("#vm-VmNotInstalled-memory-count button")
         b.wait_visible("#vm-memory-modal")
         b.set_input_text("#vm-VmNotInstalled-memory-modal-max-memory", "150")
-        b.blur("#vm-VmNotInstalled-memory-modal-max-memory")
         b.set_input_text("#vm-VmNotInstalled-memory-modal-memory", "130")
-        b.blur("#vm-VmNotInstalled-memory-modal-memory")
         b.click("#vm-VmNotInstalled-memory-modal-save")
         b.wait_not_present(".pf-v5-c-modal-box__body")
 
