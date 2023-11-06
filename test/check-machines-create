@@ -2060,6 +2060,7 @@ vnc_password= "{vnc_passwd}"
 
         # Check configuration changes survived installation
         # Check memory settings have persisted
+        b.wait_in_text("#vm-VmNotInstalled-memory-count", "130.0 MiB")
         b.click("#vm-VmNotInstalled-memory-count button")
         b.wait_visible("#vm-VmNotInstalled-memory-modal-memory")
         b.wait_val("#vm-VmNotInstalled-memory-modal-max-memory", "150")
