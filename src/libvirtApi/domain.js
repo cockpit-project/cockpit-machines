@@ -712,8 +712,6 @@ export function domainGet({
                     props.autostart = returnProps[0].Autostart.v.v;
                 props.ui = resolveUiState(props.name, props.connectionName);
 
-                logDebug(`${props.name}.GET_VM(${objPath}, ${connectionName}): update props ${JSON.stringify(props)}`);
-
                 dumpxmlParams = parseDomainDumpxml(connectionName, domainXML, objPath);
 
                 Object.assign(props, dumpxmlParams);
@@ -736,6 +734,8 @@ export function domainGet({
 
                 if (!domainIsRunning(stateStr))
                     props.actualTimeInMs = -1;
+
+                logDebug(`${props.name}.GET_VM(${objPath}, ${connectionName}): update props ${JSON.stringify(props)}`);
 
                 return store.dispatch(updateOrAddVm({ state: stateStr, ...props }));
             })
