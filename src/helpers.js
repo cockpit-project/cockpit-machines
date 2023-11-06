@@ -176,7 +176,7 @@ export function arrayEquals(arr1, arr2) {
 }
 
 export function logDebug() {
-    if (window.debugging === "all" || window.debugging === "machines")
+    if (window.debugging === "all" || window.debugging?.includes("machines"))
         console.debug.apply(console, arguments);
 }
 
