@@ -20,6 +20,8 @@
 import cockpit from 'cockpit';
 import store from '../store.js';
 
+import { logDebug } from '../helpers.js';
+
 import {
     removeVmCreateInProgress,
     clearVmUiState,
@@ -110,6 +112,7 @@ export const Enum = {
  * Call a Libvirt method
  */
 export function call(connectionName, objectPath, iface, method, args, opts) {
+    logDebug("libvirt call:", connectionName, objectPath, iface, method, JSON.stringify(args), JSON.stringify(opts));
     return dbusClient(connectionName).call(objectPath, iface, method, args, opts);
 }
 
