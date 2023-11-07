@@ -66,7 +66,8 @@ class TestMachinesNICs(VirtualMachinesCase):
         self.deleteIface(1)
 
         # Test add network
-        m.execute("virsh attach-interface --domain subVmTest1 --type network --source default --target vnet1 --model virtio --mac 52:54:00:4b:73:5f --config --live")
+        m.execute("virsh attach-interface --domain subVmTest1 --type network --source default --target vnet1 "
+                  "--model virtio --mac 52:54:00:4b:73:5f --config --live", timeout=300)
 
         b.wait_in_text("#vm-subVmTest1-network-1-type", "network")
         b.wait_in_text("#vm-subVmTest1-network-1-source", "default")
@@ -76,7 +77,8 @@ class TestMachinesNICs(VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-network-1-state", "up")
 
         # Test bridge network
-        m.execute("virsh attach-interface --domain subVmTest1 --type bridge --source virbr0 --model virtio --mac 52:54:00:4b:73:5e --config --live")
+        m.execute("virsh attach-interface --domain subVmTest1 --type bridge --source virbr0 --model virtio "
+                  "--mac 52:54:00:4b:73:5e --config --live", timeout=300)
 
         # vNICs are alphabetically sorted by MAC address, so now the new vNIC is first in the list
         b.wait_in_text("#vm-subVmTest1-network-1-type", "bridge")
@@ -110,7 +112,8 @@ class TestMachinesNICs(VirtualMachinesCase):
 
         m.execute("virsh start subVmTest1")
         # Attach vNIC only to live config
-        m.execute("virsh attach-interface --domain subVmTest1 --type network --source default --model virtio --mac 52:54:00:4b:73:6f --live")
+        m.execute("virsh attach-interface --domain subVmTest1 --type network --source default --model virtio "
+                  "--mac 52:54:00:4b:73:6f --live", timeout=300)
         b.wait_in_text("#vm-subVmTest1-network-3-mac", "52:54:00:4b:73:6f")
         # vNIC which is only attached to live config cannot be edited
         b.wait_visible("#vm-subVmTest1-network-3-edit-dialog[aria-disabled=true]")
