@@ -170,7 +170,7 @@ export function getOptionalValue(value, id, descr) {
     );
 }
 
-export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
+export const VmHostDevCard = ({ vm, nodeDevices }) => {
     const id = vmId(vm.name);
 
     // Hostdev data mapping to rows
@@ -321,6 +321,5 @@ export const VmHostDevCard = ({ vm, nodeDevices, config }) => {
 
 VmHostDevCard.propTypes = {
     vm: PropTypes.object.isRequired,
-    config: PropTypes.object.isRequired,
     nodeDevices: PropTypes.array.isRequired,
 };
