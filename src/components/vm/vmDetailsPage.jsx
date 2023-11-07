@@ -165,7 +165,7 @@ export const VmDetailsPage = ({
             className: "hostdevs-card",
             title: _("Host devices"),
             actions: <VmHostDevActions vm={vm} />,
-            body: <VmHostDevCard vm={vm} nodeDevices={nodeDevices} config={config} />,
+            body: <VmHostDevCard vm={vm} nodeDevices={nodeDevices} />,
         }
     ];
     if (vm.snapshots !== -1 && vm.snapshots !== undefined) {
