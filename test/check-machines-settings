@@ -405,7 +405,6 @@ class TestMachinesSettings(VirtualMachinesCase):
         self.waitCirrOSBooted(args['logfile'])
 
         b.set_input_text("#vm-subVmTest1-memory-modal-memory", str(current_memory - 10))
-        b.blur("#vm-subVmTest1-memory-modal-memory")
         # Save the memory settings
         b.click("#vm-subVmTest1-memory-modal-save")
         b.wait_not_present("#vm-memory-modal")
@@ -430,7 +429,6 @@ class TestMachinesSettings(VirtualMachinesCase):
 
         # Verify that limiting max memory in offline VMs below memory will decrease memory as well
         b.set_input_text("#vm-subVmTest1-memory-modal-max-memory", str(current_memory - 20))
-        b.blur("#vm-subVmTest1-memory-modal-max-memory")
         self.assertEqual(int(b.attr("#vm-subVmTest1-memory-modal-memory", "value")), current_memory - 20)
 
         # Verify that unit conversions work
