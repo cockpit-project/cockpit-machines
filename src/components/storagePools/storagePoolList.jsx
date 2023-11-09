@@ -44,7 +44,7 @@ export class StoragePoolList extends React.Component {
         const actions = (<CreateStoragePoolAction loggedUser={loggedUser} libvirtVersion={libvirtVersion} />);
 
         return (
-            <WithDialogs>
+            <WithDialogs key="storage-pool-list">
                 <Page>
                     <PageBreadcrumb stickyOnBreakpoint={{ default: "top" }}>
                         <Breadcrumb className='machines-listing-breadcrumb'>

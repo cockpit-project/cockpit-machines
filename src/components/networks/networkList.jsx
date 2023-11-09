@@ -43,7 +43,7 @@ export class NetworkList extends React.Component {
         const unlocked = superuser.allowed;
 
         return (
-            <WithDialogs>
+            <WithDialogs key="network-list">
                 <Page>
                     <PageBreadcrumb stickyOnBreakpoint={{ default: "top" }}>
                         <Breadcrumb variant={PageSectionVariants.light} className='machines-listing-breadcrumb'>
