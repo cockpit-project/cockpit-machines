@@ -226,6 +226,7 @@ class TestMachinesHostDevs(VirtualMachinesCase):
                 b.wait_in_text("#delete-resource-modal-vendor", self._vendor)
 
                 b.click('.pf-v5-c-modal-box__footer button:contains("Remove")')
+                b.wait_not_present("#delete-resource-modal")
                 b.wait_not_present(f"#vm-subVmTest1-hostdev-{self.vm_dev_id}-product")
 
         # Check the error if selecting no devices when the VM is running
