@@ -16,7 +16,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { useCallback, useState, useEffect } from 'react';
+import { debounce } from 'throttle-debounce';
+import React, { useMemo, useRef, useState, useEffect } from 'react';
 import { Bullseye } from "@patternfly/react-core/dist/esm/layouts/Bullseye";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
@@ -30,7 +31,7 @@ import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 import { Spinner } from "@patternfly/react-core/dist/esm/components/Spinner";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import cockpit from 'cockpit';
-import { DialogsContext } from 'dialogs.jsx';
+import { useDialogs } from 'dialogs.jsx';
 import { FormHelper } from 'cockpit-components-form-helper.jsx';
 
 import { FileAutoComplete } from 'cockpit-components-file-autocomplete.jsx';
@@ -83,8 +84,7 @@ function getDiskUsageMessage(vms, storagePool, volumeName) {
     return message;
 }
 
-function getDefaultVolumeName(poolName, storagePools, vm) {
-    const vmStoragePool = storagePools.find(pool => pool.name == poolName);
+function getDefaultVolumeName(vmStoragePool, vm) {
     const filteredVolumes = getFilteredVolumes(vmStoragePool, vm.disks);
     return filteredVolumes[0] && filteredVolumes[0].name;
 }
@@ -111,7 +111,7 @@ const SelectExistingVolume = ({ idPrefix, storagePoolName, existingVolumeName, o
         initiallySelected = "empty";
     }
 
-    const diskUsageMessage = getDiskUsageMessage(vms, vmStoragePools.find(pool => pool.name === storagePoolName), existingVolumeName);
+    const diskUsageMessage = getDiskUsageMessage(vms, vmStoragePool, existingVolumeName);
     return (
         <FormGroup fieldId={`${idPrefix}-select-volume`}
                    label={_("Volume")}>
@@ -182,25 +182,21 @@ const AdditionalOptions = ({ cacheMode, device, idPrefix, onValueChanged, busTyp
     // https://libvirt.org/formatdomain.html#hard-drives-floppy-disks-cdroms
     const serialLength = busType === "scsi" ? 36 : 20;
 
-    const setSerialHelper = useCallback(value => {
-        const clearedSerial = clearSerial(value);
+    useEffect(() => {
+        const clearedSerial = clearSerial(serial);
 
-        if (value !== clearedSerial)
+        if (serial !== clearedSerial) {
             // Show the message once triggerred and leave it around as reminder
             setShowAllowedCharactersMessage(true);
+            onValueChanged('serial', clearedSerial);
+        }
         if (clearedSerial.length > serialLength) {
             setShowMaxLengthMessage(true);
             setTruncatedSerial(clearedSerial.substring(0, serialLength));
         } else {
             setShowMaxLengthMessage(false);
         }
-
-        onValueChanged('serial', clearedSerial);
-    }, [onValueChanged, serialLength]);
-
-    useEffect(() => {
-        setSerialHelper(serial);
-    }, [setSerialHelper, serial, busType]);
+    }, [onValueChanged, serial, serialLength, busType]);
 
     const displayBusTypes = diskBusTypes[device]
             .filter(bus => supportedDiskBusTypes.includes(bus))
@@ -244,7 +240,7 @@ const AdditionalOptions = ({ cacheMode, device, idPrefix, onValueChanged, busTyp
                         aria-label={_("serial number")}
                         className="ct-monospace"
                         value={serial}
-                        onChange={(_, value) => setSerialHelper(value)} />
+                        onChange={(_, value) => onValueChanged("serial", value)} />
                     <FormHelperText>
                         {validationFailed.serial
                             ? <HelperText>
@@ -345,13 +341,11 @@ const CustomPath = ({ idPrefix, onValueChanged, device, validationFailed, hideDe
                 <FileAutoComplete
                     id={`${idPrefix}-file-autocomplete`}
                     placeholder={_("Path to file on host's file system")}
-                    onChange={value => onValueChanged("file", value)}
+                    onChange={value => debounce(250, onValueChanged("file", value))}
                     superuser="try" />
                 <FormHelper fieldId={`${idPrefix}-file-autocomplete`} helperTextInvalid={validationFailed.customPath} />
             </FormGroup>
-            {!hideDeviceRow && <FormGroup id={`${idPrefix}-device`}
-                   fieldId={`${idPrefix}-select-device`}
-                   label={_("Device")}>
+            {!hideDeviceRow && <FormGroup label={_("Device")}>
                 <FormSelect id={`${idPrefix}-select-device`}
                         onChange={(_event, value) => onValueChanged('device', value)}
                         value={device}>
@@ -365,511 +359,498 @@ const CustomPath = ({ idPrefix, onValueChanged, device, validationFailed, hideDe
     );
 };
 
-export class AddDiskModalBody extends React.Component {
-    static contextType = DialogsContext;
+const sortFunction = (poolA, poolB) => poolA.name.localeCompare(poolB.name);
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            validate: false,
-            dialogLoading: true,
-            customDiskVerificationFailed: false,
-            customDiskVerificationMessage: null,
-            verificationInProgress: false,
-            file: null,
-        };
-        this.onValueChanged = this.onValueChanged.bind(this);
-        this.dialogErrorSet = this.dialogErrorSet.bind(this);
-        this.onAddClicked = this.onAddClicked.bind(this);
-        this.onInsertClicked = this.onInsertClicked.bind(this);
-        this.existingVolumeNameDelta = this.existingVolumeNameDelta.bind(this);
-        this.validateParams = this.validateParams.bind(this);
-    }
+export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, supportedDiskBusTypes }) => {
+    const [customDiskVerificationFailed, setCustomDiskVerificationFailed] = useState(false);
+    const [customDiskVerificationMessage, setCustomDiskVerificationMessage] = useState(null);
+    const [dialogError, setDialogError] = useState(null);
+    const [dialogErrorDetail, setDialogErrorDetail] = useState(null);
+    const [diskParams, setDiskParams] = useState({
+        cacheMode: 'default',
+        device: "disk",
+        file: "",
+        format: "",
+        serial: "",
+        size: 1,
+        unit: units.GiB.name,
+        volumeName: "",
+    });
+    const [mode, setMode] = useState(isMediaInsertion ? CUSTOM_PATH : CREATE_NEW);
+    const [validate, setValidate] = useState(false);
+    const [verificationInProgress, setVerificationInProgress] = useState(false);
+    const [storagePools, setStoragePools] = useState();
 
-    get initialState() {
-        const { vm, vms, isMediaInsertion } = this.props;
-        const storagePools = getVmStoragePools(vm);
-        const defaultBus = 'virtio';
-        const existingTargets = Object.getOwnPropertyNames(vm.disks);
-        const availableTarget = getNextAvailableTarget(existingTargets, defaultBus);
-        const sortFunction = (poolA, poolB) => poolA.name.localeCompare(poolB.name);
-        let defaultPool;
-        if (storagePools.length > 0)
-            defaultPool = storagePools
-                    .map(pool => ({ name: pool.name, type: pool.type }))
-                    .sort(sortFunction)[0];
+    const Dialogs = useDialogs();
 
-        return {
-            storagePools,
-            vm,
-            vms,
-            file: "",
-            device: "disk",
-            storagePoolName: defaultPool && defaultPool.name,
-            storagePoolType: defaultPool && defaultPool.type,
-            mode: isMediaInsertion ? CUSTOM_PATH : CREATE_NEW,
-            volumeName: "",
-            existingVolumeName: undefined,
-            size: 1,
-            unit: units.GiB.name,
-            format: defaultPool && getDefaultVolumeFormat(defaultPool),
-            target: availableTarget,
-            permanent: !domainIsRunning(vm.state), // default true for a down VM; for a running domain, the disk is attached tentatively only
-            hotplug: domainIsRunning(vm.state), // must be kept false for a down VM; the value is not being changed by user
-            addDiskInProgress: false,
-            cacheMode: 'default',
-            busType: defaultBus,
-            updateDisks: false,
-            serial: "",
-        };
-    }
+    const defaultPool = useMemo(() => storagePools?.[0], [storagePools]);
 
-    componentDidMount() {
+    // VM params that should be refreshed when VM, storage Pools or mode changes
+    const initialDiskParams = useMemo(() => ({
+        connectionName: vm.connectionName,
+        existingVolumeName: defaultPool && getDefaultVolumeName(defaultPool, vm),
+        storagePool: defaultPool,
+        type: mode === CUSTOM_PATH ? "file" : "volume",
+        permanent: !domainIsRunning(vm.state)
+    }), [defaultPool, mode, vm]);
+    const storagePoolName = diskParams.storagePool?.name;
+
+    useEffect(() => {
         // Refresh storage volume list before displaying the dialog.
         // There are recently no Libvirt events for storage volumes and polling is ugly.
         // https://bugzilla.redhat.com/show_bug.cgi?id=1578836
-        storagePoolGetAll({ connectionName: this.props.vm.connectionName })
-                .then(() => this.setState({ dialogLoading: false, ...this.initialState }))
-                .catch(exc => this.dialogErrorSet(_("Storage pools could not be fetched"), exc.message));
-    }
+        storagePoolGetAll({ connectionName: vm.connectionName })
+                .always(() => {
+                    setStoragePools(getVmStoragePools(vm.connectionName).sort(sortFunction));
+                })
+                .catch(exc => dialogErrorSet(_("Storage pools could not be fetched"), exc.message));
+    }, [vm.connectionName]);
 
-    validateParams() {
-        const validationFailed = {};
+    useEffect(() => {
+        // Reset dialog form when changing mode or if storage pools list changed
+        setDiskParams(diskParams => ({
+            ...diskParams,
+            ...initialDiskParams,
+        }));
+    }, [initialDiskParams]);
 
-        if (this.state.mode !== CUSTOM_PATH && !this.state.storagePoolName)
-            validationFailed.storagePool = _("Please choose a storage pool");
+    useEffect(() => {
+        // Follow up state updates after 'existingVolumeName' is changed
+        if (!diskParams.storagePool)
+            return;
 
-        if (this.state.mode === CUSTOM_PATH && this.state.customDiskVerificationFailed)
-            validationFailed.customPath = this.state.customDiskVerificationMessage;
-
-        if (this.state.mode === CREATE_NEW) {
-            if (!this.state.volumeName) {
-                validationFailed.volumeName = _("Please enter new volume name");
-            }
-            if (poolTypesNotSupportingVolumeCreation.includes(this.state.storagePoolType)) {
-                validationFailed.storagePool = cockpit.format(_("Pool type $0 does not support volume creation"), this.state.storagePoolType);
-            }
-            const poolCapacity = parseFloat(convertToUnit(this.state.storagePools.find(pool => pool.name == this.state.storagePoolName).capacity, units.B, this.state.unit));
-            if (this.state.size > poolCapacity) {
-                validationFailed.size = cockpit.format(_("Storage volume size must not exceed the storage pool's capacity ($0 $1)"), poolCapacity.toFixed(2), this.state.unit);
-            }
-        } else if (this.state.mode === USE_EXISTING) {
-            if (this.state.mode !== CUSTOM_PATH && !this.state.existingVolumeName)
-                validationFailed.existingVolumeName = _("Please choose a volume");
-        }
-
-        return validationFailed;
-    }
-
-    existingVolumeNameDelta(value, poolName) {
-        const { storagePools, vm } = this.state;
-        const stateDelta = { existingVolumeName: value };
-        const pool = storagePools.find(pool => pool.name === poolName && pool.connectionName === vm.connectionName);
-        if (!pool)
-            return stateDelta;
-
-        stateDelta.format = getDefaultVolumeFormat(pool);
+        let format = getDefaultVolumeFormat(diskParams.storagePool);
         let deviceType = "disk";
-        if (['dir', 'fs', 'netfs', 'gluster', 'vstorage'].indexOf(pool.type) > -1) {
-            const volume = pool.volumes.find(vol => vol.name === value);
+        if (['dir', 'fs', 'netfs', 'gluster', 'vstorage'].indexOf(diskParams.storagePool.type) > -1) {
+            const volume = diskParams.storagePool.volumes.find(vol => vol.name === diskParams.existingVolumeName);
             if (volume && volume.format) {
-                stateDelta.format = volume.format;
+                format = volume.format;
                 if (volume.format === "iso")
                     deviceType = "cdrom";
             }
         }
+        setDiskParams(diskParams => ({
+            ...diskParams,
+            format,
+            device: deviceType,
+        }));
+    }, [diskParams.storagePool, diskParams.existingVolumeName]);
 
-        this.onValueChanged("device", deviceType);
+    useEffect(() => {
+        // Initial state settings and follow up state updates after 'device' is changed
 
-        return stateDelta;
-    }
+        // According to https://libvirt.org/formatdomain.html#hard-drives-floppy-disks-cdroms (section about 'target'),
+        // scsi is the default option for libvirt for cdrom devices
+        let newBus = diskParams.device === "cdrom" && "scsi";
 
-    onValueChanged(key, value) {
-        let stateDelta = {};
-        const { storagePools, vm } = this.state;
-
-        switch (key) {
-        case 'storagePoolName': {
-            const currentPool = storagePools.find(pool => pool.name === value && pool.connectionName === vm.connectionName);
-            const prevPool = storagePools.find(pool => pool.name === this.state.storagePoolName && pool.connectionName === vm.connectionName);
-            this.setState({ storagePoolName: value, storagePoolType: currentPool.type });
-            // Reset the format only when the Format selection dropdown changes entries - otherwise just keep the old selection
-            // All pool types apart from 'disk' have either 'raw' or 'qcow2' format
-            if (currentPool && prevPool && ((currentPool.type == 'disk' && prevPool.type != 'disk') || (currentPool.type != 'disk' && prevPool.type == 'disk'))) {
-                // use onValueChange instead of setState in order to perform subsequent state change logic
-                this.onValueChanged('format', getDefaultVolumeFormat(value));
-            }
-
-            if (this.state.mode === USE_EXISTING) { // user changed pool
-                // use onValueChange instead of setState in order to perform subsequent state change logic
-                this.onValueChanged('existingVolumeName', getDefaultVolumeName(value, storagePools, vm));
-            }
-            break;
-        }
-        case 'existingVolumeName': {
-            stateDelta.existingVolumeName = value;
-            this.setState(prevState => { // to prevent asynchronous for recursive call with existingVolumeName as a key
-                return this.existingVolumeNameDelta(value, prevState.storagePoolName);
-            });
-            break;
-        }
-        case 'mode': {
-            this.setState(prevState => { // to prevent asynchronous for recursive call with existingVolumeName as a key
-                stateDelta = this.initialState;
-                stateDelta.mode = value;
-                if (value === USE_EXISTING) { // user moved to USE_EXISTING subtab
-                    const poolName = stateDelta.storagePoolName;
-                    if (poolName)
-                        stateDelta = { ...stateDelta, ...this.existingVolumeNameDelta(getDefaultVolumeName(poolName, storagePools, vm), prevState.storagePoolName) };
-                }
-
-                return stateDelta;
-            });
-            break;
-        }
-        case 'busType': {
-            const existingTargets = Object.getOwnPropertyNames(this.props.vm.disks);
-            const availableTarget = getNextAvailableTarget(existingTargets, value);
-            this.setState({ busType: value, target: availableTarget });
-            break;
-        }
-        case 'file': {
-            this.setState({ file: value });
-
-            if (value.endsWith(".iso")) {
-                // use onValueChange instead of setState in order to perform subsequent state change logic
-                this.onValueChanged("device", "cdrom");
-            }
-
-            if (value) {
-                this.setState({ verificationInProgress: true, validate: false });
-                cockpit.spawn(["head", "--bytes=16", value], { binary: true, err: "message", superuser: "try" })
-                        .then(file_header => {
-                            let format = "";
-
-                            // https://git.qemu.org/?p=qemu.git;a=blob;f=docs/interop/qcow2.txt
-                            if (file_header[0] == 81 && file_header[1] == 70 &&
-                                file_header[2] == 73 && file_header[3] == 251) {
-                                format = "qcow2";
-                                // All zeros, no backing file offset
-                                if (file_header.slice(8).every(bytes => bytes === 0)) {
-                                    this.setState({ customDiskVerificationFailed: false, format });
-                                } else {
-                                    this.setState({
-                                        format,
-                                        customDiskVerificationFailed: true,
-                                        customDiskVerificationMessage: _("Importing an image with a backing file is unsupported"),
-                                        validate: true
-                                    });
-                                }
-                            } else {
-                                format = "raw";
-                                this.setState({ customDiskVerificationFailed: false, format });
-                            }
-                            this.setState({ verificationInProgress: false });
-                        })
-                        .catch(e => {
-                            this.setState({
-                                verificationInProgress: false,
-                                format: "raw",
-                            });
-                            console.warn("could not execute head --bytes=16", e.toString());
-                        });
-            } else {
-                this.setState({ customDiskVerificationFailed: false });
-            }
-            break;
-        }
-        case 'device': {
-            this.setState({ device: value });
-            let newBus;
+        if (!newBus) {
             // If disk with the same device exists, use the same bus too
-            for (const disk of Object.values(this.props.vm.disks)) {
-                if (disk.device === value) {
+            for (const disk of Object.values(vm.disks)) {
+                if (disk.device === diskParams.device) {
                     newBus = disk.bus;
                     break;
                 }
             }
+            newBus = newBus || "virtio";
+        }
 
-            if (newBus) {
-                this.onValueChanged("busType", newBus);
-                // Disk device "cdrom" and bus "virtio" are incompatible, see:
-                // https://listman.redhat.com/archives/libvir-list/2019-January/msg01104.html
-            } else if (value === "cdrom" && this.state.busType === "virtio") {
-                // use onValueChange instead of setState in order to perform subsequent state change logic
-                // According to https://libvirt.org/formatdomain.html#hard-drives-floppy-disks-cdroms (section about 'target'),
-                // scsi is the default option for libvirt in this case too
-                this.onValueChanged("busType", "scsi");
+        setDiskParams(diskParams => ({ ...diskParams, busType: newBus }));
+    }, [diskParams.device, vm.disks]);
+
+    useEffect(() => {
+        // Initial state settings and follow up state updates after 'busType' is changed
+        const existingTargets = Object.getOwnPropertyNames(vm.disks);
+        const availableTarget = isMediaInsertion ? disk.target : getNextAvailableTarget(existingTargets, diskParams.busType);
+        setDiskParams(diskParams => ({ ...diskParams, target: availableTarget }));
+    }, [vm.disks, disk?.target, diskParams.busType, isMediaInsertion]);
+
+    const currentPoolRef = useRef();
+    useEffect(() => {
+        if (currentPoolRef.current === undefined) {
+            currentPoolRef.current = diskParams.storagePool;
+
+            // Reset the format only when the Format selection dropdown changes entries - otherwise just keep the old selection
+            // All pool types apart from 'disk' have either 'raw' or 'qcow2' format
+            const prevPool = currentPoolRef.current;
+            if ((diskParams.storagePool?.type == 'disk' && prevPool?.type != 'disk') || (diskParams.storagePool?.type != 'disk' && prevPool?.type == 'disk')) {
+                prevPool.current = diskParams.storagePool;
+                setDiskParams(diskParams => ({
+                    ...diskParams,
+                    format: getDefaultVolumeFormat(diskParams.storagePool?.name),
+                }));
             }
+        }
+    }, [diskParams.storagePool?.type, diskParams.storagePool?.name, diskParams.storagePool]);
+
+    useEffect(() => {
+        const file = diskParams.file;
+
+        if (file?.endsWith(".iso")) {
+            setDiskParams(diskParams => ({ ...diskParams, device: "cdrom" }));
+        }
+
+        if (file) {
+            setVerificationInProgress(true);
+            cockpit.spawn(["head", "--bytes=16", file], { binary: true, err: "message", superuser: "try" })
+                    .then(file_header => {
+                        let format = "";
+
+                        // https://git.qemu.org/?p=qemu.git;a=blob;f=docs/interop/qcow2.txt
+                        if (file_header[0] == 81 && file_header[1] == 70 &&
+                            file_header[2] == 73 && file_header[3] == 251) {
+                            format = "qcow2";
+                            // All zeros, no backing file offset
+                            if (file_header.slice(8).every(bytes => bytes === 0)) {
+                                setCustomDiskVerificationFailed(false);
+                            } else {
+                                setCustomDiskVerificationFailed(true);
+                                setCustomDiskVerificationMessage(_("Importing an image with a backing file is unsupported"));
+                            }
+                        } else {
+                            format = "raw";
+                            setCustomDiskVerificationFailed(false);
+                        }
+                        setDiskParams(diskParams => ({ ...diskParams, format }));
+                        setVerificationInProgress(false);
+                    })
+                    .catch(e => {
+                        setVerificationInProgress(false);
+                        setDiskParams(diskParams => ({ ...diskParams, format: "raw" }));
+                        console.warn("could not execute head --bytes=16", e.toString());
+                    });
+        } else {
+            setCustomDiskVerificationFailed(false);
+        }
+    }, [diskParams.file]);
+
+    const onValueChanged = (key, value) => {
+        switch (key) {
+        case 'storagePoolName': {
+            const currentPool = storagePools.find(pool => pool.name === value && pool.connectionName === vm.connectionName);
+            setDiskParams(diskParams => ({ ...diskParams, storagePool: currentPool, existingVolumeName: getDefaultVolumeName(currentPool, vm) }));
+            break;
+        }
+        case 'mode': {
+            setMode(value);
             break;
         }
         default:
-            this.setState({ [key]: value });
+            setDiskParams(diskParams => ({ ...diskParams, [key]: value }));
         }
-    }
+    };
 
-    dialogErrorSet(text, detail) {
-        this.setState({ dialogError: text, dialogErrorDetail: detail });
-    }
+    const dialogErrorSet = (text, detail) => {
+        setDialogError(text);
+        setDialogErrorDetail(detail);
+    };
 
-    onInsertClicked() {
-        const Dialogs = this.context;
-        const close = Dialogs.close;
-        const { vm } = this.state;
-        const { disk } = this.props;
+    const _validationFailed = useMemo(() => {
+        const validateParams = () => {
+            const validationFailed = {};
+            const storagePoolType = diskParams.storagePool?.type;
 
-        const validation = this.validateParams();
-        if (Object.getOwnPropertyNames(validation).length > 0)
-            return this.setState({ addDiskInProgress: false, validate: true });
+            if (mode !== CUSTOM_PATH && !storagePoolName)
+                validationFailed.storagePool = _("Please choose a storage pool");
 
-        this.setState({ addDiskInProgress: true, validate: false });
-        return domainInsertDisk({
-            connectionName: vm.connectionName,
-            vmName: vm.name,
-            target: disk.target,
-            diskType: this.state.mode === CUSTOM_PATH ? "file" : "volume",
-            file: this.state.file,
-            poolName: this.state.storagePoolName,
-            volumeName: this.state.existingVolumeName,
-            live: vm.state === "running",
-        })
-                .then(() => { // force reload of VM data, events are not reliable (i.e. for a down VM)
-                    close();
-                    return domainGet({ connectionName: vm.connectionName, name: vm.name, id: vm.id });
-                })
-                .catch(exc => {
-                    this.setState({ addDiskInProgress: false });
-                    this.dialogErrorSet(_("Disk failed to be created"), exc.message);
-                });
-    }
+            if (mode === CUSTOM_PATH && customDiskVerificationFailed)
+                validationFailed.customPath = customDiskVerificationMessage;
 
-    onAddClicked() {
-        const Dialogs = this.context;
-        const { vm, vms, storagePools } = this.state;
-        let storagePool, volume, isVolumeUsed;
-        const close = Dialogs.close;
+            if (mode === CREATE_NEW) {
+                if (!diskParams.volumeName) {
+                    validationFailed.volumeName = _("Please enter new volume name");
+                }
+                if (poolTypesNotSupportingVolumeCreation.includes(storagePoolType)) {
+                    validationFailed.storagePool = cockpit.format(_("Pool type $0 does not support volume creation"), storagePoolType);
+                }
+                const poolCapacity = diskParams.storagePool && parseFloat(convertToUnit(diskParams.storagePool.capacity, units.B, diskParams.unit));
+                if (!isNaN(poolCapacity) && diskParams.size > poolCapacity) {
+                    validationFailed.size = cockpit.format(_("Storage volume size must not exceed the storage pool's capacity ($0 $1)"), poolCapacity.toFixed(2), diskParams.unit);
+                }
+            } else if (mode === USE_EXISTING) {
+                if (mode !== CUSTOM_PATH && !diskParams.existingVolumeName)
+                    validationFailed.existingVolumeName = _("Please choose a volume");
+            }
 
-        const validation = this.validateParams();
-        if (Object.getOwnPropertyNames(validation).length > 0)
-            return this.setState({ addDiskInProgress: false, validate: true });
+            return validationFailed;
+        };
+        return validateParams();
+    }, [diskParams, mode, customDiskVerificationFailed, customDiskVerificationMessage, storagePoolName]);
+    const validationFailed = validate ? _validationFailed : {};
 
-        if (this.state.mode === CREATE_NEW) {
-            this.setState({ addDiskInProgress: true, validate: false });
-            // create new disk
-            return storageVolumeCreateAndAttach({
-                connectionName: vm.connectionName,
-                poolName: this.state.storagePoolName,
-                volumeName: this.state.volumeName,
-                size: convertToUnit(this.state.size, this.state.unit, 'MiB'),
-                format: this.state.format,
-                target: this.state.target,
-                permanent: this.state.permanent,
-                hotplug: this.state.hotplug,
-                vmName: vm.name,
-                vmId: vm.id,
-                cacheMode: this.state.cacheMode,
-                busType: this.state.busType,
-                serial: clearSerial(this.state.serial)
-            })
-                    .then(() => { // force reload of VM data, events are not reliable (i.e. for a down VM)
-                        close();
-                        return domainGet({ connectionName: vm.connectionName, name: vm.name, id: vm.id });
-                    })
-                    .catch(exc => {
-                        this.setState({ addDiskInProgress: false });
-                        this.dialogErrorSet(_("Disk failed to be created"), exc.message);
-                    });
-        } else if (this.state.mode === USE_EXISTING) {
-            // use existing volume
-            storagePool = storagePools.find(pool => pool.name === this.state.storagePoolName);
-            volume = storagePool.volumes.find(vol => vol.name === this.state.existingVolumeName);
-            isVolumeUsed = getStorageVolumesUsage(vms, storagePool);
-        }
-
-        return domainAttachDisk({
-            connectionName: vm.connectionName,
-            type: this.state.mode === CUSTOM_PATH ? "file" : "volume",
-            file: this.state.file,
-            device: this.state.device,
-            poolName: this.state.storagePoolName,
-            volumeName: this.state.existingVolumeName,
-            format: this.state.format,
-            target: this.state.target,
-            permanent: this.state.permanent,
-            hotplug: this.state.hotplug,
-            vmName: vm.name,
-            vmId: vm.id,
-            cacheMode: this.state.cacheMode,
-            shareable: volume && volume.format === "raw" && isVolumeUsed[this.state.existingVolumeName].length > 0,
-            busType: this.state.busType,
-            serial: this.state.serial
-        })
-                .then(() => { // force reload of VM data, events are not reliable (i.e. for a down VM)
-                    const promises = [];
-                    if (this.state.mode !== CUSTOM_PATH && volume.format === "raw" && isVolumeUsed[this.state.existingVolumeName]) {
-                        isVolumeUsed[this.state.existingVolumeName].forEach(vmName => {
-                            const vm = vms.find(vm => vm.name === vmName);
-                            const diskTarget = getStorageVolumeDiskTarget(vm, storagePool, this.state.existingVolumeName);
-
-                            promises.push(
-                                domainUpdateDiskAttributes({ connectionName: vm.connectionName, objPath: vm.id, readonly: false, shareable: true, target: diskTarget })
-                                        .catch(exc => this.dialogErrorSet(_("Disk settings could not be saved"), exc.message))
-                            );
-                        });
-
-                        Promise.all(promises)
-                                .then(() => close());
-                    } else {
-                        close();
-                    }
-
-                    return domainGet({ connectionName: vm.connectionName, name: vm.name, id: vm.id });
-                })
-                .catch(exc => {
-                    this.setState({ addDiskInProgress: false });
-                    this.dialogErrorSet(_("Disk failed to be attached"), exc.message);
-                });
-    }
-
-    render() {
-        const Dialogs = this.context;
-        const { dialogLoading, vm, storagePools, vms } = this.state;
-        const { isMediaInsertion } = this.props;
-        const idPrefix = `${this.props.idPrefix}-adddisk`;
-        const validationFailed = this.state.validate ? this.validateParams() : {};
-
-        let defaultBody;
-        if (dialogLoading) {
-            defaultBody = (
-                <Bullseye>
-                    <Spinner />
-                </Bullseye>
-            );
-        } else if (isMediaInsertion) {
-            defaultBody = (
+    let defaultBody;
+    const dialogLoading = storagePools === undefined;
+    if (dialogLoading) {
+        defaultBody = (
+            <Bullseye>
+                <Spinner />
+            </Bullseye>
+        );
+    } else if (isMediaInsertion) {
+        defaultBody = (
+            <Form onSubmit={e => e.preventDefault()} isHorizontal>
+                <FormGroup fieldId={`${idPrefix}-source`}
+                           id={`${idPrefix}-source-group`}
+                           label={_("Source")} isInline hasNoPaddingTop>
+                    <Radio id={`${idPrefix}-custompath`}
+                           name="source"
+                           label={_("Custom path")}
+                           isChecked={mode === CUSTOM_PATH}
+                           onChange={() => onValueChanged('mode', CUSTOM_PATH)} />
+                    <Radio id={`${idPrefix}-useexisting`}
+                           name="source"
+                           label={_("Use existing")}
+                           isChecked={mode === USE_EXISTING}
+                           onChange={() => onValueChanged('mode', USE_EXISTING)} />
+                </FormGroup>
+                {mode === USE_EXISTING && (
+                    <UseExistingDisk idPrefix={`${idPrefix}-existing`}
+                                     onValueChanged={onValueChanged}
+                                     storagePoolName={storagePoolName}
+                                     existingVolumeName={diskParams.existingVolumeName}
+                                     validationFailed={validationFailed}
+                                     vmStoragePools={storagePools}
+                                     vms={vms}
+                                     vm={vm} />
+                )}
+                {mode === CUSTOM_PATH && (
+                    <CustomPath idPrefix={idPrefix}
+                                onValueChanged={onValueChanged}
+                                hideDeviceRow
+                                validationFailed={validationFailed} />
+                )}
+            </Form>
+        );
+    } else {
+        defaultBody = (
+            <>
                 <Form onSubmit={e => e.preventDefault()} isHorizontal>
                     <FormGroup fieldId={`${idPrefix}-source`}
                                id={`${idPrefix}-source-group`}
                                label={_("Source")} isInline hasNoPaddingTop>
-                        <Radio id={`${idPrefix}-custompath`}
+                        <Radio id={`${idPrefix}-createnew`}
                                name="source"
-                               label={_("Custom path")}
-                               isChecked={this.state.mode === CUSTOM_PATH}
-                               onChange={() => this.onValueChanged('mode', CUSTOM_PATH)} />
+                               label={_("Create new")}
+                               isChecked={mode === CREATE_NEW}
+                               onChange={() => onValueChanged('mode', CREATE_NEW)} />
                         <Radio id={`${idPrefix}-useexisting`}
                                name="source"
                                label={_("Use existing")}
-                               isChecked={this.state.mode === USE_EXISTING}
-                               onChange={() => this.onValueChanged('mode', USE_EXISTING)} />
+                               isChecked={mode === USE_EXISTING}
+                               onChange={() => onValueChanged('mode', USE_EXISTING)} />
+                        <Radio id={`${idPrefix}-custompath`}
+                               name="source"
+                               label={_("Custom path")}
+                               isChecked={mode === CUSTOM_PATH}
+                               onChange={() => onValueChanged('mode', CUSTOM_PATH)} />
                     </FormGroup>
-                    {this.state.mode === USE_EXISTING && (
+                    {mode === CREATE_NEW && (
+                        <CreateNewDisk idPrefix={`${idPrefix}-new`}
+                                       onValueChanged={onValueChanged}
+                                       storagePoolName={storagePoolName}
+                                       volumeName={diskParams.volumeName}
+                                       size={diskParams.size}
+                                       unit={diskParams.unit}
+                                       format={diskParams.format}
+                                       validationFailed={validationFailed}
+                                       vmStoragePools={storagePools} />
+                    )}
+                    {mode === USE_EXISTING && (
                         <UseExistingDisk idPrefix={`${idPrefix}-existing`}
-                                         onValueChanged={this.onValueChanged}
-                                         storagePoolName={this.state.storagePoolName}
-                                         existingVolumeName={this.state.existingVolumeName}
+                                         onValueChanged={onValueChanged}
+                                         storagePoolName={storagePoolName}
+                                         existingVolumeName={diskParams.existingVolumeName}
                                          validationFailed={validationFailed}
                                          vmStoragePools={storagePools}
                                          vms={vms}
                                          vm={vm} />
                     )}
-                    {this.state.mode === CUSTOM_PATH && (
+                    {mode === CUSTOM_PATH && (
                         <CustomPath idPrefix={idPrefix}
-                                    onValueChanged={this.onValueChanged}
-                                    hideDeviceRow
+                                    onValueChanged={onValueChanged}
+                                    device={diskParams.device}
                                     validationFailed={validationFailed} />
                     )}
+                    {vm.persistent &&
+                    <PermanentChange idPrefix={idPrefix}
+                                     permanent={diskParams.permanent}
+                                     onValueChanged={onValueChanged}
+                                     vm={vm} />}
                 </Form>
-            );
-        } else {
-            defaultBody = (
-                <>
-                    <Form onSubmit={e => e.preventDefault()} isHorizontal>
-                        <FormGroup fieldId={`${idPrefix}-source`}
-                                   id={`${idPrefix}-source-group`}
-                                   label={_("Source")} isInline hasNoPaddingTop>
-                            <Radio id={`${idPrefix}-createnew`}
-                                   name="source"
-                                   label={_("Create new")}
-                                   isChecked={this.state.mode === CREATE_NEW}
-                                   onChange={() => this.onValueChanged('mode', CREATE_NEW)} />
-                            <Radio id={`${idPrefix}-useexisting`}
-                                   name="source"
-                                   label={_("Use existing")}
-                                   isChecked={this.state.mode === USE_EXISTING}
-                                   onChange={() => this.onValueChanged('mode', USE_EXISTING)} />
-                            <Radio id={`${idPrefix}-custompath`}
-                                   name="source"
-                                   label={_("Custom path")}
-                                   isChecked={this.state.mode === CUSTOM_PATH}
-                                   onChange={() => this.onValueChanged('mode', CUSTOM_PATH)} />
-                        </FormGroup>
-                        {this.state.mode === CREATE_NEW && (
-                            <CreateNewDisk idPrefix={`${idPrefix}-new`}
-                                           onValueChanged={this.onValueChanged}
-                                           storagePoolName={this.state.storagePoolName}
-                                           volumeName={this.state.volumeName}
-                                           size={this.state.size}
-                                           unit={this.state.unit}
-                                           format={this.state.format}
-                                           validationFailed={validationFailed}
-                                           vmStoragePools={storagePools} />
-                        )}
-                        {this.state.mode === USE_EXISTING && (
-                            <UseExistingDisk idPrefix={`${idPrefix}-existing`}
-                                             onValueChanged={this.onValueChanged}
-                                             storagePoolName={this.state.storagePoolName}
-                                             existingVolumeName={this.state.existingVolumeName}
-                                             validationFailed={validationFailed}
-                                             vmStoragePools={storagePools}
-                                             vms={vms}
-                                             vm={vm} />
-                        )}
-                        {this.state.mode === CUSTOM_PATH && (
-                            <CustomPath idPrefix={idPrefix}
-                                        onValueChanged={this.onValueChanged}
-                                        device={this.state.device}
-                                        validationFailed={validationFailed} />
-                        )}
-                        {vm.persistent &&
-                        <PermanentChange idPrefix={idPrefix}
-                                         permanent={this.state.permanent}
-                                         onValueChanged={this.onValueChanged}
-                                         vm={vm} />}
-                    </Form>
-                    <AdditionalOptions cacheMode={this.state.cacheMode}
-                                       device={this.state.device}
-                                       idPrefix={idPrefix}
-                                       onValueChanged={this.onValueChanged}
-                                       busType={this.state.busType}
-                                       serial={this.state.serial}
-                                       validationFailed={validationFailed}
-                                       supportedDiskBusTypes={this.props.supportedDiskBusTypes} />
-                </>
-            );
-        }
-
-        return (
-            <Modal position="top" variant="medium" id={`${idPrefix}-dialog-modal-window`} isOpen onClose={Dialogs.close}
-                   title={isMediaInsertion ? _("Insert disc media") : _("Add disk")}
-                   footer={
-                       <>
-                           <Button id={`${idPrefix}-dialog-add`}
-                                   variant='primary'
-                                   isLoading={this.state.addDiskInProgress || this.state.verificationInProgress}
-                                   isDisabled={this.state.addDiskInProgress || this.state.verificationInProgress || dialogLoading ||
-                                               (storagePools.length == 0 && this.state.mode != CUSTOM_PATH) ||
-                                               (this.state.mode == CUSTOM_PATH && this.state.device === "disk" && this.state.customDiskVerificationFailed)}
-                                   onClick={isMediaInsertion ? this.onInsertClicked : this.onAddClicked}>
-                               {isMediaInsertion ? _("Insert") : _("Add")}
-                           </Button>
-                           <Button id={`${idPrefix}-dialog-cancel`} variant='link' onClick={Dialogs.close}>
-                               {_("Cancel")}
-                           </Button>
-                       </>
-                   }>
-                {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
-                {defaultBody}
-            </Modal>
+                <AdditionalOptions cacheMode={diskParams.cacheMode}
+                                   device={diskParams.device}
+                                   idPrefix={idPrefix}
+                                   onValueChanged={onValueChanged}
+                                   busType={diskParams.busType}
+                                   serial={diskParams.serial}
+                                   validationFailed={validationFailed}
+                                   supportedDiskBusTypes={supportedDiskBusTypes} />
+            </>
         );
     }
-}
+
+    return (
+        <Modal position="top" variant="medium" id={`${idPrefix}-dialog-modal-window`} isOpen onClose={Dialogs.close}
+               title={isMediaInsertion ? _("Insert disc media") : _("Add disk")}
+               footer={
+                   <AddDiskModalFooter
+                     dialogLoading={dialogLoading}
+                     dialogErrorSet={dialogErrorSet}
+                     diskParams={diskParams}
+                     idPrefix={idPrefix}
+                     isMediaInsertion={isMediaInsertion}
+                     mode={mode}
+                     setValidate={setValidate}
+                     storagePoolName={storagePoolName}
+                     storagePools={storagePools}
+                     validate={validate}
+                     validationFailed={_validationFailed}
+                     verificationInProgress={verificationInProgress}
+                     vm={vm}
+                     vms={vms}
+                   />
+               }
+        >
+            {dialogError && <ModalError dialogError={dialogError} dialogErrorDetail={dialogErrorDetail} />}
+            {defaultBody}
+        </Modal>
+    );
+};
+
+const AddDiskModalFooter = ({
+    dialogErrorSet,
+    dialogLoading,
+    diskParams,
+    idPrefix,
+    isMediaInsertion,
+    mode,
+    setValidate,
+    storagePoolName,
+    storagePools,
+    validate,
+    validationFailed,
+    verificationInProgress,
+    vm,
+    vms,
+}) => {
+    const [addDiskInProgress, setAddDiskInProgress] = useState(false);
+    const Dialogs = useDialogs();
+
+    const onInsertClicked = () => {
+        return domainInsertDisk({
+            connectionName: vm.connectionName,
+            vmName: vm.name,
+            target: diskParams.target,
+            diskType: mode === CUSTOM_PATH ? "file" : "volume",
+            file: diskParams.file,
+            poolName: storagePoolName,
+            volumeName: diskParams.existingVolumeName,
+            live: vm.state === "running",
+        });
+    };
+
+    const onAddClicked = () => {
+        const hotplug = domainIsRunning(vm.state);
+        let storagePool, volume, isVolumeUsed;
+
+        if (mode === CREATE_NEW) {
+            // create new disk
+            const size = convertToUnit(diskParams.size, diskParams.unit, 'MiB');
+            return storageVolumeCreateAndAttach({
+                connectionName: vm.connectionName,
+                poolName: storagePoolName,
+                volumeName: diskParams.volumeName,
+                size,
+                format: diskParams.format,
+                target: diskParams.target,
+                permanent: diskParams.permanent,
+                hotplug,
+                vmName: vm.name,
+                vmId: vm.id,
+                cacheMode: diskParams.cacheMode,
+                busType: diskParams.busType,
+                serial: diskParams.serial
+            });
+        } else if (mode === USE_EXISTING) {
+            // use existing volume
+            storagePool = storagePools.find(pool => pool.name === storagePoolName);
+            volume = storagePool.volumes.find(vol => vol.name === diskParams.existingVolumeName);
+            isVolumeUsed = getStorageVolumesUsage(vms, storagePool);
+        }
+
+        return domainAttachDisk({
+            connectionName: vm.connectionName,
+            type: mode === CUSTOM_PATH ? "file" : "volume",
+            file: diskParams.file,
+            device: diskParams.device,
+            poolName: storagePoolName,
+            volumeName: diskParams.existingVolumeName,
+            format: diskParams.format,
+            target: diskParams.target,
+            permanent: diskParams.permanent,
+            hotplug,
+            vmName: vm.name,
+            vmId: vm.id,
+            cacheMode: diskParams.cacheMode,
+            shareable: volume && volume.format === "raw" && isVolumeUsed[diskParams.existingVolumeName].length > 0,
+            busType: diskParams.busType,
+            serial: diskParams.serial
+        })
+                .then(() => { // force reload of VM data, events are not reliable (i.e. for a down VM)
+                    const promises = [];
+                    if (mode !== CUSTOM_PATH && volume.format === "raw" && isVolumeUsed[diskParams.existingVolumeName]) {
+                        isVolumeUsed[diskParams.existingVolumeName].forEach(vmName => {
+                            const vm = vms.find(vm => vm.name === vmName);
+                            const diskTarget = getStorageVolumeDiskTarget(vm, storagePool, diskParams.existingVolumeName);
+
+                            promises.push(
+                                domainUpdateDiskAttributes({ connectionName: vm.connectionName, objPath: vm.id, readonly: false, shareable: true, target: diskTarget })
+                                        .catch(exc => dialogErrorSet(_("Disk settings could not be saved"), exc.message))
+                            );
+                        });
+
+                        return Promise.all(promises);
+                    }
+                });
+    };
+
+    const onClick = () => {
+        setValidate(true);
+        if (Object.getOwnPropertyNames(validationFailed).length > 0) {
+            setAddDiskInProgress(false);
+            return;
+        }
+
+        setAddDiskInProgress(true);
+
+        return (
+            isMediaInsertion
+                ? onInsertClicked()
+                : onAddClicked()
+        )
+                .then(() => { // force reload of VM data, events are not reliable (i.e. for a down VM)
+                    Dialogs.close();
+                    return domainGet({ connectionName: vm.connectionName, name: vm.name, id: vm.id });
+                })
+                .catch(exc => {
+                    setAddDiskInProgress(false);
+                    dialogErrorSet(_("Disk failed to be added"), exc.message);
+                });
+    };
+
+    return (
+        <>
+            <Button id={`${idPrefix}-dialog-add`}
+                    variant='primary'
+                    isLoading={addDiskInProgress || verificationInProgress}
+                    isDisabled={addDiskInProgress || verificationInProgress || dialogLoading ||
+                                (storagePools.length == 0 && mode != CUSTOM_PATH) ||
+                                (validate && Object.keys(validationFailed).length > 0)}
+                    onClick={onClick}>
+                {isMediaInsertion ? _("Insert") : _("Add")}
+            </Button>
+            <Button id={`${idPrefix}-dialog-cancel`} variant='link' onClick={Dialogs.close}>
+                {_("Cancel")}
+            </Button>
+        </>
+    );
+};

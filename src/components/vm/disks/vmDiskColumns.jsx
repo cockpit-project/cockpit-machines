@@ -167,7 +167,7 @@ export const DiskActions = ({ vm, vms, disk, supportedDiskBusTypes, idPrefixRow,
     const Dialogs = useDialogs();
 
     function openMediaInsertionDialog() {
-        Dialogs.show(<AddDiskModalBody idPrefix={idPrefixRow + "-insert-dialog"}
+        Dialogs.show(<AddDiskModalBody idPrefix={idPrefixRow + "-insert-dialog-adddisk"}
                                        vm={vm} vms={vms}
                                        disk={disk}
                                        supportedDiskBusTypes={supportedDiskBusTypes}

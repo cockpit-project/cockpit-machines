@@ -64,7 +64,7 @@ export const VmDisksActions = ({ vm, vms, supportedDiskBusTypes }) => {
     const idPrefix = `${vmId(vm.name)}-disks`;
 
     function open() {
-        Dialogs.show(<AddDiskModalBody idPrefix={idPrefix}
+        Dialogs.show(<AddDiskModalBody idPrefix={idPrefix + "-adddisk"}
                                        vm={vm} vms={vms}
                                        supportedDiskBusTypes={supportedDiskBusTypes} />);
     }

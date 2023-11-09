@@ -495,7 +495,6 @@ class TestMachinesDisks(VirtualMachinesCase):
             xfail_error_message=None, xfail_error_title=None,
             xwarning_object=None, xwarning_message=None,
             pixel_test_ignore=None,
-            skip_add=False,
         ):
             self.test_obj = test_obj
             self.vm_name = vm_name
@@ -518,7 +517,6 @@ class TestMachinesDisks(VirtualMachinesCase):
             self.expected_volume_format = expected_volume_format
             self.persistent_vm = persistent_vm
             self.expected_access = expected_access
-            self.skip_add = skip_add
 
             self.pixel_test_tag = pixel_test_tag
             self.pixel_test_ignore = pixel_test_ignore
@@ -553,8 +551,7 @@ class TestMachinesDisks(VirtualMachinesCase):
                                                     ignore=[self.pixel_test_ignore] if self.pixel_test_ignore else [],
                                                     skip_layouts=["rtl"])
 
-            if not self.skip_add:
-                self.add_disk()
+            self.add_disk()
             if not self.xfail:
                 self.verify_disk_added()
             else:
@@ -1124,7 +1121,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             device='disk',
             file_path='/tmp/',
             mode='custom-path',
-            xfail=True, xfail_error_title="Disk failed to be attached",
+            xfail=True, xfail_error_title="Disk failed to be added",
         ).execute()
 
         # check disk device type
@@ -1158,7 +1155,6 @@ class TestMachinesDisks(VirtualMachinesCase):
             device='disk',
             file_path='/tmp/base.qcow2',
             mode='custom-path',
-            skip_add=True,
             xfail=True, xfail_object='file-autocomplete',
             xfail_error_message='Importing an image with a backing file is unsupported',
         ).execute()
