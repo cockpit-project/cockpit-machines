@@ -847,9 +847,9 @@ export function getHostDevSourceObject(dev) {
     return source;
 }
 
-export function getVmStoragePools(vm) {
+export function getVmStoragePools(connectionName) {
     const { storagePools } = store.getState();
-    return storagePools.filter(sp => sp && sp.name && sp.connectionName == vm.connectionName && sp.active);
+    return storagePools.filter(sp => sp && sp.name && sp.connectionName == connectionName && sp.active);
 }
 
 export function nicLookupByMAC(interfacesList, mac) {

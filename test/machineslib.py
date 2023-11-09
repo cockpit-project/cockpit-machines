@@ -436,8 +436,6 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
             "Warning: Failed.*type:.*The prop `format` is marked as required in `VolumeCreateBody`, but its value is `undefined`",
             # FIXME: https://github.com/cockpit-project/cockpit-machines/issues/1273
             " Warning: Failed.*type:.* Invalid prop `size` of type `string` supplied to `VolumeCreateBody`, expected `number`",
-            # FIXME: https://github.com/cockpit-project/cockpit-machines/issues/1275
-            "Warning: An update .* was scheduled from inside an update function",
             # deprecated PF SelectGroup has invalid properties
             r"Warning: React does not recognize the .* prop.*(inputId|isSelected|sendRef|keyHandler)",
         )

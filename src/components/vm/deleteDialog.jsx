@@ -128,7 +128,7 @@ export class DeleteDialog extends React.Component {
         const Dialogs = this.context;
         const storage = this.state.disks.filter(d => d.checked);
         const { vm, onAddErrorNotification } = this.props;
-        const storagePools = getVmStoragePools(vm);
+        const storagePools = getVmStoragePools(vm.connectionName);
 
         Promise.all(
             (Array.isArray(vm.snapshots) ? vm.snapshots : [])
