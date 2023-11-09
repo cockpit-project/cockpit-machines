@@ -128,7 +128,7 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
     );
 
     return (
-        <WithDialogs>
+        <WithDialogs key="vms-list">
             <Page>
                 <PageSection>
                     <Gallery className="ct-cards-grid" hasGutter>
