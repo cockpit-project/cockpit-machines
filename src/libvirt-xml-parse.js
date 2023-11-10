@@ -401,6 +401,7 @@ export function parseDumpxmlForDisks(devicesElem) {
             const readonlyElem = getSingleOptionalElem(diskElem, 'readonly');
             const shareableElem = getSingleOptionalElem(diskElem, 'shareable');
             const bootElem = getSingleOptionalElem(diskElem, 'boot');
+            const addressElem = getSingleOptionalElem(diskElem, 'address');
 
             const sourceHostElem = sourceElem ? getSingleOptionalElem(sourceElem, 'host') : undefined;
 
@@ -437,6 +438,19 @@ export function parseDumpxmlForDisks(devicesElem) {
                 readonly: !!readonlyElem,
                 shareable: !!shareableElem,
                 removable: targetElem.getAttribute('removable'),
+                address: addressElem
+                    ? {
+                        type: driverElem.getAttribute('type'),
+                        bus: driverElem.getAttribute('bus'),
+                        slot: driverElem.getAttribute('slot'),
+                        function: driverElem.getAttribute('function'),
+                        domain: driverElem.getAttribute('domain'),
+                        multifunction: driverElem.getAttribute('multifunction'),
+                        controller: driverElem.getAttribute('controller'),
+                        target: driverElem.getAttribute('target'),
+                        unit: driverElem.getAttribute('unit')
+                    }
+                    : {},
             };
 
             if (disk.target) {

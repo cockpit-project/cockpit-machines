@@ -32,9 +32,6 @@ import {
     updateOrAddVm,
 } from '../actions/store-actions.js';
 import {
-    getDiskXML,
-} from '../libvirt-xml-create.js';
-import {
     setVmCreateInProgress,
     setVmInstallInProgress,
     updateImageDownloadProgress,
@@ -42,6 +39,7 @@ import {
 } from '../components/create-vm-dialog/uiState.js';
 import {
     DOMAINSTATE,
+    getNextAvailableTarget,
     fileDownload,
     getHostDevSourceObject,
     getNodeDevSource,
@@ -63,7 +61,6 @@ import {
 import {
     changeMedia,
     updateBootOrder,
-    updateDisk,
     updateMaxMemory,
 } from '../libvirt-xml-update.js';
 import { storagePoolRefresh } from './storagePool.js';
@@ -101,17 +98,6 @@ function buildConsoleVVFile(consoleDetail) {
         'fullscreen=0\n';
 }
 
-function domainAttachDevice({ connectionName, vmId, permanent, hotplug, xmlDesc }) {
-    let flags = Enum.VIR_DOMAIN_AFFECT_CURRENT;
-    if (hotplug)
-        flags |= Enum.VIR_DOMAIN_AFFECT_LIVE;
-    if (permanent)
-        flags |= Enum.VIR_DOMAIN_AFFECT_CONFIG;
-
-    // Error handling is done from the calling side
-    return call(connectionName, vmId, 'org.libvirt.Domain', 'AttachDevice', [xmlDesc, flags], { timeout, type: 'su' });
-}
-
 export function getPythonPath() {
     return cockpit.spawn(["/bin/sh", "-c", "command -v /usr/libexec/platform-python || command -v python3 || command -v python"]).then(pyexe => { pythonPath = pyexe.trim() });
 }
@@ -125,7 +111,6 @@ export function domainAttachDisk({
     volumeName,
     format,
     target,
-    vmId,
     vmName,
     permanent,
     hotplug,
@@ -134,9 +119,31 @@ export function domainAttachDisk({
     busType,
     serial,
 }) {
-    const xmlDesc = getDiskXML(type, file, device, poolName, volumeName, format, target, cacheMode, shareable, busType, serial);
+    const options = { err: "message" };
+    if (connectionName === "system")
+        options.superuser = "try";
+    let define = "--define";
+    if (hotplug && !permanent)
+        define = "--no-define";
+    let source = "";
+    if (type === 'file')
+        source = `,source.file=${file}`;
+    else
+        source = `,source.pool=${poolName},source.volume=${volumeName}`;
+    let driverType = "";
+    if (format && ['qcow2', 'raw'].includes(format))
+        driverType = `,driver.type=${format}`;
+    let serialNum = "";
+    if (serial)
+        serialNum = `,serial=${serial}`;
+    const shareableOption = shareable ? "yes" : "no";
 
-    return domainAttachDevice({ connectionName, vmId, permanent, hotplug, xmlDesc });
+    const args = ["virt-xml", "-c", `qemu:///${connectionName}`, vmName, "--add-device", "--disk", `type=${type},shareable=${shareableOption},target.bus=${busType},target.dev=${target},driver.name=qemu,driver.discard=unmap,cache=${cacheMode},device=${device}${source}${driverType}${serialNum}`, define];
+
+    if (hotplug)
+        args.push("--update");
+
+    return cockpit.spawn(args, options);
 }
 
 export function domainAttachHostDevices({ connectionName, vmName, live, devices }) {
@@ -1101,10 +1108,45 @@ export function domainStart({ connectionName, id: objPath }) {
     return call(connectionName, objPath, 'org.libvirt.Domain', 'Create', [0], { timeout, type: 'u' });
 }
 
-export function domainUpdateDiskAttributes({ connectionName, objPath, target, readonly, shareable, busType, existingTargets, cache }) {
-    return call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' })
-            .then(domXml => {
-                const updatedXML = updateDisk({ diskTarget: target, domXml, readonly, shareable, busType, existingTargets, cache });
-                return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [updatedXML], { timeout, type: 's' });
-            });
+export function domainUpdateDiskAttributes({ connectionName, vmName, target, readonly, shareable, busType, oldBusType, existingTargets, cache }) {
+    const options = { err: "message" };
+    if (connectionName === "system")
+        options.superuser = "try";
+
+    const shareableOption = shareable ? "yes" : "no";
+    const readonlyOption = readonly ? "yes" : "no";
+    let newTarget = target;
+    let addressBus;
+    let addressType;
+    if (busType !== oldBusType) {
+        newTarget = getNextAvailableTarget(existingTargets, busType);
+        // Workaround for https://github.com/virt-manager/virt-manager/issues/430
+        // Until that issue is fixed, we have to change address type and address bus manually
+        if (busType === "virtio")
+            addressType = "pci";
+        if (busType === "usb" || busType === "scsi" || busType === "sata") {
+            // The only allowed bus value is '0' as defined in function qemuValidateDomainDeviceDefAddressDrive at
+            // https://gitlab.com/libvirt/libvirt/-/blob/master/src/qemu/qemu_validate.c
+            addressBus = 0;
+            if (busType === "usb")
+                addressType = "usb";
+            else
+                addressType = "drive";
+        }
+    }
+    let cacheMode = "";
+    if (cache)
+        cacheMode = `,cache=${cache}`;
+
+    const args = [
+        "virt-xml", "-c", `qemu:///${connectionName}`,
+        vmName, "--edit", `target.dev=${target}`, "--disk",
+        `shareable=${shareableOption},readonly=${readonlyOption},target.bus=${busType},target.dev=${newTarget}${cacheMode}`
+    ];
+    if (addressType)
+        args[args.length - 1] += (`,address.type=${addressType}`);
+    if (!isNaN(addressBus)) // addressBus can also be 0
+        args[args.length - 1] += (`,address.bus=${addressBus}`);
+
+    return cockpit.spawn(args, options);
 }
