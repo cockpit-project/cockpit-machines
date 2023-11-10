@@ -55,13 +55,15 @@ export function storageVolumeCreateAndAttach({
     serial,
 }) {
     const volXmlDesc = getVolumeXML(volumeName, size, format);
+    let storagePoolPath;
 
     return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName', [poolName], { timeout, type: 's' })
-            .then((storagePoolPath) => {
-                return call(connectionName, storagePoolPath[0], 'org.libvirt.StoragePool', 'StorageVolCreateXML', [volXmlDesc, 0], { timeout, type: 'su' })
-                        .then(() => {
-                            return storagePoolRefresh({ connectionName, objPath: storagePoolPath[0] });
-                        });
+            .then(_storagePoolPath => {
+                storagePoolPath = _storagePoolPath[0];
+                return call(connectionName, storagePoolPath, 'org.libvirt.StoragePool', 'StorageVolCreateXML', [volXmlDesc, 0], { timeout, type: 'su' });
+            })
+            .then(() => {
+                return storagePoolRefresh({ connectionName, objPath: storagePoolPath });
             })
             .then((volPath) => {
                 return domainAttachDisk({ connectionName, type: "volume", device: "disk", poolName, volumeName, format, target, vmId, permanent, hotplug, cacheMode, busType, serial });
