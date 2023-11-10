@@ -317,6 +317,7 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                     user_login="foo",
                                                                     root_password="dogsaremybestfr13nds",
                                                                     ssh_keys=[rsakey, dsakey],
+                                                                    expected_ssh_keys=[rsakey, dsakey],
                                                                     create_and_run=True))
 
         # try to input multiple keys (separated by newline) into one text input, expect only first one to be used
