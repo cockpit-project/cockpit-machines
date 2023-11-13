@@ -291,7 +291,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         self.machine.execute("ssh-keygen -t rsa -N '' -f /tmp/rsakey")
         rsakey = self.machine.execute("cat /tmp/rsakey.pub").strip()
         self.addCleanup(self.machine.execute, "rm -f /tmp/rsakey*")
-        self.machine.execute("ssh-keygen -t dsa -N '' -C '' -f /tmp/dsakey")  # public key with empty comment
+        self.machine.execute("ssh-keygen -t dsa -N '' -C '' -f /tmp/dsakey").strip()  # public key with empty comment
         dsakey = self.machine.execute("cat /tmp/dsakey.pub")
         self.addCleanup(self.machine.execute, "rm -f /tmp/dsakey*")
 
@@ -317,6 +317,7 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                     user_login="foo",
                                                                     root_password="dogsaremybestfr13nds",
                                                                     ssh_keys=[rsakey, dsakey],
+                                                                    expected_ssh_keys=[rsakey, dsakey],
                                                                     create_and_run=True))
 
         # try to input multiple keys (separated by newline) into one text input, expect only first one to be used

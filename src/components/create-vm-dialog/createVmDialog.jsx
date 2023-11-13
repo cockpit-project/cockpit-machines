@@ -763,7 +763,7 @@ const parseKey = debounce(500, (key, setKeyObject, setKeyInvalid) => {
             .then(() => {
                 setKeyInvalid(false);
                 const parts = key.split(" ");
-                if (parts.length > 2) {
+                if (parts.length >= 2) {
                     setKeyObject({
                         type: parts[0],
                         data: parts[1],
