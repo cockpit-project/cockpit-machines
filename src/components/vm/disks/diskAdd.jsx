@@ -205,7 +205,7 @@ const AdditionalOptions = ({ cacheMode, device, idPrefix, onValueChanged, busTyp
     const displayBusTypes = diskBusTypes[device]
             .filter(bus => supportedDiskBusTypes.includes(bus))
             .map(type => ({ value: type }));
-    if (!displayBusTypes.find(displayBusType => busType.value === displayBusType.busType))
+    if (!displayBusTypes.find(displayBusType => busType === displayBusType.value))
         displayBusTypes.push({ value: busType, disabled: true });
 
     return (
