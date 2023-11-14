@@ -752,8 +752,7 @@ const UsersConfigurationRow = ({
     );
 };
 
-// This method needs to be outside of component as re-render would create a new instance of debounce
-const parseKey = debounce(500, (key, setKeyObject, setKeyInvalid) => {
+const parseKey = (key, setKeyObject, setKeyInvalid) => {
     if (isEmpty(key))
         return;
 
@@ -776,22 +775,41 @@ const parseKey = debounce(500, (key, setKeyObject, setKeyInvalid) => {
                 setKeyInvalid(true);
                 console.warn("Could not validate the public key");
             });
-});
+};
+
+const handleSSHKeysValue = (value, idx, onChange, additem) => {
+    let index = idx;
+    for (const part of value.split("\n")) {
+        if (part.trim() === "") {
+            continue;
+        }
+        if (index !== idx) {
+            additem();
+        }
+
+        onChange(index, "value", part);
+        index++;
+    }
+};
 
 const SshKeysRow = ({
-    id, item, onChange, idx, removeitem,
+    id, item, onChange, idx, removeitem, additem
 }) => {
     const [keyObject, setKeyObject] = useState();
     const [keyInvalid, setKeyInvalid] = useState(false);
+    const keyValue = item.value || "";
 
-    const onChangeHelper = (value) => {
-        // Some users might want to input multiple keys into the same field
-        // While handling that in the future might be a nice user experience, now we only parse one key out of input
-        value = value.split(/\r?\n/)[0];
-
-        onChange(idx, "value", value);
-        parseKey(value, setKeyObject, setKeyInvalid);
-    };
+    useEffect(() => {
+        let timeoutId = null;
+        if (keyValue !== "" && !keyObject) {
+            timeoutId = setTimeout(() => parseKey(keyValue, setKeyObject, setKeyInvalid), 500);
+        }
+        return () => {
+            if (timeoutId !== null) {
+                clearTimeout(timeoutId);
+            }
+        };
+    }, [keyValue, keyObject]);
 
     return (
         <Grid id={id} key={id}>
@@ -805,9 +823,9 @@ const SshKeysRow = ({
                     : <FormGroup label={_("Public key")}
                         testdata={keyInvalid ? "key-invalid" : undefined}
                         fieldId='public-key'>
-                        <TextArea value={item.value || ""}
+                        <TextArea value={keyValue}
                             aria-label={_("Public SSH key")}
-                            onChange={(_, value) => onChangeHelper(value)}
+                            onChange={(_, value) => handleSSHKeysValue(value, idx, onChange, additem)}
                             rows="3" />
                         <FormHelper helperText={_("Keys are located in ~/.ssh/ and have a \".pub\" extension.")} />
                     </FormGroup>

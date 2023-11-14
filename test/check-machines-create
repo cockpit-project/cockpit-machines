@@ -330,7 +330,7 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                     user_login="foo",
                                                                     root_password="dogsaremybestfr13nds",
                                                                     ssh_keys=[f"{rsakey} \n {dsakey}"],
-                                                                    expected_ssh_keys=[rsakey],
+                                                                    expected_ssh_keys=[rsakey, dsakey],
                                                                     create_and_run=True))
 
         # Try to create VM with invalid ssh key
