@@ -562,7 +562,8 @@ class TestMachinesDisks(VirtualMachinesCase):
                     self.test_obj.browser.wait_in_text(f"{prefix}-{self.xfail_object}-helper.pf-m-error", self.xfail_error_message)
                 else:
                     self.test_obj.browser.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-alert__title", self.xfail_error_title)
-                    self.test_obj.browser.click(f"{prefix}-dialog-cancel")
+                self.test_obj.browser.click(f"{prefix}-dialog-cancel")
+                self.test_obj.browser.wait_not_present(".pf-v5-c-modal-box")
 
         def openDialog(self):
             b = self.test_obj.browser
@@ -1161,8 +1162,6 @@ class TestMachinesDisks(VirtualMachinesCase):
             xfail=True, xfail_object='file-autocomplete',
             xfail_error_message='Importing an image with a backing file is unsupported',
         ).execute()
-        # Image can't be added, close dialog
-        b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
 
         # non iso file
         self.VMAddDiskDialog(
@@ -1209,6 +1208,8 @@ class TestMachinesDisks(VirtualMachinesCase):
         for _retry in range(0, 10):
             b.key_press(chr(40), use_ord=True)
             time.sleep(0.5)
+        b.click(".pf-v5-c-modal-box__close button")
+        b.wait_not_present(".pf-v5-c-modal-box")
         b.wait_not_present("#navbar-oops")
 
         # Ensure that adding disks with custom path is possible when no storage pools are present
@@ -1216,6 +1217,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         m.execute("for pool in $(virsh pool-list --all --name); do virsh pool-destroy $pool || true; virsh pool-undefine $pool; done")
         b.wait_visible("#vm-details[data-pools-count='0']")
         b.click(prefix)
+        b.click(f"{prefix}-custompath")
         b.set_file_autocomplete_val("#vm-subVmTest1-disks-adddisk-file", "/var/lib/libvirt/novell.iso")
         b.wait_visible(f"{prefix}-custompath:checked")
         b.wait_visible(f"{prefix}-dialog-add[aria-disabled=false]")
@@ -1224,6 +1226,8 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.click(f"{prefix}-useexisting")
         b.wait_visible(f"{prefix}-dialog-add[aria-disabled=true]")
         b.click(f"{prefix}-dialog-cancel")
+        b.wait_not_present(".pf-v5-c-modal-box")
+
         self.VMAddDiskDialog(
             self,
             expected_target='sdc',
@@ -1241,6 +1245,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.click("div.pf-v5-c-modal-box button:contains(Show additional options)")
         b.wait_visible(f"{prefix}-bus-type[data-value=ide]")
         b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
+        b.wait_not_present(".pf-v5-c-modal-box")
 
         # check CD/DVD discs correctly assumes raw format for raw file
         m.execute("qemu-img create -f raw /var/lib/libvirt/images/foobar.raw 1M")
