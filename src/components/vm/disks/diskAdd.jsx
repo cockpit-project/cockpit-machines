@@ -375,6 +375,7 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
         size: 1,
         unit: units.GiB.name,
         volumeName: "",
+        permanent: true,
     });
     const [mode, setMode] = useState(isMediaInsertion ? CUSTOM_PATH : CREATE_NEW);
     const [validate, setValidate] = useState(false);
@@ -391,7 +392,6 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
         existingVolumeName: defaultPool && getDefaultVolumeName(defaultPool, vm),
         storagePool: defaultPool,
         type: mode === CUSTOM_PATH ? "file" : "volume",
-        permanent: !domainIsRunning(vm.state)
     }), [defaultPool, mode, vm]);
     const storagePoolName = diskParams.storagePool?.name;
 

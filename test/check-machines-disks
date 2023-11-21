@@ -483,7 +483,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             file_path=None, device=None,
             volume_size=10, volume_size_unit='MiB',
             mode="create-new",
-            expected_target='vda', permanent=False, cache_mode=None,
+            expected_target='vda', permanent=True, cache_mode=None,
             expected_format='raw',
             serial=None, expected_serial=None,
             bus_type=None, pool_type=None,
@@ -612,9 +612,9 @@ class TestMachinesDisks(VirtualMachinesCase):
                 # Select from the available volumes
                 b.select_from_dropdown(f"#vm-{self.vm_name}-disks-adddisk-existing-select-volume", self.volume_name)
 
-            # Configure persistency - by default the check box in unchecked for running VMs
-            if self.permanent:
-                b.click(f"#vm-{self.vm_name}-disks-adddisk-permanent")
+            # Configure persistency - by default the check box is checked
+            if not self.permanent:
+                b.set_checked(f"#vm-{self.vm_name}-disks-adddisk-permanent", False)
 
             # Check non-persistent VM cannot have permanent disk attached
             if not self.persistent_vm:
@@ -1011,7 +1011,6 @@ class TestMachinesDisks(VirtualMachinesCase):
             pool_name='myPoolTwo',
             volume_name='mydiskofpooltwo_permanent',
             volume_size=2,
-            permanent=True,
             mode='use-existing',
             expected_target=get_next_free_target(used_targets)[-1],
         ).execute()
@@ -1019,13 +1018,12 @@ class TestMachinesDisks(VirtualMachinesCase):
         # check the autoselected options
         # default_tmp pool should be autoselected since it's the first in alphabetical order
         # defaultVol volume should be autoselected since it's the only volume in default_tmp pool
-        transient_targets.append(get_next_free_target(used_targets)[-1])
         self.VMAddDiskDialog(
             self,
             pool_name='default_tmp',
             volume_name='defaultVol',
             mode='use-existing',
-            expected_target=transient_targets[-1],
+            expected_target=get_next_free_target(used_targets)[-1],
             volume_format='raw',
         ).openDialog().add_disk().verify_disk_added()
 
@@ -1142,6 +1140,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             expected_format='raw',
             file_path='/var/lib/libvirt/novell.iso',
             mode='custom-path',
+            permanent=False,
             pixel_test_tag='vm-add-disk-modal-custom-path'
         ).execute()
 
@@ -1154,6 +1153,7 @@ class TestMachinesDisks(VirtualMachinesCase):
             expected_format='qcow2',
             file_path='/tmp/foobar.qcow2',
             mode='custom-path',
+            permanent=False,
         ).execute()
 
         # Disk with backing file should shown a warning
@@ -1175,7 +1175,8 @@ class TestMachinesDisks(VirtualMachinesCase):
             bus_type='scsi',
             expected_target='sdb',
             file_path='/var/lib/libvirt/empty.img',
-            mode='custom-path'
+            mode='custom-path',
+            permanent=False,
         ).execute()
 
         # shut off
