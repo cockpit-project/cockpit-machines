@@ -917,6 +917,15 @@ class TestMachinesDisks(VirtualMachinesCase):
         m.upload([os.path.join(BOTS_DIR, "machine/cloud-init.iso")], "/var/lib/libvirt/images/defaultVol.iso")
         m.execute("virsh pool-refresh images")
         wait(lambda: "defaultVol.iso" in m.execute("virsh vol-list images"), delay=3)
+
+        # wait until the volume bubbled through the UI
+        b.go("/machines#/storages")
+        self.waitPoolRow("images")
+        self.togglePoolRow("images")
+        b.click("tr[data-row-id=pool-images-system] + tr li:contains('Storage volumes') button")
+        b.wait_in_text("#storage-pools-listing", "defaultVol.iso")
+        b.go("/machines#vm?name=subVmTest1&connection=system")
+
         dialog = self.VMAddDiskDialog(
             self,
             mode="use-existing",
