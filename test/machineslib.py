@@ -144,8 +144,8 @@ class VirtualMachinesCaseHelpers:
         m.execute("virsh net-start default || true")
         m.execute(r"until virsh net-info default | grep 'Active:\s*yes'; do sleep 1; done")
 
-    def createVm(self, name, graphics='none', ptyconsole=False, running=True, memory=128, connection='system'):
-        m = self.machine
+    def createVm(self, name, graphics='none', ptyconsole=False, running=True, memory=128, connection='system', machine=None):
+        m = machine or self.machine
 
         image_file = m.pull("cirros")
 
@@ -190,7 +190,7 @@ class VirtualMachinesCaseHelpers:
             command.append(
                 f'[ "$(virsh -c qemu:///{connection} domstate {name})" = {state} ] || \
                 {{ virsh -c qemu:///{connection} dominfo {name} >&2; cat /var/log/libvirt/qemu/{name}.log >&2; exit 1; }}')
-        self.run_admin("; ".join(command), connection)
+        self.run_admin("; ".join(command), connection, machine=machine)
 
         # TODO check if kernel is booted
         # Ideally we would like to check guest agent event for that
@@ -228,8 +228,8 @@ class VirtualMachinesCaseHelpers:
         self.addCleanup(m.execute, "targetcli /iscsi delete %s; iscsiadm -m node -o delete || true" % target_iqn)
         return orig_iqn
 
-    def run_admin(self, cmd, connectionName='system'):
-        m = self.machine
+    def run_admin(self, cmd, connectionName='system', machine=None):
+        m = machine or self.machine
 
         if connectionName == 'session':
             return m.execute(f"su - admin -c 'export XDG_RUNTIME_DIR=/run/user/$(id -u admin); {cmd}'")
