@@ -78,6 +78,9 @@ class Vnc extends React.Component {
                 binary: "raw",
                 address: consoleDetail.address,
                 port: parseInt(consoleDetail.tlsPort || consoleDetail.port, 10),
+                // https://issues.redhat.com/browse/COCKPIT-870
+                // https://issues.redhat.com/browse/RHEL-3959
+                host: cockpit.transport.host,
             });
             this.setState({
                 path: `${prefix.slice(1)}?${window.btoa(query)}`,
