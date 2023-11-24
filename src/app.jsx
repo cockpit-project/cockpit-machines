@@ -119,10 +119,6 @@ export const App = () => {
         checkVirtualization();
     }, []);
 
-    useEffect(() => {
-        localStorage.setItem('virtualization-disabled-ignored', emptyStateIgnored);
-    }, [emptyStateIgnored]);
-
     if (!virtualizationEnabled && !emptyStateIgnored) {
         return (
             <Page>
@@ -139,7 +135,10 @@ export const App = () => {
                         </EmptyStateBody>
                         <EmptyStateFooter>
                             <EmptyStateActions>
-                                <Button id="ignore-hw-virtualization-disabled-btn" variant="secondary" onClick={() => setEmptyStateIgnored(true)}>{_("Ignore")}</Button>
+                                <Button id="ignore-hw-virtualization-disabled-btn" variant="secondary" onClick={() => {
+                                    setEmptyStateIgnored(true);
+                                    localStorage.setItem('virtualization-disabled-ignored', true);
+                                }}>{_("Ignore")}</Button>
                             </EmptyStateActions>
                         </EmptyStateFooter>
                     </EmptyState>
