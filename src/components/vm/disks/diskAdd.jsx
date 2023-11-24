@@ -370,7 +370,7 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
         cacheMode: 'default',
         device: "disk",
         file: "",
-        format: "",
+        format: undefined,
         serial: "",
         size: 1,
         unit: units.GiB.name,
@@ -475,7 +475,7 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
             setVerificationInProgress(true);
             cockpit.spawn(["head", "--bytes=16", file], { binary: true, err: "message", superuser: "try" })
                     .then(file_header => {
-                        let format = "";
+                        let format;
 
                         // https://git.qemu.org/?p=qemu.git;a=blob;f=docs/interop/qcow2.txt
                         if (file_header[0] == 81 && file_header[1] == 70 &&
@@ -564,7 +564,7 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
     const validationFailed = validate ? _validationFailed : {};
 
     let defaultBody;
-    const dialogLoading = storagePools === undefined;
+    const dialogLoading = storagePools === undefined || diskParams.format === undefined;
     if (dialogLoading) {
         defaultBody = (
             <Bullseye>

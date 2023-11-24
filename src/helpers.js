@@ -722,7 +722,7 @@ export function getDefaultVolumeFormat(pool) {
     if (['dir', 'fs', 'netfs', 'gluster', 'vstorage'].indexOf(pool.type) > -1)
         return 'qcow2';
 
-    return undefined;
+    return null;
 }
 
 /**
