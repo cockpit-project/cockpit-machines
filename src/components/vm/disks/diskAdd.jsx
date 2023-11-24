@@ -395,6 +395,19 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
     }), [defaultPool, mode, vm]);
     const storagePoolName = diskParams.storagePool?.name;
 
+    const getPoolFormatAndDevice = (pool, volName) => {
+        const params = { format: getDefaultVolumeFormat(pool), device: "disk" };
+        if (['dir', 'fs', 'netfs', 'gluster', 'vstorage'].indexOf(pool.type) > -1) {
+            const volume = pool.volumes.find(vol => vol.name === volName);
+            if (volume?.format) {
+                params.format = volume.format;
+                if (volume.format === "iso")
+                    params.device = "cdrom";
+            }
+        }
+        return params;
+    };
+
     useEffect(() => {
         // Refresh storage volume list before displaying the dialog.
         // There are recently no Libvirt events for storage volumes and polling is ugly.
@@ -423,20 +436,9 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
             return;
         }
 
-        let format = getDefaultVolumeFormat(diskParams.storagePool);
-        let deviceType = "disk";
-        if (['dir', 'fs', 'netfs', 'gluster', 'vstorage'].indexOf(diskParams.storagePool.type) > -1) {
-            const volume = diskParams.storagePool.volumes.find(vol => vol.name === diskParams.existingVolumeName);
-            if (volume && volume.format) {
-                format = volume.format;
-                if (volume.format === "iso")
-                    deviceType = "cdrom";
-            }
-        }
         setDiskParams(diskParams => ({
             ...diskParams,
-            format,
-            device: deviceType,
+            ...getPoolFormatAndDevice(diskParams.storagePool, diskParams.existingVolumeName),
         }));
     }, [storagePools, diskParams.storagePool, diskParams.existingVolumeName]);
 
@@ -513,7 +515,14 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
         switch (key) {
         case 'storagePoolName': {
             const currentPool = storagePools.find(pool => pool.name === value && pool.connectionName === vm.connectionName);
-            setDiskParams(diskParams => ({ ...diskParams, storagePool: currentPool, existingVolumeName: getDefaultVolumeName(currentPool, vm) }));
+            const existingVolumeName = getDefaultVolumeName(currentPool, vm);
+
+            setDiskParams(diskParams => ({
+                ...diskParams,
+                storagePool: currentPool,
+                existingVolumeName,
+                ...getPoolFormatAndDevice(currentPool, existingVolumeName),
+            }));
             break;
         }
         case 'mode': {
