@@ -51,6 +51,7 @@ const VolumeDetails = ({ idPrefix, size, unit, format, storagePoolCapacity, stor
     // TODO: Use slider
     let formatRow;
     let validVolumeFormats;
+    const existingValidVolumeFormats = []; // valid for existing volumes, but not for creation
     const volumeMaxSize = parseFloat(convertToUnit(storagePoolCapacity, units.B, unit).toFixed(2));
     const validationStateSize = validationFailed.size ? 'error' : 'default';
 
@@ -62,18 +63,24 @@ const VolumeDetails = ({ idPrefix, size, unit, format, storagePoolCapacity, stor
         ];
     } else if (['dir', 'fs', 'netfs', 'gluster', 'vstorage'].indexOf(storagePoolType) > -1) {
         validVolumeFormats = ['qcow2', 'raw'];
+        existingValidVolumeFormats.push('iso');
     }
 
     if (validVolumeFormats) {
-        formatRow = (
-            <FormGroup fieldId={`${idPrefix}-fileformat`} label={_("Format")}>
-                <FormSelect id={`${idPrefix}-format`}
-                    onChange={(_event, value) => onValueChanged('format', value)}
-                    value={format}>
-                    { validVolumeFormats.map(format => <FormSelectOption value={format} key={format} label={format} />) }
-                </FormSelect>
-            </FormGroup>
-        );
+        if (!format)
+            console.error("VolumeDetails internal error: format is not set for storage pool type", storagePoolType); // not-covered: assertion
+        else if (!validVolumeFormats.includes(format) && !existingValidVolumeFormats.includes(format))
+            console.error("VolumeDetails internal error: format", format, "is not valid for storage pool type", storagePoolType); // not-covered: assertion
+        else
+            formatRow = (
+                <FormGroup fieldId={`${idPrefix}-fileformat`} label={_("Format")}>
+                    <FormSelect id={`${idPrefix}-format`}
+                        onChange={(_event, value) => onValueChanged('format', value)}
+                        value={format}>
+                        { validVolumeFormats.map(format => <FormSelectOption value={format} key={format} label={format} />) }
+                    </FormSelect>
+                </FormGroup>
+            );
     }
 
     return (
@@ -137,7 +144,7 @@ export const VolumeCreateBody = ({
 };
 
 VolumeCreateBody.propTypes = {
-    format: PropTypes.string.isRequired,
+    format: PropTypes.string, // required for some pool types only
     idPrefix: PropTypes.string.isRequired,
     onValueChanged: PropTypes.func.isRequired,
     size: PropTypes.number.isRequired,
