@@ -416,8 +416,12 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
 
     useEffect(() => {
         // Follow up state updates after 'existingVolumeName' is changed
-        if (!diskParams.storagePool)
+        if (!diskParams.storagePool) {
+            // if storage pool detection finished, and there are no pools, mark format detection as initialized
+            if (storagePools !== undefined && storagePools.length === 0)
+                setDiskParams(diskParams => ({ ...diskParams, format: null }));
             return;
+        }
 
         let format = getDefaultVolumeFormat(diskParams.storagePool);
         let deviceType = "disk";
@@ -434,7 +438,7 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
             format,
             device: deviceType,
         }));
-    }, [diskParams.storagePool, diskParams.existingVolumeName]);
+    }, [storagePools, diskParams.storagePool, diskParams.existingVolumeName]);
 
     useEffect(() => {
         // Initial state settings and follow up state updates after 'device' is changed
