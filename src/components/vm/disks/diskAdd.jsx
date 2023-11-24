@@ -17,7 +17,7 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import { debounce } from 'throttle-debounce';
-import React, { useMemo, useRef, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Bullseye } from "@patternfly/react-core/dist/esm/layouts/Bullseye";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
@@ -463,24 +463,6 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
         const availableTarget = isMediaInsertion ? disk.target : getNextAvailableTarget(existingTargets, diskParams.busType);
         setDiskParams(diskParams => ({ ...diskParams, target: availableTarget }));
     }, [vm.disks, disk?.target, diskParams.busType, isMediaInsertion]);
-
-    const currentPoolRef = useRef();
-    useEffect(() => {
-        if (currentPoolRef.current === undefined) {
-            currentPoolRef.current = diskParams.storagePool;
-
-            // Reset the format only when the Format selection dropdown changes entries - otherwise just keep the old selection
-            // All pool types apart from 'disk' have either 'raw' or 'qcow2' format
-            const prevPool = currentPoolRef.current;
-            if ((diskParams.storagePool?.type == 'disk' && prevPool?.type != 'disk') || (diskParams.storagePool?.type != 'disk' && prevPool?.type == 'disk')) {
-                prevPool.current = diskParams.storagePool;
-                setDiskParams(diskParams => ({
-                    ...diskParams,
-                    format: getDefaultVolumeFormat(diskParams.storagePool?.name),
-                }));
-            }
-        }
-    }, [diskParams.storagePool?.type, diskParams.storagePool?.name, diskParams.storagePool]);
 
     useEffect(() => {
         const file = diskParams.file;
