@@ -434,8 +434,6 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
             "Failed to get libvirt version from the dbus API:.*Cannot recv data: Connection reset by peer",
             # FIXME:: https://github.com/cockpit-project/cockpit-machines/issues/1272
             "Warning: Failed.*type:.*The prop `format` is marked as required in `VolumeCreateBody`, but its value is `undefined`",
-            # FIXME: https://github.com/cockpit-project/cockpit-machines/issues/1273
-            " Warning: Failed.*type:.* Invalid prop `size` of type `string` supplied to `VolumeCreateBody`, expected `number`",
             # deprecated PF SelectGroup has invalid properties
             r"Warning: React does not recognize the .* prop.*(inputId|isSelected|sendRef|keyHandler)",
         )

@@ -534,6 +534,10 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
             setMode(value);
             break;
         }
+        case 'size': {
+            setDiskParams(diskParams => ({ ...diskParams, size: parseInt(value) }));
+            break;
+        }
         default:
             setDiskParams(diskParams => ({ ...diskParams, [key]: value }));
         }

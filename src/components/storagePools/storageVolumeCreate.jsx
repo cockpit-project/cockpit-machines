@@ -57,7 +57,14 @@ class CreateStorageVolumeModal extends React.Component {
     }
 
     onValueChanged(key, value) {
-        this.setState({ [key]: value });
+        switch (key) {
+        case 'size':
+            this.setState({ size: parseInt(value) });
+            break;
+
+        default:
+            this.setState({ [key]: value });
+        }
     }
 
     validateParams() {
