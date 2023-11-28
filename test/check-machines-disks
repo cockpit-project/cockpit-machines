@@ -604,6 +604,9 @@ class TestMachinesDisks(VirtualMachinesCase):
                 # Type in file path
                 b.set_file_autocomplete_val(f"#vm-{self.vm_name}-disks-adddisk-file", self.file_path)
                 if self.device:
+                    if self.file_path.endswith(".iso"):
+                        # wait for auto-detection to finish
+                        b.wait_val(f"#vm-{self.vm_name}-disks-adddisk-select-device", "cdrom")
                     b.select_from_dropdown(f"#vm-{self.vm_name}-disks-adddisk-select-device", self.device)
             elif self.mode == "use-existing":
                 b.wait_visible(f"#vm-{self.vm_name}-disks-adddisk-existing-select-pool:enabled")
