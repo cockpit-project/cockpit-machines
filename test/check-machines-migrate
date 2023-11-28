@@ -147,7 +147,7 @@ class TestMachinesMigration(VirtualMachinesCase):
         self.goToVmPage("subVmTest1")
 
         self.performAction("subVmTest1", "migrate")
-        b.wait_visible("#migrate-modal.pf-v5-c-modal-box")
+        b.wait_visible("#migrate-modal")
 
         if fail == "uri":
             # test failure for syntactically incorrect destination uri
@@ -192,7 +192,7 @@ class TestMachinesMigration(VirtualMachinesCase):
             self.assertIn("subVmTest1", machine1.execute("virsh list --all"))
         else:
             with b.wait_timeout(120):
-                b.wait_not_present("#migrate-modal.pf-v5-c-modal-box")
+                b.wait_not_present("#migrate-modal")
 
             # Verify the state of the migrated VM in the destination host
             # The migrated VM should always exist on destination - domstate depends on the options of the dialog set
