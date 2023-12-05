@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import { combineReducers } from 'redux/dist/redux.js';
+import { combineReducers } from 'redux';
 import VMS_CONFIG from "./config.js";
 import { logDebug, isObjectEmpty } from './helpers.js';
 import {
