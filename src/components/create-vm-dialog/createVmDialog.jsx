@@ -245,7 +245,7 @@ function validateParams(vmParams) {
         );
     }
 
-    if (!vmParams.userPassword && vmParams.userLogin) {
+    if (vmParams.userLogin && !((!!vmParams.userPassword) || vmParams.sshKeys.length > 0)) {
         validationFailed.userPassword = _("User password must not be empty when user login is set");
     }
     if (vmParams.userPassword && !vmParams.userLogin) {

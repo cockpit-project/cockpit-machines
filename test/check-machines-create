@@ -198,6 +198,14 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                          create_and_run=True),
                                              {"create-vm-dialog-user-login": "User login must not be empty when SSH keys are set"})
 
+        # Without the root password and "Create and edit"
+        runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
+                                                                         storage_size=10, storage_size_unit='MiB',
+                                                                         location=config.VALID_DISK_IMAGE_PATH,
+                                                                         user_login="",
+                                                                         ssh_keys=[rsakey]),
+                                             {"create-vm-dialog-user-login": "User login must not be empty when SSH keys are set"})
+
     def testCreateNameGeneration(self):
         config = TestMachinesCreate.TestCreateConfig
         runner = TestMachinesCreate.CreateVmRunner(self)
@@ -304,6 +312,27 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                                     user_password="catsaremybestfr13nds",
                                                                     user_login="foo",
                                                                     root_password="dogsaremybestfr13nds",
+                                                                    ssh_keys=[rsakey],
+                                                                    create_and_run=True))
+
+        # Try to create VM with a SSH key and without the root and user password
+        runner.createCloudBaseImageTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
+                                                                    storage_size=10, storage_size_unit='MiB',
+                                                                    location=config.VALID_DISK_IMAGE_PATH,
+                                                                    os_name=config.FEDORA_28,
+                                                                    os_short_id=config.FEDORA_28_SHORTID,
+                                                                    user_login="foo",
+                                                                    ssh_keys=[rsakey],
+                                                                    create_and_run=True))
+
+        # Try to create VM with a SSH key and root password, also without the user password
+        runner.createCloudBaseImageTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
+                                                                    storage_size=10, storage_size_unit='MiB',
+                                                                    location=config.VALID_DISK_IMAGE_PATH,
+                                                                    os_name=config.FEDORA_28,
+                                                                    os_short_id=config.FEDORA_28_SHORTID,
+                                                                    root_password="dogsaremybestfr13nds",
+                                                                    user_login="foo",
                                                                     ssh_keys=[rsakey],
                                                                     create_and_run=True))
 
@@ -1149,7 +1178,8 @@ vnc_password= "{vnc_passwd}"
                 user_data_path = virt_install_cmd_out.split("user-data=", 1)[1].split()[0]
                 user_data = self.machine.execute("cat " + user_data_path)
 
-                self.assertIn("\nssh_pwauth: true", user_data)
+                if self.user_password:
+                    self.assertIn("\nssh_pwauth: true", user_data)
 
             ssh_keys = self.expected_ssh_keys or self.ssh_keys
             if ssh_keys is not None:
@@ -1306,7 +1336,7 @@ vnc_password= "{vnc_passwd}"
                 b.set_checked(f"#connectionName-{self.connection}", True)
 
             if self.is_unattended or self.sourceType == "cloud":
-                if self.is_unattended or self.user_password or self.user_login or self.root_password:
+                if self.is_unattended or self.user_password or self.user_login or self.root_password or self.ssh_keys:
                     b.click("#pf-tab-1-automation")
 
                 if self.profile:
