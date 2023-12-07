@@ -39,6 +39,15 @@ def get_graphics_capabilies(connection):
         for value in graphics.find('enum').findall('value'):
             consoles.append(value.text)
 
+    # HACK: Ignore spice on RHEL 8; https://issues.redhat.com/browse/RHEL-18058
+    try:
+        with open("/etc/os-release") as f:
+            if "platform:el8" in f.read():
+                logging.debug("get_graphics_capabilies: ignoring spice on RHEL 8")
+                consoles.remove('spice')
+    except FileNotFoundError:
+        pass  # not RHEL then
+
     logging.debug('get_graphics_capabilies: %s', ', '.join(consoles))
 
     return [c for c in consoles if c in ['vnc', 'spice']]
