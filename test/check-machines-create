@@ -1218,13 +1218,14 @@ vnc_password= "{vnc_passwd}"
             domainXML = m.execute(f"virsh dumpxml --security-info {self.name}")
             root = ET.fromstring(domainXML)
 
-            expect_spice = not m.image.startswith("rhel-9") and m.image not in ["centos-9-stream"]
-            spice = root.findall(".//graphics[@type='spice']")
-            if expect_spice:
+            if m.image.startswith("rhel-9") or m.image in ["centos-9-stream"]:
+                # we don't expect any SPICE device, unsupported on RHEL 9
+                self.assertNotIn("spice", domainXML)
+            else:
+                # SPICE is supported on all other OSes
+                spice = root.findall(".//graphics[@type='spice']")
                 self.assertEqual(spice_listen, spice[0].attrib['listen'])
                 self.assertEqual(spice_passwd, spice[0].attrib.get('passwd', None))
-            else:
-                self.assertEqual(spice, [])
 
             vnc = root.findall(".//graphics[@type='vnc']")[0]
             self.assertEqual(vnc_listen, vnc.attrib['listen'])
