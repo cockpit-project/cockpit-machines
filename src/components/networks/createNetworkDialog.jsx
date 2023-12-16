@@ -22,6 +22,7 @@ import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { FormSelect, FormSelectOption, FormSelectOptionGroup } from "@patternfly/react-core/dist/esm/components/FormSelect";
+import { HelperText, HelperTextItem } from '@patternfly/react-core';
 import { Grid } from "@patternfly/react-core/dist/esm/layouts/Grid";
 import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
@@ -220,14 +221,18 @@ const DhcpRow = ({ ipVersion, rangeStart, rangeEnd, expanded, onValueChanged, va
                     <TextInput id={'create-network-ipv' + ipVersion + '-dhcp-range-start'}
                                value={rangeStart}
                                onChange={(_, value) => onValueChanged('ipv' + ipVersion + 'DhcpRangeStart', value)} />
-                    <FormHelper helperTextInvalid={validationStart == "error" && validationFailed['ipv' + ipVersion + 'DhcpRangeStart']} />
+                    <HelperText>
+                        <HelperTextItem variant="error">{validationStart == "error" && validationFailed['ipv' + ipVersion + 'DhcpRangeStart']}</HelperTextItem>
+                    </HelperText>
                 </FormGroup>
                 <FormGroup fieldId={'create-network-ipv' + ipVersion + '-dhcp-range-end'}
                            className={`create-network-ipv${ipVersion}-dhcp-range-end`} label={_("End")}>
                     <TextInput id={'create-network-ipv' + ipVersion + '-dhcp-range-end'}
                                value={rangeEnd}
                                onChange={(_, value) => onValueChanged('ipv' + ipVersion + 'DhcpRangeEnd', value)} />
-                    <FormHelper helperTextInvalid={validationEnd == "error" && validationFailed['ipv' + ipVersion + 'DhcpRangeEnd']} />
+                    <HelperText>
+                        <HelperTextItem variant="error">{validationEnd == "error" && validationFailed['ipv' + ipVersion + 'DhcpRangeEnd']} </HelperTextItem>
+                    </HelperText>
                 </FormGroup>
             </Grid>}
         </>
@@ -245,14 +250,18 @@ const Ipv4Row = ({ validationFailed, dialogValues, onValueChanged }) => {
                            value={dialogValues.ipv4}
                            validated={validationAddress}
                            onChange={(_, value) => onValueChanged('ipv4', value)} />
-                <FormHelper helperTextInvalid={validationAddress == "error" && validationFailed.ipv4} />
+                <HelperText>
+                    <HelperTextItem variant="error">{validationAddress == "error" && validationFailed.ipv4} </HelperTextItem>
+                </HelperText>
             </FormGroup>
             <FormGroup fieldId='create-network-ipv4-netmask' label={_("Mask or prefix length")}>
                 <TextInput id='create-network-ipv4-netmask'
                            value={dialogValues.netmask}
                            validated={validationNetmask}
                            onChange={(_, value) => onValueChanged('netmask', value)} />
-                <FormHelper helperTextInvalid={validationNetmask == "error" && validationFailed.netmask} />
+                <HelperText>
+                    <HelperTextItem variant="error">{validationNetmask == "error" && validationFailed.netmask} </HelperTextItem>
+                </HelperText>
             </FormGroup>
             <DhcpRow ipVersion='4'
                 rangeStart={dialogValues.ipv4DhcpRangeStart}
