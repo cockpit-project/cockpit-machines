@@ -248,7 +248,7 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
         );
         dropdownItems.push(<DropdownSeparator key="separator-suspend" />);
     }
-    
+
     if (domainCanShutdown(state)) {
         shutdown = (
             <Button key='action-shutdown'
