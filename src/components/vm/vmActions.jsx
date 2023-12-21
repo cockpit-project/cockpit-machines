@@ -243,7 +243,7 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
             <DropdownItem key={`${id}-suspend`}
                           id={`${id}-suspend`}
                           onClick={() => onDiskSuspend(vm)}>
-                {_("Suspend")}
+                {_("Suspend To Disk")}
             </DropdownItem>
         );
         dropdownItems.push(<DropdownSeparator key="separator-suspend" />);
