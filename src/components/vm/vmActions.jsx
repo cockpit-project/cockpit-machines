@@ -45,6 +45,7 @@ import {
     domainCanRun,
     domainCanPause,
     domainCanShutdown,
+    domainCanDiskSuspend,
     domainForceOff,
     domainForceReboot,
     domainInstall,
@@ -54,6 +55,7 @@ import {
     domainSendNMI,
     domainShutdown,
     domainStart,
+    domainDiskSuspend,
 } from '../../libvirtApi/domain.js';
 import store from "../../store.js";
 
@@ -177,6 +179,19 @@ const onSendNMI = (vm) => domainSendNMI({ name: vm.name, id: vm.id, connectionNa
     );
 });
 
+const onDiskSuspend = (vm) => domainDiskSuspend({ name: vm.name, id: vm.id, connectionName: vm.connectionName, flags: vm.state == 'running' ? 2 : 4 }).catch(ex => {
+    store.dispatch(
+        updateVm({
+            connectionName: vm.connectionName,
+            name: vm.name,
+            error: {
+                text: cockpit.format(_("VM $0 failed to Suspend To Disk"), vm.name),
+                detail: ex.message,
+            }
+        })
+    );
+});
+
 const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
     const Dialogs = useDialogs();
     const [isActionOpen, setIsActionOpen] = useState(false);
@@ -223,6 +238,17 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
         dropdownItems.push(<DropdownSeparator key="separator-resume" />);
     }
 
+    if (domainCanDiskSuspend(state)) {
+        dropdownItems.push(
+            <DropdownItem key={`${id}-suspend`}
+                          id={`${id}-suspend`}
+                          onClick={() => onDiskSuspend(vm)}>
+                {_("Suspend")}
+            </DropdownItem>
+        );
+        dropdownItems.push(<DropdownSeparator key="separator-suspend" />);
+    }    
+    
     if (domainCanShutdown(state)) {
         shutdown = (
             <Button key='action-shutdown'
