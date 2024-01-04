@@ -30,11 +30,11 @@ const _ = cockpit.gettext;
 
 export const ConfirmDialog = ({ idPrefix, actionsList, title, titleIcon, vm }) => {
     const Dialogs = useDialogs();
-    const [uptime, setUptime] = useState();
+    const [startTime, setStartTime] = useState();
 
     useEffect(() => {
         return domainGetStartTime({ connectionName: vm.connectionName, vmName: vm.name })
-                .then(res => setUptime(res))
+                .then(res => setStartTime(res))
                 .catch(e => console.error(JSON.stringify(e)));
     }, [vm]);
 
@@ -64,11 +64,11 @@ export const ConfirmDialog = ({ idPrefix, actionsList, title, titleIcon, vm }) =
             titleIconVariant={titleIcon}
             isOpen
             footer={actions}>
-            {uptime
+            {startTime
                 ? <DescriptionList isHorizontal isFluid>
                     <DescriptionListGroup>
                         <DescriptionListTerm>{_("Uptime")}</DescriptionListTerm>
-                        <DescriptionListDescription id="uptime">{distanceToNow(new Date(uptime))}</DescriptionListDescription>
+                        <DescriptionListDescription id="uptime">{distanceToNow(startTime)}</DescriptionListDescription>
                     </DescriptionListGroup>
                 </DescriptionList>
                 /* for tests */
