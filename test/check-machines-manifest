@@ -19,11 +19,11 @@
 
 import os
 
-from testlib import MachineCase, nondestructive, test_main
+import testlib
 
 
-@nondestructive
-class TestMachinesManifest(MachineCase):
+@testlib.nondestructive
+class TestMachinesManifest(testlib.MachineCase):
 
     def testBasic(self):
         b = self.browser
@@ -42,4 +42,4 @@ class TestMachinesManifest(MachineCase):
 
 
 if __name__ == '__main__':
-    test_main()
+    testlib.test_main()

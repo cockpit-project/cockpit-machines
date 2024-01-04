@@ -21,8 +21,8 @@ import os
 import time
 import xml.etree.ElementTree as ET
 
-from machineslib import VirtualMachinesCase
-from testlib import BOTS_DIR, Error, nondestructive, skipImage, test_main, timeout, wait
+import machineslib
+import testlib
 
 SYSTEM_LOCAL_CONF = '''<!DOCTYPE busconfig PUBLIC
 "-//freedesktop//DTD D-Bus Bus Configuration 1.0//EN"
@@ -48,15 +48,15 @@ def release_target(used_targets, target):
     used_targets.remove(target)
 
 
-@nondestructive
-class TestMachinesDisks(VirtualMachinesCase):
+@testlib.nondestructive
+class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
     def wait_for_disk_stats(self, name, target):
         b = self.browser
         try:
             with b.wait_timeout(10):
                 b.wait_visible(f"#vm-{name}-disks-{target}-used")  # wait for disk statistics to show up
-        except Error as ex:
+        except testlib.Error as ex:
             if not ex.msg.startswith('timeout'):
                 raise
             # stats did not show up, check if user message showed up
@@ -92,7 +92,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         m.execute("virsh vol-create-as myPoolOne mydisk2 --capacity 100M --format raw")
         m.execute("virsh vol-create-as myPoolOne mydisk3 --capacity 100M --format qcow2")
         m.execute("virsh vol-create-as myPoolOne mydisk4 --capacity 100M --format qcow2")
-        wait(lambda: all(disk in m.execute("virsh vol-list myPoolOne") for disk in ["mydisk", "mydisk2", "mydisk3", "mydisk4"]))
+        testlib.wait(lambda: all(disk in m.execute("virsh vol-list myPoolOne") for disk in ["mydisk", "mydisk2", "mydisk3", "mydisk4"]))
 
         m.execute(f"virsh attach-disk --domain subVmTest1 --source {p1}/mydisk --target vde --targetbus virtio --persistent")
         m.execute(f"virsh attach-disk --domain subVmTest1 --source {p1}/mydisk2 --target vdf --targetbus virtio")
@@ -746,8 +746,8 @@ class TestMachinesDisks(VirtualMachinesCase):
 
             return self
 
-    @skipImage("TODO: scsi support missing on arch image", "arch")
-    @skipImage("Debian images' -cloud kernel don't have target-cli-mod kmod", "debian*")
+    @testlib.skipImage("TODO: scsi support missing on arch image", "arch")
+    @testlib.skipImage("Debian images' -cloud kernel don't have target-cli-mod kmod", "debian*")
     def testAddDiskSCSI(self):
         b = self.browser
         m = self.machine
@@ -760,7 +760,7 @@ class TestMachinesDisks(VirtualMachinesCase):
 
         m.execute(f"virsh pool-define-as iscsi-pool --type iscsi --target /dev/disk/by-id --source-host 127.0.0.1 --source-dev {target_iqn}")
         m.execute("virsh pool-start iscsi-pool")
-        wait(lambda: "unit:0:0:0" in self.machine.execute("virsh pool-refresh iscsi-pool; virsh vol-list iscsi-pool"), delay=3)
+        testlib.wait(lambda: "unit:0:0:0" in self.machine.execute("virsh pool-refresh iscsi-pool; virsh vol-list iscsi-pool"), delay=3)
 
         self.addCleanup(self.machine.execute, "virsh pool-destroy iscsi-pool; virsh pool-undefine iscsi-pool")
 
@@ -917,9 +917,9 @@ class TestMachinesDisks(VirtualMachinesCase):
         ).execute()
 
         # Test fix for https://bugzilla.redhat.com/show_bug.cgi?id=2107247
-        m.upload([os.path.join(BOTS_DIR, "machine/cloud-init.iso")], "/var/lib/libvirt/images/defaultVol.iso")
+        m.upload([os.path.join(testlib.BOTS_DIR, "machine/cloud-init.iso")], "/var/lib/libvirt/images/defaultVol.iso")
         m.execute("virsh pool-refresh images")
-        wait(lambda: "defaultVol.iso" in m.execute("virsh vol-list images"), delay=3)
+        testlib.wait(lambda: "defaultVol.iso" in m.execute("virsh vol-list images"), delay=3)
 
         # wait until the volume bubbled through the UI
         b.go("/machines#/storages")
@@ -953,7 +953,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         if m.image in ["debian-testing"]:
             self.allow_journal_messages(f'.* type=1400 .* apparmor="DENIED" operation="open" profile="libvirt.* name="{self.vm_tmpdir}.*')
 
-    @timeout(900)
+    @testlib.timeout(900)
     def testAddDiskDirPool(self):
         b = self.browser
         m = self.machine
@@ -971,11 +971,11 @@ class TestMachinesDisks(VirtualMachinesCase):
         m.execute(f"virsh pool-define-as myPoolOne --type dir --target {v1}; virsh pool-start myPoolOne")
         m.execute(f"virsh pool-define-as myPoolTwo --type dir --target {v2}; virsh pool-start myPoolTwo")
 
-        m.upload([os.path.join(BOTS_DIR, "machine/cloud-init.iso")], os.path.join(default_tmp, "defaultVol.iso"))
+        m.upload([os.path.join(testlib.BOTS_DIR, "machine/cloud-init.iso")], os.path.join(default_tmp, "defaultVol.iso"))
         m.execute("virsh vol-create-as default_tmp defaultVol --capacity 10M --format raw")
         m.execute("virsh vol-create-as myPoolTwo mydiskofpooltwo_temporary --capacity 50M --format qcow2")
         m.execute("virsh vol-create-as myPoolTwo mydiskofpooltwo_permanent --capacity 50M --format qcow2")
-        wait(lambda: "mydiskofpooltwo_permanent" in m.execute("virsh vol-list myPoolTwo"))
+        testlib.wait(lambda: "mydiskofpooltwo_permanent" in m.execute("virsh vol-list myPoolTwo"))
 
         self.createVm("subVmTest1")
 
@@ -1269,7 +1269,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         ).execute()
 
         # check CD/DVD discs correctly assumes raw format for ISO file
-        m.upload([os.path.join(BOTS_DIR, "machine/cloud-init.iso")], "/var/lib/libvirt/images/isofile")
+        m.upload([os.path.join(testlib.BOTS_DIR, "machine/cloud-init.iso")], "/var/lib/libvirt/images/isofile")
         self.VMAddDiskDialog(
             self,
             device='disk',
@@ -1458,9 +1458,9 @@ class TestMachinesDisks(VirtualMachinesCase):
         m.execute("virsh vol-create-as myPoolOne mydiskofpoolone_1 --capacity 1G --format qcow2")
         m.execute("virsh vol-create-as myPoolOne mydiskofpoolone_2 --capacity 1G --format qcow2")
         m.execute("virsh vol-create-as myPoolOne mydiskofpoolone_3 --capacity 1M --format qcow2")
-        wait(lambda: "mydiskofpoolone_1" in m.execute("virsh vol-list myPoolOne"))
-        wait(lambda: "mydiskofpoolone_2" in m.execute("virsh vol-list myPoolOne"))
-        wait(lambda: "mydiskofpoolone_3" in m.execute("virsh vol-list myPoolOne"))
+        testlib.wait(lambda: "mydiskofpoolone_1" in m.execute("virsh vol-list myPoolOne"))
+        testlib.wait(lambda: "mydiskofpoolone_2" in m.execute("virsh vol-list myPoolOne"))
+        testlib.wait(lambda: "mydiskofpoolone_3" in m.execute("virsh vol-list myPoolOne"))
 
         args = self.createVm("subVmTest1")
 
@@ -1494,7 +1494,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.click("#delete-resource-modal-primary")
         b.wait_not_present(".pf-v5-c-modal-box")
         # Wait for underlying VM's OS to detach the disk
-        wait(lambda: "vdc" not in m.execute("virsh domblklist subVmTest1"), delay=1)
+        testlib.wait(lambda: "vdc" not in m.execute("virsh domblklist subVmTest1"), delay=1)
         b.wait_not_present("#vm-subVmTest1-disks-vdc-device")
 
         # Test that detaching disk of a running domain will affect the
@@ -1519,10 +1519,10 @@ class TestMachinesDisks(VirtualMachinesCase):
         m.execute("virsh vol-create-as myPoolOne diskSata --capacity 1M --format qcow2")
         m.execute("virsh vol-create-as myPoolOne diskSata2 --capacity 1M --format qcow2")
         m.execute("virsh vol-create-as myPoolOne diskSata3 --capacity 1M --format qcow2")
-        wait(lambda: "diskVirtio" in m.execute("virsh vol-list myPoolOne"))
-        wait(lambda: "diskSata" in m.execute("virsh vol-list myPoolOne"))
-        wait(lambda: "diskSata2" in m.execute("virsh vol-list myPoolOne"))
-        wait(lambda: "diskSata3" in m.execute("virsh vol-list myPoolOne"))
+        testlib.wait(lambda: "diskVirtio" in m.execute("virsh vol-list myPoolOne"))
+        testlib.wait(lambda: "diskSata" in m.execute("virsh vol-list myPoolOne"))
+        testlib.wait(lambda: "diskSata2" in m.execute("virsh vol-list myPoolOne"))
+        testlib.wait(lambda: "diskSata3" in m.execute("virsh vol-list myPoolOne"))
         vdf_path = f"{p1}/diskVirtio"
         sda_path = f"{p1}/diskSata"
         sdb_path = f"{p1}/diskSata2"
@@ -1623,7 +1623,7 @@ class TestMachinesDisks(VirtualMachinesCase):
         b.wait_visible(".pf-v5-c-modal-box")
         b.click("#delete-resource-modal-primary")
         b.wait_not_present(".pf-v5-c-modal-box")
-        wait(lambda: "vdc" not in m.execute("virsh domblklist subVmTest1"), delay=1)
+        testlib.wait(lambda: "vdc" not in m.execute("virsh domblklist subVmTest1"), delay=1)
         b.wait_not_present("#vm-subVmTest1-disks-vdc-device")
 
     def testInsertDiscCDROM(self):
@@ -1632,7 +1632,7 @@ class TestMachinesDisks(VirtualMachinesCase):
 
         # Prepare storage pool with an ISO file in it to be used with "Use existing" option
         m.execute("virsh pool-define-as images --type dir --target /var/lib/libvirt/images; virsh pool-start images")
-        m.upload([os.path.join(BOTS_DIR, "machine/cloud-init.iso")], "/var/lib/libvirt/images/cd.iso")
+        m.upload([os.path.join(testlib.BOTS_DIR, "machine/cloud-init.iso")], "/var/lib/libvirt/images/cd.iso")
 
         # Prepare ISO file to be used with "Custom path" option
         m.execute("touch /var/lib/libvirt/novell.iso")
@@ -1678,4 +1678,4 @@ class TestMachinesDisks(VirtualMachinesCase):
 
 
 if __name__ == '__main__':
-    test_main()
+    testlib.test_main()

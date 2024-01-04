@@ -19,8 +19,8 @@
 
 import subprocess
 
-from machineslib import VirtualMachinesCase
-from testlib import nondestructive, test_main, wait
+import machineslib
+import testlib
 
 # If this test fails to run, the host machine needs:
 # echo "options kvm-intel nested=1" > /etc/modprobe.d/kvm-intel.conf
@@ -31,8 +31,8 @@ from testlib import nondestructive, test_main, wait
 distrosWithDefaultHostModel = ["centos-8-stream"]
 
 
-@nondestructive
-class TestMachinesSettings(VirtualMachinesCase):
+@testlib.nondestructive
+class TestMachinesSettings(machineslib.VirtualMachinesCase):
 
     def testVCPU(self):
         b = self.browser
@@ -132,7 +132,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         b.click("#machines-cpu-modal-dialog-apply")
         b.wait_not_present("#machines-cpu-modal-dialog")
 
-        wait(lambda: m.execute(
+        testlib.wait(lambda: m.execute(
             "virsh dumpxml subVmTest1 | tee /tmp/subVmTest1.xml | xmllint --xpath '/domain/cpu/topology[@sockets=\"2\"][@threads=\"1\"][@cores=\"2\"]' -"))
 
         # Run VM - this ensures that the internal state is updated before we move on.
@@ -482,10 +482,10 @@ class TestMachinesSettings(VirtualMachinesCase):
         dom_xml = "virsh -c qemu:///system dumpxml subVmTest1"
 
         xmllint_elem = f"{dom_xml} | xmllint --xpath 'string(//domain/cpu/@mode)' - 2>&1 || true"
-        wait(lambda: cpu_model in m.execute(xmllint_elem).strip())
+        testlib.wait(lambda: cpu_model in m.execute(xmllint_elem).strip())
 
         xmllint_elem = f"{dom_xml} | xmllint --xpath 'string(//domain/vcpu)' - 2>&1 || true"
-        wait(lambda: "3" in m.execute(xmllint_elem).strip())
+        testlib.wait(lambda: "3" in m.execute(xmllint_elem).strip())
 
         virsh_output = m.execute("virsh dumpxml subVmTest1 | xmllint --xpath '/domain/devices/watchdog/@action' -").strip()
         self.assertEqual(virsh_output, 'action="reset"')
@@ -685,7 +685,7 @@ class TestMachinesSettings(VirtualMachinesCase):
         self.waitPageInit()
         self.goToVmPage("subVmTest2")
         m.execute("virsh undefine subVmTest2")
-        wait(lambda: "no" in m.execute("virsh dominfo subVmTest2 | grep ^Persistent"), delay=3)
+        testlib.wait(lambda: "no" in m.execute("virsh dominfo subVmTest2 | grep ^Persistent"), delay=3)
         # UI was notified that VM is transient
         b.wait_visible("#vm-subVmTest2-memory-count button[aria-disabled=true]")
 
@@ -865,7 +865,7 @@ class TestMachinesSettings(VirtualMachinesCase):
             setVsockLive(new_auto=False, new_address="4", previous_auto=True, previous_address=default_libvirt_vsock_address)
 
             m.execute("virsh undefine subVmTest1")
-            wait(lambda: "no" in m.execute("virsh dominfo subVmTest1 | grep ^Persistent"), delay=3)
+            testlib.wait(lambda: "no" in m.execute("virsh dominfo subVmTest1 | grep ^Persistent"), delay=3)
             # UI was notified that VM is transient
             b.wait_visible("#vm-subVmTest1-memory-count button[aria-disabled=true]")
 
@@ -878,4 +878,4 @@ class TestMachinesSettings(VirtualMachinesCase):
 
 
 if __name__ == '__main__':
-    test_main()
+    testlib.test_main()

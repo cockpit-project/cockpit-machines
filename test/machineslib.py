@@ -19,9 +19,9 @@ import os
 import sys
 import traceback
 
-from netlib import NetworkHelpers
-from storagelib import StorageHelpers
-from testlib import Error, MachineCase, attach, wait
+import netlib
+import storagelib
+import testlib
 
 
 def hasMonolithicDaemon(image):
@@ -312,8 +312,8 @@ class VirtualMachinesCaseHelpers:
 
     def waitLogFile(self, logfile, expected_text):
         try:
-            wait(lambda: expected_text in self.machine.execute(f"cat {logfile}"), delay=3)
-        except Error:
+            testlib.wait(lambda: expected_text in self.machine.execute(f"cat {logfile}"), delay=3)
+        except testlib.Error:
             log = self.machine.execute(f"cat {logfile}")
             print(f"----- log of failed VM ------\n{log}\n---------")
             raise
@@ -322,7 +322,7 @@ class VirtualMachinesCaseHelpers:
         self.waitLogFile(logfile, "login as 'cirros' user.")
 
 
-class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelpers, NetworkHelpers):
+class VirtualMachinesCase(testlib.MachineCase, VirtualMachinesCaseHelpers, storagelib.StorageHelpers, netlib.NetworkHelpers):
     def setUp(self):
         super().setUp()
 
@@ -447,7 +447,7 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
         dest_file = f"{self.label()}-{m.label}-{vm}.xml"
         dest = os.path.abspath(dest_file)
         m.download(vms_xml, dest)
-        attach(dest, move=False)
+        testlib.attach(dest, move=False)
         print(f"Wrote {vm} XML to {dest_file}")
 
     def downloadVmLog(self, vm):
@@ -459,7 +459,7 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
             dest_file = f"{self.label()}-{m.label}-{vm}.log"
             dest = os.path.abspath(dest_file)
             m.download(vms_log, dest)
-            attach(dest, move=True)
+            testlib.attach(dest, move=True)
             print(f"Wrote {vm} log to {dest_file}")
 
     def downloadVmsArtifacts(self):

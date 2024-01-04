@@ -24,17 +24,17 @@ import time
 import xml.etree.ElementTree as ET
 from datetime import datetime
 
-from machineslib import VirtualMachinesCase
+import machineslib
+import testlib
 from machinesxmls import NETWORK_XML_PXE, PXE_SERVER_CFG
-from testlib import Error, nondestructive, skipImage, test_main, wait
 
 NO_STORAGE = "No storage"
 NEW_VOLUME_QCOW2 = "Create new qcow2 volume"
 NEW_VOLUME_RAW = "Create new raw volume"
 
 
-@nondestructive
-class TestMachinesCreate(VirtualMachinesCase):
+@testlib.nondestructive
+class TestMachinesCreate(machineslib.VirtualMachinesCase):
 
     # This test contains basic button and form validation of the Create VM dialog
     # None of the sub-tests will actually call virt-install
@@ -496,8 +496,8 @@ class TestMachinesCreate(VirtualMachinesCase):
         # virt-install will overwrite our changes.
 
         # Wait for virt-install to define the VM, stop it, and wait for virt-install to be done
-        wait(lambda: "pxe-guest" in self.machine.execute("virsh list --name --persistent"), delay=3)
-        wait(lambda: "pxe-guest" in self.machine.execute("virsh list --name"), delay=3)
+        testlib.wait(lambda: "pxe-guest" in self.machine.execute("virsh list --name --persistent"), delay=3)
+        testlib.wait(lambda: "pxe-guest" in self.machine.execute("virsh list --name"), delay=3)
         self.machine.execute("virsh destroy pxe-guest")
         runner._assertScriptFinished()
         self.assertEqual(self.machine.execute("virsh list --name").strip(), "")
@@ -542,7 +542,7 @@ class TestMachinesCreate(VirtualMachinesCase):
         self.machine.execute("virsh start pxe-guest")
 
         # The file is full of ANSI control characters in between every letter, filter them out
-        wait(lambda: self.machine.execute(r"sed 's,\x1B\[[0-9;]*[a-zA-Z],,g' /tmp/serial.txt | grep 'Rebooting in 60'"), delay=3)
+        testlib.wait(lambda: self.machine.execute(r"sed 's,\x1B\[[0-9;]*[a-zA-Z],,g' /tmp/serial.txt | grep 'Rebooting in 60'"), delay=3)
         self.goToMainPage()
 
         self.machine.execute("virsh destroy pxe-guest")
@@ -557,7 +557,7 @@ class TestMachinesCreate(VirtualMachinesCase):
                                                       create_and_run=True,
                                                       delete=False))
         # Wait for virt-install to define the VM and then stop it
-        wait(lambda: "pxe-guest" in self.machine.execute("virsh list --persistent"), delay=3)
+        testlib.wait(lambda: "pxe-guest" in self.machine.execute("virsh list --persistent"), delay=3)
         b.wait_in_text("#vm-pxe-guest-system-state", "Running")
         self.machine.execute("virsh destroy pxe-guest")
 
@@ -596,7 +596,7 @@ vnc_password= "{vnc_passwd}"
                                         location=config.NOVELL_MOCKUP_ISO_PATH),
             "127.0.0.1", "::1", None, None)
 
-    @skipImage("TODO: Arch Linux has no iscsi support", "arch")
+    @testlib.skipImage("TODO: Arch Linux has no iscsi support", "arch")
     def testCreateThenInstall(self):
         runner = TestMachinesCreate.CreateVmRunner(self)
         config = TestMachinesCreate.TestCreateConfig
@@ -631,7 +631,7 @@ vnc_password= "{vnc_passwd}"
                 "virsh pool-start iscsi-pool"
             ]
             print(self.machine.execute("; ".join(cmd).format(target_iqn)))
-            wait(lambda: "unit:0:0:0" in self.machine.execute("virsh pool-refresh iscsi-pool; virsh vol-list iscsi-pool"), delay=3)
+            testlib.wait(lambda: "unit:0:0:0" in self.machine.execute("virsh pool-refresh iscsi-pool; virsh vol-list iscsi-pool"), delay=3)
 
             self.addCleanup(self.machine.execute, "virsh pool-destroy iscsi-pool; virsh pool-undefine iscsi-pool")
 
@@ -1190,7 +1190,7 @@ vnc_password= "{vnc_passwd}"
             # usual tricks: prevent grep from seeing itself in the output of ps
             virt_install_cmd = "ps aux | grep '[v]irt-install --connect'"
 
-            wait(lambda: self.machine.execute(virt_install_cmd), delay=3)
+            testlib.wait(lambda: self.machine.execute(virt_install_cmd), delay=3)
             virt_install_cmd_out = self.machine.execute(virt_install_cmd)
             if self.user_login or self.user_password:
                 self.assertIn("--cloud-init user-data=", virt_install_cmd_out)
@@ -1215,7 +1215,7 @@ vnc_password= "{vnc_passwd}"
             # Wait for it to become permanent before destruction.  If
             # we destroy it while it is still transient, the domain
             # will come back as running.
-            wait(lambda: "yes" in self.machine.execute(f"virsh dominfo {self.name} | grep ^Persistent"))
+            testlib.wait(lambda: "yes" in self.machine.execute(f"virsh dominfo {self.name} | grep ^Persistent"))
             self.machine.execute(f"virsh destroy {self.name}")
 
             # wait for virt-install to finish
@@ -1264,7 +1264,7 @@ vnc_password= "{vnc_passwd}"
 
             # usual tricks: prevent grep from seeing itself in the output of ps
             virt_install_cmd = "ps aux | grep '[v]irt-install --connect'"
-            wait(lambda: self.machine.execute(virt_install_cmd), delay=3)
+            testlib.wait(lambda: self.machine.execute(virt_install_cmd), delay=3)
             virt_install_cmd_out = self.machine.execute(virt_install_cmd)
             self.assertIn(f"--install os={self.os_short_id}", virt_install_cmd_out)
             if self.is_unattended:
@@ -1440,7 +1440,7 @@ vnc_password= "{vnc_passwd}"
                         break
                     time.sleep(5)
                 else:
-                    raise Error("Retry limit exceeded: None of [%s] is part of the error message '%s'" % (
+                    raise testlib.Error("Retry limit exceeded: None of [%s] is part of the error message '%s'" % (
                         ', '.join(errors), b.text(error_location)))
 
             if self.create_and_run:
@@ -1458,7 +1458,7 @@ vnc_password= "{vnc_passwd}"
                     waitForError(errors, error_location)
 
                 # dialog can complete if the error was not returned immediately
-            except Error:
+            except testlib.Error:
                 if b.is_present("#create-vm-dialog"):
                     raise
                 else:
@@ -1628,7 +1628,7 @@ vnc_password= "{vnc_passwd}"
             # because we might end up checking the text for the new state the momment it disappears
             # HACK: Ensure that the selector exists to avoid a quadratic timeout loop; see
             # https://github.com/cockpit-project/cockpit/pull/16200
-            wait(lambda: b.is_present(selector) and b.text(selector) != before, tries=30, delay=3)
+            testlib.wait(lambda: b.is_present(selector) and b.text(selector) != before, tries=30, delay=3)
             b.wait_in_text(selector, after)
 
         def _create(self, dialog):
@@ -1718,7 +1718,7 @@ vnc_password= "{vnc_passwd}"
                 self._assertCorrectConfiguration(dialog)
 
                 # Wait for virt-install to define the VM and then stop it - otherwise we get 'domain is ready being removed' error
-                wait(lambda: dialog.name in self.machine.execute("virsh list --persistent"), delay=3)
+                testlib.wait(lambda: dialog.name in self.machine.execute("virsh list --persistent"), delay=3)
 
                 # unfinished install script runs indefinitely, so we need to force it off
                 self.test_obj.performAction(name, "forceOff", checkExpectedState=False)
@@ -1812,7 +1812,7 @@ vnc_password= "{vnc_passwd}"
                 b.click(f"#vm-{name}-disks-adddisk-dialog-cancel")
 
             if dialog.sourceType == 'pxe' and "network" not in dialog.location:
-                wait(lambda: "mode='bridge'" in m.execute(f"virsh dumpxml {name}"))
+                testlib.wait(lambda: "mode='bridge'" in m.execute(f"virsh dumpxml {name}"))
 
             return self
 
@@ -1843,7 +1843,7 @@ vnc_password= "{vnc_passwd}"
             b = self.browser
 
             # wait until virt-install process is finished
-            wait(lambda: "virt-install" not in self.machine.execute("ps aux | grep '[v]irt-install --connect' || true"))
+            testlib.wait(lambda: "virt-install" not in self.machine.execute("ps aux | grep '[v]irt-install --connect' || true"))
             b.wait_in_text("#virtual-machines-listing .pf-v5-c-empty-state", "No VM is running")
             # wait for the vm and disks to be deleted
             self.machine.execute("until test -z $(virsh list --all --name); do sleep 1; done")
@@ -2040,7 +2040,7 @@ vnc_password= "{vnc_passwd}"
         b.click(".pf-v5-c-modal-box__footer button:contains(Create and edit)")
         b.wait_not_present("#create-vm-dialog")
 
-        wait(lambda: "<cockpit_machines:os_variant>fedora28</cockpit_machines:os_variant>" in m.execute("virsh dumpxml VmNotInstalled"), delay=3)
+        testlib.wait(lambda: "<cockpit_machines:os_variant>fedora28</cockpit_machines:os_variant>" in m.execute("virsh dumpxml VmNotInstalled"), delay=3)
 
         self.waitVmPage("VmNotInstalled")
 
@@ -2115,12 +2115,12 @@ vnc_password= "{vnc_passwd}"
         b.click("#vm-VmNotInstalled-system-install")
 
         # Wait for virt-install to define the VM and then stop it - otherwise we get 'domain is ready being removed' error
-        wait(lambda: "VmNotInstalled" in m.execute("virsh list --persistent"), delay=3)
+        testlib.wait(lambda: "VmNotInstalled" in m.execute("virsh list --persistent"), delay=3)
         logfile = "/var/log/libvirt/qemu/VmNotInstalled.log"
         m.execute(f"> {logfile}")  # clear logfile
         self.performAction("VmNotInstalled", "forceOff", checkExpectedState=False)
         b.wait_in_text("#vm-VmNotInstalled-system-state", "Shut off")
-        wait(lambda: "133120" in m.execute("virsh dominfo VmNotInstalled | grep 'Used memory'"), delay=1)  # Wait until memory parameters get adjusted after shutting the VM
+        testlib.wait(lambda: "133120" in m.execute("virsh dominfo VmNotInstalled | grep 'Used memory'"), delay=1)  # Wait until memory parameters get adjusted after shutting the VM
 
         # Check configuration changes survived installation
         # Check memory settings have persisted
@@ -2278,4 +2278,4 @@ vnc_password= "{vnc_passwd}"
 
 
 if __name__ == '__main__':
-    test_main()
+    testlib.test_main()

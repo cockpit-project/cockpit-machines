@@ -19,12 +19,12 @@
 
 import os
 
-from machineslib import VirtualMachinesCase
-from testlib import nondestructive, test_main, wait
+import machineslib
+import testlib
 
 
-@nondestructive
-class TestMachinesStoragePools(VirtualMachinesCase):
+@testlib.nondestructive
+class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
 
     def gotoVolumesTab(self, poolName, connectionName="system"):
         selector = f"tr[data-row-id='pool-{poolName}-{connectionName}'] + tr li:contains('Storage volumes')"
@@ -64,7 +64,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         m.execute("virsh vol-create-as myPoolTwo VolumeTwo --capacity 1G --format qcow2")
         m.execute("virsh vol-create-as myPoolTwo VolumeThree --capacity 1G --format qcow2")
         m.execute("virsh vol-create-as myPoolTwo VolumeFour --capacity 1G --format qcow2")
-        wait(lambda: all(volume in m.execute("virsh vol-list myPoolTwo") for volume in ["VolumeOne", "VolumeTwo", "VolumeThree", "VolumeFour"]))
+        testlib.wait(lambda: all(volume in m.execute("virsh vol-list myPoolTwo") for volume in ["VolumeOne", "VolumeTwo", "VolumeThree", "VolumeFour"]))
         m.execute('virsh pool-refresh myPoolOne; virsh pool-refresh myPoolTwo')
 
         connectionName = m.execute("virsh uri | head -1 | cut -d/ -f4").strip()
@@ -858,7 +858,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
 
                 m.execute(create_cmd)
                 # Check whether the pool creation is successful
-                wait(lambda: self.name in m.execute("virsh pool-list --all"))
+                testlib.wait(lambda: self.name in m.execute("virsh pool-list --all"))
                 # Check the pool state
                 b.wait_text(f"#pool-{self.name}-{self.connection}-state", "inactive")
 
@@ -868,11 +868,11 @@ class TestMachinesStoragePools(VirtualMachinesCase):
 
                     if self.pool_type == "iscsi":
                         # these should get picked up through StoragePoolEvent CREATED
-                        wait(lambda: "unit:0:0:0" in m.execute(f"virsh vol-list {self.name}"))
+                        testlib.wait(lambda: "unit:0:0:0" in m.execute(f"virsh vol-list {self.name}"))
                     elif self.vol_name:
                         if self.vol_name not in m.execute(f"virsh vol-list {self.name}"):
                             m.execute(f"virsh vol-create-as {self.name} {self.vol_name} 1M")
-                            wait(lambda: self.vol_name in m.execute(f"virsh vol-list {self.name}"))
+                            testlib.wait(lambda: self.vol_name in m.execute(f"virsh vol-list {self.name}"))
                             # need refresh after volume creation
                             b.reload()
                             b.enter_page('/machines')
@@ -925,24 +925,24 @@ class TestMachinesStoragePools(VirtualMachinesCase):
                 if self.activate and self.vol_name:
                     if self.remove_volume:
                         if self.pool_type == "netfs":
-                            wait(lambda: self.vol_name not in m.execute(f'ls -A {self.source_path}'))
+                            testlib.wait(lambda: self.vol_name not in m.execute(f'ls -A {self.source_path}'))
                         elif self.pool_type == "dir":
-                            wait(lambda: self.vol_name not in m.execute(f'ls -A {self.target}'))
+                            testlib.wait(lambda: self.vol_name not in m.execute(f'ls -A {self.target}'))
                         elif self.pool_type == "disk":
-                            wait(lambda: self.vol_name not in m.execute("lsblk"))
+                            testlib.wait(lambda: self.vol_name not in m.execute("lsblk"))
                     else:
                         if self.pool_type == "netfs":
                             vol_path = os.path.join(self.source_path, self.vol_name)
-                            wait(lambda: m.execute(f'test -f {vol_path}'))
+                            testlib.wait(lambda: m.execute(f'test -f {vol_path}'))
                         elif self.pool_type == "dir":
                             vol_path = os.path.join(self.target, self.vol_name)
-                            wait(lambda: m.execute(f'test -f {vol_path}'))
+                            testlib.wait(lambda: m.execute(f'test -f {vol_path}'))
                         elif self.pool_type == "disk":
-                            wait(lambda: self.vol_name in m.execute("lsblk"))
+                            testlib.wait(lambda: self.vol_name in m.execute("lsblk"))
 
                 # general check
                 self.test_obj.waitPoolRow(self.name, self.connection, present=False)
-                wait(lambda: self.name not in m.execute("virsh pool-list --all"))
+                testlib.wait(lambda: self.name not in m.execute("virsh pool-list --all"))
 
         # dir pool deletion
         StoragePoolsCreationAndDeletion(self,
@@ -1083,7 +1083,7 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         # Delete the VM, or the deletion button will be disabled
         m.execute("virsh undefine subVmTest1")
         # Check both command and UI that the VM is not shown
-        wait(lambda: "subVmTest1" not in m.execute("virsh list --all"))
+        testlib.wait(lambda: "subVmTest1" not in m.execute("virsh list --all"))
         b.click(".machines-listing-breadcrumb li a:contains(Virtual machines)")
         b.wait_not_present("#vm-subVmTest1-system-name")
         # Go back to the storage pool list
@@ -1098,8 +1098,8 @@ class TestMachinesStoragePools(VirtualMachinesCase):
         b.set_checked("#storage-pool-delete-volumes", True)
         b.click(".pf-v5-c-backdrop footer button[aria-disabled=false]:contains(Delete)")
         b.assert_pixels("#storage-pool-delete-modal", "storage-pool-delete-modal-error")
-        wait(lambda: "forDeletion" not in m.execute("ls /var/lib/libvirt/images/"))
+        testlib.wait(lambda: "forDeletion" not in m.execute("ls /var/lib/libvirt/images/"))
 
 
 if __name__ == '__main__':
-    test_main()
+    testlib.test_main()
