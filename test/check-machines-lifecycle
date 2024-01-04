@@ -17,12 +17,12 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
 
-from machineslib import VirtualMachinesCase
-from testlib import nondestructive, test_main, wait
+import machineslib
+import testlib
 
 
-@nondestructive
-class TestMachinesLifecycle(VirtualMachinesCase):
+@testlib.nondestructive
+class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
 
     def testBasic(self):
         self._testBasic(run_pixel_tests=True)
@@ -124,12 +124,12 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         b.wait_in_text(".memory-usage-chart .pf-v5-c-progress__status > .pf-v5-c-progress__measure", "128 MiB")
         b.wait_not_in_text(".memory-usage-chart .pf-v5-c-progress__status > .pf-v5-c-progress__measure", "0 /")
         usage = b.text(".memory-usage-chart .pf-v5-c-progress__status > .pf-v5-c-progress__measure").split("/ 128 MiB")[0]
-        wait(lambda: float(usage) > 0.0, delay=3)
+        testlib.wait(lambda: float(usage) > 0.0, delay=3)
 
         b.wait_in_text(".vcpu-usage-chart .pf-v5-c-progress__status > .pf-v5-c-progress__measure", "1 vCPU")
         usage = b.text(".vcpu-usage-chart .pf-v5-c-progress__status > .pf-v5-c-progress__measure").split("% of 1 vCPU")[0]
         # CPU usage cannot be nonzero with blank image, so just ensure it's a percentage
-        wait(lambda: float(usage) <= 100.0, delay=3)
+        testlib.wait(lambda: float(usage) <= 100.0, delay=3)
 
         # suspend/resume
         m.execute("virsh suspend subVmTest1")
@@ -490,14 +490,14 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         name = "vm-keep-vol"
         args = self.createVm(name)
         self.waitVmRow(name)
-        wait(lambda: name in m.execute("virsh list --all --name"))
+        testlib.wait(lambda: name in m.execute("virsh list --all --name"))
 
         self.performAction(name, "delete")
         b.set_checked(f"#vm-{name}-delete-modal-dialog input[type=checkbox]", False)
         b.click(f"#vm-{name}-delete-modal-dialog button:contains(Delete)")
 
         self.waitVmRow(name, present=False)
-        wait(lambda: name not in m.execute("virsh list --all --name"))
+        testlib.wait(lambda: name not in m.execute("virsh list --all --name"))
         m.execute(f"test -f {args['image']}")
 
         # Try to delete a transient VM
@@ -518,7 +518,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         args = self.createVm(name)
         self.waitVmRow(name)
         self.goToVmPage(name)
-        wait(lambda: name in m.execute("virsh list --all --name"))
+        testlib.wait(lambda: name in m.execute("virsh list --all --name"))
         addDisk(secondDiskVolName, poolName, name)
         # Remove VM's disk from command line
         m.execute(f"rm {(secondDiskPoolPath + secondDiskVolName)}")
@@ -533,7 +533,7 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
         # Check VM got deleted, but there is a warning about unsuccessful storage deletion
         self.waitVmRow(name, present=False)
-        wait(lambda: name not in m.execute("virsh list --all --name"))
+        testlib.wait(lambda: name not in m.execute("virsh list --all --name"))
         b.wait_visible(".pf-v5-c-alert-group li .pf-v5-c-alert")
         b.wait_in_text(".pf-v5-c-alert-group li .pf-v5-c-alert .pf-v5-c-alert__title", f"Could not delete all storage for {name}")
         b.click("button.alert-link.more-button")
@@ -569,4 +569,4 @@ class TestMachinesLifecycle(VirtualMachinesCase):
 
 
 if __name__ == '__main__':
-    test_main()
+    testlib.test_main()

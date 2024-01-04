@@ -17,12 +17,12 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
 
-from machineslib import VirtualMachinesCase
-from testlib import nondestructive, test_main
+import machineslib
+import testlib
 
 
-@nondestructive
-class TestMachinesVirtualization(VirtualMachinesCase):
+@testlib.nondestructive
+class TestMachinesVirtualization(machineslib.VirtualMachinesCase):
 
     def testVirtualizationDisabled(self):
         b = self.browser
@@ -106,4 +106,4 @@ class TestMachinesVirtualization(VirtualMachinesCase):
 
 
 if __name__ == '__main__':
-    test_main()
+    testlib.test_main()

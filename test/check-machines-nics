@@ -19,19 +19,19 @@
 
 import json
 
-from machineslib import VirtualMachinesCase
+import machineslib
+import testlib
 from machinesxmls import TEST_NETWORK4_XML, TEST_NETWORK_XML
-from testlib import no_retry_when_changed, nondestructive, test_main, wait
 
 
-@nondestructive
-class TestMachinesNICs(VirtualMachinesCase):
+@testlib.nondestructive
+class TestMachinesNICs(machineslib.VirtualMachinesCase):
     def setUp(self):
         super().setUp()
         # querying object manager often runs into that on network changes; irrelevant
         self.allow_journal_messages("org.freedesktop.NetworkManager: couldn't get managed objects at /org/freedesktop: Timeout was reached")
 
-    @no_retry_when_changed
+    @testlib.no_retry_when_changed
     def testVmNICs(self):
         b = self.browser
         m = self.machine
@@ -47,7 +47,7 @@ class TestMachinesNICs(VirtualMachinesCase):
         # Wait for the dynamic IP address to be assigned before logging in
         # If the IP will change or get assigned after fetching the domain data the user will not see any
         # changes until they refresh the page, since there is not any signal associated with this change
-        wait(lambda: "1" in self.machine.execute("virsh domifaddr subVmTest1  | grep 192.168.122. | wc -l"), delay=3)
+        testlib.wait(lambda: "1" in self.machine.execute("virsh domifaddr subVmTest1  | grep 192.168.122. | wc -l"), delay=3)
         self.goToVmPage("subVmTest1")
 
         b.wait_in_text("#vm-subVmTest1-network-1-type", "network")
@@ -134,7 +134,7 @@ class TestMachinesNICs(VirtualMachinesCase):
                         skip_layouts=["medium", "rtl"])
 
         # Start vm and wait until kernel is booted
-        wait(lambda: "1" in self.machine.execute("virsh domifaddr subVmTest1 | grep 192.168.122. | wc -l"), delay=3)
+        testlib.wait(lambda: "1" in self.machine.execute("virsh domifaddr subVmTest1 | grep 192.168.122. | wc -l"), delay=3)
         b.reload()
         b.enter_page('/machines')
         self.waitPageInit()
@@ -171,14 +171,14 @@ class TestMachinesNICs(VirtualMachinesCase):
 
             b.wait_in_text("#vm-subVmTest1-network-1-state", "down")
             b.wait_in_text("#vm-subVmTest1-iface-1-plug", "Plug")
-            wait(lambda: "down" in m.execute(f"virsh domif-getlink subVmTest1 {mac_address}"))
+            testlib.wait(lambda: "down" in m.execute(f"virsh domif-getlink subVmTest1 {mac_address}"))
 
             # Click "plug"
             b.click("#vm-subVmTest1-iface-1-plug")
 
             b.wait_in_text("#vm-subVmTest1-network-1-state", "up")
             b.wait_in_text("#vm-subVmTest1-iface-1-unplug", "Unplug")
-            wait(lambda: "up" in m.execute(f"virsh domif-getlink subVmTest1 {mac_address}"))
+            testlib.wait(lambda: "up" in m.execute(f"virsh domif-getlink subVmTest1 {mac_address}"))
 
         plugAndUnplugNICs()
 
@@ -732,4 +732,4 @@ class TestMachinesNICs(VirtualMachinesCase):
 
 
 if __name__ == '__main__':
-    test_main()
+    testlib.test_main()

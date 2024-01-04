@@ -19,9 +19,9 @@
 
 import xml.etree.ElementTree as ET
 
-from machineslib import VirtualMachinesCase
+import machineslib
+import testlib
 from machinesxmls import TEST_NETWORK2_XML, TEST_NETWORK3_XML, TEST_NETWORK4_XML, TEST_NETWORK_IPV6_XML, TEST_NETWORK_XML
-from testlib import nondestructive, test_main, wait
 
 
 def getNetworkDevice(m):
@@ -37,8 +37,8 @@ def getNetworkDevice(m):
     return device
 
 
-@nondestructive
-class TestMachinesNetworks(VirtualMachinesCase):
+@testlib.nondestructive
+class TestMachinesNetworks(machineslib.VirtualMachinesCase):
 
     def testNetworks(self):
         b = self.browser
@@ -760,7 +760,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
         b.click(f"#activate-network-test_network2-{connectionName}")
         b.wait_in_text(f"#network-test_network2-{connectionName}-state", "active")
         # check virsh state
-        wait(lambda: "yes" == m.execute("virsh net-info test_network2 | grep 'Active:' | awk '{print $2}'").strip(), tries=5)
+        testlib.wait(lambda: "yes" == m.execute("virsh net-info test_network2 | grep 'Active:' | awk '{print $2}'").strip(), tries=5)
 
         # deactivate network
         b.wait_visible(f"#deactivate-network-test_network2-{connectionName}")
@@ -768,7 +768,7 @@ class TestMachinesNetworks(VirtualMachinesCase):
         b.wait_in_text(f"#network-test_network2-{connectionName}-state", "inactive")
         b.wait_visible(f"#activate-network-test_network2-{connectionName}")
         # check virsh state
-        wait(lambda: "no" == m.execute("virsh net-info test_network2 | grep 'Active:' | awk '{print $2}'").strip(), tries=5)
+        testlib.wait(lambda: "no" == m.execute("virsh net-info test_network2 | grep 'Active:' | awk '{print $2}'").strip(), tries=5)
 
         # check "X" button of the deletion dialog
         b.click(f"#network-test_network2-{connectionName}-action-kebab button")
@@ -971,8 +971,8 @@ class TestMachinesNetworks(VirtualMachinesCase):
 
         # Check that the static IP is correctly assigned to the VM
         m.execute("virsh start subVmTest1")
-        wait(lambda: "1" in self.machine.execute("virsh domifaddr subVmTest1 | grep 192.168.122.222 | wc -l"), delay=3)
+        testlib.wait(lambda: "1" in self.machine.execute("virsh domifaddr subVmTest1 | grep 192.168.122.222 | wc -l"), delay=3)
 
 
 if __name__ == '__main__':
-    test_main()
+    testlib.test_main()
