@@ -790,16 +790,20 @@ export function domainGetStartTime({
 
         // Use libvirt APIs for getting VM start up time when it's implemented:
         // https://gitlab.com/libvirt/libvirt/-/issues/481
-        return cockpit.script(`grep 'starting up' '${logFile}' | tail -1`, options);
+        return cockpit.script(`grep ': starting up' '${logFile}' | tail -1`, options);
     })
             .then(line => {
                 // Line from a log with a start up time is expected to look like this:
                 // 2023-05-05 11:22:03.043+0000: starting up libvirt version: 8.6.0, package: 3.fc37 (Fedora Project, 2022-08-09-13:54:03, ), qemu version: 7.0.0qemu-7.0.0-9.fc37, kernel: 6.0.6-300.fc37.x86_64, hostname: fedora
 
                 // Alternatively regex line.match(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/g) can be used
-                const timeStr = line.split(': starting')[0];
-
-                return Promise.resolve(timeStr);
+                const timeStr = line.split(': starting up')[0];
+                const date = new Date(timeStr);
+                return isNaN(date) ? null : date;
+            })
+            .catch(ex => {
+                console.log("Unable to detect domain start time:", ex);
+                return null;
             });
 }
 

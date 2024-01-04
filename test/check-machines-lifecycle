@@ -246,6 +246,22 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
         b.wait_not_present("#vm-subVmTest2-system-confirm-action-modal")
 
+        # uptime parsing robustness: unparseable format
+        self.machine.execute(f"sed -i '/: starting up/ s/^/invalidtime/' {args2['qemulog']}")
+        b.click("#vm-subVmTest2-system-shutdown-button")
+        b.wait_visible("#vm-subVmTest2-system-confirm-action-modal")
+        b._wait_present(".uptime-not-available")
+        b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
+        b.wait_not_present("#vm-subVmTest2-system-confirm-action-modal")
+
+        # uptime parsing robustness: no "starting up" line
+        self.machine.execute(f"sed -i '/: starting up/d' {args2['qemulog']}")
+        b.click("#vm-subVmTest2-system-shutdown-button")
+        b.wait_visible("#vm-subVmTest2-system-confirm-action-modal")
+        b._wait_present(".uptime-not-available")
+        b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
+        b.wait_not_present("#vm-subVmTest2-system-confirm-action-modal")
+
         b.set_input_text("#text-search", "subVmTest2")
         self.waitVmRow("subVmTest2")
         self.waitVmRow("subVmTest1", "system", False)
