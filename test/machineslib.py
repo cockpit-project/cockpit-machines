@@ -152,10 +152,12 @@ class VirtualMachinesCaseHelpers:
         if connection == "system":
             img = f"/var/lib/libvirt/images/{name}-2.img"
             logPath = f"/var/log/libvirt/console-{name}.log"
+            qemuLogPath = f"/var/log/libvirt/qemu/{name}.log"
         else:
             m.execute("runuser -l admin -c 'mkdir -p /home/admin/.local/share/libvirt/images'")
             img = f"/home/admin/.local/share/libvirt/images/{name}-2.img"
             logPath = f"/home/admin/.local/share/libvirt/console-{name}.log"
+            qemuLogPath = f"/home/admin/.local/share/libvirt/qemu/{name}.log"
 
         m.upload([image_file], img)
         m.execute(f"chmod 777 {img}")
@@ -164,6 +166,7 @@ class VirtualMachinesCaseHelpers:
             "name": name,
             "image": img,
             "logfile": logPath,
+            "qemulog": qemuLogPath,
             "memory": memory,
         }
         if ptyconsole:
