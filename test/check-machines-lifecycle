@@ -235,6 +235,12 @@ class TestMachinesLifecycle(VirtualMachinesCase):
         # Check uptime
         b.click("#vm-subVmTest2-system-shutdown-button")
         b.wait_visible("#vm-subVmTest2-system-confirm-action-modal")
+        # it starts with "less than a minute", so this should be reasonably race free
+        if superuser:
+            b.wait_in_text("#uptime", "minute")
+        else:
+            # unprivileged sessions can't read the log
+            b._wait_present(".uptime-not-available")
         if run_pixel_tests:
             b.assert_pixels("#vm-subVmTest2-system-confirm-action-modal", "shutdown-confirm-dialog")
         b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
