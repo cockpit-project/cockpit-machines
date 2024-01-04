@@ -64,13 +64,16 @@ export const ConfirmDialog = ({ idPrefix, actionsList, title, titleIcon, vm }) =
             titleIconVariant={titleIcon}
             isOpen
             footer={actions}>
-            {uptime &&
-            <DescriptionList isHorizontal isFluid>
-                <DescriptionListGroup>
-                    <DescriptionListTerm>{_("Uptime")}</DescriptionListTerm>
-                    <DescriptionListDescription id="uptime">{distanceToNow(new Date(uptime))}</DescriptionListDescription>
-                </DescriptionListGroup>
-            </DescriptionList>}
+            {uptime
+                ? <DescriptionList isHorizontal isFluid>
+                    <DescriptionListGroup>
+                        <DescriptionListTerm>{_("Uptime")}</DescriptionListTerm>
+                        <DescriptionListDescription id="uptime">{distanceToNow(new Date(uptime))}</DescriptionListDescription>
+                    </DescriptionListGroup>
+                </DescriptionList>
+                /* for tests */
+                : <span className="uptime-not-available" />
+            }
         </Modal>
     );
 };
