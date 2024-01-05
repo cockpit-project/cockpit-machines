@@ -529,9 +529,9 @@ export function parseDumpxmlForRedirectedDevices(devicesElem) {
                 type: redirdevElem.getAttribute('type'),
                 bootOrder: bootElem?.getAttribute('order'),
                 address: {
-                    type: addressElem.getAttribute('type'),
-                    bus: addressElem.getAttribute('bus'),
-                    port: addressElem.getAttribute('port'),
+                    type: addressElem?.getAttribute('type'),
+                    bus: addressElem?.getAttribute('bus'),
+                    port: addressElem?.getAttribute('port'),
                 },
                 source: {
                     mode: sourceElem?.getAttribute('mode'),
