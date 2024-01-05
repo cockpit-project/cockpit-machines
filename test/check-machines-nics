@@ -314,7 +314,21 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             self,
             mac=mac_address,
             model="e1000e",
+            remove=False,
         ).execute()
+
+        # avoid duplicate MAC
+        self.NICAddDialog(
+            self,
+            source_type="network",
+            source="test_network",
+            mac=mac_address,
+            xfail=True,
+            xfail_error="MAC address already in use",
+        ).execute()
+
+        # remove the first one from "Test model" again, it fails to start
+        self.deleteIface(1)
 
         # Start vm and wait until kernel is booted
         m.execute(f"> {args['logfile']}")  # clear logfile
@@ -376,6 +390,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             nic_num=1,
             source=None,
             source_type=None,
+            xfail_error=None,
         ):
             self.assertEqual = test_obj.assertEqual
             self.browser = test_obj.browser
@@ -385,14 +400,19 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             self.nic_num = nic_num
             self.source = source
             self.source_type = source_type
+            self.xfail_error = xfail_error
             self.vm_state = "running" if "running" in test_obj.machine.execute("virsh domstate subVmTest1") else "shut off"
 
         def execute(self):
             self.open()
             self.fill()
             self.save()
-            self.verify()
-            self.verify_overview()
+            if not self.xfail_error:
+                self.verify()
+                self.verify_overview()
+            else:
+                self.browser.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-alert__title", self.xfail_error)
+                self.browser.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
 
         def open(self):
             b = self.browser
@@ -434,7 +454,8 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             b = self.browser
 
             b.click(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-save")
-            b.wait_not_present(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-modal-window")
+            if not self.xfail_error:
+                b.wait_not_present(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-modal-window")
 
         def cancel(self):
             b = self.browser
@@ -541,20 +562,39 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         # Remove default vNIC
         self.deleteIface(1)
 
-        # Test Warning message when changes are done in a running VM
+        MAC1 = "52:54:00:f0:eb:63"
+
         self.NICAddDialog(
             self,
             source_type="bridge",
             source="virbr0",
-            mac="52:54:00:f0:eb:63",
+            mac=MAC1,
             remove=False
         ).execute()
+
+        # create a second NIC, and check that trying to edit to existing MAC is prohibited
+        self.NICAddDialog(
+            self,
+            source_type="bridge",
+            source="virbr0",
+            nic_num=2,
+            mac="52:54:00:f0:eb:64",
+            remove=False
+        ).execute()
+        self.NICEditDialog(
+            self,
+            nic_num=2,
+            mac=MAC1,
+            source_type="network",
+            xfail_error="MAC address already in use",
+        ).execute()
+        self.deleteIface(2)
 
         # The dialog fields should reflect the permanent configuration
         dialog = self.NICEditDialog(self)
         dialog.open()
         b.wait_in_text("#vm-subVmTest1-network-1-edit-dialog-source", "virbr0")
-        b.wait_val("#vm-subVmTest1-network-1-edit-dialog-mac", "52:54:00:f0:eb:63")
+        b.wait_val("#vm-subVmTest1-network-1-edit-dialog-mac", MAC1)
         b.assert_pixels("#vm-subVmTest1-network-1-edit-dialog-modal-window", "vm-edit-nic-modal", skip_layouts=["rtl"])
         dialog.cancel()
 

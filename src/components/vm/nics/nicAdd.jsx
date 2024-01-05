@@ -36,7 +36,7 @@ import './nic.css';
 const _ = cockpit.gettext;
 
 function getRandomMac(vms) {
-    // prevent getting cycled in inforseen case where all MACs will conflict with existing ones
+    // prevent getting cycled in the unforseen case where all MACs will conflict with existing ones
     for (let i = 0; i < 42; i++) {
         const parts = ["52", "54", "00"];
         for (let j = 0; j < 3; j++)
@@ -146,6 +146,12 @@ export class AddNIC extends React.Component {
     add() {
         const Dialogs = this.context;
         const { vm, vms } = this.props;
+
+        // disallow duplicate MACs
+        if (this.state.setNetworkMac && vm.interfaces.some(iface => iface.mac === this.state.networkMac)) {
+            this.dialogErrorSet(_("MAC address already in use"), _("Please choose a different MAC address"));
+            return;
+        }
 
         this.setState({ addVNicInProgress: true });
         domainAttachIface({
