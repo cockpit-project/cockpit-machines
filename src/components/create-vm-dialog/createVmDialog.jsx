@@ -85,7 +85,7 @@ import { domainCreate } from '../../libvirtApi/domain.js';
 import { storagePoolRefresh } from '../../libvirtApi/storagePool.js';
 import { getAccessToken } from '../../libvirtApi/rhel-images.js';
 import { PasswordFormFields, password_quality } from 'cockpit-components-password.jsx';
-import { DynamicListForm } from 'DynamicListForm.jsx';
+import { DynamicListForm } from 'cockpit-components-dynamic-list.jsx';
 
 import './createVmDialog.scss';
 
