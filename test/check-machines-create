@@ -32,6 +32,8 @@ NO_STORAGE = "No storage"
 NEW_VOLUME_QCOW2 = "Create new qcow2 volume"
 NEW_VOLUME_RAW = "Create new raw volume"
 
+ED25519_PUB = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKIXL+o/1JPsH9Ftf3CtEPVFOpFxJIk4xYzTzkupkUNk a@test"
+
 
 @testlib.nondestructive
 class TestMachinesCreate(machineslib.VirtualMachinesCase):
@@ -39,6 +41,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
     # This test contains basic button and form validation of the Create VM dialog
     # None of the sub-tests will actually call virt-install
     def testCreateBasicValidation(self):
+        b = self.browser
         runner = TestMachinesCreate.CreateVmRunner(self)
         config = TestMachinesCreate.TestCreateConfig
 
@@ -205,6 +208,48 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                                                          user_login="",
                                                                          ssh_keys=[rsakey]),
                                              {"create-vm-dialog-user-login": "User login must not be empty when SSH keys are set"})
+
+        # Delete SSH keys
+        dialog = TestMachinesCreate.VmDialog(self, sourceType='cloud',
+                                             storage_size=10, storage_size_unit='MiB',
+                                             location=config.VALID_DISK_IMAGE_PATH,
+                                             user_login="admin",
+                                             ssh_keys=[rsakey])
+        dialog.open() \
+            .fill()
+
+        # initially we have the single rsakey
+        b.wait_in_text("#create-vm-dialog-ssh-key-0 #validated", "ssh-rsa")
+        self.assertFalse(b.is_present("#create-vm-dialog-ssh-key-1"))
+
+        # add two more empty ones
+        b.click("button:contains(Add SSH keys)")
+        b.wait_text_matches("#create-vm-dialog-ssh-key-1 textarea", "^$")
+        self.assertFalse(b.is_present("#create-vm-dialog-ssh-key-2"))
+
+        b.click("button:contains(Add SSH keys)")
+        b.wait_text_matches("#create-vm-dialog-ssh-key-2 textarea", "^$")
+        self.assertFalse(b.is_present("#create-vm-dialog-ssh-key-3"))
+
+        # delete the third (empty) one
+        b.click("#create-vm-dialog-ssh-key-2-btn-close")
+        b.wait_not_present("#create-vm-dialog-ssh-key-2")
+        # first two still exist
+        b.wait_visible("#create-vm-dialog-ssh-key-0 #validated")
+        b.wait_text_matches("#create-vm-dialog-ssh-key-1 textarea", "^$")
+
+        # now delete the first key
+        b.click("#create-vm-dialog-ssh-key-0-btn-close")
+        # only the second (empty) one exists now)
+        b.wait_not_present("#create-vm-dialog-ssh-key-0")
+        b.wait_text_matches("#create-vm-dialog-ssh-key-1 textarea", "^$")
+        b.wait_not_present("#create-vm-dialog-ssh-key-2")
+
+        # enter a valid EC key
+        b.set_input_text("#create-vm-dialog-ssh-key-1 textarea", ED25519_PUB, value_check=False)
+        b.wait_in_text("#create-vm-dialog-ssh-key-1 #validated", "ssh-ed25519")
+
+        dialog.cancel()
 
     def testCreateNameGeneration(self):
         config = TestMachinesCreate.TestCreateConfig
