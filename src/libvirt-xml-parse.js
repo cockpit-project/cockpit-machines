@@ -246,6 +246,7 @@ export function parseDomainDumpxml(connectionName, domXml, objPath) {
     const filesystems = parseDumpxmlForFilesystems(devicesElem);
     const watchdog = parseDumpxmlForWatchdog(devicesElem);
     const vsock = parseDumpxmlForVsock(devicesElem);
+    const hasSpice = parseDumpxmlForSpice(devicesElem);
 
     const hasInstallPhase = parseDumpxmlMachinesMetadataElement(metadataElem, 'has_install_phase') === 'true';
     const installSourceType = parseDumpxmlMachinesMetadataElement(metadataElem, 'install_source_type');
@@ -289,6 +290,7 @@ export function parseDomainDumpxml(connectionName, domXml, objPath) {
         watchdog,
         vsock,
         metadata,
+        hasSpice,
     };
 }
 
@@ -479,6 +481,21 @@ export function parseDumpxmlForVsock(devicesElem) {
     }
 
     return { cid };
+}
+
+function parseDumpxmlForSpice(devicesElem) {
+    for (let i = 0; i < devicesElem.children.length; ++i) {
+        const device = devicesElem.children.item(i);
+        // also catch spicevmc
+        if (device.getAttribute("type")?.startsWith("spice"))
+            return true;
+        // qxl video is also related to SPICE
+        if (device.tagName === "video" && getSingleOptionalElem(device, "model")?.getAttribute("type") === "qxl")
+            return true;
+    }
+
+    logDebug("parseDumpxmlForSpice: no SPICE elements found in", devicesElem.children);
+    return false;
 }
 
 export function parseDumpxmlForFilesystems(devicesElem) {
