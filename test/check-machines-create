@@ -2321,6 +2321,177 @@ vnc_password= "{vnc_passwd}"
                                               "expired",
                                               False)
 
+    def testReplaceSpice(self):
+        m = self.machine
+        b = self.browser
+        TestMachinesCreate.CreateVmRunner(self)
+        config = TestMachinesCreate.TestCreateConfig
+
+        self.login_and_go("/machines")
+        self.waitPageInit()
+
+        def checkConnnectInfo(expect_vnc=True, expect_spice=False):
+            # if VNC is available, the inline viewer is the default
+            if expect_vnc:
+                b.wait_visible(".pf-v5-c-console__vnc canvas")
+
+            b.click("#pf-v5-c-console__type-selector")
+            b.wait_visible("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
+            b.click("#DesktopViewer button")
+            b.wait_not_present("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
+            if expect_vnc:
+                b.wait_in_text(".pf-v5-c-console__manual-connection", "VNC")
+            else:
+                self.assertNotIn("VNC", b.text(".pf-v5-c-console__manual-connection"))
+            if expect_spice:
+                b.wait_in_text(".pf-v5-c-console__manual-connection", "SPICE")
+            else:
+                self.assertNotIn("SPICE", b.text(".pf-v5-c-console__manual-connection"))
+
+        def doReplaceSpice(vmName, expect_running=False):
+            self.performAction(vmName, "replace-spice")
+            if expect_running:
+                b.wait_visible("#spice-modal-idle-message")
+            else:
+                b.wait_in_text(".pf-v5-c-modal-box__body", "Reconfigure")
+                self.assertFalse(b.is_present("#spice-modal-idle-message"))
+
+            b.click("#replace-spice-dialog-confirm")
+            b.wait_not_present(".pf-v5-c-modal-box")
+
+            if expect_running:
+                b.click(f"#vm-{vmName}-needs-shutdown")
+                b.wait_in_text(".pf-v5-c-popover__body", "SPICE")
+            else:
+                b.wait_not_present(f"#vm-{vmName}-needs-shutdown")
+
+            # should not have any spice or qxl video any more
+            dump = m.execute(f"virsh dumpxml --inactive {vmName}")
+            self.assertNotIn("spice", dump)
+            self.assertNotIn("qxl", dump)
+
+        #
+        # c-machines standard VM (vnc + spice on non-RHEL), running
+        #
+
+        dialog = TestMachinesCreate.VmDialog(self, sourceType='cloud',
+                                             location=config.VALID_DISK_IMAGE_PATH,
+                                             create_and_run=True,
+                                             delete=False)
+        vmCockpit = dialog.name
+        dialog.open() \
+            .fill()
+        b.click(".pf-v5-c-modal-box__footer button:contains(Create and run)")
+        self.browser.wait_not_present("#create-vm-dialog")
+        self.waitVmRow(vmCockpit, "system")
+        self.goToVmPage(vmCockpit)
+        b.wait_text(f"#vm-{vmCockpit}-system-state", "Running")
+        domainXML = m.execute(f"virsh dumpxml --inactive {vmCockpit}")
+
+        # on RHEL 9, SPICE is unsupported; on RHEL 8, we disable SPICE in VM creation; so we don't expect any device
+        if m.image.startswith("rhel") or m.image.startswith("centos"):
+            self.assertNotIn("spice", domainXML)
+            self.assertNotIn("qxl", domainXML)
+            # and thus no "Replace SPICE" menu entry
+            b.click(f"#vm-{vmCockpit}-system-action-kebab button")
+            b.wait_in_text(f"#vm-{vmCockpit}-system-action-kebab > .pf-v5-c-dropdown__menu", "Delete")
+            self.assertNotIn("Replace SPICE",
+                             b.text(f"#vm-{vmCockpit}-system-action-kebab > .pf-v5-c-dropdown__menu"))
+        else:
+            # all other OSes configure SPICE by default
+            self.assertIn("graphics type='spice'", domainXML)
+            self.assertIn("channel type='spicevmc'", domainXML)
+            checkConnnectInfo(expect_vnc=True, expect_spice=True)
+
+            doReplaceSpice(vmCockpit, expect_running=True)
+
+            # "Replace SPICE" menu entry goes away (async)
+            for _retry in range(15):
+                time.sleep(1)
+                b.click(f"#vm-{vmCockpit}-system-action-kebab button")
+                b.wait_in_text(f"#vm-{vmCockpit}-system-action-kebab > .pf-v5-c-dropdown__menu", "Delete")
+                menu = b.text(f"#vm-{vmCockpit}-system-action-kebab > .pf-v5-c-dropdown__menu")
+                b.click(f"#vm-{vmCockpit}-system-action-kebab button")
+                b.wait_not_present(".pf-v5-c-dropdown__menu")
+                if "Replace SPICE" not in menu:
+                    break
+            else:
+                self.fail("timed out waiting for Replace SPICE menu item removal")
+
+            # ensure that the VM can start without any SPICE plugins
+            # avoid uninstalling packages to keep this nondestructive
+            plugins = m.execute("find /usr/lib* -path '*qemu*spice*' | xargs").strip()
+            try:
+                m.execute(f"mkdir {self.vm_tmpdir}/qemu; for f in {plugins}; do mv $f {self.vm_tmpdir}/qemu; done")
+                caps = m.execute("virsh domcapabilities")
+                if m.image.startswith("debian") or m.image.startswith("ubuntu"):
+                    # on Debian, spice graphics is built in, spicevmc channels are a plugin
+                    self.assertNotIn("spicevmc", caps)
+                else:
+                    # in Fedora/RHEL we don't expect any remaining capability
+                    self.assertNotIn("spice", caps)
+
+                # restart the VM to make the change effective
+                self.performAction(vmCockpit, "forceOff")
+                b.wait_not_present(f"#vm-{vmCockpit}-needs-shutdown")
+                b.click(f"#vm-{vmCockpit}-system-run")
+                b.wait_text(f"#vm-{vmCockpit}-system-state", "Running")
+                checkConnnectInfo(expect_vnc=True, expect_spice=False)
+            finally:
+                m.execute(f"for f in {plugins}; do mv {self.vm_tmpdir}/qemu/$(basename $f) $f; done")
+
+            b.wait_not_present(f"#vm-{vmCockpit}-needs-shutdown")
+
+        self.goToMainPage()
+        self.machine.execute(f"virsh destroy {vmCockpit}; virsh undefine {vmCockpit}")
+
+        # RHEL 9 doesn't support SPICE, so skip the rest of the test
+        if m.image.startswith("rhel-9") or m.image.startswith("centos-9"):
+            return
+
+        #
+        # custom spice-only VM, not running
+        #
+
+        vmSpiceOnly = "SpiceOnly"
+        self.createVm(vmSpiceOnly, graphics="spice", running=False)
+        self.waitVmRow(vmSpiceOnly, "system")
+        self.goToVmPage(vmSpiceOnly)
+        b.wait_text(f"#vm-{vmSpiceOnly}-system-state", "Shut off")
+        doReplaceSpice(vmSpiceOnly, expect_running=False)
+
+        b.click(f"#vm-{vmSpiceOnly}-system-run")
+        b.wait_text(f"#vm-{vmSpiceOnly}-system-state", "Running")
+        checkConnnectInfo(expect_vnc=True, expect_spice=False)
+
+        self.goToMainPage()
+        self.machine.execute(f"virsh destroy {vmSpiceOnly}; virsh undefine {vmSpiceOnly}")
+
+        # failed migration
+        # we can't test this properly, as it's not possible to poke invalid XML into libvirt
+        # simulate it with hacking virt-xml-validate
+
+        self.write_file("/usr/local/bin/virt-xml-validate",
+                        # ensure to drain stdin (read the XML), to avoid exiting too early
+                        "#!/bin/sh\ncat >/dev/null\necho kaputt >&2\nexit 1",
+                        perm="0755")
+
+        vmKaputt = "Kaputt"
+        self.createVm(vmKaputt, graphics="spice", running=False)
+        self.waitVmRow(vmKaputt, "system")
+        self.goToVmPage(vmKaputt)
+        b.wait_text(f"#vm-{vmKaputt}-system-state", "Shut off")
+        domainXML = m.execute(f"virsh dumpxml {vmKaputt}")
+
+        self.performAction(vmKaputt, "replace-spice")
+        b.click("#replace-spice-dialog-confirm")
+        b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-alert", "Failed to replace SPICE devices")
+        b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
+        b.wait_not_present(".pf-v5-c-modal-box")
+
+        # no change to the XML
+        self.assertEqual(m.execute(f"virsh dumpxml {vmKaputt}"), domainXML)
+
 
 if __name__ == '__main__':
     testlib.test_main()

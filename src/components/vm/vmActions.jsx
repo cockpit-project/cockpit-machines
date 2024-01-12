@@ -36,6 +36,7 @@ import { ConfirmDialog } from './confirmDialog.jsx';
 import { DeleteDialog } from "./deleteDialog.jsx";
 import { MigrateDialog } from './vmMigrateDialog.jsx';
 import { RenameDialog } from './vmRenameDialog.jsx';
+import { ReplaceSpiceDialog } from './vmReplaceSpiceDialog.jsx';
 import {
     domainCanDelete,
     domainCanInstall,
@@ -426,6 +427,20 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
             </DropdownItem>
         );
         dropdownItems.push(<DropdownSeparator key="separator-migrate" />);
+    }
+
+    if (vm.inactiveXML?.hasSpice) {
+        dropdownItems.push(
+            <DropdownItem key={`${id}-replace-spice`}
+                          id={`${id}-replace-spice`}
+                          onClick={() => Dialogs.show(<ReplaceSpiceDialog vmName={vm.name}
+                                                                          vmId={vm.id}
+                                                                          connectionName={vm.connectionName}
+                                                                          vmRunning={vm.state == 'running'} />)}>
+                {_("Replace SPICE devices")}
+            </DropdownItem>
+        );
+        dropdownItems.push(<DropdownSeparator key="separator-spice" />);
     }
 
     if (domainCanRename(state)) {
