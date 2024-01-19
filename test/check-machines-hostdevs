@@ -21,17 +21,17 @@ import re
 import subprocess
 import xml.etree.ElementTree as ET
 
-from machineslib import VirtualMachinesCase
+import machineslib
+import testlib
 from machinesxmls import PCI_HOSTDEV, SCSI_HOST_HOSTDEV, USB_HOSTDEV, USB_HOSTDEV_NONEXISTENT
-from testlib import nondestructive, test_main, wait
 
 virt_xml_mock = """#!/usr/bin/python
 
 raise Exception("Mock error message")"""
 
 
-@nondestructive
-class TestMachinesHostDevs(VirtualMachinesCase):
+@testlib.nondestructive
+class TestMachinesHostDevs(machineslib.VirtualMachinesCase):
 
     def testHostDevicesList(self):
         b = self.browser
@@ -233,11 +233,11 @@ class TestMachinesHostDevs(VirtualMachinesCase):
         dialog = HostDevAddDialog(self, fail_message="No host device selected")
         dialog.open()
         dialog.add()
-        wait(lambda: "true" == m.execute(f"virsh -c qemu:///{connectionName} dumpxml subVmTest1 | grep -A 5 hostdev || echo true").strip())
+        testlib.wait(lambda: "true" == m.execute(f"virsh -c qemu:///{connectionName} dumpxml subVmTest1 | grep -A 5 hostdev || echo true").strip())
         # Check no host devices attached after shutting off the VM
         self.performAction("subVmTest1", "forceOff", connectionName=connectionName)
         b.wait_in_text(f"#vm-subVmTest1-{connectionName}-state", "Shut off")
-        wait(lambda: "true" == m.execute("virsh -c qemu:///{connectionName} dumpxml subVmTest1 | grep -A 5 hostdev || echo true").strip())
+        testlib.wait(lambda: "true" == m.execute("virsh -c qemu:///{connectionName} dumpxml subVmTest1 | grep -A 5 hostdev || echo true").strip())
 
         output = self.run_admin(f"virsh -c qemu:///{connectionName} nodedev-list --cap usb_device", connectionName)
         if output.strip() != "":
@@ -346,4 +346,4 @@ class TestMachinesHostDevs(VirtualMachinesCase):
 
 
 if __name__ == '__main__':
-    test_main()
+    testlib.test_main()

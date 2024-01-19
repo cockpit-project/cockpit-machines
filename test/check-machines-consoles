@@ -19,14 +19,14 @@
 
 import time
 
-from machineslib import VirtualMachinesCase
-from testlib import nondestructive, skipImage, test_main, wait
+import machineslib
+import testlib
 
 
-@nondestructive
-class TestMachinesConsoles(VirtualMachinesCase):
+@testlib.nondestructive
+class TestMachinesConsoles(machineslib.VirtualMachinesCase):
 
-    @skipImage('SPICE not supported on RHEL', "rhel-*", "centos-*")
+    @testlib.skipImage('SPICE not supported on RHEL', "rhel-*", "centos-*")
     def testExternalConsole(self):
         b = self.browser
 
@@ -121,7 +121,7 @@ class TestMachinesConsoles(VirtualMachinesCase):
                 break
             time.sleep(1)
         # Make sure the content of console is expected
-        wait(lambda: "cirros login" in b.text(f"#{name}-terminal .xterm-accessibility-tree"))
+        testlib.wait(lambda: "cirros login" in b.text(f"#{name}-terminal .xterm-accessibility-tree"))
 
         b.click(f"#{name}-serialconsole-disconnect")
         b.wait_text(f"#{name}-terminal", "Disconnected from serial console. Click the connect button.")
@@ -219,4 +219,4 @@ class TestMachinesConsoles(VirtualMachinesCase):
 
 
 if __name__ == '__main__':
-    test_main()
+    testlib.test_main()

@@ -123,6 +123,13 @@ export class EditNICModal extends React.Component {
         const Dialogs = this.context;
         const { vm, network } = this.props;
 
+        // disallow duplicate MACs
+        if (this.state.networkMac != this.props.network.mac &&
+              vm.interfaces.some(iface => iface.mac === this.state.networkMac)) {
+            this.dialogErrorSet(_("MAC address already in use"), _("Please choose a different MAC address"));
+            return;
+        }
+
         domainChangeInterfaceSettings({
             vmName: vm.name,
             connectionName: vm.connectionName,

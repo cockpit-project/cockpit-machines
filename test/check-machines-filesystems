@@ -17,12 +17,12 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
 
-from machineslib import VirtualMachinesCase
-from testlib import nondestructive, test_main
+import machineslib
+import testlib
 
 
-@nondestructive
-class TestMachinesFilesystems(VirtualMachinesCase):
+@testlib.nondestructive
+class TestMachinesFilesystems(machineslib.VirtualMachinesCase):
     def testBasicSystemConnection(self):
         self._testBasic()
 
@@ -59,6 +59,8 @@ class TestMachinesFilesystems(VirtualMachinesCase):
         b.set_input_text("#vm-subVmTest1-filesystems-modal-mountTag", "dir1")
         b.click(".pf-v5-c-expandable-section__toggle")
         b.wait_visible("#vm-subVmTest1-filesystems-modal-xattr:not(:checked)")
+        # Check "Extended attributes" text
+        b.wait_text('#vm-subVmTest1-filesystems-modal-xattr + label', "Use extended attributes on files and directories")
         b.set_checked("#vm-subVmTest1-filesystems-modal-xattr", True)
 
         b.click("#vm-subVmTest1-filesystems-modal-add")
@@ -134,4 +136,4 @@ class TestMachinesFilesystems(VirtualMachinesCase):
 
 
 if __name__ == '__main__':
-    test_main()
+    testlib.test_main()

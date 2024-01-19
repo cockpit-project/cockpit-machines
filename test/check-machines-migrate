@@ -17,12 +17,12 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
 
-from machineslib import VirtualMachinesCase
+import machineslib
+import testlib
 from machinesxmls import POOL_XML
-from testlib import skipImage, test_main, wait
 
 
-class TestMachinesMigration(VirtualMachinesCase):
+class TestMachinesMigration(machineslib.VirtualMachinesCase):
     provision = {  # noqa: RUF012
         "machine1": {"address": "10.111.113.1/20", "dns": "10.111.112.100"},
         "machine2": {"address": "10.111.113.2/20", "dns": "10.111.112.100"},
@@ -87,46 +87,46 @@ class TestMachinesMigration(VirtualMachinesCase):
     def testSharedStorageMigration(self):
         self._testMigrationGeneric(False, False, None)
 
-    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-*", "rhel-9-*", "centos-9-stream")
+    @testlib.skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-*", "rhel-9-*", "centos-9-stream")
     def testCopyStorageMigration(self):
         self._testMigrationGeneric(True, False, None)
 
     def testMoveTemporarilyMigration(self):
         self._testMigrationGeneric(False, True, None)
 
-    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-*", "rhel-9-*", "centos-9-stream")
+    @testlib.skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-*", "rhel-9-*", "centos-9-stream")
     def testFailMigrationPoolNotFound(self):
         # Equivalent storage pool is not present on the destination
         self._testMigrationGeneric(True, False, "pool")
 
     # Only qemu 5.1.0 and above does checking for volumes compatibility during migration
     # See https://mail.gnu.org/archive/html/qemu-devel/2020-04/msg05559.html
-    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-*", "rhel-9-*", "centos-9-stream")
+    @testlib.skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-*", "rhel-9-*", "centos-9-stream")
     def testFailMigrationVolumesNotCompatible(self):
         # Different sized volume already exists on destination
         self._testMigrationGeneric(True, False, "volume")
 
-    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-*", "rhel-9-*", "centos-9-stream")
+    @testlib.skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-*", "rhel-9-*", "centos-9-stream")
     def testFailMigrationTCPPortClosed(self):
         # Ports for TCP transfer are closed
         self._testMigrationGeneric(True, False, "port_closed")
 
-    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-*", "rhel-9-*", "centos-9-stream")
+    @testlib.skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-*", "rhel-9-*", "centos-9-stream")
     def testFailMigrationAuthentication(self):
         # No key authentication is set up
         self._testMigrationGeneric(True, False, "authentication")
 
-    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-*", "rhel-9-*", "centos-9-stream")
+    @testlib.skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-*", "rhel-9-*", "centos-9-stream")
     def testFailMigrationUriIncorrect(self):
         # Incorrect uri inputted
         self._testMigrationGeneric(True, False, "uri")
 
-    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-*", "rhel-9-*", "centos-9-stream")
+    @testlib.skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-*", "rhel-9-*", "centos-9-stream")
     def testFailMigrationDomainUnknown(self):
         # Destination domain name is not defined in /etc/hosts and is not resolvable
         self._testMigrationGeneric(True, False, "domain")
 
-    @skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-*", "rhel-9-*", "centos-9-stream")
+    @testlib.skipImage('RHEL does not provide support for copy-storage migration', "rhel-8-*", "rhel-9-*", "centos-9-stream")
     def testFailMigrationStopLibvirtd(self):
         # Libvirtd.service is not working on the destination
         self._testMigrationGeneric(True, False, "libvirtd")
@@ -188,7 +188,7 @@ class TestMachinesMigration(VirtualMachinesCase):
                 machine2.execute(f"systemctl start {self.getLibvirtServiceName()}.service")
                 machine2.execute(f"systemctl start {self.getLibvirtServiceName()}.socket")
 
-            wait(lambda: "subVmTest1" not in machine2.execute("virsh list --all"), delay=3)
+            testlib.wait(lambda: "subVmTest1" not in machine2.execute("virsh list --all"), delay=3)
             self.assertIn("subVmTest1", machine1.execute("virsh list --all"))
         else:
             with b.wait_timeout(120):
@@ -196,8 +196,8 @@ class TestMachinesMigration(VirtualMachinesCase):
 
             # Verify the state of the migrated VM in the destination host
             # The migrated VM should always exist on destination - domstate depends on the options of the dialog set
-            wait(lambda: "subVmTest1" in machine2.execute("virsh list --all"), delay=3)
-            wait(lambda: "running" in machine2.execute("virsh domstate subVmTest1"), delay=3)
+            testlib.wait(lambda: "subVmTest1" in machine2.execute("virsh list --all"), delay=3)
+            testlib.wait(lambda: "running" in machine2.execute("virsh domstate subVmTest1"), delay=3)
             if temporary:
                 # VM on the destination host should be transient
                 self.assertIn("Persistent:     no", machine2.execute("virsh dominfo subVmTest1"))
@@ -225,4 +225,4 @@ class TestMachinesMigration(VirtualMachinesCase):
 
 
 if __name__ == '__main__':
-    test_main()
+    testlib.test_main()

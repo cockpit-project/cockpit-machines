@@ -19,9 +19,9 @@ import os
 import sys
 import traceback
 
-from netlib import NetworkHelpers
-from storagelib import StorageHelpers
-from testlib import Error, MachineCase, attach, wait
+import netlib
+import storagelib
+import testlib
 
 
 def hasMonolithicDaemon(image):
@@ -144,7 +144,7 @@ class VirtualMachinesCaseHelpers:
         m.execute("virsh net-start default || true")
         m.execute(r"until virsh net-info default | grep 'Active:\s*yes'; do sleep 1; done")
 
-    def createVm(self, name, graphics='none', ptyconsole=False, running=True, memory=128, connection='system', machine=None):
+    def createVm(self, name, graphics='none', ptyconsole=False, running=True, memory=128, connection='system', machine=None, os="cirros0.4.0"):
         m = machine or self.machine
 
         image_file = m.pull("cirros")
@@ -152,10 +152,12 @@ class VirtualMachinesCaseHelpers:
         if connection == "system":
             img = f"/var/lib/libvirt/images/{name}-2.img"
             logPath = f"/var/log/libvirt/console-{name}.log"
+            qemuLogPath = f"/var/log/libvirt/qemu/{name}.log"
         else:
             m.execute("runuser -l admin -c 'mkdir -p /home/admin/.local/share/libvirt/images'")
             img = f"/home/admin/.local/share/libvirt/images/{name}-2.img"
             logPath = f"/home/admin/.local/share/libvirt/console-{name}.log"
+            qemuLogPath = f"/home/admin/.local/share/libvirt/qemu/{name}.log"
 
         m.upload([image_file], img)
         m.execute(f"chmod 777 {img}")
@@ -164,6 +166,7 @@ class VirtualMachinesCaseHelpers:
             "name": name,
             "image": img,
             "logfile": logPath,
+            "qemulog": qemuLogPath,
             "memory": memory,
         }
         if ptyconsole:
@@ -171,15 +174,15 @@ class VirtualMachinesCaseHelpers:
         else:
             console = "file,target.type=serial,source.path={} ".format(args["logfile"])
 
-        command = ["virt-install --connect qemu:///{5} --name {0} "
-                   "--os-variant cirros0.4.0 "
+        command = [f"virt-install --connect qemu:///{connection} --name {name} "
+                   f"--os-variant {os} "
                    "--boot hd,network "
                    "--vcpus 1 "
-                   "--memory {1} "
-                   "--import --disk {2} "
-                   "--graphics {3} "
-                   "--console {4}"
-                   "--print-step 1 > /tmp/xml-{5}".format(name, memory, img, "none" if graphics == "none" else graphics + ",listen=127.0.0.1", console, connection)]
+                   f"--memory {memory} "
+                   f"--import --disk {img} "
+                   f"--graphics {'none' if graphics == 'none' else graphics + ',listen=127.0.0.1'} "
+                   f"--console {console}"
+                   f"--print-step 1 > /tmp/xml-{connection}"]
 
         command.append(f"virsh -c qemu:///{connection} define /tmp/xml-{connection}")
         if running:
@@ -312,8 +315,8 @@ class VirtualMachinesCaseHelpers:
 
     def waitLogFile(self, logfile, expected_text):
         try:
-            wait(lambda: expected_text in self.machine.execute(f"cat {logfile}"), delay=3)
-        except Error:
+            testlib.wait(lambda: expected_text in self.machine.execute(f"cat {logfile}"), delay=3)
+        except testlib.Error:
             log = self.machine.execute(f"cat {logfile}")
             print(f"----- log of failed VM ------\n{log}\n---------")
             raise
@@ -322,7 +325,7 @@ class VirtualMachinesCaseHelpers:
         self.waitLogFile(logfile, "login as 'cirros' user.")
 
 
-class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelpers, NetworkHelpers):
+class VirtualMachinesCase(testlib.MachineCase, VirtualMachinesCaseHelpers, storagelib.StorageHelpers, netlib.NetworkHelpers):
     def setUp(self):
         super().setUp()
 
@@ -447,7 +450,7 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
         dest_file = f"{self.label()}-{m.label}-{vm}.xml"
         dest = os.path.abspath(dest_file)
         m.download(vms_xml, dest)
-        attach(dest, move=False)
+        testlib.attach(dest, move=False)
         print(f"Wrote {vm} XML to {dest_file}")
 
     def downloadVmLog(self, vm):
@@ -459,7 +462,7 @@ class VirtualMachinesCase(MachineCase, VirtualMachinesCaseHelpers, StorageHelper
             dest_file = f"{self.label()}-{m.label}-{vm}.log"
             dest = os.path.abspath(dest_file)
             m.download(vms_log, dest)
-            attach(dest, move=True)
+            testlib.attach(dest, move=True)
             print(f"Wrote {vm} log to {dest_file}")
 
     def downloadVmsArtifacts(self):
