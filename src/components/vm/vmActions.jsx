@@ -46,6 +46,7 @@ import {
     domainCanPause,
     domainCanShutdown,
     domainCanSave,
+    domainCanSaveRemove,
     domainForceOff,
     domainForceReboot,
     domainInstall,
@@ -56,6 +57,8 @@ import {
     domainShutdown,
     domainStart,
     domainSave,
+    domainSaveRemove,
+    domainHasSaveImage
 } from '../../libvirtApi/domain.js';
 import store from "../../store.js";
 
@@ -185,12 +188,36 @@ const onSave = (vm) => domainSave({ name: vm.name, id: vm.id, connectionName: vm
             connectionName: vm.connectionName,
             name: vm.name,
             error: {
-                text: cockpit.format(_("VM $0 failed to Save To Disk"), vm.name),
+                text: cockpit.format(_("VM $0 failed to save "), vm.name),
                 detail: ex.message,
             }
         })
     );
 });
+
+const onSaveRemove = (vm) => domainSaveRemove({ name: vm.name, id: vm.id, connectionName: vm.connectionName })
+        .then(() => domainHasSaveImage({ name: vm.name, id: vm.id, connectionName: vm.connectionName }))
+        .then((SaveImage) => {
+            store.dispatch(
+                updateVm({
+                    connectionName: vm.connectionName,
+                    name: vm.name,
+                    savedImage: SaveImage
+                })
+            );
+        })
+        .catch(ex => {
+            store.dispatch(
+                updateVm({
+                    connectionName: vm.connectionName,
+                    name: vm.name,
+                    error: {
+                        text: cockpit.format(_("VM $0 failed to remove save image "), vm.name),
+                        detail: ex.message,
+                    }
+                })
+            );
+        });
 
 const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
     const Dialogs = useDialogs();
@@ -211,6 +238,7 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
 
     const id = `${vmId(vm.name)}-${vm.connectionName}`;
     const state = vm.state;
+    const savedImage = vm.savedImage;
     const hasInstallPhase = vm.metadata && vm.metadata.hasInstallPhase;
     const dropdownItems = [];
 
@@ -240,10 +268,21 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
 
     if (domainCanSave(state)) {
         dropdownItems.push(
-            <DropdownItem key={`${id}-saved`}
-                          id={`${id}-saved`}
+            <DropdownItem key={`${id}-save`}
+                          id={`${id}-save`}
                           onClick={() => onSave(vm)}>
                 {_("Save")}
+            </DropdownItem>
+        );
+        dropdownItems.push(<DropdownSeparator key="separator-suspend" />);
+    }
+
+    if (domainCanSaveRemove(state, savedImage)) {
+        dropdownItems.push(
+            <DropdownItem key={`${id}-saveRemove`}
+                          id={`${id}-savedRemove`}
+                          onClick={() => onSaveRemove(vm)}>
+                {_("Remove save Image")}
             </DropdownItem>
         );
         dropdownItems.push(<DropdownSeparator key="separator-suspend" />);

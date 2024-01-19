@@ -83,6 +83,7 @@ export const domainCanPause = (vmState) => vmState == 'running';
 export const domainCanRename = (vmState) => vmState == 'shut off';
 export const domainCanResume = (vmState) => vmState == 'paused';
 export const domainCanSave = (vmState) => vmState == 'running' || vmState == 'paused';
+export const domainCanSaveRemove = (vmState, saveImage) => vmState == "shut off" && saveImage == true;
 export const domainIsRunning = (vmState) => domainCanReset(vmState);
 export const domainSerialConsoleCommand = ({ vm, alias }) => {
     if (vm.displays.find(display => display.type == 'pty'))
@@ -728,6 +729,11 @@ export function domainGet({
                     supportedDiskBusTypes: getDomainCapDiskBusTypes(domCaps),
                 };
 
+                return call(connectionName, objPath, 'org.libvirt.Domain', 'HasManagedSaveImage', [0], { timeout, type: 'u' });
+            })
+            .then(savedImage => {
+                props.savedImage = savedImage[0];
+
                 return call(connectionName, objPath, 'org.libvirt.Domain', 'GetState', [0], { timeout, type: 'u' });
             })
             .then(state => {
@@ -736,7 +742,7 @@ export function domainGet({
                 if (!domainIsRunning(stateStr))
                     props.actualTimeInMs = -1;
 
-                logDebug(`${props.name}.GET_VM(${objPath}, ${connectionName}): update props ${JSON.stringify(props)}`);
+                logDebug(`GET_VM: ${props.name}.GET_VM(${objPath}, ${connectionName}): update props ${JSON.stringify(props)}`);
 
                 return store.dispatch(updateOrAddVm({ state: stateStr, ...props }));
             })
@@ -951,6 +957,20 @@ export function domainSave({
     flags
 }) {
     return call(connectionName, objPath, 'org.libvirt.Domain', 'ManagedSave', [flags], { timeout, type: 'u' });
+}
+
+export function domainSaveRemove({
+    connectionName,
+    id: objPath,
+}) {
+    return call(connectionName, objPath, 'org.libvirt.Domain', 'ManagedSaveRemove', [0], { timeout, type: 'u' });
+}
+
+export function domainHasSaveImage({
+    connectionName,
+    id: objPath,
+}) {
+    return call(connectionName, objPath, 'org.libvirt.Domain', 'HasManagedSaveImage', [0], { timeout, type: 'u' });
 }
 
 export function domainSendKey({ connectionName, id, keyCodes }) {
