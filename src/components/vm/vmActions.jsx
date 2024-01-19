@@ -55,7 +55,7 @@ import {
     domainSendNMI,
     domainShutdown,
     domainStart,
-    domainDiskSave,
+    domainSave,
 } from '../../libvirtApi/domain.js';
 import store from "../../store.js";
 

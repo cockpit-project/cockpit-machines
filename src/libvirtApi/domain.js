@@ -953,7 +953,6 @@ export function domainSave({
     return call(connectionName, objPath, 'org.libvirt.Domain', 'ManagedSave', [flags], { timeout, type: 'u' });
 }
 
-
 export function domainSendKey({ connectionName, id, keyCodes }) {
     const holdTime = 0;
     const flags = 0;
