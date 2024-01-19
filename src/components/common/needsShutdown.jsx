@@ -119,7 +119,7 @@ export function getDevicesRequiringShutdown(vm) {
 export const NeedsShutdownTooltip = ({ iconId, tooltipId }) => {
     return (
         <Tooltip id={tooltipId} content={NEEDS_SHUTDOWN_MESSAGE}>
-            <Icon status="info">
+            <Icon status="custom">
                 <PendingIcon id={iconId} />
             </Icon>
         </Tooltip>
@@ -127,7 +127,7 @@ export const NeedsShutdownTooltip = ({ iconId, tooltipId }) => {
 };
 
 export const NeedsShutdownAlert = ({ idPrefix }) =>
-    <Alert isInline variant='warning' id={`${idPrefix}-idle-message`} title={NEEDS_SHUTDOWN_MESSAGE} />;
+    <Alert isInline id={`${idPrefix}-idle-message`} customIcon={<PendingIcon />} title={NEEDS_SHUTDOWN_MESSAGE} />;
 
 export const VmNeedsShutdown = ({ vm }) => {
     const devices = getDevicesRequiringShutdown(vm);
@@ -153,13 +153,12 @@ export const VmNeedsShutdown = ({ vm }) => {
     const header = _("VM needs shutdown");
     return (
         <Popover aria-label={header}
-            alertSeverityVariant="info"
             headerContent={header}
             headerIcon={<PendingIcon />}
             position="bottom"
             hasAutoWidth
             bodyContent={body}>
-            <Label className="resource-state-text" color="blue" id={`vm-${vm.name}-needs-shutdown`}
+            <Label className="resource-state-text" color="cyan" id={`vm-${vm.name}-needs-shutdown`}
                    icon={<PendingIcon />} onClick={() => null}>
                 {_("Changes pending")}
             </Label>
