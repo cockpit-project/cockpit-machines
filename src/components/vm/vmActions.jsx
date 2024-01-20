@@ -202,7 +202,7 @@ const onSaveRemove = (vm) => domainSaveRemove({ name: vm.name, id: vm.id, connec
                 updateVm({
                     connectionName: vm.connectionName,
                     name: vm.name,
-                    savedImage: SaveImage
+                    savedImage: SaveImage[0],
                 })
             );
         })
