@@ -45,7 +45,7 @@ def get_graphics_capabilies(connection):
             if "platform:el8" in f.read():
                 logging.debug("get_graphics_capabilies: ignoring spice on RHEL 8")
                 consoles.remove('spice')
-    except FileNotFoundError:
+    except (FileNotFoundError, ValueError):
         pass  # not RHEL then
 
     logging.debug('get_graphics_capabilies: %s', ', '.join(consoles))
