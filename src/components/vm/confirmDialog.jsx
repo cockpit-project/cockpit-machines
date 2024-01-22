@@ -33,7 +33,7 @@ export const ConfirmDialog = ({ idPrefix, actionsList, title, titleIcon, vm }) =
     const [startTime, setStartTime] = useState();
 
     useEffect(() => {
-        return domainGetStartTime({ connectionName: vm.connectionName, vmName: vm.name })
+        domainGetStartTime({ connectionName: vm.connectionName, vmName: vm.name })
                 .then(res => setStartTime(res))
                 .catch(e => console.error(JSON.stringify(e)));
     }, [vm]);
