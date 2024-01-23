@@ -2408,6 +2408,9 @@ vnc_password= "{vnc_passwd}"
         b.wait_text(f"#vm-{vmCockpit}-system-state", "Running")
         domainXML = m.execute(f"virsh dumpxml --inactive {vmCockpit}")
 
+        # no warning label: on RHEL the VM doesn't use SPICE, on other OSes the host supports SPICE
+        b.wait_not_present(f"#vm-{vmCockpit}-uses-spice")
+
         # on RHEL 9, SPICE is unsupported; on RHEL 8, we disable SPICE in VM creation; so we don't expect any device
         if m.image.startswith("rhel") or m.image.startswith("centos"):
             self.assertNotIn("spice", domainXML)
@@ -2443,11 +2446,13 @@ vnc_password= "{vnc_passwd}"
                 # restart the VM to make the change effective
                 self.performAction(vmCockpit, "forceOff")
                 b.wait_not_present(f"#vm-{vmCockpit}-needs-shutdown")
+                b.wait_not_present(f"#vm-{vmCockpit}-uses-spice")
                 b.click(f"#vm-{vmCockpit}-system-run")
                 b.wait_text(f"#vm-{vmCockpit}-system-state", "Running")
                 checkConnnectInfo(expect_vnc=True, expect_spice=False)
 
             b.wait_not_present(f"#vm-{vmCockpit}-needs-shutdown")
+            b.wait_not_present(f"#vm-{vmCockpit}-uses-spice")
 
         self.goToMainPage()
         self.machine.execute(f"virsh destroy {vmCockpit}; virsh undefine {vmCockpit}")
@@ -2498,6 +2503,43 @@ vnc_password= "{vnc_passwd}"
 
         # no change to the XML
         self.assertEqual(m.execute(f"virsh dumpxml {vmKaputt}"), domainXML)
+
+    # we need this test to create a SPICE VM to simulate the host change to "no spice support"
+    @testlib.skipImage('SPICE not supported on RHEL', "rhel-*", "centos-*")
+    @testlib.skipImage("SPICE support is compiled in, cannot be removed from the host", "ubuntu-2204")
+    def testNoSpiceAlert(self):
+        b = self.browser
+
+        vmName = "subVmTest1"
+        self.createVm(vmName, graphics="spice", running=False)
+
+        with self.remove_spice_plugins():
+            self.login_and_go("/machines")
+            self.waitPageInit()
+            self.waitVmRow(vmName, "system")
+            self.goToVmPage(vmName)
+            b.wait_text(f"#vm-{vmName}-system-state", "Shut off")
+
+            # warns
+            b.wait_visible(f"#vm-{vmName}-uses-spice")
+            # and indeed startup fails
+            b.click(f"#vm-{vmName}-system-run")
+            b.wait_in_text(f"#vm-{vmName}-system-state-error", "Failed")
+            b.click(f"#vm-{vmName}-system-state-error button[aria-label=Close]")
+            b.wait_not_present(f"#vm-{vmName}-system-state-error")
+
+            b.click(f"#vm-{vmName}-uses-spice")
+            b.wait_in_text(".pf-v5-c-popover", "Uses SPICE")
+            b.click(".pf-v5-c-popover footer button")
+            # clicking the action auto-closes the popover and brings up the dialog
+            b.wait_not_present(".pf-v5-c-popover")
+            b.click("#replace-spice-dialog-confirm")
+            b.wait_not_present(f"#vm-{vmName}-uses-spice")
+
+            # works now
+            b.click(f"#vm-{vmName}-system-run")
+            b.wait_text(f"#vm-{vmName}-system-state", "Running")
+            b.wait_not_present(f"#vm-{vmName}-system-state-error")
 
 
 if __name__ == '__main__':

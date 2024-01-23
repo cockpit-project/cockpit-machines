@@ -58,6 +58,7 @@ import {
     getDomainCapCPUCustomModels,
     getDomainCapCPUHostModel,
     getDomainCapDiskBusTypes,
+    getDomainCapSupportsSpice,
     getSingleOptionalElem,
     parseDomainDumpxml,
     getHostDevElemBySource,
@@ -661,6 +662,7 @@ export async function domainGet({
             cpuModels: getDomainCapCPUCustomModels(domCaps),
             cpuHostModel: getDomainCapCPUHostModel(domCaps),
             supportedDiskBusTypes: getDomainCapDiskBusTypes(domCaps),
+            supportsSpice: getDomainCapSupportsSpice(domCaps),
         };
 
         const [state] = await call(connectionName, objPath, 'org.libvirt.Domain', 'GetState', [0], { timeout, type: 'u' });

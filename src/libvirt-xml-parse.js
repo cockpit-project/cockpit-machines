@@ -182,6 +182,21 @@ export function getDomainCapDiskBusTypes(capsXML) {
     return busElem && Array.prototype.map.call(busElem.getElementsByTagName("value"), valueElem => valueElem.textContent);
 }
 
+export function getDomainCapSupportsSpice(capsXML) {
+    const domainCapsElem = getElem(capsXML);
+    const graphicsCapsElems = domainCapsElem.getElementsByTagName("graphics")?.[0]
+            ?.getElementsByTagName("enum")?.[0]
+            ?.getElementsByTagName("value");
+    const hasSpiceGraphics = graphicsCapsElems && Array.prototype.find.call(
+        graphicsCapsElems, valueElem => valueElem.textContent == "spice");
+    const channelCapsElems = domainCapsElem.getElementsByTagName("channel")?.[0]
+            ?.getElementsByTagName("enum")?.[0]
+            ?.getElementsByTagName("value");
+    const hasSpiceChannel = channelCapsElems && Array.prototype.find.call(
+        channelCapsElems, valueElem => valueElem.textContent == "spicevmc");
+    return hasSpiceGraphics || hasSpiceChannel;
+}
+
 export function getSingleOptionalElem(parent, name) {
     const subElems = parent.getElementsByTagName(name);
     return subElems.length > 0 ? subElems[0] : undefined; // optional
