@@ -642,7 +642,6 @@ export async function domainGet({
         props.id = objPath;
 
         const [returnProps] = await call(connectionName, objPath, "org.freedesktop.DBus.Properties", "GetAll", ["org.libvirt.Domain"], { timeout, type: 's' });
-        const [savedImage] = await call(connectionName, objPath, 'org.libvirt.Domain', 'HasManagedSaveImage', [0], { timeout, type: 'u' });
 
         /* Sometimes not all properties are returned, for example when some domain got deleted while part
         * of the properties got fetched from libvirt. Make sure that there is check before reading the attributes.
@@ -668,6 +667,7 @@ export async function domainGet({
             supportsSpice: getDomainCapSupportsSpice(domCaps),
         };
 
+        const [savedImage] = await call(connectionName, objPath, 'org.libvirt.Domain', 'HasManagedSaveImage', [0], { timeout, type: 'u' });
         props.savedImage = savedImage;
 
         const [state] = await call(connectionName, objPath, 'org.libvirt.Domain', 'GetState', [0], { timeout, type: 'u' });
