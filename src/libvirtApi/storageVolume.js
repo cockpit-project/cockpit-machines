@@ -93,23 +93,16 @@ export function storageVolumeGetAll({ connectionName, poolName }) {
                     );
                 }
 
-                // WA to avoid Promise.all() fail-fast behavior
-                const toResultObject = (promise) => {
-                    return promise
-                            .then(result => ({ success: true, result }))
-                            .catch(error => ({ success: false, error }));
-                };
-
-                return Promise.all(storageVolumesPropsPromises.map(toResultObject)).then(volumeXmlList => {
+                return Promise.allSettled(storageVolumesPropsPromises).then(volumeXmlList => {
                     for (let i = 0; i < volumeXmlList.length; i++) {
-                        if (volumeXmlList[i].success) {
-                            const volumeXml = volumeXmlList[i].result[0];
+                        if (volumeXmlList[i].status === 'fulfilled') {
+                            const volumeXml = volumeXmlList[i].value[0];
                             const dumpxmlParams = parseStorageVolumeDumpxml(connectionName, volumeXml);
 
                             volumes.push(dumpxmlParams);
                         }
                     }
-                    return Promise.resolve(volumes);
+                    return volumes;
                 });
             })
             .catch(ex => console.warn("GET_STORAGE_VOLUMES action failed for pool", poolName, ":", ex.toString()));

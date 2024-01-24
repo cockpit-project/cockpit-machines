@@ -65,23 +65,16 @@ export function snapshotGetAll({ connectionName, domainPath }) {
                     );
                 });
 
-                // WA to avoid Promise.all() fail-fast behavior
-                const toResultObject = (promise) => {
-                    return promise
-                            .then(result => ({ success: true, result }))
-                            .catch(error => ({ success: false, error }));
-                };
-
-                return Promise.all(promises.map(toResultObject))
+                return Promise.allSettled(promises)
                         .then(snapXmlList => {
                             snapXmlList.forEach(snap => {
-                                if (snap.success) {
-                                    const result = snap.result;
+                                if (snap.status === 'fulfilled') {
+                                    const result = snap.value;
                                     const snapParams = parseDomainSnapshotDumpxml(result.xml[0]);
                                     snapParams.isCurrent = result.isCurrent[0];
                                     snaps.push(snapParams);
                                 } else {
-                                    console.warn("DomainSnapshot method GetXMLDesc failed", snap.error.toString());
+                                    console.warn("DomainSnapshot method GetXMLDesc failed", snap.reason.toString());
                                 }
                             });
                             return store.dispatch(updateDomainSnapshots({
