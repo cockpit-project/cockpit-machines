@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
 
+import contextlib
 import math
 import os
 import re
@@ -2321,6 +2322,25 @@ vnc_password= "{vnc_passwd}"
                                               "expired",
                                               False)
 
+    @contextlib.contextmanager
+    def remove_spice_plugins(self):
+        m = self.machine
+        # avoid uninstalling packages to keep this nondestructive
+        plugins = m.execute("find /usr/lib* -path '*qemu*spice*' | xargs").strip()
+        try:
+            m.execute(f"mkdir {self.vm_tmpdir}/qemu; for f in {plugins}; do mv $f {self.vm_tmpdir}/qemu; done")
+            caps = m.execute("virsh domcapabilities")
+            if m.image.startswith("debian") or m.image.startswith("ubuntu"):
+                # on Debian, spice graphics is built in, spicevmc channels are a plugin
+                self.assertNotIn("spicevmc", caps)
+            else:
+                # in Fedora/RHEL we don't expect any remaining capability
+                self.assertNotIn("spice", caps)
+
+            yield
+        finally:
+            m.execute(f"for f in {plugins}; do mv {self.vm_tmpdir}/qemu/$(basename $f) $f; done")
+
     def testReplaceSpice(self):
         m = self.machine
         b = self.browser
@@ -2419,26 +2439,13 @@ vnc_password= "{vnc_passwd}"
                 self.fail("timed out waiting for Replace SPICE menu item removal")
 
             # ensure that the VM can start without any SPICE plugins
-            # avoid uninstalling packages to keep this nondestructive
-            plugins = m.execute("find /usr/lib* -path '*qemu*spice*' | xargs").strip()
-            try:
-                m.execute(f"mkdir {self.vm_tmpdir}/qemu; for f in {plugins}; do mv $f {self.vm_tmpdir}/qemu; done")
-                caps = m.execute("virsh domcapabilities")
-                if m.image.startswith("debian") or m.image.startswith("ubuntu"):
-                    # on Debian, spice graphics is built in, spicevmc channels are a plugin
-                    self.assertNotIn("spicevmc", caps)
-                else:
-                    # in Fedora/RHEL we don't expect any remaining capability
-                    self.assertNotIn("spice", caps)
-
+            with self.remove_spice_plugins():
                 # restart the VM to make the change effective
                 self.performAction(vmCockpit, "forceOff")
                 b.wait_not_present(f"#vm-{vmCockpit}-needs-shutdown")
                 b.click(f"#vm-{vmCockpit}-system-run")
                 b.wait_text(f"#vm-{vmCockpit}-system-state", "Running")
                 checkConnnectInfo(expect_vnc=True, expect_spice=False)
-            finally:
-                m.execute(f"for f in {plugins}; do mv {self.vm_tmpdir}/qemu/$(basename $f) $f; done")
 
             b.wait_not_present(f"#vm-{vmCockpit}-needs-shutdown")
 
