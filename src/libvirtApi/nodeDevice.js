@@ -33,47 +33,44 @@ import { call, timeout } from './helpers.js';
  *
  * @param NodeDevice object path
  */
-export function nodeDeviceGet({
+export async function nodeDeviceGet({
     id: objPath,
     connectionName,
 }) {
-    let deviceXmlObject;
-    return call(connectionName, objPath, 'org.libvirt.NodeDevice', 'GetXMLDesc', [0], { timeout, type: 'u' })
-            .then(deviceXml => {
-                deviceXmlObject = parseNodeDeviceDumpxml(deviceXml);
-                deviceXmlObject.connectionName = connectionName;
+    try {
+        const [deviceXml] = await call(connectionName, objPath, 'org.libvirt.NodeDevice', 'GetXMLDesc', [0], { timeout, type: 'u' });
+        const deviceXmlObject = parseNodeDeviceDumpxml(deviceXml);
+        deviceXmlObject.connectionName = connectionName;
 
-                if (deviceXmlObject.path && ["pci", "usb_device"].includes(deviceXmlObject.capability.type)) {
-                    return cockpit.spawn(["udevadm", "info", "--path", deviceXmlObject.path], { err: "message" })
-                            .then(output => {
-                                const nodeDev = parseUdevDB(output);
-                                if (nodeDev && nodeDev.SUBSYSTEM === "pci") {
-                                    deviceXmlObject.pciSlotName = nodeDev.PCI_SLOT_NAME;
-                                    deviceXmlObject.class = nodeDev.ID_PCI_CLASS_FROM_DATABASE;
-                                } else if (nodeDev && nodeDev.SUBSYSTEM === "usb") {
-                                    deviceXmlObject.class = nodeDev.ID_USB_CLASS_FROM_DATABASE;
-                                    deviceXmlObject.busnum = nodeDev.BUSNUM;
-                                    deviceXmlObject.devnum = nodeDev.DEVNUM;
-                                }
+        if (deviceXmlObject.path && ["pci", "usb_device"].includes(deviceXmlObject.capability.type)) {
+            const output = await cockpit.spawn(["udevadm", "info", "--path", deviceXmlObject.path], { err: "message" });
+            const nodeDev = parseUdevDB(output);
+            if (nodeDev && nodeDev.SUBSYSTEM === "pci") {
+                deviceXmlObject.pciSlotName = nodeDev.PCI_SLOT_NAME;
+                deviceXmlObject.class = nodeDev.ID_PCI_CLASS_FROM_DATABASE;
+            } else if (nodeDev && nodeDev.SUBSYSTEM === "usb") {
+                deviceXmlObject.class = nodeDev.ID_USB_CLASS_FROM_DATABASE;
+                deviceXmlObject.busnum = nodeDev.BUSNUM;
+                deviceXmlObject.devnum = nodeDev.DEVNUM;
+            }
+        }
 
-                                return store.dispatch(updateOrAddNodeDevice(deviceXmlObject));
-                            });
-                } else {
-                    return store.dispatch(updateOrAddNodeDevice(deviceXmlObject));
-                }
-            })
-            .catch(ex => console.warn('GET_NODE_DEVICE action failed for path', objPath, ex.toString()));
+        store.dispatch(updateOrAddNodeDevice(deviceXmlObject));
+    } catch (ex) {
+        console.warn('GET_NODE_DEVICE action failed for path', objPath, ex.toString());
+    }
 }
 
-export function nodeDeviceGetAll({
+export async function nodeDeviceGetAll({
     connectionName,
 }) {
-    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListNodeDevices', [0], { timeout, type: 'u' })
-            .then(objPaths => Promise.all(objPaths[0].map(path => nodeDeviceGet({ connectionName, id: path }))))
-            .catch(ex => {
-                console.warn('GET_ALL_NODE_DEVICES action failed:', ex.toString());
-                return Promise.reject(ex);
-            });
+    try {
+        const [objPaths] = await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListNodeDevices', [0], { timeout, type: 'u' });
+        await Promise.all(objPaths.map(path => nodeDeviceGet({ connectionName, id: path })));
+    } catch (ex) {
+        console.warn('GET_ALL_NODE_DEVICES action failed:', ex.toString());
+        throw ex;
+    }
 }
 
 /**

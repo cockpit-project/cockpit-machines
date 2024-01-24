@@ -34,7 +34,7 @@ export function storagePoolActivate({ connectionName, objPath }) {
     return call(connectionName, objPath, 'org.libvirt.StoragePool', 'Create', [Enum.VIR_STORAGE_POOL_CREATE_NORMAL], { timeout, type: 'u' });
 }
 
-export function storagePoolCreate({
+export async function storagePoolCreate({
     connectionName,
     name,
     type,
@@ -43,19 +43,19 @@ export function storagePoolCreate({
     autostart,
 }) {
     const poolXmlDesc = getPoolXML({ name, type, source, target });
+
     let storagePoolPath;
+    try {
+        [storagePoolPath] = await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolDefineXML',
+                                       [poolXmlDesc, 0], { timeout, type: 'su' });
+        const args = ['org.libvirt.StoragePool', 'Autostart', cockpit.variant('b', autostart)];
 
-    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolDefineXML', [poolXmlDesc, 0], { timeout, type: 'su' })
-            .then(poolPath => {
-                storagePoolPath = poolPath[0];
-                const args = ['org.libvirt.StoragePool', 'Autostart', cockpit.variant('b', autostart)];
-
-                return call(connectionName, storagePoolPath, 'org.freedesktop.DBus.Properties', 'Set', args, { timeout, type: 'ssv' });
-            }, exc => {
-                if (storagePoolPath)
-                    storagePoolUndefine({ connectionName, objPath: storagePoolPath });
-                return Promise.reject(exc);
-            });
+        await call(connectionName, storagePoolPath, 'org.freedesktop.DBus.Properties', 'Set', args, { timeout, type: 'ssv' });
+    } catch (ex) {
+        if (storagePoolPath)
+            storagePoolUndefine({ connectionName, objPath: storagePoolPath });
+        throw ex;
+    }
 }
 
 export function storagePoolDeactivate({ connectionName, objPath }) {
@@ -68,7 +68,7 @@ export function storagePoolDeactivate({ connectionName, objPath }) {
  * @param Pool object path
  * @returns {Function}
  */
-export function storagePoolGet({
+export async function storagePoolGet({
     id: objPath,
     connectionName,
     updateOnly,
@@ -76,71 +76,67 @@ export function storagePoolGet({
     let dumpxmlParams;
     const props = {};
 
-    return call(connectionName, objPath, 'org.libvirt.StoragePool', 'GetXMLDesc', [0], { timeout, type: 'u' })
-            .then(poolXml => {
-                dumpxmlParams = parseStoragePoolDumpxml(connectionName, poolXml[0], objPath);
+    try {
+        const [poolXml] = await call(connectionName, objPath, 'org.libvirt.StoragePool', 'GetXMLDesc', [0], { timeout, type: 'u' });
+        dumpxmlParams = parseStoragePoolDumpxml(connectionName, poolXml, objPath);
 
-                return call(connectionName, objPath, 'org.freedesktop.DBus.Properties', 'GetAll', ['org.libvirt.StoragePool'], { timeout, type: 's' });
-            })
-            .then((resultProps) => {
-                /* Sometimes not all properties are returned; for example when some storage got deleted while part
-                 * of the properties got fetched from libvirt. Make sure that there is check before reading the attributes.
-                 */
-                if ("Active" in resultProps[0])
-                    props.active = resultProps[0].Active.v.v;
-                if ("Persistent" in resultProps[0])
-                    props.persistent = resultProps[0].Persistent.v.v;
-                if ("Autostart" in resultProps[0])
-                    props.autostart = resultProps[0].Autostart.v.v;
+        const [resultProps] = await call(connectionName, objPath, 'org.freedesktop.DBus.Properties', 'GetAll', ['org.libvirt.StoragePool'], { timeout, type: 's' });
+        /* Sometimes not all properties are returned; for example when some storage got deleted while part
+            * of the properties got fetched from libvirt. Make sure that there is check before reading the attributes.
+            */
+        if ("Active" in resultProps)
+            props.active = resultProps.Active.v.v;
+        if ("Persistent" in resultProps)
+            props.persistent = resultProps.Persistent.v.v;
+        if ("Autostart" in resultProps)
+            props.autostart = resultProps.Autostart.v.v;
 
-                props.volumes = [];
-                if (props.active) {
-                    return storageVolumeGetAll({ connectionName, poolName: dumpxmlParams.name })
-                            .then(volumes => {
-                                props.volumes = volumes;
-                            })
-                            .finally(() => store.dispatch(updateOrAddStoragePool(Object.assign({}, dumpxmlParams, props), updateOnly)));
-                } else {
-                    return store.dispatch(updateOrAddStoragePool(Object.assign({}, dumpxmlParams, props), updateOnly));
-                }
-            })
-            .catch(ex => console.warn('GET_STORAGE_POOL action failed for path', objPath, ex.toString()));
+        props.volumes = [];
+        if (props.active) {
+            const volumes = await storageVolumeGetAll({ connectionName, poolName: dumpxmlParams.name });
+            props.volumes = volumes;
+        }
+        store.dispatch(updateOrAddStoragePool(Object.assign({}, dumpxmlParams, props), updateOnly));
+    } catch (ex) {
+        console.warn('GET_STORAGE_POOL action failed for path', objPath, ex.toString());
+    }
 }
 
-export function storagePoolGetAll({
+export async function storagePoolGetAll({
     connectionName,
 }) {
-    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListStoragePools', [0], { timeout, type: 'u' })
-            .then(objPaths => {
-                return Promise.all(objPaths[0].map(path => {
-                    return call(connectionName, path, 'org.freedesktop.DBus.Properties', 'Get', ['org.libvirt.StoragePool', 'Active'], { timeout, type: 'ss' })
-                            .then(active => {
-                                if (active[0].v)
-                                    return storagePoolRefresh({ connectionName, objPath: path });
-                                else
-                                    return storagePoolGet({ connectionName, id: path });
-                            });
-                }));
-            })
-            .catch(ex => {
-                console.warn('GET_ALL_STORAGE_POOLS action failed:', ex.toString());
-                return Promise.reject(ex);
-            });
+    try {
+        const [objPaths] = await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListStoragePools', [0],
+                                      { timeout, type: 'u' });
+        return await Promise.all(objPaths.map(async path => {
+            const [active] = await call(connectionName, path, 'org.freedesktop.DBus.Properties', 'Get',
+                                        ['org.libvirt.StoragePool', 'Active'], { timeout, type: 'ss' });
+            if (active.v)
+                return storagePoolRefresh({ connectionName, objPath: path });
+            else
+                return storagePoolGet({ connectionName, id: path });
+        }));
+    } catch (ex) {
+        console.warn('GET_ALL_STORAGE_POOLS action failed:', ex.toString());
+        throw ex;
+    }
 }
 
-export function storagePoolGetCapabilities({ connectionName }) {
-    // TODO: replace with D-Bus API once available https://bugzilla.redhat.com/show_bug.cgi?id=1986321
+export async function storagePoolGetCapabilities({ connectionName }) {
+    // TODO: replace with D-Bus API once available https://issues.redhat.com/browse/RHEL-7045
     const opts = { err: "message", environ: ['LC_ALL=C.UTF-8'] };
     if (connectionName === 'system')
         opts.superuser = 'try';
 
-    return cockpit.spawn(
-        ["virsh", "-c", "qemu:///" + connectionName, "pool-capabilities"],
-        opts
-    ).then(poolCapabilities => parsePoolCapabilities(poolCapabilities), ex => {
+    try {
+        const poolCapabilities = await cockpit.spawn(
+            ["virsh", "-c", "qemu:///" + connectionName, "pool-capabilities"],
+            opts);
+        return parsePoolCapabilities(poolCapabilities);
+    } catch (ex) {
         console.warn('virsh pool-capabilities failed:', ex.toString());
-        return Promise.reject(ex);
-    });
+        throw ex;
+    }
 }
 
 export function storagePoolRefresh({ connectionName, objPath }) {

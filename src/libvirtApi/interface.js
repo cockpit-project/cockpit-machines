@@ -33,42 +33,43 @@ import { call, Enum, timeout } from './helpers.js';
  * @param {object} objPath interface object path
  * @param {string} connectionName
  */
-export function interfaceGet({
+export async function interfaceGet({
     id: objPath,
     connectionName,
 }) {
     const props = {};
 
-    return call(connectionName, objPath, 'org.freedesktop.DBus.Properties', 'GetAll', ['org.libvirt.Interface'], { timeout, type: 's' })
-            .then(resultProps => {
-                /* Sometimes not all properties are returned; for example when some network got deleted while part
-                 * of the properties got fetched from libvirt. Make sure that there is check before reading the attributes.
-                 */
-                if ("Active" in resultProps[0])
-                    props.active = resultProps[0].Active.v.v;
-                if ("MAC" in resultProps[0])
-                    props.mac = resultProps[0].MAC.v.v;
-                if ("Name" in resultProps[0])
-                    props.name = resultProps[0].Name.v.v;
-                props.id = objPath;
-                props.connectionName = connectionName;
+    try {
+        const [resultProps] = await call(connectionName, objPath, 'org.freedesktop.DBus.Properties', 'GetAll',
+                                         ['org.libvirt.Interface'], { timeout, type: 's' });
+        /* Sometimes not all properties are returned; for example when some network got deleted while part
+            * of the properties got fetched from libvirt. Make sure that there is check before reading the attributes.
+            */
+        if ("Active" in resultProps)
+            props.active = resultProps.Active.v.v;
+        if ("MAC" in resultProps)
+            props.mac = resultProps.MAC.v.v;
+        if ("Name" in resultProps)
+            props.name = resultProps.Name.v.v;
+        props.id = objPath;
+        props.connectionName = connectionName;
 
-                return call(connectionName, objPath, 'org.libvirt.Interface', 'GetXMLDesc', [0], { timeout, type: 'u' });
-            })
-            .then(xml => {
-                const iface = parseIfaceDumpxml(xml);
-                return store.dispatch(updateOrAddInterface(Object.assign({}, props, iface)));
-            })
-            .catch(ex => console.log('listInactiveInterfaces action for path', objPath, ex.toString()));
+        const [xml] = await call(connectionName, objPath, 'org.libvirt.Interface', 'GetXMLDesc', [0], { timeout, type: 'u' });
+        const iface = parseIfaceDumpxml(xml);
+        store.dispatch(updateOrAddInterface(Object.assign(props, iface)));
+    } catch (ex) {
+        console.log('listInactiveInterfaces action for path', objPath, ex.toString());
+    }
 }
 
-export function interfaceGetAll({ connectionName }) {
+export async function interfaceGetAll({ connectionName }) {
     const flags = Enum.VIR_CONNECT_LIST_INTERFACES_ACTIVE | Enum.VIR_CONNECT_LIST_INTERFACES_INACTIVE;
 
-    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListInterfaces', [flags], { timeout, type: 'u' })
-            .then(ifaces => Promise.all(ifaces[0].map(path => interfaceGet({ connectionName, id: path }))))
-            .catch(ex => {
-                console.warn('getAllInterfaces action failed:', ex.toString());
-                return Promise.reject(ex);
-            });
+    try {
+        const [ifaces] = await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListInterfaces', [flags], { timeout, type: 'u' });
+        await Promise.all(ifaces.map(path => interfaceGet({ connectionName, id: path })));
+    } catch (ex) {
+        console.warn('getAllInterfaces action failed:', ex.toString());
+        throw ex;
+    }
 }
