@@ -39,71 +39,55 @@ export function snapshotCurrent({ connectionName, objPath }) {
     return call(connectionName, objPath, 'org.libvirt.Domain', 'SnapshotCurrent', [0], { timeout, type: 'u' });
 }
 
-export function snapshotDelete({ connectionName, domainPath, snapshotName }) {
-    return call(connectionName, domainPath, 'org.libvirt.Domain', 'SnapshotLookupByName', [snapshotName, 0], { timeout, type: 'su' })
-            .then((objPath) => {
-                return call(connectionName, objPath[0], 'org.libvirt.DomainSnapshot', 'Delete', [0], { timeout, type: 'u' });
-            });
+export async function snapshotDelete({ connectionName, domainPath, snapshotName }) {
+    const [objPath] = await call(connectionName, domainPath, 'org.libvirt.Domain', 'SnapshotLookupByName',
+                                 [snapshotName, 0], { timeout, type: 'su' });
+    await call(connectionName, objPath, 'org.libvirt.DomainSnapshot', 'Delete', [0], { timeout, type: 'u' });
 }
 
-export function snapshotGetAll({ connectionName, domainPath }) {
-    return call(connectionName, domainPath, 'org.libvirt.Domain', 'ListDomainSnapshots', [0], { timeout, type: 'u' })
-            .then(objPaths => {
-                const snaps = [];
-                const promises = [];
+export async function snapshotGetAll({ connectionName, domainPath }) {
+    try {
+        const [objPaths] = await call(connectionName, domainPath, 'org.libvirt.Domain', 'ListDomainSnapshots', [0],
+                                      { timeout, type: 'u' });
 
-                objPaths[0].forEach(objPath => {
-                    promises.push(call(connectionName, objPath, 'org.libvirt.DomainSnapshot', 'GetXMLDesc', [0], { timeout, type: 'u' })
-                            .then((xml) => {
-                                const result = { xml };
-                                return call(connectionName, objPath, 'org.libvirt.DomainSnapshot', 'IsCurrent', [0], { timeout, type: 'u' })
-                                        .then((isCurrent) => {
-                                            result.isCurrent = isCurrent;
-                                            return result;
-                                        });
-                            })
-                    );
-                });
+        const snapXmlList = await Promise.allSettled(objPaths.map(async objPath => {
+            const [xml] = await call(connectionName, objPath, 'org.libvirt.DomainSnapshot', 'GetXMLDesc', [0], { timeout, type: 'u' });
+            const [isCurrent] = await call(connectionName, objPath, 'org.libvirt.DomainSnapshot', 'IsCurrent', [0], { timeout, type: 'u' });
+            return { xml, isCurrent };
+        }));
 
-                return Promise.allSettled(promises)
-                        .then(snapXmlList => {
-                            snapXmlList.forEach(snap => {
-                                if (snap.status === 'fulfilled') {
-                                    const result = snap.value;
-                                    const snapParams = parseDomainSnapshotDumpxml(result.xml[0]);
-                                    snapParams.isCurrent = result.isCurrent[0];
-                                    snaps.push(snapParams);
-                                } else {
-                                    console.warn("DomainSnapshot method GetXMLDesc failed", snap.reason.toString());
-                                }
-                            });
-                            return store.dispatch(updateDomainSnapshots({
-                                connectionName,
-                                domainPath,
-                                snaps: snaps.sort((a, b) => a.creationTime - b.creationTime)
-                            }));
-                        });
-            })
-            .catch(ex => {
-                if (ex.name === 'org.freedesktop.DBus.Error.UnknownMethod')
-                    logDebug("LIST_DOMAIN_SNAPSHOTS action failed for domain", domainPath, ", not supported by libvirt-dbus");
-                else
-                    console.warn("LIST_DOMAIN_SNAPSHOTS action failed for domain", domainPath, ":", JSON.stringify(ex), "name:", ex.name);
-                return store.dispatch(updateDomainSnapshots({
-                    connectionName,
-                    domainPath,
-                    snaps: -1
-                }));
-            });
+        const snaps = [];
+        snapXmlList.forEach(snap => {
+            if (snap.status === 'fulfilled') {
+                const snapParams = parseDomainSnapshotDumpxml(snap.value.xml);
+                snapParams.isCurrent = snap.value.isCurrent;
+                snaps.push(snapParams);
+            } else {
+                console.warn("DomainSnapshot method GetXMLDesc failed", snap.reason.toString());
+            }
+        });
+        store.dispatch(updateDomainSnapshots({
+            connectionName,
+            domainPath,
+            snaps: snaps.sort((a, b) => a.creationTime - b.creationTime)
+        }));
+    } catch (ex) {
+        if (ex.name === 'org.freedesktop.DBus.Error.UnknownMethod')
+            logDebug("LIST_DOMAIN_SNAPSHOTS action failed for domain", domainPath, ", not supported by libvirt-dbus");
+        else
+            console.warn("LIST_DOMAIN_SNAPSHOTS action failed for domain", domainPath, ":", JSON.stringify(ex), "name:", ex.name);
+        store.dispatch(updateDomainSnapshots({
+            connectionName,
+            domainPath,
+            snaps: -1
+        }));
+    }
 }
 
-export function snapshotRevert({ connectionName, domainPath, snapshotName, force }) {
-    let flags = 0;
-    if (force)
-        flags |= Enum.VIR_DOMAIN_SNAPSHOT_REVERT_FORCE;
+export async function snapshotRevert({ connectionName, domainPath, snapshotName, force }) {
+    const flags = force ? Enum.VIR_DOMAIN_SNAPSHOT_REVERT_FORCE : 0;
 
-    return call(connectionName, domainPath, 'org.libvirt.Domain', 'SnapshotLookupByName', [snapshotName, 0], { timeout, type: 'su' })
-            .then((objPath) => {
-                return call(connectionName, objPath[0], 'org.libvirt.DomainSnapshot', 'Revert', [flags], { timeout, type: 'u' });
-            });
+    const [objPath] = await call(connectionName, domainPath, 'org.libvirt.Domain', 'SnapshotLookupByName', [snapshotName, 0],
+                                 { timeout, type: 'su' });
+    await call(connectionName, objPath, 'org.libvirt.DomainSnapshot', 'Revert', [flags], { timeout, type: 'u' });
 }

@@ -27,19 +27,16 @@ import { storagePoolRefresh } from './storagePool.js';
 import { domainAttachDisk } from './domain.js';
 import { call, timeout } from './helpers.js';
 
-export function storageVolumeCreate({ connectionName, poolName, volName, size, format }) {
+export async function storageVolumeCreate({ connectionName, poolName, volName, size, format }) {
     const volXmlDesc = getVolumeXML(volName, size, format);
 
-    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName', [poolName], { timeout, type: 's' })
-            .then(path => {
-                return call(connectionName, path[0], 'org.libvirt.StoragePool', 'StorageVolCreateXML', [volXmlDesc, 0], { timeout, type: 'su' })
-                        .then(() => {
-                            return storagePoolRefresh({ connectionName, objPath: path[0] });
-                        });
-            });
+    const [path] = await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName',
+                              [poolName], { timeout, type: 's' });
+    await call(connectionName, path, 'org.libvirt.StoragePool', 'StorageVolCreateXML', [volXmlDesc, 0], { timeout, type: 'su' });
+    await storagePoolRefresh({ connectionName, objPath: path });
 }
 
-export function storageVolumeCreateAndAttach({
+export async function storageVolumeCreateAndAttach({
     connectionName,
     poolName,
     volumeName,
@@ -55,55 +52,36 @@ export function storageVolumeCreateAndAttach({
     serial,
 }) {
     const volXmlDesc = getVolumeXML(volumeName, size, format);
-    let storagePoolPath;
-
-    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName', [poolName], { timeout, type: 's' })
-            .then(_storagePoolPath => {
-                storagePoolPath = _storagePoolPath[0];
-                return call(connectionName, storagePoolPath, 'org.libvirt.StoragePool', 'StorageVolCreateXML', [volXmlDesc, 0], { timeout, type: 'su' });
-            })
-            .then(() => {
-                return storagePoolRefresh({ connectionName, objPath: storagePoolPath });
-            })
-            .then((volPath) => {
-                return domainAttachDisk({ connectionName, type: "volume", device: "disk", poolName, volumeName, format, target, vmId, permanent, hotplug, cacheMode, busType, serial });
-            });
+    const [storagePoolPath] = await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName', [poolName], { timeout, type: 's' });
+    await call(connectionName, storagePoolPath, 'org.libvirt.StoragePool', 'StorageVolCreateXML', [volXmlDesc, 0], { timeout, type: 'su' });
+    await storagePoolRefresh({ connectionName, objPath: storagePoolPath });
+    await domainAttachDisk({ connectionName, type: "volume", device: "disk", poolName, volumeName, format, target, vmId, permanent, hotplug, cacheMode, busType, serial });
 }
 
-export function storageVolumeDelete({ connectionName, poolName, volName }) {
-    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName', [poolName], { timeout, type: 's' })
-            .then(objPath => call(connectionName, objPath[0], 'org.libvirt.StoragePool', 'StorageVolLookupByName', [volName], { timeout, type: 's' }))
-            .then(objPath => call(connectionName, objPath[0], 'org.libvirt.StorageVol', 'Delete', [0], { timeout, type: 'u' }));
+export async function storageVolumeDelete({ connectionName, poolName, volName }) {
+    const [poolPath] = await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName',
+                                  [poolName], { timeout, type: 's' });
+    const [volPath] = await call(connectionName, poolPath, 'org.libvirt.StoragePool', 'StorageVolLookupByName',
+                                 [volName], { timeout, type: 's' });
+    await call(connectionName, volPath, 'org.libvirt.StorageVol', 'Delete', [0], { timeout, type: 'u' });
 }
 
-export function storageVolumeGetAll({ connectionName, poolName }) {
-    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName', [poolName], { timeout, type: 's' })
-            .then(storagePoolPath => {
-                return call(connectionName, storagePoolPath[0], 'org.libvirt.StoragePool', 'ListStorageVolumes', [0], { timeout, type: 'u' });
-            })
-            .then((objPaths) => {
-                const volumes = [];
-                const storageVolumesPropsPromises = [];
+export async function storageVolumeGetAll({ connectionName, poolName }) {
+    try {
+        const [storagePoolPath] = await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName',
+                                             [poolName], { timeout, type: 's' });
+        const [objPaths] = await call(connectionName, storagePoolPath, 'org.libvirt.StoragePool', 'ListStorageVolumes', [0],
+                                      { timeout, type: 'u' });
 
-                for (let i = 0; i < objPaths[0].length; i++) {
-                    const objPath = objPaths[0][i];
+        const storageVolumesPropsPromises = objPaths.map(objPath =>
+            call(connectionName, objPath, 'org.libvirt.StorageVol', 'GetXMLDesc', [0], { timeout, type: 'u' })
+        );
 
-                    storageVolumesPropsPromises.push(
-                        call(connectionName, objPath, 'org.libvirt.StorageVol', 'GetXMLDesc', [0], { timeout, type: 'u' })
-                    );
-                }
-
-                return Promise.allSettled(storageVolumesPropsPromises).then(volumeXmlList => {
-                    for (let i = 0; i < volumeXmlList.length; i++) {
-                        if (volumeXmlList[i].status === 'fulfilled') {
-                            const volumeXml = volumeXmlList[i].value[0];
-                            const dumpxmlParams = parseStorageVolumeDumpxml(connectionName, volumeXml);
-
-                            volumes.push(dumpxmlParams);
-                        }
-                    }
-                    return volumes;
-                });
-            })
-            .catch(ex => console.warn("GET_STORAGE_VOLUMES action failed for pool", poolName, ":", ex.toString()));
+        const volumeXmlList = await Promise.allSettled(storageVolumesPropsPromises);
+        return volumeXmlList
+                .filter(vol => vol.status === 'fulfilled')
+                .map(vol => parseStorageVolumeDumpxml(connectionName, vol.value[0]));
+    } catch (ex) {
+        console.warn("GET_STORAGE_VOLUMES action failed for pool", poolName, ":", ex.toString());
+    }
 }

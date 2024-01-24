@@ -152,7 +152,7 @@ function delayPolling(action, timeout) {
  * @param  {String} objPath        D-Bus object path of the Domain we need to poll.
  * @return {Function}
  */
-function doUsagePolling(name, connectionName, objPath) {
+async function doUsagePolling(name, connectionName, objPath) {
     logDebug(`doUsagePolling(${name}, ${connectionName}, ${objPath})`);
 
     if (!usagePollingEnabled(store.getState(), name, connectionName)) {
@@ -161,82 +161,85 @@ function doUsagePolling(name, connectionName, objPath) {
     }
     const flags = Enum.VIR_DOMAIN_STATS_BALLOON | Enum.VIR_DOMAIN_STATS_VCPU | Enum.VIR_DOMAIN_STATS_BLOCK | Enum.VIR_DOMAIN_STATS_STATE;
 
-    return call(connectionName, objPath, "org.libvirt.Domain", "GetStats", [flags, 0], { timeout: 5000, type: "uu" })
-            .then(info => {
-                if (Object.getOwnPropertyNames(info[0]).length > 0) {
-                    info = info[0];
-                    const props = { name, connectionName, id: objPath };
-                    let avgvCpuTime = 0;
+    try {
+        const [info] = await call(connectionName, objPath, "org.libvirt.Domain", "GetStats", [flags, 0], { timeout: 5000, type: "uu" });
+        if (Object.getOwnPropertyNames(info).length > 0) {
+            const props = { name, connectionName, id: objPath };
+            let avgvCpuTime = 0;
 
-                    if ("balloon.rss" in info)
-                        props.rssMemory = info["balloon.rss"].v.v;
-                    else if ("state.state" in info && info["state.state"].v.v == Enum.VIR_DOMAIN_SHUTOFF)
-                        props.rssMemory = 0.0;
-                    for (let i = 0; i < info["vcpu.maximum"].v.v; i++) {
-                        if (!(`vcpu.${i}.time` in info))
-                            continue;
-                        avgvCpuTime += info[`vcpu.${i}.time`].v.v;
-                    }
-                    avgvCpuTime /= info["vcpu.current"].v.v;
-                    if (info["vcpu.current"].v.v > 0)
-                        Object.assign(props, {
-                            actualTimeInMs: Date.now(),
-                            cpuTime: avgvCpuTime
-                        });
-                    Object.assign(props, {
-                        disksStats: calculateDiskStats(info)
-                    });
+            if ("balloon.rss" in info)
+                props.rssMemory = info["balloon.rss"].v.v;
+            else if ("state.state" in info && info["state.state"].v.v == Enum.VIR_DOMAIN_SHUTOFF)
+                props.rssMemory = 0.0;
+            for (let i = 0; i < info["vcpu.maximum"].v.v; i++) {
+                if (!(`vcpu.${i}.time` in info))
+                    continue;
+                avgvCpuTime += info[`vcpu.${i}.time`].v.v;
+            }
+            avgvCpuTime /= info["vcpu.current"].v.v;
+            if (info["vcpu.current"].v.v > 0)
+                Object.assign(props, {
+                    actualTimeInMs: Date.now(),
+                    cpuTime: avgvCpuTime
+                });
+            Object.assign(props, {
+                disksStats: calculateDiskStats(info)
+            });
 
-                    logDebug(`doUsagePolling: ${JSON.stringify(props)}`);
-                    return store.dispatch(updateVm(props));
-                }
-            })
-            .catch(ex => console.warn(`GetStats(${name}, ${connectionName}) failed: ${ex.toString()}`))
-            .finally(() => delayPolling(() => doUsagePolling(name, connectionName, objPath), null));
+            logDebug(`doUsagePolling: ${JSON.stringify(props)}`);
+            store.dispatch(updateVm(props));
+        }
+    } catch (ex) {
+        console.warn(`GetStats(${name}, ${connectionName}) failed: ${ex.toString()}`);
+    }
+    delayPolling(() => doUsagePolling(name, connectionName, objPath), null);
 }
 
-function getLoggedInUser() {
-    logDebug(`GET_LOGGED_IN_USER:`);
-    return cockpit.user().then(loggedUser => store.dispatch(setLoggedInUser({ loggedUser })));
+async function getLoggedInUser() {
+    const loggedUser = await cockpit.user();
+    logDebug(`GET_LOGGED_IN_USER:`, loggedUser);
+    store.dispatch(setLoggedInUser({ loggedUser }));
 }
 
-export function getLibvirtVersion({ connectionName }) {
-    return call(connectionName, "/org/libvirt/QEMU", "org.freedesktop.DBus.Properties", "Get", ["org.libvirt.Connect", "LibVersion"], { timeout, type: "ss" })
-            .then(version => store.dispatch(updateLibvirtVersion({ libvirtVersion: version[0].v })));
+export async function getLibvirtVersion({ connectionName }) {
+    const [version] = await call(connectionName, "/org/libvirt/QEMU", "org.freedesktop.DBus.Properties", "Get", ["org.libvirt.Connect", "LibVersion"], { timeout, type: "ss" });
+    store.dispatch(updateLibvirtVersion({ libvirtVersion: version.v }));
 }
 
-function getNodeMaxMemory({ connectionName }) {
+async function getNodeMaxMemory({ connectionName }) {
     // Some nodes don"t return all memory in just one cell.
     // Using -1 == VIR_NODE_MEMORY_STATS_ALL_CELLS will return memory across all cells
-    return call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "NodeGetMemoryStats", [-1, 0], { timeout, type: "iu" })
-            .then(stats => store.dispatch(setNodeMaxMemory({ memory: stats[0].total })))
-            .catch(ex => {
-                console.warn("NodeGetMemoryStats failed:", ex.toString());
-                return Promise.reject(ex);
-            });
+    try {
+        const [stats] = await call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "NodeGetMemoryStats", [-1, 0], { timeout, type: "iu" });
+        store.dispatch(setNodeMaxMemory({ memory: stats.total }));
+    } catch (ex) {
+        console.warn("NodeGetMemoryStats failed:", ex.toString());
+        throw ex;
+    }
 }
 
-function getOsInfoList () {
+async function getOsInfoList () {
     logDebug(`GET_OS_INFO_LIST():`);
-    return python.spawn(getOSListScript, null, { err: "message", environ: ['LC_ALL=C.UTF-8'] })
-            .then(osList => {
-                parseOsInfoList(osList);
-            })
-            .catch(ex => {
-                console.error(`get os list returned error: "${JSON.stringify(ex)}"`);
-                parseOsInfoList('[]');
-            });
+    try {
+        const osList = await python.spawn(getOSListScript, null, { err: "message", environ: ['LC_ALL=C.UTF-8'] });
+        parseOsInfoList(osList);
+    } catch (ex) {
+        console.error(`get os list returned error: "${JSON.stringify(ex)}"`);
+        parseOsInfoList('[]');
+    }
 }
 
-function networkUpdateOrDelete(connectionName, netPath) {
-    call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "ListNetworks", [0], { timeout, type: "u" })
-            .then(objPaths => {
-                if (objPaths[0].includes(netPath))
-                    return networkGet({ connectionName, id: netPath, updateOnly: true });
-                else // Transient network which got undefined when stopped
-                    return store.dispatch(undefineNetwork({ connectionName, id: netPath }));
-            })
-            .catch(ex => console.warn("networkUpdateOrDelete action failed:", ex.toString()));
+async function networkUpdateOrDelete(connectionName, netPath) {
+    try {
+        const [objPaths] = await call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "ListNetworks", [0],
+                                      { timeout, type: "u" });
+        if (objPaths.includes(netPath))
+            return networkGet({ connectionName, id: netPath, updateOnly: true });
+        else // Transient network which got undefined when stopped
+            return store.dispatch(undefineNetwork({ connectionName, id: netPath }));
+    } catch (ex) {
+        console.warn("networkUpdateOrDelete action failed:", ex.toString());
+    }
 }
 
 function parseOsInfoList(osList) {
@@ -418,15 +421,16 @@ function startEventMonitorStoragePools(connectionName) {
         });
 }
 
-function storagePoolStopOrUndefine(connectionName, poolPath) {
-    return call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "ListStoragePools", [0], { timeout, type: "u" })
-            .then(objPaths => {
-                if (objPaths[0].includes(poolPath))
-                    return storagePoolGet({ connectionName, id: poolPath, updateOnly: true });
-                else // Transient pool which got undefined when stopped
-                    return store.dispatch(undefineStoragePool({ connectionName, id: poolPath }));
-            })
-            .catch(ex => console.warn("storagePoolStopOrUndefine action failed:", ex.toString()));
+async function storagePoolStopOrUndefine(connectionName, poolPath) {
+    try {
+        const [objPaths] = await call(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "ListStoragePools", [0], { timeout, type: "u" });
+        if (objPaths.includes(poolPath))
+            await storagePoolGet({ connectionName, id: poolPath, updateOnly: true });
+        else // Transient pool which got undefined when stopped
+            store.dispatch(undefineStoragePool({ connectionName, id: poolPath }));
+    } catch (ex) {
+        console.warn("storagePoolStopOrUndefine action failed:", ex.toString());
+    }
 }
 
 export function getApiData({ connectionName }) {
