@@ -22,6 +22,8 @@
  * See https://github.com/libvirt/libvirt-dbus
  */
 import cockpit from 'cockpit';
+import * as python from 'python.js';
+
 import store from '../store.js';
 import VMS_CONFIG from '../config.js';
 
@@ -91,8 +93,6 @@ export const domainSerialConsoleCommand = ({ vm, alias }) => {
         return false;
 };
 
-let pythonPath;
-
 function buildConsoleVVFile(consoleDetail) {
     return '[virt-viewer]\n' +
         `type=${consoleDetail.type}\n` +
@@ -111,11 +111,6 @@ function domainAttachDevice({ connectionName, vmId, permanent, hotplug, xmlDesc 
 
     // Error handling is done from the calling side
     return call(connectionName, vmId, 'org.libvirt.Domain', 'AttachDevice', [xmlDesc, flags], { timeout, type: 'su' });
-}
-
-export async function getPythonPath() {
-    const out = await cockpit.spawn(["/bin/sh", "-c", "command -v /usr/libexec/platform-python || command -v python3 || command -v python"]);
-    pythonPath = out.trim();
 }
 
 export function domainAttachDisk({
@@ -350,7 +345,7 @@ export async function domainCreate({
         }
 
         await hashPasswords(args);
-        await cockpit.spawn([pythonPath, "--", "-", JSON.stringify(args)], opts).input(installVmScript);
+        await python.spawn(installVmScript, [JSON.stringify(args)], opts);
     } catch (ex) {
         clearVmUiState(vmName, connectionName);
         throw ex;
@@ -766,9 +761,7 @@ export function domainInstall({ vm }) {
         vmName: vm.name,
     });
 
-    return cockpit
-            .spawn([pythonPath, "--", "-", args], opts)
-            .input(installVmScript)
+    return python.spawn(installVmScript, [args], opts)
             .catch(ex => {
                 console.error(JSON.stringify(ex));
                 return Promise.reject(ex);
