@@ -49,7 +49,6 @@ import {
 import {
     domainGet,
     domainGetAll,
-    getPythonPath,
 } from "../libvirtApi/domain.js";
 import {
     call,
@@ -444,7 +443,6 @@ export function getApiData({ connectionName }) {
 }
 
 export const initState = () => Promise.all([
-    getPythonPath(),
     getLoggedInUser(),
     getOsInfoList(),
 ]);

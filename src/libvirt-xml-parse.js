@@ -182,6 +182,21 @@ export function getDomainCapDiskBusTypes(capsXML) {
     return busElem && Array.prototype.map.call(busElem.getElementsByTagName("value"), valueElem => valueElem.textContent);
 }
 
+export function getDomainCapSupportsSpice(capsXML) {
+    const domainCapsElem = getElem(capsXML);
+    const graphicsCapsElems = domainCapsElem.getElementsByTagName("graphics")?.[0]
+            ?.getElementsByTagName("enum")?.[0]
+            ?.getElementsByTagName("value");
+    const hasSpiceGraphics = graphicsCapsElems && Array.prototype.find.call(
+        graphicsCapsElems, valueElem => valueElem.textContent == "spice");
+    const channelCapsElems = domainCapsElem.getElementsByTagName("channel")?.[0]
+            ?.getElementsByTagName("enum")?.[0]
+            ?.getElementsByTagName("value");
+    const hasSpiceChannel = channelCapsElems && Array.prototype.find.call(
+        channelCapsElems, valueElem => valueElem.textContent == "spicevmc");
+    return hasSpiceGraphics || hasSpiceChannel;
+}
+
 export function getSingleOptionalElem(parent, name) {
     const subElems = parent.getElementsByTagName(name);
     return subElems.length > 0 ? subElems[0] : undefined; // optional
@@ -246,6 +261,7 @@ export function parseDomainDumpxml(connectionName, domXml, objPath) {
     const filesystems = parseDumpxmlForFilesystems(devicesElem);
     const watchdog = parseDumpxmlForWatchdog(devicesElem);
     const vsock = parseDumpxmlForVsock(devicesElem);
+    const hasSpice = parseDumpxmlForSpice(devicesElem);
 
     const hasInstallPhase = parseDumpxmlMachinesMetadataElement(metadataElem, 'has_install_phase') === 'true';
     const installSourceType = parseDumpxmlMachinesMetadataElement(metadataElem, 'install_source_type');
@@ -289,6 +305,7 @@ export function parseDomainDumpxml(connectionName, domXml, objPath) {
         watchdog,
         vsock,
         metadata,
+        hasSpice,
     };
 }
 
@@ -479,6 +496,21 @@ export function parseDumpxmlForVsock(devicesElem) {
     }
 
     return { cid };
+}
+
+function parseDumpxmlForSpice(devicesElem) {
+    for (let i = 0; i < devicesElem.children.length; ++i) {
+        const device = devicesElem.children.item(i);
+        // also catch spicevmc
+        if (device.getAttribute("type")?.startsWith("spice"))
+            return true;
+        // qxl video is also related to SPICE
+        if (device.tagName === "video" && getSingleOptionalElem(device, "model")?.getAttribute("type") === "qxl")
+            return true;
+    }
+
+    logDebug("parseDumpxmlForSpice: no SPICE elements found in", devicesElem.children);
+    return false;
 }
 
 export function parseDumpxmlForFilesystems(devicesElem) {
