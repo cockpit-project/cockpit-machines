@@ -372,11 +372,11 @@ class CreateNetworkModal extends React.Component {
                 ipv6DhcpRangeStart,
                 ipv6DhcpRangeEnd
             })
-                    .fail(exc => {
+                    .then(Dialogs.close)
+                    .catch(exc => {
                         this.setState({ createInProgress: false });
                         this.dialogErrorSet(_("Virtual network failed to be created"), exc.message);
-                    })
-                    .then(Dialogs.close);
+                    });
         }
     }
 

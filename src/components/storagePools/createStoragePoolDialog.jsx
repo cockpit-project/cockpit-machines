@@ -393,11 +393,11 @@ class CreateStoragePoolModal extends React.Component {
         if (!modalIsIncomplete) {
             this.setState({ createInProgress: true });
             storagePoolCreate({ ...this.state })
-                    .fail(exc => {
+                    .then(Dialogs.close)
+                    .catch(exc => {
                         this.setState({ createInProgress: false });
                         this.dialogErrorSet(_("Storage pool failed to be created"), exc.message);
-                    })
-                    .then(Dialogs.close);
+                    });
         }
     }
 

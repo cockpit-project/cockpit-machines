@@ -413,9 +413,7 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
         // There are recently no Libvirt events for storage volumes and polling is ugly.
         // https://bugzilla.redhat.com/show_bug.cgi?id=1578836
         storagePoolGetAll({ connectionName: vm.connectionName })
-                .always(() => {
-                    setStoragePools(getVmStoragePools(vm.connectionName).sort(sortFunction));
-                })
+                .finally(() => setStoragePools(getVmStoragePools(vm.connectionName).sort(sortFunction)))
                 .catch(exc => dialogErrorSet(_("Storage pools could not be fetched"), exc.message));
     }, [vm.connectionName]);
 
