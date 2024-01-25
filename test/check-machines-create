@@ -2353,7 +2353,8 @@ vnc_password= "{vnc_passwd}"
         def checkConnnectInfo(expect_vnc=True, expect_spice=False):
             # if VNC is available, the inline viewer is the default
             if expect_vnc:
-                b.wait_visible(".pf-v5-c-console__vnc canvas")
+                with b.wait_timeout(60):
+                    b.wait_visible(".pf-v5-c-console__vnc canvas")
 
             b.click("#pf-v5-c-console__type-selector")
             b.wait_visible("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
