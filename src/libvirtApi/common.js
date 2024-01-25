@@ -236,7 +236,7 @@ async function networkUpdateOrDelete(connectionName, netPath) {
         if (objPaths.includes(netPath))
             return networkGet({ connectionName, id: netPath, updateOnly: true });
         else // Transient network which got undefined when stopped
-            return store.dispatch(undefineNetwork({ connectionName, id: netPath }));
+            store.dispatch(undefineNetwork({ connectionName, id: netPath }));
     } catch (ex) {
         console.warn("networkUpdateOrDelete action failed:", ex.toString());
     }
@@ -245,7 +245,7 @@ async function networkUpdateOrDelete(connectionName, netPath) {
 function parseOsInfoList(osList) {
     const osinfodata = JSON.parse(osList);
 
-    return store.dispatch(updateOsInfoList(osinfodata.filter(os => os.shortId)));
+    store.dispatch(updateOsInfoList(osinfodata.filter(os => os.shortId)));
 }
 
 /**
@@ -464,7 +464,7 @@ export function usageStopPolling({
     name,
     connectionName
 }) {
-    return store.dispatch(updateVm({
+    store.dispatch(updateVm({
         connectionName,
         name,
         usagePolling: false
