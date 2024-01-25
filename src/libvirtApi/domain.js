@@ -397,16 +397,14 @@ export function domainDeleteStorage({
 }) {
     const storageVolPromises = [];
 
-    for (let i = 0; i < storage.length; i++) {
-        const disk = storage[i];
-
+    storage.forEach(disk => {
         switch (disk.type) {
         case 'file': {
             logDebug(`deleteStorage: deleting file storage ${disk.source.file}`);
 
             storageVolPromises.push(
                 call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StorageVolLookupByPath', [disk.source.file], { timeout, type: 's' })
-                        .then(volPath => call(connectionName, volPath[0], 'org.libvirt.StorageVol', 'Delete', [0], { timeout, type: 'u' }))
+                        .then(([volPath]) => call(connectionName, volPath, 'org.libvirt.StorageVol', 'Delete', [0], { timeout, type: 'u' }))
                         .catch(ex => {
                             if (!ex.message.includes("no storage vol with matching"))
                                 return Promise.reject(ex);
@@ -423,8 +421,8 @@ export function domainDeleteStorage({
             logDebug(`deleteStorage: deleting volume storage ${disk.source.volume} on pool ${disk.source.pool}`);
             storageVolPromises.push(
                 call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName', [disk.source.pool], { timeout, type: 's' })
-                        .then(objPath => call(connectionName, objPath[0], 'org.libvirt.StoragePool', 'StorageVolLookupByName', [disk.source.volume], { timeout, type: 's' }))
-                        .then(volPath => call(connectionName, volPath[0], 'org.libvirt.StorageVol', 'Delete', [0], { timeout, type: 'u' }))
+                        .then(([objPath]) => call(connectionName, objPath, 'org.libvirt.StoragePool', 'StorageVolLookupByName', [disk.source.volume], { timeout, type: 's' }))
+                        .then(([volPath]) => call(connectionName, volPath, 'org.libvirt.StorageVol', 'Delete', [0], { timeout, type: 'u' }))
             );
             const pool = storagePools.find(pool => pool.connectionName === connectionName && pool.name === disk.source.pool);
             if (pool)
@@ -434,7 +432,7 @@ export function domainDeleteStorage({
         default:
             logDebug("Disks of type $0 are currently ignored during VM deletion".format(disk.type));
         }
-    }
+    });
 
     if (storage.length > 0 && storageVolPromises.length == 0)
         return Promise.reject(new Error("Could not find storage file to delete."));
