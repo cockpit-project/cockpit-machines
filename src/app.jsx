@@ -55,17 +55,12 @@ function canLoggedUserConnectSession (connectionName, loggedUser) {
     return connectionName !== 'session' || loggedUser.name !== 'root';
 }
 
-function unknownConnectionName() {
-    return cockpit.user()
-            .then(loggedUser => {
-                const connectionNames = (
-                    Object.getOwnPropertyNames(VMS_CONFIG.Virsh.connections).filter(
-                        // The 'root' user does not have its own qemu:///session just qemu:///system
-                        // https://bugzilla.redhat.com/show_bug.cgi?id=1045069
-                        connectionName => canLoggedUserConnectSession(connectionName, loggedUser))
-                );
-                return connectionNames;
-            });
+async function unknownConnectionName() {
+    const loggedUser = await cockpit.user();
+    return Object.getOwnPropertyNames(VMS_CONFIG.Virsh.connections).filter(
+        // The 'root' user does not have its own qemu:///session just qemu:///system
+        // https://bugzilla.redhat.com/show_bug.cgi?id=1045069
+        connectionName => canLoggedUserConnectSession(connectionName, loggedUser));
 }
 
 export const App = () => {
@@ -82,41 +77,37 @@ export const App = () => {
 
     useEvent(superuser, "changed");
     useEffect(() => {
-        Promise.all([initState(), unknownConnectionName()])
-                .then(([_init, connectionNames]) => {
-                    return Promise.allSettled(connectionNames.map(conn => {
-                        return getLibvirtVersion({ connectionName: conn })
-                                .then(() => {
-                                    return getApiData({ connectionName: conn })
-                                            .then(promises => {
-                                                const errorMsgs = [];
-                                                promises.forEach(promise => {
-                                                    if (promise.status == 'rejected' && promise.reason)
-                                                        errorMsgs.push(promise.reason.message);
-                                                });
-                                                setError(errorMsgs.join(', '));
-                                            });
-                                }, ex => {
-                                    // access denied is expected for unprivileged session
-                                    if (conn !== 'system' || superuser.allowed || ex.name !== 'org.freedesktop.DBus.Error.AccessDenied')
-                                        console.error("Failed to get libvirt version from the dbus API:", ex);
-                                    /* If the API call failed on system connection and the user has superuser privileges then show the Empty state screen */
-                                    if (conn == "system")
-                                        setSystemSocketInactive(true);
-                                });
-                    }));
-                })
-                .finally(() => setLoadingResources(false));
+        (async () => {
+            await initState();
+            const connectionNames = await unknownConnectionName();
+
+            await Promise.allSettled(connectionNames.map(async connectionName => {
+                try {
+                    await getLibvirtVersion({ connectionName });
+                    const promises = await getApiData({ connectionName });
+                    const errorMsgs = promises
+                            .filter(promise => promise.status === 'rejected')
+                            .map(promise => promise.reason.message);
+                    setError(errorMsgs.join(', '));
+                } catch (ex) {
+                    // access denied is expected for unprivileged session
+                    if (connectionName !== 'system' || superuser.allowed || ex.name !== 'org.freedesktop.DBus.Error.AccessDenied')
+                        console.error("Failed to get libvirt version from the dbus API:", ex);
+                    /* If the API call failed on system connection and the user has superuser privileges then show the Empty state screen */
+                    if (connectionName == "system")
+                        setSystemSocketInactive(true);
+                }
+                setLoadingResources(false);
+            }));
+        })();
     }, []);
 
     useEffect(() => {
-        async function checkVirtualization() {
+        (async () => {
             const hardwareVirtCheck = await cockpit.script("virt-host-validate | grep 'Checking for hardware virtualization'");
 
             setVirtualizationEnabled(hardwareVirtCheck.includes('PASS'));
-        }
-
-        checkVirtualization();
+        })();
     }, []);
 
     if (!virtualizationEnabled && !emptyStateIgnored) {
@@ -179,28 +170,25 @@ class AppActive extends React.Component {
         this.onNavigate = () => this.setState({ path: cockpit.location.path });
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         cockpit.addEventListener("locationchanged", this.onNavigate);
 
         if (this.props.error)
             this.onAddErrorNotification({ text: _("Failed to fetch some resources"), detail: this.props.error });
 
-        cockpit.script('type virt-install', { err: 'ignore' })
-                .then(() => {
-                    this.setState({ virtInstallAvailable: true });
-                    cockpit.spawn(['virt-install', '--install=?'], { err: 'ignore' })
-                            .then(() => this.setState({ downloadOSSupported: true }),
-                                  () => this.setState({ downloadOSSupported: false }));
+        const check_exec = argv => cockpit.spawn(argv, { err: 'ignore' })
+                .catch(() => false);
 
-                    cockpit.spawn(['virt-install', '--cloud-init=?'], { err: 'ignore' })
-                            .then(() => this.setState({ cloudInitSupported: true }),
-                                  () => this.setState({ cloudInitSupported: false }));
-
-                    cockpit.spawn(['virt-install', '--unattended=?'], { err: 'ignore' })
-                            .then(options => this.setState({ unattendedSupported: true, unattendedUserLogin: options.includes('user-login') }),
-                                  () => this.setState({ unattendedSupported: false }));
-                },
-                      () => this.setState({ virtInstallAvailable: false }));
+        const virtInstallAvailable = !!await check_exec(['sh', '-c', 'type virt-install']);
+        this.setState({ virtInstallAvailable });
+        if (virtInstallAvailable) {
+            const downloadOSSupported = !!await check_exec(['virt-install', '--install=?']);
+            const cloudInitSupported = !!await check_exec(['virt-install', '--cloud-init=?']);
+            const unattended_out = await check_exec(['virt-install', '--unattended=?']);
+            const unattendedSupported = !!unattended_out;
+            const unattendedUserLogin = unattended_out?.includes('user-login');
+            this.setState({ cloudInitSupported, downloadOSSupported, unattendedSupported, unattendedUserLogin });
+        }
     }
 
     componentWillUnmount() {
