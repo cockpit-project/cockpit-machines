@@ -683,7 +683,7 @@ export async function domainGet({
         else
             console.warn(`GET_VM failed for ${objPath}, undefining: ${ex.toString()}`);
         // but undefine either way -- if we  can't get info about the VM, don't show it
-        await store.dispatch(undefineVm({ connectionName, id: objPath }));
+        store.dispatch(undefineVm({ connectionName, id: objPath }));
     }
 }
 
