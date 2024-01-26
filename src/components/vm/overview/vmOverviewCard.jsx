@@ -168,7 +168,7 @@ class VmOverviewCard extends React.Component {
                             <DescriptionListTerm>{_("State")}</DescriptionListTerm>
                             <DescriptionListDescription>
                                 <StateIcon error={vm.error}
-                                               state={vm.state + (vm.savedImage ? " (saved)" : "")}
+                                               state={vm.state + (vm.suspendImage ? " (suspended)" : "")}
                                                valueId={`${idPrefix}-${vm.connectionName}-state`}
                                                dismissError={() => store.dispatch(updateVm({
                                                    connectionName: vm.connectionName,

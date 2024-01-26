@@ -46,8 +46,8 @@ import {
     domainCanRun,
     domainCanPause,
     domainCanShutdown,
-    domainCanSave,
-    domainCanSaveRemove,
+    domainCanSuspendToDisk,
+    domainCanSuspenImageRemove,
     domainForceOff,
     domainForceReboot,
     domainInstall,
@@ -57,9 +57,9 @@ import {
     domainSendNMI,
     domainShutdown,
     domainStart,
-    domainSave,
-    domainSaveRemove,
-    domainHasSaveImage
+    domainSuspendToDisk,
+    domainSuspendImageRemove,
+    domainHasSuspendImage
 } from '../../libvirtApi/domain.js';
 import store from "../../store.js";
 
@@ -183,7 +183,7 @@ const onSendNMI = (vm) => domainSendNMI({ name: vm.name, id: vm.id, connectionNa
     );
 });
 
-const onSave = (vm) => domainSave({ name: vm.name, id: vm.id, connectionName: vm.connectionName, flags: vm.state == 'running' ? 2 : 4 }).catch(ex => {
+const onSuspendToDisk = (vm) => domainSuspendToDisk({ name: vm.name, id: vm.id, connectionName: vm.connectionName, flags: vm.state == 'running' ? 2 : 4 }).catch(ex => {
     store.dispatch(
         updateVm({
             connectionName: vm.connectionName,
@@ -196,14 +196,14 @@ const onSave = (vm) => domainSave({ name: vm.name, id: vm.id, connectionName: vm
     );
 });
 
-const onSaveRemove = (vm) => domainSaveRemove({ name: vm.name, id: vm.id, connectionName: vm.connectionName })
-        .then(() => domainHasSaveImage({ name: vm.name, id: vm.id, connectionName: vm.connectionName }))
-        .then((SaveImage) => {
+const onSuspendImageRemove = (vm) => domainSuspendImageRemove({ name: vm.name, id: vm.id, connectionName: vm.connectionName })
+        .then(() => domainHasSuspendImage({ name: vm.name, id: vm.id, connectionName: vm.connectionName }))
+        .then((SuspendImage) => {
             store.dispatch(
                 updateVm({
                     connectionName: vm.connectionName,
                     name: vm.name,
-                    savedImage: SaveImage[0],
+                    suspendImage: SuspendImage[0],
                 })
             );
         })
@@ -239,7 +239,7 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
 
     const id = `${vmId(vm.name)}-${vm.connectionName}`;
     const state = vm.state;
-    const savedImage = vm.savedImage;
+    const suspendImage = vm.suspendImage;
     const hasInstallPhase = vm.metadata && vm.metadata.hasInstallPhase;
     const dropdownItems = [];
 
@@ -267,23 +267,23 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
         dropdownItems.push(<DropdownSeparator key="separator-resume" />);
     }
 
-    if (domainCanSave(state)) {
+    if (domainCanSuspendToDisk(state)) {
         dropdownItems.push(
             <DropdownItem key={`${id}-save`}
                           id={`${id}-save`}
-                          onClick={() => onSave(vm)}>
-                {_("Save")}
+                          onClick={() => onSuspendToDisk(vm)}>
+                {_("Suspend to disk")}
             </DropdownItem>
         );
         dropdownItems.push(<DropdownSeparator key="separator-suspend" />);
     }
 
-    if (domainCanSaveRemove(state, savedImage)) {
+    if (domainCanSuspenImageRemove(state, suspendImage)) {
         dropdownItems.push(
             <DropdownItem key={`${id}-saveRemove`}
                           id={`${id}-savedRemove`}
-                          onClick={() => onSaveRemove(vm)}>
-                {_("Remove save Image")}
+                          onClick={() => onSuspendImageRemove(vm)}>
+                {_("Remove Suspend Image")}
             </DropdownItem>
         );
         dropdownItems.push(<DropdownSeparator key="separator-suspend" />);
