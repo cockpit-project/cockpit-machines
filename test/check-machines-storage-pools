@@ -488,6 +488,20 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
             source={"source_path": "vol_grp1"},
         ).execute()
 
+        # Prepare a disk with ext4 filesystem to test the fs storage pool type
+        dev = self.add_ram_disk(2)
+        m.execute(f"parted {dev} mklabel gpt")
+        m.execute(f"parted -s {dev} mkpart primary ext4 0% 100%")
+        part_dev = f"{dev}p1"
+        m.execute(f"mkfs.ext4 {part_dev}")
+        StoragePoolCreateDialog(
+            delf,
+            name="my_fs_pool",
+            pool_type="fs",
+            target="/media/",
+            source={"source_path": dev, "format":"ext4"},
+        ).execute()
+
     def testStorageVolumesCreate(self):
         b = self.browser
         m = self.machine
