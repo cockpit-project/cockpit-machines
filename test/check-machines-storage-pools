@@ -495,7 +495,7 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         part_dev = f"{dev}p1"
         m.execute(f"mkfs.ext4 {part_dev}")
         StoragePoolCreateDialog(
-            delf,
+            self,
             name="my_fs_pool",
             pool_type="fs",
             target="/media/",
