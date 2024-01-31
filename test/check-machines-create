@@ -2518,10 +2518,12 @@ vnc_password= "{vnc_passwd}"
             self.login_and_go("/machines")
             self.waitPageInit()
             self.waitVmRow(vmName, "system")
+            # warns on the overview
+            b.wait_visible(f"#vm-{vmName}-uses-spice")
             self.goToVmPage(vmName)
             b.wait_text(f"#vm-{vmName}-system-state", "Shut off")
 
-            # warns
+            # warns on the details page
             b.wait_visible(f"#vm-{vmName}-uses-spice")
             # and indeed startup fails
             b.click(f"#vm-{vmName}-system-run")
