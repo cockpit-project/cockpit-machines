@@ -183,7 +183,7 @@ const StoragePoolSourceRow = ({ onValueChanged, dialogValues }) => {
                 <FormHelper fieldId="storage-pool-dialog-source" helperTextInvalid={validationState == "error" && _("Source path should not be empty")} />
             </FormGroup>
         );
-    else if (dialogValues.type == 'disk')
+    else if (dialogValues.type == 'disk' || dialogValues.type == 'fs')
         return (
             <Grid hasGutter>
                 <FormGroup fieldId='storage-pool-dialog-source' label={_("Source path")}
@@ -200,36 +200,7 @@ const StoragePoolSourceRow = ({ onValueChanged, dialogValues }) => {
                     <FormSelect id='storage-pool-dialog-source-format'
                                 value={dialogValues.source.format}
                                 onChange={(_event, value) => onValueChanged('source', { format: value })}>
-                        { diskPoolSourceFormatTypes
-                                .map(format => {
-                                    return (
-                                        <FormSelectOption value={format} key={format}
-                                                          label={format} />
-                                    );
-                                })
-                        }
-                    </FormSelect>
-                </FormGroup>
-            </Grid>
-        );
-    else if (dialogValues.type == 'fs')
-        return (
-            <Grid hasGutter>
-                <FormGroup fieldId='storage-pool-dialog-source' label={_("Source path")}
-                           className="pf-m-8-col"
-                           id="storage-pool-dialog-source-group">
-                    <FileAutoComplete id='storage-pool-dialog-source'
-                                      superuser='try'
-                                      placeholder={placeholder}
-                                      onChange={value => onValueChanged('source', { device: value })} />
-                    <FormHelper fieldId="storage-pool-dialog-source" helperTextInvalid={validationState == "error" && _("Source path should not be empty")} />
-                </FormGroup>
-                <FormGroup fieldId='storage-pool-dialog-source-format' label={_("Format")}
-                           className="pf-m-4-col">
-                    <FormSelect id='storage-pool-dialog-source-format'
-                                value={dialogValues.source.format}
-                                onChange={(_event, value) => onValueChanged('source', { format: value })}>
-                        { diskPoolSourceFsTypes
+                        { (dialogValues.type === 'fs' ? diskPoolSourceFsTypes : diskPoolSourceFormatTypes)
                                 .map(format => {
                                     return (
                                         <FormSelectOption value={format} key={format}
