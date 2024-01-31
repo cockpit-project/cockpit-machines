@@ -489,7 +489,6 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         ).execute()
 
         # Prepare a disk with ext4 filesystem to test the fs storage pool type
-        dev = self.add_ram_disk(2)
         m.execute(f"parted {dev} mklabel gpt")
         m.execute(f"parted -s {dev} mkpart primary ext4 0% 100%")
         part_dev = f"{dev}p1"
