@@ -60,6 +60,7 @@ const StoragePoolTypeRow = ({ onValueChanged, dialogValues, libvirtVersion, pool
         { type: 'iscsi', detail: _("iSCSI target") },
         { type: 'disk', detail: _("Physical disk device") },
         { type: 'logical', detail: _("LVM volume group") },
+        { type: 'fs', detail: _("Pre-formatted Block Device") },
     ];
     // iscsi-direct exists since 4.7.0
     if (libvirtVersion && libvirtVersion >= 4007000)
@@ -68,7 +69,6 @@ const StoragePoolTypeRow = ({ onValueChanged, dialogValues, libvirtVersion, pool
     const supportedPoolTypes = poolTypes.filter(pool => poolCapabilities[pool.type] ? poolCapabilities[pool.type].supported === "yes" : true);
 
     /* TODO
-        { type: 'fs', detail _("Pre-formatted Block Device") },
         { type: 'gluster', detail _("Gluster Filesystem") },
         { type: 'mpath', detail _("Multipath Device Enumerator") },
         { type: 'rbd', detail _("RADOS Block Device/Ceph") },
@@ -98,7 +98,7 @@ const StoragePoolTypeRow = ({ onValueChanged, dialogValues, libvirtVersion, pool
 const StoragePoolTargetRow = ({ onValueChanged, dialogValues }) => {
     const validationState = dialogValues.target.length == 0 && dialogValues.validationFailed.target ? 'error' : 'default';
 
-    if (['dir', 'netfs', 'iscsi', 'disk'].includes(dialogValues.type)) {
+    if (['dir', 'netfs', 'iscsi', 'disk', 'fs'].includes(dialogValues.type)) {
         return (
             <FormGroup fieldId='storage-pool-dialog-target' label={_("Target path")}
                        id="storage-pool-dialog-target-group">
@@ -151,6 +151,8 @@ const StoragePoolSourceRow = ({ onValueChanged, dialogValues }) => {
     let validationState;
     let placeholder;
     const diskPoolSourceFormatTypes = ['dos', 'dvh', 'gpt', 'mac'];
+    // https://libvirt.org/storage.html#valid-filesystem-pool-format-types
+    const diskPoolSourceFsTypes = ['auto', 'ext2', 'ext3', 'ext4', 'xfs'];
 
     if (dialogValues.type == 'netfs') {
         validationState = dialogValues.source.dir.length == 0 && dialogValues.validationFailed.source ? 'error' : 'default';
@@ -182,7 +184,7 @@ const StoragePoolSourceRow = ({ onValueChanged, dialogValues }) => {
                 <FormHelper fieldId="storage-pool-dialog-source" helperTextInvalid={validationState == "error" && _("Source path should not be empty")} />
             </FormGroup>
         );
-    else if (dialogValues.type == 'disk')
+    else if (dialogValues.type == 'disk' || dialogValues.type == 'fs')
         return (
             <Grid hasGutter>
                 <FormGroup fieldId='storage-pool-dialog-source' label={_("Source path")}
@@ -199,7 +201,7 @@ const StoragePoolSourceRow = ({ onValueChanged, dialogValues }) => {
                     <FormSelect id='storage-pool-dialog-source-format'
                                 value={dialogValues.source.format}
                                 onChange={(_event, value) => onValueChanged('source', { format: value })}>
-                        { diskPoolSourceFormatTypes
+                        { (dialogValues.type === 'fs' ? diskPoolSourceFsTypes : diskPoolSourceFormatTypes)
                                 .map(format => {
                                     return (
                                         <FormSelectOption value={format} key={format}
