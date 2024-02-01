@@ -11,13 +11,13 @@ import { ReplaceSpiceDialog } from './vmReplaceSpiceDialog.jsx';
 
 const _ = cockpit.gettext;
 
-export const VmUsesSpice = ({ vm }) => {
+export const VmUsesSpice = ({ vm, vms }) => {
     const Dialogs = useDialogs();
 
     if (!vm.hasSpice || vm.capabilities?.supportsSpice)
         return null;
 
-    const onReplace = () => Dialogs.show(<ReplaceSpiceDialog vm={vm} />);
+    const onReplace = () => Dialogs.show(<ReplaceSpiceDialog vm={vm} vms={vms} />);
 
     const header = _("Uses SPICE");
     return (
