@@ -151,11 +151,8 @@ const StoragePoolSourceRow = ({ onValueChanged, dialogValues }) => {
     let validationState;
     let placeholder;
     const diskPoolSourceFormatTypes = ['dos', 'dvh', 'gpt', 'mac'];
+    // https://libvirt.org/storage.html#valid-filesystem-pool-format-types
     const diskPoolSourceFsTypes = ['auto', 'ext2', 'ext3', 'ext4', 'xfs'];
-    /*
-      FsTypes lists the types listed below:
-      https://libvirt.org/storage.html#valid-filesystem-pool-format-types
-    */
 
     if (dialogValues.type == 'netfs') {
         validationState = dialogValues.source.dir.length == 0 && dialogValues.validationFailed.source ? 'error' : 'default';
