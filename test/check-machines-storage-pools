@@ -498,7 +498,7 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
             name="my_fs_pool",
             pool_type="fs",
             target="/media/",
-            source={"source_path": part_dev, "format":"ext4"},
+            source={"source_path": part_dev, "format": "ext4"},
         ).execute()
 
     def testStorageVolumesCreate(self):
