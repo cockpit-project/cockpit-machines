@@ -32,7 +32,7 @@ import { domainReplaceSpice } from '../../libvirtApi/domain.js';
 
 const _ = cockpit.gettext;
 
-export const ReplaceSpiceDialog = ({ vmName, vmId, connectionName, vmRunning }) => {
+export const ReplaceSpiceDialog = ({ vm }) => {
     const Dialogs = useDialogs();
     const [error, dialogErrorSet] = useState(null);
     const [inProgress, setInProgress] = useState(false);
@@ -40,7 +40,7 @@ export const ReplaceSpiceDialog = ({ vmName, vmId, connectionName, vmRunning }) 
     function onReplace() {
         setInProgress(true);
 
-        return domainReplaceSpice({ connectionName, id: vmId })
+        return domainReplaceSpice({ connectionName: vm.connectionName, id: vm.id })
                 .then(() => Dialogs.close())
                 .catch(exc => {
                     // we don't know of any case where this would fail, so this is all belt-and-suspenders
@@ -60,7 +60,7 @@ export const ReplaceSpiceDialog = ({ vmName, vmId, connectionName, vmRunning }) 
 
     return (
         <Modal position="top" variant="small" isOpen onClose={Dialogs.close}
-           title={cockpit.format(_("Replace SPICE devices in VM $0"), vmName)}
+           title={cockpit.format(_("Replace SPICE devices in VM $0"), vm.name)}
            footer={
                <>
                    <Button variant='primary'
@@ -74,7 +74,7 @@ export const ReplaceSpiceDialog = ({ vmName, vmId, connectionName, vmRunning }) 
                    </Button>
                </>
            }>
-            { vmRunning && !error && <NeedsShutdownAlert idPrefix="spice-modal" /> }
+            { vm.state === 'running' && !error && <NeedsShutdownAlert idPrefix="spice-modal" /> }
             {error && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.dialogErrorDetail} />}
             <TextContent>
                 <Text>{_("Reconfigure the virtual machine for a host which does not support SPICE, for host upgrades or live migration:")}</Text>

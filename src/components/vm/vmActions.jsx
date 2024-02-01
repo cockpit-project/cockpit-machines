@@ -433,10 +433,7 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
         dropdownItems.push(
             <DropdownItem key={`${id}-replace-spice`}
                           id={`${id}-replace-spice`}
-                          onClick={() => Dialogs.show(<ReplaceSpiceDialog vmName={vm.name}
-                                                                          vmId={vm.id}
-                                                                          connectionName={vm.connectionName}
-                                                                          vmRunning={vm.state == 'running'} />)}>
+                          onClick={() => Dialogs.show(<ReplaceSpiceDialog vm={vm} />)}>
                 {_("Replace SPICE devices")}
             </DropdownItem>
         );

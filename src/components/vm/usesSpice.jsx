@@ -17,10 +17,7 @@ export const VmUsesSpice = ({ vm }) => {
     if (!vm.hasSpice || vm.capabilities?.supportsSpice)
         return null;
 
-    const onReplace = () => Dialogs.show(<ReplaceSpiceDialog vmName={vm.name}
-                                                             vmId={vm.id}
-                                                             connectionName={vm.connectionName}
-                                                             vmRunning={vm.state == 'running'} />);
+    const onReplace = () => Dialogs.show(<ReplaceSpiceDialog vm={vm} />);
 
     const header = _("Uses SPICE");
     return (
