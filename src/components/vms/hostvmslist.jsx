@@ -44,7 +44,7 @@ import store from "../../store.js";
 
 import "./hostvmslist.scss";
 
-const VmState = ({ vm, dismissError }) => {
+const VmState = ({ vm, vms, dismissError }) => {
     let state = null;
 
     if (vm.downloadProgress) {
@@ -60,7 +60,7 @@ const VmState = ({ vm, dismissError }) => {
             error={vm.error}
             state={state}
             valueId={`${vmId(vm.name)}-${vm.connectionName}-state`}
-            additionalState={<><VmNeedsShutdown vm={vm} /><VmUsesSpice vm={vm} /></>} />
+            additionalState={<><VmNeedsShutdown vm={vm} /><VmUsesSpice vm={vm} vms={vms} /></>} />
     );
 };
 
@@ -154,6 +154,7 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                                         const vmActions = (
                                             <VmActions
                                                 vm={vm}
+                                                vms={vms}
                                                 config={config}
                                                 storagePools={storagePools}
                                                 onAddErrorNotification={onAddErrorNotification}
@@ -175,6 +176,7 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                                                 {
                                                     title: (
                                                         <VmState vm={vm}
+                                                                 vms={vms}
                                                                  dismissError={() => store.dispatch(updateVm({
                                                                      connectionName: vm.connectionName,
                                                                      name: vm.name,

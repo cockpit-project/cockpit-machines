@@ -2370,16 +2370,23 @@ vnc_password= "{vnc_passwd}"
             else:
                 self.assertNotIn("SPICE", b.text(".pf-v5-c-console__manual-connection"))
 
-        def doReplaceSpice(vmName, expect_running=False):
+        def doReplaceSpiceSingle(vmName, expect_running=False, cancel=False):
             self.performAction(vmName, "replace-spice")
+            b.wait_text(".pf-v5-c-modal-box__title-text", f"Replace SPICE devices in VM {vmName}")
+            b.wait_in_text(".pf-v5-c-modal-box__body", "Replace SPICE on the virtual machine")
             if expect_running:
                 b.wait_visible("#spice-modal-idle-message")
             else:
-                b.wait_in_text(".pf-v5-c-modal-box__body", "Reconfigure")
                 self.assertFalse(b.is_present("#spice-modal-idle-message"))
+            self.assertFalse(b.is_present("#replace-spice-dialog-other"))
 
-            b.click("#replace-spice-dialog-confirm")
+            if cancel:
+                b.click('.pf-v5-c-modal-box__footer button:contains("Cancel")')
+            else:
+                b.click("#replace-spice-dialog-confirm")
             b.wait_not_present(".pf-v5-c-modal-box")
+            if cancel:
+                return
 
             if expect_running:
                 b.click(f"#vm-{vmName}-needs-shutdown")
@@ -2428,7 +2435,7 @@ vnc_password= "{vnc_passwd}"
             self.assertIn("channel type='spicevmc'", domainXML)
             checkConnnectInfo(expect_vnc=True, expect_spice=True)
 
-            doReplaceSpice(vmCockpit, expect_running=True)
+            doReplaceSpiceSingle(vmCockpit, expect_running=True)
 
             # "Replace SPICE" menu entry goes away (async)
             for _retry in range(15):
@@ -2464,22 +2471,94 @@ vnc_password= "{vnc_passwd}"
             return
 
         #
-        # custom spice-only VM, not running
+        # some custom spice-only VMs, not running; test mass conversion
         #
+
+        self.createVm("SpiceOne", graphics="spice", running=False)
+        self.createVm("SpiceTwo", graphics="spice", running=True)
+        self.createVm("SpiceSession", graphics="spice", connection="session", running=False)
+        # this one shouldn't be touched
+        self.createVm("VncOne", graphics="vnc", running=False)
 
         vmSpiceOnly = "SpiceOnly"
         self.createVm(vmSpiceOnly, graphics="spice", running=False)
         self.waitVmRow(vmSpiceOnly, "system")
+
+        # detail page only shows single VM conversion
         self.goToVmPage(vmSpiceOnly)
         b.wait_text(f"#vm-{vmSpiceOnly}-system-state", "Shut off")
-        doReplaceSpice(vmSpiceOnly, expect_running=False)
+        doReplaceSpiceSingle(vmSpiceOnly, expect_running=False, cancel=True)
 
+        # overview page shows mass VM conversion
+        self.goToMainPage()
+        self.performAction(vmSpiceOnly, "replace-spice")
+
+        b.wait_text(".pf-v5-c-modal-box__title-text", "Replace SPICE devices")
+        b.wait_in_text(".pf-v5-c-modal-box__body", "Replace SPICE on selected VMs")
+        # action came from vmSpiceOnly, should be at the top and selected
+        b.wait_visible(f".pf-v5-c-menu__item:contains('{vmSpiceOnly}') input:checked")
+        b.wait_visible(".pf-v5-c-menu__item input:checked")  # selector is ambigous if anything else is checked
+        # other SPICE VMs are also offered
+        menu = b.text("#replace-spice-dialog-other")
+        self.assertIn("SpiceOne", menu)
+        self.assertIn("SpiceTwo", menu)
+        self.assertIn("SpiceSession", menu)
+        self.assertNotIn("Vnc", menu)
+
+        b.wait_text("#replace-spice-dialog-select-all", "Select all")
+        b.click("#replace-spice-dialog-select-all")
+        # now there are no unchecked VMs
+        b.wait_not_present(".pf-v5-c-menu__item input:not(:checked)")
+        b.wait_text("#replace-spice-dialog-select-all", "Deselect others")
+        b.click("#replace-spice-dialog-select-all")
+        # only the first one selected now
+        b.wait_visible(f".pf-v5-c-menu__item:contains('{vmSpiceOnly}') input:checked")
+        # fails due to ambiguity if others are
+        b.wait_visible(".pf-v5-c-menu__item input:checked")
+        b.click("#replace-spice-dialog-select-all")
+        b.wait_not_present(".pf-v5-c-menu__item input:not(:checked)")
+        # uncheck SpiceTwo
+        b.click(".pf-v5-c-menu__item:contains('SpiceTwo') input")
+        b.wait_visible(".pf-v5-c-menu__item:contains('SpiceTwo') input:not(:checked)")
+
+        # ensure we don't have an alert for failed install of subVmTest1, as it would interfere with the pixel test;
+        # this is unfortunately unpredictable
+        if b.is_present(".pf-v5-c-alert-group"):
+            b.click(".pf-v5-c-alert-group .pf-v5-c-alert__action button")
+            b.wait_not_present(".pf-v5-c-alert-group")
+
+        b.assert_pixels(".pf-v5-c-modal-box", "replace-spice-multi")
+
+        b.click("#replace-spice-dialog-confirm")
+        b.wait_not_present(".pf-v5-c-modal-box")
+
+        # SpiceOnly still runs
         b.click(f"#vm-{vmSpiceOnly}-system-run")
         b.wait_text(f"#vm-{vmSpiceOnly}-system-state", "Running")
+        self.goToVmPage(vmSpiceOnly)
+        # and was converted to VNC
         checkConnnectInfo(expect_vnc=True, expect_spice=False)
 
+        # other VMs were also converted
+        self.assertNotIn("spice", m.execute("virsh dumpxml SpiceOne"))
+        self.assertNotIn("spice", self.run_admin("virsh -c qemu:///session dumpxml SpiceSession", "session"))
+        # but we unchecked SpiceTwo (this is running)
+        self.assertIn("spice", m.execute("virsh dumpxml --inactive SpiceTwo"))
+
         self.goToMainPage()
-        self.machine.execute(f"virsh destroy {vmSpiceOnly}; virsh undefine {vmSpiceOnly}")
+
+        # now test unchecking the "primary" VM
+        self.createVm("SpiceThree", graphics="spice", running=False)
+        self.waitVmRow("SpiceThree", "system")
+        self.performAction("SpiceTwo", "replace-spice")
+        b.wait_text(".pf-v5-c-modal-box__title-text", "Replace SPICE devices")
+        b.click("#replace-spice-dialog-select-all")
+        b.click(".pf-v5-c-menu__item:contains('SpiceTwo') input")
+        b.wait_visible(".pf-v5-c-menu__item:contains('SpiceTwo') input:not(:checked)")
+        b.click("#replace-spice-dialog-confirm")
+        b.wait_not_present(".pf-v5-c-modal-box")
+        self.assertNotIn("spice", m.execute("virsh dumpxml --inactive SpiceThree"))
+        self.assertIn("spice", m.execute("virsh dumpxml --inactive SpiceTwo"))
 
         # failed migration
         # we can't test this properly, as it's not possible to poke invalid XML into libvirt

@@ -178,7 +178,7 @@ const onSendNMI = (vm) => domainSendNMI({ name: vm.name, id: vm.id, connectionNa
     );
 });
 
-const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
+const VmActions = ({ vm, vms, onAddErrorNotification, isDetailsPage }) => {
     const Dialogs = useDialogs();
     const [isActionOpen, setIsActionOpen] = useState(false);
     const [operationInProgress, setOperationInProgress] = useState(false);
@@ -433,7 +433,7 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
         dropdownItems.push(
             <DropdownItem key={`${id}-replace-spice`}
                           id={`${id}-replace-spice`}
-                          onClick={() => Dialogs.show(<ReplaceSpiceDialog vm={vm} />)}>
+                          onClick={() => Dialogs.show(<ReplaceSpiceDialog vm={vm} vms={vms} />)}>
                 {_("Replace SPICE devices")}
             </DropdownItem>
         );
@@ -492,6 +492,7 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
 
 VmActions.propTypes = {
     vm: PropTypes.object.isRequired,
+    vms: PropTypes.array,
     onAddErrorNotification: PropTypes.func.isRequired,
 };
 
