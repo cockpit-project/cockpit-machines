@@ -60,7 +60,7 @@ const StoragePoolTypeRow = ({ onValueChanged, dialogValues, libvirtVersion, pool
         { type: 'iscsi', detail: _("iSCSI target") },
         { type: 'disk', detail: _("Physical disk device") },
         { type: 'logical', detail: _("LVM volume group") },
-        { type: 'fs', detail: _("Pre-formatted Block Device") },
+        { type: 'fs', detail: _("Pre-formatted block device") },
     ];
     // iscsi-direct exists since 4.7.0
     if (libvirtVersion && libvirtVersion >= 4007000)
