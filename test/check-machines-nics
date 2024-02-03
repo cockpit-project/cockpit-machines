@@ -466,7 +466,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         def verify(self):
             dom_xml = "virsh -c qemu:///system dumpxml --domain subVmTest1"
             mac_string = f'"{self.mac}"'
-            xmllint_element = f"{dom_xml} | xmllint --xpath 'string(//domain/devices/interface[starts-with(mac/@address,{mac_string})]/{{prop}})' - 2>&1 || true"
+            xmllint_element = f"{dom_xml} | xmllint --xpath 'string(//domain/devices/interface[starts-with(mac/@address,{mac_string})]/{{prop}})' -"
 
             if self.source_type == "network":
                 self.assertEqual(
@@ -730,7 +730,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             # Verify libvirt XML
             dom_xml = "virsh -c qemu:///system dumpxml --domain subVmTest1"
             mac_string = f'"{self.mac}"'
-            xmllint_element = f"{dom_xml} | xmllint --xpath 'string(//domain/devices/interface[starts-with(mac/@address,{mac_string})]/{{prop}})' - 2>&1 || true"
+            xmllint_element = f"{dom_xml} | xmllint --xpath 'string(//domain/devices/interface[starts-with(mac/@address,{mac_string})]/{{prop}})' -"
 
             if (self.source_type == "network"):
                 self.assertEqual("network", self.machine.execute(xmllint_element.format(prop='@type')).strip())

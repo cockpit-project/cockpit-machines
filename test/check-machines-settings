@@ -251,7 +251,7 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
 
         # Verify libvirt XML
         dom_xml = "virsh dumpxml subVmTest1"
-        xmllint_element = f"{dom_xml} | xmllint --xpath 'string(//domain/{{prop}})' - 2>&1 || true"
+        xmllint_element = f"{dom_xml} | xmllint --xpath 'string(//domain/{{prop}})' -"
         self.assertEqual("coreduo", m.execute(xmllint_element.format(prop='cpu/model')).strip())
 
         # Host-model gets expanded  to custom mode when the VM is running
@@ -481,10 +481,10 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
 
         dom_xml = "virsh -c qemu:///system dumpxml subVmTest1"
 
-        xmllint_elem = f"{dom_xml} | xmllint --xpath 'string(//domain/cpu/@mode)' - 2>&1 || true"
+        xmllint_elem = f"{dom_xml} | xmllint --xpath 'string(//domain/cpu/@mode)' -"
         testlib.wait(lambda: cpu_model in m.execute(xmllint_elem).strip())
 
-        xmllint_elem = f"{dom_xml} | xmllint --xpath 'string(//domain/vcpu)' - 2>&1 || true"
+        xmllint_elem = f"{dom_xml} | xmllint --xpath 'string(//domain/vcpu)' -"
         testlib.wait(lambda: "3" in m.execute(xmllint_elem).strip())
 
         virsh_output = m.execute("virsh dumpxml subVmTest1 | xmllint --xpath '/domain/devices/watchdog/@action' -").strip()

@@ -128,7 +128,7 @@ class VirtualMachinesCaseHelpers:
 
     def getDomainMacAddress(self, vmName):
         dom_xml = f"virsh -c qemu:///system dumpxml --domain {vmName}"
-        return self.machine.execute(f"{dom_xml} | xmllint --xpath 'string(//domain/devices/interface/mac/@address)' - 2>&1 || true").strip()
+        return self.machine.execute(f"{dom_xml} | xmllint --xpath 'string(//domain/devices/interface/mac/@address)' -").strip()
 
     def getLibvirtServiceName(self):
         m = self.machine
@@ -142,9 +142,11 @@ class VirtualMachinesCaseHelpers:
         # Wait until we can get a list of domains
         m.execute("until virsh list; do sleep 1; done")
 
-        # Wait for the network 'default' to become active
-        m.execute("virsh net-define /etc/libvirt/qemu/networks/default.xml || true")
-        m.execute("virsh net-start default || true")
+        # Create/activate network 'default' if necessary
+        m.execute("""if ! out=$(virsh net-info default); then
+                         virsh net-define /etc/libvirt/qemu/networks/default.xml
+                     fi
+                     if ! echo "$out" | grep -q 'Active.*yes'; then virsh net-start default; fi""")
         m.execute(r"until virsh net-info default | grep 'Active:\s*yes'; do sleep 1; done")
 
     def createVm(self, name, graphics='none', ptyconsole=False, running=True, memory=128, connection='system', machine=None, os="cirros0.4.0"):
@@ -231,7 +233,7 @@ class VirtualMachinesCaseHelpers:
                   """ % {"tgt": target_iqn, "ini": orig_iqn})
 
         self.addCleanup(m.execute, "targetcli /backstores/ramdisk delete test")
-        self.addCleanup(m.execute, "targetcli /iscsi delete %s; iscsiadm -m node -o delete || true" % target_iqn)
+        self.addCleanup(m.execute, f"targetcli /iscsi delete {target_iqn}; iscsiadm -m node -o delete")
         return orig_iqn
 
     def run_admin(self, cmd, connectionName='system', machine=None):
@@ -370,7 +372,7 @@ class VirtualMachinesCase(testlib.MachineCase, VirtualMachinesCaseHelpers, stora
 
         # Stop all domains
         for connection in ["system", "session"]:
-            cmd = f"for d in $(virsh -c qemu:///{connection} list --name); do virsh -c qemu:///{connection} destroy $d || true; done"
+            cmd = f"for d in $(virsh -c qemu:///{connection} list --name); do virsh -c qemu:///{connection} destroy $d; done"
             if connection == "session":
                 cmd += f"; for d in $(virsh -c qemu:///{connection} list --all --name); do virsh -c qemu:///{connection} undefine $d; done"
                 cmd = f"runuser -l admin -c '{cmd}'"
@@ -381,7 +383,7 @@ class VirtualMachinesCase(testlib.MachineCase, VirtualMachinesCaseHelpers, stora
 
         # Stop all pools
         for connection in ["system", "session"]:
-            cmd = f"for n in $(virsh -c qemu:///{connection} pool-list --name); do virsh -c qemu:///{connection} pool-destroy $n || true; done"
+            cmd = f"for n in $(virsh -c qemu:///{connection} pool-list --name); do virsh -c qemu:///{connection} pool-destroy $n; done"
             if connection == "session":
                 cmd += f"; for d in $(virsh -c qemu:///{connection} pool-list --all --name); do virsh -c qemu:///{connection} pool-undefine $d; done"
                 cmd = f"runuser -l admin -c '{cmd}'"
@@ -392,7 +394,7 @@ class VirtualMachinesCase(testlib.MachineCase, VirtualMachinesCaseHelpers, stora
 
         # Stop all networks
         for connection in ["system", "session"]:
-            cmd = f"for n in $(virsh -c qemu:///{connection} net-list --name); do virsh -c qemu:///{connection} net-destroy $n || true; done"
+            cmd = f"for n in $(virsh -c qemu:///{connection} net-list --name); do virsh -c qemu:///{connection} net-destroy $n; done"
             if connection == "session":
                 cmd += f"; for d in $(virsh -c qemu:///{connection} net-list --all --name); do virsh -c qemu:///{connection} net-undefine $d; done"
                 cmd = f"runuser -l admin -c '{cmd}'"
