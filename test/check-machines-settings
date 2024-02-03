@@ -597,14 +597,12 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
             b.wait_not_present("#vm-subVmTest1-watchdog-modal")
 
             b.wait_in_text("#vm-subVmTest1-watchdog-state", "none")
-            # check no watchdog is present in VM's xml (also xmllint is expected to return non-zero code)
-            virsh_output = m.execute("virsh dumpxml subVmTest1 | xmllint --xpath '/domain/devices/watchdog' - 2>&1 || true").strip()
-            self.assertEqual(virsh_output, 'XPath set is empty')
+            # check no watchdog is present in VM
+            self.assertNotIn("watchdog", m.execute("virsh dumpxml subVmTest1"))
 
             if live:
-                # check no watchdog is present in VM's xml (also xmllint is expected to return non-zero code)
-                virsh_output = m.execute("virsh dumpxml subVmTest1 --inactive | xmllint --xpath '/domain/devices/watchdog' - 2>&1 || true").strip()
-                self.assertEqual(virsh_output, 'XPath set is empty')
+                # check no watchdog is present in VM
+                self.assertNotIn("watchdog", m.execute("virsh dumpxml subVmTest1 --inactive"))
 
         args = self.createVm("subVmTest1", running=False)
 
@@ -824,14 +822,12 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
             b.wait_not_present("#vm-subVmTest1-vsock-modal")
 
             b.wait_in_text("#vm-subVmTest1-vsock-address", "none")
-            # check no vsock is present in VM's xml (also xmllint is expected to return non-zero code)
-            virsh_output = m.execute("virsh dumpxml subVmTest1 | xmllint --xpath '/domain/devices/vsock' - 2>&1 || true").strip()
-            self.assertEqual(virsh_output, 'XPath set is empty')
+            # check no vsock is present in VM
+            self.assertNotIn("vsock", m.execute("virsh dumpxml subVmTest1"))
 
             if live:
-                # check no vsock is present in VM's xml (also xmllint is expected to return non-zero code)
-                virsh_output = m.execute("virsh dumpxml subVmTest1 --inactive | xmllint --xpath '/domain/devices/vsock' - 2>&1 || true").strip()
-                self.assertEqual(virsh_output, 'XPath set is empty')
+                # check no vsock is present in VM
+                self.assertNotIn("vsock", m.execute("virsh dumpxml subVmTest1 --inactive"))
 
         self.createVm("subVmTest1", running=False)
 
