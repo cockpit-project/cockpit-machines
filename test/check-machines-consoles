@@ -215,7 +215,9 @@ class TestMachinesConsoles(machineslib.VirtualMachinesCase):
 
         b.wait_not_present("#navbar-oops")
 
-        self.allowed_messages.append("connection unexpectedly closed by peer")
+        self.allow_journal_messages("connection unexpectedly closed by peer")
+        self.allow_browser_errors("Disconnection timed out.",
+                                  "Failed when connecting: Connection closed")
 
 
 if __name__ == '__main__':
