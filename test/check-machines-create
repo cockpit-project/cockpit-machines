@@ -753,11 +753,11 @@ vnc_password= "{vnc_passwd}"
                                                       create_and_run=False,
                                                       connection='session'))
         cmds = [
-            "mkdir -p '/var/lib/libvirt/pools/tmp pool'; chmod a+rwx '/var/lib/libvirt/pools/tmp pool'",
-            "virsh pool-define-as 'tmp pool' --type dir --target '/var/lib/libvirt/pools/tmp pool'",
-            "virsh pool-start 'tmp pool'",
-            "qemu-img create -f qcow2 '/var/lib/libvirt/pools/tmp pool/vmTmpDestination.qcow2' 128M",
-            "virsh pool-refresh 'tmp pool'"
+            "mkdir -p '/var/lib/libvirt/pools/tmp-pool'; chmod a+rwx '/var/lib/libvirt/pools/tmp-pool'",
+            "virsh pool-define-as 'tmp-pool' --type dir --target '/var/lib/libvirt/pools/tmp-pool'",
+            "virsh pool-start 'tmp-pool'",
+            "qemu-img create -f qcow2 '/var/lib/libvirt/pools/tmp-pool/vmTmpDestination.qcow2' 128M",
+            "virsh pool-refresh 'tmp-pool'"
         ]
         self.machine.execute("; ".join(cmds))
 
@@ -769,7 +769,7 @@ vnc_password= "{vnc_passwd}"
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='file',
                                                       location=config.NOVELL_MOCKUP_ISO_PATH,
                                                       memory_size=128, memory_size_unit='MiB',
-                                                      storage_pool="tmp pool",
+                                                      storage_pool="tmp-pool",
                                                       storage_volume="vmTmpDestination.qcow2",
                                                       create_and_run=True,))
 
