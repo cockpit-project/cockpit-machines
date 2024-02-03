@@ -206,7 +206,7 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
             def verify_backend(self):
                 # Verify libvirt XML
                 snap_xml = f"virsh -c qemu:///system snapshot-dumpxml --domain subVmTest1 --snapshotname {self.name}"
-                xmllint_element = f"{snap_xml} | xmllint --xpath 'string(//domainsnapshot/{{prop}})' - 2>&1 || true"
+                xmllint_element = f"{snap_xml} | xmllint --xpath 'string(//domainsnapshot/{{prop}})' -"
 
                 if (self.name):
                     self.test_obj.assertEqual(self.name, m.execute(xmllint_element.format(prop='name')).strip())

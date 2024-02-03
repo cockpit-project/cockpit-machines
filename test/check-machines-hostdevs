@@ -190,8 +190,8 @@ class TestMachinesHostDevs(machineslib.VirtualMachinesCase):
                 m.execute("diff /tmp/vmdir/vmxml1 /tmp/vmdir/vmxml2 | sed -e 's/^>//;1d' > /tmp/vmdir/vmdiff")
 
                 if self.dev_type == "usb_device":
-                    vendor_id = m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/vendor/@id)' - 2>&1 || true").strip()
-                    product_id = m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/product/@id)' - 2>&1 || true").strip()
+                    vendor_id = m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/vendor/@id)' -").strip()
+                    product_id = m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/product/@id)' -").strip()
 
                     output = self.run_admin(f"virsh -c qemu:///{connectionName} nodedev-list --cap {self.dev_type}", connectionName)
                     devices = output.splitlines()
@@ -199,17 +199,17 @@ class TestMachinesHostDevs(machineslib.VirtualMachinesCase):
                     for dev in devices:
                         if self.dev_type == "usb_device":
                             self.run_admin(f"virsh -c qemu:///{connectionName} nodedev-dumpxml --device {dev} > /tmp/vmdir/nodedevxml", connectionName)
-                            vendor = m.execute(f"xmllint --xpath 'string(//device/capability/vendor[starts-with(@id, \"{vendor_id}\")])' - 2>&1 < /tmp/vmdir/nodedevxml || true")
-                            product = m.execute(f"xmllint --xpath 'string(//device/capability/product[starts-with(@id, \"{product_id}\")])' < /tmp/vmdir/nodedevxml - 2>&1 || true")
+                            vendor = m.execute(f"xmllint --xpath 'string(//device/capability/vendor[starts-with(@id, \"{vendor_id}\")])' - 2>&1 < /tmp/vmdir/nodedevxml")
+                            product = m.execute(f"xmllint --xpath 'string(//device/capability/product[starts-with(@id, \"{product_id}\")])' < /tmp/vmdir/nodedevxml - 2>&1")
 
                             if vendor.strip() == self._vendor and product.strip() == self._model:
                                 return
 
                 elif self.dev_type == "pci":
-                    domain = int(m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@domain)' - 2>&1 || true"), base=16)
-                    bus = int(m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@bus)' - 2>&1 || true"), base=16)
-                    slot = int(m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@slot)' - 2>&1 || true"), base=16)
-                    func = int(m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@function)' - 2>&1 || true"), base=16)
+                    domain = int(m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@domain)' -"), base=16)
+                    bus = int(m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@bus)' -"), base=16)
+                    slot = int(m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@slot)' -"), base=16)
+                    func = int(m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@function)' -"), base=16)
 
                     slot_parts = re.split(r":|\.", self._slot)
 
@@ -233,11 +233,11 @@ class TestMachinesHostDevs(machineslib.VirtualMachinesCase):
         dialog = HostDevAddDialog(self, fail_message="No host device selected")
         dialog.open()
         dialog.add()
-        testlib.wait(lambda: "true" == m.execute(f"virsh -c qemu:///{connectionName} dumpxml subVmTest1 | grep -A 5 hostdev || echo true").strip())
+        m.execute(f"while virsh -c qemu:///{connectionName} dumpxml subVmTest1 | grep -A 5 hostdev; do sleep 1; done")
         # Check no host devices attached after shutting off the VM
         self.performAction("subVmTest1", "forceOff", connectionName=connectionName)
         b.wait_in_text(f"#vm-subVmTest1-{connectionName}-state", "Shut off")
-        testlib.wait(lambda: "true" == m.execute("virsh -c qemu:///{connectionName} dumpxml subVmTest1 | grep -A 5 hostdev || echo true").strip())
+        m.execute(f"while virsh -c qemu:///{connectionName} dumpxml subVmTest1 | grep -A 5 hostdev; do sleep 1; done")
 
         output = self.run_admin(f"virsh -c qemu:///{connectionName} nodedev-list --cap usb_device", connectionName)
         if output.strip() != "":

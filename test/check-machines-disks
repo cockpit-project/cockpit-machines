@@ -1238,7 +1238,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
         # Ensure that adding disks with custom path is possible when no storage pools are present
         # https://bugzilla.redhat.com/show_bug.cgi?id=1985228
-        m.execute("for pool in $(virsh pool-list --all --name); do virsh pool-destroy $pool || true; virsh pool-undefine $pool; done")
+        m.execute("for pool in $(virsh pool-list --name); do virsh pool-destroy $pool; done")
+        m.execute("for pool in $(virsh pool-list --all --name); do virsh pool-undefine $pool; done")
         b.wait_visible("#vm-details[data-pools-count='0']")
         b.click(prefix)
         b.click(f"{prefix}-custompath")

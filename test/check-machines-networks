@@ -234,7 +234,7 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
 
                 # Verify libvirt XML
                 net_xml = f"virsh -c qemu:///system net-dumpxml {self.name}"
-                xmllint_element = f"{net_xml} | xmllint --xpath 'string(//network/{{prop}})' - 2>&1 || true"
+                xmllint_element = f"{net_xml} | xmllint --xpath 'string(//network/{{prop}})' -"
 
                 self.test_obj.assertEqual(self.name, m.execute(xmllint_element.format(prop='name')).strip())
                 if (self.forward_mode == "none"):

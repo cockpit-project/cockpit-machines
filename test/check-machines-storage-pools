@@ -323,7 +323,7 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
 
                 # Verify libvirt XML
                 pool_xml = f"virsh -c qemu:///system pool-dumpxml {self.name}"
-                xmllint_element = f"{pool_xml} | xmllint --xpath 'string(//pool/{{prop}})' - 2>&1 || true"
+                xmllint_element = f"{pool_xml} | xmllint --xpath 'string(//pool/{{prop}})' -"
 
                 self.test_obj.assertEqual(self.name, m.execute(xmllint_element.format(prop='name')).strip())
                 if (self.target):
@@ -519,7 +519,6 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         m.execute("systemctl restart nfs-server")
         m.execute(f"virsh pool-define-as nfs-pool --type netfs --target {nfs_pool} --source-host 127.0.0.1 --source-path {mnt_exports}")
         m.execute("virsh pool-start nfs-pool")
-        self.addCleanup(m.execute, "virsh pool-destroy nfs-pool || true")  # Destroy pool as it block removal of `nfs_pool`
 
         # Prepare disk/block pool
         dev = self.add_ram_disk(10)
@@ -607,7 +606,7 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
 
                 # Verify libvirt XML
                 vol_xml = f"virsh -c qemu:///system vol-dumpxml --pool {self.pool_name} --vol {self.vol_name}"
-                xmllint_element = f"{vol_xml} | xmllint --xpath 'string(//volume/{{prop}})' - 2>&1 || true"
+                xmllint_element = f"{vol_xml} | xmllint --xpath 'string(//volume/{{prop}})' -"
 
                 self.test_obj.assertEqual(self.vol_name, m.execute(xmllint_element.format(prop='name')).strip())
 

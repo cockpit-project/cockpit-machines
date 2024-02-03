@@ -1601,7 +1601,7 @@ vnc_password= "{vnc_passwd}"
             new_fedora_28_xml = ET.tostring(root)
             self.machine.execute(f"echo '{str(new_fedora_28_xml, 'utf-8')}' > {self.test_obj.vm_tmpdir}/fedora-28.xml")
             self.machine.execute(f"mount -o bind  {self.test_obj.vm_tmpdir}/fedora-28.xml /usr/share/osinfo/os/fedoraproject.org/fedora-28.xml")
-            self.test_obj.addCleanup(self.machine.execute, "umount /usr/share/osinfo/os/fedoraproject.org/fedora-28.xml || true")
+            self.test_obj.addCleanup(self.machine.execute, "umount /usr/share/osinfo/os/fedoraproject.org/fedora-28.xml")
 
             # Fake distro with no minimum ram or storage defined
             fedora_29_xml = self.machine.execute("cat /usr/share/osinfo/os/fedoraproject.org/fedora-29.xml")
@@ -1613,7 +1613,7 @@ vnc_password= "{vnc_passwd}"
             new_fedora_29_xml = ET.tostring(root)
             self.machine.execute(f"echo '{str(new_fedora_29_xml, 'utf-8')}' > {self.test_obj.vm_tmpdir}/fedora-29.xml")
             self.machine.execute(f"mount -o bind  {self.test_obj.vm_tmpdir}/fedora-29.xml /usr/share/osinfo/os/fedoraproject.org/fedora-29.xml")
-            self.test_obj.addCleanup(self.machine.execute, "umount /usr/share/osinfo/os/fedoraproject.org/fedora-29.xml || true")
+            self.test_obj.addCleanup(self.machine.execute, "umount /usr/share/osinfo/os/fedoraproject.org/fedora-29.xml")
 
         def _fakeOsDBInfoRhel(self):
             # Fake rhel 8 images
@@ -1625,7 +1625,7 @@ vnc_password= "{vnc_passwd}"
             new_rhel_8_1_xml = ET.tostring(root)
             self.machine.execute(f"echo '{str(new_rhel_8_1_xml, 'utf-8')}' > {self.test_obj.vm_tmpdir}/rhel-8.1.xml")
             self.machine.execute(f"mount -o bind  {self.test_obj.vm_tmpdir}/rhel-8.1.xml /usr/share/osinfo/os/redhat.com/rhel-8.1.xml")
-            self.test_obj.addCleanup(self.machine.execute, "umount /usr/share/osinfo/os/redhat.com/rhel-8.1.xml || true")
+            self.test_obj.addCleanup(self.machine.execute, "umount /usr/share/osinfo/os/redhat.com/rhel-8.1.xml")
 
             rhel_8_2_xml = self.machine.execute("cat /usr/share/osinfo/os/redhat.com/rhel-8.2.xml")
             root = ET.fromstring(rhel_8_2_xml)
@@ -1635,7 +1635,7 @@ vnc_password= "{vnc_passwd}"
             new_rhel_8_2_xml = ET.tostring(root)
             self.machine.execute(f"echo '{str(new_rhel_8_2_xml, 'utf-8')}' > {self.test_obj.vm_tmpdir}/rhel-8.2.xml")
             self.machine.execute(f"mount -o bind  {self.test_obj.vm_tmpdir}/rhel-8.2.xml /usr/share/osinfo/os/redhat.com/rhel-8.2.xml")
-            self.test_obj.addCleanup(self.machine.execute, "umount /usr/share/osinfo/os/redhat.com/rhel-8.2.xml || true")
+            self.test_obj.addCleanup(self.machine.execute, "umount /usr/share/osinfo/os/redhat.com/rhel-8.2.xml")
 
             # Fake rhel 7 image
             rhel_7_1_xml = self.machine.execute("cat /usr/share/osinfo/os/redhat.com/rhel-7.1.xml")
@@ -1645,7 +1645,7 @@ vnc_password= "{vnc_passwd}"
             new_rhel_7_1_xml = ET.tostring(root)
             self.machine.execute(f"echo '{str(new_rhel_7_1_xml, 'utf-8')}' > {self.test_obj.vm_tmpdir}/rhel-7.1.xml")
             self.machine.execute(f"mount -o bind  {self.test_obj.vm_tmpdir}/rhel-7.1.xml /usr/share/osinfo/os/redhat.com/rhel-7.1.xml")
-            self.test_obj.addCleanup(self.machine.execute, "umount /usr/share/osinfo/os/redhat.com/rhel-7.1.xml || true")
+            self.test_obj.addCleanup(self.machine.execute, "umount /usr/share/osinfo/os/redhat.com/rhel-7.1.xml")
 
         def _fakeFedoraTree(self):
             server = self.test_obj.setup_mock_server("mock-range-server.py", ["archive.fedoraproject.org"])
@@ -2146,7 +2146,7 @@ vnc_password= "{vnc_passwd}"
             raise AssertionError("Unhandled distro for OVMF path")
 
         m.execute("mount -t tmpfs tmpfs " + ovmf_path)
-        self.addCleanup(m.execute, f"umount {ovmf_path} || true")
+        self.addCleanup(m.execute, f"if mountpoint {ovmf_path}; then umount {ovmf_path}; fi")
 
         # Reload for the new configuration to be read
         b.reload()
