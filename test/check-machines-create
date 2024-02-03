@@ -1693,7 +1693,7 @@ vnc_password= "{vnc_passwd}"
             final_state = "Running" if dialog.create_and_run else "Shut off"
             # Test dowloading RHEL image shows the progress of the download
             if dialog.os_name == TestMachinesCreate.TestCreateConfig.RHEL_8_1:
-                # Check download percantage is shown as a whole number 0-100 followed by '%'
+                # Check download percentage is shown as a whole number 0-100 followed by '%'
                 if dialog.create_and_run:
                     b.wait_in_text(f"#vm-{dialog.name}-{dialog.connection}-state", "Downloading")
                     # Progress is shown in VM state in VMs list
@@ -1703,7 +1703,8 @@ vnc_password= "{vnc_passwd}"
                     # Progress is shown at VM page empty state
                     self.assertRegex(b.text(".pf-v5-c-empty-state__body .pf-v5-c-progress__status"), r"^[0-9][0-9]?%$|^100%$")
 
-                b.wait_in_text(f"#vm-{dialog.name}-{dialog.connection}-state", final_state)
+                with b.wait_timeout(60):
+                    b.wait_in_text(f"#vm-{dialog.name}-{dialog.connection}-state", final_state)
             b.wait_not_present("#create-vm-dialog")
             b.wait_text(f"#vm-{dialog.name}-{dialog.connection}-state",
                         dialog.create_and_run and "Running" or "Shut off")
