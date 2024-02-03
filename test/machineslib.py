@@ -370,35 +370,33 @@ class VirtualMachinesCase(testlib.MachineCase, VirtualMachinesCaseHelpers, stora
         if not hasMonolithicDaemon(m.image):
             self.addCleanup(m.execute, "systemctl stop virtstoraged.service virtnetworkd.service")
 
-        # Stop all domains
-        for connection in ["system", "session"]:
-            cmd = f"for d in $(virsh -c qemu:///{connection} list --name); do virsh -c qemu:///{connection} destroy $d; done"
-            if connection == "session":
-                cmd += f"; for d in $(virsh -c qemu:///{connection} list --all --name); do virsh -c qemu:///{connection} undefine $d; done"
-                cmd = f"runuser -l admin -c '{cmd}'"
-            self.addCleanup(m.execute, cmd)
+        def stop_all():
+            # domains
+            # this is a race condition: a test may leave a domain shutting down, so it may go away while iterating
+            m.execute('for d in $(virsh -c qemu:///system list --name); do '
+                      '  if ! out=$(virsh -c qemu:///system destroy $d 2>&1); then '
+                      '    echo "$out" | grep -q "domain is not running"; '
+                      "  fi; done")
+            m.execute("runuser -l admin -c 'for d in $(virsh -c qemu:///session list --all --name); do "
+                      "virsh -c qemu:///session undefine $d; done'")
 
-        # Cleanup pools
-        self.addCleanup(m.execute, "rm -rf /run/libvirt/storage/*")
+            # pools
+            m.execute("rm -rf /run/libvirt/storage/*")
+            m.execute("for n in $(virsh -c qemu:///system pool-list --name); do virsh -c qemu:///system pool-destroy $n; done")
+            m.execute("runuser -l admin -c 'for d in $(virsh -c qemu:///session pool-list --name); do "
+                      "virsh -c qemu:///session pool-destroy $d; done'")
+            m.execute("runuser -l admin -c 'for d in $(virsh -c qemu:///session pool-list --name --all); do "
+                      "virsh -c qemu:///session pool-undefine $d; done'")
 
-        # Stop all pools
-        for connection in ["system", "session"]:
-            cmd = f"for n in $(virsh -c qemu:///{connection} pool-list --name); do virsh -c qemu:///{connection} pool-destroy $n; done"
-            if connection == "session":
-                cmd += f"; for d in $(virsh -c qemu:///{connection} pool-list --all --name); do virsh -c qemu:///{connection} pool-undefine $d; done"
-                cmd = f"runuser -l admin -c '{cmd}'"
-            self.addCleanup(m.execute, cmd)
+            # networks
+            m.execute("rm -rf /run/libvirt/network/test_network*")
+            m.execute("for n in $(virsh -c qemu:///system net-list --name); do virsh -c qemu:///system net-destroy $n; done")
+            m.execute("runuser -l admin -c 'for d in $(virsh -c qemu:///session net-list --name); do "
+                      "virsh -c qemu:///session net-destroy $d; done'")
+            m.execute("runuser -l admin -c 'for d in $(virsh -c qemu:///session net-list --name --all); do "
+                      "virsh -c qemu:///session net-undefine $d; done'")
 
-        # Cleanup networks
-        self.addCleanup(m.execute, "rm -rf /run/libvirt/network/test_network*")
-
-        # Stop all networks
-        for connection in ["system", "session"]:
-            cmd = f"for n in $(virsh -c qemu:///{connection} net-list --name); do virsh -c qemu:///{connection} net-destroy $n; done"
-            if connection == "session":
-                cmd += f"; for d in $(virsh -c qemu:///{connection} net-list --all --name); do virsh -c qemu:///{connection} net-undefine $d; done"
-                cmd = f"runuser -l admin -c '{cmd}'"
-            self.addCleanup(m.execute, cmd)
+        self.addCleanup(stop_all)
 
         # we don't have configuration to open the firewall for local libvirt machines, so just stop firewalld
         if not hasMonolithicDaemon(m.image):
