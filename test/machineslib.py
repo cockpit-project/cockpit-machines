@@ -424,8 +424,6 @@ class VirtualMachinesCase(testlib.MachineCase, VirtualMachinesCaseHelpers, stora
         if m.image == 'arch':
             self.allow_journal_messages(r".* couldn't get all properties of org.freedesktop.NetworkManager.Device at /org/freedesktop/NetworkManager/Devices/\d+: Timeout was reached")
 
-        m.execute("virsh net-define /etc/libvirt/qemu/networks/default.xml || true")
-
         # avoid error noise about resources getting cleaned up
         self.addCleanup(lambda: not self.browser.cdp.valid or self.browser.logout())
 
