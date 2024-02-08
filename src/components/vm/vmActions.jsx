@@ -46,6 +46,8 @@ import {
     domainCanRun,
     domainCanPause,
     domainCanShutdown,
+    domainCanSuspendToDisk,
+    domainCanSuspenImageRemove,
     domainForceOff,
     domainForceReboot,
     domainInstall,
@@ -55,6 +57,9 @@ import {
     domainSendNMI,
     domainShutdown,
     domainStart,
+    domainSuspendToDisk,
+    domainSuspendImageRemove,
+    domainHasSuspendImage
 } from '../../libvirtApi/domain.js';
 import store from "../../store.js";
 
@@ -178,6 +183,43 @@ const onSendNMI = (vm) => domainSendNMI({ name: vm.name, id: vm.id, connectionNa
     );
 });
 
+const onSuspendToDisk = (vm) => domainSuspendToDisk({ name: vm.name, id: vm.id, connectionName: vm.connectionName, flags: vm.state == 'running' ? 2 : 4 }).catch(ex => {
+    store.dispatch(
+        updateVm({
+            connectionName: vm.connectionName,
+            name: vm.name,
+            error: {
+                text: cockpit.format(_("VM $0 failed to save "), vm.name),
+                detail: ex.message,
+            }
+        })
+    );
+});
+
+const onSuspendImageRemove = (vm) => domainSuspendImageRemove({ name: vm.name, id: vm.id, connectionName: vm.connectionName })
+        .then(() => domainHasSuspendImage({ name: vm.name, id: vm.id, connectionName: vm.connectionName }))
+        .then((SuspendImage) => {
+            store.dispatch(
+                updateVm({
+                    connectionName: vm.connectionName,
+                    name: vm.name,
+                    suspendImage: SuspendImage[0],
+                })
+            );
+        })
+        .catch(ex => {
+            store.dispatch(
+                updateVm({
+                    connectionName: vm.connectionName,
+                    name: vm.name,
+                    error: {
+                        text: cockpit.format(_("VM $0 failed to remove save image "), vm.name),
+                        detail: ex.message,
+                    }
+                })
+            );
+        });
+
 const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
     const Dialogs = useDialogs();
     const [isActionOpen, setIsActionOpen] = useState(false);
@@ -197,6 +239,7 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
 
     const id = `${vmId(vm.name)}-${vm.connectionName}`;
     const state = vm.state;
+    const suspendImage = vm.suspendImage;
     const hasInstallPhase = vm.metadata && vm.metadata.hasInstallPhase;
     const dropdownItems = [];
 
@@ -222,6 +265,28 @@ const VmActions = ({ vm, onAddErrorNotification, isDetailsPage }) => {
             </DropdownItem>
         );
         dropdownItems.push(<DropdownSeparator key="separator-resume" />);
+    }
+
+    if (domainCanSuspendToDisk(state)) {
+        dropdownItems.push(
+            <DropdownItem key={`${id}-save`}
+                          id={`${id}-save`}
+                          onClick={() => onSuspendToDisk(vm)}>
+                {_("Suspend to disk")}
+            </DropdownItem>
+        );
+        dropdownItems.push(<DropdownSeparator key="separator-suspend" />);
+    }
+
+    if (domainCanSuspenImageRemove(state, suspendImage)) {
+        dropdownItems.push(
+            <DropdownItem key={`${id}-saveRemove`}
+                          id={`${id}-savedRemove`}
+                          onClick={() => onSuspendImageRemove(vm)}>
+                {_("Remove Suspend Image")}
+            </DropdownItem>
+        );
+        dropdownItems.push(<DropdownSeparator key="separator-suspend" />);
     }
 
     if (domainCanShutdown(state)) {
