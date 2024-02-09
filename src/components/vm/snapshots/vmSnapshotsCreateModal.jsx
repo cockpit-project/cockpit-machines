@@ -127,15 +127,15 @@ export class CreateSnapshotModal extends React.Component {
         this.setState({ dialogError: text, dialogErrorDetail: detail });
     }
 
-    onValidate(submitted = false) {
+    onValidate() {
         const { name, memoryPath } = this.state;
         const { vm, isExternal } = this.props;
         const validationError = {};
 
         if (vm.snapshots.findIndex(snap => snap.name === name) > -1)
             validationError.name = _("Name already exists");
-        else if (!name && submitted)
-            validationError.name = _("Name should not be empty");
+        else if (!name)
+            validationError.name = _("Name can not be empty");
 
         if (isExternal && vm.state === "running" && !memoryPath)
             validationError.memory = _("Memory file can not be empty");
@@ -148,9 +148,7 @@ export class CreateSnapshotModal extends React.Component {
         const { vm, isExternal, storagePools } = this.props;
         const { name, description, memoryPath } = this.state;
         const disks = Object.values(vm.disks);
-        const validationError = this.onValidate(true);
-
-        this.setState({ submitted: true });
+        const validationError = this.onValidate();
 
         if (!Object.keys(validationError).length) {
             this.setState({ inProgress: true });
@@ -179,8 +177,8 @@ export class CreateSnapshotModal extends React.Component {
     render() {
         const Dialogs = this.context;
         const { idPrefix, isExternal, vm } = this.props;
-        const { name, description, memoryPath, submitted } = this.state;
-        const validationError = this.onValidate(submitted);
+        const { name, description, memoryPath } = this.state;
+        const validationError = this.onValidate();
 
         const body = (
             <Form onSubmit={e => e.preventDefault()} isHorizontal>
