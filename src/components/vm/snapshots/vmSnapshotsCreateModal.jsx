@@ -91,6 +91,7 @@ const MemoryPathRow = ({ onValueChanged, memoryPath, validationError }) => {
             <FileAutoComplete
                 onChange={value => onValueChanged("memoryPath", value)}
                 superuser="try"
+                isOptionCreatable
                 value={memoryPath} />
             <FormHelper helperTextInvalid={validationError} />
         </FormGroup>
