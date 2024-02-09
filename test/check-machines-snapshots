@@ -153,7 +153,7 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
                 b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Create snapshot")
 
             def fill(self):
-                if self.name:
+                if self.name is not None:
                     b.set_input_text("#snapshot-create-dialog-name", self.name)
                 if self.description:
                     b.set_input_text("#snapshot-create-dialog-description", self.description)
@@ -274,6 +274,15 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
             state="shutoff",
             expect_external=supports_external,
             remove=False,
+        ).execute()
+
+        # Test inline validation for empty name
+        SnapshotCreateDialog(
+            self,
+            name="",
+            state="shutoff",
+            expect_external=supports_external,
+            xfail="name",
         ).execute()
 
         # Test inline validation for existing snapshot name
