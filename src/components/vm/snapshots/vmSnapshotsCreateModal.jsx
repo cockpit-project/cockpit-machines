@@ -195,7 +195,8 @@ export class CreateSnapshotModal extends React.Component {
                    title={_("Create snapshot")}
                    footer={
                        <>
-                           <Button variant="primary" isLoading={this.state.inProgress} isDisabled={this.state.inProgress} onClick={this.onCreate}>
+                           <Button variant="primary" isLoading={this.state.inProgress} onClick={this.onCreate}
+                                   isDisabled={this.state.inProgress || Object.keys(validationError).length > 0}>
                                {_("Create")}
                            </Button>
                            <Button variant="link" onClick={Dialogs.close}>
