@@ -901,9 +901,10 @@ export function vmSupportsExternalSnapshots(config, vm, storagePools) {
 
     // Currently external snapshots works only for disks where we can specify a local path of a newly created disk snapshot file
     // This rules out all disks which are not file-based, or pool-based where pool is of type "dir"
+    // or media-less disks
     const supportedPools = storagePools.filter(pool => pool.type === "dir" && pool.connectionName === vm.connectionName);
     if (!disks.every(disk =>
-        disk.type === "file" ||
+        (disk.type === "file" && disk.source?.file) ||
         (disk.type === "volume" && supportedPools.some(pool => pool.name === disk.source.pool))
     )) {
         logDebug(`vmSupportsExternalSnapshots: vm ${vm.name} has unsupported disk type`);

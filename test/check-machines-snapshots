@@ -297,6 +297,42 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         ).execute()
         m.execute("virsh snapshot-delete subVmTest1 test_snap_1")
 
+        # With second disk: CD-ROM with media
+        m.execute("touch /var/lib/libvirt/images/mock.iso")
+        m.execute("virsh attach-disk --domain subVmTest1 --config --source /var/lib/libvirt/images/mock.iso "
+                  "--target sdd --type cdrom")
+        # virsh attach-disk doesn't send an event for offline VM changes
+        b.reload()
+        b.enter_page('/machines')
+        b.wait_visible("#vm-subVmTest1-disks-sdd-source-file")
+        SnapshotCreateDialog(
+            self,
+            name="withmedia",
+            state="shutoff",
+            expect_external=supports_external,
+        ).execute()
+
+        # with CD-ROM drive without media
+        # doesn't support external snapshots yet
+        b.click("#vm-subVmTest1-disks-sdd-eject-button")
+        b.click(".pf-v5-c-modal-box__footer button:contains(Eject)")
+        b.wait_not_present(".pf-v5-c-modal-box")
+        b.wait_visible("#vm-subVmTest1-disks-sdd-insert")
+        SnapshotCreateDialog(
+            self,
+            name="nomedia",
+            state="shutoff",
+            expect_external=False,
+        ).execute()
+
+        # delete CD-DROM again so that the next test can use external snapshot again
+        b.wait_visible("#vm-subVmTest1-disks-sdd-action-kebab")
+        b.click("#vm-subVmTest1-disks-sdd-action-kebab button")
+        b.click("#delete-vm-subVmTest1-disks-sdd")
+        b.click("#delete-resource-modal-primary")
+        b.wait_not_present(".pf-v5-c-modal-box")
+        testlib.wait(lambda: "sdd" not in m.execute("virsh domblklist subVmTest1"), delay=1)
+
         b.click("#vm-subVmTest1-system-run")
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
