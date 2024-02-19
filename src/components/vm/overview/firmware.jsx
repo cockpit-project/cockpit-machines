@@ -27,7 +27,7 @@ import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { useDialogs, DialogsContext } from 'dialogs.jsx';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
-import { domainSetOSFirmware, domainCanInstall } from "../../../libvirtApi/domain.js";
+import { domainAddTPM, domainCanInstall, domainSetOSFirmware } from "../../../libvirtApi/domain.js";
 import { supportsUefiXml, labelForFirmwarePath } from './helpers.jsx';
 
 const _ = cockpit.gettext;
@@ -61,6 +61,10 @@ class FirmwareModal extends React.Component {
                 objPath: vm.id,
                 loaderType: stateToXml(this.state.firmware)
             });
+
+            if (this.state.firmware == 'efi' && !vm.hasTPM && vm.capabilities.supportsTPM)
+                await domainAddTPM({ connectionName: vm.connectionName, vmName: vm.name });
+
             Dialogs.close();
         } catch (exc) {
             this.dialogErrorSet(_("Failed to change firmware"), exc.message);

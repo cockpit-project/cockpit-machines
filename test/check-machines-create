@@ -2126,6 +2126,9 @@ vnc_password= "{vnc_passwd}"
         # Attach some interface
         m.execute("virsh attach-interface --persistent VmNotInstalled bridge virbr0")
 
+        # BIOS machine doesn't have TPM by default
+        self.assertNotIn("tpm", m.execute("virsh dumpxml VmNotInstalled"))
+
         # Change the os boot firmware configuration
         b.wait_in_text("#vm-VmNotInstalled-firmware", "BIOS")
         b.click("#vm-VmNotInstalled-firmware")
@@ -2134,6 +2137,13 @@ vnc_password= "{vnc_passwd}"
         b.click("#firmware-dialog-apply")
         b.wait_not_present(".pf-v5-c-modal-box__body")
         b.wait_in_text("#vm-VmNotInstalled-firmware", "UEFI")
+        self.assertIn("<os firmware='efi'>", m.execute("virsh dumpxml VmNotInstalled"))
+
+        # auto-enabled software TPM (doesn't work on RHEL 8 or arch)
+        if not m.image.startswith("rhel-8") and not m.image.startswith("centos-8") and m.image != 'arch':
+            tpm_xml = m.execute("virsh dumpxml VmNotInstalled | xmllint --xpath /domain/devices/tpm -")
+            self.assertIn('model="tpm-crb"', tpm_xml)
+            self.assertIn('type="emulator"', tpm_xml)
 
         # Temporarily delete the OVMF binary and check the firmware options again
         if "fedora" in m.image or "rhel" in m.image or "centos" in m.image:
@@ -2243,6 +2253,56 @@ vnc_password= "{vnc_passwd}"
         # no explicit "firmware=" field
         self.assertIn("<os>", domainXML)
         self.assertNotIn("efi", domainXML)
+
+    @testlib.skipImage("does not support virt-xml --tpm", "rhel-8*", "centos-8*")
+    @testlib.skipImage("does not support TPM 2.0", "arch")
+    def testConfigureBeforeInstallBiosTPM(self):
+        m = self.machine
+        b = self.browser
+        TestMachinesCreate.CreateVmRunner(self)
+
+        # create VM with BIOS
+        vmName = "subVmTest1"
+        self.login_and_go("/machines")
+        self.waitPageInit()
+        dialog = TestMachinesCreate.VmDialog(self, sourceType='file',
+                                             name=vmName,
+                                             location=TestMachinesCreate.TestCreateConfig.NOVELL_MOCKUP_ISO_PATH,
+                                             memory_size=128, memory_size_unit='MiB',
+                                             storage_size=256, storage_size_unit='MiB',
+                                             create_and_run=False)
+        dialog.open().fill()
+        b.click(".pf-v5-c-modal-box__footer #create-and-edit")
+        b.wait_not_present("#create-vm-dialog")
+        b.wait_in_text(f"#vm-{vmName}-firmware", "BIOS")
+
+        # manually add TPM to BIOS
+        m.execute(f"virt-xml --add-device --tpm default {vmName}")
+        self.assertIn("tpm", m.execute(f"virsh dumpxml {vmName}"))
+        # this doesn't change the UI, so we have to reload to ensure that the UI picks up the change
+        # otherwise this is a race condition
+        b.reload()
+        b.enter_page('/machines')
+
+        # Change the os boot firmware to EFI
+        b.click(f"#vm-{vmName}-firmware")
+        b.wait_visible(".pf-v5-c-modal-box__body")
+        b.select_from_dropdown(".pf-v5-c-modal-box__body select", "efi")
+        b.click("#firmware-dialog-apply")
+        b.wait_not_present(".pf-v5-c-modal-box__body")
+        b.wait_in_text(f"#vm-{vmName}-firmware", "UEFI")
+
+        # did not add a second TPM; that would fail in the dialog anyway, but let's double-check the backend
+        out = m.execute(f"virsh dumpxml {vmName} | xmllint --xpath /domain/devices/tpm - | grep --count '<tpm'")
+        self.assertEqual(out.strip(), "1")
+
+        # Install the VM
+        b.click(f"#vm-{vmName}-system-install")
+        b.wait_in_text(f"#vm-{vmName}-system-state", "Running")
+
+        # AppArmor policy fixed in later versions, don't bother with reporting
+        if m.image == 'debian-stable':
+            self.allow_journal_messages('.*apparmor="DENIED".*name="/etc/ssl/openssl.cnf".*comm="swtpm".*')
 
     def testCreateDownloadRhel(self):
         runner = TestMachinesCreate.CreateVmRunner(self, rhel_download=True)

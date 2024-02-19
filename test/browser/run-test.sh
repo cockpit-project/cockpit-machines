@@ -46,6 +46,7 @@ fi
 EXCLUDES="$EXCLUDES
           TestMachinesCreate.testConfigureBeforeInstall
           TestMachinesCreate.testConfigureBeforeInstallBios
+          TestMachinesCreate.testConfigureBeforeInstallBiosTPM
           TestMachinesCreate.testCreateBasicValidation
           TestMachinesCreate.testCreateNameGeneration
           TestMachinesCreate.testCreateDownloadRhel
