@@ -197,6 +197,14 @@ export function getDomainCapSupportsSpice(capsXML) {
     return hasSpiceGraphics || hasSpiceChannel;
 }
 
+export function getDomainCapSupportsTPM(capsXML) {
+    const domainCapsElem = getElem(capsXML);
+    const tpmCapsElems = domainCapsElem.getElementsByTagName("tpm")?.[0]
+            ?.getElementsByTagName("enum")?.[0]
+            ?.getElementsByTagName("value");
+    return tpmCapsElems?.length > 0;
+}
+
 export function getSingleOptionalElem(parent, name) {
     const subElems = parent.getElementsByTagName(name);
     return subElems.length > 0 ? subElems[0] : undefined; // optional
@@ -262,6 +270,7 @@ export function parseDomainDumpxml(connectionName, domXml, objPath) {
     const watchdog = parseDumpxmlForWatchdog(devicesElem);
     const vsock = parseDumpxmlForVsock(devicesElem);
     const hasSpice = parseDumpxmlForSpice(devicesElem);
+    const hasTPM = parseDumpxmlForTPM(devicesElem);
 
     const hasInstallPhase = parseDumpxmlMachinesMetadataElement(metadataElem, 'has_install_phase') === 'true';
     const installSourceType = parseDumpxmlMachinesMetadataElement(metadataElem, 'install_source_type');
@@ -306,6 +315,7 @@ export function parseDomainDumpxml(connectionName, domXml, objPath) {
         vsock,
         metadata,
         hasSpice,
+        hasTPM,
     };
 }
 
@@ -547,6 +557,10 @@ function parseDumpxmlForSpice(devicesElem) {
 
     logDebug("parseDumpxmlForSpice: no SPICE elements found in", devicesElem.children);
     return false;
+}
+
+function parseDumpxmlForTPM(devicesElem) {
+    return devicesElem.getElementsByTagName('tpm').length > 0;
 }
 
 export function parseDumpxmlForFilesystems(devicesElem) {
