@@ -52,11 +52,19 @@ class FirmwareModal extends React.Component {
         this.setState({ dialogError: text, dialogErrorDetail: detail });
     }
 
-    save() {
+    async save() {
         const Dialogs = this.context;
         const vm = this.props.vm;
-        domainSetOSFirmware({ connectionName: vm.connectionName, objPath: vm.id, loaderType: stateToXml(this.state.firmware) })
-                .then(Dialogs.close, exc => this.dialogErrorSet(_("Failed to change firmware"), exc.message));
+        try {
+            await domainSetOSFirmware({
+                connectionName: vm.connectionName,
+                objPath: vm.id,
+                loaderType: stateToXml(this.state.firmware)
+            });
+            Dialogs.close();
+        } catch (exc) {
+            this.dialogErrorSet(_("Failed to change firmware"), exc.message);
+        }
     }
 
     render() {
