@@ -42,7 +42,7 @@ class FirmwareModal extends React.Component {
         super(props);
         this.state = {
             dialogError: null,
-            firmware: xmlToState(props.firmware),
+            firmware: xmlToState(props.vm.firmware),
         };
         this.dialogErrorSet = this.dialogErrorSet.bind(this);
         this.save = this.save.bind(this);
@@ -54,7 +54,8 @@ class FirmwareModal extends React.Component {
 
     save() {
         const Dialogs = this.context;
-        domainSetOSFirmware({ connectionName: this.props.connectionName, objPath: this.props.vmId, loaderType: stateToXml(this.state.firmware) })
+        const vm = this.props.vm;
+        domainSetOSFirmware({ connectionName: vm.connectionName, objPath: vm.id, loaderType: stateToXml(this.state.firmware) })
                 .then(Dialogs.close, exc => this.dialogErrorSet(_("Failed to change firmware"), exc.message));
     }
 
@@ -92,9 +93,7 @@ class FirmwareModal extends React.Component {
 }
 
 FirmwareModal.propTypes = {
-    connectionName: PropTypes.string.isRequired,
-    vmId: PropTypes.string.isRequired,
-    firmware: PropTypes.string,
+    vm: PropTypes.object.isRequired,
 };
 
 export const FirmwareLink = ({ vm, loaderElems, idPrefix }) => {
@@ -107,10 +106,6 @@ export const FirmwareLink = ({ vm, loaderElems, idPrefix }) => {
             if (valueElem && valueElem[0].parentNode == loader)
                 return valueElem[0].textContent;
         });
-    }
-
-    function open() {
-        Dialogs.show(<FirmwareModal connectionName={vm.connectionName} vmId={vm.id} firmware={vm.firmware} />);
     }
 
     let firmwareLinkWrapper;
@@ -136,7 +131,8 @@ export const FirmwareLink = ({ vm, loaderElems, idPrefix }) => {
         const firmwareLink = disabled => {
             return (
                 <span id={`${idPrefix}-firmware-tooltip`}>
-                    <Button variant="link" isInline id={`${idPrefix}-firmware`} isDisabled={disabled} onClick={open}>
+                    <Button variant="link" isInline id={`${idPrefix}-firmware`} isDisabled={disabled}
+                            onClick={() => Dialogs.show(<FirmwareModal vm={vm} />)}>
                         {currentFirmware}
                     </Button>
                 </span>
