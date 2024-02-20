@@ -21,6 +21,7 @@ jobs:
     targets:
     - fedora-38
     - fedora-39
+    - fedora-40
     - fedora-development
     - centos-stream-8
     - centos-stream-9
@@ -30,6 +31,7 @@ jobs:
     targets:
       - fedora-38
       - fedora-39
+      - fedora-40
       - fedora-development
       - centos-stream-8
       - centos-stream-9
@@ -53,6 +55,7 @@ jobs:
       - fedora-development
       - fedora-38
       - fedora-39
+      - fedora-40
 
   - job: koji_build
     trigger: commit
@@ -60,6 +63,7 @@ jobs:
       - fedora-development
       - fedora-38
       - fedora-39
+      - fedora-40
 
   - job: bodhi_update
     trigger: commit
@@ -67,3 +71,4 @@ jobs:
       # rawhide updates are created automatically
       - fedora-38
       - fedora-39
+      - fedora-40
