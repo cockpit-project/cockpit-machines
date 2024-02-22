@@ -1,7 +1,7 @@
 /*
  * This file is part of Cockpit.
  *
- * Copyright (C) 2019 Red Hat, Inc.
+ * Copyright (C) 2019 - 2024 Red Hat, Inc.
  *
  * Cockpit is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -17,7 +17,7 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as ip from "ip";
+import * as ipaddr from "ipaddr.js";
 
 /**
  * Validates correctness of ipv4 address
@@ -25,9 +25,7 @@ import * as ip from "ip";
  * @param {string} address
  * @returns {boolean}
  */
-export function validateIpv4(address) {
-    return ip.isV4Format(address);
-}
+export const validateIpv4 = address => ipaddr.IPv4.isValid(address);
 
 /**
  * Returns if the provided address is the network's broadcast address
@@ -35,14 +33,11 @@ export function validateIpv4(address) {
  * @param {string} address
  * @returns {boolean}
  */
-export function ipv4IsBroadcast(address, netMask) {
-    if (!validateNetmask(netMask))
+export function ipv4IsBroadcast(address, netmask) {
+    const prefix = validateNetmask(netmask);
+    if (prefix === null)
         return false;
-    const mask = netmaskConvert(netMask);
-    const subnet = ip.subnet(address, mask);
-
-    // user provided netmask
-    return address === subnet.broadcastAddress;
+    return address === ipaddr.IPv4.broadcastAddressFromCIDR(`${address}/${prefix}`).toString();
 }
 
 /**
@@ -51,47 +46,37 @@ export function ipv4IsBroadcast(address, netMask) {
  * @param {string} address
  * @returns {boolean}
  */
-export function ipv4IsNetworkIdentifier(address, netMask) {
-    if (!validateNetmask(netMask))
+export function ipv4IsNetworkIdentifier(address, netmask) {
+    const prefix = validateNetmask(netmask);
+    if (prefix === null)
         return false;
-    const mask = netmaskConvert(netMask);
-    const subnet = ip.subnet(address, mask);
-
-    // user provided network identifier
-    return address === subnet.networkAddress;
+    return address === ipaddr.IPv4.networkAddressFromCIDR(`${address}/${prefix}`).toString();
 }
 
 /**
  * validates correctness of ipv4 prefix length or mask
  *
  * @param {string} prefixOrNetmask
- * @returns {boolean}
+ * @returns int prefix length, or null if invalid
  */
 export function validateNetmask(prefixOrNetmask) {
-    const netmaskParts = ["255", "254", "252", "248", "240", "224", "192", "128", "0"];
-    const parts = prefixOrNetmask.split('.');
-
-    // prefix length
-    if (parts.length === 1) {
-        if (!/^[0-9]+$/.test(parts[0].trim()))
-            return false;
-        const prefixLength = parseInt(parts[0], 10);
-        if (isNaN(prefixLength) || prefixLength < 1 || prefixLength > 31)
-            return false;
-
-        return true;
+    if (/^[0-9]+$/.test(prefixOrNetmask)) {
+        // prefix
+        try {
+            const prefix = parseInt(prefixOrNetmask);
+            ipaddr.IPv4.subnetMaskFromPrefixLength(prefix);
+            return prefix;
+        } catch (_ex) {
+            return null;
+        }
+    } else {
+        // mask
+        try {
+            return ipaddr.IPv4.parse(prefixOrNetmask).prefixLengthFromSubnetMask();
+        } catch (_ex) {
+            return null;
+        }
     }
-
-    // netmask
-    if (!validateIpv4(prefixOrNetmask))
-        return false;
-
-    for (let i = 0; i < 4; i++) {
-        if (!(netmaskParts.includes(parts[i])))
-            return false;
-    }
-
-    return true;
 }
 
 /**
@@ -101,28 +86,36 @@ export function validateNetmask(prefixOrNetmask) {
  * @returns {string}
  */
 export function netmaskConvert(prefixOrNetmask) {
-    const parts = prefixOrNetmask.split('.');
+    // single number → netmask
+    if (/^[0-9]+$/.test(prefixOrNetmask)) {
+        try {
+            return ipaddr.IPv4.subnetMaskFromPrefixLength(parseInt(prefixOrNetmask)).toString();
+        } catch (_ex) {
+            // leave unchanged; UI will validate
+        }
+    }
 
-    if (parts.length === 4)
-        return prefixOrNetmask;
-    else if (parts.length === 1)
-        return ip.fromPrefixLen(prefixOrNetmask);
+    return prefixOrNetmask;
 }
 
 /**
- * Checks whetever address @ip is in subnet defined by @network and @netmask
+ * Checks whetever address @address is in subnet defined by @network and @netmask
  *
  * @param {string} network
  * @param {string} netmask
- * @param {string} ip
+ * @param {string} address
  * @returns {boolean}
  */
-export function isIpv4InNetwork(network, netmask, ipaddr) {
-    if (!ip.isV4Format(network) || !validateNetmask(netmask) || !ip.isV4Format(ipaddr))
+export function isIpv4InNetwork(network, netmask, address) {
+    if (!validateIpv4(network) || !validateIpv4(address))
         return false;
-    const mask = netmaskConvert(netmask);
+    const prefix = validateNetmask(netmask);
+    if (prefix === null)
+        return false;
 
-    return ip.subnet(network, mask).contains(ipaddr);
+    const b_network = ipaddr.IPv4.broadcastAddressFromCIDR(`${network}/${prefix}`).toString();
+    const b_ipaddr = ipaddr.IPv4.broadcastAddressFromCIDR(`${address}/${prefix}`).toString();
+    return b_network === b_ipaddr;
 }
 
 /**
@@ -131,9 +124,7 @@ export function isIpv4InNetwork(network, netmask, ipaddr) {
  * @param {string} address
  * @returns {boolean}
  */
-export function validateIpv6(address) {
-    return ip.isV6Format(address);
-}
+export const validateIpv6 = address => ipaddr.IPv6.isValid(address);
 
 /**
  * validates correctness of ipv6 prefix length
@@ -142,59 +133,28 @@ export function validateIpv6(address) {
  * @returns {boolean}
  */
 export function validateIpv6Prefix(prefix) {
-    if (!/^[0-9]+$/.test(prefix.trim()))
-        return false;
-    const prefixLength = parseInt(prefix, 10);
-    if (isNaN(prefixLength) || prefixLength < 0 || prefixLength > 128)
-        return false;
-
-    return true;
+    if (/^[0-9]+$/.test(prefix.trim())) {
+        try {
+            ipaddr.IPv6.subnetMaskFromPrefixLength(prefix);
+            return true;
+        } catch (_ex) {}
+    }
+    return false;
 }
 
 /**
- * Converts ipv6 address to string containing it's binary representation
- *
- * @param {string} ip
- * @returns {string}
- */
-function ipv6ToBinStr(ip) {
-    const validGroupCount = 8;
-    /* Split address by `:`
-     * Then check if the array contains an empty string (happens at ::), and if so
-     * replace it with the appropriate number of 0 entries.
-     */
-    const arrAddr = ip.split(":");
-    const arrAddrExpanded = arrAddr.reduce((accum, hexNum) => {
-        if (hexNum)
-            accum.push(hexNum);
-        else
-            for (let i = 0; i < (validGroupCount - arrAddr.length + 1); i++)
-                accum.push("0");
-        return accum;
-    }, []);
-
-    /* Convert the array of 8 hex entries into a 128 bits binary string */
-    return arrAddrExpanded.map(num => {
-        let bin = parseInt(num, 16).toString(2);
-        while (bin.length < 16)
-            bin = "0" + bin;
-        return bin;
-    }).join("");
-}
-
-/**
- * Checks whetever IPv6 address @ip is in subnet defined by @network and @prefix
+ * Checks whetever IPv6 @address is in subnet defined by @network and @prefix
  *
  * @param {string} network
  * @param {string} prefix
- * @param {string} ip
+ * @param {string} address
  * @returns {boolean}
  */
-export function isIpv6InNetwork(network, prefix, ip) {
-    network = ipv6ToBinStr(network);
-    network = network.substring(0, prefix);
-    ip = ipv6ToBinStr(ip);
-    ip = ip.substring(0, prefix);
+export function isIpv6InNetwork(network, prefix, address) {
+    if (!validateIpv6(network) || !validateIpv6Prefix(prefix) || !validateIpv6(address))
+        return false;
 
-    return network == ip;
+    const b_network = ipaddr.IPv6.broadcastAddressFromCIDR(`${network}/${prefix}`).toString();
+    const b_ipaddr = ipaddr.IPv6.broadcastAddressFromCIDR(`${address}/${prefix}`).toString();
+    return b_network === b_ipaddr;
 }
