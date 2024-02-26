@@ -299,7 +299,7 @@ export async function domainCreate({
         sshKeys,
     };
 
-    logDebug(`CREATE_VM(${vmName}): install_machine.py '${args}'`);
+    logDebug(`CREATE_VM(${vmName}): install_machine.py '${JSON.stringify(args)}'`);
 
     const hashPasswords = async args => {
         if (args.sourceType === CLOUD_IMAGE) {
