@@ -8,9 +8,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-19 02:50+0000\n"
-"PO-Revision-Date: 2023-09-16 07:35+0000\n"
-"Last-Translator: Jan Kuparinen <copper_fin@hotmail.com>\n"
+"POT-Creation-Date: 2024-02-27 02:50+0000\n"
+"PO-Revision-Date: 2024-02-20 20:36+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
+"memory@weblate.org>\n"
 "Language-Team: Finnish <https://translate.fedoraproject.org/projects/cockpit-"
 "machines/main/fi/>\n"
 "Language: fi\n"
@@ -18,7 +19,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1\n"
-"X-Generator: Weblate 5.0.1\n"
+"X-Generator: Weblate 5.4\n"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:913
 msgid "$0 $1 available at default location"
@@ -312,7 +313,7 @@ msgstr "Välimuisti"
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:102
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:174
 #: src/components/vm/overview/memoryModal.jsx:159
-#: src/components/vm/overview/firmware.jsx:72
+#: src/components/vm/overview/firmware.jsx:85
 #: src/components/vm/overview/cpuModal.jsx:338
 #: src/components/vm/overview/bootOrder.jsx:318
 #: src/components/vm/overview/vsock.jsx:244
@@ -341,7 +342,7 @@ msgstr "Koko"
 msgid "Change boot order"
 msgstr "Vaihda käynnistysjärjestystä"
 
-#: src/components/vm/overview/firmware.jsx:65
+#: src/components/vm/overview/firmware.jsx:78
 msgid "Change firmware"
 msgstr "Vaihda laiteohjelmisto"
 
@@ -569,7 +570,7 @@ msgstr "Nykyinen"
 msgid "Current allocation"
 msgstr "Nykyinen kohdentaminen"
 
-#: src/components/vm/overview/firmware.jsx:125
+#: src/components/vm/overview/firmware.jsx:132
 msgid "Custom firmware: $0"
 msgstr "Mukautettu laiteohjelmisto: $0"
 
@@ -719,10 +720,8 @@ msgid "Disk $0 could not be removed"
 msgstr "Levyä $0 ei voitu poistaa"
 
 #: src/components/vm/disks/diskAdd.jsx:833
-#, fuzzy
-#| msgid "Disk failed to be created"
 msgid "Disk failed to be added"
-msgstr "Levyn luominen epäonnistui"
+msgstr "Levyn liittäminen epäonnistui"
 
 #: src/components/vm/disks/diskAdd.jsx:238
 msgid "Disk identifier"
@@ -890,7 +889,7 @@ msgstr "Epäonnistui"
 msgid "Failed to add shared directory"
 msgstr "Jaetun hakemiston lisäys epäonnistui"
 
-#: src/components/vm/overview/firmware.jsx:58
+#: src/components/vm/overview/firmware.jsx:70
 msgid "Failed to change firmware"
 msgstr "Laiteohjelmiston vaihtaminen epäonnistui"
 
@@ -962,7 +961,7 @@ msgid "Filter by name"
 msgstr "Suodata nimen mukaan"
 
 #: src/components/vm/overview/vmOverviewCard.jsx:274
-#: src/components/vm/overview/firmware.jsx:78
+#: src/components/vm/overview/firmware.jsx:91
 msgid "Firmware"
 msgstr "Laiteohjelmisto"
 
@@ -1053,7 +1052,7 @@ msgstr "Laitteistovirtualisointi on pois käytöstä"
 
 #: src/components/vm/vmReplaceSpiceDialog.jsx:161
 msgid "Help"
-msgstr ""
+msgstr "Ohje"
 
 #: src/components/vm/disks/diskAdd.jsx:208
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:241
@@ -1327,13 +1326,13 @@ msgstr "Jätä salasana tyhjäksi, jos et halua käyttäjätilin luomista"
 msgid "Leave the password blank if you do not wish to set a root password"
 msgstr "Jätä salasana tyhjäksi, jos et halua root:n tilin luomista"
 
-#: src/components/vm/overview/firmware.jsx:168
+#: src/components/vm/overview/firmware.jsx:176
 msgid ""
 "Libvirt did not detect any UEFI/OVMF firmware image installed on the host"
 msgstr ""
 "Libvirt ei havainnut isäntään asennettuja UEFI/OVMF-laiteohjelmistokuvia"
 
-#: src/components/vm/overview/firmware.jsx:162
+#: src/components/vm/overview/firmware.jsx:170
 msgid "Libvirt or hypervisor does not support UEFI"
 msgstr "Libvirt tai hypervisori ei tue UEFI:a"
 
@@ -1548,10 +1547,8 @@ msgid "Name already exists"
 msgstr "Nimi on jo olemassa"
 
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:139
-#, fuzzy
-#| msgid "Name must not be empty"
 msgid "Name can not be empty"
-msgstr "Nimi ei saa olla tyhjä"
+msgstr "Nimi ei voi olla tyhjä"
 
 #: src/components/storagePools/createStoragePoolDialog.jsx:51
 msgid "Name contains invalid characters"
@@ -1931,10 +1928,8 @@ msgid "Power off"
 msgstr "Sammuta virta"
 
 #: src/components/storagePools/createStoragePoolDialog.jsx:63
-#, fuzzy
-#| msgid "redirected device"
 msgid "Pre-formatted block device"
-msgstr "uudelleenohjattu laite"
+msgstr "Esialustettu lohkolaite"
 
 #: src/components/vm/overview/cpuModal.jsx:273
 msgid "Preferred number of sockets to expose to the guest."
@@ -2008,7 +2003,7 @@ msgstr ""
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:805
 msgid "Public key"
-msgstr ""
+msgstr "Julkinen avain"
 
 #: src/components/networks/networkOverviewTab.jsx:277
 msgid "Range"
@@ -2071,10 +2066,8 @@ msgid "Remove host device from VM?"
 msgstr "Poista isäntälaite VM:stä?"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:821
-#, fuzzy
-#| msgid "Remove filesystem?"
 msgid "Remove item"
-msgstr "Poista tiedostojärjestelmä?"
+msgstr "Poista kohde"
 
 #: src/components/vm/nics/vmNicsCard.jsx:468
 msgid "Remove network interface?"
@@ -2175,10 +2168,8 @@ msgid "Running"
 msgstr "Käynnissä"
 
 #: src/components/common/needsShutdown.jsx:122
-#, fuzzy
-#| msgid "SPICE port"
 msgid "SPICE"
-msgstr "SPICE-portti"
+msgstr "SPICE"
 
 #: src/components/vm/consoles/desktopConsole.jsx:52
 msgid "SPICE TLS port"
@@ -2206,15 +2197,13 @@ msgid "SPICE port"
 msgstr "SPICE-portti"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:846
-#, fuzzy
-#| msgid "Send key"
 msgid "SSH keys"
-msgstr "Lähetä avain"
+msgstr "SSH-avaimet"
 
 #: src/components/vm/nics/nicEdit.jsx:189
 #: src/components/vm/disks/diskEdit.jsx:267
 #: src/components/vm/overview/memoryModal.jsx:156
-#: src/components/vm/overview/firmware.jsx:69
+#: src/components/vm/overview/firmware.jsx:82
 #: src/components/vm/overview/bootOrder.jsx:315
 #: src/components/vm/overview/vsock.jsx:196
 #: src/components/vm/overview/watchdog.jsx:154
@@ -2223,7 +2212,7 @@ msgstr "Tallenna"
 
 #: src/components/vm/vmReplaceSpiceDialog.jsx:115
 msgid "Select all"
-msgstr ""
+msgstr "Valitse kaikki"
 
 #: src/components/vm/consoles/consoles.jsx:110
 msgid "Select console type"
@@ -2316,7 +2305,7 @@ msgstr "Sammuta $0?"
 msgid "Shut off"
 msgstr "Sammuta"
 
-#: src/components/vm/overview/firmware.jsx:149
+#: src/components/vm/overview/firmware.jsx:157
 msgid "Shut off the VM in order to edit firmware configuration"
 msgstr "Sammuta virtuaalikone, jotta voit muokata laiteohjelmiston kokoonpanoa"
 
@@ -2671,7 +2660,7 @@ msgstr "Tätä taltiota käyttää jo toinen virtuaalikone."
 msgid "Threads per core"
 msgstr "Säikeitä per ydin"
 
-#: src/components/vm/overview/firmware.jsx:155
+#: src/components/vm/overview/firmware.jsx:163
 msgid "Transient VMs don't support editing firmware configuration"
 msgstr ""
 "Ohimenevät virtuaalikoneet eivät tue laiteohjelmiston kokoonpanon "
@@ -2735,7 +2724,7 @@ msgstr "Yksikkö"
 msgid "Unknown"
 msgstr "Tuntematon"
 
-#: src/components/vm/overview/firmware.jsx:127
+#: src/components/vm/overview/firmware.jsx:134
 msgid "Unknown firmware"
 msgstr "Tuntematon laiteohjelmisto"
 
