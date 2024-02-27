@@ -430,9 +430,6 @@ class VirtualMachinesCase(testlib.MachineCase, VirtualMachinesCaseHelpers, stora
         # noVNC warns about this for non-TLS connections; for RHEL downstream testing
         self.allow_browser_errors("noVNC requires a secure context")
 
-        # HACK: older c-ws versions always log an assertion, fixed in PR cockpit#16765
-        self.allow_journal_messages("json_object_get_string_member: assertion 'node != NULL' failed")
-
         # HACK: fix these in our code
         self.allow_browser_errors(
             r"Scrollbar test exception: TypeError: Cannot read properties of null \(reading 'appendChild'\)",
