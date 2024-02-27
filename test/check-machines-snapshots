@@ -251,7 +251,7 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         supports_external = not (
             m.image.startswith("rhel-8") or
             m.image.startswith("centos-8") or
-            m.image in ["debian-stable", "ubuntu-2204", "ubuntu-stable", "fedora-38", "fedora-39"])
+            m.image in ["debian-stable", "ubuntu-2204", "ubuntu-stable", "fedora-39"])
 
         # HACK: deleting external snapshots for non-running VMs is broken https://bugs.debian.org/bug=1061725
         # Work around that by temporarily disabling libvirtd's AppArmor profile. AppArmor isn't installed by
