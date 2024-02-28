@@ -416,10 +416,6 @@ class VirtualMachinesCase(testlib.MachineCase, VirtualMachinesCaseHelpers, stora
             self.allow_journal_messages('.* type=1400 .* apparmor="DENIED" operation="open" profile="libvirt.* name="/" .* denied_mask="r" .*')
             self.allow_journal_messages('.* type=1400 .* apparmor="DENIED" operation="open" profile="libvirt.* name="/sys/bus/nd/devices/" .* denied_mask="r" .*')
 
-        # FIXME: testDomainMemorySettings on Fedora-32 reports this. Figure out where it comes from.
-        # Ignoring just to unbreak tests for now
-        self.allow_journal_messages("Failed to get COMM: No such process")
-
         # FIXME: Testing on Arch Linux fails randomly with networkmanager time outs while the test passes.
         if m.image == 'arch':
             self.allow_journal_messages(r".* couldn't get all properties of org.freedesktop.NetworkManager.Device at /org/freedesktop/NetworkManager/Devices/\d+: Timeout was reached")
