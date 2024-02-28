@@ -172,7 +172,6 @@ export const VsockModal = ({ vm, vms, vmVsockNormalized, isVsockAttached, idPref
                         inputName="vsock-context-identifier"
                         id="vsock-context-identifier"
                         inputAriaLabel="vsock context identifier"
-                        allowEmptyInput
                         widthChars={4} />
                 </Flex>
                 <FormHelper fieldId="vsock-cid-usage"
