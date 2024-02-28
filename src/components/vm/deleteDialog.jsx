@@ -162,7 +162,7 @@ export class DeleteDialog extends React.Component {
         return (
             <Modal position="top" variant="medium" id={`${id}-delete-modal-dialog`} isOpen onClose={Dialogs.close}
                 title={<>
-                    <ExclamationTriangleIcon color="orange" className="pf-v5-u-mr-sm" />
+                    <ExclamationTriangleIcon className="ct-icon-exclamation-triangle pf-v5-u-mr-sm" />
                     { cockpit.format(_("Delete $0 VM?"), this.props.vm.name) }
                 </>}
                 footer={
