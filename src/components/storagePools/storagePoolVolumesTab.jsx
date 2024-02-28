@@ -90,12 +90,12 @@ export class StoragePoolVolumesTab extends React.Component {
         const rows = volumes
                 .sort(sortFunction)
                 .map(volume => {
-                    const allocation = parseFloat(convertToUnit(volume.allocation, units.B, units.GiB).toFixed(2));
+                    const physical = parseFloat(convertToUnit(volume.physical, units.B, units.GiB).toFixed(2));
                     const capacity = parseFloat(convertToUnit(volume.capacity, units.B, units.GiB).toFixed(2));
                     const columns = [
                         { title: <div id={`${storagePoolIdPrefix}-volume-${volume.name}-name`}>{volume.name}</div> },
                         { title: <div id={`${storagePoolIdPrefix}-volume-${volume.name}-usedby`}>{(isVolumeUsed[volume.name] || []).join(', ')}</div>, },
-                        { title: <div id={`${storagePoolIdPrefix}-volume-${volume.name}-size`}>{`${allocation} / ${capacity} GB`}</div> },
+                        { title: <div id={`${storagePoolIdPrefix}-volume-${volume.name}-size`}>{`${physical} / ${capacity} GB`}</div> },
                     ];
                     return { columns, selected: volume.selected, props: { key: volume.name } };
                 });

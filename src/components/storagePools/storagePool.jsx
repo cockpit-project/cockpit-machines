@@ -48,11 +48,11 @@ export const getStoragePoolRow = ({ storagePool, vms, onAddErrorNotification }) 
             { storagePool.name }
         </span>
     );
-    const allocation = parseFloat(convertToUnit(storagePool.allocation, units.B, units.GiB).toFixed(2));
+    const physical = parseFloat(convertToUnit(storagePool.physical, units.B, units.GiB).toFixed(2));
     const capacity = parseFloat(convertToUnit(storagePool.capacity, units.B, units.GiB).toFixed(2));
-    const sizeLabel = String(cockpit.format("$0 / $1 GiB", allocation, capacity));
+    const sizeLabel = String(cockpit.format("$0 / $1 GiB", physical, capacity));
     const size = (
-        <Progress value={Number(storagePool.allocation)}
+        <Progress value={Number(storagePool.physical)}
                   min={0}
                   max={Number(storagePool.capacity)}
                   label={sizeLabel}

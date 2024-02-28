@@ -94,7 +94,7 @@ export class VmDisksCardLibvirt extends React.Component {
                         if (!vm.disks[target] || (vm.disks[target].type !== 'volume' && !vm.disksStats[target])) {
                             return false; // not yet retrieved, can't decide about disk stats support
                         }
-                        return vm.disks[target].type == 'volume' || !isNaN(vm.disksStats[target].capacity) || !isNaN(vm.disksStats[target].allocation);
+                        return vm.disks[target].type == 'volume' || !isNaN(vm.disksStats[target].capacity) || !isNaN(vm.disksStats[target].physical);
                     });
         }
 
@@ -104,11 +104,11 @@ export class VmDisksCardLibvirt extends React.Component {
     prepareDiskData(disk, diskStats, idPrefix, storagePools) {
         diskStats = diskStats || {};
 
-        let used = diskStats.allocation;
+        let used = diskStats.physical;
         let capacity = diskStats.capacity;
 
         /*
-         * For disks of type `volume` allocation and capacity stats are not
+         * For disks of type `volume` physical and capacity stats are not
          * fetched with the virConnectGetAllDomainStats API so we need to get
          * them from the volume.
          *
@@ -125,7 +125,7 @@ export class VmDisksCardLibvirt extends React.Component {
 
             if (volume) {
                 capacity = volume.capacity;
-                used = volume.allocation;
+                used = volume.physical;
             }
         }
 
