@@ -15,3 +15,6 @@ printf "[WebService]\\nAllowUnencrypted=true\\n" > /etc/cockpit/cockpit.conf
 if type firewall-cmd >/dev/null 2>&1; then
     firewall-cmd --add-service=cockpit --permanent
 fi
+
+# test https://bugzilla.redhat.com/show_bug.cgi?id=2266014
+systemctl disable --now virtinterfaced.service virtinterfaced-admin.socket virtinterfaced-ro.socket virtinterfaced.socket
