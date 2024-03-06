@@ -18,11 +18,11 @@
  */
 import React from 'react';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
-import { Dropdown, KebabToggle } from "@patternfly/react-core/dist/esm/deprecated/components/Dropdown";
 import { Progress } from "@patternfly/react-core/dist/esm/components/Progress";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 
 import { ListingPanel } from 'cockpit-components-listing-panel.jsx';
+import { KebabDropdown } from "cockpit-components-dropdown";
 import {
     convertToUnit,
     rephraseUI,
@@ -196,13 +196,7 @@ class StoragePoolActions extends React.Component {
             <div className="btn-group">
                 { storagePool.active && deactivateButton }
                 { !storagePool.active && activateButton }
-                <Dropdown onSelect={() => this.setState(prevState => ({ isActionOpen: !prevState.isActionOpen }))}
-                          id={`${id}-action-kebab`}
-                          toggle={<KebabToggle onToggle={(_event, isActionOpen) => this.setState({ isActionOpen })} />}
-                          isPlain
-                          isOpen={this.state.isActionOpen}
-                          position='right'
-                          dropdownItems={dropdownItems} />
+                <KebabDropdown toggleButtonId={`${id}-action-kebab`} position='right' dropdownItems={dropdownItems} />
             </div>
         );
     }

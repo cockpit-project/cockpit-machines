@@ -20,11 +20,13 @@ import cockpit from 'cockpit';
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
-import { Dropdown, DropdownItem, DropdownSeparator, KebabToggle } from "@patternfly/react-core/dist/esm/deprecated/components/Dropdown";
+import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
+import { DropdownItem } from "@patternfly/react-core/dist/esm/components/Dropdown";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { PowerOffIcon, RedoIcon } from '@patternfly/react-icons';
 import { useDialogs } from 'dialogs.jsx';
 import { fmt_to_fragments } from 'utils.jsx';
+import { KebabDropdown } from 'cockpit-components-dropdown.jsx';
 
 import { updateVm } from '../../actions/store-actions.js';
 import {
@@ -180,7 +182,6 @@ const onSendNMI = (vm) => domainSendNMI({ name: vm.name, id: vm.id, connectionNa
 
 const VmActions = ({ vm, vms, onAddErrorNotification, isDetailsPage }) => {
     const Dialogs = useDialogs();
-    const [isActionOpen, setIsActionOpen] = useState(false);
     const [operationInProgress, setOperationInProgress] = useState(false);
     const [prevVmState, setPrevVmState] = useState(vm.state);
     const [virtCloneAvailable, setVirtCloneAvailable] = useState(false);
@@ -210,7 +211,7 @@ const VmActions = ({ vm, vms, onAddErrorNotification, isDetailsPage }) => {
                 {_("Pause")}
             </DropdownItem>
         );
-        dropdownItems.push(<DropdownSeparator key="separator-pause" />);
+        dropdownItems.push(<Divider key="separator-pause" />);
     }
 
     if (domainCanResume(state)) {
@@ -221,7 +222,7 @@ const VmActions = ({ vm, vms, onAddErrorNotification, isDetailsPage }) => {
                 {_("Resume")}
             </DropdownItem>
         );
-        dropdownItems.push(<DropdownSeparator key="separator-resume" />);
+        dropdownItems.push(<Divider key="separator-resume" />);
     }
 
     if (domainCanShutdown(state)) {
@@ -300,7 +301,7 @@ const VmActions = ({ vm, vms, onAddErrorNotification, isDetailsPage }) => {
                 {_("Force shut down")}
             </DropdownItem>
         );
-        dropdownItems.push(<DropdownSeparator key="separator-shutdown" />);
+        dropdownItems.push(<Divider key="separator-shutdown" />);
         dropdownItems.push(
             <DropdownItem key={`${id}-sendNMI`}
                           id={`${id}-sendNMI`}
@@ -320,7 +321,7 @@ const VmActions = ({ vm, vms, onAddErrorNotification, isDetailsPage }) => {
                 {_("Send non-maskable interrupt")}
             </DropdownItem>
         );
-        dropdownItems.push(<DropdownSeparator key="separator-sendnmi" />);
+        dropdownItems.push(<Divider key="separator-sendnmi" />);
     }
 
     if (domainCanReset(state)) {
@@ -364,7 +365,7 @@ const VmActions = ({ vm, vms, onAddErrorNotification, isDetailsPage }) => {
                 {_("Force reboot")}
             </DropdownItem>
         );
-        dropdownItems.push(<DropdownSeparator key="separator-reset" />);
+        dropdownItems.push(<Divider key="separator-reset" />);
     }
 
     let run = null;
@@ -426,7 +427,7 @@ const VmActions = ({ vm, vms, onAddErrorNotification, isDetailsPage }) => {
                 {_("Migrate")}
             </DropdownItem>
         );
-        dropdownItems.push(<DropdownSeparator key="separator-migrate" />);
+        dropdownItems.push(<Divider key="separator-migrate" />);
     }
 
     if (vm.inactiveXML?.hasSpice) {
@@ -437,7 +438,7 @@ const VmActions = ({ vm, vms, onAddErrorNotification, isDetailsPage }) => {
                 {_("Replace SPICE devices")}
             </DropdownItem>
         );
-        dropdownItems.push(<DropdownSeparator key="separator-spice" />);
+        dropdownItems.push(<Divider key="separator-spice" />);
     }
 
     if (domainCanRename(state)) {
@@ -450,7 +451,7 @@ const VmActions = ({ vm, vms, onAddErrorNotification, isDetailsPage }) => {
                 {_("Rename")}
             </DropdownItem>
         );
-        dropdownItems.push(<DropdownSeparator key="separator-rename" />);
+        dropdownItems.push(<Divider key="separator-rename" />);
     }
 
     if (state !== undefined && domainCanDelete(state, vm.id)) {
@@ -479,13 +480,11 @@ const VmActions = ({ vm, vms, onAddErrorNotification, isDetailsPage }) => {
             {run}
             {shutdown}
             {install}
-            <Dropdown onSelect={() => setIsActionOpen(!isActionOpen)}
-                      id={`${id}-action-kebab`}
-                      toggle={<KebabToggle isDisabled={vm.isUi} onToggle={(_event, isOpen) => setIsActionOpen(isOpen)} />}
-                      isPlain
-                      isOpen={isActionOpen}
-                      position='right'
-                      dropdownItems={dropdownItems} />
+            <KebabDropdown
+                toggleButtonId={`${id}-action-kebab`}
+                position='right'
+                dropdownItems={dropdownItems}
+            />
         </div>
     );
 };

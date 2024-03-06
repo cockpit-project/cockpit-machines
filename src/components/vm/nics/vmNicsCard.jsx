@@ -20,7 +20,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
-import { Dropdown, KebabToggle } from "@patternfly/react-core/dist/esm/deprecated/components/Dropdown";
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { DialogsContext } from 'dialogs.jsx';
@@ -32,6 +31,7 @@ import { EditNICModal } from './nicEdit.jsx';
 import { needsShutdownIfaceModel, needsShutdownIfaceSource, needsShutdownIfaceType, NeedsShutdownTooltip } from '../../common/needsShutdown.jsx';
 import './nic.css';
 import { domainChangeInterfaceSettings, domainDetachIface, domainInterfaceAddresses, domainGet } from '../../../libvirtApi/domain.js';
+import { KebabDropdown } from "cockpit-components-dropdown";
 import { ListingTable } from "cockpit-components-table.jsx";
 import { DeleteResourceButton } from '../../common/deleteResource.jsx';
 
@@ -493,16 +493,6 @@ export class VmNetworkTab extends React.Component {
                         );
                     }
 
-                    const isOpen = this.state.dropdownOpenActions.has(network.mac);
-                    const setIsOpen = open => {
-                        const next = new Set(this.state.dropdownOpenActions);
-                        if (open)
-                            next.add(network.mac);
-                        else
-                            next.delete(network.mac);
-
-                        this.setState({ dropdownOpenActions: next });
-                    };
                     return (
                         <div className='machines-listing-actions'>
                             <Button id={`${id}-iface-${networkId}-` + (isUp ? 'unplug' : 'plug')}
@@ -511,14 +501,7 @@ export class VmNetworkTab extends React.Component {
                                 {isUp ? 'Unplug' : 'Plug'}
                             </Button>
                             {editNICAction()}
-                            <Dropdown onSelect={() => setIsOpen(false)}
-                                id={`${id}-iface-${networkId}-action-kebab`}
-                                key={`${id}-iface-${networkId}-action-kebab`}
-                                toggle={<KebabToggle onToggle={(_event, isDropdownOpen) => setIsOpen(isDropdownOpen)} />}
-                                isPlain
-                                isOpen={isOpen}
-                                position='right'
-                                dropdownItems={[deleteButton]} />
+                            <KebabDropdown position="right" toggleButtonId={`${id}-iface-${networkId}-action-kebab`} dropdownItems={[deleteButton]} />
                         </div>
                     );
                 },
