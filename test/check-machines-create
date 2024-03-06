@@ -2485,10 +2485,10 @@ vnc_password= "{vnc_passwd}"
             self.assertNotIn("spice", domainXML)
             self.assertNotIn("qxl", domainXML)
             # and thus no "Replace SPICE" menu entry
-            b.click(f"#vm-{vmCockpit}-system-action-kebab button")
-            b.wait_in_text(f"#vm-{vmCockpit}-system-action-kebab > .pf-v5-c-dropdown__menu", "Delete")
+            b.click(f"#vm-{vmCockpit}-system-action-kebab")
+            b.wait_visible(f"#vm-{vmCockpit}-system-delete")
             self.assertNotIn("Replace SPICE",
-                             b.text(f"#vm-{vmCockpit}-system-action-kebab > .pf-v5-c-dropdown__menu"))
+                             b.text("ul.pf-v5-c-menu__list"))
         else:
             # all other OSes configure SPICE by default
             self.assertIn("graphics type='spice'", domainXML)
@@ -2500,11 +2500,11 @@ vnc_password= "{vnc_passwd}"
             # "Replace SPICE" menu entry goes away (async)
             for _retry in range(15):
                 time.sleep(1)
-                b.click(f"#vm-{vmCockpit}-system-action-kebab button")
-                b.wait_in_text(f"#vm-{vmCockpit}-system-action-kebab > .pf-v5-c-dropdown__menu", "Delete")
-                menu = b.text(f"#vm-{vmCockpit}-system-action-kebab > .pf-v5-c-dropdown__menu")
-                b.click(f"#vm-{vmCockpit}-system-action-kebab button")
-                b.wait_not_present(".pf-v5-c-dropdown__menu")
+                b.click(f"#vm-{vmCockpit}-system-action-kebab")
+                b.wait_visible(f"#vm-{vmCockpit}-system-delete")
+                menu = b.text("ul.pf-v5-c-menu__list")
+                b.click(f"#vm-{vmCockpit}-system-action-kebab")
+                b.wait_not_present("ul.pf-v5-c-menu__list")
                 if "Replace SPICE" not in menu:
                     break
             else:

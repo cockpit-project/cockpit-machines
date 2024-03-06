@@ -18,7 +18,7 @@
  */
 import React, { useState } from 'react';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
-import { Dropdown, DropdownItem, KebabToggle } from "@patternfly/react-core/dist/esm/deprecated/components/Dropdown";
+import { DropdownItem } from "@patternfly/react-core/dist/esm/components/Dropdown";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { useDialogs } from 'dialogs.jsx';
 
@@ -36,6 +36,8 @@ import {
     networkUndefine
 } from '../../libvirtApi/network.js';
 import store from '../../store.js';
+
+import { KebabDropdown } from "cockpit-components-dropdown";
 
 import cockpit from 'cockpit';
 
@@ -88,7 +90,6 @@ export const getNetworkRow = ({ network }) => {
 
 const NetworkActions = ({ network }) => {
     const Dialogs = useDialogs();
-    const [isActionOpen, setIsActionOpen] = useState(false);
     const [operationInProgress, setOperationInProgress] = useState(false);
 
     const onActivate = () => {
@@ -173,13 +174,7 @@ const NetworkActions = ({ network }) => {
                 {_("Activate")}
             </Button>
             }
-            <Dropdown onSelect={() => setIsActionOpen(!isActionOpen)}
-                      id={`${id}-action-kebab`}
-                      toggle={<KebabToggle onToggle={(_event, isOpen) => setIsActionOpen(isOpen)} />}
-                      isPlain
-                      isOpen={isActionOpen}
-                      position='right'
-                      dropdownItems={dropdownItems} />
+            <KebabDropdown position="right" toggleButtonId={`${id}-action-kebab`} dropdownItems={dropdownItems} />
         </div>
     );
 };
