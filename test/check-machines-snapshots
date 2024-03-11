@@ -252,6 +252,9 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
             m.image.startswith("rhel-8") or
             m.image.startswith("centos-8") or
             m.image in ["debian-stable", "ubuntu-2204", "ubuntu-stable", "fedora-39"])
+        # Transitional code while we move ubuntu-stable from 23.10 mantic to 24.04 noble
+        if m.image == "ubuntu-stable" and m.execute(". /etc/os-release; echo $VERSION_ID").strip() == "24.04":
+            supports_external = True
 
         # HACK: deleting external snapshots for non-running VMs is broken https://bugs.debian.org/bug=1061725
         # Work around that by temporarily disabling libvirtd's AppArmor profile. AppArmor isn't installed by
