@@ -923,7 +923,6 @@ vnc_password= "{vnc_passwd}"
         VALID_DISK_IMAGE_PATH = '/var/lib/libvirt/images/example.img'
         NOVELL_MOCKUP_ISO_PATH = '/var/lib/libvirt/novell.iso'
         PATH_WITH_SPACE = '/var/lib/libvirt/novell with spaces.iso'
-        NOT_EXISTENT_PATH = '/tmp/not-existent.iso'
         ISO_URL = 'https://archive.fedoraproject.org/pub/archive/fedora/linux/releases/28/Server/x86_64/os/images/boot.iso'
         TREE_URL = 'https://archive.fedoraproject.org/pub/archive/fedora/linux/releases/28/Server/x86_64/os'
 
@@ -934,14 +933,12 @@ vnc_password= "{vnc_passwd}"
         FEDORA_28_SHORTID = 'fedora28'
 
         FEDORA_29 = 'Fedora 29'
-        FEDORA_29_SHORTID = 'fedora29'
 
         RHEL_8_1 = 'Red Hat Enterprise Linux 8.1 (Ootpa)'
         RHEL_8_1_SHORTID = 'rhel8.1'
         RHEL_8_2 = 'Red Hat Enterprise Linux 8.2 (Ootpa)'
         RHEL_8_2_SHORTID = 'rhel8.2'
         RHEL_7_1 = 'Red Hat Enterprise Linux 7.1'
-        RHEL_7_1_SHORTID = 'rhel7.1'
 
         CENTOS_7 = 'CentOS 7'
 
@@ -1663,19 +1660,6 @@ vnc_password= "{vnc_passwd}"
         def _fakeRhelDownload(self):
             server = self.test_obj.setup_mock_server("mock-rhsm-rest", ["sso.redhat.com", "api.access.redhat.com"])
             self.test_obj.addCleanup(self.machine.execute, f"kill {server}")
-
-        def _assertVmStates(self, name, connection, before, after):
-            b = self.browser
-            selector = f"#vm-{name}-{connection}-state"
-
-            b.wait_in_text(selector, before)
-
-            # Make sure that the initial state goes away and then try to check what the new state is
-            # because we might end up checking the text for the new state the momment it disappears
-            # HACK: Ensure that the selector exists to avoid a quadratic timeout loop; see
-            # https://github.com/cockpit-project/cockpit/pull/16200
-            testlib.wait(lambda: b.is_present(selector) and b.text(selector) != before, tries=30, delay=3)
-            b.wait_in_text(selector, after)
 
         def _create(self, dialog):
             b = self.browser

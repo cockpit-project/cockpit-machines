@@ -290,13 +290,13 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         self.createVm("subVmTest3")
         m.execute("virsh destroy subVmTest2; virsh destroy subVmTest3; virsh net-destroy default")
 
-        def tryRunDomain(index, name, connection):
+        def tryRunDomain(name, connection):
             self.waitVmRow(name)
 
             b.click(f"#vm-{name}-{connection}-run")
 
         # Try to run subVmTest1 - it will fail because of inactive default network
-        tryRunDomain(1, 'subVmTest1', 'system')
+        tryRunDomain('subVmTest1', 'system')
         b.wait_visible("#vm-subVmTest1-system-state-error")
         if run_pixel_tests:
             b.assert_pixels("tr[data-row-id=vm-subVmTest1-system]", "vm-state-error")
@@ -305,7 +305,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         b.click('#vm-subVmTest1-system-state-error button[aria-label=Close]')
 
         # Try to run subVmTest2
-        tryRunDomain(2, 'subVmTest2', 'system')
+        tryRunDomain('subVmTest2', 'system')
         b.click('#vm-subVmTest2-system-state-error button:contains("view more")')
         b.wait_in_text(".pf-v5-c-popover", "VM subVmTest2 failed to start")
         b.click('#vm-subVmTest2-system-state-error button[aria-label=Close]')

@@ -33,8 +33,6 @@ def hasMonolithicDaemon(image):
 
 
 class VirtualMachinesCaseHelpers:
-    created_pool = False
-
     def waitPageInit(self):
         virtualization_disabled_ignored = self.browser.call_js_func("localStorage.getItem", "virtualization-disabled-ignored") == "true"
         virtualization_enabled = "PASS" in self.machine.execute("virt-host-validate | grep 'Checking for hardware virtualization'")
