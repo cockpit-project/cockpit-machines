@@ -65,9 +65,6 @@ class TestMachinesVirtualization(machineslib.VirtualMachinesCase):
         def stopLibvirtService():
             m.execute(f"systemctl stop {libvirtServiceName}")
 
-        def startLibvirtSocket():
-            m.execute(f"systemctl start {libvirtServiceName}")
-
         def hack_libvirtd_crash():
             # work around libvirtd crashing when stopped too quickly; https://bugzilla.redhat.com/show_bug.cgi?id=1828207
             m.execute("virsh domifaddr 1")
