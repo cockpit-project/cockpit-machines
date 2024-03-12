@@ -175,7 +175,7 @@ class VirtualMachinesCaseHelpers:
         if ptyconsole:
             console = "pty,target.type=virtio "
         else:
-            console = "file,target.type=serial,source.path={} ".format(args["logfile"])
+            console = f"file,target.type=serial,source.path={args['logfile']} "
 
         command = [f"virt-install --connect qemu:///{connection} --name {name} "
                    f"--os-variant {os} "

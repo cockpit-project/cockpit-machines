@@ -1549,9 +1549,10 @@ vnc_password= "{vnc_passwd}"
 
             self.machine.execute(f"touch {TestMachinesCreate.TestCreateConfig.NOVELL_MOCKUP_ISO_PATH}")
             self.machine.execute(f"qemu-img create {TestMachinesCreate.TestCreateConfig.VALID_DISK_IMAGE_PATH} 500M")
-            test_obj.addCleanup(test_obj.machine.execute, "rm -f {0} {1}".format(
-                TestMachinesCreate.TestCreateConfig.NOVELL_MOCKUP_ISO_PATH,
-                TestMachinesCreate.TestCreateConfig.VALID_DISK_IMAGE_PATH))
+            test_obj.addCleanup(
+                test_obj.machine.execute,
+                f"rm -f {TestMachinesCreate.TestCreateConfig.NOVELL_MOCKUP_ISO_PATH} "
+                f"{TestMachinesCreate.TestCreateConfig.VALID_DISK_IMAGE_PATH}")
 
             if rhel_download:
                 self._fakeOsDBInfoRhel()
