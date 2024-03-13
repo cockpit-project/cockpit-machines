@@ -246,9 +246,7 @@ class VirtualMachinesCaseHelpers:
         b = self.browser
 
         b.wait_visible(f"#vm-{vm_name}-disks-{target}-device")
-        b.wait_visible(f"#vm-{vm_name}-disks-{target}-action-kebab")
         b.click(f"#vm-{vm_name}-disks-{target}-action-kebab")
-        b.wait_visible(f"#delete-vm-{vm_name}-disks-{target}")
         b.click(f"#delete-vm-{vm_name}-disks-{target}")
         b.wait_visible(".pf-v5-c-modal-box")
         b.click("#delete-resource-modal-primary")
@@ -258,9 +256,7 @@ class VirtualMachinesCaseHelpers:
     def deleteIface(self, iface, mac=None, vm_name=None):
         b = self.browser
 
-        b.wait_visible(f"#vm-subVmTest1-iface-{iface}-action-kebab")
         b.click(f"#vm-subVmTest1-iface-{iface}-action-kebab")
-        b.wait_visible(f"#delete-vm-subVmTest1-iface-{iface}")
         b.click(f"#delete-vm-subVmTest1-iface-{iface}")
         b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Remove network interface?")
         if mac and vm_name:

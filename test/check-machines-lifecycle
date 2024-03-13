@@ -93,7 +93,6 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
             b.wait_not_present("#vm-subVmTest1-needs-shutdown")
             m.execute("virt-xml subVmTest1 --add-device --watchdog action=reset --update")
             m.execute("virt-xml subVmTest1 --edit --watchdog action=pause")
-            b.wait_visible("#vm-subVmTest1-needs-shutdown")
             b.click("#vm-subVmTest1-needs-shutdown")
             b.wait_in_text(".pf-v5-c-popover__body", message)
             m.execute("virt-xml subVmTest1 --remove-device --watchdog 1 --update")
@@ -149,10 +148,8 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         # pause
         self.performAction("subVmTest1", "pause")
         # check removing button of disk and network interface when the VM is paused
-        b.wait_visible("#vm-subVmTest1-disks-vda-action-kebab")
         b.click("#vm-subVmTest1-disks-vda-action-kebab")
         b.wait_visible(".pf-m-disabled #delete-vm-subVmTest1-disks-vda")
-        b.wait_visible("#vm-subVmTest1-iface-1-action-kebab")
         b.click("#vm-subVmTest1-iface-1-action-kebab")
         b.wait_visible(".pf-m-disabled #delete-vm-subVmTest1-iface-1")
 
