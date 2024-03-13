@@ -756,7 +756,6 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         b.assert_pixels("#app", "networks-page", skip_layouts=["rtl"])
 
         # activate network
-        b.wait_visible(f"#activate-network-test_network2-{connectionName}")
         b.click(f"#activate-network-test_network2-{connectionName}")
         b.wait_in_text(f"#network-test_network2-{connectionName}-state", "active")
         # check virsh state

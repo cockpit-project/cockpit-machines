@@ -329,7 +329,6 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         ).execute()
 
         # delete CD-DROM again so that the next test can use external snapshot again
-        b.wait_visible("#vm-subVmTest1-disks-sdd-action-kebab")
         b.click("#vm-subVmTest1-disks-sdd-action-kebab")
         b.click("#delete-vm-subVmTest1-disks-sdd")
         b.click("#delete-resource-modal-primary")
