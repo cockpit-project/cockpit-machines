@@ -1,18 +1,11 @@
 /basic:
   summary: Run browser integration for basic functionality
   require:
+    - cockpit-machines
     - cockpit-system
     - cockpit-ws
-    # build/test infra dependencies
-    - virt-install
-    - bzip2
-    - git-core
-    - libvirt-python3
-    - make
-    - nodejs
-    - python3
-    - python3-yaml
     # required by tests
+    - podman
     - dbus-tools
     - firewalld
     - libvirt-daemon-driver-storage-iscsi
@@ -23,18 +16,11 @@
 /network:
   summary: Run browser integration for network functionality
   require:
+    - cockpit-machines
     - cockpit-system
     - cockpit-ws
-    # build/test infra dependencies
-    - virt-install
-    - bzip2
-    - git-core
-    - libvirt-python3
-    - make
-    - nodejs
-    - python3
-    - python3-yaml
     # required by tests
+    - podman
     - dbus-tools
     - firewalld
   test: ./browser.sh network
@@ -43,18 +29,11 @@
 /storage:
   summary: Run browser integration for storage functionality
   require:
+    - cockpit-machines
     - cockpit-system
     - cockpit-ws
-    # build/test infra dependencies
-    - virt-install
-    - bzip2
-    - git-core
-    - libvirt-python3
-    - make
-    - nodejs
-    - python3
-    - python3-yaml
     # required by tests
+    - podman
     - dbus-tools
     - firewalld
     - libvirt-daemon-driver-storage-iscsi
