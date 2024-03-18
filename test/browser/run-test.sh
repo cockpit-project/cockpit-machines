@@ -17,7 +17,7 @@ else
     grep '"version"' node_modules/chrome-remote-interface/package.json
 fi
 
-. /usr/lib/os-release
+. /run/host/usr/lib/os-release
 export TEST_OS="${ID}-${VERSION_ID/./-}"
 
 if [ "${TEST_OS#centos-}" != "$TEST_OS" ]; then
@@ -119,12 +119,19 @@ done
 echo "TEST_ALLOW_JOURNAL_MESSAGES: ${TEST_ALLOW_JOURNAL_MESSAGES:-}"
 echo "TEST_AUDIT_NO_SELINUX: ${TEST_AUDIT_NO_SELINUX:-}"
 
+# Chromium sometimes gets OOM killed on testing farm
+export TEST_BROWSER=firefox
+
 # execute run-tests
 RC=0
-test/common/run-tests --nondestructive $exclude_options \
-    --machine localhost:22 --browser localhost:9090 $TESTS || RC=$?
+test/common/run-tests \
+    --nondestructive \
+    $exclude_options \
+    --machine localhost:22 \
+    --browser localhost:9090 \
+    $TESTS \
+|| RC=$?
 
 echo $RC > "$LOGS/exitcode"
 cp --verbose Test* "$LOGS" || true
-# deliver test result via exitcode file
-exit 0
+exit $RC
