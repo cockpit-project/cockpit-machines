@@ -26,7 +26,8 @@ import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { Gallery } from "@patternfly/react-core/dist/esm/layouts/Gallery";
 import { Toolbar, ToolbarContent, ToolbarItem } from "@patternfly/react-core/dist/esm/components/Toolbar";
-import { Select, SelectOption } from "@patternfly/react-core/dist/esm/deprecated/components/Select";
+import { Select, SelectList, SelectOption } from "@patternfly/react-core/dist/esm/components/Select";
+import { MenuToggle } from "@patternfly/react-core/dist/esm/components/MenuToggle";
 import { Page, PageSection } from "@patternfly/react-core/dist/esm/components/Page";
 import { WithDialogs } from 'dialogs.jsx';
 
@@ -70,7 +71,7 @@ const _ = cockpit.gettext;
  * List of all VMs defined on this host
  */
 const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddErrorNotification }) => {
-    const [statusSelected, setStatusSelected] = useState({ value: _("All"), toString: function() { return this.value } });
+    const [statusSelected, setStatusSelected] = useState({ value: _("All") });
     const [currentTextFilter, setCurrentTextFilter] = useState("");
     const [statusIsExpanded, setStatusIsExpanded] = useState(false);
     const combinedVms = [...vms, ...dummyVmsFilter(vms, ui.vms)];
@@ -93,6 +94,17 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                     .map(state => { return { value: rephraseUI('resourceStates', state), apiState: state } })
                     .sort((a, b) => (prioritySorting[a.apiState] || 0) - (prioritySorting[b.apiState] || 0) || a.value.localeCompare(b.value)));
 
+    const toggle = toggleRef => (
+        <MenuToggle
+            ref={toggleRef}
+            id="vm-state-select-toggle"
+            onClick={() => setStatusIsExpanded(!statusIsExpanded)}
+            isExpanded={statusIsExpanded}
+            isFullWidth
+        >
+            {statusSelected.value}
+        </MenuToggle>);
+
     const toolBar = (
         <Toolbar>
             <ToolbarContent>
@@ -107,18 +119,22 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                         {_("State")}
                     </ToolbarItem>
                     <ToolbarItem>
-                        <Select variant="single"
-                                toggleId="vm-state-select-toggle"
-                                onToggle={(_event, statusIsExpanded) => setStatusIsExpanded(statusIsExpanded)}
-                                onSelect={(event, selection) => { setStatusIsExpanded(false); setStatusSelected(selection) }}
-                                selections={statusSelected}
-                                isOpen={statusIsExpanded}
-                                aria-labelledby="vm-state-select">
-                            {sortOptions.map((option, index) => (
-                                option.apiState === "_divider"
-                                    ? <Divider component="li" key={index} />
-                                    : <SelectOption key={index} value={{ ...option, toString: function() { return this.value } }} />
-                            ))}
+                        <Select
+                          id="vm-state-menu"
+                          isOpen={statusIsExpanded}
+                          selected={statusSelected}
+                          toggle={toggle}
+                          onOpenChange={isOpen => setStatusIsExpanded(isOpen)}
+                          onSelect={(_, selection) => { setStatusIsExpanded(false); setStatusSelected(selection) }}
+                          aria-labelledby="vm-state-select"
+                        >
+                            <SelectList>
+                                {sortOptions.map((option, index) => (
+                                    option.apiState === "_divider"
+                                        ? <Divider component="li" key={index} />
+                                        : <SelectOption key={index} value={option}>{option.value}</SelectOption>
+                                ))}
+                            </SelectList>
                         </Select>
                     </ToolbarItem>
                 </>}
