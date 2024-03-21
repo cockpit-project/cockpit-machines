@@ -156,7 +156,11 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
 
         # suspend/resume
         m.execute("virsh suspend subVmTest1")
-        b.wait_in_text("#vm-subVmTest1-system-state", "Paused")
+        try:
+            b.wait_in_text("#vm-subVmTest1-system-state", "Paused")
+        except:
+            print(m.execute("virsh list"))
+            raise
         # resume sometimes fails with "unable to execute QEMU command 'cont': Resetting the Virtual Machine is required"
         m.execute('virsh resume subVmTest1 || { virsh destroy subVmTest1; virsh start subVmTest1; }')
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
