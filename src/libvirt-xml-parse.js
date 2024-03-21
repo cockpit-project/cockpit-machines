@@ -1086,6 +1086,8 @@ export function parseStoragePoolDumpxml(connectionName, storagePoolXml, objPath)
     result.capacity = storagePoolElem.getElementsByTagName('capacity')[0].childNodes[0].nodeValue;
     result.available = storagePoolElem.getElementsByTagName('available')[0].childNodes[0].nodeValue;
     result.allocation = storagePoolElem.getElementsByTagName('allocation')[0].childNodes[0].nodeValue;
+    const physicalElem = storagePoolElem.getElementsByTagName('physical')[0];
+    result.physical = physicalElem ? physicalElem.childNodes[0].nodeValue : NaN;
 
     // Fetch path property if target is contained for this type of pool
     if (['dir', 'fs', 'netfs', 'logical', 'disk', 'iscsi', 'scsi', 'mpath', 'zfs'].indexOf(result.type) > -1) {
