@@ -84,7 +84,7 @@ class TestMachinesConsoles(machineslib.VirtualMachinesCase):
         self.waitCirrOSBooted(args['logfile'])
 
         self.machine.execute(f"echo '' > {args['logfile']}")
-        b.click("#subVmTest1-system-vnc-sendkey button")
+        b.click("#subVmTest1-system-vnc-sendkey")
         b.click("#ctrl-alt-Delete")
         self.waitLogFile(args['logfile'], "Requesting system reboot")
 
