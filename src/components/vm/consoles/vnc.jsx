@@ -20,7 +20,9 @@ import React from 'react';
 import cockpit from 'cockpit';
 
 import { VncConsole } from '@patternfly/react-console';
-import { Dropdown, DropdownItem, DropdownSeparator, DropdownToggle } from "@patternfly/react-core/dist/esm/deprecated/components/Dropdown";
+import { Dropdown, DropdownItem, DropdownList } from "@patternfly/react-core/dist/esm/components/Dropdown";
+import { MenuToggle } from "@patternfly/react-core/dist/esm/components/MenuToggle";
+import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
 
 import { logDebug } from '../../../helpers.js';
 import { domainSendKey } from '../../../libvirtApi/domain.js';
@@ -140,21 +142,23 @@ class Vnc extends React.Component {
         };
         const dropdownItems = [
             ...['Delete', 'Backspace'].map(key => renderDropdownItem(key)),
-            <DropdownSeparator key="separator" />,
+            <Divider key="separator" />,
             ...[...Array(12).keys()].map(key => renderDropdownItem(cockpit.format("F$0", key + 1))),
         ];
         const additionalButtons = [
             <Dropdown onSelect={this.onExtraKeysDropdownToggle}
-                id={cockpit.format("$0-$1-vnc-sendkey", vmName, connectionName)}
                 key={cockpit.format("$0-$1-vnc-sendkey", vmName, connectionName)}
-                toggle={
-                    <DropdownToggle onToggle={(_event, isOpen) => this.setState({ isActionOpen: isOpen })}>
+                toggle={(toggleRef) => (
+                    <MenuToggle id={cockpit.format("$0-$1-vnc-sendkey", vmName, connectionName)} ref={toggleRef} onClick={(_event, isOpen) => this.setState({ isActionOpen: isOpen })}>
                         {_("Send key")}
-                    </DropdownToggle>
-                }
+                    </MenuToggle>
+                )}
                 isOpen={isActionOpen}
-                dropdownItems={dropdownItems}
-            />
+            >
+                <DropdownList>
+                    {dropdownItems}
+                </DropdownList>
+            </Dropdown>
         ];
 
         return (
