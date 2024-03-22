@@ -171,8 +171,8 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         b.wait_visible(f'#myPoolOne-{connectionName}-create-volume-button:enabled')
 
         # See deletion of Pool is disabled because this pool is referenced by VM's disk
-        b.click(f"#pool-myPoolTwo-{connectionName}-action-kebab > button")
-        b.wait_visible(f"#delete-pool-myPoolTwo-{connectionName} > a[aria-disabled=true]")
+        b.click(f"#pool-myPoolTwo-{connectionName}-action-kebab")
+        b.wait_visible(f".pf-m-aria-disabled #delete-pool-myPoolTwo-{connectionName}")
 
         # VM is not running, so we need to reload the page
         b.reload()
@@ -201,8 +201,8 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         # Transient pool
         self.togglePoolRow("myPoolThree", connectionName)
         b.wait_not_present(f"#pool-myPoolThree-{connectionName}-autostart")  # Transient pool shouldn't have autostart option
-        b.click(f"#pool-myPoolThree-{connectionName}-action-kebab > button")
-        b.wait_visible(f'#delete-pool-myPoolThree-{connectionName} > a[aria-disabled=true]')  # Transient pool cannot be deleted
+        b.click(f"#pool-myPoolThree-{connectionName}-action-kebab")
+        b.wait_visible(f'.pf-m-aria-disabled #delete-pool-myPoolThree-{connectionName}')  # Transient pool cannot be deleted
         b.click(f'#deactivate-pool-myPoolThree-{connectionName}')  # Deactivate transient pool
         # Check it's not present after deactivation
         self.waitPoolRow("myPoolThree", connectionName, False)
@@ -757,7 +757,7 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         b.wait_visible("#storage-pools-listing")
 
         # Check for deleting a pool whose disk is used by a VM
-        b.click("#pool-images-system-action-kebab button")
+        b.click("#pool-images-system-action-kebab")
         b.click("#delete-pool-images-system")
         b.set_checked("#storage-pool-delete-volumes", True)
         b.wait_in_text(".pf-v5-c-backdrop .pf-v5-c-helper-text__item-text", "Pool's volumes are used by")
@@ -768,7 +768,7 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         b.wait_not_present(".pf-v5-c-backdrop")
 
         # Check "X" button of the dialog
-        b.click("#pool-images-system-action-kebab button")
+        b.click("#pool-images-system-action-kebab")
         b.click("#delete-pool-images-system")
         b.click(".pf-v5-c-backdrop button[aria-label=Close]")
         b.wait_not_present(".pf-v5-c-backdrop")
@@ -783,7 +783,7 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         m.execute(f'chattr +a {args["image"]}')
         self.addCleanup(m.execute, f'chattr -a {args["image"]}')
 
-        b.click("#pool-images-system-action-kebab button")
+        b.click("#pool-images-system-action-kebab")
         b.click("#delete-pool-images-system")
         b.set_checked("#storage-pool-delete-volumes", True)
         b.wait_visible("#storage-pool-delete-modal")
@@ -802,9 +802,9 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         b.enter_page('/machines')
         b.wait_in_text("body", "Virtual machines")
 
-        b.click("#pool-images-system-action-kebab button")
-        b.wait_visible("#delete-pool-images-system a[aria-disabled=true]")
-        b.mouse("#delete-pool-images-system a", "mouseenter")
+        b.click("#pool-images-system-action-kebab")
+        b.wait_visible(".pf-m-aria-disabled #delete-pool-images-system")
+        b.mouse("#delete-pool-images-system", "mouseenter")
         b.wait_in_text(
             ".pf-v5-c-tooltip__content",
             "Non-persistent storage pool cannot be deleted. It ceases to exists when it's deactivated.")
@@ -894,7 +894,7 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
 
             def delete(self):
                 # Expand and click the delete button
-                b.click(f"#pool-{self.name}-{self.connection}-action-kebab button")
+                b.click(f"#pool-{self.name}-{self.connection}-action-kebab")
                 b.click(f"#delete-pool-{self.name}-{self.connection}")
                 # Check if deletion dialog is shown
                 b.wait_visible("div.pf-v5-c-modal-box")
@@ -1057,10 +1057,10 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
 
         b.wait_in_text("#pool-images-system-volume-forDeletion-usedby", "subVmTest1")
 
-        b.click("#pool-images-system-action-kebab button")
-        b.mouse("#delete-pool-images-system a[aria-disabled=true]", "mouseenter")
+        b.click("#pool-images-system-action-kebab")
+        b.mouse("#delete-pool-images-system", "mouseenter")
         b.wait_in_text("#delete-tooltip", "Pool's volumes are used by VMs")
-        b.mouse("#delete-pool-images-system a[aria-disabled=true]", "mouseleave")
+        b.mouse("#delete-pool-images-system", "mouseleave")
 
         # Detach the disk
         m.execute("virsh detach-disk subVmTest1 vdb --config")
@@ -1075,8 +1075,8 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         b.wait_not_in_text("#pool-images-system-volume-forDeletion-usedby", "subVmTest1")
 
         # Check for deleting a pool whose disk is used by a VM
-        b.click("#pool-images-system-action-kebab button")
-        b.click("#pool-images-system-action-kebab a:contains(Delete)")
+        b.click("#pool-images-system-action-kebab")
+        b.click("#delete-pool-images-system")
         b.set_checked("#storage-pool-delete-volumes", True)
         b.wait_in_text(".pf-v5-c-backdrop .pf-v5-c-helper-text__item-text", "Pool's volumes are used by")
         b.wait_visible(".pf-v5-c-backdrop footer button[aria-disabled=true]:contains(Delete)")
@@ -1086,8 +1086,8 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         b.wait_not_present(".pf-v5-c-backdrop")
 
         # Check "X" button of the dialog
-        b.click("#pool-images-system-action-kebab button")
-        b.click("#pool-images-system-action-kebab a:contains(Delete)")
+        b.click("#pool-images-system-action-kebab")
+        b.click("#delete-pool-images-system")
         b.click(".pf-v5-c-backdrop button[aria-label=Close]")
         b.wait_not_present(".pf-v5-c-backdrop")
 
@@ -1105,8 +1105,8 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
 
         m.execute(f'chattr +a {args["image"]}')
         self.addCleanup(m.execute, f'chattr -a {args["image"]}')
-        b.click("#pool-images-system-action-kebab button")
-        b.click("#pool-images-system-action-kebab a:contains(Delete)")
+        b.click("#pool-images-system-action-kebab")
+        b.click("#delete-pool-images-system")
         b.set_checked("#storage-pool-delete-volumes", True)
         b.click(".pf-v5-c-backdrop footer button[aria-disabled=false]:contains(Delete)")
         b.assert_pixels("#storage-pool-delete-modal", "storage-pool-delete-modal-error")

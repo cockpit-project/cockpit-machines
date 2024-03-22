@@ -48,9 +48,9 @@ class VirtualMachinesCaseHelpers:
         if logPath:
             m.write(logPath, '')
 
-        b.click(f"#vm-{vmName}-{connectionName}-action-kebab button")
-        b.wait_visible(f"#vm-{vmName}-{connectionName}-action-kebab > .pf-v5-c-dropdown__menu")
-        b.click(f"#vm-{vmName}-{connectionName}-{action} a")
+        b.click(f"#vm-{vmName}-{connectionName}-action-kebab")
+        b.wait_visible(".pf-v5-c-menu")
+        b.click(f"#vm-{vmName}-{connectionName}-{action}")
         if action in ["reboot", "forceReboot"] and logPath:
             # https://bugzilla.redhat.com/show_bug.cgi?id=2221144
             # The VM should not be rebooted when the confirmation dialog is shown
@@ -247,7 +247,7 @@ class VirtualMachinesCaseHelpers:
 
         b.wait_visible(f"#vm-{vm_name}-disks-{target}-device")
         b.wait_visible(f"#vm-{vm_name}-disks-{target}-action-kebab")
-        b.click(f"#vm-{vm_name}-disks-{target}-action-kebab button")
+        b.click(f"#vm-{vm_name}-disks-{target}-action-kebab")
         b.wait_visible(f"#delete-vm-{vm_name}-disks-{target}")
         b.click(f"#delete-vm-{vm_name}-disks-{target}")
         b.wait_visible(".pf-v5-c-modal-box")
@@ -259,7 +259,7 @@ class VirtualMachinesCaseHelpers:
         b = self.browser
 
         b.wait_visible(f"#vm-subVmTest1-iface-{iface}-action-kebab")
-        b.click(f"#vm-subVmTest1-iface-{iface}-action-kebab button")
+        b.click(f"#vm-subVmTest1-iface-{iface}-action-kebab")
         b.wait_visible(f"#delete-vm-subVmTest1-iface-{iface}")
         b.click(f"#delete-vm-subVmTest1-iface-{iface}")
         b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Remove network interface?")

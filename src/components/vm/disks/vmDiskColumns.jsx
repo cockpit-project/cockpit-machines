@@ -22,8 +22,10 @@ import cockpit from 'cockpit';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
-import { Dropdown, DropdownItem, KebabToggle } from "@patternfly/react-core/dist/esm/deprecated/components/Dropdown";
+import { DropdownItem } from "@patternfly/react-core/dist/esm/components/Dropdown";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
+
+import { KebabDropdown } from 'cockpit-components-dropdown.jsx';
 
 import { useDialogs } from 'dialogs.jsx';
 import { domainDeleteStorage, domainDetachDisk, domainGet } from '../../../libvirtApi/domain.js';
@@ -235,14 +237,14 @@ export const DiskActions = ({ vm, vms, disk, supportedDiskBusTypes, idPrefixRow,
                             vm={vm}
                             idPrefix={`${idPrefixRow}-edit`}
                             supportedDiskBusTypes={supportedDiskBusTypes} />}
-            <Dropdown onSelect={() => setIsActionOpen(false)}
-                      key={idPrefixRow + "-action-kebab"}
-                      id={idPrefixRow + "-action-kebab"}
-                      toggle={<KebabToggle onToggle={(_event, isOpen) => setIsActionOpen(isOpen)} />}
-                      isPlain
-                      isOpen={isActionOpen}
-                      position='right'
-                      dropdownItems={dropdownItems} />
+            <KebabDropdown
+                key={idPrefixRow + "-action-kebab"}
+                toggleButtonId={idPrefixRow + "-action-kebab"}
+                position='right'
+                dropdownItems={dropdownItems}
+                isOpen={isActionOpen}
+                setIsOpen={setIsActionOpen}
+            />
         </div>
     );
 };

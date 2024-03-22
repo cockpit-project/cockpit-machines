@@ -150,11 +150,11 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         self.performAction("subVmTest1", "pause")
         # check removing button of disk and network interface when the VM is paused
         b.wait_visible("#vm-subVmTest1-disks-vda-action-kebab")
-        b.click("#vm-subVmTest1-disks-vda-action-kebab button")
-        b.wait_visible("#delete-vm-subVmTest1-disks-vda a[aria-disabled=true]")
+        b.click("#vm-subVmTest1-disks-vda-action-kebab")
+        b.wait_visible(".pf-m-disabled #delete-vm-subVmTest1-disks-vda")
         b.wait_visible("#vm-subVmTest1-iface-1-action-kebab")
-        b.click("#vm-subVmTest1-iface-1-action-kebab button")
-        b.wait_visible("#delete-vm-subVmTest1-iface-1 a[aria-disabled=true]")
+        b.click("#vm-subVmTest1-iface-1-action-kebab")
+        b.wait_visible(".pf-m-disabled #delete-vm-subVmTest1-iface-1")
 
         # resume
         self.performAction("subVmTest1", "resume")
@@ -506,8 +506,8 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         args = self.createVm(name)
         m.execute(f"virsh undefine {name}")
         b.wait_visible(f"tr[data-row-id=vm-{name}-system][data-vm-transient=true]")
-        b.click(f"#vm-{name}-system-action-kebab button")
-        b.wait_visible(f"#vm-{name}-system-delete a.pf-m-disabled")  # delete buton should be disabled
+        b.click(f"#vm-{name}-system-action-kebab")
+        b.wait_visible(f".pf-m-disabled #vm-{name}-system-delete")  # delete buton should be disabled
         b.click(f"#vm-{name}-system-forceOff")
         b.wait_visible(f"#vm-{name}-system-confirm-action-modal")
         b.click(f".pf-v5-c-modal-box__footer #vm-{name}-system-forceOff")

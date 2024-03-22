@@ -107,8 +107,8 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         self.toggleNetworkRow("test_network4", connectionName)
         b.wait_in_text(f"#network-test_network4-{connectionName}-persistent", "no")
         b.wait_not_present(f"#network-test_network4-{connectionName}-autostart")  # Transient network shouldn't have autostart option
-        b.click(f"#network-test_network4-{connectionName}-action-kebab button")
-        b.wait_visible(f'#delete-network-test_network4-{connectionName} a.pf-m-aria-disabled')  # Transient network cannot be deleted
+        b.click(f"#network-test_network4-{connectionName}-action-kebab")
+        b.wait_visible(f'li.pf-m-aria-disabled > #delete-network-test_network4-{connectionName}')  # Transient network cannot be deleted
         b.click(f'#deactivate-network-test_network4-{connectionName}')  # Deactivate transient network
         self.waitNetworkRow("test_network4", connectionName, False)  # Check it's not present after deactivation
 
@@ -771,14 +771,14 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         testlib.wait(lambda: "no" == m.execute("virsh net-info test_network2 | grep 'Active:' | awk '{print $2}'").strip(), tries=5)
 
         # check "X" button of the deletion dialog
-        b.click(f"#network-test_network2-{connectionName}-action-kebab button")
+        b.click(f"#network-test_network2-{connectionName}-action-kebab")
         b.click(f'#delete-network-test_network2-{connectionName}')
         b.wait_visible("#delete-resource-modal")
         b.click("#delete-resource-modal button[aria-label=Close]")
         b.wait_not_present("#delete-resource-modal")
 
         # Delete an inactive network
-        b.click(f"#network-test_network2-{connectionName}-action-kebab button")
+        b.click(f"#network-test_network2-{connectionName}-action-kebab")
         b.click(f'#delete-network-test_network2-{connectionName}')
         b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-description-list", "test_network2")
         b.click(".pf-v5-c-modal-box__footer button:contains(Delete)")
@@ -789,7 +789,7 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         m.execute("virsh net-define /tmp/xml; virsh net-start test_network2")
         b.wait_in_text(f"#network-test_network2-{connectionName}-state", "active")
         self.toggleNetworkRow("test_network2", connectionName)
-        b.click(f"#network-test_network2-{connectionName}-action-kebab button")
+        b.click(f"#network-test_network2-{connectionName}-action-kebab")
         b.click(f'#delete-network-test_network2-{connectionName}')
         b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-description-list", "test_network2")
         b.click(".pf-v5-c-modal-box__footer button:contains(Delete)")
