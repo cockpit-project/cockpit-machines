@@ -37,6 +37,7 @@ import { Spinner } from "@patternfly/react-core/dist/esm/components/Spinner";
 import { ExternalLinkAltIcon, TrashIcon } from '@patternfly/react-icons';
 
 import { DialogsContext } from 'dialogs.jsx';
+import { useInit } from "hooks.js";
 import cockpit from 'cockpit';
 import store from "../../store.js";
 import { MachinesConnectionSelector } from '../common/machinesConnectionSelector.jsx';
@@ -752,45 +753,60 @@ const UsersConfigurationRow = ({
     );
 };
 
-// This method needs to be outside of component as re-render would create a new instance of debounce
-const parseKey = debounce(500, (key, setKeyObject, setKeyInvalid) => {
-    if (isEmpty(key))
-        return;
-
-    // Validate correctness of the key
-    return cockpit.spawn(["ssh-keygen", "-l", "-f", "-"], { err: "message" })
-            .input(key)
-            .then(() => {
-                setKeyInvalid(false);
-                const parts = key.split(" ");
-                if (parts.length >= 2) {
-                    setKeyObject({
-                        type: parts[0],
-                        data: parts[1],
-                        comment: parts[2], // comment is optional in SSH-format
-                    });
-                }
-            })
-            .catch(() => {
-                setKeyObject(undefined);
-                setKeyInvalid(true);
-                console.warn("Could not validate the public key");
-            });
-});
-
-const SshKeysRow = ({
-    id, item, onChange, idx, removeitem,
-}) => {
+const useParsedKey = (value) => {
     const [keyObject, setKeyObject] = useState();
     const [keyInvalid, setKeyInvalid] = useState(false);
 
-    const onChangeHelper = (value) => {
-        // Some users might want to input multiple keys into the same field
-        // While handling that in the future might be a nice user experience, now we only parse one key out of input
-        value = value.split(/\r?\n/)[0];
+    const parseKey = (key) => {
+        if (isEmpty(key))
+            return;
 
+        // Validate correctness of the key
+        return cockpit.spawn(["ssh-keygen", "-l", "-f", "-"], { err: "message" })
+                .input(key)
+                .then(() => {
+                    setKeyInvalid(false);
+                    const parts = key.split(" ");
+                    if (parts.length >= 2) {
+                        setKeyObject({
+                            type: parts[0],
+                            data: parts[1],
+                            comment: parts[2], // comment is optional in SSH-format
+                        });
+                    }
+                })
+                .catch(() => {
+                    setKeyObject(undefined);
+                    setKeyInvalid(true);
+                    console.warn("Could not validate the public key");
+                });
+    };
+
+    const debouncedParseKey = useInit(() => debounce(500, parseKey));
+    useInit(() => debouncedParseKey(value), [value]);
+
+    return [keyObject, keyInvalid];
+};
+
+const SshKeysRow = ({
+    id, item, onChange, idx, removeitem, additem
+}) => {
+    const [keyObject, keyInvalid] = useParsedKey(item.value);
+
+    const onChangeHelper = (value) => {
+        const lines = value.split(/\r?\n/);
+
+        // The first line is for us.
+        value = lines[0];
         onChange(idx, "value", value);
-        parseKey(value, setKeyObject, setKeyInvalid);
+
+        // If there are more lines, create additional entries for them.
+        for (let i = 1; i < lines.length; i++) {
+            if (lines[i]) {
+                additem();
+                onChange(idx + i, "value", lines[i]);
+            }
+        }
     };
 
     return (
