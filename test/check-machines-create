@@ -399,7 +399,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                                                     expected_ssh_keys=[rsakey, dsakey],
                                                                     create_and_run=True))
 
-        # try to input multiple keys (separated by newline) into one text input, expect only first one to be used
+        # try to input multiple keys (separated by newline) into one text input
         runner.createCloudBaseImageTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
                                                                     storage_size=10, storage_size_unit='MiB',
                                                                     location=config.VALID_DISK_IMAGE_PATH,
@@ -408,8 +408,8 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                                                     user_password="catsaremybestfr13nds",
                                                                     user_login="foo",
                                                                     root_password="dogsaremybestfr13nds",
-                                                                    ssh_keys=[f"{rsakey} \n {dsakey}"],
-                                                                    expected_ssh_keys=[rsakey],
+                                                                    ssh_keys=[f"{rsakey}\n{dsakey}"],
+                                                                    expected_ssh_keys=[rsakey, dsakey],
                                                                     create_and_run=True))
 
         # Try to create VM with invalid ssh key
@@ -1247,7 +1247,7 @@ vnc_password= "{vnc_passwd}"
             ssh_keys = self.expected_ssh_keys or self.ssh_keys
             if ssh_keys is not None:
                 for key in ssh_keys:
-                    self.assertIn(key, user_data)
+                    self.assertIn("- " + key, user_data)
 
             # --unattended option is conflicting with --cloud-init option, resulting --cloud-init user_data being ignored
             # https://bugzilla.redhat.com/show_bug.cgi?id=2096200#c14
@@ -1413,7 +1413,17 @@ vnc_password= "{vnc_passwd}"
                 if self.ssh_keys is not None:
                     for idx, key in enumerate(self.ssh_keys):
                         b.click("button:contains(Add SSH keys)")
-                        b.set_input_text(f"#create-vm-dialog-ssh-key-{idx} textarea", key, value_check=False, blur=False)
+                        # set_val does not emit the expected "change"
+                        # event with React input and textarea
+                        # components, and we would need to use
+                        # set_input_text instead for that reason. But
+                        # we want to simulate a paste operation here,
+                        # not typing individual characters. So we have
+                        # use set_val and follow it up with
+                        # set_input_text for the event.
+                        b.set_val(f"#create-vm-dialog-ssh-key-{idx} textarea", key)
+                        b.set_input_text(f"#create-vm-dialog-ssh-key-{idx} textarea", " ",
+                                         append=True, value_check=False)
                         # Check that ssh key was validated
                         if self.ssh_key_invalid:
                             self.browser.wait_attr(f"#create-vm-dialog-ssh-key-{idx} .pf-v5-c-form__group", "testdata", "key-invalid")
