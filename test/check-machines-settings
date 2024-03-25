@@ -50,8 +50,16 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
 
-        b.click("#vm-subVmTest1-cpu button")  # open VCPU modal detail window
+        # Check the synatx of CPU should be "${number} vCPU, ${CPU mode}"
+        b.wait_in_text("#vm-subVmTest1-cpu", "2 vCPUs, ")
 
+        # Check "X" on the dialog
+        b.click("#vm-subVmTest1-cpu button")
+        b.wait_visible("#machines-cpu-modal-dialog")
+        b.click(".pf-v5-c-modal-box__close button")
+        b.wait_not_present("#machines-cpu-modal-dialog")
+
+        b.click("#vm-subVmTest1-cpu button")
         b.wait_visible("#machines-cpu-modal-dialog")
 
         # Test basic vCPU properties
@@ -70,6 +78,10 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
         b.set_val("#socketsSelect", "2")
         b.wait_val("#coresSelect", "1")
         b.wait_val("#threadsSelect", "2")
+
+        # Check the warning on the dialog
+        b.wait_in_text("#machines-cpu-modal-dialog .pf-v5-c-alert",
+                       "Changes will take effect after shutting down the VM")
 
         # Save
         b.click("#machines-cpu-modal-dialog-apply")
