@@ -12,7 +12,7 @@ $DNF libvirt-daemon-driver-storage-iscsi-direct || true
 
 # Show critical packages versions
 rpm -q selinux-policy cockpit-bridge cockpit-machines
-rpm -qa | grep -E 'libvirt|qemu' | sort
+rpm -qa | grep -E 'virt|qemu' | sort
 
 # allow test to set up things on the machine
 mkdir -p /root/.ssh
