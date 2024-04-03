@@ -61,6 +61,7 @@ exec podman \
         --shm-size=1024m \
         --security-opt=label=disable \
         --network=host \
+        --env='TEST_*' \
         --volume="${TMT_TEST_DATA}":/logs:rw,U --env=LOGS=/logs \
         --volume="$(pwd)":/source:rw,U --env=SOURCE=/source \
         --volume=/usr/lib/os-release:/run/host/usr/lib/os-release:ro \
