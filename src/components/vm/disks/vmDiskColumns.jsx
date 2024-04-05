@@ -242,6 +242,8 @@ export const DiskActions = ({ vm, vms, disk, supportedDiskBusTypes, idPrefixRow,
                 toggleButtonId={idPrefixRow + "-action-kebab"}
                 position='right'
                 dropdownItems={dropdownItems}
+                isOpen={isActionOpen}
+                setIsOpen={setIsActionOpen}
             />
         </div>
     );
