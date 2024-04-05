@@ -493,6 +493,17 @@ export class VmNetworkTab extends React.Component {
                         );
                     }
 
+                    const isOpen = this.state.dropdownOpenActions.has(network.mac);
+                    const setIsOpen = open => {
+                        const next = new Set(this.state.dropdownOpenActions);
+                        if (open)
+                            next.add(network.mac);
+                        else
+                            next.delete(network.mac);
+
+                        this.setState({ dropdownOpenActions: next });
+                    };
+
                     return (
                         <div className='machines-listing-actions'>
                             <Button id={`${id}-iface-${networkId}-` + (isUp ? 'unplug' : 'plug')}
@@ -501,7 +512,11 @@ export class VmNetworkTab extends React.Component {
                                 {isUp ? 'Unplug' : 'Plug'}
                             </Button>
                             {editNICAction()}
-                            <KebabDropdown position="right" toggleButtonId={`${id}-iface-${networkId}-action-kebab`} dropdownItems={[deleteButton]} />
+                            <KebabDropdown position="right"
+                                           toggleButtonId={`${id}-iface-${networkId}-action-kebab`}
+                                           dropdownItems={[deleteButton]}
+                                           isOpen={isOpen}
+                                           setIsOpen={setIsOpen} />
                         </div>
                     );
                 },
