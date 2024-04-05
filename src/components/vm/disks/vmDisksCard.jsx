@@ -234,6 +234,8 @@ export const VmDisksCard = ({ vm, vms, disks, renderCapacity, supportedDiskBusTy
             });
         }
 
+        console.log("XXX VmDisksCard open actions", [...openActions], "for", disk.target, "is open", openActions.has(disk.target));
+
         columns.push({
             title: <DiskActions vm={vm}
                                 vms={vms}
@@ -249,6 +251,7 @@ export const VmDisksCard = ({ vm, vms, disks, renderCapacity, supportedDiskBusTy
                                         next.add(disk.target);
                                     else
                                         next.delete(disk.target);
+                                    console.log("XXX VmDisksCard setOpenActions open", open, "for", disk.target, "prev", [...prev], "next", [...next]);
                                     return next;
                                 })
                                 } />

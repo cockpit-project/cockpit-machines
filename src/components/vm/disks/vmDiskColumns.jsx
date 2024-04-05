@@ -199,6 +199,7 @@ export const DiskActions = ({ vm, vms, disk, supportedDiskBusTypes, idPrefixRow,
     }
 
     const disabled = vm.state != 'shut off' && vm.state != 'running';
+    console.log("XXX DiskActions for", vm.name, "vm state", vm.state, "disk", disk.target, "disabled", disabled, "is open", isActionOpen);
 
     let button = (
         <DropdownItem className="pf-m-danger"

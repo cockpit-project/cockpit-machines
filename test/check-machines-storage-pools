@@ -177,6 +177,8 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         # VM is not running, so we need to reload the page
         b.reload()
         b.enter_page('/machines')
+        # b.eval_js('window.debugging = "machines"')
+        b.cdp.trace = True
 
         # Expand row for myPoolTwo and check list of storage volumes
         self.togglePoolRow("myPoolTwo", connectionName)
@@ -206,6 +208,18 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         b.click(f'#deactivate-pool-myPoolThree-{connectionName}')  # Deactivate transient pool
         # Check it's not present after deactivation
         self.waitPoolRow("myPoolThree", connectionName, False)
+
+    def testStoragePoolsBasic2(self):
+        self.testStoragePoolsBasic()
+
+    def testStoragePoolsBasic3(self):
+        self.testStoragePoolsBasic()
+
+    def testStoragePoolsBasic4(self):
+        self.testStoragePoolsBasic()
+
+    def testStoragePoolsBasic5(self):
+        self.testStoragePoolsBasic()
 
     def testStoragePoolsCreate(self):
         b = self.browser
