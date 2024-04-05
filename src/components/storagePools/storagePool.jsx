@@ -101,7 +101,6 @@ class StoragePoolActions extends React.Component {
     constructor() {
         super();
         this.state = {
-            isActionOpen: false,
             operationInProgress: false,
         };
         this.onActivate = this.onActivate.bind(this);
