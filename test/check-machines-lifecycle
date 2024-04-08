@@ -104,6 +104,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
         if run_pixel_tests:
+            b.wait_visible("#vm-subVmTest1-add-iface-button:not(:disabled)")
             b.assert_pixels("#vm-details", "vm-details", ignore=[
                 ".memory-usage-chart",
                 ".vcpu-usage-chart",
