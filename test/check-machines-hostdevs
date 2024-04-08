@@ -261,6 +261,11 @@ class TestMachinesHostDevs(machineslib.VirtualMachinesCase):
         self.goToVmPage("subVmTest1")
         b.wait_visible("#vm-subVmTest1-hostdevs")
 
+        # Add USB devices when the VM is running
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
+        if has_usb:
+            HostDevAddDialog(self, "system", dev_type="usb_device").execute()
+
         # Check the error if selecting no devices when the VM is running
         dialog = HostDevAddDialog(self, "system", fail_message="No host device selected")
         dialog.open()
