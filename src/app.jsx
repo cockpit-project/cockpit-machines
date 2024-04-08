@@ -104,9 +104,14 @@ export const App = () => {
 
     useEffect(() => {
         (async () => {
-            const hardwareVirtCheck = await cockpit.script("virt-host-validate | grep 'Checking for hardware virtualization'");
-
-            setVirtualizationEnabled(hardwareVirtCheck.includes('PASS'));
+            try {
+                const hardwareVirtCheck = await cockpit.script(
+                    "virt-host-validate qemu | grep 'Checking for hardware virtualization'");
+                setVirtualizationEnabled(hardwareVirtCheck.includes('PASS'));
+            } catch (ex) {
+                // That line doesn't exist on some architectures, so the grep may fail
+                console.debug("Failed to check for hardware virtualization:", ex);
+            }
         })();
     }, []);
 

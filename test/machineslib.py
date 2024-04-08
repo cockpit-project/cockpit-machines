@@ -35,7 +35,7 @@ def hasMonolithicDaemon(image):
 class VirtualMachinesCaseHelpers:
     def waitPageInit(self):
         virtualization_disabled_ignored = self.browser.call_js_func("localStorage.getItem", "virtualization-disabled-ignored") == "true"
-        virtualization_enabled = "PASS" in self.machine.execute("virt-host-validate | grep 'Checking for hardware virtualization'")
+        virtualization_enabled = "PASS" in self.machine.execute("virt-host-validate qemu | grep 'Checking for hardware virtualization'")
         if not virtualization_enabled and not virtualization_disabled_ignored:
             self.browser.click("#ignore-hw-virtualization-disabled-btn")
         with self.browser.wait_timeout(30):
