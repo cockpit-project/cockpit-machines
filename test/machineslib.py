@@ -46,6 +46,9 @@ class VirtualMachinesCaseHelpers:
         b = self.browser
         b.click(kebab_selector)
         b.wait_visible(f"{kebab_selector}[aria-expanded=true]")
+        # HACK: PF bug: Dropdown open state is bouncing
+        time.sleep(0.2)
+        b.wait_visible(f"{kebab_selector}[aria-expanded=true]")
         b.click(menu_selector)
         b.wait_not_present(f"{kebab_selector}[aria-expanded=true]")
 
