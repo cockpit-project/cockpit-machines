@@ -247,6 +247,10 @@ class VirtualMachinesCaseHelpers:
 
         b.wait_visible(f"#vm-{vm_name}-disks-{target}-device")
         b.click(f"#vm-{vm_name}-disks-{target}-action-kebab")
+        b.wait_visible(f"#vm-{vm_name}-disks-{target}-action-kebab[aria-expanded=true]")
+        # HACK: kebab open state rendered in lists is bouncing
+        time.sleep(0.2)
+        b.wait_visible(f"#vm-{vm_name}-disks-{target}-action-kebab[aria-expanded=true]")
         b.click(f"#delete-vm-{vm_name}-disks-{target}")
         b.wait_visible(".pf-v5-c-modal-box")
         b.wait_in_text("#delete-resource-modal-target", target)
