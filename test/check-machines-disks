@@ -1498,15 +1498,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
 
-        b.wait_visible("#vm-subVmTest1-disks-vdc-device")
-        b.click("#vm-subVmTest1-disks-vdc-action-kebab")
-        b.click("#delete-vm-subVmTest1-disks-vdc")
-        b.wait_visible(".pf-v5-c-modal-box")
-        b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-description-list", "subVmTest1")
-        b.wait_in_text("#delete-resource-modal-target", "vdc")
-        b.wait_in_text("#delete-resource-modal-file", vdc_path)
-        b.click("#delete-resource-modal-primary")
-        b.wait_not_present(".pf-v5-c-modal-box")
+        self.deleteDisk("vdc", expect_path=vdc_path)
         # Wait for underlying VM's OS to detach the disk
         testlib.wait(lambda: "vdc" not in m.execute("virsh domblklist subVmTest1"), delay=1)
         b.wait_not_present("#vm-subVmTest1-disks-vdc-device")
@@ -1517,15 +1509,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b.wait_not_present("#vm-subVmTest1-disks-vdc-device")
 
         # Test detaching permanent disk of a stopped domain
-        b.click("#vm-subVmTest1-disks-vdd-action-kebab")
-        b.wait_visible("#vm-subVmTest1-disks-vdd-device")
-        b.click("#delete-vm-subVmTest1-disks-vdd")
-        b.wait_in_text("#delete-resource-modal-target", "vdd")
-        b.wait_in_text("#delete-resource-modal-file", vdd_path)
-        b.wait_visible(".pf-v5-c-modal-box")
-        b.click("#delete-resource-modal-primary")
-        b.wait_not_present("#vm-subVmTest1-disks-vdd-device")
-        b.wait_not_present(".pf-v5-c-modal-box")
+        self.deleteDisk("vdd", expect_path=vdd_path)
 
         # Test detaching several disks and the deletion dialog can be closed correctly
         m.execute("virsh vol-create-as myPoolOne diskVirtio --capacity 1M --format qcow2")
@@ -1626,12 +1610,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         # Test detaching of disk on non-persistent VM
         m.execute("virsh undefine subVmTest1")
         m.execute(f"virsh attach-disk --domain subVmTest1 --source {p1}/mydiskofpoolone_1 --target vdc --targetbus virtio")
-        b.click("#vm-subVmTest1-disks-vdc-action-kebab")
-        b.wait_visible("#vm-subVmTest1-disks-vdc-device")
-        b.click("#delete-vm-subVmTest1-disks-vdc")
-        b.wait_visible(".pf-v5-c-modal-box")
-        b.click("#delete-resource-modal-primary")
-        b.wait_not_present(".pf-v5-c-modal-box")
+        self.deleteDisk("vdc")
         testlib.wait(lambda: "vdc" not in m.execute("virsh domblklist subVmTest1"), delay=1)
         b.wait_not_present("#vm-subVmTest1-disks-vdc-device")
 
