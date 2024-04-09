@@ -329,10 +329,7 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         ).execute()
 
         # delete CD-DROM again so that the next test can use external snapshot again
-        b.click("#vm-subVmTest1-disks-sdd-action-kebab")
-        b.click("#delete-vm-subVmTest1-disks-sdd")
-        b.click("#delete-resource-modal-primary")
-        b.wait_not_present(".pf-v5-c-modal-box")
+        self.deleteDisk("sdd")
         testlib.wait(lambda: "sdd" not in m.execute("virsh domblklist subVmTest1"), delay=1)
 
         b.click("#vm-subVmTest1-system-run")
