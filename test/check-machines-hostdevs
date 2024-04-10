@@ -30,6 +30,121 @@ virt_xml_mock = """#!/usr/bin/python
 raise Exception("Mock error message")"""
 
 
+class HostDevAddDialog(object):
+    def __init__(
+        self, test_obj, connection_name, dev_type="usb_device", dev_id=0, vm_dev_id=1, remove=True, fail_message=None
+    ):
+        self.test_obj = test_obj
+        self.connection_name = connection_name
+        self.dev_type = dev_type
+        self.dev_id = dev_id
+        self.vm_dev_id = vm_dev_id
+        self._vendor = None
+        self._model = None
+        self.fail_message = fail_message
+        self.run_admin = test_obj.run_admin
+        self.addCleanup = test_obj.addCleanup
+
+    def execute(self):
+        self.open()
+        self.fill()
+        self.add()
+        if not self.fail_message:
+            self.verify()
+            self.verify_backend()
+            if self.remove:
+                self.remove()
+
+    def open(self):
+        b = self.test_obj.browser
+        b.wait_not_present(f"#vm-subVmTest1-hostdev-{self.vm_dev_id}-product")
+        b.click("button#vm-subVmTest1-hostdevs-add")
+        b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Add host device")
+        if self.connection_name != "session":
+            b.assert_pixels(".pf-v5-c-modal-box", "vm-hostdevs-add-dialog", skip_layouts=["rtl"])
+
+    def fill(self):
+        b = self.test_obj.browser
+        b.click(f"input#{self.dev_type}")
+        b.set_checked(f".pf-v5-c-table input[name='checkrow{self.dev_id}']", True)
+        self._model = b.text(f"#vm-subVmTest1-hostdevs-dialog table tbody tr:nth-child({self.dev_id + 1}) td:nth-child(2)")
+        self._vendor = b.text(f"#vm-subVmTest1-hostdevs-dialog table tbody tr:nth-child({self.dev_id + 1}) td:nth-child(3)")
+        if self.dev_type == "pci":
+            self._slot = b.text(f"#vm-subVmTest1-hostdevs-dialog table tbody tr:nth-child({self.dev_id + 1}) td:nth-child(4) dd")
+
+    def cancel(self):
+        b = self.test_obj.browser
+        b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
+        b.wait_not_present("#vm-subVmTest1-hostdevs-dialog")
+
+    def add(self):
+        b = self.test_obj.browser
+        self.run_admin(f"virsh -c qemu:///{self.connection_name} dumpxml subVmTest1 > /tmp/vmdir/vmxml1",
+                       self.connection_name)
+        b.click(".pf-v5-c-modal-box__footer button:contains(Add)")
+        if self.fail_message:
+            b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-alert__title", self.fail_message)
+            b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
+        b.wait_not_present("#vm-subVmTest1-hostdevs-dialog")
+
+    def verify(self):
+        b = self.test_obj.browser
+        b.wait_visible(f"#vm-subVmTest1-hostdev-{self.vm_dev_id}-product")
+        if (self._model != "(Undefined)"):
+            b.wait_in_text(f"#vm-subVmTest1-hostdev-{self.vm_dev_id}-product", self._model)
+
+        b.wait_in_text(f"#vm-subVmTest1-hostdev-{self.vm_dev_id}-vendor", self._vendor)
+
+    def verify_backend(self):
+        m = self.test_obj.machine
+        self.run_admin(f"virsh -c qemu:///{self.connection_name} dumpxml subVmTest1 > /tmp/vmdir/vmxml2",
+                       self.connection_name)
+        m.execute("diff /tmp/vmdir/vmxml1 /tmp/vmdir/vmxml2 | sed -e 's/^>//;1d' > /tmp/vmdir/vmdiff")
+
+        if self.dev_type == "usb_device":
+            vendor_id = m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/vendor/@id)' -").strip()
+            product_id = m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/product/@id)' -").strip()
+
+            output = self.run_admin(f"virsh -c qemu:///{self.connection_name} nodedev-list --cap {self.dev_type}",
+                                    self.connection_name)
+            devices = output.splitlines()
+            devices = list(filter(None, devices))
+            for dev in devices:
+                if self.dev_type == "usb_device":
+                    self.run_admin(f"virsh -c qemu:///{self.connection_name} nodedev-dumpxml --device {dev} > /tmp/vmdir/nodedevxml",
+                                   self.connection_name)
+                    vendor = m.execute(f"xmllint --xpath 'string(//device/capability/vendor[starts-with(@id, \"{vendor_id}\")])' - 2>&1 < /tmp/vmdir/nodedevxml")
+                    product = m.execute(f"xmllint --xpath 'string(//device/capability/product[starts-with(@id, \"{product_id}\")])' < /tmp/vmdir/nodedevxml - 2>&1")
+
+                    if vendor.strip() == self._vendor and product.strip() == self._model:
+                        return
+
+        elif self.dev_type == "pci":
+            domain = int(m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@domain)' -"), base=16)
+            bus = int(m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@bus)' -"), base=16)
+            slot = int(m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@slot)' -"), base=16)
+            func = int(m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@function)' -"), base=16)
+
+            slot_parts = re.split(r":|\.", self._slot)
+
+            if int(slot_parts[0], 16) == domain and int(slot_parts[1], 16) == bus and int(slot_parts[2], 16) == slot and int(slot_parts[3], 16) == func:
+                return
+
+        raise Exception("Verification failed. No matching node device was found in VM's xml.")
+
+    def remove(self):
+        b = self.test_obj.browser
+        b.click(f"#delete-vm-subVmTest1-hostdev-{self.vm_dev_id}")
+        b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-description-list", "subVmTest1")
+        if (self._model != "(Undefined)"):
+            b.wait_in_text("#delete-resource-modal-product", self._model)
+        b.wait_in_text("#delete-resource-modal-vendor", self._vendor)
+
+        b.click('.pf-v5-c-modal-box__footer button:contains("Remove")')
+        b.wait_not_present("#delete-resource-modal")
+        b.wait_not_present(f"#vm-subVmTest1-hostdev-{self.vm_dev_id}-product")
+
+
 @testlib.nondestructive
 class TestMachinesHostDevs(machineslib.VirtualMachinesCase):
 
@@ -127,110 +242,8 @@ class TestMachinesHostDevs(machineslib.VirtualMachinesCase):
         self.goToVmPage("subVmTest1", connectionName)
         b.wait_visible("#vm-subVmTest1-hostdevs")
 
-        class HostDevAddDialog(object):
-            def __init__(
-                self, test_obj, dev_type="usb_device", dev_id=0, vm_dev_id=1, remove=True, fail_message=None
-            ):
-                self.test_obj = test_obj
-                self.dev_type = dev_type
-                self.dev_id = dev_id
-                self.vm_dev_id = vm_dev_id
-                self._vendor = None
-                self._model = None
-                self.fail_message = fail_message
-                self.run_admin = test_obj.run_admin
-                self.addCleanup = test_obj.addCleanup
-
-            def execute(self):
-                self.open()
-                self.fill()
-                self.add()
-                if not self.fail_message:
-                    self.verify()
-                    self.verify_backend()
-                    if self.remove:
-                        self.remove()
-
-            def open(self):
-                b.wait_not_present(f"#vm-subVmTest1-hostdev-{self.vm_dev_id}-product")
-                b.click("button#vm-subVmTest1-hostdevs-add")
-                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Add host device")
-                if connectionName != "session":
-                    b.assert_pixels(".pf-v5-c-modal-box", "vm-hostdevs-add-dialog", skip_layouts=["rtl"])
-
-            def fill(self):
-                b.click(f"input#{self.dev_type}")
-                b.set_checked(f".pf-v5-c-table input[name='checkrow{self.dev_id}']", True)
-                self._model = b.text(f"#vm-subVmTest1-hostdevs-dialog table tbody tr:nth-child({self.dev_id + 1}) td:nth-child(2)")
-                self._vendor = b.text(f"#vm-subVmTest1-hostdevs-dialog table tbody tr:nth-child({self.dev_id + 1}) td:nth-child(3)")
-                if self.dev_type == "pci":
-                    self._slot = b.text(f"#vm-subVmTest1-hostdevs-dialog table tbody tr:nth-child({self.dev_id + 1}) td:nth-child(4) dd")
-
-            def cancel(self):
-                b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
-                b.wait_not_present("#vm-subVmTest1-hostdevs-dialog")
-
-            def add(self):
-                self.run_admin(f"virsh -c qemu:///{connectionName} dumpxml subVmTest1 > /tmp/vmdir/vmxml1", connectionName)
-                b.click(".pf-v5-c-modal-box__footer button:contains(Add)")
-                if self.fail_message:
-                    b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-alert__title", self.fail_message)
-                    b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
-                b.wait_not_present("#vm-subVmTest1-hostdevs-dialog")
-
-            def verify(self):
-                b.wait_visible(f"#vm-subVmTest1-hostdev-{self.vm_dev_id}-product")
-                if (self._model != "(Undefined)"):
-                    b.wait_in_text(f"#vm-subVmTest1-hostdev-{self.vm_dev_id}-product", self._model)
-
-                b.wait_in_text(f"#vm-subVmTest1-hostdev-{self.vm_dev_id}-vendor", self._vendor)
-
-            def verify_backend(self):
-                self.run_admin(f"virsh -c qemu:///{connectionName} dumpxml subVmTest1 > /tmp/vmdir/vmxml2", connectionName)
-                m.execute("diff /tmp/vmdir/vmxml1 /tmp/vmdir/vmxml2 | sed -e 's/^>//;1d' > /tmp/vmdir/vmdiff")
-
-                if self.dev_type == "usb_device":
-                    vendor_id = m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/vendor/@id)' -").strip()
-                    product_id = m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/product/@id)' -").strip()
-
-                    output = self.run_admin(f"virsh -c qemu:///{connectionName} nodedev-list --cap {self.dev_type}", connectionName)
-                    devices = output.splitlines()
-                    devices = list(filter(None, devices))
-                    for dev in devices:
-                        if self.dev_type == "usb_device":
-                            self.run_admin(f"virsh -c qemu:///{connectionName} nodedev-dumpxml --device {dev} > /tmp/vmdir/nodedevxml", connectionName)
-                            vendor = m.execute(f"xmllint --xpath 'string(//device/capability/vendor[starts-with(@id, \"{vendor_id}\")])' - 2>&1 < /tmp/vmdir/nodedevxml")
-                            product = m.execute(f"xmllint --xpath 'string(//device/capability/product[starts-with(@id, \"{product_id}\")])' < /tmp/vmdir/nodedevxml - 2>&1")
-
-                            if vendor.strip() == self._vendor and product.strip() == self._model:
-                                return
-
-                elif self.dev_type == "pci":
-                    domain = int(m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@domain)' -"), base=16)
-                    bus = int(m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@bus)' -"), base=16)
-                    slot = int(m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@slot)' -"), base=16)
-                    func = int(m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@function)' -"), base=16)
-
-                    slot_parts = re.split(r":|\.", self._slot)
-
-                    if int(slot_parts[0], 16) == domain and int(slot_parts[1], 16) == bus and int(slot_parts[2], 16) == slot and int(slot_parts[3], 16) == func:
-                        return
-
-                raise Exception("Verification failed. No matching node device was found in VM's xml.")
-
-            def remove(self):
-                b.click(f"#delete-vm-subVmTest1-hostdev-{self.vm_dev_id}")
-                b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-description-list", "subVmTest1")
-                if (self._model != "(Undefined)"):
-                    b.wait_in_text("#delete-resource-modal-product", self._model)
-                b.wait_in_text("#delete-resource-modal-vendor", self._vendor)
-
-                b.click('.pf-v5-c-modal-box__footer button:contains("Remove")')
-                b.wait_not_present("#delete-resource-modal")
-                b.wait_not_present(f"#vm-subVmTest1-hostdev-{self.vm_dev_id}-product")
-
         # Check the error if selecting no devices when the VM is running
-        dialog = HostDevAddDialog(self, fail_message="No host device selected")
+        dialog = HostDevAddDialog(self, connectionName, fail_message="No host device selected")
         dialog.open()
         dialog.add()
         m.execute(f"while virsh -c qemu:///{connectionName} dumpxml subVmTest1 | grep -A 5 hostdev; do sleep 1; done")
@@ -243,6 +256,7 @@ class TestMachinesHostDevs(machineslib.VirtualMachinesCase):
         if output.strip() != "":
             HostDevAddDialog(
                 self,
+                connectionName,
                 dev_type="usb_device",
             ).execute()
 
@@ -250,6 +264,7 @@ class TestMachinesHostDevs(machineslib.VirtualMachinesCase):
         if output.strip() != "":
             HostDevAddDialog(
                 self,
+                connectionName,
                 dev_type="pci",
             ).execute()
 
@@ -259,6 +274,7 @@ class TestMachinesHostDevs(machineslib.VirtualMachinesCase):
         self.addCleanup(m.execute, "umount /usr/bin/virt-xml")
         HostDevAddDialog(
             self,
+            connectionName,
             dev_type="pci",
             fail_message="Host device could not be attached",
         ).execute()
