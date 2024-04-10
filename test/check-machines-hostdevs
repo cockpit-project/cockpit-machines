@@ -25,10 +25,6 @@ import machineslib
 import testlib
 from machinesxmls import PCI_HOSTDEV, SCSI_HOST_HOSTDEV, USB_HOSTDEV, USB_HOSTDEV_NONEXISTENT
 
-virt_xml_mock = """#!/usr/bin/python
-
-raise Exception("Mock error message")"""
-
 
 class HostDevAddDialog(object):
     def __init__(
@@ -225,59 +221,61 @@ class TestMachinesHostDevs(machineslib.VirtualMachinesCase):
             b.wait_not_present("#delete-vm-subVmTest1-hostdev-r2")
 
     def testHostDevAddSessionConnection(self):
-        self.testHostDevAddSingleDevice('session')
+        b = self.browser
 
-    def testHostDevAddSingleDevice(self, connectionName='system'):
+        self.run_admin("mkdir /tmp/vmdir", "session")
+        self.addCleanup(self.run_admin, "rm -rf /tmp/vmdir/", "session")
+
+        self.login_and_go("/machines", superuser=False)
+        self.waitPageInit()
+
+        self.createVm("subVmTest1", connection="session")
+
+        self.goToVmPage("subVmTest1", "session")
+        b.wait_visible("#vm-subVmTest1-hostdevs")
+
+        # users can't access host devices
+        HostDevAddDialog(
+            self,
+            "session",
+            dev_type="pci",
+            fail_message="Host device could not be attached",
+        ).execute()
+
+    def testHostDevAddSingleDevice(self):
         b = self.browser
         m = self.machine
 
-        self.run_admin("mkdir /tmp/vmdir", connectionName)
-        self.addCleanup(self.run_admin, "rm -rf /tmp/vmdir/", connectionName)
+        m.execute("mkdir /tmp/vmdir")
+        self.addCleanup(m.execute, "rm -rf /tmp/vmdir/")
+
+        # this needs to be dynamic: some TF or custom test machines don't have such devices
+        has_usb = m.execute("virsh nodedev-list --cap usb_device").strip() != ""
+        has_pci = m.execute("virsh nodedev-list --cap pci").strip() != ""
 
         self.login_and_go("/machines")
         self.waitPageInit()
 
-        self.createVm("subVmTest1", connection=connectionName)
+        self.createVm("subVmTest1")
 
-        self.goToVmPage("subVmTest1", connectionName)
+        self.goToVmPage("subVmTest1")
         b.wait_visible("#vm-subVmTest1-hostdevs")
 
         # Check the error if selecting no devices when the VM is running
-        dialog = HostDevAddDialog(self, connectionName, fail_message="No host device selected")
+        dialog = HostDevAddDialog(self, "system", fail_message="No host device selected")
         dialog.open()
         dialog.add()
-        m.execute(f"while virsh -c qemu:///{connectionName} dumpxml subVmTest1 | grep -A 5 hostdev; do sleep 1; done")
+        m.execute("while virsh dumpxml subVmTest1 | grep -A 5 hostdev; do sleep 1; done")
         # Check no host devices attached after shutting off the VM
-        self.performAction("subVmTest1", "forceOff", connectionName=connectionName)
-        b.wait_in_text(f"#vm-subVmTest1-{connectionName}-state", "Shut off")
-        m.execute(f"while virsh -c qemu:///{connectionName} dumpxml subVmTest1 | grep -A 5 hostdev; do sleep 1; done")
+        self.performAction("subVmTest1", "forceOff")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Shut off")
+        m.execute("while virsh dumpxml subVmTest1 | grep -A 5 hostdev; do sleep 1; done")
 
-        output = self.run_admin(f"virsh -c qemu:///{connectionName} nodedev-list --cap usb_device", connectionName)
-        if output.strip() != "":
-            HostDevAddDialog(
-                self,
-                connectionName,
-                dev_type="usb_device",
-            ).execute()
+        if has_usb:
+            HostDevAddDialog(self, "system", dev_type="usb_device").execute()
 
-        output = m.execute(f"virsh -c qemu:///{connectionName} nodedev-list --cap pci")
-        if output.strip() != "":
-            HostDevAddDialog(
-                self,
-                connectionName,
-                dev_type="pci",
-            ).execute()
-
-        mock_virt_xml = f"{self.vm_tmpdir}/mock-virt-xml"
-        m.execute(f"echo '{virt_xml_mock}' > {mock_virt_xml}; chmod 777 {mock_virt_xml}")
-        m.execute(f"mount -o bind {mock_virt_xml} /usr/bin/virt-xml")
-        self.addCleanup(m.execute, "umount /usr/bin/virt-xml")
-        HostDevAddDialog(
-            self,
-            connectionName,
-            dev_type="pci",
-            fail_message="Host device could not be attached",
-        ).execute()
+        if has_pci:
+            HostDevAddDialog(self, "system", dev_type="pci",).execute()
 
     def testHostDevAddMultipleDevices(self, connectionName='system'):
         b = self.browser
