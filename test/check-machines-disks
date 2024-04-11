@@ -1541,9 +1541,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b.wait_visible("#vm-subVmTest1-disks-vda-device")
 
         def removeDiskAndChecks(target, path, removeFile=False, removeFileFail=False, removeFileNotPresent=False):
-            b.click(f"#vm-subVmTest1-disks-{target}-action-kebab")
-            b.wait_visible(f"#vm-subVmTest1-disks-{target}-action-kebab[aria-expanded=true]")
-            b.click(f"#delete-vm-subVmTest1-disks-{target}")
+            self.dropdownAction(f"#vm-subVmTest1-disks-{target}-action-kebab",
+                                f"#delete-vm-subVmTest1-disks-{target}")
             b.wait_in_text("div[role=dialog]:contains(\"Remove disk\")", target)
             b.wait_in_text("#delete-resource-modal-target", target)
             if path:
