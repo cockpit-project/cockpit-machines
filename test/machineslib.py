@@ -41,6 +41,14 @@ class VirtualMachinesCaseHelpers:
         with self.browser.wait_timeout(30):
             self.browser.wait_in_text("body", "Virtual machines")
 
+    # TODO: generic, move to testlib.py?
+    def dropdownAction(self, kebab_selector, menu_selector):
+        b = self.browser
+        b.click(kebab_selector)
+        b.wait_visible(f"{kebab_selector}[aria-expanded=true]")
+        b.click(menu_selector)
+        b.wait_not_present(f"{kebab_selector}[aria-expanded=true]")
+
     def performAction(self, vmName, action, checkExpectedState=True, connectionName="system", logPath=None):
         b = self.browser
         m = self.machine
@@ -48,9 +56,7 @@ class VirtualMachinesCaseHelpers:
         if logPath:
             m.write(logPath, '')
 
-        b.click(f"#vm-{vmName}-{connectionName}-action-kebab")
-        b.wait_visible(".pf-v5-c-menu")
-        b.click(f"#vm-{vmName}-{connectionName}-{action}")
+        self.dropdownAction(f"#vm-{vmName}-{connectionName}-action-kebab", f"#vm-{vmName}-{connectionName}-{action}")
         if action in ["reboot", "forceReboot"] and logPath:
             # https://bugzilla.redhat.com/show_bug.cgi?id=2221144
             # The VM should not be rebooted when the confirmation dialog is shown
@@ -246,8 +252,7 @@ class VirtualMachinesCaseHelpers:
         b = self.browser
 
         b.wait_visible(f"#vm-{vm_name}-disks-{target}-device")
-        b.click(f"#vm-{vm_name}-disks-{target}-action-kebab")
-        b.click(f"#delete-vm-{vm_name}-disks-{target}")
+        self.dropdownAction(f"#vm-{vm_name}-disks-{target}-action-kebab", f"#delete-vm-{vm_name}-disks-{target}")
         b.wait_visible(".pf-v5-c-modal-box")
         b.wait_in_text("#delete-resource-modal-target", target)
         if expect_path:
@@ -259,8 +264,7 @@ class VirtualMachinesCaseHelpers:
     def deleteIface(self, iface, mac=None, vm_name=None):
         b = self.browser
 
-        b.click(f"#vm-subVmTest1-iface-{iface}-action-kebab")
-        b.click(f"#delete-vm-subVmTest1-iface-{iface}")
+        self.dropdownAction(f"#vm-subVmTest1-iface-{iface}-action-kebab", f"#delete-vm-subVmTest1-iface-{iface}")
         b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Remove network interface?")
         if mac and vm_name:
             b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-description-list", f"{mac} will be removed from {vm_name}")
