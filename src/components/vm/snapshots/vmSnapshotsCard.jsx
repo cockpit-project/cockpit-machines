@@ -20,7 +20,7 @@ import React from 'react';
 
 import cockpit from 'cockpit';
 import { useDialogs, DialogsContext } from 'dialogs.jsx';
-import { vmId, localize_datetime, vmSupportsExternalSnapshots } from "../../../helpers.js";
+import { vmId, localize_datetime, vmNoExternalSnapshotsReason } from "../../../helpers.js";
 import { CreateSnapshotModal } from "./vmSnapshotsCreateModal.jsx";
 import { ListingTable } from "cockpit-components-table.jsx";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -31,6 +31,8 @@ import { DeleteResourceButton } from '../../common/deleteResource.jsx';
 import { RevertSnapshotModal } from './vmSnapshotsRevertModal.jsx';
 import { snapshotDelete, snapshotGetAll } from '../../../libvirtApi/snapshot.js';
 
+import VMS_CONFIG from "../../../config.js";
+
 import './vmSnapshotsCard.scss';
 
 const _ = cockpit.gettext;
@@ -39,12 +41,18 @@ export const VmSnapshotsActions = ({ vm, config, storagePools }) => {
     const Dialogs = useDialogs();
     const id = vmId(vm.name);
 
-    const isExternal = vmSupportsExternalSnapshots(config, vm, storagePools);
+    const preferExternalDocURL = VMS_CONFIG.PreferExternalSnapshotsDocURL;
+    const noExternalReason = vmNoExternalSnapshotsReason(config, vm, storagePools);
+
+    // If possible, we make external snapshots.
+    const isExternal = !noExternalReason;
 
     function open() {
         Dialogs.show(<CreateSnapshotModal idPrefix={`${id}-create-snapshot`}
-                                          isExternal={isExternal}
                                           storagePools={storagePools}
+                                          noExternalReason={noExternalReason}
+                                          preferExternalDocURL={preferExternalDocURL}
+                                          isExternal={isExternal}
                                           vm={vm} />);
     }
 

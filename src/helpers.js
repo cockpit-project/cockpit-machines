@@ -880,30 +880,30 @@ export function getStoragePoolPath(storagePools, poolName, connectionName) {
     return pool?.target?.path;
 }
 
-export function vmSupportsExternalSnapshots(config, vm, storagePools) {
+export function vmNoExternalSnapshotsReason(config, vm, storagePools) {
     // External snapshot should only be used if the VM's os types/architecture allow it
     // and if snapshot features are present among guest capabilities:
     // https://libvirt.org/formatcaps.html#guest-capabilities
     if (!config.capabilities?.guests.some(guest => guest.osType === vm.osType &&
                                                    guest.arch === vm.arch &&
                                                    guest.features.externalSnapshot)) {
-        logDebug(`vmSupportsExternalSnapshots: vm ${vm.name} has no external snapshot support`);
-        return false;
+        logDebug(`vmNoExternalSnapshotsReason: vm ${vm.name} has no external snapshot support`);
+        return "not-implemented";
     }
 
     // If at leat one disk has internal snapshot preference specified, use internal snapshot for all disk,
     // as mixing internal and external is not allowed
     const disks = Object.values(vm.disks);
     if (disks.some(disk => disk.snapshot === "internal")) {
-        logDebug(`vmSupportsExternalSnapshots: vm ${vm.name} has internal snapshot preference specified`);
-        return false;
+        logDebug(`vmNoExternalSnapshotsReason: vm ${vm.name} has internal snapshot preference specified`);
+        return "explicit-internal";
     }
 
     // Currently external snapshots work only for disks of type "file"
     if (!disks.every(disk => disk.type === "file")) {
-        logDebug(`vmSupportsExternalSnapshots: vm ${vm.name} has unsupported disk type`);
-        return false;
+        logDebug(`vmNoExternalSnapshotsReason: vm ${vm.name} has unsupported disk type`);
+        return "non-file-volume";
     }
 
-    return true;
+    return null;
 }

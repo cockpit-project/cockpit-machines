@@ -21,6 +21,7 @@ import React from "react";
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
+import { HelperText, HelperTextItem } from "@patternfly/react-core/dist/esm/components/HelperText";
 import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
 import { TextArea } from "@patternfly/react-core/dist/esm/components/TextArea";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
@@ -29,6 +30,7 @@ import { FormHelper } from 'cockpit-components-form-helper.jsx';
 import { DialogsContext } from 'dialogs.jsx';
 import { ModalError } from "cockpit-components-inline-notification.jsx";
 import { FileAutoComplete } from "cockpit-components-file-autocomplete.jsx";
+import { fmt_to_fragments } from 'utils.jsx';
 import { snapshotCreate, snapshotGetAll } from "../../../libvirtApi/snapshot.js";
 import { getSortedBootOrderDevices, LIBVIRT_SYSTEM_CONNECTION } from "../../../helpers.js";
 
@@ -178,6 +180,7 @@ export class CreateSnapshotModal extends React.Component {
     render() {
         const Dialogs = this.context;
         const { idPrefix, isExternal, vm } = this.props;
+        const { noExternalReason, preferExternalDocURL } = this.props;
         const { name, description, memoryPath } = this.state;
         const validationError = this.onValidate();
 
@@ -191,11 +194,30 @@ export class CreateSnapshotModal extends React.Component {
             </Form>
         );
 
+        let prefer_external_info = null;
+        if (!isExternal && preferExternalDocURL) {
+            const link = (
+                <a target="blank" rel="noopener noreferrer" href={preferExternalDocURL}>
+                    {_("the product documentation")}
+                </a>
+            );
+
+            if (noExternalReason == "non-file-volume") {
+                prefer_external_info = fmt_to_fragments(_("This snapshot will be created in the deprecated \"internal\" format because some of the disks have a source that is not of type \"File\". See $0 for more information about this format and its limitations."), link);
+            }
+        }
+
         return (
             <Modal position="top" variant="medium" id={`${idPrefix}-modal`} isOpen onClose={Dialogs.close}
                    title={_("Create snapshot")}
                    footer={
                        <>
+                           {prefer_external_info &&
+                           <HelperText>
+                               <HelperTextItem>
+                                   {prefer_external_info}
+                               </HelperTextItem>
+                           </HelperText>}
                            <Button variant="primary" isLoading={this.state.inProgress} onClick={this.onCreate}
                                    isDisabled={this.state.inProgress || Object.keys(validationError).length > 0}>
                                {_("Create")}

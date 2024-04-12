@@ -153,6 +153,10 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
             def open(self):
                 b.click("#vm-subVmTest1-add-snapshot-button")
                 b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Create snapshot")
+                if not self.expect_external and "rhel" in m.image:
+                    b.wait_in_text(".pf-v5-c-modal-box", "deprecated \"internal\" format")
+                else:
+                    b.wait_not_in_text(".pf-v5-c-modal-box", "deprecated \"internal\" format")
 
             def fill(self):
                 if self.name is not None:
