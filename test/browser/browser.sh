@@ -14,6 +14,9 @@ $DNF libvirt-daemon-driver-storage-iscsi-direct || true
 rpm -q selinux-policy cockpit-bridge cockpit-machines
 rpm -qa | grep -E 'virt|qemu' | sort
 
+# Show test configuration
+echo "TEST_AUDIT_NO_SELINUX: ${TEST_AUDIT_NO_SELINUX:-}"
+
 # allow test to set up things on the machine
 mkdir -p /root/.ssh
 curl https://raw.githubusercontent.com/cockpit-project/bots/main/machine/identity.pub  >> /root/.ssh/authorized_keys
