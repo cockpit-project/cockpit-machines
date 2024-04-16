@@ -55,6 +55,15 @@ fi
 # TODO: Run in "host" network ns, as some tests fail on unexpected veth/bridge claimed by the container
 # fix these and then use the isolation in starter-kit and friends
 CONTAINER="$(cat .cockpit-ci/container)"
+
+# this often fails in TF
+for i in $(seq 5); do
+    if podman pull "$CONTAINER"; then
+        break
+    fi
+    sleep $((i * i * 5))
+done
+
 exec podman \
     run \
         --rm \
