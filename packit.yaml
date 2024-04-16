@@ -25,19 +25,31 @@ actions:
 jobs:
   - job: copr_build
     trigger: pull_request
+    packages: [cockpit-machines-fedora]
     targets:
     - fedora-39
     - fedora-40
     - fedora-development
+
+  - job: copr_build
+    trigger: pull_request
+    packages: [cockpit-machines-centos]
+    targets:
     - centos-stream-8
     - centos-stream-9
 
   - job: tests
+    packages: [cockpit-machines-fedora]
     trigger: pull_request
     targets:
       - fedora-39
       - fedora-40
       - fedora-development
+
+  - job: tests
+    packages: [cockpit-machines-centos]
+    trigger: pull_request
+    targets:
       - centos-stream-8
       - centos-stream-9
 
