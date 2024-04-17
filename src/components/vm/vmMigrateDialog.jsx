@@ -35,6 +35,8 @@ import { isEmpty, isObjectEmpty } from '../../helpers.js';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { useDialogs } from 'dialogs.jsx';
 
+import VMS_CONFIG from "../../config.js";
+
 import './vmMigrateDialog.scss';
 
 const _ = cockpit.gettext;
@@ -129,21 +131,8 @@ export const MigrateDialog = ({ vm, connectionName }) => {
     const [storage, setStorage] = useState("nocopy");
     const [temporary, setTemporary] = useState(false);
     const [validationFailed, setValidationFailed] = useState(false);
-    const [copyStorageHidden, setCopyStorageHidden] = useState(true);
 
-    cockpit.file("/etc/os-release").read()
-            .then(data => {
-                let isRhel = false;
-
-                data.split('\n').forEach(line => {
-                    const parts = line.split('=');
-
-                    if (parts.length === 2 && parts[0] === "ID" && parts[1].replace(/^"(.*)"$/, '$1') === "rhel")
-                        isRhel = true;
-                });
-
-                setCopyStorageHidden(isRhel);
-            });
+    const copyStorageHidden = !VMS_CONFIG.StorageMigrationSupported;
 
     function validateParams() {
         const validation = {};

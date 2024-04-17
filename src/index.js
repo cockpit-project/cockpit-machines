@@ -24,6 +24,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 
 import store from './store.js';
+import { load_config } from './config.js';
 import App from './app.jsx';
 import { logDebug } from './helpers.js';
 
@@ -51,7 +52,8 @@ function appMain() {
 }
 
 (function() {
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", async function() {
+        await load_config();
         appMain();
     });
 }());
