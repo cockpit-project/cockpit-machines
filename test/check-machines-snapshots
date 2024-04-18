@@ -146,6 +146,7 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
                 if self.xfail is None:
                     self.verify_frontend()
                     self.verify_backend()
+                    self.revert()
                     if self.remove:
                         self.cleanup()
 
@@ -237,6 +238,11 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
                     print(m.execute(snap_xml))
                     print("------ end snapshot XML -------")
                     raise
+
+            def revert(self):
+                b.click(f"#vm-subVmTest1-snapshot-{self.snap_num}-revert")
+                b.click('.pf-v5-c-modal-box__footer button:contains("Revert")')
+                b.wait_not_present('.pf-v5-c-modal-box__footer button:contains("Revert")')
 
             def cleanup(self):
                 b.click(f"#delete-vm-subVmTest1-snapshot-{self.snap_num}")
