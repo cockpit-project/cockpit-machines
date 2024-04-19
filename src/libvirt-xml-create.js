@@ -263,15 +263,24 @@ export function getSnapshotXML(name, description, disks, memoryPath, isExternal,
 
         const disksElem = doc.createElement('disks');
         disks.forEach(disk => {
-            // Disk can have attribute "snapshot" set to "no", which means no snapshot should be created of the said disk
-            // This cannot be configured through cockpit, but we should uphold it nevertheless
-            // see "snapshot" attribute of <disk> element at https://libvirt.org/formatdomain.html#hard-drives-floppy-disks-cdroms
-            if (disk.snapshot !== "no") {
-                const diskElem = doc.createElement('disk');
-                diskElem.setAttribute('name', disk.target);
-                diskElem.setAttribute('snapshot', 'external');
-                disksElem.appendChild(diskElem);
-            }
+            // Disk can have attribute "snapshot" set to "no", which
+            // means no snapshot should be created of the said disk
+            // This cannot be configured through cockpit, but we
+            // should uphold it nevertheless.
+            //
+            // See "snapshot" attribute of <disk> element at
+            // https://libvirt.org/formatdomain.html#hard-drives-floppy-disks-cdroms
+            if (disk.snapshot == "no")
+                return;
+
+            // Skip disks without source, such as empty media drives.
+            if (isExternal && disk.type == "file" && !disk.source.file)
+                return;
+
+            const diskElem = doc.createElement('disk');
+            diskElem.setAttribute('name', disk.target);
+            diskElem.setAttribute('snapshot', 'external');
+            disksElem.appendChild(diskElem);
         });
         snapElem.appendChild(disksElem);
     }

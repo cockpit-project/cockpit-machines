@@ -899,8 +899,8 @@ export function vmSupportsExternalSnapshots(config, vm, storagePools) {
         return false;
     }
 
-    // Currently external snapshots work only for disks of type "file" with a source.
-    if (!disks.every(disk => (disk.type === "file" && disk.source?.file))) {
+    // Currently external snapshots work only for disks of type "file"
+    if (!disks.every(disk => disk.type === "file")) {
         logDebug(`vmSupportsExternalSnapshots: vm ${vm.name} has unsupported disk type`);
         return false;
     }

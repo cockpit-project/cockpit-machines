@@ -241,8 +241,9 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
 
             def revert(self):
                 b.click(f"#vm-subVmTest1-snapshot-{self.snap_num}-revert")
+                b.wait_visible(".pf-v5-c-modal-box")
                 b.click('.pf-v5-c-modal-box__footer button:contains("Revert")')
-                b.wait_not_present('.pf-v5-c-modal-box__footer button:contains("Revert")')
+                b.wait_not_present(".pf-v5-c-modal-box")
 
             def cleanup(self):
                 b.click(f"#delete-vm-subVmTest1-snapshot-{self.snap_num}")
@@ -355,7 +356,6 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         ).execute()
 
         # With CD-ROM drive without media
-        # doesn't support external snapshots yet
         b.click("#vm-subVmTest1-disks-sdd-eject-button")
         b.click(".pf-v5-c-modal-box__footer button:contains(Eject)")
         b.wait_not_present(".pf-v5-c-modal-box")
@@ -364,7 +364,7 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
             self,
             name="nomedia",
             state="shutoff",
-            expect_external=False,
+            expect_external=supports_external,
         ).execute()
 
         # delete CD-DROM again so that the next test can use external snapshot again
