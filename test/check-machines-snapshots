@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
 
+import os
 import time
 from datetime import datetime
 
@@ -300,7 +301,39 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         ).execute()
         m.execute("virsh snapshot-delete subVmTest1 test_snap_1")
 
-        # With second disk: CD-ROM with media
+        # With disk in a pool.
+        # This will make a internal snapshot.
+
+        p1 = os.path.join(self.vm_tmpdir, "vm_one")
+        m.execute(f"mkdir --mode 777 {p1}")
+        m.execute(f"virsh pool-create-as myPoolOne --type dir --target {p1}")
+        m.execute("virsh vol-create-as myPoolOne mydisk --capacity 100M --format qcow2")
+        testlib.wait(lambda: "mydisk" in m.execute("virsh vol-list myPoolOne"))
+
+        diskXML = """<disk type="volume" device="disk">
+          <driver name="qemu"/>
+          <source pool="myPoolOne" volume="mydisk"/>
+          <target dev="vdb" bus="virtio"/>
+        </disk>""".replace("\n", "")
+
+        m.execute(f"echo '{diskXML}' > /tmp/disk.xml; virsh attach-device --config --file /tmp/disk.xml subVmTest1")
+
+        # virsh attach-disk doesn't send an event for offline VM changes
+        b.reload()
+        b.enter_page('/machines')
+        b.wait_visible("#vm-subVmTest1-disks-vdb-source-volume")
+
+        SnapshotCreateDialog(
+            self,
+            name="withpool",
+            state="shutoff",
+            expect_external=False,
+        ).execute()
+
+        self.deleteDisk("vdb")
+        testlib.wait(lambda: "vdb" not in m.execute("virsh domblklist subVmTest1"), delay=1)
+
+        # With CD-ROM with media
         m.execute("touch /var/lib/libvirt/images/mock.iso")
         m.execute("virsh attach-disk --domain subVmTest1 --config --source /var/lib/libvirt/images/mock.iso "
                   "--target sdd --type cdrom")
@@ -315,7 +348,7 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
             expect_external=supports_external,
         ).execute()
 
-        # with CD-ROM drive without media
+        # With CD-ROM drive without media
         # doesn't support external snapshots yet
         b.click("#vm-subVmTest1-disks-sdd-eject-button")
         b.click(".pf-v5-c-modal-box__footer button:contains(Eject)")
