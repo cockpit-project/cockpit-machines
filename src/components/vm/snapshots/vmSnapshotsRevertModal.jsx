@@ -27,6 +27,7 @@ import cockpit from 'cockpit';
 import { DialogsContext } from 'dialogs.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { snapshotRevert } from '../../../libvirtApi/snapshot.js';
+import { domainGet } from '../../../libvirtApi/domain.js';
 
 const _ = cockpit.gettext;
 
@@ -62,14 +63,21 @@ export class RevertSnapshotModal extends React.Component {
             snapshotName: snap.name,
             force: this.state.defaultRevertFailed
         })
-                .then(Dialogs.close, exc => {
-                    this.setState({
-                        defaultRevertFailed: true,
-                        inProgress: false,
-                        inProgressForce: false
+                .then(
+                    () => {
+                        // Reverting an external snapshot might change the disk
+                        // configuration of a VM without event.
+                        domainGet({ connectionName: vm.connectionName, id: vm.id });
+                        Dialogs.close();
+                    },
+                    exc => {
+                        this.setState({
+                            defaultRevertFailed: true,
+                            inProgress: false,
+                            inProgressForce: false
+                        });
+                        this.dialogErrorSet(_("Could not revert to snapshot"), exc.message);
                     });
-                    this.dialogErrorSet(_("Could not revert to snapshot"), exc.message);
-                });
     }
 
     dialogErrorSet(text, detail) {
