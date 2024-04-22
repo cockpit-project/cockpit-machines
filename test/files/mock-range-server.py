@@ -74,7 +74,7 @@ class RangeHTTPRequestHandler(SimpleHTTPRequestHandler):
         Otherwise, the entire file is copied using SimpleHTTPServer.copyfile
         """
 
-        start, end = self.range
+        start, _ = self.range
         infile.seek(start)
         bufsize = 64 * 1024  # 64KB
         while True:

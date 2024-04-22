@@ -1701,7 +1701,7 @@ vnc_password= "{vnc_passwd}"
                     b.wait_in_text(f"#vm-{dialog.name}-{dialog.connection}-state", final_state)
             b.wait_not_present("#create-vm-dialog")
             b.wait_text(f"#vm-{dialog.name}-{dialog.connection}-state",
-                        dialog.create_and_run and "Running" or "Shut off")
+                        "Running" if dialog.create_and_run else "Shut off")
 
         def _tryCreate(self, dialog, generated_name=None):
             name = generated_name or dialog.name

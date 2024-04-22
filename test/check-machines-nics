@@ -442,10 +442,10 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
                 b.set_input_text(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-mac", self.mac)
 
             if (self.vm_state == "running" and
-                    (self.source_type is not None and self.source_type != self.source_type_current or
-                        self.source is not None and self.source != self.source_current or
-                        self.model is not None and self.model != self.model_current or
-                        self.mac is not None and self.mac != self.mac_current)):
+                    ((self.source_type is not None and self.source_type != self.source_type_current) or
+                        (self.source is not None and self.source != self.source_current) or
+                        (self.model is not None and self.model != self.model_current) or
+                        (self.mac is not None and self.mac != self.mac_current))):
                 b.wait_visible(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-idle-message")
             else:
                 b.wait_not_present(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-idle-message")
