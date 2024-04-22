@@ -890,31 +890,29 @@ const MemoryRow = ({ memorySize, memorySizeUnit, nodeMaxMemory, minimumMemory, o
     }
 
     return (
-        <>
-            <FormGroup label={_("Memory")}
+        <FormGroup label={_("Memory")}
                        fieldId='memory-size' id='memory-group'>
-                <InputGroup>
-                    <TextInput id='memory-size' value={memorySize}
+            <InputGroup>
+                <TextInput id='memory-size' value={memorySize}
                                className="size-input"
                                onKeyUp={digitFilter}
                                onChange={(_, value) => onValueChanged('memorySize', Number(value))} />
-                    <FormSelect id="memory-size-unit-select"
+                <FormSelect id="memory-size-unit-select"
                                 className="unit-select"
                                 data-value={memorySizeUnit}
                                 value={memorySizeUnit}
                                 onChange={(_event, value) => onValueChanged('memorySizeUnit', value)}>
-                        <FormSelectOption value={units.MiB.name} key={units.MiB.name}
+                    <FormSelectOption value={units.MiB.name} key={units.MiB.name}
                                           label={_("MiB")} />
-                        <FormSelectOption value={units.GiB.name} key={units.GiB.name}
+                    <FormSelectOption value={units.GiB.name} key={units.GiB.name}
                                           label={_("GiB")} />
-                    </FormSelect>
-                </InputGroup>
-                <FormHelper fieldId="memory-size"
+                </FormSelect>
+            </InputGroup>
+            <FormHelper fieldId="memory-size"
                             variant={validationStateMemory}
                             helperTextInvalid={validationStateMemory == "error" && validationFailed.memory}
                             helperText={helperText} />
-            </FormGroup>
-        </>
+        </FormGroup>
     );
 };
 
@@ -1010,32 +1008,30 @@ const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit,
             </FormGroup>}
 
             { (storagePoolName === "NewVolumeQCOW2" || storagePoolName === "NewVolumeRAW") &&
-            <>
-                <FormGroup label={_("Storage limit")} fieldId='storage-limit'
+            <FormGroup label={_("Storage limit")} fieldId='storage-limit'
                            id='storage-group'>
-                    <InputGroup>
-                        <TextInput id='storage-limit' value={storageSize}
+                <InputGroup>
+                    <TextInput id='storage-limit' value={storageSize}
                                    className="size-input"
                                    onKeyUp={digitFilter}
                                    onChange={(_, value) => onValueChanged('storageSize', Number(value))} />
-                        <FormSelect id="storage-limit-unit-select"
+                    <FormSelect id="storage-limit-unit-select"
                                     data-value={storageSizeUnit}
                                     className="unit-select"
                                     value={storageSizeUnit}
                                     onChange={(_event, value) => onValueChanged('storageSizeUnit', value)}>
-                            <FormSelectOption value={units.MiB.name} key={units.MiB.name}
+                        <FormSelectOption value={units.MiB.name} key={units.MiB.name}
                                                label={_("MiB")} />
-                            <FormSelectOption value={units.GiB.name} key={units.GiB.name}
+                        <FormSelectOption value={units.GiB.name} key={units.GiB.name}
                                                label={_("GiB")} />
-                        </FormSelect>
-                    </InputGroup>
-                    <FormHelper
+                    </FormSelect>
+                </InputGroup>
+                <FormHelper
                         fieldId="storage-limit"
                         variant={validationStateStorage}
                         helperTextInvalid={validationStateStorage == "error" && validationFailed.storage}
                         helperText={helperTextNewVolume} />
-                </FormGroup>
-            </>}
+            </FormGroup>}
         </>
     );
 };
@@ -1356,15 +1352,12 @@ class CreateVmModal extends React.Component {
                     validationFailed={validationFailed} />
 
                 {this.state.sourceType != DOWNLOAD_AN_OS &&
-                <>
-                    <OSRow
+                <OSRow
                         os={this.state.os}
                         osInfoList={this.props.osInfoList}
                         onValueChanged={this.onValueChanged}
                         isLoading={this.state.autodetectOSInProgress}
-                        validationFailed={validationFailed} />
-
-                </>}
+                        validationFailed={validationFailed} />}
                 { this.state.sourceType != EXISTING_DISK_IMAGE_SOURCE &&
                 <StorageRow
                     allowNoDisk={this.state.sourceType !== CLOUD_IMAGE}

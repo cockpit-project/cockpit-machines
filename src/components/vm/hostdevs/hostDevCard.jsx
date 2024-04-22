@@ -143,11 +143,9 @@ export const VmHostDevActions = ({ vm }) => {
     }
 
     return (
-        <>
-            <Button id={`${idPrefix}-add`} variant='secondary' onClick={open}>
-                {_("Add host device")}
-            </Button>
-        </>
+        <Button id={`${idPrefix}-add`} variant='secondary' onClick={open}>
+            {_("Add host device")}
+        </Button>
     );
 };
 
