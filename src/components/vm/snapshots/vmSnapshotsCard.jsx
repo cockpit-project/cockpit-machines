@@ -30,6 +30,7 @@ import { CheckIcon, InfoAltIcon } from '@patternfly/react-icons';
 import { DeleteResourceButton } from '../../common/deleteResource.jsx';
 import { RevertSnapshotModal } from './vmSnapshotsRevertModal.jsx';
 import { snapshotDelete, snapshotGetAll } from '../../../libvirtApi/snapshot.js';
+import { domainGet } from '../../../libvirtApi/domain.js';
 
 import './vmSnapshotsCard.scss';
 
@@ -181,7 +182,12 @@ export class VmSnapshotsCard extends React.Component {
                             actionDescription: cockpit.format(_("Snapshot $0 will be deleted from $1. All of its captured content will be lost."), snap.name, vm.name),
                             deleteHandler: () => {
                                 return snapshotDelete({ connectionName: vm.connectionName, domainPath: vm.id, snapshotName: snap.name })
-                                        .then(() => snapshotGetAll({ connectionName: vm.connectionName, domainPath: vm.id }));
+                                        .then(() => {
+                                            // Deleting an external snapshot might change the disk
+                                            // configuration of a VM without event.
+                                            domainGet({ connectionName: vm.connectionName, id: vm.id });
+                                            snapshotGetAll({ connectionName: vm.connectionName, domainPath: vm.id });
+                                        });
                             },
                         };
 

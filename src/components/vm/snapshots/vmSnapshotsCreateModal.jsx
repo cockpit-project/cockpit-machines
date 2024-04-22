@@ -31,6 +31,7 @@ import { ModalError } from "cockpit-components-inline-notification.jsx";
 import { FileAutoComplete } from "cockpit-components-file-autocomplete.jsx";
 import { snapshotCreate, snapshotGetAll } from "../../../libvirtApi/snapshot.js";
 import { getSortedBootOrderDevices, LIBVIRT_SYSTEM_CONNECTION } from "../../../helpers.js";
+import { domainGet } from '../../../libvirtApi/domain.js';
 
 const _ = cockpit.gettext;
 
@@ -166,6 +167,9 @@ export class CreateSnapshotModal extends React.Component {
                     .then(() => {
                         // VM Snapshots do not trigger any events so we have to refresh them manually
                         snapshotGetAll({ connectionName: vm.connectionName, domainPath: vm.id });
+                        // Creating an external snapshot might change
+                        // the disk configuration of a VM without event.
+                        domainGet({ connectionName: vm.connectionName, id: vm.id });
                         Dialogs.close();
                     })
                     .catch(exc => {
