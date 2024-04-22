@@ -227,8 +227,7 @@ const NetworkAddStaticHostEntries = ({ idPrefix, network, parentIndex, setIsOpen
     };
 
     return (
-        <>
-            <Modal id="add-new-static-entry" position="top" variant="small" isOpen onClose={() => setIsOpen(false)}
+        <Modal id="add-new-static-entry" position="top" variant="small" isOpen onClose={() => setIsOpen(false)}
                 title={_("Add a DHCP static host entry")}
                 footer={
                     <>
@@ -240,27 +239,26 @@ const NetworkAddStaticHostEntries = ({ idPrefix, network, parentIndex, setIsOpen
                         </Button>
                     </>
                 }>
-                <Form onSubmit={e => {
-                    e.preventDefault();
-                }} isHorizontal>
-                    {error && <ModalError dialogError={_("Failed to save network settings")} dialogErrorDetail={error} />}
-                    <FormGroup label={_("MAC address")} fieldId="add-new-static-entry-mac-address">
-                        <TextInput id="add-new-static-entry-mac-address"
+            <Form onSubmit={e => {
+                e.preventDefault();
+            }} isHorizontal>
+                {error && <ModalError dialogError={_("Failed to save network settings")} dialogErrorDetail={error} />}
+                <FormGroup label={_("MAC address")} fieldId="add-new-static-entry-mac-address">
+                    <TextInput id="add-new-static-entry-mac-address"
                                    validated={isSubmitted && !macAddress ? "error" : "default"}
                                    value={macAddress}
                                    onChange={(_, value) => setMacAddress(value)} />
-                        <FormHelper fieldId="add-new-static-entry-mac-address" helperTextInvalid={isSubmitted && !macAddress && _("MAC address must not be empty")} />
-                    </FormGroup>
-                    <FormGroup label={_("IP address")} fieldId="add-new-static-entry-ip-address">
-                        <TextInput id="add-new-static-entry-ip-address"
+                    <FormHelper fieldId="add-new-static-entry-mac-address" helperTextInvalid={isSubmitted && !macAddress && _("MAC address must not be empty")} />
+                </FormGroup>
+                <FormGroup label={_("IP address")} fieldId="add-new-static-entry-ip-address">
+                    <TextInput id="add-new-static-entry-ip-address"
                                    validated={isSubmitted && !ipAddress ? "error" : "default"}
                                    value={ipAddress}
                                    onChange={(_, value) => setIpAddress(value)} />
-                        <FormHelper fieldId="add-new-static-entry-ip-address" helperTextInvalid={isSubmitted && !ipAddress && _("IP address must not be empty")} />
-                    </FormGroup>
-                </Form>
-            </Modal>
-        </>
+                    <FormHelper fieldId="add-new-static-entry-ip-address" helperTextInvalid={isSubmitted && !ipAddress && _("IP address must not be empty")} />
+                </FormGroup>
+            </Form>
+        </Modal>
     );
 };
 
