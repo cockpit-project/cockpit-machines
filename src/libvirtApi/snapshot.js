@@ -29,11 +29,37 @@ import { parseDomainSnapshotDumpxml } from '../libvirt-xml-parse.js';
 import { call, Enum, timeout } from './helpers.js';
 import { logDebug } from '../helpers.js';
 
-export function snapshotCreate({ connectionName, vmId, name, description, memoryPath, disks, isExternal, storagePools }) {
-    // that flag ought to be implicit for non-running VMs, see https://issues.redhat.com/browse/RHEL-22797
+export async function snapshotCreate({ vm, name, description, isExternal, memoryPath }) {
+    // The "disk only" flag ought to be implicit for non-running VMs, see https://issues.redhat.com/browse/RHEL-22797
+
+    // However, "disk only" can be used to request external snapshots
+    // for a stopped machine. The alternative is to list all disks
+    // with a snapshot type of "external" in the XML, but then we need
+    // to worry about which disks to include and which to skip.
+
+    // The behavior is as follows:
+    //
+    // VM state  |  disk only  |  memory path   =>  resulting snapshot type
+    // --------------------------------------------------------------------
+    // shutoff   |  false      |  null          =>  internal
+    // shutoff   |  true       |  null          =>  external
+    // running   |  false      |  null          =>  internal full system
+    // running   |  false      |  non-null      =>  external full system
+    // running   |  true       |  null          =>  external disk only
+    //
+    // Other cases are errors.
+
     const flags = (!isExternal || memoryPath) ? 0 : Enum.VIR_DOMAIN_SNAPSHOT_CREATE_DISK_ONLY;
-    const xmlDesc = getSnapshotXML(name, description, disks, memoryPath, isExternal, storagePools, connectionName);
-    return call(connectionName, vmId, 'org.libvirt.Domain', 'SnapshotCreateXML', [xmlDesc, flags], { timeout, type: 'su' });
+    const xmlDesc = getSnapshotXML(name, description, memoryPath);
+
+    // We really don't want to make disk only snapshots of running
+    // machines by accident.
+
+    if (vm.state === "running" && (flags & Enum.VIR_DOMAIN_SNAPSHOT_CREATE_DISK_ONLY))
+        throw new Error("Cowardly refusing to make a disk-only snapshot of a running machine");
+
+    return await call(vm.connectionName, vm.id, 'org.libvirt.Domain', 'SnapshotCreateXML', [xmlDesc, flags],
+                      { timeout, type: 'su' });
 }
 
 export function snapshotCurrent({ connectionName, objPath }) {
