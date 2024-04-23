@@ -147,22 +147,18 @@ export class CreateSnapshotModal extends React.Component {
 
     onCreate() {
         const Dialogs = this.context;
-        const { vm, isExternal, storagePools } = this.props;
+        const { vm, isExternal } = this.props;
         const { name, description, memoryPath } = this.state;
-        const disks = Object.values(vm.disks);
         const validationError = this.onValidate();
 
         if (!Object.keys(validationError).length) {
             this.setState({ inProgress: true });
             snapshotCreate({
-                connectionName: vm.connectionName,
-                vmId: vm.id,
+                vm,
                 name,
                 description,
-                memoryPath: vm.state === "running" && memoryPath,
-                disks,
                 isExternal,
-                storagePools
+                memoryPath: isExternal && vm.state === "running" && memoryPath,
             })
                     .then(() => {
                         // VM Snapshots do not trigger any events so we have to refresh them manually
