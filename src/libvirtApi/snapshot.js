@@ -31,7 +31,11 @@ import { logDebug } from '../helpers.js';
 
 export function snapshotCreate({ connectionName, vmId, name, description, memoryPath, disks, isExternal, storagePools }) {
     // that flag ought to be implicit for non-running VMs, see https://issues.redhat.com/browse/RHEL-22797
-    const flags = (!isExternal || memoryPath) ? 0 : Enum.VIR_DOMAIN_SNAPSHOT_CREATE_DISK_ONLY;
+    let flags = 0;
+    if (isExternal && !memoryPath)
+        flags |= Enum.VIR_DOMAIN_SNAPSHOT_CREATE_DISK_ONLY | Enum.VIR_DOMAIN_SNAPSHOT_CREATE_QUIESCE;
+    if (memoryPath)
+        flags |= Enum.VIR_DOMAIN_SNAPSHOT_CREATE_LIVE;
     const xmlDesc = getSnapshotXML(name, description, disks, memoryPath, isExternal, storagePools, connectionName);
     return call(connectionName, vmId, 'org.libvirt.Domain', 'SnapshotCreateXML', [xmlDesc, flags], { timeout, type: 'su' });
 }
