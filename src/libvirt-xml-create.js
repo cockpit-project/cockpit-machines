@@ -236,7 +236,7 @@ export function getPoolXML({ name, type, source, target }) {
 }
 
 // see https://libvirt.org/formatsnapshot.html
-export function getSnapshotXML(name, description, disks, memoryPath, isExternal, storagePools, connectionName) {
+export function getSnapshotXML(name, description, memoryPath) {
     const doc = document.implementation.createDocument('', '', null);
 
     const snapElem = doc.createElement('domainsnapshot');
@@ -253,36 +253,11 @@ export function getSnapshotXML(name, description, disks, memoryPath, isExternal,
         snapElem.appendChild(descriptionElem);
     }
 
-    if (isExternal) {
-        if (memoryPath) {
-            const memoryElem = doc.createElement('memory');
-            memoryElem.setAttribute('snapshot', 'external');
-            memoryElem.setAttribute('file', memoryPath);
-            snapElem.appendChild(memoryElem);
-        }
-
-        const disksElem = doc.createElement('disks');
-        disks.forEach(disk => {
-            // Disk can have attribute "snapshot" set to "no", which
-            // means no snapshot should be created of the said disk
-            // This cannot be configured through cockpit, but we
-            // should uphold it nevertheless.
-            //
-            // See "snapshot" attribute of <disk> element at
-            // https://libvirt.org/formatdomain.html#hard-drives-floppy-disks-cdroms
-            if (disk.snapshot == "no")
-                return;
-
-            // Skip disks without source, such as empty media drives.
-            if (isExternal && disk.type == "file" && !disk.source.file)
-                return;
-
-            const diskElem = doc.createElement('disk');
-            diskElem.setAttribute('name', disk.target);
-            diskElem.setAttribute('snapshot', 'external');
-            disksElem.appendChild(diskElem);
-        });
-        snapElem.appendChild(disksElem);
+    if (memoryPath) {
+        const memoryElem = doc.createElement('memory');
+        memoryElem.setAttribute('snapshot', 'external');
+        memoryElem.setAttribute('file', memoryPath);
+        snapElem.appendChild(memoryElem);
     }
 
     doc.appendChild(snapElem);
