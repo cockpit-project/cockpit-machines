@@ -125,7 +125,10 @@ const DevRow = ({ idPrefix, type, selectableDevices, setSelectableDevices }) => 
                    className="vm-device-table"
                    aria-label={_("Table of selectable host devices")}>
                 <Thead>
-                    <Tr><Th />{[_("Product"), _("Vendor"), _("Location")].map(col => <Th key={col}>{col}</Th>)}</Tr>
+                    <Tr>
+                        <Th aria-label={_("Row select")} />
+                        {[_("Product"), _("Vendor"), _("Location")].map(col => <Th key={col}>{col}</Th>)}
+                    </Tr>
                 </Thead>
                 <Tbody>
                     {selectableDevices.map((dev, rowIndex) => {

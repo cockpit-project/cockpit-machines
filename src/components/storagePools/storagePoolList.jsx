@@ -69,7 +69,7 @@ export class StoragePoolList extends React.Component {
                                                   { title: _("Size"), props: { width: 40 } },
                                                   { title: _("Connection"), props: { width: 15 } },
                                                   { title: _("State"), props: { width: 15 } },
-                                                  { title: "", props: { width: 15 } },
+                                                  { title: "", props: { width: 15, "aria-label": _("Actions") } },
                                               ]}
                                               emptyCaption={_("No storage pool is defined on this host")}
                                               rows={storagePools

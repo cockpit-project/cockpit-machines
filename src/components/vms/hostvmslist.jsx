@@ -161,7 +161,7 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                                 { title: _("Name"), header: true, props: { width: 25 } },
                                 { title: _("Connection"), props: { width: 25 } },
                                 { title: _("State"), props: { width: 25 } },
-                                { title: "", props: { width: 25 } },
+                                { title: "", props: { width: 25, "aria-label": _("Actions") } },
                             ]}
                             emptyCaption={_("No VM is running or defined on this host")}
                             rows={ combinedVmsFiltered
