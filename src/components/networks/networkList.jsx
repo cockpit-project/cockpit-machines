@@ -69,7 +69,7 @@ export class NetworkList extends React.Component {
                                     { title: _("Connection"), props: { width: 15 } },
                                     { title: _("Forwarding mode"), props: { width: 15 } },
                                     { title: _("State"), props: { width: 20 } },
-                                    { title: "", props: { width: 20 } },
+                                    { title: "", props: { width: 20, "aria-label": _("Actions") } },
                                 ]}
                                 emptyCaption={_("No network is defined on this host")}
                                 rows={networks

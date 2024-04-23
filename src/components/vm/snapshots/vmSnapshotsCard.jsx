@@ -159,6 +159,7 @@ export class VmSnapshotsCard extends React.Component {
             },
             {
                 name: "",
+                aria: _("Actions"),
                 value: (snap, snapId) => {
                     const revertSnapshotHelper = () => {
                         const revertDialogProps = {
@@ -210,7 +211,10 @@ export class VmSnapshotsCard extends React.Component {
 
         detailMap = detailMap.filter(d => !d.hidden);
 
-        const columnTitles = detailMap.map(target => ({ title: target.name, props: { width: 15 } }));
+        const columnTitles = detailMap.map(target => ({
+            title: target.name,
+            props: { width: 15, "aria-label": target.aria }
+        }));
         let rows = [];
         if (vm.snapshots) {
             rows = vm.snapshots.sort((a, b) => ((b.creationTime - a.creationTime) || (a.name.localeCompare(b.name)))).map((target, snapId) => {

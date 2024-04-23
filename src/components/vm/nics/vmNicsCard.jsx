@@ -418,6 +418,7 @@ export class VmNetworkTab extends React.Component {
             },
             {
                 name: "",
+                aria: _("Actions"),
                 value: (network, networkId) => {
                     const isUp = network.state === 'up';
                     const nicPersistent = !!vm.inactiveXML.interfaces.filter(iface => iface.mac == network.mac).length;
@@ -527,7 +528,7 @@ export class VmNetworkTab extends React.Component {
         let networkId = 1;
         detailMap = detailMap.filter(d => !d.hidden);
 
-        const columnTitles = detailMap.map(target => target.name);
+        const columnTitles = detailMap.map(target => ({ title: target.name, props: { "aria-label": target.aria } }));
         const sortIfaces = (a, b) => {
             if (a.type !== b.type)
                 return a.type > b.type ? 1 : -1;

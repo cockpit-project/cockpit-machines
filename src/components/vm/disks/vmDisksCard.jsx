@@ -191,7 +191,7 @@ export const VmDisksCard = ({ vm, vms, disks, renderCapacity, supportedDiskBusTy
         if (renderAdditional)
             columnTitles.push(_("Additional"));
 
-        columnTitles.push('');
+        columnTitles.push({ title: '', props: { "aria-label": _("Actions") } });
     }
 
     const rows = disks.map(disk => {
