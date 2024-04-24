@@ -33,10 +33,7 @@ export const validateIpv4 = address => ipaddr.IPv4.isValid(address);
  * @param {string} address
  * @returns {boolean}
  */
-export function ipv4IsBroadcast(address, netmask) {
-    const prefix = validateNetmask(netmask);
-    if (prefix === null)
-        return false;
+export function ipv4IsBroadcast(address, prefix) {
     return address === ipaddr.IPv4.broadcastAddressFromCIDR(`${address}/${prefix}`).toString();
 }
 
@@ -46,20 +43,23 @@ export function ipv4IsBroadcast(address, netmask) {
  * @param {string} address
  * @returns {boolean}
  */
-export function ipv4IsNetworkIdentifier(address, netmask) {
-    const prefix = validateNetmask(netmask);
-    if (prefix === null)
-        return false;
+export function ipv4IsNetworkIdentifier(address, prefix) {
     return address === ipaddr.IPv4.networkAddressFromCIDR(`${address}/${prefix}`).toString();
 }
 
+export function ipv4ExampleBridgeAddressForNetworkIdentifier(network) {
+    const net = ipaddr.parse(network);
+    net.octets[3] += 1;
+    return ipaddr.fromByteArray(net.octets).toString();
+}
+
 /**
- * validates correctness of ipv4 prefix length or mask
+ * parses ipv4 prefix length or mask
  *
  * @param {string} prefixOrNetmask
  * @returns int prefix length, or null if invalid
  */
-export function validateNetmask(prefixOrNetmask) {
+export function parseNetmask(prefixOrNetmask) {
     if (/^[0-9]+$/.test(prefixOrNetmask)) {
         // prefix
         try {
@@ -106,11 +106,8 @@ export function netmaskConvert(prefixOrNetmask) {
  * @param {string} address
  * @returns {boolean}
  */
-export function isIpv4InNetwork(network, netmask, address) {
+export function isIpv4InNetwork(network, prefix, address) {
     if (!validateIpv4(network) || !validateIpv4(address))
-        return false;
-    const prefix = validateNetmask(netmask);
-    if (prefix === null)
         return false;
 
     const b_network = ipaddr.IPv4.broadcastAddressFromCIDR(`${network}/${prefix}`).toString();
