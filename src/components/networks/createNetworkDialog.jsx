@@ -53,10 +53,22 @@ function validateParams(dialogValues) {
         validationFailed.name = _("Name should not be empty");
 
     if (dialogValues.ip === "IPv4 only" || dialogValues.ip === "IPv4 and IPv6") {
+        let ipv4_prefix = null;
+
         if (isEmpty(dialogValues.netmask.trim()))
             validationFailed.netmask = _("Mask or prefix length should not be empty");
-        else if (!utils.validateNetmask(dialogValues.netmask))
-            validationFailed.netmask = _("Invalid IPv4 mask or prefix length");
+        else {
+            ipv4_prefix = utils.parseNetmask(dialogValues.netmask);
+            if (ipv4_prefix === null)
+                validationFailed.netmask = _("Invalid IPv4 mask or prefix length");
+            else if ((ipv4_prefix % 8) != 0) {
+                // because we use localPtr="yes".
+                validationFailed.netmask = _("IPv4 prefix length must be a multiple of 8");
+            } else if (ipv4_prefix > 24) {
+                // because we use localPtr="yes".
+                validationFailed.netmask = _("IPv4 prefix length must be 24 or less");
+            }
+        }
 
         if (isEmpty(dialogValues.ipv4.trim()))
             validationFailed.ipv4 = _("IPv4 network should not be empty");
@@ -64,11 +76,13 @@ function validateParams(dialogValues) {
             validationFailed.ipv4 = _("Invalid IPv4 address");
         // During virtual network creation, address is assigned to bridge. However no interface can have the
         // address same as the network identifier, as it would disable the connectivity of the virtual network.
-        else if (utils.ipv4IsNetworkIdentifier(dialogValues.ipv4, dialogValues.netmask))
-            validationFailed.ipv4 = _("IPv4 address cannot be same as the network identifier");
+        else if (!validationFailed.netmask && utils.ipv4IsNetworkIdentifier(dialogValues.ipv4, ipv4_prefix)) {
+            validationFailed.ipv4 =
+                cockpit.format(_("Must be an address instead of the network identifier, such as $0"),
+                               utils.ipv4ExampleBridgeAddressForNetworkIdentifier(dialogValues.ipv4));
         // Using broacast address of network space as the address of virtual network's bridge
         // is forbidden and would disable the connectivity of the virtual network.
-        else if (utils.ipv4IsBroadcast(dialogValues.ipv4, dialogValues.netmask))
+        } else if (!validationFailed.netmask && utils.ipv4IsBroadcast(dialogValues.ipv4, ipv4_prefix))
             validationFailed.ipv4 = _("IPv4 address cannot be same as the network's broadcast address");
 
         if (dialogValues.ipv4DhcpEnabled) {
@@ -76,14 +90,14 @@ function validateParams(dialogValues) {
                 validationFailed.ipv4DhcpRangeStart = _("Start should not be empty");
             else if (!utils.validateIpv4(dialogValues.ipv4DhcpRangeStart))
                 validationFailed.ipv4DhcpRangeStart = _("Invalid IPv4 address");
-            else if (!utils.isIpv4InNetwork(dialogValues.ipv4, dialogValues.netmask, dialogValues.ipv4DhcpRangeStart))
+            else if (!validationFailed.netmask && !utils.isIpv4InNetwork(dialogValues.ipv4, ipv4_prefix, dialogValues.ipv4DhcpRangeStart))
                 validationFailed.ipv4DhcpRangeStart = _("Address not within subnet");
 
             if (isEmpty(dialogValues.ipv4DhcpRangeEnd.trim()))
                 validationFailed.ipv4DhcpRangeEnd = _("End should not be empty");
             else if (!utils.validateIpv4(dialogValues.ipv4DhcpRangeEnd))
                 validationFailed.ipv4DhcpRangeEnd = _("Invalid IPv4 address");
-            else if (!utils.isIpv4InNetwork(dialogValues.ipv4, dialogValues.netmask, dialogValues.ipv4DhcpRangeEnd))
+            else if (!validationFailed.netmask && !utils.isIpv4InNetwork(dialogValues.ipv4, ipv4_prefix, dialogValues.ipv4DhcpRangeEnd))
                 validationFailed.ipv4DhcpRangeEnd = _("Address not within subnet");
         }
     }
