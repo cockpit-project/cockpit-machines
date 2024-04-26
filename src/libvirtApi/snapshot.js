@@ -52,12 +52,6 @@ export async function snapshotCreate({ vm, name, description, isExternal, memory
     const flags = (!isExternal || memoryPath) ? 0 : Enum.VIR_DOMAIN_SNAPSHOT_CREATE_DISK_ONLY;
     const xmlDesc = getSnapshotXML(name, description, memoryPath);
 
-    // We really don't want to make disk only snapshots of running
-    // machines by accident.
-
-    if (vm.state === "running" && (flags & Enum.VIR_DOMAIN_SNAPSHOT_CREATE_DISK_ONLY))
-        throw new Error("Cowardly refusing to make a disk-only snapshot of a running machine");
-
     return await call(vm.connectionName, vm.id, 'org.libvirt.Domain', 'SnapshotCreateXML', [xmlDesc, flags],
                       { timeout, type: 'su' });
 }

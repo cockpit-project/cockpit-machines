@@ -126,7 +126,7 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         class SnapshotCreateDialog(object):
             def __init__(
                 self, test_obj, name=None, description=None, memory_path=None, state="shutoff", snap_num=0,
-                vm_name="subVmTest1", expect_external=False, xfail=None, remove=True
+                vm_name="subVmTest1", expect_external=False, disk_only=None, xfail=None, remove=True
             ):
                 self.test_obj = test_obj
                 self.name = name
@@ -138,6 +138,7 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
                 self.remove = remove
                 self.xfail = xfail
                 self.expect_external = expect_external
+                self.disk_only = disk_only
 
             def execute(self):
                 self.open()
@@ -157,6 +158,10 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
             def fill(self):
                 if self.name is not None:
                     b.set_input_text("#snapshot-create-dialog-name", self.name)
+                if self.disk_only is True:
+                    b.click("#snapshot-create-dialog-type-disk-only")
+                elif self.disk_only is False:
+                    b.click("#snapshot-create-dialog-type-full")
                 if self.description:
                     b.set_input_text("#snapshot-create-dialog-description", self.description)
                 if self.memory_path is not None:
@@ -203,6 +208,8 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
                 if self.state:
                     if self.state == "shutoff":
                         state = "shut off"
+                    elif self.state == "disk-snapshot":
+                        state = "no state saved"
                     else:
                         state = self.state
                     b.wait_in_text(f"#vm-subVmTest1-snapshot-{self.snap_num}-type", state)
@@ -378,7 +385,8 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
             m.execute("rm /etc/apparmor.d/disable/usr.sbin.libvirtd")
             m.execute("aa-teardown; systemctl restart apparmor libvirtd")
 
-        # Test snapshot creation on running VM
+        # Test snapshot creation on running VM, use default "full
+        # system" snapshot
         SnapshotCreateDialog(
             self,
             name="test_snap_2",
@@ -395,6 +403,15 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
                 expect_external=True,
                 memory_path="",
                 xfail="memory-path",
+            ).execute()
+
+            # Make a disk-only snapshot
+            SnapshotCreateDialog(
+                self,
+                name="test_snap_4",
+                state="disk-snapshot",
+                expect_external=True,
+                disk_only=True,
             ).execute()
 
     def testSnapshotRevert(self):

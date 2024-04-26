@@ -20,10 +20,15 @@ import cockpit from "cockpit";
 import React from "react";
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
+import { InfoAltIcon } from '@patternfly/react-icons';
 import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
 import { TextArea } from "@patternfly/react-core/dist/esm/components/TextArea";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
+import { Radio } from "@patternfly/react-core/dist/esm/components/Radio/index.js";
+import { Split } from "@patternfly/react-core/dist/esm/layouts/Split/index.js";
 
 import { FormHelper } from 'cockpit-components-form-helper.jsx';
 import { DialogsContext } from 'dialogs.jsx';
@@ -48,6 +53,41 @@ const NameRow = ({ onValueChanged, name, validationError }) => {
                 id="snapshot-create-dialog-name"
                 onChange={(_, value) => onValueChanged("name", value)} />
             <FormHelper helperTextInvalid={validationError} />
+        </FormGroup>
+    );
+};
+
+const TypeRow = ({ onValueChanged, isDiskOnly }) => {
+    return (
+        <FormGroup id="snapshot-create-dialog-type" hasNoPaddingTop
+                   label={_("Type")}
+                   labelIcon={
+                       <Popover
+                           bodyContent={
+                               <Flex direction={{ default: 'column' }}>
+                                   <FlexItem>
+                                       <h4 className="popover-headline">{_("Full system")}</h4>
+                                       <p>{_("A full system snapshot can be used to revert the virtual machine to its exact current state where all its processes have the same run-time state as now. It might require significant extra storage to save the memory state.")}</p>
+                                   </FlexItem>
+                                   <FlexItem>
+                                       <h4 className="popover-headline">{_("Disk only")}</h4>
+                                       <p>{_("This type of snapshot only saves the storage devices of the virtual machine, and not the state of running processes.")}</p>
+                                   </FlexItem>
+                               </Flex>}>
+                           <button onClick={e => e.preventDefault()} className="pf-v5-c-form__group-label-help">
+                               <InfoAltIcon />
+                           </button>
+                       </Popover>}>
+            <Split hasGutter>
+                <Radio isChecked={!isDiskOnly}
+                       id="snapshot-create-dialog-type-full"
+                       onChange={() => onValueChanged("isDiskOnly", false)}
+                       label={_("Full system")} />
+                <Radio isChecked={isDiskOnly}
+                       id="snapshot-create-dialog-type-disk-only"
+                       onChange={() => onValueChanged("isDiskOnly", true)}
+                       label={_("Disk only")} />
+            </Split>
         </FormGroup>
     );
 };
@@ -111,6 +151,7 @@ export class CreateSnapshotModal extends React.Component {
         this.state = {
             name: snapName,
             description: "",
+            isDiskOnly: false,
             memoryPath: getDefaultMemoryPath(props.vm, snapName),
             inProgress: false,
         };
@@ -130,7 +171,7 @@ export class CreateSnapshotModal extends React.Component {
     }
 
     onValidate() {
-        const { name, memoryPath } = this.state;
+        const { name, isDiskOnly, memoryPath } = this.state;
         const { vm, isExternal } = this.props;
         const validationError = {};
 
@@ -139,7 +180,7 @@ export class CreateSnapshotModal extends React.Component {
         else if (!name)
             validationError.name = _("Name can not be empty");
 
-        if (isExternal && vm.state === "running" && !memoryPath)
+        if (isExternal && vm.state === "running" && !isDiskOnly && !memoryPath)
             validationError.memory = _("Memory file can not be empty");
 
         return validationError;
@@ -148,7 +189,7 @@ export class CreateSnapshotModal extends React.Component {
     onCreate() {
         const Dialogs = this.context;
         const { vm, isExternal } = this.props;
-        const { name, description, memoryPath } = this.state;
+        const { name, description, isDiskOnly, memoryPath } = this.state;
         const validationError = this.onValidate();
 
         if (!Object.keys(validationError).length) {
@@ -158,7 +199,7 @@ export class CreateSnapshotModal extends React.Component {
                 name,
                 description,
                 isExternal,
-                memoryPath: isExternal && vm.state === "running" && memoryPath,
+                memoryPath: isExternal && vm.state === "running" && !isDiskOnly && memoryPath,
             })
                     .then(() => {
                         // VM Snapshots do not trigger any events so we have to refresh them manually
@@ -178,16 +219,18 @@ export class CreateSnapshotModal extends React.Component {
     render() {
         const Dialogs = this.context;
         const { idPrefix, isExternal, vm } = this.props;
-        const { name, description, memoryPath } = this.state;
+        const { name, description, isDiskOnly, memoryPath } = this.state;
         const validationError = this.onValidate();
 
         const body = (
             <Form onSubmit={e => e.preventDefault()} isHorizontal>
                 <NameRow name={name} validationError={validationError.name} onValueChanged={this.onValueChanged} />
-                <DescriptionRow description={description} onValueChanged={this.onValueChanged} />
                 {isExternal && vm.state === 'running' &&
+                    <TypeRow isDiskOnly={isDiskOnly} onValueChanged={this.onValueChanged} />}
+                {isExternal && vm.state === 'running' && !isDiskOnly &&
                     <MemoryPathRow memoryPath={memoryPath} onValueChanged={this.onValueChanged}
                                    validationError={validationError.memory} />}
+                <DescriptionRow description={description} onValueChanged={this.onValueChanged} />
             </Form>
         );
 
