@@ -81,12 +81,12 @@ class TestMachinesConsoles(machineslib.VirtualMachinesCase):
         b.wait_visible(".pf-v5-c-console__vnc canvas")
 
         # make sure the log file is full - then empty it and reboot the VM - the log file should fill up again
-        self.waitCirrOSBooted(args['logfile'])
+        self.waitGuestBooted(args['logfile'])
 
         self.machine.execute(f"echo '' > {args['logfile']}")
         b.click("#subVmTest1-system-vnc-sendkey")
         b.click("#ctrl-alt-Delete")
-        self.waitLogFile(args['logfile'], "Requesting system reboot")
+        self.waitLogFile(args['logfile'], "reboot: Restarting system")
 
     def testInlineConsoleWithUrlRoot(self, urlroot=""):
         self.testInlineConsole(urlroot="/webcon")
@@ -117,11 +117,11 @@ class TestMachinesConsoles(machineslib.VirtualMachinesCase):
         for _ in range(0, 60):
             b.focus(f"#{name}-terminal .xterm-accessibility-tree")
             b.key_press("\r")
-            if "cirros login" in b.text(f"#{name}-terminal .xterm-accessibility-tree"):
+            if "Welcome to Alpine Linux" in b.text(f"#{name}-terminal .xterm-accessibility-tree"):
                 break
             time.sleep(1)
         # Make sure the content of console is expected
-        testlib.wait(lambda: "cirros login" in b.text(f"#{name}-terminal .xterm-accessibility-tree"))
+        testlib.wait(lambda: "Welcome to Alpine Linux" in b.text(f"#{name}-terminal .xterm-accessibility-tree"))
 
         b.click(f"#{name}-serialconsole-disconnect")
         b.wait_text(f"#{name}-terminal", "Disconnected from serial console. Click the connect button.")
@@ -137,8 +137,8 @@ class TestMachinesConsoles(machineslib.VirtualMachinesCase):
         m.execute("virsh destroy vmWithSerialConsole; virt-xml --add-device vmWithSerialConsole --console pty,target_type=virtio; virsh start vmWithSerialConsole")
         b.click("#pf-v5-c-console__type-selector")
         b.wait_visible("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
-        b.click("li:contains('Serial console (console0)') button")
-        b.wait(lambda: m.execute("ps aux | grep 'virsh -c qemu:///system console vmWithSerialConsole console0'"))
+        b.click("li:contains('Serial console (serial0)') button")
+        b.wait(lambda: m.execute("ps aux | grep 'virsh -c qemu:///system console vmWithSerialConsole serial0'"))
         b.click("#pf-v5-c-console__type-selector")
         b.click("li:contains('Serial console (console1)') button")
         b.wait(lambda: m.execute("ps aux | grep 'virsh -c qemu:///system console vmWithSerialConsole console1'"))
@@ -147,8 +147,7 @@ class TestMachinesConsoles(machineslib.VirtualMachinesCase):
         # Remove all console firstly
         m.execute("virsh destroy vmWithSerialConsole")
         m.execute("virt-xml --remove-device vmWithSerialConsole --console all")
-        # Add serial0 and console1 ~ console5
-        m.execute("virt-xml vmWithSerialConsole --add-device --console pty,target.type=serial")
+        # Add console1 ~ console5
         m.execute("for i in {1..5};do virt-xml vmWithSerialConsole --add-device --console pty,target.type=virtio; done")
         m.execute("virsh start vmWithSerialConsole")
 

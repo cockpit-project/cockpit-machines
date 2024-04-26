@@ -107,8 +107,8 @@ if [ "$ID" = "fedora" ]; then
     export TEST_TIMEOUT_FACTOR=3
 fi
 
-# pre-download cirros image for Machines tests
-bots/image-download cirros
+# pre-download alpine image for Machines tests
+bots/image-download alpine
 
 exclude_options=""
 for t in $EXCLUDES; do

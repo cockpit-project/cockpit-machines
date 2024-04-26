@@ -139,7 +139,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # Wait for the system to completely start
-        self.waitCirrOSBooted(args['logfile'])
+        self.waitGuestBooted(args['logfile'])
 
         # Send Non-Maskable Interrupt (no change in VM state is expected)
         self.performAction("subVmTest1", "sendNMI")
@@ -164,11 +164,11 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
 
         # force reboot
         self.performAction("subVmTest1", "forceReboot", logPath=args['logfile'])
-        self.waitCirrOSBooted(args['logfile'])
+        self.waitGuestBooted(args['logfile'])
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # the shut off button beside the VM name
-        self.waitCirrOSBooted(args['logfile'])
+        self.waitGuestBooted(args['logfile'])
         b.click("#vm-subVmTest1-system-shutdown-button")
         b.wait_visible("#vm-subVmTest1-system-confirm-action-modal")
         b.click(".pf-v5-c-modal-box__footer #vm-subVmTest1-system-off")
@@ -179,7 +179,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         self.machine.execute(f"echo '' > {args['logfile']}")
         b.click("#vm-subVmTest1-system-run")
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
-        self.waitCirrOSBooted(args['logfile'])
+        self.waitGuestBooted(args['logfile'])
         self.performAction("subVmTest1", "off")
 
         # force shut off
@@ -431,7 +431,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         self.goToVmPage(name)
 
         # Make sure that the VM booted normally before attempting to suspend it
-        self.waitCirrOSBooted(args['logfile'])
+        self.waitGuestBooted(args['logfile'])
 
         self.machine.execute(f"virsh -c qemu:///system suspend {name}")
         b.wait_in_text(f"#vm-{name}-system-state", "Paused")
