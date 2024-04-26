@@ -156,10 +156,10 @@ class VirtualMachinesCaseHelpers:
                      if ! echo "$out" | grep -q 'Active.*yes'; then virsh net-start default; fi""")
         m.execute(r"until virsh net-info default | grep 'Active:\s*yes'; do sleep 1; done")
 
-    def createVm(self, name, graphics='none', ptyconsole=False, running=True, memory=128, connection='system', machine=None, os="cirros0.4.0"):
+    def createVm(self, name, graphics='none', ptyconsole=False, running=True, memory=128, connection='system', machine=None, os="linux2016"):
         m = machine or self.machine
 
-        image_file = m.pull("cirros")
+        image_file = m.pull("alpine")
 
         if connection == "system":
             img = f"/var/lib/libvirt/images/{name}-2.img"
@@ -182,7 +182,7 @@ class VirtualMachinesCaseHelpers:
             "memory": memory,
         }
         if ptyconsole:
-            console = "pty,target.type=virtio "
+            console = "pty,target.type=serial "
         else:
             console = f"file,target.type=serial,source.path={args['logfile']} "
 
@@ -330,8 +330,8 @@ class VirtualMachinesCaseHelpers:
             print(f"----- log of failed VM ------\n{log}\n---------")
             raise
 
-    def waitCirrOSBooted(self, logfile):
-        self.waitLogFile(logfile, "login as 'cirros' user.")
+    def waitGuestBooted(self, logfile):
+        self.waitLogFile(logfile, "Welcome to Alpine Linux")
 
 
 class VirtualMachinesCase(testlib.MachineCase, VirtualMachinesCaseHelpers, storagelib.StorageHelpers, netlib.NetworkHelpers):

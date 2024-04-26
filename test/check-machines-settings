@@ -408,7 +408,7 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
 
         # Check memory hotunplugging
         # The balloon driver needs to be loaded to descrease memory
-        self.waitCirrOSBooted(args['logfile'])
+        self.waitGuestBooted(args['logfile'])
 
         b.set_input_text("#vm-subVmTest1-memory-modal-memory", str(current_memory - 10))
         # Save the memory settings
@@ -461,7 +461,7 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
 
-        self.waitCirrOSBooted(args['logfile'])
+        self.waitGuestBooted(args['logfile'])
 
         # Change CPU model setting
         b.click("#vm-subVmTest1-cpu button")
@@ -646,7 +646,7 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
         setWatchdogActionLive(action="reset")
         setWatchdogActionLive(action="pause", previous_action="reset")
         # Make sure that the VM booted normally before attempting to hotunplug
-        self.waitCirrOSBooted(args['logfile'])
+        self.waitGuestBooted(args['logfile'])
         removeWatchdogDevice(live=True)
         # Check rebooting machine will not unexpectedly affect watchdog configuration
         setWatchdogActionLive(action="poweroff", reboot_machine=True)

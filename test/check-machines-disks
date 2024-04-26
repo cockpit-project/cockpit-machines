@@ -785,7 +785,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         m.execute("virsh pool-destroy images; virsh pool-undefine images")
 
         # Wait for the system to completely start
-        self.waitCirrOSBooted(args['logfile'])
+        self.waitGuestBooted(args['logfile'])
 
         self.login_and_go("/machines#/storages")
         self.waitPageInit()
@@ -843,7 +843,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         args = self.createVm("subVmTest1")
 
         # Wait for the system to completely start
-        self.waitCirrOSBooted(args['logfile'])
+        self.waitGuestBooted(args['logfile'])
 
         self.login_and_go("/machines")
         self.waitPageInit()
@@ -901,7 +901,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         args = self.createVm("subVmTest1")
 
         # Wait for the system to completely start
-        self.waitCirrOSBooted(args['logfile'])
+        self.waitGuestBooted(args['logfile'])
 
         self.login_and_go("/machines")
         self.waitPageInit()
@@ -1492,7 +1492,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         self.waitVmRow("subVmTest1")
 
         # Wait for the login prompt before we try detaching disks - we need the OS to be fully responsive
-        self.waitCirrOSBooted(args['logfile'])
+        self.waitGuestBooted(args['logfile'])
 
         # Test detaching non permanent disk of a running domain
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
@@ -1598,13 +1598,13 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         m.execute(f"> {args['logfile']}")  # clear logfile
         m.execute("virsh start subVmTest1")
         # Make sure that the VM booted normally before attempting to suspend it
-        self.waitCirrOSBooted(args['logfile'])
+        self.waitGuestBooted(args['logfile'])
         m.execute("virsh suspend subVmTest1")
         b.wait_in_text("#vm-subVmTest1-system-state", "Paused")
         b.click("#vm-subVmTest1-disks-vde-action-kebab")
         b.wait_visible(".pf-m-disabled #delete-vm-subVmTest1-disks-vde")
         m.execute("virsh resume subVmTest1")
-        self.waitCirrOSBooted(args['logfile'])
+        self.waitGuestBooted(args['logfile'])
 
         # Test detaching of disk on non-persistent VM
         m.execute("virsh undefine subVmTest1")
