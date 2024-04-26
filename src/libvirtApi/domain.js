@@ -689,6 +689,16 @@ export async function domainGet({
     }
 }
 
+export async function domainGetNow(vm, refresh) {
+    if (refresh)
+        await domainGet(vm);
+    for (const new_vm of store.getState().vms) {
+        if (new_vm.connectionName == vm.connectionName && new_vm.id == vm.id)
+            return new_vm;
+    }
+    return null;
+}
+
 export async function domainGetAll({ connectionName }) {
     try {
         const [objPaths] = await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListDomains', [0],

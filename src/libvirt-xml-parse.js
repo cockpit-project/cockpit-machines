@@ -271,6 +271,7 @@ export function parseDomainDumpxml(connectionName, domXml, objPath) {
     const vsock = parseDumpxmlForVsock(devicesElem);
     const hasSpice = parseDumpxmlForSpice(devicesElem);
     const hasTPM = parseDumpxmlForTPM(devicesElem);
+    const hasAgent = parseDumpxmlForAgent(devicesElem);
 
     const hasInstallPhase = parseDumpxmlMachinesMetadataElement(metadataElem, 'has_install_phase') === 'true';
     const installSourceType = parseDumpxmlMachinesMetadataElement(metadataElem, 'install_source_type');
@@ -316,6 +317,7 @@ export function parseDomainDumpxml(connectionName, domXml, objPath) {
         metadata,
         hasSpice,
         hasTPM,
+        hasAgent,
     };
 }
 
@@ -561,6 +563,22 @@ function parseDumpxmlForSpice(devicesElem) {
 
 function parseDumpxmlForTPM(devicesElem) {
     return devicesElem.getElementsByTagName('tpm').length > 0;
+}
+
+function parseDumpxmlForAgent(devicesElem) {
+    const channelElems = devicesElem.getElementsByTagName('channel');
+    for (let i = 0; i < channelElems.length; ++i) {
+        const channel = channelElems[i];
+        const target = getSingleOptionalElem(channel, "target");
+
+        if (target &&
+            target.getAttribute("type") == "virtio" &&
+            target.getAttribute("name") == "org.qemu.guest_agent.0" &&
+            target.getAttribute("state") == "connected")
+            return true;
+    }
+
+    return false;
 }
 
 export function parseDumpxmlForFilesystems(devicesElem) {

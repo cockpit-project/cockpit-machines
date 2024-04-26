@@ -28,6 +28,7 @@ import { getSnapshotXML } from '../libvirt-xml-create.js';
 import { parseDomainSnapshotDumpxml } from '../libvirt-xml-parse.js';
 import { call, Enum, timeout } from './helpers.js';
 import { logDebug } from '../helpers.js';
+import { domainGetNow } from './domain.js';
 
 export async function snapshotCreate({ vm, name, description, isExternal, memoryPath }) {
     // The "disk only" flag ought to be implicit for non-running VMs, see https://issues.redhat.com/browse/RHEL-22797
@@ -49,8 +50,16 @@ export async function snapshotCreate({ vm, name, description, isExternal, memory
     //
     // Other cases are errors.
 
-    const flags = (!isExternal || memoryPath) ? 0 : Enum.VIR_DOMAIN_SNAPSHOT_CREATE_DISK_ONLY;
+    let flags = (!isExternal || memoryPath) ? 0 : Enum.VIR_DOMAIN_SNAPSHOT_CREATE_DISK_ONLY;
     const xmlDesc = getSnapshotXML(name, description, memoryPath);
+
+    if (vm.state === "running" && (flags & Enum.VIR_DOMAIN_SNAPSHOT_CREATE_DISK_ONLY)) {
+        // There are no events when the agent connects or disconnects,
+        // so we need to refresh our idea of the vm data.
+        const vm_now = await domainGetNow(vm, true);
+        if (vm_now?.hasAgent)
+            flags |= Enum.VIR_DOMAIN_SNAPSHOT_CREATE_QUIESCE;
+    }
 
     return await call(vm.connectionName, vm.id, 'org.libvirt.Domain', 'SnapshotCreateXML', [xmlDesc, flags],
                       { timeout, type: 'su' });

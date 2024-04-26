@@ -109,7 +109,8 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         b = self.browser
         m = self.machine
 
-        self.createVm("subVmTest1")
+        # We want the agent channel
+        args = self.createVm("subVmTest1", os="linux2022")
 
         self.login_and_go("/machines")
         self.waitPageInit()
@@ -405,7 +406,23 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
                 xfail="memory-path",
             ).execute()
 
-            # Make a disk-only snapshot
+            # Test disk only snapshots and how they interact with the
+            # guest agent
+
+            self.waitGuestBooted(args['logfile'])
+            ip_addr = m.execute("virsh domifaddr subVmTest1 | grep ipv4 | sed -e '/ipv4/s/.*\\(192\\.168\\.[^\\/]*\\).*/\\1/'").strip()
+            m.upload([m.identity_file], "/tmp/ssh_identity")
+
+            def run_in_guest(cmd):
+                return m.execute(f'ssh -o StrictHostKeyChecking=no -i /tmp/ssh_identity root@{ip_addr} "{cmd}"')
+
+            self.assertIn("started", run_in_guest("rc-service qemu-guest-agent status"))
+
+            def fsfreeze_count():
+                return int(run_in_guest("cat /var/log/messages | grep guest-fsfreeze | wc -l"))
+
+            self.assertEqual(fsfreeze_count(), 0)
+
             SnapshotCreateDialog(
                 self,
                 name="test_snap_4",
@@ -413,6 +430,23 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
                 expect_external=True,
                 disk_only=True,
             ).execute()
+
+            # Agent should have frozen the filesystem during snapshot creation
+            self.assertEqual(fsfreeze_count(), 1)
+
+            # Switch off agent, Cockpit should not call it anymore
+            run_in_guest("rc-service qemu-guest-agent stop")
+
+            SnapshotCreateDialog(
+                self,
+                name="test_snap_5",
+                state="disk-snapshot",
+                expect_external=True,
+                disk_only=True,
+            ).execute()
+
+            # Still the same freeze count
+            self.assertEqual(fsfreeze_count(), 1)
 
     def testSnapshotRevert(self):
         b = self.browser
