@@ -123,7 +123,7 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         b.wait_in_text("#card-pf-networks .pf-v5-c-card__header button", "Network")
         b.click(".pf-v5-c-card .pf-v5-c-card__header button:contains(Network)")
 
-        # HACK: Firefox 112 on centos-8-stream does not have `:has` yet, so for now use JavaScript to obtain the elements parent sibling.
+        # HACK: Firefox 112 on RHEL 8 does not have `:has` yet, so for now use JavaScript to obtain the elements parent sibling.
         b.inject_js("""
            ph_input_form_helper_text = function(id) {
               return document.getElementById(id).parentElement.parentElement.querySelector(".pf-v5-c-helper-text__item.pf-m-error").textContent

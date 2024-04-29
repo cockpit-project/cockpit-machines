@@ -26,10 +26,6 @@ import testlib
 # echo "options kvm-intel nested=1" > /etc/modprobe.d/kvm-intel.conf
 # rmmod kvm-intel && modprobe kvm-intel || true
 
-# virt-install changed the default to "host-passthrough"
-# https://github.com/virt-manager/virt-manager/commit/2c477f330244e04614e174f50fbf37260c535705
-distrosWithDefaultHostModel = ["centos-8-stream"]
-
 
 @testlib.nondestructive
 class TestMachinesSettings(machineslib.VirtualMachinesCase):
@@ -234,8 +230,6 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         cpu_model = "host-model"
-        if m.image in distrosWithDefaultHostModel:
-            cpu_model = "host-passthrough"
 
         # Copy host CPU configuration
         b.click("#vm-subVmTest1-cpu button")
@@ -473,8 +467,6 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
         b.click("#vm-subVmTest1-cpu button")
         b.wait_visible("#machines-cpu-modal-dialog")
         cpu_model = "host-model"
-        if m.image in distrosWithDefaultHostModel:
-            cpu_model = "host-passthrough"
         b.select_from_dropdown("#cpu-model-select-group select", cpu_model)
         b.set_input_text("#machines-vcpu-max-field input", "3")  # Change values
         b.set_input_text("#machines-vcpu-count-field input", "3")
@@ -503,7 +495,7 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
         self.assertEqual(virsh_output, 'action="reset"')
 
         # Check both changes have been applied
-        b.wait_in_text("#vm-subVmTest1-cpu", "3 vCPUs, host passthrough" if m.image in distrosWithDefaultHostModel else "3 vCPUs, host")
+        b.wait_in_text("#vm-subVmTest1-cpu", "3 vCPUs, host")
         b.wait_in_text("#vm-subVmTest1-watchdog-state", "Reset")
 
     def testWatchdog(self):
@@ -662,7 +654,7 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
         m.execute("virsh destroy subVmTest1")
 
         # Some OSes don't support target.hotplug=off
-        if m.image.startswith("rhel-8") or m.image in ["centos-8-stream"]:
+        if m.image.startswith("rhel-8"):
             self.assertIn("Unknown --controller options", m.execute(
                 "! virt-xml subVmTest1 --edit model=pci-root --controller target.hotplug=off 2>&1")
             )

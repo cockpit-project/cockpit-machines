@@ -76,7 +76,7 @@ Run `make vm` to build an RPM and install it into a standard Cockpit test VM.
 This will be `fedora-39` by default. You can set `$TEST_OS` to use a different
 image, for example
 
-    TEST_OS=centos-8-stream make vm
+    TEST_OS=centos-9-stream make vm
 
 Then run
 
@@ -93,7 +93,7 @@ failures (for interactive debugging):
 
 You can also run all of the tests:
 
-    TEST_OS=centos-8-stream make check
+    TEST_OS=... make check
 
 However, this is rather expensive, and most of the time it's better to let the
 CI machinery do this on a draft pull request.
