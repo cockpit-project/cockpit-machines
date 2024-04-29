@@ -29,7 +29,7 @@ def hasMonolithicDaemon(image):
     return (image.startswith("rhel-8-") or
             image.startswith("debian") or
             image.startswith("ubuntu") or
-            image in ["centos-8-stream", "arch"])
+            image in ["arch"])
 
 
 class VirtualMachinesCaseHelpers:

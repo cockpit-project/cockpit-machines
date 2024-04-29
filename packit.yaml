@@ -35,7 +35,6 @@ jobs:
     trigger: pull_request
     packages: [cockpit-machines-centos]
     targets:
-    - centos-stream-8
     - centos-stream-9
 
   - job: tests
@@ -50,7 +49,6 @@ jobs:
     packages: [cockpit-machines-centos]
     trigger: pull_request
     targets:
-      - centos-stream-8
       - centos-stream-9
 
   - job: copr_build

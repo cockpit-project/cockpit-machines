@@ -439,7 +439,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         b.click(f"#vm-{name}-delete-modal-dialog button:contains(Delete)")
         self.waitVmRow(name, 'system', False)
 
-        if not m.image.startswith("rhel-8-") and m.image != "centos-8-stream":  # no snapshot support
+        if not m.image.startswith("rhel-8-"):
             # Delete a VM with snapshots and ensure the qcow2 image overlays get also cleaned up
             name = "vm-with-snapshots"
             self.createVm(name, running=False)

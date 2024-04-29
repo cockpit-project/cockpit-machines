@@ -2134,7 +2134,7 @@ vnc_password= "{vnc_passwd}"
         self.assertIn("<os firmware='efi'>", m.execute("virsh dumpxml VmNotInstalled"))
 
         # auto-enabled software TPM (doesn't work on RHEL 8 or arch)
-        if not m.image.startswith("rhel-8") and not m.image.startswith("centos-8") and m.image != 'arch':
+        if not m.image.startswith("rhel-8") and m.image != 'arch':
             tpm_xml = m.execute("virsh dumpxml VmNotInstalled | xmllint --xpath /domain/devices/tpm -")
             self.assertIn('model="tpm-crb"', tpm_xml)
             self.assertIn('type="emulator"', tpm_xml)
@@ -2248,7 +2248,7 @@ vnc_password= "{vnc_passwd}"
         self.assertIn("<os>", domainXML)
         self.assertNotIn("efi", domainXML)
 
-    @testlib.skipImage("does not support virt-xml --tpm", "rhel-8*", "centos-8*")
+    @testlib.skipImage("does not support virt-xml --tpm", "rhel-8*")
     @testlib.skipImage("does not support TPM 2.0", "arch")
     def testConfigureBeforeInstallBiosTPM(self):
         m = self.machine

@@ -209,8 +209,8 @@ class TestMachinesHostDevs(machineslib.VirtualMachinesCase):
 
         b.wait_in_text("#vm-subVmTest1-hostdev-1-source #slot-1", "0000:00:0f.0")
 
-        # QEMU version on rhel and centos-8/9-stream doesn't support scsi-host devices yet
-        if not m.image.startswith("rhel-8") and not m.image.startswith("rhel-9") and m.image != "centos-8-stream" and m.image != "centos-9-stream":
+        # QEMU version on RHEL 8/9 doesn't support scsi-host devices yet
+        if not m.image.startswith("rhel-8") and not m.image.startswith("rhel-9") and m.image != "centos-9-stream":
             # Test the unsupported device type, e.g. scsi_host, doesn't have "Remove" button
             m.execute(f"echo \"{SCSI_HOST_HOSTDEV}\" > /tmp/scsihost_hostdevxml")
             m.execute("virsh attach-device --domain subVmTest1 --file /tmp/scsihost_hostdevxml --persistent")
