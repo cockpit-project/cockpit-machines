@@ -545,7 +545,7 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
             virsh_output = m.execute("virsh dumpxml subVmTest1 | xmllint --xpath '/domain/devices/watchdog/@action' -").strip()
             self.assertEqual(virsh_output, f'action="{action}"')
 
-        def setWatchdogActionLive(action, previous_action=None, reboot_machine=False):
+        def setWatchdogActionLive(action, previous_action=None, reboot_machine=False, add=False, removable=True):
             openWatchDogDialog()
 
             b.click(f"#{action}")
@@ -555,6 +555,16 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
             else:
                 # When attaching adding a new watchdog, no message should be present
                 b.wait_not_present("#vm-subVmTest1-watchdog-modal #vm-subVmTest1-idle-message")
+
+            if add:
+                b.wait_in_text("#watchdog-dialog-apply", "Add")
+            else:
+                b.wait_in_text("#watchdog-dialog-apply", "Save")
+
+            if removable and not add:
+                b.wait_visible("#watchdog-dialog-detach")
+            else:
+                b.wait_not_present("#watchdog-dialog-detach")
 
             closeWatchDogDialog("#watchdog-dialog-apply")
 
@@ -643,13 +653,13 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # Test configuring watchdog for running VM
-        setWatchdogActionLive(action="reset")
+        setWatchdogActionLive(action="reset", add=True)
         setWatchdogActionLive(action="pause", previous_action="reset")
         # Make sure that the VM booted normally before attempting to hotunplug
         self.waitGuestBooted(args['logfile'])
         removeWatchdogDevice(live=True)
         # Check rebooting machine will not unexpectedly affect watchdog configuration
-        setWatchdogActionLive(action="poweroff", reboot_machine=True)
+        setWatchdogActionLive(action="poweroff", reboot_machine=True, add=True)
 
         m.execute("virsh destroy subVmTest1")
 
@@ -705,6 +715,28 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
         b.wait_visible("#watchdog-dialog-apply[aria-disabled=true]")
         b.mouse("#watchdog-dialog-apply", "mouseenter")
         b.wait_visible("#watchdog-live-edit-tooltip")
+        b.click("#vm-subVmTest2-watchdog-modal button[aria-label=Close]")
+        b.wait_not_present("#vm-subVmTest2-watchdog-modal")
+
+        self.goToMainPage()
+        self.waitPageInit()
+
+        m.execute("virsh destroy subVmTest2")
+
+        # Create a Q35 machine, which has a permanent watchdog that
+        # can't be removed.  (Some older versions of libvirt don't add
+        # a watchdog.)
+
+        m.execute("virsh destroy subVmTest1; virsh undefine subVmTest1")
+        args = self.createVm("subVmTest1", os="linux2022")
+        has_watchdog = m.image not in ["debian-stable", "ubuntu-2204", "rhel-8-10"]
+
+        self.goToVmPage("subVmTest1")
+        if has_watchdog:
+            b.wait_in_text("#vm-subVmTest1-watchdog-state", "Reset")
+            setWatchdogActionLive(action="pause", previous_action="reset", reboot_machine=True, removable=False)
+        else:
+            b.wait_in_text("#vm-subVmTest1-watchdog-state", "none")
 
     def testVsock(self):
         b = self.browser
