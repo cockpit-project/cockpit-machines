@@ -68,7 +68,7 @@ const WatchdogModalAlert = ({ dialogError }) => {
     return <ModalError dialogError={dialogError.text} dialogErrorDetail={dialogError.detail} />;
 };
 
-export const WatchdogModal = ({ vm, isWatchdogAttached, idPrefix }) => {
+export const WatchdogModal = ({ vm, isWatchdogAttached, isRemovable, idPrefix }) => {
     const [dialogError, setDialogError] = useState();
     const [watchdogAction, setWatchdogAction] = useState(vm.watchdog.action || SUPPORTEDACTIONS[0]); // use first option as default
     const [inProgress, setInProgress] = useState(false);
@@ -182,7 +182,7 @@ export const WatchdogModal = ({ vm, isWatchdogAttached, idPrefix }) => {
                                isDisabled={inProgress}>
                            {_("Apply on next boot")}
                        </Button>}
-                       {isWatchdogAttached &&
+                       {isWatchdogAttached && isRemovable &&
                        <Button variant='secondary'
                                id="watchdog-dialog-detach"
                                onClick={detach}
@@ -228,8 +228,17 @@ export const WatchdogLink = ({ vm, idPrefix, onAddErrorNotification }) => {
 
     const isWatchdogAttached = Object.keys(vm.watchdog).length > 0;
 
+    // The Q35 chipset has a "Intel TCO" watchdog built into the
+    // southbridge, and it can't be removed.
+
+    const isRemovable = (vm.watchdog.model !== "itco");
+
     function open() {
-        Dialogs.show(<WatchdogModal vm={vm} isWatchdogAttached={isWatchdogAttached} idPrefix={idPrefix} onAddErrorNotification={onAddErrorNotification} />);
+        Dialogs.show(<WatchdogModal vm={vm}
+                                    isWatchdogAttached={isWatchdogAttached}
+                                    isRemovable={isRemovable}
+                                    idPrefix={idPrefix}
+                                    onAddErrorNotification={onAddErrorNotification} />);
     }
 
     return (
