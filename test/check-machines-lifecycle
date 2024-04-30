@@ -65,7 +65,8 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         b = self.browser
         m = self.machine
 
-        args = self.createVm("subVmTest1")
+        # We want no initial watchdog
+        args = self.createVm("subVmTest1", os="linux2016")
 
         self.login_and_go("/machines", user=user, superuser=superuser)
 

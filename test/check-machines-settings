@@ -452,7 +452,8 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
         b = self.browser
         m = self.machine
 
-        args = self.createVm("subVmTest1")
+        # We want a machine without watchdog
+        args = self.createVm("subVmTest1", os="linux2016")
 
         self.login_and_go("/machines")
         self.waitPageInit()
@@ -473,7 +474,7 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
         b.click("#machines-cpu-modal-dialog-apply")  # Save
         b.wait_not_present("#machines-cpu-modal-dialog")
 
-        # Change watchdog
+        # Add watchdog
         b.click("#vm-subVmTest1-watchdog-button")
         b.wait_visible("#vm-subVmTest1-watchdog-modal")
         b.click("#reset")
@@ -618,7 +619,10 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
                 # check no watchdog is present in VM
                 self.assertNotIn("watchdog", m.execute("virsh dumpxml subVmTest1 --inactive"))
 
-        args = self.createVm("subVmTest1", running=False)
+        # We want a machine with hotpluggable watchdog, and no initial
+        # watchdog.  Asking for os="linux2016" gives us that.
+
+        args = self.createVm("subVmTest1", running=False, os="linux2016")
 
         self.login_and_go("/machines")
         self.waitPageInit()
@@ -692,7 +696,7 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
             m.execute("virsh destroy subVmTest1; virsh start subVmTest1")
             b.wait_not_present("#watchdog-tooltip")
 
-        args = self.createVm("subVmTest2")
+        args = self.createVm("subVmTest2", os="linux2016")
         self.goToMainPage()
         self.waitPageInit()
         self.goToVmPage("subVmTest2")

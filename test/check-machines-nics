@@ -48,6 +48,9 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         # If the IP will change or get assigned after fetching the domain data the user will not see any
         # changes until they refresh the page, since there is not any signal associated with this change
         testlib.wait(lambda: "1" in self.machine.execute("virsh domifaddr subVmTest1  | grep 192.168.122. | wc -l"), delay=3)
+        if "rhel-8" not in m.image:
+            testlib.wait(lambda: "1" in self.machine.execute("virsh domifaddr --source agent subVmTest1  | grep fe80:: | wc -l"), delay=3)
+
         self.goToVmPage("subVmTest1")
 
         b.wait_in_text("#vm-subVmTest1-network-1-type", "network")
@@ -56,11 +59,15 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         b.wait_in_text('#vm-subVmTest1-networks td[data-label="Source"]', "TAP device")
         b.wait_in_text("#vm-subVmTest1-network-1-tapdevice", "vnet0")
         b.wait_in_text("#vm-subVmTest1-network-1-ipv4-address", "192.168.122.")
+        if "rhel-8" not in m.image:
+            b.wait_in_text("#vm-subVmTest1-network-1-ipv6-address", "fe80::")
         b.wait_visible('td[data-label="IP address"].pf-m-width-20')
         b.wait_in_text("#vm-subVmTest1-network-1-state", "up")
         b.assert_pixels("#vm-subVmTest1-networks",
                         "vm-details-nics-card",
-                        ignore=["#vm-subVmTest1-network-1-mac", "#vm-subVmTest1-network-1-ipv4-address"],
+                        ignore=["#vm-subVmTest1-network-1-mac",
+                                "#vm-subVmTest1-network-1-ipv4-address",
+                                "#vm-subVmTest1-network-1-ipv6-address"],
                         # MAC and IP address values are not static, and their values affect the width of their columns and neighbouring columns
                         # With medium layout this variable width of the columns makes pixel tests references of the table different each test run
                         skip_layouts=["medium", "rtl"])
