@@ -192,7 +192,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
         # Virtio bus type should not be shown for CDROM devices
         m.execute("touch /var/lib/libvirt/novell.iso")
-        m.execute("virsh attach-disk --domain subVmTest1 --source /var/lib/libvirt/novell.iso --target hda --type cdrom --mode readonly --persistent")
+        m.execute("virsh attach-disk --domain subVmTest1 --source /var/lib/libvirt/novell.iso --target hda --type cdrom --targetbus sata --mode readonly --persistent")
         # virsh attach-disk want send an event for offline VM changes
         b.reload()
         b.enter_page('/machines')
@@ -1128,7 +1128,10 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         m = self.machine
         prefix = "#vm-subVmTest1-disks-adddisk"
 
-        self.createVm("subVmTest1")
+        # We want a "pc-i440fx" machine that supports IDE etc, and
+        # "linux2016" gives us one.
+
+        self.createVm("subVmTest1", os="linux2016")
 
         # Prepare file for Custom File disk type
         m.execute("touch /var/lib/libvirt/novell.iso")
@@ -1433,6 +1436,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         ).execute()
 
         self.createVm("subVmTest2")
+
         self.goToMainPage()
         self.waitVmRow("subVmTest2")
         self.goToVmPage("subVmTest2")

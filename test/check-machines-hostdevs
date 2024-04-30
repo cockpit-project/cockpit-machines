@@ -26,6 +26,23 @@ import testlib
 from machinesxmls import PCI_HOSTDEV, SCSI_HOST_HOSTDEV, USB_HOSTDEV, USB_HOSTDEV_NONEXISTENT
 
 
+def find_usb_hostdev(root, vendor_id, product_id):
+    for hostdev in root.find('devices').iter('hostdev'):
+        source = hostdev.find('source')
+        if source.find('vendor').get('id') == vendor_id and source.find('product').get('id') == product_id:
+            return True
+    return False
+
+
+def find_pci_hostdev(root, slot_parts):
+    for hostdev in root.find('devices').iter('hostdev'):
+        addr = hostdev.find('source').find('address')
+        addr_parts = [int(addr.get(a), 16) for a in ['domain', 'bus', 'slot', 'function']]
+        if slot_parts == addr_parts:
+            return True
+    return False
+
+
 class HostDevAddDialog(object):
     def __init__(
         self, test_obj, connection_name, dev_type="usb_device", dev_id=0, vm_dev_id=1, remove=True, fail_message=None
@@ -75,8 +92,8 @@ class HostDevAddDialog(object):
 
     def add(self):
         b = self.test_obj.browser
-        self.run_admin(f"virsh -c qemu:///{self.connection_name} dumpxml subVmTest1 > /tmp/vmdir/vmxml1",
-                       self.connection_name)
+        self._orig_xml = self.run_admin(f"virsh -c qemu:///{self.connection_name} dumpxml subVmTest1",
+                                        self.connection_name)
         b.click(".pf-v5-c-modal-box__footer button:contains(Add)")
         if self.fail_message:
             b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-alert__title", self.fail_message)
@@ -92,38 +109,33 @@ class HostDevAddDialog(object):
         b.wait_in_text(f"#vm-subVmTest1-hostdev-{self.vm_dev_id}-vendor", self._vendor)
 
     def verify_backend(self):
-        m = self.test_obj.machine
-        self.run_admin(f"virsh -c qemu:///{self.connection_name} dumpxml subVmTest1 > /tmp/vmdir/vmxml2",
-                       self.connection_name)
-        m.execute("diff /tmp/vmdir/vmxml1 /tmp/vmdir/vmxml2 | sed -e 's/^>//;1d' > /tmp/vmdir/vmdiff")
+        xml = self.run_admin(f"virsh -c qemu:///{self.connection_name} dumpxml subVmTest1", self.connection_name)
+        xml_root = ET.fromstring(xml)
+        orig_xml_root = ET.fromstring(self._orig_xml)
 
         if self.dev_type == "usb_device":
-            vendor_id = m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/vendor/@id)' -").strip()
-            product_id = m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/product/@id)' -").strip()
+            # Find all devices with the expected vendor and model and
+            # check whether one of them has been added
 
             output = self.run_admin(f"virsh -c qemu:///{self.connection_name} nodedev-list --cap {self.dev_type}",
                                     self.connection_name)
             devices = output.splitlines()
             devices = list(filter(None, devices))
             for dev in devices:
-                if self.dev_type == "usb_device":
-                    self.run_admin(f"virsh -c qemu:///{self.connection_name} nodedev-dumpxml --device {dev} > /tmp/vmdir/nodedevxml",
-                                   self.connection_name)
-                    vendor = m.execute(f"xmllint --xpath 'string(//device/capability/vendor[starts-with(@id, \"{vendor_id}\")])' - 2>&1 < /tmp/vmdir/nodedevxml")
-                    product = m.execute(f"xmllint --xpath 'string(//device/capability/product[starts-with(@id, \"{product_id}\")])' < /tmp/vmdir/nodedevxml - 2>&1")
-
-                    if vendor.strip() == self._vendor and product.strip() == self._model:
+                node_xml = self.run_admin(f"virsh -c qemu:///{self.connection_name} nodedev-dumpxml --device {dev}",
+                                          self.connection_name)
+                cap = ET.fromstring(node_xml).find('capability')
+                vendor = cap.find('vendor')
+                product = cap.find('product')
+                if vendor.text == self._vendor and product.text == self._model:
+                    p_id = product.get('id')
+                    v_id = vendor.get('id')
+                    if find_usb_hostdev(xml_root, v_id, p_id) and not find_usb_hostdev(orig_xml_root, v_id, p_id):
                         return
 
         elif self.dev_type == "pci":
-            domain = int(m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@domain)' -"), base=16)
-            bus = int(m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@bus)' -"), base=16)
-            slot = int(m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@slot)' -"), base=16)
-            func = int(m.execute("cat /tmp/vmdir/vmdiff | xmllint --xpath 'string(//hostdev/source/address/@function)' -"), base=16)
-
-            slot_parts = re.split(r":|\.", self._slot)
-
-            if int(slot_parts[0], 16) == domain and int(slot_parts[1], 16) == bus and int(slot_parts[2], 16) == slot and int(slot_parts[3], 16) == func:
+            slot_parts = [int(p, 16) for p in re.split(r":|\.", self._slot)]
+            if find_pci_hostdev(xml_root, slot_parts) and not find_pci_hostdev(orig_xml_root, slot_parts):
                 return
 
         raise Exception("Verification failed. No matching node device was found in VM's xml.")
@@ -284,7 +296,6 @@ class TestMachinesHostDevs(machineslib.VirtualMachinesCase):
 
     def testHostDevAddMultipleDevices(self, connectionName='system'):
         b = self.browser
-        m = self.machine
 
         self.run_admin("mkdir /tmp/vmdir", connectionName)
         self.addCleanup(self.run_admin, "rm -rf /tmp/vmdir/", connectionName)
@@ -307,11 +318,11 @@ class TestMachinesHostDevs(machineslib.VirtualMachinesCase):
         b.set_checked(".pf-v5-c-table input[name='checkrow1']", True)
         slot2 = b.text("#vm-subVmTest1-hostdevs-dialog table tbody tr:nth-child(2) td:nth-child(4) dd")
 
-        # PCI devies will be sorted in the UI by slot
+        # PCI devices will be sorted in the UI by slot
         if slot1 > slot2:
             (slot1, slot2) = (slot2, slot1)
 
-        self.run_admin(f"virsh -c qemu:///{connectionName} dumpxml subVmTest1 > /tmp/vmdir/vmxml1", connectionName)
+        orig_xml = self.run_admin(f"virsh -c qemu:///{connectionName} dumpxml subVmTest1", connectionName)
         b.click(".pf-v5-c-modal-box__footer button:contains(Add)")
         b.wait_not_present("#vm-subVmTest1-hostdevs-dialog")
 
@@ -321,47 +332,18 @@ class TestMachinesHostDevs(machineslib.VirtualMachinesCase):
         b.wait_visible("#vm-subVmTest1-hostdev-2-product")
         b.wait_in_text("#slot-2", slot2)
 
-        self.run_admin(f"virsh -c qemu:///{connectionName} dumpxml subVmTest1 > /tmp/vmdir/vmxml2", connectionName)
-        vm_diff = m.execute("diff /tmp/vmdir/vmxml1 /tmp/vmdir/vmxml2 | sed -e 's/^>//;1d'")  # Print difference between XMLs before and after adding host devices
-        vm_diff = f'<root>{vm_diff}</root>'  # Diff contains 2 <hostdevice> elements. Add root to ease xml parsing
+        xml = self.run_admin(f"virsh -c qemu:///{connectionName} dumpxml subVmTest1", connectionName)
 
-        root = ET.fromstring(vm_diff)
+        xml_root = ET.fromstring(xml)
+        orig_root = ET.fromstring(orig_xml)
 
-        hostdev1_address_elem = root[0].find('source').find('address')
-        hostdev2_address_elem = root[1].find('source').find('address')
+        slot_parts1 = [int(p, 16) for p in re.split(r":|\.", slot1)]
+        self.assertTrue(find_pci_hostdev(xml_root, slot_parts1))
+        self.assertFalse(find_pci_hostdev(orig_root, slot_parts1))
 
-        hostdev1_domain = hostdev1_address_elem.get('domain')[2:]  # Remove '0x' prefix from hex number
-        hostdev1_bus = hostdev1_address_elem.get('bus')[2:]
-        hostdev1_slot = hostdev1_address_elem.get('slot')[2:]
-        hostdev1_function = hostdev1_address_elem.get('function')[2:]
-        hostdev2_domain = hostdev2_address_elem.get('domain')[2:]
-        hostdev2_bus = hostdev2_address_elem.get('bus')[2:]
-        hostdev2_slot = hostdev2_address_elem.get('slot')[2:]
-        hostdev2_function = hostdev2_address_elem.get('function')[2:]
-
-        slot_parts1 = re.split(r":|\.", slot1)
-        slot_parts2 = re.split(r":|\.", slot2)
-        # Cannot guarantee order of host devices in VM's XML, try in different order in case of failure
-        try:
-            self.assertEqual(slot_parts1[0], hostdev1_domain)
-            self.assertEqual(slot_parts1[1], hostdev1_bus)
-            self.assertEqual(slot_parts1[2], hostdev1_slot)
-            self.assertEqual(slot_parts1[3], hostdev1_function)
-
-            self.assertEqual(slot_parts2[0], hostdev2_domain)
-            self.assertEqual(slot_parts2[1], hostdev2_bus)
-            self.assertEqual(slot_parts2[2], hostdev2_slot)
-            self.assertEqual(slot_parts2[3], hostdev2_function)
-        except AssertionError:
-            self.assertEqual(slot_parts1[0], hostdev2_domain)
-            self.assertEqual(slot_parts1[1], hostdev2_bus)
-            self.assertEqual(slot_parts1[2], hostdev2_slot)
-            self.assertEqual(slot_parts1[3], hostdev2_function)
-
-            self.assertEqual(slot_parts2[0], hostdev1_domain)
-            self.assertEqual(slot_parts2[1], hostdev1_bus)
-            self.assertEqual(slot_parts2[2], hostdev1_slot)
-            self.assertEqual(slot_parts2[3], hostdev1_function)
+        slot_parts2 = [int(p, 16) for p in re.split(r":|\.", slot2)]
+        self.assertTrue(find_pci_hostdev(xml_root, slot_parts2))
+        self.assertFalse(find_pci_hostdev(orig_root, slot_parts2))
 
 
 if __name__ == '__main__':

@@ -156,8 +156,13 @@ class VirtualMachinesCaseHelpers:
                      if ! echo "$out" | grep -q 'Active.*yes'; then virsh net-start default; fi""")
         m.execute(r"until virsh net-info default | grep 'Active:\s*yes'; do sleep 1; done")
 
-    def createVm(self, name, graphics='none', ptyconsole=False, running=True, memory=128, connection='system', machine=None, os="linux2016"):
+    def createVm(self, name, graphics='none', ptyconsole=False, running=True, memory=128, connection='system', machine=None, os=None):
         m = machine or self.machine
+
+        if os is None:
+            # q35 in rhel-8 can't do a lot of hotplugging, so we stick
+            # with i440fx by default there.
+            os = "linux2022" if "rhel-8" not in m.image else "linux2016"
 
         image_file = m.pull("alpine")
 

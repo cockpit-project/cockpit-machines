@@ -504,7 +504,7 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
 
         mac = b.text("#vm-subVmTest1-network-1-mac")
         next_mac = self.get_next_mac(mac)
-        m.execute(f'virsh attach-interface --persistent subVmTest1 bridge virbr0 --mac {next_mac}')
+        m.execute(f'virsh attach-interface --persistent subVmTest1 bridge virbr0 --model virtio --mac {next_mac}')
 
         # Wait for the edit button
         b.click("#vm-subVmTest1-network-1-edit-dialog")
