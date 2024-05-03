@@ -37,7 +37,7 @@ import { WATCHDOG_INFO_MESSAGE } from './helpers.jsx';
 
 const _ = cockpit.gettext;
 
-const SUPPORTEDACTIONS = ["reset", "poweroff", "inject-nmi", "pause"];
+const SUPPORTEDACTIONS = ["reset", "poweroff", "inject-nmi", "pause", "none"];
 
 const WatchdogModalAlert = ({ dialogError }) => {
     const [isExpanded, setIsExpanded] = useState(false);
