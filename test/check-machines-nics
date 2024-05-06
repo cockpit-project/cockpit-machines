@@ -56,6 +56,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         b.wait_in_text('#vm-subVmTest1-networks td[data-label="Source"]', "TAP device")
         b.wait_in_text("#vm-subVmTest1-network-1-tapdevice", "vnet0")
         b.wait_in_text("#vm-subVmTest1-network-1-ipv4-address", "192.168.122.")
+        b.wait_visible("#vm-subVmTest1-network-1-ipv6-address")
         b.wait_visible('td[data-label="IP address"].pf-m-width-20')
         b.wait_in_text("#vm-subVmTest1-network-1-state", "up")
         b.assert_pixels("#vm-subVmTest1-networks",
