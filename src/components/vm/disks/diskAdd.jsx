@@ -397,7 +397,7 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
 
     const getPoolFormatAndDevice = (pool, volName) => {
         const params = { format: getDefaultVolumeFormat(pool), device: "disk" };
-        if (['dir', 'fs', 'netfs', 'gluster', 'vstorage'].indexOf(pool.type) > -1) {
+        if (volName && ['dir', 'fs', 'netfs', 'gluster', 'vstorage'].indexOf(pool.type) > -1) {
             const volume = pool.volumes.find(vol => vol.name === volName);
             if (volume?.format) {
                 params.format = volume.format;
@@ -436,9 +436,9 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
 
         setDiskParams(diskParams => ({
             ...diskParams,
-            ...getPoolFormatAndDevice(diskParams.storagePool, diskParams.existingVolumeName),
+            ...getPoolFormatAndDevice(diskParams.storagePool, mode == USE_EXISTING && diskParams.existingVolumeName),
         }));
-    }, [storagePools, diskParams.storagePool, diskParams.existingVolumeName]);
+    }, [storagePools, diskParams.storagePool, diskParams.existingVolumeName, mode]);
 
     useEffect(() => {
         // Initial state settings and follow up state updates after 'device' is changed
@@ -519,7 +519,7 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
                 ...diskParams,
                 storagePool: currentPool,
                 existingVolumeName,
-                ...getPoolFormatAndDevice(currentPool, existingVolumeName),
+                ...getPoolFormatAndDevice(currentPool, mode == USE_EXISTING && existingVolumeName),
             }));
             break;
         }
