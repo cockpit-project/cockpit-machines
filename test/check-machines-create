@@ -2298,6 +2298,44 @@ vnc_password= "{vnc_passwd}"
         if m.image == 'debian-stable':
             self.allow_journal_messages('.*apparmor="DENIED".*name="/etc/ssl/openssl.cnf".*comm="swtpm".*')
 
+    def testConfigureBeforeInstallEFI(self):
+        m = self.machine
+        b = self.browser
+        TestMachinesCreate.CreateVmRunner(self)
+
+        m.upload([m.pull("alpine-efi")], "/var/lib/libvirt/images/")
+
+        # create VM with an EFI image
+        vmName = "subVmTest1"
+        self.login_and_go("/machines")
+        self.waitPageInit()
+        dialog = TestMachinesCreate.VmDialog(self, sourceType='file',
+                                             name=vmName,
+                                             location="/var/lib/libvirt/images/alpine-efi",
+                                             memory_size=128, memory_size_unit='MiB',
+                                             storage_size=256, storage_size_unit='MiB',
+                                             create_and_run=False)
+        dialog.open().fill()
+        b.click(".pf-v5-c-modal-box__footer #create-and-edit")
+        b.wait_not_present("#create-vm-dialog")
+        b.wait_in_text(f"#vm-{vmName}-firmware", "BIOS")
+
+        # Change the os boot firmware to EFI
+        b.click(f"#vm-{vmName}-firmware")
+        b.wait_visible(".pf-v5-c-modal-box__body")
+        b.select_from_dropdown(".pf-v5-c-modal-box__body select", "efi")
+        b.click("#firmware-dialog-apply")
+        b.wait_not_present(".pf-v5-c-modal-box__body")
+        b.wait_in_text(f"#vm-{vmName}-firmware", "UEFI")
+
+        # Install the VM
+        b.click(f"#vm-{vmName}-system-install")
+        b.wait_in_text(f"#vm-{vmName}-system-state", "Running")
+
+        # AppArmor policy fixed in later versions, don't bother with reporting
+        if m.image == 'debian-stable':
+            self.allow_journal_messages('.*apparmor="DENIED".*name="/etc/ssl/openssl.cnf".*comm="swtpm".*')
+
     def testCreateDownloadRhel(self):
         runner = TestMachinesCreate.CreateVmRunner(self, rhel_download=True)
         config = TestMachinesCreate.TestCreateConfig
