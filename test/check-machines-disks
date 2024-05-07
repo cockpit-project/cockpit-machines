@@ -987,9 +987,10 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         m.execute(f"virsh pool-define-as myPoolTwo --type dir --target {v2}; virsh pool-start myPoolTwo")
 
         m.upload([os.path.join(testlib.BOTS_DIR, "machine/cloud-init.iso")], os.path.join(default_tmp, "defaultVol.iso"))
-        m.execute("virsh vol-create-as default_tmp defaultVol --capacity 10M --format raw")
+        m.execute("virsh pool-refresh default_tmp")
         m.execute("virsh vol-create-as myPoolTwo mydiskofpooltwo_temporary --capacity 50M --format qcow2")
         m.execute("virsh vol-create-as myPoolTwo mydiskofpooltwo_permanent --capacity 50M --format qcow2")
+
         testlib.wait(lambda: "mydiskofpooltwo_permanent" in m.execute("virsh vol-list myPoolTwo"))
 
         self.createVm("subVmTest1")
@@ -1024,26 +1025,15 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b.click(f"{prefix}-dialog-cancel")
         b.wait_not_present(f"{prefix}-dialog-modal-window")
 
+        pool_disk = get_next_free_target(used_targets)[-1]
         self.VMAddDiskDialog(
             self,
             pool_name='myPoolTwo',
             volume_name='mydiskofpooltwo_permanent',
             volume_size=2,
             mode='use-existing',
-            expected_target=get_next_free_target(used_targets)[-1],
+            expected_target=pool_disk
         ).execute()
-
-        # check the autoselected options
-        # default_tmp pool should be autoselected since it's the first in alphabetical order
-        # defaultVol volume should be autoselected since it's the only volume in default_tmp pool
-        self.VMAddDiskDialog(
-            self,
-            pool_name='default_tmp',
-            volume_name='defaultVol',
-            mode='use-existing',
-            expected_target=get_next_free_target(used_targets)[-1],
-            volume_format='raw',
-        ).openDialog().add_disk().verify_disk_added()
 
         # shut off
         self.performAction("subVmTest1", "forceOff")
@@ -1057,15 +1047,37 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         for target in permanent_targets:
             b.wait_visible(f"#vm-subVmTest1-disks-{target}-device")
 
-        # check that bus and device type can be automatically picked up from the volume format (ISO)
+        # Check that creating a new volume in default_tmp does not by
+        # accident use the defaults from defaultVol.iso.  Those
+        # defaults will add the disk as "scsi" and "raw", while we
+        # expect "virtio" and "qcow2".  It's important that
+        # defaultVol.iso is not yet attached itself for this.
+
         self.VMAddDiskDialog(
             self,
-            expected_target='sda',
+            pool_name='default_tmp',
+            volume_name='zzz-i-am-not-first',
+            mode='create-new',
+            volume_size=10,
+            volume_size_unit='MiB',
+            bus_type="virtio",
+            expected_format="qcow2",
+            expected_target=get_next_free_target(used_targets)[-1],
+        ).execute()
+
+        # check the autoselected options
+        # default_tmp pool should be autoselected since it's the first in alphabetical order
+        # defaultVol.iso volume should be autoselected since it's also first
+        self.VMAddDiskDialog(
+            self,
+            device='cdrom',
+            mode='use-existing',
             pool_name='default_tmp',
             volume_name='defaultVol.iso',
-            mode='use-existing',
+            expected_target="sda",
+            expected_access='Read-only',
             expected_volume_format='iso',
-        ).execute()
+        ).openDialog().add_disk().verify_disk_added()
 
         # Add a new raw disk for a shut off VM
         self.VMAddDiskDialog(
@@ -1117,7 +1129,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b.enter_page('/machines')
         self.waitPageInit()
         # Check that usage information can't be fetched since the pool is inactive
-        b.wait_not_present("#vm-subVmTest1-disks-vdd-used")
+        b.wait_not_present(f"#vm-subVmTest1-disks-{pool_disk}-used")
 
         # AppArmor doesn't like the non-standard path for our storage pools
         if m.image in ["debian-testing"]:
