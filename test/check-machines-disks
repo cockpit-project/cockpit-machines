@@ -1679,6 +1679,28 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
                 force=True,
             ).execute()
 
+    def testBlockDeviceDisk(self):
+        b = self.browser
+        m = self.machine
+
+        loop_dev = self.add_loopback_disk()
+
+        self.createVm("subVmTest1", running=False)
+        m.execute(f"virt-xml subVmTest1 --add-device --disk source.type=block,source.dev={loop_dev}")
+        m.execute("virsh start subVmTest1")
+
+        self.login_and_go("/machines")
+        self.waitPageInit()
+
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
+        self.goToVmPage("subVmTest1")
+
+        b.wait_in_text('#vm-subVmTest1-disks', "Block device")
+        b.wait_text('#vm-subVmTest1-disks-vdb-source-dev', loop_dev)
+
+        if "debian" in m.image or "ubuntu" in m.image:
+            self.allow_journal_messages(f'.* type=1400 .* apparmor="DENIED" operation="open".*profile="virt-aa-helper" name="{loop_dev}".*')
+
 
 if __name__ == '__main__':
     testlib.test_main()
