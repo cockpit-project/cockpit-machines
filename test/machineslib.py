@@ -463,6 +463,18 @@ class VirtualMachinesCase(testlib.MachineCase, VirtualMachinesCaseHelpers, stora
             testlib.attach(dest, move=True)
             print(f"Wrote {vm} log to {dest_file}")
 
+    def downloadVmConsole(self, vm):
+        m = self.machine
+
+        console_log = f"/var/log/libvirt/console-{vm}.log"
+        # Log file may not exist
+        if m.execute(f"! test -f {console_log} || echo exists").strip() == "exists":
+            dest_file = f"{self.label()}-{m.label}-{vm}-console.log"
+            dest = os.path.abspath(dest_file)
+            m.download(console_log, dest)
+            testlib.attach(dest, move=True)
+            print(f"Wrote {vm} console log to {dest_file}")
+
     def downloadVmsArtifacts(self):
         m = self.machine
 
@@ -472,6 +484,7 @@ class VirtualMachinesCase(testlib.MachineCase, VirtualMachinesCaseHelpers, stora
         for vm in vms:
             self.downloadVmXml(vm)
             self.downloadVmLog(vm)
+            self.downloadVmConsole(vm)
 
     def tearDown(self):
         b = self.browser
