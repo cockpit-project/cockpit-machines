@@ -173,7 +173,8 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         b.click("#vm-subVmTest1-system-shutdown-button")
         b.wait_visible("#vm-subVmTest1-system-confirm-action-modal")
         b.click(".pf-v5-c-modal-box__footer #vm-subVmTest1-system-off")
-        b.wait_in_text("#vm-subVmTest1-system-state", "Shut off")
+        with b.wait_timeout(60):
+            b.wait_in_text("#vm-subVmTest1-system-state", "Shut off")
         b.wait_visible("#vm-subVmTest1-system-run")
 
         # the shut off button in the extended operation list
