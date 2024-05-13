@@ -1328,15 +1328,20 @@ vnc_password= "{vnc_passwd}"
                 b.set_input_text("#vm-name", self.name)
 
             b.wait_not_present("#offline-token")
-            if self.os_name:
-                b.click("#os-select-group > div button")
-                b.click(f"#os-select li:contains('{self.os_name}') button")
-                b.wait_attr("#os-select-group input", "value", self.os_name)
 
             if self.sourceType != 'disk_image':
                 b.select_from_dropdown("#source-type", self.sourceType)
             else:
                 b.wait_not_present("#source-type")
+
+            # Data loading doesn't start immediately
+            time.sleep(1)
+            b.wait_attr("#os-select-group", "data-loading", "false")
+
+            if self.os_name:
+                b.click("#os-select-group > div button")
+                b.click(f"#os-select li:contains('{self.os_name}') button")
+                b.wait_attr("#os-select-group input", "value", self.os_name)
 
             if self.sourceType == 'file' or self.sourceType == 'cloud':
                 b.set_file_autocomplete_val("#source-file-group", self.location or " ")
@@ -2309,11 +2314,12 @@ vnc_password= "{vnc_passwd}"
         vmName = "subVmTest1"
         self.login_and_go("/machines")
         self.waitPageInit()
-        dialog = TestMachinesCreate.VmDialog(self, sourceType='file',
+        dialog = TestMachinesCreate.VmDialog(self, sourceType='cloud',
                                              name=vmName,
                                              location="/var/lib/libvirt/images/alpine-efi",
-                                             memory_size=128, memory_size_unit='MiB',
-                                             storage_size=256, storage_size_unit='MiB',
+                                             os_name="Oracle Linux 6.0",
+                                             memory_size=256, memory_size_unit='MiB',
+                                             storage_size=512, storage_size_unit='MiB',
                                              create_and_run=False)
         dialog.open().fill()
         b.click(".pf-v5-c-modal-box__footer #create-and-edit")
@@ -2331,6 +2337,14 @@ vnc_password= "{vnc_passwd}"
         # Install the VM
         b.click(f"#vm-{vmName}-system-install")
         b.wait_in_text(f"#vm-{vmName}-system-state", "Running")
+
+        # Now the boot messages are on the serial console
+        b.click("#pf-v5-c-console__type-selector")
+        b.wait_visible("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
+        b.click("#SerialConsole button")
+        b.wait_not_present("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
+
+        testlib.sit()
 
         # AppArmor policy fixed in later versions, don't bother with reporting
         if m.image == 'debian-stable':
