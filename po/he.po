@@ -24,7 +24,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-07 02:50+0000\n"
+"POT-Creation-Date: 2024-05-14 02:50+0000\n"
 "PO-Revision-Date: 2023-03-06 09:20+0000\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language-Team: Hebrew <https://translate.fedoraproject.org/projects/cockpit-"
@@ -199,10 +199,10 @@ msgstr "נוסף"
 msgid "Address"
 msgstr "כתובת"
 
-#: src/components/networks/createNetworkDialog.jsx:80
-#: src/components/networks/createNetworkDialog.jsx:87
-#: src/components/networks/createNetworkDialog.jsx:108
-#: src/components/networks/createNetworkDialog.jsx:115
+#: src/components/networks/createNetworkDialog.jsx:94
+#: src/components/networks/createNetworkDialog.jsx:101
+#: src/components/networks/createNetworkDialog.jsx:122
+#: src/components/networks/createNetworkDialog.jsx:129
 msgid "Address not within subnet"
 msgstr "הכתובת אינה בתת־הרשת"
 
@@ -256,7 +256,7 @@ msgid ""
 "cloud-init."
 msgstr "התקנות אוטומטיות זמינות רק בעת הורדת דמות או בעת שימוש ב־cloud-init."
 
-#: src/components/networks/createNetworkDialog.jsx:166
+#: src/components/networks/createNetworkDialog.jsx:180
 msgid "Automatic"
 msgstr "אוטומטית"
 
@@ -269,6 +269,12 @@ msgstr "אוטומציה"
 #: src/components/networks/networkOverviewTab.jsx:119
 msgid "Autostart"
 msgstr "התחלה אוטומטית"
+
+#: src/components/vm/disks/vmDiskColumns.jsx:42
+#, fuzzy
+#| msgid "Host device"
+msgid "Block device"
+msgstr "התקן מארח"
 
 #: src/helpers.js:232
 msgid "Blocked"
@@ -314,7 +320,7 @@ msgid "CPU mode could not be saved"
 msgstr "לא ניתן לשמור את הגדרות המעבד הווירטואלי"
 
 #: src/components/vm/disks/diskAdd.jsx:212
-#: src/components/vm/disks/vmDiskColumns.jsx:103
+#: src/components/vm/disks/vmDiskColumns.jsx:104
 #: src/components/vm/disks/diskEdit.jsx:60
 msgid "Cache"
 msgstr "מכלא"
@@ -343,7 +349,7 @@ msgstr "מכלא"
 #: src/components/vm/disks/diskEdit.jsx:270
 #: src/components/vm/disks/mediaEject.jsx:110
 #: src/components/common/deleteResource.jsx:91
-#: src/components/networks/createNetworkDialog.jsx:421
+#: src/components/networks/createNetworkDialog.jsx:435
 #: src/components/networks/networkOverviewTab.jsx:238
 #: src/components/create-vm-dialog/createVmDialog.jsx:1486
 msgid "Cancel"
@@ -476,7 +482,7 @@ msgstr "לא ניתן למחוק את $0"
 msgid "Could not delete all storage for $0"
 msgstr "לא ניתן למחוק את האחסון עבור $0"
 
-#: src/components/vm/disks/vmDiskColumns.jsx:135
+#: src/components/vm/disks/vmDiskColumns.jsx:136
 #, fuzzy
 #| msgid "Could not delete storage for $0"
 msgid "Could not delete disk's storage"
@@ -497,7 +503,7 @@ msgstr "קרס"
 #: src/components/storagePools/storageVolumeCreate.jsx:114
 #: src/components/storagePools/createStoragePoolDialog.jsx:442
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:201
-#: src/components/networks/createNetworkDialog.jsx:418
+#: src/components/networks/createNetworkDialog.jsx:432
 msgid "Create"
 msgstr "יצירה"
 
@@ -560,8 +566,8 @@ msgstr "יצירת מאגר אחסון"
 msgid "Create storage volume"
 msgstr "יצירת כרך אחסון"
 
-#: src/components/networks/createNetworkDialog.jsx:411
-#: src/components/networks/createNetworkDialog.jsx:439
+#: src/components/networks/createNetworkDialog.jsx:425
+#: src/components/networks/createNetworkDialog.jsx:453
 msgid "Create virtual network"
 msgstr "יצירת רשת וירטואלית"
 
@@ -715,14 +721,14 @@ msgstr "פרטים"
 #: src/components/vm/hostdevs/hostDevCard.jsx:98
 #: src/components/vm/hostdevs/hostDevCard.jsx:244
 #: src/components/vm/disks/diskAdd.jsx:348
-#: src/components/vm/disks/vmDiskColumns.jsx:42
+#: src/components/vm/disks/vmDiskColumns.jsx:43
 #: src/components/vm/disks/vmDisksCard.jsx:172
-#: src/components/networks/createNetworkDialog.jsx:160
+#: src/components/networks/createNetworkDialog.jsx:174
 #: src/components/networks/networkList.jsx:68
 msgid "Device"
 msgstr "התקן"
 
-#: src/components/networks/createNetworkDialog.jsx:167
+#: src/components/networks/createNetworkDialog.jsx:181
 msgid "Devices"
 msgstr "התקנים"
 
@@ -745,7 +751,7 @@ msgstr "מנותק מהמסוף הטורי. יש ללחוץ על כפתור הח
 msgid "Disk"
 msgstr "כוננים"
 
-#: src/components/vm/disks/vmDiskColumns.jsx:149
+#: src/components/vm/disks/vmDiskColumns.jsx:150
 msgid "Disk $0 could not be removed"
 msgstr "לא ניתן להסיר את הכונן $0"
 
@@ -860,7 +866,7 @@ msgstr "עריכת מנשקי הרשת של אורחות חולפות אסורה
 msgid "Editing transient network interfaces is not allowed"
 msgstr "עריכת מנשקים של רשת חולפת אסורה"
 
-#: src/components/vm/disks/vmDiskColumns.jsx:195
+#: src/components/vm/disks/vmDiskColumns.jsx:196
 #: src/components/vm/disks/mediaEject.jsx:103
 msgid "Eject"
 msgstr "שליפה"
@@ -877,12 +883,12 @@ msgstr "מכונה מדומה"
 msgid "Enable virtualization support in BIOS/EFI settings."
 msgstr ""
 
-#: src/components/networks/createNetworkDialog.jsx:226
+#: src/components/networks/createNetworkDialog.jsx:240
 msgid "End"
 msgstr "סוף"
 
-#: src/components/networks/createNetworkDialog.jsx:83
-#: src/components/networks/createNetworkDialog.jsx:111
+#: src/components/networks/createNetworkDialog.jsx:97
+#: src/components/networks/createNetworkDialog.jsx:125
 msgid "End should not be empty"
 msgstr "הסוף אמור להיות ריק"
 
@@ -1028,11 +1034,11 @@ msgstr "לאלץ כיבוי"
 
 #: src/components/storagePools/createStoragePoolDialog.jsx:199
 #: src/components/storagePools/storageVolumeCreateBody.jsx:76
-#: src/components/vm/disks/vmDiskColumns.jsx:105
+#: src/components/vm/disks/vmDiskColumns.jsx:106
 msgid "Format"
 msgstr "פרמוט"
 
-#: src/components/networks/createNetworkDialog.jsx:141
+#: src/components/networks/createNetworkDialog.jsx:155
 msgid "Forward mode"
 msgstr "מצב העברה"
 
@@ -1100,7 +1106,7 @@ msgstr "הסתרת אפשרויות נוספות"
 #: src/components/storagePools/storagePoolOverviewTab.jsx:34
 #: src/components/storagePools/createStoragePoolDialog.jsx:121
 #: src/components/vm/overview/bootOrder.jsx:101
-#: src/components/vm/disks/vmDiskColumns.jsx:46
+#: src/components/vm/disks/vmDiskColumns.jsx:47
 msgid "Host"
 msgstr "מארח"
 
@@ -1155,45 +1161,51 @@ msgstr "כתובת IP"
 msgid "IP address must not be empty"
 msgstr "השם לא יכול להישאר ריק"
 
-#: src/components/networks/createNetworkDialog.jsx:182
+#: src/components/networks/createNetworkDialog.jsx:196
 msgid "IP configuration"
 msgstr "הגדרת IP"
 
-#: src/components/networks/createNetworkDialog.jsx:243
+#: src/components/networks/createNetworkDialog.jsx:257
 #: src/components/networks/networkOverviewTab.jsx:138
 msgid "IPv4 address"
 msgstr "כתובת IPv4"
 
-#: src/components/networks/createNetworkDialog.jsx:68
-msgid "IPv4 address cannot be same as the network identifier"
-msgstr ""
-
-#: src/components/networks/createNetworkDialog.jsx:72
+#: src/components/networks/createNetworkDialog.jsx:86
 msgid "IPv4 address cannot be same as the network's broadcast address"
 msgstr ""
 
-#: src/components/networks/createNetworkDialog.jsx:190
+#: src/components/networks/createNetworkDialog.jsx:204
 msgid "IPv4 and IPv6"
 msgstr "IPv4 ו־IPv6"
 
-#: src/components/networks/createNetworkDialog.jsx:62
+#: src/components/networks/createNetworkDialog.jsx:74
 msgid "IPv4 network should not be empty"
 msgstr "רשת IPv4 לא אמורה להישאר ריקה"
 
-#: src/components/networks/createNetworkDialog.jsx:188
+#: src/components/networks/createNetworkDialog.jsx:202
 msgid "IPv4 only"
 msgstr "IPv4 בלבד"
 
-#: src/components/networks/createNetworkDialog.jsx:273
+#: src/components/networks/createNetworkDialog.jsx:69
+#, fuzzy
+#| msgid "Prefix length should not be empty"
+msgid "IPv4 prefix length must be 24 or less"
+msgstr "אורך הקידומת לא אמור להיות ריק"
+
+#: src/components/networks/createNetworkDialog.jsx:66
+msgid "IPv4 prefix length must be a multiple of 8"
+msgstr ""
+
+#: src/components/networks/createNetworkDialog.jsx:287
 #: src/components/networks/networkOverviewTab.jsx:158
 msgid "IPv6 address"
 msgstr "כתובת IPv6"
 
-#: src/components/networks/createNetworkDialog.jsx:93
+#: src/components/networks/createNetworkDialog.jsx:107
 msgid "IPv6 network should not be empty"
 msgstr "רשת IPv6 לא אמורה להישאר ריקה"
 
-#: src/components/networks/createNetworkDialog.jsx:189
+#: src/components/networks/createNetworkDialog.jsx:203
 msgid "IPv6 only"
 msgstr "IPv6 בלבד"
 
@@ -1275,7 +1287,7 @@ msgid "Inject a non-maskable interrupt"
 msgstr "שליחת פסיקה שלא ניתן למסך"
 
 #: src/components/vm/disks/diskAdd.jsx:846
-#: src/components/vm/disks/vmDiskColumns.jsx:187
+#: src/components/vm/disks/vmDiskColumns.jsx:188
 #, fuzzy
 #| msgid "Ctrl+Insert"
 msgid "Insert"
@@ -1321,23 +1333,23 @@ msgstr "סוג מנשק"
 msgid "Interface type help"
 msgstr "סוג מנשק"
 
-#: src/components/networks/createNetworkDialog.jsx:64
-#: src/components/networks/createNetworkDialog.jsx:78
-#: src/components/networks/createNetworkDialog.jsx:85
+#: src/components/networks/createNetworkDialog.jsx:76
+#: src/components/networks/createNetworkDialog.jsx:92
+#: src/components/networks/createNetworkDialog.jsx:99
 msgid "Invalid IPv4 address"
 msgstr "כתובת IPv4 שגויה"
 
-#: src/components/networks/createNetworkDialog.jsx:59
+#: src/components/networks/createNetworkDialog.jsx:63
 msgid "Invalid IPv4 mask or prefix length"
 msgstr "מסכה או אורך קידומת של IPv4 שגוי"
 
-#: src/components/networks/createNetworkDialog.jsx:95
-#: src/components/networks/createNetworkDialog.jsx:106
-#: src/components/networks/createNetworkDialog.jsx:113
+#: src/components/networks/createNetworkDialog.jsx:109
+#: src/components/networks/createNetworkDialog.jsx:120
+#: src/components/networks/createNetworkDialog.jsx:127
 msgid "Invalid IPv6 address"
 msgstr "כתובת IPv6 שגויה"
 
-#: src/components/networks/createNetworkDialog.jsx:100
+#: src/components/networks/createNetworkDialog.jsx:114
 msgid "Invalid IPv6 prefix"
 msgstr "קידומת IPv6 שגויה"
 
@@ -1459,11 +1471,11 @@ msgstr "ניהול מכונות וירטואליות"
 msgid "Manual connection"
 msgstr "חיבור ידני"
 
-#: src/components/networks/createNetworkDialog.jsx:250
+#: src/components/networks/createNetworkDialog.jsx:264
 msgid "Mask or prefix length"
 msgstr "מסכה או אורך קידומת"
 
-#: src/components/networks/createNetworkDialog.jsx:57
+#: src/components/networks/createNetworkDialog.jsx:59
 msgid "Mask or prefix length should not be empty"
 msgstr "מסכה או אורך קידומת לא אמור להישאר ריק"
 
@@ -1584,6 +1596,10 @@ msgstr ""
 msgid "Mount tag must not be empty"
 msgstr "השם לא יכול להישאר ריק"
 
+#: src/components/networks/createNetworkDialog.jsx:81
+msgid "Must be an address instead of the network identifier, such as $0"
+msgstr ""
+
 #: src/components/create-vm-dialog/pxe-helpers.js:93
 msgid "NAT to $0"
 msgstr "NAT אל $0"
@@ -1600,7 +1616,7 @@ msgstr "החלפת מצב מתאם הרשת $0 של המכונה הווירטו�
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:90
 #: src/components/vm/vmCloneDialog.jsx:93
 #: src/components/vms/hostvmslist.jsx:161
-#: src/components/networks/createNetworkDialog.jsx:126
+#: src/components/networks/createNetworkDialog.jsx:140
 #: src/components/networks/networkList.jsx:67
 #: src/components/create-vm-dialog/createVmDialog.jsx:265
 msgid "Name"
@@ -1825,7 +1841,7 @@ msgid ""
 msgstr ""
 "לא ניתן למחוק מאגר אחסון שאינו עקבי. הוא פשוט חדל מלהתקיים לאחר סיום הפעלתו."
 
-#: src/components/networks/createNetworkDialog.jsx:187
+#: src/components/networks/createNetworkDialog.jsx:201
 msgid "None"
 msgstr "אין"
 
@@ -1980,7 +1996,7 @@ msgstr "נא להפעיל את המכונה הווירטואלית כדי לגש
 #: src/components/vm/overview/bootOrder.jsx:99
 #: src/components/vm/deleteDialog.jsx:68
 #: src/components/vm/disks/diskAdd.jsx:151
-#: src/components/vm/disks/vmDiskColumns.jsx:44
+#: src/components/vm/disks/vmDiskColumns.jsx:45
 #: src/components/vm/disks/mediaEject.jsx:85
 msgid "Pool"
 msgstr "מאגר"
@@ -2004,7 +2020,7 @@ msgstr "כרכי המאגר משמשים מכונות וירטואליות "
 #: src/components/vm/overview/bootOrder.jsx:102
 #: src/components/vm/overview/bootOrder.jsx:118
 #: src/components/vm/nics/vmNicsCard.jsx:162
-#: src/components/vm/disks/vmDiskColumns.jsx:47
+#: src/components/vm/disks/vmDiskColumns.jsx:48
 msgid "Port"
 msgstr "פתחה"
 
@@ -2026,11 +2042,11 @@ msgstr "מספר השקעים המועדף לחשיפה לאורח."
 msgid "Prefix"
 msgstr "קידומת"
 
-#: src/components/networks/createNetworkDialog.jsx:280
+#: src/components/networks/createNetworkDialog.jsx:294
 msgid "Prefix length"
 msgstr "אורך קידומת"
 
-#: src/components/networks/createNetworkDialog.jsx:98
+#: src/components/networks/createNetworkDialog.jsx:112
 msgid "Prefix length should not be empty"
 msgstr "אורך הקידומת לא אמור להיות ריק"
 
@@ -2059,7 +2075,7 @@ msgstr "פרופיל"
 #: src/components/vm/overview/bootOrder.jsx:98
 #: src/components/vm/overview/bootOrder.jsx:159
 #: src/components/vm/hostdevs/hostDevCard.jsx:114
-#: src/components/vm/disks/vmDiskColumns.jsx:43
+#: src/components/vm/disks/vmDiskColumns.jsx:44
 msgid "Protocol"
 msgstr "פרוטוקול"
 
@@ -2123,8 +2139,8 @@ msgstr "פרטי המציג מרחוק"
 #: src/components/vm/hostdevs/hostDevCard.jsx:257
 #: src/components/vm/nics/vmNicsCard.jsx:471
 #: src/components/vm/nics/vmNicsCard.jsx:481
-#: src/components/vm/disks/vmDiskColumns.jsx:148
-#: src/components/vm/disks/vmDiskColumns.jsx:214
+#: src/components/vm/disks/vmDiskColumns.jsx:149
+#: src/components/vm/disks/vmDiskColumns.jsx:215
 #: src/components/networks/networkOverviewTab.jsx:70
 msgid "Remove"
 msgstr "הסרה"
@@ -2133,11 +2149,11 @@ msgstr "הסרה"
 msgid "Remove SPICE audio and host devices"
 msgstr ""
 
-#: src/components/vm/disks/vmDiskColumns.jsx:161
+#: src/components/vm/disks/vmDiskColumns.jsx:162
 msgid "Remove and delete file"
 msgstr ""
 
-#: src/components/vm/disks/vmDiskColumns.jsx:147
+#: src/components/vm/disks/vmDiskColumns.jsx:148
 msgid "Remove disk from VM?"
 msgstr "להסיר כונן מהמכונה הווירטואלית?"
 
@@ -2319,7 +2335,7 @@ msgstr "שליחת פסיקה שלא ניתן למסך"
 msgid "Send non-maskable interrupt to $0?"
 msgstr "שליחת פסיקה שלא ניתן למסך"
 
-#: src/components/vm/disks/vmDiskColumns.jsx:104
+#: src/components/vm/disks/vmDiskColumns.jsx:105
 msgid "Serial"
 msgstr "טורית"
 
@@ -2333,7 +2349,7 @@ msgstr "מסוף טורי"
 msgid "Serial console ($0)"
 msgstr "מסוף טורי"
 
-#: src/components/networks/createNetworkDialog.jsx:214
+#: src/components/networks/createNetworkDialog.jsx:228
 msgid "Set DHCP range"
 msgstr "הגדרת טווח DHCP"
 
@@ -2496,7 +2512,7 @@ msgstr "המקור אמור להיפתח בפרוטוקולי http,‏ ftp או 
 msgid "Source volume group"
 msgstr "קבוצת כרכים מקורית"
 
-#: src/components/networks/createNetworkDialog.jsx:219
+#: src/components/networks/createNetworkDialog.jsx:233
 msgid "Start"
 msgstr "התחלה"
 
@@ -2504,8 +2520,8 @@ msgstr "התחלה"
 msgid "Start pool when host boots"
 msgstr "הפעלת המאגר עם עליית המארח"
 
-#: src/components/networks/createNetworkDialog.jsx:76
-#: src/components/networks/createNetworkDialog.jsx:104
+#: src/components/networks/createNetworkDialog.jsx:90
+#: src/components/networks/createNetworkDialog.jsx:118
 msgid "Start should not be empty"
 msgstr "ההתחלה לא אמורה להיות ריקה"
 
@@ -2626,7 +2642,7 @@ msgstr ""
 
 #: src/components/vm/overview/bootOrder.jsx:153
 #: src/components/vm/hostdevs/hostDevCard.jsx:109
-#: src/components/vm/disks/vmDiskColumns.jsx:152
+#: src/components/vm/disks/vmDiskColumns.jsx:153
 msgid "Target"
 msgstr "יעד"
 
@@ -2655,7 +2671,7 @@ msgstr "המכונה הווירטואלית פועלת ויהיה עליך לכ�
 
 #: src/components/vm/nics/vmNicsCard.jsx:482
 #: src/components/vm/nics/vmNicsCard.jsx:490
-#: src/components/vm/disks/vmDiskColumns.jsx:222
+#: src/components/vm/disks/vmDiskColumns.jsx:223
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr "על המכונה הווירטואלית להיות פעילה או כבויה כדי לנתק את ההתקן הזה"
 
@@ -2707,7 +2723,7 @@ msgstr ""
 msgid "This VM is transient. Shut it down if you wish to delete it."
 msgstr "זו מכונה וירטואלית זמנית. ניתן לכבות אותה אם ברצונך למחוק אותה."
 
-#: src/components/vm/disks/vmDiskColumns.jsx:150
+#: src/components/vm/disks/vmDiskColumns.jsx:151
 msgid "This disk will be removed from $0:"
 msgstr ""
 
@@ -2808,7 +2824,7 @@ msgstr "שם ייחודי"
 msgid "Unique name, default: $0"
 msgstr "שם ייחודי"
 
-#: src/components/networks/createNetworkDialog.jsx:128
+#: src/components/networks/createNetworkDialog.jsx:142
 msgid "Unique network name"
 msgstr "שם רשת ייחודי"
 
@@ -3015,7 +3031,7 @@ msgstr "ניהול מכונות וירטואליות"
 msgid "Virtual network"
 msgstr "רשת וירטואלית"
 
-#: src/components/networks/createNetworkDialog.jsx:378
+#: src/components/networks/createNetworkDialog.jsx:392
 msgid "Virtual network failed to be created"
 msgstr "יצירת הרשת הווירטואלית נכשלה"
 
@@ -3033,7 +3049,7 @@ msgstr "שירות הווירטואליזציה (libvirt) אינו פעיל"
 #: src/components/vm/overview/bootOrder.jsx:100
 #: src/components/vm/deleteDialog.jsx:65
 #: src/components/vm/disks/diskAdd.jsx:117
-#: src/components/vm/disks/vmDiskColumns.jsx:45
+#: src/components/vm/disks/vmDiskColumns.jsx:46
 #: src/components/vm/disks/mediaEject.jsx:89
 #: src/components/create-vm-dialog/createVmDialog.jsx:996
 msgid "Volume"

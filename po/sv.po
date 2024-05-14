@@ -7,10 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-07 02:50+0000\n"
-"PO-Revision-Date: 2024-02-15 18:35+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
-"memory@weblate.org>\n"
+"POT-Creation-Date: 2024-05-14 02:50+0000\n"
+"PO-Revision-Date: 2024-05-14 03:36+0000\n"
+"Last-Translator: Luna Jernberg <bittin@reimu.nl>\n"
 "Language-Team: Swedish <https://translate.fedoraproject.org/projects/cockpit-"
 "machines/main/sv/>\n"
 "Language: sv\n"
@@ -18,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1\n"
-"X-Generator: Weblate 5.4\n"
+"X-Generator: Weblate 5.5.2\n"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:927
 msgid "$0 $1 available at default location"
@@ -175,10 +174,10 @@ msgstr "Ytterligare"
 msgid "Address"
 msgstr "Adress"
 
-#: src/components/networks/createNetworkDialog.jsx:80
-#: src/components/networks/createNetworkDialog.jsx:87
-#: src/components/networks/createNetworkDialog.jsx:108
-#: src/components/networks/createNetworkDialog.jsx:115
+#: src/components/networks/createNetworkDialog.jsx:94
+#: src/components/networks/createNetworkDialog.jsx:101
+#: src/components/networks/createNetworkDialog.jsx:122
+#: src/components/networks/createNetworkDialog.jsx:129
 msgid "Address not within subnet"
 msgstr "Adress inte inom subnät"
 
@@ -234,7 +233,7 @@ msgstr ""
 "Automatiserade installationer är endast tillgängliga ner en avbild hämtas "
 "eller cloud-init används."
 
-#: src/components/networks/createNetworkDialog.jsx:166
+#: src/components/networks/createNetworkDialog.jsx:180
 msgid "Automatic"
 msgstr "Automatisk"
 
@@ -247,6 +246,12 @@ msgstr "Automatisering"
 #: src/components/networks/networkOverviewTab.jsx:119
 msgid "Autostart"
 msgstr "Starta automatiskt"
+
+#: src/components/vm/disks/vmDiskColumns.jsx:42
+#, fuzzy
+#| msgid "Host device"
+msgid "Block device"
+msgstr "Värdenhet"
 
 #: src/helpers.js:232
 msgid "Blocked"
@@ -290,7 +295,7 @@ msgid "CPU mode could not be saved"
 msgstr "CPU-läget kunde inte sparas"
 
 #: src/components/vm/disks/diskAdd.jsx:212
-#: src/components/vm/disks/vmDiskColumns.jsx:103
+#: src/components/vm/disks/vmDiskColumns.jsx:104
 #: src/components/vm/disks/diskEdit.jsx:60
 msgid "Cache"
 msgstr "Cache"
@@ -319,7 +324,7 @@ msgstr "Cache"
 #: src/components/vm/disks/diskEdit.jsx:270
 #: src/components/vm/disks/mediaEject.jsx:110
 #: src/components/common/deleteResource.jsx:91
-#: src/components/networks/createNetworkDialog.jsx:421
+#: src/components/networks/createNetworkDialog.jsx:435
 #: src/components/networks/networkOverviewTab.jsx:238
 #: src/components/create-vm-dialog/createVmDialog.jsx:1486
 msgid "Cancel"
@@ -453,7 +458,7 @@ msgstr "Det gick inte att radera $0"
 msgid "Could not delete all storage for $0"
 msgstr "Det gick inte att radera all lagring för $0"
 
-#: src/components/vm/disks/vmDiskColumns.jsx:135
+#: src/components/vm/disks/vmDiskColumns.jsx:136
 msgid "Could not delete disk's storage"
 msgstr "Kunde inte ta bort diskens lagring"
 
@@ -472,7 +477,7 @@ msgstr "Kraschad"
 #: src/components/storagePools/storageVolumeCreate.jsx:114
 #: src/components/storagePools/createStoragePoolDialog.jsx:442
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:201
-#: src/components/networks/createNetworkDialog.jsx:418
+#: src/components/networks/createNetworkDialog.jsx:432
 msgid "Create"
 msgstr "Skapa"
 
@@ -531,8 +536,8 @@ msgstr "Skapa en lagringspool"
 msgid "Create storage volume"
 msgstr "Skapa lagringsvolym"
 
-#: src/components/networks/createNetworkDialog.jsx:411
-#: src/components/networks/createNetworkDialog.jsx:439
+#: src/components/networks/createNetworkDialog.jsx:425
+#: src/components/networks/createNetworkDialog.jsx:453
 msgid "Create virtual network"
 msgstr "Skapa virtuellt nätverk"
 
@@ -684,14 +689,14 @@ msgstr "Detaljer"
 #: src/components/vm/hostdevs/hostDevCard.jsx:98
 #: src/components/vm/hostdevs/hostDevCard.jsx:244
 #: src/components/vm/disks/diskAdd.jsx:348
-#: src/components/vm/disks/vmDiskColumns.jsx:42
+#: src/components/vm/disks/vmDiskColumns.jsx:43
 #: src/components/vm/disks/vmDisksCard.jsx:172
-#: src/components/networks/createNetworkDialog.jsx:160
+#: src/components/networks/createNetworkDialog.jsx:174
 #: src/components/networks/networkList.jsx:68
 msgid "Device"
 msgstr "Enhet"
 
-#: src/components/networks/createNetworkDialog.jsx:167
+#: src/components/networks/createNetworkDialog.jsx:181
 msgid "Devices"
 msgstr "Enheter"
 
@@ -712,7 +717,7 @@ msgstr "Frånkopplad från seriekonsolen. Klicka på Anslut."
 msgid "Disk"
 msgstr "Disk"
 
-#: src/components/vm/disks/vmDiskColumns.jsx:149
+#: src/components/vm/disks/vmDiskColumns.jsx:150
 msgid "Disk $0 could not be removed"
 msgstr "Disk $0 kunde inte tas bort"
 
@@ -823,7 +828,7 @@ msgstr "Att redigera nätverksgränssnitt för transienta gäster är inte till�
 msgid "Editing transient network interfaces is not allowed"
 msgstr "Att redigera transienta nätverksgränssnit är inte tillåtet"
 
-#: src/components/vm/disks/vmDiskColumns.jsx:195
+#: src/components/vm/disks/vmDiskColumns.jsx:196
 #: src/components/vm/disks/mediaEject.jsx:103
 msgid "Eject"
 msgstr "Mata ut"
@@ -840,12 +845,12 @@ msgstr "Emulerad maskin"
 msgid "Enable virtualization support in BIOS/EFI settings."
 msgstr "Aktivera virtualiseringsstöd i BIOS/EFI-inställningar."
 
-#: src/components/networks/createNetworkDialog.jsx:226
+#: src/components/networks/createNetworkDialog.jsx:240
 msgid "End"
 msgstr "Slut"
 
-#: src/components/networks/createNetworkDialog.jsx:83
-#: src/components/networks/createNetworkDialog.jsx:111
+#: src/components/networks/createNetworkDialog.jsx:97
+#: src/components/networks/createNetworkDialog.jsx:125
 msgid "End should not be empty"
 msgstr "Slutet kan inte vara tomt"
 
@@ -983,11 +988,11 @@ msgstr "Framtvinga avstängning $0?"
 
 #: src/components/storagePools/createStoragePoolDialog.jsx:199
 #: src/components/storagePools/storageVolumeCreateBody.jsx:76
-#: src/components/vm/disks/vmDiskColumns.jsx:105
+#: src/components/vm/disks/vmDiskColumns.jsx:106
 msgid "Format"
 msgstr "Formater"
 
-#: src/components/networks/createNetworkDialog.jsx:141
+#: src/components/networks/createNetworkDialog.jsx:155
 msgid "Forward mode"
 msgstr "Vidarebefordransläge"
 
@@ -1054,7 +1059,7 @@ msgstr "Göm ytterligare inställningar"
 #: src/components/storagePools/storagePoolOverviewTab.jsx:34
 #: src/components/storagePools/createStoragePoolDialog.jsx:121
 #: src/components/vm/overview/bootOrder.jsx:101
-#: src/components/vm/disks/vmDiskColumns.jsx:46
+#: src/components/vm/disks/vmDiskColumns.jsx:47
 msgid "Host"
 msgstr "Värd"
 
@@ -1103,45 +1108,49 @@ msgstr "IP-adress"
 msgid "IP address must not be empty"
 msgstr "IP address kan inte vara tomt"
 
-#: src/components/networks/createNetworkDialog.jsx:182
+#: src/components/networks/createNetworkDialog.jsx:196
 msgid "IP configuration"
 msgstr "IP-konfiguration"
 
-#: src/components/networks/createNetworkDialog.jsx:243
+#: src/components/networks/createNetworkDialog.jsx:257
 #: src/components/networks/networkOverviewTab.jsx:138
 msgid "IPv4 address"
 msgstr "IPv4-adress"
 
-#: src/components/networks/createNetworkDialog.jsx:68
-msgid "IPv4 address cannot be same as the network identifier"
-msgstr "IPv4-adressen kan inte vara samma som nätverksidentifieraren"
-
-#: src/components/networks/createNetworkDialog.jsx:72
+#: src/components/networks/createNetworkDialog.jsx:86
 msgid "IPv4 address cannot be same as the network's broadcast address"
 msgstr "IPv4-adressen kan inte vara densamma som nätverkets broadcast-adress"
 
-#: src/components/networks/createNetworkDialog.jsx:190
+#: src/components/networks/createNetworkDialog.jsx:204
 msgid "IPv4 and IPv6"
 msgstr "IPv4 och IPv6"
 
-#: src/components/networks/createNetworkDialog.jsx:62
+#: src/components/networks/createNetworkDialog.jsx:74
 msgid "IPv4 network should not be empty"
 msgstr "IPv4 nätverk kan inte vara tom"
 
-#: src/components/networks/createNetworkDialog.jsx:188
+#: src/components/networks/createNetworkDialog.jsx:202
 msgid "IPv4 only"
 msgstr "IPv4 enbart"
 
-#: src/components/networks/createNetworkDialog.jsx:273
+#: src/components/networks/createNetworkDialog.jsx:69
+msgid "IPv4 prefix length must be 24 or less"
+msgstr "IPv4-prefixlängden måste vara 24 eller mindre"
+
+#: src/components/networks/createNetworkDialog.jsx:66
+msgid "IPv4 prefix length must be a multiple of 8"
+msgstr "IPv4-prefixlängden måste vara en multipel av 8"
+
+#: src/components/networks/createNetworkDialog.jsx:287
 #: src/components/networks/networkOverviewTab.jsx:158
 msgid "IPv6 address"
 msgstr "IPv6-adress"
 
-#: src/components/networks/createNetworkDialog.jsx:93
+#: src/components/networks/createNetworkDialog.jsx:107
 msgid "IPv6 network should not be empty"
 msgstr "IPv6 nätverk kan inte vara tom"
 
-#: src/components/networks/createNetworkDialog.jsx:189
+#: src/components/networks/createNetworkDialog.jsx:203
 msgid "IPv6 only"
 msgstr "IPv6 enbart"
 
@@ -1224,7 +1233,7 @@ msgid "Inject a non-maskable interrupt"
 msgstr "Injicera ett ej maskerbart avbrott"
 
 #: src/components/vm/disks/diskAdd.jsx:846
-#: src/components/vm/disks/vmDiskColumns.jsx:187
+#: src/components/vm/disks/vmDiskColumns.jsx:188
 msgid "Insert"
 msgstr "Insert"
 
@@ -1264,23 +1273,23 @@ msgstr "Gränssnittstyp"
 msgid "Interface type help"
 msgstr "Gränssnittstyp hjälp"
 
-#: src/components/networks/createNetworkDialog.jsx:64
-#: src/components/networks/createNetworkDialog.jsx:78
-#: src/components/networks/createNetworkDialog.jsx:85
+#: src/components/networks/createNetworkDialog.jsx:76
+#: src/components/networks/createNetworkDialog.jsx:92
+#: src/components/networks/createNetworkDialog.jsx:99
 msgid "Invalid IPv4 address"
 msgstr "Felaktig IPv4-adress"
 
-#: src/components/networks/createNetworkDialog.jsx:59
+#: src/components/networks/createNetworkDialog.jsx:63
 msgid "Invalid IPv4 mask or prefix length"
 msgstr "Felaktig IPv4 nätverksmask eller prefix"
 
-#: src/components/networks/createNetworkDialog.jsx:95
-#: src/components/networks/createNetworkDialog.jsx:106
-#: src/components/networks/createNetworkDialog.jsx:113
+#: src/components/networks/createNetworkDialog.jsx:109
+#: src/components/networks/createNetworkDialog.jsx:120
+#: src/components/networks/createNetworkDialog.jsx:127
 msgid "Invalid IPv6 address"
 msgstr "Felaktig IPv6-adress"
 
-#: src/components/networks/createNetworkDialog.jsx:100
+#: src/components/networks/createNetworkDialog.jsx:114
 msgid "Invalid IPv6 prefix"
 msgstr "Felaktigt IPv6-prefix"
 
@@ -1391,11 +1400,11 @@ msgstr "Hantera virtuella maskiner"
 msgid "Manual connection"
 msgstr "Manuell anslutning"
 
-#: src/components/networks/createNetworkDialog.jsx:250
+#: src/components/networks/createNetworkDialog.jsx:264
 msgid "Mask or prefix length"
 msgstr "Mask eller prefixlängd"
 
-#: src/components/networks/createNetworkDialog.jsx:57
+#: src/components/networks/createNetworkDialog.jsx:59
 msgid "Mask or prefix length should not be empty"
 msgstr "Mask eller prefixlängd kan inte vara tom"
 
@@ -1506,6 +1515,11 @@ msgstr "Monteringstagg"
 msgid "Mount tag must not be empty"
 msgstr "Monteringstaggen får inte vara tom"
 
+#: src/components/networks/createNetworkDialog.jsx:81
+msgid "Must be an address instead of the network identifier, such as $0"
+msgstr ""
+"Måste vara en adress istället för nätverksidentifieraren, till exempel $0"
+
 #: src/components/create-vm-dialog/pxe-helpers.js:93
 msgid "NAT to $0"
 msgstr "NAT till $0"
@@ -1522,7 +1536,7 @@ msgstr "NIC $0 på VM $1 kunde inte ändra läge"
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:90
 #: src/components/vm/vmCloneDialog.jsx:93
 #: src/components/vms/hostvmslist.jsx:161
-#: src/components/networks/createNetworkDialog.jsx:126
+#: src/components/networks/createNetworkDialog.jsx:140
 #: src/components/networks/networkList.jsx:67
 #: src/components/create-vm-dialog/createVmDialog.jsx:265
 msgid "Name"
@@ -1729,7 +1743,7 @@ msgstr ""
 "Icke varaktig lagringspool kan inte raderas. Den slutar att finnas när den "
 "deaktiveras."
 
-#: src/components/networks/createNetworkDialog.jsx:187
+#: src/components/networks/createNetworkDialog.jsx:201
 msgid "None"
 msgstr "Inga"
 
@@ -1880,7 +1894,7 @@ msgstr "Starta den virtuella maskinen för att komma åt dess konsol."
 #: src/components/vm/overview/bootOrder.jsx:99
 #: src/components/vm/deleteDialog.jsx:68
 #: src/components/vm/disks/diskAdd.jsx:151
-#: src/components/vm/disks/vmDiskColumns.jsx:44
+#: src/components/vm/disks/vmDiskColumns.jsx:45
 #: src/components/vm/disks/mediaEject.jsx:85
 msgid "Pool"
 msgstr "Pool"
@@ -1904,7 +1918,7 @@ msgstr "Poolens volymer används av VM:ar "
 #: src/components/vm/overview/bootOrder.jsx:102
 #: src/components/vm/overview/bootOrder.jsx:118
 #: src/components/vm/nics/vmNicsCard.jsx:162
-#: src/components/vm/disks/vmDiskColumns.jsx:47
+#: src/components/vm/disks/vmDiskColumns.jsx:48
 msgid "Port"
 msgstr "Port"
 
@@ -1924,11 +1938,11 @@ msgstr "Föredraget antal uttag att exponera för gästen."
 msgid "Prefix"
 msgstr "Prefix"
 
-#: src/components/networks/createNetworkDialog.jsx:280
+#: src/components/networks/createNetworkDialog.jsx:294
 msgid "Prefix length"
 msgstr "Prefixlängd"
 
-#: src/components/networks/createNetworkDialog.jsx:98
+#: src/components/networks/createNetworkDialog.jsx:112
 msgid "Prefix length should not be empty"
 msgstr "Prefixlängden ska inte vara tom"
 
@@ -1959,7 +1973,7 @@ msgstr "Profil"
 #: src/components/vm/overview/bootOrder.jsx:98
 #: src/components/vm/overview/bootOrder.jsx:159
 #: src/components/vm/hostdevs/hostDevCard.jsx:114
-#: src/components/vm/disks/vmDiskColumns.jsx:43
+#: src/components/vm/disks/vmDiskColumns.jsx:44
 msgid "Protocol"
 msgstr "Protokoll"
 
@@ -2025,8 +2039,8 @@ msgstr "Detaljer om fjärrvisaren"
 #: src/components/vm/hostdevs/hostDevCard.jsx:257
 #: src/components/vm/nics/vmNicsCard.jsx:471
 #: src/components/vm/nics/vmNicsCard.jsx:481
-#: src/components/vm/disks/vmDiskColumns.jsx:148
-#: src/components/vm/disks/vmDiskColumns.jsx:214
+#: src/components/vm/disks/vmDiskColumns.jsx:149
+#: src/components/vm/disks/vmDiskColumns.jsx:215
 #: src/components/networks/networkOverviewTab.jsx:70
 msgid "Remove"
 msgstr "Ta bort"
@@ -2035,11 +2049,11 @@ msgstr "Ta bort"
 msgid "Remove SPICE audio and host devices"
 msgstr "Ta bort SPICE-ljud- och värdenheter"
 
-#: src/components/vm/disks/vmDiskColumns.jsx:161
+#: src/components/vm/disks/vmDiskColumns.jsx:162
 msgid "Remove and delete file"
 msgstr "Ta bort och radera fil"
 
-#: src/components/vm/disks/vmDiskColumns.jsx:147
+#: src/components/vm/disks/vmDiskColumns.jsx:148
 msgid "Remove disk from VM?"
 msgstr "Ta bort en disk från VM:en?"
 
@@ -2215,7 +2229,7 @@ msgstr "Skicka ej maskerbart avbrott"
 msgid "Send non-maskable interrupt to $0?"
 msgstr "Skicka ej maskerbart avbrott till $0?"
 
-#: src/components/vm/disks/vmDiskColumns.jsx:104
+#: src/components/vm/disks/vmDiskColumns.jsx:105
 msgid "Serial"
 msgstr "Seriell"
 
@@ -2227,7 +2241,7 @@ msgstr "Seriekonsol"
 msgid "Serial console ($0)"
 msgstr "Seriekonsol ($0)"
 
-#: src/components/networks/createNetworkDialog.jsx:214
+#: src/components/networks/createNetworkDialog.jsx:228
 msgid "Set DHCP range"
 msgstr "Ställ in DHCP-intervall"
 
@@ -2383,7 +2397,7 @@ msgstr "Källan skall börja med ett av protokollen http, ftp eller nfs"
 msgid "Source volume group"
 msgstr "Källvolymgrupp"
 
-#: src/components/networks/createNetworkDialog.jsx:219
+#: src/components/networks/createNetworkDialog.jsx:233
 msgid "Start"
 msgstr "Starta"
 
@@ -2391,8 +2405,8 @@ msgstr "Starta"
 msgid "Start pool when host boots"
 msgstr "Starta poolen när värden startar upp"
 
-#: src/components/networks/createNetworkDialog.jsx:76
-#: src/components/networks/createNetworkDialog.jsx:104
+#: src/components/networks/createNetworkDialog.jsx:90
+#: src/components/networks/createNetworkDialog.jsx:118
 msgid "Start should not be empty"
 msgstr "Start ska inte vara tomt"
 
@@ -2506,7 +2520,7 @@ msgstr "Tabell över valbara värdenheter"
 
 #: src/components/vm/overview/bootOrder.jsx:153
 #: src/components/vm/hostdevs/hostDevCard.jsx:109
-#: src/components/vm/disks/vmDiskColumns.jsx:152
+#: src/components/vm/disks/vmDiskColumns.jsx:153
 msgid "Target"
 msgstr "Mål"
 
@@ -2533,7 +2547,7 @@ msgstr "VM:en $0 kör och kommer tvingande stängas av före den tas bort."
 
 #: src/components/vm/nics/vmNicsCard.jsx:482
 #: src/components/vm/nics/vmNicsCard.jsx:490
-#: src/components/vm/disks/vmDiskColumns.jsx:222
+#: src/components/vm/disks/vmDiskColumns.jsx:223
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr ""
 "VM:en behöver köra eller vara avstängd för att koppla ifrån denna enhet"
@@ -2589,7 +2603,7 @@ msgstr "Kopiera och klistra sedan in det ovan."
 msgid "This VM is transient. Shut it down if you wish to delete it."
 msgstr "Denna VM är transient. Stäng av den om du vill radera den."
 
-#: src/components/vm/disks/vmDiskColumns.jsx:150
+#: src/components/vm/disks/vmDiskColumns.jsx:151
 msgid "This disk will be removed from $0:"
 msgstr "Denna disk kommer tas bort från $0:"
 
@@ -2700,7 +2714,7 @@ msgstr "Unikt namn"
 msgid "Unique name, default: $0"
 msgstr "Unikt namn, standard $0"
 
-#: src/components/networks/createNetworkDialog.jsx:128
+#: src/components/networks/createNetworkDialog.jsx:142
 msgid "Unique network name"
 msgstr "Unikt nätverksnamn"
 
@@ -2905,7 +2919,7 @@ msgstr "Hantering av virtuella maskiner"
 msgid "Virtual network"
 msgstr "Virtuellt nätverk"
 
-#: src/components/networks/createNetworkDialog.jsx:378
+#: src/components/networks/createNetworkDialog.jsx:392
 msgid "Virtual network failed to be created"
 msgstr "Det gick inte att skapa ett virtuellt nätverk"
 
@@ -2926,7 +2940,7 @@ msgstr "Virtualiseringstjänsten (libvirt) är inte aktiv"
 #: src/components/vm/overview/bootOrder.jsx:100
 #: src/components/vm/deleteDialog.jsx:65
 #: src/components/vm/disks/diskAdd.jsx:117
-#: src/components/vm/disks/vmDiskColumns.jsx:45
+#: src/components/vm/disks/vmDiskColumns.jsx:46
 #: src/components/vm/disks/mediaEject.jsx:89
 #: src/components/create-vm-dialog/createVmDialog.jsx:996
 msgid "Volume"
