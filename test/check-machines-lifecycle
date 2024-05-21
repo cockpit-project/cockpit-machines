@@ -365,6 +365,30 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         b.wait_text("h2.vm-name", "test%")
         b.wait_not_present("#navbar-oops")
 
+    def testEditDescription(self):
+        b = self.browser
+
+        self.createVm("mac", running=False)
+        self.login_and_go("/machines")
+        self.waitPageInit()
+        self.goToVmPage("mac")
+
+        self.performAction("mac", "edit-description")
+
+        # Non-ascii chars, unbalanced quotes, backslash, multiple lines
+        desc1 = '"Döscrü\\ptiän \'\'\' كرة القدم'
+        desc2 = 'Second <b>line</b>'
+        desc = desc1 + "\n" + desc2
+
+        # set_input_text can't handle the newline, but set_val doesn't
+        # trigger an event. So we use both.
+        b.set_val("#edit-description-dialog-description", desc[:-1])
+        b.set_input_text("#edit-description-dialog-description", desc[-1], append=True, value_check=False)
+        b.click("#edit-description-dialog-confirm")
+
+        b.wait_text(".vm-description p:nth-child(1)", desc1)
+        b.wait_text(".vm-description p:nth-child(2)", desc2)
+
     def testDelete(self):
         b = self.browser
         m = self.machine
