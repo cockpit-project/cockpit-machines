@@ -2520,8 +2520,8 @@ vnc_password= "{vnc_passwd}"
         self.goToMainPage()
         self.machine.execute(f"virsh destroy {vmCockpit}; virsh undefine {vmCockpit}")
 
-        # RHEL 9 doesn't support SPICE, so skip the rest of the test
-        if m.image.startswith("rhel-9") or m.image.startswith("centos-9"):
+        # RHEL ≥ 9 doesn't support SPICE, so skip the rest of the test
+        if (m.image.startswith("rhel-") or m.image.startswith("centos-")) and "rhel-8" not in m.image:
             return
 
         #
