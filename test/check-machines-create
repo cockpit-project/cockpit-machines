@@ -1572,6 +1572,7 @@ vnc_password= "{vnc_passwd}"
 
             # Make sure we don't run into long DNS timeouts when trying to contact this server
             self.machine.execute("echo >>/etc/hosts 127.0.0.42 mirror.i3d.net")
+            self.machine.execute("echo >>/etc/hosts ::1 mirror.i3d.net")
 
             # console for try INSTALL
             self.test_obj.allow_journal_messages('.*connection.*')
