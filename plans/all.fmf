@@ -1,5 +1,14 @@
 discover:
     how: fmf
+
+# counteract https://issues.redhat.com/browse/TFT-2564
+adjust:
+  prepare+:
+  - how: shell
+    script: |
+      rm --force --verbose /etc/yum.repos.d/fedora.repo
+    when: distro == centos-10
+
 execute:
     how: tmt
 
