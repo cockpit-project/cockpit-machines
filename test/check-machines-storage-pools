@@ -477,7 +477,7 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
                 b.wait_not_present("#create-storage-pool-dialog")
 
         # Prepare a Volume Group to be used as source for the LVM pool
-        m.execute(f"wipefs -a {dev}; pvcreate {dev}; vgcreate vol_grp1 {dev}")
+        m.execute(f"wipefs -a {dev}; until pvcreate {dev}; do sleep .5; done; vgcreate vol_grp1 {dev}")
         b.go("/machines#/storages")
         b.enter_page("/machines")
 
@@ -698,7 +698,7 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         ).execute()
 
         # create disk for lvm-pool
-        m.execute(f"wipefs -a {dev}; pvcreate {dev}; vgcreate vol_grp1 {dev}")
+        m.execute(f"wipefs -a {dev}; until pvcreate {dev}; do sleep .5; done; vgcreate vol_grp1 {dev}")
         m.execute("virsh pool-define-as lvm-pool --type logical --source-name vol_grp1; virsh pool-start lvm-pool")
 
         StorageVolumeCreateDialog(
