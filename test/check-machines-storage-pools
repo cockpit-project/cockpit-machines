@@ -429,7 +429,7 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         dev = self.add_ram_disk(2)
         m.execute(f"parted {dev} mklabel gpt")
 
-        if m.image == "arch":
+        if m.image == "arch" or m.image == "opensuse-tumbleweed":
             m.execute("mkdir -p /media/")
 
         StoragePoolCreateDialog(
