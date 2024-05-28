@@ -311,6 +311,11 @@ class VirtualMachinesCaseHelpers:
                 f"cp {self.vm_tmpdir}/server.crt /etc/ca-certificates/trust-source/anchors/server.crt",
                 "update-ca-trust"
             ]
+        elif "suse" in self.machine.image:
+            cmds += [
+                f"cp {self.vm_tmpdir}/server.crt /etc/pki/trust/anchors/server.crt",
+                "update-ca-certificates"
+            ]
         else:
             cmds += [
                 f"cp {self.vm_tmpdir}/server.crt /etc/pki/ca-trust/source/anchors/server.crt",
