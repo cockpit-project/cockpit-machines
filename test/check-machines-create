@@ -2146,6 +2146,8 @@ vnc_password= "{vnc_passwd}"
             ovmf_path = "/usr/share/OVMF"
         elif "arch" in m.image:
             ovmf_path = "/usr/share/edk2-ovmf"
+        elif "suse" in m.image:
+            ovmf_path = "/usr/share/qemu"
         else:
             raise AssertionError("Unhandled distro for OVMF path")
 
