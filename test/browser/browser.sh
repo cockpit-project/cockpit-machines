@@ -10,6 +10,14 @@ DNF="dnf install --disablerepo=fedora-cisco-openh264 -y"
 # RHEL/CentOS 8 and Fedora have this, but not RHEL 9; tests check this more precisely
 $DNF libvirt-daemon-driver-storage-iscsi-direct || true
 
+# HACK: this package creates bogus/broken sda → nvme symlinks; it's new in rawhide TF default instances, not required for
+# our tests, and only causes trouble; https://github.com/amazonlinux/amazon-ec2-utils/issues/37
+if rpm -q amazon-ec2-utils; then
+    rpm -e --verbose amazon-ec2-utils
+    # clean up the symlinks
+    udevadm trigger /dev/nvme*
+fi
+
 # Show critical packages versions
 rpm -q selinux-policy cockpit-bridge cockpit-machines
 rpm -qa | grep -E 'virt|qemu' | sort
