@@ -100,7 +100,7 @@ NETWORK_XML_PXE = """<network>
   <bridge name='virbr0' stp='on' delay='0'/>
   <mac address='52:54:00:53:7d:8e'/>
   <ip address='192.168.122.1' netmask='255.255.255.0'>
-    <tftp root='/var/lib/libvirt/pxe-config'/>
+    <tftp root='/var/lib/libvirt/dnsmasq'/>
     <dhcp>
       <range start='192.168.122.2' end='192.168.122.254'/>
       <bootp file='pxe.cfg'/>

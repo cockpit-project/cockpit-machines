@@ -511,9 +511,9 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
 
         # Set up the PXE server configuration files
         cmds = [
-            "mkdir -p /var/lib/libvirt/pxe-config",
-            f"echo \"{PXE_SERVER_CFG}\" > /var/lib/libvirt/pxe-config/pxe.cfg",
-            "chmod 666 /var/lib/libvirt/pxe-config/pxe.cfg"
+            "mkdir -p /var/lib/libvirt/dnsmasq",
+            f"echo \"{PXE_SERVER_CFG}\" > /var/lib/libvirt/dnsmasq/pxe.cfg",
+            "chmod 666 /var/lib/libvirt/dnsmasq/pxe.cfg"
         ]
         self.machine.execute("; ".join(cmds))
 
