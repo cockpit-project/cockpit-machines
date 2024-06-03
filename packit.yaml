@@ -84,6 +84,7 @@ jobs:
 
   - job: koji_build
     trigger: commit
+    packages: [cockpit-machines-fedora]
     dist_git_branches:
       - fedora-development
       - fedora-39
@@ -91,6 +92,7 @@ jobs:
 
   - job: bodhi_update
     trigger: commit
+    packages: [cockpit-machines-fedora]
     dist_git_branches:
       # rawhide updates are created automatically
       - fedora-39
