@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-16 02:50+0000\n"
+"POT-Creation-Date: 2024-06-04 02:50+0000\n"
 "PO-Revision-Date: 2021-05-31 20:02+0000\n"
 "Last-Translator: Igor Gorbounov <igor.gorbounov@gmail.com>\n"
 "Language-Team: Russian <https://translate.fedoraproject.org/projects/cockpit-"
@@ -109,6 +109,18 @@ msgstr "Доступ"
 msgid "Action"
 msgstr "Подключение"
 
+# ctx::sourcefile::Navigation Menu
+#: src/components/networks/networkList.jsx:72
+#: src/components/storagePools/storagePoolList.jsx:72
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:162
+#: src/components/vm/disks/vmDisksCard.jsx:194
+#: src/components/vm/nics/vmNicsCard.jsx:421
+#: src/components/vms/hostvmslist.jsx:164
+#, fuzzy
+#| msgid "Connection"
+msgid "Actions"
+msgstr "Подключение"
+
 #: src/components/networks/network.jsx:174
 #: src/components/storagePools/storagePool.jsx:168
 msgid "Activate"
@@ -119,7 +131,7 @@ msgid "Activate the storage pool to administer volumes"
 msgstr "Активировать пул хранения для администрирования томов"
 
 #: src/components/networks/networkOverviewTab.jsx:235
-#: src/components/vm/hostdevs/hostDevAdd.jsx:229
+#: src/components/vm/hostdevs/hostDevAdd.jsx:232
 #: src/components/vm/disks/diskAdd.jsx:846
 #: src/components/vm/overview/vsock.jsx:195
 #: src/components/vm/overview/watchdog.jsx:154
@@ -140,7 +152,7 @@ msgstr ""
 msgid "Add disk"
 msgstr "Добавить диск"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:244
+#: src/components/vm/hostdevs/hostDevAdd.jsx:247
 #: src/components/vm/hostdevs/hostDevCard.jsx:147
 #, fuzzy
 #| msgid "host device"
@@ -335,7 +347,7 @@ msgstr "Кэш"
 #: src/components/vm/vmMigrateDialog.jsx:202
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:110
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:204
-#: src/components/vm/hostdevs/hostDevAdd.jsx:234
+#: src/components/vm/hostdevs/hostDevAdd.jsx:237
 #: src/components/vm/disks/diskEdit.jsx:270
 #: src/components/vm/disks/mediaEject.jsx:110
 #: src/components/vm/disks/diskAdd.jsx:849
@@ -692,7 +704,7 @@ msgstr "Удаление связанных файлов хранилища:"
 msgid "Delete network?"
 msgstr "Изолированная сеть"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:180
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:181
 #, fuzzy
 msgid "Delete snapshot?"
 msgstr "Создание моментального снимка"
@@ -891,7 +903,7 @@ msgid "Dying"
 msgstr "Умирающий"
 
 #: src/components/vm/disks/diskEdit.jsx:166
-#: src/components/vm/nics/vmNicsCard.jsx:453
+#: src/components/vm/nics/vmNicsCard.jsx:454
 msgid "Edit"
 msgstr "Изменить"
 
@@ -909,11 +921,11 @@ msgstr "Добавить сетевой интерфейс"
 msgid "Edit watchdog device type"
 msgstr ""
 
-#: src/components/vm/nics/vmNicsCard.jsx:441
+#: src/components/vm/nics/vmNicsCard.jsx:442
 msgid "Editing network interfaces of transient guests is not allowed"
 msgstr ""
 
-#: src/components/vm/nics/vmNicsCard.jsx:447
+#: src/components/vm/nics/vmNicsCard.jsx:448
 msgid "Editing transient network interfaces is not allowed"
 msgstr ""
 
@@ -1189,7 +1201,7 @@ msgstr "Узел"
 msgid "Host device"
 msgstr "Главное устройство"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:206
+#: src/components/vm/hostdevs/hostDevAdd.jsx:209
 #, fuzzy
 #| msgid "Boot order settings could not be saved"
 msgid "Host device could not be attached"
@@ -1479,7 +1491,7 @@ msgstr ""
 msgid "Libvirt or hypervisor does not support UEFI"
 msgstr "Libvirt или гипервизор не поддерживают UEFI"
 
-#: src/components/vm/nics/vmNicsCard.jsx:444
+#: src/components/vm/nics/vmNicsCard.jsx:445
 #, fuzzy
 #| msgid "No network devices"
 msgid "Loading available network devices"
@@ -1500,7 +1512,7 @@ msgid "Local install media (ISO image or distro install tree)"
 msgstr ""
 
 # ctx::sourcefile::Navigation Menu
-#: src/components/vm/hostdevs/hostDevAdd.jsx:128
+#: src/components/vm/hostdevs/hostDevAdd.jsx:130
 #, fuzzy
 #| msgid "Connection"
 msgid "Location"
@@ -1782,13 +1794,13 @@ msgstr "Сетевая файловая система"
 msgid "Network interface"
 msgstr "Добавить сетевой интерфейс"
 
-#: src/components/vm/nics/vmNicsCard.jsx:469
+#: src/components/vm/nics/vmNicsCard.jsx:470
 #, fuzzy
 #| msgid "Network interface settings could not be saved"
 msgid "Network interface $0 could not be removed"
 msgstr "Не удалось сохранить параметры сетевого интерфейса"
 
-#: src/components/vm/nics/vmNicsCard.jsx:470
+#: src/components/vm/nics/vmNicsCard.jsx:471
 #, fuzzy
 #| msgid "Network interface settings could not be saved"
 msgid "Network interface $0 will be removed from $1"
@@ -1860,7 +1872,7 @@ msgstr ""
 msgid "No disks defined for this VM"
 msgstr "Отсутствуют диски, определённые для этой виртуальной машины"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:211
+#: src/components/vm/hostdevs/hostDevAdd.jsx:214
 #, fuzzy
 #| msgid "No boot device found"
 msgid "No host device selected"
@@ -1875,7 +1887,7 @@ msgstr "Отсутствуют диски, определённые для эт�
 msgid "No network devices"
 msgstr "Сетевые устройства отсутствуют"
 
-#: src/components/vm/nics/vmNicsCard.jsx:560
+#: src/components/vm/nics/vmNicsCard.jsx:561
 msgid "No network interfaces defined for this VM"
 msgstr ""
 "Отсутствуют сетевые интерфейсы, определённые для этой виртуальной машины"
@@ -1893,7 +1905,7 @@ msgstr "Нет доступных сетей"
 msgid "No parent"
 msgstr "Родительский элемент"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:226
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:230
 #, fuzzy
 msgid "No snapshots defined for this VM"
 msgstr "Отсутствуют диски, определённые для этой виртуальной машины"
@@ -2162,7 +2174,7 @@ msgstr "Длина префикса"
 msgid "Prefix length should not be empty"
 msgstr "Длина префикса не должна быть пустой"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:227
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:231
 msgid ""
 "Previously taken snapshots allow you to revert to an earlier state if "
 "something goes wrong"
@@ -2172,7 +2184,7 @@ msgstr ""
 msgid "Private"
 msgstr "Частная"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:128
+#: src/components/vm/hostdevs/hostDevAdd.jsx:130
 #: src/components/vm/hostdevs/hostDevCard.jsx:235
 #: src/components/vm/hostdevs/hostDevCard.jsx:241
 #: src/components/vm/overview/bootOrder.jsx:131
@@ -2255,8 +2267,8 @@ msgstr "Сведения о гипервизоре"
 #: src/components/vm/overview/watchdog.jsx:191
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:59
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:68
-#: src/components/vm/nics/vmNicsCard.jsx:471
-#: src/components/vm/nics/vmNicsCard.jsx:481
+#: src/components/vm/nics/vmNicsCard.jsx:472
+#: src/components/vm/nics/vmNicsCard.jsx:482
 msgid "Remove"
 msgstr "Удалить"
 
@@ -2292,7 +2304,7 @@ msgstr "главное устройство"
 msgid "Remove item"
 msgstr "Сетевая файловая система"
 
-#: src/components/vm/nics/vmNicsCard.jsx:468
+#: src/components/vm/nics/vmNicsCard.jsx:469
 #, fuzzy
 #| msgid "Add network interface"
 msgid "Remove network interface?"
@@ -2346,7 +2358,7 @@ msgstr ""
 msgid "Resume"
 msgstr "Возобновить"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:173
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:174
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:100
 #, fuzzy
 msgid "Revert"
@@ -2375,6 +2387,10 @@ msgstr "Маршрутизация к $0"
 #: src/components/create-vm-dialog/pxe-helpers.js:100
 msgid "Routed network"
 msgstr "Сеть с маршрутизацией"
+
+#: src/components/vm/hostdevs/hostDevAdd.jsx:129
+msgid "Row select"
+msgstr ""
 
 #: src/components/vm/vmActions.jsx:380
 msgid "Run"
@@ -2575,13 +2591,13 @@ msgstr "Размер"
 msgid "Slot"
 msgstr ""
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:181
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:182
 #, fuzzy
 #| msgid "The $0 could not be deleted"
 msgid "Snapshot $0 could not be deleted"
 msgstr "Не удалось удалить $0"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:182
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:183
 #, fuzzy
 #| msgid "After deleting the snapshot, all its captured content will be lost."
 msgid ""
@@ -2818,8 +2834,8 @@ msgstr ""
 "Виртуальная машина работает и будет принудительно отключена перед удалением."
 
 #: src/components/vm/disks/vmDiskColumns.jsx:223
-#: src/components/vm/nics/vmNicsCard.jsx:482
-#: src/components/vm/nics/vmNicsCard.jsx:490
+#: src/components/vm/nics/vmNicsCard.jsx:483
+#: src/components/vm/nics/vmNicsCard.jsx:491
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr ""
 "ВМ должна работать или быть отключена, чтобы отсоединить это устройство"
@@ -2962,7 +2978,7 @@ msgstr ""
 msgid "UUID"
 msgstr ""
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:142
+#: src/components/vm/hostdevs/hostDevAdd.jsx:145
 msgid "Undefined"
 msgstr ""
 
@@ -3165,7 +3181,7 @@ msgstr ""
 
 # translation auto-copied from project subscription-manager, version 1.11.X,
 # document keys
-#: src/components/vm/hostdevs/hostDevAdd.jsx:128
+#: src/components/vm/hostdevs/hostDevAdd.jsx:130
 #: src/components/vm/hostdevs/hostDevCard.jsx:207
 #: src/components/vm/hostdevs/hostDevCard.jsx:234
 #: src/components/vm/hostdevs/hostDevCard.jsx:240

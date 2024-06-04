@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-16 02:50+0000\n"
+"POT-Creation-Date: 2024-06-04 02:50+0000\n"
 "PO-Revision-Date: 2024-02-19 03:37+0000\n"
 "Last-Translator: Mie Yamamoto <myamamot@redhat.com>\n"
 "Language-Team: Japanese <https://translate.fedoraproject.org/projects/"
@@ -94,6 +94,17 @@ msgstr "アクセス"
 msgid "Action"
 msgstr "アクション"
 
+#: src/components/networks/networkList.jsx:72
+#: src/components/storagePools/storagePoolList.jsx:72
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:162
+#: src/components/vm/disks/vmDisksCard.jsx:194
+#: src/components/vm/nics/vmNicsCard.jsx:421
+#: src/components/vms/hostvmslist.jsx:164
+#, fuzzy
+#| msgid "Action"
+msgid "Actions"
+msgstr "アクション"
+
 #: src/components/networks/network.jsx:174
 #: src/components/storagePools/storagePool.jsx:168
 msgid "Activate"
@@ -104,7 +115,7 @@ msgid "Activate the storage pool to administer volumes"
 msgstr "ストレージプールをアクティベートしてボリュームを管理"
 
 #: src/components/networks/networkOverviewTab.jsx:235
-#: src/components/vm/hostdevs/hostDevAdd.jsx:229
+#: src/components/vm/hostdevs/hostDevAdd.jsx:232
 #: src/components/vm/disks/diskAdd.jsx:846
 #: src/components/vm/overview/vsock.jsx:195
 #: src/components/vm/overview/watchdog.jsx:154
@@ -125,7 +136,7 @@ msgstr "DHCP 静的ホストエントリーの追加"
 msgid "Add disk"
 msgstr "ディスクの追加"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:244
+#: src/components/vm/hostdevs/hostDevAdd.jsx:247
 #: src/components/vm/hostdevs/hostDevCard.jsx:147
 msgid "Add host device"
 msgstr "ホストデバイスの追加"
@@ -308,7 +319,7 @@ msgstr "キャッシュ"
 #: src/components/vm/vmMigrateDialog.jsx:202
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:110
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:204
-#: src/components/vm/hostdevs/hostDevAdd.jsx:234
+#: src/components/vm/hostdevs/hostDevAdd.jsx:237
 #: src/components/vm/disks/diskEdit.jsx:270
 #: src/components/vm/disks/mediaEject.jsx:110
 #: src/components/vm/disks/diskAdd.jsx:849
@@ -632,7 +643,7 @@ msgstr "関連するストレージファイルの削除:"
 msgid "Delete network?"
 msgstr "ネットワークを削除しますか?"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:180
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:181
 msgid "Delete snapshot?"
 msgstr "スナップショットを削除しますか?"
 
@@ -804,7 +815,7 @@ msgid "Dying"
 msgstr "終了中"
 
 #: src/components/vm/disks/diskEdit.jsx:166
-#: src/components/vm/nics/vmNicsCard.jsx:453
+#: src/components/vm/nics/vmNicsCard.jsx:454
 msgid "Edit"
 msgstr "編集"
 
@@ -820,11 +831,11 @@ msgstr "vsock インターフェイスの編集"
 msgid "Edit watchdog device type"
 msgstr "ウォッチドッグデバイスタイプの編集"
 
-#: src/components/vm/nics/vmNicsCard.jsx:441
+#: src/components/vm/nics/vmNicsCard.jsx:442
 msgid "Editing network interfaces of transient guests is not allowed"
 msgstr "一時的なゲストのネットワークインターフェースの編集は許可されていません"
 
-#: src/components/vm/nics/vmNicsCard.jsx:447
+#: src/components/vm/nics/vmNicsCard.jsx:448
 msgid "Editing transient network interfaces is not allowed"
 msgstr "一時的なネットワークインターフェースの編集は許可されていません"
 
@@ -1065,7 +1076,7 @@ msgstr "ホスト"
 msgid "Host device"
 msgstr "ホストデバイス"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:206
+#: src/components/vm/hostdevs/hostDevAdd.jsx:209
 msgid "Host device could not be attached"
 msgstr "ホストデバイスを割り当てられませんでした"
 
@@ -1344,7 +1355,7 @@ msgstr ""
 msgid "Libvirt or hypervisor does not support UEFI"
 msgstr "libvirtまたはハイパーバイザーがUEFIをサポートしていません"
 
-#: src/components/vm/nics/vmNicsCard.jsx:444
+#: src/components/vm/nics/vmNicsCard.jsx:445
 msgid "Loading available network devices"
 msgstr "利用可能なネットワークデバイスの読み込み"
 
@@ -1362,7 +1373,7 @@ msgstr ""
 "ローカルインストールメディア (ISO イメージまたはディストリビューションインス"
 "トールツリー)"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:128
+#: src/components/vm/hostdevs/hostDevAdd.jsx:130
 msgid "Location"
 msgstr "場所"
 
@@ -1611,11 +1622,11 @@ msgstr "ネットワークファイルシステム"
 msgid "Network interface"
 msgstr "ネットワークインターフェイス"
 
-#: src/components/vm/nics/vmNicsCard.jsx:469
+#: src/components/vm/nics/vmNicsCard.jsx:470
 msgid "Network interface $0 could not be removed"
 msgstr "ネットワークインターフェース $0 は削除できませんでした"
 
-#: src/components/vm/nics/vmNicsCard.jsx:470
+#: src/components/vm/nics/vmNicsCard.jsx:471
 msgid "Network interface $0 will be removed from $1"
 msgstr "ネットワークインターフェース $0 は、$1 から削除されます"
 
@@ -1677,7 +1688,7 @@ msgstr "ホストとこの仮想マシン間で共有されるディレクトリ
 msgid "No disks defined for this VM"
 msgstr "この仮想マシンに対してディスクが定義されていません"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:211
+#: src/components/vm/hostdevs/hostDevAdd.jsx:214
 msgid "No host device selected"
 msgstr "ホストデバイスが選択されていません"
 
@@ -1689,7 +1700,7 @@ msgstr "この仮想マシンに割り当てられているホストデバイス
 msgid "No network devices"
 msgstr "ネットワークデバイスはありません"
 
-#: src/components/vm/nics/vmNicsCard.jsx:560
+#: src/components/vm/nics/vmNicsCard.jsx:561
 msgid "No network interfaces defined for this VM"
 msgstr "この仮想マシンにはネットワークインターフェースが定義されていません"
 
@@ -1705,7 +1716,7 @@ msgstr "利用可能なネットワークはありません"
 msgid "No parent"
 msgstr "親なし"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:226
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:230
 msgid "No snapshots defined for this VM"
 msgstr "この仮想マシンに対してスナップショットが定義されていません"
 
@@ -1957,7 +1968,7 @@ msgstr "プレフィックス長"
 msgid "Prefix length should not be empty"
 msgstr "プレフィックス長は空欄にできません"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:227
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:231
 msgid ""
 "Previously taken snapshots allow you to revert to an earlier state if "
 "something goes wrong"
@@ -1969,7 +1980,7 @@ msgstr ""
 msgid "Private"
 msgstr "プライベート"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:128
+#: src/components/vm/hostdevs/hostDevAdd.jsx:130
 #: src/components/vm/hostdevs/hostDevCard.jsx:235
 #: src/components/vm/hostdevs/hostDevCard.jsx:241
 #: src/components/vm/overview/bootOrder.jsx:131
@@ -2050,8 +2061,8 @@ msgstr "リモートビューアーの詳細"
 #: src/components/vm/overview/watchdog.jsx:191
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:59
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:68
-#: src/components/vm/nics/vmNicsCard.jsx:471
-#: src/components/vm/nics/vmNicsCard.jsx:481
+#: src/components/vm/nics/vmNicsCard.jsx:472
+#: src/components/vm/nics/vmNicsCard.jsx:482
 msgid "Remove"
 msgstr "削除"
 
@@ -2079,7 +2090,7 @@ msgstr "仮想マシンからホストデバイスを削除しますか?"
 msgid "Remove item"
 msgstr "アイテムの削除"
 
-#: src/components/vm/nics/vmNicsCard.jsx:468
+#: src/components/vm/nics/vmNicsCard.jsx:469
 msgid "Remove network interface?"
 msgstr "ネットワークインターフェースを削除しますか?"
 
@@ -2131,7 +2142,7 @@ msgstr ""
 msgid "Resume"
 msgstr "再開"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:173
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:174
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:100
 msgid "Revert"
 msgstr "元に戻す"
@@ -2160,6 +2171,10 @@ msgstr "$0 へのルーティング"
 #: src/components/create-vm-dialog/pxe-helpers.js:100
 msgid "Routed network"
 msgstr "ルーティングされたネットワーク"
+
+#: src/components/vm/hostdevs/hostDevAdd.jsx:129
+msgid "Row select"
+msgstr ""
 
 #: src/components/vm/vmActions.jsx:380
 msgid "Run"
@@ -2335,11 +2350,11 @@ msgstr "サイズ"
 msgid "Slot"
 msgstr "スロット"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:181
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:182
 msgid "Snapshot $0 could not be deleted"
 msgstr "スナップショット $0 を削除できませんでした"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:182
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:183
 msgid ""
 "Snapshot $0 will be deleted from $1. All of its captured content will be "
 "lost."
@@ -2556,8 +2571,8 @@ msgid "The VM $0 is running and will be forced off before deletion."
 msgstr "仮想マシン $0 が実行中で、削除前に強制的にオフになります。"
 
 #: src/components/vm/disks/vmDiskColumns.jsx:223
-#: src/components/vm/nics/vmNicsCard.jsx:482
-#: src/components/vm/nics/vmNicsCard.jsx:490
+#: src/components/vm/nics/vmNicsCard.jsx:483
+#: src/components/vm/nics/vmNicsCard.jsx:491
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr ""
 "このデバイスを切断するには、VM を実行するか、シャットオフする必要があります"
@@ -2710,7 +2725,7 @@ msgstr "USB"
 msgid "UUID"
 msgstr "UUID"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:142
+#: src/components/vm/hostdevs/hostDevAdd.jsx:145
 msgid "Undefined"
 msgstr "未定義"
 
@@ -2900,7 +2915,7 @@ msgstr "VNC ポート"
 msgid "Valid token"
 msgstr "有効なトークン"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:128
+#: src/components/vm/hostdevs/hostDevAdd.jsx:130
 #: src/components/vm/hostdevs/hostDevCard.jsx:207
 #: src/components/vm/hostdevs/hostDevCard.jsx:234
 #: src/components/vm/hostdevs/hostDevCard.jsx:240
