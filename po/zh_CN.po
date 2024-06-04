@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-16 02:50+0000\n"
+"POT-Creation-Date: 2024-06-04 02:50+0000\n"
 "PO-Revision-Date: 2024-02-19 03:37+0000\n"
 "Last-Translator: Mie Yamamoto <myamamot@redhat.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.fedoraproject.org/"
@@ -101,6 +101,17 @@ msgstr "访问"
 msgid "Action"
 msgstr "操作"
 
+#: src/components/networks/networkList.jsx:72
+#: src/components/storagePools/storagePoolList.jsx:72
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:162
+#: src/components/vm/disks/vmDisksCard.jsx:194
+#: src/components/vm/nics/vmNicsCard.jsx:421
+#: src/components/vms/hostvmslist.jsx:164
+#, fuzzy
+#| msgid "Action"
+msgid "Actions"
+msgstr "操作"
+
 #: src/components/networks/network.jsx:174
 #: src/components/storagePools/storagePool.jsx:168
 msgid "Activate"
@@ -111,7 +122,7 @@ msgid "Activate the storage pool to administer volumes"
 msgstr "激活存储池以管理卷"
 
 #: src/components/networks/networkOverviewTab.jsx:235
-#: src/components/vm/hostdevs/hostDevAdd.jsx:229
+#: src/components/vm/hostdevs/hostDevAdd.jsx:232
 #: src/components/vm/disks/diskAdd.jsx:846
 #: src/components/vm/overview/vsock.jsx:195
 #: src/components/vm/overview/watchdog.jsx:154
@@ -132,7 +143,7 @@ msgstr "添加一个DHCP静态主机条目"
 msgid "Add disk"
 msgstr "添加磁盘"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:244
+#: src/components/vm/hostdevs/hostDevAdd.jsx:247
 #: src/components/vm/hostdevs/hostDevCard.jsx:147
 msgid "Add host device"
 msgstr "添加主机设备"
@@ -310,7 +321,7 @@ msgstr "缓存"
 #: src/components/vm/vmMigrateDialog.jsx:202
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:110
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:204
-#: src/components/vm/hostdevs/hostDevAdd.jsx:234
+#: src/components/vm/hostdevs/hostDevAdd.jsx:237
 #: src/components/vm/disks/diskEdit.jsx:270
 #: src/components/vm/disks/mediaEject.jsx:110
 #: src/components/vm/disks/diskAdd.jsx:849
@@ -630,7 +641,7 @@ msgstr "删除关联的存储文件："
 msgid "Delete network?"
 msgstr "删除网络？"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:180
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:181
 msgid "Delete snapshot?"
 msgstr "删除快照？"
 
@@ -798,7 +809,7 @@ msgid "Dying"
 msgstr "停止工作"
 
 #: src/components/vm/disks/diskEdit.jsx:166
-#: src/components/vm/nics/vmNicsCard.jsx:453
+#: src/components/vm/nics/vmNicsCard.jsx:454
 msgid "Edit"
 msgstr "编辑"
 
@@ -814,11 +825,11 @@ msgstr "编辑 vsock 接口"
 msgid "Edit watchdog device type"
 msgstr "编辑 watchdog 设备类型"
 
-#: src/components/vm/nics/vmNicsCard.jsx:441
+#: src/components/vm/nics/vmNicsCard.jsx:442
 msgid "Editing network interfaces of transient guests is not allowed"
 msgstr "不允许编辑临时客户机的网络接口"
 
-#: src/components/vm/nics/vmNicsCard.jsx:447
+#: src/components/vm/nics/vmNicsCard.jsx:448
 msgid "Editing transient network interfaces is not allowed"
 msgstr "不允许编辑临时网络接口"
 
@@ -1058,7 +1069,7 @@ msgstr "主机"
 msgid "Host device"
 msgstr "主机设备"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:206
+#: src/components/vm/hostdevs/hostDevAdd.jsx:209
 msgid "Host device could not be attached"
 msgstr "无法连接主机设备"
 
@@ -1324,7 +1335,7 @@ msgstr "Libvirt 未检测到安装在主机上的任何 UEFI/OVMF 固件镜像"
 msgid "Libvirt or hypervisor does not support UEFI"
 msgstr "Libvirt 或虚拟机管理器不支持 UEFI"
 
-#: src/components/vm/nics/vmNicsCard.jsx:444
+#: src/components/vm/nics/vmNicsCard.jsx:445
 msgid "Loading available network devices"
 msgstr "加载可用的网络设备"
 
@@ -1340,7 +1351,7 @@ msgstr "载入中..."
 msgid "Local install media (ISO image or distro install tree)"
 msgstr "本地安装媒体（ISO镜像或者发行版安装树）"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:128
+#: src/components/vm/hostdevs/hostDevAdd.jsx:130
 msgid "Location"
 msgstr "位置"
 
@@ -1587,11 +1598,11 @@ msgstr "网络文件系统"
 msgid "Network interface"
 msgstr "网络接口"
 
-#: src/components/vm/nics/vmNicsCard.jsx:469
+#: src/components/vm/nics/vmNicsCard.jsx:470
 msgid "Network interface $0 could not be removed"
 msgstr "无法删除网络接口 $0"
 
-#: src/components/vm/nics/vmNicsCard.jsx:470
+#: src/components/vm/nics/vmNicsCard.jsx:471
 msgid "Network interface $0 will be removed from $1"
 msgstr "网络接口 $0 将从 $1 中删除"
 
@@ -1653,7 +1664,7 @@ msgstr "主机和此虚拟机之间没有共享的目录"
 msgid "No disks defined for this VM"
 msgstr "没有为该虚拟机定义磁盘"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:211
+#: src/components/vm/hostdevs/hostDevAdd.jsx:214
 msgid "No host device selected"
 msgstr "没有选择主机设备"
 
@@ -1665,7 +1676,7 @@ msgstr "没有分配给这个虚拟机的主机设备"
 msgid "No network devices"
 msgstr "没有网络设备"
 
-#: src/components/vm/nics/vmNicsCard.jsx:560
+#: src/components/vm/nics/vmNicsCard.jsx:561
 msgid "No network interfaces defined for this VM"
 msgstr "没有为此 VM 定义网络接口"
 
@@ -1681,7 +1692,7 @@ msgstr "没有可用的网络"
 msgid "No parent"
 msgstr "没有上级"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:226
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:230
 msgid "No snapshots defined for this VM"
 msgstr "没有为这个虚拟机定义快照"
 
@@ -1926,7 +1937,7 @@ msgstr "前缀长度"
 msgid "Prefix length should not be empty"
 msgstr "前缀长度不能为空"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:227
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:231
 msgid ""
 "Previously taken snapshots allow you to revert to an earlier state if "
 "something goes wrong"
@@ -1936,7 +1947,7 @@ msgstr "提前创建的快照使得您可以在出现问题的时候回复到较
 msgid "Private"
 msgstr "私有"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:128
+#: src/components/vm/hostdevs/hostDevAdd.jsx:130
 #: src/components/vm/hostdevs/hostDevCard.jsx:235
 #: src/components/vm/hostdevs/hostDevCard.jsx:241
 #: src/components/vm/overview/bootOrder.jsx:131
@@ -2016,8 +2027,8 @@ msgstr "Remote viewer 详情"
 #: src/components/vm/overview/watchdog.jsx:191
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:59
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:68
-#: src/components/vm/nics/vmNicsCard.jsx:471
-#: src/components/vm/nics/vmNicsCard.jsx:481
+#: src/components/vm/nics/vmNicsCard.jsx:472
+#: src/components/vm/nics/vmNicsCard.jsx:482
 msgid "Remove"
 msgstr "删除"
 
@@ -2045,7 +2056,7 @@ msgstr "从虚拟机中删除主机设备？"
 msgid "Remove item"
 msgstr "删除项目"
 
-#: src/components/vm/nics/vmNicsCard.jsx:468
+#: src/components/vm/nics/vmNicsCard.jsx:469
 msgid "Remove network interface?"
 msgstr "删除网络接口？"
 
@@ -2095,7 +2106,7 @@ msgstr "网络中的限制（基于SLIRP 的模拟）和 PCI 设备分配"
 msgid "Resume"
 msgstr "恢复"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:173
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:174
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:100
 msgid "Revert"
 msgstr "恢复"
@@ -2124,6 +2135,10 @@ msgstr "路由到 $0"
 #: src/components/create-vm-dialog/pxe-helpers.js:100
 msgid "Routed network"
 msgstr "路由的网络"
+
+#: src/components/vm/hostdevs/hostDevAdd.jsx:129
+msgid "Row select"
+msgstr ""
 
 #: src/components/vm/vmActions.jsx:380
 msgid "Run"
@@ -2294,11 +2309,11 @@ msgstr "大小"
 msgid "Slot"
 msgstr "插槽"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:181
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:182
 msgid "Snapshot $0 could not be deleted"
 msgstr "快照 $0 无法删除"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:182
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:183
 msgid ""
 "Snapshot $0 will be deleted from $1. All of its captured content will be "
 "lost."
@@ -2509,8 +2524,8 @@ msgid "The VM $0 is running and will be forced off before deletion."
 msgstr "虚拟机 $0 正在运行，在删除前将被强制关闭。"
 
 #: src/components/vm/disks/vmDiskColumns.jsx:223
-#: src/components/vm/nics/vmNicsCard.jsx:482
-#: src/components/vm/nics/vmNicsCard.jsx:490
+#: src/components/vm/nics/vmNicsCard.jsx:483
+#: src/components/vm/nics/vmNicsCard.jsx:491
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr "虚拟机需要运行或关闭才能分离该设备"
 
@@ -2650,7 +2665,7 @@ msgstr "USB"
 msgid "UUID"
 msgstr "UUID"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:142
+#: src/components/vm/hostdevs/hostDevAdd.jsx:145
 msgid "Undefined"
 msgstr "未定义"
 
@@ -2837,7 +2852,7 @@ msgstr "VNC 端口"
 msgid "Valid token"
 msgstr "有效令牌"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:128
+#: src/components/vm/hostdevs/hostDevAdd.jsx:130
 #: src/components/vm/hostdevs/hostDevCard.jsx:207
 #: src/components/vm/hostdevs/hostDevCard.jsx:234
 #: src/components/vm/hostdevs/hostDevCard.jsx:240

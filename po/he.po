@@ -24,7 +24,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-16 02:50+0000\n"
+"POT-Creation-Date: 2024-06-04 02:50+0000\n"
 "PO-Revision-Date: 2023-03-06 09:20+0000\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language-Team: Hebrew <https://translate.fedoraproject.org/projects/cockpit-"
@@ -118,6 +118,17 @@ msgstr "גישה"
 msgid "Action"
 msgstr "פעולה"
 
+#: src/components/networks/networkList.jsx:72
+#: src/components/storagePools/storagePoolList.jsx:72
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:162
+#: src/components/vm/disks/vmDisksCard.jsx:194
+#: src/components/vm/nics/vmNicsCard.jsx:421
+#: src/components/vms/hostvmslist.jsx:164
+#, fuzzy
+#| msgid "Action"
+msgid "Actions"
+msgstr "פעולה"
+
 #: src/components/networks/network.jsx:174
 #: src/components/storagePools/storagePool.jsx:168
 msgid "Activate"
@@ -128,7 +139,7 @@ msgid "Activate the storage pool to administer volumes"
 msgstr "יש להפעיל את מאגר האחסון כדי לנהל כרכים"
 
 #: src/components/networks/networkOverviewTab.jsx:235
-#: src/components/vm/hostdevs/hostDevAdd.jsx:229
+#: src/components/vm/hostdevs/hostDevAdd.jsx:232
 #: src/components/vm/disks/diskAdd.jsx:846
 #: src/components/vm/overview/vsock.jsx:195
 #: src/components/vm/overview/watchdog.jsx:154
@@ -149,7 +160,7 @@ msgstr "הוספת רשומת מארח סטטית ל־DHCP"
 msgid "Add disk"
 msgstr "הוספת כונן"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:244
+#: src/components/vm/hostdevs/hostDevAdd.jsx:247
 #: src/components/vm/hostdevs/hostDevCard.jsx:147
 msgid "Add host device"
 msgstr "הוספת התקן מארח"
@@ -334,7 +345,7 @@ msgstr "מכלא"
 #: src/components/vm/vmMigrateDialog.jsx:202
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:110
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:204
-#: src/components/vm/hostdevs/hostDevAdd.jsx:234
+#: src/components/vm/hostdevs/hostDevAdd.jsx:237
 #: src/components/vm/disks/diskEdit.jsx:270
 #: src/components/vm/disks/mediaEject.jsx:110
 #: src/components/vm/disks/diskAdd.jsx:849
@@ -666,7 +677,7 @@ msgstr "מחיקת קובצי אחסון משויכים:"
 msgid "Delete network?"
 msgstr "למחוק את הרשת?"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:180
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:181
 msgid "Delete snapshot?"
 msgstr "למחוק תמונת מצב?"
 
@@ -840,7 +851,7 @@ msgid "Dying"
 msgstr "גוסס"
 
 #: src/components/vm/disks/diskEdit.jsx:166
-#: src/components/vm/nics/vmNicsCard.jsx:453
+#: src/components/vm/nics/vmNicsCard.jsx:454
 msgid "Edit"
 msgstr "עריכה"
 
@@ -858,11 +869,11 @@ msgstr "הוספת מנשק רשת"
 msgid "Edit watchdog device type"
 msgstr "עריכת סוג התקן השגחה"
 
-#: src/components/vm/nics/vmNicsCard.jsx:441
+#: src/components/vm/nics/vmNicsCard.jsx:442
 msgid "Editing network interfaces of transient guests is not allowed"
 msgstr "עריכת מנשקי הרשת של אורחות חולפות אסורה"
 
-#: src/components/vm/nics/vmNicsCard.jsx:447
+#: src/components/vm/nics/vmNicsCard.jsx:448
 msgid "Editing transient network interfaces is not allowed"
 msgstr "עריכת מנשקים של רשת חולפת אסורה"
 
@@ -1114,7 +1125,7 @@ msgstr "מארח"
 msgid "Host device"
 msgstr "התקן מארח"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:206
+#: src/components/vm/hostdevs/hostDevAdd.jsx:209
 #, fuzzy
 #| msgid "Boot order settings could not be saved"
 msgid "Host device could not be attached"
@@ -1398,7 +1409,7 @@ msgstr "Libvirt לא זיהה תמונת קושחה מסוג UEFI/OVMF מותק�
 msgid "Libvirt or hypervisor does not support UEFI"
 msgstr "Libvirt או ה־hypervisor לא תומכים ב־UEFI"
 
-#: src/components/vm/nics/vmNicsCard.jsx:444
+#: src/components/vm/nics/vmNicsCard.jsx:445
 #, fuzzy
 #| msgid "No network devices"
 msgid "Loading available network devices"
@@ -1416,7 +1427,7 @@ msgstr "בטעינה…"
 msgid "Local install media (ISO image or distro install tree)"
 msgstr "מדיה להתקנה מקומית (דמות ISO או עץ התקנת הפצה)"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:128
+#: src/components/vm/hostdevs/hostDevAdd.jsx:130
 #, fuzzy
 #| msgid "Connection"
 msgid "Location"
@@ -1689,13 +1700,13 @@ msgstr "מערכת קבצים רשתית"
 msgid "Network interface"
 msgstr "הוספת מנשק רשת"
 
-#: src/components/vm/nics/vmNicsCard.jsx:469
+#: src/components/vm/nics/vmNicsCard.jsx:470
 #, fuzzy
 #| msgid "Network interface settings could not be saved"
 msgid "Network interface $0 could not be removed"
 msgstr "לא ניתן לשמור את הגדרות מנשק הרשת"
 
-#: src/components/vm/nics/vmNicsCard.jsx:470
+#: src/components/vm/nics/vmNicsCard.jsx:471
 #, fuzzy
 #| msgid "Network interface settings could not be saved"
 msgid "Network interface $0 will be removed from $1"
@@ -1763,7 +1774,7 @@ msgstr ""
 msgid "No disks defined for this VM"
 msgstr "לא מוגדרים כוננים למכונה הווירטואלית הזאת"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:211
+#: src/components/vm/hostdevs/hostDevAdd.jsx:214
 #, fuzzy
 #| msgid "No boot device found"
 msgid "No host device selected"
@@ -1779,7 +1790,7 @@ msgstr "לא מוגדרות תמונות מצב למכונה הווירטואל�
 msgid "No network devices"
 msgstr "אין התקני רשת"
 
-#: src/components/vm/nics/vmNicsCard.jsx:560
+#: src/components/vm/nics/vmNicsCard.jsx:561
 msgid "No network interfaces defined for this VM"
 msgstr "לא הוגדרו מנשקי רשת למכונה הווירטואלית הזאת"
 
@@ -1795,7 +1806,7 @@ msgstr "אין רשתות זמינות"
 msgid "No parent"
 msgstr "אין הורה"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:226
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:230
 msgid "No snapshots defined for this VM"
 msgstr "לא מוגדרות תמונות מצב למכונה הווירטואלית הזאת"
 
@@ -2050,7 +2061,7 @@ msgstr "אורך קידומת"
 msgid "Prefix length should not be empty"
 msgstr "אורך הקידומת לא אמור להיות ריק"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:227
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:231
 msgid ""
 "Previously taken snapshots allow you to revert to an earlier state if "
 "something goes wrong"
@@ -2060,7 +2071,7 @@ msgstr "תמונות מצב שנלכדו בעבר מאפשרות לך לחזור
 msgid "Private"
 msgstr "פרטי"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:128
+#: src/components/vm/hostdevs/hostDevAdd.jsx:130
 #: src/components/vm/hostdevs/hostDevCard.jsx:235
 #: src/components/vm/hostdevs/hostDevCard.jsx:241
 #: src/components/vm/overview/bootOrder.jsx:131
@@ -2140,8 +2151,8 @@ msgstr "פרטי המציג מרחוק"
 #: src/components/vm/overview/watchdog.jsx:191
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:59
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:68
-#: src/components/vm/nics/vmNicsCard.jsx:471
-#: src/components/vm/nics/vmNicsCard.jsx:481
+#: src/components/vm/nics/vmNicsCard.jsx:472
+#: src/components/vm/nics/vmNicsCard.jsx:482
 msgid "Remove"
 msgstr "הסרה"
 
@@ -2171,7 +2182,7 @@ msgstr "להסיר התקן מארח ממכונה וירטואלית?"
 msgid "Remove item"
 msgstr "להסיר מערכת קבצים?"
 
-#: src/components/vm/nics/vmNicsCard.jsx:468
+#: src/components/vm/nics/vmNicsCard.jsx:469
 msgid "Remove network interface?"
 msgstr "להסיר מנשק רשת?"
 
@@ -2223,7 +2234,7 @@ msgstr ""
 msgid "Resume"
 msgstr "המשך"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:173
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:174
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:100
 msgid "Revert"
 msgstr "החזרה אחורה"
@@ -2252,6 +2263,10 @@ msgstr "ניתוב אל $0"
 #: src/components/create-vm-dialog/pxe-helpers.js:100
 msgid "Routed network"
 msgstr "רשת מנותבת"
+
+#: src/components/vm/hostdevs/hostDevAdd.jsx:129
+msgid "Row select"
+msgstr ""
 
 #: src/components/vm/vmActions.jsx:380
 msgid "Run"
@@ -2441,13 +2456,13 @@ msgstr "גודל"
 msgid "Slot"
 msgstr "משבצת"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:181
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:182
 #, fuzzy
 #| msgid "The $0 could not be deleted"
 msgid "Snapshot $0 could not be deleted"
 msgstr "לא ניתן למחוק את ה־$0"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:182
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:183
 #, fuzzy
 #| msgid "After deleting the snapshot, all its captured content will be lost."
 msgid ""
@@ -2670,8 +2685,8 @@ msgid "The VM $0 is running and will be forced off before deletion."
 msgstr "המכונה הווירטואלית פועלת ויהיה עליך לכבות אותה לפני המחיקה."
 
 #: src/components/vm/disks/vmDiskColumns.jsx:223
-#: src/components/vm/nics/vmNicsCard.jsx:482
-#: src/components/vm/nics/vmNicsCard.jsx:490
+#: src/components/vm/nics/vmNicsCard.jsx:483
+#: src/components/vm/nics/vmNicsCard.jsx:491
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr "על המכונה הווירטואלית להיות פעילה או כבויה כדי לנתק את ההתקן הזה"
 
@@ -2810,7 +2825,7 @@ msgstr ""
 msgid "UUID"
 msgstr ""
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:142
+#: src/components/vm/hostdevs/hostDevAdd.jsx:145
 msgid "Undefined"
 msgstr ""
 
@@ -3005,7 +3020,7 @@ msgstr "פתחת VNC"
 msgid "Valid token"
 msgstr ""
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:128
+#: src/components/vm/hostdevs/hostDevAdd.jsx:130
 #: src/components/vm/hostdevs/hostDevCard.jsx:207
 #: src/components/vm/hostdevs/hostDevCard.jsx:234
 #: src/components/vm/hostdevs/hostDevCard.jsx:240

@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-16 02:50+0000\n"
+"POT-Creation-Date: 2024-06-04 02:50+0000\n"
 "PO-Revision-Date: 2024-05-11 06:36+0000\n"
 "Last-Translator: Martin Pitt <mpitt@redhat.com>\n"
 "Language-Team: French <https://translate.fedoraproject.org/projects/cockpit-"
@@ -108,6 +108,17 @@ msgstr "Accès"
 msgid "Action"
 msgstr "Action"
 
+#: src/components/networks/networkList.jsx:72
+#: src/components/storagePools/storagePoolList.jsx:72
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:162
+#: src/components/vm/disks/vmDisksCard.jsx:194
+#: src/components/vm/nics/vmNicsCard.jsx:421
+#: src/components/vms/hostvmslist.jsx:164
+#, fuzzy
+#| msgid "Action"
+msgid "Actions"
+msgstr "Action"
+
 #: src/components/networks/network.jsx:174
 #: src/components/storagePools/storagePool.jsx:168
 msgid "Activate"
@@ -118,7 +129,7 @@ msgid "Activate the storage pool to administer volumes"
 msgstr "Activer le pool de stockage pour gérer les volumes"
 
 #: src/components/networks/networkOverviewTab.jsx:235
-#: src/components/vm/hostdevs/hostDevAdd.jsx:229
+#: src/components/vm/hostdevs/hostDevAdd.jsx:232
 #: src/components/vm/disks/diskAdd.jsx:846
 #: src/components/vm/overview/vsock.jsx:195
 #: src/components/vm/overview/watchdog.jsx:154
@@ -139,7 +150,7 @@ msgstr "Ajouter une entrée d’hôte statique DHCP"
 msgid "Add disk"
 msgstr "Ajouter un disque"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:244
+#: src/components/vm/hostdevs/hostDevAdd.jsx:247
 #: src/components/vm/hostdevs/hostDevCard.jsx:147
 msgid "Add host device"
 msgstr "Ajouter un dispositif hôte"
@@ -326,7 +337,7 @@ msgstr "Cache"
 #: src/components/vm/vmMigrateDialog.jsx:202
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:110
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:204
-#: src/components/vm/hostdevs/hostDevAdd.jsx:234
+#: src/components/vm/hostdevs/hostDevAdd.jsx:237
 #: src/components/vm/disks/diskEdit.jsx:270
 #: src/components/vm/disks/mediaEject.jsx:110
 #: src/components/vm/disks/diskAdd.jsx:849
@@ -656,7 +667,7 @@ msgstr "Supprimer les fichiers de stockage associés :"
 msgid "Delete network?"
 msgstr "Supprimer le réseau ?"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:180
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:181
 msgid "Delete snapshot?"
 msgstr "Supprimer l'instantané ?"
 
@@ -837,7 +848,7 @@ msgid "Dying"
 msgstr "Sur le point ce cesser toute activité"
 
 #: src/components/vm/disks/diskEdit.jsx:166
-#: src/components/vm/nics/vmNicsCard.jsx:453
+#: src/components/vm/nics/vmNicsCard.jsx:454
 msgid "Edit"
 msgstr "Modifier"
 
@@ -853,13 +864,13 @@ msgstr "Modifier l'interface vsock"
 msgid "Edit watchdog device type"
 msgstr "Modifier le dispositif de suveillance"
 
-#: src/components/vm/nics/vmNicsCard.jsx:441
+#: src/components/vm/nics/vmNicsCard.jsx:442
 msgid "Editing network interfaces of transient guests is not allowed"
 msgstr ""
 "La modification des interfaces réseau des invités transitoires n’est pas "
 "autorisée"
 
-#: src/components/vm/nics/vmNicsCard.jsx:447
+#: src/components/vm/nics/vmNicsCard.jsx:448
 msgid "Editing transient network interfaces is not allowed"
 msgstr "La modification des interfaces réseau transitoires n’est pas autorisée"
 
@@ -1110,7 +1121,7 @@ msgstr "Hôte"
 msgid "Host device"
 msgstr "Périphérique hôte"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:206
+#: src/components/vm/hostdevs/hostDevAdd.jsx:209
 msgid "Host device could not be attached"
 msgstr "Le dispositif hôte n’a pas pu être attaché"
 
@@ -1393,7 +1404,7 @@ msgstr ""
 msgid "Libvirt or hypervisor does not support UEFI"
 msgstr "Libvirt ou l’hyperviseur ne prend pas en charge UEFI"
 
-#: src/components/vm/nics/vmNicsCard.jsx:444
+#: src/components/vm/nics/vmNicsCard.jsx:445
 msgid "Loading available network devices"
 msgstr "Chargement des périphériques réseau disponibles"
 
@@ -1411,7 +1422,7 @@ msgstr ""
 "Support d’installation local (image ISO ou arborescence d'installation de la "
 "distribution)"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:128
+#: src/components/vm/hostdevs/hostDevAdd.jsx:130
 msgid "Location"
 msgstr "Emplacement"
 
@@ -1667,11 +1678,11 @@ msgstr "Système de fichiers par réseau (NFS)"
 msgid "Network interface"
 msgstr "Interface réseau"
 
-#: src/components/vm/nics/vmNicsCard.jsx:469
+#: src/components/vm/nics/vmNicsCard.jsx:470
 msgid "Network interface $0 could not be removed"
 msgstr "L'interface réseau $0 n'a pas pu être supprimée"
 
-#: src/components/vm/nics/vmNicsCard.jsx:470
+#: src/components/vm/nics/vmNicsCard.jsx:471
 msgid "Network interface $0 will be removed from $1"
 msgstr "L'interface réseau $0 sera supprimée de $1"
 
@@ -1734,7 +1745,7 @@ msgstr "Aucun répertoire partagé entre l’hôte et cette machine virtuelle"
 msgid "No disks defined for this VM"
 msgstr "Aucun disque défini pour cette machine virtuelle"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:211
+#: src/components/vm/hostdevs/hostDevAdd.jsx:214
 msgid "No host device selected"
 msgstr "Pas de périphérique hôte sélectionné"
 
@@ -1746,7 +1757,7 @@ msgstr "Aucun périphérique hôte affecté à cette machine virtuelle"
 msgid "No network devices"
 msgstr "Aucun périphérique réseau disponible"
 
-#: src/components/vm/nics/vmNicsCard.jsx:560
+#: src/components/vm/nics/vmNicsCard.jsx:561
 msgid "No network interfaces defined for this VM"
 msgstr "Aucune interface réseau définie pour cette machine virtuelle"
 
@@ -1762,7 +1773,7 @@ msgstr "Aucun réseau disponible"
 msgid "No parent"
 msgstr "Pas de parent"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:226
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:230
 msgid "No snapshots defined for this VM"
 msgstr "Aucun instantané défini pour cette machine virtuelle"
 
@@ -2017,7 +2028,7 @@ msgstr "Longueur du préfixe"
 msgid "Prefix length should not be empty"
 msgstr "La longueur du préfixe ne doit pas être vide"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:227
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:231
 msgid ""
 "Previously taken snapshots allow you to revert to an earlier state if "
 "something goes wrong"
@@ -2029,7 +2040,7 @@ msgstr ""
 msgid "Private"
 msgstr "Privé"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:128
+#: src/components/vm/hostdevs/hostDevAdd.jsx:130
 #: src/components/vm/hostdevs/hostDevCard.jsx:235
 #: src/components/vm/hostdevs/hostDevCard.jsx:241
 #: src/components/vm/overview/bootOrder.jsx:131
@@ -2114,8 +2125,8 @@ msgstr "Détails du bureau à distance"
 #: src/components/vm/overview/watchdog.jsx:191
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:59
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:68
-#: src/components/vm/nics/vmNicsCard.jsx:471
-#: src/components/vm/nics/vmNicsCard.jsx:481
+#: src/components/vm/nics/vmNicsCard.jsx:472
+#: src/components/vm/nics/vmNicsCard.jsx:482
 msgid "Remove"
 msgstr "Retirer"
 
@@ -2145,7 +2156,7 @@ msgstr "Retirer le dispositif hôte de la VM ?"
 msgid "Remove item"
 msgstr "Supprimer le système de fichiers ?"
 
-#: src/components/vm/nics/vmNicsCard.jsx:468
+#: src/components/vm/nics/vmNicsCard.jsx:469
 msgid "Remove network interface?"
 msgstr "Supprimer l'interface réseau ?"
 
@@ -2199,7 +2210,7 @@ msgstr ""
 msgid "Resume"
 msgstr "Reprendre"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:173
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:174
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:100
 msgid "Revert"
 msgstr "Rétablir"
@@ -2229,6 +2240,10 @@ msgstr "Routage vers $0"
 #: src/components/create-vm-dialog/pxe-helpers.js:100
 msgid "Routed network"
 msgstr "Réseau routé"
+
+#: src/components/vm/hostdevs/hostDevAdd.jsx:129
+msgid "Row select"
+msgstr ""
 
 #: src/components/vm/vmActions.jsx:380
 msgid "Run"
@@ -2414,11 +2429,11 @@ msgstr "Taille"
 msgid "Slot"
 msgstr "Emplacement"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:181
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:182
 msgid "Snapshot $0 could not be deleted"
 msgstr "L’instantané $0 n’a pas pu être supprimé"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:182
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:183
 msgid ""
 "Snapshot $0 will be deleted from $1. All of its captured content will be "
 "lost."
@@ -2639,8 +2654,8 @@ msgstr ""
 "La VM $0 est en cours d'exécution et sera désactivée avant d'être supprimée."
 
 #: src/components/vm/disks/vmDiskColumns.jsx:223
-#: src/components/vm/nics/vmNicsCard.jsx:482
-#: src/components/vm/nics/vmNicsCard.jsx:490
+#: src/components/vm/nics/vmNicsCard.jsx:483
+#: src/components/vm/nics/vmNicsCard.jsx:491
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr ""
 "La machine virtuelle doit être en marche ou éteinte pour détacher ce "
@@ -2799,7 +2814,7 @@ msgstr "USB"
 msgid "UUID"
 msgstr "UUID"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:142
+#: src/components/vm/hostdevs/hostDevAdd.jsx:145
 msgid "Undefined"
 msgstr "Indéfini"
 
@@ -2997,7 +3012,7 @@ msgstr "Port VNC"
 msgid "Valid token"
 msgstr "Jeton valide"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:128
+#: src/components/vm/hostdevs/hostDevAdd.jsx:130
 #: src/components/vm/hostdevs/hostDevCard.jsx:207
 #: src/components/vm/hostdevs/hostDevCard.jsx:234
 #: src/components/vm/hostdevs/hostDevCard.jsx:240
