@@ -17,8 +17,8 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
-import cockpit from 'cockpit';
-import { read_os_release } from "os-release.js";
+import { read_os_release } from "os-release";
+import { get_manifest_config_matchlist } from "utils";
 
 /**
  * Application-wide constants
@@ -41,30 +41,15 @@ const VMS_CONFIG = {
     StorageMigrationSupported: true,
 };
 
-function try_fields(dict, fields, def) {
-    for (let i = 0; i < fields.length; i++) {
-        if (fields[i] && dict[fields[i]] !== undefined)
-            return dict[fields[i]];
-    }
-    return undefined;
-}
-
 export async function load_config() {
-    const config = cockpit.manifests.machines?.config;
     const os_release = await read_os_release();
+    const matches = [os_release.PLATFORM_ID, os_release.ID];
 
-    function get_config(name) {
-        if (config) {
-            let val = config[name];
-            if (typeof val === 'object' && val !== null)
-                val = try_fields(val, [os_release.PLATFORM_ID, os_release.ID]);
-            if (val !== undefined)
-                VMS_CONFIG[name] = val;
-        }
+    for (const key in VMS_CONFIG) {
+        const val = get_manifest_config_matchlist("machines", key, undefined, matches);
+        if (val !== undefined)
+            VMS_CONFIG[key] = val;
     }
-
-    for (const f in VMS_CONFIG)
-        get_config(f);
 }
 
 export default VMS_CONFIG;
