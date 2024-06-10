@@ -114,7 +114,7 @@ class TestMachinesConsoles(machineslib.VirtualMachinesCase):
         # Sometimes, pressing Enter one time doesn't take effect, so loop to press Enter to make sure the console has accepted it
         for _ in range(0, 60):
             b.focus(f"#{name}-terminal .xterm-accessibility-tree")
-            b.key_press("\r")
+            b.key("Enter")
             if "Welcome to Alpine Linux" in b.text(f"#{name}-terminal .xterm-accessibility-tree"):
                 break
             time.sleep(1)

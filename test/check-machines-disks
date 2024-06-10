@@ -1242,10 +1242,10 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         ).openDialog()
         b.click(f"{prefix}-file .pf-v5-c-select__toggle-button")
         b.wait_visible(f"{prefix}-file-autocomplete")
-        b.key_press(chr(40), use_ord=True)
+        b.key("ArrowDown")
         b.focus(f"{prefix}-file-autocomplete li:first-child")
         for _retry in range(0, 10):
-            b.key_press(chr(40), use_ord=True)
+            b.key("ArrowDown")
             time.sleep(0.5)
         b.click(".pf-v5-c-modal-box__close button")
         b.wait_not_present(".pf-v5-c-modal-box")
