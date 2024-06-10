@@ -1170,7 +1170,7 @@ vnc_password= "{vnc_passwd}"
 
             b.focus("#os-select-group input")
             # os_search_name is meant to be used to test substring much
-            b.key_press(self.os_search_name or self.os_name)
+            b.input_text(self.os_search_name or self.os_name)
 
             if not present:
                 try:
