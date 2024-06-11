@@ -27,6 +27,7 @@ const packageJson = JSON.parse(fs.readFileSync('package.json'));
 const parser = (await import('argparse')).default.ArgumentParser();
 parser.add_argument('-r', '--rsync', { help: "rsync bundles to ssh target after build", metavar: "HOST" });
 parser.add_argument('-w', '--watch', { action: 'store_true', help: "Enable watch mode", default: process.env.ESBUILD_WATCH === "true" });
+parser.add_argument('-m', '--metafile', { help: "Enable bundle size information file", metavar: "FILE" });
 const args = parser.parse_args();
 
 if (args.rsync)
@@ -84,6 +85,7 @@ const context = await esbuild.context({
         ".js": "jsx",
         ".py": "text",
     },
+    metafile: !!args.metafile,
     minify: production,
     nodePaths,
     outdir,
@@ -118,7 +120,10 @@ const context = await esbuild.context({
 });
 
 try {
-    await context.rebuild();
+    const result = await context.rebuild();
+    if (args.metafile) {
+        fs.writeFileSync(args.metafile, JSON.stringify(result.metafile));
+    }
 } catch (e) {
     if (!args.watch)
         process.exit(1);
