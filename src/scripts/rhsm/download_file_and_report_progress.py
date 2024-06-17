@@ -24,9 +24,10 @@ if not os.path.exists(download_path):
                 new_percentage = round(done * 100 / size)
                 if (new_percentage > percentage):
                     percentage = new_percentage
-                    print(f"{percentage}", flush=True)  # print adds newling by default, which serves nicely as a delimeter
+                    # print adds newling by default, which serves nicely as a delimiter
+                    print(f"{percentage}", flush=True)
                 f.write(block)
                 block = s.read(2 ** 20)
 
     except urllib.error.URLError as error:
-        sys.exit(error)
+        sys.exit(str(error))
