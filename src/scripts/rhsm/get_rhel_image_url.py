@@ -11,7 +11,7 @@ try:
     with urllib.request.urlopen(req) as s:
         ret_obj = json.loads(s.read())
 except urllib.error.URLError as error:
-    sys.exit(error)
+    sys.exit(str(error))
 
 if "error" in ret_obj:
     sys.exit(ret_obj["error"])

@@ -24,4 +24,4 @@ try:
 
     print(ret_obj["access_token"])
 except Exception as error:
-    sys.exit(error)
+    sys.exit(str(error))
