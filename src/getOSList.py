@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import json
+from typing import Any
 
 import gi
 
@@ -28,7 +29,8 @@ res = []
 for i in range(oses.get_length()):
     os = oses.get_nth(i)
 
-    osObj = {}
+    # not very useful, but Libosinfo doesn't provide types/schema
+    osObj: 'dict[str, Any]' = {}
     osObj['id'] = os.get_id() or ""
     osObj['shortId'] = os.get_short_id() or ""
     osObj['name'] = os.get_name() or ""
