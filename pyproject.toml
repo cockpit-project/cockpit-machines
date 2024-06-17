@@ -1,3 +1,23 @@
+[tool.mypy]
+follow_imports = 'silent'  # https://github.com/python-lsp/pylsp-mypy/issues/81
+scripts_are_modules = true  # allow checking all scripts in one invocation
+explicit_package_bases = true
+mypy_path = 'test/common:test:bots'
+exclude = [
+    "bots"
+]
+
+[[tool.mypy.overrides]]
+ignore_missing_imports = true
+module = [
+    # run without bots checked out
+    "machine.*",
+    "testvm",
+
+    # run without gobject-introspection
+    "gi.*",
+]
+
 [tool.ruff]
 exclude = [
     ".git/",
