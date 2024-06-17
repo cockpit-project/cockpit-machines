@@ -23,6 +23,8 @@ import { formatRelative } from 'date-fns';
 import cockpit from 'cockpit';
 import store from './store.js';
 
+import VMS_CONFIG from "./config.js";
+
 const _ = cockpit.gettext;
 
 export const LIBVIRT_SESSION_CONNECTION = 'session';
@@ -899,8 +901,11 @@ export function vmSupportsExternalSnapshots(config, vm, storagePools) {
         return false;
     }
 
-    // Currently external snapshots work only for disks of type "file"
-    if (!disks.every(disk => disk.type === "file")) {
+    // HACK: https://gitlab.com/libvirt/libvirt/-/issues/631
+    //
+    // Currently external snapshots work only for disks of type "file".
+
+    if (!VMS_CONFIG.ForceExternalSnapshots && !disks.every(disk => disk.type === "file")) {
         logDebug(`vmSupportsExternalSnapshots: vm ${vm.name} has unsupported disk type`);
         return false;
     }

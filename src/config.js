@@ -39,6 +39,7 @@ const VMS_CONFIG = {
     },
 
     StorageMigrationSupported: true,
+    ForceExternalSnapshots: false,
 };
 
 export async function load_config() {
