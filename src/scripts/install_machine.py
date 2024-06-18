@@ -54,11 +54,23 @@ def get_graphics_capabilies(connection):
 
 
 def prepare_graphics_params(connection):
-    graphics_config = {
+    # Check to make sure loopback has an IPv6 address assigned
+    # if not default back to IPv4
+    # once we stop supporting Python 3.6, use this:
+    # ip_lo = subprocess.run(['ip', '-6', 'addr', 'show', 'dev', 'lo'], capture_output=True, text=True)
+    ip_lo = subprocess.run(['ip', '-6', 'addr', 'show', 'dev', 'lo'], stdout=subprocess.PIPE, universal_newlines=True)
+
+    if ip_lo.returncode == 0 and "inet6" in ip_lo.stdout:
         # Use ipv6 as workaround for https://bugs.launchpad.net/ubuntu/+source/qemu/+bug/1492621
-        'spice': {'listen': '::1'},
+        spice_address = '::1'
+    else:
+        spice_address = '127.0.0.1'
+
+    graphics_config = {
+        'spice': {'listen': spice_address},
         'vnc': {'listen': '127.0.0.1'}
     }
+
     try:
         # Configparser needs a default section
         with open("/etc/libvirt/qemu.conf", 'r') as f:
@@ -67,7 +79,7 @@ def prepare_graphics_params(connection):
         config = configparser.ConfigParser()
         config.read_string(config_string)
 
-        graphics_config['spice']['listen'] = config['dummy_section'].get('spice_listen', '::1')
+        graphics_config['spice']['listen'] = config['dummy_section'].get('spice_listen', spice_address)
         spice_password = config['dummy_section'].get('spice_password', None)
         if spice_password is not None:
             graphics_config['spice']['password'] = spice_password
