@@ -899,7 +899,15 @@ export function vmSupportsExternalSnapshots(config, vm, storagePools) {
         return false;
     }
 
-    // Currently external snapshots work only for disks of type "file"
+    // HACK - https://gitlab.com/libvirt/libvirt/-/issues/631
+    //
+    // Currently external snapshots work only for disks of type
+    // "file".  We work around this by making internal snapshots
+    // instead in that case. The workaround here should be removed
+    // when the bug is fixed. Also see:
+    //
+    //     https://github.com/cockpit-project/cockpit-machines/pull/1554
+    //
     if (!disks.every(disk => disk.type === "file")) {
         logDebug(`vmSupportsExternalSnapshots: vm ${vm.name} has unsupported disk type`);
         return false;
