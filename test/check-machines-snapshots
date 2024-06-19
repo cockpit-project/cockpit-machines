@@ -18,6 +18,7 @@
 # along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
 
 import os
+import subprocess
 import time
 from datetime import datetime
 
@@ -318,7 +319,9 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         m.execute("virsh snapshot-delete subVmTest1 test_snap_1")
 
         # With disk in a pool.
-        # This will make a internal snapshot.
+        #
+        # This will make a internal snapshot because of our workaround for
+        # https://gitlab.com/libvirt/libvirt/-/issues/631.
 
         p1 = os.path.join(self.vm_tmpdir, "vm_one")
         m.execute(f"mkdir --mode 777 {p1}")
@@ -338,6 +341,14 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         b.reload()
         b.enter_page('/machines')
         b.wait_visible("#vm-subVmTest1-disks-vdb-source-volume")
+
+        # Let's check whether
+        # https://gitlab.com/libvirt/libvirt/-/issues/631 has been
+        # fixed. If so, we can remove our workaround for it in
+        # helpers.js.
+        with self.assertRaises(subprocess.CalledProcessError) as cm:
+            m.execute("virsh snapshot-create-as subVmTest1 snap --disk-only 2>&1")
+        self.assertIn(b"cannot generate external snapshot name for disk 'vdb' without source", cm.exception.stdout)
 
         SnapshotCreateDialog(
             self,
