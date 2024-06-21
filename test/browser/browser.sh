@@ -59,11 +59,6 @@ if [ "$ID" = fedora ]; then
     dnf install -y virtiofsd
 fi
 
-# HACK: https://issues.redhat.com/browse/RHEL-29893
-if [ "$PLATFORM_ID" = "platform:el10" ]; then
-    dnf install -y kernel-modules-extra
-fi
-
 # Run tests in the cockpit tasks container, as unprivileged user
 # TODO: Run in "host" network ns, as some tests fail on unexpected veth/bridge claimed by the container
 # fix these and then use the isolation in starter-kit and friends

@@ -36,8 +36,7 @@ jobs:
     packages: [cockpit-machines-centos]
     targets:
     - centos-stream-9
-    # blocked on https://issues.redhat.com/browse/RHEL-29893
-    # - centos-stream-10
+    - centos-stream-10
 
   - job: tests
     packages: [cockpit-machines-fedora]
@@ -52,8 +51,7 @@ jobs:
     trigger: pull_request
     targets:
       - centos-stream-9
-      # blocked on https://issues.redhat.com/browse/RHEL-29893
-      # - centos-stream-10
+      - centos-stream-10
 
   - job: copr_build
     trigger: release
