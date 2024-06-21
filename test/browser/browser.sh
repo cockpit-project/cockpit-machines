@@ -4,11 +4,15 @@ set -eux
 
 cd "${0%/*}/../.."
 
+. /usr/lib/os-release
+
 # we don't need the H.264 codec, and it is sometimes not available (rhbz#2005760)
 DNF="dnf install --disablerepo=fedora-cisco-openh264 -y"
 
-# RHEL/CentOS 8 and Fedora have this, but not RHEL 9; tests check this more precisely
-$DNF libvirt-daemon-driver-storage-iscsi-direct || true
+# RHEL/CentOS 8 and Fedora have this, but not RHEL 9/10; tests check this more precisely
+if [ "${PLATFORM_ID:-}" = "platform:el8" ] || [ "$ID" = "fedora" ]; then
+    $DNF libvirt-daemon-driver-storage-iscsi-direct
+fi
 
 # HACK: this package creates bogus/broken sda → nvme symlinks; it's new in rawhide TF default instances, not required for
 # our tests, and only causes trouble; https://github.com/amazonlinux/amazon-ec2-utils/issues/37
@@ -43,8 +47,6 @@ su -c 'echo foobar | sudo --stdin whoami' - admin
 echo core > /proc/sys/kernel/core_pattern
 
 sh -x test/vm.install
-
-. /usr/lib/os-release
 
 if [ "${PLATFORM_ID:-}" != "platform:el8" ]; then
     # https://gitlab.com/libvirt/libvirt/-/issues/219
