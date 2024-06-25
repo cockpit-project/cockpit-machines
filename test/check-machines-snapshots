@@ -20,7 +20,6 @@
 import os
 import subprocess
 import time
-from datetime import datetime
 
 import machineslib
 import testlib
@@ -35,15 +34,6 @@ def supportsSnapshot(image):
 class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
 
     def testSnapshots(self):
-        # Checks if difference of @time1 and @time2 is not greater than @difference (in seconds)
-        def checkTimeDiff(time1, time2, difference):
-            tmp = time2.split(' ')  # split "today at 13:13:13" into day and time
-            if not tmp[2].startswith('00:') and not tmp[0] == "today":
-                return False
-
-            diff = datetime.strptime(time1, '%H:%M:%S') - datetime.strptime("".join(tmp[-2:]), '%I:%M%p')
-            return -difference < diff.total_seconds() < difference
-
         b = self.browser
         m = self.machine
 
@@ -65,7 +55,6 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         m.execute("virsh detach-disk --domain subVmTest1 --target vda --persistent")  # vda is raw disk, which are not supported by internal snapshots
         m.execute("qemu-img create -f qcow2 /var/lib/libvirt/images/foobar.qcow2 1M")
         m.execute("virsh attach-disk --domain subVmTest1 --source /var/lib/libvirt/images/foobar.qcow2 --target vdb --persistent")
-        time1 = datetime.now().strftime("%H:%M:%S")
         m.execute("virsh snapshot-create-as --domain subVmTest1 --name snapshotB --description 'Description of snapshotB' --disk-only")
 
         b.reload()  # snapshots events not available yet: https://gitlab.com/libvirt/libvirt/-/issues/44
@@ -76,13 +65,11 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-snapshot-0-description", "Description of snapshotB")
         b.wait_in_text("#vm-subVmTest1-snapshot-0-type", "no state saved")
         b.wait_in_text("#vm-subVmTest1-snapshot-0-parent", "No parent")
-        time2 = b.text("#vm-subVmTest1-snapshot-0-date")
-        self.assertTrue(checkTimeDiff(time1, time2, 60))
+        b.wait_text("#vm-subVmTest1-snapshot-0-date", "less than a minute ago")
 
         # Check snapshot for shutoff VM
         self.performAction("subVmTest1", "forceOff")
 
-        time1 = datetime.now().strftime("%H:%M:%S")
         long_description = "This is a long description" * 10
         m.execute(f"virsh snapshot-create-as --domain subVmTest1 --name snapshotC --description '{long_description}'")
 
@@ -93,8 +80,7 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-snapshot-0-description", long_description)
         b.wait_in_text("#vm-subVmTest1-snapshot-0-type", "shut off")
         b.wait_in_text("#vm-subVmTest1-snapshot-0-parent", "snapshotB")
-        time2 = b.text("#vm-subVmTest1-snapshot-0-date")
-        self.assertTrue(checkTimeDiff(time1, time2, 60))
+        b.wait_text("#vm-subVmTest1-snapshot-0-date", "less than a minute ago")
 
         b.assert_pixels(
             "#vm-subVmTest1-snapshots", "vm-snapshost-card",

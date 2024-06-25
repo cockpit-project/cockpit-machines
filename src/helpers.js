@@ -17,9 +17,6 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
-import * as dfnlocales from 'date-fns/locale';
-import { formatRelative } from 'date-fns';
-
 import cockpit from 'cockpit';
 import store from './store.js';
 
@@ -39,11 +36,6 @@ export function toReadableNumber(number) {
         const fixed1 = Math.floor(number * 10) / 10;
         return (number - fixed1 === 0) ? Math.floor(number) : fixed1;
     }
-}
-
-export function localize_datetime(time) {
-    const locale = (cockpit.language == "en") ? dfnlocales.enUS : dfnlocales[cockpit.language.replace('_', '')];
-    return formatRelative(time, Date.now(), { locale });
 }
 
 export const diskBusTypes = {
