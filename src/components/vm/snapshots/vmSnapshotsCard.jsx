@@ -26,9 +26,10 @@ import { CheckIcon, InfoAltIcon } from '@patternfly/react-icons';
 
 import cockpit from 'cockpit';
 import { useDialogs, DialogsContext } from 'dialogs.jsx';
+import * as timeformat from 'timeformat';
 import { ListingTable } from "cockpit-components-table.jsx";
 
-import { vmId, localize_datetime, vmSupportsExternalSnapshots } from "../../../helpers.js";
+import { vmId, vmSupportsExternalSnapshots } from "../../../helpers.js";
 import { CreateSnapshotModal } from "./vmSnapshotsCreateModal.jsx";
 import { DeleteResourceButton } from '../../common/deleteResource.jsx';
 import { RevertSnapshotModal } from './vmSnapshotsRevertModal.jsx';
@@ -76,11 +77,12 @@ export class VmSnapshotsCard extends React.Component {
             {
                 name: _("Creation time"),
                 value: (snap, snapId) => {
-                    const date = localize_datetime(snap.creationTime * 1000);
+                    const dateRel = timeformat.distanceToNow(snap.creationTime * 1000, true);
+                    const dateAbs = timeformat.dateTimeSeconds(snap.creationTime * 1000);
                     return (
                         <Flex className="snap-creation-time">
                             <FlexItem id={`${id}-snapshot-${snapId}-date`} spacer={{ default: 'spacerSm' }}>
-                                {date}
+                                <Tooltip content={dateAbs}><span>{dateRel}</span></Tooltip>
                             </FlexItem>
                             { snap.isCurrent && <FlexItem><Tooltip content={_("Current")}>
                                 <CheckIcon id={`${id}-snapshot-${snapId}-current`} />
