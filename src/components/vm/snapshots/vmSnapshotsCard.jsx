@@ -16,17 +16,20 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
+
 import React from 'react';
 
-import cockpit from 'cockpit';
-import { useDialogs, DialogsContext } from 'dialogs.jsx';
-import { vmId, localize_datetime, vmSupportsExternalSnapshots } from "../../../helpers.js";
-import { CreateSnapshotModal } from "./vmSnapshotsCreateModal.jsx";
-import { ListingTable } from "cockpit-components-table.jsx";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { CheckIcon, InfoAltIcon } from '@patternfly/react-icons';
+
+import cockpit from 'cockpit';
+import { useDialogs, DialogsContext } from 'dialogs.jsx';
+import { ListingTable } from "cockpit-components-table.jsx";
+
+import { vmId, localize_datetime, vmSupportsExternalSnapshots } from "../../../helpers.js";
+import { CreateSnapshotModal } from "./vmSnapshotsCreateModal.jsx";
 import { DeleteResourceButton } from '../../common/deleteResource.jsx';
 import { RevertSnapshotModal } from './vmSnapshotsRevertModal.jsx';
 import { snapshotDelete, snapshotGetAll } from '../../../libvirtApi/snapshot.js';
