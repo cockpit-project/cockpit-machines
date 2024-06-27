@@ -80,7 +80,6 @@ class TestMachinesFilesystems(machineslib.VirtualMachinesCase):
 
         b.click("#vm-subVmTest1-filesystems-modal-add")
         b.wait_not_present("#vm-subVmTest1-filesystems-modal-add")
-        b.wait_visible("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir1/-dir1']")
         b.wait_in_text("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir1/-dir1'] td[data-label='Source path']", "/tmp/dir1/")
         b.wait_in_text("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir1/-dir1'] td[data-label='Mount tag']", "dir1")
 
@@ -101,7 +100,6 @@ class TestMachinesFilesystems(machineslib.VirtualMachinesCase):
 
         b.click("#vm-subVmTest1-filesystems-modal-add")
         b.wait_not_present("#vm-subVmTest1-filesystems-modal-add")
-        b.wait_visible("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir2/-dir2']")
         b.wait_in_text("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir2/-dir2'] td[data-label='Source path']", "/tmp/dir2/")
         b.wait_in_text("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir2/-dir2'] td[data-label='Mount tag']", "dir2")
 

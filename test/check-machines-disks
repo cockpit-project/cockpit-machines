@@ -1584,7 +1584,6 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
             if removeFileFail:
                 # Check Toast notification is present
-                b.wait_visible(".pf-v5-c-alert.pf-m-warning")
                 b.wait_in_text(".pf-v5-c-alert.pf-m-warning .pf-v5-c-alert__title", "Could not delete")
                 # Cleanup Toast notification
                 b.click(".pf-v5-c-alert-group li:first-of-type .pf-v5-c-alert button.pf-m-plain")
