@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
 
-import os
-
 import testlib
 
 
@@ -34,11 +32,11 @@ class TestMachinesManifest(testlib.MachineCase):
         self.login_and_go(None)
         b.wait_in_text("#host-apps .pf-m-current", "Overview")
 
-        # HACK: is_pybridge should also check TEST_SCENARIO
-        if self.is_pybridge() or os.getenv('TEST_SCENARIO') == 'pybridge':
-            self.assertNotIn("Virtual machines", b.text("#host-apps"))
-        else:
+        # Cockpit with a C bridge
+        if m.image.startswith("rhel-8") or m.image.startswith("centos-8") or m.image == "debian-stable" or m.image == "ubuntu-2204":
             self.assertIn("Virtual machines", b.text("#host-apps"))
+        else:
+            self.assertNotIn("Virtual machines", b.text("#host-apps"))
 
 
 if __name__ == '__main__':
