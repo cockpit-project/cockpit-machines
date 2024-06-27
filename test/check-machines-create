@@ -1957,7 +1957,6 @@ vnc_password= "{vnc_passwd}"
             if not dialog.offline_token_autofilled:
                 b.set_input_text("#offline-token", dialog.offline_token)
 
-            b.wait_visible("#token-helper-message")
             b.wait_in_text("#token-helper-message", error_msg)
             b.wait_in_text("#token-helper-message", "Get a new RHSM token")
             if create_disabled:

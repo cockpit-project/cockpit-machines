@@ -149,7 +149,6 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         # Wait for the VCPUs link to get new values before opening the dialog
-        b.wait_visible("#vm-subVmTest1-cpu")
         b.wait_in_text("#vm-subVmTest1-cpu", "2 vCPUs")
 
         # Open dialog

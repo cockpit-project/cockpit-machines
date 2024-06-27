@@ -116,7 +116,6 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         # Expand row for second storage pool and check list of storage volumes
         self.togglePoolRow("myPoolTwo", connectionName)
         self.gotoVolumesTab("myPoolTwo")
-        b.wait_visible(f"#pool-myPoolTwo-{connectionName}-volume-VolumeOne-name")
         b.wait_in_text(f"#pool-myPoolTwo-{connectionName}-volume-VolumeOne-name", "VolumeOne")
         b.wait_in_text(f"#pool-myPoolTwo-{connectionName}-volume-VolumeTwo-name", "VolumeTwo")
         b.wait_in_text(f"#pool-myPoolTwo-{connectionName}-volume-VolumeThree-name", "VolumeThree")
@@ -182,7 +181,6 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         self.togglePoolRow("myPoolTwo", connectionName)
         self.gotoVolumesTab("myPoolTwo")
 
-        b.wait_visible(f"#pool-myPoolTwo-{connectionName}-volume-VolumeOne-usedby")
         b.wait_in_text(f"#pool-myPoolTwo-{connectionName}-volume-VolumeOne-usedby", "subVmTest1")
 
         # Detach disk from VM
