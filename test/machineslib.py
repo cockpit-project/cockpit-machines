@@ -82,7 +82,8 @@ class VirtualMachinesCaseHelpers:
             if logPath:
                 testlib.wait(lambda: "Linux version" in m.execute(f"cat {logPath}"))
         if action == "forceOff" or action == "off":
-            b.wait_in_text(f"#vm-{vmName}-{connectionName}-state", "Shut off")
+            with b.wait_timeout(30):
+                b.wait_in_text(f"#vm-{vmName}-{connectionName}-state", "Shut off")
 
     def goToVmPage(self, vmName, connectionName='system'):
         self.browser.click(f"tbody tr[data-row-id=\"vm-{vmName}-{connectionName}\"] a.vm-list-item-name")  # click on the row
