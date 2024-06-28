@@ -75,6 +75,12 @@ export const VmDetailsPage = ({
                 <VmNeedsShutdown vm={vm} />
                 <VmUsesSpice vm={vm} />
             </div>
+            {
+                vm.inactiveXML.description &&
+                    <div className="vm-description">
+                        {vm.inactiveXML.description.split("\n").map((p, i) => <p key={i}>{p}</p>)}
+                    </div>
+            }
         </PageSection>
     );
 

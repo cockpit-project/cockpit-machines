@@ -245,6 +245,8 @@ export function parseDomainDumpxml(connectionName, domXml, objPath) {
     const metadataElem = getSingleOptionalElem(domainElem, "metadata");
 
     const name = domainElem.getElementsByTagName("name")[0].childNodes[0].nodeValue;
+    const uuid = domainElem.getElementsByTagName("uuid")[0].childNodes[0].nodeValue;
+    const description = domainElem.getElementsByTagName("description")[0]?.childNodes[0]?.nodeValue;
     const id = objPath;
     const osType = osTypeElem.childNodes[0].nodeValue;
     const osBoot = parseDumpxmlForOsBoot(osBootElems);
@@ -292,7 +294,9 @@ export function parseDomainDumpxml(connectionName, domXml, objPath) {
 
     return {
         connectionName,
+        uuid,
         name,
+        description,
         id,
         osType,
         osBoot,
