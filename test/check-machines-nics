@@ -212,6 +212,8 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         with b.wait_timeout(90):
             b.wait_not_present("#vm-subVmTest1-network-1-mac")
 
+        print('just a change for re-tries')
+
         # Detach NIC when the VM is shutoff, Also check this issue: https://bugzilla.redhat.com/show_bug.cgi?id=1791543
         self.performAction("subVmTest1", "off")
         # Attach since no NIC now

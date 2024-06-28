@@ -102,6 +102,8 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         checkConnectionDescription("#create-new-vm", "Good choice for desktop virtualization")
         checkNeedsShutdownLabel("Watchdog")
 
+        print("changing this for science")
+
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
         if run_pixel_tests:
