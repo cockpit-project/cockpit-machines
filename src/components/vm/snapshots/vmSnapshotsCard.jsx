@@ -77,7 +77,7 @@ export class VmSnapshotsCard extends React.Component {
             {
                 name: _("Creation time"),
                 value: (snap, snapId) => {
-                    const dateRel = timeformat.distanceToNow(snap.creationTime * 1000, true);
+                    const dateRel = timeformat.distanceToNow(snap.creationTime * 1000);
                     const dateAbs = timeformat.dateTimeSeconds(snap.creationTime * 1000);
                     return (
                         <Flex className="snap-creation-time">

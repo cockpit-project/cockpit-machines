@@ -68,7 +68,7 @@ export const ConfirmDialog = ({ idPrefix, actionsList, title, titleIcon, vm }) =
                 ? <DescriptionList isHorizontal isFluid>
                     <DescriptionListGroup>
                         <DescriptionListTerm>{_("Started")}</DescriptionListTerm>
-                        <DescriptionListDescription id="uptime">{distanceToNow(startTime, true)}</DescriptionListDescription>
+                        <DescriptionListDescription id="uptime">{distanceToNow(startTime)}</DescriptionListDescription>
                     </DescriptionListGroup>
                 </DescriptionList>
                 /* for tests */
