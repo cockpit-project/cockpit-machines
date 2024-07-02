@@ -24,6 +24,21 @@ import testlib
 @testlib.nondestructive
 class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
 
+    def testBasic2(self):
+        self._testBasic(run_pixel_tests=False)
+
+    def testBasic3(self):
+        self._testBasic(run_pixel_tests=False)
+
+    def testBasic4(self):
+        self._testBasic(run_pixel_tests=False)
+
+    def testBasic5(self):
+        self._testBasic(run_pixel_tests=False)
+
+    def testBasic1(self):
+        self._testBasic(run_pixel_tests=False)
+
     def testBasic(self):
         self._testBasic(run_pixel_tests=True)
 
