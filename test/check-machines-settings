@@ -249,15 +249,15 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
         # Choose manually a CPU model
         b.click("#vm-subVmTest1-cpu button")
         b.wait_visible("#machines-cpu-modal-dialog")
-        b.select_from_dropdown("#cpu-model-select-group select", "coreduo")
+        b.select_from_dropdown("#cpu-model-select-group select", "qemu64")
         b.click("#machines-cpu-modal-dialog-apply")
         b.wait_not_present("#machines-cpu-modal-dialog")
-        b.wait_in_text("#vm-subVmTest1-cpu .pf-v5-c-description-list__text", "custom (coreduo)")
+        b.wait_in_text("#vm-subVmTest1-cpu .pf-v5-c-description-list__text", "custom (qemu64)")
 
         # Verify libvirt XML
         dom_xml = "virsh dumpxml subVmTest1"
         xmllint_element = f"{dom_xml} | xmllint --xpath 'string(//domain/{{prop}})' -"
-        self.assertEqual("coreduo", m.execute(xmllint_element.format(prop='cpu/model')).strip())
+        self.assertEqual("qemu64", m.execute(xmllint_element.format(prop='cpu/model')).strip())
 
         # Host-model gets expanded  to custom mode when the VM is running
         b.click("#vm-subVmTest1-cpu button")
