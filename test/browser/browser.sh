@@ -26,6 +26,9 @@ fi
 rpm -q selinux-policy cockpit-bridge cockpit-machines
 rpm -qa | grep -E 'virt|qemu' | sort
 
+# basic libvirt selftests
+virt-host-validate qemu || echo "failed with code $?"
+
 # allow test to set up things on the machine
 mkdir -p /root/.ssh
 curl https://raw.githubusercontent.com/cockpit-project/bots/main/machine/identity.pub  >> /root/.ssh/authorized_keys
