@@ -22,6 +22,11 @@ if rpm -q amazon-ec2-utils; then
     udevadm trigger /dev/nvme*
 fi
 
+# HACK: https://issues.redhat.com/browse/RHEL-46893
+if [ "$(rpm -q selinux-policy)" = "selinux-policy-40.13.4-1.el10.noarch" ] ; then
+    setenforce 0
+fi
+
 # Show critical packages versions
 rpm -q selinux-policy cockpit-bridge cockpit-machines
 rpm -qa | grep -E 'virt|qemu' | sort
