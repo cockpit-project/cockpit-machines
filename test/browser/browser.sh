@@ -26,6 +26,10 @@ fi
 if [ "$(rpm -q selinux-policy)" = "selinux-policy-40.13.4-1.el10.noarch" ] ; then
     setenforce 0
 fi
+# HACK: same regression in rawhide: https://bugzilla.redhat.com/show_bug.cgi?id=2297965
+if [ "$(rpm -q selinux-policy)" = "selinux-policy-41.8-4.fc41.noarch" ] ; then
+    setenforce 0
+fi
 
 # Show critical packages versions
 rpm -q selinux-policy cockpit-bridge cockpit-machines
