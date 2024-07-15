@@ -1328,6 +1328,10 @@ vnc_password= "{vnc_passwd}"
                     user_login = virt_install_cmd_out.split("user-login=", 1)[1].split(",")[0].rstrip()
                     self.assertIn(user_login, self.user_login)
 
+            # HACK: wait for virt-install to finish; this only races on tumbleweed
+            if self.machine.image == 'opensuse-tumbleweed' and self.create_and_run:
+                self.machine.execute(f"while {virt_install_cmd}; do sleep 1; done", timeout=300)
+
         def fill(self):
             b = self.browser
             if not self.name_generated:
