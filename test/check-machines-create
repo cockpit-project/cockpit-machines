@@ -1300,6 +1300,12 @@ vnc_password= "{vnc_passwd}"
             else:
                 self.browser.click(".pf-v5-c-modal-box__footer button:contains(Create and edit)")
             self.browser.wait_not_present("#create-vm-dialog")
+
+            if self.create_and_run:
+                self.browser.wait_text(f"#vm-{self.name}-{self.connection}-state", "Running")
+            else:
+                self.browser.wait_text(f"#vm-{self.name}-{self.connection}-state", "Shut off")
+
             if self.storage_pool != NO_STORAGE:
                 self.goToVmPage(self.name)
                 self.browser.wait_text(f"#vm-{self.name}-disks-vda-bus", "virtio")
