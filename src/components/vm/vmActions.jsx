@@ -38,6 +38,7 @@ import { ConfirmDialog } from './confirmDialog.jsx';
 import { DeleteDialog } from "./deleteDialog.jsx";
 import { MigrateDialog } from './vmMigrateDialog.jsx';
 import { RenameDialog } from './vmRenameDialog.jsx';
+import { EditDescriptionDialog } from './vmEditDescriptionDialog.jsx';
 import { ReplaceSpiceDialog } from './vmReplaceSpiceDialog.jsx';
 import {
     domainCanDelete,
@@ -451,8 +452,20 @@ const VmActions = ({ vm, vms, onAddErrorNotification, isDetailsPage }) => {
                 {_("Rename")}
             </DropdownItem>
         );
-        dropdownItems.push(<Divider key="separator-rename" />);
     }
+
+    if (isDetailsPage) {
+        dropdownItems.push(
+            <DropdownItem key={`${id}-edit-description`}
+                          id={`${id}-edit-description`}
+                          onClick={() => Dialogs.show(<EditDescriptionDialog vm={vm} />)}>
+                {_("Edit description")}
+            </DropdownItem>
+        );
+    }
+
+    if (domainCanRename(state) || isDetailsPage)
+        dropdownItems.push(<Divider key="separator-rename" />);
 
     if (state !== undefined && domainCanDelete(state, vm.id)) {
         if (!vm.persistent) {
