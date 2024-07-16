@@ -888,6 +888,33 @@ export function domainSendNMI({
     return call(connectionName, objPath, 'org.libvirt.Domain', 'InjectNMI', [0], { timeout, type: 'u' });
 }
 
+function shlex_quote(str) {
+    // yay, command line apis...
+    return "'" + str.replaceAll("'", "'\"'\"'") + "'";
+}
+
+async function domainSetXML(vm, option, values) {
+    const opts = { err: "message" };
+    if (vm.connectionName === 'system')
+        opts.superuser = 'try';
+
+    // We don't pass the arguments for virt-xml through a shell, but
+    // virt-xml does its own parsing with the Python shlex module. So
+    // we need to do the equivalent of shlex.quote here.
+
+    const args = [];
+    for (const key in values)
+        args.push(shlex_quote(key + '=' + values[key]));
+
+    await cockpit.spawn([
+        'virt-xml', '-c', `qemu:///${vm.connectionName}`, '--' + option, args.join(','), vm.uuid, '--edit'
+    ], opts);
+}
+
+export async function domainSetDescription(vm, description) {
+    await domainSetXML(vm, "metadata", { description });
+}
+
 export function domainSetCpuMode({
     name,
     connectionName,

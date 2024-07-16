@@ -367,6 +367,27 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         b.wait_text("h2.vm-name", "test%")
         b.wait_not_present("#navbar-oops")
 
+    def testEditDescription(self):
+        b = self.browser
+
+        self.createVm("mac", running=False)
+        self.login_and_go("/machines")
+        self.waitPageInit()
+        self.goToVmPage("mac")
+
+        self.performAction("mac", "edit-description")
+
+        # Non-ascii chars, unbalanced quotes, backslash, multiple lines
+        desc1 = '"Döscrü\\ptiän \'\'\' كرة القدم'
+        desc2 = 'Second <b>line</b>'
+
+        b.set_input_text("#edit-description-dialog-description", desc1 + "\n" + desc2)
+        b.click("#edit-description-dialog-confirm")
+        b.wait_not_present("#edit-description-dialog-confirm")
+
+        b.wait_text(".vm-description p:nth-child(1)", desc1)
+        b.wait_text(".vm-description p:nth-child(2)", desc2)
+
     def testDelete(self):
         b = self.browser
         m = self.machine
