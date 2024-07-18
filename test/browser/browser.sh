@@ -22,14 +22,15 @@ if rpm -q amazon-ec2-utils; then
     udevadm trigger /dev/nvme*
 fi
 
-# HACK: https://issues.redhat.com/browse/RHEL-46893
-if [ "$(rpm -q selinux-policy)" = "selinux-policy-40.13.4-1.el10.noarch" ] ; then
-    setenforce 0
-fi
-# HACK: same regression in rawhide: https://bugzilla.redhat.com/show_bug.cgi?id=2297965
-if [ "$(rpm -q selinux-policy)" = "selinux-policy-41.8-4.fc41.noarch" ] ; then
-    setenforce 0
-fi
+case "$(rpm -q selinux-policy)" in
+    # HACK: https://issues.redhat.com/browse/RHEL-46893
+    selinux-policy-40.13.4-1.el10.noarch|selinux-policy-40.13.5-1.el10.noarch)
+        setenforce 0 ;;
+
+    # HACK: same regression in rawhide: https://bugzilla.redhat.com/show_bug.cgi?id=2297965
+    selinux-policy-41.8-4.fc41.noarch)
+        setenforce 0 ;;
+esac
 
 # Show critical packages versions
 rpm -q selinux-policy cockpit-bridge cockpit-machines
