@@ -278,12 +278,9 @@ class AppActive extends React.Component {
                     <>
                         {allNotifications}
                         <EmptyStatePanel title={ cockpit.format(_("VM $0 does not exist on $1 connection"), cockpit.location.options.name, cockpit.location.options.connection) }
-                                         action={
-                                             <Button variant="link"
-                                                     onClick={() => cockpit.location.go(["vms"])}>
-                                                 {_("Go to VMs list")}
-                                             </Button>
-                                         }
+                                         action={_("Go to VMs list")}
+                                         actionVariant="link"
+                                         onAction={() => cockpit.location.go(["vms"])}
                                          icon={ExclamationCircleIcon} />
                     </>
                 );
@@ -292,12 +289,9 @@ class AppActive extends React.Component {
                     <>
                         {allNotifications}
                         <EmptyStatePanel title={cockpit.format(vm.downloadProgress ? _("Downloading image for VM $0") : _("Creating VM $0"), cockpit.location.options.name)}
-                                         action={
-                                             <Button variant="link"
-                                                     onClick={() => cockpit.location.go(["vms"])}>
-                                                 {_("Go to VMs list")}
-                                             </Button>
-                                         }
+                                         action={_("Go to VMs list")}
+                                         actionVariant="link"
+                                         onAction={() => cockpit.location.go(["vms"])}
                                          paragraph={vm.downloadProgress && <Progress aria-label={_("Download progress")}
                                                                                      value={Number(vm.downloadProgress)}
                                                                                      measureLocation={ProgressMeasureLocation.outside} />}

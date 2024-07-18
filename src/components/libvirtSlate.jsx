@@ -22,7 +22,6 @@ import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 
 import { EmptyStatePanel } from "cockpit-components-empty-state.jsx";
-import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { ExclamationCircleIcon } from "@patternfly/react-icons";
 
 const _ = cockpit.gettext;
@@ -31,16 +30,12 @@ const LibvirtSlate = ({ loadingResources }) => {
     if (loadingResources)
         return <EmptyStatePanel title={ _("Loading resources") } loading />;
 
-    const troubleshoot_btn = (
-        <Button variant="link" onClick={() => cockpit.jump("/system/services")}>
-            { _("Troubleshoot") }
-        </Button>
-    );
-
     return (
         <EmptyStatePanel icon={ ExclamationCircleIcon }
                          title={ _("Virtualization service (libvirt) is not active") }
-                         secondary={ troubleshoot_btn } />
+                         action={_("Troubleshoot")}
+                         actionVariant="link"
+                         onAction={() => cockpit.jump("/system/services")} />
     );
 };
 
