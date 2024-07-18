@@ -17,7 +17,7 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import cockpit from "cockpit";
-import React from "react";
+import React from 'react';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
@@ -30,8 +30,13 @@ import { DialogsContext } from 'dialogs.jsx';
 import { ModalError } from "cockpit-components-inline-notification.jsx";
 import { FileAutoComplete } from "cockpit-components-file-autocomplete.jsx";
 import { snapshotCreate, snapshotGetAll } from "../../../libvirtApi/snapshot.js";
-import { getSortedBootOrderDevices, LIBVIRT_SYSTEM_CONNECTION } from "../../../helpers.js";
+import {
+    getSortedBootOrderDevices, LIBVIRT_SYSTEM_CONNECTION,
+    formatWithBestUnit, dirname
+} from "../../../helpers.js";
 import { domainGet } from '../../../libvirtApi/domain.js';
+
+import get_available_space_sh from "./get-available-space.sh";
 
 const _ = cockpit.gettext;
 
@@ -64,40 +69,79 @@ const DescriptionRow = ({ onValueChanged, description }) => {
     );
 };
 
-function getDefaultMemoryPath(vm, snapName) {
-    // Choosing a default path where memory snapshot should be stored might be tricky. Ideally we want
-    // to store it in the same directory where the primary disk (the disk which is first booted) is stored
-    // If howver no such disk can be found, we should fallback to libvirt's default /var/lib/libvirt
+function getDefaultMemoryLocation(vm) {
+    // If we find an existing external snapshot, use it's memory path
+    // as the default. Otherwise, try to find the primary disk and use
+    // it's location. If that fails as well, use a reasonable hard
+    // coded value.
+
+    for (const s of vm.snapshots.sort((a, b) => b.creationTime - a.creationTime)) {
+        if (s.memoryPath)
+            return dirname(s.memoryPath);
+    }
+
     const devices = getSortedBootOrderDevices(vm).filter(d => d.bootOrder &&
                                                               d.device.device === "disk" &&
                                                               d.device.type === "file" &&
                                                               d.device.source.file);
     if (devices.length > 0) {
         const primaryDiskPath = devices[0].device.source.file;
-        const directory = primaryDiskPath.substring(0, primaryDiskPath.lastIndexOf("/") + 1);
-        return directory + snapName;
+        const directory = dirname(primaryDiskPath);
+        return directory;
     } else {
         if (vm.connectionName === LIBVIRT_SYSTEM_CONNECTION)
-            return "/var/lib/libvirt/memory/" + snapName;
+            return "/var/lib/libvirt/memory";
         else if (current_user)
-            return current_user.home + "/.local/share/libvirt/memory/" + snapName;
+            return current_user.home + "/.local/share/libvirt/memory";
     }
 
     return "";
 }
 
-const MemoryPathRow = ({ onValueChanged, memoryPath, validationError }) => {
+const MemoryLocationRow = ({ onValueChanged, memoryLocation, validationError, available, needed }) => {
+    let info = "";
+    let info_variant = "default";
+
+    if (available) {
+        info = cockpit.format(_("$0 available at this location."), formatWithBestUnit(available));
+        if (available * 0.9 < needed)
+            info_variant = "warning";
+    }
+    if (needed) {
+        info = info + " " + cockpit.format(_("About $0 are needed to save the memory state of the machine."),
+                                           formatWithBestUnit(needed));
+    }
+
     return (
-        <FormGroup id="snapshot-create-dialog-memory-path" label={_("Memory file")}>
+        <FormGroup id="snapshot-create-dialog-memory-location" label={_("Memory save location")}>
             <FileAutoComplete
-                onChange={value => onValueChanged("memoryPath", value)}
-                superuser="try"
+                onChange={value => onValueChanged("memoryLocation", value)}
+                value={memoryLocation}
                 isOptionCreatable
-                value={memoryPath} />
-            <FormHelper helperTextInvalid={validationError} />
+                onlyDirectories
+                placeholder={_("Path to directory")}
+                superuser="try" />
+            <FormHelper helperTextInvalid={validationError}
+                        helperText={info}
+                        variant={validationError ? "error" : info_variant} />
         </FormGroup>
     );
 };
+
+function get_available_space(path, callback) {
+    if (!path)
+        callback(null);
+
+    cockpit.script(get_available_space_sh, [path], { superuser: "try" })
+            .then(output => {
+                const info = JSON.parse(output);
+                callback(info.free * info.unit);
+            })
+            .catch(exc => {
+            // channel has already logged the error
+                callback(null);
+            });
+}
 
 export class CreateSnapshotModal extends React.Component {
     static contextType = DialogsContext;
@@ -107,11 +151,12 @@ export class CreateSnapshotModal extends React.Component {
         // cut off seconds, subseconds, and timezone
         const now = new Date().toISOString()
                 .replace(/:[^:]*$/, '');
-        const snapName = props.vm.name + '_' + now;
+        const snapName = now;
         this.state = {
             name: snapName,
             description: "",
-            memoryPath: getDefaultMemoryPath(props.vm, snapName),
+            memoryLocation: getDefaultMemoryLocation(props.vm),
+            available: null,
             inProgress: false,
         };
 
@@ -121,8 +166,18 @@ export class CreateSnapshotModal extends React.Component {
         this.onCreate = this.onCreate.bind(this);
     }
 
+    updateAvailableSpace(path) {
+        get_available_space(path, val => this.setState({ available: val }));
+    }
+
     onValueChanged(key, value) {
         this.setState({ [key]: value });
+        if (key == "memoryLocation") {
+            // We don't need to debounce this.  The "memoryLocation"
+            // state is not changed on each keypress, but only when
+            // the input is blurred.
+            this.updateAvailableSpace(value);
+        }
     }
 
     dialogErrorSet(text, detail) {
@@ -130,7 +185,7 @@ export class CreateSnapshotModal extends React.Component {
     }
 
     onValidate() {
-        const { name, memoryPath } = this.state;
+        const { name, memoryLocation } = this.state;
         const { vm, isExternal } = this.props;
         const validationError = {};
 
@@ -139,8 +194,8 @@ export class CreateSnapshotModal extends React.Component {
         else if (!name)
             validationError.name = _("Name can not be empty");
 
-        if (isExternal && vm.state === "running" && !memoryPath)
-            validationError.memory = _("Memory file can not be empty");
+        if (isExternal && vm.state === "running" && !memoryLocation)
+            validationError.memory = _("Memory save location can not be empty");
 
         return validationError;
     }
@@ -148,20 +203,29 @@ export class CreateSnapshotModal extends React.Component {
     onCreate() {
         const Dialogs = this.context;
         const { vm, isExternal } = this.props;
-        const { name, description, memoryPath } = this.state;
+        const { name, description, memoryLocation } = this.state;
         const validationError = this.onValidate();
 
         if (!Object.keys(validationError).length) {
             this.setState({ inProgress: true });
-            snapshotCreate({
-                vm,
-                name,
-                description,
-                isExternal,
-                memoryPath: isExternal && vm.state === "running" && memoryPath,
-            })
+            let mpath = null;
+            if (isExternal && vm.state === "running" && memoryLocation) {
+                mpath = memoryLocation;
+                if (mpath[mpath.length - 1] != "/")
+                    mpath = mpath + "/";
+                mpath = mpath + vm.name + "." + name + ".save";
+            }
+            cockpit.spawn(["mkdir", "-p", memoryLocation], { superuser: "try", err: "message" })
+                    .then(() =>
+                        snapshotCreate({
+                            vm,
+                            name,
+                            description,
+                            isExternal,
+                            memoryPath: mpath,
+                        }))
                     .then(() => {
-                        // VM Snapshots do not trigger any events so we have to refresh them manually
+                    // VM Snapshots do not trigger any events so we have to refresh them manually
                         snapshotGetAll({ connectionName: vm.connectionName, domainPath: vm.id });
                         // Creating an external snapshot might change
                         // the disk configuration of a VM without event.
@@ -175,10 +239,14 @@ export class CreateSnapshotModal extends React.Component {
         }
     }
 
+    componentDidMount() {
+        this.updateAvailableSpace(this.state.memoryLocation);
+    }
+
     render() {
         const Dialogs = this.context;
         const { idPrefix, isExternal, vm } = this.props;
-        const { name, description, memoryPath } = this.state;
+        const { name, description, memoryLocation, available } = this.state;
         const validationError = this.onValidate();
 
         const body = (
@@ -186,8 +254,10 @@ export class CreateSnapshotModal extends React.Component {
                 <NameRow name={name} validationError={validationError.name} onValueChanged={this.onValueChanged} />
                 <DescriptionRow description={description} onValueChanged={this.onValueChanged} />
                 {isExternal && vm.state === 'running' &&
-                    <MemoryPathRow memoryPath={memoryPath} onValueChanged={this.onValueChanged}
-                                   validationError={validationError.memory} />}
+                    <MemoryLocationRow memoryLocation={memoryLocation} onValueChanged={this.onValueChanged}
+                                       validationError={validationError.memory}
+                                       available={available}
+                                       needed={(vm.rssMemory || vm.currentMemory) * 1024} />}
             </Form>
         );
 

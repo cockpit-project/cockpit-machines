@@ -145,6 +145,12 @@ export function convertToUnitVerbose(input, inputUnit, outputUnit) {
     return result;
 }
 
+export function formatWithBestUnit(input, inputUnit) {
+    const best = convertToBestUnit(input, inputUnit || units.B);
+    const decimals = best.value >= 100 ? 0 : best.value >= 10 ? 1 : 2;
+    return cockpit.format("$0 $1", best.value.toFixed(decimals), best.unit);
+}
+
 export function isEmpty(str) {
     return (!str || str.length === 0);
 }
@@ -906,4 +912,14 @@ export function vmSupportsExternalSnapshots(config, vm, storagePools) {
     }
 
     return true;
+}
+
+export function dirname(path) {
+    const i = path.lastIndexOf("/");
+    if (i < 0)
+        return null;
+    else if (i == 0)
+        return "/";
+    else
+        return path.substr(0, i);
 }
