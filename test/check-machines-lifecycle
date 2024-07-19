@@ -269,7 +269,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         self.waitVmRow("subVmTest2")
         self.waitVmRow("subVmTest1", "system", False)
 
-        b.select_PF5("#vm-state-select-toggle", "#vm-state-menu", "Running")
+        b.select_PF("#vm-state-select-toggle", "Running")
         self.waitVmRow("subVmTest1", "system", False)
         self.waitVmRow("subVmTest2")
 
@@ -277,11 +277,11 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         self.waitVmRow("subVmTest1", "system", False)
         self.waitVmRow("subVmTest2")
 
-        b.select_PF5("#vm-state-select-toggle", "#vm-state-menu", "Shut off")
+        b.select_PF("#vm-state-select-toggle", "Shut off")
         self.waitVmRow("subVmTest1")
         self.waitVmRow("subVmTest2", "system", False)
 
-        b.select_PF5("#vm-state-select-toggle", "#vm-state-menu", "All")
+        b.select_PF("#vm-state-select-toggle", "All")
         self.waitVmRow("subVmTest1")
         self.waitVmRow("subVmTest2")
 
