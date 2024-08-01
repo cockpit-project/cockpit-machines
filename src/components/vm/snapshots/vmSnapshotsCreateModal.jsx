@@ -67,7 +67,7 @@ const DescriptionRow = ({ onValueChanged, description }) => {
 function getDefaultMemoryPath(vm, snapName) {
     // Choosing a default path where memory snapshot should be stored might be tricky. Ideally we want
     // to store it in the same directory where the primary disk (the disk which is first booted) is stored
-    // If howver no such disk can be found, we should fallback to libvirt's default /var/lib/libvirt
+    // If however no such disk can be found, we should fallback to libvirt's default /var/lib/libvirt
     const devices = getSortedBootOrderDevices(vm).filter(d => d.bootOrder &&
                                                               d.device.device === "disk" &&
                                                               d.device.type === "file" &&

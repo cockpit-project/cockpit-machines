@@ -532,7 +532,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
                     b.wait_visible(f"#vm-subVmTest1-network-{self.nic_num}-source-tooltip")
                     needs_reboot_visible = True
                 # Changing source_type may in effect also change source, so tooltip being present is correct
-                # Only changing source type beteen bridge and direct should not affect source
+                # Only changing source type between bridge and direct should not affect source
                 elif self.source_type in ["direct", "bridge"] and self.source_type_current in ["direct", "bridge"]:
                     b.wait_not_present(f"#vm-subVmTest1-network-{self.nic_num}-source-tooltip")
 

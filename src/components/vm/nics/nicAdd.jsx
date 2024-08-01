@@ -36,7 +36,7 @@ import './nic.css';
 const _ = cockpit.gettext;
 
 function getRandomMac(vms) {
-    // prevent getting cycled in the unforseen case where all MACs will conflict with existing ones
+    // prevent getting cycled in the unforeseen case where all MACs will conflict with existing ones
     for (let i = 0; i < 42; i++) {
         const parts = ["52", "54", "00"];
         for (let j = 0; j < 3; j++)

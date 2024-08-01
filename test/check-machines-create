@@ -101,7 +101,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         # check that newer oses are present and searchable with substring match
         runner.checkFilteredOsTest(TestMachinesCreate.VmDialog(self, os_name=config.WINDOWS_SERVER_10, os_search_name=config.WINDOWS_SERVER_10_SHORT))
 
-        # check OS versons are sorted in alphabetical order
+        # check OS versions are sorted in alphabetical order
         runner.checkSortedOsTest(TestMachinesCreate.VmDialog(self), [config.FEDORA_29, config.FEDORA_28])
 
         # Memory unit conversion
@@ -185,7 +185,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                              create=False,
                                              is_warning=True)
 
-        # Check swithing from "os" to "cloud" source type doesn't reset passwords
+        # Check switching from "os" to "cloud" source type doesn't reset passwords
         # https://bugzilla.redhat.com/show_bug.cgi?id=2109986
         runner.checkPasswordsAreNotResetTest(TestMachinesCreate.VmDialog(self))
 
@@ -1159,7 +1159,7 @@ vnc_password= "{vnc_passwd}"
 
             b.click("#pf-tab-1-automation")
 
-            # Check swithing from "os" to "cloud" sourcetype did not reset passwords
+            # Check switching from "os" to "cloud" sourcetype did not reset passwords
             b.wait_attr("#create-vm-dialog-user-password-pw1", "value", "foobaruser")
             b.wait_attr("#create-vm-dialog-root-password-pw1", "value", "foobarroot")
 
@@ -1696,7 +1696,7 @@ vnc_password= "{vnc_passwd}"
                     b.click(".pf-v5-c-modal-box__footer button:contains(Create and edit)")
 
             final_state = "Running" if dialog.create_and_run else "Shut off"
-            # Test dowloading RHEL image shows the progress of the download
+            # Test downloading RHEL image shows the progress of the download
             if dialog.os_name == TestMachinesCreate.TestCreateConfig.RHEL_8_1:
                 # Check download percentage is shown as a whole number 0-100 followed by '%'
                 if dialog.create_and_run:
@@ -2563,7 +2563,7 @@ vnc_password= "{vnc_passwd}"
         b.wait_in_text(".pf-v5-c-modal-box__body", "Replace SPICE on selected VMs")
         # action came from vmSpiceOnly, should be at the top and selected
         b.wait_visible(f".pf-v5-c-menu__item:contains('{vmSpiceOnly}') input:checked")
-        b.wait_visible(".pf-v5-c-menu__item input:checked")  # selector is ambigous if anything else is checked
+        b.wait_visible(".pf-v5-c-menu__item input:checked")  # selector is ambiguous if anything else is checked
         # other SPICE VMs are also offered
         menu = b.text("#replace-spice-dialog-other")
         self.assertIn("SpiceOne", menu)
