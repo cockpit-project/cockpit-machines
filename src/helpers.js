@@ -833,7 +833,7 @@ export function getHostDevSourceObject(dev) {
 
         source = { vendor, product, bus, device };
     } else {
-        console.warn(`getHostDevSourceObject: unsupport device type '${dev.type}'`);
+        console.warn(`getHostDevSourceObject: unsupported device type '${dev.type}'`);
     }
 
     return source;
@@ -883,7 +883,7 @@ export function vmSupportsExternalSnapshots(config, vm, storagePools) {
         return false;
     }
 
-    // If at leat one disk has internal snapshot preference specified, use internal snapshot for all disk,
+    // If at least one disk has internal snapshot preference specified, use internal snapshot for all disk,
     // as mixing internal and external is not allowed
     const disks = Object.values(vm.disks);
     if (disks.some(disk => disk.snapshot === "internal")) {

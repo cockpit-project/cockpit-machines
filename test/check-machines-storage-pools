@@ -735,7 +735,7 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
             append=True)
         m.execute("systemctl restart nfs-server")
 
-        # Physcial disk device
+        # Physical disk device
         dev = self.add_ram_disk(2)
         target_path = os.path.join(self.vm_tmpdir, "mnt")
         # Create mount path and parted the physical disk device

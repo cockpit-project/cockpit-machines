@@ -186,7 +186,7 @@ const AdditionalOptions = ({ cacheMode, device, idPrefix, onValueChanged, busTyp
         const clearedSerial = clearSerial(serial);
 
         if (serial !== clearedSerial) {
-            // Show the message once triggerred and leave it around as reminder
+            // Show the message once triggered and leave it around as reminder
             setShowAllowedCharactersMessage(true);
             onValueChanged('serial', clearedSerial);
         }

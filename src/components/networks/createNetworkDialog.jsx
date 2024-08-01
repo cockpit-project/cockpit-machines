@@ -80,7 +80,7 @@ function validateParams(dialogValues) {
             validationFailed.ipv4 =
                 cockpit.format(_("Must be an address instead of the network identifier, such as $0"),
                                utils.ipv4ExampleBridgeAddressForNetworkIdentifier(dialogValues.ipv4));
-        // Using broacast address of network space as the address of virtual network's bridge
+        // Using broadcast address of network space as the address of virtual network's bridge
         // is forbidden and would disable the connectivity of the virtual network.
         } else if (!validationFailed.netmask && utils.ipv4IsBroadcast(dialogValues.ipv4, ipv4_prefix))
             validationFailed.ipv4 = _("IPv4 address cannot be same as the network's broadcast address");

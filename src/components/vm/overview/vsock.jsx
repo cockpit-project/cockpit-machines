@@ -145,7 +145,7 @@ export const VsockModal = ({ vm, vms, vmVsockNormalized, isVsockAttached, idPref
     const showWarning = () => {
         if (isVsockAttached && vm.persistent && vm.state === "running" &&
             (vmVsockNormalized.auto !== auto ||
-            // If automatic generation is set, then adress in live XML is prefilled with a value libvirt chooses,
+            // If automatic generation is set, then address in live XML is prefilled with a value libvirt chooses,
             // and it's expected that live XML will contain different address than inactiveXML
             (!auto && vmVsockNormalized.address !== address)))
             return <NeedsShutdownAlert idPrefix={idPrefix} />;
@@ -268,7 +268,7 @@ export const VsockLink = ({ vm, vms, idPrefix }) => {
     };
     const vsockActionChanged = vm.persistent && vm.state === "running" &&
                                (vm.inactiveXML.vsock.cid.auto !== vm.vsock.cid.auto ||
-                               // If automatic generation is set, then adress in live XML is prefilled with a value libvirt chooses,
+                               // If automatic generation is set, then address in live XML is prefilled with a value libvirt chooses,
                                // and it's expected that live XML will contain different address than inactiveXML
                                (!vmVsockNormalized.auto && vm.inactiveXML.vsock.cid.address !== vm.vsock.cid.address));
     let vsockAddress = _("none");
