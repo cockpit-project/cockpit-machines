@@ -233,7 +233,7 @@ export class VmSnapshotsCard extends React.Component {
                           gridBreakPoint='grid-lg'
                           variant="compact"
                           emptyCaption={_("No snapshots defined for this VM")}
-                          emptyCaptionDetail={_("Previously taken snapshots allow you to revert to an earlier state if something goes wrong")}
+                          emptyCaptionDetail={_("Snapshots are used to revert a VM to a earlier state"  ")}
                           columns={columnTitles}
                           rows={rows} />
         );
