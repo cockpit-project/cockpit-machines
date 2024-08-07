@@ -27,6 +27,10 @@ case "$(rpm -q selinux-policy)" in
     selinux-policy-40.13.4-1.el10.noarch|selinux-policy-40.13.5-1.el10.noarch)
         setenforce 0 ;;
 
+    # HACK: https://issues.redhat.com/browse/RHEL-49567
+    selinux-policy-40.13.6-1.el10.noarch)
+        setenforce 0 ;;
+
     # HACK: same regression in rawhide: https://bugzilla.redhat.com/show_bug.cgi?id=2297965
     selinux-policy-41.8-4.fc41.noarch)
         setenforce 0 ;;
