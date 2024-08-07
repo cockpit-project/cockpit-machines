@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-05 02:53+0000\n"
+"POT-Creation-Date: 2024-08-07 02:53+0000\n"
 "PO-Revision-Date: 2024-07-11 05:38+0000\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <https://translate.fedoraproject.org/projects/"
@@ -70,8 +70,8 @@ msgstr "Коригування пам'яті $0"
 msgid "$0 network"
 msgstr "Мережа $0"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:145
 #: src/components/vm/vmUsageCard.jsx:47
+#: src/components/vm/overview/vmOverviewCard.jsx:145
 msgid "$0 vCPU"
 msgid_plural "$0 vCPUs"
 msgstr[0] "$0 вірт. проц."
@@ -99,10 +99,10 @@ msgstr "Доступ"
 msgid "Action"
 msgstr "Дія"
 
-#: src/components/vm/disks/vmDisksCard.jsx:194
+#: src/components/vms/hostvmslist.jsx:164
 #: src/components/vm/nics/vmNicsCard.jsx:421
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:167
-#: src/components/vms/hostvmslist.jsx:164
+#: src/components/vm/disks/vmDisksCard.jsx:194
 #: src/components/networks/networkList.jsx:72
 #: src/components/storagePools/storagePoolList.jsx:72
 msgid "Actions"
@@ -117,11 +117,11 @@ msgstr "Задіяти"
 msgid "Activate the storage pool to administer volumes"
 msgstr "Активувати буфер зберігання даних для адміністрування томів"
 
+#: src/components/vm/nics/nicAdd.jsx:219
 #: src/components/vm/overview/vsock.jsx:195
 #: src/components/vm/overview/watchdog.jsx:154
-#: src/components/vm/disks/diskAdd.jsx:846
-#: src/components/vm/nics/nicAdd.jsx:219
 #: src/components/vm/hostdevs/hostDevAdd.jsx:232
+#: src/components/vm/disks/diskAdd.jsx:846
 #: src/components/networks/networkOverviewTab.jsx:235
 msgid "Add"
 msgstr "Додати"
@@ -134,8 +134,8 @@ msgstr "Додати ключі SSH"
 msgid "Add a DHCP static host entry"
 msgstr "Додати запис статичного вузла DHCP"
 
-#: src/components/vm/disks/vmDisksCard.jsx:75
 #: src/components/vm/disks/diskAdd.jsx:690
+#: src/components/vm/disks/vmDisksCard.jsx:75
 msgid "Add disk"
 msgstr "Додати диск"
 
@@ -183,8 +183,8 @@ msgstr "Додавання цього диска змінить режим до�
 msgid "Additional"
 msgstr "Додаткові"
 
-#: src/components/vm/consoles/desktopConsole.jsx:47
 #: src/components/vm/nics/vmNicsCard.jsx:154
+#: src/components/vm/consoles/desktopConsole.jsx:47
 #: src/components/networks/networkOverviewTab.jsx:142
 #: src/components/networks/networkOverviewTab.jsx:162
 msgid "Address"
@@ -221,7 +221,7 @@ msgstr ""
 msgid "Also delete all volumes inside this pool:"
 msgstr "Також вилучити усі томи у цьому буфері:"
 
-#: src/components/vm/disks/diskAdd.jsx:140 src/components/vm/nics/nicAdd.jsx:94
+#: src/components/vm/nics/nicAdd.jsx:94 src/components/vm/disks/diskAdd.jsx:140
 msgid "Always attach"
 msgstr "Завжди долучати"
 
@@ -284,13 +284,13 @@ msgstr "Не вдалося зберегти параметри порядку �
 #: src/components/vm/overview/bootOrder.jsx:135
 #: src/components/vm/overview/bootOrder.jsx:138
 #: src/components/vm/overview/bootOrder.jsx:152
-#: src/components/vm/disks/vmDisksCard.jsx:186
-#: src/components/vm/disks/diskAdd.jsx:223
-#: src/components/vm/disks/diskEdit.jsx:90
 #: src/components/vm/hostdevs/hostDevAdd.jsx:89
 #: src/components/vm/hostdevs/hostDevCard.jsx:99
 #: src/components/vm/hostdevs/hostDevCard.jsx:107
 #: src/components/vm/hostdevs/hostDevCard.jsx:245
+#: src/components/vm/disks/diskAdd.jsx:223
+#: src/components/vm/disks/vmDisksCard.jsx:186
+#: src/components/vm/disks/diskEdit.jsx:90
 msgid "Bus"
 msgstr "Канал"
 
@@ -298,9 +298,9 @@ msgstr "Канал"
 msgid "CD/DVD disc"
 msgstr "Диск CD/DVD"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:187
-#: src/components/vm/vmUsageCard.jsx:69
 #: src/components/common/needsShutdown.jsx:114
+#: src/components/vm/vmUsageCard.jsx:69
+#: src/components/vm/overview/vmOverviewCard.jsx:187
 msgid "CPU"
 msgstr "Процесор"
 
@@ -315,32 +315,32 @@ msgid "Cache"
 msgstr "Кеш"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:1486
-#: src/components/vm/vmMigrateDialog.jsx:202
+#: src/components/common/deleteResource.jsx:91
+#: src/components/vm/nics/nicAdd.jsx:222 src/components/vm/nics/nicEdit.jsx:192
+#: src/components/vm/confirmDialog.jsx:54
+#: src/components/vm/deleteDialog.jsx:174
+#: src/components/vm/vmReplaceSpiceDialog.jsx:135
+#: src/components/vm/overview/memoryModal.jsx:159
+#: src/components/vm/overview/bootOrder.jsx:318
 #: src/components/vm/overview/vsock.jsx:243
 #: src/components/vm/overview/watchdog.jsx:194
-#: src/components/vm/overview/memoryModal.jsx:159
 #: src/components/vm/overview/firmware.jsx:85
-#: src/components/vm/overview/bootOrder.jsx:318
 #: src/components/vm/overview/cpuModal.jsx:338
-#: src/components/vm/disks/mediaEject.jsx:110
-#: src/components/vm/disks/diskAdd.jsx:849
-#: src/components/vm/disks/diskEdit.jsx:270
 #: src/components/vm/vmRenameDialog.jsx:71
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:172
-#: src/components/vm/vmCloneDialog.jsx:83
-#: src/components/vm/confirmDialog.jsx:54 src/components/vm/nics/nicAdd.jsx:222
-#: src/components/vm/nics/nicEdit.jsx:192
-#: src/components/vm/vmReplaceSpiceDialog.jsx:135
+#: src/components/vm/hostdevs/hostDevAdd.jsx:237
+#: src/components/vm/vmMigrateDialog.jsx:202
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:110
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:204
-#: src/components/vm/deleteDialog.jsx:174
-#: src/components/vm/hostdevs/hostDevAdd.jsx:237
+#: src/components/vm/disks/diskAdd.jsx:849
+#: src/components/vm/disks/mediaEject.jsx:110
+#: src/components/vm/disks/diskEdit.jsx:270
+#: src/components/vm/vmCloneDialog.jsx:83
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:172
 #: src/components/networks/createNetworkDialog.jsx:435
 #: src/components/networks/networkOverviewTab.jsx:238
-#: src/components/common/deleteResource.jsx:91
-#: src/components/storagePools/storagePoolDelete.jsx:205
 #: src/components/storagePools/createStoragePoolDialog.jsx:445
 #: src/components/storagePools/storageVolumeCreate.jsx:117
+#: src/components/storagePools/storagePoolDelete.jsx:205
 msgid "Cancel"
 msgstr "Скасувати"
 
@@ -407,7 +407,7 @@ msgstr ""
 "У результаті натискання «Запустити віддалений переглядач» буде отримано "
 "файл .vv і запущено $0."
 
-#: src/components/vm/vmCloneDialog.jsx:80 src/components/vm/vmActions.jsx:404
+#: src/components/vm/vmActions.jsx:404 src/components/vm/vmCloneDialog.jsx:80
 msgid "Clone"
 msgstr "Клонувати"
 
@@ -436,11 +436,11 @@ msgstr ""
 msgid "Connecting"
 msgstr "З'єднання"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:163
-#: src/components/vms/hostvmslist.jsx:162
-#: src/components/networks/createNetworkDialog.jsx:41
-#: src/components/networks/networkList.jsx:69
 #: src/components/common/machinesConnectionSelector.jsx:39
+#: src/components/vms/hostvmslist.jsx:162
+#: src/components/vm/overview/vmOverviewCard.jsx:163
+#: src/components/networks/networkList.jsx:69
+#: src/components/networks/createNetworkDialog.jsx:41
 #: src/components/storagePools/storagePoolList.jsx:70
 msgid "Connection"
 msgstr "З’єднання"
@@ -613,12 +613,13 @@ msgstr "Параметри DHCP"
 msgid "Deactivate"
 msgstr "Вимкнути"
 
-#: src/components/vm/deleteDialog.jsx:171 src/components/vm/vmActions.jsx:464
-#: src/components/vm/vmActions.jsx:472 src/components/networks/network.jsx:151
-#: src/components/networks/network.jsx:154
 #: src/components/common/deleteResource.jsx:79
 #: src/components/common/deleteResource.jsx:133
 #: src/components/common/deleteResource.jsx:144
+#: src/components/vm/vmActions.jsx:464 src/components/vm/vmActions.jsx:472
+#: src/components/vm/deleteDialog.jsx:171
+#: src/components/networks/network.jsx:151
+#: src/components/networks/network.jsx:154
 #: src/components/storagePools/storagePoolDelete.jsx:202
 #: src/components/storagePools/storagePoolDelete.jsx:238
 #: src/components/storagePools/storagePoolDelete.jsx:248
@@ -701,15 +702,15 @@ msgstr "Подробиці"
 #: src/components/vm/overview/bootOrder.jsx:104
 #: src/components/vm/overview/bootOrder.jsx:136
 #: src/components/vm/overview/bootOrder.jsx:139
-#: src/components/vm/disks/vmDisksCard.jsx:172
-#: src/components/vm/disks/vmDiskColumns.jsx:43
-#: src/components/vm/disks/diskAdd.jsx:348
 #: src/components/vm/hostdevs/hostDevAdd.jsx:88
 #: src/components/vm/hostdevs/hostDevAdd.jsx:123
 #: src/components/vm/hostdevs/hostDevCard.jsx:98
 #: src/components/vm/hostdevs/hostDevCard.jsx:244
-#: src/components/networks/createNetworkDialog.jsx:174
+#: src/components/vm/disks/vmDiskColumns.jsx:43
+#: src/components/vm/disks/diskAdd.jsx:348
+#: src/components/vm/disks/vmDisksCard.jsx:172
 #: src/components/networks/networkList.jsx:68
+#: src/components/networks/createNetworkDialog.jsx:174
 msgid "Device"
 msgstr "Пристрій"
 
@@ -822,8 +823,8 @@ msgstr "Тривалість"
 msgid "Dying"
 msgstr "Вмирає"
 
-#: src/components/vm/disks/diskEdit.jsx:166
 #: src/components/vm/nics/vmNicsCard.jsx:454
+#: src/components/vm/disks/diskEdit.jsx:166
 msgid "Edit"
 msgstr "Змінити"
 
@@ -976,8 +977,8 @@ msgstr "Каталог файлової системи"
 msgid "Filter by name"
 msgstr "Фільтрувати за назвою"
 
-#: src/components/vm/overview/firmware.jsx:91
 #: src/components/vm/overview/vmOverviewCard.jsx:274
+#: src/components/vm/overview/firmware.jsx:91
 msgid "Firmware"
 msgstr "Мікропрограма"
 
@@ -1006,8 +1007,8 @@ msgid "Force shut down $0?"
 msgstr "Примусово вимкнути $0?"
 
 #: src/components/vm/disks/vmDiskColumns.jsx:106
-#: src/components/storagePools/createStoragePoolDialog.jsx:199
 #: src/components/storagePools/storageVolumeCreateBody.jsx:76
+#: src/components/storagePools/createStoragePoolDialog.jsx:199
 msgid "Format"
 msgstr "Формат"
 
@@ -1077,8 +1078,8 @@ msgstr "Приховати додаткові параметри"
 
 #: src/components/vm/overview/bootOrder.jsx:101
 #: src/components/vm/disks/vmDiskColumns.jsx:47
-#: src/components/storagePools/storagePoolOverviewTab.jsx:34
 #: src/components/storagePools/createStoragePoolDialog.jsx:121
+#: src/components/storagePools/storagePoolOverviewTab.jsx:34
 msgid "Host"
 msgstr "Вузол"
 
@@ -1389,8 +1390,9 @@ msgstr "Місце"
 msgid "MAC"
 msgstr "MAC"
 
+#: src/components/vm/nics/nicAdd.jsx:68
 #: src/components/vm/nics/vmNicsCard.jsx:351
-#: src/components/vm/nics/nicAdd.jsx:68 src/components/vm/nics/nicEdit.jsx:47
+#: src/components/vm/nics/nicEdit.jsx:47
 #: src/components/networks/networkOverviewTab.jsx:246
 msgid "MAC address"
 msgstr "MAC-адреса"
@@ -1470,8 +1472,8 @@ msgid "Media will be ejected from $0:"
 msgstr "Носій даних буде виштовхнуто з $0:"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:893
-#: src/components/vm/overview/vmOverviewCard.jsx:182
 #: src/components/vm/vmUsageCard.jsx:58
+#: src/components/vm/overview/vmOverviewCard.jsx:182
 msgid "Memory"
 msgstr "Пам'ять"
 
@@ -1499,8 +1501,8 @@ msgstr "Об'єм пам'яті не може бути нульовим"
 msgid "MiB"
 msgstr "МіБ"
 
-#: src/components/vm/vmMigrateDialog.jsx:199
 #: src/components/vm/vmActions.jsx:427
+#: src/components/vm/vmMigrateDialog.jsx:199
 msgid "Migrate"
 msgstr "Перенести"
 
@@ -1557,16 +1559,16 @@ msgid "NIC $0 of VM $1 failed to change state"
 msgstr "NIC $0 ВМ $1, не вдалося змінити стан"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:265
-#: src/components/vm/vmCloneDialog.jsx:93
+#: src/components/vms/hostvmslist.jsx:161
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:95
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:44
-#: src/components/vms/hostvmslist.jsx:161
-#: src/components/networks/createNetworkDialog.jsx:140
+#: src/components/vm/vmCloneDialog.jsx:93
 #: src/components/networks/networkList.jsx:67
-#: src/components/storagePools/storagePoolVolumesTab.jsx:78
+#: src/components/networks/createNetworkDialog.jsx:140
+#: src/components/storagePools/storageVolumeCreateBody.jsx:38
 #: src/components/storagePools/createStoragePoolDialog.jsx:45
 #: src/components/storagePools/storagePoolList.jsx:68
-#: src/components/storagePools/storageVolumeCreateBody.jsx:38
+#: src/components/storagePools/storagePoolVolumesTab.jsx:78
 msgid "Name"
 msgstr "Назва"
 
@@ -1802,9 +1804,9 @@ msgstr ""
 "Один або декілька позначених томів використовуються доменами. Щоб уможливити "
 "вилучення цих томів, спочатку від'єднайте диски."
 
+#: src/components/vm/nics/nicEdit.jsx:44
 #: src/components/vm/overview/memoryModal.jsx:145
 #: src/components/vm/overview/bootOrder.jsx:368
-#: src/components/vm/nics/nicEdit.jsx:44
 msgid "Only editable when the guest is shut off"
 msgstr "Можна редагувати, лише якщо гостьову систему вимкнено"
 
@@ -1838,10 +1840,10 @@ msgstr "PCI"
 msgid "Parent snapshot"
 msgstr "Батьківський знімок"
 
-#: src/components/vm/disks/diskEdit.jsx:42
 #: src/components/vm/deleteDialog.jsx:60
 #: src/components/vm/hostdevs/hostDevCard.jsx:123
 #: src/components/vm/hostdevs/hostDevCard.jsx:127
+#: src/components/vm/disks/diskEdit.jsx:42
 msgid "Path"
 msgstr "Шлях"
 
@@ -1877,7 +1879,7 @@ msgstr "Сталий (типовий)"
 msgid "Permissions denied for disk images in home directories"
 msgstr "Доступ заборонено для образів дисків у домашніх каталогах"
 
-#: src/components/vm/disks/diskAdd.jsx:137 src/components/vm/nics/nicAdd.jsx:91
+#: src/components/vm/nics/nicAdd.jsx:91 src/components/vm/disks/diskAdd.jsx:137
 msgid "Persistence"
 msgstr "Сталість"
 
@@ -1921,11 +1923,11 @@ msgid "Please start the virtual machine to access its console."
 msgstr ""
 "Будь ласка, запустіть віртуальну машину, щоб отримати доступ до її консолі."
 
+#: src/components/vm/deleteDialog.jsx:68
 #: src/components/vm/overview/bootOrder.jsx:99
 #: src/components/vm/disks/vmDiskColumns.jsx:45
-#: src/components/vm/disks/mediaEject.jsx:85
 #: src/components/vm/disks/diskAdd.jsx:151
-#: src/components/vm/deleteDialog.jsx:68
+#: src/components/vm/disks/mediaEject.jsx:85
 msgid "Pool"
 msgstr "Буфер"
 
@@ -1945,10 +1947,10 @@ msgstr "Для типу буфера не пердебачено підтрим�
 msgid "Pool's volumes are used by VMs "
 msgstr "Томи буфера використовуються ВМ "
 
+#: src/components/vm/nics/vmNicsCard.jsx:162
 #: src/components/vm/overview/bootOrder.jsx:102
 #: src/components/vm/overview/bootOrder.jsx:118
 #: src/components/vm/disks/vmDiskColumns.jsx:48
-#: src/components/vm/nics/vmNicsCard.jsx:162
 msgid "Port"
 msgstr "Порт"
 
@@ -2002,8 +2004,8 @@ msgstr "Профіль"
 
 #: src/components/vm/overview/bootOrder.jsx:98
 #: src/components/vm/overview/bootOrder.jsx:159
-#: src/components/vm/disks/vmDiskColumns.jsx:44
 #: src/components/vm/hostdevs/hostDevCard.jsx:114
+#: src/components/vm/disks/vmDiskColumns.jsx:44
 msgid "Protocol"
 msgstr "Протокол"
 
@@ -2061,16 +2063,16 @@ msgstr "Віддалена адреса"
 msgid "Remote viewer details"
 msgstr "Параметри віддаленого переглядача"
 
+#: src/components/vm/nics/vmNicsCard.jsx:472
+#: src/components/vm/nics/vmNicsCard.jsx:482
 #: src/components/vm/overview/vsock.jsx:240
 #: src/components/vm/overview/watchdog.jsx:191
+#: src/components/vm/hostdevs/hostDevCard.jsx:251
+#: src/components/vm/hostdevs/hostDevCard.jsx:257
 #: src/components/vm/disks/vmDiskColumns.jsx:149
 #: src/components/vm/disks/vmDiskColumns.jsx:215
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:59
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:68
-#: src/components/vm/nics/vmNicsCard.jsx:472
-#: src/components/vm/nics/vmNicsCard.jsx:482
-#: src/components/vm/hostdevs/hostDevCard.jsx:251
-#: src/components/vm/hostdevs/hostDevCard.jsx:257
 #: src/components/networks/networkOverviewTab.jsx:70
 msgid "Remove"
 msgstr "Вилучити"
@@ -2107,7 +2109,7 @@ msgstr "Вилучити інтерфейс мережі?"
 msgid "Remove static host from DHCP"
 msgstr "Вилучити статичний вузол з DHCP"
 
-#: src/components/vm/vmRenameDialog.jsx:68 src/components/vm/vmActions.jsx:451
+#: src/components/vm/vmActions.jsx:451 src/components/vm/vmRenameDialog.jsx:68
 msgid "Rename"
 msgstr "Перейменувати"
 
@@ -2119,9 +2121,8 @@ msgstr "Перейменувати ВМ $0"
 msgid "Replace"
 msgstr "Замінити"
 
-#: src/components/vm/usesSpice.jsx:38
+#: src/components/vm/usesSpice.jsx:38 src/components/vm/vmActions.jsx:438
 #: src/components/vm/vmReplaceSpiceDialog.jsx:124
-#: src/components/vm/vmActions.jsx:438
 msgid "Replace SPICE devices"
 msgstr "Замінити пристрої SPICE"
 
@@ -2233,13 +2234,13 @@ msgstr "Порт SPICE"
 msgid "SSH keys"
 msgstr "Ключі SSH"
 
+#: src/components/vm/nics/nicEdit.jsx:189
+#: src/components/vm/overview/memoryModal.jsx:156
+#: src/components/vm/overview/bootOrder.jsx:315
 #: src/components/vm/overview/vsock.jsx:195
 #: src/components/vm/overview/watchdog.jsx:154
-#: src/components/vm/overview/memoryModal.jsx:156
 #: src/components/vm/overview/firmware.jsx:82
-#: src/components/vm/overview/bootOrder.jsx:315
 #: src/components/vm/disks/diskEdit.jsx:267
-#: src/components/vm/nics/nicEdit.jsx:189
 msgid "Save"
 msgstr "Зберегти"
 
@@ -2304,8 +2305,8 @@ msgstr ""
 msgid "Shared directories"
 msgstr "Спільні каталоги"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:178
 #: src/components/vm/vmDetailsPage.jsx:191
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:178
 msgid "Shared host directories need to be manually mounted inside the VM"
 msgstr "Спільні каталоги основної системи має бути змонтовано вручну у ВМ"
 
@@ -2349,9 +2350,9 @@ msgstr ""
 msgid "Shutting down"
 msgstr "Вимикання"
 
-#: src/components/storagePools/storagePoolVolumesTab.jsx:78
-#: src/components/storagePools/storagePoolList.jsx:69
 #: src/components/storagePools/storageVolumeCreateBody.jsx:90
+#: src/components/storagePools/storagePoolList.jsx:69
+#: src/components/storagePools/storagePoolVolumesTab.jsx:78
 msgid "Size"
 msgstr "Розмір"
 
@@ -2391,12 +2392,12 @@ msgid "Some configuration changes only take effect after a fresh boot:"
 msgstr ""
 "Деякі зміни у налаштуваннях набудуть чинності лише після перезавантаження:"
 
-#: src/components/vm/disks/vmDisksCard.jsx:190
+#: src/components/vm/nics/nicBody.jsx:197
+#: src/components/vm/nics/vmNicsCard.jsx:407
+#: src/components/vm/hostdevs/hostDevCard.jsx:217
 #: src/components/vm/disks/diskAdd.jsx:590
 #: src/components/vm/disks/diskAdd.jsx:626
-#: src/components/vm/nics/vmNicsCard.jsx:407
-#: src/components/vm/nics/nicBody.jsx:197
-#: src/components/vm/hostdevs/hostDevCard.jsx:217
+#: src/components/vm/disks/vmDisksCard.jsx:190
 #: src/components/storagePools/storagePoolOverviewTab.jsx:51
 msgid "Source"
 msgstr "Джерело"
@@ -2412,10 +2413,10 @@ msgstr "Джерело має бути непорожнім"
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:48
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:65
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:202
-#: src/components/storagePools/storagePoolOverviewTab.jsx:41
-#: src/components/storagePools/storagePoolOverviewTab.jsx:46
 #: src/components/storagePools/createStoragePoolDialog.jsx:173
 #: src/components/storagePools/createStoragePoolDialog.jsx:190
+#: src/components/storagePools/storagePoolOverviewTab.jsx:41
+#: src/components/storagePools/storagePoolOverviewTab.jsx:46
 msgid "Source path"
 msgstr "Шлях до джерела"
 
@@ -2453,10 +2454,10 @@ msgstr "Почато"
 msgid "Startup"
 msgstr "Запуск"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:168
-#: src/components/vm/nics/vmNicsCard.jsx:412
 #: src/components/vms/hostvmslist.jsx:119
 #: src/components/vms/hostvmslist.jsx:163
+#: src/components/vm/nics/vmNicsCard.jsx:412
+#: src/components/vm/overview/vmOverviewCard.jsx:168
 #: src/components/networks/networkList.jsx:71
 #: src/components/storagePools/storagePoolList.jsx:71
 msgid "State"
@@ -2561,13 +2562,13 @@ msgid "Table of selectable host devices"
 msgstr "Таблиця придатних для вибору пристроїв основної системи"
 
 #: src/components/vm/overview/bootOrder.jsx:153
-#: src/components/vm/disks/vmDiskColumns.jsx:153
 #: src/components/vm/hostdevs/hostDevCard.jsx:109
+#: src/components/vm/disks/vmDiskColumns.jsx:153
 msgid "Target"
 msgstr "Призначення"
 
-#: src/components/storagePools/storagePoolOverviewTab.jsx:61
 #: src/components/storagePools/createStoragePoolDialog.jsx:103
+#: src/components/storagePools/storagePoolOverviewTab.jsx:61
 msgid "Target path"
 msgstr "Шлях призначення"
 
@@ -2588,9 +2589,9 @@ msgid "The VM $0 is running and will be forced off before deletion."
 msgstr ""
 "Запущено віртуальну машину $0. Її буде примусово зупинено перед вилученням."
 
-#: src/components/vm/disks/vmDiskColumns.jsx:223
 #: src/components/vm/nics/vmNicsCard.jsx:483
 #: src/components/vm/nics/vmNicsCard.jsx:491
+#: src/components/vm/disks/vmDiskColumns.jsx:223
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr ""
 "Віртуальну машину має бути запущено або вимкнено, щоб можна було від'єднати "
@@ -2721,17 +2722,17 @@ msgstr ""
 msgid "Troubleshoot"
 msgstr "Діагностика проблем"
 
+#: src/components/vm/nics/vmNicsCard.jsx:325
 #: src/components/vm/overview/bootOrder.jsx:116
 #: src/components/vm/overview/bootOrder.jsx:129
 #: src/components/vm/overview/bootOrder.jsx:144
 #: src/components/vm/overview/bootOrder.jsx:151
 #: src/components/vm/overview/bootOrder.jsx:158
 #: src/components/vm/overview/bootOrder.jsx:164
-#: src/components/vm/nics/vmNicsCard.jsx:325
 #: src/components/vm/hostdevs/hostDevAdd.jsx:47
 #: src/components/vm/hostdevs/hostDevCard.jsx:177
-#: src/components/storagePools/storagePoolOverviewTab.jsx:76
 #: src/components/storagePools/createStoragePoolDialog.jsx:81
+#: src/components/storagePools/storagePoolOverviewTab.jsx:76
 msgid "Type"
 msgstr "Тип"
 
@@ -2950,10 +2951,10 @@ msgstr "Чинний жетон"
 msgid "Vendor"
 msgstr "Постачальник"
 
-#: src/components/vm/vmDetailsPage.jsx:89
-#: src/components/vm/vmDetailsPage.jsx:251
 #: src/components/vms/hostvmslist.jsx:155
 #: src/components/vms/hostvmslist.jsx:158
+#: src/components/vm/vmDetailsPage.jsx:89
+#: src/components/vm/vmDetailsPage.jsx:251
 #: src/components/networks/networkList.jsx:51
 #: src/components/storagePools/storagePoolList.jsx:52 src/manifest.json:0
 msgid "Virtual machines"
@@ -2987,11 +2988,11 @@ msgid "Virtualization service (libvirt) is not active"
 msgstr "Служба віртуалізації (libvirt) не є активною"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:996
+#: src/components/vm/deleteDialog.jsx:65
 #: src/components/vm/overview/bootOrder.jsx:100
 #: src/components/vm/disks/vmDiskColumns.jsx:46
-#: src/components/vm/disks/mediaEject.jsx:89
 #: src/components/vm/disks/diskAdd.jsx:117
-#: src/components/vm/deleteDialog.jsx:65
+#: src/components/vm/disks/mediaEject.jsx:89
 msgid "Volume"
 msgstr "Том"
 
@@ -3016,8 +3017,8 @@ msgstr "Vsock"
 msgid "WWPN"
 msgstr "WWPN"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:208
 #: src/components/common/needsShutdown.jsx:118
+#: src/components/vm/overview/vmOverviewCard.jsx:208
 msgid "Watchdog"
 msgstr "Сторожовик"
 
@@ -3091,11 +3092,11 @@ msgstr "диск"
 msgid "down"
 msgstr "нижче"
 
-#: src/components/vm/overview/vsock.jsx:292
-#: src/components/vm/overview/watchdog.jsx:251
 #: src/components/vm/overview/vmOverviewCard.jsx:122
 #: src/components/vm/overview/vmOverviewCard.jsx:130
 #: src/components/vm/overview/bootOrder.jsx:361
+#: src/components/vm/overview/vsock.jsx:292
+#: src/components/vm/overview/watchdog.jsx:251
 msgid "edit"
 msgstr "редагувати"
 
@@ -3164,16 +3165,16 @@ msgstr "libvirt"
 msgid "mcast"
 msgstr "mcast"
 
-#: src/components/vm/overview/vsock.jsx:225
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:192
-#: src/components/vm/vmDetailsPage.jsx:204
-#: src/components/vm/nics/nicBody.jsx:110
 #: src/components/common/machinesConnectionSelector.jsx:82
+#: src/components/vm/nics/nicBody.jsx:110
+#: src/components/vm/overview/vsock.jsx:225
+#: src/components/vm/vmDetailsPage.jsx:204
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:192
 msgid "more info"
 msgstr "додаткова інформація"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:188
 #: src/components/vm/vmDetailsPage.jsx:200
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:188
 msgid "mount point: The mount point inside the guest"
 msgstr "точка монтування: точка монтування всередині гостьової системи"
 
