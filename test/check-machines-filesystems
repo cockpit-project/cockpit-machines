@@ -60,8 +60,12 @@ class TestMachinesFilesystems(machineslib.VirtualMachinesCase):
 
         b.set_input_text("#vm-subVmTest1-filesystems-modal-mountTag", "")
         b.set_input_text("#vm-subVmTest1-filesystems-modal-source-group input", "/tmp")
-        b.wait_visible("#vm-subVmTest1-filesystems-modal-source")
+        # In some hosts with high latency, the path dropdown list needs some time to load, the check will fail if it is too quick.
+        # Thus, add more check to ensure that the loading is finished
+        b.wait_in_text("#vm-subVmTest1-filesystems-modal-source", "/tmp")
         b.click("#vm-subVmTest1-filesystems-modal-source button:nth-child(1)")
+        b.wait_not_present("#vm-subVmTest1-filesystems-modal-source")
+        b.wait_attr_contains("#vm-subVmTest1-filesystems-modal-source-group input", "value", "/tmp")
         b.click("#vm-subVmTest1-filesystems-modal-add")
         b.wait_not_present("#vm-subVmTest1-filesystems-modal-source-helper")
         b.wait_visible("#vm-subVmTest1-filesystems-modal-mountTag-helper")
