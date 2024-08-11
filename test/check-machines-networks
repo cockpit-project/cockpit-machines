@@ -124,7 +124,7 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         b.click(".pf-v5-c-card .pf-v5-c-card__header button:contains(Network)")
 
         # HACK: Firefox 112 on RHEL 8 does not have `:has` yet, so for now use JavaScript to obtain the elements parent sibling.
-        b.inject_js("""
+        b.eval_js("""
            ph_input_form_helper_text = function(id) {
               return document.getElementById(id).parentElement.parentElement.querySelector(".pf-v5-c-helper-text__item.pf-m-error").textContent
 
