@@ -574,10 +574,10 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             if not self.xfail:
                 self.verify_disk_added()
                 if self.remove:
-                    self.test_obj.browser.click(f"#vm-{self.vm_name}-disks-{self.expected_target}-action-kebab button")
-                    self.test_obj.browser.click(f"#delete-vm-{self.vm_name}-disks-{self.expected_target} a")
+                    self.test_obj.browser.click(f"#vm-{self.vm_name}-disks-{self.expected_target}-action-kebab")
+                    self.test_obj.browser.click(f"#delete-vm-{self.vm_name}-disks-{self.expected_target}")
                     self.test_obj.browser.wait_visible("#delete-resource-modal")
-                    self.test_obj.browser.click('#delete-resource-modal #delete-resource-modal-primary')
+                    self.test_obj.browser.click('#delete-resource-modal-primary')
                     self.test_obj.browser.wait_not_present("#delete-resource-modal")
                     self.test_obj.browser.wait_not_present(f"#vm-{self.vm_name}-disks-{self.expected_target}-device")
             else:
