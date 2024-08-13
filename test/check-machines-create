@@ -425,6 +425,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                                                     ssh_key_invalid=True,
                                                                     create_and_run=True))
 
+    @testlib.timeout(900)
     def testCreateDownloadAnOS(self):
         runner = TestMachinesCreate.CreateVmRunner(self)
         config = TestMachinesCreate.TestCreateConfig
@@ -1328,8 +1329,12 @@ vnc_password= "{vnc_passwd}"
                     user_login = virt_install_cmd_out.split("user-login=", 1)[1].split(",")[0].rstrip()
                     self.assertIn(user_login, self.user_login)
 
-            # HACK: wait for virt-install to finish; this only races on tumbleweed
-            if self.machine.image == 'opensuse-tumbleweed' and self.create_and_run:
+            # HACK: on some OSes we need to wait for virt-install to
+            # exit; on others, it wont ever exit but that's fine as
+            # well.  (On some OSes the created VM crashes in the
+            # kernel, on others, the BIOS can't find a bootable
+            # device. Maybe that's the difference.)
+            if self.create_and_run and self.machine.image.startswith(('opensuse-tumbleweed', 'centos-10', 'rhel-10')):
                 self.machine.execute(f"while {virt_install_cmd}; do sleep 1; done", timeout=300)
 
         def fill(self):
