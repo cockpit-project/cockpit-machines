@@ -42,6 +42,7 @@ class TestMultiMachineVNC(VirtualMachinesCase):
         self.machine2 = self.machines['machine2']
 
         self.setup_ssh_auth()
+        self.enable_multihost(self.machine1)
 
     def testBasic(self):
         b = self.browser
