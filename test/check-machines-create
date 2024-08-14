@@ -1334,7 +1334,7 @@ vnc_password= "{vnc_passwd}"
             # well.  (On some OSes the created VM crashes in the
             # kernel, on others, the BIOS can't find a bootable
             # device. Maybe that's the difference.)
-            if self.create_and_run and self.machine.image.startswith(('opensuse-tumbleweed', 'centos-10', 'rhel-10')):
+            if self.create_and_run and self.machine.image.startswith(('opensuse-tumbleweed', 'centos-10', 'rhel-10', 'debian-testing')):
                 self.machine.execute(f"while {virt_install_cmd}; do sleep 1; done", timeout=300)
 
         def fill(self):
