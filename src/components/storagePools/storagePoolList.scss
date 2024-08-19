@@ -1,4 +1,10 @@
 #storage-pools-listing {
+  // Approximate size of text
+  // (overflows work, but will knock out alignment)
+  --progress-text: 8rem;
+  --progress-bar-min: 2rem;
+  --progress-bar-max: 12vw;
+
   .pf-v5-c-table tbody > tr > * {
     // These tables are 1 row tall; progress bar does odd stuff for alignment;
     // vertical alignment makes text line up
@@ -9,12 +15,6 @@
     // Undo the PF alignment offset, as we're aligning to the middle (see above)
     margin-block-start: 0;
   }
-
-  // Approximate size of text
-  // (overflows work, but will knock out alignment)
-  --progress-text: 8rem;
-  --progress-bar-min: 2rem;
-  --progress-bar-max: 12vw;
 
   td[data-label="Size"] {
     > .pf-v5-c-progress {
