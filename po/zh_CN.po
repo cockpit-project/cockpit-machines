@@ -19,9 +19,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-12 02:55+0000\n"
-"PO-Revision-Date: 2024-02-19 03:37+0000\n"
-"Last-Translator: Mie Yamamoto <myamamot@redhat.com>\n"
+"POT-Creation-Date: 2024-08-17 02:52+0000\n"
+"PO-Revision-Date: 2024-08-17 11:38+0000\n"
+"Last-Translator: jianqing yan <yanjianqing@kylinos.cn>\n"
 "Language-Team: Chinese (Simplified) <https://translate.fedoraproject.org/"
 "projects/cockpit-machines/main/zh_CN/>\n"
 "Language: zh_CN\n"
@@ -29,7 +29,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0\n"
-"X-Generator: Weblate 5.4\n"
+"X-Generator: Weblate 5.6.2\n"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:927
 msgid "$0 $1 available at default location"
@@ -263,7 +263,7 @@ msgstr "自动启动"
 #, fuzzy
 #| msgid "Host device"
 msgid "Block device"
-msgstr "主机设备"
+msgstr "块设备"
 
 #: src/helpers.js:224
 msgid "Blocked"
@@ -1139,11 +1139,12 @@ msgstr "仅 IPv4"
 #, fuzzy
 #| msgid "Prefix length should not be empty"
 msgid "IPv4 prefix length must be 24 or less"
-msgstr "前缀长度不能为空"
+msgstr "IPv4前缀长度的位数必须是小于等于24"
 
 #: src/components/networks/createNetworkDialog.jsx:66
+#, fuzzy
 msgid "IPv4 prefix length must be a multiple of 8"
-msgstr ""
+msgstr "IPv4 前缀长度必须是 8 的倍数"
 
 #: src/components/networks/createNetworkDialog.jsx:287
 #: src/components/networks/networkOverviewTab.jsx:158
@@ -1516,7 +1517,7 @@ msgstr "挂载标签不能为空"
 #, fuzzy
 #| msgid "IPv4 address cannot be same as the network identifier"
 msgid "Must be an address instead of the network identifier, such as $0"
-msgstr "IPv4 地址不能与网络标识符相同"
+msgstr "必须是地址而不是网络标识符，例如 $0"
 
 #: src/components/create-vm-dialog/pxe-helpers.js:93
 msgid "NAT to $0"
@@ -2138,8 +2139,9 @@ msgid "Routed network"
 msgstr "路由的网络"
 
 #: src/components/vm/hostdevs/hostDevAdd.jsx:129
+#, fuzzy
 msgid "Row select"
-msgstr ""
+msgstr "行选择"
 
 #: src/components/vm/vmActions.jsx:380
 msgid "Run"
