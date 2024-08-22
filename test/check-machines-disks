@@ -640,8 +640,12 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
                 b.select_from_dropdown(f"#vm-{self.vm_name}-disks-adddisk-existing-select-volume", self.volume_name)
 
             # Configure persistency - by default the check box is checked
-            if not self.permanent:
-                b.set_checked(f"#vm-{self.vm_name}-disks-adddisk-permanent", False)
+            if self.persistent_vm:
+                if not self.permanent:
+                    b.set_checked(f"#vm-{self.vm_name}-disks-adddisk-permanent", False)
+            else:
+                # checkbox not shown at all for transient VM
+                b.wait_not_present(f"#vm-{self.vm_name}-disks-adddisk-permanent")
 
             # Check non-persistent VM cannot have permanent disk attached
             if not self.persistent_vm:
@@ -1107,7 +1111,9 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             b.click("#vm-subVmTest1-system-run")
             b.wait_in_text("#vm-subVmTest1-system-state", "Running")
             # Test disk attachment to non-persistent VM
+            b.wait_visible(".vm-top-panel[data-vm-transient=false]")
             m.execute("virsh undefine subVmTest1")
+            b.wait_visible(".vm-top-panel[data-vm-transient=true]")
             self.VMAddDiskDialog(
                 self,
                 pool_name='myPoolOne',

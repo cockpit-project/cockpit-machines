@@ -375,7 +375,7 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
         size: 1,
         unit: units.GiB.name,
         volumeName: "",
-        permanent: true,
+        permanent: vm.persistent,
     });
     const [mode, setMode] = useState(isMediaInsertion ? CUSTOM_PATH : CREATE_NEW);
     const [validate, setValidate] = useState(false);
