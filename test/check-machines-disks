@@ -214,6 +214,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         openDialog("sda")
         b.wait_visible("#vm-subVmTest1-disks-sda-edit-bus-type:disabled")
         b.wait_visible("#vm-subVmTest1-disks-sda-edit-cache-mode:disabled")
+        b.click("#vm-subVmTest1-disks-sda-edit-dialog button[aria-label='Close']")
+        b.wait_not_present("#vm-subVmTest1-disks-sda-edit-dialog")
 
         # Disks on non-persistent VM cannot be edited
         m.execute("virsh undefine subVmTest1")
