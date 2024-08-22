@@ -439,6 +439,8 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
         # Verify that unit conversions work
         b.select_from_dropdown("#vm-subVmTest1-memory-modal-memory-unit-select", "GiB")
         b.wait_attr("#vm-subVmTest1-memory-modal-memory", "value", "0")
+        b.click("#vm-memory-modal button[aria-label='Close']")
+        b.wait_not_present("#vm-memory-modal")
 
         # Run VM
         b.click("#vm-subVmTest1-system-run")
