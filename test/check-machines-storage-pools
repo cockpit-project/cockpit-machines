@@ -187,6 +187,8 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         self.goToMainPage()
         self.waitVmRow("subVmTest1")
         self.goToVmPage("subVmTest1")
+        self.waitDisks(["vda", "vdc"])
+
         self.deleteDisk("vdc")
         self.goToMainPage()
         b.click(".pf-v5-c-card .pf-v5-c-card__header button:contains(Storage pools)")
