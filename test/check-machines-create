@@ -1193,6 +1193,9 @@ vnc_password= "{vnc_passwd}"
             # Check only RHEL >= 8 is shown
             b.wait_visible(f"#os-select li button:contains('{TestMachinesCreate.TestCreateConfig.RHEL_8_1}')")
             b.wait_not_present(f"#os-select li button:contains('{TestMachinesCreate.TestCreateConfig.RHEL_7_1}')")
+            # make the select list go away to not obscure other elements
+            b.click("#os-select-group .pf-v5-c-select__toggle-button")
+            b.wait_not_present("#os-select li")
 
             return self
 
@@ -1205,6 +1208,9 @@ vnc_password= "{vnc_passwd}"
             next_os = b.text(f"#os-select-group li:contains({sorted_list[0]}) + li")
             # The next neighbour should contain the second OS from the sorted list
             self.assertEqual(next_os, sorted_list[1])
+            # make the select list go away to not obscure other elements
+            b.click("#os-select-group .pf-v5-c-select__toggle-button")
+            b.wait_not_present("#os-select li")
             return self
 
         def checkPXENotAvailableSession(self):
