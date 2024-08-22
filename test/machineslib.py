@@ -343,6 +343,17 @@ class VirtualMachinesCaseHelpers:
     def waitGuestBooted(self, logfile):
         self.waitLogFile(logfile, "Welcome to Alpine Linux")
 
+    def waitDisks(self, expected_disks: list[str], vm="subVmTest1"):
+        """Wait until Disks table initialized on the details
+
+        This prevents the kebabs from jumping around during re-renders, which
+        makes trying to click on them racy.
+        """
+        for disk in expected_disks:
+            self.browser.wait_visible(f"#vm-{vm}-disks-{disk}-device")  # type: ignore[attr-defined]
+        # HACK: we need to wait on *something* else, but no idea what..
+        time.sleep(0.5)
+
 
 class VirtualMachinesCase(testlib.MachineCase, VirtualMachinesCaseHelpers, storagelib.StorageHelpers, netlib.NetworkHelpers):
     def setUp(self):

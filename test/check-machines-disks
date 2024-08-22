@@ -104,6 +104,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
         self.goToVmPage("subVmTest1")
+        self.waitDisks(["vda", "vde", "vdf", "vdg"])
 
         # Test non-persistent disks are not configurable
         b.wait_not_present("#vm-subVmTest1-disks-vdf-edit")
@@ -182,6 +183,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         m.execute(f"virsh attach-disk --domain subVmTest1 --source {p1}/mydisk4 --target sdb --targetbus sata --persistent")
         b.reload()
         b.enter_page('/machines')
+        # expected devices after bus type change
+        self.waitDisks(["sda", "sdb", "vda", "vdg"])
         openDialog("sdb")
         b.set_checked("#vm-subVmTest1-disks-sdb-edit-readonly", True)
         save("sdb", xfail="readonly sata disks are not supported")
@@ -196,6 +199,9 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         # virsh attach-disk want send an event for offline VM changes
         b.reload()
         b.enter_page('/machines')
+        # expected devices after bus type change
+        self.waitDisks(["hda", "sdb", "vda", "vdg"])
+
         openDialog("hda")
         b._wait_present("#vm-subVmTest1-disks-hda-edit-bus-type option[value=sata]")
         self.assertFalse(b.is_present("#vm-subVmTest1-disks-hda-edit-bus-type option[value=virtio]"))
@@ -224,6 +230,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         self.goToMainPage()
         self.createVm("subVmTest2", running=False, os="unknown")
         self.goToVmPage("subVmTest2")
+        self.waitDisks(["hda"], vm="subVmTest2")
 
         b.wait_in_text("#vm-subVmTest2-disks-hda-bus", "ide")
 
@@ -296,7 +303,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         print("Restarting vm-subVmTest1, might take a while")
         self.performAction("subVmTest1", "forceReboot")
 
-        b.wait_visible("#vm-subVmTest1-disks-vda-device")
+        self.waitDisks(["vda"])
         b.wait_not_present("#vm-subVmTest1-disks-vdc-device")
 
         # Check when no storage pool and adding existed disk
@@ -1046,8 +1053,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             release_target(used_targets, target)
 
         permanent_targets = [t for t in used_targets if t not in transient_targets]
-        for target in permanent_targets:
-            b.wait_visible(f"#vm-subVmTest1-disks-{target}-device")
+        self.waitDisks(permanent_targets)
 
         # Check that creating a new volume in default_tmp does not by
         # accident use the defaults from defaultVol.iso.  Those
@@ -1515,6 +1521,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         # Test detaching non permanent disk of a running domain
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
+        self.waitDisks(["vda", "vdc", "vdd", "vde"])
 
         self.deleteDisk("vdc", expect_path=vdc_path)
         # Wait for underlying VM's OS to detach the disk
@@ -1553,10 +1560,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b.reload()
         b.enter_page('/machines')
         self.waitPageInit()
-        b.wait_visible("#vm-subVmTest1-disks-sda-device")
-        b.wait_visible("#vm-subVmTest1-disks-sdb-device")
-        b.wait_visible("#vm-subVmTest1-disks-sdc-device")
-        b.wait_visible("#vm-subVmTest1-disks-vda-device")
+        self.waitDisks(["sda", "sdb", "sdc", "vda"])
 
         def removeDiskAndChecks(target, path, removeFile=False, removeFileFail=False, removeFileNotPresent=False):
             self.dropdownAction(f"#vm-subVmTest1-disks-{target}-action-kebab",
@@ -1651,6 +1655,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.goToVmPage("subVmTest1")
+        # wait until Disks have initialized; otherwise the kebabs jump around
+        self.waitDisks(["sda", "vda"])
 
         self.VMInsertMediaDialog(
             self,
