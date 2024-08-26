@@ -58,6 +58,9 @@ import {
     timeout,
 } from "../libvirtApi/helpers.js";
 import {
+    interfaceGetAll,
+} from "../libvirtApi/interface.js";
+import {
     networkGet,
     networkGetAll,
 } from "../libvirtApi/network.js";
@@ -452,6 +455,7 @@ export function getApiData({ connectionName }) {
     return Promise.allSettled([
         domainGetAll({ connectionName }),
         storagePoolGetAll({ connectionName }),
+        interfaceGetAll({ connectionName }),
         networkGetAll({ connectionName }),
         nodeDeviceGetAll({ connectionName }),
         getNodeMaxMemory({ connectionName }),
