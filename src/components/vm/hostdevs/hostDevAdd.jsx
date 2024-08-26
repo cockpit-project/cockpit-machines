@@ -41,7 +41,7 @@ import "./hostDevAdd.scss";
 
 const _ = cockpit.gettext;
 
-const TypeRow = ({ idPrefix, type, setType }) => {
+const TypeRow = ({ type, setType }) => {
     return (
         <FormGroup fieldId="usb_device"
                    label={_("Type")}
@@ -217,7 +217,7 @@ const AddHostDev = ({ idPrefix, vm }) => {
 
     const body = (
         <Form isHorizontal>
-            <TypeRow idPrefix={idPrefix} type={type} setType={setTypeWrapper} />
+            <TypeRow type={type} setType={setTypeWrapper} />
             <DevRow idPrefix={idPrefix} type={type} selectableDevices={selectableDevices} setSelectableDevices={setSelectableDevices} />
         </Form>
     );

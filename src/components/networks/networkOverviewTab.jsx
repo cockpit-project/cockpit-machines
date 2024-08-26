@@ -190,14 +190,13 @@ const NetworkAddStaticHostEntriesAction = ({ idPrefix, network, parentIndex }) =
                     onClick={() => setIsOpen(true)}>
                 {_("add entry")}
             </Button>
-            {isOpen && <NetworkAddStaticHostEntries idPrefix={idPrefix}
-                                                    network={network} parentIndex={parentIndex}
+            {isOpen && <NetworkAddStaticHostEntries network={network} parentIndex={parentIndex}
                                                     setIsOpen={setIsOpen} />}
         </>
     );
 };
 
-const NetworkAddStaticHostEntries = ({ idPrefix, network, parentIndex, setIsOpen }) => {
+const NetworkAddStaticHostEntries = ({ network, parentIndex, setIsOpen }) => {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [ipAddress, setIpAddress] = useState('');
     const [macAddress, setMacAddress] = useState('');
