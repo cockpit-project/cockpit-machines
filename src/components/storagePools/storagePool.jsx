@@ -41,7 +41,7 @@ import cockpit from 'cockpit';
 
 const _ = cockpit.gettext;
 
-export const getStoragePoolRow = ({ storagePool, vms, onAddErrorNotification }) => {
+export const getStoragePoolRow = ({ storagePool, vms }) => {
     const idPrefix = `${storagePoolId(storagePool.name, storagePool.connectionName)}`;
     const name = (
         <span id={`${idPrefix}-name`}>

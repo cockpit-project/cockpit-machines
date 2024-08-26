@@ -872,7 +872,7 @@ export function getStoragePoolPath(storagePools, poolName, connectionName) {
     return pool?.target?.path;
 }
 
-export function vmSupportsExternalSnapshots(config, vm, storagePools) {
+export function vmSupportsExternalSnapshots(config, vm) {
     // External snapshot should only be used if the VM's os types/architecture allow it
     // and if snapshot features are present among guest capabilities:
     // https://libvirt.org/formatcaps.html#guest-capabilities

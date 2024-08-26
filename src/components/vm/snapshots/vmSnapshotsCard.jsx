@@ -44,7 +44,7 @@ export const VmSnapshotsActions = ({ vm, config, storagePools }) => {
     const Dialogs = useDialogs();
     const id = vmId(vm.name);
 
-    const isExternal = vmSupportsExternalSnapshots(config, vm, storagePools);
+    const isExternal = vmSupportsExternalSnapshots(config, vm);
 
     function open() {
         Dialogs.show(<CreateSnapshotModal idPrefix={`${id}-create-snapshot`}

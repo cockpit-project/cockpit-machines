@@ -85,7 +85,7 @@ const NetworkMacRow = ({ idPrefix, dialogValues, onValueChanged }) => {
     );
 };
 
-const PermanentChange = ({ idPrefix, onValueChanged, dialogValues, vm }) => {
+const PermanentChange = ({ idPrefix, onValueChanged, dialogValues }) => {
     // By default for a running VM, the iface is attached until shut down only. Enable permanent change of the domain.xml
     return (
         <FormGroup label={_("Persistence")} fieldId={`${idPrefix}-permanent`} hasNoPaddingTop>
@@ -198,8 +198,7 @@ export class AddNIC extends React.Component {
                 {domainIsRunning(vm.state) && vm.persistent &&
                 <PermanentChange idPrefix={idPrefix}
                                  dialogValues={this.state}
-                                 onValueChanged={this.onValueChanged}
-                                 vm={vm} />}
+                                 onValueChanged={this.onValueChanged} />}
             </Form>
         );
 

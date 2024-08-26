@@ -347,8 +347,7 @@ class AppActive extends React.Component {
                 <StoragePoolList storagePools={storagePools}
                     vms={vms}
                     loggedUser={systemInfo.loggedUser}
-                    libvirtVersion={systemInfo.libvirtVersion}
-                    onAddErrorNotification={this.onAddErrorNotification} />
+                    libvirtVersion={systemInfo.libvirtVersion} />
                 }
                 {path.length > 0 && path[0] == 'networks' &&
                 <NetworkList networks={networks}

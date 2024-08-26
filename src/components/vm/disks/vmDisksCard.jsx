@@ -101,7 +101,7 @@ export class VmDisksCardLibvirt extends React.Component {
         return areDiskStatsSupported;
     }
 
-    prepareDiskData(disk, diskStats, idPrefix, storagePools) {
+    prepareDiskData(disk, diskStats, storagePools) {
         diskStats = diskStats || {};
 
         let used = diskStats.allocation;
@@ -139,14 +139,12 @@ export class VmDisksCardLibvirt extends React.Component {
     render() {
         const { vm, vms, storagePools, supportedDiskBusTypes, onAddErrorNotification } = this.props;
 
-        const idPrefix = `${vmId(vm.name)}-disks`;
         const areDiskStatsSupported = this.getDiskStatsSupport(vm);
 
         const disks = Object.getOwnPropertyNames(vm.disks)
                 .sort() // by 'target'
                 .map(target => this.prepareDiskData(vm.disks[target],
                                                     vm.disksStats && vm.disksStats[target],
-                                                    `${idPrefix}-${target}`,
                                                     storagePools));
         return (
             <VmDisksCard
