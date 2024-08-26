@@ -86,11 +86,23 @@ If "virt-install" is installed, you can also create new virtual machines.
 %make_install PREFIX=/usr
 appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/metainfo/*
 
+# Add cockpit-machines-logging service
+install -Dm644 %{_sourcedir}/src/systemd/cockpit-machines-logging.service %{buildroot}%{_unitdir}/cockpit-machines-logging.service
+install -Dm755 %{_sourcedir}/src/bin/cockpit-machines-logging %{buildroot}%{_bindir}/cockpit-machines-logging
+
+%post
+%systemd_post cockpit-machines-logging.service
+
+%preun
+%systemd_preun cockpit-machines-logging.service
+
 %files
 %doc README.md
 %license LICENSE dist/index.js.LEGAL.txt dist/index.css.LEGAL.txt
 %{_datadir}/cockpit/*
 %{_datadir}/metainfo/*
+%{_unitdir}/cockpit-machines-logging.service
+%attr(0755, root, root) %{_bindir}/cockpit-machines-logging
 
 # The changelog is automatically generated and merged
 %changelog
