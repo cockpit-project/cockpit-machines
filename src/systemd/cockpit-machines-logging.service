@@ -1,0 +1,11 @@
+[Unit]
+Description=Cockpit machines logging
+Documentation=man:cockpit-machines
+Requires=cockpit.service
+After=cockpit.service
+
+[Service]
+ExecStart=/usr/bin/cockpit-machines-logging
+
+[Install]
+WantedBy=multi-user.target
