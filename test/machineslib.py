@@ -444,9 +444,6 @@ class VirtualMachinesCase(testlib.MachineCase, VirtualMachinesCaseHelpers, stora
         self.allow_journal_messages(r'.* type=1400 .* apparmor="DENIED" operation="capable" profile="\S*libvirtd.* capname="sys_rawio".*')
         # AppArmor doesn't like the non-standard path for our storage pools
         self.allow_journal_messages('.* type=1400 .* apparmor="DENIED" operation="open".* profile="virt-aa-helper" name="%s.*' % self.vm_tmpdir)
-        if m.image in ["ubuntu-stable"]:
-            self.allow_journal_messages('.* type=1400 .* apparmor="DENIED" operation="open" profile="libvirt.* name="/" .* denied_mask="r" .*')
-            self.allow_journal_messages('.* type=1400 .* apparmor="DENIED" operation="open" profile="libvirt.* name="/sys/bus/nd/devices/" .* denied_mask="r" .*')
 
         # FIXME: Testing on Arch Linux fails randomly with networkmanager time outs while the test passes.
         if m.image == 'arch':
