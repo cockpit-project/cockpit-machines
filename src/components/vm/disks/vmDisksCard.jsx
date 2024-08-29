@@ -227,8 +227,7 @@ export const VmDisksCard = ({ vm, vms, disks, renderCapacity, supportedDiskBusTy
                                    type={disk.driver.type}
                                    io={disk.driver.io}
                                    discard={disk.driver.discard}
-                                   serial={disk.serial}
-                                   errorPolicy={disk.driver.errorPolicy} />
+                                   serial={disk.serial} />
             });
         }
 

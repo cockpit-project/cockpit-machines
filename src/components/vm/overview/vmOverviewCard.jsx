@@ -100,7 +100,7 @@ class VmOverviewCard extends React.Component {
     }
 
     render() {
-        const { vm, vms, nodeDevices, libvirtVersion } = this.props;
+        const { vm, vms, libvirtVersion } = this.props;
         const idPrefix = vmId(vm.name);
 
         const autostart = (
@@ -191,8 +191,7 @@ class VmOverviewCard extends React.Component {
                         <DescriptionListGroup>
                             <DescriptionListTerm>{_("Boot order")}</DescriptionListTerm>
                             <DescriptionListDescription id={`${idPrefix}-boot-order`}>
-                                <BootOrderLink vm={vm} idPrefix={idPrefix}
-                                                   nodeDevices={nodeDevices} />
+                                <BootOrderLink vm={vm} idPrefix={idPrefix} />
                             </DescriptionListDescription>
                         </DescriptionListGroup>
 
@@ -289,7 +288,6 @@ VmOverviewCard.propTypes = {
     vms: PropTypes.array.isRequired,
     config: PropTypes.object.isRequired,
     libvirtVersion: PropTypes.number.isRequired,
-    nodeDevices: PropTypes.array.isRequired,
 };
 
 export default VmOverviewCard;

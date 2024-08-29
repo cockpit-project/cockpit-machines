@@ -349,7 +349,7 @@ function getBootOrder(vm) {
     return bootOrder;
 }
 
-export const BootOrderLink = ({ vm, idPrefix, nodeDevices }) => {
+export const BootOrderLink = ({ vm, idPrefix }) => {
     const Dialogs = useDialogs();
 
     function open() {

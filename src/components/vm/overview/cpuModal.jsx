@@ -200,7 +200,6 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
         setIsLoading(true);
         domainSetCpuMode({
             name: vm.name,
-            id: vm.id,
             connectionName: vm.connectionName,
             mode: cpuMode,
             model: cpuModel

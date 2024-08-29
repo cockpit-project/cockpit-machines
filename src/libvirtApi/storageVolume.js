@@ -44,7 +44,6 @@ export async function storageVolumeCreateAndAttach({
     format,
     target,
     vmId,
-    vmName,
     permanent,
     hotplug,
     cacheMode,
