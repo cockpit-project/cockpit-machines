@@ -125,7 +125,6 @@ export function domainAttachDisk({
     format,
     target,
     vmId,
-    vmName,
     permanent,
     hotplug,
     cacheMode,
@@ -354,7 +353,7 @@ export async function domainCreate({
     }
 }
 
-export function domainCreateFilesystem({ connectionName, objPath, vmName, source, target, xattr }) {
+export function domainCreateFilesystem({ connectionName, vmName, source, target, xattr }) {
     const options = { err: "message" };
     if (connectionName === "system")
         options.superuser = "try";
@@ -478,7 +477,6 @@ export function domainDesktopConsole({
 }
 
 export async function domainDetachDisk({
-    name,
     connectionName,
     id: vmPath,
     target,
@@ -892,7 +890,6 @@ export function domainSendNMI({
 
 export function domainSetCpuMode({
     name,
-    id: objPath,
     connectionName,
     mode,
     model,

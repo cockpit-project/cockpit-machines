@@ -93,14 +93,13 @@ export const VmFilesystemsCard = ({ connectionName, vmName, vmState, filesystems
     );
 };
 
-export const VmFilesystemActions = ({ connectionName, objPath, vmName, vmState }) => {
+export const VmFilesystemActions = ({ connectionName, vmName, vmState }) => {
     const Dialogs = useDialogs();
     const idPrefix = `${vmId(vmName)}-filesystems`;
 
     function open() {
         Dialogs.show(<VmFilesystemAddModal connectionName={connectionName}
-                                           vmName={vmName}
-                                           objPath={objPath} />);
+                                           vmName={vmName} />);
     }
 
     const addButton = (
@@ -115,7 +114,7 @@ export const VmFilesystemActions = ({ connectionName, objPath, vmName, vmState }
     return vmState == 'shut off' ? addButton : <Tooltip content={_("Adding shared directories is possible only when the guest is shut off")}>{addButton}</Tooltip>;
 };
 
-const VmFilesystemAddModal = ({ connectionName, objPath, vmName }) => {
+const VmFilesystemAddModal = ({ connectionName, vmName }) => {
     const Dialogs = useDialogs();
     const [additionalOptionsExpanded, setAdditionalOptionsExpanded] = useState(false);
     const [dialogError, setDialogError] = useState();
@@ -143,7 +142,6 @@ const VmFilesystemAddModal = ({ connectionName, objPath, vmName }) => {
             })
                     .then(() => domainCreateFilesystem({
                         connectionName,
-                        objPath,
                         vmName,
                         source,
                         target: mountTag,

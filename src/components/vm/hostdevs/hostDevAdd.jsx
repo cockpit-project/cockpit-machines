@@ -78,7 +78,7 @@ function devicesHaveAChild(selectableDevices) {
     return Object.values(all).sort(a => a.hasChildren ? 1 : -1);
 }
 
-const DevRow = ({ idPrefix, type, selectableDevices, setSelectableDevices }) => {
+const DevRow = ({ idPrefix, selectableDevices, setSelectableDevices }) => {
     function getSource(nodeDev, id) {
         const cells = [];
         if (nodeDev.capability.type === "usb_device") {
@@ -218,7 +218,7 @@ const AddHostDev = ({ idPrefix, vm }) => {
     const body = (
         <Form isHorizontal>
             <TypeRow type={type} setType={setTypeWrapper} />
-            <DevRow idPrefix={idPrefix} type={type} selectableDevices={selectableDevices} setSelectableDevices={setSelectableDevices} />
+            <DevRow idPrefix={idPrefix} selectableDevices={selectableDevices} setSelectableDevices={setSelectableDevices} />
         </Form>
     );
 

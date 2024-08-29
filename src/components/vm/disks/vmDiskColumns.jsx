@@ -84,7 +84,7 @@ DiskSourceCell.propTypes = {
     idPrefix: PropTypes.string.isRequired,
 };
 
-export const DiskExtras = ({ idPrefix, cache, type, io, discard, serial, errorPolicy }) => {
+export const DiskExtras = ({ idPrefix, cache, type, io, discard, serial }) => {
     const addOptional = (chunks, value, type, descr) => {
         if (value) {
             chunks.push(
@@ -112,7 +112,6 @@ DiskExtras.propTypes = {
     cache: PropTypes.string,
     io: PropTypes.string,
     discard: PropTypes.string,
-    errorPolicy: PropTypes.string,
     idPrefix: PropTypes.string.isRequired,
 };
 
@@ -121,7 +120,6 @@ export const RemoveDiskModal = ({ vm, disk, storagePools, onAddErrorNotification
         return domainDetachDisk({
             connectionName: vm.connectionName,
             id: vm.id,
-            name: vm.name,
             target: disk.target,
             live: vm.state === 'running',
             persistent: vm.persistent,

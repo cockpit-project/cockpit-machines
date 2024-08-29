@@ -118,7 +118,7 @@ export const VmDetailsPage = ({
                                   maxVcpu={vm.capabilities.maxVcpu}
                                   cpuModels={vm.capabilities.cpuModels}
                                   cpuHostModel={vm.capabilities.cpuHostModel}
-                                  nodeDevices={nodeDevices} libvirtVersion={libvirtVersion} />,
+                                  libvirtVersion={libvirtVersion} />,
         },
         {
             id: `${vmId(vm.name)}-usage`,
@@ -208,13 +208,11 @@ export const VmDetailsPage = ({
                     </>
                 ),
                 actions: <VmFilesystemActions connectionName={vm.connectionName}
-                                              objPath={vm.id}
                                               vmName={vm.name}
                                               memory={vm.memory}
                                               vmState={vm.state} />,
                 body: <VmFilesystemsCard connectionName={vm.connectionName}
                                          filesystems={vm.filesystems}
-                                         objPath={vm.id}
                                          vmName={vm.name}
                                          vmState={vm.state} />
             }
