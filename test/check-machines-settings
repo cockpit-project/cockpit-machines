@@ -454,6 +454,7 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
 
     def testMultipleSettings(self):
         b = self.browser
+        m = self.machine
 
         # We want a machine without watchdog
         args = self.createVm("subVmTest1", os="linux2016")
@@ -497,6 +498,47 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
         # Check both changes have been applied
         b.wait_in_text("#vm-subVmTest1-cpu", "3 vCPUs, host")
         b.wait_in_text("#vm-subVmTest1-watchdog-state", "Reset")
+
+        # Add TPM to running VM
+        b.click("#vm-subVmTest1-system-run")
+        b.wait_in_text("#vm-subVmTest1-system-state", "Running")
+        self.assertNotIn("tpm", m.execute("virsh dumpxml subVmTest1"))
+        self.assertNotIn("tpm", m.execute("virsh dumpxml --inactive subVmTest1"))
+        self.performAction("subVmTest1", "add-tpm")
+        if machineslib.hasBrokenTPM(m.image):
+            error_location = ".pf-v5-c-alert-group li .pf-v5-c-alert"
+            b.wait_in_text(error_location, "Failed to add TPM to VM subVmTest1")
+            b.wait_in_text("button.alert-link.more-button", "show more")
+            b.click("button.alert-link.more-button")
+            b.wait_in_text(error_location, "unsupported configuration")
+            # Close the notification
+            b.click(".pf-v5-c-alert-group li .pf-v5-c-alert button.pf-m-plain")
+            b.wait_not_present(".pf-v5-c-alert-group li .pf-v5-c-alert")
+        else:
+            # this can only add it to the inactive XML, not live
+            b.click("#vm-subVmTest1-needs-shutdown")
+            b.wait_in_text(".pf-v5-c-popover", "TPM")
+            b.click(".pf-v5-c-popover button")
+            b.wait_not_present(".pf-v5-c-popover")
+            self.assertIn("tpm", m.execute("virsh dumpxml --inactive subVmTest1"))
+            self.assertNotIn("tpm", m.execute("virsh dumpxml subVmTest1"))
+            # removes menu entry
+            b.click("#vm-subVmTest1-system-action-kebab")
+            b.wait_visible("#vm-subVmTest1-system-delete")
+            self.assertFalse(b.is_present("#vm-subVmTest1-system-add-tpm"))
+            b.click("#vm-subVmTest1-system-action-kebab")
+            b.wait_not_present(".pf-v5-c-menu__list")
+
+            # after restarting, TPM is active
+            self.performAction("subVmTest1", "forceOff")
+            b.wait_not_present("#vm-subVmTest1-needs-shutdown")
+            b.click("#vm-subVmTest1-system-run")
+            b.wait_in_text("#vm-subVmTest1-system-state", "Running")
+            self.assertIn("tpm", m.execute("virsh dumpxml subVmTest1"))
+
+            # https://launchpad.net/bugs/1968187
+            if m.image.startswith("debian"):
+                self.allow_journal_messages('.*apparmor="DENIED".*name="/etc/ssl/openssl.cnf".*comm="swtpm".*')
 
     def testWatchdog(self):
         b = self.browser

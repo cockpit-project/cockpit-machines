@@ -77,6 +77,10 @@ export function needsShutdownWatchdog(vm) {
     return vm.persistent && vm.state === "running" && vm.inactiveXML.watchdog.action !== vm.watchdog.action;
 }
 
+export function needsShutdownTpm(vm) {
+    return vm.persistent && vm.state === "running" && vm.inactiveXML.hasTPM !== vm.hasTPM;
+}
+
 export function needsShutdownSpice(vm) {
     return vm.hasSpice !== vm.inactiveXML.hasSpice;
 }
@@ -120,6 +124,10 @@ export function getDevicesRequiringShutdown(vm) {
     // SPICE
     if (needsShutdownSpice(vm))
         devices.push(_("SPICE"));
+
+    // TPM
+    if (needsShutdownTpm(vm))
+        devices.push(_("TPM"));
 
     return devices;
 }
