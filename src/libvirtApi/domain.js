@@ -1069,3 +1069,59 @@ export async function domainAddTPM({ connectionName, vmName }) {
                     return Promise.reject(ex);
             });
 }
+
+export function domainAttachVideo({ connectionName, vmName, permanent, hotplug, videoType, password }) {
+    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--add-device', '--graphics', `${videoType},passwd=\"${password}\"`];
+    const options = { err: "message" };
+
+    if (connectionName === "system")
+        options.superuser = "try";
+
+    if (hotplug) {
+        args.push("--update");
+        if (!permanent)
+            args.push("--no-define");
+    }
+
+    return cockpit.spawn(args, options);
+}
+
+export function domainDetachVideo({ connectionName, index, vmName, live, persistent }) {
+    const options = { err: "message" };
+    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--remove-device', '--graphics', `${index + 1}`];
+
+    if (connectionName === "system")
+        options.superuser = "try";
+
+    if (live) {
+        args.push("--update");
+        if (!persistent)
+            args.push("--no-define");
+    }
+
+    return cockpit.spawn(args, options);
+}
+
+export function domainChangeVideoSettings({
+    vmName,
+    connectionName,
+    hotplug,
+    persistent,
+    videoType,
+    password,
+    state,
+}) {
+    const options = { err: "message" };
+    if (connectionName === "system")
+        options.superuser = "try";
+
+    const args = ["virt-xml", "-c", `qemu:///${connectionName}`, vmName, "--edit", "--graphics", `${videoType},passwd=\"${password}\"`];
+
+    if (hotplug) {
+        args.push("--update");
+        if (!persistent)
+            args.push("--no-define");
+    }
+
+    return cockpit.spawn(args, options);
+}
