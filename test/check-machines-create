@@ -2186,6 +2186,12 @@ vnc_password= "{vnc_passwd}"
             tpm_xml = m.execute("virsh dumpxml VmNotInstalled | xmllint --xpath /domain/devices/tpm -")
             self.assertIn('model="tpm-crb"', tpm_xml)
             self.assertIn('type="emulator"', tpm_xml)
+            # thus menu does not offer to add a TPM
+            b.click("#vm-VmNotInstalled-system-action-kebab")
+            b.wait_visible("#vm-VmNotInstalled-system-delete")
+            self.assertNotIn("Add TPM", b.text("ul.pf-v5-c-menu__list"))
+            b.click("#vm-VmNotInstalled-system-action-kebab")
+            b.wait_not_present("ul.pf-v5-c-menu__list")
 
         # Temporarily delete the OVMF binary and check the firmware options again
         if "fedora" in m.image or "rhel" in m.image or "centos" in m.image:
@@ -2319,15 +2325,34 @@ vnc_password= "{vnc_passwd}"
         b.wait_not_present("#create-vm-dialog")
         b.wait_in_text(f"#vm-{vmName}-firmware", "BIOS")
 
-        # manually add TPM to BIOS
-        if not machineslib.hasBrokenTPM(m.image):
-            m.execute(f"virt-xml --add-device --tpm default {vmName}")
-            self.assertIn("tpm", m.execute(f"virsh dumpxml {vmName}"))
+        # add TPM to VM
+        self.assertNotIn("tpm", m.execute(f"virsh dumpxml {vmName}"))
+        self.performAction(vmName, "add-tpm")
 
-            # this doesn't change the UI, so we have to reload to ensure that the UI picks up the change
-            # otherwise this is a race condition
-            b.reload()
-            b.enter_page('/machines')
+        if machineslib.hasBrokenTPM(m.image):
+            error_location = ".pf-v5-c-alert-group li .pf-v5-c-alert"
+            b.wait_in_text(error_location, f"Failed to add TPM to VM {vmName}")
+            b.wait_in_text("button.alert-link.more-button", "show more")
+            b.click("button.alert-link.more-button")
+            b.wait_in_text(error_location, "unsupported configuration")
+            # Close the notification
+            b.click(".pf-v5-c-alert-group li .pf-v5-c-alert button.pf-m-plain")
+            b.wait_not_present(".pf-v5-c-alert-group li .pf-v5-c-alert")
+        else:
+            testlib.wait(lambda: "tpm" in m.execute(f"virsh dumpxml {vmName}"))
+
+            # "Add TPM" action goes away (async); no other visual feedback for non-running VM
+            for _retry in range(10):
+                time.sleep(0.2)
+                b.click(f"#vm-{vmName}-system-action-kebab")
+                b.wait_visible(f"#vm-{vmName}-system-delete")
+                menu = b.text("ul.pf-v5-c-menu__list")
+                b.click(f"#vm-{vmName}-system-action-kebab")
+                b.wait_not_present("ul.pf-v5-c-menu__list")
+                if "Add TPM" not in menu:
+                    break
+            else:
+                self.fail("timed out waiting for Add TPM menu item removal")
 
         # Change the os boot firmware to EFI
         b.click(f"#vm-{vmName}-firmware")
@@ -2353,7 +2378,7 @@ vnc_password= "{vnc_passwd}"
         b.click(f"#vm-{vmName}-system-install")
         b.wait_in_text(f"#vm-{vmName}-system-state", "Running")
 
-        # AppArmor policy fixed in later versions, don't bother with reporting
+        # https://launchpad.net/bugs/1968187
         if m.image == 'debian-stable':
             self.allow_journal_messages('.*apparmor="DENIED".*name="/etc/ssl/openssl.cnf".*comm="swtpm".*')
 

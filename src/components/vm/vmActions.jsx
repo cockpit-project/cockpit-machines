@@ -58,6 +58,7 @@ import {
     domainSendNMI,
     domainShutdown,
     domainStart,
+    domainAddTPM,
 } from '../../libvirtApi/domain.js';
 import store from "../../store.js";
 
@@ -180,6 +181,13 @@ const onSendNMI = (vm) => domainSendNMI({ name: vm.name, id: vm.id, connectionNa
         })
     );
 });
+
+const onAddTPM = (vm, onAddErrorNotification) => domainAddTPM({ connectionName: vm.connectionName, vmName: vm.name })
+        .catch(ex => onAddErrorNotification({
+            text: cockpit.format(_("Failed to add TPM to VM $0"), vm.name),
+            detail: ex.message,
+            resourceId: vm.id,
+        }));
 
 const VmActions = ({ vm, vms, onAddErrorNotification, isDetailsPage }) => {
     const Dialogs = useDialogs();
@@ -466,6 +474,17 @@ const VmActions = ({ vm, vms, onAddErrorNotification, isDetailsPage }) => {
 
     if (domainCanRename(state) || isDetailsPage)
         dropdownItems.push(<Divider key="separator-rename" />);
+
+    if (!vm.hasTPM && !vm.inactiveXML?.hasTPM && vm.capabilities?.supportsTPM) {
+        dropdownItems.push(
+            <DropdownItem key={`${id}-add-tpm`}
+                          id={`${id}-add-tpm`}
+                          onClick={() => onAddTPM(vm, onAddErrorNotification)}>
+                {_("Add TPM")}
+            </DropdownItem>
+        );
+        dropdownItems.push(<Divider key="separator-add-tpm" />);
+    }
 
     if (state !== undefined && domainCanDelete(state, vm.id)) {
         if (!vm.persistent) {
