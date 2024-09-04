@@ -321,9 +321,8 @@ export function fileDownload({ data, fileName = 'myFile.dat', mimeType = 'applic
     } else */ { // do iframe dataURL download
         logDebug('fileDownload() is using IFRAME');
         const f = document.createElement('iframe');
-        f.width = '1';
-        f.height = '1';
         document.body.appendChild(f);
+        f.setAttribute("hidden", "hidden");
         const nicerText = '\n[...............................GraphicsConsole]\n';
         f.src = `data:${mimeType},${encodeURIComponent(data + nicerText)}`;
         window.setTimeout(() => document.body.removeChild(f), 333);
