@@ -26,6 +26,18 @@ import testlib
 @testlib.nondestructive
 class TestMachinesConsoles(machineslib.VirtualMachinesCase):
 
+    def waitDownloadFile(self, filename: str, expected_size: int | None = None, content: str | None = None) -> None:
+        b = self.browser
+        filepath = b.driver.download_dir / filename
+
+        # Big downloads can take a while
+        testlib.wait(filepath.exists, tries=120)
+        if expected_size is not None:
+            testlib.wait(lambda: filepath.stat().st_size == expected_size)
+
+        if content is not None:
+            self.assertEqual(filepath.read_text(), content)
+
     @testlib.skipImage('SPICE not supported on RHEL', "rhel-*", "centos-*")
     def testExternalConsole(self):
         b = self.browser
@@ -43,14 +55,27 @@ class TestMachinesConsoles(machineslib.VirtualMachinesCase):
         b.wait_in_text(".pf-v5-c-console__manual-connection dl > div:first-child dd", "127.0.0.1")
         b.wait_in_text(".pf-v5-c-console__manual-connection dl > div:nth-child(2) dd", "5900")
 
+        b.allow_download()
         b.click(".pf-v5-c-console__remote-viewer-launch-vv")  # "Launch Remote Viewer" button
-        b.wait_visible("#dynamically-generated-file")  # is .vv file generated for download?
-        self.assertEqual(b.attr("#dynamically-generated-file", "href"),
-                         u"data:application/x-virt-viewer,%5Bvirt-viewer%5D%0Atype%3Dspice%0Ahost%3D127.0.0.1%0Aport%3D5900%0Adelete-this-file%3D1%0Afullscreen%3D0%0A")
+        content = """[virt-viewer]
+type=spice
+host=127.0.0.1
+port=5900
+delete-this-file=1
+fullscreen=0
 
-        # HACK: clicking 'Launch Remote Viewer' kills execution context and thus CDP fails
-        b.reload()
-        b.enter_page("/machines")
+[...............................GraphicsConsole]
+"""
+        # HACK: Due to a bug in cockpit-machines, Firefox downloads the desktop
+        # viewer file as a randomly generated file while chromium as
+        # "download". As we want to download this as "$vmName.vv" in the end
+        # work around the issue for now.
+        if b.browser == "chromium":
+            self.waitDownloadFile("download", content=content)
+        else:
+            b.wait_visible("#dynamically-generated-file")  # is .vv file generated for download?
+            self.assertEqual(b.attr("#dynamically-generated-file", "href"),
+                            u"data:application/x-virt-viewer,%5Bvirt-viewer%5D%0Atype%3Dspice%0Ahost%3D127.0.0.1%0Aport%3D5900%0Adelete-this-file%3D1%0Afullscreen%3D0%0A")
 
         # Go to the expanded console view
         b.click("button:contains(Expand)")
