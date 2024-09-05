@@ -220,7 +220,7 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
         caution = <NeedsShutdownAlert idPrefix="cpu-modal" />;
 
     const defaultBody = (
-        <Form isHorizontal className="cpu-modal">
+        <Form className="cpu-modal">
             { caution }
             { error && error.dialogError && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.dialogErrorDetail} /> }
             <FormGroup fieldId="machines-vcpu-max-field" label={_("vCPU maximum")}

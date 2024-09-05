@@ -154,7 +154,7 @@ export const VsockModal = ({ vm, vms, vmVsockNormalized, isVsockAttached, idPref
     const vsockUsage = getVsockUsageMessage(vm.name, vm.connectionName, vms, auto, address);
 
     const body = (
-        <Form onSubmit={e => e.preventDefault()} isHorizontal>
+        <Form onSubmit={e => e.preventDefault()}>
             <FormGroup fieldId="vsock-cid"
                        label={_("Custom identifier")}
                        isInline>

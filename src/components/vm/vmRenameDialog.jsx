@@ -75,8 +75,7 @@ export const RenameDialog = ({ vmName, vmId, connectionName }) => {
             <Form onSubmit={e => {
                 e.preventDefault();
                 onRename();
-            }}
-            isHorizontal>
+            }}>
                 {!isObjectEmpty(error) && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.dialogErrorDetail} />}
                 <FormGroup label={_("New name")}
                            fieldId="rename-dialog-new-name">

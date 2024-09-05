@@ -240,7 +240,7 @@ const NetworkAddStaticHostEntries = ({ network, parentIndex, setIsOpen }) => {
                 }>
             <Form onSubmit={e => {
                 e.preventDefault();
-            }} isHorizontal>
+            }}>
                 {error && <ModalError dialogError={_("Failed to save network settings")} dialogErrorDetail={error} />}
                 <FormGroup label={_("MAC address")} fieldId="add-new-static-entry-mac-address">
                     <TextInput id="add-new-static-entry-mac-address"

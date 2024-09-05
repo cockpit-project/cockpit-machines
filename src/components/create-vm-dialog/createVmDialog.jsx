@@ -1410,7 +1410,7 @@ class CreateVmModal extends React.Component {
         );
 
         const dialogBody = (
-            <Form isHorizontal>
+            <Form>
                 <NameRow
                     vmName={this.state.vmName}
                     suggestedVmName={this.state.suggestedVmName}

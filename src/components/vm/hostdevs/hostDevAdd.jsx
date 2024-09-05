@@ -216,7 +216,7 @@ const AddHostDev = ({ idPrefix, vm }) => {
     };
 
     const body = (
-        <Form isHorizontal>
+        <Form>
             <TypeRow type={type} setType={setTypeWrapper} />
             <DevRow idPrefix={idPrefix} selectableDevices={selectableDevices} setSelectableDevices={setSelectableDevices} />
         </Form>

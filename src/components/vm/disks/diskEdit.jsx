@@ -223,7 +223,7 @@ export class EditDiskModal extends React.Component {
         const { vm, disk, idPrefix, supportedDiskBusTypes } = this.props;
 
         const defaultBody = (
-            <Form isHorizontal>
+            <Form>
                 <NameRow idPrefix={idPrefix}
                          diskType={vm.disks[disk.target].type}
                          name={getDiskFullName(vm.disks[disk.target])} />

@@ -118,7 +118,7 @@ class CreateStorageVolumeModal extends React.Component {
                            </Button>
                        </>
                    }>
-                <Form isHorizontal>
+                <Form>
                     {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                     <VolumeCreateBody format={this.state.format}
                                       idPrefix={idPrefix}

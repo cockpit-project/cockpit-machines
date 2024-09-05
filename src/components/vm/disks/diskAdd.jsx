@@ -207,7 +207,7 @@ const AdditionalOptions = ({ cacheMode, device, idPrefix, onValueChanged, busTyp
     return (
         <ExpandableSection toggleText={ expanded ? _("Hide additional options") : _("Show additional options")}
                            onToggle={() => setExpanded(!expanded)} isExpanded={expanded} className="pf-v5-u-pt-lg">
-            <Form onSubmit={e => e.preventDefault()} isHorizontal>
+            <Form onSubmit={e => e.preventDefault()}>
                 <Grid hasGutter md={6}>
                     <FormGroup fieldId='cache-mode' label={_("Cache")}>
                         <FormSelect id='cache-mode'
@@ -584,7 +584,7 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
         );
     } else if (isMediaInsertion) {
         defaultBody = (
-            <Form onSubmit={e => e.preventDefault()} isHorizontal>
+            <Form onSubmit={e => e.preventDefault()}>
                 <FormGroup fieldId={`${idPrefix}-source`}
                            id={`${idPrefix}-source-group`}
                            label={_("Source")} isInline hasNoPaddingTop>
@@ -620,7 +620,7 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
     } else {
         defaultBody = (
             <>
-                <Form onSubmit={e => e.preventDefault()} isHorizontal>
+                <Form onSubmit={e => e.preventDefault()}>
                     <FormGroup fieldId={`${idPrefix}-source`}
                                id={`${idPrefix}-source-group`}
                                label={_("Source")} isInline hasNoPaddingTop>
