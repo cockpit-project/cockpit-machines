@@ -6,7 +6,6 @@ import os from 'node:os';
 import process from 'node:process';
 
 import copy from 'esbuild-plugin-copy';
-import { replace } from 'esbuild-plugin-replace';
 
 import { cockpitCompressPlugin } from './pkg/lib/esbuild-compress-plugin.js';
 import { cockpitPoEsbuildPlugin } from './pkg/lib/cockpit-po-plugin.js';
@@ -100,15 +99,6 @@ const context = await esbuild.context({
                 { from: ['./src/manifest.json'], to: ['./manifest.json'] },
                 { from: ['./src/index.html'], to: ['./index.html'] },
             ]
-        }),
-        // TODO: The following HACKS are needed for ip module - replace this module with one better maintained
-        // The replacement is done as ip module imports `os` which is not in our dependencies, but since we don't use
-        // the functions using the `os` module, we can just replace it with an empty object
-        replace({
-            include: /ip.js/,
-            values: {
-                "var os": 'var os = {}; // HACK: os is not really used in our used functions from ip.js',
-            }
         }),
         ...esbuildStylesPlugins,
         cockpitPoEsbuildPlugin(),
