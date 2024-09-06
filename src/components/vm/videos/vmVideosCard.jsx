@@ -56,6 +56,11 @@ export class VmVideoActions extends React.Component {
         const { vm } = this.props;
         const id = vmId(vm.name);
 
+        const vncExists = vm.displays.some(video => video.type === 'vnc');
+        if (vncExists) {
+            return null;
+        }
+
         const open = () => {
             Dialogs.show(<AddVIDEO idPrefix={`${id}-add-video`}
                                  vm={vm} />);
