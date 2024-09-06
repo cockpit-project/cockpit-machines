@@ -178,7 +178,7 @@ export class VmVideoTab extends React.Component {
                         errorMessage: cockpit.format(_("Video device $0 could not be removed"), video.index),
                         actionDescription: cockpit.format(_("Video device $0 will be removed from $1"), video.index, vm.name),
                         actionName: _("Remove"),
-                        deleteHandler: () => domainDetachVideo({ connectionName: vm.connectionName, index: video.index, vmName: vm.name, live: vm.state === 'running', persistent: vm.persistent }),
+                        deleteHandler: () => domainDetachVideo({ connectionName: vm.connectionName, index: video.index, vmName: vm.name, persistent: vm.persistent }),
                     };
                     const disabled = vm.state != 'shut off' && vm.state != 'running';
 

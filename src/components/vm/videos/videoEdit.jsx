@@ -67,7 +67,6 @@ export class EditVIDEOModal extends React.Component {
             persistent: vm.persistent,
             videoType: this.state.videoType,
             password: this.state.videoPassword || "",
-            hotplug: vm.state === "running",
         };
 
         domainChangeVideoSettings(videoParams)

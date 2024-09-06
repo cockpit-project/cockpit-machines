@@ -72,7 +72,6 @@ export class AddVIDEO extends React.Component {
             videoType: this.state.videoType,
             permanent: this.state.permanent,
             password: this.state.password || "",
-            hotplug: vm.state === "running",
         };
 
         domainAttachVideo(videoParams)
