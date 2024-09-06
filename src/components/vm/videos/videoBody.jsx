@@ -37,8 +37,8 @@ const _ = cockpit.gettext;
 
 export const VideoTypeRow = ({ idPrefix, onValueChanged, dialogValues, osTypeArch, osTypeMachine }) => {
     const availableTypes = [
-        { name: 'vnc', desc: 'vnc' },
-        { name: 'spice', desc: 'spice' }];
+        { name: 'vnc', desc: 'vnc' }
+    ];
     const defaultType = dialogValues.videoType;
 
     return (

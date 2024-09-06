@@ -112,14 +112,13 @@ export class VmVideoTab extends React.Component {
         const id = vmId(vm.name);
 
         const videos = vm.displays
-            .filter(video => video.type === 'vnc' || video.type === 'spice')
+            .filter(video => video.type === 'vnc')
             .map((video, index) => ({ ...video, index }));
 
         const availableSources = {
-            video: ['vnc', 'spice'],
+            video: ['vnc'],
             device: {
                 'vnc': { type: 'vnc' },
-                'spice': { type: 'spice' }
             }
         };
 
