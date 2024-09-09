@@ -84,6 +84,7 @@ const context = await esbuild.context({
     loader: {
         ".js": "jsx",
         ".py": "text",
+        ".sh": "text",
     },
     metafile: !!args.metafile,
     minify: production,

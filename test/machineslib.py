@@ -410,7 +410,7 @@ class VirtualMachinesCase(testlib.MachineCase, VirtualMachinesCaseHelpers, stora
                       '    echo "$out" | grep -q "domain is not running"; '
                       "  fi; done")
             m.execute("runuser -l admin -c 'for d in $(virsh -c qemu:///session list --all --name); do "
-                      "virsh -c qemu:///session undefine $d; done'")
+                      "virsh -c qemu:///session undefine $d --snapshots-metadata; done'")
 
             # pools
             m.execute("rm -rf /run/libvirt/storage/*")
