@@ -906,3 +906,7 @@ export function vmSupportsExternalSnapshots(config, vm) {
 
     return true;
 }
+
+export function vmHasVFIOHostDevs(vm) {
+    return !!vm.hostDevices.find(hd => hd.driver === "vfio");
+}

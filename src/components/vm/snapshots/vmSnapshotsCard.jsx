@@ -29,7 +29,7 @@ import { useDialogs, DialogsContext } from 'dialogs.jsx';
 import * as timeformat from 'timeformat';
 import { ListingTable } from "cockpit-components-table.jsx";
 
-import { vmId, vmSupportsExternalSnapshots } from "../../../helpers.js";
+import { vmId, vmSupportsExternalSnapshots, vmHasVFIOHostDevs } from "../../../helpers.js";
 import { CreateSnapshotModal } from "./vmSnapshotsCreateModal.jsx";
 import { DeleteResourceButton } from '../../common/deleteResource.jsx';
 import { RevertSnapshotModal } from './vmSnapshotsRevertModal.jsx';
@@ -53,11 +53,20 @@ export const VmSnapshotsActions = ({ vm, config, storagePools }) => {
                                           vm={vm} />);
     }
 
-    return (
-        <Button id={`${id}-add-snapshot-button`} variant="secondary" onClick={open}>
+    let excuse = null;
+    if (vm.state != 'shut off' && vmHasVFIOHostDevs(vm))
+        excuse = _("Creating snapshots of VMs with VFIO devices is not supported while they are running.");
+
+    const button = (
+        <Button id={`${id}-add-snapshot-button`}
+                variant="secondary"
+                onClick={open}
+                isAriaDisabled={!!excuse}>
             {_("Create snapshot")}
         </Button>
     );
+
+    return excuse ? <Tooltip content={excuse}>{button}</Tooltip> : button;
 };
 
 export class VmSnapshotsCard extends React.Component {
