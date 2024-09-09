@@ -47,7 +47,6 @@ const DeleteDialogBody = ({ disks, vmName, destroy, onChange }) => {
                             onChange={(_event, checked) => {
                                 onChange(index, checked);
                             }}
-                            checked={!!disk.checked} // https://github.com/patternfly/patternfly-react/issues/6762
                             isChecked={!!disk.checked} />
                     <DataListItemCells
                         dataListCells={[
