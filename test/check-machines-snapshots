@@ -20,6 +20,8 @@
 import os
 import subprocess
 import time
+import unittest
+import xml.etree.ElementTree as ET
 
 import machineslib
 import testlib
@@ -28,6 +30,13 @@ import testlib
 # libvirt-dbus snapshot APIs are available since 1.4.0, see https://github.com/libvirt/libvirt-dbus/commit/642b1b71
 def supportsSnapshot(image):
     return not image.startswith("rhel-8")
+
+
+def supportsExternalSnapshots(image):
+    # external memory snapshots introduced in libvirt 9.9.0
+    return not (
+        image.startswith("rhel-8") or
+        image in ["debian-stable", "ubuntu-2204"])
 
 
 @testlib.nondestructive
@@ -147,7 +156,7 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
                 if self.description:
                     b.set_input_text("#snapshot-create-dialog-description", self.description)
                 if self.memory_path is not None:
-                    b.set_input_text("#snapshot-create-dialog-memory-path input", self.memory_path)
+                    b.set_input_text("#snapshot-create-dialog-memory-location input", self.memory_path)
 
             def assert_pixels(self):
                 if self.name == 'test_snap_1':
@@ -172,7 +181,7 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
                     self.assert_pixels()
                     b.wait_visible("#snapshot-create-dialog-name[aria-invalid=true]")
                 elif self.xfail == 'memory-path':
-                    b.wait_visible("#snapshot-create-dialog-memory-path .pf-v5-c-helper-text__item-text")
+                    b.wait_visible("#snapshot-create-dialog-memory-location .pf-v5-c-helper-text__item-text")
                 else:
                     raise ValueError(f"Unknown xfail: {self.xfail}")
 
@@ -242,8 +251,7 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         # No Snapshots present
         b.wait_visible("#vm-subVmTest1-add-snapshot-button")
 
-        # external memory snapshots introduced in libvirt 9.9.0
-        supports_external = not (m.image.startswith("rhel-8") or m.image in ["debian-stable", "ubuntu-2204"])
+        supports_external = supportsExternalSnapshots(m.image)
 
         # HACK: deleting external snapshots for non-running VMs is broken https://bugs.debian.org/bug=1061725
         # Work around that by temporarily disabling libvirtd's AppArmor profile. AppArmor isn't installed by
@@ -468,6 +476,117 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         self.assertEqual("no", m.execute("virsh snapshot-info --domain subVmTest1 --snapshotname snapshotA | grep 'Current:' | awk '{print $2}'").strip())
         self.assertEqual("no", m.execute("virsh snapshot-info --domain subVmTest1 --snapshotname snapshotB | grep 'Current:' | awk '{print $2}'").strip())
         self.assertEqual("yes", m.execute("virsh snapshot-info --domain subVmTest1 --snapshotname snapshotC | grep 'Current:' | awk '{print $2}'").strip())
+
+    def testMemoryLocation(self, connection="system"):
+        b = self.browser
+        m = self.machine
+
+        def getSnapshotXML(vm, snap):
+            xml = self.run_admin(f"virsh -c qemu:///{connection} snapshot-dumpxml --domain {vm} --snapshotname {snap}",
+                                 connectionName=connection)
+            return ET.fromstring(xml)
+
+        if not supportsExternalSnapshots(m.image):
+            raise unittest.SkipTest("external snapshots not supported")
+
+        self.login_and_go("/machines")
+        self.waitPageInit()
+
+        self.createVm("subVmTest1", connection=connection)
+
+        self.waitVmRow("subVmTest1", connectionName=connection)
+        b.wait_in_text(f"#vm-subVmTest1-{connection}-state", "Running")
+        self.goToVmPage("subVmTest1", connectionName=connection)
+
+        # Open dialog
+        b.click("#vm-subVmTest1-add-snapshot-button")
+        b.set_input_text("#snapshot-create-dialog-name", "snap-1")
+
+        snapshot_dir = "/var/lib/libvirt" if connection == "system" else "/home/admin/.local/share/libvirt"
+
+        # Check default
+        b.wait_val("#snapshot-create-dialog-memory-location input", snapshot_dir + "/images")
+
+        # Check validation
+        b.set_input_text("#snapshot-create-dialog-memory-location input", "")
+        b.wait_text("#snapshot-create-dialog-memory-location .pf-v5-c-helper-text__item-text",
+                    "Memory save location can not be empty")
+
+        # Check creation of new directories
+        b.set_input_text("#snapshot-create-dialog-memory-location input", snapshot_dir + "/new")
+        b.wait_text("#snapshot-create-dialog-memory-location li button", f'Create "{snapshot_dir}/new"')
+        b.click("#snapshot-create-dialog-memory-location li button")
+
+        # Check available space detection
+        b.wait_in_text("#snapshot-create-dialog-memory-location .pf-v5-c-helper-text__item-text",
+                       "Memory snapshot will use about ")
+        b.wait_in_text("#snapshot-create-dialog-memory-location .pf-v5-c-helper-text__item-text",
+                       "Total space available: ")
+        self.assertNotIn("pf-m-warning",
+                         b.attr("#snapshot-create-dialog-memory-location .pf-v5-c-helper-text__item", "class"))
+
+        # Create it
+        b.click(".pf-v5-c-modal-box__footer button:contains(Create)")
+        b.wait_not_present("#vm-subVmTest1-create-snapshot-modal")
+
+        # Check that it uses the new directory
+        b.wait_text("#vm-subVmTest1-snapshot-0-name", "snap-1")
+        self.assertEqual(getSnapshotXML("subVmTest1", "snap-1").find("memory").get("file"),
+                         snapshot_dir + "/new/subVmTest1.snap-1.save")
+
+        # Open dialog for second snapshot
+        b.click("#vm-subVmTest1-add-snapshot-button")
+        b.set_input_text("#snapshot-create-dialog-name", "snap-2")
+
+        # Check that default comes from the previous snapshot
+        b.wait_val("#snapshot-create-dialog-memory-location input", snapshot_dir + "/new")
+
+        # Use a different location so that we have two snapshots and
+        # can test the sorting function that determines the most
+        # recent one.
+
+        snapshot_dir2 = "/var/lib/libvirt2" if connection == "system" else "/home/admin/.local/share/libvirt/2"
+
+        b.set_input_text("#snapshot-create-dialog-memory-location input", snapshot_dir2)
+        b.wait_text("#snapshot-create-dialog-memory-location li button", f'Create "{snapshot_dir2}"')
+        b.click("#snapshot-create-dialog-memory-location li:first-child button")
+
+        # Wait a couple of seconds to guarantee a different
+        # "creationTime" from the previous snapshot and create it
+        time.sleep(3)
+        b.click(".pf-v5-c-modal-box__footer button:contains(Create)")
+        b.wait_not_present("#vm-subVmTest1-create-snapshot-modal")
+
+        b.wait_text("#vm-subVmTest1-snapshot-0-name", "snap-2")
+        self.assertEqual(getSnapshotXML("subVmTest1", "snap-2").find("memory").get("file"),
+                         os.path.join(snapshot_dir2, "subVmTest1.snap-2.save"))
+
+        # Open dialog for third snapshot
+        b.click("#vm-subVmTest1-add-snapshot-button")
+        b.set_input_text("#snapshot-create-dialog-name", "snap-3")
+
+        # Check that default comes from the previous snapshot
+        b.wait_val("#snapshot-create-dialog-memory-location input", snapshot_dir2)
+
+        dev = self.add_ram_disk(50)
+        m.execute(f"mkfs.ext4 {dev}; mkdir -p /var/small; mount {dev} /var/small")
+        if connection == "session":
+            m.execute("chown admin:admin /var/small")
+        b.set_input_text("#snapshot-create-dialog-memory-location input", "/var/small")
+        b.wait_text("#snapshot-create-dialog-memory-location li:first-child button", "/var/small/")
+        b.click("#snapshot-create-dialog-memory-location li:first-child button")
+        b.wait_in_text("#snapshot-create-dialog-memory-location .pf-v5-c-helper-text__item.pf-m-warning",
+                       "Total space available: ")
+
+        # Go ahead and let it fail
+        b.click(".pf-v5-c-modal-box__footer button:contains(Create)")
+        b.wait_in_text("#vm-subVmTest1-create-snapshot-modal .pf-v5-c-alert",
+                       "No space left on device")
+        b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
+        b.wait_not_present("#vm-subVmTest1-create-snapshot-modal")
+
+    def testMemoryLocationSession(self):
+        self.testMemoryLocation(connection="session")
 
 
 if __name__ == '__main__':
