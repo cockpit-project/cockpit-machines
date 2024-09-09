@@ -640,8 +640,11 @@ export function parseDumpxmlForHostDevices(devicesElem) {
         for (let i = 0; i < hostdevElems.length; i++) {
             const hostdevElem = hostdevElems[i];
             const bootElem = getSingleOptionalElem(hostdevElem, 'boot');
+            const driverElem = getSingleOptionalElem(hostdevElem, 'driver');
             const type = hostdevElem.getAttribute('type');
             const mode = hostdevElem.getAttribute('mode');
+            const driver = driverElem?.getAttribute('name');
+
             let dev;
 
             switch (type) {
@@ -659,6 +662,7 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                     type,
                     mode,
                     bootOrder: bootElem?.getAttribute('order'),
+                    driver,
                     address: {
                         port: addressElem?.getAttribute('port'),
                     },
@@ -689,6 +693,7 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                     type,
                     mode,
                     bootOrder: bootElem?.getAttribute('order'),
+                    driver,
                     source: {
                         address: {
                             vendor: {
@@ -720,6 +725,7 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                     type,
                     mode,
                     bootOrder: bootElem?.getAttribute('order'),
+                    driver,
                     source: {
                         protocol,
                         name,
@@ -743,6 +749,7 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                     type,
                     mode,
                     bootOrder: bootElem?.getAttribute('order'),
+                    driver,
                     source: {
                         protocol: sourceElem.getAttribute('protocol'),
                         wwpn: sourceElem.getAttribute('wwpn'),
@@ -759,6 +766,7 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                     type,
                     mode,
                     bootOrder: bootElem?.getAttribute('order'),
+                    driver,
                     source: {
                         address: {
                             uuid: addressElem.getAttribute('uuid'),
@@ -776,6 +784,7 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                     type,
                     mode,
                     bootOrder: bootElem?.getAttribute('order'),
+                    driver,
                     source: {
                         block: blockElem.childNodes[0].nodeValue
                     },
@@ -806,6 +815,7 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                     type,
                     mode,
                     bootOrder: bootElem?.getAttribute('order'),
+                    driver,
                     source: {
                         interface: interfaceElem.childNodes[0].nodeValue
                     },
