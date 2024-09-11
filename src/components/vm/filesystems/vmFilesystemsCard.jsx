@@ -192,7 +192,7 @@ const VmFilesystemAddModal = ({ connectionName, vmName }) => {
                        </Popover>
                    </>
                }>
-            <Form isHorizontal>
+            <Form>
                 {dialogError && <ModalError dialogError={_("Failed to add shared directory")} dialogErrorDetail={dialogError} />}
                 <FormGroup fieldId={`${idPrefix}-modal-source`}
                            id={`${idPrefix}-modal-source-group`}

@@ -87,8 +87,7 @@ export const CloneDialog = ({ name, connectionName }) => {
             <Form onSubmit={e => {
                 e.preventDefault();
                 onClone();
-            }}
-            isHorizontal>
+            }}>
                 {!isObjectEmpty(error) && <ModalError dialogError={error.dialogError} dialogErrorDetail={virtCloneOutput} />}
                 <FormGroup label={_("Name")} fieldId="vm-name"
                            id="vm-name-group">

@@ -124,7 +124,7 @@ export class MemoryModal extends React.Component {
         const vm = this.props.vm;
         const idPrefix = vmId(vm.name) + '-memory-modal';
         const defaultBody = (
-            <Form isHorizontal id='memory-config-dialog'>
+            <Form id='memory-config-dialog'>
                 <MemorySelectRow id={`${idPrefix}-memory`}
                     label={_("Current allocation")}
                     value={Math.floor(convertToUnit(this.state.memory, 'KiB', this.state.memoryUnit))}

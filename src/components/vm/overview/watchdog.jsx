@@ -197,7 +197,7 @@ export const WatchdogModal = ({ vm, isWatchdogAttached, isRemovable, idPrefix })
                }>
             {needsShutdown()}
             <WatchdogModalAlert dialogError={dialogError} />
-            <Form onSubmit={e => e.preventDefault()} isHorizontal>
+            <Form onSubmit={e => e.preventDefault()}>
                 <FormGroup role="radiogroup"
                            label={_("Action")}
                            fieldId="watchdog-action"

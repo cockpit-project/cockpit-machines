@@ -399,7 +399,7 @@ class CreateNetworkModal extends React.Component {
         const validationFailed = this.state.validate && validateParams(this.state);
 
         const body = (
-            <Form isHorizontal>
+            <Form>
                 <ConnectionRow connectionName={LIBVIRT_SYSTEM_CONNECTION} />
 
                 <NetworkNameRow dialogValues={this.state}
