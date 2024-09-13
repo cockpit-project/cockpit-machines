@@ -230,7 +230,7 @@ const VmActions = ({ vm, vms, onAddErrorNotification, isDetailsPage }) => {
         shutdown = (
             <Button key='action-shutdown'
                     size="sm"
-                    variant={isDetailsPage ? 'primary' : 'secondary'}
+                    variant="secondary"
                     isLoading={operationInProgress}
                     isDisabled={operationInProgress}
                     id={`${id}-shutdown-button`}
