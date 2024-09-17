@@ -22,7 +22,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-09 03:01+0000\n"
+"POT-Creation-Date: 2024-09-17 02:50+0000\n"
 "PO-Revision-Date: 2023-04-30 18:20+0000\n"
 "Last-Translator: Ettore Atalan <atalanttore@googlemail.com>\n"
 "Language-Team: German <https://translate.fedoraproject.org/projects/cockpit-"
@@ -112,7 +112,7 @@ msgstr "Aktion"
 #: src/components/storagePools/storagePoolList.jsx:72
 #: src/components/networks/networkList.jsx:72
 #: src/components/vm/nics/vmNicsCard.jsx:421
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:167
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:176
 #: src/components/vm/disks/vmDisksCard.jsx:192
 #: src/components/vms/hostvmslist.jsx:164
 #, fuzzy
@@ -344,7 +344,7 @@ msgstr "Cache"
 #: src/components/vm/vmReplaceSpiceDialog.jsx:135
 #: src/components/vm/vmMigrateDialog.jsx:202
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:169
-#: src/components/vm/deleteDialog.jsx:174
+#: src/components/vm/deleteDialog.jsx:173
 #: src/components/vm/confirmDialog.jsx:54
 #: src/components/vm/vmRenameDialog.jsx:71
 #: src/components/vm/overview/cpuModal.jsx:337
@@ -354,7 +354,7 @@ msgstr "Cache"
 #: src/components/vm/overview/firmware.jsx:85
 #: src/components/vm/overview/vsock.jsx:243
 #: src/components/vm/vmCloneDialog.jsx:83
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:204
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:284
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:110
 #: src/components/vm/hostdevs/hostDevAdd.jsx:237
 #: src/components/vm/disks/diskEdit.jsx:270
@@ -480,11 +480,11 @@ msgstr "Speicher kopieren"
 msgid "Cores per socket"
 msgstr "Kerne pro Socket"
 
-#: src/components/vm/deleteDialog.jsx:156
+#: src/components/vm/deleteDialog.jsx:155
 msgid "Could not delete $0"
 msgstr "$0 konnte nicht gelöscht werden"
 
-#: src/components/vm/deleteDialog.jsx:151
+#: src/components/vm/deleteDialog.jsx:150
 #, fuzzy
 #| msgid "Could not delete storage for $0"
 msgid "Could not delete all storage for $0"
@@ -511,7 +511,7 @@ msgstr "Abgestürzt"
 #: src/components/storagePools/storageVolumeCreate.jsx:114
 #: src/components/storagePools/createStoragePoolDialog.jsx:442
 #: src/components/networks/createNetworkDialog.jsx:432
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:201
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:281
 msgid "Create"
 msgstr "Erstellen"
 
@@ -573,8 +573,8 @@ msgstr "Neuen Datenträger erstellen"
 msgid "Create new virtual machine"
 msgstr "Neue Virtuelle Maschine erstellen"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:196
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:58
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:276
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:65
 msgid "Create snapshot"
 msgstr "Snapshot erzeugen"
 
@@ -605,11 +605,17 @@ msgstr "VM erstellen"
 msgid "Creating VM $0"
 msgstr "VM $0 erstellen"
 
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:58
+msgid ""
+"Creating snapshots of VMs with VFIO devices is not supported while they are "
+"running."
+msgstr ""
+
 #: src/components/create-vm-dialog/createVmDialog.jsx:1285
 msgid "Creation of VM $0 failed"
 msgstr "Das Erstellen von VM $0 ist fehlgeschlagen"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:78
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:87
 msgid "Creation time"
 msgstr "Erstellungszeit"
 
@@ -617,7 +623,7 @@ msgstr "Erstellungszeit"
 msgid "Ctrl+Alt+$0"
 msgstr "Strg + Alt +$0"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:87
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:96
 msgid "Current"
 msgstr "Aktuell"
 
@@ -659,11 +665,11 @@ msgstr "Deaktivieren"
 #: src/components/common/deleteResource.jsx:133
 #: src/components/common/deleteResource.jsx:144
 #: src/components/vm/vmActions.jsx:477 src/components/vm/vmActions.jsx:485
-#: src/components/vm/deleteDialog.jsx:171
+#: src/components/vm/deleteDialog.jsx:170
 msgid "Delete"
 msgstr "Löschen"
 
-#: src/components/vm/deleteDialog.jsx:166
+#: src/components/vm/deleteDialog.jsx:165
 msgid "Delete $0 VM?"
 msgstr "$0 VM löschen?"
 
@@ -677,7 +683,7 @@ msgid_plural "Delete $0 volumes"
 msgstr[0] "$0 Datenträger löschen"
 msgstr[1] "Datenträger $0 löschen"
 
-#: src/components/vm/deleteDialog.jsx:84
+#: src/components/vm/deleteDialog.jsx:83
 msgid "Delete associated storage files:"
 msgstr "Verknüpfte Speicherdateien löschen:"
 
@@ -685,7 +691,7 @@ msgstr "Verknüpfte Speicherdateien löschen:"
 msgid "Delete network?"
 msgstr "Netzwerk löschen?"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:186
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:195
 msgid "Delete snapshot?"
 msgstr "Schnappschuss löschen?"
 
@@ -702,8 +708,8 @@ msgstr ""
 "ausgeschaltet ist"
 
 #: src/components/vm/vmEditDescriptionDialog.jsx:73
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:57
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:105
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:59
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:114
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -809,7 +815,7 @@ msgstr ""
 msgid "Disk settings could not be saved"
 msgstr "Festplatten-Einstellungen konnten nicht gespeichert werden"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:130
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:139
 msgid "Disk-only snapshot"
 msgstr "Nur-Datenträger-Schnappschuss"
 
@@ -828,11 +834,11 @@ msgstr ""
 msgid "Do nothing"
 msgstr ""
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:132
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:141
 msgid "Domain has crashed"
 msgstr "Domain ist abgestürzt"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:131
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:140
 msgid "Domain is blocked on resource"
 msgstr "Domain ist durch Resource blockiert"
 
@@ -1570,20 +1576,24 @@ msgstr "Speicher"
 msgid "Memory could not be saved"
 msgstr "Speicher konnte nicht gespeichert werden"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:91
-#, fuzzy
-#| msgid "Memory"
-msgid "Memory file"
-msgstr "Speicher"
-
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:143
-#, fuzzy
-#| msgid "Source must not be empty"
-msgid "Memory file can not be empty"
-msgstr "Quelle darf nicht leer sein"
-
 #: src/components/create-vm-dialog/createVmDialog.jsx:234
 msgid "Memory must not be 0"
+msgstr "Speicher darf nicht 0 sein"
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:194
+#, fuzzy
+#| msgid "Source must not be empty"
+msgid "Memory save location can not be empty"
+msgstr "Quelle darf nicht leer sein"
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:101
+msgid "Memory snapshot will use about $0."
+msgstr ""
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:111
+#, fuzzy
+#| msgid "Memory must not be 0"
+msgid "Memory state path"
 msgstr "Speicher darf nicht 0 sein"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:906
@@ -1660,17 +1670,17 @@ msgstr ""
 #: src/components/networks/createNetworkDialog.jsx:140
 #: src/components/networks/networkList.jsx:67
 #: src/components/vm/vmCloneDialog.jsx:93
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:44
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:95
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:46
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:104
 #: src/components/vms/hostvmslist.jsx:161
 msgid "Name"
 msgstr "Name"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:138
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:189
 msgid "Name already exists"
 msgstr "Name existiert bereits"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:140
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:191
 #, fuzzy
 #| msgid "Name must not be empty"
 msgid "Name can not be empty"
@@ -1784,7 +1794,7 @@ msgstr "Kein Startgerät gefunden"
 msgid "No connection available"
 msgstr "Keine Verbindung verfügbar"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:109
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:118
 msgid "No description"
 msgstr "Keine Beschreibung"
 
@@ -1820,11 +1830,11 @@ msgstr "Kein Netzwerk auf diesem Host definiert"
 msgid "No networks available"
 msgstr "Keine Netzwerke verfügbar"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:156
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:165
 msgid "No parent"
 msgstr "Kein Elternteil"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:235
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:244
 msgid "No snapshots defined for this VM"
 msgstr "Für diese VM sind keine Schnappschüsse definiert"
 
@@ -1934,11 +1944,11 @@ msgstr "Überblick"
 msgid "PCI"
 msgstr "PCI"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:154
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:163
 msgid "Parent snapshot"
 msgstr "Übergeordneter Schnappschuss"
 
-#: src/components/vm/deleteDialog.jsx:60
+#: src/components/vm/deleteDialog.jsx:59
 #: src/components/vm/hostdevs/hostDevCard.jsx:123
 #: src/components/vm/hostdevs/hostDevCard.jsx:127
 #: src/components/vm/disks/diskEdit.jsx:42
@@ -1956,6 +1966,12 @@ msgstr "Pfad zur ISO-Datei im Dateisystem des Hosts"
 #: src/components/create-vm-dialog/createVmDialog.jsx:298
 msgid "Path to cloud image file on host's file system"
 msgstr "Pfad zur Cloud-Abbilddatei im Dateisystem des Hosts"
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:117
+#, fuzzy
+#| msgid "Path to file"
+msgid "Path to directory"
+msgstr "Pfad zur Datei"
 
 #: src/components/vm/disks/diskAdd.jsx:343
 msgid "Path to file on host's file system"
@@ -2018,7 +2034,7 @@ msgstr ""
 msgid "Please start the virtual machine to access its console."
 msgstr "Starten Sie die virtuelle Maschine, um auf die Konsole zuzugreifen."
 
-#: src/components/vm/deleteDialog.jsx:68
+#: src/components/vm/deleteDialog.jsx:67
 #: src/components/vm/overview/bootOrder.jsx:99
 #: src/components/vm/disks/diskAdd.jsx:151
 #: src/components/vm/disks/vmDiskColumns.jsx:45
@@ -2077,7 +2093,7 @@ msgstr "Präfixlänge"
 msgid "Prefix length should not be empty"
 msgstr "Präfixlänge sollte nicht leer sein"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:236
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:245
 msgid ""
 "Previously taken snapshots allow you to revert to an earlier state if "
 "something goes wrong"
@@ -2254,7 +2270,7 @@ msgstr ""
 msgid "Resume"
 msgstr "Fortfahren"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:179
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:188
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:100
 msgid "Revert"
 msgstr "Zurückkehren"
@@ -2460,7 +2476,7 @@ msgid "Shut off the VM in order to edit firmware configuration"
 msgstr ""
 "Fahren Sie die VM herunter, um die Firmware-Konfiguration zu bearbeiten"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:129 src/helpers.js:219
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:138 src/helpers.js:219
 msgid "Shutting down"
 msgstr "Wird heruntergefahren"
 
@@ -2478,11 +2494,11 @@ msgstr "Größe"
 msgid "Slot"
 msgstr ""
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:187
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:196
 msgid "Snapshot $0 could not be deleted"
 msgstr "Schnappschuss $0 konnte nicht gelöscht werden"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:188
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:197
 msgid ""
 "Snapshot $0 will be deleted from $1. All of its captured content will be "
 "lost."
@@ -2490,7 +2506,7 @@ msgstr ""
 "Schnappschuss $0 wird aus $1 gelöscht. Der gesamte erfasste Inhalt geht "
 "dabei verloren."
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:173
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:234
 msgid "Snapshot failed to be created"
 msgstr "Schnappschuss konnte nicht erstellt werden"
 
@@ -2704,7 +2720,7 @@ msgstr "Temporär"
 msgid "Temporary migration"
 msgstr "Temporäre Migration"
 
-#: src/components/vm/deleteDialog.jsx:82
+#: src/components/vm/deleteDialog.jsx:81
 msgid "The VM $0 is running and will be forced off before deletion."
 msgstr ""
 "Die VM $0 ist in Betrieb und wird vor dem Löschen zwangsweise abgeschaltet."
@@ -2826,6 +2842,12 @@ msgstr "Dieses Volumen wird bereits von einer anderen VM verwendet."
 #: src/components/vm/overview/cpuModal.jsx:293
 msgid "Threads per core"
 msgstr "Fäden pro Kern"
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:105
+#, fuzzy
+#| msgid "Total size: $0"
+msgid "Total space available: $0."
+msgstr "Gesamtgröße: $0"
 
 #: src/components/vm/overview/firmware.jsx:163
 msgid "Transient VMs don't support editing firmware configuration"
@@ -3035,7 +3057,7 @@ msgstr ""
 msgid "VM needs shutdown"
 msgstr "VM $0 konnte nicht heruntergefahren werden"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:120
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:129
 msgid "VM state"
 msgstr "VM-Status"
 
@@ -3107,7 +3129,7 @@ msgid "Virtualization service (libvirt) is not active"
 msgstr "Der Virtualisierungsdienst (libvirt) ist nicht aktiv"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:996
-#: src/components/vm/deleteDialog.jsx:65
+#: src/components/vm/deleteDialog.jsx:64
 #: src/components/vm/overview/bootOrder.jsx:100
 #: src/components/vm/disks/diskAdd.jsx:117
 #: src/components/vm/disks/vmDiskColumns.jsx:46
@@ -3312,7 +3334,7 @@ msgstr "Netzwerk"
 msgid "no"
 msgstr "Nein"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:124
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:133
 msgid "no state saved"
 msgstr "kein Zustand gespeichert"
 
@@ -3433,6 +3455,11 @@ msgstr ""
 #: src/components/networks/networkOverviewTab.jsx:115 src/helpers.js:264
 msgid "yes"
 msgstr "Ja"
+
+#, fuzzy
+#~| msgid "Memory"
+#~ msgid "Memory file"
+#~ msgstr "Speicher"
 
 #~ msgid "Disk failed to be attached"
 #~ msgstr "Festplatte konnte nicht angeschlossen werden"
@@ -3795,9 +3822,6 @@ msgstr "Ja"
 #~ msgid "Paste"
 #~ msgstr "Einfügen"
 
-#~ msgid "Path to file"
-#~ msgstr "Pfad zur Datei"
-
 #~ msgid "Peripheral chassis"
 #~ msgstr "Peripheriechassis"
 
@@ -3877,9 +3901,6 @@ msgstr "Ja"
 
 #~ msgid "Time zone"
 #~ msgstr "Zeitzone"
-
-#~ msgid "Total size: $0"
-#~ msgstr "Gesamtgröße: $0"
 
 #~ msgid "Tower"
 #~ msgstr "Turm"

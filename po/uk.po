@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-09 03:01+0000\n"
-"PO-Revision-Date: 2024-09-08 13:38+0000\n"
+"POT-Creation-Date: 2024-09-17 02:50+0000\n"
+"PO-Revision-Date: 2024-09-17 06:27+0000\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <https://translate.fedoraproject.org/projects/"
 "cockpit-machines/main/uk/>\n"
@@ -102,7 +102,7 @@ msgstr "Дія"
 #: src/components/storagePools/storagePoolList.jsx:72
 #: src/components/networks/networkList.jsx:72
 #: src/components/vm/nics/vmNicsCard.jsx:421
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:167
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:176
 #: src/components/vm/disks/vmDisksCard.jsx:192
 #: src/components/vms/hostvmslist.jsx:164
 msgid "Actions"
@@ -326,7 +326,7 @@ msgstr "Кеш"
 #: src/components/vm/vmReplaceSpiceDialog.jsx:135
 #: src/components/vm/vmMigrateDialog.jsx:202
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:169
-#: src/components/vm/deleteDialog.jsx:174
+#: src/components/vm/deleteDialog.jsx:173
 #: src/components/vm/confirmDialog.jsx:54
 #: src/components/vm/vmRenameDialog.jsx:71
 #: src/components/vm/overview/cpuModal.jsx:337
@@ -336,7 +336,7 @@ msgstr "Кеш"
 #: src/components/vm/overview/firmware.jsx:85
 #: src/components/vm/overview/vsock.jsx:243
 #: src/components/vm/vmCloneDialog.jsx:83
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:204
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:284
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:110
 #: src/components/vm/hostdevs/hostDevAdd.jsx:237
 #: src/components/vm/disks/diskEdit.jsx:270
@@ -468,11 +468,11 @@ msgstr "Копіювати сховище даних"
 msgid "Cores per socket"
 msgstr "Кількість ядер на сокет"
 
-#: src/components/vm/deleteDialog.jsx:156
+#: src/components/vm/deleteDialog.jsx:155
 msgid "Could not delete $0"
 msgstr "Не вдалося вилучити $0"
 
-#: src/components/vm/deleteDialog.jsx:151
+#: src/components/vm/deleteDialog.jsx:150
 msgid "Could not delete all storage for $0"
 msgstr "Не вдалося вилучити усе сховище для $0"
 
@@ -495,7 +495,7 @@ msgstr "Аварійне завершення"
 #: src/components/storagePools/storageVolumeCreate.jsx:114
 #: src/components/storagePools/createStoragePoolDialog.jsx:442
 #: src/components/networks/createNetworkDialog.jsx:432
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:201
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:281
 msgid "Create"
 msgstr "Створити"
 
@@ -539,8 +539,8 @@ msgstr "Створити том raw"
 msgid "Create new virtual machine"
 msgstr "Створити віртуальну машину"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:196
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:58
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:276
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:65
 msgid "Create snapshot"
 msgstr "Створення знімка"
 
@@ -571,11 +571,19 @@ msgstr "створення ВМ"
 msgid "Creating VM $0"
 msgstr "Створення ВМ $0"
 
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:58
+msgid ""
+"Creating snapshots of VMs with VFIO devices is not supported while they are "
+"running."
+msgstr ""
+"Не передбачено можливості створення знімків ВМ з пристроями VFIO, доки "
+"машину запущено."
+
 #: src/components/create-vm-dialog/createVmDialog.jsx:1285
 msgid "Creation of VM $0 failed"
 msgstr "Не вдалося створити ВМ $0"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:78
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:87
 msgid "Creation time"
 msgstr "Час створення"
 
@@ -583,7 +591,7 @@ msgstr "Час створення"
 msgid "Ctrl+Alt+$0"
 msgstr "Ctrl+Alt+$0"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:87
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:96
 msgid "Current"
 msgstr "Поточний"
 
@@ -623,11 +631,11 @@ msgstr "Вимкнути"
 #: src/components/common/deleteResource.jsx:133
 #: src/components/common/deleteResource.jsx:144
 #: src/components/vm/vmActions.jsx:477 src/components/vm/vmActions.jsx:485
-#: src/components/vm/deleteDialog.jsx:171
+#: src/components/vm/deleteDialog.jsx:170
 msgid "Delete"
 msgstr "Вилучити"
 
-#: src/components/vm/deleteDialog.jsx:166
+#: src/components/vm/deleteDialog.jsx:165
 msgid "Delete $0 VM?"
 msgstr "Вилучити ВМ $0?"
 
@@ -642,7 +650,7 @@ msgstr[0] "Вилучити $0 том"
 msgstr[1] "Вилучити $0 томи"
 msgstr[2] "Вилучити $0 томів"
 
-#: src/components/vm/deleteDialog.jsx:84
+#: src/components/vm/deleteDialog.jsx:83
 msgid "Delete associated storage files:"
 msgstr "Вилучити пов’язані файли у сховищі даних:"
 
@@ -650,7 +658,7 @@ msgstr "Вилучити пов’язані файли у сховищі дан
 msgid "Delete network?"
 msgstr "Вилучити мережу?"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:186
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:195
 msgid "Delete snapshot?"
 msgstr "Вилучити знімок?"
 
@@ -668,8 +676,8 @@ msgstr ""
 "Вилучення спільних каталогів можливе, лише якщо гостьову систему вимкнено"
 
 #: src/components/vm/vmEditDescriptionDialog.jsx:73
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:57
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:105
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:59
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:114
 msgid "Description"
 msgstr "Опис"
 
@@ -770,7 +778,7 @@ msgstr "Образи дисків можуть зберігатися у дом�
 msgid "Disk settings could not be saved"
 msgstr "Не вдалося зберегти параметри диска"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:130
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:139
 msgid "Disk-only snapshot"
 msgstr "Знімок лише на диску"
 
@@ -789,11 +797,11 @@ msgstr ""
 msgid "Do nothing"
 msgstr "Нічого не робити"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:132
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:141
 msgid "Domain has crashed"
 msgstr "Домен завершив роботу аварійно"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:131
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:140
 msgid "Domain is blocked on resource"
 msgstr "Домен заблоковано на ресурсі"
 
@@ -1495,17 +1503,21 @@ msgstr "Пам'ять"
 msgid "Memory could not be saved"
 msgstr "Не вдалося зберегти дані щодо обсягу пам'яті"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:91
-msgid "Memory file"
-msgstr "Файл пам'яті"
-
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:143
-msgid "Memory file can not be empty"
-msgstr "Файл пам'яті не може бути порожнім"
-
 #: src/components/create-vm-dialog/createVmDialog.jsx:234
 msgid "Memory must not be 0"
 msgstr "Об'єм пам'яті не може бути нульовим"
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:194
+msgid "Memory save location can not be empty"
+msgstr "Місце зберігання у пам'яті не може бути порожнім"
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:101
+msgid "Memory snapshot will use about $0."
+msgstr "Знімок пам'яті використовуватиме приблизно $0."
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:111
+msgid "Memory state path"
+msgstr "Шлях до стану пам'яті"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:906
 #: src/components/create-vm-dialog/createVmDialog.jsx:1024
@@ -1579,17 +1591,17 @@ msgstr "NIC $0 ВМ $1, не вдалося змінити стан"
 #: src/components/networks/createNetworkDialog.jsx:140
 #: src/components/networks/networkList.jsx:67
 #: src/components/vm/vmCloneDialog.jsx:93
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:44
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:95
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:46
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:104
 #: src/components/vms/hostvmslist.jsx:161
 msgid "Name"
 msgstr "Назва"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:138
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:189
 msgid "Name already exists"
 msgstr "Таку назву вже використано"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:140
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:191
 msgid "Name can not be empty"
 msgstr "Назва не може бути порожньою"
 
@@ -1698,7 +1710,7 @@ msgstr "Не знайдено пристрою для завантаження"
 msgid "No connection available"
 msgstr "Немає доступних з'єднань"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:109
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:118
 msgid "No description"
 msgstr "Немає опису"
 
@@ -1734,11 +1746,11 @@ msgstr "У цій основній системі мережу не визнач
 msgid "No networks available"
 msgstr "Немає доступних мереж"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:156
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:165
 msgid "No parent"
 msgstr "Немає батьківського запису"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:235
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:244
 msgid "No snapshots defined for this VM"
 msgstr "Для цієї ВМ не визначено знімків"
 
@@ -1849,11 +1861,11 @@ msgstr "Огляд"
 msgid "PCI"
 msgstr "PCI"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:154
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:163
 msgid "Parent snapshot"
 msgstr "Батьківський знімок"
 
-#: src/components/vm/deleteDialog.jsx:60
+#: src/components/vm/deleteDialog.jsx:59
 #: src/components/vm/hostdevs/hostDevCard.jsx:123
 #: src/components/vm/hostdevs/hostDevCard.jsx:127
 #: src/components/vm/disks/diskEdit.jsx:42
@@ -1871,6 +1883,10 @@ msgstr "Шлях до ISO у файловій системі основної с
 #: src/components/create-vm-dialog/createVmDialog.jsx:298
 msgid "Path to cloud image file on host's file system"
 msgstr "Шлях до файла образу хмари у файловій системі основної системи"
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:117
+msgid "Path to directory"
+msgstr "Шлях до каталогу"
 
 #: src/components/vm/disks/diskAdd.jsx:343
 msgid "Path to file on host's file system"
@@ -1936,7 +1952,7 @@ msgid "Please start the virtual machine to access its console."
 msgstr ""
 "Будь ласка, запустіть віртуальну машину, щоб отримати доступ до її консолі."
 
-#: src/components/vm/deleteDialog.jsx:68
+#: src/components/vm/deleteDialog.jsx:67
 #: src/components/vm/overview/bootOrder.jsx:99
 #: src/components/vm/disks/diskAdd.jsx:151
 #: src/components/vm/disks/vmDiskColumns.jsx:45
@@ -1991,7 +2007,7 @@ msgstr "Довжина префікса"
 msgid "Prefix length should not be empty"
 msgstr "Довжина префікса повинна бути непорожньою"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:236
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:245
 msgid ""
 "Previously taken snapshots allow you to revert to an earlier state if "
 "something goes wrong"
@@ -2166,7 +2182,7 @@ msgstr ""
 msgid "Resume"
 msgstr "Відновити"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:179
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:188
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:100
 msgid "Revert"
 msgstr "Повернутися"
@@ -2360,7 +2376,7 @@ msgstr ""
 "Вимкніть віртуальну машину, щоб розпочати редагування налаштувань "
 "мікропрограми"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:129 src/helpers.js:219
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:138 src/helpers.js:219
 msgid "Shutting down"
 msgstr "Вимикання"
 
@@ -2378,18 +2394,18 @@ msgstr "Розмір"
 msgid "Slot"
 msgstr "Слот"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:187
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:196
 msgid "Snapshot $0 could not be deleted"
 msgstr "Не вдалося вилучити знімок $0"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:188
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:197
 msgid ""
 "Snapshot $0 will be deleted from $1. All of its captured content will be "
 "lost."
 msgstr ""
 "Знімок $0 буде вилучено з $1. Усі захоплені у ньому дані буде втрачено."
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:173
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:234
 msgid "Snapshot failed to be created"
 msgstr "Не вдалося створити знімок"
 
@@ -2598,7 +2614,7 @@ msgstr "Тимчасове"
 msgid "Temporary migration"
 msgstr "Тимчасове перенесення"
 
-#: src/components/vm/deleteDialog.jsx:82
+#: src/components/vm/deleteDialog.jsx:81
 msgid "The VM $0 is running and will be forced off before deletion."
 msgstr ""
 "Запущено віртуальну машину $0. Її буде примусово зупинено перед вилученням."
@@ -2725,6 +2741,10 @@ msgstr "Цей том вже використано іншою ВМ."
 #: src/components/vm/overview/cpuModal.jsx:293
 msgid "Threads per core"
 msgstr "Потоків на ядро"
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:105
+msgid "Total space available: $0."
+msgstr "Загалом доступного місця: $0"
 
 #: src/components/vm/overview/firmware.jsx:163
 msgid "Transient VMs don't support editing firmware configuration"
@@ -2928,7 +2948,7 @@ msgstr ""
 msgid "VM needs shutdown"
 msgstr "ВМ потребує вимикання"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:120
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:129
 msgid "VM state"
 msgstr "Стан ВМ"
 
@@ -3002,7 +3022,7 @@ msgid "Virtualization service (libvirt) is not active"
 msgstr "Служба віртуалізації (libvirt) не є активною"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:996
-#: src/components/vm/deleteDialog.jsx:65
+#: src/components/vm/deleteDialog.jsx:64
 #: src/components/vm/overview/bootOrder.jsx:100
 #: src/components/vm/disks/diskAdd.jsx:117
 #: src/components/vm/disks/vmDiskColumns.jsx:46
@@ -3207,7 +3227,7 @@ msgstr "мережа"
 msgid "no"
 msgstr "ні"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:124
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:133
 msgid "no state saved"
 msgstr "немає збережених станів"
 
@@ -3321,6 +3341,9 @@ msgstr "vsock потребує спеціалізованого програмн
 #: src/components/networks/networkOverviewTab.jsx:115 src/helpers.js:264
 msgid "yes"
 msgstr "так"
+
+#~ msgid "Memory file"
+#~ msgstr "Файл пам'яті"
 
 #~ msgid "Uptime"
 #~ msgstr "Тривалість роботи"
@@ -3701,9 +3724,6 @@ msgstr "так"
 #~ msgid "Paste"
 #~ msgstr "Вставити"
 
-#~ msgid "Path to file"
-#~ msgstr "Шлях до файла"
-
 #~ msgid "Peripheral chassis"
 #~ msgstr "Периферійний апаратний блок"
 
@@ -3792,9 +3812,6 @@ msgstr "так"
 
 #~ msgid "Today"
 #~ msgstr "Сьогодні"
-
-#~ msgid "Total size: $0"
-#~ msgstr "Загальний розмір: $0"
 
 #~ msgid "Tower"
 #~ msgstr "Башточка"
