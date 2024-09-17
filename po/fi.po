@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-09 03:01+0000\n"
-"PO-Revision-Date: 2024-06-25 18:36+0000\n"
+"POT-Creation-Date: 2024-09-17 02:50+0000\n"
+"PO-Revision-Date: 2024-09-16 09:57+0000\n"
 "Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
 "memory@weblate.org>\n"
 "Language-Team: Finnish <https://translate.fedoraproject.org/projects/cockpit-"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1\n"
-"X-Generator: Weblate 5.5.5\n"
+"X-Generator: Weblate 5.7.2\n"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:927
 msgid "$0 $1 available at default location"
@@ -97,7 +97,7 @@ msgstr "Toiminto"
 #: src/components/storagePools/storagePoolList.jsx:72
 #: src/components/networks/networkList.jsx:72
 #: src/components/vm/nics/vmNicsCard.jsx:421
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:167
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:176
 #: src/components/vm/disks/vmDisksCard.jsx:192
 #: src/components/vms/hostvmslist.jsx:164
 msgid "Actions"
@@ -123,7 +123,7 @@ msgstr "Lisää"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:863
 msgid "Add SSH keys"
-msgstr ""
+msgstr "Lisää SSH-avaimet"
 
 #: src/components/networks/networkOverviewTab.jsx:230
 msgid "Add a DHCP static host entry"
@@ -321,7 +321,7 @@ msgstr "Välimuisti"
 #: src/components/vm/vmReplaceSpiceDialog.jsx:135
 #: src/components/vm/vmMigrateDialog.jsx:202
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:169
-#: src/components/vm/deleteDialog.jsx:174
+#: src/components/vm/deleteDialog.jsx:173
 #: src/components/vm/confirmDialog.jsx:54
 #: src/components/vm/vmRenameDialog.jsx:71
 #: src/components/vm/overview/cpuModal.jsx:337
@@ -331,7 +331,7 @@ msgstr "Välimuisti"
 #: src/components/vm/overview/firmware.jsx:85
 #: src/components/vm/overview/vsock.jsx:243
 #: src/components/vm/vmCloneDialog.jsx:83
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:204
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:284
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:110
 #: src/components/vm/hostdevs/hostDevAdd.jsx:237
 #: src/components/vm/disks/diskEdit.jsx:270
@@ -446,11 +446,11 @@ msgstr "Konsoli"
 
 #: src/components/vm/vmReplaceSpiceDialog.jsx:157
 msgid "Convert QXL video card to VGA"
-msgstr ""
+msgstr "Muunna QXL-näytönohjain VGA:ksi"
 
 #: src/components/vm/vmReplaceSpiceDialog.jsx:156
 msgid "Convert SPICE graphics console to VNC"
-msgstr ""
+msgstr "Muunna SPICE-grafiikkakonsoli VNC:ksi"
 
 #: src/components/vm/vmMigrateDialog.jsx:103
 #: src/components/vm/vmMigrateDialog.jsx:119
@@ -461,11 +461,11 @@ msgstr "Kopioi tallennustila"
 msgid "Cores per socket"
 msgstr "Ytimiä per kanta"
 
-#: src/components/vm/deleteDialog.jsx:156
+#: src/components/vm/deleteDialog.jsx:155
 msgid "Could not delete $0"
 msgstr "$0 ei voitu poistaa"
 
-#: src/components/vm/deleteDialog.jsx:151
+#: src/components/vm/deleteDialog.jsx:150
 msgid "Could not delete all storage for $0"
 msgstr "Ei voitu poistaa kaikkea tallennustilaa $0:lle"
 
@@ -488,7 +488,7 @@ msgstr "Kaatui"
 #: src/components/storagePools/storageVolumeCreate.jsx:114
 #: src/components/storagePools/createStoragePoolDialog.jsx:442
 #: src/components/networks/createNetworkDialog.jsx:432
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:201
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:281
 msgid "Create"
 msgstr "Luo"
 
@@ -532,8 +532,8 @@ msgstr "Luo uusi raaka-taltio"
 msgid "Create new virtual machine"
 msgstr "Luo uusi virtuaalikone"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:196
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:58
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:276
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:65
 msgid "Create snapshot"
 msgstr "Luo tilannevedos"
 
@@ -564,11 +564,19 @@ msgstr "Virtuaalikoneen luominen"
 msgid "Creating VM $0"
 msgstr "Luodaan virtuaalikone $0"
 
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:58
+msgid ""
+"Creating snapshots of VMs with VFIO devices is not supported while they are "
+"running."
+msgstr ""
+"Tilannekuvien luomista virtuaalikoneista VFIO-laitteilla ei tueta niiden "
+"ollessa käynnissä."
+
 #: src/components/create-vm-dialog/createVmDialog.jsx:1285
 msgid "Creation of VM $0 failed"
 msgstr "Virtuaalikoneen $0 luominen epäonnistui"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:78
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:87
 msgid "Creation time"
 msgstr "Luomisaika"
 
@@ -576,7 +584,7 @@ msgstr "Luomisaika"
 msgid "Ctrl+Alt+$0"
 msgstr "Ctrl+Alt+$0"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:87
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:96
 msgid "Current"
 msgstr "Nykyinen"
 
@@ -616,11 +624,11 @@ msgstr "Deaktivoi"
 #: src/components/common/deleteResource.jsx:133
 #: src/components/common/deleteResource.jsx:144
 #: src/components/vm/vmActions.jsx:477 src/components/vm/vmActions.jsx:485
-#: src/components/vm/deleteDialog.jsx:171
+#: src/components/vm/deleteDialog.jsx:170
 msgid "Delete"
 msgstr "Poista"
 
-#: src/components/vm/deleteDialog.jsx:166
+#: src/components/vm/deleteDialog.jsx:165
 msgid "Delete $0 VM?"
 msgstr "Poista $0 VM?"
 
@@ -634,7 +642,7 @@ msgid_plural "Delete $0 volumes"
 msgstr[0] "Poista $0 taltio"
 msgstr[1] "Poista $0 taltiota"
 
-#: src/components/vm/deleteDialog.jsx:84
+#: src/components/vm/deleteDialog.jsx:83
 msgid "Delete associated storage files:"
 msgstr "Poista liittyvät tallennustiedostot:"
 
@@ -642,7 +650,7 @@ msgstr "Poista liittyvät tallennustiedostot:"
 msgid "Delete network?"
 msgstr "Poista verkko ?"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:186
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:195
 msgid "Delete snapshot?"
 msgstr "Poista tilannevedos ?"
 
@@ -661,14 +669,14 @@ msgstr ""
 "sammutettuna"
 
 #: src/components/vm/vmEditDescriptionDialog.jsx:73
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:57
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:105
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:59
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:114
 msgid "Description"
 msgstr "Kuvaus"
 
 #: src/components/vm/vmReplaceSpiceDialog.jsx:115
 msgid "Deselect others"
-msgstr ""
+msgstr "Poista muut valinnat"
 
 #: src/components/vm/consoles/consoles.jsx:113
 msgid "Desktop viewer"
@@ -763,7 +771,7 @@ msgstr "Levykuvat voidaan tallentaa käyttäjän kotihakemistoon"
 msgid "Disk settings could not be saved"
 msgstr "Levyn asetuksia ei voitu tallentaa"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:130
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:139
 msgid "Disk-only snapshot"
 msgstr "Vain levy -tilannevedos"
 
@@ -782,11 +790,11 @@ msgstr ""
 msgid "Do nothing"
 msgstr "Älä tee mitään"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:132
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:141
 msgid "Domain has crashed"
 msgstr "Toimialue on kaatunut"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:131
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:140
 msgid "Domain is blocked on resource"
 msgstr "Toimialue on estetty resurssilla"
 
@@ -828,16 +836,12 @@ msgid "Edit $0 attributes"
 msgstr "Muokkaa $0 attribuuttia"
 
 #: src/components/vm/vmActions.jsx:462
-#, fuzzy
-#| msgid "No description"
 msgid "Edit description"
-msgstr "Ei kuvausta"
+msgstr "Muokkaa kuvausta"
 
 #: src/components/vm/vmEditDescriptionDialog.jsx:54
-#, fuzzy
-#| msgid "No description"
 msgid "Edit description of VM $0"
-msgstr "Ei kuvausta"
+msgstr "Muokkaa virtuaalikoneen $0 kuvausta"
 
 #: src/components/vm/overview/vsock.jsx:213
 msgid "Edit vsock interface"
@@ -953,10 +957,8 @@ msgid "Failed to rename VM $0"
 msgstr "VM:n $0 nimen vaihto epäonnistui"
 
 #: src/components/vm/vmReplaceSpiceDialog.jsx:76
-#, fuzzy
-#| msgid "Failed to rename VM $0"
 msgid "Failed to replace SPICE devices"
-msgstr "VM:n $0 nimen vaihto epäonnistui"
+msgstr "SPICE-laitteiden vaihtaminen epäonnistui"
 
 #: src/components/networks/networkOverviewTab.jsx:244
 msgid "Failed to save network settings"
@@ -967,10 +969,8 @@ msgid "Failed to send key Ctrl+Alt+$0 to VM $1"
 msgstr "Näppäimen Ctrl+Alt+$0 lähettäminen virtuaalikoneeseen $1 epäonnistui"
 
 #: src/components/vm/vmEditDescriptionDialog.jsx:46
-#, fuzzy
-#| msgid "Failed to clone VM $0"
 msgid "Failed to set description of VM $0"
-msgstr "VM:n $0 kloonaus epäonnistui"
+msgstr "Virtuaalikoneen $0 kuvauksen asettaminen epäonnistui"
 
 #: src/components/vm/overview/cpuModal.jsx:251
 msgid "Fewer than the maximum number of virtual CPUs should be enabled."
@@ -1170,14 +1170,12 @@ msgid "IPv4 only"
 msgstr "IPv4 vain"
 
 #: src/components/networks/createNetworkDialog.jsx:69
-#, fuzzy
-#| msgid "Prefix length should not be empty"
 msgid "IPv4 prefix length must be 24 or less"
-msgstr "Etuliitteen pituuss ei tulisi olla tyhjä"
+msgstr "IPv4-etuliitteen pituus saa olla enintään 24 merkkiä"
 
 #: src/components/networks/createNetworkDialog.jsx:66
 msgid "IPv4 prefix length must be a multiple of 8"
-msgstr ""
+msgstr "IPv4-etuliitteen merkkimäärän on oltava 8:n kerrannainen"
 
 #: src/components/networks/createNetworkDialog.jsx:287
 #: src/components/networks/networkOverviewTab.jsx:158
@@ -1342,6 +1340,8 @@ msgstr "Eristetty verkko"
 #: src/components/create-vm-dialog/createVmDialog.jsx:828
 msgid "Keys are located in ~/.ssh/ and have a \".pub\" extension."
 msgstr ""
+"Avaimet sijaitsevat hakemistossa ~/.ssh/ ja ne tunnistetaan niiden \".pub\"-"
+"laajennuksesta."
 
 #: src/components/storagePools/createStoragePoolDialog.jsx:62
 msgid "LVM volume group"
@@ -1408,7 +1408,7 @@ msgstr "MAC-osoite"
 
 #: src/components/vm/nics/nicEdit.jsx:129 src/components/vm/nics/nicAdd.jsx:152
 msgid "MAC address already in use"
-msgstr ""
+msgstr "MAC-osoite on jo käytössä"
 
 #: src/components/networks/networkOverviewTab.jsx:250
 msgid "MAC address must not be empty"
@@ -1490,20 +1490,24 @@ msgstr "Muisti"
 msgid "Memory could not be saved"
 msgstr "Muistia ei voitu tallentaa"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:91
-#, fuzzy
-#| msgid "Memory"
-msgid "Memory file"
-msgstr "Muisti"
-
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:143
-#, fuzzy
-#| msgid "Source must not be empty"
-msgid "Memory file can not be empty"
-msgstr "Lähde ei saa olla tyhjä"
-
 #: src/components/create-vm-dialog/createVmDialog.jsx:234
 msgid "Memory must not be 0"
+msgstr "Muisti ei saa olla 0"
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:194
+#, fuzzy
+#| msgid "Memory file can not be empty"
+msgid "Memory save location can not be empty"
+msgstr "Muistitiedosto ei voi olla tyhjä"
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:101
+msgid "Memory snapshot will use about $0."
+msgstr ""
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:111
+#, fuzzy
+#| msgid "Memory must not be 0"
+msgid "Memory state path"
 msgstr "Muisti ei saa olla 0"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:906
@@ -1559,10 +1563,8 @@ msgid "Mount tag must not be empty"
 msgstr "Liitostunnus ei voi olla tyhjä"
 
 #: src/components/networks/createNetworkDialog.jsx:81
-#, fuzzy
-#| msgid "IPv4 address cannot be same as the network identifier"
 msgid "Must be an address instead of the network identifier, such as $0"
-msgstr "IPv4-osoite ei voi olla sama kuin verkkotunniste"
+msgstr "On oltava osoite verkkotunnuksen sijaan, kuten $0"
 
 #: src/components/create-vm-dialog/pxe-helpers.js:93
 msgid "NAT to $0"
@@ -1580,17 +1582,17 @@ msgstr "Virtuaalikoneen $1 verkkokortti $0 ei muuttanut tilaa"
 #: src/components/networks/createNetworkDialog.jsx:140
 #: src/components/networks/networkList.jsx:67
 #: src/components/vm/vmCloneDialog.jsx:93
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:44
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:95
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:46
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:104
 #: src/components/vms/hostvmslist.jsx:161
 msgid "Name"
 msgstr "Nimi"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:138
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:189
 msgid "Name already exists"
 msgstr "Nimi on jo olemassa"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:140
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:191
 msgid "Name can not be empty"
 msgstr "Nimi ei voi olla tyhjä"
 
@@ -1685,7 +1687,7 @@ msgstr "Uusi taltion nimi"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:861
 msgid "No SSH keys specified"
-msgstr ""
+msgstr "SSH-avaimia ei määritetty"
 
 #: src/components/vms/hostvmslist.jsx:166
 msgid "No VM is running or defined on this host"
@@ -1699,7 +1701,7 @@ msgstr "Käynnistyslaitetta ei löytynyt"
 msgid "No connection available"
 msgstr "Ei yhteytta saatavilla"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:109
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:118
 msgid "No description"
 msgstr "Ei kuvausta"
 
@@ -1736,11 +1738,11 @@ msgstr "Tälle isännälle ei ole määritetty verkkoa"
 msgid "No networks available"
 msgstr "Verkkoja ei ole käytettävissä"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:156
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:165
 msgid "No parent"
 msgstr "Ei vanhempi"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:235
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:244
 msgid "No snapshots defined for this VM"
 msgstr "Tälle virtuaalikoneelle ei ole määritetty tilannevedoksia"
 
@@ -1841,7 +1843,7 @@ msgstr "Toiminto käynnissä"
 
 #: src/components/vm/vmReplaceSpiceDialog.jsx:99
 msgid "Other VMs using SPICE"
-msgstr ""
+msgstr "Muut SPICEa käyttävät virtuaalikoneet"
 
 #: src/components/storagePools/storagePool.jsx:74
 #: src/components/vm/vmDetailsPage.jsx:119
@@ -1852,11 +1854,11 @@ msgstr "Esittely"
 msgid "PCI"
 msgstr "PCI"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:154
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:163
 msgid "Parent snapshot"
 msgstr "Vanhempi-tilannevedos"
 
-#: src/components/vm/deleteDialog.jsx:60
+#: src/components/vm/deleteDialog.jsx:59
 #: src/components/vm/hostdevs/hostDevCard.jsx:123
 #: src/components/vm/hostdevs/hostDevCard.jsx:127
 #: src/components/vm/disks/diskEdit.jsx:42
@@ -1874,6 +1876,12 @@ msgstr "Polku ISO-tiedostoon isännän tiedostojärjestelmässä"
 #: src/components/create-vm-dialog/createVmDialog.jsx:298
 msgid "Path to cloud image file on host's file system"
 msgstr "Polku pilvipohjaiseen tiedostoon isännän tiedostojärjestelmässä"
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:117
+#, fuzzy
+#| msgid "Path to file"
+msgid "Path to directory"
+msgstr "Polku tiedostoon"
 
 #: src/components/vm/disks/diskAdd.jsx:343
 msgid "Path to file on host's file system"
@@ -1914,7 +1922,7 @@ msgstr "Fyysinen levylaite isännässä"
 
 #: src/components/vm/nics/nicEdit.jsx:129 src/components/vm/nics/nicAdd.jsx:152
 msgid "Please choose a different MAC address"
-msgstr ""
+msgstr "Valitse toinen MAC-osoite"
 
 #: src/components/vm/disks/diskAdd.jsx:550
 msgid "Please choose a storage pool"
@@ -1931,12 +1939,13 @@ msgstr "Anna uusi taltion nimi"
 #: src/components/vm/vmReplaceSpiceDialog.jsx:78
 msgid "Please see $0 how to reconfigure your VM manually."
 msgstr ""
+"Katso $0 kuinka voit määrittää virtuaalikoneen uudelleen manuaalisesti."
 
 #: src/components/vm/consoles/consoles.jsx:40
 msgid "Please start the virtual machine to access its console."
 msgstr "Käynnistä virtuaalikone päästäksesi sen konsoliin."
 
-#: src/components/vm/deleteDialog.jsx:68
+#: src/components/vm/deleteDialog.jsx:67
 #: src/components/vm/overview/bootOrder.jsx:99
 #: src/components/vm/disks/diskAdd.jsx:151
 #: src/components/vm/disks/vmDiskColumns.jsx:45
@@ -1991,7 +2000,7 @@ msgstr "Etuliitteen pituus"
 msgid "Prefix length should not be empty"
 msgstr "Etuliitteen pituuss ei tulisi olla tyhjä"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:236
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:245
 msgid ""
 "Previously taken snapshots allow you to revert to an earlier state if "
 "something goes wrong"
@@ -2043,7 +2052,7 @@ msgstr "Tarjoaa virtuaalisen lähiverkon NATin kanssa ulkomaailmaan."
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:825
 msgid "Public SSH key"
-msgstr ""
+msgstr "Julkinen SSH-avain"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:821
 msgid "Public key"
@@ -2091,7 +2100,7 @@ msgstr "Poista"
 
 #: src/components/vm/vmReplaceSpiceDialog.jsx:158
 msgid "Remove SPICE audio and host devices"
-msgstr ""
+msgstr "Poista SPICE-ääni- ja isäntälaitteet"
 
 #: src/components/vm/disks/vmDiskColumns.jsx:160
 msgid "Remove and delete file"
@@ -2131,26 +2140,24 @@ msgstr "Nimeä uudelleen VM $0"
 
 #: src/components/vm/vmReplaceSpiceDialog.jsx:132
 msgid "Replace"
-msgstr ""
+msgstr "Vaihda"
 
 #: src/components/vm/vmReplaceSpiceDialog.jsx:124
 #: src/components/vm/vmActions.jsx:439 src/components/vm/usesSpice.jsx:38
 msgid "Replace SPICE devices"
-msgstr ""
+msgstr "Vaihda SPICE-laitteet"
 
 #: src/components/vm/vmReplaceSpiceDialog.jsx:124
 msgid "Replace SPICE devices in VM $0"
-msgstr ""
+msgstr "Vaihda SPICE-laitteet virtuaalikoneessa $0"
 
 #: src/components/vm/vmReplaceSpiceDialog.jsx:146
 msgid "Replace SPICE on selected VMs."
-msgstr ""
+msgstr "Vaihda SPICE valituissa virtuaalikoneissa."
 
 #: src/components/vm/vmReplaceSpiceDialog.jsx:147
-#, fuzzy
-#| msgid "Create new virtual machine"
 msgid "Replace SPICE on the virtual machine."
-msgstr "Luo uusi virtuaalikone"
+msgstr "Vaihda SPICE virtuaalikoneessa."
 
 #: src/helpers.js:272
 msgid "Reset"
@@ -2167,7 +2174,7 @@ msgstr ""
 msgid "Resume"
 msgstr "Palauta"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:179
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:188
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:100
 msgid "Revert"
 msgstr "Palaa"
@@ -2200,7 +2207,7 @@ msgstr "Reititetty verkko"
 
 #: src/components/vm/hostdevs/hostDevAdd.jsx:129
 msgid "Row select"
-msgstr ""
+msgstr "Rivin valinta"
 
 #: src/components/vm/vmActions.jsx:381
 msgid "Run"
@@ -2229,16 +2236,16 @@ msgstr "SPICE-osoite"
 
 #: src/components/vm/vmReplaceSpiceDialog.jsx:151
 #: src/components/vm/vmReplaceSpiceDialog.jsx:153
-#, fuzzy
-#| msgid "SPICE port"
 msgid "SPICE conversion"
-msgstr "SPICE-portti"
+msgstr "SPICE-muunnos"
 
 #: src/components/vm/usesSpice.jsx:32
 msgid ""
 "SPICE is not supported on this host and will cause this virtual machine to "
 "not boot."
 msgstr ""
+"SPICEa ei tueta tällä isännällä, ja se aiheuttaa sen, että tämä "
+"virtuaalikone ei käynnisty."
 
 #: src/components/vm/consoles/desktopConsole.jsx:50
 msgid "SPICE port"
@@ -2358,7 +2365,7 @@ msgstr "Sammuta"
 msgid "Shut off the VM in order to edit firmware configuration"
 msgstr "Sammuta virtuaalikone, jotta voit muokata laiteohjelmiston kokoonpanoa"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:129 src/helpers.js:219
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:138 src/helpers.js:219
 msgid "Shutting down"
 msgstr "Sammutetaan"
 
@@ -2376,11 +2383,11 @@ msgstr "Koko"
 msgid "Slot"
 msgstr "Aukko"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:187
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:196
 msgid "Snapshot $0 could not be deleted"
 msgstr "Tilannevedosta $0 ei voitu poistaa"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:188
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:197
 msgid ""
 "Snapshot $0 will be deleted from $1. All of its captured content will be "
 "lost."
@@ -2388,7 +2395,7 @@ msgstr ""
 "Tilannevedos $0 poistetaan kohteesta $1. Kaikki sen kaapattu sisältö "
 "menetetään."
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:173
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:234
 msgid "Snapshot failed to be created"
 msgstr "Tilannevedoksen luominen epäonnistui"
 
@@ -2460,10 +2467,8 @@ msgid "Start should not be empty"
 msgstr "Käynnistys ei tulisi olla tyhjä"
 
 #: src/components/vm/confirmDialog.jsx:70
-#, fuzzy
-#| msgid "Start"
 msgid "Started"
-msgstr "Käynnistä"
+msgstr "Käynnistetty"
 
 #: src/components/storagePools/createStoragePoolDialog.jsx:233
 msgid "Startup"
@@ -2559,7 +2564,7 @@ msgstr "Pysäytetty (PM)"
 
 #: src/components/vm/usesSpice.jsx:33
 msgid "Switch to VNC to continue using this machine."
-msgstr ""
+msgstr "Vaihda VNC:hen jatkaaksesi tämän koneen käyttöä."
 
 #: src/helpers.js:212
 msgid "System"
@@ -2596,7 +2601,7 @@ msgstr "Väliaikainen"
 msgid "Temporary migration"
 msgstr "Väliaikainen migraatio"
 
-#: src/components/vm/deleteDialog.jsx:82
+#: src/components/vm/deleteDialog.jsx:81
 msgid "The VM $0 is running and will be forced off before deletion."
 msgstr ""
 "Virtuaalikone $0 on käynnissä ja se pakotetaan pois päältä ennen poistamista."
@@ -2671,6 +2676,8 @@ msgid ""
 "This is intended for a host which does not support SPICE due to upgrades or "
 "live migration."
 msgstr ""
+"Tämä on tarkoitettu isännälle, joka ei tue SPICEa päivitysten tai "
+"reaaliaikaisen siirron vuoksi."
 
 #: src/components/vm/nics/nicBody.jsx:84
 msgid ""
@@ -2714,6 +2721,12 @@ msgstr "Tätä taltiota käyttää jo toinen virtuaalikone."
 #: src/components/vm/overview/cpuModal.jsx:293
 msgid "Threads per core"
 msgstr "Säikeitä per ydin"
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:105
+#, fuzzy
+#| msgid "Total size: $0"
+msgid "Total space available: $0."
+msgstr "Koko yhteensä: $0"
 
 #: src/components/vm/overview/firmware.jsx:163
 msgid "Transient VMs don't support editing firmware configuration"
@@ -2830,11 +2843,9 @@ msgid "User login"
 msgstr "Käyttäjän sisäänkirjautuminen"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:255
-#, fuzzy
-#| msgid "User login must not be empty when user password is set"
 msgid "User login must not be empty when SSH keys are set"
 msgstr ""
-"Käyttäjän sisäänkirjautuminen ei saa olla tyhjä, kun käyttäjän salasana on "
+"Käyttäjän sisäänkirjautumistunnus ei saa olla tyhjä, kun SSH-avaimet on "
 "asetettu"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:253
@@ -2859,7 +2870,7 @@ msgstr "Käyttäjäistunto"
 
 #: src/components/vm/usesSpice.jsx:22
 msgid "Uses SPICE"
-msgstr ""
+msgstr "Käyttää SPICEä"
 
 #: src/components/vm/hostdevs/hostDevCard.jsx:311
 msgid "VM $0 Host Devices"
@@ -2921,7 +2932,7 @@ msgstr ""
 msgid "VM needs shutdown"
 msgstr "Virtuaalikone vaatii sammutuksen"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:120
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:129
 msgid "VM state"
 msgstr "Virtuaalikoneen tila"
 
@@ -2994,7 +3005,7 @@ msgid "Virtualization service (libvirt) is not active"
 msgstr "Virtualisointipalvelu (libvirt) ei ole aktiivinen"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:996
-#: src/components/vm/deleteDialog.jsx:65
+#: src/components/vm/deleteDialog.jsx:64
 #: src/components/vm/overview/bootOrder.jsx:100
 #: src/components/vm/disks/diskAdd.jsx:117
 #: src/components/vm/disks/vmDiskColumns.jsx:46
@@ -3198,7 +3209,7 @@ msgstr "verkko"
 msgid "no"
 msgstr "ei"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:124
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:133
 msgid "no state saved"
 msgstr "ei tilaa tallennettuna"
 
@@ -3311,6 +3322,9 @@ msgstr "vsock vaatii erikoisohjelmiston"
 #: src/components/networks/networkOverviewTab.jsx:115 src/helpers.js:264
 msgid "yes"
 msgstr "kyllä"
+
+#~ msgid "Memory file"
+#~ msgstr "Muistitiedosto"
 
 #~ msgid "Uptime"
 #~ msgstr "Toiminta-aika"
@@ -3685,9 +3699,6 @@ msgstr "kyllä"
 #~ msgid "Paste"
 #~ msgstr "Siirrä"
 
-#~ msgid "Path to file"
-#~ msgstr "Polku tiedostoon"
-
 #~ msgid "Peripheral chassis"
 #~ msgstr "Kehäalusta"
 
@@ -3775,9 +3786,6 @@ msgstr "kyllä"
 
 #~ msgid "Today"
 #~ msgstr "Tänään"
-
-#~ msgid "Total size: $0"
-#~ msgstr "Koko yhteensä: $0"
 
 #~ msgid "Tower"
 #~ msgstr "Torni"

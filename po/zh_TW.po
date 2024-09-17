@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-09 03:01+0000\n"
+"POT-Creation-Date: 2024-09-17 02:50+0000\n"
 "PO-Revision-Date: 2024-08-12 09:40+0000\n"
 "Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
 "memory@weblate.org>\n"
@@ -95,7 +95,7 @@ msgstr "動作"
 #: src/components/storagePools/storagePoolList.jsx:72
 #: src/components/networks/networkList.jsx:72
 #: src/components/vm/nics/vmNicsCard.jsx:421
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:167
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:176
 #: src/components/vm/disks/vmDisksCard.jsx:192
 #: src/components/vms/hostvmslist.jsx:164
 msgid "Actions"
@@ -312,7 +312,7 @@ msgstr "快取"
 #: src/components/vm/vmReplaceSpiceDialog.jsx:135
 #: src/components/vm/vmMigrateDialog.jsx:202
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:169
-#: src/components/vm/deleteDialog.jsx:174
+#: src/components/vm/deleteDialog.jsx:173
 #: src/components/vm/confirmDialog.jsx:54
 #: src/components/vm/vmRenameDialog.jsx:71
 #: src/components/vm/overview/cpuModal.jsx:337
@@ -322,7 +322,7 @@ msgstr "快取"
 #: src/components/vm/overview/firmware.jsx:85
 #: src/components/vm/overview/vsock.jsx:243
 #: src/components/vm/vmCloneDialog.jsx:83
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:204
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:284
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:110
 #: src/components/vm/hostdevs/hostDevAdd.jsx:237
 #: src/components/vm/disks/diskEdit.jsx:270
@@ -452,11 +452,11 @@ msgstr "複製儲存空間"
 msgid "Cores per socket"
 msgstr "每個插槽的核心數"
 
-#: src/components/vm/deleteDialog.jsx:156
+#: src/components/vm/deleteDialog.jsx:155
 msgid "Could not delete $0"
 msgstr "無法刪除 $0"
 
-#: src/components/vm/deleteDialog.jsx:151
+#: src/components/vm/deleteDialog.jsx:150
 msgid "Could not delete all storage for $0"
 msgstr "無法刪除 $0 的所有儲存空間"
 
@@ -479,7 +479,7 @@ msgstr "已當機"
 #: src/components/storagePools/storageVolumeCreate.jsx:114
 #: src/components/storagePools/createStoragePoolDialog.jsx:442
 #: src/components/networks/createNetworkDialog.jsx:432
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:201
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:281
 msgid "Create"
 msgstr "建立"
 
@@ -523,8 +523,8 @@ msgstr "建立新的未格式化磁碟區"
 msgid "Create new virtual machine"
 msgstr "建立新虛擬機器"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:196
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:58
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:276
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:65
 msgid "Create snapshot"
 msgstr "建立快照"
 
@@ -555,11 +555,17 @@ msgstr "正在建立 VM"
 msgid "Creating VM $0"
 msgstr "正在建立虛擬機器 $0"
 
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:58
+msgid ""
+"Creating snapshots of VMs with VFIO devices is not supported while they are "
+"running."
+msgstr ""
+
 #: src/components/create-vm-dialog/createVmDialog.jsx:1285
 msgid "Creation of VM $0 failed"
 msgstr "建立虛擬機器 $0 失敗"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:78
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:87
 msgid "Creation time"
 msgstr "建立時間"
 
@@ -567,7 +573,7 @@ msgstr "建立時間"
 msgid "Ctrl+Alt+$0"
 msgstr "Ctrl+Alt+$0"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:87
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:96
 msgid "Current"
 msgstr "目前"
 
@@ -607,11 +613,11 @@ msgstr "停用"
 #: src/components/common/deleteResource.jsx:133
 #: src/components/common/deleteResource.jsx:144
 #: src/components/vm/vmActions.jsx:477 src/components/vm/vmActions.jsx:485
-#: src/components/vm/deleteDialog.jsx:171
+#: src/components/vm/deleteDialog.jsx:170
 msgid "Delete"
 msgstr "刪除"
 
-#: src/components/vm/deleteDialog.jsx:166
+#: src/components/vm/deleteDialog.jsx:165
 msgid "Delete $0 VM?"
 msgstr "刪除 $0 虛擬機器？"
 
@@ -624,7 +630,7 @@ msgid "Delete $0 volume"
 msgid_plural "Delete $0 volumes"
 msgstr[0] "刪除 $0 個磁碟區"
 
-#: src/components/vm/deleteDialog.jsx:84
+#: src/components/vm/deleteDialog.jsx:83
 msgid "Delete associated storage files:"
 msgstr "刪除相關的儲存空間檔案："
 
@@ -632,7 +638,7 @@ msgstr "刪除相關的儲存空間檔案："
 msgid "Delete network?"
 msgstr "刪除網路？"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:186
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:195
 msgid "Delete snapshot?"
 msgstr "刪除快照？"
 
@@ -648,8 +654,8 @@ msgid "Deleting shared directories is possible only when the guest is shut off"
 msgstr "刪除共享目錄只在客體已關閉時可執行"
 
 #: src/components/vm/vmEditDescriptionDialog.jsx:73
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:57
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:105
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:59
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:114
 msgid "Description"
 msgstr "說明"
 
@@ -748,7 +754,7 @@ msgstr "磁碟映像檔可以被儲存在使用者的家目錄"
 msgid "Disk settings could not be saved"
 msgstr "磁碟設定無法儲存"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:130
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:139
 msgid "Disk-only snapshot"
 msgstr "僅磁碟的快照"
 
@@ -765,11 +771,11 @@ msgstr "請勿在原本、與目的地的主機上同時執行此虛擬機器。
 msgid "Do nothing"
 msgstr "什麼都不做"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:132
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:141
 msgid "Domain has crashed"
 msgstr "虛擬機器 (Domain) 已當機"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:131
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:140
 msgid "Domain is blocked on resource"
 msgstr "虛擬機器 (Domain) 因資源問題被阻擋"
 
@@ -1461,16 +1467,24 @@ msgstr "記憶體"
 msgid "Memory could not be saved"
 msgstr "記憶體無法被儲存"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:91
-msgid "Memory file"
-msgstr "記憶體檔案"
-
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:143
-msgid "Memory file can not be empty"
-msgstr "記憶體檔案不得為空值"
-
 #: src/components/create-vm-dialog/createVmDialog.jsx:234
 msgid "Memory must not be 0"
+msgstr "記憶體不可為 0"
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:194
+#, fuzzy
+#| msgid "Memory file can not be empty"
+msgid "Memory save location can not be empty"
+msgstr "記憶體檔案不得為空值"
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:101
+msgid "Memory snapshot will use about $0."
+msgstr ""
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:111
+#, fuzzy
+#| msgid "Memory must not be 0"
+msgid "Memory state path"
 msgstr "記憶體不可為 0"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:906
@@ -1545,17 +1559,17 @@ msgstr "虛擬機器 $1 的網路卡 $0 變更狀態失敗"
 #: src/components/networks/createNetworkDialog.jsx:140
 #: src/components/networks/networkList.jsx:67
 #: src/components/vm/vmCloneDialog.jsx:93
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:44
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:95
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:46
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:104
 #: src/components/vms/hostvmslist.jsx:161
 msgid "Name"
 msgstr "名稱"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:138
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:189
 msgid "Name already exists"
 msgstr "名稱已經存在"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:140
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:191
 msgid "Name can not be empty"
 msgstr "名稱不得為空值"
 
@@ -1664,7 +1678,7 @@ msgstr "找不到開機裝置"
 msgid "No connection available"
 msgstr "沒有可用的連線"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:109
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:118
 msgid "No description"
 msgstr "無描述"
 
@@ -1700,11 +1714,11 @@ msgstr "此主機上沒有定義網路"
 msgid "No networks available"
 msgstr "沒有可用的網路"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:156
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:165
 msgid "No parent"
 msgstr "無上層"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:235
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:244
 msgid "No snapshots defined for this VM"
 msgstr "此虛擬機器沒有已定義的快照"
 
@@ -1812,11 +1826,11 @@ msgstr "概覽"
 msgid "PCI"
 msgstr "PCI"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:154
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:163
 msgid "Parent snapshot"
 msgstr "上層快照"
 
-#: src/components/vm/deleteDialog.jsx:60
+#: src/components/vm/deleteDialog.jsx:59
 #: src/components/vm/hostdevs/hostDevCard.jsx:123
 #: src/components/vm/hostdevs/hostDevCard.jsx:127
 #: src/components/vm/disks/diskEdit.jsx:42
@@ -1834,6 +1848,12 @@ msgstr "主機檔案系統上 ISO 檔案的路徑"
 #: src/components/create-vm-dialog/createVmDialog.jsx:298
 msgid "Path to cloud image file on host's file system"
 msgstr "主機檔案系統上雲端映像 (cloud image) 檔案的路徑"
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:117
+#, fuzzy
+#| msgid "Path to file"
+msgid "Path to directory"
+msgstr "文件路徑"
 
 #: src/components/vm/disks/diskAdd.jsx:343
 msgid "Path to file on host's file system"
@@ -1896,7 +1916,7 @@ msgstr "請參閱 $0 以了解如何手動重新設定您的虛擬機器。"
 msgid "Please start the virtual machine to access its console."
 msgstr "請啟動虛擬機器以存取它的控制台。"
 
-#: src/components/vm/deleteDialog.jsx:68
+#: src/components/vm/deleteDialog.jsx:67
 #: src/components/vm/overview/bootOrder.jsx:99
 #: src/components/vm/disks/diskAdd.jsx:151
 #: src/components/vm/disks/vmDiskColumns.jsx:45
@@ -1951,7 +1971,7 @@ msgstr "前綴長度"
 msgid "Prefix length should not be empty"
 msgstr "前綴長度不應為空值"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:236
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:245
 msgid ""
 "Previously taken snapshots allow you to revert to an earlier state if "
 "something goes wrong"
@@ -2120,7 +2140,7 @@ msgstr "網路實作 (基於 SLIRP 的模擬方式) 與 PCI 裝置指派的限�
 msgid "Resume"
 msgstr "恢復執行"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:179
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:188
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:100
 msgid "Revert"
 msgstr "還原"
@@ -2310,7 +2330,7 @@ msgstr "已關閉"
 msgid "Shut off the VM in order to edit firmware configuration"
 msgstr "將虛擬機器關機以編輯韌體設定"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:129 src/helpers.js:219
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:138 src/helpers.js:219
 msgid "Shutting down"
 msgstr "正在關機"
 
@@ -2328,17 +2348,17 @@ msgstr "大小"
 msgid "Slot"
 msgstr "插槽"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:187
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:196
 msgid "Snapshot $0 could not be deleted"
 msgstr "快照 $0 無法被刪除"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:188
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:197
 msgid ""
 "Snapshot $0 will be deleted from $1. All of its captured content will be "
 "lost."
 msgstr "快照 $0 將被從 $1 刪除。所有其儲存的內容將會遺失。"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:173
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:234
 msgid "Snapshot failed to be created"
 msgstr "快照建立失敗"
 
@@ -2546,7 +2566,7 @@ msgstr "暫時的"
 msgid "Temporary migration"
 msgstr "暫時性遷移"
 
-#: src/components/vm/deleteDialog.jsx:82
+#: src/components/vm/deleteDialog.jsx:81
 msgid "The VM $0 is running and will be forced off before deletion."
 msgstr "虛擬機器 $0 正在執行中，將在刪除前被強制關閉。"
 
@@ -2654,6 +2674,12 @@ msgstr "此磁碟區已被用於其他虛擬機器。"
 #: src/components/vm/overview/cpuModal.jsx:293
 msgid "Threads per core"
 msgstr "每個核心的執行緒數量"
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:105
+#, fuzzy
+#| msgid "Total size: $0"
+msgid "Total space available: $0."
+msgstr "總大小： $0"
 
 #: src/components/vm/overview/firmware.jsx:163
 msgid "Transient VMs don't support editing firmware configuration"
@@ -2851,7 +2877,7 @@ msgstr ""
 msgid "VM needs shutdown"
 msgstr "虛擬機器需要關機"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:120
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:129
 msgid "VM state"
 msgstr "虛擬機器狀態"
 
@@ -2925,7 +2951,7 @@ msgid "Virtualization service (libvirt) is not active"
 msgstr "虛擬化服務（libvirt）未啟動"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:996
-#: src/components/vm/deleteDialog.jsx:65
+#: src/components/vm/deleteDialog.jsx:64
 #: src/components/vm/overview/bootOrder.jsx:100
 #: src/components/vm/disks/diskAdd.jsx:117
 #: src/components/vm/disks/vmDiskColumns.jsx:46
@@ -3128,7 +3154,7 @@ msgstr "網絡"
 msgid "no"
 msgstr "否"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:124
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:133
 msgid "no state saved"
 msgstr "沒有已儲存的狀態"
 
@@ -3236,6 +3262,9 @@ msgstr "vsock 需要特殊的軟體"
 #: src/components/networks/networkOverviewTab.jsx:115 src/helpers.js:264
 msgid "yes"
 msgstr "是"
+
+#~ msgid "Memory file"
+#~ msgstr "記憶體檔案"
 
 #~ msgid "Disk failed to be attached"
 #~ msgstr "磁槃無法連接"
@@ -3537,9 +3566,6 @@ msgstr "是"
 #~ msgid "Password not accepted"
 #~ msgstr "密碼不被接受"
 
-#~ msgid "Path to file"
-#~ msgstr "文件路徑"
-
 #~ msgid "Peripheral chassis"
 #~ msgstr "外圍機箱"
 
@@ -3610,9 +3636,6 @@ msgstr "是"
 # ctx::sourcefile::/rhn/account/LocalePreferences
 #~ msgid "Time zone"
 #~ msgstr "時區"
-
-#~ msgid "Total size: $0"
-#~ msgstr "總大小： $0"
 
 #~ msgid "Tower"
 #~ msgstr "塔"

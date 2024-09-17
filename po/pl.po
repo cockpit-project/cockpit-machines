@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-09 03:01+0000\n"
+"POT-Creation-Date: 2024-09-17 02:50+0000\n"
 "PO-Revision-Date: 2024-06-14 18:36+0000\n"
 "Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
 "memory@weblate.org>\n"
@@ -105,7 +105,7 @@ msgstr "Działanie"
 #: src/components/storagePools/storagePoolList.jsx:72
 #: src/components/networks/networkList.jsx:72
 #: src/components/vm/nics/vmNicsCard.jsx:421
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:167
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:176
 #: src/components/vm/disks/vmDisksCard.jsx:192
 #: src/components/vms/hostvmslist.jsx:164
 #, fuzzy
@@ -334,7 +334,7 @@ msgstr "Pamięć podręczna"
 #: src/components/vm/vmReplaceSpiceDialog.jsx:135
 #: src/components/vm/vmMigrateDialog.jsx:202
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:169
-#: src/components/vm/deleteDialog.jsx:174
+#: src/components/vm/deleteDialog.jsx:173
 #: src/components/vm/confirmDialog.jsx:54
 #: src/components/vm/vmRenameDialog.jsx:71
 #: src/components/vm/overview/cpuModal.jsx:337
@@ -344,7 +344,7 @@ msgstr "Pamięć podręczna"
 #: src/components/vm/overview/firmware.jsx:85
 #: src/components/vm/overview/vsock.jsx:243
 #: src/components/vm/vmCloneDialog.jsx:83
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:204
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:284
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:110
 #: src/components/vm/hostdevs/hostDevAdd.jsx:237
 #: src/components/vm/disks/diskEdit.jsx:270
@@ -476,11 +476,11 @@ msgstr "Skopiowanie urządzeń do przechowywania danych"
 msgid "Cores per socket"
 msgstr "Rdzenie na gniazdo"
 
-#: src/components/vm/deleteDialog.jsx:156
+#: src/components/vm/deleteDialog.jsx:155
 msgid "Could not delete $0"
 msgstr "Nie można usunąć $0"
 
-#: src/components/vm/deleteDialog.jsx:151
+#: src/components/vm/deleteDialog.jsx:150
 msgid "Could not delete all storage for $0"
 msgstr "Nie można usunąć wszystkich urządzeń do przechowywania danych dla $0"
 
@@ -503,7 +503,7 @@ msgstr "Uległo awarii"
 #: src/components/storagePools/storageVolumeCreate.jsx:114
 #: src/components/storagePools/createStoragePoolDialog.jsx:442
 #: src/components/networks/createNetworkDialog.jsx:432
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:201
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:281
 msgid "Create"
 msgstr "Utwórz"
 
@@ -549,8 +549,8 @@ msgstr "Utwórz nowy surowy wolumin"
 msgid "Create new virtual machine"
 msgstr "Utwórz nową maszynę wirtualną"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:196
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:58
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:276
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:65
 msgid "Create snapshot"
 msgstr "Utwórz migawkę"
 
@@ -581,11 +581,17 @@ msgstr "tworzenie maszyny wirtualnej"
 msgid "Creating VM $0"
 msgstr "Tworzenie maszyny wirtualnej $0"
 
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:58
+msgid ""
+"Creating snapshots of VMs with VFIO devices is not supported while they are "
+"running."
+msgstr ""
+
 #: src/components/create-vm-dialog/createVmDialog.jsx:1285
 msgid "Creation of VM $0 failed"
 msgstr "Utworzenie maszyny wirtualnej $0 się nie powiodło"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:78
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:87
 msgid "Creation time"
 msgstr "Czas utworzenia"
 
@@ -593,7 +599,7 @@ msgstr "Czas utworzenia"
 msgid "Ctrl+Alt+$0"
 msgstr "Ctrl+Alt+$0"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:87
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:96
 msgid "Current"
 msgstr "Obecne"
 
@@ -633,11 +639,11 @@ msgstr "Dezaktywuj"
 #: src/components/common/deleteResource.jsx:133
 #: src/components/common/deleteResource.jsx:144
 #: src/components/vm/vmActions.jsx:477 src/components/vm/vmActions.jsx:485
-#: src/components/vm/deleteDialog.jsx:171
+#: src/components/vm/deleteDialog.jsx:170
 msgid "Delete"
 msgstr "Usuń"
 
-#: src/components/vm/deleteDialog.jsx:166
+#: src/components/vm/deleteDialog.jsx:165
 msgid "Delete $0 VM?"
 msgstr "Usunąć maszynę wirtualną $0?"
 
@@ -652,7 +658,7 @@ msgstr[0] "Usuń $0 wolumin"
 msgstr[1] "Usuń $0 woluminy"
 msgstr[2] "Usuń $0 woluminów"
 
-#: src/components/vm/deleteDialog.jsx:84
+#: src/components/vm/deleteDialog.jsx:83
 msgid "Delete associated storage files:"
 msgstr "Usunięcie powiązanych plików urządzeń do przechowywania danych:"
 
@@ -660,7 +666,7 @@ msgstr "Usunięcie powiązanych plików urządzeń do przechowywania danych:"
 msgid "Delete network?"
 msgstr "Usunąć sieć?"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:186
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:195
 msgid "Delete snapshot?"
 msgstr "Usunąć migawkę?"
 
@@ -678,8 +684,8 @@ msgstr ""
 "Usuwanie udostępnianych katalogów jest możliwe tylko przy wyłączonym gościu"
 
 #: src/components/vm/vmEditDescriptionDialog.jsx:73
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:57
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:105
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:59
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:114
 msgid "Description"
 msgstr "Opis"
 
@@ -780,7 +786,7 @@ msgstr "Obraz dysków mogą być przechowywane w katalogu domowym użytkownika"
 msgid "Disk settings could not be saved"
 msgstr "Nie można zapisać ustawień dysku"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:130
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:139
 msgid "Disk-only snapshot"
 msgstr "Migawka tylko dysku"
 
@@ -799,11 +805,11 @@ msgstr ""
 msgid "Do nothing"
 msgstr "Nie rób nic"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:132
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:141
 msgid "Domain has crashed"
 msgstr "Domena uległa awarii"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:131
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:140
 msgid "Domain is blocked on resource"
 msgstr "Domena jest zablokowana na zasobie"
 
@@ -1516,20 +1522,24 @@ msgstr "Pamięć"
 msgid "Memory could not be saved"
 msgstr "Nie można zapisać pamięci"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:91
-#, fuzzy
-#| msgid "Memory"
-msgid "Memory file"
-msgstr "Pamięć"
-
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:143
-#, fuzzy
-#| msgid "Source must not be empty"
-msgid "Memory file can not be empty"
-msgstr "Źródło nie może być puste"
-
 #: src/components/create-vm-dialog/createVmDialog.jsx:234
 msgid "Memory must not be 0"
+msgstr "Pamięć nie może wynosić 0"
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:194
+#, fuzzy
+#| msgid "Source must not be empty"
+msgid "Memory save location can not be empty"
+msgstr "Źródło nie może być puste"
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:101
+msgid "Memory snapshot will use about $0."
+msgstr ""
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:111
+#, fuzzy
+#| msgid "Memory must not be 0"
+msgid "Memory state path"
 msgstr "Pamięć nie może wynosić 0"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:906
@@ -1606,17 +1616,17 @@ msgstr "Zmiana stanu NIC $0 maszyny wirtualnej $1 się nie powiodła"
 #: src/components/networks/createNetworkDialog.jsx:140
 #: src/components/networks/networkList.jsx:67
 #: src/components/vm/vmCloneDialog.jsx:93
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:44
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:95
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:46
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:104
 #: src/components/vms/hostvmslist.jsx:161
 msgid "Name"
 msgstr "Nazwa"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:138
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:189
 msgid "Name already exists"
 msgstr "Nazwa już istnieje"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:140
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:191
 #, fuzzy
 #| msgid "Name must not be empty"
 msgid "Name can not be empty"
@@ -1728,7 +1738,7 @@ msgstr "Nie odnaleziono żadnego urządzenia startowego"
 msgid "No connection available"
 msgstr "Brak dostępnego połączenia"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:109
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:118
 msgid "No description"
 msgstr "Brak opisu"
 
@@ -1764,11 +1774,11 @@ msgstr "Na tym gospodarzu nie określono żadnej sieci"
 msgid "No networks available"
 msgstr "Brak dostępnych sieci"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:156
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:165
 msgid "No parent"
 msgstr "Brak nadrzędnego"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:235
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:244
 msgid "No snapshots defined for this VM"
 msgstr "Nie określono migawek dla tej maszyny wirtualnej"
 
@@ -1884,11 +1894,11 @@ msgstr "Przegląd"
 msgid "PCI"
 msgstr "PCI"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:154
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:163
 msgid "Parent snapshot"
 msgstr "Migawka nadrzędna"
 
-#: src/components/vm/deleteDialog.jsx:60
+#: src/components/vm/deleteDialog.jsx:59
 #: src/components/vm/hostdevs/hostDevCard.jsx:123
 #: src/components/vm/hostdevs/hostDevCard.jsx:127
 #: src/components/vm/disks/diskEdit.jsx:42
@@ -1906,6 +1916,12 @@ msgstr "Ścieżka do pliku ISO w systemie plików gospodarza"
 #: src/components/create-vm-dialog/createVmDialog.jsx:298
 msgid "Path to cloud image file on host's file system"
 msgstr "Ścieżka do pliku obrazu chmury w systemie plików gospodarza"
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:117
+#, fuzzy
+#| msgid "Path to file"
+msgid "Path to directory"
+msgstr "Ścieżka do pliku"
 
 #: src/components/vm/disks/diskAdd.jsx:343
 msgid "Path to file on host's file system"
@@ -1968,7 +1984,7 @@ msgstr "Proszę zobacz $0 jak zrekonfigurować swoje VM ręcznie."
 msgid "Please start the virtual machine to access its console."
 msgstr "Proszę uruchomić maszynę wirtualną, aby uzyskać dostęp do jej konsoli."
 
-#: src/components/vm/deleteDialog.jsx:68
+#: src/components/vm/deleteDialog.jsx:67
 #: src/components/vm/overview/bootOrder.jsx:99
 #: src/components/vm/disks/diskAdd.jsx:151
 #: src/components/vm/disks/vmDiskColumns.jsx:45
@@ -2025,7 +2041,7 @@ msgstr "Długość przedrostka"
 msgid "Prefix length should not be empty"
 msgstr "Długość przedrostka nie może być pusta"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:236
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:245
 msgid ""
 "Previously taken snapshots allow you to revert to an earlier state if "
 "something goes wrong"
@@ -2202,7 +2218,7 @@ msgstr ""
 msgid "Resume"
 msgstr "Wznów"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:179
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:188
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:100
 msgid "Revert"
 msgstr "Przywróć"
@@ -2401,7 +2417,7 @@ msgstr ""
 "Należy wyłączyć maszynę wirtualną, aby zmodyfikować konfigurację "
 "oprogramowania sprzętowego"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:129 src/helpers.js:219
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:138 src/helpers.js:219
 msgid "Shutting down"
 msgstr "Wyłączanie"
 
@@ -2419,17 +2435,17 @@ msgstr "Rozmiar"
 msgid "Slot"
 msgstr "Gniazdo"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:187
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:196
 msgid "Snapshot $0 could not be deleted"
 msgstr "Nie można usunąć migawki $0"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:188
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:197
 msgid ""
 "Snapshot $0 will be deleted from $1. All of its captured content will be "
 "lost."
 msgstr "Migawka $0 zostanie usunięta z $1. Cała jej treść zostanie utracona."
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:173
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:234
 msgid "Snapshot failed to be created"
 msgstr "Utworzenie migawki się nie powiodło"
 
@@ -2641,7 +2657,7 @@ msgstr "Tymczasowa"
 msgid "Temporary migration"
 msgstr "Migracja tymczasowa"
 
-#: src/components/vm/deleteDialog.jsx:82
+#: src/components/vm/deleteDialog.jsx:81
 msgid "The VM $0 is running and will be forced off before deletion."
 msgstr ""
 "Maszyna wirtualna $0 jest uruchomiona i przed jej usunięciem zostanie "
@@ -2768,6 +2784,12 @@ msgstr "Ten wolumin jest już używany przez inną maszynę wirtualną."
 #: src/components/vm/overview/cpuModal.jsx:293
 msgid "Threads per core"
 msgstr "Wątki na rdzeń"
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:105
+#, fuzzy
+#| msgid "Total size: $0"
+msgid "Total space available: $0."
+msgstr "Całkowity rozmiar: $0"
 
 #: src/components/vm/overview/firmware.jsx:163
 msgid "Transient VMs don't support editing firmware configuration"
@@ -2971,7 +2993,7 @@ msgstr ""
 msgid "VM needs shutdown"
 msgstr "Maszyna wirtualna wymaga wyłączenia"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:120
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:129
 msgid "VM state"
 msgstr "Stan maszyny wirtualnej"
 
@@ -3044,7 +3066,7 @@ msgid "Virtualization service (libvirt) is not active"
 msgstr "Usługa wirtualizacji (libvirt) nie jest aktywna"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:996
-#: src/components/vm/deleteDialog.jsx:65
+#: src/components/vm/deleteDialog.jsx:64
 #: src/components/vm/overview/bootOrder.jsx:100
 #: src/components/vm/disks/diskAdd.jsx:117
 #: src/components/vm/disks/vmDiskColumns.jsx:46
@@ -3249,7 +3271,7 @@ msgstr "sieć"
 msgid "no"
 msgstr "nie"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:124
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:133
 msgid "no state saved"
 msgstr "nie zapisano żadnego stanu"
 
@@ -3362,6 +3384,11 @@ msgstr "vsock wymaga specjalnego oprogramowania"
 #: src/components/networks/networkOverviewTab.jsx:115 src/helpers.js:264
 msgid "yes"
 msgstr "tak"
+
+#, fuzzy
+#~| msgid "Memory"
+#~ msgid "Memory file"
+#~ msgstr "Pamięć"
 
 #~ msgid "Uptime"
 #~ msgstr "Czas działania"
@@ -3737,9 +3764,6 @@ msgstr "tak"
 #~ msgid "Paste"
 #~ msgstr "Wklej"
 
-#~ msgid "Path to file"
-#~ msgstr "Ścieżka do pliku"
-
 #~ msgid "Peripheral chassis"
 #~ msgstr "Obudowa peryferyjna"
 
@@ -3828,9 +3852,6 @@ msgstr "tak"
 
 #~ msgid "Today"
 #~ msgstr "Dzisiaj"
-
-#~ msgid "Total size: $0"
-#~ msgstr "Całkowity rozmiar: $0"
 
 #~ msgid "Tower"
 #~ msgstr "Tower"

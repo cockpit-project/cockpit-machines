@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-09 03:01+0000\n"
-"PO-Revision-Date: 2024-09-08 13:38+0000\n"
+"POT-Creation-Date: 2024-09-17 02:50+0000\n"
+"PO-Revision-Date: 2024-09-16 11:52+0000\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language-Team: Turkish <https://translate.fedoraproject.org/projects/cockpit-"
 "machines/main/tr/>\n"
@@ -99,7 +99,7 @@ msgstr "Eylem"
 #: src/components/storagePools/storagePoolList.jsx:72
 #: src/components/networks/networkList.jsx:72
 #: src/components/vm/nics/vmNicsCard.jsx:421
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:167
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:176
 #: src/components/vm/disks/vmDisksCard.jsx:192
 #: src/components/vms/hostvmslist.jsx:164
 msgid "Actions"
@@ -320,7 +320,7 @@ msgstr "Önbellek"
 #: src/components/vm/vmReplaceSpiceDialog.jsx:135
 #: src/components/vm/vmMigrateDialog.jsx:202
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:169
-#: src/components/vm/deleteDialog.jsx:174
+#: src/components/vm/deleteDialog.jsx:173
 #: src/components/vm/confirmDialog.jsx:54
 #: src/components/vm/vmRenameDialog.jsx:71
 #: src/components/vm/overview/cpuModal.jsx:337
@@ -330,7 +330,7 @@ msgstr "Önbellek"
 #: src/components/vm/overview/firmware.jsx:85
 #: src/components/vm/overview/vsock.jsx:243
 #: src/components/vm/vmCloneDialog.jsx:83
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:204
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:284
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:110
 #: src/components/vm/hostdevs/hostDevAdd.jsx:237
 #: src/components/vm/disks/diskEdit.jsx:270
@@ -462,11 +462,11 @@ msgstr "Depolamayı kopyala"
 msgid "Cores per socket"
 msgstr "Soket başına çekirdek sayısı"
 
-#: src/components/vm/deleteDialog.jsx:156
+#: src/components/vm/deleteDialog.jsx:155
 msgid "Could not delete $0"
 msgstr "$0 silinemedi"
 
-#: src/components/vm/deleteDialog.jsx:151
+#: src/components/vm/deleteDialog.jsx:150
 msgid "Could not delete all storage for $0"
 msgstr "$0 için tüm depolama alanı silinemedi"
 
@@ -489,7 +489,7 @@ msgstr "Çöktü"
 #: src/components/storagePools/storageVolumeCreate.jsx:114
 #: src/components/storagePools/createStoragePoolDialog.jsx:442
 #: src/components/networks/createNetworkDialog.jsx:432
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:201
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:281
 msgid "Create"
 msgstr "Oluştur"
 
@@ -535,8 +535,8 @@ msgstr "Yeni ham birim oluştur"
 msgid "Create new virtual machine"
 msgstr "Yeni sanal makine oluştur"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:196
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:58
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:276
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:65
 msgid "Create snapshot"
 msgstr "Anlık görüntü oluştur"
 
@@ -567,11 +567,19 @@ msgstr "Sanal makine oluşturuluyor"
 msgid "Creating VM $0"
 msgstr "$0 sanal makinesi oluşturuluyor"
 
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:58
+msgid ""
+"Creating snapshots of VMs with VFIO devices is not supported while they are "
+"running."
+msgstr ""
+"VFIO aygıtlarına sahip sanal makinelerin çalışırken anlık görüntülerinin "
+"oluşturulması desteklenmiyor."
+
 #: src/components/create-vm-dialog/createVmDialog.jsx:1285
 msgid "Creation of VM $0 failed"
 msgstr "$0 sanal makinesini oluşturma başarısız oldu"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:78
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:87
 msgid "Creation time"
 msgstr "Oluşturma zamanı"
 
@@ -579,7 +587,7 @@ msgstr "Oluşturma zamanı"
 msgid "Ctrl+Alt+$0"
 msgstr "Ctrl+Alt+$0"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:87
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:96
 msgid "Current"
 msgstr "Şu anki"
 
@@ -619,11 +627,11 @@ msgstr "Devre dışı bırak"
 #: src/components/common/deleteResource.jsx:133
 #: src/components/common/deleteResource.jsx:144
 #: src/components/vm/vmActions.jsx:477 src/components/vm/vmActions.jsx:485
-#: src/components/vm/deleteDialog.jsx:171
+#: src/components/vm/deleteDialog.jsx:170
 msgid "Delete"
 msgstr "Sil"
 
-#: src/components/vm/deleteDialog.jsx:166
+#: src/components/vm/deleteDialog.jsx:165
 msgid "Delete $0 VM?"
 msgstr "$0 sanal makinesi silinsin mi?"
 
@@ -637,7 +645,7 @@ msgid_plural "Delete $0 volumes"
 msgstr[0] "$0 birimi sil"
 msgstr[1] "$0 birimi sil"
 
-#: src/components/vm/deleteDialog.jsx:84
+#: src/components/vm/deleteDialog.jsx:83
 msgid "Delete associated storage files:"
 msgstr "İlişkili depolama dosyalarını sil:"
 
@@ -645,7 +653,7 @@ msgstr "İlişkili depolama dosyalarını sil:"
 msgid "Delete network?"
 msgstr "Ağ silinsin mi?"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:186
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:195
 msgid "Delete snapshot?"
 msgstr "Anlık görüntü silinsin mi?"
 
@@ -662,8 +670,8 @@ msgid "Deleting shared directories is possible only when the guest is shut off"
 msgstr "Paylaşılan dizinleri silmek yalnızca konuk kapalı olduğunda mümkündür"
 
 #: src/components/vm/vmEditDescriptionDialog.jsx:73
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:57
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:105
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:59
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:114
 msgid "Description"
 msgstr "Açıklama"
 
@@ -764,7 +772,7 @@ msgstr "Disk kalıpları kullanıcı ev dizininde saklanabilir"
 msgid "Disk settings could not be saved"
 msgstr "Disk ayarları kaydedilemedi"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:130
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:139
 msgid "Disk-only snapshot"
 msgstr "Sadece disk anlık görüntüsü"
 
@@ -782,11 +790,11 @@ msgstr ""
 msgid "Do nothing"
 msgstr "Hiçbir şey yapma"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:132
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:141
 msgid "Domain has crashed"
 msgstr "Etki alanı çöktü"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:131
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:140
 msgid "Domain is blocked on resource"
 msgstr "Etki alanı, kaynakta engellendi"
 
@@ -1480,17 +1488,21 @@ msgstr "Bellek"
 msgid "Memory could not be saved"
 msgstr "Bellek kaydedilemedi"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:91
-msgid "Memory file"
-msgstr "Bellek dosyası"
-
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:143
-msgid "Memory file can not be empty"
-msgstr "Bellek dosyası boş olmamalıdır"
-
 #: src/components/create-vm-dialog/createVmDialog.jsx:234
 msgid "Memory must not be 0"
 msgstr "Bellek 0 olmamak zorundadır"
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:194
+msgid "Memory save location can not be empty"
+msgstr "Bellek kayıt konumu boş olamaz"
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:101
+msgid "Memory snapshot will use about $0."
+msgstr "Bellek anlık görüntüsü yaklaşık $0 kullanacak."
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:111
+msgid "Memory state path"
+msgstr "Bellek durumu konumu"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:906
 #: src/components/create-vm-dialog/createVmDialog.jsx:1024
@@ -1564,17 +1576,17 @@ msgstr "$1 sanal makinesinin $0 NIC'inin durumunu değiştirme başarısız oldu
 #: src/components/networks/createNetworkDialog.jsx:140
 #: src/components/networks/networkList.jsx:67
 #: src/components/vm/vmCloneDialog.jsx:93
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:44
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:95
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:46
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:104
 #: src/components/vms/hostvmslist.jsx:161
 msgid "Name"
 msgstr "Ad"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:138
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:189
 msgid "Name already exists"
 msgstr "Bu ad zaten var"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:140
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:191
 msgid "Name can not be empty"
 msgstr "Ad boş olamaz"
 
@@ -1683,7 +1695,7 @@ msgstr "Bulunan önyükleme aygıtı yok"
 msgid "No connection available"
 msgstr "Kullanılabilir bağlantı yok"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:109
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:118
 msgid "No description"
 msgstr "Açıklama yok"
 
@@ -1719,11 +1731,11 @@ msgstr "Bu anamakinede tanımlı ağ yok"
 msgid "No networks available"
 msgstr "Kullanılabilir ağlar yok"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:156
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:165
 msgid "No parent"
 msgstr "Üst öğe yok"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:235
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:244
 msgid "No snapshots defined for this VM"
 msgstr "Bu sanal makine için tanımlanan anlık görüntüler yok"
 
@@ -1834,11 +1846,11 @@ msgstr "Genel Bakış"
 msgid "PCI"
 msgstr "PCI"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:154
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:163
 msgid "Parent snapshot"
 msgstr "Üst öğe anlık görüntüsü"
 
-#: src/components/vm/deleteDialog.jsx:60
+#: src/components/vm/deleteDialog.jsx:59
 #: src/components/vm/hostdevs/hostDevCard.jsx:123
 #: src/components/vm/hostdevs/hostDevCard.jsx:127
 #: src/components/vm/disks/diskEdit.jsx:42
@@ -1856,6 +1868,10 @@ msgstr "Anamakinenin dosya sistemi üzerindeki ISO dosyasının yolu"
 #: src/components/create-vm-dialog/createVmDialog.jsx:298
 msgid "Path to cloud image file on host's file system"
 msgstr "Ana makinenin dosya sistemi üzerindeki bulut kalıp dosyasının yolu"
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:117
+msgid "Path to directory"
+msgstr "Dizinin yolu"
 
 #: src/components/vm/disks/diskAdd.jsx:343
 msgid "Path to file on host's file system"
@@ -1920,7 +1936,7 @@ msgstr ""
 msgid "Please start the virtual machine to access its console."
 msgstr "Konsoluna erişmek için lütfen sanal makineyi başlatın."
 
-#: src/components/vm/deleteDialog.jsx:68
+#: src/components/vm/deleteDialog.jsx:67
 #: src/components/vm/overview/bootOrder.jsx:99
 #: src/components/vm/disks/diskAdd.jsx:151
 #: src/components/vm/disks/vmDiskColumns.jsx:45
@@ -1975,7 +1991,7 @@ msgstr "Ön ek uzunluğu"
 msgid "Prefix length should not be empty"
 msgstr "Ön ek uzunluğu boş olmamalıdır"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:236
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:245
 msgid ""
 "Previously taken snapshots allow you to revert to an earlier state if "
 "something goes wrong"
@@ -2147,7 +2163,7 @@ msgstr ""
 msgid "Resume"
 msgstr "Devam"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:179
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:188
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:100
 msgid "Revert"
 msgstr "Geri döndür"
@@ -2340,7 +2356,7 @@ msgstr "Kapat"
 msgid "Shut off the VM in order to edit firmware configuration"
 msgstr "Aygıt yazılımı yapılandırmasını düzenlemek için sanal makineyi kapatın"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:129 src/helpers.js:219
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:138 src/helpers.js:219
 msgid "Shutting down"
 msgstr "Kapatılıyor"
 
@@ -2358,11 +2374,11 @@ msgstr "Boyut"
 msgid "Slot"
 msgstr "Yuva"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:187
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:196
 msgid "Snapshot $0 could not be deleted"
 msgstr "$0 anlık görüntüsü silinemedi"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:188
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:197
 msgid ""
 "Snapshot $0 will be deleted from $1. All of its captured content will be "
 "lost."
@@ -2370,7 +2386,7 @@ msgstr ""
 "$0 anlık görüntüsü, $1 sanal makinesinden silinecek. Kaydedilen tüm içeriği "
 "kaybolacaktır."
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:173
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:234
 msgid "Snapshot failed to be created"
 msgstr "Anlık görüntünün oluşturulması başarısız oldu"
 
@@ -2580,7 +2596,7 @@ msgstr "Geçici"
 msgid "Temporary migration"
 msgstr "Geçici taşıma"
 
-#: src/components/vm/deleteDialog.jsx:82
+#: src/components/vm/deleteDialog.jsx:81
 msgid "The VM $0 is running and will be forced off before deletion."
 msgstr ""
 "$0 sanal makinesi çalışıyor ve silinmeden önce kapanmaya zorlanacaktır."
@@ -2703,6 +2719,10 @@ msgstr "Bu birim zaten başka bir sanal makine tarafından kullanılıyor."
 #: src/components/vm/overview/cpuModal.jsx:293
 msgid "Threads per core"
 msgstr "Çekirdek başına iş parçacığı sayısı"
+
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:105
+msgid "Total space available: $0."
+msgstr "Toplam kullanılabilir alan: $0."
 
 #: src/components/vm/overview/firmware.jsx:163
 msgid "Transient VMs don't support editing firmware configuration"
@@ -2908,7 +2928,7 @@ msgstr ""
 msgid "VM needs shutdown"
 msgstr "Sanal makinenin kapatılması gerekiyor"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:120
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:129
 msgid "VM state"
 msgstr "Sanal Makine durumu"
 
@@ -2981,7 +3001,7 @@ msgid "Virtualization service (libvirt) is not active"
 msgstr "Sanallaştırma hizmeti (libvirt) etkin değil"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:996
-#: src/components/vm/deleteDialog.jsx:65
+#: src/components/vm/deleteDialog.jsx:64
 #: src/components/vm/overview/bootOrder.jsx:100
 #: src/components/vm/disks/diskAdd.jsx:117
 #: src/components/vm/disks/vmDiskColumns.jsx:46
@@ -3185,7 +3205,7 @@ msgstr "ağ"
 msgid "no"
 msgstr "hayır"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:124
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:133
 msgid "no state saved"
 msgstr "kaydedilen durum yok"
 
@@ -3298,6 +3318,9 @@ msgstr "vsock özel yazılım gerektirir"
 #: src/components/networks/networkOverviewTab.jsx:115 src/helpers.js:264
 msgid "yes"
 msgstr "evet"
+
+#~ msgid "Memory file"
+#~ msgstr "Bellek dosyası"
 
 #~ msgid "Uptime"
 #~ msgstr "Çalışma süresi"
@@ -3672,9 +3695,6 @@ msgstr "evet"
 #~ msgid "Paste"
 #~ msgstr "Yapıştır"
 
-#~ msgid "Path to file"
-#~ msgstr "Dosyanın yolu"
-
 #~ msgid "Peripheral chassis"
 #~ msgstr "Çevresel donanım kasası"
 
@@ -3763,9 +3783,6 @@ msgstr "evet"
 
 #~ msgid "Today"
 #~ msgstr "Bugün"
-
-#~ msgid "Total size: $0"
-#~ msgstr "Toplam boyut: $0"
 
 #~ msgid "Tower"
 #~ msgstr "Tower"
