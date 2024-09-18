@@ -492,7 +492,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
                 )
                 if self.source:
                     self.assertEqual(
-                        self.source if self.vm_state == "shut off" else self.source,
+                        self.source,
                         self.machine.execute(xmllint_element.format(prop='source/@dev')).strip()
                     )
             if self.model:
