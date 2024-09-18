@@ -910,13 +910,3 @@ export function vmSupportsExternalSnapshots(config, vm) {
 export function vmHasVFIOHostDevs(vm) {
     return !!vm.hostDevices.find(hd => hd.driver === "vfio");
 }
-
-export function dirname(path) {
-    const i = path.lastIndexOf("/");
-    if (i < 0)
-        return ".";
-    else if (i == 0)
-        return "/";
-    else
-        return path.substr(0, i);
-}
