@@ -25,12 +25,14 @@ import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
 import { TextArea } from "@patternfly/react-core/dist/esm/components/TextArea";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 
+import { dirname } from "cockpit-path";
 import { FormHelper } from 'cockpit-components-form-helper.jsx';
 import { DialogsContext } from 'dialogs.jsx';
 import { ModalError } from "cockpit-components-inline-notification.jsx";
 import { FileAutoComplete } from "cockpit-components-file-autocomplete.jsx";
+
 import { snapshotCreate, snapshotGetAll } from "../../../libvirtApi/snapshot.js";
-import { getSortedBootOrderDevices, LIBVIRT_SYSTEM_CONNECTION, dirname } from "../../../helpers.js";
+import { getSortedBootOrderDevices, LIBVIRT_SYSTEM_CONNECTION } from "../../../helpers.js";
 import { domainGet } from '../../../libvirtApi/domain.js';
 
 import get_available_space_sh from "./get-available-space.sh";
