@@ -998,7 +998,6 @@ export function domainSetVCPUSettings ({
     sockets,
     cores,
     threads,
-    isRunning
 }) {
     const opts = { err: "message", environ: ['LC_ALL=C.UTF-8'] };
     if (connectionName === 'system')
