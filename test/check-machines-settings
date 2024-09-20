@@ -414,11 +414,11 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
         b.click("#vm-subVmTest1-memory-modal-save")
         b.wait_not_present("#vm-memory-modal")
 
-        b.wait_in_text("#vm-subVmTest1-memory-count", f"{f'{current_memory - 10:.1f}'} MiB")
+        b.wait_in_text("#vm-subVmTest1-memory-count", f"{f'{current_memory - 10}'} MiB")
 
         # Shut off domain and check changes are  still there
         self.performAction("subVmTest1", "forceOff")
-        b.wait_in_text("#vm-subVmTest1-memory-count", f"{f'{current_memory - 10:.1f}'} MiB")
+        b.wait_in_text("#vm-subVmTest1-memory-count", f"{f'{current_memory - 10}'} MiB")
 
         # Click for the edit link
         b.click("#vm-subVmTest1-memory-count button")

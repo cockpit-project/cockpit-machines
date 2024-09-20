@@ -23,12 +23,7 @@ import cockpit from 'cockpit';
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { Progress, ProgressVariant } from "@patternfly/react-core/dist/esm/components/Progress";
 
-import {
-    logDebug,
-    units,
-    convertToBestUnit,
-    convertToUnit,
-} from "../../helpers.js";
+import { logDebug } from "../../helpers.js";
 
 const _ = cockpit.gettext;
 
@@ -36,10 +31,10 @@ class VmUsageTab extends React.Component {
     render() {
         const vm = this.props.vm;
 
-        const rssMem = vm.rssMemory ? vm.rssMemory : 0; // in KiB
-        const memTotal = vm.currentMemory ? vm.currentMemory : 0; // in KiB
-        const memRssBest = convertToBestUnit(rssMem, units.KiB);
-        const memTotalBest = convertToBestUnit(memTotal, units.KiB);
+        const memTotal = vm.currentMemory ? vm.currentMemory * 1024 : 0;
+        const [memTotalFmt, memTotalUnit] = cockpit.format_bytes(memTotal, { base2: true, separate: true });
+        const rssMem = vm.rssMemory ? vm.rssMemory * 1024 : 0;
+        const memRss = cockpit.format_bytes(rssMem, memTotalUnit, { base2: true, separate: true })[0];
 
         const totalCpus = vm.vcpus && vm.vcpus.count > 0 ? vm.vcpus.count : 0;
         const vmCpuUsage = vm.cpuUsage;
@@ -54,12 +49,9 @@ class VmUsageTab extends React.Component {
                     <Progress value={rssMem}
                         className="pf-m-sm"
                         min={0} max={memTotal}
-                        variant={(rssMem / memTotal * 100) > 90 ? ProgressVariant.danger : ProgressVariant.info}
+                        variant={rssMem / memTotal > 0.9 ? ProgressVariant.danger : ProgressVariant.info}
                         title={_("Memory")}
-                        label={cockpit.format("$0 / $1 $2",
-                                              parseFloat(memRssBest.value.toFixed(1)),
-                                              memRssBest.value != 0 ? parseFloat(convertToUnit(memTotal, units.KiB, memRssBest.unit).toFixed(1)) : parseFloat(memTotalBest.value.toFixed(1)),
-                                              memRssBest.value != 0 ? memRssBest.unit : memTotalBest.unit)} />
+                        label={cockpit.format("$0 / $1 $2", memRss, memTotalFmt, memTotalUnit)} />
                 </FlexItem>
                 <FlexItem className="vcpu-usage-chart">
                     <Progress value={cpuUsage}
