@@ -109,7 +109,7 @@ export function convertToUnit(input, inputUnit, outputUnit) {
     return convertToUnitVerbose(input, inputUnit, outputUnit).value;
 }
 
-export function convertToUnitVerbose(input, inputUnit, outputUnit) {
+function convertToUnitVerbose(input, inputUnit, outputUnit) {
     const result = {
         value: 0,
         unit: units.B.name,
