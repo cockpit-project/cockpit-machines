@@ -100,11 +100,6 @@ export function getBestUnit(input, inputUnit) {
     return logUnitMap[getLogarithmOfBase1024(convertToUnitVerbose(input, inputUnit, units.B).value)];
 }
 
-export function convertToBestUnit(input, inputUnit) {
-    return convertToUnitVerbose(input, inputUnit,
-                                logUnitMap[getLogarithmOfBase1024(convertToUnitVerbose(input, inputUnit, units.B).value)]);
-}
-
 export function convertToUnit(input, inputUnit, outputUnit) {
     return convertToUnitVerbose(input, inputUnit, outputUnit).value;
 }

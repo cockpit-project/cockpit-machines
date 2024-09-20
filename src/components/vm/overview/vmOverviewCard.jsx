@@ -33,9 +33,7 @@ import { HelpIcon } from '@patternfly/react-icons';
 import { CPUModal } from './cpuModal.jsx';
 import MemoryModal from './memoryModal.jsx';
 import {
-    convertToBestUnit,
     rephraseUI,
-    units,
     vmId,
 } from '../../../helpers.js';
 import { updateVm } from '../../../actions/store-actions.js';
@@ -111,12 +109,11 @@ class VmOverviewCard extends React.Component {
                         label={_("Run when host boots")} />
             </DescriptionListDescription>
         );
-        const memory = convertToBestUnit(vm.currentMemory, units.KiB);
         const memoryLink = (
             <DescriptionListDescription id={`${idPrefix}-memory-count`}>
                 <Flex spaceItems={{ default: 'spaceItemsSm' }}>
                     <FlexItem>
-                        {cockpit.format("$0 $1", parseFloat(memory.value).toFixed(1), memory.unit)}
+                        {cockpit.format_bytes(vm.currentMemory * 1024, { base2: true })}
                     </FlexItem>
                     <Button variant="link" isInline isDisabled={!vm.persistent} onClick={this.openMemory}>
                         {_("edit")}
