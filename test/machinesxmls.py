@@ -56,6 +56,17 @@ TEST_NETWORK2_XML = """
 </network>
 """
 
+TEST_NETWORK2_CLASH_XML = """
+<network>
+  <name>test_network2_clash</name>
+  <ip address='192.168.100.1' netmask='255.255.255.0'>
+    <dhcp>
+      <range start='192.168.100.128' end='192.168.100.170'/>
+    </dhcp>
+  </ip>
+</network>
+"""
+
 TEST_NETWORK3_XML = """
 <network>
   <name>test_network3</name>

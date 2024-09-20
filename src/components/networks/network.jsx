@@ -95,6 +95,12 @@ const NetworkActions = ({ network }) => {
     const onActivate = () => {
         setOperationInProgress(true);
         networkActivate({ connectionName: network.connectionName, objPath: network.id })
+                .then(() => store.dispatch(
+                    updateOrAddNetwork({
+                        connectionName: network.connectionName,
+                        name: network.name,
+                        error: null
+                    })))
                 .finally(() => setOperationInProgress(false))
                 .catch(exc => {
                     store.dispatch(
@@ -113,6 +119,12 @@ const NetworkActions = ({ network }) => {
     const onDeactivate = () => {
         setOperationInProgress(true);
         networkDeactivate({ connectionName: network.connectionName, objPath: network.id })
+                .then(() => store.dispatch(
+                    updateOrAddNetwork({
+                        connectionName: network.connectionName,
+                        name: network.name,
+                        error: null
+                    })))
                 .finally(() => setOperationInProgress(false))
                 .catch(exc => {
                     store.dispatch(
