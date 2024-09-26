@@ -455,7 +455,7 @@ export function getApiData({ connectionName }) {
     return Promise.allSettled([
         domainGetAll({ connectionName }),
         storagePoolGetAll({ connectionName }),
-        interfaceGetAll({ connectionName }),
+        interfaceGetAll(),
         networkGetAll({ connectionName }),
         nodeDeviceGetAll({ connectionName }),
         getNodeMaxMemory({ connectionName }),

@@ -19,22 +19,19 @@
 
 import xml.etree.ElementTree as ET
 
+import json
 import machineslib
 import testlib
 from machinesxmls import TEST_NETWORK2_CLASH_XML, TEST_NETWORK2_XML, TEST_NETWORK3_XML, TEST_NETWORK4_XML, TEST_NETWORK_IPV6_XML, TEST_NETWORK_XML
 
 
 def getNetworkDevice(m):
-    net_devices_str = m.execute("virsh iface-list")
-    net_devices_str = net_devices_str.split("\n", 2)[2]  # Remove first 2 lines of table header
-    if net_devices_str not in ["\n", "\r\n"]:
-        device = net_devices_str.split(' ', 2)[1]  # Get the name of device, ignoring spacing before device string
-    else:  # If $virsh-iface list did not return any device, check virsh nodedev-list net:noh
-        net_devices_str = m.execute("virsh nodedev-list net")
-        net_devices_str = net_devices_str.split("\n", 2)[0]
-        device = net_devices_str.split("_", 2)[1]  # Ignore prefix (example: net_enp0s31f6_8c_16_45_5f_77_34)
+    # To replicate `virsh iface-list` behavior, filter active interfaces
+    # from ip command and get the first active one.
+    routes = json.loads(m.execute("ip --json a"))
+    active = list(filter(lambda r: r['operstate'] == "UP", routes))
 
-    return device
+    return active[0]["ifname"]
 
 
 @testlib.nondestructive
