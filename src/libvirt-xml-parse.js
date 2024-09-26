@@ -899,15 +899,6 @@ export function parseDumpxmlMachinesMetadataElement(metadataElem, name) {
     return subElems.length > 0 ? subElems[0].textContent : null;
 }
 
-export function parseIfaceDumpxml(ifaceXml) {
-    const retObj = {};
-    const ifaceElem = getElem(ifaceXml);
-
-    retObj.type = ifaceElem.getAttribute("type");
-
-    return retObj;
-}
-
 export function parseNetDumpxml(netXml) {
     const retObj = {};
     const netElem = getElem(netXml);
