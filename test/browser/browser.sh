@@ -53,7 +53,6 @@ sh -x test/vm.install
 
 if [ "${PLATFORM_ID:-}" != "platform:el8" ]; then
     # https://gitlab.com/libvirt/libvirt/-/issues/219
-    systemctl start virtinterfaced.socket
     systemctl start virtnetworkd.socket
     systemctl start virtnodedevd.socket
     systemctl start virtstoraged.socket
