@@ -84,7 +84,7 @@ DiskSourceCell.propTypes = {
     idPrefix: PropTypes.string.isRequired,
 };
 
-export const DiskExtras = ({ idPrefix, cache, type, io, discard, serial }) => {
+export const DiskExtras = ({ idPrefix, cache, type, serial }) => {
     const addOptional = (chunks, value, type, descr) => {
         if (value) {
             chunks.push(
@@ -110,8 +110,8 @@ export const DiskExtras = ({ idPrefix, cache, type, io, discard, serial }) => {
 
 DiskExtras.propTypes = {
     cache: PropTypes.string,
-    io: PropTypes.string,
-    discard: PropTypes.string,
+    serial: PropTypes.string,
+    type: PropTypes.string,
     idPrefix: PropTypes.string.isRequired,
 };
 
