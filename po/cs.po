@@ -12,9 +12,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-23 03:04+0000\n"
-"PO-Revision-Date: 2024-09-08 13:38+0000\n"
-"Last-Translator: Pavel Borecki <pavel.borecki@gmail.com>\n"
+"POT-Creation-Date: 2024-10-01 03:20+0000\n"
+"PO-Revision-Date: 2024-10-01 14:33+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
+"memory@weblate.org>\n"
 "Language-Team: Czech <https://translate.fedoraproject.org/projects/cockpit-"
 "machines/main/cs/>\n"
 "Language: cs\n"
@@ -115,7 +116,7 @@ msgstr "Akce"
 msgid "Actions"
 msgstr "Akce"
 
-#: src/components/networks/network.jsx:174
+#: src/components/networks/network.jsx:186
 #: src/components/storagePools/storagePool.jsx:168
 msgid "Activate"
 msgstr "Aktivovat"
@@ -605,6 +606,8 @@ msgid ""
 "Creating snapshots of VMs with VFIO devices is not supported while they are "
 "running."
 msgstr ""
+"Pořizování zachycených stavů v zapnutém stavu není u virt. strojů s VFIO "
+"zařízeními podporováno."
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:1285
 msgid "Creation of VM $0 failed"
@@ -644,7 +647,7 @@ msgstr "Uživatelsky určený popis umístění"
 msgid "DHCP Settings"
 msgstr "Nastavení pro DHCP"
 
-#: src/components/networks/network.jsx:170
+#: src/components/networks/network.jsx:182
 #: src/components/storagePools/storagePool.jsx:159
 msgid "Deactivate"
 msgstr "Deaktivovat"
@@ -652,8 +655,8 @@ msgstr "Deaktivovat"
 # auto translated by TM merge from project: FreeIPA, version: ipa-4-5, DocId:
 # po/ipa
 #: src/components/vm/deleteDialog.jsx:170 src/components/vm/vmActions.jsx:477
-#: src/components/vm/vmActions.jsx:485 src/components/networks/network.jsx:151
-#: src/components/networks/network.jsx:154
+#: src/components/vm/vmActions.jsx:485 src/components/networks/network.jsx:163
+#: src/components/networks/network.jsx:166
 #: src/components/storagePools/storagePoolDelete.jsx:202
 #: src/components/storagePools/storagePoolDelete.jsx:238
 #: src/components/storagePools/storagePoolDelete.jsx:248
@@ -682,7 +685,7 @@ msgstr[2] "Smazat $0 svazků"
 msgid "Delete associated storage files:"
 msgstr "Smazat související soubory úložiště:"
 
-#: src/components/networks/network.jsx:141
+#: src/components/networks/network.jsx:153
 msgid "Delete network?"
 msgstr "Smazat síť?"
 
@@ -1575,20 +1578,16 @@ msgid "Memory must not be 0"
 msgstr "Je třeba, aby paměť nebyla 0 (nula)"
 
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:196
-#, fuzzy
-#| msgid "Memory file can not be empty"
 msgid "Memory save location can not be empty"
-msgstr "Soubor pro obsah paměti je třeba vyplnit"
+msgstr "Umístění pro uložení obsahu operační paměti je třeba vyplnit"
 
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:103
 msgid "Memory snapshot will use about $0."
-msgstr ""
+msgstr "Zachycený stav obsahu paměti zabere přibližně $0."
 
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:113
-#, fuzzy
-#| msgid "Memory must not be 0"
 msgid "Memory state path"
-msgstr "Je třeba, aby paměť nebyla 0 (nula)"
+msgstr "Popis umístění stavu paměti"
 
 # auto translated by TM merge from project: libbytesize, version: master,
 # DocId: libbytesize
@@ -1705,19 +1704,19 @@ msgstr "Název: "
 msgid "Netmask"
 msgstr "Maska sítě"
 
-#: src/components/networks/network.jsx:142
+#: src/components/networks/network.jsx:154
 msgid "Network $0 could not be deleted"
 msgstr "Síť $0 nebylo možné smazat"
 
-#: src/components/networks/network.jsx:105
+#: src/components/networks/network.jsx:111
 msgid "Network $0 failed to get activated"
 msgstr "Síť $0 se nepodařilo aktivovat"
 
-#: src/components/networks/network.jsx:123
+#: src/components/networks/network.jsx:135
 msgid "Network $0 failed to get deactivated"
 msgstr "Síť $0 se nepodařilo deaktivovat"
 
-#: src/components/networks/network.jsx:143
+#: src/components/networks/network.jsx:155
 msgid "Network $0 will be permanently deleted."
 msgstr "Síť $0 bude nenávratně smazána."
 
@@ -1863,7 +1862,7 @@ msgstr "Žádné virtuální sítě"
 msgid "No volumes exist in this storage pool."
 msgstr "V tomto fondu úložiště neexistují žádné svazky."
 
-#: src/components/networks/network.jsx:150
+#: src/components/networks/network.jsx:162
 msgid ""
 "Non-persistent network cannot be deleted. It ceases to exists when it's "
 "deactivated."
@@ -1968,10 +1967,8 @@ msgid "Path to cloud image file on host's file system"
 msgstr "Popis umístění souboru s cloud obrazem na souborovém systému hostitele"
 
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:119
-#, fuzzy
-#| msgid "Path to file"
 msgid "Path to directory"
-msgstr "Popis umístění serveru"
+msgstr "Popis umístění složky"
 
 #: src/components/vm/disks/diskAdd.jsx:343
 msgid "Path to file on host's file system"
@@ -2856,10 +2853,8 @@ msgid "Threads per core"
 msgstr "Vláken na jádro"
 
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:107
-#, fuzzy
-#| msgid "Total size: $0"
 msgid "Total space available: $0."
-msgstr "Celková velikost: $0"
+msgstr "Celkový prostor k dispozici: $0."
 
 #: src/components/vm/overview/firmware.jsx:163
 msgid "Transient VMs don't support editing firmware configuration"
