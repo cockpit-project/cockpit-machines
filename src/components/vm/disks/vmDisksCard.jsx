@@ -225,8 +225,6 @@ export const VmDisksCard = ({ vm, vms, disks, renderCapacity, supportedDiskBusTy
                 title: <DiskExtras idPrefix={idPrefixRow}
                                    cache={disk.driver.cache}
                                    type={disk.driver.type}
-                                   io={disk.driver.io}
-                                   discard={disk.driver.discard}
                                    serial={disk.serial} />
             });
         }
