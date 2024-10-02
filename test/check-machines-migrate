@@ -58,7 +58,8 @@ class TestMachinesMigration(machineslib.VirtualMachinesCase):
 
         if fail != "port_closed":
             # Plain migration: The source host VM opens a direct unencrypted TCP connection to the destination host for sending the migration data.
-            # Unless a port is manually specified, libvirt will choose a migration port in the range 49152-49215, which will need to be open in the firewall on the remote host.
+            # Unless a port is manually specified, libvirt will choose a migration port in the range 49152-49215,
+            # which will need to be open in the firewall on the remote host.
             # https://wiki.libvirt.org/page/FAQ
             machine2.execute("systemctl start firewalld")
             machine2.execute("firewall-cmd --permanent --add-port 49152-49215/tcp")

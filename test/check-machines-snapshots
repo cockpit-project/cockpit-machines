@@ -61,7 +61,8 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-snapshots .pf-v5-c-empty-state", "No snapshots")
 
         # Check snapshot for running VM
-        m.execute("virsh detach-disk --domain subVmTest1 --target vda --persistent")  # vda is raw disk, which are not supported by internal snapshots
+        # vda is raw disk, which are not supported by internal snapshots
+        m.execute("virsh detach-disk --domain subVmTest1 --target vda --persistent")
         m.execute("qemu-img create -f qcow2 /var/lib/libvirt/images/foobar.qcow2 1M")
         m.execute("virsh attach-disk --domain subVmTest1 --source /var/lib/libvirt/images/foobar.qcow2 --target vdb --persistent")
         m.execute("virsh snapshot-create-as --domain subVmTest1 --name snapshotB --description 'Description of snapshotB' --disk-only")
@@ -160,7 +161,8 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
 
             def assert_pixels(self):
                 if self.name == 'test_snap_1':
-                    b.assert_pixels("#vm-subVmTest1-create-snapshot-modal", "create-snapshot-dialog" + ("" if not self.xfail else "-error"), skip_layouts=["rtl"])
+                    b.assert_pixels("#vm-subVmTest1-create-snapshot-modal",
+                                    "create-snapshot-dialog" + ("" if not self.xfail else "-error"), skip_layouts=["rtl"])
 
             def cancel(self):
                 b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
@@ -244,7 +246,8 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
             def cleanup(self):
                 b.click(f"#delete-vm-subVmTest1-snapshot-{self.snap_num}")
                 b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Delete snapshot?")
-                b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-description-list", f"{self.name} will be deleted from {self.vm_name}")
+                b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-description-list",
+                               f"{self.name} will be deleted from {self.vm_name}")
                 b.click('.pf-v5-c-modal-box__footer button:contains("Delete")')
                 b.wait_not_present(f"#vm-subVmTest1-snapshot-{self.snap_num}-name:contains({self.name})")
 

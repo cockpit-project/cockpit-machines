@@ -84,7 +84,8 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         b.wait_in_text(f"#network-test_network2-{connectionName}-ipv6-prefix", "64")
         b.wait_in_text(f"#network-test_network2-{connectionName}-ipv6-dhcp-range", "fd00:e81d:a6d7:55::100 - fd00:e81d:a6d7:55::1ff")
         b.wait_in_text(f"#network-test_network2-{connectionName}-ipv6-dhcp-host-0", "Name: simon, IP: 2001:db8:ca2:2:3::1")
-        b.wait_in_text(f"#network-test_network2-{connectionName}-ipv6-dhcp-host-1", "ID: 0:1:0:1:18:aa:62:fe:0:16:3e:44:55:66, IP: 2001:db8:ca2:2:3::2")
+        b.wait_in_text(f"#network-test_network2-{connectionName}-ipv6-dhcp-host-1",
+                       "ID: 0:1:0:1:18:aa:62:fe:0:16:3e:44:55:66, IP: 2001:db8:ca2:2:3::2")
 
         # Close expanded row for this pool
         self.toggleNetworkRow("test_network2", connectionName)
@@ -97,15 +98,18 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         b.wait_visible(f"#network-test_network3-{connectionName}-autostart:not(:checked)")
 
         # Check overview network properties are not present
-        for el in ["ipv4-address", "ipv4-netmask", "ipv4-dhcp-range", "ipv4-dhcp-host-0", "ipv6-address", "ipv6-prefix", "ipv6-dhcp-range", "ipv6-dhcp-host-0"]:
+        for el in ["ipv4-address", "ipv4-netmask", "ipv4-dhcp-range", "ipv4-dhcp-host-0",
+                   "ipv6-address", "ipv6-prefix", "ipv6-dhcp-range", "ipv6-dhcp-host-0"]:
             b.wait_not_present(f"#network-test_network3-{connectionName}-{el}")
 
         # Transient network
         self.toggleNetworkRow("test_network4", connectionName)
         b.wait_in_text(f"#network-test_network4-{connectionName}-persistent", "no")
-        b.wait_not_present(f"#network-test_network4-{connectionName}-autostart")  # Transient network shouldn't have autostart option
+        # Transient network shouldn't have autostart option
+        b.wait_not_present(f"#network-test_network4-{connectionName}-autostart")
         b.click(f"#network-test_network4-{connectionName}-action-kebab")
-        b.wait_visible(f'li.pf-m-aria-disabled > #delete-network-test_network4-{connectionName}')  # Transient network cannot be deleted
+        # Transient network cannot be deleted
+        b.wait_visible(f'li.pf-m-aria-disabled > #delete-network-test_network4-{connectionName}')
         b.click(f'#deactivate-network-test_network4-{connectionName}')  # Deactivate transient network
         self.waitNetworkRow("test_network4", connectionName, False)  # Check it's not present after deactivation
 
@@ -129,8 +133,9 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
 
         class NetworkCreateDialog(object):
             def __init__(
-                self, test_obj, name, forward_mode=None, ip_conf=None, ipv4_address=None, ipv4_netmask=None, ipv6_address=None, ipv6_prefix=None, device=None,
-                ipv4_dhcp_start=None, ipv4_dhcp_end=None, ipv6_dhcp_start=None, ipv6_dhcp_end=None, xfail=False, xfail_error=None, xfail_objects=None,
+                self, test_obj, name, forward_mode=None, ip_conf=None, ipv4_address=None, ipv4_netmask=None,
+                ipv6_address=None, ipv6_prefix=None, device=None, ipv4_dhcp_start=None, ipv4_dhcp_end=None,
+                ipv6_dhcp_start=None, ipv6_dhcp_end=None, xfail=False, xfail_error=None, xfail_objects=None,
                 remove=True, activate=False
             ):
                 self.test_obj = test_obj
@@ -165,7 +170,8 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
             def open(self):
                 b.click("#create-network")
                 b.wait_visible("#create-network-dialog")
-                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Create virtual network")
+                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title",
+                               "Create virtual network")
 
             def fill(self):
                 b.set_input_text("#create-network-name", self.name)
@@ -212,9 +218,12 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
                     else:
                         for xfo in self.xfail_objects:
                             if "range" in xfo:
-                                b.wait_in_text(f"#create-network-dialog .create-network-{xfo} .pf-v5-c-form__helper-text .pf-v5-c-helper-text__item.pf-m-error", self.xfail_error)
+                                b.wait_in_text(
+                                    f"#create-network-dialog .create-network-{xfo} .pf-v5-c-form__helper-text .pf-v5-c-helper-text__item.pf-m-error",
+                                    self.xfail_error)
                             else:
-                                self.test_obj.assertIn(self.xfail_error, b.eval_js(f"ph_input_form_helper_text(\"create-network-{xfo}\")"))
+                                self.test_obj.assertIn(self.xfail_error,
+                                                       b.eval_js(f"ph_input_form_helper_text(\"create-network-{xfo}\")"))
 
                     self.cancel()
                 else:
@@ -240,21 +249,30 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
                     self.test_obj.assertEqual(self.forward_mode, m.execute(xmllint_element.format(prop='forward/@mode')).strip())
 
                 if self.device:
-                    self.test_obj.assertEqual(self.device, m.execute(xmllint_element.format(prop='forward/interface/@dev')).strip())
+                    self.test_obj.assertEqual(self.device,
+                                              m.execute(xmllint_element.format(prop='forward/interface/@dev')).strip())
 
                 if (self.ip_conf != "None"):
                     if "4" in self.ip_conf:
-                        self.test_obj.assertEqual(self.ipv4_address, m.execute(xmllint_element.format(prop='ip/@address')).strip())
-                        self.test_obj.assertEqual(self.ipv4_netmask, m.execute(xmllint_element.format(prop='ip/@netmask')).strip())
+                        self.test_obj.assertEqual(self.ipv4_address,
+                                                  m.execute(xmllint_element.format(prop='ip/@address')).strip())
+                        self.test_obj.assertEqual(self.ipv4_netmask,
+                                                  m.execute(xmllint_element.format(prop='ip/@netmask')).strip())
                         if self.ipv4_dhcp_start and self.ipv4_dhcp_start:
-                            self.test_obj.assertEqual(self.ipv4_dhcp_start, m.execute(xmllint_element.format(prop='ip/dhcp/range/@start')).strip())
-                            self.test_obj.assertEqual(self.ipv4_dhcp_end, m.execute(xmllint_element.format(prop='ip/dhcp/range/@end')).strip())
+                            self.test_obj.assertEqual(self.ipv4_dhcp_start,
+                                                      m.execute(xmllint_element.format(prop='ip/dhcp/range/@start')).strip())
+                            self.test_obj.assertEqual(self.ipv4_dhcp_end,
+                                                      m.execute(xmllint_element.format(prop='ip/dhcp/range/@end')).strip())
                     if "6" in self.ip_conf:
-                        self.test_obj.assertEqual(self.ipv6_address, m.execute(xmllint_element.format(prop='ip[starts-with(@family,"ipv6")]/@address')).strip())
-                        self.test_obj.assertEqual(self.ipv6_prefix, m.execute(xmllint_element.format(prop='ip[starts-with(@family,"ipv6")]/@prefix')).strip())
+                        self.test_obj.assertEqual(self.ipv6_address,
+                                                  m.execute(xmllint_element.format(prop='ip[starts-with(@family,"ipv6")]/@address')).strip())
+                        self.test_obj.assertEqual(self.ipv6_prefix,
+                                                  m.execute(xmllint_element.format(prop='ip[starts-with(@family,"ipv6")]/@prefix')).strip())
                         if self.ipv6_dhcp_start and self.ipv6_dhcp_start:
-                            self.test_obj.assertEqual(self.ipv6_dhcp_start, m.execute(xmllint_element.format(prop='ip[starts-with(@family,"ipv6")]/dhcp/range/@start')).strip())
-                            self.test_obj.assertEqual(self.ipv6_dhcp_end, m.execute(xmllint_element.format(prop='ip[starts-with(@family,"ipv6")]/dhcp/range/@end')).strip())
+                            self.test_obj.assertEqual(self.ipv6_dhcp_start,
+                                                      m.execute(xmllint_element.format(prop='ip[starts-with(@family,"ipv6")]/dhcp/range/@start')).strip())
+                            self.test_obj.assertEqual(self.ipv6_dhcp_end,
+                                                      m.execute(xmllint_element.format(prop='ip[starts-with(@family,"ipv6")]/dhcp/range/@end')).strip())
                 else:
                     self.test_obj.assertEqual("", m.execute(xmllint_element.format(prop='ip')).strip())
 
@@ -278,12 +296,14 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
                         b.wait_in_text(f"#network-{self.name}-{connectionName}-ipv4-address", self.ipv4_address)
                         b.wait_in_text(f"#network-{self.name}-{connectionName}-ipv4-netmask", self.ipv4_netmask)
                         if self.ipv4_dhcp_start and self.ipv4_dhcp_start:
-                            b.wait_in_text(f"#network-{self.name}-{connectionName}-ipv4-dhcp-range", self.ipv4_dhcp_start + " - " + self.ipv4_dhcp_end)
+                            b.wait_in_text(f"#network-{self.name}-{connectionName}-ipv4-dhcp-range",
+                                           self.ipv4_dhcp_start + " - " + self.ipv4_dhcp_end)
                     if "6" in self.ip_conf:
                         b.wait_in_text(f"#network-{self.name}-{connectionName}-ipv6-address", self.ipv6_address)
                         b.wait_in_text(f"#network-{self.name}-{connectionName}-ipv6-prefix", self.ipv6_prefix)
                         if self.ipv6_dhcp_start and self.ipv6_dhcp_start:
-                            b.wait_in_text(f"#network-{self.name}-{connectionName}-ipv6-dhcp-range", self.ipv6_dhcp_start + " - " + self.ipv6_dhcp_end)
+                            b.wait_in_text(f"#network-{self.name}-{connectionName}-ipv6-dhcp-range",
+                                           self.ipv6_dhcp_start + " - " + self.ipv6_dhcp_end)
 
                     if "4" not in self.ip_conf:
                         b.wait_not_present(f"#network-{self.name}-{connectionName}-ipv4-address")
@@ -693,7 +713,8 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
             virsh net-destroy default; virsh net-undefine default
             virsh net-define /tmp/net-test-network.xml; virsh net-start test_network""")
 
-        # First shut of the VM otherwise the interface will not be the same in the live and config XML https://www.redhat.com/archives/libvir-list/2019-August/msg01034.html
+        # First shut of the VM otherwise the interface will not be the same in the live and config XML
+        # https://www.redhat.com/archives/libvir-list/2019-August/msg01034.html
         self.performAction("subVmTest1", "forceOff")
 
         # Try to edit the interface changing the source to a non deleted network
@@ -734,7 +755,8 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         b.wait_visible(f"#network-test_network2-{connectionName}-autostart")
 
         # set checkbox state and check state of checkbox
-        b.set_checked(f"#network-test_network2-{connectionName}-autostart", True)  # don't know the initial state of checkbox, so set it to checked
+        # don't know the initial state of checkbox, so set it to checked
+        b.set_checked(f"#network-test_network2-{connectionName}-autostart", True)
         b.wait_visible(f"#network-test_network2-{connectionName}-autostart:checked")
         # check virsh state
         autostartState = m.execute("virsh net-info test_network2 | grep 'Autostart:' | awk '{print $2}'").strip()
@@ -786,14 +808,16 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         b.click(f"#activate-network-test_network2-{connectionName}")
         b.wait_in_text(f"#network-test_network2-{connectionName}-state", "active")
         # check virsh state
-        testlib.wait(lambda: "yes" == m.execute("virsh net-info test_network2 | grep 'Active:' | awk '{print $2}'").strip(), tries=5)
+        testlib.wait(lambda: "yes" == m.execute("virsh net-info test_network2 | grep 'Active:' | awk '{print $2}'").strip(),
+                     tries=5)
         # deactivate network
         b.wait_visible(f"#deactivate-network-test_network2-{connectionName}")
         b.click(f"#deactivate-network-test_network2-{connectionName}")
         b.wait_in_text(f"#network-test_network2-{connectionName}-state", "inactive")
         b.wait_visible(f"#activate-network-test_network2-{connectionName}")
         # check virsh state
-        testlib.wait(lambda: "no" == m.execute("virsh net-info test_network2 | grep 'Active:' | awk '{print $2}'").strip(), tries=5)
+        testlib.wait(lambda: "no" == m.execute("virsh net-info test_network2 | grep 'Active:' | awk '{print $2}'").strip(),
+                     tries=5)
 
         # trigger error on clashing network
         m.write("/tmp/xml", TEST_NETWORK2_CLASH_XML)
@@ -865,7 +889,8 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
             def open(self):
                 b.click(f"#network-{self.network_name}-{self.connection_name}-static-host-entries-add")
                 b.wait_visible("#add-new-static-entry-mac-address")
-                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Add a DHCP static host entry")
+                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title",
+                               "Add a DHCP static host entry")
                 b.wait_in_text("div.pf-v5-c-modal-box__body label[for=add-new-static-entry-mac-address]", "MAC address")
                 b.wait_in_text("div.pf-v5-c-modal-box__body label[for=add-new-static-entry-ip-address]", "IP address")
 
@@ -909,7 +934,8 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
                     raise Exception(f'No DHCP host with IP address {self.ip} found in network XML:\n{net_xml}')
 
             def verify_overview(self):
-                b.wait_in_text(f"#network-{self.network_name}-{self.connection_name}-ipv4-dhcp-host-{self.entry_id}", f"MAC: {self.mac}, IP: {self.ip}")
+                b.wait_in_text(f"#network-{self.network_name}-{self.connection_name}-ipv4-dhcp-host-{self.entry_id}",
+                               f"MAC: {self.mac}, IP: {self.ip}")
 
             def cleanup(self):
                 b.click(f"#delete-network-{self.network_name}-{self.connection_name}-ipv4-dhcp-host-{self.entry_id}-button")

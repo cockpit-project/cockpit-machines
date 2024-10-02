@@ -109,7 +109,8 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
 
         # try to CREATE WITH DIALOG ERROR
         # name
-        runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, "", storage_size=1, os_name=None), {"vm-name": "Name must not be empty"})
+        runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, "", storage_size=1, os_name=None),
+                                             {"vm-name": "Name must not be empty"})
 
         # location
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, sourceType='url',
@@ -481,7 +482,8 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                                                   create_and_run=True, delete=False))
 
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, "existing-name", storage_size=1,
-                                                                         check_script_finished=False, env_is_empty=False), {"vm-name": "already exists"})
+                                                                         check_script_finished=False, env_is_empty=False),
+                                             {"vm-name": "already exists"})
 
     @testlib.skipImage("TODO: fails in 50% of runs", "opensuse-tumbleweed")
     def testCreatePXE(self):
@@ -1384,7 +1386,8 @@ vnc_password= "{vnc_passwd}"
             if self.expected_os_name:
                 b.wait_attr("#os-select-group input", "value", self.expected_os_name)
 
-            if self.sourceType == "os" and self.os_name in [TestMachinesCreate.TestCreateConfig.RHEL_8_1, TestMachinesCreate.TestCreateConfig.RHEL_8_2]:
+            if self.sourceType == "os" and self.os_name in [TestMachinesCreate.TestCreateConfig.RHEL_8_1,
+                                                            TestMachinesCreate.TestCreateConfig.RHEL_8_2]:
                 if not self.offline_token_autofilled:
                     b.set_input_text("#offline-token", self.offline_token)
                 b.wait_in_text("#offline-token", self.offline_token)
@@ -1848,7 +1851,9 @@ vnc_password= "{vnc_passwd}"
                 else:
                     raise AssertionError("Unknown disk device")
             # New volume was created or existing volume was already chosen as destination
-            elif (dialog.storage_size is not None and dialog.storage_size > 0) or dialog.storage_pool not in [NO_STORAGE, NEW_VOLUME_QCOW2, NEW_VOLUME_RAW]:
+            elif (dialog.storage_size is not None and dialog.storage_size > 0) or dialog.storage_pool not in [NO_STORAGE,
+                                                                                                              NEW_VOLUME_QCOW2,
+                                                                                                              NEW_VOLUME_RAW]:
                 b.wait_visible(".disks-card table tbody:first-of-type")
                 if b.is_present(f"#vm-{name}-disks-vda-device"):
                     b.wait_in_text(f"#vm-{name}-disks-vda-device", "disk")
@@ -1863,7 +1868,8 @@ vnc_password= "{vnc_passwd}"
                     b.wait_in_text(f"#vm-{name}-disks-vda-type", "qcow2")
                 elif dialog.storage_pool == NEW_VOLUME_RAW:
                     b.wait_in_text(f"#vm-{name}-disks-vda-type", "raw")
-            elif (vm_state == "Running" and (((dialog.storage_pool == NO_STORAGE or dialog.storage_size == 0) and dialog.sourceType == 'file') or dialog.sourceType == 'url')):
+            elif (vm_state == "Running" and (((dialog.storage_pool == NO_STORAGE or dialog.storage_size == 0)
+                                               and dialog.sourceType == 'file') or dialog.sourceType == 'url')):
                 b.wait_visible(".disks-card table tbody:first-of-type")
                 if b.is_present(f"#vm-{name}-disks-sda-device"):
                     b.wait_in_text(f"#vm-{name}-disks-sda-device", "cdrom")
@@ -2075,7 +2081,8 @@ vnc_password= "{vnc_passwd}"
 
             if dialog.sourceType != 'cloud':
                 self.browser.mouse(".pf-v5-c-tabs__list button[aria-disabled=true]:contains(Automation)", "mouseenter")
-                self.browser.wait_in_text("div.pf-v5-c-tooltip__content", "Automated installs are only available when downloading an image or using cloud-init.")
+                self.browser.wait_in_text("div.pf-v5-c-tooltip__content",
+                                          "Automated installs are only available when downloading an image or using cloud-init.")
                 self.browser.mouse(".pf-v5-c-tabs__list button[aria-disabled=true]:contains(Automation)", "mouseleave")
             else:
                 self.browser.wait_visible(".pf-v5-c-tabs__list button[aria-disabled=false]:contains(Automation)")
@@ -2104,7 +2111,8 @@ vnc_password= "{vnc_passwd}"
         b.click(".pf-v5-c-modal-box__footer button:contains(Create and edit)")
         b.wait_not_present("#create-vm-dialog")
 
-        testlib.wait(lambda: "<cockpit_machines:os_variant>fedora28</cockpit_machines:os_variant>" in m.execute("virsh dumpxml VmNotInstalled"), delay=3)
+        testlib.wait(lambda: "<cockpit_machines:os_variant>fedora28</cockpit_machines:os_variant>" in m.execute("virsh dumpxml VmNotInstalled"),
+                     delay=3)
 
         self.waitVmPage("VmNotInstalled")
 
@@ -2196,7 +2204,8 @@ vnc_password= "{vnc_passwd}"
         m.execute(f"> {logfile}")  # clear logfile
         self.performAction("VmNotInstalled", "forceOff", checkExpectedState=False)
         b.wait_in_text("#vm-VmNotInstalled-system-state", "Shut off")
-        testlib.wait(lambda: "133120" in m.execute("virsh dominfo VmNotInstalled | grep 'Used memory'"), delay=1)  # Wait until memory parameters get adjusted after shutting the VM
+        # Wait until memory parameters get adjusted after shutting the VM
+        testlib.wait(lambda: "133120" in m.execute("virsh dominfo VmNotInstalled | grep 'Used memory'"), delay=1)
 
         # Check configuration changes survived installation
         # Check memory settings have persisted
