@@ -195,7 +195,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
         # Virtio bus type should not be shown for CDROM devices
         m.execute("touch /var/lib/libvirt/novell.iso")
-        m.execute("virsh attach-disk --domain subVmTest1 --source /var/lib/libvirt/novell.iso --target hda --type cdrom --targetbus sata --mode readonly --persistent")
+        m.execute(
+"virsh attach-disk --domain subVmTest1 --source /var/lib/libvirt/novell.iso --target hda --type cdrom --targetbus sata --mode readonly --persistent")
         # virsh attach-disk want send an event for offline VM changes
         b.reload()
         b.enter_page('/machines')
@@ -722,7 +723,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
                 self.test_obj.waitPoolRow(self.pool_name)
                 self.test_obj.togglePoolRow(self.pool_name)
 
-                b.click(f"tr[data-row-id=pool-{self.pool_name}-system] + tr li:contains('Storage volumes') button")  # open the "Storage volumes" subtab
+                # open the "Storage volumes" subtab
+                b.click(f"tr[data-row-id=pool-{self.pool_name}-system] + tr li:contains('Storage volumes') button")
                 b.wait_visible(f"#pool-{self.pool_name}-system-volume-{self.volume_name}-name")
 
                 b.click(".machines-listing-breadcrumb li a:contains(Virtual machines)")

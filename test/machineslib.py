@@ -34,8 +34,11 @@ def hasMonolithicDaemon(image):
 
 class VirtualMachinesCaseHelpers:
     def waitPageInit(self):
-        virtualization_disabled_ignored = self.browser.call_js_func("localStorage.getItem", "virtualization-disabled-ignored") == "true"
-        virtualization_enabled = "PASS" in self.machine.execute("virt-host-validate qemu | grep 'Checking for hardware virtualization' || true")
+        m = self.machine
+        virtualization_disabled_ignored = \
+                self.browser.call_js_func("localStorage.getItem", "virtualization-disabled-ignored") == "true"
+        virtualization_enabled = \
+                "PASS" in m.execute("virt-host-validate qemu | grep 'Checking for hardware virtualization' || true")
         if not virtualization_enabled and not virtualization_disabled_ignored:
             self.browser.click("#ignore-hw-virtualization-disabled-btn")
         with self.browser.wait_timeout(30):
@@ -102,12 +105,13 @@ class VirtualMachinesCaseHelpers:
             b.wait_not_present(vm_row)
 
     def togglePoolRow(self, poolName, connectionName="system"):
-        isExpanded = 'pf-m-expanded' in self.browser.attr(f"tbody tr[data-row-id=\"pool-{poolName}-{connectionName}\"] + tr", "class")  # click on the row header
-        self.browser.click(f"tbody tr[data-row-id=\"pool-{poolName}-{connectionName}\"] .pf-v5-c-table__toggle button")  # click on the row header
+        b = self.browser
+        isExpanded = 'pf-m-expanded' in b.attr(f"tbody tr[data-row-id=\"pool-{poolName}-{connectionName}\"] + tr", "class")
+        b.click(f"tbody tr[data-row-id=\"pool-{poolName}-{connectionName}\"] .pf-v5-c-table__toggle button")
         if isExpanded:
-            self.browser.wait_not_present(f"tbody tr[data-row-id=\"pool-{poolName}-{connectionName}\"] + tr.pf-m-expanded")  # click on the row header
+            b.wait_not_present(f"tbody tr[data-row-id=\"pool-{poolName}-{connectionName}\"] + tr.pf-m-expanded")
         else:
-            self.browser.wait_visible(f"tbody tr[data-row-id=\"pool-{poolName}-{connectionName}\"] + tr.pf-m-expanded")  # click on the row header
+            b.wait_visible(f"tbody tr[data-row-id=\"pool-{poolName}-{connectionName}\"] + tr.pf-m-expanded")
 
     def waitPoolRow(self, poolName, connectionName="system", present=True):
         b = self.browser
@@ -118,12 +122,14 @@ class VirtualMachinesCaseHelpers:
             b.wait_not_present(pool_row)
 
     def toggleNetworkRow(self, networkName, connectionName="system"):
-        isExpanded = 'pf-m-expanded' in self.browser.attr(f"tbody tr[data-row-id=\"network-{networkName}-{connectionName}\"] + tr", "class")  # click on the row header
-        self.browser.click(f"tbody tr[data-row-id=\"network-{networkName}-{connectionName}\"] .pf-v5-c-table__toggle button")  # click on the row header
+        b = self.browser
+        isExpanded = 'pf-m-expanded' in b.attr(f"tbody tr[data-row-id=\"network-{networkName}-{connectionName}\"] + tr",
+                                                          "class")
+        b.click(f"tbody tr[data-row-id=\"network-{networkName}-{connectionName}\"] .pf-v5-c-table__toggle button")
         if isExpanded:
-            self.browser.wait_not_present(f"tbody tr[data-row-id=\"network-{networkName}-{connectionName}\"] + tr.pf-m-expanded")  # click on the row header
+            b.wait_not_present(f"tbody tr[data-row-id=\"network-{networkName}-{connectionName}\"] + tr.pf-m-expanded")
         else:
-            self.browser.wait_visible(f"tbody tr[data-row-id=\"network-{networkName}-{connectionName}\"] + tr.pf-m-expanded")  # click on the row header
+            b.wait_visible(f"tbody tr[data-row-id=\"network-{networkName}-{connectionName}\"] + tr.pf-m-expanded")
 
     def waitNetworkRow(self, networkName, connectionName="system", present=True):
         b = self.browser
@@ -156,7 +162,8 @@ class VirtualMachinesCaseHelpers:
                      if ! echo "$out" | grep -q 'Active.*yes'; then virsh net-start default; fi""")
         m.execute(r"until virsh net-info default | grep 'Active:\s*yes'; do sleep 1; done")
 
-    def createVm(self, name, graphics='none', ptyconsole=False, running=True, memory=128, connection='system', machine=None, os=None):
+    def createVm(self, name, graphics='none', ptyconsole=False, running=True, memory=128,
+                 connection='system', machine=None, os=None):
         m = machine or self.machine
 
         if os is None:
@@ -298,7 +305,7 @@ class VirtualMachinesCaseHelpers:
         cmds = [
             # Generate certificate for https server
             f"cd {self.vm_tmpdir}",
-            f"openssl req -x509 -newkey rsa:4096 -nodes -keyout server.key -new -out server.crt -config {self.vm_tmpdir}/min-openssl-config.cnf -sha256 -days 365 -extensions dn"
+            f"openssl req -x509 -newkey rsa:4096 -nodes -keyout server.key -new -out server.crt -config {self.vm_tmpdir}/min-openssl-config.cnf -sha256 -days 365 -extensions dn"  # noqa: E501
         ]
 
         if self.machine.image.startswith("ubuntu") or self.machine.image.startswith("debian"):
@@ -330,7 +337,8 @@ class VirtualMachinesCaseHelpers:
         #
         # and on certain distribution supports only https (not http)
         # see: block-drv-ro-whitelist option in qemu-kvm.spec for certain distribution
-        return self.machine.spawn(f"cd /var/lib/libvirt; exec python3 {self.vm_tmpdir}/{mock_server_filename} {self.vm_tmpdir}/server.crt {self.vm_tmpdir}/server.key", "httpsserver")
+        return self.machine.spawn(f"cd /var/lib/libvirt; exec python3 {self.vm_tmpdir}/{mock_server_filename} {self.vm_tmpdir}/server.crt {self.vm_tmpdir}/server.key",  # noqa: E501
+                                  "httpsserver")
 
     def waitLogFile(self, logfile, expected_text):
         try:
@@ -438,16 +446,17 @@ class VirtualMachinesCase(testlib.MachineCase, VirtualMachinesCaseHelpers, stora
 
         # user libvirtd instance tends to SIGABRT with "Failed to find user record for uid .." on shutdown during cleanup
         # so make sure that there are no leftover user processes that bleed into the next test
-        self.addCleanup(self.machine.execute, '''pkill -u admin || true; while [ -n "$(pgrep -au admin | grep -v 'systemd --user')" ]; do sleep 0.5; done''')
+        clean_cmd = '''pkill -u admin || true; while [ -n "$(pgrep -au admin | grep -v 'systemd --user')" ]; do sleep 0.5; done'''
+        self.addCleanup(m.execute, clean_cmd)
 
         # FIXME: report downstream; AppArmor noisily denies some operations, but they are not required for us
         self.allow_journal_messages(r'.* type=1400 .* apparmor="DENIED" operation="capable" profile="\S*libvirtd.* capname="sys_rawio".*')
         # AppArmor doesn't like the non-standard path for our storage pools
-        self.allow_journal_messages('.* type=1400 .* apparmor="DENIED" operation="open".* profile="virt-aa-helper" name="%s.*' % self.vm_tmpdir)
+        self.allow_journal_messages(f'.* type=1400 .* apparmor="DENIED" operation="open".* profile="virt-aa-helper" name="{self.vm_tmpdir}.*')
 
         # FIXME: Testing on Arch Linux fails randomly with networkmanager time outs while the test passes.
         if m.image == 'arch':
-            self.allow_journal_messages(r".* couldn't get all properties of org.freedesktop.NetworkManager.Device at /org/freedesktop/NetworkManager/Devices/\d+: Timeout was reached")
+            self.allow_journal_messages(r".* couldn't get all properties of org.freedesktop.NetworkManager.Device at /org/freedesktop/NetworkManager/Devices/\d+: Timeout was reached")  # noqa: E501
 
         # avoid error noise about resources getting cleaned up
         self.addCleanup(lambda: not self.browser.valid or self.browser.logout())

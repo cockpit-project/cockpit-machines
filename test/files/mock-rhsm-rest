@@ -54,7 +54,8 @@ class handler(BaseHTTPRequestHandler):
                 fs = os.fstat(f.fileno())
                 self.send_header("Content-Length", str(fs.st_size))
                 self.end_headers()
-                shutil.copyfileobj(f, self.wfile, 10240)  # Specify 1KiB buffer size, otherwise the download might be too fast on some platforms
+                # Specify 1KiB buffer size, otherwise the download might be too fast on some platforms
+                shutil.copyfileobj(f, self.wfile, 10240)
             return
 
         self.send_response(404)

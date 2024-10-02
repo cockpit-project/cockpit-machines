@@ -61,8 +61,8 @@ class TestMachinesFilesystems(machineslib.VirtualMachinesCase):
         b.set_input_text("#vm-subVmTest1-filesystems-modal-mountTag", "")
         b.set_input_text("#vm-subVmTest1-filesystems-modal-source-group input", "/tmp")
         # In some hosts with the high latency, the path of the expand list needs some time to load, the check will fail if it is too quick.
-        # Thus, add a check that the folder input appears in the expand list(#vm-{name}-filesystems-modal-source) to ensure that the loading is finished
-        # #vm-{name}-filesystems-modal-source only contains the expand list, without the input line
+        # Thus, add a check that the folder input appears in the expand list(#vm-{name}-filesystems-modal-source)
+        # to ensure that the loading is finished #vm-{name}-filesystems-modal-source only contains the expand list, without the input line.
         b.wait_in_text("#vm-subVmTest1-filesystems-modal-source", "/tmp")
         b.click("#vm-subVmTest1-filesystems-modal-source button:nth-child(1)")
         # Check the expand list disappears

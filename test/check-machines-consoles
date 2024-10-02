@@ -158,7 +158,10 @@ fullscreen=0
                         ignore=[".pf-v5-c-console__vnc"], skip_layouts=["rtl"])
 
         # Add a second serial console
-        m.execute("virsh destroy vmWithSerialConsole; virt-xml --add-device vmWithSerialConsole --console pty,target_type=virtio; virsh start vmWithSerialConsole")
+        m.execute("""
+            virsh destroy vmWithSerialConsole;
+            virt-xml --add-device vmWithSerialConsole --console pty,target_type=virtio;
+            virsh start vmWithSerialConsole""")
         b.click("#pf-v5-c-console__type-selector")
         b.wait_visible("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
         b.click("li:contains('Serial console (serial0)') button")

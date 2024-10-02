@@ -64,7 +64,8 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         m.execute("virsh vol-create-as myPoolTwo VolumeTwo --capacity 1G --format qcow2")
         m.execute("virsh vol-create-as myPoolTwo VolumeThree --capacity 1G --format qcow2")
         m.execute("virsh vol-create-as myPoolTwo VolumeFour --capacity 1G --format qcow2")
-        testlib.wait(lambda: all(volume in m.execute("virsh vol-list myPoolTwo") for volume in ["VolumeOne", "VolumeTwo", "VolumeThree", "VolumeFour"]))
+        testlib.wait(lambda: all(volume in m.execute("virsh vol-list myPoolTwo")
+                                 for volume in ["VolumeOne", "VolumeTwo", "VolumeThree", "VolumeFour"]))
         m.execute('virsh pool-refresh myPoolOne; virsh pool-refresh myPoolTwo')
 
         connectionName = m.execute("virsh uri | head -1 | cut -d/ -f4").strip()
@@ -163,7 +164,8 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         # Try deactivating and activating a pool
         b.click(f"#deactivate-pool-myPoolOne-{connectionName}")
         b.wait_in_text(f"#pool-myPoolOne-{connectionName}-state", "inactive")
-        b.wait_in_text(f"tr[data-row-id='pool-myPoolOne-{connectionName}'] + tr .pf-v5-c-empty-state", "Activate the storage pool to administer volumes")
+        b.wait_in_text(f"tr[data-row-id='pool-myPoolOne-{connectionName}'] + tr .pf-v5-c-empty-state",
+                       "Activate the storage pool to administer volumes")
         b.wait_visible(f'#myPoolOne-{connectionName}-create-volume-button:disabled')
         b.click(f"#activate-pool-myPoolOne-{connectionName}")
         b.wait_in_text(f"#pool-myPoolOne-{connectionName}-state", "active")
@@ -598,7 +600,8 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
                     b.wait_not_present("#create-volume-dialog-modal")
                 else:
                     for xfo in self.xfail_objects:
-                        b.wait_in_text(f"#create-volume-dialog-{xfo}-group .pf-v5-c-form__helper-text .pf-m-error", self.xfail_error)
+                        b.wait_in_text(f"#create-volume-dialog-{xfo}-group .pf-v5-c-form__helper-text .pf-m-error",
+                                       self.xfail_error)
 
             def verify(self):
                 # Check that the defined volume is now visible
@@ -1024,6 +1027,7 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         # iscsi pool deletion
         # TODO: Arch image has no iscsi yet
         if "debian" not in m.image and "arch" not in m.image:
+            xfail_error = "this function is not supported by the connection driver: storage pool does not support vol deletion"
             StoragePoolsCreationAndDeletion(self,
                                             name="iscsi-pool-1",
                                             pool_type="iscsi",
@@ -1032,7 +1036,7 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
                                             activate=True,
                                             remove_volume=True,
                                             xfail=True,
-                                            xfail_error="this function is not supported by the connection driver: storage pool does not support vol deletion").execute()
+                                            xfail_error=xfail_error).execute()
 
             StoragePoolsCreationAndDeletion(self,
                                             name="iscsi-pool-2",
