@@ -411,6 +411,10 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         b = self.browser
         m = self.machine
 
+        def get_snapshot_state(snap_name):
+            script = f"virsh snapshot-info --domain subVmTest1 --snapshotname {snap_name} | grep 'Current:' | awk '{{print $2}}'"
+            return m.execute(script).strip()
+
         self.createVm("subVmTest1")
 
         # Check snapshot for running VM
@@ -433,8 +437,8 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
 
         b.wait_visible("#vm-subVmTest1-snapshot-1-current")
         b.wait_not_present("#vm-subVmTest1-snapshot-0-current")
-        self.assertEqual("yes", m.execute("virsh snapshot-info --domain subVmTest1 --snapshotname snapshotA | grep 'Current:' | awk '{print $2}'").strip())
-        self.assertEqual("no", m.execute("virsh snapshot-info --domain subVmTest1 --snapshotname snapshotB | grep 'Current:' | awk '{print $2}'").strip())
+        self.assertEqual("yes", get_snapshot_state("snapshotA"))
+        self.assertEqual("no", get_snapshot_state("snapshotB"))
 
         b.click("#vm-subVmTest1-snapshot-0-revert")
         b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Revert to snapshot snapshotB")
@@ -442,8 +446,8 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
 
         b.wait_not_present("#vm-subVmTest1-snapshot-1-current")
         b.wait_visible("#vm-subVmTest1-snapshot-0-current")
-        self.assertEqual("no", m.execute("virsh snapshot-info --domain subVmTest1 --snapshotname snapshotA | grep 'Current:' | awk '{print $2}'").strip())
-        self.assertEqual("yes", m.execute("virsh snapshot-info --domain subVmTest1 --snapshotname snapshotB | grep 'Current:' | awk '{print $2}'").strip())
+        self.assertEqual("no", get_snapshot_state("snapshotA"))
+        self.assertEqual("yes", get_snapshot_state("snapshotB"))
 
         # Test force revert
         # Create snapshot of shut off VM
@@ -473,9 +477,10 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         b.wait_not_present("#vm-subVmTest1-snapshot-1-current")
         b.wait_not_present("#vm-subVmTest1-snapshot-2-current")
         b.wait_visible("#vm-subVmTest1-snapshot-0-current")
-        self.assertEqual("no", m.execute("virsh snapshot-info --domain subVmTest1 --snapshotname snapshotA | grep 'Current:' | awk '{print $2}'").strip())
-        self.assertEqual("no", m.execute("virsh snapshot-info --domain subVmTest1 --snapshotname snapshotB | grep 'Current:' | awk '{print $2}'").strip())
-        self.assertEqual("yes", m.execute("virsh snapshot-info --domain subVmTest1 --snapshotname snapshotC | grep 'Current:' | awk '{print $2}'").strip())
+
+        self.assertEqual("no", get_snapshot_state("snapshotA"))
+        self.assertEqual("no", get_snapshot_state("snapshotB"))
+        self.assertEqual("yes", get_snapshot_state("snapshotC"))
 
     def testMemoryLocation(self, connection="system"):
         b = self.browser
