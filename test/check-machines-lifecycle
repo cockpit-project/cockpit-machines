@@ -530,7 +530,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         m.execute(f"virsh undefine {name}")
         b.wait_visible(f"tr[data-row-id=vm-{name}-system][data-vm-transient=true]")
         b.click(f"#vm-{name}-system-action-kebab")
-        b.wait_visible(f".pf-m-disabled #vm-{name}-system-delete")  # delete buton should be disabled
+        b.wait_visible(f".pf-m-aria-disabled #vm-{name}-system-delete")  # delete buton should be disabled
         b.click(f"#vm-{name}-system-forceOff")
         b.wait_visible(f"#vm-{name}-system-confirm-action-modal")
         b.click(f".pf-v5-c-modal-box__footer #vm-{name}-system-forceOff")
