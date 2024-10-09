@@ -473,7 +473,7 @@ const VmActions = ({ vm, vms, onAddErrorNotification, isDetailsPage }) => {
                 <Tooltip key={`${id}-delete`} id={`${id}-delete-tooltip`} content={_("This VM is transient. Shut it down if you wish to delete it.")}>
                     <DropdownItem id={`${id}-delete`}
                                   className='pf-m-danger'
-                                  isDisabled>
+                                  isAriaDisabled>
                         {_("Delete")}
                     </DropdownItem>
                 </Tooltip>
