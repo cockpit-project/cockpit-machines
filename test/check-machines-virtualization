@@ -21,6 +21,10 @@ import machineslib
 import testlib
 
 
+def get_systemd_services(libvirt_servicename):
+    return f"{libvirt_servicename}-ro.socket {libvirt_servicename}.socket {libvirt_servicename}-admin.socket"
+
+
 @testlib.nondestructive
 class TestMachinesVirtualization(machineslib.VirtualMachinesCase):
 
@@ -59,10 +63,8 @@ class TestMachinesVirtualization(machineslib.VirtualMachinesCase):
         self.addCleanup(m.execute, f"echo '{core_pattern}' > /proc/sys/kernel/core_pattern")
 
         def stopLibvirtSocket():
-            m.execute(
-    f"systemctl stop {self.getLibvirtServiceName()}-ro.socket {self.getLibvirtServiceName()}.socket {self.getLibvirtServiceName()}-admin.socket")
-            self.addCleanup(m.execute,
-    f"systemctl start {self.getLibvirtServiceName()}-ro.socket {self.getLibvirtServiceName()}.socket {self.getLibvirtServiceName()}-admin.socket")
+            m.execute(f"systemctl stop {get_systemd_services(self.getLibvirtServiceName())}")
+            self.addCleanup(m.execute, f"systemctl start {get_systemd_services(self.getLibvirtServiceName())}")
 
         def stopLibvirtService():
             m.execute(f"systemctl stop {libvirtServiceName}")

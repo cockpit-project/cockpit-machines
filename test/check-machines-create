@@ -99,7 +99,8 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         runner.checkFilteredOsTest(TestMachinesCreate.VmDialog(self, os_name=config.MAGEIA_3_FILTERED_OS))
 
         # check that newer oses are present and searchable with substring match
-        runner.checkFilteredOsTest(TestMachinesCreate.VmDialog(self, os_name=config.WINDOWS_SERVER_10, os_search_name=config.WINDOWS_SERVER_10_SHORT))
+        runner.checkFilteredOsTest(TestMachinesCreate.VmDialog(self, os_name=config.WINDOWS_SERVER_10,
+                                                               os_search_name=config.WINDOWS_SERVER_10_SHORT))
 
         # check OS versions are sorted in alphabetical order
         runner.checkSortedOsTest(TestMachinesCreate.VmDialog(self), [config.FEDORA_29, config.FEDORA_28])
@@ -115,13 +116,16 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         # location
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, sourceType='url',
                                                                          location="invalid/url",
-                                                                         os_name=config.FEDORA_28), {"source-url": "Source should start with"})
+                                                                         os_name=config.FEDORA_28),
+                                                                         {"source-url": "Source should start with"})
 
         # memory
-        runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, memory_size=0, os_name=None), {"memory": "Memory must not be 0"})
+        runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, memory_size=0, os_name=None),
+                                             {"memory": "Memory must not be 0"})
 
         # storage
-        runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, storage_size=0), {"storage": "Storage size must not be 0"})
+        runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, storage_size=0),
+                                             {"storage": "Storage size must not be 0"})
 
         # Try setting the memory to value bigger than it's available on the OS
         # The dialog should auto-adjust it to match the OS'es total memory
@@ -165,7 +169,8 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                                                          location=config.VALID_DISK_IMAGE_PATH,
                                                                          user_login="foo",
                                                                          create_and_run=True),
-                                             {"create-vm-dialog-user-password-pw1": "User password must not be empty when user login is set"},
+                                             {"create-vm-dialog-user-password-pw1":
+                                              "User password must not be empty when user login is set"},
                                              is_warning=True)
 
         # user login
@@ -611,7 +616,8 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         b.wait_in_text("#vm-pxe-guest-system-state", "Running")
         self.machine.execute("virsh destroy pxe-guest")
 
-        # Verify that the newly created disk is first in the boot order and the network used for the PXE boot is not on the bootable devices list
+        # Verify that the newly created disk is first in the boot order and the network used
+        # for the PXE boot is not on the bootable devices list.
         b.wait_in_text("#vm-pxe-guest-boot-order", "disk")
         b.wait_not_in_text("#vm-pxe-guest-boot-order", "network")
 
@@ -1087,7 +1093,8 @@ vnc_password= "{vnc_passwd}"
 
             b.set_input_text("#storage-limit", "127")
             # storage limit must be a warning, not an error
-            b.wait_in_text("#storage-limit-helper.pf-m-warning", "The selected operating system has minimum storage size requirement of 128 MiB")
+            b.wait_in_text("#storage-limit-helper.pf-m-warning",
+                           "The selected operating system has minimum storage size requirement of 128 MiB")
 
             b.set_input_text("#os-select-group input", suse)
             b.click(f"#os-select li button:contains('{suse}')")
@@ -1277,7 +1284,8 @@ vnc_password= "{vnc_passwd}"
 
             self.browser.wait_text(f"#vm-{self.name}-{self.connection}-state", "Shut off")
 
-            self.assertIn(f"backing file: {self.location}", self.machine.execute(f"qemu-img info /var/lib/libvirt/images/{self.name}.qcow2"))
+            self.assertIn(f"backing file: {self.location}",
+                          self.machine.execute(f"qemu-img info /var/lib/libvirt/images/{self.name}.qcow2"))
 
         def createRespectQemuConfConsoleConfig(self, vnc_listen, spice_listen, vnc_passwd, spice_passwd):
             m = self.machine
@@ -1633,8 +1641,10 @@ vnc_password= "{vnc_passwd}"
             root.find('os').find('resources').find('minimum').find('storage').text = '134217728'
             root.find('os').find('eol-date').text = '9999-12-31'
             new_fedora_28_xml = ET.tostring(root)
-            self.machine.execute(f"echo '{str(new_fedora_28_xml, 'utf-8')}' > {self.test_obj.vm_tmpdir}/fedora-28.xml")
-            self.machine.execute(f"mount -o bind  {self.test_obj.vm_tmpdir}/fedora-28.xml /usr/share/osinfo/os/fedoraproject.org/fedora-28.xml")
+            self.machine.execute(f"""
+            echo '{str(new_fedora_28_xml, 'utf-8')}' > {self.test_obj.vm_tmpdir}/fedora-28.xml
+            mount -o bind  {self.test_obj.vm_tmpdir}/fedora-28.xml /usr/share/osinfo/os/fedoraproject.org/fedora-28.xml
+            """)
             self.test_obj.addCleanup(self.machine.execute, "umount /usr/share/osinfo/os/fedoraproject.org/fedora-28.xml")
 
             # Fake distro with no minimum ram or storage defined
@@ -1645,8 +1655,10 @@ vnc_password= "{vnc_passwd}"
             minimum.remove(minimum.find('ram'))
             minimum.remove(minimum.find('storage'))
             new_fedora_29_xml = ET.tostring(root)
-            self.machine.execute(f"echo '{str(new_fedora_29_xml, 'utf-8')}' > {self.test_obj.vm_tmpdir}/fedora-29.xml")
-            self.machine.execute(f"mount -o bind  {self.test_obj.vm_tmpdir}/fedora-29.xml /usr/share/osinfo/os/fedoraproject.org/fedora-29.xml")
+            self.machine.execute(f"""
+            echo '{str(new_fedora_29_xml, 'utf-8')}' > {self.test_obj.vm_tmpdir}/fedora-29.xml
+            mount -o bind  {self.test_obj.vm_tmpdir}/fedora-29.xml /usr/share/osinfo/os/fedoraproject.org/fedora-29.xml
+            """)
             self.test_obj.addCleanup(self.machine.execute, "umount /usr/share/osinfo/os/fedoraproject.org/fedora-29.xml")
 
         def _fakeOsDBInfoRhel(self):
@@ -1691,7 +1703,8 @@ vnc_password= "{vnc_passwd}"
             if self.machine.image == "arch":
                 self.machine.execute(f"cp /boot/vmlinuz-linux {distro_tree_path}images/pxeboot/vmlinuz")
             else:
-                self.machine.execute(f"cp /boot/vmlinuz-{self.machine.execute('uname -r').rstrip()} {distro_tree_path}images/pxeboot/vmlinuz")
+                self.machine.execute(
+                    f"cp /boot/vmlinuz-{self.machine.execute('uname -r').rstrip()} {distro_tree_path}images/pxeboot/vmlinuz")
             self.machine.execute("chown -R 777 /var/lib/libvirt/pub")
 
         def _fakeRhelDownload(self):
@@ -2111,7 +2124,8 @@ vnc_password= "{vnc_passwd}"
         b.click(".pf-v5-c-modal-box__footer button:contains(Create and edit)")
         b.wait_not_present("#create-vm-dialog")
 
-        testlib.wait(lambda: "<cockpit_machines:os_variant>fedora28</cockpit_machines:os_variant>" in m.execute("virsh dumpxml VmNotInstalled"),
+        testlib.wait(lambda: "<cockpit_machines:os_variant>fedora28</cockpit_machines:os_variant>"
+                     in m.execute("virsh dumpxml VmNotInstalled"),
                      delay=3)
 
         self.waitVmPage("VmNotInstalled")
