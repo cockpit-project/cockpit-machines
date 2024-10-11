@@ -101,8 +101,16 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
             b.wait_in_text(".pf-v5-c-popover__body", message)
             m.execute("virt-xml subVmTest1 --remove-device --watchdog 1 --update")
 
-        checkConnectionDescription("#import-existing-vm", "Ideal for server VMs")
-        checkConnectionDescription("#create-new-vm", "Good choice for desktop virtualization")
+        if superuser:
+            checkConnectionDescription("#import-existing-vm", "Ideal for server VMs")
+            checkConnectionDescription("#create-new-vm", "Good choice for desktop virtualization")
+        else:
+            b.click("#create-new-vm")
+            b.wait_visible("#create-vm-dialog")
+            b.wait_not_present("#connection")
+            b.click('#create-vm-dialog button:contains("Cancel")')
+            b.wait_not_present("#create-vm-dialog")
+
         checkNeedsShutdownLabel("Watchdog")
 
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
