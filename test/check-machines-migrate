@@ -57,7 +57,8 @@ class TestMachinesMigration(machineslib.VirtualMachinesCase):
             machine2.execute("virsh vol-create-as images subVmTest1-2.img --capacity 1M --format qcow2")
 
         if fail != "port_closed":
-            # Plain migration: The source host VM opens a direct unencrypted TCP connection to the destination host for sending the migration data.
+            # Plain migration: The source host VM opens a direct unencrypted TCP connection to the destination host
+            # for sending the migration data.
             # Unless a port is manually specified, libvirt will choose a migration port in the range 49152-49215,
             # which will need to be open in the firewall on the remote host.
             # https://wiki.libvirt.org/page/FAQ

@@ -94,9 +94,11 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         m.execute("virsh vol-create-as myPoolOne mydisk4 --capacity 100M --format qcow2")
         testlib.wait(lambda: all(disk in m.execute("virsh vol-list myPoolOne") for disk in ["mydisk", "mydisk2", "mydisk3", "mydisk4"]))
 
-        m.execute(f"virsh attach-disk --domain subVmTest1 --source {p1}/mydisk --target vde --targetbus virtio --persistent")
-        m.execute(f"virsh attach-disk --domain subVmTest1 --source {p1}/mydisk2 --target vdf --targetbus virtio")
-        m.execute(f"virsh attach-disk --domain subVmTest1 --source {p1}/mydisk3 --target vdg --targetbus virtio --subdriver qcow2 --persistent")
+        m.execute(f"""
+        virsh attach-disk --domain subVmTest1 --source {p1}/mydisk --target vde --targetbus virtio --persistent
+        virsh attach-disk --domain subVmTest1 --source {p1}/mydisk2 --target vdf --targetbus virtio
+        virsh attach-disk --domain subVmTest1 --source {p1}/mydisk3 --target vdg --targetbus virtio --subdriver qcow2 --persistent
+        """)
 
         self.login_and_go("/machines")
         self.waitPageInit()
@@ -195,8 +197,10 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
         # Virtio bus type should not be shown for CDROM devices
         m.execute("touch /var/lib/libvirt/novell.iso")
-        m.execute(
-"virsh attach-disk --domain subVmTest1 --source /var/lib/libvirt/novell.iso --target hda --type cdrom --targetbus sata --mode readonly --persistent")
+        m.execute("""
+            virsh attach-disk --domain subVmTest1 --source /var/lib/libvirt/novell.iso --target hda \
+                    --type cdrom --targetbus sata --mode readonly --persistent
+        """)
         # virsh attach-disk want send an event for offline VM changes
         b.reload()
         b.enter_page('/machines')
@@ -391,7 +395,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
                 # Choose storage pool
                 b.select_from_dropdown(f"#vm-{self.vm_name}-disks-{self.target}-insert-dialog-adddisk-existing-select-pool", self.pool_name)
                 # Select from the available volumes
-                b.select_from_dropdown(f"#vm-{self.vm_name}-disks-{self.target}-insert-dialog-adddisk-existing-select-volume", self.volume_name)
+                b.select_from_dropdown(f"#vm-{self.vm_name}-disks-{self.target}-insert-dialog-adddisk-existing-select-volume",
+                                       self.volume_name)
 
             return self
 
@@ -469,7 +474,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             # https://piware.de/2013/09/how-to-watch-system-d-bus-method-calls/
             m.write("/usr/share/dbus-1/system-local.conf", SYSTEM_LOCAL_CONF)
             # Setup dbus monitor to watch for disk ejection call
-            m.spawn("dbus-monitor --system \"interface='org.libvirt.Domain',member='UpdateDevice'\" > /tmp/dbus_monitor_logs", "dbusmonitor")
+            m.spawn(
+            "dbus-monitor --system \"interface='org.libvirt.Domain',member='UpdateDevice'\" > /tmp/dbus_monitor_logs", "dbusmonitor")
 
             # Force eject the disc
             b.click(".pf-v5-c-modal-box__footer button:contains(Force eject)")
@@ -623,7 +629,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
                 if self.volume_format:
                     b.select_from_dropdown(f"#vm-{self.vm_name}-disks-adddisk-new-format", self.volume_format)
                 else:
-                    b.wait_val(f"#vm-{self.vm_name}-disks-adddisk-new-format", self.getExpectedFormat(self.pool_type, self.expected_volume_format))
+                    b.wait_val(f"#vm-{self.vm_name}-disks-adddisk-new-format",
+                               self.getExpectedFormat(self.pool_type, self.expected_volume_format))
             elif self.mode == "custom-path":
                 b.wait_visible(f"#vm-{self.vm_name}-disks-adddisk-file")
                 # Type in file path
@@ -788,8 +795,10 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         target_iqn = "iqn.2019-09.cockpit.lan"
         self.prepareStorageDeviceOnISCSI(target_iqn)
 
-        m.execute(f"virsh pool-define-as iscsi-pool --type iscsi --target /dev/disk/by-id --source-host 127.0.0.1 --source-dev {target_iqn}")
-        m.execute("virsh pool-start iscsi-pool")
+        m.execute(f"""
+        virsh pool-define-as iscsi-pool --type iscsi --target /dev/disk/by-id --source-host 127.0.0.1 --source-dev {target_iqn}
+        virsh pool-start iscsi-pool
+        """)
         testlib.wait(lambda: "unit:0:0:0" in self.machine.execute("virsh pool-refresh iscsi-pool; virsh vol-list iscsi-pool"), delay=3)
 
         self.addCleanup(self.machine.execute, "virsh pool-destroy iscsi-pool; virsh pool-undefine iscsi-pool")
@@ -973,7 +982,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         # First select some iso file, where disk type is set to "cdrom"
         b.select_from_dropdown("#vm-subVmTest1-disks-adddisk-existing-select-pool", "images")
         b.select_from_dropdown("#vm-subVmTest1-disks-adddisk-existing-select-volume", "defaultVol.iso")
-        # Then choose a different storage pool without selecting the volume (let UI automatically select the first volume from loop-disk storage pool)
+        # Then choose a different storage pool without selecting the volume
+        # (let UI automatically select the first volume from loop-disk storage pool)
         # This tests that type of disk automatically resets back to default "disk"
         b.select_from_dropdown("#vm-subVmTest1-disks-adddisk-existing-select-pool", "loop-disk")
         # Check that newly attached disk is indeed of type "disk"
@@ -1561,7 +1571,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         m.execute(f"virsh attach-disk --domain subVmTest1 --source {sda_path} --target sda --targetbus sata --persistent")
         m.execute(f"virsh attach-disk --domain subVmTest1 --source {sdb_path} --target sdb --targetbus sata --persistent")
         m.execute(f"virsh attach-disk --domain subVmTest1 --source {sdc_path} --target sdc --targetbus sata --persistent")
-        m.execute("virsh attach-disk --domain subVmTest1 --config --target sdd --type cdrom --source ''")  # attach disk with no file (empty cd-rom)
+        # attach disk with no file (empty cd-rom)
+        m.execute("virsh attach-disk --domain subVmTest1 --config --target sdd --type cdrom --source ''")
         m.execute("virt-xml subVmTest1 --add-device --disk type='block',source.dev='/dev/null',target.dev=sde")
 
         # Need to refresh when attaching disk for shutoff VM

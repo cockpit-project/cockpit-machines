@@ -22,7 +22,14 @@ import xml.etree.ElementTree as ET
 
 import machineslib
 import testlib
-from machinesxmls import TEST_NETWORK2_CLASH_XML, TEST_NETWORK2_XML, TEST_NETWORK3_XML, TEST_NETWORK4_XML, TEST_NETWORK_IPV6_XML, TEST_NETWORK_XML
+from machinesxmls import (
+    TEST_NETWORK2_CLASH_XML,
+    TEST_NETWORK2_XML,
+    TEST_NETWORK3_XML,
+    TEST_NETWORK4_XML,
+    TEST_NETWORK_IPV6_XML,
+    TEST_NETWORK_XML,
+)
 
 
 def getNetworkDevice(m):
@@ -78,12 +85,16 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         b.wait_visible(f"#network-test_network2-{connectionName}-autostart:not(:checked)")
         b.wait_in_text(f"#network-test_network2-{connectionName}-ipv4-address", "192.168.100.1")
         b.wait_in_text(f"#network-test_network2-{connectionName}-ipv4-netmask", "255.255.255.0")
-        b.wait_in_text(f"#network-test_network2-{connectionName}-ipv4-dhcp-range", "192.168.100.128 - 192.168.100.170")
-        b.wait_in_text(f"#network-test_network2-{connectionName}-ipv4-dhcp-host-0", "Name: paul, MAC: 00:16:3E:5D:C7:9E, IP: 192.168.122.254")
+        b.wait_in_text(f"#network-test_network2-{connectionName}-ipv4-dhcp-range",
+                       "192.168.100.128 - 192.168.100.170")
+        b.wait_in_text(f"#network-test_network2-{connectionName}-ipv4-dhcp-host-0",
+                       "Name: paul, MAC: 00:16:3E:5D:C7:9E, IP: 192.168.122.254")
         b.wait_in_text(f"#network-test_network2-{connectionName}-ipv6-address", "fd00:e81d:a6d7:55::1")
         b.wait_in_text(f"#network-test_network2-{connectionName}-ipv6-prefix", "64")
-        b.wait_in_text(f"#network-test_network2-{connectionName}-ipv6-dhcp-range", "fd00:e81d:a6d7:55::100 - fd00:e81d:a6d7:55::1ff")
-        b.wait_in_text(f"#network-test_network2-{connectionName}-ipv6-dhcp-host-0", "Name: simon, IP: 2001:db8:ca2:2:3::1")
+        b.wait_in_text(f"#network-test_network2-{connectionName}-ipv6-dhcp-range",
+                       "fd00:e81d:a6d7:55::100 - fd00:e81d:a6d7:55::1ff")
+        b.wait_in_text(f"#network-test_network2-{connectionName}-ipv6-dhcp-host-0",
+                       "Name: simon, IP: 2001:db8:ca2:2:3::1")
         b.wait_in_text(f"#network-test_network2-{connectionName}-ipv6-dhcp-host-1",
                        "ID: 0:1:0:1:18:aa:62:fe:0:16:3e:44:55:66, IP: 2001:db8:ca2:2:3::2")
 
@@ -126,9 +137,8 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
 
         # HACK: Firefox 112 on RHEL 8 does not have `:has` yet, so for now use JavaScript to obtain the elements parent sibling.
         b.eval_js("""
-           ph_input_form_helper_text = function(id) {
-              return document.getElementById(id).parentElement.parentElement.querySelector(".pf-v5-c-helper-text__item.pf-m-error").textContent
-
+       ph_input_form_helper_text = function(id) {
+          return document.getElementById(id).parentElement.parentElement.querySelector(".pf-v5-c-helper-text__item.pf-m-error").textContent
         }""")
 
         class NetworkCreateDialog(object):
@@ -208,6 +218,9 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
             def create(self):
                 b.click(".pf-v5-c-modal-box__footer button:contains(Create)")
 
+                def get_helper_text(xfo):
+                    return f"#create-network-dialog .create-network-{xfo} .pf-v5-c-form__helper-text .pf-v5-c-helper-text__item.pf-m-error"
+
                 if (self.xfail):
                     # Check incomplete dialog
                     if "body" in self.xfail_objects:
@@ -218,9 +231,7 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
                     else:
                         for xfo in self.xfail_objects:
                             if "range" in xfo:
-                                b.wait_in_text(
-                                    f"#create-network-dialog .create-network-{xfo} .pf-v5-c-form__helper-text .pf-v5-c-helper-text__item.pf-m-error",
-                                    self.xfail_error)
+                                b.wait_in_text(get_helper_text(xfo), self.xfail_error)
                             else:
                                 self.test_obj.assertIn(self.xfail_error,
                                                        b.eval_js(f"ph_input_form_helper_text(\"create-network-{xfo}\")"))

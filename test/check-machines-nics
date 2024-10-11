@@ -68,8 +68,10 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
                         ignore=["#vm-subVmTest1-network-1-mac",
                                 "#vm-subVmTest1-network-1-ipv4-address",
                                 "#vm-subVmTest1-network-1-ipv6-address"],
-                        # MAC and IP address values are not static, and their values affect the width of their columns and neighbouring columns
-                        # With medium layout this variable width of the columns makes pixel tests references of the table different each test run
+                        # MAC and IP address values are not static, and their values affect the width of
+                        # their columns and neighbouring columns
+                        # With medium layout this variable width of the columns makes pixel tests references
+                        # of the table different each test run
                         skip_layouts=["medium", "rtl"])
 
         # Remove default interface
@@ -136,8 +138,10 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
                         ignore=["#vm-subVmTest1-network-1-mac", "#vm-subVmTest1-network-1-ipv4-address", "#vm-subVmTest1-network-1-source",
                                 "#vm-subVmTest1-network-2-mac", "#vm-subVmTest1-network-2-ipv4-address", "#vm-subVmTest1-network-2-source",
                                 "#vm-subVmTest1-network-3-mac", "#vm-subVmTest1-network-3-ipv4-address", "#vm-subVmTest1-network-3-source"],
-                        # MAC and IP address values are not static, and their values affect the width of their columns and neighbouring columns
-                        # With medium layout this variable width of the columns makes pixel tests references of the table different each test run
+                        # MAC and IP address values are not static, and their values affect the width of
+                        # their columns and neighbouring columns
+                        # With medium layout this variable width of the columns makes pixel tests references of
+                        # the table different each test run
                         skip_layouts=["medium", "rtl"])
 
         # Start vm and wait until kernel is booted
@@ -215,11 +219,14 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         # Detach NIC when the VM is shutoff, Also check this issue: https://bugzilla.redhat.com/show_bug.cgi?id=1791543
         self.performAction("subVmTest1", "off")
         # Attach since no NIC now
-        m.execute("virsh attach-interface --domain subVmTest1 --type network --source default --model virtio --mac 52:54:00:4b:73:5f --config")
-        m.execute("virsh attach-interface --domain subVmTest1 --type bridge --source virbr0 --model virtio --mac 52:54:00:4b:73:6f --config")
-        m.execute("virsh attach-interface --domain subVmTest1 --type network --source default --model virtio --mac 52:54:00:4b:73:4f --config")
+        m.execute("""
+        virsh attach-interface --domain subVmTest1 --type network --source default --model virtio --mac 52:54:00:4b:73:5f --config
+        virsh attach-interface --domain subVmTest1 --type bridge --source virbr0 --model virtio --mac 52:54:00:4b:73:6f --config
+        virsh attach-interface --domain subVmTest1 --type network --source default --model virtio --mac 52:54:00:4b:73:4f --config
+        """)
         # Add network with the same MAC address
-        m.execute("virsh attach-interface --domain subVmTest1 --type network --source default --model e1000e --mac 52:54:00:4b:73:5f --config")
+        m.execute(
+            "virsh attach-interface --domain subVmTest1 --type network --source default --model e1000e --mac 52:54:00:4b:73:5f --config")
         # Refresh for getting new added NIC
         b.reload()
         b.enter_page('/machines')
@@ -473,7 +480,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         def verify(self):
             dom_xml = "virsh -c qemu:///system dumpxml --domain subVmTest1"
             mac_string = f'"{self.mac}"'
-            xmllint_element = f"{dom_xml} | xmllint --xpath 'string(//domain/devices/interface[starts-with(mac/@address,{mac_string})]/{{prop}})' -"
+            xmllint_element = f"{dom_xml} | xmllint --xpath 'string(//domain/devices/interface[starts-with(mac/@address,{mac_string})]/{{prop}})' -"  # noqa: E501
 
             if self.source_type == "network":
                 self.assertEqual(
@@ -688,7 +695,8 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
 
         def open(self):
             self.browser.click("#vm-subVmTest1-add-iface-button")  # open the Network Interfaces subtab
-            self.browser.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Add virtual network interface")
+            self.browser.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title",
+                                      "Add virtual network interface")
 
         def fill(self):
             self.browser.select_from_dropdown("#vm-subVmTest1-add-iface-type", self.source_type)
@@ -737,7 +745,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             # Verify libvirt XML
             dom_xml = "virsh -c qemu:///system dumpxml --domain subVmTest1"
             mac_string = f'"{self.mac}"'
-            xmllint_element = f"{dom_xml} | xmllint --xpath 'string(//domain/devices/interface[starts-with(mac/@address,{mac_string})]/{{prop}})' -"
+            xmllint_element = f"{dom_xml} | xmllint --xpath 'string(//domain/devices/interface[starts-with(mac/@address,{mac_string})]/{{prop}})' -"  # noqa: E501
 
             if (self.source_type == "network"):
                 self.assertEqual("network", self.machine.execute(xmllint_element.format(prop='@type')).strip())

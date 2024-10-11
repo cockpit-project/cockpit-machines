@@ -421,10 +421,13 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         self.createVm("subVmTest1")
 
         # Check snapshot for running VM
-        m.execute("virsh detach-disk --domain subVmTest1 --target vda --config")  # vda is raw disk, which are not supported by internal snapshots
-        m.execute("qemu-img create -f qcow2 /var/lib/libvirt/images/foobar.qcow2 1M")
-        m.execute("virsh attach-disk --domain subVmTest1 --source /var/lib/libvirt/images/foobar.qcow2 --target vdb --subdriver qcow2 --config")
-        m.execute("virsh snapshot-create-as --domain subVmTest1 --name snapshotA --description 'Description of snapshotA'")
+        # vda is raw disk, which are not supported by internal snapshots
+        m.execute("""
+        virsh detach-disk --domain subVmTest1 --target vda --config
+        qemu-img create -f qcow2 /var/lib/libvirt/images/foobar.qcow2 1M
+        virsh attach-disk --domain subVmTest1 --source /var/lib/libvirt/images/foobar.qcow2 --target vdb --subdriver qcow2 --config
+        virsh snapshot-create-as --domain subVmTest1 --name snapshotA --description 'Description of snapshotA'
+        """)
         time.sleep(1)
         m.execute("virsh snapshot-create-as --domain subVmTest1 --name snapshotB --description 'Description of snapshotB'")
         # snapshotB is the current snapshot
