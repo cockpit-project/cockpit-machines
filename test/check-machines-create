@@ -1641,8 +1641,8 @@ vnc_password= "{vnc_passwd}"
             root.find('os').find('resources').find('minimum').find('storage').text = '134217728'
             root.find('os').find('eol-date').text = '9999-12-31'
             new_fedora_28_xml = ET.tostring(root)
+            self.machine.write(f"{self.test_obj.vm_tmpdir}/fedora-28.xml", str(new_fedora_28_xml, 'utf-8'))
             self.machine.execute(f"""
-            echo '{str(new_fedora_28_xml, 'utf-8')}' > {self.test_obj.vm_tmpdir}/fedora-28.xml
             mount -o bind  {self.test_obj.vm_tmpdir}/fedora-28.xml /usr/share/osinfo/os/fedoraproject.org/fedora-28.xml
             """)
             self.test_obj.addCleanup(self.machine.execute, "umount /usr/share/osinfo/os/fedoraproject.org/fedora-28.xml")
