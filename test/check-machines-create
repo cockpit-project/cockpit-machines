@@ -519,12 +519,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                                       create_and_run=True))
 
         # Set up the PXE server configuration files
-        cmds = [
-            "mkdir -p /var/lib/libvirt/dnsmasq",
-            f"echo \"{PXE_SERVER_CFG}\" > /var/lib/libvirt/dnsmasq/pxe.cfg",
-            "chmod 666 /var/lib/libvirt/dnsmasq/pxe.cfg"
-        ]
-        self.machine.execute("; ".join(cmds))
+        self.machine.write("/var/lib/libvirt/dnsmasq/pxe.cfg", PXE_SERVER_CFG, perm="0666")
 
         # Define and start a NAT network with tftp server configuration
         self.machine.write("/tmp/pxe-nat.xml", NETWORK_XML_PXE)
@@ -1605,8 +1600,8 @@ vnc_password= "{vnc_passwd}"
                 self._fakeFedoraTree()
 
             # Make sure we don't run into long DNS timeouts when trying to contact this server
-            self.machine.execute("echo >>/etc/hosts 127.0.0.42 mirror.i3d.net")
-            self.machine.execute("echo >>/etc/hosts ::1 mirror.i3d.net")
+            self.machine.write("/etc/hosts", "127.0.0.42 mirror.i3d.net", append=True)
+            self.machine.write("/etc/hosts", "::1 mirror.i3d.net", append=True)
 
             # console for try INSTALL
             self.test_obj.allow_journal_messages('.*connection.*')
