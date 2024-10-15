@@ -23,6 +23,7 @@ import traceback
 import netlib
 import storagelib
 import testlib
+from machine import testvm
 
 
 def hasMonolithicDaemon(image):
@@ -33,6 +34,8 @@ def hasMonolithicDaemon(image):
 
 
 class VirtualMachinesCaseHelpers:
+    machine: testvm.Machine
+
     def waitPageInit(self):
         m = self.machine
         virtualization_disabled_ignored = \
@@ -143,10 +146,12 @@ class VirtualMachinesCaseHelpers:
         dom_xml = f"virsh -c qemu:///system dumpxml --domain {vmName}"
         return self.machine.execute(f"{dom_xml} | xmllint --xpath 'string(//domain/devices/interface/mac/@address)' -").strip()
 
-    def getDomainXpathValue(self, vmName: str, xpath: str, *, inactive: bool = False):
+    def getDomainXpathValue(self, vmName: str, xpath: str, *, str_value: bool = False, inactive: bool = False):
         dom_xml = f"virsh dumpxml {vmName} "
         if inactive:
             dom_xml += "--inactive "
+        if str_value:
+            xpath = f"string({xpath})"
         return self.machine.execute(f"{dom_xml} | xmllint --xpath '{xpath}' -").strip()
 
     def getLibvirtServiceName(self):

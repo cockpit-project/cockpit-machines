@@ -703,8 +703,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
         def verify_disk_added(self):
             def _get_disk_prop(target, vm_name, prop):
-                x_path = f"/domain/devices/disk[target/@dev='{target}']/{prop}"
-                return m.execute(f"virsh dumpxml {self.vm_name} | xmllint --xpath \"{x_path}\" -").strip()
+                x_path = f'/domain/devices/disk[target/@dev="{target}"]/{prop}'
+                return self.test_obj.getDomainXpathValue(self.vm_name, x_path)
 
             b = self.test_obj.browser
             m = self.test_obj.machine
