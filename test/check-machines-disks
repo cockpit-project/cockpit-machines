@@ -92,7 +92,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         m.execute("virsh vol-create-as myPoolOne mydisk2 --capacity 100M --format raw")
         m.execute("virsh vol-create-as myPoolOne mydisk3 --capacity 100M --format qcow2")
         m.execute("virsh vol-create-as myPoolOne mydisk4 --capacity 100M --format qcow2")
-        testlib.wait(lambda: all(disk in m.execute("virsh vol-list myPoolOne") for disk in ["mydisk", "mydisk2", "mydisk3", "mydisk4"]))
+        disks = ["mydisk", "mydisk2", "mydisk3", "mydisk4"]
+        testlib.wait(lambda: all(disk in m.execute("virsh vol-list myPoolOne") for disk in disks))
 
         m.execute(f"""
         virsh attach-disk --domain subVmTest1 --source {p1}/mydisk --target vde --targetbus virtio --persistent
@@ -393,7 +394,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             elif self.mode == "use-existing":
                 b.wait_visible(f"#vm-{self.vm_name}-disks-{self.target}-insert-dialog-adddisk-existing-select-pool:enabled")
                 # Choose storage pool
-                b.select_from_dropdown(f"#vm-{self.vm_name}-disks-{self.target}-insert-dialog-adddisk-existing-select-pool", self.pool_name)
+                b.select_from_dropdown(f"#vm-{self.vm_name}-disks-{self.target}-insert-dialog-adddisk-existing-select-pool",
+                                       self.pool_name)
                 # Select from the available volumes
                 b.select_from_dropdown(f"#vm-{self.vm_name}-disks-{self.target}-insert-dialog-adddisk-existing-select-volume",
                                        self.volume_name)
@@ -837,12 +839,13 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             mode='use-existing',
         ).execute()
 
-        # Detach the iscsi disk before reaching teardown because shutting of the domains would sometimes hang when iscsi disks are attached
+        # Detach the iscsi disk before reaching teardown because shutting of the domains would sometimes hang when
+        # iscsi disks are attached.
         m.execute("virsh detach-disk subVmTest1 --target vdb")
 
         # AppArmor doesn't like the non-standard path for our storage pools
         if m.image in ["debian-testing"]:
-            self.allow_journal_messages(f'.* type=1400 .* apparmor="DENIED" operation="open" profile="libvirt.* name="{self.vm_tmpdir}.*')
+            self.allow_journal_messages(f'.* type=1400 .* apparmor="DENIED" operation="open" profile="libvirt.* name="{self.vm_tmpdir}.*')  # noqa: E501
 
     def testAddDiskNFS(self):
         b = self.browser
@@ -858,9 +861,11 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         mnt_exports = os.path.join(self.vm_tmpdir, "mnt_exports")
         m.execute(f"mkdir {nfs_pool} {mnt_exports}")
         m.write("/etc/exports", f"{mnt_exports} 127.0.0.1/24(rw,sync,no_root_squash,no_subtree_check,fsid=0)")
-        m.execute("systemctl restart nfs-server")
-        m.execute(f"virsh pool-define-as nfs-pool --type netfs --target {nfs_pool} --source-host 127.0.0.1 --source-path {mnt_exports}")
-        m.execute("virsh pool-start nfs-pool")
+        m.execute(f"""
+        systemctl restart nfs-server
+        virsh pool-define-as nfs-pool --type netfs --target {nfs_pool} --source-host 127.0.0.1 --source-path {mnt_exports}
+        virsh pool-start nfs-pool
+        """)
         # And create a volume on it in order to test use existing volume dialog
         m.execute("virsh vol-create-as --pool nfs-pool --name nfs-volume-0 --capacity 1M --format qcow2")
 
@@ -898,7 +903,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
         # AppArmor doesn't like the non-standard path for our storage pools
         if m.image in ["debian-testing"]:
-            self.allow_journal_messages(f'.* type=1400 .* apparmor="DENIED" operation="open" profile="libvirt.* name="{self.vm_tmpdir}.*')
+            self.allow_journal_messages(f'.* type=1400 .* apparmor="DENIED" operation="open" profile="libvirt.* name="{self.vm_tmpdir}.*')  # noqa: E501
 
     def testAddDiskPool(self):
         b = self.browser
@@ -991,7 +996,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
         # AppArmor doesn't like the non-standard path for our storage pools
         if m.image in ["debian-testing"]:
-            self.allow_journal_messages(f'.* type=1400 .* apparmor="DENIED" operation="open" profile="libvirt.* name="{self.vm_tmpdir}.*')
+            self.allow_journal_messages(f'.* type=1400 .* apparmor="DENIED" operation="open" profile="libvirt.* name="{self.vm_tmpdir}.*')  # noqa: E501
 
     @testlib.timeout(900)
     def testAddDiskDirPool(self):
@@ -1159,7 +1164,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
         # AppArmor doesn't like the non-standard path for our storage pools
         if m.image in ["debian-testing"]:
-            self.allow_journal_messages(f'.* type=1400 .* apparmor="DENIED" operation="open" profile="libvirt.* name="{self.vm_tmpdir}.*')
+            self.allow_journal_messages(f'.* type=1400 .* apparmor="DENIED" operation="open" profile="libvirt.* name="{self.vm_tmpdir}.*')  # noqa: E501
 
     def testAddDiskCustomPath(self):
         b = self.browser
@@ -1725,7 +1730,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b.wait_text('#vm-subVmTest1-disks-vdb-source-dev', loop_dev)
 
         if "debian" in m.image or "ubuntu" in m.image:
-            self.allow_journal_messages(f'.* type=1400 .* apparmor="DENIED" operation="open".*profile="virt-aa-helper" name="{loop_dev}".*')
+            self.allow_journal_messages(f'.* type=1400 .* apparmor="DENIED" operation="open".*profile="virt-aa-helper" name="{loop_dev}".*')  # noqa: E501
 
 
 if __name__ == '__main__':

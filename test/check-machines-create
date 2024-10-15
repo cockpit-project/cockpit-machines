@@ -592,7 +592,8 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         self.machine.execute("virsh start pxe-guest")
 
         # The file is full of ANSI control characters in between every letter, filter them out
-        testlib.wait(lambda: self.machine.execute(r"sed 's,\x1B\[[0-9;]*[a-zA-Z],,g' /tmp/serial.txt | grep 'Rebooting in 60'"), delay=3)
+        cmd = r"sed 's,\x1B\[[0-9;]*[a-zA-Z],,g' /tmp/serial.txt | grep 'Rebooting in 60'"
+        testlib.wait(lambda: self.machine.execute(cmd), delay=3)
         self.goToMainPage()
 
         self.machine.execute("virsh destroy pxe-guest")
@@ -683,7 +684,8 @@ vnc_password= "{vnc_passwd}"
                 "virsh pool-start iscsi-pool"
             ]
             print(self.machine.execute("; ".join(cmd).format(target_iqn)))
-            testlib.wait(lambda: "unit:0:0:0" in self.machine.execute("virsh pool-refresh iscsi-pool; virsh vol-list iscsi-pool"), delay=3)
+            pool_refresh_dump_cmd = "virsh pool-refresh iscsi-pool; virsh vol-list iscsi-pool"
+            testlib.wait(lambda: "unit:0:0:0" in self.machine.execute(pool_refresh_dump_cmd), delay=3)
 
             self.addCleanup(self.machine.execute, "virsh pool-destroy iscsi-pool; virsh pool-undefine iscsi-pool")
 
@@ -1039,6 +1041,7 @@ vnc_password= "{vnc_passwd}"
 
         def open(self):
             b = self.browser
+            m = self.machine
 
             if self.sourceType == 'disk_image':
                 b.click("#import-existing-vm")
@@ -1057,8 +1060,8 @@ vnc_password= "{vnc_passwd}"
                 query_result = f'{query_result}'
                 # check if there is os present in osinfo-query because it can be filtered out in the UI
                 # throws exception if grep fails
-                self.machine.execute(
-                    fr"osinfo-query os --fields=name | tail -n +3 | sed -e 's/\s*|\s*/|/g; s/^\s*//g; s/\s*$//g' | grep '{query_result}'")
+                sanitize_cmd = r"sed -e 's/\s*|\s*/|/g; s/^\s*//g; s/\s*$//g'"
+                m.execute(fr"osinfo-query os --fields=name | tail -n +3 | {sanitize_cmd} | grep '{query_result}'")
 
             return self
 
@@ -1084,7 +1087,8 @@ vnc_password= "{vnc_passwd}"
             # Check minimum requirement warnings are present
             b.set_input_text("#memory-size", "127")
             # memory limit must be a warning, not an error
-            b.wait_in_text("#memory-size-helper.pf-m-warning", "The selected operating system has minimum memory requirement of 128 MiB")
+            b.wait_in_text("#memory-size-helper.pf-m-warning",
+                           "The selected operating system has minimum memory requirement of 128 MiB")
 
             b.set_input_text("#storage-limit", "127")
             # storage limit must be a warning, not an error

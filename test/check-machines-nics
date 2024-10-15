@@ -29,7 +29,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
     def setUp(self):
         super().setUp()
         # querying object manager often runs into that on network changes; irrelevant
-        self.allow_journal_messages("org.freedesktop.NetworkManager: couldn't get managed objects at /org/freedesktop: Timeout was reached")
+        self.allow_journal_messages("org.freedesktop.NetworkManager: couldn't get managed objects at /org/freedesktop: Timeout was reached")  # noqa: E501
 
     @testlib.no_retry_when_changed
     def testVmNICs(self):
@@ -47,9 +47,11 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         # Wait for the dynamic IP address to be assigned before logging in
         # If the IP will change or get assigned after fetching the domain data the user will not see any
         # changes until they refresh the page, since there is not any signal associated with this change
-        testlib.wait(lambda: "1" in self.machine.execute("virsh domifaddr subVmTest1  | grep 192.168.122. | wc -l"), delay=3)
+        cmd = "virsh domifaddr subVmTest1  | grep 192.168.122. | wc -l"
+        testlib.wait(lambda: "1" in self.machine.execute(cmd), delay=3)
         if "rhel-8" not in m.image:
-            testlib.wait(lambda: "1" in self.machine.execute("virsh domifaddr --source agent subVmTest1  | grep fe80:: | wc -l"), delay=3)
+            cmd = "virsh domifaddr --source agent subVmTest1  | grep fe80:: | wc -l"
+            testlib.wait(lambda: "1" in self.machine.execute(cmd), delay=3)
 
         self.goToVmPage("subVmTest1")
 
@@ -135,9 +137,15 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         # https://bugzilla.redhat.com/show_bug.cgi?id=2215597
         b.assert_pixels("#vm-subVmTest1-networks",
                         "vm-details-nics-card-edit-disabled",
-                        ignore=["#vm-subVmTest1-network-1-mac", "#vm-subVmTest1-network-1-ipv4-address", "#vm-subVmTest1-network-1-source",
-                                "#vm-subVmTest1-network-2-mac", "#vm-subVmTest1-network-2-ipv4-address", "#vm-subVmTest1-network-2-source",
-                                "#vm-subVmTest1-network-3-mac", "#vm-subVmTest1-network-3-ipv4-address", "#vm-subVmTest1-network-3-source"],
+                        ignore=["#vm-subVmTest1-network-1-mac",
+                                "#vm-subVmTest1-network-1-ipv4-address",
+                                "#vm-subVmTest1-network-1-source",
+                                "#vm-subVmTest1-network-2-mac",
+                                "#vm-subVmTest1-network-2-ipv4-address",
+                                "#vm-subVmTest1-network-2-source",
+                                "#vm-subVmTest1-network-3-mac",
+                                "#vm-subVmTest1-network-3-ipv4-address",
+                                "#vm-subVmTest1-network-3-source"],
                         # MAC and IP address values are not static, and their values affect the width of
                         # their columns and neighbouring columns
                         # With medium layout this variable width of the columns makes pixel tests references of
@@ -223,10 +231,10 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         virsh attach-interface --domain subVmTest1 --type network --source default --model virtio --mac 52:54:00:4b:73:5f --config
         virsh attach-interface --domain subVmTest1 --type bridge --source virbr0 --model virtio --mac 52:54:00:4b:73:6f --config
         virsh attach-interface --domain subVmTest1 --type network --source default --model virtio --mac 52:54:00:4b:73:4f --config
-        """)
         # Add network with the same MAC address
-        m.execute(
-            "virsh attach-interface --domain subVmTest1 --type network --source default --model e1000e --mac 52:54:00:4b:73:5f --config")
+        virsh attach-interface --domain subVmTest1 --type network --source default --model e1000e --mac 52:54:00:4b:73:5f --config
+        """)
+
         # Refresh for getting new added NIC
         b.reload()
         b.enter_page('/machines')
