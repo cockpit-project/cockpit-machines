@@ -164,6 +164,7 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-cpu", "2 vCPUs")
 
         # Check value of sockets, threads and cores from VM dumpxml
+        self.getDomainXpathValue("subVmTest1", '/domain/cpu/topology[@sockets=\"2\"][@threads=\"1\"][@cores=\"2\"]')
         m.execute(
             "virsh dumpxml subVmTest1 | xmllint --xpath '/domain/cpu/topology[@sockets=\"2\"][@threads=\"1\"][@cores=\"2\"]' -")
 
@@ -612,7 +613,7 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
                 b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
                 b.wait_in_text("#vm-subVmTest1-watchdog-state", action_strings[action])
-                virsh_output_current = m.execute("virsh dumpxml subVmTest1 | xmllint --xpath '/domain/devices/watchdog/@action' -").strip()
+                virsh_output_current = self.getDomainXpathValue('subVmTest1', '/domain/devices/watchdog/@action')
                 self.assertEqual(virsh_output_current, f'action="{action}"')
 
         def removeWatchdogDevice(live=True):
@@ -788,8 +789,8 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
 
             b.wait_in_text("#vm-subVmTest1-vsock-address", "assign automatically" if auto else address)
 
-            virsh_output_auto = m.execute("virsh dumpxml subVmTest1 | xmllint --xpath '/domain/devices/vsock/cid/@auto' -").strip()
-            virsh_output_address = m.execute("virsh dumpxml subVmTest1 | xmllint --xpath '/domain/devices/vsock/cid/@address' -").strip()
+            virsh_output_auto = self.getDomainXpathValue('subVmTest1', '/domain/devices/vsock/cid/@auto')
+            virsh_output_address = self.getDomainXpathValue('subVmTest1', '/domain/devices/vsock/cid/@address')
             self.assertEqual(virsh_output_auto, 'auto="yes"' if auto else 'auto="no"')
             if not auto:
                 self.assertEqual(virsh_output_address, f'address="{address}"')
@@ -827,7 +828,8 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
             # - if no previous vsock is configured on a VM, we are attaching a new vsock device and live VM config will get updated
             # - if vsock action is configured on a VM, and we are editing an editing vsock device, the live VM config will persist
             #   the old setting until VM is rebooted
-            virsh_output_auto = m.execute("virsh dumpxml subVmTest1 | xmllint --xpath '/domain/devices/vsock/cid/@auto' -").strip()
+            vmName = 'subVmTest1'
+            virsh_output_auto = self.getDomainXpathValue(vmName, '/domain/devices/vsock/cid/@auto')
             if previous_auto is not None:  # Editing exiting vsock
                 expected_auto = "yes" if previous_auto else "no"
             else:  # Attaching new vsock
@@ -842,19 +844,17 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
                 else:
                     expected_address = default_libvirt_vsock_address  # When we don't specify address, libvirt will choose
             b.wait_in_text("#vm-subVmTest1-vsock-address", expected_address)
-            virsh_output_address = m.execute("virsh dumpxml subVmTest1 | xmllint --xpath '/domain/devices/vsock/cid/@address' -").strip()
+            virsh_output_address = self.getDomainXpathValue(vmName, '/domain/devices/vsock/cid/@address')
             self.assertEqual(virsh_output_address, f'address="{expected_address}"')
 
             # Offline VM config will always have newly configured vsock, no matter if we are attaching
             # a new vsock device or editing an existing one.
             expected_auto_offline = "yes" if new_auto else "no"
-            virsh_output_offline_auto = m.execute(
-                    "virsh dumpxml subVmTest1 --inactive | xmllint --xpath '/domain/devices/vsock/cid/@auto' -").strip()
+            virsh_output_offline_auto = self.getDomainXpathValue(vmName, '/domain/devices/vsock/cid/@auto', inactive=True)
             self.assertEqual(virsh_output_offline_auto, f'auto="{expected_auto_offline}"')
 
             expected_address_offline = new_address
-            address_cmd = "virsh dumpxml subVmTest1 --inactive | xmllint --xpath '/domain/devices/vsock/cid/@address' -"
-            virsh_output_offline_address = m.execute(address_cmd).strip()
+            virsh_output_offline_address = self.getDomainXpathValue(vmName, '/domain/devices/vsock/cid/@address', inactive=True)
             if expected_address_offline:
                 self.assertEqual(virsh_output_offline_address, f'address="{expected_address_offline}"')
 
@@ -865,13 +865,12 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
                 b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
                 expected_after_reboot_auto = "yes" if new_auto else "no"
-                virsh_output_auto = m.execute("virsh dumpxml subVmTest1 | xmllint --xpath '/domain/devices/vsock/cid/@auto' -").strip()
+                virsh_output_auto = self.getDomainXpathValue(vmName, '/domain/devices/vsock/cid/@auto')
                 self.assertEqual(virsh_output_auto, f'auto="{expected_after_reboot_auto}"')
 
                 expected_after_reboot_address = new_address if new_address else default_libvirt_vsock_address
                 b.wait_in_text("#vm-subVmTest1-vsock-address", expected_after_reboot_address)
-                virsh_output_address = m.execute(
-                        "virsh dumpxml subVmTest1 | xmllint --xpath '/domain/devices/vsock/cid/@address' -").strip()
+                virsh_output_address = self.getDomainXpathValue(vmName, '/domain/devices/vsock/cid/@address')
                 self.assertEqual(virsh_output_address, f'address="{expected_after_reboot_address}"')
 
         def removeVsockDevice(live=True):

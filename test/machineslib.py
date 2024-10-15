@@ -143,6 +143,12 @@ class VirtualMachinesCaseHelpers:
         dom_xml = f"virsh -c qemu:///system dumpxml --domain {vmName}"
         return self.machine.execute(f"{dom_xml} | xmllint --xpath 'string(//domain/devices/interface/mac/@address)' -").strip()
 
+    def getDomainXpathValue(self, vmName: str, xpath: str, *, inactive: bool = False):
+        dom_xml = f"virsh dumpxml {vmName} "
+        if inactive:
+            dom_xml += "--inactive "
+        return self.machine.execute(f"{dom_xml} | xmllint --xpath '{xpath}' -").strip()
+
     def getLibvirtServiceName(self):
         m = self.machine
         return "libvirtd" if hasMonolithicDaemon(m.image) else "virtqemud"
