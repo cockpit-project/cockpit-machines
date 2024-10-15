@@ -256,9 +256,7 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-cpu .pf-v5-c-description-list__text", "custom (qemu64)")
 
         # Verify libvirt XML
-        dom_xml = "virsh dumpxml subVmTest1"
-        xmllint_element = f"{dom_xml} | xmllint --xpath 'string(//domain/{{prop}})' -"
-        self.assertEqual("qemu64", m.execute(xmllint_element.format(prop='cpu/model')).strip())
+        self.assertEqual("qemu64", self.getDomainXpathValue('subVmTest1', '/domain/cpu/model', str_value=True))
 
         # Host-model gets expanded  to custom mode when the VM is running
         b.click("#vm-subVmTest1-cpu button")
@@ -490,15 +488,11 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
         # Shut off domain
         self.performAction("subVmTest1", "forceOff")
 
-        dom_xml = "virsh -c qemu:///system dumpxml subVmTest1"
+        testlib.wait(lambda: cpu_model in self.getDomainXpathValue('subVmTest1', '//domain/cpu/@mode',
+                                                                   str_value=True))
+        testlib.wait(lambda: "3" in self.getDomainXpathValue('subVmTest1', '//domain/vcpu', str_value=True))
 
-        xmllint_elem = f"{dom_xml} | xmllint --xpath 'string(//domain/cpu/@mode)' -"
-        testlib.wait(lambda: cpu_model in m.execute(xmllint_elem).strip())
-
-        xmllint_elem = f"{dom_xml} | xmllint --xpath 'string(//domain/vcpu)' -"
-        testlib.wait(lambda: "3" in m.execute(xmllint_elem).strip())
-
-        virsh_output = m.execute("virsh dumpxml subVmTest1 | xmllint --xpath '/domain/devices/watchdog/@action' -").strip()
+        virsh_output = self.getDomainXpathValue('subVmTest1', '/domain/devices/watchdog/@action')
         self.assertEqual(virsh_output, 'action="reset"')
 
         # Check both changes have been applied
@@ -550,7 +544,7 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
 
             b.wait_in_text("#vm-subVmTest1-watchdog-state", action_strings[action])
 
-            virsh_output = m.execute("virsh dumpxml subVmTest1 | xmllint --xpath '/domain/devices/watchdog/@action' -").strip()
+            virsh_output = self.getDomainXpathValue('subVmTest1', '/domain/devices/watchdog/@action')
             self.assertEqual(virsh_output, f'action="{action}"')
 
         def setWatchdogActionLive(action, previous_action=None, reboot_machine=False, add=False, removable=True):
@@ -597,13 +591,12 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
             #   and live VM config will persist the old setting until VM is rebooted
             expected_action = previous_action if previous_action else action
             b.wait_in_text("#vm-subVmTest1-watchdog-state", action_strings[expected_action])
-            virsh_output_offline = m.execute("virsh dumpxml subVmTest1 | xmllint --xpath '/domain/devices/watchdog/@action' -").strip()
+            virsh_output_offline = self.getDomainXpathValue('subVmTest1', '/domain/devices/watchdog/@action')
             self.assertEqual(virsh_output_offline, f'action="{expected_action}"')
 
             # Offline VM config will always have newly configured watchdog action, no matter
             # if we are attaching a new watchdog device or editing an existing one
-            virsh_output_offline = m.execute(
-                    "virsh dumpxml subVmTest1 --inactive | xmllint --xpath '/domain/devices/watchdog/@action' -").strip()
+            virsh_output_offline = self.getDomainXpathValue('subVmTest1', '/domain/devices/watchdog/@action', inactive=True)
             self.assertEqual(virsh_output_offline, f'action="{action}"')
 
             if reboot_machine:
