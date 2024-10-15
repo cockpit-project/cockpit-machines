@@ -518,9 +518,11 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         self.restore_file("/etc/exports")
         m.execute(f"mkdir {nfs_pool} {mnt_exports}")
         m.write("/etc/exports", f"{mnt_exports} 127.0.0.1/24(rw,sync,no_root_squash,no_subtree_check,fsid=0)")
-        m.execute("systemctl restart nfs-server")
-        m.execute(f"virsh pool-define-as nfs-pool --type netfs --target {nfs_pool} --source-host 127.0.0.1 --source-path {mnt_exports}")
-        m.execute("virsh pool-start nfs-pool")
+        m.execute(f"""
+        systemctl restart nfs-server
+        virsh pool-define-as nfs-pool --type netfs --target {nfs_pool} --source-host 127.0.0.1 --source-path {mnt_exports}
+        virsh pool-start nfs-pool
+        """)
 
         # Prepare disk/block pool
         dev = self.add_ram_disk(10)

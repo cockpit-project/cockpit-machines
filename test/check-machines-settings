@@ -218,7 +218,6 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
 
     def testCPUModel(self):
         b = self.browser
-        m = self.machine
 
         self.createVm("subVmTest1")
 
@@ -371,8 +370,8 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
             # re-open and check the boot option is the disk
             b.click("#vm-subVmTest1-boot-order button")
             b.wait_visible("#vm-subVmTest1-order-modal-window")
-            b.wait_text("#vm-subVmTest1-order-modal-device-row-0 .pf-v5-c-description-list__description .pf-v5-c-description-list__text",
-                        args["image"])
+            file_desc_sel = ".pf-v5-c-description-list__description .pf-v5-c-description-list__text"
+            b.wait_text(f"#vm-subVmTest1-order-modal-device-row-0 {file_desc_sel}", args["image"])
 
             b.click("#vm-subVmTest1-order-modal-cancel")
             b.wait_not_present("#vm-subVmTest1-order-modal-window")
@@ -454,7 +453,6 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
 
     def testMultipleSettings(self):
         b = self.browser
-        m = self.machine
 
         # We want a machine without watchdog
         args = self.createVm("subVmTest1", os="linux2016")
@@ -818,8 +816,10 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
             # persist the previously configured vsock action until reboot.
             # On the other hand, libvirt does support attaching a vsock to a RUNNING VM
             # So in summary:
-            # - if no previous vsock is configured on a VM, we are attaching a new vsock device and live VM config will get updated
-            # - if vsock action is configured on a VM, and we are editing an editing vsock device, the live VM config will persist
+            # - if no previous vsock is configured on a VM, we are attaching a new vsock device and
+            #   live VM config will get updated
+            # - if vsock action is configured on a VM, and we are editing an editing vsock device,
+            #    the live VM config will persist
             #   the old setting until VM is rebooted
             vmName = 'subVmTest1'
             virsh_output_auto = self.getDomainXpathValue(vmName, '/domain/devices/vsock/cid/@auto')

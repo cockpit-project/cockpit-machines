@@ -138,7 +138,8 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         # HACK: Firefox 112 on RHEL 8 does not have `:has` yet, so for now use JavaScript to obtain the elements parent sibling.
         b.eval_js("""
        ph_input_form_helper_text = function(id) {
-          return document.getElementById(id).parentElement.parentElement.querySelector(".pf-v5-c-helper-text__item.pf-m-error").textContent
+          const selector = ".pf-v5-c-helper-text__item.pf-m-error";
+          return document.getElementById(id).parentElement.parentElement.querySelector(selector).textContent;
         }""")
 
         class NetworkCreateDialog(object):
@@ -219,7 +220,8 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
                 b.click(".pf-v5-c-modal-box__footer button:contains(Create)")
 
                 def get_helper_text(xfo):
-                    return f"#create-network-dialog .create-network-{xfo} .pf-v5-c-form__helper-text .pf-v5-c-helper-text__item.pf-m-error"
+                    pf_error_sel = ".pf-v5-c-form__helper-text .pf-v5-c-helper-text__item.pf-m-error"
+                    return f"#create-network-dialog .create-network-{xfo} {pf_error_sel}"
 
                 if (self.xfail):
                     # Check incomplete dialog
