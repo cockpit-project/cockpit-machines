@@ -843,10 +843,6 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         # iscsi disks are attached.
         m.execute("virsh detach-disk subVmTest1 --target vdb")
 
-        # AppArmor doesn't like the non-standard path for our storage pools
-        if m.image in ["debian-testing"]:
-            self.allow_journal_messages(f'.* type=1400 .* apparmor="DENIED" operation="open" profile="libvirt.* name="{self.vm_tmpdir}.*')  # noqa: E501
-
     def testAddDiskNFS(self):
         b = self.browser
         m = self.machine
