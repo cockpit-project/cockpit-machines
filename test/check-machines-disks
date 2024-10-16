@@ -897,10 +897,6 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             expected_target=get_next_free_target(used_targets)[-1],
         ).execute()
 
-        # AppArmor doesn't like the non-standard path for our storage pools
-        if m.image in ["debian-testing"]:
-            self.allow_journal_messages(f'.* type=1400 .* apparmor="DENIED" operation="open" profile="libvirt.* name="{self.vm_tmpdir}.*')  # noqa: E501
-
     def testAddDiskPool(self):
         b = self.browser
         m = self.machine
@@ -989,10 +985,6 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b.select_from_dropdown("#vm-subVmTest1-disks-adddisk-existing-select-pool", "loop-disk")
         # Check that newly attached disk is indeed of type "disk"
         dialog.add_disk().verify_disk_added()
-
-        # AppArmor doesn't like the non-standard path for our storage pools
-        if m.image in ["debian-testing"]:
-            self.allow_journal_messages(f'.* type=1400 .* apparmor="DENIED" operation="open" profile="libvirt.* name="{self.vm_tmpdir}.*')  # noqa: E501
 
     @testlib.timeout(900)
     def testAddDiskDirPool(self):
@@ -1157,10 +1149,6 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         self.waitPageInit()
         # Check that usage information can't be fetched since the pool is inactive
         b.wait_not_present(f"#vm-subVmTest1-disks-{pool_disk}-used")
-
-        # AppArmor doesn't like the non-standard path for our storage pools
-        if m.image in ["debian-testing"]:
-            self.allow_journal_messages(f'.* type=1400 .* apparmor="DENIED" operation="open" profile="libvirt.* name="{self.vm_tmpdir}.*')  # noqa: E501
 
     def testAddDiskCustomPath(self):
         b = self.browser
