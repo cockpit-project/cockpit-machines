@@ -274,7 +274,7 @@ export function parseDomainDumpxml(connectionName, domXml, objPath) {
     const watchdog = parseDumpxmlForWatchdog(devicesElem);
     const vsock = parseDumpxmlForVsock(devicesElem);
     const hasSpice = parseDumpxmlForSpice(devicesElem);
-    const hasTPM = parseDumpxmlForTPM(devicesElem);
+    const { tpm, hasTPM } = parseDumpxmlForTPM(devicesElem);
 
     const hasInstallPhase = parseDumpxmlMachinesMetadataElement(metadataElem, 'has_install_phase') === 'true';
     const installSourceType = parseDumpxmlMachinesMetadataElement(metadataElem, 'install_source_type');
@@ -321,6 +321,7 @@ export function parseDomainDumpxml(connectionName, domXml, objPath) {
         vsock,
         metadata,
         hasSpice,
+        tpm,
         hasTPM,
     };
 }
@@ -566,7 +567,25 @@ function parseDumpxmlForSpice(devicesElem) {
 }
 
 function parseDumpxmlForTPM(devicesElem) {
-    return devicesElem.getElementsByTagName('tpm').length > 0;
+    const tpmElems = devicesElem.getElementsByTagName('tpm');
+    if (tpmElems.length > 0) {
+        const tpmElem = tpmElems[0];
+        const model = tpmElem.getAttribute('model');
+        const backendElem = tpmElem.getElementsByTagName('backend')[0];
+        const type = backendElem.getAttribute('type');
+        const version = backendElem.getAttribute('version');
+        const devicePathElem = backendElem.getElementsByTagName('device')[0];
+        const devicePath = devicePathElem ? devicePathElem.getAttribute('path') : null;
+
+        const tpm = {
+            model,
+            type,
+            version,
+            devicePath,
+        };
+        return { tpm, hasTPM: true };
+    }
+    return { tpm: {}, hasTPM: false };
 }
 
 export function parseDumpxmlForFilesystems(devicesElem) {
