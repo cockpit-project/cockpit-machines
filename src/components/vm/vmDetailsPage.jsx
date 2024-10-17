@@ -37,6 +37,7 @@ import { VmFilesystemsCard, VmFilesystemActions } from './filesystems/vmFilesyst
 import { VmDisksCardLibvirt, VmDisksActions } from './disks/vmDisksCard.jsx';
 import { VmNetworkTab, VmNetworkActions } from './nics/vmNicsCard.jsx';
 import { VmHostDevCard, VmHostDevActions } from './hostdevs/hostDevCard.jsx';
+import { VmVideoTab, VmVideoActions } from './videos/vmVideosCard.jsx';
 import Consoles from './consoles/consoles.jsx';
 import VmOverviewCard from './overview/vmOverviewCard.jsx';
 import VmUsageTab from './vmUsageCard.jsx';
@@ -174,6 +175,13 @@ export const VmDetailsPage = ({
             title: _("Host devices"),
             actions: <VmHostDevActions vm={vm} />,
             body: <VmHostDevCard vm={vm} nodeDevices={nodeDevices} />,
+        },
+        {
+            id: `${vmId(vm.name)}-videodevs`,
+            className: "videodev-card",
+            title: _("Video devices"),
+            actions: <VmVideoActions vm={vm} />,
+            body: <VmVideoTab vm={vm} config={config} />,
         }
     ];
     if (vm.snapshots !== -1 && vm.snapshots !== undefined) {
@@ -235,7 +243,7 @@ export const VmDetailsPage = ({
                 <CardHeader actions={{ actions: card.actions }}>
                     <CardTitle component="h2">{card.title}</CardTitle>
                 </CardHeader>
-                <CardBody className={["disks-card", "hostdevs-card", "networks-card", "snapshots-card", "filesystems-card"].includes(card.className) ? "contains-list" : ""}>
+                <CardBody className={["disks-card", "hostdevs-card", "networks-card", "snapshots-card", "filesystems-card", "videodev-card"].includes(card.className) ? "contains-list" : ""}>
                     {card.body}
                 </CardBody>
                 <CardFooter />
