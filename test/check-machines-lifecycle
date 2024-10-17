@@ -244,6 +244,15 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
         b.wait_not_present("#vm-subVmTest2-system-confirm-action-modal")
 
+        # uptime parsing robustness: invalid time
+        self.machine.execute(
+            r"sed -i 's/^[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\} [0-9]\{2\}:[0-9]\{2\}:[0-9]\{2\}.*starting up/0.5: starting up/g' " + args2['qemulog'])
+        b.click("#vm-subVmTest2-system-shutdown-button")
+        b.wait_visible("#vm-subVmTest2-system-confirm-action-modal")
+        b.wait_in_text("#uptime", "years")
+        b.click(".pf-v5-c-modal-box__close button")
+        b.wait_not_present("#vm-subVmTest2-system-confirm-action-modal")
+
         # uptime parsing robustness: unparseable format
         self.machine.execute(f"sed -i '/: starting up/ s/^/invalidtime/' {args2['qemulog']}")
         b.click("#vm-subVmTest2-system-shutdown-button")
