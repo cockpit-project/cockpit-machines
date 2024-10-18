@@ -17,12 +17,16 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
+import cockpit from 'cockpit';
+
 import {
     getTodayYearShifted,
 } from "../../helpers.js";
 
 import * as python from "python.js";
 import autoDetectOSScript from './autoDetectOS.py';
+
+const _ = cockpit.gettext;
 
 const ACCEPT_RELEASE_DATES_AFTER = getTodayYearShifted(-3);
 const ACCEPT_EOL_DATES_AFTER = getTodayYearShifted(-1);
@@ -74,6 +78,12 @@ export function filterReleaseEolDates(os) {
         (os.eolDate && compareDates(ACCEPT_EOL_DATES_AFTER, os.eolDate) < 0) ||
         (!os.eolDate && os.releaseDate && compareDates(ACCEPT_RELEASE_DATES_AFTER, os.releaseDate) < 0)
     );
+}
+
+export function getOSEOLDescription(os) {
+    if (os.eolDate && compareDates(ACCEPT_EOL_DATES_AFTER, os.eolDate) < 0)
+        return cockpit.format(_("Vendor support ended $0"), os.eolDate);
+    return null;
 }
 
 export function compareDates(a, b, emptyFirst = false) {
