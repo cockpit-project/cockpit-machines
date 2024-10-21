@@ -57,6 +57,7 @@ import {
     domainSendNMI,
     domainShutdown,
     domainStart,
+    domainAddTPM,
 } from '../../libvirtApi/domain.js';
 import store from "../../store.js";
 
@@ -179,6 +180,8 @@ const onSendNMI = (vm) => domainSendNMI({ name: vm.name, id: vm.id, connectionNa
         })
     );
 });
+
+const onAddTPM = (vm) => domainAddTPM({ connectionName: vm.connectionName, vmName: vm.name });
 
 const VmActions = ({ vm, vms, onAddErrorNotification, isDetailsPage }) => {
     const Dialogs = useDialogs();
@@ -452,6 +455,17 @@ const VmActions = ({ vm, vms, onAddErrorNotification, isDetailsPage }) => {
             </DropdownItem>
         );
         dropdownItems.push(<Divider key="separator-rename" />);
+    }
+
+    if (!Object.keys(vm.tpm).length) {
+        dropdownItems.push(
+            <DropdownItem key={`${id}-add-tpm`}
+                          id={`${id}-add-tpm`}
+                          onClick={() => onAddTPM(vm)}>
+                {_("Add TPM")}
+            </DropdownItem>
+        );
+        dropdownItems.push(<Divider key="separator-add-tpm" />);
     }
 
     if (state !== undefined && domainCanDelete(state, vm.id)) {

@@ -42,7 +42,6 @@ import { updateVm } from '../../../actions/store-actions.js';
 import { BootOrderLink } from './bootOrder.jsx';
 import { FirmwareLink } from './firmware.jsx';
 import { WatchdogLink } from './watchdog.jsx';
-import { TpmLink } from './tpm.jsx';
 import { needsShutdownCpuModel, NeedsShutdownTooltip, needsShutdownVcpu } from '../../common/needsShutdown.jsx';
 import { VsockLink } from './vsock.jsx';
 import { StateIcon } from '../../common/stateIcon.jsx';
@@ -256,13 +255,6 @@ class VmOverviewCard extends React.Component {
                             <DescriptionListDescription id={`${idPrefix}-vsock`}>
                                 <VsockLink vm={vm} vms={vms} idPrefix={idPrefix} infoMessage={VSOCK_INFO_MESSAGE} socatMessage={SOCAT_EXAMPLE} />
                             </DescriptionListDescription>
-                        </DescriptionListGroup>
-
-                        <DescriptionListGroup>
-                            <DescriptionListTerm>{_("TPM")}</DescriptionListTerm>
-                                 <DescriptionListDescription id={`${idPrefix}-tpm`}>
-                                     <TpmLink vm={vm} idPrefix={idPrefix} />
-                                 </DescriptionListDescription>
                         </DescriptionListGroup>
                     </DescriptionList>
                 </FlexItem>
