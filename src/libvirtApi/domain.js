@@ -573,6 +573,22 @@ export function domainRemoveWatchdog({ connectionName, vmName, permanent, hotplu
     return cockpit.spawn(args, options);
 }
 
+export function domainRemoveTpm({ connectionName, vmName, permanent, hotplug, model }) {
+    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--remove-device', '--tpm', `model=${model}`];
+    const options = { err: "message" };
+
+    if (connectionName === "system")
+        options.superuser = "try";
+
+    if (hotplug) {
+        args.push("--update");
+        if (!permanent)
+            args.push("--no-define");
+    }
+
+    return cockpit.spawn(args, options);
+}
+
 export async function domainEjectDisk({
     connectionName,
     id: vmPath,
@@ -1037,6 +1053,26 @@ export function domainSetWatchdog({ connectionName, vmName, defineOffline, hotpl
     // Only attaching new watchdog device to running VM works
     // Editing existing watchdog device on running VM (live XML config) is not possible, in such situation we only change offline XML config
     if (hotplug && !isWatchdogAttached) {
+        args.push("--update");
+        if (!defineOffline)
+            args.push("--no-define");
+    }
+
+    return cockpit.spawn(args, options);
+}
+
+export function domainSetTpm({ connectionName, vmName, defineOffline, hotplug, model, type, version, devicePath, isTpmAttached }) {
+    const deviceVerStr = type === "emulator" ? `,version=${version}` : "";
+    const devicePathStr = type === "passthrough" ? `,path=${devicePath}` : "";
+    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, isTpmAttached ? '--edit' : '--add-device', '--tpm', `model=${model},type=${type}${deviceVerStr}${devicePathStr}`];
+    const options = { err: "message" };
+
+    if (connectionName === "system")
+        options.superuser = "try";
+
+    // Only attaching new tpm device to running VM works
+    // Editing existing tpm device on running VM (live XML config) is not possible, in such situation we only change offline XML config
+    if (hotplug && !isTpmAttached) {
         args.push("--update");
         if (!defineOffline)
             args.push("--no-define");

@@ -77,6 +77,10 @@ export function needsShutdownWatchdog(vm) {
     return vm.persistent && vm.state === "running" && vm.inactiveXML.watchdog.action !== vm.watchdog.action;
 }
 
+export function needsShutdownTpm(vm) {
+    return vm.persistent && vm.state === "running" && vm.inactiveXML.tpm !== vm.tpm;
+}
+
 export function needsShutdownSpice(vm) {
     return vm.hasSpice !== vm.inactiveXML.hasSpice;
 }
