@@ -125,6 +125,10 @@ export function getDevicesRequiringShutdown(vm) {
     if (needsShutdownSpice(vm))
         devices.push(_("SPICE"));
 
+    // TPM
+    if (needsShutdownTpm(vm))
+        devices.push(_("TPM"));
+
     return devices;
 }
 
