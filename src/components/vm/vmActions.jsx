@@ -457,7 +457,7 @@ const VmActions = ({ vm, vms, onAddErrorNotification, isDetailsPage }) => {
         dropdownItems.push(<Divider key="separator-rename" />);
     }
 
-    if (!Object.keys(vm.tpm).length) {
+    if (!vm.tpm) {
         dropdownItems.push(
             <DropdownItem key={`${id}-add-tpm`}
                           id={`${id}-add-tpm`}

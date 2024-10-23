@@ -270,7 +270,8 @@ export function parseDomainDumpxml(connectionName, domXml, objPath) {
     const watchdog = parseDumpxmlForWatchdog(devicesElem);
     const vsock = parseDumpxmlForVsock(devicesElem);
     const hasSpice = parseDumpxmlForSpice(devicesElem);
-    const { tpm, hasTPM } = parseDumpxmlForTPM(devicesElem);
+    const hasTPM = !!parseDumpxmlForTPM(devicesElem);
+    const tpm = parseDumpxmlForTPM(devicesElem);
 
     const hasInstallPhase = parseDumpxmlMachinesMetadataElement(metadataElem, 'has_install_phase') === 'true';
     const installSourceType = parseDumpxmlMachinesMetadataElement(metadataElem, 'install_source_type');
@@ -577,9 +578,9 @@ function parseDumpxmlForTPM(devicesElem) {
             version,
             devicePath,
         };
-        return { tpm, hasTPM: true };
+        return tpm;
     }
-    return { tpm: {}, hasTPM: false };
+    return null;
 }
 
 export function parseDumpxmlForFilesystems(devicesElem) {
