@@ -76,6 +76,7 @@ import {
     correctSpecialCases,
     filterReleaseEolDates,
     getOSStringRepresentation,
+    getOSDescription,
     needsRHToken,
     isDownloadableOs,
     loadOfflineToken,
@@ -405,10 +406,8 @@ const SourceRow = ({ connectionName, source, sourceType, networks, nodeDevices, 
 class OSRow extends React.Component {
     constructor(props) {
         super(props);
-        const IGNORE_VENDORS = ['ALTLinux', 'Mandriva', 'GNOME Project'];
         const osInfoListExt = this.props.osInfoList
                 .map(os => correctSpecialCases(os))
-                .filter(os => filterReleaseEolDates(os) && !IGNORE_VENDORS.find(vendor => vendor == os.vendor))
                 .sort((a, b) => {
                     if (a.vendor == b.vendor) {
                         // Sort OS with numbered version by version
@@ -426,9 +425,20 @@ class OSRow extends React.Component {
                     return getOSStringRepresentation(a).toLowerCase() > getOSStringRepresentation(b).toLowerCase() ? 1 : -1;
                 });
 
+        const IGNORE_VENDORS = ['ALTLinux', 'Mandriva', 'GNOME Project'];
+        const newOsEntries = [];
+        const oldOsEntries = [];
+        for (const os of osInfoListExt) {
+            if (filterReleaseEolDates(os) && !IGNORE_VENDORS.find(vendor => vendor == os.vendor))
+                newOsEntries.push(os);
+            else
+                oldOsEntries.push(os);
+        }
+
         this.state = {
             typeAheadKey: Math.random(),
-            osEntries: osInfoListExt,
+            newOsEntries,
+            oldOsEntries,
         };
         this.createValue = os => {
             return ({
@@ -474,9 +484,23 @@ class OSRow extends React.Component {
                     }}
                     onToggle={(_event, isOpen) => this.setState({ isOpen })}
                     isOpen={this.state.isOpen}
-                    menuAppendTo="parent">
-                    {this.state.osEntries.map(os => (<SelectOption key={os.id}
-                                                                  value={this.createValue(os)} />))}
+                    menuAppendTo="parent"
+                    isGrouped
+                >
+                    <SelectGroup label={_("Recommended operating systems")} key="new">
+                        {this.state.newOsEntries
+                                .map(os => (<SelectOption key={os.id}
+                                                   description={getOSDescription(os)}
+                                                   value={this.createValue(os)} />))
+                        }
+                    </SelectGroup>
+                    <SelectGroup label={_("Unsupported and older operating systems")} key="old">
+                        {this.state.oldOsEntries
+                                .map(os => (<SelectOption key={os.id}
+                                                   description={getOSDescription(os)}
+                                                   value={this.createValue(os)} />))
+                        }
+                    </SelectGroup>
                 </PFSelect>
                 <FormHelper helperTextInvalid={validationStateOS == "error" && validationFailed.os} />
             </FormGroup>

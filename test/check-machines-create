@@ -91,16 +91,16 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                                             pixel_test_tag="auto"))
 
         # check if older os are filtered
-        runner.checkFilteredOsTest(TestMachinesCreate.VmDialog(self, os_name=config.REDHAT_RHEL_4_7_FILTERED_OS,
+        runner.checkFilteredOsTest(TestMachinesCreate.VmDialog(self, os_name=config.OLD_FILTERED_OS,
+                                                               os_is_old=True))
+
+        runner.checkFilteredOsTest(TestMachinesCreate.VmDialog(self, os_name=config.UNSUPPORTED_FILTERED_OS,
+                                                               os_is_unsupported=True,
+                                                               pixel_test_tag="filter-unsupported"))
+
+        runner.checkFilteredOsTest(TestMachinesCreate.VmDialog(self, os_name=config.NOT_FOUND_FILTERED_OS,
+                                                               os_is_not_found=True,
                                                                pixel_test_tag="filter"))
-
-        runner.checkFilteredOsTest(TestMachinesCreate.VmDialog(self, os_name=config.MANDRIVA_2011_FILTERED_OS))
-
-        runner.checkFilteredOsTest(TestMachinesCreate.VmDialog(self, os_name=config.MAGEIA_3_FILTERED_OS))
-
-        # check that newer oses are present and searchable with substring match
-        runner.checkFilteredOsTest(TestMachinesCreate.VmDialog(self, os_name=config.WINDOWS_SERVER_10,
-                                                               os_search_name=config.WINDOWS_SERVER_10_SHORT))
 
         # check OS versions are sorted in alphabetical order
         runner.checkSortedOsTest(TestMachinesCreate.VmDialog(self), [config.FEDORA_29, config.FEDORA_28])
@@ -935,7 +935,9 @@ vnc_password= "{vnc_passwd}"
         TREE_URL = 'https://archive.fedoraproject.org/pub/archive/fedora/linux/releases/28/Server/x86_64/os'
 
         # LINUX can be filtered if 3 years old
-        REDHAT_RHEL_4_7_FILTERED_OS = 'Red Hat Enterprise Linux 4.9'
+        OLD_FILTERED_OS = 'Red Hat Enterprise Linux 8.3'
+        UNSUPPORTED_FILTERED_OS = 'Fedora 34'
+        NOT_FOUND_FILTERED_OS = 'Red Hat Enterprise Linux 4.9'
 
         FEDORA_28 = 'Fedora 28'
         FEDORA_28_SHORTID = 'fedora28'
@@ -950,13 +952,6 @@ vnc_password= "{vnc_passwd}"
 
         CENTOS_7 = 'CentOS 7'
 
-        MANDRIVA_2011_FILTERED_OS = 'Mandriva Linux 2011'
-
-        MAGEIA_3_FILTERED_OS = 'Mageia 3'
-
-        WINDOWS_SERVER_10 = 'Microsoft Windows 10'
-        WINDOWS_SERVER_10_SHORT = 'win'
-
     class VmDialog:
         vmId = 0
 
@@ -969,6 +964,9 @@ vnc_password= "{vnc_passwd}"
                      os_name="Fedora 28",
                      os_search_name=None,
                      os_short_id="fedora28",
+                     os_is_unsupported=False,
+                     os_is_old=False,
+                     os_is_not_found=False,
                      expected_os_name=None,
                      is_unattended=None,
                      profile=None,
@@ -1017,6 +1015,9 @@ vnc_password= "{vnc_passwd}"
             self.os_name = os_name
             self.os_search_name = os_search_name
             self.os_short_id = os_short_id
+            self.os_is_unsupported = os_is_unsupported
+            self.os_is_old = os_is_old
+            self.os_is_not_found = os_is_not_found
             self.expected_os_name = expected_os_name
             self.is_unattended = is_unattended
             self.profile = profile
@@ -1078,7 +1079,7 @@ vnc_password= "{vnc_passwd}"
             # https://bugzilla.redhat.com/show_bug.cgi?id=1987120
             b.select_from_dropdown("#source-type", "url")
             fake_fedora = "Fedora 28"  # 128 MiB minimum storage
-            suse = "SUSE CaaS Platform Unknown (unknown)"  # 20 GiB minimum storage
+            suse = "SUSE CaaS Platform Unknown"  # 20 GiB minimum storage
             b.set_input_text("#os-select-group input", fake_fedora)
             b.click(f"#os-select li button:contains('{fake_fedora}')")
             b.wait_val("#storage-limit", "128")
@@ -1176,23 +1177,25 @@ vnc_password= "{vnc_passwd}"
 
             return self
 
-        def checkOsFiltered(self, present=False):
+        def checkOsFiltered(self):
             b = self.browser
 
             b.focus("#os-select-group input")
-            # os_search_name is meant to be used to test substring much
+            # os_search_name is meant to be used to test substring match
             b.input_text(self.os_search_name or self.os_name)
 
-            if not present:
-                try:
-                    with b.wait_timeout(5):
-                        b.wait_in_text("#os-select li button", "No results found")
-                    return self
-                except AssertionError:
-                    # os found which is not ok
-                    self.fail(f"{self.os_name} was not filtered")
+            if not self.os_is_not_found:
+                # There should be exactly one entry
+                b.wait_in_text("#os-select li button", self.os_name)
+                # It might have a description
+                if self.os_is_unsupported:
+                    b.wait_in_text("#os-select li button", "Vendor support ended")
+                elif self.os_is_old:
+                    b.wait_in_text("#os-select li button", "Released ")
             else:
-                b.wait_visible(f"#os-select li button:contains({self.os_search_name})")
+                b.wait_in_text("#os-select li button", "No results found")
+
+            return self
 
         def checkRhelIsDownloadable(self):
             b = self.browser
