@@ -41,8 +41,6 @@ import {
     VSOCK_INFO_MESSAGE,
 } from './helpers.jsx';
 
-import "./vsock.scss";
-
 const _ = cockpit.gettext;
 
 const ASSIGN_AUTOMATICALLY = _("Assign automatically");
