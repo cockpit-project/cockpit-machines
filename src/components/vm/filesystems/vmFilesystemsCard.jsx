@@ -40,8 +40,6 @@ import { domainCreateFilesystem, domainDeleteFilesystem, domainSetMemoryBacking 
 import { vmId } from "../../../helpers.js";
 import { DeleteResourceButton } from '../../common/deleteResource.jsx';
 
-import "./vmFilesystemsCard.scss";
-
 const _ = cockpit.gettext;
 
 export const VmFilesystemsCard = ({ connectionName, vmName, vmState, filesystems }) => {
