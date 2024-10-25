@@ -27,7 +27,7 @@ import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
 import { Text, TextContent, TextList, TextListItem, TextVariants } from "@patternfly/react-core/dist/esm/components/Text";
 import { HelpIcon } from "@patternfly/react-icons";
 import cockpit from 'cockpit';
-import './machinesConnectionSelector.scss';
+import './machinesConnectionSelector.css';
 
 const _ = cockpit.gettext;
 

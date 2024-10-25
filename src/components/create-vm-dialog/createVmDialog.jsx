@@ -88,7 +88,7 @@ import { getAccessToken } from '../../libvirtApi/rhel-images.js';
 import { PasswordFormFields, password_quality } from 'cockpit-components-password.jsx';
 import { DynamicListForm } from 'cockpit-components-dynamic-list.jsx';
 
-import './createVmDialog.scss';
+import './createVmDialog.css';
 
 const _ = cockpit.gettext;
 

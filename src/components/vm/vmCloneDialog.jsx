@@ -29,7 +29,7 @@ import { isEmpty, isObjectEmpty } from '../../helpers.js';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { useDialogs } from 'dialogs.jsx';
 
-import "./vmCloneDialog.scss";
+import "./vmCloneDialog.css";
 const _ = cockpit.gettext;
 
 export const CloneDialog = ({ name, connectionName }) => {

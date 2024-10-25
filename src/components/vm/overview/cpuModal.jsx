@@ -32,7 +32,7 @@ import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { domainSetVCPUSettings, domainSetCpuMode } from "../../../libvirtApi/domain.js";
 import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
 
-import "./vcpuModal.scss";
+import "./vcpuModal.css";
 
 const _ = cockpit.gettext;
 

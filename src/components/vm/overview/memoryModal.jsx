@@ -19,7 +19,7 @@ import {
     domainSetMaxMemory,
 } from '../../../libvirtApi/domain.js';
 
-import './memoryModal.scss';
+import './memoryModal.css';
 
 const _ = cockpit.gettext;
 
