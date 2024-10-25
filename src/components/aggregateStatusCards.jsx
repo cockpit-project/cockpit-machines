@@ -26,7 +26,7 @@ import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { ServerIcon, NetworkIcon, ArrowCircleUpIcon, ArrowCircleDownIcon } from '@patternfly/react-icons';
 
-import './aggregateStatusCards.scss';
+import './aggregateStatusCards.css';
 
 export class AggregateStatusCards extends React.Component {
     onCardSelect(event, goto) {

@@ -36,7 +36,7 @@ import { fmt_to_fragments } from 'utils.jsx';
 import { NeedsShutdownAlert } from '../common/needsShutdown.jsx';
 import { domainReplaceSpice } from '../../libvirtApi/domain.js';
 
-import './vmReplaceSpiceDialog.scss';
+import './vmReplaceSpiceDialog.css';
 
 const _ = cockpit.gettext;
 

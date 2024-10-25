@@ -36,7 +36,7 @@ import { RevertSnapshotModal } from './vmSnapshotsRevertModal.jsx';
 import { snapshotDelete, snapshotGetAll } from '../../../libvirtApi/snapshot.js';
 import { domainGet } from '../../../libvirtApi/domain.js';
 
-import './vmSnapshotsCard.scss';
+import './vmSnapshotsCard.css';
 
 const _ = cockpit.gettext;
 

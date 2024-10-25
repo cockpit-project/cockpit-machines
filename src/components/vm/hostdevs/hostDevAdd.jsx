@@ -37,7 +37,7 @@ import { findMatchingNodeDevices } from "../../../helpers.js";
 import { getOptionalValue } from "./hostDevCard.jsx";
 import store from "../../../store.js";
 
-import "./hostDevAdd.scss";
+import "./hostDevAdd.css";
 
 const _ = cockpit.gettext;
 

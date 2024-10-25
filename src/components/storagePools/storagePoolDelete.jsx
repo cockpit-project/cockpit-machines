@@ -35,7 +35,7 @@ import { storageVolumeDelete } from '../../libvirtApi/storageVolume.js';
 import { storagePoolDeactivate, storagePoolUndefine } from '../../libvirtApi/storagePool.js';
 import cockpit from 'cockpit';
 
-import './storagePoolDelete.scss';
+import './storagePoolDelete.css';
 
 const _ = cockpit.gettext;
 

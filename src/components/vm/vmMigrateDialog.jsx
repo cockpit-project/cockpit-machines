@@ -37,7 +37,7 @@ import { useDialogs } from 'dialogs.jsx';
 
 import VMS_CONFIG from "../../config.js";
 
-import './vmMigrateDialog.scss';
+import './vmMigrateDialog.css';
 
 const _ = cockpit.gettext;
 

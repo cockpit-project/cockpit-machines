@@ -13,7 +13,7 @@ import {
     nicLookupByMAC
 } from "../../helpers.js";
 
-import "./needsShutdown.scss";
+import "./needsShutdown.css";
 
 const _ = cockpit.gettext;
 
