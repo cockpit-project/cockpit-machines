@@ -1661,36 +1661,24 @@ vnc_password= "{vnc_passwd}"
             self.test_obj.addCleanup(self.machine.execute, "umount /usr/share/osinfo/os/fedoraproject.org/fedora-29.xml")
 
         def _fakeOsDBInfoRhel(self):
-            # Fake rhel 8 images
-            rhel_8_1_xml = self.machine.execute("cat /usr/share/osinfo/os/redhat.com/rhel-8.1.xml")
-            root = ET.fromstring(rhel_8_1_xml)
-            root.find('os').find('resources').find('minimum').find('ram').text = '134217728'
-            root.find('os').find('resources').find('minimum').find('storage').text = '134217728'
-            root.find('os').find('release-date').text = datetime.today().strftime('%Y-%m-%d')
-            new_rhel_8_1_xml = ET.tostring(root)
-            self.machine.execute(f"echo '{str(new_rhel_8_1_xml, 'utf-8')}' > {self.test_obj.vm_tmpdir}/rhel-8.1.xml")
-            self.machine.execute(f"mount -o bind  {self.test_obj.vm_tmpdir}/rhel-8.1.xml /usr/share/osinfo/os/redhat.com/rhel-8.1.xml")
-            self.test_obj.addCleanup(self.machine.execute, "umount /usr/share/osinfo/os/redhat.com/rhel-8.1.xml")
+            def fake_osinfo(filename):
+                filepath = f"/usr/share/osinfo/os/redhat.com/{filename}"
+                xml = self.machine.execute(f"cat {filepath}")
+                root = ET.fromstring(xml)
+                root.find('os').find('resources').find('minimum').find('ram').text = '134217728'
+                root.find('os').find('resources').find('minimum').find('storage').text = '134217728'
+                root.find('os').find('release-date').text = datetime.today().strftime('%Y-%m-%d')
+                new_xml = ET.tostring(root)
+                self.machine.execute(f"echo '{str(new_xml, 'utf-8')}' > {self.test_obj.vm_tmpdir}/{filename}")
+                self.machine.execute(f"mount -o bind  {self.test_obj.vm_tmpdir}/{filename} {filepath}")
+                self.test_obj.addCleanup(self.machine.execute, f"umount /{filepath}")
 
-            rhel_8_2_xml = self.machine.execute("cat /usr/share/osinfo/os/redhat.com/rhel-8.2.xml")
-            root = ET.fromstring(rhel_8_2_xml)
-            root.find('os').find('resources').find('minimum').find('ram').text = '134217728'
-            root.find('os').find('resources').find('minimum').find('storage').text = '134217728'
-            root.find('os').find('release-date').text = datetime.today().strftime('%Y-%m-%d')
-            new_rhel_8_2_xml = ET.tostring(root)
-            self.machine.execute(f"echo '{str(new_rhel_8_2_xml, 'utf-8')}' > {self.test_obj.vm_tmpdir}/rhel-8.2.xml")
-            self.machine.execute(f"mount -o bind  {self.test_obj.vm_tmpdir}/rhel-8.2.xml /usr/share/osinfo/os/redhat.com/rhel-8.2.xml")
-            self.test_obj.addCleanup(self.machine.execute, "umount /usr/share/osinfo/os/redhat.com/rhel-8.2.xml")
+            # Fake rhel 8 images
+            fake_osinfo("rhel-8.1.xml")
+            fake_osinfo("rhel-8.2.xml")
 
             # Fake rhel 7 image
-            rhel_7_1_xml = self.machine.execute("cat /usr/share/osinfo/os/redhat.com/rhel-7.1.xml")
-            root = ET.fromstring(rhel_7_1_xml)
-            root.find('os').find('resources').find('minimum').find('ram').text = '134217728'
-            root.find('os').find('resources').find('minimum').find('storage').text = '134217728'
-            new_rhel_7_1_xml = ET.tostring(root)
-            self.machine.execute(f"echo '{str(new_rhel_7_1_xml, 'utf-8')}' > {self.test_obj.vm_tmpdir}/rhel-7.1.xml")
-            self.machine.execute(f"mount -o bind  {self.test_obj.vm_tmpdir}/rhel-7.1.xml /usr/share/osinfo/os/redhat.com/rhel-7.1.xml")
-            self.test_obj.addCleanup(self.machine.execute, "umount /usr/share/osinfo/os/redhat.com/rhel-7.1.xml")
+            fake_osinfo("rhel-7.1.xml")
 
         def _fakeFedoraTree(self):
             server = self.test_obj.setup_mock_server("mock-range-server.py", ["archive.fedoraproject.org"])
