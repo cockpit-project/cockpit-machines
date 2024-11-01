@@ -33,7 +33,8 @@ class TestMachinesManifest(testlib.MachineCase):
         b.wait_in_text("#host-apps .pf-m-current", "Overview")
 
         # Cockpit with a C bridge
-        if m.image.startswith("rhel-8") or m.image.startswith("centos-8") or m.image == "debian-stable" or m.image == "ubuntu-2204":
+        if m.image.startswith("rhel-8") or m.image.startswith("centos-8") \
+                or m.image == "debian-stable" or m.image == "ubuntu-2204":
             self.assertIn("Virtual machines", b.text("#host-apps"))
         else:
             self.assertNotIn("Virtual machines", b.text("#host-apps"))

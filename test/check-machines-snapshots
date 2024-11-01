@@ -65,7 +65,7 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         m.execute("virsh detach-disk --domain subVmTest1 --target vda --persistent")
         m.execute("qemu-img create -f qcow2 /var/lib/libvirt/images/foobar.qcow2 1M")
         m.execute("virsh attach-disk --domain subVmTest1 --source /var/lib/libvirt/images/foobar.qcow2 --target vdb --persistent")
-        m.execute("virsh snapshot-create-as --domain subVmTest1 --name snapshotB --description 'Description of snapshotB' --disk-only")
+        m.execute("virsh snapshot-create-as --domain subVmTest1 --name snapshotB --description 'Description of snapshotB' --disk-only")  # noqa: E501
 
         b.reload()  # snapshots events not available yet: https://gitlab.com/libvirt/libvirt/-/issues/44
         b.enter_page('/machines')
@@ -423,10 +423,10 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         # Check snapshot for running VM
         # vda is raw disk, which are not supported by internal snapshots
         m.execute("""
-        virsh detach-disk --domain subVmTest1 --target vda --config
-        qemu-img create -f qcow2 /var/lib/libvirt/images/foobar.qcow2 1M
-        virsh attach-disk --domain subVmTest1 --source /var/lib/libvirt/images/foobar.qcow2 --target vdb --subdriver qcow2 --config
-        virsh snapshot-create-as --domain subVmTest1 --name snapshotA --description 'Description of snapshotA'
+virsh detach-disk --domain subVmTest1 --target vda --config
+qemu-img create -f qcow2 /var/lib/libvirt/images/foobar.qcow2 1M
+virsh attach-disk --domain subVmTest1 --source /var/lib/libvirt/images/foobar.qcow2 --target vdb --subdriver qcow2 --config
+virsh snapshot-create-as --domain subVmTest1 --name snapshotA --description 'Description of snapshotA'
         """)
         time.sleep(1)
         m.execute("virsh snapshot-create-as --domain subVmTest1 --name snapshotB --description 'Description of snapshotB'")
@@ -447,7 +447,8 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         self.assertEqual("no", get_snapshot_state("snapshotB"))
 
         b.click("#vm-subVmTest1-snapshot-0-revert")
-        b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Revert to snapshot snapshotB")
+        b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title",
+                       "Revert to snapshot snapshotB")
         b.click('.pf-v5-c-modal-box__footer button:contains("Revert")')
 
         b.wait_not_present("#vm-subVmTest1-snapshot-1-current")

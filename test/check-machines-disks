@@ -476,8 +476,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             # https://piware.de/2013/09/how-to-watch-system-d-bus-method-calls/
             m.write("/usr/share/dbus-1/system-local.conf", SYSTEM_LOCAL_CONF)
             # Setup dbus monitor to watch for disk ejection call
-            m.spawn(
-            "dbus-monitor --system \"interface='org.libvirt.Domain',member='UpdateDevice'\" > /tmp/dbus_monitor_logs", "dbusmonitor")
+            m.spawn("dbus-monitor --system \"interface='org.libvirt.Domain',member='UpdateDevice'\" > /tmp/dbus_monitor_logs",
+                    "dbusmonitor")
 
             # Force eject the disc
             b.click(".pf-v5-c-modal-box__footer button:contains(Force eject)")
@@ -589,9 +589,11 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
                 self.verify_disk_added()
             else:
                 if self.xfail_object:
-                    self.test_obj.browser.wait_in_text(f"{prefix}-{self.xfail_object}-helper.pf-m-error", self.xfail_error_message)
+                    self.test_obj.browser.wait_in_text(f"{prefix}-{self.xfail_object}-helper.pf-m-error",
+                                                       self.xfail_error_message)
                 else:
-                    self.test_obj.browser.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-alert__title", self.xfail_error_title)
+                    self.test_obj.browser.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-alert__title",
+                                                       self.xfail_error_title)
                 self.test_obj.browser.click(f"{prefix}-dialog-cancel")
                 self.test_obj.browser.wait_not_present(".pf-v5-c-modal-box")
 
@@ -712,7 +714,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             m = self.test_obj.machine
             with b.wait_timeout(60):
                 b.wait_not_present(f"#vm-{self.vm_name}-disks-adddisk-dialog-modal-window")
-            if self.device == "cdrom" or (self.file_path and self.file_path.endswith(".iso")) or self.expected_volume_format == "iso":
+            if self.device == "cdrom" or (self.file_path and self.file_path.endswith(".iso")) \
+                    or self.expected_volume_format == "iso":
                 expected_bus_type = self.bus_type or "scsi"
                 expected_device = self.device or "cdrom"
             else:
@@ -758,7 +761,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
                         b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.expected_target}-type", "raw")
                     elif self.expected_volume_format != "iso":
                         # If volume is ISO file, libvirt doesn't assign drive.type to a disk
-                        b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.expected_target}-type", self.volume_format or expected_format)
+                        b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.expected_target}-type",
+                                       self.volume_format or expected_format)
             else:
                 b.wait_in_text(f'#vm-{self.vm_name}-disks-{self.expected_target}-source-file', self.file_path)
                 domainXML = self.test_obj.machine.execute(f"virsh dumpxml {self.vm_name}")
@@ -801,7 +805,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         virsh pool-define-as iscsi-pool --type iscsi --target /dev/disk/by-id --source-host 127.0.0.1 --source-dev {target_iqn}
         virsh pool-start iscsi-pool
         """)
-        testlib.wait(lambda: "unit:0:0:0" in self.machine.execute("virsh pool-refresh iscsi-pool; virsh vol-list iscsi-pool"), delay=3)
+        cmd = "virsh pool-refresh iscsi-pool; virsh vol-list iscsi-pool"
+        testlib.wait(lambda: "unit:0:0:0" in self.machine.execute(cmd), delay=3)
 
         self.addCleanup(self.machine.execute, "virsh pool-destroy iscsi-pool; virsh pool-undefine iscsi-pool")
 
@@ -1292,7 +1297,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
         # Ensure that the bus type autofilled value is according to the bus types of the existing disks of the guest,
         # even when these are not in the predefined value (see ide)
-        m.execute("virt-xml subVmTest1 --edit --disk target=vda,bus=ide,path=/var/lib/libvirt/images/subVmTest1-2.img,clearxml=yes")
+        m.execute("virt-xml subVmTest1 --edit --disk target=vda,bus=ide,path=/var/lib/libvirt/images/subVmTest1-2.img,clearxml=yes")  # noqa: E501
         b.wait_text("#vm-subVmTest1-disks-vda-bus", "ide")
         b.click(prefix)
         b.click(f"{prefix}-custompath")

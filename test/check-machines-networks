@@ -292,7 +292,8 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
             def verify_overview(self):
                 # Check basic network properties
                 modes = {"nat": "NAT", "none": "None (isolated network)", "open": "Open", "route": "Routed",
-                         "bridge": "Bridge", "private": "Private", "vepa": "VEPA", "passthrough": "Passthrough", "hostdev": "Hostdev"}
+                         "bridge": "Bridge", "private": "Private", "vepa": "VEPA",
+                         "passthrough": "Passthrough", "hostdev": "Hostdev"}
                 connectionName = m.execute("virsh uri | head -1 | cut -d/ -f4").strip()
 
                 b.wait_in_text(f"#network-{self.name}-{connectionName}-forwarding", modes[self.forward_mode])

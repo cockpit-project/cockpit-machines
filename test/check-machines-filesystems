@@ -93,7 +93,8 @@ class TestMachinesFilesystems(machineslib.VirtualMachinesCase):
         domain_xml = "virsh -c qemu:///system dumpxml subVmTest1"
         xmllint_element = f"{domain_xml} | xmllint --xpath 'string(//domain/{{prop}})' -"
 
-        self.assertEqual('/tmp/dir1/', self.machine.execute(xmllint_element.format(prop='devices/filesystem/source/@dir')).strip())
+        self.assertEqual('/tmp/dir1/',
+                         self.machine.execute(xmllint_element.format(prop='devices/filesystem/source/@dir')).strip())
         self.assertEqual('dir1', self.machine.execute(xmllint_element.format(prop='devices/filesystem/target/@dir')).strip())
         self.assertEqual('on', self.machine.execute(xmllint_element.format(prop='devices/filesystem/binary/@xattr')).strip())
         self.assertEqual('shared', self.machine.execute(xmllint_element.format(prop='memoryBacking/access/@mode')).strip())
@@ -110,7 +111,8 @@ class TestMachinesFilesystems(machineslib.VirtualMachinesCase):
         b.wait_in_text("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir2/-dir2'] td[data-label='Source path']", "/tmp/dir2/")
         b.wait_in_text("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir2/-dir2'] td[data-label='Mount tag']", "dir2")
 
-        self.assertEqual('/tmp/dir2/', self.machine.execute(xmllint_element.format(prop='devices/filesystem[2]/source/@dir')).strip())
+        self.assertEqual('/tmp/dir2/',
+                         self.machine.execute(xmllint_element.format(prop='devices/filesystem[2]/source/@dir')).strip())
         self.assertEqual('dir2', self.machine.execute(xmllint_element.format(prop='devices/filesystem[2]/target/@dir')).strip())
         self.assertEqual('', self.machine.execute(xmllint_element.format(prop='devices/filesystem[2]/binary/@xattr')).strip())
 

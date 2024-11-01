@@ -329,7 +329,8 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
 
                 self.test_obj.assertEqual(self.name, m.execute(xmllint_element.format(prop='name')).strip())
                 if (self.target):
-                    self.test_obj.assertEqual(self.target, m.execute(xmllint_element.format(prop='target/path')).strip() + '/')
+                    self.test_obj.assertEqual(self.target,
+                                              m.execute(xmllint_element.format(prop='target/path')).strip() + '/')
                 self.test_obj.assertEqual(self.pool_type, m.execute(xmllint_element.format(prop='@type')).strip())
 
                 host = m.execute(xmllint_element.format(prop='source/host/@name')).strip()
@@ -573,7 +574,8 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
                 b.click(f"#{self.pool_name}-system-create-volume-button")  # open the "Storage volumes" subtab
 
                 b.wait_visible("#create-volume-dialog-modal")
-                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Create storage volume")
+                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title",
+                               "Create storage volume")
 
             def fill(self):
                 b.set_input_text("#create-volume-dialog-name", self.vol_name)
