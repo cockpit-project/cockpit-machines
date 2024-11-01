@@ -174,20 +174,22 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                              is_warning=True)
 
         # user login
+        errors = {"create-vm-dialog-user-login": "User login must not be empty when user password is set"}
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
                                                                          storage_size=10, storage_size_unit='MiB',
                                                                          location=config.VALID_DISK_IMAGE_PATH,
                                                                          user_password="catsaremybestfr13nds",
                                                                          create_and_run=True),
-                                             {"create-vm-dialog-user-login": "User login must not be empty when user password is set"})
+                                             errors)
 
         # user login
+        errors = {"create-vm-dialog-root-password-pw1": "Password quality check failed"}
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
                                                                          storage_size=10, storage_size_unit='MiB',
                                                                          location=config.VALID_DISK_IMAGE_PATH,
                                                                          root_password="foo",
                                                                          create_and_run=True),
-                                             {"create-vm-dialog-root-password-pw1": "Password quality check failed"},
+                                             errors,
                                              create=False,
                                              is_warning=True)
 
@@ -199,6 +201,8 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         self.machine.execute("ssh-keygen -t rsa -N '' -f /tmp/rsakey")
         rsakey = self.machine.execute("cat /tmp/rsakey.pub").strip()
         self.addCleanup(self.machine.execute, "rm -f /tmp/rsakey*")
+
+        errors = {"create-vm-dialog-user-login": "User login must not be empty when SSH keys are set"}
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
                                                                          storage_size=10, storage_size_unit='MiB',
                                                                          location=config.VALID_DISK_IMAGE_PATH,
@@ -206,15 +210,16 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                                                          user_login="",
                                                                          ssh_keys=[rsakey],
                                                                          create_and_run=True),
-                                             {"create-vm-dialog-user-login": "User login must not be empty when SSH keys are set"})
+                                             errors)
 
         # Without the root password and "Create and edit"
+        errors = {"create-vm-dialog-user-login": "User login must not be empty when SSH keys are set"}
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
                                                                          storage_size=10, storage_size_unit='MiB',
                                                                          location=config.VALID_DISK_IMAGE_PATH,
                                                                          user_login="",
                                                                          ssh_keys=[rsakey]),
-                                             {"create-vm-dialog-user-login": "User login must not be empty when SSH keys are set"})
+                                             errors)
 
         # Delete SSH keys
         dialog = TestMachinesCreate.VmDialog(self, sourceType='cloud',
@@ -1050,9 +1055,11 @@ vnc_password= "{vnc_passwd}"
 
             b.wait_visible("#create-vm-dialog")
             if self.sourceType == 'disk_image':
-                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Import a virtual machine")
+                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title",
+                               "Import a virtual machine")
             else:
-                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Create new virtual machine")
+                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title",
+                               "Create new virtual machine")
 
             if self.os_name is not None:
                 # remove os codename from os name, e.g.: 'bullseye' in 'Debian 11 (bullseye)'
@@ -1459,7 +1466,8 @@ vnc_password= "{vnc_passwd}"
                                          append=True, value_check=False)
                         # Check that ssh key was validated
                         if self.ssh_key_invalid:
-                            self.browser.wait_attr(f"#create-vm-dialog-ssh-key-{idx} .pf-v5-c-form__group", "testdata", "key-invalid")
+                            self.browser.wait_attr(f"#create-vm-dialog-ssh-key-{idx} .pf-v5-c-form__group",
+                                                   "testdata", "key-invalid")
                         else:
                             b.wait_visible(f"#create-vm-dialog-ssh-key-{idx} #validated")
 
@@ -1632,8 +1640,8 @@ vnc_password= "{vnc_passwd}"
             self.machine.execute("virsh pool-start default")
 
         def _fakeOsDBInfoFedora(self):
-            # Fake the osinfo-db data in order that it will allow spawn the installation - of course we don't expect it to succeed -
-            # we just need to check that the VM was spawned
+            # Fake the osinfo-db data in order that it will allow spawn the installation
+            # - of course we don't expect it to succeed - we just need to check that the VM was spawned
             fedora_28_xml = self.machine.execute("cat /usr/share/osinfo/os/fedoraproject.org/fedora-28.xml")
             root = ET.fromstring(fedora_28_xml)
             root.find('os').find('resources').find('minimum').find('ram').text = '134217728'
@@ -1722,7 +1730,8 @@ vnc_password= "{vnc_passwd}"
                 else:
                     b.wait_in_text(".pf-v5-c-empty-state__content", "Downloading image")
                     # Progress is shown at VM page empty state
-                    self.assertRegex(b.text(".pf-v5-c-empty-state__body .pf-v5-c-progress__status"), r"^[0-9][0-9]?%$|^100%$")
+                    self.assertRegex(b.text(".pf-v5-c-empty-state__body .pf-v5-c-progress__status"),
+                                     r"^[0-9][0-9]?%$|^100%$")
 
                 with b.wait_timeout(60):
                     b.wait_in_text(f"#vm-{dialog.name}-{dialog.connection}-state", final_state)
@@ -1785,7 +1794,8 @@ vnc_password= "{vnc_passwd}"
                 b.wait_in_text(f"#vm-{name}-{connection}-state", "Running")
                 self._assertCorrectConfiguration(dialog)
 
-                # Wait for virt-install to define the VM and then stop it - otherwise we get 'domain is ready being removed' error
+                # Wait for virt-install to define the VM and then stop it -
+                # otherwise we get 'domain is ready being removed' error
                 testlib.wait(lambda: dialog.name in self.machine.execute("virsh list --persistent"), delay=3)
 
                 # unfinished install script runs indefinitely, so we need to force it off
@@ -2062,7 +2072,8 @@ vnc_password= "{vnc_passwd}"
         def createThenInstallTest(self, dialog, installFromVmDetails=False, tryWithFailInstall=False):
             self._tryCreateThenInstall(dialog, installFromVmDetails, tryWithFailInstall) \
                 ._assertScriptFinished() \
-                ._assertDomainDefined(dialog.name, dialog.connection, install_phase="true" if tryWithFailInstall else "false") \
+                ._assertDomainDefined(dialog.name,
+                                      dialog.connection, install_phase="true" if tryWithFailInstall else "false") \
                 ._deleteVm(dialog) \
                 .checkEnvIsEmpty()
 

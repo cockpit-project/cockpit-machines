@@ -289,13 +289,14 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
 
         mac_address = "52:54:00:a5:f8:00"
         # Test a error message handling
+        # fail because network 'test_network4' is not active
         self.NICAddDialog(
             self,
             source_type="network",
             source="test_network4",
             mac=mac_address,
             xfail=True,
-            xfail_error="Network interface settings could not be saved",  # fail because network 'test_network4' is not active
+            xfail_error="Network interface settings could not be saved",
         ).execute()
 
         # Shut off domain
@@ -666,12 +667,14 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
     class NICAddDialog:
 
         def __init__(
-            # We have always have to specify mac and source_type to identify the device in xml and $virsh detach-interface
+            # We have always have to specify mac and source_type to identify the device in xml
+            # and $virsh detach-interface
             self, test_obj, source_type="direct", source=None, model=None, nic_num=1,
             permanent=False, mac=None, remove=True, persistent_vm=True,
             xfail=False, xfail_error=None, pixel_test_tag=None
         ):
-            self.bridge_devices = (entry['ifname'] for entry in json.loads(test_obj.machine.execute("ip -j link show type bridge")))
+            ip_output = json.loads(test_obj.machine.execute("ip -j link show type bridge"))
+            self.bridge_devices = (entry['ifname'] for entry in ip_output)
             self.source_type = source_type
             self.source = source
             self.model = model
@@ -733,7 +736,8 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
 
         def assert_pixels(self):
             if self.pixel_test_tag:
-                self.browser.assert_pixels("#vm-subVmTest1-add-iface-dialog", self.pixel_test_tag, skip_layouts=["rtl"])
+                self.browser.assert_pixels("#vm-subVmTest1-add-iface-dialog",
+                                           self.pixel_test_tag, skip_layouts=["rtl"])
 
         def cancel(self):
             self.browser.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
@@ -758,14 +762,17 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             if (self.source_type == "network"):
                 self.assertEqual("network", self.machine.execute(xmllint_element.format(prop='@type')).strip())
                 if self.source:
-                    self.assertEqual(self.source, self.machine.execute(xmllint_element.format(prop='source/@network')).strip())
+                    self.assertEqual(self.source,
+                                     self.machine.execute(xmllint_element.format(prop='source/@network')).strip())
             elif (self.source_type == "direct"):
                 self.assertEqual("direct", self.machine.execute(xmllint_element.format(prop='@type')).strip())
                 if self.source:
-                    self.assertEqual(self.source, self.machine.execute(xmllint_element.format(prop='source/@dev')).strip())
+                    self.assertEqual(self.source,
+                                     self.machine.execute(xmllint_element.format(prop='source/@dev')).strip())
 
             if (self.model):
-                self.assertEqual(self.model, self.machine.execute(xmllint_element.format(prop='model/@type')).strip())
+                self.assertEqual(self.model,
+                                 self.machine.execute(xmllint_element.format(prop='model/@type')).strip())
 
         def verify_overview(self):
             # The first NIC is default, our new NIC is second in row
@@ -779,7 +786,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
 
         def cleanup(self):
             if self.permanent:
-                self.machine.execute(f"virsh detach-interface --mac {self.mac} --domain subVmTest1 --type {self.source_type} --config")
+                self.machine.execute(f"virsh detach-interface --mac {self.mac} --domain subVmTest1 --type {self.source_type} --config")  # noqa: E501
 
                 # we don't get any signal for interface detaching right now
                 self.browser.reload()

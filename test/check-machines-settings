@@ -186,7 +186,8 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
             self.goToVmPage(vm_name)
 
             # set checkbox state and check state of checkbox
-            b.set_checked(f"#vm-{vm_name}-autostart-switch", True)  # don't know the initial state of checkbox, so set it to checked
+            # don't know the initial state of checkbox, so set it to checked
+            b.set_checked(f"#vm-{vm_name}-autostart-switch", True)
             b.wait_visible(f"#vm-{vm_name}-autostart-switch:checked")
             # check virsh state
             autostartState = m.execute("virsh dominfo %s | grep 'Autostart:' | awk '{print $2}'" % vm_name).strip()
@@ -550,7 +551,8 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
 
             b.click(f"#{action}")
             if previous_action:
-                # When editing an exiting watchdog, message warning user that changes will take effect after reboot should be present
+                # When editing an exiting watchdog, message warning user that changes will take effect
+                # after reboot should be present
                 b.wait_visible("#vm-subVmTest1-watchdog-modal #vm-subVmTest1-idle-message")
             else:
                 # When attaching adding a new watchdog, no message should be present
@@ -578,14 +580,15 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
                 b.wait_not_present("#watchdog-tooltip")
                 b.wait_not_present("#vm-subVmTest1-needs-shutdown")
 
-            # Libvirt doesn't support editing watchdog device on RUNNING vm, so a live VM config will persist the previously
-            # configured watchdog action until reboot.
+            # Libvirt doesn't support editing watchdog device on RUNNING vm, so a live VM config
+            # will persist the previously configured watchdog action until reboot.
             # On the other hand, libvirt does support attaching a watchdog to a RUNNING VM
             # So in summary:
             # - if no previous watchdog action is configured on a VM (meaning VM has no watchdog device),
             #   we are attaching a new watchdog device
             #   and live VM config have new action set
-            # - if watchdog action is configured on a VM (meaning VM has a watchdog device), we are editing an editing watchdog device
+            # - if watchdog action is configured on a VM (meaning VM has a watchdog device),
+            #   we are editing an editing watchdog device
             #   and live VM config will persist the old setting until VM is rebooted
             expected_action = previous_action if previous_action else action
             b.wait_in_text("#vm-subVmTest1-watchdog-state", action_strings[expected_action])
@@ -843,11 +846,13 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
             # Offline VM config will always have newly configured vsock, no matter if we are attaching
             # a new vsock device or editing an existing one.
             expected_auto_offline = "yes" if new_auto else "no"
-            virsh_output_offline_auto = self.getDomainXpathValue(vmName, '/domain/devices/vsock/cid/@auto', inactive=True)
+            virsh_output_offline_auto = self.getDomainXpathValue(vmName, '/domain/devices/vsock/cid/@auto',
+                                                                 inactive=True)
             self.assertEqual(virsh_output_offline_auto, f'auto="{expected_auto_offline}"')
 
             expected_address_offline = new_address
-            virsh_output_offline_address = self.getDomainXpathValue(vmName, '/domain/devices/vsock/cid/@address', inactive=True)
+            virsh_output_offline_address = self.getDomainXpathValue(vmName, '/domain/devices/vsock/cid/@address',
+                                                                    inactive=True)
             if expected_address_offline:
                 self.assertEqual(virsh_output_offline_address, f'address="{expected_address_offline}"')
 

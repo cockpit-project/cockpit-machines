@@ -495,7 +495,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
             self.createVm(name, running=False)
 
             m.execute("virsh vol-create-as --pool images --name tmpdisk --capacity 1 --format qcow2")
-            m.execute(f"virt-xml {name} --add-device --disk source.pool=images,source.volume=tmpdisk,target.dev=sdb,driver.type=qcow2")
+            m.execute(f"virt-xml {name} --add-device --disk source.pool=images,source.volume=tmpdisk,target.dev=sdb,driver.type=qcow2")  # noqa: E501
             m.execute(f"virsh snapshot-create-as --domain {name} --name snapshotFails")
             b.reload()
             b.enter_page('/machines')
