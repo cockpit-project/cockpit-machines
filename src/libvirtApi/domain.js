@@ -912,6 +912,11 @@ async function domainSetXML(vm, option, values) {
 }
 
 export async function domainSetDescription(vm, description) {
+    // The description will appear in a "open" message for a "spawn"
+    // channel, and excessive lengths will crash the session with a
+    // protocol error. So let's limit it to a reasonable length here.
+    if (description.length > 32000)
+        description = description.slice(0, 32000);
     await domainSetXML(vm, "metadata", { description });
 }
 
