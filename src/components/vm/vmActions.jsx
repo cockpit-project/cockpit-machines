@@ -66,6 +66,7 @@ const _ = cockpit.gettext;
 
 const onStart = (vm, setOperationInProgress) => domainStart({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
     setOperationInProgress(false);
+    console.warn("Failed to start VM", vm.name, ":", cockpit.message(ex));
     store.dispatch(
         updateVm({
             connectionName: vm.connectionName,
