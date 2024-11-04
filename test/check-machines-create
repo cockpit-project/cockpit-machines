@@ -2172,12 +2172,17 @@ vnc_password= "{vnc_passwd}"
         b.wait_visible(".pf-v5-c-modal-box__body")
         b.select_from_dropdown(".pf-v5-c-modal-box__body select", "efi")
         b.click("#firmware-dialog-apply")
+        # ack error message if adding TPM failed
+        if machineslib.hasBrokenTPM(m.image):
+            b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-alert", "Failed to change firmware")
+            b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-alert", "TPM")
+            b.click('.pf-v5-c-modal-box__footer button:contains("Cancel")')
         b.wait_not_present(".pf-v5-c-modal-box__body")
         b.wait_in_text("#vm-VmNotInstalled-firmware", "UEFI")
         self.assertIn("<os firmware='efi'>", m.execute("virsh dumpxml VmNotInstalled"))
 
-        # auto-enabled software TPM (doesn't work on RHEL 8 or arch)
-        if not m.image.startswith("rhel-8") and m.image != 'arch':
+        # auto-enabled software TPM
+        if not machineslib.hasBrokenTPM(m.image):
             tpm_xml = m.execute("virsh dumpxml VmNotInstalled | xmllint --xpath /domain/devices/tpm -")
             self.assertIn('model="tpm-crb"', tpm_xml)
             self.assertIn('type="emulator"', tpm_xml)
@@ -2294,8 +2299,6 @@ vnc_password= "{vnc_passwd}"
         self.assertIn("<os>", domainXML)
         self.assertNotIn("efi", domainXML)
 
-    @testlib.skipImage("does not support virt-xml --tpm", "rhel-8*")
-    @testlib.skipImage("does not support TPM 2.0", "arch")
     def testConfigureBeforeInstallBiosTPM(self):
         m = self.machine
         b = self.browser
@@ -2317,24 +2320,34 @@ vnc_password= "{vnc_passwd}"
         b.wait_in_text(f"#vm-{vmName}-firmware", "BIOS")
 
         # manually add TPM to BIOS
-        m.execute(f"virt-xml --add-device --tpm default {vmName}")
-        self.assertIn("tpm", m.execute(f"virsh dumpxml {vmName}"))
-        # this doesn't change the UI, so we have to reload to ensure that the UI picks up the change
-        # otherwise this is a race condition
-        b.reload()
-        b.enter_page('/machines')
+        if not machineslib.hasBrokenTPM(m.image):
+            m.execute(f"virt-xml --add-device --tpm default {vmName}")
+            self.assertIn("tpm", m.execute(f"virsh dumpxml {vmName}"))
+
+            # this doesn't change the UI, so we have to reload to ensure that the UI picks up the change
+            # otherwise this is a race condition
+            b.reload()
+            b.enter_page('/machines')
 
         # Change the os boot firmware to EFI
         b.click(f"#vm-{vmName}-firmware")
         b.wait_visible(".pf-v5-c-modal-box__body")
         b.select_from_dropdown(".pf-v5-c-modal-box__body select", "efi")
         b.click("#firmware-dialog-apply")
+        # ack error message if adding TPM failed
+        if machineslib.hasBrokenTPM(m.image):
+            b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-alert", "Failed to change firmware")
+            b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-alert", "TPM")
+            b.click('.pf-v5-c-modal-box__footer button:contains("Cancel")')
         b.wait_not_present(".pf-v5-c-modal-box__body")
         b.wait_in_text(f"#vm-{vmName}-firmware", "UEFI")
 
-        # did not add a second TPM; that would fail in the dialog anyway, but let's double-check the backend
-        out = m.execute(f"virsh dumpxml {vmName} | xmllint --xpath /domain/devices/tpm - | grep --count '<tpm'")
-        self.assertEqual(out.strip(), "1")
+        if machineslib.hasBrokenTPM(m.image):
+            self.assertNotIn("tpm", m.execute(f"virsh dumpxml {vmName}"))
+        else:
+            # did not add a second TPM; that would fail in the dialog anyway, but let's double-check the backend
+            out = m.execute(f"virsh dumpxml {vmName} | xmllint --xpath /domain/devices/tpm - | grep --count '<tpm'")
+            self.assertEqual(out.strip(), "1")
 
         # Install the VM
         b.click(f"#vm-{vmName}-system-install")
