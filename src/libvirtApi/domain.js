@@ -1082,13 +1082,5 @@ export async function domainReplaceSpice({ connectionName, id: objPath }) {
 
 export async function domainAddTPM({ connectionName, vmName }) {
     const args = ["virt-xml", "-c", `qemu:///${connectionName}`, "--add-device", "--tpm", "default", vmName];
-    return cockpit.spawn(args, { err: "message", superuser: connectionName === "system" ? "try" : null })
-            // RHEL 8 does not support --tpm default; arch (and likely other system setups) fails with
-            // unsupported configuration: TPM version '2.0' is not supported
-            .catch(ex => {
-                if (ex.message?.includes("Unknown TPM backend type") || ex.message?.includes("unsupported configuration"))
-                    console.log("Failed to add TPM:", ex);
-                else
-                    return Promise.reject(ex);
-            });
+    return cockpit.spawn(args, { err: "message", superuser: connectionName === "system" ? "try" : null });
 }
