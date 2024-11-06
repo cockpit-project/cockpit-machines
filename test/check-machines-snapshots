@@ -158,6 +158,8 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
                     b.set_input_text("#snapshot-create-dialog-description", self.description)
                 if self.memory_path is not None:
                     b.set_input_text("#snapshot-create-dialog-memory-location input", self.memory_path)
+                    # Setting the input pops up the dropdown, clicking it away should show an validation error
+                    b.click("#snapshot-create-dialog-memory-location button[aria-label='Typeahead menu toggle']")
 
             def assert_pixels(self):
                 if self.name == 'test_snap_1':
@@ -526,7 +528,7 @@ virsh snapshot-create-as --domain subVmTest1 --name snapshotA --description 'Des
 
         # Check creation of new directories
         b.set_input_text("#snapshot-create-dialog-memory-location input", snapshot_dir + "/new")
-        b.wait_text("#snapshot-create-dialog-memory-location li button", f'Create "{snapshot_dir}/new"')
+        b.wait_text("#snapshot-create-dialog-memory-location li button", f"Create {snapshot_dir}/new")
         b.click("#snapshot-create-dialog-memory-location li button")
 
         # Check available space detection
@@ -560,7 +562,7 @@ virsh snapshot-create-as --domain subVmTest1 --name snapshotA --description 'Des
         snapshot_dir2 = "/var/lib/libvirt2" if connection == "system" else "/home/admin/.local/share/libvirt/2"
 
         b.set_input_text("#snapshot-create-dialog-memory-location input", snapshot_dir2)
-        b.wait_text("#snapshot-create-dialog-memory-location li button", f'Create "{snapshot_dir2}"')
+        b.wait_text("#snapshot-create-dialog-memory-location li button", f"Create {snapshot_dir2}")
         b.click("#snapshot-create-dialog-memory-location li:first-child button")
 
         # Wait a couple of seconds to guarantee a different
