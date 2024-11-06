@@ -59,16 +59,7 @@ class TestMachinesFilesystems(machineslib.VirtualMachinesCase):
         b.wait_not_present("#vm-subVmTest1-filesystems-modal-mountTag-helper")
 
         b.set_input_text("#vm-subVmTest1-filesystems-modal-mountTag", "")
-        b.set_input_text("#vm-subVmTest1-filesystems-modal-source-group input", "/tmp")
-        # In some hosts with the high latency, the path of the expand list needs some time to load,
-        # the check will fail if it is too quick.
-        # Thus, add a check that the folder input appears in the expand list(#vm-{name}-filesystems-modal-source)
-        # to ensure that the loading is finished #vm-{name}-filesystems-modal-source only contains the expand list,
-        # without the input line.
-        b.wait_in_text("#vm-subVmTest1-filesystems-modal-source", "/tmp")
-        b.click("#vm-subVmTest1-filesystems-modal-source button:nth-child(1)")
-        # Check the expand list disappears
-        b.wait_not_present("#vm-subVmTest1-filesystems-modal-source")
+        b.set_file_autocomplete_val("#vm-subVmTest1-filesystems-modal-source-group", "/tmp/")
         b.click("#vm-subVmTest1-filesystems-modal-add")
         b.wait_not_present("#vm-subVmTest1-filesystems-modal-source-helper")
         b.wait_visible("#vm-subVmTest1-filesystems-modal-mountTag-helper")
@@ -128,8 +119,13 @@ class TestMachinesFilesystems(machineslib.VirtualMachinesCase):
         # Try to add a new shared filesystem with non existing source directory
         b.click("#vm-subVmTest1-filesystems-add")
         b.set_input_text("#vm-subVmTest1-filesystems-modal-source-group input", "dir3")
-        b.wait_in_text("#vm-subVmTest1-filesystems-modal-source", "No such file or directory")
+        b.wait_in_text("#vm-subVmTest1-filesystems-modal-source-group ul", "No such file or directory")
+        b.click("#vm-subVmTest1-filesystems-modal-source button[aria-label='Clear input value']")
+        b.click("#vm-subVmTest1-filesystems-modal-source button[aria-label='Typeahead menu toggle']")
+        b.blur("#vm-subVmTest1-filesystems-modal-source-group input")
+        b.wait_not_present("#vm-subVmTest1-filesystems-modal-source  .pf-v5-c-menu")
         b.click("#vm-subVmTest1-filesystems-modal-cancel")
+        b.wait_not_present(".pf-v5-c-modal-box__body ")
 
         # Start VM and ensure that adding filesystem is disabled
         b.click("#vm-subVmTest1-system-run")

@@ -1260,10 +1260,10 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             self,
             mode='custom-path'
         ).openDialog()
-        b.click(f"{prefix}-file .pf-v5-c-select__toggle-button")
-        b.wait_visible(f"{prefix}-file-autocomplete")
+        b.click(f"{prefix}-file-autocomplete .pf-v5-c-menu-toggle__button")
+        b.wait_visible(".pf-v5-c-menu__content")
         b.key("ArrowDown")
-        b.focus(f"{prefix}-file-autocomplete li:first-child")
+        b.focus(".pf-v5-c-menu__content li:first-child")
         for _retry in range(0, 10):
             b.key("ArrowDown")
             time.sleep(0.5)
