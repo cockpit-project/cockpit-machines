@@ -1377,10 +1377,10 @@ vnc_password= "{vnc_passwd}"
             else:
                 b.wait_not_present("#source-type")
 
-            if self.sourceType == 'file' or self.sourceType == 'cloud':
-                b.set_file_autocomplete_val("#source-file-group", self.location or " ")
-            elif self.sourceType == 'disk_image':
-                b.set_file_autocomplete_val("#source-disk-group", self.location or " ")
+            if (self.sourceType == 'file' or self.sourceType == 'cloud') and self.location:
+                b.set_file_autocomplete_val("#source-file-group", self.location)
+            elif self.sourceType == 'disk_image' and self.location:
+                b.set_file_autocomplete_val("#source-disk-group", self.location)
             elif self.sourceType == 'pxe':
                 if self.location:
                     b.select_from_dropdown("#network-select", self.location)
