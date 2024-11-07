@@ -55,14 +55,14 @@ class TestMachinesFilesystems(machineslib.VirtualMachinesCase):
 
         b.set_input_text("#vm-subVmTest1-filesystems-modal-mountTag", "test")
         b.click("#vm-subVmTest1-filesystems-modal-add")
-        b.wait_visible("#vm-subVmTest1-filesystems-modal-source-helper")
+        b.wait_text("#vm-subVmTest1-filesystems-modal-source-helper", "Source must not be empty")
         b.wait_not_present("#vm-subVmTest1-filesystems-modal-mountTag-helper")
 
         b.set_input_text("#vm-subVmTest1-filesystems-modal-mountTag", "")
         b.set_file_autocomplete_val("#vm-subVmTest1-filesystems-modal-source-group", "/tmp/")
         b.click("#vm-subVmTest1-filesystems-modal-add")
         b.wait_not_present("#vm-subVmTest1-filesystems-modal-source-helper")
-        b.wait_visible("#vm-subVmTest1-filesystems-modal-mountTag-helper")
+        b.wait_text("#vm-subVmTest1-filesystems-modal-mountTag-helper", "Mount tag must not be empty")
 
         b.click("#vm-subVmTest1-filesystems-modal-cancel")
 
