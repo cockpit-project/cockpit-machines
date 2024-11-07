@@ -35,7 +35,7 @@ def hasMonolithicDaemon(image):
 
 # software TPM doesn't work on some OSes
 def hasBrokenTPM(image):
-    return image.startswith("rhel-8") or image == 'arch'
+    return image.startswith("rhel-8")
 
 
 class VirtualMachinesCaseHelpers:
