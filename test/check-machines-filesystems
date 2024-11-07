@@ -133,7 +133,11 @@ class TestMachinesFilesystems(machineslib.VirtualMachinesCase):
 
         # Start VM and ensure that adding filesystem is disabled
         b.click("#vm-subVmTest1-system-run")
-        b.wait_visible("#vm-subVmTest1-filesystems-add[aria-disabled=true]")
+        b.wait_visible("#vm-subVmTest1-filesystems-add:not([aria-disabled])")  # Add button should still be enabled
+        b.click("#vm-subVmTest1-filesystems-add")
+        b.wait_visible("#vm-subVmTest1-filesystems-modal-add[disabled]")  # Add button in modal should be disabled
+        b.wait_in_text(".pf-v5-c-modal-box__body", "Adding shared directories is only possible when the guest is shut off")
+        b.click("#vm-subVmTest1-filesystems-modal-cancel")
 
     def testDelete(self):
         b = self.browser

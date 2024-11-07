@@ -99,7 +99,8 @@ export const VmFilesystemActions = ({ connectionName, vmName, vmState }) => {
 
     function open() {
         Dialogs.show(<VmFilesystemAddModal connectionName={connectionName}
-                                           vmName={vmName} />);
+                                           vmName={vmName}
+                                           vmState={vmState} />);
     }
 
     const addButton = (
@@ -114,7 +115,7 @@ export const VmFilesystemActions = ({ connectionName, vmName, vmState }) => {
     return vmState == 'shut off' ? addButton : <Tooltip content={_("Adding shared directories is possible only when the guest is shut off")}>{addButton}</Tooltip>;
 };
 
-const VmFilesystemAddModal = ({ connectionName, vmName }) => {
+const VmFilesystemAddModal = ({ connectionName, vmName, vmState }) => {
     const Dialogs = useDialogs();
     const [additionalOptionsExpanded, setAdditionalOptionsExpanded] = useState(false);
     const [dialogError, setDialogError] = useState();
@@ -125,6 +126,10 @@ const VmFilesystemAddModal = ({ connectionName, vmName }) => {
     const idPrefix = `${vmId(vmName)}-filesystems`;
 
     const onAddClicked = () => {
+        if (isVmRunning) {
+            setWarningMessage(_('Adding shared directories is only possible when the guest is shut off'));
+            return;
+        }
         const validationFailed = {};
 
         if (!mountTag)
@@ -158,7 +163,8 @@ const VmFilesystemAddModal = ({ connectionName, vmName }) => {
                title={_("Share a host directory with the guest")}
                footer={
                    <>
-                       <Button id={`${idPrefix}-modal-add`}
+                        <Button id={`${idPrefix}-modal-add`}
+                                isDisabled={isVmRunning}
                                variant='primary'
                                onClick={onAddClicked}>
                            {_("Share")}
