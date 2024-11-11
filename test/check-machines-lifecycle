@@ -378,15 +378,13 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         self.performAction("mac", "edit-description")
 
         # Non-ascii chars, unbalanced quotes, backslash, multiple lines
-        desc1 = '"Döscrü\\ptiän \'\'\' كرة القدم'
-        desc2 = 'Second <b>line</b>'
+        desc = '"Döscrü\\ptiän \'\'\' كرة القدم\nSecond <b>line</b>'
 
-        b.set_input_text("#edit-description-dialog-description", desc1 + "\n" + desc2)
+        b.set_input_text("#edit-description-dialog-description", desc)
         b.click("#edit-description-dialog-confirm")
         b.wait_not_present("#edit-description-dialog-confirm")
 
-        b.wait_text(".vm-description p:nth-child(1)", desc1)
-        b.wait_text(".vm-description p:nth-child(2)", desc2)
+        b.wait_text(".vm-description", desc)
 
     def testDelete(self):
         b = self.browser
