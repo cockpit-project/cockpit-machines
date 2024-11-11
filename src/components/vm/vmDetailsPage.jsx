@@ -77,9 +77,9 @@ export const VmDetailsPage = ({
             </div>
             {
                 vm.inactiveXML.description &&
-                    <div className="vm-description">
-                        {vm.inactiveXML.description.split("\n").map((p, i) => <p key={i}>{p}</p>)}
-                    </div>
+                    <p className="vm-description">
+                        {vm.inactiveXML.description}
+                    </p>
             }
         </PageSection>
     );
