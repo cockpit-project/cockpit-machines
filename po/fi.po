@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-05 03:02+0000\n"
+"POT-Creation-Date: 2024-11-09 03:02+0000\n"
 "PO-Revision-Date: 2024-09-23 21:00+0000\n"
 "Last-Translator: Jan Kuparinen <copper_fin@hotmail.com>\n"
 "Language-Team: Finnish <https://translate.fedoraproject.org/projects/cockpit-"
@@ -123,6 +123,10 @@ msgstr "Lisää"
 #: src/components/create-vm-dialog/createVmDialog.jsx:863
 msgid "Add SSH keys"
 msgstr "Lisää SSH-avaimet"
+
+#: src/components/vm/vmActions.jsx:484
+msgid "Add TPM"
+msgstr ""
 
 #: src/components/networks/networkOverviewTab.jsx:230
 msgid "Add a DHCP static host entry"
@@ -292,7 +296,7 @@ msgstr "Väylä"
 msgid "CD/DVD disc"
 msgstr "CD/DVD-levy"
 
-#: src/components/common/needsShutdown.jsx:114
+#: src/components/common/needsShutdown.jsx:118
 #: src/components/vm/overview/vmOverviewCard.jsx:184
 #: src/components/vm/vmUsageCard.jsx:61
 msgid "CPU"
@@ -359,7 +363,7 @@ msgstr "Vaihda käynnistysjärjestystä"
 msgid "Change firmware"
 msgstr "Vaihda laiteohjelmisto"
 
-#: src/components/common/needsShutdown.jsx:171
+#: src/components/common/needsShutdown.jsx:179
 msgid "Changes pending"
 msgstr "Muutokset odottavat"
 
@@ -401,7 +405,7 @@ msgstr ""
 "Painamalla \"Käynnistä etäkatseluohjelma\" lataat .vv-tiedoston ja "
 "käynnistät $0."
 
-#: src/components/vm/vmActions.jsx:405 src/components/vm/vmCloneDialog.jsx:80
+#: src/components/vm/vmActions.jsx:414 src/components/vm/vmCloneDialog.jsx:80
 msgid "Clone"
 msgstr "Kloonaa"
 
@@ -622,7 +626,7 @@ msgstr "Deaktivoi"
 #: src/components/storagePools/storagePoolDelete.jsx:202
 #: src/components/storagePools/storagePoolDelete.jsx:238
 #: src/components/storagePools/storagePoolDelete.jsx:248
-#: src/components/vm/vmActions.jsx:477 src/components/vm/vmActions.jsx:485
+#: src/components/vm/vmActions.jsx:497 src/components/vm/vmActions.jsx:505
 #: src/components/vm/deleteDialog.jsx:170
 msgid "Delete"
 msgstr "Poista"
@@ -733,7 +737,7 @@ msgstr "Yhteys katkaistu"
 msgid "Disconnected from serial console. Click the connect button."
 msgstr "Irrotettu sarjakonsolista. Napsauta yhdistä-painiketta."
 
-#: src/components/common/needsShutdown.jsx:93
+#: src/components/common/needsShutdown.jsx:97
 msgid "Disk"
 msgstr "Levy"
 
@@ -834,7 +838,7 @@ msgstr "Muokkaa"
 msgid "Edit $0 attributes"
 msgstr "Muokkaa $0 attribuuttia"
 
-#: src/components/vm/vmActions.jsx:462
+#: src/components/vm/vmActions.jsx:471
 msgid "Edit description"
 msgstr "Muokkaa kuvausta"
 
@@ -914,6 +918,12 @@ msgstr "Laajennetut määreet"
 #: src/components/common/stateIcon.jsx:61
 msgid "Failed"
 msgstr "Epäonnistui"
+
+#: src/components/vm/vmActions.jsx:188
+#, fuzzy
+#| msgid "Failed to clone VM $0"
+msgid "Failed to add TPM to VM $0"
+msgstr "VM:n $0 kloonaus epäonnistui"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:196
 msgid "Failed to add shared directory"
@@ -1001,11 +1011,11 @@ msgstr "Laiteohjelmisto"
 msgid "Force eject"
 msgstr "Pakota poisto"
 
-#: src/components/vm/vmActions.jsx:361 src/components/vm/vmActions.jsx:366
+#: src/components/vm/vmActions.jsx:370 src/components/vm/vmActions.jsx:375
 msgid "Force reboot"
 msgstr "Pakota uudelleenkäynnistys"
 
-#: src/components/vm/vmActions.jsx:354
+#: src/components/vm/vmActions.jsx:363
 msgid "Force reboot $0?"
 msgstr "Pakota $0 uudelleenkäynnistys?"
 
@@ -1013,11 +1023,11 @@ msgstr "Pakota $0 uudelleenkäynnistys?"
 msgid "Force revert"
 msgstr "Pakota palautus"
 
-#: src/components/vm/vmActions.jsx:297 src/components/vm/vmActions.jsx:302
+#: src/components/vm/vmActions.jsx:306 src/components/vm/vmActions.jsx:311
 msgid "Force shut down"
 msgstr "Pakota sammutus"
 
-#: src/components/vm/vmActions.jsx:290
+#: src/components/vm/vmActions.jsx:299
 msgid "Force shut down $0?"
 msgstr "Pakota $0 sammutus?"
 
@@ -1280,7 +1290,7 @@ msgstr "Aseta levyasema"
 msgid "Inside the VM"
 msgstr "VM:n sisällä"
 
-#: src/components/vm/vmActions.jsx:393
+#: src/components/vm/vmActions.jsx:402
 msgid "Install"
 msgstr "Asennus"
 
@@ -1513,7 +1523,7 @@ msgstr "Muistin tilan polku"
 msgid "MiB"
 msgstr "Mit"
 
-#: src/components/vm/vmActions.jsx:428
+#: src/components/vm/vmActions.jsx:437
 #: src/components/vm/vmMigrateDialog.jsx:199
 msgid "Migrate"
 msgstr "Migratoi"
@@ -1639,7 +1649,7 @@ msgstr "Verkkokäynnistys (PXE)"
 msgid "Network file system"
 msgstr "Verkkotiedostojärjestelmä"
 
-#: src/components/common/needsShutdown.jsx:103
+#: src/components/common/needsShutdown.jsx:107
 msgid "Network interface"
 msgstr "verkkoliitäntä"
 
@@ -1881,7 +1891,7 @@ msgstr "Polku hakemistoon"
 msgid "Path to file on host's file system"
 msgstr "Polku tiedostoon isännän tiedostojärjestelmässä"
 
-#: src/helpers.js:270 src/components/vm/vmActions.jsx:212
+#: src/helpers.js:270 src/components/vm/vmActions.jsx:221
 msgid "Pause"
 msgstr "Keskeytä"
 
@@ -2061,12 +2071,12 @@ msgstr "Alue"
 msgid "Read-only"
 msgstr "Vain luku"
 
-#: src/components/vm/vmActions.jsx:257 src/components/vm/vmActions.jsx:341
-#: src/components/vm/vmActions.jsx:346
+#: src/components/vm/vmActions.jsx:266 src/components/vm/vmActions.jsx:350
+#: src/components/vm/vmActions.jsx:355
 msgid "Reboot"
 msgstr "Käynnistä uudelleen"
 
-#: src/components/vm/vmActions.jsx:334
+#: src/components/vm/vmActions.jsx:343
 msgid "Reboot $0?"
 msgstr "Käynnistä $0 uudelleen?"
 
@@ -2124,7 +2134,7 @@ msgstr "Poista verkkoliitäntä?"
 msgid "Remove static host from DHCP"
 msgstr "Poista staattinen isäntä DHCP:stä"
 
-#: src/components/vm/vmRenameDialog.jsx:68 src/components/vm/vmActions.jsx:452
+#: src/components/vm/vmRenameDialog.jsx:68 src/components/vm/vmActions.jsx:461
 msgid "Rename"
 msgstr "Nimeä uudelleen"
 
@@ -2136,7 +2146,7 @@ msgstr "Nimeä uudelleen VM $0"
 msgid "Replace"
 msgstr "Vaihda"
 
-#: src/components/vm/vmActions.jsx:439
+#: src/components/vm/vmActions.jsx:448
 #: src/components/vm/vmReplaceSpiceDialog.jsx:124
 #: src/components/vm/usesSpice.jsx:38
 msgid "Replace SPICE devices"
@@ -2165,7 +2175,7 @@ msgstr ""
 "Rajoitukset verkkotoiminnassa (SLIRP-pohjainen emulointi) ja PCI-laitteiden "
 "määrittämisessä"
 
-#: src/components/vm/vmActions.jsx:223
+#: src/components/vm/vmActions.jsx:232
 msgid "Resume"
 msgstr "Palauta"
 
@@ -2204,7 +2214,7 @@ msgstr "Reititetty verkko"
 msgid "Row select"
 msgstr "Rivin valinta"
 
-#: src/components/vm/vmActions.jsx:381
+#: src/components/vm/vmActions.jsx:390
 msgid "Run"
 msgstr "Suorita"
 
@@ -2217,7 +2227,7 @@ msgstr "Suorita, kun isäntä käynnistyy"
 msgid "Running"
 msgstr "Käynnissä"
 
-#: src/components/common/needsShutdown.jsx:122
+#: src/components/common/needsShutdown.jsx:126
 msgid "SPICE"
 msgstr "SPICE"
 
@@ -2273,11 +2283,11 @@ msgstr "Valitse konsolin tyyppi"
 msgid "Send key"
 msgstr "Lähetä avain"
 
-#: src/components/vm/vmActions.jsx:317 src/components/vm/vmActions.jsx:322
+#: src/components/vm/vmActions.jsx:326 src/components/vm/vmActions.jsx:331
 msgid "Send non-maskable interrupt"
 msgstr "Lähetä ei-peitettävä keskeytys"
 
-#: src/components/vm/vmActions.jsx:311
+#: src/components/vm/vmActions.jsx:320
 msgid "Send non-maskable interrupt to $0?"
 msgstr "Lähetä kohteeseen $0 ei-peitettävä keskeytys?"
 
@@ -2343,12 +2353,12 @@ msgstr "Näytä vähemmän"
 msgid "Show more"
 msgstr "Näytä lisää"
 
-#: src/components/vm/vmActions.jsx:249 src/components/vm/vmActions.jsx:262
-#: src/components/vm/vmActions.jsx:277 src/components/vm/vmActions.jsx:282
+#: src/components/vm/vmActions.jsx:258 src/components/vm/vmActions.jsx:271
+#: src/components/vm/vmActions.jsx:286 src/components/vm/vmActions.jsx:291
 msgid "Shut down"
 msgstr "Sammuta"
 
-#: src/components/vm/vmActions.jsx:239 src/components/vm/vmActions.jsx:270
+#: src/components/vm/vmActions.jsx:248 src/components/vm/vmActions.jsx:279
 msgid "Shut down $0?"
 msgstr "Sammuta $0?"
 
@@ -2402,7 +2412,7 @@ msgstr "Tilannevedokset"
 msgid "Sockets"
 msgstr "Pistokkeet"
 
-#: src/components/common/needsShutdown.jsx:148
+#: src/components/common/needsShutdown.jsx:156
 msgid "Some configuration changes only take effect after a fresh boot:"
 msgstr ""
 "Jotkut asetusmuutokset tulevat voimaan vasta uuden käynnistyksen jälkeen:"
@@ -2569,6 +2579,10 @@ msgstr "Järjestelmä"
 msgid "TAP device"
 msgstr "TAP-laite"
 
+#: src/components/common/needsShutdown.jsx:130
+msgid "TPM"
+msgstr ""
+
 #: src/components/vm/hostdevs/hostDevAdd.jsx:126
 msgid "Table of selectable host devices"
 msgstr "Taulukko valittavista olevista isäntälaitteista"
@@ -2654,7 +2668,7 @@ msgstr "Tunnisteen nimi, jota vieras käyttää tämän vientipisteen liittämis
 msgid "Then copy and paste it above."
 msgstr "Kopioi ja liitä se sitten yläpuolelle."
 
-#: src/components/vm/vmActions.jsx:473
+#: src/components/vm/vmActions.jsx:493
 msgid "This VM is transient. Shut it down if you wish to delete it."
 msgstr "Tämä virtuaalikone on ohimenevä. Sammuta se, jos haluat poistaa sen."
 
@@ -2877,39 +2891,39 @@ msgstr "Virtuaalikone $0 on jo olemassa"
 msgid "VM $0 does not exist on $1 connection"
 msgstr "Virtuaalikone $0 ei ole olemassa yhteydellä $1"
 
-#: src/components/vm/vmActions.jsx:107
+#: src/components/vm/vmActions.jsx:109
 msgid "VM $0 failed to force reboot"
 msgstr "Virtuaalikoneen $0 uudelleenkäynnistyksen pakottaminen epäonnistui"
 
-#: src/components/vm/vmActions.jsx:164
+#: src/components/vm/vmActions.jsx:166
 msgid "VM $0 failed to force shutdown"
 msgstr "Virtuaalikone $0 epäonnistui pakottamaan sammutus"
 
-#: src/components/vm/vmActions.jsx:82
+#: src/components/vm/vmActions.jsx:84
 msgid "VM $0 failed to get installed"
 msgstr "Virtuaalikone $0 epäonnistui saamaan itse asennetuksi"
 
-#: src/components/vm/vmActions.jsx:136
+#: src/components/vm/vmActions.jsx:138
 msgid "VM $0 failed to pause"
 msgstr "Virtuaalikone $0 epäonnistui keskeytymään"
 
-#: src/components/vm/vmActions.jsx:94
+#: src/components/vm/vmActions.jsx:96
 msgid "VM $0 failed to reboot"
 msgstr "Virtuaalikone $0 epäonnistui käynnistymään uudelleen"
 
-#: src/components/vm/vmActions.jsx:149
+#: src/components/vm/vmActions.jsx:151
 msgid "VM $0 failed to resume"
 msgstr "Virtuaalikone $0 epäonnistui palautumaan"
 
-#: src/components/vm/vmActions.jsx:177
+#: src/components/vm/vmActions.jsx:179
 msgid "VM $0 failed to send NMI"
 msgstr "Virtuaalikone $0 epäonnistui lähettämään NMI"
 
-#: src/components/vm/vmActions.jsx:123
+#: src/components/vm/vmActions.jsx:125
 msgid "VM $0 failed to shutdown"
 msgstr "Virtuaalikone $0 epäonnistui sammuttamaan"
 
-#: src/components/vm/vmActions.jsx:73
+#: src/components/vm/vmActions.jsx:75
 msgid "VM $0 failed to start"
 msgstr "Virtuaalikone $0 epäonnistui käynnistymään"
 
@@ -2921,7 +2935,7 @@ msgstr ""
 "VM julkaistiin etuoikeutetulla rajoitetulla pääsyllä, jossa prosessin ja PTY:"
 "n omistaa käyttäjätilisi"
 
-#: src/components/common/needsShutdown.jsx:161
+#: src/components/common/needsShutdown.jsx:169
 msgid "VM needs shutdown"
 msgstr "Virtuaalikone vaatii sammutuksen"
 
@@ -3027,7 +3041,7 @@ msgstr "Vsock"
 msgid "WWPN"
 msgstr "WWPN"
 
-#: src/components/common/needsShutdown.jsx:118
+#: src/components/common/needsShutdown.jsx:122
 #: src/components/vm/overview/vmOverviewCard.jsx:204
 msgid "Watchdog"
 msgstr "Vahtikoira"
@@ -3266,7 +3280,7 @@ msgstr "vCPU-lasku"
 msgid "vCPU maximum"
 msgstr "vCPU enintään"
 
-#: src/components/common/needsShutdown.jsx:110
+#: src/components/common/needsShutdown.jsx:114
 msgid "vCPUs"
 msgstr "vCPU:t"
 
@@ -3278,7 +3292,7 @@ msgstr "virtuaali-isännän käyttäjä"
 msgid "view more..."
 msgstr "Katso lisää..."
 
-#: src/components/vm/vmActions.jsx:415
+#: src/components/vm/vmActions.jsx:424
 msgid ""
 "virt-install package needs to be installed on the system in order to clone "
 "VMs"

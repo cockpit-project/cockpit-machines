@@ -8,10 +8,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE_VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-05 03:02+0000\n"
-"PO-Revision-Date: 2024-09-16 17:44+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
-"memory@weblate.org>\n"
+"POT-Creation-Date: 2024-11-09 03:02+0000\n"
+"PO-Revision-Date: 2024-11-07 00:50+0000\n"
+"Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translate.fedoraproject.org/projects/"
 "cockpit-machines/main/ka/>\n"
 "Language: ka\n"
@@ -19,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1\n"
-"X-Generator: Weblate 5.7.2\n"
+"X-Generator: Weblate 5.8.2\n"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:927
 msgid "$0 $1 available at default location"
@@ -124,6 +123,10 @@ msgstr "დამატება"
 #: src/components/create-vm-dialog/createVmDialog.jsx:863
 msgid "Add SSH keys"
 msgstr "SSH გასაღებების დამატება"
+
+#: src/components/vm/vmActions.jsx:484
+msgid "Add TPM"
+msgstr "TPM-ის დამატება"
 
 #: src/components/networks/networkOverviewTab.jsx:230
 msgid "Add a DHCP static host entry"
@@ -293,7 +296,7 @@ msgstr "მატარებელი"
 msgid "CD/DVD disc"
 msgstr "CD/DVD დისკი"
 
-#: src/components/common/needsShutdown.jsx:114
+#: src/components/common/needsShutdown.jsx:118
 #: src/components/vm/overview/vmOverviewCard.jsx:184
 #: src/components/vm/vmUsageCard.jsx:61
 msgid "CPU"
@@ -360,7 +363,7 @@ msgstr "ჩატვირთვის მიმდევრობის შე�
 msgid "Change firmware"
 msgstr "მიკროკოდის შეცვლა"
 
-#: src/components/common/needsShutdown.jsx:171
+#: src/components/common/needsShutdown.jsx:179
 msgid "Changes pending"
 msgstr "დარჩენილი ცვლილებები"
 
@@ -402,7 +405,7 @@ msgstr ""
 "\"დაშორებული დამთვალიერებლის გაშვება\"-ზე დაჭერა გადმოწერს .vv ფაილს და "
 "გაუშვებს $0-ს."
 
-#: src/components/vm/vmActions.jsx:405 src/components/vm/vmCloneDialog.jsx:80
+#: src/components/vm/vmActions.jsx:414 src/components/vm/vmCloneDialog.jsx:80
 msgid "Clone"
 msgstr "კლონი"
 
@@ -623,7 +626,7 @@ msgstr "დეაქტივაცია"
 #: src/components/storagePools/storagePoolDelete.jsx:202
 #: src/components/storagePools/storagePoolDelete.jsx:238
 #: src/components/storagePools/storagePoolDelete.jsx:248
-#: src/components/vm/vmActions.jsx:477 src/components/vm/vmActions.jsx:485
+#: src/components/vm/vmActions.jsx:497 src/components/vm/vmActions.jsx:505
 #: src/components/vm/deleteDialog.jsx:170
 msgid "Delete"
 msgstr "წაშლა"
@@ -733,7 +736,7 @@ msgstr "გათიშულია"
 msgid "Disconnected from serial console. Click the connect button."
 msgstr "სერიული კონსოლი გაითიშა. დააწექით კავშირის ღილაკს."
 
-#: src/components/common/needsShutdown.jsx:93
+#: src/components/common/needsShutdown.jsx:97
 msgid "Disk"
 msgstr "დისკი"
 
@@ -832,7 +835,7 @@ msgstr "ჩასწორება"
 msgid "Edit $0 attributes"
 msgstr "$0-ის ატრიბუტების ჩასწორება"
 
-#: src/components/vm/vmActions.jsx:462
+#: src/components/vm/vmActions.jsx:471
 msgid "Edit description"
 msgstr "აღწერის ჩასწორება"
 
@@ -910,6 +913,10 @@ msgstr "გაფართოებული ატრიბუტები"
 #: src/components/common/stateIcon.jsx:61
 msgid "Failed"
 msgstr "შეცდომა"
+
+#: src/components/vm/vmActions.jsx:188
+msgid "Failed to add TPM to VM $0"
+msgstr "ჩავარდა TPM-ის დამატება ვმ-ზე $0"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:196
 msgid "Failed to add shared directory"
@@ -997,11 +1004,11 @@ msgstr "მიკროკოდი"
 msgid "Force eject"
 msgstr "ძალით გამოღება"
 
-#: src/components/vm/vmActions.jsx:361 src/components/vm/vmActions.jsx:366
+#: src/components/vm/vmActions.jsx:370 src/components/vm/vmActions.jsx:375
 msgid "Force reboot"
 msgstr "ძალით გადატვირთვა"
 
-#: src/components/vm/vmActions.jsx:354
+#: src/components/vm/vmActions.jsx:363
 msgid "Force reboot $0?"
 msgstr "გადავტვირთო ძალით $0?"
 
@@ -1009,11 +1016,11 @@ msgstr "გადავტვირთო ძალით $0?"
 msgid "Force revert"
 msgstr "ძალით დაბრუნება"
 
-#: src/components/vm/vmActions.jsx:297 src/components/vm/vmActions.jsx:302
+#: src/components/vm/vmActions.jsx:306 src/components/vm/vmActions.jsx:311
 msgid "Force shut down"
 msgstr "ძალით გამორთვა"
 
-#: src/components/vm/vmActions.jsx:290
+#: src/components/vm/vmActions.jsx:299
 msgid "Force shut down $0?"
 msgstr "გამოვრთო ძალით $0?"
 
@@ -1274,7 +1281,7 @@ msgstr "დისკის ჩადება"
 msgid "Inside the VM"
 msgstr "ვმ-ის შიგნით"
 
-#: src/components/vm/vmActions.jsx:393
+#: src/components/vm/vmActions.jsx:402
 msgid "Install"
 msgstr "დაყენება"
 
@@ -1506,7 +1513,7 @@ msgstr "მეხსიერების მდგომარეობის �
 msgid "MiB"
 msgstr "მიბ"
 
-#: src/components/vm/vmActions.jsx:428
+#: src/components/vm/vmActions.jsx:437
 #: src/components/vm/vmMigrateDialog.jsx:199
 msgid "Migrate"
 msgstr "მიგრაცია"
@@ -1632,7 +1639,7 @@ msgstr "ქსელური ჩატვირთვა (PXE)"
 msgid "Network file system"
 msgstr "ქსელური ფაილური სისტემა"
 
-#: src/components/common/needsShutdown.jsx:103
+#: src/components/common/needsShutdown.jsx:107
 msgid "Network interface"
 msgstr "ქსელის ინტერფეისი"
 
@@ -1870,7 +1877,7 @@ msgstr "ბილიკი საქაღალდემდე"
 msgid "Path to file on host's file system"
 msgstr "ბილიკი ფაილამდე ჰოსტის ფალურ სისტემაზე"
 
-#: src/helpers.js:270 src/components/vm/vmActions.jsx:212
+#: src/helpers.js:270 src/components/vm/vmActions.jsx:221
 msgid "Pause"
 msgstr "შეჩერება"
 
@@ -2048,12 +2055,12 @@ msgstr "დიაპაზონი"
 msgid "Read-only"
 msgstr "მხოლოდ-წასაკითხად"
 
-#: src/components/vm/vmActions.jsx:257 src/components/vm/vmActions.jsx:341
-#: src/components/vm/vmActions.jsx:346
+#: src/components/vm/vmActions.jsx:266 src/components/vm/vmActions.jsx:350
+#: src/components/vm/vmActions.jsx:355
 msgid "Reboot"
 msgstr "გადატვირთვა"
 
-#: src/components/vm/vmActions.jsx:334
+#: src/components/vm/vmActions.jsx:343
 msgid "Reboot $0?"
 msgstr "გადავტვირთო $0?"
 
@@ -2111,7 +2118,7 @@ msgstr "წავშალო ქსელის ინტერფეისი?
 msgid "Remove static host from DHCP"
 msgstr "host-ის სტატიკური ჩანაწერების DHCP-დან წაშლა"
 
-#: src/components/vm/vmRenameDialog.jsx:68 src/components/vm/vmActions.jsx:452
+#: src/components/vm/vmRenameDialog.jsx:68 src/components/vm/vmActions.jsx:461
 msgid "Rename"
 msgstr "გადარქმევა"
 
@@ -2123,7 +2130,7 @@ msgstr "ვმ-ის გადარქმევა ($0)"
 msgid "Replace"
 msgstr "ჩანაცვლება"
 
-#: src/components/vm/vmActions.jsx:439
+#: src/components/vm/vmActions.jsx:448
 #: src/components/vm/vmReplaceSpiceDialog.jsx:124
 #: src/components/vm/usesSpice.jsx:38
 msgid "Replace SPICE devices"
@@ -2152,7 +2159,7 @@ msgstr ""
 "ქსელის შეზღუდვები (SIRP-ზე ბაზირებული ემულაცია) და PCI მოწყობილობების "
 "მინიჭება"
 
-#: src/components/vm/vmActions.jsx:223
+#: src/components/vm/vmActions.jsx:232
 msgid "Resume"
 msgstr "გაგრძელება"
 
@@ -2190,7 +2197,7 @@ msgstr "დარაუტებული ქსელი"
 msgid "Row select"
 msgstr "მწკრივის არჩევა"
 
-#: src/components/vm/vmActions.jsx:381
+#: src/components/vm/vmActions.jsx:390
 msgid "Run"
 msgstr "გაშვება"
 
@@ -2203,7 +2210,7 @@ msgstr "ჰოსტის ჩატვირთვისას გაშვე�
 msgid "Running"
 msgstr "გაშვებულია"
 
-#: src/components/common/needsShutdown.jsx:122
+#: src/components/common/needsShutdown.jsx:126
 msgid "SPICE"
 msgstr "SPICE"
 
@@ -2259,11 +2266,11 @@ msgstr "აირჩიეთ კონსოლის ტიპი"
 msgid "Send key"
 msgstr "ღილაკის გაგზავნა"
 
-#: src/components/vm/vmActions.jsx:317 src/components/vm/vmActions.jsx:322
+#: src/components/vm/vmActions.jsx:326 src/components/vm/vmActions.jsx:331
 msgid "Send non-maskable interrupt"
 msgstr "შეუნიღბვადი წყვეტის გაგზავნა"
 
-#: src/components/vm/vmActions.jsx:311
+#: src/components/vm/vmActions.jsx:320
 msgid "Send non-maskable interrupt to $0?"
 msgstr "გავუგზავნო შეუნიღბვადი წყვეტა $0-ს?"
 
@@ -2329,12 +2336,12 @@ msgstr "ნაკლების ჩვენება"
 msgid "Show more"
 msgstr "მეტის ჩვენება"
 
-#: src/components/vm/vmActions.jsx:249 src/components/vm/vmActions.jsx:262
-#: src/components/vm/vmActions.jsx:277 src/components/vm/vmActions.jsx:282
+#: src/components/vm/vmActions.jsx:258 src/components/vm/vmActions.jsx:271
+#: src/components/vm/vmActions.jsx:286 src/components/vm/vmActions.jsx:291
 msgid "Shut down"
 msgstr "გამორთვა"
 
-#: src/components/vm/vmActions.jsx:239 src/components/vm/vmActions.jsx:270
+#: src/components/vm/vmActions.jsx:248 src/components/vm/vmActions.jsx:279
 msgid "Shut down $0?"
 msgstr "გამოვრთო $0?"
 
@@ -2387,7 +2394,7 @@ msgstr "სწრაფი ასლები"
 msgid "Sockets"
 msgstr "სოკეტები"
 
-#: src/components/common/needsShutdown.jsx:148
+#: src/components/common/needsShutdown.jsx:156
 msgid "Some configuration changes only take effect after a fresh boot:"
 msgstr ""
 "კონფიგურაციის ზოგიერთი ცვლილება ძალაში მხოლოდ გადატვირთვის შემდეგ შევა:"
@@ -2553,6 +2560,10 @@ msgstr "სისტემა"
 msgid "TAP device"
 msgstr "TAP მოწყობილობა"
 
+#: src/components/common/needsShutdown.jsx:130
+msgid "TPM"
+msgstr "TPM"
+
 #: src/components/vm/hostdevs/hostDevAdd.jsx:126
 msgid "Table of selectable host devices"
 msgstr "ჰოსტის არჩევადი მოწყობილობების ცხრილი"
@@ -2638,7 +2649,7 @@ msgstr ""
 msgid "Then copy and paste it above."
 msgstr "დააკოპირეთ და ზემოთ ჩასვით."
 
-#: src/components/vm/vmActions.jsx:473
+#: src/components/vm/vmActions.jsx:493
 msgid "This VM is transient. Shut it down if you wish to delete it."
 msgstr "ვმ-ი დროებითია. წასაშლელად გამორთეთ."
 
@@ -2854,39 +2865,39 @@ msgstr "ვმ ($0) უკვე არსებობს"
 msgid "VM $0 does not exist on $1 connection"
 msgstr "ვმ-ი ($0) არ არსებობს ამ ($1) კავშირდზე"
 
-#: src/components/vm/vmActions.jsx:107
+#: src/components/vm/vmActions.jsx:109
 msgid "VM $0 failed to force reboot"
 msgstr "ვმ-ის ($0) ძალით გადატვირთვის შეცდომა"
 
-#: src/components/vm/vmActions.jsx:164
+#: src/components/vm/vmActions.jsx:166
 msgid "VM $0 failed to force shutdown"
 msgstr "ვმ-ის ($0) ძალით გამორთვის შეცდომა"
 
-#: src/components/vm/vmActions.jsx:82
+#: src/components/vm/vmActions.jsx:84
 msgid "VM $0 failed to get installed"
 msgstr "ვმ-ის ($0) დაყენების შეცდომა"
 
-#: src/components/vm/vmActions.jsx:136
+#: src/components/vm/vmActions.jsx:138
 msgid "VM $0 failed to pause"
 msgstr "ვმ-ის ($0) შეჩერების შეცდომა"
 
-#: src/components/vm/vmActions.jsx:94
+#: src/components/vm/vmActions.jsx:96
 msgid "VM $0 failed to reboot"
 msgstr "ვმ-ის ($0) გადატვირთვის შეცდომა"
 
-#: src/components/vm/vmActions.jsx:149
+#: src/components/vm/vmActions.jsx:151
 msgid "VM $0 failed to resume"
 msgstr "ვმ-ის ($0) გაგრძელების შეცდომა"
 
-#: src/components/vm/vmActions.jsx:177
+#: src/components/vm/vmActions.jsx:179
 msgid "VM $0 failed to send NMI"
 msgstr "ვმ-მა ($0) ვერ შეძლო NMI-ის გაგზავნა"
 
-#: src/components/vm/vmActions.jsx:123
+#: src/components/vm/vmActions.jsx:125
 msgid "VM $0 failed to shutdown"
 msgstr "ვმ-ის ($0) გამორთვის შეცდომა"
 
-#: src/components/vm/vmActions.jsx:73
+#: src/components/vm/vmActions.jsx:75
 msgid "VM $0 failed to start"
 msgstr "ვმ-ის ($0) გაშვების შეცდომა"
 
@@ -2898,7 +2909,7 @@ msgstr ""
 "VM გაშვებულია არაპრივილეგირებული უფლებებით, პროცესზე და PTY-ზე წვდომა თქვენს "
 "ანგარიშს გააჩნია"
 
-#: src/components/common/needsShutdown.jsx:161
+#: src/components/common/needsShutdown.jsx:169
 msgid "VM needs shutdown"
 msgstr "ვმ-ს გამორთვა სჭირდება"
 
@@ -3004,7 +3015,7 @@ msgstr "Vsock"
 msgid "WWPN"
 msgstr "WWPN"
 
-#: src/components/common/needsShutdown.jsx:118
+#: src/components/common/needsShutdown.jsx:122
 #: src/components/vm/overview/vmOverviewCard.jsx:204
 msgid "Watchdog"
 msgstr "საკონტროლო ტაიმერი"
@@ -3243,7 +3254,7 @@ msgstr "vCPU-ების რაოდენობა"
 msgid "vCPU maximum"
 msgstr "vCPU-ის მაქსიმუმი"
 
-#: src/components/common/needsShutdown.jsx:110
+#: src/components/common/needsShutdown.jsx:114
 msgid "vCPUs"
 msgstr "vCPU-ები"
 
@@ -3255,7 +3266,7 @@ msgstr "vhostuser"
 msgid "view more..."
 msgstr "მეტის ნახვა..."
 
-#: src/components/vm/vmActions.jsx:415
+#: src/components/vm/vmActions.jsx:424
 msgid ""
 "virt-install package needs to be installed on the system in order to clone "
 "VMs"

@@ -12,9 +12,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-05 03:02+0000\n"
-"PO-Revision-Date: 2024-10-29 22:33+0000\n"
-"Last-Translator: Pavel Borecki <pavel.borecki@gmail.com>\n"
+"POT-Creation-Date: 2024-11-09 03:02+0000\n"
+"PO-Revision-Date: 2024-11-09 21:38+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
+"memory@weblate.org>\n"
 "Language-Team: Czech <https://translate.fedoraproject.org/projects/cockpit-"
 "machines/main/cs/>\n"
 "Language: cs\n"
@@ -22,7 +23,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
-"X-Generator: Weblate 5.7.2\n"
+"X-Generator: Weblate 5.8.2\n"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:927
 msgid "$0 $1 available at default location"
@@ -138,6 +139,10 @@ msgstr "Přidat"
 #: src/components/create-vm-dialog/createVmDialog.jsx:863
 msgid "Add SSH keys"
 msgstr "Přidat SSH klíče"
+
+#: src/components/vm/vmActions.jsx:484
+msgid "Add TPM"
+msgstr "Přidat TPM"
 
 #: src/components/networks/networkOverviewTab.jsx:230
 msgid "Add a DHCP static host entry"
@@ -313,7 +318,7 @@ msgstr "Sběrnice"
 msgid "CD/DVD disc"
 msgstr "CD/DVD disk"
 
-#: src/components/common/needsShutdown.jsx:114
+#: src/components/common/needsShutdown.jsx:118
 #: src/components/vm/overview/vmOverviewCard.jsx:184
 #: src/components/vm/vmUsageCard.jsx:61
 msgid "CPU"
@@ -383,7 +388,7 @@ msgstr "Změnit pořadí zavádění"
 msgid "Change firmware"
 msgstr "Změnit firmware"
 
-#: src/components/common/needsShutdown.jsx:171
+#: src/components/common/needsShutdown.jsx:179
 msgid "Changes pending"
 msgstr "Čekající změny"
 
@@ -425,7 +430,7 @@ msgstr ""
 "Kliknutím na „Spustit vzdálený prohlížeč“ se stáhne soubor ve formátu .vv a "
 "spustí se $0."
 
-#: src/components/vm/vmActions.jsx:405 src/components/vm/vmCloneDialog.jsx:80
+#: src/components/vm/vmActions.jsx:414 src/components/vm/vmCloneDialog.jsx:80
 msgid "Clone"
 msgstr "Klonovat"
 
@@ -661,7 +666,7 @@ msgstr "Deaktivovat"
 #: src/components/storagePools/storagePoolDelete.jsx:202
 #: src/components/storagePools/storagePoolDelete.jsx:238
 #: src/components/storagePools/storagePoolDelete.jsx:248
-#: src/components/vm/vmActions.jsx:477 src/components/vm/vmActions.jsx:485
+#: src/components/vm/vmActions.jsx:497 src/components/vm/vmActions.jsx:505
 #: src/components/vm/deleteDialog.jsx:170
 msgid "Delete"
 msgstr "Smazat"
@@ -781,7 +786,7 @@ msgstr "Odpojeno od sériové konzole. Klikněte na tlačítko Připojit."
 
 # auto translated by TM merge from project: blivet-gui, version: master,
 # DocId: po/blivet-gui
-#: src/components/common/needsShutdown.jsx:93
+#: src/components/common/needsShutdown.jsx:97
 msgid "Disk"
 msgstr "Disk"
 
@@ -888,7 +893,7 @@ msgstr "Upravit atributy $0"
 
 # auto translated by TM merge from project: FreeIPA, version: ipa-4-5, DocId:
 # po/ipa
-#: src/components/vm/vmActions.jsx:462
+#: src/components/vm/vmActions.jsx:471
 msgid "Edit description"
 msgstr "Upravit popis"
 
@@ -971,6 +976,10 @@ msgstr "Rozšířené atributy"
 #: src/components/common/stateIcon.jsx:61
 msgid "Failed"
 msgstr "Neúspěšné"
+
+#: src/components/vm/vmActions.jsx:188
+msgid "Failed to add TPM to VM $0"
+msgstr "Nepodařilo se přidat TPM do VM $0"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:196
 msgid "Failed to add shared directory"
@@ -1062,11 +1071,11 @@ msgstr "Firmware"
 msgid "Force eject"
 msgstr "Vynutit vysunutí"
 
-#: src/components/vm/vmActions.jsx:361 src/components/vm/vmActions.jsx:366
+#: src/components/vm/vmActions.jsx:370 src/components/vm/vmActions.jsx:375
 msgid "Force reboot"
 msgstr "Vynutit restart"
 
-#: src/components/vm/vmActions.jsx:354
+#: src/components/vm/vmActions.jsx:363
 msgid "Force reboot $0?"
 msgstr "Vynutit restart $0?"
 
@@ -1074,11 +1083,11 @@ msgstr "Vynutit restart $0?"
 msgid "Force revert"
 msgstr "Vynutit vrácení k předchozímu stavu"
 
-#: src/components/vm/vmActions.jsx:297 src/components/vm/vmActions.jsx:302
+#: src/components/vm/vmActions.jsx:306 src/components/vm/vmActions.jsx:311
 msgid "Force shut down"
 msgstr "Vynutit vypnutí"
 
-#: src/components/vm/vmActions.jsx:290
+#: src/components/vm/vmActions.jsx:299
 msgid "Force shut down $0?"
 msgstr "Vynutit vypnutí $0?"
 
@@ -1355,7 +1364,7 @@ msgid "Inside the VM"
 msgstr "Uvnitř virt. stroje"
 
 # auto translated by TM merge from project: dnf, version: master, DocId: dnf
-#: src/components/vm/vmActions.jsx:393
+#: src/components/vm/vmActions.jsx:402
 msgid "Install"
 msgstr "Nainstalovat"
 
@@ -1598,7 +1607,7 @@ msgstr "Popis umístění stavu paměti"
 msgid "MiB"
 msgstr "MiB"
 
-#: src/components/vm/vmActions.jsx:428
+#: src/components/vm/vmActions.jsx:437
 #: src/components/vm/vmMigrateDialog.jsx:199
 msgid "Migrate"
 msgstr "Přestěhovat"
@@ -1728,7 +1737,7 @@ msgstr "Zavádění ze sítě (PXE)"
 msgid "Network file system"
 msgstr "Síťový souborový systém"
 
-#: src/components/common/needsShutdown.jsx:103
+#: src/components/common/needsShutdown.jsx:107
 msgid "Network interface"
 msgstr "Síťové rozhraní"
 
@@ -1974,7 +1983,7 @@ msgstr "Popis umístění složky"
 msgid "Path to file on host's file system"
 msgstr "Popis umístění souboru na souborovém systému hostitele"
 
-#: src/helpers.js:270 src/components/vm/vmActions.jsx:212
+#: src/helpers.js:270 src/components/vm/vmActions.jsx:221
 msgid "Pause"
 msgstr "Pozastavit"
 
@@ -2162,14 +2171,14 @@ msgstr "Pouze pro čtení"
 
 # auto translated by TM merge from project: system-config-kdump, version:
 # master, DocId: system-config-kdump
-#: src/components/vm/vmActions.jsx:257 src/components/vm/vmActions.jsx:341
-#: src/components/vm/vmActions.jsx:346
+#: src/components/vm/vmActions.jsx:266 src/components/vm/vmActions.jsx:350
+#: src/components/vm/vmActions.jsx:355
 msgid "Reboot"
 msgstr "Restartovat"
 
 # auto translated by TM merge from project: system-config-kdump, version:
 # master, DocId: system-config-kdump
-#: src/components/vm/vmActions.jsx:334
+#: src/components/vm/vmActions.jsx:343
 msgid "Reboot $0?"
 msgstr "Restartovat $0?"
 
@@ -2231,7 +2240,7 @@ msgstr "Odebrat síťové rozhraní?"
 msgid "Remove static host from DHCP"
 msgstr "Odebrat statickou položku hostitele z DHCP"
 
-#: src/components/vm/vmRenameDialog.jsx:68 src/components/vm/vmActions.jsx:452
+#: src/components/vm/vmRenameDialog.jsx:68 src/components/vm/vmActions.jsx:461
 msgid "Rename"
 msgstr "Přejmenovat"
 
@@ -2243,7 +2252,7 @@ msgstr "Přejmenovat virt. stroj $0"
 msgid "Replace"
 msgstr "Nahradit"
 
-#: src/components/vm/vmActions.jsx:439
+#: src/components/vm/vmActions.jsx:448
 #: src/components/vm/vmReplaceSpiceDialog.jsx:124
 #: src/components/vm/usesSpice.jsx:38
 msgid "Replace SPICE devices"
@@ -2271,7 +2280,7 @@ msgid ""
 msgstr ""
 "Omezení v síťování (emulace založená na SLIRP) a přiřazení PCI zařízení"
 
-#: src/components/vm/vmActions.jsx:223
+#: src/components/vm/vmActions.jsx:232
 msgid "Resume"
 msgstr "Navázat v chodu"
 
@@ -2312,7 +2321,7 @@ msgstr "Výběr řádku"
 
 # auto translated by TM merge from project: virt-manager, version: master,
 # DocId: virt-manager
-#: src/components/vm/vmActions.jsx:381
+#: src/components/vm/vmActions.jsx:390
 msgid "Run"
 msgstr "Spustit"
 
@@ -2327,7 +2336,7 @@ msgstr "Spustit při startu hostitele"
 msgid "Running"
 msgstr "Spuštěné"
 
-#: src/components/common/needsShutdown.jsx:122
+#: src/components/common/needsShutdown.jsx:126
 msgid "SPICE"
 msgstr "SPICE"
 
@@ -2385,11 +2394,11 @@ msgstr "Vybrat typ konzole"
 msgid "Send key"
 msgstr "Poslat stisk klávesy"
 
-#: src/components/vm/vmActions.jsx:317 src/components/vm/vmActions.jsx:322
+#: src/components/vm/vmActions.jsx:326 src/components/vm/vmActions.jsx:331
 msgid "Send non-maskable interrupt"
 msgstr "Poslat nemaskovatelné přerušení"
 
-#: src/components/vm/vmActions.jsx:311
+#: src/components/vm/vmActions.jsx:320
 msgid "Send non-maskable interrupt to $0?"
 msgstr "Poslat $0 nemaskovatelné přerušení?"
 
@@ -2457,14 +2466,14 @@ msgstr "Zobrazit více"
 
 # auto translated by TM merge from project: virt-manager, version: master,
 # DocId: virt-manager
-#: src/components/vm/vmActions.jsx:249 src/components/vm/vmActions.jsx:262
-#: src/components/vm/vmActions.jsx:277 src/components/vm/vmActions.jsx:282
+#: src/components/vm/vmActions.jsx:258 src/components/vm/vmActions.jsx:271
+#: src/components/vm/vmActions.jsx:286 src/components/vm/vmActions.jsx:291
 msgid "Shut down"
 msgstr "Vypnout"
 
 # auto translated by TM merge from project: virt-manager, version: master,
 # DocId: virt-manager
-#: src/components/vm/vmActions.jsx:239 src/components/vm/vmActions.jsx:270
+#: src/components/vm/vmActions.jsx:248 src/components/vm/vmActions.jsx:279
 msgid "Shut down $0?"
 msgstr "Vypnout $0?"
 
@@ -2520,7 +2529,7 @@ msgstr "Zachycené stavy"
 msgid "Sockets"
 msgstr "Patic"
 
-#: src/components/common/needsShutdown.jsx:148
+#: src/components/common/needsShutdown.jsx:156
 msgid "Some configuration changes only take effect after a fresh boot:"
 msgstr ""
 "Některé změny nastavení se projeví až po úplném vypnutí a zapnutí virt. "
@@ -2699,6 +2708,10 @@ msgstr "Systém"
 msgid "TAP device"
 msgstr "TAP zařízení"
 
+#: src/components/common/needsShutdown.jsx:130
+msgid "TPM"
+msgstr "TPM"
+
 #: src/components/vm/hostdevs/hostDevAdd.jsx:126
 msgid "Table of selectable host devices"
 msgstr "Tabulka zařízení hostitele, která je možné vybrat"
@@ -2788,7 +2801,7 @@ msgstr ""
 msgid "Then copy and paste it above."
 msgstr "Poté ho zkopírujte a vložte výše."
 
-#: src/components/vm/vmActions.jsx:473
+#: src/components/vm/vmActions.jsx:493
 msgid "This VM is transient. Shut it down if you wish to delete it."
 msgstr ""
 "Tento vir. stroj je přechodný. Pokud ho chcete smazat, stačí ho vypnout."
@@ -3011,39 +3024,39 @@ msgstr "Virt. stroj $0 už existuje"
 msgid "VM $0 does not exist on $1 connection"
 msgstr "Virt. stroj $0 na spojení $1 neexistuje"
 
-#: src/components/vm/vmActions.jsx:107
+#: src/components/vm/vmActions.jsx:109
 msgid "VM $0 failed to force reboot"
 msgstr "Nepodařilo se vynutit restart virt. stroje $0"
 
-#: src/components/vm/vmActions.jsx:164
+#: src/components/vm/vmActions.jsx:166
 msgid "VM $0 failed to force shutdown"
 msgstr "Nepodařilo se vynutit vypnutí virt. stroje $0"
 
-#: src/components/vm/vmActions.jsx:82
+#: src/components/vm/vmActions.jsx:84
 msgid "VM $0 failed to get installed"
 msgstr "Virt. stroj $0 se nepodařilo nainstalovat"
 
-#: src/components/vm/vmActions.jsx:136
+#: src/components/vm/vmActions.jsx:138
 msgid "VM $0 failed to pause"
 msgstr "Virt. stroj $0 se nepodařilo pozastavit"
 
-#: src/components/vm/vmActions.jsx:94
+#: src/components/vm/vmActions.jsx:96
 msgid "VM $0 failed to reboot"
 msgstr "Virt. stroj $0 se nepodařilo restartovat"
 
-#: src/components/vm/vmActions.jsx:149
+#: src/components/vm/vmActions.jsx:151
 msgid "VM $0 failed to resume"
 msgstr "Nepodařilo se navázat v chodu virt. stroje $0"
 
-#: src/components/vm/vmActions.jsx:177
+#: src/components/vm/vmActions.jsx:179
 msgid "VM $0 failed to send NMI"
 msgstr "Nepodařilo se zaslat virt. stroji $0 nemaskovatelné přerušení"
 
-#: src/components/vm/vmActions.jsx:123
+#: src/components/vm/vmActions.jsx:125
 msgid "VM $0 failed to shutdown"
 msgstr "Virt. stroj $0 se nepodařilo vypnout"
 
-#: src/components/vm/vmActions.jsx:73
+#: src/components/vm/vmActions.jsx:75
 msgid "VM $0 failed to start"
 msgstr "Virt. stroj $0 se nepodařilo zapnout"
 
@@ -3055,7 +3068,7 @@ msgstr ""
 "Virt. stroj spuštěn s neprivilegovaným omezeným přístupem, kdy proces a "
 "pseudoterminál je vlastněn vaším uživatelským účtem"
 
-#: src/components/common/needsShutdown.jsx:161
+#: src/components/common/needsShutdown.jsx:169
 msgid "VM needs shutdown"
 msgstr "Virt. stroj je třeba vypnout"
 
@@ -3167,7 +3180,7 @@ msgstr "Virt. soket"
 msgid "WWPN"
 msgstr "Neopakující se číslo portu"
 
-#: src/components/common/needsShutdown.jsx:118
+#: src/components/common/needsShutdown.jsx:122
 #: src/components/vm/overview/vmOverviewCard.jsx:204
 msgid "Watchdog"
 msgstr "Resetátor (watchdog)"
@@ -3425,7 +3438,7 @@ msgstr "Počet virt. procesorů"
 msgid "vCPU maximum"
 msgstr "Nejvýše virt. procesorů"
 
-#: src/components/common/needsShutdown.jsx:110
+#: src/components/common/needsShutdown.jsx:114
 msgid "vCPUs"
 msgstr "virt. procesorů"
 
@@ -3437,7 +3450,7 @@ msgstr "uzivatelhostitelevirtstroju"
 msgid "view more..."
 msgstr "zobrazit více…"
 
-#: src/components/vm/vmActions.jsx:415
+#: src/components/vm/vmActions.jsx:424
 msgid ""
 "virt-install package needs to be installed on the system in order to clone "
 "VMs"
