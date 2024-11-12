@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-05 03:02+0000\n"
-"PO-Revision-Date: 2024-09-19 01:40+0000\n"
-"Last-Translator: JW Wang <v72807647@gmail.com>\n"
+"POT-Creation-Date: 2024-11-09 03:02+0000\n"
+"PO-Revision-Date: 2024-11-06 17:38+0000\n"
+"Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: Chinese (Traditional) <https://translate.fedoraproject.org/"
 "projects/cockpit-machines/main/zh_TW/>\n"
 "Language: zh_TW\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0\n"
-"X-Generator: Weblate 5.7.2\n"
+"X-Generator: Weblate 5.8.2\n"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:927
 msgid "$0 $1 available at default location"
@@ -121,6 +121,10 @@ msgstr "新增"
 #: src/components/create-vm-dialog/createVmDialog.jsx:863
 msgid "Add SSH keys"
 msgstr "新增 SSH 金鑰"
+
+#: src/components/vm/vmActions.jsx:484
+msgid "Add TPM"
+msgstr ""
 
 #: src/components/networks/networkOverviewTab.jsx:230
 msgid "Add a DHCP static host entry"
@@ -283,7 +287,7 @@ msgstr "匯流排"
 msgid "CD/DVD disc"
 msgstr "CD/DVD 光碟"
 
-#: src/components/common/needsShutdown.jsx:114
+#: src/components/common/needsShutdown.jsx:118
 #: src/components/vm/overview/vmOverviewCard.jsx:184
 #: src/components/vm/vmUsageCard.jsx:61
 msgid "CPU"
@@ -350,7 +354,7 @@ msgstr "變更開機順序"
 msgid "Change firmware"
 msgstr "變更韌體"
 
-#: src/components/common/needsShutdown.jsx:171
+#: src/components/common/needsShutdown.jsx:179
 msgid "Changes pending"
 msgstr "未套用的變更"
 
@@ -390,7 +394,7 @@ msgid ""
 "Clicking \"Launch remote viewer\" will download a .vv file and launch $0."
 msgstr "點選 \"啟動 Remote Viewer\" 將會下載一個 .vv 檔案並啟動 $0 。"
 
-#: src/components/vm/vmActions.jsx:405 src/components/vm/vmCloneDialog.jsx:80
+#: src/components/vm/vmActions.jsx:414 src/components/vm/vmCloneDialog.jsx:80
 msgid "Clone"
 msgstr "拓製"
 
@@ -611,7 +615,7 @@ msgstr "停用"
 #: src/components/storagePools/storagePoolDelete.jsx:202
 #: src/components/storagePools/storagePoolDelete.jsx:238
 #: src/components/storagePools/storagePoolDelete.jsx:248
-#: src/components/vm/vmActions.jsx:477 src/components/vm/vmActions.jsx:485
+#: src/components/vm/vmActions.jsx:497 src/components/vm/vmActions.jsx:505
 #: src/components/vm/deleteDialog.jsx:170
 msgid "Delete"
 msgstr "刪除"
@@ -716,7 +720,7 @@ msgstr "已斷線"
 msgid "Disconnected from serial console. Click the connect button."
 msgstr "序列控制台連線中斷。請按連線按鈕。"
 
-#: src/components/common/needsShutdown.jsx:93
+#: src/components/common/needsShutdown.jsx:97
 msgid "Disk"
 msgstr "磁碟"
 
@@ -815,7 +819,7 @@ msgstr "編輯"
 msgid "Edit $0 attributes"
 msgstr "編輯 $0 屬性"
 
-#: src/components/vm/vmActions.jsx:462
+#: src/components/vm/vmActions.jsx:471
 msgid "Edit description"
 msgstr "編輯描述"
 
@@ -892,6 +896,12 @@ msgstr "延伸屬性"
 #: src/components/common/stateIcon.jsx:61
 msgid "Failed"
 msgstr "失敗"
+
+#: src/components/vm/vmActions.jsx:188
+#, fuzzy
+#| msgid "Failed to clone VM $0"
+msgid "Failed to add TPM to VM $0"
+msgstr "拓製虛擬機器 $0 失敗"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:196
 msgid "Failed to add shared directory"
@@ -981,11 +991,11 @@ msgstr "韌體"
 msgid "Force eject"
 msgstr "強制退出"
 
-#: src/components/vm/vmActions.jsx:361 src/components/vm/vmActions.jsx:366
+#: src/components/vm/vmActions.jsx:370 src/components/vm/vmActions.jsx:375
 msgid "Force reboot"
 msgstr "強制重開機"
 
-#: src/components/vm/vmActions.jsx:354
+#: src/components/vm/vmActions.jsx:363
 msgid "Force reboot $0?"
 msgstr "強制把 $0 重開機嗎？"
 
@@ -993,11 +1003,11 @@ msgstr "強制把 $0 重開機嗎？"
 msgid "Force revert"
 msgstr "強制還原"
 
-#: src/components/vm/vmActions.jsx:297 src/components/vm/vmActions.jsx:302
+#: src/components/vm/vmActions.jsx:306 src/components/vm/vmActions.jsx:311
 msgid "Force shut down"
 msgstr "強制關機"
 
-#: src/components/vm/vmActions.jsx:290
+#: src/components/vm/vmActions.jsx:299
 msgid "Force shut down $0?"
 msgstr "將 $0 強制關機嗎？"
 
@@ -1254,7 +1264,7 @@ msgstr "插入光碟媒體"
 msgid "Inside the VM"
 msgstr "於虛擬機器內"
 
-#: src/components/vm/vmActions.jsx:393
+#: src/components/vm/vmActions.jsx:402
 msgid "Install"
 msgstr "安裝"
 
@@ -1484,7 +1494,7 @@ msgstr "記憶體狀態路徑"
 msgid "MiB"
 msgstr "MiB"
 
-#: src/components/vm/vmActions.jsx:428
+#: src/components/vm/vmActions.jsx:437
 #: src/components/vm/vmMigrateDialog.jsx:199
 msgid "Migrate"
 msgstr "遷移"
@@ -1610,7 +1620,7 @@ msgstr "網路開機 (PXE)"
 msgid "Network file system"
 msgstr "網絡檔案系統"
 
-#: src/components/common/needsShutdown.jsx:103
+#: src/components/common/needsShutdown.jsx:107
 msgid "Network interface"
 msgstr "網路介面"
 
@@ -1847,7 +1857,7 @@ msgstr "目錄的路徑"
 msgid "Path to file on host's file system"
 msgstr "主機檔案系統上檔案的路徑"
 
-#: src/helpers.js:270 src/components/vm/vmActions.jsx:212
+#: src/helpers.js:270 src/components/vm/vmActions.jsx:221
 msgid "Pause"
 msgstr "暫停"
 
@@ -2023,12 +2033,12 @@ msgstr "範圍"
 msgid "Read-only"
 msgstr "唯讀"
 
-#: src/components/vm/vmActions.jsx:257 src/components/vm/vmActions.jsx:341
-#: src/components/vm/vmActions.jsx:346
+#: src/components/vm/vmActions.jsx:266 src/components/vm/vmActions.jsx:350
+#: src/components/vm/vmActions.jsx:355
 msgid "Reboot"
 msgstr "重新開機"
 
-#: src/components/vm/vmActions.jsx:334
+#: src/components/vm/vmActions.jsx:343
 msgid "Reboot $0?"
 msgstr "將 $0 重新開機？"
 
@@ -2086,7 +2096,7 @@ msgstr "移除網路介面？"
 msgid "Remove static host from DHCP"
 msgstr "從 DHCP 移除靜態主機"
 
-#: src/components/vm/vmRenameDialog.jsx:68 src/components/vm/vmActions.jsx:452
+#: src/components/vm/vmRenameDialog.jsx:68 src/components/vm/vmActions.jsx:461
 msgid "Rename"
 msgstr "重新命名"
 
@@ -2098,7 +2108,7 @@ msgstr "重新命名虛擬機器 $0"
 msgid "Replace"
 msgstr "取代"
 
-#: src/components/vm/vmActions.jsx:439
+#: src/components/vm/vmActions.jsx:448
 #: src/components/vm/vmReplaceSpiceDialog.jsx:124
 #: src/components/vm/usesSpice.jsx:38
 msgid "Replace SPICE devices"
@@ -2125,7 +2135,7 @@ msgid ""
 "Restrictions in networking (SLIRP-based emulation) and PCI device assignment"
 msgstr "網路實作 (基於 SLIRP 的模擬方式) 與 PCI 裝置指派的限制"
 
-#: src/components/vm/vmActions.jsx:223
+#: src/components/vm/vmActions.jsx:232
 msgid "Resume"
 msgstr "恢復執行"
 
@@ -2163,7 +2173,7 @@ msgstr "經路由的網路"
 msgid "Row select"
 msgstr "選擇列"
 
-#: src/components/vm/vmActions.jsx:381
+#: src/components/vm/vmActions.jsx:390
 msgid "Run"
 msgstr "執行"
 
@@ -2176,7 +2186,7 @@ msgstr "在主機開機時執行"
 msgid "Running"
 msgstr "執行中"
 
-#: src/components/common/needsShutdown.jsx:122
+#: src/components/common/needsShutdown.jsx:126
 msgid "SPICE"
 msgstr "SPICE"
 
@@ -2230,11 +2240,11 @@ msgstr "選擇控制台類型"
 msgid "Send key"
 msgstr "傳送按鍵"
 
-#: src/components/vm/vmActions.jsx:317 src/components/vm/vmActions.jsx:322
+#: src/components/vm/vmActions.jsx:326 src/components/vm/vmActions.jsx:331
 msgid "Send non-maskable interrupt"
 msgstr "發送不可屏蔽中斷"
 
-#: src/components/vm/vmActions.jsx:311
+#: src/components/vm/vmActions.jsx:320
 msgid "Send non-maskable interrupt to $0?"
 msgstr "對 $0 送出非可遮蔽中斷？"
 
@@ -2300,14 +2310,14 @@ msgstr "顯示更多"
 
 # translation auto-copied from project virt-manager, version 0.10.0, document
 # virt-manager
-#: src/components/vm/vmActions.jsx:249 src/components/vm/vmActions.jsx:262
-#: src/components/vm/vmActions.jsx:277 src/components/vm/vmActions.jsx:282
+#: src/components/vm/vmActions.jsx:258 src/components/vm/vmActions.jsx:271
+#: src/components/vm/vmActions.jsx:286 src/components/vm/vmActions.jsx:291
 msgid "Shut down"
 msgstr "關機"
 
 # translation auto-copied from project virt-manager, version 0.10.0, document
 # virt-manager
-#: src/components/vm/vmActions.jsx:239 src/components/vm/vmActions.jsx:270
+#: src/components/vm/vmActions.jsx:248 src/components/vm/vmActions.jsx:279
 msgid "Shut down $0?"
 msgstr "將 $0 關機？"
 
@@ -2361,7 +2371,7 @@ msgstr "快照"
 msgid "Sockets"
 msgstr "插槽"
 
-#: src/components/common/needsShutdown.jsx:148
+#: src/components/common/needsShutdown.jsx:156
 msgid "Some configuration changes only take effect after a fresh boot:"
 msgstr "部份設定變更僅在下一次完整重新開機後生效："
 
@@ -2528,6 +2538,10 @@ msgstr "系統"
 msgid "TAP device"
 msgstr "TAP 裝置"
 
+#: src/components/common/needsShutdown.jsx:130
+msgid "TPM"
+msgstr ""
+
 #: src/components/vm/hostdevs/hostDevAdd.jsx:126
 msgid "Table of selectable host devices"
 msgstr "可選擇的主機裝置列表"
@@ -2610,7 +2624,7 @@ msgstr "用於讓客體掛載此匯出點的標籤名稱。"
 msgid "Then copy and paste it above."
 msgstr "然後複製並於上方貼上。"
 
-#: src/components/vm/vmActions.jsx:473
+#: src/components/vm/vmActions.jsx:493
 msgid "This VM is transient. Shut it down if you wish to delete it."
 msgstr "此虛擬機器是暫時的。如果想要刪除它，將其關機即可。"
 
@@ -2817,39 +2831,39 @@ msgstr "虛擬機器 $0 已經存在"
 msgid "VM $0 does not exist on $1 connection"
 msgstr "虛擬機器 $0 不存在於 $1 連線"
 
-#: src/components/vm/vmActions.jsx:107
+#: src/components/vm/vmActions.jsx:109
 msgid "VM $0 failed to force reboot"
 msgstr "虛擬機器 $0 強制重開機失敗"
 
-#: src/components/vm/vmActions.jsx:164
+#: src/components/vm/vmActions.jsx:166
 msgid "VM $0 failed to force shutdown"
 msgstr "虛擬機器 $0 強制關機失敗"
 
-#: src/components/vm/vmActions.jsx:82
+#: src/components/vm/vmActions.jsx:84
 msgid "VM $0 failed to get installed"
 msgstr "虛擬機器 $0 安裝失敗"
 
-#: src/components/vm/vmActions.jsx:136
+#: src/components/vm/vmActions.jsx:138
 msgid "VM $0 failed to pause"
 msgstr "虛擬機器 $0 暫停失敗"
 
-#: src/components/vm/vmActions.jsx:94
+#: src/components/vm/vmActions.jsx:96
 msgid "VM $0 failed to reboot"
 msgstr "虛擬機器 $0 重新開機失敗"
 
-#: src/components/vm/vmActions.jsx:149
+#: src/components/vm/vmActions.jsx:151
 msgid "VM $0 failed to resume"
 msgstr "虛擬機器 $0 恢復執行失敗"
 
-#: src/components/vm/vmActions.jsx:177
+#: src/components/vm/vmActions.jsx:179
 msgid "VM $0 failed to send NMI"
 msgstr "虛擬機器 $0 發送 NMI 失敗"
 
-#: src/components/vm/vmActions.jsx:123
+#: src/components/vm/vmActions.jsx:125
 msgid "VM $0 failed to shutdown"
 msgstr "虛擬機器 $0 關機失敗"
 
-#: src/components/vm/vmActions.jsx:73
+#: src/components/vm/vmActions.jsx:75
 msgid "VM $0 failed to start"
 msgstr "虛擬機器 $0 啟動失敗"
 
@@ -2860,7 +2874,7 @@ msgid ""
 msgstr ""
 "虛擬機器以無特權的限制存取模式啟動，其處理程序及 PTY 皆由您的使用者帳號所擁有"
 
-#: src/components/common/needsShutdown.jsx:161
+#: src/components/common/needsShutdown.jsx:169
 msgid "VM needs shutdown"
 msgstr "虛擬機器需要關機"
 
@@ -2967,7 +2981,7 @@ msgstr "Vsock"
 msgid "WWPN"
 msgstr "WWPN"
 
-#: src/components/common/needsShutdown.jsx:118
+#: src/components/common/needsShutdown.jsx:122
 #: src/components/vm/overview/vmOverviewCard.jsx:204
 msgid "Watchdog"
 msgstr "Watchdog"
@@ -3206,7 +3220,7 @@ msgid "vCPU maximum"
 msgstr "vCPU 最大值"
 
 # ctx::sourcefile::/rhn/systems/details/virtualization/VirtualGuestsList.do
-#: src/components/common/needsShutdown.jsx:110
+#: src/components/common/needsShutdown.jsx:114
 msgid "vCPUs"
 msgstr "vCPUs"
 
@@ -3218,23 +3232,23 @@ msgstr "vhostuser"
 msgid "view more..."
 msgstr "檢視更多..."
 
-#: src/components/vm/vmActions.jsx:415
+#: src/components/vm/vmActions.jsx:424
 msgid ""
 "virt-install package needs to be installed on the system in order to clone "
 "VMs"
-msgstr "須在系統上安裝 virt-install 套件以拓製虛擬機器"
+msgstr "須在系統上安裝 virt-install 軟體包以拓製虛擬機器"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:1538
 msgid ""
 "virt-install package needs to be installed on the system in order to create "
 "new VMs"
-msgstr "須在系統上安裝 virt-install 套件以建立新的虛擬機器"
+msgstr "須在系統上安裝 virt-install 軟體包以建立新的虛擬機器"
 
 #: src/components/vm/overview/vmOverviewCard.jsx:133
 msgid ""
 "virt-install package needs to be installed on the system in order to edit "
 "this attribute"
-msgstr "須在系統上安裝 virt-install 套件以編輯此屬性"
+msgstr "須在系統上安裝 virt-install 軟體包以編輯此特性"
 
 #: src/manifest.json:0
 msgid "vm"

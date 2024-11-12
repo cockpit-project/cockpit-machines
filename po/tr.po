@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-05 03:02+0000\n"
-"PO-Revision-Date: 2024-09-16 11:52+0000\n"
+"POT-Creation-Date: 2024-11-09 03:02+0000\n"
+"PO-Revision-Date: 2024-11-08 05:38+0000\n"
 "Last-Translator: Oğuz Ersen <oguz@ersen.moe>\n"
 "Language-Team: Turkish <https://translate.fedoraproject.org/projects/cockpit-"
 "machines/main/tr/>\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n>1)\n"
-"X-Generator: Weblate 5.7.2\n"
+"X-Generator: Weblate 5.8.2\n"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:927
 msgid "$0 $1 available at default location"
@@ -126,6 +126,10 @@ msgstr "Ekle"
 #: src/components/create-vm-dialog/createVmDialog.jsx:863
 msgid "Add SSH keys"
 msgstr "SSH anahtarları ekle"
+
+#: src/components/vm/vmActions.jsx:484
+msgid "Add TPM"
+msgstr "TPM ekle"
 
 #: src/components/networks/networkOverviewTab.jsx:230
 msgid "Add a DHCP static host entry"
@@ -292,7 +296,7 @@ msgstr "Veri yolu"
 msgid "CD/DVD disc"
 msgstr "CD/DVD disk"
 
-#: src/components/common/needsShutdown.jsx:114
+#: src/components/common/needsShutdown.jsx:118
 #: src/components/vm/overview/vmOverviewCard.jsx:184
 #: src/components/vm/vmUsageCard.jsx:61
 msgid "CPU"
@@ -359,7 +363,7 @@ msgstr "Önyükleme sırasını değiştir"
 msgid "Change firmware"
 msgstr "Aygıt yazılımını değiştir"
 
-#: src/components/common/needsShutdown.jsx:171
+#: src/components/common/needsShutdown.jsx:179
 msgid "Changes pending"
 msgstr "Değişiklikler bekliyor"
 
@@ -402,7 +406,7 @@ msgstr ""
 "\"Remote Viewer'ı Başlat\"a tıklamak bir .vv dosyası indirecek ve $0 "
 "başlatılacak."
 
-#: src/components/vm/vmActions.jsx:405 src/components/vm/vmCloneDialog.jsx:80
+#: src/components/vm/vmActions.jsx:414 src/components/vm/vmCloneDialog.jsx:80
 msgid "Clone"
 msgstr "Kopya"
 
@@ -626,7 +630,7 @@ msgstr "Devre dışı bırak"
 #: src/components/storagePools/storagePoolDelete.jsx:202
 #: src/components/storagePools/storagePoolDelete.jsx:238
 #: src/components/storagePools/storagePoolDelete.jsx:248
-#: src/components/vm/vmActions.jsx:477 src/components/vm/vmActions.jsx:485
+#: src/components/vm/vmActions.jsx:497 src/components/vm/vmActions.jsx:505
 #: src/components/vm/deleteDialog.jsx:170
 msgid "Delete"
 msgstr "Sil"
@@ -735,7 +739,7 @@ msgstr "Bağlantı kesildi"
 msgid "Disconnected from serial console. Click the connect button."
 msgstr "Seri konsoldan bağlantı kesildi. Bağlan düğmesine tıklayın."
 
-#: src/components/common/needsShutdown.jsx:93
+#: src/components/common/needsShutdown.jsx:97
 msgid "Disk"
 msgstr "Disk"
 
@@ -835,7 +839,7 @@ msgstr "Düzenle"
 msgid "Edit $0 attributes"
 msgstr "$0 özniteliklerini düzenle"
 
-#: src/components/vm/vmActions.jsx:462
+#: src/components/vm/vmActions.jsx:471
 msgid "Edit description"
 msgstr "Açıklamayı düzenle"
 
@@ -914,6 +918,10 @@ msgstr "Genişletilmiş öznitelikler"
 #: src/components/common/stateIcon.jsx:61
 msgid "Failed"
 msgstr "Başarısız oldu"
+
+#: src/components/vm/vmActions.jsx:188
+msgid "Failed to add TPM to VM $0"
+msgstr "$0 sanal makinesine TPM ekleme başarısız oldu"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:196
 msgid "Failed to add shared directory"
@@ -1002,11 +1010,11 @@ msgstr "Aygıt yazılımı"
 msgid "Force eject"
 msgstr "Çıkarmaya zorla"
 
-#: src/components/vm/vmActions.jsx:361 src/components/vm/vmActions.jsx:366
+#: src/components/vm/vmActions.jsx:370 src/components/vm/vmActions.jsx:375
 msgid "Force reboot"
 msgstr "Yeniden başlatmaya zorla"
 
-#: src/components/vm/vmActions.jsx:354
+#: src/components/vm/vmActions.jsx:363
 msgid "Force reboot $0?"
 msgstr "$0 yeniden başlatmaya zorlansın mı?"
 
@@ -1014,11 +1022,11 @@ msgstr "$0 yeniden başlatmaya zorlansın mı?"
 msgid "Force revert"
 msgstr "Geri döndürmeye zorla"
 
-#: src/components/vm/vmActions.jsx:297 src/components/vm/vmActions.jsx:302
+#: src/components/vm/vmActions.jsx:306 src/components/vm/vmActions.jsx:311
 msgid "Force shut down"
 msgstr "Kapatmaya zorla"
 
-#: src/components/vm/vmActions.jsx:290
+#: src/components/vm/vmActions.jsx:299
 msgid "Force shut down $0?"
 msgstr "$0 kapatmaya zorlansın mı?"
 
@@ -1280,7 +1288,7 @@ msgstr "Disk ortamını tak"
 msgid "Inside the VM"
 msgstr "Sanal makine içinde"
 
-#: src/components/vm/vmActions.jsx:393
+#: src/components/vm/vmActions.jsx:402
 msgid "Install"
 msgstr "Yükle"
 
@@ -1512,7 +1520,7 @@ msgstr "Bellek durumu konumu"
 msgid "MiB"
 msgstr "MiB"
 
-#: src/components/vm/vmActions.jsx:428
+#: src/components/vm/vmActions.jsx:437
 #: src/components/vm/vmMigrateDialog.jsx:199
 msgid "Migrate"
 msgstr "Taşı"
@@ -1638,7 +1646,7 @@ msgstr "Ağ üzerinden önyükleme (PXE)"
 msgid "Network file system"
 msgstr "Ağ dosya sistemi (NFS)"
 
-#: src/components/common/needsShutdown.jsx:103
+#: src/components/common/needsShutdown.jsx:107
 msgid "Network interface"
 msgstr "Ağ arayüzü"
 
@@ -1878,7 +1886,7 @@ msgstr "Dizinin yolu"
 msgid "Path to file on host's file system"
 msgstr "Ana makinenin dosya sistemi üzerindeki dosyanın yolu"
 
-#: src/helpers.js:270 src/components/vm/vmActions.jsx:212
+#: src/helpers.js:270 src/components/vm/vmActions.jsx:221
 msgid "Pause"
 msgstr "Duraklat"
 
@@ -2058,12 +2066,12 @@ msgstr "Aralık"
 msgid "Read-only"
 msgstr "Salt-okunur"
 
-#: src/components/vm/vmActions.jsx:257 src/components/vm/vmActions.jsx:341
-#: src/components/vm/vmActions.jsx:346
+#: src/components/vm/vmActions.jsx:266 src/components/vm/vmActions.jsx:350
+#: src/components/vm/vmActions.jsx:355
 msgid "Reboot"
 msgstr "Yeniden başlat"
 
-#: src/components/vm/vmActions.jsx:334
+#: src/components/vm/vmActions.jsx:343
 msgid "Reboot $0?"
 msgstr "$0 yeniden başlatılsın mı?"
 
@@ -2121,7 +2129,7 @@ msgstr "Ağ arayüzü kaldırılsın mı?"
 msgid "Remove static host from DHCP"
 msgstr "DHCP'den statik ana makineyi kaldır"
 
-#: src/components/vm/vmRenameDialog.jsx:68 src/components/vm/vmActions.jsx:452
+#: src/components/vm/vmRenameDialog.jsx:68 src/components/vm/vmActions.jsx:461
 msgid "Rename"
 msgstr "Yeniden adlandır"
 
@@ -2133,7 +2141,7 @@ msgstr "$0 sanal makinesini yeniden adlandır"
 msgid "Replace"
 msgstr "Değiştir"
 
-#: src/components/vm/vmActions.jsx:439
+#: src/components/vm/vmActions.jsx:448
 #: src/components/vm/vmReplaceSpiceDialog.jsx:124
 #: src/components/vm/usesSpice.jsx:38
 msgid "Replace SPICE devices"
@@ -2161,7 +2169,7 @@ msgid ""
 msgstr ""
 "Ağ oluşturma (SLIRP tabanlı öykünme) ve PCI aygıt atamasındaki kısıtlamalar"
 
-#: src/components/vm/vmActions.jsx:223
+#: src/components/vm/vmActions.jsx:232
 msgid "Resume"
 msgstr "Devam"
 
@@ -2200,7 +2208,7 @@ msgstr "Yönlendirilmiş ağ"
 msgid "Row select"
 msgstr "Satır seçimi"
 
-#: src/components/vm/vmActions.jsx:381
+#: src/components/vm/vmActions.jsx:390
 msgid "Run"
 msgstr "Çalıştır"
 
@@ -2213,7 +2221,7 @@ msgstr "Anamakine önyüklendiğinde çalıştır"
 msgid "Running"
 msgstr "Çalışıyor"
 
-#: src/components/common/needsShutdown.jsx:122
+#: src/components/common/needsShutdown.jsx:126
 msgid "SPICE"
 msgstr "SPICE"
 
@@ -2269,11 +2277,11 @@ msgstr "Konsol türünü seçin"
 msgid "Send key"
 msgstr "Tuş gönder"
 
-#: src/components/vm/vmActions.jsx:317 src/components/vm/vmActions.jsx:322
+#: src/components/vm/vmActions.jsx:326 src/components/vm/vmActions.jsx:331
 msgid "Send non-maskable interrupt"
 msgstr "Maskelenemez kesme (NMI) gönder"
 
-#: src/components/vm/vmActions.jsx:311
+#: src/components/vm/vmActions.jsx:320
 msgid "Send non-maskable interrupt to $0?"
 msgstr "$0 için maskelenemez kesme (NMI) gönderilsin mi?"
 
@@ -2341,12 +2349,12 @@ msgstr "Daha az göster"
 msgid "Show more"
 msgstr "Daha fazla göster"
 
-#: src/components/vm/vmActions.jsx:249 src/components/vm/vmActions.jsx:262
-#: src/components/vm/vmActions.jsx:277 src/components/vm/vmActions.jsx:282
+#: src/components/vm/vmActions.jsx:258 src/components/vm/vmActions.jsx:271
+#: src/components/vm/vmActions.jsx:286 src/components/vm/vmActions.jsx:291
 msgid "Shut down"
 msgstr "Kapat"
 
-#: src/components/vm/vmActions.jsx:239 src/components/vm/vmActions.jsx:270
+#: src/components/vm/vmActions.jsx:248 src/components/vm/vmActions.jsx:279
 msgid "Shut down $0?"
 msgstr "$0 kapatılsın mı?"
 
@@ -2400,7 +2408,7 @@ msgstr "Anlık görüntüler"
 msgid "Sockets"
 msgstr "Soketler"
 
-#: src/components/common/needsShutdown.jsx:148
+#: src/components/common/needsShutdown.jsx:156
 msgid "Some configuration changes only take effect after a fresh boot:"
 msgstr ""
 "Bazı yapılandırma değişiklikleri yalnızca yeni bir önyüklemeden sonra etkili "
@@ -2571,6 +2579,10 @@ msgstr "Sistem"
 msgid "TAP device"
 msgstr "TAP aygıtı"
 
+#: src/components/common/needsShutdown.jsx:130
+msgid "TPM"
+msgstr "TPM"
+
 #: src/components/vm/hostdevs/hostDevAdd.jsx:126
 msgid "Table of selectable host devices"
 msgstr "Seçilebilir anamakine aygıtları tablosu"
@@ -2659,7 +2671,7 @@ msgstr ""
 msgid "Then copy and paste it above."
 msgstr "Ardından kopyalayın ve yukarıya yapıştırın."
 
-#: src/components/vm/vmActions.jsx:473
+#: src/components/vm/vmActions.jsx:493
 msgid "This VM is transient. Shut it down if you wish to delete it."
 msgstr "Bu sanal makine geçicidir. Silmek istiyorsanız kapatın."
 
@@ -2882,39 +2894,39 @@ msgstr "$0 sanal makinesi zaten var"
 msgid "VM $0 does not exist on $1 connection"
 msgstr "$0 sanal makinesi $1 bağlantısında mevcut değil"
 
-#: src/components/vm/vmActions.jsx:107
+#: src/components/vm/vmActions.jsx:109
 msgid "VM $0 failed to force reboot"
 msgstr "$0 sanal makinesini zorla yeniden başlatma başarısız oldu"
 
-#: src/components/vm/vmActions.jsx:164
+#: src/components/vm/vmActions.jsx:166
 msgid "VM $0 failed to force shutdown"
 msgstr "$0 sanal makinesini zorla kapatma başarısız oldu"
 
-#: src/components/vm/vmActions.jsx:82
+#: src/components/vm/vmActions.jsx:84
 msgid "VM $0 failed to get installed"
 msgstr "$0 sanal makinesinin yüklenmesi başarısız oldu"
 
-#: src/components/vm/vmActions.jsx:136
+#: src/components/vm/vmActions.jsx:138
 msgid "VM $0 failed to pause"
 msgstr "$0 sanal makinesini duraklatma başarısız oldu"
 
-#: src/components/vm/vmActions.jsx:94
+#: src/components/vm/vmActions.jsx:96
 msgid "VM $0 failed to reboot"
 msgstr "$0 sanal makinesini yeniden başlatma başarısız oldu"
 
-#: src/components/vm/vmActions.jsx:149
+#: src/components/vm/vmActions.jsx:151
 msgid "VM $0 failed to resume"
 msgstr "$0 sanal makinesini devam ettirme başarısız oldu"
 
-#: src/components/vm/vmActions.jsx:177
+#: src/components/vm/vmActions.jsx:179
 msgid "VM $0 failed to send NMI"
 msgstr "$0 sanal makinesinin NMI göndermesi başarısız oldu"
 
-#: src/components/vm/vmActions.jsx:123
+#: src/components/vm/vmActions.jsx:125
 msgid "VM $0 failed to shutdown"
 msgstr "$0 sanal makinesini kapatma başarısız oldu"
 
-#: src/components/vm/vmActions.jsx:73
+#: src/components/vm/vmActions.jsx:75
 msgid "VM $0 failed to start"
 msgstr "$0 sanal makinesi başlatılamadı"
 
@@ -2926,7 +2938,7 @@ msgstr ""
 "Sanal makine kullanıcı hesabınızın sahip olduğu işlem ve PTY ile "
 "ayrıcalıksız sınırlı erişimle başlatıldı"
 
-#: src/components/common/needsShutdown.jsx:161
+#: src/components/common/needsShutdown.jsx:169
 msgid "VM needs shutdown"
 msgstr "Sanal makinenin kapatılması gerekiyor"
 
@@ -3032,7 +3044,7 @@ msgstr "Vsock"
 msgid "WWPN"
 msgstr "WWPN"
 
-#: src/components/common/needsShutdown.jsx:118
+#: src/components/common/needsShutdown.jsx:122
 #: src/components/vm/overview/vmOverviewCard.jsx:204
 msgid "Watchdog"
 msgstr "Gözlemci"
@@ -3271,7 +3283,7 @@ msgstr "vCPU sayısı"
 msgid "vCPU maximum"
 msgstr "en fazla vCPU"
 
-#: src/components/common/needsShutdown.jsx:110
+#: src/components/common/needsShutdown.jsx:114
 msgid "vCPUs"
 msgstr "vCPU'lar"
 
@@ -3283,7 +3295,7 @@ msgstr "vhostuser"
 msgid "view more..."
 msgstr "daha fazla göster..."
 
-#: src/components/vm/vmActions.jsx:415
+#: src/components/vm/vmActions.jsx:424
 msgid ""
 "virt-install package needs to be installed on the system in order to clone "
 "VMs"

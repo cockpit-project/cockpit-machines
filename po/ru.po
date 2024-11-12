@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-05 03:02+0000\n"
+"POT-Creation-Date: 2024-11-09 03:02+0000\n"
 "PO-Revision-Date: 2021-05-31 20:02+0000\n"
 "Last-Translator: Igor Gorbounov <igor.gorbounov@gmail.com>\n"
 "Language-Team: Russian <https://translate.fedoraproject.org/projects/cockpit-"
@@ -141,6 +141,10 @@ msgstr "Добавить"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:863
 msgid "Add SSH keys"
+msgstr ""
+
+#: src/components/vm/vmActions.jsx:484
+msgid "Add TPM"
 msgstr ""
 
 #: src/components/networks/networkOverviewTab.jsx:230
@@ -320,7 +324,7 @@ msgstr "Шина"
 msgid "CD/DVD disc"
 msgstr "Диск CD/DVD"
 
-#: src/components/common/needsShutdown.jsx:114
+#: src/components/common/needsShutdown.jsx:118
 #: src/components/vm/overview/vmOverviewCard.jsx:184
 #: src/components/vm/vmUsageCard.jsx:61
 msgid "CPU"
@@ -391,7 +395,7 @@ msgstr "Порядок загрузки"
 msgid "Change firmware"
 msgstr "Изменить микропрограмму"
 
-#: src/components/common/needsShutdown.jsx:171
+#: src/components/common/needsShutdown.jsx:179
 msgid "Changes pending"
 msgstr ""
 
@@ -429,7 +433,7 @@ msgstr ""
 "Нажатие на «Запустить средство удалённого просмотра» приведет к загрузке "
 "файла .vv и запуску $0."
 
-#: src/components/vm/vmActions.jsx:405 src/components/vm/vmCloneDialog.jsx:80
+#: src/components/vm/vmActions.jsx:414 src/components/vm/vmCloneDialog.jsx:80
 msgid "Clone"
 msgstr "Клонировать"
 
@@ -676,7 +680,7 @@ msgstr "Отключить"
 #: src/components/storagePools/storagePoolDelete.jsx:202
 #: src/components/storagePools/storagePoolDelete.jsx:238
 #: src/components/storagePools/storagePoolDelete.jsx:248
-#: src/components/vm/vmActions.jsx:477 src/components/vm/vmActions.jsx:485
+#: src/components/vm/vmActions.jsx:497 src/components/vm/vmActions.jsx:505
 #: src/components/vm/deleteDialog.jsx:170
 msgid "Delete"
 msgstr "Удалить"
@@ -802,7 +806,7 @@ msgstr "Отключиться"
 msgid "Disconnected from serial console. Click the connect button."
 msgstr "Отключено от последовательной консоли. Нажмите кнопку «Подключить»."
 
-#: src/components/common/needsShutdown.jsx:93
+#: src/components/common/needsShutdown.jsx:97
 #, fuzzy
 #| msgid "Disks"
 msgid "Disk"
@@ -919,7 +923,7 @@ msgstr "Изменить"
 msgid "Edit $0 attributes"
 msgstr "Редактировать атрибуты $0"
 
-#: src/components/vm/vmActions.jsx:462
+#: src/components/vm/vmActions.jsx:471
 #, fuzzy
 msgid "Edit description"
 msgstr "Описание"
@@ -1004,6 +1008,12 @@ msgstr "Редактировать атрибуты $0"
 #: src/components/common/stateIcon.jsx:61
 msgid "Failed"
 msgstr "Сбой"
+
+#: src/components/vm/vmActions.jsx:188
+#, fuzzy
+#| msgid "Failed to clone VM $0"
+msgid "Failed to add TPM to VM $0"
+msgstr "Не удалось клонировать ВМ $0"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:196
 #, fuzzy
@@ -1117,11 +1127,11 @@ msgstr "Микропрограмма"
 msgid "Force eject"
 msgstr "Принудительная перезагрузка"
 
-#: src/components/vm/vmActions.jsx:361 src/components/vm/vmActions.jsx:366
+#: src/components/vm/vmActions.jsx:370 src/components/vm/vmActions.jsx:375
 msgid "Force reboot"
 msgstr "Принудительная перезагрузка"
 
-#: src/components/vm/vmActions.jsx:354
+#: src/components/vm/vmActions.jsx:363
 #, fuzzy
 #| msgid "Force reboot"
 msgid "Force reboot $0?"
@@ -1133,11 +1143,11 @@ msgstr "Принудительная перезагрузка"
 msgid "Force revert"
 msgstr "Принудительная перезагрузка"
 
-#: src/components/vm/vmActions.jsx:297 src/components/vm/vmActions.jsx:302
+#: src/components/vm/vmActions.jsx:306 src/components/vm/vmActions.jsx:311
 msgid "Force shut down"
 msgstr "Принудительное завершение работы"
 
-#: src/components/vm/vmActions.jsx:290
+#: src/components/vm/vmActions.jsx:299
 #, fuzzy
 #| msgid "Force shut down"
 msgid "Force shut down $0?"
@@ -1414,7 +1424,7 @@ msgstr ""
 msgid "Inside the VM"
 msgstr ""
 
-#: src/components/vm/vmActions.jsx:393
+#: src/components/vm/vmActions.jsx:402
 msgid "Install"
 msgstr "Установить"
 
@@ -1677,7 +1687,7 @@ msgstr "Значение для памяти должно отличаться �
 msgid "MiB"
 msgstr "МиБ"
 
-#: src/components/vm/vmActions.jsx:428
+#: src/components/vm/vmActions.jsx:437
 #: src/components/vm/vmMigrateDialog.jsx:199
 msgid "Migrate"
 msgstr ""
@@ -1817,7 +1827,7 @@ msgstr "Сетевая загрузка (PXE)"
 msgid "Network file system"
 msgstr "Сетевая файловая система"
 
-#: src/components/common/needsShutdown.jsx:103
+#: src/components/common/needsShutdown.jsx:107
 #, fuzzy
 #| msgid "Add network interface"
 msgid "Network interface"
@@ -2092,7 +2102,7 @@ msgstr "Путь к файлу"
 msgid "Path to file on host's file system"
 msgstr "Путь к файлу ISO в файловой системе узла"
 
-#: src/helpers.js:270 src/components/vm/vmActions.jsx:212
+#: src/helpers.js:270 src/components/vm/vmActions.jsx:221
 msgid "Pause"
 msgstr "Приостановить"
 
@@ -2273,12 +2283,12 @@ msgstr "Изменить"
 msgid "Read-only"
 msgstr "Только для чтения"
 
-#: src/components/vm/vmActions.jsx:257 src/components/vm/vmActions.jsx:341
-#: src/components/vm/vmActions.jsx:346
+#: src/components/vm/vmActions.jsx:266 src/components/vm/vmActions.jsx:350
+#: src/components/vm/vmActions.jsx:355
 msgid "Reboot"
 msgstr "Перезагрузка"
 
-#: src/components/vm/vmActions.jsx:334
+#: src/components/vm/vmActions.jsx:343
 #, fuzzy
 #| msgid "Reboot"
 msgid "Reboot $0?"
@@ -2349,7 +2359,7 @@ msgstr "Добавить сетевой интерфейс"
 msgid "Remove static host from DHCP"
 msgstr ""
 
-#: src/components/vm/vmRenameDialog.jsx:68 src/components/vm/vmActions.jsx:452
+#: src/components/vm/vmRenameDialog.jsx:68 src/components/vm/vmActions.jsx:461
 msgid "Rename"
 msgstr ""
 
@@ -2361,7 +2371,7 @@ msgstr ""
 msgid "Replace"
 msgstr ""
 
-#: src/components/vm/vmActions.jsx:439
+#: src/components/vm/vmActions.jsx:448
 #: src/components/vm/vmReplaceSpiceDialog.jsx:124
 #: src/components/vm/usesSpice.jsx:38
 msgid "Replace SPICE devices"
@@ -2390,7 +2400,7 @@ msgid ""
 "Restrictions in networking (SLIRP-based emulation) and PCI device assignment"
 msgstr ""
 
-#: src/components/vm/vmActions.jsx:223
+#: src/components/vm/vmActions.jsx:232
 msgid "Resume"
 msgstr "Возобновить"
 
@@ -2428,7 +2438,7 @@ msgstr "Сеть с маршрутизацией"
 msgid "Row select"
 msgstr ""
 
-#: src/components/vm/vmActions.jsx:381
+#: src/components/vm/vmActions.jsx:390
 msgid "Run"
 msgstr "Запуск"
 
@@ -2441,7 +2451,7 @@ msgstr "Выполнять при загрузке узла"
 msgid "Running"
 msgstr "Работает"
 
-#: src/components/common/needsShutdown.jsx:122
+#: src/components/common/needsShutdown.jsx:126
 #, fuzzy
 msgid "SPICE"
 msgstr "Порт SPICE:"
@@ -2503,11 +2513,11 @@ msgstr "Тип консоли"
 msgid "Send key"
 msgstr "Отправить клавишу"
 
-#: src/components/vm/vmActions.jsx:317 src/components/vm/vmActions.jsx:322
+#: src/components/vm/vmActions.jsx:326 src/components/vm/vmActions.jsx:331
 msgid "Send non-maskable interrupt"
 msgstr "Отправить немаскируемое прерывание"
 
-#: src/components/vm/vmActions.jsx:311
+#: src/components/vm/vmActions.jsx:320
 #, fuzzy
 #| msgid "Send non-maskable interrupt"
 msgid "Send non-maskable interrupt to $0?"
@@ -2587,14 +2597,14 @@ msgstr "показать больше"
 
 # translation auto-copied from project virt-manager, version 0.10.0, document
 # virt-manager
-#: src/components/vm/vmActions.jsx:249 src/components/vm/vmActions.jsx:262
-#: src/components/vm/vmActions.jsx:277 src/components/vm/vmActions.jsx:282
+#: src/components/vm/vmActions.jsx:258 src/components/vm/vmActions.jsx:271
+#: src/components/vm/vmActions.jsx:286 src/components/vm/vmActions.jsx:291
 msgid "Shut down"
 msgstr "Завершение работы"
 
 # translation auto-copied from project virt-manager, version 0.10.0, document
 # virt-manager
-#: src/components/vm/vmActions.jsx:239 src/components/vm/vmActions.jsx:270
+#: src/components/vm/vmActions.jsx:248 src/components/vm/vmActions.jsx:279
 #, fuzzy
 #| msgid "Shut down"
 msgid "Shut down $0?"
@@ -2658,7 +2668,7 @@ msgstr "Создание моментального снимка"
 msgid "Sockets"
 msgstr "Сокеты"
 
-#: src/components/common/needsShutdown.jsx:148
+#: src/components/common/needsShutdown.jsx:156
 msgid "Some configuration changes only take effect after a fresh boot:"
 msgstr ""
 
@@ -2841,6 +2851,10 @@ msgstr "Система"
 msgid "TAP device"
 msgstr "Главное устройство"
 
+#: src/components/common/needsShutdown.jsx:130
+msgid "TPM"
+msgstr ""
+
 #: src/components/vm/hostdevs/hostDevAdd.jsx:126
 msgid "Table of selectable host devices"
 msgstr ""
@@ -2928,7 +2942,7 @@ msgstr ""
 msgid "Then copy and paste it above."
 msgstr ""
 
-#: src/components/vm/vmActions.jsx:473
+#: src/components/vm/vmActions.jsx:493
 msgid "This VM is transient. Shut it down if you wish to delete it."
 msgstr "Эта ВМ временная. Выключите ее, если хотите ее удалить."
 
@@ -3143,39 +3157,39 @@ msgstr "ВМ $0 уже существует"
 msgid "VM $0 does not exist on $1 connection"
 msgstr ""
 
-#: src/components/vm/vmActions.jsx:107
+#: src/components/vm/vmActions.jsx:109
 msgid "VM $0 failed to force reboot"
 msgstr "Не удалось принудительно перезапустить виртуальную машину $0"
 
-#: src/components/vm/vmActions.jsx:164
+#: src/components/vm/vmActions.jsx:166
 msgid "VM $0 failed to force shutdown"
 msgstr "Не удалось принудительно завершить работу виртуальной машины $0"
 
-#: src/components/vm/vmActions.jsx:82
+#: src/components/vm/vmActions.jsx:84
 msgid "VM $0 failed to get installed"
 msgstr "Не удалось установить виртуальную машину $0"
 
-#: src/components/vm/vmActions.jsx:136
+#: src/components/vm/vmActions.jsx:138
 msgid "VM $0 failed to pause"
 msgstr "Не удалось приостановить виртуальную машину $0"
 
-#: src/components/vm/vmActions.jsx:94
+#: src/components/vm/vmActions.jsx:96
 msgid "VM $0 failed to reboot"
 msgstr "Не удалось перезапустить виртуальную машину $0"
 
-#: src/components/vm/vmActions.jsx:149
+#: src/components/vm/vmActions.jsx:151
 msgid "VM $0 failed to resume"
 msgstr "Не удалось возобновить виртуальную машину $0"
 
-#: src/components/vm/vmActions.jsx:177
+#: src/components/vm/vmActions.jsx:179
 msgid "VM $0 failed to send NMI"
 msgstr "Ошибка отправки немаскируемого прерывания виртуальной машиной $0"
 
-#: src/components/vm/vmActions.jsx:123
+#: src/components/vm/vmActions.jsx:125
 msgid "VM $0 failed to shutdown"
 msgstr "Не удалось завершить работу виртуальной машины $0"
 
-#: src/components/vm/vmActions.jsx:73
+#: src/components/vm/vmActions.jsx:75
 msgid "VM $0 failed to start"
 msgstr "Не удалось запустить виртуальную машину $0"
 
@@ -3185,7 +3199,7 @@ msgid ""
 "by your user account"
 msgstr ""
 
-#: src/components/common/needsShutdown.jsx:161
+#: src/components/common/needsShutdown.jsx:169
 #, fuzzy
 #| msgid "VM $0 failed to shutdown"
 msgid "VM needs shutdown"
@@ -3297,7 +3311,7 @@ msgstr ""
 msgid "WWPN"
 msgstr "WWPN"
 
-#: src/components/common/needsShutdown.jsx:118
+#: src/components/common/needsShutdown.jsx:122
 #: src/components/vm/overview/vmOverviewCard.jsx:204
 msgid "Watchdog"
 msgstr ""
@@ -3543,7 +3557,7 @@ msgid "vCPU maximum"
 msgstr "Наибольшее количество виртуальных ЦП"
 
 # ctx::sourcefile::/rhn/systems/details/virtualization/VirtualGuestsList.do
-#: src/components/common/needsShutdown.jsx:110
+#: src/components/common/needsShutdown.jsx:114
 msgid "vCPUs"
 msgstr "Виртуальные ЦП"
 
@@ -3556,7 +3570,7 @@ msgstr "vhostuser"
 msgid "view more..."
 msgstr "Подробнее..."
 
-#: src/components/vm/vmActions.jsx:415
+#: src/components/vm/vmActions.jsx:424
 #, fuzzy
 msgid ""
 "virt-install package needs to be installed on the system in order to clone "

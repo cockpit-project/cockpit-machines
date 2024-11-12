@@ -7,9 +7,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-11-05 03:02+0000\n"
-"PO-Revision-Date: 2024-09-17 06:27+0000\n"
-"Last-Translator: Luna Jernberg <bittin@reimu.nl>\n"
+"POT-Creation-Date: 2024-11-09 03:02+0000\n"
+"PO-Revision-Date: 2024-11-08 05:38+0000\n"
+"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
+"memory@weblate.org>\n"
 "Language-Team: Swedish <https://translate.fedoraproject.org/projects/cockpit-"
 "machines/main/sv/>\n"
 "Language: sv\n"
@@ -17,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1\n"
-"X-Generator: Weblate 5.7.2\n"
+"X-Generator: Weblate 5.8.2\n"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:927
 msgid "$0 $1 available at default location"
@@ -123,6 +124,10 @@ msgstr "Lägg till"
 #: src/components/create-vm-dialog/createVmDialog.jsx:863
 msgid "Add SSH keys"
 msgstr "Lägg till SSH nycklar"
+
+#: src/components/vm/vmActions.jsx:484
+msgid "Add TPM"
+msgstr "Lägg till TPM"
 
 #: src/components/networks/networkOverviewTab.jsx:230
 msgid "Add a DHCP static host entry"
@@ -291,7 +296,7 @@ msgstr "Buss"
 msgid "CD/DVD disc"
 msgstr "CD/DVD skiva"
 
-#: src/components/common/needsShutdown.jsx:114
+#: src/components/common/needsShutdown.jsx:118
 #: src/components/vm/overview/vmOverviewCard.jsx:184
 #: src/components/vm/vmUsageCard.jsx:61
 msgid "CPU"
@@ -358,7 +363,7 @@ msgstr "Ändra uppstartsordning"
 msgid "Change firmware"
 msgstr "Ändra hårdvarufirmware"
 
-#: src/components/common/needsShutdown.jsx:171
+#: src/components/common/needsShutdown.jsx:179
 msgid "Changes pending"
 msgstr "Ändringar väntar"
 
@@ -399,7 +404,7 @@ msgid ""
 msgstr ""
 "Att klicka på ”Starta fjärrvisare” kommer hämta en .vv-fil och starta $0."
 
-#: src/components/vm/vmActions.jsx:405 src/components/vm/vmCloneDialog.jsx:80
+#: src/components/vm/vmActions.jsx:414 src/components/vm/vmCloneDialog.jsx:80
 msgid "Clone"
 msgstr "Klona"
 
@@ -621,7 +626,7 @@ msgstr "Avaktivera"
 #: src/components/storagePools/storagePoolDelete.jsx:202
 #: src/components/storagePools/storagePoolDelete.jsx:238
 #: src/components/storagePools/storagePoolDelete.jsx:248
-#: src/components/vm/vmActions.jsx:477 src/components/vm/vmActions.jsx:485
+#: src/components/vm/vmActions.jsx:497 src/components/vm/vmActions.jsx:505
 #: src/components/vm/deleteDialog.jsx:170
 msgid "Delete"
 msgstr "Ta bort"
@@ -730,7 +735,7 @@ msgstr "Frånkopplad"
 msgid "Disconnected from serial console. Click the connect button."
 msgstr "Frånkopplad från seriekonsolen. Klicka på Anslut."
 
-#: src/components/common/needsShutdown.jsx:93
+#: src/components/common/needsShutdown.jsx:97
 msgid "Disk"
 msgstr "Disk"
 
@@ -829,7 +834,7 @@ msgstr "Redigera"
 msgid "Edit $0 attributes"
 msgstr "Redigera $0 attribut"
 
-#: src/components/vm/vmActions.jsx:462
+#: src/components/vm/vmActions.jsx:471
 msgid "Edit description"
 msgstr "Redigera beskrivning"
 
@@ -908,6 +913,10 @@ msgstr "Utökade attribut"
 #: src/components/common/stateIcon.jsx:61
 msgid "Failed"
 msgstr "Misslyckades"
+
+#: src/components/vm/vmActions.jsx:188
+msgid "Failed to add TPM to VM $0"
+msgstr "Misslyckades att lägga till TPM för VM $0"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:196
 msgid "Failed to add shared directory"
@@ -995,11 +1004,11 @@ msgstr "Hårdvaruprogram"
 msgid "Force eject"
 msgstr "Tvinga utmatning"
 
-#: src/components/vm/vmActions.jsx:361 src/components/vm/vmActions.jsx:366
+#: src/components/vm/vmActions.jsx:370 src/components/vm/vmActions.jsx:375
 msgid "Force reboot"
 msgstr "Tvinga omstart"
 
-#: src/components/vm/vmActions.jsx:354
+#: src/components/vm/vmActions.jsx:363
 msgid "Force reboot $0?"
 msgstr "Tvinga omstart $0?"
 
@@ -1007,11 +1016,11 @@ msgstr "Tvinga omstart $0?"
 msgid "Force revert"
 msgstr "Framtvinga återställning"
 
-#: src/components/vm/vmActions.jsx:297 src/components/vm/vmActions.jsx:302
+#: src/components/vm/vmActions.jsx:306 src/components/vm/vmActions.jsx:311
 msgid "Force shut down"
 msgstr "Framtvinga avstängning"
 
-#: src/components/vm/vmActions.jsx:290
+#: src/components/vm/vmActions.jsx:299
 msgid "Force shut down $0?"
 msgstr "Framtvinga avstängning $0?"
 
@@ -1274,7 +1283,7 @@ msgstr "Sätt i skivmedia"
 msgid "Inside the VM"
 msgstr "Inuti VM"
 
-#: src/components/vm/vmActions.jsx:393
+#: src/components/vm/vmActions.jsx:402
 msgid "Install"
 msgstr "Installera"
 
@@ -1504,7 +1513,7 @@ msgstr "Minnesstatussökväg"
 msgid "MiB"
 msgstr "MiB"
 
-#: src/components/vm/vmActions.jsx:428
+#: src/components/vm/vmActions.jsx:437
 #: src/components/vm/vmMigrateDialog.jsx:199
 msgid "Migrate"
 msgstr "Migrera"
@@ -1631,7 +1640,7 @@ msgstr "Nätverksboot (PXE)"
 msgid "Network file system"
 msgstr "Nätverksfilsystem"
 
-#: src/components/common/needsShutdown.jsx:103
+#: src/components/common/needsShutdown.jsx:107
 msgid "Network interface"
 msgstr "Nätverksgränssnitt"
 
@@ -1872,7 +1881,7 @@ msgstr "Sökväg till katalog"
 msgid "Path to file on host's file system"
 msgstr "Sökväg till fil på värdens filsystem"
 
-#: src/helpers.js:270 src/components/vm/vmActions.jsx:212
+#: src/helpers.js:270 src/components/vm/vmActions.jsx:221
 msgid "Pause"
 msgstr "Pausa"
 
@@ -2052,12 +2061,12 @@ msgstr "Räckvidd"
 msgid "Read-only"
 msgstr "Skrivskyddad"
 
-#: src/components/vm/vmActions.jsx:257 src/components/vm/vmActions.jsx:341
-#: src/components/vm/vmActions.jsx:346
+#: src/components/vm/vmActions.jsx:266 src/components/vm/vmActions.jsx:350
+#: src/components/vm/vmActions.jsx:355
 msgid "Reboot"
 msgstr "Starta om"
 
-#: src/components/vm/vmActions.jsx:334
+#: src/components/vm/vmActions.jsx:343
 msgid "Reboot $0?"
 msgstr "Starta om $0?"
 
@@ -2115,7 +2124,7 @@ msgstr "Ta bort nätverksgränssnittet?"
 msgid "Remove static host from DHCP"
 msgstr "Ta bort statiska värdposter från DHCP"
 
-#: src/components/vm/vmRenameDialog.jsx:68 src/components/vm/vmActions.jsx:452
+#: src/components/vm/vmRenameDialog.jsx:68 src/components/vm/vmActions.jsx:461
 msgid "Rename"
 msgstr "Byt namn"
 
@@ -2127,7 +2136,7 @@ msgstr "Byt namn på VM $0"
 msgid "Replace"
 msgstr "Ersätt"
 
-#: src/components/vm/vmActions.jsx:439
+#: src/components/vm/vmActions.jsx:448
 #: src/components/vm/vmReplaceSpiceDialog.jsx:124
 #: src/components/vm/usesSpice.jsx:38
 msgid "Replace SPICE devices"
@@ -2156,7 +2165,7 @@ msgstr ""
 "Begränsningar i nätverkande (SLIRP-baserad emulering) och PCI-"
 "enhetstilldelning"
 
-#: src/components/vm/vmActions.jsx:223
+#: src/components/vm/vmActions.jsx:232
 msgid "Resume"
 msgstr "Återuppta"
 
@@ -2196,7 +2205,7 @@ msgstr "Ruttlagt nätverk"
 msgid "Row select"
 msgstr "Radval"
 
-#: src/components/vm/vmActions.jsx:381
+#: src/components/vm/vmActions.jsx:390
 msgid "Run"
 msgstr "Kör"
 
@@ -2209,7 +2218,7 @@ msgstr "Kör när värd startar"
 msgid "Running"
 msgstr "Kör"
 
-#: src/components/common/needsShutdown.jsx:122
+#: src/components/common/needsShutdown.jsx:126
 msgid "SPICE"
 msgstr "SPICE"
 
@@ -2265,11 +2274,11 @@ msgstr "Välj konsoltyp"
 msgid "Send key"
 msgstr "Skicka tangenttryck"
 
-#: src/components/vm/vmActions.jsx:317 src/components/vm/vmActions.jsx:322
+#: src/components/vm/vmActions.jsx:326 src/components/vm/vmActions.jsx:331
 msgid "Send non-maskable interrupt"
 msgstr "Skicka ej maskerbart avbrott"
 
-#: src/components/vm/vmActions.jsx:311
+#: src/components/vm/vmActions.jsx:320
 msgid "Send non-maskable interrupt to $0?"
 msgstr "Skicka ej maskerbart avbrott till $0?"
 
@@ -2335,12 +2344,12 @@ msgstr "Visa mindre"
 msgid "Show more"
 msgstr "Visa mer"
 
-#: src/components/vm/vmActions.jsx:249 src/components/vm/vmActions.jsx:262
-#: src/components/vm/vmActions.jsx:277 src/components/vm/vmActions.jsx:282
+#: src/components/vm/vmActions.jsx:258 src/components/vm/vmActions.jsx:271
+#: src/components/vm/vmActions.jsx:286 src/components/vm/vmActions.jsx:291
 msgid "Shut down"
 msgstr "Stäng av"
 
-#: src/components/vm/vmActions.jsx:239 src/components/vm/vmActions.jsx:270
+#: src/components/vm/vmActions.jsx:248 src/components/vm/vmActions.jsx:279
 msgid "Shut down $0?"
 msgstr "Stäng av $0?"
 
@@ -2395,7 +2404,7 @@ msgstr "Ögonblicksbilder"
 msgid "Sockets"
 msgstr "Uttag"
 
-#: src/components/common/needsShutdown.jsx:148
+#: src/components/common/needsShutdown.jsx:156
 msgid "Some configuration changes only take effect after a fresh boot:"
 msgstr ""
 "Vissa konfigurationsändringar träder bara i kraft efter en fräsch uppstart:"
@@ -2562,6 +2571,10 @@ msgstr "System"
 msgid "TAP device"
 msgstr "TAP-enhet"
 
+#: src/components/common/needsShutdown.jsx:130
+msgid "TPM"
+msgstr "TPM"
+
 #: src/components/vm/hostdevs/hostDevAdd.jsx:126
 msgid "Table of selectable host devices"
 msgstr "Tabell över valbara värdenheter"
@@ -2647,7 +2660,7 @@ msgstr ""
 msgid "Then copy and paste it above."
 msgstr "Kopiera och klistra sedan in det ovan."
 
-#: src/components/vm/vmActions.jsx:473
+#: src/components/vm/vmActions.jsx:493
 msgid "This VM is transient. Shut it down if you wish to delete it."
 msgstr "Denna VM är transient. Stäng av den om du vill radera den."
 
@@ -2865,39 +2878,39 @@ msgstr "VM $0 existerar redan"
 msgid "VM $0 does not exist on $1 connection"
 msgstr "VM $0 finns inte på $1 -anslutning"
 
-#: src/components/vm/vmActions.jsx:107
+#: src/components/vm/vmActions.jsx:109
 msgid "VM $0 failed to force reboot"
 msgstr "VM $0 misslyckades med att tvinga omstart"
 
-#: src/components/vm/vmActions.jsx:164
+#: src/components/vm/vmActions.jsx:166
 msgid "VM $0 failed to force shutdown"
 msgstr "VM:en $0 kunde inte tvingande stängas av"
 
-#: src/components/vm/vmActions.jsx:82
+#: src/components/vm/vmActions.jsx:84
 msgid "VM $0 failed to get installed"
 msgstr "VM:en $0 kunde inte installeras"
 
-#: src/components/vm/vmActions.jsx:136
+#: src/components/vm/vmActions.jsx:138
 msgid "VM $0 failed to pause"
 msgstr "VM:en $0 kunde inte pausa"
 
-#: src/components/vm/vmActions.jsx:94
+#: src/components/vm/vmActions.jsx:96
 msgid "VM $0 failed to reboot"
 msgstr "VM:en $0 kunde inte starta om"
 
-#: src/components/vm/vmActions.jsx:149
+#: src/components/vm/vmActions.jsx:151
 msgid "VM $0 failed to resume"
 msgstr "VM:en $0 kunde inte återuppta"
 
-#: src/components/vm/vmActions.jsx:177
+#: src/components/vm/vmActions.jsx:179
 msgid "VM $0 failed to send NMI"
 msgstr "VM:en $0 kunde inte skicka NMI"
 
-#: src/components/vm/vmActions.jsx:123
+#: src/components/vm/vmActions.jsx:125
 msgid "VM $0 failed to shutdown"
 msgstr "VM $0 kunde inte stängas av"
 
-#: src/components/vm/vmActions.jsx:73
+#: src/components/vm/vmActions.jsx:75
 msgid "VM $0 failed to start"
 msgstr "VM:en $0 kunde inte starta"
 
@@ -2909,7 +2922,7 @@ msgstr ""
 "VM:en startad med opriviligierad begränsad åtkomst, med processen och PTY:n "
 "ägda av ditt användarkonto"
 
-#: src/components/common/needsShutdown.jsx:161
+#: src/components/common/needsShutdown.jsx:169
 msgid "VM needs shutdown"
 msgstr "VM behöver stängas av"
 
@@ -3015,7 +3028,7 @@ msgstr "Vsock"
 msgid "WWPN"
 msgstr "WWPN"
 
-#: src/components/common/needsShutdown.jsx:118
+#: src/components/common/needsShutdown.jsx:122
 #: src/components/vm/overview/vmOverviewCard.jsx:204
 msgid "Watchdog"
 msgstr "Vakthund"
@@ -3255,7 +3268,7 @@ msgstr "vCPU-antal"
 msgid "vCPU maximum"
 msgstr "vCPU-maximum"
 
-#: src/components/common/needsShutdown.jsx:110
+#: src/components/common/needsShutdown.jsx:114
 msgid "vCPUs"
 msgstr "vCPU:er"
 
@@ -3267,7 +3280,7 @@ msgstr "vhost-användare"
 msgid "view more..."
 msgstr "visa mer..."
 
-#: src/components/vm/vmActions.jsx:415
+#: src/components/vm/vmActions.jsx:424
 msgid ""
 "virt-install package needs to be installed on the system in order to clone "
 "VMs"
