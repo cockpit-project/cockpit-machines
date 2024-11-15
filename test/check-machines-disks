@@ -848,6 +848,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         # iscsi disks are attached.
         m.execute("virsh detach-disk subVmTest1 --target vdb")
 
+    @testlib.skipImage("triggers kernel oops, https://issues.redhat.com/browse/RHEL-67841",
+                       "rhel-10*", "centos-10")
     def testAddDiskNFS(self):
         b = self.browser
         m = self.machine
