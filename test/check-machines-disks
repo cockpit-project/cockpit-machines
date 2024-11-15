@@ -856,6 +856,12 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
         m.execute("if selinuxenabled 2>/dev/null; then setsebool -P virt_use_nfs 1; fi")
 
+        # HACK: NFS produces dozens of permissive=1 SELinux issues; setroubleshoot runs massively parallel
+        # on them, and eats up too much RAM and I/O; https://bugzilla.redhat.com/show_bug.cgi?id=2326499
+        if m.execute("systemctl list-unit-files --no-legend setroubleshootd.service", check=False).strip():
+            m.execute("systemctl mask --runtime setroubleshootd")
+            self.addCleanup(m.execute, "systemctl unmask setroubleshootd")
+
         # Prepare a local NFS pool
         self.restore_file("/etc/exports")
         nfs_pool = os.path.join(self.vm_tmpdir, "nfs_pool")
