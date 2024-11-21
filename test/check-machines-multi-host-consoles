@@ -43,6 +43,7 @@ class TestMultiMachineVNC(VirtualMachinesCase):
 
         self.setup_ssh_auth()
         self.enable_multihost(self.machine1)
+        self.machine1.write("/etc/cockpit/cockpit.conf", "[Session]\nWarnBeforeConnecting=false\n", append=True)
 
     def testBasic(self):
         b = self.browser
