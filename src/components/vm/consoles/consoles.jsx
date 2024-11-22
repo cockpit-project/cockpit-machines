@@ -19,14 +19,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
-import { AccessConsoles } from "@patternfly/react-console";
+import { vmId } from "../../../helpers.js";
+import { Button, Text, TextContent, TextVariants } from '@patternfly/react-core';
+import { DialogsContext } from 'dialogs.jsx';
+import { AddVNC } from './vncAdd.jsx';
+import { EditVNCModal } from './vncEdit.jsx';
 
 import SerialConsole from './serialConsole.jsx';
 import Vnc from './vnc.jsx';
 import DesktopConsole from './desktopConsole.jsx';
 import {
+    domainAttachVnc,
     domainCanConsole,
     domainDesktopConsole,
+    domainGet,
     domainSerialConsoleCommand
 } from '../../../libvirtApi/domain.js';
 
@@ -35,6 +41,8 @@ import './consoles.css';
 const _ = cockpit.gettext;
 
 const VmNotRunning = () => {
+// DEBUG
+console.log("++++ DEBUG ++++ :");
     return (
         <div id="vm-not-running-message">
             {_("Please start the virtual machine to access its console.")}
@@ -43,11 +51,18 @@ const VmNotRunning = () => {
 };
 
 class Consoles extends React.Component {
+    static contextType = DialogsContext;
+
     constructor (props) {
         super(props);
 
         this.state = {
             serial: props.vm.displays && props.vm.displays.filter(display => display.type == 'pty'),
+            selectedConsole: this.getDefaultConsole(props.vm),
+            addVncInProgress: false,
+            vncAddress: "",
+            vncPort: "",
+            vncPassword: "",
         };
 
         this.getDefaultConsole = this.getDefaultConsole.bind(this);
@@ -60,6 +75,10 @@ class Consoles extends React.Component {
 
         if (newSerial.length !== oldSerial.length || oldSerial.some((pty, index) => pty.alias !== newSerial[index].alias))
             return { serial: newSerial };
+
+        if (nextProps.selectedConsole !== prevState.selectedConsole) {
+            return { selectedConsole: nextProps.selectedConsole };
+        }
 
         return null;
     }
@@ -91,14 +110,72 @@ class Consoles extends React.Component {
         domainDesktopConsole({ name: vm.name, id: vm.id, connectionName: vm.connectionName, consoleDetail: vm.displays.find(display => display.type == type) });
     }
 
+    add() {
+        const Dialogs = this.context;
+        const { vm } = this.props;
+
+        this.setState({ addVncInProgress: true });
+        const vncParams = {
+            connectionName: vm.connectionName,
+            vmName: vm.name,
+            vncAddress: this.state.vncAddress || "",
+            vncPort: this.state.vncPort || "",
+            vncPassword: this.state.vncPassword || "",
+        };
+
+        domainAttachVnc(vncParams)
+                .then(() => {
+                    domainGet({ connectionName: vm.connectionName, id: vm.id });
+                    Dialogs.close();
+                })
+                .catch(exc => this.dialogErrorSet(_("Video device settings could not be saved"), exc.message))
+                .finally(() => this.setState({ addVncInProgress: false }));
+    }
+
     render () {
+        const Dialogs = this.context;
         const { vm, onAddErrorNotification, isExpanded } = this.props;
-        const { serial } = this.state;
+        const { serial, selectedConsole } = this.state;
         const spice = vm.displays && vm.displays.find(display => display.type == 'spice');
         const vnc = vm.displays && vm.displays.find(display => display.type == 'vnc');
+        const id = vmId(vm.name);
+
+        const openVncAdd = () => {
+            Dialogs.show(<AddVNC idPrefix={`${id}-add-vnc`}
+                                 vm={vm} />);
+        };
+
+        const openVncEdit = () => {
+            Dialogs.show(<EditVNCModal idPrefix={`${id}-edit-vnc`}
+                                 vmName={vm.name}
+                                 vmId={id}
+                                 connectionName={vm.connectionName}
+                                 consoleDetail={vnc} />);
+        };
 
         if (!domainCanConsole || !domainCanConsole(vm.state)) {
-            return (<VmNotRunning />);
+            return (
+                <>
+                    <VmNotRunning />
+                    {selectedConsole === 'VncConsole' && !vnc && (
+                        <Button variant="secondary" size="sm"
+                                        onClick={openVncAdd}>
+                            {_("Add VNC")}
+                        </Button>
+                    )}
+                    {selectedConsole === 'VncConsole' && vnc && (
+                        <TextContent>
+                            <Text component={TextVariants.p}>
+                                {`VNC ${vnc.address}:${vnc.port}  `}
+                                <Button variant="link"
+                                    onClick={openVncEdit}>
+                                    {_("Edit")}
+                                </Button>
+                            </Text>
+                        </TextContent>
+                    )}
+                </>
+            );
         }
 
         const onDesktopConsole = () => { // prefer spice over vnc
@@ -106,36 +183,43 @@ class Consoles extends React.Component {
         };
 
         return (
-            <AccessConsoles preselectedType={this.getDefaultConsole()}
-                            textSelectConsoleType={_("Select console type")}
-                            textSerialConsole={_("Serial console")}
-                            textVncConsole={_("VNC console")}
-                            textDesktopViewerConsole={_("Desktop viewer")}>
-                {serial.map((pty, idx) => (<SerialConsole type={serial.length == 1 ? "SerialConsole" : cockpit.format(_("Serial console ($0)"), pty.alias || idx)}
-                                                  key={"pty-" + idx}
-                                                  connectionName={vm.connectionName}
-                                                  vmName={vm.name}
-                                                  spawnArgs={domainSerialConsoleCommand({ vm, alias: pty.alias })} />))}
-                {vnc &&
-                <Vnc type="VncConsole"
-                     vmName={vm.name}
-                     vmId={vm.id}
-                     connectionName={vm.connectionName}
-                     consoleDetail={vnc}
-                     onAddErrorNotification={onAddErrorNotification}
-                     isExpanded={isExpanded} />}
-                {(vnc || spice) &&
-                <DesktopConsole type="DesktopViewer"
-                                onDesktopConsole={onDesktopConsole}
-                                vnc={vnc}
-                                spice={spice} />}
-            </AccessConsoles>
+            <>
+                {selectedConsole === 'SerialConsole' && serial.map((pty, idx) => (
+                    <SerialConsole type={serial.length == 1 ? "SerialConsole" : cockpit.format(_("Serial console ($0)"), pty.alias || idx)}
+                                   key={"pty-" + idx}
+                                   connectionName={vm.connectionName}
+                                   vmName={vm.name}
+                                   spawnArgs={domainSerialConsoleCommand({ vm, alias: pty.alias })} />
+                ))}
+                {selectedConsole === 'VncConsole' && !vnc && (
+                    <Button variant="secondary" size="sm"
+                            onClick={openVncAdd}>
+                        {_("Add VNC")}
+                    </Button>
+                )}
+                {selectedConsole === 'VncConsole' && vnc && (
+                    <Vnc type="VncConsole"
+                         vmName={vm.name}
+                         vmId={vm.id}
+                         connectionName={vm.connectionName}
+                         consoleDetail={vnc}
+                         onAddErrorNotification={onAddErrorNotification}
+                         isExpanded={isExpanded} />
+                )}
+                {selectedConsole === 'DesktopViewer' && (vnc || spice) && (
+                    <DesktopConsole type="DesktopViewer"
+                                    onDesktopConsole={onDesktopConsole}
+                                    vnc={vnc}
+                                    spice={spice} />
+                )}
+            </>
         );
     }
 }
 Consoles.propTypes = {
     vm: PropTypes.object.isRequired,
     onAddErrorNotification: PropTypes.func.isRequired,
+    selectedConsole: PropTypes.string.isRequired,
 };
 
 export default Consoles;

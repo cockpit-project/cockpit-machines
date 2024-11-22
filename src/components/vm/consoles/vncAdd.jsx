@@ -19,21 +19,16 @@
 import React from 'react';
 import cockpit from 'cockpit';
 import PropTypes from 'prop-types';
-import { Button } from "@patternfly/react-core/dist/esm/components/Button";
-// import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
-import { Form } from "@patternfly/react-core/dist/esm/components/Form";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import { Button, Form, Modal, ModalVariant } from "@patternfly/react-core";
 import { DialogsContext } from 'dialogs.jsx';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
-import { VideoTypeRow } from './videoBody.jsx';
-import { domainAttachVideo, domainGet } from '../../../libvirtApi/domain.js';
-
-import './video.css';
+import { VncRow } from './vncBody.jsx';
+import { domainAttachVnc, domainGet } from '../../../libvirtApi/domain.js';
 
 const _ = cockpit.gettext;
 
-export class AddVIDEO extends React.Component {
+export class AddVNC extends React.Component {
     static contextType = DialogsContext;
 
     constructor(props) {
@@ -41,10 +36,10 @@ export class AddVIDEO extends React.Component {
 
         this.state = {
             dialogError: undefined,
-            videoType: "vnc",
-            password: "",
-            permanent: false,
-            addVideoInProgress: false,
+            vncAddress: "",
+            vncPort: "",
+            vncPassword: "",
+            addVncInProgress: false,
         };
         this.add = this.add.bind(this);
         this.onValueChanged = this.onValueChanged.bind(this);
@@ -65,44 +60,42 @@ export class AddVIDEO extends React.Component {
         const Dialogs = this.context;
         const { vm } = this.props;
 
-        this.setState({ addVideoInProgress: true });
-        const videoParams = {
+        this.setState({ addVncInProgress: true });
+        const vncParams = {
             connectionName: vm.connectionName,
             vmName: vm.name,
-            videoType: this.state.videoType,
-            permanent: this.state.permanent,
-            password: this.state.password || "",
+            vncAddress: this.state.vncAddress || "",
+            vncPort: this.state.vncPort || "",
+            vncPassword: this.state.vncPassword || "",
         };
 
-        domainAttachVideo(videoParams)
+        domainAttachVnc(vncParams)
                 .then(() => {
                     domainGet({ connectionName: vm.connectionName, id: vm.id });
                     Dialogs.close();
                 })
-                .catch(exc => this.dialogErrorSet(_("Video device settings could not be saved"), exc.message))
-                .finally(() => this.setState({ addVideoInProgress: false }));
+                .catch(exc => this.dialogErrorSet(_("VNC device settings could not be saved"), exc.message))
+                .finally(() => this.setState({ addVncInProgress: false }));
     }
 
     render() {
         const Dialogs = this.context;
-        const { idPrefix, vm } = this.props;
+        const { idPrefix } = this.props;
 
         const defaultBody = (
             <Form onSubmit={e => e.preventDefault()} isHorizontal>
-                <VideoTypeRow idPrefix={idPrefix}
+                <VncRow idPrefix={idPrefix}
                                  dialogValues={this.state}
-                                 onValueChanged={this.onValueChanged}
-                                 osTypeArch={vm.arch}
-                                 osTypeMachine={vm.emulatedMachine} />
+                                 onValueChanged={this.onValueChanged} />
             </Form>
         );
 
         return (
-            <Modal position="top" variant="medium" id={`${idPrefix}-dialog`} isOpen onClose={Dialogs.close} className='video-add'
-                title={_("Add virtual video device")}
+            <Modal position="top" variant={ModalVariant.small} id={`${idPrefix}-dialog`} isOpen onClose={Dialogs.close} className='vnc-add'
+                title={_("Add VNC")}
                 footer={
                     <>
-                        <Button isLoading={this.state.addVideoInProgress}
+                        <Button isLoading={this.state.addVncInProgress}
                                 isDisabled={false}
                                 id={`${idPrefix}-add`}
                                 variant='primary'
@@ -121,9 +114,9 @@ export class AddVIDEO extends React.Component {
     }
 }
 
-AddVIDEO.propTypes = {
+AddVNC.propTypes = {
     idPrefix: PropTypes.string.isRequired,
     vm: PropTypes.object.isRequired,
 };
 
-export default AddVIDEO;
+export default AddVNC;

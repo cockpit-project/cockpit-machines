@@ -17,14 +17,18 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
+import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 
+import { logDebug } from "../../../helpers.js";
 import { VncConsole } from '@patternfly/react-console';
 import { Dropdown, DropdownItem, DropdownList } from "@patternfly/react-core/dist/esm/components/Dropdown";
 import { MenuToggle } from "@patternfly/react-core/dist/esm/components/MenuToggle";
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
+import { Button, Text, TextContent, TextVariants } from '@patternfly/react-core';
+import { DialogsContext } from 'dialogs.jsx';
+import { EditVNCModal } from './vncEdit.jsx';
 
-import { logDebug } from '../../../helpers.js';
 import { domainSendKey } from '../../../libvirtApi/domain.js';
 
 const _ = cockpit.gettext;
@@ -49,17 +53,25 @@ const Enum = {
 };
 
 class Vnc extends React.Component {
+    static contextType = DialogsContext;
+
     constructor(props) {
         super(props);
+
         this.state = {
             path: undefined,
             isActionOpen: false,
+            vncAddress: props.consoleDetail.address || '',
+            vncPort: props.consoleDetail.port || '',
+            vncPassword: props.consoleDetail.password || '',
         };
 
         this.connect = this.connect.bind(this);
         this.onDisconnected = this.onDisconnected.bind(this);
         this.onInitFailed = this.onInitFailed.bind(this);
         this.onExtraKeysDropdownToggle = this.onExtraKeysDropdownToggle.bind(this);
+        this.onValueChanged = this.onValueChanged.bind(this);
+        this.dialogErrorSet = this.dialogErrorSet.bind(this);
     }
 
     connect(props) {
@@ -114,7 +126,17 @@ class Vnc extends React.Component {
         this.setState({ isActionOpen: false });
     }
 
+    onValueChanged(key, value) {
+        const stateDelta = { [key]: value };
+        this.setState(stateDelta);
+    }
+
+    dialogErrorSet(text, detail) {
+        this.setState({ dialogError: text, dialogErrorDetail: detail });
+    }
+
     render() {
+        const Dialogs = this.context;
         const { consoleDetail, connectionName, vmName, vmId, onAddErrorNotification, isExpanded } = this.props;
         const { path, isActionOpen } = this.state;
         if (!consoleDetail || !path) {
@@ -161,8 +183,17 @@ class Vnc extends React.Component {
             </Dropdown>
         ];
 
+        const openVncEdit = () => {
+            Dialogs.show(<EditVNCModal idPrefix={`${vmId}-edit-vnc`}
+                                 vmName={vmName}
+                                 vmId={vmId}
+                                 connectionName={connectionName}
+                                 consoleDetail={consoleDetail} />);
+        };
+
         return (
-            <VncConsole host={window.location.hostname}
+            <>
+                <VncConsole host={window.location.hostname}
                         port={window.location.port || (encrypt ? '443' : '80')}
                         path={path}
                         encrypt={encrypt}
@@ -178,11 +209,29 @@ class Vnc extends React.Component {
                         consoleContainerId={isExpanded ? "vnc-display-container-expanded" : "vnc-display-container-minimized"}
                         resizeSession
                         scaleViewport
-            />
+                />
+                <TextContent>
+                    <Text component={TextVariants.p}>
+                        {`VNC ${consoleDetail.address}:${consoleDetail.port}  `}
+                        <Button variant="link"
+                            onClick={openVncEdit}>
+                            {_("Edit")}
+                        </Button>
+                    </Text>
+                </TextContent>
+            </>
         );
     }
 }
 
 // TODO: define propTypes
+Vnc.propTypes = {
+    vmName: PropTypes.string.isRequired,
+    vmId: PropTypes.string.isRequired,
+    connectionName: PropTypes.string.isRequired,
+    consoleDetail: PropTypes.object.isRequired,
+    onAddErrorNotification: PropTypes.func.isRequired,
+    isExpanded: PropTypes.string.isRequired,
+};
 
 export default Vnc;

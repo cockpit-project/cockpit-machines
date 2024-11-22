@@ -1070,8 +1070,8 @@ export async function domainAddTPM({ connectionName, vmName }) {
             });
 }
 
-export function domainAttachVideo({ connectionName, vmName, permanent, videoType, password }) {
-    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--add-device', '--graphics', `${videoType},passwd=${password}`];
+export function domainAttachVnc({ connectionName, vmName, vncAddress, vncPort, vncPassword }) {
+    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--add-device', '--graphics', `vnc,listen=${vncAddress},port=${vncPort},passwd=${vncPassword}`];
     const options = { err: "message" };
 
     if (connectionName === "system")
@@ -1090,19 +1090,18 @@ export function domainDetachVideo({ connectionName, index, vmName, persistent })
     return cockpit.spawn(args, options);
 }
 
-export function domainChangeVideoSettings({
-    vmName,
+export function domainChangeVncSettings({
     connectionName,
-    persistent,
-    videoType,
-    password,
-    state,
+    vmName,
+    vncAddress,
+    vncPort,
+    vncPassword,
 }) {
     const options = { err: "message" };
     if (connectionName === "system")
         options.superuser = "try";
 
-    const args = ["virt-xml", "-c", `qemu:///${connectionName}`, vmName, "--edit", "--graphics", `${videoType},passwd=${password}`];
+    const args = ["virt-xml", "-c", `qemu:///${connectionName}`, vmName, "--edit", "--graphics", `vnc,listen=${vncAddress},port=${vncPort},passwd=${vncPassword}`];
 
     return cockpit.spawn(args, options);
 }

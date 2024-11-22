@@ -19,18 +19,16 @@
 import React from 'react';
 import cockpit from 'cockpit';
 import PropTypes from 'prop-types';
-import { Button } from "@patternfly/react-core/dist/esm/components/Button";
-import { Form } from "@patternfly/react-core/dist/esm/components/Form";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import { Button, Form, Modal, ModalVariant } from "@patternfly/react-core";
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { DialogsContext } from 'dialogs.jsx';
-import { VideoTypeAndSourceRow, VideoTypeRow } from './videoBody.jsx';
-import { domainChangeVideoSettings, domainGet } from '../../../libvirtApi/domain.js';
+import { VncRow } from './vncBody.jsx';
+import { domainChangeVncSettings, domainGet } from '../../../libvirtApi/domain.js';
 
 const _ = cockpit.gettext;
 
-export class EditVIDEOModal extends React.Component {
+export class EditVNCModal extends React.Component {
     static contextType = DialogsContext;
 
     constructor(props) {
@@ -38,9 +36,13 @@ export class EditVIDEOModal extends React.Component {
 
         this.state = {
             dialogError: undefined,
-            videoType: props.video.type,
             saveDisabled: false,
-            videoPassword: props.video.password || "",
+            vmName: props.vmName,
+            vmId: props.vmId,
+            connectionName: props.connectionName,
+            vncAddress: props.consoleDetail.address || "",
+            vncPort: props.consoleDetail.port || "",
+            vncPassword: props.consoleDetail.password || "",
         };
 
         this.save = this.save.bind(this);
@@ -59,45 +61,42 @@ export class EditVIDEOModal extends React.Component {
 
     save() {
         const Dialogs = this.context;
-        const { vm, video } = this.props;
 
-        const videoParams = {
-            vmName: vm.name,
-            connectionName: vm.connectionName,
-            persistent: vm.persistent,
-            videoType: this.state.videoType,
-            password: this.state.videoPassword || "",
+        const vncParams = {
+            connectionName: this.state.connectionName,
+            vmName: this.state.vmName,
+            vncAddress: this.state.vncAddress || "",
+            vncPort: this.state.vncPort || "",
+            vncPassword: this.state.vncPassword || "",
         };
 
-        domainChangeVideoSettings(videoParams)
+        domainChangeVncSettings(vncParams)
                 .then(() => {
-                    domainGet({ connectionName: vm.connectionName, id: vm.id });
+                    domainGet({ connectionName: this.state.connectionName, id: this.state.vmId });
                     Dialogs.close();
                 })
                 .catch((exc) => {
-                    this.dialogErrorSet(_("Video device settings could not be saved"), exc.message);
+                    this.dialogErrorSet(_("VNC settings could not be saved"), exc.message);
                 });
     }
 
     render() {
         const Dialogs = this.context;
-        const { idPrefix, vm, video, availableSources } = this.props;
+        const { idPrefix } = this.props;
 
         const defaultBody = (
             <Form onSubmit={e => e.preventDefault()} isHorizontal>
-                <VideoTypeRow idPrefix={idPrefix}
+                <VncRow idPrefix={idPrefix}
                                  dialogValues={this.state}
-                                 onValueChanged={this.onValueChanged}
-                                 osTypeArch={vm.arch}
-                                 osTypeMachine={vm.emulatedMachine} />
+                                 onValueChanged={this.onValueChanged} />
             </Form>
         );
         const showWarning = () => {
         };
 
         return (
-            <Modal position="top" variant="medium" id={`${idPrefix}-modal-window`} isOpen onClose={Dialogs.close} className='video-edit'
-                   title={cockpit.format(_("$0 virtual video device settings"), video)}
+            <Modal position="top" variant={ModalVariant.small} id={`${idPrefix}-dialog`} isOpen onClose={Dialogs.close} className='vnc-edit'
+                   title={_("Edit VNC settings")}
                    footer={
                        <>
                            <Button isDisabled={this.state.saveDisabled} id={`${idPrefix}-save`} variant='primary' onClick={this.save}>
@@ -117,8 +116,12 @@ export class EditVIDEOModal extends React.Component {
         );
     }
 }
-EditVIDEOModal.propTypes = {
-    availableSources: PropTypes.object.isRequired,
+EditVNCModal.propTypes = {
     idPrefix: PropTypes.string.isRequired,
-    vm: PropTypes.object.isRequired,
+    vmName: PropTypes.string.isRequired,
+    vmId: PropTypes.string.isRequired,
+    connectionName: PropTypes.string.isRequired,
+    consoleDetail: PropTypes.object.isRequired,
 };
+
+export default EditVNCModal;
