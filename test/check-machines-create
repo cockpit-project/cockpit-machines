@@ -1434,7 +1434,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
             else:
                 b.wait_val("#memory-size", self.expected_memory_size)
 
-            if (self.connection):
+            if self.connection:
                 b.set_checked(f"#connectionName-{self.connection}", True)
 
             if self.is_unattended or self.sourceType == "cloud":
