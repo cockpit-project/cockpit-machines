@@ -63,6 +63,14 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             print("Libvirt version does not support disk statistics")
             b.wait_visible(f"#vm-{name}-disks-notification")
 
+    def attackDisk(self, domain, source, target, bus, persistent=False, subdriver=None):
+        cmd = f"virsh attach-disk --domain {domain} --source {source} --target {target} --targetbus {bus}"
+        if subdriver:
+            cmd += f" --subdriver {subdriver}"
+        if persistent:
+            cmd += " --persistent"
+        self.machine.execute(cmd)
+
     def testDiskEdit(self):
         b = self.browser
         m = self.machine
@@ -95,11 +103,9 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         disks = ["mydisk", "mydisk2", "mydisk3", "mydisk4"]
         testlib.wait(lambda: all(disk in m.execute("virsh vol-list myPoolOne") for disk in disks))
 
-        m.execute(f"""
-        virsh attach-disk --domain subVmTest1 --source {p1}/mydisk --target vde --targetbus virtio --persistent
-        virsh attach-disk --domain subVmTest1 --source {p1}/mydisk2 --target vdf --targetbus virtio
-        virsh attach-disk --domain subVmTest1 --source {p1}/mydisk3 --target vdg --targetbus virtio --subdriver qcow2 --persistent
-        """)
+        self.attackDisk("subVmTest1", f"{p1}/mydisk", "vde", "virtio", persistent=True)
+        self.attackDisk("subVmTest1", f"{p1}/mydisk2", "vdf", "virtio")
+        self.attackDisk("subVmTest1", f"{p1}/mydisk3", "vdg", "virtio", persistent=True, subdriver="qcow2")
 
         self.login_and_go("/machines")
         self.waitPageInit()
@@ -183,7 +189,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-disks-vdg-access", "Read-only")
 
         # Check that errors appear correctly and disappear when closing the dialog and reopening
-        m.execute(f"virsh attach-disk --domain subVmTest1 --source {p1}/mydisk4 --target sdb --targetbus sata --persistent")
+        self.attackDisk("subVmTest1", f"{p1}/mydisk4", "sdb", "sata", persistent=True)
         b.reload()
         b.enter_page('/machines')
         # expected devices after bus type change
@@ -390,7 +396,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             if self.mode == "custom-path":
                 b.wait_visible(f"#vm-{self.vm_name}-disks-{self.target}-insert-dialog-adddisk-file")
                 # Type in file path
-                b.set_file_autocomplete_val(f"#vm-{self.vm_name}-disks-{self.target}-insert-dialog-adddisk-file", self.file_path)
+                b.set_file_autocomplete_val(f"#vm-{self.vm_name}-disks-{self.target}-insert-dialog-adddisk-file",
+                                            self.file_path)
             elif self.mode == "use-existing":
                 b.wait_visible(f"#vm-{self.vm_name}-disks-{self.target}-insert-dialog-adddisk-existing-select-pool:enabled")
                 # Choose storage pool
@@ -444,7 +451,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
                 b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.target}-modal-description-file", self.file_path)
             elif self.mode == "use-existing":
                 b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.target}-modal-description-pool dd", self.pool_name)
-                b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.target}-modal-description-volume dd", self.volume_name)
+                b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.target}-modal-description-volume dd",
+                               self.volume_name)
 
             b.click(".pf-v5-c-modal-box__footer button:contains(Eject)")
             b.wait_not_present(".pf-v5-c-modal-box")
@@ -476,8 +484,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             # https://piware.de/2013/09/how-to-watch-system-d-bus-method-calls/
             m.write("/usr/share/dbus-1/system-local.conf", SYSTEM_LOCAL_CONF)
             # Setup dbus monitor to watch for disk ejection call
-            m.spawn("dbus-monitor --system \"interface='org.libvirt.Domain',member='UpdateDevice'\" > /tmp/dbus_monitor_logs",
-                    "dbusmonitor")
+            interface = "\"interface='org.libvirt.Domain',member='UpdateDevice'\""
+            m.spawn(f"dbus-monitor --system {interface} > /tmp/dbus_monitor_logs", "dbusmonitor")
 
             # Force eject the disc
             b.click(".pf-v5-c-modal-box__footer button:contains(Force eject)")
@@ -674,7 +682,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
                 # Configure bus type
                 if self.bus_type:
-                    b.select_from_dropdown(f"div.pf-v5-c-modal-box #vm-{self.vm_name}-disks-adddisk-bus-type", self.bus_type)
+                    b.select_from_dropdown(f"div.pf-v5-c-modal-box #vm-{self.vm_name}-disks-adddisk-bus-type",
+                                           self.bus_type)
 
                 # Configure serial number
                 if self.serial:
@@ -686,9 +695,11 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
                         b.wait_val(f"#vm-{self.vm_name}-disks-adddisk-serial", self.expected_serial)
 
                     if self.xwarning_object == 'serial-characters':
-                        b.wait_in_text("#serial-characters-message .pf-v5-c-helper-text__item-text", self.xwarning_message)
+                        b.wait_in_text("#serial-characters-message .pf-v5-c-helper-text__item-text",
+                                       self.xwarning_message)
                     elif self.xwarning_object == 'serial-length':
-                        b.wait_in_text("#serial-length-message .pf-v5-c-helper-text__item-text", self.xwarning_message)
+                        b.wait_in_text("#serial-length-message .pf-v5-c-helper-text__item-text",
+                                       self.xwarning_message)
                     else:
                         b.wait_not_present("#serial-length-message")
                         b.wait_not_present("#serial-characters-message")
@@ -802,7 +813,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         self.prepareStorageDeviceOnISCSI(target_iqn)
 
         m.execute(f"""
-        virsh pool-define-as iscsi-pool --type iscsi --target /dev/disk/by-id --source-host 127.0.0.1 --source-dev {target_iqn}
+        virsh pool-define-as iscsi-pool --type iscsi --target /dev/disk/by-id \
+                --source-host 127.0.0.1 --source-dev {target_iqn}
         virsh pool-start iscsi-pool
         """)
         cmd = "virsh pool-refresh iscsi-pool; virsh vol-list iscsi-pool"
@@ -832,7 +844,9 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             self,
             pool_name='iscsi-pool',
             pool_type='iscsi',
-            xfail=True, xfail_object='new-select-pool', xfail_error_message='Pool type iscsi does not support volume creation',
+            xfail=True,
+            xfail_object='new-select-pool',
+            xfail_error_message='Pool type iscsi does not support volume creation',
         ).execute()
 
         self.VMAddDiskDialog(
@@ -864,7 +878,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         m.write("/etc/exports", f"{mnt_exports} 127.0.0.1/24(rw,sync,no_root_squash,no_subtree_check,fsid=0)")
         m.execute(f"""
         systemctl restart nfs-server
-        virsh pool-define-as nfs-pool --type netfs --target {nfs_pool} --source-host 127.0.0.1 --source-path {mnt_exports}
+        virsh pool-define-as nfs-pool --type netfs --target {nfs_pool} \
+                --source-host 127.0.0.1 --source-path {mnt_exports}
         virsh pool-start nfs-pool
         """)
         # And create a volume on it in order to test use existing volume dialog
@@ -890,7 +905,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             volume_size_unit='MiB',
             expected_target=get_next_free_target(used_targets)[-1],
             pixel_test_tag='vm-add-disk-modal-nfs',
-            pixel_test_ignore='.pf-v5-c-modal-box__footer',  # FIXME: The buttons size seems to change undeterministically
+            # FIXME: The buttons size seems to change undeterministically
+            pixel_test_ignore='.pf-v5-c-modal-box__footer',
         ).execute()
 
         self.VMAddDiskDialog(
@@ -945,7 +961,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             volume_size_unit='MiB',
             expected_target=get_next_free_target(used_targets)[-1],
             pixel_test_tag='vm-add-disk-modal-disk-pool',
-            pixel_test_ignore='.pf-v5-c-modal-box__footer',  # FIXME: The buttons size seems to change undeterministically
+            # FIXME: The buttons size seems to change undeterministically
+            pixel_test_ignore='.pf-v5-c-modal-box__footer',
         ).execute()
 
         self.VMAddDiskDialog(
@@ -1009,7 +1026,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         m.execute(f"virsh pool-define-as myPoolOne --type dir --target {v1}; virsh pool-start myPoolOne")
         m.execute(f"virsh pool-define-as myPoolTwo --type dir --target {v2}; virsh pool-start myPoolTwo")
 
-        m.upload([os.path.join(testlib.BOTS_DIR, "machine/cloud-init.iso")], os.path.join(default_tmp, "defaultVol.iso"))
+        m.upload([os.path.join(testlib.BOTS_DIR, "machine/cloud-init.iso")],
+                 os.path.join(default_tmp, "defaultVol.iso"))
         m.execute("virsh pool-refresh default_tmp")
         m.execute("virsh vol-create-as myPoolTwo mydiskofpooltwo_temporary --capacity 50M --format qcow2")
         m.execute("virsh vol-create-as myPoolTwo mydiskofpooltwo_permanent --capacity 50M --format qcow2")
@@ -1148,7 +1166,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b.wait_visible(f"{prefix}-dialog-add:disabled")
         b.click(f"{prefix}-dialog-cancel")
 
-        # Make sure that trying to inspect the Disks tab will just show the fields that are available when a pool is inactive
+        # Make sure that trying to inspect the Disks tab will just show the
+        # fields that are available when a pool is inactive
         b.reload()
         b.enter_page('/machines')
         self.waitPageInit()
@@ -1484,8 +1503,12 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             volume_format='raw',
         ).execute()
 
-        # QCOW2 disks cannot be 'shared', so even after adding it to multiple VMs, it's access should be only "writeable"
-        m.execute("virsh attach-disk --domain subVmTest1 --source myPoolOne/qcowVol --target vdg --targetbus virtio --config")
+        # QCOW2 disks cannot be 'shared', so even after adding it to multiple VMs,
+        # it's access should be only "writeable"
+        m.execute("""
+                  virsh attach-disk --domain subVmTest1 --source myPoolOne/qcowVol \
+                  --target vdg --targetbus virtio --config
+                  """)
         self.VMAddDiskDialog(
             self,
             vm_name="subVmTest2",
@@ -1519,9 +1542,9 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         vdc_path = f"{p1}/mydiskofpoolone_1"
         vdd_path = f"{p1}/mydiskofpoolone_2"
         vde_path = f"{p1}/mydiskofpoolone_3"
-        m.execute(f"virsh attach-disk --domain subVmTest1 --source {vdc_path} --target vdc --targetbus virtio")
-        m.execute(f"virsh attach-disk --domain subVmTest1 --source {vdd_path} --target vdd --targetbus virtio --persistent")
-        m.execute(f"virsh attach-disk --domain subVmTest1 --source {vde_path} --target vde --targetbus virtio --persistent")
+        self.attackDisk("subVmTest1", vdc_path, "vdc", "virtio")
+        self.attackDisk("subVmTest1", vdd_path, "vdd", "virtio", persistent=True)
+        self.attackDisk("subVmTest1", vde_path, "vde", "virtio", persistent=True)
 
         self.login_and_go("/machines")
         self.waitPageInit()
@@ -1561,10 +1584,11 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         sda_path = f"{p1}/diskSata"
         sdb_path = f"{p1}/diskSata2"
         sdc_path = f"{p1}/diskSata3"
-        m.execute(f"virsh attach-disk --domain subVmTest1 --source {vdf_path} --target vdf --targetbus virtio --persistent")
-        m.execute(f"virsh attach-disk --domain subVmTest1 --source {sda_path} --target sda --targetbus sata --persistent")
-        m.execute(f"virsh attach-disk --domain subVmTest1 --source {sdb_path} --target sdb --targetbus sata --persistent")
-        m.execute(f"virsh attach-disk --domain subVmTest1 --source {sdc_path} --target sdc --targetbus sata --persistent")
+        domain = "subVmTest1"
+        self.attackDisk(domain, vdf_path, "vdf", "virtio", persistent=True)
+        self.attackDisk(domain, sda_path, "sda", "sata", persistent=True)
+        self.attackDisk(domain, sdb_path, "sdb", "sata", persistent=True)
+        self.attackDisk(domain, sdc_path, "sdc", "virtio", persistent=True)
         # attach disk with no file (empty cd-rom)
         m.execute("virsh attach-disk --domain subVmTest1 --config --target sdd --type cdrom --source ''")
         m.execute("virt-xml subVmTest1 --add-device --disk type='block',source.dev='/dev/null',target.dev=sde")
@@ -1642,7 +1666,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
         # Test detaching of disk on non-persistent VM
         m.execute("virsh undefine subVmTest1")
-        m.execute(f"virsh attach-disk --domain subVmTest1 --source {p1}/mydiskofpoolone_1 --target vdc --targetbus virtio")
+        self.attackDisk("subVmTest1", f"{p1}/mydiskofpoolone_1", "vdc", "virtio")
         self.deleteDisk("vdc")
         testlib.wait(lambda: "vdc" not in m.execute("virsh domblklist subVmTest1"), delay=1)
         b.wait_not_present("#vm-subVmTest1-disks-vdc-device")

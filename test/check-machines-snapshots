@@ -62,9 +62,10 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
 
         # Check snapshot for running VM
         # vda is raw disk, which are not supported by internal snapshots
+        img_path = "/var/lib/libvirt/images/foobar.qcow2"
         m.execute("virsh detach-disk --domain subVmTest1 --target vda --persistent")
-        m.execute("qemu-img create -f qcow2 /var/lib/libvirt/images/foobar.qcow2 1M")
-        m.execute("virsh attach-disk --domain subVmTest1 --source /var/lib/libvirt/images/foobar.qcow2 --target vdb --persistent")
+        m.execute(f"qemu-img create -f qcow2 {img_path} 1M")
+        m.execute(f"virsh attach-disk --domain subVmTest1 --source {img_path} --target vdb --persistent")
         m.execute("virsh snapshot-create-as --domain subVmTest1 --name snapshotB --description 'Description of snapshotB' --disk-only")  # noqa: E501
 
         b.reload()  # snapshots events not available yet: https://gitlab.com/libvirt/libvirt/-/issues/44
@@ -149,7 +150,8 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
 
             def open(self):
                 b.click("#vm-subVmTest1-add-snapshot-button")
-                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Create snapshot")
+                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title",
+                               "Create snapshot")
 
             def fill(self):
                 if self.name is not None:
@@ -164,7 +166,8 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
             def assert_pixels(self):
                 if self.name == 'test_snap_1':
                     b.assert_pixels("#vm-subVmTest1-create-snapshot-modal",
-                                    "create-snapshot-dialog" + ("" if not self.xfail else "-error"), skip_layouts=["rtl"])
+                                    "create-snapshot-dialog" + ("" if not self.xfail else "-error"),
+                                    skip_layouts=["rtl"])
 
             def cancel(self):
                 b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
@@ -215,7 +218,8 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
                 if (self.name):
                     self.test_obj.assertEqual(self.name, m.execute(xmllint_element.format(prop='name')).strip())
                 if (self.description):
-                    self.test_obj.assertEqual(self.description, m.execute(xmllint_element.format(prop='description')).strip())
+                    self.test_obj.assertEqual(self.description,
+                                              m.execute(xmllint_element.format(prop='description')).strip())
                 if (self.state):
                     self.test_obj.assertEqual(self.state, m.execute(xmllint_element.format(prop='state')).strip())
 
@@ -247,7 +251,8 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
 
             def cleanup(self):
                 b.click(f"#delete-vm-subVmTest1-snapshot-{self.snap_num}")
-                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Delete snapshot?")
+                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title",
+                               "Delete snapshot?")
                 b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-description-list",
                                f"{self.name} will be deleted from {self.vm_name}")
                 b.click('.pf-v5-c-modal-box__footer button:contains("Delete")')
@@ -417,23 +422,24 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         m = self.machine
 
         def get_snapshot_state(snap_name):
-            script = f"virsh snapshot-info --domain subVmTest1 --snapshotname {snap_name} | grep 'Current:' | awk '{{print $2}}'"
+            script = f"virsh snapshot-info --domain subVmTest1 --snapshotname {snap_name} | grep 'Current:' | awk '{{print $2}}'"  # noqa: E501
             return m.execute(script).strip()
 
         self.createVm("subVmTest1")
 
         # Check snapshot for running VM
         # vda is raw disk, which are not supported by internal snapshots
-        m.execute("""
-virsh detach-disk --domain subVmTest1 --target vda --config
-qemu-img create -f qcow2 /var/lib/libvirt/images/foobar.qcow2 1M
-virsh attach-disk --domain subVmTest1 --source /var/lib/libvirt/images/foobar.qcow2 --target vdb --subdriver qcow2 --config
-virsh snapshot-create-as --domain subVmTest1 --name snapshotA --description 'Description of snapshotA'
-        """)
-        time.sleep(1)
-        m.execute("virsh snapshot-create-as --domain subVmTest1 --name snapshotB --description 'Description of snapshotB'")
+        img_path = "/var/lib/libvirt/images/foobar.qcow2"
+        m.execute(f"""
+        virsh detach-disk --domain subVmTest1 --target vda --config
+        qemu-img create -f qcow2 /var/lib/libvirt/images/foobar.qcow2 1M
+        virsh attach-disk --domain subVmTest1 --source {img_path} --target vdb --subdriver qcow2 --config
+        virsh snapshot-create-as --domain subVmTest1 --name snapshotA --description 'Description of snapshotA'
+        sleep 1
+        virsh snapshot-create-as --domain subVmTest1 --name snapshotB --description 'Description of snapshotB'
         # snapshotB is the current snapshot
-        m.execute("virsh snapshot-current --domain subVmTest1 --snapshotname snapshotA")
+        virsh snapshot-current --domain subVmTest1 --snapshotname snapshotA
+        """)
 
         self.login_and_go("/machines")
         self.waitPageInit()
@@ -468,11 +474,13 @@ virsh snapshot-create-as --domain subVmTest1 --name snapshotA --description 'Des
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         m.execute("virsh managedsave subVmTest1")
 
-        # When reverting to a snapshot with shut off VM state, but VM also has saved managed state of it's runtime memory,
-        # libvirt will require using force options since there is a risk of memory corruption
+        # When reverting to a snapshot with shut off VM state, but VM also has saved managed
+        # state of it's runtime memory, libvirt will require using force options since there is a risk
+        # of memory corruption
         b.wait_in_text("#vm-subVmTest1-snapshot-0-name", "snapshotC")
         b.click("#vm-subVmTest1-snapshot-0-revert")
-        b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Revert to snapshot snapshotC")
+        b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title",
+                       "Revert to snapshot snapshotC")
         b.click('.pf-v5-c-modal-box__footer button:contains("Revert")')
         # Check "Force revert" is present and Regular revert is disabled
         b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-alert__description", "revert requires force")
@@ -496,8 +504,8 @@ virsh snapshot-create-as --domain subVmTest1 --name snapshotA --description 'Des
         m = self.machine
 
         def getSnapshotXML(vm, snap):
-            xml = self.run_admin(f"virsh -c qemu:///{connection} snapshot-dumpxml --domain {vm} --snapshotname {snap}",
-                                 connectionName=connection)
+            cmd = f"virsh -c qemu:///{connection} snapshot-dumpxml --domain {vm} --snapshotname {snap}"
+            xml = self.run_admin(cmd, connectionName=connection)
             return ET.fromstring(xml)
 
         if not supportsExternalSnapshots(m.image):

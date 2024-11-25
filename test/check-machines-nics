@@ -153,7 +153,8 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
                         skip_layouts=["medium", "rtl"])
 
         # Start vm and wait until kernel is booted
-        testlib.wait(lambda: "1" in self.machine.execute("virsh domifaddr subVmTest1 | grep 192.168.122. | wc -l"), delay=3)
+        testlib.wait(lambda: "1" in self.machine.execute("virsh domifaddr subVmTest1 | grep 192.168.122. | wc -l"),
+                     delay=3)
         b.reload()
         b.enter_page('/machines')
         self.waitPageInit()
@@ -227,12 +228,13 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         # Detach NIC when the VM is shutoff, Also check this issue: https://bugzilla.redhat.com/show_bug.cgi?id=1791543
         self.performAction("subVmTest1", "off")
         # Attach since no NIC now
-        m.execute("""
-        virsh attach-interface --domain subVmTest1 --type network --source default --model virtio --mac 52:54:00:4b:73:5f --config
-        virsh attach-interface --domain subVmTest1 --type bridge --source virbr0 --model virtio --mac 52:54:00:4b:73:6f --config
-        virsh attach-interface --domain subVmTest1 --type network --source default --model virtio --mac 52:54:00:4b:73:4f --config
+        attach_cmd = "virsh attach-interface --domain subVmTest1"
+        m.execute(f"""
+        {attach_cmd} --type network --source default --model virtio --mac 52:54:00:4b:73:5f --config
+        {attach_cmd} --type bridge --source virbr0 --model virtio --mac 52:54:00:4b:73:6f --config
+        {attach_cmd} --type network --source default --model virtio --mac 52:54:00:4b:73:4f --config
         # Add network with the same MAC address
-        virsh attach-interface --domain subVmTest1 --type network --source default --model e1000e --mac 52:54:00:4b:73:5f --config
+        {attach_cmd} --type network --source default --model e1000e --mac 52:54:00:4b:73:5f --config
         """)
 
         # Refresh for getting new added NIC
@@ -418,13 +420,13 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             self.assertEqual = test_obj.assertEqual
             self.browser = test_obj.browser
             self.mac = mac
-            self.machine = test_obj.machine
+            m = self.machine = test_obj.machine
             self.model = model
             self.nic_num = nic_num
             self.source = source
             self.source_type = source_type
             self.xfail_error = xfail_error
-            self.vm_state = "running" if "running" in test_obj.machine.execute("virsh domstate subVmTest1") else "shut off"
+            self.vm_state = "running" if "running" in m.execute("virsh domstate subVmTest1") else "shut off"
 
         def execute(self):
             self.open()
@@ -443,7 +445,8 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             b.click(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog")
             b.wait_visible(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-modal-window")
 
-            # select widget options are never visible for the headless chrome - call therefore directly the js function
+            # select widget options are never visible for the headless chrome,
+            # call therefore directly the js function
             self.source_type_current = b.attr(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-type", "data-value")
             self.source_current = b.attr(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-source", "data-value")
             self.mac_current = b.val(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-mac")
@@ -618,7 +621,8 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         dialog.open()
         b.wait_in_text("#vm-subVmTest1-network-1-edit-dialog-source", "virbr0")
         b.wait_val("#vm-subVmTest1-network-1-edit-dialog-mac", MAC1)
-        b.assert_pixels("#vm-subVmTest1-network-1-edit-dialog-modal-window", "vm-edit-nic-modal", skip_layouts=["rtl"])
+        b.assert_pixels("#vm-subVmTest1-network-1-edit-dialog-modal-window", "vm-edit-nic-modal",
+                        skip_layouts=["rtl"])
         dialog.cancel()
 
         # Check "X" of the dialog

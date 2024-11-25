@@ -31,9 +31,11 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         user_name = f"test_{user_group if user_group else 'none'}_user"
         self.machine.execute(f"useradd{' -G ' + user_group if user_group else ''} {user_name}")
         self.machine.execute(f"echo '{user_name}:foobar' | chpasswd")
-        # user libvirtd instance tends to SIGABRT with "Failed to find user record for uid .." on shutdown during cleanup
+        # user libvirtd instance tends to SIGABRT with "Failed to find user record for uid .."
+        # on shutdown during cleanup
         # so make sure that there are no leftover user processes that bleed into the next test
-        self.addCleanup(self.machine.execute, f"pkill -u {user_name} || true; while pgrep -u {user_name}; do sleep 0.5; done")
+        self.addCleanup(self.machine.execute,
+                        f"pkill -u {user_name} || true; while pgrep -u {user_name}; do sleep 0.5; done")
         # HACK: ...but it still tends to crash during shutdown (without known stack trace)
         self.allow_journal_messages('Process .*libvirtd.* of user 10.* dumped core.*')
 
@@ -78,13 +80,14 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         self.waitVmRow("subVmTest1")
 
         def checkConnectionDescription(button: str, text: str):
+            popover_id = "popover-machines-connection-selector-popover-body"
             b.click(button)
             b.wait_visible("#create-vm-dialog")
             b.click('#create-vm-dialog button[aria-label="more info"]')
-            b.wait_in_text("#popover-machines-connection-selector-popover-body", text)
+            b.wait_in_text(f"#{popover_id}", text)
 
             # Close the connection description dialog
-            b.click("div[aria-describedby=popover-machines-connection-selector-popover-body] button[aria-label=Close]")
+            b.click(f"div[aria-describedby={popover_id}] button[aria-label=Close]")
             b.wait_not_present("#popover-machines-connection-selector-popover-body")
             # Close the VM creation dialog
             b.click('#create-vm-dialog button:contains("Cancel")')
@@ -124,18 +127,21 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         b.click("#vm-subVmTest1-usage")
         b.wait_in_text(".memory-usage-chart .pf-v5-c-progress__status > .pf-v5-c-progress__measure", "128 MiB")
         b.wait_not_in_text(".memory-usage-chart .pf-v5-c-progress__status > .pf-v5-c-progress__measure", "0 /")
-        usage = b.text(".memory-usage-chart .pf-v5-c-progress__status > .pf-v5-c-progress__measure").split("/ 128 MiB")[0]
+        usage = b.text(".memory-usage-chart .pf-v5-c-progress__status > .pf-v5-c-progress__measure")
+        usage = usage.split("/ 128 MiB")[0]
         testlib.wait(lambda: float(usage) > 0.0, delay=3)
 
         b.wait_in_text(".vcpu-usage-chart .pf-v5-c-progress__status > .pf-v5-c-progress__measure", "1 vCPU")
-        usage = b.text(".vcpu-usage-chart .pf-v5-c-progress__status > .pf-v5-c-progress__measure").split("% of 1 vCPU")[0]
+        usage = b.text(".vcpu-usage-chart .pf-v5-c-progress__status > .pf-v5-c-progress__measure")
+        usage = usage.split("% of 1 vCPU")[0]
         # CPU usage cannot be nonzero with blank image, so just ensure it's a percentage
         testlib.wait(lambda: float(usage) <= 100.0, delay=3)
 
         # suspend/resume
         m.execute("virsh suspend subVmTest1")
         b.wait_in_text("#vm-subVmTest1-system-state", "Paused")
-        # resume sometimes fails with "unable to execute QEMU command 'cont': Resetting the Virtual Machine is required"
+        # resume sometimes fails with "unable to execute QEMU command 'cont':
+        # Resetting the Virtual Machine is required"
         m.execute('virsh resume subVmTest1 || { virsh destroy subVmTest1; virsh start subVmTest1; }')
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
@@ -469,7 +475,8 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
             name = "vm-with-snapshots"
             self.createVm(name, running=False)
 
-            m.execute(f"virsh snapshot-create-as --domain {name} --name snapshotA --description 'Description of snapshotA'")
+            desc = "Description of snapshotA"
+            m.execute(f"virsh snapshot-create-as --domain {name} --name snapshotA --description '{desc}'")
 
             qemu_img_info = m.execute(f"qemu-img info /var/lib/libvirt/images/{name}-2.img")
             self.assertIn("snapshotA", qemu_img_info)
@@ -559,7 +566,8 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         self.waitVmRow(name, present=False)
         testlib.wait(lambda: name not in m.execute("virsh list --all --name"))
         b.wait_visible(".pf-v5-c-alert-group li .pf-v5-c-alert")
-        b.wait_in_text(".pf-v5-c-alert-group li .pf-v5-c-alert .pf-v5-c-alert__title", f"Could not delete all storage for {name}")
+        b.wait_in_text(".pf-v5-c-alert-group li .pf-v5-c-alert .pf-v5-c-alert__title",
+                       f"Could not delete all storage for {name}")
         b.click("button.alert-link.more-button")
         b.wait_in_text(".pf-v5-c-alert-group li .pf-v5-c-alert .pf-v5-c-alert__description", args['image'])
         b.wait_in_text(".pf-v5-c-alert-group li .pf-v5-c-alert .pf-v5-c-alert__description", secondDiskVolName)
