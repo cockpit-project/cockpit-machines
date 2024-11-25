@@ -96,7 +96,7 @@ class VirtualMachinesCaseHelpers:
             b.wait_in_text(f"#vm-{vmName}-{connectionName}-state", "Shut off")
 
     def goToVmPage(self, vmName, connectionName='system'):
-        self.browser.click(f"tbody tr[data-row-id=\"vm-{vmName}-{connectionName}\"] a.vm-list-item-name")  # click on the row
+        self.browser.click(f"tbody tr[data-row-id=\"vm-{vmName}-{connectionName}\"] a.vm-list-item-name")
 
     def goToMainPage(self):
         self.browser.click(".machines-listing-breadcrumb li:first-of-type a")
@@ -114,12 +114,14 @@ class VirtualMachinesCaseHelpers:
 
     def togglePoolRow(self, poolName, connectionName="system"):
         b = self.browser
-        isExpanded = 'pf-m-expanded' in b.attr(f"tbody tr[data-row-id=\"pool-{poolName}-{connectionName}\"] + tr", "class")
-        b.click(f"tbody tr[data-row-id=\"pool-{poolName}-{connectionName}\"] .pf-v5-c-table__toggle button")
+        sel = f"tbody tr[data-row-id=\"pool-{poolName}-{connectionName}\"]"
+        isExpanded = 'pf-m-expanded' in b.attr(f"{sel} + tr", "class")
+
+        b.click(f"{sel} .pf-v5-c-table__toggle button")
         if isExpanded:
-            b.wait_not_present(f"tbody tr[data-row-id=\"pool-{poolName}-{connectionName}\"] + tr.pf-m-expanded")
+            b.wait_not_present(f"{sel} + tr.pf-m-expanded")
         else:
-            b.wait_visible(f"tbody tr[data-row-id=\"pool-{poolName}-{connectionName}\"] + tr.pf-m-expanded")
+            b.wait_visible(f"{sel} + tr.pf-m-expanded")
 
     def waitPoolRow(self, poolName, connectionName="system", present=True):
         b = self.browser
@@ -131,13 +133,14 @@ class VirtualMachinesCaseHelpers:
 
     def toggleNetworkRow(self, networkName, connectionName="system"):
         b = self.browser
-        isExpanded = 'pf-m-expanded' in b.attr(f"tbody tr[data-row-id=\"network-{networkName}-{connectionName}\"] + tr",
-                                                          "class")
-        b.click(f"tbody tr[data-row-id=\"network-{networkName}-{connectionName}\"] .pf-v5-c-table__toggle button")
+        sel = f"tbody tr[data-row-id=\"network-{networkName}-{connectionName}\"]"
+        isExpanded = 'pf-m-expanded' in b.attr(f"{sel} + tr", "class")
+
+        b.click(f"{sel} .pf-v5-c-table__toggle button")
         if isExpanded:
-            b.wait_not_present(f"tbody tr[data-row-id=\"network-{networkName}-{connectionName}\"] + tr.pf-m-expanded")
+            b.wait_not_present(f"{sel} + tr.pf-m-expanded")
         else:
-            b.wait_visible(f"tbody tr[data-row-id=\"network-{networkName}-{connectionName}\"] + tr.pf-m-expanded")
+            b.wait_visible(f"{sel} + tr.pf-m-expanded")
 
     def waitNetworkRow(self, networkName, connectionName="system", present=True):
         b = self.browser
@@ -148,8 +151,9 @@ class VirtualMachinesCaseHelpers:
             b.wait_not_present(network_row)
 
     def getDomainMacAddress(self, vmName):
+        m = self.machine
         dom_xml = f"virsh -c qemu:///system dumpxml --domain {vmName}"
-        return self.machine.execute(f"{dom_xml} | xmllint --xpath 'string(//domain/devices/interface/mac/@address)' -").strip()
+        return m.execute(f"{dom_xml} | xmllint --xpath 'string(//domain/devices/interface/mac/@address)' -").strip()
 
     def getDomainXpathValue(self, vmName: str, xpath: str, *, str_value: bool = False, inactive: bool = False):
         dom_xml = f"virsh dumpxml {vmName} "
@@ -230,9 +234,10 @@ class VirtualMachinesCaseHelpers:
 
         if connection == "system":
             state = "running" if running else "\"shut off\""
+            logfile = f"/var/log/libvirt/qemu/{name}.log"
             command.append(
                 f'[ "$(virsh -c qemu:///{connection} domstate {name})" = {state} ] || \
-                {{ virsh -c qemu:///{connection} dominfo {name} >&2; cat /var/log/libvirt/qemu/{name}.log >&2; exit 1; }}')
+                {{ virsh -c qemu:///{connection} dominfo {name} >&2; cat {logfile} >&2; exit 1; }}')
         self.run_admin("; ".join(command), connection, machine=machine)
 
         # TODO check if kernel is booted
@@ -296,9 +301,11 @@ class VirtualMachinesCaseHelpers:
         b = self.browser
 
         self.dropdownAction(f"#vm-subVmTest1-iface-{iface}-action-kebab", f"#delete-vm-subVmTest1-iface-{iface}")
-        b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Remove network interface?")
+        b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title",
+                       "Remove network interface?")
         if mac and vm_name:
-            b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-description-list", f"{mac} will be removed from {vm_name}")
+            b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-description-list",
+                           f"{mac} will be removed from {vm_name}")
         b.click(".pf-v5-c-modal-box__footer button:contains(Remove)")
         b.wait_not_present(".pf-v5-c-modal-box")
 
@@ -379,7 +386,8 @@ class VirtualMachinesCaseHelpers:
         time.sleep(0.5)
 
 
-class VirtualMachinesCase(testlib.MachineCase, VirtualMachinesCaseHelpers, storagelib.StorageHelpers, netlib.NetworkHelpers):
+class VirtualMachinesCase(testlib.MachineCase, VirtualMachinesCaseHelpers,
+                          storagelib.StorageHelpers, netlib.NetworkHelpers):
     def setUp(self):
         super().setUp()
 
@@ -424,7 +432,7 @@ class VirtualMachinesCase(testlib.MachineCase, VirtualMachinesCaseHelpers, stora
 
         # HACK: https://issues.redhat.com/browse/RHEL-49567
         for mach in self.machines.values():
-            mach.execute('if test "$(rpmquery selinux-policy)" = selinux-policy-40.13.6-1.el10.noarch; then setenforce 0; fi')
+            mach.execute('if test "$(rpmquery selinux-policy)" = selinux-policy-40.13.6-1.el10.noarch; then setenforce 0; fi')  # noqa: E501
 
         def stop_all():
             # domains
@@ -437,16 +445,24 @@ class VirtualMachinesCase(testlib.MachineCase, VirtualMachinesCaseHelpers, stora
                       "virsh -c qemu:///session undefine $d --snapshots-metadata; done'")
 
             # pools
-            m.execute("rm -rf /run/libvirt/storage/*")
-            m.execute("for n in $(virsh -c qemu:///system pool-list --name); do virsh -c qemu:///system pool-destroy $n; done")
+            m.execute("""
+                      rm -rf /run/libvirt/storage/*
+                      for n in $(virsh -c qemu:///system pool-list --name);
+                        do virsh -c qemu:///system pool-destroy $n;
+                      done
+            """)
             m.execute("runuser -l admin -c 'for d in $(virsh -c qemu:///session pool-list --name); do "
                       "virsh -c qemu:///session pool-destroy $d; done'")
             m.execute("runuser -l admin -c 'for d in $(virsh -c qemu:///session pool-list --name --all); do "
                       "virsh -c qemu:///session pool-undefine $d; done'")
 
             # networks
-            m.execute("rm -rf /run/libvirt/network/test_network*")
-            m.execute("for n in $(virsh -c qemu:///system net-list --name); do virsh -c qemu:///system net-destroy $n; done")
+            m.execute("""
+                      rm -rf /run/libvirt/network/test_network*
+                      for n in $(virsh -c qemu:///system net-list --name);
+                        do virsh -c qemu:///system net-destroy $n;
+                      done
+                      """)
             m.execute("runuser -l admin -c 'for d in $(virsh -c qemu:///session net-list --name); do "
                       "virsh -c qemu:///session net-destroy $d; done'")
             m.execute("runuser -l admin -c 'for d in $(virsh -c qemu:///session net-list --name --all); do "
@@ -455,22 +471,23 @@ class VirtualMachinesCase(testlib.MachineCase, VirtualMachinesCaseHelpers, stora
         self.addCleanup(stop_all)
 
         # we don't have configuration to open the firewall for local libvirt machines, so just stop firewalld
+        m.execute("systemctl stop firewalld")
         if not hasMonolithicDaemon(m.image):
-            m.execute("systemctl stop firewalld; systemctl reset-failed virtnetworkd; systemctl try-restart virtnetworkd")
+            m.execute("systemctl reset-failed virtnetworkd; systemctl try-restart virtnetworkd")
         else:
-            m.execute("systemctl stop firewalld; systemctl reset-failed libvirtd; systemctl try-restart libvirtd")
+            m.execute("systemctl reset-failed libvirtd; systemctl try-restart libvirtd")
 
-        # user libvirtd instance tends to SIGABRT with "Failed to find user record for uid .." on shutdown during cleanup
-        # so make sure that there are no leftover user processes that bleed into the next test
-        clean_cmd = '''pkill -u admin || true; while [ -n "$(pgrep -au admin | grep -v 'systemd --user')" ]; do sleep 0.5; done'''
-        self.addCleanup(m.execute, clean_cmd)
+        # user libvirtd instance tends to SIGABRT with "Failed to find user record for uid .." on shutdown
+        # during cleanup so make sure that there are no leftover user processes that bleed into the next test
+        self.addCleanup(m.execute, """
+            pkill -u admin || true;
+            while [ -n "$(pgrep -au admin | grep -v 'systemd --user')" ]; do sleep 0.5; done
+        """)
 
         # FIXME: report downstream; AppArmor noisily denies some operations, but they are not required for us
-        self.allow_journal_messages(
-                r'.* type=1400 .* apparmor="DENIED" operation="capable" profile="\S*libvirtd.* capname="sys_rawio".*')
+        self.allow_journal_messages(r'.* type=1400 .* apparmor="DENIED" operation="capable" profile="\S*libvirtd.* capname="sys_rawio".*')  # noqa: E501
         # AppArmor doesn't like the non-standard path for our storage pools
-        self.allow_journal_messages(
-                f'.* type=1400 .* apparmor="DENIED" operation="open".* profile="virt-aa-helper" name="{self.vm_tmpdir}.*')
+        self.allow_journal_messages(f'.* type=1400 .* apparmor="DENIED" operation="open".* profile="virt-aa-helper" name="{self.vm_tmpdir}.*')  # noqa: E501
 
         # FIXME: Testing on Arch Linux fails randomly with networkmanager time outs while the test passes.
         if m.image == 'arch':

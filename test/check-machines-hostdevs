@@ -72,7 +72,8 @@ class HostDevAddDialog(object):
         b = self.test_obj.browser
         b.wait_not_present(f"#vm-subVmTest1-hostdev-{self.vm_dev_id}-product")
         b.click("button#vm-subVmTest1-hostdevs-add")
-        b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Add host device")
+        b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title",
+                       "Add host device")
         if self.connection_name != "session":
             b.assert_pixels(".pf-v5-c-modal-box", "vm-hostdevs-add-dialog", skip_layouts=["rtl"])
 
@@ -80,10 +81,11 @@ class HostDevAddDialog(object):
         b = self.test_obj.browser
         b.click(f"input#{self.dev_type}")
         b.set_checked(f".pf-v5-c-table input[name='checkrow{self.dev_id}']", True)
-        self._model = b.text(f"#vm-subVmTest1-hostdevs-dialog table tbody tr:nth-child({self.dev_id + 1}) td:nth-child(2)")
-        self._vendor = b.text(f"#vm-subVmTest1-hostdevs-dialog table tbody tr:nth-child({self.dev_id + 1}) td:nth-child(3)")
+        sel = f"#vm-subVmTest1-hostdevs-dialog table tbody tr:nth-child({self.dev_id + 1})"
+        self._model = b.text(f"{sel} td:nth-child(2)")
+        self._vendor = b.text(f"{sel} td:nth-child(3)")
         if self.dev_type == "pci":
-            self._slot = b.text(f"#vm-subVmTest1-hostdevs-dialog table tbody tr:nth-child({self.dev_id + 1}) td:nth-child(4) dd")
+            self._slot = b.text(f"{sel} td:nth-child(4) dd")
 
     def cancel(self):
         b = self.test_obj.browser

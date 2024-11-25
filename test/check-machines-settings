@@ -164,9 +164,9 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-cpu", "2 vCPUs")
 
         # Check value of sockets, threads and cores from VM dumpxml
-        self.getDomainXpathValue("subVmTest1", '/domain/cpu/topology[@sockets=\"2\"][@threads=\"1\"][@cores=\"2\"]')
-        m.execute(
-            "virsh dumpxml subVmTest1 | xmllint --xpath '/domain/cpu/topology[@sockets=\"2\"][@threads=\"1\"][@cores=\"2\"]' -")
+        xpath_sel = '/domain/cpu/topology[@sockets=\"2\"][@threads=\"1\"][@cores=\"2\"]'
+        self.getDomainXpathValue("subVmTest1", xpath_sel)
+        m.execute(f"virsh dumpxml subVmTest1 | xmllint --xpath '{xpath_sel}' -")
 
         # non-persistent VM doesn't have configurable vcpu
         m.execute("virsh undefine subVmTest1")
@@ -294,8 +294,9 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
         b.wait_visible("#vm-subVmTest1-boot-order button[aria-disabled=true]")
         self.performAction("subVmTest1", "forceOff")
 
-        # No host device is attached to VM by default, so attach a PCI device to have at least 1 host device in boot order
-        # Take a device from the end of the list, since first device might be a root pci device
+        # No host device is attached to VM by default, so attach a PCI device
+        # to have at least 1 host device in boot order Take a device from the
+        # end of the list, since first device might be a root pci device
         pci_output = m.execute("virsh nodedev-list --cap pci").strip().splitlines()[-1]
         # Turn 'pci_0123_45_67_8' into '0123:45:67.8'
         split = pci_output[len("pci_"):].split('_')
@@ -639,7 +640,8 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
 
             # Offline VM config will always have newly configured watchdog action, no matter
             # if we are attaching a new watchdog device or editing an existing one
-            virsh_output_offline = self.getDomainXpathValue('subVmTest1', '/domain/devices/watchdog/@action', inactive=True)
+            virsh_output_offline = self.getDomainXpathValue('subVmTest1', '/domain/devices/watchdog/@action',
+                                                            inactive=True)
             self.assertEqual(virsh_output_offline, f'action="{action}"')
 
             if reboot_machine:
@@ -840,7 +842,7 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
                 b.set_input_text("#vsock-context-identifier input", new_address)
 
             if previous_address or previous_auto:
-                # When editing an exiting vsock, message warning user that changes will take effect after reboot should be present
+                # When editing an exiting vsock, warn the user that the changes will take effect after a reboot
                 b.wait_visible("#vm-subVmTest1-vsock-modal #vm-subVmTest1-idle-message")
             else:
                 # When attaching adding a new vsock, no message should be present
@@ -880,7 +882,8 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
                 if new_address is not None:
                     expected_address = new_address   # Attaching new vsock, new vsock is already present in live VM
                 else:
-                    expected_address = default_libvirt_vsock_address  # When we don't specify address, libvirt will choose
+                    # When we don't specify address, libvirt will choose
+                    expected_address = default_libvirt_vsock_address
             b.wait_in_text("#vm-subVmTest1-vsock-address", expected_address)
             virsh_output_address = self.getDomainXpathValue(vmName, '/domain/devices/vsock/cid/@address')
             self.assertEqual(virsh_output_address, f'address="{expected_address}"')
@@ -958,7 +961,8 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
             # Test configuring vsock for running VM
             setVsockLive(new_auto=False, new_address="5")
             setVsockLive(new_auto=True, previous_auto=False, previous_address="5", reboot_machine=True)
-            setVsockLive(new_auto=False, new_address="4", previous_auto=True, previous_address=default_libvirt_vsock_address)
+            setVsockLive(new_auto=False, new_address="4", previous_auto=True,
+                         previous_address=default_libvirt_vsock_address)
 
             m.execute("virsh undefine subVmTest1")
             testlib.wait(lambda: "no" in m.execute("virsh dominfo subVmTest1 | grep ^Persistent"), delay=3)

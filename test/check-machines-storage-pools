@@ -202,9 +202,11 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
 
         # Transient pool
         self.togglePoolRow("myPoolThree", connectionName)
-        b.wait_not_present(f"#pool-myPoolThree-{connectionName}-autostart")  # Transient pool shouldn't have autostart option
+        # Transient pool shouldn't have autostart option
+        b.wait_not_present(f"#pool-myPoolThree-{connectionName}-autostart")
         b.click(f"#pool-myPoolThree-{connectionName}-action-kebab")
-        b.wait_visible(f'.pf-m-aria-disabled #delete-pool-myPoolThree-{connectionName}')  # Transient pool cannot be deleted
+        # Transient pool cannot be deleted
+        b.wait_visible(f'.pf-m-aria-disabled #delete-pool-myPoolThree-{connectionName}')
         b.click(f'#deactivate-pool-myPoolThree-{connectionName}')  # Deactivate transient pool
         # Check it's not present after deactivation
         self.waitPoolRow("myPoolThree", connectionName, False)
@@ -256,7 +258,8 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
             def open(self):
                 b.click("#create-storage-pool")
                 b.wait_visible("#create-storage-pool-dialog")
-                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Create storage pool")
+                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title",
+                               "Create storage pool")
 
             def fill(self):
                 b.set_input_text("#storage-pool-dialog-name", self.name)
@@ -343,7 +346,8 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
                 source_path_device = m.execute(xmllint_element.format(prop="source/device/@path")).strip()
                 source_name = m.execute(xmllint_element.format(prop="source/name")).strip()
                 if "source_path" in self.source:
-                    self.test_obj.assertIn(self.source["source_path"], [source_path_dir, source_path_device, source_name])
+                    self.test_obj.assertIn(self.source["source_path"],
+                                           [source_path_dir, source_path_device, source_name])
                 else:
                     self.test_obj.assertEqual("", host.rstrip())
 
@@ -459,7 +463,8 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
                 source={"host": "127.0.0.1", "source_path": target_iqn}
             ).execute()
 
-            if "debian" not in m.image and "ubuntu" not in m.image and "rhel" not in m.image and "centos" not in m.image:
+            if "debian" not in m.image and "ubuntu" not in m.image and "rhel" not in m.image \
+                    and "centos" not in m.image:
                 # iscsi-direct pool type is not available in RHEL and Debian/Ubuntu (https://bugs.debian.org/918728)
                 StoragePoolCreateDialog(
                     self,
@@ -473,7 +478,8 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
                 # Ensure that iscsi-direct is absent from the types dropdown
                 b.click("#create-storage-pool")
                 b.wait_visible("#create-storage-pool-dialog")
-                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Create storage pool")
+                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title",
+                               "Create storage pool")
                 b.click("#storage-pool-dialog-type")
                 b.wait_not_present("#storage-pool-dialog-type option[value*='isci-direct']")
                 b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
@@ -521,7 +527,8 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         m.write("/etc/exports", f"{mnt_exports} 127.0.0.1/24(rw,sync,no_root_squash,no_subtree_check,fsid=0)")
         m.execute(f"""
         systemctl restart nfs-server
-        virsh pool-define-as nfs-pool --type netfs --target {nfs_pool} --source-host 127.0.0.1 --source-path {mnt_exports}
+        virsh pool-define-as nfs-pool --type netfs --target {nfs_pool} \
+                                      --source-host 127.0.0.1 --source-path {mnt_exports}
         virsh pool-start nfs-pool
         """)
 
@@ -618,7 +625,8 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
                 self.test_obj.assertEqual(self.vol_name, m.execute(xmllint_element.format(prop='name')).strip())
 
                 if (self.fmt):
-                    self.test_obj.assertEqual(self.fmt, m.execute(xmllint_element.format(prop='target/format/@type')).strip())
+                    self.test_obj.assertEqual(self.fmt,
+                                              m.execute(xmllint_element.format(prop='target/format/@type')).strip())
 
                 size = int(m.execute(xmllint_element.format(prop='capacity')).strip())
                 if self.unit == "GiB":
@@ -682,11 +690,12 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
             remove=True,
         ).execute()
 
+        # Partition names must follow pattern of sda1, sda2..., anything else will fail
         StorageVolumeCreateDialog(
             self,
             pool_name="disk-pool",
             pool_type="disk",
-            vol_name="unacceptable name",  # Partition names must follow pattern of sda1, sda2..., anything else will fail
+            vol_name="unacceptable name",
             size="2",
             unit="MiB",
             fmt="none",
@@ -903,14 +912,16 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
                 # Check if deletion dialog is shown
                 b.wait_visible("div.pf-v5-c-modal-box")
                 # Checks for the deletion dialog
-                b.wait_in_text("#storage-pool-delete-modal .pf-v5-c-modal-box__title-text", f"Delete {self.name} storage pool?")
+                b.wait_in_text("#storage-pool-delete-modal .pf-v5-c-modal-box__title-text",
+                               f"Delete {self.name} storage pool?")
                 # Checks for the icon in the dialog title
                 b.wait_visible('#storage-pool-delete-modal svg[color=orange]')
 
                 if self.activate:
                     if self.vol_name or self.pool_type == "iscsi":
                         b.set_checked("#storage-pool-delete-volumes", self.remove_volume)
-                        b.wait_in_text(".pool-volumes-delete-list", self.vol_name if self.pool_type != "iscsi" else "unit:0:0:0")
+                        b.wait_in_text(".pool-volumes-delete-list",
+                                       self.vol_name if self.pool_type != "iscsi" else "unit:0:0:0")
                     else:
                         # Check when no volume
                         b.wait_not_present("#storage-pool-delete-volumes")
@@ -919,7 +930,7 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
                 else:
                     # Check the content of inactive pool deletion dialog
                     b.wait_text(".pf-v5-c-modal-box__body div",
-                                "Deleting an inactive storage pool will only undefine the pool. Its content will not be deleted.")
+                                "Deleting an inactive storage pool will only undefine the pool. Its content will not be deleted.")  # noqa: E501
 
                 b.click('.pf-v5-c-modal-box__footer button:contains("Delete")')
 
@@ -1031,7 +1042,7 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         # iscsi pool deletion
         # TODO: Arch image has no iscsi yet
         if "debian" not in m.image and "arch" not in m.image:
-            xfail_error = "this function is not supported by the connection driver: storage pool does not support vol deletion"
+            xfail_error = "this function is not supported by the connection driver: storage pool does not support vol deletion"  # noqa: E501
             StoragePoolsCreationAndDeletion(self,
                                             name="iscsi-pool-1",
                                             pool_type="iscsi",

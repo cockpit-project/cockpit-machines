@@ -135,7 +135,8 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         b.wait_in_text("#card-pf-networks .pf-v5-c-card__header button", "Network")
         b.click(".pf-v5-c-card .pf-v5-c-card__header button:contains(Network)")
 
-        # HACK: Firefox 112 on RHEL 8 does not have `:has` yet, so for now use JavaScript to obtain the elements parent sibling.
+        # HACK: Firefox 112 on RHEL 8 does not have `:has` yet, so for now use
+        # JavaScript to obtain the elements parent sibling.
         b.eval_js("""
        ph_input_form_helper_text = function(id) {
           const selector = ".pf-v5-c-helper-text__item.pf-m-error";
@@ -259,7 +260,8 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
                 if (self.forward_mode == "none"):
                     self.test_obj.assertEqual("", m.execute(xmllint_element.format(prop='forward/@mode')).strip())
                 else:
-                    self.test_obj.assertEqual(self.forward_mode, m.execute(xmllint_element.format(prop='forward/@mode')).strip())
+                    self.test_obj.assertEqual(self.forward_mode,
+                                              m.execute(xmllint_element.format(prop='forward/@mode')).strip())
 
                 if self.device:
                     self.test_obj.assertEqual(self.device,
@@ -501,7 +503,8 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
             ipv6_dhcp_start="fd00:e81d:a6d7:54::100",
             ipv6_dhcp_end="ad00:e81d:a6d7:55::100",
             xfail=True,
-            xfail_objects=["ipv4-dhcp-range-start", "ipv4-dhcp-range-end", "ipv6-dhcp-range-start", "ipv6-dhcp-range-end"],
+            xfail_objects=["ipv4-dhcp-range-start", "ipv4-dhcp-range-end",
+                           "ipv6-dhcp-range-start", "ipv6-dhcp-range-end"],
             xfail_error="Address not within subnet",
         ).execute()
 
@@ -701,7 +704,10 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
 
         # Create a second bridge to LAN NIC
         next_mac = self.get_next_mac(next_mac)
-        m.execute(f"ip link add name br1 type bridge; virsh attach-interface --current subVmTest1 bridge br1 --mac {next_mac}")
+        m.execute(f"""
+                  ip link add name br1 type bridge
+                  virsh attach-interface --current subVmTest1 bridge br1 --mac {next_mac}
+                  """)
         self.addCleanup(m.execute, "ip link delete br1")
 
         m.execute("virsh start subVmTest1")
@@ -822,7 +828,8 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         b.click(f"#activate-network-test_network2-{connectionName}")
         b.wait_in_text(f"#network-test_network2-{connectionName}-state", "active")
         # check virsh state
-        testlib.wait(lambda: "yes" == m.execute("virsh net-info test_network2 | grep 'Active:' | awk '{print $2}'").strip(),
+        virsh_state_cmd = "virsh net-info test_network2 | grep 'Active:' | awk '{print $2}'"
+        testlib.wait(lambda: "yes" == m.execute(virsh_state_cmd).strip(),
                      tries=5)
         # deactivate network
         b.wait_visible(f"#deactivate-network-test_network2-{connectionName}")
@@ -830,7 +837,7 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         b.wait_in_text(f"#network-test_network2-{connectionName}-state", "inactive")
         b.wait_visible(f"#activate-network-test_network2-{connectionName}")
         # check virsh state
-        testlib.wait(lambda: "no" == m.execute("virsh net-info test_network2 | grep 'Active:' | awk '{print $2}'").strip(),
+        testlib.wait(lambda: "no" == m.execute(virsh_state_cmd).strip(),
                      tries=5)
 
         # trigger error on clashing network
@@ -905,8 +912,10 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
                 b.wait_visible("#add-new-static-entry-mac-address")
                 b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title",
                                "Add a DHCP static host entry")
-                b.wait_in_text("div.pf-v5-c-modal-box__body label[for=add-new-static-entry-mac-address]", "MAC address")
-                b.wait_in_text("div.pf-v5-c-modal-box__body label[for=add-new-static-entry-ip-address]", "IP address")
+                b.wait_in_text("div.pf-v5-c-modal-box__body label[for=add-new-static-entry-mac-address]",
+                               "MAC address")
+                b.wait_in_text("div.pf-v5-c-modal-box__body label[for=add-new-static-entry-ip-address]",
+                               "IP address")
 
             def fill(self):
                 b.set_input_text("#add-new-static-entry-mac-address", self.mac)
@@ -1052,7 +1061,8 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
 
         # Check that the static IP is correctly assigned to the VM
         m.execute("virsh start subVmTest1")
-        testlib.wait(lambda: "1" in self.machine.execute("virsh domifaddr subVmTest1 | grep 192.168.122.222 | wc -l"), delay=3)
+        testlib.wait(lambda: "1" in self.machine.execute("virsh domifaddr subVmTest1 | grep 192.168.122.222 | wc -l"),
+                     delay=3)
 
 
 if __name__ == '__main__':

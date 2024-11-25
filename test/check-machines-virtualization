@@ -83,7 +83,8 @@ class TestMachinesVirtualization(machineslib.VirtualMachinesCase):
         self.waitPageInit()
         self.waitVmRow("subVmTest1")
 
-        # Check that empty state screen appears for privileged users when both the service and the socket are not running
+        # Check that empty state screen appears for privileged users when both the service
+        # and the socket are not running
         hack_libvirtd_crash()
         stopLibvirtSocket()
         stopLibvirtService()
@@ -98,9 +99,9 @@ class TestMachinesVirtualization(machineslib.VirtualMachinesCase):
 
         # Make sure that unprivileged users can see the VM list when libvirtd is not running
         m.execute("useradd nonadmin; echo nonadmin:foobar | chpasswd")
-        # user libvirtd instance tends to SIGABRT with "Failed to find user record for uid .." on shutdown during cleanup
-        # so make sure that there are no leftover user processes that bleed into the next test
-        self.addCleanup(self.machine.execute, "pkill -u nonadmin || true; while pgrep -u nonadmin; do sleep 0.5; done")
+        # user libvirtd instance tends to SIGABRT with "Failed to find user record for uid .." on
+        # shutdown during cleanup so make sure that there are no leftover user processes that bleed into the next test
+        self.addCleanup(m.execute, "pkill -u nonadmin || true; while pgrep -u nonadmin; do sleep 0.5; done")
         self.login_and_go("/machines", user="nonadmin", superuser=False)
         self.waitPageInit()
         b.wait_in_text("#virtual-machines-listing .pf-v5-c-empty-state", "No VM is running")
