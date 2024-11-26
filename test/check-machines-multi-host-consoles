@@ -68,8 +68,7 @@ class TestMultiMachineVNC(VirtualMachinesCase):
         self.goToVmPage(name)
         b.wait_in_text(f"#vm-{name}-system-state", "Running")
 
-        # Cockpit 329 warns the user before adding a remote host
-        b.add_machine(m2_host, known_host=True, password=None, expect_warning=not self.system_before(329))
+        b.add_machine(m2_host, known_host=True, password=None, expect_warning=False)
 
         b.switch_to_top()
         b.click("#hosts-sel button")
