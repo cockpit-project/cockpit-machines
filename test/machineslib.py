@@ -494,7 +494,7 @@ class VirtualMachinesCase(testlib.MachineCase, VirtualMachinesCaseHelpers,
             self.allow_journal_messages(r".* couldn't get all properties of org.freedesktop.NetworkManager.Device at /org/freedesktop/NetworkManager/Devices/\d+: Timeout was reached")  # noqa: E501
 
         # avoid error noise about resources getting cleaned up
-        self.addCleanup(lambda: not self.browser.valid or self.browser.logout())
+        self.addCleanup(lambda: not self.browser.have_test_api() or self.browser.logout())
 
         # noVNC warns about this for non-TLS connections; for RHEL downstream testing
         self.allow_browser_errors("noVNC requires a secure context")
@@ -557,7 +557,7 @@ class VirtualMachinesCase(testlib.MachineCase, VirtualMachinesCaseHelpers,
 
     def tearDown(self):
         b = self.browser
-        if b.valid and b.is_present("#button.alert-link.more-button"):
+        if b.have_test_api() and b.is_present("#button.alert-link.more-button"):
             b.click("button.alert-link.more-button")
 
         if self.getError():
