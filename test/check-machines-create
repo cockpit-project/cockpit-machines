@@ -632,6 +632,27 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         b.wait_in_text("#vm-pxe-guest-boot-order", "disk")
         b.wait_not_in_text("#vm-pxe-guest-boot-order", "network")
 
+    def testCreatePXE2(self):
+        self.testCreatePXE()
+
+    def testCreatePXE3(self):
+        self.testCreatePXE()
+
+    def testCreatePXE4(self):
+        self.testCreatePXE()
+
+    def testCreatePXE5(self):
+        self.testCreatePXE()
+
+    def testCreatePXE6(self):
+        self.testCreatePXE()
+
+    def testCreatePXE7(self):
+        self.testCreatePXE()
+
+    def testCreatePXE8(self):
+        self.testCreatePXE()
+
     def testCreateAndVerifyQemuConf(self):
         runner = TestMachinesCreate.CreateVmRunner(self)
         config = TestMachinesCreate.TestCreateConfig

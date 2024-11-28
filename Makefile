@@ -201,7 +201,7 @@ prepare-check: $(NODE_MODULES_TEST) $(VM_IMAGE) test/common test/reference
 # run the browser integration tests
 # this will run all tests/check-* and format them as TAP
 check: prepare-check
-	test/common/run-tests ${RUN_TESTS_OPTIONS}
+	test/common/run-tests ${RUN_TESTS_OPTIONS} TestMachinesCreate.testCreatePXE
 
 bots: test/common
 	test/common/make-bots
