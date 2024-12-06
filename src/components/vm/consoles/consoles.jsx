@@ -164,7 +164,7 @@ class Consoles extends React.Component {
                     {selectedConsole === 'VncConsole' && vnc && (
                         <TextContent>
                             <Text component={TextVariants.p}>
-                                {`VNC ${vnc.address}:${vnc.port}  `}
+                                {`VNC address=${vnc.address} port=${vnc.port === '-1' ? 'auto' : vnc.port}  `}
                                 <Button variant="link"
                                     onClick={openVncEdit}>
                                     {_("Edit")}

@@ -212,7 +212,7 @@ class Vnc extends React.Component {
                 />
                 <TextContent>
                     <Text component={TextVariants.p}>
-                        {`VNC ${consoleDetail.address}:${consoleDetail.port}  `}
+                        {`VNC address=${consoleDetail.address} port=${consoleDetail.port}  `}
                         <Button variant="link"
                             onClick={openVncEdit}>
                             {_("Edit")}
