@@ -91,7 +91,7 @@ export class AddVNC extends React.Component {
         );
 
         return (
-            <Modal position="top" variant={ModalVariant.small} id={`${idPrefix}-dialog`} isOpen onClose={Dialogs.close} className='vnc-add'
+            <Modal position="top" variant={ModalVariant.medium} id={`${idPrefix}-dialog`} isOpen onClose={Dialogs.close} className='vnc-add'
                 title={_("Add VNC")}
                 footer={
                     <>

@@ -41,8 +41,6 @@ import './consoles.css';
 const _ = cockpit.gettext;
 
 const VmNotRunning = () => {
-// DEBUG
-console.log("++++ DEBUG ++++ :");
     return (
         <div id="vm-not-running-message">
             {_("Please start the virtual machine to access its console.")}

@@ -95,7 +95,7 @@ export class EditVNCModal extends React.Component {
         };
 
         return (
-            <Modal position="top" variant={ModalVariant.small} id={`${idPrefix}-dialog`} isOpen onClose={Dialogs.close} className='vnc-edit'
+            <Modal position="top" variant={ModalVariant.medium} id={`${idPrefix}-dialog`} isOpen onClose={Dialogs.close} className='vnc-edit'
                    title={_("Edit VNC settings")}
                    footer={
                        <>

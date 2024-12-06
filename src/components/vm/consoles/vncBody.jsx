@@ -19,7 +19,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormGroup, TextInput } from "@patternfly/react-core";
+import { FormGroup, Grid, GridItem, TextInput } from "@patternfly/react-core";
 
 import cockpit from 'cockpit';
 
@@ -27,26 +27,32 @@ const _ = cockpit.gettext;
 
 export const VncRow = ({ idPrefix, onValueChanged, dialogValues }) => {
     return (
-        <>
-            <FormGroup fieldId={`${idPrefix}-address`} label={_("VNC address")}>
-                <TextInput id={`${idPrefix}-address`}
+        <Grid hasGutter md={6}>
+            <GridItem span={6}>
+                <FormGroup fieldId={`${idPrefix}-address`} label={_("VNC address")}>
+                    <TextInput id={`${idPrefix}-address`}
                            value={dialogValues.vncAddress}
                            type="text"
                            onChange={(event) => onValueChanged('vncAddress', event.target.value)} />
-            </FormGroup>
-            <FormGroup fieldId={`${idPrefix}-port`} label={_("VNC port")}>
-                <TextInput id={`${idPrefix}-port`}
+                </FormGroup>
+            </GridItem>
+            <GridItem span={6}>
+                <FormGroup fieldId={`${idPrefix}-port`} label={_("VNC port")}>
+                    <TextInput id={`${idPrefix}-port`}
                            value={dialogValues.vncPort}
                            type="number"
                            onChange={(event) => onValueChanged('vncPort', event.target.value)} />
-            </FormGroup>
-            <FormGroup fieldId={`${idPrefix}-password`} label={_("VNC password")}>
-                <TextInput id={`${idPrefix}-password`}
+                </FormGroup>
+            </GridItem>
+            <GridItem span={6}>
+                <FormGroup fieldId={`${idPrefix}-password`} label={_("VNC password")}>
+                    <TextInput id={`${idPrefix}-password`}
                            value={dialogValues.vncPassword}
                            type="password"
                            onChange={(event) => onValueChanged('vncPassword', event.target.value)} />
-            </FormGroup>
-        </>
+                </FormGroup>
+            </GridItem>
+        </Grid>
     );
 };
 
