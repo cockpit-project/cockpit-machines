@@ -17,6 +17,10 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
+import cockpit from 'cockpit';
+import React from 'react';
+import { ExclamationTriangleIcon, OutlinedClockIcon } from "@patternfly/react-icons";
+
 import {
     getTodayYearShifted,
 } from "../../helpers.js";
@@ -24,8 +28,9 @@ import {
 import * as python from "python.js";
 import autoDetectOSScript from './autoDetectOS.py';
 
+const _ = cockpit.gettext;
+
 const ACCEPT_RELEASE_DATES_AFTER = getTodayYearShifted(-3);
-const ACCEPT_EOL_DATES_AFTER = getTodayYearShifted(-1);
 const RHSM_TOKEN = "rhsm-offline-token";
 
 export const URL_SOURCE = 'url';
@@ -68,12 +73,19 @@ export function getOSStringRepresentation(os) {
 }
 
 export function filterReleaseEolDates(os) {
-    // Filter out all OSes their EOL date exists and is olrder than allowed
-    // or their EOL date does not exist but their release date is too old
+    // Filter out all OSes with elapsed EOL, or that have been released too long ago
     return !(
-        (os.eolDate && compareDates(ACCEPT_EOL_DATES_AFTER, os.eolDate) < 0) ||
+        (os.eolDate && new Date(os.eolDate).getTime() < Date.now()) ||
         (!os.eolDate && os.releaseDate && compareDates(ACCEPT_RELEASE_DATES_AFTER, os.releaseDate) < 0)
     );
+}
+
+export function getOSDescription(os) {
+    if (os.eolDate && new Date(os.eolDate).getTime() < Date.now())
+        return <span><ExclamationTriangleIcon /> {cockpit.format(_("Vendor support ended $0"), os.eolDate)}</span>;
+    if (!os.eolDate && os.releaseDate && compareDates(ACCEPT_RELEASE_DATES_AFTER, os.releaseDate) < 0)
+        return <span><OutlinedClockIcon /> {cockpit.format(_("Released $0"), os.releaseDate)}</span>;
+    return null;
 }
 
 export function compareDates(a, b, emptyFirst = false) {
