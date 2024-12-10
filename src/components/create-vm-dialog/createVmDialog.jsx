@@ -41,6 +41,7 @@ import { useInit } from "hooks.js";
 import cockpit from 'cockpit';
 import store from "../../store.js";
 import { MachinesConnectionSelector } from '../common/machinesConnectionSelector.jsx';
+import { TypeaheadSelect } from 'cockpit-components-typeahead-select';
 import { FormHelper } from "cockpit-components-form-helper.jsx";
 import { FileAutoComplete } from "cockpit-components-file-autocomplete.jsx";
 import {
@@ -76,6 +77,7 @@ import {
     correctSpecialCases,
     filterReleaseEolDates,
     getOSStringRepresentation,
+    getOSDescription,
     needsRHToken,
     isDownloadableOs,
     loadOfflineToken,
@@ -405,10 +407,8 @@ const SourceRow = ({ connectionName, source, sourceType, networks, nodeDevices, 
 class OSRow extends React.Component {
     constructor(props) {
         super(props);
-        const IGNORE_VENDORS = ['ALTLinux', 'Mandriva', 'GNOME Project'];
         const osInfoListExt = this.props.osInfoList
                 .map(os => correctSpecialCases(os))
-                .filter(os => filterReleaseEolDates(os) && !IGNORE_VENDORS.find(vendor => vendor == os.vendor))
                 .sort((a, b) => {
                     if (a.vendor == b.vendor) {
                         // Sort OS with numbered version by version
@@ -426,22 +426,34 @@ class OSRow extends React.Component {
                     return getOSStringRepresentation(a).toLowerCase() > getOSStringRepresentation(b).toLowerCase() ? 1 : -1;
                 });
 
+        const IGNORE_VENDORS = ['ALTLinux', 'Mandriva', 'GNOME Project'];
+        const newOsEntries = [];
+        const oldOsEntries = [];
+        for (const os of osInfoListExt) {
+            if (filterReleaseEolDates(os) && !IGNORE_VENDORS.find(vendor => vendor == os.vendor))
+                newOsEntries.push(os);
+            else
+                oldOsEntries.push(os);
+        }
+
+        const make_option = os => ({
+            value: os.shortId,
+            content: getOSStringRepresentation(os),
+            description: getOSDescription(os),
+        });
+
+        const selectOptions = [
+            { decorator: "header", content: _("Recommended operating systems"), key: "recommended-header" },
+            ...newOsEntries.map(make_option),
+            { decorator: "divider", key: "divider" },
+            { decorator: "header", content: _("Unsupported and older operating systems"), key: "unsupported-header" },
+            ...oldOsEntries.map(make_option),
+        ];
+
         this.state = {
             typeAheadKey: Math.random(),
-            osEntries: osInfoListExt,
-        };
-        this.createValue = os => {
-            return ({
-                toString: function() { return this.displayName },
-                compareTo: function(value) {
-                    if (typeof value == "string")
-                        return this.shortId.toLowerCase().includes(value.toLowerCase()) || this.displayName.toLowerCase().includes(value.toLowerCase());
-                    else
-                        return this.shortId == value.shortId;
-                },
-                ...os,
-                displayName: getOSStringRepresentation(os),
-            });
+            selectOptions,
+            osInfoListExt,
         };
     }
 
@@ -454,30 +466,21 @@ class OSRow extends React.Component {
                        data-loading={!!isLoading}
                        id="os-select-group"
                        label={_("Operating system")}>
-                <PFSelect
-                    variant="typeahead"
-                    key={this.state.typeAheadKey}
-                    id='os-select'
-                    isDisabled={isLoading}
-                    selections={os ? this.createValue(os) : null}
-                    typeAheadAriaLabel={_("Choose an operating system")}
-                    placeholderText={_("Choose an operating system")}
-                    onSelect={(event, value) => {
-                        this.setState({
-                            isOpen: false
-                        });
-                        onValueChanged('os', value);
-                    }}
-                    onClear={() => {
-                        this.setState({ isOpen: false });
-                        onValueChanged('os', null);
-                    }}
-                    onToggle={(_event, isOpen) => this.setState({ isOpen })}
-                    isOpen={this.state.isOpen}
-                    menuAppendTo="parent">
-                    {this.state.osEntries.map(os => (<SelectOption key={os.id}
-                                                                  value={this.createValue(os)} />))}
-                </PFSelect>
+                <TypeaheadSelect key={this.state.typeAheadKey}
+                                 id='os-select'
+                                 isDisabled={isLoading}
+                                 isScrollable
+                                 placeholder={_("Choose an operating system")}
+                                 selectOptions={this.state.selectOptions}
+                                 selected={os?.shortId}
+                                 onSelect={(event, value) => {
+                                     const os = this.state.osInfoListExt.find(os => os.shortId === value);
+                                     onValueChanged('os', os);
+                                 }}
+                                 onClearSelection={() => {
+                                     onValueChanged('os', null);
+                                 }}
+                />
                 <FormHelper helperTextInvalid={validationStateOS == "error" && validationFailed.os} />
             </FormGroup>
         );
