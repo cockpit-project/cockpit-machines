@@ -60,7 +60,7 @@ export const CloneDialog = ({ name, connectionName }) => {
             options.superuser = "try";
         return cockpit.spawn(["virt-clone", "--connect", "qemu:///" + connectionName, "--original", name, "--name", newVmName, "--auto-clone"], options)
                 .stream(setVirtCloneOutput)
-                .then(Dialogs.close, exc => {
+                .then(Dialogs.close, () => {
                     setInProgress(false);
                     dialogErrorSet({ dialogError: cockpit.format(_("Failed to clone VM $0"), name) });
                 });

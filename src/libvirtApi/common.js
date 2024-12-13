@@ -374,7 +374,7 @@ function startEventMonitorNetworks(connectionName) {
     /* Subscribe to signals on Network Interface */
     dbusClient(connectionName).subscribe(
         { interface: "org.libvirt.Network" },
-        (path, iface, signal, args) => {
+        (path, _iface, signal) => {
             switch (signal) {
             case "Refresh":
             /* These signals imply possible changes in what we display, so re-read the state */
@@ -424,7 +424,7 @@ function startEventMonitorStoragePools(connectionName) {
     /* Subscribe to signals on StoragePool Interface */
     dbusClient(connectionName).subscribe(
         { interface: "org.libvirt.StoragePool" },
-        (path, iface, signal, args) => {
+        (path, _iface, signal) => {
             switch (signal) {
             case "Refresh":
             /* These signals imply possible changes in what we display, so re-read the state */
