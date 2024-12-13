@@ -134,7 +134,7 @@ function get_available_space(path, superuser, callback) {
                 const info = JSON.parse(output);
                 callback(info.free * info.unit);
             })
-            .catch(exc => {
+            .catch(() => {
                 // channel has already logged the error
                 callback(null);
             });

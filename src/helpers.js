@@ -296,7 +296,7 @@ export function rephraseUI(key, original) {
  * @param mimeType
  * @returns {*}
  */
-export function fileDownload({ data, fileName = 'myFile.dat', mimeType = 'application/octet-stream' }) {
+export function fileDownload({ data, _fileName = 'myFile.dat', mimeType = 'application/octet-stream' }) {
     if (!data) {
         console.error('fileDownload(): no data to download');
         return false;

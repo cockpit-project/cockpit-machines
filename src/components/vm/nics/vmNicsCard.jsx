@@ -279,7 +279,7 @@ export class VmNetworkTab extends React.Component {
         this.getIpAddr();
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps, _prevState) {
         if (prevProps.vm.state !== this.props.vm.state)
             this.getIpAddr();
     }
