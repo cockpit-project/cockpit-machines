@@ -20,13 +20,11 @@ Depends: ${misc:Depends},
          cockpit-bridge (>= 215),
          libvirt-daemon-system,
          libvirt-clients | libvirt-bin,
-         libvirt-dbus
-Recommends: virtinst (>= 3.0.0), python3-gi, gir1.2-libosinfo-1.0, qemu-block-extra
+         libvirt-dbus,
+         virtinst (>= 3.0.0),
+Recommends: python3-gi, gir1.2-libosinfo-1.0, qemu-block-extra
 Description: Cockpit user interface for virtual machines
  The Cockpit Web Console enables users to administer GNU/Linux servers using a
  web browser.
  .
- This package adds an user interface for managing virtual machines.
- .
- If the "virtinst" package is installed, you can also create new virtual
- machines.
+ This package adds an user interface for managing libvirt virtual machines.
