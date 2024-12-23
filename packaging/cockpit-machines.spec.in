@@ -43,7 +43,7 @@ Requires: libvirt-daemon-driver-qemu
 Requires: libvirt-daemon-driver-network
 Requires: libvirt-daemon-driver-nodedev
 Requires: libvirt-daemon-driver-storage-core
-Requires: (libvirt-daemon-config-network if virt-install)
+Requires: libvirt-daemon-config-network
 Recommends: libvirt-daemon-driver-storage-disk
 %if 0%{?rhel}
 Requires: qemu-kvm
@@ -62,8 +62,8 @@ Requires: (qemu-audio-spice if qemu-char-spice)
 %endif
 Requires: libvirt-client
 Requires: libvirt-dbus >= 1.2.0
+Requires: virt-install >= 3.0.0
 # Optional components
-Recommends: virt-install >= 3.0.0
 Recommends: libosinfo
 Recommends: python3-gobject-base
 Suggests: (qemu-virtiofsd or virtiofsd)
@@ -71,9 +71,7 @@ Suggests: (qemu-virtiofsd or virtiofsd)
 %{NPM_PROVIDES}
 
 %description
-Cockpit component for managing virtual machines.
-
-If "virt-install" is installed, you can also create new virtual machines.
+Cockpit component for managing libvirt virtual machines.
 
 %prep
 %setup -q -n %{name}
