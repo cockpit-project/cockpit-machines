@@ -20,14 +20,12 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { debounce } from 'throttle-debounce';
-import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
 import { Grid, GridItem } from "@patternfly/react-core/dist/esm/layouts/Grid";
 import { InputGroup } from "@patternfly/react-core/dist/esm/components/InputGroup";
 import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
-import { Select as PFSelect, SelectGroup, SelectOption } from "@patternfly/react-core/dist/esm/deprecated/components/Select";
 import { Tab, TabTitleText, Tabs } from "@patternfly/react-core/dist/esm/components/Tabs";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -44,6 +42,7 @@ import { MachinesConnectionSelector } from '../common/machinesConnectionSelector
 import { TypeaheadSelect } from 'cockpit-components-typeahead-select';
 import { FormHelper } from "cockpit-components-form-helper.jsx";
 import { FileAutoComplete } from "cockpit-components-file-autocomplete.jsx";
+import { SimpleSelect } from "cockpit-components-simple-select";
 import {
     isEmpty,
     digitFilter,
@@ -920,8 +919,6 @@ const MemoryRow = ({ memorySize, memorySizeUnit, nodeMaxMemory, minimumMemory, o
 };
 
 const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit, onValueChanged, minimumStorage, storagePoolName, storagePools, storageVolume, vms, validationFailed, createMode }) => {
-    const [isStorageOpen, setIsStorageOpen] = useState(false);
-
     let validationStateStorage = validationFailed.storage ? 'error' : 'default';
     const poolSpaceAvailable = getSpaceAvailable(storagePools, connectionName);
     let helperTextNewVolume = (
@@ -960,37 +957,28 @@ const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit,
     const helperTextVariant = createMode == NONE && (isVolumeUsed[storageVolume] && isVolumeUsed[storageVolume].length > 0) ? "warning" : "default";
 
     const StorageSelectOptions = [
-        <SelectOption key="NewVolumeQCOW2" value="NewVolumeQCOW2">{_("Create new qcow2 volume")}</SelectOption>,
-        <SelectOption key="NewVolumeRAW" value="NewVolumeRAW">{_("Create new raw volume")}</SelectOption>
+        { value: "NewVolumeQCOW2", content: _("Create new qcow2 volume") },
+        { value: "NewVolumeRAW", content: _("Create new raw volume") },
     ];
     if (allowNoDisk) {
-        StorageSelectOptions.push(<Divider key="dividerNoStorage" />);
-        StorageSelectOptions.push(<SelectOption value="NoStorage" key="NoStorage">{_("No storage")}</SelectOption>);
+        StorageSelectOptions.push({ decorator: "divider", key: "dividerNoStorage" });
+        StorageSelectOptions.push({ value: "NoStorage", content: _("No storage") });
     }
     const nonEmptyStoragePools = storagePools.filter(pool => pool.volumes?.length);
     if (nonEmptyStoragePools.length > 0) {
-        StorageSelectOptions.push(<Divider key="dividerPools" />);
-        StorageSelectOptions.push(<SelectGroup key="Storage pools" label={_("Storage pools")}>
-            { nonEmptyStoragePools.map(pool => <SelectOption value={pool.name} key={pool.name} />) }
-        </SelectGroup>);
+        StorageSelectOptions.push({ decorator: "divider", key: "dividerPools" });
+        StorageSelectOptions.push({ decorator: "header", key: "Storage pools", content: _("Storage pools") });
+        nonEmptyStoragePools.forEach(pool => StorageSelectOptions.push({ value: pool.name, content: pool.name }));
     }
     return (
         <>
             <FormGroup label={_("Storage")} id="storage-select-group">
-                <PFSelect
-                    toggleId="storage-select"
-                    selections={storagePoolName}
-                    typeAheadAriaLabel={_("Choose an operating system")}
-                    placeholderText={_("Choose an operating system")}
-                    onSelect={(event, value) => {
-                        setIsStorageOpen(false);
-                        onValueChanged('storagePool', value);
-                    }}
-                    onToggle={(_event, isOpen) => setIsStorageOpen(isOpen)}
-                    isOpen={isStorageOpen}
-                    menuAppendTo="parent">
-                    {StorageSelectOptions}
-                </PFSelect>
+                <SimpleSelect
+                    toggleProps={{ id: "storage-select" }}
+                    toggleWidth="100%"
+                    selected={storagePoolName}
+                    onSelect={value => { onValueChanged('storagePool', value) }}
+                    options={StorageSelectOptions} />
             </FormGroup>
 
             { storagePoolName !== "NewVolumeQCOW2" &&
