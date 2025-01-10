@@ -20,10 +20,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 import { AccessConsoles } from "@patternfly/react-console";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 
+import { useDialogs } from 'dialogs.jsx';
 import SerialConsole from './serialConsole.jsx';
 import Vnc from './vnc.jsx';
 import DesktopConsole from './desktopConsole.jsx';
+import { ReplaceSpiceDialog } from '../vmReplaceSpiceDialog.jsx';
+
 import {
     domainCanConsole,
     domainDesktopConsole,
@@ -34,10 +38,31 @@ import './consoles.css';
 
 const _ = cockpit.gettext;
 
-const VmNotRunning = () => {
+const VmNotRunning = ({ vm, vnc, spice }) => {
+    const Dialogs = useDialogs();
+
     return (
         <div id="vm-not-running-message">
-            {_("Please start the virtual machine to access its console.")}
+            <div>{_("Please start the virtual machine to access its console.")}</div>
+            { vnc
+                ? <div>
+                      <b>{_("VNC")}</b> {vnc.address}:{vnc.port}
+                      <Button variant="link">{_("Edit")}</Button>
+                  </div>
+                : <div>
+                      <b>{_("VNC")}</b> {_("Not supported")}
+                      <Button variant="link">{_("Add support")}</Button>
+                  </div>
+            }
+            { spice
+                ? <div>
+                      <b>{_("Spice")}</b> {spice.address}:{spice.port}
+                      <Button variant="link" onClick={() => Dialogs.show(<ReplaceSpiceDialog vm={vm} vms={[vm]} />)}>
+                          {_("Replace SPICE devices")}
+                      </Button>
+                  </div>
+                : null
+            }
         </div>
     );
 };
@@ -98,7 +123,7 @@ class Consoles extends React.Component {
         const vnc = vm.displays && vm.displays.find(display => display.type == 'vnc');
 
         if (!domainCanConsole || !domainCanConsole(vm.state)) {
-            return (<VmNotRunning />);
+            return (<VmNotRunning vm={vm} vnc={vnc} spice={spice} />);
         }
 
         const onDesktopConsole = () => { // prefer spice over vnc
@@ -110,7 +135,7 @@ class Consoles extends React.Component {
                             textSelectConsoleType={_("Select console type")}
                             textSerialConsole={_("Serial console")}
                             textVncConsole={_("VNC console")}
-                            textDesktopViewerConsole={_("Desktop viewer")}>
+                            textDesktopViewerConsole={_("Spice console")}>
                 {serial.map((pty, idx) => (<SerialConsole type={serial.length == 1 ? "SerialConsole" : cockpit.format(_("Serial console ($0)"), pty.alias || idx)}
                                                   key={"pty-" + idx}
                                                   connectionName={vm.connectionName}
@@ -125,9 +150,10 @@ class Consoles extends React.Component {
                      onAddErrorNotification={onAddErrorNotification}
                      isExpanded={isExpanded} />
                 {spice &&
-                <DesktopConsole type="DesktopViewer"
-                                onDesktopConsole={() => this.onDesktopConsoleDownload('spice')}
-                                spice={spice} />}
+                 <DesktopConsole type="DesktopViewer"
+                                 vm={vm}
+                                 onDesktopConsole={() => this.onDesktopConsoleDownload('spice')}
+                                 spice={spice} />}
             </AccessConsoles>
         );
     }
