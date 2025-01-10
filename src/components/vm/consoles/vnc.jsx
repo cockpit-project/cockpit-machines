@@ -23,6 +23,7 @@ import { VncConsole } from '@patternfly/react-console';
 import { Dropdown, DropdownItem, DropdownList } from "@patternfly/react-core/dist/esm/components/Dropdown";
 import { MenuToggle } from "@patternfly/react-core/dist/esm/components/MenuToggle";
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
+import { EmptyState, EmptyStateBody } from "@patternfly/react-core/dist/esm/components/EmptyState";
 
 import { logDebug } from '../../../helpers.js';
 import { domainSendKey } from '../../../libvirtApi/domain.js';
@@ -117,7 +118,18 @@ class Vnc extends React.Component {
     render() {
         const { consoleDetail, connectionName, vmName, vmId, onAddErrorNotification, isExpanded } = this.props;
         const { path, isActionOpen } = this.state;
-        if (!consoleDetail || !path) {
+        if (!consoleDetail) {
+            return (
+                <div className="pf-v5-c-console__vnc">
+                    <EmptyState>
+                        <EmptyStateBody>
+                            {_("Graphical console not supported. Shut down the virtual machine to add support.")}
+                        </EmptyStateBody>
+                    </EmptyState>
+                </div>
+            );
+        }
+        if (!path) {
             // postpone rendering until consoleDetail is known and channel ready
             return null;
         }

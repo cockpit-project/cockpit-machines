@@ -20,10 +20,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 import { AccessConsoles } from "@patternfly/react-console";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/index.js";
 
+import { useDialogs } from 'dialogs.jsx';
 import SerialConsole from './serialConsole.jsx';
 import Vnc from './vnc.jsx';
 import DesktopConsole from './desktopConsole.jsx';
+import { AddVNC } from './vncAdd.jsx';
+import { EditVNCModal } from './vncEdit.jsx';
+
 import {
     domainCanConsole,
     domainDesktopConsole,
@@ -34,10 +40,59 @@ import './consoles.css';
 
 const _ = cockpit.gettext;
 
-const VmNotRunning = () => {
+const VmNotRunning = ({ vm, vnc }) => {
+    const Dialogs = useDialogs();
+
+    function add_vnc() {
+        Dialogs.show(<AddVNC
+                         idPrefix="add-vnc"
+                         vm={vm} />);
+    }
+
+    function edit_vnc() {
+        Dialogs.show(<EditVNCModal
+                         idPrefix="edit-vnc"
+                         consoleDetail={vnc}
+                         vmName={vm.name}
+                         vmId={vm.id}
+                         connectionName={vm.connectionName} />);
+    }
+
+    let vnc_info;
+    let vnc_action;
+
+    if (!vnc) {
+        vnc_info = _("not supported");
+        vnc_action = (
+            <Button variant="link" isInline onClick={add_vnc}>
+                {_("Add support")}
+            </Button>
+        );
+    } else {
+        if (vnc.port == -1)
+            vnc_info = _("supported");
+        else
+            vnc_info = cockpit.format(_("supported, port $0"), vnc.port);
+
+        vnc_action = (
+            <Button variant="link" isInline onClick={edit_vnc}>
+                {_("Edit")}
+            </Button>
+        );
+    }
+
     return (
         <div id="vm-not-running-message">
-            {_("Please start the virtual machine to access its console.")}
+            <p>{_("Please start the virtual machine to access its console.")}</p>
+            <br />
+            <Split hasGutter>
+                <SplitItem isFilled>
+                    <span><b>{_("Graphical console:")}</b> {vnc_info}</span>
+                </SplitItem>
+                <SplitItem>
+                    {vnc_action}
+                </SplitItem>
+            </Split>
         </div>
     );
 };
@@ -98,7 +153,7 @@ class Consoles extends React.Component {
         const vnc = vm.displays && vm.displays.find(display => display.type == 'vnc');
 
         if (!domainCanConsole || !domainCanConsole(vm.state)) {
-            return (<VmNotRunning />);
+            return (<VmNotRunning vm={vm} vnc={vnc} />);
         }
 
         const onDesktopConsole = () => { // prefer spice over vnc
@@ -109,21 +164,20 @@ class Consoles extends React.Component {
             <AccessConsoles preselectedType={this.getDefaultConsole()}
                             textSelectConsoleType={_("Select console type")}
                             textSerialConsole={_("Serial console")}
-                            textVncConsole={_("VNC console")}
+                            textVncConsole={_("Graphical console (VNC)")}
                             textDesktopViewerConsole={_("Desktop viewer")}>
                 {serial.map((pty, idx) => (<SerialConsole type={serial.length == 1 ? "SerialConsole" : cockpit.format(_("Serial console ($0)"), pty.alias || idx)}
                                                   key={"pty-" + idx}
                                                   connectionName={vm.connectionName}
                                                   vmName={vm.name}
                                                   spawnArgs={domainSerialConsoleCommand({ vm, alias: pty.alias })} />))}
-                {vnc &&
                 <Vnc type="VncConsole"
                      vmName={vm.name}
                      vmId={vm.id}
                      connectionName={vm.connectionName}
                      consoleDetail={vnc}
                      onAddErrorNotification={onAddErrorNotification}
-                     isExpanded={isExpanded} />}
+                     isExpanded={isExpanded} />
                 {(vnc || spice) &&
                 <DesktopConsole type="DesktopViewer"
                                 onDesktopConsole={onDesktopConsole}
