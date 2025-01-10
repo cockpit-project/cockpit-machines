@@ -26,6 +26,8 @@ import { MenuToggle } from "@patternfly/react-core/dist/esm/components/MenuToggl
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
 import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/index.js";
 import { EmptyState, EmptyStateBody, EmptyStateFooter } from "@patternfly/react-core/dist/esm/components/EmptyState";
+import { InfoCircleIcon } from "@patternfly/react-icons";
+import { Popover } from "@patternfly/react-core/dist/esm/components/Popover/index.js";
 
 import { logDebug } from '../../../helpers.js';
 import { domainSendKey } from '../../../libvirtApi/domain.js';

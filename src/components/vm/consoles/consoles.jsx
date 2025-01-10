@@ -124,10 +124,9 @@ class Consoles extends React.Component {
                      onLaunch={() => this.onDesktopConsoleDownload('vnc')}
                      onAddErrorNotification={onAddErrorNotification}
                      isExpanded={isExpanded} />
-                {(vnc || spice) &&
+                {spice &&
                 <DesktopConsole type="DesktopViewer"
-                                onDesktopConsole={onDesktopConsole}
-                                vnc={vnc}
+                                onDesktopConsole={() => this.onDesktopConsoleDownload('spice')}
                                 spice={spice} />}
             </AccessConsoles>
         );
