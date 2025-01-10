@@ -116,7 +116,6 @@ class Consoles extends React.Component {
                                                   connectionName={vm.connectionName}
                                                   vmName={vm.name}
                                                   spawnArgs={domainSerialConsoleCommand({ vm, alias: pty.alias })} />))}
-                {vnc &&
                 <Vnc type="VncConsole"
                      vmName={vm.name}
                      vmId={vm.id}
@@ -124,7 +123,7 @@ class Consoles extends React.Component {
                      consoleDetail={vnc}
                      onLaunch={() => this.onDesktopConsoleDownload('vnc')}
                      onAddErrorNotification={onAddErrorNotification}
-                     isExpanded={isExpanded} />}
+                     isExpanded={isExpanded} />
                 {(vnc || spice) &&
                 <DesktopConsole type="DesktopViewer"
                                 onDesktopConsole={onDesktopConsole}

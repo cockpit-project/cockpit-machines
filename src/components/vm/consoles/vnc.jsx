@@ -25,6 +25,7 @@ import { Dropdown, DropdownItem, DropdownList } from "@patternfly/react-core/dis
 import { MenuToggle } from "@patternfly/react-core/dist/esm/components/MenuToggle";
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
 import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/index.js";
+import { EmptyState, EmptyStateBody, EmptyStateFooter } from "@patternfly/react-core/dist/esm/components/EmptyState";
 
 import { logDebug } from '../../../helpers.js';
 import { domainSendKey } from '../../../libvirtApi/domain.js';
@@ -119,6 +120,22 @@ class Vnc extends React.Component {
     render() {
         const { consoleDetail, connectionName, vmName, vmId, onAddErrorNotification, isExpanded } = this.props;
         const { path, isActionOpen } = this.state;
+
+        if (!consoleDetail) {
+            return (
+                <div className="vm-console-main">
+                    <EmptyState>
+                        <EmptyStateBody>{_("Graphical support not enabled")}</EmptyStateBody>
+                        <EmptyStateFooter>
+                            <Button variant="secondary">
+                                {_("Add VNC")}
+                            </Button>
+                        </EmptyStateFooter>
+                    </EmptyState>
+                </div>
+            );
+        }
+
         if (!consoleDetail || !path) {
             // postpone rendering until consoleDetail is known and channel ready
             return null;
