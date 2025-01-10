@@ -122,6 +122,7 @@ class Consoles extends React.Component {
                      vmId={vm.id}
                      connectionName={vm.connectionName}
                      consoleDetail={vnc}
+                     onLaunch={() => this.onDesktopConsoleDownload('vnc')}
                      onAddErrorNotification={onAddErrorNotification}
                      isExpanded={isExpanded} />}
                 {(vnc || spice) &&

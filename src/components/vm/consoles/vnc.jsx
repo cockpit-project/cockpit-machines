@@ -20,9 +20,11 @@ import React from 'react';
 import cockpit from 'cockpit';
 
 import { VncConsole } from '@patternfly/react-console';
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Dropdown, DropdownItem, DropdownList } from "@patternfly/react-core/dist/esm/components/Dropdown";
 import { MenuToggle } from "@patternfly/react-core/dist/esm/components/MenuToggle";
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
+import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/index.js";
 
 import { logDebug } from '../../../helpers.js';
 import { domainSendKey } from '../../../libvirtApi/domain.js';
@@ -121,6 +123,23 @@ class Vnc extends React.Component {
             // postpone rendering until consoleDetail is known and channel ready
             return null;
         }
+
+        const detail = (
+            <Split>
+                <SplitItem isFilled>
+                    <b>{_("VNC")}</b> {consoleDetail.address}:{consoleDetail.port}
+                    <Button variant="link">{_("Edit")}</Button>
+                </SplitItem>
+                <SplitItem>
+                    <Button variant="secondary" onClick={this.props.onLaunch}>{_("Launch viewer")}</Button>
+                    {"\n"}
+                    <Popover headerContent={_("Desktop viewer")} bodyContent="Here we explain everything that you need to know about this button.">
+                        <InfoCircleIcon />
+                    </Popover>
+                </SplitItem>
+            </Split>
+        );
+
         const credentials = consoleDetail.password ? { password: consoleDetail.password } : undefined;
         const encrypt = this.getEncrypt();
         const renderDropdownItem = keyName => {
@@ -162,23 +181,26 @@ class Vnc extends React.Component {
         ];
 
         return (
-            <VncConsole host={window.location.hostname}
-                        port={window.location.port || (encrypt ? '443' : '80')}
-                        path={path}
-                        encrypt={encrypt}
-                        shared
-                        credentials={credentials}
-                        vncLogging='warn'
-                        onDisconnected={this.onDisconnected}
-                        onInitFailed={this.onInitFailed}
-                        additionalButtons={additionalButtons}
-                        textConnecting={_("Connecting")}
-                        textDisconnected={_("Disconnected")}
-                        textDisconnect={_("Disconnect")}
-                        consoleContainerId={isExpanded ? "vnc-display-container-expanded" : "vnc-display-container-minimized"}
-                        resizeSession
-                        scaleViewport
-            />
+            <>
+                <VncConsole host={window.location.hostname}
+                    port={window.location.port || (encrypt ? '443' : '80')}
+                    path={path}
+                    encrypt={encrypt}
+                    shared
+                    credentials={credentials}
+                    vncLogging='warn'
+                    onDisconnected={this.onDisconnected}
+                    onInitFailed={this.onInitFailed}
+                    additionalButtons={additionalButtons}
+                    textConnecting={_("Connecting")}
+                    textDisconnected={_("Disconnected")}
+                    textDisconnect={_("Disconnect")}
+                    consoleContainerId={isExpanded ? "vnc-display-container-expanded" : "vnc-display-container-minimized"}
+                    resizeSession
+                    scaleViewport
+                />
+                <div className="vm-console-footer">{detail}</div>
+            </>
         );
     }
 }
