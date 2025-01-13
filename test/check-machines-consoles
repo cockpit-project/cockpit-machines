@@ -17,6 +17,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
 
+import os
 import time
 
 import machineslib
@@ -71,11 +72,12 @@ fullscreen=0
         # "download". As we want to download this as "$vmName.vv" in the end
         # work around the issue for now.
         if b.browser == "chromium":
-            self.waitDownloadFile("download", content=content)
+            fname = "download"
         else:
-            b.wait_visible("#dynamically-generated-file")  # is .vv file generated for download?
-            self.assertEqual(b.attr("#dynamically-generated-file", "href"),
-                            u"data:application/x-virt-viewer,%5Bvirt-viewer%5D%0Atype%3Dspice%0Ahost%3D127.0.0.1%0Aport%3D5900%0Adelete-this-file%3D1%0Afullscreen%3D0%0A")
+            testlib.wait(lambda: len(os.listdir(b.driver.download_dir)) == 1)
+            fname = os.listdir(b.driver.download_dir)[0]
+
+        self.waitDownloadFile(fname, expected_size=len(content), content=content)
 
         # Go to the expanded console view
         b.click("button:contains(Expand)")
