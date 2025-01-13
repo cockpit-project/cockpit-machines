@@ -137,15 +137,15 @@ export const VmDetailsPage = ({
                 id: `${vmId(vm.name)}-consoles`,
                 className: "consoles-card",
                 title: _("Console"),
-                actions: vm.state != "shut off"
-                    ? <Button variant="link"
-                          onClick={() => {
-                              const urlOptions = { name: vm.name, connection: vm.connectionName };
-                              return cockpit.location.go(["vm", "console"], { ...cockpit.location.options, ...urlOptions });
-                          }}
-                          icon={<ExpandIcon />}
-                          iconPosition="right">{_("Expand")}</Button>
-                    : null,
+                actions: <Button variant="link"
+                             onClick={() => {
+                                 const urlOptions = { name: vm.name, connection: vm.connectionName };
+                                 return cockpit.location.go(["vm", "console"], { ...cockpit.location.options, ...urlOptions });
+                             }}
+                             icon={<ExpandIcon />}
+                             iconPosition="right">
+                             {_("Expand")}
+                         </Button>,
                 body: <Consoles vm={vm} config={config}
                             onAddErrorNotification={onAddErrorNotification} />,
             }]

@@ -20,9 +20,12 @@ import React from 'react';
 import cockpit from 'cockpit';
 
 import { VncConsole } from '@patternfly/react-console';
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Dropdown, DropdownItem, DropdownList } from "@patternfly/react-core/dist/esm/components/Dropdown";
 import { MenuToggle } from "@patternfly/react-core/dist/esm/components/MenuToggle";
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
+import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/index.js";
+import { EmptyState, EmptyStateBody, EmptyStateFooter } from "@patternfly/react-core/dist/esm/components/EmptyState";
 
 import { logDebug } from '../../../helpers.js';
 import { domainSendKey } from '../../../libvirtApi/domain.js';
@@ -115,12 +118,35 @@ class Vnc extends React.Component {
     }
 
     render() {
-        const { consoleDetail, connectionName, vmName, vmId, onAddErrorNotification, isExpanded } = this.props;
+        const { consoleDetail, vm, onAddErrorNotification, isExpanded } = this.props;
         const { path, isActionOpen } = this.state;
+
+        if (!consoleDetail) {
+            return (
+                <div className="vm-console-main">
+                    <EmptyState>
+                        <EmptyStateBody>{_("VNC support not enabled. Shut down the virtual machine to add support.")}</EmptyStateBody>
+                    </EmptyState>
+                </div>
+            );
+        }
+
         if (!consoleDetail || !path) {
             // postpone rendering until consoleDetail is known and channel ready
             return null;
         }
+
+        const detail = (
+            <Split>
+                <SplitItem isFilled>
+                    <b>{_("VNC")}</b> {consoleDetail.address}:{consoleDetail.port}
+                </SplitItem>
+                <SplitItem>
+                    <Button variant="secondary" onClick={this.props.onLaunch}>{_("Launch viewer")}</Button>
+                </SplitItem>
+            </Split>
+        );
+
         const credentials = consoleDetail.password ? { password: consoleDetail.password } : undefined;
         const encrypt = this.getEncrypt();
         const renderDropdownItem = keyName => {
@@ -129,11 +155,11 @@ class Vnc extends React.Component {
                     id={cockpit.format("ctrl-alt-$0", keyName)}
                     key={cockpit.format("ctrl-alt-$0", keyName)}
                     onClick={() => {
-                        return domainSendKey({ connectionName, id: vmId, keyCodes: [Enum.KEY_LEFTCTRL, Enum.KEY_LEFTALT, Enum[cockpit.format("KEY_$0", keyName.toUpperCase())]] })
+                        return domainSendKey({ connectionName: vm.connectionName, id: vm.id, keyCodes: [Enum.KEY_LEFTCTRL, Enum.KEY_LEFTALT, Enum[cockpit.format("KEY_$0", keyName.toUpperCase())]] })
                                 .catch(ex => onAddErrorNotification({
-                                    text: cockpit.format(_("Failed to send key Ctrl+Alt+$0 to VM $1"), keyName, vmName),
+                                    text: cockpit.format(_("Failed to send key Ctrl+Alt+$0 to VM $1"), keyName, vm.name),
                                     detail: ex.message,
-                                    resourceId: vmId,
+                                    resourceId: vm.id,
                                 }));
                     }}>
                     {cockpit.format(_("Ctrl+Alt+$0"), keyName)}
@@ -147,9 +173,9 @@ class Vnc extends React.Component {
         ];
         const additionalButtons = [
             <Dropdown onSelect={this.onExtraKeysDropdownToggle}
-                key={cockpit.format("$0-$1-vnc-sendkey", vmName, connectionName)}
+                key={cockpit.format("$0-$1-vnc-sendkey", vm.name, vm.connectionName)}
                 toggle={(toggleRef) => (
-                    <MenuToggle id={cockpit.format("$0-$1-vnc-sendkey", vmName, connectionName)} ref={toggleRef} onClick={(_event, isOpen) => this.setState({ isActionOpen: isOpen })}>
+                    <MenuToggle id={cockpit.format("$0-$1-vnc-sendkey", vm.name, vm.connectionName)} ref={toggleRef} onClick={(_event, isOpen) => this.setState({ isActionOpen: isOpen })}>
                         {_("Send key")}
                     </MenuToggle>
                 )}
@@ -162,23 +188,26 @@ class Vnc extends React.Component {
         ];
 
         return (
-            <VncConsole host={window.location.hostname}
-                        port={window.location.port || (encrypt ? '443' : '80')}
-                        path={path}
-                        encrypt={encrypt}
-                        shared
-                        credentials={credentials}
-                        vncLogging='warn'
-                        onDisconnected={this.onDisconnected}
-                        onInitFailed={this.onInitFailed}
-                        additionalButtons={additionalButtons}
-                        textConnecting={_("Connecting")}
-                        textDisconnected={_("Disconnected")}
-                        textDisconnect={_("Disconnect")}
-                        consoleContainerId={isExpanded ? "vnc-display-container-expanded" : "vnc-display-container-minimized"}
-                        resizeSession
-                        scaleViewport
-            />
+            <>
+                <VncConsole host={window.location.hostname}
+                    port={window.location.port || (encrypt ? '443' : '80')}
+                    path={path}
+                    encrypt={encrypt}
+                    shared
+                    credentials={credentials}
+                    vncLogging='warn'
+                    onDisconnected={this.onDisconnected}
+                    onInitFailed={this.onInitFailed}
+                    additionalButtons={additionalButtons}
+                    textConnecting={_("Connecting")}
+                    textDisconnected={_("Disconnected")}
+                    textDisconnect={_("Disconnect")}
+                    consoleContainerId={isExpanded ? "vnc-display-container-expanded" : "vnc-display-container-minimized"}
+                    resizeSession
+                    scaleViewport
+                />
+                <div className="vm-console-footer">{detail}</div>
+            </>
         );
     }
 }

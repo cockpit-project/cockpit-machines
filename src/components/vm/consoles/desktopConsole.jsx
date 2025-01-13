@@ -17,51 +17,35 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React from "react";
-import { DesktopViewer } from '@patternfly/react-console';
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { EmptyState, EmptyStateBody, EmptyStateFooter } from "@patternfly/react-core/dist/esm/components/EmptyState";
+
+import { useDialogs } from 'dialogs.jsx';
+import { ReplaceSpiceDialog } from '../vmReplaceSpiceDialog.jsx';
 
 import cockpit from "cockpit";
 
 const _ = cockpit.gettext;
 
-function fmt_to_fragments(fmt) {
-    const args = Array.prototype.slice.call(arguments, 1);
+const DesktopConsoleDownload = ({ vm, spice, onDesktopConsole }) => {
+    const Dialogs = useDialogs();
 
-    function replace(part) {
-        if (part[0] == "$") {
-            return args[parseInt(part.slice(1))];
-        } else
-            return part;
-    }
-
-    return React.createElement.apply(null, [React.Fragment, { }].concat(fmt.split(/(\$[0-9]+)/g).map(replace)));
-}
-
-const DesktopConsoleDownload = ({ vnc, spice, onDesktopConsole }) => {
     return (
-        <DesktopViewer spice={spice}
-                       vnc={vnc}
-                       onDownload={onDesktopConsole}
-                       textManualConnection={_("Manual connection")}
-                       textNoProtocol={_("No connection available")}
-                       textConnectWith={_("Connect with any viewer application for following protocols")}
-                       textAddress={_("Address")}
-                       textSpiceAddress={_("SPICE address")}
-                       textVNCAddress={_("VNC address")}
-                       textSpicePort={_("SPICE port")}
-                       textVNCPort={_("VNC port")}
-                       textSpiceTlsPort={_("SPICE TLS port")}
-                       textVNCTlsPort={_("VNC TLS port")}
-                       textConnectWithRemoteViewer={_("Launch remote viewer")}
-                       textMoreInfo={_("Remote viewer details")}
-                       textMoreInfoContent={<>
-                           <p>
-                               {fmt_to_fragments(_("Clicking \"Launch remote viewer\" will download a .vv file and launch $0."), <i>Remote Viewer</i>)}
-                           </p>
-                           <p>
-                               {fmt_to_fragments(_("$0 is available for most operating systems. To install it, search for it in GNOME Software or run the following:"), <i>Remote Viewer</i>)}
-                           </p>
-                       </>}
-        />
+        <>
+            <div className="vm-console-main">
+                <EmptyState>
+                    <EmptyStateBody><b>{_("Spice")}</b> {spice.address}:{spice.port}</EmptyStateBody>
+                    <EmptyStateFooter>
+                        <Button variant="primary" onClick={onDesktopConsole}>
+                            {_("Launch viewer")}
+                        </Button>
+                        <Button variant="link" onClick={() => Dialogs.show(<ReplaceSpiceDialog vm={vm} vms={[vm]} />)}>
+                            {_("Replace with VNC")}
+                        </Button>
+                    </EmptyStateFooter>
+                </EmptyState>
+            </div>
+        </>
     );
 };
 
