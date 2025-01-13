@@ -26,8 +26,6 @@ import { MenuToggle } from "@patternfly/react-core/dist/esm/components/MenuToggl
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
 import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/index.js";
 import { EmptyState, EmptyStateBody, EmptyStateFooter } from "@patternfly/react-core/dist/esm/components/EmptyState";
-import { InfoCircleIcon } from "@patternfly/react-icons";
-import { Popover } from "@patternfly/react-core/dist/esm/components/Popover/index.js";
 
 import { logDebug } from '../../../helpers.js';
 import { domainSendKey } from '../../../libvirtApi/domain.js';
@@ -120,19 +118,14 @@ class Vnc extends React.Component {
     }
 
     render() {
-        const { consoleDetail, connectionName, vmName, vmId, onAddErrorNotification, isExpanded } = this.props;
+        const { consoleDetail, vm, onAddErrorNotification, isExpanded } = this.props;
         const { path, isActionOpen } = this.state;
 
         if (!consoleDetail) {
             return (
                 <div className="vm-console-main">
                     <EmptyState>
-                        <EmptyStateBody>{_("Graphical support not enabled")}</EmptyStateBody>
-                        <EmptyStateFooter>
-                            <Button variant="secondary">
-                                {_("Add VNC")}
-                            </Button>
-                        </EmptyStateFooter>
+                        <EmptyStateBody>{_("VNC support not enabled. Shut down the virtual machine to add support.")}</EmptyStateBody>
                     </EmptyState>
                 </div>
             );
@@ -147,14 +140,9 @@ class Vnc extends React.Component {
             <Split>
                 <SplitItem isFilled>
                     <b>{_("VNC")}</b> {consoleDetail.address}:{consoleDetail.port}
-                    <Button variant="link">{_("Edit")}</Button>
                 </SplitItem>
                 <SplitItem>
                     <Button variant="secondary" onClick={this.props.onLaunch}>{_("Launch viewer")}</Button>
-                    {"\n"}
-                    <Popover headerContent={_("Desktop viewer")} bodyContent="Here we explain everything that you need to know about this button.">
-                        <InfoCircleIcon />
-                    </Popover>
                 </SplitItem>
             </Split>
         );
@@ -167,11 +155,11 @@ class Vnc extends React.Component {
                     id={cockpit.format("ctrl-alt-$0", keyName)}
                     key={cockpit.format("ctrl-alt-$0", keyName)}
                     onClick={() => {
-                        return domainSendKey({ connectionName, id: vmId, keyCodes: [Enum.KEY_LEFTCTRL, Enum.KEY_LEFTALT, Enum[cockpit.format("KEY_$0", keyName.toUpperCase())]] })
+                        return domainSendKey({ connectionName: vm.connectionName, id: vm.id, keyCodes: [Enum.KEY_LEFTCTRL, Enum.KEY_LEFTALT, Enum[cockpit.format("KEY_$0", keyName.toUpperCase())]] })
                                 .catch(ex => onAddErrorNotification({
-                                    text: cockpit.format(_("Failed to send key Ctrl+Alt+$0 to VM $1"), keyName, vmName),
+                                    text: cockpit.format(_("Failed to send key Ctrl+Alt+$0 to VM $1"), keyName, vm.name),
                                     detail: ex.message,
-                                    resourceId: vmId,
+                                    resourceId: vm.id,
                                 }));
                     }}>
                     {cockpit.format(_("Ctrl+Alt+$0"), keyName)}
@@ -185,9 +173,9 @@ class Vnc extends React.Component {
         ];
         const additionalButtons = [
             <Dropdown onSelect={this.onExtraKeysDropdownToggle}
-                key={cockpit.format("$0-$1-vnc-sendkey", vmName, connectionName)}
+                key={cockpit.format("$0-$1-vnc-sendkey", vm.name, vm.connectionName)}
                 toggle={(toggleRef) => (
-                    <MenuToggle id={cockpit.format("$0-$1-vnc-sendkey", vmName, connectionName)} ref={toggleRef} onClick={(_event, isOpen) => this.setState({ isActionOpen: isOpen })}>
+                    <MenuToggle id={cockpit.format("$0-$1-vnc-sendkey", vm.name, vm.connectionName)} ref={toggleRef} onClick={(_event, isOpen) => this.setState({ isActionOpen: isOpen })}>
                         {_("Send key")}
                     </MenuToggle>
                 )}

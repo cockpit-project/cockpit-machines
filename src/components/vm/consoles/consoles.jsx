@@ -27,6 +27,8 @@ import SerialConsole from './serialConsole.jsx';
 import Vnc from './vnc.jsx';
 import DesktopConsole from './desktopConsole.jsx';
 import { ReplaceSpiceDialog } from '../vmReplaceSpiceDialog.jsx';
+import { AddVNC } from './vncAdd.jsx';
+import { EditVNCModal } from './vncEdit.jsx';
 
 import {
     domainCanConsole,
@@ -41,17 +43,36 @@ const _ = cockpit.gettext;
 const VmNotRunning = ({ vm, vnc, spice }) => {
     const Dialogs = useDialogs();
 
+    function add_vnc() {
+        Dialogs.show(<AddVNC
+                         idPrefix="add-vnc"
+                         vm={vm} />);
+    }
+
+    function edit_vnc() {
+        Dialogs.show(<EditVNCModal
+                         idPrefix="edit-vnc"
+                         consoleDetail={vnc}
+                         vmName={vm.name}
+                         vmId={vm.id}
+                         connectionName={vm.connectionName} />);
+    }
+
     return (
         <div id="vm-not-running-message">
             <div>{_("Please start the virtual machine to access its console.")}</div>
             { vnc
                 ? <div>
                       <b>{_("VNC")}</b> {vnc.address}:{vnc.port}
-                      <Button variant="link">{_("Edit")}</Button>
+                      <Button variant="link" onClick={edit_vnc}>
+                          {_("Edit")}
+                      </Button>
                   </div>
                 : <div>
-                      <b>{_("VNC")}</b> {_("Not supported")}
-                      <Button variant="link">{_("Add support")}</Button>
+                      <b>{_("VNC")}</b> {_("not supported.")}
+                      <Button variant="link" onClick={add_vnc}>
+                          {_("Add support")}
+                      </Button>
                   </div>
             }
             { spice
@@ -142,9 +163,7 @@ class Consoles extends React.Component {
                                                   vmName={vm.name}
                                                   spawnArgs={domainSerialConsoleCommand({ vm, alias: pty.alias })} />))}
                 <Vnc type="VncConsole"
-                     vmName={vm.name}
-                     vmId={vm.id}
-                     connectionName={vm.connectionName}
+                     vm={vm}
                      consoleDetail={vnc}
                      onLaunch={() => this.onDesktopConsoleDownload('vnc')}
                      onAddErrorNotification={onAddErrorNotification}
