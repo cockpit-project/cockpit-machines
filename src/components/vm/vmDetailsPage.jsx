@@ -29,6 +29,7 @@ import { Card, CardBody, CardFooter, CardHeader, CardTitle } from '@patternfly/r
 import { Page, PageGroup, PageBreadcrumb, PageSection, PageSectionVariants } from "@patternfly/react-core/dist/esm/components/Page";
 import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
 import { ExpandIcon, HelpIcon } from '@patternfly/react-icons';
+import { Flex, FlexItem, ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
 import { WithDialogs } from 'dialogs.jsx';
 
 import { vmId } from "../../helpers.js";
@@ -113,6 +114,23 @@ export const VmDetailsPage = ({
         );
     }
 
+    const [selectedConsole, setSelectedConsole] = React.useState(() => {
+        if (vm.displays) {
+            if (vm.displays.find(display => display.type == "pty")) {
+                return 'SerialConsole';
+            }
+            if (vm.displays.find(display => display.type == "vnc")) {
+                return 'VncConsole';
+            }
+            if (vm.displays.find(display => display.type == "spice")) {
+                return 'DesktopViewer';
+            }
+        }
+
+        // no console defined
+        return null;
+    });
+
     const cardContents = [
         {
             id: `${vmId(vm.name)}-overview`,
@@ -137,17 +155,50 @@ export const VmDetailsPage = ({
                 id: `${vmId(vm.name)}-consoles`,
                 className: "consoles-card",
                 title: _("Console"),
-                actions: vm.state != "shut off"
-                    ? <Button variant="link"
-                          onClick={() => {
-                              const urlOptions = { name: vm.name, connection: vm.connectionName };
-                              return cockpit.location.go(["vm", "console"], { ...cockpit.location.options, ...urlOptions });
-                          }}
-                          icon={<ExpandIcon />}
-                          iconPosition="right">{_("Expand")}</Button>
-                    : null,
+                actions: (
+                    <Flex justifyContent={{ default: 'justifyContentSpaceBetween' }}>
+                        <FlexItem>
+                            <ToggleGroup aria-label="Console selection">
+                                {vm.displays && vm.displays.filter(display => display.type === 'pty').length > 0 && (
+                                    <ToggleGroupItem
+                        text={_("Serial")}
+                        buttonId="SerialConsole"
+                        isSelected={selectedConsole === 'SerialConsole'}
+                        onChange={() => setSelectedConsole('SerialConsole')}
+                                    />
+                                )}
+                                <ToggleGroupItem
+                        text={_("VNC")}
+                        buttonId="VncConsole"
+                        isSelected={selectedConsole === 'VncConsole'}
+                        onChange={() => setSelectedConsole('VncConsole')}
+                                />
+                                {(vm.displays && (vm.displays.find(display => display.type === 'vnc') || vm.displays.find(display => display.type === 'spice'))) && (
+                                    <ToggleGroupItem
+                        text={_("Desktop viewer")}
+                        buttonId="DesktopViewer"
+                        isSelected={selectedConsole === 'DesktopViewer'}
+                        onChange={() => setSelectedConsole('DesktopViewer')}
+                                    />
+                                )}
+                            </ToggleGroup>
+                        </FlexItem>
+                        {vm.state !== "shut off" && (
+                            <FlexItem>
+                                <Button variant="link"
+                    onClick={() => {
+                        const urlOptions = { name: vm.name, connection: vm.connectionName };
+                        return cockpit.location.go(["vm", "console"], { ...cockpit.location.options, ...urlOptions });
+                    }}
+                    icon={<ExpandIcon />}
+                    iconPosition="right">{_("Expand")}</Button>
+                            </FlexItem>
+                        )}
+                    </Flex>
+                ),
                 body: <Consoles vm={vm} config={config}
-                            onAddErrorNotification={onAddErrorNotification} />,
+                            onAddErrorNotification={onAddErrorNotification}
+                            selectedConsole={selectedConsole} />,
             }]
             : []),
         {
@@ -174,7 +225,7 @@ export const VmDetailsPage = ({
             title: _("Host devices"),
             actions: <VmHostDevActions vm={vm} />,
             body: <VmHostDevCard vm={vm} nodeDevices={nodeDevices} />,
-        }
+        },
     ];
     if (vm.snapshots !== -1 && vm.snapshots !== undefined) {
         cardContents.push({
