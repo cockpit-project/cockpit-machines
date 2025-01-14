@@ -49,6 +49,13 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         user = self.createUser(user_group='libvirt')
         self._testBasic(user, superuser=False)
 
+    @testlib.skipImage("No SELinux", "debian-*", "ubuntu-*", "arch", "opensuse*")
+    def testBasicSysadmU(self):
+        user = self.createUser(user_group='libvirt')
+        self.machine.execute(f"semanage login -a -s sysadm_u {user}")
+        self.addCleanup(self.machine.execute, f"semanage login -d -s sysadm_u {user}")
+        self._testBasic(user, superuser=False)
+
     def testBasicAdminUser(self):
         # The group in debian based distro should be sudo
         if "ubuntu" in self.machine.image or "debian" in self.machine.image:
