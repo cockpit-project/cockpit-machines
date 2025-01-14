@@ -168,7 +168,7 @@ class Vnc extends React.Component {
                         encrypt={encrypt}
                         shared
                         credentials={credentials}
-                        vncLogging='warn'
+                        vncLogging={ window.debugging?.includes("vnc") ? 'debug' : 'warn' }
                         onDisconnected={this.onDisconnected}
                         onInitFailed={this.onInitFailed}
                         additionalButtons={additionalButtons}
