@@ -2246,6 +2246,7 @@ vnc_password= "{vnc_passwd}"
         # Wait for virt-install to define the VM and then stop it,
         # otherwise we get 'domain is ready being removed' error
         testlib.wait(lambda: "VmNotInstalled" in m.execute("virsh list --persistent"), delay=3)
+        b.wait_in_text("#vm-VmNotInstalled-system-state", "Running")
         logfile = "/var/log/libvirt/qemu/VmNotInstalled.log"
         m.execute(f"> {logfile}")  # clear logfile
         self.performAction("VmNotInstalled", "forceOff", checkExpectedState=False)
