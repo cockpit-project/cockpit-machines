@@ -23,7 +23,7 @@ import { Button, Form, Modal, ModalVariant } from "@patternfly/react-core";
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { DialogsContext } from 'dialogs.jsx';
-import { VncRow } from './vncBody.jsx';
+import { VncRow, validateDialogValues } from './vncBody.jsx';
 import { domainChangeVncSettings, domainGet } from '../../../libvirtApi/domain.js';
 
 const _ = cockpit.gettext;
@@ -41,8 +41,9 @@ export class EditVNCModal extends React.Component {
             vmId: props.vmId,
             connectionName: props.connectionName,
             vncAddress: props.consoleDetail.address || "",
-            vncPort: props.consoleDetail.port || "",
+            vncPort: Number(props.consoleDetail.port) == -1 ? "" : props.consoleDetail.port || "",
             vncPassword: props.consoleDetail.password || "",
+            validationErrors: { },
         };
 
         this.save = this.save.bind(this);
@@ -51,7 +52,7 @@ export class EditVNCModal extends React.Component {
     }
 
     onValueChanged(key, value) {
-        const stateDelta = { [key]: value };
+        const stateDelta = { [key]: value, validationErrors: { [key]: null } };
         this.setState(stateDelta);
     }
 
@@ -61,6 +62,12 @@ export class EditVNCModal extends React.Component {
 
     save() {
         const Dialogs = this.context;
+
+        const errors = validateDialogValues(this.state);
+        if (errors) {
+            this.setState({ validationErrors: errors });
+            return;
+        }
 
         const vncParams = {
             connectionName: this.state.connectionName,
@@ -86,9 +93,11 @@ export class EditVNCModal extends React.Component {
 
         const defaultBody = (
             <Form onSubmit={e => e.preventDefault()} isHorizontal>
-                <VncRow idPrefix={idPrefix}
-                                 dialogValues={this.state}
-                                 onValueChanged={this.onValueChanged} />
+                <VncRow
+                    idPrefix={idPrefix}
+                    dialogValues={this.state}
+                    validationErrors={this.state.validationErrors}a
+                    onValueChanged={this.onValueChanged} />
             </Form>
         );
         const showWarning = () => {
@@ -96,7 +105,7 @@ export class EditVNCModal extends React.Component {
 
         return (
             <Modal position="top" variant={ModalVariant.medium} id={`${idPrefix}-dialog`} isOpen onClose={Dialogs.close} className='vnc-edit'
-                   title={_("Edit VNC settings")}
+                   title={_("Edit VNC server settings")}
                    footer={
                        <>
                            <Button isDisabled={this.state.saveDisabled} id={`${idPrefix}-save`} variant='primary' onClick={this.save}>
