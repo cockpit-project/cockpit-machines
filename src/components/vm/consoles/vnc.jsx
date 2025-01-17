@@ -149,7 +149,10 @@ class Vnc extends React.Component {
             <Dropdown onSelect={this.onExtraKeysDropdownToggle}
                 key={cockpit.format("$0-$1-vnc-sendkey", vmName, connectionName)}
                 toggle={(toggleRef) => (
-                    <MenuToggle id={cockpit.format("$0-$1-vnc-sendkey", vmName, connectionName)} ref={toggleRef} onClick={(_event, isOpen) => this.setState({ isActionOpen: isOpen })}>
+                    <MenuToggle
+                        id={cockpit.format("$0-$1-vnc-sendkey", vmName, connectionName)}
+                        ref={toggleRef}
+                        onClick={(_event) => this.setState({ isActionOpen: !isActionOpen })}>
                         {_("Send key")}
                     </MenuToggle>
                 )}
