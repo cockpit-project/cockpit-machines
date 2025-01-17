@@ -88,7 +88,25 @@ class Consoles extends React.Component {
     onDesktopConsoleDownload (type) {
         const { vm } = this.props;
         // fire download of the .vv file
-        domainDesktopConsole({ name: vm.name, id: vm.id, connectionName: vm.connectionName, consoleDetail: vm.displays.find(display => display.type == type) });
+        const consoleDetail = vm.displays.find(display => display.type == type);
+
+        let address;
+        if (cockpit.transport.host == "localhost") {
+            const app = cockpit.transport.application();
+            if (app.startsWith("cockpit+=")) {
+                address = app.substr(9);
+            } else {
+                address = window.location.hostname;
+            }
+        } else {
+            address = cockpit.transport.host;
+            const pos = address.indexOf("@");
+            if (pos >= 0) {
+                address = address.substr(pos + 1);
+            }
+        }
+
+        domainDesktopConsole({ name: vm.name, consoleDetail: { ...consoleDetail, address } });
     }
 
     render () {
