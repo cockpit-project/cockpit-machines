@@ -50,6 +50,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         self._testBasic(user, superuser=False)
 
     @testlib.skipImage("No SELinux", "debian-*", "ubuntu-*", "arch", "opensuse*")
+    @testlib.skipImage("crashes C bridge", "rhel-8*")
     def testBasicSysadmU(self):
         user = self.createUser(user_group='libvirt')
         self.machine.execute(f"semanage login -a -s sysadm_u {user}")
