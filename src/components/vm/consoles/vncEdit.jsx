@@ -96,7 +96,7 @@ export class EditVNCModal extends React.Component {
                 <VncRow
                     idPrefix={idPrefix}
                     dialogValues={this.state}
-                    validationErrors={this.state.validationErrors}a
+                    validationErrors={this.state.validationErrors}
                     onValueChanged={this.onValueChanged} />
             </Form>
         );

@@ -84,14 +84,10 @@ export const VncRow = ({ idPrefix, onValueChanged, dialogValues, validationError
 export function validateDialogValues(values) {
     const res = { };
 
-    console.log("port", JSON.stringify(values.vncPort), values.vncPort.match("^[0-9]+$"));
-
     if (values.vncPort == "")
         ; // fine
-    else if (!values.vncPort.match("^[0-9]+$"))
-        res.vncPort = _("Port must be a positive number.")
-    else if (Number(values.vncPort) < 5900)
-        res.vncPort = _("Port must be 5900 or larger.")
+    else if (!values.vncPort.match("^[0-9]+$") || Number(values.vncPort) < 5900)
+        res.vncPort = _("Port must be 5900 or larger.");
 
     return Object.keys(res).length > 0 ? res : null;
 }
