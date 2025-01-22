@@ -57,7 +57,6 @@ class Consoles extends React.Component {
         this.state = {
             serial: props.vm.displays && props.vm.displays.filter(display => display.type == 'pty'),
             selectedConsole: this.getDefaultConsole(props.vm),
-            addVncInProgress: false,
             vncAddress: "",
             vncPort: "",
             vncPassword: "",
@@ -112,7 +111,6 @@ class Consoles extends React.Component {
         const Dialogs = this.context;
         const { vm } = this.props;
 
-        this.setState({ addVncInProgress: true });
         const vncParams = {
             connectionName: vm.connectionName,
             vmName: vm.name,
@@ -127,7 +125,6 @@ class Consoles extends React.Component {
                     Dialogs.close();
                 })
                 .catch(exc => this.dialogErrorSet(_("Video device settings could not be saved"), exc.message))
-                .finally(() => this.setState({ addVncInProgress: false }));
     }
 
     render () {
