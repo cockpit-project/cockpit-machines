@@ -61,17 +61,12 @@ class Vnc extends React.Component {
         this.state = {
             path: undefined,
             isActionOpen: false,
-            vncAddress: props.consoleDetail.address || '',
-            vncPort: props.consoleDetail.port || '',
-            vncPassword: props.consoleDetail.password || '',
         };
 
         this.connect = this.connect.bind(this);
         this.onDisconnected = this.onDisconnected.bind(this);
         this.onInitFailed = this.onInitFailed.bind(this);
         this.onExtraKeysDropdownToggle = this.onExtraKeysDropdownToggle.bind(this);
-        this.onValueChanged = this.onValueChanged.bind(this);
-        this.dialogErrorSet = this.dialogErrorSet.bind(this);
     }
 
     connect(props) {
@@ -124,15 +119,6 @@ class Vnc extends React.Component {
 
     onExtraKeysDropdownToggle() {
         this.setState({ isActionOpen: false });
-    }
-
-    onValueChanged(key, value) {
-        const stateDelta = { [key]: value };
-        this.setState(stateDelta);
-    }
-
-    dialogErrorSet(text, detail) {
-        this.setState({ dialogError: text, dialogErrorDetail: detail });
     }
 
     render() {

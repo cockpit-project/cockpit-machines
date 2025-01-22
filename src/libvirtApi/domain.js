@@ -1080,16 +1080,6 @@ export function domainAttachVnc({ connectionName, vmName, vncAddress, vncPort, v
     return cockpit.spawn(args, options);
 }
 
-export function domainDetachVideo({ connectionName, index, vmName, persistent }) {
-    const options = { err: "message" };
-    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--remove-device', '--graphics', `${index + 1}`];
-
-    if (connectionName === "system")
-        options.superuser = "try";
-
-    return cockpit.spawn(args, options);
-}
-
 export function domainChangeVncSettings({
     connectionName,
     vmName,
