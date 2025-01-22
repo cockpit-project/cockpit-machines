@@ -81,10 +81,6 @@ export function needsShutdownSpice(vm) {
     return vm.hasSpice !== vm.inactiveXML.hasSpice;
 }
 
-export function needsShutdownVideo(vm, video) {
-    return false;
-}
-
 export function getDevicesRequiringShutdown(vm) {
     if (!vm.persistent)
         return [];
