@@ -21,7 +21,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
     FormGroup, FormHelperText, HelperText, HelperTextItem,
-    InputGroup, TextInput, Button
+    InputGroup, TextInput, Button, Checkbox,
 } from "@patternfly/react-core";
 import { EyeIcon, EyeSlashIcon } from "@patternfly/react-icons";
 
@@ -34,34 +34,30 @@ export const VncRow = ({ idPrefix, onValueChanged, dialogValues, validationError
 
     return (
         <>
-            <Grid hasGutter md={6}>
-                <GridItem span={6}>
-                    <FormGroup fieldId={`${idPrefix}-address`} label={_("Listening address")}>
-                        <TextInput id={`${idPrefix}-address`}
-                            value={dialogValues.vncAddress}
-                            type="text"
-                            placeholder={_("default")}
-                            onChange={(event) => onValueChanged('vncAddress', event.target.value)} />
-                    </FormGroup>
-                </GridItem>
-                <GridItem span={6}>
-                    <FormGroup fieldId={`${idPrefix}-port`} label={_("Listening port")}>
-                        <TextInput id={`${idPrefix}-port`}
-                            value={dialogValues.vncPort}
-                            type="text"
-                            placeholder={_("automatic")}
-                            validated={validationErrors.vncPort ? "error" : null}
-                            onChange={(event) => onValueChanged('vncPort', event.target.value)} />
-                        { validationErrors.vncPort &&
-                            <FormHelperText>
-                                <HelperText>
-                                    <HelperTextItem variant='error'>{validationErrors.vncPort}</HelperTextItem>
-                                </HelperText>
-                            </FormHelperText>
-                        }
-                    </FormGroup>
-                </GridItem>
-            </Grid>
+            <FormGroup
+                fieldId={`${idPrefix}-portmode`}
+                label={_("Listening")} isInline hasNoPaddingTop isStack>
+                <Checkbox
+                    id={`${idPrefix}-autoport`}
+                    label={_("Use a static port")}
+                    isChecked={dialogValues.vncCustomPort}
+                    onChange={(_ev, checked) => onValueChanged('vncCustomPort', checked)} />
+                { dialogValues.vncCustomPort &&
+                    <TextInput
+                        id={`${idPrefix}-port`}
+                        value={dialogValues.vncPort}
+                        type="text"
+                        validated={validationErrors.vncPort ? "error" : null}
+                        onChange={(event) => onValueChanged('vncPort', event.target.value)} />
+                }
+                { validationErrors.vncPort &&
+                    <FormHelperText>
+                        <HelperText>
+                            <HelperTextItem variant='error'>{validationErrors.vncPort}</HelperTextItem>
+                        </HelperText>
+                    </FormHelperText>
+                }
+            </FormGroup>
             <FormGroup fieldId={`${idPrefix}-password`} label={_("Password")}>
                 <InputGroup>
                     <TextInput
@@ -83,9 +79,7 @@ export const VncRow = ({ idPrefix, onValueChanged, dialogValues, validationError
 export function validateDialogValues(values) {
     const res = { };
 
-    if (values.vncPort == "")
-        ; // fine
-    else if (!values.vncPort.match("^[0-9]+$") || Number(values.vncPort) < 5900)
+    if (values.vncCustomPort && (!values.vncPort.match("^[0-9]+$") || Number(values.vncPort) < 5900))
         res.vncPort = _("Port must be 5900 or larger.");
 
     return Object.keys(res).length > 0 ? res : null;

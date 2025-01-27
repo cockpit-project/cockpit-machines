@@ -38,7 +38,7 @@ export class AddVNC extends React.Component {
 
         this.state = {
             dialogError: undefined,
-            vncAddress: "",
+            vncCustomPort: false,
             vncPort: "",
             vncPassword: "",
             addVncInProgress: false,
@@ -73,8 +73,8 @@ export class AddVNC extends React.Component {
         const vncParams = {
             connectionName: vm.connectionName,
             vmName: vm.name,
-            vncAddress: this.state.vncAddress || "",
-            vncPort: this.state.vncPort || "",
+            vncAddress: "",
+            vncPort: this.state.vncCustomPort ? this.state.vncPort : "",
             vncPassword: this.state.vncPassword || "",
         };
 

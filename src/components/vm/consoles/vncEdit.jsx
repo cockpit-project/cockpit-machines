@@ -38,7 +38,7 @@ export class EditVNCModal extends React.Component {
         this.state = {
             dialogError: undefined,
             saveDisabled: false,
-            vncAddress: props.consoleDetail.address || "",
+            vncCustomPort: Number(props.consoleDetail.port) != -1,
             vncPort: Number(props.consoleDetail.port) == -1 ? "" : props.consoleDetail.port || "",
             vncPassword: props.consoleDetail.password || "",
             validationErrors: { },
@@ -71,8 +71,8 @@ export class EditVNCModal extends React.Component {
         const vncParams = {
             connectionName: vm.connectionName,
             vmName: vm.name,
-            vncAddress: this.state.vncAddress || "",
-            vncPort: this.state.vncPort || "",
+            vncAddress: this.props.consoleDetail.address || "",
+            vncPort: this.state.vncCustomPort ? this.state.vncPort : "",
             vncPassword: this.state.vncPassword || "",
         };
 
