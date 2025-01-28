@@ -94,7 +94,7 @@ class Consoles extends React.Component {
         if (cockpit.transport.host == "localhost") {
             const app = cockpit.transport.application();
             if (app.startsWith("cockpit+=")) {
-                address = app.substr(9);
+                address = "wrong:" + app.substr(9);
             } else {
                 address = window.location.hostname;
             }
