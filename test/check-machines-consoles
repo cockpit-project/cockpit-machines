@@ -28,8 +28,7 @@ import testlib
 class TestMachinesConsoles(machineslib.VirtualMachinesCase):
 
     def waitDownloadFile(self, filename: str, expected_size: int | None = None, content: str | None = None) -> None:
-        b = self.browser
-        filepath = b.driver.download_dir / filename
+        filepath = self.browser.driver.download_dir / filename
 
         # Big downloads can take a while
         testlib.wait(filepath.exists, tries=120)
@@ -38,6 +37,30 @@ class TestMachinesConsoles(machineslib.VirtualMachinesCase):
 
         if content is not None:
             self.assertEqual(filepath.read_text(), content)
+
+    def waitViewerDownload(self, kind, host, port=5900):
+        self.browser.allow_download()
+        self.browser.click(".pf-v5-c-console__remote-viewer-launch-vv")  # "Launch Remote Viewer" button
+        content = f"""[virt-viewer]
+type={kind}
+host={host}
+port={port}
+delete-this-file=1
+fullscreen=0
+
+[...............................GraphicsConsole]
+"""
+        # HACK: Due to a bug in cockpit-machines, Firefox downloads the desktop
+        # viewer file as a randomly generated file while chromium as
+        # "download". As we want to download this as "$vmName.vv" in the end
+        # work around the issue for now.
+        if self.browser.browser == "chromium":
+            fname = "download"
+        else:
+            testlib.wait(lambda: len(os.listdir(self.browser.driver.download_dir)) == 1)
+            fname = os.listdir(self.browser.driver.download_dir)[0]
+
+        self.waitDownloadFile(fname, content=content)
 
     @testlib.skipImage('SPICE not supported on RHEL', "rhel-*", "centos-*")
     def testExternalConsole(self):
@@ -56,28 +79,7 @@ class TestMachinesConsoles(machineslib.VirtualMachinesCase):
         b.wait_in_text(".pf-v5-c-console__manual-connection dl > div:first-child dd", "127.0.0.1")
         b.wait_in_text(".pf-v5-c-console__manual-connection dl > div:nth-child(2) dd", "5900")
 
-        b.allow_download()
-        b.click(".pf-v5-c-console__remote-viewer-launch-vv")  # "Launch Remote Viewer" button
-        content = """[virt-viewer]
-type=spice
-host=127.0.0.1
-port=5900
-delete-this-file=1
-fullscreen=0
-
-[...............................GraphicsConsole]
-"""
-        # HACK: Due to a bug in cockpit-machines, Firefox downloads the desktop
-        # viewer file as a randomly generated file while chromium as
-        # "download". As we want to download this as "$vmName.vv" in the end
-        # work around the issue for now.
-        if b.browser == "chromium":
-            fname = "download"
-        else:
-            testlib.wait(lambda: len(os.listdir(b.driver.download_dir)) == 1)
-            fname = os.listdir(b.driver.download_dir)[0]
-
-        self.waitDownloadFile(fname, expected_size=len(content), content=content)
+        self.waitViewerDownload("spice", b.address)
 
         # Go to the expanded console view
         b.click("button:contains(Expand)")
@@ -252,6 +254,75 @@ fullscreen=0
         self.allow_journal_messages("connection unexpectedly closed by peer")
         self.allow_browser_errors("Disconnection timed out.",
                                   "Failed when connecting: Connection closed")
+
+    def testExternalConsoleMultiHost(self):
+        b = self.browser
+
+        my_ip = "172.27.0.15"
+        name = "subVmTest1"
+
+        self.setup_ssh_auth()
+        self.machine.execute(f"ssh-keyscan {my_ip} > /etc/ssh/ssh_known_hosts")
+        self.enable_multihost(self.machine)
+        self.machine.write("/etc/cockpit/cockpit.conf", "[Session]\nWarnBeforeConnecting=false\n", append=True)
+
+        self.createVm(name, graphics="vnc")
+
+        self.machine.start_cockpit()
+
+        # Direct login via SSH
+
+        b.open(f"/={my_ip}/machines")
+        b.set_val('#login-user-input', "admin")
+        b.set_val('#login-password-input', "foobar")
+        b.click("#login-button")
+
+        self.waitPageInit()
+        b.become_superuser()
+        b.enter_page("/machines")
+        self.waitVmRow(name)
+
+        self.goToVmPage(name)
+        b.wait_in_text(f"#vm-{name}-system-state", "Running")
+
+        b.click("#pf-v5-c-console__type-selector")
+        b.wait_visible("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
+        b.click("#DesktopViewer button")
+        b.wait_not_present("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
+
+        b.wait_in_text(".pf-v5-c-console__manual-connection dl > div:first-child dd", "127.0.0.1")
+        b.wait_in_text(".pf-v5-c-console__manual-connection dl > div:nth-child(2) dd", "5900")
+
+        self.waitViewerDownload("vnc", my_ip)
+
+        # Login from Shell via SSH
+
+        b.logout()
+        b.login_and_go("/system")
+
+        host = f"admin@{my_ip}"
+
+        b.add_machine(host, password=None, known_host=True, expect_warning=False)
+
+        b.go(f"/@{host}/machines")
+        b.enter_page("/machines", host=host)
+        self.waitPageInit()
+        b.become_superuser()
+        b.enter_page("/machines", host=host)
+        self.waitVmRow(name)
+
+        self.goToVmPage(name)
+        b.wait_in_text(f"#vm-{name}-system-state", "Running")
+
+        b.click("#pf-v5-c-console__type-selector")
+        b.wait_visible("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
+        b.click("#DesktopViewer button")
+        b.wait_not_present("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
+
+        b.wait_in_text(".pf-v5-c-console__manual-connection dl > div:first-child dd", "127.0.0.1")
+        b.wait_in_text(".pf-v5-c-console__manual-connection dl > div:nth-child(2) dd", "5900")
+
+        self.waitViewerDownload("vnc", my_ip)
 
 
 if __name__ == '__main__':
