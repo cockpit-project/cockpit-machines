@@ -23,8 +23,9 @@ import { Button, Form, Modal, ModalVariant } from "@patternfly/react-core";
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { DialogsContext } from 'dialogs.jsx';
-import { VncRow } from './vncBody.jsx';
+import { VncRow, validateDialogValues } from './vncBody.jsx';
 import { domainChangeVncSettings, domainGet } from '../../../libvirtApi/domain.js';
+import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
 
 const _ = cockpit.gettext;
 
@@ -37,12 +38,10 @@ export class EditVNCModal extends React.Component {
         this.state = {
             dialogError: undefined,
             saveDisabled: false,
-            vmName: props.vmName,
-            vmId: props.vmId,
-            connectionName: props.connectionName,
             vncAddress: props.consoleDetail.address || "",
-            vncPort: props.consoleDetail.port || "",
+            vncPort: Number(props.consoleDetail.port) == -1 ? "" : props.consoleDetail.port || "",
             vncPassword: props.consoleDetail.password || "",
+            validationErrors: { },
         };
 
         this.save = this.save.bind(this);
@@ -51,7 +50,7 @@ export class EditVNCModal extends React.Component {
     }
 
     onValueChanged(key, value) {
-        const stateDelta = { [key]: value };
+        const stateDelta = { [key]: value, validationErrors: { [key]: null } };
         this.setState(stateDelta);
     }
 
@@ -61,10 +60,17 @@ export class EditVNCModal extends React.Component {
 
     save() {
         const Dialogs = this.context;
+        const { vm } = this.props;
+
+        const errors = validateDialogValues(this.state);
+        if (errors) {
+            this.setState({ validationErrors: errors });
+            return;
+        }
 
         const vncParams = {
-            connectionName: this.state.connectionName,
-            vmName: this.state.vmName,
+            connectionName: vm.connectionName,
+            vmName: vm.name,
             vncAddress: this.state.vncAddress || "",
             vncPort: this.state.vncPort || "",
             vncPassword: this.state.vncPassword || "",
@@ -72,7 +78,7 @@ export class EditVNCModal extends React.Component {
 
         domainChangeVncSettings(vncParams)
                 .then(() => {
-                    domainGet({ connectionName: this.state.connectionName, id: this.state.vmId });
+                    domainGet({ connectionName: vm.connectionName, id: vm.id });
                     Dialogs.close();
                 })
                 .catch((exc) => {
@@ -82,21 +88,21 @@ export class EditVNCModal extends React.Component {
 
     render() {
         const Dialogs = this.context;
-        const { idPrefix } = this.props;
+        const { idPrefix, vm } = this.props;
 
         const defaultBody = (
             <Form onSubmit={e => e.preventDefault()} isHorizontal>
-                <VncRow idPrefix={idPrefix}
-                                 dialogValues={this.state}
-                                 onValueChanged={this.onValueChanged} />
+                <VncRow
+                    idPrefix={idPrefix}
+                    dialogValues={this.state}
+                    validationErrors={this.state.validationErrors}
+                    onValueChanged={this.onValueChanged} />
             </Form>
         );
-        const showWarning = () => {
-        };
 
         return (
             <Modal position="top" variant={ModalVariant.medium} id={`${idPrefix}-dialog`} isOpen onClose={Dialogs.close} className='vnc-edit'
-                   title={_("Edit VNC settings")}
+                   title={_("Edit VNC server settings")}
                    footer={
                        <>
                            <Button isDisabled={this.state.saveDisabled} id={`${idPrefix}-save`} variant='primary' onClick={this.save}>
@@ -108,7 +114,7 @@ export class EditVNCModal extends React.Component {
                        </>
                    }>
                 <>
-                    { showWarning() }
+                    { vm.state === 'running' && !this.state.dialogError && <NeedsShutdownAlert idPrefix={idPrefix} /> }
                     {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                     {defaultBody}
                 </>
@@ -118,9 +124,7 @@ export class EditVNCModal extends React.Component {
 }
 EditVNCModal.propTypes = {
     idPrefix: PropTypes.string.isRequired,
-    vmName: PropTypes.string.isRequired,
-    vmId: PropTypes.string.isRequired,
-    connectionName: PropTypes.string.isRequired,
+    vm: PropTypes.object.isRequired,
     consoleDetail: PropTypes.object.isRequired,
 };
 

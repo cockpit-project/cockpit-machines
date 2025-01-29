@@ -23,8 +23,10 @@ import { Button, Form, Modal, ModalVariant } from "@patternfly/react-core";
 import { DialogsContext } from 'dialogs.jsx';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
-import { VncRow } from './vncBody.jsx';
+import { VncRow, validateDialogValues } from './vncBody.jsx';
 import { domainAttachVnc, domainGet } from '../../../libvirtApi/domain.js';
+
+import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
 
 const _ = cockpit.gettext;
 
@@ -40,6 +42,7 @@ export class AddVNC extends React.Component {
             vncPort: "",
             vncPassword: "",
             addVncInProgress: false,
+            validationErrors: { },
         };
         this.add = this.add.bind(this);
         this.onValueChanged = this.onValueChanged.bind(this);
@@ -59,6 +62,12 @@ export class AddVNC extends React.Component {
     add() {
         const Dialogs = this.context;
         const { vm } = this.props;
+
+        const errors = validateDialogValues(this.state);
+        if (errors) {
+            this.setState({ validationErrors: errors });
+            return;
+        }
 
         this.setState({ addVncInProgress: true });
         const vncParams = {
@@ -80,19 +89,21 @@ export class AddVNC extends React.Component {
 
     render() {
         const Dialogs = this.context;
-        const { idPrefix } = this.props;
+        const { idPrefix, vm } = this.props;
 
         const defaultBody = (
             <Form onSubmit={e => e.preventDefault()} isHorizontal>
-                <VncRow idPrefix={idPrefix}
-                                 dialogValues={this.state}
-                                 onValueChanged={this.onValueChanged} />
+                <VncRow
+                    idPrefix={idPrefix}
+                    dialogValues={this.state}
+                    validationErrors={this.state.validationErrors}
+                    onValueChanged={this.onValueChanged} />
             </Form>
         );
 
         return (
             <Modal position="top" variant={ModalVariant.medium} id={`${idPrefix}-dialog`} isOpen onClose={Dialogs.close} className='vnc-add'
-                title={_("Add VNC")}
+                title={_("Add VNC server")}
                 footer={
                     <>
                         <Button isLoading={this.state.addVncInProgress}
@@ -107,6 +118,7 @@ export class AddVNC extends React.Component {
                         </Button>
                     </>
                 }>
+                { vm.state === 'running' && !this.state.dialogError && <NeedsShutdownAlert idPrefix={idPrefix} /> }
                 {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                 {defaultBody}
             </Modal>
