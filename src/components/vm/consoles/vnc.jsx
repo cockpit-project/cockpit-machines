@@ -20,19 +20,26 @@ import React from 'react';
 import cockpit from 'cockpit';
 
 import { VncConsole } from '@patternfly/react-console';
+import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
 import { Dropdown, DropdownItem, DropdownList } from "@patternfly/react-core/dist/esm/components/Dropdown";
 import { MenuToggle } from "@patternfly/react-core/dist/esm/components/MenuToggle";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
 import { EmptyState, EmptyStateBody, EmptyStateFooter } from "@patternfly/react-core/dist/esm/components/EmptyState";
 import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/index.js";
+import { DescriptionList, DescriptionListTerm, DescriptionListGroup, DescriptionListDescription } from "@patternfly/react-core/dist/esm/components/DescriptionList";
+import { Text, TextContent, TextVariants, TextList, TextListItem, TextListItemVariants, TextListVariants } from "@patternfly/react-core/dist/esm/components/Text";
+import { ClipboardCopy } from "@patternfly/react-core/dist/esm/components/ClipboardCopy/index.js";
 
-import { useDialogs } from 'dialogs.jsx';
+import { useDialogs, DialogsContext } from 'dialogs.jsx';
+import { KebabDropdown } from 'cockpit-components-dropdown.jsx';
+import { fmt_to_fragments } from 'utils.jsx';
 
 import { logDebug } from '../../../helpers.js';
 import { domainSendKey } from '../../../libvirtApi/domain.js';
 import { AddVNC } from './vncAdd.jsx';
 import { EditVNCModal } from './vncEdit.jsx';
+import { ReplaceSpiceDialog } from '../vmReplaceSpiceDialog.jsx';
 
 const _ = cockpit.gettext;
 // https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h
@@ -55,7 +62,7 @@ const Enum = {
     KEY_DELETE: 111,
 };
 
-export const VncState = ({ vm, vnc }) => {
+export const VncState = ({ vm, vnc, spice }) => {
     const Dialogs = useDialogs();
 
     function add_vnc() {
@@ -66,31 +73,59 @@ export const VncState = ({ vm, vnc }) => {
         Dialogs.show(<EditVNCModal idPrefix="edit-vnc" vm={vm} consoleDetail={vnc} />);
     }
 
+    function replace_spice() {
+        Dialogs.show(<ReplaceSpiceDialog vm={vm} vms={[vm]} />);
+    }
+
     if (vm.state == "running" && !vnc) {
-        return (
-            <EmptyState>
-                <EmptyStateBody>
-                    {_("Graphical support not enabled.")}
-                </EmptyStateBody>
-                <EmptyStateFooter>
-                    <Button variant="secondary" onClick={add_vnc}>
-                        {_("Add VNC")}
-                    </Button>
-                </EmptyStateFooter>
-            </EmptyState>
-        );
+        if (!spice) {
+            return (
+                <EmptyState>
+                    <EmptyStateBody>
+                        {_("Graphical support not enabled.")}
+                    </EmptyStateBody>
+                    <EmptyStateFooter>
+                        <Button variant="secondary" onClick={add_vnc}>
+                            {_("Add VNC")}
+                        </Button>
+                    </EmptyStateFooter>
+                </EmptyState>
+            );
+        } else {
+            return (
+                <EmptyState>
+                    <EmptyStateBody>
+                        {_("SPICE graphical console can not be shown here.")}
+                    </EmptyStateBody>
+                    <EmptyStateFooter>
+                        <Button variant="secondary" onClick={replace_spice}>
+                            {_("Convert to VNC")}
+                        </Button>
+                    </EmptyStateFooter>
+                </EmptyState>
+            );
+        }
     }
 
     let vnc_info;
     let vnc_action;
 
     if (!vnc) {
-        vnc_info = _("not supported");
-        vnc_action = (
-            <Button variant="link" isInline onClick={add_vnc}>
-                {_("Add support")}
-            </Button>
-        );
+        if (!spice) {
+            vnc_info = _("not supported");
+            vnc_action = (
+                <Button variant="link" isInline onClick={add_vnc}>
+                    {_("Add support")}
+                </Button>
+            );
+        } else {
+            vnc_info = _("SPICE, can not be shown here");
+            vnc_action = (
+                <Button variant="link" isInline onClick={replace_spice}>
+                    {_("Convert to VNC")}
+                </Button>
+            );
+        }
     } else {
         if (vnc.port == -1)
             vnc_info = _("VNC, dynamic port");
@@ -128,18 +163,74 @@ export const VncState = ({ vm, vnc }) => {
     );
 };
 
+const VncConnectInfo = ({ vm, connection_address, vnc, spice }) => {
+    function TLI(term, description) {
+        // What is this? Java?
+        return (
+            <>
+                <TextListItem component={TextListItemVariants.dt}>{term}</TextListItem>
+                <TextListItem component={TextListItemVariants.dd}>{description}</TextListItem>
+            </>
+        );
+    }
+
+    return (
+        <>
+            <TextContent>
+                <Text component={TextVariants.p}>
+                    {fmt_to_fragments(_('Clicking "Launch viewer" will download a $0 file and launch the Remote Viewer application on your system.'), <code>.vv</code>)}
+                </Text>
+                <Text component={TextVariants.p}>
+                    {_('Remote Viewer is available for most operating systems. To install it, search for "Remote Viewer" in GNOME Software, KDE Discover, or run the following:')}
+                </Text>
+                <TextList component={TextListVariants.dl}>
+                    {TLI(_("RHEL, CentOS"), <code>sudo yum install virt-viewer</code>)}
+                    {TLI(_("Fedora"), <code>sudo dnf install virt-viewer</code>)}
+                    {TLI(_("Ubuntu, Debian"), <code>sudo apt-get install virt-viewer</code>)}
+                    {TLI(_("Windows"),
+                        fmt_to_fragments(
+                            _("Download the MSI from $0"),
+                            <a href="https://virt-manager.org/download" target="_blank" rel="noopener noreferrer">
+                                {"virt-manager.org"}
+                            </a>))}
+                </TextList>
+                { (vnc || spice) &&
+                    <>
+                        <Text component={TextVariants.p}>
+                            {_('Other remote viewer applications can connect to the following address:')}
+                        </Text>
+                        <Text component={TextVariants.p}>
+                            <ClipboardCopy
+                                hoverTip={_("Copy to clipboard")}
+                                clickTip={_("Successfully copied to clipboard!")}
+                                variant="inline-compact"
+                                isCode>
+                                {vnc
+                                    ? cockpit.format("vnc://$0:$1", connection_address, vnc.port)
+                                    : cockpit.format("spice://$0:$1", connection_address, spice.port)
+                                }
+                            </ClipboardCopy>
+                        </Text>
+                    </>
+                }
+            </TextContent>
+        </>
+    );
+};
+
 class Vnc extends React.Component {
+    static contextType = DialogsContext;
+
     constructor(props) {
         super(props);
         this.state = {
             path: undefined,
-            isActionOpen: false,
+            connected: true,
         };
 
         this.connect = this.connect.bind(this);
         this.onDisconnected = this.onDisconnected.bind(this);
         this.onInitFailed = this.onInitFailed.bind(this);
-        this.onExtraKeysDropdownToggle = this.onExtraKeysDropdownToggle.bind(this);
     }
 
     connect(props) {
@@ -184,34 +275,28 @@ class Vnc extends React.Component {
 
     onDisconnected(detail) { // server disconnected
         console.info('Connection lost: ', detail);
+        this.setState({ connected: false });
     }
 
     onInitFailed(detail) {
         console.error('VncConsole failed to init: ', detail, this);
     }
 
-    onExtraKeysDropdownToggle() {
-        this.setState({ isActionOpen: false });
-    }
-
     render() {
-        const { consoleDetail, inactiveConsoleDetail, vm, onAddErrorNotification, isExpanded } = this.props;
-        const { path, isActionOpen } = this.state;
+        const Dialogs = this.context;
+        const {
+            consoleDetail, inactiveConsoleDetail, vm, onAddErrorNotification, isExpanded, connectionAddress,
+            spiceDetail,
+        } = this.props;
+        const { path, connected } = this.state;
 
-        if (!consoleDetail) {
-            return (
-                <div className="pf-v5-c-console__vnc">
-                    <VncState vm={vm} vnc={inactiveConsoleDetail} />
-                </div>
-            );
+        function edit_vnc() {
+            Dialogs.show(<EditVNCModal
+                             idPrefix="edit-vnc"
+                             consoleDetail={inactiveConsoleDetail}
+                             vm={vm} />);
         }
 
-        if (!path) {
-            // postpone rendering until consoleDetail is known and channel ready
-            return null;
-        }
-        const credentials = consoleDetail.password ? { password: consoleDetail.password } : undefined;
-        const encrypt = this.getEncrypt();
         const renderDropdownItem = keyName => {
             return (
                 <DropdownItem
@@ -233,44 +318,101 @@ class Vnc extends React.Component {
             ...['Delete', 'Backspace'].map(key => renderDropdownItem(key)),
             <Divider key="separator" />,
             ...[...Array(12).keys()].map(key => renderDropdownItem(cockpit.format("F$0", key + 1))),
-        ];
-        const additionalButtons = [
-            <Dropdown onSelect={this.onExtraKeysDropdownToggle}
-                key={cockpit.format("$0-$1-vnc-sendkey", vm.name, vm.connectionName)}
-                toggle={(toggleRef) => (
-                    <MenuToggle
-                        id={cockpit.format("$0-$1-vnc-sendkey", vm.name, vm.connectionName)}
-                        ref={toggleRef}
-                        onClick={(_event) => this.setState({ isActionOpen: !isActionOpen })}>
-                        {_("Send key")}
-                    </MenuToggle>
-                )}
-                isOpen={isActionOpen}
-            >
-                <DropdownList>
-                    {dropdownItems}
-                </DropdownList>
-            </Dropdown>
+            <Divider key="separator2" />,
+            <DropdownItem
+                id="vnc-edit"
+                key="edit"
+                onClick={edit_vnc}>
+                {_("Edit VNC server settings")}
+            </DropdownItem>,
+            <DropdownItem
+                id="vnc-disconnect"
+                key="disconnect"
+                onClick={() => this.setState({ connected: false })}>
+                {_("Disconnect")}
+            </DropdownItem>,
         ];
 
+        const detail = (
+            <Split>
+                <SplitItem isFilled>
+                    <Button variant="secondary" onClick={this.props.onLaunch}>{_("Launch viewer")}</Button>
+                    <Popover
+                        className="ct-remote-viewer-popover"
+                        headerContent={_("Remote viewer")}
+                        hasAutoWidth
+                        bodyContent={<VncConnectInfo
+                                         vm={vm}
+                                         vnc={consoleDetail}
+                                         spice={spiceDetail}
+                                         connection_address={connectionAddress} />}>
+                        <Button variant="plain">
+                            {_("How to connect")}
+                        </Button>
+                    </Popover>
+                </SplitItem>
+                <SplitItem>
+                    { (connected && consoleDetail) &&
+                        <KebabDropdown
+                            toggleButtonId={"vnc-actions"}
+                            position='right'
+                            dropdownItems={dropdownItems}
+                        />
+                    }
+                </SplitItem>
+            </Split>
+        );
+
+        if (!consoleDetail) {
+            return (
+                <>
+                    <div className="pf-v5-c-console__vnc">
+                        <VncState vm={vm} vnc={inactiveConsoleDetail} spice={spiceDetail} />
+                    </div>
+                    { spiceDetail && <div className="vm-console-footer">{detail}</div> }
+                </>
+            );
+        }
+
+        if (!path) {
+            // postpone rendering until consoleDetail is known and channel ready
+            return null;
+        }
+
+        const credentials = consoleDetail.password ? { password: consoleDetail.password } : undefined;
+        const encrypt = this.getEncrypt();
+
         return (
-            <VncConsole host={window.location.hostname}
-                        port={window.location.port || (encrypt ? '443' : '80')}
-                        path={path}
-                        encrypt={encrypt}
-                        shared
-                        credentials={credentials}
-                        vncLogging={ window.debugging?.includes("vnc") ? 'debug' : 'warn' }
-                        onDisconnected={this.onDisconnected}
-                        onInitFailed={this.onInitFailed}
-                        additionalButtons={additionalButtons}
-                        textConnecting={_("Connecting")}
-                        textDisconnected={_("Disconnected")}
-                        textDisconnect={_("Disconnect")}
-                        consoleContainerId={isExpanded ? "vnc-display-container-expanded" : "vnc-display-container-minimized"}
-                        resizeSession
-                        scaleViewport
-            />
+            <>
+                { connected
+                    ? <VncConsole
+                          host={window.location.hostname}
+                          port={window.location.port || (encrypt ? '443' : '80')}
+                          path={path}
+                          encrypt={encrypt}
+                          shared
+                          credentials={credentials}
+                          vncLogging={ window.debugging?.includes("vnc") ? 'debug' : 'warn' }
+                          onDisconnected={this.onDisconnected}
+                          onInitFailed={this.onInitFailed}
+                          textConnecting={_("Connecting")}
+                          consoleContainerId={isExpanded ? "vnc-display-container-expanded" : "vnc-display-container-minimized"}
+                          resizeSession
+                          scaleViewport
+                    />
+                    : <div className="pf-v5-c-console__vnc">
+                          <EmptyState>
+                              <EmptyStateBody>{_("Disconnected")}</EmptyStateBody>
+                              <EmptyStateFooter>
+                                  <Button variant="primary" onClick={() => this.setState({ connected: true })}>
+                                      {_("Connect")}
+                                  </Button>
+                              </EmptyStateFooter>
+                          </EmptyState>
+                      </div>
+                }
+                <div className="vm-console-footer">{detail}</div>
+            </>
         );
     }
 }
