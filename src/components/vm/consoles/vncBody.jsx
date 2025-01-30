@@ -21,8 +21,10 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
     FormGroup, FormHelperText, HelperText, HelperTextItem,
-    InputGroup, TextInput, Button, Checkbox,
+    Grid, GridItem,
+    InputGroup, TextInput, Button, Checkbox
 } from "@patternfly/react-core";
+import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/index.js";
 import { EyeIcon, EyeSlashIcon } from "@patternfly/react-icons";
 
 import cockpit from 'cockpit';

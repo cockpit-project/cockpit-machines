@@ -22,8 +22,9 @@ import cockpit from 'cockpit';
 import { AccessConsoles } from "@patternfly/react-console";
 
 import SerialConsole from './serialConsole.jsx';
-import Vnc from './vnc.jsx';
+import Vnc, { VncState } from './vnc.jsx';
 import DesktopConsole from './desktopConsole.jsx';
+
 import {
     domainCanConsole,
     domainDesktopConsole,
@@ -33,14 +34,6 @@ import {
 import './consoles.css';
 
 const _ = cockpit.gettext;
-
-const VmNotRunning = () => {
-    return (
-        <div id="vm-not-running-message">
-            {_("Please start the virtual machine to access its console.")}
-        </div>
-    );
-};
 
 class Consoles extends React.Component {
     constructor (props) {
@@ -81,8 +74,9 @@ class Consoles extends React.Component {
             return 'SerialConsole';
         }
 
-        // no console defined
-        return null;
+        // no console defined, but the VncConsole is always there and
+        // will instruct people how to enable it for real.
+        return 'VncConsole';
     }
 
     onDesktopConsoleDownload (type) {
@@ -114,9 +108,14 @@ class Consoles extends React.Component {
         const { serial } = this.state;
         const spice = vm.displays && vm.displays.find(display => display.type == 'spice');
         const vnc = vm.displays && vm.displays.find(display => display.type == 'vnc');
+        const inactive_vnc = vm.inactiveXML.displays && vm.inactiveXML.displays.find(display => display.type == 'vnc');
 
         if (!domainCanConsole || !domainCanConsole(vm.state)) {
-            return (<VmNotRunning />);
+            return (
+                <div id="vm-not-running-message">
+                    <VncState vm={vm} vnc={inactive_vnc} />
+                </div>
+            );
         }
 
         const onDesktopConsole = () => { // prefer spice over vnc
@@ -127,21 +126,19 @@ class Consoles extends React.Component {
             <AccessConsoles preselectedType={this.getDefaultConsole()}
                             textSelectConsoleType={_("Select console type")}
                             textSerialConsole={_("Serial console")}
-                            textVncConsole={_("VNC console")}
+                            textVncConsole={_("Graphical console")}
                             textDesktopViewerConsole={_("Desktop viewer")}>
                 {serial.map((pty, idx) => (<SerialConsole type={serial.length == 1 ? "SerialConsole" : cockpit.format(_("Serial console ($0)"), pty.alias || idx)}
                                                   key={"pty-" + idx}
                                                   connectionName={vm.connectionName}
                                                   vmName={vm.name}
                                                   spawnArgs={domainSerialConsoleCommand({ vm, alias: pty.alias })} />))}
-                {vnc &&
                 <Vnc type="VncConsole"
-                     vmName={vm.name}
-                     vmId={vm.id}
-                     connectionName={vm.connectionName}
+                     vm={vm}
                      consoleDetail={vnc}
+                     inactiveConsoleDetail={inactive_vnc}
                      onAddErrorNotification={onAddErrorNotification}
-                     isExpanded={isExpanded} />}
+                     isExpanded={isExpanded} />
                 {(vnc || spice) &&
                 <DesktopConsole type="DesktopViewer"
                                 onDesktopConsole={onDesktopConsole}

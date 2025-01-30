@@ -22,10 +22,17 @@ import cockpit from 'cockpit';
 import { VncConsole } from '@patternfly/react-console';
 import { Dropdown, DropdownItem, DropdownList } from "@patternfly/react-core/dist/esm/components/Dropdown";
 import { MenuToggle } from "@patternfly/react-core/dist/esm/components/MenuToggle";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
+import { EmptyState, EmptyStateBody, EmptyStateFooter } from "@patternfly/react-core/dist/esm/components/EmptyState";
+import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/index.js";
+
+import { useDialogs } from 'dialogs.jsx';
 
 import { logDebug } from '../../../helpers.js';
 import { domainSendKey } from '../../../libvirtApi/domain.js';
+import { AddVNC } from './vncAdd.jsx';
+import { EditVNCModal } from './vncEdit.jsx';
 
 const _ = cockpit.gettext;
 // https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h
@@ -46,6 +53,79 @@ const Enum = {
     KEY_F11: 87,
     KEY_F12: 88,
     KEY_DELETE: 111,
+};
+
+export const VncState = ({ vm, vnc }) => {
+    const Dialogs = useDialogs();
+
+    function add_vnc() {
+        Dialogs.show(<AddVNC idPrefix="add-vnc" vm={vm} />);
+    }
+
+    function edit_vnc() {
+        Dialogs.show(<EditVNCModal idPrefix="edit-vnc" vm={vm} consoleDetail={vnc} />);
+    }
+
+    if (vm.state == "running" && !vnc) {
+        return (
+            <EmptyState>
+                <EmptyStateBody>
+                    {_("Graphical support not enabled.")}
+                </EmptyStateBody>
+                <EmptyStateFooter>
+                    <Button variant="secondary" onClick={add_vnc}>
+                        {_("Add VNC")}
+                    </Button>
+                </EmptyStateFooter>
+            </EmptyState>
+        );
+    }
+
+    let vnc_info;
+    let vnc_action;
+
+    if (!vnc) {
+        vnc_info = _("not supported");
+        vnc_action = (
+            <Button variant="link" isInline onClick={add_vnc}>
+                {_("Add support")}
+            </Button>
+        );
+    } else {
+        if (vnc.port == -1)
+            vnc_info = _("VNC, dynamic port");
+        else
+            vnc_info = cockpit.format(_("VNC, port $0"), vnc.port);
+
+        vnc_action = (
+            <Button variant="link" isInline onClick={edit_vnc}>
+                {_("Edit")}
+            </Button>
+        );
+    }
+
+    return (
+        <>
+            <p>
+                {
+                    vm.state == "running"
+                        ? _("Shut down and restart the virtual machine to access the graphical console.")
+                        : _("Please start the virtual machine to access its console.")
+                }
+            </p>
+            <br />
+            <div>
+                <Split hasGutter>
+                    <SplitItem isFilled>
+                        <span><b>{_("Graphical console:")}</b> {vnc_info}</span>
+                    </SplitItem>
+                    <SplitItem>
+                        {vnc_action}
+                    </SplitItem>
+                </Split>
+            </div>
+        </>
+    );
 };
 
 class Vnc extends React.Component {
@@ -115,9 +195,18 @@ class Vnc extends React.Component {
     }
 
     render() {
-        const { consoleDetail, connectionName, vmName, vmId, onAddErrorNotification, isExpanded } = this.props;
+        const { consoleDetail, inactiveConsoleDetail, vm, onAddErrorNotification, isExpanded } = this.props;
         const { path, isActionOpen } = this.state;
-        if (!consoleDetail || !path) {
+
+        if (!consoleDetail) {
+            return (
+                <div className="pf-v5-c-console__vnc">
+                    <VncState vm={vm} vnc={inactiveConsoleDetail} />
+                </div>
+            );
+        }
+
+        if (!path) {
             // postpone rendering until consoleDetail is known and channel ready
             return null;
         }
@@ -129,11 +218,11 @@ class Vnc extends React.Component {
                     id={cockpit.format("ctrl-alt-$0", keyName)}
                     key={cockpit.format("ctrl-alt-$0", keyName)}
                     onClick={() => {
-                        return domainSendKey({ connectionName, id: vmId, keyCodes: [Enum.KEY_LEFTCTRL, Enum.KEY_LEFTALT, Enum[cockpit.format("KEY_$0", keyName.toUpperCase())]] })
+                        return domainSendKey({ connectionName: vm.connectionName, id: vm.id, keyCodes: [Enum.KEY_LEFTCTRL, Enum.KEY_LEFTALT, Enum[cockpit.format("KEY_$0", keyName.toUpperCase())]] })
                                 .catch(ex => onAddErrorNotification({
-                                    text: cockpit.format(_("Failed to send key Ctrl+Alt+$0 to VM $1"), keyName, vmName),
+                                    text: cockpit.format(_("Failed to send key Ctrl+Alt+$0 to VM $1"), keyName, vm.name),
                                     detail: ex.message,
-                                    resourceId: vmId,
+                                    resourceId: vm.id,
                                 }));
                     }}>
                     {cockpit.format(_("Ctrl+Alt+$0"), keyName)}
@@ -147,10 +236,10 @@ class Vnc extends React.Component {
         ];
         const additionalButtons = [
             <Dropdown onSelect={this.onExtraKeysDropdownToggle}
-                key={cockpit.format("$0-$1-vnc-sendkey", vmName, connectionName)}
+                key={cockpit.format("$0-$1-vnc-sendkey", vm.name, vm.connectionName)}
                 toggle={(toggleRef) => (
                     <MenuToggle
-                        id={cockpit.format("$0-$1-vnc-sendkey", vmName, connectionName)}
+                        id={cockpit.format("$0-$1-vnc-sendkey", vm.name, vm.connectionName)}
                         ref={toggleRef}
                         onClick={(_event) => this.setState({ isActionOpen: !isActionOpen })}>
                         {_("Send key")}
