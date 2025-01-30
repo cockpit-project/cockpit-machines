@@ -37,7 +37,7 @@ import { VmFilesystemsCard, VmFilesystemActions } from './filesystems/vmFilesyst
 import { VmDisksCardLibvirt, VmDisksActions } from './disks/vmDisksCard.jsx';
 import { VmNetworkTab, VmNetworkActions } from './nics/vmNicsCard.jsx';
 import { VmHostDevCard, VmHostDevActions } from './hostdevs/hostDevCard.jsx';
-import Consoles from './consoles/consoles.jsx';
+import Consoles, { ConsoleCard } from './consoles/consoles.jsx';
 import VmOverviewCard from './overview/vmOverviewCard.jsx';
 import VmUsageTab from './vmUsageCard.jsx';
 import { VmSnapshotsCard, VmSnapshotsActions } from './snapshots/vmSnapshotsCard.jsx';
@@ -133,20 +133,11 @@ export const VmDetailsPage = ({
             body: <VmUsageTab vm={vm} />,
         },
         {
-            id: `${vmId(vm.name)}-consoles`,
-            className: "consoles-card",
-            title: _("Console"),
-            actions: vm.state != "shut off"
-                ? <Button variant="link"
-                      onClick={() => {
-                          const urlOptions = { name: vm.name, connection: vm.connectionName };
-                          return cockpit.location.go(["vm", "console"], { ...cockpit.location.options, ...urlOptions });
-                      }}
-                      icon={<ExpandIcon />}
-                      iconPosition="right">{_("Expand")}</Button>
-                : null,
-            body: <Consoles vm={vm} config={config}
-                      onAddErrorNotification={onAddErrorNotification} />,
+            card: <ConsoleCard
+                      key={`${vmId(vm.name)}-consoles`}
+                      vm={vm}
+                      config={config}
+                      onAddErrorNotification={onAddErrorNotification} />
         },
         {
             id: `${vmId(vm.name)}-disks`,
@@ -224,6 +215,8 @@ export const VmDetailsPage = ({
     }
 
     const cards = cardContents.map(card => {
+        if (card.card)
+            return card.card;
         return (
             <Card key={card.id}
                   className={card.className}
