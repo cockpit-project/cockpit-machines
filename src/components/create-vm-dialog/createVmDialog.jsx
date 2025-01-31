@@ -864,7 +864,7 @@ const CloudInitOptionsRow = ({
                 label={_("SSH keys")}
                 actionLabel={_("Add SSH keys")}
                 onChange={value => onValueChanged('sshKeys', value)}
-                itemcomponent={ <SshKeysRow />} />
+                itemcomponent={SshKeysRow} />
         </>
     );
 };
