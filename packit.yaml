@@ -27,8 +27,8 @@ jobs:
     trigger: pull_request
     packages: [cockpit-machines-fedora]
     targets:
-    - fedora-40
     - fedora-41
+    - fedora-42
     - fedora-development
 
   - job: copr_build
@@ -42,8 +42,8 @@ jobs:
     packages: [cockpit-machines-fedora]
     trigger: pull_request
     targets:
-      - fedora-40
       - fedora-41
+      - fedora-42
       - fedora-development
 
   - job: tests
@@ -70,8 +70,8 @@ jobs:
     trigger: release
     packages: [cockpit-machines-fedora]
     dist_git_branches:
-      - fedora-40
       - fedora-41
+      - fedora-42
       - fedora-development
 
   - job: propose_downstream
@@ -84,8 +84,8 @@ jobs:
     trigger: commit
     packages: [cockpit-machines-fedora]
     dist_git_branches:
-      - fedora-40
       - fedora-41
+      - fedora-42
       - fedora-development
 
   - job: bodhi_update
@@ -93,5 +93,5 @@ jobs:
     packages: [cockpit-machines-fedora]
     dist_git_branches:
       # rawhide updates are created automatically
-      - fedora-40
       - fedora-41
+      - fedora-42
