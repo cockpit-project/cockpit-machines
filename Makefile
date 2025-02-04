@@ -40,7 +40,7 @@ COCKPIT_REPO_FILES = \
 	$(NULL)
 
 COCKPIT_REPO_URL = https://github.com/cockpit-project/cockpit.git
-COCKPIT_REPO_COMMIT = 8ba240136c7bea2a29d7eb3b4f98fd9a387e5d99 # 332 + 19 commits
+COCKPIT_REPO_COMMIT = 403e669037e7eea71fc3e40060b6271ddfc9cc7e # mvollmer:lib-kebab-drills
 
 $(COCKPIT_REPO_FILES): $(COCKPIT_REPO_STAMP)
 COCKPIT_REPO_TREE = '$(strip $(COCKPIT_REPO_COMMIT))^{tree}'
