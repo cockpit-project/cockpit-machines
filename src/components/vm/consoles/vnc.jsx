@@ -56,6 +56,8 @@ class Vnc extends React.Component {
             isActionOpen: false,
         };
 
+        this.credentials = null;
+
         this.connect = this.connect.bind(this);
         this.onDisconnected = this.onDisconnected.bind(this);
         this.onInitFailed = this.onInitFailed.bind(this);
@@ -121,7 +123,13 @@ class Vnc extends React.Component {
             // postpone rendering until consoleDetail is known and channel ready
             return null;
         }
-        const credentials = consoleDetail.password ? { password: consoleDetail.password } : undefined;
+
+        // We must pass the very same object to VncConsole.credentials
+        // on every render. Otherwise VncConsole thinks credentials
+        // have changed and will reconnect.
+        if (!this.credentials || this.credentials.password != consoleDetail.password)
+            this.credentials = { password: consoleDetail.password };
+
         const encrypt = this.getEncrypt();
         const renderDropdownItem = keyName => {
             return (
@@ -170,7 +178,7 @@ class Vnc extends React.Component {
                         path={path}
                         encrypt={encrypt}
                         shared
-                        credentials={credentials}
+                        credentials={this.credentials}
                         vncLogging={ window.debugging?.includes("vnc") ? 'debug' : 'warn' }
                         onDisconnected={this.onDisconnected}
                         onInitFailed={this.onInitFailed}
