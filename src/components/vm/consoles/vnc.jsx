@@ -23,6 +23,7 @@ import { VncConsole } from '@patternfly/react-console';
 import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
 import { Dropdown, DropdownItem, DropdownList } from "@patternfly/react-core/dist/esm/components/Dropdown";
 import { MenuToggle } from "@patternfly/react-core/dist/esm/components/MenuToggle";
+import { MenuItem, DrilldownMenu } from "@patternfly/react-core/dist/esm/components/Menu";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
 import { EmptyState, EmptyStateBody, EmptyStateFooter } from "@patternfly/react-core/dist/esm/components/EmptyState";
@@ -315,10 +316,28 @@ class Vnc extends React.Component {
             );
         };
         const dropdownItems = [
-            ...['Delete', 'Backspace'].map(key => renderDropdownItem(key)),
-            <Divider key="separator" />,
-            ...[...Array(12).keys()].map(key => renderDropdownItem(cockpit.format("F$0", key + 1))),
-            <Divider key="separator2" />,
+            <DropdownItem
+                key="sendkey"
+                itemId="drilldown:sendkey"
+                direction="down"
+                drilldownMenu={
+                    <DrilldownMenu id="sendkey-menu">
+                        {
+                            [
+                                <MenuItem key="back" itemId="drilldown:sendkey_back" direction="up">
+                                    {_("Send key")}
+                                </MenuItem>,
+                                <Divider key="divider" />,
+                                ...['Delete', 'Backspace'].map(key => renderDropdownItem(key)),
+                                <Divider key="separator" />,
+                                ...[...Array(12).keys()].map(key => renderDropdownItem(cockpit.format("F$0", key + 1))),
+                            ]
+                        }
+                    </DrilldownMenu>
+                }
+            >
+                {_("Send key")}
+            </DropdownItem>,
             <DropdownItem
                 id="vnc-edit"
                 key="edit"
@@ -354,8 +373,24 @@ class Vnc extends React.Component {
                 <SplitItem>
                     { (connected && consoleDetail) &&
                         <KebabDropdown
+                            id="vnc-actions-menu"
                             toggleButtonId={"vnc-actions"}
-                            position='right'
+                            popperProps={{
+                                positions: 'right',
+                                direction: 'up',
+                                /* XXX - For some reason, the
+                                   drilldown menu is exactly as wide
+                                   as the menu item that opens it.  In
+                                   our case, "Send key" is too short
+                                   and "Ctrl+Alt+BackSpace" will be
+                                   cut off. Thus, we hard code the
+                                   popper width here. Also, it looks
+                                   nicer when the popper doesn't
+                                   change width during drilling.
+                                 */
+                                minWidth: '200px',
+                            }}
+                            containsDrilldown
                             dropdownItems={dropdownItems}
                         />
                     }
