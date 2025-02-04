@@ -17,7 +17,7 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import PropTypes from 'prop-types';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import cockpit from 'cockpit';
 
 import { Breadcrumb, BreadcrumbItem } from "@patternfly/react-core/dist/esm/components/Breadcrumb";
@@ -37,7 +37,7 @@ import { VmFilesystemsCard, VmFilesystemActions } from './filesystems/vmFilesyst
 import { VmDisksCardLibvirt, VmDisksActions } from './disks/vmDisksCard.jsx';
 import { VmNetworkTab, VmNetworkActions } from './nics/vmNicsCard.jsx';
 import { VmHostDevCard, VmHostDevActions } from './hostdevs/hostDevCard.jsx';
-import Consoles from './consoles/consoles.jsx';
+import { ConsoleCard, Console, console_name } from './consoles/consoles.jsx';
 import VmOverviewCard from './overview/vmOverviewCard.jsx';
 import VmUsageTab from './vmUsageCard.jsx';
 import { VmSnapshotsCard, VmSnapshotsActions } from './snapshots/vmSnapshotsCard.jsx';
@@ -63,6 +63,8 @@ export const VmDetailsPage = ({
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    const [consoleType, setConsoleType] = useState(null);
 
     const vmActionsPageSection = (
         <PageSection className="actions-pagesection" variant={PageSectionVariants.light} isWidthLimited>
@@ -98,14 +100,17 @@ export const VmDetailsPage = ({
                                 {vm.name}
                             </BreadcrumbItem>
                             <BreadcrumbItem isActive>
-                                {_("Console")}
+                                {console_name(vm, consoleType)}
                             </BreadcrumbItem>
                         </Breadcrumb>
                     </PageBreadcrumb>
                     {vmActionsPageSection}
                     <PageSection variant={PageSectionVariants.light}>
-                        <Consoles vm={vm} config={config}
+                        <Console
+                            vm={vm}
+                            config={config}
                             onAddErrorNotification={onAddErrorNotification}
+                            type={consoleType}
                             isExpanded />
                     </PageSection>
                 </Page>
@@ -132,24 +137,15 @@ export const VmDetailsPage = ({
             title: _("Usage"),
             body: <VmUsageTab vm={vm} />,
         },
-        ...(vm.displays.length
-            ? [{
-                id: `${vmId(vm.name)}-consoles`,
-                className: "consoles-card",
-                title: _("Console"),
-                actions: vm.state != "shut off"
-                    ? <Button variant="link"
-                          onClick={() => {
-                              const urlOptions = { name: vm.name, connection: vm.connectionName };
-                              return cockpit.location.go(["vm", "console"], { ...cockpit.location.options, ...urlOptions });
-                          }}
-                          icon={<ExpandIcon />}
-                          iconPosition="right">{_("Expand")}</Button>
-                    : null,
-                body: <Consoles vm={vm} config={config}
-                            onAddErrorNotification={onAddErrorNotification} />,
-            }]
-            : []),
+        {
+            card: <ConsoleCard
+                      key={`${vmId(vm.name)}-consoles`}
+                      vm={vm}
+                      config={config}
+                      type={consoleType}
+                      setType={setConsoleType}
+                      onAddErrorNotification={onAddErrorNotification} />
+        },
         {
             id: `${vmId(vm.name)}-disks`,
             className: "disks-card",
@@ -226,6 +222,8 @@ export const VmDetailsPage = ({
     }
 
     const cards = cardContents.map(card => {
+        if (card.card)
+            return card.card;
         return (
             <Card key={card.id}
                   className={card.className}

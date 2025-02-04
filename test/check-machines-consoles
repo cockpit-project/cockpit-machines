@@ -19,6 +19,7 @@
 
 import os
 import time
+import xml.etree.ElementTree as ET
 
 import machineslib
 import testlib
@@ -323,6 +324,59 @@ fullscreen=0
         b.wait_in_text(".pf-v5-c-console__manual-connection dl > div:nth-child(2) dd", "5900")
 
         self.waitViewerDownload("vnc", my_ip)
+
+    def testAddEditVNC(self):
+        b = self.browser
+
+        # Create a machine without any consoles
+
+        name = "subVmTest1"
+        self.createVm(name)
+
+        self.login_and_go("/machines")
+        self.waitPageInit()
+        self.waitVmRow(name)
+        self.goToVmPage(name)
+
+        # "Console" card shows empty state
+
+        b.wait_in_text(f"#vm-{name}-consoles .pf-v5-c-empty-state", "Graphical console not supported")
+
+        # Shut down machine, card shows a button to add VNC
+
+        self.performAction("subVmTest1", "forceOff")
+        b.wait_in_text("#vm-not-running-message", "Graphical console: not supported")
+        b.click("#vm-not-running-message button:contains(Add support)")
+
+        b.wait_visible("#add-vnc-dialog")
+        b.set_input_text("#add-vnc-address", "0.0.0.0")
+        b.set_input_text("#add-vnc-port", "5000")
+        b.click("#add-vnc-add")
+        b.wait_visible("#add-vnc-dialog .pf-m-error:contains('Port must be 5900 or larger.')")
+        b.set_input_text("#add-vnc-port", "5901")
+        b.click("#add-vnc-add")
+        b.wait_not_present("#add-vnc-dialog")
+
+        b.wait_in_text("#vm-not-running-message", "Graphical console: supported, port 5901")
+
+        root = ET.fromstring(self.machine.execute(f"virsh dumpxml {name}"))
+        graphics = root.find('devices').findall('graphics')
+        self.assertEqual(len(graphics), 1)
+        self.assertEqual(graphics[0].get('port'), "5901")
+        self.assertEqual(graphics[0].get('listen'), "0.0.0.0")
+
+        b.click("#vm-not-running-message button:contains(Edit)")
+        b.wait_visible("#edit-vnc-dialog")
+        b.set_input_text("#edit-vnc-address", "")
+        b.set_input_text("#edit-vnc-port", "")
+        b.click("#edit-vnc-save")
+        b.wait_not_present("#edit-vnc-dialog")
+
+        root = ET.fromstring(self.machine.execute(f"virsh dumpxml {name}"))
+        graphics = root.find('devices').findall('graphics')
+        self.assertEqual(len(graphics), 1)
+        self.assertEqual(graphics[0].get('port'), "-1")
+        self.assertEqual(graphics[0].get('listen'), None)
 
 
 if __name__ == '__main__':

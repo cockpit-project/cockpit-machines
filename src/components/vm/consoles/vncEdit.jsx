@@ -1,0 +1,131 @@
+/*
+ * This file is part of Cockpit.
+ *
+ * Copyright 2024 Fsas Technologies Inc.
+ *
+ * Cockpit is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * Cockpit is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
+ */
+import React from 'react';
+import cockpit from 'cockpit';
+import PropTypes from 'prop-types';
+import { Button, Form, Modal, ModalVariant } from "@patternfly/react-core";
+
+import { ModalError } from 'cockpit-components-inline-notification.jsx';
+import { DialogsContext } from 'dialogs.jsx';
+import { VncRow, validateDialogValues } from './vncBody.jsx';
+import { domainChangeVncSettings, domainGet } from '../../../libvirtApi/domain.js';
+import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
+
+const _ = cockpit.gettext;
+
+export class EditVNCModal extends React.Component {
+    static contextType = DialogsContext;
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            dialogError: undefined,
+            saveDisabled: false,
+            vncCustomPort: Number(props.consoleDetail.port) != -1,
+            vncPort: Number(props.consoleDetail.port) == -1 ? "" : props.consoleDetail.port || "",
+            vncPassword: props.consoleDetail.password || "",
+            validationErrors: { },
+        };
+
+        this.save = this.save.bind(this);
+        this.onValueChanged = this.onValueChanged.bind(this);
+        this.dialogErrorSet = this.dialogErrorSet.bind(this);
+    }
+
+    onValueChanged(key, value) {
+        const stateDelta = { [key]: value, validationErrors: { [key]: null } };
+        this.setState(stateDelta);
+    }
+
+    dialogErrorSet(text, detail) {
+        this.setState({ dialogError: text, dialogErrorDetail: detail });
+    }
+
+    save() {
+        const Dialogs = this.context;
+        const { vm } = this.props;
+
+        const errors = validateDialogValues(this.state);
+        if (errors) {
+            this.setState({ validationErrors: errors });
+            return;
+        }
+
+        const vncParams = {
+            connectionName: vm.connectionName,
+            vmName: vm.name,
+            vncAddress: this.props.consoleDetail.address || "",
+            vncPort: this.state.vncCustomPort ? this.state.vncPort : "",
+            vncPassword: this.state.vncPassword || "",
+        };
+
+        domainChangeVncSettings(vncParams)
+                .then(() => {
+                    domainGet({ connectionName: vm.connectionName, id: vm.id });
+                    Dialogs.close();
+                })
+                .catch((exc) => {
+                    this.dialogErrorSet(_("VNC settings could not be saved"), exc.message);
+                });
+    }
+
+    render() {
+        const Dialogs = this.context;
+        const { idPrefix, vm } = this.props;
+
+        const defaultBody = (
+            <Form onSubmit={e => e.preventDefault()} isHorizontal>
+                <VncRow
+                    idPrefix={idPrefix}
+                    dialogValues={this.state}
+                    validationErrors={this.state.validationErrors}
+                    onValueChanged={this.onValueChanged} />
+            </Form>
+        );
+
+        return (
+            <Modal position="top" variant={ModalVariant.medium} id={`${idPrefix}-dialog`} isOpen onClose={Dialogs.close} className='vnc-edit'
+                   title={_("Edit VNC server settings")}
+                   footer={
+                       <>
+                           <Button isDisabled={this.state.saveDisabled} id={`${idPrefix}-save`} variant='primary' onClick={this.save}>
+                               {_("Save")}
+                           </Button>
+                           <Button id={`${idPrefix}-cancel`} variant='link' onClick={Dialogs.close}>
+                               {_("Cancel")}
+                           </Button>
+                       </>
+                   }>
+                <>
+                    { vm.state === 'running' && !this.state.dialogError && <NeedsShutdownAlert idPrefix={idPrefix} /> }
+                    {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
+                    {defaultBody}
+                </>
+            </Modal>
+        );
+    }
+}
+EditVNCModal.propTypes = {
+    idPrefix: PropTypes.string.isRequired,
+    vm: PropTypes.object.isRequired,
+    consoleDetail: PropTypes.object.isRequired,
+};
+
+export default EditVNCModal;
