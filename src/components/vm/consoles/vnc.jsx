@@ -21,9 +21,9 @@ import cockpit from 'cockpit';
 
 import { VncConsole } from '@patternfly/react-console';
 import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
-import { Dropdown, DropdownItem, DropdownList } from "@patternfly/react-core/dist/esm/components/Dropdown";
+import { Dropdown, DropdownItem, DropdownList, DropdownGroup } from "@patternfly/react-core/dist/esm/components/Dropdown";
 import { MenuToggle } from "@patternfly/react-core/dist/esm/components/MenuToggle";
-import { MenuItem, DrilldownMenu } from "@patternfly/react-core/dist/esm/components/Menu";
+import { DrilldownMenu } from "@patternfly/react-core/dist/esm/components/Menu";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
 import { EmptyState, EmptyStateBody, EmptyStateFooter } from "@patternfly/react-core/dist/esm/components/EmptyState";
@@ -31,6 +31,7 @@ import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/
 import { DescriptionList, DescriptionListTerm, DescriptionListGroup, DescriptionListDescription } from "@patternfly/react-core/dist/esm/components/DescriptionList";
 import { Text, TextContent, TextVariants, TextList, TextListItem, TextListItemVariants, TextListVariants } from "@patternfly/react-core/dist/esm/components/Text";
 import { ClipboardCopy } from "@patternfly/react-core/dist/esm/components/ClipboardCopy/index.js";
+import { ToggleGroup, ToggleGroupItem } from "@patternfly/react-core/dist/esm/components/ToggleGroup/index.js";
 
 import { useDialogs, DialogsContext } from 'dialogs.jsx';
 import { KebabDropdown } from 'cockpit-components-dropdown.jsx';
@@ -227,6 +228,7 @@ class Vnc extends React.Component {
         this.state = {
             path: undefined,
             connected: true,
+            size_mode: "local",
         };
 
         this.connect = this.connect.bind(this);
@@ -289,7 +291,7 @@ class Vnc extends React.Component {
             consoleDetail, inactiveConsoleDetail, vm, onAddErrorNotification, isExpanded, connectionAddress,
             spiceDetail,
         } = this.props;
-        const { path, connected } = this.state;
+        const { path, connected, size_mode } = this.state;
 
         function edit_vnc() {
             Dialogs.show(<EditVNCModal
@@ -324,9 +326,9 @@ class Vnc extends React.Component {
                     <DrilldownMenu id="sendkey-menu">
                         {
                             [
-                                <MenuItem key="back" itemId="drilldown:sendkey_back" direction="up">
+                                <DropdownItem key="back" itemId="drilldown:sendkey_back" direction="up">
                                     {_("Send key")}
-                                </MenuItem>,
+                                </DropdownItem>,
                                 <Divider key="divider" />,
                                 ...['Delete', 'Backspace'].map(key => renderDropdownItem(key)),
                                 <Divider key="separator" />,
@@ -338,18 +340,33 @@ class Vnc extends React.Component {
             >
                 {_("Send key")}
             </DropdownItem>,
-            <DropdownItem
-                id="vnc-edit"
-                key="edit"
-                onClick={edit_vnc}>
-                {_("Edit VNC server settings")}
-            </DropdownItem>,
-            <DropdownItem
-                id="vnc-disconnect"
-                key="disconnect"
-                onClick={() => this.setState({ connected: false })}>
-                {_("Disconnect")}
-            </DropdownItem>,
+            <Divider key="divider3" />,
+            <DropdownGroup key="scaling" label={_("Scaling and resizing")}>
+                <DropdownItem isSelected={!size_mode} onClick={() => this.setState({ size_mode: null })}>
+                    {_("No scaling or resizing")}
+                </DropdownItem>
+                <DropdownItem isSelected={size_mode == "local"} onClick={() => this.setState({ size_mode: "local" })}>
+                    {_("Local scaling")}
+                </DropdownItem>
+                <DropdownItem isSelected={size_mode == "remote"} onClick={() => this.setState({ size_mode: "remote" })}>
+                    {_("Remote resizing")}
+                </DropdownItem>
+            </DropdownGroup>,
+            <Divider key="divider2" />,
+            <DropdownGroup key="server" label={_("VNC server")}>
+                <DropdownItem
+                    id="vnc-edit"
+                    key="edit"
+                    onClick={edit_vnc}>
+                    {_("Edit settings")}
+                </DropdownItem>
+                <DropdownItem
+                    id="vnc-disconnect"
+                    key="disconnect"
+                    onClick={() => this.setState({ connected: false })}>
+                    {_("Disconnect")}
+                </DropdownItem>
+            </DropdownGroup>,
         ];
 
         const detail = (
@@ -432,8 +449,8 @@ class Vnc extends React.Component {
                           onInitFailed={this.onInitFailed}
                           textConnecting={_("Connecting")}
                           consoleContainerId={isExpanded ? "vnc-display-container-expanded" : "vnc-display-container-minimized"}
-                          resizeSession
-                          scaleViewport
+                          scaleViewport={size_mode == "local"}
+                          resizeSession={size_mode == "remote"}
                     />
                     : <div className="pf-v5-c-console__vnc">
                           <EmptyState>
