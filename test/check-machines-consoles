@@ -324,6 +324,85 @@ fullscreen=0
 
         self.waitViewerDownload("vnc", my_ip)
 
+    def testAddVNC(self, withSerial=True):
+        b = self.browser
+
+        # Create a machine without VNC but maybe with a serial consoles
+
+        name = "subVmTest1"
+        self.createVm(name, ptyconsole=withSerial)
+
+        self.login_and_go("/machines")
+        self.waitPageInit()
+        self.waitVmRow(name)
+        self.goToVmPage(name)
+
+        def assert_state(text):
+            b.wait_in_text(f"#vm-{name}-consoles .pf-v5-c-empty-state", text)
+
+        def assert_not_state(text):
+            b.wait_not_in_text(f"#vm-{name}-consoles .pf-v5-c-empty-state", text)
+
+        # "Console" card for VNC shows empty state
+
+        if withSerial:
+            b.click("#pf-v5-c-console__type-selector")
+            b.wait_visible("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
+            b.click("#VncConsole button")
+            b.wait_not_present("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
+
+        if withSerial:
+            assert_state("Graphical support not enabled.")
+            b.assert_pixels(f"#vm-{name}-consoles", "no-vnc")
+        else:
+            assert_state("Console support not enabled.")
+
+        # Make "Add VNC" fail
+
+        self.machine.execute(f"chattr +i /etc/libvirt/qemu/{name}.xml")
+        self.addCleanup(self.machine.execute, f"chattr -i /etc/libvirt/qemu/{name}.xml")
+
+        b.click(f"#vm-{name}-consoles .pf-v5-c-empty-state button:contains(Add VNC)")
+        b.wait_in_text(".pf-m-toast", f"Failed to add VNC to VM {name}")
+        b.click(".pf-m-toast .pf-v5-c-alert__action button")
+        b.wait_not_present(".pf-m-toast")
+
+        self.machine.execute(f"chattr -i /etc/libvirt/qemu/{name}.xml")
+
+        b.click(f"#vm-{name}-consoles .pf-v5-c-empty-state button:contains(Add VNC)")
+
+        if withSerial:
+            assert_state("Please shut down and restart the virtual machine to access its graphical console.")
+            b.assert_pixels(f"#vm-{name}-consoles", "needs-shutdown")
+        else:
+            assert_state("Please shut down and restart the virtual machine to access its console.")
+
+        # Shut down machine
+
+        self.performAction("subVmTest1", "forceOff")
+        assert_state("Please start the virtual machine to access its console.")
+        b.assert_pixels(f"#vm-{name}-consoles", "shutoff")
+
+        # Remove VNC from the outside and add it back while shut-off
+
+        self.machine.execute(f"virt-xml --remove-device --graphics vnc {name}")
+        if withSerial:
+            assert_state("Please start the virtual machine to access its serial console.")
+            assert_state("Graphical support not enabled.")
+            b.assert_pixels(f"#vm-{name}-consoles", "shutoff-no-vnc")
+        else:
+            assert_state("Console support not enabled.")
+
+        b.click("#vm-not-running-message button:contains(Add VNC)")
+        if withSerial:
+            assert_not_state("Graphical support not enabled.")
+        else:
+            assert_not_state("Console support not enabled.")
+        assert_state("Please start the virtual machine to access its console.")
+
+    def testAddVNCNoSerial(self):
+        self.testAddVNC(withSerial=False)
+
 
 if __name__ == '__main__':
     testlib.test_main()

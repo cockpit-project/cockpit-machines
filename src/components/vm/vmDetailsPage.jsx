@@ -132,24 +132,22 @@ export const VmDetailsPage = ({
             title: _("Usage"),
             body: <VmUsageTab vm={vm} />,
         },
-        ...(vm.displays.length
-            ? [{
-                id: `${vmId(vm.name)}-consoles`,
-                className: "consoles-card",
-                title: _("Console"),
-                actions: vm.state != "shut off"
-                    ? <Button variant="link"
-                          onClick={() => {
-                              const urlOptions = { name: vm.name, connection: vm.connectionName };
-                              return cockpit.location.go(["vm", "console"], { ...cockpit.location.options, ...urlOptions });
-                          }}
-                          icon={<ExpandIcon />}
-                          iconPosition="right">{_("Expand")}</Button>
-                    : null,
-                body: <Consoles vm={vm} config={config}
-                            onAddErrorNotification={onAddErrorNotification} />,
-            }]
-            : []),
+        {
+            id: `${vmId(vm.name)}-consoles`,
+            className: "consoles-card",
+            title: _("Console"),
+            actions: vm.state != "shut off"
+                ? <Button variant="link"
+                      onClick={() => {
+                          const urlOptions = { name: vm.name, connection: vm.connectionName };
+                          return cockpit.location.go(["vm", "console"], { ...cockpit.location.options, ...urlOptions });
+                      }}
+                      icon={<ExpandIcon />}
+                      iconPosition="right">{_("Expand")}</Button>
+                : null,
+            body: <Consoles vm={vm} config={config}
+                      onAddErrorNotification={onAddErrorNotification} />,
+        },
         {
             id: `${vmId(vm.name)}-disks`,
             className: "disks-card",

@@ -1089,3 +1089,13 @@ export async function domainAddTPM({ connectionName, vmName }) {
     const args = ["virt-xml", "-c", `qemu:///${connectionName}`, "--add-device", "--tpm", "default", vmName];
     return cockpit.spawn(args, { err: "message", superuser: connectionName === "system" ? "try" : null });
 }
+
+export function domainAddVnc(vm) {
+    const args = ['virt-xml', '-c', `qemu:///${vm.connectionName}`, vm.uuid, '--add-device', '--graphics', 'vnc'];
+    const options = { err: "message" };
+
+    if (vm.connectionName === "system")
+        options.superuser = "try";
+
+    return cockpit.spawn(args, options);
+}

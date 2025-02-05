@@ -16,10 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 import { AccessConsoles } from "@patternfly/react-console";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { EmptyState, EmptyStateBody, EmptyStateFooter, EmptyStateActions } from "@patternfly/react-core/dist/esm/components/EmptyState";
 
 import SerialConsole from './serialConsole.jsx';
 import Vnc from './vnc.jsx';
@@ -27,18 +29,79 @@ import DesktopConsole from './desktopConsole.jsx';
 import {
     domainCanConsole,
     domainDesktopConsole,
-    domainSerialConsoleCommand
+    domainSerialConsoleCommand,
+    domainAddVnc,
 } from '../../../libvirtApi/domain.js';
 
 import './consoles.css';
 
 const _ = cockpit.gettext;
 
-const VmNotRunning = () => {
+const ConsoleEmptyState = ({ vm, onAddErrorNotification }) => {
+    const serials = vm.displays && vm.displays.filter(display => display.type == 'pty');
+    const inactive_vnc = vm.inactiveXML.displays && vm.inactiveXML.displays.find(display => display.type == 'vnc');
+
+    const [inProgress, setInProgress] = useState(false);
+
+    function add_vnc() {
+        setInProgress(true);
+        domainAddVnc(vm)
+                .catch(ex => onAddErrorNotification({
+                    text: cockpit.format(_("Failed to add VNC to VM $0"), vm.name),
+                    detail: ex.message,
+                    resourceId: vm.id,
+                }))
+                .finally(() => setInProgress(false));
+    }
+
+    let top_message = null;
+    let bot_message = _("Graphical support not enabled.");
+
+    if (serials.length == 0 && !inactive_vnc) {
+        bot_message = _("Console support not enabled.");
+    } else {
+        if (vm.state != "running") {
+            if (serials.length > 0 && !inactive_vnc) {
+                top_message = _("Please start the virtual machine to access its serial console.");
+            } else {
+                top_message = _("Please start the virtual machine to access its console.");
+            }
+        } else if (inactive_vnc) {
+            if (serials.length > 0) {
+                top_message = _("Please shut down and restart the virtual machine to access its graphical console.");
+            } else {
+                top_message = _("Please shut down and restart the virtual machine to access its console.");
+            }
+        }
+    }
+
     return (
-        <div id="vm-not-running-message">
-            {_("Please start the virtual machine to access its console.")}
-        </div>
+        <EmptyState>
+            { top_message &&
+                <EmptyStateBody>
+                    {top_message}
+                </EmptyStateBody>
+            }
+            { !inactive_vnc &&
+                <>
+                    <EmptyStateBody>
+                        {bot_message}
+                    </EmptyStateBody>
+                    <EmptyStateFooter>
+                        <EmptyStateActions>
+                            <Button
+                                variant="secondary"
+                                onClick={add_vnc}
+                                isLoading={inProgress}
+                                disabled={inProgress}
+                            >
+                                {_("Add VNC")}
+                            </Button>
+                        </EmptyStateActions>
+                    </EmptyStateFooter>
+                </>
+            }
+        </EmptyState>
     );
 };
 
@@ -81,8 +144,9 @@ class Consoles extends React.Component {
             return 'SerialConsole';
         }
 
-        // no console defined
-        return null;
+        // no console defined, but the VncConsole is always there and
+        // will instruct people how to enable it for real.
+        return 'VncConsole';
     }
 
     onDesktopConsoleDownload (type) {
@@ -116,7 +180,11 @@ class Consoles extends React.Component {
         const vnc = vm.displays && vm.displays.find(display => display.type == 'vnc');
 
         if (!domainCanConsole || !domainCanConsole(vm.state)) {
-            return (<VmNotRunning />);
+            return (
+                <div id="vm-not-running-message">
+                    <ConsoleEmptyState vm={vm} onAddErrorNotification={onAddErrorNotification} />
+                </div>
+            );
         }
 
         const onDesktopConsole = () => { // prefer spice over vnc
@@ -134,14 +202,21 @@ class Consoles extends React.Component {
                                                   connectionName={vm.connectionName}
                                                   vmName={vm.name}
                                                   spawnArgs={domainSerialConsoleCommand({ vm, alias: pty.alias })} />))}
-                {vnc &&
-                <Vnc type="VncConsole"
-                     vmName={vm.name}
-                     vmId={vm.id}
-                     connectionName={vm.connectionName}
-                     consoleDetail={vnc}
-                     onAddErrorNotification={onAddErrorNotification}
-                     isExpanded={isExpanded} />}
+                {vnc
+                    ? <Vnc
+                          type="VncConsole"
+                          vmName={vm.name}
+                          vmId={vm.id}
+                          connectionName={vm.connectionName}
+                          consoleDetail={vnc}
+                          onAddErrorNotification={onAddErrorNotification}
+                          isExpanded={isExpanded} />
+                    : <div type="VncConsole" className="pf-v5-c-console__vnc">
+                        <ConsoleEmptyState
+                              vm={vm}
+                              onAddErrorNotification={onAddErrorNotification} />
+                    </div>
+                }
                 {(vnc || spice) &&
                 <DesktopConsole type="DesktopViewer"
                                 onDesktopConsole={onDesktopConsole}
