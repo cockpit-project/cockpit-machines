@@ -7,13 +7,6 @@ downstream_package_name: cockpit-machines
 # use the nicely formatted release description from our upstream release, instead of git shortlog
 copy_upstream_release_description: true
 
-packages:
-  cockpit-machines-fedora:
-    specfile_path: cockpit-machines.spec
-  cockpit-machines-centos:
-    specfile_path: cockpit-machines.spec
-    pkg_tool: centpkg
-
 srpm_build_deps:
 - npm
 - make
@@ -25,31 +18,19 @@ actions:
 jobs:
   - job: copr_build
     trigger: pull_request
-    packages: [cockpit-machines-fedora]
     targets:
     - fedora-41
     - fedora-42
     - fedora-development
-
-  - job: copr_build
-    trigger: pull_request
-    packages: [cockpit-machines-centos]
-    targets:
     - centos-stream-9
     - centos-stream-10
 
   - job: tests
-    packages: [cockpit-machines-fedora]
     trigger: pull_request
     targets:
       - fedora-41
       - fedora-42
       - fedora-development
-
-  - job: tests
-    packages: [cockpit-machines-centos]
-    trigger: pull_request
-    targets:
       - centos-stream-9
       - centos-stream-10
 
@@ -68,21 +49,13 @@ jobs:
 
   - job: propose_downstream
     trigger: release
-    packages: [cockpit-machines-fedora]
     dist_git_branches:
       - fedora-41
       - fedora-42
       - fedora-development
 
-  - job: propose_downstream
-    trigger: release
-    packages: [cockpit-machines-centos]
-    dist_git_branches:
-      - c9s
-
   - job: koji_build
     trigger: commit
-    packages: [cockpit-machines-fedora]
     dist_git_branches:
       - fedora-41
       - fedora-42
@@ -90,7 +63,6 @@ jobs:
 
   - job: bodhi_update
     trigger: commit
-    packages: [cockpit-machines-fedora]
     dist_git_branches:
       # rawhide updates are created automatically
       - fedora-41
