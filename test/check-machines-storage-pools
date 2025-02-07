@@ -23,6 +23,8 @@ import machineslib
 import testlib
 
 
+@testlib.skipImage("NFS kernel oops https://bugzilla.redhat.com/show_bug.cgi?id=2344326",
+                   "fedora-42", "fedora-43")
 @testlib.nondestructive
 class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
 
