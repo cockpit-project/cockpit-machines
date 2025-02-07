@@ -864,6 +864,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
     @testlib.skipImage("triggers kernel oops, https://issues.redhat.com/browse/RHEL-67841",
                        "rhel-10*", "centos-10")
+    @testlib.skipImage("NFS kernel oops https://bugzilla.redhat.com/show_bug.cgi?id=2344326",
+                       "fedora-42", "fedora-43")
     def testAddDiskNFS(self):
         b = self.browser
         m = self.machine
