@@ -893,7 +893,7 @@ function shlex_quote(str) {
     return "'" + str.replaceAll("'", "'\"'\"'") + "'";
 }
 
-async function domainSetXML(vm, option, values) {
+async function domainModifyXML(vm, action, option, type, values) {
     const opts = { err: "message" };
     if (vm.connectionName === 'system')
         opts.superuser = 'try';
@@ -903,12 +903,16 @@ async function domainSetXML(vm, option, values) {
     // we need to do the equivalent of shlex.quote here.
 
     const args = [];
+    if (type)
+        args.push(shlex_quote(type));
     for (const key in values)
         args.push(shlex_quote(key + '=' + values[key]));
 
-    await cockpit.spawn([
-        'virt-xml', '-c', `qemu:///${vm.connectionName}`, '--' + option, args.join(','), vm.uuid, '--edit'
-    ], opts);
+    const cmd = [
+        'virt-xml', '-c', `qemu:///${vm.connectionName}`, '--' + option, args.join(','), vm.uuid, '--' + action,
+    ];
+
+    await cockpit.spawn(cmd, opts);
 }
 
 export async function domainSetDescription(vm, description) {
@@ -917,7 +921,7 @@ export async function domainSetDescription(vm, description) {
     // protocol error. So let's limit it to a reasonable length here.
     if (description.length > 32000)
         description = description.slice(0, 32000);
-    await domainSetXML(vm, "metadata", { description });
+    await domainModifyXML(vm, "edit", "metadata", null, { description });
 }
 
 export function domainSetCpuMode({
@@ -1088,4 +1092,12 @@ export async function domainReplaceSpice({ connectionName, id: objPath }) {
 export async function domainAddTPM({ connectionName, vmName }) {
     const args = ["virt-xml", "-c", `qemu:///${connectionName}`, "--add-device", "--tpm", "default", vmName];
     return cockpit.spawn(args, { err: "message", superuser: connectionName === "system" ? "try" : null });
+}
+
+export async function domainAttachVnc(vm, values) {
+    await domainModifyXML(vm, "add-device", "graphics", "vnc", values);
+}
+
+export async function domainChangeVncSettings(vm, values) {
+    await domainModifyXML(vm, "edit", "graphics", "vnc", values);
 }

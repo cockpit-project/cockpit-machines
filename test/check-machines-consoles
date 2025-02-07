@@ -19,6 +19,7 @@
 
 import os
 import time
+import xml.etree.ElementTree as ET
 
 import machineslib
 import testlib
@@ -246,7 +247,7 @@ fullscreen=0
         # Test message is present if VM is not running
         self.performAction(name, "forceOff", checkExpectedState=False)
 
-        b.wait_in_text("#vm-not-running-message", "start the virtual machine")
+        b.wait_in_text("#vm-not-running-message", "Start the virtual machine")
 
         # Test deleting VM from console page will not trigger any error
         self.performAction(name, "delete")
@@ -329,6 +330,124 @@ fullscreen=0
         b.wait_in_text(".pf-v5-c-console__manual-connection dl > div:nth-child(2) dd", "5900")
 
         self.waitViewerDownload("vnc", my_ip)
+
+    def testAddEditVNC(self, withSerial=True):
+        b = self.browser
+
+        # Create a machine without any consoles
+
+        name = "subVmTest1"
+        self.createVm(name, ptyconsole=withSerial)
+
+        self.login_and_go("/machines")
+        self.waitPageInit()
+        self.waitVmRow(name)
+        self.goToVmPage(name)
+
+        def assert_state(text):
+            b.wait_in_text(f"#vm-{name}-consoles .pf-v5-c-empty-state", text)
+
+        def assert_not_state(text):
+            b.wait_not_in_text(f"#vm-{name}-consoles .pf-v5-c-empty-state", text)
+
+        if withSerial:
+            b.click("#pf-v5-c-console__type-selector")
+            b.wait_visible("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
+            b.click("#VncConsole button")
+            b.wait_not_present("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
+
+        # "Console" card shows empty state
+
+        if withSerial:
+            assert_state("Graphical console support not enabled")
+            b.assert_pixels(f"#vm-{name}-consoles", "no-vnc")
+        else:
+            assert_state("Console support not enabled")
+
+        b.click(f"#vm-{name}-consoles .pf-v5-c-empty-state button:contains(Add VNC)")
+
+        b.wait_visible("#add-vnc-dialog")
+        b.set_input_text("#add-vnc-port", "5000")
+        b.click("#add-vnc-save")
+        b.wait_visible("#add-vnc-dialog .pf-m-error:contains('Port must be 5900 or larger.')")
+        b.set_input_text("#add-vnc-port", "Hamburg")
+        b.wait_not_present("#add-vnc-dialog .pf-m-error")
+        b.click("#add-vnc-save")
+        b.wait_visible("#add-vnc-dialog .pf-m-error:contains('Port must be 5900 or larger.')")
+        if withSerial:
+            b.assert_pixels("#add-vnc-dialog", "add")
+        b.set_input_text("#add-vnc-port", "100000000000")  # for testing failed libvirt calls
+        b.set_input_text("#add-vnc-password", "foobar")
+        b.wait_attr("#add-vnc-password", "type", "password")
+        b.click("#add-vnc-dialog .pf-v5-c-input-group button")
+        b.wait_attr("#add-vnc-password", "type", "text")
+        b.click("#add-vnc-save")
+        b.wait_in_text("#add-vnc-dialog", "VNC settings could not be saved")
+        b.wait_in_text("#add-vnc-dialog", "cannot parse vnc port 100000000000")
+        b.set_input_text("#add-vnc-port", "5901")
+        b.click("#add-vnc-save")
+        b.wait_not_present("#add-vnc-dialog")
+
+        if withSerial:
+            assert_state("Restart this virtual machine to access its graphical console")
+            b.wait_visible(f"#vm-{name}-needs-shutdown")
+            b.assert_pixels(f"#vm-{name}-consoles", "needs-shutdown")
+        else:
+            assert_state("Restart this virtual machine to access its console")
+
+        root = ET.fromstring(self.machine.execute(f"virsh dumpxml --inactive --security-info {name}"))
+        graphics = root.find('devices').findall('graphics')
+        self.assertEqual(len(graphics), 1)
+        self.assertEqual(graphics[0].get('port'), "5901")
+        self.assertEqual(graphics[0].get('passwd'), "foobar")
+
+        b.click(f"#vm-{name}-consoles .pf-v5-c-empty-state button:contains(VNC settings)")
+        b.wait_visible("#edit-vnc-dialog")
+        b.wait_val("#edit-vnc-port", "5901")
+        b.wait_val("#edit-vnc-password", "foobar")
+        if withSerial:
+            b.assert_pixels("#edit-vnc-dialog", "edit")
+        b.set_input_text("#edit-vnc-port", "")
+        b.click("#edit-vnc-save")
+        b.wait_not_present("#edit-vnc-dialog")
+
+        root = ET.fromstring(self.machine.execute(f"virsh dumpxml --inactive --security-info {name}"))
+        graphics = root.find('devices').findall('graphics')
+        self.assertEqual(len(graphics), 1)
+        self.assertEqual(graphics[0].get('port'), "-1")
+        self.assertEqual(graphics[0].get('passwd'), "foobar")
+
+        # Shut down machine
+
+        self.performAction("subVmTest1", "forceOff")
+        assert_state("Start the virtual machine to access its console")
+        if withSerial:
+            b.assert_pixels(f"#vm-{name}-consoles", "shutoff")
+
+        # Remove VNC from the outside and do the whole dance again
+
+        self.machine.execute(f"virt-xml --remove-device --graphics vnc {name}")
+
+        if withSerial:
+            assert_state("Start the virtual machine to access its serial console")
+            assert_state("Graphical console support not enabled")
+            b.assert_pixels(f"#vm-{name}-consoles", "shutoff-no-vnc")
+        else:
+            assert_state("Console support not enabled")
+
+        b.click("#vm-not-running-message button:contains(Add VNC)")
+        b.wait_visible("#add-vnc-dialog")
+        b.click("#add-vnc-save")
+        b.wait_not_present("#add-vnc-dialog")
+
+        if withSerial:
+            assert_not_state("Graphical console support not enabled")
+        else:
+            assert_not_state("Console support not enabled")
+        assert_state("Start the virtual machine to access its console")
+
+    def testAddEditVNCNoSerial(self):
+        self.testAddEditVNC(withSerial=False)
 
 
 if __name__ == '__main__':
