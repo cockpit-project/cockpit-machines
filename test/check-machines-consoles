@@ -38,6 +38,8 @@ class TestMachinesConsoles(machineslib.VirtualMachinesCase):
         if content is not None:
             self.assertEqual(filepath.read_text(), content)
 
+        os.unlink(filepath)
+
     def waitViewerDownload(self, kind, host, port=5900):
         self.browser.allow_download()
         self.browser.click(".pf-v5-c-console__remote-viewer-launch-vv")  # "Launch Remote Viewer" button
@@ -54,13 +56,17 @@ fullscreen=0
         # viewer file as a randomly generated file while chromium as
         # "download". As we want to download this as "$vmName.vv" in the end
         # work around the issue for now.
+
+        def ready_downloads():
+            return list(filter(lambda p: not p.endswith(".part"), os.listdir(self.browser.driver.download_dir)))
+
         if self.browser.browser == "chromium":
             fname = "download"
         else:
-            testlib.wait(lambda: len(os.listdir(self.browser.driver.download_dir)) == 1)
-            fname = os.listdir(self.browser.driver.download_dir)[0]
+            testlib.wait(lambda: len(ready_downloads()) == 1)
+            fname = ready_downloads()[0]
 
-        self.waitDownloadFile(fname, content=content)
+        self.waitDownloadFile(fname, content=content, expected_size=len(content))
 
     @testlib.skipImage('SPICE not supported on RHEL', "rhel-*", "centos-*")
     def testExternalConsole(self):
