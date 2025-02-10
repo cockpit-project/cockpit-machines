@@ -21,10 +21,11 @@ import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 import { AccessConsoles } from "@patternfly/react-console";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { Card, CardBody, CardFooter, CardHeader, CardTitle } from '@patternfly/react-core/dist/esm/components/Card';
 import {
     EmptyState, EmptyStateHeader, EmptyStateBody, EmptyStateFooter, EmptyStateActions, EmptyStateIcon
 } from "@patternfly/react-core/dist/esm/components/EmptyState";
-import { PendingIcon } from "@patternfly/react-icons";
+import { PendingIcon, ExpandIcon, HelpIcon } from "@patternfly/react-icons";
 
 import { useDialogs } from 'dialogs.jsx';
 
@@ -38,6 +39,7 @@ import {
     domainDesktopConsole,
     domainSerialConsoleCommand
 } from '../../../libvirtApi/domain.js';
+import { vmId } from "../../../helpers.js";
 
 import './consoles.css';
 
@@ -229,9 +231,43 @@ class Consoles extends React.Component {
         );
     }
 }
+
 Consoles.propTypes = {
     vm: PropTypes.object.isRequired,
     onAddErrorNotification: PropTypes.func.isRequired,
 };
 
 export default Consoles;
+
+export const ConsoleCard = ({ vm, config, onAddErrorNotification }) => {
+    let actions = null;
+    if (vm.state != "shut off") {
+        actions = (
+            <Button
+                variant="link"
+                onClick={() => {
+                    const urlOptions = { name: vm.name, connection: vm.connectionName };
+                    return cockpit.location.go(["vm", "console"], { ...cockpit.location.options, ...urlOptions });
+                }}
+                icon={<ExpandIcon />}
+                iconPosition="right">{_("Expand")}
+            </Button>
+        );
+    }
+
+    return (
+        <Card
+            className="consoles-card"
+            id={`${vmId(vm.name)}-consoles`}
+            isSelectable
+            isClickable>
+            <CardHeader actions={{ actions }}>
+                <CardTitle component="h2">{_("Console")}</CardTitle>
+            </CardHeader>
+            <CardBody>
+                <Consoles vm={vm} config={config} onAddErrorNotification={onAddErrorNotification} />
+            </CardBody>
+            <CardFooter />
+        </Card>
+    );
+};
