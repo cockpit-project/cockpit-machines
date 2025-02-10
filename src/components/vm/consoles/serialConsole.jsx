@@ -21,6 +21,7 @@ import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/index.js";
 import { Terminal } from "cockpit-components-terminal.jsx";
 
 const _ = cockpit.gettext;
@@ -89,14 +90,20 @@ class SerialConsoleCockpit extends React.Component {
 
         return (
             <>
-                <div className="pf-v5-c-console__actions-serial">
-                    {this.state.channel
-                        ? <Button id={this.props.vmName + "-serialconsole-disconnect"} variant="secondary" onClick={this.onDisconnect}>{_("Disconnect")}</Button>
-                        : <Button id={this.props.vmName + "-serialconsole-connect"} variant="secondary" onClick={() => this.createChannel(this.props.spawnArgs)}>{_("Connect")}</Button>
-                    }
-                </div>
                 <div id={pid} className="vm-terminal pf-v5-c-console__serial">
                     {t}
+                </div>
+                <div className="vm-console-footer">
+                    <Split>
+                        <SplitItem isFilled>
+                        </SplitItem>
+                        <SplitItem>
+                            {this.state.channel
+                                ? <Button id={this.props.vmName + "-serialconsole-disconnect"} variant="secondary" onClick={this.onDisconnect}>{_("Disconnect")}</Button>
+                                : <Button id={this.props.vmName + "-serialconsole-connect"} variant="secondary" onClick={() => this.createChannel(this.props.spawnArgs)}>{_("Connect")}</Button>
+                            }
+                        </SplitItem>
+                    </Split>
                 </div>
             </>
         );
