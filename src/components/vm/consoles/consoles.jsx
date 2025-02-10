@@ -25,7 +25,8 @@ import { Card, CardBody, CardFooter, CardHeader, CardTitle } from '@patternfly/r
 import {
     EmptyState, EmptyStateHeader, EmptyStateBody, EmptyStateFooter, EmptyStateActions, EmptyStateIcon
 } from "@patternfly/react-core/dist/esm/components/EmptyState";
-import { PendingIcon, ExpandIcon, HelpIcon } from "@patternfly/react-icons";
+import { PendingIcon, ExpandIcon, CompressIcon, HelpIcon } from "@patternfly/react-icons";
+import { ToggleGroup, ToggleGroupItem } from '@patternfly/react-core/dist/esm/components/ToggleGroup';
 
 import { useDialogs } from 'dialogs.jsx';
 
@@ -45,10 +46,19 @@ import './consoles.css';
 
 const _ = cockpit.gettext;
 
-const ConsoleEmptyState = ({ vm }) => {
+export const ConsoleEmptyState = ({ vm, type }) => {
     const Dialogs = useDialogs();
-    const serials = vm.displays && vm.displays.filter(display => display.type == 'pty');
     const inactive_vnc = vm.inactiveXML.displays && vm.inactiveXML.displays.find(display => display.type == 'vnc');
+
+    if (type != "vnc") {
+        return (
+            <EmptyState>
+                <EmptyStateBody>
+                    {_("Start the virtual machine to access this console")}
+                </EmptyStateBody>
+            </EmptyState>
+        );
+    }
 
     function add_vnc() {
         Dialogs.show(<AddEditVNCModal idPrefix="add-vnc" vm={vm} consoleDetail={null} />);
@@ -58,192 +68,167 @@ const ConsoleEmptyState = ({ vm }) => {
         Dialogs.show(<AddEditVNCModal idPrefix="edit-vnc" vm={vm} consoleDetail={inactive_vnc} />);
     }
 
-    let icon = null;
-    let top_message = null;
-    let bot_message = _("Graphical console support not enabled");
-
-    if (serials.length == 0 && !inactive_vnc) {
-        bot_message = _("Console support not enabled");
-    } else {
-        if (vm.state != "running") {
-            if (serials.length > 0 && !inactive_vnc) {
-                top_message = _("Start the virtual machine to access its serial console");
-            } else {
-                top_message = _("Start the virtual machine to access its console");
-            }
-        } else if (inactive_vnc) {
-            icon = <EmptyStateIcon icon={PendingIcon} />;
-            if (serials.length > 0) {
-                top_message = _("Restart this virtual machine to access its graphical console");
-            } else {
-                top_message = _("Restart this virtual machine to access its console");
-            }
-        }
-    }
-
-    return (
-        <EmptyState>
-            <EmptyStateHeader icon={icon} />
-            <EmptyStateBody>
-                {top_message}
-            </EmptyStateBody>
-            { !inactive_vnc
-                ? <>
+    if (inactive_vnc) {
+        if (vm.state == "running") {
+            // Running and VNC defined?  Changes are pending.
+            return (
+                <EmptyState>
+                    <EmptyStateHeader icon={<EmptyStateIcon icon={PendingIcon} />} />
                     <EmptyStateBody>
-                        {bot_message}
+                        {_("Restart this virtual machine to access its graphical console")}
                     </EmptyStateBody>
                     <EmptyStateFooter>
                         <EmptyStateActions>
-                            <Button variant="secondary" onClick={add_vnc}>
-                                {_("Add VNC")}
+                            <Button variant="link" onClick={edit_vnc}>
+                                {_("VNC settings")}
                             </Button>
                         </EmptyStateActions>
                     </EmptyStateFooter>
-                </>
-                : <EmptyStateFooter>
+                </EmptyState>
+            );
+        } else {
+            // Not running and VNC defined?  Just start it.
+            return (
+                <EmptyState>
+                    <EmptyStateBody>
+                        {_("Start the virtual machine to access this console")}
+                    </EmptyStateBody>
+                </EmptyState>
+            );
+        }
+    } else  {
+        // No VNC defined?  Add it.
+        return (
+            <EmptyState>
+                <EmptyStateBody>
+                    {_("Graphical support not enabled")}
+                </EmptyStateBody>
+                <EmptyStateFooter>
                     <EmptyStateActions>
-                        <Button variant="link" onClick={edit_vnc}>
-                            {_("VNC settings")}
+                        <Button variant="secondary" onClick={add_vnc}>
+                            {_("Add VNC")}
                         </Button>
                     </EmptyStateActions>
                 </EmptyStateFooter>
-            }
-        </EmptyState>
-    );
+            </EmptyState>
+        );
+    }
 };
 
-class Consoles extends React.Component {
-    constructor (props) {
-        super(props);
+export function console_default(vm) {
+    const serials = vm.displays && vm.displays.filter(display => display.type == 'pty');
+    const vnc = vm.displays && vm.displays.find(display => display.type == 'vnc');
 
-        this.state = {
-            serial: props.vm.displays && props.vm.displays.filter(display => display.type == 'pty'),
-        };
+    if (vnc || serials.length == 0)
+        return "vnc";
+    else
+        return "serial0";
+}
 
-        this.getDefaultConsole = this.getDefaultConsole.bind(this);
-        this.onDesktopConsoleDownload = this.onDesktopConsoleDownload.bind(this);
-    }
+export function console_name(vm, type) {
+    if (!type)
+        type = console_default(vm);
 
-    static getDerivedStateFromProps(nextProps, prevState) {
-        const oldSerial = prevState.serial;
-        const newSerial = nextProps.vm.displays && nextProps.vm.displays.filter(display => display.type == 'pty');
-
-        if (newSerial.length !== oldSerial.length || oldSerial.some((pty, index) => pty.alias !== newSerial[index].alias))
-            return { serial: newSerial };
-
-        return null;
-    }
-
-    getDefaultConsole () {
-        const { vm } = this.props;
-
-        if (vm.displays) {
-            if (vm.displays.find(display => display.type == "vnc")) {
-                return 'VncConsole';
-            }
-            if (vm.displays.find(display => display.type == "spice")) {
-                return 'DesktopViewer';
-            }
-        }
-
-        const serialConsoleCommand = domainSerialConsoleCommand({ vm });
-        if (serialConsoleCommand) {
-            return 'SerialConsole';
-        }
-
-        // no console defined, but the VncConsole is always there and
-        // will instruct people how to enable it for real.
-        return 'VncConsole';
-    }
-
-    onDesktopConsoleDownload (type) {
-        const { vm } = this.props;
-        // fire download of the .vv file
-        const consoleDetail = vm.displays.find(display => display.type == type);
-
-        let address;
-        if (cockpit.transport.host == "localhost") {
-            const app = cockpit.transport.application();
-            if (app.startsWith("cockpit+=")) {
-                address = app.substr(9);
-            } else {
-                address = window.location.hostname;
-            }
-        } else {
-            address = cockpit.transport.host;
-            const pos = address.indexOf("@");
-            if (pos >= 0) {
-                address = address.substr(pos + 1);
-            }
-        }
-
-        domainDesktopConsole({ name: vm.name, consoleDetail: { ...consoleDetail, address } });
-    }
-
-    render () {
-        const { vm, onAddErrorNotification, isExpanded } = this.props;
-        const { serial } = this.state;
-        const spice = vm.displays && vm.displays.find(display => display.type == 'spice');
-        const vnc = vm.displays && vm.displays.find(display => display.type == 'vnc');
-
-        if (!domainCanConsole || !domainCanConsole(vm.state)) {
-            return (
-                <div id="vm-not-running-message">
-                    <ConsoleEmptyState vm={vm} />
-                </div>
-            );
-        }
-
-        const onDesktopConsole = () => { // prefer spice over vnc
-            this.onDesktopConsoleDownload(spice ? 'spice' : 'vnc');
-        };
-
-        return (
-            <AccessConsoles preselectedType={this.getDefaultConsole()}
-                            textSelectConsoleType={_("Select console type")}
-                            textSerialConsole={_("Serial console")}
-                            textVncConsole={_("VNC console")}
-                            textDesktopViewerConsole={_("Desktop viewer")}>
-                {serial.map((pty, idx) => (<SerialConsole type={serial.length == 1 ? "SerialConsole" : cockpit.format(_("Serial console ($0)"), pty.alias || idx)}
-                                                  key={"pty-" + idx}
-                                                  connectionName={vm.connectionName}
-                                                  vmName={vm.name}
-                                                  spawnArgs={domainSerialConsoleCommand({ vm, alias: pty.alias })} />))}
-                { vnc
-                    ? <Vnc
-                          type="VncConsole"
-                          vmName={vm.name}
-                          vmId={vm.id}
-                          connectionName={vm.connectionName}
-                          consoleDetail={vnc}
-                          onAddErrorNotification={onAddErrorNotification}
-                          isExpanded={isExpanded} />
-                    : <div type="VncConsole" className="pf-v5-c-console__vnc">
-                        <ConsoleEmptyState vm={vm} />
-                    </div>
-                }
-                {(vnc || spice) &&
-                <DesktopConsole type="DesktopViewer"
-                                onDesktopConsole={onDesktopConsole}
-                                vnc={vnc}
-                                spice={spice} />}
-            </AccessConsoles>
-        );
+    if (type.startsWith("serial")) {
+        const serials = vm.displays && vm.displays.filter(display => display.type == 'pty');
+        if (serials.length == 1)
+            return _("Serial console");
+        const idx = Number(type.substr(6));
+        return cockpit.format(_("Serial console ($0)"), serials[idx]?.alias || idx);
+    } else if (type == "vnc") {
+        return _("Graphical console");
+    } else {
+        return _("Console");
     }
 }
 
-Consoles.propTypes = {
-    vm: PropTypes.object.isRequired,
-    onAddErrorNotification: PropTypes.func.isRequired,
+function connection_address() {
+    let address;
+    if (cockpit.transport.host == "localhost") {
+        const app = cockpit.transport.application();
+        if (app.startsWith("cockpit+=")) {
+            address = app.substr(9);
+        } else {
+            address = window.location.hostname;
+        }
+    } else {
+        address = cockpit.transport.host;
+        const pos = address.indexOf("@");
+        if (pos >= 0) {
+            address = address.substr(pos + 1);
+        }
+    }
+    return address;
+}
+
+function console_launch(vm, consoleDetail) {
+    // fire download of the .vv file
+    domainDesktopConsole({ name: vm.name, consoleDetail: { ...consoleDetail, address: connection_address() } });
+}
+
+export const Console = ({ vm, config, type, onAddErrorNotification, isExpanded }) => {
+    let con = null;
+
+    if (!type)
+        type = console_default(vm);
+
+    if (vm.state != "running") {
+        return (
+            <div className="pf-v5-c-console">
+                <ConsoleEmptyState vm={vm} type={type} />
+            </div>
+        );
+    }
+
+    if (type.startsWith("serial")) {
+        const serials = vm.displays && vm.displays.filter(display => display.type == 'pty');
+        const idx = Number(type.substr(6));
+        if (serials.length > idx)
+            con = <SerialConsole
+                          type={type}
+                          connectionName={vm.connectionName}
+                          vmName={vm.name}
+                          spawnArgs={domainSerialConsoleCommand({ vm, alias: serials[idx].alias })} />;
+    } else if (type == "vnc") {
+        const vnc = vm.displays && vm.displays.find(display => display.type == 'vnc');
+        const inactive_vnc = vm.inactiveXML.displays && vm.inactiveXML.displays.find(display => display.type == 'vnc');
+        const spice = vm.displays && vm.displays.find(display => display.type == 'spice');
+
+        con = <Vnc
+                  type="VncConsole"
+                  vm={vm}
+                  consoleDetail={vnc}
+                  spiceDetail={spice}
+                  inactiveConsoleDetail={inactive_vnc}
+                  onAddErrorNotification={onAddErrorNotification}
+                  onLaunch={() => console_launch(vm, vnc || spice)}
+                  connectionAddress={connection_address()}
+                  isExpanded={isExpanded} />;
+    }
+
+    if (con) {
+        return (
+            <div className="pf-v5-c-console">
+                {con}
+            </div>
+        );
+    }
 };
 
-export default Consoles;
+export const ConsoleCard = ({ vm, config, type, setType, onAddErrorNotification, isExpanded }) => {
+    const serials = vm.displays && vm.displays.filter(display => display.type == 'pty');
 
-export const ConsoleCard = ({ vm, config, onAddErrorNotification }) => {
-    let actions = null;
-    if (vm.state != "shut off") {
-        actions = (
+    if (!type)
+        type = console_default(vm);
+
+    const actions = [];
+    const tabs = [];
+    let body;
+
+    if (!isExpanded) {
+        actions.push(
             <Button
+                key="expand"
                 variant="link"
                 onClick={() => {
                     const urlOptions = { name: vm.name, connection: vm.connectionName };
@@ -253,7 +238,43 @@ export const ConsoleCard = ({ vm, config, onAddErrorNotification }) => {
                 iconPosition="right">{_("Expand")}
             </Button>
         );
+    } else {
+        actions.push(
+            <Button
+                key="compress"
+                variant="link"
+                onClick={() => {
+                    const urlOptions = { name: vm.name, connection: vm.connectionName };
+                    return cockpit.location.go(["vm"], { ...cockpit.location.options, ...urlOptions });
+                }}
+                icon={<CompressIcon />}
+                iconPosition="right">{_("Compress")}
+            </Button>
+        );
     }
+
+    if (serials.length > 0)
+        tabs.push(<ToggleGroupItem
+                      key="vnc"
+                      text={_("Graphical")}
+                      isSelected={type == "vnc"}
+                      onChange={() => setType("vnc")} />);
+
+    serials.forEach((pty, idx) => {
+        const t = "serial" + idx;
+        tabs.push(<ToggleGroupItem
+                      key={t}
+                      text={serials.length == 1 ? _("Serial") : cockpit.format(_("Serial ($0)"), pty.alias || idx)}
+                      isSelected={type == t}
+                      onChange={() => setType(t)} />);
+    })
+
+    body = <Console
+               vm={vm}
+               config={config}
+               onAddErrorNotification={onAddErrorNotification}
+               type={type}
+               isExpanded={isExpanded} />
 
     return (
         <Card
@@ -262,10 +283,11 @@ export const ConsoleCard = ({ vm, config, onAddErrorNotification }) => {
             isSelectable
             isClickable>
             <CardHeader actions={{ actions }}>
-                <CardTitle component="h2">{_("Console")}</CardTitle>
+                <CardTitle component="h2">{isExpanded ? vm.name : _("Console")}</CardTitle>
+                <ToggleGroup>{tabs}</ToggleGroup>
             </CardHeader>
             <CardBody>
-                <Consoles vm={vm} config={config} onAddErrorNotification={onAddErrorNotification} />
+                {body}
             </CardBody>
             <CardFooter />
         </Card>
