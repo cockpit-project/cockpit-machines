@@ -61,6 +61,7 @@ class Vnc extends React.Component {
         this.connect = this.connect.bind(this);
         this.onDisconnected = this.onDisconnected.bind(this);
         this.onInitFailed = this.onInitFailed.bind(this);
+        this.onSecurityFailure = this.onSecurityFailure.bind(this);
         this.onExtraKeysDropdownToggle = this.onExtraKeysDropdownToggle.bind(this);
     }
 
@@ -110,6 +111,10 @@ class Vnc extends React.Component {
 
     onInitFailed(detail) {
         console.error('VncConsole failed to init: ', detail, this);
+    }
+
+    onSecurityFailure(event) {
+        console.info('Security failure:', event?.detail?.reason || "unknown reason");
     }
 
     onExtraKeysDropdownToggle() {
@@ -182,6 +187,7 @@ class Vnc extends React.Component {
                         vncLogging={ window.debugging?.includes("vnc") ? 'debug' : 'warn' }
                         onDisconnected={this.onDisconnected}
                         onInitFailed={this.onInitFailed}
+                        onSecurityFailure={this.onSecurityFailure}
                         additionalButtons={additionalButtons}
                         textConnecting={_("Connecting")}
                         textDisconnected={_("Disconnected")}
