@@ -45,6 +45,8 @@ import VmActions from './vmActions.jsx';
 import { VmNeedsShutdown } from '../common/needsShutdown.jsx';
 import { VmUsesSpice } from './usesSpice.jsx';
 
+import { domainModifyCockpitConfig, domainUpdateCockpitConfig } from "../../libvirtApi/domain";
+
 import './vmDetailsPage.scss';
 
 const _ = cockpit.gettext;
@@ -81,6 +83,13 @@ export const VmDetailsPage = ({
                         {vm.inactiveXML.description}
                     </p>
             }
+            <p>CONFIG: {JSON.stringify(vm.cockpit_config)}</p>
+            <Button onClick={() => domainModifyCockpitConfig(vm, old => ({ ...old, count: (old.count || 0) + 1 }))}>
+                {"plus"}
+            </Button>
+            <Button onClick={() => domainUpdateCockpitConfig(vm, { count: 0 })}>
+                {"reset"}
+            </Button>
         </PageSection>
     );
 
