@@ -638,6 +638,7 @@ export async function domainGet({
 
         const [returnProps] = await call(connectionName, objPath, "org.freedesktop.DBus.Properties", "GetAll", ["org.libvirt.Domain"], { timeout, type: 's' });
 
+
         /* Sometimes not all properties are returned, for example when some domain got deleted while part
         * of the properties got fetched from libvirt. Make sure that there is check before reading the attributes.
         */
@@ -1088,4 +1089,65 @@ export async function domainReplaceSpice({ connectionName, id: objPath }) {
 export async function domainAddTPM({ connectionName, vmName }) {
     const args = ["virt-xml", "-c", `qemu:///${connectionName}`, "--add-device", "--tpm", "default", vmName];
     return cockpit.spawn(args, { err: "message", superuser: connectionName === "system" ? "try" : null });
+}
+
+export async function domainModifyCockpitConfig(vm, modify) {
+    // Get old metadata that we are up-to-date and narrow the window
+    // where we overwrite changes made externally.
+
+    const [oldXML] = await call(vm.connectionName, vm.id,
+        'org.libvirt.Domain', 'GetMetadata',
+        [
+            Enum.VIR_DOMAIN_METADATA_ELEMENT,
+            "https://github.com/cockpit-project/cockpit-machines/config",
+            Enum.VIR_DOMAIN_AFFECT_CONFIG,
+        ],
+        { timeout, type: 'isu' });
+    const parser = new DOMParser();
+    const oldDoc = parser.parseFromString(oldXML, "application/xml");
+    const oldElems = oldDoc.getElementsByTagName("json");
+
+    let old_config = { };
+    if (oldElems && oldElems.length >= 1) {
+        try {
+            old_config = JSON.parse(oldElems[0].textContent);
+        } catch (err) {
+            console.error("Failed to parse cockpit-config of", vm.name, ":", err);
+        }
+    }
+
+    // Modify config.
+
+    const new_config = modify(old_config);
+
+    // Write new metadata
+
+    const elt = document.createElement("div");
+    elt.textContent = JSON.stringify(new_config);
+    const xml = elt.innerHTML;
+    let flags = Enum.VIR_DOMAIN_AFFECT_CONFIG;
+    if (vm.state != "shut off")
+        flags |= Enum.VIR_DOMAIN_AFFECT_LIVE;
+    await call(vm.connectionName, vm.id,
+        'org.libvirt.Domain', 'SetMetadata',
+        [
+            Enum.VIR_DOMAIN_METADATA_ELEMENT,
+            "<json>" + xml + "</json>",
+            "cockpit-config",
+            "https://github.com/cockpit-project/cockpit-machines/config",
+            flags,
+        ],
+        { timeout, type: 'isssu' });
+
+    // Pull it back in to update our state.
+
+    // XXX - this could be done via store.dispatch(updateOrAddVm(...),
+    // but that means we need to be able to predict what's going to
+    // happen. That should be possible and probably worth it.
+
+    domainGet({ connectionName: vm.connectionName, id: vm.id });
+}
+
+export async function domainUpdateCockpitConfig(vm, delta) {
+    await domainModifyCockpitConfig(vm, old => ({ ...old, ...delta }));
 }

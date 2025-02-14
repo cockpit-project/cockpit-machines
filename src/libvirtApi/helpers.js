@@ -107,6 +107,10 @@ export const Enum = {
     VIR_MIGRATE_UNDEFINE_SOURCE: 16,
     VIR_MIGRATE_NON_SHARED_DISK: 64,
     VIR_MIGRATE_OFFLINE: 1024,
+    // https://libvirt.org/html/libvirt-libvirt-domain.html#virDomainMetadataType
+    VIR_DOMAIN_METADATA_DESCRIPTION: 0,
+    VIR_DOMAIN_METADATA_TITLE: 1,
+    VIR_DOMAIN_METADATA_ELEMENT: 2,
 };
 
 /**

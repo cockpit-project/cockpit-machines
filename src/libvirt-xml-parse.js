@@ -6,6 +6,7 @@ import {
 } from './helpers.js';
 
 const METADATA_NAMESPACE = "https://github.com/cockpit-project/cockpit-machines";
+const CONFIG_NAMESPACE = "https://github.com/cockpit-project/cockpit-machines/config";
 
 export function getDiskElemByTarget(domxml, targetOriginal) {
     const domainElem = getElem(domxml);
@@ -294,6 +295,16 @@ export function parseDomainDumpxml(connectionName, domXml, objPath) {
         userPassword,
     };
 
+    let cockpit_config = { };
+    const configXML = metadataElem.getElementsByTagNameNS(CONFIG_NAMESPACE, "json");
+    if (configXML && configXML.length >= 1) {
+        try {
+            cockpit_config = JSON.parse(configXML[0].textContent);
+        } catch (err) {
+            console.error("Failed to parse cockpit-config of", name, ":", err);
+        }
+    }
+
     return {
         connectionName,
         uuid,
@@ -322,6 +333,7 @@ export function parseDomainDumpxml(connectionName, domXml, objPath) {
         metadata,
         hasSpice,
         hasTPM,
+        cockpit_config,
     };
 }
 
