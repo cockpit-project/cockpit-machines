@@ -87,6 +87,8 @@ export const domainCanShutdown = (vmState) => domainCanReset(vmState);
 export const domainCanPause = (vmState) => vmState == 'running';
 export const domainCanRename = (vmState) => vmState == 'shut off';
 export const domainCanResume = (vmState) => vmState == 'paused';
+export const domainCanSuspendToDisk = (vmState) => vmState == 'running' || vmState == 'paused';
+export const domainCanSuspenImageRemove = (vmState, saveImage) => vmState == "shut off" && saveImage == true;
 export const domainIsRunning = (vmState) => domainCanReset(vmState);
 export const domainSerialConsoleCommand = ({ vm, alias }) => {
     if (vm.displays.find(display => display.type == 'pty'))
@@ -663,6 +665,9 @@ export async function domainGet({
             supportsTPM: getDomainCapSupportsTPM(domCaps),
         };
 
+        const [suspendImage] = await call(connectionName, objPath, 'org.libvirt.Domain', 'HasManagedSaveImage', [0], { timeout, type: 'u' });
+        props.suspendImage = suspendImage;
+
         const [state] = await call(connectionName, objPath, 'org.libvirt.Domain', 'GetState', [0], { timeout, type: 'u' });
         const stateStr = DOMAINSTATE[state[0]];
 
@@ -872,6 +877,28 @@ export function domainResume({
     id: objPath
 }) {
     return call(connectionName, objPath, 'org.libvirt.Domain', 'Resume', [], { timeout, type: '' });
+}
+
+export function domainSuspendToDisk({
+    connectionName,
+    id: objPath,
+    flags
+}) {
+    return call(connectionName, objPath, 'org.libvirt.Domain', 'ManagedSave', [flags], { timeout, type: 'u' });
+}
+
+export function domainSuspendImageRemove({
+    connectionName,
+    id: objPath,
+}) {
+    return call(connectionName, objPath, 'org.libvirt.Domain', 'ManagedSaveRemove', [0], { timeout, type: 'u' });
+}
+
+export function domainHasSuspendImage({
+    connectionName,
+    id: objPath,
+}) {
+    return call(connectionName, objPath, 'org.libvirt.Domain', 'HasManagedSaveImage', [0], { timeout, type: 'u' });
 }
 
 export function domainSendKey({ connectionName, id, keyCodes }) {
