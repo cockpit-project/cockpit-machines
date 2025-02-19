@@ -64,6 +64,7 @@ export const VmDetailsPage = ({
     }, []);
 
     const [consoleType, setConsoleType] = useState(null);
+    const [consoleSizeMode, setConsoleSizeMode] = useState(null);
 
     const vmActionsPageSection = (
         <PageSection className="actions-pagesection" variant={PageSectionVariants.light} isWidthLimited>
@@ -95,6 +96,8 @@ export const VmDetailsPage = ({
                         config={config}
                         type={consoleType}
                         setType={setConsoleType}
+                        sizeMode={consoleSizeMode}
+                        setSizeMode={setConsoleSizeMode}
                         onAddErrorNotification={onAddErrorNotification}
                         isExpanded />
                 </Page>
@@ -128,6 +131,8 @@ export const VmDetailsPage = ({
                       config={config}
                       type={consoleType}
                       setType={setConsoleType}
+                      sizeMode={consoleSizeMode}
+                      setSizeMode={setConsoleSizeMode}
                       onAddErrorNotification={onAddErrorNotification} />
         },
         {
