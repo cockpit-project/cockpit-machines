@@ -47,6 +47,8 @@ import { logDebug } from '../../../helpers.js';
 import { RemoteConnectionInfo, connection_address, console_launch } from './common';
 import { domainSendKey, domainAttachVnc, domainChangeVncSettings, domainGet } from '../../../libvirtApi/domain.js';
 
+import store from '../../../store.js';
+
 import "@patternfly/patternfly/components/InlineEdit/inline-edit.css";
 
 const _ = cockpit.gettext;
@@ -279,6 +281,8 @@ export class VncActive extends React.Component {
         this.state = {
             path: undefined,
             connected: true,
+            clean_disconnect: true,
+            failure_reason: null,
         };
 
         this.credentials = null;
@@ -329,9 +333,8 @@ export class VncActive extends React.Component {
         return window.location.protocol === 'https:';
     }
 
-    onDisconnected(detail) { // server disconnected
-        console.info('Connection lost: ', detail);
-        this.setState({ connected: false });
+    onDisconnected(event) { // server disconnected
+        this.setState({ connected: false, clean_disconnect: event.detail.clean });
     }
 
     onInitFailed(detail) {
@@ -339,19 +342,22 @@ export class VncActive extends React.Component {
     }
 
     onSecurityFailure(event) {
-        console.info('Security failure:', event?.detail?.reason || "unknown reason");
+        if (event.detail?.reason)
+            this.setState({ failure_reason: event.detail.reason });
     }
 
     render() {
         const {
             consoleDetail, inactiveConsoleDetail, vm, onAddErrorNotification, isExpanded
         } = this.props;
-        const { path, connected } = this.state;
+        const { path, connected, clean_disconnect, failure_reason } = this.state;
 
         if (!path) {
             // postpone rendering until consoleDetail is known and channel ready
             return null;
         }
+
+        const qemu_conf = store.getState().qemu.conf;
 
         // We must pass the very same object to VncConsole.credentials
         // on every render. Otherwise VncConsole thinks credentials
@@ -367,9 +373,19 @@ export class VncActive extends React.Component {
                            vnc={consoleDetail}
                            inactive_vnc={inactiveConsoleDetail}
                            connected={connected}
-                           onDisconnect={() => this.setState({ connected: false })}
+                           onDisconnect={() => this.setState({ connected: false, clean_disconnect: true })}
                            onAddErrorNotification={onAddErrorNotification} />
         );
+
+        const vnc_tls = qemu_conf.vnc_tls == "1";
+
+        function get_failure_reason() {
+            if (failure_reason)
+                return failure_reason;
+            if (vnc_tls)
+                return _("VNC with TLS is not supported by the in-page viewer");
+            return _("Failed to connect");
+        }
 
         return (
             <>
@@ -392,11 +408,15 @@ export class VncActive extends React.Component {
                     />
                     : <div className="pf-v5-c-console__vnc">
                         <EmptyState>
-                            <EmptyStateBody>{_("Disconnected")}</EmptyStateBody>
+                            <EmptyStateBody>
+                                { clean_disconnect ? _("Disconnected") : get_failure_reason() }
+                            </EmptyStateBody>
                             <EmptyStateFooter>
-                                <Button variant="primary" onClick={() => this.setState({ connected: true })}>
-                                    {_("Connect")}
-                                </Button>
+                                { (clean_disconnect || !vnc_tls) &&
+                                    <Button variant="primary" onClick={() => this.setState({ connected: true, failure_reason: null })}>
+                                        { clean_disconnect ? _("Connect") : _("Retry") }
+                                    </Button>
+                                }
                             </EmptyStateFooter>
                         </EmptyState>
                     </div>
