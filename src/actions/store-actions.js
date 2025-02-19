@@ -36,6 +36,7 @@ import {
     UPDATE_OS_INFO_LIST,
     UPDATE_UI_VM,
     UPDATE_VM,
+    UPDATE_QEMU_CONF,
 } from '../constants/store-action-types.js';
 
 /**
@@ -194,5 +195,12 @@ export function updateVm(props) {
     return {
         type: UPDATE_VM,
         vm: props,
+    };
+}
+
+export function updateQemuConf(conf) {
+    return {
+        type: UPDATE_QEMU_CONF,
+        conf,
     };
 }
