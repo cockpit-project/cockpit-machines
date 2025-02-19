@@ -29,6 +29,7 @@ import { HelperText, HelperTextItem } from "@patternfly/react-core/dist/esm/comp
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { InputGroup } from "@patternfly/react-core/dist/esm/components/InputGroup";
 import { EyeIcon, EyeSlashIcon, PendingIcon, HelpIcon } from "@patternfly/react-icons";
+import { ToggleGroup, ToggleGroupItem } from '@patternfly/react-core/dist/esm/components/ToggleGroup';
 
 import {
     EmptyState, EmptyStateHeader, EmptyStateIcon, EmptyStateBody, EmptyStateFooter, EmptyStateActions
@@ -36,7 +37,7 @@ import {
 import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/index.js";
 
 import { KebabDropdown } from 'cockpit-components-dropdown.jsx';
-import { DropdownItem } from "@patternfly/react-core/dist/esm/components/Dropdown";
+import { DropdownItem, DropdownGroup } from "@patternfly/react-core/dist/esm/components/Dropdown";
 
 import { Modal, ModalVariant } from "@patternfly/react-core/dist/esm/components/Modal";
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
@@ -189,7 +190,11 @@ const VncEditModal = ({ vm, inactive_vnc }) => {
     );
 };
 
-const VncFooter = ({ vm, vnc, inactive_vnc, connected, onDisconnect, onAddErrorNotification }) => {
+const VncFooter = ({
+    vm, vnc, inactive_vnc, connected, onDisconnect,
+    isExpanded, sizeMode, setSizeMode,
+    onAddErrorNotification
+}) => {
     const Dialogs = useDialogs();
 
     const renderDropdownItem = keyName => {
@@ -261,6 +266,24 @@ const VncFooter = ({ vm, vnc, inactive_vnc, connected, onDisconnect, onAddErrorN
                         </Button>
                     </Popover>
                 </SplitItem>
+                { isExpanded &&
+                    <SplitItem>
+                        <ToggleGroup>
+                            <ToggleGroupItem
+                                text={_("No scaling or resizing")}
+                                isSelected={!sizeMode}
+                                onChange={() => setSizeMode(null)} />
+                            <ToggleGroupItem
+                                text={_("Local scaling")}
+                                isSelected={sizeMode == "local"}
+                                onChange={() => setSizeMode("local")} />
+                            <ToggleGroupItem
+                                text={_("Remote resizing")}
+                                isSelected={sizeMode == "remote"}
+                                onChange={() => setSizeMode("remote")} />
+                        </ToggleGroup>
+                    </SplitItem>
+                }
                 <SplitItem>
                     <KebabDropdown
                         toggleButtonId="vnc-actions"
@@ -344,7 +367,8 @@ export class VncActive extends React.Component {
 
     render() {
         const {
-            consoleDetail, inactiveConsoleDetail, vm, onAddErrorNotification, isExpanded
+            consoleDetail, inactiveConsoleDetail, vm, onAddErrorNotification, isExpanded,
+            sizeMode, setSizeMode,
         } = this.props;
         const { path, connected } = this.state;
 
@@ -363,12 +387,15 @@ export class VncActive extends React.Component {
 
         const footer = (
             <VncFooter
-                           vm={vm}
-                           vnc={consoleDetail}
-                           inactive_vnc={inactiveConsoleDetail}
-                           connected={connected}
-                           onDisconnect={() => this.setState({ connected: false })}
-                           onAddErrorNotification={onAddErrorNotification} />
+                vm={vm}
+                vnc={consoleDetail}
+                inactive_vnc={inactiveConsoleDetail}
+                connected={connected}
+                isExpanded={isExpanded}
+                sizeMode={sizeMode}
+                setSizeMode={setSizeMode}
+                onDisconnect={() => this.setState({ connected: false })}
+                onAddErrorNotification={onAddErrorNotification} />
         );
 
         return (
@@ -387,8 +414,8 @@ export class VncActive extends React.Component {
                           onSecurityFailure={this.onSecurityFailure}
                           textConnecting={_("Connecting")}
                           consoleContainerId={isExpanded ? "vnc-display-container-expanded" : "vnc-display-container-minimized"}
-                          resizeSession
-                          scaleViewport
+                          scaleViewport={!isExpanded || sizeMode == "local"}
+                          resizeSession={!!isExpanded && sizeMode == "remote"}
                     />
                     : <div className="pf-v5-c-console__vnc">
                         <EmptyState>

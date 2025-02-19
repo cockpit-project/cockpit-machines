@@ -34,7 +34,7 @@ import './consoles.css';
 
 const _ = cockpit.gettext;
 
-export const ConsoleCard = ({ vm, config, type, setType, onAddErrorNotification, isExpanded }) => {
+export const ConsoleCard = ({ vm, config, type, setType, sizeMode, setSizeMode, onAddErrorNotification, isExpanded }) => {
     const serials = vm.displays && vm.displays.filter(display => display.type == 'pty');
     const inactive_serials = vm.inactiveXML.displays && vm.inactiveXML.displays.filter(display => display.type == 'pty');
     const vnc = vm.displays && vm.displays.find(display => display.type == 'vnc');
@@ -105,13 +105,15 @@ export const ConsoleCard = ({ vm, config, type, setType, onAddErrorNotification,
             if (vnc) {
                 body = (
                     <VncActive
-                           type="VncConsole"
-                           vm={vm}
-                           consoleDetail={vnc}
-                           inactiveConsoleDetail={inactive_vnc}
-                           spiceDetail={spice}
-                           onAddErrorNotification={onAddErrorNotification}
-                           isExpanded={isExpanded} />
+                        type="VncConsole"
+                        vm={vm}
+                        consoleDetail={vnc}
+                        inactiveConsoleDetail={inactive_vnc}
+                        spiceDetail={spice}
+                        sizeMode={sizeMode}
+                        setSizeMode={setSizeMode}
+                        onAddErrorNotification={onAddErrorNotification}
+                        isExpanded={isExpanded} />
                 );
             } else if (inactive_vnc) {
                 body = (
