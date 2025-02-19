@@ -429,8 +429,15 @@ export class VncActive extends React.Component {
         // We must pass the very same object to VncConsole.credentials
         // on every render. Otherwise VncConsole thinks credentials
         // have changed and will reconnect.
-        if (!this.credentials || this.credentials.password != consoleDetail.password)
-            this.credentials = { password: consoleDetail.password };
+        //
+        // Also, we should always pass credentials even if we don't
+        // know any password. Otherwise NoVNC just hangs when the
+        // server is asking for a password. But we can't use null as
+        // the password, that makes NoVNC crash.
+        //
+        const pwd = consoleDetail.password || qemu_conf.vnc_password || "";
+        if (!this.credentials || this.credentials.password != pwd)
+            this.credentials = { password: pwd };
 
         const encrypt = this.getEncrypt();
 
