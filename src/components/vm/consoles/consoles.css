@@ -6,6 +6,7 @@
 .pf-v5-c-console__vnc > div > div {
     inline-size: 100%;
     block-size: 100%;
+    max-block-size: 100%;
 }
 
 .pf-v5-c-console__actions {
@@ -42,5 +43,18 @@
 }
 
 .consoles-card {
-    height: 100%;
+    block-size: 100%;
+    max-block-size: 100%;
+}
+
+.consoles-page-expanded .pf-v5-c-console {
+    display: block;
+}
+
+.consoles-page-expanded .pf-v5-c-console__vnc {
+    margin-bottom: 15px;
+}
+
+.consoles-page-expanded .consoles-card .pf-v5-c-card__body {
+    max-block-size: calc(100% - 120px);
 }
