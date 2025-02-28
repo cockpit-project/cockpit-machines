@@ -16,16 +16,23 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/index.js";
+import {
+    EmptyState, EmptyStateHeader, EmptyStateIcon, EmptyStateBody, EmptyStateFooter, EmptyStateActions
+} from "@patternfly/react-core/dist/esm/components/EmptyState";
 import { Terminal } from "cockpit-components-terminal.jsx";
+import { PendingIcon } from "@patternfly/react-icons";
+
+import { domainAttachSerialConsole } from '../../../libvirtApi/domain.js';
 
 const _ = cockpit.gettext;
 
-class SerialConsoleCockpit extends React.Component {
+export class SerialActive extends React.Component {
     constructor (props) {
         super(props);
 
@@ -89,24 +96,83 @@ class SerialConsoleCockpit extends React.Component {
 
         return (
             <>
-                <div className="pf-v5-c-console__actions-serial">
-                    {this.state.channel
-                        ? <Button id={this.props.vmName + "-serialconsole-disconnect"} variant="secondary" onClick={this.onDisconnect}>{_("Disconnect")}</Button>
-                        : <Button id={this.props.vmName + "-serialconsole-connect"} variant="secondary" onClick={() => this.createChannel(this.props.spawnArgs)}>{_("Connect")}</Button>
-                    }
-                </div>
                 <div id={pid} className="vm-terminal pf-v5-c-console__serial">
                     {t}
+                </div>
+                <div className="vm-console-footer">
+                    <Split>
+                        <SplitItem isFilled />
+                        <SplitItem>
+                            {this.state.channel
+                                ? <Button id={this.props.vmName + "-serialconsole-disconnect"} variant="secondary" onClick={this.onDisconnect}>{_("Disconnect")}</Button>
+                                : <Button id={this.props.vmName + "-serialconsole-connect"} variant="secondary" onClick={() => this.createChannel(this.props.spawnArgs)}>{_("Connect")}</Button>
+                            }
+                        </SplitItem>
+                    </Split>
                 </div>
             </>
         );
     }
 }
 
-SerialConsoleCockpit.propTypes = {
+SerialActive.propTypes = {
     connectionName: PropTypes.string.isRequired,
     vmName: PropTypes.string.isRequired,
     spawnArgs: PropTypes.array.isRequired,
 };
 
-export default SerialConsoleCockpit;
+export const SerialInactive = ({ vm }) => {
+    return (
+        <EmptyState>
+            <EmptyStateBody>
+                {_("Start the virtual machine to access the console")}
+            </EmptyStateBody>
+        </EmptyState>
+    );
+};
+
+export const SerialMissing = ({ vm, onAddErrorNotification }) => {
+    const [inProgress, setInProgress] = useState(false);
+
+    function add_serial() {
+        setInProgress(true);
+        domainAttachSerialConsole(vm)
+                .catch(ex => onAddErrorNotification({
+                    text: cockpit.format(_("Failed to add text console to VM $0"), vm.name),
+                    detail: ex.message,
+                    resourceId: vm.id,
+                }))
+                .finally(() => setInProgress(false));
+    }
+
+    return (
+        <EmptyState>
+            <EmptyStateBody>
+                {_("Text console support not enabled")}
+            </EmptyStateBody>
+            <EmptyStateFooter>
+                <EmptyStateActions>
+                    <Button
+                        variant="secondary"
+                        onClick={add_serial}
+                        isLoading={inProgress}
+                        disabled={inProgress}
+                    >
+                        {_("Add text console")}
+                    </Button>
+                </EmptyStateActions>
+            </EmptyStateFooter>
+        </EmptyState>
+    );
+};
+
+export const SerialPending = ({ vm }) => {
+    return (
+        <EmptyState>
+            <EmptyStateHeader icon={<EmptyStateIcon icon={PendingIcon} />} />
+            <EmptyStateBody>
+                {_("Restart this virtual machine to access its text console")}
+            </EmptyStateBody>
+        </EmptyState>
+    );
+};
