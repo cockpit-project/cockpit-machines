@@ -18,13 +18,29 @@
      grid-template-rows: min-content 1fr;
 }
 
+.vm-console-footer {
+    grid-area: 3 / 1 / 4 / 3;
+}
+
 .consoles-page-expanded .actions-pagesection .pf-v5-c-page__main-body {
      padding-block-end: 0;
 }
 
-/* Hide send key button - there is not way to do that from the JS
+/* Hide standard VNC actions - there is not way to do that from the JS
  * https://github.com/patternfly/patternfly-react/issues/3689
  */
-#pf-v5-c-console__send-shortcut {
+.pf-v5-c-console__actions-vnc {
     display: none;
+}
+
+.consoles-card .pf-v5-c-empty-state__icon {
+    color: var(--pf-v5-global--custom-color--200);
+}
+
+.ct-remote-viewer-popover {
+    max-inline-size: 60ch;
+}
+
+.consoles-card {
+    height: 100%;
 }
