@@ -296,37 +296,48 @@ export function rephraseUI(key, original) {
  * @param mimeType
  * @returns {*}
  */
-export function fileDownload({ data, _fileName = 'myFile.dat', mimeType = 'application/octet-stream' }) {
+export function fileDownload({ data, fileName = 'myFile.dat', mimeType = 'application/octet-stream' }) {
     if (!data) {
         console.error('fileDownload(): no data to download');
         return false;
     }
 
-    const a = document.createElement('a');
-    a.id = 'dynamically-generated-file';
-    a.href = `data:${mimeType},${encodeURIComponent(data)}`;
-    document.body.appendChild(a); // if not used further then at least within integration tests
+    // It is important to tell the filename to the browser, especially
+    // the extension. That makes mime-type detection work, which seems
+    // to be necessary for at least Chrome. It also produces files in
+    // the Download folder of the user that make sense later.
+    //
+    // So we want to trigger the download by clicking on a link like
+    // this:
+    //
+    //   <a href="data:<mime>,<data>" download="<filename.ext>" />
+    //
+    // This, however, needs a CSP of "frame-src data:" in our parent
+    // frame (the Shell), so that the browser allows 'navigating' to
+    // the "data:" URL in our iframe.
+    //
+    // But we can instead create our own custom iframe inside
+    // ourselves and put the link inside that. This nested iframe also
+    // needs a CSP of "frame-src data:", but now it is us that defines
+    // the policy, via our manifest. No changes to the Shell are
+    // needed.
 
-    // Workaround since I can't get CSP working for this
-    /*
-    if ('download' in a) { // html5 A[download]
-        logDebug('fileDownload() is using A.HREF');
+    const f = document.createElement('iframe');
+    f.setAttribute("hidden", "hidden");
+    f.addEventListener("load", () => {
+        // Once we get the "load" event, we can start modifying the
+        // document inside the iframe.
+        const doc = f.contentDocument;
+        const a = doc.createElement('a');
+        a.href = `data:${mimeType},${encodeURIComponent(data)}`;
         a.setAttribute('download', fileName);
+        doc.body.appendChild(a);
         a.click();
-    } else */ { // do iframe dataURL download
-        logDebug('fileDownload() is using IFRAME');
-        const f = document.createElement('iframe');
-        document.body.appendChild(f);
-        f.setAttribute("hidden", "hidden");
-        const nicerText = '\n[...............................GraphicsConsole]\n';
-        f.src = `data:${mimeType},${encodeURIComponent(data + nicerText)}`;
         window.setTimeout(() => document.body.removeChild(f), 333);
-    }
+    });
 
-    window.setTimeout(() => { // give test browser some time ...
-        logDebug('removing temporary A.HREF for filedownload');
-        document.body.removeChild(a);
-    }, 5000);
+    // Start the show
+    document.body.appendChild(f);
     return true;
 }
 
