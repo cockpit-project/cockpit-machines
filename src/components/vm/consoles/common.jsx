@@ -48,8 +48,20 @@ export function connection_address() {
 }
 
 export function console_launch(vm, consoleDetail) {
-    // fire download of the .vv file
-    domainDesktopConsole({ name: vm.name, consoleDetail: { ...consoleDetail, address: connection_address() } });
+    if (consoleDetail.type == "spice") {
+        // Launch via direct link
+        const protocol = consoleDetail.tlsPort ? "spice+tls" : "spice";
+        const host = connection_address();
+        const port = consoleDetail.tlsPort || consoleDetail.port;
+        window.parent.location = `${protocol}://${host}:${port}`;
+    } else {
+        // Current versions of remote-viewer are not registered for
+        // the vnc:// protocol, we need to trigger it via a file
+        // download.
+        //
+        // See https://gitlab.com/virt-viewer/virt-viewer/-/merge_requests/156
+        domainDesktopConsole({ name: vm.name, consoleDetail: { ...consoleDetail, address: connection_address() } });
+    }
 }
 
 export const RemoteConnectionInfo = ({ hide, url, onEdit }) => {
