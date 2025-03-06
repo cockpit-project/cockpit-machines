@@ -79,7 +79,8 @@ export function getVirtualNetworkByName(virtualNetworkName, virtualNetworks) {
  * @param {object} virtualNetwork - A Virtual Network object.
  */
 function getVirtualNetworkDescription(virtualNetwork) {
-    let mode, dev;
+    let mode;
+    let dev;
     const forward = virtualNetwork.forward;
 
     if (forward) {
