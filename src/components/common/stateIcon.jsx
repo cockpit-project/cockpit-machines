@@ -66,9 +66,7 @@ export const StateIcon = ({ state, valueId, error, dismissError, additionalState
                    icon={stateMap[state] && stateMap[state].icon}
                    className={"resource-state-text resource-state--" + (state || "").toLowerCase().replace(' ', '-')}
                    id={valueId}>
-                <>
-                    {rephraseUI('resourceStates', state)}
-                </>
+                {rephraseUI('resourceStates', state)}
             </Label>
             {additionalState}
         </Flex>
