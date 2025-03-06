@@ -211,7 +211,7 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         b.wait_visible(f'.pf-m-aria-disabled #delete-pool-myPoolThree-{connectionName}')
         b.click(f'#deactivate-pool-myPoolThree-{connectionName}')  # Deactivate transient pool
         # Check it's not present after deactivation
-        self.waitPoolRow("myPoolThree", connectionName, False)
+        self.waitPoolRow("myPoolThree", connectionName, present=False)
 
     def testStoragePoolsCreate(self):
         b = self.browser
@@ -321,7 +321,7 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
 
                     # If pool creation failed make sure that the pool is not shown in the UI
                     if self.xfail_error and 'already exists' not in self.xfail_error:
-                        self.test_obj.waitPoolRow(self.name, "system", False)
+                        self.test_obj.waitPoolRow(self.name, "system", present=False)
 
             def verify_dialog(self):
                 # Check that the defined pools is now visible

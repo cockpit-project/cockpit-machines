@@ -19,13 +19,15 @@ import os
 import sys
 import time
 import traceback
+from collections.abc import Mapping, Sequence
 
 import netlib
 import storagelib
 import testlib
+from machine import testvm
 
 
-def hasMonolithicDaemon(image):
+def hasMonolithicDaemon(image: str) -> bool:
     return (image.startswith("rhel-8-") or
             image.startswith("debian") or
             image.startswith("ubuntu") or
@@ -33,13 +35,12 @@ def hasMonolithicDaemon(image):
 
 
 # software TPM doesn't work on some OSes
-def hasBrokenTPM(image):
+def hasBrokenTPM(image: str) -> bool:
     return image.startswith("rhel-8")
 
 
 class VirtualMachinesCaseHelpers(testlib.MachineCase):
-
-    def waitPageInit(self):
+    def waitPageInit(self) -> None:
         m = self.machine
         virtualization_disabled_ignored = \
                 self.browser.call_js_func("localStorage.getItem", "virtualization-disabled-ignored") == "true"
@@ -51,7 +52,7 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
             self.browser.wait_in_text("body", "Virtual machines")
 
     # TODO: generic, move to testlib.py?
-    def dropdownAction(self, kebab_selector, menu_selector):
+    def dropdownAction(self, kebab_selector: str, menu_selector: str) -> None:
         b = self.browser
         b.click(kebab_selector)
         b.wait_visible(f"{kebab_selector}[aria-expanded=true]")
@@ -61,7 +62,8 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
         b.click(menu_selector)
         b.wait_not_present(f"{kebab_selector}[aria-expanded=true]")
 
-    def performAction(self, vmName, action, checkExpectedState=True, connectionName="system", logPath=None):
+    def performAction(self, vmName: str, action: str, *, checkExpectedState: bool = True,
+                      connectionName: str = "system", logPath: str | None = None) -> None:
         b = self.browser
         m = self.machine
 
@@ -93,16 +95,16 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
         if action == "forceOff" or action == "off":
             b.wait_in_text(f"#vm-{vmName}-{connectionName}-state", "Shut off")
 
-    def goToVmPage(self, vmName, connectionName='system'):
+    def goToVmPage(self, vmName: str, connectionName: str = 'system') -> None:
         self.browser.click(f"tbody tr[data-row-id=\"vm-{vmName}-{connectionName}\"] a.vm-list-item-name")
 
-    def goToMainPage(self):
+    def goToMainPage(self) -> None:
         self.browser.click(".machines-listing-breadcrumb li:first-of-type a")
 
-    def waitVmPage(self, vmName):
+    def waitVmPage(self, vmName: str) -> None:
         self.browser.wait_in_text("#vm-details .vm-name", vmName)
 
-    def waitVmRow(self, vmName, connectionName='system', present=True):
+    def waitVmRow(self, vmName: str, connectionName: str = 'system', *, present: bool = True) -> None:
         b = self.browser
         vm_row = f"tbody tr[data-row-id=\"vm-{vmName}-{connectionName}\"]"
         if present:
@@ -110,7 +112,7 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
         else:
             b.wait_not_present(vm_row)
 
-    def togglePoolRow(self, poolName, connectionName="system"):
+    def togglePoolRow(self, poolName: str, connectionName: str = "system") -> None:
         b = self.browser
         sel = f"tbody tr[data-row-id=\"pool-{poolName}-{connectionName}\"]"
         isExpanded = 'pf-m-expanded' in b.attr(f"{sel} + tr", "class")
@@ -121,7 +123,7 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
         else:
             b.wait_visible(f"{sel} + tr.pf-m-expanded")
 
-    def waitPoolRow(self, poolName, connectionName="system", present=True):
+    def waitPoolRow(self, poolName: str, connectionName: str = "system", *, present: bool = True) -> None:
         b = self.browser
         pool_row = f"tbody tr[data-row-id=\"pool-{poolName}-{connectionName}\"]"
         if present:
@@ -129,7 +131,7 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
         else:
             b.wait_not_present(pool_row)
 
-    def toggleNetworkRow(self, networkName, connectionName="system"):
+    def toggleNetworkRow(self, networkName: str, connectionName: str = "system") -> None:
         b = self.browser
         sel = f"tbody tr[data-row-id=\"network-{networkName}-{connectionName}\"]"
         isExpanded = 'pf-m-expanded' in b.attr(f"{sel} + tr", "class")
@@ -140,7 +142,7 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
         else:
             b.wait_visible(f"{sel} + tr.pf-m-expanded")
 
-    def waitNetworkRow(self, networkName, connectionName="system", present=True):
+    def waitNetworkRow(self, networkName: str, connectionName: str = "system", *, present: bool = True) -> None:
         b = self.browser
         network_row = f"tbody tr[data-row-id=\"network-{networkName}-{connectionName}\"]"
         if present:
@@ -148,12 +150,12 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
         else:
             b.wait_not_present(network_row)
 
-    def getDomainMacAddress(self, vmName):
+    def getDomainMacAddress(self, vmName: str) -> str:
         m = self.machine
         dom_xml = f"virsh -c qemu:///system dumpxml --domain {vmName}"
         return m.execute(f"{dom_xml} | xmllint --xpath 'string(//domain/devices/interface/mac/@address)' -").strip()
 
-    def getDomainXpathValue(self, vmName: str, xpath: str, *, str_value: bool = False, inactive: bool = False):
+    def getDomainXpathValue(self, vmName: str, xpath: str, *, str_value: bool = False, inactive: bool = False) -> str:
         dom_xml = f"virsh dumpxml {vmName} "
         if inactive:
             dom_xml += "--inactive "
@@ -161,11 +163,11 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
             xpath = f"string({xpath})"
         return self.machine.execute(f"{dom_xml} | xmllint --xpath '{xpath}' -").strip()
 
-    def getLibvirtServiceName(self):
+    def getLibvirtServiceName(self) -> str:
         m = self.machine
         return "libvirtd" if hasMonolithicDaemon(m.image) else "virtqemud"
 
-    def startLibvirt(self, m):
+    def startLibvirt(self, m: testvm.Machine) -> None:
 
         # Ensure everything has started correctly
         m.execute(f"systemctl start {self.getLibvirtServiceName()}.service")
@@ -180,8 +182,9 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
                      if ! echo "$out" | grep -q 'Active.*yes'; then virsh net-start default; fi""")
         m.execute(r"until virsh net-info default | grep 'Active:\s*yes'; do sleep 1; done")
 
-    def createVm(self, name, graphics='none', ptyconsole=False, running=True, memory=128,
-                 connection='system', machine=None, os=None):
+    def createVm(self, name: str, graphics: str = 'none', *, ptyconsole: bool = False, running: bool = True,
+                 memory: int = 128, connection: str = 'system', machine: testvm.Machine | None = None,
+                 os: str | None = None) -> Mapping[str, str | int]:
         m = machine or self.machine
 
         if os is None:
@@ -204,7 +207,7 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
         m.upload([image_file], img)
         m.execute(f"chmod 777 {img}")
 
-        args = {
+        args: Mapping[str, str | int] = {
             "name": name,
             "image": img,
             "logfile": logPath,
@@ -248,7 +251,7 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
         return args
 
     # Preparations for iscsi storage pool; return the system's initiator name
-    def prepareStorageDeviceOnISCSI(self, target_iqn):
+    def prepareStorageDeviceOnISCSI(self, target_iqn: str) -> str:
         m = self.machine
 
         # ensure that we generate a /etc/iscsi/initiatorname.iscsi
@@ -274,7 +277,7 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
         self.addCleanup(m.execute, f"targetcli /iscsi delete {target_iqn}; iscsiadm -m node -o delete")
         return orig_iqn
 
-    def run_admin(self, cmd, connectionName='system', machine=None):
+    def run_admin(self, cmd: str, connectionName: str = 'system', machine: testvm.Machine | None = None) -> str:
         m = machine or self.machine
 
         if connectionName == 'session':
@@ -282,7 +285,7 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
         else:
             return m.execute(cmd)
 
-    def deleteDisk(self, target, vm_name="subVmTest1", expect_path=None):
+    def deleteDisk(self, target: str, vm_name: str = "subVmTest1", expect_path: str | None = None) -> None:
         b = self.browser
 
         b.wait_visible(f"#vm-{vm_name}-disks-{target}-device")
@@ -295,7 +298,7 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
         b.wait_not_present(".pf-v5-c-modal-box")
         b.wait_not_present(f"#vm-{vm_name}-disks-{target}-device")
 
-    def deleteIface(self, iface, mac=None, vm_name=None):
+    def deleteIface(self, iface: str, mac: str | None = None, vm_name: str | None = None) -> None:
         b = self.browser
 
         self.dropdownAction(f"#vm-subVmTest1-iface-{iface}-action-kebab", f"#delete-vm-subVmTest1-iface-{iface}")
@@ -307,7 +310,7 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
         b.click(".pf-v5-c-modal-box__footer button:contains(Remove)")
         b.wait_not_present(".pf-v5-c-modal-box")
 
-    def get_next_mac(self, last_mac):
+    def get_next_mac(self, last_mac: str) -> str:
         parts = last_mac.split(':')
         suffix = parts[-1]
         new_suffix = format((int(suffix, 16) + 1) & 0xFF, "x").zfill(2)
@@ -315,7 +318,7 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
         new_mac = ':'.join(parts)
         return new_mac
 
-    def setup_mock_server(self, mock_server_filename, subj_names):
+    def setup_mock_server(self, mock_server_filename: str, subj_names: str) -> int:
         self.machine.upload(["files/min-openssl-config.cnf", f"files/{mock_server_filename}"], self.vm_tmpdir)
 
         self.restore_file("/etc/hosts")
@@ -361,7 +364,7 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
         return self.machine.spawn(f"cd /var/lib/libvirt; exec python3 {self.vm_tmpdir}/{mock_server_filename} {self.vm_tmpdir}/server.crt {self.vm_tmpdir}/server.key",  # noqa: E501
                                   "httpsserver")
 
-    def waitLogFile(self, logfile, expected_text):
+    def waitLogFile(self, logfile: str, expected_text: str) -> None:
         try:
             testlib.wait(lambda: expected_text in self.machine.execute(f"cat {logfile}"), delay=3)
         except testlib.Error:
@@ -369,28 +372,26 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
             print(f"----- log of failed VM ------\n{log}\n---------")
             raise
 
-    def waitGuestBooted(self, logfile):
+    def waitGuestBooted(self, logfile: str) -> None:
         self.waitLogFile(logfile, "Welcome to Alpine Linux")
 
-    def waitDisks(self, expected_disks: list[str], vm="subVmTest1"):
+    def waitDisks(self, expected_disks: Sequence[str], vm: str = "subVmTest1") -> None:
         """Wait until Disks table initialized on the details
 
         This prevents the kebabs from jumping around during re-renders, which
         makes trying to click on them racy.
         """
         for disk in expected_disks:
-            self.browser.wait_visible(f"#vm-{vm}-disks-{disk}-device")  # type: ignore[attr-defined]
+            self.browser.wait_visible(f"#vm-{vm}-disks-{disk}-device")
         # HACK: we need to wait on *something* else, but no idea what..
         time.sleep(0.5)
 
 
 class VirtualMachinesCase(VirtualMachinesCaseHelpers, storagelib.StorageHelpers, netlib.NetworkHelpers):
-    def setUp(self):
+    def setUp(self) -> None:
         super().setUp()
 
-        for m in self.machines:
-            m = self.machines[m]
-
+        for m in self.machines.values():
             # We don't want nested KVM since it doesn't work well enough
             # three levels deep.
             #
@@ -431,7 +432,7 @@ class VirtualMachinesCase(VirtualMachinesCaseHelpers, storagelib.StorageHelpers,
         for mach in self.machines.values():
             mach.execute('if test "$(rpmquery selinux-policy)" = selinux-policy-40.13.6-1.el10.noarch; then setenforce 0; fi')  # noqa: E501
 
-        def stop_all():
+        def stop_all() -> None:
             # domains
             # this is a race condition: a test may leave a domain shutting down, so it may go away while iterating
             m.execute('for d in $(virsh -c qemu:///system list --name); do '
@@ -491,7 +492,11 @@ class VirtualMachinesCase(VirtualMachinesCaseHelpers, storagelib.StorageHelpers,
             self.allow_journal_messages(r".* couldn't get all properties of org.freedesktop.NetworkManager.Device at /org/freedesktop/NetworkManager/Devices/\d+: Timeout was reached")  # noqa: E501
 
         # avoid error noise about resources getting cleaned up
-        self.addCleanup(lambda: not self.browser.have_test_api() or self.browser.logout())
+        def session_cleanup() -> None:
+            if self.browser.have_test_api():
+                self.browser.logout()
+
+        self.addCleanup(session_cleanup)
 
         # noVNC warns about this for non-TLS connections; for RHEL downstream testing
         self.allow_browser_errors("noVNC requires a secure context")
@@ -506,7 +511,7 @@ class VirtualMachinesCase(VirtualMachinesCaseHelpers, storagelib.StorageHelpers,
             r"Warning: React does not recognize the .* prop.*(inputId|isSelected|sendRef|keyHandler)",
         )
 
-    def downloadVmXml(self, vm):
+    def downloadVmXml(self, vm: str) -> None:
         m = self.machine
 
         vms_xml = f"/var/lib/cockpittest/pkg_specific_artifacts/{vm}.xml"
@@ -517,7 +522,7 @@ class VirtualMachinesCase(VirtualMachinesCaseHelpers, storagelib.StorageHelpers,
         testlib.attach(dest, move=False)
         print(f"Wrote {vm} XML to {dest_file}")
 
-    def downloadVmLog(self, vm):
+    def downloadVmLog(self, vm: str) -> None:
         m = self.machine
 
         vms_log = f"/var/log/libvirt/qemu/{vm}.log"
@@ -529,7 +534,7 @@ class VirtualMachinesCase(VirtualMachinesCaseHelpers, storagelib.StorageHelpers,
             testlib.attach(dest, move=True)
             print(f"Wrote {vm} log to {dest_file}")
 
-    def downloadVmConsole(self, vm):
+    def downloadVmConsole(self, vm: str) -> None:
         m = self.machine
 
         console_log = f"/var/log/libvirt/console-{vm}.log"
@@ -541,7 +546,7 @@ class VirtualMachinesCase(VirtualMachinesCaseHelpers, storagelib.StorageHelpers,
             testlib.attach(dest, move=True)
             print(f"Wrote {vm} console log to {dest_file}")
 
-    def downloadVmsArtifacts(self):
+    def downloadVmsArtifacts(self) -> None:
         m = self.machine
 
         vms = m.execute("virsh list --all --name").strip().splitlines()
@@ -552,7 +557,7 @@ class VirtualMachinesCase(VirtualMachinesCaseHelpers, storagelib.StorageHelpers,
             self.downloadVmLog(vm)
             self.downloadVmConsole(vm)
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         b = self.browser
         if b.have_test_api() and b.is_present("#button.alert-link.more-button"):
             b.click("button.alert-link.more-button")
