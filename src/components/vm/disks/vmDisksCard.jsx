@@ -166,7 +166,9 @@ VmDisksCardLibvirt.propTypes = {
 
 export const VmDisksCard = ({ vm, vms, disks, renderCapacity, supportedDiskBusTypes, storagePools, onAddErrorNotification }) => {
     const [openActions, setOpenActions] = useState(new Set());
-    let renderCapacityUsed, renderAccess, renderAdditional;
+    let renderCapacityUsed;
+    let renderAccess;
+    let renderAdditional;
     const columnTitles = [_("Device")];
     const idPrefix = `${vmId(vm.name)}-disks`;
 

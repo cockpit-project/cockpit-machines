@@ -747,7 +747,9 @@ const AddDiskModalFooter = ({
 
     const onAddClicked = () => {
         const hotplug = domainIsRunning(vm.state);
-        let storagePool, volume, isVolumeUsed;
+        let storagePool;
+        let volume;
+        let isVolumeUsed;
 
         if (mode === CREATE_NEW) {
             // create new disk
