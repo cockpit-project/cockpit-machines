@@ -18,6 +18,22 @@ module = [
     "gi.*",
 ]
 
+[[tool.mypy.overrides]]
+check_untyped_defs = true
+disallow_any_generics = true
+disallow_incomplete_defs = true
+disallow_subclassing_any = true
+disallow_untyped_calls = true
+disallow_untyped_decorators = true
+disallow_untyped_defs = true
+no_implicit_reexport = true
+strict_concatenate = true
+strict_equality = true
+warn_unused_ignores = true
+module = [
+   "machineslib",
+]
+
 [tool.ruff]
 exclude = [
     ".git/",
