@@ -78,7 +78,6 @@ import { call, Enum, timeout, resolveUiState } from './helpers.js';
 import { CLOUD_IMAGE, DOWNLOAD_AN_OS, LOCAL_INSTALL_MEDIA_SOURCE, needsRHToken } from "../components/create-vm-dialog/createVmDialogUtils.js";
 
 export const domainCanConsole = (vmState) => vmState == 'running';
-export const domainCanDelete = (_vmState, _vmId) => true;
 export const domainCanInstall = (vmState, hasInstallPhase) => vmState != 'running' && hasInstallPhase;
 export const domainCanReset = (vmState) => vmState == 'running' || vmState == 'idle' || vmState == 'paused';
 export const domainCanRun = (vmState, hasInstallPhase) => !hasInstallPhase && vmState == 'shut off';
