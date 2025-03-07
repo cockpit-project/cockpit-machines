@@ -56,7 +56,7 @@ export class StoragePoolVolumesTab extends React.Component {
         this.setState({ deleteError, deleteErrorDetail });
     }
 
-    onSelect(event, isSelected, rowId) {
+    onSelect(_event, isSelected, rowId) {
         let rows;
         if (rowId === -1) {
             rows = this.state.rows.map(oneRow => {
