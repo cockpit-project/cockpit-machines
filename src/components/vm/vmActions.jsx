@@ -41,7 +41,6 @@ import { RenameDialog } from './vmRenameDialog.jsx';
 import { EditDescriptionDialog } from './vmEditDescriptionDialog.jsx';
 import { ReplaceSpiceDialog } from './vmReplaceSpiceDialog.jsx';
 import {
-    domainCanDelete,
     domainCanInstall,
     domainCanReset,
     domainCanRename,
@@ -487,7 +486,7 @@ const VmActions = ({ vm, vms, onAddErrorNotification, isDetailsPage }) => {
         dropdownItems.push(<Divider key="separator-add-tpm" />);
     }
 
-    if (state !== undefined && domainCanDelete(state, vm.id)) {
+    if (state !== undefined) {
         if (!vm.persistent) {
             dropdownItems.push(
                 <Tooltip key={`${id}-delete`} id={`${id}-delete-tooltip`} content={_("This VM is transient. Shut it down if you wish to delete it.")}>
