@@ -122,7 +122,8 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         # Transient network cannot be deleted
         b.wait_visible(f'li.pf-m-aria-disabled > #delete-network-test_network4-{connectionName}')
         b.click(f'#deactivate-network-test_network4-{connectionName}')  # Deactivate transient network
-        self.waitNetworkRow("test_network4", connectionName, False)  # Check it's not present after deactivation
+        self.waitNetworkRow("test_network4", connectionName,
+                            present=False)  # Check it's not present after deactivation
 
     def testNetworksCreate(self):
         b = self.browser
@@ -870,7 +871,7 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
                             f'#delete-network-test_network2-{connectionName}')
         b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-description-list", "test_network2")
         b.click(".pf-v5-c-modal-box__footer button:contains(Delete)")
-        self.waitNetworkRow("test_network2", connectionName, False)
+        self.waitNetworkRow("test_network2", connectionName, present=False)
 
         # Delete an active network
         b.wait_in_text(f"#network-test_network2_clash-{connectionName}-state", "active")
@@ -879,7 +880,7 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
                             f'#delete-network-test_network2_clash-{connectionName}')
         b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-description-list", "test_network2_clash")
         b.click(".pf-v5-c-modal-box__footer button:contains(Delete)")
-        self.waitNetworkRow("test_network2_clash", connectionName, False)
+        self.waitNetworkRow("test_network2_clash", connectionName, present=False)
 
     def testNetworkAddStaticDCHPHosts(self):
         class NetworkAddStaticDCHPHostsDialog(object):

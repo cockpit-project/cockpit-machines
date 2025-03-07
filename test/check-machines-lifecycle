@@ -276,24 +276,24 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
 
         b.set_input_text("#text-search", "subVmTest2")
         self.waitVmRow("subVmTest2")
-        self.waitVmRow("subVmTest1", "system", False)
+        self.waitVmRow("subVmTest1", "system", present=False)
 
         # Check VM search is case insensitive
         b.set_input_text("#text-search", "SuBvMtEsT2")
         self.waitVmRow("subVmTest2")
-        self.waitVmRow("subVmTest1", "system", False)
+        self.waitVmRow("subVmTest1", "system", present=False)
 
         b.select_PF("#vm-state-select-toggle", "Running")
-        self.waitVmRow("subVmTest1", "system", False)
+        self.waitVmRow("subVmTest1", "system", present=False)
         self.waitVmRow("subVmTest2")
 
         b.set_input_text("#text-search", "")
-        self.waitVmRow("subVmTest1", "system", False)
+        self.waitVmRow("subVmTest1", "system", present=False)
         self.waitVmRow("subVmTest2")
 
         b.select_PF("#vm-state-select-toggle", "Shut off")
         self.waitVmRow("subVmTest1")
-        self.waitVmRow("subVmTest2", "system", False)
+        self.waitVmRow("subVmTest2", "system", present=False)
 
         b.select_PF("#vm-state-select-toggle", "All")
         self.waitVmRow("subVmTest1")
@@ -361,7 +361,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         b.set_input_text("#rename-dialog-new-name", "new")
         b.click("#rename-dialog-confirm")
         self.waitVmRow("new")
-        self.waitVmRow("old", "system", False)
+        self.waitVmRow("old", "system", present=False)
 
         # Rename to itself and expect error
         self.performAction("new", "rename")
@@ -454,7 +454,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         b.click(f"#vm-{name}-delete-modal-dialog button:contains(Delete)")
         b.wait_not_present(f"#vm-{name}-delete-modal-dialog")
 
-        self.waitVmRow(name, "system", False)
+        self.waitVmRow(name, "system", present=False)
 
         m.execute(f"while test -f {img2}; do sleep 1; done")
         m.execute(f"while test -f {secondDiskPoolPath + secondDiskVolName}; do sleep 1; done")
@@ -474,7 +474,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         b.wait_in_text(f"#vm-{name}-system-state", "Paused")
         self.performAction(name, "delete")
         b.click(f"#vm-{name}-delete-modal-dialog button:contains(Delete)")
-        self.waitVmRow(name, 'system', False)
+        self.waitVmRow(name, 'system', present=False)
 
         if not m.image.startswith("rhel-8-"):
             # Delete a VM with snapshots and ensure the qcow2 image overlays get also cleaned up
@@ -547,7 +547,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         b.click(f"#vm-{name}-system-forceOff")
         b.wait_visible(f"#vm-{name}-system-confirm-action-modal")
         b.click(f".pf-v5-c-modal-box__footer #vm-{name}-system-forceOff")
-        self.waitVmRow(name, 'system', False)
+        self.waitVmRow(name, 'system', present=False)
         b.wait_not_present(f'#vm-{name}-system-state-error button:contains("view more")')
 
         # Try to delete a VM where storage deletion will fail
@@ -594,7 +594,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         b.click(f"#vm-{name}-delete-modal-dialog button:contains(Delete)")
         b.wait_not_present(f"#vm-{name}-delete-modal-dialog")
 
-        self.waitVmRow(name, "system", False)
+        self.waitVmRow(name, "system", present=False)
 
         # Guest disk image has been deleted
         m.execute(f"while test -f {img2}; do sleep 1; done")
