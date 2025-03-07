@@ -655,7 +655,8 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                 const sourceElem = getSingleOptionalElem(hostdevElem, 'source');
                 const sourceAddressElem = getSingleOptionalElem(sourceElem, 'address');
 
-                let vendorElem, productElem;
+                let vendorElem;
+                let productElem;
                 if (sourceElem) {
                     vendorElem = sourceElem.getElementsByTagName('vendor')[0];
                     productElem = sourceElem.getElementsByTagName('product')[0];
@@ -686,7 +687,8 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                 const sourceElem = hostdevElem.getElementsByTagName('source')[0];
                 const addressElem = sourceElem.getElementsByTagName('address')[0];
 
-                let vendorElem, productElem;
+                let vendorElem;
+                let productElem;
                 if (sourceElem) {
                     vendorElem = sourceElem.getElementsByTagName('vendor')[0];
                     productElem = sourceElem.getElementsByTagName('product')[0];
