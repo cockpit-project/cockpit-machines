@@ -472,7 +472,7 @@ class OSRow extends React.Component {
                                  placeholder={_("Choose an operating system")}
                                  selectOptions={this.state.selectOptions}
                                  selected={os?.shortId}
-                                 onSelect={(event, value) => {
+                                 onSelect={(_event, value) => {
                                      const os = this.state.osInfoListExt.find(os => os.shortId === value);
                                      onValueChanged('os', os);
                                  }}

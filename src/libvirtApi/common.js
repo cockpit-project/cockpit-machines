@@ -350,7 +350,7 @@ function startEventMonitorDomains(connectionName) {
 function startEventMonitorNetworks(connectionName) {
     dbusClient(connectionName).subscribe(
         { interface: "org.libvirt.Connect", member: "NetworkEvent" },
-        (path, iface, signal, args) => {
+        (_path, _iface, signal, args) => {
             const objPath = args[0];
             const eventType = args[1];
 
@@ -389,7 +389,7 @@ function startEventMonitorNetworks(connectionName) {
 function startEventMonitorStoragePools(connectionName) {
     dbusClient(connectionName).subscribe(
         { interface: "org.libvirt.Connect", member: "StoragePoolEvent" },
-        (path, iface, signal, args) => {
+        (_path, _iface, _signal, args) => {
             const objPath = args[0];
             const eventType = args[1];
 

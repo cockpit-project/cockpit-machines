@@ -104,7 +104,7 @@ const DevRow = ({ idPrefix, selectableDevices, setSelectableDevices }) => {
         return cells;
     }
 
-    function onSelect(event, isSelected, rowId) {
+    function onSelect(_event, isSelected, rowId) {
         let newDevs;
         if (rowId === -1) {
             newDevs = selectableDevices.map(oneRow => {
