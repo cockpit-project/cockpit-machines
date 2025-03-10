@@ -122,7 +122,8 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         # Transient network cannot be deleted
         b.wait_visible(f'li.pf-m-aria-disabled > #delete-network-test_network4-{connectionName}')
         b.click(f'#deactivate-network-test_network4-{connectionName}')  # Deactivate transient network
-        self.waitNetworkRow("test_network4", connectionName, False)  # Check it's not present after deactivation
+        self.waitNetworkRow("test_network4", connectionName,
+                            present=False)  # Check it's not present after deactivation
 
     def testNetworksCreate(self):
         b = self.browser

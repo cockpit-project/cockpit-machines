@@ -270,7 +270,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         self.goToVmPage("subVmTest1")
         self.deleteIface(1)
         self.performAction("subVmTest1", "forceOff", checkExpectedState=False)
-        self.waitVmRow("subVmTest1", "system", False)
+        self.waitVmRow("subVmTest1", "system", present=False)
 
     def testNICAdd(self):
         b = self.browser
