@@ -1834,7 +1834,7 @@ vnc_password= "{vnc_passwd}"
             b.click(f"#vm-{dialog.name}-delete-modal-dialog button:contains(Delete)")
             b.wait_not_present(f"#vm-{dialog.name}-delete-modal-dialog")
 
-            self.test_obj.waitVmRow(dialog.name, dialog.connection, False)
+            self.test_obj.waitVmRow(dialog.name, dialog.connection, present=False)
             return self
 
         def _assertCorrectConfiguration(self, dialog):
