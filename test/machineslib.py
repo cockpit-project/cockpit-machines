@@ -23,7 +23,6 @@ import traceback
 import netlib
 import storagelib
 import testlib
-from machine import testvm
 
 
 def hasMonolithicDaemon(image):
@@ -38,8 +37,7 @@ def hasBrokenTPM(image):
     return image.startswith("rhel-8")
 
 
-class VirtualMachinesCaseHelpers:
-    machine: testvm.Machine
+class VirtualMachinesCaseHelpers(testlib.MachineCase):
 
     def waitPageInit(self):
         m = self.machine
@@ -386,8 +384,7 @@ class VirtualMachinesCaseHelpers:
         time.sleep(0.5)
 
 
-class VirtualMachinesCase(testlib.MachineCase, VirtualMachinesCaseHelpers,
-                          storagelib.StorageHelpers, netlib.NetworkHelpers):
+class VirtualMachinesCase(VirtualMachinesCaseHelpers, storagelib.StorageHelpers, netlib.NetworkHelpers):
     def setUp(self):
         super().setUp()
 
