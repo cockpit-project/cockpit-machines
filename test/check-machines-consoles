@@ -78,6 +78,8 @@ fullscreen=0
         b.wait_in_text('.pf-v5-c-expandable-section__content',
                        'Clicking "Launch remote viewer" will download')
 
+        b.wait_not_in_text('.pf-c-expandable-section__content', 'SSH tunnel needs to be set up on client')
+
         b.assert_pixels("#vm-subVmTest1-consoles-page", "vm-details-console-external", skip_layouts=["rtl"])
 
     def testInlineConsole(self, urlroot=""):
