@@ -136,7 +136,7 @@ export const ConsoleCard = ({ state, vm, config, onAddErrorNotification, isExpan
                         state={state.vncState}
                         vm={vm}
                         vnc={vnc}
-                    />
+                        isExpanded={isExpanded} />
                 );
             } else if (inactive_vnc) {
                 body = (
