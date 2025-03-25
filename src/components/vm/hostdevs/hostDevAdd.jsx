@@ -27,7 +27,9 @@ import {
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { DescriptionList } from "@patternfly/react-core/dist/esm/components/DescriptionList";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import {
+    Modal
+} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
 import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 import { useDialogs } from 'dialogs.jsx';
 

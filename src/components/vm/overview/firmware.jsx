@@ -22,7 +22,9 @@ import cockpit from 'cockpit';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import {
+    Modal
+} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { useDialogs, DialogsContext } from 'dialogs.jsx';
 

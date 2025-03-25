@@ -24,7 +24,9 @@ import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { NumberInput } from "@patternfly/react-core/dist/esm/components/NumberInput";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import {
+    Modal
+} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
 import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
 import { HelpIcon } from '@patternfly/react-icons';
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
@@ -220,9 +222,7 @@ export const VsockModal = ({ vm, vms, vmVsockNormalized, isVsockAttached, idPref
                            </Flex>
                        }
                        hasAutoWidth>
-                       <Button variant="plain" className="pf-v5-u-px-sm pf-v5-u-py-0" aria-label={_("more info")}>
-                           <HelpIcon />
-                       </Button>
+                       <Button icon={<HelpIcon />} variant="plain" className="pf-v6-u-px-sm pf-v6-u-py-0" aria-label={_("more info")} />
                    </Popover>
                </>}
                isOpen

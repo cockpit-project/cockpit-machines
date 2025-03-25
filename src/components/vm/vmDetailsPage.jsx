@@ -26,7 +26,7 @@ import { Gallery } from "@patternfly/react-core/dist/esm/layouts/Gallery";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List";
 import { Card, CardBody, CardFooter, CardHeader, CardTitle } from '@patternfly/react-core/dist/esm/components/Card';
-import { Page, PageGroup, PageBreadcrumb, PageSection, PageSectionVariants } from "@patternfly/react-core/dist/esm/components/Page";
+import { Page, PageGroup, PageBreadcrumb, PageSection, } from "@patternfly/react-core/dist/esm/components/Page";
 import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
 import { ExpandIcon, HelpIcon } from '@patternfly/react-icons';
 import { WithDialogs } from 'dialogs.jsx';
@@ -65,7 +65,7 @@ export const VmDetailsPage = ({
     }, []);
 
     const vmActionsPageSection = (
-        <PageSection className="actions-pagesection" variant={PageSectionVariants.light} isWidthLimited>
+        <PageSection hasBodyWrapper className="actions-pagesection" isWidthLimited>
             <div className="vm-top-panel" data-vm-transient={!vm.persistent}>
                 <h2 className="vm-name">{vm.name}</h2>
                 <VmActions vm={vm}
@@ -89,7 +89,7 @@ export const VmDetailsPage = ({
             <WithDialogs key="vm-details">
                 <Page id={"vm-" + vm.name + "-consoles-page"}
                       className="consoles-page-expanded">
-                    <PageBreadcrumb stickyOnBreakpoint={{ default: "top" }}>
+                    <PageBreadcrumb hasBodyWrapper={false} stickyOnBreakpoint={{ default: "top" }}>
                         <Breadcrumb className='machines-listing-breadcrumb'>
                             <BreadcrumbItem to='#'>
                                 {_("Virtual machines")}
@@ -103,7 +103,7 @@ export const VmDetailsPage = ({
                         </Breadcrumb>
                     </PageBreadcrumb>
                     {vmActionsPageSection}
-                    <PageSection variant={PageSectionVariants.light}>
+                    <PageSection hasBodyWrapper={false}>
                         <Consoles vm={vm} config={config}
                             onAddErrorNotification={onAddErrorNotification}
                             isExpanded />
@@ -207,9 +207,7 @@ export const VmDetailsPage = ({
                                 </List>
                             }
                             hasAutoWidth>
-                            <Button variant="plain" aria-label={_("more info")}>
-                                <HelpIcon />
-                            </Button>
+                            <Button icon={<HelpIcon />} variant="plain" aria-label={_("more info")} />
                         </Popover>
                     </>
                 ),
@@ -249,7 +247,7 @@ export const VmDetailsPage = ({
                   className="vm-details"
                   data-pools-count={storagePools.length}>
                 <PageGroup>
-                    <PageBreadcrumb>
+                    <PageBreadcrumb hasBodyWrapper={false}>
                         <Breadcrumb className='machines-listing-breadcrumb'>
                             <BreadcrumbItem to='#'>
                                 {_("Virtual machines")}
@@ -261,7 +259,7 @@ export const VmDetailsPage = ({
                     </PageBreadcrumb>
                     {vmActionsPageSection}
                 </PageGroup>
-                <PageSection>
+                <PageSection hasBodyWrapper={false}>
                     <Gallery className='ct-vm-overview' hasGutter>
                         {cards}
                     </Gallery>

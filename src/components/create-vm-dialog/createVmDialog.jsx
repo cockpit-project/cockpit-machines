@@ -25,7 +25,9 @@ import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form
 import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
 import { Grid, GridItem } from "@patternfly/react-core/dist/esm/layouts/Grid";
 import { InputGroup } from "@patternfly/react-core/dist/esm/components/InputGroup";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import {
+    Modal
+} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
 import { Tab, TabTitleText, Tabs } from "@patternfly/react-core/dist/esm/components/Tabs";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -508,13 +510,13 @@ const getAccessTokenDebounce = debounce(500, (offlineToken, onValueChanged, setV
 const HelperMessageToken = ({ message }) => {
     const link = (
         <a href="https://access.redhat.com/management/api" target="_blank" rel="noopener noreferrer">
-            <ExternalLinkAltIcon className="pf-v5-u-mr-xs" />
+            <ExternalLinkAltIcon className="pf-v6-u-mr-xs" />
             {_("Get a new RHSM token.")}
         </a>
     );
 
     return (
-        <Flex id="token-helper-message" className="pf-v5-c-form__helper-text">
+        <Flex id="token-helper-message" className="pf-v6-c-form__helper-text">
             {message && <FlexItem className="invalid-token-helper" grow={{ default: 'grow' }}>{message + " "}</FlexItem>}
             <FlexItem>
                 { link }
@@ -531,7 +533,7 @@ const validationStates = {
     },
     INPROGRESS: {
         option: "default",
-        message: <span id="token-helper-message" className="pf-v5-c-form__helper-text"><Spinner size="md" /> {_("Checking token validity...")}</span>,
+        message: <span id="token-helper-message" className="pf-v6-c-form__helper-text"><Spinner size="md" /> {_("Checking token validity...")}</span>,
     },
     FAILED: {
         option: "error",
@@ -1410,13 +1412,13 @@ class CreateVmModal extends React.Component {
                     validationFailed={validationFailed} />
                 { this.props.mode === "create"
                     ? <Tabs activeKey={this.state.activeTabKey} onSelect={this.handleTabClick}>
-                        <Tab eventKey={0} title={<TabTitleText>{_("Details")}</TabTitleText>} id="details-tab" className="pf-v5-c-form">
+                        <Tab eventKey={0} title={<TabTitleText>{_("Details")}</TabTitleText>} id="details-tab" className="pf-v6-c-form">
                             {detailsTab}
                         </Tab>
                         <Tab eventKey={1}
                              title={<TabTitleText>{_("Automation")}</TabTitleText>}
                              id="automation"
-                             className="pf-v5-c-form"
+                             className="pf-v6-c-form"
                              tooltip={automationTabTooltip}
                              isAriaDisabled={!!automationTabTooltip}>
                             {automationTab}

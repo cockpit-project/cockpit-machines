@@ -24,7 +24,7 @@ import { Flex } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
 import { Popover, PopoverPosition } from "@patternfly/react-core/dist/esm/components/Popover";
-import { Text, TextContent, TextVariants } from "@patternfly/react-core/dist/esm/components/Text";
+import { Content, ContentVariants } from "@patternfly/react-core/dist/esm/components/Content";
 import { ExternalLinkSquareAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 
 import cockpit from 'cockpit';
@@ -160,21 +160,21 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
         <>
             <FormGroup fieldId={`${idPrefix}-type`}
                        label={_("Interface type")}
-                       labelIcon={
+                       labelHelp={
                            <Popover aria-label={_("Interface type help")}
                                     position={PopoverPosition.bottom}
                                     enableFlip={false}
                                     bodyContent={<Flex direction={{ default: 'column' }}>
-                                        {availableNetworkTypes.map(type => (<TextContent key={type.name}>
-                                            <Text component={TextVariants.h4}>{type.desc}</Text>
+                                        {availableNetworkTypes.map(type => (<Content key={type.name}>
+                                            <Content component={ContentVariants.h4}>{type.desc}</Content>
                                             <strong>{type.detailHeadline}</strong>
                                             <p>
                                                 {type.detailParagraph}
                                                 {type.externalDocs}
                                             </p>
-                                        </TextContent>))}
+                                        </Content>))}
                                     </Flex>}>
-                               <button onClick={e => e.preventDefault()} className="pf-v5-c-form__group-label-help">
+                               <button onClick={e => e.preventDefault()} className="pf-v6-c-form__group-label-help">
                                    <OutlinedQuestionCircleIcon />
                                </button>
                            </Popover>
