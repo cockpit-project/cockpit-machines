@@ -44,7 +44,7 @@ export class NetworkList extends React.Component {
 
         return (
             <WithDialogs key="network-list">
-                <Page>
+                <Page className="no-masthead-sidebar">
                     <PageBreadcrumb hasBodyWrapper={false} stickyOnBreakpoint={{ default: "top" }}>
                         <Breadcrumb variant={PageSectionVariants.light} className='machines-listing-breadcrumb'>
                             <BreadcrumbItem to='#'>

@@ -117,7 +117,7 @@ export const App = () => {
 
     if (!virtualizationEnabled && !emptyStateIgnored) {
         return (
-            <Page>
+            <Page className="no-masthead-sidebar">
                 <PageSection hasBodyWrapper={false}>
                     <EmptyState headingLevel="h4" icon={VirtualMachineIcon} titleText={_("Hardware virtualization is disabled")} className="virtualization-disabled-empty-state">
                         <EmptyStateBody>
@@ -142,7 +142,7 @@ export const App = () => {
         );
     } else if ((superuser.allowed && systemSocketInactive) || loadingResources) {
         return (
-            <Page>
+            <Page className="no-masthead-sidebar">
                 <PageSection hasBodyWrapper={false}>
                     <LibvirtSlate loadingResources={loadingResources} />
                 </PageSection>

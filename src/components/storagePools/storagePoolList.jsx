@@ -45,7 +45,7 @@ export class StoragePoolList extends React.Component {
 
         return (
             <WithDialogs key="storage-pool-list">
-                <Page>
+                <Page className="no-masthead-sidebar">
                     <PageBreadcrumb hasBodyWrapper={false} stickyOnBreakpoint={{ default: "top" }}>
                         <Breadcrumb className='machines-listing-breadcrumb'>
                             <BreadcrumbItem to='#'>

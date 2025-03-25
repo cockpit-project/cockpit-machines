@@ -146,7 +146,7 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
 
     return (
         <WithDialogs key="vms-list">
-            <Page>
+            <Page className="no-masthead-sidebar">
                 <PageSection hasBodyWrapper={false}>
                     <Gallery className="ct-cards-grid" hasGutter>
                         <AggregateStatusCards networks={networks} storagePools={storagePools} />
