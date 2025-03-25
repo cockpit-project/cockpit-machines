@@ -88,7 +88,7 @@ export const VmDetailsPage = ({
         return (
             <WithDialogs key="vm-details">
                 <Page id={"vm-" + vm.name + "-consoles-page"}
-                      className="consoles-page-expanded">
+                      className="consoles-page-expanded no-masthead-sidebar">
                     <PageBreadcrumb hasBodyWrapper={false} stickyOnBreakpoint={{ default: "top" }}>
                         <Breadcrumb className='machines-listing-breadcrumb'>
                             <BreadcrumbItem to='#'>
@@ -244,7 +244,7 @@ export const VmDetailsPage = ({
     return (
         <WithDialogs>
             <Page id="vm-details"
-                  className="vm-details"
+                  className="vm-details no-masthead-sidebar"
                   data-pools-count={storagePools.length}>
                 <PageGroup>
                     <PageBreadcrumb hasBodyWrapper={false}>
