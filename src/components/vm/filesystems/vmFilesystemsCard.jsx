@@ -24,7 +24,9 @@ import { CodeBlock, CodeBlockCode } from "@patternfly/react-core/dist/esm/compon
 import { ExpandableSection } from "@patternfly/react-core/dist/esm/components/ExpandableSection";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import {
+    Modal
+} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
 import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
@@ -184,9 +186,7 @@ const VmFilesystemAddModal = ({ connectionName, vmName }) => {
                                </List>
                            }
                            hasAutoWidth>
-                           <Button variant="plain" aria-label={_("more info")}>
-                               <HelpIcon />
-                           </Button>
+                           <Button icon={<HelpIcon />} variant="plain" aria-label={_("more info")} />
                        </Popover>
                    </>
                }>
@@ -195,10 +195,10 @@ const VmFilesystemAddModal = ({ connectionName, vmName }) => {
                 <FormGroup fieldId={`${idPrefix}-modal-source`}
                            id={`${idPrefix}-modal-source-group`}
                            label={_("Source path")}
-                           labelIcon={
+                           labelHelp={
                                <Popover headerContent={_("The host path that is to be exported.")}>
                                    <button aria-label={_("More info for source path field")}
-                                           className="pf-v5-c-form__group-label-help"
+                                           className="pf-v6-c-form__group-label-help"
                                            onClick={e => e.preventDefault()}
                                            type="button">
                                        <HelpIcon />
@@ -214,10 +214,10 @@ const VmFilesystemAddModal = ({ connectionName, vmName }) => {
                 </FormGroup>
                 <FormGroup fieldId={`${idPrefix}-modal-mountTag`}
                            label={_("Mount tag")}
-                           labelIcon={
+                           labelHelp={
                                <Popover headerContent={_("The tag name to be used by the guest to mount this export point.")}>
                                    <button aria-label={_("More info for mount tag field")}
-                                           className="pf-v5-c-form__group-label-help"
+                                           className="pf-v6-c-form__group-label-help"
                                            onClick={e => e.preventDefault()}
                                            type="button">
                                        <HelpIcon />

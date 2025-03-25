@@ -22,7 +22,9 @@ import cockpit from 'cockpit';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import {
+    Modal
+} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
 import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
 import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 import { InfoAltIcon } from '@patternfly/react-icons';
@@ -58,9 +60,9 @@ const CacheRow = ({ onValueChanged, dialogValues, idPrefix, shutoff }) => {
     return (
         <FormGroup fieldId={`${idPrefix}-cache-mode`}
                    label={_("Cache")}
-                   labelIcon={!shutoff &&
+                   labelHelp={!shutoff &&
                        <Popover bodyContent={_("Machine must be shut off before changing cache mode")}>
-                           <button onClick={e => e.preventDefault()} className="pf-v5-c-form__group-label-help">
+                           <button onClick={e => e.preventDefault()} className="pf-v6-c-form__group-label-help">
                                <InfoAltIcon />
                            </button>
                        </Popover>}>
@@ -88,9 +90,9 @@ const BusRow = ({ onValueChanged, dialogValues, diskDevice, idPrefix, shutoff, s
 
     return (
         <FormGroup fieldId={`${idPrefix}-bus-type`} label={_("Bus")}
-                   labelIcon={!shutoff &&
+                   labelHelp={!shutoff &&
                        <Popover bodyContent={_("Machine must be shut off before changing bus type")}>
-                           <button onClick={e => e.preventDefault()} className="pf-v5-c-form__group-label-help">
+                           <button onClick={e => e.preventDefault()} className="pf-v6-c-form__group-label-help">
                                <InfoAltIcon />
                            </button>
                        </Popover>}>

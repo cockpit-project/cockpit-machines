@@ -5,23 +5,23 @@
   --progress-bar-min: 2rem;
   --progress-bar-max: 12vw;
 
-  .pf-v5-c-table tbody > tr > * {
+  .pf-v6-c-table tbody > tr > * {
     // These tables are 1 row tall; progress bar does odd stuff for alignment;
     // vertical alignment makes text line up
     vertical-align: middle;
   }
 
-  .pf-v5-c-table__toggle > .pf-v5-c-button {
+  .pf-v6-c-table__toggle > .pf-v6-c-button {
     // Undo the PF alignment offset, as we're aligning to the middle (see above)
     margin-block-start: 0;
   }
 
   td[data-label="Size"] {
-    > .pf-v5-c-progress {
+    > .pf-v6-c-progress {
       // Fix progress bar size
       grid-template-columns: minmax(var(--progress-bar-min), var(--progress-bar-max)) minmax(max-content, var(--progress-text));
 
-      > .pf-v5-c-progress__status {
+      > .pf-v6-c-progress__status {
         // Align status text to the end (for GiB to align properly)
         justify-self: end;
       }

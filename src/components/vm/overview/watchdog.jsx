@@ -24,7 +24,9 @@ import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { ExpandableSection, ExpandableSectionToggle } from "@patternfly/react-core/dist/esm/components/ExpandableSection";
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import {
+    Modal
+} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
 import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { useDialogs } from 'dialogs.jsx';

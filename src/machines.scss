@@ -15,25 +15,25 @@
 @import "@patternfly/patternfly/utilities/Text/text.css";
 
 /* Style the list cards as ct-cards */
-.pf-v5-c-page__main-section > .pf-v5-c-card {
+.pf-v6-c-page__main-section > .pf-v6-c-card {
     @extend .ct-card;
 }
 
-.pf-v5-c-form__group .pf-v5-c-helper-text {
+.pf-v6-c-form__group .pf-v6-c-helper-text {
     margin-block-start: var(--pf-v5-c-form__helper-text--MarginTop);
 }
 
 /* Create a hybrid popover with an alert style */
-.ct-popover-alert .pf-v5-c-popover__content {
-    @extend .pf-v5-c-alert;
+.ct-popover-alert .pf-v6-c-popover__content {
+    @extend .pf-v6-c-alert;
     @extend .pf-m-danger;
     display: block;
     box-shadow: none;
 }
 
 /* Also style the hybrid popover alert title like an alert */
-.ct-popover-alert .pf-v5-c-title {
-    @extend .pf-v5-c-alert__title;
+.ct-popover-alert .pf-v6-c-title {
+    @extend .pf-v6-c-alert__title;
     font-size: inherit;
 }
 
@@ -44,18 +44,18 @@
     margin-inline: 0;
 }
 
-.machines-listing-actions button:not(.pf-v5-c-menu-toggle) {
+.machines-listing-actions button:not(.pf-v6-c-menu-toggle) {
     margin-block: 0.25rem;
     margin-inline: 0.5rem 0;
 }
 
 
-.pf-v5-c-table {
+.pf-v6-c-table {
     .btn-group {
         align-items: center;
     }
 
-    > tbody > tr:not(.pf-v5-c-table__expandable-row) > [data-label="Actions"] .pf-v5-c-button {
+    > tbody > tr:not(.pf-v6-c-table__expandable-row) > [data-label="Actions"] .pf-v6-c-button {
         // vertical: compensate for padding; fixing alignment
         // horizontal: add some needed padding
         margin-block: -0.25rem;
@@ -63,7 +63,7 @@
     }
 }
 
-.machines-connection-selector > .pf-v5-c-radio:first-child {
+.machines-connection-selector > .pf-v6-c-radio:first-child {
     padding-inline-end: var(--pf-v5-global--spacer--md);
 }
 
@@ -72,7 +72,7 @@
     max-inline-size: 5rem;
 }
 
-.ct-external-docs-link.pf-v5-c-button.pf-m-link.pf-m-inline {
+.ct-external-docs-link.pf-v6-c-button.pf-m-link.pf-m-inline {
   padding-inline-start: var(--pf-v5-global--spacer--sm);
 }
 
@@ -81,7 +81,7 @@
 }
 
 // Do not add a box-shadow to a "subsection", while it's technically correct it looks weird.
-.pf-v5-c-page__main-section.pf-m-light.actions-pagesection {
+.pf-v6-c-page__main-section.pf-m-light.actions-pagesection {
     box-shadow: none;
 }
 
@@ -92,14 +92,14 @@
 
 // Can be removed once https://github.com/cockpit-project/cockpit/pull/18694 is included in the used pkg/lib
 .pf-v5-theme-dark {
-  .pf-v5-c-page__main-group section {
+  .pf-v6-c-page__main-group section {
     --pf-v5-c-page__main-breadcrumb--BackgroundColor: var(--pf-v5-global--BackgroundColor--dark-100);
     background-color: var(--pf-v5-global--BackgroundColor--dark-100);
   }
 }
 
 // remove oversized gap between checkbox label and checkbox body
-#storage-pool-delete-modal span.pf-v5-c-check__body {
+#storage-pool-delete-modal span.pf-v6-c-check__body {
     margin-block-start: 0;
 }
 

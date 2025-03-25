@@ -1,30 +1,30 @@
 @import "@patternfly/react-styles/css/components/Consoles/SerialConsole.css";
 
-.pf-v5-c-console,
-.pf-v5-c-console__vnc,
-.pf-v5-c-console__vnc > div,
-.pf-v5-c-console__vnc > div > div {
+.pf-v6-c-console,
+.pf-v6-c-console__vnc,
+.pf-v6-c-console__vnc > div,
+.pf-v6-c-console__vnc > div > div {
     inline-size: 100%;
     block-size: 100%;
 }
 
-.pf-v5-c-console__actions {
+.pf-v6-c-console__actions {
     max-inline-size: 25ch;
 }
 
-.pf-v5-c-console {
+.pf-v6-c-console {
      /* auto minimum width, causing problem */
      grid-template-columns: 1fr;
      grid-template-rows: min-content 1fr;
 }
 
-.consoles-page-expanded .actions-pagesection .pf-v5-c-page__main-body {
+.consoles-page-expanded .actions-pagesection .pf-v6-c-page__main-body {
      padding-block-end: 0;
 }
 
 /* Hide send key button - there is not way to do that from the JS
  * https://github.com/patternfly/patternfly-react/issues/3689
  */
-#pf-v5-c-console__send-shortcut {
+#pf-v6-c-console__send-shortcut {
     display: none;
 }

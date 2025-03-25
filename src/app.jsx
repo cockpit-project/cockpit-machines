@@ -19,10 +19,10 @@
 import React, { useState, useEffect } from 'react';
 import { AlertGroup } from "@patternfly/react-core/dist/esm/components/Alert";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
-import { EmptyState, EmptyStateIcon, EmptyStateBody, EmptyStateActions, EmptyStateHeader, EmptyStateFooter } from "@patternfly/react-core/dist/esm/components/EmptyState";
-import { Page, PageSection, PageSectionVariants } from "@patternfly/react-core/dist/esm/components/Page";
+import { EmptyState, EmptyStateBody, EmptyStateActions, EmptyStateFooter } from "@patternfly/react-core/dist/esm/components/EmptyState";
+import { Page, PageSection, } from "@patternfly/react-core/dist/esm/components/Page";
 import { Progress, ProgressMeasureLocation } from "@patternfly/react-core/dist/esm/components/Progress";
-import { Text, TextContent } from "@patternfly/react-core/dist/esm/components/Text";
+import { Content, } from "@patternfly/react-core/dist/esm/components/Content";
 import { ExclamationCircleIcon, VirtualMachineIcon } from '@patternfly/react-icons';
 import { superuser } from "superuser.js";
 import cockpit from 'cockpit';
@@ -118,16 +118,15 @@ export const App = () => {
     if (!virtualizationEnabled && !emptyStateIgnored) {
         return (
             <Page>
-                <PageSection variant={PageSectionVariants.light}>
-                    <EmptyState className="virtualization-disabled-empty-state">
-                        <EmptyStateHeader titleText={_("Hardware virtualization is disabled")} icon={<EmptyStateIcon icon={VirtualMachineIcon} />} headingLevel="h4" />
+                <PageSection hasBodyWrapper={false}>
+                    <EmptyState headingLevel="h4" icon={VirtualMachineIcon} titleText={_("Hardware virtualization is disabled")} className="virtualization-disabled-empty-state">
                         <EmptyStateBody>
-                            <TextContent>
-                                <Text>{_("Enable virtualization support in BIOS/EFI settings.")}</Text>
-                                <Text>
+                            <Content>
+                                <Content component="p">{_("Enable virtualization support in BIOS/EFI settings.")}</Content>
+                                <Content component="p">
                                     {_("Changing BIOS/EFI settings is specific to each manufacturer. It involves pressing a hotkey during boot (ESC, F1, F12, Del). Enable a setting called \"virtualization\", \"VM\", \"VMX\", \"SVM\", \"VTX\", \"VTD\". Consult your computer's manual for details.")}
-                                </Text>
-                            </TextContent>
+                                </Content>
+                            </Content>
                         </EmptyStateBody>
                         <EmptyStateFooter>
                             <EmptyStateActions>
@@ -144,7 +143,7 @@ export const App = () => {
     } else if ((superuser.allowed && systemSocketInactive) || loadingResources) {
         return (
             <Page>
-                <PageSection variant={PageSectionVariants.light}>
+                <PageSection hasBodyWrapper={false}>
                     <LibvirtSlate loadingResources={loadingResources} />
                 </PageSection>
             </Page>

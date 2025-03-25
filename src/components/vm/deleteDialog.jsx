@@ -22,7 +22,9 @@ import React from 'react';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { DataList, DataListCell, DataListCheck, DataListItem, DataListItemCells, DataListItemRow } from "@patternfly/react-core/dist/esm/components/DataList";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import {
+    Modal
+} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 import { DialogsContext } from 'dialogs.jsx';
 
@@ -50,7 +52,7 @@ const DeleteDialogBody = ({ disks, vmName, destroy, onChange }) => {
                             isChecked={!!disk.checked} />
                     <DataListItemCells
                         dataListCells={[
-                            <DataListCell id={disk.target} className="pf-v5-u-mr-2xl" key="target name" isFilled={false}>
+                            <DataListCell id={disk.target} className="pf-v6-u-mr-2xl" key="target name" isFilled={false}>
                                 <strong>{disk.target}</strong>
                             </DataListCell>,
                             <DataListCell key="target source" alignRight>
@@ -80,7 +82,7 @@ const DeleteDialogBody = ({ disks, vmName, destroy, onChange }) => {
             <FormGroup>
                 {destroy && <p>{cockpit.format(_("The VM $0 is running and will be forced off before deletion."), vmName)}</p>}
                 {disks.length > 0 && <>
-                    <p className="pf-v5-u-mb-sm">{_("Delete associated storage files:")}</p>
+                    <p className="pf-v6-u-mb-sm">{_("Delete associated storage files:")}</p>
                     <DataList isCompact>
                         { disks.map(disk_row) }
                     </DataList>
@@ -161,7 +163,7 @@ export class DeleteDialog extends React.Component {
         return (
             <Modal position="top" variant="medium" id={`${id}-delete-modal-dialog`} isOpen onClose={Dialogs.close}
                 title={<>
-                    <ExclamationTriangleIcon className="ct-icon-exclamation-triangle pf-v5-u-mr-sm" />
+                    <ExclamationTriangleIcon className="ct-icon-exclamation-triangle pf-v6-u-mr-sm" />
                     { cockpit.format(_("Delete $0 VM?"), this.props.vm.name) }
                 </>}
                 footer={

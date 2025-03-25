@@ -174,7 +174,7 @@ export const VmNeedsShutdown = ({ vm }) => {
             position="bottom"
             hasAutoWidth
             bodyContent={body}>
-            <Label className="resource-state-text" color="cyan" id={`vm-${vm.name}-needs-shutdown`}
+            <Label className="resource-state-text" color="teal" id={`vm-${vm.name}-needs-shutdown`}
                    icon={<PendingIcon />} onClick={() => null}>
                 {_("Changes pending")}
             </Label>
