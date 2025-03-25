@@ -23,9 +23,11 @@ import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { Menu, MenuContent, MenuList, MenuItem } from "@patternfly/react-core/dist/esm/components/Menu";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import {
+    Modal
+} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
 import { Panel, PanelFooter, PanelMain, PanelMainBody } from "@patternfly/react-core/dist/esm/components/Panel";
-import { Text, TextContent, TextList, TextListItem } from "@patternfly/react-core/dist/esm/components/Text";
+import { Content, } from "@patternfly/react-core/dist/esm/components/Content";
 import { HelpIcon } from '@patternfly/react-icons';
 import { Popover, PopoverPosition } from "@patternfly/react-core/dist/esm/components/Popover";
 
@@ -138,34 +140,34 @@ export const ReplaceSpiceDialog = ({ vm, vms }) => {
            }>
             { vm.state === 'running' && !error && <NeedsShutdownAlert idPrefix="spice-modal" /> }
             {error && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.dialogErrorDetail} />}
-            <TextContent>
+            <Content>
                 <Flex spaceItems={{ default: 'spaceItemsNone' }}>
                     <FlexItem>
-                        <Text>
+                        <Content component="p">
                             {isMultiple
                                 ? _("Replace SPICE on selected VMs.")
                                 : _("Replace SPICE on the virtual machine.") }
-                        </Text>
+                        </Content>
                     </FlexItem>
                     <FlexItem>
                         <Popover aria-label={_("SPICE conversion")}
                                 position={PopoverPosition.top}
                                 headerContent={_("SPICE conversion")}
                                 bodyContent={
-                                    <TextList className="spice-replace-dialog-popover-list">
-                                        <TextListItem>{_("Convert SPICE graphics console to VNC")}</TextListItem>
-                                        <TextListItem>{_("Convert QXL video card to VGA")}</TextListItem>
-                                        <TextListItem>{_("Remove SPICE audio and host devices")}</TextListItem>
-                                    </TextList>
+                                    <Content component="ul" className="spice-replace-dialog-popover-list">
+                                        <Content component="li">{_("Convert SPICE graphics console to VNC")}</Content>
+                                        <Content component="li">{_("Convert QXL video card to VGA")}</Content>
+                                        <Content component="li">{_("Remove SPICE audio and host devices")}</Content>
+                                    </Content>
                                 }>
                             <Button variant='link' aria-label={_("Help")} icon={<HelpIcon />}> </Button>
                         </Popover>
                     </FlexItem>
                 </Flex>
-                <Text>
+                <Content component="p">
                     {_("This is intended for a host which does not support SPICE due to upgrades or live migration.")}
-                </Text>
-            </TextContent>
+                </Content>
+            </Content>
             { vmSelect }
         </Modal>
     );

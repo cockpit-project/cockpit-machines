@@ -21,7 +21,7 @@ import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Icon } from "@patternfly/react-core/dist/esm/components/Icon";
-import { Text, TextVariants } from "@patternfly/react-core/dist/esm/components/Text";
+import { Content, ContentVariants } from "@patternfly/react-core/dist/esm/components/Content";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
@@ -152,9 +152,9 @@ class VmOverviewCard extends React.Component {
             <Flex className="overview-tab" direction={{ default: "column", "2xl": "row" }}>
                 <FlexItem>
                     <DescriptionList isHorizontal>
-                        <Text component={TextVariants.h4}>
+                        <Content component={ContentVariants.h4}>
                             {_("General")}
-                        </Text>
+                        </Content>
 
                         <DescriptionListGroup>
                             <DescriptionListTerm>{_("Connection")}</DescriptionListTerm>
@@ -208,7 +208,7 @@ class VmOverviewCard extends React.Component {
                                     <Popover alertSeverityVariant="info"
                                         position="right"
                                         bodyContent={WATCHDOG_INFO_MESSAGE}>
-                                        <button onClick={e => e.preventDefault()} className="pf-v5-c-form__group-label-help">
+                                        <button onClick={e => e.preventDefault()} className="pf-v6-c-form__group-label-help">
                                             <Icon className="overview-icon" status="info">
                                                 <HelpIcon />
                                             </Icon>
@@ -240,7 +240,7 @@ class VmOverviewCard extends React.Component {
                                             </Flex>
                                         }
                                         hasAutoWidth>
-                                        <button onClick={e => e.preventDefault()} className="pf-v5-c-form__group-label-help">
+                                        <button onClick={e => e.preventDefault()} className="pf-v6-c-form__group-label-help">
                                             <Icon className="overview-icon" status="info">
                                                 <HelpIcon />
                                             </Icon>
@@ -256,9 +256,9 @@ class VmOverviewCard extends React.Component {
                 </FlexItem>
                 <FlexItem>
                     <DescriptionList isHorizontal>
-                        <Text component={TextVariants.h4}>
+                        <Content component={ContentVariants.h4}>
                             {_("Hypervisor details")}
-                        </Text>
+                        </Content>
 
                         <DescriptionListGroup>
                             <DescriptionListTerm>{_("Emulated machine")}</DescriptionListTerm>

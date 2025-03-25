@@ -21,7 +21,9 @@ import cockpit from 'cockpit';
 import React, { useState } from 'react';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import {
+    Modal
+} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 
 import { FormHelper } from 'cockpit-components-form-helper.jsx';
