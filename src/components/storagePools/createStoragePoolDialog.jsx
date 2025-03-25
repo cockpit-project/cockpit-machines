@@ -24,7 +24,9 @@ import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
 import { Grid } from "@patternfly/react-core/dist/esm/layouts/Grid";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import {
+    Modal
+} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { DialogsContext } from 'dialogs.jsx';
 import { FormHelper } from 'cockpit-components-form-helper.jsx';

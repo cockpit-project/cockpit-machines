@@ -24,7 +24,7 @@ import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
-import { Text, TextContent, TextList, TextListItem, TextVariants } from "@patternfly/react-core/dist/esm/components/Text";
+import { Content, ContentVariants } from "@patternfly/react-core/dist/esm/components/Content";
 import { HelpIcon } from "@patternfly/react-icons";
 import cockpit from 'cockpit';
 import './machinesConnectionSelector.css';
@@ -40,48 +40,46 @@ export const MachinesConnectionSelector = ({ onValueChanged, loggedUser, connect
                    isInline
                    id={id}
                    className="machines-connection-selector"
-                   labelIcon={
+                   labelHelp={
                        showInfoHelper && <Popover id="machines-connection-selector-popover"
                            bodyContent={<>
-                               <TextContent>
-                                   <Text component={TextVariants.h4}>{rephraseUI("connections", LIBVIRT_SYSTEM_CONNECTION)}</Text>
-                                   <TextList>
-                                       <TextListItem>
+                               <Content>
+                                   <Content component={ContentVariants.h4}>{rephraseUI("connections", LIBVIRT_SYSTEM_CONNECTION)}</Content>
+                                   <Content component="ul">
+                                       <Content component="li">
                                            {_("Ideal for server VMs")}
-                                       </TextListItem>
-                                       <TextListItem>
+                                       </Content>
+                                       <Content component="li">
                                            {_("VM will launch with root permissions")}
-                                       </TextListItem>
-                                       <TextListItem>
+                                       </Content>
+                                       <Content component="li">
                                            {_("Ideal networking support")}
-                                       </TextListItem>
-                                       <TextListItem>
+                                       </Content>
+                                       <Content component="li">
                                            {_("Permissions denied for disk images in home directories")}
-                                       </TextListItem>
-                                   </TextList>
-                               </TextContent>
-                               <TextContent>
-                                   <Text component={TextVariants.h4}>{rephraseUI("connections", LIBVIRT_SESSION_CONNECTION)}</Text>
-                                   <TextList>
-                                       <TextListItem>
+                                       </Content>
+                                   </Content>
+                               </Content>
+                               <Content>
+                                   <Content component={ContentVariants.h4}>{rephraseUI("connections", LIBVIRT_SESSION_CONNECTION)}</Content>
+                                   <Content component="ul">
+                                       <Content component="li">
                                            {_("Good choice for desktop virtualization")}
-                                       </TextListItem>
-                                       <TextListItem>
+                                       </Content>
+                                       <Content component="li">
                                            {_("VM launched with unprivileged limited access, with the process and PTY owned by your user account")}
-                                       </TextListItem>
-                                       <TextListItem>
+                                       </Content>
+                                       <Content component="li">
                                            {_("Restrictions in networking (SLIRP-based emulation) and PCI device assignment")}
-                                       </TextListItem>
-                                       <TextListItem>
+                                       </Content>
+                                       <Content component="li">
                                            {_("Disk images can be stored in user home directory")}
-                                       </TextListItem>
-                                   </TextList>
-                               </TextContent>
+                                       </Content>
+                                   </Content>
+                               </Content>
                            </>}
                        >
-                           <Button variant="plain" aria-label={_("more info")} className="pf-v5-c-form__group-label-help">
-                               <HelpIcon />
-                           </Button>
+                           <Button icon={<HelpIcon />} variant="plain" aria-label={_("more info")} className="pf-v6-c-form__group-label-help" />
                        </Popover>
                    }>
             <Radio isChecked={connectionName === LIBVIRT_SYSTEM_CONNECTION}

@@ -21,7 +21,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form } from "@patternfly/react-core/dist/esm/components/Form";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import {
+    Modal
+} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import cockpit from 'cockpit';
 

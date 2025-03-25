@@ -23,7 +23,9 @@ import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
 import { DropdownItem } from "@patternfly/react-core/dist/esm/components/Dropdown";
 import { HelperText, HelperTextItem } from "@patternfly/react-core/dist/esm/components/HelperText";
 import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import {
+    Modal
+} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
 import { Stack } from "@patternfly/react-core/dist/esm/layouts/Stack";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { ExclamationTriangleIcon, InfoIcon } from '@patternfly/react-icons';
@@ -190,7 +192,7 @@ class StoragePoolDelete extends React.Component {
         return (
             <Modal id="storage-pool-delete-modal" position="top" variant="small" isOpen onClose={Dialogs.close}
                 title={<>
-                    <ExclamationTriangleIcon color="orange" className="pf-v5-u-mr-sm" />
+                    <ExclamationTriangleIcon color="orange" className="pf-v6-u-mr-sm" />
                     { cockpit.format(_("Delete $0 storage pool?"), storagePool.name) }
                 </>}
                    footer={

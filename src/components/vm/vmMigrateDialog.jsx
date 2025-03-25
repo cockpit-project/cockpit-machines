@@ -23,7 +23,9 @@ import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import {
+    Modal
+} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
 import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { Popover, PopoverPosition } from "@patternfly/react-core/dist/esm/components/Popover";
@@ -59,7 +61,7 @@ const DurationRow = ({ temporary, setTemporary }) => {
         <FormGroup hasNoPaddingTop
                    fieldId="temporary"
                    label={_("Duration")}
-                   labelIcon={
+                   labelHelp={
                        <Popover aria-label="Duration popover"
                                 position={PopoverPosition.bottom}
                                 enableFlip
@@ -73,7 +75,7 @@ const DurationRow = ({ temporary, setTemporary }) => {
                                         <p>{_("A copy of the VM will run on the destination and will disappear when it is shut off. Meanwhile, the origin host keeps its copy of the VM configuration.")}</p>
                                     </FlexItem>
                                 </Flex>}>
-                           <button onClick={e => e.preventDefault()} className="pf-v5-c-form__group-label-help">
+                           <button onClick={e => e.preventDefault()} className="pf-v6-c-form__group-label-help">
                                <OutlinedQuestionCircleIcon />
                            </button>
                        </Popover>
@@ -90,7 +92,7 @@ const StorageRow = ({ storage, setStorage }) => {
     return (
         <FormGroup hasNoPaddingTop
                    label={_("Storage")}
-                   labelIcon={
+                   labelHelp={
                        <Popover aria-label="Storage popover"
                                 position={PopoverPosition.bottom}
                                 enableFlip
@@ -104,7 +106,7 @@ const StorageRow = ({ storage, setStorage }) => {
                                         <p>{_("Full disk images and the domain's memory will be migrated. Only non-shared, writable disk images will be transferred. Unused storage will remain on the origin after migration.")}</p>
                                     </FlexItem>
                                 </Flex>}>
-                           <button onClick={e => e.preventDefault()} className="pf-v5-c-form__group-label-help">
+                           <button onClick={e => e.preventDefault()} className="pf-v6-c-form__group-label-help">
                                <OutlinedQuestionCircleIcon />
                            </button>
                        </Popover>

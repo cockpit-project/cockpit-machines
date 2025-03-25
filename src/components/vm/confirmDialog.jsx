@@ -20,7 +20,9 @@ import cockpit from 'cockpit';
 import React, { useEffect, useState } from 'react';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import {
+    Modal
+} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
 import { useDialogs } from 'dialogs.jsx';
 import { distanceToNow } from 'timeformat.js';
 

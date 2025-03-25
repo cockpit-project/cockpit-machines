@@ -147,7 +147,7 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
     return (
         <WithDialogs key="vms-list">
             <Page>
-                <PageSection>
+                <PageSection hasBodyWrapper={false}>
                     <Gallery className="ct-cards-grid" hasGutter>
                         <AggregateStatusCards networks={networks} storagePools={storagePools} />
                         <Card id='virtual-machines-listing' isSelectable isClickable>
