@@ -2517,12 +2517,10 @@ vnc_password= "{vnc_passwd}"
             # if VNC is available, the inline viewer is the default
             if expect_vnc:
                 with b.wait_timeout(60):
-                    b.wait_visible(".pf-v6-c-console__vnc canvas")
+                    b.wait_visible("[class*=consoleVnc-] canvas")
 
-            b.click(".pf-v6-c-console__type-selector")
-            b.wait_visible(".pf-v6-c-console__type-selector + .pf-v6-c-select__menu")
-            b.click("#DesktopViewer button")
-            b.wait_not_present(".pf-v6-c-console__type-selector + .pf-v6-c-select__menu")
+            b.click("#pf-v6-c-console__type-selector")
+            b.click("#DesktopViewer")
             if expect_vnc:
                 b.wait_in_text(".pf-v6-c-console__manual-connection", "VNC")
             else:

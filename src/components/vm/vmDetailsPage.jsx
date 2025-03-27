@@ -103,7 +103,7 @@ export const VmDetailsPage = ({
                         </Breadcrumb>
                     </PageBreadcrumb>
                     {vmActionsPageSection}
-                    <PageSection hasBodyWrapper={false}>
+                    <PageSection isFilled hasBodyWrapper={false}>
                         <Consoles vm={vm} config={config}
                             onAddErrorNotification={onAddErrorNotification}
                             isExpanded />

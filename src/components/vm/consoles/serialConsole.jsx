@@ -89,13 +89,13 @@ class SerialConsoleCockpit extends React.Component {
 
         return (
             <>
-                <div className="pf-v6-c-console__actions-serial">
+                <div className="vm-terminal-actions">
                     {this.state.channel
                         ? <Button id={this.props.vmName + "-serialconsole-disconnect"} variant="secondary" onClick={this.onDisconnect}>{_("Disconnect")}</Button>
                         : <Button id={this.props.vmName + "-serialconsole-connect"} variant="secondary" onClick={() => this.createChannel(this.props.spawnArgs)}>{_("Connect")}</Button>
                     }
                 </div>
-                <div id={pid} className="vm-terminal pf-v6-c-console__serial">
+                <div id={pid} className="vm-terminal">
                     {t}
                 </div>
             </>

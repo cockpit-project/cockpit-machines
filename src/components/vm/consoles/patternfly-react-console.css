@@ -1,0 +1,60 @@
+/* @patternfly/react-console generates its styling at run-time and
+   inserts it into the DOM as a <style> element.  These elements will
+   be blocked by our Content-Security-Policy.
+
+   Instead of opening up our CSP, we include the relevant CSS
+   here. It's not a lot and we need to fix some bugs in it anyway.
+
+   The classnames look like they are run-time generated, but seem
+   stable in practice. Nevertheless, let's match them with a wildcard.
+
+   We plan to stop using react-console in the near future, and if any
+   trouble arises because of the hacks we do here, we should
+   accelerate that plan.
+*/
+
+/* From AccessConsoles
+ */
+
+[class*="console-"] {
+  display: grid;
+  /* See https://github.com/patternfly/react-console/issues/91 */
+  row-gap: var(--pf-t--global--spacer--md);
+  grid-template-areas: 'actions-main actions-extra'
+    'main main';
+}
+
+[class*="consoleActions-"] {
+  display: flex;
+  grid-area: actions-main;
+}
+
+/* From VncConsole
+ */
+
+[class*="consoleVnc-"] {
+  grid-area: main;
+}
+
+/* From VncActions
+ */
+
+[class*="consoleActionsVnc-"] {
+  display: flex;
+  flex-wrap: wrap;
+  grid-area: actions-extra;
+  /* See https://github.com/patternfly/react-console/issues/91 */
+  column-gap: var(--pf-t--global--spacer--sm);
+  justify-content: flex-end;
+}
+
+/* From DesktopViewer
+ */
+
+[class*="consoleDesktopViewer-"] {
+  /* See https://github.com/patternfly/react-console/issues/91 */
+  gap: var(--pf-t--global--spacer--md);
+  display: grid;
+  grid-area: main;
+  grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+}
