@@ -1,28 +1,48 @@
-.pf-v6-c-console,
-.pf-v6-c-console__vnc,
-.pf-v6-c-console__vnc > div,
-.pf-v6-c-console__vnc > div > div {
+@import "./patternfly-react-console.css";
+
+/* Make the vnc console fill the card body.
+*/
+[class*="console-"],
+[class*="consoleVnc-"],
+[class*="consoleVnc-"] > div,
+[class*="consoleVnc-"] > div > div {
     inline-size: 100%;
     block-size: 100%;
 }
 
-.pf-v6-c-console__actions {
+/* Prevent dropdown select from cramping the other actions.
+*/
+[class*="consoleActions-"] {
     max-inline-size: 25ch;
+    margin-inline-end: var(--pf-t--global--spacer--sm);
 }
 
-.pf-v6-c-console {
+[class*="console-"] {
      /* auto minimum width, causing problem */
      grid-template-columns: 1fr;
      grid-template-rows: min-content 1fr;
 }
 
-.consoles-page-expanded .actions-pagesection .pf-v6-c-page__main-body {
-     padding-block-end: 0;
-}
-
 /* Hide send key button - there is not way to do that from the JS
  * https://github.com/patternfly/patternfly-react/issues/3689
  */
-#pf-v6-c-console__send-shortcut {
+[class*="consoleActionsVnc-"] button:nth-child(2) {
     display: none;
+}
+
+/* Our SerialConsole is a completely custom component, fit it into the
+   AccessConsole grid.
+*/
+.vm-terminal-actions {
+    grid-area: actions-extra;
+}
+
+.vm-terminal {
+    grid-area: main;
+}
+
+/* Make sure the expanded console fills the whole page
+ */
+.consoles-page-expanded > div {
+    block-size: 100%;
 }
