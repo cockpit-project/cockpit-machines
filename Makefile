@@ -162,18 +162,6 @@ rpm: $(TARFILE) $(SPEC)
 	rm -r "`pwd`/rpmbuild"
 	rm -r "`pwd`/output" "`pwd`/build"
 
-# pybridge scenario: build and install the python bridge from cockpit repo
-ifeq ("$(TEST_SCENARIO)","pybridge")
-COCKPIT_PYBRIDGE_REF = main
-COCKPIT_WHEEL = cockpit-0-py3-none-any.whl
-
-$(COCKPIT_WHEEL):
-	pip wheel git+https://github.com/cockpit-project/cockpit.git@${COCKPIT_PYBRIDGE_REF}
-
-VM_DEPENDS = $(COCKPIT_WHEEL)
-VM_CUSTOMIZE_FLAGS += --install $(COCKPIT_WHEEL)
-endif
-
 ifeq ("$(TEST_SCENARIO)","updates-testing")
 VM_CUSTOMIZE_FLAGS = --run-command 'dnf -y update --setopt=install_weak_deps=False --enablerepo=updates-testing >&2'
 endif
@@ -185,7 +173,7 @@ VM_INSTALL = --build $(TARFILE) --script $(CURDIR)/test/vm.install
 endif
 
 # build a VM with locally built distro pkgs installed
-$(VM_IMAGE): $(TARFILE) packaging/debian/rules packaging/debian/control packaging/arch/PKGBUILD bots $(VM_DEPENDS)
+$(VM_IMAGE): $(TARFILE) packaging/debian/rules packaging/debian/control packaging/arch/PKGBUILD bots
 	bots/image-customize --fresh $(VM_CUSTOMIZE_FLAGS) $(VM_INSTALL) $(TEST_OS)
 
 # convenience target for the above
