@@ -115,7 +115,7 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                     placeholder={_("Filter by name")} />
                 </ToolbarItem>
                 {domainStates.length > 1 && <>
-                    <ToolbarItem variant="label" id="vm-state-select">
+                    <ToolbarItem alignSelf="center" variant="label" id="vm-state-select">
                         {_("State")}
                     </ToolbarItem>
                     <ToolbarItem>
