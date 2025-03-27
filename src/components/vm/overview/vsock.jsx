@@ -27,8 +27,6 @@ import { NumberInput } from "@patternfly/react-core/dist/esm/components/NumberIn
 import {
     Modal
 } from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
-import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
-import { HelpIcon } from '@patternfly/react-icons';
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { useDialogs } from 'dialogs.jsx';
 import { fmt_to_fragments } from 'utils.jsx';
@@ -37,6 +35,7 @@ import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { FormHelper } from "cockpit-components-form-helper.jsx";
 import { domainRemoveVsock, domainSetVsock } from "../../../libvirtApi/domain.js";
 import { NeedsShutdownAlert, NeedsShutdownTooltip } from "../../common/needsShutdown.jsx";
+import { InfoPopover } from '../../common/infoPopover.jsx';
 import {
     SOCAT_EXAMPLE,
     SOCAT_EXAMPLE_HEADER,
@@ -213,7 +212,7 @@ export const VsockModal = ({ vm, vms, vmVsockNormalized, isVsockAttached, idPref
                title={isVsockAttached ? _("Edit vsock interface") : _("Add vsock interface")}
                description={<>
                    {VSOCK_INFO_MESSAGE}
-                   <Popover alertSeverityVariant="info"
+                   <InfoPopover alertSeverityVariant="info"
                        position="bottom"
                        headerContent={SOCAT_EXAMPLE_HEADER}
                        bodyContent={
@@ -221,9 +220,7 @@ export const VsockModal = ({ vm, vms, vmVsockNormalized, isVsockAttached, idPref
                                {SOCAT_EXAMPLE}
                            </Flex>
                        }
-                       hasAutoWidth>
-                       <Button icon={<HelpIcon />} variant="plain" className="pf-v6-u-px-sm pf-v6-u-py-0" aria-label={_("more info")} />
-                   </Popover>
+                       hasAutoWidth />
                </>}
                isOpen
                footer={
