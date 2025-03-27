@@ -91,7 +91,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
             popover_id = "popover-machines-connection-selector-popover-body"
             b.click(button)
             b.wait_visible("#create-vm-dialog")
-            b.click('#create-vm-dialog button[aria-label="more info"]')
+            b.click('#create-vm-dialog span[aria-label="more info"]')
             b.wait_in_text(f"#{popover_id}", text)
 
             # Close the connection description dialog
