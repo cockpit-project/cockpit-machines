@@ -108,17 +108,17 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
     const toolBar = (
         <Toolbar>
             <ToolbarContent>
-                <ToolbarItem>
+                <ToolbarItem alignSelf="baseline">
                     <TextInput name="text-search" id="text-search" type="search"
                     value={currentTextFilter}
                     onChange={(_, currentTextFilter) => setCurrentTextFilter(currentTextFilter)}
                     placeholder={_("Filter by name")} />
                 </ToolbarItem>
                 {domainStates.length > 1 && <>
-                    <ToolbarItem variant="label" id="vm-state-select">
+                    <ToolbarItem alignSelf="baseline" variant="label" id="vm-state-select">
                         {_("State")}
                     </ToolbarItem>
-                    <ToolbarItem>
+                    <ToolbarItem alignSelf="baseline">
                         <Select
                           id="vm-state-menu"
                           isOpen={statusIsExpanded}
@@ -138,8 +138,8 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                         </Select>
                     </ToolbarItem>
                 </>}
-                <ToolbarItem variant="separator" />
-                <ToolbarItem>{actions}</ToolbarItem>
+                <ToolbarItem alignSelf="baseline" variant="separator" />
+                <ToolbarItem alignSelf="baseline">{actions}</ToolbarItem>
             </ToolbarContent>
         </Toolbar>
     );
