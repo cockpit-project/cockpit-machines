@@ -20,15 +20,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
-import { Icon } from "@patternfly/react-core/dist/esm/components/Icon";
 import { Content, ContentVariants } from "@patternfly/react-core/dist/esm/components/Content";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
-import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
 import { Switch } from "@patternfly/react-core/dist/esm/components/Switch";
 import { DialogsContext } from 'dialogs.jsx';
-import { HelpIcon } from '@patternfly/react-icons';
 
 import { CPUModal } from './cpuModal.jsx';
 import MemoryModal from './memoryModal.jsx';
@@ -41,6 +38,7 @@ import { BootOrderLink } from './bootOrder.jsx';
 import { FirmwareLink } from './firmware.jsx';
 import { WatchdogLink } from './watchdog.jsx';
 import { needsShutdownCpuModel, NeedsShutdownTooltip, needsShutdownVcpu } from '../../common/needsShutdown.jsx';
+import { InfoPopover } from '../../common/infoPopover.jsx';
 import { VsockLink } from './vsock.jsx';
 import { StateIcon } from '../../common/stateIcon.jsx';
 import { domainChangeAutostart, domainGet } from '../../../libvirtApi/domain.js';
@@ -198,56 +196,36 @@ class VmOverviewCard extends React.Component {
                         </DescriptionListGroup>}
 
                         <DescriptionListGroup>
-                            <Flex spaceItems={{ default: 'spaceItemsXs' }} alignItems={{ default: 'alignItemsCenter' }}>
-                                <FlexItem>
-                                    <DescriptionListTerm>
-                                        {_("Watchdog")}
-                                    </DescriptionListTerm>
-                                </FlexItem>
-                                <FlexItem>
-                                    <Popover alertSeverityVariant="info"
-                                        position="right"
-                                        bodyContent={WATCHDOG_INFO_MESSAGE}>
-                                        <Button isInline variant="plain">
-                                            <Icon className="overview-icon" status="info">
-                                                <HelpIcon />
-                                            </Icon>
-                                        </Button>
-                                    </Popover>
-                                </FlexItem>
-                            </Flex>
+                            <DescriptionListTerm>
+                                {_("Watchdog")}
+                                <InfoPopover
+                                    alertSeverityVariant="info"
+                                    position="right"
+                                    bodyContent={WATCHDOG_INFO_MESSAGE}
+                                />
+                            </DescriptionListTerm>
                             <DescriptionListDescription id={`${idPrefix}-watchdog`}>
                                 <WatchdogLink vm={vm} idPrefix={idPrefix} />
                             </DescriptionListDescription>
                         </DescriptionListGroup>
 
                         <DescriptionListGroup>
-                            <Flex spaceItems={{ default: 'spaceItemsXs' }} alignItems={{ default: 'alignItemsCenter' }}>
-                                <FlexItem>
-                                    <DescriptionListTerm>
-                                        {_("Vsock")}
-                                    </DescriptionListTerm>
-                                </FlexItem>
-                                <FlexItem>
-                                    <Popover alertSeverityVariant="info"
-                                        position="right"
-                                        headerContent={_("vsock requires special software")}
-                                        bodyContent={VSOCK_INFO_MESSAGE}
-                                        footerContent={
-                                            <Flex direction={{ default: 'column' }}>
-                                                <FlexItem>{SOCAT_EXAMPLE_HEADER}</FlexItem>
-                                                {SOCAT_EXAMPLE}
-                                            </Flex>
-                                        }
-                                        hasAutoWidth>
-                                        <Button isInline variant="plain">
-                                            <Icon className="overview-icon" status="info">
-                                                <HelpIcon />
-                                            </Icon>
-                                        </Button>
-                                    </Popover>
-                                </FlexItem>
-                            </Flex>
+                            <DescriptionListTerm>
+                                {_("Vsock")}
+                                <InfoPopover
+                                    alertSeverityVariant="info"
+                                    position="right"
+                                    headerContent={_("vsock requires special software")}
+                                    bodyContent={VSOCK_INFO_MESSAGE}
+                                    footerContent={
+                                        <Flex direction={{ default: 'column' }}>
+                                            <FlexItem>{SOCAT_EXAMPLE_HEADER}</FlexItem>
+                                            {SOCAT_EXAMPLE}
+                                        </Flex>
+                                    }
+                                    hasAutoWidth
+                                />
+                            </DescriptionListTerm>
                             <DescriptionListDescription id={`${idPrefix}-vsock`}>
                                 <VsockLink vm={vm} vms={vms} idPrefix={idPrefix} infoMessage={VSOCK_INFO_MESSAGE} socatMessage={SOCAT_EXAMPLE} />
                             </DescriptionListDescription>

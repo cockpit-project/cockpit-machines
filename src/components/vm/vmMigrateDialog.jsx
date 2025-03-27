@@ -28,14 +28,15 @@ import {
 } from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
 import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
-import { Popover, PopoverPosition } from "@patternfly/react-core/dist/esm/components/Popover";
-import { OutlinedQuestionCircleIcon } from "@patternfly/react-icons";
+import { PopoverPosition } from "@patternfly/react-core/dist/esm/components/Popover";
 
 import { FormHelper } from 'cockpit-components-form-helper.jsx';
 import { domainGetAll, domainMigrateToUri } from '../../libvirtApi/domain.js';
 import { isEmpty, isObjectEmpty } from '../../helpers.js';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { useDialogs } from 'dialogs.jsx';
+
+import { InfoPopover } from '../common/infoPopover.jsx';
 
 import VMS_CONFIG from "../../config.js";
 
@@ -62,7 +63,7 @@ const DurationRow = ({ temporary, setTemporary }) => {
                    fieldId="temporary"
                    label={_("Duration")}
                    labelHelp={
-                       <Popover aria-label="Duration popover"
+                       <InfoPopover aria-label="Duration popover"
                                 position={PopoverPosition.bottom}
                                 enableFlip
                                 bodyContent={<Flex direction={{ default: 'column' }}>
@@ -74,11 +75,8 @@ const DurationRow = ({ temporary, setTemporary }) => {
                                         <h4 className="popover-headline">{_("Temporary")}</h4>
                                         <p>{_("A copy of the VM will run on the destination and will disappear when it is shut off. Meanwhile, the origin host keeps its copy of the VM configuration.")}</p>
                                     </FlexItem>
-                                </Flex>}>
-                           <button onClick={e => e.preventDefault()} className="pf-v6-c-form__group-label-help">
-                               <OutlinedQuestionCircleIcon />
-                           </button>
-                       </Popover>
+                                </Flex>}
+                       />
                    }>
             <Checkbox id="temporary"
                       isChecked={temporary}
@@ -93,7 +91,7 @@ const StorageRow = ({ storage, setStorage }) => {
         <FormGroup hasNoPaddingTop
                    label={_("Storage")}
                    labelHelp={
-                       <Popover aria-label="Storage popover"
+                       <InfoPopover aria-label="Storage popover"
                                 position={PopoverPosition.bottom}
                                 enableFlip
                                 bodyContent={<Flex direction={{ default: 'column' }}>
@@ -105,11 +103,8 @@ const StorageRow = ({ storage, setStorage }) => {
                                         <h4 className="popover-headline">{_("Copy storage")}</h4>
                                         <p>{_("Full disk images and the domain's memory will be migrated. Only non-shared, writable disk images will be transferred. Unused storage will remain on the origin after migration.")}</p>
                                     </FlexItem>
-                                </Flex>}>
-                           <button onClick={e => e.preventDefault()} className="pf-v6-c-form__group-label-help">
-                               <OutlinedQuestionCircleIcon />
-                           </button>
-                       </Popover>
+                                </Flex>}
+                       />
                    }>
             <Radio id="shared"
                    name="storage"

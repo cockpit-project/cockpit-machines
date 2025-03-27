@@ -25,9 +25,7 @@ import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/co
 import {
     Modal
 } from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
-import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
 import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
-import { InfoAltIcon } from '@patternfly/react-icons';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { useDialogs, DialogsContext } from 'dialogs.jsx';
@@ -35,6 +33,7 @@ import { useDialogs, DialogsContext } from 'dialogs.jsx';
 import { domainUpdateDiskAttributes } from '../../../libvirtApi/domain.js';
 import { diskBusTypes, diskCacheModes, getDiskPrettyName, getDiskFullName } from '../../../helpers.js';
 import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
+import { InfoPopover } from '../../common/infoPopover.jsx';
 
 const _ = cockpit.gettext;
 
@@ -61,11 +60,7 @@ const CacheRow = ({ onValueChanged, dialogValues, idPrefix, shutoff }) => {
         <FormGroup fieldId={`${idPrefix}-cache-mode`}
                    label={_("Cache")}
                    labelHelp={!shutoff &&
-                       <Popover bodyContent={_("Machine must be shut off before changing cache mode")}>
-                           <button onClick={e => e.preventDefault()} className="pf-v6-c-form__group-label-help">
-                               <InfoAltIcon />
-                           </button>
-                       </Popover>}>
+                       <InfoPopover bodyContent={_("Machine must be shut off before changing cache mode")} />}>
             <FormSelect id={`${idPrefix}-cache-mode`}
                         onChange={(_event, value) => onValueChanged('cacheMode', value)}
                         isDisabled={!shutoff}
@@ -91,11 +86,7 @@ const BusRow = ({ onValueChanged, dialogValues, diskDevice, idPrefix, shutoff, s
     return (
         <FormGroup fieldId={`${idPrefix}-bus-type`} label={_("Bus")}
                    labelHelp={!shutoff &&
-                       <Popover bodyContent={_("Machine must be shut off before changing bus type")}>
-                           <button onClick={e => e.preventDefault()} className="pf-v6-c-form__group-label-help">
-                               <InfoAltIcon />
-                           </button>
-                       </Popover>}>
+                       <InfoPopover bodyContent={_("Machine must be shut off before changing bus type")} />}>
             <FormSelect id={`${idPrefix}-bus-type`}
                 onChange={(_event, value) => onValueChanged('busType', value)}
                 value={dialogValues.busType}

@@ -23,9 +23,11 @@ import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Flex } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
-import { Popover, PopoverPosition } from "@patternfly/react-core/dist/esm/components/Popover";
+import { PopoverPosition } from "@patternfly/react-core/dist/esm/components/Popover";
 import { Content, ContentVariants } from "@patternfly/react-core/dist/esm/components/Content";
-import { ExternalLinkSquareAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
+import { ExternalLinkSquareAltIcon } from '@patternfly/react-icons';
+
+import { InfoPopover } from '../../common/infoPopover.jsx';
 
 import cockpit from 'cockpit';
 
@@ -161,7 +163,7 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
             <FormGroup fieldId={`${idPrefix}-type`}
                        label={_("Interface type")}
                        labelHelp={
-                           <Popover aria-label={_("Interface type help")}
+                           <InfoPopover aria-label={_("Interface type help")}
                                     position={PopoverPosition.bottom}
                                     enableFlip={false}
                                     bodyContent={<Flex direction={{ default: 'column' }}>
@@ -173,11 +175,8 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
                                                 {type.externalDocs}
                                             </p>
                                         </Content>))}
-                                    </Flex>}>
-                               <button onClick={e => e.preventDefault()} className="pf-v6-c-form__group-label-help">
-                                   <OutlinedQuestionCircleIcon />
-                               </button>
-                           </Popover>
+                                    </Flex>}
+                           />
                        }>
                 <FormSelect id={`${idPrefix}-type`}
                             onChange={(_event, value) => onValueChanged('networkType', value)}
