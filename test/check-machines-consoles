@@ -244,6 +244,7 @@ fullscreen=0
         self.allow_browser_errors("Disconnection timed out.",
                                   "Failed when connecting: Connection closed")
 
+    @testlib.skipBeiboot("multi-host config not supported in beiboot scenario")
     def testExternalConsoleMultiHost(self):
         b = self.browser
 

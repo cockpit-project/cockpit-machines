@@ -178,9 +178,15 @@ ifeq ("$(TEST_SCENARIO)","updates-testing")
 VM_CUSTOMIZE_FLAGS = --run-command 'dnf -y update --setopt=install_weak_deps=False --enablerepo=updates-testing >&2'
 endif
 
+ifeq ("$(TEST_SCENARIO)","ws-container")
+VM_INSTALL = --upload $(TARFILE):/var/tmp/ --script $(CURDIR)/test/vm-ws.install
+else
+VM_INSTALL = --build $(TARFILE) --script $(CURDIR)/test/vm.install
+endif
+
 # build a VM with locally built distro pkgs installed
 $(VM_IMAGE): $(TARFILE) packaging/debian/rules packaging/debian/control packaging/arch/PKGBUILD bots $(VM_DEPENDS)
-	bots/image-customize --fresh $(VM_CUSTOMIZE_FLAGS) --build $(TARFILE) --script $(CURDIR)/test/vm.install $(TEST_OS)
+	bots/image-customize --fresh $(VM_CUSTOMIZE_FLAGS) $(VM_INSTALL) $(TEST_OS)
 
 # convenience target for the above
 vm: $(VM_IMAGE)

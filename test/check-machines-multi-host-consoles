@@ -21,6 +21,7 @@ import testlib
 from machineslib import VirtualMachinesCase
 
 
+@testlib.skipBeiboot("multi-host config not supported in beiboot scenario")
 class TestMultiMachineVNC(VirtualMachinesCase):
     """
     Test for showing the wrong VNC console when adding another host via the add

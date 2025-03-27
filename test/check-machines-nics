@@ -121,8 +121,13 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         # dropdown options are not visible, but still part of DOM tree, so let's use _wait_present
         b._wait_present("#vm-subVmTest1-add-iface-source option:nth-of-type(1):contains(0bridge)")
         b._wait_present("#vm-subVmTest1-add-iface-source option:nth-of-type(2):contains(abridge)")
-        b._wait_present("#vm-subVmTest1-add-iface-source option:nth-of-type(3):contains(virbr0)")
-        b._wait_present("#vm-subVmTest1-add-iface-source option:nth-of-type(4):contains(xbridge)")
+        if m.ws_container:
+            b._wait_present("#vm-subVmTest1-add-iface-source option:nth-of-type(3):contains(cni-podman0)")
+            b._wait_present("#vm-subVmTest1-add-iface-source option:nth-of-type(4):contains(virbr0)")
+            b._wait_present("#vm-subVmTest1-add-iface-source option:nth-of-type(5):contains(xbridge)")
+        else:
+            b._wait_present("#vm-subVmTest1-add-iface-source option:nth-of-type(3):contains(virbr0)")
+            b._wait_present("#vm-subVmTest1-add-iface-source option:nth-of-type(4):contains(xbridge)")
         b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
         b.wait_not_present("#vm-subVmTest1-add-iface-dialog")
 
