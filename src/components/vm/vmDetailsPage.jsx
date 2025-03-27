@@ -27,8 +27,7 @@ import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List";
 import { Card, CardBody, CardFooter, CardHeader, CardTitle } from '@patternfly/react-core/dist/esm/components/Card';
 import { Page, PageGroup, PageBreadcrumb, PageSection, } from "@patternfly/react-core/dist/esm/components/Page";
-import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
-import { ExpandIcon, HelpIcon } from '@patternfly/react-icons';
+import { ExpandIcon } from '@patternfly/react-icons';
 import { WithDialogs } from 'dialogs.jsx';
 
 import { vmId } from "../../helpers.js";
@@ -43,6 +42,7 @@ import VmUsageTab from './vmUsageCard.jsx';
 import { VmSnapshotsCard, VmSnapshotsActions } from './snapshots/vmSnapshotsCard.jsx';
 import VmActions from './vmActions.jsx';
 import { VmNeedsShutdown } from '../common/needsShutdown.jsx';
+import { InfoPopover } from '../common/infoPopover.jsx';
 import { VmUsesSpice } from './usesSpice.jsx';
 
 import './vmDetailsPage.scss';
@@ -193,7 +193,7 @@ export const VmDetailsPage = ({
                 title: (
                     <>
                         {_("Shared directories")}
-                        <Popover
+                        <InfoPopover
                             headerContent={_("Shared host directories need to be manually mounted inside the VM")}
                             bodyContent={
                                 <CodeBlock>
@@ -206,9 +206,8 @@ export const VmDetailsPage = ({
                                     <ListItem>{_("mount point: The mount point inside the guest")}</ListItem>
                                 </List>
                             }
-                            hasAutoWidth>
-                            <Button icon={<HelpIcon />} variant="plain" aria-label={_("more info")} />
-                        </Popover>
+                            hasAutoWidth
+                        />
                     </>
                 ),
                 actions: <VmFilesystemActions connectionName={vm.connectionName}

@@ -20,14 +20,13 @@
 import React from 'react';
 
 import { LIBVIRT_SYSTEM_CONNECTION, LIBVIRT_SESSION_CONNECTION, rephraseUI } from '../../helpers.js';
-import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
-import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
 import { Content, ContentVariants } from "@patternfly/react-core/dist/esm/components/Content";
-import { HelpIcon } from "@patternfly/react-icons";
 import cockpit from 'cockpit';
 import './machinesConnectionSelector.css';
+
+import { InfoPopover } from '../common/infoPopover.jsx';
 
 const _ = cockpit.gettext;
 
@@ -41,7 +40,7 @@ export const MachinesConnectionSelector = ({ onValueChanged, loggedUser, connect
                    id={id}
                    className="machines-connection-selector"
                    labelHelp={
-                       showInfoHelper && <Popover id="machines-connection-selector-popover"
+                       showInfoHelper && <InfoPopover id="machines-connection-selector-popover"
                            bodyContent={<>
                                <Content>
                                    <Content component={ContentVariants.h4}>{rephraseUI("connections", LIBVIRT_SYSTEM_CONNECTION)}</Content>
@@ -78,9 +77,7 @@ export const MachinesConnectionSelector = ({ onValueChanged, loggedUser, connect
                                    </Content>
                                </Content>
                            </>}
-                       >
-                           <Button icon={<HelpIcon />} variant="plain" aria-label={_("more info")} className="pf-v6-c-form__group-label-help" />
-                       </Popover>
+                       />
                    }>
             <Radio isChecked={connectionName === LIBVIRT_SYSTEM_CONNECTION}
                    onChange={() => onValueChanged('connectionName', LIBVIRT_SYSTEM_CONNECTION)}
