@@ -57,7 +57,7 @@ export class StoragePoolList extends React.Component {
                         </Breadcrumb>
                     </PageBreadcrumb>
                     <PageSection hasBodyWrapper={false} id='storage-pools-listing'>
-                        <Card isSelectable isClickable>
+                        <Card isPlain>
                             <CardHeader actions={{ actions }}>
                                 <CardTitle component="h2">{_("Storage pools")}</CardTitle>
                             </CardHeader>
