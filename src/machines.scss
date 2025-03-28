@@ -94,3 +94,15 @@
 .pf-v6-c-modal-box__body .pf-v6-c-alert {
     margin-block-end: var(--pf-t--global--spacer--md);
 }
+
+.pf-v6-c-card__body.contains-list table {
+    --pf-v6-c-table--cell--first-last-child--PaddingInline: 0;
+}
+
+.pf-v6-c-card__body.contains-list table tbody:last-child tr:last-child {
+    --pf-v6-c-table__tr--BorderBlockEndWidth: 0;
+}
+
+.pf-v6-c-card__body.contains-list table thead tr:last-child {
+    border-block-end: var(--pf-t--global--border--width--divider--default) solid var(--pf-v6-c-table__tr--BorderBlockEndColor);;
+}
