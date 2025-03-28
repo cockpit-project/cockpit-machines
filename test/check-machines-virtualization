@@ -37,9 +37,9 @@ class TestMachinesVirtualization(machineslib.VirtualMachinesCase):
 
         self.login_and_go("/machines")
 
-        b.wait_visible("div.pf-v5-c-empty-state:contains('Hardware virtualization is disabled')")
+        b.wait_visible("div.pf-v6-c-empty-state:contains('Hardware virtualization is disabled')")
 
-        b.assert_pixels(".pf-v5-c-empty-state", "virtualization-disabled-warning")
+        b.assert_pixels(".pf-v6-c-empty-state", "virtualization-disabled-warning")
 
         b.click("#ignore-hw-virtualization-disabled-btn")
 
@@ -47,7 +47,7 @@ class TestMachinesVirtualization(machineslib.VirtualMachinesCase):
         b.wait_visible("#card-pf-networks")
         b.wait_visible("#virtual-machines-listing")
 
-        b.wait_visible(".pf-v5-c-page .pf-v5-c-card__title:contains('Virtual machines')")
+        b.wait_visible(".pf-v6-c-page .pf-v6-c-card__title:contains('Virtual machines')")
 
     def testLibvirt(self):
         b = self.browser
@@ -75,7 +75,7 @@ class TestMachinesVirtualization(machineslib.VirtualMachinesCase):
 
         def waitEmptyState():
             with b.wait_timeout(15):
-                b.wait_in_text(".pf-v5-c-empty-state", "Virtualization service (libvirt) is not active")
+                b.wait_in_text(".pf-v6-c-empty-state", "Virtualization service (libvirt) is not active")
 
         # Check initial state
         self.createVm("subVmTest1")
@@ -91,7 +91,7 @@ class TestMachinesVirtualization(machineslib.VirtualMachinesCase):
         b.reload()
         b.enter_page('/machines')
         waitEmptyState()
-        b.click(".pf-v5-c-empty-state button.pf-m-link")  # Troubleshoot
+        b.click(".pf-v6-c-empty-state button.pf-m-link")  # Troubleshoot
         b.leave_page()
         b.wait(lambda: "system/services" in b.eval_js("window.location.href"))
         self.allow_browser_errors("Failed to get libvirt version from the dbus API:.*"
@@ -104,7 +104,7 @@ class TestMachinesVirtualization(machineslib.VirtualMachinesCase):
         self.addCleanup(m.execute, "pkill -u nonadmin || true; while pgrep -u nonadmin; do sleep 0.5; done")
         self.login_and_go("/machines", user="nonadmin", superuser=False)
         self.waitPageInit()
-        b.wait_in_text("#virtual-machines-listing .pf-v5-c-empty-state", "No VM is running")
+        b.wait_in_text("#virtual-machines-listing .pf-v6-c-empty-state", "No VM is running")
 
 
 if __name__ == '__main__':

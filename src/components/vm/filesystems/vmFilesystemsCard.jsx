@@ -24,11 +24,11 @@ import { CodeBlock, CodeBlockCode } from "@patternfly/react-core/dist/esm/compon
 import { ExpandableSection } from "@patternfly/react-core/dist/esm/components/ExpandableSection";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
-import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
+import {
+    Modal
+} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
-import { HelpIcon } from "@patternfly/react-icons";
 
 import { FormHelper } from 'cockpit-components-form-helper.jsx';
 import { ListingTable } from "cockpit-components-table.jsx";
@@ -39,6 +39,7 @@ import { useDialogs } from 'dialogs.jsx';
 import { domainCreateFilesystem, domainDeleteFilesystem, domainSetMemoryBacking } from "../../../libvirtApi/domain.js";
 import { vmId } from "../../../helpers.js";
 import { DeleteResourceButton } from '../../common/deleteResource.jsx';
+import { InfoPopover } from '../../common/infoPopover.jsx';
 
 const _ = cockpit.gettext;
 
@@ -171,7 +172,7 @@ const VmFilesystemAddModal = ({ connectionName, vmName }) => {
                description={
                    <>
                        {_("Shared host directories need to be manually mounted inside the VM")}
-                       <Popover
+                       <InfoPopover
                            headerContent={_("You can mount the shared folder using:")}
                            bodyContent={
                                <CodeBlock>
@@ -183,11 +184,8 @@ const VmFilesystemAddModal = ({ connectionName, vmName }) => {
                                    <ListItem>{_("mount point: The mount point inside the guest")}</ListItem>
                                </List>
                            }
-                           hasAutoWidth>
-                           <Button variant="plain" aria-label={_("more info")}>
-                               <HelpIcon />
-                           </Button>
-                       </Popover>
+                           hasAutoWidth
+                       />
                    </>
                }>
             <Form isHorizontal>
@@ -195,15 +193,8 @@ const VmFilesystemAddModal = ({ connectionName, vmName }) => {
                 <FormGroup fieldId={`${idPrefix}-modal-source`}
                            id={`${idPrefix}-modal-source-group`}
                            label={_("Source path")}
-                           labelIcon={
-                               <Popover headerContent={_("The host path that is to be exported.")}>
-                                   <button aria-label={_("More info for source path field")}
-                                           className="pf-v5-c-form__group-label-help"
-                                           onClick={e => e.preventDefault()}
-                                           type="button">
-                                       <HelpIcon />
-                                   </button>
-                               </Popover>
+                           labelHelp={
+                               <InfoPopover headerContent={_("The host path that is to be exported.")} />
                            }>
                     <FileAutoComplete id={`${idPrefix}-modal-source`}
                                       onChange={value => setSource(value)}
@@ -214,15 +205,8 @@ const VmFilesystemAddModal = ({ connectionName, vmName }) => {
                 </FormGroup>
                 <FormGroup fieldId={`${idPrefix}-modal-mountTag`}
                            label={_("Mount tag")}
-                           labelIcon={
-                               <Popover headerContent={_("The tag name to be used by the guest to mount this export point.")}>
-                                   <button aria-label={_("More info for mount tag field")}
-                                           className="pf-v5-c-form__group-label-help"
-                                           onClick={e => e.preventDefault()}
-                                           type="button">
-                                       <HelpIcon />
-                                   </button>
-                               </Popover>
+                           labelHelp={
+                               <InfoPopover headerContent={_("The tag name to be used by the guest to mount this export point.")} />
                            }>
                     <TextInput id={`${idPrefix}-modal-mountTag`}
                                onChange={(_, value) => setMountTag(value)}

@@ -128,7 +128,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         else:
             b._wait_present("#vm-subVmTest1-add-iface-source option:nth-of-type(3):contains(virbr0)")
             b._wait_present("#vm-subVmTest1-add-iface-source option:nth-of-type(4):contains(xbridge)")
-        b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
+        b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
         b.wait_not_present("#vm-subVmTest1-add-iface-dialog")
 
         m.execute("virsh start subVmTest1")
@@ -441,8 +441,8 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
                 self.verify()
                 self.verify_overview()
             else:
-                self.browser.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-alert__title", self.xfail_error)
-                self.browser.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
+                self.browser.wait_in_text(".pf-v6-c-modal-box__body .pf-v6-c-alert__title", self.xfail_error)
+                self.browser.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
 
         def open(self):
             b = self.browser
@@ -715,7 +715,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
 
         def open(self):
             self.browser.click("#vm-subVmTest1-add-iface-button")  # open the Network Interfaces subtab
-            self.browser.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title",
+            self.browser.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-modal-box__header .pf-v6-c-modal-box__title",
                                       "Add virtual network interface")
 
         def fill(self):
@@ -749,18 +749,18 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
                                            self.pixel_test_tag, skip_layouts=["rtl"])
 
         def cancel(self):
-            self.browser.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
+            self.browser.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
             self.browser.wait_not_present("#vm-subVmTest1-add-iface-dialog")
 
         def create(self):
-            self.browser.click(".pf-v5-c-modal-box__footer button:contains(Add)")
+            self.browser.click(".pf-v6-c-modal-box__footer button:contains(Add)")
 
             if not self.xfail:
                 with self.browser.wait_timeout(60):
                     self.browser.wait_not_present("#vm-subVmTest1-add-iface-dialog")
             else:
-                self.browser.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-alert__title", self.xfail_error)
-                self.browser.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
+                self.browser.wait_in_text(".pf-v6-c-modal-box__body .pf-v6-c-alert__title", self.xfail_error)
+                self.browser.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
 
         def verify(self):
             # Verify libvirt XML
@@ -807,7 +807,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
                 # Check NIC is no longer in list; the device-removed signal can take *very* long to arrive
                 with self.browser.wait_timeout(90):
                     self.browser.wait_not_present(f"#vm-subVmTest1-network-{self.nic_num}-mac")
-                self.browser.wait_not_present(".pf-v5-c-modal-box")
+                self.browser.wait_not_present(".pf-v6-c-modal-box")
 
 
 if __name__ == '__main__':

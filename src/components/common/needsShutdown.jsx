@@ -13,8 +13,6 @@ import {
     nicLookupByMAC
 } from "../../helpers.js";
 
-import "./needsShutdown.css";
-
 const _ = cockpit.gettext;
 
 const NEEDS_SHUTDOWN_MESSAGE = _("Changes will take effect after shutting down the VM");
@@ -85,6 +83,47 @@ export function needsShutdownSpice(vm) {
     return vm.hasSpice !== vm.inactiveXML.hasSpice;
 }
 
+export function needsShutdownVnc(vm) {
+    function find_vnc(v) {
+        return v.displays && v.displays.find(d => d.type == "vnc");
+    }
+
+    const active_vnc = find_vnc(vm);
+    const inactive_vnc = find_vnc(vm.inactiveXML);
+
+    if (inactive_vnc) {
+        if (!active_vnc)
+            return true;
+
+        // The active_vnc.port value is the actual port allocated at
+        // machine start, it is never -1. Thus, we can't just compare
+        // inactive_vnc.port with active_vnc.port here when
+        // inactive_vnc.port is -1. Also, when inactive_vnc.port _is_
+        // -1, we can't tell whether active_vnc.port has been
+        // allocated based on some old fixed port in inactive_vnc.port
+        // (in which case we might want to shutdown and restart), or
+        // whether it was allocated dynamically (in which case we
+        // don't want to). But luckily that doesn't really matter and
+        // a shutdown would not have any useful effect anyway, so we
+        // don't have to worry that we are missing a notification for
+        // a pending shutdown.
+        //
+        if (inactive_vnc.port != -1 && active_vnc.port != inactive_vnc.port)
+            return true;
+
+        if (active_vnc.password != inactive_vnc.password)
+            return true;
+    }
+
+    return false;
+}
+
+export function needsShutdownSerialConsole(vm) {
+    const serials = vm.displays && vm.displays.filter(display => display.type == 'pty');
+    const inactive_serials = vm.inactiveXML.displays && vm.inactiveXML.displays.filter(display => display.type == 'pty');
+    return serials.length != inactive_serials.length;
+}
+
 export function getDevicesRequiringShutdown(vm) {
     if (!vm.persistent)
         return [];
@@ -124,6 +163,14 @@ export function getDevicesRequiringShutdown(vm) {
     // SPICE
     if (needsShutdownSpice(vm))
         devices.push(_("SPICE"));
+
+    // VNC
+    if (needsShutdownVnc(vm))
+        devices.push(_("VNC"));
+
+    // Serial console
+    if (needsShutdownSerialConsole(vm))
+        devices.push(_("Text console"));
 
     // TPM
     if (needsShutdownTpm(vm))
@@ -174,7 +221,7 @@ export const VmNeedsShutdown = ({ vm }) => {
             position="bottom"
             hasAutoWidth
             bodyContent={body}>
-            <Label className="resource-state-text" color="cyan" id={`vm-${vm.name}-needs-shutdown`}
+            <Label className="resource-state-text" color="teal" id={`vm-${vm.name}-needs-shutdown`}
                    icon={<PendingIcon />} onClick={() => null}>
                 {_("Changes pending")}
             </Label>

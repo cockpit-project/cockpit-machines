@@ -22,7 +22,9 @@ import PropTypes from 'prop-types';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
 import { DropdownItem } from "@patternfly/react-core/dist/esm/components/Dropdown";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import {
+    Modal
+} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 
 import cockpit from 'cockpit';
@@ -93,7 +95,7 @@ export class DeleteResourceModal extends React.Component {
                        </>
                    }>
                 {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
-                <DescriptionList className={this.state.dialogError && "pf-v5-u-pt-md"} isHorizontal>
+                <DescriptionList className={this.state.dialogError && "pf-v6-u-pt-md"} isHorizontal>
                     {actionDescription || cockpit.format(_("Confirm this action"))}
                     {objectDescription && objectDescription.flatMap(row => row.value
                         ? <DescriptionListGroup id={`delete-resource-modal-${row.name.toLowerCase().replace(/ /g, "-")}`} key={row.name}>

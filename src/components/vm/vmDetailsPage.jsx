@@ -19,30 +19,28 @@
 import PropTypes from 'prop-types';
 import React, { useEffect } from 'react';
 import cockpit from 'cockpit';
+import { useStateObject } from './consoles/state';
 
 import { Breadcrumb, BreadcrumbItem } from "@patternfly/react-core/dist/esm/components/Breadcrumb";
 import { CodeBlock, CodeBlockCode } from "@patternfly/react-core/dist/esm/components/CodeBlock";
 import { Gallery } from "@patternfly/react-core/dist/esm/layouts/Gallery";
-import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List";
 import { Card, CardBody, CardFooter, CardHeader, CardTitle } from '@patternfly/react-core/dist/esm/components/Card';
-import { Page, PageGroup, PageBreadcrumb, PageSection, PageSectionVariants } from "@patternfly/react-core/dist/esm/components/Page";
-import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
-import { ExpandIcon, HelpIcon } from '@patternfly/react-icons';
+import { Page, PageGroup, PageBreadcrumb, PageSection } from "@patternfly/react-core/dist/esm/components/Page";
 import { WithDialogs } from 'dialogs.jsx';
 
 import { vmId } from "../../helpers.js";
-
 import { VmFilesystemsCard, VmFilesystemActions } from './filesystems/vmFilesystemsCard.jsx';
 import { VmDisksCardLibvirt, VmDisksActions } from './disks/vmDisksCard.jsx';
 import { VmNetworkTab, VmNetworkActions } from './nics/vmNicsCard.jsx';
 import { VmHostDevCard, VmHostDevActions } from './hostdevs/hostDevCard.jsx';
-import Consoles from './consoles/consoles.jsx';
+import { ConsoleState, ConsoleCard } from './consoles/consoles.jsx';
 import VmOverviewCard from './overview/vmOverviewCard.jsx';
 import VmUsageTab from './vmUsageCard.jsx';
 import { VmSnapshotsCard, VmSnapshotsActions } from './snapshots/vmSnapshotsCard.jsx';
 import VmActions from './vmActions.jsx';
 import { VmNeedsShutdown } from '../common/needsShutdown.jsx';
+import { InfoPopover } from '../common/infoPopover.jsx';
 import { VmUsesSpice } from './usesSpice.jsx';
 
 import './vmDetailsPage.scss';
@@ -64,8 +62,11 @@ export const VmDetailsPage = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    // We want to reset the ConsoleState when a machine starts or shuts down.
+    const consoleState = useStateObject(() => new ConsoleState(), [vm.state]);
+
     const vmActionsPageSection = (
-        <PageSection className="actions-pagesection" variant={PageSectionVariants.light} isWidthLimited>
+        <PageSection hasBodyWrapper className="actions-pagesection" isWidthLimited>
             <div className="vm-top-panel" data-vm-transient={!vm.persistent}>
                 <h2 className="vm-name">{vm.name}</h2>
                 <VmActions vm={vm}
@@ -88,23 +89,12 @@ export const VmDetailsPage = ({
         return (
             <WithDialogs key="vm-details">
                 <Page id={"vm-" + vm.name + "-consoles-page"}
-                      className="consoles-page-expanded">
-                    <PageBreadcrumb stickyOnBreakpoint={{ default: "top" }}>
-                        <Breadcrumb className='machines-listing-breadcrumb'>
-                            <BreadcrumbItem to='#'>
-                                {_("Virtual machines")}
-                            </BreadcrumbItem>
-                            <BreadcrumbItem to={'#' + cockpit.format("vm?name=$0&connection=$1", encodeURIComponent(vm.name), vm.connectionName)}>
-                                {vm.name}
-                            </BreadcrumbItem>
-                            <BreadcrumbItem isActive>
-                                {_("Console")}
-                            </BreadcrumbItem>
-                        </Breadcrumb>
-                    </PageBreadcrumb>
-                    {vmActionsPageSection}
-                    <PageSection variant={PageSectionVariants.light}>
-                        <Consoles vm={vm} config={config}
+                      className="consoles-page-expanded no-masthead-sidebar">
+                    <PageSection hasBodyWrapper={false}>
+                        <ConsoleCard
+                            state={consoleState}
+                            vm={vm}
+                            config={config}
                             onAddErrorNotification={onAddErrorNotification}
                             isExpanded />
                     </PageSection>
@@ -132,24 +122,14 @@ export const VmDetailsPage = ({
             title: _("Usage"),
             body: <VmUsageTab vm={vm} />,
         },
-        ...(vm.displays.length
-            ? [{
-                id: `${vmId(vm.name)}-consoles`,
-                className: "consoles-card",
-                title: _("Console"),
-                actions: vm.state != "shut off"
-                    ? <Button variant="link"
-                          onClick={() => {
-                              const urlOptions = { name: vm.name, connection: vm.connectionName };
-                              return cockpit.location.go(["vm", "console"], { ...cockpit.location.options, ...urlOptions });
-                          }}
-                          icon={<ExpandIcon />}
-                          iconPosition="right">{_("Expand")}</Button>
-                    : null,
-                body: <Consoles vm={vm} config={config}
-                            onAddErrorNotification={onAddErrorNotification} />,
-            }]
-            : []),
+        {
+            card: <ConsoleCard
+                      state={consoleState}
+                      key={`${vmId(vm.name)}-consoles`}
+                      vm={vm}
+                      config={config}
+                      onAddErrorNotification={onAddErrorNotification} />
+        },
         {
             id: `${vmId(vm.name)}-disks`,
             className: "disks-card",
@@ -193,7 +173,7 @@ export const VmDetailsPage = ({
                 title: (
                     <>
                         {_("Shared directories")}
-                        <Popover
+                        <InfoPopover
                             headerContent={_("Shared host directories need to be manually mounted inside the VM")}
                             bodyContent={
                                 <CodeBlock>
@@ -206,11 +186,8 @@ export const VmDetailsPage = ({
                                     <ListItem>{_("mount point: The mount point inside the guest")}</ListItem>
                                 </List>
                             }
-                            hasAutoWidth>
-                            <Button variant="plain" aria-label={_("more info")}>
-                                <HelpIcon />
-                            </Button>
-                        </Popover>
+                            hasAutoWidth
+                        />
                     </>
                 ),
                 actions: <VmFilesystemActions connectionName={vm.connectionName}
@@ -226,12 +203,12 @@ export const VmDetailsPage = ({
     }
 
     const cards = cardContents.map(card => {
+        if (card.card)
+            return card.card;
         return (
             <Card key={card.id}
                   className={card.className}
-                  id={card.id}
-                  isSelectable
-                  isClickable>
+                  id={card.id}>
                 <CardHeader actions={{ actions: card.actions }}>
                     <CardTitle component="h2">{card.title}</CardTitle>
                 </CardHeader>
@@ -246,10 +223,10 @@ export const VmDetailsPage = ({
     return (
         <WithDialogs>
             <Page id="vm-details"
-                  className="vm-details"
+                  className="vm-details no-masthead-sidebar"
                   data-pools-count={storagePools.length}>
                 <PageGroup>
-                    <PageBreadcrumb>
+                    <PageBreadcrumb hasBodyWrapper={false}>
                         <Breadcrumb className='machines-listing-breadcrumb'>
                             <BreadcrumbItem to='#'>
                                 {_("Virtual machines")}
@@ -261,7 +238,7 @@ export const VmDetailsPage = ({
                     </PageBreadcrumb>
                     {vmActionsPageSection}
                 </PageGroup>
-                <PageSection>
+                <PageSection hasBodyWrapper={false}>
                     <Gallery className='ct-vm-overview' hasGutter>
                         {cards}
                     </Gallery>

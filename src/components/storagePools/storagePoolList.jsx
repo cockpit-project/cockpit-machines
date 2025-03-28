@@ -45,8 +45,8 @@ export class StoragePoolList extends React.Component {
 
         return (
             <WithDialogs key="storage-pool-list">
-                <Page>
-                    <PageBreadcrumb stickyOnBreakpoint={{ default: "top" }}>
+                <Page className="no-masthead-sidebar">
+                    <PageBreadcrumb hasBodyWrapper={false} stickyOnBreakpoint={{ default: "top" }}>
                         <Breadcrumb className='machines-listing-breadcrumb'>
                             <BreadcrumbItem to='#'>
                                 {_("Virtual machines")}
@@ -56,8 +56,8 @@ export class StoragePoolList extends React.Component {
                             </BreadcrumbItem>
                         </Breadcrumb>
                     </PageBreadcrumb>
-                    <PageSection id='storage-pools-listing'>
-                        <Card isSelectable isClickable>
+                    <PageSection hasBodyWrapper={false} id='storage-pools-listing'>
+                        <Card isPlain>
                             <CardHeader actions={{ actions }}>
                                 <CardTitle component="h2">{_("Storage pools")}</CardTitle>
                             </CardHeader>

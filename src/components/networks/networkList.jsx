@@ -44,8 +44,8 @@ export class NetworkList extends React.Component {
 
         return (
             <WithDialogs key="network-list">
-                <Page>
-                    <PageBreadcrumb stickyOnBreakpoint={{ default: "top" }}>
+                <Page className="no-masthead-sidebar">
+                    <PageBreadcrumb hasBodyWrapper={false} stickyOnBreakpoint={{ default: "top" }}>
                         <Breadcrumb variant={PageSectionVariants.light} className='machines-listing-breadcrumb'>
                             <BreadcrumbItem to='#'>
                                 {_("Virtual machines")}
@@ -55,8 +55,8 @@ export class NetworkList extends React.Component {
                             </BreadcrumbItem>
                         </Breadcrumb>
                     </PageBreadcrumb>
-                    <PageSection id='networks-listing'>
-                        <Card isSelectable isClickable>
+                    <PageSection hasBodyWrapper={false} id='networks-listing'>
+                        <Card isPlain>
                             <CardHeader actions={{ actions: unlocked && <CreateNetworkAction /> }}>
                                 <CardTitle component="h2">{_("Networks")}</CardTitle>
                             </CardHeader>

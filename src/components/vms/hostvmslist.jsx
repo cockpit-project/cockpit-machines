@@ -115,7 +115,7 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                     placeholder={_("Filter by name")} />
                 </ToolbarItem>
                 {domainStates.length > 1 && <>
-                    <ToolbarItem variant="label" id="vm-state-select">
+                    <ToolbarItem alignSelf="center" variant="label" id="vm-state-select">
                         {_("State")}
                     </ToolbarItem>
                     <ToolbarItem>
@@ -146,11 +146,11 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
 
     return (
         <WithDialogs key="vms-list">
-            <Page>
-                <PageSection>
+            <Page className="no-masthead-sidebar">
+                <PageSection hasBodyWrapper={false}>
                     <Gallery className="ct-cards-grid" hasGutter>
                         <AggregateStatusCards networks={networks} storagePools={storagePools} />
-                        <Card id='virtual-machines-listing' isSelectable isClickable>
+                        <Card isPlain id='virtual-machines-listing'>
                             <CardHeader actions={{ actions: toolBar }}>
                                 <CardTitle component="h2">{_("Virtual machines")}</CardTitle>
                             </CardHeader>
