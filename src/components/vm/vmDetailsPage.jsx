@@ -24,12 +24,9 @@ import { useStateObject } from './consoles/state';
 import { Breadcrumb, BreadcrumbItem } from "@patternfly/react-core/dist/esm/components/Breadcrumb";
 import { CodeBlock, CodeBlockCode } from "@patternfly/react-core/dist/esm/components/CodeBlock";
 import { Gallery } from "@patternfly/react-core/dist/esm/layouts/Gallery";
-import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List";
 import { Card, CardBody, CardFooter, CardHeader, CardTitle } from '@patternfly/react-core/dist/esm/components/Card';
-import { Page, PageGroup, PageBreadcrumb, PageSection, PageSectionVariants } from "@patternfly/react-core/dist/esm/components/Page";
-import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
-import { HelpIcon } from '@patternfly/react-icons';
+import { Page, PageGroup, PageBreadcrumb, PageSection } from "@patternfly/react-core/dist/esm/components/Page";
 import { WithDialogs } from 'dialogs.jsx';
 
 import { vmId } from "../../helpers.js";
