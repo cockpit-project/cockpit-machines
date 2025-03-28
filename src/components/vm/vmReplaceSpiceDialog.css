@@ -1,6 +1,6 @@
 .spice-replace-dialog-panel {
     /* separate it a bit from the text above */
-    margin-block-start: var(--pf-v5-global--spacer--md);
+    margin-block-start: var(--pf-t--global--spacer--md);
 
     /* drop excessive inside spacing */
     .pf-v6-c-panel__main-body {
@@ -15,11 +15,6 @@
     list-style: inside;
 }
 
-/* HACK: fix blurred line between panel main body and footer; this should go into the PF overrides */
-.pf-v6-c-panel.pf-m-scrollable {
-    --pf-v5-c-panel__footer--BoxShadow: 0 -1px var(--pf-v5-global--BorderColor--100);
-}
-
 #replace-spice-dialog-select-all {
-    --pf-v5-c-button--PaddingLeft: 0;
+    --pf-v6-c-button--PaddingInlineStart: 0;
 }

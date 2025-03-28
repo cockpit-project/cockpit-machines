@@ -62,7 +62,7 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         m.execute(f"echo \"{TEST_NETWORK4_XML}\" > /tmp/xml; virsh net-create /tmp/xml")
 
         # Click on Networks card
-        b.click(".pf-v5-c-card .pf-v5-c-card__header button:contains(Networks)")
+        b.click(".pf-v6-c-card .pf-v6-c-card__header button:contains(Networks)")
 
         # Check that all networks are there
         b.wait_in_text("body", "Networks")
@@ -133,14 +133,14 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         self.waitPageInit()
 
         # Click on Networks card
-        b.wait_in_text("#card-pf-networks .pf-v5-c-card__header button", "Network")
-        b.click(".pf-v5-c-card .pf-v5-c-card__header button:contains(Network)")
+        b.wait_in_text("#card-pf-networks .pf-v6-c-card__header button", "Network")
+        b.click(".pf-v6-c-card .pf-v6-c-card__header button:contains(Network)")
 
         # HACK: Firefox 112 on RHEL 8 does not have `:has` yet, so for now use
         # JavaScript to obtain the elements parent sibling.
         b.eval_js("""
        ph_input_form_helper_text = function(id) {
-          const selector = ".pf-v5-c-helper-text__item.pf-m-error";
+          const selector = ".pf-v6-c-helper-text__item.pf-m-error";
           return document.getElementById(id).parentElement.parentElement.querySelector(selector).textContent;
         }""")
 
@@ -183,7 +183,7 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
             def open(self):
                 b.click("#create-network")
                 b.wait_visible("#create-network-dialog")
-                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title",
+                b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-modal-box__header .pf-v6-c-modal-box__title",
                                "Create virtual network")
 
             def fill(self):
@@ -215,20 +215,20 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
                             b.set_input_text("#create-network-ipv6-dhcp-range-end", self.ipv6_dhcp_end)
 
             def cancel(self):
-                b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
+                b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
                 b.wait_not_present("#create-network-dialog")
 
             def create(self):
-                b.click(".pf-v5-c-modal-box__footer button:contains(Create)")
+                b.click(".pf-v6-c-modal-box__footer button:contains(Create)")
 
                 def get_helper_text(xfo):
-                    pf_error_sel = ".pf-v5-c-form__helper-text .pf-v5-c-helper-text__item.pf-m-error"
+                    pf_error_sel = ".pf-v6-c-form__helper-text .pf-v6-c-helper-text__item.pf-m-error"
                     return f"#create-network-dialog .create-network-{xfo} {pf_error_sel}"
 
                 if (self.xfail):
                     # Check incomplete dialog
                     if "body" in self.xfail_objects:
-                        error_location = "#create-network-dialog .pf-v5-c-modal-box__body .pf-m-danger"
+                        error_location = "#create-network-dialog .pf-v6-c-modal-box__body .pf-m-danger"
                         b.wait_visible(error_location)
                         error_message = b.text(error_location)
                         self.test_obj.assertIn(self.xfail_error, error_message)
@@ -246,7 +246,7 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
 
             def verify_expected_error_on_head(self, error_message):
                 b.click(f'#network-{self.name}-system-state-error button:contains("view more")')
-                b.wait_in_text(".pf-v5-c-popover", error_message)
+                b.wait_in_text(".pf-v6-c-popover", error_message)
                 b.click(f'#network-{self.name}-system-state-error button[aria-label=Close]')
 
             def verify_dialog(self):
@@ -721,7 +721,7 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         b.wait_val("#vm-subVmTest1-network-1-edit-dialog-type", "bridge")
         b.select_from_dropdown("#vm-subVmTest1-network-1-edit-dialog-type", "network")
         b.wait_visible("#vm-subVmTest1-network-1-edit-dialog-save:disabled")
-        b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
+        b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
 
         # Ensure that when the source of a NIC was removed we can still change it
 
@@ -763,8 +763,8 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         self.waitPageInit()
 
         # Click on Networks card
-        b.wait_in_text("#card-pf-networks .pf-v5-c-card__header button", "Network")
-        b.click(".pf-v5-c-card .pf-v5-c-card__header button:contains(Network)")
+        b.wait_in_text("#card-pf-networks .pf-v6-c-card__header button", "Network")
+        b.click(".pf-v6-c-card .pf-v6-c-card__header button:contains(Network)")
 
         # Check that all networks are there
         b.wait_in_text("body", "Networks")
@@ -811,7 +811,7 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         self.waitPageInit()
 
         # Click on Networks card
-        b.click(".pf-v5-c-card .pf-v5-c-card__header button:contains(Network)")
+        b.click(".pf-v6-c-card .pf-v6-c-card__header button:contains(Network)")
 
         # Check that all networks are there
         b.wait_in_text("body", "Networks")
@@ -820,7 +820,7 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         # Expand row for first network
         self.toggleNetworkRow("test_network2", connectionName)
         # wait until the expanded content is visible
-        b.wait_visible("#network-test_network2-system-autostart-off")
+        b.wait_visible("#network-test_network2-system-autostart:not(:checked)")
         b.wait_in_text("#network-test_network2-system-ipv6-dhcp-host-0", "simon")
 
         b.assert_pixels("#app", "networks-page", skip_layouts=["rtl"])
@@ -869,8 +869,8 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         # Delete an inactive network
         self.dropdownAction(f"#network-test_network2-{connectionName}-action-kebab",
                             f'#delete-network-test_network2-{connectionName}')
-        b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-description-list", "test_network2")
-        b.click(".pf-v5-c-modal-box__footer button:contains(Delete)")
+        b.wait_in_text(".pf-v6-c-modal-box__body .pf-v6-c-description-list", "test_network2")
+        b.click(".pf-v6-c-modal-box__footer button:contains(Delete)")
         self.waitNetworkRow("test_network2", connectionName, present=False)
 
         # Delete an active network
@@ -878,8 +878,8 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         self.toggleNetworkRow("test_network2_clash", connectionName)
         self.dropdownAction(f"#network-test_network2_clash-{connectionName}-action-kebab",
                             f'#delete-network-test_network2_clash-{connectionName}')
-        b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-description-list", "test_network2_clash")
-        b.click(".pf-v5-c-modal-box__footer button:contains(Delete)")
+        b.wait_in_text(".pf-v6-c-modal-box__body .pf-v6-c-description-list", "test_network2_clash")
+        b.click(".pf-v6-c-modal-box__footer button:contains(Delete)")
         self.waitNetworkRow("test_network2_clash", connectionName, present=False)
 
     def testNetworkAddStaticDCHPHosts(self):
@@ -911,11 +911,11 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
             def open(self):
                 b.click(f"#network-{self.network_name}-{self.connection_name}-static-host-entries-add")
                 b.wait_visible("#add-new-static-entry-mac-address")
-                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title",
+                b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-modal-box__header .pf-v6-c-modal-box__title",
                                "Add a DHCP static host entry")
-                b.wait_in_text("div.pf-v5-c-modal-box__body label[for=add-new-static-entry-mac-address]",
+                b.wait_in_text("div.pf-v6-c-modal-box__body label[for=add-new-static-entry-mac-address]",
                                "MAC address")
-                b.wait_in_text("div.pf-v5-c-modal-box__body label[for=add-new-static-entry-ip-address]",
+                b.wait_in_text("div.pf-v6-c-modal-box__body label[for=add-new-static-entry-ip-address]",
                                "IP address")
 
             def fill(self):
@@ -923,17 +923,17 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
                 b.set_input_text("#add-new-static-entry-ip-address", self.ip)
 
             def cancel(self):
-                b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
+                b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
                 b.wait_not_present("#add-new-static-entry")
 
             def add(self):
-                b.click(".pf-v5-c-modal-box__footer button:contains(Add)")
+                b.click(".pf-v6-c-modal-box__footer button:contains(Add)")
 
                 if self.xfail:
                     # Check incomplete dialog
                     for k, v in self.xfail.items():
                         if k == "header":
-                            b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-alert.pf-m-danger", v)
+                            b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-alert.pf-m-danger", v)
                             break
                         else:
                             b.wait_in_text(k, v)
@@ -963,10 +963,10 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
 
             def cleanup(self):
                 b.click(f"#delete-network-{self.network_name}-{self.connection_name}-ipv4-dhcp-host-{self.entry_id}-button")
-                b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-description-list", self.ip)
+                b.wait_in_text(".pf-v6-c-modal-box__body .pf-v6-c-description-list", self.ip)
                 b.wait_in_text("#delete-resource-modal-ip", self.ip)
                 b.wait_in_text("#delete-resource-modal-mac", self.mac)
-                b.click(".pf-v5-c-modal-box__footer button:contains(Remove)")
+                b.click(".pf-v6-c-modal-box__footer button:contains(Remove)")
                 b.wait_not_present(f"#network-{self.network_name}-{self.connection_name}-ipv4-dhcp-host-{self.entry_id}")
 
         b = self.browser
@@ -982,7 +982,7 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         self.waitPageInit()
 
         # Click on Networks card
-        b.click(".pf-v5-c-card .pf-v5-c-card__header button:contains(Network)")
+        b.click(".pf-v6-c-card .pf-v6-c-card__header button:contains(Network)")
 
         # Check that all networks are there
         b.wait_in_text("body", "Networks")
@@ -1034,7 +1034,7 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         # An error should be raised if "MAC address" and "IP address" is invaild
         b.click("#add-new-static-entry-save")
         b.wait_in_text(
-            ".pf-m-danger .pf-v5-c-alert__description",
+            ".pf-m-danger .pf-v6-c-alert__description",
             "XML error: Cannot parse MAC address")
 
         # Attach basic static DHCP host and try to remove it
