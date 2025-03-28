@@ -19,7 +19,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Breadcrumb, BreadcrumbItem } from "@patternfly/react-core/dist/esm/components/Breadcrumb";
-import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core/dist/esm/components/Card';
+import { Card, CardHeader, CardTitle } from '@patternfly/react-core/dist/esm/components/Card';
 import { Page, PageBreadcrumb, PageSection, PageSectionVariants } from "@patternfly/react-core/dist/esm/components/Page";
 import { WithDialogs } from 'dialogs.jsx';
 
@@ -60,8 +60,7 @@ export class NetworkList extends React.Component {
                             <CardHeader actions={{ actions: unlocked && <CreateNetworkAction /> }}>
                                 <CardTitle component="h2">{_("Networks")}</CardTitle>
                             </CardHeader>
-                            <CardBody className="contains-list">
-                                <ListingTable aria-label={_("Networks")}
+                            <ListingTable aria-label={_("Networks")}
                                 variant='compact'
                                 columns={[
                                     { title: _("Name"), header: true, props: { width: 15 } },
@@ -76,7 +75,6 @@ export class NetworkList extends React.Component {
                                         .sort(sortFunction)
                                         .map(network => getNetworkRow({ network, resourceHasError }))
                                 } />
-                            </CardBody>
                         </Card>
                     </PageSection>
                 </Page>

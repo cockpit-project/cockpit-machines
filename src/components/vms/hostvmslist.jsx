@@ -21,7 +21,7 @@ import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
-import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core/dist/esm/components/Card';
+import { Card, CardHeader, CardTitle } from '@patternfly/react-core/dist/esm/components/Card';
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { Gallery } from "@patternfly/react-core/dist/esm/layouts/Gallery";
@@ -154,63 +154,61 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                             <CardHeader actions={{ actions: toolBar }}>
                                 <CardTitle component="h2">{_("Virtual machines")}</CardTitle>
                             </CardHeader>
-                            <CardBody className="contains-list">
-                                <ListingTable aria-label={_("Virtual machines")}
-                            variant='compact'
-                            columns={[
-                                { title: _("Name"), header: true, props: { width: 25 } },
-                                { title: _("Connection"), props: { width: 25 } },
-                                { title: _("State"), props: { width: 25 } },
-                                { title: "", props: { width: 25, "aria-label": _("Actions") } },
-                            ]}
-                            emptyCaption={_("No VM is running or defined on this host")}
-                            rows={ combinedVmsFiltered
-                                    .sort(sortFunction)
-                                    .map(vm => {
-                                        const vmActions = (
-                                            <VmActions
+                            <ListingTable aria-label={_("Virtual machines")}
+                                variant='compact'
+                                columns={[
+                                    { title: _("Name"), header: true, props: { width: 25 } },
+                                    { title: _("Connection"), props: { width: 25 } },
+                                    { title: _("State"), props: { width: 25 } },
+                                    { title: "", props: { width: 25, "aria-label": _("Actions") } },
+                                ]}
+                                emptyCaption={_("No VM is running or defined on this host")}
+                                rows={ combinedVmsFiltered
+                                        .sort(sortFunction)
+                                        .map(vm => {
+                                            const vmActions = (
+                                                <VmActions
                                                 vm={vm}
                                                 vms={vms}
                                                 config={config}
                                                 storagePools={storagePools}
                                                 onAddErrorNotification={onAddErrorNotification}
-                                            />
-                                        );
+                                                />
+                                            );
 
-                                        return {
-                                            columns: [
-                                                {
-                                                    title: <Button id={`${vmId(vm.name)}-${vm.connectionName}-name`}
+                                            return {
+                                                columns: [
+                                                    {
+                                                        title: <Button id={`${vmId(vm.name)}-${vm.connectionName}-name`}
                                                               variant="link"
                                                               isInline
                                                               isDisabled={vm.isUi && !vm.createInProgress}
                                                               component="a"
                                                               href={'#' + cockpit.format("vm?name=$0&connection=$1", encodeURIComponent(vm.name), vm.connectionName)}
                                                               className="vm-list-item-name">{vm.name}</Button>
-                                                },
-                                                { title: rephraseUI('connections', vm.connectionName) },
-                                                {
-                                                    title: (
-                                                        <VmState vm={vm}
+                                                    },
+                                                    { title: rephraseUI('connections', vm.connectionName) },
+                                                    {
+                                                        title: (
+                                                            <VmState vm={vm}
                                                                  vms={vms}
                                                                  dismissError={() => store.dispatch(updateVm({
                                                                      connectionName: vm.connectionName,
                                                                      name: vm.name,
                                                                      error: null
                                                                  }))} />
-                                                    ),
+                                                        ),
+                                                    },
+                                                    { title: vmActions },
+                                                ],
+                                                props: {
+                                                    key: cockpit.format("$0-$1-row", vmId(vm.name), vm.connectionName),
+                                                    'data-row-id': cockpit.format("$0-$1", vmId(vm.name), vm.connectionName),
+                                                    'data-vm-transient': !vm.persistent,
                                                 },
-                                                { title: vmActions },
-                                            ],
-                                            props: {
-                                                key: cockpit.format("$0-$1-row", vmId(vm.name), vm.connectionName),
-                                                'data-row-id': cockpit.format("$0-$1", vmId(vm.name), vm.connectionName),
-                                                'data-vm-transient': !vm.persistent,
-                                            },
-                                        };
-                                    }) }
-                                />
-                            </CardBody>
+                                            };
+                                        }) }
+                            />
                         </Card>
                     </Gallery>
                 </PageSection>
