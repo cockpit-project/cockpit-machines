@@ -21,7 +21,6 @@ import cockpit from 'cockpit';
 import React, { useState } from 'react';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
-import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { Menu, MenuContent, MenuList, MenuItem } from "@patternfly/react-core/dist/esm/components/Menu";
 import {
     Modal
@@ -140,25 +139,26 @@ export const ReplaceSpiceDialog = ({ vm, vms }) => {
            }>
             { vm.state === 'running' && !error && <NeedsShutdownAlert idPrefix="spice-modal" /> }
             {error && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.dialogErrorDetail} />}
-            <Content>
-                <Content component="p">
-                    {isMultiple
-                        ? _("Replace SPICE on selected VMs.")
-                        : _("Replace SPICE on the virtual machine.") }
-                    <InfoPopover aria-label={_("SPICE conversion")}
-                        position={PopoverPosition.top}
-                        headerContent={_("SPICE conversion")}
-                        bodyContent={
-                            <Content component="ul" className="spice-replace-dialog-popover-list">
-                                <Content component="li">{_("Convert SPICE graphics console to VNC")}</Content>
-                                <Content component="li">{_("Convert QXL video card to VGA")}</Content>
-                                <Content component="li">{_("Remove SPICE audio and host devices")}</Content>
-                            </Content>
-                        } />
-                </Content>
-                <Content component="p">
-                    {_("This is intended for a host which does not support SPICE due to upgrades or live migration.")}
-                </Content>
+            <Content component="p">
+                {isMultiple
+                    ? _("Replace SPICE on selected VMs.")
+                    : _("Replace SPICE on the virtual machine.") }
+                <InfoPopover aria-label={_("SPICE conversion")}
+                    position={PopoverPosition.top}
+                    headerContent={_("SPICE conversion")}
+                    bodyContent={
+                        <Content component="ul" className="spice-replace-dialog-popover-list">
+                            <Content component="li">{_("Convert SPICE graphics console to VNC")}</Content>
+                            <Content component="li">{_("Convert QXL video card to VGA")}</Content>
+                            <Content component="li">{_("Remove SPICE audio and host devices")}</Content>
+                        </Content>
+                    } />
+            </Content>
+            <Content component="p">
+                {_("This is intended for a host which does not support SPICE due to upgrades or live migration.")}
+            </Content>
+            <Content component="p">
+                {_("It can also be used to enable the inline graphical console in the browser, which does not support SPICE.")}
             </Content>
             { vmSelect }
         </Modal>

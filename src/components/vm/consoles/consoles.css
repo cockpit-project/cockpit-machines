@@ -1,47 +1,79 @@
-@import "./patternfly-react-console.css";
+.consoles-card .pf-v5-c-card__footer:empty {
+    display: none;
+}
 
-/* Make the vnc console fill the card body.
-*/
-[class*="console-"],
-[class*="consoleVnc-"],
-[class*="consoleVnc-"] > div,
-[class*="consoleVnc-"] > div > div {
+.vm-console {
+    inline-size: 100%;
+    block-size: 100%;
+    max-block-size: 100%;
+
+    /* HACK - I only get this to behave with a two column grid.  With only
+              one column, the VNC console will make the page wider
+              than the browser window...
+     */
+    display: grid;
+    grid-template-areas: 'main main'
+                         'footer footer';
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr min-content;
+}
+
+.vm-console-footer {
+    grid-area: footer;
+    margin-block-start: var(--pf-t--global--spacer--md);
+}
+
+/* VNC
+ */
+
+.vm-console-vnc {
+    grid-area: main;
+}
+
+.vm-console-vnc,
+.vm-console-vnc > div {
     inline-size: 100%;
     block-size: 100%;
 }
 
-/* Prevent dropdown select from cramping the other actions.
-*/
-[class*="consoleActions-"] {
-    max-inline-size: 25ch;
+.vm-console .pending {
+    /* XXX */
+    color: var(--pf-v5-global--custom-color--200);
 }
 
-[class*="console-"] {
-     /* auto minimum width, causing problem */
-     grid-template-columns: 1fr;
-     grid-template-rows: min-content 1fr;
+.ct-remote-viewer-popover {
+    max-inline-size: 60ch;
 }
 
-/* Hide send key button - there is not way to do that from the JS
- * https://github.com/patternfly/patternfly-react/issues/3689
+/* Serial
  */
-[class*="consoleActionsVnc-"] button:nth-child(2) {
-    display: none;
+
+.vm-console-serial {
+  grid-area: main;
 }
 
-/* Our SerialConsole is a completely custom component, fit it into the
-   AccessConsole grid.
-*/
-.vm-terminal-actions {
-    grid-area: actions-extra;
-}
-
-.vm-terminal {
-    grid-area: main;
-}
-
-/* Make sure the expanded console fills the whole page
+/* Expanded console
  */
-.consoles-page-expanded > div {
-    block-size: 100%;
+
+.consoles-page-expanded {
+    .pf-v6-c-page__main-container,
+    .pf-v6-c-page__main,
+    .pf-v6-c-page__main-section,
+    .consoles-card {
+        block-size: 100%;
+    }
+
+    .vm-console {
+        /* HACK - in the expanded view, "grid" doesn't work and only "block"
+                  keeps the console in bounds.
+         */
+        display: block;
+    }
+
+    .consoles-card .pf-v6-c-card__body {
+        /* 100% - card header height (padding-top + title line height + padding-bottom) */
+        /* block-size: calc(100% - (var(--pf-v6-c-card--first-child--PaddingBlockStart) + var(--pf-v6-c-card__title--not--last-child--PaddingBlockEnd))); */
+        block-size: calc(100% - 110px);
+        padding: 0;
+    }
 }
