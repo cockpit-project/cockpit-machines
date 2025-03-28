@@ -26,9 +26,8 @@ import { Gallery } from "@patternfly/react-core/dist/esm/layouts/Gallery";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List";
 import { Card, CardBody, CardFooter, CardHeader, CardTitle } from '@patternfly/react-core/dist/esm/components/Card';
-import { Page, PageGroup, PageBreadcrumb, PageSection, PageSectionVariants } from "@patternfly/react-core/dist/esm/components/Page";
-import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
-import { ExpandIcon, HelpIcon } from '@patternfly/react-icons';
+import { Page, PageGroup, PageBreadcrumb, PageSection, } from "@patternfly/react-core/dist/esm/components/Page";
+import { ExpandIcon } from '@patternfly/react-icons';
 import { WithDialogs } from 'dialogs.jsx';
 
 import { vmId } from "../../helpers.js";
@@ -43,6 +42,7 @@ import VmUsageTab from './vmUsageCard.jsx';
 import { VmSnapshotsCard, VmSnapshotsActions } from './snapshots/vmSnapshotsCard.jsx';
 import VmActions from './vmActions.jsx';
 import { VmNeedsShutdown } from '../common/needsShutdown.jsx';
+import { InfoPopover } from '../common/infoPopover.jsx';
 import { VmUsesSpice } from './usesSpice.jsx';
 
 import './vmDetailsPage.scss';
@@ -65,7 +65,7 @@ export const VmDetailsPage = ({
     }, []);
 
     const vmActionsPageSection = (
-        <PageSection className="actions-pagesection" variant={PageSectionVariants.light} isWidthLimited>
+        <PageSection hasBodyWrapper className="actions-pagesection" isWidthLimited>
             <div className="vm-top-panel" data-vm-transient={!vm.persistent}>
                 <h2 className="vm-name">{vm.name}</h2>
                 <VmActions vm={vm}
@@ -88,8 +88,8 @@ export const VmDetailsPage = ({
         return (
             <WithDialogs key="vm-details">
                 <Page id={"vm-" + vm.name + "-consoles-page"}
-                      className="consoles-page-expanded">
-                    <PageBreadcrumb stickyOnBreakpoint={{ default: "top" }}>
+                      className="consoles-page-expanded no-masthead-sidebar">
+                    <PageBreadcrumb hasBodyWrapper={false} stickyOnBreakpoint={{ default: "top" }}>
                         <Breadcrumb className='machines-listing-breadcrumb'>
                             <BreadcrumbItem to='#'>
                                 {_("Virtual machines")}
@@ -103,7 +103,7 @@ export const VmDetailsPage = ({
                         </Breadcrumb>
                     </PageBreadcrumb>
                     {vmActionsPageSection}
-                    <PageSection variant={PageSectionVariants.light}>
+                    <PageSection isFilled hasBodyWrapper={false}>
                         <Consoles vm={vm} config={config}
                             onAddErrorNotification={onAddErrorNotification}
                             isExpanded />
@@ -193,7 +193,7 @@ export const VmDetailsPage = ({
                 title: (
                     <>
                         {_("Shared directories")}
-                        <Popover
+                        <InfoPopover
                             headerContent={_("Shared host directories need to be manually mounted inside the VM")}
                             bodyContent={
                                 <CodeBlock>
@@ -206,11 +206,8 @@ export const VmDetailsPage = ({
                                     <ListItem>{_("mount point: The mount point inside the guest")}</ListItem>
                                 </List>
                             }
-                            hasAutoWidth>
-                            <Button variant="plain" aria-label={_("more info")}>
-                                <HelpIcon />
-                            </Button>
-                        </Popover>
+                            hasAutoWidth
+                        />
                     </>
                 ),
                 actions: <VmFilesystemActions connectionName={vm.connectionName}
@@ -229,9 +226,7 @@ export const VmDetailsPage = ({
         return (
             <Card key={card.id}
                   className={card.className}
-                  id={card.id}
-                  isSelectable
-                  isClickable>
+                  id={card.id}>
                 <CardHeader actions={{ actions: card.actions }}>
                     <CardTitle component="h2">{card.title}</CardTitle>
                 </CardHeader>
@@ -246,10 +241,10 @@ export const VmDetailsPage = ({
     return (
         <WithDialogs>
             <Page id="vm-details"
-                  className="vm-details"
+                  className="vm-details no-masthead-sidebar"
                   data-pools-count={storagePools.length}>
                 <PageGroup>
-                    <PageBreadcrumb>
+                    <PageBreadcrumb hasBodyWrapper={false}>
                         <Breadcrumb className='machines-listing-breadcrumb'>
                             <BreadcrumbItem to='#'>
                                 {_("Virtual machines")}
@@ -261,7 +256,7 @@ export const VmDetailsPage = ({
                     </PageBreadcrumb>
                     {vmActionsPageSection}
                 </PageGroup>
-                <PageSection>
+                <PageSection hasBodyWrapper={false}>
                     <Gallery className='ct-vm-overview' hasGutter>
                         {cards}
                     </Gallery>

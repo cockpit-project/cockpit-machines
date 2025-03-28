@@ -13,8 +13,6 @@ import {
     nicLookupByMAC
 } from "../../helpers.js";
 
-import "./needsShutdown.css";
-
 const _ = cockpit.gettext;
 
 const NEEDS_SHUTDOWN_MESSAGE = _("Changes will take effect after shutting down the VM");
@@ -174,7 +172,7 @@ export const VmNeedsShutdown = ({ vm }) => {
             position="bottom"
             hasAutoWidth
             bodyContent={body}>
-            <Label className="resource-state-text" color="cyan" id={`vm-${vm.name}-needs-shutdown`}
+            <Label className="resource-state-text" color="teal" id={`vm-${vm.name}-needs-shutdown`}
                    icon={<PendingIcon />} onClick={() => null}>
                 {_("Changes pending")}
             </Label>

@@ -20,7 +20,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import {
+    Modal
+} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
 import { Stack, StackItem } from "@patternfly/react-core/dist/esm/layouts/Stack";
 
 import cockpit from 'cockpit';

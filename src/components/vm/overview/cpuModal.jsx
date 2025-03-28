@@ -22,15 +22,16 @@ import cockpit from 'cockpit';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { FormSelect, FormSelectOption, FormSelectOptionGroup } from "@patternfly/react-core/dist/esm/components/FormSelect";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import {
+    Modal
+} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
 import { NumberInput } from "@patternfly/react-core/dist/esm/components/NumberInput";
-import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
-import { HelpIcon } from '@patternfly/react-icons';
 
 import { useDialogs } from 'dialogs.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { domainSetVCPUSettings, domainSetCpuMode } from "../../../libvirtApi/domain.js";
 import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
+import { InfoPopover } from '../../common/infoPopover.jsx';
 
 import "./vcpuModal.css";
 
@@ -223,14 +224,11 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
             { caution }
             { error && error.dialogError && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.dialogErrorDetail} /> }
             <FormGroup fieldId="machines-vcpu-max-field" label={_("vCPU maximum")}
-                       labelIcon={
-                           <Popover bodyContent={maxVcpu
+                       labelHelp={
+                           <InfoPopover bodyContent={maxVcpu
                                ? cockpit.format(_("Maximum number of virtual CPUs allocated for the guest OS, which must be between 1 and $0"), parseInt(maxVcpu))
-                               : _("Maximum number of virtual CPUs allocated for the guest OS")}>
-                               <button onClick={e => e.preventDefault()} className="pf-v5-c-form__group-label-help">
-                                   <HelpIcon />
-                               </button>
-                           </Popover>}>
+                               : _("Maximum number of virtual CPUs allocated for the guest OS")} />
+                       }>
                 <NumberInput
                     id="machines-vcpu-max-field"
                     value={max}
@@ -246,12 +244,9 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
                 />
             </FormGroup>
             <FormGroup fieldId="machines-vcpu-count-field" label={_("vCPU count")}
-                       labelIcon={
-                           <Popover bodyContent={_("Fewer than the maximum number of virtual CPUs should be enabled.")}>
-                               <button onClick={e => e.preventDefault()} className="pf-v5-c-form__group-label-help">
-                                   <HelpIcon />
-                               </button>
-                           </Popover>}>
+                       labelHelp={
+                           <InfoPopover bodyContent={_("Fewer than the maximum number of virtual CPUs should be enabled.")} />
+                       }>
                 <NumberInput
                     id="machines-vcpu-count-field"
                     value={count}
@@ -267,12 +262,9 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
                 />
             </FormGroup>
             <FormGroup fieldId="sockets" label={_("Sockets")}
-                       labelIcon={
-                           <Popover bodyContent={_("Preferred number of sockets to expose to the guest.")}>
-                               <button onClick={e => e.preventDefault()} className="pf-v5-c-form__group-label-help">
-                                   <HelpIcon />
-                               </button>
-                           </Popover>}>
+                       labelHelp={
+                           <InfoPopover bodyContent={_("Preferred number of sockets to expose to the guest.")} />
+                       }>
                 <FormSelect id="socketsSelect"
                             className="cpu-numeric-dropdown"
                             value={sockets.toString()}

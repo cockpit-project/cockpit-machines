@@ -58,7 +58,7 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
             b.wait_not_present("#vm-subVmTest1-snapshots")
             return
 
-        b.wait_in_text("#vm-subVmTest1-snapshots .pf-v5-c-empty-state", "No snapshots")
+        b.wait_in_text("#vm-subVmTest1-snapshots .pf-v6-c-empty-state", "No snapshots")
 
         # Check snapshot for running VM
         # vda is raw disk, which are not supported by internal snapshots
@@ -150,7 +150,7 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
 
             def open(self):
                 b.click("#vm-subVmTest1-add-snapshot-button")
-                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title",
+                b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-modal-box__header .pf-v6-c-modal-box__title",
                                "Create snapshot")
 
             def fill(self):
@@ -170,7 +170,7 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
                                     skip_layouts=["rtl"])
 
             def cancel(self):
-                b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
+                b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
                 b.wait_not_present("#vm-subVmTest1-create-snapshot-modal")
 
             def create(self):
@@ -178,17 +178,17 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
                     self.assert_pixels()
 
                 if self.xfail is None:
-                    b.click(".pf-v5-c-modal-box__footer button:contains(Create)")
+                    b.click(".pf-v6-c-modal-box__footer button:contains(Create)")
                     b.wait_not_present("#vm-subVmTest1-create-snapshot-modal")
                     return
 
-                b.wait_text(".pf-v5-c-modal-box__footer button[aria-disabled=true]", "Create")
+                b.wait_text(".pf-v6-c-modal-box__footer button[disabled]", "Create")
 
                 if self.xfail == 'name':
                     self.assert_pixels()
                     b.wait_visible("#snapshot-create-dialog-name[aria-invalid=true]")
                 elif self.xfail == 'memory-path':
-                    b.wait_visible("#snapshot-create-dialog-memory-location .pf-v5-c-helper-text__item-text")
+                    b.wait_visible("#snapshot-create-dialog-memory-location .pf-v6-c-helper-text__item-text")
                 else:
                     raise ValueError(f"Unknown xfail: {self.xfail}")
 
@@ -245,17 +245,17 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
 
             def revert(self):
                 b.click(f"#vm-subVmTest1-snapshot-{self.snap_num}-revert")
-                b.wait_visible(".pf-v5-c-modal-box")
-                b.click('.pf-v5-c-modal-box__footer button:contains("Revert")')
-                b.wait_not_present(".pf-v5-c-modal-box")
+                b.wait_visible(".pf-v6-c-modal-box")
+                b.click('.pf-v6-c-modal-box__footer button:contains("Revert")')
+                b.wait_not_present(".pf-v6-c-modal-box")
 
             def cleanup(self):
                 b.click(f"#delete-vm-subVmTest1-snapshot-{self.snap_num}")
-                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title",
+                b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-modal-box__header .pf-v6-c-modal-box__title",
                                "Delete snapshot?")
-                b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-description-list",
+                b.wait_in_text(".pf-v6-c-modal-box__body .pf-v6-c-description-list",
                                f"{self.name} will be deleted from {self.vm_name}")
-                b.click('.pf-v5-c-modal-box__footer button:contains("Delete")')
+                b.click('.pf-v6-c-modal-box__footer button:contains("Delete")')
                 b.wait_not_present(f"#vm-subVmTest1-snapshot-{self.snap_num}-name:contains({self.name})")
 
         # No Snapshots present
@@ -376,8 +376,8 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
 
         # With CD-ROM drive without media
         b.click("#vm-subVmTest1-disks-sdd-eject-button")
-        b.click(".pf-v5-c-modal-box__footer button:contains(Eject)")
-        b.wait_not_present(".pf-v5-c-modal-box")
+        b.click(".pf-v6-c-modal-box__footer button:contains(Eject)")
+        b.wait_not_present(".pf-v6-c-modal-box")
         b.wait_visible("#vm-subVmTest1-disks-sdd-insert")
         SnapshotCreateDialog(
             self,
@@ -455,9 +455,9 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         self.assertEqual("no", get_snapshot_state("snapshotB"))
 
         b.click("#vm-subVmTest1-snapshot-0-revert")
-        b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title",
+        b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-modal-box__header .pf-v6-c-modal-box__title",
                        "Revert to snapshot snapshotB")
-        b.click('.pf-v5-c-modal-box__footer button:contains("Revert")')
+        b.click('.pf-v6-c-modal-box__footer button:contains("Revert")')
 
         b.wait_not_present("#vm-subVmTest1-snapshot-1-current")
         b.wait_visible("#vm-subVmTest1-snapshot-0-current")
@@ -479,16 +479,16 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         # of memory corruption
         b.wait_in_text("#vm-subVmTest1-snapshot-0-name", "snapshotC")
         b.click("#vm-subVmTest1-snapshot-0-revert")
-        b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title",
+        b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-modal-box__header .pf-v6-c-modal-box__title",
                        "Revert to snapshot snapshotC")
-        b.click('.pf-v5-c-modal-box__footer button:contains("Revert")')
+        b.click('.pf-v6-c-modal-box__footer button:contains("Revert")')
         # Check "Force revert" is present and Regular revert is disabled
-        b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-alert__description", "revert requires force")
-        b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Revert):disabled")
-        b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Force revert)")
+        b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-alert__description", "revert requires force")
+        b.wait_visible(".pf-v6-c-modal-box__footer button:contains(Revert):disabled")
+        b.wait_visible(".pf-v6-c-modal-box__footer button:contains(Force revert)")
 
-        b.click(".pf-v5-c-modal-box__footer button:contains(Force revert)")
-        b.wait_not_present(".pf-v5-c-modal-box")
+        b.click(".pf-v6-c-modal-box__footer button:contains(Force revert)")
+        b.wait_not_present(".pf-v6-c-modal-box")
 
         # Check VM was reverted to a correct snapshot
         b.wait_not_present("#vm-subVmTest1-snapshot-1-current")
@@ -531,24 +531,24 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
 
         # Check validation
         b.set_input_text("#snapshot-create-dialog-memory-location input", "")
-        b.wait_text("#snapshot-create-dialog-memory-location .pf-v5-c-helper-text__item-text",
+        b.wait_text("#snapshot-create-dialog-memory-location .pf-v6-c-helper-text__item-text",
                     "Memory save location can not be empty")
 
         # Check creation of new directories
         b.set_input_text("#snapshot-create-dialog-memory-location input", snapshot_dir + "/new")
-        b.wait_text("#snapshot-create-dialog-memory-location li button", f"Create {snapshot_dir}/new")
-        b.click("#snapshot-create-dialog-memory-location li button")
+        b.wait_text(".pf-v6-c-menu li button", f"Create {snapshot_dir}/new")
+        b.click(".pf-v6-c-menu li button")
 
         # Check available space detection
-        b.wait_in_text("#snapshot-create-dialog-memory-location .pf-v5-c-helper-text__item-text",
+        b.wait_in_text("#snapshot-create-dialog-memory-location .pf-v6-c-helper-text__item-text",
                        "Memory snapshot will use about ")
-        b.wait_in_text("#snapshot-create-dialog-memory-location .pf-v5-c-helper-text__item-text",
+        b.wait_in_text("#snapshot-create-dialog-memory-location .pf-v6-c-helper-text__item-text",
                        "Total space available: ")
         self.assertNotIn("pf-m-warning",
-                         b.attr("#snapshot-create-dialog-memory-location .pf-v5-c-helper-text__item", "class"))
+                         b.attr("#snapshot-create-dialog-memory-location .pf-v6-c-helper-text__item", "class"))
 
         # Create it
-        b.click(".pf-v5-c-modal-box__footer button:contains(Create)")
+        b.click(".pf-v6-c-modal-box__footer button:contains(Create)")
         b.wait_not_present("#vm-subVmTest1-create-snapshot-modal")
 
         # Check that it uses the new directory
@@ -570,13 +570,13 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         snapshot_dir2 = "/var/lib/libvirt2" if connection == "system" else "/home/admin/.local/share/libvirt/2"
 
         b.set_input_text("#snapshot-create-dialog-memory-location input", snapshot_dir2)
-        b.wait_text("#snapshot-create-dialog-memory-location li button", f"Create {snapshot_dir2}")
-        b.click("#snapshot-create-dialog-memory-location li:first-child button")
+        b.wait_text(".pf-v6-c-menu li button", f"Create {snapshot_dir2}")
+        b.click(".pf-v6-c-menu li:first-child button")
 
         # Wait a couple of seconds to guarantee a different
         # "creationTime" from the previous snapshot and create it
         time.sleep(3)
-        b.click(".pf-v5-c-modal-box__footer button:contains(Create)")
+        b.click(".pf-v6-c-modal-box__footer button:contains(Create)")
         b.wait_not_present("#vm-subVmTest1-create-snapshot-modal")
 
         b.wait_text("#vm-subVmTest1-snapshot-0-name", "snap-2")
@@ -595,16 +595,16 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         if connection == "session":
             m.execute("chown admin:admin /var/small")
         b.set_input_text("#snapshot-create-dialog-memory-location input", "/var/small")
-        b.wait_text("#snapshot-create-dialog-memory-location li:first-child button", "/var/small/")
-        b.click("#snapshot-create-dialog-memory-location li:first-child button")
-        b.wait_in_text("#snapshot-create-dialog-memory-location .pf-v5-c-helper-text__item.pf-m-warning",
+        b.wait_text(".pf-v6-c-menu li:first-child button", "/var/small/")
+        b.click(".pf-v6-c-menu li:first-child button")
+        b.wait_in_text("#snapshot-create-dialog-memory-location .pf-v6-c-helper-text__item.pf-m-warning",
                        "Total space available: ")
 
         # Go ahead and let it fail
-        b.click(".pf-v5-c-modal-box__footer button:contains(Create)")
-        b.wait_in_text("#vm-subVmTest1-create-snapshot-modal .pf-v5-c-alert",
+        b.click(".pf-v6-c-modal-box__footer button:contains(Create)")
+        b.wait_in_text("#vm-subVmTest1-create-snapshot-modal .pf-v6-c-alert",
                        "No space left on device")
-        b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
+        b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
         b.wait_not_present("#vm-subVmTest1-create-snapshot-modal")
 
     def testMemoryLocationSession(self):

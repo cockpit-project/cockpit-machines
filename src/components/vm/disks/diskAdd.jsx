@@ -26,7 +26,9 @@ import { Form, FormGroup, FormHelperText } from "@patternfly/react-core/dist/esm
 import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
 import { Grid } from "@patternfly/react-core/dist/esm/layouts/Grid";
 import { HelperText, HelperTextItem } from "@patternfly/react-core/dist/esm/components/HelperText";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import {
+    Modal
+} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
 import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 import { Spinner } from "@patternfly/react-core/dist/esm/components/Spinner";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
@@ -206,7 +208,7 @@ const AdditionalOptions = ({ cacheMode, device, idPrefix, onValueChanged, busTyp
 
     return (
         <ExpandableSection toggleText={ expanded ? _("Hide additional options") : _("Show additional options")}
-                           onToggle={() => setExpanded(!expanded)} isExpanded={expanded} className="pf-v5-u-pt-lg">
+                           onToggle={() => setExpanded(!expanded)} isExpanded={expanded} className="pf-v6-u-pt-lg">
             <Form onSubmit={e => e.preventDefault()} isHorizontal>
                 <Grid hasGutter md={6}>
                     <FormGroup fieldId='cache-mode' label={_("Cache")}>
@@ -244,18 +246,18 @@ const AdditionalOptions = ({ cacheMode, device, idPrefix, onValueChanged, busTyp
                     <FormHelperText>
                         {validationFailed.serial
                             ? <HelperText>
-                                <HelperTextItem variant="error" hasIcon>
+                                <HelperTextItem variant="error">
                                     {validationFailed.serial}
                                 </HelperTextItem>
                             </HelperText>
                             : <HelperText component="ul">
                                 { showAllowedCharactersMessage &&
-                                <HelperTextItem id="serial-characters-message" key="regex" variant="indeterminate" hasIcon>
+                                <HelperTextItem id="serial-characters-message" key="regex" variant="indeterminate">
                                     {_("Allowed characters: basic Latin alphabet, numbers, and limited punctuation (-, _, +, .)")}
                                 </HelperTextItem>
                                 }
                                 { showMaxLengthMessage &&
-                                <HelperTextItem id="serial-length-message" key="length" variant="warning" hasIcon>
+                                <HelperTextItem id="serial-length-message" key="length" variant="warning">
                                     {cockpit.format(_("Identifier may be silently truncated to $0 characters "), serialLength)}
                                     <span className="ct-monospace">{`(${truncatedSerial})`}</span>
                                 </HelperTextItem>

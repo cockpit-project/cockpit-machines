@@ -23,9 +23,11 @@ import { DescriptionList, DescriptionListDescription, DescriptionListGroup, Desc
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List";
-import { Modal } from "@patternfly/react-core/dist/esm/components/Modal";
+import {
+    Modal
+} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
 import { Switch } from "@patternfly/react-core/dist/esm/components/Switch";
-import { Text, TextVariants } from "@patternfly/react-core/dist/esm/components/Text";
+import { Content, ContentVariants } from "@patternfly/react-core/dist/esm/components/Content";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import cockpit from 'cockpit';
 
@@ -106,9 +108,9 @@ export const NetworkOverviewTab = ({ network }) => {
         <Flex className="overview-tab">
             <FlexItem>
                 <DescriptionList>
-                    <Text component={TextVariants.h4}>
+                    <Content component={ContentVariants.h4}>
                         {_("General")}
-                    </Text>
+                    </Content>
 
                     <DescriptionListGroup>
                         <DescriptionListTerm> {_("Persistent")} </DescriptionListTerm>
@@ -134,9 +136,9 @@ export const NetworkOverviewTab = ({ network }) => {
 
             { ip[0] && <FlexItem>
                 <DescriptionList>
-                    <Text component={TextVariants.h4}>
+                    <Content component={ContentVariants.h4}>
                         {_("IPv4 address")}
-                    </Text>
+                    </Content>
 
                     { ip[0].address && <DescriptionListGroup>
                         <DescriptionListTerm> {_("Address")} </DescriptionListTerm>
@@ -154,9 +156,9 @@ export const NetworkOverviewTab = ({ network }) => {
 
             { ip[1] && <FlexItem>
                 <DescriptionList>
-                    <Text component={TextVariants.h4}>
+                    <Content component={ContentVariants.h4}>
                         {_("IPv6 address")}
-                    </Text>
+                    </Content>
 
                     { ip[1].address && <DescriptionListGroup>
                         <DescriptionListTerm> {_("Address")} </DescriptionListTerm>
@@ -266,9 +268,9 @@ const StaticDHCPSettings = ({ idPrefix, ip, network, protocol }) => {
 
     return (
         <>
-            <Text component={TextVariants.h5}>
+            <Content component={ContentVariants.h5}>
                 {_("DHCP Settings")}
-            </Text>
+            </Content>
             { ip[parentIndex].dhcp.range.start &&
             <DescriptionListGroup>
                 <DescriptionListTerm> {_("Range")} </DescriptionListTerm>
