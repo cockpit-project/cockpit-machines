@@ -1,48 +1,63 @@
-@import "./patternfly-react-console.css";
+/* Common
+ */
 
-/* Make the vnc console fill the card body.
-*/
-[class*="console-"],
-[class*="consoleVnc-"],
-[class*="consoleVnc-"] > div,
-[class*="consoleVnc-"] > div > div {
+.vm-console,
+.vm-console-vnc,
+.vm-console-vnc > div,
+.vm-console-serial {
     inline-size: 100%;
     block-size: 100%;
 }
 
-/* Prevent dropdown select from cramping the other actions.
-*/
-[class*="consoleActions-"] {
-    max-inline-size: 25ch;
-    margin-inline-end: var(--pf-t--global--spacer--sm);
+.ct-remote-viewer-popover {
+    max-inline-size: 60ch;
 }
 
-[class*="console-"] {
-     /* auto minimum width, causing problem */
-     grid-template-columns: 1fr;
-     grid-template-rows: min-content 1fr;
-}
-
-/* Hide send key button - there is not way to do that from the JS
- * https://github.com/patternfly/patternfly-react/issues/3689
+/* Console card in overview page
  */
-[class*="consoleActionsVnc-"] button:nth-child(2) {
-    display: none;
+
+.vm-details {
+    .vm-console {
+        /* HACK - I only get this to behave with a two column grid.  With only
+           one column, the VNC console will make the page wider
+           than the browser window...
+         */
+        display: grid;
+        grid-template-areas: 'main main'
+                             'footer footer';
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr min-content;
+    }
+
+    .vm-console-footer {
+        grid-area: footer;
+        margin-block-start: var(--pf-t--global--spacer--md);
+    }
+
+    .vm-console-vnc {
+        grid-area: main;
+    }
+
+    .vm-console-serial {
+        grid-area: main;
+    }
 }
 
-/* Our SerialConsole is a completely custom component, fit it into the
-   AccessConsole grid.
-*/
-.vm-terminal-actions {
-    grid-area: actions-extra;
-}
-
-.vm-terminal {
-    grid-area: main;
-}
-
-/* Make sure the expanded console fills the whole page
+/* Expanded console
  */
-.consoles-page-expanded > div {
-    block-size: 100%;
+
+.consoles-page-expanded {
+    .pf-v6-c-page__main-container,
+    .pf-v6-c-page__main,
+    .pf-v6-c-page__main-section,
+    .consoles-card {
+        block-size: 100%;
+    }
+
+    .consoles-card .pf-v6-c-card__body {
+        /* HACK - better done with a Flex instead of a Card? */
+        max-block-size: calc(100% - 77px);  /* 100% - card header height */
+        padding-inline-start: 0;
+        padding-inline-end: 0;
+    }
 }
