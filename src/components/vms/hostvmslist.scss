@@ -6,12 +6,6 @@
     @extend .ct-card;
 }
 
-// PF4 issue https://github.com/patternfly/patternfly-react/issues/4612
-// Mimic .pf-v6-c-table__action
-#virtual-machines-listing td:last-child {
-    --pf-v5-c-table--cell--Width: 1%;
-}
-
 // Expand the link to the container, for easier clickability
 #virtual-machines-listing th a {
     display: block;
@@ -20,5 +14,5 @@
 
 // Add spacing between buttons in the toolbar
 .pf-v6-c-toolbar__item {
-    gap: 0 var(--pf-v5-global--spacer--xs);
+    gap: 0 var(--pf-t--global--spacer--xs);
 }
