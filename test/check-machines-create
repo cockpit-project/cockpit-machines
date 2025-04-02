@@ -1066,10 +1066,10 @@ vnc_password= "{vnc_passwd}"
 
             b.wait_visible("#create-vm-dialog")
             if self.sourceType == 'disk_image':
-                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title",
+                b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-modal-box__header .pf-v6-c-modal-box__title",
                                "Import a virtual machine")
             else:
-                b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title",
+                b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-modal-box__header .pf-v6-c-modal-box__title",
                                "Create new virtual machine")
 
             if self.os_name is not None:
@@ -1223,7 +1223,7 @@ vnc_password= "{vnc_passwd}"
             b.wait_visible(f"#os-select li button:contains('{TestMachinesCreate.TestCreateConfig.RHEL_8_1}')")
             b.wait_not_present(f"#os-select li button:contains('{TestMachinesCreate.TestCreateConfig.RHEL_7_1}')")
             # make the select list go away to not obscure other elements
-            b.click("#os-select-group button.pf-v5-c-menu-toggle__button")
+            b.click("#os-select-group button.pf-v6-c-menu-toggle__button")
             b.wait_not_present("#os-select li")
 
             return self
@@ -1231,15 +1231,15 @@ vnc_password= "{vnc_passwd}"
         def checkOsSorted(self, sorted_list):
             b = self.browser
 
-            b.click("#os-select-group button.pf-v5-c-menu-toggle__button")
+            b.click("#os-select-group button.pf-v6-c-menu-toggle__button")
 
             # Find the first OS from the sorted list, and get a text of it's next neighbour
-            next_os = b.text(f"#os-select-group li:contains({sorted_list[0]}) + li")
+            next_os = b.text(f".pf-v6-c-menu li:contains({sorted_list[0]}) + li")
             # The next neighbour should contain the second OS from the sorted list
             self.assertEqual(next_os, sorted_list[1])
             # make the select list go away to not obscure other elements
-            b.click("#os-select-group button.pf-v5-c-menu-toggle__button")
-            b.wait_not_present("#os-select li")
+            b.click("#os-select-group button.pf-v6-c-menu-toggle__button")
+            b.wait_not_present(".pf-v6-c-menu")
             return self
 
         def checkPXENotAvailableSession(self):
@@ -1250,9 +1250,9 @@ vnc_password= "{vnc_passwd}"
 
         def createAndVerifyVirtInstallArgsCloudInit(self):
             if self.create_and_run:
-                self.browser.click(".pf-v5-c-modal-box__footer button:contains(Create and run)")
+                self.browser.click(".pf-v6-c-modal-box__footer button:contains(Create and run)")
             else:
-                self.browser.click(".pf-v5-c-modal-box__footer button:contains(Create and edit)")
+                self.browser.click(".pf-v6-c-modal-box__footer button:contains(Create and edit)")
             self.browser.wait_not_present("#create-vm-dialog")
 
             if self.create_and_run:
@@ -1310,9 +1310,9 @@ vnc_password= "{vnc_passwd}"
             m = self.machine
 
             if self.create_and_run:
-                self.browser.click(".pf-v5-c-modal-box__footer button:contains(Create and run)")
+                self.browser.click(".pf-v6-c-modal-box__footer button:contains(Create and run)")
             else:
-                self.browser.click(".pf-v5-c-modal-box__footer button:contains(Create and edit)")
+                self.browser.click(".pf-v6-c-modal-box__footer button:contains(Create and edit)")
             self.browser.wait_not_present("#create-vm-dialog")
             self.browser.wait_text(f"#vm-{self.name}-{self.connection}-state", "Shut off")
 
@@ -1334,9 +1334,9 @@ vnc_password= "{vnc_passwd}"
 
         def createAndVerifyVirtInstallArgsUnattended(self):
             if self.create_and_run:
-                self.browser.click(".pf-v5-c-modal-box__footer button:contains(Create and run)")
+                self.browser.click(".pf-v6-c-modal-box__footer button:contains(Create and run)")
             else:
-                self.browser.click(".pf-v5-c-modal-box__footer button:contains(Create and edit)")
+                self.browser.click(".pf-v6-c-modal-box__footer button:contains(Create and edit)")
             self.browser.wait_not_present("#create-vm-dialog")
 
             if self.create_and_run:
@@ -1381,7 +1381,7 @@ vnc_password= "{vnc_passwd}"
 
             b.wait_not_present("#offline-token")
             if self.os_name:
-                b.click("#os-select-group button.pf-v5-c-menu-toggle__button")
+                b.click("#os-select-group button.pf-v6-c-menu-toggle__button")
                 b.click(f"#os-select li:contains('{self.os_name}') button")
                 b.wait_attr("#os-select-group input", "value", self.os_name)
 
@@ -1423,7 +1423,7 @@ vnc_password= "{vnc_passwd}"
             if self.sourceType != 'disk_image':
                 if not self.expected_storage_size:
                     b.click("#storage-select")
-                    b.click(f"#storage-select-group li button:contains('{self.storage_pool}')")
+                    b.click(f".pf-v6-c-menu li button:contains('{self.storage_pool}')")
 
                     if self.storage_pool in [NEW_VOLUME_QCOW2, NEW_VOLUME_RAW] or self.storage_pool == NO_STORAGE:
                         b.wait_not_present("#storage-volume-select")
@@ -1479,7 +1479,7 @@ vnc_password= "{vnc_passwd}"
                                          append=True, value_check=False)
                         # Check that ssh key was validated
                         if self.ssh_key_invalid:
-                            self.browser.wait_attr(f"#create-vm-dialog-ssh-key-{idx} .pf-v5-c-form__group",
+                            self.browser.wait_attr(f"#create-vm-dialog-ssh-key-{idx} .pf-v6-c-form__group",
                                                    "testdata", "key-invalid")
                         else:
                             b.wait_visible(f"#create-vm-dialog-ssh-key-{idx} #validated")
@@ -1496,7 +1496,7 @@ vnc_password= "{vnc_passwd}"
         def cancel(self, force=False):
             b = self.browser
             if b.is_present("#create-vm-dialog"):
-                b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
+                b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
                 b.wait_not_present("#create-vm-dialog")
             elif force:
                 raise Exception("There is no dialog to cancel")
@@ -1508,17 +1508,17 @@ vnc_password= "{vnc_passwd}"
             if create:
                 if self.sourceType == 'disk_image':
                     if self.create_and_run:
-                        b.click(".pf-v5-c-modal-box__footer button:contains(Import and run)")
+                        b.click(".pf-v6-c-modal-box__footer button:contains(Import and run)")
                     else:
-                        b.click(".pf-v5-c-modal-box__footer button:contains(Import and edit)")
+                        b.click(".pf-v6-c-modal-box__footer button:contains(Import and edit)")
                 else:
                     if self.create_and_run:
-                        b.click(".pf-v5-c-modal-box__footer button:contains(Create and run)")
+                        b.click(".pf-v6-c-modal-box__footer button:contains(Create and run)")
                     else:
-                        b.click(".pf-v5-c-modal-box__footer button:contains(Create and edit)")
+                        b.click(".pf-v6-c-modal-box__footer button:contains(Create and edit)")
 
             for error, error_msg in errors.items():
-                form_helper_sel = f".pf-v5-c-modal-box__body #{error}-group .pf-v5-c-form__helper-text"
+                form_helper_sel = f".pf-v6-c-modal-box__body #{error}-group .pf-v6-c-form__helper-text"
                 if is_warning:
                     error_location = f"{form_helper_sel} .pf-m-warning"
                 else:
@@ -1529,11 +1529,11 @@ vnc_password= "{vnc_passwd}"
 
             if create:
                 if self.sourceType == 'disk_image':
-                    b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Import and run)[aria-disabled=true]")
-                    b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Import and edit)[aria-disabled=true]")
+                    b.wait_visible(".pf-v6-c-modal-box__footer button:contains(Import and run)[disabled]")
+                    b.wait_visible(".pf-v6-c-modal-box__footer button:contains(Import and edit)[aria-disabled=true]")
                 else:
-                    b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Create and run)[aria-disabled=true]")
-                    b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Create and edit)[aria-disabled=true]")
+                    b.wait_visible(".pf-v6-c-modal-box__footer button:contains(Create and run)[disabled]")
+                    b.wait_visible(".pf-v6-c-modal-box__footer button:contains(Create and edit)[aria-disabled=true]")
 
             return self
 
@@ -1551,11 +1551,11 @@ vnc_password= "{vnc_passwd}"
                         ', '.join(errors), b.text(error_location)))
 
             if self.create_and_run:
-                b.click(".pf-v5-c-modal-box__footer button:contains(Create and run)")
+                b.click(".pf-v6-c-modal-box__footer button:contains(Create and run)")
             else:
-                b.click(".pf-v5-c-modal-box__footer button:contains(Create and edit)")
+                b.click(".pf-v6-c-modal-box__footer button:contains(Create and edit)")
 
-            error_location = ".pf-v5-c-modal-box__footer div.pf-v5-c-alert"
+            error_location = ".pf-v6-c-modal-box__footer div.pf-v6-c-alert"
 
             try:
                 with b.wait_timeout(10):
@@ -1570,7 +1570,7 @@ vnc_password= "{vnc_passwd}"
                     raise
                 else:
                     # then error should be shown in the notification area
-                    error_location = ".pf-v5-c-alert-group li .pf-v5-c-alert"
+                    error_location = ".pf-v6-c-alert-group li .pf-v6-c-alert"
                     with b.wait_timeout(20):
                         b.wait_visible(error_location)
                         b.wait_in_text("button.alert-link.more-button", "show more")
@@ -1578,8 +1578,8 @@ vnc_password= "{vnc_passwd}"
                         waitForError(errors, error_location)
 
             # Close the notification
-            b.click(".pf-v5-c-alert-group li .pf-v5-c-alert button.pf-m-plain")
-            b.wait_not_present(".pf-v5-c-alert-group li .pf-v5-c-alert")
+            b.click(".pf-v6-c-alert-group li .pf-v6-c-alert button.pf-m-plain")
+            b.wait_not_present(".pf-v6-c-alert-group li .pf-v6-c-alert")
 
             return self
 
@@ -1725,14 +1725,14 @@ vnc_password= "{vnc_passwd}"
             b = self.browser
             if dialog.sourceType == 'disk_image':
                 if dialog.create_and_run:
-                    b.click(".pf-v5-c-modal-box__footer button:contains(Import and run)")
+                    b.click(".pf-v6-c-modal-box__footer button:contains(Import and run)")
                 else:
-                    b.click(".pf-v5-c-modal-box__footer button:contains(Import and edit)")
+                    b.click(".pf-v6-c-modal-box__footer button:contains(Import and edit)")
             else:
                 if dialog.create_and_run:
-                    b.click(".pf-v5-c-modal-box__footer button:contains(Create and run)")
+                    b.click(".pf-v6-c-modal-box__footer button:contains(Create and run)")
                 else:
-                    b.click(".pf-v5-c-modal-box__footer button:contains(Create and edit)")
+                    b.click(".pf-v6-c-modal-box__footer button:contains(Create and edit)")
 
             final_state = "Running" if dialog.create_and_run else "Shut off"
             # Test downloading RHEL image shows the progress of the download
@@ -1744,9 +1744,9 @@ vnc_password= "{vnc_passwd}"
                     self.assertRegex(b.text(f"#vm-{dialog.name}-{dialog.connection}-state"),
                                      r"^.*[0-9][0-9]?%$|^100%$")
                 else:
-                    b.wait_in_text(".pf-v5-c-empty-state__content", "Downloading image")
+                    b.wait_in_text(".pf-v6-c-empty-state__content", "Downloading image")
                     # Progress is shown at VM page empty state
-                    self.assertRegex(b.text(".pf-v5-c-empty-state__body .pf-v5-c-progress__status"),
+                    self.assertRegex(b.text(".pf-v6-c-empty-state__body .pf-v6-c-progress__status"),
                                      r"^[0-9][0-9]?%$|^100%$")
 
                 with b.wait_timeout(60):
@@ -1801,7 +1801,7 @@ vnc_password= "{vnc_passwd}"
                 m.execute("virsh net-destroy default")
                 b.wait_in_text(f"#vm-{name}-{connection}-state", "Shut off")
                 b.wait_visible(f"#vm-{name}-{connection}-install")
-                b.wait_in_text(".pf-v5-c-alert", "failed to get installed")
+                b.wait_in_text(".pf-v6-c-alert", "failed to get installed")
                 # can reattempt installation
                 b.wait_visible(f"#vm-{name}-{connection}-install")
                 # can't run, as it is still in install phase
@@ -1864,7 +1864,7 @@ vnc_password= "{vnc_passwd}"
                 memory_text = "/ " + f"{dialog.memory_size / 1024:.1f}".rstrip('.0') + " GiB"
             else:
                 memory_text = "/ " + f"{dialog.memory_size:.1f}".rstrip('.0') + f" {dialog.memory_size_unit}"
-            b.wait_in_text(".memory-usage-chart .pf-v5-c-progress__status > .pf-v5-c-progress__measure", memory_text)
+            b.wait_in_text(".memory-usage-chart .pf-v6-c-progress__status > .pf-v6-c-progress__measure", memory_text)
 
             # check disks
             # Test disk got imported/created
@@ -1903,7 +1903,7 @@ vnc_password= "{vnc_passwd}"
                 else:
                     raise AssertionError("Unknown disk device")
             else:
-                b.wait_in_text(f"#vm-{name}-disks .pf-v5-c-empty-state", "No disks defined")
+                b.wait_in_text(f"#vm-{name}-disks .pf-v6-c-empty-state", "No disks defined")
                 b.click(f"#vm-{name}-disks-adddisk")
                 b.click(f"#vm-{name}-disks-adddisk-dialog-cancel")
 
@@ -1941,15 +1941,15 @@ vnc_password= "{vnc_passwd}"
 
             # wait until virt-install process is finished
             testlib.wait(lambda: "virt-install" not in m.execute("ps aux | grep '[v]irt-install --connect' || true"))
-            b.wait_in_text("#virtual-machines-listing .pf-v5-c-empty-state", "No VM is running")
+            b.wait_in_text("#virtual-machines-listing .pf-v6-c-empty-state", "No VM is running")
             # wait for the vm and disks to be deleted
             m.execute("until test -z $(virsh list --all --name); do sleep 1; done")
             m.execute("until test -z $(ls /home/admin/.local/share/libvirt/images/ 2>/dev/null); do sleep 1; done")
 
             # When we delete a VM while virt-install is running there will be an error
-            while (b.is_present(".pf-v5-c-alert-group li")):
-                b.click(".pf-v5-c-alert-group li:first-of-type .pf-v5-c-alert button.pf-m-plain")
-            b.wait_not_present(".pf-v5-c-alert-group")
+            while (b.is_present(".pf-v6-c-alert-group li")):
+                b.click(".pf-v6-c-alert-group li:first-of-type .pf-v6-c-alert button.pf-m-plain")
+            b.wait_not_present(".pf-v6-c-alert-group")
 
             return self
 
@@ -2006,7 +2006,7 @@ vnc_password= "{vnc_passwd}"
             dialog.open() \
 
             b.select_from_dropdown("#source-type", dialog.sourceType)
-            b.click("#os-select-group button.pf-v5-c-menu-toggle__button")
+            b.click("#os-select-group button.pf-v6-c-menu-toggle__button")
             b.click(f"#os-select li:contains('{dialog.os_name}') button")
             b.wait_attr("#os-select-group input", "value", dialog.os_name)
             if not dialog.offline_token_autofilled:
@@ -2015,8 +2015,8 @@ vnc_password= "{vnc_passwd}"
             b.wait_in_text("#token-helper-message", error_msg)
             b.wait_in_text("#token-helper-message", "Get a new RHSM token")
             if create_disabled:
-                b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Create and run)[aria-disabled=true]")
-                b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Create and edit)[aria-disabled=true]")
+                b.wait_visible(".pf-v6-c-modal-box__footer button:contains(Create and run)[disabled]")
+                b.wait_visible(".pf-v6-c-modal-box__footer button:contains(Create and edit)[aria-disabled=true]")
 
             dialog.cancel()
 
@@ -2107,14 +2107,14 @@ vnc_password= "{vnc_passwd}"
             self.browser.select_from_dropdown("#source-type", dialog.sourceType)
 
             if dialog.sourceType != 'cloud':
-                self.browser.mouse(".pf-v5-c-tabs__list button[aria-disabled=true]:contains(Automation)",
+                self.browser.mouse(".pf-v6-c-tabs__list button[aria-disabled=true]:contains(Automation)",
                                    "mouseenter")
                 tooltip_text = "Automated installs are only available when downloading an image or using cloud-init."
-                self.browser.wait_in_text("div.pf-v5-c-tooltip__content", tooltip_text)
-                self.browser.mouse(".pf-v5-c-tabs__list button[aria-disabled=true]:contains(Automation)",
+                self.browser.wait_in_text("div.pf-v6-c-tooltip__content", tooltip_text)
+                self.browser.mouse(".pf-v6-c-tabs__list button[aria-disabled=true]:contains(Automation)",
                                    "mouseleave")
             else:
-                self.browser.wait_visible(".pf-v5-c-tabs__list button[aria-disabled=false]:contains(Automation)")
+                self.browser.wait_visible(".pf-v6-c-tabs__list button[aria-disabled=false]:contains(Automation)")
 
             dialog.cancel()
 
@@ -2137,7 +2137,7 @@ vnc_password= "{vnc_passwd}"
         dialog.open() \
             .fill() \
 
-        b.click(".pf-v5-c-modal-box__footer button:contains(Create and edit)")
+        b.click(".pf-v6-c-modal-box__footer button:contains(Create and edit)")
         b.wait_not_present("#create-vm-dialog")
 
         testlib.wait(lambda: "<cockpit_machines:os_variant>fedora28</cockpit_machines:os_variant>"
@@ -2156,27 +2156,27 @@ vnc_password= "{vnc_passwd}"
         b.set_input_text("#vm-VmNotInstalled-memory-modal-max-memory", "150")
         b.set_input_text("#vm-VmNotInstalled-memory-modal-memory", "130")
         b.click("#vm-VmNotInstalled-memory-modal-save")
-        b.wait_not_present(".pf-v5-c-modal-box__body")
+        b.wait_not_present(".pf-v6-c-modal-box__body")
 
         # Change vCPUs setting
         b.click("#vm-VmNotInstalled-cpu button")
-        b.wait_visible(".pf-v5-c-modal-box__body")
+        b.wait_visible(".pf-v6-c-modal-box__body")
         b.set_input_text("#machines-vcpu-max-field input", "8")
         b.set_input_text("#machines-vcpu-count-field input", "2")
         b.select_from_dropdown("#socketsSelect", "2")
         b.select_from_dropdown("#coresSelect", "2")
         b.select_from_dropdown("#threadsSelect", "2")
         b.click("#machines-cpu-modal-dialog-apply")
-        b.wait_not_present(".pf-v5-c-modal-box__body")
+        b.wait_not_present(".pf-v6-c-modal-box__body")
 
         # Change Boot Order setting
         bootOrder = b.text("#vm-VmNotInstalled-boot-order")
         b.click("#vm-VmNotInstalled-boot-order button")
-        b.wait_visible(".pf-v5-c-modal-box__body")
+        b.wait_visible(".pf-v6-c-modal-box__body")
         b.set_checked("#vm-VmNotInstalled-order-modal-device-1-checkbox", True)
         b.click("#vm-VmNotInstalled-order-modal-device-row-0 #vm-VmNotInstalled-order-modal-down")
         b.click("#vm-VmNotInstalled-order-modal-save")
-        b.wait_not_present(".pf-v5-c-modal-box__body")
+        b.wait_not_present(".pf-v6-c-modal-box__body")
 
         # Attach some interface
         m.execute("virsh attach-interface --persistent VmNotInstalled bridge virbr0")
@@ -2187,15 +2187,15 @@ vnc_password= "{vnc_passwd}"
         # Change the os boot firmware configuration
         b.wait_in_text("#vm-VmNotInstalled-firmware", "BIOS")
         b.click("#vm-VmNotInstalled-firmware")
-        b.wait_visible(".pf-v5-c-modal-box__body")
-        b.select_from_dropdown(".pf-v5-c-modal-box__body select", "efi")
+        b.wait_visible(".pf-v6-c-modal-box__body")
+        b.select_from_dropdown(".pf-v6-c-modal-box__body select", "efi")
         b.click("#firmware-dialog-apply")
         # ack error message if adding TPM failed
         if machineslib.hasBrokenTPM(m.image):
-            b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-alert", "Failed to change firmware")
-            b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-alert", "TPM")
-            b.click('.pf-v5-c-modal-box__footer button:contains("Cancel")')
-        b.wait_not_present(".pf-v5-c-modal-box__body")
+            b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-alert", "Failed to change firmware")
+            b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-alert", "TPM")
+            b.click('.pf-v6-c-modal-box__footer button:contains("Cancel")')
+        b.wait_not_present(".pf-v6-c-modal-box__body")
         b.wait_in_text("#vm-VmNotInstalled-firmware", "UEFI")
         self.assertIn("<os firmware='efi'>", m.execute("virsh dumpxml VmNotInstalled"))
 
@@ -2207,9 +2207,9 @@ vnc_password= "{vnc_passwd}"
             # thus menu does not offer to add a TPM
             b.click("#vm-VmNotInstalled-system-action-kebab")
             b.wait_visible("#vm-VmNotInstalled-system-delete")
-            self.assertNotIn("Add TPM", b.text("ul.pf-v5-c-menu__list"))
+            self.assertNotIn("Add TPM", b.text("ul.pf-v6-c-menu__list"))
             b.click("#vm-VmNotInstalled-system-action-kebab")
-            b.wait_not_present("ul.pf-v5-c-menu__list")
+            b.wait_not_present("ul.pf-v6-c-menu__list")
 
         # Temporarily delete the OVMF binary and check the firmware options again
         if "fedora" in m.image or "rhel" in m.image or "centos" in m.image:
@@ -2231,7 +2231,7 @@ vnc_password= "{vnc_passwd}"
         b.enter_page('/machines')
 
         b.mouse("#vm-VmNotInstalled-firmware-tooltip", "mouseenter")
-        b.wait_in_text(".pf-v5-c-tooltip",
+        b.wait_in_text(".pf-v6-c-tooltip",
                        "Libvirt did not detect any UEFI/OVMF firmware image installed on the host")
         b.mouse("#vm-VmNotInstalled-firmware-tooltip", "mouseleave")
         b.wait_not_present("#missing-uefi-images")
@@ -2259,18 +2259,18 @@ vnc_password= "{vnc_passwd}"
         b.wait_val("#vm-VmNotInstalled-memory-modal-max-memory", "150")
         b.wait_val("#vm-VmNotInstalled-memory-modal-memory", "130")
         b.click("#vm-VmNotInstalled-memory-modal-cancel")
-        b.wait_not_present(".pf-v5-c-modal-box__body")
+        b.wait_not_present(".pf-v6-c-modal-box__body")
 
         # Check vCPU settings have persisted
         b.click("#vm-VmNotInstalled-cpu button")
-        b.wait_visible(".pf-v5-c-modal-box__body")
+        b.wait_visible(".pf-v6-c-modal-box__body")
         b.wait_val("#machines-vcpu-max-field input", "8")
         b.wait_val("#machines-vcpu-count-field input", "2")
         b.wait_val("#socketsSelect", "2")
         b.wait_val("#coresSelect", "2")
         b.wait_val("#threadsSelect", "2")
         b.click("#machines-cpu-modal-dialog-cancel")
-        b.wait_not_present(".pf-v5-c-modal-box__body")
+        b.wait_not_present(".pf-v6-c-modal-box__body")
 
         # Check changed boot order have persisted
         b.wait_text_not("#vm-VmNotInstalled-boot-order", bootOrder)
@@ -2306,7 +2306,7 @@ vnc_password= "{vnc_passwd}"
                                              create_and_run=False)
         dialog.open().fill()
 
-        b.click(".pf-v5-c-modal-box__footer #create-and-edit")
+        b.click(".pf-v6-c-modal-box__footer #create-and-edit")
         b.wait_not_present("#create-vm-dialog")
 
         self.waitVmPage("VmNotInstalledBios")
@@ -2314,10 +2314,10 @@ vnc_password= "{vnc_passwd}"
         # Show and keep the os boot firmware configuration
         b.wait_in_text("#vm-VmNotInstalledBios-firmware", "BIOS")
         b.click("#vm-VmNotInstalledBios-firmware")
-        b.wait_visible(".pf-v5-c-modal-box__body")
-        b.wait_val(".pf-v5-c-modal-box__body select", "bios")
+        b.wait_visible(".pf-v6-c-modal-box__body")
+        b.wait_val(".pf-v6-c-modal-box__body select", "bios")
         b.click("#firmware-dialog-apply")
-        b.wait_not_present(".pf-v5-c-modal-box__body")
+        b.wait_not_present(".pf-v6-c-modal-box__body")
         b.wait_in_text("#vm-VmNotInstalledBios-firmware", "BIOS")
 
         # Install the VM
@@ -2345,7 +2345,7 @@ vnc_password= "{vnc_passwd}"
                                              storage_size=256, storage_size_unit='MiB',
                                              create_and_run=False)
         dialog.open().fill()
-        b.click(".pf-v5-c-modal-box__footer #create-and-edit")
+        b.click(".pf-v6-c-modal-box__footer #create-and-edit")
         b.wait_not_present("#create-vm-dialog")
         b.wait_in_text(f"#vm-{vmName}-firmware", "BIOS")
 
@@ -2354,14 +2354,14 @@ vnc_password= "{vnc_passwd}"
         self.performAction(vmName, "add-tpm")
 
         if machineslib.hasBrokenTPM(m.image):
-            error_location = ".pf-v5-c-alert-group li .pf-v5-c-alert"
+            error_location = ".pf-v6-c-alert-group li .pf-v6-c-alert"
             b.wait_in_text(error_location, f"Failed to add TPM to VM {vmName}")
             b.wait_in_text("button.alert-link.more-button", "show more")
             b.click("button.alert-link.more-button")
             b.wait_in_text(error_location, "unsupported configuration")
             # Close the notification
-            b.click(".pf-v5-c-alert-group li .pf-v5-c-alert button.pf-m-plain")
-            b.wait_not_present(".pf-v5-c-alert-group li .pf-v5-c-alert")
+            b.click(".pf-v6-c-alert-group li .pf-v6-c-alert button.pf-m-plain")
+            b.wait_not_present(".pf-v6-c-alert-group li .pf-v6-c-alert")
         else:
             testlib.wait(lambda: "tpm" in m.execute(f"virsh dumpxml {vmName}"))
 
@@ -2370,9 +2370,9 @@ vnc_password= "{vnc_passwd}"
                 time.sleep(0.2)
                 b.click(f"#vm-{vmName}-system-action-kebab")
                 b.wait_visible(f"#vm-{vmName}-system-delete")
-                menu = b.text("ul.pf-v5-c-menu__list")
+                menu = b.text("ul.pf-v6-c-menu__list")
                 b.click(f"#vm-{vmName}-system-action-kebab")
-                b.wait_not_present("ul.pf-v5-c-menu__list")
+                b.wait_not_present("ul.pf-v6-c-menu__list")
                 if "Add TPM" not in menu:
                     break
             else:
@@ -2380,15 +2380,15 @@ vnc_password= "{vnc_passwd}"
 
         # Change the os boot firmware to EFI
         b.click(f"#vm-{vmName}-firmware")
-        b.wait_visible(".pf-v5-c-modal-box__body")
-        b.select_from_dropdown(".pf-v5-c-modal-box__body select", "efi")
+        b.wait_visible(".pf-v6-c-modal-box__body")
+        b.select_from_dropdown(".pf-v6-c-modal-box__body select", "efi")
         b.click("#firmware-dialog-apply")
         # ack error message if adding TPM failed
         if machineslib.hasBrokenTPM(m.image):
-            b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-alert", "Failed to change firmware")
-            b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-alert", "TPM")
-            b.click('.pf-v5-c-modal-box__footer button:contains("Cancel")')
-        b.wait_not_present(".pf-v5-c-modal-box__body")
+            b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-alert", "Failed to change firmware")
+            b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-alert", "TPM")
+            b.click('.pf-v6-c-modal-box__footer button:contains("Cancel")')
+        b.wait_not_present(".pf-v6-c-modal-box__body")
         b.wait_in_text(f"#vm-{vmName}-firmware", "UEFI")
 
         if machineslib.hasBrokenTPM(m.image):
@@ -2435,8 +2435,8 @@ vnc_password= "{vnc_passwd}"
                                              os_short_id=config.RHEL_8_1_SHORTID) \
             .open() \
             .fill()
-        b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Create and run)[aria-disabled=false]")
-        b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Create and edit)[aria-disabled=false]")
+        b.wait_visible(".pf-v6-c-modal-box__footer button:contains(Create and run)[aria-disabled=false]")
+        b.wait_visible(".pf-v6-c-modal-box__footer button:contains(Create and edit)[aria-disabled=false]")
         dialog.cancel()
 
         runner.checkDialogErrorTest(TestMachinesCreate.VmDialog(self, sourceType='os',
@@ -2517,25 +2517,25 @@ vnc_password= "{vnc_passwd}"
             # if VNC is available, the inline viewer is the default
             if expect_vnc:
                 with b.wait_timeout(60):
-                    b.wait_visible(".pf-v5-c-console__vnc canvas")
+                    b.wait_visible(".pf-v6-c-console__vnc canvas")
 
-            b.click("#pf-v5-c-console__type-selector")
-            b.wait_visible("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
+            b.click(".pf-v6-c-console__type-selector")
+            b.wait_visible(".pf-v6-c-console__type-selector + .pf-v6-c-select__menu")
             b.click("#DesktopViewer button")
-            b.wait_not_present("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
+            b.wait_not_present(".pf-v6-c-console__type-selector + .pf-v6-c-select__menu")
             if expect_vnc:
-                b.wait_in_text(".pf-v5-c-console__manual-connection", "VNC")
+                b.wait_in_text(".pf-v6-c-console__manual-connection", "VNC")
             else:
-                self.assertNotIn("VNC", b.text(".pf-v5-c-console__manual-connection"))
+                self.assertNotIn("VNC", b.text(".pf-v6-c-console__manual-connection"))
             if expect_spice:
-                b.wait_in_text(".pf-v5-c-console__manual-connection", "SPICE")
+                b.wait_in_text(".pf-v6-c-console__manual-connection", "SPICE")
             else:
-                self.assertNotIn("SPICE", b.text(".pf-v5-c-console__manual-connection"))
+                self.assertNotIn("SPICE", b.text(".pf-v6-c-console__manual-connection"))
 
         def doReplaceSpiceSingle(vmName, expect_running=False, cancel=False):
             self.performAction(vmName, "replace-spice")
-            b.wait_text(".pf-v5-c-modal-box__title-text", f"Replace SPICE devices in VM {vmName}")
-            b.wait_in_text(".pf-v5-c-modal-box__body", "Replace SPICE on the virtual machine")
+            b.wait_text(".pf-v6-c-modal-box__title-text", f"Replace SPICE devices in VM {vmName}")
+            b.wait_in_text(".pf-v6-c-modal-box__body", "Replace SPICE on the virtual machine")
             if expect_running:
                 b.wait_visible("#spice-modal-idle-message")
             else:
@@ -2543,16 +2543,16 @@ vnc_password= "{vnc_passwd}"
             self.assertFalse(b.is_present("#replace-spice-dialog-other"))
 
             if cancel:
-                b.click('.pf-v5-c-modal-box__footer button:contains("Cancel")')
+                b.click('.pf-v6-c-modal-box__footer button:contains("Cancel")')
             else:
                 b.click("#replace-spice-dialog-confirm")
-            b.wait_not_present(".pf-v5-c-modal-box")
+            b.wait_not_present(".pf-v6-c-modal-box")
             if cancel:
                 return
 
             if expect_running:
                 b.click(f"#vm-{vmName}-needs-shutdown")
-                b.wait_in_text(".pf-v5-c-popover__body", "SPICE")
+                b.wait_in_text(".pf-v6-c-popover__body", "SPICE")
             else:
                 b.wait_not_present(f"#vm-{vmName}-needs-shutdown")
 
@@ -2572,7 +2572,7 @@ vnc_password= "{vnc_passwd}"
         vmCockpit = dialog.name
         dialog.open() \
             .fill()
-        b.click(".pf-v5-c-modal-box__footer button:contains(Create and run)")
+        b.click(".pf-v6-c-modal-box__footer button:contains(Create and run)")
         self.browser.wait_not_present("#create-vm-dialog")
         self.waitVmRow(vmCockpit, "system")
         self.goToVmPage(vmCockpit)
@@ -2590,7 +2590,7 @@ vnc_password= "{vnc_passwd}"
             b.click(f"#vm-{vmCockpit}-system-action-kebab")
             b.wait_visible(f"#vm-{vmCockpit}-system-delete")
             self.assertNotIn("Replace SPICE",
-                             b.text("ul.pf-v5-c-menu__list"))
+                             b.text("ul.pf-v6-c-menu__list"))
         else:
             # all other OSes configure SPICE by default
             self.assertIn("graphics type='spice'", domainXML)
@@ -2604,9 +2604,9 @@ vnc_password= "{vnc_passwd}"
                 time.sleep(1)
                 b.click(f"#vm-{vmCockpit}-system-action-kebab")
                 b.wait_visible(f"#vm-{vmCockpit}-system-delete")
-                menu = b.text("ul.pf-v5-c-menu__list")
+                menu = b.text("ul.pf-v6-c-menu__list")
                 b.click(f"#vm-{vmCockpit}-system-action-kebab")
-                b.wait_not_present("ul.pf-v5-c-menu__list")
+                b.wait_not_present("ul.pf-v6-c-menu__list")
                 if "Replace SPICE" not in menu:
                     break
             else:
@@ -2655,11 +2655,11 @@ vnc_password= "{vnc_passwd}"
         self.goToMainPage()
         self.performAction(vmSpiceOnly, "replace-spice")
 
-        b.wait_text(".pf-v5-c-modal-box__title-text", "Replace SPICE devices")
-        b.wait_in_text(".pf-v5-c-modal-box__body", "Replace SPICE on selected VMs")
+        b.wait_text(".pf-v6-c-modal-box__title-text", "Replace SPICE devices")
+        b.wait_in_text(".pf-v6-c-modal-box__body", "Replace SPICE on selected VMs")
         # action came from vmSpiceOnly, should be at the top and selected
-        b.wait_visible(f".pf-v5-c-menu__item:contains('{vmSpiceOnly}') input:checked")
-        b.wait_visible(".pf-v5-c-menu__item input:checked")  # selector is ambiguous if anything else is checked
+        b.wait_visible(f".pf-v6-c-menu__item:contains('{vmSpiceOnly}') input:checked")
+        b.wait_visible(".pf-v6-c-menu__item input:checked")  # selector is ambiguous if anything else is checked
         # other SPICE VMs are also offered
         menu = b.text("#replace-spice-dialog-other")
         self.assertIn("SpiceOne", menu)
@@ -2670,29 +2670,29 @@ vnc_password= "{vnc_passwd}"
         b.wait_text("#replace-spice-dialog-select-all", "Select all")
         b.click("#replace-spice-dialog-select-all")
         # now there are no unchecked VMs
-        b.wait_not_present(".pf-v5-c-menu__item input:not(:checked)")
+        b.wait_not_present(".pf-v6-c-menu__item input:not(:checked)")
         b.wait_text("#replace-spice-dialog-select-all", "Deselect others")
         b.click("#replace-spice-dialog-select-all")
         # only the first one selected now
-        b.wait_visible(f".pf-v5-c-menu__item:contains('{vmSpiceOnly}') input:checked")
+        b.wait_visible(f".pf-v6-c-menu__item:contains('{vmSpiceOnly}') input:checked")
         # fails due to ambiguity if others are
-        b.wait_visible(".pf-v5-c-menu__item input:checked")
+        b.wait_visible(".pf-v6-c-menu__item input:checked")
         b.click("#replace-spice-dialog-select-all")
-        b.wait_not_present(".pf-v5-c-menu__item input:not(:checked)")
+        b.wait_not_present(".pf-v6-c-menu__item input:not(:checked)")
         # uncheck SpiceTwo
-        b.click(".pf-v5-c-menu__item:contains('SpiceTwo') input")
-        b.wait_visible(".pf-v5-c-menu__item:contains('SpiceTwo') input:not(:checked)")
+        b.click(".pf-v6-c-menu__item:contains('SpiceTwo') input")
+        b.wait_visible(".pf-v6-c-menu__item:contains('SpiceTwo') input:not(:checked)")
 
         # ensure we don't have an alert for failed install of subVmTest1, as it would interfere with the pixel test;
         # this is unfortunately unpredictable
-        if b.is_present(".pf-v5-c-alert-group"):
-            b.click(".pf-v5-c-alert-group .pf-v5-c-alert__action button")
-            b.wait_not_present(".pf-v5-c-alert-group")
+        if b.is_present(".pf-v6-c-alert-group"):
+            b.click(".pf-v6-c-alert-group .pf-v6-c-alert__action button")
+            b.wait_not_present(".pf-v6-c-alert-group")
 
-        b.assert_pixels(".pf-v5-c-modal-box", "replace-spice-multi")
+        b.assert_pixels(".pf-v6-c-modal-box", "replace-spice-multi")
 
         b.click("#replace-spice-dialog-confirm")
-        b.wait_not_present(".pf-v5-c-modal-box")
+        b.wait_not_present(".pf-v6-c-modal-box")
 
         # SpiceOnly still runs
         b.click(f"#vm-{vmSpiceOnly}-system-run")
@@ -2713,12 +2713,12 @@ vnc_password= "{vnc_passwd}"
         self.createVm("SpiceThree", graphics="spice", running=False)
         self.waitVmRow("SpiceThree", "system")
         self.performAction("SpiceTwo", "replace-spice")
-        b.wait_text(".pf-v5-c-modal-box__title-text", "Replace SPICE devices")
+        b.wait_text(".pf-v6-c-modal-box__title-text", "Replace SPICE devices")
         b.click("#replace-spice-dialog-select-all")
-        b.click(".pf-v5-c-menu__item:contains('SpiceTwo') input")
-        b.wait_visible(".pf-v5-c-menu__item:contains('SpiceTwo') input:not(:checked)")
+        b.click(".pf-v6-c-menu__item:contains('SpiceTwo') input")
+        b.wait_visible(".pf-v6-c-menu__item:contains('SpiceTwo') input:not(:checked)")
         b.click("#replace-spice-dialog-confirm")
-        b.wait_not_present(".pf-v5-c-modal-box")
+        b.wait_not_present(".pf-v6-c-modal-box")
         self.assertNotIn("spice", m.execute("virsh dumpxml --inactive SpiceThree"))
         self.assertIn("spice", m.execute("virsh dumpxml --inactive SpiceTwo"))
 
@@ -2740,9 +2740,9 @@ vnc_password= "{vnc_passwd}"
 
         self.performAction(vmKaputt, "replace-spice")
         b.click("#replace-spice-dialog-confirm")
-        b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-alert", "Failed to replace SPICE devices")
-        b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
-        b.wait_not_present(".pf-v5-c-modal-box")
+        b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-alert", "Failed to replace SPICE devices")
+        b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
+        b.wait_not_present(".pf-v6-c-modal-box")
 
         # no change to the XML
         self.assertEqual(m.execute(f"virsh dumpxml {vmKaputt}"), domainXML)
@@ -2774,10 +2774,10 @@ vnc_password= "{vnc_passwd}"
             b.wait_not_present(f"#vm-{vmName}-system-state-error")
 
             b.click(f"#vm-{vmName}-uses-spice")
-            b.wait_in_text(".pf-v5-c-popover", "Uses SPICE")
-            b.click(".pf-v5-c-popover footer button")
+            b.wait_in_text(".pf-v6-c-popover", "Uses SPICE")
+            b.click(".pf-v6-c-popover footer button")
             # clicking the action auto-closes the popover and brings up the dialog
-            b.wait_not_present(".pf-v5-c-popover")
+            b.wait_not_present(".pf-v6-c-popover")
             b.click("#replace-spice-dialog-confirm")
             b.wait_not_present(f"#vm-{vmName}-uses-spice")
 

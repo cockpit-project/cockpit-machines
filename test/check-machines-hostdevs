@@ -72,15 +72,15 @@ class HostDevAddDialog(object):
         b = self.test_obj.browser
         b.wait_not_present(f"#vm-subVmTest1-hostdev-{self.vm_dev_id}-product")
         b.click("button#vm-subVmTest1-hostdevs-add")
-        b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title",
+        b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-modal-box__header .pf-v6-c-modal-box__title",
                        "Add host device")
         if self.connection_name != "session":
-            b.assert_pixels(".pf-v5-c-modal-box", "vm-hostdevs-add-dialog", skip_layouts=["rtl"])
+            b.assert_pixels(".pf-v6-c-modal-box", "vm-hostdevs-add-dialog", skip_layouts=["rtl"])
 
     def fill(self):
         b = self.test_obj.browser
         b.click(f"input#{self.dev_type}")
-        b.set_checked(f".pf-v5-c-table input[name='checkrow{self.dev_id}']", True)
+        b.set_checked(f".pf-v6-c-table input[name='checkrow{self.dev_id}']", True)
         sel = f"#vm-subVmTest1-hostdevs-dialog table tbody tr:nth-child({self.dev_id + 1})"
         self._model = b.text(f"{sel} td:nth-child(2)")
         self._vendor = b.text(f"{sel} td:nth-child(3)")
@@ -89,17 +89,17 @@ class HostDevAddDialog(object):
 
     def cancel(self):
         b = self.test_obj.browser
-        b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
+        b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
         b.wait_not_present("#vm-subVmTest1-hostdevs-dialog")
 
     def add(self):
         b = self.test_obj.browser
         self._orig_xml = self.run_admin(f"virsh -c qemu:///{self.connection_name} dumpxml subVmTest1",
                                         self.connection_name)
-        b.click(".pf-v5-c-modal-box__footer button:contains(Add)")
+        b.click(".pf-v6-c-modal-box__footer button:contains(Add)")
         if self.fail_message:
-            b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-alert__title", self.fail_message)
-            b.click(".pf-v5-c-modal-box__footer button:contains(Cancel)")
+            b.wait_in_text(".pf-v6-c-modal-box__body .pf-v6-c-alert__title", self.fail_message)
+            b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
         b.wait_not_present("#vm-subVmTest1-hostdevs-dialog")
 
     def verify(self):
@@ -145,12 +145,12 @@ class HostDevAddDialog(object):
     def remove(self):
         b = self.test_obj.browser
         b.click(f"#delete-vm-subVmTest1-hostdev-{self.vm_dev_id}")
-        b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-description-list", "subVmTest1")
+        b.wait_in_text(".pf-v6-c-modal-box__body .pf-v6-c-description-list", "subVmTest1")
         if (self._model != "(Undefined)"):
             b.wait_in_text("#delete-resource-modal-product", self._model)
         b.wait_in_text("#delete-resource-modal-vendor", self._vendor)
 
-        b.click('.pf-v5-c-modal-box__footer button:contains("Remove")')
+        b.click('.pf-v6-c-modal-box__footer button:contains("Remove")')
         b.wait_not_present("#delete-resource-modal")
         b.wait_not_present(f"#vm-subVmTest1-hostdev-{self.vm_dev_id}-product")
 
@@ -172,7 +172,7 @@ class TestMachinesHostDevs(machineslib.VirtualMachinesCase):
 
         self.goToVmPage("subVmTest1")
 
-        b.wait_in_text("#vm-subVmTest1-hostdevs .pf-v5-c-empty-state__body", "No host devices assigned to this VM")
+        b.wait_in_text("#vm-subVmTest1-hostdevs .pf-v6-c-empty-state__body", "No host devices assigned to this VM")
 
         # Test hot plug of USB host device
         # A usb device might not always be present
@@ -311,13 +311,13 @@ class TestMachinesHostDevs(machineslib.VirtualMachinesCase):
         b.wait_not_present("#vm-subVmTest1-hostdev-1-product")
 
         b.click("button#vm-subVmTest1-hostdevs-add")
-        b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title", "Add host device")
+        b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-modal-box__header .pf-v6-c-modal-box__title", "Add host device")
         b.click("input#pci")
 
-        b.set_checked(".pf-v5-c-table input[name='checkrow0']", True)
+        b.set_checked(".pf-v6-c-table input[name='checkrow0']", True)
         slot1 = b.text("#vm-subVmTest1-hostdevs-dialog table tbody tr:nth-child(1) td:nth-child(4) dd")
 
-        b.set_checked(".pf-v5-c-table input[name='checkrow1']", True)
+        b.set_checked(".pf-v6-c-table input[name='checkrow1']", True)
         slot2 = b.text("#vm-subVmTest1-hostdevs-dialog table tbody tr:nth-child(2) td:nth-child(4) dd")
 
         # PCI devices will be sorted in the UI by slot
@@ -325,7 +325,7 @@ class TestMachinesHostDevs(machineslib.VirtualMachinesCase):
             (slot1, slot2) = (slot2, slot1)
 
         orig_xml = self.run_admin(f"virsh -c qemu:///{connectionName} dumpxml subVmTest1", connectionName)
-        b.click(".pf-v5-c-modal-box__footer button:contains(Add)")
+        b.click(".pf-v6-c-modal-box__footer button:contains(Add)")
         b.wait_not_present("#vm-subVmTest1-hostdevs-dialog")
 
         b.wait_visible("#vm-subVmTest1-hostdev-1-product")

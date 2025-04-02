@@ -41,7 +41,7 @@ class TestMachinesConsoles(machineslib.VirtualMachinesCase):
 
     def waitViewerDownload(self, kind, host, port=5900):
         self.browser.allow_download()
-        self.browser.click(".pf-v5-c-console__remote-viewer-launch-vv")  # "Launch Remote Viewer" button
+        self.browser.click(".pf-v6-c-console__remote-viewer-launch-vv")  # "Launch Remote Viewer" button
         content = f"""[virt-viewer]
 type={kind}
 host={host}
@@ -65,8 +65,8 @@ fullscreen=0
         self.goToVmPage("subVmTest1")
 
         # since VNC is not defined for this VM, the view for "Desktop Viewer" is rendered by default
-        b.wait_in_text(".pf-v5-c-console__manual-connection dl > div:first-child dd", "127.0.0.1")
-        b.wait_in_text(".pf-v5-c-console__manual-connection dl > div:nth-child(2) dd", "5900")
+        b.wait_in_text(".pf-v6-c-console__manual-connection dl > div:first-child dd", "127.0.0.1")
+        b.wait_in_text(".pf-v6-c-console__manual-connection dl > div:nth-child(2) dd", "5900")
 
         self.waitViewerDownload("spice", b.address)
 
@@ -74,8 +74,8 @@ fullscreen=0
         b.click("button:contains(Expand)")
 
         # Check "More information"
-        b.click('.pf-v5-c-console__remote-viewer .pf-v5-c-expandable-section__toggle')
-        b.wait_in_text('.pf-v5-c-expandable-section__content',
+        b.click('.pf-v6-c-console__remote-viewer .pf-v6-c-expandable-section__toggle')
+        b.wait_in_text('.pf-v6-c-expandable-section__content',
                        'Clicking "Launch remote viewer" will download')
 
         b.assert_pixels("#vm-subVmTest1-consoles-page", "vm-details-console-external", skip_layouts=["rtl"])
@@ -96,7 +96,7 @@ fullscreen=0
         self.goToVmPage("subVmTest1")
 
         # since VNC is defined for this VM, the view for "In-Browser Viewer" is rendered by default
-        b.wait_visible(".pf-v5-c-console__vnc canvas")
+        b.wait_visible(".pf-v6-c-console__vnc canvas")
 
         # make sure the log file is full - then empty it and reboot the VM - the log file should fill up again
         self.waitGuestBooted(args['logfile'])
@@ -123,10 +123,10 @@ fullscreen=0
         self.goToVmPage(name)
         b.wait_in_text(f"#vm-{name}-system-state", "Running")
 
-        b.click("#pf-v5-c-console__type-selector")
-        b.wait_visible("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
+        b.click(".pf-v6-c-console__type-selector")
+        b.wait_visible(".pf-v6-c-console__type-selector + .pf-v6-c-select__menu")
         b.click("#SerialConsole button")
-        b.wait_not_present("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
+        b.wait_not_present(".pf-v6-c-console__type-selector + .pf-v6-c-select__menu")
 
         # In case the OS already finished booting, press Enter into the console to re-trigger the login prompt
         # Sometimes, pressing Enter one time doesn't take effect, so loop to press Enter to make sure
@@ -149,18 +149,18 @@ fullscreen=0
 
         b.click("button:contains(Expand)")
         b.assert_pixels("#vm-vmWithSerialConsole-consoles-page", "vm-details-console-serial",
-                        ignore=[".pf-v5-c-console__vnc"], skip_layouts=["rtl"])
+                        ignore=[".pf-v6-c-console__vnc"], skip_layouts=["rtl"])
 
         # Add a second serial console
         m.execute("""
             virsh destroy vmWithSerialConsole;
             virt-xml --add-device vmWithSerialConsole --console pty,target_type=virtio;
             virsh start vmWithSerialConsole""")
-        b.click("#pf-v5-c-console__type-selector")
-        b.wait_visible("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
+        b.click(".pf-v6-c-console__type-selector")
+        b.wait_visible(".pf-v6-c-console__type-selector + .pf-v6-c-select__menu")
         b.click("li:contains('Serial console (serial0)') button")
         b.wait(lambda: m.execute("ps aux | grep 'virsh -c qemu:///system console vmWithSerialConsole serial0'"))
-        b.click("#pf-v5-c-console__type-selector")
+        b.click(".pf-v6-c-console__type-selector")
         b.click("li:contains('Serial console (console1)') button")
         b.wait(lambda: m.execute("ps aux | grep 'virsh -c qemu:///system console vmWithSerialConsole console1'"))
 
@@ -177,8 +177,8 @@ fullscreen=0
                   """)
 
         for i in range(0, 6):
-            b.click("#pf-v5-c-console__type-selector")
-            b.wait_visible("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
+            b.click(".pf-v6-c-console__type-selector")
+            b.wait_visible(".pf-v6-c-console__type-selector + .pf-v6-c-select__menu")
             b.click(f'li:contains(\'Serial console ({"serial" if i == 0 else "console"}{i})\') button')
             b.wait(lambda: m.execute(
                 f'ps aux | grep \'virsh -c qemu:///system console vmWithSerialConsole {"serial" if i == 0 else "console"}{i}\''))  # noqa: B023, E501
@@ -206,22 +206,22 @@ fullscreen=0
 
         # test switching console from serial to graphical
         b.wait_visible(f"#vm-{name}-consoles")
-        b.wait_visible(".pf-v5-c-console__vnc canvas")
+        b.wait_visible(".pf-v6-c-console__vnc canvas")
 
-        b.click("#pf-v5-c-console__type-selector")
-        b.wait_visible("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
+        b.click(".pf-v6-c-console__type-selector")
+        b.wait_visible(".pf-v6-c-console__type-selector + .pf-v6-c-select__menu")
         b.click("#SerialConsole button")
-        b.wait_not_present("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
+        b.wait_not_present(".pf-v6-c-console__type-selector + .pf-v6-c-select__menu")
 
-        b.wait_not_present(".pf-v5-c-console__vnc canvas")
+        b.wait_not_present(".pf-v6-c-console__vnc canvas")
         b.wait_visible(f"#{name}-terminal")
 
         # Go back to Vnc console
-        b.click("#pf-v5-c-console__type-selector")
-        b.wait_visible("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
+        b.click(".pf-v6-c-console__type-selector")
+        b.wait_visible(".pf-v6-c-console__type-selector + .pf-v6-c-select__menu")
         b.click("#VncConsole button")
-        b.wait_not_present("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
-        b.wait_visible(".pf-v5-c-console__vnc canvas")
+        b.wait_not_present(".pf-v6-c-console__type-selector + .pf-v6-c-select__menu")
+        b.wait_visible(".pf-v6-c-console__vnc canvas")
 
         # Go to the expanded console view
         b.click("button:contains(Expand)")
@@ -275,13 +275,13 @@ fullscreen=0
         self.goToVmPage(name)
         b.wait_in_text(f"#vm-{name}-system-state", "Running")
 
-        b.click("#pf-v5-c-console__type-selector")
-        b.wait_visible("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
+        b.click(".pf-v6-c-console__type-selector")
+        b.wait_visible(".pf-v6-c-console__type-selector + .pf-v6-c-select__menu")
         b.click("#DesktopViewer button")
-        b.wait_not_present("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
+        b.wait_not_present(".pf-v6-c-console__type-selector + .pf-v6-c-select__menu")
 
-        b.wait_in_text(".pf-v5-c-console__manual-connection dl > div:first-child dd", "127.0.0.1")
-        b.wait_in_text(".pf-v5-c-console__manual-connection dl > div:nth-child(2) dd", "5900")
+        b.wait_in_text(".pf-v6-c-console__manual-connection dl > div:first-child dd", "127.0.0.1")
+        b.wait_in_text(".pf-v6-c-console__manual-connection dl > div:nth-child(2) dd", "5900")
 
         self.waitViewerDownload("vnc", my_ip)
 
@@ -304,13 +304,13 @@ fullscreen=0
         self.goToVmPage(name)
         b.wait_in_text(f"#vm-{name}-system-state", "Running")
 
-        b.click("#pf-v5-c-console__type-selector")
-        b.wait_visible("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
+        b.click(".pf-v6-c-console__type-selector")
+        b.wait_visible(".pf-v6-c-console__type-selector + .pf-v6-c-select__menu")
         b.click("#DesktopViewer button")
-        b.wait_not_present("#pf-v5-c-console__type-selector + .pf-v5-c-select__menu")
+        b.wait_not_present(".pf-v6-c-console__type-selector + .pf-v6-c-select__menu")
 
-        b.wait_in_text(".pf-v5-c-console__manual-connection dl > div:first-child dd", "127.0.0.1")
-        b.wait_in_text(".pf-v5-c-console__manual-connection dl > div:nth-child(2) dd", "5900")
+        b.wait_in_text(".pf-v6-c-console__manual-connection dl > div:first-child dd", "127.0.0.1")
+        b.wait_in_text(".pf-v6-c-console__manual-connection dl > div:nth-child(2) dd", "5900")
 
         self.waitViewerDownload("vnc", my_ip)
 
