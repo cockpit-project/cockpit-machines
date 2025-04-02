@@ -80,7 +80,7 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
         # Some actions, which can cause expensive downtime when clicked accidentally, have confirmation dialog
         if action in ["off", "forceOff", "reboot", "forceReboot", "sendNMI"]:
             b.wait_visible(f"#vm-{vmName}-{connectionName}-confirm-action-modal")
-            b.click(f".pf-v5-c-modal-box__footer #vm-{vmName}-{connectionName}-{action}")
+            b.click(f".pf-v6-c-modal-box__footer #vm-{vmName}-{connectionName}-{action}")
             b.wait_not_present(f"#vm-{vmName}-{connectionName}-confirm-action-modal")
 
         if not checkExpectedState:
@@ -117,7 +117,7 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
         sel = f"tbody tr[data-row-id=\"pool-{poolName}-{connectionName}\"]"
         isExpanded = 'pf-m-expanded' in b.attr(f"{sel} + tr", "class")
 
-        b.click(f"{sel} .pf-v5-c-table__toggle button")
+        b.click(f"{sel} .pf-v6-c-table__toggle button")
         if isExpanded:
             b.wait_not_present(f"{sel} + tr.pf-m-expanded")
         else:
@@ -136,7 +136,7 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
         sel = f"tbody tr[data-row-id=\"network-{networkName}-{connectionName}\"]"
         isExpanded = 'pf-m-expanded' in b.attr(f"{sel} + tr", "class")
 
-        b.click(f"{sel} .pf-v5-c-table__toggle button")
+        b.click(f"{sel} .pf-v6-c-table__toggle button")
         if isExpanded:
             b.wait_not_present(f"{sel} + tr.pf-m-expanded")
         else:
@@ -290,25 +290,25 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
 
         b.wait_visible(f"#vm-{vm_name}-disks-{target}-device")
         self.dropdownAction(f"#vm-{vm_name}-disks-{target}-action-kebab", f"#delete-vm-{vm_name}-disks-{target}")
-        b.wait_visible(".pf-v5-c-modal-box")
+        b.wait_visible(".pf-v6-c-modal-box")
         b.wait_in_text("#delete-resource-modal-target", target)
         if expect_path:
             b.wait_in_text("#delete-resource-modal-file", expect_path)
         b.click("#delete-resource-modal-primary")
-        b.wait_not_present(".pf-v5-c-modal-box")
+        b.wait_not_present(".pf-v6-c-modal-box")
         b.wait_not_present(f"#vm-{vm_name}-disks-{target}-device")
 
     def deleteIface(self, iface: str, mac: str | None = None, vm_name: str | None = None) -> None:
         b = self.browser
 
         self.dropdownAction(f"#vm-subVmTest1-iface-{iface}-action-kebab", f"#delete-vm-subVmTest1-iface-{iface}")
-        b.wait_in_text(".pf-v5-c-modal-box .pf-v5-c-modal-box__header .pf-v5-c-modal-box__title",
+        b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-modal-box__header .pf-v6-c-modal-box__title",
                        "Remove network interface?")
         if mac and vm_name:
-            b.wait_in_text(".pf-v5-c-modal-box__body .pf-v5-c-description-list",
+            b.wait_in_text(".pf-v6-c-modal-box__body .pf-v6-c-description-list",
                            f"{mac} will be removed from {vm_name}")
-        b.click(".pf-v5-c-modal-box__footer button:contains(Remove)")
-        b.wait_not_present(".pf-v5-c-modal-box")
+        b.click(".pf-v6-c-modal-box__footer button:contains(Remove)")
+        b.wait_not_present(".pf-v6-c-modal-box")
 
     def get_next_mac(self, last_mac: str) -> str:
         parts = last_mac.split(':')

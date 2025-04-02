@@ -208,11 +208,11 @@ class VmOverviewCard extends React.Component {
                                     <Popover alertSeverityVariant="info"
                                         position="right"
                                         bodyContent={WATCHDOG_INFO_MESSAGE}>
-                                        <button onClick={e => e.preventDefault()} className="pf-v6-c-form__group-label-help">
+                                        <Button isInline variant="plain">
                                             <Icon className="overview-icon" status="info">
                                                 <HelpIcon />
                                             </Icon>
-                                        </button>
+                                        </Button>
                                     </Popover>
                                 </FlexItem>
                             </Flex>
@@ -240,11 +240,11 @@ class VmOverviewCard extends React.Component {
                                             </Flex>
                                         }
                                         hasAutoWidth>
-                                        <button onClick={e => e.preventDefault()} className="pf-v6-c-form__group-label-help">
+                                        <Button isInline variant="plain">
                                             <Icon className="overview-icon" status="info">
                                                 <HelpIcon />
                                             </Icon>
-                                        </button>
+                                        </Button>
                                     </Popover>
                                 </FlexItem>
                             </Flex>

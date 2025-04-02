@@ -3,12 +3,7 @@
 /* Imports 'pf-u-pt-md' class used for Expander in Add Disk dialog */
 @use "../node_modules/@patternfly/patternfly/utilities/Spacing/spacing.css";
 
-/* For pf-t-light mixin */
-@import "@patternfly/patternfly/sass-utilities/colors.scss";
-@import "@patternfly/patternfly/sass-utilities/scss-variables.scss";
-@import "@patternfly/patternfly/sass-utilities/mixins.scss";
  // for $alert
-@import "@patternfly/patternfly/sass-utilities/component-namespaces.scss";
 @import "@patternfly/patternfly/components/Alert/alert.scss";
 
 /* Utilities */
@@ -17,10 +12,6 @@
 /* Style the list cards as ct-cards */
 .pf-v6-c-page__main-section > .pf-v6-c-card {
     @extend .ct-card;
-}
-
-.pf-v6-c-form__group .pf-v6-c-helper-text {
-    margin-block-start: var(--pf-v5-c-form__helper-text--MarginTop);
 }
 
 /* Create a hybrid popover with an alert style */
@@ -64,7 +55,7 @@
 }
 
 .machines-connection-selector > .pf-v6-c-radio:first-child {
-    padding-inline-end: var(--pf-v5-global--spacer--md);
+    padding-inline-end: var(--pf-t--global--spacer--md);
 }
 
 // Limit width for GiB/MiB dropdowns and inputs
@@ -73,11 +64,11 @@
 }
 
 .ct-external-docs-link.pf-v6-c-button.pf-m-link.pf-m-inline {
-  padding-inline-start: var(--pf-v5-global--spacer--sm);
+  padding-inline-start: var(--pf-t--global--spacer--sm);
 }
 
 .ct-monospace {
-    font-family: var(--pf-v5-global--FontFamily--monospace);
+    font-family: var(--pf-t--global--font--family--mono);
 }
 
 // Do not add a box-shadow to a "subsection", while it's technically correct it looks weird.
@@ -87,15 +78,7 @@
 
 .virtualization-disabled-empty-state {
   // Use a max width of 60 0-characters across and let it size for mobile too
-   --pf-v5-c-empty-state__content--MaxWidth: min(60ch, 100%);
-}
-
-// Can be removed once https://github.com/cockpit-project/cockpit/pull/18694 is included in the used pkg/lib
-.pf-v5-theme-dark {
-  .pf-v6-c-page__main-group section {
-    --pf-v5-c-page__main-breadcrumb--BackgroundColor: var(--pf-v5-global--BackgroundColor--dark-100);
-    background-color: var(--pf-v5-global--BackgroundColor--dark-100);
-  }
+   --pf-v6-c-empty-state__content--MaxWidth: min(60ch, 100%);
 }
 
 // remove oversized gap between checkbox label and checkbox body
