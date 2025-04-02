@@ -6,6 +6,11 @@
 .pf-v5-c-console__vnc > div > div {
     inline-size: 100%;
     block-size: 100%;
+    max-block-size: 100%;
+}
+
+.pf-v5-c-console {
+    row-gap: 0;
 }
 
 .pf-v5-c-console__actions {
@@ -18,13 +23,52 @@
      grid-template-rows: min-content 1fr;
 }
 
+.vm-console-footer {
+    grid-area: 3 / 1 / 4 / 3;
+    margin-top: var(--pf-v5-global--spacer--md);
+}
+
 .consoles-page-expanded .actions-pagesection .pf-v5-c-page__main-body {
      padding-block-end: 0;
 }
 
-/* Hide send key button - there is not way to do that from the JS
+/* Hide standard VNC actions - there is not way to do that from the JS
  * https://github.com/patternfly/patternfly-react/issues/3689
  */
-#pf-v5-c-console__send-shortcut {
+.pf-v5-c-console__actions-vnc {
     display: none;
+}
+
+.consoles-card .pf-v5-c-empty-state__icon {
+    color: var(--pf-v5-global--custom-color--200);
+}
+
+.ct-remote-viewer-popover {
+    max-inline-size: 60ch;
+}
+
+.consoles-card {
+    block-size: 100%;
+    max-block-size: 100%;
+}
+
+.consoles-page-expanded .pf-v5-c-console {
+    display: block;
+}
+
+.consoles-page-expanded .pf-v5-c-console__vnc {
+    margin-bottom: 15px;
+}
+
+.consoles-page-expanded .consoles-card .pf-v5-c-card__body {
+    /* 24px + 36px + 16px = card header height (padding-top + title line height + paddin-bottom) */
+    max-block-size: calc(100% - (24px + 36px + 16px));
+}
+
+.consoles-card .pf-v5-c-card__footer:empty {
+  display: none;
+}
+
+.consoles-card .pf-v5-c-console__serial {
+    block-size: 100%;
 }
