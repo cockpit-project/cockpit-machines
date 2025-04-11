@@ -73,10 +73,16 @@ export class VncState extends StateObject {
     constructor() {
         super();
         this.connected = true;
+        this.sizeMode = null;
     }
 
     setConnected(val) {
         this.connected = val;
+        this.update();
+    }
+
+    setSizeMode(val) {
+        this.sizeMode = val;
         this.update();
     }
 }
@@ -202,7 +208,19 @@ const VncEditModal = ({ vm, inactive_vnc }) => {
     );
 };
 
-export const VncActiveActions = ({ state, vm, vnc, onAddErrorNotification }) => {
+export const VncActiveActions = ({ state, vm, vnc, isExpanded, onAddErrorNotification }) => {
+    const sizeModeItem = (mode, label) => {
+        return (
+            <DropdownItem
+                key={mode}
+                isSelected={state.sizeMode == mode}
+                onClick={() => state.setSizeMode(mode)}
+            >
+                {label}
+            </DropdownItem>
+        );
+    };
+
     const renderDropdownItem = keyName => {
         return (
             <DropdownItem
@@ -231,6 +249,14 @@ export const VncActiveActions = ({ state, vm, vnc, onAddErrorNotification }) => 
     };
 
     const dropdownItems = [
+        ...(isExpanded
+            ? [
+                sizeModeItem(null, _("No scaling or resizing")),
+                sizeModeItem("local", _("Local scaling")),
+                sizeModeItem("remote", _("Remote resizing")),
+                <Divider key="separator3" />,
+            ]
+            : []),
         ...['Delete', 'Backspace'].map(key => renderDropdownItem(key)),
         <Divider key="separator" />,
         ...[...Array(12).keys()].map(key => renderDropdownItem(cockpit.format("F$0", key + 1))),
@@ -391,8 +417,8 @@ export class VncActive extends React.Component {
                           onInitFailed={this.onInitFailed}
                           onSecurityFailure={this.onSecurityFailure}
                           consoleContainerId={isExpanded ? "vnc-display-container-expanded" : "vnc-display-container-minimized"}
-                          resizeSession
-                          scaleViewport
+                          scaleViewport={!isExpanded || state.sizeMode == "local"}
+                          resizeSession={!!isExpanded && state.sizeMode == "remote"}
                     />
                     : <div className="vm-console-vnc">
                         <EmptyState>
