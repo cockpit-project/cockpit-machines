@@ -44,9 +44,10 @@ class SerialStates extends StateObject {
         this.states = { };
     }
 
-    get(key) {
+    get(vm, alias, idx) {
+        const key = alias || idx;
         if (!(key in this.states)) {
-            const state = new SerialState();
+            const state = new SerialState(domainSerialConsoleCommand({ vm, alias }), vm.connectionName);
             this.follow(state);
             this.states[key] = state;
         }
@@ -200,13 +201,11 @@ export const ConsoleCard = ({ state, vm, config, onAddErrorNotification, isExpan
                 if (vm.state != "running") {
                     body = <SerialInactive vm={vm} />;
                 } else {
-                    const serial_state = state.serialStates.get(pty.alias || idx);
+                    const serial_state = state.serialStates.get(vm, pty.alias, idx);
                     body = (
                         <SerialActive
-                            state={serial_state}
-                            connectionName={vm.connectionName}
                             vmName={vm.name}
-                            spawnArgs={domainSerialConsoleCommand({ vm, alias: pty.alias })}
+                            state={serial_state}
                         />
                     );
                     body_actions = (

@@ -25,7 +25,7 @@ import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import {
     EmptyState, EmptyStateBody, EmptyStateFooter, EmptyStateActions
 } from "@patternfly/react-core/dist/esm/components/EmptyState";
-import { Terminal } from "cockpit-components-terminal.jsx";
+import { Terminal, TerminalState } from "cockpit-components-terminal.jsx";
 import { PendingIcon } from "@patternfly/react-icons";
 import { KebabDropdown } from 'cockpit-components-dropdown.jsx';
 import { DropdownItem } from "@patternfly/react-core/dist/esm/components/Dropdown";
@@ -35,9 +35,33 @@ import { domainAttachSerialConsole } from '../../../libvirtApi/domain.js';
 const _ = cockpit.gettext;
 
 export class SerialState extends StateObject {
-    constructor () {
+    constructor (spawnArgs, connectionName) {
         super();
         this.connected = true;
+
+        function createChannel() {
+            const opts = {
+                payload: "stream",
+                spawn: spawnArgs,
+                pty: true,
+            };
+            if (connectionName == "system")
+                opts.superuser = "try";
+            return cockpit.channel(opts);
+        }
+
+        this.terminal_state = new TerminalState(createChannel);
+    }
+
+    updateChannel() {
+        if (this.connected)
+            this.terminal_state.connectChannel();
+        else
+            this.terminal_state.disconnectChannel();
+    }
+
+    close() {
+        this.terminal_state.close();
     }
 
     setConnected(val) {
@@ -65,97 +89,38 @@ export const SerialActiveActions = ({ state }) => {
     );
 };
 
-export class SerialActive extends React.Component {
-    constructor (props) {
-        super(props);
+export const SerialActive = ({ vmName, state }) => {
+    state.updateChannel();
 
-        this.state = {
-            channel: undefined,
-        };
-    }
-
-    componentDidMount() {
-        this.updateChannel(this.props.spawnArgs);
-    }
-
-    componentDidUpdate(prevProps) {
-        const oldSpawnArgs = prevProps.spawnArgs;
-        const newSpawnArgs = this.props.spawnArgs;
-
-        const channel_needs_update = () => {
-            if (newSpawnArgs.length !== oldSpawnArgs.length ||
-                oldSpawnArgs.some((arg, index) => arg !== newSpawnArgs[index]))
-                return true;
-            if (this.props.state.connected && !this.state.channel)
-                return true;
-            if (!this.props.state.connected && this.state.channel)
-                return true;
-            return false;
-        };
-
-        if (channel_needs_update())
-            this.updateChannel(this.props.spawnArgs);
-    }
-
-    updateChannel() {
-        if (this.state.channel)
-            this.state.channel.close();
-
-        if (this.props.state.connected) {
-            const opts = {
-                payload: "stream",
-                spawn: this.props.spawnArgs,
-                pty: true,
-            };
-            if (this.props.connectionName == "system")
-                opts.superuser = "try";
-            const channel = cockpit.channel(opts);
-            this.setState({ channel });
-        } else {
-            this.setState({ channel: null });
-        }
-    }
-
-    render () {
-        const { state } = this.props;
-
-        const pid = this.props.vmName + "-terminal";
-        let t;
-        if (!state.connected) {
-            t = (
-                <EmptyState>
-                    <EmptyStateBody>{_("Disconnected")}</EmptyStateBody>
-                    <EmptyStateFooter>
-                        <Button variant="primary" onClick={() => state.setConnected(true)}>
-                            {_("Connect")}
-                        </Button>
-                    </EmptyStateFooter>
-                </EmptyState>
-            );
-        } else if (!this.state.channel) {
-            t = <span>{_("Loading...")}</span>;
-        } else {
-            t = (
-                <Terminal
-                    refName={this.props.vmName}
-                    channel={this.state.channel}
-                    parentId={pid}
-                />
-            );
-        }
-        return (
-            <div id={pid} className="vm-terminal vm-console-serial">
-                {t}
-            </div>
+    const pid = vmName + "-terminal";
+    let t;
+    if (!state.connected) {
+        t = (
+            <EmptyState>
+                <EmptyStateBody>{_("Disconnected")}</EmptyStateBody>
+                <EmptyStateFooter>
+                    <Button variant="primary" onClick={() => state.setConnected(true)}>
+                        {_("Connect")}
+                    </Button>
+                </EmptyStateFooter>
+            </EmptyState>
+        );
+    } else {
+        t = (
+            <Terminal
+                state={state.terminal_state}
+                refName={vmName}
+                parentId={pid}
+            />
         );
     }
-}
 
-SerialActive.propTypes = {
-    connectionName: PropTypes.string.isRequired,
-    vmName: PropTypes.string.isRequired,
-    spawnArgs: PropTypes.array.isRequired,
-};
+    return (
+        <div id={pid} className="vm-terminal vm-console-serial">
+            {t}
+        </div>
+    );
+}
 
 export const SerialInactive = ({ vm }) => {
     return (
