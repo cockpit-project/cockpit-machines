@@ -587,7 +587,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             prefix = f"#vm-{self.vm_name}-disks-adddisk"
 
             if self.pixel_test_tag:
-                self.test_obj.browser.wait_visible(f"{prefix}-dialog-add[aria-disabled=false]")
+                self.test_obj.browser.wait_visible(f"{prefix}-dialog-add:not([aria-disabled=true])")
                 self.test_obj.browser.assert_pixels(f"{prefix}-dialog-modal-window", self.pixel_test_tag,
                                                     ignore=[self.pixel_test_ignore] if self.pixel_test_ignore else [],
                                                     skip_layouts=["rtl"])
