@@ -227,8 +227,8 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         self.waitVmRow("subVmTest2")
 
         if run_pixel_tests:
-            b.wait_visible("#import-existing-vm[aria-disabled=false]")
-            b.wait_visible("#create-new-vm[aria-disabled=false]")
+            b.wait_visible("#import-existing-vm:not([aria-disabled=false])")
+            b.wait_visible("#create-new-vm:not([aria-disabled=true]")
             b.assert_pixels("#virtual-machines-page", "main-page")
 
         # stop second VM, event handling should still work

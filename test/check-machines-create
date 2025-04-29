@@ -1489,7 +1489,7 @@ vnc_password= "{vnc_passwd}"
                     b.mouse("#create-and-edit", "mouseenter")
                     b.wait_visible("#create-and-edit-disabled-tooltip")
                 else:
-                    b.wait_visible("#create-and-run[aria-disabled=false]")
+                    b.wait_visible("#create-and-run:not([aria-disabled=true])")
 
             return self
 
@@ -2435,8 +2435,8 @@ vnc_password= "{vnc_passwd}"
                                              os_short_id=config.RHEL_8_1_SHORTID) \
             .open() \
             .fill()
-        b.wait_visible(".pf-v6-c-modal-box__footer button:contains(Create and run)[aria-disabled=false]")
-        b.wait_visible(".pf-v6-c-modal-box__footer button:contains(Create and edit)[aria-disabled=false]")
+        b.wait_visible(".pf-v6-c-modal-box__footer button:not([aria-disabled=false]):contains(Create and run)")
+        b.wait_visible(".pf-v6-c-modal-box__footer button:not([aria-disabled=false]):contains(Create and edit)")
         dialog.cancel()
 
         runner.checkDialogErrorTest(TestMachinesCreate.VmDialog(self, sourceType='os',
