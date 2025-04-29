@@ -1123,7 +1123,7 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         self.addCleanup(m.execute, f'chattr -a {args["image"]}')
         self.dropdownAction("#pool-images-system-action-kebab", "#delete-pool-images-system")
         b.set_checked("#storage-pool-delete-volumes", True)
-        b.click(".pf-v6-c-backdrop footer button[aria-disabled=false]:contains(Delete)")
+        b.click(".pf-v6-c-backdrop footer button:contains(Delete)")
         b.assert_pixels("#storage-pool-delete-modal", "storage-pool-delete-modal-error")
         testlib.wait(lambda: "forDeletion" not in m.execute("ls /var/lib/libvirt/images/"))
 
