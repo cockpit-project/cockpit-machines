@@ -66,7 +66,13 @@ export async function nodeDeviceGetAll({
 }) {
     try {
         const [objPaths] = await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListNodeDevices', [0], { timeout, type: 'u' });
-        await Promise.all(objPaths.map(path => nodeDeviceGet({ connectionName, id: path })));
+        // Chunk calls to nodeDeviceGet, without this systems with alot of pci
+        // devices will reach the open file limit
+        const chunkSize = 200;
+        for (let i = 0; i < objPaths.length; i += chunkSize) {
+            const objPathsChunked = objPaths.slice(i, i + chunkSize);
+            await Promise.all(objPathsChunked.map(path => nodeDeviceGet({ connectionName, id: path })));
+        }
     } catch (ex) {
         console.warn('GET_ALL_NODE_DEVICES action failed:', ex.toString());
         throw ex;
