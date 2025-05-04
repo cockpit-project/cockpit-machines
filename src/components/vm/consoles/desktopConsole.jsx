@@ -17,9 +17,12 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React from "react";
+import { CodeBlock, CodeBlockCode } from "@patternfly/react-core/dist/esm/components/CodeBlock";
 import { DesktopViewer } from '@patternfly/react-console';
 
+import { getServerAddress, needsTunnel } from "./utils.js";
 import cockpit from "cockpit";
+import store from './../../../store.js';
 
 const _ = cockpit.gettext;
 
@@ -37,6 +40,11 @@ function fmt_to_fragments(fmt) {
 }
 
 const DesktopConsoleDownload = ({ vnc, spice, onDesktopConsole }) => {
+    // DesktopViewer prefers spice over vnc
+    const address = (spice && spice.address) || (vnc && vnc.address);
+    const serverAddress = getServerAddress();
+    const loggedUser = store.getState().systemInfo.loggedUser;
+
     return (
         <DesktopViewer spice={spice}
                        vnc={vnc}
@@ -57,6 +65,12 @@ const DesktopConsoleDownload = ({ vnc, spice, onDesktopConsole }) => {
                            <p>
                                {fmt_to_fragments(_("Clicking \"Launch remote viewer\" will download a .vv file and launch $0."), <i>Remote Viewer</i>)}
                            </p>
+                           {needsTunnel(address, serverAddress) && <p>
+                               {_("SSH tunnel needs to be set up on client:")}
+                               <CodeBlock>
+                                   <CodeBlockCode>{`ssh -L 5900:localhost:5900 -N ${loggedUser.name}@${serverAddress}`}</CodeBlockCode>
+                               </CodeBlock>
+                           </p>}
                            <p>
                                {fmt_to_fragments(_("$0 is available for most operating systems. To install it, search for it in GNOME Software or run the following:"), <i>Remote Viewer</i>)}
                            </p>
