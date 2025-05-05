@@ -102,7 +102,7 @@ export function netmaskConvert(prefixOrNetmask) {
  * Checks whetever address @address is in subnet defined by @network and @netmask
  *
  * @param {string} network
- * @param {string} netmask
+ * @param {string} prefix
  * @param {string} address
  * @returns {boolean}
  */
@@ -126,7 +126,7 @@ export const validateIpv6 = address => ipaddr.IPv6.isValid(address);
 /**
  * validates correctness of ipv6 prefix length
  *
- * @param {string} prefixOrNetmask
+ * @param {string} prefix
  * @returns {boolean}
  */
 export function validateIpv6Prefix(prefix) {

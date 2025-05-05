@@ -150,7 +150,7 @@ const StoragePoolInitiatorRow = ({ onValueChanged, dialogValues }) => {
 };
 
 const StoragePoolSourceRow = ({ onValueChanged, dialogValues }) => {
-    let validationState;
+    let validationState = "default";
     let placeholder;
     const diskPoolSourceFormatTypes = ['dos', 'dvh', 'gpt', 'mac'];
     // https://libvirt.org/storage.html#valid-filesystem-pool-format-types

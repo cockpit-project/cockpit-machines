@@ -481,7 +481,6 @@ export function findMatchingNodeDevices(hostdev, nodeDevices) {
  * disks, interfaces, redirected devices, host devices
  *
  * @param {object} vm
- * @returns {array}
  */
 export function getBootOrderDevices(vm) {
     const devices = [];
@@ -578,7 +577,6 @@ export function getBootOrderDevices(vm) {
  * will be at the end of the array.
  *
  * @param {object} vm
- * @returns {array} = sorted array
  */
 export function getSortedBootOrderDevices(vm) {
     const devices = getBootOrderDevices(vm);
@@ -630,7 +628,7 @@ function getVmDisksMap(vms, connectionName) {
  * @param {object} vm
  * @param {object} storagePool
  * @param {string} volumeName
- * @returns {string}
+ * @returns {string | undefined}
  */
 export function getStorageVolumeDiskTarget(vm, storagePool, volumeName) {
     const disks = vm.disks || [];
@@ -689,8 +687,6 @@ export function getStorageVolumesUsage(vms, storagePool) {
 /**
  * Returns a list of potential physical devices suitable as network devices
  * by merging all network node devices and interfaces.
- *
- * @returns {array}
  */
 export function getNetworkDevices() {
     const { nodeDevices, interfaces } = store.getState();
