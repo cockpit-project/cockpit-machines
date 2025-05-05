@@ -16,6 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
+
+// @cockpit-ts-relaxed
+
+import type { UIState } from './components/create-vm-dialog/uiState';
+
 import { combineReducers } from 'redux';
 import VMS_CONFIG from "./config.js";
 import { logDebug, isObjectEmpty } from './helpers.js';
@@ -41,6 +46,8 @@ import {
     UPDATE_VM,
 } from './constants/store-action-types.js';
 
+import type { VM, NodeDevice, Interface, StoragePool, Network } from './libvirtApi/types';
+
 // --- helpers -------------------
 function getFirstIndexOfResource(state, field, value, connectionName) {
     return state.findIndex(e => {
@@ -55,7 +62,20 @@ function replaceResource({ state, updatedResource, index }) {
 }
 
 // --- reducers ------------------
-function config(state, action) {
+interface StateWithProvider<S> {
+    provider?: {
+        reducer: ((state: S | undefined, action) => S) | undefined;
+    };
+    providerState?: S;
+}
+
+interface Config extends StateWithProvider<unknown> {
+    refreshInterval: number;
+    nodeMaxMemory?: unknown;
+    capabilities?: unknown;
+}
+
+function config(state: Config | undefined, action): Config {
     state = state || {
         refreshInterval: VMS_CONFIG.DefaultRefreshInterval,
     };
@@ -79,8 +99,19 @@ function config(state, action) {
 /**
  * Provider might optionally extend the reducer tree (see state.provider.reducer() function)
  */
-function lazyComposedReducer({ parentReducer, getSubreducer, getSubstate, setSubstate }) {
-    return (state, action) => {
+
+function lazyComposedReducer<T, S>({
+    parentReducer,
+    getSubreducer,
+    getSubstate,
+    setSubstate
+} : {
+    parentReducer: (state: T | undefined, action) => T,
+    getSubreducer: (state: T) => ((state: S | undefined, action) => S) | undefined,
+    getSubstate: (state: T) => S | undefined,
+    setSubstate: (state: T, substate: S) => T,
+}) {
+    return (state: T, action): T => {
         let newState = parentReducer(state, action);
         const subreducer = getSubreducer(newState);
         if (subreducer) {
@@ -93,7 +124,7 @@ function lazyComposedReducer({ parentReducer, getSubreducer, getSubstate, setSub
     };
 }
 
-function interfaces(state, action) {
+function interfaces(state: Interface[] | undefined, action): Interface[] {
     state = state || [];
 
     switch (action.type) {
@@ -120,7 +151,7 @@ function interfaces(state, action) {
     }
 }
 
-function networks(state, action) {
+function networks(state: Network[] | undefined, action) {
     state = state || [];
 
     switch (action.type) {
@@ -159,7 +190,7 @@ function networks(state, action) {
     }
 }
 
-function nodeDevices(state, action) {
+function nodeDevices(state: NodeDevice[] | undefined, action): NodeDevice[] {
     state = state || [];
 
     switch (action.type) {
@@ -186,7 +217,7 @@ function nodeDevices(state, action) {
     }
 }
 
-function vms(state, action) {
+function vms(state: VM[] | undefined, action): VM[] {
     state = state || [];
 
     logDebug('reducer vms: action=' + JSON.stringify(action));
@@ -253,7 +284,7 @@ function vms(state, action) {
     case UPDATE_DOMAIN_SNAPSHOTS: {
         const { connectionName, domainPath, snaps } = action.payload;
         const index = getFirstIndexOfResource(state, 'id', domainPath, connectionName);
-        const indexedVm = findVmToUpdate(state, { connectionName, id: domainPath });
+        const indexedVm = findVmToUpdate(state, { connectionName, id: domainPath, name: undefined });
 
         if (index < 0 || !indexedVm)
             return state;
@@ -317,7 +348,7 @@ function systemInfo(state, action) {
     }
 }
 
-function storagePools(state, action) {
+function storagePools(state: StoragePool[] | undefined, action): StoragePool[] {
     state = state || [];
 
     switch (action.type) {
@@ -356,7 +387,7 @@ function storagePools(state, action) {
     }
 }
 
-function ui(state, action) {
+function ui(state: UIState | undefined, action): UIState {
     // transient properties
     state = state || {
         notifications: [],
@@ -422,11 +453,11 @@ function timeSampleUsageData(newVmRecord, previousVmRecord) {
 }
 
 export default combineReducers({
-    config: lazyComposedReducer({
+    config: lazyComposedReducer<Config, unknown>({
         parentReducer: config,
         getSubreducer: (state) => (state.provider && state.provider.reducer) ? state.provider.reducer : undefined,
         getSubstate: (state) => state.providerState,
-        setSubstate: (state, subState) => Object.assign({}, state, { providerState: subState }),
+        setSubstate: (state, subState) => ({ ...state, providerState: subState }),
     }),
     interfaces,
     networks,
