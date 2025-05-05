@@ -17,10 +17,16 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
-import cockpit from 'cockpit';
+import cockpit, { Variant } from 'cockpit';
 import store from '../store.js';
 
 import { logDebug } from '../helpers.js';
+
+import {
+    optString,
+    ConnectionName,
+    VM,
+} from '../types';
 
 import {
     removeVmCreateInProgress,
@@ -109,32 +115,98 @@ export const Enum = {
     VIR_MIGRATE_OFFLINE: 1024,
 };
 
+/* Utilities for accessing DBus variants.  These throw errors when the
+   variant does not have the exepcted signature.
+
+   DBus variants with unexpected signatures can only result from
+   programming errors and thus we don't need to provide a lot of
+   context in the error messages.
+
+   https://dbus.freedesktop.org/doc/dbus-specification.html#type-system
+ */
+
+function assert_signature(val: Variant, expected: string[]): void {
+    if (!expected.includes(val.t))
+        throw new Error(`Unexpected signature ${val.t}`);
+}
+
+export function get_variant_string(val: Variant): string {
+    assert_signature(val, ["s"]);
+    return val.v as string;
+}
+
+export function get_variant_number(val: Variant): number {
+    assert_signature(val, ["y", "n", "q", "i", "u", "x", "t", "d"]);
+    return val.v as number;
+}
+
+export function get_variant_boolean(val: Variant): boolean {
+    assert_signature(val, ["b"]);
+    return val.v as boolean;
+}
+
+export function get_variant_variant(val: Variant): Variant {
+    assert_signature(val, ["v"]);
+    return val.v as unknown as Variant;
+}
+
+export interface DBusProps {
+    [_: string]: Variant;
+}
+
+function get_prop(props: DBusProps, name: string): Variant {
+    const p = props[name];
+    if (!p)
+        throw new Error(`Property ${name} is missing`);
+    return p;
+}
+
+export function get_string_prop(props: DBusProps, name: string): string {
+    return get_variant_string(get_variant_variant(get_prop(props, name)));
+}
+
+export function get_number_prop(props: DBusProps, name: string): number {
+    return get_variant_number(get_variant_variant(get_prop(props, name)));
+}
+
+export function get_boolean_prop(props: DBusProps, name: string): boolean {
+    return get_variant_boolean(get_variant_variant(get_prop(props, name)));
+}
+
 /**
  * Call a Libvirt method
  */
-export function call(connectionName, objectPath, iface, method, args, opts) {
+export function call<R = void>(
+    connectionName: ConnectionName,
+    objectPath: string,
+    iface: string,
+    method: string,
+    args: unknown[],
+    opts: cockpit.DBusCallOptions
+): Promise<R> {
     logDebug("libvirt call:", connectionName, objectPath, iface, method, JSON.stringify(args), JSON.stringify(opts));
-    return dbusClient(connectionName).call(objectPath, iface, method, args, opts);
+    return dbusClient(connectionName).call(objectPath, iface, method, args, opts) as Promise<R>;
 }
 
 /**
  * Get Libvirt D-Bus client
  */
-export function dbusClient(connectionName) {
-    const clientLibvirt = {};
+export function dbusClient(connectionName: ConnectionName): cockpit.DBusClient {
+    const clientLibvirt: Record<string, cockpit.DBusClient> = {};
 
     if (!(connectionName in clientLibvirt) || clientLibvirt[connectionName] === null) {
-        const opts = { bus: connectionName };
-        if (connectionName === 'system')
-            opts.superuser = 'try';
-        clientLibvirt[connectionName] = cockpit.dbus("org.libvirt", opts);
+        clientLibvirt[connectionName] = cockpit.dbus("org.libvirt",
+                                                     {
+                                                         bus: connectionName,
+                                                         ...(connectionName === 'system' ? { superuser: "try" } : {})
+                                                     });
     }
 
     return clientLibvirt[connectionName];
 }
 
-export function resolveUiState(name, connectionName) {
-    const result = {
+export function resolveUiState(name: optString, connectionName: ConnectionName): VM["ui"] {
+    const result: VM["ui"] = {
         // used just the first time vm is shown
         initiallyExpanded: false,
         initiallyOpenedConsoleTab: false,
@@ -142,7 +214,7 @@ export function resolveUiState(name, connectionName) {
 
     const uiState = store.getState().ui.vms.find(vm => vm.name == name && vm.connectionName == connectionName);
 
-    if (uiState) {
+    if (uiState && name) {
         result.initiallyExpanded = uiState.expanded;
         result.initiallyOpenedConsoleTab = uiState.openConsoleTab;
 

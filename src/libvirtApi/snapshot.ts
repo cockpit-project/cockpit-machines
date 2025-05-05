@@ -23,13 +23,30 @@
  */
 import store from '../store.js';
 
+import {
+    ConnectionName,
+    VM, VMSnapshot,
+} from '../types';
+
 import { updateDomainSnapshots } from '../actions/store-actions.js';
 import { getSnapshotXML } from '../libvirt-xml-create.js';
 import { parseDomainSnapshotDumpxml } from '../libvirt-xml-parse.js';
 import { call, Enum, timeout } from './helpers.js';
 import { logDebug } from '../helpers.js';
 
-export async function snapshotCreate({ vm, name, description, isExternal, memoryPath }) {
+export async function snapshotCreate({
+    vm,
+    name,
+    description,
+    isExternal,
+    memoryPath
+} : {
+    vm: VM,
+    name: string,
+    description: string,
+    isExternal: string,
+    memoryPath: string,
+}): Promise<void> {
     // The "disk only" flag ought to be implicit for non-running VMs, see https://issues.redhat.com/browse/RHEL-22797
 
     // However, "disk only" can be used to request external snapshots
@@ -62,28 +79,49 @@ export async function snapshotCreate({ vm, name, description, isExternal, memory
                       { timeout, type: 'su' });
 }
 
-export function snapshotCurrent({ connectionName, objPath }) {
+export function snapshotCurrent({
+    connectionName,
+    objPath
+} : {
+    connectionName: ConnectionName,
+    objPath: string,
+}): Promise<void> {
     return call(connectionName, objPath, 'org.libvirt.Domain', 'SnapshotCurrent', [0], { timeout, type: 'u' });
 }
 
-export async function snapshotDelete({ connectionName, domainPath, snapshotName }) {
-    const [objPath] = await call(connectionName, domainPath, 'org.libvirt.Domain', 'SnapshotLookupByName',
-                                 [snapshotName, 0], { timeout, type: 'su' });
+export async function snapshotDelete({
+    connectionName,
+    domainPath,
+    snapshotName
+} : {
+    connectionName: ConnectionName,
+    domainPath: string,
+    snapshotName: string,
+}): Promise<void> {
+    const [objPath] = await call<[string]>(connectionName, domainPath, 'org.libvirt.Domain', 'SnapshotLookupByName',
+                                           [snapshotName, 0], { timeout, type: 'su' });
     await call(connectionName, objPath, 'org.libvirt.DomainSnapshot', 'Delete', [0], { timeout, type: 'u' });
 }
 
-export async function snapshotGetAll({ connectionName, domainPath }) {
+export async function snapshotGetAll({
+    connectionName,
+    domainPath
+} : {
+    connectionName: ConnectionName,
+    domainPath: string,
+}): Promise<void> {
     try {
-        const [objPaths] = await call(connectionName, domainPath, 'org.libvirt.Domain', 'ListDomainSnapshots', [0],
-                                      { timeout, type: 'u' });
+        const [objPaths] = await call<[string[]]>(connectionName, domainPath,
+                                                  'org.libvirt.Domain', 'ListDomainSnapshots', [0],
+                                                  { timeout, type: 'u' });
 
         const snapXmlList = await Promise.allSettled(objPaths.map(async objPath => {
-            const [xml] = await call(connectionName, objPath, 'org.libvirt.DomainSnapshot', 'GetXMLDesc', [0], { timeout, type: 'u' });
-            const [isCurrent] = await call(connectionName, objPath, 'org.libvirt.DomainSnapshot', 'IsCurrent', [0], { timeout, type: 'u' });
+            const [xml] = await call<[string]>(connectionName, objPath, 'org.libvirt.DomainSnapshot', 'GetXMLDesc', [0], { timeout, type: 'u' });
+            const [isCurrent] = await call<[boolean]>(connectionName, objPath, 'org.libvirt.DomainSnapshot', 'IsCurrent', [0], { timeout, type: 'u' });
             return { xml, isCurrent };
         }));
 
-        const snaps = [];
+        const snaps: VMSnapshot[] = [];
         snapXmlList.forEach(snap => {
             if (snap.status === 'fulfilled') {
                 const snapParams = parseDomainSnapshotDumpxml(snap.value.xml);
@@ -96,13 +134,15 @@ export async function snapshotGetAll({ connectionName, domainPath }) {
         store.dispatch(updateDomainSnapshots({
             connectionName,
             domainPath,
-            snaps: snaps.sort((a, b) => a.creationTime - b.creationTime)
+            snaps: snaps.sort((a, b) => Number(a.creationTime) - Number(b.creationTime))
         }));
     } catch (ex) {
-        if (ex.name === 'org.freedesktop.DBus.Error.UnknownMethod')
-            logDebug("LIST_DOMAIN_SNAPSHOTS action failed for domain", domainPath, ", not supported by libvirt-dbus");
-        else
-            console.warn("LIST_DOMAIN_SNAPSHOTS action failed for domain", domainPath, ":", JSON.stringify(ex), "name:", ex.name);
+        if (ex instanceof Error) {
+            if (ex.name === 'org.freedesktop.DBus.Error.UnknownMethod')
+                logDebug("LIST_DOMAIN_SNAPSHOTS action failed for domain", domainPath, ", not supported by libvirt-dbus");
+            else
+                console.warn("LIST_DOMAIN_SNAPSHOTS action failed for domain", domainPath, ":", JSON.stringify(ex), "name:", ex.name);
+        }
         store.dispatch(updateDomainSnapshots({
             connectionName,
             domainPath,
@@ -111,10 +151,20 @@ export async function snapshotGetAll({ connectionName, domainPath }) {
     }
 }
 
-export async function snapshotRevert({ connectionName, domainPath, snapshotName, force }) {
+export async function snapshotRevert({
+    connectionName,
+    domainPath,
+    snapshotName,
+    force
+} : {
+    connectionName: ConnectionName,
+    domainPath: string,
+    snapshotName: string,
+    force: boolean,
+}): Promise<void> {
     const flags = force ? Enum.VIR_DOMAIN_SNAPSHOT_REVERT_FORCE : 0;
 
-    const [objPath] = await call(connectionName, domainPath, 'org.libvirt.Domain', 'SnapshotLookupByName', [snapshotName, 0],
-                                 { timeout, type: 'su' });
+    const [objPath] = await call<[string]>(connectionName, domainPath, 'org.libvirt.Domain', 'SnapshotLookupByName', [snapshotName, 0],
+                                           { timeout, type: 'su' });
     await call(connectionName, objPath, 'org.libvirt.DomainSnapshot', 'Revert', [flags], { timeout, type: 'u' });
 }

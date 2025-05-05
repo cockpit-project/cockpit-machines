@@ -24,6 +24,8 @@
 import cockpit from 'cockpit';
 import store from '../store.js';
 
+import type { ConnectionName, NodeDevice } from '../types';
+
 import { updateOrAddNodeDevice } from '../actions/store-actions.js';
 import { parseNodeDeviceDumpxml } from '../libvirt-xml-parse.js';
 import { call, timeout } from './helpers.js';
@@ -36,13 +38,18 @@ import { call, timeout } from './helpers.js';
 export async function nodeDeviceGet({
     id: objPath,
     connectionName,
-}) {
+} : {
+    id: string,
+    connectionName: ConnectionName,
+}): Promise<void> {
     try {
-        const [deviceXml] = await call(connectionName, objPath, 'org.libvirt.NodeDevice', 'GetXMLDesc', [0], { timeout, type: 'u' });
-        const deviceXmlObject = parseNodeDeviceDumpxml(deviceXml);
-        deviceXmlObject.connectionName = connectionName;
+        const [deviceXml] = await call<[string]>(connectionName, objPath, 'org.libvirt.NodeDevice', 'GetXMLDesc', [0], { timeout, type: 'u' });
+        const deviceXmlObject: NodeDevice = {
+            connectionName,
+            ...parseNodeDeviceDumpxml(deviceXml)
+        };
 
-        if (deviceXmlObject.path && ["pci", "usb_device"].includes(deviceXmlObject.capability.type)) {
+        if (deviceXmlObject.path && ["pci", "usb_device"].includes(deviceXmlObject.capability.type || "")) {
             const output = await cockpit.spawn(["udevadm", "info", "--path", deviceXmlObject.path], { err: "message" });
             const nodeDev = parseUdevDB(output);
             if (nodeDev && nodeDev.SUBSYSTEM === "pci") {
@@ -57,15 +64,18 @@ export async function nodeDeviceGet({
 
         store.dispatch(updateOrAddNodeDevice(deviceXmlObject));
     } catch (ex) {
-        console.warn('GET_NODE_DEVICE action failed for path', objPath, ex.toString());
+        if (ex instanceof Error)
+            console.warn('GET_NODE_DEVICE action failed for path', objPath, ex.toString());
     }
 }
 
 export async function nodeDeviceGetAll({
     connectionName,
-}) {
+} : {
+    connectionName: ConnectionName
+}): Promise<void> {
     try {
-        const [objPaths] = await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListNodeDevices', [0], { timeout, type: 'u' });
+        const [objPaths] : [string[]] = await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListNodeDevices', [0], { timeout, type: 'u' });
         // Chunk calls to nodeDeviceGet, without this systems with alot of pci
         // devices will reach the open file limit
         const chunkSize = 200;
@@ -74,7 +84,8 @@ export async function nodeDeviceGetAll({
             await Promise.all(objPathsChunked.map(path => nodeDeviceGet({ connectionName, id: path })));
         }
     } catch (ex) {
-        console.warn('GET_ALL_NODE_DEVICES action failed:', ex.toString());
+        if (ex instanceof Error)
+            console.warn('GET_ALL_NODE_DEVICES action failed:', ex.toString());
         throw ex;
     }
 }
@@ -82,13 +93,10 @@ export async function nodeDeviceGetAll({
 /**
  * Parses output of "udevadm info --path [devicePath]" into a node device object
  * Inspired by parseUdevDB() from cockpit's pkg/lib/machine-info.js
- *
- * @param {string} text output of "udevadm" commdn
- * @returns {object}
  */
-function parseUdevDB(text) {
+function parseUdevDB(text: string): Record<string, string> | undefined {
     const udevPropertyRE = /^E: (\w+)=(.*)$/;
-    const device = {};
+    const device: Record<string, string> = {};
 
     if (!(text = text.trim()))
         return;

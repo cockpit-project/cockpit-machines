@@ -1,19 +1,56 @@
+/*
+ * This file is part of Cockpit.
+ *
+ * Copyright (C) 2021 Red Hat, Inc.
+ *
+ * Cockpit is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * Cockpit is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
+ */
+
+import type {
+    optString,
+
+    ConnectionName,
+
+    HypervisorCapabilities, GuestCapabilities,
+
+    VMXML,
+    VMOsBoot, VMCpu, VMVcpus, VMMetadata,
+    VMConsole, VMGraphics, VMWatchdog, VMVsock,
+    VMDisk, VMInterface, VMFilesystem, VMRedirectedDevice,
+    VMHostDevice, VMHostDeviceUsb, VMHostDevicePci, VMHostDeviceScsi, VMHostDeviceScsiHost,
+    VMHostDeviceMdev, VMHostDeviceStorage, VMHostDeviceMisc, VMHostDeviceNet,
+    VMSnapshot,
+
+    StoragePool, StorageVolume, StoragePoolCapabilites,
+
+    NetworkXML, NetworkIp, NetworkDhcpHost,
+
+    NodeDeviceXML, NodeDeviceCapability,
+} from './types';
+
 import {
     convertToUnit,
     logDebug,
     rephraseUI,
     units,
+    HostDevSourceObject,
 } from './helpers.js';
 
 const METADATA_NAMESPACE = "https://github.com/cockpit-project/cockpit-machines";
 
-export function getDiskElemByTarget(domxml, targetOriginal) {
+export function getDiskElemByTarget(domxml: string, targetOriginal: string): string | undefined {
     const domainElem = getElem(domxml);
-
-    if (!domainElem) {
-        console.warn(`Can't parse dumpxml, input: "${domainElem}"`);
-        return;
-    }
 
     const devicesElem = domainElem.getElementsByTagName('devices')[0];
     const diskElems = devicesElem.getElementsByTagName('disk');
@@ -30,13 +67,8 @@ export function getDiskElemByTarget(domxml, targetOriginal) {
     }
 }
 
-export function getHostDevElemBySource(domxml, source) {
+export function getHostDevElemBySource(domxml: string, source: HostDevSourceObject): string | undefined {
     const domainElem = getElem(domxml);
-
-    if (!domainElem) {
-        console.warn(`Can't parse dumpxml, input: "${domainElem}"`);
-        return;
-    }
 
     const devicesElem = domainElem.getElementsByTagName('devices')[0];
     if (!devicesElem) {
@@ -92,13 +124,8 @@ export function getHostDevElemBySource(domxml, source) {
     }
 }
 
-export function getIfaceElemByMac(domxml, mac) {
+export function getIfaceElemByMac(domxml: string, mac: string): string | undefined {
     const domainElem = getElem(domxml);
-
-    if (!domainElem) {
-        console.warn(`Can't parse dumpxml, input: "${domainElem}"`);
-        return;
-    }
 
     const devicesElem = domainElem.getElementsByTagName('devices')[0];
     const ifaceElems = devicesElem.getElementsByTagName('interface');
@@ -115,49 +142,52 @@ export function getIfaceElemByMac(domxml, mac) {
     }
 }
 
-export function getDoc(xml) {
+export function getDoc(xml: string): XMLDocument {
     const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(xml, "application/xml");
-
-    if (!xmlDoc) {
-        console.warn(`Can't parse dumpxml, input: "${xml}"`);
-        return;
-    }
-
+    const xmlDoc: XMLDocument = parser.parseFromString(xml, "application/xml");
+    if (!xmlDoc)
+        throw new Error(`Can't parse dumpxml, input: "${xml}"`);
     return xmlDoc;
 }
 
-export function getElem(xml) {
+export function getOptionalElem(xml: string): Element | null {
     const xmlDoc = getDoc(xml);
-
     return xmlDoc.firstElementChild;
 }
 
-export function parsePoolCapabilities(capsXML) {
-    const poolCapsElem = getElem(capsXML);
-    const poolElements = poolCapsElem.getElementsByTagName("pool");
+export function getElem(xml: string): Element {
+    const elem = getOptionalElem(xml);
+    if (!elem)
+        throw new Error(`dumpxml is empty: "${xml}"`);
+    return elem;
+}
 
-    return Array.prototype.reduce.call(poolElements, function(result, item) {
+export function parsePoolCapabilities(capsXML: string): StoragePoolCapabilites {
+    const poolCapsElem = getElem(capsXML);
+    const poolElements = Array.from(poolCapsElem.getElementsByTagName("pool"));
+
+    return poolElements.reduce(function(result: StoragePoolCapabilites, item) {
         const type = item.getAttribute('type');
         const supported = item.getAttribute('supported');
-        result[type] = { supported };
+        if (type)
+            result[type] = { supported };
         return result;
     }, {});
 }
 
-export function getDomainCapMaxVCPU(capsXML) {
+export function getDomainCapMaxVCPU(capsXML: string): optString {
     const domainCapsElem = getElem(capsXML);
     const vcpuElem = domainCapsElem.getElementsByTagName("vcpu")?.[0];
     return vcpuElem && vcpuElem.getAttribute('max');
 }
 
-export function getDomainCapLoader(capsXML) {
+export function getDomainCapLoader(capsXML: string): HTMLCollection | undefined {
     const domainCapsElem = getElem(capsXML);
     const osElem = domainCapsElem.getElementsByTagName("os")?.[0];
     return osElem && osElem.getElementsByTagName("loader");
 }
 
-export function getDomainCapCPUCustomModels(capsXML) {
+export function getDomainCapCPUCustomModels(capsXML: string): null | optString[] {
     const domainCapsElem = getElem(capsXML);
     const cpuElem = domainCapsElem.getElementsByTagName("cpu")?.[0];
     const modeElems = cpuElem && cpuElem.getElementsByTagName("mode");
@@ -165,7 +195,7 @@ export function getDomainCapCPUCustomModels(capsXML) {
     return customModeElem && Array.prototype.map.call(customModeElem.getElementsByTagName("model"), modelElem => modelElem.textContent);
 }
 
-export function getDomainCapCPUHostModel(capsXML) {
+export function getDomainCapCPUHostModel(capsXML: string): optString {
     const domainCapsElem = getElem(capsXML);
     const cpuElem = domainCapsElem.getElementsByTagName("cpu")?.[0];
     const modeElems = cpuElem && cpuElem.getElementsByTagName("mode");
@@ -173,7 +203,7 @@ export function getDomainCapCPUHostModel(capsXML) {
     return hostModelModeElem && Array.prototype.map.call(hostModelModeElem.getElementsByTagName("model"), modelElem => modelElem.textContent)[0];
 }
 
-export function getDomainCapDiskBusTypes(capsXML) {
+export function getDomainCapDiskBusTypes(capsXML: string): null | optString[] {
     const domainCapsElem = getElem(capsXML);
     const devicesCapsElem = domainCapsElem.getElementsByTagName("devices")?.[0];
     const diskCapsElem = devicesCapsElem?.getElementsByTagName("disk")?.[0];
@@ -182,7 +212,7 @@ export function getDomainCapDiskBusTypes(capsXML) {
     return busElem && Array.prototype.map.call(busElem.getElementsByTagName("value"), valueElem => valueElem.textContent);
 }
 
-export function getDomainCapSupportsSpice(capsXML) {
+export function getDomainCapSupportsSpice(capsXML: string): boolean {
     const domainCapsElem = getElem(capsXML);
     const graphicsCapsElems = domainCapsElem.getElementsByTagName("graphics")?.[0]
             ?.getElementsByTagName("enum")?.[0]
@@ -194,10 +224,10 @@ export function getDomainCapSupportsSpice(capsXML) {
             ?.getElementsByTagName("value");
     const hasSpiceChannel = channelCapsElems && Array.prototype.find.call(
         channelCapsElems, valueElem => valueElem.textContent == "spicevmc");
-    return hasSpiceGraphics || hasSpiceChannel;
+    return !!hasSpiceGraphics || !!hasSpiceChannel;
 }
 
-export function getDomainCapSupportsTPM(capsXML) {
+export function getDomainCapSupportsTPM(capsXML: string): boolean {
     const domainCapsElem = getElem(capsXML);
     const tpmCapsElems = domainCapsElem.getElementsByTagName("tpm")?.[0]
             ?.getElementsByTagName("enum")?.[0]
@@ -205,12 +235,12 @@ export function getDomainCapSupportsTPM(capsXML) {
     return tpmCapsElems?.length > 0;
 }
 
-export function getSingleOptionalElem(parent, name) {
+export function getSingleOptionalElem(parent: Element, name: string): Element | undefined {
     const subElems = parent.getElementsByTagName(name);
     return subElems.length > 0 ? subElems[0] : undefined; // optional
 }
 
-export function parseDomainSnapshotDumpxml(snapshot) {
+export function parseDomainSnapshotDumpxml(snapshot: string): VMSnapshot {
     const snapElem = getElem(snapshot);
 
     const nameElem = getSingleOptionalElem(snapElem, 'name');
@@ -228,11 +258,8 @@ export function parseDomainSnapshotDumpxml(snapshot) {
     return { name, description, state, creationTime, parentName, memoryPath };
 }
 
-export function parseDomainDumpxml(connectionName, domXml, objPath) {
+export function parseDomainDumpxml(connectionName: ConnectionName, domXml: string, objPath: string): VMXML {
     const domainElem = getElem(domXml);
-    if (!domainElem) {
-        return;
-    }
 
     const osElem = domainElem.getElementsByTagNameNS("", "os")[0];
     const currentMemoryElem = domainElem.getElementsByTagName("currentMemory")[0];
@@ -246,8 +273,8 @@ export function parseDomainDumpxml(connectionName, domXml, objPath) {
     const osBootElems = osElem.getElementsByTagName("boot");
     const metadataElem = getSingleOptionalElem(domainElem, "metadata");
 
-    const name = domainElem.getElementsByTagName("name")[0].childNodes[0].nodeValue;
-    const uuid = domainElem.getElementsByTagName("uuid")[0].childNodes[0].nodeValue;
+    const name = domainElem.getElementsByTagName("name")[0].childNodes[0].nodeValue || "";
+    const uuid = domainElem.getElementsByTagName("uuid")[0].childNodes[0].nodeValue || "";
     const description = domainElem.getElementsByTagName("description")[0]?.childNodes[0]?.nodeValue;
     const id = objPath;
     const osType = osTypeElem.childNodes[0].nodeValue;
@@ -257,9 +284,9 @@ export function parseDomainDumpxml(connectionName, domXml, objPath) {
     const firmware = osElem.getAttribute("firmware");
     const loaderElem = getSingleOptionalElem(osElem, "loader");
 
-    const currentMemoryUnit = currentMemoryElem.getAttribute("unit");
+    const currentMemoryUnit = currentMemoryElem.getAttribute("unit") || "B";
     const currentMemory = convertToUnit(currentMemoryElem.childNodes[0].nodeValue, currentMemoryUnit, units.KiB);
-    const memoryUnit = memoryElem.getAttribute("unit");
+    const memoryUnit = memoryElem.getAttribute("unit") || "B";
     const memory = convertToUnit(memoryElem.childNodes[0].nodeValue, memoryUnit, units.KiB);
 
     const vcpus = parseDumpxmlForVCPU(vcpuElem, vcpuCurrentAttr);
@@ -284,7 +311,7 @@ export function parseDomainDumpxml(connectionName, domXml, objPath) {
     const userLogin = parseDumpxmlMachinesMetadataElement(metadataElem, 'user_login');
     const userPassword = parseDumpxmlMachinesMetadataElement(metadataElem, 'user_password');
 
-    const metadata = {
+    const metadata: VMMetadata = {
         hasInstallPhase,
         installSourceType,
         installSource,
@@ -325,8 +352,8 @@ export function parseDomainDumpxml(connectionName, domXml, objPath) {
     };
 }
 
-export function parseDumpxmlForOsBoot(osBootElems) {
-    const osBoot = [];
+export function parseDumpxmlForOsBoot(osBootElems: HTMLCollection): VMOsBoot[] {
+    const osBoot: VMOsBoot[] = [];
 
     for (let bootNum = 0; bootNum < osBootElems.length; bootNum++) {
         const bootElem = osBootElems[bootNum];
@@ -342,20 +369,20 @@ export function parseDumpxmlForOsBoot(osBootElems) {
     return osBoot; // already sorted
 }
 
-export function parseDumpxmlForVCPU(vcpuElem, vcpuCurrentAttr) {
-    const vcpus = {};
-    vcpus.count = (vcpuCurrentAttr && vcpuCurrentAttr.value) ? vcpuCurrentAttr.value : vcpuElem.childNodes[0].nodeValue;
-    vcpus.placement = vcpuElem.getAttribute("placement");
-    vcpus.max = vcpuElem.childNodes[0].nodeValue;
-    return vcpus;
+export function parseDumpxmlForVCPU(vcpuElem: Element, vcpuCurrentAttr: Attr | null): VMVcpus {
+    return {
+        count: (vcpuCurrentAttr && vcpuCurrentAttr.value) ? vcpuCurrentAttr.value : vcpuElem.childNodes[0].nodeValue,
+        placement: vcpuElem.getAttribute("placement"),
+        max: vcpuElem.childNodes[0].nodeValue,
+    };
 }
 
-export function parseDumpxmlForCpu(cpuElem) {
-    if (!cpuElem) {
-        return { topology: {} };
-    }
+export function parseDumpxmlForCpu(cpuElem: Element): VMCpu {
+    const cpu: VMCpu = { topology: {} };
 
-    const cpu = {};
+    if (!cpuElem) {
+        return cpu;
+    }
 
     cpu.mode = cpuElem.getAttribute('mode');
     if (cpu.mode === 'custom') {
@@ -364,8 +391,6 @@ export function parseDumpxmlForCpu(cpuElem) {
             cpu.model = modelElem.childNodes[0].nodeValue; // content of the domain/cpu/model element
         }
     }
-
-    cpu.topology = {};
 
     const topologyElem = getSingleOptionalElem(cpuElem, 'topology');
 
@@ -378,13 +403,13 @@ export function parseDumpxmlForCpu(cpuElem) {
     return cpu;
 }
 
-export function parseDumpxmlForConsoles(devicesElem) {
-    const displays = [];
+export function parseDumpxmlForConsoles(devicesElem: Element): VMConsole[] {
+    const displays: VMConsole[] = [];
     const graphicsElems = devicesElem.getElementsByTagName("graphics");
     if (graphicsElems) {
         for (let i = 0; i < graphicsElems.length; i++) {
             const graphicsElem = graphicsElems[i];
-            const display = {
+            const display: VMGraphics = {
                 type: graphicsElem.getAttribute('type'),
                 port: graphicsElem.getAttribute('port'),
                 tlsPort: graphicsElem.getAttribute('tlsPort'),
@@ -418,9 +443,9 @@ export function parseDumpxmlForConsoles(devicesElem) {
     return displays;
 }
 
-export function parseDumpxmlForCapabilities(capabilitiesXML) {
-    const capabilitiesElem = getElem(capabilitiesXML);
-    const capabilities = { guests: [] };
+export function parseDumpxmlForCapabilities(capabilitiesXML: string): HypervisorCapabilities {
+    const capabilitiesElem = getOptionalElem(capabilitiesXML);
+    const capabilities: HypervisorCapabilities = { guests: [] };
 
     if (capabilitiesElem) {
         const guestElems = capabilitiesElem.getElementsByTagName('guest');
@@ -430,9 +455,9 @@ export function parseDumpxmlForCapabilities(capabilitiesXML) {
             const osTypeElem = getSingleOptionalElem(guestElem, 'os_type');
             const archElem = getSingleOptionalElem(guestElem, 'arch');
 
-            const guestCapabilities = { // see https://libvirt.org/formatcaps.html#guest-capabilities
+            const guestCapabilities: GuestCapabilities = { // see https://libvirt.org/formatcaps.html#guest-capabilities
                 osType: osTypeElem?.childNodes[0].nodeValue,
-                arch: archElem.getAttribute('name'),
+                arch: archElem?.getAttribute('name'),
             };
 
             const featuresElem = getSingleOptionalElem(guestElem, 'features');
@@ -441,7 +466,7 @@ export function parseDumpxmlForCapabilities(capabilitiesXML) {
                 const externalSnapshotElem = getSingleOptionalElem(featuresElem, 'externalSnapshot');
 
                 guestCapabilities.features = {
-                    diskSnapshot: diskSnapshotElem.getAttribute('default') === "yes",
+                    diskSnapshot: diskSnapshotElem?.getAttribute('default') === "yes",
                     externalSnapshot: !!externalSnapshotElem,
                 };
             }
@@ -453,8 +478,8 @@ export function parseDumpxmlForCapabilities(capabilitiesXML) {
     return capabilities;
 }
 
-export function parseDumpxmlForDisks(devicesElem) {
-    const disks = {};
+export function parseDumpxmlForDisks(devicesElem: Element): Record<string, VMDisk> {
+    const disks: Record<string, VMDisk> = {};
     const diskElems = devicesElem.getElementsByTagName('disk');
     if (diskElems) {
         for (let i = 0; i < diskElems.length; i++) {
@@ -472,7 +497,7 @@ export function parseDumpxmlForDisks(devicesElem) {
 
             const sourceHostElem = sourceElem ? getSingleOptionalElem(sourceElem, 'host') : undefined;
 
-            const disk = { // see https://libvirt.org/formatdomain.html#elementsDisks
+            const disk: VMDisk = { // see https://libvirt.org/formatdomain.html#elementsDisks
                 target: targetElem.getAttribute('dev'), // identifier of the disk, i.e. sda, hdc
                 driver: {
                     name: driverElem?.getAttribute('name'), // optional
@@ -488,6 +513,7 @@ export function parseDumpxmlForDisks(devicesElem) {
                 device: diskElem.getAttribute('device'), // i.e. cdrom, disk
                 source: {
                     file: sourceElem?.getAttribute('file'), // optional file name of the disk
+                    dir: sourceElem?.getAttribute('dir'),
                     dev: sourceElem?.getAttribute('dev'),
                     pool: sourceElem?.getAttribute('pool'),
                     volume: sourceElem?.getAttribute('volume'),
@@ -520,7 +546,7 @@ export function parseDumpxmlForDisks(devicesElem) {
     return disks;
 }
 
-export function parseDumpxmlForWatchdog(devicesElem) {
+export function parseDumpxmlForWatchdog(devicesElem: Element): VMWatchdog {
     const watchdogElem = getSingleOptionalElem(devicesElem, 'watchdog');
 
     if (watchdogElem) {
@@ -533,9 +559,9 @@ export function parseDumpxmlForWatchdog(devicesElem) {
     }
 }
 
-export function parseDumpxmlForVsock(devicesElem) {
+export function parseDumpxmlForVsock(devicesElem: Element): VMVsock {
     const vsockElem = getSingleOptionalElem(devicesElem, 'vsock');
-    const cid = {};
+    const cid: VMVsock["cid"] = {};
 
     if (vsockElem) {
         const cidElem = getSingleOptionalElem(devicesElem, 'cid');
@@ -550,9 +576,11 @@ export function parseDumpxmlForVsock(devicesElem) {
     return { cid };
 }
 
-function parseDumpxmlForSpice(devicesElem) {
+function parseDumpxmlForSpice(devicesElem: Element): boolean {
     for (let i = 0; i < devicesElem.children.length; ++i) {
         const device = devicesElem.children.item(i);
+        if (!device)
+            continue;
         // also catch spicevmc
         if (device.getAttribute("type")?.startsWith("spice"))
             return true;
@@ -565,12 +593,12 @@ function parseDumpxmlForSpice(devicesElem) {
     return false;
 }
 
-function parseDumpxmlForTPM(devicesElem) {
+function parseDumpxmlForTPM(devicesElem: Element): boolean {
     return devicesElem.getElementsByTagName('tpm').length > 0;
 }
 
-export function parseDumpxmlForFilesystems(devicesElem) {
-    const filesystems = [];
+export function parseDumpxmlForFilesystems(devicesElem: Element): VMFilesystem[] {
+    const filesystems: VMFilesystem[] = [];
     const filesystemElems = devicesElem.getElementsByTagName('filesystem');
 
     if (filesystemElems) {
@@ -581,17 +609,17 @@ export function parseDumpxmlForFilesystems(devicesElem) {
             const targetElem = getSingleOptionalElem(filesystemElem, 'target');
             const accessElem = getSingleOptionalElem(filesystemElem, 'readonly');
 
-            const filesystem = { // https://libvirt.org/formatdomain.html#filesystems
+            const filesystem: VMFilesystem = { // https://libvirt.org/formatdomain.html#filesystems
                 accessmode: filesystemElem.getAttribute('accessmode'),
                 readonly: !!accessElem,
                 source: {
-                    dir: sourceElem.getAttribute('dir'),
-                    name: sourceElem.getAttribute('name'),
-                    socket: sourceElem.getAttribute('socket'),
-                    file: sourceElem.getAttribute('file'),
+                    dir: sourceElem?.getAttribute('dir'),
+                    name: sourceElem?.getAttribute('name'),
+                    socket: sourceElem?.getAttribute('socket'),
+                    file: sourceElem?.getAttribute('file'),
                 },
                 target: {
-                    dir: targetElem.getAttribute('dir'),
+                    dir: targetElem?.getAttribute('dir'),
                 },
             };
             filesystems.push(filesystem);
@@ -600,8 +628,8 @@ export function parseDumpxmlForFilesystems(devicesElem) {
     return filesystems;
 }
 
-export function parseDumpxmlForRedirectedDevices(devicesElem) {
-    const redirdevs = [];
+export function parseDumpxmlForRedirectedDevices(devicesElem: Element): VMRedirectedDevice[] {
+    const redirdevs: VMRedirectedDevice[] = [];
     const redirdevElems = devicesElem.getElementsByTagName('redirdev');
 
     if (redirdevElems) {
@@ -612,7 +640,7 @@ export function parseDumpxmlForRedirectedDevices(devicesElem) {
             const sourceElem = getSingleOptionalElem(redirdevElem, 'source');
             const bootElem = getSingleOptionalElem(redirdevElem, 'boot');
 
-            const dev = { // see https://libvirt.org/formatdomain.html#elementsRedir
+            const dev: VMRedirectedDevice = { // see https://libvirt.org/formatdomain.html#elementsRedir
                 bus: redirdevElem.getAttribute('bus'),
                 type: redirdevElem.getAttribute('type'),
                 bootOrder: bootElem?.getAttribute('order'),
@@ -634,8 +662,8 @@ export function parseDumpxmlForRedirectedDevices(devicesElem) {
 }
 
 // TODO Parse more attributes. Right now it parses only necessary
-export function parseDumpxmlForHostDevices(devicesElem) {
-    const hostdevs = [];
+export function parseDumpxmlForHostDevices(devicesElem: Element): VMHostDevice[] {
+    const hostdevs: VMHostDevice[] = [];
     const hostdevElems = devicesElem.getElementsByTagName('hostdev');
 
     if (hostdevElems) {
@@ -645,15 +673,14 @@ export function parseDumpxmlForHostDevices(devicesElem) {
             const driverElem = getSingleOptionalElem(hostdevElem, 'driver');
             const type = hostdevElem.getAttribute('type');
             const mode = hostdevElem.getAttribute('mode');
+            const bootOrder = bootElem?.getAttribute('order');
             const driver = driverElem?.getAttribute('name');
-
-            let dev;
 
             switch (type) {
             case "usb": {
                 const addressElem = getSingleOptionalElem(hostdevElem, 'address');
                 const sourceElem = getSingleOptionalElem(hostdevElem, 'source');
-                const sourceAddressElem = getSingleOptionalElem(sourceElem, 'address');
+                const sourceAddressElem = sourceElem ? getSingleOptionalElem(sourceElem, 'address') : null;
 
                 let vendorElem;
                 let productElem;
@@ -661,10 +688,10 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                     vendorElem = sourceElem.getElementsByTagName('vendor')[0];
                     productElem = sourceElem.getElementsByTagName('product')[0];
                 }
-                dev = {
+                const dev: VMHostDeviceUsb = {
                     type,
                     mode,
-                    bootOrder: bootElem?.getAttribute('order'),
+                    bootOrder,
                     driver,
                     address: {
                         port: addressElem?.getAttribute('port'),
@@ -693,10 +720,10 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                     vendorElem = sourceElem.getElementsByTagName('vendor')[0];
                     productElem = sourceElem.getElementsByTagName('product')[0];
                 }
-                dev = {
+                const dev: VMHostDevicePci = {
                     type,
                     mode,
-                    bootOrder: bootElem?.getAttribute('order'),
+                    bootOrder,
                     driver,
                     source: {
                         address: {
@@ -725,10 +752,10 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                 if (protocol === "iscsi")
                     name = sourceElem.getAttribute('name');
 
-                dev = {
+                const dev: VMHostDeviceScsi = {
                     type,
                     mode,
-                    bootOrder: bootElem?.getAttribute('order'),
+                    bootOrder,
                     driver,
                     source: {
                         protocol,
@@ -749,10 +776,10 @@ export function parseDumpxmlForHostDevices(devicesElem) {
             case "scsi_host": {
                 const sourceElem = hostdevElem.getElementsByTagName('source')[0];
 
-                dev = {
+                const dev: VMHostDeviceScsiHost = {
                     type,
                     mode,
-                    bootOrder: bootElem?.getAttribute('order'),
+                    bootOrder,
                     driver,
                     source: {
                         protocol: sourceElem.getAttribute('protocol'),
@@ -766,10 +793,10 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                 const sourceElem = hostdevElem.getElementsByTagName('source')[0];
                 const addressElem = sourceElem.getElementsByTagName('address')[0];
 
-                dev = {
+                const dev: VMHostDeviceMdev = {
                     type,
                     mode,
-                    bootOrder: bootElem?.getAttribute('order'),
+                    bootOrder,
                     driver,
                     source: {
                         address: {
@@ -784,10 +811,10 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                 const sourceElem = hostdevElem.getElementsByTagName('source')[0];
                 const blockElem = sourceElem.getElementsByTagName('block')[0];
 
-                dev = {
+                const dev: VMHostDeviceStorage = {
                     type,
                     mode,
-                    bootOrder: bootElem?.getAttribute('order'),
+                    bootOrder,
                     driver,
                     source: {
                         block: blockElem.childNodes[0].nodeValue
@@ -800,10 +827,11 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                 const sourceElem = hostdevElem.getElementsByTagName('source')[0];
                 const charElem = sourceElem.getElementsByTagName('char')[0];
 
-                dev = {
+                const dev: VMHostDeviceMisc = {
                     type,
                     mode,
-                    bootOrder: bootElem?.getAttribute('order'),
+                    bootOrder,
+                    driver,
                     source: {
                         char: charElem.childNodes[0].nodeValue
                     },
@@ -815,10 +843,10 @@ export function parseDumpxmlForHostDevices(devicesElem) {
                 const sourceElem = hostdevElem.getElementsByTagName('source')[0];
                 const interfaceElem = sourceElem.getElementsByTagName('interface')[0];
 
-                dev = {
+                const dev: VMHostDeviceNet = {
                     type,
                     mode,
-                    bootOrder: bootElem?.getAttribute('order'),
+                    bootOrder,
                     driver,
                     source: {
                         interface: interfaceElem.childNodes[0].nodeValue
@@ -833,8 +861,8 @@ export function parseDumpxmlForHostDevices(devicesElem) {
     return hostdevs;
 }
 
-export function parseDumpxmlForInterfaces(devicesElem) {
-    const interfaces = [];
+export function parseDumpxmlForInterfaces(devicesElem: Element): VMInterface[] {
+    const interfaces: VMInterface[] = [];
     const interfaceElems = devicesElem.getElementsByTagName('interface');
     if (interfaceElems) {
         for (let i = 0; i < interfaceElems.length; i++) {
@@ -853,7 +881,7 @@ export function parseDumpxmlForInterfaces(devicesElem) {
             const localElem = addressElem ? getSingleOptionalElem(addressElem, 'local') : null;
             const bootElem = getSingleOptionalElem(interfaceElem, 'boot');
 
-            const networkInterface = { // see https://libvirt.org/formatdomain.html#elementsNICS
+            const networkInterface: VMInterface = { // see https://libvirt.org/formatdomain.html#elementsNICS
                 type: interfaceElem.getAttribute('type'), // Only one required parameter
                 managed: interfaceElem.getAttribute('managed'),
                 name: interfaceElem.getAttribute('name'), // Name of interface
@@ -892,7 +920,7 @@ export function parseDumpxmlForInterfaces(devicesElem) {
     return interfaces;
 }
 
-export function parseDumpxmlMachinesMetadataElement(metadataElem, name) {
+export function parseDumpxmlMachinesMetadataElement(metadataElem: Element | undefined, name: string): optString {
     if (!metadataElem) {
         return null;
     }
@@ -901,12 +929,9 @@ export function parseDumpxmlMachinesMetadataElement(metadataElem, name) {
     return subElems.length > 0 ? subElems[0].textContent : null;
 }
 
-export function parseNetDumpxml(netXml) {
-    const retObj = {};
+export function parseNetDumpxml(netXml: string): NetworkXML {
+    const retObj: Partial<NetworkXML> = {};
     const netElem = getElem(netXml);
-    if (!netElem) {
-        return;
-    }
 
     retObj.uuid = netElem.getElementsByTagName("uuid")[0].childNodes[0].nodeValue;
 
@@ -931,11 +956,11 @@ export function parseNetDumpxml(netXml) {
         retObj.forward = { mode: (forwardElem.getAttribute("mode") || "nat") };
     }
 
-    return retObj;
+    return retObj as NetworkXML;
 }
 
-function parseNetDumpxmlForIp(ipElems) {
-    const ip = [];
+function parseNetDumpxmlForIp(ipElems: HTMLCollection): NetworkIp[] {
+    const ip: NetworkIp[] = [];
 
     for (let i = 0; i < ipElems.length; i++) {
         const ipElem = ipElems[i];
@@ -950,13 +975,13 @@ function parseNetDumpxmlForIp(ipElems) {
 
         let rangeElem;
         let bootp;
-        const dhcpHosts = [];
+        const dhcpHosts: NetworkDhcpHost[] = [];
         if (dhcpElem) {
             rangeElem = dhcpElem.getElementsByTagName("range")[0];
             const hostElems = dhcpElem.getElementsByTagName("host");
 
             for (let i = 0; i < hostElems.length; i++) {
-                const host = {
+                const host: NetworkDhcpHost = {
                     ip: hostElems[i].getAttribute("ip"),
                     name: hostElems[i].getAttribute("name"),
                     mac: hostElems[i].getAttribute("mac"),
@@ -970,7 +995,7 @@ function parseNetDumpxmlForIp(ipElems) {
                 bootp = { file: bootpElem.getAttribute("file") };
         }
 
-        const tmp = {
+        const tmp: NetworkIp = {
             address,
             family,
             netmask,
@@ -991,11 +1016,8 @@ function parseNetDumpxmlForIp(ipElems) {
     return ip;
 }
 
-export function parseNodeDeviceDumpxml(nodeDevice) {
+export function parseNodeDeviceDumpxml(nodeDevice: string): NodeDeviceXML {
     const deviceElem = getElem(nodeDevice);
-    if (!deviceElem) {
-        return;
-    }
 
     const name = deviceElem.getElementsByTagName("name")[0].childNodes[0].nodeValue;
     const pathElem = getSingleOptionalElem(deviceElem, 'path');
@@ -1004,7 +1026,7 @@ export function parseNodeDeviceDumpxml(nodeDevice) {
     const parentName = parentElem?.childNodes[0].nodeValue;
     const capabilityElem = deviceElem.getElementsByTagName("capability")[0];
 
-    const capability = {};
+    const capability: NodeDeviceCapability = {};
 
     capability.type = capabilityElem.getAttribute("type");
     if (capability.type == 'net')
@@ -1081,25 +1103,28 @@ export function parseNodeDeviceDumpxml(nodeDevice) {
     return { name, path, parent: parentName, capability };
 }
 
-export function parseStoragePoolDumpxml(connectionName, storagePoolXml, objPath) {
+export function parseStoragePoolDumpxml(
+    connectionName: ConnectionName,
+    storagePoolXml: string,
+    objPath: string)
+: StoragePool {
     const storagePoolElem = getElem(storagePoolXml);
-    if (!storagePoolElem) {
-        return;
-    }
 
-    const result = { connectionName };
-    result.type = storagePoolElem.getAttribute('type');
-    result.name = storagePoolElem.getElementsByTagName('name')[0].childNodes[0].nodeValue;
-    result.id = objPath;
-    result.uuid = storagePoolElem.getElementsByTagName("uuid")[0].childNodes[0].nodeValue;
-    result.capacity = storagePoolElem.getElementsByTagName('capacity')[0].childNodes[0].nodeValue;
-    result.available = storagePoolElem.getElementsByTagName('available')[0].childNodes[0].nodeValue;
-    result.allocation = storagePoolElem.getElementsByTagName('allocation')[0].childNodes[0].nodeValue;
+    const result: StoragePool = {
+        connectionName,
+        type: storagePoolElem.getAttribute('type'),
+        name: storagePoolElem.getElementsByTagName('name')[0].childNodes[0].nodeValue,
+        id: objPath,
+        uuid: storagePoolElem.getElementsByTagName("uuid")[0].childNodes[0].nodeValue,
+        capacity: storagePoolElem.getElementsByTagName('capacity')[0].childNodes[0].nodeValue,
+        available: storagePoolElem.getElementsByTagName('available')[0].childNodes[0].nodeValue,
+        allocation: storagePoolElem.getElementsByTagName('allocation')[0].childNodes[0].nodeValue,
+    };
 
     // Fetch path property if target is contained for this type of pool
-    if (['dir', 'fs', 'netfs', 'logical', 'disk', 'iscsi', 'scsi', 'mpath', 'zfs'].indexOf(result.type) > -1) {
+    if (['dir', 'fs', 'netfs', 'logical', 'disk', 'iscsi', 'scsi', 'mpath', 'zfs'].indexOf(result.type || "") > -1) {
         const targetElem = storagePoolElem.getElementsByTagName('target')[0];
-        result.target = { path: getSingleOptionalElem(targetElem, 'path').childNodes[0].nodeValue };
+        result.target = { path: getSingleOptionalElem(targetElem, 'path')?.childNodes[0].nodeValue };
     }
     const sourceElem = storagePoolElem.getElementsByTagName('source')[0];
     if (sourceElem) {
@@ -1129,16 +1154,17 @@ export function parseStoragePoolDumpxml(connectionName, storagePoolXml, objPath)
     return result;
 }
 
-export function parseStorageVolumeDumpxml(connectionName, storageVolumeXml, objPath) {
+export function parseStorageVolumeDumpxml(
+    connectionName: ConnectionName,
+    storageVolumeXml: string,
+    objPath?: string)
+: StorageVolume {
     const storageVolumeElem = getElem(storageVolumeXml);
-    if (!storageVolumeElem) {
-        return;
-    }
     const type = storageVolumeElem.getAttribute('type');
-    const name = storageVolumeElem.getElementsByTagName('name')[0].childNodes[0].nodeValue;
+    const name = storageVolumeElem.getElementsByTagName('name')[0].childNodes[0].nodeValue || "";
     const id = objPath;
     const targetElem = storageVolumeElem.getElementsByTagName('target')[0];
-    const path = getSingleOptionalElem(targetElem, 'path').childNodes[0].nodeValue;
+    const path = getSingleOptionalElem(targetElem, 'path')?.childNodes[0].nodeValue;
     const capacity = storageVolumeElem.getElementsByTagName('capacity')[0].childNodes[0].nodeValue;
     const allocation = storageVolumeElem.getElementsByTagName('allocation')[0].childNodes[0].nodeValue;
     const physicalElem = storageVolumeElem.getElementsByTagName('physical')[0];

@@ -24,11 +24,18 @@
  * Reference: https://redux.js.org/recipes/computing-derived-data/
  */
 
-export function getRefreshInterval(state) {
+import type store from './store.js';
+import type { ConnectionName } from './types';
+
+export function getRefreshInterval(state: ReturnType<typeof store.getState>): number {
     return state.config.refreshInterval;
 }
 
-export function usagePollingEnabled(state, name, connectionName) {
+export function usagePollingEnabled(
+    state: ReturnType<typeof store.getState>,
+    name: string,
+    connectionName: ConnectionName
+): boolean {
     const vm = state.vms.find(vm => vm.connectionName === connectionName && vm.name === name);
-    return vm ? vm.usagePolling : false; // VM got undefined
+    return vm ? !!vm.usagePolling : false; // VM got undefined
 }

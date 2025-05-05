@@ -164,7 +164,7 @@ const DeviceRow = ({ idPrefix, device, index, onToggle, upDisabled, downDisabled
             }
             case "mdev": {
                 addOptional(additionalInfo, device.device.type, _("Type"));
-                addOptional(additionalInfo, nodeDev.capability.type.id, _("Type ID"));
+                addOptional(additionalInfo, nodeDev.capability.type?.id, _("Type ID"));
                 break;
             }
             }

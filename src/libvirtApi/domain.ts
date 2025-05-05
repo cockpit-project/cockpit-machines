@@ -17,6 +17,8 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
+// @cockpit-ts-relaxed
+
 /*
  * Provider for Libvirt using libvirt-dbus API.
  * See https://github.com/libvirt/libvirt-dbus
@@ -27,7 +29,12 @@ import * as python from 'python.js';
 import store from '../store.js';
 import VMS_CONFIG from '../config.js';
 
+import type {
+    ConnectionName, VM,
+} from '../types';
+
 import installVmScript from '../scripts/install_machine.py';
+
 import {
     deleteUnlistedVMs,
     undefineVm,
@@ -74,7 +81,7 @@ import {
 import { storagePoolRefresh } from './storagePool.js';
 import { snapshotGetAll } from './snapshot.js';
 import { downloadRhelImage, getRhelImageUrl } from './rhel-images.js';
-import { call, Enum, timeout, resolveUiState } from './helpers.js';
+import { DBusProps, get_string_prop, get_boolean_prop, call, Enum, timeout, resolveUiState } from './helpers.js';
 import { CLOUD_IMAGE, DOWNLOAD_AN_OS, LOCAL_INSTALL_MEDIA_SOURCE, needsRHToken } from "../components/create-vm-dialog/createVmDialogUtils.js";
 
 export const domainCanConsole = (vmState) => vmState == 'running';
@@ -103,7 +110,7 @@ function buildConsoleVVFile(consoleDetail) {
         'fullscreen=0\n';
 }
 
-function domainAttachDevice({ connectionName, vmId, permanent, hotplug, xmlDesc }) {
+function domainAttachDevice({ connectionName, vmId, permanent, hotplug, xmlDesc }): Promise<void> {
     let flags = Enum.VIR_DOMAIN_AFFECT_CURRENT;
     if (hotplug)
         flags |= Enum.VIR_DOMAIN_AFFECT_LIVE;
@@ -112,6 +119,23 @@ function domainAttachDevice({ connectionName, vmId, permanent, hotplug, xmlDesc 
 
     // Error handling is done from the calling side
     return call(connectionName, vmId, 'org.libvirt.Domain', 'AttachDevice', [xmlDesc, flags], { timeout, type: 'su' });
+}
+
+export interface DiskParams {
+    type: string,
+    file?: string,
+    device: string,
+    poolName: string,
+    volumeName: string,
+    format: string,
+    target: string,
+    vmId: string,
+    permanent: boolean,
+    hotplug: boolean,
+    cacheMode: string,
+    shareable?: boolean,
+    busType: string,
+    serial: string,
 }
 
 export function domainAttachDisk({
@@ -130,14 +154,32 @@ export function domainAttachDisk({
     shareable,
     busType,
     serial,
-}) {
+} : { connectionName: ConnectionName } & DiskParams): Promise<void> {
     const xmlDesc = getDiskXML(type, file, device, poolName, volumeName, format, target, cacheMode, shareable, busType, serial);
 
     return domainAttachDevice({ connectionName, vmId, permanent, hotplug, xmlDesc });
 }
 
+function spawn(connectionName: ConnectionName, args: string[]): cockpit.Spawn<string> {
+    return cockpit.spawn(
+        args,
+        {
+            err: "message",
+            ...(connectionName === "system" ? { superuser: "try" } : { })
+        });
+}
+
+function script(connectionName: ConnectionName, script: string): cockpit.Spawn<string> {
+    return cockpit.script(
+        script,
+        undefined,
+        {
+            err: "message",
+            ...(connectionName === "system" ? { superuser: "try" } : { })
+        });
+}
+
 export function domainAttachHostDevices({ connectionName, vmName, live, devices }) {
-    const options = { err: "message" };
     const args = ["virt-xml", "-c", `qemu:///${connectionName}`, vmName];
 
     devices.forEach(dev => {
@@ -148,21 +190,15 @@ export function domainAttachHostDevices({ connectionName, vmName, live, devices 
         args.push("--add-device", "--hostdev", source);
     });
 
-    if (connectionName === "system")
-        options.superuser = "try";
     if (live)
         args.push("--update");
 
-    return cockpit.spawn(args, options);
+    return spawn(connectionName, args);
 }
 
 export function domainAttachIface({ connectionName, vmName, mac, permanent, hotplug, sourceType, source, model }) {
     const macArg = mac ? "mac=" + mac + "," : "";
     const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--add-device', '--network', `${macArg}type=${sourceType},source=${source},source.mode=bridge,model=${model}`];
-    const options = { err: "message" };
-
-    if (connectionName === "system")
-        options.superuser = "try";
 
     if (hotplug) {
         args.push("--update");
@@ -170,7 +206,7 @@ export function domainAttachIface({ connectionName, vmName, mac, permanent, hotp
             args.push("--no-define");
     }
 
-    return cockpit.spawn(args, options);
+    return spawn(connectionName, args);
 }
 
 export function domainChangeInterfaceSettings({
@@ -185,10 +221,6 @@ export function domainChangeInterfaceSettings({
     networkModel,
     state,
 }) {
-    const options = { err: "message" };
-    if (connectionName === "system")
-        options.superuser = "try";
-
     let networkParams = "";
     if (state) {
         networkParams = `link.state=${state}`;
@@ -218,7 +250,7 @@ export function domainChangeInterfaceSettings({
             args.push("--no-define");
     }
 
-    return cockpit.spawn(args, options);
+    return spawn(connectionName, args);
 }
 
 export async function domainChangeAutostart ({
@@ -226,7 +258,7 @@ export async function domainChangeAutostart ({
     vmName,
     autostart,
 }) {
-    const [domainPath] = await call(
+    const [domainPath] = await call<[string]>(
         connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainLookupByName',
         [vmName], { timeout, type: 's' });
     await call(
@@ -240,7 +272,7 @@ export async function domainChangeBootOrder({
     connectionName,
     devices,
 }) {
-    const [domXml] = await call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
+    const [domXml] = await call<[string]>(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
     const updatedXML = updateBootOrder(domXml, devices);
     await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [updatedXML], { timeout, type: 's' });
 }
@@ -273,10 +305,6 @@ export async function domainCreate({
         setVmInstallInProgress({ name: vmName, connectionName });
     }
 
-    const opts = { err: "message", environ: ['LC_ALL=C.UTF-8'] };
-    if (connectionName === 'system')
-        opts.superuser = 'try';
-
     const args = {
         connectionName,
         memorySize,
@@ -302,28 +330,23 @@ export async function domainCreate({
     const hashPasswords = async args => {
         if (args.sourceType === CLOUD_IMAGE) {
             const promises = [];
-            const options = { err: "message" };
             if (args.userPassword)
-                promises.push(cockpit.spawn(['openssl', 'passwd', '-5', args.userPassword], options));
+                promises.push(spawn("session", ['openssl', 'passwd', '-5', args.userPassword]));
             if (args.rootPassword)
-                promises.push(cockpit.spawn(['openssl', 'passwd', '-5', args.rootPassword], options));
+                promises.push(spawn("session", ['openssl', 'passwd', '-5', args.rootPassword]));
 
             const ret = await Promise.all(promises);
             if (args.userPassword)
-                args.userPassword = ret.shift().trim();
+                args.userPassword = ret.shift()!.trim();
             if (args.rootPassword)
-                args.rootPassword = ret.shift().trim();
+                args.rootPassword = ret.shift()!.trim();
         }
     };
 
     try {
         /* try to download RHEL image */
         if (sourceType == DOWNLOAD_AN_OS && needsRHToken(os)) {
-            const options = { err: "message" };
-            if (connectionName === "system")
-                options.superuser = "try";
-
-            const arch = (await cockpit.spawn(['uname', '-m'], options)).trim();
+            const arch = (await spawn(connectionName, ['uname', '-m'])).trim();
             const outObj = JSON.parse(await getRhelImageUrl(accessToken, osVersion, arch));
             const url = outObj.url;
             const filename = outObj.filename;
@@ -337,7 +360,7 @@ export async function domainCreate({
                     .stream(progress => {
                         buffer += progress;
                         const chunks = buffer.split("\n");
-                        buffer = chunks.pop();
+                        buffer = chunks.pop() || "";
 
                         if (chunks.length > 0)
                             updateImageDownloadProgress(vmName, connectionName, chunks.pop());
@@ -345,7 +368,14 @@ export async function domainCreate({
         }
 
         await hashPasswords(args);
-        await python.spawn(installVmScript, [JSON.stringify(args)], opts);
+        await python.spawn(
+            installVmScript,
+            [JSON.stringify(args)],
+            {
+                err: "message",
+                environ: ['LC_ALL=C.UTF-8'],
+                ...(connectionName === "system" ? { superuser: "try" } : { })
+            });
     } catch (ex) {
         clearVmUiState(vmName, connectionName);
         throw ex;
@@ -353,20 +383,16 @@ export async function domainCreate({
 }
 
 export function domainCreateFilesystem({ connectionName, vmName, source, target, xattr }) {
-    const options = { err: "message" };
-    if (connectionName === "system")
-        options.superuser = "try";
-
     let xattrOption = "";
     if (xattr)
         xattrOption = ",binary.xattr=on";
 
-    return cockpit.spawn(
+    return spawn(
+        connectionName,
         [
             'virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--add-device', '--filesystem',
             `type=mount,accessmode=passthrough,driver.type=virtiofs,source.dir=${source},target.dir=${target}${xattrOption}`
         ],
-        options
     );
 }
 
@@ -384,7 +410,7 @@ export async function domainDelete({
         await call(connectionName, objPath, 'org.libvirt.Domain', 'Undefine', [flags], { timeout, type: 'u' });
     } catch (ex) {
         // Transient domains get undefined after shut off
-        if (!live || !ex.message.includes("Domain not found"))
+        if (!live || !(ex instanceof Error && ex.message.includes("Domain not found")))
             throw ex;
     }
 }
@@ -402,7 +428,7 @@ export function domainDeleteStorage({
             logDebug(`deleteStorage: deleting file storage ${disk.source.file}`);
 
             storageVolPromises.push(
-                call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StorageVolLookupByPath', [disk.source.file], { timeout, type: 's' })
+                call<[string]>(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StorageVolLookupByPath', [disk.source.file], { timeout, type: 's' })
                         .then(([volPath]) => call(connectionName, volPath, 'org.libvirt.StorageVol', 'Delete', [0], { timeout, type: 'u' }))
                         .catch(ex => {
                             if (!ex.message.includes("no storage vol with matching"))
@@ -419,8 +445,8 @@ export function domainDeleteStorage({
         case 'volume': {
             logDebug(`deleteStorage: deleting volume storage ${disk.source.volume} on pool ${disk.source.pool}`);
             storageVolPromises.push(
-                call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName', [disk.source.pool], { timeout, type: 's' })
-                        .then(([objPath]) => call(connectionName, objPath, 'org.libvirt.StoragePool', 'StorageVolLookupByName', [disk.source.volume], { timeout, type: 's' }))
+                call<[string]>(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName', [disk.source.pool], { timeout, type: 's' })
+                        .then(([objPath]) => call<[string]>(connectionName, objPath, 'org.libvirt.StoragePool', 'StorageVolLookupByName', [disk.source.volume], { timeout, type: 's' }))
                         .then(([volPath]) => call(connectionName, volPath, 'org.libvirt.StorageVol', 'Delete', [0], { timeout, type: 'u' }))
             );
             const pool = storagePools.find(pool => pool.connectionName === connectionName && pool.name === disk.source.pool);
@@ -429,7 +455,7 @@ export function domainDeleteStorage({
             break;
         }
         default:
-            logDebug("Disks of type $0 are currently ignored during VM deletion".format(disk.type));
+            logDebug(`Disks of type ${disk.type} are currently ignored during VM deletion`);
         }
     });
 
@@ -447,13 +473,9 @@ export function domainDeleteStorage({
 }
 
 export function domainDeleteFilesystem({ connectionName, vmName, target }) {
-    const options = { err: "message" };
-    if (connectionName === "system")
-        options.superuser = "try";
-
-    return cockpit.spawn(
+    return spawn(
+        connectionName,
         ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--remove-device', '--filesystem', `target.dir=${target}`],
-        options
     );
 }
 
@@ -486,10 +508,10 @@ export async function domainDetachDisk({
     if (live)
         detachFlags |= Enum.VIR_DOMAIN_AFFECT_LIVE;
 
-    const [domXml] = await call(connectionName, vmPath, 'org.libvirt.Domain', 'GetXMLDesc', [0], { timeout, type: 'u' });
+    const [domXml] = await call<[string]>(connectionName, vmPath, 'org.libvirt.Domain', 'GetXMLDesc', [0], { timeout, type: 'u' });
     const diskXML = getDiskElemByTarget(domXml, target);
 
-    const [domInactiveXml] = await call(connectionName, vmPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
+    const [domInactiveXml] = await call<[string]>(connectionName, vmPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
 
     const diskInactiveXML = getDiskElemByTarget(domInactiveXml, target);
     if (diskInactiveXML && persistent)
@@ -506,13 +528,13 @@ export async function domainDetachHostDevice({ connectionName, vmId, live, dev }
 
     // hostdev's <address bus=... device=...> may be different between live XML and offline XML (or it may be present in live XML but missing in offline XML)
     // therefore we need to call DetachDevice twice with different hostdevXMLs, once for live XML and once for offline XML
-    const [domInactiveXml] = await call(connectionName, vmId, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
+    const [domInactiveXml] = await call<[string]>(connectionName, vmId, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
     const hostdevInactiveXML = getHostDevElemBySource(domInactiveXml, source);
     if (hostdevInactiveXML)
         await call(connectionName, vmId, 'org.libvirt.Domain', 'DetachDevice', [hostdevInactiveXML, Enum.VIR_DOMAIN_AFFECT_CONFIG], { timeout, type: 'su' });
 
     if (live) {
-        const [domXml] = await call(connectionName, vmId, 'org.libvirt.Domain', 'GetXMLDesc', [0], { timeout, type: 'u' });
+        const [domXml] = await call<[string]>(connectionName, vmId, 'org.libvirt.Domain', 'GetXMLDesc', [0], { timeout, type: 'u' });
         const hostdevXML = getHostDevElemBySource(domXml, source);
 
         await call(connectionName, vmId, 'org.libvirt.Domain', 'DetachDevice', [hostdevXML, Enum.VIR_DOMAIN_AFFECT_LIVE], { timeout, type: 'su' });
@@ -520,15 +542,11 @@ export async function domainDetachHostDevice({ connectionName, vmId, live, dev }
 }
 
 export function domainDetachIface({ connectionName, index, vmName, live, persistent }) {
-    const options = { err: "message" };
     // Normally we should identify a vNIC to detach by a number of slot, bus, function and domain.
     // Such detachment is however broken in virt-xml, so instead let's detach it by the index of <interface> in array of VM's XML <devices>
     // This serves as workaround for https://github.com/virt-manager/virt-manager/issues/356
     // virt-xml counts devices starting from 1, so we have to increase index by 1
     const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--remove-device', '--network', `${index + 1}`];
-
-    if (connectionName === "system")
-        options.superuser = "try";
 
     if (live) {
         args.push("--update");
@@ -536,40 +554,30 @@ export function domainDetachIface({ connectionName, index, vmName, live, persist
             args.push("--no-define");
     }
 
-    return cockpit.spawn(args, options);
+    return spawn(connectionName, args);
 }
 
 export function domainRemoveVsock({ connectionName, vmName, permanent, hotplug }) {
     const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--remove-device', '--vsock', '1'];
 
-    const options = { err: "message" };
-
-    if (connectionName === "system")
-        options.superuser = "try";
-
     if (hotplug) {
         args.push("--update");
         if (!permanent)
             args.push("--no-define");
     }
 
-    return cockpit.spawn(args, options);
+    return spawn(connectionName, args);
 }
 
 export function domainRemoveWatchdog({ connectionName, vmName, permanent, hotplug, model }) {
     const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--remove-device', '--watchdog', `model=${model}`];
-    const options = { err: "message" };
-
-    if (connectionName === "system")
-        options.superuser = "try";
-
     if (hotplug) {
         args.push("--update");
         if (!permanent)
             args.push("--no-define");
     }
 
-    return cockpit.spawn(args, options);
+    return spawn(connectionName, args);
 }
 
 export async function domainEjectDisk({
@@ -591,10 +599,10 @@ export async function domainEjectDisk({
         updateFlags |= Enum.VIR_DOMAIN_DEVICE_MODIFY_FORCE;
 
     // Switch to using virt-xml once 'force' flag is implemented: https://github.com/virt-manager/virt-manager/issues/442
-    const [domXml] = await call(connectionName, vmPath, 'org.libvirt.Domain', 'GetXMLDesc', [0], { timeout, type: 'u' });
+    const [domXml] = await call<[string]>(connectionName, vmPath, 'org.libvirt.Domain', 'GetXMLDesc', [0], { timeout, type: 'u' });
     const diskXML = changeMedia({ domXml, target, eject, file, pool, volume });
 
-    const [domInactiveXml] = await call(connectionName, vmPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
+    const [domInactiveXml] = await call<[string]>(connectionName, vmPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
     const diskInactiveXML = getDiskElemByTarget(domInactiveXml, target);
     if (diskInactiveXML && persistent)
         updateFlags |= Enum.VIR_DOMAIN_AFFECT_CONFIG;
@@ -626,32 +634,33 @@ export async function domainGet({
     id: objPath,
     connectionName,
 }) {
-    const props = {};
+    const props: Partial<VM> = {};
 
     try {
-        const [domainXML] = await call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_SECURE], { timeout, type: 'u' });
-        const [domInactiveXml] = await call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_SECURE | Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
+        const [domainXML] = await call<[string]>(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_SECURE], { timeout, type: 'u' });
+        const [domInactiveXml] = await call<[string]>(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_SECURE | Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
         props.inactiveXML = parseDomainDumpxml(connectionName, domInactiveXml, objPath);
         props.connectionName = connectionName;
         props.id = objPath;
 
-        const [returnProps] = await call(connectionName, objPath, "org.freedesktop.DBus.Properties", "GetAll", ["org.libvirt.Domain"], { timeout, type: 's' });
+        const [returnProps] = await call<[DBusProps]>(connectionName, objPath, "org.freedesktop.DBus.Properties", "GetAll", ["org.libvirt.Domain"], { timeout, type: 's' });
 
         /* Sometimes not all properties are returned, for example when some domain got deleted while part
         * of the properties got fetched from libvirt. Make sure that there is check before reading the attributes.
         */
         if ("Name" in returnProps)
-            props.name = returnProps.Name.v.v;
+            props.name = get_string_prop(returnProps, "Name");
         if ("Persistent" in returnProps)
-            props.persistent = returnProps.Persistent.v.v;
+            props.persistent = get_boolean_prop(returnProps, "Persistent");
         if ("Autostart" in returnProps)
-            props.autostart = returnProps.Autostart.v.v;
-        props.ui = resolveUiState(props.name, props.connectionName);
+            props.autostart = get_boolean_prop(returnProps, "Autostart");
+        props.ui = resolveUiState(props.name, connectionName);
 
         const dumpxmlParams = parseDomainDumpxml(connectionName, domainXML, objPath);
         Object.assign(props, dumpxmlParams);
 
-        const domCaps = await domainGetCapabilities({ connectionName, arch: dumpxmlParams.arch, model: dumpxmlParams.emulatedMachine });
+        const [domCaps] = await domainGetCapabilities({ connectionName, arch: dumpxmlParams.arch, model: dumpxmlParams.emulatedMachine });
+        // XXX - don't parse domCaps multiple times
         props.capabilities = {
             loaderElems: getDomainCapLoader(domCaps),
             maxVcpu: getDomainCapMaxVCPU(domCaps),
@@ -662,7 +671,7 @@ export async function domainGet({
             supportsTPM: getDomainCapSupportsTPM(domCaps),
         };
 
-        const [state] = await call(connectionName, objPath, 'org.libvirt.Domain', 'GetState', [0], { timeout, type: 'u' });
+        const [state] = await call<[number[]]>(connectionName, objPath, 'org.libvirt.Domain', 'GetState', [0], { timeout, type: 'u' });
         const stateStr = DOMAINSTATE[state[0]];
 
         if (!domainIsRunning(stateStr))
@@ -670,17 +679,23 @@ export async function domainGet({
 
         logDebug(`${props.name}.GET_VM(${objPath}, ${connectionName}): update props ${JSON.stringify(props)}`);
 
-        store.dispatch(updateOrAddVm({ state: stateStr, ...props }));
+        props.state = stateStr;
 
-        clearVmUiState(props.name, connectionName);
+        // XXX - change the code to make sure we construct a valid "VM" object.
+        store.dispatch(updateOrAddVm(props as VM));
+
+        if (props.name)
+            clearVmUiState(props.name, connectionName);
 
         await snapshotGetAll({ connectionName, domainPath: objPath });
     } catch (ex) {
-        // "not found" is an expected error, as this runs on Stopped/Undefined events; so be quiet about these
-        if (ex.message.startsWith("Domain not found"))
-            logDebug(`GET_VM: domain ${connectionName} ${objPath} went away, undefining: ${ex.toString()}`);
-        else
-            console.warn(`GET_VM failed for ${objPath}, undefining: ${ex.toString()}`);
+        if (ex instanceof Error) {
+            // "not found" is an expected error, as this runs on Stopped/Undefined events; so be quiet about these
+            if (ex.message.startsWith("Domain not found"))
+                logDebug(`GET_VM: domain ${connectionName} ${objPath} went away, undefining: ${ex.toString()}`);
+            else
+                console.warn(`GET_VM failed for ${objPath}, undefining: ${ex.toString()}`);
+        }
         // but undefine either way -- if we  can't get info about the VM, don't show it
         store.dispatch(undefineVm({ connectionName, id: objPath }));
     }
@@ -688,18 +703,19 @@ export async function domainGet({
 
 export async function domainGetAll({ connectionName }) {
     try {
-        const [objPaths] = await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListDomains', [0],
-                                      { timeout, type: 'u' });
+        const [objPaths] = await call<[string[]]>(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListDomains', [0],
+                                                  { timeout, type: 'u' });
         store.dispatch(deleteUnlistedVMs(connectionName, [], objPaths));
         await Promise.all(objPaths.map(path => domainGet({ connectionName, id: path })));
     } catch (ex) {
-        console.warn('GET_ALL_VMS action failed:', ex.toString());
+        if (ex instanceof Error)
+            console.warn('GET_ALL_VMS action failed:', ex.toString());
         throw ex;
     }
 }
 
 export function domainGetCapabilities({ connectionName, arch, model }) {
-    return call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'GetDomainCapabilities', ['', arch, model, '', 0], { timeout, type: 'ssssu' });
+    return call<[string]>(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'GetDomainCapabilities', ['', arch, model, '', 0], { timeout, type: 'ssssu' });
 }
 
 export async function domainGetStartTime({
@@ -707,9 +723,6 @@ export async function domainGetStartTime({
     vmName,
 }) {
     const loggedUser = await cockpit.user();
-    const options = { err: "message" };
-    if (connectionName === "system")
-        options.superuser = "try";
 
     /* The possible paths of logfiles path, as of libvirt 9.3.0 are defined in:
         * https://gitlab.com/libvirt/libvirt/-/blob/v9.3.0/src/qemu/qemu_conf.c#L153
@@ -723,7 +736,7 @@ export async function domainGetStartTime({
     try {
         // Use libvirt APIs for getting VM start up time when it's implemented:
         // https://gitlab.com/libvirt/libvirt/-/issues/481
-        const line = await cockpit.script(`grep ': starting up' '${logFile}' | tail -1`, options);
+        const line = await script(connectionName, `grep ': starting up' '${logFile}' | tail -1`);
 
         // Line from a log with a start up time is expected to look like this:
         // 2023-05-05 11:22:03.043+0000: starting up libvirt version: 8.6.0, package: 3.fc37 (Fedora Project, 2022-08-09-13:54:03, ), qemu version: 7.0.0qemu-7.0.0-9.fc37, kernel: 6.0.6-300.fc37.x86_64, hostname: fedora
@@ -731,7 +744,7 @@ export async function domainGetStartTime({
         // Alternatively regex line.match(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/g) can be used
         const timeStr = line.split(': starting up')[0];
         const date = new Date(timeStr);
-        return isNaN(date) ? null : date;
+        return isNaN(date.getTime()) ? null : date;
     } catch (ex) {
         console.log("Unable to detect domain start time:", ex);
         return null;
@@ -743,10 +756,6 @@ export function domainInstall({ vm }) {
     // shows dummy vm until we get vm from virsh (cleans up inProgress)
     // vm should be returned even if script fails
     setVmInstallInProgress(vm);
-
-    const opts = { err: "message", environ: ['LC_ALL=C.UTF-8'] };
-    if (vm.connectionName === 'system')
-        opts.superuser = 'try';
 
     const args = JSON.stringify({
         connectionName: vm.connectionName,
@@ -760,7 +769,14 @@ export function domainInstall({ vm }) {
         vmName: vm.name,
     });
 
-    return python.spawn(installVmScript, [args], opts)
+    return python.spawn(
+        installVmScript,
+        [args],
+        {
+            err: "message",
+            environ: ['LC_ALL=C.UTF-8'],
+            ...(vm.connectionName === "system" ? { superuser: "try" } : { })
+        })
             .catch(ex => {
                 console.error(JSON.stringify(ex));
                 return Promise.reject(ex);
@@ -778,10 +794,6 @@ export function domainInsertDisk({
     volumeName,
     live = false,
 }) {
-    const options = { err: "message" };
-    if (connectionName === "system")
-        options.superuser = "try";
-
     let source;
     if (diskType === "file")
         source = `source.file=${file},type=file`;
@@ -799,26 +811,26 @@ export function domainInsertDisk({
     if (live)
         args.push("--update");
 
-    return cockpit.spawn(args, options);
+    return spawn(connectionName, args);
 }
 
 export function domainInterfaceAddresses({ connectionName, objPath }) {
     return Promise.allSettled([
-        call(connectionName, objPath, 'org.libvirt.Domain', 'InterfaceAddresses', [Enum.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_LEASE, 0], { timeout, type: 'uu' })
+        call<unknown[]>(connectionName, objPath, 'org.libvirt.Domain', 'InterfaceAddresses', [Enum.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_LEASE, 0], { timeout, type: 'uu' })
                 .then(res => {
                     return {
                         source: 'lease',
                         ...res
                     };
                 }),
-        call(connectionName, objPath, 'org.libvirt.Domain', 'InterfaceAddresses', [Enum.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_ARP, 0], { timeout, type: 'uu' })
+        call<unknown[]>(connectionName, objPath, 'org.libvirt.Domain', 'InterfaceAddresses', [Enum.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_ARP, 0], { timeout, type: 'uu' })
                 .then(res => {
                     return {
                         source: 'arp',
                         ...res
                     };
                 }),
-        call(connectionName, objPath, 'org.libvirt.Domain', 'InterfaceAddresses', [Enum.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_AGENT, 0], { timeout, type: 'uu' })
+        call<unknown[]>(connectionName, objPath, 'org.libvirt.Domain', 'InterfaceAddresses', [Enum.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_AGENT, 0], { timeout, type: 'uu' })
                 .then(res => {
                     return {
                         source: 'agent',
@@ -893,10 +905,6 @@ function shlex_quote(str) {
 }
 
 async function domainSetXML(vm, option, values) {
-    const opts = { err: "message" };
-    if (vm.connectionName === 'system')
-        opts.superuser = 'try';
-
     // We don't pass the arguments for virt-xml through a shell, but
     // virt-xml does its own parsing with the Python shlex module. So
     // we need to do the equivalent of shlex.quote here.
@@ -905,9 +913,9 @@ async function domainSetXML(vm, option, values) {
     for (const key in values)
         args.push(shlex_quote(key + '=' + values[key]));
 
-    await cockpit.spawn([
-        'virt-xml', '-c', `qemu:///${vm.connectionName}`, '--' + option, args.join(','), vm.uuid, '--edit'
-    ], opts);
+    await spawn(
+        vm.connectionName,
+        ['virt-xml', '-c', `qemu:///${vm.connectionName}`, '--' + option, args.join(','), vm.uuid, '--edit']);
 }
 
 export async function domainSetDescription(vm, description) {
@@ -926,23 +934,16 @@ export function domainSetCpuMode({
     model,
 }) {
     const modelStr = model ? `,model=${model}` : "";
-    const opts = { err: "message", environ: ['LC_ALL=C'] };
-    if (connectionName === 'system')
-        opts.superuser = 'try';
 
-    return cockpit.spawn([
+    return spawn(connectionName, [
         'virt-xml', '-c', `qemu:///${connectionName}`, '--cpu', `clearxml=true,mode=${mode}${modelStr}`, name, '--edit'
-    ], opts);
+    ]);
 }
 
 export function domainSetMemoryBacking({ connectionName, vmName, type }) {
-    const options = { err: "message" };
-    if (connectionName === "system")
-        options.superuser = "try";
-
-    return cockpit.spawn(
-        ['virt-xml', '-c', `qemu:///${connectionName}`, '--memorybacking', `access.mode=shared,source.type=${type}`, vmName, '--edit'],
-        options
+    return spawn(
+        connectionName,
+        ['virt-xml', '-c', `qemu:///${connectionName}`, '--memorybacking', `access.mode=shared,source.type=${type}`, vmName, '--edit']
     );
 }
 
@@ -964,13 +965,13 @@ export async function domainSetMaxMemory({
     connectionName,
     maxMemory // in KiB
 }) {
-    const [domXml] = await call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [0], { timeout, type: 'u' });
+    const [domXml] = await call<[string]>(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [0], { timeout, type: 'u' });
     const updatedXML = updateMaxMemory(domXml, maxMemory);
     await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [updatedXML], { timeout, type: 's' });
 }
 
 export async function domainSetOSFirmware({ connectionName, objPath, loaderType }) {
-    const [domXml] = await call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
+    const [domXml] = await call<[string]>(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
     const s = new XMLSerializer();
     const doc = getDoc(domXml);
     const domainElem = doc.firstElementChild;
@@ -1003,22 +1004,14 @@ export function domainSetVCPUSettings ({
     cores,
     threads,
 }) {
-    const opts = { err: "message", environ: ['LC_ALL=C.UTF-8'] };
-    if (connectionName === 'system')
-        opts.superuser = 'try';
-
-    return cockpit.spawn([
+    return spawn(connectionName, [
         'virt-xml', '-c', `qemu:///${connectionName}`, '--vcpu', `${max},vcpu.current=${count},sockets=${sockets},cores=${cores},threads=${threads}`, name, '--edit'
-    ], opts);
+    ]);
 }
 
 export function domainSetVsock({ connectionName, vmName, permanent, hotplug, auto, address, isVsockAttached }) {
     const cidAddressStr = address ? `,cid.address=${address}` : "";
     const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, isVsockAttached ? '--edit' : '--add-device', '--vsock', `cid.auto=${auto}${cidAddressStr}`];
-    const options = { err: "message" };
-
-    if (connectionName === "system")
-        options.superuser = "try";
 
     // Only attaching new vsock device to running VM works
     // Editing existing vsock device on running VM (live XML config) is not possible, in such situation we only change offline XML config
@@ -1028,15 +1021,11 @@ export function domainSetVsock({ connectionName, vmName, permanent, hotplug, aut
             args.push("--no-define");
     }
 
-    return cockpit.spawn(args, options);
+    return spawn(connectionName, args);
 }
 
 export function domainSetWatchdog({ connectionName, vmName, defineOffline, hotplug, action, isWatchdogAttached }) {
     const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, isWatchdogAttached ? '--edit' : '--add-device', '--watchdog', `action=${action}`];
-    const options = { err: "message" };
-
-    if (connectionName === "system")
-        options.superuser = "try";
 
     // Only attaching new watchdog device to running VM works
     // Editing existing watchdog device on running VM (live XML config) is not possible, in such situation we only change offline XML config
@@ -1046,7 +1035,7 @@ export function domainSetWatchdog({ connectionName, vmName, defineOffline, hotpl
             args.push("--no-define");
     }
 
-    return cockpit.spawn(args, options);
+    return spawn(connectionName, args);
 }
 
 export function domainShutdown({
@@ -1061,7 +1050,7 @@ export function domainStart({ connectionName, id: objPath }) {
 }
 
 export async function domainUpdateDiskAttributes({ connectionName, objPath, target, readonly, shareable, busType, existingTargets, cache }) {
-    const [domXml] = await call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
+    const [domXml] = await call<[string]>(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
     const updatedXML = updateDisk({ diskTarget: target, domXml, readonly, shareable, busType, existingTargets, cache });
     await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [updatedXML], { timeout, type: 's' });
 }
@@ -1069,7 +1058,7 @@ export async function domainUpdateDiskAttributes({ connectionName, objPath, targ
 export async function domainReplaceSpice({ connectionName, id: objPath }) {
     /* Ideally this would be done by virt-xml, but it doesn't offer that functionality yet
      * see https://issues.redhat.com/browse/RHEL-17436 */
-    const [domXML] = await call(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
+    const [domXML] = await call<[string]>(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
     const updatedXML = replaceSpice(domXML);
 
     // check that updatedXML is valid; if not, throw; it needs to be updated manually
@@ -1086,5 +1075,5 @@ export async function domainReplaceSpice({ connectionName, id: objPath }) {
 
 export async function domainAddTPM({ connectionName, vmName }) {
     const args = ["virt-xml", "-c", `qemu:///${connectionName}`, "--add-device", "--tpm", "default", vmName];
-    return cockpit.spawn(args, { err: "message", superuser: connectionName === "system" ? "try" : null });
+    return spawn(connectionName, args);
 }
