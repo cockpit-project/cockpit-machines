@@ -27,14 +27,15 @@ import store from '../store.js';
 
 import { updateOrAddInterface } from '../actions/store-actions.js';
 
-export async function interfaceGetAll() {
+export async function interfaceGetAll(): Promise<void> {
     let ifaces = [];
 
     try {
         const ipData = await cockpit.spawn(["ip", "--json", "a"], { err: "message" });
         ifaces = JSON.parse(ipData);
     } catch (ex) {
-        console.warn("Failed to get interfaces with ip command:", ex.toString());
+        if (ex instanceof Error)
+            console.warn("Failed to get interfaces with ip command:", ex.toString());
     }
 
     for (const iface of ifaces) {

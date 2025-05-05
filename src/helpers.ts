@@ -19,17 +19,29 @@
 
 import cockpit from 'cockpit';
 import store from './store.js';
+import type {
+    optString,
+    ConnectionName,
+    VM, VMState, VMDisk, VMInterface, VMRedirectedDevice, VMHostDevice,
+    NodeDevice,
+    StoragePool,
+    HypervisorCapabilities,
+} from './types';
+
+import type {
+    UIVMState
+} from './components/create-vm-dialog/uiState';
 
 const _ = cockpit.gettext;
 
 export const LIBVIRT_SESSION_CONNECTION = 'session';
 export const LIBVIRT_SYSTEM_CONNECTION = 'system';
 
-export function dummyVmsFilter(vms, uiVms) {
+export function dummyVmsFilter(vms: VM[], uiVms: UIVMState[]): UIVMState[] {
     return uiVms.filter(uiVm => vms.find(vm => vm.name == uiVm.name && vm.connectionName == uiVm.connectionName) === undefined);
 }
 
-export function toReadableNumber(number) {
+export function toReadableNumber(number: number): number {
     if (number < 1) {
         return Math.floor(number * 100) / 100;
     } else {
@@ -47,7 +59,12 @@ export const diskBusTypes = {
 
 export const diskCacheModes = ['default', 'none', 'writethrough', 'writeback', 'directsync', 'unsafe'];
 
-export const units = {
+interface Unit {
+    name: string;
+    base1024Exponent: number;
+}
+
+export const units: Record<string, Unit> = {
     B: {
         name: "B",
         base1024Exponent: 0,
@@ -78,45 +95,50 @@ export const units = {
     },
 };
 
-const logUnitMap = {
-    0: units.B,
-    1: units.KiB,
-    2: units.MiB,
-    3: units.GiB,
-    4: units.TiB,
-    5: units.PiB,
-    6: units.EiB,
-};
+const logUnitMap = [
+    units.B,
+    units.KiB,
+    units.MiB,
+    units.GiB,
+    units.TiB,
+    units.PiB,
+    units.EiB,
+];
 
-function getPowerOf1024(exponent) {
+function getPowerOf1024(exponent: number): number {
     return exponent === 0 ? 1 : Math.pow(1024, exponent);
 }
 
-function getLogarithmOfBase1024(value) {
+function getLogarithmOfBase1024(value: number): number {
     return value > 0 ? (Math.floor(Math.log(value) / Math.log(1024))) : 0;
 }
 
-export function getBestUnit(input, inputUnit) {
+export function getBestUnit(input: unknown, inputUnit: string | Unit): Unit {
     return logUnitMap[getLogarithmOfBase1024(convertToUnitVerbose(input, inputUnit, units.B).value)];
 }
 
-export function convertToUnit(input, inputUnit, outputUnit) {
+export function convertToUnit(input: unknown, inputUnit: string | Unit, outputUnit: string | Unit): number {
     return convertToUnitVerbose(input, inputUnit, outputUnit).value;
 }
 
-function convertToUnitVerbose(input, inputUnit, outputUnit) {
-    const result = {
+interface Result {
+    value: number;
+    unit: string;
+}
+
+function convertToUnitVerbose(input: unknown, inputUnit: string | Unit, outputUnit: string | Unit): Result {
+    const result: Result = {
         value: 0,
         unit: units.B.name,
     };
 
-    input = Number(input);
-    if (isNaN(input)) {
+    const parsed_input = Number(input);
+    if (isNaN(parsed_input)) {
         console.error('input is not a number');
         return result;
     }
 
-    if (input < 0) {
+    if (parsed_input < 0) {
         console.error(`input == ${input} cannot be less than zero`);
         return result;
     }
@@ -131,27 +153,27 @@ function convertToUnitVerbose(input, inputUnit, outputUnit) {
 
     const exponentDiff = inUnit.base1024Exponent - outUnit.base1024Exponent;
     if (exponentDiff < 0) {
-        result.value = input / getPowerOf1024(-1 * exponentDiff);
+        result.value = parsed_input / getPowerOf1024(-1 * exponentDiff);
     } else {
-        result.value = input * getPowerOf1024(exponentDiff);
+        result.value = parsed_input * getPowerOf1024(exponentDiff);
     }
     result.unit = outUnit.name;
 
     return result;
 }
 
-export function isEmpty(str) {
+export function isEmpty(str: string): boolean {
     return (!str || str.length === 0);
 }
 
-export function isObjectEmpty(obj) {
+export function isObjectEmpty(obj: object): boolean {
     if (!obj)
         return false;
 
     return Object.keys(obj).length === 0;
 }
 
-export function arrayEquals(arr1, arr2) {
+export function arrayEquals(arr1: unknown[], arr2: unknown[]): boolean {
     if (arr1.length !== arr2.length) {
         return false;
     }
@@ -162,12 +184,12 @@ export function arrayEquals(arr1, arr2) {
     return diff.length === 0;
 }
 
-export function logDebug() {
+export function logDebug(...args: unknown[]): void {
     if (window.debugging === "all" || window.debugging?.includes("machines"))
-        console.debug.apply(console, arguments);
+        console.debug(...args);
 }
 
-export function digitFilter(event, allowDots = false) {
+export function digitFilter(event: KeyboardEvent, allowDots: boolean = false): boolean {
     const accept = (allowDots && event.key === '.') || (event.key >= '0' && event.key <= '9') ||
                  event.key === 'Backspace' || event.key === 'Delete' || event.key === 'Tab' ||
                  event.key === 'ArrowLeft' || event.key === 'ArrowRight' ||
@@ -181,13 +203,13 @@ export function digitFilter(event, allowDots = false) {
     return accept;
 }
 
-export function getTodayYearShifted(yearDifference) {
+export function getTodayYearShifted(yearDifference: number): Date {
     const result = new Date();
     result.setFullYear(result.getFullYear() + yearDifference);
     return result;
 }
 
-export const DOMAINSTATE = [
+export const DOMAINSTATE: VMState[] = [
     "no state",
     "running",
     "blocked",
@@ -198,7 +220,7 @@ export const DOMAINSTATE = [
     "pmsuspended",
 ];
 
-const transform = {
+const transform: Record<string, Record<string, string>> = {
     autostart: {
         false: _("disabled"),
         true: _("enabled"),
@@ -274,7 +296,7 @@ const transform = {
     },
 };
 
-export function rephraseUI(key, original) {
+export function rephraseUI(key: string, original: string): string {
     if (!(key in transform)) {
         logDebug(`rephraseUI(key='${key}', original='${original}'): unknown key`);
         return original;
@@ -290,13 +312,16 @@ export function rephraseUI(key, original) {
 
 /**
  * Download given content as a file in the browser
- *
- * @param data Content of the file
- * @param fileName
- * @param mimeType
- * @returns {*}
  */
-export function fileDownload({ data, fileName = 'myFile.dat', mimeType = 'application/octet-stream' }) {
+export function fileDownload({
+    data,
+    fileName = 'myFile.dat',
+    mimeType = 'application/octet-stream'
+} : {
+    data: string,
+    fileName: string,
+    mimeType: string
+}) : boolean {
     if (!data) {
         console.error('fileDownload(): no data to download');
         return false;
@@ -327,7 +352,7 @@ export function fileDownload({ data, fileName = 'myFile.dat', mimeType = 'applic
     f.addEventListener("load", () => {
         // Once we get the "load" event, we can start modifying the
         // document inside the iframe.
-        const doc = f.contentDocument;
+        const doc = f.contentDocument!;
         const a = doc.createElement('a');
         a.href = `data:${mimeType},${encodeURIComponent(data)}`;
         a.setAttribute('download', fileName);
@@ -341,20 +366,20 @@ export function fileDownload({ data, fileName = 'myFile.dat', mimeType = 'applic
     return true;
 }
 
-export function vmId(vmName) {
+export function vmId(vmName: string): string {
     return `vm-${vmName}`;
 }
 
-export function networkId(poolName, connectionName) {
+export function networkId(poolName: string, connectionName: string): string {
     return `network-${poolName}-${connectionName}`;
 }
 
-export function storagePoolId(poolName, connectionName) {
+export function storagePoolId(poolName: string, connectionName: string): string {
     return `pool-${poolName}-${connectionName}`;
 }
 
-export function findMatchingNodeDevices(hostdev, nodeDevices) {
-    let nodeDevs = [];
+export function findMatchingNodeDevices(hostdev: VMHostDevice, nodeDevices: NodeDevice[]): NodeDevice[] {
+    let nodeDevs: NodeDevice[] = [];
     switch (hostdev.type) {
     case "usb": {
         const vendorId = hostdev.source.vendor.id;
@@ -385,10 +410,10 @@ export function findMatchingNodeDevices(hostdev, nodeDevices) {
     }
     case "pci": {
         // convert hexadecimal number in string to decimal number in string
-        const domain = parseInt(hostdev.source.address.domain, 16).toString();
-        const bus = parseInt(hostdev.source.address.bus, 16).toString();
-        const slot = parseInt(hostdev.source.address.slot, 16).toString();
-        const func = parseInt(hostdev.source.address.func, 16).toString();
+        const domain = parseInt(hostdev.source.address.domain || "", 16).toString();
+        const bus = parseInt(hostdev.source.address.bus || "", 16).toString();
+        const slot = parseInt(hostdev.source.address.slot || "", 16).toString();
+        const func = parseInt(hostdev.source.address.func || "", 16).toString();
 
         nodeDevs = nodeDevices.filter(d => {
             // pci device is identified by bus, slot, domain, function
@@ -415,7 +440,7 @@ export function findMatchingNodeDevices(hostdev, nodeDevices) {
                 d.capability.bus &&
                 d.capability.lun &&
                 d.capability.target &&
-                d.capability.bus._value == bus &&
+                d.capability.bus instanceof Object && d.capability.bus._value == bus &&
                 d.capability.lun._value == unit &&
                 d.capability.target._value == target)
                 return true;
@@ -476,14 +501,18 @@ export function findMatchingNodeDevices(hostdev, nodeDevices) {
     return nodeDevs;
 }
 
+interface BootOrderDevice {
+    device: VMDisk | VMInterface | VMRedirectedDevice | VMHostDevice;
+    type: "disk" | "network" | "redirdev" | "hostdev";
+    bootOrder: number | undefined;
+}
+
 /**
- * Return and array of all devices which can possibly be assigned boot order:
- * disks, interfaces, redirected devices, host devices
- *
- * @param {object} vm
+ * Return and array of all devices which can possibly be assigned boot
+ * order: disks, interfaces, redirected devices, host devices
  */
-export function getBootOrderDevices(vm) {
-    const devices = [];
+export function getBootOrderDevices(vm: VM): BootOrderDevice[] {
+    const devices: BootOrderDevice[] = [];
 
     // Create temporary arrays of devices
     const disks = Object.values(vm.disks);
@@ -500,6 +529,7 @@ export function getBootOrderDevices(vm) {
                     // Disk is default value, if device property is not defined
                     // See: www.libvirt.org/formatdomain.html#elementsDisks
                     const type = disk.device ? disk.device : "disk";
+                    // XXX - shouldn't we compare to "boot.type" here instead of "type"?
                     return disk.device == type || !disk.device;
                 });
 
@@ -525,6 +555,10 @@ export function getBootOrderDevices(vm) {
         }
     }
 
+    function to_optNumber(str: optString): number | undefined {
+        return str ? Number(str) : undefined;
+    }
+
     // if boot order was defined in os->boot (old way), array contains only devices without boot order
     // in case of boot order defined in devices->boot (new way), array contains all devices
     for (let i = 0; i < disks.length; i++) {
@@ -532,7 +566,7 @@ export function getBootOrderDevices(vm) {
 
         devices.push({
             device: disk,
-            bootOrder: disk.bootOrder,
+            bootOrder: to_optNumber(disk.bootOrder),
             type: "disk"
         });
     }
@@ -544,7 +578,7 @@ export function getBootOrderDevices(vm) {
 
         devices.push({
             device: iface,
-            bootOrder: iface.bootOrder,
+            bootOrder: to_optNumber(iface.bootOrder),
             type: "network"
         });
     }
@@ -554,7 +588,7 @@ export function getBootOrderDevices(vm) {
             .forEach(redirdev => {
                 devices.push({
                     device: redirdev,
-                    bootOrder: redirdev.bootOrder,
+                    bootOrder: to_optNumber(redirdev.bootOrder),
                     type: "redirdev"
                 });
             });
@@ -564,7 +598,7 @@ export function getBootOrderDevices(vm) {
             .forEach(hostdev => {
                 devices.push({
                     device: hostdev,
-                    bootOrder: hostdev.bootOrder,
+                    bootOrder: to_optNumber(hostdev.bootOrder),
                     type: "hostdev"
                 });
             });
@@ -575,10 +609,8 @@ export function getBootOrderDevices(vm) {
 /**
  * Sorts all devices according to their boot order ascending. Devices with no boot order
  * will be at the end of the array.
- *
- * @param {object} vm
  */
-export function getSortedBootOrderDevices(vm) {
+export function getSortedBootOrderDevices(vm: VM): BootOrderDevice[] {
     const devices = getBootOrderDevices(vm);
 
     devices.sort((a, b) => {
@@ -599,8 +631,21 @@ export function getSortedBootOrderDevices(vm) {
     return devices;
 }
 
-function getVmDisksMap(vms, connectionName) {
-    const vmDisksMap = {};
+interface DiskMapVolume {
+    type: "volume";
+    pool: optString;
+    volume: optString;
+}
+
+interface DiskMapFile {
+    type: "file";
+    source: optString;
+}
+
+type DiskMap = DiskMapVolume | DiskMapFile;
+
+function getVmDisksMap(vms: VM[], connectionName: ConnectionName): Record<string, Array<DiskMap>> {
+    const vmDisksMap: Record<string, Array<DiskMap>> = {};
 
     for (const vm of vms) {
         if (vm.connectionName != connectionName)
@@ -624,13 +669,8 @@ function getVmDisksMap(vms, connectionName) {
 
 /**
  * Returns a string which represent disk target of volume in VM using the said volume.
- *
- * @param {object} vm
- * @param {object} storagePool
- * @param {string} volumeName
- * @returns {string | undefined}
  */
-export function getStorageVolumeDiskTarget(vm, storagePool, volumeName) {
+export function getStorageVolumeDiskTarget(vm: VM, storagePool: StoragePool, volumeName: string): optString {
     const disks = vm.disks || [];
     const targetPath = storagePool.target ? storagePool.target.path : '';
     const volumePath = targetPath + '/' + volumeName;
@@ -641,26 +681,24 @@ export function getStorageVolumeDiskTarget(vm, storagePool, volumeName) {
             (disk.type == 'file' && disk.source.file == volumePath))
             return disk.target;
     }
+
+    return null;
 }
 
 /**
  * Returns a object of key-value pairs of Storage Volume names mapping
  * to arrays of VM names using the relevant Storage Volume
- *
- * @param {object} vms
- * @param {object} storagePool
- * @returns {object}
  */
-export function getStorageVolumesUsage(vms, storagePool) {
+export function getStorageVolumesUsage(vms: VM[], storagePool: StoragePool): Record<string, string[]> {
     if (!storagePool)
-        return false;
+        return { };
 
     // Get a dictionary of vmName -> disks for a specific connection
     const vmDisksMap = getVmDisksMap(vms, storagePool.connectionName);
     const volumes = storagePool.volumes || [];
 
     // And make it a dictionary of volumeName -> array of Domains using volume
-    const isVolumeUsed = {};
+    const isVolumeUsed: Record<string, Array<string>> = {};
     for (const i in volumes) {
         const volumeName = volumes[i].name;
         const targetPath = storagePool.target ? storagePool.target.path : '';
@@ -688,12 +726,12 @@ export function getStorageVolumesUsage(vms, storagePool) {
  * Returns a list of potential physical devices suitable as network devices
  * by merging all network node devices and interfaces.
  */
-export function getNetworkDevices() {
+export function getNetworkDevices(): string[] {
     const { nodeDevices, interfaces } = store.getState();
-    const devs = [];
+    const devs: string[] = [];
 
     nodeDevices.forEach(dev => {
-        if (dev.capability.type === "net")
+        if (dev.capability.type === "net" && dev.capability.interface)
             devs.push(dev.capability.interface);
     });
 
@@ -707,12 +745,12 @@ export function getNetworkDevices() {
     return uniq;
 }
 
-export function getDefaultVolumeFormat(pool) {
+export function getDefaultVolumeFormat(pool: StoragePool): optString {
     // For the valid volume format types for different pool types see https://libvirt.org/storage.html
-    if (['disk'].indexOf(pool.type) > -1)
+    if (['disk'].indexOf(pool.type || "") > -1)
         return 'none';
 
-    if (['dir', 'fs', 'netfs', 'gluster', 'vstorage'].indexOf(pool.type) > -1)
+    if (['dir', 'fs', 'netfs', 'gluster', 'vstorage'].indexOf(pool.type || "") > -1)
         return 'qcow2';
 
     return null;
@@ -721,14 +759,11 @@ export function getDefaultVolumeFormat(pool) {
 /**
  * Returns an identifying value which can be used as disk name.
  * Can be file path, url, pool/volume or disk device type (fallback)
- *
- * @param {object} disk
- * @returns {string}
  */
-export function getDiskFullName(disk) {
+export function getDiskFullName(disk: VMDisk): optString {
     let name;
 
-    if (["file", "block", "dir"].includes(disk.type)) {
+    if (["file", "block", "dir"].includes(disk.type || "")) {
         // file path
         let path;
         if (disk.type === "file")
@@ -761,10 +796,10 @@ export function getDiskFullName(disk) {
  * @param {object} disk
  * @returns {string}
  */
-export function getDiskPrettyName(disk) {
+export function getDiskPrettyName(disk: VMDisk): optString {
     let name = getDiskFullName(disk);
 
-    if (["file", "block", "dir"].includes(disk.type) || disk.type === "volume") {
+    if (name && (["file", "block", "dir"].includes(disk.type || "") || disk.type === "volume")) {
         const parts = name.split('/');
         name = parts[parts.length - 1];
     }
@@ -772,7 +807,7 @@ export function getDiskPrettyName(disk) {
     return name;
 }
 
-export function getNextAvailableTarget(existingTargets, busType) {
+export function getNextAvailableTarget(existingTargets: string[], busType: string): string | undefined {
     let i = 0;
     let prefix = 'vd';
     if (busType !== 'virtio')
@@ -786,34 +821,50 @@ export function getNextAvailableTarget(existingTargets, busType) {
     }
 }
 
-export function getNodeDevSource(dev) {
+export function getNodeDevSource(dev: NodeDevice): string | undefined {
     let source;
 
     if (dev.capability.type === "pci") {
-        let domain = Number(dev.capability.domain);
-        let bus = Number(dev.capability.bus);
-        let slot = Number(dev.capability.slot);
-        let func = Number(dev.capability.function);
+        const domain = Number(dev.capability.domain);
+        const bus = Number(dev.capability.bus);
+        const slot = Number(dev.capability.slot);
+        const func = Number(dev.capability.function);
 
-        domain = domain.toString(16).padStart(4, '0');
-        bus = bus.toString(16).padStart(2, '0');
-        slot = slot.toString(16).padStart(2, '0');
-        func = func.toString(16).padStart(1, '0');
+        const domain_str = domain.toString(16).padStart(4, '0');
+        const bus_str = bus.toString(16).padStart(2, '0');
+        const slot_str = slot.toString(16).padStart(2, '0');
+        const func_str = func.toString(16).padStart(1, '0');
 
-        source = `${domain}:${bus}:${slot}.${func}`;
+        source = `${domain_str}:${bus_str}:${slot_str}.${func_str}`;
     } else if (dev.capability.type === "usb_device") {
         const device = dev.devnum;
         const bus = dev.busnum;
 
         source = `${bus}.${device}`;
     } else {
-        console.warn(`getNodeDevSource: unsupported device type '${dev.type}'`);
+        console.warn(`getNodeDevSource: unsupported device type '${dev.capability.type}'`);
     }
 
     return source;
 }
 
-export function getHostDevSourceObject(dev) {
+export type HostDevSourceObject =
+{
+    // common
+    vendor: optString;
+    product: optString;
+    bus: optString;
+
+    // pci
+    domain?: optString;
+    slot?: optString;
+    func?: optString;
+
+    // usb
+    device?: optString;
+}
+
+export function getHostDevSourceObject(dev: VMHostDevice): HostDevSourceObject | undefined {
     let source;
 
     if (dev.type === "pci") {
@@ -822,8 +873,8 @@ export function getHostDevSourceObject(dev) {
         const slot = dev.source.address.slot;
         const func = dev.source.address.func;
         // In pci devices vendor and product is optional
-        const vendor = dev.source.vendor && dev.source.vendor.id;
-        const product = dev.source.product && dev.source.product.id;
+        const vendor = dev.source.address.vendor && dev.source.address.vendor.id;
+        const product = dev.source.address.product && dev.source.address.product.id;
 
         source = { domain, bus, slot, func, vendor, product };
     } else if (dev.type === "usb") {
@@ -840,17 +891,19 @@ export function getHostDevSourceObject(dev) {
     return source;
 }
 
-export function getVmStoragePools(connectionName) {
+export function getVmStoragePools(connectionName: ConnectionName): StoragePool[] {
     const { storagePools } = store.getState();
     return storagePools.filter(sp => sp && sp.name && sp.connectionName == connectionName && sp.active);
 }
 
-export function nicLookupByMAC(interfacesList, mac) {
+export function nicLookupByMAC(interfacesList: VMInterface[], mac: string): VMInterface {
     return interfacesList.filter(iface => iface.mac == mac)[0];
 }
 
-export function getIfaceSourceName(iface) {
-    const mapper = {
+type SourceName = optString | { address: optString, port: optString };
+
+export function getIfaceSourceName(iface: VMInterface): SourceName {
+    const mapper: Record<string, (source: VMInterface["source"]) => SourceName> = {
         direct: source => source.dev,
         network: source => source.network,
         bridge: source => source.bridge,
@@ -860,26 +913,30 @@ export function getIfaceSourceName(iface) {
         udp: source => ({ address: source.address, port: source.port }),
     };
 
-    return mapper[iface.type] && mapper[iface.type](iface.source);
+    return mapper[iface.type || ""] && mapper[iface.type || ""](iface.source);
 }
 
-export function canDeleteDiskFile(disk) {
-    return disk.type === "volume" || (disk.type === "file" && disk.source.file);
+export function canDeleteDiskFile(disk: VMDisk): boolean {
+    return disk.type === "volume" || (disk.type === "file" && !!disk.source.file);
 }
 
-export function getStoragePoolPath(storagePools, poolName, connectionName) {
+export function getStoragePoolPath(
+    storagePools: StoragePool[],
+    poolName: string,
+    connectionName: ConnectionName
+): optString {
     const pool = storagePools.find(pool => pool.name === poolName && pool.connectionName === connectionName);
 
     return pool?.target?.path;
 }
 
-export function vmSupportsExternalSnapshots(config, vm) {
+export function vmSupportsExternalSnapshots(config: { capabilities?: HypervisorCapabilities }, vm: VM): boolean {
     // External snapshot should only be used if the VM's os types/architecture allow it
     // and if snapshot features are present among guest capabilities:
     // https://libvirt.org/formatcaps.html#guest-capabilities
     if (!config.capabilities?.guests.some(guest => guest.osType === vm.osType &&
                                                    guest.arch === vm.arch &&
-                                                   guest.features.externalSnapshot)) {
+                                                   guest.features?.externalSnapshot)) {
         logDebug(`vmSupportsExternalSnapshots: vm ${vm.name} has no external snapshot support`);
         return false;
     }
@@ -909,6 +966,6 @@ export function vmSupportsExternalSnapshots(config, vm) {
     return true;
 }
 
-export function vmHasVFIOHostDevs(vm) {
+export function vmHasVFIOHostDevs(vm: VM): boolean {
     return !!vm.hostDevices.find(hd => hd.driver === "vfio");
 }

@@ -38,6 +38,19 @@ import {
     UPDATE_VM,
 } from '../constants/store-action-types.js';
 
+import type cockpit from "cockpit";
+import type { UIVMState } from '../components/create-vm-dialog/uiState';
+import type {
+    ConnectionName,
+    VM,
+    VMSnapshot,
+    StoragePool,
+    Network,
+    NodeInterface,
+    NodeDevice,
+    HypervisorCapabilities,
+} from '../types';
+
 /**
  * All actions dispatchable by in the application
  */
@@ -47,21 +60,25 @@ import {
  *  The naming convention for action creator names is: <verb><Noun>
  *  with the present tense.
  */
-export function addUiVm(vm) {
+export function addUiVm(vm: UIVMState) {
     return {
         type: ADD_UI_VM,
         vm,
     };
 }
 
-export function deleteUiVm(vm) {
+export function deleteUiVm(vm: UIVMState) {
     return {
         type: DELETE_UI_VM,
         vm,
     };
 }
 
-export function deleteUnlistedVMs(connectionName, vmNames, vmIds) {
+export function deleteUnlistedVMs(
+    connectionName: ConnectionName,
+    vmNames: string[],
+    vmIds: string[]
+) {
     return {
         type: DELETE_UNLISTED_VMS,
         vmNames,
@@ -70,21 +87,33 @@ export function deleteUnlistedVMs(connectionName, vmNames, vmIds) {
     };
 }
 
-export function setNodeMaxMemory({ memory }) {
+export function setNodeMaxMemory({
+    memory
+} : {
+    memory: number
+}) {
     return {
         type: SET_NODE_MAX_MEMORY,
         payload: { memory }
     };
 }
 
-export function setCapabilities({ capabilities }) {
+export function setCapabilities({
+    capabilities
+} : {
+    capabilities: HypervisorCapabilities
+}) {
     return {
         type: SET_CAPABILITIES,
         payload: { capabilities }
     };
 }
 
-export function setLoggedInUser({ loggedUser }) {
+export function setLoggedInUser({
+    loggedUser
+} : {
+    loggedUser: cockpit.UserInfo
+}) {
     return {
         type: SET_LOGGED_IN_USER,
         payload: {
@@ -93,7 +122,13 @@ export function setLoggedInUser({ loggedUser }) {
     };
 }
 
-export function undefineNetwork({ connectionName, id }) {
+export function undefineNetwork({
+    connectionName,
+    id
+} : {
+    connectionName: ConnectionName,
+    id: string,
+}) {
     return {
         type: UNDEFINE_NETWORK,
         payload: {
@@ -103,7 +138,13 @@ export function undefineNetwork({ connectionName, id }) {
     };
 }
 
-export function undefineStoragePool({ connectionName, id }) {
+export function undefineStoragePool({
+    connectionName,
+    id
+} : {
+    connectionName: ConnectionName,
+    id: string,
+}) {
     return {
         type: UNDEFINE_STORAGE_POOL,
         payload: {
@@ -113,7 +154,17 @@ export function undefineStoragePool({ connectionName, id }) {
     };
 }
 
-export function undefineVm({ connectionName, name, id, transientOnly }) {
+export function undefineVm({
+    connectionName,
+    name,
+    id,
+    transientOnly
+} : {
+    connectionName: ConnectionName,
+    name?: string,
+    id?: string,
+    transientOnly?: boolean,
+}) {
     return {
         type: UNDEFINE_VM,
         name,
@@ -123,14 +174,26 @@ export function undefineVm({ connectionName, name, id, transientOnly }) {
     };
 }
 
-export function updateLibvirtVersion({ libvirtVersion }) {
+export function updateLibvirtVersion({
+    libvirtVersion
+} : {
+    libvirtVersion: number
+}) {
     return {
         type: UPDATE_LIBVIRT_VERSION,
         libvirtVersion,
     };
 }
 
-export function updateDomainSnapshots({ connectionName, domainPath, snaps }) {
+export function updateDomainSnapshots({
+    connectionName,
+    domainPath,
+    snaps
+} : {
+    connectionName: ConnectionName,
+    domainPath: string,
+    snaps: VMSnapshot[] | -1,
+}) {
     return {
         type: UPDATE_DOMAIN_SNAPSHOTS,
         payload: {
@@ -141,56 +204,56 @@ export function updateDomainSnapshots({ connectionName, domainPath, snaps }) {
     };
 }
 
-export function updateOrAddInterface(props) {
+export function updateOrAddInterface(props: NodeInterface) {
     return {
         type: UPDATE_ADD_INTERFACE,
         payload: { iface: props },
     };
 }
 
-export function updateOrAddNetwork(props, updateOnly) {
+export function updateOrAddNetwork(props: Network, updateOnly: boolean) {
     return {
         type: UPDATE_ADD_NETWORK,
         payload: { network: props, updateOnly },
     };
 }
 
-export function updateOrAddNodeDevice(props) {
+export function updateOrAddNodeDevice(props: NodeDevice) {
     return {
         type: UPDATE_ADD_NODE_DEVICE,
         payload: { nodedev: props },
     };
 }
 
-export function updateOrAddStoragePool(props, updateOnly) {
+export function updateOrAddStoragePool(props: StoragePool, updateOnly: boolean) {
     return {
         type: UPDATE_ADD_STORAGE_POOL,
         payload: { storagePool: props, updateOnly },
     };
 }
 
-export function updateOrAddVm(props) {
+export function updateOrAddVm(props: VM) {
     return {
         type: UPDATE_ADD_VM,
         vm: props,
     };
 }
 
-export function updateOsInfoList(osInfoList) {
+export function updateOsInfoList(osInfoList: string[]) {
     return {
         type: UPDATE_OS_INFO_LIST,
         osInfoList,
     };
 }
 
-export function updateUiVm(vm) {
+export function updateUiVm(vm: Partial<UIVMState>) {
     return {
         type: UPDATE_UI_VM,
         vm,
     };
 }
 
-export function updateVm(props) {
+export function updateVm(props: Partial<VM>) {
     return {
         type: UPDATE_VM,
         vm: props,
