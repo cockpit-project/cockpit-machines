@@ -566,7 +566,7 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
                     validationFailed.size = cockpit.format(_("Storage volume size must not exceed the storage pool's capacity ($0 $1)"), poolCapacity.toFixed(2), diskParams.unit);
                 }
             } else if (mode === USE_EXISTING) {
-                if (mode !== CUSTOM_PATH && !diskParams.existingVolumeName)
+                if (!diskParams.existingVolumeName)
                     validationFailed.existingVolumeName = _("Please choose a volume");
             }
 

@@ -67,7 +67,7 @@ function getNodeDevicesOfType(nodeDevices, type) {
 
 /**
  * Return the Virtual Network matching a name from a Virtual Networks list.
- * @param {string} virtualNetworkName.
+ * @param {string} virtualNetworkName
  * @param {array} virtualNetworks - An array of object containing Virtual Networks.
  */
 export function getVirtualNetworkByName(virtualNetworkName, virtualNetworks) {
@@ -111,7 +111,6 @@ function getVirtualNetworkDescription(virtualNetwork) {
 }
 
 /**
- * @param {array} nodeDevices - An array of object containing NodeDevices.
  * @param {object} virtualNetwork - A Virtual Network object.
  */
 export function getVirtualNetworkPXESupport(virtualNetwork) {

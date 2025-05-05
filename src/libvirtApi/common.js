@@ -77,8 +77,8 @@ import {
 
 /**
  * Calculates disk statistics.
- * @param  {info} Object returned by GetStats method call.
- * @return {Dictionary Object}
+ * @param  {object} info - Object returned by GetStats method call.
+ * @return {object}
  */
 function calculateDiskStats(info) {
     const disksStats = {};
@@ -154,7 +154,7 @@ function delayPolling(action, timeout) {
  * @param  {String} name           Domain name.
  * @param  {String} connectionName D-Bus connection type; one of session/system.
  * @param  {String} objPath        D-Bus object path of the Domain we need to poll.
- * @return {Function}
+ * @return {Promise<void>}
  */
 async function doUsagePolling(name, connectionName, objPath) {
     logDebug(`doUsagePolling(${name}, ${connectionName}, ${objPath})`);
