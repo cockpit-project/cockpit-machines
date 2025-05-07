@@ -213,6 +213,7 @@ const transform = {
         paused: _("Paused"),
         shutdown: _("Shutting down"),
         'shut off': _("Shut off"),
+        'shut off (suspended)': _("Shut off (Suspended)"),        
         crashed: _("Crashed"),
         dying: _("Dying"),
         pmsuspended: _("Suspended (PM)"),
