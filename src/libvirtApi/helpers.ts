@@ -23,6 +23,12 @@ import store from '../store.js';
 import { logDebug } from '../helpers.js';
 
 import {
+    opt_string,
+    ConnectionName,
+    VM,
+} from './types';
+
+import {
     removeVmCreateInProgress,
     clearVmUiState,
 } from '../components/create-vm-dialog/uiState.js';
@@ -109,32 +115,70 @@ export const Enum = {
     VIR_MIGRATE_OFFLINE: 1024,
 };
 
+/* Slightly improved type for cockpit.DBusClient.
+ */
+
+interface DBusClientAdditions {
+    subscribe: (
+        match: {
+            interface?: string,
+            member?: string,
+        },
+        func: (path: string, iface: string, signal: string, args: unknown[]) => void,
+    ) => void;
+}
+
+export type DBusClient = cockpit.DBusClient & DBusClientAdditions;
+
+/* Utility types for the result of the Properties.GetAll call.
+   (There is cockpit.Variant, but it can't be nested.)
+ */
+
+export type DBusType = string | Uint8Array | number | boolean | DBusType[] | { t: string; v: DBusType };
+
+export interface DBusVariant {
+    t: string;
+    v: DBusType;
+}
+
+export interface DBusProps {
+    [_: string]: DBusVariant;
+}
+
 /**
  * Call a Libvirt method
  */
-export function call(connectionName, objectPath, iface, method, args, opts) {
+export function call<R = void>(
+    connectionName: ConnectionName,
+    objectPath: string,
+    iface: string,
+    method: string,
+    args: unknown[],
+    opts: cockpit.DBusCallOptions
+): Promise<R> {
     logDebug("libvirt call:", connectionName, objectPath, iface, method, JSON.stringify(args), JSON.stringify(opts));
-    return dbusClient(connectionName).call(objectPath, iface, method, args, opts);
+    return dbusClient(connectionName).call(objectPath, iface, method, args, opts) as Promise<R>;
 }
 
 /**
  * Get Libvirt D-Bus client
  */
-export function dbusClient(connectionName) {
-    const clientLibvirt = {};
+export function dbusClient(connectionName: ConnectionName): DBusClient {
+    const clientLibvirt: Record<string, DBusClient> = {};
 
     if (!(connectionName in clientLibvirt) || clientLibvirt[connectionName] === null) {
-        const opts = { bus: connectionName };
-        if (connectionName === 'system')
-            opts.superuser = 'try';
-        clientLibvirt[connectionName] = cockpit.dbus("org.libvirt", opts);
+        clientLibvirt[connectionName] = cockpit.dbus("org.libvirt",
+                                                     {
+                                                         bus: connectionName,
+                                                         ...(connectionName === 'system' ? { superuser: "try" } : {})
+                                                     }) as DBusClient;
     }
 
     return clientLibvirt[connectionName];
 }
 
-export function resolveUiState(name, connectionName) {
-    const result = {
+export function resolveUiState(name: opt_string, connectionName: ConnectionName) {
+    const result: VM["ui"] = {
         // used just the first time vm is shown
         initiallyExpanded: false,
         initiallyOpenedConsoleTab: false,
@@ -142,7 +186,7 @@ export function resolveUiState(name, connectionName) {
 
     const uiState = store.getState().ui.vms.find(vm => vm.name == name && vm.connectionName == connectionName);
 
-    if (uiState) {
+    if (uiState && name) {
         result.initiallyExpanded = uiState.expanded;
         result.initiallyOpenedConsoleTab = uiState.openConsoleTab;
 

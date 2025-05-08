@@ -34,7 +34,8 @@ export async function interfaceGetAll() {
         const ipData = await cockpit.spawn(["ip", "--json", "a"], { err: "message" });
         ifaces = JSON.parse(ipData);
     } catch (ex) {
-        console.warn("Failed to get interfaces with ip command:", ex.toString());
+        if (ex instanceof Error)
+            console.warn("Failed to get interfaces with ip command:", ex.toString());
     }
 
     for (const iface of ifaces) {
