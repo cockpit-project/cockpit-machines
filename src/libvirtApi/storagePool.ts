@@ -24,10 +24,8 @@
 import cockpit from 'cockpit';
 import store from '../store.js';
 
-import type {
-    ConnectionName,
-    StoragePool, StoragePoolCapabilites
-} from '../types';
+import type { ConnectionName, StoragePool, StoragePoolCapabilites } from '../types';
+import type { StoragePoolSource } from '../libvirt-xml-create.js';
 
 import { updateOrAddStoragePool } from '../actions/store-actions.js';
 import { getPoolXML } from '../libvirt-xml-create.js';
@@ -49,7 +47,7 @@ export interface StoragePoolCreateParams {
     connectionName: ConnectionName,
     name: string,
     type: string,
-    source: string,
+    source: StoragePoolSource,
     target: string,
     autostart: boolean,
 }
