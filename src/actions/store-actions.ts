@@ -39,10 +39,10 @@ import {
 } from '../constants/store-action-types.js';
 
 import type cockpit from "cockpit";
-import type { UIVMState } from '../components/create-vm-dialog/uiState';
 import type {
     ConnectionName,
     VM,
+    UIVM,
     VMSnapshot,
     StoragePool,
     Network,
@@ -60,14 +60,14 @@ import type {
  *  The naming convention for action creator names is: <verb><Noun>
  *  with the present tense.
  */
-export function addUiVm(vm: UIVMState) {
+export function addUiVm(vm: UIVM) {
     return {
         type: ADD_UI_VM,
         vm,
     };
 }
 
-export function deleteUiVm(vm: UIVMState) {
+export function deleteUiVm(vm: { connectionName: ConnectionName, name: string }) {
     return {
         type: DELETE_UI_VM,
         vm,
@@ -246,7 +246,7 @@ export function updateOsInfoList(osInfoList: string[]) {
     };
 }
 
-export function updateUiVm(vm: Partial<UIVMState>) {
+export function updateUiVm(vm: Partial<UIVM>) {
     return {
         type: UPDATE_UI_VM,
         vm,

@@ -1,7 +1,7 @@
 /*
  * This file is part of Cockpit.
  *
- * Copyright (C) 2016 Red Hat, Inc.
+ * Copyright (C) 2025 Red Hat, Inc.
  *
  * Cockpit is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by
@@ -17,30 +17,26 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
-
 import cockpit from 'cockpit';
 
-import { EmptyStatePanel } from "cockpit-components-empty-state.jsx";
-import { ExclamationCircleIcon } from "@patternfly/react-icons";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { Icon } from "@patternfly/react-core/dist/esm/components/Icon";
+import { Popover, PopoverProps } from "@patternfly/react-core/dist/esm/components/Popover";
+import { HelpIcon } from "@patternfly/react-icons";
 
 const _ = cockpit.gettext;
 
-const LibvirtSlate = ({ loadingResources }) => {
-    if (loadingResources)
-        return <EmptyStatePanel title={ _("Loading resources") } loading />;
-
+export const InfoPopover = ({ ...props }: PopoverProps) => {
     return (
-        <EmptyStatePanel icon={ ExclamationCircleIcon }
-                         title={ _("Virtualization service (libvirt) is not active") }
-                         action={_("Troubleshoot")}
-                         actionVariant="link"
-                         onAction={() => cockpit.jump("/system/services")} />
+        <>
+            {"\n"}
+            <Popover {...props}>
+                <Button component="span" isInline variant="link" aria-label={_("more info")}>
+                    <Icon status="info">
+                        <HelpIcon />
+                    </Icon>
+                </Button>
+            </Popover>
+        </>
     );
 };
-
-LibvirtSlate.propTypes = {
-    loadingResources: PropTypes.bool.isRequired,
-};
-
-export default LibvirtSlate;
