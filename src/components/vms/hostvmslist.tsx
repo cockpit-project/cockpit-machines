@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
+
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -27,7 +27,7 @@ import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput"
 import { Gallery } from "@patternfly/react-core/dist/esm/layouts/Gallery";
 import { Toolbar, ToolbarContent, ToolbarItem } from "@patternfly/react-core/dist/esm/components/Toolbar";
 import { Select, SelectList, SelectOption } from "@patternfly/react-core/dist/esm/components/Select";
-import { MenuToggle } from "@patternfly/react-core/dist/esm/components/MenuToggle";
+import { MenuToggle, MenuToggleElement } from "@patternfly/react-core/dist/esm/components/MenuToggle";
 import { Page, PageSection } from "@patternfly/react-core/dist/esm/components/Page";
 import { WithDialogs } from 'dialogs.jsx';
 
@@ -43,15 +43,32 @@ import { VmUsesSpice } from '../vm/usesSpice.jsx';
 import { AggregateStatusCards } from "../aggregateStatusCards.jsx";
 import store from "../../store.js";
 
+import type {
+    VM,
+    UIVM,
+    StoragePool,
+    Network,
+} from '../../types';
+
 import "./hostvmslist.scss";
 
-const VmState = ({ vm, vms, dismissError }) => {
-    let state = null;
+const VmState = ({
+    vm,
+    vms,
+    dismissError
+} : {
+    vm: VM | UIVM,
+    vms: VM[],
+    dismissError: () => void,
+}) => {
+    let state = "";
 
-    if (vm.downloadProgress) {
-        state = cockpit.format(_("Downloading: $0%"), vm.downloadProgress);
-    } else if (vm.createInProgress) {
-        state = _("Creating VM");
+    if (vm.isUi) {
+        if (vm.downloadProgress) {
+            state = cockpit.format(_("Downloading: $0%"), vm.downloadProgress);
+        } else if (vm.createInProgress) {
+            state = _("Creating VM");
+        }
     } else {
         state = vm.state;
     }
@@ -61,7 +78,7 @@ const VmState = ({ vm, vms, dismissError }) => {
             error={vm.error}
             state={state}
             valueId={`${vmId(vm.name)}-${vm.connectionName}-state`}
-            additionalState={<><VmNeedsShutdown vm={vm} /><VmUsesSpice vm={vm} vms={vms} /></>} />
+            additionalState={!vm.isUi && <><VmNeedsShutdown vm={vm} /><VmUsesSpice vm={vm} vms={vms} /></>} />
     );
 };
 
@@ -70,31 +87,51 @@ const _ = cockpit.gettext;
 /**
  * List of all VMs defined on this host
  */
-const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddErrorNotification }) => {
-    const [statusSelected, setStatusSelected] = useState({ value: _("All") });
+interface HostVmsListProps {
+    vms: VM[],
+    ui: ReturnType<typeof store.getState>["ui"],
+    storagePools: StoragePool[],
+    actions: React.ReactNode,
+    networks: Network[],
+    onAddErrorNotification: () => void,
+}
+
+const HostVmsList = ({
+    vms,
+    ui,
+    storagePools,
+    actions,
+    networks,
+    onAddErrorNotification
+}: HostVmsListProps) => {
+    interface StateFilter {
+        value: string;
+        apiState?: string;
+    }
+    const [statusSelected, setStatusSelected] = useState<StateFilter>({ value: _("All") });
     const [currentTextFilter, setCurrentTextFilter] = useState("");
     const [statusIsExpanded, setStatusIsExpanded] = useState(false);
     const combinedVms = [...vms, ...dummyVmsFilter(vms, ui.vms)];
     const combinedVmsFiltered = combinedVms
             // searching VM should be case insensitive
-            .filter(vm => vm.name.toUpperCase().indexOf(currentTextFilter.toUpperCase()) != -1 && (!statusSelected.apiState || statusSelected.apiState == vm.state));
+            .filter(vm => vm.name && vm.name.toUpperCase().indexOf(currentTextFilter.toUpperCase()) != -1 && (!statusSelected.apiState || (!vm.isUi && statusSelected.apiState == vm.state)));
 
-    const sortFunction = (vmA, vmB) => vmA.name.localeCompare(vmB.name);
+    const sortFunction = (vmA: VM | UIVM, vmB: VM | UIVM) => vmA.name.localeCompare(vmB.name);
 
-    let domainStates = DOMAINSTATE.filter(state => vms.some(vm => vm.state === state));
-    const prioritySorting = { // Put running, shut off and divider at top of the list. The lower the value, the bigger priority it has
+    let domainStates: string[] = DOMAINSTATE.filter(state => vms.some(vm => vm.state === state));
+    const prioritySorting: Record<string, number | undefined> = { // Put running, shut off and divider at top of the list. The lower the value, the bigger priority it has
         running: -3,
         "shut off": -2,
         _divider: -1,
     };
     if (domainStates.some(e => ["running", "shut off"].includes(e)) && domainStates.some(e => !["running", "shut off"].includes(e)))
         domainStates = domainStates.concat(["_divider"]);
-    const sortOptions = [{ value: _("All") }]
+    const sortOptions: StateFilter[] = [{ value: _("All") }]
             .concat(domainStates
                     .map(state => { return { value: rephraseUI('resourceStates', state), apiState: state } })
                     .sort((a, b) => (prioritySorting[a.apiState] || 0) - (prioritySorting[b.apiState] || 0) || a.value.localeCompare(b.value)));
 
-    const toggle = toggleRef => (
+    const toggle = (toggleRef: React.LegacyRef<MenuToggleElement>) => (
         <MenuToggle
             ref={toggleRef}
             id="vm-state-select-toggle"
@@ -125,7 +162,11 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                           selected={statusSelected}
                           toggle={toggle}
                           onOpenChange={isOpen => setStatusIsExpanded(isOpen)}
-                          onSelect={(_, selection) => { setStatusIsExpanded(false); setStatusSelected(selection) }}
+                          onSelect={(_, selection) => {
+                              setStatusIsExpanded(false);
+                              // HACK - https://github.com/patternfly/patternfly-react/issues/11361
+                              setStatusSelected(selection as unknown as StateFilter);
+                          }}
                           aria-labelledby="vm-state-select"
                         >
                             <SelectList>
@@ -170,8 +211,6 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                                                 <VmActions
                                                 vm={vm}
                                                 vms={vms}
-                                                config={config}
-                                                storagePools={storagePools}
                                                 onAddErrorNotification={onAddErrorNotification}
                                                 />
                                             );
@@ -182,7 +221,7 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                                                         title: <Button id={`${vmId(vm.name)}-${vm.connectionName}-name`}
                                                               variant="link"
                                                               isInline
-                                                              isDisabled={vm.isUi && !vm.createInProgress}
+                                                              isDisabled={!!vm.isUi && !vm.createInProgress}
                                                               component="a"
                                                               href={'#' + cockpit.format("vm?name=$0&connection=$1", encodeURIComponent(vm.name), vm.connectionName)}
                                                               className="vm-list-item-name">{vm.name}</Button>
@@ -204,7 +243,7 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
                                                 props: {
                                                     key: cockpit.format("$0-$1-row", vmId(vm.name), vm.connectionName),
                                                     'data-row-id': cockpit.format("$0-$1", vmId(vm.name), vm.connectionName),
-                                                    'data-vm-transient': !vm.persistent,
+                                                    'data-vm-transient': !vm.isUi && !vm.persistent,
                                                 },
                                             };
                                         }) }
@@ -215,13 +254,6 @@ const HostVmsList = ({ vms, config, ui, storagePools, actions, networks, onAddEr
             </Page>
         </WithDialogs>
     );
-};
-HostVmsList.propTypes = {
-    vms: PropTypes.array.isRequired,
-    config: PropTypes.object.isRequired,
-    ui: PropTypes.object.isRequired,
-    storagePools: PropTypes.array.isRequired,
-    onAddErrorNotification: PropTypes.func.isRequired,
 };
 
 export default HostVmsList;

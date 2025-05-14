@@ -17,12 +17,11 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Flex } from "@patternfly/react-core/dist/esm/layouts/Flex";
-import { Label } from "@patternfly/react-core/dist/esm/components/Label";
+import { Label, LabelProps } from "@patternfly/react-core/dist/esm/components/Label";
 import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
 import { ErrorCircleOIcon, PendingIcon } from '@patternfly/react-icons';
 
@@ -30,15 +29,31 @@ import {
     rephraseUI,
 } from "../../helpers.js";
 
+import type { VMError } from '../../types';
+
 import "./stateIcon.scss";
 
 const _ = cockpit.gettext;
 
-export const StateIcon = ({ state, valueId, error, dismissError, additionalState }) => {
+interface StateIconProps {
+    state: string,
+    valueId: string,
+    error: VMError | null | undefined,
+    dismissError: () => void,
+    additionalState: React.ReactNode,
+}
+
+export const StateIcon = ({
+    state,
+    valueId,
+    error,
+    dismissError,
+    additionalState
+}: StateIconProps) => {
     if (state === undefined) {
         return (<div />);
     }
-    const stateMap = {
+    const stateMap: Record<string, { color?: LabelProps["color"], icon?: React.ReactNode }> = {
         /* VM states */
         running: { color: "green" },
         crashed: { color: "red" },
@@ -62,7 +77,7 @@ export const StateIcon = ({ state, valueId, error, dismissError, additionalState
                     <Button variant="link" isInline>{_("view more...")}</Button>
                 </>
             </Label>}
-            <Label color={stateMap[state] && stateMap[state].color}
+            <Label {...(stateMap[state] && stateMap[state].color) ? { color: stateMap[state].color } : {}}
                    icon={stateMap[state] && stateMap[state].icon}
                    className={"resource-state-text resource-state--" + (state || "").toLowerCase().replace(' ', '-')}
                    id={valueId}>
@@ -80,11 +95,6 @@ export const StateIcon = ({ state, valueId, error, dismissError, additionalState
         );
     else
         return label;
-};
-
-StateIcon.propTypes = {
-    state: PropTypes.string,
-    valueId: PropTypes.string,
 };
 
 export default StateIcon;
