@@ -18,8 +18,8 @@
  */
 
 import React from 'react';
-import PropTypes from 'prop-types';
-import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+
+import { Button, ButtonProps } from "@patternfly/react-core/dist/esm/components/Button";
 import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
 import { DropdownItem } from "@patternfly/react-core/dist/esm/components/Dropdown";
 import {
@@ -29,14 +29,32 @@ import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 
 import cockpit from 'cockpit';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
-import { useDialogs, DialogsContext } from 'dialogs.jsx';
+import { useDialogs, DialogsContext, Dialogs } from 'dialogs.jsx';
 
 const _ = cockpit.gettext;
 
-export class DeleteResourceModal extends React.Component {
-    static contextType = DialogsContext;
+interface DeleteResourceModalProps {
+    title: string;
+    errorMessage: string;
+    objectDescription: { name: string, value: string }[];
+    actionName: string;
+    actionNameSecondary: string;
+    actionDescription: boolean;
+    deleteHandler: () => Promise<void>;
+    deleteHandlerSecondary: () => Promise<void>;
+}
 
-    constructor(props) {
+interface DeleteResourceModalState {
+    dialogError: string | undefined;
+    dialogErrorDetail?: string;
+    inProgress: boolean;
+}
+
+export class DeleteResourceModal extends React.Component<DeleteResourceModalProps, DeleteResourceModalState> {
+    static contextType = DialogsContext;
+    context!: Dialogs;
+
+    constructor(props: DeleteResourceModalProps) {
         super(props);
 
         this.state = {
@@ -48,7 +66,7 @@ export class DeleteResourceModal extends React.Component {
         this.dialogErrorSet = this.dialogErrorSet.bind(this);
     }
 
-    delete(deleteHandler) {
+    delete(deleteHandler: () => Promise<void>): void {
         const Dialogs = this.context;
         this.setState({ inProgress: true });
         deleteHandler()
@@ -58,7 +76,7 @@ export class DeleteResourceModal extends React.Component {
                 });
     }
 
-    dialogErrorSet(text, detail) {
+    dialogErrorSet(text: string, detail: string): void {
         this.setState({ dialogError: text, dialogErrorDetail: detail });
     }
 
@@ -94,8 +112,13 @@ export class DeleteResourceModal extends React.Component {
                            </Button>
                        </>
                    }>
-                {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
-                <DescriptionList className={this.state.dialogError && "pf-v6-u-pt-md"} isHorizontal>
+                {this.state.dialogError &&
+                    <ModalError
+                        dialogError={this.state.dialogError}
+                        {...this.state.dialogErrorDetail && { dialogErrorDetail: this.state.dialogErrorDetail } }
+                    />
+                }
+                <DescriptionList className={this.state.dialogError ? "pf-v6-u-pt-md" : ""} isHorizontal>
                     {actionDescription || cockpit.format(_("Confirm this action"))}
                     {objectDescription && objectDescription.flatMap(row => row.value
                         ? <DescriptionListGroup id={`delete-resource-modal-${row.name.toLowerCase().replace(/ /g, "-")}`} key={row.name}>
@@ -109,17 +132,34 @@ export class DeleteResourceModal extends React.Component {
     }
 }
 
-DeleteResourceModal.propTypes = {
-    title: PropTypes.string.isRequired,
-    errorMessage: PropTypes.string.isRequired,
-    objectDescription: PropTypes.array,
-    deleteHandler: PropTypes.func.isRequired
-};
+interface DeleteResourceButtonProps {
+    objectId: string,
+    disabled: boolean,
+    overlayText: string,
+    actionName: string,
+    dialogProps: DeleteResourceModalProps,
+    isLink: boolean,
+    isInline: boolean,
+    isSecondary: boolean,
+    className: string,
+    isDropdownItem: boolean,
+}
 
-export const DeleteResourceButton = ({ objectId, disabled, overlayText, actionName, dialogProps, isLink, isInline, isSecondary, className, isDropdownItem }) => {
+export const DeleteResourceButton = ({
+    objectId,
+    disabled,
+    overlayText,
+    actionName,
+    dialogProps,
+    isLink,
+    isInline,
+    isSecondary,
+    className,
+    isDropdownItem
+}: DeleteResourceButtonProps) => {
     const Dialogs = useDialogs();
 
-    let variant = "danger";
+    let variant: ButtonProps["variant"] = "danger";
     if (isSecondary)
         variant = "secondary";
     if (isLink)
@@ -158,11 +198,4 @@ export const DeleteResourceButton = ({ objectId, disabled, overlayText, actionNa
     } else {
         return button;
     }
-};
-DeleteResourceButton.propTypes = {
-    objectId: PropTypes.string.isRequired,
-    disabled: PropTypes.bool,
-    overlayText: PropTypes.string,
-    actionName: PropTypes.string,
-    dialogProps: PropTypes.object.isRequired,
 };

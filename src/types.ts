@@ -53,6 +53,11 @@ export interface HypervisorCapabilities {
 
 /** Virtual Machines **/
 
+export interface VMError {
+    text: string;
+    detail: string;
+}
+
 export interface VMDisk {
     target: optString;
     driver: {
@@ -376,12 +381,16 @@ export interface VMDiskStat {
 }
 
 export interface VM extends VMXML {
+    isUi?: undefined; // To discriminate from UIVM, see below
+
     inactiveXML: VMXML;
 
     state: VMState;
     persistent: boolean;
     autostart: boolean;
     usagePolling?: boolean;
+
+    error?: VMError | null;
 
     // Unused
     ui: {
@@ -410,6 +419,20 @@ export interface VM extends VMXML {
     disksStats: Record<string, VMDiskStat> | undefined;
 
     snapshots: VMSnapshot[] | -1;
+}
+
+/** "Fake" VMs for the UI only **/
+
+export interface UIVM {
+    isUi: true;
+    connectionName: ConnectionName;
+    name: string;
+    error?: undefined;
+    expanded?: boolean;
+    openConsoleTab?: boolean;
+    createInProgress?: boolean;
+    installInProgress?: boolean; // XXX - never set?
+    downloadProgress?: string | undefined;
 }
 
 /** Storage Pools **/

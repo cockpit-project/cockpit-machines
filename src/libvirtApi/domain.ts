@@ -848,7 +848,7 @@ export async function domainGet({
         Object.assign(props, dumpxmlParams);
 
         const [domCaps] = await domainGetCapabilities({ connectionName, arch: dumpxmlParams.arch, model: dumpxmlParams.emulatedMachine });
-        // XXX - don't parse domCaps multiple times
+        // TODO - don't parse domCaps multiple times
         props.capabilities = {
             loaderElems: getDomainCapLoader(domCaps),
             maxVcpu: getDomainCapMaxVCPU(domCaps),
@@ -869,7 +869,7 @@ export async function domainGet({
 
         props.state = stateStr;
 
-        // XXX - change the code to make sure we construct a valid "VM" object.
+        // TODO - change the code to make sure we construct a valid "VM" object.
         store.dispatch(updateOrAddVm(props as VM));
 
         if (props.name)

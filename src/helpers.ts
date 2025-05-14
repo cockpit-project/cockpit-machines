@@ -23,21 +23,18 @@ import type {
     optString,
     ConnectionName,
     VM, VMState, VMDisk, VMInterface, VMRedirectedDevice, VMHostDevice,
+    UIVM,
     NodeDevice,
     StoragePool,
     HypervisorCapabilities,
 } from './types';
-
-import type {
-    UIVMState
-} from './components/create-vm-dialog/uiState';
 
 const _ = cockpit.gettext;
 
 export const LIBVIRT_SESSION_CONNECTION = 'session';
 export const LIBVIRT_SYSTEM_CONNECTION = 'system';
 
-export function dummyVmsFilter(vms: VM[], uiVms: UIVMState[]): UIVMState[] {
+export function dummyVmsFilter(vms: VM[], uiVms: UIVM[]): UIVM[] {
     return uiVms.filter(uiVm => vms.find(vm => vm.name == uiVm.name && vm.connectionName == uiVm.connectionName) === undefined);
 }
 
@@ -553,7 +550,6 @@ export function getBootOrderDevices(vm: VM): BootOrderDevice[] {
                     // Disk is default value, if device property is not defined
                     // See: www.libvirt.org/formatdomain.html#elementsDisks
                     const type = disk.device ? disk.device : "disk";
-                    // XXX - shouldn't we compare to "boot.type" here instead of "type"?
                     return disk.device == type || !disk.device;
                 });
 
@@ -920,7 +916,7 @@ export function getVmStoragePools(connectionName: ConnectionName): StoragePool[]
     return storagePools.filter(sp => sp && sp.name && sp.connectionName == connectionName && sp.active);
 }
 
-export function nicLookupByMAC(interfacesList: VMInterface[], mac: string): VMInterface {
+export function nicLookupByMAC(interfacesList: VMInterface[], mac: optString): VMInterface {
     return interfacesList.filter(iface => iface.mac == mac)[0];
 }
 
