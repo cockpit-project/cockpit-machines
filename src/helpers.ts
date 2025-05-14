@@ -501,11 +501,35 @@ export function findMatchingNodeDevices(hostdev: VMHostDevice, nodeDevices: Node
     return nodeDevs;
 }
 
-interface BootOrderDevice {
-    device: VMDisk | VMInterface | VMRedirectedDevice | VMHostDevice;
-    type: "disk" | "network" | "redirdev" | "hostdev";
+interface BootOrderDeviceBase {
     bootOrder: number | undefined;
 }
+
+interface BootOrderDeviceDisk extends BootOrderDeviceBase {
+    type: "disk";
+    device: VMDisk;
+}
+
+interface BootOrderDeviceInterface extends BootOrderDeviceBase {
+    type: "network";
+    device: VMInterface;
+}
+
+interface BootOrderDeviceRedirected extends BootOrderDeviceBase {
+    type: "redirdev";
+    device: VMRedirectedDevice;
+}
+
+interface BootOrderDeviceHost extends BootOrderDeviceBase {
+    type: "hostdev";
+    device: VMHostDevice;
+}
+
+export type BootOrderDevice =
+    BootOrderDeviceDisk |
+    BootOrderDeviceInterface |
+    BootOrderDeviceRedirected |
+    BootOrderDeviceHost;
 
 /**
  * Return and array of all devices which can possibly be assigned boot

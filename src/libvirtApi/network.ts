@@ -24,10 +24,8 @@
 import cockpit from 'cockpit';
 import store from '../store.js';
 
-import type {
-    ConnectionName,
-    Network
-} from '../types';
+import type { ConnectionName, Network } from '../types';
+import type { NetworkSpec } from '../libvirt-xml-create.js';
 
 import { updateOrAddNetwork } from '../actions/store-actions.js';
 import { getNetworkXML } from '../libvirt-xml-create.js';
@@ -57,21 +55,6 @@ export function networkAddStaticHostEntries(params: StaticHostEntriesSpec): Prom
     return networkUpdateStaticHostEntries({ ...params, commandFlag: Enum.VIR_NETWORK_UPDATE_COMMAND_ADD_LAST });
 }
 
-export interface NetworkCreateParams {
-    connectionName: ConnectionName,
-    name: string,
-    forwardMode: string,
-    device: string,
-    ipv4: string,
-    netmask: string,
-    ipv6: string,
-    prefix: string,
-    ipv4DhcpRangeStart: string,
-    ipv4DhcpRangeEnd: string,
-    ipv6DhcpRangeStart: string,
-    ipv6DhcpRangeEnd: string,
-}
-
 export function networkCreate({
     connectionName,
     name,
@@ -85,7 +68,7 @@ export function networkCreate({
     ipv4DhcpRangeEnd,
     ipv6DhcpRangeStart,
     ipv6DhcpRangeEnd
-} : NetworkCreateParams): Promise<void> {
+} : { connectionName: ConnectionName } & NetworkSpec): Promise<void> {
     const netXmlDesc = getNetworkXML({
         name,
         forwardMode,

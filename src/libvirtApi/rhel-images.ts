@@ -17,6 +17,8 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
+import type cockpit from 'cockpit';
+
 import * as python from "python.js";
 
 import downloadRhelImageScript from '../scripts/rhsm/download_file_and_report_progress.py';
@@ -32,34 +34,48 @@ import {
  * See https://access.redhat.com/management/api/rhsm
  */
 
-export function downloadRhelImage(accessToken, url, fileName, downloadDir, isSystem) {
+export function downloadRhelImage(
+    accessToken: string,
+    url: string,
+    fileName: string,
+    downloadDir: string,
+    isSystem: boolean
+): cockpit.Spawn<string> {
     logDebug(`Download rhel image: ${url}, ${fileName}, ${downloadDir}, ${isSystem}`);
 
-    const args = JSON.stringify({
+    const arg = JSON.stringify({
         accessToken,
         url,
         fileName,
         downloadDir
     });
 
-    return python.spawn(downloadRhelImageScript, args, { err: "message", superuser: isSystem && "require", environ: ['LC_ALL=C.UTF-8'] });
+    return python.spawn(downloadRhelImageScript, [arg], {
+        err: "message",
+        ...(isSystem ? { superuser: "require" } : { }),
+        environ: ['LC_ALL=C.UTF-8']
+    });
 }
 
-export function getAccessToken(offlineToken) {
+export function getAccessToken(offlineToken: string): cockpit.Spawn<string> {
     logDebug(`Get access token`);
 
-    const args = JSON.stringify({ offlineToken });
-    return python.spawn(getAccessTokenScript, args, { err: "message", environ: ['LC_ALL=C.UTF-8'] });
+    const arg = JSON.stringify({ offlineToken });
+    return python.spawn(getAccessTokenScript, [arg], { err: "message", environ: ['LC_ALL=C.UTF-8'] });
 }
 
-export function getRhelImageUrl(accessToken, rhelVersion, arch) {
+export function getRhelImageUrl(
+    accessToken: string,
+    rhelVersion: string,
+    arch: string
+): cockpit.Spawn<string> {
     logDebug(`Download rhel image, ${rhelVersion}, ${arch}`);
 
-    const args = JSON.stringify({
+    const arg = JSON.stringify({
         accessToken,
         rhelVersion,
         arch,
     });
 
-    return python.spawn(getRhelImageUrlScript, args, { err: "message", environ: ['LC_ALL=C.UTF-8'] });
+    return python.spawn(getRhelImageUrlScript, [arg], { err: "message", environ: ['LC_ALL=C.UTF-8'] });
 }
