@@ -189,7 +189,7 @@ const onAddTPM = (vm, onAddErrorNotification) => domainAddTPM({ connectionName: 
             resourceId: vm.id,
         }));
 
-const VmActions = ({ vm, vms, onAddErrorNotification, isDetailsPage }) => {
+const VmActions = ({ vm, vms, onAddErrorNotification, isDetailsPage = undefined }) => {
     const Dialogs = useDialogs();
     const [operationInProgress, setOperationInProgress] = useState(false);
     const [prevVmState, setPrevVmState] = useState(vm.state);
