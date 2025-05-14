@@ -1049,7 +1049,7 @@ class CreateVmModal extends React.Component {
             validate: false,
             vmName: '',
             suggestedVmName: '',
-            connectionName: LIBVIRT_SYSTEM_CONNECTION,
+            connectionName: this.props.systemSocketAvailable ? LIBVIRT_SYSTEM_CONNECTION : LIBVIRT_SESSION_CONNECTION,
             sourceType: defaultSourceType,
             source: '',
             os: undefined,
@@ -1324,12 +1324,13 @@ class CreateVmModal extends React.Component {
 
         const detailsTab = (
             <>
+                {this.props.systemSocketAvailable &&
                 <MachinesConnectionSelector
                     id='connection'
                     connectionName={this.state.connectionName}
                     onValueChanged={this.onValueChanged}
                     loggedUser={loggedUser}
-                    showInfoHelper />
+                    showInfoHelper />}
                 <SourceRow
                     connectionName={this.state.connectionName}
                     networks={networks.filter(network => network.connectionName == this.state.connectionName)}
@@ -1506,7 +1507,9 @@ export class CreateVmAction extends React.Component {
                                         downloadOSSupported={this.props.downloadOSSupported}
                                         unattendedSupported={this.props.unattendedSupported}
                                         unattendedUserLogin={this.props.unattendedUserLogin}
-                                        loggedUser={this.props.systemInfo.loggedUser} />);
+                                        loggedUser={this.props.systemInfo.loggedUser}
+                                        systemSocketAvailable={this.props.systemSocketAvailable}
+            />);
         };
 
         let testdata;
