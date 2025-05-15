@@ -37,7 +37,7 @@ interface MachinesConnectionSelectorProps {
     loggedUser: cockpit.UserInfo,
     connectionName: ConnectionName,
     id: string,
-    showInfoHelper: boolean,
+    showInfoHelper?: boolean,
 }
 
 export const MachinesConnectionSelector = ({

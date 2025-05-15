@@ -18,7 +18,10 @@
  */
 
 import React from 'react';
-import PropTypes from 'prop-types';
+
+import type { StoragePool, StorageVolume } from '../../types';
+import type { StorageVolumesUsage } from '../../helpers';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 
@@ -28,8 +31,15 @@ import cockpit from 'cockpit';
 
 const _ = cockpit.gettext;
 
-export class StorageVolumeDelete extends React.Component {
-    constructor(props) {
+interface StorageVolumeDeleteProps {
+    storagePool: StoragePool,
+    volumes: StorageVolume[],
+    isVolumeUsed: StorageVolumesUsage,
+    deleteErrorHandler: (text: string, detail: string) => void,
+}
+
+export class StorageVolumeDelete extends React.Component<StorageVolumeDeleteProps> {
+    constructor(props: StorageVolumeDeleteProps) {
         super(props);
         this.storageVolumeListDelete = this.storageVolumeListDelete.bind(this);
     }
@@ -74,9 +84,3 @@ export class StorageVolumeDelete extends React.Component {
         );
     }
 }
-StorageVolumeDelete.propTypes = {
-    storagePool: PropTypes.object.isRequired,
-    volumes: PropTypes.array.isRequired,
-    isVolumeUsed: PropTypes.object.isRequired,
-    deleteErrorHandler: PropTypes.func.isRequired,
-};
