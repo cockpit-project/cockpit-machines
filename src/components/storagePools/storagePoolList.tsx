@@ -17,7 +17,9 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
+
+import type { VM, StoragePool } from '../../types';
+
 import { Breadcrumb, BreadcrumbItem } from "@patternfly/react-core/dist/esm/components/Breadcrumb";
 import { Card, CardHeader, CardTitle } from '@patternfly/react-core/dist/esm/components/Card';
 import { Page, PageBreadcrumb, PageSection } from "@patternfly/react-core/dist/esm/components/Page";
@@ -32,15 +34,22 @@ import './storagePoolList.scss';
 
 const _ = cockpit.gettext;
 
-export class StoragePoolList extends React.Component {
-    shouldComponentUpdate(nextProps, _) {
+interface StoragePoolListProps {
+    storagePools: StoragePool[],
+    vms: VM[],
+    libvirtVersion: number,
+    loggedUser: cockpit.UserInfo,
+}
+
+export class StoragePoolList extends React.Component<StoragePoolListProps> {
+    shouldComponentUpdate(nextProps: StoragePoolListProps) {
         const storagePools = nextProps.storagePools;
         return !storagePools.find(pool => !pool.name);
     }
 
     render() {
         const { storagePools, loggedUser, vms, libvirtVersion } = this.props;
-        const sortFunction = (storagePoolA, storagePoolB) => storagePoolA.name.localeCompare(storagePoolB.name);
+        const sortFunction = (storagePoolA: StoragePool, storagePoolB: StoragePool) => storagePoolA.name.localeCompare(storagePoolB.name);
         const actions = (<CreateStoragePoolAction loggedUser={loggedUser} libvirtVersion={libvirtVersion} />);
 
         return (
@@ -87,8 +96,3 @@ export class StoragePoolList extends React.Component {
         );
     }
 }
-StoragePoolList.propTypes = {
-    storagePools: PropTypes.array.isRequired,
-    vms: PropTypes.array.isRequired,
-    libvirtVersion: PropTypes.number,
-};

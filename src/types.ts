@@ -53,6 +53,11 @@ export interface HypervisorCapabilities {
 
 /** Virtual Machines **/
 
+export interface DetailedError {
+    text: string;
+    detail: string;
+}
+
 export interface VMDisk {
     target: optString;
     driver: {
@@ -376,12 +381,16 @@ export interface VMDiskStat {
 }
 
 export interface VM extends VMXML {
+    isUi?: undefined; // To discriminate from UIVM, see below
+
     inactiveXML: VMXML;
 
     state: VMState;
     persistent: boolean;
     autostart: boolean;
     usagePolling?: boolean;
+
+    error?: DetailedError | null;
 
     // Unused
     ui: {
@@ -412,6 +421,20 @@ export interface VM extends VMXML {
     snapshots: VMSnapshot[] | -1;
 }
 
+/** "Fake" VMs for the UI only **/
+
+export interface UIVM {
+    isUi: true;
+    connectionName: ConnectionName;
+    name: string;
+    error?: undefined;
+    expanded?: boolean;
+    openConsoleTab?: boolean;
+    createInProgress?: boolean;
+    installInProgress?: boolean; // XXX - never set?
+    downloadProgress?: string | undefined;
+}
+
 /** Storage Pools **/
 
 export interface StorageVolume {
@@ -424,13 +447,16 @@ export interface StorageVolume {
     allocation: optString;
     physical: optString | number;
     format: optString;
+
+    // XXX - private for StoragePoolVolumesTab
+    selected?: boolean;
 }
 
 export interface StoragePool {
     connectionName: ConnectionName;
     id: string;
+    name: string;
     type: optString;
-    name: optString;
     uuid: optString;
     capacity: optString;
     available: optString;
@@ -457,6 +483,8 @@ export interface StoragePool {
     persistent?: boolean;
     autostart?: boolean;
     volumes?: StorageVolume[] | undefined;
+
+    error?: DetailedError | null | undefined;
 }
 
 export type StoragePoolCapabilites = Record<string, { supported: optString}>;
