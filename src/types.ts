@@ -34,7 +34,7 @@ export type optString = string | null | undefined;
 
 /** General **/
 
-export type ConnectionName = string;
+export type ConnectionName = "session" | "system";
 
 /** Capabilities **/
 
