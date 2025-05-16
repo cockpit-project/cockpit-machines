@@ -19,8 +19,6 @@
 
 // @cockpit-ts-relaxed
 
-import type { UIState } from './components/create-vm-dialog/uiState';
-
 import { combineReducers } from 'redux';
 import VMS_CONFIG from "./config.js";
 import { logDebug, isObjectEmpty } from './helpers.js';
@@ -49,6 +47,7 @@ import {
 import type {
     ConnectionName,
     VM,
+    UIVM,
     NodeDevice,
     NodeInterface,
     StoragePool,
@@ -396,6 +395,11 @@ function storagePools(state: StoragePool[] | undefined, action): StoragePool[] {
     default:
         return state;
     }
+}
+
+interface UIState {
+    notifications: unknown[]; // XXX - unused?
+    vms: UIVM[];
 }
 
 function ui(state: UIState | undefined, action): UIState {

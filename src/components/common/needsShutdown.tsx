@@ -1,3 +1,22 @@
+/*
+ * This file is part of Cockpit.
+ *
+ * Copyright (C) Red Hat, Inc.
+ *
+ * Cockpit is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * Cockpit is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import React from 'react';
 import cockpit from 'cockpit';
 import { Alert } from "@patternfly/react-core/dist/esm/components/Alert";
@@ -8,6 +27,8 @@ import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { PendingIcon } from "@patternfly/react-icons";
 
+import type { VM, VMDisk, VMInterface } from '../../types';
+
 import {
     getIfaceSourceName,
     nicLookupByMAC
@@ -17,11 +38,11 @@ const _ = cockpit.gettext;
 
 const NEEDS_SHUTDOWN_MESSAGE = _("Changes will take effect after shutting down the VM");
 
-function diskPropertyChanged(disk, inactiveDisk, property) {
+function diskPropertyChanged(disk: VMDisk, inactiveDisk: VMDisk, property: keyof VMDisk) {
     return disk[property] !== inactiveDisk[property];
 }
 
-export function needsShutdownDiskAccess(vm, diskTarget) {
+export function needsShutdownDiskAccess(vm: VM, diskTarget: string) {
     const inactiveDisk = vm.inactiveXML.disks[diskTarget];
     const disk = vm.disks[diskTarget];
 
@@ -30,34 +51,34 @@ export function needsShutdownDiskAccess(vm, diskTarget) {
          diskPropertyChanged(disk, inactiveDisk, "shareable"));
 }
 
-export function needsShutdownIfaceType(vm, iface) {
+export function needsShutdownIfaceType(vm: VM, iface: VMInterface) {
     const inactiveIface = nicLookupByMAC(vm.inactiveXML.interfaces, iface.mac);
 
     return inactiveIface && inactiveIface.type !== iface.type;
 }
 
-export function needsShutdownIfaceModel(vm, iface) {
+export function needsShutdownIfaceModel(vm: VM, iface: VMInterface) {
     const inactiveIface = nicLookupByMAC(vm.inactiveXML.interfaces, iface.mac);
 
     return inactiveIface && inactiveIface.model !== iface.model;
 }
 
-export function needsShutdownIfaceSource(vm, iface) {
+export function needsShutdownIfaceSource(vm: VM, iface: VMInterface) {
     const inactiveIface = nicLookupByMAC(vm.inactiveXML.interfaces, iface.mac);
 
     return inactiveIface &&
         getIfaceSourceName(inactiveIface) !== getIfaceSourceName(iface);
 }
 
-export function needsShutdownVcpu(vm) {
+export function needsShutdownVcpu(vm: VM) {
     return ((vm.vcpus.count !== vm.inactiveXML.vcpus.count) ||
             (vm.vcpus.max !== vm.inactiveXML.vcpus.max) ||
-            (vm.cpu.sockets !== vm.inactiveXML.cpu.sockets) ||
-            (vm.cpu.threads !== vm.inactiveXML.cpu.threads) ||
-            (vm.cpu.cores !== vm.inactiveXML.cpu.cores));
+            (vm.cpu.topology.sockets !== vm.inactiveXML.cpu.topology.sockets) ||
+            (vm.cpu.topology.threads !== vm.inactiveXML.cpu.topology.threads) ||
+            (vm.cpu.topology.cores !== vm.inactiveXML.cpu.topology.cores));
 }
 
-export function needsShutdownCpuModel(vm) {
+export function needsShutdownCpuModel(vm: VM) {
     /* The live xml shows what host-model expanded to when started
      * This is important since the expansion varies depending on the host and so needs to be tracked across migration
      */
@@ -71,19 +92,19 @@ export function needsShutdownCpuModel(vm) {
     return false;
 }
 
-export function needsShutdownWatchdog(vm) {
+export function needsShutdownWatchdog(vm: VM) {
     return vm.persistent && vm.state === "running" && vm.inactiveXML.watchdog.action !== vm.watchdog.action;
 }
 
-export function needsShutdownTpm(vm) {
+export function needsShutdownTpm(vm: VM) {
     return vm.persistent && vm.state === "running" && vm.inactiveXML.hasTPM !== vm.hasTPM;
 }
 
-export function needsShutdownSpice(vm) {
+export function needsShutdownSpice(vm: VM) {
     return vm.hasSpice !== vm.inactiveXML.hasSpice;
 }
 
-export function getDevicesRequiringShutdown(vm) {
+export function getDevicesRequiringShutdown(vm: VM) {
     if (!vm.persistent)
         return [];
 
@@ -130,7 +151,13 @@ export function getDevicesRequiringShutdown(vm) {
     return devices;
 }
 
-export const NeedsShutdownTooltip = ({ iconId, tooltipId }) => {
+export const NeedsShutdownTooltip = ({
+    iconId,
+    tooltipId
+}: {
+    iconId: string,
+    tooltipId: string,
+}) => {
     return (
         <Tooltip id={tooltipId} content={NEEDS_SHUTDOWN_MESSAGE}>
             <Icon status="custom">
@@ -140,10 +167,10 @@ export const NeedsShutdownTooltip = ({ iconId, tooltipId }) => {
     );
 };
 
-export const NeedsShutdownAlert = ({ idPrefix }) =>
+export const NeedsShutdownAlert = ({ idPrefix } : { idPrefix: string }) =>
     <Alert isInline id={`${idPrefix}-idle-message`} customIcon={<PendingIcon />} title={NEEDS_SHUTDOWN_MESSAGE} />;
 
-export const VmNeedsShutdown = ({ vm }) => {
+export const VmNeedsShutdown = ({ vm } : { vm: VM }) => {
     const devices = getDevicesRequiringShutdown(vm);
 
     if (devices.length === 0)
