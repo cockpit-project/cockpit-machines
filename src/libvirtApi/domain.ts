@@ -25,7 +25,6 @@ import cockpit from 'cockpit';
 import * as python from 'python.js';
 
 import store from '../store.js';
-import VMS_CONFIG from '../config.js';
 
 import type {
     optString,
@@ -99,7 +98,7 @@ export const domainCanResume = (vmState: VMState) => vmState == 'paused';
 export const domainIsRunning = (vmState: VMState) => domainCanReset(vmState);
 export const domainSerialConsoleCommand = ({ vm, alias } : { vm: VM, alias: string }) => {
     if (vm.displays.find(display => display.type == 'pty'))
-        return ['virsh', ...VMS_CONFIG.Virsh.connections[vm.connectionName].params, 'console', vm.name, alias || ''];
+        return ['virsh', '-c', `qemu:///${vm.connectionName}`, 'console', vm.name, alias || ''];
     else
         return false;
 };
