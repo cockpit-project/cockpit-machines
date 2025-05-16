@@ -45,22 +45,19 @@ import {
 } from "./libvirtApi/common.js";
 import { useEvent } from "hooks";
 import store from './store.js';
-import VMS_CONFIG from "./config.js";
 
 const _ = cockpit.gettext;
 
 superuser.reload_page_on_change();
 
-function canLoggedUserConnectSession (connectionName, loggedUser) {
-    return connectionName !== 'session' || loggedUser.name !== 'root';
-}
-
 async function unknownConnectionName() {
     const loggedUser = await cockpit.user();
-    return Object.getOwnPropertyNames(VMS_CONFIG.Virsh.connections).filter(
-        // The 'root' user does not have its own qemu:///session just qemu:///system
-        // https://bugzilla.redhat.com/show_bug.cgi?id=1045069
-        connectionName => canLoggedUserConnectSession(connectionName, loggedUser));
+    // The 'root' user does not have its own qemu:///session just qemu:///system
+    // https://bugzilla.redhat.com/show_bug.cgi?id=1045069
+    if (loggedUser.name == "root")
+        return ["system"];
+    else
+        return ["system", "session"];
 }
 
 export const App = () => {
