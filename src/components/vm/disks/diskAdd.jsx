@@ -38,9 +38,9 @@ import { FormHelper } from 'cockpit-components-form-helper.jsx';
 
 import { FileAutoComplete } from 'cockpit-components-file-autocomplete.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
-import { diskBusTypes, diskCacheModes, units, convertToUnit, getDefaultVolumeFormat, getNextAvailableTarget, getStorageVolumesUsage, getStorageVolumeDiskTarget, getVmStoragePools } from '../../../helpers.js';
+import { diskBusTypes, diskCacheModes, units, convertToUnit, getDefaultVolumeFormat, getNextAvailableTarget, getStorageVolumesUsage, getVmStoragePools } from '../../../helpers.js';
 import { VolumeCreateBody } from '../../storagePools/storageVolumeCreateBody.jsx';
-import { domainAttachDisk, domainGet, domainInsertDisk, domainIsRunning, domainUpdateDiskAttributes } from '../../../libvirtApi/domain.js';
+import { domainAttachDisk, domainGet, domainInsertDisk, domainIsRunning } from '../../../libvirtApi/domain.js';
 import { storagePoolGetAll } from '../../../libvirtApi/storagePool.js';
 import { storageVolumeCreateAndAttach } from '../../../libvirtApi/storageVolume.js';
 
@@ -77,13 +77,7 @@ function getDiskUsageMessage(vms, storagePool, volumeName) {
         return null;
 
     const vmsUsing = isVolumeUsed[volumeName].join(', ');
-    const volume = storagePool.volumes.find(vol => vol.name === volumeName);
-
-    let message = cockpit.format(_("This volume is already used by $0."), vmsUsing);
-    if (volume.format === "raw")
-        message += " " + _("Adding this disk will change its access mode to shared.");
-
-    return message;
+    return cockpit.format(_("This volume is already used by $0."), vmsUsing);
 }
 
 function getDefaultVolumeName(vmStoragePool, vm) {
@@ -749,9 +743,6 @@ const AddDiskModalFooter = ({
 
     const onAddClicked = () => {
         const hotplug = domainIsRunning(vm.state);
-        let storagePool;
-        let volume;
-        let isVolumeUsed;
 
         if (mode === CREATE_NEW) {
             // create new disk
@@ -770,11 +761,6 @@ const AddDiskModalFooter = ({
                 busType: diskParams.busType,
                 serial: diskParams.serial
             });
-        } else if (mode === USE_EXISTING) {
-            // use existing volume
-            storagePool = storagePools.find(pool => pool.name === storagePoolName);
-            volume = storagePool.volumes.find(vol => vol.name === diskParams.existingVolumeName);
-            isVolumeUsed = getStorageVolumesUsage(vms, storagePool);
         }
 
         return domainAttachDisk({
@@ -790,26 +776,10 @@ const AddDiskModalFooter = ({
             hotplug,
             vmId: vm.id,
             cacheMode: diskParams.cacheMode,
-            shareable: volume && volume.format === "raw" && isVolumeUsed[diskParams.existingVolumeName].length > 0,
+            shareable: false,
             busType: diskParams.busType,
             serial: diskParams.serial
-        })
-                .then(() => { // force reload of VM data, events are not reliable (i.e. for a down VM)
-                    const promises = [];
-                    if (mode !== CUSTOM_PATH && volume.format === "raw" && isVolumeUsed[diskParams.existingVolumeName]) {
-                        isVolumeUsed[diskParams.existingVolumeName].forEach(vmName => {
-                            const vm = vms.find(vm => vm.name === vmName);
-                            const diskTarget = getStorageVolumeDiskTarget(vm, storagePool, diskParams.existingVolumeName);
-
-                            promises.push(
-                                domainUpdateDiskAttributes({ connectionName: vm.connectionName, objPath: vm.id, readonly: false, shareable: true, target: diskTarget })
-                                        .catch(exc => dialogErrorSet(_("Disk settings could not be saved"), exc.message))
-                            );
-                        });
-
-                        return Promise.all(promises);
-                    }
-                });
+        });
     };
 
     const onClick = () => {

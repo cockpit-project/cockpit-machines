@@ -1501,7 +1501,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         self.goToMainPage()
         self.waitVmRow("subVmTest2")
         self.goToVmPage("subVmTest2")
-        # Adding a raw disk to multiple VMs should make it 'shared'
+        # Adding a raw disk to multiple VMs, should not make it 'shared'
         self.VMAddDiskDialog(
             self,
             vm_name="subVmTest2",
@@ -1509,27 +1509,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             volume_name='rawVol',
             mode='use-existing',
             expected_target='vdb',
-            expected_access="Writeable and shared",
-            volume_format='raw',
-        ).execute()
-
-        # QCOW2 disks cannot be 'shared', so even after adding it to multiple VMs,
-        # it's access should be only "writeable"
-        m.execute("""
-                  virsh attach-disk --domain subVmTest1 --source myPoolOne/qcowVol \
-                  --target vdg --targetbus virtio --config
-                  """)
-        self.VMAddDiskDialog(
-            self,
-            vm_name="subVmTest2",
-            pool_name='myPoolOne',
-            volume_name='qcowVol',
-            mode='use-existing',
-            expected_target='vdc',
             expected_access="Writeable",
-            volume_format='qcow2',
-            serial="UseExisting",
-            expected_serial="UseExisting",
+            volume_format='raw',
         ).execute()
 
     def testDetachDisk(self):
