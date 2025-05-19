@@ -213,7 +213,7 @@ export const VmDisksCard = ({ vm, vms, disks, renderCapacity, supportedDiskBusTy
         if (renderAccess) {
             const access = (
                 <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${idPrefixRow}-access`}>
-                    <FlexItem>{ disk.readonly ? _("Read-only") : disk.shareable ? _("Writeable and shared") : _("Writeable") }</FlexItem>
+                    <FlexItem>{ disk.readonly ? _("Read-only") : disk.shareable ? _("Concurrently writeable") : _("Writeable") }</FlexItem>
                     { needsShutdownDiskAccess(vm, disk.target) && <NeedsShutdownTooltip iconId={`${idPrefixRow}-access-tooltip`} tooltipId={`tip-${idPrefixRow}-access`} /> }
                 </Flex>
             );

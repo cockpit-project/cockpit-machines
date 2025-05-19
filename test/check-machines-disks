@@ -123,11 +123,10 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b.click("#vm-subVmTest1-disks-vdg-edit-dialog > .pf-v6-c-modal-box__close button")
         b.wait_not_present("#vm-subVmTest1-disks-vdg-edit-dialog")
 
-        # Test qcow2 disk has only readonly attribute configurable
+        # Test qcow2 disk has both read-only and writeable configurable
         openDialog("vdg")
         b.wait_visible("#vm-subVmTest1-disks-vdg-edit-readonly")
         b.wait_visible("#vm-subVmTest1-disks-vdg-edit-writable")
-        b.wait_not_present("#vm-subVmTest1-disks-vdg-edit-writable-shareable")
         cancel("vdg")
 
         # Test configuration of readonly and shareable attributes
@@ -153,18 +152,22 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b.wait_not_present("#vm-subVmTest1-disks-vde-access-tooltip")
         b.wait_not_present("#vm-subVmTest1-needs-shutdown")
 
-        # Test configuration of readonly and shareable attributes for Shut off VM
         openDialog("vde")
-        # Changing readonly
-        b.set_checked("#vm-subVmTest1-disks-vde-edit-writable-shareable", True)
+        # Changing to writeable
+        b.set_checked("#vm-subVmTest1-disks-vde-edit-writable", True)
         # Tooltip in dialog should not be present
         b.wait_not_present("#vm-subVmTest1-disks-vde-edit-idle-message")
 
         # Close dialog
         save("vde")
-        b.wait_in_text("#vm-subVmTest1-disks-vde-access", "Writeable and shared")
+        b.wait_in_text("#vm-subVmTest1-disks-vde-access", "Writeable")
         b.wait_not_present("#vm-subVmTest1-disks-vde-access-tooltip")
         b.wait_not_present("#vm-subVmTest1-needs-shutdown")
+
+        # Set "shareable" attribute externally
+        testlib.sit()
+        m.execute("virt-xml --edit target=vde --disk shareable=on subVmTest1")
+        b.wait_in_text("#vm-subVmTest1-disks-vde-access", "Concurrently writeable")
 
         b.wait_in_text("#vm-subVmTest1-disks-vde-bus", "virtio")
         b.wait_not_present("#vm-subVmTest1-disks-vde-cache")
@@ -221,7 +224,6 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         # As CDROMs are readonly access mode editing should be disabled
         b.wait_visible("#vm-subVmTest1-disks-hda-edit-readonly")
         b.wait_not_present("#vm-subVmTest1-disks-hda-edit-writable")
-        b.wait_not_present("#vm-subVmTest1-disks-hda-edit-writable-shareable")
         cancel("hda")
 
         # Start Vm
