@@ -114,7 +114,7 @@ const AccessRow = ({ onValueChanged, dialogValues, diskDevice, driverType, idPre
                        onValueChanged("access", event.currentTarget.value);
                    }}
                    label={_("Read-only")} />
-            {diskDevice != "cdrom" && <>
+            {diskDevice != "cdrom" &&
                 <Radio id={`${idPrefix}-writable`}
                        name="access"
                        value="writable"
@@ -122,17 +122,7 @@ const AccessRow = ({ onValueChanged, dialogValues, diskDevice, driverType, idPre
                        onChange={(event, _) => {
                            onValueChanged("access", event.currentTarget.value);
                        }}
-                       label={_("Writeable")} />
-                {(driverType === "raw") &&
-                <Radio id={`${idPrefix}-writable-shareable`}
-                       name="access"
-                       value="shareable"
-                       isChecked={dialogValues.access == "shareable" }
-                       onChange={(event, _) => {
-                           onValueChanged("access", event.currentTarget.value);
-                       }}
-                       label={_("Writeable and shared")} />}
-            </>}
+                       label={_("Writeable")} />}
         </FormGroup>
     );
 };
@@ -169,8 +159,6 @@ export class EditDiskModal extends React.Component {
         let access;
         if (props.disk.readonly)
             access = "readonly";
-        else if (props.disk.shareable)
-            access = "shareable";
         else
             access = "writable";
 
@@ -202,7 +190,7 @@ export class EditDiskModal extends React.Component {
             objPath: vm.id,
             target: disk.target,
             readonly: this.state.access == "readonly",
-            shareable: this.state.access == "shareable",
+            shareable: this.props.disk.shareable,
             busType: this.state.busType,
             cache: this.state.cacheMode,
             existingTargets
