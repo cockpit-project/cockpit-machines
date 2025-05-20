@@ -11,17 +11,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-13 03:33+0000\n"
-"PO-Revision-Date: 2025-01-10 08:38+0000\n"
+"POT-Creation-Date: 2025-05-19 03:39+0000\n"
+"PO-Revision-Date: 2025-05-16 04:47+0000\n"
 "Last-Translator: 김인수 <simmon@nplob.com>\n"
-"Language-Team: Korean <https://translate.fedoraproject.org/projects/cockpit-"
-"machines/main/ko/>\n"
+"Language-Team: Korean <https://translate.fedoraproject.org/projects/cockpit/"
+"cockpit-machines/ko/>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0\n"
-"X-Generator: Weblate 5.9.2\n"
+"X-Generator: Weblate 5.11.3\n"
 
 #: src/components/create-vm-dialog/createVmDialog.jsx:929
 msgid "$0 $1 available at default location"
@@ -98,12 +98,12 @@ msgid "Action"
 msgstr "동작"
 
 # ctx::sourcefile::Navigation Menu
-#: src/components/vms/hostvmslist.jsx:163
 #: src/components/storagePools/storagePoolList.jsx:71
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:176
-#: src/components/vm/disks/vmDisksCard.jsx:194
-#: src/components/vm/nics/vmNicsCard.jsx:421
 #: src/components/networks/networkList.jsx:71
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:176
+#: src/components/vm/nics/vmNicsCard.jsx:421
+#: src/components/vm/disks/vmDisksCard.jsx:194
+#: src/components/vms/hostvmslist.jsx:163
 msgid "Actions"
 msgstr "동작"
 
@@ -116,12 +116,12 @@ msgstr "활성화"
 msgid "Activate the storage pool to administer volumes"
 msgstr "볼륨을 관리하려면 저장소 풀을 활성화하세요"
 
+#: src/components/networks/networkOverviewTab.jsx:236
 #: src/components/vm/overview/watchdog.jsx:156
 #: src/components/vm/overview/vsock.jsx:194
-#: src/components/vm/hostdevs/hostDevAdd.jsx:232
-#: src/components/vm/disks/diskAdd.jsx:848
 #: src/components/vm/nics/nicAdd.jsx:220
-#: src/components/networks/networkOverviewTab.jsx:236
+#: src/components/vm/disks/diskAdd.jsx:848
+#: src/components/vm/hostdevs/hostDevAdd.jsx:232
 msgid "Add"
 msgstr "추가"
 
@@ -183,10 +183,10 @@ msgstr "이와 같은 디스크 추가하기는 접근 방법을 공유하기로
 msgid "Additional"
 msgstr "추가"
 
-#: src/components/vm/consoles/desktopConsole.jsx:47
-#: src/components/vm/nics/vmNicsCard.jsx:154
 #: src/components/networks/networkOverviewTab.jsx:144
 #: src/components/networks/networkOverviewTab.jsx:164
+#: src/components/vm/nics/vmNicsCard.jsx:154
+#: src/components/vm/consoles/desktopConsole.jsx:47
 msgid "Address"
 msgstr "주소"
 
@@ -219,7 +219,7 @@ msgstr "허용되는 문자: 기본 라틴 알파벳, 숫자와 제한된 구두
 msgid "Also delete all volumes inside this pool:"
 msgstr "또한 이 풀 안에 있는 모든 볼륨을 삭제합니다:"
 
-#: src/components/vm/disks/diskAdd.jsx:142 src/components/vm/nics/nicAdd.jsx:96
+#: src/components/vm/nics/nicAdd.jsx:96 src/components/vm/disks/diskAdd.jsx:142
 msgid "Always attach"
 msgstr "항상 연결"
 
@@ -256,8 +256,8 @@ msgid "Automation"
 msgstr "자동화"
 
 #: src/components/storagePools/storagePoolOverviewTab.jsx:71
-#: src/components/vm/overview/vmOverviewCard.jsx:194
 #: src/components/networks/networkOverviewTab.jsx:121
+#: src/components/vm/overview/vmOverviewCard.jsx:194
 msgid "Autostart"
 msgstr "자동 시작"
 
@@ -265,7 +265,7 @@ msgstr "자동 시작"
 msgid "Block device"
 msgstr "블록 장치"
 
-#: src/helpers.js:219
+#: src/helpers.ts:241
 msgid "Blocked"
 msgstr "차단됩니다"
 
@@ -282,13 +282,13 @@ msgstr "부팅 순서 설정을 저장 할 수 없습니다"
 #: src/components/vm/overview/bootOrder.jsx:137
 #: src/components/vm/overview/bootOrder.jsx:140
 #: src/components/vm/overview/bootOrder.jsx:154
+#: src/components/vm/disks/vmDisksCard.jsx:186
+#: src/components/vm/disks/diskEdit.jsx:87
+#: src/components/vm/disks/diskAdd.jsx:225
 #: src/components/vm/hostdevs/hostDevAdd.jsx:89
 #: src/components/vm/hostdevs/hostDevCard.jsx:99
 #: src/components/vm/hostdevs/hostDevCard.jsx:107
 #: src/components/vm/hostdevs/hostDevCard.jsx:245
-#: src/components/vm/disks/vmDisksCard.jsx:186
-#: src/components/vm/disks/diskEdit.jsx:87
-#: src/components/vm/disks/diskAdd.jsx:225
 msgid "Bus"
 msgstr "버스"
 
@@ -296,9 +296,9 @@ msgstr "버스"
 msgid "CD/DVD disc"
 msgstr "CD/DVD 디스크"
 
+#: src/components/common/needsShutdown.jsx:116
 #: src/components/vm/overview/vmOverviewCard.jsx:182
 #: src/components/vm/vmUsageCard.jsx:61
-#: src/components/common/needsShutdown.jsx:116
 msgid "CPU"
 msgstr "CPU"
 
@@ -315,31 +315,31 @@ msgstr "캐쉬"
 #: src/components/storagePools/createStoragePoolDialog.jsx:447
 #: src/components/storagePools/storagePoolDelete.jsx:205
 #: src/components/storagePools/storageVolumeCreate.jsx:119
-#: src/components/vm/overview/watchdog.jsx:196
-#: src/components/vm/overview/bootOrder.jsx:320
-#: src/components/vm/overview/memoryModal.jsx:161
-#: src/components/vm/overview/cpuModal.jsx:328
-#: src/components/vm/overview/vsock.jsx:238
-#: src/components/vm/overview/firmware.jsx:87
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:168
-#: src/components/vm/confirmDialog.jsx:56
-#: src/components/vm/vmReplaceSpiceDialog.jsx:136
-#: src/components/vm/hostdevs/hostDevAdd.jsx:237
-#: src/components/vm/vmMigrateDialog.jsx:199
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:288
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:112
-#: src/components/vm/vmCloneDialog.jsx:85
-#: src/components/vm/vmRenameDialog.jsx:73
-#: src/components/vm/disks/mediaEject.jsx:112
-#: src/components/vm/disks/diskEdit.jsx:263
-#: src/components/vm/disks/diskAdd.jsx:851
-#: src/components/vm/nics/nicEdit.jsx:194 src/components/vm/nics/nicAdd.jsx:223
-#: src/components/vm/vmEditDescriptionDialog.jsx:65
-#: src/components/vm/deleteDialog.jsx:175
 #: src/components/networks/networkOverviewTab.jsx:239
 #: src/components/networks/createNetworkDialog.jsx:437
 #: src/components/create-vm-dialog/createVmDialog.jsx:1479
 #: src/components/common/deleteResource.jsx:93
+#: src/components/vm/vmEditDescriptionDialog.jsx:65
+#: src/components/vm/vmMigrateDialog.jsx:199
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:168
+#: src/components/vm/confirmDialog.jsx:56
+#: src/components/vm/vmReplaceSpiceDialog.jsx:136
+#: src/components/vm/overview/memoryModal.jsx:161
+#: src/components/vm/overview/watchdog.jsx:196
+#: src/components/vm/overview/bootOrder.jsx:320
+#: src/components/vm/overview/firmware.jsx:87
+#: src/components/vm/overview/cpuModal.jsx:328
+#: src/components/vm/overview/vsock.jsx:238
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:112
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:288
+#: src/components/vm/deleteDialog.jsx:175
+#: src/components/vm/nics/nicEdit.jsx:194 src/components/vm/nics/nicAdd.jsx:223
+#: src/components/vm/vmCloneDialog.jsx:85
+#: src/components/vm/disks/diskEdit.jsx:263
+#: src/components/vm/disks/diskAdd.jsx:851
+#: src/components/vm/disks/mediaEject.jsx:112
+#: src/components/vm/vmRenameDialog.jsx:73
+#: src/components/vm/hostdevs/hostDevAdd.jsx:237
 msgid "Cancel"
 msgstr "취소"
 
@@ -434,12 +434,12 @@ msgid "Connecting"
 msgstr "연결 중"
 
 # ctx::sourcefile::Navigation Menu
-#: src/components/vms/hostvmslist.jsx:161
 #: src/components/storagePools/storagePoolList.jsx:69
-#: src/components/vm/overview/vmOverviewCard.jsx:158
 #: src/components/networks/networkList.jsx:68
 #: src/components/networks/createNetworkDialog.jsx:43
 #: src/components/common/machinesConnectionSelector.jsx:38
+#: src/components/vm/overview/vmOverviewCard.jsx:158
+#: src/components/vms/hostvmslist.jsx:161
 msgid "Connection"
 msgstr "연결"
 
@@ -485,14 +485,14 @@ msgstr "동적으로 와치독을 추가 할 수 없습니다"
 msgid "Could not revert to snapshot"
 msgstr "순간찍기로 전환 할 수 없습니다"
 
-#: src/helpers.js:216
+#: src/helpers.ts:238
 msgid "Crashed"
 msgstr "충돌"
 
 #: src/components/storagePools/createStoragePoolDialog.jsx:444
 #: src/components/storagePools/storageVolumeCreate.jsx:116
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:285
 #: src/components/networks/createNetworkDialog.jsx:434
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:285
 msgid "Create"
 msgstr "생성"
 
@@ -536,8 +536,8 @@ msgstr "신규 단순 볼륨 만들기"
 msgid "Create new virtual machine"
 msgstr "새로운 가상 머신 만들기"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:280
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:65
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:280
 msgid "Create snapshot"
 msgstr "순간찍기 생성"
 
@@ -622,13 +622,13 @@ msgstr "비활성화"
 #: src/components/storagePools/storagePoolDelete.jsx:202
 #: src/components/storagePools/storagePoolDelete.jsx:238
 #: src/components/storagePools/storagePoolDelete.jsx:248
-#: src/components/vm/vmActions.jsx:496 src/components/vm/vmActions.jsx:504
-#: src/components/vm/deleteDialog.jsx:172
 #: src/components/networks/network.jsx:163
 #: src/components/networks/network.jsx:166
 #: src/components/common/deleteResource.jsx:81
 #: src/components/common/deleteResource.jsx:135
 #: src/components/common/deleteResource.jsx:146
+#: src/components/vm/vmActions.jsx:496 src/components/vm/vmActions.jsx:504
+#: src/components/vm/deleteDialog.jsx:172
 msgid "Delete"
 msgstr "삭제"
 
@@ -669,9 +669,9 @@ msgstr ""
 msgid "Deleting shared directories is possible only when the guest is shut off"
 msgstr "공유된 디렉토리 삭제하기는 게스트가 종료된 경우에만 할 수 있습니다"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:63
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:114
 #: src/components/vm/vmEditDescriptionDialog.jsx:75
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:114
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:63
 msgid "Description"
 msgstr "설명"
 
@@ -700,19 +700,19 @@ msgstr "삭제를 시도하기 전에 VM에서 이 풀을 사용하는 디스크
 msgid "Details"
 msgstr "상세정보"
 
+#: src/components/networks/networkList.jsx:67
+#: src/components/networks/createNetworkDialog.jsx:176
 #: src/components/vm/overview/bootOrder.jsx:99
 #: src/components/vm/overview/bootOrder.jsx:106
 #: src/components/vm/overview/bootOrder.jsx:138
 #: src/components/vm/overview/bootOrder.jsx:141
+#: src/components/vm/disks/vmDisksCard.jsx:172
+#: src/components/vm/disks/diskAdd.jsx:350
+#: src/components/vm/disks/vmDiskColumns.jsx:43
 #: src/components/vm/hostdevs/hostDevAdd.jsx:88
 #: src/components/vm/hostdevs/hostDevAdd.jsx:123
 #: src/components/vm/hostdevs/hostDevCard.jsx:98
 #: src/components/vm/hostdevs/hostDevCard.jsx:244
-#: src/components/vm/disks/vmDisksCard.jsx:172
-#: src/components/vm/disks/diskAdd.jsx:350
-#: src/components/vm/disks/vmDiskColumns.jsx:43
-#: src/components/networks/networkList.jsx:67
-#: src/components/networks/createNetworkDialog.jsx:176
 msgid "Device"
 msgstr "장치"
 
@@ -783,7 +783,7 @@ msgid ""
 "Do not run this VM on the origin and destination hosts at the same time."
 msgstr "동시에 출발지와 대상 호스트에서 이 VM을 동작하지 마세요."
 
-#: src/helpers.js:271
+#: src/helpers.ts:293
 msgid "Do nothing"
 msgstr "아무 것도 하지 않기"
 
@@ -811,7 +811,7 @@ msgstr "VM $0를 위해 이미지 내려받기 중"
 msgid "Downloading: $0%"
 msgstr "내려받기 중: $0%"
 
-#: src/helpers.js:272
+#: src/helpers.ts:294
 msgid "Dump core"
 msgstr "덤프 코어"
 
@@ -819,12 +819,12 @@ msgstr "덤프 코어"
 msgid "Duration"
 msgstr "지속기간"
 
-#: src/helpers.js:217
+#: src/helpers.ts:239
 msgid "Dying"
 msgstr "종료 중"
 
-#: src/components/vm/disks/diskEdit.jsx:159
 #: src/components/vm/nics/vmNicsCard.jsx:454
+#: src/components/vm/disks/diskEdit.jsx:159
 msgid "Edit"
 msgstr "편집"
 
@@ -856,8 +856,8 @@ msgstr "임시 게스트의 네트워크 연결장치 편집하기는 허용되�
 msgid "Editing transient network interfaces is not allowed"
 msgstr "임시 네트워크 연결장치 편집하기는 허용되지 않습니다"
 
-#: src/components/vm/disks/mediaEject.jsx:105
 #: src/components/vm/disks/vmDiskColumns.jsx:194
+#: src/components/vm/disks/mediaEject.jsx:105
 msgid "Eject"
 msgstr "꺼내기"
 
@@ -1020,8 +1020,8 @@ msgstr "강제 종료"
 msgid "Force shut down $0?"
 msgstr "$0를 강제 종료 할까요?"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:201
 #: src/components/storagePools/storageVolumeCreateBody.jsx:76
+#: src/components/storagePools/createStoragePoolDialog.jsx:201
 #: src/components/vm/disks/vmDiskColumns.jsx:106
 msgid "Format"
 msgstr "포멧"
@@ -1044,8 +1044,8 @@ msgstr ""
 "가능한 디스크 이미지만 전송 될 것입니다. 사용하지 않은 저장소는 이전 후에도 "
 "원본에 남아 있습니다."
 
-#: src/components/vm/overview/vmOverviewCard.jsx:154
 #: src/components/networks/networkOverviewTab.jsx:112
+#: src/components/vm/overview/vmOverviewCard.jsx:154
 msgid "General"
 msgstr "일반"
 
@@ -1058,10 +1058,10 @@ msgid "Get a new RHSM token."
 msgstr "신규 RHSM 토큰 가져오기."
 
 #: src/components/storagePools/storageVolumeCreateBody.jsx:108
-#: src/components/vm/overview/memorySelectRow.jsx:89
-#: src/components/vm/disks/vmDisksCard.jsx:49
 #: src/components/create-vm-dialog/createVmDialog.jsx:912
 #: src/components/create-vm-dialog/createVmDialog.jsx:1019
+#: src/components/vm/overview/memorySelectRow.jsx:89
+#: src/components/vm/disks/vmDisksCard.jsx:49
 msgid "GiB"
 msgstr "GiB"
 
@@ -1073,7 +1073,7 @@ msgstr "VM 목록으로 이동"
 msgid "Good choice for desktop virtualization"
 msgstr "데스크탑 가상화를 위한 훌륭한 선택"
 
-#: src/helpers.js:268
+#: src/helpers.ts:290
 msgid "Gracefully shutdown"
 msgstr "우아한 종료"
 
@@ -1129,8 +1129,8 @@ msgstr "ID"
 msgid "IP"
 msgstr "IP"
 
-#: src/components/vm/nics/vmNicsCard.jsx:357
 #: src/components/networks/networkOverviewTab.jsx:254
+#: src/components/vm/nics/vmNicsCard.jsx:357
 msgid "IP address"
 msgstr "네트워크 주소"
 
@@ -1204,7 +1204,7 @@ msgstr ""
 msgid "Identifier may be silently truncated to $0 characters "
 msgstr "식별자는 $0 문자로 자동으로 잘릴 수 있습니다 "
 
-#: src/helpers.js:212
+#: src/helpers.ts:234
 msgid "Idle"
 msgstr "유휴"
 
@@ -1258,7 +1258,7 @@ msgstr "초기자"
 msgid "Initiator should not be empty"
 msgstr "초기자는 비워둘 수 없습니다"
 
-#: src/helpers.js:273
+#: src/helpers.ts:295
 msgid "Inject a non-maskable interrupt"
 msgstr "마스크 불가능 인터럽트 주입"
 
@@ -1392,16 +1392,16 @@ msgstr "위치"
 
 # translation auto-copied from project Satellite6 Hammer CLI Foreman, version
 # 6.1, document hammer-cli-foreman
-#: src/components/vm/overview/bootOrder.jsx:113
 #: src/components/networks/networkOverviewTab.jsx:70
+#: src/components/vm/overview/bootOrder.jsx:113
 msgid "MAC"
 msgstr "MAC"
 
 # auto translated by TM merge from project: RHOSP Director Installation and
 # Usage , version: 11-Korean, DocId: master
+#: src/components/networks/networkOverviewTab.jsx:247
 #: src/components/vm/nics/vmNicsCard.jsx:351
 #: src/components/vm/nics/nicEdit.jsx:49 src/components/vm/nics/nicAdd.jsx:70
-#: src/components/networks/networkOverviewTab.jsx:247
 msgid "MAC address"
 msgstr "MAC 주소"
 
@@ -1475,9 +1475,9 @@ msgstr "미디어는 $0에서 꺼낼 수 없습니다"
 msgid "Media will be ejected from $0:"
 msgstr "미디어는 $0에서 꺼냅니다:"
 
+#: src/components/create-vm-dialog/createVmDialog.jsx:897
 #: src/components/vm/overview/vmOverviewCard.jsx:177
 #: src/components/vm/vmUsageCard.jsx:53
-#: src/components/create-vm-dialog/createVmDialog.jsx:897
 msgid "Memory"
 msgstr "메모리"
 
@@ -1503,14 +1503,14 @@ msgid "Memory state path"
 msgstr "메모리 상태 경로"
 
 #: src/components/storagePools/storageVolumeCreateBody.jsx:106
-#: src/components/vm/overview/memorySelectRow.jsx:87
 #: src/components/create-vm-dialog/createVmDialog.jsx:910
 #: src/components/create-vm-dialog/createVmDialog.jsx:1017
+#: src/components/vm/overview/memorySelectRow.jsx:87
 msgid "MiB"
 msgstr "MiB"
 
-#: src/components/vm/vmActions.jsx:436
 #: src/components/vm/vmMigrateDialog.jsx:196
+#: src/components/vm/vmActions.jsx:436
 msgid "Migrate"
 msgstr "이전"
 
@@ -1527,8 +1527,8 @@ msgstr "이전이 실패했습니다"
 msgid "Mode"
 msgstr "모드"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:197
 #: src/components/vm/nics/nicBody.jsx:50
+#: src/components/vm/hostdevs/hostDevCard.jsx:197
 msgid "Model"
 msgstr "방식"
 
@@ -1558,17 +1558,17 @@ msgstr "$0에 NAT"
 msgid "NIC $0 of VM $1 failed to change state"
 msgstr "VM $1의 NIC $0은 상태 변경에 실패했습니다"
 
-#: src/components/vms/hostvmslist.jsx:160
-#: src/components/storagePools/createStoragePoolDialog.jsx:47
-#: src/components/storagePools/storagePoolList.jsx:67
-#: src/components/storagePools/storagePoolVolumesTab.jsx:78
 #: src/components/storagePools/storageVolumeCreateBody.jsx:38
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:50
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:104
-#: src/components/vm/vmCloneDialog.jsx:95
+#: src/components/storagePools/createStoragePoolDialog.jsx:47
+#: src/components/storagePools/storagePoolVolumesTab.jsx:78
+#: src/components/storagePools/storagePoolList.jsx:67
 #: src/components/networks/networkList.jsx:66
 #: src/components/networks/createNetworkDialog.jsx:142
 #: src/components/create-vm-dialog/createVmDialog.jsx:268
+#: src/components/vm/snapshots/vmSnapshotsCard.jsx:104
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:50
+#: src/components/vm/vmCloneDialog.jsx:95
+#: src/components/vms/hostvmslist.jsx:160
 msgid "Name"
 msgstr "이름"
 
@@ -1585,8 +1585,8 @@ msgid "Name contains invalid characters"
 msgstr "이름에 잘못된 문자가 있습니다"
 
 #: src/components/storagePools/storageVolumeCreate.jsx:76
-#: src/components/vm/vmCloneDialog.jsx:47
 #: src/components/create-vm-dialog/createVmDialog.jsx:197
+#: src/components/vm/vmCloneDialog.jsx:47
 msgid "Name must not be empty"
 msgstr "이름을 입력하셔야 합니다"
 
@@ -1729,7 +1729,7 @@ msgstr "원인 개체 없음"
 msgid "No snapshots defined for this VM"
 msgstr "이 VM을 위해 정의된 순간찍기가 없음"
 
-#: src/helpers.js:220
+#: src/helpers.ts:242
 msgid "No state"
 msgstr "상태 없음"
 
@@ -1775,7 +1775,7 @@ msgstr ""
 msgid "None"
 msgstr "없음"
 
-#: src/helpers.js:250
+#: src/helpers.ts:272
 msgid "None (isolated network)"
 msgstr "없음(격리된 네트워크)"
 
@@ -1803,13 +1803,13 @@ msgstr ""
 "하나 이상의 선택된 볼륨이 도메인에서 사용되고 있습니다. 먼저 디스크를 분리하"
 "여 볼륨을 삭제하십시오."
 
-#: src/components/vm/overview/bootOrder.jsx:370
 #: src/components/vm/overview/memoryModal.jsx:147
+#: src/components/vm/overview/bootOrder.jsx:370
 #: src/components/vm/nics/nicEdit.jsx:46
 msgid "Only editable when the guest is shut off"
 msgstr "게스트가 종료된 경우에만 편집할 수 있습니다"
 
-#: src/helpers.js:248
+#: src/helpers.ts:270
 msgid "Open"
 msgstr "열기"
 
@@ -1841,10 +1841,10 @@ msgstr "PCI"
 msgid "Parent snapshot"
 msgstr "상위 순간찍기"
 
+#: src/components/vm/deleteDialog.jsx:61
+#: src/components/vm/disks/diskEdit.jsx:43
 #: src/components/vm/hostdevs/hostDevCard.jsx:123
 #: src/components/vm/hostdevs/hostDevCard.jsx:127
-#: src/components/vm/disks/diskEdit.jsx:43
-#: src/components/vm/deleteDialog.jsx:61
 msgid "Path"
 msgstr "경로"
 
@@ -1868,11 +1868,11 @@ msgstr "디렉토리의 경로"
 msgid "Path to file on host's file system"
 msgstr "호스트 파일 시스템에서 파일의 경로"
 
-#: src/components/vm/vmActions.jsx:220 src/helpers.js:270
+#: src/helpers.ts:292 src/components/vm/vmActions.jsx:220
 msgid "Pause"
 msgstr "일시정지"
 
-#: src/helpers.js:213
+#: src/helpers.ts:235
 msgid "Paused"
 msgstr "일시정지"
 
@@ -1884,7 +1884,7 @@ msgstr "매개변수(기본값)"
 msgid "Permissions denied for disk images in home directories"
 msgstr "홈 디렉토리에서 디스크 이미지용 권한이 거부됨"
 
-#: src/components/vm/disks/diskAdd.jsx:139 src/components/vm/nics/nicAdd.jsx:93
+#: src/components/vm/nics/nicAdd.jsx:93 src/components/vm/disks/diskAdd.jsx:139
 msgid "Persistence"
 msgstr "고집"
 
@@ -1926,10 +1926,10 @@ msgid "Please start the virtual machine to access its console."
 msgstr "가상 머신을 시작하여 콘솔에 접근하세요."
 
 #: src/components/vm/overview/bootOrder.jsx:101
-#: src/components/vm/disks/mediaEject.jsx:87
+#: src/components/vm/deleteDialog.jsx:69
 #: src/components/vm/disks/diskAdd.jsx:153
 #: src/components/vm/disks/vmDiskColumns.jsx:45
-#: src/components/vm/deleteDialog.jsx:69
+#: src/components/vm/disks/mediaEject.jsx:87
 msgid "Pool"
 msgstr "풀"
 
@@ -1951,12 +1951,12 @@ msgstr "풀 볼륨은 VM에서 사용됩니다 "
 
 #: src/components/vm/overview/bootOrder.jsx:104
 #: src/components/vm/overview/bootOrder.jsx:120
-#: src/components/vm/disks/vmDiskColumns.jsx:48
 #: src/components/vm/nics/vmNicsCard.jsx:162
+#: src/components/vm/disks/vmDiskColumns.jsx:48
 msgid "Port"
 msgstr "포트"
 
-#: src/helpers.js:269
+#: src/helpers.ts:291
 msgid "Power off"
 msgstr "전원 종료"
 
@@ -1988,7 +1988,7 @@ msgstr ""
 "이전에 촬영한 순간찍기를 사용하면 문제가 발생했을 때 이전 상태로 돌아갈 수 있"
 "습니다"
 
-#: src/helpers.js:253
+#: src/helpers.ts:275
 msgid "Private"
 msgstr "비공개"
 
@@ -2006,8 +2006,8 @@ msgstr "프로파일"
 
 #: src/components/vm/overview/bootOrder.jsx:100
 #: src/components/vm/overview/bootOrder.jsx:161
-#: src/components/vm/hostdevs/hostDevCard.jsx:114
 #: src/components/vm/disks/vmDiskColumns.jsx:44
+#: src/components/vm/hostdevs/hostDevCard.jsx:114
 msgid "Protocol"
 msgstr "프로토콜"
 
@@ -2045,7 +2045,7 @@ msgstr "범위"
 #: src/components/vm/disks/vmDisksCard.jsx:216
 #: src/components/vm/disks/diskEdit.jsx:116
 msgid "Read-only"
-msgstr "읽기 전용"
+msgstr "읽기-전용"
 
 #: src/components/vm/vmActions.jsx:265 src/components/vm/vmActions.jsx:349
 #: src/components/vm/vmActions.jsx:354
@@ -2072,17 +2072,17 @@ msgstr "원격 URL"
 msgid "Remote viewer details"
 msgstr "원격 뷰어 세부 정보"
 
-#: src/components/vm/overview/watchdog.jsx:193
-#: src/components/vm/overview/vsock.jsx:235
+#: src/components/networks/networkOverviewTab.jsx:72
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:58
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:67
-#: src/components/vm/hostdevs/hostDevCard.jsx:251
-#: src/components/vm/hostdevs/hostDevCard.jsx:257
-#: src/components/vm/disks/vmDiskColumns.jsx:147
-#: src/components/vm/disks/vmDiskColumns.jsx:213
+#: src/components/vm/overview/watchdog.jsx:193
+#: src/components/vm/overview/vsock.jsx:235
 #: src/components/vm/nics/vmNicsCard.jsx:472
 #: src/components/vm/nics/vmNicsCard.jsx:482
-#: src/components/networks/networkOverviewTab.jsx:72
+#: src/components/vm/disks/vmDiskColumns.jsx:147
+#: src/components/vm/disks/vmDiskColumns.jsx:213
+#: src/components/vm/hostdevs/hostDevCard.jsx:251
+#: src/components/vm/hostdevs/hostDevCard.jsx:257
 msgid "Remove"
 msgstr "제거"
 
@@ -2130,8 +2130,9 @@ msgstr "VM $0 이름변경"
 msgid "Replace"
 msgstr "교체"
 
-#: src/components/vm/vmActions.jsx:447 src/components/vm/usesSpice.jsx:38
+#: src/components/vm/vmActions.jsx:447
 #: src/components/vm/vmReplaceSpiceDialog.jsx:125
+#: src/components/vm/usesSpice.jsx:38
 msgid "Replace SPICE devices"
 msgstr "SPICE 장치를 교체합니다"
 
@@ -2147,7 +2148,7 @@ msgstr "선택한 VM에서 SPICE 장치를 교체합니다."
 msgid "Replace SPICE on the virtual machine."
 msgstr "가상 장비에서 SPICE를 교체합니다."
 
-#: src/helpers.js:267
+#: src/helpers.ts:289
 msgid "Reset"
 msgstr "초기화"
 
@@ -2160,8 +2161,8 @@ msgstr "네트워크(SLIRP-기반 모의)와 PCI 장치 할당 제한"
 msgid "Resume"
 msgstr "다시 시작"
 
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:102
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:188
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:102
 msgid "Revert"
 msgstr "되돌리기"
 
@@ -2198,12 +2199,12 @@ msgstr "행 선택"
 msgid "Run"
 msgstr "실행"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:107
 #: src/components/networks/networkOverviewTab.jsx:126
+#: src/components/vm/overview/vmOverviewCard.jsx:107
 msgid "Run when host boots"
 msgstr "호스트 부팅 시 실행"
 
-#: src/helpers.js:211
+#: src/helpers.ts:233
 msgid "Running"
 msgstr "작동중"
 
@@ -2239,14 +2240,14 @@ msgstr "SPICE 포트"
 msgid "SSH keys"
 msgstr "SSH 키"
 
+#: src/components/vm/vmEditDescriptionDialog.jsx:62
+#: src/components/vm/overview/memoryModal.jsx:158
 #: src/components/vm/overview/watchdog.jsx:156
 #: src/components/vm/overview/bootOrder.jsx:317
-#: src/components/vm/overview/memoryModal.jsx:158
-#: src/components/vm/overview/vsock.jsx:194
 #: src/components/vm/overview/firmware.jsx:84
-#: src/components/vm/disks/diskEdit.jsx:260
+#: src/components/vm/overview/vsock.jsx:194
 #: src/components/vm/nics/nicEdit.jsx:191
-#: src/components/vm/vmEditDescriptionDialog.jsx:62
+#: src/components/vm/disks/diskEdit.jsx:260
 msgid "Save"
 msgstr "저장"
 
@@ -2310,8 +2311,8 @@ msgstr "게스트와 호스트 디텍토리를 공유합니다"
 msgid "Shared directories"
 msgstr "공유 디렉토리"
 
-#: src/components/vm/vmDetailsPage.jsx:197
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:174
+#: src/components/vm/vmDetailsPage.jsx:197
 msgid "Shared host directories need to be manually mounted inside the VM"
 msgstr "공유 호스트 디렉토리는 VM 안에세 수동으로 적재가 필요합니다"
 
@@ -2345,7 +2346,7 @@ msgstr "종료"
 msgid "Shut down $0?"
 msgstr "$0를 종료 할까요?"
 
-#: src/helpers.js:215
+#: src/helpers.ts:237
 msgid "Shut off"
 msgstr "종료"
 
@@ -2353,13 +2354,13 @@ msgstr "종료"
 msgid "Shut off the VM in order to edit firmware configuration"
 msgstr "펌웨어 구성을 편집하려면 VM을 종료하십시오"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:138 src/helpers.js:214
+#: src/helpers.ts:236 src/components/vm/snapshots/vmSnapshotsCard.jsx:138
 msgid "Shutting down"
 msgstr "종료 중"
 
-#: src/components/storagePools/storagePoolList.jsx:68
-#: src/components/storagePools/storagePoolVolumesTab.jsx:78
 #: src/components/storagePools/storageVolumeCreateBody.jsx:90
+#: src/components/storagePools/storagePoolVolumesTab.jsx:78
+#: src/components/storagePools/storagePoolList.jsx:68
 msgid "Size"
 msgstr "크기"
 
@@ -2400,12 +2401,12 @@ msgid "Some configuration changes only take effect after a fresh boot:"
 msgstr "몇 가지 구성은 일반적인 부팅 후에만 영향을 미칩니다:"
 
 #: src/components/storagePools/storagePoolOverviewTab.jsx:51
-#: src/components/vm/hostdevs/hostDevCard.jsx:217
+#: src/components/vm/nics/vmNicsCard.jsx:407
+#: src/components/vm/nics/nicBody.jsx:196
 #: src/components/vm/disks/vmDisksCard.jsx:190
 #: src/components/vm/disks/diskAdd.jsx:592
 #: src/components/vm/disks/diskAdd.jsx:628
-#: src/components/vm/nics/vmNicsCard.jsx:407
-#: src/components/vm/nics/nicBody.jsx:196
+#: src/components/vm/hostdevs/hostDevCard.jsx:217
 msgid "Source"
 msgstr "소스"
 
@@ -2461,12 +2462,12 @@ msgstr "시작됨"
 msgid "Startup"
 msgstr "시작"
 
-#: src/components/vms/hostvmslist.jsx:119
-#: src/components/vms/hostvmslist.jsx:162
 #: src/components/storagePools/storagePoolList.jsx:70
+#: src/components/networks/networkList.jsx:70
 #: src/components/vm/overview/vmOverviewCard.jsx:163
 #: src/components/vm/nics/vmNicsCard.jsx:412
-#: src/components/networks/networkList.jsx:70
+#: src/components/vms/hostvmslist.jsx:119
+#: src/components/vms/hostvmslist.jsx:162
 msgid "State"
 msgstr "상태"
 
@@ -2478,8 +2479,8 @@ msgstr "고정 호스트 항목"
 msgid "Static host from DHCP could not be removed"
 msgstr "DHCP에서 고정 호스트가 제거 될 수 없습니다"
 
-#: src/components/vm/vmMigrateDialog.jsx:92
 #: src/components/create-vm-dialog/createVmDialog.jsx:977
+#: src/components/vm/vmMigrateDialog.jsx:92
 msgid "Storage"
 msgstr "저장소"
 
@@ -2544,7 +2545,7 @@ msgid ""
 "Storage volumes must be shared between this host and the destination host."
 msgstr "저장소 볼륨은 이 호스트와 대상 호스트 사이에서 공유되어야 합니다."
 
-#: src/helpers.js:218
+#: src/helpers.ts:240
 msgid "Suspended (PM)"
 msgstr "일시 정지됩니다(PM)"
 
@@ -2554,7 +2555,7 @@ msgstr "이 장비를 사용하도록 계속해서 VNC로 전환합니다."
 
 # translation auto-copied from project virt-manager, version 0.10.0, document
 # virt-manager
-#: src/helpers.js:207
+#: src/helpers.ts:229
 msgid "System"
 msgstr "시스템"
 
@@ -2571,8 +2572,8 @@ msgid "Table of selectable host devices"
 msgstr "선택 할 수 있는 호스트 장치의 표"
 
 #: src/components/vm/overview/bootOrder.jsx:155
-#: src/components/vm/hostdevs/hostDevCard.jsx:109
 #: src/components/vm/disks/vmDiskColumns.jsx:151
+#: src/components/vm/hostdevs/hostDevCard.jsx:109
 msgid "Target"
 msgstr "대상"
 
@@ -2597,9 +2598,9 @@ msgstr "임시 이전"
 msgid "The VM $0 is running and will be forced off before deletion."
 msgstr "VM $0는 실행되고 있으므로 삭제 전 강제로 종료됩니다."
 
-#: src/components/vm/disks/vmDiskColumns.jsx:221
 #: src/components/vm/nics/vmNicsCard.jsx:483
 #: src/components/vm/nics/vmNicsCard.jsx:491
+#: src/components/vm/disks/vmDiskColumns.jsx:221
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr "이 장치를 분리하려면 VM이 실행 중이거나 종료되어 있어야합니다"
 
@@ -2729,9 +2730,9 @@ msgstr "문제 해결"
 #: src/components/vm/overview/bootOrder.jsx:153
 #: src/components/vm/overview/bootOrder.jsx:160
 #: src/components/vm/overview/bootOrder.jsx:166
+#: src/components/vm/nics/vmNicsCard.jsx:325
 #: src/components/vm/hostdevs/hostDevAdd.jsx:47
 #: src/components/vm/hostdevs/hostDevCard.jsx:177
-#: src/components/vm/nics/vmNicsCard.jsx:325
 msgid "Type"
 msgstr "유형"
 
@@ -2847,7 +2848,7 @@ msgstr "사용자 비밀번호"
 msgid "User password must not be empty when user login is set"
 msgstr "사용자 비밀번호는 사용자 로그인 설정 할 때에 비워두지 않아야 합니다"
 
-#: src/helpers.js:208
+#: src/helpers.ts:230
 msgid "User session"
 msgstr "사용자 세션"
 
@@ -2958,12 +2959,12 @@ msgstr "제조사"
 msgid "Vendor support ended $0"
 msgstr "제조사 지원은 $0에 종료됩니다"
 
-#: src/components/vms/hostvmslist.jsx:155
-#: src/components/vms/hostvmslist.jsx:157
 #: src/components/storagePools/storagePoolList.jsx:52
+#: src/components/networks/networkList.jsx:51
 #: src/components/vm/vmDetailsPage.jsx:95
 #: src/components/vm/vmDetailsPage.jsx:248
-#: src/components/networks/networkList.jsx:51 src/manifest.json:0
+#: src/components/vms/hostvmslist.jsx:155
+#: src/components/vms/hostvmslist.jsx:157 src/manifest.json:0
 msgid "Virtual machines"
 msgstr "가상 머신"
 
@@ -2993,12 +2994,12 @@ msgstr ""
 msgid "Virtualization service (libvirt) is not active"
 msgstr "가상화 서비스(libvirt)가 활성화되어 있지 않습니다"
 
+#: src/components/create-vm-dialog/createVmDialog.jsx:989
 #: src/components/vm/overview/bootOrder.jsx:102
-#: src/components/vm/disks/mediaEject.jsx:91
+#: src/components/vm/deleteDialog.jsx:66
 #: src/components/vm/disks/diskAdd.jsx:119
 #: src/components/vm/disks/vmDiskColumns.jsx:46
-#: src/components/vm/deleteDialog.jsx:66
-#: src/components/create-vm-dialog/createVmDialog.jsx:989
+#: src/components/vm/disks/mediaEject.jsx:91
 msgid "Volume"
 msgstr "볼륨"
 
@@ -3023,8 +3024,8 @@ msgstr "Vsock"
 msgid "WWPN"
 msgstr "WWPN"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:200
 #: src/components/common/needsShutdown.jsx:120
+#: src/components/vm/overview/vmOverviewCard.jsx:200
 msgid "Watchdog"
 msgstr "와치독"
 
@@ -3070,63 +3071,63 @@ msgstr "추가"
 msgid "add entry"
 msgstr "항목 추가"
 
-#: src/helpers.js:238
+#: src/helpers.ts:260
 msgid "bridge"
 msgstr "브릿지"
 
-#: src/helpers.js:224
+#: src/helpers.ts:246
 msgid "cdrom"
 msgstr "cdrom"
 
-#: src/components/vm/overview/cpuModal.jsx:311 src/helpers.js:231
+#: src/helpers.ts:253 src/components/vm/overview/cpuModal.jsx:311
 msgid "custom"
 msgstr "사용자 지정"
 
-#: src/helpers.js:236
+#: src/helpers.ts:258
 msgid "direct"
 msgstr "직접"
 
-#: src/helpers.js:203
+#: src/helpers.ts:225
 msgid "disabled"
 msgstr "비활성화됨"
 
-#: src/helpers.js:223 src/helpers.js:226
+#: src/helpers.ts:245 src/helpers.ts:248
 msgid "disk"
 msgstr "디스크"
 
-#: src/helpers.js:264
+#: src/helpers.ts:286
 msgid "down"
 msgstr "아래로"
 
 #: src/components/vm/overview/watchdog.jsx:253
-#: src/components/vm/overview/bootOrder.jsx:363
 #: src/components/vm/overview/vmOverviewCard.jsx:117
 #: src/components/vm/overview/vmOverviewCard.jsx:125
+#: src/components/vm/overview/bootOrder.jsx:363
 #: src/components/vm/overview/vsock.jsx:287
 msgid "edit"
 msgstr "편집"
 
-#: src/helpers.js:204
+#: src/helpers.ts:226
 msgid "enabled"
 msgstr "활성화됨"
 
-#: src/helpers.js:240
+#: src/helpers.ts:262
 msgid "ethernet"
 msgstr "이더넷"
 
-#: src/helpers.js:232
+#: src/helpers.ts:254
 msgid "host"
 msgstr "호스트"
 
-#: src/helpers.js:228
+#: src/helpers.ts:250
 msgid "host device"
 msgstr "호스트 장치"
 
-#: src/helpers.js:233
+#: src/helpers.ts:255
 msgid "host passthrough"
 msgstr "호스트 통과"
 
-#: src/helpers.js:241
+#: src/helpers.ts:263
 msgid "hostdev"
 msgstr "hostdev"
 
@@ -3167,17 +3168,17 @@ msgstr "iso"
 msgid "libvirt"
 msgstr "libvirt"
 
-#: src/helpers.js:242
+#: src/helpers.ts:264
 msgid "mcast"
 msgstr "mcast"
 
-#: src/components/vm/nics/nicBody.jsx:112
 #: src/components/common/infoPopover.jsx:34
+#: src/components/vm/nics/nicBody.jsx:112
 msgid "more info"
 msgstr "더 많은 정보"
 
-#: src/components/vm/vmDetailsPage.jsx:206
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:184
+#: src/components/vm/vmDetailsPage.jsx:206
 msgid "mount point: The mount point inside the guest"
 msgstr "적재점: 게스트 안에서 적재점"
 
@@ -3185,13 +3186,13 @@ msgstr "적재점: 게스트 안에서 적재점"
 msgid "mount tag: The tag associated to the exported mount point"
 msgstr "적재 태그: 내보낸 적재점과 연결된 태그"
 
-#: src/helpers.js:225 src/helpers.js:237
+#: src/helpers.ts:247 src/helpers.ts:259
 msgid "network"
 msgstr "네트워크"
 
-#: src/components/storagePools/storagePoolOverviewTab.jsx:67
+#: src/helpers.ts:282 src/components/storagePools/storagePoolOverviewTab.jsx:67
 #: src/components/storagePools/storagePoolOverviewTab.jsx:72
-#: src/components/networks/networkOverviewTab.jsx:117 src/helpers.js:260
+#: src/components/networks/networkOverviewTab.jsx:117
 msgid "no"
 msgstr "아니요"
 
@@ -3199,9 +3200,9 @@ msgstr "아니요"
 msgid "no state saved"
 msgstr "저장된 상태 없음"
 
+#: src/components/networks/networkOverviewTab.jsx:292
 #: src/components/vm/overview/watchdog.jsx:249
 #: src/components/vm/overview/vsock.jsx:269
-#: src/components/networks/networkOverviewTab.jsx:292
 msgid "none"
 msgstr "없음"
 
@@ -3217,7 +3218,7 @@ msgstr "qcow2"
 msgid "qemu"
 msgstr "qemu"
 
-#: src/helpers.js:227
+#: src/helpers.ts:249
 msgid "redirected device"
 msgstr "리디렉트된 장치"
 
@@ -3229,19 +3230,19 @@ msgstr "제거"
 msgid "serial number"
 msgstr "일련 번호"
 
-#: src/helpers.js:243
+#: src/helpers.ts:265
 msgid "server"
 msgstr "서버"
 
-#: src/helpers.js:244
+#: src/helpers.ts:266
 msgid "udp"
 msgstr "udp"
 
-#: src/helpers.js:263
+#: src/helpers.ts:285
 msgid "up"
 msgstr "위로"
 
-#: src/helpers.js:239
+#: src/helpers.ts:261
 msgid "user"
 msgstr "사용자"
 
@@ -3266,7 +3267,7 @@ msgstr "vCPU 최대"
 msgid "vCPUs"
 msgstr "vCPU"
 
-#: src/helpers.js:245
+#: src/helpers.ts:267
 msgid "vhostuser"
 msgstr "가상 호스트 사용자"
 
@@ -3301,9 +3302,9 @@ msgstr "vm"
 msgid "vsock requires special software"
 msgstr "vsock은 특별한 소프트웨어가 필요합니다"
 
-#: src/components/storagePools/storagePoolOverviewTab.jsx:67
+#: src/helpers.ts:281 src/components/storagePools/storagePoolOverviewTab.jsx:67
 #: src/components/storagePools/storagePoolOverviewTab.jsx:72
-#: src/components/networks/networkOverviewTab.jsx:117 src/helpers.js:259
+#: src/components/networks/networkOverviewTab.jsx:117
 msgid "yes"
 msgstr "예"
 
