@@ -70,7 +70,7 @@ function devicesHaveAChild(selectableDevices) {
     });
 
     Object.values(all).forEach(item => {
-        if (item.parent && item.parent !== "computer" && (item.capability.type === "usb_device" || item.capability.type === "pci")) {
+        if (item.parent && all[item.parent] && item.parent !== "computer" && (item.capability.type === "usb_device" || item.capability.type === "pci")) {
             all[item.parent].hasChildren = true;
         }
     });
