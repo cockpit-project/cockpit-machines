@@ -17,7 +17,10 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
+
+import type { VM, StoragePool } from '../../types';
+import type { Dialogs } from 'dialogs';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
 import { DropdownItem } from "@patternfly/react-core/dist/esm/components/Dropdown";
@@ -48,7 +51,7 @@ const _ = cockpit.gettext;
  * @param {array} vms
  * returns {boolean}
  */
-function canDeleteOnlyWithoutVolumes(pool, vms) {
+function canDeleteOnlyWithoutVolumes(pool: StoragePool, vms: VM[]): boolean {
     if (!canDelete(pool, vms))
         return false;
 
@@ -70,7 +73,7 @@ function canDeleteOnlyWithoutVolumes(pool, vms) {
  * @param {array} vms
  * returns {boolean}
  */
-function canDelete(pool, vms) {
+function canDelete(pool: StoragePool, vms: VM[]): boolean {
     for (let i = 0; i < vms.length; i++) {
         const vm = vms[i];
         const disks = Object.values(vm.disks);
@@ -82,9 +85,9 @@ function canDelete(pool, vms) {
     return true;
 }
 
-function getPoolDeleteHelperText(vms, storagePool) {
+function getPoolDeleteHelperText(vms: VM[], storagePool: StoragePool): React.ReactNode {
     const usage = getStorageVolumesUsage(vms, storagePool);
-    let vmsUsage = [];
+    let vmsUsage: string[] = [];
     for (const property in usage)
         vmsUsage = vmsUsage.concat(usage[property]);
 
@@ -98,10 +101,22 @@ function getPoolDeleteHelperText(vms, storagePool) {
     );
 }
 
-class StoragePoolDelete extends React.Component {
-    static contextType = DialogsContext;
+interface StoragePoolDeleteProps {
+    storagePool: StoragePool,
+    vms: VM[],
+}
 
-    constructor(props) {
+interface StoragePoolDeleteState {
+    dialogError: string | undefined,
+    dialogErrorDetail?: string | undefined;
+    deleteVolumes: boolean,
+}
+
+class StoragePoolDelete extends React.Component<StoragePoolDeleteProps, StoragePoolDeleteState> {
+    static contextType = DialogsContext;
+    declare context: Dialogs;
+
+    constructor(props: StoragePoolDeleteProps) {
         super(props);
 
         this.state = {
@@ -109,17 +124,10 @@ class StoragePoolDelete extends React.Component {
             deleteVolumes: false,
         };
         this.delete = this.delete.bind(this);
-        this.onValueChanged = this.onValueChanged.bind(this);
         this.dialogErrorSet = this.dialogErrorSet.bind(this);
     }
 
-    onValueChanged(key, value) {
-        const stateDelta = { [key]: value };
-
-        this.setState(stateDelta);
-    }
-
-    dialogErrorSet(text, detail) {
+    dialogErrorSet(text: string, detail: string): void {
         this.setState({ dialogError: text, dialogErrorDetail: detail });
     }
 
@@ -127,7 +135,7 @@ class StoragePoolDelete extends React.Component {
         const Dialogs = this.context;
         const storagePool = this.props.storagePool;
         const volumes = storagePool.volumes || [];
-        const storagePoolDeactivateAndUndefine = (storagePool) => {
+        const storagePoolDeactivateAndUndefine = (storagePool: StoragePool): Promise<void> => {
             if (storagePool.active) {
                 return storagePoolDeactivate({ connectionName: storagePool.connectionName, objPath: storagePool.id })
                         .then(() => storagePoolUndefine({ connectionName: storagePool.connectionName, objPath: storagePool.id }));
@@ -136,7 +144,7 @@ class StoragePoolDelete extends React.Component {
             }
         };
 
-        if (this.state.deleteVolumes && storagePool.volumes.length > 0) {
+        if (this.state.deleteVolumes && storagePool.volumes && storagePool.volumes.length > 0) {
             Promise.all(volumes.map(volume => storageVolumeDelete({ connectionName: storagePool.connectionName, poolName: storagePool.name, volName: volume.name })))
                     .then(() => storagePoolDeactivateAndUndefine(storagePool))
                     .then(() => Dialogs.close(),
@@ -167,7 +175,12 @@ class StoragePoolDelete extends React.Component {
 
         const defaultBody = (
             <Stack hasGutter>
-                {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
+                {this.state.dialogError &&
+                    <ModalError
+                        dialogError={this.state.dialogError}
+                        {...this.state.dialogErrorDetail && { dialogErrorDetail: this.state.dialogErrorDetail } }
+                    />
+                }
                 { storagePool.active
                     ? (volumes.length > 0
                         ? <Checkbox id='storage-pool-delete-volumes'
@@ -180,7 +193,7 @@ class StoragePoolDelete extends React.Component {
                                             }
                                         </List>
                                     }
-                                    onChange={(_event, checked) => this.onValueChanged('deleteVolumes', checked)} />
+                              onChange={(_event, checked) => this.setState({ deleteVolumes: checked })} />
                         : _("No volumes exist in this storage pool."))
                     : _("Deleting an inactive storage pool will only undefine the pool. Its content will not be deleted.")
                 }
@@ -211,12 +224,8 @@ class StoragePoolDelete extends React.Component {
         );
     }
 }
-StoragePoolDelete.propTypes = {
-    storagePool: PropTypes.object.isRequired,
-    vms: PropTypes.array.isRequired,
-};
 
-export const StoragePoolDeleteAction = ({ storagePool, vms }) => {
+export const StoragePoolDeleteAction = ({ storagePool, vms } : { storagePool: StoragePool, vms: VM[] }) => {
     const Dialogs = useDialogs();
 
     const id = storagePoolId(storagePool.name, storagePool.connectionName);
