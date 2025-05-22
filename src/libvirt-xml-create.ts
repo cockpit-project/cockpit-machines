@@ -17,8 +17,6 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
-import cockpit from 'cockpit';
-
 export function getDiskXML(
     type: string,
     file: string | undefined,
@@ -48,8 +46,8 @@ export function getDiskXML(
 
     const sourceElem = doc.createElement('source');
     if (type === 'file') {
-        cockpit.assert(file, "File must not be null");
-        sourceElem.setAttribute('file', file);
+        if (file)
+            sourceElem.setAttribute('file', file);
     } else {
         sourceElem.setAttribute('volume', volumeName);
         sourceElem.setAttribute('pool', poolName);
