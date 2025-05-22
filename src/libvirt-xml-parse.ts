@@ -1113,7 +1113,7 @@ export function parseStoragePoolDumpxml(
     const result: StoragePool = {
         connectionName,
         type: storagePoolElem.getAttribute('type'),
-        name: storagePoolElem.getElementsByTagName('name')[0].childNodes[0].nodeValue,
+        name: storagePoolElem.getElementsByTagName('name')[0].childNodes[0].nodeValue || "",
         id: objPath,
         uuid: storagePoolElem.getElementsByTagName("uuid")[0].childNodes[0].nodeValue,
         capacity: storagePoolElem.getElementsByTagName('capacity')[0].childNodes[0].nodeValue,
