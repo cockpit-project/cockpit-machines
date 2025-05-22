@@ -17,6 +17,9 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
+
+import type { VM, StoragePool } from '../../types';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Progress } from "@patternfly/react-core/dist/esm/components/Progress";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
@@ -41,7 +44,7 @@ import cockpit from 'cockpit';
 
 const _ = cockpit.gettext;
 
-export const getStoragePoolRow = ({ storagePool, vms }) => {
+export const getStoragePoolRow = ({ storagePool, vms } : { storagePool: StoragePool, vms: VM[] }) => {
     const idPrefix = `${storagePoolId(storagePool.name, storagePool.connectionName)}`;
     const name = (
         <span id={`${idPrefix}-name`}>
@@ -97,9 +100,18 @@ export const getStoragePoolRow = ({ storagePool, vms }) => {
     };
 };
 
-class StoragePoolActions extends React.Component {
-    constructor() {
-        super();
+interface StoragePoolActionsProps {
+    storagePool: StoragePool,
+    vms: VM[],
+}
+
+interface StoragePoolActionsState {
+    operationInProgress: boolean;
+}
+
+class StoragePoolActions extends React.Component<StoragePoolActionsProps, StoragePoolActionsState> {
+    constructor(props: StoragePoolActionsProps) {
+        super(props);
         this.state = {
             operationInProgress: false,
         };

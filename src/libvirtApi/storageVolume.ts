@@ -44,8 +44,8 @@ export async function storageVolumeCreate({
     connectionName: ConnectionName,
     poolName: string,
     volName: string,
-    size: string,
-    format: string,
+    size: number,
+    format: optString,
 }): Promise<void> {
     const volXmlDesc = getVolumeXML(volName, size, format);
 
@@ -59,7 +59,7 @@ export interface StorageVolumeCreateAndAttachParams {
     connectionName: ConnectionName,
     poolName: string,
     volumeName: string,
-    size: string,
+    size: number,
     format: string,
     target: string,
     vmId: string,

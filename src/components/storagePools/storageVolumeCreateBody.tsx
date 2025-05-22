@@ -18,7 +18,9 @@
  */
 
 import React from 'react';
-import PropTypes from 'prop-types';
+
+import type { optString, StoragePool } from '../../types';
+
 import { FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
 import { Grid } from "@patternfly/react-core/dist/esm/layouts/Grid";
@@ -31,7 +33,31 @@ import cockpit from 'cockpit';
 
 const _ = cockpit.gettext;
 
-const VolumeName = ({ idPrefix, volumeName, validationFailed, onValueChanged }) => {
+export interface ValidationFailed {
+    volumeName?: string | undefined;
+    size?: string | undefined;
+}
+
+export interface DialogValues {
+    volumeName: string,
+    size: number,
+    unit: string;
+    format: optString;
+}
+
+type OnValueChanged = <K extends keyof DialogValues>(key: K, value: string) => void;
+
+const VolumeName = ({
+    idPrefix,
+    volumeName,
+    validationFailed,
+    onValueChanged
+} : {
+    idPrefix: string,
+    volumeName: string,
+    validationFailed: ValidationFailed,
+    onValueChanged: OnValueChanged,
+}) => {
     const validationStateName = validationFailed.volumeName ? 'error' : 'default';
     return (
         <FormGroup fieldId={`${idPrefix}-name`}
@@ -42,12 +68,30 @@ const VolumeName = ({ idPrefix, volumeName, validationFailed, onValueChanged }) 
                         value={volumeName || ""}
                         validated={validationStateName}
                         onChange={(_, value) => onValueChanged('volumeName', value)} />
-            <FormHelper fieldId={`${idPrefix}-name`} helperTextInvalid={validationStateName == "error" && validationFailed.volumeName} />
+            <FormHelper fieldId={`${idPrefix}-name`} helperTextInvalid={validationStateName == "error" ? validationFailed.volumeName : null} />
         </FormGroup>
     );
 };
 
-const VolumeDetails = ({ idPrefix, size, unit, format, storagePoolCapacity, storagePoolType, validationFailed, onValueChanged }) => {
+const VolumeDetails = ({
+    idPrefix,
+    size,
+    unit,
+    format,
+    storagePoolCapacity,
+    storagePoolType,
+    validationFailed,
+    onValueChanged
+} : {
+    idPrefix: string,
+    size: number,
+    unit: string,
+    format: optString,
+    storagePoolCapacity: optString,
+    storagePoolType: string,
+    validationFailed: ValidationFailed,
+    onValueChanged: OnValueChanged,
+}) => {
     // TODO: Use slider
     let formatRow;
     let validVolumeFormats;
@@ -91,7 +135,7 @@ const VolumeDetails = ({ idPrefix, size, unit, format, storagePoolCapacity, stor
                 <InputGroup>
                     <TextInput id={`${idPrefix}-size`}
                                type="number" inputMode='numeric' pattern="[0-9]*"
-                               value={parseFloat(size).toFixed(0)}
+                               value={size.toFixed(0)}
                                onKeyUp={digitFilter}
                                step={1}
                                min={0}
@@ -108,7 +152,7 @@ const VolumeDetails = ({ idPrefix, size, unit, format, storagePoolCapacity, stor
                                           label={_("GiB")} />
                     </FormSelect>
                 </InputGroup>
-                <FormHelper fieldId={`${idPrefix}-size`} helperTextInvalid={validationStateSize == "error" && validationFailed.size} />
+                <FormHelper fieldId={`${idPrefix}-size`} helperTextInvalid={validationStateSize == "error" ? validationFailed.size : null} />
             </FormGroup>
             {formatRow}
         </Grid>
@@ -124,6 +168,15 @@ export const VolumeCreateBody = ({
     unit,
     validationFailed,
     volumeName,
+} : {
+    format: optString,
+    idPrefix: string,
+    onValueChanged: OnValueChanged,
+    size: number,
+    storagePool: StoragePool,
+    unit: string,
+    validationFailed: ValidationFailed,
+    volumeName: string,
 }) => {
     return (
         <>
@@ -141,14 +194,4 @@ export const VolumeCreateBody = ({
                            validationFailed={validationFailed} />
         </>
     );
-};
-
-VolumeCreateBody.propTypes = {
-    format: PropTypes.string, // required for some pool types only
-    idPrefix: PropTypes.string.isRequired,
-    onValueChanged: PropTypes.func.isRequired,
-    size: PropTypes.number.isRequired,
-    storagePool: PropTypes.object.isRequired,
-    unit: PropTypes.string.isRequired,
-    volumeName: PropTypes.string,
 };
