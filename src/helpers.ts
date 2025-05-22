@@ -23,21 +23,18 @@ import type {
     optString,
     ConnectionName,
     VM, VMState, VMDisk, VMInterface, VMRedirectedDevice, VMHostDevice,
+    UIVM,
     NodeDevice,
     StoragePool,
     HypervisorCapabilities,
 } from './types';
-
-import type {
-    UIVMState
-} from './components/create-vm-dialog/uiState';
 
 const _ = cockpit.gettext;
 
 export const LIBVIRT_SESSION_CONNECTION = 'session';
 export const LIBVIRT_SYSTEM_CONNECTION = 'system';
 
-export function dummyVmsFilter(vms: VM[], uiVms: UIVMState[]): UIVMState[] {
+export function dummyVmsFilter(vms: VM[], uiVms: UIVM[]): UIVM[] {
     return uiVms.filter(uiVm => vms.find(vm => vm.name == uiVm.name && vm.connectionName == uiVm.connectionName) === undefined);
 }
 
@@ -189,7 +186,7 @@ export function logDebug(...args: unknown[]): void {
         console.debug(...args);
 }
 
-export function digitFilter(event: KeyboardEvent, allowDots: boolean = false): boolean {
+export function digitFilter(event: React.KeyboardEvent, allowDots: boolean = false): boolean {
     const accept = (allowDots && event.key === '.') || (event.key >= '0' && event.key <= '9') ||
                  event.key === 'Backspace' || event.key === 'Delete' || event.key === 'Tab' ||
                  event.key === 'ArrowLeft' || event.key === 'ArrowRight' ||
@@ -713,7 +710,9 @@ export function getStorageVolumeDiskTarget(vm: VM, storagePool: StoragePool, vol
  * Returns a object of key-value pairs of Storage Volume names mapping
  * to arrays of VM names using the relevant Storage Volume
  */
-export function getStorageVolumesUsage(vms: VM[], storagePool: StoragePool): Record<string, string[]> {
+export type StorageVolumesUsage = Record<string, string[]>;
+
+export function getStorageVolumesUsage(vms: VM[], storagePool: StoragePool): StorageVolumesUsage {
     if (!storagePool)
         return { };
 
@@ -920,7 +919,7 @@ export function getVmStoragePools(connectionName: ConnectionName): StoragePool[]
     return storagePools.filter(sp => sp && sp.name && sp.connectionName == connectionName && sp.active);
 }
 
-export function nicLookupByMAC(interfacesList: VMInterface[], mac: string): VMInterface {
+export function nicLookupByMAC(interfacesList: VMInterface[], mac: optString): VMInterface {
     return interfacesList.filter(iface => iface.mac == mac)[0];
 }
 

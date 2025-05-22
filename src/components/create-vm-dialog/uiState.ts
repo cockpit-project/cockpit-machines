@@ -27,7 +27,7 @@ import {
 
 import VMS_CONFIG from "../../config.js";
 
-import type { ConnectionName } from '../../types';
+import type { ConnectionName, UIVM } from '../../types';
 
 const CREATE_TIMEOUT = 'CREATE_TIMEOUT';
 
@@ -36,28 +36,12 @@ const timeouts: Record<ConnectionName, Record<string, Record<string, number>>> =
     system: {}
 };
 
-export interface UIVMState {
-    isUi?: true;
-    connectionName?: ConnectionName;
-    name?: string;
-    expanded?: boolean;
-    openConsoleTab?: boolean;
-    createInProgress?: boolean;
-    installInProgress?: boolean; // XXX - never set?
-    downloadProgress?: string | undefined;
-}
-
-export interface UIState {
-    notifications: unknown[];
-    vms: UIVMState[];
-}
-
 export function setVmCreateInProgress(
     name: string,
     connectionName: ConnectionName,
-    settings?: UIVMState,
+    settings?: Partial<UIVM>,
 ): void {
-    const vm: UIVMState = {
+    const vm: UIVM = {
         name,
         connectionName,
         isUi: true,
@@ -89,9 +73,9 @@ export function updateImageDownloadProgress(
     name: string,
     connectionName: ConnectionName,
     downloadProgress: string | undefined,
-    settings?: UIVMState,
+    settings?: Partial<UIVM>,
 ): void {
-    const vm: UIVMState = {
+    const vm = {
         name,
         connectionName,
         downloadProgress,
@@ -103,7 +87,7 @@ export function updateImageDownloadProgress(
 export function finishVmCreateInProgress(
     name: string,
     connectionName: ConnectionName,
-    settings?: UIVMState,
+    settings?: Partial<UIVM>,
 ): void {
     const vm = {
         name,
@@ -118,7 +102,7 @@ export function finishVmCreateInProgress(
 export function removeVmCreateInProgress(
     name: string,
     connectionName: ConnectionName,
-    settings?: UIVMState,
+    settings?: Partial<UIVM>,
 ): void {
     if (clearTimeout(name, connectionName, CREATE_TIMEOUT)) {
         finishVmCreateInProgress(name, connectionName, settings);

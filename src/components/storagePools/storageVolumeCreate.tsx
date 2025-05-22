@@ -18,7 +18,11 @@
  */
 
 import React from 'react';
-import PropTypes from 'prop-types';
+
+import type { StoragePool } from '../../types';
+import type { DialogValues, ValidationFailed } from './storageVolumeCreateBody';
+import type { Dialogs } from 'dialogs';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form } from "@patternfly/react-core/dist/esm/components/Form";
 import {
@@ -35,10 +39,23 @@ import { VolumeCreateBody } from './storageVolumeCreateBody.jsx';
 
 const _ = cockpit.gettext;
 
-class CreateStorageVolumeModal extends React.Component {
-    static contextType = DialogsContext;
+interface CreateStorageVolumeModalProps {
+    idPrefix: string;
+    storagePool: StoragePool;
+}
 
-    constructor(props) {
+interface CreateStorageVolumeModalState extends DialogValues {
+    createInProgress: boolean,
+    validate?: boolean;
+    dialogError: string | undefined,
+    dialogErrorDetail?: string | undefined;
+}
+
+class CreateStorageVolumeModal extends React.Component<CreateStorageVolumeModalProps, CreateStorageVolumeModalState> {
+    static contextType = DialogsContext;
+    declare context: Dialogs;
+
+    constructor(props: CreateStorageVolumeModalProps) {
         super(props);
         this.state = {
             createInProgress: false,
@@ -54,27 +71,27 @@ class CreateStorageVolumeModal extends React.Component {
         this.validateParams = this.validateParams.bind(this);
     }
 
-    dialogErrorSet(text, detail) {
+    dialogErrorSet(text: string, detail: string) {
         this.setState({ dialogError: text, dialogErrorDetail: detail });
     }
 
-    onValueChanged(key, value) {
+    onValueChanged<K extends keyof DialogValues>(key: K, value: string) {
         switch (key) {
         case 'size':
             this.setState({ size: parseInt(value) });
             break;
 
         default:
-            this.setState({ [key]: value });
+            this.setState({ [key]: value } as Pick<CreateStorageVolumeModalState, K>);
         }
     }
 
     validateParams() {
-        const validationFailed = {};
+        const validationFailed: ValidationFailed = {};
 
         if (isEmpty(this.state.volumeName.trim()))
             validationFailed.volumeName = _("Name must not be empty");
-        const poolCapacity = parseFloat(convertToUnit(this.props.storagePool.capacity, units.B, this.state.unit));
+        const poolCapacity = convertToUnit(this.props.storagePool.capacity, units.B, this.state.unit);
         if (this.state.size > poolCapacity)
             validationFailed.size = cockpit.format(_("Storage volume size must not exceed the storage pool's capacity ($0 $1)"), poolCapacity.toFixed(2), this.state.unit);
 
@@ -121,7 +138,12 @@ class CreateStorageVolumeModal extends React.Component {
                        </>
                    }>
                 <Form isHorizontal>
-                    {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
+                    {this.state.dialogError &&
+                        <ModalError
+                            dialogError={this.state.dialogError}
+                            {...this.state.dialogErrorDetail && { dialogErrorDetail: this.state.dialogErrorDetail } }
+                        />
+                    }
                     <VolumeCreateBody format={this.state.format}
                                       idPrefix={idPrefix}
                                       onValueChanged={this.onValueChanged}
@@ -135,12 +157,14 @@ class CreateStorageVolumeModal extends React.Component {
         );
     }
 }
-CreateStorageVolumeModal.propTypes = {
-    storagePool: PropTypes.object.isRequired,
-};
 
-export class StorageVolumeCreate extends React.Component {
+interface StorageVolumeCreateProps {
+    storagePool: StoragePool,
+}
+
+export class StorageVolumeCreate extends React.Component<StorageVolumeCreateProps> {
     static contextType = DialogsContext;
+    declare context: Dialogs;
 
     render() {
         const Dialogs = this.context;
@@ -148,7 +172,7 @@ export class StorageVolumeCreate extends React.Component {
         const poolTypesNotSupportingVolumeCreation = ['iscsi', 'iscsi-direct', 'gluster', 'mpath'];
 
         const createButton = () => {
-            if (!poolTypesNotSupportingVolumeCreation.includes(this.props.storagePool.type) && this.props.storagePool.active) {
+            if (!poolTypesNotSupportingVolumeCreation.includes(this.props.storagePool.type || "") && this.props.storagePool.active) {
                 return (
                     <Button id={`${idPrefix}-button`}
                             variant='secondary'
@@ -176,7 +200,3 @@ export class StorageVolumeCreate extends React.Component {
         return createButton();
     }
 }
-
-StorageVolumeCreate.propTypes = {
-    storagePool: PropTypes.object.isRequired,
-};
