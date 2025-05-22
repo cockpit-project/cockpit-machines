@@ -17,6 +17,8 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
+import type { optString } from './types';
+
 export function getDiskXML(
     type: string,
     file: string | undefined,
@@ -181,8 +183,8 @@ export function getNetworkXML({
 
 export function getVolumeXML(
     volumeName: string,
-    size: string,
-    format: string,
+    size: number,
+    format: optString,
 ): string {
     const doc = document.implementation.createDocument('', '', null);
 
@@ -195,7 +197,7 @@ export function getVolumeXML(
 
     const allocationElem = doc.createElement('capacity');
     allocationElem.setAttribute('unit', 'MiB');
-    allocationElem.appendChild(doc.createTextNode(size));
+    allocationElem.appendChild(doc.createTextNode(String(size)));
     volElem.appendChild(allocationElem);
 
     const targetElem = doc.createElement('target');
@@ -219,7 +221,7 @@ export interface StoragePoolSource {
     name?: string;
     host?: string;
     initiator?: string;
-    format?: string;
+    format?: string | undefined;
 }
 
 export function getPoolXML({

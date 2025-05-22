@@ -17,7 +17,9 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
+
+import type { StoragePool } from '../../types';
+
 import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
 
 import { storagePoolId } from '../../helpers.js';
@@ -25,7 +27,7 @@ import cockpit from 'cockpit';
 
 const _ = cockpit.gettext;
 
-export const StoragePoolOverviewTab = ({ storagePool }) => {
+export const StoragePoolOverviewTab = ({ storagePool } : { storagePool: StoragePool }) => {
     const idPrefix = `${storagePoolId(storagePool.name, storagePool.connectionName)}`;
 
     return (
@@ -78,7 +80,4 @@ export const StoragePoolOverviewTab = ({ storagePool }) => {
             </DescriptionListGroup>
         </DescriptionList>
     );
-};
-StoragePoolOverviewTab.propTypes = {
-    storagePool: PropTypes.object.isRequired,
 };

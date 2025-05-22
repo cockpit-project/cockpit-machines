@@ -33,11 +33,11 @@ import { InfoPopover } from '../common/infoPopover.jsx';
 const _ = cockpit.gettext;
 
 interface MachinesConnectionSelectorProps {
-    onValueChanged: (prop: string, value: string) => void,
+    onValueChanged: (prop: "connectionName", value: ConnectionName) => void,
     loggedUser: cockpit.UserInfo,
     connectionName: ConnectionName,
     id: string,
-    showInfoHelper: boolean,
+    showInfoHelper?: boolean,
 }
 
 export const MachinesConnectionSelector = ({
