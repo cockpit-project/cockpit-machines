@@ -29,7 +29,6 @@ import {
 } from '../types';
 
 import {
-    removeVmCreateInProgress,
     clearVmUiState,
 } from '../components/create-vm-dialog/uiState.js';
 
@@ -218,11 +217,7 @@ export function resolveUiState(name: optString, connectionName: ConnectionName):
         result.initiallyExpanded = uiState.expanded;
         result.initiallyOpenedConsoleTab = uiState.openConsoleTab;
 
-        if (uiState.installInProgress) {
-            removeVmCreateInProgress(name, connectionName);
-        } else {
-            clearVmUiState(name, connectionName);
-        }
+        clearVmUiState(name, connectionName);
     }
 
     return result;
