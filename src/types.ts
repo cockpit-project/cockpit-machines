@@ -431,7 +431,6 @@ export interface UIVM {
     expanded?: boolean;
     openConsoleTab?: boolean;
     createInProgress?: boolean;
-    installInProgress?: boolean; // XXX - never set?
     downloadProgress?: string | undefined;
 }
 

@@ -84,31 +84,6 @@ export function updateImageDownloadProgress(
     store.dispatch(updateUiVm(vm));
 }
 
-export function finishVmCreateInProgress(
-    name: string,
-    connectionName: ConnectionName,
-    settings?: Partial<UIVM>,
-): void {
-    const vm = {
-        name,
-        connectionName,
-        downloadProgress: undefined,
-        createInProgress: false,
-        ...settings
-    };
-    store.dispatch(updateUiVm(vm));
-}
-
-export function removeVmCreateInProgress(
-    name: string,
-    connectionName: ConnectionName,
-    settings?: Partial<UIVM>,
-): void {
-    if (clearTimeout(name, connectionName, CREATE_TIMEOUT)) {
-        finishVmCreateInProgress(name, connectionName, settings);
-    }
-}
-
 export function clearVmUiState(
     name: string,
     connectionName: ConnectionName,
