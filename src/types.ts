@@ -95,7 +95,7 @@ export interface VMDisk {
 }
 
 export interface VMInterface {
-    type: optString;
+    type: string;
     managed: optString;
     name: optString;
     target: optString;

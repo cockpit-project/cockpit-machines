@@ -18,7 +18,10 @@
  */
 
 import React from 'react';
-import PropTypes from 'prop-types';
+
+import type { optString, ConnectionName } from '../../../types';
+import type { AvailableSources } from './vmNicsCard';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Flex } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
@@ -35,8 +38,28 @@ import './nic.css';
 
 const _ = cockpit.gettext;
 
-export const NetworkModelRow = ({ idPrefix, onValueChanged, dialogValues, osTypeArch, osTypeMachine }) => {
-    const availableModelTypes = [
+export interface DialogBodyValues {
+    networkModel: string;
+    networkType: string;
+    networkSource: string;
+}
+
+type OnValueChanged = <K extends keyof DialogBodyValues>(key: K, value: DialogBodyValues[K]) => void;
+
+export const NetworkModelRow = ({
+    idPrefix,
+    onValueChanged,
+    dialogValues,
+    osTypeArch,
+    osTypeMachine
+} : {
+    idPrefix: string,
+    onValueChanged: OnValueChanged,
+    dialogValues: DialogBodyValues,
+    osTypeArch: optString,
+    osTypeMachine: optString,
+}) => {
+    const availableModelTypes: { name: string, desc?: string }[] = [
         { name: 'virtio', desc: 'Linux, perf' },
         { name: 'e1000e', desc: 'PCI' },
         { name: 'e1000', desc: 'PCI, legacy' },
@@ -64,27 +87,38 @@ export const NetworkModelRow = ({ idPrefix, onValueChanged, dialogValues, osType
     );
 };
 
-NetworkModelRow.propTypes = {
-    idPrefix: PropTypes.string.isRequired,
-    osTypeArch: PropTypes.string.isRequired,
-    osTypeMachine: PropTypes.string.isRequired,
-    onValueChanged: PropTypes.func.isRequired,
-    dialogValues: PropTypes.object.isRequired,
-};
+export const NetworkTypeAndSourceRow = ({
+    idPrefix,
+    onValueChanged,
+    dialogValues,
+    connectionName
+} : {
+    idPrefix: string,
+    onValueChanged: OnValueChanged,
+    dialogValues: DialogBodyValues & { availableSources: AvailableSources },
+    connectionName: ConnectionName,
+}) => {
+    interface NetworkTypeDescription {
+        name: string,
+        desc: string,
+        detailHeadline?: React.ReactNode,
+        detailParagraph?: React.ReactNode,
+        externalDocs?: React.ReactNode,
+        disabled?: boolean,
+    }
 
-export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues, connectionName }) => {
     const defaultNetworkType = dialogValues.networkType;
-    let availableNetworkTypes = [];
+    let availableNetworkTypes: NetworkTypeDescription[] = [];
     let defaultNetworkSource = dialogValues.networkSource;
-    let networkSourcesContent;
-    let networkSourceEnabled = true;
+    let networkSourcesContent: React.ReactNode;
+    let networkSourceEnabled: boolean = true;
 
     // { name: 'ethernet', desc: 'Generic ethernet connection' }, Add back to the list when implemented
-    const virtualNetwork = [{
+    const virtualNetwork: NetworkTypeDescription[] = [{
         name: 'network',
         desc: 'Virtual network',
         detailHeadline: _("This is the recommended config for general guest connectivity on hosts with dynamic / wireless networking configs."),
-        detailParagraph: _("Provides a connection whose details are described by the named network definition.")
+        detailParagraph: _("Provides a connection whose details are described by the named network definition."),
     }];
     if (connectionName !== 'session') {
         availableNetworkTypes = [
@@ -129,7 +163,7 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
     availableNetworkTypes.sort(function(x, y) { return x.name == defaultNetworkType ? -1 : y.name == defaultNetworkType ? 1 : 0 });
 
     if (["network", "direct", "bridge"].includes(dialogValues.networkType)) {
-        let sources;
+        let sources: string[] = [];
         if (dialogValues.networkType === "network")
             sources = dialogValues.availableSources.network;
         else if (dialogValues.networkType === "direct")
@@ -205,11 +239,4 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
             )}
         </>
     );
-};
-
-NetworkTypeAndSourceRow.propTypes = {
-    idPrefix: PropTypes.string.isRequired,
-    connectionName: PropTypes.string.isRequired,
-    onValueChanged: PropTypes.func.isRequired,
-    dialogValues: PropTypes.object.isRequired,
 };
