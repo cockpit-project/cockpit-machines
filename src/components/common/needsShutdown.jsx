@@ -51,6 +51,13 @@ export function needsShutdownIfaceSource(vm, iface) {
         getIfaceSourceName(inactiveIface) !== getIfaceSourceName(iface);
 }
 
+export function needsShutdownIfaceSourceMode(vm, iface) {
+    const inactiveIface = nicLookupByMAC(vm.inactiveXML.interfaces, iface.mac);
+
+    return inactiveIface && inactiveIface.type == "direct" && iface.type == "direct" &&
+        inactiveIface.source.mode !== iface.source.mode;
+}
+
 export function needsShutdownVcpu(vm) {
     return ((vm.vcpus.count !== vm.inactiveXML.vcpus.count) ||
             (vm.vcpus.max !== vm.inactiveXML.vcpus.max) ||
@@ -103,7 +110,8 @@ export function getDevicesRequiringShutdown(vm) {
     for (const iface of vm.interfaces) {
         if (needsShutdownIfaceType(vm, iface) ||
             needsShutdownIfaceModel(vm, iface) ||
-            needsShutdownIfaceSource(vm, iface)) {
+            needsShutdownIfaceSource(vm, iface) ||
+            needsShutdownIfaceSourceMode(vm, iface)) {
             devices.push(_("Network interface"));
             break;
         }

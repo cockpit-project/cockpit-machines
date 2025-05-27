@@ -26,6 +26,7 @@ import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/co
 import { Popover, PopoverPosition } from "@patternfly/react-core/dist/esm/components/Popover";
 import { Text, TextContent, TextVariants } from "@patternfly/react-core/dist/esm/components/Text";
 import { ExternalLinkSquareAltIcon, OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
+import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 
 import cockpit from 'cockpit';
 
@@ -202,6 +203,22 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
                                 value={defaultNetworkSource}>
                         {networkSourcesContent}
                     </FormSelect>
+                </FormGroup>
+            )}
+            {dialogValues.networkType == "direct" && (
+                <FormGroup id={`${idPrefix}-source-mode`} label={_("Mode")} hasNoPaddingTop isInline
+                           data-value={dialogValues.networkSourceMode}>
+                    {["vepa", "bridge", "private", "passthrough"].map(mode =>
+                        <Radio
+                            key={mode}
+                            id={`${idPrefix}-source-mode-${mode}`}
+                            name={`mode-${mode}`}
+                            isChecked={dialogValues.networkSourceMode == mode}
+                            // The label is not translated since the
+                            // documentation we link to is always in
+                            // English.
+                            label={<pre>{mode}</pre>}
+                            onChange={() => onValueChanged('networkSourceMode', mode)} />)}
                 </FormGroup>
             )}
         </>
