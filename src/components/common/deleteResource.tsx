@@ -36,12 +36,12 @@ const _ = cockpit.gettext;
 interface DeleteResourceModalProps {
     title: string;
     errorMessage: string;
-    objectDescription: { name: string, value: string }[];
-    actionName: string;
-    actionNameSecondary: string;
-    actionDescription: boolean;
+    objectDescription?: { name: string, value: React.ReactNode }[];
+    actionName?: string;
+    actionNameSecondary?: string;
+    actionDescription: string;
     deleteHandler: () => Promise<void>;
-    deleteHandlerSecondary: () => Promise<void>;
+    deleteHandlerSecondary?: () => Promise<void>;
 }
 
 interface DeleteResourceModalState {
@@ -82,7 +82,10 @@ export class DeleteResourceModal extends React.Component<DeleteResourceModalProp
 
     render() {
         const Dialogs = this.context;
-        const { title, objectDescription, actionName, actionDescription, actionNameSecondary } = this.props;
+        const {
+            title, objectDescription, actionName, actionDescription,
+            actionNameSecondary, deleteHandlerSecondary
+        } = this.props;
 
         return (
             <Modal position="top" variant="small" isOpen onClose={Dialogs.close}
@@ -98,12 +101,12 @@ export class DeleteResourceModal extends React.Component<DeleteResourceModalProp
                                onClick={() => this.delete(this.props.deleteHandler)}>
                                {actionName || _("Delete")}
                            </Button>
-                           {actionNameSecondary &&
+                           {actionNameSecondary && deleteHandlerSecondary &&
                            <Button variant='secondary'
                                id="delete-resource-modal-secondary"
                                isLoading={this.state.inProgress}
                                isDisabled={this.state.inProgress}
-                               onClick={() => this.delete(this.props.deleteHandlerSecondary)}
+                               onClick={() => this.delete(deleteHandlerSecondary)}
                                isDanger>
                                {actionNameSecondary}
                            </Button>}
@@ -134,27 +137,27 @@ export class DeleteResourceModal extends React.Component<DeleteResourceModalProp
 
 interface DeleteResourceButtonProps {
     objectId: string,
-    disabled: boolean,
-    overlayText: string,
+    disabled?: boolean,
+    overlayText?: string,
     actionName: string,
     dialogProps: DeleteResourceModalProps,
     isLink: boolean,
     isInline: boolean,
-    isSecondary: boolean,
-    className: string,
-    isDropdownItem: boolean,
+    isSecondary?: boolean,
+    className?: string,
+    isDropdownItem?: boolean,
 }
 
 export const DeleteResourceButton = ({
     objectId,
-    disabled,
+    disabled = false,
     overlayText,
     actionName,
     dialogProps,
     isLink,
     isInline,
-    isSecondary,
-    className,
+    isSecondary = false,
+    className = "",
     isDropdownItem
 }: DeleteResourceButtonProps) => {
     const Dialogs = useDialogs();
