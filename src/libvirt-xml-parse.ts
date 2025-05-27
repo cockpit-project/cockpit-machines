@@ -982,9 +982,9 @@ function parseNetDumpxmlForIp(ipElems: HTMLCollection): NetworkIp[] {
 
             for (let i = 0; i < hostElems.length; i++) {
                 const host: NetworkDhcpHost = {
-                    ip: hostElems[i].getAttribute("ip"),
+                    ip: hostElems[i].getAttribute("ip") || "",
                     name: hostElems[i].getAttribute("name"),
-                    mac: hostElems[i].getAttribute("mac"),
+                    mac: hostElems[i].getAttribute("mac") || "",
                     id: hostElems[i].getAttribute("id"),
                 };
                 dhcpHosts.push(host);
