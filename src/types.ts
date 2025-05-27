@@ -491,15 +491,15 @@ export type StoragePoolCapabilites = Record<string, { supported: optString}>;
 /** Networks **/
 
 export interface NetworkDhcpHost {
-    ip: optString;
+    ip: string;
     name: optString;
-    mac: optString;
+    mac: string;
     id: optString;
 }
 
 export interface NetworkIp {
     address: optString;
-    family: optString;
+    family: string;
     netmask: optString;
     prefix: optString;
     dhcp: {
@@ -532,10 +532,11 @@ export interface NetworkXML {
 export interface Network extends NetworkXML {
     connectionName: ConnectionName;
     id: string;
-    name?: string;
+    name: string;
     active?: boolean;
     persistent?: boolean;
     autostart?: boolean;
+    error?: DetailedError | null;
 }
 
 /** Node Devices **/
