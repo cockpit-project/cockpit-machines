@@ -19,13 +19,12 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Flex } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
+import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 import { PopoverPosition } from "@patternfly/react-core/dist/esm/components/Popover";
 import { Content, ContentVariants } from "@patternfly/react-core/dist/esm/components/Content";
-import { ExternalLinkSquareAltIcon } from '@patternfly/react-icons';
 
 import { InfoPopover } from '../../common/infoPopover.jsx';
 
@@ -83,7 +82,7 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
     const virtualNetwork = [{
         name: 'network',
         desc: 'Virtual network',
-        detailHeadline: _("This is the recommended config for general guest connectivity on hosts with dynamic / wireless networking configs."),
+        detailHeadline: _("This is the recommended type for general guest connectivity on hosts with dynamic / wireless networking configs."),
         detailParagraph: _("Provides a connection whose details are described by the named network definition.")
     }];
     if (connectionName !== 'session') {
@@ -92,26 +91,13 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
             {
                 name: 'bridge',
                 desc: 'Bridge to LAN',
-                detailHeadline: _("This is the recommended config for general guest connectivity on hosts with static wired networking configs."),
+                detailHeadline: _("This is the recommended type for general guest connectivity on hosts with static wired networking configs."),
                 detailParagraph: _("Provides a bridge from the guest virtual machine directly onto the LAN. This needs a bridge device on the host with one or more physical NICs.")
             },
             {
                 name: 'direct',
                 desc: 'Direct attachment',
-                detailHeadline: _("This is the recommended config for high performance or enhanced security."),
-                detailParagraph: _("In the default 'vepa' mode, switching is offloaded to the external switch. If the switch is not VEPA-capable, communication between guest virtual machines, or between a guests and the host is not possible."),
-                externalDocs: (
-                    <Button isInline
-                            className='ct-external-docs-link'
-                            variant="link"
-                            component="a"
-                            icon={<ExternalLinkSquareAltIcon />}
-                            iconPosition="right"
-                            target="__blank"
-                            href="https://libvirt.org/formatdomain.html#direct-attachment-to-physical-interface">
-                        {_("more info")}
-                    </Button>
-                )
+                detailParagraph: _("This is the recommended type for high performance or enhanced security."),
             },
         ];
     } else {
@@ -170,10 +156,7 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
                                         {availableNetworkTypes.map(type => (<Content key={type.name}>
                                             <Content component={ContentVariants.h4}>{type.desc}</Content>
                                             <strong>{type.detailHeadline}</strong>
-                                            <p>
-                                                {type.detailParagraph}
-                                                {type.externalDocs}
-                                            </p>
+                                            <p>{type.detailParagraph}</p>
                                         </Content>))}
                                     </Flex>}
                            />
@@ -201,6 +184,65 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
                                 value={defaultNetworkSource}>
                         {networkSourcesContent}
                     </FormSelect>
+                </FormGroup>
+            )}
+            {dialogValues.networkType == "direct" && (
+                <FormGroup id={`${idPrefix}-source-mode`} label={_("Mode")} hasNoPaddingTop isInline
+                    data-value={dialogValues.networkSourceMode}
+                       labelHelp={
+                           <InfoPopover
+                               aria-label={_("Mode help")}
+                               position={PopoverPosition.bottom}
+                               enableFlip={false}
+                               bodyContent={
+                                   <Content>
+                                       <Content component={ContentVariants.h4}>
+                                           VEPA
+                                       </Content>
+                                       <Content component={ContentVariants.p}>
+                                           {_("All VMs' packets are sent to the external bridge. Packets whose destination is a VM on the same host as where the packet originates from are sent back to the host by the VEPA capable bridge (today's bridges are typically not VEPA capable)")}.
+                                       </Content>
+                                       <Content component={ContentVariants.h4}>
+                                           {_("Bridge")}
+                                       </Content>
+                                       <Content component={ContentVariants.p}>
+                                           {_("Packets whose destination is on the same host as where they originate from are directly delivered to the target macvtap device. Both origin and destination devices need to be in bridge mode for direct delivery. If either one of them is in \"VEPA\" mode, a VEPA capable bridge is required.")}
+                                       </Content>
+                                       <Content component={ContentVariants.h4}>
+                                           {_("Private")}
+                                       </Content>
+                                       <Content component={ContentVariants.p}>
+                                           {_("All packets are sent to the external bridge and will only be delivered to a target VM on the same host if they are sent through an external router or gateway and that device sends them back to the host. This procedure is followed if either the source or destination device is in \"Private\" mode.")}
+                                       </Content>
+                                       <Content component={ContentVariants.h4}>
+                                           {_("Passthrough")}
+                                       </Content>
+                                       <Content component={ContentVariants.p}>
+                                           {_("This feature attaches a virtual function of a SRIOV capable NIC directly to a VM without losing the migration capability. All packets are sent to the VF/IF of the configured network device. Depending on the capabilities of the device additional prerequisites or limitations may apply.")}
+                                       </Content>
+                                   </Content>}
+                           />
+                       }>
+                    <Radio id={`${idPrefix}-source-mode-vepa`}
+                        name="mode-vepa"
+                        isChecked={dialogValues.networkSourceMode == "vepa"}
+                        label="VEPA"
+                        onChange={() => onValueChanged('networkSourceMode', "vepa")} />
+                    <Radio id={`${idPrefix}-source-mode-bridge`}
+                        name="mode-bridge"
+                        isChecked={dialogValues.networkSourceMode == "bridge"}
+                        label={_("Bridge")}
+                        onChange={() => onValueChanged('networkSourceMode', "bridge")} />
+                    <Radio id={`${idPrefix}-source-mode-private`}
+                        name="mode-private"
+                        isChecked={dialogValues.networkSourceMode == "private"}
+                        label={_("Private")}
+                        onChange={() => onValueChanged('networkSourceMode', "private")} />
+                    <Radio id={`${idPrefix}-source-mode-passthrough`}
+                        name="mode-passthrough"
+                        isChecked={dialogValues.networkSourceMode == "passthrough"}
+                        label={_("Passthrough")}
+                        onChange={() => onValueChanged('networkSourceMode', "passthrough")} />
                 </FormGroup>
             )}
         </>
