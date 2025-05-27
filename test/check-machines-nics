@@ -327,6 +327,15 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             self,
             mac=mac_address,
             source_type="direct",
+            source_mode="bridge",
+        ).execute()
+
+        mac_address = self.get_next_mac(mac_address)
+        self.NICAddDialog(
+            self,
+            mac=mac_address,
+            source_type="direct",
+            source_mode="passthrough",
         ).execute()
 
         # Test Bridge
@@ -420,6 +429,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             nic_num=1,
             source=None,
             source_type=None,
+            source_mode=None,
             xfail_error=None,
         ):
             self.assertEqual = test_obj.assertEqual
@@ -430,6 +440,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             self.nic_num = nic_num
             self.source = source
             self.source_type = source_type
+            self.source_mode = source_mode
             self.xfail_error = xfail_error
             self.vm_state = "running" if "running" in m.execute("virsh domstate subVmTest1") else "shut off"
 
@@ -453,6 +464,9 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             # select widget options are never visible for the headless chrome,
             # call therefore directly the js function
             self.source_type_current = b.attr(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-type", "data-value")
+            if self.source_type_current == "direct":
+                self.source_mode_current = b.attr(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-source-mode",
+                                                  "data-value")
             self.source_current = b.attr(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-source", "data-value")
             self.mac_current = b.val(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-mac")
             self.model_current = b.attr(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-model", "data-value")
@@ -462,6 +476,8 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
 
             if self.source_type:
                 b.select_from_dropdown(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-type", self.source_type)
+            if self.source_mode:
+                b.click(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-source-mode-{self.source_mode}")
             if self.source:
                 b.select_from_dropdown(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-source", self.source)
             if self.model:
@@ -475,6 +491,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             if (self.vm_state == "running" and
                     ((self.source_type is not None and self.source_type != self.source_type_current) or
                         (self.source is not None and self.source != self.source_current) or
+                        (self.source_mode is not None and self.source_mode != self.source_mode_current) or
                         (self.model is not None and self.model != self.model_current) or
                         (self.mac is not None and self.mac != self.mac_current))):
                 b.wait_visible(f"#vm-subVmTest1-network-{self.nic_num}-edit-dialog-idle-message")
@@ -514,6 +531,10 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
                     "direct" if self.vm_state == "shut off" else self.source_type_current,
                     self.machine.execute(xmllint_element.format(prop='@type')).strip()
                 )
+                if self.source_mode:
+                    self.assertEqual(
+                        self.source_mode if self.vm_state == "shut off" else self.source_mode_current,
+                        self.machine.execute(xmllint_element.format(prop='source/@mode')).strip())
                 if self.source:
                     self.assertEqual(
                         self.source,
@@ -528,10 +549,20 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         def verify_overview(self):
             b = self.browser
 
+            if self.source_type and self.vm_state == "shut off":
+                source_type = self.source_type
+            else:
+                source_type = self.source_type_current
+
             b.wait_in_text(
                 f"#vm-subVmTest1-network-{self.nic_num}-type",
-                self.source_type if self.source_type and self.vm_state == "shut off" else self.source_type_current
+                source_type
             )
+            if source_type == "direct":
+                b.wait_in_text(
+                    f"#vm-subVmTest1-network-{self.nic_num}-source-mode",
+                    self.source_mode if self.source_mode and self.vm_state == "shut off" else self.source_mode_current
+                )
             b.wait_in_text(
                 f"#vm-subVmTest1-network-{self.nic_num}-source",
                 self.source if self.source and self.vm_state == "shut off" else self.source_current
@@ -639,6 +670,18 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         self.NICEditDialog(
             self,
             source_type="direct",
+            source_mode="passthrough",
+            source="eth43",
+        ).execute()
+        self.NICEditDialog(
+            self,
+            source_type="direct",
+            source_mode="bridge",
+            source="eth43",
+        ).execute()
+        self.NICEditDialog(
+            self,
+            source_type="direct",
             source="eth43",
         ).execute()
         # Check "Source" of the 'direct' NIC
@@ -678,13 +721,14 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         def __init__(
             # We have always have to specify mac and source_type to identify the device in xml
             # and $virsh detach-interface
-            self, test_obj, source_type="direct", source=None, model=None, nic_num=1,
+            self, test_obj, source_type="direct", source_mode=None, source=None, model=None, nic_num=1,
             permanent=False, mac=None, remove=True, persistent_vm=True,
             xfail=False, xfail_error=None, pixel_test_tag=None
         ):
             ip_output = json.loads(test_obj.machine.execute("ip -j link show type bridge"))
             self.bridge_devices = (entry['ifname'] for entry in ip_output)
             self.source_type = source_type
+            self.source_mode = source_mode
             self.source = source
             self.model = model
             self.permanent = permanent
@@ -728,6 +772,8 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
                 else:
                     self.browser._wait_present(f"#vm-subVmTest1-add-iface-source option[value={bridge}]")
 
+            if self.source_mode:
+                self.browser.click(f"#vm-subVmTest1-add-iface-source-mode-{self.source_mode}")
             if self.source:
                 self.browser.select_from_dropdown("#vm-subVmTest1-add-iface-source", self.source)
             if self.model:
@@ -775,6 +821,9 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
                                      self.machine.execute(xmllint_element.format(prop='source/@network')).strip())
             elif (self.source_type == "direct"):
                 self.assertEqual("direct", self.machine.execute(xmllint_element.format(prop='@type')).strip())
+                if self.source_mode:
+                    self.assertEqual(self.source_mode,
+                                     self.machine.execute(xmllint_element.format(prop='source/@mode')).strip())
                 if self.source:
                     self.assertEqual(self.source,
                                      self.machine.execute(xmllint_element.format(prop='source/@dev')).strip())
@@ -790,6 +839,8 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
                 self.browser.wait_in_text(f"#vm-subVmTest1-network-{self.nic_num}-model", self.model)
             if self.source:
                 self.browser.wait_in_text(f"#vm-subVmTest1-network-{self.nic_num}-source", self.source)
+            if self.source_mode:
+                self.browser.wait_in_text(f"#vm-subVmTest1-network-{self.nic_num}-source-mode", self.source_mode)
             if self.mac:
                 self.browser.wait_in_text(f"#vm-subVmTest1-network-{self.nic_num}-mac", self.mac)
 
