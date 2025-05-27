@@ -76,6 +76,7 @@ export class EditNICModal extends React.Component {
             dialogError: undefined,
             networkType: props.network.type,
             networkSource: defaultNetworkSource,
+            networkSourceMode: props.network.type == "direct" ? props.network.source.mode : "bridge",
             networkModel: props.network.model,
             networkMac: props.network.mac,
             saveDisabled: false,
@@ -139,6 +140,7 @@ export class EditNICModal extends React.Component {
             networkModel: this.state.networkModel,
             networkType: this.state.networkType,
             networkSource: this.state.networkSource,
+            networkSourceMode: this.state.networkSourceMode,
         })
                 .then(() => {
                     domainGet({ connectionName: vm.connectionName, id: vm.id });

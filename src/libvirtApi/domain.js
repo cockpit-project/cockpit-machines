@@ -157,9 +157,9 @@ export function domainAttachHostDevices({ connectionName, vmName, live, devices 
     return cockpit.spawn(args, options);
 }
 
-export function domainAttachIface({ connectionName, vmName, mac, permanent, hotplug, sourceType, source, model }) {
+export function domainAttachIface({ connectionName, vmName, mac, permanent, hotplug, sourceType, source, sourceMode, model }) {
     const macArg = mac ? "mac=" + mac + "," : "";
-    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--add-device', '--network', `${macArg}type=${sourceType},source=${source},source.mode=bridge,model=${model}`];
+    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--add-device', '--network', `${macArg}type=${sourceType},source=${source},source.mode=${sourceMode},model=${model}`];
     const options = { err: "message" };
 
     if (connectionName === "system")
@@ -183,6 +183,7 @@ export function domainChangeInterfaceSettings({
     newMacAddress,
     networkType,
     networkSource,
+    networkSourceMode,
     networkModel,
     state,
 }) {
@@ -203,6 +204,8 @@ export function domainChangeInterfaceSettings({
         }
         if (networkSource)
             networkParams += `source=${networkSource},`;
+        if (networkSourceMode)
+            networkParams += `source.mode=${networkSourceMode},`;
         if (networkModel)
             networkParams += `model=${networkModel},`;
     }
