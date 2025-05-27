@@ -882,7 +882,7 @@ export function parseDumpxmlForInterfaces(devicesElem: Element): VMInterface[] {
             const bootElem = getSingleOptionalElem(interfaceElem, 'boot');
 
             const networkInterface: VMInterface = { // see https://libvirt.org/formatdomain.html#elementsNICS
-                type: interfaceElem.getAttribute('type'), // Only one required parameter
+                type: interfaceElem.getAttribute('type') || "", // Only one required parameter
                 managed: interfaceElem.getAttribute('managed'),
                 name: interfaceElem.getAttribute('name'), // Name of interface
                 target: targetElem?.getAttribute('dev'),
