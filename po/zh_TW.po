@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-19 03:39+0000\n"
+"POT-Creation-Date: 2025-05-26 03:37+0000\n"
 "PO-Revision-Date: 2025-03-22 11:46+0000\n"
 "Last-Translator: hsu zangmen <chzang55@gmail.com>\n"
 "Language-Team: Chinese (Traditional) <https://translate.fedoraproject.org/"
@@ -114,7 +114,7 @@ msgstr "啟用儲存空間集區以管理磁碟區"
 #: src/components/vm/overview/watchdog.jsx:156
 #: src/components/vm/overview/vsock.jsx:194
 #: src/components/vm/nics/nicAdd.jsx:220
-#: src/components/vm/disks/diskAdd.jsx:848
+#: src/components/vm/disks/diskAdd.jsx:818
 #: src/components/vm/hostdevs/hostDevAdd.jsx:232
 msgid "Add"
 msgstr "新增"
@@ -132,7 +132,7 @@ msgid "Add a DHCP static host entry"
 msgstr "新增 DHCP 靜態主機項目"
 
 #: src/components/vm/disks/vmDisksCard.jsx:75
-#: src/components/vm/disks/diskAdd.jsx:692
+#: src/components/vm/disks/diskAdd.jsx:686
 msgid "Add disk"
 msgstr "新增磁碟"
 
@@ -169,10 +169,6 @@ msgstr "新增 watchdog 須重新開機才會生效。"
 msgid "Adding shared directories is possible only when the guest is shut off"
 msgstr "只有在客體已關閉時才能新增共享目錄"
 
-#: src/components/vm/disks/diskAdd.jsx:84
-msgid "Adding this disk will change its access mode to shared."
-msgstr "新增此磁碟會將其存取模式變更為共享。"
-
 #: src/components/vm/disks/vmDisksCard.jsx:192
 msgid "Additional"
 msgstr "額外"
@@ -203,7 +199,7 @@ msgstr ""
 "所有虛擬機器的活動、包含儲存空間，將都是暫時的。這將會導致在目的地主機上的資"
 "料遺失。"
 
-#: src/components/vm/disks/diskAdd.jsx:256
+#: src/components/vm/disks/diskAdd.jsx:250
 msgid ""
 "Allowed characters: basic Latin alphabet, numbers, and limited punctuation "
 "(-, _, +, .)"
@@ -213,7 +209,7 @@ msgstr "允許的字元：基本拉丁字母、數字、與有限的標點 (-, _
 msgid "Also delete all volumes inside this pool:"
 msgstr "同時將這個集區內的所有磁碟區刪除："
 
-#: src/components/vm/nics/nicAdd.jsx:96 src/components/vm/disks/diskAdd.jsx:142
+#: src/components/vm/nics/nicAdd.jsx:96 src/components/vm/disks/diskAdd.jsx:136
 msgid "Always attach"
 msgstr "每次都附加"
 
@@ -276,7 +272,7 @@ msgstr "無法儲存開機順序"
 #: src/components/vm/overview/bootOrder.jsx:154
 #: src/components/vm/disks/vmDisksCard.jsx:186
 #: src/components/vm/disks/diskEdit.jsx:87
-#: src/components/vm/disks/diskAdd.jsx:225
+#: src/components/vm/disks/diskAdd.jsx:219
 #: src/components/vm/hostdevs/hostDevAdd.jsx:89
 #: src/components/vm/hostdevs/hostDevCard.jsx:99
 #: src/components/vm/hostdevs/hostDevCard.jsx:107
@@ -284,7 +280,7 @@ msgstr "無法儲存開機順序"
 msgid "Bus"
 msgstr "匯流排"
 
-#: src/components/vm/disks/diskAdd.jsx:357
+#: src/components/vm/disks/diskAdd.jsx:351
 msgid "CD/DVD disc"
 msgstr "CD/DVD 光碟"
 
@@ -299,7 +295,7 @@ msgid "CPU mode could not be saved"
 msgstr "無法儲存 CPU 模式"
 
 #: src/components/vm/disks/diskEdit.jsx:61
-#: src/components/vm/disks/diskAdd.jsx:214
+#: src/components/vm/disks/diskAdd.jsx:208
 #: src/components/vm/disks/vmDiskColumns.jsx:104
 msgid "Cache"
 msgstr "快取"
@@ -327,8 +323,8 @@ msgstr "快取"
 #: src/components/vm/deleteDialog.jsx:175
 #: src/components/vm/nics/nicEdit.jsx:194 src/components/vm/nics/nicAdd.jsx:223
 #: src/components/vm/vmCloneDialog.jsx:85
-#: src/components/vm/disks/diskEdit.jsx:263
-#: src/components/vm/disks/diskAdd.jsx:851
+#: src/components/vm/disks/diskEdit.jsx:251
+#: src/components/vm/disks/diskAdd.jsx:821
 #: src/components/vm/disks/mediaEject.jsx:112
 #: src/components/vm/vmRenameDialog.jsx:73
 #: src/components/vm/hostdevs/hostDevAdd.jsx:237
@@ -363,7 +359,7 @@ msgstr "未套用的變更"
 msgid "Changes will take effect after shutting down the VM"
 msgstr "變更將於虛擬機器關機後生效"
 
-#: src/app.jsx:127
+#: src/app.jsx:124
 msgid ""
 "Changing BIOS/EFI settings is specific to each manufacturer. It involves "
 "pressing a hotkey during boot (ESC, F1, F12, Del). Enable a setting called "
@@ -407,6 +403,10 @@ msgstr "雲端基礎 (Cloud base) 映像"
 #: org.cockpit_project.machines.metainfo.xml:19
 msgid "Cockpit Project"
 msgstr "Cockpit 專案"
+
+#: src/components/vm/disks/vmDisksCard.jsx:216
+msgid "Concurrently writeable"
+msgstr ""
 
 #: src/components/common/deleteResource.jsx:99
 msgid "Confirm this action"
@@ -512,7 +512,7 @@ msgstr "建立並編輯"
 msgid "Create and run"
 msgstr "建立並執行"
 
-#: src/components/vm/disks/diskAdd.jsx:631
+#: src/components/vm/disks/diskAdd.jsx:625
 msgid "Create new"
 msgstr "新建"
 
@@ -556,7 +556,7 @@ msgstr "建立磁碟分區"
 msgid "Creating VM"
 msgstr "正在建立 VM"
 
-#: src/app.jsx:290
+#: src/app.jsx:287
 msgid "Creating VM $0"
 msgstr "正在建立虛擬機器 $0"
 
@@ -594,9 +594,9 @@ msgstr "自訂的韌體：$0"
 msgid "Custom identifier"
 msgstr "自訂識別碼"
 
-#: src/components/vm/disks/diskAdd.jsx:342
-#: src/components/vm/disks/diskAdd.jsx:595
-#: src/components/vm/disks/diskAdd.jsx:641
+#: src/components/vm/disks/diskAdd.jsx:336
+#: src/components/vm/disks/diskAdd.jsx:589
+#: src/components/vm/disks/diskAdd.jsx:635
 msgid "Custom path"
 msgstr "自訂路徑"
 
@@ -696,7 +696,7 @@ msgstr "詳細資訊"
 #: src/components/vm/overview/bootOrder.jsx:138
 #: src/components/vm/overview/bootOrder.jsx:141
 #: src/components/vm/disks/vmDisksCard.jsx:172
-#: src/components/vm/disks/diskAdd.jsx:350
+#: src/components/vm/disks/diskAdd.jsx:344
 #: src/components/vm/disks/vmDiskColumns.jsx:43
 #: src/components/vm/hostdevs/hostDevAdd.jsx:88
 #: src/components/vm/hostdevs/hostDevAdd.jsx:123
@@ -730,11 +730,11 @@ msgstr "磁碟"
 msgid "Disk $0 could not be removed"
 msgstr "無法移除磁碟 $0"
 
-#: src/components/vm/disks/diskAdd.jsx:835
+#: src/components/vm/disks/diskAdd.jsx:805
 msgid "Disk failed to be added"
 msgstr "新增磁碟失敗"
 
-#: src/components/vm/disks/diskAdd.jsx:240
+#: src/components/vm/disks/diskAdd.jsx:234
 msgid "Disk identifier"
 msgstr "磁碟識別碼"
 
@@ -742,7 +742,7 @@ msgstr "磁碟識別碼"
 msgid "Disk image"
 msgstr "磁碟映像"
 
-#: src/components/vm/disks/diskAdd.jsx:355
+#: src/components/vm/disks/diskAdd.jsx:349
 msgid "Disk image file"
 msgstr "磁碟映像檔"
 
@@ -754,8 +754,7 @@ msgstr "磁碟映像路徑不可為空值"
 msgid "Disk images can be stored in user home directory"
 msgstr "磁碟映像檔可以被儲存在使用者的家目錄"
 
-#: src/components/vm/disks/diskEdit.jsx:211
-#: src/components/vm/disks/diskAdd.jsx:806
+#: src/components/vm/disks/diskEdit.jsx:199
 msgid "Disk settings could not be saved"
 msgstr "磁碟設定無法儲存"
 
@@ -788,11 +787,11 @@ msgstr "虛擬機器 (Domain) 因資源問題被阻擋"
 msgid "Download an OS"
 msgstr "下載作業系統"
 
-#: src/app.jsx:294
+#: src/app.jsx:291
 msgid "Download progress"
 msgstr "下載進度"
 
-#: src/app.jsx:290
+#: src/app.jsx:287
 msgid "Downloading image for VM $0"
 msgstr "正在為虛擬機器 $0 下載映像"
 
@@ -813,11 +812,11 @@ msgid "Dying"
 msgstr "垂死"
 
 #: src/components/vm/nics/vmNicsCard.jsx:454
-#: src/components/vm/disks/diskEdit.jsx:159
+#: src/components/vm/disks/diskEdit.jsx:149
 msgid "Edit"
 msgstr "編輯"
 
-#: src/components/vm/disks/diskEdit.jsx:256
+#: src/components/vm/disks/diskEdit.jsx:244
 msgid "Edit $0 attributes"
 msgstr "編輯 $0 屬性"
 
@@ -858,7 +857,7 @@ msgstr "從虛擬機器將光碟退片嗎？"
 msgid "Emulated machine"
 msgstr "模擬的機器"
 
-#: src/app.jsx:125
+#: src/app.jsx:122
 msgid "Enable virtualization support in BIOS/EFI settings."
 msgstr "於 BIOS/EFI 設定啟用虛擬化支援。"
 
@@ -931,7 +930,7 @@ msgstr "拆離 vsock 失敗"
 msgid "Failed to detach watchdog"
 msgstr "拆離 watchdog 失敗"
 
-#: src/app.jsx:181
+#: src/app.jsx:178
 msgid "Failed to fetch some resources"
 msgstr "取得某些資源失敗"
 
@@ -1055,7 +1054,7 @@ msgstr "取得一個新的 RHSM 權杖。"
 msgid "GiB"
 msgstr "GiB"
 
-#: src/app.jsx:280 src/app.jsx:291
+#: src/app.jsx:277 src/app.jsx:288
 msgid "Go to VMs list"
 msgstr "移動至虛擬機器清單"
 
@@ -1067,12 +1066,12 @@ msgstr "桌面虛擬化的好選擇"
 msgid "Gracefully shutdown"
 msgstr "正常關機"
 
-#: src/app.jsx:122
+#: src/app.jsx:119
 msgid "Hardware virtualization is disabled"
 msgstr "硬體虛擬化已被停用"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:218
-#: src/components/vm/disks/diskAdd.jsx:210
+#: src/components/vm/disks/diskAdd.jsx:204
 msgid "Hide additional options"
 msgstr "隱藏額外動作"
 
@@ -1188,7 +1187,7 @@ msgid ""
 "same time."
 msgstr "識別碼正被 $0 使用。無法在同時間執行多個具有相同識別碼的虛擬機器。"
 
-#: src/components/vm/disks/diskAdd.jsx:261
+#: src/components/vm/disks/diskAdd.jsx:255
 msgid "Identifier may be silently truncated to $0 characters "
 msgstr "識別碼可能會不經提醒就被截斷至 $0 個字元。 "
 
@@ -1196,7 +1195,7 @@ msgstr "識別碼可能會不經提醒就被截斷至 $0 個字元。 "
 msgid "Idle"
 msgstr "閒置"
 
-#: src/app.jsx:136
+#: src/app.jsx:133
 msgid "Ignore"
 msgstr "忽略"
 
@@ -1216,7 +1215,7 @@ msgstr "匯入並編輯"
 msgid "Import and run"
 msgstr "匯入並執行"
 
-#: src/components/vm/disks/diskAdd.jsx:495
+#: src/components/vm/disks/diskAdd.jsx:489
 msgid "Importing an image with a backing file is unsupported"
 msgstr "不支援匯入含基底檔案的映像"
 
@@ -1247,12 +1246,12 @@ msgstr "起動器不應該留白"
 msgid "Inject a non-maskable interrupt"
 msgstr "注入非可遮蔽中斷"
 
-#: src/components/vm/disks/diskAdd.jsx:848
+#: src/components/vm/disks/diskAdd.jsx:818
 #: src/components/vm/disks/vmDiskColumns.jsx:186
 msgid "Insert"
 msgstr "插入"
 
-#: src/components/vm/disks/diskAdd.jsx:692
+#: src/components/vm/disks/diskAdd.jsx:686
 msgid "Insert disc media"
 msgstr "插入光碟媒體"
 
@@ -1721,7 +1720,7 @@ msgstr "沒有儲存空間"
 msgid "No storage pool is defined on this host"
 msgstr "此主機上沒有已定義的儲存集區"
 
-#: src/components/vm/disks/diskAdd.jsx:169
+#: src/components/vm/disks/diskAdd.jsx:163
 msgid "No storage pools available"
 msgstr "沒有可用的儲存集區"
 
@@ -1840,7 +1839,7 @@ msgstr "主機檔案系統上雲端映像 (cloud image) 檔案的路徑"
 msgid "Path to directory"
 msgstr "目錄的路徑"
 
-#: src/components/vm/disks/diskAdd.jsx:345
+#: src/components/vm/disks/diskAdd.jsx:339
 msgid "Path to file on host's file system"
 msgstr "主機檔案系統上檔案的路徑"
 
@@ -1860,7 +1859,7 @@ msgstr "永久（預設）"
 msgid "Permissions denied for disk images in home directories"
 msgstr "存取家目錄中的磁碟映像檔時權限被拒"
 
-#: src/components/vm/nics/nicAdd.jsx:93 src/components/vm/disks/diskAdd.jsx:139
+#: src/components/vm/nics/nicAdd.jsx:93 src/components/vm/disks/diskAdd.jsx:133
 msgid "Persistence"
 msgstr "持續性"
 
@@ -1881,15 +1880,15 @@ msgstr "主機上的實體磁碟裝置"
 msgid "Please choose a different MAC address"
 msgstr "請選擇一個不同的 MAC 位址"
 
-#: src/components/vm/disks/diskAdd.jsx:552
+#: src/components/vm/disks/diskAdd.jsx:546
 msgid "Please choose a storage pool"
 msgstr "請選擇一個儲存集區"
 
-#: src/components/vm/disks/diskAdd.jsx:570
+#: src/components/vm/disks/diskAdd.jsx:564
 msgid "Please choose a volume"
 msgstr "請選擇一個磁碟區"
 
-#: src/components/vm/disks/diskAdd.jsx:559
+#: src/components/vm/disks/diskAdd.jsx:553
 msgid "Please enter new volume name"
 msgstr "請輸入新的磁碟區名稱"
 
@@ -1903,7 +1902,7 @@ msgstr "請啟動虛擬機器以存取它的控制台。"
 
 #: src/components/vm/overview/bootOrder.jsx:101
 #: src/components/vm/deleteDialog.jsx:69
-#: src/components/vm/disks/diskAdd.jsx:153
+#: src/components/vm/disks/diskAdd.jsx:147
 #: src/components/vm/disks/vmDiskColumns.jsx:45
 #: src/components/vm/disks/mediaEject.jsx:87
 msgid "Pool"
@@ -1913,7 +1912,7 @@ msgstr "集區"
 msgid "Pool needs to be active to create volume"
 msgstr "集區須為啟用狀態才能建立磁碟區"
 
-#: src/components/vm/disks/diskAdd.jsx:562
+#: src/components/vm/disks/diskAdd.jsx:556
 msgid "Pool type $0 does not support volume creation"
 msgstr "集區類型 $0 不支援建立磁碟區"
 
@@ -2219,7 +2218,7 @@ msgstr "SSH 金鑰"
 #: src/components/vm/overview/firmware.jsx:84
 #: src/components/vm/overview/vsock.jsx:194
 #: src/components/vm/nics/nicEdit.jsx:191
-#: src/components/vm/disks/diskEdit.jsx:260
+#: src/components/vm/disks/diskEdit.jsx:248
 msgid "Save"
 msgstr "儲存"
 
@@ -2291,7 +2290,7 @@ msgid "Shared storage"
 msgstr "共享儲存裝置"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:218
-#: src/components/vm/disks/diskAdd.jsx:210
+#: src/components/vm/disks/diskAdd.jsx:204
 msgid "Show additional options"
 msgstr "顯示額外選項"
 
@@ -2374,8 +2373,8 @@ msgstr "部份設定變更僅在下一次完整重新開機後生效："
 #: src/components/vm/nics/vmNicsCard.jsx:407
 #: src/components/vm/nics/nicBody.jsx:196
 #: src/components/vm/disks/vmDisksCard.jsx:190
-#: src/components/vm/disks/diskAdd.jsx:592
-#: src/components/vm/disks/diskAdd.jsx:628
+#: src/components/vm/disks/diskAdd.jsx:586
+#: src/components/vm/disks/diskAdd.jsx:622
 #: src/components/vm/hostdevs/hostDevCard.jsx:217
 msgid "Source"
 msgstr "來源"
@@ -2485,7 +2484,7 @@ msgstr "儲存集區名稱"
 msgid "Storage pools"
 msgstr "儲存集區"
 
-#: src/components/vm/disks/diskAdd.jsx:419
+#: src/components/vm/disks/diskAdd.jsx:413
 msgid "Storage pools could not be fetched"
 msgstr "無法取得儲存集區"
 
@@ -2498,7 +2497,7 @@ msgid "Storage volume"
 msgstr "儲存磁碟區"
 
 #: src/components/storagePools/storageVolumeCreate.jsx:79
-#: src/components/vm/disks/diskAdd.jsx:566
+#: src/components/vm/disks/diskAdd.jsx:560
 msgid "Storage volume size must not exceed the storage pool's capacity ($0 $1)"
 msgstr "儲存磁碟區大小必須不超過儲存集區的容量 ($0 $1)"
 
@@ -2589,7 +2588,7 @@ msgid ""
 msgstr ""
 "將從來源主機移除被遷移的虛擬機器設定。目標主機將會被作為虛擬機器的新家。"
 
-#: src/components/vm/disks/diskAdd.jsx:111
+#: src/components/vm/disks/diskAdd.jsx:105
 msgid "The pool is empty"
 msgstr "集區是空的"
 
@@ -2661,7 +2660,7 @@ msgid ""
 msgstr ""
 "此工具管理虛擬機器。您可以使用它建立、監看並控制 libvirt 子系統的虛擬機器。"
 
-#: src/components/vm/disks/diskAdd.jsx:82
+#: src/components/vm/disks/diskAdd.jsx:80
 msgid "This volume is already used by $0."
 msgstr "此磁碟區已被用於 $0 。"
 
@@ -2764,8 +2763,8 @@ msgstr "Url"
 msgid "Usage"
 msgstr "使用率"
 
-#: src/components/vm/disks/diskAdd.jsx:600
-#: src/components/vm/disks/diskAdd.jsx:636
+#: src/components/vm/disks/diskAdd.jsx:594
+#: src/components/vm/disks/diskAdd.jsx:630
 msgid "Use existing"
 msgstr "利用現有的"
 
@@ -2826,7 +2825,7 @@ msgstr "虛擬機器 $0 的主機裝置"
 msgid "VM $0 already exists"
 msgstr "虛擬機器 $0 已經存在"
 
-#: src/app.jsx:279
+#: src/app.jsx:276
 msgid "VM $0 does not exist on $1 connection"
 msgstr "虛擬機器 $0 不存在於 $1 連線"
 
@@ -2957,7 +2956,7 @@ msgstr "虛擬化服務（libvirt）未啟動"
 #: src/components/create-vm-dialog/createVmDialog.jsx:989
 #: src/components/vm/overview/bootOrder.jsx:102
 #: src/components/vm/deleteDialog.jsx:66
-#: src/components/vm/disks/diskAdd.jsx:119
+#: src/components/vm/disks/diskAdd.jsx:113
 #: src/components/vm/disks/vmDiskColumns.jsx:46
 #: src/components/vm/disks/mediaEject.jsx:91
 msgid "Volume"
@@ -3002,11 +3001,6 @@ msgstr ""
 #: src/components/vm/disks/diskEdit.jsx:125
 msgid "Writeable"
 msgstr "可寫入"
-
-#: src/components/vm/disks/vmDisksCard.jsx:216
-#: src/components/vm/disks/diskEdit.jsx:134
-msgid "Writeable and shared"
-msgstr "可寫入且共享"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:176
 msgid "You can mount the shared folder using:"
@@ -3185,7 +3179,7 @@ msgstr "重新導向的裝置"
 msgid "remove"
 msgstr "移除"
 
-#: src/components/vm/disks/diskAdd.jsx:242
+#: src/components/vm/disks/diskAdd.jsx:236
 msgid "serial number"
 msgstr "序號"
 
@@ -3263,6 +3257,12 @@ msgstr "vsock 需要特殊的軟體"
 #: src/components/networks/networkOverviewTab.jsx:117
 msgid "yes"
 msgstr "是"
+
+#~ msgid "Adding this disk will change its access mode to shared."
+#~ msgstr "新增此磁碟會將其存取模式變更為共享。"
+
+#~ msgid "Writeable and shared"
+#~ msgstr "可寫入且共享"
 
 #~ msgid "Help"
 #~ msgstr "說明"

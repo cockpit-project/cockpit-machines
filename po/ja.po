@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-19 03:39+0000\n"
+"POT-Creation-Date: 2025-05-26 03:37+0000\n"
 "PO-Revision-Date: 2025-02-28 05:56+0000\n"
 "Last-Translator: Martin Pitt <mpitt@redhat.com>\n"
 "Language-Team: Japanese <https://translate.fedoraproject.org/projects/"
@@ -116,7 +116,7 @@ msgstr "ストレージプールをアクティベートしてボリュームを
 #: src/components/vm/overview/watchdog.jsx:156
 #: src/components/vm/overview/vsock.jsx:194
 #: src/components/vm/nics/nicAdd.jsx:220
-#: src/components/vm/disks/diskAdd.jsx:848
+#: src/components/vm/disks/diskAdd.jsx:818
 #: src/components/vm/hostdevs/hostDevAdd.jsx:232
 msgid "Add"
 msgstr "追加"
@@ -134,7 +134,7 @@ msgid "Add a DHCP static host entry"
 msgstr "DHCP 静的ホストエントリーの追加"
 
 #: src/components/vm/disks/vmDisksCard.jsx:75
-#: src/components/vm/disks/diskAdd.jsx:692
+#: src/components/vm/disks/diskAdd.jsx:686
 msgid "Add disk"
 msgstr "ディスクの追加"
 
@@ -171,10 +171,6 @@ msgstr "ウォッチドッグを追加すると、有効にするために再起
 msgid "Adding shared directories is possible only when the guest is shut off"
 msgstr "ゲストがシャットオフされた場合に限り、共有ディレクトリーを追加できます"
 
-#: src/components/vm/disks/diskAdd.jsx:84
-msgid "Adding this disk will change its access mode to shared."
-msgstr "このディスクを追加すると、アクセスモードが shared に変更されます。"
-
 #: src/components/vm/disks/vmDisksCard.jsx:192
 msgid "Additional"
 msgstr "追加"
@@ -205,7 +201,7 @@ msgstr ""
 "ストレージを含む仮想マシンアクティビティーはすべて一時的なものです。これによ"
 "り、移行先ホストでデータが失われます。"
 
-#: src/components/vm/disks/diskAdd.jsx:256
+#: src/components/vm/disks/diskAdd.jsx:250
 msgid ""
 "Allowed characters: basic Latin alphabet, numbers, and limited punctuation "
 "(-, _, +, .)"
@@ -217,7 +213,7 @@ msgstr ""
 msgid "Also delete all volumes inside this pool:"
 msgstr "このプール内のボリュームをすべて削除します:"
 
-#: src/components/vm/nics/nicAdd.jsx:96 src/components/vm/disks/diskAdd.jsx:142
+#: src/components/vm/nics/nicAdd.jsx:96 src/components/vm/disks/diskAdd.jsx:136
 msgid "Always attach"
 msgstr "常に割り当てる"
 
@@ -282,7 +278,7 @@ msgstr "ブート順序の設定は保存できませんでした"
 #: src/components/vm/overview/bootOrder.jsx:154
 #: src/components/vm/disks/vmDisksCard.jsx:186
 #: src/components/vm/disks/diskEdit.jsx:87
-#: src/components/vm/disks/diskAdd.jsx:225
+#: src/components/vm/disks/diskAdd.jsx:219
 #: src/components/vm/hostdevs/hostDevAdd.jsx:89
 #: src/components/vm/hostdevs/hostDevCard.jsx:99
 #: src/components/vm/hostdevs/hostDevCard.jsx:107
@@ -290,7 +286,7 @@ msgstr "ブート順序の設定は保存できませんでした"
 msgid "Bus"
 msgstr "バス"
 
-#: src/components/vm/disks/diskAdd.jsx:357
+#: src/components/vm/disks/diskAdd.jsx:351
 msgid "CD/DVD disc"
 msgstr "CD/DVD ディスク"
 
@@ -305,7 +301,7 @@ msgid "CPU mode could not be saved"
 msgstr "CPU モードを保存できませんでした"
 
 #: src/components/vm/disks/diskEdit.jsx:61
-#: src/components/vm/disks/diskAdd.jsx:214
+#: src/components/vm/disks/diskAdd.jsx:208
 #: src/components/vm/disks/vmDiskColumns.jsx:104
 msgid "Cache"
 msgstr "キャッシュ"
@@ -333,8 +329,8 @@ msgstr "キャッシュ"
 #: src/components/vm/deleteDialog.jsx:175
 #: src/components/vm/nics/nicEdit.jsx:194 src/components/vm/nics/nicAdd.jsx:223
 #: src/components/vm/vmCloneDialog.jsx:85
-#: src/components/vm/disks/diskEdit.jsx:263
-#: src/components/vm/disks/diskAdd.jsx:851
+#: src/components/vm/disks/diskEdit.jsx:251
+#: src/components/vm/disks/diskAdd.jsx:821
 #: src/components/vm/disks/mediaEject.jsx:112
 #: src/components/vm/vmRenameDialog.jsx:73
 #: src/components/vm/hostdevs/hostDevAdd.jsx:237
@@ -369,7 +365,7 @@ msgstr "変更を保留中"
 msgid "Changes will take effect after shutting down the VM"
 msgstr "変更は、仮想マシンをシャットダウンすると反映されます"
 
-#: src/app.jsx:127
+#: src/app.jsx:124
 msgid ""
 "Changing BIOS/EFI settings is specific to each manufacturer. It involves "
 "pressing a hotkey during boot (ESC, F1, F12, Del). Enable a setting called "
@@ -415,6 +411,10 @@ msgstr "クラウドベースイメージ"
 #: org.cockpit_project.machines.metainfo.xml:19
 msgid "Cockpit Project"
 msgstr "Cockpit プロジェクト"
+
+#: src/components/vm/disks/vmDisksCard.jsx:216
+msgid "Concurrently writeable"
+msgstr ""
 
 #: src/components/common/deleteResource.jsx:99
 msgid "Confirm this action"
@@ -520,7 +520,7 @@ msgstr "作成して編集する"
 msgid "Create and run"
 msgstr "作成して実行する"
 
-#: src/components/vm/disks/diskAdd.jsx:631
+#: src/components/vm/disks/diskAdd.jsx:625
 msgid "Create new"
 msgstr "新規作成"
 
@@ -564,7 +564,7 @@ msgstr "ボリュームの作成"
 msgid "Creating VM"
 msgstr "VM を作成中"
 
-#: src/app.jsx:290
+#: src/app.jsx:287
 msgid "Creating VM $0"
 msgstr "仮想マシン $0 を作成する"
 
@@ -604,9 +604,9 @@ msgstr "カスタムファームウェア: $0"
 msgid "Custom identifier"
 msgstr "カスタム識別子"
 
-#: src/components/vm/disks/diskAdd.jsx:342
-#: src/components/vm/disks/diskAdd.jsx:595
-#: src/components/vm/disks/diskAdd.jsx:641
+#: src/components/vm/disks/diskAdd.jsx:336
+#: src/components/vm/disks/diskAdd.jsx:589
+#: src/components/vm/disks/diskAdd.jsx:635
 msgid "Custom path"
 msgstr "カスタムパス"
 
@@ -708,7 +708,7 @@ msgstr "詳細"
 #: src/components/vm/overview/bootOrder.jsx:138
 #: src/components/vm/overview/bootOrder.jsx:141
 #: src/components/vm/disks/vmDisksCard.jsx:172
-#: src/components/vm/disks/diskAdd.jsx:350
+#: src/components/vm/disks/diskAdd.jsx:344
 #: src/components/vm/disks/vmDiskColumns.jsx:43
 #: src/components/vm/hostdevs/hostDevAdd.jsx:88
 #: src/components/vm/hostdevs/hostDevAdd.jsx:123
@@ -742,11 +742,11 @@ msgstr "ディスク"
 msgid "Disk $0 could not be removed"
 msgstr "ディスク $0 は削除できませんでした"
 
-#: src/components/vm/disks/diskAdd.jsx:835
+#: src/components/vm/disks/diskAdd.jsx:805
 msgid "Disk failed to be added"
 msgstr "ディスクの追加に失敗しました"
 
-#: src/components/vm/disks/diskAdd.jsx:240
+#: src/components/vm/disks/diskAdd.jsx:234
 msgid "Disk identifier"
 msgstr "ディスク識別子"
 
@@ -754,7 +754,7 @@ msgstr "ディスク識別子"
 msgid "Disk image"
 msgstr "ディスクイメージ"
 
-#: src/components/vm/disks/diskAdd.jsx:355
+#: src/components/vm/disks/diskAdd.jsx:349
 msgid "Disk image file"
 msgstr "ディスクイメージファイル"
 
@@ -766,8 +766,7 @@ msgstr "ディスクイメージパスは空欄にできません"
 msgid "Disk images can be stored in user home directory"
 msgstr "ディスクイメージはユーザーのホームディレクトリーに保存できます"
 
-#: src/components/vm/disks/diskEdit.jsx:211
-#: src/components/vm/disks/diskAdd.jsx:806
+#: src/components/vm/disks/diskEdit.jsx:199
 msgid "Disk settings could not be saved"
 msgstr "ディスク設定を保存できませんでした"
 
@@ -801,11 +800,11 @@ msgstr "ドメインがリソース上でブロックされています"
 msgid "Download an OS"
 msgstr "OS をダウンロードします"
 
-#: src/app.jsx:294
+#: src/app.jsx:291
 msgid "Download progress"
 msgstr "進捗状況のダウンロード"
 
-#: src/app.jsx:290
+#: src/app.jsx:287
 msgid "Downloading image for VM $0"
 msgstr "仮想マシン $0 のイメージをダウンロード中"
 
@@ -826,11 +825,11 @@ msgid "Dying"
 msgstr "終了中"
 
 #: src/components/vm/nics/vmNicsCard.jsx:454
-#: src/components/vm/disks/diskEdit.jsx:159
+#: src/components/vm/disks/diskEdit.jsx:149
 msgid "Edit"
 msgstr "編集"
 
-#: src/components/vm/disks/diskEdit.jsx:256
+#: src/components/vm/disks/diskEdit.jsx:244
 msgid "Edit $0 attributes"
 msgstr "$0 属性の編集"
 
@@ -871,7 +870,7 @@ msgstr "仮想マシンからディスクを取り出しますか?"
 msgid "Emulated machine"
 msgstr "エミュレートされたマシン"
 
-#: src/app.jsx:125
+#: src/app.jsx:122
 msgid "Enable virtualization support in BIOS/EFI settings."
 msgstr "BIOS/EFI 設定で仮想化サポートを有効にしてください。"
 
@@ -944,7 +943,7 @@ msgstr "vsock の割り当てを解除できませんでした"
 msgid "Failed to detach watchdog"
 msgstr "ウォッチドッグの割り当てを解除できませんでした"
 
-#: src/app.jsx:181
+#: src/app.jsx:178
 msgid "Failed to fetch some resources"
 msgstr "一部のリソースの取得に失敗しました"
 
@@ -1067,7 +1066,7 @@ msgstr "新しい RHSM トークンを取得します。"
 msgid "GiB"
 msgstr "GiB"
 
-#: src/app.jsx:280 src/app.jsx:291
+#: src/app.jsx:277 src/app.jsx:288
 msgid "Go to VMs list"
 msgstr "仮想マシンの一覧に移動"
 
@@ -1079,12 +1078,12 @@ msgstr "デスクトップ仮想化に適しています"
 msgid "Gracefully shutdown"
 msgstr "正常なシャットダウン"
 
-#: src/app.jsx:122
+#: src/app.jsx:119
 msgid "Hardware virtualization is disabled"
 msgstr "ハードウェア仮想化が無効になっています"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:218
-#: src/components/vm/disks/diskAdd.jsx:210
+#: src/components/vm/disks/diskAdd.jsx:204
 msgid "Hide additional options"
 msgstr "その他のオプションを非表示にします"
 
@@ -1204,7 +1203,7 @@ msgstr ""
 "$0 によって使用されている識別子です。同じ識別子を持つ VM を同時に実行すること"
 "はできません。"
 
-#: src/components/vm/disks/diskAdd.jsx:261
+#: src/components/vm/disks/diskAdd.jsx:255
 msgid "Identifier may be silently truncated to $0 characters "
 msgstr "識別子は警告なしに $0 文字に切り捨てられることがあります "
 
@@ -1212,7 +1211,7 @@ msgstr "識別子は警告なしに $0 文字に切り捨てられることが�
 msgid "Idle"
 msgstr "アイドル"
 
-#: src/app.jsx:136
+#: src/app.jsx:133
 msgid "Ignore"
 msgstr "無視"
 
@@ -1232,7 +1231,7 @@ msgstr "インポートして編集する"
 msgid "Import and run"
 msgstr "インポートして実行する"
 
-#: src/components/vm/disks/diskAdd.jsx:495
+#: src/components/vm/disks/diskAdd.jsx:489
 msgid "Importing an image with a backing file is unsupported"
 msgstr ""
 "バッキングファイルを使用したイメージのインポートはサポートされていません"
@@ -1267,12 +1266,12 @@ msgstr "イニシエーターは空にできません"
 msgid "Inject a non-maskable interrupt"
 msgstr "マスク不可割り込みの挿入"
 
-#: src/components/vm/disks/diskAdd.jsx:848
+#: src/components/vm/disks/diskAdd.jsx:818
 #: src/components/vm/disks/vmDiskColumns.jsx:186
 msgid "Insert"
 msgstr "挿入"
 
-#: src/components/vm/disks/diskAdd.jsx:692
+#: src/components/vm/disks/diskAdd.jsx:686
 msgid "Insert disc media"
 msgstr "ディスクメディアの挿入"
 
@@ -1747,7 +1746,7 @@ msgstr "ストレージはありません"
 msgid "No storage pool is defined on this host"
 msgstr "このホストではストレージプールが定義されていません"
 
-#: src/components/vm/disks/diskAdd.jsx:169
+#: src/components/vm/disks/diskAdd.jsx:163
 msgid "No storage pools available"
 msgstr "利用可能なストレージプールはありません"
 
@@ -1870,7 +1869,7 @@ msgstr "ホストファイルシステムのクラウドイメージファイル
 msgid "Path to directory"
 msgstr "ディレクトリーへのパス"
 
-#: src/components/vm/disks/diskAdd.jsx:345
+#: src/components/vm/disks/diskAdd.jsx:339
 msgid "Path to file on host's file system"
 msgstr "ホストファイルシステムのファイルへのパス"
 
@@ -1891,7 +1890,7 @@ msgid "Permissions denied for disk images in home directories"
 msgstr ""
 "ホームディレクトリーのディスクイメージに対するパーミッションが拒否されました"
 
-#: src/components/vm/nics/nicAdd.jsx:93 src/components/vm/disks/diskAdd.jsx:139
+#: src/components/vm/nics/nicAdd.jsx:93 src/components/vm/disks/diskAdd.jsx:133
 msgid "Persistence"
 msgstr "永続"
 
@@ -1912,15 +1911,15 @@ msgstr "ホスト上の物理ディスクデバイス"
 msgid "Please choose a different MAC address"
 msgstr "別の MAC アドレスを選択してください"
 
-#: src/components/vm/disks/diskAdd.jsx:552
+#: src/components/vm/disks/diskAdd.jsx:546
 msgid "Please choose a storage pool"
 msgstr "ストレージプールを選択してください"
 
-#: src/components/vm/disks/diskAdd.jsx:570
+#: src/components/vm/disks/diskAdd.jsx:564
 msgid "Please choose a volume"
 msgstr "ボリュームを選択してください"
 
-#: src/components/vm/disks/diskAdd.jsx:559
+#: src/components/vm/disks/diskAdd.jsx:553
 msgid "Please enter new volume name"
 msgstr "新しいボリューム名を入力してください"
 
@@ -1934,7 +1933,7 @@ msgstr "仮想マシンを起動して、コンソールにアクセスしてく
 
 #: src/components/vm/overview/bootOrder.jsx:101
 #: src/components/vm/deleteDialog.jsx:69
-#: src/components/vm/disks/diskAdd.jsx:153
+#: src/components/vm/disks/diskAdd.jsx:147
 #: src/components/vm/disks/vmDiskColumns.jsx:45
 #: src/components/vm/disks/mediaEject.jsx:87
 msgid "Pool"
@@ -1944,7 +1943,7 @@ msgstr "プール"
 msgid "Pool needs to be active to create volume"
 msgstr "ボリュームを作成するには、プールがアクティブである必要があります"
 
-#: src/components/vm/disks/diskAdd.jsx:562
+#: src/components/vm/disks/diskAdd.jsx:556
 msgid "Pool type $0 does not support volume creation"
 msgstr "プールタイプ $0 はボリューム作成をサポートしません"
 
@@ -2257,7 +2256,7 @@ msgstr "SSH キー"
 #: src/components/vm/overview/firmware.jsx:84
 #: src/components/vm/overview/vsock.jsx:194
 #: src/components/vm/nics/nicEdit.jsx:191
-#: src/components/vm/disks/diskEdit.jsx:260
+#: src/components/vm/disks/diskEdit.jsx:248
 msgid "Save"
 msgstr "保存"
 
@@ -2332,7 +2331,7 @@ msgid "Shared storage"
 msgstr "共有ストレージ"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:218
-#: src/components/vm/disks/diskAdd.jsx:210
+#: src/components/vm/disks/diskAdd.jsx:204
 msgid "Show additional options"
 msgstr "その他のオプションを表示します"
 
@@ -2411,8 +2410,8 @@ msgstr "一部の設定変更は、再起動後にのみ有効になります:"
 #: src/components/vm/nics/vmNicsCard.jsx:407
 #: src/components/vm/nics/nicBody.jsx:196
 #: src/components/vm/disks/vmDisksCard.jsx:190
-#: src/components/vm/disks/diskAdd.jsx:592
-#: src/components/vm/disks/diskAdd.jsx:628
+#: src/components/vm/disks/diskAdd.jsx:586
+#: src/components/vm/disks/diskAdd.jsx:622
 #: src/components/vm/hostdevs/hostDevCard.jsx:217
 msgid "Source"
 msgstr "ソース"
@@ -2522,7 +2521,7 @@ msgstr "ストレージプール名"
 msgid "Storage pools"
 msgstr "ストレージプール"
 
-#: src/components/vm/disks/diskAdd.jsx:419
+#: src/components/vm/disks/diskAdd.jsx:413
 msgid "Storage pools could not be fetched"
 msgstr "ストレージプールを取得できませんでした"
 
@@ -2535,7 +2534,7 @@ msgid "Storage volume"
 msgstr "ストレージボリューム"
 
 #: src/components/storagePools/storageVolumeCreate.jsx:79
-#: src/components/vm/disks/diskAdd.jsx:566
+#: src/components/vm/disks/diskAdd.jsx:560
 msgid "Storage volume size must not exceed the storage pool's capacity ($0 $1)"
 msgstr ""
 "ストレージボリュームサイズは、ストレージプールの容量を超えることはできません "
@@ -2630,7 +2629,7 @@ msgstr ""
 "移行された仮想マシン設定は移行元ホストから削除されます。移行先ホストは、仮想"
 "マシンの新しいホームとみなされます。"
 
-#: src/components/vm/disks/diskAdd.jsx:111
+#: src/components/vm/disks/diskAdd.jsx:105
 msgid "The pool is empty"
 msgstr "プールが空です"
 
@@ -2712,7 +2711,7 @@ msgstr ""
 "このツールは仮想マシンを管理します。これを使用すると、libvirt サブシステムの"
 "仮想マシンを作成、監視、および制御できます。"
 
-#: src/components/vm/disks/diskAdd.jsx:82
+#: src/components/vm/disks/diskAdd.jsx:80
 msgid "This volume is already used by $0."
 msgstr "このボリュームは、すでに $0 で使用されています。"
 
@@ -2813,8 +2812,8 @@ msgstr "URL"
 msgid "Usage"
 msgstr "使用率"
 
-#: src/components/vm/disks/diskAdd.jsx:600
-#: src/components/vm/disks/diskAdd.jsx:636
+#: src/components/vm/disks/diskAdd.jsx:594
+#: src/components/vm/disks/diskAdd.jsx:630
 msgid "Use existing"
 msgstr "既存の使用"
 
@@ -2876,7 +2875,7 @@ msgstr "仮想マシン $0 ホストデバイス"
 msgid "VM $0 already exists"
 msgstr "VM $0 はすでに存在します"
 
-#: src/app.jsx:279
+#: src/app.jsx:276
 msgid "VM $0 does not exist on $1 connection"
 msgstr "VM $0 は $1 接続に存在しません"
 
@@ -3007,7 +3006,7 @@ msgstr "仮想化サービス (libvirt) は有効ではありません"
 #: src/components/create-vm-dialog/createVmDialog.jsx:989
 #: src/components/vm/overview/bootOrder.jsx:102
 #: src/components/vm/deleteDialog.jsx:66
-#: src/components/vm/disks/diskAdd.jsx:119
+#: src/components/vm/disks/diskAdd.jsx:113
 #: src/components/vm/disks/vmDiskColumns.jsx:46
 #: src/components/vm/disks/mediaEject.jsx:91
 msgid "Volume"
@@ -3053,11 +3052,6 @@ msgstr ""
 #: src/components/vm/disks/diskEdit.jsx:125
 msgid "Writeable"
 msgstr "書き込み可能"
-
-#: src/components/vm/disks/vmDisksCard.jsx:216
-#: src/components/vm/disks/diskEdit.jsx:134
-msgid "Writeable and shared"
-msgstr "書き込み可能で共有済み"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:176
 msgid "You can mount the shared folder using:"
@@ -3236,7 +3230,7 @@ msgstr "リダイレクトデバイス"
 msgid "remove"
 msgstr "削除する"
 
-#: src/components/vm/disks/diskAdd.jsx:242
+#: src/components/vm/disks/diskAdd.jsx:236
 msgid "serial number"
 msgstr "シリアル番号"
 
@@ -3319,6 +3313,12 @@ msgstr "vsock には特別なソフトウェアが必要です"
 #: src/components/networks/networkOverviewTab.jsx:117
 msgid "yes"
 msgstr "はい"
+
+#~ msgid "Adding this disk will change its access mode to shared."
+#~ msgstr "このディスクを追加すると、アクセスモードが shared に変更されます。"
+
+#~ msgid "Writeable and shared"
+#~ msgstr "書き込み可能で共有済み"
 
 #~ msgid "Help"
 #~ msgstr "ヘルプ"
