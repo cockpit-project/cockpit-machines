@@ -211,7 +211,7 @@ export function updateOrAddInterface(props: NodeInterface) {
     };
 }
 
-export function updateOrAddNetwork(props: Network, updateOnly: boolean) {
+export function updateOrAddNetwork(props: Partial<Network>, updateOnly?: boolean) {
     return {
         type: UPDATE_ADD_NETWORK,
         payload: { network: props, updateOnly },
