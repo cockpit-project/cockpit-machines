@@ -189,6 +189,16 @@ const NetworkSource = ({
                         {needsShutdownIfaceSource(vm, network) && <NeedsShutdownTooltip iconId={`${id}-network-${networkId}-source-tooltip`} tooltipId="tip-network" />}
                     </Flex>
                 </DescriptionListDescription>
+                { network.source.mode &&
+                    <>
+                        <DescriptionListTerm>
+                            {_("Mode")}
+                        </DescriptionListTerm>
+                        <DescriptionListDescription id={`${id}-network-${networkId}-source-mode`}>
+                            {network.source.mode}
+                        </DescriptionListDescription>
+                    </>
+                }
             </DescriptionListGroup>
         );
     };

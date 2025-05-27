@@ -153,6 +153,7 @@ export class AddNIC extends React.Component<AddNICProps, AddNICState> {
             dialogError: undefined,
             networkType: "network",
             networkSource: props.availableSources.network.length > 0 ? props.availableSources.network[0] : "",
+            networkSourceMode: "bridge",
             networkModel: "virtio",
             setNetworkMac: false,
             networkMac: "",
@@ -206,6 +207,7 @@ export class AddNIC extends React.Component<AddNICProps, AddNICState> {
             model: this.state.networkModel,
             sourceType: this.state.networkType,
             source: this.state.networkSource,
+            sourceMode: this.state.networkSourceMode,
             // Generate our own random MAC address because virt-xml has bug which generates different MAC for online and offline XML
             // https://github.com/virt-manager/virt-manager/issues/305
             mac: this.state.setNetworkMac ? this.state.networkMac : getRandomMac(vms),

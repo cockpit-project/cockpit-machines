@@ -226,6 +226,7 @@ interface InterfaceSpec {
     hotplug: boolean,
     sourceType: string,
     source: string,
+    sourceMode: string,
     model: string,
 }
 
@@ -237,10 +238,11 @@ export async function domainAttachIface({
     hotplug,
     sourceType,
     source,
+    sourceMode,
     model
 }: { connectionName: ConnectionName, vmName: string } & InterfaceSpec): Promise<void> {
     const macArg = mac ? "mac=" + mac + "," : "";
-    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--add-device', '--network', `${macArg}type=${sourceType},source=${source},source.mode=bridge,model=${model}`];
+    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--add-device', '--network', `${macArg}type=${sourceType},source=${source},source.mode=${sourceMode},model=${model}`];
 
     if (hotplug) {
         args.push("--update");
@@ -258,6 +260,7 @@ interface InterfaceChangeSpec {
     newMacAddress?: string,
     networkType?: string,
     networkSource?: string,
+    networkSourceMode?: string,
     networkModel?: string,
     state?: string,
 }
@@ -271,6 +274,7 @@ export function domainChangeInterfaceSettings({
     newMacAddress,
     networkType,
     networkSource,
+    networkSourceMode,
     networkModel,
     state,
 }: { connectionName: ConnectionName, vmName: string } & InterfaceChangeSpec): cockpit.Spawn<string> {
@@ -287,6 +291,8 @@ export function domainChangeInterfaceSettings({
         }
         if (networkSource)
             networkParams += `source=${networkSource},`;
+        if (networkSourceMode)
+            networkParams += `source.mode=${networkSourceMode},`;
         if (networkModel)
             networkParams += `model=${networkModel},`;
     }
