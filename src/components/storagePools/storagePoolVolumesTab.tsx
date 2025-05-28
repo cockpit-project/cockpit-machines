@@ -18,7 +18,8 @@
  */
 
 import React from 'react';
-import PropTypes from 'prop-types';
+
+import type { VM, StoragePool, StorageVolume } from '../../types';
 
 import { ListingTable } from "cockpit-components-table.jsx";
 import { InlineNotification } from 'cockpit-components-inline-notification.jsx';
@@ -31,8 +32,19 @@ import './storagePoolVolumesTab.css';
 
 const _ = cockpit.gettext;
 
-export class StoragePoolVolumesTab extends React.Component {
-    constructor(props) {
+interface StoragePoolVolumesTabProps {
+    storagePool: StoragePool,
+    vms: VM[],
+}
+
+interface StoragePoolVolumesTabState {
+    rows: StorageVolume[];
+    deleteError?: string | undefined;
+    deleteErrorDetail?: string | undefined;
+}
+
+export class StoragePoolVolumesTab extends React.Component<StoragePoolVolumesTabProps, StoragePoolVolumesTabState> {
+    constructor(props: StoragePoolVolumesTabProps) {
         super(props);
 
         this.state = {
@@ -45,18 +57,18 @@ export class StoragePoolVolumesTab extends React.Component {
         this.onSelect = this.onSelect.bind(this);
     }
 
-    static getDerivedStateFromProps(props, current_state) {
+    static getDerivedStateFromProps(props: StoragePoolVolumesTabProps, current_state: StoragePoolVolumesTabState) {
         if ((props.storagePool.volumes || []).length !== current_state.rows.length) {
             return { rows: props.storagePool.volumes || [] };
         }
         return null;
     }
 
-    deleteErrorHandler(deleteError, deleteErrorDetail) {
+    deleteErrorHandler(deleteError: string, deleteErrorDetail: string) {
         this.setState({ deleteError, deleteErrorDetail });
     }
 
-    onSelect(_event, isSelected, rowId) {
+    onSelect(_event: React.FormEvent, isSelected: boolean, rowId: number): void {
         let rows;
         if (rowId === -1) {
             rows = this.state.rows.map(oneRow => {
@@ -86,7 +98,7 @@ export class StoragePoolVolumesTab extends React.Component {
                     storagePool={storagePool} />
         ];
 
-        const sortFunction = (volumeA, volumeB) => volumeA.name.localeCompare(volumeB.name);
+        const sortFunction = (volumeA: StorageVolume, volumeB: StorageVolume) => volumeA.name.localeCompare(volumeB.name);
         const rows = volumes
                 .sort(sortFunction)
                 .map(volume => {
@@ -97,14 +109,14 @@ export class StoragePoolVolumesTab extends React.Component {
                         { title: <div id={`${storagePoolIdPrefix}-volume-${volume.name}-usedby`}>{(isVolumeUsed[volume.name] || []).join(', ')}</div>, },
                         { title: <div id={`${storagePoolIdPrefix}-volume-${volume.name}-size`}>{`${allocation} / ${capacity} GB`}</div> },
                     ];
-                    return { columns, selected: volume.selected, props: { key: volume.name } };
+                    return { columns, selected: !!volume.selected, props: { key: volume.name } };
                 });
 
         return (
             <>
                 { this.state.deleteError &&
                 <InlineNotification type='danger' text={this.state.deleteError}
-                    detail={this.state.deleteErrorDetail}
+                    {...this.state.deleteErrorDetail && { detail: this.state.deleteErrorDetail }}
                     onDismiss={() => this.setState({ deleteError: undefined }) } /> }
                 <ListingTable variant='compact'
                     actions={actions}
@@ -117,7 +129,3 @@ export class StoragePoolVolumesTab extends React.Component {
         );
     }
 }
-StoragePoolVolumesTab.propTypes = {
-    storagePool: PropTypes.object.isRequired,
-    vms: PropTypes.array.isRequired,
-};
