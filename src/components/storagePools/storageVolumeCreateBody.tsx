@@ -33,16 +33,16 @@ import cockpit from 'cockpit';
 
 const _ = cockpit.gettext;
 
-export interface ValidationFailed {
-    volumeName?: string | undefined;
-    size?: string | undefined;
-}
-
 export interface DialogValues {
     volumeName: string,
     size: number,
     unit: string;
     format: optString;
+}
+
+export interface ValidationFailed {
+    volumeName?: string | undefined;
+    size?: string | undefined;
 }
 
 type OnValueChanged = <K extends keyof DialogValues>(key: K, value: string) => void;
