@@ -33,7 +33,7 @@ import { useDialogs, DialogsContext, Dialogs } from 'dialogs.jsx';
 
 const _ = cockpit.gettext;
 
-interface DeleteResourceModalProps {
+export interface DeleteResourceModalProps {
     title: string;
     errorMessage: string;
     objectDescription?: { name: string, value: React.ReactNode }[];
