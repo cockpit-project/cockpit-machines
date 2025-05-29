@@ -23,6 +23,7 @@ import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Flex } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
+import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 import { PopoverPosition } from "@patternfly/react-core/dist/esm/components/Popover";
 import { Content, ContentVariants } from "@patternfly/react-core/dist/esm/components/Content";
 import { ExternalLinkSquareAltIcon } from '@patternfly/react-icons';
@@ -83,7 +84,7 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
     const virtualNetwork = [{
         name: 'network',
         desc: 'Virtual network',
-        detailHeadline: _("This is the recommended config for general guest connectivity on hosts with dynamic / wireless networking configs."),
+        detailHeadline: _("This is the recommended type for general guest connectivity on hosts with dynamic / wireless networking configs."),
         detailParagraph: _("Provides a connection whose details are described by the named network definition.")
     }];
     if (connectionName !== 'session') {
@@ -92,14 +93,13 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
             {
                 name: 'bridge',
                 desc: 'Bridge to LAN',
-                detailHeadline: _("This is the recommended config for general guest connectivity on hosts with static wired networking configs."),
+                detailHeadline: _("This is the recommended type for general guest connectivity on hosts with static wired networking configs."),
                 detailParagraph: _("Provides a bridge from the guest virtual machine directly onto the LAN. This needs a bridge device on the host with one or more physical NICs.")
             },
             {
                 name: 'direct',
                 desc: 'Direct attachment',
-                detailHeadline: _("This is the recommended config for high performance or enhanced security."),
-                detailParagraph: _("In the default 'vepa' mode, switching is offloaded to the external switch. If the switch is not VEPA-capable, communication between guest virtual machines, or between a guests and the host is not possible."),
+                detailParagraph: _("This is the recommended type for high performance or enhanced security."),
                 externalDocs: (
                     <Button isInline
                             className='ct-external-docs-link'
@@ -201,6 +201,31 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
                                 value={defaultNetworkSource}>
                         {networkSourcesContent}
                     </FormSelect>
+                </FormGroup>
+            )}
+            {dialogValues.networkType == "direct" && (
+                <FormGroup id={`${idPrefix}-source-mode`} label={_("Mode")} hasNoPaddingTop isInline
+                           data-value={dialogValues.networkSourceMode}>
+                    <Radio id={`${idPrefix}-source-mode-vepa`}
+                        name="mode-vepa"
+                        isChecked={dialogValues.networkSourceMode == "vepa"}
+                        label="VEPA"
+                        onChange={() => onValueChanged('networkSourceMode', "vepa")} />
+                    <Radio id={`${idPrefix}-source-mode-bridge`}
+                        name="mode-bridge"
+                        isChecked={dialogValues.networkSourceMode == "bridge"}
+                        label={_("Bridge")}
+                        onChange={() => onValueChanged('networkSourceMode', "bridge")} />
+                    <Radio id={`${idPrefix}-source-mode-private`}
+                        name="mode-private"
+                        isChecked={dialogValues.networkSourceMode == "private"}
+                        label={_("Private")}
+                        onChange={() => onValueChanged('networkSourceMode', "private")} />
+                    <Radio id={`${idPrefix}-source-mode-passthrough`}
+                        name="mode-passthrough"
+                        isChecked={dialogValues.networkSourceMode == "passthrough"}
+                        label={_("Passthrough")}
+                        onChange={() => onValueChanged('networkSourceMode', "passthrough")} />
                 </FormGroup>
             )}
         </>
