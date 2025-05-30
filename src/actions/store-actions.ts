@@ -211,7 +211,7 @@ export function updateOrAddInterface(props: NodeInterface) {
     };
 }
 
-export function updateOrAddNetwork(props: Network, updateOnly: boolean) {
+export function updateOrAddNetwork(props: Partial<Network>, updateOnly?: boolean) {
     return {
         type: UPDATE_ADD_NETWORK,
         payload: { network: props, updateOnly },
@@ -225,7 +225,7 @@ export function updateOrAddNodeDevice(props: NodeDevice) {
     };
 }
 
-export function updateOrAddStoragePool(props: StoragePool, updateOnly: boolean) {
+export function updateOrAddStoragePool(props: Partial<StoragePool>, updateOnly?: boolean) {
     return {
         type: UPDATE_ADD_STORAGE_POOL,
         payload: { storagePool: props, updateOnly },
