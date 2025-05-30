@@ -29,7 +29,7 @@ import {
     rephraseUI,
 } from "../../helpers.js";
 
-import type { VMError } from '../../types';
+import type { DetailedError } from '../../types';
 
 import "./stateIcon.scss";
 
@@ -38,9 +38,9 @@ const _ = cockpit.gettext;
 interface StateIconProps {
     state: string,
     valueId: string,
-    error: VMError | null | undefined,
+    error: DetailedError | null | undefined,
     dismissError: () => void,
-    additionalState: React.ReactNode,
+    additionalState?: React.ReactNode,
 }
 
 export const StateIcon = ({

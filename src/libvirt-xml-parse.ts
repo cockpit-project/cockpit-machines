@@ -882,7 +882,7 @@ export function parseDumpxmlForInterfaces(devicesElem: Element): VMInterface[] {
             const bootElem = getSingleOptionalElem(interfaceElem, 'boot');
 
             const networkInterface: VMInterface = { // see https://libvirt.org/formatdomain.html#elementsNICS
-                type: interfaceElem.getAttribute('type'), // Only one required parameter
+                type: interfaceElem.getAttribute('type') || "", // Only one required parameter
                 managed: interfaceElem.getAttribute('managed'),
                 name: interfaceElem.getAttribute('name'), // Name of interface
                 target: targetElem?.getAttribute('dev'),
@@ -982,9 +982,9 @@ function parseNetDumpxmlForIp(ipElems: HTMLCollection): NetworkIp[] {
 
             for (let i = 0; i < hostElems.length; i++) {
                 const host: NetworkDhcpHost = {
-                    ip: hostElems[i].getAttribute("ip"),
+                    ip: hostElems[i].getAttribute("ip") || "",
                     name: hostElems[i].getAttribute("name"),
-                    mac: hostElems[i].getAttribute("mac"),
+                    mac: hostElems[i].getAttribute("mac") || "",
                     id: hostElems[i].getAttribute("id"),
                 };
                 dhcpHosts.push(host);
@@ -1112,8 +1112,8 @@ export function parseStoragePoolDumpxml(
 
     const result: StoragePool = {
         connectionName,
-        type: storagePoolElem.getAttribute('type'),
-        name: storagePoolElem.getElementsByTagName('name')[0].childNodes[0].nodeValue,
+        type: storagePoolElem.getAttribute('type') || "",
+        name: storagePoolElem.getElementsByTagName('name')[0].childNodes[0].nodeValue || "",
         id: objPath,
         uuid: storagePoolElem.getElementsByTagName("uuid")[0].childNodes[0].nodeValue,
         capacity: storagePoolElem.getElementsByTagName('capacity')[0].childNodes[0].nodeValue,
@@ -1122,7 +1122,7 @@ export function parseStoragePoolDumpxml(
     };
 
     // Fetch path property if target is contained for this type of pool
-    if (['dir', 'fs', 'netfs', 'logical', 'disk', 'iscsi', 'scsi', 'mpath', 'zfs'].indexOf(result.type || "") > -1) {
+    if (['dir', 'fs', 'netfs', 'logical', 'disk', 'iscsi', 'scsi', 'mpath', 'zfs'].indexOf(result.type) > -1) {
         const targetElem = storagePoolElem.getElementsByTagName('target')[0];
         result.target = { path: getSingleOptionalElem(targetElem, 'path')?.childNodes[0].nodeValue };
     }

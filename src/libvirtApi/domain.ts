@@ -229,7 +229,7 @@ interface InterfaceSpec {
     model: string,
 }
 
-export function domainAttachIface({
+export async function domainAttachIface({
     connectionName,
     vmName,
     mac,
@@ -238,7 +238,7 @@ export function domainAttachIface({
     sourceType,
     source,
     model
-}: { connectionName: ConnectionName, vmName: string } & InterfaceSpec): cockpit.Spawn<string> {
+}: { connectionName: ConnectionName, vmName: string } & InterfaceSpec): Promise<void> {
     const macArg = mac ? "mac=" + mac + "," : "";
     const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--add-device', '--network', `${macArg}type=${sourceType},source=${source},source.mode=bridge,model=${model}`];
 
@@ -248,12 +248,12 @@ export function domainAttachIface({
             args.push("--no-define");
     }
 
-    return spawn(connectionName, args);
+    await spawn(connectionName, args);
 }
 
 interface InterfaceChangeSpec {
-    hotplug: boolean,
-    persistent: boolean,
+    hotplug?: boolean,
+    persistent?: boolean,
     macAddress: string,
     newMacAddress?: string,
     networkType?: string,
@@ -675,7 +675,7 @@ export async function domainDetachHostDevice({
     }
 }
 
-export function domainDetachIface({
+export async function domainDetachIface({
     connectionName,
     index,
     vmName,
@@ -687,7 +687,7 @@ export function domainDetachIface({
     vmName: string,
     live: boolean,
     persistent: boolean,
-}): cockpit.Spawn<string> {
+}): Promise<void> {
     // Normally we should identify a vNIC to detach by a number of slot, bus, function and domain.
     // Such detachment is however broken in virt-xml, so instead let's detach it by the index of <interface> in array of VM's XML <devices>
     // This serves as workaround for https://github.com/virt-manager/virt-manager/issues/356
@@ -700,7 +700,7 @@ export function domainDetachIface({
             args.push("--no-define");
     }
 
-    return spawn(connectionName, args);
+    await spawn(connectionName, args);
 }
 
 export function domainRemoveVsock({
@@ -1022,29 +1022,53 @@ export function domainInsertDisk({
     return spawn(connectionName, args);
 }
 
+/* This is the shape of the return value of the
+ * "org.libvirt.Domain.InterfaceAddresses" DBus method.
+ */
+
+interface InterfaceAddress {
+    length: number,
+    0: string, // name
+    1: string, // mac
+    2: {
+        length: number,
+        0: number, // type
+        1: string, // IP
+        2: number, // prefix
+    }[]
+}
+
+/* And this is how the domainInterfaceAddresses function wraps it up.
+ */
+
+interface InterfaceAddresses {
+    source: string,
+    0: InterfaceAddress[],
+}
+
 export function domainInterfaceAddresses({
     connectionName,
     objPath
 } : {
     connectionName: ConnectionName,
     objPath: string,
-}): Promise<PromiseSettledResult<unknown>[]> {
+}): Promise<PromiseSettledResult<InterfaceAddresses>[]> {
     return Promise.allSettled([
-        call<unknown[]>(connectionName, objPath, 'org.libvirt.Domain', 'InterfaceAddresses', [Enum.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_LEASE, 0], { timeout, type: 'uu' })
+        call<[InterfaceAddress[]]>(connectionName, objPath, 'org.libvirt.Domain', 'InterfaceAddresses', [Enum.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_LEASE, 0], { timeout, type: 'uu' })
                 .then(res => {
                     return {
                         source: 'lease',
                         ...res
                     };
                 }),
-        call<unknown[]>(connectionName, objPath, 'org.libvirt.Domain', 'InterfaceAddresses', [Enum.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_ARP, 0], { timeout, type: 'uu' })
+        call<[InterfaceAddress[]]>(connectionName, objPath, 'org.libvirt.Domain', 'InterfaceAddresses', [Enum.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_ARP, 0], { timeout, type: 'uu' })
                 .then(res => {
                     return {
                         source: 'arp',
                         ...res
                     };
                 }),
-        call<unknown[]>(connectionName, objPath, 'org.libvirt.Domain', 'InterfaceAddresses', [Enum.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_AGENT, 0], { timeout, type: 'uu' })
+        call<[InterfaceAddress[]]>(connectionName, objPath, 'org.libvirt.Domain', 'InterfaceAddresses', [Enum.VIR_DOMAIN_INTERFACE_ADDRESSES_SRC_AGENT, 0], { timeout, type: 'uu' })
                 .then(res => {
                     return {
                         source: 'agent',

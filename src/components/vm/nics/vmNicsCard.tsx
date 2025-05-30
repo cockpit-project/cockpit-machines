@@ -17,7 +17,12 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
+
+import type { VM, VMInterface, Network } from '../../../types';
+import type { Notification } from '../../../app';
+
+import type { Dialogs } from 'dialogs';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
@@ -37,8 +42,12 @@ import { DeleteResourceButton } from '../../common/deleteResource.jsx';
 
 const _ = cockpit.gettext;
 
-const getNetworkDevices = () => {
-    const devs = {};
+interface NetworkDevice {
+    type?: "bridge";
+}
+
+const getNetworkDevices = (): Promise<Record<string, NetworkDevice>> => {
+    const devs: Record<string, NetworkDevice> = {};
     return cockpit.spawn(["find", "/sys/class/net", "-type", "l", "-printf", '%f\n'], { err: "message" })
             .then(output => {
                 output.trim().split('\n')
@@ -46,7 +55,7 @@ const getNetworkDevices = () => {
                 return cockpit.spawn(["ip", "-j", "link", "show", "type", "bridge"], { err: "message" });
             })
             .then(bridges => {
-                const bridgeNames = JSON.parse(bridges).map(br => br.ifname);
+                const bridgeNames: string[] = JSON.parse(bridges).map((br: { ifname: string }) => br.ifname);
                 bridgeNames.forEach(br => {
                     if (devs[br]) {
                         devs[br].type = "bridge";
@@ -56,13 +65,32 @@ const getNetworkDevices = () => {
             .then(() => {
                 return Promise.resolve(devs);
             })
-            .catch(e => console.warn("could not read /sys/class/net:", e.toString()));
+            .catch(e => {
+                console.warn("could not read /sys/class/net:", e.toString());
+                return {};
+            });
 };
 
-export class VmNetworkActions extends React.Component {
-    static contextType = DialogsContext;
+interface VmNetworkActionsProps {
+    vm: VM;
+    vms: VM[];
+    networks: Network[];
+}
 
-    constructor(props) {
+interface VmNetworkActionsState {
+    networkDevices: Record<string, NetworkDevice> | undefined;
+}
+
+export interface AvailableSources {
+    network: string[];
+    device: Record<string, NetworkDevice>;
+}
+
+export class VmNetworkActions extends React.Component<VmNetworkActionsProps, VmNetworkActionsState> {
+    static contextType = DialogsContext;
+    declare context: Dialogs;
+
+    constructor(props: VmNetworkActionsProps) {
         super(props);
 
         this.state = {
@@ -76,10 +104,13 @@ export class VmNetworkActions extends React.Component {
     }
 
     render() {
+        if (!this.state.networkDevices)
+            return null;
+
         const Dialogs = this.context;
         const { vm, vms, networks } = this.props;
         const id = vmId(vm.name);
-        const availableSources = {
+        const availableSources: AvailableSources = {
             network: networks.map(network => network.name),
             device: this.state.networkDevices,
         };
@@ -101,24 +132,35 @@ export class VmNetworkActions extends React.Component {
     }
 }
 
-VmNetworkActions.propTypes = {
-    vm: PropTypes.object.isRequired,
-    vms: PropTypes.array.isRequired,
-    networks: PropTypes.array.isRequired,
-};
+interface NetworkManagerDevice extends cockpit.DBusProxy {
+    Interface: string;
+}
 
-const NetworkSource = ({ network, networkId, vm, hostDevices }) => {
+const NetworkSource = ({
+    network,
+    networkId,
+    vm,
+    hostDevices
+} : {
+    network: VMInterface,
+    networkId: number,
+    vm: VM,
+    hostDevices: cockpit.DBusProxies,
+}) => {
     const id = vmId(vm.name);
-    const checkDeviceAvailability = (network) => {
-        for (const i in hostDevices) {
-            if (hostDevices[i].valid && hostDevices[i].Interface == network) {
+    const checkDeviceAvailability = (network: string) => {
+        const hd = hostDevices as unknown as Record<string, NetworkManagerDevice>; // XXX - do better
+        for (const i in hd) {
+            if (hd[i].valid && hd[i].Interface == network) {
                 return true;
             }
         }
         return false;
     };
 
-    const sourceJump = (source) => {
+    type SourceName = ReturnType<typeof getIfaceSourceName>;
+
+    const sourceJump = (source: string) => {
         return () => {
             if (source !== null && checkDeviceAvailability(source)) {
                 cockpit.jump(`/network#/${source}`, cockpit.transport.host);
@@ -126,9 +168,11 @@ const NetworkSource = ({ network, networkId, vm, hostDevices }) => {
         };
     };
 
-    const singleSourceElem = source => {
+    const singleSourceElem = (source: SourceName) => {
         let label = rephraseUI("networkType", network.type);
         label = label.charAt(0).toUpperCase() + label.slice(1);
+
+        cockpit.assert(typeof source == "string");
 
         return (
             <DescriptionListGroup>
@@ -148,26 +192,31 @@ const NetworkSource = ({ network, networkId, vm, hostDevices }) => {
             </DescriptionListGroup>
         );
     };
-    const addressPortSourceElem = source => (<>
-        <DescriptionListGroup>
-            <DescriptionListTerm>
-                {_("Address")}
-            </DescriptionListTerm>
-            <DescriptionListDescription id={`${id}-network-${networkId}-address`}>
-                {source.address}
-            </DescriptionListDescription>
-        </DescriptionListGroup>
-        <DescriptionListGroup>
-            <DescriptionListTerm>
-                {_("Port")}
-            </DescriptionListTerm>
-            <DescriptionListDescription id={`${id}-network-${networkId}-port`}>
-                {source.port}
-            </DescriptionListDescription>
-        </DescriptionListGroup>
-    </>);
+    const addressPortSourceElem = (source: SourceName) => {
+        cockpit.assert(source && typeof source != "string");
+        return (
+            <>
+                <DescriptionListGroup>
+                    <DescriptionListTerm>
+                        {_("Address")}
+                    </DescriptionListTerm>
+                    <DescriptionListDescription id={`${id}-network-${networkId}-address`}>
+                        {source.address}
+                    </DescriptionListDescription>
+                </DescriptionListGroup>
+                <DescriptionListGroup>
+                    <DescriptionListTerm>
+                        {_("Port")}
+                    </DescriptionListTerm>
+                    <DescriptionListDescription id={`${id}-network-${networkId}-port`}>
+                        {source.port}
+                    </DescriptionListDescription>
+                </DescriptionListGroup>
+            </>
+        );
+    };
 
-    const getSourceElem = {
+    const getSourceElem: Record<string, (source: SourceName) => React.ReactNode> = {
         direct: singleSourceElem,
         network: singleSourceElem,
         bridge: singleSourceElem,
@@ -179,7 +228,7 @@ const NetworkSource = ({ network, networkId, vm, hostDevices }) => {
 
     let source;
     if (getSourceElem[network.type] !== undefined)
-        source = getSourceElem[network.type](getIfaceSourceName(network), networkId);
+        source = getSourceElem[network.type](getIfaceSourceName(network));
 
     return (
         <DescriptionList isHorizontal isFluid>
@@ -196,10 +245,33 @@ const NetworkSource = ({ network, networkId, vm, hostDevices }) => {
     );
 };
 
-export class VmNetworkTab extends React.Component {
-    static contextType = DialogsContext;
+interface VmNetworkTabProps {
+    vm: VM,
+    networks: Network[],
+    onAddErrorNotification: (notification: Notification) => void;
+}
 
-    constructor(props) {
+interface IpAddress {
+    name: string,
+    mac: string,
+    ip: Record<string, string>,
+    source: string,
+}
+
+interface VmNetworkTabState {
+    networkDevices: Record<string, NetworkDevice> | undefined,
+    ips: IpAddress[],
+    dropdownOpenActions: Set<unknown>,
+}
+
+export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTabState> {
+    static contextType = DialogsContext;
+    declare context: Dialogs;
+
+    client: cockpit.DBusClient;
+    hostDevices: cockpit.DBusProxies;
+
+    constructor(props: VmNetworkTabProps) {
         super(props);
 
         this.state = {
@@ -230,14 +302,14 @@ export class VmNetworkTab extends React.Component {
                 .then(domifaddressAllSources => {
                     const allRejected = !domifaddressAllSources.some(promise => promise.status == 'fulfilled');
 
-                    if (allRejected)
+                    if (allRejected) {
                         this.props.onAddErrorNotification({
                             text: cockpit.format(_("Failed to fetch the IP addresses of the interfaces present in $0"), this.props.vm.name),
-                            detail: [...new Set(domifaddressAllSources.map(promise => promise.reason ? promise.reason.message : ''))].join(', '),
+                            detail: [...new Set(domifaddressAllSources.map(promise => promise.status == 'rejected' && promise.reason ? promise.reason.message : ''))].join(', '),
                             resourceId: this.props.vm.id,
                         });
-                    else {
-                        const ipaddresses = [];
+                    } else {
+                        const ipaddresses: IpAddress[] = [];
 
                         domifaddressAllSources
                                 .filter(promise => promise.status == 'fulfilled')
@@ -249,7 +321,7 @@ export class VmNetworkTab extends React.Component {
                                         if (!iface.length || iface[0] == "lo")
                                             return;
 
-                                        const address = {
+                                        const address: IpAddress = {
                                             name: iface[0],
                                             mac: iface[1],
                                             ip: { },
@@ -279,7 +351,7 @@ export class VmNetworkTab extends React.Component {
         this.getIpAddr();
     }
 
-    componentDidUpdate(prevProps, _prevState) {
+    componentDidUpdate(prevProps: VmNetworkTabProps) {
         if (prevProps.vm.state !== this.props.vm.state)
             this.getIpAddr();
     }
@@ -292,17 +364,13 @@ export class VmNetworkTab extends React.Component {
         const Dialogs = this.context;
         const { vm, networks, onAddErrorNotification } = this.props;
         const id = vmId(vm.name);
-        const availableSources = {
-            network: networks.map(network => network.name),
-            device: this.state.networkDevices,
-        };
 
-        const onChangeState = (network) => {
-            return (e) => {
+        const onChangeState = (network: VMInterface) => {
+            return (e: React.MouseEvent) => {
                 e.stopPropagation();
                 if (network.mac) {
                     domainChangeInterfaceSettings({ vmName: vm.name, connectionName: vm.connectionName, macAddress: network.mac, state: network.state === 'up' ? 'down' : 'up', hotplug: vm.state === "running" })
-                            .then(() => domainGet({ connectionName: vm.connectionName, id: vm.id, name: vm.name }))
+                            .then(() => domainGet({ connectionName: vm.connectionName, id: vm.id }))
                             .catch(ex => {
                                 onAddErrorNotification({
                                     text: cockpit.format(_("NIC $0 of VM $1 failed to change state"), network.mac, vm.name),
@@ -317,10 +385,19 @@ export class VmNetworkTab extends React.Component {
         // Normally we should identify a vNIC to detach by a number of slot, bus, function and domain.
         // Such detachment is however broken in virt-xml, so instead let's detach it by the index of <interface> in array of VM's XML <devices>
         // This serves as workaround for https://github.com/virt-manager/virt-manager/issues/356
-        const ifaces = vm.interfaces.map((iface, index) => ({ ...iface, index }));
+        type VMInterfaceWithIndex = VMInterface & { index: number };
+        const ifaces: VMInterfaceWithIndex[] = vm.interfaces.map((iface, index) => ({ ...iface, index }));
+
+        interface Detail {
+            name: string,
+            value: keyof VMInterface | ((network: VMInterfaceWithIndex, networkId: number) => React.ReactNode),
+            props: object,
+            hidden?: boolean,
+            aria?: string,
+        }
 
         // Network data mapping to rows
-        let detailMap = [
+        let detailMap: Detail[] = [
             {
                 name: _("Type"),
                 value: (network, networkId) => {
@@ -358,9 +435,9 @@ export class VmNetworkTab extends React.Component {
                 value: (network, networkId) => {
                     const ips = this.state.ips.filter(ip => ip.mac === network.mac);
 
-                    const ip = {};
+                    const ip: { inet?: string, inet6?: string } = {};
                     // If information from agent are available, it's preferred over lease/arp
-                    ips.sort((a, _) => a === "agent" ? -1 : 1).forEach(a => {
+                    ips.sort((a) => a.source === "agent" ? -1 : 1).forEach(a => {
                         // Various sources (agent,lease,arp) may have only partial information about interface
                         // (e.g. one source may only know ipv4 address, the other may only know ipv6 address)
                         // Therefore, look at each source to get all available information
@@ -411,7 +488,7 @@ export class VmNetworkTab extends React.Component {
             {
                 name: _("State"),
                 value: (network, networkId) => {
-                    return <span className='machines-network-state' id={`${id}-network-${networkId}-state`}>{rephraseUI('networkState', network.state)}</span>;
+                    return <span className='machines-network-state' id={`${id}-network-${networkId}-state`}>{rephraseUI('networkState', String(network.state))}</span>;
                 },
                 props: { width: 10 },
                 hidden: ifaces.every(i => !i.state),
@@ -423,6 +500,13 @@ export class VmNetworkTab extends React.Component {
                     const isUp = network.state === 'up';
                     const nicPersistent = !!vm.inactiveXML.interfaces.filter(iface => iface.mac == network.mac).length;
                     const editNICAction = () => {
+                        if (!this.state.networkDevices)
+                            return null;
+
+                        const availableSources: AvailableSources = {
+                            network: networks.map(network => network.name),
+                            device: this.state.networkDevices,
+                        };
                         const editNICDialogProps = {
                             idPrefix: `${id}-network-${networkId}-edit-dialog`,
                             vm,
@@ -495,7 +579,7 @@ export class VmNetworkTab extends React.Component {
                     }
 
                     const isOpen = this.state.dropdownOpenActions.has(network.mac);
-                    const setIsOpen = open => {
+                    const setIsOpen = (open: boolean) => {
                         const next = new Set(this.state.dropdownOpenActions);
                         if (open)
                             next.add(network.mac);
@@ -517,7 +601,7 @@ export class VmNetworkTab extends React.Component {
                                            toggleButtonId={`${id}-iface-${networkId}-action-kebab`}
                                            dropdownItems={[deleteButton]}
                                            isOpen={isOpen}
-                                           setIsOpen={setIsOpen} />
+                                           setIsOpen={setIsOpen as React.Dispatch<React.SetStateAction<boolean>>} />
                         </div>
                     );
                 },
@@ -528,12 +612,16 @@ export class VmNetworkTab extends React.Component {
         let networkId = 1;
         detailMap = detailMap.filter(d => !d.hidden);
 
-        const columnTitles = detailMap.map(target => ({ title: target.name, props: { "aria-label": target.aria } }));
-        const sortIfaces = (a, b) => {
+        const columnTitles = detailMap.map(target =>
+            ({
+                title: target.name,
+                props: target.aria ? { "aria-label": target.aria } : { },
+            }));
+        const sortIfaces = (a: VMInterface, b: VMInterface) => {
             if (a.type !== b.type)
                 return a.type > b.type ? 1 : -1;
             else if (a.mac !== b.mac)
-                return a.mac > b.mac ? 1 : -1;
+                return String(a.mac) > String(b.mac) ? 1 : -1;
             else
                 return 0;
         };
@@ -542,11 +630,11 @@ export class VmNetworkTab extends React.Component {
                 let column = null;
                 if (typeof d.value === 'string') {
                     if (target[d.value] !== undefined) {
-                        column = { title: <div id={`${id}-network-${networkId}-${d.value}`}>{target[d.value]}</div>, props: d.props };
+                        column = { title: <div id={`${id}-network-${networkId}-${d.value}`}>{String(target[d.value])}</div>, props: d.props };
                     }
                 }
                 if (typeof d.value === 'function') {
-                    column = { title: d.value(target, networkId, vm.connectionName), props: d.props };
+                    column = { title: d.value(target, networkId), props: d.props };
                 }
                 return column;
             });
@@ -564,9 +652,3 @@ export class VmNetworkTab extends React.Component {
         );
     }
 }
-
-VmNetworkTab.propTypes = {
-    vm: PropTypes.object.isRequired,
-    networks: PropTypes.array.isRequired,
-    onAddErrorNotification: PropTypes.func.isRequired,
-};
