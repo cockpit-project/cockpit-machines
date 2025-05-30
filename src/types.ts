@@ -53,7 +53,7 @@ export interface HypervisorCapabilities {
 
 /** Virtual Machines **/
 
-export interface VMError {
+export interface DetailedError {
     text: string;
     detail: string;
 }
@@ -390,7 +390,7 @@ export interface VM extends VMXML {
     autostart: boolean;
     usagePolling?: boolean;
 
-    error?: VMError | null;
+    error?: DetailedError | null;
 
     // Unused
     ui: {
@@ -446,13 +446,16 @@ export interface StorageVolume {
     allocation: optString;
     physical: optString | number;
     format: optString;
+
+    // XXX - private for StoragePoolVolumesTab
+    selected?: boolean;
 }
 
 export interface StoragePool {
     connectionName: ConnectionName;
     id: string;
-    type: optString;
-    name: optString;
+    name: string;
+    type: string;
     uuid: optString;
     capacity: optString;
     available: optString;
@@ -479,6 +482,8 @@ export interface StoragePool {
     persistent?: boolean;
     autostart?: boolean;
     volumes?: StorageVolume[] | undefined;
+
+    error?: DetailedError | null | undefined;
 }
 
 export type StoragePoolCapabilites = Record<string, { supported: optString}>;
