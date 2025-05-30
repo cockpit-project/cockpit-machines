@@ -17,12 +17,14 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
+import type { optString } from './types';
+
 export function getDiskXML(
     type: string,
     file: string | undefined,
     device: string,
-    poolName: string,
-    volumeName: string,
+    poolName: string | undefined,
+    volumeName: string | undefined,
     format: string,
     target: string,
     cacheMode: string,
@@ -49,8 +51,10 @@ export function getDiskXML(
         if (file)
             sourceElem.setAttribute('file', file);
     } else {
-        sourceElem.setAttribute('volume', volumeName);
-        sourceElem.setAttribute('pool', poolName);
+        if (volumeName)
+            sourceElem.setAttribute('volume', volumeName);
+        if (poolName)
+            sourceElem.setAttribute('pool', poolName);
     }
     diskElem.appendChild(sourceElem);
 
@@ -79,9 +83,9 @@ export interface NetworkSpec {
     name: string,
     forwardMode: string,
     device: string,
-    ipv4: string,
+    ipv4: string | undefined,
     netmask: string,
-    ipv6: string,
+    ipv6: string | undefined,
     prefix: string,
     ipv4DhcpRangeStart: string,
     ipv4DhcpRangeEnd: string,
@@ -181,8 +185,8 @@ export function getNetworkXML({
 
 export function getVolumeXML(
     volumeName: string,
-    size: string,
-    format: string,
+    size: number,
+    format: optString,
 ): string {
     const doc = document.implementation.createDocument('', '', null);
 
@@ -195,7 +199,7 @@ export function getVolumeXML(
 
     const allocationElem = doc.createElement('capacity');
     allocationElem.setAttribute('unit', 'MiB');
-    allocationElem.appendChild(doc.createTextNode(size));
+    allocationElem.appendChild(doc.createTextNode(String(size)));
     volElem.appendChild(allocationElem);
 
     const targetElem = doc.createElement('target');
@@ -219,7 +223,7 @@ export interface StoragePoolSource {
     name?: string;
     host?: string;
     initiator?: string;
-    format?: string;
+    format?: string | undefined;
 }
 
 export function getPoolXML({

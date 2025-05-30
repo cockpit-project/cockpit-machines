@@ -17,7 +17,9 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+
+import type { Network, NetworkDhcpHost, NetworkIp } from '../../types';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
@@ -41,7 +43,14 @@ import '../common/overviewCard.css';
 
 const _ = cockpit.gettext;
 
-const DHCPHost = (host, index, family, idPrefix, network, parentIndex) => {
+const DHCPHost = (
+    host: NetworkDhcpHost,
+    index: number,
+    family: string,
+    idPrefix: string,
+    network: Network,
+    parentIndex: number
+) => {
     const id = `${idPrefix}-${family}-dhcp-host-${index}`;
 
     const hostVals = [];
@@ -76,7 +85,7 @@ const DHCPHost = (host, index, family, idPrefix, network, parentIndex) => {
                                       macAddress: host.mac,
                                       ipAddress: host.ip,
                                       parentIndex,
-                                      isNetworkActive: network.active
+                                      isNetworkActive: !!network.active
                                   }).then(() => networkGet({ connectionName: network.connectionName, id: network.id, updateOnly: true }))
                               }} />
     );
@@ -95,14 +104,14 @@ const DHCPHost = (host, index, family, idPrefix, network, parentIndex) => {
     );
 };
 
-export const NetworkOverviewTab = ({ network }) => {
+export const NetworkOverviewTab = ({ network } : { network: Network }) => {
     const idPrefix = `${networkId(network.name, network.connectionName)}`;
 
-    const ip = [];
+    const ip: NetworkIp[] = [];
     // Libvirt allows network to have multiple ipv6 and ipv4 addresses.
     // But we only first one of each
-    ip[0] = network.ip.find(ip => ip.family === "ipv4");
-    ip[1] = network.ip.find(ip => ip.family === "ipv6");
+    ip[0] = network.ip.find(ip => ip.family === "ipv4")!;
+    ip[1] = network.ip.find(ip => ip.family === "ipv6")!;
 
     return (
         <Flex className="overview-tab">
@@ -177,11 +186,15 @@ export const NetworkOverviewTab = ({ network }) => {
     );
 };
 
-NetworkOverviewTab.propTypes = {
-    network: PropTypes.object.isRequired,
-};
-
-const NetworkAddStaticHostEntriesAction = ({ idPrefix, network, parentIndex }) => {
+const NetworkAddStaticHostEntriesAction = ({
+    idPrefix,
+    network,
+    parentIndex
+} : {
+    idPrefix: string,
+    network: Network,
+    parentIndex: number,
+}) => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
@@ -198,7 +211,15 @@ const NetworkAddStaticHostEntriesAction = ({ idPrefix, network, parentIndex }) =
     );
 };
 
-const NetworkAddStaticHostEntries = ({ network, parentIndex, setIsOpen }) => {
+const NetworkAddStaticHostEntries = ({
+    network,
+    parentIndex,
+    setIsOpen
+} : {
+    network: Network,
+    parentIndex: number,
+    setIsOpen: (val: boolean) => void,
+}) => {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [ipAddress, setIpAddress] = useState('');
     const [macAddress, setMacAddress] = useState('');
@@ -216,7 +237,7 @@ const NetworkAddStaticHostEntries = ({ network, parentIndex, setIsOpen }) => {
             macAddress,
             ipAddress,
             parentIndex,
-            isNetworkActive: network.active,
+            isNetworkActive: !!network.active,
         })
                 .then(
                     () => {
@@ -249,21 +270,31 @@ const NetworkAddStaticHostEntries = ({ network, parentIndex, setIsOpen }) => {
                                    validated={isSubmitted && !macAddress ? "error" : "default"}
                                    value={macAddress}
                                    onChange={(_, value) => setMacAddress(value)} />
-                    <FormHelper fieldId="add-new-static-entry-mac-address" helperTextInvalid={isSubmitted && !macAddress && _("MAC address must not be empty")} />
+                    <FormHelper fieldId="add-new-static-entry-mac-address" helperTextInvalid={(isSubmitted && !macAddress) ? _("MAC address must not be empty") : null} />
                 </FormGroup>
                 <FormGroup label={_("IP address")} fieldId="add-new-static-entry-ip-address">
                     <TextInput id="add-new-static-entry-ip-address"
                                    validated={isSubmitted && !ipAddress ? "error" : "default"}
                                    value={ipAddress}
                                    onChange={(_, value) => setIpAddress(value)} />
-                    <FormHelper fieldId="add-new-static-entry-ip-address" helperTextInvalid={isSubmitted && !ipAddress && _("IP address must not be empty")} />
+                    <FormHelper fieldId="add-new-static-entry-ip-address" helperTextInvalid={(isSubmitted && !ipAddress) ? _("IP address must not be empty") : null} />
                 </FormGroup>
             </Form>
         </Modal>
     );
 };
 
-const StaticDHCPSettings = ({ idPrefix, ip, network, protocol }) => {
+const StaticDHCPSettings = ({
+    idPrefix,
+    ip,
+    network,
+    protocol
+} : {
+    idPrefix: string,
+    ip: NetworkIp[],
+    network: Network,
+    protocol: string,
+}) => {
     const parentIndex = protocol == 'ipv4' ? 0 : 1;
 
     return (
