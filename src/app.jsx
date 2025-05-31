@@ -337,6 +337,8 @@ class AppActive extends React.Component {
                     networks={networks}
                     actions={vmActions}
                     resourceHasError={this.state.resourceHasError}
+                    onUsageStartPollingVMS={() => vms.filter(vm => !vm.isUi).forEach(vm => {usageStartPolling({name: vm.name, id: vm.id, connectionName: vm.connectionName })})}
+                    onUsageStopPollingVMS={() => vms.filter(vm => !vm.isUi).forEach(vm => {usageStopPolling({name: vm.name, connectionName: vm.connectionName })})}
                     onAddErrorNotification={this.onAddErrorNotification} />
                 }
                 {path.length > 0 && path[0] == 'storages' &&
