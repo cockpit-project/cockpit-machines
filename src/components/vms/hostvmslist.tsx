@@ -31,6 +31,8 @@ import { MenuToggle, MenuToggleElement } from "@patternfly/react-core/dist/esm/c
 import { Page, PageSection } from "@patternfly/react-core/dist/esm/components/Page";
 import { WithDialogs } from 'dialogs.jsx';
 
+import { Progress, ProgressVariant } from "@patternfly/react-core/dist/esm/components/Progress";
+
 import VmActions from '../vm/vmActions.jsx';
 import { updateVm } from '../../actions/store-actions.js';
 
@@ -82,6 +84,42 @@ const VmState = ({
             state={state}
             valueId={`${vmId(vm.name)}-${vm.connectionName}-state`}
             additionalState={!vm.isUi && <><VmNeedsShutdown vm={vm} /><VmUsesSpice vm={vm} vms={vms} /></>} />
+    );
+};
+
+const VmUsageCpu = ({ vm } : {vm: VM | UIVM, }) => {
+    let cpuUsage: number = 0;
+
+    if (!vm.isUi) {
+        const vmCpuUsage:number = vm.cpuUsage ? vm.cpuUsage : 0;
+        cpuUsage = vm.cpuUsage && isNaN(vmCpuUsage) ? 0 : parseFloat(vmCpuUsage.toFixed(1));
+    }
+
+    return (
+        <Progress value={cpuUsage}
+            className="pf-m-bg"
+            min={0} max={100}
+            variant={cpuUsage > 90 ? ProgressVariant.danger : undefined}
+
+        />
+    );
+};
+
+const VmUsageMem = ({ vm } : {vm: VM | UIVM, }) => {
+    let memTotal: number = 0;
+    let rssMem: number = 0;
+
+    if (!vm.isUi) {
+        memTotal = vm.currentMemory ? vm.currentMemory * 1024 : 0;
+        rssMem = vm.rssMemory ? vm.rssMemory * 1024 : 0;
+    }
+
+    return (
+        <Progress value={rssMem}
+            className="pf-m-bg"
+            min={0} max={memTotal}
+            variant={rssMem / memTotal > 0.9 ? ProgressVariant.danger : undefined}
+        />
     );
 };
 
@@ -212,10 +250,12 @@ const HostVmsList = ({
                             <ListingTable aria-label={_("Virtual machines")}
                                 variant='compact'
                                 columns={[
-                                    { title: _("Name"), header: true, props: { width: 25 } },
-                                    { title: _("Connection"), props: { width: 25 } },
-                                    { title: _("State"), props: { width: 25 } },
-                                    { title: "", props: { width: 25, "aria-label": _("Actions") } },
+                                    { title: _("Name"), header: true, props: { width: 20 } },
+                                    { title: _("Connection"), props: { width: 20 } },
+                                    { title: _("State"), props: { width: 15 } },
+                                    { title: _("Cpu"), props: { width: 15 } },
+                                    { title: _("Mem"), props: { width: 15 } },
+                                    { title: "", props: { width: 15, "aria-label": _("Actions") } },
                                 ]}
                                 emptyCaption={_("No VM is running or defined on this host")}
                                 rows={ combinedVmsFiltered
@@ -252,6 +292,8 @@ const HostVmsList = ({
                                                                  }))} />
                                                         ),
                                                     },
+                                                    { title: (<VmUsageCpu vm={vm} />) },
+                                                    { title: (<VmUsageMem vm={vm} />) },
                                                     { title: vmActions },
                                                 ],
                                                 props: {
