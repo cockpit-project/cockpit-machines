@@ -389,6 +389,7 @@ export interface VM extends VMXML {
     persistent: boolean;
     autostart: boolean;
     usagePolling?: boolean;
+    suspendImage: boolean;
 
     error?: VMError | null;
 
