@@ -17,7 +17,7 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import cockpit from 'cockpit';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -30,6 +30,8 @@ import { Select, SelectList, SelectOption } from "@patternfly/react-core/dist/es
 import { MenuToggle, MenuToggleElement } from "@patternfly/react-core/dist/esm/components/MenuToggle";
 import { Page, PageSection } from "@patternfly/react-core/dist/esm/components/Page";
 import { WithDialogs } from 'dialogs.jsx';
+
+import { Progress, ProgressVariant } from "@patternfly/react-core/dist/esm/components/Progress";
 
 import VmActions from '../vm/vmActions.jsx';
 import { updateVm } from '../../actions/store-actions.js';
@@ -82,6 +84,41 @@ const VmState = ({
     );
 };
 
+const VmUsageCpu = ({vm} : {vm: VM | UIVM, }) => {
+    var cpuUsage:number=0
+    
+    if (!vm.isUi){
+    
+        const vmCpuUsage:number = vm.cpuUsage?vm.cpuUsage:0;
+        cpuUsage = vm.cpuUsage && isNaN(vmCpuUsage) ? 0 : parseFloat(vmCpuUsage.toFixed(1));
+    }
+    return (
+        <Progress value={cpuUsage}
+            className="pf-m-bg"
+            min={0} max={100}
+            variant={cpuUsage > 90 ? ProgressVariant.danger : undefined}
+            
+        />
+    )
+};
+
+const VmUsageMem = ({vm}  : {vm: VM | UIVM, }) =>{
+    var memTotal:number=0
+    var rssMem:number=0
+
+     if (!vm.isUi){
+        memTotal = vm.currentMemory ? vm.currentMemory * 1024 : 0;
+        rssMem = vm.rssMemory ? vm.rssMemory * 1024 : 0;
+    }
+    return (
+        <Progress value={rssMem}
+            className="pf-m-bg"
+            min={0} max={memTotal}
+            variant={rssMem / memTotal > 0.9 ? ProgressVariant.danger : undefined}
+        />
+    )
+};
+
 const _ = cockpit.gettext;
 
 /**
@@ -93,6 +130,8 @@ interface HostVmsListProps {
     storagePools: StoragePool[],
     actions: React.ReactNode,
     networks: Network[],
+    onUsageStartPollingVMS: () => void,
+    onUsageStopPollingVMS: () => void,
     onAddErrorNotification: () => void,
 }
 
@@ -102,12 +141,23 @@ const HostVmsList = ({
     storagePools,
     actions,
     networks,
+    onUsageStartPollingVMS,
+    onUsageStopPollingVMS,
     onAddErrorNotification
 }: HostVmsListProps) => {
     interface StateFilter {
         value: string;
         apiState?: string;
     }
+    useEffect(() => {
+        // Anything in here is fired on component mount.
+        onUsageStartPollingVMS();
+        return () => {
+            // Anything in here is fired on component unmount.
+            onUsageStopPollingVMS();
+        };
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     const [statusSelected, setStatusSelected] = useState<StateFilter>({ value: _("All") });
     const [currentTextFilter, setCurrentTextFilter] = useState("");
     const [statusIsExpanded, setStatusIsExpanded] = useState(false);
@@ -198,10 +248,12 @@ const HostVmsList = ({
                             <ListingTable aria-label={_("Virtual machines")}
                                 variant='compact'
                                 columns={[
-                                    { title: _("Name"), header: true, props: { width: 25 } },
-                                    { title: _("Connection"), props: { width: 25 } },
-                                    { title: _("State"), props: { width: 25 } },
-                                    { title: "", props: { width: 25, "aria-label": _("Actions") } },
+                                    { title: _("Name"), header: true, props: { width: 20 } },
+                                    { title: _("Connection"), props: { width: 20 } },
+                                    { title: _("State"), props: { width: 15 } },
+                                    { title: _("Cpu"), props: { width: 15 } },
+                                    { title: _("Mem"), props: { width: 15 } },
+                                    { title: "", props: { width: 15, "aria-label": _("Actions") } },
                                 ]}
                                 emptyCaption={_("No VM is running or defined on this host")}
                                 rows={ combinedVmsFiltered
@@ -238,6 +290,8 @@ const HostVmsList = ({
                                                                  }))} />
                                                         ),
                                                     },
+                                                    { title: (<VmUsageCpu vm={vm}/>)},
+                                                    { title: (<VmUsageMem vm={vm}/>)},
                                                     { title: vmActions },
                                                 ],
                                                 props: {
