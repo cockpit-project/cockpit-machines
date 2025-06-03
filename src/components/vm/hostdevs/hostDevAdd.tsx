@@ -18,6 +18,9 @@
  */
 import React, { useMemo, useState, useEffect } from "react";
 import cockpit from "cockpit";
+
+import type { VM, NodeDevice } from '../../../types';
+
 import {
     Table,
     Tbody,
@@ -41,7 +44,13 @@ import store from "../../../store.js";
 
 const _ = cockpit.gettext;
 
-const TypeRow = ({ type, setType }) => {
+const TypeRow = ({
+    type,
+    setType
+} : {
+    type: string,
+    setType: (val: string) => void,
+}) => {
     return (
         <FormGroup fieldId="usb_device"
                    label={_("Type")}
@@ -61,12 +70,17 @@ const TypeRow = ({ type, setType }) => {
     );
 };
 
-function devicesHaveAChild(selectableDevices) {
-    const all = {};
+interface NodeDevice2 extends NodeDevice {
+    hasChildren: boolean,
+}
+
+function devicesHaveAChild(selectableDevices: NodeDevice[]): NodeDevice2[] {
+    const all: Record<string, NodeDevice2> = {};
 
     selectableDevices.forEach(item => {
-        all[item.name] = { ...item };
-        all[item.name].hasChildren = false;
+        if (item.name) {
+            all[item.name] = { ...item, hasChildren: false };
+        }
     });
 
     Object.values(all).forEach(item => {
@@ -78,8 +92,21 @@ function devicesHaveAChild(selectableDevices) {
     return Object.values(all).sort(a => a.hasChildren ? 1 : -1);
 }
 
-const DevRow = ({ idPrefix, selectableDevices, setSelectableDevices }) => {
-    function getSource(nodeDev, id) {
+interface SelectableDevice {
+    selected: boolean,
+    nodeDev: NodeDevice2,
+}
+
+const DevRow = ({
+    idPrefix,
+    selectableDevices,
+    setSelectableDevices
+} : {
+    idPrefix: string,
+    selectableDevices: SelectableDevice[],
+    setSelectableDevices: (val: SelectableDevice[]) => void,
+}) => {
+    function getSource(nodeDev: NodeDevice, id: number): React.ReactNode {
         const cells = [];
         if (nodeDev.capability.type === "usb_device") {
             const device = nodeDev.devnum;
@@ -88,15 +115,15 @@ const DevRow = ({ idPrefix, selectableDevices, setSelectableDevices }) => {
             cells.push(getOptionalValue(device, `${id}-device`, _("Device")));
             cells.push(getOptionalValue(bus, `${id}-bus`, _("Bus")));
         } else if (nodeDev.capability.type === "pci") {
-            let domain = Number(nodeDev.capability.domain);
-            let bus = Number(nodeDev.capability.bus);
-            let slot = Number(nodeDev.capability.slot);
-            let func = Number(nodeDev.capability.function);
+            const domain_num = Number(nodeDev.capability.domain);
+            const bus_num = Number(nodeDev.capability.bus);
+            const slot_num = Number(nodeDev.capability.slot);
+            const func_num = Number(nodeDev.capability.function);
 
-            domain = domain.toString(16).padStart(4, '0');
-            bus = bus.toString(16).padStart(2, '0');
-            slot = slot.toString(16).padStart(2, '0');
-            func = func.toString(16).padStart(1, '0');
+            const domain = domain_num.toString(16).padStart(4, '0');
+            const bus = bus_num.toString(16).padStart(2, '0');
+            const slot = slot_num.toString(16).padStart(2, '0');
+            const func = func_num.toString(16).padStart(1, '0');
 
             cells.push(getOptionalValue(`${domain}:${bus}:${slot}.${func}`, `${id}-slot`, _("Slot")));
         }
@@ -104,7 +131,7 @@ const DevRow = ({ idPrefix, selectableDevices, setSelectableDevices }) => {
         return cells;
     }
 
-    function onSelect(_event, isSelected, rowId) {
+    function onSelect(isSelected: boolean, rowId: number) {
         let newDevs;
         if (rowId === -1) {
             newDevs = selectableDevices.map(oneRow => {
@@ -137,13 +164,13 @@ const DevRow = ({ idPrefix, selectableDevices, setSelectableDevices }) => {
                                 <Td
                                     select={{
                                         rowIndex,
-                                        onSelect: (_event, isSelecting) => onSelect(event, isSelecting, rowIndex),
+                                        onSelect: (_event, isSelecting) => onSelect(isSelecting, rowIndex),
                                         isSelected: dev.selected,
                                         isDisabled: dev.nodeDev.hasChildren
                                     }}
                                 />
-                                <Td>{dev.nodeDev.capability.product._value || "(" + _("Undefined") + ")"}</Td>
-                                <Td>{dev.nodeDev.capability.vendor._value}</Td>
+                                <Td>{dev.nodeDev.capability.product?._value || "(" + _("Undefined") + ")"}</Td>
+                                <Td>{dev.nodeDev.capability.vendor?._value}</Td>
                                 <Td><DescriptionList key='source' isHorizontal>{getSource(dev.nodeDev, rowIndex)}</DescriptionList></Td>
                             </Tr>
                         );
@@ -154,8 +181,8 @@ const DevRow = ({ idPrefix, selectableDevices, setSelectableDevices }) => {
     );
 };
 
-function getSelectableDevices(nodeDevices, vm, type) {
-    const devicesNotAlreadyAttached = [];
+function getSelectableDevices(nodeDevices: NodeDevice2[], vm: VM, type: string): SelectableDevice[] {
+    const devicesNotAlreadyAttached: SelectableDevice[] = [];
 
     const devicesWithCorrectType = nodeDevices.filter(dev => dev.capability && dev.capability.type === type);
     devicesWithCorrectType.filter(dev => dev.capability && dev.capability.type === type).forEach(nodeDev => {
@@ -175,10 +202,16 @@ function getSelectableDevices(nodeDevices, vm, type) {
     return devicesNotAlreadyAttached;
 }
 
-const AddHostDev = ({ idPrefix, vm }) => {
+const AddHostDev = ({
+    idPrefix,
+    vm
+} : {
+    idPrefix: string,
+    vm: VM,
+}) => {
     const Dialogs = useDialogs();
     const [type, setType] = useState("usb_device");
-    const [selectableDevices, setSelectableDevices] = useState([]);
+    const [selectableDevices, setSelectableDevices] = useState<SelectableDevice[]>([]);
     const [dialogError, setDialogError] = useState("");
     const [dialogErrorDetail, setDialogErrorDetail] = useState("");
     const [addHostDevInProgress, setAddHostDevInProgress] = useState(false);
@@ -190,7 +223,7 @@ const AddHostDev = ({ idPrefix, vm }) => {
         setSelectableDevices(getSelectableDevices(allDevices, vm, type));
     }, [allDevices, vm, type]);
 
-    const setTypeWrapper = (newType) => {
+    const setTypeWrapper = (newType: string) => {
         setSelectableDevices(getSelectableDevices(allDevices, vm, newType));
         setType(newType);
     };
