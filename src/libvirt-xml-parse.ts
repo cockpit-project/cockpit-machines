@@ -1020,7 +1020,7 @@ function parseNetDumpxmlForIp(ipElems: HTMLCollection): NetworkIp[] {
     return ip;
 }
 
-export function parseNodeDeviceDumpxml(nodeDevice: string): NodeDeviceXML {
+export function parseNodeDeviceDumpxml(nodeDevice: string): NodeDeviceXML | null {
     const deviceElem = getElem(nodeDevice);
 
     const name = deviceElem.getElementsByTagName("name")[0].childNodes[0].nodeValue;
@@ -1030,9 +1030,14 @@ export function parseNodeDeviceDumpxml(nodeDevice: string): NodeDeviceXML {
     const parentName = parentElem?.childNodes[0].nodeValue;
     const capabilityElem = deviceElem.getElementsByTagName("capability")[0];
 
-    const capability: NodeDeviceCapability = {};
+    const type = capabilityElem.getAttribute("type");
+    if (!type)
+        return null;
 
-    capability.type = capabilityElem.getAttribute("type");
+    const capability: NodeDeviceCapability = {
+        type,
+    };
+
     if (capability.type == 'net')
         capability.interface = capabilityElem.getElementsByTagName("interface")[0].childNodes[0].nodeValue;
     else if (capability.type == 'storage')

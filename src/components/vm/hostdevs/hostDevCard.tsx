@@ -17,7 +17,8 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
+
+import type { optString, VM, VMHostDevice, VMHostDevicePci, NodeDevice } from '../../../types';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
@@ -33,29 +34,33 @@ import { DeleteResourceButton } from '../../common/deleteResource.jsx';
 
 const _ = cockpit.gettext;
 
-function getClass(hostDev, nodeDevices) {
+function getClass(hostDev: VMHostDevice, nodeDevices: NodeDevice[]): optString {
     const nodeDev = findMatchingNodeDevices(hostDev, nodeDevices)[0];
 
     if (nodeDev && (["usb_device", "pci"].includes(nodeDev.capability.type)))
         return nodeDev.class;
 }
 
-function getProduct(hostDev, nodeDevices) {
+function getProduct(hostDev: VMHostDevice, nodeDevices: NodeDevice[]): optString {
     const nodeDev = findMatchingNodeDevices(hostDev, nodeDevices)[0];
 
     if (["usb", "pci"].includes(hostDev.type)) {
         if (nodeDev)
-            return nodeDev.capability.product._value;
+            return nodeDev.capability.product?._value;
         else if (hostDev.type === "usb")
             return hostDev.source.product.id;
     }
 }
 
-function getPciSlot(hostDev) {
-    let domain = hostDev.source.address.domain.split('x')[1];
-    let bus = hostDev.source.address.bus.split('x')[1];
-    let slot = hostDev.source.address.slot.split('x')[1];
-    let func = hostDev.source.address.func.split('x')[1];
+function getPciSlot(hostDev: VMHostDevicePci): string {
+    function hexdigits(str: optString) {
+        return str ? str.split('x')[1] : "";
+    }
+
+    let domain = hexdigits(hostDev.source.address.domain);
+    let bus = hexdigits(hostDev.source.address.bus);
+    let slot = hexdigits(hostDev.source.address.slot);
+    let func = hexdigits(hostDev.source.address.func);
 
     domain = String(domain).padStart(4, '0');
     bus = String(bus).padStart(2, '0');
@@ -65,18 +70,18 @@ function getPciSlot(hostDev) {
     return `${domain}:${bus}:${slot}.${func}`;
 }
 
-function getVendor(hostDev, nodeDevices) {
+function getVendor(hostDev: VMHostDevice, nodeDevices: NodeDevice[]): optString {
     const nodeDev = findMatchingNodeDevices(hostDev, nodeDevices)[0];
 
     if (["usb", "pci"].includes(hostDev.type)) {
         if (nodeDev)
-            return nodeDev.capability.vendor._value;
+            return nodeDev.capability.vendor?._value;
         else if (hostDev.type === "usb")
             return hostDev.source.vendor.id;
     }
 }
 
-function getSource(hostDev, nodeDevices, hostdevId) {
+function getSource(hostDev: VMHostDevice, nodeDevices: NodeDevice[], hostdevId: number): React.ReactNode {
     const cells = [];
     if (hostDev.type === "usb") {
         const nodeDevs = findMatchingNodeDevices(hostDev, nodeDevices);
@@ -102,7 +107,7 @@ function getSource(hostDev, nodeDevices, hostdevId) {
     } else if (hostDev.type === "scsi") {
         const bus = hostDev.source.address.bus;
         const target = hostDev.source.address.target;
-        const unit = hostDev.source.address.lun;
+        const unit = hostDev.source.address.unit;
 
         cells.push(getOptionalValue(bus, `bus-${hostdevId}`, _("Bus")));
         cells.push(getOptionalValue(unit, `unit-${hostdevId}`, _("Slot")));
@@ -134,7 +139,7 @@ function getSource(hostDev, nodeDevices, hostdevId) {
     return <DescriptionList isHorizontal>{cells}</DescriptionList>;
 }
 
-export const VmHostDevActions = ({ vm }) => {
+export const VmHostDevActions = ({ vm } : { vm: VM }) => {
     const Dialogs = useDialogs();
     const idPrefix = `${vmId(vm.name)}-hostdevs`;
 
@@ -150,12 +155,8 @@ export const VmHostDevActions = ({ vm }) => {
 };
 
 /* Adds an optional description-value pair to an array which represents multiple values of a table cell
- *
- * @param value a value of the descr-value pair
- * @param descr a description of the descr-value pair
- * @param id
  */
-export function getOptionalValue(value, id, descr) {
+export function getOptionalValue(value: optString, id: string, descr: string) {
     return (
         <DescriptionListGroup key={descr}>
             <DescriptionListTerm>
@@ -168,11 +169,22 @@ export function getOptionalValue(value, id, descr) {
     );
 }
 
-export const VmHostDevCard = ({ vm, nodeDevices }) => {
+export const VmHostDevCard = ({
+    vm,
+    nodeDevices
+} : {
+    vm: VM,
+    nodeDevices: NodeDevice[]
+}) => {
     const id = vmId(vm.name);
 
+    interface Detail {
+        name: string,
+        value: (hostdev: VMHostDevice, hostdevId: number) => React.ReactNode,
+    }
+
     // Hostdev data mapping to rows
-    const detailMap = [
+    const detailMap: Detail[] = [
         {
             name: _("Type"),
             value: (hostdev, hostdevId) => {
@@ -228,7 +240,12 @@ export const VmHostDevCard = ({ vm, nodeDevices }) => {
             value: (hostdev, hostdevId) => {
                 const source = getHostDevSourceObject(hostdev);
 
-                let objectDescription = [];
+                interface Description {
+                    name: string,
+                    value: optString,
+                }
+
+                let objectDescription: Description[] = [];
                 if (hostdev.type === "pci") {
                     objectDescription = [
                         { name: _("Vendor"), value: getVendor(hostdev, nodeDevices) },
@@ -276,7 +293,7 @@ export const VmHostDevCard = ({ vm, nodeDevices }) => {
 
     let hostdevId = 1;
 
-    const sortHostDevices = (a, b) => {
+    const sortHostDevices = (a: VMHostDevice, b: VMHostDevice) => {
         if (a.type !== b.type)
             return a.type > b.type ? 1 : -1;
 
@@ -301,7 +318,7 @@ export const VmHostDevCard = ({ vm, nodeDevices }) => {
     const columnTitles = detailMap.map(target => target.name);
     const rows = vm.hostDevices.sort(sortHostDevices).map(target => {
         const columns = detailMap.map(d => {
-            return { title: d.value(target, hostdevId, vm.connectionName) };
+            return { title: d.value(target, hostdevId) };
         });
         hostdevId++;
         return { columns, props: { key: hostdevId } };
@@ -315,9 +332,4 @@ export const VmHostDevCard = ({ vm, nodeDevices }) => {
                       rows={rows}
                       columns={columnTitles} />
     );
-};
-
-VmHostDevCard.propTypes = {
-    vm: PropTypes.object.isRequired,
-    nodeDevices: PropTypes.array.isRequired,
 };
