@@ -836,6 +836,7 @@ export async function domainGet({
         props.inactiveXML = parseDomainDumpxml(connectionName, domInactiveXml, objPath);
         props.connectionName = connectionName;
         props.id = objPath;
+        props.snapshots = null;
 
         const [returnProps] = await call<[DBusProps]>(connectionName, objPath, "org.freedesktop.DBus.Properties", "GetAll", ["org.libvirt.Domain"], { timeout, type: 's' });
 

@@ -18,7 +18,10 @@
  */
 
 import React from 'react';
-import PropTypes from 'prop-types';
+
+import type { VM, VMSnapshot } from '../../../types';
+import type { Dialogs } from 'dialogs';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import {
     Modal
@@ -33,10 +36,25 @@ import { domainGet } from '../../../libvirtApi/domain.js';
 
 const _ = cockpit.gettext;
 
-export class RevertSnapshotModal extends React.Component {
-    static contextType = DialogsContext;
+interface RevertSnapshotModalProps {
+    idPrefix: string,
+    vm: VM,
+    snap: VMSnapshot,
+}
 
-    constructor(props) {
+interface RevertSnapshotModalState {
+    dialogError: string | undefined,
+    dialogErrorDetail?: string,
+    inProgress: boolean,
+    inProgressForce: boolean,
+    defaultRevertFailed: boolean,
+}
+
+export class RevertSnapshotModal extends React.Component<RevertSnapshotModalProps, RevertSnapshotModalState> {
+    static contextType = DialogsContext;
+    declare context: Dialogs;
+
+    constructor(props: RevertSnapshotModalProps) {
         super(props);
 
         this.state = {
@@ -82,7 +100,7 @@ export class RevertSnapshotModal extends React.Component {
                     });
     }
 
-    dialogErrorSet(text, detail) {
+    dialogErrorSet(text: string, detail: string) {
         this.setState({ dialogError: text, dialogErrorDetail: detail });
     }
 
@@ -114,16 +132,15 @@ export class RevertSnapshotModal extends React.Component {
                        </>
                    }>
                 <Stack hasGutter>
-                    {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
+                    {this.state.dialogError &&
+                        <ModalError
+                            dialogError={this.state.dialogError}
+                            {...this.state.dialogErrorDetail && { dialogErrorDetail: this.state.dialogErrorDetail } }
+                        />
+                    }
                     <StackItem>{ cockpit.format(_("Reverting to this snapshot will take the VM back to the time of the snapshot and the current state will be lost, along with any data not captured in a snapshot")) }</StackItem>
                 </Stack>
             </Modal>
         );
     }
 }
-
-RevertSnapshotModal.propTypes = {
-    idPrefix: PropTypes.string.isRequired,
-    vm: PropTypes.object.isRequired,
-    snap: PropTypes.object.isRequired,
-};
