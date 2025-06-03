@@ -1027,9 +1027,10 @@ export function parseNodeDeviceDumpxml(nodeDevice: string): NodeDeviceXML {
     const parentName = parentElem?.childNodes[0].nodeValue;
     const capabilityElem = deviceElem.getElementsByTagName("capability")[0];
 
-    const capability: NodeDeviceCapability = {};
+    const capability: NodeDeviceCapability = {
+        type: capabilityElem.getAttribute("type") || "",
+    };
 
-    capability.type = capabilityElem.getAttribute("type");
     if (capability.type == 'net')
         capability.interface = capabilityElem.getElementsByTagName("interface")[0].childNodes[0].nodeValue;
     else if (capability.type == 'storage')

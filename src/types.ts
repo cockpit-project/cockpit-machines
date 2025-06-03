@@ -545,7 +545,7 @@ export interface Network extends NetworkXML {
 /** Node Devices **/
 
 export interface NodeDeviceCapability {
-    type?: optString;
+    type: string;
 
     // type == 'net'
     interface?: optString;
