@@ -44,25 +44,28 @@ export async function nodeDeviceGet({
 }): Promise<void> {
     try {
         const [deviceXml] = await call<[string]>(connectionName, objPath, 'org.libvirt.NodeDevice', 'GetXMLDesc', [0], { timeout, type: 'u' });
-        const deviceXmlObject: NodeDevice = {
-            connectionName,
-            ...parseNodeDeviceDumpxml(deviceXml)
-        };
+        const parsed = parseNodeDeviceDumpxml(deviceXml);
+        if (parsed) {
+            const deviceXmlObject: NodeDevice = {
+                connectionName,
+                ...parsed,
+            };
 
-        if (deviceXmlObject.path && ["pci", "usb_device"].includes(deviceXmlObject.capability.type || "")) {
-            const output = await cockpit.spawn(["udevadm", "info", "--path", deviceXmlObject.path], { err: "message" });
-            const nodeDev = parseUdevDB(output);
-            if (nodeDev && nodeDev.SUBSYSTEM === "pci") {
-                deviceXmlObject.pciSlotName = nodeDev.PCI_SLOT_NAME;
-                deviceXmlObject.class = nodeDev.ID_PCI_CLASS_FROM_DATABASE;
-            } else if (nodeDev && nodeDev.SUBSYSTEM === "usb") {
-                deviceXmlObject.class = nodeDev.ID_USB_CLASS_FROM_DATABASE;
-                deviceXmlObject.busnum = nodeDev.BUSNUM;
-                deviceXmlObject.devnum = nodeDev.DEVNUM;
+            if (deviceXmlObject.path && ["pci", "usb_device"].includes(deviceXmlObject.capability.type)) {
+                const output = await cockpit.spawn(["udevadm", "info", "--path", deviceXmlObject.path], { err: "message" });
+                const nodeDev = parseUdevDB(output);
+                if (nodeDev && nodeDev.SUBSYSTEM === "pci") {
+                    deviceXmlObject.pciSlotName = nodeDev.PCI_SLOT_NAME;
+                    deviceXmlObject.class = nodeDev.ID_PCI_CLASS_FROM_DATABASE;
+                } else if (nodeDev && nodeDev.SUBSYSTEM === "usb") {
+                    deviceXmlObject.class = nodeDev.ID_USB_CLASS_FROM_DATABASE;
+                    deviceXmlObject.busnum = nodeDev.BUSNUM;
+                    deviceXmlObject.devnum = nodeDev.DEVNUM;
+                }
             }
-        }
 
-        store.dispatch(updateOrAddNodeDevice(deviceXmlObject));
+            store.dispatch(updateOrAddNodeDevice(deviceXmlObject));
+        }
     } catch (ex) {
         if (ex instanceof Error)
             console.warn('GET_NODE_DEVICE action failed for path', objPath, ex.toString());
