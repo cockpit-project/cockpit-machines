@@ -76,7 +76,7 @@ export async function nodeDeviceGetAll({
 }): Promise<void> {
     try {
         const [objPaths] : [string[]] = await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListNodeDevices', [0], { timeout, type: 'u' });
-        // Chunk calls to nodeDeviceGet, without this systems with alot of pci
+        // Chunk calls to nodeDeviceGet, without this systems with a lot of pci
         // devices will reach the open file limit
         const chunkSize = 200;
         for (let i = 0; i < objPaths.length; i += chunkSize) {
