@@ -19,12 +19,14 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Flex } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
 import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 import { PopoverPosition } from "@patternfly/react-core/dist/esm/components/Popover";
 import { Content, ContentVariants } from "@patternfly/react-core/dist/esm/components/Content";
+import { ExternalLinkSquareAltIcon } from '@patternfly/react-icons';
 
 import { InfoPopover } from '../../common/infoPopover.jsx';
 
@@ -196,29 +198,19 @@ export const NetworkTypeAndSourceRow = ({ idPrefix, onValueChanged, dialogValues
                                enableFlip={false}
                                bodyContent={
                                    <Content>
-                                       <Content component={ContentVariants.h4}>
-                                           VEPA
+                                       <Content component={ContentVariants.p}>
+                                           {_("The mode influences the delivery of packets.")}
                                        </Content>
                                        <Content component={ContentVariants.p}>
-                                           {_("All VMs' packets are sent to the external bridge. Packets whose destination is a VM on the same host as where the packet originates from are sent back to the host by the VEPA capable bridge (today's bridges are typically not VEPA capable)")}.
-                                       </Content>
-                                       <Content component={ContentVariants.h4}>
-                                           {_("Bridge")}
-                                       </Content>
-                                       <Content component={ContentVariants.p}>
-                                           {_("Packets whose destination is on the same host as where they originate from are directly delivered to the target macvtap device. Both origin and destination devices need to be in bridge mode for direct delivery. If either one of them is in \"VEPA\" mode, a VEPA capable bridge is required.")}
-                                       </Content>
-                                       <Content component={ContentVariants.h4}>
-                                           {_("Private")}
-                                       </Content>
-                                       <Content component={ContentVariants.p}>
-                                           {_("All packets are sent to the external bridge and will only be delivered to a target VM on the same host if they are sent through an external router or gateway and that device sends them back to the host. This procedure is followed if either the source or destination device is in \"Private\" mode.")}
-                                       </Content>
-                                       <Content component={ContentVariants.h4}>
-                                           {_("Passthrough")}
-                                       </Content>
-                                       <Content component={ContentVariants.p}>
-                                           {_("This feature attaches a virtual function of a SRIOV capable NIC directly to a VM without losing the migration capability. All packets are sent to the VF/IF of the configured network device. Depending on the capabilities of the device additional prerequisites or limitations may apply.")}
+                                           <Button isInline
+                                               variant="link"
+                                               component="a"
+                                               icon={<ExternalLinkSquareAltIcon />}
+                                               iconPosition="right"
+                                               target="__blank"
+                                               href="https://libvirt.org/formatdomain.html#direct-attachment-to-physical-interface">
+                                               {_("More info")}
+                                           </Button>
                                        </Content>
                                    </Content>}
                            />
