@@ -301,7 +301,7 @@ def install_vm(args):
             # the VM so that we get back the metadata which enable the 'Install'
             # button, so that the user can re-attempt installation
             with tempfile.NamedTemporaryFile() as file:
-                logging.debug("virt-install failed, redefining to renable the 'Install' button")
+                logging.debug("virt-install failed, redefining to re-enable the 'Install' button")
                 file.write(prevXML)
                 file.flush()
                 virsh(args['connectionName'], "define", file.name)

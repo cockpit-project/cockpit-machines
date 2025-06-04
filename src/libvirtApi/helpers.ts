@@ -115,7 +115,7 @@ export const Enum = {
 };
 
 /* Utilities for accessing DBus variants.  These throw errors when the
-   variant does not have the exepcted signature.
+   variant does not have the expected signature.
 
    DBus variants with unexpected signatures can only result from
    programming errors and thus we don't need to provide a lot of
