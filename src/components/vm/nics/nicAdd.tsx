@@ -18,7 +18,12 @@
  */
 import React from 'react';
 import cockpit from 'cockpit';
-import PropTypes from 'prop-types';
+
+import type { Dialogs } from 'dialogs';
+import type { VM } from '../../../types';
+import type { DialogBodyValues } from './nicBody';
+import type { AvailableSources } from './vmNicsCard';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
@@ -37,7 +42,7 @@ import './nic.css';
 
 const _ = cockpit.gettext;
 
-function getRandomMac(vms) {
+function getRandomMac(vms: VM[]): string | undefined {
     // prevent getting cycled in the unforeseen case where all MACs will conflict with existing ones
     for (let i = 0; i < 42; i++) {
         const parts = ["52", "54", "00"];
@@ -65,7 +70,23 @@ function getRandomMac(vms) {
     return undefined;
 }
 
-const NetworkMacRow = ({ idPrefix, dialogValues, onValueChanged }) => {
+interface DialogValues extends DialogBodyValues {
+    setNetworkMac: boolean;
+    networkMac: string;
+    permanent: boolean;
+}
+
+type OnValueChanged = <K extends keyof DialogValues>(key: K, value: DialogValues[K]) => void;
+
+const NetworkMacRow = ({
+    idPrefix,
+    dialogValues,
+    onValueChanged
+} : {
+    idPrefix: string,
+    dialogValues: DialogValues,
+    onValueChanged: OnValueChanged,
+}) => {
     return (
         <FormGroup fieldId={`${idPrefix}-generate-mac`} label={_("MAC address")} hasNoPaddingTop isInline>
             <Radio id={`${idPrefix}-generate-mac`}
@@ -87,7 +108,15 @@ const NetworkMacRow = ({ idPrefix, dialogValues, onValueChanged }) => {
     );
 };
 
-const PermanentChange = ({ idPrefix, onValueChanged, dialogValues }) => {
+const PermanentChange = ({
+    idPrefix,
+    onValueChanged,
+    dialogValues
+} : {
+    idPrefix: string,
+    onValueChanged: OnValueChanged,
+    dialogValues: DialogValues,
+}) => {
     // By default for a running VM, the iface is attached until shut down only. Enable permanent change of the domain.xml
     return (
         <FormGroup label={_("Persistence")} fieldId={`${idPrefix}-permanent`} hasNoPaddingTop>
@@ -99,16 +128,31 @@ const PermanentChange = ({ idPrefix, onValueChanged, dialogValues }) => {
     );
 };
 
-export class AddNIC extends React.Component {
-    static contextType = DialogsContext;
+interface AddNICProps {
+    idPrefix: string,
+    vm: VM,
+    vms: VM[],
+    availableSources: AvailableSources;
+}
 
-    constructor(props) {
+interface AddNICState extends DialogValues {
+    dialogError: string | undefined,
+    dialogErrorDetail?: string,
+    addVNicInProgress: boolean,
+    saveDisabled?: boolean,
+}
+
+export class AddNIC extends React.Component<AddNICProps, AddNICState> {
+    static contextType = DialogsContext;
+    declare context: Dialogs;
+
+    constructor(props: AddNICProps) {
         super(props);
 
         this.state = {
             dialogError: undefined,
             networkType: "network",
-            networkSource: props.availableSources.network.length > 0 ? props.availableSources.network[0] : undefined,
+            networkSource: props.availableSources.network.length > 0 ? props.availableSources.network[0] : "",
             networkSourceMode: "bridge",
             networkModel: "virtio",
             setNetworkMac: false,
@@ -121,12 +165,12 @@ export class AddNIC extends React.Component {
         this.dialogErrorSet = this.dialogErrorSet.bind(this);
     }
 
-    onValueChanged(key, value) {
-        const stateDelta = { [key]: value };
+    onValueChanged<K extends keyof DialogValues>(key: K, value: DialogValues[K]): void {
+        const stateDelta = { [key]: value } as Pick<AddNICState, K>;
 
         this.setState(stateDelta);
 
-        if (key == 'networkType' && ['network', 'direct', 'bridge'].includes(value)) {
+        if (key == 'networkType' && ['network', 'direct', 'bridge'].includes(value as DialogValues["networkType"])) {
             let sources;
             if (value === "network")
                 sources = this.props.availableSources.network;
@@ -138,11 +182,11 @@ export class AddNIC extends React.Component {
             if (sources && sources.length > 0)
                 this.setState({ networkSource: sources[0], saveDisabled: false });
             else
-                this.setState({ networkSource: undefined, saveDisabled: true });
+                this.setState({ networkSource: "", saveDisabled: true });
         }
     }
 
-    dialogErrorSet(text, detail) {
+    dialogErrorSet(text: string, detail: string) {
         this.setState({ dialogError: text, dialogErrorDetail: detail });
     }
 
@@ -226,17 +270,16 @@ export class AddNIC extends React.Component {
                         </Button>
                     </>
                 }>
-                {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
+                {this.state.dialogError &&
+                    <ModalError
+                        dialogError={this.state.dialogError}
+                        {...this.state.dialogErrorDetail && { dialogErrorDetail: this.state.dialogErrorDetail } }
+                    />
+                }
                 {defaultBody}
             </Modal>
         );
     }
 }
-
-AddNIC.propTypes = {
-    idPrefix: PropTypes.string.isRequired,
-    vm: PropTypes.object.isRequired,
-    vms: PropTypes.array.isRequired,
-};
 
 export default AddNIC;
