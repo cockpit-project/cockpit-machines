@@ -18,7 +18,12 @@
  */
 import React from 'react';
 import cockpit from 'cockpit';
-import PropTypes from 'prop-types';
+
+import type { Dialogs } from 'dialogs';
+import type { optString, VM, VMInterface } from '../../../types';
+import type { DialogBodyValues } from './nicBody';
+import type { AvailableSources } from './vmNicsCard';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import {
@@ -35,7 +40,23 @@ import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
 
 const _ = cockpit.gettext;
 
-const NetworkMacRow = ({ mac, onValueChanged, idPrefix, isShutoff }) => {
+interface DialogValues extends DialogBodyValues {
+    networkMac: string,
+}
+
+type OnValueChanged = <K extends keyof DialogValues>(key: K, value: DialogValues[K]) => void;
+
+const NetworkMacRow = ({
+    mac,
+    onValueChanged,
+    idPrefix,
+    isShutoff
+} : {
+    mac: string,
+    onValueChanged: OnValueChanged,
+    idPrefix: string,
+    isShutoff: boolean,
+}) => {
     let macInput = (
         <TextInput id={`${idPrefix}-mac`}
                    value={mac}
@@ -52,15 +73,29 @@ const NetworkMacRow = ({ mac, onValueChanged, idPrefix, isShutoff }) => {
     );
 };
 
-export class EditNICModal extends React.Component {
-    static contextType = DialogsContext;
+interface EditNICModalProps {
+    idPrefix: string,
+    vm: VM,
+    network: VMInterface,
+    availableSources: AvailableSources,
+}
 
-    constructor(props) {
+interface EditNICModalState extends DialogValues {
+    dialogError: string | undefined,
+    dialogErrorDetail?: string,
+    saveDisabled: boolean,
+}
+
+export class EditNICModal extends React.Component<EditNICModalProps, EditNICModalState> {
+    static contextType = DialogsContext;
+    declare context: Dialogs;
+
+    constructor(props: EditNICModalProps) {
         super(props);
 
         let defaultNetworkSource;
         const currentSource = this.getNetworkSource(props.network);
-        let availableSources = [];
+        let availableSources: string[] = [];
 
         if (props.network.type === "network")
             availableSources = props.availableSources.network;
@@ -69,18 +104,18 @@ export class EditNICModal extends React.Component {
         else if (props.network.type === "bridge")
             availableSources = Object.keys(props.availableSources.device).filter(dev => props.availableSources.device[dev].type == "bridge");
 
-        if (availableSources.includes(currentSource))
+        if (availableSources.includes(currentSource || ""))
             defaultNetworkSource = currentSource;
         else
-            defaultNetworkSource = availableSources.length > 0 ? availableSources[0] : undefined;
+            defaultNetworkSource = availableSources.length > 0 ? availableSources[0] : "";
 
         this.state = {
             dialogError: undefined,
             networkType: props.network.type,
-            networkSource: defaultNetworkSource,
-            networkSourceMode: props.network.type == "direct" ? props.network.source.mode : "bridge",
-            networkModel: props.network.model,
-            networkMac: props.network.mac,
+            networkSource: defaultNetworkSource || "",
+            networkSourceMode: props.network.type == "direct" ? (props.network.source.mode || "") : "bridge",
+            networkModel: props.network.model || "",
+            networkMac: props.network.mac || "",
             saveDisabled: false,
         };
         this.save = this.save.bind(this);
@@ -88,7 +123,7 @@ export class EditNICModal extends React.Component {
         this.dialogErrorSet = this.dialogErrorSet.bind(this);
     }
 
-    getNetworkSource(network) {
+    getNetworkSource(network: VMInterface): optString {
         if (network.type === "network")
             return network.source.network;
         else if (network.type === "direct")
@@ -97,8 +132,8 @@ export class EditNICModal extends React.Component {
             return network.source.bridge;
     }
 
-    onValueChanged(key, value) {
-        const stateDelta = { [key]: value };
+    onValueChanged<K extends keyof DialogValues>(key: K, value: DialogValues[K]): void {
+        const stateDelta = { [key]: value } as Pick<EditNICModalState, K>;
 
         this.setState(stateDelta);
 
@@ -114,11 +149,11 @@ export class EditNICModal extends React.Component {
             if (sources && sources.length > 0)
                 this.setState({ networkSource: sources[0], saveDisabled: false });
             else
-                this.setState({ networkSource: undefined, saveDisabled: true });
+                this.setState({ networkSource: "", saveDisabled: true });
         }
     }
 
-    dialogErrorSet(text, detail) {
+    dialogErrorSet(text: string, detail: string) {
         this.setState({ dialogError: text, dialogErrorDetail: detail });
     }
 
@@ -137,7 +172,7 @@ export class EditNICModal extends React.Component {
             vmName: vm.name,
             connectionName: vm.connectionName,
             persistent: vm.persistent,
-            macAddress: network.mac,
+            macAddress: network.mac || "",
             newMacAddress: this.state.networkMac,
             networkModel: this.state.networkModel,
             networkType: this.state.networkType,
@@ -199,16 +234,15 @@ export class EditNICModal extends React.Component {
                    }>
                 <>
                     { showWarning() }
-                    {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
+                    {this.state.dialogError &&
+                        <ModalError
+                            dialogError={this.state.dialogError}
+                            {...this.state.dialogErrorDetail && { dialogErrorDetail: this.state.dialogErrorDetail } }
+                        />
+                    }
                     {defaultBody}
                 </>
             </Modal>
         );
     }
 }
-EditNICModal.propTypes = {
-    availableSources: PropTypes.object.isRequired,
-    idPrefix: PropTypes.string.isRequired,
-    vm: PropTypes.object.isRequired,
-    network: PropTypes.object.isRequired,
-};
