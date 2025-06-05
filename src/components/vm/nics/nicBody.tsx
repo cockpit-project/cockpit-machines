@@ -250,26 +250,17 @@ export const NetworkTypeAndSourceRow = ({
                                    </Content>}
                            />
                        }>
-                    <Radio id={`${idPrefix}-source-mode-vepa`}
-                        name="mode-vepa"
-                        isChecked={dialogValues.networkSourceMode == "vepa"}
-                        label="VEPA"
-                        onChange={() => onValueChanged('networkSourceMode', "vepa")} />
-                    <Radio id={`${idPrefix}-source-mode-bridge`}
-                        name="mode-bridge"
-                        isChecked={dialogValues.networkSourceMode == "bridge"}
-                        label={_("Bridge")}
-                        onChange={() => onValueChanged('networkSourceMode', "bridge")} />
-                    <Radio id={`${idPrefix}-source-mode-private`}
-                        name="mode-private"
-                        isChecked={dialogValues.networkSourceMode == "private"}
-                        label={_("Private")}
-                        onChange={() => onValueChanged('networkSourceMode', "private")} />
-                    <Radio id={`${idPrefix}-source-mode-passthrough`}
-                        name="mode-passthrough"
-                        isChecked={dialogValues.networkSourceMode == "passthrough"}
-                        label={_("Passthrough")}
-                        onChange={() => onValueChanged('networkSourceMode', "passthrough")} />
+                    {["vepa", "bridge", "private", "passthrough"].map(mode =>
+                        <Radio
+                            key={mode}
+                            id={`${idPrefix}-source-mode-${mode}`}
+                            name={`mode-${mode}`}
+                            isChecked={dialogValues.networkSourceMode == mode}
+                            // The label is not translated since the
+                            // documentation we link to is always in
+                            // English.
+                            label={<pre>{mode}</pre>}
+                            onChange={() => onValueChanged('networkSourceMode', mode)} />)}
                 </FormGroup>
             )}
         </>
