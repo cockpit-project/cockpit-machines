@@ -18,6 +18,10 @@
  */
 
 import React from 'react';
+
+import type { ConnectionName } from '../../types';
+import type { Dialogs } from 'dialogs';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
@@ -38,7 +42,7 @@ import cockpit from 'cockpit';
 
 const _ = cockpit.gettext;
 
-const ConnectionRow = ({ connectionName }) => {
+const ConnectionRow = ({ connectionName } : { connectionName: ConnectionName }) => {
     return (
         <FormGroup fieldId="create-network-connection-name" label={_("Connection")} hasNoPaddingTop>
             <div id="create-network-connection-name">
@@ -48,14 +52,45 @@ const ConnectionRow = ({ connectionName }) => {
     );
 };
 
-function validateParams(dialogValues) {
-    const validationFailed = {};
+interface DialogValues {
+    name: string;
+    forwardMode: string;
+    device: string;
+    ip: string;
+    netmask: string;
+    ipv4: string;
+    ipv4DhcpEnabled: boolean;
+    ipv4DhcpRangeStart: string;
+    ipv4DhcpRangeEnd: string;
+    ipv6: string;
+    prefix: string;
+    ipv6DhcpEnabled: boolean;
+    ipv6DhcpRangeStart: string;
+    ipv6DhcpRangeEnd: string;
+}
+
+type OnValueChanged = <K extends keyof DialogValues>(key: K, value: DialogValues[K]) => void;
+
+interface ValidationFailed {
+    name?: string;
+    netmask?: string;
+    ipv4?: string;
+    ipv4DhcpRangeStart?: string;
+    ipv4DhcpRangeEnd?: string;
+    ipv6?: string;
+    prefix?: string;
+    ipv6DhcpRangeStart?: string;
+    ipv6DhcpRangeEnd?: string;
+}
+
+function validateParams(dialogValues: DialogValues): ValidationFailed {
+    const validationFailed: ValidationFailed = {};
 
     if (isEmpty(dialogValues.name.trim()))
         validationFailed.name = _("Name should not be empty");
 
     if (dialogValues.ip === "IPv4 only" || dialogValues.ip === "IPv4 and IPv6") {
-        let ipv4_prefix = null;
+        let ipv4_prefix: number | null = null;
 
         if (isEmpty(dialogValues.netmask.trim()))
             validationFailed.netmask = _("Mask or prefix length should not be empty");
@@ -78,13 +113,13 @@ function validateParams(dialogValues) {
             validationFailed.ipv4 = _("Invalid IPv4 address");
         // During virtual network creation, address is assigned to bridge. However no interface can have the
         // address same as the network identifier, as it would disable the connectivity of the virtual network.
-        else if (!validationFailed.netmask && utils.ipv4IsNetworkIdentifier(dialogValues.ipv4, ipv4_prefix)) {
+        else if (!validationFailed.netmask && utils.ipv4IsNetworkIdentifier(dialogValues.ipv4, String(ipv4_prefix))) {
             validationFailed.ipv4 =
                 cockpit.format(_("Must be an address instead of the network identifier, such as $0"),
                                utils.ipv4ExampleBridgeAddressForNetworkIdentifier(dialogValues.ipv4));
         // Using broadcast address of network space as the address of virtual network's bridge
         // is forbidden and would disable the connectivity of the virtual network.
-        } else if (!validationFailed.netmask && utils.ipv4IsBroadcast(dialogValues.ipv4, ipv4_prefix))
+        } else if (!validationFailed.netmask && utils.ipv4IsBroadcast(dialogValues.ipv4, String(ipv4_prefix)))
             validationFailed.ipv4 = _("IPv4 address cannot be same as the network's broadcast address");
 
         if (dialogValues.ipv4DhcpEnabled) {
@@ -92,14 +127,14 @@ function validateParams(dialogValues) {
                 validationFailed.ipv4DhcpRangeStart = _("Start should not be empty");
             else if (!utils.validateIpv4(dialogValues.ipv4DhcpRangeStart))
                 validationFailed.ipv4DhcpRangeStart = _("Invalid IPv4 address");
-            else if (!validationFailed.netmask && !utils.isIpv4InNetwork(dialogValues.ipv4, ipv4_prefix, dialogValues.ipv4DhcpRangeStart))
+            else if (!validationFailed.netmask && !utils.isIpv4InNetwork(dialogValues.ipv4, String(ipv4_prefix), dialogValues.ipv4DhcpRangeStart))
                 validationFailed.ipv4DhcpRangeStart = _("Address not within subnet");
 
             if (isEmpty(dialogValues.ipv4DhcpRangeEnd.trim()))
                 validationFailed.ipv4DhcpRangeEnd = _("End should not be empty");
             else if (!utils.validateIpv4(dialogValues.ipv4DhcpRangeEnd))
                 validationFailed.ipv4DhcpRangeEnd = _("Invalid IPv4 address");
-            else if (!validationFailed.netmask && !utils.isIpv4InNetwork(dialogValues.ipv4, ipv4_prefix, dialogValues.ipv4DhcpRangeEnd))
+            else if (!validationFailed.netmask && !utils.isIpv4InNetwork(dialogValues.ipv4, String(ipv4_prefix), dialogValues.ipv4DhcpRangeEnd))
                 validationFailed.ipv4DhcpRangeEnd = _("Address not within subnet");
         }
     }
@@ -135,7 +170,15 @@ function validateParams(dialogValues) {
     return validationFailed;
 }
 
-const NetworkNameRow = ({ onValueChanged, dialogValues, validationFailed }) => {
+const NetworkNameRow = ({
+    onValueChanged,
+    dialogValues,
+    validationFailed,
+} : {
+    onValueChanged: OnValueChanged,
+    dialogValues: DialogValues,
+    validationFailed: ValidationFailed,
+}) => {
     const validationState = validationFailed.name ? 'error' : 'default';
 
     return (
@@ -150,7 +193,13 @@ const NetworkNameRow = ({ onValueChanged, dialogValues, validationFailed }) => {
     );
 };
 
-const NetworkForwardModeRow = ({ onValueChanged, dialogValues }) => {
+const NetworkForwardModeRow = ({
+    onValueChanged,
+    dialogValues
+} : {
+    onValueChanged: OnValueChanged,
+    dialogValues: DialogValues,
+}) => {
     const forwardModes = ['nat', 'open', 'none'];
 
     return (
@@ -170,7 +219,13 @@ const NetworkForwardModeRow = ({ onValueChanged, dialogValues }) => {
     );
 };
 
-const NetworkDeviceRow = ({ onValueChanged, dialogValues }) => {
+const NetworkDeviceRow = ({
+    onValueChanged,
+    dialogValues
+} : {
+    onValueChanged: OnValueChanged,
+    dialogValues: DialogValues,
+}) => {
     const devices = getNetworkDevices();
     return (
         <FormGroup fieldId='create-network-device' label={_("Device")}>
@@ -193,7 +248,15 @@ const NetworkDeviceRow = ({ onValueChanged, dialogValues }) => {
     );
 };
 
-const IpRow = ({ onValueChanged, dialogValues, validationFailed }) => {
+const IpRow = ({
+    onValueChanged,
+    dialogValues,
+    validationFailed
+} : {
+    onValueChanged: OnValueChanged,
+    dialogValues: DialogValues,
+    validationFailed: ValidationFailed,
+}) => {
     return (
         <FormGroup fieldId='create-network-ip-configuration' label={_("IP configuration")} isStack>
             <FormSelect id='create-network-ip-configuration'
@@ -218,9 +281,29 @@ const IpRow = ({ onValueChanged, dialogValues, validationFailed }) => {
     );
 };
 
-const DhcpRow = ({ ipVersion, rangeStart, rangeEnd, expanded, onValueChanged, validationFailed }) => {
-    const validationStart = validationFailed['ipv' + ipVersion + 'DhcpRangeStart'] ? 'error' : 'default';
-    const validationEnd = validationFailed['ipv' + ipVersion + 'DhcpRangeEnd'] ? 'error' : 'default';
+const DhcpRow = ({
+    ipVersion,
+    rangeStart,
+    rangeEnd,
+    expanded,
+    onRangeStartChanged,
+    onRangeEndChanged,
+    onExpandedChanged,
+    validationFailedRangeStart,
+    validationFailedRangeEnd,
+} : {
+    ipVersion: string,
+    rangeStart: string,
+    rangeEnd: string,
+    expanded: boolean,
+    onRangeStartChanged: (val: string) => void,
+    onExpandedChanged: (val: boolean) => void,
+    onRangeEndChanged: (val: string) => void,
+    validationFailedRangeStart: string | undefined,
+    validationFailedRangeEnd: string | undefined,
+}) => {
+    const validationStart = validationFailedRangeStart ? 'error' : 'default';
+    const validationEnd = validationFailedRangeEnd ? 'error' : 'default';
 
     return (
         <>
@@ -228,29 +311,37 @@ const DhcpRow = ({ ipVersion, rangeStart, rangeEnd, expanded, onValueChanged, va
                 <Checkbox id={'create-network-ipv' + ipVersion + '-dhcp'}
                           isChecked={expanded}
                           label={_("Set DHCP range")}
-                          onChange={() => onValueChanged('ipv' + ipVersion + 'DhcpEnabled', !expanded)} />
+                    onChange={() => onExpandedChanged(!expanded)} />
             </FormGroup>
             {expanded && <Grid hasGutter md={6}>
                 <FormGroup fieldId={'create-network-ipv' + ipVersion + '-dhcp-range-start'}
                            className={`create-network-ipv${ipVersion}-dhcp-range-start`} label={_("Start")}>
                     <TextInput id={'create-network-ipv' + ipVersion + '-dhcp-range-start'}
                                value={rangeStart}
-                               onChange={(_, value) => onValueChanged('ipv' + ipVersion + 'DhcpRangeStart', value)} />
-                    <FormHelper helperTextInvalid={validationStart == "error" && validationFailed['ipv' + ipVersion + 'DhcpRangeStart']} />
+                               onChange={(_, value) => onRangeStartChanged(value)} />
+                    <FormHelper helperTextInvalid={validationStart == "error" ? validationFailedRangeStart : null} />
                 </FormGroup>
                 <FormGroup fieldId={'create-network-ipv' + ipVersion + '-dhcp-range-end'}
                            className={`create-network-ipv${ipVersion}-dhcp-range-end`} label={_("End")}>
                     <TextInput id={'create-network-ipv' + ipVersion + '-dhcp-range-end'}
                                value={rangeEnd}
-                               onChange={(_, value) => onValueChanged('ipv' + ipVersion + 'DhcpRangeEnd', value)} />
-                    <FormHelper helperTextInvalid={validationEnd == "error" && validationFailed['ipv' + ipVersion + 'DhcpRangeEnd']} />
+                               onChange={(_, value) => onRangeEndChanged(value)} />
+                    <FormHelper helperTextInvalid={validationEnd == "error" ? validationFailedRangeEnd : null} />
                 </FormGroup>
             </Grid>}
         </>
     );
 };
 
-const Ipv4Row = ({ validationFailed, dialogValues, onValueChanged }) => {
+const Ipv4Row = ({
+    validationFailed,
+    dialogValues,
+    onValueChanged
+} : {
+    onValueChanged: OnValueChanged,
+    dialogValues: DialogValues,
+    validationFailed: ValidationFailed,
+}) => {
     const validationAddress = validationFailed.ipv4 ? 'error' : 'default';
     const validationNetmask = validationFailed.netmask ? 'error' : 'default';
 
@@ -261,26 +352,37 @@ const Ipv4Row = ({ validationFailed, dialogValues, onValueChanged }) => {
                            value={dialogValues.ipv4}
                            validated={validationAddress}
                            onChange={(_, value) => onValueChanged('ipv4', value)} />
-                <FormHelper helperTextInvalid={validationAddress == "error" && validationFailed.ipv4} />
+                <FormHelper helperTextInvalid={validationAddress == "error" ? validationFailed.ipv4 : null} />
             </FormGroup>
             <FormGroup fieldId='create-network-ipv4-netmask' label={_("Mask or prefix length")}>
                 <TextInput id='create-network-ipv4-netmask'
                            value={dialogValues.netmask}
                            validated={validationNetmask}
                            onChange={(_, value) => onValueChanged('netmask', value)} />
-                <FormHelper helperTextInvalid={validationNetmask == "error" && validationFailed.netmask} />
+                <FormHelper helperTextInvalid={validationNetmask == "error" ? validationFailed.netmask : null} />
             </FormGroup>
             <DhcpRow ipVersion='4'
                 rangeStart={dialogValues.ipv4DhcpRangeStart}
                 rangeEnd={dialogValues.ipv4DhcpRangeEnd}
                 expanded={dialogValues.ipv4DhcpEnabled}
-                onValueChanged={onValueChanged}
-                validationFailed={validationFailed} />
+                onRangeStartChanged={val => onValueChanged('ipv4DhcpRangeStart', val)}
+                onRangeEndChanged={val => onValueChanged('ipv4DhcpRangeEnd', val)}
+                onExpandedChanged={val => onValueChanged('ipv4DhcpEnabled', val)}
+                validationFailedRangeStart={validationFailed.ipv4DhcpRangeStart}
+                validationFailedRangeEnd={validationFailed.ipv4DhcpRangeEnd} />
         </>
     );
 };
 
-const Ipv6Row = ({ validationFailed, dialogValues, onValueChanged }) => {
+const Ipv6Row = ({
+    validationFailed,
+    dialogValues,
+    onValueChanged
+} : {
+    onValueChanged: OnValueChanged,
+    dialogValues: DialogValues,
+    validationFailed: ValidationFailed,
+}) => {
     const validationAddress = validationFailed.ipv6 ? 'error' : 'default';
     const validationPrefix = validationFailed.prefix ? 'error' : 'default';
 
@@ -291,29 +393,44 @@ const Ipv6Row = ({ validationFailed, dialogValues, onValueChanged }) => {
                            value={dialogValues.ipv6}
                            validated={validationAddress}
                            onChange={(_, value) => onValueChanged('ipv6', value)} />
-                <FormHelper helperTextInvalid={validationAddress == "error" && validationFailed.ipv6} />
+                <FormHelper helperTextInvalid={validationAddress == "error" ? validationFailed.ipv6 : null} />
             </FormGroup>
             <FormGroup fieldId='create-network-ipv6-prefix' label={_("Prefix length")}>
                 <TextInput id='create-network-ipv6-prefix'
                            value={dialogValues.prefix}
                            validated={validationPrefix}
                            onChange={(_, value) => onValueChanged('prefix', value)} />
-                <FormHelper helperTextInvalid={validationPrefix == "error" && validationFailed.prefix} />
+                <FormHelper helperTextInvalid={validationPrefix == "error" ? validationFailed.prefix : null} />
             </FormGroup>
             <DhcpRow ipVersion='6'
                 rangeStart={dialogValues.ipv6DhcpRangeStart}
                 rangeEnd={dialogValues.ipv6DhcpRangeEnd}
                 expanded={dialogValues.ipv6DhcpEnabled}
-                onValueChanged={onValueChanged}
-                validationFailed={validationFailed} />
+                onRangeStartChanged={val => onValueChanged('ipv6DhcpRangeStart', val)}
+                onRangeEndChanged={val => onValueChanged('ipv6DhcpRangeEnd', val)}
+                onExpandedChanged={val => onValueChanged('ipv6DhcpEnabled', val)}
+                validationFailedRangeStart={validationFailed.ipv6DhcpRangeStart}
+                validationFailedRangeEnd={validationFailed.ipv6DhcpRangeEnd} />
         </>
     );
 };
 
-class CreateNetworkModal extends React.Component {
-    static contextType = DialogsContext;
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+interface CreateNetworkModalProps {
+}
 
-    constructor(props) {
+interface CreateNetworkModalState extends DialogValues {
+    createInProgress: boolean;
+    dialogError: string | undefined,
+    dialogErrorDetail?: string;
+    validate: boolean;
+}
+
+class CreateNetworkModal extends React.Component<CreateNetworkModalProps, CreateNetworkModalState> {
+    static contextType = DialogsContext;
+    declare context: Dialogs;
+
+    constructor(props: CreateNetworkModalProps) {
         super(props);
         this.state = {
             createInProgress: false,
@@ -340,7 +457,7 @@ class CreateNetworkModal extends React.Component {
         this.onCreate = this.onCreate.bind(this);
     }
 
-    dialogErrorSet(text, detail) {
+    dialogErrorSet(text: string, detail: string) {
         this.setState({ dialogError: text, dialogErrorDetail: detail });
     }
 
@@ -348,7 +465,7 @@ class CreateNetworkModal extends React.Component {
         this.setState({ dialogError: undefined });
     }
 
-    onValueChanged(key, value) {
+    onValueChanged<K extends keyof DialogValues>(key: K, value: DialogValues[K]): void {
         if (key === "forwardMode") {
             if (this.state.ip !== "None" && (value === "bridge" || value === "vepa"))
                 this.setState({ ip: "None" });
@@ -357,13 +474,13 @@ class CreateNetworkModal extends React.Component {
                 this.setState({ ip: "IPv4 only" });
         }
 
-        this.setState({ [key]: value });
+        this.setState({ [key]: value } as Pick<CreateNetworkModalState, K>);
     }
 
     onCreate() {
         const Dialogs = this.context;
         if (Object.getOwnPropertyNames(validateParams(this.state)).length > 0) {
-            this.setState({ inProgress: false, validate: true });
+            this.setState({ createInProgress: false, validate: true });
         } else {
             const {
                 name, forwardMode, ip, prefix, device,
@@ -398,7 +515,7 @@ class CreateNetworkModal extends React.Component {
 
     render() {
         const Dialogs = this.context;
-        const validationFailed = this.state.validate && validateParams(this.state);
+        const validationFailed = this.state.validate ? validateParams(this.state) : {};
 
         const body = (
             <Form isHorizontal>
@@ -412,8 +529,7 @@ class CreateNetworkModal extends React.Component {
                                        onValueChanged={this.onValueChanged} />
                 { (this.state.forwardMode === "nat" || this.state.forwardMode === "route") &&
                 <NetworkDeviceRow dialogValues={this.state}
-                                  onValueChanged={this.onValueChanged}
-                                  validationFailed={validationFailed} /> }
+                                  onValueChanged={this.onValueChanged} /> }
 
                 { (this.state.forwardMode !== "vepa" && this.state.forwardMode !== "bridge") &&
                 <IpRow dialogValues={this.state}
@@ -438,7 +554,12 @@ class CreateNetworkModal extends React.Component {
                            </Button>
                        </>
                    }>
-                {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
+                {this.state.dialogError &&
+                    <ModalError
+                        dialogError={this.state.dialogError}
+                        {...this.state.dialogErrorDetail && { dialogErrorDetail: this.state.dialogErrorDetail } }
+                    />
+                }
                 {body}
             </Modal>
         );

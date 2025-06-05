@@ -17,6 +17,9 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { useState } from 'react';
+
+import type { Network } from '../../types';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { DropdownItem } from "@patternfly/react-core/dist/esm/components/Dropdown";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
@@ -43,7 +46,7 @@ import cockpit from 'cockpit';
 
 const _ = cockpit.gettext;
 
-export const getNetworkRow = ({ network }) => {
+export const getNetworkRow = ({ network } : { network: Network }) => {
     const idPrefix = `${networkId(network.name, network.connectionName)}`;
     const name = (
         <span id={`${idPrefix}-name`}>
@@ -88,7 +91,7 @@ export const getNetworkRow = ({ network }) => {
     };
 };
 
-const NetworkActions = ({ network }) => {
+const NetworkActions = ({ network } : { network: Network }) => {
     const Dialogs = useDialogs();
     const [operationInProgress, setOperationInProgress] = useState(false);
 
@@ -141,7 +144,7 @@ const NetworkActions = ({ network }) => {
     };
 
     const id = networkId(network.name, network.connectionName);
-    const deleteHandler = (network) => {
+    const deleteHandler = (network: Network): Promise<void> => {
         if (network.active) {
             return networkDeactivate({ connectionName: network.connectionName, objPath: network.id })
                     .then(() => networkUndefine({ connectionName: network.connectionName, objPath: network.id }));
