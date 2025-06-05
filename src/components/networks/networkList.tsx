@@ -17,10 +17,12 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
+
+import type { Network } from '../../types';
+
 import { Breadcrumb, BreadcrumbItem } from "@patternfly/react-core/dist/esm/components/Breadcrumb";
 import { Card, CardHeader, CardTitle } from '@patternfly/react-core/dist/esm/components/Card';
-import { Page, PageBreadcrumb, PageSection, PageSectionVariants } from "@patternfly/react-core/dist/esm/components/Page";
+import { Page, PageBreadcrumb, PageSection } from "@patternfly/react-core/dist/esm/components/Page";
 import { WithDialogs } from 'dialogs.jsx';
 
 import cockpit from 'cockpit';
@@ -31,22 +33,26 @@ import { CreateNetworkAction } from './createNetworkDialog.jsx';
 
 const _ = cockpit.gettext;
 
-export class NetworkList extends React.Component {
-    shouldComponentUpdate(nextProps, _) {
+export interface NetworkListProps {
+    networks: Network[];
+}
+
+export class NetworkList extends React.Component<NetworkListProps> {
+    shouldComponentUpdate(nextProps: NetworkListProps) {
         const networks = nextProps.networks;
         return !networks.find(network => !network.name);
     }
 
     render() {
-        const { networks, resourceHasError } = this.props;
-        const sortFunction = (networkA, networkB) => networkA.name.localeCompare(networkB.name);
+        const { networks } = this.props;
+        const sortFunction = (networkA: Network, networkB: Network) => networkA.name.localeCompare(networkB.name);
         const unlocked = superuser.allowed;
 
         return (
             <WithDialogs key="network-list">
                 <Page className="no-masthead-sidebar">
                     <PageBreadcrumb hasBodyWrapper={false} stickyOnBreakpoint={{ default: "top" }}>
-                        <Breadcrumb variant={PageSectionVariants.light} className='machines-listing-breadcrumb'>
+                        <Breadcrumb className='machines-listing-breadcrumb'>
                             <BreadcrumbItem to='#'>
                                 {_("Virtual machines")}
                             </BreadcrumbItem>
@@ -73,7 +79,7 @@ export class NetworkList extends React.Component {
                                 emptyCaption={_("No network is defined on this host")}
                                 rows={networks
                                         .sort(sortFunction)
-                                        .map(network => getNetworkRow({ network, resourceHasError }))
+                                        .map(network => getNetworkRow({ network }))
                                 } />
                         </Card>
                     </PageSection>
@@ -82,7 +88,3 @@ export class NetworkList extends React.Component {
         );
     }
 }
-NetworkList.propTypes = {
-    networks: PropTypes.array.isRequired,
-    resourceHasError: PropTypes.object.isRequired,
-};

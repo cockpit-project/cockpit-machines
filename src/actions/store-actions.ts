@@ -192,7 +192,7 @@ export function updateDomainSnapshots({
 } : {
     connectionName: ConnectionName,
     domainPath: string,
-    snaps: VMSnapshot[] | -1,
+    snaps: VMSnapshot[] | null,
 }) {
     return {
         type: UPDATE_DOMAIN_SNAPSHOTS,
@@ -211,7 +211,7 @@ export function updateOrAddInterface(props: NodeInterface) {
     };
 }
 
-export function updateOrAddNetwork(props: Network, updateOnly: boolean) {
+export function updateOrAddNetwork(props: Partial<Network>, updateOnly?: boolean) {
     return {
         type: UPDATE_ADD_NETWORK,
         payload: { network: props, updateOnly },

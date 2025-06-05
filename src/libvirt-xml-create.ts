@@ -23,8 +23,8 @@ export function getDiskXML(
     type: string,
     file: string | undefined,
     device: string,
-    poolName: string,
-    volumeName: string,
+    poolName: string | undefined,
+    volumeName: string | undefined,
     format: string,
     target: string,
     cacheMode: string,
@@ -51,8 +51,10 @@ export function getDiskXML(
         if (file)
             sourceElem.setAttribute('file', file);
     } else {
-        sourceElem.setAttribute('volume', volumeName);
-        sourceElem.setAttribute('pool', poolName);
+        if (volumeName)
+            sourceElem.setAttribute('volume', volumeName);
+        if (poolName)
+            sourceElem.setAttribute('pool', poolName);
     }
     diskElem.appendChild(sourceElem);
 
@@ -81,9 +83,9 @@ export interface NetworkSpec {
     name: string,
     forwardMode: string,
     device: string,
-    ipv4: string,
+    ipv4: string | undefined,
     netmask: string,
-    ipv6: string,
+    ipv6: string | undefined,
     prefix: string,
     ipv4DhcpRangeStart: string,
     ipv4DhcpRangeEnd: string,
@@ -303,7 +305,7 @@ export function getPoolXML({
 export function getSnapshotXML(
     name?: string,
     description?: string,
-    memoryPath?: string,
+    memoryPath?: string | null,
 ): string {
     const doc = document.implementation.createDocument('', '', null);
 

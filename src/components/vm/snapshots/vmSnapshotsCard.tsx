@@ -19,6 +19,11 @@
 
 import React from 'react';
 
+import type { VM, VMSnapshot, HypervisorCapabilities } from '../../../types';
+import type { Dialogs } from 'dialogs';
+import type { ListingTableColumnProps, ListingTableRowProps } from 'cockpit-components-table.jsx';
+import type { TdProps } from '@patternfly/react-table';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
@@ -40,7 +45,13 @@ import './vmSnapshotsCard.css';
 
 const _ = cockpit.gettext;
 
-export const VmSnapshotsActions = ({ vm, config, storagePools }) => {
+export const VmSnapshotsActions = ({
+    vm,
+    config,
+} : {
+    vm: VM,
+    config: { capabilities?: HypervisorCapabilities },
+}) => {
     const Dialogs = useDialogs();
     const id = vmId(vm.name);
 
@@ -49,7 +60,6 @@ export const VmSnapshotsActions = ({ vm, config, storagePools }) => {
     function open() {
         Dialogs.show(<CreateSnapshotModal idPrefix={`${id}-create-snapshot`}
                                           isExternal={isExternal}
-                                          storagePools={storagePools}
                                           vm={vm} />);
     }
 
@@ -69,10 +79,15 @@ export const VmSnapshotsActions = ({ vm, config, storagePools }) => {
     return excuse ? <Tooltip content={excuse}>{button}</Tooltip> : button;
 };
 
-export class VmSnapshotsCard extends React.Component {
-    static contextType = DialogsContext;
+interface VmSnapshotsCardProps {
+    vm: VM;
+}
 
-    constructor(props) {
+export class VmSnapshotsCard extends React.Component<VmSnapshotsCardProps> {
+    static contextType = DialogsContext;
+    declare context: Dialogs;
+
+    constructor(props: VmSnapshotsCardProps) {
         super(props);
         this.state = {};
     }
@@ -82,12 +97,20 @@ export class VmSnapshotsCard extends React.Component {
         const { vm } = this.props;
         const id = vmId(vm.name);
 
-        let detailMap = [
+        interface Detail {
+            name: string,
+            aria?: string,
+            value: (snap: VMSnapshot, snapId: number) => React.ReactNode,
+            props?: TdProps,
+            hidden?: boolean,
+        }
+
+        let detailMap: Detail[] = [
             {
                 name: _("Creation time"),
                 value: (snap, snapId) => {
-                    const dateRel = timeformat.distanceToNow(snap.creationTime * 1000);
-                    const dateAbs = timeformat.dateTimeSeconds(snap.creationTime * 1000);
+                    const dateRel = timeformat.distanceToNow(Number(snap.creationTime) * 1000);
+                    const dateAbs = timeformat.dateTimeSeconds(Number(snap.creationTime) * 1000);
                     return (
                         <Flex className="snap-creation-time">
                             <FlexItem id={`${id}-snapshot-${snapId}-date`} spacer={{ default: 'spacerSm' }}>
@@ -113,7 +136,7 @@ export class VmSnapshotsCard extends React.Component {
             {
                 name: _("Description"),
                 value: (snap, snapId) => {
-                    let desc = snap.description;
+                    let desc: React.ReactNode = snap.description;
                     if (!desc)
                         desc = (<span className="pf-v6-u-text-color-subtle">{_("No description")}</span>);
 
@@ -128,13 +151,13 @@ export class VmSnapshotsCard extends React.Component {
             {
                 name: _("VM state"),
                 value: (snap, snapId) => {
-                    const statesMap = {
+                    const statesMap: Record<string, React.ReactNode> = {
                         shutoff: "shut off",
                         "disk-snapshot": <span className="pf-v6-u-text-color-subtle">{_("no state saved")}</span>,
                     };
                     const state = statesMap[snap.state] || snap.state;
 
-                    const infoTips = {
+                    const infoTips: Record<string, React.ReactNode> = {
                         shutdown: _("Shutting down"),
                         "disk-snapshot": _("Disk-only snapshot"),
                         blocked: _("Domain is blocked on resource"),
@@ -225,14 +248,17 @@ export class VmSnapshotsCard extends React.Component {
 
         detailMap = detailMap.filter(d => !d.hidden);
 
-        const columnTitles = detailMap.map(target => ({
+        const columnTitles: ListingTableColumnProps[] = detailMap.map(target => ({
             title: target.name,
-            props: { width: 15, "aria-label": target.aria }
+            props: { width: 15, ...(target.aria ? { "aria-label": target.aria } : { }) }
         }));
-        let rows = [];
+        let rows: ListingTableRowProps[] = [];
         if (vm.snapshots) {
-            rows = vm.snapshots.sort((a, b) => ((b.creationTime - a.creationTime) || (a.name.localeCompare(b.name)))).map((target, snapId) => {
-                const columns = detailMap.map(d => ({ title: d.value(target, snapId), props: d.props }));
+            rows = vm.snapshots.sort((a, b) => ((Number(b.creationTime) - Number(a.creationTime)) || (a.name.localeCompare(b.name)))).map((target, snapId) => {
+                const columns = detailMap.map(d => ({
+                    title: d.value(target, snapId),
+                    ...(d.props ? { props: d.props } : { })
+                }));
                 return { columns };
             });
         }
