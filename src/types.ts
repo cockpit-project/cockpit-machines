@@ -58,8 +58,10 @@ export interface DetailedError {
     detail: string;
 }
 
+export type VMDiskDevice = "floppy" | "disk" | "cdrom" | "lun";
+
 export interface VMDisk {
-    target: optString;
+    target: string;
     driver: {
         name: optString;
         type: optString;
@@ -71,7 +73,7 @@ export interface VMDisk {
     bootOrder: optString;
     type: optString;
     snapshot: optString;
-    device: optString;
+    device: VMDiskDevice;
     source: {
         file: optString;
         dir: optString;
@@ -85,6 +87,7 @@ export interface VMDisk {
             port: optString;
         },
         startupPolicy: optString;
+        device?: optString; // XXX - never set?
     };
     bus: optString;
     serial: optString;
@@ -95,7 +98,7 @@ export interface VMDisk {
 }
 
 export interface VMInterface {
-    type: optString;
+    type: string;
     managed: optString;
     name: optString;
     target: optString;
@@ -324,9 +327,9 @@ export interface VMMetadata {
 }
 
 export interface VMSnapshot {
-    name: optString,
+    name: string,
     description: optString,
-    state: optString,
+    state: string,
     creationTime: optString,
     parentName: optString,
     memoryPath: optString,
@@ -418,7 +421,7 @@ export interface VM extends VMXML {
     actualTimeInMs: number | undefined;
     disksStats: Record<string, VMDiskStat> | undefined;
 
-    snapshots: VMSnapshot[] | -1;
+    snapshots: VMSnapshot[] | null;
 }
 
 /** "Fake" VMs for the UI only **/
@@ -491,15 +494,15 @@ export type StoragePoolCapabilites = Record<string, { supported: optString}>;
 /** Networks **/
 
 export interface NetworkDhcpHost {
-    ip: optString;
+    ip: string;
     name: optString;
-    mac: optString;
+    mac: string;
     id: optString;
 }
 
 export interface NetworkIp {
     address: optString;
-    family: optString;
+    family: string;
     netmask: optString;
     prefix: optString;
     dhcp: {
@@ -532,16 +535,17 @@ export interface NetworkXML {
 export interface Network extends NetworkXML {
     connectionName: ConnectionName;
     id: string;
-    name?: string;
+    name: string;
     active?: boolean;
     persistent?: boolean;
     autostart?: boolean;
+    error?: DetailedError | null;
 }
 
 /** Node Devices **/
 
 export interface NodeDeviceCapability {
-    type?: optString;
+    type: string;
 
     // type == 'net'
     interface?: optString;

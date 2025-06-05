@@ -19,6 +19,8 @@
 
 import cockpit from 'cockpit';
 
+import { optString } from './types';
+
 import { getDoc, getSingleOptionalElem } from './libvirt-xml-parse.js';
 import { getNextAvailableTarget, logDebug, BootOrderDevice } from './helpers.js';
 
@@ -33,9 +35,9 @@ export function changeMedia({
     domXml: string,
     target: string,
     eject: boolean,
-    file: string,
-    pool: string,
-    volume: string,
+    file: string | undefined,
+    pool: string | undefined,
+    volume: string | undefined,
 }): string {
     const s = new XMLSerializer();
     const doc = getDoc(domXml);
@@ -87,12 +89,12 @@ export function updateDisk({
     cache
 } : {
     domXml: string,
-    diskTarget: string,
+    diskTarget: optString,
     readonly: boolean,
     shareable: boolean,
-    busType: string,
+    busType: optString,
     existingTargets: string[],
-    cache: string,
+    cache: optString,
 }): string {
     const s = new XMLSerializer();
     const doc = getDoc(domXml);

@@ -27,7 +27,7 @@ import type {
     VMXML,
     VMOsBoot, VMCpu, VMVcpus, VMMetadata,
     VMConsole, VMGraphics, VMWatchdog, VMVsock,
-    VMDisk, VMInterface, VMFilesystem, VMRedirectedDevice,
+    VMDisk, VMDiskDevice, VMInterface, VMFilesystem, VMRedirectedDevice,
     VMHostDevice, VMHostDeviceUsb, VMHostDevicePci, VMHostDeviceScsi, VMHostDeviceScsiHost,
     VMHostDeviceMdev, VMHostDeviceStorage, VMHostDeviceMisc, VMHostDeviceNet,
     VMSnapshot,
@@ -248,10 +248,10 @@ export function parseDomainSnapshotDumpxml(snapshot: string): VMSnapshot {
     const parentElem = getSingleOptionalElem(snapElem, 'parent');
     const memElem = getSingleOptionalElem(snapElem, 'memory');
 
-    const name = nameElem?.childNodes[0].nodeValue;
+    const name = nameElem?.childNodes[0].nodeValue || "";
     const description = descElem?.childNodes[0].nodeValue;
     const parentName = parentElem?.getElementsByTagName("name")[0].childNodes[0].nodeValue;
-    const state = snapElem.getElementsByTagName("state")[0].childNodes[0].nodeValue;
+    const state = snapElem.getElementsByTagName("state")[0].childNodes[0].nodeValue || "";
     const creationTime = snapElem.getElementsByTagName("creationTime")[0].childNodes[0].nodeValue;
     const memoryPath = memElem?.getAttribute("file");
 
@@ -497,48 +497,49 @@ export function parseDumpxmlForDisks(devicesElem: Element): Record<string, VMDis
 
             const sourceHostElem = sourceElem ? getSingleOptionalElem(sourceElem, 'host') : undefined;
 
-            const disk: VMDisk = { // see https://libvirt.org/formatdomain.html#elementsDisks
-                target: targetElem.getAttribute('dev'), // identifier of the disk, i.e. sda, hdc
-                driver: {
-                    name: driverElem?.getAttribute('name'), // optional
-                    type: driverElem?.getAttribute('type'),
-                    cache: driverElem?.getAttribute('cache'), // optional
-                    discard: driverElem?.getAttribute('discard'), // optional
-                    io: driverElem?.getAttribute('io'), // optional
-                    errorPolicy: driverElem?.getAttribute('error_policy'), // optional
-                },
-                bootOrder: bootElem?.getAttribute('order'),
-                type: diskElem.getAttribute('type'), // i.e.: file
-                snapshot: diskElem.getAttribute('snapshot'), // i.e.: internal, external
-                device: diskElem.getAttribute('device'), // i.e. cdrom, disk
-                source: {
-                    file: sourceElem?.getAttribute('file'), // optional file name of the disk
-                    dir: sourceElem?.getAttribute('dir'),
-                    dev: sourceElem?.getAttribute('dev'),
-                    pool: sourceElem?.getAttribute('pool'),
-                    volume: sourceElem?.getAttribute('volume'),
-                    protocol: sourceElem?.getAttribute('protocol'),
-                    name: sourceElem?.getAttribute('name'),
-                    host: {
-                        name: sourceHostElem?.getAttribute('name'),
-                        port: sourceHostElem?.getAttribute('port'),
+            const target = targetElem.getAttribute('dev');
+            if (target) {
+                const disk: VMDisk = { // see https://libvirt.org/formatdomain.html#elementsDisks
+                    target, // identifier of the disk, i.e. sda, hdc
+                    driver: {
+                        name: driverElem?.getAttribute('name'), // optional
+                        type: driverElem?.getAttribute('type'),
+                        cache: driverElem?.getAttribute('cache'), // optional
+                        discard: driverElem?.getAttribute('discard'), // optional
+                        io: driverElem?.getAttribute('io'), // optional
+                        errorPolicy: driverElem?.getAttribute('error_policy'), // optional
                     },
-                    startupPolicy: sourceElem?.getAttribute('startupPolicy'), // optional startupPolicy of the disk
+                    bootOrder: bootElem?.getAttribute('order'),
+                    type: diskElem.getAttribute('type'), // i.e.: file
+                    snapshot: diskElem.getAttribute('snapshot'), // i.e.: internal, external
+                    device: (diskElem.getAttribute('device') || "disk") as VMDiskDevice, // i.e. cdrom, disk
+                    source: {
+                        file: sourceElem?.getAttribute('file'), // optional file name of the disk
+                        dir: sourceElem?.getAttribute('dir'),
+                        dev: sourceElem?.getAttribute('dev'),
+                        pool: sourceElem?.getAttribute('pool'),
+                        volume: sourceElem?.getAttribute('volume'),
+                        protocol: sourceElem?.getAttribute('protocol'),
+                        name: sourceElem?.getAttribute('name'),
+                        host: {
+                            name: sourceHostElem?.getAttribute('name'),
+                            port: sourceHostElem?.getAttribute('port'),
+                        },
+                        startupPolicy: sourceElem?.getAttribute('startupPolicy'), // optional startupPolicy of the disk
 
-                },
-                bus: targetElem.getAttribute('bus'), // i.e. scsi, ide
-                serial: serialElem?.childNodes[0].nodeValue, // optional serial number
-                aliasName: aliasElem?.getAttribute('name'), // i.e. scsi0-0-0-0, ide0-1-0
-                readonly: !!readonlyElem,
-                shareable: !!shareableElem,
-                removable: targetElem.getAttribute('removable'),
-            };
+                    },
+                    bus: targetElem.getAttribute('bus'), // i.e. scsi, ide
+                    serial: serialElem?.childNodes[0].nodeValue, // optional serial number
+                    aliasName: aliasElem?.getAttribute('name'), // i.e. scsi0-0-0-0, ide0-1-0
+                    readonly: !!readonlyElem,
+                    shareable: !!shareableElem,
+                    removable: targetElem.getAttribute('removable'),
+                };
 
-            if (disk.target) {
                 disks[disk.target] = disk;
                 logDebug(`parseDumpxmlForDisks(): disk device found: ${JSON.stringify(disk)}`);
             } else {
-                console.warn(`parseDumpxmlForDisks(): mandatory properties are missing in dumpxml, found: ${JSON.stringify(disk)}`);
+                console.warn(`parseDumpxmlForDisks(): mandatory target property missing in dumpxml for ${new XMLSerializer().serializeToString(diskElem)}`);
             }
         }
     }
@@ -882,7 +883,7 @@ export function parseDumpxmlForInterfaces(devicesElem: Element): VMInterface[] {
             const bootElem = getSingleOptionalElem(interfaceElem, 'boot');
 
             const networkInterface: VMInterface = { // see https://libvirt.org/formatdomain.html#elementsNICS
-                type: interfaceElem.getAttribute('type'), // Only one required parameter
+                type: interfaceElem.getAttribute('type') || "", // Only one required parameter
                 managed: interfaceElem.getAttribute('managed'),
                 name: interfaceElem.getAttribute('name'), // Name of interface
                 target: targetElem?.getAttribute('dev'),
@@ -982,9 +983,9 @@ function parseNetDumpxmlForIp(ipElems: HTMLCollection): NetworkIp[] {
 
             for (let i = 0; i < hostElems.length; i++) {
                 const host: NetworkDhcpHost = {
-                    ip: hostElems[i].getAttribute("ip"),
+                    ip: hostElems[i].getAttribute("ip") || "",
                     name: hostElems[i].getAttribute("name"),
-                    mac: hostElems[i].getAttribute("mac"),
+                    mac: hostElems[i].getAttribute("mac") || "",
                     id: hostElems[i].getAttribute("id"),
                 };
                 dhcpHosts.push(host);
@@ -1026,9 +1027,10 @@ export function parseNodeDeviceDumpxml(nodeDevice: string): NodeDeviceXML {
     const parentName = parentElem?.childNodes[0].nodeValue;
     const capabilityElem = deviceElem.getElementsByTagName("capability")[0];
 
-    const capability: NodeDeviceCapability = {};
+    const capability: NodeDeviceCapability = {
+        type: capabilityElem.getAttribute("type") || "",
+    };
 
-    capability.type = capabilityElem.getAttribute("type");
     if (capability.type == 'net')
         capability.interface = capabilityElem.getElementsByTagName("interface")[0].childNodes[0].nodeValue;
     else if (capability.type == 'storage')
