@@ -311,7 +311,7 @@ const DhcpRow = ({
                 <Checkbox id={'create-network-ipv' + ipVersion + '-dhcp'}
                           isChecked={expanded}
                           label={_("Set DHCP range")}
-                    onChange={() => onExpandedChanged(!expanded)} />
+                          onChange={() => onExpandedChanged(!expanded)} />
             </FormGroup>
             {expanded && <Grid hasGutter md={6}>
                 <FormGroup fieldId={'create-network-ipv' + ipVersion + '-dhcp-range-start'}
