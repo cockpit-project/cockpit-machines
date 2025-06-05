@@ -33,11 +33,6 @@ import cockpit from 'cockpit';
 
 const _ = cockpit.gettext;
 
-export interface ValidationFailed {
-    volumeName?: string | undefined;
-    size?: string | undefined;
-}
-
 export interface DialogValues {
     volumeName: string,
     size: number,
@@ -45,7 +40,12 @@ export interface DialogValues {
     format: optString;
 }
 
-type OnValueChanged = <K extends keyof DialogValues>(key: K, value: string) => void;
+export interface ValidationFailed {
+    volumeName?: string;
+    size?: string;
+}
+
+type OnValueChanged = <K extends keyof DialogValues>(key: K, value: DialogValues[K]) => void;
 
 const VolumeName = ({
     idPrefix,
@@ -141,7 +141,7 @@ const VolumeDetails = ({
                                min={0}
                                max={volumeMaxSize}
                                validated={validationStateSize}
-                               onChange={(_, value) => onValueChanged('size', value)} />
+                               onChange={(_, value) => onValueChanged('size', parseInt(value))} />
                     <FormSelect id={`${idPrefix}-unit`}
                                 className="ct-machines-select-unit"
                                 value={unit}
