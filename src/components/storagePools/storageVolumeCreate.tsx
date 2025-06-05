@@ -75,15 +75,8 @@ class CreateStorageVolumeModal extends React.Component<CreateStorageVolumeModalP
         this.setState({ dialogError: text, dialogErrorDetail: detail });
     }
 
-    onValueChanged<K extends keyof DialogValues>(key: K, value: string) {
-        switch (key) {
-        case 'size':
-            this.setState({ size: parseInt(value) });
-            break;
-
-        default:
-            this.setState({ [key]: value } as Pick<CreateStorageVolumeModalState, K>);
-        }
+    onValueChanged<K extends keyof DialogValues>(key: K, value: DialogValues[K]) {
+        this.setState({ [key]: value } as Pick<CreateStorageVolumeModalState, K>);
     }
 
     validateParams() {
