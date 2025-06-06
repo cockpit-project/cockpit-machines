@@ -415,6 +415,7 @@ export interface VM extends VMXML {
 
     rssMemory: number | undefined;
     cpuTime: number | undefined;
+    cpuUsage: number | undefined;
     actualTimeInMs: number | undefined;
     disksStats: Record<string, VMDiskStat> | undefined;
 
