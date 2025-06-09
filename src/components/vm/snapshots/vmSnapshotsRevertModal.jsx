@@ -21,8 +21,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import {
-    Modal
-} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 import { Stack, StackItem } from "@patternfly/react-core/dist/esm/layouts/Stack";
 
 import cockpit from 'cockpit';
@@ -91,32 +91,32 @@ export class RevertSnapshotModal extends React.Component {
         const { idPrefix, snap } = this.props;
 
         return (
-            <Modal position="top" variant="medium" id={`${idPrefix}-snapshot-${snap.name}-modal`} isOpen onClose={Dialogs.close}
-                   title={cockpit.format(_("Revert to snapshot $0"), snap.name)}
-                   footer={
-                       <>
-                           <Button variant='primary'
-                                   isLoading={this.state.inProgress}
-                                   isDisabled={this.state.inProgress || this.state.defaultRevertFailed}
-                                   onClick={this.revert}>
-                               {_("Revert")}
-                           </Button>
-                           { this.state.defaultRevertFailed &&
-                           <Button variant='danger'
-                                   isLoading={this.state.inProgressForce}
-                                   isDisabled={this.state.inProgress || this.state.inProgressForce}
-                                   onClick={this.revert}>
-                               {_("Force revert")}
-                           </Button>}
-                           <Button variant='link' onClick={Dialogs.close}>
-                               {_("Cancel")}
-                           </Button>
-                       </>
-                   }>
-                <Stack hasGutter>
-                    {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
-                    <StackItem>{ cockpit.format(_("Reverting to this snapshot will take the VM back to the time of the snapshot and the current state will be lost, along with any data not captured in a snapshot")) }</StackItem>
-                </Stack>
+            <Modal position="top" variant="medium" id={`${idPrefix}-snapshot-${snap.name}-modal`} isOpen onClose={Dialogs.close}>
+                <ModalHeader title={cockpit.format(_("Revert to snapshot $0"), snap.name)} />
+                <ModalBody>
+                    <Stack hasGutter>
+                        {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
+                        <StackItem>{ cockpit.format(_("Reverting to this snapshot will take the VM back to the time of the snapshot and the current state will be lost, along with any data not captured in a snapshot")) }</StackItem>
+                    </Stack>
+                </ModalBody>
+                <ModalFooter>
+                    <Button variant='primary'
+                            isLoading={this.state.inProgress}
+                            isDisabled={this.state.inProgress || this.state.defaultRevertFailed}
+                            onClick={this.revert}>
+                        {_("Revert")}
+                    </Button>
+                    { this.state.defaultRevertFailed &&
+                    <Button variant='danger'
+                            isLoading={this.state.inProgressForce}
+                            isDisabled={this.state.inProgress || this.state.inProgressForce}
+                            onClick={this.revert}>
+                        {_("Force revert")}
+                    </Button>}
+                    <Button variant='link' onClick={Dialogs.close}>
+                        {_("Cancel")}
+                    </Button>
+                </ModalFooter>
             </Modal>
         );
     }

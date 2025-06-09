@@ -28,8 +28,8 @@ import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form
 import { FormSelect, FormSelectOption, FormSelectOptionGroup } from "@patternfly/react-core/dist/esm/components/FormSelect";
 import { Grid } from "@patternfly/react-core/dist/esm/layouts/Grid";
 import {
-    Modal
-} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { useDialogs, DialogsContext } from 'dialogs.jsx';
 import { FormHelper } from 'cockpit-components-form-helper.jsx';
@@ -539,28 +539,28 @@ class CreateNetworkModal extends React.Component<CreateNetworkModalProps, Create
         );
 
         return (
-            <Modal position="top" variant="medium" id='create-network-dialog' className='network-create' isOpen onClose={ Dialogs.close }
-                   title={_("Create virtual network")}
-                   footer={
-                       <>
-                           <Button variant='primary'
-                                   isLoading={ this.state.createInProgress }
-                                   isDisabled={ this.state.createInProgress || Object.getOwnPropertyNames(validationFailed).length > 0 }
-                                   onClick={ this.onCreate }>
-                               {_("Create")}
-                           </Button>
-                           <Button variant='link' onClick={ Dialogs.close }>
-                               {_("Cancel")}
-                           </Button>
-                       </>
-                   }>
-                {this.state.dialogError &&
-                    <ModalError
-                        dialogError={this.state.dialogError}
-                        {...this.state.dialogErrorDetail && { dialogErrorDetail: this.state.dialogErrorDetail } }
-                    />
-                }
-                {body}
+            <Modal position="top" variant="medium" id='create-network-dialog' className='network-create' isOpen onClose={ Dialogs.close }>
+                <ModalHeader title={_("Create virtual network")} />
+                <ModalBody>
+                    {this.state.dialogError &&
+                        <ModalError
+                            dialogError={this.state.dialogError}
+                            {...this.state.dialogErrorDetail && { dialogErrorDetail: this.state.dialogErrorDetail } }
+                        />
+                    }
+                    {body}
+                </ModalBody>
+                <ModalFooter>
+                    <Button variant='primary'
+                            isLoading={ this.state.createInProgress }
+                            isDisabled={ this.state.createInProgress || Object.getOwnPropertyNames(validationFailed).length > 0 }
+                            onClick={ this.onCreate }>
+                        {_("Create")}
+                    </Button>
+                    <Button variant='link' onClick={ Dialogs.close }>
+                        {_("Cancel")}
+                    </Button>
+                </ModalFooter>
             </Modal>
         );
     }

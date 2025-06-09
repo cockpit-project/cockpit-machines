@@ -23,8 +23,8 @@ import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
 import { Menu, MenuContent, MenuList, MenuItem } from "@patternfly/react-core/dist/esm/components/Menu";
 import {
-    Modal
-} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 import { Panel, PanelFooter, PanelMain, PanelMainBody } from "@patternfly/react-core/dist/esm/components/Panel";
 import { Content, } from "@patternfly/react-core/dist/esm/components/Content";
 import { PopoverPosition } from "@patternfly/react-core/dist/esm/components/Popover";
@@ -121,45 +121,45 @@ export const ReplaceSpiceDialog = ({ vm, vms }) => {
     }
 
     return (
-        <Modal position="top" variant="small" isOpen onClose={Dialogs.close}
-           title={isMultiple ? _("Replace SPICE devices") : cockpit.format(_("Replace SPICE devices in VM $0"), vm.name)}
-           footer={
-               <>
-                   <Button variant='primary'
-                           id="replace-spice-dialog-confirm"
-                           isDisabled={inProgress}
-                           isLoading={inProgress}
-                           onClick={onReplace}>
-                       {_("Replace")}
-                   </Button>
-                   <Button variant='link' onClick={Dialogs.close}>
-                       {_("Cancel")}
-                   </Button>
-               </>
-           }>
-            { vm.state === 'running' && !error && <NeedsShutdownAlert idPrefix="spice-modal" /> }
-            {error && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.dialogErrorDetail} />}
-            <Content>
-                <Content component="p">
-                    {isMultiple
-                        ? _("Replace SPICE on selected VMs.")
-                        : _("Replace SPICE on the virtual machine.") }
-                    <InfoPopover aria-label={_("SPICE conversion")}
-                        position={PopoverPosition.top}
-                        headerContent={_("SPICE conversion")}
-                        bodyContent={
-                            <Content component="ul" className="spice-replace-dialog-popover-list">
-                                <Content component="li">{_("Convert SPICE graphics console to VNC")}</Content>
-                                <Content component="li">{_("Convert QXL video card to VGA")}</Content>
-                                <Content component="li">{_("Remove SPICE audio and host devices")}</Content>
-                            </Content>
-                        } />
+        <Modal position="top" variant="small" isOpen onClose={Dialogs.close}>
+            <ModalHeader title={isMultiple ? _("Replace SPICE devices") : cockpit.format(_("Replace SPICE devices in VM $0"), vm.name)} />
+            <ModalBody>
+                { vm.state === 'running' && !error && <NeedsShutdownAlert idPrefix="spice-modal" /> }
+                {error && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.dialogErrorDetail} />}
+                <Content>
+                    <Content component="p">
+                        {isMultiple
+                            ? _("Replace SPICE on selected VMs.")
+                            : _("Replace SPICE on the virtual machine.") }
+                        <InfoPopover aria-label={_("SPICE conversion")}
+                            position={PopoverPosition.top}
+                            headerContent={_("SPICE conversion")}
+                            bodyContent={
+                                <Content component="ul" className="spice-replace-dialog-popover-list">
+                                    <Content component="li">{_("Convert SPICE graphics console to VNC")}</Content>
+                                    <Content component="li">{_("Convert QXL video card to VGA")}</Content>
+                                    <Content component="li">{_("Remove SPICE audio and host devices")}</Content>
+                                </Content>
+                            } />
+                    </Content>
+                    <Content component="p">
+                        {_("This is intended for a host which does not support SPICE due to upgrades or live migration.")}
+                    </Content>
                 </Content>
-                <Content component="p">
-                    {_("This is intended for a host which does not support SPICE due to upgrades or live migration.")}
-                </Content>
-            </Content>
-            { vmSelect }
+                { vmSelect }
+            </ModalBody>
+            <ModalFooter>
+                <Button variant='primary'
+                        id="replace-spice-dialog-confirm"
+                        isDisabled={inProgress}
+                        isLoading={inProgress}
+                        onClick={onReplace}>
+                    {_("Replace")}
+                </Button>
+                <Button variant='link' onClick={Dialogs.close}>
+                    {_("Cancel")}
+                </Button>
+            </ModalFooter>
         </Modal>
     );
 };

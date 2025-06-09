@@ -22,8 +22,8 @@ import React, { useState } from 'react';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import {
-    Modal
-} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 
 import { FormHelper } from 'cockpit-components-form-helper.jsx';
@@ -70,37 +70,37 @@ export const CloneDialog = ({ name, connectionName }) => {
 
     const validationFailed = validateParams();
     return (
-        <Modal position="top" variant="small" isOpen onClose={Dialogs.close}
-           title={cockpit.format(_("Create a clone VM based on $0"), name)}
-           footer={
-               <>
-                   {isObjectEmpty(error) && virtCloneOutput && <code className="vm-clone-virt-clone-output">{virtCloneOutput}</code>}
-                   <Button variant='primary'
-                           isDisabled={inProgress || !isObjectEmpty(validationFailed)}
-                           isLoading={inProgress}
-                           onClick={onClone}>
-                       {_("Clone")}
-                   </Button>
-                   <Button variant='link' onClick={Dialogs.close}>
-                       {_("Cancel")}
-                   </Button>
-               </>
-           }>
-            <Form onSubmit={e => {
-                e.preventDefault();
-                onClone();
-            }}
-            isHorizontal>
-                {!isObjectEmpty(error) && <ModalError dialogError={error.dialogError} dialogErrorDetail={virtCloneOutput} />}
-                <FormGroup label={_("Name")} fieldId="vm-name"
-                           id="vm-name-group">
-                    <TextInput id='vm-name'
-                               validated={validationFailed.name ? "error" : "default"}
-                               value={newVmName}
-                               onChange={(_, value) => setNewVmName(value)} />
-                    <FormHelper helperTextInvalid={validationFailed.name} />
-                </FormGroup>
-            </Form>
+        <Modal position="top" variant="small" isOpen onClose={Dialogs.close}>
+            <ModalHeader title={cockpit.format(_("Create a clone VM based on $0"), name)} />
+            <ModalBody>
+                <Form onSubmit={e => {
+                    e.preventDefault();
+                    onClone();
+                }}
+                isHorizontal>
+                    {!isObjectEmpty(error) && <ModalError dialogError={error.dialogError} dialogErrorDetail={virtCloneOutput} />}
+                    <FormGroup label={_("Name")} fieldId="vm-name"
+                               id="vm-name-group">
+                        <TextInput id='vm-name'
+                                   validated={validationFailed.name ? "error" : "default"}
+                                   value={newVmName}
+                                   onChange={(_, value) => setNewVmName(value)} />
+                        <FormHelper helperTextInvalid={validationFailed.name} />
+                    </FormGroup>
+                </Form>
+            </ModalBody>
+            <ModalFooter>
+                {isObjectEmpty(error) && virtCloneOutput && <code className="vm-clone-virt-clone-output">{virtCloneOutput}</code>}
+                <Button variant='primary'
+                        isDisabled={inProgress || !isObjectEmpty(validationFailed)}
+                        isLoading={inProgress}
+                        onClick={onClone}>
+                    {_("Clone")}
+                </Button>
+                <Button variant='link' onClick={Dialogs.close}>
+                    {_("Cancel")}
+                </Button>
+            </ModalFooter>
         </Modal>
     );
 };

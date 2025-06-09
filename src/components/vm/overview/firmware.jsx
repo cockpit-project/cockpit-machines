@@ -23,8 +23,8 @@ import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
 import {
-    Modal
-} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { useDialogs, DialogsContext } from 'dialogs.jsx';
 
@@ -76,31 +76,31 @@ class FirmwareModal extends React.Component {
     render() {
         const Dialogs = this.context;
         return (
-            <Modal position="top" variant="medium" isOpen onClose={Dialogs.close}
-                   title={_("Change firmware")}
-                   footer={
-                       <>
-                           <Button variant='primary' id="firmware-dialog-apply" onClick={this.save}>
-                               {_("Save")}
-                           </Button>
-                           <Button variant='link' onClick={Dialogs.close}>
-                               {_("Cancel")}
-                           </Button>
-                       </>
-                   }>
-                <Form isHorizontal>
-                    {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
-                    <FormGroup label={_("Firmware")} fieldId="firmware-dialog-select">
-                        <FormSelect onChange={(_event, value) => this.setState({ firmware: value })}
-                                    id='firmware-dialog-select'
-                                    value={this.state.firmware }>
-                            <FormSelectOption value='bios' key='bios'
-                                              label='BIOS' />
-                            <FormSelectOption value='efi' key='efi'
-                                              label='UEFI' />
-                        </FormSelect>
-                    </FormGroup>
-                </Form>
+            <Modal position="top" variant="medium" isOpen onClose={Dialogs.close}>
+                <ModalHeader title={_("Change firmware")} />
+                <ModalBody>
+                    <Form isHorizontal>
+                        {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
+                        <FormGroup label={_("Firmware")} fieldId="firmware-dialog-select">
+                            <FormSelect onChange={(_event, value) => this.setState({ firmware: value })}
+                                        id='firmware-dialog-select'
+                                        value={this.state.firmware }>
+                                <FormSelectOption value='bios' key='bios'
+                                                  label='BIOS' />
+                                <FormSelectOption value='efi' key='efi'
+                                                  label='UEFI' />
+                            </FormSelect>
+                        </FormGroup>
+                    </Form>
+                </ModalBody>
+                <ModalFooter>
+                    <Button variant='primary' id="firmware-dialog-apply" onClick={this.save}>
+                        {_("Save")}
+                    </Button>
+                    <Button variant='link' onClick={Dialogs.close}>
+                        {_("Cancel")}
+                    </Button>
+                </ModalFooter>
             </Modal>
         );
     }

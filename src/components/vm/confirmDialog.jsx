@@ -21,8 +21,8 @@ import React, { useEffect, useState } from 'react';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
 import {
-    Modal
-} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 import { useDialogs } from 'dialogs.jsx';
 import { distanceToNow } from 'timeformat.js';
 
@@ -62,20 +62,26 @@ export const ConfirmDialog = ({ idPrefix, actionsList, title, titleIcon, vm }) =
             position="top"
             variant="small"
             onClose={Dialogs.close}
-            title={title}
-            titleIconVariant={titleIcon}
             isOpen
-            footer={actions}>
-            {startTime
-                ? <DescriptionList isHorizontal isFluid>
-                    <DescriptionListGroup>
-                        <DescriptionListTerm>{_("Started")}</DescriptionListTerm>
-                        <DescriptionListDescription id="uptime">{distanceToNow(startTime)}</DescriptionListDescription>
-                    </DescriptionListGroup>
-                </DescriptionList>
-                /* for tests */
-                : <span className="uptime-not-available" />
-            }
+        >
+            <ModalHeader title={title}
+                titleIconVariant={titleIcon}
+            />
+            <ModalBody>
+                {startTime
+                    ? <DescriptionList isHorizontal isFluid>
+                        <DescriptionListGroup>
+                            <DescriptionListTerm>{_("Started")}</DescriptionListTerm>
+                            <DescriptionListDescription id="uptime">{distanceToNow(startTime)}</DescriptionListDescription>
+                        </DescriptionListGroup>
+                    </DescriptionList>
+                    /* for tests */
+                    : <span className="uptime-not-available" />
+                }
+            </ModalBody>
+            <ModalFooter>
+                {actions}
+            </ModalFooter>
         </Modal>
     );
 };

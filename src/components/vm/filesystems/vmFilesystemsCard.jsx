@@ -25,8 +25,8 @@ import { ExpandableSection } from "@patternfly/react-core/dist/esm/components/Ex
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List";
 import {
-    Modal
-} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 
@@ -153,81 +153,82 @@ const VmFilesystemAddModal = ({ connectionName, vmName }) => {
         }
     };
     return (
-        <Modal position="top" isOpen variant="medium" onClose={Dialogs.close}
-               title={_("Share a host directory with the guest")}
-               footer={
-                   <>
-                       <Button id={`${idPrefix}-modal-add`}
-                               variant='primary'
-                               onClick={onAddClicked}>
-                           {_("Share")}
-                       </Button>
-                       <Button id={`${idPrefix}-modal-cancel`}
-                               variant='link'
-                               onClick={Dialogs.close}>
-                           {_("Cancel")}
-                       </Button>
-                   </>
-               }
-               description={
-                   <>
-                       {_("Shared host directories need to be manually mounted inside the VM")}
-                       <InfoPopover
-                           headerContent={_("You can mount the shared folder using:")}
-                           bodyContent={
-                               <CodeBlock>
-                                   <CodeBlockCode>mount -t virtiofs {mountTag || 'hostshare'} [mount point]</CodeBlockCode>
-                               </CodeBlock>
-                           }
-                           footerContent={
-                               <List>
-                                   <ListItem>{_("mount point: The mount point inside the guest")}</ListItem>
-                               </List>
-                           }
-                           hasAutoWidth
-                       />
-                   </>
-               }>
-            <Form isHorizontal>
-                {dialogError && <ModalError dialogError={_("Failed to add shared directory")} dialogErrorDetail={dialogError} />}
-                <FormGroup fieldId={`${idPrefix}-modal-source`}
-                           id={`${idPrefix}-modal-source-group`}
-                           label={_("Source path")}
-                           labelHelp={
-                               <InfoPopover headerContent={_("The host path that is to be exported.")} />
-                           }>
-                    <FileAutoComplete id={`${idPrefix}-modal-source`}
-                                      onChange={value => setSource(value)}
-                                      placeholder="/export/to/guest"
-                                      superuser="try"
-                                      value={source} />
-                    <FormHelper fieldId={`${idPrefix}-modal-source`} helperTextInvalid={validationFailed.source} />
-                </FormGroup>
-                <FormGroup fieldId={`${idPrefix}-modal-mountTag`}
-                           label={_("Mount tag")}
-                           labelHelp={
-                               <InfoPopover headerContent={_("The tag name to be used by the guest to mount this export point.")} />
-                           }>
-                    <TextInput id={`${idPrefix}-modal-mountTag`}
-                               onChange={(_, value) => setMountTag(value)}
-                               placeholder="hostshare"
-                               value={mountTag}
-                               validated={validationFailed.mountTag ? "error" : "default"} />
-                    <FormHelper fieldId={`${idPrefix}-modal-mountTag`} helperTextInvalid={validationFailed.mountTag} />
-                </FormGroup>
-                <ExpandableSection toggleText={ additionalOptionsExpanded ? _("Hide additional options") : _("Show additional options")}
-                                   onToggle={() => setAdditionalOptionsExpanded(!additionalOptionsExpanded)}
-                                   isExpanded={additionalOptionsExpanded}>
-                    <FormGroup hasNoPaddingTop
-                               fieldId={`${idPrefix}-modal-xattr`}
-                               label={_("Extended attributes")}>
-                        <Checkbox id={`${idPrefix}-modal-xattr`}
-                                  isChecked={xattr}
-                                  label={_("Use extended attributes on files and directories")}
-                                  onChange={(_event, xattr) => setXattr(xattr)} />
+        <Modal position="top" isOpen variant="medium" onClose={Dialogs.close}>
+            <ModalHeader title={_("Share a host directory with the guest")}
+                description={
+                    <>
+                        {_("Shared host directories need to be manually mounted inside the VM")}
+                        <InfoPopover
+                            headerContent={_("You can mount the shared folder using:")}
+                            bodyContent={
+                                <CodeBlock>
+                                    <CodeBlockCode>mount -t virtiofs {mountTag || 'hostshare'} [mount point]</CodeBlockCode>
+                                </CodeBlock>
+                            }
+                            footerContent={
+                                <List>
+                                    <ListItem>{_("mount point: The mount point inside the guest")}</ListItem>
+                                </List>
+                            }
+                            hasAutoWidth
+                        />
+                    </>
+                }
+            />
+            <ModalBody>
+                <Form isHorizontal>
+                    {dialogError && <ModalError dialogError={_("Failed to add shared directory")} dialogErrorDetail={dialogError} />}
+                    <FormGroup fieldId={`${idPrefix}-modal-source`}
+                               id={`${idPrefix}-modal-source-group`}
+                               label={_("Source path")}
+                               labelHelp={
+                                   <InfoPopover headerContent={_("The host path that is to be exported.")} />
+                               }>
+                        <FileAutoComplete id={`${idPrefix}-modal-source`}
+                                          onChange={value => setSource(value)}
+                                          placeholder="/export/to/guest"
+                                          superuser="try"
+                                          value={source} />
+                        <FormHelper fieldId={`${idPrefix}-modal-source`} helperTextInvalid={validationFailed.source} />
                     </FormGroup>
-                </ExpandableSection>
-            </Form>
+                    <FormGroup fieldId={`${idPrefix}-modal-mountTag`}
+                               label={_("Mount tag")}
+                               labelHelp={
+                                   <InfoPopover headerContent={_("The tag name to be used by the guest to mount this export point.")} />
+                               }>
+                        <TextInput id={`${idPrefix}-modal-mountTag`}
+                                   onChange={(_, value) => setMountTag(value)}
+                                   placeholder="hostshare"
+                                   value={mountTag}
+                                   validated={validationFailed.mountTag ? "error" : "default"} />
+                        <FormHelper fieldId={`${idPrefix}-modal-mountTag`} helperTextInvalid={validationFailed.mountTag} />
+                    </FormGroup>
+                    <ExpandableSection toggleText={ additionalOptionsExpanded ? _("Hide additional options") : _("Show additional options")}
+                                       onToggle={() => setAdditionalOptionsExpanded(!additionalOptionsExpanded)}
+                                       isExpanded={additionalOptionsExpanded}>
+                        <FormGroup hasNoPaddingTop
+                                   fieldId={`${idPrefix}-modal-xattr`}
+                                   label={_("Extended attributes")}>
+                            <Checkbox id={`${idPrefix}-modal-xattr`}
+                                      isChecked={xattr}
+                                      label={_("Use extended attributes on files and directories")}
+                                      onChange={(_event, xattr) => setXattr(xattr)} />
+                        </FormGroup>
+                    </ExpandableSection>
+                </Form>
+            </ModalBody>
+            <ModalFooter>
+                <Button id={`${idPrefix}-modal-add`}
+                        variant='primary'
+                        onClick={onAddClicked}>
+                    {_("Share")}
+                </Button>
+                <Button id={`${idPrefix}-modal-cancel`}
+                        variant='link'
+                        onClick={Dialogs.close}>
+                    {_("Cancel")}
+                </Button>
+            </ModalFooter>
         </Modal>
     );
 };

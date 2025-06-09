@@ -27,8 +27,8 @@ import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/co
 import { Grid } from "@patternfly/react-core/dist/esm/layouts/Grid";
 import { HelperText, HelperTextItem } from "@patternfly/react-core/dist/esm/components/HelperText";
 import {
-    Modal
-} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 import { Spinner } from "@patternfly/react-core/dist/esm/components/Spinner";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
@@ -682,29 +682,30 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
     }
 
     return (
-        <Modal position="top" variant="medium" id={`${idPrefix}-dialog-modal-window`} isOpen onClose={Dialogs.close}
-               title={isMediaInsertion ? _("Insert disc media") : _("Add disk")}
-               footer={
-                   <AddDiskModalFooter
-                     dialogLoading={dialogLoading}
-                     dialogErrorSet={dialogErrorSet}
-                     diskParams={diskParams}
-                     idPrefix={idPrefix}
-                     isMediaInsertion={isMediaInsertion}
-                     mode={mode}
-                     setValidate={setValidate}
-                     storagePoolName={storagePoolName}
-                     storagePools={storagePools}
-                     validate={validate}
-                     validationFailed={_validationFailed}
-                     verificationInProgress={verificationInProgress}
-                     vm={vm}
-                     vms={vms}
-                   />
-               }
-        >
-            {dialogError && <ModalError dialogError={dialogError} dialogErrorDetail={dialogErrorDetail} />}
-            {defaultBody}
+        <Modal position="top" variant="medium" id={`${idPrefix}-dialog-modal-window`} isOpen onClose={Dialogs.close}>
+            <ModalHeader title={isMediaInsertion ? _("Insert disc media") : _("Add disk")} />
+            <ModalBody>
+                {dialogError && <ModalError dialogError={dialogError} dialogErrorDetail={dialogErrorDetail} />}
+                {defaultBody}
+            </ModalBody>
+            <ModalFooter>
+                <AddDiskModalFooter
+                  dialogLoading={dialogLoading}
+                  dialogErrorSet={dialogErrorSet}
+                  diskParams={diskParams}
+                  idPrefix={idPrefix}
+                  isMediaInsertion={isMediaInsertion}
+                  mode={mode}
+                  setValidate={setValidate}
+                  storagePoolName={storagePoolName}
+                  storagePools={storagePools}
+                  validate={validate}
+                  validationFailed={_validationFailed}
+                  verificationInProgress={verificationInProgress}
+                  vm={vm}
+                  vms={vms}
+                />
+            </ModalFooter>
         </Modal>
     );
 };

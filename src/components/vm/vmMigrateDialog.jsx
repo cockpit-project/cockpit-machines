@@ -24,8 +24,8 @@ import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import {
-    Modal
-} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { PopoverPosition } from "@patternfly/react-core/dist/esm/components/Popover";
@@ -186,7 +186,7 @@ export const MigrateDialog = ({ vm, connectionName }) => {
     };
 
     const footer = (
-        <>
+        <ModalFooter>
             {dataCorruptionWarning()}
             <Button variant='primary'
                     id="migrate-button"
@@ -198,16 +198,19 @@ export const MigrateDialog = ({ vm, connectionName }) => {
             <Button id="cancel-button" variant='link' onClick={Dialogs.close}>
                 {_("Cancel")}
             </Button>
-        </>
+        </ModalFooter>
     );
 
     return (
-        <Modal id="migrate-modal" position="top" variant="medium" isOpen onClose={Dialogs.close}
-               description={copyStorageHidden && _("Storage volumes must be shared between this host and the destination host.")}
-               title={_("Migrate VM to another host")}
-               footer={footer}>
-            {!isObjectEmpty(error) && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.message} />}
-            {body}
+        <Modal id="migrate-modal" position="top" variant="medium" isOpen onClose={Dialogs.close}>
+            <ModalHeader title={_("Migrate VM to another host")}
+                description={copyStorageHidden && _("Storage volumes must be shared between this host and the destination host.")}
+            />
+            <ModalBody>
+                {!isObjectEmpty(error) && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.message} />}
+                {body}
+            </ModalBody>
+            {footer}
         </Modal>
     );
 };

@@ -22,8 +22,8 @@ import React, { useState } from 'react';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import {
-    Modal
-} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 
 import { FormHelper } from 'cockpit-components-form-helper.jsx';
@@ -59,36 +59,36 @@ export const RenameDialog = ({ vmName, vmId, connectionName }) => {
     }
 
     return (
-        <Modal position="top" variant="small" isOpen onClose={Dialogs.close}
-           title={cockpit.format(_("Rename VM $0"), vmName)}
-           footer={
-               <>
-                   <Button variant='primary'
-                           id="rename-dialog-confirm"
-                           isDisabled={!newName}
-                           onClick={onRename}>
-                       {_("Rename")}
-                   </Button>
-                   <Button variant='link' onClick={Dialogs.close}>
-                       {_("Cancel")}
-                   </Button>
-               </>
-           }>
-            <Form onSubmit={e => {
-                e.preventDefault();
-                onRename();
-            }}
-            isHorizontal>
-                {!isObjectEmpty(error) && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.dialogErrorDetail} />}
-                <FormGroup label={_("New name")}
-                           fieldId="rename-dialog-new-name">
-                    <TextInput id='rename-dialog-new-name'
-                               validated={submitted && !newName ? "error" : "default"}
-                               value={newName}
-                               onChange={(_, value) => setNewName(value)} />
-                    <FormHelper helperTextInvalid={submitted && !newName && _("New name must not be empty")} />
-                </FormGroup>
-            </Form>
+        <Modal position="top" variant="small" isOpen onClose={Dialogs.close}>
+            <ModalHeader title={cockpit.format(_("Rename VM $0"), vmName)} />
+            <ModalBody>
+                <Form onSubmit={e => {
+                    e.preventDefault();
+                    onRename();
+                }}
+                isHorizontal>
+                    {!isObjectEmpty(error) && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.dialogErrorDetail} />}
+                    <FormGroup label={_("New name")}
+                               fieldId="rename-dialog-new-name">
+                        <TextInput id='rename-dialog-new-name'
+                                   validated={submitted && !newName ? "error" : "default"}
+                                   value={newName}
+                                   onChange={(_, value) => setNewName(value)} />
+                        <FormHelper helperTextInvalid={submitted && !newName && _("New name must not be empty")} />
+                    </FormGroup>
+                </Form>
+            </ModalBody>
+            <ModalFooter>
+                <Button variant='primary'
+                        id="rename-dialog-confirm"
+                        isDisabled={!newName}
+                        onClick={onRename}>
+                    {_("Rename")}
+                </Button>
+                <Button variant='link' onClick={Dialogs.close}>
+                    {_("Cancel")}
+                </Button>
+            </ModalFooter>
         </Modal>
     );
 };

@@ -27,11 +27,11 @@ import { DropdownItem } from "@patternfly/react-core/dist/esm/components/Dropdow
 import { HelperText, HelperTextItem } from "@patternfly/react-core/dist/esm/components/HelperText";
 import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List";
 import {
-    Modal
-} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 import { Stack } from "@patternfly/react-core/dist/esm/layouts/Stack";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
-import { ExclamationTriangleIcon, InfoIcon } from '@patternfly/react-icons';
+import { InfoIcon } from '@patternfly/react-icons';
 import { useDialogs, DialogsContext } from 'dialogs.jsx';
 
 import { getStorageVolumesUsage, storagePoolId } from '../../helpers.js';
@@ -201,25 +201,25 @@ class StoragePoolDelete extends React.Component<StoragePoolDeleteProps, StorageP
         );
 
         return (
-            <Modal id="storage-pool-delete-modal" position="top" variant="small" isOpen onClose={Dialogs.close}
-                title={<>
-                    <ExclamationTriangleIcon color="orange" className="pf-v6-u-mr-sm" />
-                    { cockpit.format(_("Delete $0 storage pool?"), storagePool.name) }
-                </>}
-                   footer={
-                       <>
-                           {showWarning()}
-                           <Button variant='danger'
-                               onClick={this.delete}
-                               isDisabled={canDeleteOnlyWithoutVolumes(storagePool, vms) && this.state.deleteVolumes}>
-                               {_("Delete")}
-                           </Button>
-                           <Button variant='link' onClick={Dialogs.close}>
-                               {_("Cancel")}
-                           </Button>
-                       </>
-                   }>
-                {defaultBody}
+            <Modal id="storage-pool-delete-modal" position="top" variant="small" isOpen onClose={Dialogs.close}>
+                <ModalHeader
+                    title={cockpit.format(_("Delete $0 storage pool?"), storagePool.name)}
+                    titleIconVariant="warning"
+                />
+                <ModalBody>
+                    {defaultBody}
+                </ModalBody>
+                <ModalFooter>
+                    {showWarning()}
+                    <Button variant='danger'
+                        onClick={this.delete}
+                        isDisabled={canDeleteOnlyWithoutVolumes(storagePool, vms) && this.state.deleteVolumes}>
+                        {_("Delete")}
+                    </Button>
+                    <Button variant='link' onClick={Dialogs.close}>
+                        {_("Cancel")}
+                    </Button>
+                </ModalFooter>
             </Modal>
         );
     }

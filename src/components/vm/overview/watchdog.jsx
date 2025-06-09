@@ -25,8 +25,8 @@ import { ExpandableSection, ExpandableSectionToggle } from "@patternfly/react-co
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import {
-    Modal
-} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { useDialogs } from 'dialogs.jsx';
@@ -171,50 +171,51 @@ export const WatchdogModal = ({ vm, isWatchdogAttached, isRemovable, idPrefix })
                position="top"
                variant="small"
                onClose={Dialogs.close}
-               title={isWatchdogAttached ? _("Edit watchdog device type") : _("Add watchdog device type")}
-               description={WATCHDOG_INFO_MESSAGE}
-               isOpen
-               footer={
-                   <>
-                       {primaryButton}
-                       {offerColdplug && <Button variant='secondary'
-                               id="watchdog-dialog-apply-next-boot"
-                               onClick={() => save(true)}
-                               isLoading={inProgress}
-                               isDisabled={inProgress}>
-                           {_("Apply on next boot")}
-                       </Button>}
-                       {isWatchdogAttached && isRemovable &&
-                       <Button variant='secondary'
-                               id="watchdog-dialog-detach"
-                               onClick={detach}
-                               isLoading={inProgress}
-                               isDisabled={inProgress}>
-                           {_("Remove")}
-                       </Button>}
-                       <Button variant='link' onClick={Dialogs.close}>
-                           {_("Cancel")}
-                       </Button>
-                   </>
-               }>
-            {needsShutdown()}
-            <WatchdogModalAlert dialogError={dialogError} />
-            <Form onSubmit={e => e.preventDefault()} isHorizontal>
-                <FormGroup role="radiogroup"
-                           label={_("Action")}
-                           fieldId="watchdog-action"
-                           hasNoPaddingTop
-                           isStack>
-                    {SUPPORTEDACTIONS.map(action => (
-                        <Radio label={rephraseUI("watchdogAction", action)}
-                               key={action}
-                               id={action}
-                               isChecked={watchdogAction === action}
-                               onChange={() => setWatchdogAction(action)}
-                               isLabelWrapped />)
-                    )}
-                </FormGroup>
-            </Form>
+               isOpen>
+            <ModalHeader title={isWatchdogAttached ? _("Edit watchdog device type") : _("Add watchdog device type")}
+                description={WATCHDOG_INFO_MESSAGE}
+            />
+            <ModalBody>
+                {needsShutdown()}
+                <WatchdogModalAlert dialogError={dialogError} />
+                <Form onSubmit={e => e.preventDefault()} isHorizontal>
+                    <FormGroup role="radiogroup"
+                               label={_("Action")}
+                               fieldId="watchdog-action"
+                               hasNoPaddingTop
+                               isStack>
+                        {SUPPORTEDACTIONS.map(action => (
+                            <Radio label={rephraseUI("watchdogAction", action)}
+                                   key={action}
+                                   id={action}
+                                   isChecked={watchdogAction === action}
+                                   onChange={() => setWatchdogAction(action)}
+                                   isLabelWrapped />)
+                        )}
+                    </FormGroup>
+                </Form>
+            </ModalBody>
+            <ModalFooter>
+                {primaryButton}
+                {offerColdplug && <Button variant='secondary'
+                        id="watchdog-dialog-apply-next-boot"
+                        onClick={() => save(true)}
+                        isLoading={inProgress}
+                        isDisabled={inProgress}>
+                    {_("Apply on next boot")}
+                </Button>}
+                {isWatchdogAttached && isRemovable &&
+                <Button variant='secondary'
+                        id="watchdog-dialog-detach"
+                        onClick={detach}
+                        isLoading={inProgress}
+                        isDisabled={inProgress}>
+                    {_("Remove")}
+                </Button>}
+                <Button variant='link' onClick={Dialogs.close}>
+                    {_("Cancel")}
+                </Button>
+            </ModalFooter>
         </Modal>
     );
 };

@@ -25,8 +25,8 @@ import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { NumberInput } from "@patternfly/react-core/dist/esm/components/NumberInput";
 import {
-    Modal
-} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { useDialogs } from 'dialogs.jsx';
 import { fmt_to_fragments } from 'utils.jsx';
@@ -209,39 +209,40 @@ export const VsockModal = ({ vm, vms, vmVsockNormalized, isVsockAttached, idPref
                position="top"
                variant="small"
                onClose={Dialogs.close}
-               title={isVsockAttached ? _("Edit vsock interface") : _("Add vsock interface")}
-               description={<>
-                   {VSOCK_INFO_MESSAGE}
-                   <InfoPopover alertSeverityVariant="info"
-                       position="bottom"
-                       headerContent={SOCAT_EXAMPLE_HEADER}
-                       bodyContent={
-                           <Flex direction={{ default: 'column' }}>
-                               {SOCAT_EXAMPLE}
-                           </Flex>
-                       }
-                       hasAutoWidth />
-               </>}
-               isOpen
-               footer={
-                   <>
-                       {primaryButton}
-                       {isVsockAttached &&
-                       <Button variant='secondary'
-                               id="vsock-dialog-detach"
-                               onClick={detach}
-                               isLoading={actionInProgress == "detach"}
-                               isDisabled={actionInProgress}>
-                           {_("Remove")}
-                       </Button>}
-                       <Button variant='link' onClick={Dialogs.close}>
-                           {_("Cancel")}
-                       </Button>
-                   </>
-               }>
-            {showWarning()}
-            {dialogError && <ModalError dialogError={dialogError.text} dialogErrorDetail={dialogError.detail} />}
-            {body}
+               isOpen>
+            <ModalHeader title={isVsockAttached ? _("Edit vsock interface") : _("Add vsock interface")}
+                description={<>
+                    {VSOCK_INFO_MESSAGE}
+                    <InfoPopover alertSeverityVariant="info"
+                        position="bottom"
+                        headerContent={SOCAT_EXAMPLE_HEADER}
+                        bodyContent={
+                            <Flex direction={{ default: 'column' }}>
+                                {SOCAT_EXAMPLE}
+                            </Flex>
+                        }
+                        hasAutoWidth />
+                </>}
+            />
+            <ModalBody>
+                {showWarning()}
+                {dialogError && <ModalError dialogError={dialogError.text} dialogErrorDetail={dialogError.detail} />}
+                {body}
+            </ModalBody>
+            <ModalFooter>
+                {primaryButton}
+                {isVsockAttached &&
+                <Button variant='secondary'
+                        id="vsock-dialog-detach"
+                        onClick={detach}
+                        isLoading={actionInProgress == "detach"}
+                        isDisabled={actionInProgress}>
+                    {_("Remove")}
+                </Button>}
+                <Button variant='link' onClick={Dialogs.close}>
+                    {_("Cancel")}
+                </Button>
+            </ModalFooter>
         </Modal>
     );
 };

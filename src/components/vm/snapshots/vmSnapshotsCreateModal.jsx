@@ -22,8 +22,8 @@ import React from "react";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import {
-    Modal
-} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 import { TextArea } from "@patternfly/react-core/dist/esm/components/TextArea";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 
@@ -276,21 +276,21 @@ export class CreateSnapshotModal extends React.Component {
         );
 
         return (
-            <Modal position="top" variant="medium" id={`${idPrefix}-modal`} isOpen onClose={Dialogs.close}
-                   title={_("Create snapshot")}
-                   footer={
-                       <>
-                           <Button variant="primary" isLoading={this.state.inProgress} onClick={this.onCreate}
-                                   isDisabled={this.state.inProgress || Object.keys(validationError).length > 0}>
-                               {_("Create")}
-                           </Button>
-                           <Button variant="link" onClick={Dialogs.close}>
-                               {_("Cancel")}
-                           </Button>
-                       </>
-                   }>
-                {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
-                {body}
+            <Modal position="top" variant="medium" id={`${idPrefix}-modal`} isOpen onClose={Dialogs.close}>
+                <ModalHeader title={_("Create snapshot")} />
+                <ModalBody>
+                    {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
+                    {body}
+                </ModalBody>
+                <ModalFooter>
+                    <Button variant="primary" isLoading={this.state.inProgress} onClick={this.onCreate}
+                            isDisabled={this.state.inProgress || Object.keys(validationError).length > 0}>
+                        {_("Create")}
+                    </Button>
+                    <Button variant="link" onClick={Dialogs.close}>
+                        {_("Cancel")}
+                    </Button>
+                </ModalFooter>
             </Modal>
         );
     }

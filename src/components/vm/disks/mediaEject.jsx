@@ -21,8 +21,8 @@ import React, { useState } from 'react';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
 import {
-    Modal
-} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 
 import { domainEjectDisk, domainGet } from '../../../libvirtApi/domain.js';
 import cockpit from 'cockpit';
@@ -97,27 +97,27 @@ export const MediaEjectModal = ({ idPrefix, vm, disk }) => {
 
     return (
         <Modal position="top" variant="small" isOpen onClose={Dialogs.close}
-               id={idPrefix + "-modal"}
-               title={_("Eject disc from VM?")}
-               footer={
-                   <>
-                       <Button variant='primary' isLoading={inProgress} isDisabled={inProgress || defaultEjectionFailed} onClick={onDelete}>
-                           { _("Eject")}
-                       </Button>
-                       { defaultEjectionFailed &&
-                       <Button variant='danger' isLoading={inProgressForce} isDisabled={inProgress} onClick={onDelete}>
-                           { _("Force eject")}
-                       </Button>}
-                       <Button variant='link' onClick={Dialogs.close}>
-                           {_("Cancel")}
-                       </Button>
-                   </>
-               }>
-            {dialogErrorDetail && <ModalError dialogError={cockpit.format(_("Media could not be ejected from $0"), vm.name)} dialogErrorDetail={dialogErrorDetail} />}
-            <DescriptionList className={dialogErrorDetail && "pf-v6-u-pt-md"} isHorizontal>
-                {cockpit.format(_("Media will be ejected from $0:"), vm.name)}
-                {description}
-            </DescriptionList>
+               id={idPrefix + "-modal"}>
+            <ModalHeader title={_("Eject disc from VM?")} />
+            <ModalBody>
+                {dialogErrorDetail && <ModalError dialogError={cockpit.format(_("Media could not be ejected from $0"), vm.name)} dialogErrorDetail={dialogErrorDetail} />}
+                <DescriptionList className={dialogErrorDetail && "pf-v6-u-pt-md"} isHorizontal>
+                    {cockpit.format(_("Media will be ejected from $0:"), vm.name)}
+                    {description}
+                </DescriptionList>
+            </ModalBody>
+            <ModalFooter>
+                <Button variant='primary' isLoading={inProgress} isDisabled={inProgress || defaultEjectionFailed} onClick={onDelete}>
+                    { _("Eject")}
+                </Button>
+                { defaultEjectionFailed &&
+                <Button variant='danger' isLoading={inProgressForce} isDisabled={inProgress} onClick={onDelete}>
+                    { _("Force eject")}
+                </Button>}
+                <Button variant='link' onClick={Dialogs.close}>
+                    {_("Cancel")}
+                </Button>
+            </ModalFooter>
         </Modal>
     );
 };
