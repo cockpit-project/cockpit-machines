@@ -23,8 +23,8 @@ import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { FormSelect, FormSelectOption, FormSelectOptionGroup } from "@patternfly/react-core/dist/esm/components/FormSelect";
 import {
-    Modal
-} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 import { NumberInput } from "@patternfly/react-core/dist/esm/components/NumberInput";
 
 import { useDialogs } from 'dialogs.jsx';
@@ -317,19 +317,19 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
     );
 
     return (
-        <Modal position="top" variant="small" id='machines-cpu-modal-dialog' isOpen onClose={Dialogs.close}
-               title={cockpit.format(_("$0 CPU details"), vm.name)}
-               footer={
-                   <>
-                       <Button id='machines-cpu-modal-dialog-apply' variant='primary' onClick={saveCPUMode} isDisabled={isLoading} isLoading={isLoading}>
-                           {_("Apply")}
-                       </Button>
-                       <Button id='machines-cpu-modal-dialog-cancel' variant='link' onClick={Dialogs.close}>
-                           {_("Cancel")}
-                       </Button>
-                   </>
-               }>
-            { defaultBody }
+        <Modal position="top" variant="small" id='machines-cpu-modal-dialog' isOpen onClose={Dialogs.close}>
+            <ModalHeader title={cockpit.format(_("$0 CPU details"), vm.name)} />
+            <ModalBody>
+                { defaultBody }
+            </ModalBody>
+            <ModalFooter>
+                <Button id='machines-cpu-modal-dialog-apply' variant='primary' onClick={saveCPUMode} isDisabled={isLoading} isLoading={isLoading}>
+                    {_("Apply")}
+                </Button>
+                <Button id='machines-cpu-modal-dialog-cancel' variant='link' onClick={Dialogs.close}>
+                    {_("Cancel")}
+                </Button>
+            </ModalFooter>
         </Modal>
     );
 };

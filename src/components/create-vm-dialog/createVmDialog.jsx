@@ -26,8 +26,8 @@ import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/co
 import { Grid, GridItem } from "@patternfly/react-core/dist/esm/layouts/Grid";
 import { InputGroup } from "@patternfly/react-core/dist/esm/components/InputGroup";
 import {
-    Modal
-} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 import { Tab, TabTitleText, Tabs } from "@patternfly/react-core/dist/esm/components/Tabs";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -1457,9 +1457,12 @@ class CreateVmModal extends React.Component {
         }
 
         return (
-            <Modal position="top" variant="medium" id='create-vm-dialog' isOpen onClose={Dialogs.close}
-                title={this.props.mode == 'create' ? _("Create new virtual machine") : _("Import a virtual machine")}
-                actions={[
+            <Modal position="top" variant="medium" id='create-vm-dialog' isOpen onClose={Dialogs.close}>
+                <ModalHeader title={this.props.mode == 'create' ? _("Create new virtual machine") : _("Import a virtual machine")} />
+                <ModalBody>
+                    {dialogBody}
+                </ModalBody>
+                <ModalFooter>
                     <Button variant="primary"
                             key="primary-button"
                             id="create-and-run"
@@ -1471,15 +1474,14 @@ class CreateVmModal extends React.Component {
                             }
                             onClick={() => this.onCreateClicked(true)}>
                         {this.props.mode == 'create' ? _("Create and run") : _("Import and run")}
-                    </Button>,
-                    createAndEdit,
+                    </Button>
+                    {createAndEdit}
                     <Button variant='link'
                             key="cancel-button"
                             onClick={Dialogs.close}>
                         {_("Cancel")}
                     </Button>
-                ]}>
-                {dialogBody}
+                </ModalFooter>
             </Modal>
         );
     }

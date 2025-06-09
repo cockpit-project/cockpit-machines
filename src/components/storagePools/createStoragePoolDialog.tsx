@@ -30,8 +30,8 @@ import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form
 import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
 import { Grid } from "@patternfly/react-core/dist/esm/layouts/Grid";
 import {
-    Modal
-} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { DialogsContext } from 'dialogs.jsx';
 import { FormHelper } from 'cockpit-components-form-helper.jsx';
@@ -516,19 +516,19 @@ class CreateStoragePoolModal extends React.Component<CreateStoragePoolModalProps
         );
 
         return (
-            <Modal position="top" variant="medium" id='create-storage-pool-dialog' className='pool-create' isOpen onClose={ Dialogs.close }
-                   title={_("Create storage pool")}
-                   footer={
-                       <>
-                           <Button variant='primary' isLoading={this.state.createInProgress} isDisabled={this.state.createInProgress} onClick={this.onCreateClicked}>
-                               {_("Create")}
-                           </Button>
-                           <Button variant='link' onClick={ Dialogs.close }>
-                               {_("Cancel")}
-                           </Button>
-                       </>
-                   }>
-                {defaultBody}
+            <Modal position="top" variant="medium" id='create-storage-pool-dialog' className='pool-create' isOpen onClose={ Dialogs.close }>
+                <ModalHeader title={_("Create storage pool")} />
+                <ModalBody>
+                    {defaultBody}
+                </ModalBody>
+                <ModalFooter>
+                    <Button variant='primary' isLoading={this.state.createInProgress} isDisabled={this.state.createInProgress} onClick={this.onCreateClicked}>
+                        {_("Create")}
+                    </Button>
+                    <Button variant='link' onClick={ Dialogs.close }>
+                        {_("Cancel")}
+                    </Button>
+                </ModalFooter>
             </Modal>
         );
     }

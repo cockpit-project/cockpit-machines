@@ -2,8 +2,8 @@ import React from 'react';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form } from "@patternfly/react-core/dist/esm/components/Form";
 import {
-    Modal
-} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 import PropTypes from 'prop-types';
 
 import cockpit from 'cockpit';
@@ -150,20 +150,20 @@ export class MemoryModal extends React.Component {
         );
 
         return (
-            <Modal position="top" variant="medium" id='vm-memory-modal' isOpen onClose={Dialogs.close}
-                   title={cockpit.format(_("$0 memory adjustment"), vm.name)}
-                   footer={
-                       <>
-                           <Button id={`${idPrefix}-save`} variant='primary' onClick={this.save}>
-                               {_("Save")}
-                           </Button>
-                           <Button id={`${idPrefix}-cancel`} variant='link' onClick={Dialogs.close}>
-                               {_("Cancel")}
-                           </Button>
-                       </>
-                   }>
-                {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
-                {defaultBody}
+            <Modal position="top" variant="medium" id='vm-memory-modal' isOpen onClose={Dialogs.close}>
+                <ModalHeader title={cockpit.format(_("$0 memory adjustment"), vm.name)} />
+                <ModalBody>
+                    {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
+                    {defaultBody}
+                </ModalBody>
+                <ModalFooter>
+                    <Button id={`${idPrefix}-save`} variant='primary' onClick={this.save}>
+                        {_("Save")}
+                    </Button>
+                    <Button id={`${idPrefix}-cancel`} variant='link' onClick={Dialogs.close}>
+                        {_("Cancel")}
+                    </Button>
+                </ModalFooter>
             </Modal>
         );
     }

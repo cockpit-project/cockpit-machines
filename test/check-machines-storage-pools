@@ -917,7 +917,7 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
                 b.wait_in_text("#storage-pool-delete-modal .pf-v6-c-modal-box__title-text",
                                f"Delete {self.name} storage pool?")
                 # Checks for the icon in the dialog title
-                b.wait_visible('#storage-pool-delete-modal svg[color=orange]')
+                b.wait_visible('#storage-pool-delete-modal .pf-v6-c-modal-box__title-icon svg')
 
                 if self.activate:
                     if self.vol_name or self.pool_type == "iscsi":

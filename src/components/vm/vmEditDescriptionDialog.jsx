@@ -22,8 +22,8 @@ import React, { useState } from 'react';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import {
-    Modal
-} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 import { TextArea } from "@patternfly/react-core/dist/esm/components/TextArea";
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
@@ -52,33 +52,33 @@ export const EditDescriptionDialog = ({ vm }) => {
     }
 
     return (
-        <Modal position="top" variant="small" isOpen onClose={Dialogs.close}
-               title={cockpit.format(_("Edit description of VM $0"), vm.name)}
-               footer={
-                   <>
-                       <Button variant='primary'
-                               id="edit-description-dialog-confirm"
-                               onClick={onSubmit}>
-                           {_("Save")}
-                       </Button>
-                       <Button variant='link' onClick={Dialogs.close}>
-                           {_("Cancel")}
-                       </Button>
-                   </>
-               }>
-            <Form onSubmit={e => {
-                e.preventDefault();
-                onSubmit();
-            }}
-            isHorizontal>
-                {!isObjectEmpty(error) && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.dialogErrorDetail} />}
-                <FormGroup label={_("Description")}
-                           fieldId="edit-description-dialog-description">
-                    <TextArea id='edit-description-dialog-description'
-                               value={description}
-                               onChange={(_, value) => setDescription(value)} />
-                </FormGroup>
-            </Form>
+        <Modal position="top" variant="small" isOpen onClose={Dialogs.close}>
+            <ModalHeader title={cockpit.format(_("Edit description of VM $0"), vm.name)} />
+            <ModalBody>
+                <Form onSubmit={e => {
+                    e.preventDefault();
+                    onSubmit();
+                }}
+                isHorizontal>
+                    {!isObjectEmpty(error) && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.dialogErrorDetail} />}
+                    <FormGroup label={_("Description")}
+                               fieldId="edit-description-dialog-description">
+                        <TextArea id='edit-description-dialog-description'
+                                   value={description}
+                                   onChange={(_, value) => setDescription(value)} />
+                    </FormGroup>
+                </Form>
+            </ModalBody>
+            <ModalFooter>
+                <Button variant='primary'
+                        id="edit-description-dialog-confirm"
+                        onClick={onSubmit}>
+                    {_("Save")}
+                </Button>
+                <Button variant='link' onClick={Dialogs.close}>
+                    {_("Cancel")}
+                </Button>
+            </ModalFooter>
         </Modal>
     );
 };

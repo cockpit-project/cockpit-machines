@@ -23,8 +23,8 @@ import { Button, ButtonProps } from "@patternfly/react-core/dist/esm/components/
 import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
 import { DropdownItem } from "@patternfly/react-core/dist/esm/components/Dropdown";
 import {
-    Modal
-} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 
 import cockpit from 'cockpit';
@@ -89,47 +89,46 @@ export class DeleteResourceModal extends React.Component<DeleteResourceModalProp
 
         return (
             <Modal position="top" variant="small" isOpen onClose={Dialogs.close}
-                   id="delete-resource-modal"
-                   title={title}
-                   titleIconVariant="warning"
-                   footer={
-                       <>
-                           <Button variant='danger'
-                               id="delete-resource-modal-primary"
-                               isLoading={this.state.inProgress}
-                               isDisabled={this.state.inProgress}
-                               onClick={() => this.delete(this.props.deleteHandler)}>
-                               {actionName || _("Delete")}
-                           </Button>
-                           {actionNameSecondary && deleteHandlerSecondary &&
-                           <Button variant='secondary'
-                               id="delete-resource-modal-secondary"
-                               isLoading={this.state.inProgress}
-                               isDisabled={this.state.inProgress}
-                               onClick={() => this.delete(deleteHandlerSecondary)}
-                               isDanger>
-                               {actionNameSecondary}
-                           </Button>}
-                           <Button variant='link' onClick={Dialogs.close}>
-                               {_("Cancel")}
-                           </Button>
-                       </>
-                   }>
-                {this.state.dialogError &&
-                    <ModalError
-                        dialogError={this.state.dialogError}
-                        {...this.state.dialogErrorDetail && { dialogErrorDetail: this.state.dialogErrorDetail } }
-                    />
-                }
-                <DescriptionList className={this.state.dialogError ? "pf-v6-u-pt-md" : ""} isHorizontal>
-                    {actionDescription || cockpit.format(_("Confirm this action"))}
-                    {objectDescription && objectDescription.flatMap(row => row.value
-                        ? <DescriptionListGroup id={`delete-resource-modal-${row.name.toLowerCase().replace(/ /g, "-")}`} key={row.name}>
-                            <DescriptionListTerm>{row.name}</DescriptionListTerm>
-                            <DescriptionListDescription>{row.value}</DescriptionListDescription>
-                        </DescriptionListGroup>
-                        : [])}
-                </DescriptionList>
+                   id="delete-resource-modal">
+                <ModalHeader title={title} titleIconVariant="warning" />
+                <ModalBody>
+                    {this.state.dialogError &&
+                        <ModalError
+                            dialogError={this.state.dialogError}
+                            {...this.state.dialogErrorDetail && { dialogErrorDetail: this.state.dialogErrorDetail } }
+                        />
+                    }
+                    <DescriptionList className={this.state.dialogError ? "pf-v6-u-pt-md" : ""} isHorizontal>
+                        {actionDescription || cockpit.format(_("Confirm this action"))}
+                        {objectDescription && objectDescription.flatMap(row => row.value
+                            ? <DescriptionListGroup id={`delete-resource-modal-${row.name.toLowerCase().replace(/ /g, "-")}`} key={row.name}>
+                                <DescriptionListTerm>{row.name}</DescriptionListTerm>
+                                <DescriptionListDescription>{row.value}</DescriptionListDescription>
+                            </DescriptionListGroup>
+                            : [])}
+                    </DescriptionList>
+                </ModalBody>
+                <ModalFooter>
+                    <Button variant='danger'
+                        id="delete-resource-modal-primary"
+                        isLoading={this.state.inProgress}
+                        isDisabled={this.state.inProgress}
+                        onClick={() => this.delete(this.props.deleteHandler)}>
+                        {actionName || _("Delete")}
+                    </Button>
+                    {actionNameSecondary && deleteHandlerSecondary &&
+                    <Button variant='secondary'
+                        id="delete-resource-modal-secondary"
+                        isLoading={this.state.inProgress}
+                        isDisabled={this.state.inProgress}
+                        onClick={() => this.delete(deleteHandlerSecondary)}
+                        isDanger>
+                        {actionNameSecondary}
+                    </Button>}
+                    <Button variant='link' onClick={Dialogs.close}>
+                        {_("Cancel")}
+                    </Button>
+                </ModalFooter>
             </Modal>
         );
     }

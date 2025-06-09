@@ -27,8 +27,8 @@ import type { AvailableSources } from './vmNicsCard';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import {
-    Modal
-} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 
@@ -220,19 +220,9 @@ export class EditNICModal extends React.Component<EditNICModalProps, EditNICModa
         };
 
         return (
-            <Modal position="top" variant="medium" id={`${idPrefix}-modal-window`} isOpen onClose={Dialogs.close} className='nic-edit'
-                   title={cockpit.format(_("$0 virtual network interface settings"), network.mac)}
-                   footer={
-                       <>
-                           <Button isDisabled={this.state.saveDisabled} id={`${idPrefix}-save`} variant='primary' onClick={this.save}>
-                               {_("Save")}
-                           </Button>
-                           <Button id={`${idPrefix}-cancel`} variant='link' onClick={Dialogs.close}>
-                               {_("Cancel")}
-                           </Button>
-                       </>
-                   }>
-                <>
+            <Modal position="top" variant="medium" id={`${idPrefix}-modal-window`} isOpen onClose={Dialogs.close} className='nic-edit'>
+                <ModalHeader title={cockpit.format(_("$0 virtual network interface settings"), network.mac)} />
+                <ModalBody>
                     { showWarning() }
                     {this.state.dialogError &&
                         <ModalError
@@ -241,7 +231,15 @@ export class EditNICModal extends React.Component<EditNICModalProps, EditNICModa
                         />
                     }
                     {defaultBody}
-                </>
+                </ModalBody>
+                <ModalFooter>
+                    <Button isDisabled={this.state.saveDisabled} id={`${idPrefix}-save`} variant='primary' onClick={this.save}>
+                        {_("Save")}
+                    </Button>
+                    <Button id={`${idPrefix}-cancel`} variant='link' onClick={Dialogs.close}>
+                        {_("Cancel")}
+                    </Button>
+                </ModalFooter>
             </Modal>
         );
     }

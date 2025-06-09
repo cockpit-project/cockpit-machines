@@ -26,8 +26,8 @@ import type { Dialogs } from 'dialogs';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form } from "@patternfly/react-core/dist/esm/components/Form";
 import {
-    Modal
-} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import cockpit from 'cockpit';
 
@@ -125,34 +125,34 @@ class CreateStorageVolumeModal extends React.Component<CreateStorageVolumeModalP
         const validationFailed = this.state.validate ? this.validateParams() : {};
 
         return (
-            <Modal position="top" variant="medium" id={`${idPrefix}-modal`} className='volume-create' isOpen onClose={Dialogs.close}
-                   title={_("Create storage volume")}
-                   footer={
-                       <>
-                           <Button variant="primary" onClick={this.onCreateClicked} isLoading={this.state.createInProgress} isDisabled={this.state.createInProgress}>
-                               {_("Create")}
-                           </Button>
-                           <Button variant='link' onClick={Dialogs.close}>
-                               {_("Cancel")}
-                           </Button>
-                       </>
-                   }>
-                <Form isHorizontal>
-                    {this.state.dialogError &&
-                        <ModalError
-                            dialogError={this.state.dialogError}
-                            {...this.state.dialogErrorDetail && { dialogErrorDetail: this.state.dialogErrorDetail } }
-                        />
-                    }
-                    <VolumeCreateBody format={this.state.format}
-                                      idPrefix={idPrefix}
-                                      onValueChanged={this.onValueChanged}
-                                      size={this.state.size}
-                                      storagePool={this.props.storagePool}
-                                      unit={this.state.unit}
-                                      validationFailed={validationFailed}
-                                      volumeName={this.state.volumeName} />
-                </Form>
+            <Modal position="top" variant="medium" id={`${idPrefix}-modal`} className='volume-create' isOpen onClose={Dialogs.close}>
+                <ModalHeader title={_("Create storage volume")} />
+                <ModalBody>
+                    <Form isHorizontal>
+                        {this.state.dialogError &&
+                            <ModalError
+                                dialogError={this.state.dialogError}
+                                {...this.state.dialogErrorDetail && { dialogErrorDetail: this.state.dialogErrorDetail } }
+                            />
+                        }
+                        <VolumeCreateBody format={this.state.format}
+                                          idPrefix={idPrefix}
+                                          onValueChanged={this.onValueChanged}
+                                          size={this.state.size}
+                                          storagePool={this.props.storagePool}
+                                          unit={this.state.unit}
+                                          validationFailed={validationFailed}
+                                          volumeName={this.state.volumeName} />
+                    </Form>
+                </ModalBody>
+                <ModalFooter>
+                    <Button variant="primary" onClick={this.onCreateClicked} isLoading={this.state.createInProgress} isDisabled={this.state.createInProgress}>
+                        {_("Create")}
+                    </Button>
+                    <Button variant='link' onClick={Dialogs.close}>
+                        {_("Cancel")}
+                    </Button>
+                </ModalFooter>
             </Modal>
         );
     }

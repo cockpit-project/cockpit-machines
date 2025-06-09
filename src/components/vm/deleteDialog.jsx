@@ -23,9 +23,8 @@ import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { DataList, DataListCell, DataListCheck, DataListItem, DataListItemCells, DataListItemRow } from "@patternfly/react-core/dist/esm/components/DataList";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import {
-    Modal
-} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
-import { ExclamationTriangleIcon } from '@patternfly/react-icons';
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 import { DialogsContext } from 'dialogs.jsx';
 
 import { canDeleteDiskFile, vmId, getVmStoragePools } from '../../helpers.js';
@@ -161,23 +160,22 @@ export class DeleteDialog extends React.Component {
         const Dialogs = this.context;
         const id = vmId(this.props.vm.name);
         return (
-            <Modal position="top" variant="medium" id={`${id}-delete-modal-dialog`} isOpen onClose={Dialogs.close}
-                title={<>
-                    <ExclamationTriangleIcon className="ct-icon-exclamation-triangle pf-v6-u-mr-sm" />
-                    { cockpit.format(_("Delete $0 VM?"), this.props.vm.name) }
-                </>}
-                footer={
-                    <>
-                        <Button variant='danger' onClick={this.delete}>
-                            {_("Delete")}
-                        </Button>
-                        <Button variant='link' onClick={Dialogs.close}>
-                            {_("Cancel")}
-                        </Button>
-                    </>
-                }>
-                {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
-                <DeleteDialogBody disks={this.state.disks} vmName={this.props.vm.name} destroy={this.props.vm.state != 'shut off'} onChange={this.onDiskCheckedChanged} />
+            <Modal position="top" variant="medium" id={`${id}-delete-modal-dialog`} isOpen onClose={Dialogs.close}>
+                <ModalHeader title={cockpit.format(_("Delete $0 VM?"), this.props.vm.name)}
+                    titleIconVariant="warning"
+                />
+                <ModalBody>
+                    {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
+                    <DeleteDialogBody disks={this.state.disks} vmName={this.props.vm.name} destroy={this.props.vm.state != 'shut off'} onChange={this.onDiskCheckedChanged} />
+                </ModalBody>
+                <ModalFooter>
+                    <Button variant='danger' onClick={this.delete}>
+                        {_("Delete")}
+                    </Button>
+                    <Button variant='link' onClick={Dialogs.close}>
+                        {_("Cancel")}
+                    </Button>
+                </ModalFooter>
             </Modal>
         );
     }

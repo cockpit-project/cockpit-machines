@@ -28,8 +28,8 @@ import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import {
-    Modal
-} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { DialogsContext } from 'dialogs.jsx';
@@ -251,32 +251,32 @@ export class AddNIC extends React.Component<AddNICProps, AddNICState> {
         );
 
         return (
-            <Modal position="top" variant="medium" id={`${idPrefix}-dialog`} isOpen onClose={Dialogs.close} className='nic-add'
-                title={_("Add virtual network interface")}
-                footer={
-                    <>
-                        <Button isLoading={this.state.addVNicInProgress}
-                                isDisabled={
-                                    (["network", "direct", "bridge"].includes(this.state.networkType) && this.state.networkSource === undefined) ||
-                                    this.state.addVNicInProgress
-                                }
-                                id={`${idPrefix}-add`}
-                                variant='primary'
-                                onClick={this.add}>
-                            {_("Add")}
-                        </Button>
-                        <Button id={`${idPrefix}-cancel`} variant='link' onClick={Dialogs.close}>
-                            {_("Cancel")}
-                        </Button>
-                    </>
-                }>
-                {this.state.dialogError &&
-                    <ModalError
-                        dialogError={this.state.dialogError}
-                        {...this.state.dialogErrorDetail && { dialogErrorDetail: this.state.dialogErrorDetail } }
-                    />
-                }
-                {defaultBody}
+            <Modal position="top" variant="medium" id={`${idPrefix}-dialog`} isOpen onClose={Dialogs.close} className='nic-add'>
+                <ModalHeader title={_("Add virtual network interface")} />
+                <ModalBody>
+                    {this.state.dialogError &&
+                        <ModalError
+                            dialogError={this.state.dialogError}
+                            {...this.state.dialogErrorDetail && { dialogErrorDetail: this.state.dialogErrorDetail } }
+                        />
+                    }
+                    {defaultBody}
+                </ModalBody>
+                <ModalFooter>
+                    <Button isLoading={this.state.addVNicInProgress}
+                            isDisabled={
+                                (["network", "direct", "bridge"].includes(this.state.networkType) && this.state.networkSource === undefined) ||
+                                this.state.addVNicInProgress
+                            }
+                            id={`${idPrefix}-add`}
+                            variant='primary'
+                            onClick={this.add}>
+                        {_("Add")}
+                    </Button>
+                    <Button id={`${idPrefix}-cancel`} variant='link' onClick={Dialogs.close}>
+                        {_("Cancel")}
+                    </Button>
+                </ModalFooter>
             </Modal>
         );
     }

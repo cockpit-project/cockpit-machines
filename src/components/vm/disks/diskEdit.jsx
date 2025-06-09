@@ -23,8 +23,8 @@ import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
 import {
-    Modal
-} from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
@@ -241,23 +241,21 @@ export class EditDiskModal extends React.Component {
             <Modal position="top" variant="medium" id={`${idPrefix}-dialog`}
                    isOpen
                    onClose={Dialogs.close}
-                   title={cockpit.format(_("Edit $0 attributes"), getDiskPrettyName(vm.disks[disk.target]))}
-                   footer={
-                       <>
-                           <Button id={`${idPrefix}-dialog-save`} variant='primary' onClick={this.onSaveClicked}>
-                               {_("Save")}
-                           </Button>
-                           <Button id={`${idPrefix}-dialog-cancel`} variant='link' onClick={Dialogs.close}>
-                               {_("Cancel")}
-                           </Button>
-                       </>
-                   }
             >
-                <>
+                <ModalHeader title={cockpit.format(_("Edit $0 attributes"), getDiskPrettyName(vm.disks[disk.target]))} />
+                <ModalBody>
                     {showWarning()}
                     {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
                     {defaultBody}
-                </>
+                </ModalBody>
+                <ModalFooter>
+                    <Button id={`${idPrefix}-dialog-save`} variant='primary' onClick={this.onSaveClicked}>
+                        {_("Save")}
+                    </Button>
+                    <Button id={`${idPrefix}-dialog-cancel`} variant='link' onClick={Dialogs.close}>
+                        {_("Cancel")}
+                    </Button>
+                </ModalFooter>
             </Modal>
         );
     }
