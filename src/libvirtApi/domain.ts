@@ -139,8 +139,8 @@ export interface DiskSpec {
     type: string,
     file?: string,
     device: string,
-    poolName: string,
-    volumeName: string,
+    poolName?: string | undefined,
+    volumeName?: string | undefined,
     format: string,
     target: string,
     vmId: string,
@@ -770,9 +770,9 @@ export async function domainEjectDisk({
     id: string,
     target: string,
     eject: boolean,
-    file: string,
-    pool: string,
-    volume: string,
+    file?: string,
+    pool?: string,
+    volume?: string,
     live?: boolean,
     persistent: boolean,
     force: boolean,
@@ -1003,9 +1003,9 @@ export function domainInsertDisk({
     vmName: string,
     target: string,
     diskType: string,
-    file: string,
-    poolName: string,
-    volumeName: string,
+    file: string | undefined,
+    poolName: string | undefined,
+    volumeName: string | undefined,
     live?: boolean,
 }): cockpit.Spawn<string> {
     let source;
@@ -1418,12 +1418,12 @@ export async function domainUpdateDiskAttributes({
 } : {
     connectionName: ConnectionName,
     objPath: string,
-    target: string,
+    target: optString,
     readonly: boolean,
     shareable: boolean,
-    busType: string,
+    busType: optString,
     existingTargets: string[],
-    cache: string,
+    cache: optString,
 }): Promise<void> {
     const [domXml] = await call<[string]>(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
     const updatedXML = updateDisk({ diskTarget: target, domXml, readonly, shareable, busType, existingTargets, cache });

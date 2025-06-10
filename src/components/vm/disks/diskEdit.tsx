@@ -19,6 +19,10 @@
 
 import React from 'react';
 import cockpit from 'cockpit';
+
+import type { Dialogs } from 'dialogs';
+import type { optString, VM, VMDisk, VMDiskDevice } from '../../../types';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
@@ -37,9 +41,25 @@ import { InfoPopover } from '../../common/infoPopover.jsx';
 
 const _ = cockpit.gettext;
 
-const NameRow = ({ idPrefix, name, diskType }) => {
+interface DialogValues {
+    cacheMode: optString;
+    busType: optString;
+    access: string;
+}
+
+type OnValueChanged = <K extends keyof DialogValues>(key: K, value: DialogValues[K]) => void;
+
+const NameRow = ({
+    idPrefix,
+    name,
+    diskType
+} : {
+    idPrefix: string,
+    name: optString,
+    diskType: optString,
+}) => {
     let label = _("ID");
-    if (["file", "block", "dir"].includes(diskType))
+    if (diskType == "file" || diskType == "block" || diskType == "dir")
         label = _("Path");
     else if (diskType === "network")
         label = _("Url");
@@ -55,12 +75,24 @@ const NameRow = ({ idPrefix, name, diskType }) => {
     );
 };
 
-const CacheRow = ({ onValueChanged, dialogValues, idPrefix, shutoff }) => {
+const CacheRow = ({
+    onValueChanged,
+    dialogValues,
+    idPrefix,
+    shutoff
+} : {
+    onValueChanged: OnValueChanged,
+    dialogValues: DialogValues,
+    idPrefix: string,
+    shutoff: boolean,
+}) => {
     return (
         <FormGroup fieldId={`${idPrefix}-cache-mode`}
                    label={_("Cache")}
-                   labelHelp={!shutoff &&
-                       <InfoPopover bodyContent={_("Machine must be shut off before changing cache mode")} />}>
+                   {...!shutoff
+                       ? { labelHelp: <InfoPopover bodyContent={_("Machine must be shut off before changing cache mode")} /> }
+                       : { }
+                   }>
             <FormSelect id={`${idPrefix}-cache-mode`}
                         onChange={(_event, value) => onValueChanged('cacheMode', value)}
                         isDisabled={!shutoff}
@@ -76,17 +108,33 @@ const CacheRow = ({ onValueChanged, dialogValues, idPrefix, shutoff }) => {
     );
 };
 
-const BusRow = ({ onValueChanged, dialogValues, diskDevice, idPrefix, shutoff, supportedDiskBusTypes }) => {
-    const busTypes = diskBusTypes[diskDevice]
+const BusRow = ({
+    onValueChanged,
+    dialogValues,
+    diskDevice,
+    idPrefix,
+    shutoff,
+    supportedDiskBusTypes
+} : {
+    onValueChanged: OnValueChanged,
+    dialogValues: DialogValues,
+    diskDevice: VMDiskDevice,
+    idPrefix: string,
+    shutoff: boolean,
+    supportedDiskBusTypes: string[],
+}) => {
+    const busTypes: { value: string, disabled?: boolean }[] = diskBusTypes[diskDevice]
             .filter(bus => supportedDiskBusTypes.includes(bus))
             .map(type => ({ value: type }));
     if (busTypes.find(busType => busType.value == dialogValues.busType) == undefined)
-        busTypes.push({ value: dialogValues.busType, disabled: true });
+        busTypes.push({ value: dialogValues.busType || "", disabled: true });
 
     return (
         <FormGroup fieldId={`${idPrefix}-bus-type`} label={_("Bus")}
-                   labelHelp={!shutoff &&
-                       <InfoPopover bodyContent={_("Machine must be shut off before changing bus type")} />}>
+            {...!shutoff
+                ? { labelHelp: <InfoPopover bodyContent={_("Machine must be shut off before changing bus type")} /> }
+                : { }
+            }>
             <FormSelect id={`${idPrefix}-bus-type`}
                 onChange={(_event, value) => onValueChanged('busType', value)}
                 value={dialogValues.busType}
@@ -94,7 +142,7 @@ const BusRow = ({ onValueChanged, dialogValues, diskDevice, idPrefix, shutoff, s
                 {busTypes.map(busType => {
                     return (
                         <FormSelectOption value={busType.value} key={busType.value}
-                                          isDisabled={busType.disabled}
+                                          isDisabled={!!busType.disabled}
                                           label={busType.value} />
                     );
                 })}
@@ -103,14 +151,24 @@ const BusRow = ({ onValueChanged, dialogValues, diskDevice, idPrefix, shutoff, s
     );
 };
 
-const AccessRow = ({ onValueChanged, dialogValues, diskDevice, driverType, idPrefix }) => {
+const AccessRow = ({
+    onValueChanged,
+    dialogValues,
+    diskDevice,
+    idPrefix
+} : {
+    onValueChanged: OnValueChanged,
+    dialogValues: DialogValues,
+    diskDevice: VMDiskDevice,
+    idPrefix: string,
+}) => {
     return (
         <FormGroup fieldId={`${idPrefix}-access`} label={_("Access")} isInline hasNoPaddingTop>
             <Radio id={`${idPrefix}-readonly`}
                    name="access"
                    value="readonly"
                    isChecked={dialogValues.access == "readonly" }
-                   onChange={(event, _) => {
+                   onChange={(event) => {
                        onValueChanged("access", event.currentTarget.value);
                    }}
                    label={_("Read-only")} />
@@ -119,7 +177,7 @@ const AccessRow = ({ onValueChanged, dialogValues, diskDevice, driverType, idPre
                        name="access"
                        value="writable"
                        isChecked={dialogValues.access == "writable" }
-                       onChange={(event, _) => {
+                       onChange={(event) => {
                            onValueChanged("access", event.currentTarget.value);
                        }}
                        label={_("Writeable")} />}
@@ -127,7 +185,17 @@ const AccessRow = ({ onValueChanged, dialogValues, diskDevice, driverType, idPre
     );
 };
 
-export const EditDiskAction = ({ idPrefix, disk, vm, supportedDiskBusTypes }) => {
+export const EditDiskAction = ({
+    idPrefix,
+    disk,
+    vm,
+    supportedDiskBusTypes
+} : {
+    idPrefix: string,
+    disk: VMDisk,
+    vm: VM,
+    supportedDiskBusTypes: string[],
+}) => {
     const Dialogs = useDialogs();
 
     function open() {
@@ -137,7 +205,7 @@ export const EditDiskAction = ({ idPrefix, disk, vm, supportedDiskBusTypes }) =>
                                     vm={vm} />);
     }
 
-    const enabled = (Object.keys(diskBusTypes).includes(disk.device) &&
+    const enabled = (Object.keys(diskBusTypes).includes(disk.device || "") &&
                      supportedDiskBusTypes &&
                      supportedDiskBusTypes.length > 0);
 
@@ -151,10 +219,23 @@ export const EditDiskAction = ({ idPrefix, disk, vm, supportedDiskBusTypes }) =>
     );
 };
 
-export class EditDiskModal extends React.Component {
-    static contextType = DialogsContext;
+interface EditDiskModalProps {
+    idPrefix: string;
+    disk: VMDisk;
+    supportedDiskBusTypes: string[];
+    vm: VM;
+}
 
-    constructor(props) {
+interface EditDiskModalState extends DialogValues {
+    dialogError?: string;
+    dialogErrorDetail?: string;
+}
+
+export class EditDiskModal extends React.Component<EditDiskModalProps, EditDiskModalState> {
+    static contextType = DialogsContext;
+    declare context: Dialogs;
+
+    constructor(props: EditDiskModalProps) {
         super(props);
         let access;
         if (props.disk.readonly)
@@ -172,11 +253,11 @@ export class EditDiskModal extends React.Component {
         this.onSaveClicked = this.onSaveClicked.bind(this);
     }
 
-    onValueChanged(key, value) {
-        this.setState({ [key]: value });
+    onValueChanged<K extends keyof DialogValues>(key: K, value: DialogValues[K]): void {
+        this.setState({ [key]: value } as Pick<EditDiskModalState, K>);
     }
 
-    dialogErrorSet(text, detail) {
+    dialogErrorSet(text: string, detail: string) {
         this.setState({ dialogError: text, dialogErrorDetail: detail });
     }
 
@@ -206,17 +287,16 @@ export class EditDiskModal extends React.Component {
         const defaultBody = (
             <Form isHorizontal>
                 <NameRow idPrefix={idPrefix}
-                         diskType={vm.disks[disk.target].type}
-                         name={getDiskFullName(vm.disks[disk.target])} />
+                         diskType={disk.type}
+                         name={getDiskFullName(disk)} />
 
                 <AccessRow dialogValues={this.state}
                            diskDevice={disk.device}
                            idPrefix={idPrefix}
-                           driverType={vm.disks[disk.target].driver.type}
                            onValueChanged={this.onValueChanged} />
 
                 <BusRow dialogValues={this.state}
-                        diskDevice={disk.device}
+                        diskDevice={disk.device || "disk"}
                         idPrefix={idPrefix}
                         onValueChanged={this.onValueChanged}
                         shutoff={vm.state == 'shut off'}
@@ -242,10 +322,15 @@ export class EditDiskModal extends React.Component {
                    isOpen
                    onClose={Dialogs.close}
             >
-                <ModalHeader title={cockpit.format(_("Edit $0 attributes"), getDiskPrettyName(vm.disks[disk.target]))} />
+                <ModalHeader title={cockpit.format(_("Edit $0 attributes"), getDiskPrettyName(disk))} />
                 <ModalBody>
                     {showWarning()}
-                    {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
+                    {this.state.dialogError &&
+                        <ModalError
+                            dialogError={this.state.dialogError}
+                            {...this.state.dialogErrorDetail && { dialogErrorDetail: this.state.dialogErrorDetail } }
+                        />
+                    }
                     {defaultBody}
                 </ModalBody>
                 <ModalFooter>
