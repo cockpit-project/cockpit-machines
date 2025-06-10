@@ -48,7 +48,7 @@ export class StoragePoolVolumesTab extends React.Component<StoragePoolVolumesTab
         super(props);
 
         this.state = {
-            rows: (props.storagePool.volumes || []).map(row => {
+            rows: props.storagePool.volumes.map(row => {
                 row.selected = false;
                 return row;
             }),
@@ -58,8 +58,8 @@ export class StoragePoolVolumesTab extends React.Component<StoragePoolVolumesTab
     }
 
     static getDerivedStateFromProps(props: StoragePoolVolumesTabProps, current_state: StoragePoolVolumesTabState) {
-        if ((props.storagePool.volumes || []).length !== current_state.rows.length) {
-            return { rows: props.storagePool.volumes || [] };
+        if (props.storagePool.volumes.length !== current_state.rows.length) {
+            return { rows: props.storagePool.volumes };
         }
         return null;
     }

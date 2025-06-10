@@ -1119,6 +1119,8 @@ export function parseStoragePoolDumpxml(
         capacity: storagePoolElem.getElementsByTagName('capacity')[0].childNodes[0].nodeValue,
         available: storagePoolElem.getElementsByTagName('available')[0].childNodes[0].nodeValue,
         allocation: storagePoolElem.getElementsByTagName('allocation')[0].childNodes[0].nodeValue,
+        volumes: [],
+        volumes_had_error: false,
     };
 
     // Fetch path property if target is contained for this type of pool

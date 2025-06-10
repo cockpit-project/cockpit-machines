@@ -134,7 +134,7 @@ class StoragePoolDelete extends React.Component<StoragePoolDeleteProps, StorageP
     delete() {
         const Dialogs = this.context;
         const storagePool = this.props.storagePool;
-        const volumes = storagePool.volumes || [];
+        const volumes = storagePool.volumes;
         const storagePoolDeactivateAndUndefine = (storagePool: StoragePool): Promise<void> => {
             if (storagePool.active) {
                 return storagePoolDeactivate({ connectionName: storagePool.connectionName, objPath: storagePool.id })
@@ -144,7 +144,7 @@ class StoragePoolDelete extends React.Component<StoragePoolDeleteProps, StorageP
             }
         };
 
-        if (this.state.deleteVolumes && storagePool.volumes && storagePool.volumes.length > 0) {
+        if (this.state.deleteVolumes && storagePool.volumes.length > 0) {
             Promise.all(volumes.map(volume => storageVolumeDelete({ connectionName: storagePool.connectionName, poolName: storagePool.name, volName: volume.name })))
                     .then(() => storagePoolDeactivateAndUndefine(storagePool))
                     .then(() => Dialogs.close(),
@@ -159,7 +159,7 @@ class StoragePoolDelete extends React.Component<StoragePoolDeleteProps, StorageP
     render() {
         const Dialogs = this.context;
         const { storagePool, vms } = this.props;
-        const volumes = storagePool.volumes || [];
+        const volumes = storagePool.volumes;
 
         const showWarning = () => {
             if (canDeleteOnlyWithoutVolumes(storagePool, vms) && this.state.deleteVolumes) {

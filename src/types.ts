@@ -481,7 +481,7 @@ export interface StoragePool {
     active?: boolean;
     persistent?: boolean;
     autostart?: boolean;
-    volumes?: StorageVolume[] | undefined;
+    volumes: StorageVolume[];
 
     error?: DetailedError | null | undefined;
 }

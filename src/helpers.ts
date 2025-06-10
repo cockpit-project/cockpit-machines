@@ -717,7 +717,7 @@ export function getStorageVolumesUsage(vms: VM[], storagePool: StoragePool): Sto
 
     // Get a dictionary of vmName -> disks for a specific connection
     const vmDisksMap = getVmDisksMap(vms, storagePool.connectionName);
-    const volumes = storagePool.volumes || [];
+    const volumes = storagePool.volumes;
 
     // And make it a dictionary of volumeName -> array of Domains using volume
     const isVolumeUsed: Record<string, Array<string>> = {};

@@ -117,7 +117,7 @@ export class VmDisksCardLibvirt extends React.Component {
          */
         if (disk.type == 'volume') {
             const pool = storagePools.filter(pool => pool.name == disk.source.pool)[0];
-            const volumes = pool ? pool.volumes : [];
+            const volumes = pool ? pool.volumes;
             const volumeName = disk.source.volume;
             let volume;
             if (volumes)
