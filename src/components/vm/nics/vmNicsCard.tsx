@@ -282,7 +282,7 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
         this.deviceProxyHandler = this.deviceProxyHandler.bind(this);
         this.getIpAddr = this.getIpAddr.bind(this);
         this.client = cockpit.dbus("org.freedesktop.NetworkManager");
-        const proxies = this.client.proxies("org.freedesktop.NetworkManager.Device");
+        const proxies = this.client.proxies("org.freedesktop.NetworkManager.Device", "/org/freedesktop");
         proxies.addEventListener('changed', this.deviceProxyHandler);
         proxies.addEventListener('removed', this.deviceProxyHandler);
         this.hostDevices = proxies as unknown as Record<string, NetworkManagerDeviceProxy>;
