@@ -40,7 +40,6 @@ const _ = cockpit.gettext;
 export const DISK_SOURCE_LIST = [
     { name: "file", label: _("File") },
     { name: "dev", label: _("Block device") },
-    { name: "device", label: _("Device") },
     { name: "protocol", label: _("Protocol") },
     { name: "pool", label: _("Pool") },
     { name: "volume", label: _("Volume") },
