@@ -146,7 +146,7 @@ const PoolRow = ({ idPrefix, onValueChanged, storagePoolName, validationFailed, 
         <FormGroup fieldId={`${idPrefix}-select-pool`}
                    label={_("Pool")}>
             <FormSelect id={`${idPrefix}-select-pool`}
-                           isDisabled={!vmStoragePools.length || !vmStoragePools.every(pool => pool.volumes !== undefined)}
+                           isDisabled={!vmStoragePools.length}
                            onChange={(_event, value) => onValueChanged('storagePoolName', value)}
                            validated={validationStatePool}
                            value={storagePoolName || 'no-resource'}>

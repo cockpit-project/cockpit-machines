@@ -119,9 +119,10 @@ export async function storagePoolGet({
         if ("Autostart" in resultProps)
             props.autostart = get_boolean_prop(resultProps, "Autostart");
 
-        props.volumes = [];
         if (props.active) {
             const volumes = await storageVolumeGetAll({ connectionName, poolName: dumpxmlParams.name });
+            if (!volumes)
+                return;
             props.volumes = volumes;
         }
         store.dispatch(updateOrAddStoragePool(Object.assign({}, dumpxmlParams, props), !!updateOnly));

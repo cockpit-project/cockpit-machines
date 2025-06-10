@@ -550,7 +550,7 @@ export function domainDeleteStorage({
                                         .then(() => { }); // delete key file
                         })
             );
-            const pool = storagePools.find(pool => pool.connectionName === connectionName && pool.volumes?.some(vol => vol.path === disk.source.file));
+            const pool = storagePools.find(pool => pool.connectionName === connectionName && pool.volumes.some(vol => vol.path === disk.source.file));
             if (pool)
                 storageVolPromises.push(storagePoolRefresh({ connectionName, objPath: pool.id }));
             break;

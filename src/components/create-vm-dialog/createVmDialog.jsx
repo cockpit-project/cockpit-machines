@@ -966,7 +966,7 @@ const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit,
         StorageSelectOptions.push({ decorator: "divider", key: "dividerNoStorage" });
         StorageSelectOptions.push({ value: "NoStorage", content: _("No storage") });
     }
-    const nonEmptyStoragePools = storagePools.filter(pool => pool.volumes?.length);
+    const nonEmptyStoragePools = storagePools.filter(pool => pool.volumes.length);
     if (nonEmptyStoragePools.length > 0) {
         StorageSelectOptions.push({ decorator: "divider", key: "dividerPools" });
         StorageSelectOptions.push({ decorator: "header", key: "Storage pools", content: _("Storage pools") });
