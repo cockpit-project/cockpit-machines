@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-02 03:43+0000\n"
+"POT-Creation-Date: 2025-06-10 03:40+0000\n"
 "PO-Revision-Date: 2025-06-02 18:37+0000\n"
 "Last-Translator: JW Wang <v72807647@gmail.com>\n"
 "Language-Team: Chinese (Traditional) <https://translate.fedoraproject.org/"
@@ -69,7 +69,7 @@ msgid "$0 vCPU"
 msgid_plural "$0 vCPUs"
 msgstr[0] "$0 個虛擬CPU"
 
-#: src/components/vm/nics/nicEdit.jsx:187
+#: src/components/vm/nics/nicEdit.jsx:189
 msgid "$0 virtual network interface settings"
 msgstr "$0 虛擬網路介面設定"
 
@@ -92,21 +92,21 @@ msgid "Action"
 msgstr "動作"
 
 # ctx::sourcefile::Navigation Menu
-#: src/components/storagePools/storagePoolList.jsx:71
+#: src/components/storagePools/storagePoolList.tsx:80
 #: src/components/vm/disks/vmDisksCard.jsx:194
-#: src/components/vm/nics/vmNicsCard.jsx:421
+#: src/components/vm/nics/vmNicsCard.jsx:431
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:176
-#: src/components/networks/networkList.jsx:71
+#: src/components/networks/networkList.tsx:77
 #: src/components/vms/hostvmslist.tsx:204
 msgid "Actions"
 msgstr "動作"
 
-#: src/components/storagePools/storagePool.jsx:168
-#: src/components/networks/network.jsx:186
+#: src/components/storagePools/storagePool.tsx:180
+#: src/components/networks/network.tsx:189
 msgid "Activate"
 msgstr "啟用"
 
-#: src/components/storagePools/storagePoolVolumesTab.jsx:112
+#: src/components/storagePools/storagePoolVolumesTab.tsx:124
 msgid "Activate the storage pool to administer volumes"
 msgstr "啟用儲存空間集區以管理磁碟區"
 
@@ -114,8 +114,8 @@ msgstr "啟用儲存空間集區以管理磁碟區"
 #: src/components/vm/overview/watchdog.jsx:156
 #: src/components/vm/disks/diskAdd.jsx:818
 #: src/components/vm/hostdevs/hostDevAdd.jsx:232
-#: src/components/vm/nics/nicAdd.jsx:220
-#: src/components/networks/networkOverviewTab.jsx:236
+#: src/components/vm/nics/nicAdd.jsx:222
+#: src/components/networks/networkOverviewTab.tsx:257
 msgid "Add"
 msgstr "新增"
 
@@ -127,7 +127,7 @@ msgstr "新增 SSH 金鑰"
 msgid "Add TPM"
 msgstr "新增 TPM"
 
-#: src/components/networks/networkOverviewTab.jsx:232
+#: src/components/networks/networkOverviewTab.tsx:253
 msgid "Add a DHCP static host entry"
 msgstr "新增 DHCP 靜態主機項目"
 
@@ -149,7 +149,7 @@ msgstr "新增網路介面"
 msgid "Add shared directory"
 msgstr "新增共享目錄"
 
-#: src/components/vm/nics/nicAdd.jsx:209
+#: src/components/vm/nics/nicAdd.jsx:211
 msgid "Add virtual network interface"
 msgstr "新增虛擬網路介面"
 
@@ -174,16 +174,16 @@ msgid "Additional"
 msgstr "額外"
 
 #: src/components/vm/consoles/desktopConsole.jsx:47
-#: src/components/vm/nics/vmNicsCard.jsx:154
-#: src/components/networks/networkOverviewTab.jsx:144
-#: src/components/networks/networkOverviewTab.jsx:164
+#: src/components/vm/nics/vmNicsCard.jsx:164
+#: src/components/networks/networkOverviewTab.tsx:153
+#: src/components/networks/networkOverviewTab.tsx:173
 msgid "Address"
 msgstr "位址"
 
-#: src/components/networks/createNetworkDialog.jsx:96
-#: src/components/networks/createNetworkDialog.jsx:103
-#: src/components/networks/createNetworkDialog.jsx:124
-#: src/components/networks/createNetworkDialog.jsx:131
+#: src/components/networks/createNetworkDialog.tsx:131
+#: src/components/networks/createNetworkDialog.tsx:138
+#: src/components/networks/createNetworkDialog.tsx:159
+#: src/components/networks/createNetworkDialog.tsx:166
 msgid "Address not within subnet"
 msgstr "位址不在子網路內"
 
@@ -206,7 +206,7 @@ msgid ""
 "(-, _, +, .)"
 msgstr "允許的字元：基本拉丁字母、數字、與有限的標點 (-, _, +, .)"
 
-#: src/components/storagePools/storagePoolDelete.jsx:175
+#: src/components/storagePools/storagePoolDelete.tsx:188
 msgid "Also delete all volumes inside this pool:"
 msgstr "同時將這個集區內的所有磁碟區刪除："
 
@@ -236,7 +236,7 @@ msgid ""
 "cloud-init."
 msgstr "自動安裝只在下載映像檔或使用 cloud-init 時可供使用。"
 
-#: src/components/networks/createNetworkDialog.jsx:182
+#: src/components/networks/createNetworkDialog.tsx:237
 msgid "Automatic"
 msgstr "自動"
 
@@ -244,9 +244,9 @@ msgstr "自動"
 msgid "Automation"
 msgstr "自動化"
 
-#: src/components/storagePools/storagePoolOverviewTab.jsx:71
+#: src/components/storagePools/storagePoolOverviewTab.tsx:73
 #: src/components/vm/overview/vmOverviewCard.jsx:194
-#: src/components/networks/networkOverviewTab.jsx:121
+#: src/components/networks/networkOverviewTab.tsx:130
 msgid "Autostart"
 msgstr "自動啟動"
 
@@ -265,6 +265,12 @@ msgstr "開機順序"
 #: src/components/vm/overview/bootOrder.jsx:244
 msgid "Boot order settings could not be saved"
 msgstr "無法儲存開機順序"
+
+#: src/components/vm/nics/nicBody.jsx:226
+#, fuzzy
+#| msgid "bridge"
+msgid "Bridge"
+msgstr "橋接"
 
 #: src/components/vm/overview/bootOrder.jsx:107
 #: src/components/vm/overview/bootOrder.jsx:119
@@ -285,7 +291,7 @@ msgstr "匯流排"
 msgid "CD/DVD disc"
 msgstr "CD/DVD 光碟"
 
-#: src/components/common/needsShutdown.tsx:137
+#: src/components/common/needsShutdown.tsx:145
 #: src/components/vm/overview/vmOverviewCard.jsx:182
 #: src/components/vm/vmUsageCard.jsx:61
 msgid "CPU"
@@ -301,11 +307,11 @@ msgstr "無法儲存 CPU 模式"
 msgid "Cache"
 msgstr "快取"
 
-#: src/components/storagePools/storageVolumeCreate.jsx:119
-#: src/components/storagePools/createStoragePoolDialog.jsx:447
-#: src/components/storagePools/storagePoolDelete.jsx:205
+#: src/components/storagePools/storageVolumeCreate.tsx:136
+#: src/components/storagePools/createStoragePoolDialog.tsx:527
+#: src/components/storagePools/storagePoolDelete.tsx:218
 #: src/components/create-vm-dialog/createVmDialog.jsx:1479
-#: src/components/common/deleteResource.tsx:111
+#: src/components/common/deleteResource.tsx:114
 #: src/components/vm/overview/vsock.jsx:238
 #: src/components/vm/overview/memoryModal.jsx:161
 #: src/components/vm/overview/watchdog.jsx:196
@@ -324,11 +330,11 @@ msgstr "快取"
 #: src/components/vm/deleteDialog.jsx:175
 #: src/components/vm/vmRenameDialog.jsx:73
 #: src/components/vm/vmEditDescriptionDialog.jsx:65
-#: src/components/vm/nics/nicAdd.jsx:223 src/components/vm/nics/nicEdit.jsx:194
+#: src/components/vm/nics/nicAdd.jsx:225 src/components/vm/nics/nicEdit.jsx:196
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:288
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:112
-#: src/components/networks/networkOverviewTab.jsx:239
-#: src/components/networks/createNetworkDialog.jsx:437
+#: src/components/networks/createNetworkDialog.tsx:553
+#: src/components/networks/networkOverviewTab.tsx:260
 msgid "Cancel"
 msgstr "取消"
 
@@ -352,7 +358,7 @@ msgstr "變更開機順序"
 msgid "Change firmware"
 msgstr "變更韌體"
 
-#: src/components/common/needsShutdown.tsx:204
+#: src/components/common/needsShutdown.tsx:212
 msgid "Changes pending"
 msgstr "未套用的變更"
 
@@ -409,7 +415,7 @@ msgstr "Cockpit 專案"
 msgid "Concurrently writeable"
 msgstr "可同時寫入"
 
-#: src/components/common/deleteResource.tsx:122
+#: src/components/common/deleteResource.tsx:125
 msgid "Confirm this action"
 msgstr "確認此動作"
 
@@ -427,11 +433,11 @@ msgid "Connecting"
 msgstr "連線中"
 
 # ctx::sourcefile::Navigation Menu
-#: src/components/storagePools/storagePoolList.jsx:69
+#: src/components/storagePools/storagePoolList.tsx:78
 #: src/components/common/machinesConnectionSelector.tsx:54
 #: src/components/vm/overview/vmOverviewCard.jsx:158
-#: src/components/networks/createNetworkDialog.jsx:43
-#: src/components/networks/networkList.jsx:68
+#: src/components/networks/createNetworkDialog.tsx:47
+#: src/components/networks/networkList.tsx:74
 #: src/components/vms/hostvmslist.tsx:202
 msgid "Connection"
 msgstr "連線"
@@ -482,10 +488,10 @@ msgstr "無法還原至快照"
 msgid "Crashed"
 msgstr "已當機"
 
-#: src/components/storagePools/storageVolumeCreate.jsx:116
-#: src/components/storagePools/createStoragePoolDialog.jsx:444
+#: src/components/storagePools/storageVolumeCreate.tsx:133
+#: src/components/storagePools/createStoragePoolDialog.tsx:524
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:285
-#: src/components/networks/createNetworkDialog.jsx:434
+#: src/components/networks/createNetworkDialog.tsx:550
 msgid "Create"
 msgstr "建立"
 
@@ -534,22 +540,22 @@ msgstr "建立新虛擬機器"
 msgid "Create snapshot"
 msgstr "建立快照"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:440
-#: src/components/storagePools/createStoragePoolDialog.jsx:489
+#: src/components/storagePools/createStoragePoolDialog.tsx:520
+#: src/components/storagePools/createStoragePoolDialog.tsx:576
 msgid "Create storage pool"
 msgstr "建立儲存空間集區"
 
-#: src/components/storagePools/storageVolumeCreate.jsx:112
+#: src/components/storagePools/storageVolumeCreate.tsx:129
 msgid "Create storage volume"
 msgstr "建立儲存空間磁碟區"
 
-#: src/components/networks/createNetworkDialog.jsx:427
-#: src/components/networks/createNetworkDialog.jsx:455
+#: src/components/networks/createNetworkDialog.tsx:543
+#: src/components/networks/createNetworkDialog.tsx:576
 msgid "Create virtual network"
 msgstr "建立虛擬網路"
 
-#: src/components/storagePools/storageVolumeCreate.jsx:157
-#: src/components/storagePools/storageVolumeCreate.jsx:168
+#: src/components/storagePools/storageVolumeCreate.tsx:181
+#: src/components/storagePools/storageVolumeCreate.tsx:192
 msgid "Create volume"
 msgstr "建立磁碟分區"
 
@@ -601,24 +607,24 @@ msgstr "自訂識別碼"
 msgid "Custom path"
 msgstr "自訂路徑"
 
-#: src/components/networks/networkOverviewTab.jsx:272
+#: src/components/networks/networkOverviewTab.tsx:303
 msgid "DHCP Settings"
 msgstr "DHCP 設定"
 
-#: src/components/storagePools/storagePool.jsx:159
-#: src/components/networks/network.jsx:182
+#: src/components/storagePools/storagePool.tsx:171
+#: src/components/networks/network.tsx:185
 msgid "Deactivate"
 msgstr "停用"
 
-#: src/components/storagePools/storagePoolDelete.jsx:202
-#: src/components/storagePools/storagePoolDelete.jsx:238
-#: src/components/storagePools/storagePoolDelete.jsx:248
-#: src/components/common/deleteResource.tsx:99
-#: src/components/common/deleteResource.tsx:175
-#: src/components/common/deleteResource.tsx:186
+#: src/components/storagePools/storagePoolDelete.tsx:215
+#: src/components/storagePools/storagePoolDelete.tsx:247
+#: src/components/storagePools/storagePoolDelete.tsx:257
+#: src/components/common/deleteResource.tsx:102
+#: src/components/common/deleteResource.tsx:178
+#: src/components/common/deleteResource.tsx:189
 #: src/components/vm/deleteDialog.jsx:172 src/components/vm/vmActions.jsx:496
-#: src/components/vm/vmActions.jsx:504 src/components/networks/network.jsx:163
-#: src/components/networks/network.jsx:166
+#: src/components/vm/vmActions.jsx:504 src/components/networks/network.tsx:166
+#: src/components/networks/network.tsx:169
 msgid "Delete"
 msgstr "刪除"
 
@@ -626,11 +632,11 @@ msgstr "刪除"
 msgid "Delete $0 VM?"
 msgstr "刪除 $0 虛擬機器？"
 
-#: src/components/storagePools/storagePoolDelete.jsx:194
+#: src/components/storagePools/storagePoolDelete.tsx:207
 msgid "Delete $0 storage pool?"
 msgstr "刪除 $0 儲存集區？"
 
-#: src/components/storagePools/storageVolumeDelete.jsx:63
+#: src/components/storagePools/storageVolumeDelete.tsx:73
 msgid "Delete $0 volume"
 msgid_plural "Delete $0 volumes"
 msgstr[0] "刪除 $0 個磁碟區"
@@ -639,7 +645,7 @@ msgstr[0] "刪除 $0 個磁碟區"
 msgid "Delete associated storage files:"
 msgstr "刪除相關的儲存空間檔案："
 
-#: src/components/networks/network.jsx:153
+#: src/components/networks/network.tsx:156
 msgid "Delete network?"
 msgstr "刪除網路？"
 
@@ -647,7 +653,7 @@ msgstr "刪除網路？"
 msgid "Delete snapshot?"
 msgstr "刪除快照？"
 
-#: src/components/storagePools/storagePoolDelete.jsx:185
+#: src/components/storagePools/storagePoolDelete.tsx:198
 msgid ""
 "Deleting an inactive storage pool will only undefine the pool. Its content "
 "will not be deleted."
@@ -680,7 +686,7 @@ msgstr "目的地 URI"
 msgid "Destination URI must not be empty"
 msgstr "目的地 URI 不可為空白"
 
-#: src/components/storagePools/storagePoolDelete.jsx:96
+#: src/components/storagePools/storagePoolDelete.tsx:99
 msgid ""
 "Detach the disks using this pool from any VMs before attempting deletion."
 msgstr "在嘗試刪除前，從所有使用此集區中磁碟的虛擬機器上拆離這個集區的磁碟。"
@@ -700,12 +706,12 @@ msgstr "詳細資訊"
 #: src/components/vm/hostdevs/hostDevCard.jsx:244
 #: src/components/vm/hostdevs/hostDevAdd.jsx:88
 #: src/components/vm/hostdevs/hostDevAdd.jsx:123
-#: src/components/networks/createNetworkDialog.jsx:176
-#: src/components/networks/networkList.jsx:67
+#: src/components/networks/createNetworkDialog.tsx:231
+#: src/components/networks/networkList.tsx:73
 msgid "Device"
 msgstr "裝置"
 
-#: src/components/networks/createNetworkDialog.jsx:183
+#: src/components/networks/createNetworkDialog.tsx:238
 msgid "Devices"
 msgstr "裝置"
 
@@ -722,7 +728,7 @@ msgstr "已斷線"
 msgid "Disconnected from serial console. Click the connect button."
 msgstr "序列控制台連線中斷。請按連線按鈕。"
 
-#: src/components/common/needsShutdown.tsx:116
+#: src/components/common/needsShutdown.tsx:123
 msgid "Disk"
 msgstr "磁碟"
 
@@ -812,7 +818,7 @@ msgid "Dying"
 msgstr "垂死"
 
 #: src/components/vm/disks/diskEdit.jsx:149
-#: src/components/vm/nics/vmNicsCard.jsx:454
+#: src/components/vm/nics/vmNicsCard.jsx:464
 msgid "Edit"
 msgstr "編輯"
 
@@ -836,11 +842,11 @@ msgstr "編輯 vsock 介面"
 msgid "Edit watchdog device type"
 msgstr "編輯 watchdog 裝置類型"
 
-#: src/components/vm/nics/vmNicsCard.jsx:442
+#: src/components/vm/nics/vmNicsCard.jsx:452
 msgid "Editing network interfaces of transient guests is not allowed"
 msgstr "不允許編輯暫時性客體的網路介面"
 
-#: src/components/vm/nics/vmNicsCard.jsx:448
+#: src/components/vm/nics/vmNicsCard.jsx:458
 msgid "Editing transient network interfaces is not allowed"
 msgstr "不允許編輯暫時性網路介面"
 
@@ -861,12 +867,12 @@ msgstr "模擬的機器"
 msgid "Enable virtualization support in BIOS/EFI settings."
 msgstr "於 BIOS/EFI 設定啟用虛擬化支援。"
 
-#: src/components/networks/createNetworkDialog.jsx:242
+#: src/components/networks/createNetworkDialog.tsx:325
 msgid "End"
 msgstr "結束"
 
-#: src/components/networks/createNetworkDialog.jsx:99
-#: src/components/networks/createNetworkDialog.jsx:127
+#: src/components/networks/createNetworkDialog.tsx:134
+#: src/components/networks/createNetworkDialog.tsx:162
 msgid "End should not be empty"
 msgstr "結束不應為空值"
 
@@ -934,7 +940,7 @@ msgstr "拆離 watchdog 失敗"
 msgid "Failed to fetch some resources"
 msgstr "取得某些資源失敗"
 
-#: src/components/vm/nics/vmNicsCard.jsx:235
+#: src/components/vm/nics/vmNicsCard.jsx:245
 msgid "Failed to fetch the IP addresses of the interfaces present in $0"
 msgstr "未能取得 $0 中介面的 IP 位址"
 
@@ -946,7 +952,7 @@ msgstr "重新命名虛擬機器 $0 失敗"
 msgid "Failed to replace SPICE devices"
 msgstr "取代 SPICE 裝置失敗"
 
-#: src/components/networks/networkOverviewTab.jsx:246
+#: src/components/networks/networkOverviewTab.tsx:267
 msgid "Failed to save network settings"
 msgstr "儲存網路設定失敗"
 
@@ -971,7 +977,7 @@ msgstr "檔案"
 msgid "Filesystem $0 could not be removed"
 msgstr "檔案系統 $0 無法被移除"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:60
+#: src/components/storagePools/createStoragePoolDialog.tsx:92
 msgid "Filesystem directory"
 msgstr "檔案系統目錄"
 
@@ -1010,17 +1016,17 @@ msgstr "強制關機"
 msgid "Force shut down $0?"
 msgstr "將 $0 強制關機嗎？"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:201
-#: src/components/storagePools/storageVolumeCreateBody.jsx:76
+#: src/components/storagePools/storageVolumeCreateBody.tsx:120
+#: src/components/storagePools/createStoragePoolDialog.tsx:257
 #: src/components/vm/disks/vmDiskColumns.jsx:106
 msgid "Format"
 msgstr "格式"
 
-#: src/components/networks/createNetworkDialog.jsx:157
+#: src/components/networks/createNetworkDialog.tsx:206
 msgid "Forward mode"
 msgstr "轉發模式"
 
-#: src/components/networks/networkList.jsx:69
+#: src/components/networks/networkList.tsx:75
 msgid "Forwarding mode"
 msgstr "轉發模式"
 
@@ -1034,7 +1040,7 @@ msgstr ""
 "的磁碟被傳輸。在遷移後未使用的儲存空間會留在原本的主機上。"
 
 #: src/components/vm/overview/vmOverviewCard.jsx:154
-#: src/components/networks/networkOverviewTab.jsx:112
+#: src/components/networks/networkOverviewTab.tsx:121
 msgid "General"
 msgstr "一般"
 
@@ -1046,7 +1052,7 @@ msgstr "自動產生"
 msgid "Get a new RHSM token."
 msgstr "取得一個新的 RHSM 權杖。"
 
-#: src/components/storagePools/storageVolumeCreateBody.jsx:108
+#: src/components/storagePools/storageVolumeCreateBody.tsx:152
 #: src/components/create-vm-dialog/createVmDialog.jsx:912
 #: src/components/create-vm-dialog/createVmDialog.jsx:1019
 #: src/components/vm/overview/memorySelectRow.jsx:89
@@ -1075,8 +1081,8 @@ msgstr "硬體虛擬化已被停用"
 msgid "Hide additional options"
 msgstr "隱藏額外動作"
 
-#: src/components/storagePools/storagePoolOverviewTab.jsx:34
-#: src/components/storagePools/createStoragePoolDialog.jsx:123
+#: src/components/storagePools/storagePoolOverviewTab.tsx:36
+#: src/components/storagePools/createStoragePoolDialog.tsx:167
 #: src/components/vm/overview/bootOrder.jsx:103
 #: src/components/vm/disks/vmDiskColumns.jsx:47
 msgid "Host"
@@ -1098,11 +1104,11 @@ msgstr "主機裝置將從 $0 被移除："
 msgid "Host devices"
 msgstr "主機裝置"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:126
+#: src/components/storagePools/createStoragePoolDialog.tsx:170
 msgid "Host name"
 msgstr "主機名稱"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:129
+#: src/components/storagePools/createStoragePoolDialog.tsx:173
 msgid "Host should not be empty"
 msgstr "主機不應為空值"
 
@@ -1114,62 +1120,62 @@ msgstr "虛擬機器管理程式詳細資料"
 msgid "ID"
 msgstr "ID"
 
-#: src/components/networks/networkOverviewTab.jsx:69
+#: src/components/networks/networkOverviewTab.tsx:78
 msgid "IP"
 msgstr "IP"
 
-#: src/components/vm/nics/vmNicsCard.jsx:357
-#: src/components/networks/networkOverviewTab.jsx:254
+#: src/components/vm/nics/vmNicsCard.jsx:367
+#: src/components/networks/networkOverviewTab.tsx:275
 msgid "IP address"
 msgstr "IP 位址"
 
-#: src/components/networks/networkOverviewTab.jsx:259
+#: src/components/networks/networkOverviewTab.tsx:280
 msgid "IP address must not be empty"
 msgstr "IP 位址不能為空值"
 
-#: src/components/networks/createNetworkDialog.jsx:198
+#: src/components/networks/createNetworkDialog.tsx:261
 msgid "IP configuration"
 msgstr "IP 設定"
 
-#: src/components/networks/networkOverviewTab.jsx:140
-#: src/components/networks/createNetworkDialog.jsx:259
+#: src/components/networks/createNetworkDialog.tsx:350
+#: src/components/networks/networkOverviewTab.tsx:149
 msgid "IPv4 address"
 msgstr "IPv4 位址"
 
-#: src/components/networks/createNetworkDialog.jsx:88
+#: src/components/networks/createNetworkDialog.tsx:123
 msgid "IPv4 address cannot be same as the network's broadcast address"
 msgstr "IPv4 位址不能與該網路的廣播位址相同"
 
-#: src/components/networks/createNetworkDialog.jsx:206
+#: src/components/networks/createNetworkDialog.tsx:269
 msgid "IPv4 and IPv6"
 msgstr "IPv4 與 IPv6"
 
-#: src/components/networks/createNetworkDialog.jsx:76
+#: src/components/networks/createNetworkDialog.tsx:111
 msgid "IPv4 network should not be empty"
 msgstr "IPv4 網路不應留白"
 
-#: src/components/networks/createNetworkDialog.jsx:204
+#: src/components/networks/createNetworkDialog.tsx:267
 msgid "IPv4 only"
 msgstr "僅 IPv4"
 
-#: src/components/networks/createNetworkDialog.jsx:71
+#: src/components/networks/createNetworkDialog.tsx:106
 msgid "IPv4 prefix length must be 24 or less"
 msgstr "IPv4 前綴長度須為 24 或更小"
 
-#: src/components/networks/createNetworkDialog.jsx:68
+#: src/components/networks/createNetworkDialog.tsx:103
 msgid "IPv4 prefix length must be a multiple of 8"
 msgstr "IPv4 前綴長度須為 8 的倍數"
 
-#: src/components/networks/networkOverviewTab.jsx:160
-#: src/components/networks/createNetworkDialog.jsx:289
+#: src/components/networks/createNetworkDialog.tsx:391
+#: src/components/networks/networkOverviewTab.tsx:169
 msgid "IPv6 address"
 msgstr "IPv6 位址"
 
-#: src/components/networks/createNetworkDialog.jsx:109
+#: src/components/networks/createNetworkDialog.tsx:144
 msgid "IPv6 network should not be empty"
 msgstr "IPv6 網路不能是空值"
 
-#: src/components/networks/createNetworkDialog.jsx:205
+#: src/components/networks/createNetworkDialog.tsx:268
 msgid "IPv6 only"
 msgstr "僅 IPv6"
 
@@ -1225,20 +1231,11 @@ msgid ""
 "communication."
 msgstr "在大多數的設定中，macvtap 無法提供主機到客體間的網路通訊。"
 
-#: src/components/vm/nics/nicBody.jsx:102
-msgid ""
-"In the default 'vepa' mode, switching is offloaded to the external switch. "
-"If the switch is not VEPA-capable, communication between guest virtual "
-"machines, or between a guests and the host is not possible."
-msgstr ""
-"在預設的 'vepa' 模式，交換器功能會被卸載至外部交換器。如果交換器沒有 VEPA 功"
-"能，將無法讓虛擬機之間或主機對虛擬機通訊。"
-
-#: src/components/storagePools/createStoragePoolDialog.jsx:140
+#: src/components/storagePools/createStoragePoolDialog.tsx:190
 msgid "Initiator"
 msgstr "啟動器"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:146
+#: src/components/storagePools/createStoragePoolDialog.tsx:196
 msgid "Initiator should not be empty"
 msgstr "起動器不應該留白"
 
@@ -1279,31 +1276,31 @@ msgstr "安裝類型"
 msgid "Interface"
 msgstr "介面"
 
-#: src/components/vm/nics/nicBody.jsx:164
+#: src/components/vm/nics/nicBody.jsx:152
 msgid "Interface type"
 msgstr "介面類型"
 
-#: src/components/vm/nics/nicBody.jsx:166
+#: src/components/vm/nics/nicBody.jsx:154
 msgid "Interface type help"
 msgstr "介面類型說明"
 
-#: src/components/networks/createNetworkDialog.jsx:78
-#: src/components/networks/createNetworkDialog.jsx:94
-#: src/components/networks/createNetworkDialog.jsx:101
+#: src/components/networks/createNetworkDialog.tsx:113
+#: src/components/networks/createNetworkDialog.tsx:129
+#: src/components/networks/createNetworkDialog.tsx:136
 msgid "Invalid IPv4 address"
 msgstr "無效的 IPv4 位址"
 
-#: src/components/networks/createNetworkDialog.jsx:65
+#: src/components/networks/createNetworkDialog.tsx:100
 msgid "Invalid IPv4 mask or prefix length"
 msgstr "無效的 IPv4 遮罩或前綴長度"
 
-#: src/components/networks/createNetworkDialog.jsx:111
-#: src/components/networks/createNetworkDialog.jsx:122
-#: src/components/networks/createNetworkDialog.jsx:129
+#: src/components/networks/createNetworkDialog.tsx:146
+#: src/components/networks/createNetworkDialog.tsx:157
+#: src/components/networks/createNetworkDialog.tsx:164
 msgid "Invalid IPv6 address"
 msgstr "無效的 IPv6 位址"
 
-#: src/components/networks/createNetworkDialog.jsx:116
+#: src/components/networks/createNetworkDialog.tsx:151
 msgid "Invalid IPv6 prefix"
 msgstr "無效的 IPv6 前綴"
 
@@ -1319,7 +1316,7 @@ msgstr "隔離的網路"
 msgid "Keys are located in ~/.ssh/ and have a \".pub\" extension."
 msgstr "金鑰位於 ~/.ssh/ 且會有 \".pub\" 副檔名。"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:64
+#: src/components/storagePools/createStoragePoolDialog.tsx:96
 msgid "LVM volume group"
 msgstr "LVM 磁碟區群組"
 
@@ -1350,7 +1347,7 @@ msgstr "Libvirt 未偵測到主機上有安裝任何 UEFI/OVMF 韌體映像檔"
 msgid "Libvirt or hypervisor does not support UEFI"
 msgstr "Libvirt 或虛擬機器管理程式不支援 UEFI"
 
-#: src/components/vm/nics/vmNicsCard.jsx:445
+#: src/components/vm/nics/vmNicsCard.jsx:455
 msgid "Loading available network devices"
 msgstr "正在載入可用的網路裝置"
 
@@ -1374,21 +1371,21 @@ msgstr "位置"
 # translation auto-copied from project Satellite6 Hammer CLI Foreman, version
 # 6.1, document hammer-cli-foreman
 #: src/components/vm/overview/bootOrder.jsx:113
-#: src/components/networks/networkOverviewTab.jsx:70
+#: src/components/networks/networkOverviewTab.tsx:79
 msgid "MAC"
 msgstr "MAC"
 
 #: src/components/vm/nics/nicAdd.jsx:70 src/components/vm/nics/nicEdit.jsx:49
-#: src/components/vm/nics/vmNicsCard.jsx:351
-#: src/components/networks/networkOverviewTab.jsx:247
+#: src/components/vm/nics/vmNicsCard.jsx:361
+#: src/components/networks/networkOverviewTab.tsx:268
 msgid "MAC address"
 msgstr "MAC 位址"
 
-#: src/components/vm/nics/nicAdd.jsx:154 src/components/vm/nics/nicEdit.jsx:131
+#: src/components/vm/nics/nicAdd.jsx:155 src/components/vm/nics/nicEdit.jsx:132
 msgid "MAC address already in use"
 msgstr "MAC 位址已被使用"
 
-#: src/components/networks/networkOverviewTab.jsx:252
+#: src/components/networks/networkOverviewTab.tsx:273
 msgid "MAC address must not be empty"
 msgstr "MAC 位址不得為空值"
 
@@ -1416,11 +1413,11 @@ msgstr "管理虛擬機器"
 msgid "Manual connection"
 msgstr "手動連線"
 
-#: src/components/networks/createNetworkDialog.jsx:266
+#: src/components/networks/createNetworkDialog.tsx:357
 msgid "Mask or prefix length"
 msgstr "遮罩或前綴長度"
 
-#: src/components/networks/createNetworkDialog.jsx:61
+#: src/components/networks/createNetworkDialog.tsx:96
 msgid "Mask or prefix length should not be empty"
 msgstr "遮罩或前綴長度不應為空值"
 
@@ -1442,7 +1439,7 @@ msgid ""
 "between 1 and $0"
 msgstr "分配給客體作業系統的最大虛擬 CPU 數量，須介於 1 和 $0 之間"
 
-#: src/components/networks/networkOverviewTab.jsx:131
+#: src/components/networks/networkOverviewTab.tsx:140
 msgid "Maximum transmission unit"
 msgstr "最大傳輸單元"
 
@@ -1481,7 +1478,7 @@ msgstr "記憶體快照將使用約 $0 。"
 msgid "Memory state path"
 msgstr "記憶體狀態路徑"
 
-#: src/components/storagePools/storageVolumeCreateBody.jsx:106
+#: src/components/storagePools/storageVolumeCreateBody.tsx:150
 #: src/components/create-vm-dialog/createVmDialog.jsx:910
 #: src/components/create-vm-dialog/createVmDialog.jsx:1017
 #: src/components/vm/overview/memorySelectRow.jsx:87
@@ -1503,17 +1500,31 @@ msgstr "遷移失敗"
 
 #: src/components/vm/overview/cpuModal.jsx:293
 #: src/components/vm/overview/cpuModal.jsx:295
+#: src/components/vm/nics/nicBody.jsx:192
+#: src/components/vm/nics/vmNicsCard.jsx:151
 msgid "Mode"
 msgstr "模式"
 
+#: src/components/vm/nics/nicBody.jsx:196
+#, fuzzy
+#| msgid "Model"
+msgid "Mode help"
+msgstr "型號"
+
 #: src/components/vm/hostdevs/hostDevCard.jsx:197
-#: src/components/vm/nics/nicBody.jsx:50
+#: src/components/vm/nics/nicBody.jsx:51
 msgid "Model"
 msgstr "型號"
 
-#: src/components/vm/nics/vmNicsCard.jsx:338
+#: src/components/vm/nics/vmNicsCard.jsx:348
 msgid "Model type"
 msgstr "型號類型"
+
+#: src/components/vm/nics/nicBody.jsx:212
+#, fuzzy
+#| msgid "more info"
+msgid "More info"
+msgstr "更多資訊"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:47
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:65
@@ -1525,7 +1536,7 @@ msgstr "掛載標籤"
 msgid "Mount tag must not be empty"
 msgstr "掛載標籤不得為空值"
 
-#: src/components/networks/createNetworkDialog.jsx:83
+#: src/components/networks/createNetworkDialog.tsx:118
 msgid "Must be an address instead of the network identifier, such as $0"
 msgstr "須為位址而非網路辨識碼，例如 $0"
 
@@ -1533,20 +1544,20 @@ msgstr "須為位址而非網路辨識碼，例如 $0"
 msgid "NAT to $0"
 msgstr "NAT 至 $0"
 
-#: src/components/vm/nics/vmNicsCard.jsx:308
+#: src/components/vm/nics/vmNicsCard.jsx:318
 msgid "NIC $0 of VM $1 failed to change state"
 msgstr "虛擬機器 $1 的網路卡 $0 變更狀態失敗"
 
-#: src/components/storagePools/storagePoolVolumesTab.jsx:78
-#: src/components/storagePools/storagePoolList.jsx:67
-#: src/components/storagePools/createStoragePoolDialog.jsx:47
-#: src/components/storagePools/storageVolumeCreateBody.jsx:38
+#: src/components/storagePools/storageVolumeCreateBody.tsx:64
+#: src/components/storagePools/storagePoolVolumesTab.tsx:90
+#: src/components/storagePools/storagePoolList.tsx:76
+#: src/components/storagePools/createStoragePoolDialog.tsx:69
 #: src/components/create-vm-dialog/createVmDialog.jsx:268
 #: src/components/vm/vmCloneDialog.jsx:95
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:50
 #: src/components/vm/snapshots/vmSnapshotsCard.jsx:104
-#: src/components/networks/createNetworkDialog.jsx:142
-#: src/components/networks/networkList.jsx:66
+#: src/components/networks/createNetworkDialog.tsx:185
+#: src/components/networks/networkList.tsx:72
 #: src/components/vms/hostvmslist.tsx:201
 msgid "Name"
 msgstr "名稱"
@@ -1559,42 +1570,42 @@ msgstr "名稱已經存在"
 msgid "Name can not be empty"
 msgstr "名稱不得為空值"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:53
+#: src/components/storagePools/createStoragePoolDialog.tsx:75
 msgid "Name contains invalid characters"
 msgstr "名稱含有無效的字元"
 
-#: src/components/storagePools/storageVolumeCreate.jsx:76
+#: src/components/storagePools/storageVolumeCreate.tsx:93
 #: src/components/create-vm-dialog/createVmDialog.jsx:197
 #: src/components/vm/vmCloneDialog.jsx:47
 msgid "Name must not be empty"
 msgstr "名稱不能為空值"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:53
-#: src/components/networks/createNetworkDialog.jsx:55
+#: src/components/storagePools/createStoragePoolDialog.tsx:75
+#: src/components/networks/createNetworkDialog.tsx:90
 msgid "Name should not be empty"
 msgstr "名稱不應為空"
 
-#: src/components/networks/networkOverviewTab.jsx:49
+#: src/components/networks/networkOverviewTab.tsx:58
 msgid "Name: "
 msgstr "名稱： "
 
-#: src/components/networks/networkOverviewTab.jsx:149
+#: src/components/networks/networkOverviewTab.tsx:158
 msgid "Netmask"
 msgstr "網路遮罩"
 
-#: src/components/networks/network.jsx:154
+#: src/components/networks/network.tsx:157
 msgid "Network $0 could not be deleted"
 msgstr "網路 $0 無法被刪除"
 
-#: src/components/networks/network.jsx:111
+#: src/components/networks/network.tsx:114
 msgid "Network $0 failed to get activated"
 msgstr "網路 $0 無法被啟用"
 
-#: src/components/networks/network.jsx:135
+#: src/components/networks/network.tsx:138
 msgid "Network $0 failed to get deactivated"
 msgstr "網路 $0 無法被停用"
 
-#: src/components/networks/network.jsx:155
+#: src/components/networks/network.tsx:158
 msgid "Network $0 will be permanently deleted."
 msgstr "網路 $0 將被永遠刪除。"
 
@@ -1602,23 +1613,23 @@ msgstr "網路 $0 將被永遠刪除。"
 msgid "Network boot (PXE)"
 msgstr "網路開機 (PXE)"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:61
+#: src/components/storagePools/createStoragePoolDialog.tsx:93
 msgid "Network file system"
 msgstr "網絡檔案系統"
 
-#: src/components/common/needsShutdown.tsx:126
+#: src/components/common/needsShutdown.tsx:134
 msgid "Network interface"
 msgstr "網路介面"
 
-#: src/components/vm/nics/vmNicsCard.jsx:470
+#: src/components/vm/nics/vmNicsCard.jsx:480
 msgid "Network interface $0 could not be removed"
 msgstr "網路介面 $0 無法被移除"
 
-#: src/components/vm/nics/vmNicsCard.jsx:471
+#: src/components/vm/nics/vmNicsCard.jsx:481
 msgid "Network interface $0 will be removed from $1"
 msgstr "網路界面 $0 將被從 $1 移除"
 
-#: src/components/vm/nics/nicAdd.jsx:175 src/components/vm/nics/nicEdit.jsx:150
+#: src/components/vm/nics/nicAdd.jsx:177 src/components/vm/nics/nicEdit.jsx:152
 msgid "Network interface settings could not be saved"
 msgstr "網路介面設定無法被儲存"
 
@@ -1630,9 +1641,9 @@ msgstr "網路介面"
 msgid "Network selection does not support PXE."
 msgstr "所選網路不支援 PXE。"
 
-#: src/components/networks/networkList.jsx:54
-#: src/components/networks/networkList.jsx:61
-#: src/components/networks/networkList.jsx:63
+#: src/components/networks/networkList.tsx:60
+#: src/components/networks/networkList.tsx:67
+#: src/components/networks/networkList.tsx:69
 msgid "Networks"
 msgstr "網路"
 
@@ -1644,7 +1655,7 @@ msgstr "新名稱"
 msgid "New name must not be empty"
 msgstr "新名稱不得為空值"
 
-#: src/components/storagePools/storageVolumeCreateBody.jsx:41
+#: src/components/storagePools/storageVolumeCreateBody.tsx:67
 msgid "New volume name"
 msgstr "新磁碟區名稱"
 
@@ -1684,15 +1695,15 @@ msgstr "未選擇主機裝置"
 msgid "No host devices assigned to this VM"
 msgstr "未指派主機裝置給此虛擬機器"
 
-#: src/components/vm/nics/nicBody.jsx:151
+#: src/components/vm/nics/nicBody.jsx:139
 msgid "No network devices"
 msgstr "沒有網路裝置"
 
-#: src/components/vm/nics/vmNicsCard.jsx:561
+#: src/components/vm/nics/vmNicsCard.jsx:571
 msgid "No network interfaces defined for this VM"
 msgstr "沒有為此虛擬機器定義的網路介面"
 
-#: src/components/networks/networkList.jsx:73
+#: src/components/networks/networkList.tsx:79
 msgid "No network is defined on this host"
 msgstr "此主機上沒有定義網路"
 
@@ -1716,7 +1727,7 @@ msgstr "沒有狀態"
 msgid "No storage"
 msgstr "沒有儲存空間"
 
-#: src/components/storagePools/storagePoolList.jsx:73
+#: src/components/storagePools/storagePoolList.tsx:82
 msgid "No storage pool is defined on this host"
 msgstr "此主機上沒有已定義的儲存集區"
 
@@ -1724,31 +1735,31 @@ msgstr "此主機上沒有已定義的儲存集區"
 msgid "No storage pools available"
 msgstr "沒有可用的儲存集區"
 
-#: src/components/storagePools/storagePoolVolumesTab.jsx:112
+#: src/components/storagePools/storagePoolVolumesTab.tsx:124
 msgid "No storage volumes defined for this storage pool"
 msgstr "此儲存集區沒有已定義的儲存磁碟區"
 
-#: src/components/vm/nics/nicBody.jsx:149
+#: src/components/vm/nics/nicBody.jsx:137
 msgid "No virtual networks"
 msgstr "沒有虛擬網路"
 
-#: src/components/storagePools/storagePoolDelete.jsx:184
+#: src/components/storagePools/storagePoolDelete.tsx:197
 msgid "No volumes exist in this storage pool."
 msgstr "此儲存集區沒有既存的磁碟區。"
 
-#: src/components/networks/network.jsx:162
+#: src/components/networks/network.tsx:165
 msgid ""
 "Non-persistent network cannot be deleted. It ceases to exists when it's "
 "deactivated."
 msgstr "非持續性的網路不能被刪除。它會在被停用後自然消失。"
 
-#: src/components/storagePools/storagePoolDelete.jsx:227
+#: src/components/storagePools/storagePoolDelete.tsx:236
 msgid ""
 "Non-persistent storage pool cannot be deleted. It ceases to exists when it's "
 "deactivated."
 msgstr "非持續性的儲存集區不能被刪除。它會在被停用後自然消失。"
 
-#: src/components/networks/createNetworkDialog.jsx:203
+#: src/components/networks/createNetworkDialog.tsx:266
 msgid "None"
 msgstr "無"
 
@@ -1772,7 +1783,7 @@ msgstr "舊的權杖已過期"
 msgid "On the host"
 msgstr "於主機上"
 
-#: src/components/storagePools/storageVolumeDelete.jsx:71
+#: src/components/storagePools/storageVolumeDelete.tsx:81
 msgid ""
 "One or more selected volumes are used by domains. Detach the disks first to "
 "allow volume deletion."
@@ -1792,8 +1803,8 @@ msgstr "開放"
 msgid "Operating system"
 msgstr "作業系統"
 
-#: src/components/storagePools/storagePool.jsx:173
-#: src/components/storagePools/storagePool.jsx:180
+#: src/components/storagePools/storagePool.tsx:185
+#: src/components/storagePools/storagePool.tsx:192
 msgid "Operation is in progress"
 msgstr "作業正在進行"
 
@@ -1803,7 +1814,7 @@ msgstr "其他使用 SPICE 的虛擬機器"
 
 # translation auto-copied from project virt-manager, version 0.10.0, document
 # virt-manager
-#: src/components/storagePools/storagePool.jsx:74
+#: src/components/storagePools/storagePool.tsx:77
 #: src/components/vm/vmDetailsPage.jsx:119
 msgid "Overview"
 msgstr "概覽"
@@ -1816,6 +1827,12 @@ msgstr "PCI"
 msgid "Parent snapshot"
 msgstr "上層快照"
 
+#: src/components/vm/nics/nicBody.jsx:236
+#, fuzzy
+#| msgid "host passthrough"
+msgid "Passthrough"
+msgstr "主機直通"
+
 #: src/components/vm/disks/diskEdit.jsx:43
 #: src/components/vm/hostdevs/hostDevCard.jsx:123
 #: src/components/vm/hostdevs/hostDevCard.jsx:127
@@ -1823,7 +1840,7 @@ msgstr "上層快照"
 msgid "Path"
 msgstr "路徑"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:109
+#: src/components/storagePools/createStoragePoolDialog.tsx:147
 msgid "Path on host's filesystem"
 msgstr "主機檔案系統上的路徑"
 
@@ -1863,20 +1880,20 @@ msgstr "存取家目錄中的磁碟映像檔時權限被拒"
 msgid "Persistence"
 msgstr "持續性"
 
-#: src/components/storagePools/storagePoolOverviewTab.jsx:66
-#: src/components/networks/networkOverviewTab.jsx:116
+#: src/components/storagePools/storagePoolOverviewTab.tsx:68
+#: src/components/networks/networkOverviewTab.tsx:125
 msgid "Persistent"
 msgstr "持續的"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:63
+#: src/components/storagePools/createStoragePoolDialog.tsx:95
 msgid "Physical disk device"
 msgstr "實體磁碟裝置"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:167
+#: src/components/storagePools/createStoragePoolDialog.tsx:223
 msgid "Physical disk device on host"
 msgstr "主機上的實體磁碟裝置"
 
-#: src/components/vm/nics/nicAdd.jsx:154 src/components/vm/nics/nicEdit.jsx:131
+#: src/components/vm/nics/nicAdd.jsx:155 src/components/vm/nics/nicEdit.jsx:132
 msgid "Please choose a different MAC address"
 msgstr "請選擇一個不同的 MAC 位址"
 
@@ -1908,7 +1925,7 @@ msgstr "請啟動虛擬機器以存取它的控制台。"
 msgid "Pool"
 msgstr "集區"
 
-#: src/components/storagePools/storageVolumeCreate.jsx:163
+#: src/components/storagePools/storageVolumeCreate.tsx:187
 msgid "Pool needs to be active to create volume"
 msgstr "集區須為啟用狀態才能建立磁碟區"
 
@@ -1916,18 +1933,18 @@ msgstr "集區須為啟用狀態才能建立磁碟區"
 msgid "Pool type $0 does not support volume creation"
 msgstr "集區類型 $0 不支援建立磁碟區"
 
-#: src/components/storagePools/storageVolumeCreate.jsx:163
+#: src/components/storagePools/storageVolumeCreate.tsx:187
 msgid "Pool type doesn't support volume creation"
 msgstr "集區類型不支援建立磁碟區"
 
-#: src/components/storagePools/storagePoolDelete.jsx:94
+#: src/components/storagePools/storagePoolDelete.tsx:97
 msgid "Pool's volumes are used by VMs "
 msgstr "集區的磁碟區正被用於虛擬機器 "
 
 #: src/components/vm/overview/bootOrder.jsx:104
 #: src/components/vm/overview/bootOrder.jsx:120
 #: src/components/vm/disks/vmDiskColumns.jsx:48
-#: src/components/vm/nics/vmNicsCard.jsx:162
+#: src/components/vm/nics/vmNicsCard.jsx:172
 msgid "Port"
 msgstr "連接埠"
 
@@ -1935,7 +1952,7 @@ msgstr "連接埠"
 msgid "Power off"
 msgstr "電源關閉"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:65
+#: src/components/storagePools/createStoragePoolDialog.tsx:97
 msgid "Pre-formatted block device"
 msgstr "已預先格式化的區塊裝置"
 
@@ -1943,15 +1960,15 @@ msgstr "已預先格式化的區塊裝置"
 msgid "Preferred number of sockets to expose to the guest."
 msgstr "要向客體虛擬機公開的 socket 數量。"
 
-#: src/components/networks/networkOverviewTab.jsx:169
+#: src/components/networks/networkOverviewTab.tsx:178
 msgid "Prefix"
 msgstr "前綴"
 
-#: src/components/networks/createNetworkDialog.jsx:296
+#: src/components/networks/createNetworkDialog.tsx:398
 msgid "Prefix length"
 msgstr "前綴長度"
 
-#: src/components/networks/createNetworkDialog.jsx:114
+#: src/components/networks/createNetworkDialog.tsx:149
 msgid "Prefix length should not be empty"
 msgstr "前綴長度不應為空值"
 
@@ -1961,7 +1978,7 @@ msgid ""
 "something goes wrong"
 msgstr "先前建立的快照允許您在發生意外時還原到先前的狀態"
 
-#: src/helpers.ts:272
+#: src/components/vm/nics/nicBody.jsx:231 src/helpers.ts:272
 msgid "Private"
 msgstr "私有"
 
@@ -1984,7 +2001,7 @@ msgstr "設定檔"
 msgid "Protocol"
 msgstr "協定"
 
-#: src/components/vm/nics/nicBody.jsx:96
+#: src/components/vm/nics/nicBody.jsx:97
 msgid ""
 "Provides a bridge from the guest virtual machine directly onto the LAN. This "
 "needs a bridge device on the host with one or more physical NICs."
@@ -1992,13 +2009,13 @@ msgstr ""
 "提供一個從虛擬機器客端直接連至區域網路的橋接。需要一個於主機上具一或多個實體"
 "網路卡的橋接裝置。"
 
-#: src/components/vm/nics/nicBody.jsx:87
+#: src/components/vm/nics/nicBody.jsx:88
 msgid ""
 "Provides a connection whose details are described by the named network "
 "definition."
 msgstr "提供一個由指定名稱網路定義描述詳細資料的連線。"
 
-#: src/components/vm/nics/nicBody.jsx:123
+#: src/components/vm/nics/nicBody.jsx:111
 msgid "Provides a virtual LAN with NAT to the outside world."
 msgstr "提供一個具可連線至外界的 NAT 的虛擬區域網路。"
 
@@ -2010,7 +2027,7 @@ msgstr "公開 SSH 金鑰"
 msgid "Public key"
 msgstr "公鑰"
 
-#: src/components/networks/networkOverviewTab.jsx:276
+#: src/components/networks/networkOverviewTab.tsx:307
 msgid "Range"
 msgstr "範圍"
 
@@ -2052,9 +2069,9 @@ msgstr "Remote viewer 詳細資訊"
 #: src/components/vm/disks/vmDiskColumns.jsx:213
 #: src/components/vm/hostdevs/hostDevCard.jsx:251
 #: src/components/vm/hostdevs/hostDevCard.jsx:257
-#: src/components/vm/nics/vmNicsCard.jsx:472
 #: src/components/vm/nics/vmNicsCard.jsx:482
-#: src/components/networks/networkOverviewTab.jsx:72
+#: src/components/vm/nics/vmNicsCard.jsx:492
+#: src/components/networks/networkOverviewTab.tsx:81
 msgid "Remove"
 msgstr "移除"
 
@@ -2082,11 +2099,11 @@ msgstr "從虛擬機器移除主機裝置？"
 msgid "Remove item"
 msgstr "移除項目"
 
-#: src/components/vm/nics/vmNicsCard.jsx:469
+#: src/components/vm/nics/vmNicsCard.jsx:479
 msgid "Remove network interface?"
 msgstr "移除網路介面？"
 
-#: src/components/networks/networkOverviewTab.jsx:65
+#: src/components/networks/networkOverviewTab.tsx:74
 msgid "Remove static host from DHCP"
 msgstr "從 DHCP 移除靜態主機"
 
@@ -2172,7 +2189,7 @@ msgid "Run"
 msgstr "執行"
 
 #: src/components/vm/overview/vmOverviewCard.jsx:107
-#: src/components/networks/networkOverviewTab.jsx:126
+#: src/components/networks/networkOverviewTab.tsx:135
 msgid "Run when host boots"
 msgstr "在主機開機時執行"
 
@@ -2180,7 +2197,7 @@ msgstr "在主機開機時執行"
 msgid "Running"
 msgstr "執行中"
 
-#: src/components/common/needsShutdown.tsx:145
+#: src/components/common/needsShutdown.tsx:153
 msgid "SPICE"
 msgstr "SPICE"
 
@@ -2218,7 +2235,7 @@ msgstr "SSH 金鑰"
 #: src/components/vm/overview/bootOrder.jsx:317
 #: src/components/vm/disks/diskEdit.jsx:248
 #: src/components/vm/vmEditDescriptionDialog.jsx:62
-#: src/components/vm/nics/nicEdit.jsx:191
+#: src/components/vm/nics/nicEdit.jsx:193
 msgid "Save"
 msgstr "儲存"
 
@@ -2254,7 +2271,7 @@ msgstr "序列控制台"
 msgid "Serial console ($0)"
 msgstr "序列控制台 ($0)"
 
-#: src/components/networks/createNetworkDialog.jsx:230
+#: src/components/networks/createNetworkDialog.tsx:313
 msgid "Set DHCP range"
 msgstr "設定 DHCP 範圍"
 
@@ -2327,9 +2344,9 @@ msgstr "將虛擬機器關機以編輯韌體設定"
 msgid "Shutting down"
 msgstr "正在關機"
 
-#: src/components/storagePools/storagePoolVolumesTab.jsx:78
-#: src/components/storagePools/storagePoolList.jsx:68
-#: src/components/storagePools/storageVolumeCreateBody.jsx:90
+#: src/components/storagePools/storageVolumeCreateBody.tsx:134
+#: src/components/storagePools/storagePoolVolumesTab.tsx:90
+#: src/components/storagePools/storagePoolList.tsx:77
 msgid "Size"
 msgstr "大小"
 
@@ -2365,21 +2382,21 @@ msgstr "快照"
 msgid "Sockets"
 msgstr "插槽"
 
-#: src/components/common/needsShutdown.tsx:181
+#: src/components/common/needsShutdown.tsx:189
 msgid "Some configuration changes only take effect after a fresh boot:"
 msgstr "部份設定變更僅在下一次完整重新開機後生效："
 
-#: src/components/storagePools/storagePoolOverviewTab.jsx:51
+#: src/components/storagePools/storagePoolOverviewTab.tsx:53
 #: src/components/vm/disks/diskAdd.jsx:586
 #: src/components/vm/disks/diskAdd.jsx:622
 #: src/components/vm/disks/vmDisksCard.jsx:190
 #: src/components/vm/hostdevs/hostDevCard.jsx:217
-#: src/components/vm/nics/nicBody.jsx:196
-#: src/components/vm/nics/vmNicsCard.jsx:407
+#: src/components/vm/nics/nicBody.jsx:181
+#: src/components/vm/nics/vmNicsCard.jsx:417
 msgid "Source"
 msgstr "來源"
 
-#: src/components/storagePools/storagePoolOverviewTab.jsx:56
+#: src/components/storagePools/storagePoolOverviewTab.tsx:58
 msgid "Source format"
 msgstr "來源格式"
 
@@ -2387,18 +2404,18 @@ msgstr "來源格式"
 msgid "Source must not be empty"
 msgstr "來源不可為空值"
 
-#: src/components/storagePools/storagePoolOverviewTab.jsx:41
-#: src/components/storagePools/storagePoolOverviewTab.jsx:46
-#: src/components/storagePools/createStoragePoolDialog.jsx:175
-#: src/components/storagePools/createStoragePoolDialog.jsx:192
+#: src/components/storagePools/storagePoolOverviewTab.tsx:43
+#: src/components/storagePools/storagePoolOverviewTab.tsx:48
+#: src/components/storagePools/createStoragePoolDialog.tsx:231
+#: src/components/storagePools/createStoragePoolDialog.tsx:248
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:47
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:64
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:195
 msgid "Source path"
 msgstr "來源路徑"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:186
-#: src/components/storagePools/createStoragePoolDialog.jsx:199
+#: src/components/storagePools/createStoragePoolDialog.tsx:242
+#: src/components/storagePools/createStoragePoolDialog.tsx:255
 msgid "Source path should not be empty"
 msgstr "來源路徑不應為空"
 
@@ -2406,20 +2423,20 @@ msgstr "來源路徑不應為空"
 msgid "Source should start with http, ftp or nfs protocol"
 msgstr "來源應為 http、ftp 或 nfs 協定開頭"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:220
+#: src/components/storagePools/createStoragePoolDialog.tsx:276
 msgid "Source volume group"
 msgstr "來源磁碟區群組"
 
-#: src/components/networks/createNetworkDialog.jsx:235
+#: src/components/networks/createNetworkDialog.tsx:318
 msgid "Start"
 msgstr "開始"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:237
+#: src/components/storagePools/createStoragePoolDialog.tsx:299
 msgid "Start pool when host boots"
 msgstr "主機開機時就啟動集區"
 
-#: src/components/networks/createNetworkDialog.jsx:92
-#: src/components/networks/createNetworkDialog.jsx:120
+#: src/components/networks/createNetworkDialog.tsx:127
+#: src/components/networks/createNetworkDialog.tsx:155
 msgid "Start should not be empty"
 msgstr "開始不得為空值"
 
@@ -2427,24 +2444,24 @@ msgstr "開始不得為空值"
 msgid "Started"
 msgstr "已啟動"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:235
+#: src/components/storagePools/createStoragePoolDialog.tsx:297
 msgid "Startup"
 msgstr "啟動"
 
-#: src/components/storagePools/storagePoolList.jsx:70
+#: src/components/storagePools/storagePoolList.tsx:79
 #: src/components/vm/overview/vmOverviewCard.jsx:163
-#: src/components/vm/nics/vmNicsCard.jsx:412
-#: src/components/networks/networkList.jsx:70
+#: src/components/vm/nics/vmNicsCard.jsx:422
+#: src/components/networks/networkList.tsx:76
 #: src/components/vms/hostvmslist.tsx:156
 #: src/components/vms/hostvmslist.tsx:203
 msgid "State"
 msgstr "狀態"
 
-#: src/components/networks/networkOverviewTab.jsx:284
+#: src/components/networks/networkOverviewTab.tsx:315
 msgid "Static host entries"
 msgstr "靜態主機項目"
 
-#: src/components/networks/networkOverviewTab.jsx:66
+#: src/components/networks/networkOverviewTab.tsx:75
 msgid "Static host from DHCP could not be removed"
 msgstr "來自 DHCP 的靜態主機無法被移除"
 
@@ -2461,25 +2478,25 @@ msgstr "儲存空間位於共享的位置"
 msgid "Storage limit"
 msgstr "儲存空間限制"
 
-#: src/components/storagePools/storagePool.jsx:121
+#: src/components/storagePools/storagePool.tsx:133
 msgid "Storage pool $0 failed to get activated"
 msgstr "儲存集區 $0 啟用失敗"
 
-#: src/components/storagePools/storagePool.jsx:141
+#: src/components/storagePools/storagePool.tsx:153
 msgid "Storage pool $0 failed to get deactivated"
 msgstr "儲存集區 $0 停用失敗"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:403
+#: src/components/storagePools/createStoragePoolDialog.tsx:479
 msgid "Storage pool failed to be created"
 msgstr "儲存集區建立失敗"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:49
+#: src/components/storagePools/createStoragePoolDialog.tsx:71
 msgid "Storage pool name"
 msgstr "儲存集區名稱"
 
-#: src/components/storagePools/storagePoolList.jsx:55
-#: src/components/storagePools/storagePoolList.jsx:62
-#: src/components/storagePools/storagePoolList.jsx:64
+#: src/components/storagePools/storagePoolList.tsx:64
+#: src/components/storagePools/storagePoolList.tsx:71
+#: src/components/storagePools/storagePoolList.tsx:73
 #: src/components/create-vm-dialog/createVmDialog.jsx:972
 msgid "Storage pools"
 msgstr "儲存集區"
@@ -2496,16 +2513,16 @@ msgstr "儲存空間大小必須不為 0"
 msgid "Storage volume"
 msgstr "儲存磁碟區"
 
-#: src/components/storagePools/storageVolumeCreate.jsx:79
+#: src/components/storagePools/storageVolumeCreate.tsx:96
 #: src/components/vm/disks/diskAdd.jsx:560
 msgid "Storage volume size must not exceed the storage pool's capacity ($0 $1)"
 msgstr "儲存磁碟區大小必須不超過儲存集區的容量 ($0 $1)"
 
-#: src/components/storagePools/storagePool.jsx:80
+#: src/components/storagePools/storagePool.tsx:83
 msgid "Storage volumes"
 msgstr "儲存空間磁碟區"
 
-#: src/components/storagePools/storageVolumeDelete.jsx:47
+#: src/components/storagePools/storageVolumeDelete.tsx:57
 msgid "Storage volumes could not be deleted"
 msgstr "儲存磁碟區無法被刪除"
 
@@ -2528,11 +2545,11 @@ msgstr "切換至 VNC 以繼續使用此機器。"
 msgid "System"
 msgstr "系統"
 
-#: src/components/vm/nics/vmNicsCard.jsx:189
+#: src/components/vm/nics/vmNicsCard.jsx:199
 msgid "TAP device"
 msgstr "TAP 裝置"
 
-#: src/components/common/needsShutdown.tsx:149
+#: src/components/common/needsShutdown.tsx:157
 msgid "TPM"
 msgstr "TPM"
 
@@ -2546,12 +2563,12 @@ msgstr "可選擇的主機裝置列表"
 msgid "Target"
 msgstr "目標"
 
-#: src/components/storagePools/storagePoolOverviewTab.jsx:61
-#: src/components/storagePools/createStoragePoolDialog.jsx:105
+#: src/components/storagePools/storagePoolOverviewTab.tsx:63
+#: src/components/storagePools/createStoragePoolDialog.tsx:143
 msgid "Target path"
 msgstr "目標路徑"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:111
+#: src/components/storagePools/createStoragePoolDialog.tsx:149
 msgid "Target path should not be empty"
 msgstr "目標路徑不應為空"
 
@@ -2568,12 +2585,12 @@ msgid "The VM $0 is running and will be forced off before deletion."
 msgstr "虛擬機器 $0 正在執行中，將在刪除前被強制關閉。"
 
 #: src/components/vm/disks/vmDiskColumns.jsx:221
-#: src/components/vm/nics/vmNicsCard.jsx:483
-#: src/components/vm/nics/vmNicsCard.jsx:491
+#: src/components/vm/nics/vmNicsCard.jsx:493
+#: src/components/vm/nics/vmNicsCard.jsx:501
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr "虛擬機器須為執行中或已關閉，才能拆離此裝置"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:161
+#: src/components/storagePools/createStoragePoolDialog.tsx:217
 msgid "The directory on the server being exported"
 msgstr "正被匯出的伺服器上的目錄"
 
@@ -2588,6 +2605,10 @@ msgid ""
 msgstr ""
 "將從來源主機移除被遷移的虛擬機器設定。目標主機將會被作為虛擬機器的新家。"
 
+#: src/components/vm/nics/nicBody.jsx:202
+msgid "The mode influences the delivery of packets."
+msgstr ""
+
 #: src/components/vm/disks/diskAdd.jsx:105
 msgid "The pool is empty"
 msgstr "集區是空的"
@@ -2601,12 +2622,12 @@ msgid ""
 "The selected operating system has minimum storage size requirement of $0 $1"
 msgstr "所選擇的作業系統有著最低 $0 $1 儲存空間大小的需求"
 
-#: src/components/networks/networkOverviewTab.jsx:67
+#: src/components/networks/networkOverviewTab.tsx:76
 msgid "The static host entry for $0 will be removed:"
 msgstr "$0 的靜態主機項目將會被移除："
 
-#: src/components/storagePools/storagePoolDelete.jsx:143
-#: src/components/storagePools/storagePoolDelete.jsx:147
+#: src/components/storagePools/storagePoolDelete.tsx:151
+#: src/components/storagePools/storagePoolDelete.tsx:155
 msgid "The storage pool could not be deleted"
 msgstr "儲存集區無法被刪除"
 
@@ -2636,21 +2657,31 @@ msgid ""
 "live migration."
 msgstr "這適用於因為升級或動態遷移後不支援 SPICE 的主機。"
 
-#: src/components/vm/nics/nicBody.jsx:86
+#: src/components/vm/nics/nicBody.jsx:87
+#, fuzzy
+#| msgid ""
+#| "This is the recommended config for general guest connectivity on hosts "
+#| "with dynamic / wireless networking configs."
 msgid ""
-"This is the recommended config for general guest connectivity on hosts with "
+"This is the recommended type for general guest connectivity on hosts with "
 "dynamic / wireless networking configs."
 msgstr "這是用於具動態或無線網路之主機的通用客體連線方式建議設定。"
 
-#: src/components/vm/nics/nicBody.jsx:95
+#: src/components/vm/nics/nicBody.jsx:96
+#, fuzzy
+#| msgid ""
+#| "This is the recommended config for general guest connectivity on hosts "
+#| "with static wired networking configs."
 msgid ""
-"This is the recommended config for general guest connectivity on hosts with "
+"This is the recommended type for general guest connectivity on hosts with "
 "static wired networking configs."
 msgstr "這是用於具靜態有線網路主機的通用客體連線能力建議設定。"
 
-#: src/components/vm/nics/nicBody.jsx:101
-msgid ""
-"This is the recommended config for high performance or enhanced security."
+#: src/components/vm/nics/nicBody.jsx:102
+#, fuzzy
+#| msgid ""
+#| "This is the recommended config for high performance or enhanced security."
+msgid "This is the recommended type for high performance or enhanced security."
 msgstr "這是為了高效能或更佳安全性的建議設定。"
 
 #: org.cockpit_project.machines.metainfo.xml:8
@@ -2684,8 +2715,8 @@ msgstr "暫時性虛擬機器不支援修改韌體設定"
 msgid "Troubleshoot"
 msgstr "疑難排解"
 
-#: src/components/storagePools/storagePoolOverviewTab.jsx:76
-#: src/components/storagePools/createStoragePoolDialog.jsx:83
+#: src/components/storagePools/storagePoolOverviewTab.tsx:78
+#: src/components/storagePools/createStoragePoolDialog.tsx:115
 #: src/components/vm/overview/bootOrder.jsx:118
 #: src/components/vm/overview/bootOrder.jsx:131
 #: src/components/vm/overview/bootOrder.jsx:146
@@ -2694,7 +2725,7 @@ msgstr "疑難排解"
 #: src/components/vm/overview/bootOrder.jsx:166
 #: src/components/vm/hostdevs/hostDevCard.jsx:177
 #: src/components/vm/hostdevs/hostDevAdd.jsx:47
-#: src/components/vm/nics/vmNicsCard.jsx:325
+#: src/components/vm/nics/vmNicsCard.jsx:335
 msgid "Type"
 msgstr "類型"
 
@@ -2726,7 +2757,7 @@ msgstr "唯一名稱"
 msgid "Unique name, default: $0"
 msgstr "具唯一性名稱，預設： $0"
 
-#: src/components/networks/createNetworkDialog.jsx:144
+#: src/components/networks/createNetworkDialog.tsx:187
 msgid "Unique network name"
 msgstr "唯一的網路名稱"
 
@@ -2734,7 +2765,7 @@ msgstr "唯一的網路名稱"
 msgid "Unit"
 msgstr "單位"
 
-#: src/components/vm/nics/vmNicsCard.jsx:377
+#: src/components/vm/nics/vmNicsCard.jsx:387
 msgid "Unknown"
 msgstr "不明"
 
@@ -2785,7 +2816,7 @@ msgstr ""
 msgid "Used"
 msgstr "已使用"
 
-#: src/components/storagePools/storagePoolVolumesTab.jsx:78
+#: src/components/storagePools/storagePoolVolumesTab.tsx:90
 msgid "Used by"
 msgstr "使用於"
 
@@ -2872,7 +2903,7 @@ msgid ""
 msgstr ""
 "虛擬機器以無特權的限制存取模式啟動，其處理程序及 PTY 皆由您的使用者帳號所擁有"
 
-#: src/components/common/needsShutdown.tsx:194
+#: src/components/common/needsShutdown.tsx:202
 msgid "VM needs shutdown"
 msgstr "虛擬機器需要關機"
 
@@ -2919,10 +2950,10 @@ msgstr "供應商"
 msgid "Vendor support ended $0"
 msgstr "原廠支援已於 $0 終止"
 
-#: src/components/storagePools/storagePoolList.jsx:52
+#: src/components/storagePools/storagePoolList.tsx:61
 #: src/components/vm/vmDetailsPage.jsx:95
 #: src/components/vm/vmDetailsPage.jsx:248
-#: src/components/networks/networkList.jsx:51
+#: src/components/networks/networkList.tsx:57
 #: src/components/vms/hostvmslist.tsx:196
 #: src/components/vms/hostvmslist.tsx:198 src/manifest.json:0
 msgid "Virtual machines"
@@ -2936,7 +2967,7 @@ msgstr "虛擬機器管理"
 msgid "Virtual network"
 msgstr "虛擬網路"
 
-#: src/components/networks/createNetworkDialog.jsx:394
+#: src/components/networks/createNetworkDialog.tsx:511
 msgid "Virtual network failed to be created"
 msgstr "虛擬網路建立失敗"
 
@@ -2962,15 +2993,15 @@ msgstr "虛擬化服務（libvirt）未啟動"
 msgid "Volume"
 msgstr "磁碟區"
 
-#: src/components/storagePools/storageVolumeCreate.jsx:100
+#: src/components/storagePools/storageVolumeCreate.tsx:117
 msgid "Volume failed to be created"
 msgstr "建立磁碟區失敗"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:170
+#: src/components/storagePools/createStoragePoolDialog.tsx:226
 msgid "Volume group name"
 msgstr "磁碟區群組名稱"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:227
+#: src/components/storagePools/createStoragePoolDialog.tsx:283
 msgid "Volume group name should not be empty"
 msgstr "磁碟區群組名稱不得為空值"
 
@@ -2983,7 +3014,7 @@ msgstr "Vsock"
 msgid "WWPN"
 msgstr "WWPN"
 
-#: src/components/common/needsShutdown.tsx:141
+#: src/components/common/needsShutdown.tsx:149
 #: src/components/vm/overview/vmOverviewCard.jsx:200
 msgid "Watchdog"
 msgstr "看門狗"
@@ -3010,8 +3041,8 @@ msgstr "您可以用以下指令掛載共享資料夾："
 msgid "You need to select the most closely matching operating system"
 msgstr "您需要選擇最相近的作業系統"
 
-#: src/components/storagePools/storagePool.jsx:63
-#: src/components/networks/network.jsx:64
+#: src/components/storagePools/storagePool.tsx:66
+#: src/components/networks/network.tsx:67
 msgid "active"
 msgstr "已啟用"
 
@@ -3020,7 +3051,7 @@ msgstr "已啟用"
 msgid "add"
 msgstr "新增"
 
-#: src/components/networks/networkOverviewTab.jsx:193
+#: src/components/networks/networkOverviewTab.tsx:206
 msgid "add entry"
 msgstr "新增項目"
 
@@ -3084,32 +3115,32 @@ msgstr "主機直通"
 msgid "hostdev"
 msgstr "hostdev"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:69
+#: src/components/storagePools/createStoragePoolDialog.tsx:101
 msgid "iSCSI direct target"
 msgstr "iSCSI direct target"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:142
+#: src/components/storagePools/createStoragePoolDialog.tsx:192
 msgid "iSCSI initiator IQN"
 msgstr "iSCSI initiator IQN"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:62
+#: src/components/storagePools/createStoragePoolDialog.tsx:94
 msgid "iSCSI target"
 msgstr "iSCSI target"
 
-#: src/components/storagePools/createStoragePoolDialog.jsx:164
+#: src/components/storagePools/createStoragePoolDialog.tsx:220
 msgid "iSCSI target IQN"
 msgstr "iSCSI target IQN"
 
-#: src/components/storagePools/storagePool.jsx:63
-#: src/components/networks/network.jsx:64
+#: src/components/storagePools/storagePool.tsx:66
+#: src/components/networks/network.tsx:67
 msgid "inactive"
 msgstr "已停用"
 
-#: src/components/vm/nics/vmNicsCard.jsx:385
+#: src/components/vm/nics/vmNicsCard.jsx:395
 msgid "inet"
 msgstr "inet"
 
-#: src/components/vm/nics/vmNicsCard.jsx:393
+#: src/components/vm/nics/vmNicsCard.jsx:403
 msgid "inet6"
 msgstr "inet6"
 
@@ -3126,7 +3157,6 @@ msgid "mcast"
 msgstr "mcast"
 
 #: src/components/common/infoPopover.tsx:34
-#: src/components/vm/nics/nicBody.jsx:112
 msgid "more info"
 msgstr "更多資訊"
 
@@ -3143,9 +3173,9 @@ msgstr "掛載標籤： 與匯出的掛載點相連的標籤"
 msgid "network"
 msgstr "網絡"
 
-#: src/components/storagePools/storagePoolOverviewTab.jsx:67
-#: src/components/storagePools/storagePoolOverviewTab.jsx:72
-#: src/components/networks/networkOverviewTab.jsx:117 src/helpers.ts:279
+#: src/components/storagePools/storagePoolOverviewTab.tsx:69
+#: src/components/storagePools/storagePoolOverviewTab.tsx:74
+#: src/components/networks/networkOverviewTab.tsx:126 src/helpers.ts:279
 msgid "no"
 msgstr "否"
 
@@ -3155,7 +3185,7 @@ msgstr "沒有已儲存的狀態"
 
 #: src/components/vm/overview/vsock.jsx:269
 #: src/components/vm/overview/watchdog.jsx:249
-#: src/components/networks/networkOverviewTab.jsx:292
+#: src/components/networks/networkOverviewTab.tsx:323
 msgid "none"
 msgstr "無"
 
@@ -3175,7 +3205,7 @@ msgstr "qemu"
 msgid "redirected device"
 msgstr "重新導向的裝置"
 
-#: src/components/networks/networkOverviewTab.jsx:61
+#: src/components/networks/networkOverviewTab.tsx:70
 msgid "remove"
 msgstr "移除"
 
@@ -3214,7 +3244,7 @@ msgid "vCPU maximum"
 msgstr "vCPU 最大值"
 
 # ctx::sourcefile::/rhn/systems/details/virtualization/VirtualGuestsList.do
-#: src/components/common/needsShutdown.tsx:133
+#: src/components/common/needsShutdown.tsx:141
 msgid "vCPUs"
 msgstr "vCPUs"
 
@@ -3252,11 +3282,19 @@ msgstr "vm"
 msgid "vsock requires special software"
 msgstr "vsock 需要特殊的軟體"
 
-#: src/components/storagePools/storagePoolOverviewTab.jsx:67
-#: src/components/storagePools/storagePoolOverviewTab.jsx:72
-#: src/components/networks/networkOverviewTab.jsx:117 src/helpers.ts:278
+#: src/components/storagePools/storagePoolOverviewTab.tsx:69
+#: src/components/storagePools/storagePoolOverviewTab.tsx:74
+#: src/components/networks/networkOverviewTab.tsx:126 src/helpers.ts:278
 msgid "yes"
 msgstr "是"
+
+#~ msgid ""
+#~ "In the default 'vepa' mode, switching is offloaded to the external "
+#~ "switch. If the switch is not VEPA-capable, communication between guest "
+#~ "virtual machines, or between a guests and the host is not possible."
+#~ msgstr ""
+#~ "在預設的 'vepa' 模式，交換器功能會被卸載至外部交換器。如果交換器沒有 VEPA "
+#~ "功能，將無法讓虛擬機之間或主機對虛擬機通訊。"
 
 #~ msgid "Adding this disk will change its access mode to shared."
 #~ msgstr "新增此磁碟會將其存取模式變更為共享。"
