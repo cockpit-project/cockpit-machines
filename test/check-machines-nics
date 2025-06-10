@@ -567,6 +567,9 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
                 f"#vm-subVmTest1-network-{self.nic_num}-source",
                 self.source if self.source and self.vm_state == "shut off" else self.source_current
             )
+            if self.source_type == "direct":
+                # The source should be a link
+                b.wait_visible(f"#vm-subVmTest1-network-{self.nic_num}-source button.pf-m-link")
             b.wait_in_text(
                 f"#vm-subVmTest1-network-{self.nic_num}-model",
                 self.model if self.model and self.vm_state == "shut off" else self.model_current
