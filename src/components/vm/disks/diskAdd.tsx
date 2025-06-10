@@ -16,6 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
+
+import type { optString, VM, VMDisk, VMDiskDevice, StoragePool, StorageVolume } from '../../../types';
+import type {
+    DialogValues as VolumeCreateBodyDialogValues,
+    ValidationFailed as VolumeCreateBodyValidationFailed,
+} from '../../storagePools/storageVolumeCreateBody';
+
 import React, { useMemo, useState, useEffect } from 'react';
 import { Bullseye } from "@patternfly/react-core/dist/esm/layouts/Bullseye";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -51,16 +58,16 @@ const CUSTOM_PATH = 'custom-path';
 
 const poolTypesNotSupportingVolumeCreation = ['iscsi', 'iscsi-direct', 'gluster', 'mpath'];
 
-function clearSerial(serial) {
+function clearSerial(serial: string): string {
     return serial.replace(' ', '_').replace(/([^A-Za-z0-9_.+-]+)/gi, '');
 }
 
-function getFilteredVolumes(vmStoragePool, disks) {
+function getFilteredVolumes(vmStoragePool: StoragePool, disks: Record<string, VMDisk>): StorageVolume[] {
     const usedDiskPaths = Object.getOwnPropertyNames(disks)
             .filter(target => disks[target].source && (disks[target].source.file || disks[target].source.volume))
             .map(target => (disks[target].source && (disks[target].source.file || disks[target].source.volume)));
 
-    const filteredVolumes = vmStoragePool.volumes.filter(volume => !usedDiskPaths.includes(volume.path) && !usedDiskPaths.includes(volume.name));
+    const filteredVolumes = (vmStoragePool.volumes || []).filter(volume => !usedDiskPaths.includes(volume.path) && !usedDiskPaths.includes(volume.name));
 
     const filteredVolumesSorted = filteredVolumes.sort(function(a, b) {
         return a.name.localeCompare(b.name);
@@ -69,7 +76,7 @@ function getFilteredVolumes(vmStoragePool, disks) {
     return filteredVolumesSorted;
 }
 
-function getDiskUsageMessage(vms, storagePool, volumeName) {
+function getDiskUsageMessage(vms: VM[], storagePool: StoragePool, volumeName: string) {
     const isVolumeUsed = getStorageVolumesUsage(vms, storagePool);
 
     if (!isVolumeUsed[volumeName] || (isVolumeUsed[volumeName].length === 0))
@@ -79,13 +86,54 @@ function getDiskUsageMessage(vms, storagePool, volumeName) {
     return cockpit.format(_("This volume is already used by $0."), vmsUsing);
 }
 
-function getDefaultVolumeName(vmStoragePool, vm) {
+function getDefaultVolumeName(vmStoragePool: StoragePool, vm: VM) {
     const filteredVolumes = getFilteredVolumes(vmStoragePool, vm.disks);
     return filteredVolumes[0] && filteredVolumes[0].name;
 }
 
-const SelectExistingVolume = ({ idPrefix, storagePoolName, existingVolumeName, onValueChanged, vmStoragePools, vmDisks, vms }) => {
+interface DialogValues extends VolumeCreateBodyDialogValues {
+    existingVolumeName?: string | undefined;
+    permanent: boolean;
+    storagePoolName?: string;
+    serial: string;
+    cacheMode: string;
+    busType?: string | undefined;
+    file: string;
+    device: VMDiskDevice;
+    storagePool?: StoragePool | undefined;
+    target?: string | undefined;
+}
+
+interface ValidationFailed extends VolumeCreateBodyValidationFailed {
+    storagePool?: string;
+    serial?: string;
+    customPath?: string | null;
+    existingVolumeName?: string;
+}
+
+type OnValueChanged = <K extends keyof DialogValues>(key: K, value: DialogValues[K]) => void;
+
+const SelectExistingVolume = ({
+    idPrefix,
+    storagePoolName,
+    existingVolumeName,
+    onValueChanged,
+    vmStoragePools,
+    vmDisks,
+    vms
+} : {
+    idPrefix: string,
+    storagePoolName: string | undefined,
+    existingVolumeName: string | undefined,
+    onValueChanged: OnValueChanged,
+    vmStoragePools: StoragePool[],
+    vmDisks: Record<string, VMDisk>,
+    vms: VM[],
+}) => {
     const vmStoragePool = vmStoragePools.find(pool => pool.name == storagePoolName);
+    if (!vmStoragePool)
+        return null;
+
     const filteredVolumes = getFilteredVolumes(vmStoragePool, vmDisks);
 
     let initiallySelected;
@@ -106,14 +154,14 @@ const SelectExistingVolume = ({ idPrefix, storagePoolName, existingVolumeName, o
         initiallySelected = "empty";
     }
 
-    const diskUsageMessage = getDiskUsageMessage(vms, vmStoragePool, existingVolumeName);
+    const diskUsageMessage = existingVolumeName && getDiskUsageMessage(vms, vmStoragePool, existingVolumeName);
     return (
         <FormGroup fieldId={`${idPrefix}-select-volume`}
                    label={_("Volume")}>
             <FormSelect id={`${idPrefix}-select-volume`}
                         onChange={(_event, value) => onValueChanged('existingVolumeName', value)}
                         value={initiallySelected}
-                        validated={diskUsageMessage && "warning"}
+                        validated={diskUsageMessage ? "warning" : undefined}
                         isDisabled={!filteredVolumes.length}>
                 {content}
             </FormSelect>
@@ -122,7 +170,17 @@ const SelectExistingVolume = ({ idPrefix, storagePoolName, existingVolumeName, o
     );
 };
 
-const PermanentChange = ({ idPrefix, onValueChanged, permanent, vm }) => {
+const PermanentChange = ({
+    idPrefix,
+    onValueChanged,
+    permanent,
+    vm
+} : {
+    idPrefix: string,
+    onValueChanged: OnValueChanged,
+    permanent: boolean,
+    vm: VM,
+}) => {
     // By default for a running VM, the disk is attached until shut down only. Enable permanent change of the domain.xml
     if (!domainIsRunning(vm.state)) {
         return null;
@@ -138,7 +196,19 @@ const PermanentChange = ({ idPrefix, onValueChanged, permanent, vm }) => {
     );
 };
 
-const PoolRow = ({ idPrefix, onValueChanged, storagePoolName, validationFailed, vmStoragePools }) => {
+const PoolRow = ({
+    idPrefix,
+    onValueChanged,
+    storagePoolName,
+    validationFailed,
+    vmStoragePools
+} : {
+    idPrefix: string,
+    onValueChanged: OnValueChanged,
+    storagePoolName: string | undefined,
+    validationFailed: ValidationFailed,
+    vmStoragePools: (StoragePool & { disabled?: boolean })[],
+}) => {
     const validationStatePool = validationFailed.storagePool ? 'error' : 'default';
 
     return (
@@ -154,7 +224,7 @@ const PoolRow = ({ idPrefix, onValueChanged, storagePoolName, validationFailed, 
                             .sort((a, b) => a.name.localeCompare(b.name))
                             .map(pool => {
                                 return (
-                                    <FormSelectOption isDisabled={pool.disabled} value={pool.name} key={pool.name}
+                                    <FormSelectOption isDisabled={!!pool.disabled} value={pool.name} key={pool.name}
                                                   label={pool.name} />
                                 );
                             })
@@ -166,7 +236,25 @@ const PoolRow = ({ idPrefix, onValueChanged, storagePoolName, validationFailed, 
     );
 };
 
-const AdditionalOptions = ({ cacheMode, device, idPrefix, onValueChanged, busType, serial, validationFailed, supportedDiskBusTypes }) => {
+const AdditionalOptions = ({
+    cacheMode,
+    device,
+    idPrefix,
+    onValueChanged,
+    busType,
+    serial,
+    validationFailed,
+    supportedDiskBusTypes
+} : {
+    cacheMode: string,
+    device: VMDiskDevice,
+    idPrefix: string,
+    onValueChanged: OnValueChanged,
+    busType: string | undefined,
+    serial: string,
+    validationFailed: ValidationFailed,
+    supportedDiskBusTypes: string[],
+}) => {
     const [expanded, setExpanded] = useState(false);
     const [showAllowedCharactersMessage, setShowAllowedCharactersMessage] = useState(false);
     const [showMaxLengthMessage, setShowMaxLengthMessage] = useState(false);
@@ -193,11 +281,11 @@ const AdditionalOptions = ({ cacheMode, device, idPrefix, onValueChanged, busTyp
         }
     }, [onValueChanged, serial, serialLength, busType]);
 
-    const displayBusTypes = diskBusTypes[device]
+    const displayBusTypes: { value: string, disabled?: boolean }[] = diskBusTypes[device]
             .filter(bus => supportedDiskBusTypes.includes(bus))
             .map(type => ({ value: type }));
     if (!displayBusTypes.find(displayBusType => busType === displayBusType.value))
-        displayBusTypes.push({ value: busType, disabled: true });
+        displayBusTypes.push({ value: busType || "", disabled: true });
 
     return (
         <ExpandableSection toggleText={ expanded ? _("Hide additional options") : _("Show additional options")}
@@ -223,7 +311,7 @@ const AdditionalOptions = ({ cacheMode, device, idPrefix, onValueChanged, busTyp
                             {displayBusTypes.map(busType =>
                                 (<FormSelectOption value={busType.value}
                                                   key={busType.value}
-                                                  isDisabled={busType.disabled}
+                                                  isDisabled={!!busType.disabled}
                                                   label={busType.value} />)
                             )}
                         </FormSelect>
@@ -274,6 +362,16 @@ const CreateNewDisk = ({
     validationFailed,
     vmStoragePools,
     volumeName,
+} : {
+    format: optString,
+    idPrefix: string,
+    onValueChanged: OnValueChanged,
+    size: number,
+    storagePoolName: string | undefined,
+    unit: string,
+    validationFailed: ValidationFailed,
+    vmStoragePools: StoragePool[],
+    volumeName: string,
 }) => {
     const storagePool = vmStoragePools.find(pool => pool.name == storagePoolName);
 
@@ -292,7 +390,7 @@ const CreateNewDisk = ({
                               validationFailed={validationFailed}
                               volumeName={volumeName}
                               idPrefix={idPrefix}
-                              onValueChanged={onValueChanged} />}
+                              onValueChanged={(key: keyof VolumeCreateBodyDialogValues, value) => onValueChanged(key, value)} />}
         </>
     );
 };
@@ -306,6 +404,15 @@ const UseExistingDisk = ({
     vm,
     vmStoragePools,
     vms,
+} : {
+    existingVolumeName: string | undefined,
+    idPrefix: string,
+    onValueChanged: OnValueChanged,
+    storagePoolName: string | undefined,
+    validationFailed: ValidationFailed,
+    vm: VM,
+    vmStoragePools: StoragePool[],
+    vms: VM[],
 }) => {
     return (
         <>
@@ -326,7 +433,19 @@ const UseExistingDisk = ({
     );
 };
 
-const CustomPath = ({ idPrefix, onValueChanged, device, validationFailed, hideDeviceRow }) => {
+const CustomPath = ({
+    idPrefix,
+    onValueChanged,
+    device,
+    validationFailed,
+    hideDeviceRow
+} : {
+    idPrefix: string,
+    onValueChanged: OnValueChanged,
+    device?: string,
+    validationFailed: ValidationFailed,
+    hideDeviceRow?: boolean,
+}) => {
     return (
         <>
             <FormGroup
@@ -336,13 +455,16 @@ const CustomPath = ({ idPrefix, onValueChanged, device, validationFailed, hideDe
                 <FileAutoComplete
                     id={`${idPrefix}-file-autocomplete`}
                     placeholder={_("Path to file on host's file system")}
-                    onChange={value => onValueChanged("file", value)}
+                    onChange={(value: string) => onValueChanged("file", value)}
                     superuser="try" />
                 <FormHelper fieldId={`${idPrefix}-file-autocomplete`} helperTextInvalid={validationFailed.customPath} />
             </FormGroup>
             {!hideDeviceRow && <FormGroup label={_("Device")}>
                 <FormSelect id={`${idPrefix}-select-device`}
-                        onChange={(_event, value) => onValueChanged('device', value)}
+                        onChange={(_event, value) => {
+                            cockpit.assert(value == "disk" || value == "cdrom");
+                            onValueChanged('device', value);
+                        }}
                         value={device}>
                     <FormSelectOption value="disk" key="disk"
                                   label={_("Disk image file")} />
@@ -354,14 +476,28 @@ const CustomPath = ({ idPrefix, onValueChanged, device, validationFailed, hideDe
     );
 };
 
-const sortFunction = (poolA, poolB) => poolA.name.localeCompare(poolB.name);
+const sortFunction = (poolA: StoragePool, poolB: StoragePool) => poolA.name.localeCompare(poolB.name);
 
-export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, supportedDiskBusTypes }) => {
+export const AddDiskModalBody = ({
+    disk,
+    idPrefix,
+    isMediaInsertion,
+    vm,
+    vms,
+    supportedDiskBusTypes
+} : {
+    disk?: VMDisk,
+    idPrefix: string,
+    isMediaInsertion?: boolean,
+    vm: VM,
+    vms: VM[],
+    supportedDiskBusTypes: string[],
+}) => {
     const [customDiskVerificationFailed, setCustomDiskVerificationFailed] = useState(false);
-    const [customDiskVerificationMessage, setCustomDiskVerificationMessage] = useState(null);
-    const [dialogError, setDialogError] = useState(null);
-    const [dialogErrorDetail, setDialogErrorDetail] = useState(null);
-    const [diskParams, setDiskParams] = useState({
+    const [customDiskVerificationMessage, setCustomDiskVerificationMessage] = useState<string | null>(null);
+    const [dialogError, setDialogError] = useState<string | null>(null);
+    const [dialogErrorDetail, setDialogErrorDetail] = useState<string | null>(null);
+    const [diskParams, setDiskParams] = useState<DialogValues>({
         cacheMode: 'default',
         device: "disk",
         file: "",
@@ -375,7 +511,7 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
     const [mode, setMode] = useState(isMediaInsertion ? CUSTOM_PATH : CREATE_NEW);
     const [validate, setValidate] = useState(false);
     const [verificationInProgress, setVerificationInProgress] = useState(false);
-    const [storagePools, setStoragePools] = useState();
+    const [storagePools, setStoragePools] = useState<StoragePool[] | undefined>();
 
     const Dialogs = useDialogs();
 
@@ -390,10 +526,13 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
     }), [defaultPool, mode, vm]);
     const storagePoolName = diskParams.storagePool?.name;
 
-    const getPoolFormatAndDevice = (pool, volName) => {
-        const params = { format: getDefaultVolumeFormat(pool), device: "disk" };
+    const getPoolFormatAndDevice = (pool: StoragePool, volName: optString | false) => {
+        const params: Pick<DialogValues, "format" | "device"> = {
+            format: getDefaultVolumeFormat(pool),
+            device: "disk"
+        };
         if (volName && ['dir', 'fs', 'netfs', 'gluster', 'vstorage'].indexOf(pool.type) > -1) {
-            const volume = pool.volumes.find(vol => vol.name === volName);
+            const volume = (pool.volumes || []).find(vol => vol.name === volName);
             if (volume?.format) {
                 params.format = volume.format;
                 if (volume.format === "iso")
@@ -431,7 +570,7 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
 
         setDiskParams(diskParams => ({
             ...diskParams,
-            ...getPoolFormatAndDevice(diskParams.storagePool, mode == USE_EXISTING && diskParams.existingVolumeName),
+            ...getPoolFormatAndDevice(diskParams.storagePool!, mode == USE_EXISTING && diskParams.existingVolumeName),
         }));
     }, [storagePools, diskParams.storagePool, diskParams.existingVolumeName, mode]);
 
@@ -440,7 +579,7 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
 
         // According to https://libvirt.org/formatdomain.html#hard-drives-floppy-disks-cdroms (section about 'target'),
         // scsi is the default option for libvirt for cdrom devices
-        let newBus = diskParams.device === "cdrom" && "scsi";
+        let newBus: optString = diskParams.device === "cdrom" ? "scsi" : null;
 
         if (!newBus) {
             // If disk with the same device exists, use the same bus too
@@ -459,7 +598,7 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
     useEffect(() => {
         // Initial state settings and follow up state updates after 'busType' is changed
         const existingTargets = Object.getOwnPropertyNames(vm.disks);
-        const availableTarget = isMediaInsertion ? disk.target : getNextAvailableTarget(existingTargets, diskParams.busType);
+        const availableTarget = isMediaInsertion ? disk?.target : getNextAvailableTarget(existingTargets, diskParams.busType || "");
         setDiskParams(diskParams => ({ ...diskParams, target: availableTarget }));
     }, [vm.disks, disk?.target, diskParams.busType, isMediaInsertion]);
 
@@ -504,10 +643,13 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
         }
     }, [diskParams.file]);
 
-    const onValueChanged = (key, value) => {
+    const onValueChanged = <K extends keyof DialogValues>(key: K, value: DialogValues[K]): void => {
         switch (key) {
         case 'storagePoolName': {
-            const currentPool = storagePools.find(pool => pool.name === value && pool.connectionName === vm.connectionName);
+            const currentPool = (storagePools || []).find(pool => pool.name === value && pool.connectionName === vm.connectionName);
+            if (!currentPool)
+                break;
+
             const existingVolumeName = getDefaultVolumeName(currentPool, vm);
 
             setDiskParams(diskParams => ({
@@ -518,23 +660,19 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
             }));
             break;
         }
-        case 'mode': {
-            setMode(value);
-            break;
-        }
         default:
             setDiskParams(diskParams => ({ ...diskParams, [key]: value }));
         }
     };
 
-    const dialogErrorSet = (text, detail) => {
+    const dialogErrorSet = (text: string, detail: string) => {
         setDialogError(text);
         setDialogErrorDetail(detail);
     };
 
     const _validationFailed = useMemo(() => {
         const validateParams = () => {
-            const validationFailed = {};
+            const validationFailed: ValidationFailed = {};
             const storagePoolType = diskParams.storagePool?.type;
 
             if (mode !== CUSTOM_PATH && !storagePoolName)
@@ -547,12 +685,12 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
                 if (!diskParams.volumeName) {
                     validationFailed.volumeName = _("Please enter new volume name");
                 }
-                if (poolTypesNotSupportingVolumeCreation.includes(storagePoolType)) {
+                if (poolTypesNotSupportingVolumeCreation.includes(storagePoolType || "")) {
                     validationFailed.storagePool = cockpit.format(_("Pool type $0 does not support volume creation"), storagePoolType);
                 }
-                const poolCapacity = diskParams.storagePool && parseFloat(convertToUnit(diskParams.storagePool.capacity, units.B, diskParams.unit));
-                if (!isNaN(poolCapacity) && diskParams.size > poolCapacity) {
-                    validationFailed.size = cockpit.format(_("Storage volume size must not exceed the storage pool's capacity ($0 $1)"), poolCapacity.toFixed(2), diskParams.unit);
+                const poolCapacity = diskParams.storagePool && convertToUnit(diskParams.storagePool.capacity, units.B, diskParams.unit);
+                if (!isNaN(Number(poolCapacity)) && diskParams.size > Number(poolCapacity)) {
+                    validationFailed.size = cockpit.format(_("Storage volume size must not exceed the storage pool's capacity ($0 $1)"), poolCapacity?.toFixed(2), diskParams.unit);
                 }
             } else if (mode === USE_EXISTING) {
                 if (!diskParams.existingVolumeName)
@@ -583,12 +721,12 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
                            name="source"
                            label={_("Custom path")}
                            isChecked={mode === CUSTOM_PATH}
-                           onChange={() => onValueChanged('mode', CUSTOM_PATH)} />
+                           onChange={() => setMode(CUSTOM_PATH)} />
                     <Radio id={`${idPrefix}-useexisting`}
                            name="source"
                            label={_("Use existing")}
                            isChecked={mode === USE_EXISTING}
-                           onChange={() => onValueChanged('mode', USE_EXISTING)} />
+                           onChange={() => setMode(USE_EXISTING)} />
                 </FormGroup>
                 {mode === USE_EXISTING && (
                     <UseExistingDisk idPrefix={`${idPrefix}-existing`}
@@ -619,17 +757,17 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
                                name="source"
                                label={_("Create new")}
                                isChecked={mode === CREATE_NEW}
-                               onChange={() => onValueChanged('mode', CREATE_NEW)} />
+                               onChange={() => setMode(CREATE_NEW)} />
                         <Radio id={`${idPrefix}-useexisting`}
                                name="source"
                                label={_("Use existing")}
                                isChecked={mode === USE_EXISTING}
-                               onChange={() => onValueChanged('mode', USE_EXISTING)} />
+                               onChange={() => setMode(USE_EXISTING)} />
                         <Radio id={`${idPrefix}-custompath`}
                                name="source"
                                label={_("Custom path")}
                                isChecked={mode === CUSTOM_PATH}
-                               onChange={() => onValueChanged('mode', CUSTOM_PATH)} />
+                               onChange={() => setMode(CUSTOM_PATH)} />
                     </FormGroup>
                     {mode === CREATE_NEW && (
                         <CreateNewDisk idPrefix={`${idPrefix}-new`}
@@ -680,7 +818,7 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
         <Modal position="top" variant="medium" id={`${idPrefix}-dialog-modal-window`} isOpen onClose={Dialogs.close}>
             <ModalHeader title={isMediaInsertion ? _("Insert disc media") : _("Add disk")} />
             <ModalBody>
-                {dialogError && <ModalError dialogError={dialogError} dialogErrorDetail={dialogErrorDetail} />}
+                {dialogError && <ModalError dialogError={dialogError} {...dialogErrorDetail && { dialogErrorDetail } } />}
                 {defaultBody}
             </ModalBody>
             <ModalFooter>
@@ -689,7 +827,7 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
                   dialogErrorSet={dialogErrorSet}
                   diskParams={diskParams}
                   idPrefix={idPrefix}
-                  isMediaInsertion={isMediaInsertion}
+                  isMediaInsertion={!!isMediaInsertion}
                   mode={mode}
                   setValidate={setValidate}
                   storagePoolName={storagePoolName}
@@ -698,7 +836,6 @@ export const AddDiskModalBody = ({ disk, idPrefix, isMediaInsertion, vm, vms, su
                   validationFailed={_validationFailed}
                   verificationInProgress={verificationInProgress}
                   vm={vm}
-                  vms={vms}
                 />
             </ModalFooter>
         </Modal>
@@ -719,12 +856,26 @@ const AddDiskModalFooter = ({
     validationFailed,
     verificationInProgress,
     vm,
-    vms,
+} : {
+    dialogErrorSet: (text: string, detail: string) => void,
+    dialogLoading: boolean,
+    diskParams: DialogValues,
+    idPrefix: string,
+    isMediaInsertion: boolean,
+    mode: string,
+    setValidate: (flag: boolean) => void,
+    storagePoolName: string | undefined,
+    storagePools: StoragePool[] | undefined,
+    validate: boolean,
+    validationFailed: ValidationFailed,
+    verificationInProgress: boolean,
+    vm: VM,
 }) => {
     const [addDiskInProgress, setAddDiskInProgress] = useState(false);
     const Dialogs = useDialogs();
 
     const onInsertClicked = () => {
+        cockpit.assert(diskParams.target);
         return domainInsertDisk({
             connectionName: vm.connectionName,
             vmName: vm.name,
@@ -738,6 +889,8 @@ const AddDiskModalFooter = ({
     };
 
     const onAddClicked = () => {
+        cockpit.assert(diskParams.target);
+
         const hotplug = domainIsRunning(vm.state);
 
         if (mode === CREATE_NEW) {
@@ -745,16 +898,16 @@ const AddDiskModalFooter = ({
             const size = convertToUnit(diskParams.size, diskParams.unit, 'MiB');
             return storageVolumeCreateAndAttach({
                 connectionName: vm.connectionName,
-                poolName: storagePoolName,
+                poolName: storagePoolName || "",
                 volumeName: diskParams.volumeName,
                 size,
-                format: diskParams.format,
+                format: diskParams.format || "",
                 target: diskParams.target,
                 permanent: diskParams.permanent,
                 hotplug,
                 vmId: vm.id,
                 cacheMode: diskParams.cacheMode,
-                busType: diskParams.busType,
+                busType: diskParams.busType || "",
                 serial: diskParams.serial
             });
         }
@@ -766,14 +919,14 @@ const AddDiskModalFooter = ({
             device: diskParams.device,
             poolName: storagePoolName,
             volumeName: diskParams.existingVolumeName,
-            format: diskParams.format,
+            format: diskParams.format || "",
             target: diskParams.target,
             permanent: diskParams.permanent,
             hotplug,
             vmId: vm.id,
             cacheMode: diskParams.cacheMode,
             shareable: false,
-            busType: diskParams.busType,
+            busType: diskParams.busType || "",
             serial: diskParams.serial
         });
     };
@@ -794,7 +947,7 @@ const AddDiskModalFooter = ({
         )
                 .then(() => { // force reload of VM data, events are not reliable (i.e. for a down VM)
                     Dialogs.close();
-                    return domainGet({ connectionName: vm.connectionName, name: vm.name, id: vm.id });
+                    return domainGet({ connectionName: vm.connectionName, id: vm.id });
                 })
                 .catch(exc => {
                     setAddDiskInProgress(false);
@@ -808,8 +961,9 @@ const AddDiskModalFooter = ({
                     variant='primary'
                     isLoading={addDiskInProgress || verificationInProgress}
                     isDisabled={addDiskInProgress || verificationInProgress || dialogLoading ||
-                                (storagePools.length == 0 && mode != CUSTOM_PATH) ||
-                                (validate && Object.keys(validationFailed).length > 0)}
+                                ((storagePools || []).length == 0 && mode != CUSTOM_PATH) ||
+                                (validate && Object.keys(validationFailed).length > 0) ||
+                                !diskParams.target}
                     onClick={onClick}>
                 {isMediaInsertion ? _("Insert") : _("Add")}
             </Button>

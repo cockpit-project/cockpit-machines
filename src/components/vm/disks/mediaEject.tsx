@@ -18,6 +18,9 @@
  */
 
 import React, { useState } from 'react';
+
+import type { VM, VMDisk } from '../../../types';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
 import {
@@ -31,8 +34,16 @@ import { useDialogs } from 'dialogs.jsx';
 
 const _ = cockpit.gettext;
 
-export const MediaEjectModal = ({ idPrefix, vm, disk }) => {
-    const [dialogErrorDetail, setDialogErrorDetail] = useState(undefined);
+export const MediaEjectModal = ({
+    idPrefix,
+    vm,
+    disk
+} : {
+    idPrefix: string,
+    vm: VM,
+    disk: VMDisk,
+}) => {
+    const [dialogErrorDetail, setDialogErrorDetail] = useState<string | undefined>(undefined);
     const [inProgress, setInProgress] = useState(false);
     const [inProgressForce, setInProgressForce] = useState(false);
     const [defaultEjectionFailed, setDefaultEjectionFailed] = useState(false);
@@ -40,7 +51,7 @@ export const MediaEjectModal = ({ idPrefix, vm, disk }) => {
     const Dialogs = useDialogs();
 
     const onDelete = () => {
-        const params = {
+        const params: Parameters<typeof domainEjectDisk>[0] = {
             connectionName: vm.connectionName,
             id: vm.id,
             target: disk.target,
@@ -50,10 +61,10 @@ export const MediaEjectModal = ({ idPrefix, vm, disk }) => {
             force: defaultEjectionFailed
         };
         if (disk.type === "file") {
-            params.file = disk.source.file;
+            params.file = disk.source.file || "";
         } else if (disk.type === "volume") {
-            params.pool = disk.source.pool;
-            params.volume = disk.source.volume;
+            params.pool = disk.source.pool || "";
+            params.volume = disk.source.volume || "";
         } else {
             setDialogErrorDetail(`Disk ejection is not supported for ${disk.type} disks`);
             return;
@@ -101,7 +112,7 @@ export const MediaEjectModal = ({ idPrefix, vm, disk }) => {
             <ModalHeader title={_("Eject disc from VM?")} />
             <ModalBody>
                 {dialogErrorDetail && <ModalError dialogError={cockpit.format(_("Media could not be ejected from $0"), vm.name)} dialogErrorDetail={dialogErrorDetail} />}
-                <DescriptionList className={dialogErrorDetail && "pf-v6-u-pt-md"} isHorizontal>
+                <DescriptionList className={dialogErrorDetail ? "pf-v6-u-pt-md" : ""} isHorizontal>
                     {cockpit.format(_("Media will be ejected from $0:"), vm.name)}
                     {description}
                 </DescriptionList>

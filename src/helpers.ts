@@ -22,7 +22,7 @@ import store from './store.js';
 import type {
     optString,
     ConnectionName,
-    VM, VMState, VMDisk, VMInterface, VMRedirectedDevice, VMHostDevice,
+    VM, VMState, VMDisk, VMDiskDevice, VMInterface, VMRedirectedDevice, VMHostDevice,
     UIVM,
     NodeDevice,
     StoragePool,
@@ -47,7 +47,7 @@ export function toReadableNumber(number: number): number {
     }
 }
 
-export const diskBusTypes = {
+export const diskBusTypes: Record<VMDiskDevice, string[]> = {
     cdrom: ['sata', 'scsi', 'usb'],
     disk: ['sata', 'scsi', 'usb', 'virtio'],
     floppy: ['sata', 'scsi', 'usb', 'virtio'],

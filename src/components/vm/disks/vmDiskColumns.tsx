@@ -17,8 +17,11 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
+
+import type { optString, VM, VMDisk, StoragePool } from '../../../types';
+import type { Notification } from '../../../app';
+import type { DeleteResourceModalProps } from '../../common/deleteResource';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
@@ -37,7 +40,10 @@ import { canDeleteDiskFile } from '../../../helpers.js';
 
 const _ = cockpit.gettext;
 
-export const DISK_SOURCE_LIST = [
+type DiskSource = VMDisk["source"];
+type DiskSourceKey = keyof DiskSource | "port";
+
+export const DISK_SOURCE_LIST: { name: DiskSourceKey, label: string }[] = [
     { name: "file", label: _("File") },
     { name: "dev", label: _("Block device") },
     { name: "protocol", label: _("Protocol") },
@@ -47,7 +53,7 @@ export const DISK_SOURCE_LIST = [
     { name: "port", label: _("Port") },
 ];
 
-export function getDiskSourceValue(diskSource, value) {
+export function getDiskSourceValue(diskSource: DiskSource, value: DiskSourceKey): optString {
     if (value === "host")
         return diskSource.host.name;
     else if (value === "port")
@@ -56,8 +62,14 @@ export function getDiskSourceValue(diskSource, value) {
         return diskSource[value];
 }
 
-export const DiskSourceCell = ({ diskSource, idPrefix }) => {
-    const addOptional = (chunks, value, type, descr) => {
+export const DiskSourceCell = ({
+    diskSource,
+    idPrefix
+} : {
+    diskSource: DiskSource,
+    idPrefix: string,
+}) => {
+    const addOptional = (chunks: React.ReactNode[], value: optString, type: string, descr: string) => {
         if (value) {
             chunks.push(
                 <DescriptionListGroup key={descr}>
@@ -72,19 +84,24 @@ export const DiskSourceCell = ({ diskSource, idPrefix }) => {
         }
     };
 
-    const chunks = [];
+    const chunks: React.ReactNode[] = [];
     DISK_SOURCE_LIST.forEach(entry => addOptional(chunks, getDiskSourceValue(diskSource, entry.name), entry.name, entry.label));
 
     return <DescriptionList isHorizontal>{chunks}</DescriptionList>;
 };
 
-DiskSourceCell.propTypes = {
-    diskSource: PropTypes.object.isRequired,
-    idPrefix: PropTypes.string.isRequired,
-};
-
-export const DiskExtras = ({ idPrefix, cache, type, serial }) => {
-    const addOptional = (chunks, value, type, descr) => {
+export const DiskExtras = ({
+    idPrefix,
+    cache,
+    type,
+    serial
+} : {
+    idPrefix: string,
+    cache: optString,
+    type: optString,
+    serial: optString,
+}) => {
+    const addOptional = (chunks: React.ReactNode[], value: optString, type: string, descr: string) => {
         if (value) {
             chunks.push(
                 <DescriptionListGroup key={descr}>
@@ -99,7 +116,7 @@ export const DiskExtras = ({ idPrefix, cache, type, serial }) => {
         }
     };
 
-    const chunks = [];
+    const chunks: React.ReactNode[] = [];
     addOptional(chunks, cache, "cache", _("Cache"));
     addOptional(chunks, serial, "serial", _("Serial"));
     addOptional(chunks, type, "type", _("Format"));
@@ -107,15 +124,18 @@ export const DiskExtras = ({ idPrefix, cache, type, serial }) => {
     return <DescriptionList isHorizontal>{chunks}</DescriptionList>;
 };
 
-DiskExtras.propTypes = {
-    cache: PropTypes.string,
-    serial: PropTypes.string,
-    type: PropTypes.string,
-    idPrefix: PropTypes.string.isRequired,
-};
-
-export const RemoveDiskModal = ({ vm, disk, storagePools, onAddErrorNotification }) => {
-    const onRemoveDisk = (deleteFile) => {
+export const RemoveDiskModal = ({
+    vm,
+    disk,
+    storagePools,
+    onAddErrorNotification
+} : {
+    vm: VM,
+    disk: VMDisk,
+    storagePools: StoragePool[],
+    onAddErrorNotification: (notification: Notification) => void,
+}) => {
+    const onRemoveDisk = (deleteFile: boolean) => {
         return domainDetachDisk({
             connectionName: vm.connectionName,
             id: vm.id,
@@ -141,7 +161,7 @@ export const RemoveDiskModal = ({ vm, disk, storagePools, onAddErrorNotification
                 });
     };
 
-    const dialogProps = {
+    const dialogProps: DeleteResourceModalProps = {
         title: _("Remove disk from VM?"),
         actionName: _("Remove"),
         errorMessage: cockpit.format(_("Disk $0 could not be removed"), disk.target),
@@ -163,7 +183,27 @@ export const RemoveDiskModal = ({ vm, disk, storagePools, onAddErrorNotification
     return <DeleteResourceModal {...dialogProps} />;
 };
 
-export const DiskActions = ({ vm, vms, disk, supportedDiskBusTypes, idPrefixRow, storagePools, onAddErrorNotification, isActionOpen, setIsActionOpen }) => {
+export const DiskActions = ({
+    vm,
+    vms,
+    disk,
+    supportedDiskBusTypes,
+    idPrefixRow,
+    storagePools,
+    onAddErrorNotification,
+    isActionOpen,
+    setIsActionOpen
+} : {
+    vm: VM,
+    vms: VM[],
+    disk: VMDisk,
+    supportedDiskBusTypes: string[],
+    idPrefixRow: string,
+    storagePools: StoragePool[],
+    onAddErrorNotification: (notification: Notification) => void,
+    isActionOpen: boolean,
+    setIsActionOpen: (open: boolean) => void,
+}) => {
     const Dialogs = useDialogs();
 
     function openMediaInsertionDialog() {
@@ -175,7 +215,7 @@ export const DiskActions = ({ vm, vms, disk, supportedDiskBusTypes, idPrefixRow,
     }
 
     let cdromAction;
-    if (disk.device === "cdrom" && ["file", "volume"].includes(disk.type)) {
+    if (disk.device === "cdrom" && ["file", "volume"].includes(disk.type || "")) {
         if (!disk.source.file && !(disk.source.pool && disk.source.volume)) {
             cdromAction = (
                 <Button id={`${idPrefixRow}-insert`}
@@ -241,7 +281,7 @@ export const DiskActions = ({ vm, vms, disk, supportedDiskBusTypes, idPrefixRow,
                 position='right'
                 dropdownItems={dropdownItems}
                 isOpen={isActionOpen}
-                setIsOpen={setIsActionOpen}
+                setIsOpen={setIsActionOpen as React.Dispatch<React.SetStateAction<boolean>>}
             />
         </div>
     );

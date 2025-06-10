@@ -1,6 +1,7 @@
 export interface Notification {
     text: string;
     detail: string;
+    type?: string;
     resourceId: string;
 }
 

@@ -17,8 +17,12 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
+
+import type { optString, VM, VMDisk, VMDiskStat, StoragePool } from '../../../types';
+import type { Notification } from '../../../app';
+import type { ListingTableColumnProps, ListingTableRowProps } from 'cockpit-components-table';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { useDialogs } from 'dialogs.jsx';
@@ -31,12 +35,12 @@ import { DiskSourceCell, DiskExtras, DiskActions } from './vmDiskColumns.jsx';
 
 const _ = cockpit.gettext;
 
-const StorageUnit = ({ value, id }) => {
+const StorageUnit = ({ value, id } : { value: optString | number, id: string }) => {
     if (!value) {
         return null;
     }
 
-    if (isNaN(value)) {
+    if (isNaN(Number(value))) {
         return (
             <div id={id}>
                 {value}
@@ -51,7 +55,7 @@ const StorageUnit = ({ value, id }) => {
     );
 };
 
-const VmDiskCell = ({ value, id }) => {
+const VmDiskCell = ({ value, id } : { value: React.ReactNode, id: string }) => {
     return (
         <div id={id}>
             {value}
@@ -59,7 +63,15 @@ const VmDiskCell = ({ value, id }) => {
     );
 };
 
-export const VmDisksActions = ({ vm, vms, supportedDiskBusTypes }) => {
+export const VmDisksActions = ({
+    vm,
+    vms,
+    supportedDiskBusTypes
+} : {
+    vm: VM,
+    vms: VM[],
+    supportedDiskBusTypes: string[],
+}) => {
     const Dialogs = useDialogs();
     const idPrefix = `${vmId(vm.name)}-disks`;
 
@@ -77,11 +89,24 @@ export const VmDisksActions = ({ vm, vms, supportedDiskBusTypes }) => {
     );
 };
 
-export class VmDisksCardLibvirt extends React.Component {
+interface VMDiskWithData extends VMDisk {
+    used: optString | number;
+    capacity: optString | number;
+}
+
+interface VmDisksCardLibvirtProps {
+    vm: VM,
+    vms: VM[],
+    storagePools: StoragePool[],
+    supportedDiskBusTypes: string[],
+    onAddErrorNotification: (notification: Notification) => void,
+}
+
+export class VmDisksCardLibvirt extends React.Component<VmDisksCardLibvirtProps> {
     /**
      * Returns true, if disk statistics are retrieved.
      */
-    getDiskStatsSupport(vm) {
+    getDiskStatsSupport(vm: VM) {
         /* Possible states for disk stats:
             available ~ already read
             supported, but not available yet ~ will be read soon
@@ -91,21 +116,20 @@ export class VmDisksCardLibvirt extends React.Component {
             // stats are read/supported if there is a non-NaN stat value
             areDiskStatsSupported = !!Object.getOwnPropertyNames(vm.disksStats)
                     .some(target => {
-                        if (!vm.disks[target] || (vm.disks[target].type !== 'volume' && !vm.disksStats[target])) {
+                        const stats = vm.disksStats?.[target];
+                        if (!vm.disks[target] || (vm.disks[target].type !== 'volume' && !stats)) {
                             return false; // not yet retrieved, can't decide about disk stats support
                         }
-                        return vm.disks[target].type == 'volume' || !isNaN(vm.disksStats[target].capacity) || !isNaN(vm.disksStats[target].allocation);
+                        return vm.disks[target].type == 'volume' || !isNaN(Number(stats?.capacity)) || !isNaN(Number(stats?.allocation));
                     });
         }
 
         return areDiskStatsSupported;
     }
 
-    prepareDiskData(disk, diskStats, storagePools) {
-        diskStats = diskStats || {};
-
-        let used = diskStats.allocation;
-        let capacity = diskStats.capacity;
+    prepareDiskData(disk: VMDisk, diskStats: VMDiskStat | undefined, storagePools: StoragePool[]): VMDiskWithData {
+        let used: optString | number = diskStats && diskStats.allocation;
+        let capacity: optString | number = diskStats && diskStats.capacity;
 
         /*
          * For disks of type `volume` allocation and capacity stats are not
@@ -117,7 +141,7 @@ export class VmDisksCardLibvirt extends React.Component {
          */
         if (disk.type == 'volume') {
             const pool = storagePools.filter(pool => pool.name == disk.source.pool)[0];
-            const volumes = pool ? pool.volumes;
+            const volumes = pool ? pool.volumes : [];
             const volumeName = disk.source.volume;
             let volume;
             if (volumes)
@@ -159,17 +183,28 @@ export class VmDisksCardLibvirt extends React.Component {
     }
 }
 
-VmDisksCardLibvirt.propTypes = {
-    supportedDiskBusTypes: PropTypes.array,
-    vm: PropTypes.object.isRequired,
-};
-
-export const VmDisksCard = ({ vm, vms, disks, renderCapacity, supportedDiskBusTypes, storagePools, onAddErrorNotification }) => {
+export const VmDisksCard = ({
+    vm,
+    vms,
+    disks,
+    renderCapacity,
+    supportedDiskBusTypes,
+    storagePools,
+    onAddErrorNotification
+} : {
+    vm: VM,
+    vms: VM[],
+    disks: VMDiskWithData[],
+    renderCapacity: boolean,
+    supportedDiskBusTypes: string[],
+    storagePools: StoragePool[],
+    onAddErrorNotification: (notification: Notification) => void,
+}) => {
     const [openActions, setOpenActions] = useState(new Set());
-    let renderCapacityUsed;
-    let renderAccess;
-    let renderAdditional;
-    const columnTitles = [_("Device")];
+    let renderCapacityUsed = false;
+    let renderAccess = false;
+    let renderAdditional = false;
+    const columnTitles: (string | ListingTableColumnProps)[] = [_("Device")];
     const idPrefix = `${vmId(vm.name)}-disks`;
 
     if (disks && disks.length > 0) {
@@ -194,9 +229,9 @@ export const VmDisksCard = ({ vm, vms, disks, renderCapacity, supportedDiskBusTy
         columnTitles.push({ title: '', props: { "aria-label": _("Actions") } });
     }
 
-    const rows = disks.map(disk => {
+    const rows: ListingTableRowProps[] = disks.map(disk => {
         const idPrefixRow = `${idPrefix}-${(disk.target || disk.device)}`;
-        const columns = [
+        const columns: ListingTableRowProps["columns"] = [
             { title: <VmDiskCell value={disk.device} id={`${idPrefixRow}-device`} key={`${idPrefixRow}-device`} /> },
 
         ];
@@ -214,7 +249,7 @@ export const VmDisksCard = ({ vm, vms, disks, renderCapacity, supportedDiskBusTy
             const access = (
                 <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${idPrefixRow}-access`}>
                     <FlexItem>{ disk.readonly ? _("Read-only") : disk.shareable ? _("Concurrently writeable") : _("Writeable") }</FlexItem>
-                    { needsShutdownDiskAccess(vm, disk.target) && <NeedsShutdownTooltip iconId={`${idPrefixRow}-access-tooltip`} tooltipId={`tip-${idPrefixRow}-access`} /> }
+                    { disk.target && needsShutdownDiskAccess(vm, disk.target) && <NeedsShutdownTooltip iconId={`${idPrefixRow}-access-tooltip`} tooltipId={`tip-${idPrefixRow}-access`} /> }
                 </Flex>
             );
             columns.push({ title: access });
@@ -261,12 +296,4 @@ export const VmDisksCard = ({ vm, vms, disks, renderCapacity, supportedDiskBusTy
                 columns={columnTitles}
                 rows={rows} />
     );
-};
-
-VmDisksCard.propTypes = {
-    disks: PropTypes.array.isRequired,
-    renderCapacity: PropTypes.bool,
-    supportedDiskBusTypes: PropTypes.array,
-    storagePools: PropTypes.array.isRequired,
-    onAddErrorNotification: PropTypes.func.isRequired,
 };

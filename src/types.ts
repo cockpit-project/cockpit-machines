@@ -58,8 +58,10 @@ export interface DetailedError {
     detail: string;
 }
 
+export type VMDiskDevice = "floppy" | "disk" | "cdrom" | "lun";
+
 export interface VMDisk {
-    target: optString;
+    target: string;
     driver: {
         name: optString;
         type: optString;
@@ -71,7 +73,7 @@ export interface VMDisk {
     bootOrder: optString;
     type: optString;
     snapshot: optString;
-    device: optString;
+    device: VMDiskDevice;
     source: {
         file: optString;
         dir: optString;
