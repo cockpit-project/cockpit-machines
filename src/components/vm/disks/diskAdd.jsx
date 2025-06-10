@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import { debounce } from 'throttle-debounce';
 import React, { useMemo, useState, useEffect } from 'react';
 import { Bullseye } from "@patternfly/react-core/dist/esm/layouts/Bullseye";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -337,7 +336,7 @@ const CustomPath = ({ idPrefix, onValueChanged, device, validationFailed, hideDe
                 <FileAutoComplete
                     id={`${idPrefix}-file-autocomplete`}
                     placeholder={_("Path to file on host's file system")}
-                    onChange={value => debounce(250, onValueChanged("file", value))}
+                    onChange={value => onValueChanged("file", value)}
                     superuser="try" />
                 <FormHelper fieldId={`${idPrefix}-file-autocomplete`} helperTextInvalid={validationFailed.customPath} />
             </FormGroup>
