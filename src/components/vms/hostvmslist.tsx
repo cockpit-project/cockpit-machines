@@ -17,7 +17,7 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import cockpit from 'cockpit';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -42,6 +42,9 @@ import { VmNeedsShutdown } from '../common/needsShutdown.jsx';
 import { VmUsesSpice } from '../vm/usesSpice.jsx';
 import { AggregateStatusCards } from "../aggregateStatusCards.jsx";
 import store from "../../store.js";
+import { ensureUsagePolling } from '../../libvirtApi/common';
+
+import VMS_CONFIG from "../../config.js";
 
 import type {
     VM,
@@ -108,6 +111,17 @@ const HostVmsList = ({
         value: string;
         apiState?: string;
     }
+
+    const showUsage = vms.length < VMS_CONFIG.MaxPolledVMs;
+
+    useEffect(() => {
+        if (showUsage)
+            ensureUsagePolling(true);
+        return () => {
+            ensureUsagePolling(false);
+        };
+    }, [showUsage]);
+
     const [statusSelected, setStatusSelected] = useState<StateFilter>({ value: _("All") });
     const [currentTextFilter, setCurrentTextFilter] = useState("");
     const [statusIsExpanded, setStatusIsExpanded] = useState(false);
