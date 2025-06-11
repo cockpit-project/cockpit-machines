@@ -40,8 +40,6 @@ import {
     getApiData,
     getLibvirtVersion,
     initState,
-    usageStartPolling,
-    usageStopPolling,
 } from "./libvirtApi/common.js";
 import { useEvent } from "hooks";
 import store from './store.js';
@@ -314,8 +312,6 @@ class AppActive extends React.Component {
                             libvirtVersion={systemInfo.libvirtVersion}
                             onAddErrorNotification={this.onAddErrorNotification}
                             storagePools={(storagePools || []).filter(pool => pool && pool.connectionName == connectionName)}
-                            onUsageStartPolling={() => usageStartPolling({ name: vm.name, id: vm.id, connectionName: vm.connectionName })}
-                            onUsageStopPolling={() => usageStopPolling({ name: vm.name, id: vm.id, connectionName: vm.connectionName })}
                             networks={(networks || []).filter(network => network && network.connectionName == connectionName)}
                             nodeDevices={(nodeDevices || []).filter(device => device && device.connectionName == connectionName)}
                             key={vmId(vm.name)}
