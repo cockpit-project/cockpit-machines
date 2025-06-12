@@ -187,12 +187,19 @@ export function getDomainCapLoader(capsXML: string): HTMLCollection | undefined 
     return osElem && osElem.getElementsByTagName("loader");
 }
 
-export function getDomainCapCPUCustomModels(capsXML: string): null | optString[] {
+export function getDomainCapCPUCustomModels(capsXML: string): string[] {
     const domainCapsElem = getElem(capsXML);
     const cpuElem = domainCapsElem.getElementsByTagName("cpu")?.[0];
     const modeElems = cpuElem && cpuElem.getElementsByTagName("mode");
     const customModeElem = modeElems && Array.prototype.find.call(modeElems, modeElem => modeElem.getAttribute("name") == "custom");
-    return customModeElem && Array.prototype.map.call(customModeElem.getElementsByTagName("model"), modelElem => modelElem.textContent);
+
+    const res: string[] = [];
+    if (customModeElem) {
+        for (const modelElem of customModeElem.getElementsByTagName("model"))
+            if (modelElem.textContent)
+                res.push(modelElem.textContent);
+    }
+    return res;
 }
 
 export function getDomainCapCPUHostModel(capsXML: string): optString {
@@ -378,13 +385,13 @@ export function parseDumpxmlForVCPU(vcpuElem: Element, vcpuCurrentAttr: Attr | n
 }
 
 export function parseDumpxmlForCpu(cpuElem: Element): VMCpu {
-    const cpu: VMCpu = { topology: {} };
+    const cpu: VMCpu = { mode: "", topology: {} };
 
     if (!cpuElem) {
         return cpu;
     }
 
-    cpu.mode = cpuElem.getAttribute('mode');
+    cpu.mode = cpuElem.getAttribute('mode') || "custom";
     if (cpu.mode === 'custom') {
         const modelElem = getSingleOptionalElem(cpuElem, 'model');
         if (modelElem) {

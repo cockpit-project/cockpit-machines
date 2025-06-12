@@ -17,8 +17,10 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
+
+import type { VM } from '../../../types';
+
 import { Alert } from '@patternfly/react-core/dist/esm/components/Alert';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { ExpandableSection, ExpandableSectionToggle } from "@patternfly/react-core/dist/esm/components/ExpandableSection";
@@ -41,7 +43,14 @@ const _ = cockpit.gettext;
 
 const SUPPORTEDACTIONS = ["reset", "poweroff", "inject-nmi", "pause", "none"];
 
-const WatchdogModalAlert = ({ dialogError }) => {
+interface DialogError {
+    variant?: string;
+    text: string;
+    detail: string;
+    expandableDetail?: string;
+}
+
+const WatchdogModalAlert = ({ dialogError } : { dialogError: undefined | DialogError }) => {
     const [isExpanded, setIsExpanded] = useState(false);
 
     if (!dialogError)
@@ -70,8 +79,18 @@ const WatchdogModalAlert = ({ dialogError }) => {
     return <ModalError dialogError={dialogError.text} dialogErrorDetail={dialogError.detail} />;
 };
 
-export const WatchdogModal = ({ vm, isWatchdogAttached, isRemovable, idPrefix }) => {
-    const [dialogError, setDialogError] = useState();
+export const WatchdogModal = ({
+    vm,
+    isWatchdogAttached,
+    isRemovable,
+    idPrefix
+} : {
+    vm: VM,
+    isWatchdogAttached: boolean,
+    isRemovable: boolean,
+    idPrefix: string,
+}) => {
+    const [dialogError, setDialogError] = useState<undefined | DialogError>();
     const [watchdogAction, setWatchdogAction] = useState(vm.watchdog.action || SUPPORTEDACTIONS[0]); // use first option as default
     const [inProgress, setInProgress] = useState(false);
     const [offerColdplug, setOfferColdplug] = useState(false);
@@ -99,7 +118,7 @@ export const WatchdogModal = ({ vm, isWatchdogAttached, isRemovable, idPrefix })
             hotplug: true,
             isWatchdogAttached,
         })
-                .then(vm.persistent ? setWatchdogColdplug : Dialogs.close())
+                .then(vm.persistent ? setWatchdogColdplug : Dialogs.close)
                 .catch(exc => {
                     if (vm.persistent)
                         setOfferColdplug(true);
@@ -113,7 +132,7 @@ export const WatchdogModal = ({ vm, isWatchdogAttached, isRemovable, idPrefix })
                 });
     };
 
-    const save = (coldplug) => {
+    const save = (coldplug: boolean) => {
         setInProgress(true);
 
         let handler = setWatchdogHotplug;
@@ -126,6 +145,7 @@ export const WatchdogModal = ({ vm, isWatchdogAttached, isRemovable, idPrefix })
     };
 
     const detach = () => {
+        cockpit.assert(vm.watchdog.model);
         setInProgress(true);
         return domainRemoveWatchdog({
             connectionName: vm.connectionName,
@@ -188,6 +208,7 @@ export const WatchdogModal = ({ vm, isWatchdogAttached, isRemovable, idPrefix })
                             <Radio label={rephraseUI("watchdogAction", action)}
                                    key={action}
                                    id={action}
+                                   name={action}
                                    isChecked={watchdogAction === action}
                                    onChange={() => setWatchdogAction(action)}
                                    isLabelWrapped />)
@@ -220,13 +241,13 @@ export const WatchdogModal = ({ vm, isWatchdogAttached, isRemovable, idPrefix })
     );
 };
 
-WatchdogModal.propTypes = {
-    vm: PropTypes.object.isRequired,
-    isWatchdogAttached: PropTypes.bool.isRequired,
-    idPrefix: PropTypes.string.isRequired,
-};
-
-export const WatchdogLink = ({ vm, idPrefix, onAddErrorNotification }) => {
+export const WatchdogLink = ({
+    vm,
+    idPrefix,
+} : {
+    vm: VM,
+    idPrefix: string,
+}) => {
     const Dialogs = useDialogs();
 
     const isWatchdogAttached = Object.keys(vm.watchdog).length > 0;
@@ -240,14 +261,13 @@ export const WatchdogLink = ({ vm, idPrefix, onAddErrorNotification }) => {
         Dialogs.show(<WatchdogModal vm={vm}
                                     isWatchdogAttached={isWatchdogAttached}
                                     isRemovable={isRemovable}
-                                    idPrefix={idPrefix}
-                                    onAddErrorNotification={onAddErrorNotification} />);
+                                    idPrefix={idPrefix} />);
     }
 
     return (
         <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }}>
             <FlexItem id={`${idPrefix}-watchdog-state`}>
-                {isWatchdogAttached ? rephraseUI("watchdogAction", vm.watchdog.action) : _("none")}
+                {isWatchdogAttached ? rephraseUI("watchdogAction", vm.watchdog.action || "") : _("none")}
             </FlexItem>
             { needsShutdownWatchdog(vm) && <NeedsShutdownTooltip iconId="watchdog-tooltip" tooltipId="tip-watchdog" /> }
             <Button variant="link" isInline id={`${idPrefix}-watchdog-button`} onClick={open}>

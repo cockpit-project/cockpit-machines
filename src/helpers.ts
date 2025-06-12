@@ -22,7 +22,7 @@ import store from './store.js';
 import type {
     optString,
     ConnectionName,
-    VM, VMState, VMDisk, VMDiskDevice, VMInterface, VMRedirectedDevice, VMHostDevice,
+    VM, VMXML, VMState, VMDisk, VMDiskDevice, VMInterface, VMRedirectedDevice, VMHostDevice,
     UIVM,
     NodeDevice,
     StoragePool,
@@ -500,6 +500,10 @@ export function findMatchingNodeDevices(hostdev: VMHostDevice, nodeDevices: Node
 
 interface BootOrderDeviceBase {
     bootOrder: number | undefined;
+
+    // For UI
+    checked?: boolean;
+    initialOrder?: number | undefined;
 }
 
 interface BootOrderDeviceDisk extends BootOrderDeviceBase {
@@ -532,7 +536,7 @@ export type BootOrderDevice =
  * Return and array of all devices which can possibly be assigned boot
  * order: disks, interfaces, redirected devices, host devices
  */
-export function getBootOrderDevices(vm: VM): BootOrderDevice[] {
+export function getBootOrderDevices(vm: VMXML): BootOrderDevice[] {
     const devices: BootOrderDevice[] = [];
 
     // Create temporary arrays of devices
@@ -630,7 +634,7 @@ export function getBootOrderDevices(vm: VM): BootOrderDevice[] {
  * Sorts all devices according to their boot order ascending. Devices with no boot order
  * will be at the end of the array.
  */
-export function getSortedBootOrderDevices(vm: VM): BootOrderDevice[] {
+export function getSortedBootOrderDevices(vm: VMXML): BootOrderDevice[] {
     const devices = getBootOrderDevices(vm);
 
     devices.sort((a, b) => {
