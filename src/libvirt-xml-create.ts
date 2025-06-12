@@ -305,7 +305,7 @@ export function getPoolXML({
 export function getSnapshotXML(
     name?: string,
     description?: string,
-    memoryPath?: string,
+    memoryPath?: string | null,
 ): string {
     const doc = document.implementation.createDocument('', '', null);
 

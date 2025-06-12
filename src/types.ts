@@ -326,9 +326,9 @@ export interface VMMetadata {
 }
 
 export interface VMSnapshot {
-    name: optString,
+    name: string,
     description: optString,
-    state: optString,
+    state: string,
     creationTime: optString,
     parentName: optString,
     memoryPath: optString,
@@ -420,7 +420,7 @@ export interface VM extends VMXML {
     actualTimeInMs: number | undefined;
     disksStats: Record<string, VMDiskStat> | undefined;
 
-    snapshots: VMSnapshot[] | -1;
+    snapshots: VMSnapshot[] | undefined;
 }
 
 /** "Fake" VMs for the UI only **/

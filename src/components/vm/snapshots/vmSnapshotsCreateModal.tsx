@@ -19,6 +19,10 @@
 import cockpit from "cockpit";
 import React from "react";
 
+import type { VM } from '../../../types';
+import type { BootOrderDevice } from '../../../helpers';
+import type { Dialogs } from 'dialogs';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import {
@@ -41,10 +45,26 @@ import get_available_space_sh from "./get-available-space.sh";
 
 const _ = cockpit.gettext;
 
-let current_user = null;
+let current_user: cockpit.UserInfo | null = null;
 cockpit.user().then(user => { current_user = user });
 
-const NameRow = ({ onValueChanged, name, validationError }) => {
+interface DialogValues {
+    name: string,
+    description: string,
+    memoryLocation: string,
+}
+
+type OnValueChanged = <K extends keyof DialogValues>(key: K, value: DialogValues[K]) => void;
+
+const NameRow = ({
+    onValueChanged,
+    name,
+    validationError,
+} : {
+    onValueChanged: OnValueChanged,
+    name: string,
+    validationError: string | undefined,
+}) => {
     return (
         <FormGroup
             label={_("Name")}
@@ -58,7 +78,13 @@ const NameRow = ({ onValueChanged, name, validationError }) => {
     );
 };
 
-const DescriptionRow = ({ onValueChanged, description }) => {
+const DescriptionRow = ({
+    onValueChanged,
+    description
+} : {
+    onValueChanged: OnValueChanged,
+    description: string,
+}) => {
     return (
         <FormGroup fieldId="snapshot-create-dialog-description" label={_("Description")}>
             <TextArea value={description}
@@ -70,21 +96,30 @@ const DescriptionRow = ({ onValueChanged, description }) => {
     );
 };
 
-function getDefaultMemoryLocation(vm) {
+function getDefaultMemoryLocation(vm: VM) {
     // If we find an existing external snapshot, use it's memory path
     // as the default. Otherwise, try to find the primary disk and use
     // it's location. If that fails as well, use a reasonable hard
     // coded value.
 
-    for (const s of vm.snapshots.sort((a, b) => b.creationTime - a.creationTime)) {
-        if (s.memoryPath)
-            return dirname(s.memoryPath);
+    if (vm.snapshots) {
+        for (const s of vm.snapshots.sort((a, b) => Number(b.creationTime) - Number(a.creationTime))) {
+            if (s.memoryPath)
+                return dirname(s.memoryPath);
+        }
     }
 
-    const devices = getSortedBootOrderDevices(vm).filter(d => d.bootOrder &&
-                                                              d.device.device === "disk" &&
-                                                              d.device.type === "file" &&
-                                                              d.device.source.file);
+    type BODWithSourceFile = BootOrderDevice & { device: { source: { file: string } } };
+
+    function has_source_file(d: BootOrderDevice): d is BODWithSourceFile {
+        return !!(d.bootOrder &&
+                  d.type === "disk" &&
+                  d.device.device === "disk" &&
+                  d.device.type === "file" &&
+                  d.device.source.file);
+    }
+
+    const devices = getSortedBootOrderDevices(vm).filter(has_source_file);
     if (devices.length > 0) {
         return dirname(devices[0].device.source.file);
     } else {
@@ -97,9 +132,21 @@ function getDefaultMemoryLocation(vm) {
     return "";
 }
 
-const MemoryLocationRow = ({ onValueChanged, memoryLocation, validationError, available, needed }) => {
+const MemoryLocationRow = ({
+    onValueChanged,
+    memoryLocation,
+    validationError,
+    available,
+    needed,
+} : {
+    onValueChanged: OnValueChanged,
+    memoryLocation: string,
+    validationError: string | undefined,
+    available: null | number,
+    needed: number,
+}) => {
     let info = "";
-    let info_variant = "default";
+    let info_variant: "default" | "warning" = "default";
 
     if (needed) {
         info = cockpit.format(_("Memory snapshot will use about $0."),
@@ -114,7 +161,7 @@ const MemoryLocationRow = ({ onValueChanged, memoryLocation, validationError, av
     return (
         <FormGroup id="snapshot-create-dialog-memory-location" label={_("Memory state path")}>
             <FileAutoComplete
-                onChange={value => onValueChanged("memoryLocation", value)}
+                onChange={(value: string) => onValueChanged("memoryLocation", value)}
                 value={memoryLocation}
                 isOptionCreatable
                 onlyDirectories
@@ -127,11 +174,11 @@ const MemoryLocationRow = ({ onValueChanged, memoryLocation, validationError, av
     );
 };
 
-function get_available_space(path, superuser, callback) {
+function get_available_space(path: string, superuser: boolean, callback: (val: null | number) => void) {
     if (!path)
         callback(null);
 
-    cockpit.script(get_available_space_sh, [path], { superuser })
+    cockpit.script(get_available_space_sh, [path], superuser ? { superuser: "require" } : { })
             .then(output => {
                 const info = JSON.parse(output);
                 callback(info.free * info.unit);
@@ -142,10 +189,29 @@ function get_available_space(path, superuser, callback) {
             });
 }
 
-export class CreateSnapshotModal extends React.Component {
-    static contextType = DialogsContext;
+interface CreateSnapshotModalProps {
+    idPrefix: string,
+    vm: VM,
+    isExternal: boolean,
+}
 
-    constructor(props) {
+interface CreateSnapshotModalState extends DialogValues {
+    available: null | number,
+    inProgress: boolean,
+    dialogError?: string,
+    dialogErrorDetail?: string,
+}
+
+interface ValidationError {
+    name?: string;
+    memory?: string;
+}
+
+export class CreateSnapshotModal extends React.Component<CreateSnapshotModalProps, CreateSnapshotModalState> {
+    static contextType = DialogsContext;
+    declare context: Dialogs;
+
+    constructor(props: CreateSnapshotModalProps) {
         super(props);
         // cut off seconds, subseconds, and timezone
         const now = new Date().toISOString()
@@ -165,13 +231,13 @@ export class CreateSnapshotModal extends React.Component {
         this.onCreate = this.onCreate.bind(this);
     }
 
-    updateAvailableSpace(path) {
+    updateAvailableSpace(path: string) {
         get_available_space(path, this.props.vm.connectionName === LIBVIRT_SYSTEM_CONNECTION,
                             val => this.setState({ available: val }));
     }
 
-    onValueChanged(key, value) {
-        this.setState({ [key]: value });
+    onValueChanged<K extends keyof DialogValues>(key: K, value: DialogValues[K]) {
+        this.setState({ [key]: value } as Pick<CreateSnapshotModalState, K>);
         if (key == "memoryLocation") {
             // We don't need to debounce this.  The "memoryLocation"
             // state is not changed on each keypress, but only when
@@ -180,16 +246,16 @@ export class CreateSnapshotModal extends React.Component {
         }
     }
 
-    dialogErrorSet(text, detail) {
+    dialogErrorSet(text: string, detail: string) {
         this.setState({ dialogError: text, dialogErrorDetail: detail });
     }
 
     onValidate() {
         const { name, memoryLocation } = this.state;
         const { vm, isExternal } = this.props;
-        const validationError = {};
+        const validationError: ValidationError = {};
 
-        if (vm.snapshots.findIndex(snap => snap.name === name) > -1)
+        if (vm.snapshots && vm.snapshots.findIndex(snap => snap.name === name) > -1)
             validationError.name = _("Name already exists");
         else if (!name)
             validationError.name = _("Name can not be empty");
@@ -215,8 +281,8 @@ export class CreateSnapshotModal extends React.Component {
                     mpath = mpath + "/";
                 mpath = mpath + vm.name + "." + name + ".save";
             }
-            const superuser = (vm.connectionName === LIBVIRT_SYSTEM_CONNECTION) ? "require" : false;
-            cockpit.spawn(["mkdir", "-p", memoryLocation], { superuser, err: "message" })
+            const superuser = (vm.connectionName === LIBVIRT_SYSTEM_CONNECTION);
+            cockpit.spawn(["mkdir", "-p", memoryLocation], { ...(superuser ? { superuser: "require" } : { }), err: "message" })
                     .then(() =>
                         snapshotCreate({
                             vm,
@@ -244,7 +310,7 @@ export class CreateSnapshotModal extends React.Component {
         this.updateAvailableSpace(this.state.memoryLocation);
     }
 
-    estimateMemorySnapshotSize(vm) {
+    estimateMemorySnapshotSize(vm: VM): number {
         /* According to experiments, the memory snapshot is smaller
            than the amount of RAM used by the virtual machine.
 
@@ -279,7 +345,12 @@ export class CreateSnapshotModal extends React.Component {
             <Modal position="top" variant="medium" id={`${idPrefix}-modal`} isOpen onClose={Dialogs.close}>
                 <ModalHeader title={_("Create snapshot")} />
                 <ModalBody>
-                    {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
+                    {this.state.dialogError &&
+                        <ModalError
+                            dialogError={this.state.dialogError}
+                            {...this.state.dialogErrorDetail && { dialogErrorDetail: this.state.dialogErrorDetail } }
+                        />
+                    }
                     {body}
                 </ModalBody>
                 <ModalFooter>
