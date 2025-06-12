@@ -44,8 +44,8 @@ export async function snapshotCreate({
     vm: VM,
     name: string,
     description: string,
-    isExternal: string,
-    memoryPath: string,
+    isExternal: boolean,
+    memoryPath: string | null,
 }): Promise<void> {
     // The "disk only" flag ought to be implicit for non-running VMs, see https://issues.redhat.com/browse/RHEL-22797
 
@@ -146,7 +146,7 @@ export async function snapshotGetAll({
         store.dispatch(updateDomainSnapshots({
             connectionName,
             domainPath,
-            snaps: -1
+            snaps: undefined,
         }));
     }
 }
