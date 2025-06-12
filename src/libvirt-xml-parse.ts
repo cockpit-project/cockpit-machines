@@ -610,20 +610,23 @@ export function parseDumpxmlForFilesystems(devicesElem: Element): VMFilesystem[]
             const targetElem = getSingleOptionalElem(filesystemElem, 'target');
             const accessElem = getSingleOptionalElem(filesystemElem, 'readonly');
 
-            const filesystem: VMFilesystem = { // https://libvirt.org/formatdomain.html#filesystems
-                accessmode: filesystemElem.getAttribute('accessmode'),
-                readonly: !!accessElem,
-                source: {
-                    dir: sourceElem?.getAttribute('dir'),
-                    name: sourceElem?.getAttribute('name'),
-                    socket: sourceElem?.getAttribute('socket'),
-                    file: sourceElem?.getAttribute('file'),
-                },
-                target: {
-                    dir: targetElem?.getAttribute('dir'),
-                },
-            };
-            filesystems.push(filesystem);
+            const target = targetElem?.getAttribute('dir');
+            if (target) {
+                const filesystem: VMFilesystem = { // https://libvirt.org/formatdomain.html#filesystems
+                    accessmode: filesystemElem.getAttribute('accessmode'),
+                    readonly: !!accessElem,
+                    source: {
+                        dir: sourceElem?.getAttribute('dir'),
+                        name: sourceElem?.getAttribute('name'),
+                        socket: sourceElem?.getAttribute('socket'),
+                        file: sourceElem?.getAttribute('file'),
+                    },
+                    target: {
+                        dir: target,
+                    },
+                };
+                filesystems.push(filesystem);
+            }
         }
     }
     return filesystems;

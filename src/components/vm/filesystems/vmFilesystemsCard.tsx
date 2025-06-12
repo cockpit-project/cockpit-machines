@@ -18,6 +18,9 @@
  */
 import React, { useState } from 'react';
 import cockpit from 'cockpit';
+
+import type { ConnectionName, VMFilesystem } from '../../../types';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
 import { CodeBlock, CodeBlockCode } from "@patternfly/react-core/dist/esm/components/CodeBlock";
@@ -43,11 +46,22 @@ import { InfoPopover } from '../../common/infoPopover.jsx';
 
 const _ = cockpit.gettext;
 
-export const VmFilesystemsCard = ({ connectionName, vmName, vmState, filesystems }) => {
+export const VmFilesystemsCard = ({
+    connectionName,
+    vmName,
+    vmState,
+    filesystems
+} : {
+    connectionName: ConnectionName,
+    vmName: string,
+    vmState: string,
+    filesystems: VMFilesystem[],
+}) => {
     const columnTitles = [_("Source path"), _("Mount tag"), ""];
 
     const rows = filesystems.map(filesystem => {
-        const sourceKey = Object.keys(filesystem.source).find(key => filesystem.source[key]);
+        const keys: (keyof VMFilesystem["source"])[] = ["name", "dir", "file", "socket"];
+        const sourceKey = keys.find(key => filesystem.source[key]);
         const filesystemSource = sourceKey ? filesystem.source[sourceKey] : undefined;
         const filesystemTarget = filesystem.target.dir;
         const rowId = `${vmId(vmName)}-filesystem-${filesystemSource}-${filesystemTarget}`;
@@ -92,7 +106,15 @@ export const VmFilesystemsCard = ({ connectionName, vmName, vmState, filesystems
     );
 };
 
-export const VmFilesystemActions = ({ connectionName, vmName, vmState }) => {
+export const VmFilesystemActions = ({
+    connectionName,
+    vmName,
+    vmState
+} : {
+    connectionName: ConnectionName,
+    vmName: string,
+    vmState: string,
+}) => {
     const Dialogs = useDialogs();
     const idPrefix = `${vmId(vmName)}-filesystems`;
 
@@ -113,18 +135,29 @@ export const VmFilesystemActions = ({ connectionName, vmName, vmState }) => {
     return vmState == 'shut off' ? addButton : <Tooltip content={_("Adding shared directories is possible only when the guest is shut off")}>{addButton}</Tooltip>;
 };
 
-const VmFilesystemAddModal = ({ connectionName, vmName }) => {
+interface ValidationFailed {
+    mountTag?: string;
+    source?: string;
+}
+
+const VmFilesystemAddModal = ({
+    connectionName,
+    vmName
+} : {
+    connectionName: ConnectionName,
+    vmName: string,
+}) => {
     const Dialogs = useDialogs();
     const [additionalOptionsExpanded, setAdditionalOptionsExpanded] = useState(false);
-    const [dialogError, setDialogError] = useState();
+    const [dialogError, setDialogError] = useState<string | undefined>();
     const [mountTag, setMountTag] = useState("");
     const [source, setSource] = useState("");
-    const [validationFailed, setValidationFailed] = useState({});
+    const [validationFailed, setValidationFailed] = useState<ValidationFailed>({});
     const [xattr, setXattr] = useState(false);
     const idPrefix = `${vmId(vmName)}-filesystems`;
 
     const onAddClicked = () => {
-        const validationFailed = {};
+        const validationFailed: ValidationFailed = {};
 
         if (!mountTag)
             validationFailed.mountTag = _("Mount tag must not be empty");
@@ -182,10 +215,10 @@ const VmFilesystemAddModal = ({ connectionName, vmName }) => {
                                id={`${idPrefix}-modal-source-group`}
                                label={_("Source path")}
                                labelHelp={
-                                   <InfoPopover headerContent={_("The host path that is to be exported.")} />
+                                   <InfoPopover bodyContent={_("The host path that is to be exported.")} />
                                }>
                         <FileAutoComplete id={`${idPrefix}-modal-source`}
-                                          onChange={value => setSource(value)}
+                                          onChange={(value: string) => setSource(value)}
                                           placeholder="/export/to/guest"
                                           superuser="try"
                                           value={source} />
@@ -194,7 +227,8 @@ const VmFilesystemAddModal = ({ connectionName, vmName }) => {
                     <FormGroup fieldId={`${idPrefix}-modal-mountTag`}
                                label={_("Mount tag")}
                                labelHelp={
-                                   <InfoPopover headerContent={_("The tag name to be used by the guest to mount this export point.")} />
+                                   <InfoPopover
+                                       bodyContent={_("The tag name to be used by the guest to mount this export point.")} />
                                }>
                         <TextInput id={`${idPrefix}-modal-mountTag`}
                                    onChange={(_, value) => setMountTag(value)}

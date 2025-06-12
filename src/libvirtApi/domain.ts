@@ -485,7 +485,7 @@ export function domainCreateFilesystem({
     vmName: string,
     source: string,
     target: string,
-    xattr: string,
+    xattr: boolean,
 }): cockpit.Spawn<string> {
     let xattrOption = "";
     if (xattr)
@@ -585,7 +585,7 @@ export function domainDeleteStorage({
     });
 }
 
-export function domainDeleteFilesystem({
+export async function domainDeleteFilesystem({
     connectionName,
     vmName,
     target
@@ -593,8 +593,8 @@ export function domainDeleteFilesystem({
     connectionName: ConnectionName,
     vmName: string,
     target: string,
-}): cockpit.Spawn<string> {
-    return spawn(
+}): Promise<void> {
+    await spawn(
         connectionName,
         ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--remove-device', '--filesystem', `target.dir=${target}`],
     );
