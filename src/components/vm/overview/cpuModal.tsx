@@ -19,6 +19,9 @@
 
 import React, { useState } from 'react';
 import cockpit from 'cockpit';
+
+import type { optString, VM } from '../../../types';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { FormSelect, FormSelectOption, FormSelectOptionGroup } from "@patternfly/react-core/dist/esm/components/FormSelect";
@@ -37,7 +40,7 @@ import "./vcpuModal.css";
 
 const _ = cockpit.gettext;
 
-const dividers = (num) => {
+const dividers = (num: number) => {
     const divs = [1];
 
     for (let i = 2; i < num; i++) {
@@ -53,27 +56,39 @@ const dividers = (num) => {
     return divs;
 };
 
-const clamp = (value, max, min) => {
+const clamp = (value: number, max: number, min: number) => {
     return value < min || isNaN(value) ? min : (value > max ? max : value);
 };
 
-export const CPUModal = ({ vm, maxVcpu, models }) => {
+export const CPUModal = ({
+    vm,
+    maxVcpu,
+    models
+} : {
+    vm: VM,
+    maxVcpu: string,
+    models: string[],
+}) => {
     const Dialogs = useDialogs();
 
-    const [error, setError] = useState(undefined);
-    const [max, setMax] = useState(parseInt(vm.vcpus.max) || 1);
-    const [count, setCount] = useState(parseInt(vm.vcpus.count) || 1);
-    const [sockets, setSockets] = useState(vm.cpu.topology.sockets || 1);
-    const [threads, setThreads] = useState(vm.cpu.topology.threads || 1);
-    const [cores, setCores] = useState(vm.cpu.topology.cores || max);
+    function getInt(val: optString, def: number) {
+        return val ? parseInt(val) : def;
+    }
+
+    const [error, setError] = useState<undefined | { dialogError: string, dialogErrorDetail: string }>(undefined);
+    const [max, setMax] = useState(getInt(vm.vcpus.max, 1));
+    const [count, setCount] = useState(getInt(vm.vcpus.count, 1));
+    const [sockets, setSockets] = useState(getInt(vm.cpu.topology.sockets, 1));
+    const [threads, setThreads] = useState(getInt(vm.cpu.topology.threads, 1));
+    const [cores, setCores] = useState(getInt(vm.cpu.topology.cores, max));
     const [cpuMode, setCpuMode] = useState(vm.cpu.mode);
     const [cpuModel, setCpuModel] = useState(vm.cpu.model);
     const [isLoading, setIsLoading] = useState(false);
 
-    function onMaxChange(value) {
-        // Allow empty string
+    function onMaxChange(value: string) {
+        // Allow empty string, which we represent as zero.
         if (value == "") {
-            setMax("");
+            setMax(0);
             return;
         }
 
@@ -85,7 +100,7 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
 
         // Recalculate new values for sockets, cores and threads according to new max value
         // Max value = Sockets * Cores * Threads
-        const stateDelta = { max: maxValue, sockets, cores };
+        const stateDelta = { max: maxValue, count, sockets, cores, threads };
 
         // If count of used VCPU greater then new max value, then change it to new max value
         if (maxValue < count) {
@@ -96,7 +111,7 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
         let divs = dividers(stateDelta.max);
 
         // If current sockets value is not in divisors array, then change it to max divisor
-        if (divs.indexOf(sockets) === -1 || (vm.cpu.topology.sockets || 1) === sockets) {
+        if (divs.indexOf(sockets) === -1 || getInt(vm.cpu.topology.sockets, 1) === sockets) {
             stateDelta.sockets = divs[divs.length - 1];
         }
 
@@ -116,19 +131,19 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
         setMax(stateDelta.max);
     }
 
-    function onCountSelect (value) {
-        // Allow empty string
+    function onCountSelect (value: string) {
+        // Allow empty string, which we represent as zero.
         if (value == "") {
-            setCount("");
+            setCount(0);
             return;
         }
 
-        const newValue = clamp(value, max, 1);
-        setCount(parseInt(newValue));
+        const newValue = clamp(parseInt(value), max, 1);
+        setCount(newValue);
     }
 
-    function onSocketChange (_event, value) {
-        const stateDelta = { sockets, cores };
+    function onSocketChange (_event: React.FormEvent<HTMLSelectElement>, value: string) {
+        const stateDelta = { sockets, cores, threads };
         stateDelta.sockets = parseInt(value);
 
         // Get divisors of Max VCPU number divided by number of sockets
@@ -146,9 +161,8 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
         setThreads(stateDelta.threads);
     }
 
-    function onThreadsChange (_event, value) {
-        const stateDelta = { sockets, threads };
-        stateDelta.threads = parseInt(value);
+    function onThreadsChange (_event: React.FormEvent<HTMLSelectElement>, value: string) {
+        const stateDelta = { sockets, cores, threads: parseInt(value) };
         const divs = dividers(max / stateDelta.threads);
 
         // If current sockets value is not in divisors array, then change it to max divisor
@@ -164,9 +178,8 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
         setThreads(stateDelta.threads);
     }
 
-    function onCoresChange (_event, value) {
-        const stateDelta = { sockets, threads };
-        stateDelta.cores = parseInt(value);
+    function onCoresChange (_event: React.FormEvent<HTMLSelectElement>, value: string) {
+        const stateDelta = { sockets, cores: parseInt(value), threads };
 
         const divs = dividers(max / stateDelta.cores);
 
@@ -211,11 +224,11 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
 
     let caution = null;
     if (vm.state === 'running' && (
-        sockets != (vm.cpu.topology.sockets || 1) ||
-        threads != (vm.cpu.topology.threads || 1) ||
-        cores != (vm.cpu.topology.cores || 1) ||
-        max != vm.vcpus.max ||
-        count != vm.vcpus.count)
+        sockets != getInt(vm.cpu.topology.sockets, 1) ||
+        threads != getInt(vm.cpu.topology.threads, 1) ||
+        cores != getInt(vm.cpu.topology.cores, 1) ||
+        String(max) != vm.vcpus.max ||
+        String(count) != vm.vcpus.count)
     )
         caution = <NeedsShutdownAlert idPrefix="cpu-modal" />;
 
@@ -231,10 +244,10 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
                        }>
                 <NumberInput
                     id="machines-vcpu-max-field"
-                    value={max}
-                    onMinus={() => onMaxChange(max - 1)}
-                    onPlus={() => onMaxChange(max + 1)}
-                    onChange={event => onMaxChange(event.target.value)}
+                    value={max === 0 ? "" : max}
+                    onMinus={() => onMaxChange(String(max - 1))}
+                    onPlus={() => onMaxChange(String(max + 1))}
+                    onChange={event => onMaxChange((event.target as HTMLInputElement).value)}
                     inputAriaLabel={_("vCPU maximum")}
                     minusBtnAriaLabel="minus"
                     plusBtnAriaLabel="plus"
@@ -249,14 +262,14 @@ export const CPUModal = ({ vm, maxVcpu, models }) => {
                        }>
                 <NumberInput
                     id="machines-vcpu-count-field"
-                    value={count}
-                    onMinus={() => onCountSelect(count - 1)}
-                    onPlus={() => onCountSelect(count + 1)}
-                    onChange={event => onCountSelect(event.target.value)}
+                    value={count === 0 ? "" : count}
+                    onMinus={() => onCountSelect(String(count - 1))}
+                    onPlus={() => onCountSelect(String(count + 1))}
+                    onChange={event => onCountSelect((event.target as HTMLInputElement).value)}
                     inputAriaLabel={_("vCPU count")}
                     minusBtnAriaLabel="minus"
                     plusBtnAriaLabel="plus"
-                    max={parseInt(max)}
+                    max={max}
                     min={1}
                     widthChars={3}
                 />

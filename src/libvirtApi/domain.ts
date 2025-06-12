@@ -1224,7 +1224,7 @@ export function domainSetCpuMode({
     name: string,
     connectionName: ConnectionName,
     mode: string,
-    model: string,
+    model: optString,
 }): cockpit.Spawn<string> {
     const modelStr = model ? `,model=${model}` : "";
 
@@ -1287,7 +1287,7 @@ export async function domainSetOSFirmware({
 } : {
     connectionName: ConnectionName,
     objPath: string,
-    loaderType: string;
+    loaderType: optString;
 }): Promise<void> {
     const [domXml] = await call<[string]>(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
     const s = new XMLSerializer();
@@ -1348,8 +1348,8 @@ export function domainSetVsock({
     vmName: string,
     permanent: boolean,
     hotplug: boolean,
-    auto: boolean,
-    address: string,
+    auto: string,
+    address: optString,
     isVsockAttached: boolean,
 }): cockpit.Spawn<string> {
     const cidAddressStr = address ? `,cid.address=${address}` : "";

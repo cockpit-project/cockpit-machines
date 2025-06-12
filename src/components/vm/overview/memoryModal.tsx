@@ -1,10 +1,33 @@
+/*
+ * This file is part of Cockpit.
+ *
+ * Copyright (C) 2018 Red Hat, Inc.
+ *
+ * Cockpit is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * Cockpit is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import React from 'react';
+
+import type { VM } from '../../../types';
+import type { Config } from '../../../reducers';
+import type { Dialogs } from 'dialogs';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form } from "@patternfly/react-core/dist/esm/components/Form";
 import {
     Modal, ModalBody, ModalFooter, ModalHeader
 } from '@patternfly/react-core/dist/esm/components/Modal';
-import PropTypes from 'prop-types';
 
 import cockpit from 'cockpit';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
@@ -25,17 +48,34 @@ import './memoryModal.css';
 
 const _ = cockpit.gettext;
 
-export class MemoryModal extends React.Component {
-    static contextType = DialogsContext;
+interface MemoryModalProps {
+    vm: VM;
+    config: Config;
+}
 
-    constructor(props) {
+interface MemoryModalState {
+    memory: number,
+    memoryUnit: string,
+    maxMemory: number,
+    maxMemoryUnit: string,
+    nodeMaxMemory: number,
+    minAllowedMemory: number,
+    dialogError?: string;
+    dialogErrorDetail?: string;
+}
+
+export class MemoryModal extends React.Component<MemoryModalProps, MemoryModalState> {
+    static contextType = DialogsContext;
+    declare context: Dialogs;
+
+    constructor(props: MemoryModalProps) {
         super(props);
         this.state = {
             memory: props.vm.currentMemory, // Stored always in KiB to ease checks; the conversions to the user presented values happen inside the render
             memoryUnit: units.MiB.name,
             maxMemory: props.vm.memory, // Stored always in KiB to ease checks; the conversions to the user presented values happen inside the render
             maxMemoryUnit: units.MiB.name,
-            nodeMaxMemory: props.config.nodeMaxMemory,
+            nodeMaxMemory: props.config.nodeMaxMemory || NaN,
             minAllowedMemory: convertToUnit(128, 'MiB', 'KiB'),
         };
         this.save = this.save.bind(this);
@@ -43,8 +83,8 @@ export class MemoryModal extends React.Component {
         this.dialogErrorSet = this.dialogErrorSet.bind(this);
     }
 
-    onValueChanged(key, value) {
-        let stateDelta = {};
+    onValueChanged<K extends keyof MemoryModalState>(key: K, value: MemoryModalState[K]) {
+        let stateDelta: Partial<MemoryModalState> = {};
 
         if (key == 'memory') {
             const memoryKiB = convertToUnit(value, this.state.memoryUnit, 'KiB');
@@ -69,10 +109,10 @@ export class MemoryModal extends React.Component {
         } else if (key == 'memoryUnit' || key == 'maxMemoryUnit')
             stateDelta = { [key]: value };
 
-        this.setState(stateDelta);
+        this.setState(stateDelta as MemoryModalState);
     }
 
-    dialogErrorSet(text, detail) {
+    dialogErrorSet(text: string, detail: string) {
         this.setState({ dialogError: text, dialogErrorDetail: detail });
     }
 
@@ -144,7 +184,7 @@ export class MemoryModal extends React.Component {
                     initialUnit={this.state.maxMemoryUnit}
                     onValueChange={value => this.onValueChanged('maxMemory', value)}
                     onUnitChange={(_event, value) => this.onValueChanged('maxMemoryUnit', value)}
-                    helperText={vm.state === 'running' && _("Only editable when the guest is shut off")}
+                    helperText={vm.state === 'running' ? _("Only editable when the guest is shut off") : null}
                     isDisabled={vm.state != 'shut off'} />
             </Form>
         );
@@ -153,7 +193,12 @@ export class MemoryModal extends React.Component {
             <Modal position="top" variant="medium" id='vm-memory-modal' isOpen onClose={Dialogs.close}>
                 <ModalHeader title={cockpit.format(_("$0 memory adjustment"), vm.name)} />
                 <ModalBody>
-                    {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
+                    {this.state.dialogError &&
+                        <ModalError
+                            dialogError={this.state.dialogError}
+                            {...this.state.dialogErrorDetail && { dialogErrorDetail: this.state.dialogErrorDetail } }
+                        />
+                    }
                     {defaultBody}
                 </ModalBody>
                 <ModalFooter>
@@ -168,10 +213,5 @@ export class MemoryModal extends React.Component {
         );
     }
 }
-
-MemoryModal.propTypes = {
-    vm: PropTypes.object.isRequired,
-    config: PropTypes.object.isRequired,
-};
 
 export default MemoryModal;

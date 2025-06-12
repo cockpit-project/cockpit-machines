@@ -76,7 +76,7 @@ interface StateWithProvider<S> {
     providerState?: S;
 }
 
-interface Config extends StateWithProvider<unknown> {
+export interface Config extends StateWithProvider<unknown> {
     refreshInterval: number;
     nodeMaxMemory?: number;
     capabilities?: HypervisorCapabilities;

@@ -17,8 +17,11 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
+
+import type { optString, VM, NodeDevice } from '../../../types';
+import type { BootOrderDevice } from '../../../helpers';
+import type { Dialogs } from 'dialogs';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { DataList, DataListAction, DataListCell, DataListCheck, DataListControl, DataListItem, DataListItemCells, DataListItemRow } from "@patternfly/react-core/dist/esm/components/DataList";
@@ -52,22 +55,19 @@ const _ = cockpit.gettext;
 
 /**
  * Return an array of devices, which can assigned boot order, with added properties needed for UI.
- *
- * @param {object} vm
- * @returns {array}
  */
-function getUIBootOrderDevices(vm) {
+function getUIBootOrderDevices(vm: VM) {
     const devices = getSortedBootOrderDevices(vm.inactiveXML);
 
     devices.forEach(dev => {
         dev.checked = typeof dev.bootOrder !== 'undefined';
-        dev.initialOrder = parseInt(dev.bootOrder);
+        dev.initialOrder = dev.bootOrder;
     });
 
     return devices;
 }
 
-const DeviceInfo = ({ descr, value }) => {
+const DeviceInfo = ({ descr, value } : { descr: React.ReactNode, value: string }) => {
     return (
         <DescriptionListGroup>
             <DescriptionListTerm>
@@ -80,11 +80,31 @@ const DeviceInfo = ({ descr, value }) => {
     );
 };
 
-const DeviceRow = ({ idPrefix, device, index, onToggle, upDisabled, downDisabled, moveUp, moveDown, nodeDevices }) => {
+const DeviceRow = ({
+    idPrefix,
+    device,
+    index,
+    onToggle,
+    upDisabled,
+    downDisabled,
+    moveUp,
+    moveDown,
+    nodeDevices
+} : {
+    idPrefix: string,
+    device: BootOrderDevice,
+    index: number,
+    onToggle: (val: boolean) => void,
+    upDisabled: boolean,
+    downDisabled: boolean,
+    moveUp: () => void,
+    moveDown: () => void,
+    nodeDevices: NodeDevice[],
+}) => {
     let heading;
-    const additionalInfo = [];
+    const additionalInfo: React.ReactNode[] = [];
 
-    const addOptional = (additionalInfo, value, descr) => {
+    const addOptional = (additionalInfo: React.ReactNode[], value: optString, descr: string) => {
         if (value) {
             additionalInfo.push(
                 <DeviceInfo descr={descr} value={value} key={index + descr} />
@@ -129,9 +149,9 @@ const DeviceRow = ({ idPrefix, device, index, onToggle, upDisabled, downDisabled
             switch (device.device.type) {
             case "usb": {
                 addOptional(additionalInfo, device.device.type, _("Type"));
-                addOptional(additionalInfo, nodeDev.capability.vendor._value, _("Vendor"));
-                addOptional(additionalInfo, nodeDev.capability.product._value, _("Product"));
-                if (nodeDevs.length > 1) {
+                addOptional(additionalInfo, nodeDev.capability.vendor?._value, _("Vendor"));
+                addOptional(additionalInfo, nodeDev.capability.product?._value, _("Product"));
+                if (nodeDevs.length > 1 || typeof nodeDev.capability.bus != "string") {
                     // If there are 2 usb devices without specified bus/device and same vendor/product,
                     // it's impossible to identify which one is the one referred in VM's XML
                     addOptional(additionalInfo, _("Unspecified"), _("Bus"));
@@ -144,8 +164,8 @@ const DeviceRow = ({ idPrefix, device, index, onToggle, upDisabled, downDisabled
             }
             case "pci": {
                 addOptional(additionalInfo, device.device.type, _("Type"));
-                addOptional(additionalInfo, nodeDev.capability.vendor._value, _("Vendor"));
-                addOptional(additionalInfo, nodeDev.capability.product._value, _("Product"));
+                addOptional(additionalInfo, nodeDev.capability.vendor?._value, _("Vendor"));
+                addOptional(additionalInfo, nodeDev.capability.product?._value, _("Product"));
                 addOptional(additionalInfo, getNodeDevSource(nodeDev), _("Slot"));
                 break;
             }
@@ -164,7 +184,6 @@ const DeviceRow = ({ idPrefix, device, index, onToggle, upDisabled, downDisabled
             }
             case "mdev": {
                 addOptional(additionalInfo, device.device.type, _("Type"));
-                addOptional(additionalInfo, nodeDev.capability.type?.id, _("Type ID"));
                 break;
             }
             }
@@ -183,11 +202,13 @@ const DeviceRow = ({ idPrefix, device, index, onToggle, upDisabled, downDisabled
         >
             <DataListItemRow>
                 <DataListControl>
-                    <DataListCheck id={`${idPrefix}-device-${index}-checkbox`}
-                                       name={`${idPrefix}-device-${index}-checkbox`}
-                                       otherControls
-                                       onChange={(_, dev) => onToggle(dev)}
-                                       isChecked={!!device.checked} />
+                    <DataListCheck
+                        aria-labelledby={`${idPrefix}-device-row-${index}`}
+                        id={`${idPrefix}-device-${index}-checkbox`}
+                        name={`${idPrefix}-device-${index}-checkbox`}
+                        otherControls
+                        onChange={(_, dev) => onToggle(dev)}
+                        isChecked={!!device.checked} />
                 </DataListControl>
                 <DataListItemCells dataListCells={[
                     <DataListCell className="boot-order-modal-cell" key="item1">
@@ -197,10 +218,18 @@ const DeviceRow = ({ idPrefix, device, index, onToggle, upDisabled, downDisabled
                         </span>
                     </DataListCell>
                 ]} />
-                <DataListAction>
+                <DataListAction
+                    id={`${idPrefix}-device-row-${index}-up`}
+                    aria-label="Move up"
+                    aria-labelledby={`${idPrefix}-device-row-${index}`}
+                >
                     {upArrow}
                 </DataListAction>
-                <DataListAction>
+                <DataListAction
+                    id={`${idPrefix}-device-row-${index}-down`}
+                    aria-label="Move down"
+                    aria-labelledby={`${idPrefix}-device-row-${index}`}
+                >
                     {downArrow}
                 </DataListAction>
             </DataListItemRow>
@@ -208,10 +237,21 @@ const DeviceRow = ({ idPrefix, device, index, onToggle, upDisabled, downDisabled
     );
 };
 
-class BootOrderModal extends React.Component {
-    static contextType = DialogsContext;
+interface BootOrderModalProps {
+    vm: VM;
+}
 
-    constructor(props) {
+interface BootOrderModalState {
+    dialogError?: string;
+    dialogErrorDetail?: string;
+    devices: BootOrderDevice[];
+}
+
+class BootOrderModal extends React.Component<BootOrderModalProps, BootOrderModalState> {
+    static contextType = DialogsContext;
+    declare context: Dialogs;
+
+    constructor(props: BootOrderModalProps) {
         super(props);
         this.state = {
             devices: getUIBootOrderDevices(props.vm),
@@ -223,7 +263,7 @@ class BootOrderModal extends React.Component {
         this.moveDown = this.moveDown.bind(this);
     }
 
-    dialogErrorSet(text, detail) {
+    dialogErrorSet(text: string, detail: string) {
         this.setState({ dialogError: text, dialogErrorDetail: detail });
     }
 
@@ -244,7 +284,7 @@ class BootOrderModal extends React.Component {
                 .catch(exc => this.dialogErrorSet(_("Boot order settings could not be saved"), exc.message));
     }
 
-    onToggleDevice(device) {
+    onToggleDevice(device: BootOrderDevice) {
         // create new array so we don't edit state
         const devices = [...this.state.devices];
 
@@ -253,7 +293,7 @@ class BootOrderModal extends React.Component {
         this.setState({ devices });
     }
 
-    moveUp(device) {
+    moveUp(device: BootOrderDevice) {
         const direction = -1;
         // create new array so we don't edit state
         const devices = [...this.state.devices];
@@ -266,7 +306,7 @@ class BootOrderModal extends React.Component {
         this.setState({ devices });
     }
 
-    moveDown(device) {
+    moveDown(device: BootOrderDevice) {
         const direction = 1;
         // create new array so we don't edit state
         const devices = [...this.state.devices];
@@ -285,8 +325,9 @@ class BootOrderModal extends React.Component {
         const { nodeDevices } = store.getState();
         const idPrefix = vmId(vm.name) + '-order-modal';
         const defaultBody = (
-            <DataList isCompact
-                          className="boot-order-list-view">
+            <DataList aria-label="Boot order"
+                      isCompact
+                      className="boot-order-list-view">
                 {this.state.devices.map((device, index) => {
                     const nextDevice = this.state.devices[index + 1];
                     return (
@@ -295,7 +336,6 @@ class BootOrderModal extends React.Component {
                             idPrefix={idPrefix}
                             index={index}
                             device={device}
-                            onClick={() => this.onToggleDevice(device)}
                             onToggle={() => this.onToggleDevice(device)}
                             upDisabled={!index || !device.checked}
                             downDisabled={index + 1 == this.state.devices.length || !nextDevice.checked}
@@ -312,7 +352,12 @@ class BootOrderModal extends React.Component {
             <Modal position="top" variant="medium" id={`${idPrefix}-window`} isOpen onClose={Dialogs.close} className='boot-order'>
                 <ModalHeader title={_("Change boot order")} />
                 <ModalBody>
-                    {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
+                    {this.state.dialogError &&
+                        <ModalError
+                            dialogError={this.state.dialogError}
+                            {...this.state.dialogErrorDetail && { dialogErrorDetail: this.state.dialogErrorDetail } }
+                        />
+                    }
                     {defaultBody}
                 </ModalBody>
                 <ModalFooter>
@@ -328,17 +373,10 @@ class BootOrderModal extends React.Component {
     }
 }
 
-BootOrderModal.propTypes = {
-    vm: PropTypes.object.isRequired,
-};
-
 /**
  * Returns a sorted array of all devices with boot order
- *
- * @param {object} vm
- * @returns {array}
  */
-function getBootOrder(vm) {
+function getBootOrder(vm: VM) {
     let bootOrder = _("No boot device found");
     const devices = getSortedBootOrderDevices(vm).filter(d => d.bootOrder);
 
@@ -349,7 +387,7 @@ function getBootOrder(vm) {
     return bootOrder;
 }
 
-export const BootOrderLink = ({ vm }) => {
+export const BootOrderLink = ({ vm } : { vm: VM }) => {
     const Dialogs = useDialogs();
 
     function open() {

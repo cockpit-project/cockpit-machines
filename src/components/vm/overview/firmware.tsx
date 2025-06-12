@@ -17,8 +17,11 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
+
+import type { optString, VM } from '../../../types';
+import type { Dialogs } from 'dialogs';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
@@ -34,13 +37,24 @@ import { supportsUefiXml, labelForFirmwarePath } from './helpers.jsx';
 
 const _ = cockpit.gettext;
 
-const xmlToState = value => value || 'bios';
-const stateToXml = value => value == 'bios' ? null : value;
+const xmlToState = (value: optString) => value || 'bios';
+const stateToXml = (value: string) => value == 'bios' ? null : value;
 
-class FirmwareModal extends React.Component {
+interface FirmwareModalProps {
+    vm: VM,
+}
+
+interface FirmwareModalState {
+    dialogError: null | string;
+    dialogErrorDetail?: string;
+    firmware: string;
+}
+
+class FirmwareModal extends React.Component<FirmwareModalProps, FirmwareModalState> {
     static contextType = DialogsContext;
+    declare context: Dialogs;
 
-    constructor(props) {
+    constructor(props: FirmwareModalProps) {
         super(props);
         this.state = {
             dialogError: null,
@@ -50,7 +64,7 @@ class FirmwareModal extends React.Component {
         this.save = this.save.bind(this);
     }
 
-    dialogErrorSet(text, detail) {
+    dialogErrorSet(text: string, detail: string) {
         this.setState({ dialogError: text, dialogErrorDetail: detail });
     }
 
@@ -69,7 +83,7 @@ class FirmwareModal extends React.Component {
 
             Dialogs.close();
         } catch (exc) {
-            this.dialogErrorSet(_("Failed to change firmware"), exc.message);
+            this.dialogErrorSet(_("Failed to change firmware"), String(exc));
         }
     }
 
@@ -80,7 +94,12 @@ class FirmwareModal extends React.Component {
                 <ModalHeader title={_("Change firmware")} />
                 <ModalBody>
                     <Form isHorizontal>
-                        {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
+                        {this.state.dialogError &&
+                            <ModalError
+                                dialogError={this.state.dialogError}
+                                {...this.state.dialogErrorDetail && { dialogErrorDetail: this.state.dialogErrorDetail } }
+                            />
+                        }
                         <FormGroup label={_("Firmware")} fieldId="firmware-dialog-select">
                             <FormSelect onChange={(_event, value) => this.setState({ firmware: value })}
                                         id='firmware-dialog-select'
@@ -106,20 +125,26 @@ class FirmwareModal extends React.Component {
     }
 }
 
-FirmwareModal.propTypes = {
-    vm: PropTypes.object.isRequired,
-};
-
-export const FirmwareLink = ({ vm, loaderElems, idPrefix }) => {
+export const FirmwareLink = ({
+    vm,
+    loaderElems,
+    idPrefix
+} : {
+    vm: VM,
+    loaderElems: HTMLCollection,
+    idPrefix: string,
+}) => {
     const Dialogs = useDialogs();
 
-    function getOVMFBinariesOnHost(loaderElems) {
-        return Array.prototype.map.call(loaderElems, loader => {
+    function getOVMFBinariesOnHost(loaderElems: HTMLCollection): string[] {
+        const res = [];
+        for (let i = 0; i < loaderElems.length; i++) {
+            const loader = loaderElems[i];
             const valueElem = loader.getElementsByTagName('value');
-
-            if (valueElem && valueElem[0].parentNode == loader)
-                return valueElem[0].textContent;
-        });
+            if (valueElem && valueElem[0].parentNode == loader && valueElem[0].textContent)
+                res.push(valueElem[0].textContent);
+        }
+        return res;
     }
 
     let firmwareLinkWrapper;
@@ -142,7 +167,7 @@ export const FirmwareLink = ({ vm, loaderElems, idPrefix }) => {
         firmwareLinkWrapper = <div id={`${idPrefix}-firmware`}>{currentFirmware}</div>;
     } else {
         const uefiPaths = getOVMFBinariesOnHost(loaderElems).filter(elem => elem !== undefined);
-        const firmwareLink = disabled => {
+        const firmwareLink = (disabled: boolean) => {
             return (
                 <span id={`${idPrefix}-firmware-tooltip`}>
                     <Button variant="link" isInline id={`${idPrefix}-firmware`} isDisabled={disabled}
