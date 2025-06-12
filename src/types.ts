@@ -326,9 +326,9 @@ export interface VMMetadata {
 }
 
 export interface VMSnapshot {
-    name: optString,
+    name: string,
     description: optString,
-    state: optString,
+    state: string,
     creationTime: optString,
     parentName: optString,
     memoryPath: optString,
@@ -420,7 +420,7 @@ export interface VM extends VMXML {
     actualTimeInMs: number | undefined;
     disksStats: Record<string, VMDiskStat> | undefined;
 
-    snapshots: VMSnapshot[] | -1;
+    snapshots: VMSnapshot[] | null;
 }
 
 /** "Fake" VMs for the UI only **/
@@ -544,7 +544,7 @@ export interface Network extends NetworkXML {
 /** Node Devices **/
 
 export interface NodeDeviceCapability {
-    type?: optString;
+    type: string;
 
     // type == 'net'
     interface?: optString;

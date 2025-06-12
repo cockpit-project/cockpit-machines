@@ -248,10 +248,10 @@ export function parseDomainSnapshotDumpxml(snapshot: string): VMSnapshot {
     const parentElem = getSingleOptionalElem(snapElem, 'parent');
     const memElem = getSingleOptionalElem(snapElem, 'memory');
 
-    const name = nameElem?.childNodes[0].nodeValue;
+    const name = nameElem?.childNodes[0].nodeValue || "";
     const description = descElem?.childNodes[0].nodeValue;
     const parentName = parentElem?.getElementsByTagName("name")[0].childNodes[0].nodeValue;
-    const state = snapElem.getElementsByTagName("state")[0].childNodes[0].nodeValue;
+    const state = snapElem.getElementsByTagName("state")[0].childNodes[0].nodeValue || "";
     const creationTime = snapElem.getElementsByTagName("creationTime")[0].childNodes[0].nodeValue;
     const memoryPath = memElem?.getAttribute("file");
 
@@ -1027,9 +1027,10 @@ export function parseNodeDeviceDumpxml(nodeDevice: string): NodeDeviceXML {
     const parentName = parentElem?.childNodes[0].nodeValue;
     const capabilityElem = deviceElem.getElementsByTagName("capability")[0];
 
-    const capability: NodeDeviceCapability = {};
+    const capability: NodeDeviceCapability = {
+        type: capabilityElem.getAttribute("type") || "",
+    };
 
-    capability.type = capabilityElem.getAttribute("type");
     if (capability.type == 'net')
         capability.interface = capabilityElem.getElementsByTagName("interface")[0].childNodes[0].nodeValue;
     else if (capability.type == 'storage')
