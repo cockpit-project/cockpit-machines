@@ -17,8 +17,12 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
+
+import type { VM } from '../../../types';
+import type { Config } from '../../../reducers';
+import type { Dialogs } from 'dialogs';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Content, ContentVariants } from "@patternfly/react-core/dist/esm/components/Content";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
@@ -54,10 +58,25 @@ import '../../common/overviewCard.css';
 
 const _ = cockpit.gettext;
 
-class VmOverviewCard extends React.Component {
-    static contextType = DialogsContext;
+interface VmOverviewCardProps {
+    vm: VM;
+    vms: VM[];
+    maxVcpu: string;
+    cpuModels: string[];
+    config: Config;
+    loaderElems: HTMLCollection;
+    libvirtVersion: number;
+}
 
-    constructor(props) {
+interface VmOverviewCardState {
+    virtXMLAvailable: boolean | undefined,
+}
+
+class VmOverviewCard extends React.Component<VmOverviewCardProps, VmOverviewCardState> {
+    static contextType = DialogsContext;
+    declare context: Dialogs;
+
+    constructor(props: VmOverviewCardProps) {
         super(props);
 
         this.state = {
@@ -69,7 +88,7 @@ class VmOverviewCard extends React.Component {
     }
 
     componentDidMount() {
-        cockpit.script('type virt-xml', { err: 'ignore' })
+        cockpit.script('type virt-xml', [], { err: 'ignore' })
                 .then(() => {
                     this.setState({ virtXMLAvailable: true });
                 }, () => this.setState({ virtXMLAvailable: false }));
@@ -137,7 +156,7 @@ class VmOverviewCard extends React.Component {
             <DescriptionListDescription id={`${idPrefix}-cpu`}>
                 <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }}>
                     <FlexItem>
-                        {cockpit.format(cockpit.ngettext("$0 vCPU", "$0 vCPUs", vm.vcpus.count), vm.vcpus.count) + ", " +
+                        {cockpit.format(cockpit.ngettext("$0 vCPU", "$0 vCPUs", Number(vm.vcpus.count)), vm.vcpus.count) + ", " +
                         rephraseUI('cpuMode', vm.cpu.mode) + (vm.cpu.model ? ` (${vm.cpu.model})` : '')}
                     </FlexItem>
                     { (needsShutdownCpuModel(vm) || needsShutdownVcpu(vm)) && <NeedsShutdownTooltip iconId="cpu-tooltip" tooltipId="tip-cpu" /> }
@@ -227,7 +246,7 @@ class VmOverviewCard extends React.Component {
                                 />
                             </DescriptionListTerm>
                             <DescriptionListDescription id={`${idPrefix}-vsock`}>
-                                <VsockLink vm={vm} vms={vms} idPrefix={idPrefix} infoMessage={VSOCK_INFO_MESSAGE} socatMessage={SOCAT_EXAMPLE} />
+                                <VsockLink vm={vm} vms={vms} idPrefix={idPrefix} />
                             </DescriptionListDescription>
                         </DescriptionListGroup>
                     </DescriptionList>
@@ -248,7 +267,6 @@ class VmOverviewCard extends React.Component {
                                 <DescriptionListTerm>{_("Firmware")}</DescriptionListTerm>
                                 <FirmwareLink vm={vm}
                                               loaderElems={this.props.loaderElems}
-                                              libvirtVersion={libvirtVersion}
                                               idPrefix={idPrefix} />
                             </DescriptionListGroup>}
                     </DescriptionList>
@@ -257,12 +275,5 @@ class VmOverviewCard extends React.Component {
         );
     }
 }
-
-VmOverviewCard.propTypes = {
-    vm: PropTypes.object.isRequired,
-    vms: PropTypes.array.isRequired,
-    config: PropTypes.object.isRequired,
-    libvirtVersion: PropTypes.number.isRequired,
-};
 
 export default VmOverviewCard;

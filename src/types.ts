@@ -258,7 +258,7 @@ export interface VMOsBoot {
 }
 
 export interface VMCpu {
-    mode?: optString;
+    mode: string;
     model?: optString;
     topology: {
         sockets?: optString;
@@ -408,7 +408,7 @@ export interface VM extends VMXML {
     capabilities: {
         loaderElems: HTMLCollection | undefined;
         maxVcpu: optString;
-        cpuModels: null | (optString)[];
+        cpuModels: string[];
         cpuHostModel: optString;
         supportedDiskBusTypes: null | (optString)[];
         supportsSpice: boolean;
