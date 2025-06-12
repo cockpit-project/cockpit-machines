@@ -198,6 +198,7 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
                 if self.name:
                     b.wait_in_text(f"#vm-subVmTest1-snapshot-{self.snap_num}-name", self.name)
                 else:
+                    b.wait_visible(f"#vm-subVmTest1-snapshot-{self.snap_num}-name")
                     self.name = b.text(f"#vm-subVmTest1-snapshot-{self.snap_num}-name")
                 if self.description:
                     b.wait_in_text(f"#vm-subVmTest1-snapshot-{self.snap_num}-description", self.description)
@@ -256,6 +257,7 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
                 b.wait_in_text(".pf-v6-c-modal-box__body .pf-v6-c-description-list",
                                f"{self.name} will be deleted from {self.vm_name}")
                 b.click('.pf-v6-c-modal-box__footer button:contains("Delete")')
+                b.wait_not_present(".pf-v6-c-modal-box")
                 b.wait_not_present(f"#vm-subVmTest1-snapshot-{self.snap_num}-name:contains({self.name})")
 
         # No Snapshots present
