@@ -299,7 +299,7 @@ export interface VMFilesystem {
         file: optString;
     },
     target: {
-        dir: optString;
+        dir: string;
     },
 }
 
