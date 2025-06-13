@@ -70,7 +70,7 @@ export const VmDisksActions = ({
 } : {
     vm: VM,
     vms: VM[],
-    supportedDiskBusTypes: string[],
+    supportedDiskBusTypes: optString[] | null,
 }) => {
     const Dialogs = useDialogs();
     const idPrefix = `${vmId(vm.name)}-disks`;
@@ -98,7 +98,7 @@ interface VmDisksCardLibvirtProps {
     vm: VM,
     vms: VM[],
     storagePools: StoragePool[],
-    supportedDiskBusTypes: string[],
+    supportedDiskBusTypes: optString[] | null,
     onAddErrorNotification: (notification: Notification) => void,
 }
 
@@ -196,7 +196,7 @@ export const VmDisksCard = ({
     vms: VM[],
     disks: VMDiskWithData[],
     renderCapacity: boolean,
-    supportedDiskBusTypes: string[],
+    supportedDiskBusTypes: optString[] | null,
     storagePools: StoragePool[],
     onAddErrorNotification: (notification: Notification) => void,
 }) => {

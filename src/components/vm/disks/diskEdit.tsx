@@ -121,10 +121,10 @@ const BusRow = ({
     diskDevice: VMDiskDevice,
     idPrefix: string,
     shutoff: boolean,
-    supportedDiskBusTypes: string[],
+    supportedDiskBusTypes: optString[] | null,
 }) => {
     const busTypes: { value: string, disabled?: boolean }[] = diskBusTypes[diskDevice]
-            .filter(bus => supportedDiskBusTypes.includes(bus))
+            .filter(bus => supportedDiskBusTypes && supportedDiskBusTypes.includes(bus))
             .map(type => ({ value: type }));
     if (busTypes.find(busType => busType.value == dialogValues.busType) == undefined)
         busTypes.push({ value: dialogValues.busType || "", disabled: true });
@@ -194,7 +194,7 @@ export const EditDiskAction = ({
     idPrefix: string,
     disk: VMDisk,
     vm: VM,
-    supportedDiskBusTypes: string[],
+    supportedDiskBusTypes: optString[] | null,
 }) => {
     const Dialogs = useDialogs();
 
@@ -222,7 +222,7 @@ export const EditDiskAction = ({
 interface EditDiskModalProps {
     idPrefix: string;
     disk: VMDisk;
-    supportedDiskBusTypes: string[];
+    supportedDiskBusTypes: optString[] | null;
     vm: VM;
 }
 

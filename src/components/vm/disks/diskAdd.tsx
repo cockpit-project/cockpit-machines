@@ -253,7 +253,7 @@ const AdditionalOptions = ({
     busType: string | undefined,
     serial: string,
     validationFailed: ValidationFailed,
-    supportedDiskBusTypes: string[],
+    supportedDiskBusTypes: optString[] | null,
 }) => {
     const [expanded, setExpanded] = useState(false);
     const [showAllowedCharactersMessage, setShowAllowedCharactersMessage] = useState(false);
@@ -282,7 +282,7 @@ const AdditionalOptions = ({
     }, [onValueChanged, serial, serialLength, busType]);
 
     const displayBusTypes: { value: string, disabled?: boolean }[] = diskBusTypes[device]
-            .filter(bus => supportedDiskBusTypes.includes(bus))
+            .filter(bus => supportedDiskBusTypes && supportedDiskBusTypes.includes(bus))
             .map(type => ({ value: type }));
     if (!displayBusTypes.find(displayBusType => busType === displayBusType.value))
         displayBusTypes.push({ value: busType || "", disabled: true });
@@ -491,7 +491,7 @@ export const AddDiskModalBody = ({
     isMediaInsertion?: boolean,
     vm: VM,
     vms: VM[],
-    supportedDiskBusTypes: string[],
+    supportedDiskBusTypes: optString[] | null,
 }) => {
     const [customDiskVerificationFailed, setCustomDiskVerificationFailed] = useState(false);
     const [customDiskVerificationMessage, setCustomDiskVerificationMessage] = useState<string | null>(null);
