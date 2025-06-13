@@ -16,9 +16,13 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import PropTypes from 'prop-types';
+
 import React, { useEffect } from 'react';
 import cockpit from 'cockpit';
+
+import type { VM, StoragePool, Network, NodeDevice } from '../../types';
+import type { Config } from '../../reducers';
+import type { Notification } from '../../app';
 
 import { Breadcrumb, BreadcrumbItem } from "@patternfly/react-core/dist/esm/components/Breadcrumb";
 import { CodeBlock, CodeBlockCode } from "@patternfly/react-core/dist/esm/components/CodeBlock";
@@ -50,9 +54,27 @@ import './vmDetailsPage.scss';
 const _ = cockpit.gettext;
 
 export const VmDetailsPage = ({
-    vm, vms, config, libvirtVersion, storagePools,
-    onUsageStartPolling, onUsageStopPolling, networks,
-    nodeDevices, onAddErrorNotification
+    vm,
+    vms,
+    config,
+    libvirtVersion,
+    storagePools,
+    onUsageStartPolling,
+    onUsageStopPolling,
+    networks,
+    nodeDevices,
+    onAddErrorNotification
+} : {
+    vm: VM,
+    vms: VM[],
+    config: Config,
+    libvirtVersion: number,
+    storagePools: StoragePool[],
+    onUsageStartPolling: () => void,
+    onUsageStopPolling: () => void,
+    networks: Network[],
+    nodeDevices: NodeDevice[],
+    onAddErrorNotification: (n: Notification) => void,
 }) => {
     useEffect(() => {
         // Anything in here is fired on component mount.
@@ -69,7 +91,6 @@ export const VmDetailsPage = ({
             <div className="vm-top-panel" data-vm-transient={!vm.persistent}>
                 <h2 className="vm-name">{vm.name}</h2>
                 <VmActions vm={vm}
-                           config={config}
                            onAddErrorNotification={onAddErrorNotification}
                            isDetailsPage />
                 <VmNeedsShutdown vm={vm} />
@@ -113,7 +134,15 @@ export const VmDetailsPage = ({
         );
     }
 
-    const cardContents = [
+    interface CardContent {
+        id: string;
+        className?: string;
+        title: React.ReactNode;
+        actions?: React.ReactNode;
+        body: React.ReactNode;
+    }
+
+    const cardContents: CardContent[] = [
         {
             id: `${vmId(vm.name)}-overview`,
             title: _("Overview"),
@@ -123,7 +152,6 @@ export const VmDetailsPage = ({
                                   loaderElems={vm.capabilities.loaderElems}
                                   maxVcpu={vm.capabilities.maxVcpu}
                                   cpuModels={vm.capabilities.cpuModels}
-                                  cpuHostModel={vm.capabilities.cpuHostModel}
                                   libvirtVersion={libvirtVersion} />,
         },
         {
@@ -155,7 +183,7 @@ export const VmDetailsPage = ({
             className: "disks-card",
             title: _("Disks"),
             actions: <VmDisksActions vm={vm} vms={vms} supportedDiskBusTypes={vm.capabilities.supportedDiskBusTypes} />,
-            body: <VmDisksCardLibvirt vm={vm} vms={vms} config={config} storagePools={storagePools}
+            body: <VmDisksCardLibvirt vm={vm} vms={vms} storagePools={storagePools}
                                       onAddErrorNotification={onAddErrorNotification}
                                       supportedDiskBusTypes={vm.capabilities.supportedDiskBusTypes} />,
         },
@@ -164,7 +192,7 @@ export const VmDetailsPage = ({
             className: "networks-card",
             title: _("Network interfaces"),
             actions: <VmNetworkActions vm={vm} vms={vms} networks={networks} />,
-            body: <VmNetworkTab vm={vm} config={config}
+            body: <VmNetworkTab vm={vm}
                                 networks={networks}
                                 onAddErrorNotification={onAddErrorNotification} />,
         },
@@ -181,8 +209,8 @@ export const VmDetailsPage = ({
             id: cockpit.format("$0-snapshots", vmId(vm.name)),
             className: "snapshots-card",
             title: _("Snapshots"),
-            actions: <VmSnapshotsActions vm={vm} config={config} storagePools={storagePools} />,
-            body: <VmSnapshotsCard vm={vm} config={config} />
+            actions: <VmSnapshotsActions vm={vm} config={config} />,
+            body: <VmSnapshotsCard vm={vm} />
         });
     }
     if (libvirtVersion && libvirtVersion >= 6008000 && vm.connectionName == "system") {
@@ -212,7 +240,6 @@ export const VmDetailsPage = ({
                 ),
                 actions: <VmFilesystemActions connectionName={vm.connectionName}
                                               vmName={vm.name}
-                                              memory={vm.memory}
                                               vmState={vm.state} />,
                 body: <VmFilesystemsCard connectionName={vm.connectionName}
                                          filesystems={vm.filesystems}
@@ -225,12 +252,13 @@ export const VmDetailsPage = ({
     const cards = cardContents.map(card => {
         return (
             <Card key={card.id}
-                  className={card.className}
-                  id={card.id}>
+                {...card.className && { className: card.className }}
+                id={card.id}
+            >
                 <CardHeader actions={{ actions: card.actions }}>
                     <CardTitle component="h2">{card.title}</CardTitle>
                 </CardHeader>
-                {["disks-card", "hostdevs-card", "networks-card", "snapshots-card", "filesystems-card"].includes(card.className) ? card.body : <CardBody>{card.body}</CardBody>}
+                {card.className && ["disks-card", "hostdevs-card", "networks-card", "snapshots-card", "filesystems-card"].includes(card.className) ? card.body : <CardBody>{card.body}</CardBody>}
                 <CardFooter />
             </Card>
         );
@@ -262,15 +290,4 @@ export const VmDetailsPage = ({
             </Page>
         </WithDialogs>
     );
-};
-
-VmDetailsPage.propTypes = {
-    vm: PropTypes.object.isRequired,
-    vms: PropTypes.array.isRequired,
-    config: PropTypes.object.isRequired,
-    libvirtVersion: PropTypes.number.isRequired,
-    storagePools: PropTypes.array.isRequired,
-    networks: PropTypes.array.isRequired,
-    onAddErrorNotification: PropTypes.func.isRequired,
-    nodeDevices: PropTypes.array.isRequired,
 };

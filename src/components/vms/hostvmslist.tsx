@@ -209,9 +209,9 @@ const HostVmsList = ({
                                         .map(vm => {
                                             const vmActions = (
                                                 <VmActions
-                                                vm={vm}
-                                                vms={vms}
-                                                onAddErrorNotification={onAddErrorNotification}
+                                                    vm={vm as VM} // XXX - what happens when this is a UIVM?
+                                                    vms={vms}
+                                                    onAddErrorNotification={onAddErrorNotification}
                                                 />
                                             );
 

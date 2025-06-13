@@ -19,7 +19,7 @@
 import React from 'react';
 import cockpit from 'cockpit';
 
-import type { VM } from '../../../types';
+import type { optString, VM } from '../../../types';
 import type { Config } from '../../../reducers';
 import type { Dialogs } from 'dialogs';
 
@@ -61,10 +61,10 @@ const _ = cockpit.gettext;
 interface VmOverviewCardProps {
     vm: VM;
     vms: VM[];
-    maxVcpu: string;
+    maxVcpu: optString;
     cpuModels: string[];
     config: Config;
-    loaderElems: HTMLCollection;
+    loaderElems: HTMLCollection | undefined;
     libvirtVersion: number;
 }
 
