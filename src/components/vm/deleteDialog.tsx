@@ -19,6 +19,12 @@
 
 import cockpit from 'cockpit';
 import React from 'react';
+
+import type { VM, VMDisk } from '../../types';
+import type { Notification } from '../../app';
+
+import type { Dialogs } from 'dialogs';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { DataList, DataListCell, DataListCheck, DataListItem, DataListItemCells, DataListItemRow } from "@patternfly/react-core/dist/esm/components/DataList";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
@@ -36,8 +42,22 @@ import './deleteDialog.css';
 
 const _ = cockpit.gettext;
 
-const DeleteDialogBody = ({ disks, vmName, destroy, onChange }) => {
-    function disk_row(disk, index) {
+interface UIDisk extends VMDisk {
+    checked: boolean;
+}
+
+const DeleteDialogBody = ({
+    disks,
+    vmName,
+    destroy,
+    onChange
+} : {
+    disks: UIDisk[],
+    vmName: string,
+    destroy: boolean,
+    onChange: (index: number, val: boolean) => void;
+}) => {
+    function disk_row(disk: UIDisk, index: number) {
         return (
             <DataListItem key={disk.target}
                           aria-labelledby={disk.target}>
@@ -62,10 +82,10 @@ const DeleteDialogBody = ({ disks, vmName, destroy, onChange }) => {
                                 </div>}
                                 {disk.type == 'volume' &&
                                 <div className='disk-source'>
-                                    <span htmlFor='disk-source-volume'> {_("Volume")} </span>
+                                    <span> {_("Volume")} </span>
                                     <strong className='disk-source-volume'> {disk.source.volume} </strong>
 
-                                    <span htmlFor='disk-source-pool'> {_("Pool")} </span>
+                                    <span> {_("Pool")} </span>
                                     <strong className='disk-source-pool'> {disk.source.pool} </strong>
                                 </div>}
                             </DataListCell>,
@@ -82,7 +102,10 @@ const DeleteDialogBody = ({ disks, vmName, destroy, onChange }) => {
                 {destroy && <p>{cockpit.format(_("The VM $0 is running and will be forced off before deletion."), vmName)}</p>}
                 {disks.length > 0 && <>
                     <p className="pf-v6-u-mb-sm">{_("Delete associated storage files:")}</p>
-                    <DataList isCompact>
+                    <DataList
+                        aria-label={_("Associated storage files")}
+                        isCompact
+                    >
                         { disks.map(disk_row) }
                     </DataList>
                 </>}
@@ -91,17 +114,29 @@ const DeleteDialogBody = ({ disks, vmName, destroy, onChange }) => {
     );
 };
 
-export class DeleteDialog extends React.Component {
-    static contextType = DialogsContext;
+interface DeleteDialogProps {
+    vm: VM,
+    onAddErrorNotification: (notification: Notification) => void,
+}
 
-    constructor(props) {
+interface DeleteDialogState {
+    dialogError?: string;
+    dialogErrorDetail?: string;
+    disks: UIDisk[],
+}
+
+export class DeleteDialog extends React.Component<DeleteDialogProps, DeleteDialogState> {
+    static contextType = DialogsContext;
+    declare context: Dialogs;
+
+    constructor(props: DeleteDialogProps) {
         super(props);
         this.delete = this.delete.bind(this);
         this.onDiskCheckedChanged = this.onDiskCheckedChanged.bind(this);
         this.dialogErrorSet = this.dialogErrorSet.bind(this);
 
         const vm = props.vm;
-        const disks = [];
+        const disks: UIDisk[] = [];
 
         Object.keys(vm.disks).sort()
                 .forEach(t => {
@@ -113,15 +148,15 @@ export class DeleteDialog extends React.Component {
         this.state = { disks };
     }
 
-    dialogErrorSet(text, detail) {
+    dialogErrorSet(text: string, detail: string) {
         this.setState({ dialogError: text, dialogErrorDetail: detail });
     }
 
-    onDiskCheckedChanged(index, value) {
+    onDiskCheckedChanged(index: number, value: boolean) {
         const disks = this.state.disks.slice();
 
         disks[index].checked = value;
-        this.setState(disks);
+        this.setState({ disks });
     }
 
     delete() {
@@ -165,7 +200,12 @@ export class DeleteDialog extends React.Component {
                     titleIconVariant="warning"
                 />
                 <ModalBody>
-                    {this.state.dialogError && <ModalError dialogError={this.state.dialogError} dialogErrorDetail={this.state.dialogErrorDetail} />}
+                    {this.state.dialogError &&
+                        <ModalError
+                            dialogError={this.state.dialogError}
+                            {...this.state.dialogErrorDetail && { dialogErrorDetail: this.state.dialogErrorDetail } }
+                        />
+                    }
                     <DeleteDialogBody disks={this.state.disks} vmName={this.props.vm.name} destroy={this.props.vm.state != 'shut off'} onChange={this.onDiskCheckedChanged} />
                 </ModalBody>
                 <ModalFooter>

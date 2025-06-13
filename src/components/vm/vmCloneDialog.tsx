@@ -19,6 +19,9 @@
 
 import cockpit from 'cockpit';
 import React, { useState } from 'react';
+
+import type { ConnectionName } from '../../types';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import {
@@ -34,15 +37,29 @@ import { useDialogs } from 'dialogs.jsx';
 import "./vmCloneDialog.css";
 const _ = cockpit.gettext;
 
-export const CloneDialog = ({ name, connectionName }) => {
+interface Validation {
+    name?: string;
+}
+
+interface DialogError {
+    dialogError?: string;
+}
+
+export const CloneDialog = ({
+    name,
+    connectionName
+} : {
+    name: string,
+    connectionName: ConnectionName,
+}) => {
     const Dialogs = useDialogs();
     const [newVmName, setNewVmName] = useState(name + '-clone');
     const [inProgress, setInProgress] = useState(false);
     const [virtCloneOutput, setVirtCloneOutput] = useState('');
-    const [error, dialogErrorSet] = useState({});
+    const [error, dialogErrorSet] = useState<DialogError>({});
 
     function validateParams() {
-        const validation = {};
+        const validation: Validation = {};
         if (isEmpty(newVmName.trim()))
             validation.name = _("Name must not be empty");
 
@@ -57,10 +74,16 @@ export const CloneDialog = ({ name, connectionName }) => {
         }
 
         setInProgress(true);
-        const options = { pty: true };
-        if (connectionName === "system")
-            options.superuser = "try";
-        return cockpit.spawn(["virt-clone", "--connect", "qemu:///" + connectionName, "--original", name, "--name", newVmName, "--auto-clone"], options)
+        return cockpit.spawn(
+            [
+                "virt-clone", "--connect", "qemu:///" + connectionName,
+                "--original", name, "--name", newVmName,
+                "--auto-clone"
+            ],
+            {
+                pty: true,
+                ...(connectionName === "system" ? { superuser: "try" } : { })
+            })
                 .stream(setVirtCloneOutput)
                 .then(Dialogs.close, () => {
                     setInProgress(false);
@@ -78,7 +101,7 @@ export const CloneDialog = ({ name, connectionName }) => {
                     onClone();
                 }}
                 isHorizontal>
-                    {!isObjectEmpty(error) && <ModalError dialogError={error.dialogError} dialogErrorDetail={virtCloneOutput} />}
+                    {error.dialogError && <ModalError dialogError={error.dialogError} dialogErrorDetail={virtCloneOutput} />}
                     <FormGroup label={_("Name")} fieldId="vm-name"
                                id="vm-name-group">
                         <TextInput id='vm-name'
