@@ -1,4 +1,7 @@
 import React from 'react';
+
+import type { VM } from '../../types';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Label } from "@patternfly/react-core/dist/esm/components/Label";
 import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
@@ -11,7 +14,7 @@ import { ReplaceSpiceDialog } from './vmReplaceSpiceDialog.jsx';
 
 const _ = cockpit.gettext;
 
-export const VmUsesSpice = ({ vm, vms }) => {
+export const VmUsesSpice = ({ vm, vms } : { vm: VM, vms?: VM[] }) => {
     const Dialogs = useDialogs();
 
     if (!vm.hasSpice || vm.capabilities?.supportsSpice)

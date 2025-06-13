@@ -19,6 +19,9 @@
 
 import cockpit from 'cockpit';
 import React, { useState } from 'react';
+
+import type { VM } from '../../types';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
 import { Menu, MenuContent, MenuList, MenuItem } from "@patternfly/react-core/dist/esm/components/Menu";
@@ -41,18 +44,29 @@ import './vmReplaceSpiceDialog.css';
 
 const _ = cockpit.gettext;
 
-const selectionId = vm => vm.connectionName + vm.id;
+interface DialogError {
+    dialogError: string;
+    dialogErrorDetail: React.ReactNode;
+}
 
-export const ReplaceSpiceDialog = ({ vm, vms }) => {
+const selectionId = (vm: VM): string => vm.connectionName + vm.id;
+
+export const ReplaceSpiceDialog = ({
+    vm,
+    vms
+} : {
+    vm: VM,
+    vms?: VM[] | undefined,
+}) => {
     const spiceVMs = vms?.filter(vm => vm.inactiveXML?.hasSpice);
     // sort spiceVMs by name, put the current VM first
     spiceVMs?.sort((a, b) => (a === vm) ? -1 : (b === vm) ? 1 : a.name.localeCompare(b.name));
-    const isMultiple = spiceVMs?.length > 1;
+    const isMultiple = spiceVMs && spiceVMs.length > 1;
 
     const Dialogs = useDialogs();
-    const [error, dialogErrorSet] = useState(null);
+    const [error, dialogErrorSet] = useState<DialogError | null>(null);
     const [inProgress, setInProgress] = useState(false);
-    const defaultSelected = isMultiple ? [selectionId(spiceVMs[0])] : null;
+    const defaultSelected = isMultiple ? [selectionId(spiceVMs[0])] : [];
     const [selected, setSelected] = useState(defaultSelected);
 
     async function onReplace() {
@@ -87,11 +101,12 @@ export const ReplaceSpiceDialog = ({ vm, vms }) => {
     let vmSelect = null;
 
     if (isMultiple) {
-        const onSelect = (_ev, item) => setSelected(
-            selected.includes(item)
+        const onSelect = (_ev: React.MouseEvent | undefined, item: string | number | undefined) => {
+            cockpit.assert(typeof item == "string");
+            setSelected(selected.includes(item)
                 ? selected.filter(id => id !== item)
-                : [...selected, item]
-        );
+                : [...selected, item]);
+        };
         const menuItems = spiceVMs.map(vm => <MenuItem key={selectionId(vm)}
                                                        hasCheckbox
                                                        itemId={selectionId(vm)}
@@ -125,7 +140,7 @@ export const ReplaceSpiceDialog = ({ vm, vms }) => {
             <ModalHeader title={isMultiple ? _("Replace SPICE devices") : cockpit.format(_("Replace SPICE devices in VM $0"), vm.name)} />
             <ModalBody>
                 { vm.state === 'running' && !error && <NeedsShutdownAlert idPrefix="spice-modal" /> }
-                {error && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.dialogErrorDetail} />}
+                {error && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.dialogErrorDetail as string} />}
                 <Content>
                     <Content component="p">
                         {isMultiple

@@ -207,13 +207,15 @@ const HostVmsList = ({
                                 rows={ combinedVmsFiltered
                                         .sort(sortFunction)
                                         .map(vm => {
-                                            const vmActions = (
-                                                <VmActions
-                                                vm={vm}
-                                                vms={vms}
-                                                onAddErrorNotification={onAddErrorNotification}
-                                                />
-                                            );
+                                            let vmActions = null;
+                                            if (!vm.isUi)
+                                                vmActions = (
+                                                    <VmActions
+                                                        vm={vm}
+                                                        vms={vms}
+                                                        onAddErrorNotification={onAddErrorNotification}
+                                                    />
+                                                );
 
                                             return {
                                                 columns: [

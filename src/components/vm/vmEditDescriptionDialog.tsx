@@ -19,6 +19,9 @@
 
 import cockpit from 'cockpit';
 import React, { useState } from 'react';
+
+import type { VM } from '../../types';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import {
@@ -29,15 +32,19 @@ import { TextArea } from "@patternfly/react-core/dist/esm/components/TextArea";
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { useDialogs } from 'dialogs.jsx';
 
-import { isObjectEmpty } from '../../helpers.js';
 import { domainSetDescription } from '../../libvirtApi/domain.js';
 
 const _ = cockpit.gettext;
 
-export const EditDescriptionDialog = ({ vm }) => {
+interface DialogError {
+    dialogError?: string;
+    dialogErrorDetail?: string;
+}
+
+export const EditDescriptionDialog = ({ vm } : { vm: VM }) => {
     const Dialogs = useDialogs();
     const [description, setDescription] = useState(vm.inactiveXML.description || "");
-    const [error, dialogErrorSet] = useState({});
+    const [error, dialogErrorSet] = useState<DialogError>({});
 
     async function onSubmit() {
         try {
@@ -46,7 +53,7 @@ export const EditDescriptionDialog = ({ vm }) => {
         } catch (exc) {
             dialogErrorSet({
                 dialogError: cockpit.format(_("Failed to set description of VM $0"), vm.name),
-                dialogErrorDetail: exc.message
+                dialogErrorDetail: exc instanceof Error ? exc.message : "",
             });
         }
     }
@@ -60,7 +67,12 @@ export const EditDescriptionDialog = ({ vm }) => {
                     onSubmit();
                 }}
                 isHorizontal>
-                    {!isObjectEmpty(error) && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.dialogErrorDetail} />}
+                    {error.dialogError &&
+                        <ModalError
+                            dialogError={error.dialogError}
+                            {...error.dialogErrorDetail && { dialogErrorDetail: error.dialogErrorDetail } }
+                        />
+                    }
                     <FormGroup label={_("Description")}
                                fieldId="edit-description-dialog-description">
                         <TextArea id='edit-description-dialog-description'

@@ -96,8 +96,8 @@ type Tuple = readonly [...unknown[]];
 type Comparator<T> = (a: T, b: T) => boolean;
 type Comparators<T extends Tuple> = {[ t in keyof T ]?: Comparator<T[t]>};
 
-export function useStateObject<D extends Tuple>(constructor: () => StateObject, deps: D, comps: Comparators<D>) {
-    const state = useObject<StateObject, D>(constructor, obj => obj.close(), deps || [], comps);
+export function useStateObject<D extends Tuple>(constructor: () => StateObject, deps: D, comps?: Comparators<D>) {
+    const state = useObject<StateObject, D>(constructor, obj => obj.close(), deps, comps);
     useOn(state, "render");
     return state;
 }

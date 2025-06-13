@@ -66,7 +66,7 @@ export const CPUModal = ({
     models
 } : {
     vm: VM,
-    maxVcpu: string,
+    maxVcpu: optString,
     models: string[],
 }) => {
     const Dialogs = useDialogs();
@@ -85,6 +85,8 @@ export const CPUModal = ({
     const [cpuModel, setCpuModel] = useState(vm.cpu.model);
     const [isLoading, setIsLoading] = useState(false);
 
+    const maxHypervisor = getInt(maxVcpu, 1);
+
     function onMaxChange(value: string) {
         // Allow empty string, which we represent as zero.
         if (value == "") {
@@ -92,7 +94,6 @@ export const CPUModal = ({
             return;
         }
 
-        const maxHypervisor = parseInt(maxVcpu);
         let maxValue = parseInt(value);
 
         // Check new value for limits
@@ -251,7 +252,7 @@ export const CPUModal = ({
                     inputAriaLabel={_("vCPU maximum")}
                     minusBtnAriaLabel="minus"
                     plusBtnAriaLabel="plus"
-                    max={parseInt(maxVcpu)}
+                    max={maxHypervisor}
                     min={1}
                     widthChars={3}
                 />
