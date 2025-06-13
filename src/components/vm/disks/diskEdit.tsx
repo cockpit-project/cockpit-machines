@@ -206,7 +206,6 @@ export const EditDiskAction = ({
     }
 
     const enabled = (Object.keys(diskBusTypes).includes(disk.device || "") &&
-                     supportedDiskBusTypes &&
                      supportedDiskBusTypes.length > 0);
 
     return (

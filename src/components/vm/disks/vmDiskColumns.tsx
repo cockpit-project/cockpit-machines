@@ -221,7 +221,7 @@ export const DiskActions = ({
                 <Button id={`${idPrefixRow}-insert`}
                               variant='secondary'
                               onClick={openMediaInsertionDialog}
-                              isDisabled={!supportedDiskBusTypes || supportedDiskBusTypes.length == 0}>
+                              isDisabled={supportedDiskBusTypes.length == 0}>
                     {_("Insert")}
                 </Button>
             );
