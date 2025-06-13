@@ -18,10 +18,13 @@
  */
 import cockpit from 'cockpit';
 import React, { useEffect, useState } from 'react';
-import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+
+import type { VM } from '../../types';
+
+import { Button, type ButtonProps } from "@patternfly/react-core/dist/esm/components/Button";
 import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
 import {
-    Modal, ModalBody, ModalFooter, ModalHeader
+    Modal, ModalBody, ModalFooter, ModalHeader, type ModalHeaderProps,
 } from '@patternfly/react-core/dist/esm/components/Modal';
 import { useDialogs } from 'dialogs.jsx';
 import { distanceToNow } from 'timeformat.js';
@@ -30,9 +33,28 @@ import { domainGetStartTime } from '../../libvirtApi/domain.js';
 
 const _ = cockpit.gettext;
 
-export const ConfirmDialog = ({ idPrefix, actionsList, title, titleIcon, vm }) => {
+interface ConfirmAction {
+    id: string,
+    name: string,
+    variant: ButtonProps["variant"],
+    handler: () => void,
+}
+
+export const ConfirmDialog = ({
+    idPrefix,
+    actionsList,
+    title,
+    titleIcon,
+    vm
+} : {
+    idPrefix: string,
+    actionsList: ConfirmAction[],
+    title: React.ReactNode,
+    titleIcon?: ModalHeaderProps["titleIconVariant"],
+    vm: VM,
+}) => {
     const Dialogs = useDialogs();
-    const [startTime, setStartTime] = useState();
+    const [startTime, setStartTime] = useState<Date | null>(null);
 
     useEffect(() => {
         domainGetStartTime({ connectionName: vm.connectionName, vmName: vm.name })
@@ -41,7 +63,8 @@ export const ConfirmDialog = ({ idPrefix, actionsList, title, titleIcon, vm }) =
     }, [vm]);
 
     const actions = actionsList.map(action =>
-        <Button variant={action.variant}
+        <Button
+            {...action.variant && { variant: action.variant }}
             key={action.id}
             id={`${idPrefix}-${action.id}`}
             onClick={() => {
@@ -64,8 +87,9 @@ export const ConfirmDialog = ({ idPrefix, actionsList, title, titleIcon, vm }) =
             onClose={Dialogs.close}
             isOpen
         >
-            <ModalHeader title={title}
-                titleIconVariant={titleIcon}
+            <ModalHeader
+                title={title}
+                {...titleIcon && { titleIconVariant: titleIcon }}
             />
             <ModalBody>
                 {startTime
