@@ -138,7 +138,7 @@ interface DeleteResourceButtonProps {
     objectId: string,
     disabled?: boolean,
     overlayText?: string,
-    actionName: string,
+    actionName?: string,
     dialogProps: DeleteResourceModalProps,
     isLink?: boolean,
     isInline?: boolean,
