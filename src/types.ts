@@ -390,7 +390,6 @@ export interface VM extends VMXML {
     state: VMState;
     persistent: boolean;
     autostart: boolean;
-    usagePolling?: boolean;
 
     error?: DetailedError | null;
 
