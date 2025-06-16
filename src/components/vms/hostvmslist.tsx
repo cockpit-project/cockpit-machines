@@ -38,7 +38,7 @@ import { updateVm } from '../../actions/store-actions.js';
 
 import { vmId, rephraseUI, dummyVmsFilter, DOMAINSTATE } from "../../helpers.js";
 
-import { ListingTable } from "cockpit-components-table.jsx";
+import { ListingTable, type ListingTableColumnProps } from "cockpit-components-table.jsx";
 import StateIcon from '../common/stateIcon.jsx';
 import { VmNeedsShutdown } from '../common/needsShutdown.jsx';
 import { VmUsesSpice } from '../vm/usesSpice.jsx';
@@ -88,12 +88,11 @@ const VmState = ({
 };
 
 const VmUsageCpu = ({ vm } : {vm: VM | UIVM, }) => {
-    let cpuUsage: number = 0;
+    if (vm.isUi || vm.state != "running")
+        return null;
 
-    if (!vm.isUi) {
-        const vmCpuUsage:number = vm.cpuUsage ? vm.cpuUsage : 0;
-        cpuUsage = vm.cpuUsage && isNaN(vmCpuUsage) ? 0 : parseFloat(vmCpuUsage.toFixed(1));
-    }
+    const vmCpuUsage: number = vm.cpuUsage ? vm.cpuUsage : 0;
+    const cpuUsage = vm.cpuUsage && isNaN(vmCpuUsage) ? 0 : parseFloat(vmCpuUsage.toFixed(1));
 
     return (
         <Progress value={cpuUsage}
@@ -106,13 +105,11 @@ const VmUsageCpu = ({ vm } : {vm: VM | UIVM, }) => {
 };
 
 const VmUsageMem = ({ vm } : {vm: VM | UIVM, }) => {
-    let memTotal: number = 0;
-    let rssMem: number = 0;
+    if (vm.isUi || vm.state != "running")
+        return null;
 
-    if (!vm.isUi) {
-        memTotal = vm.currentMemory ? vm.currentMemory * 1024 : 0;
-        rssMem = vm.rssMemory ? vm.rssMemory * 1024 : 0;
-    }
+    const memTotal = vm.currentMemory ? vm.currentMemory * 1024 : 0;
+    const rssMem = vm.rssMemory ? vm.rssMemory * 1024 : 0;
 
     return (
         <Progress value={rssMem}
@@ -237,6 +234,14 @@ const HostVmsList = ({
         </Toolbar>
     );
 
+    const usageColumns: ListingTableColumnProps[] =
+          showUsage
+              ? [
+                  { title: _("CPU"), props: { width: 15 } },
+                  { title: _("Memory"), props: { width: 15 } },
+              ]
+              : [];
+
     return (
         <WithDialogs key="vms-list">
             <Page className="no-masthead-sidebar">
@@ -253,8 +258,7 @@ const HostVmsList = ({
                                     { title: _("Name"), header: true, props: { width: 20 } },
                                     { title: _("Connection"), props: { width: 20 } },
                                     { title: _("State"), props: { width: 15 } },
-                                    { title: _("Cpu"), props: { width: 15 } },
-                                    { title: _("Mem"), props: { width: 15 } },
+                                    ...usageColumns,
                                     { title: "", props: { width: 15, "aria-label": _("Actions") } },
                                 ]}
                                 emptyCaption={_("No VM is running or defined on this host")}
@@ -292,8 +296,12 @@ const HostVmsList = ({
                                                                  }))} />
                                                         ),
                                                     },
-                                                    { title: (<VmUsageCpu vm={vm} />) },
-                                                    { title: (<VmUsageMem vm={vm} />) },
+                                                    ...(showUsage
+                                                        ? [
+                                                            { title: (<VmUsageCpu vm={vm} />) },
+                                                            { title: (<VmUsageMem vm={vm} />) },
+                                                        ]
+                                                        : []),
                                                     { title: vmActions },
                                                 ],
                                                 props: {
