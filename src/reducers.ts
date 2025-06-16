@@ -44,6 +44,7 @@ import {
     UPDATE_VM,
 } from './constants/store-action-types.js';
 
+import type cockpit from 'cockpit';
 import type {
     ConnectionName,
     VM,
@@ -52,7 +53,8 @@ import type {
     NodeInterface,
     StoragePool,
     Network,
-    HypervisorCapabilities
+    HypervisorCapabilities,
+    OSInfo,
 } from './types';
 
 // --- helpers -------------------
@@ -328,7 +330,18 @@ function vms(state: VM[] | undefined, action): VM[] {
     }
 }
 
-function systemInfo(state, action) {
+interface SystemInfo {
+    libvirtService: {
+        name: string;
+        activeState: string;
+        unitState: string;
+    };
+    libvirtVersion: number;
+    osInfoList: OSInfo[] | null;
+    loggedUser: cockpit.UserInfo | null;
+}
+
+function systemInfo(state: SystemInfo | undefined, action): SystemInfo {
     state = state || {
         libvirtService: {
             name: 'unknown',
