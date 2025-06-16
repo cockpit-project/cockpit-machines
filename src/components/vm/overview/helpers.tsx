@@ -19,6 +19,8 @@
 import React from 'react';
 import cockpit from 'cockpit';
 
+import type { optString } from '../../../types';
+
 import { CodeBlock, CodeBlockCode } from "@patternfly/react-core/dist/esm/components/CodeBlock";
 import { FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 
@@ -44,11 +46,11 @@ export const SOCAT_EXAMPLE = (
     </>
 );
 
-export function labelForFirmwarePath(path, guest_arch) {
+export function labelForFirmwarePath(path: optString, guest_arch: optString) {
     /* Copied from virt-manager code:
      * Mapping of UEFI binary names to their associated architectures.
      */
-    const uefi_arch_patterns = {
+    const uefi_arch_patterns: Record<string, string[]> = {
         i686: [
             ".*ovmf-ia32.*", // fedora, gerd's firmware repo
         ],
@@ -68,7 +70,7 @@ export function labelForFirmwarePath(path, guest_arch) {
         ],
     };
     if (!path) {
-        if (["i686", "x86_64"].includes(guest_arch))
+        if (guest_arch && ["i686", "x86_64"].includes(guest_arch))
             return "bios";
         else
             return "unknown";
@@ -84,7 +86,7 @@ export function labelForFirmwarePath(path, guest_arch) {
     }
 }
 
-export function supportsUefiXml(loaderElem) {
+export function supportsUefiXml(loaderElem: Element) {
     /* Return True if libvirt advertises support for proper UEFI setup  */
     const enums = loaderElem.getElementsByTagName("enum");
     const readonly = Array.prototype.filter.call(enums, enm => enm.getAttribute("name") == "readonly");
