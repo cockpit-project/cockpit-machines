@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
+
 import React from 'react';
 import cockpit from 'cockpit';
 import { InputGroup } from "@patternfly/react-core/dist/esm/components/InputGroup";
@@ -33,15 +34,33 @@ import './memorySelectRow.css';
 
 const _ = cockpit.gettext;
 
-class MemorySelectRow extends React.Component {
-    constructor(props) {
+interface MemorySelectRowProps {
+    id: string;
+    value: number;
+    label: string;
+    minValue: number,
+    maxValue: number,
+    initialUnit: string,
+    onValueChange: (val: number) => void,
+    onUnitChange: (event: React.FormEvent, val: string) => void,
+    isDisabled?: boolean;
+    helperText?: string | null | undefined;
+}
+
+interface MemorySelectRowState {
+    memory: string;
+    inputHasFocus?: boolean;
+}
+
+class MemorySelectRow extends React.Component<MemorySelectRowProps, MemorySelectRowState> {
+    constructor(props: MemorySelectRowProps) {
         super(props);
-        this.state = { memory: props.value };
+        this.state = { memory: props.value.toFixed(0) };
     }
 
-    static getDerivedStateFromProps(nextProps, prevState) {
-        if (nextProps.value !== prevState.memory && !prevState.inputHasFocus)
-            return { memory: parseFloat(nextProps.value).toFixed(0) };
+    static getDerivedStateFromProps(nextProps: MemorySelectRowProps, prevState: MemorySelectRowState) {
+        if (!prevState.inputHasFocus)
+            return { memory: nextProps.value.toFixed(0) };
         return null;
     }
 
@@ -55,7 +74,7 @@ class MemorySelectRow extends React.Component {
                     <GridItem span={12} sm={8}>
                         <Slider className='memory-slider'
                                 id={id + '-slider'}
-                                isDisabled={isDisabled}
+                                isDisabled={!!isDisabled}
                                 key={id + '-slider-max-' + maxValue}
                                 max={maxValue}
                                 min={minValue}
@@ -74,9 +93,9 @@ class MemorySelectRow extends React.Component {
                                        pattern="[0-9]*"
                                        value={this.state.memory}
                                        onKeyUp={digitFilter}
-                                       isDisabled={isDisabled}
+                                       isDisabled={!!isDisabled}
                                        onFocus={ () => this.setState({ inputHasFocus: true }) }
-                                       onBlur={() => { onValueChange(Math.min(Math.max(minValue, this.state.memory), maxValue)); this.setState({ inputHasFocus: false }) }}
+                                       onBlur={() => { onValueChange(Math.min(Math.max(minValue, Number(this.state.memory)), maxValue)); this.setState({ inputHasFocus: false }) }}
                                        onChange={(_, memory) => this.setState({ memory })} />
                             <FormSelect id={id + "-unit-select"}
                                         className="ct-machines-select-unit"
