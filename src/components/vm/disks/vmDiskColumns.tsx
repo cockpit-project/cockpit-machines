@@ -197,7 +197,7 @@ export const DiskActions = ({
     vm: VM,
     vms: VM[],
     disk: VMDisk,
-    supportedDiskBusTypes: string[],
+    supportedDiskBusTypes: optString[] | null,
     idPrefixRow: string,
     storagePools: StoragePool[],
     onAddErrorNotification: (notification: Notification) => void,
