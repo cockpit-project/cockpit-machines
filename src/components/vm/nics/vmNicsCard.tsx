@@ -260,7 +260,7 @@ interface IpAddress {
 interface VmNetworkTabState {
     networkDevices: Record<string, NetworkDevice> | undefined,
     ips: IpAddress[],
-    dropdownOpenActions: Set<unknown>,
+    dropdownOpenActions: number,
 }
 
 export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTabState> {
@@ -276,7 +276,7 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
         this.state = {
             networkDevices: undefined,
             ips: [],
-            dropdownOpenActions: new Set(),
+            dropdownOpenActions: 0,
         };
 
         this.deviceProxyHandler = this.deviceProxyHandler.bind(this);
@@ -578,15 +578,12 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
                         );
                     }
 
-                    const isOpen = this.state.dropdownOpenActions.has(network.mac);
+                    const isOpen = this.state.dropdownOpenActions == networkId;
                     const setIsOpen = (open: boolean) => {
-                        const next = new Set(this.state.dropdownOpenActions);
-                        if (open)
-                            next.add(network.mac);
-                        else
-                            next.delete(network.mac);
-
-                        this.setState({ dropdownOpenActions: next });
+                        if (!open && this.state.dropdownOpenActions == networkId)
+                            this.setState({ dropdownOpenActions: 0 });
+                        else if (open)
+                            this.setState({ dropdownOpenActions: networkId });
                     };
 
                     return (
