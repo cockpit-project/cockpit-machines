@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-10 03:40+0000\n"
+"POT-Creation-Date: 2025-06-16 03:43+0000\n"
 "PO-Revision-Date: 2025-06-07 07:41+0000\n"
 "Last-Translator: Burak Yavuz <hitowerdigit@hotmail.com>\n"
 "Language-Team: Turkish <https://translate.fedoraproject.org/projects/cockpit/"
@@ -67,14 +67,14 @@ msgstr "$0 bellek ayarlaması"
 msgid "$0 network"
 msgstr "$0 ağ"
 
-#: src/components/vm/overview/vmOverviewCard.jsx:140
 #: src/components/vm/vmUsageCard.jsx:42
+#: src/components/vm/overview/vmOverviewCard.jsx:140
 msgid "$0 vCPU"
 msgid_plural "$0 vCPUs"
 msgstr[0] "$0 vCPU"
 msgstr[1] "$0 vCPU"
 
-#: src/components/vm/nics/nicEdit.jsx:189
+#: src/components/vm/nics/nicEdit.tsx:224
 msgid "$0 virtual network interface settings"
 msgstr "$0 sanal ağ arayüzü ayarları"
 
@@ -87,26 +87,26 @@ msgstr ""
 "kaybolacaktır. Bu arada kaynak ana makine, sanal makine yapılandırmasının "
 "kopyasını tutar."
 
-#: src/components/vm/disks/vmDisksCard.jsx:188
-#: src/components/vm/disks/diskEdit.jsx:108
+#: src/components/vm/disks/vmDisksCard.tsx:223
+#: src/components/vm/disks/diskEdit.tsx:166
 msgid "Access"
 msgstr "Erişim"
 
-#: src/components/vm/overview/watchdog.jsx:204
+#: src/components/vm/overview/watchdog.jsx:183
 msgid "Action"
 msgstr "Eylem"
 
-#: src/components/storagePools/storagePoolList.tsx:80
-#: src/components/vm/disks/vmDisksCard.jsx:194
-#: src/components/vm/nics/vmNicsCard.jsx:431
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:176
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:199
+#: src/components/vm/disks/vmDisksCard.tsx:229
+#: src/components/vm/nics/vmNicsCard.tsx:498
 #: src/components/networks/networkList.tsx:77
 #: src/components/vms/hostvmslist.tsx:204
+#: src/components/storagePools/storagePoolList.tsx:80
 msgid "Actions"
 msgstr "Eylemler"
 
-#: src/components/storagePools/storagePool.tsx:180
 #: src/components/networks/network.tsx:189
+#: src/components/storagePools/storagePool.tsx:180
 msgid "Activate"
 msgstr "Etkinleştir"
 
@@ -114,12 +114,12 @@ msgstr "Etkinleştir"
 msgid "Activate the storage pool to administer volumes"
 msgstr "Birimleri yönetmek için depolama havuzunu etkinleştir"
 
-#: src/components/vm/overview/vsock.jsx:194
-#: src/components/vm/overview/watchdog.jsx:156
-#: src/components/vm/disks/diskAdd.jsx:818
 #: src/components/vm/hostdevs/hostDevAdd.jsx:232
-#: src/components/vm/nics/nicAdd.jsx:222
-#: src/components/networks/networkOverviewTab.tsx:257
+#: src/components/vm/disks/diskAdd.tsx:968
+#: src/components/vm/overview/watchdog.jsx:156
+#: src/components/vm/overview/vsock.jsx:194
+#: src/components/vm/nics/nicAdd.tsx:274
+#: src/components/networks/networkOverviewTab.tsx:281
 msgid "Add"
 msgstr "Ekle"
 
@@ -135,17 +135,17 @@ msgstr "TPM ekle"
 msgid "Add a DHCP static host entry"
 msgstr "DHCP sabit anamakine girişi ekle"
 
-#: src/components/vm/disks/diskAdd.jsx:686
-#: src/components/vm/disks/vmDisksCard.jsx:75
+#: src/components/vm/disks/diskAdd.tsx:819
+#: src/components/vm/disks/vmDisksCard.tsx:87
 msgid "Add disk"
 msgstr "Disk ekle"
 
+#: src/components/vm/hostdevs/hostDevAdd.jsx:249
 #: src/components/vm/hostdevs/hostDevCard.jsx:147
-#: src/components/vm/hostdevs/hostDevAdd.jsx:247
 msgid "Add host device"
 msgstr "Anamakine aygıtı ekle"
 
-#: src/components/vm/nics/vmNicsCard.jsx:98
+#: src/components/vm/nics/vmNicsCard.tsx:129
 msgid "Add network interface"
 msgstr "Ağ arayüzü ekle"
 
@@ -153,15 +153,15 @@ msgstr "Ağ arayüzü ekle"
 msgid "Add shared directory"
 msgstr "Paylaşılan dizin ekle"
 
-#: src/components/vm/nics/nicAdd.jsx:211
+#: src/components/vm/nics/nicAdd.tsx:255
 msgid "Add virtual network interface"
 msgstr "Sanal ağ arayüzü ekle"
 
-#: src/components/vm/overview/vsock.jsx:212
+#: src/components/vm/overview/vsock.jsx:213
 msgid "Add vsock interface"
 msgstr "vsock arayüzü ekle"
 
-#: src/components/vm/overview/watchdog.jsx:174
+#: src/components/vm/overview/watchdog.jsx:175
 msgid "Add watchdog device type"
 msgstr "Gözlemci aygıt türü ekle"
 
@@ -173,12 +173,12 @@ msgstr "Gözlemci eklemenin etkili olması için yeniden başlatma gerekir."
 msgid "Adding shared directories is possible only when the guest is shut off"
 msgstr "Paylaşılan dizinler eklemek yalnızca konuk kapalı olduğunda mümkündür"
 
-#: src/components/vm/disks/vmDisksCard.jsx:192
+#: src/components/vm/disks/vmDisksCard.tsx:227
 msgid "Additional"
 msgstr "Ek"
 
 #: src/components/vm/consoles/desktopConsole.jsx:47
-#: src/components/vm/nics/vmNicsCard.jsx:164
+#: src/components/vm/nics/vmNicsCard.tsx:205
 #: src/components/networks/networkOverviewTab.tsx:153
 #: src/components/networks/networkOverviewTab.tsx:173
 msgid "Address"
@@ -204,7 +204,7 @@ msgstr ""
 "Depolama dahil tüm sanal makine etkinliği geçici olacaktır. Bu, hedef ana "
 "makinede veri kaybına neden olacaktır."
 
-#: src/components/vm/disks/diskAdd.jsx:250
+#: src/components/vm/disks/diskAdd.tsx:337
 msgid ""
 "Allowed characters: basic Latin alphabet, numbers, and limited punctuation "
 "(-, _, +, .)"
@@ -216,7 +216,8 @@ msgstr ""
 msgid "Also delete all volumes inside this pool:"
 msgstr "Ayrıca bu havuzun içindeki tüm birimleri sil:"
 
-#: src/components/vm/disks/diskAdd.jsx:136 src/components/vm/nics/nicAdd.jsx:96
+#: src/components/vm/disks/diskAdd.tsx:193
+#: src/components/vm/nics/nicAdd.tsx:125
 msgid "Always attach"
 msgstr "Her zaman bağla"
 
@@ -224,11 +225,11 @@ msgstr "Her zaman bağla"
 msgid "An example of vsock-aware software is socat"
 msgstr "vsock kullanabilen olan yazılımlara bir örnek: socat"
 
-#: src/components/vm/overview/cpuModal.jsx:325
+#: src/components/vm/overview/cpuModal.jsx:327
 msgid "Apply"
 msgstr "Uygula"
 
-#: src/components/vm/overview/watchdog.jsx:185
+#: src/components/vm/overview/watchdog.jsx:205
 msgid "Apply on next boot"
 msgstr "Sonraki önyüklemede uygula"
 
@@ -252,13 +253,13 @@ msgstr "Otomatik"
 msgid "Automation"
 msgstr "Otomasyon"
 
-#: src/components/storagePools/storagePoolOverviewTab.tsx:73
 #: src/components/vm/overview/vmOverviewCard.jsx:194
 #: src/components/networks/networkOverviewTab.tsx:130
+#: src/components/storagePools/storagePoolOverviewTab.tsx:73
 msgid "Autostart"
 msgstr "Otomatik başlat"
 
-#: src/components/vm/disks/vmDiskColumns.jsx:42
+#: src/components/vm/disks/vmDiskColumns.tsx:48
 msgid "Block device"
 msgstr "Blok aygıtı"
 
@@ -274,32 +275,28 @@ msgstr "Önyükleme sırası"
 msgid "Boot order settings could not be saved"
 msgstr "Önyükleme sırası ayarları kaydedilemedi"
 
-#: src/components/vm/nics/nicBody.jsx:226
-msgid "Bridge"
-msgstr "Köprü"
-
+#: src/components/vm/hostdevs/hostDevAdd.jsx:89
+#: src/components/vm/hostdevs/hostDevCard.jsx:99
+#: src/components/vm/hostdevs/hostDevCard.jsx:107
+#: src/components/vm/hostdevs/hostDevCard.jsx:245
+#: src/components/vm/disks/diskAdd.tsx:306
+#: src/components/vm/disks/vmDisksCard.tsx:221
+#: src/components/vm/disks/diskEdit.tsx:133
 #: src/components/vm/overview/bootOrder.jsx:107
 #: src/components/vm/overview/bootOrder.jsx:119
 #: src/components/vm/overview/bootOrder.jsx:137
 #: src/components/vm/overview/bootOrder.jsx:140
 #: src/components/vm/overview/bootOrder.jsx:154
-#: src/components/vm/disks/diskAdd.jsx:219
-#: src/components/vm/disks/vmDisksCard.jsx:186
-#: src/components/vm/disks/diskEdit.jsx:87
-#: src/components/vm/hostdevs/hostDevCard.jsx:99
-#: src/components/vm/hostdevs/hostDevCard.jsx:107
-#: src/components/vm/hostdevs/hostDevCard.jsx:245
-#: src/components/vm/hostdevs/hostDevAdd.jsx:89
 msgid "Bus"
 msgstr "Veri yolu"
 
-#: src/components/vm/disks/diskAdd.jsx:351
+#: src/components/vm/disks/diskAdd.tsx:472
 msgid "CD/DVD disc"
 msgstr "CD/DVD disk"
 
-#: src/components/common/needsShutdown.tsx:145
-#: src/components/vm/overview/vmOverviewCard.jsx:182
 #: src/components/vm/vmUsageCard.jsx:61
+#: src/components/vm/overview/vmOverviewCard.jsx:182
+#: src/components/common/needsShutdown.tsx:145
 msgid "CPU"
 msgstr "CPU"
 
@@ -307,40 +304,40 @@ msgstr "CPU"
 msgid "CPU mode could not be saved"
 msgstr "CPU modu kaydedilemedi"
 
-#: src/components/vm/disks/diskAdd.jsx:208
-#: src/components/vm/disks/vmDiskColumns.jsx:104
-#: src/components/vm/disks/diskEdit.jsx:61
+#: src/components/vm/disks/diskAdd.tsx:295
+#: src/components/vm/disks/vmDiskColumns.tsx:120
+#: src/components/vm/disks/diskEdit.tsx:91
 msgid "Cache"
 msgstr "Önbellek"
 
-#: src/components/storagePools/storageVolumeCreate.tsx:136
-#: src/components/storagePools/createStoragePoolDialog.tsx:527
-#: src/components/storagePools/storagePoolDelete.tsx:218
-#: src/components/create-vm-dialog/createVmDialog.jsx:1479
-#: src/components/common/deleteResource.tsx:114
-#: src/components/vm/overview/vsock.jsx:238
-#: src/components/vm/overview/memoryModal.jsx:161
-#: src/components/vm/overview/watchdog.jsx:196
-#: src/components/vm/overview/firmware.jsx:87
-#: src/components/vm/overview/bootOrder.jsx:320
-#: src/components/vm/overview/cpuModal.jsx:328
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:168
-#: src/components/vm/vmCloneDialog.jsx:85
-#: src/components/vm/disks/diskAdd.jsx:821
-#: src/components/vm/disks/mediaEject.jsx:112
-#: src/components/vm/disks/diskEdit.jsx:251
-#: src/components/vm/hostdevs/hostDevAdd.jsx:237
-#: src/components/vm/vmReplaceSpiceDialog.jsx:136
-#: src/components/vm/confirmDialog.jsx:56
 #: src/components/vm/vmMigrateDialog.jsx:199
-#: src/components/vm/deleteDialog.jsx:175
-#: src/components/vm/vmRenameDialog.jsx:73
-#: src/components/vm/vmEditDescriptionDialog.jsx:65
-#: src/components/vm/nics/nicAdd.jsx:225 src/components/vm/nics/nicEdit.jsx:196
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:288
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:112
-#: src/components/networks/createNetworkDialog.tsx:553
-#: src/components/networks/networkOverviewTab.tsx:260
+#: src/components/vm/vmEditDescriptionDialog.jsx:79
+#: src/components/vm/hostdevs/hostDevAdd.jsx:237
+#: src/components/vm/vmRenameDialog.jsx:89
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:140
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:362
+#: src/components/vm/disks/diskAdd.tsx:971
+#: src/components/vm/disks/mediaEject.tsx:129
+#: src/components/vm/disks/diskEdit.tsx:341
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:229
+#: src/components/vm/overview/watchdog.jsx:216
+#: src/components/vm/overview/bootOrder.jsx:323
+#: src/components/vm/overview/cpuModal.jsx:330
+#: src/components/vm/overview/vsock.jsx:243
+#: src/components/vm/overview/firmware.jsx:101
+#: src/components/vm/overview/memoryModal.jsx:164
+#: src/components/vm/deleteDialog.jsx:176
+#: src/components/vm/vmCloneDialog.jsx:101
+#: src/components/vm/nics/nicEdit.tsx:240 src/components/vm/nics/nicAdd.tsx:277
+#: src/components/vm/vmReplaceSpiceDialog.jsx:160
+#: src/components/vm/confirmDialog.jsx:56
+#: src/components/common/deleteResource.tsx:129
+#: src/components/create-vm-dialog/createVmDialog.jsx:1482
+#: src/components/networks/createNetworkDialog.tsx:561
+#: src/components/networks/networkOverviewTab.tsx:284
+#: src/components/storagePools/storageVolumeCreate.tsx:146
+#: src/components/storagePools/createStoragePoolDialog.tsx:529
+#: src/components/storagePools/storagePoolDelete.tsx:220
 msgid "Cancel"
 msgstr "İptal"
 
@@ -352,7 +349,7 @@ msgstr "Geçici bir sanal makinede vsock aygıtı düzenlenemez"
 msgid "Cannot edit watchdog device on a transient VM"
 msgstr "Geçici bir sanal makinede gözlemci aygıt düzenlenemez"
 
-#: src/components/vm/disks/vmDisksCard.jsx:184
+#: src/components/vm/disks/vmDisksCard.tsx:219
 msgid "Capacity"
 msgstr "Kapasite"
 
@@ -404,7 +401,7 @@ msgstr ""
 "\"Remote Viewer'ı Başlat\"a tıklamak bir .vv dosyası indirecek ve $0 "
 "başlatılacak."
 
-#: src/components/vm/vmCloneDialog.jsx:82 src/components/vm/vmActions.jsx:413
+#: src/components/vm/vmActions.jsx:413 src/components/vm/vmCloneDialog.jsx:98
 msgid "Clone"
 msgstr "Kopya"
 
@@ -420,11 +417,11 @@ msgstr "Bulut temel kalıbı"
 msgid "Cockpit Project"
 msgstr "Cockpit Projesi"
 
-#: src/components/vm/disks/vmDisksCard.jsx:216
+#: src/components/vm/disks/vmDisksCard.tsx:251
 msgid "Concurrently writeable"
 msgstr "Eşzamanlı olarak yazılabilir"
 
-#: src/components/common/deleteResource.tsx:125
+#: src/components/common/deleteResource.tsx:102
 msgid "Confirm this action"
 msgstr "Bu eylemi onayla"
 
@@ -441,12 +438,12 @@ msgstr ""
 msgid "Connecting"
 msgstr "Bağlanıyor"
 
-#: src/components/storagePools/storagePoolList.tsx:78
-#: src/components/common/machinesConnectionSelector.tsx:54
 #: src/components/vm/overview/vmOverviewCard.jsx:158
+#: src/components/common/machinesConnectionSelector.tsx:54
 #: src/components/networks/createNetworkDialog.tsx:47
 #: src/components/networks/networkList.tsx:74
 #: src/components/vms/hostvmslist.tsx:202
+#: src/components/storagePools/storagePoolList.tsx:78
 msgid "Connection"
 msgstr "Bağlantı"
 
@@ -455,11 +452,11 @@ msgstr "Bağlantı"
 msgid "Console"
 msgstr "Konsol"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:153
+#: src/components/vm/vmReplaceSpiceDialog.jsx:140
 msgid "Convert QXL video card to VGA"
 msgstr "QXL ekran kartını VGA'ya dönüştür"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:152
+#: src/components/vm/vmReplaceSpiceDialog.jsx:139
 msgid "Convert SPICE graphics console to VNC"
 msgstr "SPICE grafik konsolunu VNC'ye dönüştür"
 
@@ -472,15 +469,15 @@ msgstr "Depolamayı kopyala"
 msgid "Cores per socket"
 msgstr "Soket başına çekirdek sayısı"
 
-#: src/components/vm/deleteDialog.jsx:157
+#: src/components/vm/deleteDialog.jsx:156
 msgid "Could not delete $0"
 msgstr "$0 silinemedi"
 
-#: src/components/vm/deleteDialog.jsx:152
+#: src/components/vm/deleteDialog.jsx:151
 msgid "Could not delete all storage for $0"
 msgstr "$0 için tüm depolama alanı silinemedi"
 
-#: src/components/vm/disks/vmDiskColumns.jsx:134
+#: src/components/vm/disks/vmDiskColumns.tsx:153
 msgid "Could not delete disk's storage"
 msgstr "Disk depolama alanı silinemedi"
 
@@ -488,7 +485,7 @@ msgstr "Disk depolama alanı silinemedi"
 msgid "Could not dynamically add watchdog"
 msgstr "Dinamik olarak gözlemci eklenemedi"
 
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:81
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:99
 msgid "Could not revert to snapshot"
 msgstr "Anlık görüntüye geri döndürülemedi"
 
@@ -496,24 +493,24 @@ msgstr "Anlık görüntüye geri döndürülemedi"
 msgid "Crashed"
 msgstr "Çöktü"
 
-#: src/components/storagePools/storageVolumeCreate.tsx:133
-#: src/components/storagePools/createStoragePoolDialog.tsx:524
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:285
-#: src/components/networks/createNetworkDialog.tsx:550
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:359
+#: src/components/networks/createNetworkDialog.tsx:558
+#: src/components/storagePools/storageVolumeCreate.tsx:143
+#: src/components/storagePools/createStoragePoolDialog.tsx:526
 msgid "Create"
 msgstr "Oluştur"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1525
+#: src/components/create-vm-dialog/createVmDialog.jsx:1527
 msgid "Create VM"
 msgstr "Sanal makine oluştur"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1544
+#: src/components/create-vm-dialog/createVmDialog.jsx:1546
 msgid "Create VM by importing a disk image of an existing VM installation"
 msgstr ""
 "Mevcut bir sanal makine kurulumunun disk kalıbını içe aktararak sanal makine "
 "oluşturun"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1543
+#: src/components/create-vm-dialog/createVmDialog.jsx:1545
 msgid "Create VM from local or network installation medium"
 msgstr "Yerel veya ağ kurulum ortamından sanal makine oluşturun"
 
@@ -525,11 +522,11 @@ msgstr "$0'a dayalı bir kopya sanal makine oluştur"
 msgid "Create and edit"
 msgstr "Oluştur ve düzenle"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1473
+#: src/components/create-vm-dialog/createVmDialog.jsx:1476
 msgid "Create and run"
 msgstr "Oluştur ve çalıştır"
 
-#: src/components/vm/disks/diskAdd.jsx:625
+#: src/components/vm/disks/diskAdd.tsx:758
 msgid "Create new"
 msgstr "Yeni oluştur"
 
@@ -545,8 +542,8 @@ msgstr "Yeni ham birim oluştur"
 msgid "Create new virtual machine"
 msgstr "Yeni sanal makine oluştur"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:280
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:65
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:75
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:346
 msgid "Create snapshot"
 msgstr "Anlık görüntü oluştur"
 
@@ -555,7 +552,7 @@ msgstr "Anlık görüntü oluştur"
 msgid "Create storage pool"
 msgstr "Depolama havuzu oluştur"
 
-#: src/components/storagePools/storageVolumeCreate.tsx:129
+#: src/components/storagePools/storageVolumeCreate.tsx:122
 msgid "Create storage volume"
 msgstr "Depolama birimi oluştur"
 
@@ -564,8 +561,8 @@ msgstr "Depolama birimi oluştur"
 msgid "Create virtual network"
 msgstr "Sanal ağ oluştur"
 
-#: src/components/storagePools/storageVolumeCreate.tsx:181
-#: src/components/storagePools/storageVolumeCreate.tsx:192
+#: src/components/storagePools/storageVolumeCreate.tsx:174
+#: src/components/storagePools/storageVolumeCreate.tsx:185
 msgid "Create volume"
 msgstr "Birim oluştur"
 
@@ -577,7 +574,7 @@ msgstr "Sanal makine oluşturuluyor"
 msgid "Creating VM $0"
 msgstr "$0 sanal makinesi oluşturuluyor"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:58
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:68
 msgid ""
 "Creating snapshots of VMs with VFIO devices is not supported while they are "
 "running."
@@ -589,7 +586,7 @@ msgstr ""
 msgid "Creation of VM $0 failed"
 msgstr "$0 sanal makinesini oluşturma başarısız oldu"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:87
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:110
 msgid "Creation time"
 msgstr "Oluşturma zamanı"
 
@@ -597,7 +594,7 @@ msgstr "Oluşturma zamanı"
 msgid "Ctrl+Alt+$0"
 msgstr "Ctrl+Alt+$0"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:96
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:119
 msgid "Current"
 msgstr "Şu anki"
 
@@ -613,38 +610,39 @@ msgstr "Özel aygıt yazılımı: $0"
 msgid "Custom identifier"
 msgstr "Özel tanımlayıcı"
 
-#: src/components/vm/disks/diskAdd.jsx:336
-#: src/components/vm/disks/diskAdd.jsx:589
-#: src/components/vm/disks/diskAdd.jsx:635
+#: src/components/vm/disks/diskAdd.tsx:454
+#: src/components/vm/disks/diskAdd.tsx:722
+#: src/components/vm/disks/diskAdd.tsx:768
 msgid "Custom path"
 msgstr "Özel yol"
 
-#: src/components/networks/networkOverviewTab.tsx:303
+#: src/components/networks/networkOverviewTab.tsx:307
 msgid "DHCP Settings"
 msgstr "DHCP Ayarları"
 
-#: src/components/storagePools/storagePool.tsx:171
 #: src/components/networks/network.tsx:185
+#: src/components/storagePools/storagePool.tsx:171
 msgid "Deactivate"
 msgstr "Devre dışı bırak"
 
-#: src/components/storagePools/storagePoolDelete.tsx:215
+#: src/components/vm/vmActions.jsx:496 src/components/vm/vmActions.jsx:504
+#: src/components/vm/deleteDialog.jsx:173
+#: src/components/common/deleteResource.tsx:117
+#: src/components/common/deleteResource.tsx:177
+#: src/components/common/deleteResource.tsx:188
+#: src/components/networks/network.tsx:166
+#: src/components/networks/network.tsx:169
+#: src/components/storagePools/storagePoolDelete.tsx:217
 #: src/components/storagePools/storagePoolDelete.tsx:247
 #: src/components/storagePools/storagePoolDelete.tsx:257
-#: src/components/common/deleteResource.tsx:102
-#: src/components/common/deleteResource.tsx:178
-#: src/components/common/deleteResource.tsx:189
-#: src/components/vm/deleteDialog.jsx:172 src/components/vm/vmActions.jsx:496
-#: src/components/vm/vmActions.jsx:504 src/components/networks/network.tsx:166
-#: src/components/networks/network.tsx:169
 msgid "Delete"
 msgstr "Sil"
 
-#: src/components/vm/deleteDialog.jsx:167
+#: src/components/vm/deleteDialog.jsx:164
 msgid "Delete $0 VM?"
 msgstr "$0 sanal makinesi silinsin mi?"
 
-#: src/components/storagePools/storagePoolDelete.tsx:207
+#: src/components/storagePools/storagePoolDelete.tsx:206
 msgid "Delete $0 storage pool?"
 msgstr "$0 depolama havuzu silinsin mi?"
 
@@ -654,7 +652,7 @@ msgid_plural "Delete $0 volumes"
 msgstr[0] "$0 birimi sil"
 msgstr[1] "$0 birimi sil"
 
-#: src/components/vm/deleteDialog.jsx:85
+#: src/components/vm/deleteDialog.jsx:84
 msgid "Delete associated storage files:"
 msgstr "İlişkili depolama dosyalarını sil:"
 
@@ -662,7 +660,7 @@ msgstr "İlişkili depolama dosyalarını sil:"
 msgid "Delete network?"
 msgstr "Ağ silinsin mi?"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:195
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:218
 msgid "Delete snapshot?"
 msgstr "Anlık görüntü silinsin mi?"
 
@@ -678,9 +676,9 @@ msgstr ""
 msgid "Deleting shared directories is possible only when the guest is shut off"
 msgstr "Paylaşılan dizinleri silmek yalnızca konuk kapalı olduğunda mümkündür"
 
-#: src/components/vm/vmEditDescriptionDialog.jsx:75
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:63
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:114
+#: src/components/vm/vmEditDescriptionDialog.jsx:64
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:137
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:89
 msgid "Description"
 msgstr "Açıklama"
 
@@ -711,17 +709,16 @@ msgstr ""
 msgid "Details"
 msgstr "Ayrıntılar"
 
+#: src/components/vm/hostdevs/hostDevAdd.jsx:88
+#: src/components/vm/hostdevs/hostDevAdd.jsx:123
+#: src/components/vm/hostdevs/hostDevCard.jsx:98
+#: src/components/vm/hostdevs/hostDevCard.jsx:244
+#: src/components/vm/disks/diskAdd.tsx:462
+#: src/components/vm/disks/vmDisksCard.tsx:207
 #: src/components/vm/overview/bootOrder.jsx:99
 #: src/components/vm/overview/bootOrder.jsx:106
 #: src/components/vm/overview/bootOrder.jsx:138
 #: src/components/vm/overview/bootOrder.jsx:141
-#: src/components/vm/disks/diskAdd.jsx:344
-#: src/components/vm/disks/vmDiskColumns.jsx:43
-#: src/components/vm/disks/vmDisksCard.jsx:172
-#: src/components/vm/hostdevs/hostDevCard.jsx:98
-#: src/components/vm/hostdevs/hostDevCard.jsx:244
-#: src/components/vm/hostdevs/hostDevAdd.jsx:88
-#: src/components/vm/hostdevs/hostDevAdd.jsx:123
 #: src/components/networks/createNetworkDialog.tsx:231
 #: src/components/networks/networkList.tsx:73
 msgid "Device"
@@ -731,8 +728,8 @@ msgstr "Aygıt"
 msgid "Devices"
 msgstr "Aygıtlar"
 
-#: src/components/vm/consoles/serialConsole.jsx:94
 #: src/components/vm/consoles/vnc.jsx:194
+#: src/components/vm/consoles/serialConsole.jsx:94
 msgid "Disconnect"
 msgstr "Bağlantıyı kes"
 
@@ -748,15 +745,15 @@ msgstr "Seri konsoldan bağlantı kesildi. Bağlan düğmesine tıklayın."
 msgid "Disk"
 msgstr "Disk"
 
-#: src/components/vm/disks/vmDiskColumns.jsx:148
+#: src/components/vm/disks/vmDiskColumns.tsx:167
 msgid "Disk $0 could not be removed"
 msgstr "$0 diski kaldırılamadı"
 
-#: src/components/vm/disks/diskAdd.jsx:805
+#: src/components/vm/disks/diskAdd.tsx:954
 msgid "Disk failed to be added"
 msgstr "Diskin eklenmesi başarısız oldu"
 
-#: src/components/vm/disks/diskAdd.jsx:234
+#: src/components/vm/disks/diskAdd.tsx:321
 msgid "Disk identifier"
 msgstr "Disk tanımlayıcısı"
 
@@ -764,7 +761,7 @@ msgstr "Disk tanımlayıcısı"
 msgid "Disk image"
 msgstr "Disk kalıbı"
 
-#: src/components/vm/disks/diskAdd.jsx:349
+#: src/components/vm/disks/diskAdd.tsx:470
 msgid "Disk image file"
 msgstr "Disk kalıp dosyası"
 
@@ -776,11 +773,11 @@ msgstr "Disk kalıbı yolu boş olmamalıdır"
 msgid "Disk images can be stored in user home directory"
 msgstr "Disk kalıpları kullanıcı ev dizininde saklanabilir"
 
-#: src/components/vm/disks/diskEdit.jsx:199
+#: src/components/vm/disks/diskEdit.tsx:280
 msgid "Disk settings could not be saved"
 msgstr "Disk ayarları kaydedilemedi"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:139
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:162
 msgid "Disk-only snapshot"
 msgstr "Sadece disk anlık görüntüsü"
 
@@ -798,11 +795,11 @@ msgstr ""
 msgid "Do nothing"
 msgstr "Hiçbir şey yapma"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:141
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:164
 msgid "Domain has crashed"
 msgstr "Etki alanı çöktü"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:140
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:163
 msgid "Domain is blocked on resource"
 msgstr "Etki alanı, kaynakta engellendi"
 
@@ -834,12 +831,12 @@ msgstr "Süre"
 msgid "Dying"
 msgstr "Sonlanıyor"
 
-#: src/components/vm/disks/diskEdit.jsx:149
-#: src/components/vm/nics/vmNicsCard.jsx:464
+#: src/components/vm/disks/diskEdit.tsx:217
+#: src/components/vm/nics/vmNicsCard.tsx:538
 msgid "Edit"
 msgstr "Düzenle"
 
-#: src/components/vm/disks/diskEdit.jsx:244
+#: src/components/vm/disks/diskEdit.tsx:325
 msgid "Edit $0 attributes"
 msgstr "$0 özniteliklerini düzenle"
 
@@ -851,28 +848,28 @@ msgstr "Açıklamayı düzenle"
 msgid "Edit description of VM $0"
 msgstr "$0 sanal makinesinin açıklamasını düzenle"
 
-#: src/components/vm/overview/vsock.jsx:212
+#: src/components/vm/overview/vsock.jsx:213
 msgid "Edit vsock interface"
 msgstr "vsock arayüzünü düzenle"
 
-#: src/components/vm/overview/watchdog.jsx:174
+#: src/components/vm/overview/watchdog.jsx:175
 msgid "Edit watchdog device type"
 msgstr "Gözlemci aygıt türünü düzenle"
 
-#: src/components/vm/nics/vmNicsCard.jsx:452
+#: src/components/vm/nics/vmNicsCard.tsx:526
 msgid "Editing network interfaces of transient guests is not allowed"
 msgstr "Geçici konukların ağ arayüzlerini düzenlemeye izin verilmiyor"
 
-#: src/components/vm/nics/vmNicsCard.jsx:458
+#: src/components/vm/nics/vmNicsCard.tsx:532
 msgid "Editing transient network interfaces is not allowed"
 msgstr "Geçici ağ arayüzlerini düzenlemeye izin verilmiyor"
 
-#: src/components/vm/disks/vmDiskColumns.jsx:194
-#: src/components/vm/disks/mediaEject.jsx:105
+#: src/components/vm/disks/vmDiskColumns.tsx:233
+#: src/components/vm/disks/mediaEject.tsx:122
 msgid "Eject"
 msgstr "Çıkar"
 
-#: src/components/vm/disks/mediaEject.jsx:101
+#: src/components/vm/disks/mediaEject.tsx:112
 msgid "Eject disc from VM?"
 msgstr "Disk sanal makineden çıkarılsın mı?"
 
@@ -915,7 +912,7 @@ msgstr "Anamakinenin dosya sisteminde varolan disk kalıbı"
 msgid "Expand"
 msgstr "Genişlet"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:223
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:211
 msgid "Extended attributes"
 msgstr "Genişletilmiş öznitelikler"
 
@@ -927,7 +924,7 @@ msgstr "Başarısız oldu"
 msgid "Failed to add TPM to VM $0"
 msgstr "$0 sanal makinesine TPM ekleme başarısız oldu"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:192
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:180
 msgid "Failed to add shared directory"
 msgstr "Paylaşılan dizin ekleme başarısız oldu"
 
@@ -959,7 +956,7 @@ msgstr "Gözlemci ayırma başarısız oldu"
 msgid "Failed to fetch some resources"
 msgstr "Bazı kaynakların alınması başarısız oldu"
 
-#: src/components/vm/nics/vmNicsCard.jsx:245
+#: src/components/vm/nics/vmNicsCard.tsx:307
 msgid "Failed to fetch the IP addresses of the interfaces present in $0"
 msgstr "$0 içinde bulunan arayüzlerin IP adreslerinin alınması başarısız oldu"
 
@@ -971,7 +968,7 @@ msgstr "$0 sanal makinesini yeniden adlandırma başarısız oldu"
 msgid "Failed to replace SPICE devices"
 msgstr "SPICE aygıtlarını değiştirme başarısız oldu"
 
-#: src/components/networks/networkOverviewTab.tsx:267
+#: src/components/networks/networkOverviewTab.tsx:258
 msgid "Failed to save network settings"
 msgstr "Ağ ayarları kaydedilemedi"
 
@@ -988,8 +985,8 @@ msgstr "$0 sanal makinesinin açıklamasını ayarlama başarısız oldu"
 msgid "Fewer than the maximum number of virtual CPUs should be enabled."
 msgstr "En fazla sanal CPU sayısından daha azı etkinleştirilmelidir."
 
+#: src/components/vm/disks/vmDiskColumns.tsx:47
 #: src/components/vm/overview/bootOrder.jsx:98
-#: src/components/vm/disks/vmDiskColumns.jsx:41
 msgid "File"
 msgstr "Dosya"
 
@@ -1006,11 +1003,11 @@ msgid "Filter by name"
 msgstr "Ada göre süz"
 
 #: src/components/vm/overview/vmOverviewCard.jsx:248
-#: src/components/vm/overview/firmware.jsx:93
+#: src/components/vm/overview/firmware.jsx:84
 msgid "Firmware"
 msgstr "Aygıt yazılımı"
 
-#: src/components/vm/disks/mediaEject.jsx:109
+#: src/components/vm/disks/mediaEject.tsx:126
 msgid "Force eject"
 msgstr "Çıkarmaya zorla"
 
@@ -1022,7 +1019,7 @@ msgstr "Yeniden başlatmaya zorla"
 msgid "Force reboot $0?"
 msgstr "$0 yeniden başlatmaya zorlansın mı?"
 
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:109
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:137
 msgid "Force revert"
 msgstr "Geri döndürmeye zorla"
 
@@ -1034,9 +1031,9 @@ msgstr "Kapatmaya zorla"
 msgid "Force shut down $0?"
 msgstr "$0 kapatmaya zorlansın mı?"
 
-#: src/components/storagePools/storageVolumeCreateBody.tsx:120
+#: src/components/vm/disks/vmDiskColumns.tsx:122
 #: src/components/storagePools/createStoragePoolDialog.tsx:257
-#: src/components/vm/disks/vmDiskColumns.jsx:106
+#: src/components/storagePools/storageVolumeCreateBody.tsx:120
 msgid "Format"
 msgstr "Biçimlendir"
 
@@ -1063,7 +1060,7 @@ msgstr ""
 msgid "General"
 msgstr "Genel"
 
-#: src/components/vm/nics/nicAdd.jsx:74
+#: src/components/vm/nics/nicAdd.tsx:95
 msgid "Generate automatically"
 msgstr "Otomatik olarak oluştur"
 
@@ -1071,11 +1068,11 @@ msgstr "Otomatik olarak oluştur"
 msgid "Get a new RHSM token."
 msgstr "Yeni bir RHSM belirteci edinin."
 
-#: src/components/storagePools/storageVolumeCreateBody.tsx:152
+#: src/components/vm/disks/vmDisksCard.tsx:53
+#: src/components/vm/overview/memorySelectRow.jsx:89
 #: src/components/create-vm-dialog/createVmDialog.jsx:912
 #: src/components/create-vm-dialog/createVmDialog.jsx:1019
-#: src/components/vm/overview/memorySelectRow.jsx:89
-#: src/components/vm/disks/vmDisksCard.jsx:49
+#: src/components/storagePools/storageVolumeCreateBody.tsx:152
 msgid "GiB"
 msgstr "GiB"
 
@@ -1095,15 +1092,15 @@ msgstr "Düzgün şekilde kapat"
 msgid "Hardware virtualization is disabled"
 msgstr "Donanım sanallaştırma devre dışı"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:218
-#: src/components/vm/disks/diskAdd.jsx:204
+#: src/components/vm/disks/diskAdd.tsx:291
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:206
 msgid "Hide additional options"
 msgstr "Ek seçenekleri gizle"
 
-#: src/components/storagePools/storagePoolOverviewTab.tsx:36
-#: src/components/storagePools/createStoragePoolDialog.tsx:167
+#: src/components/vm/disks/vmDiskColumns.tsx:52
 #: src/components/vm/overview/bootOrder.jsx:103
-#: src/components/vm/disks/vmDiskColumns.jsx:47
+#: src/components/storagePools/createStoragePoolDialog.tsx:167
+#: src/components/storagePools/storagePoolOverviewTab.tsx:36
 msgid "Host"
 msgstr "Anamakine"
 
@@ -1135,7 +1132,7 @@ msgstr "Anamakine boş olmamalıdır"
 msgid "Hypervisor details"
 msgstr "Hipervizör ayrıntıları"
 
-#: src/components/vm/disks/diskEdit.jsx:41
+#: src/components/vm/disks/diskEdit.tsx:61
 msgid "ID"
 msgstr "Kimlik"
 
@@ -1143,12 +1140,12 @@ msgstr "Kimlik"
 msgid "IP"
 msgstr "IP"
 
-#: src/components/vm/nics/vmNicsCard.jsx:367
-#: src/components/networks/networkOverviewTab.tsx:275
+#: src/components/vm/nics/vmNicsCard.tsx:434
+#: src/components/networks/networkOverviewTab.tsx:268
 msgid "IP address"
 msgstr "IP adresi"
 
-#: src/components/networks/networkOverviewTab.tsx:280
+#: src/components/networks/networkOverviewTab.tsx:274
 msgid "IP address must not be empty"
 msgstr "IP adresi boş olmamak zorundadır"
 
@@ -1214,7 +1211,7 @@ msgstr ""
 "Tanımlayıcı $0 tarafından kullanılıyor. Aynı tanımlayıcıya sahip sanal "
 "makineler aynı anda çalışamaz."
 
-#: src/components/vm/disks/diskAdd.jsx:255
+#: src/components/vm/disks/diskAdd.tsx:342
 msgid "Identifier may be silently truncated to $0 characters "
 msgstr "Tanımlayıcı sessizce $0 karaktere kadar kısaltılabilir "
 
@@ -1226,7 +1223,7 @@ msgstr "Boşta"
 msgid "Ignore"
 msgstr "Yok say"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1525
+#: src/components/create-vm-dialog/createVmDialog.jsx:1527
 msgid "Import VM"
 msgstr "Sanal makineyi içe aktar"
 
@@ -1238,11 +1235,11 @@ msgstr "Bir sanal makineyi içe aktar"
 msgid "Import and edit"
 msgstr "İçe aktar ve düzenle"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1473
+#: src/components/create-vm-dialog/createVmDialog.jsx:1476
 msgid "Import and run"
 msgstr "İçe aktar ve çalıştır"
 
-#: src/components/vm/disks/diskAdd.jsx:489
+#: src/components/vm/disks/diskAdd.tsx:627
 msgid "Importing an image with a backing file is unsupported"
 msgstr "Destek dosyası olan bir kalıbın içe aktarılması desteklenmiyor"
 
@@ -1265,12 +1262,12 @@ msgstr "Başlatıcı boş olmamalıdır"
 msgid "Inject a non-maskable interrupt"
 msgstr "Maskelenemez kesme gönder"
 
-#: src/components/vm/disks/diskAdd.jsx:818
-#: src/components/vm/disks/vmDiskColumns.jsx:186
+#: src/components/vm/disks/diskAdd.tsx:968
+#: src/components/vm/disks/vmDiskColumns.tsx:225
 msgid "Insert"
 msgstr "Tak"
 
-#: src/components/vm/disks/diskAdd.jsx:686
+#: src/components/vm/disks/diskAdd.tsx:819
 msgid "Insert disc media"
 msgstr "Disk ortamını tak"
 
@@ -1298,11 +1295,11 @@ msgstr "Kurulum türü"
 msgid "Interface"
 msgstr "Arayüz"
 
-#: src/components/vm/nics/nicBody.jsx:152
+#: src/components/vm/nics/nicBody.tsx:187
 msgid "Interface type"
 msgstr "Arayüz türü"
 
-#: src/components/vm/nics/nicBody.jsx:154
+#: src/components/vm/nics/nicBody.tsx:189
 msgid "Interface type help"
 msgstr "Arayüz türü yardımı"
 
@@ -1372,7 +1369,7 @@ msgstr ""
 msgid "Libvirt or hypervisor does not support UEFI"
 msgstr "Libvirt veya hipervizör UEFI'yi desteklemiyor"
 
-#: src/components/vm/nics/vmNicsCard.jsx:455
+#: src/components/vm/nics/vmNicsCard.tsx:529
 msgid "Loading available network devices"
 msgstr "Kullanılabilir ağ aygıtları yükleniyor"
 
@@ -1397,25 +1394,25 @@ msgstr "Konum"
 msgid "MAC"
 msgstr "MAC"
 
-#: src/components/vm/nics/nicAdd.jsx:70 src/components/vm/nics/nicEdit.jsx:49
-#: src/components/vm/nics/vmNicsCard.jsx:361
-#: src/components/networks/networkOverviewTab.tsx:268
+#: src/components/vm/nics/nicEdit.tsx:70 src/components/vm/nics/nicAdd.tsx:91
+#: src/components/vm/nics/vmNicsCard.tsx:428
+#: src/components/networks/networkOverviewTab.tsx:259
 msgid "MAC address"
 msgstr "MAC adresi"
 
-#: src/components/vm/nics/nicAdd.jsx:155 src/components/vm/nics/nicEdit.jsx:132
+#: src/components/vm/nics/nicEdit.tsx:167 src/components/vm/nics/nicAdd.tsx:199
 msgid "MAC address already in use"
 msgstr "MAC adresi zaten kullanılıyor"
 
-#: src/components/networks/networkOverviewTab.tsx:273
+#: src/components/networks/networkOverviewTab.tsx:265
 msgid "MAC address must not be empty"
 msgstr "MAC adresi boş olmamak zorundadır"
 
-#: src/components/vm/disks/diskEdit.jsx:89
+#: src/components/vm/disks/diskEdit.tsx:135
 msgid "Machine must be shut off before changing bus type"
 msgstr "Veri yolu türünü değiştirmeden önce makine kapatılmak zorundadır"
 
-#: src/components/vm/disks/diskEdit.jsx:63
+#: src/components/vm/disks/diskEdit.tsx:93
 msgid "Machine must be shut off before changing cache mode"
 msgstr "Önbellek kipini değiştirmeden önce makine kapatılmak zorundadır"
 
@@ -1467,17 +1464,17 @@ msgstr ""
 msgid "Maximum transmission unit"
 msgstr "En fazla iletim birimi (MTU)"
 
-#: src/components/vm/disks/mediaEject.jsx:116
+#: src/components/vm/disks/mediaEject.tsx:114
 msgid "Media could not be ejected from $0"
 msgstr "Ortam $0 sanal makinesinden çıkarılamadı"
 
-#: src/components/vm/disks/mediaEject.jsx:118
+#: src/components/vm/disks/mediaEject.tsx:116
 msgid "Media will be ejected from $0:"
 msgstr "Ortam $0 sanal makinesinden çıkarılacak:"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:897
-#: src/components/vm/overview/vmOverviewCard.jsx:177
 #: src/components/vm/vmUsageCard.jsx:53
+#: src/components/vm/overview/vmOverviewCard.jsx:177
+#: src/components/create-vm-dialog/createVmDialog.jsx:897
 msgid "Memory"
 msgstr "Bellek"
 
@@ -1490,22 +1487,22 @@ msgstr "Bellek kaydedilemedi"
 msgid "Memory must not be 0"
 msgstr "Bellek 0 olmamak zorundadır"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:198
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:264
 msgid "Memory save location can not be empty"
 msgstr "Bellek kayıt konumu boş olamaz"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:105
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:152
 msgid "Memory snapshot will use about $0."
 msgstr "Bellek anlık görüntüsü yaklaşık $0 kullanacak."
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:115
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:162
 msgid "Memory state path"
 msgstr "Bellek durumu konumu"
 
-#: src/components/storagePools/storageVolumeCreateBody.tsx:150
+#: src/components/vm/overview/memorySelectRow.jsx:87
 #: src/components/create-vm-dialog/createVmDialog.jsx:910
 #: src/components/create-vm-dialog/createVmDialog.jsx:1017
-#: src/components/vm/overview/memorySelectRow.jsx:87
+#: src/components/storagePools/storageVolumeCreateBody.tsx:150
 msgid "MiB"
 msgstr "MiB"
 
@@ -1514,7 +1511,7 @@ msgstr "MiB"
 msgid "Migrate"
 msgstr "Taşı"
 
-#: src/components/vm/vmMigrateDialog.jsx:207
+#: src/components/vm/vmMigrateDialog.jsx:206
 msgid "Migrate VM to another host"
 msgstr "Sanal makineyi başka bir anamakineye geçir"
 
@@ -1524,31 +1521,31 @@ msgstr "Taşıma başarısız oldu"
 
 #: src/components/vm/overview/cpuModal.jsx:293
 #: src/components/vm/overview/cpuModal.jsx:295
-#: src/components/vm/nics/nicBody.jsx:192
-#: src/components/vm/nics/vmNicsCard.jsx:151
+#: src/components/vm/nics/nicBody.tsx:227
+#: src/components/vm/nics/vmNicsCard.tsx:190
 msgid "Mode"
 msgstr "Kip"
 
-#: src/components/vm/nics/nicBody.jsx:196
+#: src/components/vm/nics/nicBody.tsx:231
 msgid "Mode help"
 msgstr "Mod yardımı"
 
 #: src/components/vm/hostdevs/hostDevCard.jsx:197
-#: src/components/vm/nics/nicBody.jsx:51
+#: src/components/vm/nics/nicBody.tsx:75
 msgid "Model"
 msgstr "Model"
 
-#: src/components/vm/nics/vmNicsCard.jsx:348
+#: src/components/vm/nics/vmNicsCard.tsx:415
 msgid "Model type"
 msgstr "Model türü"
 
-#: src/components/vm/nics/nicBody.jsx:212
+#: src/components/vm/nics/nicBody.tsx:247
 msgid "More info"
 msgstr "Daha fazla bilgi"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:47
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:65
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:207
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:195
 msgid "Mount tag"
 msgstr "Bağlama etiketi"
 
@@ -1564,29 +1561,29 @@ msgstr "Ağ tanımlayıcısı yerine bir adres olmalıdır, örneğin $0"
 msgid "NAT to $0"
 msgstr "$0 ağına NAT yap"
 
-#: src/components/vm/nics/vmNicsCard.jsx:318
+#: src/components/vm/nics/vmNicsCard.tsx:376
 msgid "NIC $0 of VM $1 failed to change state"
 msgstr "$1 sanal makinesinin $0 NIC'inin durumunu değiştirme başarısız oldu"
 
-#: src/components/storagePools/storageVolumeCreateBody.tsx:64
-#: src/components/storagePools/storagePoolVolumesTab.tsx:90
-#: src/components/storagePools/storagePoolList.tsx:76
-#: src/components/storagePools/createStoragePoolDialog.tsx:69
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:127
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:70
+#: src/components/vm/vmCloneDialog.jsx:82
 #: src/components/create-vm-dialog/createVmDialog.jsx:268
-#: src/components/vm/vmCloneDialog.jsx:95
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:50
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:104
 #: src/components/networks/createNetworkDialog.tsx:185
 #: src/components/networks/networkList.tsx:72
 #: src/components/vms/hostvmslist.tsx:201
+#: src/components/storagePools/storagePoolVolumesTab.tsx:90
+#: src/components/storagePools/storagePoolList.tsx:76
+#: src/components/storagePools/createStoragePoolDialog.tsx:69
+#: src/components/storagePools/storageVolumeCreateBody.tsx:64
 msgid "Name"
 msgstr "Ad"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:193
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:259
 msgid "Name already exists"
 msgstr "Bu ad zaten var"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:195
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:261
 msgid "Name can not be empty"
 msgstr "Ad boş olamaz"
 
@@ -1594,14 +1591,14 @@ msgstr "Ad boş olamaz"
 msgid "Name contains invalid characters"
 msgstr "Ad geçersiz karakterler içeriyor"
 
-#: src/components/storagePools/storageVolumeCreate.tsx:93
-#: src/components/create-vm-dialog/createVmDialog.jsx:197
 #: src/components/vm/vmCloneDialog.jsx:47
+#: src/components/create-vm-dialog/createVmDialog.jsx:197
+#: src/components/storagePools/storageVolumeCreate.tsx:86
 msgid "Name must not be empty"
 msgstr "Ad boş olmamak zorundadır"
 
-#: src/components/storagePools/createStoragePoolDialog.tsx:75
 #: src/components/networks/createNetworkDialog.tsx:90
+#: src/components/storagePools/createStoragePoolDialog.tsx:75
 msgid "Name should not be empty"
 msgstr "Ad boş olmamalıdır"
 
@@ -1641,15 +1638,15 @@ msgstr "Ağ dosya sistemi (NFS)"
 msgid "Network interface"
 msgstr "Ağ arayüzü"
 
-#: src/components/vm/nics/vmNicsCard.jsx:480
+#: src/components/vm/nics/vmNicsCard.tsx:554
 msgid "Network interface $0 could not be removed"
 msgstr "$0 ağ arayüzü kaldırılamadı"
 
-#: src/components/vm/nics/vmNicsCard.jsx:481
+#: src/components/vm/nics/vmNicsCard.tsx:555
 msgid "Network interface $0 will be removed from $1"
 msgstr "$0 ağ arayüzü $1 sanal makinesinden kaldırılacak"
 
-#: src/components/vm/nics/nicAdd.jsx:177 src/components/vm/nics/nicEdit.jsx:152
+#: src/components/vm/nics/nicEdit.tsx:187 src/components/vm/nics/nicAdd.tsx:221
 msgid "Network interface settings could not be saved"
 msgstr "Ağ arayüzü ayarları kaydedilemedi"
 
@@ -1667,11 +1664,11 @@ msgstr "Ağ seçimi PXE'yi desteklemiyor."
 msgid "Networks"
 msgstr "Ağlar"
 
-#: src/components/vm/vmRenameDialog.jsx:83
+#: src/components/vm/vmRenameDialog.jsx:71
 msgid "New name"
 msgstr "Yeni ad"
 
-#: src/components/vm/vmRenameDialog.jsx:89
+#: src/components/vm/vmRenameDialog.jsx:77
 msgid "New name must not be empty"
 msgstr "Yeni ad boş olmamalıdır"
 
@@ -1687,7 +1684,7 @@ msgstr "SSH anahtarı belirtilmedi"
 msgid "No VM is running or defined on this host"
 msgstr "Bu anamakinede çalışan veya tanımlı sanal makine yok"
 
-#: src/components/vm/overview/bootOrder.jsx:344
+#: src/components/vm/overview/bootOrder.jsx:342
 msgid "No boot device found"
 msgstr "Bulunan önyükleme aygıtı yok"
 
@@ -1695,7 +1692,7 @@ msgstr "Bulunan önyükleme aygıtı yok"
 msgid "No connection available"
 msgstr "Kullanılabilir bağlantı yok"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:118
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:141
 msgid "No description"
 msgstr "Açıklama yok"
 
@@ -1703,7 +1700,7 @@ msgstr "Açıklama yok"
 msgid "No directories shared between the host and this VM"
 msgstr "Anamakine ve bu sanal makine arasında paylaşılan dizinler yok"
 
-#: src/components/vm/disks/vmDisksCard.jsx:259
+#: src/components/vm/disks/vmDisksCard.tsx:294
 msgid "No disks defined for this VM"
 msgstr "Bu sanal makine için tanımlanan diskler yok"
 
@@ -1715,11 +1712,11 @@ msgstr "Seçilen anamakine aygıtı yok"
 msgid "No host devices assigned to this VM"
 msgstr "Bu sanal makineye atanan anamakine aygıtları yok"
 
-#: src/components/vm/nics/nicBody.jsx:139
+#: src/components/vm/nics/nicBody.tsx:174
 msgid "No network devices"
 msgstr "Ağ aygıtları yok"
 
-#: src/components/vm/nics/vmNicsCard.jsx:571
+#: src/components/vm/nics/vmNicsCard.tsx:649
 msgid "No network interfaces defined for this VM"
 msgstr "Bu sanal makine için tanımlanan ağ arayüzleri yok"
 
@@ -1731,11 +1728,11 @@ msgstr "Bu anamakinede tanımlı ağ yok"
 msgid "No networks available"
 msgstr "Kullanılabilir ağlar yok"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:165
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:188
 msgid "No parent"
 msgstr "Üst öğe yok"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:244
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:270
 msgid "No snapshots defined for this VM"
 msgstr "Bu sanal makine için tanımlanan anlık görüntüler yok"
 
@@ -1751,7 +1748,7 @@ msgstr "Depolama yok"
 msgid "No storage pool is defined on this host"
 msgstr "Bu anamakinede tanımlı depolama havuzu yok"
 
-#: src/components/vm/disks/diskAdd.jsx:163
+#: src/components/vm/disks/diskAdd.tsx:232
 msgid "No storage pools available"
 msgstr "Kullanılabilir depolama havuzları yok"
 
@@ -1759,7 +1756,7 @@ msgstr "Kullanılabilir depolama havuzları yok"
 msgid "No storage volumes defined for this storage pool"
 msgstr "Bu depolama havuzu için tanımlı depolama birimleri yok"
 
-#: src/components/vm/nics/nicBody.jsx:137
+#: src/components/vm/nics/nicBody.tsx:172
 msgid "No virtual networks"
 msgstr "Sanal ağlar yok"
 
@@ -1814,9 +1811,9 @@ msgstr ""
 "Seçilen bir veya daha fazla birim etki alanları tarafından kullanılıyor. "
 "Birimi silmeye izin vermek için önce diskleri ayırın."
 
+#: src/components/vm/overview/bootOrder.jsx:368
 #: src/components/vm/overview/memoryModal.jsx:147
-#: src/components/vm/overview/bootOrder.jsx:370
-#: src/components/vm/nics/nicEdit.jsx:46
+#: src/components/vm/nics/nicEdit.tsx:67
 msgid "Only editable when the guest is shut off"
 msgstr "Sadece konuk kapatıldığında düzenlenebilir"
 
@@ -1837,8 +1834,8 @@ msgstr "İşlem devam ediyor"
 msgid "Other VMs using SPICE"
 msgstr "SPICE kullanan diğer sanal makineler"
 
-#: src/components/storagePools/storagePool.tsx:77
 #: src/components/vm/vmDetailsPage.jsx:119
+#: src/components/storagePools/storagePool.tsx:77
 msgid "Overview"
 msgstr "Genel Bakış"
 
@@ -1846,18 +1843,14 @@ msgstr "Genel Bakış"
 msgid "PCI"
 msgstr "PCI"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:163
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:186
 msgid "Parent snapshot"
 msgstr "Üst öğe anlık görüntüsü"
 
-#: src/components/vm/nics/nicBody.jsx:236
-msgid "Passthrough"
-msgstr "Geçiş"
-
-#: src/components/vm/disks/diskEdit.jsx:43
 #: src/components/vm/hostdevs/hostDevCard.jsx:123
 #: src/components/vm/hostdevs/hostDevCard.jsx:127
-#: src/components/vm/deleteDialog.jsx:61
+#: src/components/vm/disks/diskEdit.tsx:63
+#: src/components/vm/deleteDialog.jsx:60
 msgid "Path"
 msgstr "Yol"
 
@@ -1873,11 +1866,11 @@ msgstr "Anamakinenin dosya sistemi üzerindeki ISO dosyasının yolu"
 msgid "Path to cloud image file on host's file system"
 msgstr "Anamakinenin dosya sistemi üzerindeki bulut kalıp dosyasının yolu"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:121
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:168
 msgid "Path to directory"
 msgstr "Dizinin yolu"
 
-#: src/components/vm/disks/diskAdd.jsx:339
+#: src/components/vm/disks/diskAdd.tsx:457
 msgid "Path to file on host's file system"
 msgstr "Anamakinenin dosya sistemi üzerindeki dosyanın yolu"
 
@@ -1897,12 +1890,13 @@ msgstr "Kalıcı (varsayılan)"
 msgid "Permissions denied for disk images in home directories"
 msgstr "Ev dizinlerindeki disk kalıpları için izinler reddedildi"
 
-#: src/components/vm/disks/diskAdd.jsx:133 src/components/vm/nics/nicAdd.jsx:93
+#: src/components/vm/disks/diskAdd.tsx:190
+#: src/components/vm/nics/nicAdd.tsx:122
 msgid "Persistence"
 msgstr "Kalıcılık"
 
-#: src/components/storagePools/storagePoolOverviewTab.tsx:68
 #: src/components/networks/networkOverviewTab.tsx:125
+#: src/components/storagePools/storagePoolOverviewTab.tsx:68
 msgid "Persistent"
 msgstr "Kalıcı"
 
@@ -1914,19 +1908,19 @@ msgstr "Fiziksel disk aygıtı"
 msgid "Physical disk device on host"
 msgstr "Anamakinedeki fiziksel disk aygıtı"
 
-#: src/components/vm/nics/nicAdd.jsx:155 src/components/vm/nics/nicEdit.jsx:132
+#: src/components/vm/nics/nicEdit.tsx:167 src/components/vm/nics/nicAdd.tsx:199
 msgid "Please choose a different MAC address"
 msgstr "Lütfen farklı bir MAC adresi seçin"
 
-#: src/components/vm/disks/diskAdd.jsx:546
+#: src/components/vm/disks/diskAdd.tsx:679
 msgid "Please choose a storage pool"
 msgstr "Lütfen bir depolama havuzu seçin"
 
-#: src/components/vm/disks/diskAdd.jsx:564
+#: src/components/vm/disks/diskAdd.tsx:697
 msgid "Please choose a volume"
 msgstr "Lütfen bir birim seçin"
 
-#: src/components/vm/disks/diskAdd.jsx:553
+#: src/components/vm/disks/diskAdd.tsx:686
 msgid "Please enter new volume name"
 msgstr "Lütfen yeni birim adını girin"
 
@@ -1940,23 +1934,23 @@ msgstr ""
 msgid "Please start the virtual machine to access its console."
 msgstr "Konsoluna erişmek için lütfen sanal makineyi başlatın."
 
+#: src/components/vm/disks/diskAdd.tsx:216
+#: src/components/vm/disks/vmDiskColumns.tsx:50
+#: src/components/vm/disks/mediaEject.tsx:98
 #: src/components/vm/overview/bootOrder.jsx:101
-#: src/components/vm/disks/diskAdd.jsx:147
-#: src/components/vm/disks/vmDiskColumns.jsx:45
-#: src/components/vm/disks/mediaEject.jsx:87
-#: src/components/vm/deleteDialog.jsx:69
+#: src/components/vm/deleteDialog.jsx:68
 msgid "Pool"
 msgstr "Havuz"
 
-#: src/components/storagePools/storageVolumeCreate.tsx:187
+#: src/components/storagePools/storageVolumeCreate.tsx:180
 msgid "Pool needs to be active to create volume"
 msgstr "Birim oluşturmak için havuzun etkin olması gerekir"
 
-#: src/components/vm/disks/diskAdd.jsx:556
+#: src/components/vm/disks/diskAdd.tsx:689
 msgid "Pool type $0 does not support volume creation"
 msgstr "$0 havuz türü birim oluşturmayı desteklemiyor"
 
-#: src/components/storagePools/storageVolumeCreate.tsx:187
+#: src/components/storagePools/storageVolumeCreate.tsx:180
 msgid "Pool type doesn't support volume creation"
 msgstr "Havuz türü birim oluşturmayı desteklemiyor"
 
@@ -1964,10 +1958,10 @@ msgstr "Havuz türü birim oluşturmayı desteklemiyor"
 msgid "Pool's volumes are used by VMs "
 msgstr "Havuzun birimleri sanal makineler tarafından kullanılıyor "
 
+#: src/components/vm/disks/vmDiskColumns.tsx:53
 #: src/components/vm/overview/bootOrder.jsx:104
 #: src/components/vm/overview/bootOrder.jsx:120
-#: src/components/vm/disks/vmDiskColumns.jsx:48
-#: src/components/vm/nics/vmNicsCard.jsx:172
+#: src/components/vm/nics/vmNicsCard.tsx:213
 msgid "Port"
 msgstr "Bağlantı noktası"
 
@@ -1995,7 +1989,7 @@ msgstr "Ön ek uzunluğu"
 msgid "Prefix length should not be empty"
 msgstr "Ön ek uzunluğu boş olmamalıdır"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:245
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:271
 msgid ""
 "Previously taken snapshots allow you to revert to an earlier state if "
 "something goes wrong"
@@ -2003,15 +1997,15 @@ msgstr ""
 "Önceden kaydedilmiş anlık görüntüler, bir şeyler ters giderse daha önceki "
 "bir duruma geri dönmenizi sağlar"
 
-#: src/components/vm/nics/nicBody.jsx:231 src/helpers.ts:272
+#: src/helpers.ts:272
 msgid "Private"
 msgstr "Özel"
 
-#: src/components/vm/overview/bootOrder.jsx:133
-#: src/components/vm/overview/bootOrder.jsx:148
+#: src/components/vm/hostdevs/hostDevAdd.jsx:130
 #: src/components/vm/hostdevs/hostDevCard.jsx:235
 #: src/components/vm/hostdevs/hostDevCard.jsx:241
-#: src/components/vm/hostdevs/hostDevAdd.jsx:130
+#: src/components/vm/overview/bootOrder.jsx:133
+#: src/components/vm/overview/bootOrder.jsx:148
 msgid "Product"
 msgstr "Ürün"
 
@@ -2019,14 +2013,14 @@ msgstr "Ürün"
 msgid "Profile"
 msgstr "Profil"
 
+#: src/components/vm/hostdevs/hostDevCard.jsx:114
+#: src/components/vm/disks/vmDiskColumns.tsx:49
 #: src/components/vm/overview/bootOrder.jsx:100
 #: src/components/vm/overview/bootOrder.jsx:161
-#: src/components/vm/disks/vmDiskColumns.jsx:44
-#: src/components/vm/hostdevs/hostDevCard.jsx:114
 msgid "Protocol"
 msgstr "Protokol"
 
-#: src/components/vm/nics/nicBody.jsx:97
+#: src/components/vm/nics/nicBody.tsx:132
 msgid ""
 "Provides a bridge from the guest virtual machine directly onto the LAN. This "
 "needs a bridge device on the host with one or more physical NICs."
@@ -2035,13 +2029,13 @@ msgstr ""
 "anamakinede bir veya daha fazla fiziksel NIC'e sahip bir köprü aygıtı "
 "gerekir."
 
-#: src/components/vm/nics/nicBody.jsx:88
+#: src/components/vm/nics/nicBody.tsx:123
 msgid ""
 "Provides a connection whose details are described by the named network "
 "definition."
 msgstr "Ayrıntıları adlandırılan ağ tanımıyla açıklanan bir bağlantı sağlar."
 
-#: src/components/vm/nics/nicBody.jsx:111
+#: src/components/vm/nics/nicBody.tsx:146
 msgid "Provides a virtual LAN with NAT to the outside world."
 msgstr "NAT ile dış dünyaya sanal bir LAN sağlar."
 
@@ -2053,12 +2047,12 @@ msgstr "Ortak SSH anahtarı"
 msgid "Public key"
 msgstr "Ortak anahtar"
 
-#: src/components/networks/networkOverviewTab.tsx:307
+#: src/components/networks/networkOverviewTab.tsx:311
 msgid "Range"
 msgstr "Aralık"
 
-#: src/components/vm/disks/vmDisksCard.jsx:216
-#: src/components/vm/disks/diskEdit.jsx:116
+#: src/components/vm/disks/vmDisksCard.tsx:251
+#: src/components/vm/disks/diskEdit.tsx:174
 msgid "Read-only"
 msgstr "Salt-okunur"
 
@@ -2087,29 +2081,29 @@ msgstr "Uzak URL"
 msgid "Remote viewer details"
 msgstr "Uzak görüntüleyici ayrıntıları"
 
-#: src/components/vm/overview/vsock.jsx:235
-#: src/components/vm/overview/watchdog.jsx:193
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:58
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:67
-#: src/components/vm/disks/vmDiskColumns.jsx:147
-#: src/components/vm/disks/vmDiskColumns.jsx:213
 #: src/components/vm/hostdevs/hostDevCard.jsx:251
 #: src/components/vm/hostdevs/hostDevCard.jsx:257
-#: src/components/vm/nics/vmNicsCard.jsx:482
-#: src/components/vm/nics/vmNicsCard.jsx:492
+#: src/components/vm/disks/vmDiskColumns.tsx:166
+#: src/components/vm/disks/vmDiskColumns.tsx:252
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:58
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:67
+#: src/components/vm/overview/watchdog.jsx:213
+#: src/components/vm/overview/vsock.jsx:240
+#: src/components/vm/nics/vmNicsCard.tsx:556
+#: src/components/vm/nics/vmNicsCard.tsx:566
 #: src/components/networks/networkOverviewTab.tsx:81
 msgid "Remove"
 msgstr "Kaldır"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:154
+#: src/components/vm/vmReplaceSpiceDialog.jsx:141
 msgid "Remove SPICE audio and host devices"
 msgstr "SPICE ses ve anamakine aygıtlarını kaldır"
 
-#: src/components/vm/disks/vmDiskColumns.jsx:160
+#: src/components/vm/disks/vmDiskColumns.tsx:179
 msgid "Remove and delete file"
 msgstr "Kaldır ve dosyayı sil"
 
-#: src/components/vm/disks/vmDiskColumns.jsx:146
+#: src/components/vm/disks/vmDiskColumns.tsx:165
 msgid "Remove disk from VM?"
 msgstr "Disk sanal makineden kaldırılsın mı?"
 
@@ -2125,7 +2119,7 @@ msgstr "Anamakine aygıtı sanal makineden kaldırılsın mı?"
 msgid "Remove item"
 msgstr "Ögeyi kaldır"
 
-#: src/components/vm/nics/vmNicsCard.jsx:479
+#: src/components/vm/nics/vmNicsCard.tsx:553
 msgid "Remove network interface?"
 msgstr "Ağ arayüzü kaldırılsın mı?"
 
@@ -2133,7 +2127,7 @@ msgstr "Ağ arayüzü kaldırılsın mı?"
 msgid "Remove static host from DHCP"
 msgstr "DHCP'den sabit anamakineyi kaldır"
 
-#: src/components/vm/vmRenameDialog.jsx:70 src/components/vm/vmActions.jsx:460
+#: src/components/vm/vmRenameDialog.jsx:86 src/components/vm/vmActions.jsx:460
 msgid "Rename"
 msgstr "Yeniden adlandır"
 
@@ -2141,13 +2135,13 @@ msgstr "Yeniden adlandır"
 msgid "Rename VM $0"
 msgstr "$0 sanal makinesini yeniden adlandır"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:133
+#: src/components/vm/vmReplaceSpiceDialog.jsx:157
 msgid "Replace"
 msgstr "Değiştir"
 
-#: src/components/vm/usesSpice.jsx:38
-#: src/components/vm/vmReplaceSpiceDialog.jsx:125
 #: src/components/vm/vmActions.jsx:447
+#: src/components/vm/vmReplaceSpiceDialog.jsx:125
+#: src/components/vm/usesSpice.jsx:38
 msgid "Replace SPICE devices"
 msgstr "SPICE aygıtlarını değiştir"
 
@@ -2155,11 +2149,11 @@ msgstr "SPICE aygıtlarını değiştir"
 msgid "Replace SPICE devices in VM $0"
 msgstr "$0 sanal makinesinde SPICE aygıtlarını değiştir"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:145
+#: src/components/vm/vmReplaceSpiceDialog.jsx:132
 msgid "Replace SPICE on selected VMs."
 msgstr "Seçilen sanal makinelerde SPICE'ı değiştir."
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:146
+#: src/components/vm/vmReplaceSpiceDialog.jsx:133
 msgid "Replace SPICE on the virtual machine."
 msgstr "Sanal makinede SPICE'ı değiştir."
 
@@ -2177,16 +2171,16 @@ msgstr ""
 msgid "Resume"
 msgstr "Devam"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:188
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:102
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:211
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:130
 msgid "Revert"
 msgstr "Geri döndür"
 
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:95
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:113
 msgid "Revert to snapshot $0"
 msgstr "$0 anlık görüntüsüne geri döndür"
 
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.jsx:118
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:122
 msgid ""
 "Reverting to this snapshot will take the VM back to the time of the snapshot "
 "and the current state will be lost, along with any data not captured in a "
@@ -2237,8 +2231,8 @@ msgstr "SPICE TLS bağlantı noktası"
 msgid "SPICE address"
 msgstr "SPICE adresi"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:147
-#: src/components/vm/vmReplaceSpiceDialog.jsx:149
+#: src/components/vm/vmReplaceSpiceDialog.jsx:134
+#: src/components/vm/vmReplaceSpiceDialog.jsx:136
 msgid "SPICE conversion"
 msgstr "SPICE dönüşümü"
 
@@ -2258,14 +2252,14 @@ msgstr "SPICE bağlantı noktası"
 msgid "SSH keys"
 msgstr "SSH anahtarları"
 
-#: src/components/vm/overview/vsock.jsx:194
-#: src/components/vm/overview/memoryModal.jsx:158
+#: src/components/vm/vmEditDescriptionDialog.jsx:76
+#: src/components/vm/disks/diskEdit.tsx:338
 #: src/components/vm/overview/watchdog.jsx:156
-#: src/components/vm/overview/firmware.jsx:84
-#: src/components/vm/overview/bootOrder.jsx:317
-#: src/components/vm/disks/diskEdit.jsx:248
-#: src/components/vm/vmEditDescriptionDialog.jsx:62
-#: src/components/vm/nics/nicEdit.jsx:193
+#: src/components/vm/overview/bootOrder.jsx:320
+#: src/components/vm/overview/vsock.jsx:194
+#: src/components/vm/overview/firmware.jsx:98
+#: src/components/vm/overview/memoryModal.jsx:161
+#: src/components/vm/nics/nicEdit.tsx:237
 msgid "Save"
 msgstr "Kaydet"
 
@@ -2289,7 +2283,7 @@ msgstr "Maskelenemez kesme (NMI) gönder"
 msgid "Send non-maskable interrupt to $0?"
 msgstr "$0 için maskelenemez kesme (NMI) gönderilsin mi?"
 
-#: src/components/vm/disks/vmDiskColumns.jsx:105
+#: src/components/vm/disks/vmDiskColumns.tsx:121
 msgid "Serial"
 msgstr "Seri"
 
@@ -2305,7 +2299,7 @@ msgstr "Seri konsol ($0)"
 msgid "Set DHCP range"
 msgstr "DHCP aralığını ayarla"
 
-#: src/components/vm/nics/nicAdd.jsx:79
+#: src/components/vm/nics/nicAdd.tsx:100
 msgid "Set manually"
 msgstr "El ile ayarla"
 
@@ -2317,7 +2311,7 @@ msgstr ""
 "Katılımsız kurulum için kullanıcı parolalarının ayarlanması, sanal makinenin "
 "oluşturulurken başlatılmasını gerektirir"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:163
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:224
 msgid "Share"
 msgstr "Paylaş"
 
@@ -2329,7 +2323,7 @@ msgstr "Bir anamakine dizinini misafir ile paylaş"
 msgid "Shared directories"
 msgstr "Paylaşılan dizinler"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:174
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:160
 #: src/components/vm/vmDetailsPage.jsx:197
 msgid "Shared host directories need to be manually mounted inside the VM"
 msgstr ""
@@ -2340,8 +2334,8 @@ msgstr ""
 msgid "Shared storage"
 msgstr "Paylaşılan depolama"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:218
-#: src/components/vm/disks/diskAdd.jsx:204
+#: src/components/vm/disks/diskAdd.tsx:291
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:206
 msgid "Show additional options"
 msgstr "Ek seçenekleri göster"
 
@@ -2370,29 +2364,29 @@ msgstr "Kapat"
 msgid "Shut off the VM in order to edit firmware configuration"
 msgstr "Aygıt yazılımı yapılandırmasını düzenlemek için sanal makineyi kapatın"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:138 src/helpers.ts:233
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:161 src/helpers.ts:233
 msgid "Shutting down"
 msgstr "Kapatılıyor"
 
-#: src/components/storagePools/storageVolumeCreateBody.tsx:134
 #: src/components/storagePools/storagePoolVolumesTab.tsx:90
 #: src/components/storagePools/storagePoolList.tsx:77
+#: src/components/storagePools/storageVolumeCreateBody.tsx:134
 msgid "Size"
 msgstr "Boyut"
 
-#: src/components/vm/overview/bootOrder.jsx:149
+#: src/components/vm/hostdevs/hostDevAdd.jsx:101
 #: src/components/vm/hostdevs/hostDevCard.jsx:101
 #: src/components/vm/hostdevs/hostDevCard.jsx:108
 #: src/components/vm/hostdevs/hostDevCard.jsx:236
-#: src/components/vm/hostdevs/hostDevAdd.jsx:101
+#: src/components/vm/overview/bootOrder.jsx:149
 msgid "Slot"
 msgstr "Yuva"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:196
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:219
 msgid "Snapshot $0 could not be deleted"
 msgstr "$0 anlık görüntüsü silinemedi"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:197
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:220
 msgid ""
 "Snapshot $0 will be deleted from $1. All of its captured content will be "
 "lost."
@@ -2400,7 +2394,7 @@ msgstr ""
 "$0 anlık görüntüsü, $1 sanal makinesinden silinecek. Kaydedilen tüm içeriği "
 "kaybolacaktır."
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:238
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:304
 msgid "Snapshot failed to be created"
 msgstr "Anlık görüntünün oluşturulması başarısız oldu"
 
@@ -2418,13 +2412,13 @@ msgstr ""
 "Bazı yapılandırma değişiklikleri yalnızca yeni bir önyüklemeden sonra etkili "
 "olur:"
 
-#: src/components/storagePools/storagePoolOverviewTab.tsx:53
-#: src/components/vm/disks/diskAdd.jsx:586
-#: src/components/vm/disks/diskAdd.jsx:622
-#: src/components/vm/disks/vmDisksCard.jsx:190
 #: src/components/vm/hostdevs/hostDevCard.jsx:217
-#: src/components/vm/nics/nicBody.jsx:181
-#: src/components/vm/nics/vmNicsCard.jsx:417
+#: src/components/vm/disks/diskAdd.tsx:719
+#: src/components/vm/disks/diskAdd.tsx:755
+#: src/components/vm/disks/vmDisksCard.tsx:225
+#: src/components/vm/nics/nicBody.tsx:216
+#: src/components/vm/nics/vmNicsCard.tsx:484
+#: src/components/storagePools/storagePoolOverviewTab.tsx:53
 msgid "Source"
 msgstr "Kaynak"
 
@@ -2436,13 +2430,13 @@ msgstr "Kaynak biçimi"
 msgid "Source must not be empty"
 msgstr "Kaynak boş olmamalıdır"
 
-#: src/components/storagePools/storagePoolOverviewTab.tsx:43
-#: src/components/storagePools/storagePoolOverviewTab.tsx:48
-#: src/components/storagePools/createStoragePoolDialog.tsx:231
-#: src/components/storagePools/createStoragePoolDialog.tsx:248
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:47
 #: src/components/vm/filesystems/vmFilesystemsCard.jsx:64
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:195
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:183
+#: src/components/storagePools/createStoragePoolDialog.tsx:231
+#: src/components/storagePools/createStoragePoolDialog.tsx:248
+#: src/components/storagePools/storagePoolOverviewTab.tsx:43
+#: src/components/storagePools/storagePoolOverviewTab.tsx:48
 msgid "Source path"
 msgstr "Kaynak yolu"
 
@@ -2472,7 +2466,7 @@ msgstr "Anamakine önyüklendiğinde havuzu başlat"
 msgid "Start should not be empty"
 msgstr "Başlangıç boş olmamalıdır"
 
-#: src/components/vm/confirmDialog.jsx:72
+#: src/components/vm/confirmDialog.jsx:74
 msgid "Started"
 msgstr "Başlatıldı"
 
@@ -2480,16 +2474,16 @@ msgstr "Başlatıldı"
 msgid "Startup"
 msgstr "Başlatma"
 
-#: src/components/storagePools/storagePoolList.tsx:79
 #: src/components/vm/overview/vmOverviewCard.jsx:163
-#: src/components/vm/nics/vmNicsCard.jsx:422
+#: src/components/vm/nics/vmNicsCard.tsx:489
 #: src/components/networks/networkList.tsx:76
 #: src/components/vms/hostvmslist.tsx:156
 #: src/components/vms/hostvmslist.tsx:203
+#: src/components/storagePools/storagePoolList.tsx:79
 msgid "State"
 msgstr "Durum"
 
-#: src/components/networks/networkOverviewTab.tsx:315
+#: src/components/networks/networkOverviewTab.tsx:319
 msgid "Static host entries"
 msgstr "Sabit anamakine girişleri"
 
@@ -2497,8 +2491,8 @@ msgstr "Sabit anamakine girişleri"
 msgid "Static host from DHCP could not be removed"
 msgstr "DHCP'den sabit anamakine kaldırılamadı"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:977
 #: src/components/vm/vmMigrateDialog.jsx:92
+#: src/components/create-vm-dialog/createVmDialog.jsx:977
 msgid "Storage"
 msgstr "Depolama"
 
@@ -2526,14 +2520,14 @@ msgstr "Depolama havuzunun oluşturulması başarısız oldu"
 msgid "Storage pool name"
 msgstr "Depolama havuzu adı"
 
+#: src/components/create-vm-dialog/createVmDialog.jsx:972
 #: src/components/storagePools/storagePoolList.tsx:64
 #: src/components/storagePools/storagePoolList.tsx:71
 #: src/components/storagePools/storagePoolList.tsx:73
-#: src/components/create-vm-dialog/createVmDialog.jsx:972
 msgid "Storage pools"
 msgstr "Depolama havuzları"
 
-#: src/components/vm/disks/diskAdd.jsx:413
+#: src/components/vm/disks/diskAdd.tsx:551
 msgid "Storage pools could not be fetched"
 msgstr "Depolama havuzları alınamadı"
 
@@ -2541,12 +2535,12 @@ msgstr "Depolama havuzları alınamadı"
 msgid "Storage size must not be 0"
 msgstr "Depolama boyutu 0 olmamak zorundadır"
 
-#: src/components/vm/disks/diskEdit.jsx:47
+#: src/components/vm/disks/diskEdit.tsx:67
 msgid "Storage volume"
 msgstr "Depolama birimi"
 
-#: src/components/storagePools/storageVolumeCreate.tsx:96
-#: src/components/vm/disks/diskAdd.jsx:560
+#: src/components/vm/disks/diskAdd.tsx:693
+#: src/components/storagePools/storageVolumeCreate.tsx:89
 msgid "Storage volume size must not exceed the storage pool's capacity ($0 $1)"
 msgstr ""
 "Depolama birimi boyutu, depolama havuzunun kapasitesini ($0 $1) aşmamak "
@@ -2560,7 +2554,7 @@ msgstr "Depolama birimleri"
 msgid "Storage volumes could not be deleted"
 msgstr "Depolama birimleri silinemedi"
 
-#: src/components/vm/vmMigrateDialog.jsx:206
+#: src/components/vm/vmMigrateDialog.jsx:207
 msgid ""
 "Storage volumes must be shared between this host and the destination host."
 msgstr ""
@@ -2579,7 +2573,7 @@ msgstr "Bu makineyi kullanmaya devam etmek için VNC'ye geçin."
 msgid "System"
 msgstr "Sistem"
 
-#: src/components/vm/nics/vmNicsCard.jsx:199
+#: src/components/vm/nics/vmNicsCard.tsx:237
 msgid "TAP device"
 msgstr "TAP aygıtı"
 
@@ -2591,14 +2585,14 @@ msgstr "TPM"
 msgid "Table of selectable host devices"
 msgstr "Seçilebilir anamakine aygıtları tablosu"
 
-#: src/components/vm/overview/bootOrder.jsx:155
-#: src/components/vm/disks/vmDiskColumns.jsx:151
 #: src/components/vm/hostdevs/hostDevCard.jsx:109
+#: src/components/vm/disks/vmDiskColumns.tsx:170
+#: src/components/vm/overview/bootOrder.jsx:155
 msgid "Target"
 msgstr "Hedef"
 
-#: src/components/storagePools/storagePoolOverviewTab.tsx:63
 #: src/components/storagePools/createStoragePoolDialog.tsx:143
+#: src/components/storagePools/storagePoolOverviewTab.tsx:63
 msgid "Target path"
 msgstr "Hedef yolu"
 
@@ -2614,14 +2608,14 @@ msgstr "Geçici"
 msgid "Temporary migration"
 msgstr "Geçici taşıma"
 
-#: src/components/vm/deleteDialog.jsx:83
+#: src/components/vm/deleteDialog.jsx:82
 msgid "The VM $0 is running and will be forced off before deletion."
 msgstr ""
 "$0 sanal makinesi çalışıyor ve silinmeden önce kapanmaya zorlanacaktır."
 
-#: src/components/vm/disks/vmDiskColumns.jsx:221
-#: src/components/vm/nics/vmNicsCard.jsx:493
-#: src/components/vm/nics/vmNicsCard.jsx:501
+#: src/components/vm/disks/vmDiskColumns.tsx:260
+#: src/components/vm/nics/vmNicsCard.tsx:567
+#: src/components/vm/nics/vmNicsCard.tsx:575
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr ""
 "Bu aygıtı ayırmak için sanal makinenin çalışıyor olması veya kapatılması "
@@ -2631,7 +2625,7 @@ msgstr ""
 msgid "The directory on the server being exported"
 msgstr "Dışa aktarılan sunucu üzerindeki dizin"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:197
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:185
 msgid "The host path that is to be exported."
 msgstr "Dışa aktarılacak anamakine yolu."
 
@@ -2643,11 +2637,11 @@ msgstr ""
 "Geçirilen sanal makine yapılandırması kaynak anamakineden kaldırıldı. Hedef "
 "anamakine, sanal makinenin yeni evi olarak kabul edildi."
 
-#: src/components/vm/nics/nicBody.jsx:202
+#: src/components/vm/nics/nicBody.tsx:237
 msgid "The mode influences the delivery of packets."
 msgstr "Mod, paketlerin dağıtımını etkiler."
 
-#: src/components/vm/disks/diskAdd.jsx:105
+#: src/components/vm/disks/diskAdd.tsx:152
 msgid "The pool is empty"
 msgstr "Havuz boş"
 
@@ -2669,7 +2663,7 @@ msgstr "$0 için sabit anamakine girişi kaldırılacaktır:"
 msgid "The storage pool could not be deleted"
 msgstr "Depolama havuzu silinemedi"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:209
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:197
 msgid "The tag name to be used by the guest to mount this export point."
 msgstr ""
 "Konuk tarafından bu dışa aktarma noktasını bağlamak için kullanılacak etiket "
@@ -2683,7 +2677,7 @@ msgstr "Ardından kopyalayın ve yukarıya yapıştırın."
 msgid "This VM is transient. Shut it down if you wish to delete it."
 msgstr "Bu sanal makine geçicidir. Silmek istiyorsanız kapatın."
 
-#: src/components/vm/disks/vmDiskColumns.jsx:149
+#: src/components/vm/disks/vmDiskColumns.tsx:168
 msgid "This disk will be removed from $0:"
 msgstr "Bu disk $0 sanal makinesinden kaldırılacak:"
 
@@ -2691,7 +2685,7 @@ msgstr "Bu disk $0 sanal makinesinden kaldırılacak:"
 msgid "This filesystem will be removed from $0:"
 msgstr "Bu dosya sistemi $0 sanal makinesinden kaldırılacak:"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:159
+#: src/components/vm/vmReplaceSpiceDialog.jsx:146
 msgid ""
 "This is intended for a host which does not support SPICE due to upgrades or "
 "live migration."
@@ -2699,7 +2693,7 @@ msgstr ""
 "Bu, yükseltmeler veya canlı geçişten dolayı SPICE'ı desteklemeyen bir "
 "anamakine için tasarlanmıştır."
 
-#: src/components/vm/nics/nicBody.jsx:87
+#: src/components/vm/nics/nicBody.tsx:122
 msgid ""
 "This is the recommended type for general guest connectivity on hosts with "
 "dynamic / wireless networking configs."
@@ -2707,7 +2701,7 @@ msgstr ""
 "Bu, değişken / kablosuz ağ yapılandırmalarına sahip anamakinelerde genel "
 "misafir bağlanabilirliği için önerilen türdür."
 
-#: src/components/vm/nics/nicBody.jsx:96
+#: src/components/vm/nics/nicBody.tsx:131
 msgid ""
 "This is the recommended type for general guest connectivity on hosts with "
 "static wired networking configs."
@@ -2715,7 +2709,7 @@ msgstr ""
 "Bu, sabit kablolu ağ yapılandırmalarına sahip anamakinelerde genel misafir "
 "bağlanabilirliği için önerilen türdür."
 
-#: src/components/vm/nics/nicBody.jsx:102
+#: src/components/vm/nics/nicBody.tsx:137
 msgid "This is the recommended type for high performance or enhanced security."
 msgstr "Bu, yüksek performans veya gelişmiş güvenlik için önerilen türdür."
 
@@ -2727,7 +2721,7 @@ msgstr ""
 "Bu araç sanal makineleri yönetir. Bununla libvirt alt sisteminin sanal "
 "makinelerini oluşturabilir, izleyebilir ve denetleyebilirsiniz."
 
-#: src/components/vm/disks/diskAdd.jsx:80
+#: src/components/vm/disks/diskAdd.tsx:86
 msgid "This volume is already used by $0."
 msgstr "Bu birim zaten $0 tarafından kullanılıyor."
 
@@ -2739,7 +2733,7 @@ msgstr "Bu birim zaten başka bir sanal makine tarafından kullanılıyor."
 msgid "Threads per core"
 msgstr "Çekirdek başına iş parçacığı sayısı"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.jsx:109
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:156
 msgid "Total space available: $0."
 msgstr "Toplam kullanılabilir alan: $0."
 
@@ -2753,17 +2747,17 @@ msgstr ""
 msgid "Troubleshoot"
 msgstr "Sorun gider"
 
-#: src/components/storagePools/storagePoolOverviewTab.tsx:78
-#: src/components/storagePools/createStoragePoolDialog.tsx:115
+#: src/components/vm/hostdevs/hostDevAdd.jsx:47
+#: src/components/vm/hostdevs/hostDevCard.jsx:177
 #: src/components/vm/overview/bootOrder.jsx:118
 #: src/components/vm/overview/bootOrder.jsx:131
 #: src/components/vm/overview/bootOrder.jsx:146
 #: src/components/vm/overview/bootOrder.jsx:153
 #: src/components/vm/overview/bootOrder.jsx:160
 #: src/components/vm/overview/bootOrder.jsx:166
-#: src/components/vm/hostdevs/hostDevCard.jsx:177
-#: src/components/vm/hostdevs/hostDevAdd.jsx:47
-#: src/components/vm/nics/vmNicsCard.jsx:335
+#: src/components/vm/nics/vmNicsCard.tsx:402
+#: src/components/storagePools/createStoragePoolDialog.tsx:115
+#: src/components/storagePools/storagePoolOverviewTab.tsx:78
 msgid "Type"
 msgstr "Tür"
 
@@ -2803,7 +2797,7 @@ msgstr "Benzersiz ağ adı"
 msgid "Unit"
 msgstr "Birim"
 
-#: src/components/vm/nics/vmNicsCard.jsx:387
+#: src/components/vm/nics/vmNicsCard.tsx:454
 msgid "Unknown"
 msgstr "Bilinmiyor"
 
@@ -2811,10 +2805,10 @@ msgstr "Bilinmiyor"
 msgid "Unknown firmware"
 msgstr "Bilinmeyen aygıt yazılımı"
 
-#: src/components/vm/overview/bootOrder.jsx:137
-#: src/components/vm/overview/bootOrder.jsx:138
 #: src/components/vm/hostdevs/hostDevCard.jsx:92
 #: src/components/vm/hostdevs/hostDevCard.jsx:93
+#: src/components/vm/overview/bootOrder.jsx:137
+#: src/components/vm/overview/bootOrder.jsx:138
 msgid "Unspecified"
 msgstr "Belirtilmedi"
 
@@ -2822,7 +2816,7 @@ msgstr "Belirtilmedi"
 msgid "Unsupported and older operating systems"
 msgstr "Desteklenmeyen ve eski işletim sistemleri"
 
-#: src/components/vm/disks/diskEdit.jsx:45
+#: src/components/vm/disks/diskEdit.tsx:65
 msgid "Url"
 msgstr "URL"
 
@@ -2830,12 +2824,12 @@ msgstr "URL"
 msgid "Usage"
 msgstr "Kullanım"
 
-#: src/components/vm/disks/diskAdd.jsx:594
-#: src/components/vm/disks/diskAdd.jsx:630
+#: src/components/vm/disks/diskAdd.tsx:727
+#: src/components/vm/disks/diskAdd.tsx:763
 msgid "Use existing"
 msgstr "Varolanı kullan"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:226
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:214
 msgid "Use extended attributes on files and directories"
 msgstr "Dosyalarda ve dizinlerde genişletilmiş öznitelikleri kullan"
 
@@ -2849,7 +2843,7 @@ msgstr ""
 "kullanın. Bu, paylaşılan bir depolama havuzu, NFS veya depolamayı "
 "paylaşmanın başka herhangi bir yöntemi olabilir."
 
-#: src/components/vm/disks/vmDisksCard.jsx:182
+#: src/components/vm/disks/vmDisksCard.tsx:217
 msgid "Used"
 msgstr "Kullanılan"
 
@@ -2951,7 +2945,7 @@ msgstr ""
 msgid "VM needs shutdown"
 msgstr "Sanal makinenin kapatılması gerekiyor"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:129
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:152
 msgid "VM state"
 msgstr "Sanal Makine durumu"
 
@@ -2979,12 +2973,12 @@ msgstr "VNC bağlantı noktası"
 msgid "Valid token"
 msgstr "Geçerli belirteç"
 
-#: src/components/vm/overview/bootOrder.jsx:132
-#: src/components/vm/overview/bootOrder.jsx:147
+#: src/components/vm/hostdevs/hostDevAdd.jsx:130
 #: src/components/vm/hostdevs/hostDevCard.jsx:207
 #: src/components/vm/hostdevs/hostDevCard.jsx:234
 #: src/components/vm/hostdevs/hostDevCard.jsx:240
-#: src/components/vm/hostdevs/hostDevAdd.jsx:130
+#: src/components/vm/overview/bootOrder.jsx:132
+#: src/components/vm/overview/bootOrder.jsx:147
 msgid "Vendor"
 msgstr "Üretici"
 
@@ -2992,12 +2986,12 @@ msgstr "Üretici"
 msgid "Vendor support ended $0"
 msgstr "Üretici desteği $0 tarihinde sona erdi"
 
-#: src/components/storagePools/storagePoolList.tsx:61
 #: src/components/vm/vmDetailsPage.jsx:95
 #: src/components/vm/vmDetailsPage.jsx:248
 #: src/components/networks/networkList.tsx:57
 #: src/components/vms/hostvmslist.tsx:196
-#: src/components/vms/hostvmslist.tsx:198 src/manifest.json:0
+#: src/components/vms/hostvmslist.tsx:198
+#: src/components/storagePools/storagePoolList.tsx:61 src/manifest.json:0
 msgid "Virtual machines"
 msgstr "Sanal makineler"
 
@@ -3027,16 +3021,16 @@ msgstr ""
 msgid "Virtualization service (libvirt) is not active"
 msgstr "Sanallaştırma hizmeti (libvirt) etkin değil"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:989
+#: src/components/vm/disks/diskAdd.tsx:160
+#: src/components/vm/disks/vmDiskColumns.tsx:51
+#: src/components/vm/disks/mediaEject.tsx:102
 #: src/components/vm/overview/bootOrder.jsx:102
-#: src/components/vm/disks/diskAdd.jsx:113
-#: src/components/vm/disks/vmDiskColumns.jsx:46
-#: src/components/vm/disks/mediaEject.jsx:91
-#: src/components/vm/deleteDialog.jsx:66
+#: src/components/vm/deleteDialog.jsx:65
+#: src/components/create-vm-dialog/createVmDialog.jsx:989
 msgid "Volume"
 msgstr "Birim"
 
-#: src/components/storagePools/storageVolumeCreate.tsx:117
+#: src/components/storagePools/storageVolumeCreate.tsx:110
 msgid "Volume failed to be created"
 msgstr "Birim oluşturulması başarısız oldu"
 
@@ -3052,13 +3046,13 @@ msgstr "Birim grubu adı boş olmamalıdır"
 msgid "Vsock"
 msgstr "Vsock"
 
-#: src/components/vm/overview/bootOrder.jsx:162
 #: src/components/vm/hostdevs/hostDevCard.jsx:115
+#: src/components/vm/overview/bootOrder.jsx:162
 msgid "WWPN"
 msgstr "WWPN"
 
-#: src/components/common/needsShutdown.tsx:149
 #: src/components/vm/overview/vmOverviewCard.jsx:200
+#: src/components/common/needsShutdown.tsx:149
 msgid "Watchdog"
 msgstr "Gözlemci"
 
@@ -3072,12 +3066,12 @@ msgstr ""
 "gözlemci aygıtını kullanmak için konuk sistemin ayrıca ek bir sürücüye ve "
 "çalışan bir gözlemci hizmetine sahip olması gerekir."
 
-#: src/components/vm/disks/vmDisksCard.jsx:216
-#: src/components/vm/disks/diskEdit.jsx:125
+#: src/components/vm/disks/vmDisksCard.tsx:251
+#: src/components/vm/disks/diskEdit.tsx:183
 msgid "Writeable"
 msgstr "Yazılabilir"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:176
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:162
 msgid "You can mount the shared folder using:"
 msgstr "Paylaşılan klasörü şu komutu kullanarak bağlayabilirsiniz:"
 
@@ -3085,13 +3079,13 @@ msgstr "Paylaşılan klasörü şu komutu kullanarak bağlayabilirsiniz:"
 msgid "You need to select the most closely matching operating system"
 msgstr "En yakından eşleşen işletim sistemini seçmeniz gerekli"
 
-#: src/components/storagePools/storagePool.tsx:66
 #: src/components/networks/network.tsx:67
+#: src/components/storagePools/storagePool.tsx:66
 msgid "active"
 msgstr "etkin"
 
-#: src/components/vm/overview/vsock.jsx:287
-#: src/components/vm/overview/watchdog.jsx:253
+#: src/components/vm/overview/watchdog.jsx:254
+#: src/components/vm/overview/vsock.jsx:288
 msgid "add"
 msgstr "ekle"
 
@@ -3127,11 +3121,11 @@ msgstr "disk"
 msgid "down"
 msgstr "kapalı"
 
+#: src/components/vm/overview/watchdog.jsx:254
+#: src/components/vm/overview/bootOrder.jsx:361
 #: src/components/vm/overview/vmOverviewCard.jsx:117
 #: src/components/vm/overview/vmOverviewCard.jsx:125
-#: src/components/vm/overview/vsock.jsx:287
-#: src/components/vm/overview/watchdog.jsx:253
-#: src/components/vm/overview/bootOrder.jsx:363
+#: src/components/vm/overview/vsock.jsx:288
 msgid "edit"
 msgstr "düzenle"
 
@@ -3175,16 +3169,16 @@ msgstr "iSCSI hedefi"
 msgid "iSCSI target IQN"
 msgstr "iSCSI hedefi IQN"
 
-#: src/components/storagePools/storagePool.tsx:66
 #: src/components/networks/network.tsx:67
+#: src/components/storagePools/storagePool.tsx:66
 msgid "inactive"
 msgstr "etkin değil"
 
-#: src/components/vm/nics/vmNicsCard.jsx:395
+#: src/components/vm/nics/vmNicsCard.tsx:462
 msgid "inet"
 msgstr "inet"
 
-#: src/components/vm/nics/vmNicsCard.jsx:403
+#: src/components/vm/nics/vmNicsCard.tsx:470
 msgid "inet6"
 msgstr "inet6"
 
@@ -3204,7 +3198,7 @@ msgstr "mcast"
 msgid "more info"
 msgstr "daha fazla bilgi"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:184
+#: src/components/vm/filesystems/vmFilesystemsCard.jsx:170
 #: src/components/vm/vmDetailsPage.jsx:206
 msgid "mount point: The mount point inside the guest"
 msgstr "bağlama noktası: Konuk içindeki bağlama noktası"
@@ -3217,19 +3211,19 @@ msgstr "bağlama etiketi: Dışa aktarılan bağlama noktasıyla ilişkili etike
 msgid "network"
 msgstr "ağ"
 
+#: src/components/networks/networkOverviewTab.tsx:126
 #: src/components/storagePools/storagePoolOverviewTab.tsx:69
-#: src/components/storagePools/storagePoolOverviewTab.tsx:74
-#: src/components/networks/networkOverviewTab.tsx:126 src/helpers.ts:279
+#: src/components/storagePools/storagePoolOverviewTab.tsx:74 src/helpers.ts:279
 msgid "no"
 msgstr "hayır"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.jsx:133
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:156
 msgid "no state saved"
 msgstr "kaydedilen durum yok"
 
-#: src/components/vm/overview/vsock.jsx:269
-#: src/components/vm/overview/watchdog.jsx:249
-#: src/components/networks/networkOverviewTab.tsx:323
+#: src/components/vm/overview/watchdog.jsx:250
+#: src/components/vm/overview/vsock.jsx:270
+#: src/components/networks/networkOverviewTab.tsx:327
 msgid "none"
 msgstr "yok"
 
@@ -3253,7 +3247,7 @@ msgstr "yönlendirilen aygıt"
 msgid "remove"
 msgstr "kaldır"
 
-#: src/components/vm/disks/diskAdd.jsx:236
+#: src/components/vm/disks/diskAdd.tsx:323
 msgid "serial number"
 msgstr "seri numarası"
 
@@ -3307,7 +3301,7 @@ msgstr ""
 "Sanal makineleri çoğaltmak için sistemde virt-install paketinin yüklenmesi "
 "gerekir"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1531
+#: src/components/create-vm-dialog/createVmDialog.jsx:1533
 msgid ""
 "virt-install package needs to be installed on the system in order to create "
 "new VMs"
@@ -3331,11 +3325,17 @@ msgstr "sanal makine"
 msgid "vsock requires special software"
 msgstr "vsock özel yazılım gerektirir"
 
+#: src/components/networks/networkOverviewTab.tsx:126
 #: src/components/storagePools/storagePoolOverviewTab.tsx:69
-#: src/components/storagePools/storagePoolOverviewTab.tsx:74
-#: src/components/networks/networkOverviewTab.tsx:126 src/helpers.ts:278
+#: src/components/storagePools/storagePoolOverviewTab.tsx:74 src/helpers.ts:278
 msgid "yes"
 msgstr "evet"
+
+#~ msgid "Bridge"
+#~ msgstr "Köprü"
+
+#~ msgid "Passthrough"
+#~ msgstr "Geçiş"
 
 #~ msgid ""
 #~ "In the default 'vepa' mode, switching is offloaded to the external "
