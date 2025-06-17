@@ -390,7 +390,6 @@ export interface VM extends VMXML {
     state: VMState;
     persistent: boolean;
     autostart: boolean;
-    usagePolling?: boolean;
 
     error?: DetailedError | null;
 
@@ -417,6 +416,7 @@ export interface VM extends VMXML {
 
     rssMemory: number | undefined;
     cpuTime: number | undefined;
+    cpuUsage: number | undefined;
     actualTimeInMs: number | undefined;
     disksStats: Record<string, VMDiskStat> | undefined;
 
