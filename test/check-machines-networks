@@ -571,7 +571,10 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         next_mac = self.get_next_mac(mac)
         m.execute(f'virsh attach-interface --persistent subVmTest1 bridge virbr0 --model virtio --mac {next_mac}')
 
-        # Wait for the edit button
+        # Wait for both edit buttons, to get a stable state
+        b.wait_visible("#vm-subVmTest1-network-1-edit-dialog")
+        b.wait_visible("#vm-subVmTest1-network-2-edit-dialog")
+
         b.click("#vm-subVmTest1-network-1-edit-dialog")
 
         # Make sure the dialog warning does not appear until we change something
