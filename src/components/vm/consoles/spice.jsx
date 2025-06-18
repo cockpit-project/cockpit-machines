@@ -27,7 +27,7 @@ import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/
 import { useDialogs } from 'dialogs';
 
 import { ReplaceSpiceDialog } from '../vmReplaceSpiceDialog.jsx';
-import { RemoteConnectionPopover, connection_address, console_launch } from './common';
+import { LaunchViewerButton, connection_address } from './common';
 
 const _ = cockpit.gettext;
 
@@ -37,16 +37,11 @@ const SpiceFooter = ({ vm, spice }) => {
             <Split>
                 <SplitItem isFilled />
                 <SplitItem>
-                    <RemoteConnectionPopover
+                    <LaunchViewerButton
+                        vm={vm}
+                        console={spice}
                         url={spice && cockpit.format("spice://$0:$1", connection_address(), spice.port)}
                     />
-                    <Button
-                        variant="secondary"
-                        onClick={() => console_launch(vm, spice)}
-                        isDisabled={!spice}
-                    >
-                        {_("Launch viewer")}
-                    </Button>
                 </SplitItem>
             </Split>
         </div>

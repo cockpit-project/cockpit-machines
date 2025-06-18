@@ -43,7 +43,7 @@ import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
 import { useDialogs } from 'dialogs';
 
 import { logDebug } from '../../../helpers.js';
-import { RemoteConnectionPopover, connection_address, console_launch } from './common';
+import { LaunchViewerButton, connection_address } from './common';
 import { domainSendKey, domainAttachVnc, domainChangeVncSettings, domainGet } from '../../../libvirtApi/domain.js';
 
 import { VncConsole } from './VncConsole';
@@ -262,17 +262,12 @@ const VncFooter = ({ vm, vnc, inactive_vnc, onAddErrorNotification }) => {
             <Split>
                 <SplitItem isFilled />
                 <SplitItem>
-                    <RemoteConnectionPopover
+                    <LaunchViewerButton
+                        vm={vm}
+                        console={vnc}
                         url={vnc && cockpit.format("vnc://$0:$1", connection_address(), vnc.port)}
                         onEdit={() => Dialogs.show(<VncEditModal vm={vm} inactive_vnc={inactive_vnc} />)}
                     />
-                    <Button
-                        variant="secondary"
-                        onClick={() => console_launch(vm, vnc)}
-                        isDisabled={!vnc}
-                    >
-                        {_("Launch viewer")}
-                    </Button>
                 </SplitItem>
             </Split>
         </div>

@@ -23,9 +23,11 @@ import cockpit from 'cockpit';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Content, ContentVariants } from "@patternfly/react-core/dist/esm/components/Content";
 import { ClipboardCopy } from "@patternfly/react-core/dist/esm/components/ClipboardCopy/index.js";
-import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
-import { HelpIcon } from "@patternfly/react-icons";
+import { Flex } from "@patternfly/react-core/dist/esm/layouts/Flex";
+import { DownloadIcon } from "@patternfly/react-icons";
 import { fmt_to_fragments } from 'utils.jsx';
+import { InfoPopover } from '../../common/infoPopover';
+
 import { domainDesktopConsole } from '../../../libvirtApi/domain.js';
 
 const _ = cockpit.gettext;
@@ -114,9 +116,9 @@ const RemoteConnectionInfo = ({ hide, url, onEdit }) => {
     );
 };
 
-export const RemoteConnectionPopover = ({ url, onEdit }) => {
+const RemoteConnectionPopover = ({ url, onEdit }) => {
     return (
-        <Popover
+        <InfoPopover
             // Without a "id", the popover changes its aria attributes on each page render,
             // which might disturb screen readers.
             id="remote-viewer-info"
@@ -129,8 +131,25 @@ export const RemoteConnectionPopover = ({ url, onEdit }) => {
                     onEdit={onEdit}
                 />
             }
-        >
-            <Button icon={<HelpIcon />} variant="plain" />
-        </Popover>
+        />
+    );
+};
+
+export const LaunchViewerButton = ({ vm, console, url, onEdit }) => {
+    return (
+        <Flex columnGap={{ default: 'columnGapSm' }}>
+            <RemoteConnectionPopover
+                url={url}
+                onEdit={onEdit}
+            />
+            <Button
+                icon={<DownloadIcon />}
+                variant="secondary"
+                onClick={() => console_launch(vm, console)}
+                isDisabled={!console}
+            >
+                {_("Launch viewer")}
+            </Button>
+        </Flex>
     );
 };
