@@ -55,16 +55,6 @@ export function console_launch(vm, consoleDetail) {
 }
 
 const RemoteConnectionInfo = ({ hide, url, onEdit }) => {
-    function CDD(term, description) {
-        // What is this? Java?
-        return (
-            <>
-                <Content component={ContentVariants.dt}>{term}</Content>
-                <Content component={ContentVariants.dd}>{description}</Content>
-            </>
-        );
-    }
-
     return (
         <>
             <Content component={ContentVariants.p}>
@@ -74,20 +64,36 @@ const RemoteConnectionInfo = ({ hide, url, onEdit }) => {
                 {_("Remote Viewer is available for most operating systems. To install it, search for \"Remote Viewer\" in GNOME Software, KDE Discover, or run the following:")}
             </Content>
             <Content component={ContentVariants.dl}>
-                {CDD(_("RHEL, CentOS"), <code>sudo yum install virt-viewer</code>)}
-                {CDD(_("Fedora"), <code>sudo dnf install virt-viewer</code>)}
-                {CDD(_("Ubuntu, Debian"), <code>sudo apt-get install virt-viewer</code>)}
-                {CDD(_("Windows"),
-                     fmt_to_fragments(
-                         _("Download the MSI from $0"),
-                         <a href="https://virt-manager.org/download" target="_blank" rel="noopener noreferrer">
-                             virt-manager.org
-                         </a>))}
+                <Content component={ContentVariants.dt}>RHEL, CentOS</Content>
+                <Content component={ContentVariants.dd}>
+                    <code>sudo yum install virt-viewer</code>
+                </Content>
+                <Content component={ContentVariants.dt}>Fedora</Content>
+                <Content component={ContentVariants.dd}>
+                    <code>sudo dnf install virt-viewer</code>
+                </Content>
+                <Content component={ContentVariants.dt}>Ubuntu, Debian</Content>
+                <Content component={ContentVariants.dd}>
+                    <code>sudo apt-get install virt-viewer</code>
+                </Content>
+                <Content component={ContentVariants.dt}>SLE, openSUSE</Content>
+                <Content component={ContentVariants.dd}>
+                    <code>sudo zypper install virt-viewer</code>
+                </Content>
+                <Content component={ContentVariants.dt}>Windows</Content>
+                <Content component={ContentVariants.dd}>
+                    {fmt_to_fragments(
+                        _("Download the MSI from $0"),
+                        <a href="https://virt-manager.org/download" target="_blank" rel="noopener noreferrer">
+                            virt-manager.org
+                        </a>)}
+                </Content>
             </Content>
             { url &&
             <>
+                <Content component={ContentVariants.hr} />
                 <Content component={ContentVariants.p}>
-                    {_("Other remote viewer applications can connect to the following address:")}
+                    {_("Remote viewer applications can connect to the following address:")}
                 </Content>
                 <ClipboardCopy
                     hoverTip={_("Copy to clipboard")}
@@ -111,6 +117,9 @@ const RemoteConnectionInfo = ({ hide, url, onEdit }) => {
 export const RemoteConnectionPopover = ({ url, onEdit }) => {
     return (
         <Popover
+            // Without a "id", the popover changes its aria attributes on each page render,
+            // which might disturb screen readers.
+            id="remote-viewer-info"
             className="ct-remote-viewer-popover"
             headerContent={_("Remote viewer")}
             bodyContent={(hide) =>
