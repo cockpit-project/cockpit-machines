@@ -67,10 +67,10 @@ fullscreen=0
 
         # VNC is not defined for this VM, so we get the empty SPICE state
         b.wait_in_text(".consoles-card", "This machine has a SPICE graphical console")
-        b.click(".vm-console-footer button.pf-m-plain")
+        b.click(".vm-console-footer .pf-v6-c-button.pf-m-link")
         b.wait_in_text(".ct-remote-viewer-popover", f"spice://{b.address}:5900")
         b.assert_pixels(".ct-remote-viewer-popover", "popover")
-        b.click(".vm-console-footer button.pf-m-plain")
+        b.click(".vm-console-footer .pf-v6-c-button.pf-m-link")
         b.wait_not_present(".ct-remote-viewer-popover")
 
         self.waitViewerDownload("spice", b.address)
@@ -132,8 +132,7 @@ fullscreen=0
         # Make sure the content of console is expected
         testlib.wait(lambda: "Welcome to Alpine Linux" in b.text(f"#{name}-terminal .xterm-accessibility-tree"))
 
-        b.click(".consoles-card .pf-v6-c-card__header-main button.pf-m-plain")
-        b.click('.pf-v6-c-menu button:contains("Disconnect")')
+        b.click(".consoles-card button:contains(Disconnect)")
         b.wait_in_text(".consoles-card", "Disconnected")
 
         b.click('.consoles-card button:contains("Connect")')
@@ -252,10 +251,10 @@ fullscreen=0
         b.wait_in_text(f"#vm-{name}-system-state", "Running")
 
         b.click(".consoles-card .pf-v6-c-toggle-group button:contains(Graphical)")
-        b.click(".vm-console-footer button.pf-m-plain")
+        b.click(".vm-console-footer .pf-v6-c-button.pf-m-link")
         b.wait_in_text(".ct-remote-viewer-popover", f"vnc://{my_ip}:5900")
         b.assert_pixels(".ct-remote-viewer-popover", "popover")
-        b.click(".vm-console-footer button.pf-m-plain")
+        b.click(".vm-console-footer .pf-v6-c-button.pf-m-link")
         b.wait_not_present(".ct-remote-viewer-popover")
 
         self.waitViewerDownload("vnc", my_ip)
@@ -280,10 +279,10 @@ fullscreen=0
         b.wait_in_text(f"#vm-{name}-system-state", "Running")
 
         b.click(".consoles-card .pf-v6-c-toggle-group button:contains(Graphical)")
-        b.click(".vm-console-footer button.pf-m-plain")
+        b.click(".vm-console-footer .pf-v6-c-button.pf-m-link")
         b.wait_in_text(".ct-remote-viewer-popover", f"vnc://{my_ip}:5900")
         b.assert_pixels(".ct-remote-viewer-popover", "popover")
-        b.click(".vm-console-footer button.pf-m-plain")
+        b.click(".vm-console-footer .pf-v6-c-button.pf-m-link")
         b.wait_not_present(".ct-remote-viewer-popover")
 
         self.waitViewerDownload("vnc", my_ip)
@@ -324,23 +323,19 @@ fullscreen=0
         self.assertEqual(graphics[0].get('port'), "-1")
         self.assertEqual(graphics[0].get('passwd'), None)
 
-        b.click(".vm-console-footer button.pf-m-plain")
-        b.click(".ct-remote-viewer-popover button:contains('Set port and password')")
+        b.click(".vm-console-footer .pf-v6-c-button.pf-m-link")
+        b.click(".ct-remote-viewer-popover button:contains('Edit VNC settings (advanced)')")
         b.wait_visible("#vnc-edit-dialog")
         b.set_input_text("#vnc-edit-port", "5000")
-        b.click("#vnc-edit-save")
         b.wait_visible("#vnc-edit-dialog .pf-m-error:contains('Port must be 5900 or larger.')")
         b.set_input_text("#vnc-edit-port", "Hamburg")
-        b.wait_not_present("#vnc-edit-dialog .pf-m-error")
-        b.click("#vnc-edit-save")
-        b.wait_visible("#vnc-edit-dialog .pf-m-error:contains('Port must be 5900 or larger.')")
+        b.wait_visible("#vnc-edit-dialog .pf-m-error:contains('Port must be a number.')")
         b.assert_pixels("#vnc-edit-dialog", "add")
         b.set_input_text("#vnc-edit-port", "100000000000")  # for testing failed libvirt calls
         b.set_input_text("#vnc-edit-password", "foobarfoobar")
         b.wait_attr("#vnc-edit-password", "type", "password")
         b.click("#vnc-edit-dialog .pf-v6-c-input-group button")
         b.wait_attr("#vnc-edit-password", "type", "text")
-        b.click("#vnc-edit-save")
         b.wait_visible("#vnc-edit-dialog .pf-m-error:contains('Password must be 8 characters or less.')")
         b.set_input_text("#vnc-edit-password", "foobar")
         b.click("#vnc-edit-save")
@@ -445,8 +440,7 @@ fullscreen=0
 
         # Disconnect VNC, switch to Text
 
-        b.click("#vnc-actions")
-        b.click("#vnc-disconnect")
+        b.click(".consoles-card button:contains(Disconnect)")
         b.wait_in_text(".consoles-card", "Disconnected")
         b.click('.consoles-card .pf-v6-c-toggle-group button:contains("Text")')
         b.wait_visible(".consoles-card .vm-terminal")

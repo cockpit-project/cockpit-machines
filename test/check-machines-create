@@ -2522,14 +2522,14 @@ vnc_password= "{vnc_passwd}"
             if not expect_vnc and not expect_spice:
                 b.wait_not_present(".vm-console-footer button.pf-m-plain")
             else:
-                b.click(".vm-console-footer button.pf-m-plain")
+                b.click(".vm-console-footer .pf-v6-c-button.pf-m-link")
                 if expect_vnc:
                     b.wait_in_text(".ct-remote-viewer-popover", "vnc://")
                 else:
                     b.wait_not_in_text(".ct-remote-viewer-popover", "vnc://")
                     if expect_spice:
                         b.wait_in_text(".ct-remote-viewer-popover", "spice://")
-                b.click(".vm-console-footer button.pf-m-plain")
+                b.click(".vm-console-footer .pf-v6-c-button.pf-m-link")
                 b.wait_not_present(".ct-remote-viewer-popover")
 
         def doReplaceSpiceSingle(vmName, expect_running=False, cancel=False):

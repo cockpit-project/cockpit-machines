@@ -250,6 +250,7 @@ export const VncActiveActions = ({ state, vm, vnc, onAddErrorNotification }) => 
             onSelect={() => setIsOpen(false)}
             toggle={(toggleRef) => (
                 <MenuToggle
+                    id="vnc-actions"
                     ref={toggleRef}
                     onClick={() => setIsOpen(!isOpen)}
                     isExpanded={isOpen}
