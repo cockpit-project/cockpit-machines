@@ -21,14 +21,13 @@ import cockpit from 'cockpit';
 import { StateObject } from './state';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core/dist/esm/components/Card';
-import { ExpandIcon, CompressIcon } from "@patternfly/react-icons";
+import { ExpandIcon, CompressIcon, ConnectedIcon, DisconnectedIcon } from "@patternfly/react-icons";
 import { ToggleGroup, ToggleGroupItem } from '@patternfly/react-core/dist/esm/components/ToggleGroup';
 import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/index.js";
 
-import {
-    SerialState, SerialActive, SerialActiveActions, SerialInactive, SerialMissing, SerialPending
-} from './serial';
-import { VncState, VncActive, VncActiveActions, VncInactive, VncMissing, VncPending } from './vnc';
+import { ConsoleState } from './common';
+import { SerialActive, SerialInactive, SerialMissing, SerialPending } from './serial';
+import { VncActive, VncActiveActions, VncInactive, VncMissing, VncPending } from './vnc';
 import { SpiceActive, SpiceInactive } from './spice';
 
 import { domainSerialConsoleCommand } from '../../../libvirtApi/domain.js';
@@ -46,7 +45,7 @@ class SerialStates extends StateObject {
 
     get(key) {
         if (!(key in this.states)) {
-            const state = new SerialState();
+            const state = new ConsoleState();
             this.follow(state);
             this.states[key] = state;
         }
@@ -60,11 +59,11 @@ class SerialStates extends StateObject {
     }
 }
 
-export class ConsoleState extends StateObject {
+export class ConsoleCardState extends StateObject {
     constructor () {
         super();
         this.type = null;
-        this.vncState = new VncState();
+        this.vncState = new ConsoleState();
         this.serialStates = new SerialStates();
 
         this.follow(this.vncState);
@@ -101,35 +100,7 @@ export const ConsoleCard = ({ state, vm, config, onAddErrorNotification, isExpan
     const actions = [];
     const tabs = [];
     let body = null;
-    let body_actions = null;
-
-    if (!isExpanded) {
-        actions.push(
-            <Button
-                key="expand"
-                variant="link"
-                onClick={() => {
-                    const urlOptions = { name: vm.name, connection: vm.connectionName };
-                    return cockpit.location.go(["vm", "console"], { ...cockpit.location.options, ...urlOptions });
-                }}
-                icon={<ExpandIcon />}
-                iconPosition="right">{_("Expand")}
-            </Button>
-        );
-    } else {
-        actions.push(
-            <Button
-                key="compress"
-                variant="link"
-                onClick={() => {
-                    const urlOptions = { name: vm.name, connection: vm.connectionName };
-                    return cockpit.location.go(["vm"], { ...cockpit.location.options, ...urlOptions });
-                }}
-                icon={<CompressIcon />}
-                iconPosition="right">{_("Compress")}
-            </Button>
-        );
-    }
+    let body_state = null;
 
     tabs.push(<ToggleGroupItem
                   key="graphical"
@@ -164,13 +135,14 @@ export const ConsoleCard = ({ state, vm, config, onAddErrorNotification, isExpan
                         onAddErrorNotification={onAddErrorNotification}
                         isExpanded={isExpanded} />
                 );
-                body_actions = (
+                actions.push(
                     <VncActiveActions
                         state={state.vncState}
                         vm={vm}
                         vnc={vnc}
                     />
                 );
+                body_state = state.vncState;
             } else if (inactive_vnc) {
                 body = (
                     <VncPending
@@ -209,11 +181,7 @@ export const ConsoleCard = ({ state, vm, config, onAddErrorNotification, isExpan
                             spawnArgs={domainSerialConsoleCommand({ vm, alias: pty.alias })}
                         />
                     );
-                    body_actions = (
-                        <SerialActiveActions
-                            state={serial_state}
-                        />
-                    );
+                    body_state = serial_state;
                 }
             }
         });
@@ -233,6 +201,46 @@ export const ConsoleCard = ({ state, vm, config, onAddErrorNotification, isExpan
         }
     }
 
+    if (body_state && body_state.connected) {
+        actions.push(
+            <Button
+                key="disconnect"
+                variant="secondary"
+                onClick={() => body_state.setConnected(false)}
+            >
+                {_("Disconnect")}
+            </Button>
+        );
+    }
+
+    if (!isExpanded) {
+        actions.push(
+            <Button
+                key="expand"
+                variant="link"
+                onClick={() => {
+                    const urlOptions = { name: vm.name, connection: vm.connectionName };
+                    return cockpit.location.go(["vm", "console"], { ...cockpit.location.options, ...urlOptions });
+                }}
+                icon={<ExpandIcon />}
+                iconPosition="right">{_("Expand")}
+            </Button>
+        );
+    } else {
+        actions.push(
+            <Button
+                key="compress"
+                variant="link"
+                onClick={() => {
+                    const urlOptions = { name: vm.name, connection: vm.connectionName };
+                    return cockpit.location.go(["vm"], { ...cockpit.location.options, ...urlOptions });
+                }}
+                icon={<CompressIcon />}
+                iconPosition="right">{_("Compress")}
+            </Button>
+        );
+    }
+
     return (
         <Card
             isPlain={isExpanded}
@@ -245,9 +253,6 @@ export const ConsoleCard = ({ state, vm, config, onAddErrorNotification, isExpan
                     </SplitItem>
                     <SplitItem>
                         <ToggleGroup>{tabs}</ToggleGroup>
-                    </SplitItem>
-                    <SplitItem>
-                        {body_actions}
                     </SplitItem>
                 </Split>
             </CardHeader>

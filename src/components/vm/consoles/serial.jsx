@@ -19,7 +19,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
-import { StateObject } from './state';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import {
@@ -27,43 +26,10 @@ import {
 } from "@patternfly/react-core/dist/esm/components/EmptyState";
 import { Terminal } from "cockpit-components-terminal.jsx";
 import { PendingIcon } from "@patternfly/react-icons";
-import { KebabDropdown } from 'cockpit-components-dropdown.jsx';
-import { DropdownItem } from "@patternfly/react-core/dist/esm/components/Dropdown";
 
 import { domainAttachSerialConsole } from '../../../libvirtApi/domain.js';
 
 const _ = cockpit.gettext;
-
-export class SerialState extends StateObject {
-    constructor () {
-        super();
-        this.connected = true;
-    }
-
-    setConnected(val) {
-        this.connected = val;
-        this.update();
-    }
-}
-
-export const SerialActiveActions = ({ state }) => {
-    const dropdownItems = [
-        <DropdownItem
-            key="disconnect"
-            onClick={() => state.setConnected(false)}
-            isDisabled={!state.connected}
-        >
-            {_("Disconnect")}
-        </DropdownItem>,
-    ];
-
-    return (
-        <KebabDropdown
-            position='right'
-            dropdownItems={dropdownItems}
-        />
-    );
-};
 
 export class SerialActive extends React.Component {
     constructor (props) {

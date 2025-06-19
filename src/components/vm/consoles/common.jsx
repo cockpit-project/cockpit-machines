@@ -29,8 +29,21 @@ import { fmt_to_fragments } from 'utils.jsx';
 import { InfoPopover } from '../../common/infoPopover';
 
 import { domainDesktopConsole } from '../../../libvirtApi/domain.js';
+import { StateObject } from './state';
 
 const _ = cockpit.gettext;
+
+export class ConsoleState extends StateObject {
+    constructor () {
+        super();
+        this.connected = true;
+    }
+
+    setConnected(val) {
+        this.connected = val;
+        this.update();
+    }
+}
 
 export function connection_address() {
     let address;

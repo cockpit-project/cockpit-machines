@@ -19,7 +19,6 @@
 
 import React, { useState } from 'react';
 import cockpit from 'cockpit';
-import { StateObject } from './state';
 
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -28,14 +27,15 @@ import { HelperText, HelperTextItem } from "@patternfly/react-core/dist/esm/comp
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { InputGroup } from "@patternfly/react-core/dist/esm/components/InputGroup";
 import { EyeIcon, EyeSlashIcon, PendingIcon } from "@patternfly/react-icons";
+import { Icon } from "@patternfly/react-core/dist/esm/components/Icon";
 
 import {
     EmptyState, EmptyStateBody, EmptyStateFooter, EmptyStateActions
 } from "@patternfly/react-core/dist/esm/components/EmptyState";
 import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/index.js";
 
-import { KebabDropdown } from 'cockpit-components-dropdown.jsx';
-import { DropdownItem } from "@patternfly/react-core/dist/esm/components/Dropdown";
+import { MenuToggle } from "@patternfly/react-core/dist/esm/components/MenuToggle";
+import { Dropdown, DropdownList, DropdownItem } from "@patternfly/react-core/dist/esm/components/Dropdown";
 
 import { Modal, ModalVariant } from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
@@ -47,6 +47,7 @@ import { LaunchViewerButton, connection_address } from './common';
 import { domainSendKey, domainAttachVnc, domainChangeVncSettings, domainGet } from '../../../libvirtApi/domain.js';
 
 import { VncConsole } from './VncConsole';
+import { KeyboardIcon } from './keyboard-icon';
 
 const _ = cockpit.gettext;
 // https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h
@@ -68,18 +69,6 @@ const Enum = {
     KEY_F12: 88,
     KEY_DELETE: 111,
 };
-
-export class VncState extends StateObject {
-    constructor() {
-        super();
-        this.connected = true;
-    }
-
-    setConnected(val) {
-        this.connected = val;
-        this.update();
-    }
-}
 
 const VncEditModal = ({ vm, inactive_vnc }) => {
     const config_port = (inactive_vnc.port == -1) ? "" : (inactive_vnc.port || "");
@@ -219,6 +208,11 @@ const VncEditModal = ({ vm, inactive_vnc }) => {
 };
 
 export const VncActiveActions = ({ state, vm, vnc, onAddErrorNotification }) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    if (!state.connected)
+        return null;
+
     const renderDropdownItem = keyName => {
         return (
             <DropdownItem
@@ -250,23 +244,27 @@ export const VncActiveActions = ({ state, vm, vnc, onAddErrorNotification }) => 
         ...['Delete', 'Backspace'].map(key => renderDropdownItem(key)),
         <Divider key="separator" />,
         ...[...Array(12).keys()].map(key => renderDropdownItem(cockpit.format("F$0", key + 1))),
-        <Divider key="separator2" />,
-        <DropdownItem
-            id="vnc-disconnect"
-            key="disconnect"
-            onClick={() => state.setConnected(false)}
-            isDisabled={!state.connected}
-        >
-            {_("Disconnect")}
-        </DropdownItem>,
     ];
 
     return (
-        <KebabDropdown
-            toggleButtonId="vnc-actions"
-            position='right'
-            dropdownItems={dropdownItems}
-        />
+        <Dropdown
+            onOpenChange={setIsOpen}
+            onSelect={() => setIsOpen(false)}
+            toggle={(toggleRef) => (
+                <MenuToggle
+                    ref={toggleRef}
+                    onClick={() => setIsOpen(!isOpen)}
+                    isExpanded={isOpen}
+                >
+                    {_("Send key")}
+                </MenuToggle>
+            )}
+            isOpen={isOpen}
+        >
+            <DropdownList>
+                {dropdownItems}
+            </DropdownList>
+        </Dropdown>
     );
 };
 

@@ -34,7 +34,7 @@ import { VmFilesystemsCard, VmFilesystemActions } from './filesystems/vmFilesyst
 import { VmDisksCardLibvirt, VmDisksActions } from './disks/vmDisksCard.jsx';
 import { VmNetworkTab, VmNetworkActions } from './nics/vmNicsCard.jsx';
 import { VmHostDevCard, VmHostDevActions } from './hostdevs/hostDevCard.jsx';
-import { ConsoleState, ConsoleCard } from './consoles/consoles.jsx';
+import { ConsoleCardState, ConsoleCard } from './consoles/consoles.jsx';
 import VmOverviewCard from './overview/vmOverviewCard.jsx';
 import VmUsageTab from './vmUsageCard.jsx';
 import { VmSnapshotsCard, VmSnapshotsActions } from './snapshots/vmSnapshotsCard.jsx';
@@ -62,8 +62,8 @@ export const VmDetailsPage = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // We want to reset the ConsoleState when a machine starts or shuts down.
-    const consoleState = useStateObject(() => new ConsoleState(), [vm.state]);
+    // We want to reset the ConsoleCardState when a machine starts or shuts down.
+    const consoleState = useStateObject(() => new ConsoleCardState(), [vm.state]);
 
     const vmActionsPageSection = (
         <PageSection hasBodyWrapper className="actions-pagesection" isWidthLimited>
