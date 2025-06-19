@@ -41,6 +41,7 @@ const SpiceFooter = ({ vm, spice }) => {
                         vm={vm}
                         console={spice}
                         url={spice && cockpit.format("spice://$0:$1", connection_address(), spice.port)}
+                        onEdit={null}
                     />
                 </SplitItem>
             </Split>
