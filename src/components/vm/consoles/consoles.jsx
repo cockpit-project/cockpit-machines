@@ -21,7 +21,7 @@ import cockpit from 'cockpit';
 import { StateObject } from './state';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core/dist/esm/components/Card';
-import { ExpandIcon, CompressIcon, ConnectedIcon, DisconnectedIcon } from "@patternfly/react-icons";
+import { ExpandIcon, CompressIcon } from "@patternfly/react-icons";
 import { ToggleGroup, ToggleGroupItem } from '@patternfly/react-core/dist/esm/components/ToggleGroup';
 import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/index.js";
 

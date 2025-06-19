@@ -27,7 +27,6 @@ import { HelperText, HelperTextItem } from "@patternfly/react-core/dist/esm/comp
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { InputGroup } from "@patternfly/react-core/dist/esm/components/InputGroup";
 import { EyeIcon, EyeSlashIcon, PendingIcon } from "@patternfly/react-icons";
-import { Icon } from "@patternfly/react-core/dist/esm/components/Icon";
 
 import {
     EmptyState, EmptyStateBody, EmptyStateFooter, EmptyStateActions
@@ -47,7 +46,6 @@ import { LaunchViewerButton, connection_address } from './common';
 import { domainSendKey, domainAttachVnc, domainChangeVncSettings, domainGet } from '../../../libvirtApi/domain.js';
 
 import { VncConsole } from './VncConsole';
-import { KeyboardIcon } from './keyboard-icon';
 
 const _ = cockpit.gettext;
 // https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h
@@ -100,7 +98,7 @@ const VncEditModal = ({ vm, inactive_vnc }) => {
             field_errors += 1;
         }
 
-        return field_errors == 0
+        return field_errors == 0;
     }
 
     async function apply() {
@@ -196,8 +194,8 @@ const VncEditModal = ({ vm, inactive_vnc }) => {
                             { passwordError
                                 ? <HelperTextItem variant='error'>{passwordError}</HelperTextItem>
                                 : <HelperTextItem>
-                                      {_("Password must be 8 characters or less. VNC passwords do not provide encryption and are generally cryptographically weak. They can not be used to secure connections in untrusted networks.")}
-                                  </HelperTextItem>
+                                    {_("Password must be 8 characters or less. VNC passwords do not provide encryption and are generally cryptographically weak. They can not be used to secure connections in untrusted networks.")}
+                                </HelperTextItem>
                             }
                         </HelperText>
                     </FormHelperText>
