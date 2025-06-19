@@ -96,9 +96,14 @@ const VncEditModal = ({ vm, inactive_vnc }) => {
 
     function validate() {
         let field_errors = 0;
-        if (port != "" && (!port.match("^[0-9]+$") || Number(port) < 5900)) {
-            setPortError(_("Port must be 5900 or larger."));
-            field_errors += 1;
+        if (port != "") {
+            if (!port.match("^[0-9]+$")) {
+                setPortError(_("Port must be a number."));
+                field_errors += 1;
+            } else if (Number(port) < 5900) {
+                setPortError(_("Port must be 5900 or larger."));
+                field_errors += 1;
+            }
         }
 
         if (password.length > 8) {
@@ -202,7 +207,7 @@ const VncEditModal = ({ vm, inactive_vnc }) => {
                             { passwordError
                                 ? <HelperTextItem variant='error'>{passwordError}</HelperTextItem>
                                 : <HelperTextItem>
-                                      {_("Password must be 8 characters or less.")}
+                                      {_("Password must be 8 characters or less. VNC passwords do not provide encryption and are generally cryptographically weak. They can not be used to secure connections in untrusted networks.")}
                                   </HelperTextItem>
                             }
                         </HelperText>
@@ -278,6 +283,7 @@ const VncFooter = ({ vm, vnc, inactive_vnc, onAddErrorNotification }) => {
                         console={vnc}
                         url={vnc && cockpit.format("vnc://$0:$1", connection_address(), vnc.port)}
                         onEdit={() => Dialogs.show(<VncEditModal vm={vm} inactive_vnc={inactive_vnc} />)}
+                        editLabel={_("Edit VNC settings (advanced)")}
                     />
                 </SplitItem>
             </Split>

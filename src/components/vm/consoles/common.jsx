@@ -56,7 +56,7 @@ export function console_launch(vm, consoleDetail) {
     domainDesktopConsole({ name: vm.name, consoleDetail: { ...consoleDetail, address: connection_address() } });
 }
 
-const RemoteConnectionInfo = ({ hide, url, onEdit }) => {
+const RemoteConnectionInfo = ({ hide, url, onEdit, editLabel }) => {
     return (
         <>
             <Content component={ContentVariants.p}>
@@ -109,14 +109,14 @@ const RemoteConnectionInfo = ({ hide, url, onEdit }) => {
             }
             { onEdit &&
                 <Button isInline variant="link" onClick={() => { hide(); onEdit() }}>
-                    {_("Set port and password")}
+                    {editLabel}
                 </Button>
             }
         </>
     );
 };
 
-const RemoteConnectionPopover = ({ url, onEdit }) => {
+const RemoteConnectionPopover = ({ url, onEdit, editLabel }) => {
     return (
         <InfoPopover
             // Without a "id", the popover changes its aria attributes on each page render,
@@ -129,18 +129,20 @@ const RemoteConnectionPopover = ({ url, onEdit }) => {
                     hide={hide}
                     url={url}
                     onEdit={onEdit}
+                    editLabel={editLabel}
                 />
             }
         />
     );
 };
 
-export const LaunchViewerButton = ({ vm, console, url, onEdit }) => {
+export const LaunchViewerButton = ({ vm, console, url, onEdit, editLabel }) => {
     return (
         <Flex columnGap={{ default: 'columnGapSm' }}>
             <RemoteConnectionPopover
                 url={url}
                 onEdit={onEdit}
+                editLabel={editLabel}
             />
             <Button
                 icon={<DownloadIcon />}
