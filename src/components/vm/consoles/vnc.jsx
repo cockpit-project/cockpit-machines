@@ -94,7 +94,7 @@ const VncEditModal = ({ vm, inactive_vnc }) => {
     const [applyError, setApplyError] = useState(null);
     const [applyErrorDetail, setApplyErrorDetail] = useState(null);
 
-    async function apply() {
+    function validate() {
         let field_errors = 0;
         if (port != "" && (!port.match("^[0-9]+$") || Number(port) < 5900)) {
             setPortError(_("Port must be 5900 or larger."));
@@ -106,7 +106,11 @@ const VncEditModal = ({ vm, inactive_vnc }) => {
             field_errors += 1;
         }
 
-        if (field_errors > 0)
+        return field_errors == 0
+    }
+
+    async function apply() {
+        if (!validate())
             return;
 
         setPortError(null);
@@ -164,13 +168,15 @@ const VncEditModal = ({ vm, inactive_vnc }) => {
                         id="vnc-edit-port"
                         type="text"
                         value={port}
-                        onChange={(_ev, val) => { setPortError(null); setPort(val) }} />
+                        onChange={(_ev, val) => { setPortError(null); setPort(val) }}
+                        onBlur={validate}
+                    />
                     <FormHelperText>
                         <HelperText>
                             { portError
                                 ? <HelperTextItem variant='error'>{portError}</HelperTextItem>
                                 : <HelperTextItem>
-                                    {_("Leave empty to automatically assign a free port when the machine starts")}
+                                    {_("Port must be a number that is at least 5900. Leave empty to automatically assign a free port when the machine starts.")}
                                 </HelperTextItem>
                             }
                         </HelperText>
@@ -182,20 +188,25 @@ const VncEditModal = ({ vm, inactive_vnc }) => {
                             id="vnc-edit-password"
                             type={showPassword ? "text" : "password"}
                             value={password}
-                            onChange={(_ev, val) => { setPasswordError(null); setPassword(val) }} />
+                            onChange={(_ev, val) => { setPasswordError(null); setPassword(val) }}
+                            onBlur={validate}
+                        />
                         <Button
                             variant="control"
                             onClick={() => setShowPassword(!showPassword)}>
                             { showPassword ? <EyeSlashIcon /> : <EyeIcon /> }
                         </Button>
                     </InputGroup>
-                    { passwordError &&
-                        <FormHelperText>
-                            <HelperText>
-                                <HelperTextItem variant='error'>{passwordError}</HelperTextItem>
-                            </HelperText>
-                        </FormHelperText>
-                    }
+                    <FormHelperText>
+                        <HelperText>
+                            { passwordError
+                                ? <HelperTextItem variant='error'>{passwordError}</HelperTextItem>
+                                : <HelperTextItem>
+                                      {_("Password must be 8 characters or less.")}
+                                  </HelperTextItem>
+                            }
+                        </HelperText>
+                    </FormHelperText>
                 </FormGroup>
             </Form>
         </Modal>
