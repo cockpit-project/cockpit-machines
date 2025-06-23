@@ -1250,9 +1250,9 @@ vnc_password= "{vnc_passwd}"
 
         def createAndVerifyVirtInstallArgsCloudInit(self):
             if self.create_and_run:
-                self.browser.click(".pf-v6-c-modal-box__footer button:contains(Create and run)")
+                self.browser.click(".pf-v6-c-modal-box__footer #create-and-run")
             else:
-                self.browser.click(".pf-v6-c-modal-box__footer button:contains(Create and edit)")
+                self.browser.click(".pf-v6-c-modal-box__footer #create-and-edit")
             self.browser.wait_not_present("#create-vm-dialog")
 
             if self.create_and_run:
