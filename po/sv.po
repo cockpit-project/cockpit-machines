@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-16 03:43+0000\n"
+"POT-Creation-Date: 2025-06-20 03:38+0000\n"
 "PO-Revision-Date: 2025-06-08 06:02+0000\n"
 "Last-Translator: Luna Jernberg <bittin@reimu.nl>\n"
 "Language-Team: Swedish <https://translate.fedoraproject.org/projects/cockpit/"
@@ -111,7 +111,7 @@ msgstr "Aktivera"
 msgid "Activate the storage pool to administer volumes"
 msgstr "Aktivera lagringspoolen för att administrera volymer"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:232
+#: src/components/vm/hostdevs/hostDevAdd.tsx:265
 #: src/components/vm/disks/diskAdd.tsx:968
 #: src/components/vm/overview/watchdog.jsx:156
 #: src/components/vm/overview/vsock.jsx:194
@@ -137,8 +137,8 @@ msgstr "Lägg till en statisk DHCP-värdpost"
 msgid "Add disk"
 msgstr "Lägg till disk"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:249
-#: src/components/vm/hostdevs/hostDevCard.jsx:147
+#: src/components/vm/hostdevs/hostDevAdd.tsx:282
+#: src/components/vm/hostdevs/hostDevCard.tsx:152
 msgid "Add host device"
 msgstr "Lägg till värdenhet"
 
@@ -146,7 +146,7 @@ msgstr "Lägg till värdenhet"
 msgid "Add network interface"
 msgstr "Lägg till nätverksport"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:109
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:131
 msgid "Add shared directory"
 msgstr "Lägg till delad katalog"
 
@@ -167,7 +167,7 @@ msgid "Adding a watchdog will require a reboot to take effect."
 msgstr ""
 "Att lägga till en vakthund kommer att kräva en omstart för att träda i kraft."
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:113
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:135
 msgid "Adding shared directories is possible only when the guest is shut off"
 msgstr ""
 "Att lägga till delade kataloger är endast möjligt när gästen är avstängd"
@@ -274,10 +274,10 @@ msgstr "Uppstartsordning"
 msgid "Boot order settings could not be saved"
 msgstr "Uppstartsordningen kunde inte sparas"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:89
-#: src/components/vm/hostdevs/hostDevCard.jsx:99
-#: src/components/vm/hostdevs/hostDevCard.jsx:107
-#: src/components/vm/hostdevs/hostDevCard.jsx:245
+#: src/components/vm/hostdevs/hostDevAdd.tsx:116
+#: src/components/vm/hostdevs/hostDevCard.tsx:104
+#: src/components/vm/hostdevs/hostDevCard.tsx:112
+#: src/components/vm/hostdevs/hostDevCard.tsx:262
 #: src/components/vm/disks/diskAdd.tsx:306
 #: src/components/vm/disks/vmDisksCard.tsx:221
 #: src/components/vm/disks/diskEdit.tsx:133
@@ -311,14 +311,14 @@ msgstr "Cache"
 
 #: src/components/vm/vmMigrateDialog.jsx:199
 #: src/components/vm/vmEditDescriptionDialog.jsx:79
-#: src/components/vm/hostdevs/hostDevAdd.jsx:237
+#: src/components/vm/hostdevs/hostDevAdd.tsx:270
 #: src/components/vm/vmRenameDialog.jsx:89
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:140
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:362
 #: src/components/vm/disks/diskAdd.tsx:971
 #: src/components/vm/disks/mediaEject.tsx:129
 #: src/components/vm/disks/diskEdit.tsx:341
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:229
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:263
 #: src/components/vm/overview/watchdog.jsx:216
 #: src/components/vm/overview/bootOrder.jsx:323
 #: src/components/vm/overview/cpuModal.jsx:330
@@ -388,7 +388,7 @@ msgstr "Kontrollerar tokens giltighet..."
 msgid "Choose an operating system"
 msgstr "Välj ett operativsystem"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:187
+#: src/components/vm/hostdevs/hostDevCard.tsx:199
 msgid "Class"
 msgstr "Klass"
 
@@ -667,7 +667,7 @@ msgstr ""
 "Att ta bort en inaktiv lagringspool kommer bara att odefiniera poolen. Dess "
 "innehåll kommer inte att raderas."
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:70
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:84
 msgid "Deleting shared directories is possible only when the guest is shut off"
 msgstr "Att ta bort delade kataloger är endast möjligt när gästen är avstängd"
 
@@ -704,10 +704,10 @@ msgstr ""
 msgid "Details"
 msgstr "Detaljer"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:88
-#: src/components/vm/hostdevs/hostDevAdd.jsx:123
-#: src/components/vm/hostdevs/hostDevCard.jsx:98
-#: src/components/vm/hostdevs/hostDevCard.jsx:244
+#: src/components/vm/hostdevs/hostDevAdd.tsx:115
+#: src/components/vm/hostdevs/hostDevAdd.tsx:150
+#: src/components/vm/hostdevs/hostDevCard.tsx:103
+#: src/components/vm/hostdevs/hostDevCard.tsx:261
 #: src/components/vm/disks/diskAdd.tsx:462
 #: src/components/vm/disks/vmDisksCard.tsx:207
 #: src/components/vm/overview/bootOrder.jsx:99
@@ -906,7 +906,7 @@ msgstr "En annan disk på den här datorns filsystem"
 msgid "Expand"
 msgstr "Expandera"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:211
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:245
 msgid "Extended attributes"
 msgstr "Utökade attribut"
 
@@ -918,7 +918,7 @@ msgstr "Misslyckades"
 msgid "Failed to add TPM to VM $0"
 msgstr "Misslyckades att lägga till TPM för VM $0"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:180
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:213
 msgid "Failed to add shared directory"
 msgstr "Misslyckades att lägga till delad katalog"
 
@@ -983,7 +983,7 @@ msgstr "Färre än det maximala antalet virtuella CPU:er skall vara aktiverade."
 msgid "File"
 msgstr "Arkiv"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:61
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:75
 msgid "Filesystem $0 could not be removed"
 msgstr "Filsystem $0 kunde inte raderas"
 
@@ -1086,7 +1086,7 @@ msgid "Hardware virtualization is disabled"
 msgstr "Hårdvaruvirtualisering är inaktiverad"
 
 #: src/components/vm/disks/diskAdd.tsx:291
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:206
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:240
 msgid "Hide additional options"
 msgstr "Göm ytterligare inställningar"
 
@@ -1101,11 +1101,11 @@ msgstr "Värd"
 msgid "Host device"
 msgstr "Värdenhet"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:209
+#: src/components/vm/hostdevs/hostDevAdd.tsx:242
 msgid "Host device could not be attached"
 msgstr "Värdenheten kunde inte anslutas"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:255
+#: src/components/vm/hostdevs/hostDevCard.tsx:272
 msgid "Host device will be removed from $0:"
 msgstr "Värdenheter kommer tas bort från $0:"
 
@@ -1285,7 +1285,7 @@ msgstr "Installationskällan kan inte vara tom"
 msgid "Installation type"
 msgstr "Installationstyp"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:131
+#: src/components/vm/hostdevs/hostDevCard.tsx:136
 msgid "Interface"
 msgstr "Gränssnitt"
 
@@ -1377,7 +1377,7 @@ msgstr "Läser in …"
 msgid "Local install media (ISO image or distro install tree)"
 msgstr "Lokalt installationsmedia (ISO avbild eller distro installationsträd)"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:130
+#: src/components/vm/hostdevs/hostDevAdd.tsx:157
 msgid "Location"
 msgstr "Plats"
 
@@ -1522,7 +1522,7 @@ msgstr "Läge"
 msgid "Mode help"
 msgstr "Lägeshjälp"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:197
+#: src/components/vm/hostdevs/hostDevCard.tsx:209
 #: src/components/vm/nics/nicBody.tsx:75
 msgid "Model"
 msgstr "Modell"
@@ -1535,13 +1535,13 @@ msgstr "Modelltyp"
 msgid "More info"
 msgstr "Mer information"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:47
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:65
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:195
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:60
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:79
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:228
 msgid "Mount tag"
 msgstr "Monteringstagg"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:130
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:163
 msgid "Mount tag must not be empty"
 msgstr "Monteringstaggen får inte vara tom"
 
@@ -1689,7 +1689,7 @@ msgstr "Ingen anslutning tillgänglig"
 msgid "No description"
 msgstr "Ingen beskrivning"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:89
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:103
 msgid "No directories shared between the host and this VM"
 msgstr "Inga kataloger delade mellan värden och denna VM"
 
@@ -1697,11 +1697,11 @@ msgstr "Inga kataloger delade mellan värden och denna VM"
 msgid "No disks defined for this VM"
 msgstr "Inga diskar är definerade för denna VM"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:214
+#: src/components/vm/hostdevs/hostDevAdd.tsx:247
 msgid "No host device selected"
 msgstr "Ingen värdenhet vald"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:314
+#: src/components/vm/hostdevs/hostDevCard.tsx:331
 msgid "No host devices assigned to this VM"
 msgstr "Inga värd enheter är definerade för denna VM"
 
@@ -1709,7 +1709,7 @@ msgstr "Inga värd enheter är definerade för denna VM"
 msgid "No network devices"
 msgstr "Inga nätverksenheter"
 
-#: src/components/vm/nics/vmNicsCard.tsx:649
+#: src/components/vm/nics/vmNicsCard.tsx:646
 msgid "No network interfaces defined for this VM"
 msgstr "Inga nätverksgränssnitt är definierade för denna VM"
 
@@ -1833,7 +1833,7 @@ msgstr "Andra VMs använder SPICE"
 msgid "Overview"
 msgstr "Översikt"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:57
+#: src/components/vm/hostdevs/hostDevAdd.tsx:66
 msgid "PCI"
 msgstr "PCI"
 
@@ -1841,8 +1841,8 @@ msgstr "PCI"
 msgid "Parent snapshot"
 msgstr "Föräldraögonblicksbild"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:123
-#: src/components/vm/hostdevs/hostDevCard.jsx:127
+#: src/components/vm/hostdevs/hostDevCard.tsx:128
+#: src/components/vm/hostdevs/hostDevCard.tsx:132
 #: src/components/vm/disks/diskEdit.tsx:63
 #: src/components/vm/deleteDialog.jsx:60
 msgid "Path"
@@ -1993,9 +1993,9 @@ msgstr ""
 msgid "Private"
 msgstr "Privat"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:130
-#: src/components/vm/hostdevs/hostDevCard.jsx:235
-#: src/components/vm/hostdevs/hostDevCard.jsx:241
+#: src/components/vm/hostdevs/hostDevAdd.tsx:157
+#: src/components/vm/hostdevs/hostDevCard.tsx:252
+#: src/components/vm/hostdevs/hostDevCard.tsx:258
 #: src/components/vm/overview/bootOrder.jsx:133
 #: src/components/vm/overview/bootOrder.jsx:148
 msgid "Product"
@@ -2005,7 +2005,7 @@ msgstr "Produkt"
 msgid "Profile"
 msgstr "Profil"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:114
+#: src/components/vm/hostdevs/hostDevCard.tsx:119
 #: src/components/vm/disks/vmDiskColumns.tsx:49
 #: src/components/vm/overview/bootOrder.jsx:100
 #: src/components/vm/overview/bootOrder.jsx:161
@@ -2074,12 +2074,12 @@ msgstr "Fjärr-URL"
 msgid "Remote viewer details"
 msgstr "Detaljer om fjärrvisaren"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:251
-#: src/components/vm/hostdevs/hostDevCard.jsx:257
+#: src/components/vm/hostdevs/hostDevCard.tsx:268
+#: src/components/vm/hostdevs/hostDevCard.tsx:274
 #: src/components/vm/disks/vmDiskColumns.tsx:166
 #: src/components/vm/disks/vmDiskColumns.tsx:252
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:58
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:67
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:72
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:81
 #: src/components/vm/overview/watchdog.jsx:213
 #: src/components/vm/overview/vsock.jsx:240
 #: src/components/vm/nics/vmNicsCard.tsx:556
@@ -2100,11 +2100,11 @@ msgstr "Ta bort och radera fil"
 msgid "Remove disk from VM?"
 msgstr "Ta bort en disk från VM:en?"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:60
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:74
 msgid "Remove filesystem?"
 msgstr "Ta bort filsysteme?"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:253
+#: src/components/vm/hostdevs/hostDevCard.tsx:270
 msgid "Remove host device from VM?"
 msgstr "Ta bort värdenhet från VM:en?"
 
@@ -2197,7 +2197,7 @@ msgstr "Rutt till $0"
 msgid "Routed network"
 msgstr "Ruttlagt nätverk"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:129
+#: src/components/vm/hostdevs/hostDevAdd.tsx:156
 msgid "Row select"
 msgstr "Radval"
 
@@ -2306,11 +2306,11 @@ msgstr ""
 "Att sätta användarlösenordet för oövervakad installation kräver att man "
 "startar VM:en när den skapas"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:224
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:258
 msgid "Share"
 msgstr "Dela"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:157
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:190
 msgid "Share a host directory with the guest"
 msgstr "Dela en värdkatalog med gäst"
 
@@ -2318,7 +2318,7 @@ msgstr "Dela en värdkatalog med gäst"
 msgid "Shared directories"
 msgstr "Delade kataloger"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:160
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:193
 #: src/components/vm/vmDetailsPage.jsx:197
 msgid "Shared host directories need to be manually mounted inside the VM"
 msgstr "Delade värdkataloger behöver monteras manuellt inuti VM:en"
@@ -2328,7 +2328,7 @@ msgid "Shared storage"
 msgstr "Delad lagring"
 
 #: src/components/vm/disks/diskAdd.tsx:291
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:206
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:240
 msgid "Show additional options"
 msgstr "Visa ytterligare åtgärder"
 
@@ -2368,10 +2368,10 @@ msgstr "Stänger av"
 msgid "Size"
 msgstr "Storlek"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:101
-#: src/components/vm/hostdevs/hostDevCard.jsx:101
-#: src/components/vm/hostdevs/hostDevCard.jsx:108
-#: src/components/vm/hostdevs/hostDevCard.jsx:236
+#: src/components/vm/hostdevs/hostDevAdd.tsx:128
+#: src/components/vm/hostdevs/hostDevCard.tsx:106
+#: src/components/vm/hostdevs/hostDevCard.tsx:113
+#: src/components/vm/hostdevs/hostDevCard.tsx:253
 #: src/components/vm/overview/bootOrder.jsx:149
 msgid "Slot"
 msgstr "Plats"
@@ -2405,7 +2405,7 @@ msgid "Some configuration changes only take effect after a fresh boot:"
 msgstr ""
 "Vissa konfigurationsändringar träder bara i kraft efter en fräsch uppstart:"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:217
+#: src/components/vm/hostdevs/hostDevCard.tsx:229
 #: src/components/vm/disks/diskAdd.tsx:719
 #: src/components/vm/disks/diskAdd.tsx:755
 #: src/components/vm/disks/vmDisksCard.tsx:225
@@ -2419,13 +2419,13 @@ msgstr "Källa"
 msgid "Source format"
 msgstr "Källformat"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:132
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:165
 msgid "Source must not be empty"
 msgstr "Källa kan inte vara tomt"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:47
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:64
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:183
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:60
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:78
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:216
 #: src/components/storagePools/createStoragePoolDialog.tsx:231
 #: src/components/storagePools/createStoragePoolDialog.tsx:248
 #: src/components/storagePools/storagePoolOverviewTab.tsx:43
@@ -2571,11 +2571,11 @@ msgstr "TAP-enhet"
 msgid "TPM"
 msgstr "TPM"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:126
+#: src/components/vm/hostdevs/hostDevAdd.tsx:153
 msgid "Table of selectable host devices"
 msgstr "Tabell över valbara värdenheter"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:109
+#: src/components/vm/hostdevs/hostDevCard.tsx:114
 #: src/components/vm/disks/vmDiskColumns.tsx:170
 #: src/components/vm/overview/bootOrder.jsx:155
 msgid "Target"
@@ -2613,7 +2613,7 @@ msgstr ""
 msgid "The directory on the server being exported"
 msgstr "Katalogen på servern exporteras"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:185
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:218
 msgid "The host path that is to be exported."
 msgstr "Värdsökvägen som ska exporteras."
 
@@ -2651,7 +2651,7 @@ msgstr "Den statiska värdposten för $0 kommer att tas bort:"
 msgid "The storage pool could not be deleted"
 msgstr "Lagringspoolen kunde inte raderas"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:197
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:231
 msgid "The tag name to be used by the guest to mount this export point."
 msgstr ""
 "Taggnamnet som gästen skall använda för att montera denna exporteringspunkt."
@@ -2668,7 +2668,7 @@ msgstr "Denna VM är transient. Stäng av den om du vill radera den."
 msgid "This disk will be removed from $0:"
 msgstr "Denna disk kommer tas bort från $0:"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:62
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:76
 msgid "This filesystem will be removed from $0:"
 msgstr "Detta filsystem kommer tas bort från $0:"
 
@@ -2736,8 +2736,8 @@ msgstr ""
 msgid "Troubleshoot"
 msgstr "Felsök"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:47
-#: src/components/vm/hostdevs/hostDevCard.jsx:177
+#: src/components/vm/hostdevs/hostDevAdd.tsx:56
+#: src/components/vm/hostdevs/hostDevCard.tsx:189
 #: src/components/vm/overview/bootOrder.jsx:118
 #: src/components/vm/overview/bootOrder.jsx:131
 #: src/components/vm/overview/bootOrder.jsx:146
@@ -2758,15 +2758,15 @@ msgstr "TypID"
 msgid "URL (ISO image or distro install tree)"
 msgstr "URL (ISO avbild eller distro install träd)"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:52
+#: src/components/vm/hostdevs/hostDevAdd.tsx:61
 msgid "USB"
 msgstr "USB"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:119
+#: src/components/vm/hostdevs/hostDevCard.tsx:124
 msgid "UUID"
 msgstr "UUID"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:145
+#: src/components/vm/hostdevs/hostDevAdd.tsx:172
 msgid "Undefined"
 msgstr "Odefinierad"
 
@@ -2794,8 +2794,8 @@ msgstr "Okänd"
 msgid "Unknown firmware"
 msgstr "Okänt firmware"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:92
-#: src/components/vm/hostdevs/hostDevCard.jsx:93
+#: src/components/vm/hostdevs/hostDevCard.tsx:97
+#: src/components/vm/hostdevs/hostDevCard.tsx:98
 #: src/components/vm/overview/bootOrder.jsx:137
 #: src/components/vm/overview/bootOrder.jsx:138
 msgid "Unspecified"
@@ -2818,7 +2818,7 @@ msgstr "Användning"
 msgid "Use existing"
 msgstr "Använd befintlig"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:214
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:248
 msgid "Use extended attributes on files and directories"
 msgstr "Använd utökade attribut på filer och kataloger"
 
@@ -2869,7 +2869,7 @@ msgstr "Användarsession"
 msgid "Uses SPICE"
 msgstr "Använder SPICE"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:311
+#: src/components/vm/hostdevs/hostDevCard.tsx:328
 msgid "VM $0 Host Devices"
 msgstr "VM $0 VärdEnheter"
 
@@ -2957,10 +2957,10 @@ msgstr "VNC-port"
 msgid "Valid token"
 msgstr "Giltig token"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:130
-#: src/components/vm/hostdevs/hostDevCard.jsx:207
-#: src/components/vm/hostdevs/hostDevCard.jsx:234
-#: src/components/vm/hostdevs/hostDevCard.jsx:240
+#: src/components/vm/hostdevs/hostDevAdd.tsx:157
+#: src/components/vm/hostdevs/hostDevCard.tsx:219
+#: src/components/vm/hostdevs/hostDevCard.tsx:251
+#: src/components/vm/hostdevs/hostDevCard.tsx:257
 #: src/components/vm/overview/bootOrder.jsx:132
 #: src/components/vm/overview/bootOrder.jsx:147
 msgid "Vendor"
@@ -3030,7 +3030,7 @@ msgstr "Volymgruppens namn ska inte vara tomt"
 msgid "Vsock"
 msgstr "Vsock"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:115
+#: src/components/vm/hostdevs/hostDevCard.tsx:120
 #: src/components/vm/overview/bootOrder.jsx:162
 msgid "WWPN"
 msgstr "WWPN"
@@ -3055,7 +3055,7 @@ msgstr ""
 msgid "Writeable"
 msgstr "Skrivbar"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:162
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:195
 msgid "You can mount the shared folder using:"
 msgstr "Du kan montera den delade mappen med:"
 
@@ -3182,7 +3182,7 @@ msgstr "mcast"
 msgid "more info"
 msgstr "mer information"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:170
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:203
 #: src/components/vm/vmDetailsPage.jsx:206
 msgid "mount point: The mount point inside the guest"
 msgstr "monteringspunkt: monteringspunkten inuti gästen"

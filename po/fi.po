@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-16 03:43+0000\n"
+"POT-Creation-Date: 2025-06-20 03:38+0000\n"
 "PO-Revision-Date: 2025-03-20 17:27+0000\n"
 "Last-Translator: Ricky Tigg <ricky.tigg@gmail.com>\n"
 "Language-Team: Finnish <https://translate.fedoraproject.org/projects/cockpit-"
@@ -111,7 +111,7 @@ msgstr "Aktivoi"
 msgid "Activate the storage pool to administer volumes"
 msgstr "Aktivoi varastointivaranto taltioiden hallitsemiseksi"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:232
+#: src/components/vm/hostdevs/hostDevAdd.tsx:265
 #: src/components/vm/disks/diskAdd.tsx:968
 #: src/components/vm/overview/watchdog.jsx:156
 #: src/components/vm/overview/vsock.jsx:194
@@ -137,8 +137,8 @@ msgstr "Lisää staattinen DHCP-merkintä"
 msgid "Add disk"
 msgstr "Lisää levy"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:249
-#: src/components/vm/hostdevs/hostDevCard.jsx:147
+#: src/components/vm/hostdevs/hostDevAdd.tsx:282
+#: src/components/vm/hostdevs/hostDevCard.tsx:152
 msgid "Add host device"
 msgstr "Lisää isäntälaite"
 
@@ -146,7 +146,7 @@ msgstr "Lisää isäntälaite"
 msgid "Add network interface"
 msgstr "Lisää verkkoliitäntä"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:109
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:131
 msgid "Add shared directory"
 msgstr "Lisää jaettu kansio"
 
@@ -167,7 +167,7 @@ msgid "Adding a watchdog will require a reboot to take effect."
 msgstr ""
 "Watchdogin lisääminen vaatii uudelleenkäynnistyksen, jotta se tulee voimaan."
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:113
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:135
 msgid "Adding shared directories is possible only when the guest is shut off"
 msgstr ""
 "Jaettujen kansioiden lisääminen on mahdollista vain, kun vieras on "
@@ -275,10 +275,10 @@ msgstr "Käynnistysjärjestys"
 msgid "Boot order settings could not be saved"
 msgstr "Käynnistysjärjestysasetuksia ei voitu tallentaa"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:89
-#: src/components/vm/hostdevs/hostDevCard.jsx:99
-#: src/components/vm/hostdevs/hostDevCard.jsx:107
-#: src/components/vm/hostdevs/hostDevCard.jsx:245
+#: src/components/vm/hostdevs/hostDevAdd.tsx:116
+#: src/components/vm/hostdevs/hostDevCard.tsx:104
+#: src/components/vm/hostdevs/hostDevCard.tsx:112
+#: src/components/vm/hostdevs/hostDevCard.tsx:262
 #: src/components/vm/disks/diskAdd.tsx:306
 #: src/components/vm/disks/vmDisksCard.tsx:221
 #: src/components/vm/disks/diskEdit.tsx:133
@@ -312,14 +312,14 @@ msgstr "Välimuisti"
 
 #: src/components/vm/vmMigrateDialog.jsx:199
 #: src/components/vm/vmEditDescriptionDialog.jsx:79
-#: src/components/vm/hostdevs/hostDevAdd.jsx:237
+#: src/components/vm/hostdevs/hostDevAdd.tsx:270
 #: src/components/vm/vmRenameDialog.jsx:89
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:140
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:362
 #: src/components/vm/disks/diskAdd.tsx:971
 #: src/components/vm/disks/mediaEject.tsx:129
 #: src/components/vm/disks/diskEdit.tsx:341
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:229
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:263
 #: src/components/vm/overview/watchdog.jsx:216
 #: src/components/vm/overview/bootOrder.jsx:323
 #: src/components/vm/overview/cpuModal.jsx:330
@@ -389,7 +389,7 @@ msgstr "Tarkistetaan tokenin kelpoisuutta..."
 msgid "Choose an operating system"
 msgstr "Valitse käyttöjärjestelmä"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:187
+#: src/components/vm/hostdevs/hostDevCard.tsx:199
 msgid "Class"
 msgstr "Luokka"
 
@@ -668,7 +668,7 @@ msgstr ""
 "Passiivisen varastointivarannon poistaminen poistaa vain määrittelyn "
 "varannosta. Sen sisältöä ei poisteta."
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:70
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:84
 msgid "Deleting shared directories is possible only when the guest is shut off"
 msgstr ""
 "Jaettujen kansioiden poistaminen on mahdollista vain, kun vieras on "
@@ -707,10 +707,10 @@ msgstr ""
 msgid "Details"
 msgstr "Yksityiskohdat"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:88
-#: src/components/vm/hostdevs/hostDevAdd.jsx:123
-#: src/components/vm/hostdevs/hostDevCard.jsx:98
-#: src/components/vm/hostdevs/hostDevCard.jsx:244
+#: src/components/vm/hostdevs/hostDevAdd.tsx:115
+#: src/components/vm/hostdevs/hostDevAdd.tsx:150
+#: src/components/vm/hostdevs/hostDevCard.tsx:103
+#: src/components/vm/hostdevs/hostDevCard.tsx:261
 #: src/components/vm/disks/diskAdd.tsx:462
 #: src/components/vm/disks/vmDisksCard.tsx:207
 #: src/components/vm/overview/bootOrder.jsx:99
@@ -912,7 +912,7 @@ msgstr "Poistutaan levykuvasta isännän tiedostojärjestelmässä"
 msgid "Expand"
 msgstr "Laajenna"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:211
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:245
 msgid "Extended attributes"
 msgstr "Laajennetut määreet"
 
@@ -924,7 +924,7 @@ msgstr "Epäonnistui"
 msgid "Failed to add TPM to VM $0"
 msgstr "TPM:n lisäminen virtuaalikoneeseen $0 epäonnistui"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:180
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:213
 msgid "Failed to add shared directory"
 msgstr "Jaetun hakemiston lisäys epäonnistui"
 
@@ -989,7 +989,7 @@ msgstr "Alle virtuaalisten suorittimien enimmäismäärän tulisi olla käytöss
 msgid "File"
 msgstr "Tiedosto"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:61
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:75
 msgid "Filesystem $0 could not be removed"
 msgstr "Tiedostojärjestelmää $0 ei voitu poistaa"
 
@@ -1092,7 +1092,7 @@ msgid "Hardware virtualization is disabled"
 msgstr "Laitteistovirtualisointi on pois käytöstä"
 
 #: src/components/vm/disks/diskAdd.tsx:291
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:206
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:240
 msgid "Hide additional options"
 msgstr "Piilota lisävaihtoehdot"
 
@@ -1107,11 +1107,11 @@ msgstr "Kone"
 msgid "Host device"
 msgstr "Isäntälaite"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:209
+#: src/components/vm/hostdevs/hostDevAdd.tsx:242
 msgid "Host device could not be attached"
 msgstr "Isäntälaitetta ei voitu liittää"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:255
+#: src/components/vm/hostdevs/hostDevCard.tsx:272
 msgid "Host device will be removed from $0:"
 msgstr "Isäntälaite poistetaan $0:sta:"
 
@@ -1290,7 +1290,7 @@ msgstr "Asennuslähteen ei tulisi olla tyhjä"
 msgid "Installation type"
 msgstr "Asennustyyppi"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:131
+#: src/components/vm/hostdevs/hostDevCard.tsx:136
 msgid "Interface"
 msgstr "Liitäntä"
 
@@ -1384,7 +1384,7 @@ msgstr "Ladataan..."
 msgid "Local install media (ISO image or distro install tree)"
 msgstr "Paikallinen asennusmedia (ISO-kuvan tai jakelun asennuspuu)"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:130
+#: src/components/vm/hostdevs/hostDevAdd.tsx:157
 msgid "Location"
 msgstr "Sijainti"
 
@@ -1532,7 +1532,7 @@ msgstr "Tila"
 msgid "Mode help"
 msgstr "Malli"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:197
+#: src/components/vm/hostdevs/hostDevCard.tsx:209
 #: src/components/vm/nics/nicBody.tsx:75
 msgid "Model"
 msgstr "Malli"
@@ -1547,13 +1547,13 @@ msgstr "Mallityyppi"
 msgid "More info"
 msgstr "lisätietoja"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:47
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:65
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:195
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:60
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:79
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:228
 msgid "Mount tag"
 msgstr "Liitostunniste"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:130
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:163
 msgid "Mount tag must not be empty"
 msgstr "Liitostunnus ei voi olla tyhjä"
 
@@ -1700,7 +1700,7 @@ msgstr "Ei yhteytta saatavilla"
 msgid "No description"
 msgstr "Ei kuvausta"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:89
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:103
 msgid "No directories shared between the host and this VM"
 msgstr ""
 "Isäntäkoneen ja tämän virtuaalikoneen välillä ei ole jaettuja hakemistoja"
@@ -1709,11 +1709,11 @@ msgstr ""
 msgid "No disks defined for this VM"
 msgstr "Tälle virtuaalikoneelle ei ole määritetty levyjä"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:214
+#: src/components/vm/hostdevs/hostDevAdd.tsx:247
 msgid "No host device selected"
 msgstr "Isäntälaitetta ei valittu"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:314
+#: src/components/vm/hostdevs/hostDevCard.tsx:331
 msgid "No host devices assigned to this VM"
 msgstr "Tälle virtuaalikoneelle ei ole määritetty isäntälaitteita"
 
@@ -1721,7 +1721,7 @@ msgstr "Tälle virtuaalikoneelle ei ole määritetty isäntälaitteita"
 msgid "No network devices"
 msgstr "Ei verkkolaitteita"
 
-#: src/components/vm/nics/vmNicsCard.tsx:649
+#: src/components/vm/nics/vmNicsCard.tsx:646
 msgid "No network interfaces defined for this VM"
 msgstr "Tälle virtuaalikoneelle ei ole määritetty verkkoliitäntöjä"
 
@@ -1845,7 +1845,7 @@ msgstr "Muut SPICEa käyttävät virtuaalikoneet"
 msgid "Overview"
 msgstr "Esittely"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:57
+#: src/components/vm/hostdevs/hostDevAdd.tsx:66
 msgid "PCI"
 msgstr "PCI"
 
@@ -1853,8 +1853,8 @@ msgstr "PCI"
 msgid "Parent snapshot"
 msgstr "Vanhempi-tilannevedos"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:123
-#: src/components/vm/hostdevs/hostDevCard.jsx:127
+#: src/components/vm/hostdevs/hostDevCard.tsx:128
+#: src/components/vm/hostdevs/hostDevCard.tsx:132
 #: src/components/vm/disks/diskEdit.tsx:63
 #: src/components/vm/deleteDialog.jsx:60
 msgid "Path"
@@ -2006,9 +2006,9 @@ msgstr ""
 msgid "Private"
 msgstr "Yksityinen"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:130
-#: src/components/vm/hostdevs/hostDevCard.jsx:235
-#: src/components/vm/hostdevs/hostDevCard.jsx:241
+#: src/components/vm/hostdevs/hostDevAdd.tsx:157
+#: src/components/vm/hostdevs/hostDevCard.tsx:252
+#: src/components/vm/hostdevs/hostDevCard.tsx:258
 #: src/components/vm/overview/bootOrder.jsx:133
 #: src/components/vm/overview/bootOrder.jsx:148
 msgid "Product"
@@ -2018,7 +2018,7 @@ msgstr "Tuote"
 msgid "Profile"
 msgstr "Profiili"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:114
+#: src/components/vm/hostdevs/hostDevCard.tsx:119
 #: src/components/vm/disks/vmDiskColumns.tsx:49
 #: src/components/vm/overview/bootOrder.jsx:100
 #: src/components/vm/overview/bootOrder.jsx:161
@@ -2086,12 +2086,12 @@ msgstr "Etä-URL"
 msgid "Remote viewer details"
 msgstr "Etäkatseluohjelman yksityiskohdat"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:251
-#: src/components/vm/hostdevs/hostDevCard.jsx:257
+#: src/components/vm/hostdevs/hostDevCard.tsx:268
+#: src/components/vm/hostdevs/hostDevCard.tsx:274
 #: src/components/vm/disks/vmDiskColumns.tsx:166
 #: src/components/vm/disks/vmDiskColumns.tsx:252
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:58
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:67
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:72
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:81
 #: src/components/vm/overview/watchdog.jsx:213
 #: src/components/vm/overview/vsock.jsx:240
 #: src/components/vm/nics/vmNicsCard.tsx:556
@@ -2112,11 +2112,11 @@ msgstr "Poista ja poista tiedosto"
 msgid "Remove disk from VM?"
 msgstr "Poistetaanko levy VM:stä?"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:60
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:74
 msgid "Remove filesystem?"
 msgstr "Poista tiedostojärjestelmä?"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:253
+#: src/components/vm/hostdevs/hostDevCard.tsx:270
 msgid "Remove host device from VM?"
 msgstr "Poista isäntälaite VM:stä?"
 
@@ -2208,7 +2208,7 @@ msgstr "Reitti $0:een"
 msgid "Routed network"
 msgstr "Reititetty verkko"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:129
+#: src/components/vm/hostdevs/hostDevAdd.tsx:156
 msgid "Row select"
 msgstr "Rivin valinta"
 
@@ -2317,11 +2317,11 @@ msgstr ""
 "Käyttäjän salasanojen asettaminen valvomatonta asennusta varten edellyttää "
 "virtuaalikoneen käynnistämistä sen luomisen yhteydessä"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:224
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:258
 msgid "Share"
 msgstr "Jako"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:157
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:190
 msgid "Share a host directory with the guest"
 msgstr "Jaa isäntähakemisto vieraalle"
 
@@ -2329,7 +2329,7 @@ msgstr "Jaa isäntähakemisto vieraalle"
 msgid "Shared directories"
 msgstr "Jaetut hakemistot"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:160
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:193
 #: src/components/vm/vmDetailsPage.jsx:197
 msgid "Shared host directories need to be manually mounted inside the VM"
 msgstr "Jaetut isäntähakemistot on liitettävä manuaalisesti virtuaalikoneessa"
@@ -2339,7 +2339,7 @@ msgid "Shared storage"
 msgstr "Jaettu tallennustila"
 
 #: src/components/vm/disks/diskAdd.tsx:291
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:206
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:240
 msgid "Show additional options"
 msgstr "Näytä lisävaihtoehdot"
 
@@ -2378,10 +2378,10 @@ msgstr "Sammutetaan"
 msgid "Size"
 msgstr "Koko"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:101
-#: src/components/vm/hostdevs/hostDevCard.jsx:101
-#: src/components/vm/hostdevs/hostDevCard.jsx:108
-#: src/components/vm/hostdevs/hostDevCard.jsx:236
+#: src/components/vm/hostdevs/hostDevAdd.tsx:128
+#: src/components/vm/hostdevs/hostDevCard.tsx:106
+#: src/components/vm/hostdevs/hostDevCard.tsx:113
+#: src/components/vm/hostdevs/hostDevCard.tsx:253
 #: src/components/vm/overview/bootOrder.jsx:149
 msgid "Slot"
 msgstr "Aukko"
@@ -2415,7 +2415,7 @@ msgid "Some configuration changes only take effect after a fresh boot:"
 msgstr ""
 "Jotkut asetusmuutokset tulevat voimaan vasta uuden käynnistyksen jälkeen:"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:217
+#: src/components/vm/hostdevs/hostDevCard.tsx:229
 #: src/components/vm/disks/diskAdd.tsx:719
 #: src/components/vm/disks/diskAdd.tsx:755
 #: src/components/vm/disks/vmDisksCard.tsx:225
@@ -2429,13 +2429,13 @@ msgstr "Lähde"
 msgid "Source format"
 msgstr "Lähteen muoto"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:132
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:165
 msgid "Source must not be empty"
 msgstr "Lähde ei saa olla tyhjä"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:47
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:64
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:183
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:60
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:78
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:216
 #: src/components/storagePools/createStoragePoolDialog.tsx:231
 #: src/components/storagePools/createStoragePoolDialog.tsx:248
 #: src/components/storagePools/storagePoolOverviewTab.tsx:43
@@ -2581,11 +2581,11 @@ msgstr "TAP-laite"
 msgid "TPM"
 msgstr "TPM"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:126
+#: src/components/vm/hostdevs/hostDevAdd.tsx:153
 msgid "Table of selectable host devices"
 msgstr "Taulukko valittavista olevista isäntälaitteista"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:109
+#: src/components/vm/hostdevs/hostDevCard.tsx:114
 #: src/components/vm/disks/vmDiskColumns.tsx:170
 #: src/components/vm/overview/bootOrder.jsx:155
 msgid "Target"
@@ -2624,7 +2624,7 @@ msgstr ""
 msgid "The directory on the server being exported"
 msgstr "Viedyn palvelimen hakemisto"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:185
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:218
 msgid "The host path that is to be exported."
 msgstr "Vietävä isäntäpolku."
 
@@ -2662,7 +2662,7 @@ msgstr "Staattinen isäntämerkintä $0:lle poistetaan:"
 msgid "The storage pool could not be deleted"
 msgstr "Tallennusvarantoa ei voitu poistaa"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:197
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:231
 msgid "The tag name to be used by the guest to mount this export point."
 msgstr "Tunnisteen nimi, jota vieras käyttää tämän vientipisteen liittämiseen."
 
@@ -2678,7 +2678,7 @@ msgstr "Tämä virtuaalikone on ohimenevä. Sammuta se, jos haluat poistaa sen."
 msgid "This disk will be removed from $0:"
 msgstr "Tämä levy poistetaan $0:sta:"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:62
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:76
 msgid "This filesystem will be removed from $0:"
 msgstr "Tämä tiedostojärjestelmä poistetaan $0:sta:"
 
@@ -2757,8 +2757,8 @@ msgstr ""
 msgid "Troubleshoot"
 msgstr "Vianetsintä"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:47
-#: src/components/vm/hostdevs/hostDevCard.jsx:177
+#: src/components/vm/hostdevs/hostDevAdd.tsx:56
+#: src/components/vm/hostdevs/hostDevCard.tsx:189
 #: src/components/vm/overview/bootOrder.jsx:118
 #: src/components/vm/overview/bootOrder.jsx:131
 #: src/components/vm/overview/bootOrder.jsx:146
@@ -2779,15 +2779,15 @@ msgstr "Tyypin tunnus"
 msgid "URL (ISO image or distro install tree)"
 msgstr "URL (ISO-kuvan tai jakelun asennuspuu)"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:52
+#: src/components/vm/hostdevs/hostDevAdd.tsx:61
 msgid "USB"
 msgstr "USB"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:119
+#: src/components/vm/hostdevs/hostDevCard.tsx:124
 msgid "UUID"
 msgstr "UUID"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:145
+#: src/components/vm/hostdevs/hostDevAdd.tsx:172
 msgid "Undefined"
 msgstr "Määrittämätön"
 
@@ -2815,8 +2815,8 @@ msgstr "Tuntematon"
 msgid "Unknown firmware"
 msgstr "Tuntematon laiteohjelmisto"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:92
-#: src/components/vm/hostdevs/hostDevCard.jsx:93
+#: src/components/vm/hostdevs/hostDevCard.tsx:97
+#: src/components/vm/hostdevs/hostDevCard.tsx:98
 #: src/components/vm/overview/bootOrder.jsx:137
 #: src/components/vm/overview/bootOrder.jsx:138
 msgid "Unspecified"
@@ -2839,7 +2839,7 @@ msgstr "Käyttö"
 msgid "Use existing"
 msgstr "Käytä olemassaolevaa"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:214
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:248
 msgid "Use extended attributes on files and directories"
 msgstr "Käytä laajennettuja määritteitä tiedostoissa ja hakemistoissa"
 
@@ -2895,7 +2895,7 @@ msgstr "Käyttäjäistunto"
 msgid "Uses SPICE"
 msgstr "Käyttää SPICEä"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:311
+#: src/components/vm/hostdevs/hostDevCard.tsx:328
 msgid "VM $0 Host Devices"
 msgstr "VM $0 isäntälaitteet"
 
@@ -2983,10 +2983,10 @@ msgstr "VNC-portti"
 msgid "Valid token"
 msgstr "Kelvollinen tokeni"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:130
-#: src/components/vm/hostdevs/hostDevCard.jsx:207
-#: src/components/vm/hostdevs/hostDevCard.jsx:234
-#: src/components/vm/hostdevs/hostDevCard.jsx:240
+#: src/components/vm/hostdevs/hostDevAdd.tsx:157
+#: src/components/vm/hostdevs/hostDevCard.tsx:219
+#: src/components/vm/hostdevs/hostDevCard.tsx:251
+#: src/components/vm/hostdevs/hostDevCard.tsx:257
 #: src/components/vm/overview/bootOrder.jsx:132
 #: src/components/vm/overview/bootOrder.jsx:147
 msgid "Vendor"
@@ -3056,7 +3056,7 @@ msgstr "Taltioryhmän nimi ei tulisi olla tyhjä"
 msgid "Vsock"
 msgstr "Vsock"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:115
+#: src/components/vm/hostdevs/hostDevCard.tsx:120
 #: src/components/vm/overview/bootOrder.jsx:162
 msgid "WWPN"
 msgstr "WWPN"
@@ -3081,7 +3081,7 @@ msgstr ""
 msgid "Writeable"
 msgstr "Kirjoitettava"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:162
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:195
 msgid "You can mount the shared folder using:"
 msgstr "Voit liittää jaetun kansion seuraavasti:"
 
@@ -3208,7 +3208,7 @@ msgstr "monilähetys"
 msgid "more info"
 msgstr "lisätietoja"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:170
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:203
 #: src/components/vm/vmDetailsPage.jsx:206
 msgid "mount point: The mount point inside the guest"
 msgstr "liitoskohta: liitoskohta vieraskoneessa"
