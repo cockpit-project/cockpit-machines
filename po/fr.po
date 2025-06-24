@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-16 03:43+0000\n"
+"POT-Creation-Date: 2025-06-20 03:38+0000\n"
 "PO-Revision-Date: 2025-06-09 11:08+0000\n"
 "Last-Translator: Léane GRASSER <leane.grasser@proton.me>\n"
 "Language-Team: French <https://translate.fedoraproject.org/projects/cockpit/"
@@ -126,7 +126,7 @@ msgstr "Activer"
 msgid "Activate the storage pool to administer volumes"
 msgstr "Activer le pool de stockage pour gérer les volumes"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:232
+#: src/components/vm/hostdevs/hostDevAdd.tsx:265
 #: src/components/vm/disks/diskAdd.tsx:968
 #: src/components/vm/overview/watchdog.jsx:156
 #: src/components/vm/overview/vsock.jsx:194
@@ -152,8 +152,8 @@ msgstr "Ajouter une entrée d’hôte statique DHCP"
 msgid "Add disk"
 msgstr "Ajouter un disque"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:249
-#: src/components/vm/hostdevs/hostDevCard.jsx:147
+#: src/components/vm/hostdevs/hostDevAdd.tsx:282
+#: src/components/vm/hostdevs/hostDevCard.tsx:152
 msgid "Add host device"
 msgstr "Ajouter un dispositif hôte"
 
@@ -161,7 +161,7 @@ msgstr "Ajouter un dispositif hôte"
 msgid "Add network interface"
 msgstr "Ajouter une interface réseau"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:109
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:131
 msgid "Add shared directory"
 msgstr "Ajouter un répertoire partagé"
 
@@ -183,7 +183,7 @@ msgstr ""
 "L'ajout d'un dispositif de surveillance nécessite un redémarrage pour "
 "prendre effet."
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:113
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:135
 msgid "Adding shared directories is possible only when the guest is shut off"
 msgstr ""
 "L’ajout de répertoires partagés n’est possible que lorsque la machine "
@@ -292,10 +292,10 @@ msgid "Boot order settings could not be saved"
 msgstr ""
 "Les paramètres relatifs à l’ordre de démarrage n’ont pas pu être enregistrés"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:89
-#: src/components/vm/hostdevs/hostDevCard.jsx:99
-#: src/components/vm/hostdevs/hostDevCard.jsx:107
-#: src/components/vm/hostdevs/hostDevCard.jsx:245
+#: src/components/vm/hostdevs/hostDevAdd.tsx:116
+#: src/components/vm/hostdevs/hostDevCard.tsx:104
+#: src/components/vm/hostdevs/hostDevCard.tsx:112
+#: src/components/vm/hostdevs/hostDevCard.tsx:262
 #: src/components/vm/disks/diskAdd.tsx:306
 #: src/components/vm/disks/vmDisksCard.tsx:221
 #: src/components/vm/disks/diskEdit.tsx:133
@@ -329,14 +329,14 @@ msgstr "Cache"
 
 #: src/components/vm/vmMigrateDialog.jsx:199
 #: src/components/vm/vmEditDescriptionDialog.jsx:79
-#: src/components/vm/hostdevs/hostDevAdd.jsx:237
+#: src/components/vm/hostdevs/hostDevAdd.tsx:270
 #: src/components/vm/vmRenameDialog.jsx:89
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:140
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:362
 #: src/components/vm/disks/diskAdd.tsx:971
 #: src/components/vm/disks/mediaEject.tsx:129
 #: src/components/vm/disks/diskEdit.tsx:341
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:229
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:263
 #: src/components/vm/overview/watchdog.jsx:216
 #: src/components/vm/overview/bootOrder.jsx:323
 #: src/components/vm/overview/cpuModal.jsx:330
@@ -408,7 +408,7 @@ msgstr "Vérification de la validité du jeton..."
 msgid "Choose an operating system"
 msgstr "Choisissez un système d’exploitation"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:187
+#: src/components/vm/hostdevs/hostDevCard.tsx:199
 msgid "Class"
 msgstr "Classe"
 
@@ -691,7 +691,7 @@ msgstr ""
 "Supprimer un pool de stockage inactif va seulement déprogrammer le pool. Son "
 "contenu ne sera pas supprimé."
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:70
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:84
 msgid "Deleting shared directories is possible only when the guest is shut off"
 msgstr ""
 "La suppression de répertoires partagés n’est possible que lorsque la machine "
@@ -730,10 +730,10 @@ msgstr ""
 msgid "Details"
 msgstr "Détails"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:88
-#: src/components/vm/hostdevs/hostDevAdd.jsx:123
-#: src/components/vm/hostdevs/hostDevCard.jsx:98
-#: src/components/vm/hostdevs/hostDevCard.jsx:244
+#: src/components/vm/hostdevs/hostDevAdd.tsx:115
+#: src/components/vm/hostdevs/hostDevAdd.tsx:150
+#: src/components/vm/hostdevs/hostDevCard.tsx:103
+#: src/components/vm/hostdevs/hostDevCard.tsx:261
 #: src/components/vm/disks/diskAdd.tsx:462
 #: src/components/vm/disks/vmDisksCard.tsx:207
 #: src/components/vm/overview/bootOrder.jsx:99
@@ -940,7 +940,7 @@ msgstr "Image disque existante sur le système de fichiers de l’hôte"
 msgid "Expand"
 msgstr "Développer"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:211
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:245
 msgid "Extended attributes"
 msgstr "Attributs étendus"
 
@@ -952,7 +952,7 @@ msgstr "Échoué"
 msgid "Failed to add TPM to VM $0"
 msgstr "Échec de l'ajout d'un TPM à la VM $0"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:180
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:213
 msgid "Failed to add shared directory"
 msgstr "Échec de l’ajout du répertoire partagé"
 
@@ -1020,7 +1020,7 @@ msgstr ""
 msgid "File"
 msgstr "Fichier"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:61
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:75
 msgid "Filesystem $0 could not be removed"
 msgstr "Le système de fichier $0 n’a pas pu être supprimé"
 
@@ -1123,7 +1123,7 @@ msgid "Hardware virtualization is disabled"
 msgstr "La virtualisation du matériel est désactivée"
 
 #: src/components/vm/disks/diskAdd.tsx:291
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:206
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:240
 msgid "Hide additional options"
 msgstr "Cacher les options supplémentaires"
 
@@ -1138,11 +1138,11 @@ msgstr "Hôte"
 msgid "Host device"
 msgstr "Périphérique hôte"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:209
+#: src/components/vm/hostdevs/hostDevAdd.tsx:242
 msgid "Host device could not be attached"
 msgstr "Le dispositif hôte n’a pas pu être attaché"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:255
+#: src/components/vm/hostdevs/hostDevCard.tsx:272
 msgid "Host device will be removed from $0:"
 msgstr "Le dispositif hôte sera retiré de $0 :"
 
@@ -1325,7 +1325,7 @@ msgstr "La source de l’installation ne doit pas être vide"
 msgid "Installation type"
 msgstr "Type d’installation"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:131
+#: src/components/vm/hostdevs/hostDevCard.tsx:136
 msgid "Interface"
 msgstr "Interface"
 
@@ -1426,7 +1426,7 @@ msgstr ""
 "Support d’installation local (image ISO ou arborescence d'installation de la "
 "distribution)"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:130
+#: src/components/vm/hostdevs/hostDevAdd.tsx:157
 msgid "Location"
 msgstr "Emplacement"
 
@@ -1572,7 +1572,7 @@ msgstr "Mode"
 msgid "Mode help"
 msgstr "Aide des modes"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:197
+#: src/components/vm/hostdevs/hostDevCard.tsx:209
 #: src/components/vm/nics/nicBody.tsx:75
 msgid "Model"
 msgstr "Modèle"
@@ -1585,13 +1585,13 @@ msgstr "Type de modèle"
 msgid "More info"
 msgstr "Plus d'infos"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:47
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:65
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:195
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:60
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:79
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:228
 msgid "Mount tag"
 msgstr "Étiquette de montage"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:130
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:163
 msgid "Mount tag must not be empty"
 msgstr "La balise de montage ne doit pas être vide"
 
@@ -1739,7 +1739,7 @@ msgstr "Aucune connexion disponible"
 msgid "No description"
 msgstr "Aucune description"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:89
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:103
 msgid "No directories shared between the host and this VM"
 msgstr "Aucun répertoire partagé entre l’hôte et cette machine virtuelle"
 
@@ -1747,11 +1747,11 @@ msgstr "Aucun répertoire partagé entre l’hôte et cette machine virtuelle"
 msgid "No disks defined for this VM"
 msgstr "Aucun disque défini pour cette machine virtuelle"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:214
+#: src/components/vm/hostdevs/hostDevAdd.tsx:247
 msgid "No host device selected"
 msgstr "Pas de périphérique hôte sélectionné"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:314
+#: src/components/vm/hostdevs/hostDevCard.tsx:331
 msgid "No host devices assigned to this VM"
 msgstr "Aucun périphérique hôte affecté à cette machine virtuelle"
 
@@ -1759,7 +1759,7 @@ msgstr "Aucun périphérique hôte affecté à cette machine virtuelle"
 msgid "No network devices"
 msgstr "Aucun périphérique réseau disponible"
 
-#: src/components/vm/nics/vmNicsCard.tsx:649
+#: src/components/vm/nics/vmNicsCard.tsx:646
 msgid "No network interfaces defined for this VM"
 msgstr "Aucune interface réseau définie pour cette machine virtuelle"
 
@@ -1883,7 +1883,7 @@ msgstr "Autres VM utilisant SPICE"
 msgid "Overview"
 msgstr "Aperçu"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:57
+#: src/components/vm/hostdevs/hostDevAdd.tsx:66
 msgid "PCI"
 msgstr "PCI"
 
@@ -1891,8 +1891,8 @@ msgstr "PCI"
 msgid "Parent snapshot"
 msgstr "Aperçu des parents"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:123
-#: src/components/vm/hostdevs/hostDevCard.jsx:127
+#: src/components/vm/hostdevs/hostDevCard.tsx:128
+#: src/components/vm/hostdevs/hostDevCard.tsx:132
 #: src/components/vm/disks/diskEdit.tsx:63
 #: src/components/vm/deleteDialog.jsx:60
 msgid "Path"
@@ -2047,9 +2047,9 @@ msgstr ""
 msgid "Private"
 msgstr "Privé"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:130
-#: src/components/vm/hostdevs/hostDevCard.jsx:235
-#: src/components/vm/hostdevs/hostDevCard.jsx:241
+#: src/components/vm/hostdevs/hostDevAdd.tsx:157
+#: src/components/vm/hostdevs/hostDevCard.tsx:252
+#: src/components/vm/hostdevs/hostDevCard.tsx:258
 #: src/components/vm/overview/bootOrder.jsx:133
 #: src/components/vm/overview/bootOrder.jsx:148
 msgid "Product"
@@ -2059,7 +2059,7 @@ msgstr "Produit"
 msgid "Profile"
 msgstr "Profil"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:114
+#: src/components/vm/hostdevs/hostDevCard.tsx:119
 #: src/components/vm/disks/vmDiskColumns.tsx:49
 #: src/components/vm/overview/bootOrder.jsx:100
 #: src/components/vm/overview/bootOrder.jsx:161
@@ -2129,12 +2129,12 @@ msgstr "URL distante"
 msgid "Remote viewer details"
 msgstr "Détails du bureau à distance"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:251
-#: src/components/vm/hostdevs/hostDevCard.jsx:257
+#: src/components/vm/hostdevs/hostDevCard.tsx:268
+#: src/components/vm/hostdevs/hostDevCard.tsx:274
 #: src/components/vm/disks/vmDiskColumns.tsx:166
 #: src/components/vm/disks/vmDiskColumns.tsx:252
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:58
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:67
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:72
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:81
 #: src/components/vm/overview/watchdog.jsx:213
 #: src/components/vm/overview/vsock.jsx:240
 #: src/components/vm/nics/vmNicsCard.tsx:556
@@ -2155,11 +2155,11 @@ msgstr "Retirer et supprimer un fichier"
 msgid "Remove disk from VM?"
 msgstr "Retirer le disque de la VM ?"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:60
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:74
 msgid "Remove filesystem?"
 msgstr "Supprimer le système de fichiers ?"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:253
+#: src/components/vm/hostdevs/hostDevCard.tsx:270
 msgid "Remove host device from VM?"
 msgstr "Retirer le dispositif hôte de la VM ?"
 
@@ -2251,7 +2251,7 @@ msgstr "Routage vers $0"
 msgid "Routed network"
 msgstr "Réseau routé"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:129
+#: src/components/vm/hostdevs/hostDevAdd.tsx:156
 msgid "Row select"
 msgstr "Sélection de ligne"
 
@@ -2361,11 +2361,11 @@ msgstr ""
 "surveillance nécessite le démarrage de la machine virtuelle lors de sa "
 "création"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:224
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:258
 msgid "Share"
 msgstr "Partage"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:157
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:190
 msgid "Share a host directory with the guest"
 msgstr "Partager un répertoire hôte avec l’invité"
 
@@ -2373,7 +2373,7 @@ msgstr "Partager un répertoire hôte avec l’invité"
 msgid "Shared directories"
 msgstr "Répertoires partagés"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:160
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:193
 #: src/components/vm/vmDetailsPage.jsx:197
 msgid "Shared host directories need to be manually mounted inside the VM"
 msgstr ""
@@ -2385,7 +2385,7 @@ msgid "Shared storage"
 msgstr "Stockage partagé"
 
 #: src/components/vm/disks/diskAdd.tsx:291
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:206
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:240
 msgid "Show additional options"
 msgstr "Actions supplémentaires"
 
@@ -2426,10 +2426,10 @@ msgstr "Arrêt en cours"
 msgid "Size"
 msgstr "Taille"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:101
-#: src/components/vm/hostdevs/hostDevCard.jsx:101
-#: src/components/vm/hostdevs/hostDevCard.jsx:108
-#: src/components/vm/hostdevs/hostDevCard.jsx:236
+#: src/components/vm/hostdevs/hostDevAdd.tsx:128
+#: src/components/vm/hostdevs/hostDevCard.tsx:106
+#: src/components/vm/hostdevs/hostDevCard.tsx:113
+#: src/components/vm/hostdevs/hostDevCard.tsx:253
 #: src/components/vm/overview/bootOrder.jsx:149
 msgid "Slot"
 msgstr "Emplacement"
@@ -2463,7 +2463,7 @@ msgstr ""
 "Certaines modifications de la configuration ne prennent effet qu'après un "
 "nouveau démarrage :"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:217
+#: src/components/vm/hostdevs/hostDevCard.tsx:229
 #: src/components/vm/disks/diskAdd.tsx:719
 #: src/components/vm/disks/diskAdd.tsx:755
 #: src/components/vm/disks/vmDisksCard.tsx:225
@@ -2477,13 +2477,13 @@ msgstr "Source"
 msgid "Source format"
 msgstr "Format de la source"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:132
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:165
 msgid "Source must not be empty"
 msgstr "La source ne doit pas être vide"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:47
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:64
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:183
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:60
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:78
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:216
 #: src/components/storagePools/createStoragePoolDialog.tsx:231
 #: src/components/storagePools/createStoragePoolDialog.tsx:248
 #: src/components/storagePools/storagePoolOverviewTab.tsx:43
@@ -2632,11 +2632,11 @@ msgstr "Périphérique TAP"
 msgid "TPM"
 msgstr "TPM"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:126
+#: src/components/vm/hostdevs/hostDevAdd.tsx:153
 msgid "Table of selectable host devices"
 msgstr "Tableau des dispositifs hôtes sélectionnables"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:109
+#: src/components/vm/hostdevs/hostDevCard.tsx:114
 #: src/components/vm/disks/vmDiskColumns.tsx:170
 #: src/components/vm/overview/bootOrder.jsx:155
 msgid "Target"
@@ -2676,7 +2676,7 @@ msgstr ""
 msgid "The directory on the server being exported"
 msgstr "Le répertoire du serveur à exporter"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:185
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:218
 msgid "The host path that is to be exported."
 msgstr "Le chemin de l’hôte à exporter."
 
@@ -2717,7 +2717,7 @@ msgstr "L’entrée de l’hôte statique pour $0 sera supprimée :"
 msgid "The storage pool could not be deleted"
 msgstr "Le pool de stockage n’a pas pu être supprimé"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:197
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:231
 msgid "The tag name to be used by the guest to mount this export point."
 msgstr ""
 "Le nom de balise à utiliser par l’invité pour monter ce point d’exportation."
@@ -2736,7 +2736,7 @@ msgstr ""
 msgid "This disk will be removed from $0:"
 msgstr "Ce disque sera retiré de $0 :"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:62
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:76
 msgid "This filesystem will be removed from $0:"
 msgstr "Ce système de fichiers sera supprimé de $0 :"
 
@@ -2804,8 +2804,8 @@ msgstr ""
 msgid "Troubleshoot"
 msgstr "Dépannage"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:47
-#: src/components/vm/hostdevs/hostDevCard.jsx:177
+#: src/components/vm/hostdevs/hostDevAdd.tsx:56
+#: src/components/vm/hostdevs/hostDevCard.tsx:189
 #: src/components/vm/overview/bootOrder.jsx:118
 #: src/components/vm/overview/bootOrder.jsx:131
 #: src/components/vm/overview/bootOrder.jsx:146
@@ -2826,15 +2826,15 @@ msgstr "ID type"
 msgid "URL (ISO image or distro install tree)"
 msgstr "URL (image ISO ou arborescence d’installation de la distribution)"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:52
+#: src/components/vm/hostdevs/hostDevAdd.tsx:61
 msgid "USB"
 msgstr "USB"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:119
+#: src/components/vm/hostdevs/hostDevCard.tsx:124
 msgid "UUID"
 msgstr "UUID"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:145
+#: src/components/vm/hostdevs/hostDevAdd.tsx:172
 msgid "Undefined"
 msgstr "Indéfini"
 
@@ -2862,8 +2862,8 @@ msgstr "Inconnu"
 msgid "Unknown firmware"
 msgstr "Micrologiciel inconnu"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:92
-#: src/components/vm/hostdevs/hostDevCard.jsx:93
+#: src/components/vm/hostdevs/hostDevCard.tsx:97
+#: src/components/vm/hostdevs/hostDevCard.tsx:98
 #: src/components/vm/overview/bootOrder.jsx:137
 #: src/components/vm/overview/bootOrder.jsx:138
 msgid "Unspecified"
@@ -2886,7 +2886,7 @@ msgstr "Utilisation"
 msgid "Use existing"
 msgstr "Utiliser l’existant"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:214
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:248
 msgid "Use extended attributes on files and directories"
 msgstr "Utiliser les attributs étendus des fichiers et répertoires"
 
@@ -2942,7 +2942,7 @@ msgstr "Session utilisateur"
 msgid "Uses SPICE"
 msgstr "Utilise SPICE"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:311
+#: src/components/vm/hostdevs/hostDevCard.tsx:328
 msgid "VM $0 Host Devices"
 msgstr "Périphériques hôtes de la machine virtuelle $0"
 
@@ -3030,10 +3030,10 @@ msgstr "Port VNC"
 msgid "Valid token"
 msgstr "Jeton valide"
 
-#: src/components/vm/hostdevs/hostDevAdd.jsx:130
-#: src/components/vm/hostdevs/hostDevCard.jsx:207
-#: src/components/vm/hostdevs/hostDevCard.jsx:234
-#: src/components/vm/hostdevs/hostDevCard.jsx:240
+#: src/components/vm/hostdevs/hostDevAdd.tsx:157
+#: src/components/vm/hostdevs/hostDevCard.tsx:219
+#: src/components/vm/hostdevs/hostDevCard.tsx:251
+#: src/components/vm/hostdevs/hostDevCard.tsx:257
 #: src/components/vm/overview/bootOrder.jsx:132
 #: src/components/vm/overview/bootOrder.jsx:147
 msgid "Vendor"
@@ -3104,7 +3104,7 @@ msgstr "Le nom du groupe de volumes ne doit pas être vide"
 msgid "Vsock"
 msgstr "Vsock"
 
-#: src/components/vm/hostdevs/hostDevCard.jsx:115
+#: src/components/vm/hostdevs/hostDevCard.tsx:120
 #: src/components/vm/overview/bootOrder.jsx:162
 msgid "WWPN"
 msgstr "WWPN"
@@ -3130,7 +3130,7 @@ msgstr ""
 msgid "Writeable"
 msgstr "Écriture possible"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:162
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:195
 msgid "You can mount the shared folder using:"
 msgstr "Vous pouvez monter le dossier partagé en utilisant :"
 
@@ -3257,7 +3257,7 @@ msgstr "mcast"
 msgid "more info"
 msgstr "plus d’informations"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.jsx:170
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:203
 #: src/components/vm/vmDetailsPage.jsx:206
 msgid "mount point: The mount point inside the guest"
 msgstr "point de montage : point de montage à l’intérieur de l’invité"
