@@ -301,8 +301,15 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
         domainInterfaceAddresses({ connectionName: this.props.vm.connectionName, objPath: this.props.vm.id })
                 .then(domifaddressAllSources => {
                     const allRejected = !domifaddressAllSources.some(promise => promise.status == 'fulfilled');
+                    // If user is in the VMDetails page during migration, the VM might get deleted
+                    // before domainInterfaceAddresses is done processing. This race condition can end up
+                    // causing a confusing view where the UI shows a redundant "Domain not found error"
+                    // and the regular VM doesn't exist page, at the same time.
+                    const domainNotFound = domifaddressAllSources.some(promise =>
+                        promise.status === 'rejected' && promise.reason?.message.startsWith("Domain not found:")
+                    );
 
-                    if (allRejected) {
+                    if (allRejected && !domainNotFound) {
                         this.props.onAddErrorNotification({
                             text: cockpit.format(_("Failed to fetch the IP addresses of the interfaces present in $0"), this.props.vm.name),
                             detail: [...new Set(domifaddressAllSources.map(promise => promise.status == 'rejected' && promise.reason ? promise.reason.message : ''))].join(', '),
