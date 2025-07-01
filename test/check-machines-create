@@ -39,6 +39,11 @@ ED25519_PUB = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKIXL+o/1JPsH9Ftf3CtEPVFOpFxJ
 @testlib.nondestructive
 class TestMachinesCreate(machineslib.VirtualMachinesCase):
 
+    # call this for tests which are unstable with real mouse events in Chromium (only in CI)
+    def chromium_mouse_fixme(self):
+        self.browser.chromium_fake_mouse = True
+        assert self.browser.chromium_fake_mouse  # vulture
+
     # This test contains basic button and form validation of the Create VM dialog
     # None of the sub-tests will actually call virt-install
     def testCreateBasicValidation(self):
@@ -52,6 +57,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
 
         self.login_and_go("/machines")
         self.waitPageInit()
+        self.chromium_mouse_fixme()
 
         # test create and import [VM] buttons show appropriate tooltips when hovered over
         runner.createAndImportTooltipsTest()
@@ -329,6 +335,8 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         self.login_and_go("/machines")
         self.waitPageInit()
 
+        self.chromium_mouse_fixme()
+
         # Check the "Automation" tab
         runner.checkAutomationTab(TestMachinesCreate.VmDialog(self,
                                                               sourceType='cloud'))
@@ -451,6 +459,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
 
         self.login_and_go("/machines")
         self.waitPageInit()
+        self.chromium_mouse_fixme()
 
         # Check the "Automation" tab
         runner.checkAutomationTab(TestMachinesCreate.VmDialog(self,
@@ -513,6 +522,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         b = self.browser
         m = self.machine
         self.waitPageInit()
+        self.chromium_mouse_fixme()
 
         # Check the "Automation" tab
         runner.checkAutomationTab(TestMachinesCreate.VmDialog(self,
@@ -2127,6 +2137,7 @@ vnc_password= "{vnc_passwd}"
 
         self.login_and_go("/machines")
         self.waitPageInit()
+        self.chromium_mouse_fixme()
 
         dialog = TestMachinesCreate.VmDialog(self, sourceType='file',
                                              name="VmNotInstalled",
