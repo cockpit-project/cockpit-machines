@@ -26,13 +26,13 @@ class handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         authorization = self.headers['Authorization']
-        m = self.match("/management/v1/images/rhel/8.1/.*")
+        m = self.match("/management/v1/images/rhel/8.10/.*")
 
         if m and authorization == 'Bearer my_access_token':
             self.send_response(200)
             self.end_headers()
             self.wfile.write(b'{ "body": [\
-                {"imageName": "RHEL 8.1 Boot ISO", "filename": "rhel-8-1-boot.iso",\
+                {"imageName": "RHEL 8.10 Boot ISO", "filename": "rhel-8-10-boot.iso",\
                 "downloadHref": "https://api.access.redhat.com/management/v1/images/my_image_checksum/download"}\
             ] }\n')
             return

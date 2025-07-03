@@ -85,7 +85,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                                             location=config.TREE_URL,
                                                             memory_size=128, memory_size_unit='MiB',
                                                             storage_pool=NO_STORAGE,
-                                                            os_name=config.CENTOS_7,
+                                                            os_name=config.RHEL_8_10,
                                                             create_and_run=False,
                                                             expected_os_name=config.FEDORA_28,
                                                             pixel_test_tag="auto"))
@@ -934,13 +934,11 @@ vnc_password= "{vnc_passwd}"
 
         FEDORA_29 = 'Fedora 29'
 
-        RHEL_8_1 = 'Red Hat Enterprise Linux 8.1 (Ootpa)'
-        RHEL_8_1_SHORTID = 'rhel8.1'
         RHEL_8_2 = 'Red Hat Enterprise Linux 8.2 (Ootpa)'
         RHEL_8_2_SHORTID = 'rhel8.2'
+        RHEL_8_10 = 'Red Hat Enterprise Linux 8.10 (Ootpa)'
+        RHEL_8_10_SHORTID = 'rhel8.10'
         RHEL_7_1 = 'Red Hat Enterprise Linux 7.1'
-
-        CENTOS_7 = 'CentOS 7'
 
         MANDRIVA_2011_FILTERED_OS = 'Mandriva Linux 2011'
 
@@ -1190,7 +1188,7 @@ vnc_password= "{vnc_passwd}"
             b.set_input_text("#os-select-group input", "Red Hat")
 
             # Check only RHEL >= 8 is shown
-            b.wait_visible(f"#os-select li button:contains('{TestMachinesCreate.TestCreateConfig.RHEL_8_1}')")
+            b.wait_visible(f"#os-select li button:contains('{TestMachinesCreate.TestCreateConfig.RHEL_8_10}')")
             b.wait_not_present(f"#os-select li button:contains('{TestMachinesCreate.TestCreateConfig.RHEL_7_1}')")
 
             return self
@@ -1361,7 +1359,7 @@ vnc_password= "{vnc_passwd}"
             if self.expected_os_name:
                 b.wait_attr("#os-select-group input", "value", self.expected_os_name)
 
-            if self.sourceType == "os" and self.os_name in [TestMachinesCreate.TestCreateConfig.RHEL_8_1, TestMachinesCreate.TestCreateConfig.RHEL_8_2]:
+            if self.sourceType == "os" and self.os_name in [TestMachinesCreate.TestCreateConfig.RHEL_8_2, TestMachinesCreate.TestCreateConfig.RHEL_8_10]:
                 if not self.offline_token_autofilled:
                     b.set_input_text("#offline-token", self.offline_token)
                 b.wait_in_text("#offline-token", self.offline_token)
@@ -1686,7 +1684,7 @@ vnc_password= "{vnc_passwd}"
 
             final_state = "Running" if dialog.create_and_run else "Shut off"
             # Test dowloading RHEL image shows the progress of the download
-            if dialog.os_name == TestMachinesCreate.TestCreateConfig.RHEL_8_1:
+            if dialog.os_name == TestMachinesCreate.TestCreateConfig.RHEL_8_10:
                 # Check download percentage is shown as a whole number 0-100 followed by '%'
                 if dialog.create_and_run:
                     b.wait_in_text(f"#vm-{dialog.name}-{dialog.connection}-state", "Downloading")
@@ -1815,7 +1813,7 @@ vnc_password= "{vnc_passwd}"
 
             # check disks
             # Test disk got imported/created
-            if dialog.sourceType == 'disk_image' or (dialog.os_name == TestMachinesCreate.TestCreateConfig.RHEL_8_1):
+            if dialog.sourceType == 'disk_image' or (dialog.os_name == TestMachinesCreate.TestCreateConfig.RHEL_8_10):
                 b.wait_visible(".disks-card table tbody:first-of-type")
                 if b.is_present(f"#vm-{name}-disks-vda-device"):
                     b.wait_in_text(f"#vm-{name}-disks-vda-source-file", dialog.location.strip())
@@ -2311,8 +2309,8 @@ vnc_password= "{vnc_passwd}"
         m.execute(f"qemu-img create {TestMachinesCreate.TestCreateConfig.VALID_DISK_IMAGE_PATH} 500M")
 
         runner.checkDialogInvalidOfflineToken(TestMachinesCreate.VmDialog(self, sourceType='os',
-                                                                          os_name=config.RHEL_8_1,
-                                                                          os_short_id=config.RHEL_8_1_SHORTID,
+                                                                          os_name=config.RHEL_8_10,
+                                                                          os_short_id=config.RHEL_8_10_SHORTID,
                                                                           offline_token="invalid_token",
                                                                           offline_token_autofilled=False,
                                                                           create_and_run=True),
@@ -2323,8 +2321,8 @@ vnc_password= "{vnc_passwd}"
         # Check create buttons do not get disabled when RHEL is selected for sourceType != 'os' (Download an OS)
         dialog = TestMachinesCreate.VmDialog(self, sourceType='url',
                                              location=config.VALID_URL,
-                                             os_name=config.RHEL_8_1,
-                                             os_short_id=config.RHEL_8_1_SHORTID) \
+                                             os_name=config.RHEL_8_10,
+                                             os_short_id=config.RHEL_8_10_SHORTID) \
             .open() \
             .fill()
         b.wait_visible(".pf-v5-c-modal-box__footer button:contains(Create and run)[aria-disabled=false]")
@@ -2341,25 +2339,25 @@ vnc_password= "{vnc_passwd}"
         self.allow_browser_errors("spawn 'vm creation' returned error:.*No image available for RHEL 8.2")
 
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='os',
-                                                      os_name=config.RHEL_8_1,
-                                                      os_short_id=config.RHEL_8_1_SHORTID,
+                                                      os_name=config.RHEL_8_10,
+                                                      os_short_id=config.RHEL_8_10_SHORTID,
                                                       offline_token="valid_token",
                                                       offline_token_autofilled=False,
                                                       create_and_run=False))
 
-        m.execute("rm /var/lib/libvirt/images/rhel-8-1-boot.iso")
+        m.execute("rm /var/lib/libvirt/images/rhel-8-10-boot.iso")
 
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='os',
-                                                      os_name=config.RHEL_8_1,
-                                                      os_short_id=config.RHEL_8_1_SHORTID,
+                                                      os_name=config.RHEL_8_10,
+                                                      os_short_id=config.RHEL_8_10_SHORTID,
                                                       offline_token="valid_token",
                                                       offline_token_autofilled=True,
                                                       create_and_run=True))
 
         # If run on different connection, the downloaded iso should be stored in ~/.local/share/libvirt/images/
         runner.createTest(TestMachinesCreate.VmDialog(self, sourceType='os',
-                                                      os_name=config.RHEL_8_1,
-                                                      os_short_id=config.RHEL_8_1_SHORTID,
+                                                      os_name=config.RHEL_8_10,
+                                                      os_short_id=config.RHEL_8_10_SHORTID,
                                                       offline_token="valid_token",
                                                       create_and_run=True,
                                                       connection="session"),
@@ -2371,8 +2369,8 @@ vnc_password= "{vnc_passwd}"
         # Change token saved at localStorage to imitate expiration of a token
         b.call_js_func("localStorage.setItem", "rhsm-offline-token", "expired_token")
         runner.checkDialogInvalidOfflineToken(TestMachinesCreate.VmDialog(self, sourceType='os',
-                                                                          os_name=config.RHEL_8_1,
-                                                                          os_short_id=config.RHEL_8_1_SHORTID,
+                                                                          os_name=config.RHEL_8_10,
+                                                                          os_short_id=config.RHEL_8_10_SHORTID,
                                                                           offline_token_autofilled=True),
                                               "expired",
                                               False)
