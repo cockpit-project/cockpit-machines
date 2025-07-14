@@ -89,7 +89,7 @@ class TestMultiMachineVNC(VirtualMachinesCase):
         self.goToVmPage("subVmTest1")
 
         # Wait till we have a VNC connection
-        b.wait_visible("[class*=consoleVnc-] canvas")
+        b.wait_visible(".vm-console-vnc canvas")
 
         # Both machines should have the equal amount of VNC connections
         m1_open_connections = m.execute("ss -tupn | grep 127.0.0.1:5900 | grep qemu").splitlines()

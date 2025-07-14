@@ -145,6 +145,9 @@ export const ReplaceSpiceDialog = ({ vm, vms }) => {
                     <Content component="p">
                         {_("This is intended for a host which does not support SPICE due to upgrades or live migration.")}
                     </Content>
+                    <Content component="p">
+                        {_("It can also be used to enable the inline graphical console in the browser, which does not support SPICE.")}
+                    </Content>
                 </Content>
                 { vmSelect }
             </ModalBody>
