@@ -16,16 +16,36 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+
+import React, { useState } from 'react';
 import cockpit from 'cockpit';
 
-import { VncConsole } from '@patternfly/react-console';
-import { Dropdown, DropdownItem, DropdownList } from "@patternfly/react-core/dist/esm/components/Dropdown";
-import { MenuToggle } from "@patternfly/react-core/dist/esm/components/MenuToggle";
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { Form, FormGroup, FormHelperText } from "@patternfly/react-core/dist/esm/components/Form";
+import { HelperText, HelperTextItem } from "@patternfly/react-core/dist/esm/components/HelperText";
+import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
+import { InputGroup } from "@patternfly/react-core/dist/esm/components/InputGroup";
+import { EyeIcon, EyeSlashIcon, PendingIcon } from "@patternfly/react-icons";
+
+import {
+    EmptyState, EmptyStateBody, EmptyStateFooter, EmptyStateActions
+} from "@patternfly/react-core/dist/esm/components/EmptyState";
+import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/index.js";
+
+import { MenuToggle } from "@patternfly/react-core/dist/esm/components/MenuToggle";
+import { Dropdown, DropdownList, DropdownItem } from "@patternfly/react-core/dist/esm/components/Dropdown";
+
+import { Modal, ModalVariant } from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
+import { ModalError } from 'cockpit-components-inline-notification.jsx';
+import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
+import { useDialogs } from 'dialogs';
 
 import { logDebug } from '../../../helpers.js';
-import { domainSendKey } from '../../../libvirtApi/domain.js';
+import { LaunchViewerButton, connection_address } from './common';
+import { domainSendKey, domainAttachVnc, domainChangeVncSettings, domainGet } from '../../../libvirtApi/domain.js';
+
+import { VncConsole } from './VncConsole';
 
 const _ = cockpit.gettext;
 // https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h
@@ -48,12 +68,231 @@ const Enum = {
     KEY_DELETE: 111,
 };
 
-class Vnc extends React.Component {
+const VncEditModal = ({ vm, inactive_vnc }) => {
+    const config_port = (inactive_vnc.port == -1) ? "" : (inactive_vnc.port || "");
+    const config_password = inactive_vnc.password || "";
+
+    const Dialogs = useDialogs();
+    const [port, setPort] = useState(config_port);
+    const [password, setPassword] = useState(config_password);
+    const [showPassword, setShowPassword] = useState(false);
+    const [portError, setPortError] = useState(null);
+    const [passwordError, setPasswordError] = useState(null);
+    const [applyError, setApplyError] = useState(null);
+    const [applyErrorDetail, setApplyErrorDetail] = useState(null);
+
+    function validate() {
+        let field_errors = 0;
+        if (port != "") {
+            if (!port.match("^[0-9]+$")) {
+                setPortError(_("Port must be a number."));
+                field_errors += 1;
+            } else if (Number(port) < 5900) {
+                setPortError(_("Port must be 5900 or larger."));
+                field_errors += 1;
+            }
+        }
+
+        if (password.length > 8) {
+            setPasswordError(_("Password must be at most 8 characters."));
+            field_errors += 1;
+        }
+
+        return field_errors == 0;
+    }
+
+    async function apply() {
+        if (!validate())
+            return;
+
+        setPortError(null);
+        setPasswordError(null);
+
+        const vncParams = {
+            listen: inactive_vnc.address || "",
+            port,
+            password,
+        };
+
+        try {
+            await domainChangeVncSettings(vm, vncParams);
+            domainGet({ connectionName: vm.connectionName, id: vm.id });
+            Dialogs.close();
+        } catch (ex) {
+            setApplyError(_("VNC settings could not be saved"));
+            setApplyErrorDetail(ex.message);
+        }
+    }
+
+    return (
+        <Modal
+            id="vnc-edit-dialog"
+            position="top"
+            variant={ModalVariant.medium}
+            title={_("Edit VNC settings")}
+            isOpen
+            onClose={Dialogs.close}
+            footer={
+                <>
+                    <Button
+                         id="vnc-edit-save"
+                         isDisabled={!!(portError || passwordError)}
+                         variant='primary'
+                         onClick={apply}
+                    >
+                        {_("Save")}
+                    </Button>
+                    <Button id="vnc-edit-cancel" variant='link' onClick={Dialogs.close}>
+                        {_("Cancel")}
+                    </Button>
+                </>
+            }
+        >
+            { vm.state === 'running' && !applyError &&
+                <NeedsShutdownAlert idPrefix="vnc-edit" />
+            }
+            { applyError &&
+                <ModalError dialogError={applyError} dialogErrorDetail={applyErrorDetail} />
+            }
+            <Form onSubmit={e => e.preventDefault()} isHorizontal>
+                <FormGroup label={_("Port")}>
+                    <TextInput
+                        id="vnc-edit-port"
+                        type="text"
+                        value={port}
+                        onChange={(_ev, val) => { setPortError(null); setPort(val) }}
+                        onBlur={validate}
+                    />
+                    <FormHelperText>
+                        <HelperText>
+                            { portError
+                                ? <HelperTextItem variant='error'>{portError}</HelperTextItem>
+                                : <HelperTextItem>
+                                    {_("Port must be a number that is at least 5900. Leave empty to automatically assign a free port when the machine starts.")}
+                                </HelperTextItem>
+                            }
+                        </HelperText>
+                    </FormHelperText>
+                </FormGroup>
+                <FormGroup label={_("Password")}>
+                    <InputGroup>
+                        <TextInput
+                            id="vnc-edit-password"
+                            type={showPassword ? "text" : "password"}
+                            value={password}
+                            onChange={(_ev, val) => { setPasswordError(null); setPassword(val) }}
+                            onBlur={validate}
+                        />
+                        <Button
+                            variant="control"
+                            onClick={() => setShowPassword(!showPassword)}>
+                            { showPassword ? <EyeSlashIcon /> : <EyeIcon /> }
+                        </Button>
+                    </InputGroup>
+                    <FormHelperText>
+                        <HelperText>
+                            { passwordError
+                                ? <HelperTextItem variant='error'>{passwordError}</HelperTextItem>
+                                : <HelperTextItem>
+                                    {_("Password must be 8 characters or less. VNC passwords do not provide encryption and are generally cryptographically weak. They can not be used to secure connections in untrusted networks.")}
+                                </HelperTextItem>
+                            }
+                        </HelperText>
+                    </FormHelperText>
+                </FormGroup>
+            </Form>
+        </Modal>
+    );
+};
+
+export const VncActiveActions = ({ state, vm, vnc, onAddErrorNotification }) => {
+    const [isOpen, setIsOpen] = useState(false);
+
+    if (!state.connected)
+        return null;
+
+    const renderDropdownItem = keyName => {
+        return (
+            <DropdownItem
+                id={cockpit.format("ctrl-alt-$0", keyName)}
+                key={cockpit.format("ctrl-alt-$0", keyName)}
+                isDisabled={!state.connected}
+                onClick={() => {
+                    return domainSendKey({
+                        connectionName: vm.connectionName,
+                        id: vm.id,
+                        keyCodes: [
+                            Enum.KEY_LEFTCTRL,
+                            Enum.KEY_LEFTALT,
+                            Enum[cockpit.format("KEY_$0", keyName.toUpperCase())]
+                        ]
+                    })
+                            .catch(ex => onAddErrorNotification({
+                                text: cockpit.format(_("Failed to send key Ctrl+Alt+$0 to VM $1"), keyName, vm.name),
+                                detail: ex.message,
+                                resourceId: vm.id,
+                            }));
+                }}>
+                {cockpit.format(_("Ctrl+Alt+$0"), keyName)}
+            </DropdownItem>
+        );
+    };
+
+    const dropdownItems = [
+        ...['Delete', 'Backspace'].map(key => renderDropdownItem(key)),
+        <Divider key="separator" />,
+        ...[...Array(12).keys()].map(key => renderDropdownItem(cockpit.format("F$0", key + 1))),
+    ];
+
+    return (
+        <Dropdown
+            onOpenChange={setIsOpen}
+            onSelect={() => setIsOpen(false)}
+            toggle={(toggleRef) => (
+                <MenuToggle
+                    id="vnc-actions"
+                    ref={toggleRef}
+                    onClick={() => setIsOpen(!isOpen)}
+                    isExpanded={isOpen}
+                >
+                    {_("Send key")}
+                </MenuToggle>
+            )}
+            isOpen={isOpen}
+        >
+            <DropdownList>
+                {dropdownItems}
+            </DropdownList>
+        </Dropdown>
+    );
+};
+
+const VncFooter = ({ vm, vnc, inactive_vnc, onAddErrorNotification }) => {
+    const Dialogs = useDialogs();
+
+    return (
+        <div className="vm-console-footer">
+            <Split>
+                <SplitItem isFilled />
+                <SplitItem>
+                    <LaunchViewerButton
+                        vm={vm}
+                        console={vnc}
+                        url={vnc && cockpit.format("vnc://$0:$1", connection_address(), vnc.port)}
+                        onEdit={() => Dialogs.show(<VncEditModal vm={vm} inactive_vnc={inactive_vnc} />)}
+                        editLabel={_("Edit VNC settings")}
+                    />
+                </SplitItem>
+            </Split>
+        </div>
+    );
+};
+
+export class VncActive extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             path: undefined,
-            isActionOpen: false,
         };
 
         this.credentials = null;
@@ -62,7 +301,6 @@ class Vnc extends React.Component {
         this.onDisconnected = this.onDisconnected.bind(this);
         this.onInitFailed = this.onInitFailed.bind(this);
         this.onSecurityFailure = this.onSecurityFailure.bind(this);
-        this.onExtraKeysDropdownToggle = this.onExtraKeysDropdownToggle.bind(this);
     }
 
     connect(props) {
@@ -107,6 +345,7 @@ class Vnc extends React.Component {
 
     onDisconnected(detail) { // server disconnected
         console.info('Connection lost: ', detail);
+        this.props.state.setConnected(false);
     }
 
     onInitFailed(detail) {
@@ -117,14 +356,14 @@ class Vnc extends React.Component {
         console.info('Security failure:', event?.detail?.reason || "unknown reason");
     }
 
-    onExtraKeysDropdownToggle() {
-        this.setState({ isActionOpen: false });
-    }
-
     render() {
-        const { consoleDetail, connectionName, vmName, vmId, onAddErrorNotification, isExpanded } = this.props;
-        const { path, isActionOpen } = this.state;
-        if (!consoleDetail || !path) {
+        const {
+            consoleDetail, inactiveConsoleDetail, vm, onAddErrorNotification, isExpanded,
+            state,
+        } = this.props;
+        const { path } = this.state;
+
+        if (!path) {
             // postpone rendering until consoleDetail is known and channel ready
             return null;
         }
@@ -136,70 +375,118 @@ class Vnc extends React.Component {
             this.credentials = { password: consoleDetail.password };
 
         const encrypt = this.getEncrypt();
-        const renderDropdownItem = keyName => {
-            return (
-                <DropdownItem
-                    id={cockpit.format("ctrl-alt-$0", keyName)}
-                    key={cockpit.format("ctrl-alt-$0", keyName)}
-                    onClick={() => {
-                        return domainSendKey({ connectionName, id: vmId, keyCodes: [Enum.KEY_LEFTCTRL, Enum.KEY_LEFTALT, Enum[cockpit.format("KEY_$0", keyName.toUpperCase())]] })
-                                .catch(ex => onAddErrorNotification({
-                                    text: cockpit.format(_("Failed to send key Ctrl+Alt+$0 to VM $1"), keyName, vmName),
-                                    detail: ex.message,
-                                    resourceId: vmId,
-                                }));
-                    }}>
-                    {cockpit.format(_("Ctrl+Alt+$0"), keyName)}
-                </DropdownItem>
-            );
-        };
-        const dropdownItems = [
-            ...['Delete', 'Backspace'].map(key => renderDropdownItem(key)),
-            <Divider key="separator" />,
-            ...[...Array(12).keys()].map(key => renderDropdownItem(cockpit.format("F$0", key + 1))),
-        ];
-        const additionalButtons = [
-            <Dropdown onSelect={this.onExtraKeysDropdownToggle}
-                key={cockpit.format("$0-$1-vnc-sendkey", vmName, connectionName)}
-                toggle={(toggleRef) => (
-                    <MenuToggle
-                        id={cockpit.format("$0-$1-vnc-sendkey", vmName, connectionName)}
-                        ref={toggleRef}
-                        onClick={(_event) => this.setState({ isActionOpen: !isActionOpen })}>
-                        {_("Send key")}
-                    </MenuToggle>
-                )}
-                isOpen={isActionOpen}
-            >
-                <DropdownList>
-                    {dropdownItems}
-                </DropdownList>
-            </Dropdown>
-        ];
+
+        const footer = !isExpanded && (
+            <VncFooter
+                vm={vm}
+                vnc={consoleDetail}
+                inactive_vnc={inactiveConsoleDetail}
+                onAddErrorNotification={onAddErrorNotification}
+            />
+        );
 
         return (
-            <VncConsole host={window.location.hostname}
-                        port={window.location.port || (encrypt ? '443' : '80')}
-                        path={path}
-                        encrypt={encrypt}
-                        shared
-                        credentials={this.credentials}
-                        vncLogging={ window.debugging?.includes("vnc") ? 'debug' : 'warn' }
-                        onDisconnected={this.onDisconnected}
-                        onInitFailed={this.onInitFailed}
-                        onSecurityFailure={this.onSecurityFailure}
-                        additionalButtons={additionalButtons}
-                        textConnecting={_("Connecting")}
-                        textDisconnected={_("Disconnected")}
-                        textDisconnect={_("Disconnect")}
-                        consoleContainerId={isExpanded ? "vnc-display-container-expanded" : "vnc-display-container-minimized"}
-                        resizeSession
-                        scaleViewport
-            />
+            <>
+                { state.connected
+                    ? <VncConsole
+                          host={window.location.hostname}
+                          port={window.location.port || (encrypt ? '443' : '80')}
+                          path={path}
+                          encrypt={encrypt}
+                          shared
+                          credentials={this.credentials}
+                          vncLogging={ window.debugging?.includes("vnc") ? 'debug' : 'warn' }
+                          onDisconnected={this.onDisconnected}
+                          onInitFailed={this.onInitFailed}
+                          onSecurityFailure={this.onSecurityFailure}
+                          consoleContainerId={isExpanded ? "vnc-display-container-expanded" : "vnc-display-container-minimized"}
+                          resizeSession
+                          scaleViewport
+                    />
+                    : <div className="vm-console-vnc">
+                        <EmptyState>
+                            <EmptyStateBody>{_("Disconnected")}</EmptyStateBody>
+                            <EmptyStateFooter>
+                                <Button variant="primary" onClick={() => state.setConnected(true)}>
+                                    {_("Connect")}
+                                </Button>
+                            </EmptyStateFooter>
+                        </EmptyState>
+                    </div>
+                }
+                {footer}
+            </>
         );
     }
 }
 
-// TODO: define propTypes
+export const VncInactive = ({ vm, inactive_vnc, isExpanded, onAddErrorNotification }) => {
+    return (
+        <>
+            <EmptyState>
+                <EmptyStateBody>
+                    {_("Start the virtual machine to access the console")}
+                </EmptyStateBody>
+            </EmptyState>
+            { !isExpanded &&
+                <VncFooter
+                    vm={vm}
+                    inactive_vnc={inactive_vnc}
+                    onAddErrorNotification={onAddErrorNotification} />
+            }
+        </>
+    );
+};
 
-export default Vnc;
+export const VncMissing = ({ vm, onAddErrorNotification }) => {
+    const [inProgress, setInProgress] = useState(false);
+
+    function add_vnc() {
+        setInProgress(true);
+        domainAttachVnc(vm, { })
+                .catch(ex => onAddErrorNotification({
+                    text: cockpit.format(_("Failed to add VNC to VM $0"), vm.name),
+                    detail: ex.message,
+                    resourceId: vm.id,
+                }))
+                .finally(() => setInProgress(false));
+    }
+
+    return (
+        <EmptyState>
+            <EmptyStateBody>
+                {_("Graphical console support not enabled")}
+            </EmptyStateBody>
+            <EmptyStateFooter>
+                <EmptyStateActions>
+                    <Button
+                        variant="secondary"
+                        onClick={add_vnc}
+                        isLoading={inProgress}
+                        disabled={inProgress}
+                    >
+                        {_("Add VNC")}
+                    </Button>
+                </EmptyStateActions>
+            </EmptyStateFooter>
+        </EmptyState>
+    );
+};
+
+export const VncPending = ({ vm, inactive_vnc, isExpanded, onAddErrorNotification }) => {
+    return (
+        <>
+            <EmptyState icon={PendingIcon} status="custom">
+                <EmptyStateBody>
+                    {_("Restart this virtual machine to access its graphical console")}
+                </EmptyStateBody>
+            </EmptyState>
+            { !isExpanded &&
+                <VncFooter
+                    vm={vm}
+                    inactive_vnc={inactive_vnc}
+                    onAddErrorNotification={onAddErrorNotification} />
+            }
+        </>
+    );
+};

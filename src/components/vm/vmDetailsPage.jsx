@@ -19,24 +19,22 @@
 import PropTypes from 'prop-types';
 import React, { useEffect } from 'react';
 import cockpit from 'cockpit';
+import { useStateObject } from './consoles/state';
 
 import { Breadcrumb, BreadcrumbItem } from "@patternfly/react-core/dist/esm/components/Breadcrumb";
 import { CodeBlock, CodeBlockCode } from "@patternfly/react-core/dist/esm/components/CodeBlock";
 import { Gallery } from "@patternfly/react-core/dist/esm/layouts/Gallery";
-import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List";
 import { Card, CardBody, CardFooter, CardHeader, CardTitle } from '@patternfly/react-core/dist/esm/components/Card';
-import { Page, PageGroup, PageBreadcrumb, PageSection, } from "@patternfly/react-core/dist/esm/components/Page";
-import { ExpandIcon } from '@patternfly/react-icons';
+import { Page, PageGroup, PageBreadcrumb, PageSection } from "@patternfly/react-core/dist/esm/components/Page";
 import { WithDialogs } from 'dialogs.jsx';
 
 import { vmId } from "../../helpers.js";
-
 import { VmFilesystemsCard, VmFilesystemActions } from './filesystems/vmFilesystemsCard.jsx';
 import { VmDisksCardLibvirt, VmDisksActions } from './disks/vmDisksCard.jsx';
 import { VmNetworkTab, VmNetworkActions } from './nics/vmNicsCard.jsx';
 import { VmHostDevCard, VmHostDevActions } from './hostdevs/hostDevCard.jsx';
-import Consoles from './consoles/consoles.jsx';
+import { ConsoleCardState, ConsoleCard } from './consoles/consoles.jsx';
 import VmOverviewCard from './overview/vmOverviewCard.jsx';
 import VmUsageTab from './vmUsageCard.jsx';
 import { VmSnapshotsCard, VmSnapshotsActions } from './snapshots/vmSnapshotsCard.jsx';
@@ -64,6 +62,9 @@ export const VmDetailsPage = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    // We want to reset the ConsoleCardState when a machine starts or shuts down.
+    const consoleState = useStateObject(() => new ConsoleCardState(), [vm.state]);
+
     const vmActionsPageSection = (
         <PageSection hasBodyWrapper className="actions-pagesection" isWidthLimited>
             <div className="vm-top-panel" data-vm-transient={!vm.persistent}>
@@ -89,22 +90,11 @@ export const VmDetailsPage = ({
             <WithDialogs key="vm-details">
                 <Page id={"vm-" + vm.name + "-consoles-page"}
                       className="consoles-page-expanded no-masthead-sidebar">
-                    <PageBreadcrumb hasBodyWrapper={false} stickyOnBreakpoint={{ default: "top" }}>
-                        <Breadcrumb className='machines-listing-breadcrumb'>
-                            <BreadcrumbItem to='#'>
-                                {_("Virtual machines")}
-                            </BreadcrumbItem>
-                            <BreadcrumbItem to={'#' + cockpit.format("vm?name=$0&connection=$1", encodeURIComponent(vm.name), vm.connectionName)}>
-                                {vm.name}
-                            </BreadcrumbItem>
-                            <BreadcrumbItem isActive>
-                                {_("Console")}
-                            </BreadcrumbItem>
-                        </Breadcrumb>
-                    </PageBreadcrumb>
-                    {vmActionsPageSection}
-                    <PageSection isFilled hasBodyWrapper={false}>
-                        <Consoles vm={vm} config={config}
+                    <PageSection hasBodyWrapper={false}>
+                        <ConsoleCard
+                            state={consoleState}
+                            vm={vm}
+                            config={config}
                             onAddErrorNotification={onAddErrorNotification}
                             isExpanded />
                     </PageSection>
@@ -132,24 +122,14 @@ export const VmDetailsPage = ({
             title: _("Usage"),
             body: <VmUsageTab vm={vm} />,
         },
-        ...(vm.displays.length
-            ? [{
-                id: `${vmId(vm.name)}-consoles`,
-                className: "consoles-card",
-                title: _("Console"),
-                actions: vm.state != "shut off"
-                    ? <Button variant="link"
-                          onClick={() => {
-                              const urlOptions = { name: vm.name, connection: vm.connectionName };
-                              return cockpit.location.go(["vm", "console"], { ...cockpit.location.options, ...urlOptions });
-                          }}
-                          icon={<ExpandIcon />}
-                          iconPosition="right">{_("Expand")}</Button>
-                    : null,
-                body: <Consoles vm={vm} config={config}
-                            onAddErrorNotification={onAddErrorNotification} />,
-            }]
-            : []),
+        {
+            card: <ConsoleCard
+                      state={consoleState}
+                      key={`${vmId(vm.name)}-consoles`}
+                      vm={vm}
+                      config={config}
+                      onAddErrorNotification={onAddErrorNotification} />
+        },
         {
             id: `${vmId(vm.name)}-disks`,
             className: "disks-card",
@@ -223,6 +203,8 @@ export const VmDetailsPage = ({
     }
 
     const cards = cardContents.map(card => {
+        if (card.card)
+            return card.card;
         return (
             <Card key={card.id}
                   className={card.className}

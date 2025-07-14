@@ -17,143 +17,236 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React from 'react';
-import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
-import { AccessConsoles } from "@patternfly/react-console";
+import { StateObject } from './state';
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core/dist/esm/components/Card';
+import { ExpandIcon, CompressIcon } from "@patternfly/react-icons";
+import { ToggleGroup, ToggleGroupItem } from '@patternfly/react-core/dist/esm/components/ToggleGroup';
+import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/index.js";
 
-import SerialConsole from './serialConsole.jsx';
-import Vnc from './vnc.jsx';
-import DesktopConsole from './desktopConsole.jsx';
-import {
-    domainCanConsole,
-    domainDesktopConsole,
-    domainSerialConsoleCommand
-} from '../../../libvirtApi/domain.js';
+import { ConsoleState } from './common';
+import { SerialActive, SerialInactive, SerialMissing, SerialPending } from './serial';
+import { VncActive, VncActiveActions, VncInactive, VncMissing, VncPending } from './vnc';
+import { SpiceActive, SpiceInactive } from './spice';
+
+import { domainSerialConsoleCommand } from '../../../libvirtApi/domain.js';
+import { vmId } from "../../../helpers.js";
 
 import './consoles.css';
 
 const _ = cockpit.gettext;
 
-const VmNotRunning = () => {
-    return (
-        <div id="vm-not-running-message">
-            {_("Please start the virtual machine to access its console.")}
-        </div>
-    );
-};
-
-class Consoles extends React.Component {
-    constructor (props) {
-        super(props);
-
-        this.state = {
-            serial: props.vm.displays && props.vm.displays.filter(display => display.type == 'pty'),
-        };
-
-        this.getDefaultConsole = this.getDefaultConsole.bind(this);
-        this.onDesktopConsoleDownload = this.onDesktopConsoleDownload.bind(this);
+class SerialStates extends StateObject {
+    constructor() {
+        super();
+        this.states = { };
     }
 
-    static getDerivedStateFromProps(nextProps, prevState) {
-        const oldSerial = prevState.serial;
-        const newSerial = nextProps.vm.displays && nextProps.vm.displays.filter(display => display.type == 'pty');
-
-        if (newSerial.length !== oldSerial.length || oldSerial.some((pty, index) => pty.alias !== newSerial[index].alias))
-            return { serial: newSerial };
-
-        return null;
+    get(key) {
+        if (!(key in this.states)) {
+            const state = new ConsoleState();
+            this.follow(state);
+            this.states[key] = state;
+        }
+        return this.states[key];
     }
 
-    getDefaultConsole () {
-        const { vm } = this.props;
-
-        if (vm.displays) {
-            if (vm.displays.find(display => display.type == "vnc")) {
-                return 'VncConsole';
-            }
-            if (vm.displays.find(display => display.type == "spice")) {
-                return 'DesktopViewer';
-            }
+    close() {
+        for (const k in this.states) {
+            this.states[k].close();
         }
-
-        const serialConsoleCommand = domainSerialConsoleCommand({ vm });
-        if (serialConsoleCommand) {
-            return 'SerialConsole';
-        }
-
-        // no console defined
-        return null;
-    }
-
-    onDesktopConsoleDownload (type) {
-        const { vm } = this.props;
-        // fire download of the .vv file
-        const consoleDetail = vm.displays.find(display => display.type == type);
-
-        let address;
-        if (cockpit.transport.host == "localhost") {
-            const app = cockpit.transport.application();
-            if (app.startsWith("cockpit+=")) {
-                address = app.substr(9);
-            } else {
-                address = window.location.hostname;
-            }
-        } else {
-            address = cockpit.transport.host;
-            const pos = address.indexOf("@");
-            if (pos >= 0) {
-                address = address.substr(pos + 1);
-            }
-        }
-
-        domainDesktopConsole({ name: vm.name, consoleDetail: { ...consoleDetail, address } });
-    }
-
-    render () {
-        const { vm, onAddErrorNotification, isExpanded } = this.props;
-        const { serial } = this.state;
-        const spice = vm.displays && vm.displays.find(display => display.type == 'spice');
-        const vnc = vm.displays && vm.displays.find(display => display.type == 'vnc');
-
-        if (!domainCanConsole || !domainCanConsole(vm.state)) {
-            return (<VmNotRunning />);
-        }
-
-        const onDesktopConsole = () => { // prefer spice over vnc
-            this.onDesktopConsoleDownload(spice ? 'spice' : 'vnc');
-        };
-
-        return (
-            <AccessConsoles preselectedType={this.getDefaultConsole()}
-                            textSelectConsoleType={_("Select console type")}
-                            textSerialConsole={_("Serial console")}
-                            textVncConsole={_("VNC console")}
-                            textDesktopViewerConsole={_("Desktop viewer")}>
-                {serial.map((pty, idx) => (<SerialConsole type={serial.length == 1 ? "SerialConsole" : cockpit.format(_("Serial console ($0)"), pty.alias || idx)}
-                                                  key={"pty-" + idx}
-                                                  connectionName={vm.connectionName}
-                                                  vmName={vm.name}
-                                                  spawnArgs={domainSerialConsoleCommand({ vm, alias: pty.alias })} />))}
-                {vnc &&
-                <Vnc type="VncConsole"
-                     vmName={vm.name}
-                     vmId={vm.id}
-                     connectionName={vm.connectionName}
-                     consoleDetail={vnc}
-                     onAddErrorNotification={onAddErrorNotification}
-                     isExpanded={isExpanded} />}
-                {(vnc || spice) &&
-                <DesktopConsole type="DesktopViewer"
-                                onDesktopConsole={onDesktopConsole}
-                                vnc={vnc}
-                                spice={spice} />}
-            </AccessConsoles>
-        );
     }
 }
-Consoles.propTypes = {
-    vm: PropTypes.object.isRequired,
-    onAddErrorNotification: PropTypes.func.isRequired,
-};
 
-export default Consoles;
+export class ConsoleCardState extends StateObject {
+    constructor () {
+        super();
+        this.type = null;
+        this.vncState = new ConsoleState();
+        this.serialStates = new SerialStates();
+
+        this.follow(this.vncState);
+        this.follow(this.serialStates);
+    }
+
+    close() {
+        this.vncState.close();
+        this.serialStates.close();
+    }
+
+    setType(val) {
+        this.type = val;
+        this.update();
+    }
+}
+
+export const ConsoleCard = ({ state, vm, config, onAddErrorNotification, isExpanded }) => {
+    const serials = vm.displays.filter(display => display.type == 'pty');
+    const inactive_serials = vm.inactiveXML.displays.filter(display => display.type == 'pty');
+    const vnc = vm.displays.find(display => display.type == 'vnc');
+    const inactive_vnc = vm.inactiveXML.displays.find(display => display.type == 'vnc');
+    const spice = vm.displays.find(display => display.type == 'spice');
+    const inactive_spice = vm.inactiveXML.displays.find(display => display.type == 'spice');
+
+    let type = state.type;
+    if (!type) {
+        if (vnc || serials.length == 0)
+            type = "graphical";
+        else
+            type = "serial0";
+    }
+
+    const actions = [];
+    const tabs = [];
+    let body = null;
+    let body_state = null;
+
+    tabs.push(<ToggleGroupItem
+                  key="graphical"
+                  text={_("Graphical")}
+                  isSelected={type == "graphical"}
+                  onChange={() => state.setType("graphical")} />);
+
+    if (type == "graphical") {
+        if (vm.state != "running") {
+            if (!inactive_vnc && !inactive_spice) {
+                body = <VncMissing vm={vm} />;
+            } else if (inactive_vnc) {
+                body = (
+                    <VncInactive
+                        vm={vm}
+                        inactive_vnc={inactive_vnc}
+                        isExpanded={isExpanded}
+                        onAddErrorNotification={onAddErrorNotification} />
+                );
+            } else {
+                body = <SpiceInactive vm={vm} isExpanded={isExpanded} />;
+            }
+        } else {
+            if (vnc) {
+                body = (
+                    <VncActive
+                        state={state.vncState}
+                        vm={vm}
+                        consoleDetail={vnc}
+                        inactiveConsoleDetail={inactive_vnc}
+                        spiceDetail={spice}
+                        onAddErrorNotification={onAddErrorNotification}
+                        isExpanded={isExpanded} />
+                );
+                actions.push(
+                    <VncActiveActions
+                        state={state.vncState}
+                        vm={vm}
+                        vnc={vnc}
+                    />
+                );
+                body_state = state.vncState;
+            } else if (inactive_vnc) {
+                body = (
+                    <VncPending
+                        vm={vm}
+                        inactive_vnc={inactive_vnc}
+                        isExpanded={isExpanded}
+                        onAddErrorNotification={onAddErrorNotification} />
+                );
+            } else if (spice) {
+                body = <SpiceActive vm={vm} isExpanded={isExpanded} spice={spice} />;
+            } else {
+                body = <VncMissing vm={vm} onAddErrorNotification={onAddErrorNotification} />;
+            }
+        }
+    }
+
+    if (serials.length > 0) {
+        serials.forEach((pty, idx) => {
+            const t = "serial" + idx;
+            tabs.push(<ToggleGroupItem
+                          key={t}
+                          text={serials.length == 1 ? _("Serial") : cockpit.format(_("Serial ($0)"), pty.alias || idx)}
+                          isSelected={type == t}
+                          onChange={() => state.setType(t)} />);
+
+            if (type == t) {
+                if (vm.state != "running") {
+                    body = <SerialInactive vm={vm} />;
+                } else {
+                    const serial_state = state.serialStates.get(pty.alias || idx);
+                    body = (
+                        <SerialActive
+                            state={serial_state}
+                            connectionName={vm.connectionName}
+                            vmName={vm.name}
+                            spawnArgs={domainSerialConsoleCommand({ vm, alias: pty.alias })}
+                        />
+                    );
+                    body_state = serial_state;
+                }
+            }
+        });
+    } else {
+        tabs.push(<ToggleGroupItem
+                      key="serial0"
+                      text={_("Serial")}
+                      isSelected={type == "serial0"}
+                      onChange={() => state.setType("serial0")} />);
+
+        if (type == "serial0") {
+            if (inactive_serials.length > 0) {
+                body = <SerialPending vm={vm} />;
+            } else {
+                body = <SerialMissing vm={vm} onAddErrorNotification={onAddErrorNotification} />;
+            }
+        }
+    }
+
+    if (body_state && body_state.connected) {
+        actions.push(
+            <Button
+                key="disconnect"
+                variant="secondary"
+                onClick={() => body_state.setConnected(false)}
+            >
+                {_("Disconnect")}
+            </Button>
+        );
+    }
+
+    actions.push(
+        <Button
+            key="expand-compress"
+            variant="link"
+            onClick={() => {
+                const urlOptions = { name: vm.name, connection: vm.connectionName };
+                const path = isExpanded ? ["vm"] : ["vm", "console"];
+                return cockpit.location.go(path, { ...cockpit.location.options, ...urlOptions });
+            }}
+            icon={isExpanded ? <CompressIcon /> : <ExpandIcon />}
+            iconPosition="right">{isExpanded ? _("Compress") : _("Expand")}
+        </Button>
+    );
+
+    return (
+        <Card
+            isPlain={isExpanded}
+            className="ct-card consoles-card"
+            id={`${vmId(vm.name)}-consoles`}>
+            <CardHeader actions={{ actions }}>
+                <Split hasGutter>
+                    <SplitItem>
+                        <CardTitle component="h2">{isExpanded ? vm.name : _("Console")}</CardTitle>
+                    </SplitItem>
+                    <SplitItem>
+                        <ToggleGroup>{tabs}</ToggleGroup>
+                    </SplitItem>
+                </Split>
+            </CardHeader>
+            <CardBody>
+                <div className="vm-console">
+                    {body}
+                </div>
+            </CardBody>
+        </Card>
+    );
+};

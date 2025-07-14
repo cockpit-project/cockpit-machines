@@ -19,6 +19,7 @@
 
 import os
 import time
+import xml.etree.ElementTree as ET
 
 import machineslib
 import testlib
@@ -41,7 +42,7 @@ class TestMachinesConsoles(machineslib.VirtualMachinesCase):
 
     def waitViewerDownload(self, kind, host, port=5900):
         self.browser.allow_download()
-        self.browser.click(".pf-v6-c-console__remote-viewer-launch-vv")  # "Launch Remote Viewer" button
+        self.browser.click('.vm-console-footer button:contains("Launch viewer")')
         content = f"""[virt-viewer]
 type={kind}
 host={host}
@@ -64,21 +65,28 @@ fullscreen=0
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")  # running or paused
         self.goToVmPage("subVmTest1")
 
-        # since VNC is not defined for this VM, the view for "Desktop Viewer" is rendered by default
-        b.wait_in_text(".pf-v6-c-console__manual-connection dl > div:first-child dd", "127.0.0.1")
-        b.wait_in_text(".pf-v6-c-console__manual-connection dl > div:nth-child(2) dd", "5900")
+        # VNC is not defined for this VM, so we get the empty SPICE state
+        b.wait_in_text(".consoles-card", "This machine has a SPICE graphical console")
+        b.click(".vm-console-footer .pf-v6-c-button.pf-m-link")
+        b.wait_in_text(".ct-remote-viewer-popover", f"spice://{b.address}:5900")
+
+        # Pixel testing the popover is slightly tricky. We need to
+        # avoid its round corners by only looking at the body, and it
+        # moves around asynchronously when changing layout.
+
+        def reset_popover():
+            b.click(".vm-console-footer .pf-v6-c-button.pf-m-link")
+            b.wait_not_present(".ct-remote-viewer-popover")
+            b.click(".vm-console-footer .pf-v6-c-button.pf-m-link")
+            b.wait_visible(".ct-remote-viewer-popover")
+
+        b.assert_pixels("#popover-remote-viewer-info-body", "popover",
+                        layout_change_hook=reset_popover)
+
+        b.click(".vm-console-footer .pf-v6-c-button.pf-m-link")
+        b.wait_not_present(".ct-remote-viewer-popover")
 
         self.waitViewerDownload("spice", b.address)
-
-        # Go to the expanded console view
-        b.click("button:contains(Expand)")
-
-        # Check "More information"
-        b.click('.pf-v6-c-console__remote-viewer .pf-v6-c-expandable-section__toggle button')
-        b.wait_in_text('.pf-v6-c-expandable-section__content',
-                       'Clicking "Launch remote viewer" will download')
-
-        b.assert_pixels("#vm-subVmTest1-consoles-page", "vm-details-console-external", skip_layouts=["rtl"])
 
     def testInlineConsole(self, urlroot=""):
         b = self.browser
@@ -96,13 +104,13 @@ fullscreen=0
         self.goToVmPage("subVmTest1")
 
         # since VNC is defined for this VM, the view for "In-Browser Viewer" is rendered by default
-        b.wait_visible('[class*=consoleVnc-] canvas')
+        b.wait_visible(".vm-console-vnc canvas")
 
         # make sure the log file is full - then empty it and reboot the VM - the log file should fill up again
         self.waitGuestBooted(args['logfile'])
 
         self.machine.execute(f"echo '' > {args['logfile']}")
-        b.click("#subVmTest1-system-vnc-sendkey")
+        b.click("#vnc-actions")
         b.click("#ctrl-alt-Delete")
         self.waitLogFile(args['logfile'], "reboot: Restarting system")
 
@@ -123,8 +131,7 @@ fullscreen=0
         self.goToVmPage(name)
         b.wait_in_text(f"#vm-{name}-system-state", "Running")
 
-        b.click("#pf-v6-c-console__type-selector")
-        b.click("#SerialConsole")
+        b.click(".consoles-card .pf-v6-c-toggle-group button:contains(Serial)")
 
         # In case the OS already finished booting, press Enter into the console to re-trigger the login prompt
         # Sometimes, pressing Enter one time doesn't take effect, so loop to press Enter to make sure
@@ -138,28 +145,22 @@ fullscreen=0
         # Make sure the content of console is expected
         testlib.wait(lambda: "Welcome to Alpine Linux" in b.text(f"#{name}-terminal .xterm-accessibility-tree"))
 
-        b.click(f"#{name}-serialconsole-disconnect")
-        b.wait_text(f"#{name}-terminal", "Disconnected from serial console. Click the connect button.")
+        b.click(".consoles-card button:contains(Disconnect)")
+        b.wait_in_text(".consoles-card", "Disconnected")
 
-        b.click(f"#{name}-serialconsole-connect")
+        b.click('.consoles-card button:contains("Connect")')
         b.wait_in_text(f"#{name}-terminal .xterm-accessibility-tree > div:nth-child(1)",
                        f"Connected to domain '{name}'")
-
-        b.click("button:contains(Expand)")
-        b.assert_pixels("#vm-vmWithSerialConsole-consoles-page", "vm-details-console-serial",
-                        ignore=['[class*=consoleVnc-]'], skip_layouts=["rtl"])
 
         # Add a second serial console
         m.execute("""
             virsh destroy vmWithSerialConsole;
             virt-xml --add-device vmWithSerialConsole --console pty,target_type=virtio;
             virsh start vmWithSerialConsole""")
-        b.click("#pf-v6-c-console__type-selector")
-        b.click(".pf-v6-c-menu li:contains('Serial console (serial0)') button")
-        b.wait(lambda: m.execute("ps aux | grep 'virsh -c qemu:///system console vmWithSerialConsole serial0'"))
-        b.click("#pf-v6-c-console__type-selector")
-        b.click(".pf-v6-c-menu li:contains('Serial console (console1)') button")
-        b.wait(lambda: m.execute("ps aux | grep 'virsh -c qemu:///system console vmWithSerialConsole console1'"))
+        b.click('.consoles-card .pf-v6-c-toggle-group button:contains("Serial (serial0)")')
+        b.wait(lambda: m.execute("ps aux | grep 'virsh -c [q]emu:///system console vmWithSerialConsole serial0'"))
+        b.click('.consoles-card .pf-v6-c-toggle-group button:contains("Serial (console1)")')
+        b.wait(lambda: m.execute("ps aux | grep 'virsh -c [q]emu:///system console vmWithSerialConsole console1'"))
 
         # Add multiple serial consoles
         # Remove all console firstly
@@ -174,10 +175,19 @@ fullscreen=0
                   """)
 
         for i in range(0, 6):
-            b.click("#pf-v6-c-console__type-selector")
-            b.click(f'.pf-v6-c-menu li:contains(\'Serial console ({"serial" if i == 0 else "console"}{i})\') button')
+            tag = "serial" if i == 0 else "console"
+            b.click(f'.consoles-card .pf-v6-c-toggle-group button:contains("Serial ({tag}{i})")')
             b.wait(lambda: m.execute(
-                f'ps aux | grep \'virsh -c qemu:///system console vmWithSerialConsole {"serial" if i == 0 else "console"}{i}\''))  # noqa: B023, E501
+                f'ps aux | grep \'virsh -c [q]emu:///system console vmWithSerialConsole {tag}{i}\''))  # noqa: B023
+
+        def console_channels():
+            return m.execute("(ps aux | grep 'virsh -c [q]emu:///system console vmWithSerialConsole') || true")
+
+        # Verify that there is still at least one channel open
+        b.wait(lambda: console_channels() != "")
+        # Navigating away from the details page should close all channels
+        self.goToMainPage()
+        b.wait(lambda: console_channels() == "")
 
         # disconnecting the serial console closes the pty channel
         self.allow_journal_messages("connection unexpectedly closed by peer",
@@ -201,43 +211,29 @@ fullscreen=0
         b.wait_in_text(f"#vm-{name}-system-state", "Running")
 
         # test switching console from serial to graphical
-        b.wait_visible(f"#vm-{name}-consoles")
-        b.wait_visible("[class*=consoleVnc-] canvas")
+        b.wait_visible(".consoles-card")
+        b.wait_visible(".vm-console-vnc canvas")
 
-        b.click("#pf-v6-c-console__type-selector")
-        b.click("#SerialConsole")
-
-        b.wait_not_present("[class*=consoleVnc-] canvas")
+        b.click(".consoles-card .pf-v6-c-toggle-group button:contains(Serial)")
+        b.wait_not_present(".vm-console-vnc canvas")
         b.wait_visible(f"#{name}-terminal")
 
         # Go back to Vnc console
-        b.click("#pf-v6-c-console__type-selector")
-        b.click("#VncConsole")
-        b.wait_visible("[class*=consoleVnc-] canvas")
-
-        # Go to the expanded console view
-        b.click("button:contains(Expand)")
+        b.click(".consoles-card .pf-v6-c-toggle-group button:contains(Graphical)")
+        b.wait_not_present(f"#{name}-terminal")
+        b.wait_visible(".vm-console-vnc canvas")
 
         # Test message is present if VM is not running
         self.performAction(name, "forceOff", checkExpectedState=False)
 
-        b.wait_in_text("#vm-not-running-message", "start the virtual machine")
-
-        # Test deleting VM from console page will not trigger any error
-        self.performAction(name, "delete")
-        b.wait_visible(f"#vm-{name}-delete-modal-dialog")
-        b.click(f"#vm-{name}-delete-modal-dialog button:contains(Delete)")
-        self.waitPageInit()
-        self.waitVmRow(name, present=False)
-
-        b.wait_not_present("#navbar-oops")
+        b.wait_in_text(".consoles-card", "Start the virtual machine")
 
         self.allow_journal_messages("connection unexpectedly closed by peer")
         self.allow_browser_errors("Disconnection timed out.",
                                   "Failed when connecting: Connection closed")
 
     @testlib.skipBeiboot("multi-host config not supported in beiboot scenario")
-    def testExternalConsoleMultiHost(self):
+    def testMultiHostExternalConsole(self):
         b = self.browser
 
         my_ip = "172.27.0.15"
@@ -267,11 +263,11 @@ fullscreen=0
         self.goToVmPage(name)
         b.wait_in_text(f"#vm-{name}-system-state", "Running")
 
-        b.click("#pf-v6-c-console__type-selector")
-        b.click("#DesktopViewer")
-
-        b.wait_in_text(".pf-v6-c-console__manual-connection dl > div:first-child dd", "127.0.0.1")
-        b.wait_in_text(".pf-v6-c-console__manual-connection dl > div:nth-child(2) dd", "5900")
+        b.click(".consoles-card .pf-v6-c-toggle-group button:contains(Graphical)")
+        b.click(".vm-console-footer .pf-v6-c-button.pf-m-link")
+        b.wait_in_text(".ct-remote-viewer-popover", f"vnc://{my_ip}:5900")
+        b.click(".vm-console-footer .pf-v6-c-button.pf-m-link")
+        b.wait_not_present(".ct-remote-viewer-popover")
 
         self.waitViewerDownload("vnc", my_ip)
 
@@ -294,13 +290,220 @@ fullscreen=0
         self.goToVmPage(name)
         b.wait_in_text(f"#vm-{name}-system-state", "Running")
 
-        b.click("#pf-v6-c-console__type-selector")
-        b.click("#DesktopViewer")
-
-        b.wait_in_text(".pf-v6-c-console__manual-connection dl > div:first-child dd", "127.0.0.1")
-        b.wait_in_text(".pf-v6-c-console__manual-connection dl > div:nth-child(2) dd", "5900")
+        b.click(".consoles-card .pf-v6-c-toggle-group button:contains(Graphical)")
+        b.click(".vm-console-footer .pf-v6-c-button.pf-m-link")
+        b.wait_in_text(".ct-remote-viewer-popover", f"vnc://{my_ip}:5900")
+        b.click(".vm-console-footer .pf-v6-c-button.pf-m-link")
+        b.wait_not_present(".ct-remote-viewer-popover")
 
         self.waitViewerDownload("vnc", my_ip)
+
+    def testAddEditVNC(self):
+        b = self.browser
+
+        # Create a machine without any consoles
+
+        name = "subVmTest1"
+        self.createVm(name)
+
+        self.login_and_go("/machines")
+        self.waitPageInit()
+        self.waitVmRow(name)
+        self.goToVmPage(name)
+
+        def assert_state(text):
+            b.wait_in_text(f"#vm-{name}-consoles .pf-v6-c-empty-state", text)
+
+        def assert_not_state(text):
+            b.wait_not_in_text(f"#vm-{name}-consoles .pf-v6-c-empty-state", text)
+
+        # "Console" card shows empty state
+
+        assert_state("Graphical console support not enabled")
+        b.assert_pixels(".consoles-card", "no-vnc")
+
+        b.click(".consoles-card .pf-v6-c-empty-state button:contains(Add VNC)")
+
+        assert_state("Restart this virtual machine to access its graphical console")
+        b.wait_visible(f"#vm-{name}-needs-shutdown")
+        b.assert_pixels(".consoles-card", "needs-shutdown")
+
+        root = ET.fromstring(self.machine.execute(f"virsh dumpxml --inactive --security-info {name}"))
+        graphics = root.find('devices').findall('graphics')
+        self.assertEqual(len(graphics), 1)
+        self.assertEqual(graphics[0].get('port'), "-1")
+        self.assertEqual(graphics[0].get('passwd'), None)
+
+        b.click(".vm-console-footer .pf-v6-c-button.pf-m-link")
+        b.click(".ct-remote-viewer-popover button:contains('Edit VNC settings')")
+        b.wait_not_present(".ct-remote-viewer-popover")
+        b.wait_visible("#vnc-edit-dialog")
+        b.assert_pixels("#vnc-edit-dialog", "add")
+        b.set_input_text("#vnc-edit-port", "5000")
+        b.wait_visible("#vnc-edit-dialog .pf-m-error:contains('Port must be 5900 or larger.')")
+        b.set_input_text("#vnc-edit-port", "Hamburg")
+        b.wait_visible("#vnc-edit-dialog .pf-m-error:contains('Port must be a number.')")
+        b.set_input_text("#vnc-edit-port", "100000000000")  # for testing failed libvirt calls
+        b.set_input_text("#vnc-edit-password", "foobarfoobar")
+        b.wait_attr("#vnc-edit-password", "type", "password")
+        b.click("#vnc-edit-dialog .pf-v6-c-input-group button")
+        b.wait_attr("#vnc-edit-password", "type", "text")
+        b.wait_visible("#vnc-edit-dialog .pf-m-error:contains('Password must be at most 8 characters.')")
+        b.set_input_text("#vnc-edit-password", "foobar")
+        b.click("#vnc-edit-save")
+        b.wait_in_text("#vnc-edit-dialog", "VNC settings could not be saved")
+        # Exact error messages vary, but they all contain the wrong number
+        b.wait_in_text("#vnc-edit-dialog", "100000000000")
+        b.set_input_text("#vnc-edit-port", "5901")
+        b.click("#vnc-edit-save")
+        b.wait_not_present("#vnc-edit-dialog")
+
+        root = ET.fromstring(self.machine.execute(f"virsh dumpxml --inactive --security-info {name}"))
+        graphics = root.find('devices').findall('graphics')
+        self.assertEqual(len(graphics), 1)
+        self.assertEqual(graphics[0].get('port'), "5901")
+        self.assertEqual(graphics[0].get('passwd'), "foobar")
+
+        # Shut down machine
+
+        self.performAction("subVmTest1", "forceOff")
+        assert_state("Start the virtual machine to access the console")
+        b.assert_pixels(".consoles-card", "shutoff")
+
+        # Remove VNC from the outside and add it back while the machine is off
+
+        self.machine.execute(f"virt-xml --remove-device --graphics vnc {name}")
+
+        assert_state("Graphical console support not enabled")
+
+        b.click(".consoles-card .pf-v6-c-empty-state button:contains(Add VNC)")
+        assert_not_state("Graphical console support not enabled")
+        assert_state("Start the virtual machine to access the console")
+
+    def testAddSerial(self):
+        b = self.browser
+        m = self.machine
+
+        # Create a machine without any serial consoles
+
+        name = "subVmTest1"
+        self.createVm(name, running=False, ptyconsole=True)
+        m.execute(f"virt-xml --remove-device {name} --serial all")
+
+        self.login_and_go("/machines")
+        self.waitPageInit()
+        self.waitVmRow(name)
+        self.goToVmPage(name)
+
+        def assert_state(text):
+            b.wait_in_text(f"#vm-{name}-consoles .pf-v6-c-empty-state", text)
+
+        # Switch to Serial console
+
+        b.click('.consoles-card .pf-v6-c-toggle-group button:contains("Serial")')
+
+        # "Console" card shows empty state
+
+        assert_state("Serial console support not enabled")
+        b.assert_pixels(".consoles-card", "no-serial")
+
+        b.click(".consoles-card .pf-v6-c-empty-state button:contains(Add serial console)")
+
+        assert_state("Start the virtual machine to access the console")
+
+        self.performAction(name, "run")
+        testlib.wait(lambda: ("Welcome to Alpine Linux" in
+                              b.text(f"#{name}-terminal .xterm-accessibility-tree")),
+                     delay=5)
+
+        # Shutdown, remove, start, and add it while VM is running
+        self.performAction(name, "forceOff")
+        assert_state("Start the virtual machine to access the console")
+        m.execute(f"virt-xml --remove-device {name} --serial all")
+        self.performAction(name, "run")
+        b.wait_in_text(f"#vm-{name}-system-state", "Running")
+
+        b.click('.consoles-card .pf-v6-c-toggle-group button:contains("Serial")')
+        assert_state("Serial console support not enabled")
+        b.click(".consoles-card .pf-v6-c-empty-state button:contains(Add serial console)")
+
+        assert_state("Restart this virtual machine to access its serial console")
+        b.wait_visible(f"#vm-{name}-needs-shutdown")
+        b.assert_pixels(".consoles-card", "needs-shutdown")
+
+        self.performAction("subVmTest1", "forceOff")
+        assert_state("Start the virtual machine to access the console")
+        self.performAction(name, "run")
+        testlib.wait(lambda: "Welcome to Alpine Linux" in b.text(f"#{name}-terminal .xterm-accessibility-tree"))
+
+    def testExpandedConsole(self):
+        b = self.browser
+
+        # Create a machine without any serial consoles
+
+        name = "subVmTest1"
+        self.createVm(name, graphics="vnc", ptyconsole=True)
+
+        self.login_and_go("/machines")
+        self.waitPageInit()
+        self.waitVmRow(name)
+        self.goToVmPage(name)
+
+        b.click(".consoles-card button:contains(Expand)")
+        b.wait_visible(".consoles-page-expanded")
+        b.assert_pixels(".consoles-card", "expanded", ignore=[".vm-console-vnc"])
+
+        # Disconnect VNC, switch to Serial
+
+        b.click(".consoles-card button:contains(Disconnect)")
+        b.wait_in_text(".consoles-card", "Disconnected")
+        b.click('.consoles-card .pf-v6-c-toggle-group button:contains("Serial")')
+        b.wait_visible(".consoles-card .vm-terminal")
+
+        # Compress, Serial should still be selected and VNC should stay
+        # disconnected
+
+        b.click(".consoles-card button:contains(Compress)")
+        b.wait_visible("#vm-details")
+        b.wait_visible(".consoles-card .vm-terminal")
+        b.click('.consoles-card .pf-v6-c-toggle-group button:contains("Graphical")')
+        b.wait_in_text(".consoles-card", "Disconnected")
+
+        # Connect VNC
+        b.click(".consoles-card button:contains(Connect)")
+        b.wait_visible(".vm-console-vnc canvas")
+
+    @testlib.skipImage('SPICE not supported on RHEL', "rhel-*", "centos-*")
+    def testSpice(self):
+        b = self.browser
+
+        # Create a machine with a spice console, and no vnc.
+
+        name = "subVmTest1"
+        self.createVm(name, graphics="spice")
+
+        self.login_and_go("/machines")
+        self.waitPageInit()
+        self.waitVmRow(name)
+        self.goToVmPage(name)
+
+        def assert_state(text):
+            b.wait_in_text(f"#vm-{name}-consoles .pf-v6-c-empty-state", text)
+
+        assert_state("This machine has a SPICE graphical console that can not be shown here.")
+
+        b.click(".consoles-card .pf-v6-c-empty-state button:contains(Replace with VNC)")
+        b.wait_text(".pf-v6-c-modal-box__title-text", f"Replace SPICE devices in VM {name}")
+        b.click("#replace-spice-dialog-confirm")
+        b.wait_not_present(".pf-v6-c-modal-box")
+
+        assert_state("Restart this virtual machine to access its graphical consol")
+
+        self.performAction(name, "forceOff")
+        assert_state("Start the virtual machine to access the console")
+
+        self.performAction(name, "run")
+        b.wait_visible(".vm-console-vnc canvas")
 
 
 if __name__ == '__main__':

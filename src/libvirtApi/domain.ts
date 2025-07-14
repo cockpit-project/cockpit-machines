@@ -1184,18 +1184,26 @@ function shlex_quote(str: string): string {
     return "'" + str.replaceAll("'", "'\"'\"'") + "'";
 }
 
-async function domainSetXML(vm: VM, option: string, values: Record<string, string>): Promise<void> {
+async function domainModifyXML(
+    vm: VM,
+    action: string,
+    option: string,
+    type: string | null,
+    values: Record<string, string>
+): Promise<void> {
     // We don't pass the arguments for virt-xml through a shell, but
     // virt-xml does its own parsing with the Python shlex module. So
     // we need to do the equivalent of shlex.quote here.
 
     const args = [];
+    if (type)
+        args.push(shlex_quote(type));
     for (const key in values)
         args.push(shlex_quote(key + '=' + values[key]));
 
     await spawn(
         vm.connectionName,
-        ['virt-xml', '-c', `qemu:///${vm.connectionName}`, '--' + option, args.join(','), vm.uuid, '--edit']);
+        ['virt-xml', '-c', `qemu:///${vm.connectionName}`, '--' + option, args.join(','), vm.uuid, '--' + action]);
 }
 
 export async function domainSetDescription(vm: VM, description: string): Promise<void> {
@@ -1204,7 +1212,7 @@ export async function domainSetDescription(vm: VM, description: string): Promise
     // protocol error. So let's limit it to a reasonable length here.
     if (description.length > 32000)
         description = description.slice(0, 32000);
-    await domainSetXML(vm, "metadata", { description });
+    await domainModifyXML(vm, "edit", "metadata", null, { description });
 }
 
 export function domainSetCpuMode({
@@ -1463,4 +1471,16 @@ export async function domainAddTPM({
 }): Promise<void> {
     const args = ["virt-xml", "-c", `qemu:///${connectionName}`, "--add-device", "--tpm", "default", vmName];
     await spawn(connectionName, args);
+}
+
+export async function domainAttachVnc(vm: VM, values: Record<string, string>) {
+    await domainModifyXML(vm, "add-device", "graphics", "vnc", values);
+}
+
+export async function domainChangeVncSettings(vm: VM, values: Record<string, string>) {
+    await domainModifyXML(vm, "edit", "graphics", "vnc", values);
+}
+
+export async function domainAttachSerialConsole(vm: VM) {
+    await domainModifyXML(vm, "add-device", "console", "pty", { });
 }

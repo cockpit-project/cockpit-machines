@@ -2528,18 +2528,20 @@ vnc_password= "{vnc_passwd}"
             # if VNC is available, the inline viewer is the default
             if expect_vnc:
                 with b.wait_timeout(60):
-                    b.wait_visible("[class*=consoleVnc-] canvas")
+                    b.wait_visible(".vm-console-vnc canvas")
 
-            b.click("#pf-v6-c-console__type-selector")
-            b.click("#DesktopViewer")
-            if expect_vnc:
-                b.wait_in_text(".pf-v6-c-console__manual-connection", "VNC")
+            if not expect_vnc and not expect_spice:
+                b.wait_not_present(".vm-console-footer button.pf-m-plain")
             else:
-                self.assertNotIn("VNC", b.text(".pf-v6-c-console__manual-connection"))
-            if expect_spice:
-                b.wait_in_text(".pf-v6-c-console__manual-connection", "SPICE")
-            else:
-                self.assertNotIn("SPICE", b.text(".pf-v6-c-console__manual-connection"))
+                b.click(".vm-console-footer .pf-v6-c-button.pf-m-link")
+                if expect_vnc:
+                    b.wait_in_text(".ct-remote-viewer-popover", "vnc://")
+                else:
+                    b.wait_not_in_text(".ct-remote-viewer-popover", "vnc://")
+                    if expect_spice:
+                        b.wait_in_text(".ct-remote-viewer-popover", "spice://")
+                b.click(".vm-console-footer .pf-v6-c-button.pf-m-link")
+                b.wait_not_present(".ct-remote-viewer-popover")
 
         def doReplaceSpiceSingle(vmName, expect_running=False, cancel=False):
             self.performAction(vmName, "replace-spice")
