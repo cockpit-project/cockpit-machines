@@ -19,7 +19,7 @@
 import React, { useState } from 'react';
 import cockpit from 'cockpit';
 
-import type { ConnectionName, VM, VMFilesystem } from '../../../types';
+import type { VM, VMFilesystem } from '../../../types';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";

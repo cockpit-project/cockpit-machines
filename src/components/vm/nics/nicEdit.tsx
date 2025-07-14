@@ -169,8 +169,7 @@ export class EditNICModal extends React.Component<EditNICModalProps, EditNICModa
         }
 
         domainChangeInterfaceSettings({
-            vmName: vm.name,
-            connectionName: vm.connectionName,
+            vm,
             persistent: vm.persistent,
             macAddress: network.mac || "",
             newMacAddress: this.state.networkMac,

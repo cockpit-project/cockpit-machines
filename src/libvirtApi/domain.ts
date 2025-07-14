@@ -1168,10 +1168,10 @@ async function domainModifyXml(vm: VM, action: "add-device" | "remove-device" | 
     // we need to do the equivalent of shlex.quote here.
 
     const args = ['virt-xml', '-c', `qemu:///${vm.connectionName}`, vm.uuid];
-    
+
     // Add action flag
     args.push('--' + action, '--' + option);
-    
+
     // Add values (common logic for all actions)
     if (typeof values === 'string') {
         args.push(values);
