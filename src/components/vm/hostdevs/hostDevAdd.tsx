@@ -233,7 +233,7 @@ const AddHostDev = ({
 
         if (devicesToAttach.length > 0) {
             setAddHostDevInProgress(true);
-            return domainAttachHostDevices({ connectionName: vm.connectionName, vmName: vm.name, live: vm.state !== "shut off", devices: devicesToAttach })
+            return domainAttachHostDevices({ vm, live: vm.state !== "shut off", devices: devicesToAttach })
                     .then(() => {
                         domainGet({ connectionName: vm.connectionName, id: vm.id });
                         Dialogs.close();

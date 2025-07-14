@@ -369,7 +369,7 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
             return (e: React.MouseEvent) => {
                 e.stopPropagation();
                 if (network.mac) {
-                    domainChangeInterfaceSettings({ vmName: vm.name, connectionName: vm.connectionName, macAddress: network.mac, state: network.state === 'up' ? 'down' : 'up', hotplug: vm.state === "running" })
+                    domainChangeInterfaceSettings({ vm, macAddress: network.mac, state: network.state === 'up' ? 'down' : 'up', hotplug: vm.state === "running" })
                             .then(() => domainGet({ connectionName: vm.connectionName, id: vm.id }))
                             .catch(ex => {
                                 onAddErrorNotification({
@@ -554,7 +554,7 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
                         errorMessage: cockpit.format(_("Network interface $0 could not be removed"), network.mac),
                         actionDescription: cockpit.format(_("Network interface $0 will be removed from $1"), network.mac, vm.name),
                         actionName: _("Remove"),
-                        deleteHandler: () => domainDetachIface({ connectionName: vm.connectionName, index: network.index, vmName: vm.name, live: vm.state === 'running', persistent: vm.persistent && nicPersistent }),
+                                                    deleteHandler: () => domainDetachIface({ vm, index: network.index, live: vm.state === 'running', persistent: vm.persistent && nicPersistent }),
                     };
                     const disabled = vm.state != 'shut off' && vm.state != 'running';
 

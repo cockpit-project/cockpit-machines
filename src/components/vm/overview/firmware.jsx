@@ -65,7 +65,7 @@ class FirmwareModal extends React.Component {
             });
 
             if (this.state.firmware == 'efi' && !vm.hasTPM && vm.capabilities.supportsTPM)
-                await domainAddTPM({ connectionName: vm.connectionName, vmName: vm.name });
+                await domainAddTPM(vm);
 
             Dialogs.close();
         } catch (exc) {

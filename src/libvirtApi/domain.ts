@@ -194,17 +194,15 @@ function script(connectionName: ConnectionName, script: string): cockpit.Spawn<s
 }
 
 export function domainAttachHostDevices({
-    connectionName,
-    vmName,
+    vm,
     live,
     devices
 } : {
-    connectionName: ConnectionName,
-    vmName: string,
+    vm: VM,
     live: boolean,
     devices: NodeDevice[],
 }): cockpit.Spawn<string> {
-    const args = ["virt-xml", "-c", `qemu:///${connectionName}`, vmName];
+    const args = ["virt-xml", "-c", `qemu:///${vm.connectionName}`, vm.name];
 
     devices.forEach(dev => {
         const source = getNodeDevSource(dev);
@@ -217,7 +215,7 @@ export function domainAttachHostDevices({
     if (live)
         args.push("--update");
 
-    return spawn(connectionName, args);
+    return spawn(vm.connectionName, args);
 }
 
 interface InterfaceSpec {
@@ -266,8 +264,7 @@ interface InterfaceChangeSpec {
 }
 
 export function domainChangeInterfaceSettings({
-    vmName,
-    connectionName,
+    vm,
     hotplug,
     persistent,
     macAddress,
@@ -277,7 +274,7 @@ export function domainChangeInterfaceSettings({
     networkSourceMode,
     networkModel,
     state,
-}: { connectionName: ConnectionName, vmName: string } & InterfaceChangeSpec): cockpit.Spawn<string> {
+}: { vm: VM } & InterfaceChangeSpec): cockpit.Spawn<string> {
     let networkParams = "";
     if (state) {
         networkParams = `link.state=${state}`;
@@ -298,8 +295,8 @@ export function domainChangeInterfaceSettings({
     }
 
     const args = [
-        "virt-xml", "-c", `qemu:///${connectionName}`,
-        vmName, "--edit", `mac=${macAddress}`, "--network",
+        "virt-xml", "-c", `qemu:///${vm.connectionName}`,
+        vm.name, "--edit", `mac=${macAddress}`, "--network",
         networkParams
     ];
 
@@ -309,23 +306,21 @@ export function domainChangeInterfaceSettings({
             args.push("--no-define");
     }
 
-    return spawn(connectionName, args);
+    return spawn(vm.connectionName, args);
 }
 
 export async function domainChangeAutostart ({
-    connectionName,
-    vmName,
+    vm,
     autostart,
 } : {
-    connectionName: ConnectionName,
-    vmName: string,
+    vm: VM,
     autostart: boolean,
 }): Promise<void> {
     const [domainPath] = await call<[string]>(
-        connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainLookupByName',
-        [vmName], { timeout, type: 's' });
+        vm.connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainLookupByName',
+        [vm.name], { timeout, type: 's' });
     await call(
-        connectionName, domainPath, 'org.freedesktop.DBus.Properties', 'Set',
+        vm.connectionName, domainPath, 'org.freedesktop.DBus.Properties', 'Set',
         ['org.libvirt.Domain', 'Autostart', cockpit.variant('b', autostart)],
         { timeout, type: 'ssv' });
 }
@@ -474,30 +469,22 @@ export async function domainCreate({
     }
 }
 
-export function domainCreateFilesystem({
-    connectionName,
-    vmName,
+export async function domainCreateFilesystem({
+    vm,
     source,
     target,
     xattr
 } : {
-    connectionName: ConnectionName,
-    vmName: string,
+    vm: VM,
     source: string,
     target: string,
     xattr: boolean,
-}): cockpit.Spawn<string> {
+}): Promise<void> {
     let xattrOption = "";
     if (xattr)
         xattrOption = ",binary.xattr=on";
 
-    return spawn(
-        connectionName,
-        [
-            'virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--add-device', '--filesystem',
-            `type=mount,accessmode=passthrough,driver.type=virtiofs,source.dir=${source},target.dir=${target}${xattrOption}`
-        ],
-    );
+    await domainModifyXml(vm, "add-device", "filesystem", `type=mount,accessmode=passthrough,driver.type=virtiofs,source.dir=${source},target.dir=${target}${xattrOption}`);
 }
 
 export async function domainDelete({
@@ -586,18 +573,13 @@ export function domainDeleteStorage({
 }
 
 export async function domainDeleteFilesystem({
-    connectionName,
-    vmName,
+    vm,
     target
 } : {
-    connectionName: ConnectionName,
-    vmName: string,
+    vm: VM,
     target: string,
 }): Promise<void> {
-    await spawn(
-        connectionName,
-        ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--remove-device', '--filesystem', `target.dir=${target}`],
-    );
+    await domainModifyXml(vm, "remove-device", "filesystem", `target.dir=${target}`);
 }
 
 /*
@@ -682,15 +664,13 @@ export async function domainDetachHostDevice({
 }
 
 export async function domainDetachIface({
-    connectionName,
+    vm,
     index,
-    vmName,
     live,
     persistent
 } : {
-    connectionName: ConnectionName,
+    vm: VM,
     index: number,
-    vmName: string,
     live: boolean,
     persistent: boolean,
 }): Promise<void> {
@@ -698,7 +678,7 @@ export async function domainDetachIface({
     // Such detachment is however broken in virt-xml, so instead let's detach it by the index of <interface> in array of VM's XML <devices>
     // This serves as workaround for https://github.com/virt-manager/virt-manager/issues/356
     // virt-xml counts devices starting from 1, so we have to increase index by 1
-    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--remove-device', '--network', `${index + 1}`];
+    const args = ['virt-xml', '-c', `qemu:///${vm.connectionName}`, vm.name, '--remove-device', '--network', `${index + 1}`];
 
     if (live) {
         args.push("--update");
@@ -706,7 +686,7 @@ export async function domainDetachIface({
             args.push("--no-define");
     }
 
-    await spawn(connectionName, args);
+    await spawn(vm.connectionName, args);
 }
 
 export function domainRemoveVsock({
@@ -921,11 +901,9 @@ export function domainGetCapabilities({
 }
 
 export async function domainGetStartTime({
-    connectionName,
-    vmName,
+    vm,
 } : {
-    connectionName: ConnectionName,
-    vmName: string,
+    vm: VM,
 }): Promise<Date | null> {
     const loggedUser = await cockpit.user();
 
@@ -936,12 +914,12 @@ export async function domainGetStartTime({
         * - /var/log/libvirt/qemu/ - For privileged (qemu:///system) VMs
         * - ~/.cache/libvirt/qemu/logs - For non-privileged  (qemu:///session) VMs
         */
-    const logFile = connectionName === "system" ? `/var/log/libvirt/qemu/${vmName}.log` : `${loggedUser.home}/.cache/libvirt/qemu/log/${vmName}.log`;
+    const logFile = vm.connectionName === "system" ? `/var/log/libvirt/qemu/${vm.name}.log` : `${loggedUser.home}/.cache/libvirt/qemu/log/${vm.name}.log`;
 
     try {
         // Use libvirt APIs for getting VM start up time when it's implemented:
         // https://gitlab.com/libvirt/libvirt/-/issues/481
-        const line = await script(connectionName, `grep ': starting up' '${logFile}' | tail -1`);
+        const line = await script(vm.connectionName, `grep ': starting up' '${logFile}' | tail -1`);
 
         // Line from a log with a start up time is expected to look like this:
         // 2023-05-05 11:22:03.043+0000: starting up libvirt version: 8.6.0, package: 3.fc37 (Fedora Project, 2022-08-09-13:54:03, ), qemu version: 7.0.0qemu-7.0.0-9.fc37, kernel: 6.0.6-300.fc37.x86_64, hostname: fedora
@@ -1184,18 +1162,27 @@ function shlex_quote(str: string): string {
     return "'" + str.replaceAll("'", "'\"'\"'") + "'";
 }
 
-async function domainSetXML(vm: VM, option: string, values: Record<string, string>): Promise<void> {
+async function domainModifyXml(vm: VM, action: "add-device" | "remove-device" | "edit", option: string, values: Record<string, string> | string): Promise<void> {
     // We don't pass the arguments for virt-xml through a shell, but
     // virt-xml does its own parsing with the Python shlex module. So
     // we need to do the equivalent of shlex.quote here.
 
-    const args = [];
-    for (const key in values)
-        args.push(shlex_quote(key + '=' + values[key]));
+    const args = ['virt-xml', '-c', `qemu:///${vm.connectionName}`, vm.uuid];
+    
+    // Add action flag
+    args.push('--' + action, '--' + option);
+    
+    // Add values (common logic for all actions)
+    if (typeof values === 'string') {
+        args.push(values);
+    } else {
+        const valueArgs = [];
+        for (const key in values)
+            valueArgs.push(shlex_quote(key + '=' + values[key]));
+        args.push(valueArgs.join(','));
+    }
 
-    await spawn(
-        vm.connectionName,
-        ['virt-xml', '-c', `qemu:///${vm.connectionName}`, '--' + option, args.join(','), vm.uuid, '--edit']);
+    await spawn(vm.connectionName, args);
 }
 
 export async function domainSetDescription(vm: VM, description: string): Promise<void> {
@@ -1204,7 +1191,7 @@ export async function domainSetDescription(vm: VM, description: string): Promise
     // protocol error. So let's limit it to a reasonable length here.
     if (description.length > 32000)
         description = description.slice(0, 32000);
-    await domainSetXML(vm, "metadata", { description });
+    await domainModifyXml(vm, "edit", "metadata", { description });
 }
 
 export function domainSetCpuMode({
@@ -1226,17 +1213,15 @@ export function domainSetCpuMode({
 }
 
 export function domainSetMemoryBacking({
-    connectionName,
-    vmName,
+    vm,
     type
 } : {
-    connectionName: ConnectionName,
-    vmName: string,
+    vm: VM,
     type: string,
 }): cockpit.Spawn<string> {
     return spawn(
-        connectionName,
-        ['virt-xml', '-c', `qemu:///${connectionName}`, '--memorybacking', `access.mode=shared,source.type=${type}`, vmName, '--edit']
+        vm.connectionName,
+        ['virt-xml', '-c', `qemu:///${vm.connectionName}`, '--memorybacking', `access.mode=shared,source.type=${type}`, vm.name, '--edit']
     );
 }
 
@@ -1454,13 +1439,6 @@ export async function domainReplaceSpice({
     }
 }
 
-export async function domainAddTPM({
-    connectionName,
-    vmName
-} : {
-    connectionName: ConnectionName,
-    vmName: string,
-}): Promise<void> {
-    const args = ["virt-xml", "-c", `qemu:///${connectionName}`, "--add-device", "--tpm", "default", vmName];
-    await spawn(connectionName, args);
+export async function domainAddTPM(vm: VM): Promise<void> {
+    await domainModifyXml(vm, "add-device", "tpm", "default");
 }

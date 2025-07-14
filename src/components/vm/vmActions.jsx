@@ -182,7 +182,7 @@ const onSendNMI = (vm) => domainSendNMI({ name: vm.name, id: vm.id, connectionNa
     );
 });
 
-const onAddTPM = (vm, onAddErrorNotification) => domainAddTPM({ connectionName: vm.connectionName, vmName: vm.name })
+const onAddTPM = (vm, onAddErrorNotification) => domainAddTPM(vm)
         .catch(ex => onAddErrorNotification({
             text: cockpit.format(_("Failed to add TPM to VM $0"), vm.name),
             detail: ex.message,
