@@ -510,6 +510,85 @@ fullscreen=0
         self.performAction(name, "run")
         b.wait_visible(".vm-console-vnc canvas")
 
+    @testlib.skipImage('No virtio video', "arch", "opensuse-*", "rhel-8-*")
+    def testScaleResize(self):
+        b = self.browser
+        m = self.machine
+
+        name = "subVmTest1"
+        self.createVm(name, graphics="vnc")
+
+        self.login_and_go("/machines")
+        self.waitPageInit()
+        self.waitVmRow(name)
+        self.goToVmPage(name)
+
+        # The "width" and "height" HTML attributes of the NoVNC canvas
+        # always reflect the size of the remote framebuffer.  If we
+        # request a remote resize and it is rejected, these attributes
+        # will not change.  Thus, we don't actually have to log into
+        # the guest and do stuff like looking at
+        # /sys/class/drm/<foo>/modes to see how big the actual
+        # framebuffer is.
+
+        # Local scaling is done by NoVNC by setting the width and
+        # height style properties of the canvas element.  The browser
+        # will then scale the content of the canvas to make it as
+        # large as requested by its style.
+
+        def wait_widths(func):
+            def pred():
+                remote = int(b.attr(".vm-console-vnc canvas", "width"))
+                local = b.eval_js('document.querySelector(".vm-console-vnc canvas").offsetWidth')
+                ui = b.eval_js('document.querySelector(".vm-console-vnc").offsetWidth')
+                print("Widths: remote", remote, "local", local, "ui", ui)
+                return remote > 0 and local > 0 and ui > 0 and func(remote, local, ui)
+            testlib.wait(pred)
+
+        b.click(".consoles-card button:contains(Expand)")
+        b.wait_visible(".consoles-page-expanded")
+
+        # We want a small browser so that the remote framebuffer is
+        # initially wider than the console UI.
+
+        b.set_layout("medium")
+
+        # Initially we are in "No scaling or resizing" mode. The
+        # remote width is determined by the guest OS somehow, the
+        # local width is the same as remote and the UI is smaller than
+        # that.
+
+        initial_remote = 1280
+        if m.image in ["ubuntu-2204"]:
+            initial_remote = 1024
+
+        b.wait_text("#vm-console-vnc-scaling", "No scaling or resizing")
+        wait_widths(lambda remote, local, ui: remote == initial_remote and local == remote and local > ui)
+
+        # When switching to "Local scaling", the remote width stays
+        # unchanged, but the local width is now smaller than the ui.
+
+        b.select_PF("#vm-console-vnc-scaling", "Local scaling")
+        wait_widths(lambda remote, local, ui: remote == initial_remote and local <= ui)
+
+        # When switching to "Remote resizing", the remote and local
+        # width become equal to the UI.
+
+        b.select_PF("#vm-console-vnc-scaling", "Remote resizing")
+        wait_widths(lambda remote, local, ui: remote == ui and local == ui)
+
+        # When collapsing and expanding again, nothing should have
+        # changed.
+
+        b.click(".consoles-card button:contains(Compress)")
+        b.wait_visible("#vm-details")
+        b.wait_not_present("#vm-console-vnc-scaling")
+        b.click(".consoles-card button:contains(Expand)")
+        b.wait_visible(".consoles-page-expanded")
+
+        b.wait_text("#vm-console-vnc-scaling", "Remote resizing")
+        wait_widths(lambda remote, local, ui: remote == ui and local == ui)
+
 
 if __name__ == '__main__':
     testlib.test_main()

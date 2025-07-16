@@ -38,11 +38,12 @@ import { Dropdown, DropdownList, DropdownItem } from "@patternfly/react-core/dis
 
 import { Modal, ModalVariant } from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
+import { SimpleSelect } from 'cockpit-components-simple-select';
 import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
 import { useDialogs } from 'dialogs';
 
 import { logDebug } from '../../../helpers.js';
-import { LaunchViewerButton, connection_address } from './common';
+import { LaunchViewerButton, connection_address, ConsoleState } from './common';
 import { domainSendKey, domainAttachVnc, domainChangeVncSettings, domainGet } from '../../../libvirtApi/domain.js';
 
 import { VncConsole } from './VncConsole';
@@ -67,6 +68,18 @@ const Enum = {
     KEY_F12: 88,
     KEY_DELETE: 111,
 };
+
+export class VncState extends ConsoleState {
+    constructor() {
+        super();
+        this.sizeMode = "none";
+    }
+
+    setSizeMode(val) {
+        this.sizeMode = val;
+        this.update();
+    }
+}
 
 const VncEditModal = ({ vm, inactive_vnc }) => {
     const config_port = (inactive_vnc.port == -1) ? "" : (inactive_vnc.port || "");
@@ -205,11 +218,29 @@ const VncEditModal = ({ vm, inactive_vnc }) => {
     );
 };
 
-export const VncActiveActions = ({ state, vm, vnc, onAddErrorNotification }) => {
+export const VncActiveActions = ({ state, vm, vnc, isExpanded, onAddErrorNotification }) => {
     const [isOpen, setIsOpen] = useState(false);
 
     if (!state.connected)
         return null;
+
+    let scale_resize_dropdown = null;
+    if (isExpanded) {
+        scale_resize_dropdown = (
+            <SimpleSelect
+                toggleProps={{ id: "vm-console-vnc-scaling" }}
+                options={
+                    [
+                        { value: "none", content: _("No scaling or resizing") },
+                        { value: "local", content: _("Local scaling") },
+                        { value: "remote", content: _("Remote resizing") },
+                    ]
+                }
+                selected={state.sizeMode}
+                onSelect={val => state.setSizeMode(val)}
+            />
+        );
+    }
 
     const renderDropdownItem = keyName => {
         return (
@@ -245,25 +276,28 @@ export const VncActiveActions = ({ state, vm, vnc, onAddErrorNotification }) => 
     ];
 
     return (
-        <Dropdown
-            onOpenChange={setIsOpen}
-            onSelect={() => setIsOpen(false)}
-            toggle={(toggleRef) => (
-                <MenuToggle
-                    id="vnc-actions"
-                    ref={toggleRef}
-                    onClick={() => setIsOpen(!isOpen)}
-                    isExpanded={isOpen}
-                >
-                    {_("Send key")}
-                </MenuToggle>
-            )}
-            isOpen={isOpen}
-        >
-            <DropdownList>
-                {dropdownItems}
-            </DropdownList>
-        </Dropdown>
+        <>
+            {scale_resize_dropdown}
+            <Dropdown
+                onOpenChange={setIsOpen}
+                onSelect={() => setIsOpen(false)}
+                toggle={(toggleRef) => (
+                    <MenuToggle
+                        id="vnc-actions"
+                        ref={toggleRef}
+                        onClick={() => setIsOpen(!isOpen)}
+                        isExpanded={isOpen}
+                    >
+                        {_("Send key")}
+                    </MenuToggle>
+                )}
+                isOpen={isOpen}
+            >
+                <DropdownList>
+                    {dropdownItems}
+                </DropdownList>
+            </Dropdown>
+        </>
     );
 };
 
@@ -400,8 +434,8 @@ export class VncActive extends React.Component {
                           onInitFailed={this.onInitFailed}
                           onSecurityFailure={this.onSecurityFailure}
                           consoleContainerId={isExpanded ? "vnc-display-container-expanded" : "vnc-display-container-minimized"}
-                          resizeSession
-                          scaleViewport
+                          scaleViewport={!isExpanded || state.sizeMode == "local"}
+                          resizeSession={!!isExpanded && state.sizeMode == "remote"}
                     />
                     : <div className="vm-console-vnc">
                         <EmptyState>
