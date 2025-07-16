@@ -129,7 +129,6 @@ export async function storageVolumeGetAll({
                 .filter(vol => vol.status === 'fulfilled')
                 .map(vol => parseStorageVolumeDumpxml(connectionName, vol.value[0]));
     } catch (ex) {
-        if (ex instanceof Error)
-            console.warn("GET_STORAGE_VOLUMES action failed for pool", poolName, ":", ex.toString());
+        console.warn("GET_STORAGE_VOLUMES action failed for pool", poolName, ":", String(ex));
     }
 }
