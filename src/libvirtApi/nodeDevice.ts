@@ -67,8 +67,7 @@ export async function nodeDeviceGet({
             store.dispatch(updateOrAddNodeDevice(deviceXmlObject));
         }
     } catch (ex) {
-        if (ex instanceof Error)
-            console.warn('GET_NODE_DEVICE action failed for path', objPath, ex.toString());
+        console.warn('GET_NODE_DEVICE action failed for path', objPath, String(ex));
     }
 }
 
@@ -87,8 +86,7 @@ export async function nodeDeviceGetAll({
             await Promise.all(objPathsChunked.map(path => nodeDeviceGet({ connectionName, id: path })));
         }
     } catch (ex) {
-        if (ex instanceof Error)
-            console.warn('GET_ALL_NODE_DEVICES action failed:', ex.toString());
+        console.warn('GET_ALL_NODE_DEVICES action failed:', String(ex));
         throw ex;
     }
 }

@@ -127,8 +127,7 @@ export async function storagePoolGet({
         }
         store.dispatch(updateOrAddStoragePool(Object.assign({}, dumpxmlParams, props), !!updateOnly));
     } catch (ex) {
-        if (ex instanceof Error)
-            console.warn('GET_STORAGE_POOL action failed for path', objPath, ex.toString());
+        console.warn('GET_STORAGE_POOL action failed for path', objPath, String(ex));
     }
 }
 
@@ -150,8 +149,7 @@ export async function storagePoolGetAll({
                 return storagePoolGet({ connectionName, id: path });
         }));
     } catch (ex) {
-        if (ex instanceof Error)
-            console.warn('GET_ALL_STORAGE_POOLS action failed:', ex.toString());
+        console.warn('GET_ALL_STORAGE_POOLS action failed:', String(ex));
         throw ex;
     }
 }
@@ -168,8 +166,7 @@ export async function storagePoolGetCapabilities({ connectionName } : { connecti
             });
         return parsePoolCapabilities(poolCapabilities);
     } catch (ex) {
-        if (ex instanceof Error)
-            console.warn('virsh pool-capabilities failed:', ex.toString());
+        console.warn('virsh pool-capabilities failed:', String(ex));
         throw ex;
     }
 }

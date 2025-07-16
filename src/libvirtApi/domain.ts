@@ -518,7 +518,7 @@ export async function domainDelete({
         await call(connectionName, objPath, 'org.libvirt.Domain', 'Undefine', [flags], { timeout, type: 'u' });
     } catch (ex) {
         // Transient domains get undefined after shut off
-        if (!live || !(ex instanceof Error && ex.message.includes("Domain not found")))
+        if (!live || !String(ex).includes("Domain not found"))
             throw ex;
     }
 }
@@ -883,13 +883,11 @@ export async function domainGet({
 
         await snapshotGetAll({ connectionName, domainPath: objPath });
     } catch (ex) {
-        if (ex instanceof Error) {
-            // "not found" is an expected error, as this runs on Stopped/Undefined events; so be quiet about these
-            if (ex.message.startsWith("Domain not found"))
-                logDebug(`GET_VM: domain ${connectionName} ${objPath} went away, undefining: ${ex.toString()}`);
-            else
-                console.warn(`GET_VM failed for ${objPath}, undefining: ${ex.toString()}`);
-        }
+        // "not found" is an expected error, as this runs on Stopped/Undefined events; so be quiet about these
+        if (String(ex).startsWith("Domain not found"))
+            logDebug(`GET_VM: domain ${connectionName} ${objPath} went away, undefining: ${String(ex)}`);
+        else
+            console.warn(`GET_VM failed for ${objPath}, undefining: ${String(ex)}`);
         // but undefine either way -- if we  can't get info about the VM, don't show it
         store.dispatch(undefineVm({ connectionName, id: objPath }));
     }
@@ -902,8 +900,7 @@ export async function domainGetAll({ connectionName } : { connectionName: Connec
         store.dispatch(deleteUnlistedVMs(connectionName, [], objPaths));
         await Promise.all(objPaths.map(path => domainGet({ connectionName, id: path })));
     } catch (ex) {
-        if (ex instanceof Error)
-            console.warn('GET_ALL_VMS action failed:', ex.toString());
+        console.warn('GET_ALL_VMS action failed:', String(ex));
         throw ex;
     }
 }

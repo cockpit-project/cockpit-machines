@@ -105,8 +105,7 @@ export async function networkGetAll({
         const [objPaths]: [string[]] = await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListNetworks', [0], { timeout, type: 'u' });
         await Promise.all(objPaths.map(path => networkGet({ connectionName, id: path })));
     } catch (ex) {
-        if (ex instanceof Error)
-            console.warn('GET_ALL_NETWORKS action failed:', ex.toString());
+        console.warn('GET_ALL_NETWORKS action failed:', String(ex));
         throw ex;
     }
 }
@@ -148,8 +147,7 @@ export async function networkGet({
         const network = parseNetDumpxml(xml);
         store.dispatch(updateOrAddNetwork(Object.assign(props, network), !!updateOnly));
     } catch (ex) {
-        if (ex instanceof Error)
-            console.warn('GET_NETWORK action failed for path', objPath, ex.toString());
+        console.warn('GET_NETWORK action failed for path', objPath, String(ex));
     }
 }
 

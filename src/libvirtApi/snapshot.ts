@@ -137,12 +137,10 @@ export async function snapshotGetAll({
             snaps: snaps.sort((a, b) => Number(a.creationTime) - Number(b.creationTime))
         }));
     } catch (ex) {
-        if (ex instanceof Error) {
-            if (ex.name === 'org.freedesktop.DBus.Error.UnknownMethod')
-                logDebug("LIST_DOMAIN_SNAPSHOTS action failed for domain", domainPath, ", not supported by libvirt-dbus");
-            else
-                console.warn("LIST_DOMAIN_SNAPSHOTS action failed for domain", domainPath, ":", JSON.stringify(ex), "name:", ex.name);
-        }
+        if (ex && typeof ex === 'object' && 'name' in ex && ex.name === 'org.freedesktop.DBus.Error.UnknownMethod')
+            logDebug("LIST_DOMAIN_SNAPSHOTS action failed for domain", domainPath, ", not supported by libvirt-dbus");
+        else
+            console.warn("LIST_DOMAIN_SNAPSHOTS action failed for domain", domainPath, ":", String(ex));
         store.dispatch(updateDomainSnapshots({
             connectionName,
             domainPath,
