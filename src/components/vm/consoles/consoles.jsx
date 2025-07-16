@@ -27,7 +27,7 @@ import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/
 
 import { ConsoleState } from './common';
 import { SerialActive, SerialInactive, SerialMissing, SerialPending } from './serial';
-import { VncActive, VncActiveActions, VncInactive, VncMissing, VncPending } from './vnc';
+import { VncState, VncActive, VncActiveActions, VncInactive, VncMissing, VncPending } from './vnc';
 import { SpiceActive, SpiceInactive } from './spice';
 
 import { domainSerialConsoleCommand } from '../../../libvirtApi/domain.js';
@@ -63,7 +63,7 @@ export class ConsoleCardState extends StateObject {
     constructor () {
         super();
         this.type = null;
-        this.vncState = new ConsoleState();
+        this.vncState = new VncState();
         this.serialStates = new SerialStates();
 
         this.follow(this.vncState);
@@ -140,7 +140,7 @@ export const ConsoleCard = ({ state, vm, config, onAddErrorNotification, isExpan
                         state={state.vncState}
                         vm={vm}
                         vnc={vnc}
-                    />
+                        isExpanded={isExpanded} />
                 );
                 body_state = state.vncState;
             } else if (inactive_vnc) {
