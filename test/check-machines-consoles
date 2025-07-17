@@ -437,7 +437,9 @@ fullscreen=0
         self.performAction("subVmTest1", "forceOff")
         assert_state("Start the virtual machine to access the console")
         self.performAction(name, "run")
-        testlib.wait(lambda: "Welcome to Alpine Linux" in b.text(f"#{name}-terminal .xterm-accessibility-tree"))
+        testlib.wait(lambda: ("Welcome to Alpine Linux" in
+                              b.text(f"#{name}-terminal .xterm-accessibility-tree")),
+                     delay=5)
 
     def testExpandedConsole(self):
         b = self.browser
