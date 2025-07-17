@@ -83,7 +83,7 @@ export const VmDisksActions = ({
 
     return (
         <Button id={`${idPrefix}-adddisk`} variant='secondary'
-                onClick={open} isDisabled={!supportedDiskBusTypes || supportedDiskBusTypes.length == 0}>
+                onClick={open} isDisabled={supportedDiskBusTypes.length == 0}>
             {_("Add disk")}
         </Button>
     );

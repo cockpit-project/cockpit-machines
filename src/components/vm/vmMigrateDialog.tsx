@@ -19,6 +19,9 @@
 
 import cockpit from 'cockpit';
 import React, { useState } from 'react';
+
+import type { ConnectionName, VM } from '../../types';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
@@ -44,7 +47,19 @@ import './vmMigrateDialog.css';
 
 const _ = cockpit.gettext;
 
-const DestUriRow = ({ validationFailed, destUri, setDestUri }) => {
+interface ValidationFailed {
+    destUri?: string;
+}
+
+const DestUriRow = ({
+    validationFailed,
+    destUri,
+    setDestUri
+} : {
+    validationFailed: ValidationFailed,
+    destUri: string,
+    setDestUri: (val: string) => void,
+}) => {
     return (
         <FormGroup label={_("Destination URI")} fieldId="dest-uri-input">
             <TextInput id='dest-uri-input'
@@ -57,7 +72,13 @@ const DestUriRow = ({ validationFailed, destUri, setDestUri }) => {
     );
 };
 
-const DurationRow = ({ temporary, setTemporary }) => {
+const DurationRow = ({
+    temporary,
+    setTemporary
+} : {
+    temporary: boolean,
+    setTemporary: (val: boolean) => void,
+}) => {
     return (
         <FormGroup hasNoPaddingTop
                    fieldId="temporary"
@@ -81,12 +102,20 @@ const DurationRow = ({ temporary, setTemporary }) => {
             <Checkbox id="temporary"
                       isChecked={temporary}
                       label={_("Temporary migration")}
-                      onChange={setTemporary} />
+                      onChange={(_, val) => setTemporary(val)} />
         </FormGroup>
     );
 };
 
-const StorageRow = ({ storage, setStorage }) => {
+type StorageCopyMode = "copy" | "nocopy";
+
+const StorageRow = ({
+    storage,
+    setStorage
+} : {
+    storage: StorageCopyMode,
+    setStorage: (val: StorageCopyMode) => void,
+}) => {
     return (
         <FormGroup hasNoPaddingTop
                    label={_("Storage")}
@@ -120,19 +149,30 @@ const StorageRow = ({ storage, setStorage }) => {
     );
 };
 
-export const MigrateDialog = ({ vm, connectionName }) => {
+interface DialogError {
+    dialogError?: string;
+    message?: string;
+}
+
+export const MigrateDialog = ({
+    vm,
+    connectionName
+} : {
+    vm: VM,
+    connectionName: ConnectionName,
+}) => {
     const Dialogs = useDialogs();
     const [destUri, setDestUri] = useState("");
-    const [error, setDialogError] = useState({});
+    const [error, setDialogError] = useState<DialogError>({});
     const [inProgress, setInProgress] = useState(false);
-    const [storage, setStorage] = useState("nocopy");
+    const [storage, setStorage] = useState<StorageCopyMode>("nocopy");
     const [temporary, setTemporary] = useState(false);
-    const [validationFailed, setValidationFailed] = useState(false);
+    const [validationFailed, setValidationFailed] = useState<ValidationFailed>({});
 
     const copyStorageHidden = !VMS_CONFIG.StorageMigrationSupported;
 
     function validateParams() {
-        const validation = {};
+        const validation: ValidationFailed = {};
         if (isEmpty(destUri.trim()))
             validation.destUri = _("Destination URI must not be empty");
 
@@ -140,8 +180,9 @@ export const MigrateDialog = ({ vm, connectionName }) => {
     }
 
     function onMigrate() {
-        if (!isObjectEmpty(validateParams())) {
-            setValidationFailed(true);
+        const v = validateParams();
+        if (!isObjectEmpty(v)) {
+            setValidationFailed(v);
             return;
         }
 
@@ -207,7 +248,12 @@ export const MigrateDialog = ({ vm, connectionName }) => {
                 description={copyStorageHidden && _("Storage volumes must be shared between this host and the destination host.")}
             />
             <ModalBody>
-                {!isObjectEmpty(error) && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.message} />}
+                {error.dialogError &&
+                    <ModalError
+                        dialogError={error.dialogError}
+                        {...error.message && { dialogErrorDetail: error.message } }
+                    />
+                }
                 {body}
             </ModalBody>
             {footer}

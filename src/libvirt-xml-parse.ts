@@ -210,13 +210,21 @@ export function getDomainCapCPUHostModel(capsXML: string): optString {
     return hostModelModeElem && Array.prototype.map.call(hostModelModeElem.getElementsByTagName("model"), modelElem => modelElem.textContent)[0];
 }
 
-export function getDomainCapDiskBusTypes(capsXML: string): null | optString[] {
+export function getDomainCapDiskBusTypes(capsXML: string): string[] {
     const domainCapsElem = getElem(capsXML);
     const devicesCapsElem = domainCapsElem.getElementsByTagName("devices")?.[0];
     const diskCapsElem = devicesCapsElem?.getElementsByTagName("disk")?.[0];
     const enumElems = diskCapsElem?.getElementsByTagName("enum");
     const busElem = enumElems && Array.prototype.find.call(enumElems, enumElem => enumElem.getAttribute("name") == "bus");
-    return busElem && Array.prototype.map.call(busElem.getElementsByTagName("value"), valueElem => valueElem.textContent);
+
+    const res: string[] = [];
+    if (busElem) {
+        const vals = busElem.getElementsByTagName("value");
+        for (let i = 0; i < vals.length; i++)
+            if (vals[i].textContent)
+                res.push(vals[i].textContent);
+    }
+    return res;
 }
 
 export function getDomainCapSupportsSpice(capsXML: string): boolean {

@@ -410,13 +410,14 @@ export interface VM extends VMXML {
         maxVcpu: optString;
         cpuModels: string[];
         cpuHostModel: optString;
-        supportedDiskBusTypes: null | (optString)[];
+        supportedDiskBusTypes: string[];
         supportsSpice: boolean;
         supportsTPM: boolean;
     };
 
     rssMemory: number | undefined;
     cpuTime: number | undefined;
+    cpuUsage: number | undefined;
     actualTimeInMs: number | undefined;
     disksStats: Record<string, VMDiskStat> | undefined;
 
