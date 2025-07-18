@@ -19,6 +19,9 @@
 
 import cockpit from 'cockpit';
 import React, { useState } from 'react';
+
+import type { ConnectionName } from '../../types';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import {
@@ -30,15 +33,27 @@ import { FormHelper } from 'cockpit-components-form-helper.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { useDialogs } from 'dialogs.jsx';
 
-import { isObjectEmpty } from '../../helpers.js';
 import { domainRename } from '../../libvirtApi/domain.js';
 
 const _ = cockpit.gettext;
 
-export const RenameDialog = ({ vmName, vmId, connectionName }) => {
+interface DialogError {
+    dialogError?: string;
+    dialogErrorDetail?: string;
+}
+
+export const RenameDialog = ({
+    vmName,
+    vmId,
+    connectionName
+} : {
+    vmName: string,
+    vmId: string,
+    connectionName: ConnectionName,
+}) => {
     const Dialogs = useDialogs();
     const [newName, setNewName] = useState(vmName);
-    const [error, dialogErrorSet] = useState({});
+    const [error, dialogErrorSet] = useState<DialogError>({});
     const [submitted, setSubmitted] = useState(false);
 
     function onRename() {
@@ -67,14 +82,19 @@ export const RenameDialog = ({ vmName, vmId, connectionName }) => {
                     onRename();
                 }}
                 isHorizontal>
-                    {!isObjectEmpty(error) && <ModalError dialogError={error.dialogError} dialogErrorDetail={error.dialogErrorDetail} />}
+                    {error.dialogError &&
+                        <ModalError
+                            dialogError={error.dialogError}
+                            {...error.dialogErrorDetail && { dialogErrorDetail: error.dialogErrorDetail } }
+                        />
+                    }
                     <FormGroup label={_("New name")}
                                fieldId="rename-dialog-new-name">
                         <TextInput id='rename-dialog-new-name'
                                    validated={submitted && !newName ? "error" : "default"}
                                    value={newName}
                                    onChange={(_, value) => setNewName(value)} />
-                        <FormHelper helperTextInvalid={submitted && !newName && _("New name must not be empty")} />
+                        <FormHelper helperTextInvalid={(submitted && !newName) ? _("New name must not be empty") : null} />
                     </FormGroup>
                 </Form>
             </ModalBody>

@@ -18,7 +18,10 @@
  */
 import cockpit from 'cockpit';
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+
+import type { VM } from '../../types';
+import type { Notification } from '../../app';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
 import { DropdownItem } from "@patternfly/react-core/dist/esm/components/Dropdown";
@@ -63,140 +66,170 @@ import store from "../../store.js";
 
 const _ = cockpit.gettext;
 
-const onStart = (vm, setOperationInProgress) => domainStart({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
-    setOperationInProgress(false);
-    console.warn("Failed to start VM", vm.name, ":", cockpit.message(ex));
-    store.dispatch(
-        updateVm({
-            connectionName: vm.connectionName,
-            name: vm.name,
-            error: {
-                text: cockpit.format(_("VM $0 failed to start"), vm.name),
-                detail: ex.message,
-            }
-        })
-    );
-});
+const onStart = (vm: VM, setOperationInProgress: (val: boolean) => void) => (
+    domainStart({ id: vm.id, connectionName: vm.connectionName }).catch(ex => {
+        setOperationInProgress(false);
+        console.warn("Failed to start VM", vm.name, ":", cockpit.message(ex));
+        store.dispatch(
+            updateVm({
+                connectionName: vm.connectionName,
+                name: vm.name,
+                error: {
+                    text: cockpit.format(_("VM $0 failed to start"), vm.name),
+                    detail: ex.message,
+                }
+            })
+        );
+    })
+);
 
-const onInstall = (vm, onAddErrorNotification) => domainInstall({ vm, onAddErrorNotification }).catch(ex => {
-    onAddErrorNotification({
-        text: cockpit.format(_("VM $0 failed to get installed"), vm.name),
-        detail: ex.message.split(/Traceback(.+)/)[0],
-        resourceId: vm.id,
-    });
-});
-
-const onReboot = (vm) => domainReboot({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
-    store.dispatch(
-        updateVm({
-            connectionName: vm.connectionName,
-            name: vm.name,
-            error: {
-                text: cockpit.format(_("VM $0 failed to reboot"), vm.name),
-                detail: ex.message,
-            }
-        })
-    );
-});
-
-const onForceReboot = (vm) => domainForceReboot({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
-    store.dispatch(
-        updateVm({
-            connectionName: vm.connectionName,
-            name: vm.name,
-            error: {
-                text: cockpit.format(_("VM $0 failed to force reboot"), vm.name),
-                detail: ex.message,
-            }
-        })
-    );
-});
-
-const onShutdown = (vm, setOperationInProgress) => domainShutdown({ name: vm.name, id: vm.id, connectionName: vm.connectionName })
-        .then(() => !vm.persistent && cockpit.location.go(["vms"]))
-        .catch(ex => {
-            setOperationInProgress(false);
-            store.dispatch(
-                updateVm({
-                    connectionName: vm.connectionName,
-                    name: vm.name,
-                    error: {
-                        text: cockpit.format(_("VM $0 failed to shutdown"), vm.name),
-                        detail: ex.message,
-                    }
-                })
-            );
-        });
-
-const onPause = (vm) => domainPause({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
-    store.dispatch(
-        updateVm({
-            connectionName: vm.connectionName,
-            name: vm.name,
-            error: {
-                text: cockpit.format(_("VM $0 failed to pause"), vm.name),
-                detail: ex.message,
-            }
-        })
-    );
-});
-
-const onResume = (vm) => domainResume({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
-    store.dispatch(
-        updateVm({
-            connectionName: vm.connectionName,
-            name: vm.name,
-            error: {
-                text: cockpit.format(_("VM $0 failed to resume"), vm.name),
-                detail: ex.message,
-            }
-        })
-    );
-});
-
-const onForceoff = (vm) => domainForceOff({ name: vm.name, id: vm.id, connectionName: vm.connectionName })
-        .then(() => !vm.persistent && cockpit.location.go(["vms"]))
-        .catch(ex => {
-            store.dispatch(
-                updateVm({
-                    connectionName: vm.connectionName,
-                    name: vm.name,
-                    error: {
-                        text: cockpit.format(_("VM $0 failed to force shutdown"), vm.name),
-                        detail: ex.message,
-                    }
-                })
-            );
-        });
-
-const onSendNMI = (vm) => domainSendNMI({ name: vm.name, id: vm.id, connectionName: vm.connectionName }).catch(ex => {
-    store.dispatch(
-        updateVm({
-            connectionName: vm.connectionName,
-            name: vm.name,
-            error: {
-                text: cockpit.format(_("VM $0 failed to send NMI"), vm.name),
-                detail: ex.message,
-            }
-        })
-    );
-});
-
-const onAddTPM = (vm, onAddErrorNotification) => domainAddTPM({ connectionName: vm.connectionName, vmName: vm.name })
-        .catch(ex => onAddErrorNotification({
-            text: cockpit.format(_("Failed to add TPM to VM $0"), vm.name),
-            detail: ex.message,
+const onInstall = (vm: VM, onAddErrorNotification: (n: Notification) => void) => (
+    domainInstall({ vm }).catch(ex => {
+        onAddErrorNotification({
+            text: cockpit.format(_("VM $0 failed to get installed"), vm.name),
+            detail: ex.message.split(/Traceback(.+)/)[0],
             resourceId: vm.id,
-        }));
+        });
+    })
+);
 
-const VmActions = ({ vm, vms, onAddErrorNotification, isDetailsPage = undefined }) => {
+const onReboot = (vm: VM) => (
+    domainReboot({ id: vm.id, connectionName: vm.connectionName }).catch(ex => {
+        store.dispatch(
+            updateVm({
+                connectionName: vm.connectionName,
+                name: vm.name,
+                error: {
+                    text: cockpit.format(_("VM $0 failed to reboot"), vm.name),
+                    detail: ex.message,
+                }
+            })
+        );
+    })
+);
+
+const onForceReboot = (vm: VM) => (
+    domainForceReboot({ id: vm.id, connectionName: vm.connectionName }).catch(ex => {
+        store.dispatch(
+            updateVm({
+                connectionName: vm.connectionName,
+                name: vm.name,
+                error: {
+                    text: cockpit.format(_("VM $0 failed to force reboot"), vm.name),
+                    detail: ex.message,
+                }
+            })
+        );
+    })
+);
+
+const onShutdown = (vm: VM, setOperationInProgress: (val: boolean) => void) => (
+    domainShutdown({ id: vm.id, connectionName: vm.connectionName })
+            .then(() => !vm.persistent && cockpit.location.go(["vms"]))
+            .catch(ex => {
+                setOperationInProgress(false);
+                store.dispatch(
+                    updateVm({
+                        connectionName: vm.connectionName,
+                        name: vm.name,
+                        error: {
+                            text: cockpit.format(_("VM $0 failed to shutdown"), vm.name),
+                            detail: ex.message,
+                        }
+                    })
+                );
+            })
+);
+
+const onPause = (vm: VM) => (
+    domainPause({ id: vm.id, connectionName: vm.connectionName }).catch(ex => {
+        store.dispatch(
+            updateVm({
+                connectionName: vm.connectionName,
+                name: vm.name,
+                error: {
+                    text: cockpit.format(_("VM $0 failed to pause"), vm.name),
+                    detail: ex.message,
+                }
+            })
+        );
+    })
+);
+
+const onResume = (vm: VM) => (
+    domainResume({ id: vm.id, connectionName: vm.connectionName }).catch(ex => {
+        store.dispatch(
+            updateVm({
+                connectionName: vm.connectionName,
+                name: vm.name,
+                error: {
+                    text: cockpit.format(_("VM $0 failed to resume"), vm.name),
+                    detail: ex.message,
+                }
+            })
+        );
+    })
+);
+
+const onForceoff = (vm: VM) => (
+    domainForceOff({ id: vm.id, connectionName: vm.connectionName })
+            .then(() => !vm.persistent && cockpit.location.go(["vms"]))
+            .catch(ex => {
+                store.dispatch(
+                    updateVm({
+                        connectionName: vm.connectionName,
+                        name: vm.name,
+                        error: {
+                            text: cockpit.format(_("VM $0 failed to force shutdown"), vm.name),
+                            detail: ex.message,
+                        }
+                    })
+                );
+            })
+);
+
+const onSendNMI = (vm: VM) => (
+    domainSendNMI({ id: vm.id, connectionName: vm.connectionName }).catch(ex => {
+        store.dispatch(
+            updateVm({
+                connectionName: vm.connectionName,
+                name: vm.name,
+                error: {
+                    text: cockpit.format(_("VM $0 failed to send NMI"), vm.name),
+                    detail: ex.message,
+                }
+            })
+        );
+    })
+);
+
+const onAddTPM = (vm: VM, onAddErrorNotification: (n: Notification) => void) => (
+    domainAddTPM({ connectionName: vm.connectionName, vmName: vm.name })
+            .catch(ex => onAddErrorNotification({
+                text: cockpit.format(_("Failed to add TPM to VM $0"), vm.name),
+                detail: ex.message,
+                resourceId: vm.id,
+            }))
+);
+
+const VmActions = ({
+    vm,
+    vms,
+    onAddErrorNotification,
+    isDetailsPage = undefined
+} : {
+    vm : VM,
+    vms?: VM[],
+    onAddErrorNotification: (n: Notification) => void,
+    isDetailsPage?: boolean | undefined,
+}) => {
     const Dialogs = useDialogs();
     const [operationInProgress, setOperationInProgress] = useState(false);
     const [prevVmState, setPrevVmState] = useState(vm.state);
     const [virtCloneAvailable, setVirtCloneAvailable] = useState(false);
 
     useEffect(() => {
-        cockpit.script('type virt-clone', { err: 'ignore' })
+        cockpit.script('type virt-clone', [], { err: 'ignore' })
                 .then(() => setVirtCloneAvailable(true));
     }, []);
 
@@ -281,7 +314,7 @@ const VmActions = ({ vm, vms, onAddErrorNotification, isDetailsPage = undefined 
                                   actionsList={[
                                       {
                                           variant: "primary",
-                                          handler: () => onShutdown(vm),
+                                          handler: () => onShutdown(vm, setOperationInProgress),
                                           name: _("Shut down"),
                                           id: "off",
                                       },
@@ -394,10 +427,12 @@ const VmActions = ({ vm, vms, onAddErrorNotification, isDetailsPage = undefined 
     let install = null;
     if (domainCanInstall(state, hasInstallPhase)) {
         install = (
-            <Button key='action-install' variant="secondary"
-                           isLoading={vm.installInProgress}
-                           isDisabled={vm.installInProgress}
-                           onClick={() => onInstall(vm, onAddErrorNotification)} id={`${id}-install`}>
+            <Button
+                key='action-install' variant="secondary"
+                isLoading={!!vm.installInProgress}
+                isDisabled={!!vm.installInProgress}
+                onClick={() => onInstall(vm, onAddErrorNotification)} id={`${id}-install`}
+            >
                 {_("Install")}
             </Button>
         );
@@ -519,12 +554,6 @@ const VmActions = ({ vm, vms, onAddErrorNotification, isDetailsPage = undefined 
             />
         </div>
     );
-};
-
-VmActions.propTypes = {
-    vm: PropTypes.object.isRequired,
-    vms: PropTypes.array,
-    onAddErrorNotification: PropTypes.func.isRequired,
 };
 
 export default VmActions;
