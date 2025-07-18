@@ -525,6 +525,7 @@ export interface NetworkXML {
     forward?: {
         mode: string;
     };
+    // FIXME - this should certainly be forward.interface.dev instead of interface.interface.dev
     interface?: {
         interface: {
             dev: optString;
@@ -605,4 +606,37 @@ export interface NodeInterface {
     name: string;
     MAC: string;
     Active: boolean;
+}
+
+/** OSInfo **/
+
+interface OSInfoResources {
+    ram?: number;
+    storage?: number;
+}
+
+interface OSInfoMedia {
+    unattendedInstallable: boolean;
+    profiles: string;
+}
+
+export interface OSInfo {
+    // All of these are the empty string when no value is available.
+    id: string;
+    shortId: string;
+    name: string;
+    version: string;
+    family: string;
+    vendor: string;
+    releaseDate: string;
+    eolDate: string;
+    codename: string;
+
+    recommendedResources: OSInfoResources;
+    minimumResources: OSInfoResources;
+
+    profiles: string[];
+    unattendedInstallable: boolean;
+    medias: Record<string, OSInfoMedia>;
+    treeInstallable: boolean;
 }

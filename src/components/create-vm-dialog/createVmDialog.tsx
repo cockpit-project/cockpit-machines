@@ -18,11 +18,15 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+
+import type { optString, ConnectionName, VM, StoragePool, Network, NodeDevice, OSInfo } from '../../types';
+import type { Notification } from '../../app';
+import type { Dialogs } from 'dialogs';
+
 import { debounce } from 'throttle-debounce';
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
-import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
+import { FormSelect, FormSelectOption, type FormSelectProps } from "@patternfly/react-core/dist/esm/components/FormSelect";
 import { Grid, GridItem } from "@patternfly/react-core/dist/esm/layouts/Grid";
 import { InputGroup } from "@patternfly/react-core/dist/esm/components/InputGroup";
 import {
@@ -41,10 +45,10 @@ import { useInit } from "hooks.js";
 import cockpit from 'cockpit';
 import store from "../../store.js";
 import { MachinesConnectionSelector } from '../common/machinesConnectionSelector.jsx';
-import { TypeaheadSelect } from 'cockpit-components-typeahead-select';
+import { TypeaheadSelect, type TypeaheadSelectOption } from 'cockpit-components-typeahead-select';
 import { FormHelper } from "cockpit-components-form-helper.jsx";
 import { FileAutoComplete } from "cockpit-components-file-autocomplete.jsx";
-import { SimpleSelect } from "cockpit-components-simple-select";
+import { SimpleSelect, type SimpleSelectOption } from "cockpit-components-simple-select";
 import {
     isEmpty,
     digitFilter,
@@ -52,7 +56,7 @@ import {
     getBestUnit,
     toReadableNumber,
     units,
-    getStorageVolumesUsage,
+    getStorageVolumesUsage, type StorageVolumesUsage,
     LIBVIRT_SYSTEM_CONNECTION,
     LIBVIRT_SESSION_CONNECTION,
 } from "../../helpers.js";
@@ -97,14 +101,18 @@ const _ = cockpit.gettext;
 
 /* Returns pool's available space
  * Pool needs to be referenced by it's name or path.
- *
- * @param {array} storagePools
- * @param {string} poolName
- * @param {string} poolPath
- * @param {string} connectionName
- * @returns {number}
  */
-function getPoolSpaceAvailable({ storagePools, poolName, poolPath, connectionName }) {
+function getPoolSpaceAvailable({
+    storagePools,
+    poolName,
+    poolPath,
+    connectionName
+} : {
+    storagePools: StoragePool[],
+    poolName?: string | undefined,
+    poolPath?: string | undefined,
+    connectionName: ConnectionName,
+}): number | undefined {
     storagePools = storagePools.filter(pool => pool.connectionName === connectionName);
 
     let storagePool;
@@ -113,7 +121,7 @@ function getPoolSpaceAvailable({ storagePools, poolName, poolPath, connectionNam
     else if (poolPath)
         storagePool = storagePools.find(pool => pool.target && pool.target.path === poolPath);
 
-    return storagePool ? storagePool.available : undefined;
+    return (storagePool && storagePool.available) ? Number(storagePool.available) : undefined;
 }
 
 /* Returns available space of default storage pool
@@ -124,16 +132,12 @@ function getPoolSpaceAvailable({ storagePools, poolName, poolPath, connectionNam
  * If no default pool could be found, virt-install will create a pool named "default",
  * whose available space we cannot predict
  * see: virtinstall/storage.py - StoragePool.build_default_pool()
- *
- * @param {array} storagePools
- * @param {string} connectionName
- * @returns {number}
  */
 
-let current_user = null;
+let current_user: cockpit.UserInfo | null = null;
 cockpit.user().then(user => { current_user = user });
 
-function getSpaceAvailable(storagePools, connectionName) {
+function getSpaceAvailable(storagePools: StoragePool[], connectionName: ConnectionName): number | undefined {
     let space = getPoolSpaceAvailable({ storagePools, poolName: "default", connectionName });
 
     if (!space) {
@@ -149,19 +153,19 @@ function getSpaceAvailable(storagePools, connectionName) {
     return space;
 }
 
-function getMemoryDefaults(nodeMaxMemory) {
+function getMemoryDefaults(nodeMaxMemory: optString) {
     // Use available memory on host as initial default value in modal
     let memorySizeUnit = units.MiB.name;
     let memorySize = nodeMaxMemory && Math.floor(convertToUnit(nodeMaxMemory, units.KiB, units.MiB));
     // If available memory is higher than 1GiB, set 1GiB as default value in modal
-    if (memorySize > 1024) {
+    if (memorySize && memorySize > 1024) {
         memorySizeUnit = units.GiB.name;
         memorySize = 1;
     }
 
     const minimumMemory = 0;
 
-    return { memorySize, memorySizeUnit, minimumMemory };
+    return { memorySize: memorySize || 0, memorySizeUnit, minimumMemory };
 }
 
 function getStorageDefaults() {
@@ -172,7 +176,7 @@ function getStorageDefaults() {
     return { storageSize, storageSizeUnit, minimumStorage };
 }
 
-function getVmName(connectionName, vms, os) {
+function getVmName(connectionName: ConnectionName, vms: VM[], os: OSInfo) {
     let retName = os.shortId;
 
     const date = new Date();
@@ -190,8 +194,50 @@ function getVmName(connectionName, vms, os) {
     return tmpRetName;
 }
 
-function validateParams(vmParams) {
-    const validationFailed = {};
+interface VmParams {
+    connectionName: ConnectionName;
+    vmName: string;
+    suggestedVmName: string;
+    os: OSInfo | undefined;
+    profile: string;
+    source: optString;
+    sourceType: string;
+    offlineToken: optString;
+    accessToken: optString;
+    memorySize: number;
+    memorySizeUnit: string;
+    storagePool: string;
+    storageVolume: string | undefined;
+    storageSize: number;
+    storageSizeUnit: string;
+    userLogin: optString;
+    userPassword: optString;
+    rootPassword: optString;
+    sshKeys: { value: string }[];
+    startVm: boolean;
+}
+
+type OnValueChanged = <K extends keyof VmParams>(key: K, value: VmParams[K]) => void;
+
+interface ValidationFailed {
+    vmName?: string;
+    os?: string;
+    source?: string;
+    offlineToken?: string;
+    memory?: string;
+    storage?: string;
+    userLogin?: string;
+    userPassword?: string;
+}
+
+interface ValidateParamsExtraArgs {
+    osInfoList: OSInfo[];
+    nodeMaxMemory: string;
+    vms: VM[];
+}
+
+function validateParams(vmParams: VmParams & ValidateParamsExtraArgs): ValidationFailed {
+    const validationFailed: ValidationFailed = {};
 
     if (isEmpty(vmParams.vmName.trim()) && isEmpty(vmParams.suggestedVmName.trim()))
         validationFailed.vmName = _("Name must not be empty");
@@ -204,21 +250,22 @@ function validateParams(vmParams) {
     const source = vmParams.source ? vmParams.source.trim() : null;
 
     if (!isEmpty(source)) {
+        cockpit.assert(source);
         switch (vmParams.sourceType) {
         case PXE_SOURCE:
             break;
         case LOCAL_INSTALL_MEDIA_SOURCE:
         case CLOUD_IMAGE:
         case EXISTING_DISK_IMAGE_SOURCE:
-            if (!vmParams.source.startsWith("/")) {
+            if (!source.startsWith("/")) {
                 validationFailed.source = _("Invalid filename");
             }
             break;
         case URL_SOURCE:
         default:
-            if (!vmParams.source.startsWith("http") &&
-                !vmParams.source.startsWith("ftp") &&
-                !vmParams.source.startsWith("nfs")) {
+            if (!source.startsWith("http") &&
+                !source.startsWith("ftp") &&
+                !source.startsWith("nfs")) {
                 validationFailed.source = _("Source should start with http, ftp or nfs protocol");
             }
             break;
@@ -261,7 +308,17 @@ function validateParams(vmParams) {
     return validationFailed;
 }
 
-const NameRow = ({ vmName, suggestedVmName, onValueChanged, validationFailed }) => {
+const NameRow = ({
+    vmName,
+    suggestedVmName,
+    onValueChanged,
+    validationFailed
+} : {
+    vmName: string,
+    suggestedVmName: string,
+    onValueChanged: OnValueChanged,
+    validationFailed: ValidationFailed,
+}) => {
     const validationStateName = validationFailed.vmName ? 'error' : 'default';
 
     return (
@@ -278,11 +335,37 @@ const NameRow = ({ vmName, suggestedVmName, onValueChanged, validationFailed }) 
     );
 };
 
-const SourceRow = ({ connectionName, source, sourceType, networks, nodeDevices, os, osInfoList, cloudInitSupported, downloadOSSupported, offlineToken, onValueChanged, validationFailed }) => {
+const SourceRow = ({
+    connectionName,
+    source,
+    sourceType,
+    networks,
+    nodeDevices,
+    os,
+    osInfoList,
+    cloudInitSupported,
+    downloadOSSupported,
+    offlineToken,
+    onValueChanged,
+    validationFailed
+} : {
+    connectionName: ConnectionName,
+    source: optString,
+    sourceType: string,
+    networks: Network[],
+    nodeDevices: NodeDevice[],
+    os: OSInfo | undefined,
+    osInfoList: OSInfo[],
+    cloudInitSupported: boolean,
+    downloadOSSupported: boolean,
+    offlineToken: optString,
+    onValueChanged: OnValueChanged,
+    validationFailed: ValidationFailed,
+}) => {
     let installationSource;
     let installationSourceId;
     let installationSourceWarning;
-    let validationStateSource = validationFailed.source ? 'error' : 'default';
+    let validationStateSource: FormSelectProps["validated"] = validationFailed.source ? 'error' : 'default';
 
     switch (sourceType) {
     case LOCAL_INSTALL_MEDIA_SOURCE:
@@ -290,7 +373,7 @@ const SourceRow = ({ connectionName, source, sourceType, networks, nodeDevices, 
         installationSource = (
             <FileAutoComplete id={installationSourceId}
                 placeholder={_("Path to ISO file on host's file system")}
-                onChange={value => onValueChanged('source', value)}
+                onChange={(value: string) => onValueChanged('source', value)}
                 superuser="try" />
         );
         break;
@@ -299,7 +382,7 @@ const SourceRow = ({ connectionName, source, sourceType, networks, nodeDevices, 
         installationSource = (
             <FileAutoComplete id={installationSourceId}
                 placeholder={_("Path to cloud image file on host's file system")}
-                onChange={value => onValueChanged('source', value)}
+                onChange={(value: string) => onValueChanged('source', value)}
                 superuser="try" />
         );
         break;
@@ -308,7 +391,7 @@ const SourceRow = ({ connectionName, source, sourceType, networks, nodeDevices, 
         installationSource = (
             <FileAutoComplete id={installationSourceId}
                 placeholder={_("Existing disk image on host's file system")}
-                onChange={value => onValueChanged('source', value)}
+                onChange={(value: string) => onValueChanged('source', value)}
                 superuser="try" />
         );
         break;
@@ -345,11 +428,12 @@ const SourceRow = ({ connectionName, source, sourceType, networks, nodeDevices, 
                        validated={validationStateSource}
                        minLength={1}
                        placeholder={_("Remote URL")}
-                       value={source}
+                       value={source || ""}
                        onChange={(_, value) => onValueChanged('source', value)} />
         );
         break;
     default:
+        installationSourceId = "";
         break;
     }
 
@@ -405,8 +489,22 @@ const SourceRow = ({ connectionName, source, sourceType, networks, nodeDevices, 
     );
 };
 
-class OSRow extends React.Component {
-    constructor(props) {
+interface OSRowProps {
+    os: OSInfo | undefined;
+    osInfoList: OSInfo[];
+    onValueChanged: OnValueChanged;
+    isLoading: boolean;
+    validationFailed: ValidationFailed;
+}
+
+interface OSRowState {
+    typeAheadKey: number,
+    selectOptions: TypeaheadSelectOption[],
+    osInfoListExt: OSInfo[],
+}
+
+class OSRow extends React.Component<OSRowProps, OSRowState> {
+    constructor(props: OSRowProps) {
         super(props);
         const osInfoListExt = this.props.osInfoList
                 .map(os => correctSpecialCases(os))
@@ -417,7 +515,7 @@ class OSRow extends React.Component {
                             return b.version.localeCompare(a.version, undefined, { numeric: true, sensitivity: 'base' });
                         // Sort OS with non-numbered version (e.g. "testing", "rawhide") by release date
                         else if ((a.releaseDate || b.releaseDate) && (a.releaseDate !== b.releaseDate))
-                            return compareDates(a.releaseDate, b.releaseDate, true) > 0;
+                            return (compareDates(a.releaseDate, b.releaseDate, true) > 0) ? 1 : -1;
 
                         // Sort OSes of the same vendor in DESCENDING order
                         return getOSStringRepresentation(a).toLowerCase() < getOSStringRepresentation(b).toLowerCase() ? 1 : -1;
@@ -437,13 +535,13 @@ class OSRow extends React.Component {
                 oldOsEntries.push(os);
         }
 
-        const make_option = os => ({
+        const make_option = (os: OSInfo): TypeaheadSelectOption => ({
             value: os.shortId,
             content: getOSStringRepresentation(os),
             description: getOSDescription(os),
         });
 
-        const selectOptions = [
+        const selectOptions: TypeaheadSelectOption[] = [
             { decorator: "header", content: _("Recommended operating systems"), key: "recommended-header" },
             ...newOsEntries.map(make_option),
             { decorator: "divider", key: "divider" },
@@ -479,7 +577,7 @@ class OSRow extends React.Component {
                                      onValueChanged('os', os);
                                  }}
                                  onClearSelection={() => {
-                                     onValueChanged('os', null);
+                                     onValueChanged('os', undefined);
                                  }}
                 />
                 <FormHelper helperTextInvalid={validationStateOS == "error" && validationFailed.os} />
@@ -492,7 +590,19 @@ class OSRow extends React.Component {
 // Debounce will trigger "getAccessToken" only if >500ms has passed since user changed offlineToken
 // Since "getAccessToken" basically triggers HTTP request, this prevents user from triggering dozens of HTTP requests
 // while typing an offline token
-const getAccessTokenDebounce = debounce(500, (offlineToken, onValueChanged, setValidationState, validationStates, saveOfflineToken) => {
+
+interface ValidationState {
+    option: "default" | "error" | "success";
+    message: React.ReactNode;
+}
+
+function getAccessTokenHelper(
+    offlineToken: string,
+    onValueChanged: OnValueChanged,
+    setValidationState: (val: ValidationState) => void,
+    validationStates: Record<string, ValidationState>,
+    saveOfflineToken: (val: string) => void,
+): void {
     getAccessToken(offlineToken)
             .then(out => {
                 const accessToken = out.trim();
@@ -505,9 +615,10 @@ const getAccessTokenDebounce = debounce(500, (offlineToken, onValueChanged, setV
                 onValueChanged("accessToken", "");
                 setValidationState(validationStates.FAILED);
             });
-});
+}
+const getAccessTokenDebounce = debounce(500, getAccessTokenHelper);
 
-const HelperMessageToken = ({ message }) => {
+const HelperMessageToken = ({ message } : { message?: string }) => {
     const link = (
         <a href="https://access.redhat.com/management/api" target="_blank" rel="noopener noreferrer">
             <ExternalLinkAltIcon className="pf-v6-u-mr-xs" />
@@ -526,7 +637,7 @@ const HelperMessageToken = ({ message }) => {
     );
 };
 
-const validationStates = {
+const validationStates: Record<string, ValidationState> = {
     DEFAULT: {
         option: "default",
         message: <HelperMessageToken />,
@@ -549,7 +660,15 @@ const validationStates = {
     },
 };
 
-const OfflineTokenRow = ({ offlineToken, onValueChanged, formValidationFailed }) => {
+const OfflineTokenRow = ({
+    offlineToken,
+    onValueChanged,
+    formValidationFailed
+} : {
+    offlineToken: optString,
+    onValueChanged: OnValueChanged,
+    formValidationFailed: ValidationFailed;
+}) => {
     const [validationState, setValidationState] = useState(validationStates.DEFAULT);
     const [disabled, setDisabled] = useState(false);
 
@@ -581,7 +700,7 @@ const OfflineTokenRow = ({ offlineToken, onValueChanged, formValidationFailed })
         });
     }, [onValueChanged]);
 
-    const setOfflineTokenHelper = (offlineToken) => {
+    const setOfflineTokenHelper = (offlineToken: string) => {
         onValueChanged("offlineToken", offlineToken);
         // Reset accessToken to prevent race conditions where state could still have access token paired with an old offline token
         // e.g. user inputs offline token, we obtain an access token, then they change offline token and quickly click on "Create" before new access token can be obtained
@@ -606,7 +725,7 @@ const OfflineTokenRow = ({ offlineToken, onValueChanged, formValidationFailed })
                       minLength={1}
                       value={offlineToken || ""}
                       onChange={(_, value) => setOfflineTokenHelper(value)}
-                      rows="4" />
+                      rows={4} />
             <FormHelper fieldId="offline-token"
                         helperTextInvalid={formValidationFailed.offlineToken && <HelperMessageToken message={formValidationFailed.offlineToken} />}
                         helperText={validationState.message} />
@@ -616,11 +735,21 @@ const OfflineTokenRow = ({ offlineToken, onValueChanged, formValidationFailed })
 
 const UnattendedRow = ({
     onValueChanged,
-    os, profile,
+    os,
+    profile,
     rootPassword,
     unattendedUserLogin,
     userLogin, userPassword,
     validationFailed,
+} : {
+    onValueChanged: OnValueChanged,
+    os: OSInfo,
+    profile: string,
+    rootPassword: optString,
+    unattendedUserLogin: boolean,
+    userLogin: optString,
+    userPassword: optString,
+    validationFailed: ValidationFailed,
 }) => {
     return (
         <>
@@ -663,13 +792,22 @@ const UsersConfigurationRow = ({
     rootPassword,
     rootPasswordLabelInfo,
     showUserFields,
-    userLogin, userPassword,
+    userLogin,
+    userPassword,
     onValueChanged,
     validationFailed,
+} : {
+    rootPassword: optString,
+    rootPasswordLabelInfo: string,
+    showUserFields: boolean,
+    userLogin: optString,
+    userPassword: optString,
+    onValueChanged: OnValueChanged,
+    validationFailed: ValidationFailed,
 }) => {
     return (
         <>
-            <PasswordFormFields initial_password={rootPassword}
+            <PasswordFormFields initial_password={rootPassword || ""}
                                 password_label={_("Root password")}
                                 idPrefix="create-vm-dialog-root-password"
                                 password_label_info={rootPasswordLabelInfo}
@@ -685,7 +823,7 @@ const UsersConfigurationRow = ({
                                onChange={(_, value) => onValueChanged('userLogin', value)} />
                     <FormHelper helperTextInvalid={validationFailed.userLogin} />
                 </FormGroup>
-                <PasswordFormFields initial_password={userPassword}
+                <PasswordFormFields initial_password={userPassword || ""}
                                     password_label={_("User password")}
                                     idPrefix="create-vm-dialog-user-password"
                                     password_label_info={_("Leave the password blank if you do not wish to have a user account created")}
@@ -696,11 +834,17 @@ const UsersConfigurationRow = ({
     );
 };
 
-const useParsedKey = (value) => {
-    const [keyObject, setKeyObject] = useState();
+interface Key {
+    type: string;
+    data: string;
+    comment: string;
+}
+
+const useParsedKey = (value: string): [Key | undefined, boolean] => {
+    const [keyObject, setKeyObject] = useState<Key | undefined>();
     const [keyInvalid, setKeyInvalid] = useState(false);
 
-    const parseKey = (key) => {
+    const parseKey = (key: string) => {
         if (isEmpty(key))
             return;
 
@@ -732,11 +876,23 @@ const useParsedKey = (value) => {
 };
 
 const SshKeysRow = ({
-    id, item, onChange, idx, removeitem, additem
+    id,
+    item,
+    onChange,
+    idx,
+    removeitem,
+    additem
+} : {
+    id: string,
+    item: { value: string },
+    onChange: (idx: number, key: "value", value: string) => void,
+    idx: number,
+    removeitem: (idx: number) => void,
+    additem: () => void,
 }) => {
     const [keyObject, keyInvalid] = useParsedKey(item.value);
 
-    const onChangeHelper = (value) => {
+    const onChangeHelper = (value: string) => {
         const lines = value.split(/\r?\n/);
 
         // The first line is for us.
@@ -762,12 +918,12 @@ const SshKeysRow = ({
                         <div>{keyObject.data}</div>
                     </FlexItem>
                     : <FormGroup label={_("Public key")}
-                        testdata={keyInvalid ? "key-invalid" : undefined}
+                        test-data={keyInvalid ? "key-invalid" : undefined}
                         fieldId='public-key'>
                         <TextArea value={item.value || ""}
                             aria-label={_("Public SSH key")}
                             onChange={(_, value) => onChangeHelper(value)}
-                            rows="3" />
+                            rows={3} />
                         <FormHelper helperText={_("Keys are located in ~/.ssh/ and have a \".pub\" extension.")} />
                     </FormGroup>
                 }
@@ -790,6 +946,12 @@ const CloudInitOptionsRow = ({
     rootPassword,
     userLogin, userPassword,
     validationFailed,
+} : {
+    onValueChanged: OnValueChanged,
+    rootPassword: optString,
+    userLogin: optString,
+    userPassword: optString,
+    validationFailed: ValidationFailed,
 }) => {
     return (
         <>
@@ -804,14 +966,28 @@ const CloudInitOptionsRow = ({
                 emptyStateString={_("No SSH keys specified")}
                 label={_("SSH keys")}
                 actionLabel={_("Add SSH keys")}
-                onChange={value => onValueChanged('sshKeys', value)}
+                onChange={(value: { value: string}[]) => onValueChanged('sshKeys', value)}
                 itemcomponent={SshKeysRow} />
         </>
     );
 };
 
-const MemoryRow = ({ memorySize, memorySizeUnit, nodeMaxMemory, minimumMemory, onValueChanged, validationFailed }) => {
-    let validationStateMemory = validationFailed.memory ? 'error' : 'default';
+const MemoryRow = ({
+    memorySize,
+    memorySizeUnit,
+    nodeMaxMemory,
+    minimumMemory,
+    onValueChanged,
+    validationFailed
+} : {
+    memorySize: number,
+    memorySizeUnit: string,
+    nodeMaxMemory: string,
+    minimumMemory: number,
+    onValueChanged: OnValueChanged,
+    validationFailed: ValidationFailed,
+}) => {
+    let validationStateMemory: 'error' | 'default' | 'warning' = validationFailed.memory ? 'error' : 'default';
     let helperText = (
         nodeMaxMemory
             ? cockpit.format(
@@ -859,8 +1035,34 @@ const MemoryRow = ({ memorySize, memorySizeUnit, nodeMaxMemory, minimumMemory, o
     );
 };
 
-const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit, onValueChanged, minimumStorage, storagePoolName, storagePools, storageVolume, vms, validationFailed, createMode }) => {
-    let validationStateStorage = validationFailed.storage ? 'error' : 'default';
+const StorageRow = ({
+    connectionName,
+    allowNoDisk,
+    storageSize,
+    storageSizeUnit,
+    onValueChanged,
+    minimumStorage,
+    storagePoolName,
+    storagePools,
+    storageVolume,
+    vms,
+    validationFailed,
+    createMode
+} : {
+    connectionName: ConnectionName,
+    allowNoDisk: boolean,
+    storageSize: number,
+    storageSizeUnit: string,
+    onValueChanged: OnValueChanged,
+    minimumStorage: number,
+    storagePoolName: string,
+    storagePools: StoragePool[],
+    storageVolume: optString,
+    vms: VM[],
+    validationFailed: ValidationFailed,
+    createMode: number,
+}) => {
+    let validationStateStorage: 'error' | 'default' | 'warning' = validationFailed.storage ? 'error' : 'default';
     const poolSpaceAvailable = getSpaceAvailable(storagePools, connectionName);
     let helperTextNewVolume = (
         poolSpaceAvailable
@@ -883,21 +1085,22 @@ const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit,
     }
 
     let volumeEntries;
-    let isVolumeUsed = {};
+    let isVolumeUsed: StorageVolumesUsage = {};
     // Existing storage pool is chosen
     if (storagePoolName !== "NewVolumeQCOW2" && storagePoolName !== "NewVolumeRAW" && storagePoolName !== "NoStorage") {
         const storagePool = storagePools.find(pool => pool.name === storagePoolName);
-
-        isVolumeUsed = getStorageVolumesUsage(vms, storagePool);
-        volumeEntries = (
-            storagePool.volumes.map(vol => (<FormSelectOption value={vol.name}
-                                                              label={vol.name}
-                                                              key={vol.name} />))
-        );
+        if (storagePool) {
+            isVolumeUsed = getStorageVolumesUsage(vms, storagePool);
+            volumeEntries = (
+                storagePool.volumes.map(vol => (<FormSelectOption value={vol.name}
+                                                                  label={vol.name}
+                                                    key={vol.name} />))
+            );
+        }
     }
-    const helperTextVariant = createMode == NONE && (isVolumeUsed[storageVolume] && isVolumeUsed[storageVolume].length > 0) ? "warning" : "default";
+    const helperTextVariant = createMode == NONE && (storageVolume && isVolumeUsed[storageVolume] && isVolumeUsed[storageVolume].length > 0) ? "warning" : "default";
 
-    const StorageSelectOptions = [
+    const StorageSelectOptions: SimpleSelectOption<string>[] = [
         { value: "NewVolumeQCOW2", content: _("Create new qcow2 volume") },
         { value: "NewVolumeRAW", content: _("Create new raw volume") },
     ];
@@ -968,10 +1171,38 @@ const StorageRow = ({ connectionName, allowNoDisk, storageSize, storageSizeUnit,
     );
 };
 
-class CreateVmModal extends React.Component {
-    static contextType = DialogsContext;
+interface CreateVmModalProps {
+    mode: string;
+    downloadOSSupported: boolean;
+    cloudInitSupported: boolean;
+    unattendedSupported: boolean;
+    nodeMaxMemory: string;
+    osInfoList: OSInfo[];
+    vms: VM[];
+    onAddErrorNotification: (n: Notification) => void;
+    loggedUser: cockpit.UserInfo,
+    unattendedUserLogin: boolean,
+}
 
-    constructor(props) {
+interface CreateVmModalState extends VmParams {
+    createMode: number;
+    activeTabKey: string | number;
+    validate: boolean;
+    autodetectOSInProgress?: boolean;
+    minimumMemory: number;
+    minimumStorage: number;
+    unattendedInstallation?: boolean;
+    sourceMediaID?: string;
+}
+
+class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalState> {
+    static contextType = DialogsContext;
+    declare context: Dialogs;
+
+    onOsAutodetect: (val: string) => void;
+    autodetectOSPromise: cockpit.Spawn<string> | null = null;
+
+    constructor(props: CreateVmModalProps) {
         let defaultSourceType;
         if (props.mode == 'create') {
             if (!props.downloadOSSupported)
@@ -1021,7 +1252,7 @@ class CreateVmModal extends React.Component {
 
                 if (osEntry && osEntry[0]) {
                     this.onValueChanged('os', osEntry[0]);
-                    this.onValueChanged('sourceMediaID', res.media);
+                    this.setState({ sourceMediaID: res.media });
                 }
                 this.setState({ autodetectOSInProgress: false });
                 this.autodetectOSPromise = null;
@@ -1037,7 +1268,7 @@ class CreateVmModal extends React.Component {
         });
     }
 
-    handleTabClick = (event, tabIndex) => {
+    handleTabClick = (event: React.MouseEvent, tabIndex: number | string) => {
         // Prevent the form from being submitted.
         event.preventDefault();
         this.setState({
@@ -1045,18 +1276,21 @@ class CreateVmModal extends React.Component {
         });
     };
 
-    onValueChanged(key, value) {
+    onValueChanged<K extends keyof VmParams>(key: K, value: VmParams[K]): void {
         switch (key) {
         case 'vmName':
-            this.setState({ [key]: value.split(" ").join("_") });
+            cockpit.assert(typeof value == "string");
+            this.setState({ vmName: value.split(" ").join("_") });
             break;
         case 'source':
-            this.setState({ [key]: value });
+            cockpit.assert(typeof value == "string");
+            this.setState({ source: value });
             if ((this.state.sourceType == URL_SOURCE || this.state.sourceType == LOCAL_INSTALL_MEDIA_SOURCE) && value != '' && value != undefined)
                 this.onOsAutodetect(value);
             break;
         case 'sourceType':
-            this.setState({ [key]: value });
+            cockpit.assert(typeof value == "string");
+            this.setState({ sourceType: value });
             if (value == PXE_SOURCE) {
                 const { nodeDevices, networks } = store.getState();
                 const initialPXESource = getPXEInitialNetworkSource(nodeDevices.filter(nodeDevice => nodeDevice.connectionName == this.state.connectionName),
@@ -1069,41 +1303,43 @@ class CreateVmModal extends React.Component {
             }
             break;
         case 'storagePool': {
+            cockpit.assert(typeof value == "string");
             const storagePool = store.getState().storagePools.filter(pool => pool.connectionName === this.state.connectionName).find(pool => pool.name === value);
             const storageVolumes = storagePool ? storagePool.volumes : undefined;
             const storageVolume = storageVolumes ? storageVolumes[0] : undefined;
             this.setState({
-                [key]: value,
+                storagePool: value,
                 storageVolume: storageVolume ? storageVolume.name : undefined,
             });
             break;
         }
         case 'storageVolume':
-            this.setState({ [key]: value });
+            this.setState({ [key]: value } as Pick<CreateVmModalState, K>);
             break;
         case 'memorySize': {
             // virt-install doesn't allow memory, supplied in MiB, to be a float number
             // check if number is a integer, and if not, round up (ceil)
             const valueMiB = Math.ceil(convertToUnit(value, this.state.memorySizeUnit, units.MiB));
-            value = convertToUnit(valueMiB, units.MiB, this.state.memorySizeUnit);
-
-            this.setState({ [key]: value });
+            this.setState({ memorySize: convertToUnit(valueMiB, units.MiB, this.state.memorySizeUnit) });
             break;
         }
         case 'memorySizeUnit':
-            this.setState({ [key]: value });
-            key = 'memorySize';
-            value = convertToUnit(this.state.memorySize, this.state.memorySizeUnit, value);
-            this.setState({ [key]: value });
+            cockpit.assert(typeof value == "string");
+            this.setState({
+                memorySizeUnit: value,
+                memorySize: convertToUnit(this.state.memorySize, this.state.memorySizeUnit, value)
+            });
             break;
         case 'storageSizeUnit':
-            this.setState({ [key]: value });
-            key = 'storageSize';
-            value = convertToUnit(this.state.storageSize, this.state.storageSizeUnit, value);
-            this.setState({ [key]: value });
+            cockpit.assert(typeof value == "string");
+            this.setState({
+                storageSizeUnit: value,
+                storageSize: convertToUnit(this.state.storageSize, this.state.storageSizeUnit, value)
+            });
             break;
         case 'connectionName':
-            this.setState({ [key]: value });
+            cockpit.assert(value == "session" || value == "system");
+            this.setState({ connectionName: value });
             if (this.state.sourceType == PXE_SOURCE && value == LIBVIRT_SESSION_CONNECTION) {
                 // When changing to session connection, reset media source
                 this.onValueChanged('sourceType', LOCAL_INSTALL_MEDIA_SOURCE);
@@ -1118,11 +1354,12 @@ class CreateVmModal extends React.Component {
             // For different connections the generated VM names might differ
             // try to regenerate it
             if (this.state.os)
-                this.setState((prevState, prevProps) => ({ suggestedVmName: getVmName(value, prevProps.vms, prevState.os) }));
+                this.setState((prevState, prevProps) => ({ suggestedVmName: getVmName(value, prevProps.vms, prevState.os!) }));
 
             break;
         case 'os': {
-            const stateDelta = { [key]: value };
+            cockpit.assert(((_x: unknown): _x is OSInfo => true)(value));
+            const stateDelta: Partial<CreateVmModalState> = { os: value };
 
             if (value && value.profiles)
                 stateDelta.profile = value.profiles.sort().reverse()[0];
@@ -1152,22 +1389,22 @@ class CreateVmModal extends React.Component {
             }
 
             if (!value || !value.unattendedInstallable)
-                this.onValueChanged('unattendedInstallation', false);
+                this.setState({ unattendedInstallation: false });
 
             // generate VM name based on OS if user selects an OS
             // clear generated VM name if they unselect an OS
             stateDelta.suggestedVmName = value ? getVmName(this.state.connectionName, this.props.vms, value) : "";
 
-            this.setState(stateDelta);
+            this.setState(stateDelta as Pick<CreateVmModalState, K>);
             break;
         }
         default:
-            this.setState({ [key]: value });
+            this.setState({ [key]: value } as Pick<CreateVmModalState, K>);
             break;
         }
     }
 
-    onCreateClicked(startVm) {
+    onCreateClicked(startVm: boolean) {
         const Dialogs = this.context;
         const { onAddErrorNotification, osInfoList, nodeMaxMemory, vms, loggedUser } = this.props;
         const { storagePools } = store.getState();
@@ -1182,14 +1419,14 @@ class CreateVmModal extends React.Component {
             // then show errors in the notification area
             this.setState({ createMode: startVm ? RUN : EDIT, validate: false });
 
-            const unattendedInstallation = !(this.state.sourceType === CLOUD_IMAGE) && (this.state.rootPassword || this.state.userLogin || this.state.userPassword);
+            const unattendedInstallation = !(this.state.sourceType === CLOUD_IMAGE) && !!(this.state.rootPassword || this.state.userLogin || this.state.userPassword);
             const vmParams = {
                 connectionName: this.state.connectionName,
                 vmName,
                 source: this.state.source,
                 sourceType: this.state.sourceType,
                 os: this.state.os ? this.state.os.shortId : 'auto',
-                osVersion: this.state.os && this.state.os.version,
+                osVersion: this.state.os ? this.state.os.version : '',
                 profile: this.state.profile,
                 memorySize: convertToUnit(this.state.memorySize, this.state.memorySizeUnit, units.MiB),
                 storageSize: convertToUnit(this.state.storageSize, this.state.storageSizeUnit, units.GiB),
@@ -1235,15 +1472,15 @@ class CreateVmModal extends React.Component {
         const Dialogs = this.context;
         const { nodeMaxMemory, osInfoList, loggedUser, vms } = this.props;
         const { storagePools, nodeDevices, networks } = store.getState();
-        const validationFailed = this.state.validate && validateParams({ ...this.state, osInfoList, nodeMaxMemory, vms: vms.filter(vm => vm.connectionName == this.state.connectionName) });
+        const validationFailed = this.state.validate ? validateParams({ ...this.state, osInfoList, nodeMaxMemory, vms: vms.filter(vm => vm.connectionName == this.state.connectionName) }) : { };
 
         const unattendedInstructionsMessage = _("Enter root and/or user information to enable unattended installation.");
         const unattendedUnavailableMessage = _("Automated installs are only available when downloading an image or using cloud-init.");
-        const unattendedOsUnsupportedMessageFormat = os => cockpit.format(_("$0 does not support unattended installation."), os);
+        const unattendedOsUnsupportedMessageFormat = (os: string) => cockpit.format(_("$0 does not support unattended installation."), os);
 
         let unattendedDisabled = true;
         if ((this.state.sourceType == URL_SOURCE || this.state.sourceType == LOCAL_INSTALL_MEDIA_SOURCE) && this.state.os) {
-            if (this.state.os.medias && this.state.sourceMediaID in this.state.os.medias)
+            if (this.state.os.medias && this.state.sourceMediaID && this.state.sourceMediaID in this.state.os.medias)
                 unattendedDisabled = !this.state.os.medias[this.state.sourceMediaID].unattendedInstallable;
             else
                 unattendedDisabled = !this.state.os.unattendedInstallable;
@@ -1288,7 +1525,7 @@ class CreateVmModal extends React.Component {
                         os={this.state.os}
                         osInfoList={this.props.osInfoList}
                         onValueChanged={this.onValueChanged}
-                        isLoading={this.state.autodetectOSInProgress}
+                        isLoading={!!this.state.autodetectOSInProgress}
                         validationFailed={validationFailed} />}
                 { this.state.sourceType != EXISTING_DISK_IMAGE_SOURCE &&
                 <StorageRow
@@ -1346,7 +1583,6 @@ class CreateVmModal extends React.Component {
                 <NameRow
                     vmName={this.state.vmName}
                     suggestedVmName={this.state.suggestedVmName}
-                    os={this.state.os}
                     onValueChanged={this.onValueChanged}
                     validationFailed={validationFailed} />
                 { this.props.mode === "create"
@@ -1358,7 +1594,7 @@ class CreateVmModal extends React.Component {
                              title={<TabTitleText>{_("Automation")}</TabTitleText>}
                              id="automation"
                              className="pf-v6-c-form"
-                             tooltip={automationTabTooltip}
+                             {...automationTabTooltip && { tooltip: automationTabTooltip } }
                              isAriaDisabled={!!automationTabTooltip}>
                             {automationTab}
                         </Tab>
@@ -1426,8 +1662,22 @@ class CreateVmModal extends React.Component {
     }
 }
 
-export class CreateVmAction extends React.Component {
+interface CreateVmActionProps {
+    systemInfo: ReturnType<typeof store.getState>["systemInfo"];
+    mode: string;
+    nodeMaxMemory: string;
+    vms: VM[];
+    onAddErrorNotification: (n: Notification) => void;
+    cloudInitSupported: boolean;
+    downloadOSSupported: boolean;
+    unattendedSupported: boolean;
+    unattendedUserLogin: boolean;
+    virtInstallAvailable: boolean;
+}
+
+export class CreateVmAction extends React.Component<CreateVmActionProps> {
     static contextType = DialogsContext;
+    declare context: Dialogs;
 
     render() {
         const Dialogs = this.context;
@@ -1438,10 +1688,11 @@ export class CreateVmAction extends React.Component {
         const open = () => {
             // The initial resources fetching contains only ID - this will be immediately
             // replaced with the whole resource object but there is enough time to cause a crash if parsed here
+            cockpit.assert(this.props.systemInfo.loggedUser);
             Dialogs.show(<CreateVmModal mode={this.props.mode}
                                         nodeMaxMemory={this.props.nodeMaxMemory}
                                         vms={this.props.vms}
-                                        osInfoList={this.props.systemInfo.osInfoList}
+                                        osInfoList={this.props.systemInfo.osInfoList || []}
                                         onAddErrorNotification={this.props.onAddErrorNotification}
                                         cloudInitSupported={this.props.cloudInitSupported}
                                         downloadOSSupported={this.props.downloadOSSupported}
@@ -1459,7 +1710,7 @@ export class CreateVmAction extends React.Component {
             testdata = "disabledCheckingFeatures";
         let createButton = (
             <Button isDisabled={testdata !== undefined}
-                    testdata={testdata}
+                    test-data={testdata}
                     id={this.props.mode == 'create' ? 'create-new-vm' : 'import-existing-vm'}
                     variant='secondary'
                     onClick={open}>
@@ -1479,7 +1730,7 @@ export class CreateVmAction extends React.Component {
             createButton = (
                 <Tooltip id={this.props.mode + '-button-tooltip'}
                          position={this.props.mode === "create" ? "top-end" : "top"}
-                         className={this.props.mode === "create" && "custom-arrow"}
+                         className={this.props.mode === "create" ? "custom-arrow" : ""}
                          content={this.props.mode === "create"
                              ? _("Create VM from local or network installation medium")
                              : _("Create VM by importing a disk image of an existing VM installation")
@@ -1494,10 +1745,3 @@ export class CreateVmAction extends React.Component {
         return createButton;
     }
 }
-
-CreateVmAction.propTypes = {
-    mode: PropTypes.string.isRequired,
-    nodeMaxMemory: PropTypes.number,
-    onAddErrorNotification: PropTypes.func.isRequired,
-    systemInfo: PropTypes.object.isRequired,
-};

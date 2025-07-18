@@ -49,6 +49,7 @@ import type {
     NodeInterface,
     NodeDevice,
     HypervisorCapabilities,
+    OSInfo,
 } from '../types';
 
 /**
@@ -239,7 +240,7 @@ export function updateOrAddVm(props: VM) {
     };
 }
 
-export function updateOsInfoList(osInfoList: string[]) {
+export function updateOsInfoList(osInfoList: OSInfo[]) {
     return {
         type: UPDATE_OS_INFO_LIST,
         osInfoList,

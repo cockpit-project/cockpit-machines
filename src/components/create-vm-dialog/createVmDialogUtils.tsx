@@ -19,6 +19,9 @@
 
 import cockpit from 'cockpit';
 import React from 'react';
+
+import type { OSInfo } from '../../types';
+
 import { ExclamationTriangleIcon, OutlinedClockIcon } from "@patternfly/react-icons";
 
 import {
@@ -46,17 +49,16 @@ export const EDIT = 2;
 /*
  * Uses libosinfo to autodetect an OS based on its media/treeinfo.
  * treeinfo detection currently works only for rpm based distros.
- * @param {string} url - A URL pointing to the media or the tree.
  */
-export function autodetectOS(url) {
+export function autodetectOS(url: string) {
     // HACK: osinfo-detect uses GIO to read the tree info file over http. cockpit-bridge used to unset GIO env variables
     // which blocked us from using GIO calls over cockpit-bridge.
     // Overwrite the env vars here, until commit https://github.com/cockpit-project/cockpit/commit/86c1fcb46291c83d6c6903e60fe4bee82598d3a9
     // exists in all supported distros.
-    return python.spawn(autoDetectOSScript, url, { environ: ['GIO_USE_VFS=gvfs', 'LC_ALL=C.UTF-8'], err: 'message' });
+    return python.spawn(autoDetectOSScript, [url], { environ: ['GIO_USE_VFS=gvfs', 'LC_ALL=C.UTF-8'], err: 'message' });
 }
 
-export function getOSStringRepresentation(os) {
+export function getOSStringRepresentation(os: OSInfo) {
     let appendix = '';
 
     if (os.version && !os.name.includes(os.version)) {
@@ -72,7 +74,7 @@ export function getOSStringRepresentation(os) {
     return `${os.name}${appendix}`;
 }
 
-export function filterReleaseEolDates(os) {
+export function filterReleaseEolDates(os: OSInfo) {
     // Filter out all OSes with elapsed EOL, or that have been released too long ago
     return !(
         (os.eolDate && new Date(os.eolDate).getTime() < Date.now()) ||
@@ -80,7 +82,7 @@ export function filterReleaseEolDates(os) {
     );
 }
 
-export function getOSDescription(os) {
+export function getOSDescription(os: OSInfo) {
     if (os.eolDate && new Date(os.eolDate).getTime() < Date.now())
         return <span><ExclamationTriangleIcon /> {cockpit.format(_("Vendor support ended $0"), os.eolDate)}</span>;
     if (!os.eolDate && os.releaseDate && compareDates(ACCEPT_RELEASE_DATES_AFTER, os.releaseDate) < 0)
@@ -88,7 +90,7 @@ export function getOSDescription(os) {
     return null;
 }
 
-export function compareDates(a, b, emptyFirst = false) {
+export function compareDates(a: Date | string, b: string, emptyFirst: boolean = false): number {
     if (!a) {
         if (!b) {
             return 0;
@@ -102,7 +104,7 @@ export function compareDates(a, b, emptyFirst = false) {
     return new Date(b).getTime() - new Date(a).getTime();
 }
 
-export function correctSpecialCases(os) {
+export function correctSpecialCases(os: OSInfo): OSInfo {
     if (os.shortId === 'win8') {
         os.releaseDate = '2012-08-01';
     }
@@ -155,11 +157,11 @@ export function correctSpecialCases(os) {
     return os;
 }
 
-export function needsRHToken(osName) {
+export function needsRHToken(osName: string) {
     return osName.startsWith("rhel");
 }
 
-export function isDownloadableOs(os) {
+export function isDownloadableOs(os: OSInfo) {
     return os.treeInstallable ||
         (needsRHToken(os.shortId) &&
         !os.version.endsWith("unknown") &&
@@ -167,14 +169,14 @@ export function isDownloadableOs(os) {
         (os.version.localeCompare("8.0", undefined, { numeric: true, sensitivity: 'base' }) >= 0));
 }
 
-export function saveOfflineToken(offlineToken) {
+export function saveOfflineToken(offlineToken: string) {
     return localStorage.setItem(RHSM_TOKEN, offlineToken);
 }
 
-export function loadOfflineToken(setToken) {
+export function loadOfflineToken(setToken: (token: string | null) => void): void {
     return setToken(localStorage.getItem(RHSM_TOKEN));
 }
 
-export function removeOfflineToken() {
+export function removeOfflineToken(): void {
     return localStorage.removeItem(RHSM_TOKEN);
 }

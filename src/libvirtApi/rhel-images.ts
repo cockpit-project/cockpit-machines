@@ -21,6 +21,8 @@ import type cockpit from 'cockpit';
 
 import * as python from "python.js";
 
+import { optString } from '../types';
+
 import downloadRhelImageScript from '../scripts/rhsm/download_file_and_report_progress.py';
 import getRhelImageUrlScript from '../scripts/rhsm/get_rhel_image_url.py';
 import getAccessTokenScript from '../scripts/rhsm/get_access_token.py';
@@ -35,7 +37,7 @@ import {
  */
 
 export function downloadRhelImage(
-    accessToken: string,
+    accessToken: optString,
     url: string,
     fileName: string,
     downloadDir: string,
@@ -65,9 +67,9 @@ export function getAccessToken(offlineToken: string): cockpit.Spawn<string> {
 }
 
 export function getRhelImageUrl(
-    accessToken: string,
-    rhelVersion: string,
-    arch: string
+    accessToken: optString,
+    rhelVersion: optString,
+    arch: optString
 ): cockpit.Spawn<string> {
     logDebug(`Download rhel image, ${rhelVersion}, ${arch}`);
 
