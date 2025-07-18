@@ -348,16 +348,16 @@ interface DomainSpec {
     memorySize: number,
     os: string,
     profile: string,
-    rootPassword: string,
-    source: string,
+    rootPassword: optString,
+    source: optString,
     sourceType: string,
     startVm: boolean,
     storagePool: string,
     storageSize: number,
-    storageVolume: string,
+    storageVolume: optString,
     unattended: boolean,
-    userLogin: string,
-    userPassword: string,
+    userLogin: optString,
+    userPassword: optString,
     vmName: string,
     sshKeys: string[],
 }
@@ -386,7 +386,7 @@ export async function domainCreate({
     connectionName: ConnectionName,
     osVersion: string,
     loggedUser: cockpit.UserInfo,
-    accessToken: string
+    accessToken: optString
 } & DomainSpec): Promise<void> {
     // shows dummy vm  until we get vm from virsh (cleans up inProgress)
     setVmCreateInProgress(vmName, connectionName, { openConsoleTab: startVm });
