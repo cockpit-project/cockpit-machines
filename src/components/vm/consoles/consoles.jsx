@@ -21,7 +21,7 @@ import cockpit from 'cockpit';
 import { StateObject } from './state';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core/dist/esm/components/Card';
-import { ExpandIcon, CompressIcon } from "@patternfly/react-icons";
+import { ExpandIcon, CompressIcon, ConnectedIcon } from "@patternfly/react-icons";
 import { ToggleGroup, ToggleGroupItem } from '@patternfly/react-core/dist/esm/components/ToggleGroup';
 import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/index.js";
 
@@ -205,11 +205,10 @@ export const ConsoleCard = ({ state, vm, config, onAddErrorNotification, isExpan
         actions.push(
             <Button
                 key="disconnect"
-                variant="secondary"
+                variant="link"
+                icon={<ConnectedIcon />}
                 onClick={() => body_state.setConnected(false)}
-            >
-                {_("Disconnect")}
-            </Button>
+            />
         );
     }
 

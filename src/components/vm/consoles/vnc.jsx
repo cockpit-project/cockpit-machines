@@ -26,7 +26,8 @@ import { Form, FormGroup, FormHelperText } from "@patternfly/react-core/dist/esm
 import { HelperText, HelperTextItem } from "@patternfly/react-core/dist/esm/components/HelperText";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { InputGroup } from "@patternfly/react-core/dist/esm/components/InputGroup";
-import { EyeIcon, EyeSlashIcon, PendingIcon } from "@patternfly/react-icons";
+import { Icon } from "@patternfly/react-core/dist/esm/components/Icon";
+import { EyeIcon, EyeSlashIcon, PendingIcon, CogIcon } from "@patternfly/react-icons";
 
 import {
     EmptyState, EmptyStateBody, EmptyStateFooter, EmptyStateActions
@@ -38,7 +39,6 @@ import { Dropdown, DropdownList, DropdownItem } from "@patternfly/react-core/dis
 
 import { Modal, ModalVariant } from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
-import { SimpleSelect } from 'cockpit-components-simple-select';
 import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
 import { useDialogs } from 'dialogs';
 
@@ -47,6 +47,7 @@ import { LaunchViewerButton, connection_address, ConsoleState } from './common';
 import { domainSendKey, domainAttachVnc, domainChangeVncSettings, domainGet } from '../../../libvirtApi/domain.js';
 
 import { VncConsole } from './VncConsole';
+import { KeyboardIcon } from './keyboard-icon';
 
 const _ = cockpit.gettext;
 // https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h
@@ -219,26 +220,51 @@ const VncEditModal = ({ vm, inactive_vnc }) => {
 };
 
 export const VncActiveActions = ({ state, vm, vnc, isExpanded, onAddErrorNotification }) => {
-    const [isOpen, setIsOpen] = useState(false);
+    const [isKeysOpen, setIsKeysOpen] = useState(false);
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
     if (!state.connected)
         return null;
 
+    const sizeModeItem = (mode, label) => {
+        return (
+            <DropdownItem
+                key={mode}
+                isSelected={state.sizeMode == mode}
+                onClick={() => state.setSizeMode(mode)}
+            >
+                {label}
+            </DropdownItem>
+        );
+    };
+
     let scale_resize_dropdown = null;
     if (isExpanded) {
         scale_resize_dropdown = (
-            <SimpleSelect
-                toggleProps={{ id: "vm-console-vnc-scaling" }}
-                options={
-                    [
-                        { value: "none", content: _("No scaling or resizing") },
-                        { value: "local", content: _("Local scaling") },
-                        { value: "remote", content: _("Remote resizing") },
-                    ]
-                }
-                selected={state.sizeMode}
-                onSelect={val => state.setSizeMode(val)}
-            />
+            <Dropdown
+                onOpenChange={setIsSettingsOpen}
+                onSelect={() => setIsSettingsOpen(false)}
+                toggle={(toggleRef) => (
+                    <MenuToggle
+                        id="vnc-settings"
+                        ref={toggleRef}
+                        variant="plain"
+                        onClick={() => setIsSettingsOpen(!isSettingsOpen)}
+                        isExpanded={isSettingsOpen}
+                    >
+                        <Icon>
+                            <CogIcon />
+                        </Icon>
+                    </MenuToggle>
+                )}
+                isOpen={isSettingsOpen}
+            >
+                <DropdownList>
+                    {sizeModeItem("none", _("No scaling or resizing"))}
+                    {sizeModeItem("local", _("Local scaling"))}
+                    {sizeModeItem("remote", _("Remote resizing"))}
+                </DropdownList>
+            </Dropdown>
         );
     }
 
@@ -275,28 +301,35 @@ export const VncActiveActions = ({ state, vm, vnc, isExpanded, onAddErrorNotific
         ...[...Array(12).keys()].map(key => renderDropdownItem(cockpit.format("F$0", key + 1))),
     ];
 
+    const key_dropdown = (
+        <Dropdown
+            onOpenChange={setIsKeysOpen}
+            onSelect={() => setIsKeysOpen(false)}
+            toggle={(toggleRef) => (
+                <MenuToggle
+                    id="vnc-actions"
+                    ref={toggleRef}
+                    variant="plain"
+                    onClick={() => setIsKeysOpen(!isKeysOpen)}
+                    isExpanded={isKeysOpen}
+                >
+                    <Icon size="lg">
+                        <KeyboardIcon />
+                    </Icon>
+                </MenuToggle>
+            )}
+            isOpen={isKeysOpen}
+        >
+            <DropdownList>
+                {dropdownItems}
+            </DropdownList>
+        </Dropdown>
+    );
+
     return (
         <>
+            {key_dropdown}
             {scale_resize_dropdown}
-            <Dropdown
-                onOpenChange={setIsOpen}
-                onSelect={() => setIsOpen(false)}
-                toggle={(toggleRef) => (
-                    <MenuToggle
-                        id="vnc-actions"
-                        ref={toggleRef}
-                        onClick={() => setIsOpen(!isOpen)}
-                        isExpanded={isOpen}
-                    >
-                        {_("Send key")}
-                    </MenuToggle>
-                )}
-                isOpen={isOpen}
-            >
-                <DropdownList>
-                    {dropdownItems}
-                </DropdownList>
-            </Dropdown>
         </>
     );
 };
