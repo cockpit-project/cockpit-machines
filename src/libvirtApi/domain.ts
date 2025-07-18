@@ -85,6 +85,7 @@ import { snapshotGetAll } from './snapshot.js';
 import { downloadRhelImage, getRhelImageUrl } from './rhel-images.js';
 import { DBusProps, get_string_prop, get_boolean_prop, call, Enum, timeout, resolveUiState } from './helpers.js';
 import { CLOUD_IMAGE, DOWNLOAD_AN_OS, LOCAL_INSTALL_MEDIA_SOURCE, needsRHToken } from "../components/create-vm-dialog/createVmDialogUtils.js";
+import { pollUsageNow } from './common';
 
 export const domainCanConsole = (vmState: VMState) => vmState == 'running';
 export const domainCanInstall = (vmState: VMState, hasInstallPhase: boolean) => vmState != 'running' && hasInstallPhase;
@@ -899,6 +900,7 @@ export async function domainGetAll({ connectionName } : { connectionName: Connec
                                                   { timeout, type: 'u' });
         store.dispatch(deleteUnlistedVMs(connectionName, [], objPaths));
         await Promise.all(objPaths.map(path => domainGet({ connectionName, id: path })));
+        pollUsageNow();
     } catch (ex) {
         console.warn('GET_ALL_VMS action failed:', String(ex));
         throw ex;

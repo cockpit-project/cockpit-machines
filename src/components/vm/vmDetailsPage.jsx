@@ -42,6 +42,7 @@ import VmActions from './vmActions.jsx';
 import { VmNeedsShutdown } from '../common/needsShutdown.jsx';
 import { InfoPopover } from '../common/infoPopover.jsx';
 import { VmUsesSpice } from './usesSpice.jsx';
+import { ensureUsagePolling } from './../../libvirtApi/common';
 
 import './vmDetailsPage.scss';
 
@@ -49,18 +50,17 @@ const _ = cockpit.gettext;
 
 export const VmDetailsPage = ({
     vm, vms, config, libvirtVersion, storagePools,
-    onUsageStartPolling, onUsageStopPolling, networks,
+    networks,
     nodeDevices, onAddErrorNotification
 }) => {
     useEffect(() => {
         // Anything in here is fired on component mount.
-        onUsageStartPolling();
+        ensureUsagePolling(vm.uuid);
         return () => {
             // Anything in here is fired on component unmount.
-            onUsageStopPolling();
+            ensureUsagePolling(false);
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [vm.uuid]);
 
     // We want to reset the ConsoleCardState when a machine starts or shuts down.
     const consoleState = useStateObject(() => new ConsoleCardState(), [vm.state]);
