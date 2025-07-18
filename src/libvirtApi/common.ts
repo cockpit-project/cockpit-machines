@@ -79,7 +79,7 @@ import {
     parseDumpxmlForCapabilities
 } from "../libvirt-xml-parse.js";
 
-import type { ConnectionName, VM } from '../types';
+import type { ConnectionName, VM, OSInfo } from '../types';
 
 /**
  * Calculates disk statistics.
@@ -286,9 +286,9 @@ async function networkUpdateOrDelete(
 }
 
 function parseOsInfoList(osList: string): void {
-    const osinfodata = JSON.parse(osList);
+    const osinfodata: OSInfo[] = JSON.parse(osList);
 
-    store.dispatch(updateOsInfoList(osinfodata.filter((os: { shortId?: string }) => os.shortId)));
+    store.dispatch(updateOsInfoList(osinfodata.filter((os: OSInfo) => os.shortId)));
 }
 
 /**

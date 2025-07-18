@@ -159,7 +159,7 @@ function convertToUnitVerbose(input: unknown, inputUnit: string | Unit, outputUn
     return result;
 }
 
-export function isEmpty(str: string): boolean {
+export function isEmpty(str: optString): boolean {
     return (!str || str.length === 0);
 }
 

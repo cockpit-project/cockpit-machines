@@ -941,7 +941,7 @@ vnc_password= "{vnc_passwd}"
         self.login_and_go("/machines")
         self.waitPageInit()
         self.browser.wait_visible("#create-new-vm:not(:disabled)")
-        self.browser.wait_attr("#create-new-vm", "testdata", None)
+        self.browser.wait_attr("#create-new-vm", "test-data", None)
 
         virt_install_bin = self.machine.execute("command -v virt-install").strip()
         self.machine.execute(f'mount -o bind /dev/null {virt_install_bin}')
@@ -951,7 +951,7 @@ vnc_password= "{vnc_passwd}"
         self.browser.enter_page('/machines')
         self.browser.wait_visible("#create-new-vm:disabled")
         # There are many reasons why the button would be disabled, so check if it's correct one
-        self.browser.wait_attr("#create-new-vm", "testdata", "disabledVirtInstall")
+        self.browser.wait_attr("#create-new-vm", "test-data", "disabledVirtInstall")
 
     class TestCreateConfig:
         VALID_URL = 'http://mirror.i3d.net/pub/centos/7/os/x86_64/'
@@ -1492,7 +1492,7 @@ vnc_password= "{vnc_passwd}"
                         # Check that ssh key was validated
                         if self.ssh_key_invalid:
                             self.browser.wait_attr(f"#create-vm-dialog-ssh-key-{idx} .pf-v6-c-form__group",
-                                                   "testdata", "key-invalid")
+                                                   "test-data", "key-invalid")
                         else:
                             b.wait_visible(f"#create-vm-dialog-ssh-key-{idx} #validated")
 
