@@ -21,13 +21,13 @@ import cockpit from 'cockpit';
 import { StateObject } from './state';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core/dist/esm/components/Card';
-import { ExpandIcon, CompressIcon } from "@patternfly/react-icons";
+import { ExpandIcon, CompressIcon, ConnectedIcon } from "@patternfly/react-icons";
 import { ToggleGroup, ToggleGroupItem } from '@patternfly/react-core/dist/esm/components/ToggleGroup';
 import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/index.js";
 
 import { ConsoleState } from './common';
 import { SerialActive, SerialInactive, SerialMissing, SerialPending } from './serial';
-import { VncActive, VncActiveActions, VncInactive, VncMissing, VncPending } from './vnc';
+import { VncState, VncActive, VncActiveActions, VncInactive, VncMissing, VncPending } from './vnc';
 import { SpiceActive, SpiceInactive } from './spice';
 
 import { domainSerialConsoleCommand } from '../../../libvirtApi/domain.js';
@@ -63,7 +63,7 @@ export class ConsoleCardState extends StateObject {
     constructor () {
         super();
         this.type = null;
-        this.vncState = new ConsoleState();
+        this.vncState = new VncState();
         this.serialStates = new SerialStates();
 
         this.follow(this.vncState);
@@ -140,7 +140,7 @@ export const ConsoleCard = ({ state, vm, config, onAddErrorNotification, isExpan
                         state={state.vncState}
                         vm={vm}
                         vnc={vnc}
-                    />
+                        isExpanded={isExpanded} />
                 );
                 body_state = state.vncState;
             } else if (inactive_vnc) {
@@ -205,11 +205,10 @@ export const ConsoleCard = ({ state, vm, config, onAddErrorNotification, isExpan
         actions.push(
             <Button
                 key="disconnect"
-                variant="secondary"
+                variant="link"
+                icon={<ConnectedIcon />}
                 onClick={() => body_state.setConnected(false)}
-            >
-                {_("Disconnect")}
-            </Button>
+            />
         );
     }
 
