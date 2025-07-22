@@ -1496,6 +1496,11 @@ vnc_password= "{vnc_passwd}"
 
                 if self.is_unattended:
                     b.wait_visible("#create-and-edit[aria-disabled=true]")
+
+                    # HACK: make sure the mouse is not already hovering the button before entering it
+                    b.mouse("#create-and-edit", "mouseleave")
+                    b.wait_not_present("#create-and-edit-disabled-tooltip")
+
                     b.mouse("#create-and-edit", "mouseenter")
                     b.wait_visible("#create-and-edit-disabled-tooltip")
                 else:
