@@ -21,7 +21,7 @@ import cockpit from 'cockpit';
 import { StateObject } from './state';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core/dist/esm/components/Card';
-import { ExpandIcon, CompressIcon } from "@patternfly/react-icons";
+import { ExpandIcon, CompressIcon, UnknownIcon } from "@patternfly/react-icons";
 import { ToggleGroup, ToggleGroupItem } from '@patternfly/react-core/dist/esm/components/ToggleGroup';
 import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/index.js";
 
@@ -226,6 +226,32 @@ export const ConsoleCard = ({ state, vm, config, onAddErrorNotification, isExpan
             iconPosition="right">{isExpanded ? _("Compress") : _("Expand")}
         </Button>
     );
+
+    // Verify browser has fullscreen capability
+    if (document.fullscreenEnabled) {
+        actions.push(
+            <Button
+                id="vnc-fullscreen"
+                key="vnc-fullscreen"
+                variant="link"
+                onClick={() => {
+                    const isFullscreened = document.fullscreenElement;
+                    if (!isFullscreened) {
+                        document.getElementById("virtual-machines-page")?.requestFullscreen();
+                    } else {
+                        // Otherwise exit the full screen
+                        document.exitFullscreen?.();
+                    }
+                    const urlOptions = { name: vm.name, connection: vm.connectionName };
+                    const path = isFullscreened ? ["vm"] : ["vm", "console"];
+                    return cockpit.location.go(path, { ...cockpit.location.options, ...urlOptions });
+                }}
+                icon={document.fullscreenElement ? <UnknownIcon /> : <UnknownIcon />}
+                iconPosition="right">
+                {document.fullscreenElement ? _("Exit fullscreen") : _("Fullscreen")}
+            </Button>
+        );
+    }
 
     return (
         <Card
