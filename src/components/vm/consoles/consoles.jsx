@@ -213,15 +213,19 @@ export const ConsoleCard = ({ state, vm, config, onAddErrorNotification, isExpan
         );
     }
 
+    const urlOptions = { name: vm.name, connection: vm.connectionName };
+    const path = isExpanded ? ["vm"] : ["vm", "console"];
+    const href = cockpit.location.encode(path, { ...cockpit.location.options, ...urlOptions });
+    const name_parts = window.name.split("/");
+    const parent_pathname = name_parts.length > 0 ? "/" + name_parts[name_parts.length - 1] : "";
+
     actions.push(
         <Button
             key="expand-compress"
             variant="link"
-            onClick={() => {
-                const urlOptions = { name: vm.name, connection: vm.connectionName };
-                const path = isExpanded ? ["vm"] : ["vm", "console"];
-                return cockpit.location.go(path, { ...cockpit.location.options, ...urlOptions });
-            }}
+            component="a"
+            href={parent_pathname + "#" + href}
+            target="_parent"
             icon={isExpanded ? <CompressIcon /> : <ExpandIcon />}
             iconPosition="right">{isExpanded ? _("Compress") : _("Expand")}
         </Button>
