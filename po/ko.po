@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-21 03:58+0000\n"
-"PO-Revision-Date: 2025-07-21 18:53+0000\n"
+"POT-Creation-Date: 2025-07-26 03:48+0000\n"
+"PO-Revision-Date: 2025-07-26 11:18+0000\n"
 "Last-Translator: 김인수 <simmon@nplob.com>\n"
 "Language-Team: Korean <https://translate.fedoraproject.org/projects/cockpit/"
 "cockpit-machines/ko/>\n"
@@ -125,7 +125,7 @@ msgstr "SSH 키 추가"
 msgid "Add TPM"
 msgstr "TPM 추가"
 
-#: src/components/vm/consoles/vnc.jsx:468
+#: src/components/vm/consoles/vnc.jsx:502
 msgid "Add VNC"
 msgstr "VNC 추가"
 
@@ -319,7 +319,7 @@ msgstr "캐쉬"
 #: src/components/vm/vmMigrateDialog.jsx:199
 #: src/components/vm/vmRenameDialog.jsx:89
 #: src/components/vm/confirmDialog.jsx:56
-#: src/components/vm/consoles/vnc.jsx:146
+#: src/components/vm/consoles/vnc.jsx:159
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:263
 #: src/components/vm/disks/diskAdd.tsx:971
 #: src/components/vm/disks/mediaEject.tsx:129
@@ -430,7 +430,7 @@ msgid "Confirm this action"
 msgstr "작업 확인"
 
 #: src/components/vm/consoles/serial.jsx:96
-#: src/components/vm/consoles/vnc.jsx:411
+#: src/components/vm/consoles/vnc.jsx:445
 #: src/components/vm/consoles/serialConsole.jsx:95
 msgid "Connect"
 msgstr "연결"
@@ -589,7 +589,7 @@ msgstr "VM $0 생성이 실패했습니다"
 msgid "Creation time"
 msgstr "생성 시간"
 
-#: src/components/vm/consoles/vnc.jsx:236
+#: src/components/vm/consoles/vnc.jsx:267
 msgid "Ctrl+Alt+$0"
 msgstr "Ctrl+Alt+$0"
 
@@ -725,7 +725,7 @@ msgid "Disconnect"
 msgstr "연결 끊김"
 
 #: src/components/vm/consoles/serial.jsx:93
-#: src/components/vm/consoles/vnc.jsx:408
+#: src/components/vm/consoles/vnc.jsx:442
 msgid "Disconnected"
 msgstr "연결 끊김"
 
@@ -835,8 +835,8 @@ msgstr "편집"
 msgid "Edit $0 attributes"
 msgstr "$0 속성 편집"
 
-#: src/components/vm/consoles/vnc.jsx:132
-#: src/components/vm/consoles/vnc.jsx:283
+#: src/components/vm/consoles/vnc.jsx:145
+#: src/components/vm/consoles/vnc.jsx:317
 msgid "Edit VNC settings"
 msgstr "VNC 설정을 수정합니다"
 
@@ -922,7 +922,7 @@ msgstr "실패함"
 msgid "Failed to add TPM to VM $0"
 msgstr "TPM을 VM $0에 추가하는 데 실패하였습니다"
 
-#: src/components/vm/consoles/vnc.jsx:448
+#: src/components/vm/consoles/vnc.jsx:482
 msgid "Failed to add VNC to VM $0"
 msgstr "VNC를 VM $0로 추가하는 데 실패함"
 
@@ -978,7 +978,7 @@ msgstr "SPICE 장치를 교체하는데 실패함"
 msgid "Failed to save network settings"
 msgstr "네트워크 설정을 저장하는데 실패함"
 
-#: src/components/vm/consoles/vnc.jsx:231
+#: src/components/vm/consoles/vnc.jsx:262
 msgid "Failed to send key Ctrl+Alt+$0 to VM $1"
 msgstr "키 Ctrl+Alt+$0를 VM $1으로 보내지 못했습니다"
 
@@ -1097,7 +1097,7 @@ msgstr "우아한 종료"
 msgid "Graphical"
 msgstr "그래픽"
 
-#: src/components/vm/consoles/vnc.jsx:458
+#: src/components/vm/consoles/vnc.jsx:492
 msgid "Graphical console support not enabled"
 msgstr "그래픽 콘솔 지원이 활성화되지 않았습니다"
 
@@ -1407,6 +1407,10 @@ msgstr "적재 중..."
 #: src/components/create-vm-dialog/createVmDialog.jsx:374
 msgid "Local install media (ISO image or distro install tree)"
 msgstr "로컬 설치 미디어 (ISO 이미지 또는 저장소 설치 트리)"
+
+#: src/components/vm/consoles/vnc.jsx:235
+msgid "Local scaling"
+msgstr "일부 크기 조절"
 
 # ctx::sourcefile::Navigation Menu
 #: src/components/vm/hostdevs/hostDevAdd.tsx:157
@@ -1750,6 +1754,10 @@ msgstr "사용 가능한 네트워크가 없습니다"
 msgid "No parent"
 msgstr "원인 개체 없음"
 
+#: src/components/vm/consoles/vnc.jsx:234
+msgid "No scaling or resizing"
+msgstr "크기 조정이나 확장이 어렵습니다"
+
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:270
 msgid "No snapshots defined for this VM"
 msgstr "이 VM을 위해 정의된 순간찍기가 없음"
@@ -1866,11 +1874,11 @@ msgstr "PCI"
 msgid "Parent snapshot"
 msgstr "상위 순간찍기"
 
-#: src/components/vm/consoles/vnc.jsx:177
+#: src/components/vm/consoles/vnc.jsx:190
 msgid "Password"
 msgstr "비밀번호"
 
-#: src/components/vm/consoles/vnc.jsx:197
+#: src/components/vm/consoles/vnc.jsx:210
 msgid ""
 "Password must be 8 characters or less. VNC passwords do not provide "
 "encryption and are generally cryptographically weak. They can not be used to "
@@ -1880,7 +1888,7 @@ msgstr ""
 "적으로 암호학적인 취약점이 있습니다. 신뢰 할 수 없는 네트워크에서 연결을 보안"
 "하는 데 사용 될 수 없습니다."
 
-#: src/components/vm/consoles/vnc.jsx:97
+#: src/components/vm/consoles/vnc.jsx:110
 msgid "Password must be at most 8 characters."
 msgstr "비밀번호는 최대 8자까지입니다."
 
@@ -1989,7 +1997,7 @@ msgstr "풀 유형이 볼륨 생성을 지원하지 않습니다"
 msgid "Pool's volumes are used by VMs "
 msgstr "풀 볼륨은 VM에서 사용됩니다 "
 
-#: src/components/vm/consoles/vnc.jsx:158
+#: src/components/vm/consoles/vnc.jsx:171
 #: src/components/vm/disks/vmDiskColumns.tsx:53
 #: src/components/vm/overview/bootOrder.tsx:124
 #: src/components/vm/overview/bootOrder.tsx:140
@@ -1997,11 +2005,11 @@ msgstr "풀 볼륨은 VM에서 사용됩니다 "
 msgid "Port"
 msgstr "포트"
 
-#: src/components/vm/consoles/vnc.jsx:91
+#: src/components/vm/consoles/vnc.jsx:104
 msgid "Port must be 5900 or larger."
 msgstr "포트는 5900 이거나 커야 합니다."
 
-#: src/components/vm/consoles/vnc.jsx:171
+#: src/components/vm/consoles/vnc.jsx:184
 msgid ""
 "Port must be a number that is at least 5900. Leave empty to automatically "
 "assign a free port when the machine starts."
@@ -2009,7 +2017,7 @@ msgstr ""
 "포트는 적어도 5900 이상의 숫자여야 합니다. 비워 두면 장비가 시작 할 때에 여"
 "유 포트를 자동으로 할당합니다."
 
-#: src/components/vm/consoles/vnc.jsx:88
+#: src/components/vm/consoles/vnc.jsx:101
 msgid "Port must be a number."
 msgstr "포트는 숫자여야 합니다."
 
@@ -2133,6 +2141,10 @@ msgstr ""
 "원격 표시기는 대부분의 운영 체제에서 사용 할 수 있습니다. 설치하려면 그놈 소"
 "프트웨어, KDE Discover에서 \"원격 표시기\"를 검색하거나, 다음을 실행하세요:"
 
+#: src/components/vm/consoles/vnc.jsx:236
+msgid "Remote resizing"
+msgstr "원격 크기 조절"
+
 #: src/components/vm/consoles/common.jsx:139
 msgid "Remote viewer"
 msgstr "원격 뷰어"
@@ -2225,7 +2237,7 @@ msgstr "VNC로 교체합니다"
 msgid "Reset"
 msgstr "초기화"
 
-#: src/components/vm/consoles/vnc.jsx:481
+#: src/components/vm/consoles/vnc.jsx:515
 msgid "Restart this virtual machine to access its graphical console"
 msgstr "이와 같은 가상 장비를 재시작하고 해당 그래픽 콘솔에 접근하세요"
 
@@ -2309,7 +2321,7 @@ msgstr ""
 msgid "SSH keys"
 msgstr "SSH 키"
 
-#: src/components/vm/consoles/vnc.jsx:143
+#: src/components/vm/consoles/vnc.jsx:156
 #: src/components/vm/disks/diskEdit.tsx:338
 #: src/components/vm/overview/bootOrder.tsx:365
 #: src/components/vm/overview/memoryModal.tsx:206
@@ -2325,7 +2337,7 @@ msgstr "저장"
 msgid "Select all"
 msgstr "모두 선택"
 
-#: src/components/vm/consoles/vnc.jsx:258
+#: src/components/vm/consoles/vnc.jsx:291
 msgid "Send key"
 msgstr "키 전송"
 
@@ -2527,7 +2539,7 @@ msgid "Start should not be empty"
 msgstr "시작은 비워둘 수 없습니다"
 
 #: src/components/vm/consoles/serial.jsx:130
-#: src/components/vm/consoles/vnc.jsx:428
+#: src/components/vm/consoles/vnc.jsx:462
 msgid "Start the virtual machine to access the console"
 msgstr "가상 장비를 시작하여 콘솔에 접근하세요."
 
@@ -3016,7 +3028,7 @@ msgstr "가상장비는 root 권한으로 시작합니다"
 msgid "VNC"
 msgstr "VNC"
 
-#: src/components/vm/consoles/vnc.jsx:122
+#: src/components/vm/consoles/vnc.jsx:135
 msgid "VNC settings could not be saved"
 msgstr "VNC 설정을 저장 할 수 없습니다"
 

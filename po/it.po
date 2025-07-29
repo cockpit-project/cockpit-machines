@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-21 03:58+0000\n"
-"PO-Revision-Date: 2025-07-20 18:02+0000\n"
+"POT-Creation-Date: 2025-07-26 03:48+0000\n"
+"PO-Revision-Date: 2025-07-26 21:01+0000\n"
 "Last-Translator: Salvatore Cocuzza <info@salvatorecocuzza.it>\n"
 "Language-Team: Italian <https://translate.fedoraproject.org/projects/cockpit/"
 "cockpit-machines/it/>\n"
@@ -127,7 +127,7 @@ msgstr "Aggiungi chiavi SSH"
 msgid "Add TPM"
 msgstr "Aggiungi TPM"
 
-#: src/components/vm/consoles/vnc.jsx:468
+#: src/components/vm/consoles/vnc.jsx:502
 msgid "Add VNC"
 msgstr "Aggiungi VNC"
 
@@ -324,7 +324,7 @@ msgstr "Cache"
 #: src/components/vm/vmMigrateDialog.jsx:199
 #: src/components/vm/vmRenameDialog.jsx:89
 #: src/components/vm/confirmDialog.jsx:56
-#: src/components/vm/consoles/vnc.jsx:146
+#: src/components/vm/consoles/vnc.jsx:159
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:263
 #: src/components/vm/disks/diskAdd.tsx:971
 #: src/components/vm/disks/mediaEject.tsx:129
@@ -436,7 +436,7 @@ msgid "Confirm this action"
 msgstr "Conferma questa azione"
 
 #: src/components/vm/consoles/serial.jsx:96
-#: src/components/vm/consoles/vnc.jsx:411
+#: src/components/vm/consoles/vnc.jsx:445
 #: src/components/vm/consoles/serialConsole.jsx:95
 msgid "Connect"
 msgstr "Connetti"
@@ -598,7 +598,7 @@ msgstr "Creazione della VM $0 non riuscita"
 msgid "Creation time"
 msgstr "Data di creazione"
 
-#: src/components/vm/consoles/vnc.jsx:236
+#: src/components/vm/consoles/vnc.jsx:267
 msgid "Ctrl+Alt+$0"
 msgstr "Ctrl+Alt+$0"
 
@@ -739,7 +739,7 @@ msgid "Disconnect"
 msgstr "Disconnetti"
 
 #: src/components/vm/consoles/serial.jsx:93
-#: src/components/vm/consoles/vnc.jsx:408
+#: src/components/vm/consoles/vnc.jsx:442
 msgid "Disconnected"
 msgstr "Disconnesso"
 
@@ -853,8 +853,8 @@ msgstr "Modifica"
 msgid "Edit $0 attributes"
 msgstr "Modifica $0 attributi"
 
-#: src/components/vm/consoles/vnc.jsx:132
-#: src/components/vm/consoles/vnc.jsx:283
+#: src/components/vm/consoles/vnc.jsx:145
+#: src/components/vm/consoles/vnc.jsx:317
 msgid "Edit VNC settings"
 msgstr "Modifica le impostazioni VNC"
 
@@ -944,7 +944,7 @@ msgstr "Fallito"
 msgid "Failed to add TPM to VM $0"
 msgstr "Impossibile aggiungere il TPM alla VM $0"
 
-#: src/components/vm/consoles/vnc.jsx:448
+#: src/components/vm/consoles/vnc.jsx:482
 msgid "Failed to add VNC to VM $0"
 msgstr "Impossibile aggiungere VNC alla VM $0"
 
@@ -1001,7 +1001,7 @@ msgstr "Impossibile sostituire i dispositivi SPICE"
 msgid "Failed to save network settings"
 msgstr "Impossibile salvare le impostazioni di rete"
 
-#: src/components/vm/consoles/vnc.jsx:231
+#: src/components/vm/consoles/vnc.jsx:262
 msgid "Failed to send key Ctrl+Alt+$0 to VM $1"
 msgstr "Impossibile inviare la combinazione Ctrl+Alt+$0 alla VM $1"
 
@@ -1122,7 +1122,7 @@ msgstr "Arresto controllato"
 msgid "Graphical"
 msgstr "Grafica"
 
-#: src/components/vm/consoles/vnc.jsx:458
+#: src/components/vm/consoles/vnc.jsx:492
 msgid "Graphical console support not enabled"
 msgstr "Supporto della console grafica non abilitato"
 
@@ -1438,6 +1438,10 @@ msgid "Local install media (ISO image or distro install tree)"
 msgstr ""
 "Supporto di installazione locale (immagine ISO o albero di installazione "
 "della distribuzione)"
+
+#: src/components/vm/consoles/vnc.jsx:235
+msgid "Local scaling"
+msgstr "Scala locale"
 
 # ctx::sourcefile::Navigation Menu
 #: src/components/vm/hostdevs/hostDevAdd.tsx:157
@@ -1781,6 +1785,10 @@ msgstr "Nessuna rete disponibile"
 msgid "No parent"
 msgstr "Nessun genitore"
 
+#: src/components/vm/consoles/vnc.jsx:234
+msgid "No scaling or resizing"
+msgstr "Nessun ridimensionamento o ridimensionamento"
+
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:270
 msgid "No snapshots defined for this VM"
 msgstr "Nessuna istantanea definita per questa VM"
@@ -1901,11 +1909,11 @@ msgstr "PCI"
 msgid "Parent snapshot"
 msgstr "Istantanea genitore"
 
-#: src/components/vm/consoles/vnc.jsx:177
+#: src/components/vm/consoles/vnc.jsx:190
 msgid "Password"
 msgstr "Password"
 
-#: src/components/vm/consoles/vnc.jsx:197
+#: src/components/vm/consoles/vnc.jsx:210
 msgid ""
 "Password must be 8 characters or less. VNC passwords do not provide "
 "encryption and are generally cryptographically weak. They can not be used to "
@@ -1916,7 +1924,7 @@ msgstr ""
 "crittografico. Non possono essere utilizzate per proteggere connessioni in "
 "reti non affidabili."
 
-#: src/components/vm/consoles/vnc.jsx:97
+#: src/components/vm/consoles/vnc.jsx:110
 msgid "Password must be at most 8 characters."
 msgstr "La password deve essere composta al massimo da 8 caratteri."
 
@@ -2025,7 +2033,7 @@ msgstr "Il tipo di pool non supporta la creazione di volumi"
 msgid "Pool's volumes are used by VMs "
 msgstr "I volumi del pool vengono utilizzati dalle VM "
 
-#: src/components/vm/consoles/vnc.jsx:158
+#: src/components/vm/consoles/vnc.jsx:171
 #: src/components/vm/disks/vmDiskColumns.tsx:53
 #: src/components/vm/overview/bootOrder.tsx:124
 #: src/components/vm/overview/bootOrder.tsx:140
@@ -2033,11 +2041,11 @@ msgstr "I volumi del pool vengono utilizzati dalle VM "
 msgid "Port"
 msgstr "Porta"
 
-#: src/components/vm/consoles/vnc.jsx:91
+#: src/components/vm/consoles/vnc.jsx:104
 msgid "Port must be 5900 or larger."
 msgstr "La porta deve essere 5900 o superiore."
 
-#: src/components/vm/consoles/vnc.jsx:171
+#: src/components/vm/consoles/vnc.jsx:184
 msgid ""
 "Port must be a number that is at least 5900. Leave empty to automatically "
 "assign a free port when the machine starts."
@@ -2045,7 +2053,7 @@ msgstr ""
 "La porta deve essere un numero pari almeno a 5900. Lasciare vuoto per "
 "assegnare automaticamente una porta libera all'avvio della macchina."
 
-#: src/components/vm/consoles/vnc.jsx:88
+#: src/components/vm/consoles/vnc.jsx:101
 msgid "Port must be a number."
 msgstr "La porta deve essere un numero."
 
@@ -2171,6 +2179,10 @@ msgstr ""
 "installarlo, cerca \"Remote Viewer\" in GNOME Software, KDE Discover oppure "
 "esegui il comando seguente:"
 
+#: src/components/vm/consoles/vnc.jsx:236
+msgid "Remote resizing"
+msgstr "Ridimensionamento remoto"
+
 #: src/components/vm/consoles/common.jsx:139
 msgid "Remote viewer"
 msgstr "Visualizzatore remoto"
@@ -2265,7 +2277,7 @@ msgstr "Sostituisci con VNC"
 msgid "Reset"
 msgstr "Ripristina"
 
-#: src/components/vm/consoles/vnc.jsx:481
+#: src/components/vm/consoles/vnc.jsx:515
 msgid "Restart this virtual machine to access its graphical console"
 msgstr "Riavvia questa macchina virtuale per accedere alla sua console grafica"
 
@@ -2353,7 +2365,7 @@ msgstr ""
 msgid "SSH keys"
 msgstr "Chiavi SSH"
 
-#: src/components/vm/consoles/vnc.jsx:143
+#: src/components/vm/consoles/vnc.jsx:156
 #: src/components/vm/disks/diskEdit.tsx:338
 #: src/components/vm/overview/bootOrder.tsx:365
 #: src/components/vm/overview/memoryModal.tsx:206
@@ -2369,7 +2381,7 @@ msgstr "Salva"
 msgid "Select all"
 msgstr "Seleziona tutto"
 
-#: src/components/vm/consoles/vnc.jsx:258
+#: src/components/vm/consoles/vnc.jsx:291
 msgid "Send key"
 msgstr "Invia tasto"
 
@@ -2577,7 +2589,7 @@ msgid "Start should not be empty"
 msgstr "L'inizio non può essere vuoto"
 
 #: src/components/vm/consoles/serial.jsx:130
-#: src/components/vm/consoles/vnc.jsx:428
+#: src/components/vm/consoles/vnc.jsx:462
 msgid "Start the virtual machine to access the console"
 msgstr "Avviare la macchina virtuale per accedere alla console"
 
@@ -3092,7 +3104,7 @@ msgstr "La VM verrà avviata con permessi di root"
 msgid "VNC"
 msgstr "VNC"
 
-#: src/components/vm/consoles/vnc.jsx:122
+#: src/components/vm/consoles/vnc.jsx:135
 msgid "VNC settings could not be saved"
 msgstr "Impossibile salvare le impostazioni VNC"
 
