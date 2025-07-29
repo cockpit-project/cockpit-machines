@@ -43,8 +43,10 @@ import {
     usageStartPolling,
     usageStopPolling,
 } from "./libvirtApi/common.js";
-import { useEvent } from "hooks";
+import { useEvent, useFile } from "hooks";
 import store from './store.js';
+
+import { updateQemuConf } from './actions/store-actions.js';
 
 const _ = cockpit.gettext;
 
@@ -60,6 +62,26 @@ async function unknownConnectionName() {
         return ["system", "session"];
 }
 
+function parse_qemu_conf(text) {
+    const res = { };
+    for (const l of text.split('\n')) {
+        const lt = l.trim();
+        if (lt.startsWith('#'))
+            continue;
+        const pos = lt.indexOf('=');
+        if (pos > 0) {
+            const name = lt.substring(0, pos).trim();
+            let val = lt.substring(pos + 1).trim();
+            if (val[0] == '"' && val[val.length - 1] == '"')
+                val = val.substring(1, val.length - 1);
+            res[name] = val;
+        }
+    }
+    return res;
+}
+
+const qemu_conf_syntax = { parse: parse_qemu_conf };
+
 export const App = () => {
     const [loadingResources, setLoadingResources] = useState(true);
     const [error, setError] = useState('');
@@ -71,6 +93,11 @@ export const App = () => {
 
         return ignored !== null ? JSON.parse(ignored) : defaultValue;
     });
+
+    const systemQemuConf = useFile("/etc/libvirt/qemu.conf", { syntax: qemu_conf_syntax, superuser: "try" });
+    useEffect(() => {
+        store.dispatch(updateQemuConf(systemQemuConf));
+    }, [systemQemuConf]);
 
     useEvent(superuser, "changed");
     useEffect(() => {
