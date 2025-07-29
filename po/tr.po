@@ -10,10 +10,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-21 03:58+0000\n"
-"PO-Revision-Date: 2025-07-19 08:53+0000\n"
-"Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
-"memory@weblate.org>\n"
+"POT-Creation-Date: 2025-07-26 03:48+0000\n"
+"PO-Revision-Date: 2025-07-25 16:39+0000\n"
+"Last-Translator: Burak Yavuz <hitowerdigit@hotmail.com>\n"
 "Language-Team: Turkish <https://translate.fedoraproject.org/projects/cockpit/"
 "cockpit-machines/tr/>\n"
 "Language: tr\n"
@@ -124,7 +123,7 @@ msgstr "SSH anahtarları ekle"
 msgid "Add TPM"
 msgstr "TPM ekle"
 
-#: src/components/vm/consoles/vnc.jsx:468
+#: src/components/vm/consoles/vnc.jsx:502
 msgid "Add VNC"
 msgstr "VNC ekle"
 
@@ -320,7 +319,7 @@ msgstr "Önbellek"
 #: src/components/vm/vmMigrateDialog.jsx:199
 #: src/components/vm/vmRenameDialog.jsx:89
 #: src/components/vm/confirmDialog.jsx:56
-#: src/components/vm/consoles/vnc.jsx:146
+#: src/components/vm/consoles/vnc.jsx:159
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:263
 #: src/components/vm/disks/diskAdd.tsx:971
 #: src/components/vm/disks/mediaEject.tsx:129
@@ -432,7 +431,7 @@ msgid "Confirm this action"
 msgstr "Bu eylemi onayla"
 
 #: src/components/vm/consoles/serial.jsx:96
-#: src/components/vm/consoles/vnc.jsx:411
+#: src/components/vm/consoles/vnc.jsx:445
 #: src/components/vm/consoles/serialConsole.jsx:95
 msgid "Connect"
 msgstr "Bağlan"
@@ -592,7 +591,7 @@ msgstr "$0 sanal makinesini oluşturma başarısız oldu"
 msgid "Creation time"
 msgstr "Oluşturma zamanı"
 
-#: src/components/vm/consoles/vnc.jsx:236
+#: src/components/vm/consoles/vnc.jsx:267
 msgid "Ctrl+Alt+$0"
 msgstr "Ctrl+Alt+$0"
 
@@ -731,7 +730,7 @@ msgid "Disconnect"
 msgstr "Bağlantıyı kes"
 
 #: src/components/vm/consoles/serial.jsx:93
-#: src/components/vm/consoles/vnc.jsx:408
+#: src/components/vm/consoles/vnc.jsx:442
 msgid "Disconnected"
 msgstr "Bağlantı kesildi"
 
@@ -842,8 +841,8 @@ msgstr "Düzenle"
 msgid "Edit $0 attributes"
 msgstr "$0 özniteliklerini düzenle"
 
-#: src/components/vm/consoles/vnc.jsx:132
-#: src/components/vm/consoles/vnc.jsx:283
+#: src/components/vm/consoles/vnc.jsx:145
+#: src/components/vm/consoles/vnc.jsx:317
 msgid "Edit VNC settings"
 msgstr "VNC ayarlarını düzenle"
 
@@ -931,7 +930,7 @@ msgstr "Başarısız oldu"
 msgid "Failed to add TPM to VM $0"
 msgstr "$0 sanal makinesine TPM ekleme başarısız oldu"
 
-#: src/components/vm/consoles/vnc.jsx:448
+#: src/components/vm/consoles/vnc.jsx:482
 msgid "Failed to add VNC to VM $0"
 msgstr "$0 sanal makinesine VNC ekleme başarısız oldu"
 
@@ -987,7 +986,7 @@ msgstr "SPICE aygıtlarını değiştirme başarısız oldu"
 msgid "Failed to save network settings"
 msgstr "Ağ ayarları kaydedilemedi"
 
-#: src/components/vm/consoles/vnc.jsx:231
+#: src/components/vm/consoles/vnc.jsx:262
 msgid "Failed to send key Ctrl+Alt+$0 to VM $1"
 msgstr ""
 "Ctrl+Alt+$0 tuş birleşimini $1 sanal makinesine gönderme başarısız oldu"
@@ -1107,7 +1106,7 @@ msgstr "Düzgün şekilde kapat"
 msgid "Graphical"
 msgstr "Grafiksel"
 
-#: src/components/vm/consoles/vnc.jsx:458
+#: src/components/vm/consoles/vnc.jsx:492
 msgid "Graphical console support not enabled"
 msgstr "Grafiksel konsol desteği etkin değil"
 
@@ -1416,6 +1415,10 @@ msgstr "Yükleniyor..."
 #: src/components/create-vm-dialog/createVmDialog.jsx:374
 msgid "Local install media (ISO image or distro install tree)"
 msgstr "Yerel kurulum ortamı (ISO kalıbı veya dağıtım kurulum ağacı)"
+
+#: src/components/vm/consoles/vnc.jsx:235
+msgid "Local scaling"
+msgstr "Yerel ölçeklendirme"
 
 #: src/components/vm/hostdevs/hostDevAdd.tsx:157
 msgid "Location"
@@ -1756,6 +1759,10 @@ msgstr "Kullanılabilir ağlar yok"
 msgid "No parent"
 msgstr "Üst öğe yok"
 
+#: src/components/vm/consoles/vnc.jsx:234
+msgid "No scaling or resizing"
+msgstr "Ölçeklendirme veya yeniden boyutlandırma yok"
+
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:270
 msgid "No snapshots defined for this VM"
 msgstr "Bu sanal makine için tanımlanan anlık görüntüler yok"
@@ -1871,11 +1878,11 @@ msgstr "PCI"
 msgid "Parent snapshot"
 msgstr "Üst öğe anlık görüntüsü"
 
-#: src/components/vm/consoles/vnc.jsx:177
+#: src/components/vm/consoles/vnc.jsx:190
 msgid "Password"
 msgstr "Parola"
 
-#: src/components/vm/consoles/vnc.jsx:197
+#: src/components/vm/consoles/vnc.jsx:210
 msgid ""
 "Password must be 8 characters or less. VNC passwords do not provide "
 "encryption and are generally cryptographically weak. They can not be used to "
@@ -1885,7 +1892,7 @@ msgstr ""
 "sağlamaz ve genellikle kriptografik olarak zayıftır. Güvenilmeyen ağlarda "
 "bağlantıları güvence altına almak için kullanılamazlar."
 
-#: src/components/vm/consoles/vnc.jsx:97
+#: src/components/vm/consoles/vnc.jsx:110
 msgid "Password must be at most 8 characters."
 msgstr "Parola en fazla 8 karakter olmak zorundadır."
 
@@ -1996,7 +2003,7 @@ msgstr "Havuz türü birim oluşturmayı desteklemiyor"
 msgid "Pool's volumes are used by VMs "
 msgstr "Havuzun birimleri sanal makineler tarafından kullanılıyor "
 
-#: src/components/vm/consoles/vnc.jsx:158
+#: src/components/vm/consoles/vnc.jsx:171
 #: src/components/vm/disks/vmDiskColumns.tsx:53
 #: src/components/vm/overview/bootOrder.tsx:124
 #: src/components/vm/overview/bootOrder.tsx:140
@@ -2004,11 +2011,11 @@ msgstr "Havuzun birimleri sanal makineler tarafından kullanılıyor "
 msgid "Port"
 msgstr "Bağlantı noktası"
 
-#: src/components/vm/consoles/vnc.jsx:91
+#: src/components/vm/consoles/vnc.jsx:104
 msgid "Port must be 5900 or larger."
 msgstr "Bağlantı noktası 5900 veya daha büyük olmak zorundadır."
 
-#: src/components/vm/consoles/vnc.jsx:171
+#: src/components/vm/consoles/vnc.jsx:184
 msgid ""
 "Port must be a number that is at least 5900. Leave empty to automatically "
 "assign a free port when the machine starts."
@@ -2017,7 +2024,7 @@ msgstr ""
 "başladığında otomatik olarak serbest bir bağlantı noktası atamak için boş "
 "bırakın."
 
-#: src/components/vm/consoles/vnc.jsx:88
+#: src/components/vm/consoles/vnc.jsx:101
 msgid "Port must be a number."
 msgstr "Bağlantı noktası bir sayı olmak zorundadır."
 
@@ -2142,6 +2149,10 @@ msgstr ""
 "Yazılımı'nda, KDE Keşfet'te \"Remote Viewer\" arayın veya aşağıdaki komutu "
 "çalıştırın:"
 
+#: src/components/vm/consoles/vnc.jsx:236
+msgid "Remote resizing"
+msgstr "Uzaktan yeniden boyutlandırma"
+
 #: src/components/vm/consoles/common.jsx:139
 msgid "Remote viewer"
 msgstr "Uzak görüntüleyici"
@@ -2234,7 +2245,7 @@ msgstr "VNC ile değiştir"
 msgid "Reset"
 msgstr "Sıfırla"
 
-#: src/components/vm/consoles/vnc.jsx:481
+#: src/components/vm/consoles/vnc.jsx:515
 msgid "Restart this virtual machine to access its graphical console"
 msgstr "Grafiksel konsoluna erişmek için sanal makineyi yeniden başlatın"
 
@@ -2321,7 +2332,7 @@ msgstr ""
 msgid "SSH keys"
 msgstr "SSH anahtarları"
 
-#: src/components/vm/consoles/vnc.jsx:143
+#: src/components/vm/consoles/vnc.jsx:156
 #: src/components/vm/disks/diskEdit.tsx:338
 #: src/components/vm/overview/bootOrder.tsx:365
 #: src/components/vm/overview/memoryModal.tsx:206
@@ -2337,7 +2348,7 @@ msgstr "Kaydet"
 msgid "Select all"
 msgstr "Tümünü seç"
 
-#: src/components/vm/consoles/vnc.jsx:258
+#: src/components/vm/consoles/vnc.jsx:291
 msgid "Send key"
 msgstr "Tuş gönder"
 
@@ -2539,7 +2550,7 @@ msgid "Start should not be empty"
 msgstr "Başlangıç boş olmamalıdır"
 
 #: src/components/vm/consoles/serial.jsx:130
-#: src/components/vm/consoles/vnc.jsx:428
+#: src/components/vm/consoles/vnc.jsx:462
 msgid "Start the virtual machine to access the console"
 msgstr "Konsola erişmek için sanal makineyi başlatın"
 
@@ -3042,7 +3053,7 @@ msgstr "Sanal makine root izinleriyle başlatılacak"
 msgid "VNC"
 msgstr "VNC"
 
-#: src/components/vm/consoles/vnc.jsx:122
+#: src/components/vm/consoles/vnc.jsx:135
 msgid "VNC settings could not be saved"
 msgstr "VNC ayarları kaydedilemedi"
 
