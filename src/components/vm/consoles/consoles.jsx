@@ -201,7 +201,7 @@ export const ConsoleCard = ({ state, vm, config, onAddErrorNotification, isExpan
         }
     }
 
-    if (body_state && body_state.connected) {
+    if (!isExpanded && body_state && body_state.connected) {
         actions.push(
             <Button
                 key="disconnect"
@@ -213,19 +213,41 @@ export const ConsoleCard = ({ state, vm, config, onAddErrorNotification, isExpan
         );
     }
 
-    actions.push(
-        <Button
-            key="expand-compress"
-            variant="link"
-            onClick={() => {
-                const urlOptions = { name: vm.name, connection: vm.connectionName };
-                const path = isExpanded ? ["vm"] : ["vm", "console"];
-                return cockpit.location.go(path, { ...cockpit.location.options, ...urlOptions });
-            }}
-            icon={isExpanded ? <CompressIcon /> : <ExpandIcon />}
-            iconPosition="right">{isExpanded ? _("Compress") : _("Expand")}
-        </Button>
-    );
+    if (!isExpanded && body_state) {
+        const urlOptions = { name: vm.name, connection: vm.connectionName };
+        const path = ["vm", "console"];
+        const href = "#" + cockpit.location.encode(path, { ...cockpit.location.options, ...urlOptions });
+
+        actions.push(
+            <Button
+                key="detach"
+                variant="link"
+                component="a"
+                href={href}
+                target="_blank"
+                onClick={(event) => {
+                    let sizestr = "";
+                    const canvas = document.querySelector(".vm-console-vnc canvas");
+                    const title = document.querySelector(`#${vmId(vm.name)}-consoles .pf-v6-c-card__header-main`);
+                    console.log("S", canvas, title);
+                    if (canvas && title) {
+                        const width = canvas.getAttribute("width");
+                        const height = canvas.getAttribute("height");
+                        // The 16 below is the padding of the expanded version and fixed in consoles.css
+                        const header_height = title.offsetHeight + 16;
+                        if (width && height)
+                            sizestr = `,width=${width},height=${Number(height) + header_height}`;
+                    }
+                    if (body_state)
+                        body_state.setConnected(false);
+                    window.open(href, "_blank", "popup" + sizestr);
+                    event.preventDefault();
+                }}
+                icon={<ExpandIcon />}
+                iconPosition="right">{_("Detach")}
+            </Button>
+        );
+    }
 
     return (
         <Card

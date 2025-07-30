@@ -86,19 +86,18 @@ export const VmDetailsPage = ({
     );
 
     if (cockpit.location.path[1] == "console") {
+        document.title = cockpit.format(_("$0 console"), vm.name);
         return (
             <WithDialogs key="vm-details">
-                <Page id={"vm-" + vm.name + "-consoles-page"}
-                      className="consoles-page-expanded no-masthead-sidebar">
-                    <PageSection hasBodyWrapper={false}>
-                        <ConsoleCard
-                            state={consoleState}
-                            vm={vm}
-                            config={config}
-                            onAddErrorNotification={onAddErrorNotification}
-                            isExpanded />
-                    </PageSection>
-                </Page>
+                <div id={"vm-" + vm.name + "-consoles-page"}
+                     className="consoles-page-expanded shell-fullscreen">
+                    <ConsoleCard
+                        state={consoleState}
+                        vm={vm}
+                        config={config}
+                        onAddErrorNotification={onAddErrorNotification}
+                        isExpanded />
+                </div>
             </WithDialogs>
         );
     }
