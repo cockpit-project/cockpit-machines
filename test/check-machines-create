@@ -537,9 +537,20 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
 
         m.execute("virsh net-destroy default; virsh net-undefine default")
 
+        # Add an extra network interface that should appear in the PXE source dropdown
+        # Use it as a stable iface name as different machines have different iface names
+        iface = "eth42"
+        self.add_veth(iface)
+
+        # We don't handle events for networks yet, so reload the page to refresh the state
+        b.reload()
+        b.enter_page('/machines')
+        self.waitPageInit()
+
         # Create when the default installation source is not virtual network
         runner.createTest(TestMachinesCreate.VmDialog(self, name='pxe-guest',
                                                       sourceType='pxe',
+                                                      location=f"type=direct,source={iface},source.mode=bridge",
                                                       storage_pool=NO_STORAGE,
                                                       create_and_run=True))
 
@@ -549,15 +560,6 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         # Define and start a NAT network with tftp server configuration
         m.write("/tmp/pxe-nat.xml", NETWORK_XML_PXE)
         m.execute("virsh net-define /tmp/pxe-nat.xml; virsh net-start pxe-nat")
-
-        # Add an extra network interface that should appear in the PXE source dropdown
-        iface = "eth42"
-        self.add_veth(iface)
-
-        # We don't handle events for networks yet, so reload the page to refresh the state
-        b.reload()
-        b.enter_page('/machines')
-        self.waitPageInit()
 
         # Create with immediate starting
         runner.createTest(TestMachinesCreate.VmDialog(self, name='pxe-guest', sourceType='pxe',
