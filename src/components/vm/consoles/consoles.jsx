@@ -137,6 +137,7 @@ export const ConsoleCard = ({ state, vm, config, onAddErrorNotification, isExpan
                 );
                 actions.push(
                     <VncActiveActions
+                        key="vnc-actions"
                         state={state.vncState}
                         vm={vm}
                         vnc={vnc}
