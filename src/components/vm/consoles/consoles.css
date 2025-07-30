@@ -60,3 +60,27 @@
         overflow: auto;
     }
 }
+
+/* When the Shell supports removing its UI, we further tighten up the
+   card looks.
+ */
+
+.consoles-page-expanded.shell-fullscreen {
+    block-size: 100%;
+    background: var(--pf-t--global--background--color--primary--default);
+
+    .consoles-card {
+        border-radius: 0;
+    }
+
+    .consoles-card .pf-v6-c-card__header {
+        padding-block-start: 0.5rem !important;
+        padding-block-end: 0.5rem !important;
+        padding-inline-start: 1rem !important;
+        padding-inline-end: 1rem !important;
+    }
+
+     .consoles-card .pf-v6-c-card__body {
+         padding-block-end: 0;
+     }
+}
