@@ -42,6 +42,7 @@ import {
     UPDATE_OS_INFO_LIST,
     UPDATE_UI_VM,
     UPDATE_VM,
+    UPDATE_QEMU_CONF,
 } from './constants/store-action-types.js';
 
 import type {
@@ -465,6 +466,18 @@ function timeSampleUsageData(newVmRecord, previousVmRecord) {
     }
 }
 
+function qemu(state, action) {
+    state = state || {
+        config: { }
+    };
+    switch (action.type) {
+    case UPDATE_QEMU_CONF:
+        return { ...state, conf: action.conf };
+    default:
+        return state;
+    }
+}
+
 export default combineReducers({
     config: lazyComposedReducer<Config, unknown>({
         parentReducer: config,
@@ -479,4 +492,5 @@ export default combineReducers({
     systemInfo,
     storagePools,
     ui,
+    qemu,
 });
