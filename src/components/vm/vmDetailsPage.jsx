@@ -86,19 +86,39 @@ export const VmDetailsPage = ({
     );
 
     if (cockpit.location.path[1] == "console") {
-        return (
-            <WithDialogs key="vm-details">
+        const card = (
+            <ConsoleCard
+                state={consoleState}
+                vm={vm}
+                config={config}
+                onAddErrorNotification={onAddErrorNotification}
+                isExpanded />
+        );
+
+        let page;
+        if (!window.parent || window.parent.features?.fullscreen_via_manifest) {
+            // No Shell UI around us
+            page = (
+                <div id={"vm-" + vm.name + "-consoles-page"}
+                     className="consoles-page-expanded shell-fullscreen">
+                    {card}
+                </div>
+            );
+        } else {
+            // Still some Shell UI around us from an old Shell
+            page = (
                 <Page id={"vm-" + vm.name + "-consoles-page"}
                       className="consoles-page-expanded no-masthead-sidebar">
                     <PageSection hasBodyWrapper={false}>
-                        <ConsoleCard
-                            state={consoleState}
-                            vm={vm}
-                            config={config}
-                            onAddErrorNotification={onAddErrorNotification}
-                            isExpanded />
+                        {card}
                     </PageSection>
                 </Page>
+            );
+        }
+
+        return (
+            <WithDialogs key="vm-details">
+                {page}
             </WithDialogs>
         );
     }
