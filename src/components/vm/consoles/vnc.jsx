@@ -330,11 +330,24 @@ export class VncActive extends React.Component {
         };
 
         this.credentials = null;
-
         this.connect = this.connect.bind(this);
         this.onDisconnected = this.onDisconnected.bind(this);
         this.onInitFailed = this.onInitFailed.bind(this);
         this.onSecurityFailure = this.onSecurityFailure.bind(this);
+
+        this.observer = new ResizeObserver(entries => {
+            if (entries.length > 0) {
+                const canvas = entries[0].target;
+                const width = canvas.getAttribute("width");
+                const height = canvas.getAttribute("height");
+                if (width && height && Number(width) > 0 && Number(height) > 0) {
+                    console.log("OBS", width, height);
+                    const delta_width = window.outerWidth - window.innerWidth;
+                    const delta_height = window.outerHeight - window.innerHeight;
+                    window.resizeTo(Number(width) + delta_width, Number(height) + 53 + delta_height);
+                }
+            }
+        });
     }
 
     connect(props) {
@@ -365,12 +378,23 @@ export class VncActive extends React.Component {
         });
     }
 
+    observe_vnc_canvas() {
+        const vnc = document.querySelector(".vm-console-vnc canvas");
+        // console.log("VNC", vnc);
+        if (vnc && this.props.state.sizeMode == "none" && this.props.isExpanded)
+            this.observer.observe(vnc);
+        else
+            this.observer.disconnect();
+    }
+
     componentDidMount() {
         this.connect(this.props);
+        this.observe_vnc_canvas();
     }
 
     componentDidUpdate() {
         this.connect(this.props);
+        this.observe_vnc_canvas();
     }
 
     getEncrypt() {
