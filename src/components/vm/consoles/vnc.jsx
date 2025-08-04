@@ -332,9 +332,23 @@ export class VncActive extends React.Component {
         this.credentials = null;
 
         this.connect = this.connect.bind(this);
+        this.onConnected = this.onConnected.bind(this);
         this.onDisconnected = this.onDisconnected.bind(this);
         this.onInitFailed = this.onInitFailed.bind(this);
         this.onSecurityFailure = this.onSecurityFailure.bind(this);
+
+        this.observer = new MutationObserver(entries => {
+            if (entries.length > 0)
+                this.report_remote_size(entries[0].target);
+        });
+    }
+
+    report_remote_size(canvas) {
+        const width = canvas.getAttribute("width");
+        const height = canvas.getAttribute("height");
+        if (width && height && Number(width) > 0 && Number(height) > 0) {
+            this.props.onRemoteSizeChanged(Number(width), Number(height), this.props.state.sizeMode);
+        }
     }
 
     connect(props) {
@@ -375,6 +389,17 @@ export class VncActive extends React.Component {
 
     getEncrypt() {
         return window.location.protocol === 'https:';
+    }
+
+    onConnected(vnc_element) {
+        let canvas = null;
+        if (this.props.onRemoteSizeChanged)
+            canvas = vnc_element.querySelector("canvas");
+        if (canvas) {
+            this.observer.observe(canvas, { attributes: true });
+            this.report_remote_size(canvas);
+        } else
+            this.observer.disconnect();
     }
 
     onDisconnected(detail) { // server disconnected
@@ -430,6 +455,7 @@ export class VncActive extends React.Component {
                           shared
                           credentials={this.credentials}
                           vncLogging={ window.debugging?.includes("vnc") ? 'debug' : 'warn' }
+                          onConnected={this.onConnected}
                           onDisconnected={this.onDisconnected}
                           onInitFailed={this.onInitFailed}
                           onSecurityFailure={this.onSecurityFailure}

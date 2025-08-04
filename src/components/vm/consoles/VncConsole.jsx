@@ -55,6 +55,7 @@ export const VncConsole = ({
     repeaterID = '',
     vncLogging = 'warn',
     consoleContainerId,
+    onConnected = (element) => {},
     onDisconnected = () => {},
     onInitFailed,
     onSecurityFailure,
@@ -128,6 +129,7 @@ export const VncConsole = ({
         initLogging(vncLogging);
         try {
             connect();
+            onConnected(novncElem.current);
         } catch (e) {
             onInitFailed && onInitFailed(e);
             rfb.current = undefined;
@@ -138,7 +140,7 @@ export const VncConsole = ({
             removeEventListeners();
             rfb.current = undefined;
         };
-    }, [connect, onInitFailed, removeEventListeners, vncLogging]);
+    }, [connect, onInitFailed, onConnected, removeEventListeners, vncLogging]);
 
     const disconnect = () => {
         if (!rfb.current) {
