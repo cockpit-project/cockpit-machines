@@ -124,6 +124,26 @@ export const VmDetailsPage = ({
         );
     }
 
+    if (cockpit.location.path[1] == "vnc") {
+        document.title = cockpit.format(_("$0 console"), vm.name);
+        return (
+            <WithDialogs key="vm-details">
+                <div
+                    id={"vm-" + vm.name + "-consoles-page"}
+                    className="consoles-page-standalone"
+                >
+                    <ConsoleCard
+                        state={consoleState}
+                        vm={vm}
+                        config={config}
+                        onAddErrorNotification={onAddErrorNotification}
+                        isStandalone
+                    />
+                </div>
+            </WithDialogs>
+        );
+    }
+
     interface CardContentCard {
         card: NonNullable<React.ReactNode>;
     }

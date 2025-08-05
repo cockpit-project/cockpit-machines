@@ -60,3 +60,33 @@
         overflow: auto;
     }
 }
+
+/* Standalone console
+ */
+
+.consoles-page-standalone {
+    block-size: 100%;
+    background: var(--pf-t--global--background--color--primary--default);
+
+    .consoles-card {
+        block-size: 100%;
+        border-radius: 0;
+    }
+
+    .consoles-card .pf-v6-c-card__header {
+        /* NOTE: The 8 pixels padding is hard coded into consoles.jsx as
+           well. It needs to be changed there as well if it is changed here.
+         */
+        padding-block-start: 8px !important;
+        padding-block-end: 8px !important;
+        padding-inline-start: 1rem !important;
+        padding-inline-end: 1rem !important;
+    }
+
+    .consoles-card .pf-v6-c-card__body {
+        padding-inline-start: 0;
+        padding-inline-end: 0;
+        padding-block-end: 0;
+        overflow: auto;
+    }
+}
