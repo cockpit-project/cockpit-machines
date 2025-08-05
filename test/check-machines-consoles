@@ -589,6 +589,60 @@ fullscreen=0
         b.wait_text("#vm-console-vnc-scaling", "Remote resizing")
         wait_widths(lambda remote, local, ui: remote == ui and local == ui)
 
+    def testDetached(self):
+        b = self.browser
+        m = self.machine
+
+        name = "subVmTest1"
+        self.createVm(name, graphics="vnc")
+
+        self.login_and_go("/machines")
+        self.waitPageInit()
+        self.waitVmRow(name)
+        self.goToVmPage(name)
+
+        b2 = self.new_browser()
+        cookie = b.cookie("cockpit")
+
+        initial_remote = 1280
+        if m.image in ["ubuntu-2204", "rhel-8-10"]:
+            initial_remote = 1024
+
+        with b.wait_timeout(60):
+            b.wait_attr(".vm-console-vnc canvas", "width", str(initial_remote))
+
+        href = b.attr(".consoles-card a:contains(Detach)", "href")
+        b.click(".consoles-card a:contains(Detach)")
+
+        # HACK - We can't control the new window that was opened by
+        # the click on "Detach" because of limitations in our
+        # testlib. So we open a second one explicitly with a new
+        # Browser instance. But there is a debug message that will
+        # tell us what the click on "Detach" has done.
+
+        def is_detach_message(msg):
+            return (msg.startswith("> debug: Detaching VNC: ") and
+                    href in msg and
+                    f"width={initial_remote}" in msg)
+
+        testlib.wait(lambda: any(is_detach_message(msg) for msg in b.get_js_log()))
+
+        b2.open("/cockpit/@localhost/machines/index.html" + href, cookie=cookie)
+        with b2.wait_timeout(60):
+            b2.wait_attr(".vm-console-vnc canvas", "width", str(initial_remote))
+
+        # Logging out should close both of the detached windows, the
+        # one in "b" from the click on "Detach", and the explicitly
+        # opened one in "b2".  We detect this by looking for another
+        # debug message.
+
+        b.logout()
+        testlib.wait(lambda: "> debug: Closing detached VNC" in b.get_js_log())
+        testlib.wait(lambda: "> debug: Closing detached VNC" in b2.get_js_log())
+
+        # cleanup expects self.browser to be logged in.
+        self.login_and_go("/machines")
+
 
 if __name__ == '__main__':
     testlib.test_main()

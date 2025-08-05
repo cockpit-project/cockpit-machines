@@ -16,12 +16,12 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import cockpit from 'cockpit';
 import { StateObject } from './state';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core/dist/esm/components/Card';
-import { ExpandIcon, CompressIcon } from "@patternfly/react-icons";
+import { ExpandIcon, CompressIcon, ExternalLinkAltIcon } from "@patternfly/react-icons";
 import { ToggleGroup, ToggleGroupItem } from '@patternfly/react-core/dist/esm/components/ToggleGroup';
 import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/index.js";
 
@@ -81,7 +81,14 @@ export class ConsoleCardState extends StateObject {
     }
 }
 
-export const ConsoleCard = ({ state, vm, config, onAddErrorNotification, isExpanded }) => {
+export const ConsoleCard = ({
+    state,
+    vm,
+    config,
+    onAddErrorNotification,
+    isExpanded = false,
+    isStandalone = false,
+}) => {
     const serials = vm.displays.filter(display => display.type == 'pty');
     const inactive_serials = vm.inactiveXML.displays.filter(display => display.type == 'pty');
     const vnc = vm.displays.find(display => display.type == 'vnc');
@@ -89,7 +96,20 @@ export const ConsoleCard = ({ state, vm, config, onAddErrorNotification, isExpan
     const spice = vm.displays.find(display => display.type == 'spice');
     const inactive_spice = vm.inactiveXML.displays.find(display => display.type == 'spice');
 
-    let type = state.type;
+    const lastVncRemoteSize = useRef([1024, 768]);
+
+    useEffect(() => {
+        if (isStandalone) {
+            const watchdog = cockpit.channel({ payload: "null" });
+            watchdog.addEventListener("close", () => {
+                console.debug("Closing detached VNC");
+                window.close();
+            });
+            return () => watchdog.close();
+        }
+    }, [isStandalone]);
+
+    let type = isStandalone ? "graphical" : state.type;
     if (!type) {
         if (vnc || serials.length == 0)
             type = "graphical";
@@ -117,7 +137,7 @@ export const ConsoleCard = ({ state, vm, config, onAddErrorNotification, isExpan
                     <VncInactive
                         vm={vm}
                         inactive_vnc={inactive_vnc}
-                        isExpanded={isExpanded}
+                        isExpanded={isExpanded || isStandalone}
                         onAddErrorNotification={onAddErrorNotification} />
                 );
             } else {
@@ -133,7 +153,26 @@ export const ConsoleCard = ({ state, vm, config, onAddErrorNotification, isExpan
                         inactiveConsoleDetail={inactive_vnc}
                         spiceDetail={spice}
                         onAddErrorNotification={onAddErrorNotification}
-                        isExpanded={isExpanded} />
+                        isExpanded={isExpanded || isStandalone}
+                        onRemoteSizeChanged={(w, h, mode) => {
+                            if (lastVncRemoteSize.current[0] == w &&
+                                lastVncRemoteSize.current[1] == h)
+                                return;
+                            lastVncRemoteSize.current = [w, h];
+                            if (isStandalone && mode == "none") {
+                                // First we guess the height of the
+                                // header (53px), and then we measure
+                                // it.
+                                let header_height = 53;
+                                const title = document.querySelector(`#${vmId(vm.name)}-consoles .pf-v6-c-card__header`);
+                                if (title)
+                                    header_height = title.offsetHeight;
+                                const delta_width = window.outerWidth - window.innerWidth;
+                                const delta_height = window.outerHeight - window.innerHeight;
+                                window.resizeTo(w + delta_width, h + header_height + delta_height);
+                            }
+                        }}
+                    />
                 );
                 actions.push(
                     <VncActiveActions
@@ -141,7 +180,7 @@ export const ConsoleCard = ({ state, vm, config, onAddErrorNotification, isExpan
                         state={state.vncState}
                         vm={vm}
                         vnc={vnc}
-                        isExpanded={isExpanded} />
+                        isExpanded={isExpanded || isStandalone} />
                 );
                 body_state = state.vncState;
             } else if (inactive_vnc) {
@@ -149,11 +188,11 @@ export const ConsoleCard = ({ state, vm, config, onAddErrorNotification, isExpan
                     <VncPending
                         vm={vm}
                         inactive_vnc={inactive_vnc}
-                        isExpanded={isExpanded}
+                        isExpanded={isExpanded || isStandalone}
                         onAddErrorNotification={onAddErrorNotification} />
                 );
             } else if (spice) {
-                body = <SpiceActive vm={vm} isExpanded={isExpanded} spice={spice} />;
+                body = <SpiceActive vm={vm} isExpanded={isExpanded || isStandalone} spice={spice} />;
             } else {
                 body = <VncMissing vm={vm} onAddErrorNotification={onAddErrorNotification} />;
             }
@@ -202,7 +241,7 @@ export const ConsoleCard = ({ state, vm, config, onAddErrorNotification, isExpan
         }
     }
 
-    if (body_state && body_state.connected) {
+    if (!isStandalone && body_state && body_state.connected) {
         actions.push(
             <Button
                 key="disconnect"
@@ -214,34 +253,79 @@ export const ConsoleCard = ({ state, vm, config, onAddErrorNotification, isExpan
         );
     }
 
-    actions.push(
-        <Button
-            key="expand-compress"
-            variant="link"
-            onClick={() => {
-                const urlOptions = { name: vm.name, connection: vm.connectionName };
-                const path = isExpanded ? ["vm"] : ["vm", "console"];
-                return cockpit.location.go(path, { ...cockpit.location.options, ...urlOptions });
-            }}
-            icon={isExpanded ? <CompressIcon /> : <ExpandIcon />}
-            iconPosition="right">{isExpanded ? _("Compress") : _("Expand")}
-        </Button>
+    if (!isStandalone) {
+        actions.push(
+            <Button
+                key="expand-compress"
+                variant="link"
+                onClick={() => {
+                    const urlOptions = { name: vm.name, connection: vm.connectionName };
+                    const path = isExpanded ? ["vm"] : ["vm", "console"];
+                    return cockpit.location.go(path, { ...cockpit.location.options, ...urlOptions });
+                }}
+                icon={isExpanded ? <CompressIcon /> : <ExpandIcon />}
+                iconPosition="right">{isExpanded ? _("Compress") : _("Expand")}
+            </Button>
+        );
+    }
+
+    if (!isStandalone && type == "graphical") {
+        const urlOptions = { name: vm.name, connection: vm.connectionName };
+        const path = ["vm", "vnc"];
+        const href = "#" + cockpit.location.encode(path, { ...cockpit.location.options, ...urlOptions });
+
+        actions.push(
+            <Button
+                key="detach"
+                variant="link"
+                component="a"
+                href={href}
+                onClick={(event) => {
+                    let header_height = 53;
+                    const title = document.querySelector(`#${vmId(vm.name)}-consoles .pf-v6-c-card__header-main`);
+                    if (title) {
+                        // The 8 below is the padding of the expanded version and fixed in consoles.css
+                        header_height = 8 + title.offsetHeight + 8;
+                    }
+                    const sz = lastVncRemoteSize.current;
+                    const options = `popup,width=${sz[0]},height=${sz[1] + header_height}`;
+                    console.debug("Detaching VNC:", href, options);
+                    window.open(href, "vnc-" + vm.name, options);
+
+                    if (body_state)
+                        body_state.setConnected(false);
+
+                    event.preventDefault();
+                }}
+                icon={<ExternalLinkAltIcon />}
+                iconPosition="right">{_("Detach")}
+            </Button>
+        );
+    }
+
+    const title = (
+        <CardTitle component="h2">{(isExpanded || isStandalone) ? vm.name : _("Console")}</CardTitle>
     );
 
     return (
         <Card
-            isPlain={isExpanded}
+            isPlain={isExpanded || isStandalone}
             className="ct-card consoles-card"
             id={`${vmId(vm.name)}-consoles`}>
             <CardHeader actions={{ actions }}>
-                <Split hasGutter>
-                    <SplitItem>
-                        <CardTitle component="h2">{isExpanded ? vm.name : _("Console")}</CardTitle>
-                    </SplitItem>
-                    <SplitItem>
-                        <ToggleGroup>{tabs}</ToggleGroup>
-                    </SplitItem>
-                </Split>
+                { isStandalone
+                    ? title
+                    : (
+                        <Split hasGutter>
+                            <SplitItem>
+                                {title}
+                            </SplitItem>
+                            <SplitItem>
+                                <ToggleGroup>{tabs}</ToggleGroup>
+                            </SplitItem>
+                        </Split>
+                    )
+                }
             </CardHeader>
             <CardBody>
                 <div className="vm-console">

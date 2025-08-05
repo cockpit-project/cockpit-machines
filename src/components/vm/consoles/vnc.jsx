@@ -238,6 +238,7 @@ export const VncActiveActions = ({ state, vm, vnc, isExpanded, onAddErrorNotific
                 }
                 selected={state.sizeMode}
                 onSelect={val => state.setSizeMode(val)}
+                popperProps={{ position: "end" }}
             />
         );
     }
@@ -292,6 +293,7 @@ export const VncActiveActions = ({ state, vm, vnc, isExpanded, onAddErrorNotific
                     </MenuToggle>
                 )}
                 isOpen={isOpen}
+                popperProps={{ position: "end" }}
             >
                 <DropdownList>
                     {dropdownItems}
