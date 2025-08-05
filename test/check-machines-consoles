@@ -456,7 +456,7 @@ fullscreen=0
 
         b.click(".consoles-card button:contains(Expand)")
         b.wait_visible(".consoles-page-expanded")
-        b.assert_pixels(".consoles-card", "expanded", ignore=[".vm-console-vnc"])
+        b.assert_pixels(".consoles-card", "expanded", ignore=[".vm-console-vnc"], chrome_hack_double_shots=True)
 
         # Disconnect VNC, switch to Serial
 
