@@ -88,7 +88,7 @@ import {
 import { domainCreate } from '../../libvirtApi/domain.js';
 import { storagePoolRefresh } from '../../libvirtApi/storagePool.js';
 import { getAccessToken } from '../../libvirtApi/rhel-images.js';
-import { PasswordFormFields, password_quality } from 'cockpit-components-password.jsx';
+import { PasswordFormFields } from 'cockpit-components-password.jsx';
 import { DynamicListForm } from 'cockpit-components-dynamic-list.jsx';
 
 import './createVmDialog.css';
@@ -667,71 +667,12 @@ const UsersConfigurationRow = ({
     onValueChanged,
     validationFailed,
 }) => {
-    const [root_pwd_strength, setRootPasswordStrength] = useState('');
-    const [root_pwd_message, setRootPasswordMessage] = useState('');
-    const [root_pwd_errors, setRootPasswordErrors] = useState({});
-
-    const [user_pwd_strength, setUserPasswordStrength] = useState('');
-    const [user_pwd_message, setUserPasswordMessage] = useState('');
-    const [user_pwd_errors, setUserPasswordErrors] = useState({});
-
-    useEffect(() => {
-        if (rootPassword) {
-            password_quality(rootPassword)
-                    .then(strength => {
-                        setRootPasswordErrors({});
-                        setRootPasswordStrength(strength.value);
-                        setRootPasswordMessage(strength.message || '');
-                    })
-                    .catch(ex => {
-                        if (validationFailed !== undefined) {
-                            const errors = {};
-                            errors.password = (ex.message || ex.toString()).replace(/\n/g, " ");
-                            setRootPasswordErrors(errors);
-                        }
-                        setRootPasswordStrength(0);
-                        setRootPasswordMessage('');
-                    });
-        } else {
-            setRootPasswordErrors({});
-            setRootPasswordStrength('');
-            setRootPasswordMessage('');
-        }
-    }, [rootPassword, validationFailed]);
-
-    useEffect(() => {
-        if (userPassword) {
-            password_quality(userPassword)
-                    .then(strength => {
-                        setUserPasswordErrors({});
-                        setUserPasswordStrength(strength.value);
-                        setUserPasswordMessage(strength.message || '');
-                    })
-                    .catch(ex => {
-                        if (validationFailed !== undefined) {
-                            const errors = {};
-                            errors.password = (ex.message || ex.toString()).replace(/\n/g, " ");
-                            setUserPasswordErrors(errors);
-                        }
-                        setUserPasswordStrength(0);
-                        setUserPasswordMessage('');
-                    });
-        } else {
-            setUserPasswordErrors({});
-            setUserPasswordStrength('');
-            setUserPasswordMessage('');
-        }
-    }, [userPassword, validationFailed]);
-
     return (
         <>
             <PasswordFormFields initial_password={rootPassword}
                                 password_label={_("Root password")}
-                                password_strength={root_pwd_strength}
                                 idPrefix="create-vm-dialog-root-password"
-                                password_message={root_pwd_message}
                                 password_label_info={rootPasswordLabelInfo}
-                                error_password={root_pwd_errors.password}
                                 change={(_, value) => onValueChanged('rootPassword', value)} />
             {showUserFields &&
             <>
@@ -746,11 +687,9 @@ const UsersConfigurationRow = ({
                 </FormGroup>
                 <PasswordFormFields initial_password={userPassword}
                                     password_label={_("User password")}
-                                    password_strength={user_pwd_strength}
                                     idPrefix="create-vm-dialog-user-password"
-                                    password_message={user_pwd_message}
                                     password_label_info={_("Leave the password blank if you do not wish to have a user account created")}
-                                    error_password={validationFailed.userPassword ? validationFailed.userPassword : user_pwd_errors.password}
+                                    error_password={validationFailed.userPassword ? validationFailed.userPassword : undefined}
                                     change={(_, value) => onValueChanged('userPassword', value)} />
             </>}
         </>

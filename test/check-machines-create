@@ -196,15 +196,15 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                              errors)
 
         # user login
-        errors = {"create-vm-dialog-root-password-pw1": "Password quality check failed"}
+        errors = {"create-vm-dialog-root-password-pw1": "Weak password"}
         runner.checkDialogFormValidationTest(TestMachinesCreate.VmDialog(self, sourceType='cloud',
                                                                          storage_size=10, storage_size_unit='MiB',
                                                                          location=config.VALID_DISK_IMAGE_PATH,
                                                                          root_password="foo",
                                                                          create_and_run=True),
                                              errors,
-                                             create=False,
-                                             is_warning=True)
+                                             is_error=False,
+                                             create=False)
 
         # Check switching from "os" to "cloud" source type doesn't reset passwords
         # https://bugzilla.redhat.com/show_bug.cgi?id=2109986
@@ -1519,7 +1519,7 @@ vnc_password= "{vnc_passwd}"
                 raise Exception("There is no dialog to cancel")
             return self
 
-        def createAndExpectInlineValidationErrors(self, errors, create, is_warning):
+        def createAndExpectInlineValidationErrors(self, errors, create, is_warning, is_error):
             b = self.browser
 
             if create:
@@ -1538,8 +1538,10 @@ vnc_password= "{vnc_passwd}"
                 form_helper_sel = f".pf-v6-c-modal-box__body #{error}-group .pf-v6-c-form__helper-text"
                 if is_warning:
                     error_location = f"{form_helper_sel} .pf-m-warning"
-                else:
+                elif is_error:
                     error_location = f"{form_helper_sel} .pf-m-error"
+                else:
+                    error_location = f"{form_helper_sel}"
                 b.wait_visible(error_location)
                 if (error_msg):
                     b.wait_in_text(error_location, error_msg)
@@ -1981,10 +1983,10 @@ vnc_password= "{vnc_passwd}"
             self._assertScriptFinished().checkEnvIsEmpty()
 
         # Many of testCreate* tests use these helpers - let's keep them here to avoid repetition
-        def checkDialogFormValidationTest(self, dialog, errors, create=True, is_warning=False):
+        def checkDialogFormValidationTest(self, dialog, errors, create=True, is_warning=False, is_error=True):
             dialog.open() \
                 .fill() \
-                .createAndExpectInlineValidationErrors(errors, create, is_warning) \
+                .createAndExpectInlineValidationErrors(errors, create, is_warning, is_error) \
                 .cancel(True)
             if dialog.check_script_finished:
                 self._assertScriptFinished()
