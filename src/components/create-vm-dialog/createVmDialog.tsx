@@ -1320,22 +1320,22 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
             // virt-install doesn't allow memory, supplied in MiB, to be a float number
             // check if number is a integer, and if not, round up (ceil)
             const valueMiB = Math.ceil(convertToUnit(value, this.state.memorySizeUnit, units.MiB));
-            this.setState({ memorySize: convertToUnit(valueMiB, units.MiB, this.state.memorySizeUnit) });
+            this.setState(prevState => ({ memorySize: convertToUnit(valueMiB, units.MiB, prevState.memorySizeUnit) }));
             break;
         }
         case 'memorySizeUnit':
             cockpit.assert(typeof value == "string");
-            this.setState({
+            this.setState(prevState => ({
                 memorySizeUnit: value,
-                memorySize: convertToUnit(this.state.memorySize, this.state.memorySizeUnit, value)
-            });
+                memorySize: convertToUnit(prevState.memorySize, prevState.memorySizeUnit, value)
+            }));
             break;
         case 'storageSizeUnit':
             cockpit.assert(typeof value == "string");
-            this.setState({
+            this.setState(prevState => ({
                 storageSizeUnit: value,
-                storageSize: convertToUnit(this.state.storageSize, this.state.storageSizeUnit, value)
-            });
+                storageSize: convertToUnit(prevState.storageSize, prevState.storageSizeUnit, value)
+            }));
             break;
         case 'connectionName':
             cockpit.assert(value == "session" || value == "system");
