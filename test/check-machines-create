@@ -2231,18 +2231,19 @@ vnc_password= "{vnc_passwd}"
 
         # Temporarily delete the OVMF binary and check the firmware options again
         if "fedora" in m.image or "rhel" in m.image or "centos" in m.image:
-            ovmf_path = "/usr/share/edk2"
+            ovmf_paths = ["/usr/share/edk2"]
         elif "debian" in m.image or "ubuntu" in m.image:
-            ovmf_path = "/usr/share/OVMF"
+            ovmf_paths = ["/usr/share/OVMF", "/usr/share/ovmf"]
         elif "arch" in m.image:
-            ovmf_path = "/usr/share/edk2-ovmf"
+            ovmf_paths = ["/usr/share/edk2-ovmf"]
         elif "suse" in m.image:
-            ovmf_path = "/usr/share/qemu"
+            ovmf_paths = ["/usr/share/qemu"]
         else:
             raise AssertionError("Unhandled distro for OVMF path")
 
-        m.execute("mount -t tmpfs tmpfs " + ovmf_path)
-        self.addCleanup(m.execute, f"if mountpoint {ovmf_path}; then umount {ovmf_path}; fi")
+        for ovmf_path in ovmf_paths:
+            m.execute("mount -t tmpfs tmpfs " + ovmf_path)
+            self.addCleanup(m.execute, f"if mountpoint {ovmf_path}; then umount {ovmf_path}; fi")
 
         # Reload for the new configuration to be read
         b.reload()
@@ -2253,7 +2254,8 @@ vnc_password= "{vnc_passwd}"
                        "Libvirt did not detect any UEFI/OVMF firmware image installed on the host")
         b.mouse("#vm-VmNotInstalled-firmware-tooltip", "mouseleave")
         b.wait_not_present("#missing-uefi-images")
-        m.execute("umount " + ovmf_path)
+        for ovmf_path in ovmf_paths:
+            m.execute("umount " + ovmf_path)
 
         # Install the VM
         b.click("#vm-VmNotInstalled-system-install")
