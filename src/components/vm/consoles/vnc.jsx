@@ -446,6 +446,13 @@ export class VncActive extends React.Component {
             />
         );
 
+        let scaleViewport = true;
+        let resizeSession = false;
+        if (isExpanded) {
+            scaleViewport = (state.sizeMode == "local");
+            resizeSession = (state.sizeMode == "remote");
+        }
+
         return (
             <>
                 { state.connected
@@ -454,7 +461,6 @@ export class VncActive extends React.Component {
                           port={window.location.port || (encrypt ? '443' : '80')}
                           path={path}
                           encrypt={encrypt}
-                          shared
                           credentials={this.credentials}
                           vncLogging={ window.debugging?.includes("vnc") ? 'debug' : 'warn' }
                           onConnected={this.onConnected}
@@ -462,8 +468,9 @@ export class VncActive extends React.Component {
                           onInitFailed={this.onInitFailed}
                           onSecurityFailure={this.onSecurityFailure}
                           consoleContainerId={isExpanded ? "vnc-display-container-expanded" : "vnc-display-container-minimized"}
-                          scaleViewport={!isExpanded || state.sizeMode == "local"}
-                          resizeSession={!!isExpanded && state.sizeMode == "remote"}
+                          scaleViewport={scaleViewport}
+                          resizeSession={resizeSession}
+                          shared={!resizeSession}
                     />
                     : <div className="vm-console-vnc">
                         <EmptyState>
