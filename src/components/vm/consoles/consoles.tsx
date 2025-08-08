@@ -8,7 +8,7 @@
  * the Free Software Foundation; either version 2.1 of the License, or
  * (at your option) any later version.
  *
- * Cockpit is distributed in the hope that it will be useful, but
+g * Cockpit is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
  * Lesser General Public License for more details.
@@ -18,6 +18,10 @@
  */
 import React, { useRef, useEffect } from 'react';
 import cockpit from 'cockpit';
+
+import type { VM, VMConsole, VMGraphics, VMPty } from '../../../types';
+import type { Notification } from '../../../app';
+
 import { StateObject } from './state';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core/dist/esm/components/Card';
@@ -38,12 +42,9 @@ import './consoles.css';
 const _ = cockpit.gettext;
 
 class SerialStates extends StateObject {
-    constructor() {
-        super();
-        this.states = { };
-    }
+    states: Record<string, ConsoleState> = { };
 
-    get(key) {
+    get(key: string | number) {
         if (!(key in this.states)) {
             const state = new ConsoleState();
             this.follow(state);
@@ -60,6 +61,10 @@ class SerialStates extends StateObject {
 }
 
 export class ConsoleCardState extends StateObject {
+    type: null | string = null;
+    vncState: VncState;
+    serialStates: SerialStates;
+
     constructor () {
         super();
         this.type = null;
@@ -75,7 +80,7 @@ export class ConsoleCardState extends StateObject {
         this.serialStates.close();
     }
 
-    setType(val) {
+    setType(val: string) {
         this.type = val;
         this.update();
     }
@@ -84,17 +89,26 @@ export class ConsoleCardState extends StateObject {
 export const ConsoleCard = ({
     state,
     vm,
-    config,
     onAddErrorNotification,
     isExpanded = false,
     isStandalone = false,
+} : {
+    state: ConsoleCardState,
+    vm: VM,
+    onAddErrorNotification: (notification: Notification) => void,
+    isExpanded?: boolean,
+    isStandalone?: boolean,
 }) => {
-    const serials = vm.displays.filter(display => display.type == 'pty');
-    const inactive_serials = vm.inactiveXML.displays.filter(display => display.type == 'pty');
-    const vnc = vm.displays.find(display => display.type == 'vnc');
-    const inactive_vnc = vm.inactiveXML.displays.find(display => display.type == 'vnc');
-    const spice = vm.displays.find(display => display.type == 'spice');
-    const inactive_spice = vm.inactiveXML.displays.find(display => display.type == 'spice');
+    const is_pty = (display: VMConsole): display is VMPty => display.type == 'pty';
+    const is_vnc = (display: VMConsole): display is VMGraphics => display.type == 'vnc';
+    const is_spice = (display: VMConsole): display is VMGraphics => display.type == 'spice';
+
+    const serials = vm.displays.filter(is_pty);
+    const inactive_serials = vm.inactiveXML.displays.filter(is_pty);
+    const vnc = vm.displays.find(is_vnc);
+    const inactive_vnc = vm.inactiveXML.displays.find(is_vnc);
+    const spice = vm.displays.find(is_spice);
+    const inactive_spice = vm.inactiveXML.displays.find(is_spice);
 
     const lastVncRemoteSize = useRef([1024, 768]);
 
@@ -120,7 +134,7 @@ export const ConsoleCard = ({
     const actions = [];
     const tabs = [];
     let body = null;
-    let body_state = null;
+    let body_state: ConsoleState | null = null;
 
     tabs.push(<ToggleGroupItem
                   key="graphical"
@@ -131,14 +145,18 @@ export const ConsoleCard = ({
     if (type == "graphical") {
         if (vm.state != "running") {
             if (!inactive_vnc && !inactive_spice) {
-                body = <VncMissing vm={vm} />;
+                body = (
+                    <VncMissing
+                        vm={vm}
+                        onAddErrorNotification={onAddErrorNotification} />
+                );
             } else if (inactive_vnc) {
                 body = (
                     <VncInactive
                         vm={vm}
                         inactive_vnc={inactive_vnc}
                         isExpanded={isExpanded || isStandalone}
-                        onAddErrorNotification={onAddErrorNotification} />
+                    />
                 );
             } else {
                 body = <SpiceInactive vm={vm} isExpanded={isExpanded} />;
@@ -151,8 +169,6 @@ export const ConsoleCard = ({
                         vm={vm}
                         consoleDetail={vnc}
                         inactiveConsoleDetail={inactive_vnc}
-                        spiceDetail={spice}
-                        onAddErrorNotification={onAddErrorNotification}
                         isExpanded={isExpanded || isStandalone}
                         onRemoteSizeChanged={(w, h, mode) => {
                             if (lastVncRemoteSize.current[0] == w &&
@@ -165,7 +181,7 @@ export const ConsoleCard = ({
                                 // it.
                                 let header_height = 53;
                                 const title = document.querySelector(`#${vmId(vm.name)}-consoles .pf-v6-c-card__header`);
-                                if (title)
+                                if (title && title instanceof HTMLElement)
                                     header_height = title.offsetHeight;
                                 const delta_width = window.outerWidth - window.innerWidth;
                                 const delta_height = window.outerHeight - window.innerHeight;
@@ -179,8 +195,8 @@ export const ConsoleCard = ({
                         key="vnc-actions"
                         state={state.vncState}
                         vm={vm}
-                        vnc={vnc}
-                        isExpanded={isExpanded || isStandalone} />
+                        isExpanded={isExpanded || isStandalone}
+                        onAddErrorNotification={onAddErrorNotification} />
                 );
                 body_state = state.vncState;
             } else if (inactive_vnc) {
@@ -189,7 +205,7 @@ export const ConsoleCard = ({
                         vm={vm}
                         inactive_vnc={inactive_vnc}
                         isExpanded={isExpanded || isStandalone}
-                        onAddErrorNotification={onAddErrorNotification} />
+                    />
                 );
             } else if (spice) {
                 body = <SpiceActive vm={vm} isExpanded={isExpanded || isStandalone} spice={spice} />;
@@ -210,7 +226,7 @@ export const ConsoleCard = ({
 
             if (type == t) {
                 if (vm.state != "running") {
-                    body = <SerialInactive vm={vm} />;
+                    body = <SerialInactive />;
                 } else {
                     const serial_state = state.serialStates.get(pty.alias || idx);
                     body = (
@@ -234,7 +250,7 @@ export const ConsoleCard = ({
 
         if (type == "serial0") {
             if (inactive_serials.length > 0) {
-                body = <SerialPending vm={vm} />;
+                body = <SerialPending />;
             } else {
                 body = <SerialMissing vm={vm} onAddErrorNotification={onAddErrorNotification} />;
             }
@@ -242,11 +258,12 @@ export const ConsoleCard = ({
     }
 
     if (!isStandalone && body_state && body_state.connected) {
+        const bs = body_state;
         actions.push(
             <Button
                 key="disconnect"
                 variant="secondary"
-                onClick={() => body_state.setConnected(false)}
+                onClick={() => bs.setConnected(false)}
             >
                 {_("Disconnect")}
             </Button>
@@ -283,7 +300,7 @@ export const ConsoleCard = ({
                 onClick={(event) => {
                     let header_height = 53;
                     const title = document.querySelector(`#${vmId(vm.name)}-consoles .pf-v6-c-card__header-main`);
-                    if (title) {
+                    if (title && title instanceof HTMLElement) {
                         // The 8 below is the padding of the expanded version and fixed in consoles.css
                         header_height = 8 + title.offsetHeight + 8;
                     }

@@ -33,6 +33,8 @@ SOFTWARE.
    removed.
  */
 
+// @cockpit-ts-relaxed
+
 import React from 'react';
 
 import { initLogging } from '@novnc/novnc/lib/util/logging';
@@ -40,7 +42,6 @@ import RFB_module from '@novnc/novnc/lib/rfb';
 const RFB = RFB_module.default;
 
 export const VncConsole = ({
-    children,
     host,
     port = '80',
     path = '',
@@ -55,25 +56,44 @@ export const VncConsole = ({
     repeaterID = '',
     vncLogging = 'warn',
     consoleContainerId,
-    onConnected = (element) => {},
-    onDisconnected = (event) => {},
+    onConnected = () => {},
+    onDisconnected = () => {},
     onInitFailed,
     onSecurityFailure,
+} : {
+    host: string,
+    port?: string,
+    path?: string,
+    encrypt?: boolean,
+    resizeSession?: boolean,
+    clipViewport?: boolean,
+    dragViewport?: boolean,
+    scaleViewport?: boolean,
+    viewOnly?: boolean,
+    shared?: boolean,
+    credentials: { password: string },
+    repeaterID?: string,
+    vncLogging?: string,
+    consoleContainerId: string,
+    onConnected?: (element: HTMLElement | null) => void,
+    onDisconnected: (clean: boolean) => void,
+    onInitFailed: (detail: unknown) => void,
+    onSecurityFailure: (reason: string) => void,
 }) => {
-    const rfb = React.useRef();
+    const rfb = React.useRef<typeof RFB>();
 
-    const novncElem = React.useRef(null);
+    const novncElem = React.useRef<HTMLDivElement>(null);
 
     const _onDisconnected = React.useCallback(
         (e) => {
-            onDisconnected(e);
+            onDisconnected(e.detail.clean);
         },
         [onDisconnected]
     );
 
     const _onSecurityFailure = React.useCallback(
         (e) => {
-            onSecurityFailure(e);
+            onSecurityFailure(e.detail.reason);
         },
         [onSecurityFailure]
     );
@@ -103,11 +123,13 @@ export const VncConsole = ({
         };
         rfb.current = new RFB(novncElem.current, url, options);
         addEventListeners();
-        rfb.current.viewOnly = viewOnly;
-        rfb.current.clipViewport = clipViewport;
-        rfb.current.dragViewport = dragViewport;
-        rfb.current.scaleViewport = scaleViewport;
-        rfb.current.resizeSession = resizeSession;
+        if (rfb.current) {
+            rfb.current.viewOnly = viewOnly;
+            rfb.current.clipViewport = clipViewport;
+            rfb.current.dragViewport = dragViewport;
+            rfb.current.scaleViewport = scaleViewport;
+            rfb.current.resizeSession = resizeSession;
+        }
     }, [
         addEventListeners,
         host,
@@ -131,7 +153,7 @@ export const VncConsole = ({
             connect();
             onConnected(novncElem.current);
         } catch (e) {
-            onInitFailed && onInitFailed(e);
+            if (onInitFailed) onInitFailed(e);
             rfb.current = undefined;
         }
 
