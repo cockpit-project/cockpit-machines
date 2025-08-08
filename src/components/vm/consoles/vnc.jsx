@@ -48,6 +48,8 @@ import { domainSendKey, domainAttachVnc, domainChangeVncSettings, domainGet } fr
 
 import { VncConsole } from './VncConsole';
 
+import store from '../../../store.js';
+
 const _ = cockpit.gettext;
 // https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h
 const Enum = {
@@ -73,11 +75,30 @@ export class VncState extends ConsoleState {
     constructor() {
         super();
         this.sizeMode = "none";
+        this.clean_disconnect = true;
+        this.connection_failure = null;
     }
 
     setSizeMode(val) {
         this.sizeMode = val;
         this.update();
+    }
+
+    setConnected(val) {
+        this.connected = val;
+        this.connection_failure = null;
+        this.clean_disconnect = true;
+        this.update();
+    }
+
+    setDisconnected(clean) {
+        this.connected = false;
+        this.clean_disconnect = clean;
+        this.update();
+    }
+
+    setConnectionFailure(val) {
+        this.connection_failure = val;
     }
 }
 
@@ -404,9 +425,9 @@ export class VncActive extends React.Component {
             this.observer.disconnect();
     }
 
-    onDisconnected(detail) { // server disconnected
-        console.info('Connection lost: ', detail);
-        this.props.state.setConnected(false);
+    onDisconnected(event) { // server disconnected
+        console.info('Connection lost: ', event.detail);
+        this.props.state.setDisconnected(event.detail.clean);
     }
 
     onInitFailed(detail) {
@@ -414,7 +435,8 @@ export class VncActive extends React.Component {
     }
 
     onSecurityFailure(event) {
-        console.info('Security failure:', event?.detail?.reason || "unknown reason");
+        if (event.detail?.reason)
+            this.props.state.setConnectionFailure(event.detail.reason);
     }
 
     render() {
@@ -428,6 +450,8 @@ export class VncActive extends React.Component {
             // postpone rendering until consoleDetail is known and channel ready
             return null;
         }
+
+        const qemu_conf = store.getState().qemu.conf;
 
         // We must pass the very same object to VncConsole.credentials
         // on every render. Otherwise VncConsole thinks credentials
@@ -445,6 +469,16 @@ export class VncActive extends React.Component {
                 onAddErrorNotification={onAddErrorNotification}
             />
         );
+
+        const vnc_tls = qemu_conf.vnc_tls == "1";
+
+        function get_failure_reason() {
+            if (state.connection_failure)
+                return state.connection_failure;
+            if (vnc_tls)
+                return _("VNC with TLS is not supported by the in-page viewer");
+            return _("Failed to connect");
+        }
 
         return (
             <>
@@ -467,11 +501,17 @@ export class VncActive extends React.Component {
                     />
                     : <div className="vm-console-vnc">
                         <EmptyState>
-                            <EmptyStateBody>{_("Disconnected")}</EmptyStateBody>
+                            <EmptyStateBody>
+                                { state.clean_disconnect ? _("Disconnected") : get_failure_reason() }
+                            </EmptyStateBody>
                             <EmptyStateFooter>
-                                <Button variant="primary" onClick={() => state.setConnected(true)}>
-                                    {_("Connect")}
-                                </Button>
+                                { (state.clean_disconnect || !vnc_tls) &&
+                                    <Button
+                                        variant="primary"
+                                        onClick={() => state.setConnected(true)}>
+                                        { state.clean_disconnect ? _("Connect") : _("Retry") }
+                                    </Button>
+                                }
                             </EmptyStateFooter>
                         </EmptyState>
                     </div>
