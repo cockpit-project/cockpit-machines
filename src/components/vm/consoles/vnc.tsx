@@ -20,7 +20,7 @@
 import React, { useState } from 'react';
 import cockpit from 'cockpit';
 
-import type { optString, VM, VMGraphics } from '../../../types';
+import type { VM, VMGraphics } from '../../../types';
 import type { Notification } from '../../../app';
 
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
@@ -49,7 +49,7 @@ import { logDebug } from '../../../helpers.js';
 import { LaunchViewerButton, connection_address, ConsoleState } from './common';
 import { domainSendKey, domainAttachVnc, domainChangeVncSettings, domainGet } from '../../../libvirtApi/domain.js';
 
-import { VncConsole } from './VncConsole';
+import { VncConsole, VncCredentials } from './VncConsole';
 
 import store from '../../../store.js';
 
@@ -396,7 +396,7 @@ interface VncActiveState {
 }
 
 export class VncActive extends React.Component<VncActiveProps, VncActiveState> {
-    credentials: null | { password: string } = null;
+    credentials: null | VncCredentials = null;
     observer: MutationObserver;
 
     constructor(props: VncActiveProps) {
@@ -489,7 +489,7 @@ export class VncActive extends React.Component<VncActiveProps, VncActiveState> {
         console.error('VncConsole failed to init: ', detail, this);
     }
 
-    onSecurityFailure(reason: string) {
+    onSecurityFailure(reason: string | undefined) {
         if (reason)
             this.props.state.setConnectionFailure(reason);
     }
@@ -551,7 +551,6 @@ export class VncActive extends React.Component<VncActiveProps, VncActiveState> {
                           encrypt={encrypt}
                           shared
                           credentials={this.credentials}
-                          vncLogging={ window.debugging?.includes("vnc") ? 'debug' : 'warn' }
                           onConnected={this.onConnected}
                           onDisconnected={this.onDisconnected}
                           onInitFailed={this.onInitFailed}
