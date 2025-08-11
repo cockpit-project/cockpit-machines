@@ -17,7 +17,10 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { useState, useEffect } from 'react';
-import { AlertGroup } from "@patternfly/react-core/dist/esm/components/Alert";
+
+import type { ConnectionName } from './types';
+
+import { AlertGroup, type AlertProps } from "@patternfly/react-core/dist/esm/components/Alert";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { EmptyState, EmptyStateBody, EmptyStateActions, EmptyStateFooter } from "@patternfly/react-core/dist/esm/components/EmptyState";
 import { Page, PageSection, } from "@patternfly/react-core/dist/esm/components/Page";
@@ -50,7 +53,7 @@ const _ = cockpit.gettext;
 
 superuser.reload_page_on_change();
 
-async function unknownConnectionName() {
+async function unknownConnectionName(): Promise<ConnectionName[]> {
     const loggedUser = await cockpit.user();
     // The 'root' user does not have its own qemu:///session just qemu:///system
     // https://bugzilla.redhat.com/show_bug.cgi?id=1045069
@@ -88,7 +91,8 @@ export const App = () => {
                     setError(errorMsgs.join(', '));
                 } catch (ex) {
                     // access denied is expected for unprivileged session
-                    if (connectionName !== 'system' || superuser.allowed || ex.name !== 'org.freedesktop.DBus.Error.AccessDenied')
+                    if (connectionName !== 'system' || superuser.allowed ||
+                        !(ex && typeof ex === 'object' && 'name' in ex && ex.name == 'org.freedesktop.DBus.Error.AccessDenied'))
                         console.error("Failed to get libvirt version from the dbus API:", ex);
                     /* If the API call failed on system connection and the user has superuser privileges then show the Empty state screen */
                     if (connectionName == "system")
@@ -129,7 +133,7 @@ export const App = () => {
                             <EmptyStateActions>
                                 <Button id="ignore-hw-virtualization-disabled-btn" variant="secondary" onClick={() => {
                                     setEmptyStateIgnored(true);
-                                    localStorage.setItem('virtualization-disabled-ignored', true);
+                                    localStorage.setItem('virtualization-disabled-ignored', "true");
                                 }}>{_("Ignore")}</Button>
                             </EmptyStateActions>
                         </EmptyStateFooter>
@@ -150,8 +154,34 @@ export const App = () => {
     );
 };
 
-class AppActive extends React.Component {
-    constructor(props) {
+export interface Notification {
+    text: string;
+    detail: string;
+    type?: AlertProps["variant"];
+    resourceId?: string;
+}
+
+interface AppActiveProps {
+    error: string;
+}
+
+interface AppActiveState {
+    notifications: Notification[],
+    /* Dictionary with keys being a resource's UUID and values the number of active error notifications for that resource */
+    resourceHasError: Record<string, number>,
+    path: string[],
+    /* virt-install feature support checks */
+    cloudInitSupported: boolean,
+    downloadOSSupported: boolean,
+    unattendedSupported: boolean,
+    unattendedUserLogin: boolean,
+    virtInstallAvailable: boolean,
+}
+
+class AppActive extends React.Component<AppActiveProps, AppActiveState> {
+    onNavigate: () => void;
+
+    constructor(props: AppActiveProps) {
         super(props);
         this.state = {
             notifications: [],
@@ -159,11 +189,11 @@ class AppActive extends React.Component {
             resourceHasError: {},
             path: cockpit.location.path,
             /* virt-install feature support checks */
-            cloudInitSupported: undefined,
-            downloadOSSupported: undefined,
-            unattendedSupported: undefined,
-            unattendedUserLogin: undefined,
-            virtInstallAvailable: undefined,
+            cloudInitSupported: false,
+            downloadOSSupported: false,
+            unattendedSupported: false,
+            unattendedUserLogin: false,
+            virtInstallAvailable: false,
         };
         this.onAddErrorNotification = this.onAddErrorNotification.bind(this);
         this.onDismissErrorNotification = this.onDismissErrorNotification.bind(this);
@@ -177,7 +207,7 @@ class AppActive extends React.Component {
         if (this.props.error)
             this.onAddErrorNotification({ text: _("Failed to fetch some resources"), detail: this.props.error });
 
-        const check_exec = argv => cockpit.spawn(argv, { err: 'ignore' })
+        const check_exec = (argv: string[]): Promise<string | false> => cockpit.spawn(argv, { err: 'ignore' })
                 .catch(() => false);
 
         const virtInstallAvailable = !!await check_exec(['sh', '-c', 'type virt-install']);
@@ -187,7 +217,7 @@ class AppActive extends React.Component {
             const cloudInitSupported = !!await check_exec(['virt-install', '--cloud-init=?']);
             const unattended_out = await check_exec(['virt-install', '--unattended=?']);
             const unattendedSupported = !!unattended_out;
-            const unattendedUserLogin = unattended_out?.includes('user-login');
+            const unattendedUserLogin = unattendedSupported && unattended_out.includes('user-login');
             this.setState({ cloudInitSupported, downloadOSSupported, unattendedSupported, unattendedUserLogin });
         }
     }
@@ -201,13 +231,15 @@ class AppActive extends React.Component {
      * the error count for a specific resource.
      * @param {object} notification - The notification object to be added to the array.
      */
-    onAddErrorNotification(notification) {
+    onAddErrorNotification(notification: Notification) {
         const resourceHasError = Object.assign({}, this.state.resourceHasError);
 
-        if (resourceHasError[notification.resourceId])
-            resourceHasError[notification.resourceId]++;
-        else
-            resourceHasError[notification.resourceId] = 1;
+        if (notification.resourceId) {
+            if (resourceHasError[notification.resourceId])
+                resourceHasError[notification.resourceId]++;
+            else
+                resourceHasError[notification.resourceId] = 1;
+        }
 
         this.setState(prevState => ({
             notifications: prevState.notifications.concat([notification]), // append new notification to the end of array
@@ -220,18 +252,19 @@ class AppActive extends React.Component {
      * It also updates the error count for a specific resource.
      * @param {int} notificationIndex - Index of the notification to be removed.
      */
-    onDismissErrorNotification(notificationIndex) {
+    onDismissErrorNotification(notificationIndex: number) {
         const notifications = [...this.state.notifications];
 
         const resourceHasError = { ...this.state.resourceHasError };
-        resourceHasError[notifications[notificationIndex].resourceId]--;
+        if (notifications[notificationIndex].resourceId)
+            resourceHasError[notifications[notificationIndex].resourceId]--;
 
         notifications.splice(notificationIndex, 1);
 
         this.setState({ notifications, resourceHasError });
     }
 
-    getInlineNotifications(notifications) {
+    getInlineNotifications(notifications: Notification[]) {
         return notifications.map((notification, index) => (
             <InlineNotification type={notification.type || 'danger'} key={index}
                 isLiveRegion
@@ -243,14 +276,14 @@ class AppActive extends React.Component {
     }
 
     render() {
-        const { vms, config, storagePools, systemInfo, ui, networks, nodeDevices, interfaces } = store.getState();
+        const { vms, config, storagePools, systemInfo, ui, networks, nodeDevices } = store.getState();
         const { path, cloudInitSupported, downloadOSSupported, unattendedSupported, unattendedUserLogin, virtInstallAvailable } = this.state;
         const combinedVms = [...vms, ...dummyVmsFilter(vms, ui.vms)];
         const properties = {
             nodeMaxMemory: config.nodeMaxMemory,
             onAddErrorNotification: this.onAddErrorNotification,
             systemInfo,
-            vms: combinedVms,
+            vms,
             cloudInitSupported,
             downloadOSSupported,
             unattendedSupported,
@@ -280,7 +313,7 @@ class AppActive extends React.Component {
                                          icon={ExclamationCircleIcon} />
                     </>
                 );
-            } else if (vm.createInProgress) {
+            } else if (vm.isUi && vm.createInProgress) {
                 return (
                     <>
                         {allNotifications}
@@ -297,7 +330,7 @@ class AppActive extends React.Component {
             }
 
             const connectionName = vm.connectionName;
-            const vmNotifications = this.state.resourceHasError[vm.id]
+            const vmNotifications = !vm.isUi && this.state.resourceHasError[vm.id]
                 ? (
                     <AlertGroup isToast>
                         {this.getInlineNotifications(this.state.notifications.filter(notification => notification.resourceId == vm.id))}
@@ -305,17 +338,17 @@ class AppActive extends React.Component {
                 )
                 : undefined;
             // If vm.isUi is set we show a dummy placeholder until libvirt gets a real domain object for newly created V
-            const expandedContent = (vm.isUi && !vm.id)
+            const expandedContent = vm.isUi
                 ? null
                 : (
                     <>
                         {vmNotifications}
-                        <VmDetailsPage vm={vm} vms={combinedVms} config={config}
+                        <VmDetailsPage vm={vm} vms={vms} config={config}
                             libvirtVersion={systemInfo.libvirtVersion}
                             onAddErrorNotification={this.onAddErrorNotification}
                             storagePools={(storagePools || []).filter(pool => pool && pool.connectionName == connectionName)}
                             onUsageStartPolling={() => usageStartPolling({ name: vm.name, id: vm.id, connectionName: vm.connectionName })}
-                            onUsageStopPolling={() => usageStopPolling({ name: vm.name, id: vm.id, connectionName: vm.connectionName })}
+                            onUsageStopPolling={() => usageStopPolling({ name: vm.name, connectionName: vm.connectionName })}
                             networks={(networks || []).filter(network => network && network.connectionName == connectionName)}
                             nodeDevices={(nodeDevices || []).filter(device => device && device.connectionName == connectionName)}
                             key={vmId(vm.name)}
@@ -325,29 +358,26 @@ class AppActive extends React.Component {
             return expandedContent;
         }
 
+        const loggedUser = systemInfo.loggedUser;
+
         return (
             <>
                 {allNotifications}
                 {pathVms && <HostVmsList vms={vms}
-                    config={config}
                     ui={ui}
-                    libvirtVersion={systemInfo.libvirtVersion}
                     storagePools={storagePools}
-                    interfaces={interfaces}
                     networks={networks}
                     actions={vmActions}
-                    resourceHasError={this.state.resourceHasError}
                     onAddErrorNotification={this.onAddErrorNotification} />
                 }
-                {path.length > 0 && path[0] == 'storages' &&
+                {path.length > 0 && path[0] == 'storages' && loggedUser &&
                 <StoragePoolList storagePools={storagePools}
                     vms={vms}
-                    loggedUser={systemInfo.loggedUser}
+                    loggedUser={loggedUser}
                     libvirtVersion={systemInfo.libvirtVersion} />
                 }
                 {path.length > 0 && path[0] == 'networks' &&
-                <NetworkList networks={networks}
-                             resourceHasError={this.state.resourceHasError} />
+                <NetworkList networks={networks} />
                 }
             </>
         );
