@@ -103,7 +103,7 @@ export const App = () => {
         (async () => {
             try {
                 const hardwareVirtCheck = await cockpit.script(
-                    "virt-host-validate qemu | grep 'Checking for hardware virtualization'");
+                    "LANG=C.UTF-8 virt-host-validate qemu | grep 'Checking for hardware virtualization'");
                 setVirtualizationEnabled(hardwareVirtCheck.includes('PASS'));
             } catch (ex) {
                 // That line doesn't exist on some architectures, so the grep may fail
