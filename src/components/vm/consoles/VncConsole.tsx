@@ -35,12 +35,22 @@ SOFTWARE.
 
 import React from 'react';
 
-import { initLogging } from '@novnc/novnc/lib/util/logging';
-import RFB_module from '@novnc/novnc/lib/rfb';
-const RFB = RFB_module.default;
+import RFB from '@novnc/novnc/lib/rfb';
+
+/* HACK - there is something weird going on with NoVNC modules and the
+ * way we bundle things. The default export should be the RFB
+ * class/constructor, but we get a wrapper that has the constructor in
+ * its "default" field.  The hack below gives us access to the
+ * constructor function but this is clearly not how this is intended
+ * to be done...
+ */
+const RFB_constructor: typeof RFB = (RFB as unknown as { default: typeof RFB }).default;
+
+export interface VncCredentials {
+    password: string;
+}
 
 export const VncConsole = ({
-    children,
     host,
     port = '80',
     path = '',
@@ -51,46 +61,75 @@ export const VncConsole = ({
     scaleViewport = false,
     viewOnly = false,
     shared = false,
-    credentials,
     repeaterID = '',
-    vncLogging = 'warn',
     consoleContainerId,
-    onConnected = (element) => {},
+    onConnected = () => {},
     onDisconnected = () => {},
     onInitFailed,
     onSecurityFailure,
+    getCredentials,
+} : {
+    host: string,
+    port?: string,
+    path?: string,
+    encrypt?: boolean,
+    resizeSession?: boolean,
+    clipViewport?: boolean,
+    dragViewport?: boolean,
+    scaleViewport?: boolean,
+    viewOnly?: boolean,
+    shared?: boolean,
+    repeaterID?: string,
+    consoleContainerId: string,
+    onConnected?: (element: HTMLElement | null) => void,
+    onDisconnected: (clean: boolean) => void,
+    onInitFailed: (detail: unknown) => void,
+    onSecurityFailure: (reason: string | undefined) => void,
+    getCredentials: () => VncCredentials,
 }) => {
-    const rfb = React.useRef();
+    const rfb = React.useRef<RFB>();
 
-    const novncElem = React.useRef(null);
+    const novncElem = React.useRef<HTMLDivElement>(null);
 
     const _onDisconnected = React.useCallback(
-        (e) => {
-            onDisconnected(e);
+        (e: CustomEvent<{ clean: boolean }>) => {
+            onDisconnected(e.detail.clean);
         },
         [onDisconnected]
     );
 
     const _onSecurityFailure = React.useCallback(
-        (e) => {
-            onSecurityFailure(e);
+        (e: CustomEvent<{ status: number; reason?: string }>) => {
+            onSecurityFailure(e.detail.reason);
         },
         [onSecurityFailure]
+    );
+
+    const _onCredentialsRequired = React.useCallback(
+        async (e) => {
+            if (rfb.current) {
+                const creds = await getCredentials();
+                rfb.current.sendCredentials(creds);
+            }
+        },
+        [getCredentials]
     );
 
     const addEventListeners = React.useCallback(() => {
         if (rfb.current) {
             rfb.current?.addEventListener('disconnect', _onDisconnected);
             rfb.current?.addEventListener('securityfailure', _onSecurityFailure);
+            rfb.current?.addEventListener('credentialsrequired', _onCredentialsRequired);
         }
-    }, [rfb, _onDisconnected, _onSecurityFailure]);
+    }, [rfb, _onDisconnected, _onSecurityFailure, _onCredentialsRequired]);
 
     const removeEventListeners = React.useCallback(() => {
         if (rfb.current) {
             rfb.current.removeEventListener('disconnect', _onDisconnected);
             rfb.current.removeEventListener('securityfailure', _onSecurityFailure);
+            rfb.current.removeEventListener('credentialsrequired', _onCredentialsRequired);
         }
-    }, [rfb, _onDisconnected, _onSecurityFailure]);
+    }, [rfb, _onDisconnected, _onSecurityFailure, _onCredentialsRequired]);
 
     const connect = React.useCallback(() => {
         const protocol = encrypt ? 'wss' : 'ws';
@@ -99,15 +138,16 @@ export const VncConsole = ({
         const options = {
             repeaterID,
             shared,
-            credentials
         };
-        rfb.current = new RFB(novncElem.current, url, options);
+        rfb.current = new RFB_constructor(novncElem.current!, url, options);
         addEventListeners();
-        rfb.current.viewOnly = viewOnly;
-        rfb.current.clipViewport = clipViewport;
-        rfb.current.dragViewport = dragViewport;
-        rfb.current.scaleViewport = scaleViewport;
-        rfb.current.resizeSession = resizeSession;
+        if (rfb.current) {
+            rfb.current.viewOnly = viewOnly;
+            rfb.current.clipViewport = clipViewport;
+            rfb.current.dragViewport = dragViewport;
+            rfb.current.scaleViewport = scaleViewport;
+            rfb.current.resizeSession = resizeSession;
+        }
     }, [
         addEventListeners,
         host,
@@ -122,16 +162,14 @@ export const VncConsole = ({
         rfb,
         repeaterID,
         shared,
-        credentials
     ]);
 
     React.useEffect(() => {
-        initLogging(vncLogging);
         try {
             connect();
             onConnected(novncElem.current);
         } catch (e) {
-            onInitFailed && onInitFailed(e);
+            if (onInitFailed) onInitFailed(e);
             rfb.current = undefined;
         }
 
@@ -140,7 +178,7 @@ export const VncConsole = ({
             removeEventListeners();
             rfb.current = undefined;
         };
-    }, [connect, onInitFailed, onConnected, removeEventListeners, vncLogging]);
+    }, [connect, onInitFailed, onConnected, removeEventListeners]);
 
     const disconnect = () => {
         if (!rfb.current) {

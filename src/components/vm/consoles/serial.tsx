@@ -17,8 +17,11 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import cockpit from 'cockpit';
+
+import type { ConnectionName, VM } from '../../../types';
+import type { ConsoleState } from './common';
+import type { Notification } from '../../../app';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import {
@@ -31,20 +34,31 @@ import { domainAttachSerialConsole } from '../../../libvirtApi/domain.js';
 
 const _ = cockpit.gettext;
 
-export class SerialActive extends React.Component {
-    constructor (props) {
+interface SerialActiveProps {
+    connectionName: ConnectionName;
+    vmName: string;
+    spawnArgs: string[];
+    state: ConsoleState;
+}
+
+interface SerialActiveState {
+    channel: null | cockpit.Channel<string>;
+}
+
+export class SerialActive extends React.Component<SerialActiveProps, SerialActiveState> {
+    constructor (props: SerialActiveProps) {
         super(props);
 
         this.state = {
-            channel: undefined,
+            channel: null,
         };
     }
 
     componentDidMount() {
-        this.updateChannel(this.props.spawnArgs);
+        this.updateChannel();
     }
 
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps: SerialActiveProps) {
         const oldSpawnArgs = prevProps.spawnArgs;
         const newSpawnArgs = this.props.spawnArgs;
 
@@ -60,22 +74,20 @@ export class SerialActive extends React.Component {
         };
 
         if (channel_needs_update())
-            this.updateChannel(this.props.spawnArgs);
+            this.updateChannel();
     }
 
     updateChannel() {
         if (this.state.channel)
             this.state.channel.close();
 
-        if (this.props.state.connected) {
-            const opts = {
+        if (this.props.state.connected && this.props.spawnArgs.length > 0) {
+            const channel = cockpit.channel({
                 payload: "stream",
                 spawn: this.props.spawnArgs,
                 pty: true,
-            };
-            if (this.props.connectionName == "system")
-                opts.superuser = "try";
-            const channel = cockpit.channel(opts);
+                ...(this.props.connectionName == "system" ? { superuser: "try" } : { })
+            });
             this.setState({ channel });
         } else {
             this.setState({ channel: null });
@@ -117,13 +129,7 @@ export class SerialActive extends React.Component {
     }
 }
 
-SerialActive.propTypes = {
-    connectionName: PropTypes.string.isRequired,
-    vmName: PropTypes.string.isRequired,
-    spawnArgs: PropTypes.array.isRequired,
-};
-
-export const SerialInactive = ({ vm }) => {
+export const SerialInactive = () => {
     return (
         <EmptyState>
             <EmptyStateBody>
@@ -133,7 +139,13 @@ export const SerialInactive = ({ vm }) => {
     );
 };
 
-export const SerialMissing = ({ vm, onAddErrorNotification }) => {
+export const SerialMissing = ({
+    vm,
+    onAddErrorNotification
+} : {
+    vm: VM,
+    onAddErrorNotification: (notification: Notification) => void;
+}) => {
     const [inProgress, setInProgress] = useState(false);
 
     function add_serial() {
@@ -168,7 +180,7 @@ export const SerialMissing = ({ vm, onAddErrorNotification }) => {
     );
 };
 
-export const SerialPending = ({ vm }) => {
+export const SerialPending = () => {
     return (
         <EmptyState icon={PendingIcon} status="custom">
             <EmptyStateBody>

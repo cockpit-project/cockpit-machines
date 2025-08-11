@@ -20,6 +20,8 @@
 import React from 'react';
 import cockpit from 'cockpit';
 
+import type { VM, VMGraphics } from '../../../types';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Content, ContentVariants } from "@patternfly/react-core/dist/esm/components/Content";
 import { ClipboardCopy } from "@patternfly/react-core/dist/esm/components/ClipboardCopy/index.js";
@@ -34,12 +36,9 @@ import { StateObject } from './state';
 const _ = cockpit.gettext;
 
 export class ConsoleState extends StateObject {
-    constructor () {
-        super();
-        this.connected = true;
-    }
+    connected: boolean = true;
 
-    setConnected(val) {
+    setConnected(val: boolean) {
         this.connected = val;
         this.update();
     }
@@ -64,12 +63,22 @@ export function connection_address() {
     return address;
 }
 
-export function console_launch(vm, consoleDetail) {
+export function console_launch(vm: VM, consoleDetail: VMGraphics) {
     // fire download of the .vv file
     domainDesktopConsole({ name: vm.name, consoleDetail: { ...consoleDetail, address: connection_address() } });
 }
 
-const RemoteConnectionInfo = ({ hide, url, onEdit, editLabel }) => {
+const RemoteConnectionInfo = ({
+    hide,
+    url = null,
+    onEdit = null,
+    editLabel = null,
+} : {
+    hide: () => void,
+    url?: null | string,
+    onEdit?: null | (() => void),
+    editLabel?: null | string,
+}) => {
     return (
         <>
             <Content component={ContentVariants.p}>
@@ -129,7 +138,15 @@ const RemoteConnectionInfo = ({ hide, url, onEdit, editLabel }) => {
     );
 };
 
-const RemoteConnectionPopover = ({ url, onEdit, editLabel }) => {
+const RemoteConnectionPopover = ({
+    url = null,
+    onEdit = null,
+    editLabel = null,
+} : {
+    url?: null | string,
+    onEdit?: null | (() => void),
+    editLabel?: null | string,
+}) => {
     return (
         <InfoPopover
             // Without a "id", the popover changes its aria attributes on each page render,
@@ -149,7 +166,19 @@ const RemoteConnectionPopover = ({ url, onEdit, editLabel }) => {
     );
 };
 
-export const LaunchViewerButton = ({ vm, console, url, onEdit, editLabel }) => {
+export const LaunchViewerButton = ({
+    vm,
+    console,
+    url = null,
+    onEdit = null,
+    editLabel = null,
+} : {
+    vm: VM,
+    console: VMGraphics | null,
+    url?: null | string,
+    onEdit?: null | (() => void),
+    editLabel?: null | string,
+}) => {
     return (
         <Flex columnGap={{ default: 'columnGapSm' }}>
             <RemoteConnectionPopover
@@ -160,7 +189,7 @@ export const LaunchViewerButton = ({ vm, console, url, onEdit, editLabel }) => {
             <Button
                 icon={<DownloadIcon />}
                 variant="secondary"
-                onClick={() => console_launch(vm, console)}
+                onClick={() => console && console_launch(vm, console)}
                 isDisabled={!console}
             >
                 {_("Launch viewer")}
