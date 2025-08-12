@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-04 04:09+0000\n"
-"PO-Revision-Date: 2025-07-26 11:18+0000\n"
+"POT-Creation-Date: 2025-08-12 03:40+0000\n"
+"PO-Revision-Date: 2025-08-10 05:27+0000\n"
 "Last-Translator: 김인수 <simmon@nplob.com>\n"
 "Language-Team: Korean <https://translate.fedoraproject.org/projects/cockpit/"
 "cockpit-machines/ko/>\n"
@@ -23,16 +23,16 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0\n"
 "X-Generator: Weblate 5.12.2\n"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:929
+#: src/components/create-vm-dialog/createVmDialog.tsx:1070
 msgid "$0 $1 available at default location"
 msgstr "기본 위치에서 사용 가능한 $0 $1"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:246
-#: src/components/create-vm-dialog/createVmDialog.jsx:879
+#: src/components/create-vm-dialog/createVmDialog.tsx:293
+#: src/components/create-vm-dialog/createVmDialog.tsx:994
 msgid "$0 $1 available on host"
 msgstr "호스트에서 사용 가능한 $0 $1"
 
-#: src/components/vm/overview/cpuModal.tsx:334
+#: src/components/vm/overview/cpuModal.tsx:335
 msgid "$0 CPU details"
 msgstr "$0 CPU 세부 정보"
 
@@ -46,7 +46,11 @@ msgid "$0 Storage pool"
 msgid_plural "$0 Storage pools"
 msgstr[0] "$0 저장소 풀"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1303
+#: src/components/vm/vmDetailsPage.tsx:128
+msgid "$0 console"
+msgstr "$0 콘솔"
+
+#: src/components/create-vm-dialog/createVmDialog.tsx:1479
 msgid "$0 does not support unattended installation."
 msgstr "$0는 무인 설치를 지원하지 않습니다."
 
@@ -54,15 +58,15 @@ msgstr "$0는 무인 설치를 지원하지 않습니다."
 msgid "$0 memory adjustment"
 msgstr "$0 메모리 조정"
 
-#: src/components/create-vm-dialog/pxe-helpers.js:106
+#: src/components/create-vm-dialog/pxe-helpers.tsx:104
 msgid "$0 network"
 msgstr "$0 네트워크"
 
 # auto translated by TM merge from project: RHEV Administration Guide,
 # version: 3.6-async1, DocId: chap-
 # Administering_and_Maintaining_the_Red_Hat_Enterprise_Virtualization_Environment
+#: src/components/vm/vmUsageCard.tsx:40
 #: src/components/vm/overview/vmOverviewCard.tsx:159
-#: src/components/vm/vmUsageCard.jsx:42
 msgid "$0 vCPU"
 msgid_plural "$0 vCPUs"
 msgstr[0] "$0 vCPU"
@@ -71,7 +75,7 @@ msgstr[0] "$0 vCPU"
 msgid "$0 virtual network interface settings"
 msgstr "$0 가상 네트워크 연결장치 설정"
 
-#: src/components/vm/vmMigrateDialog.jsx:76
+#: src/components/vm/vmMigrateDialog.tsx:97
 msgid ""
 "A copy of the VM will run on the destination and will disappear when it is "
 "shut off. Meanwhile, the origin host keeps its copy of the VM configuration."
@@ -90,17 +94,17 @@ msgid "Action"
 msgstr "동작"
 
 # ctx::sourcefile::Navigation Menu
-#: src/components/storagePools/storagePoolList.tsx:80
 #: src/components/networks/networkList.tsx:77
 #: src/components/vms/hostvmslist.tsx:204
-#: src/components/vm/disks/vmDisksCard.tsx:229
+#: src/components/storagePools/storagePoolList.tsx:80
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:199
+#: src/components/vm/disks/vmDisksCard.tsx:229
 #: src/components/vm/nics/vmNicsCard.tsx:498
 msgid "Actions"
 msgstr "동작"
 
-#: src/components/storagePools/storagePool.tsx:180
 #: src/components/networks/network.tsx:189
+#: src/components/storagePools/storagePool.tsx:180
 msgid "Activate"
 msgstr "활성화"
 
@@ -109,23 +113,23 @@ msgid "Activate the storage pool to administer volumes"
 msgstr "볼륨을 관리하려면 저장소 풀을 활성화하세요"
 
 #: src/components/networks/networkOverviewTab.tsx:281
-#: src/components/vm/disks/diskAdd.tsx:968
-#: src/components/vm/overview/vsock.tsx:223
-#: src/components/vm/overview/watchdog.tsx:176
-#: src/components/vm/nics/nicAdd.tsx:274
 #: src/components/vm/hostdevs/hostDevAdd.tsx:265
+#: src/components/vm/disks/diskAdd.tsx:968
+#: src/components/vm/overview/watchdog.tsx:176
+#: src/components/vm/overview/vsock.tsx:223
+#: src/components/vm/nics/nicAdd.tsx:274
 msgid "Add"
 msgstr "추가"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:867
+#: src/components/create-vm-dialog/createVmDialog.tsx:968
 msgid "Add SSH keys"
 msgstr "SSH 키 추가"
 
-#: src/components/vm/vmActions.jsx:483
+#: src/components/vm/vmActions.tsx:518
 msgid "Add TPM"
 msgstr "TPM 추가"
 
-#: src/components/vm/consoles/vnc.jsx:502
+#: src/components/vm/consoles/vnc.jsx:530
 msgid "Add VNC"
 msgstr "VNC 추가"
 
@@ -138,8 +142,8 @@ msgstr "DHCP 고정 호스트 항목 추가"
 msgid "Add disk"
 msgstr "디스크 추가"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:152
 #: src/components/vm/hostdevs/hostDevAdd.tsx:282
+#: src/components/vm/hostdevs/hostDevCard.tsx:152
 msgid "Add host device"
 msgstr "호스트 장치 추가"
 
@@ -197,7 +201,7 @@ msgstr "서브넷 내에 없는 주소"
 msgid "All"
 msgstr "모두"
 
-#: src/components/vm/vmMigrateDialog.jsx:185
+#: src/components/vm/vmMigrateDialog.tsx:226
 msgid ""
 "All VM activity, including storage, will be temporary. This will result in "
 "data loss on the destination host."
@@ -224,7 +228,7 @@ msgstr "항상 연결"
 msgid "An example of vsock-aware software is socat"
 msgstr "vsock-aware 소프트웨어의 예는 socat입니다"
 
-#: src/components/vm/overview/cpuModal.tsx:340
+#: src/components/vm/overview/cpuModal.tsx:341
 msgid "Apply"
 msgstr "적용"
 
@@ -236,7 +240,11 @@ msgstr "다음 부팅시에 적용합니다"
 msgid "Assign automatically"
 msgstr "자동 할당"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1302
+#: src/components/vm/deleteDialog.tsx:106
+msgid "Associated storage files"
+msgstr "관련된 저장소 파일"
+
+#: src/components/create-vm-dialog/createVmDialog.tsx:1478
 msgid ""
 "Automated installs are only available when downloading an image or using "
 "cloud-init."
@@ -248,12 +256,12 @@ msgstr ""
 msgid "Automatic"
 msgstr "자동"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1419
+#: src/components/create-vm-dialog/createVmDialog.tsx:1594
 msgid "Automation"
 msgstr "자동화"
 
-#: src/components/storagePools/storagePoolOverviewTab.tsx:73
 #: src/components/networks/networkOverviewTab.tsx:130
+#: src/components/storagePools/storagePoolOverviewTab.tsx:73
 #: src/components/vm/overview/vmOverviewCard.tsx:213
 msgid "Autostart"
 msgstr "자동 시작"
@@ -274,6 +282,10 @@ msgstr "부팅 순서"
 msgid "Boot order settings could not be saved"
 msgstr "부팅 순서 설정을 저장 할 수 없습니다"
 
+#: src/components/vm/hostdevs/hostDevAdd.tsx:116
+#: src/components/vm/hostdevs/hostDevCard.tsx:104
+#: src/components/vm/hostdevs/hostDevCard.tsx:112
+#: src/components/vm/hostdevs/hostDevCard.tsx:262
 #: src/components/vm/disks/diskAdd.tsx:306
 #: src/components/vm/disks/vmDisksCard.tsx:221
 #: src/components/vm/disks/diskEdit.tsx:133
@@ -282,10 +294,6 @@ msgstr "부팅 순서 설정을 저장 할 수 없습니다"
 #: src/components/vm/overview/bootOrder.tsx:157
 #: src/components/vm/overview/bootOrder.tsx:160
 #: src/components/vm/overview/bootOrder.tsx:174
-#: src/components/vm/hostdevs/hostDevCard.tsx:104
-#: src/components/vm/hostdevs/hostDevCard.tsx:112
-#: src/components/vm/hostdevs/hostDevCard.tsx:262
-#: src/components/vm/hostdevs/hostDevAdd.tsx:116
 msgid "Bus"
 msgstr "버스"
 
@@ -294,12 +302,12 @@ msgid "CD/DVD disc"
 msgstr "CD/DVD 디스크"
 
 #: src/components/common/needsShutdown.tsx:190
+#: src/components/vm/vmUsageCard.tsx:59
 #: src/components/vm/overview/vmOverviewCard.tsx:201
-#: src/components/vm/vmUsageCard.jsx:61
 msgid "CPU"
 msgstr "CPU"
 
-#: src/components/vm/overview/cpuModal.tsx:221
+#: src/components/vm/overview/cpuModal.tsx:222
 msgid "CPU mode could not be saved"
 msgstr "CPU 설정을 저장 할 수 없습니다"
 
@@ -309,35 +317,35 @@ msgstr "CPU 설정을 저장 할 수 없습니다"
 msgid "Cache"
 msgstr "캐쉬"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1482
+#: src/components/networks/networkOverviewTab.tsx:284
+#: src/components/networks/createNetworkDialog.tsx:561
 #: src/components/common/deleteResource.tsx:129
 #: src/components/storagePools/storagePoolDelete.tsx:220
-#: src/components/storagePools/createStoragePoolDialog.tsx:529
 #: src/components/storagePools/storageVolumeCreate.tsx:146
-#: src/components/networks/createNetworkDialog.tsx:561
-#: src/components/networks/networkOverviewTab.tsx:284
-#: src/components/vm/vmMigrateDialog.jsx:199
-#: src/components/vm/vmRenameDialog.jsx:89
-#: src/components/vm/confirmDialog.jsx:56
+#: src/components/storagePools/createStoragePoolDialog.tsx:529
+#: src/components/vm/vmReplaceSpiceDialog.tsx:178
 #: src/components/vm/consoles/vnc.jsx:159
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:263
-#: src/components/vm/disks/diskAdd.tsx:971
-#: src/components/vm/disks/mediaEject.tsx:129
-#: src/components/vm/disks/diskEdit.tsx:341
-#: src/components/vm/overview/bootOrder.tsx:368
-#: src/components/vm/overview/cpuModal.tsx:343
-#: src/components/vm/overview/memoryModal.tsx:209
-#: src/components/vm/overview/vsock.tsx:272
-#: src/components/vm/overview/firmware.tsx:120
-#: src/components/vm/overview/watchdog.tsx:237
-#: src/components/vm/vmReplaceSpiceDialog.jsx:163
-#: src/components/vm/vmEditDescriptionDialog.jsx:79
+#: src/components/vm/confirmDialog.tsx:79
+#: src/components/vm/hostdevs/hostDevAdd.tsx:270
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:140
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:362
-#: src/components/vm/vmCloneDialog.jsx:101
+#: src/components/vm/vmCloneDialog.tsx:124
+#: src/components/vm/vmEditDescriptionDialog.tsx:91
+#: src/components/vm/vmMigrateDialog.tsx:240
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:263
+#: src/components/vm/vmRenameDialog.tsx:109
+#: src/components/vm/deleteDialog.tsx:216
+#: src/components/vm/disks/mediaEject.tsx:129
+#: src/components/vm/disks/diskAdd.tsx:971
+#: src/components/vm/disks/diskEdit.tsx:340
+#: src/components/vm/overview/firmware.tsx:120
+#: src/components/vm/overview/watchdog.tsx:237
+#: src/components/vm/overview/vsock.tsx:272
+#: src/components/vm/overview/memoryModal.tsx:209
+#: src/components/vm/overview/cpuModal.tsx:344
+#: src/components/vm/overview/bootOrder.tsx:368
 #: src/components/vm/nics/nicEdit.tsx:240 src/components/vm/nics/nicAdd.tsx:277
-#: src/components/vm/hostdevs/hostDevAdd.tsx:270
-#: src/components/vm/deleteDialog.jsx:176
+#: src/components/create-vm-dialog/createVmDialog.tsx:1657
 msgid "Cancel"
 msgstr "취소"
 
@@ -381,11 +389,11 @@ msgstr ""
 "\"VM\", \"VMX\", \"SVM\", \"VTX\", \"VTD\"라고 불리는 설정을 활성화합니다. 보"
 "다 자세히 알기 위해 자신의 컴퓨터 사용 설명서를 참고하세요."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:536
+#: src/components/create-vm-dialog/createVmDialog.tsx:647
 msgid "Checking token validity..."
 msgstr "토큰 유효성 확인 중..."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:474
+#: src/components/create-vm-dialog/createVmDialog.tsx:572
 msgid "Choose an operating system"
 msgstr "운영 체제를 선택하십시오"
 
@@ -401,7 +409,7 @@ msgstr ""
 "\"표시기 시작\"을 누르면 $0 파일을 내려받고 자신의 시스템에서 원격 표시기 응"
 "용프로그램을 시작합니다."
 
-#: src/components/vm/vmCloneDialog.jsx:98 src/components/vm/vmActions.jsx:413
+#: src/components/vm/vmCloneDialog.tsx:121 src/components/vm/vmActions.tsx:448
 msgid "Clone"
 msgstr "복제"
 
@@ -409,7 +417,7 @@ msgstr "복제"
 msgid "Close"
 msgstr "닫기"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:371
+#: src/components/create-vm-dialog/createVmDialog.tsx:455
 msgid "Cloud base image"
 msgstr "클라우드 기반 이미지"
 
@@ -417,7 +425,7 @@ msgstr "클라우드 기반 이미지"
 msgid "Cockpit Project"
 msgstr "Cockpit 프로젝트"
 
-#: src/components/vm/consoles/consoles.jsx:227
+#: src/components/vm/consoles/consoles.jsx:267
 msgid "Compress"
 msgstr "압축"
 
@@ -429,36 +437,36 @@ msgstr "동시에 쓰기 가능"
 msgid "Confirm this action"
 msgstr "작업 확인"
 
-#: src/components/vm/consoles/serial.jsx:96
-#: src/components/vm/consoles/vnc.jsx:445
 #: src/components/vm/consoles/serialConsole.jsx:95
+#: src/components/vm/consoles/serial.jsx:96
+#: src/components/vm/consoles/vnc.jsx:473
 msgid "Connect"
 msgstr "연결"
 
 # ctx::sourcefile::Navigation Menu
-#: src/components/common/machinesConnectionSelector.tsx:54
-#: src/components/storagePools/storagePoolList.tsx:78
 #: src/components/networks/networkList.tsx:74
 #: src/components/networks/createNetworkDialog.tsx:47
 #: src/components/vms/hostvmslist.tsx:202
+#: src/components/common/machinesConnectionSelector.tsx:54
+#: src/components/storagePools/storagePoolList.tsx:78
 #: src/components/vm/overview/vmOverviewCard.tsx:177
 msgid "Connection"
 msgstr "연결"
 
-#: src/components/vm/consoles/consoles.jsx:239
+#: src/components/vm/consoles/consoles.jsx:307
 msgid "Console"
 msgstr "콘솔"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:140
+#: src/components/vm/vmReplaceSpiceDialog.tsx:155
 msgid "Convert QXL video card to VGA"
 msgstr "QXL 비디오 카드를 VGA로 변환합니다"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:139
+#: src/components/vm/vmReplaceSpiceDialog.tsx:154
 msgid "Convert SPICE graphics console to VNC"
 msgstr "SPICE 그래픽 콘솔을 VNC로 변환합니다"
 
-#: src/components/vm/vmMigrateDialog.jsx:103
-#: src/components/vm/vmMigrateDialog.jsx:116
+#: src/components/vm/vmMigrateDialog.tsx:132
+#: src/components/vm/vmMigrateDialog.tsx:145
 msgid "Copy storage"
 msgstr "저장소 복사"
 
@@ -466,15 +474,15 @@ msgstr "저장소 복사"
 msgid "Copy to clipboard"
 msgstr "클립보드로 복사"
 
-#: src/components/vm/overview/cpuModal.tsx:288
+#: src/components/vm/overview/cpuModal.tsx:289
 msgid "Cores per socket"
 msgstr "소켓당 코어 수"
 
-#: src/components/vm/deleteDialog.jsx:156
+#: src/components/vm/deleteDialog.tsx:191
 msgid "Could not delete $0"
 msgstr "$0를 삭제 할 수 없습니다"
 
-#: src/components/vm/deleteDialog.jsx:151
+#: src/components/vm/deleteDialog.tsx:186
 msgid "Could not delete all storage for $0"
 msgstr "$0를 위해 모든 저장소를 삭제 할 수 없습니다"
 
@@ -494,50 +502,50 @@ msgstr "순간찍기로 전환 할 수 없습니다"
 msgid "Crashed"
 msgstr "충돌"
 
-#: src/components/storagePools/createStoragePoolDialog.tsx:526
-#: src/components/storagePools/storageVolumeCreate.tsx:143
 #: src/components/networks/createNetworkDialog.tsx:558
+#: src/components/storagePools/storageVolumeCreate.tsx:143
+#: src/components/storagePools/createStoragePoolDialog.tsx:526
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:359
 msgid "Create"
 msgstr "생성"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1527
+#: src/components/create-vm-dialog/createVmDialog.tsx:1717
 msgid "Create VM"
 msgstr "가상 머신 만들기"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1546
+#: src/components/create-vm-dialog/createVmDialog.tsx:1736
 msgid "Create VM by importing a disk image of an existing VM installation"
 msgstr "기존 VM 설치의 가져온 디스크 이미지에 의해 VM을 생성합니다"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1545
+#: src/components/create-vm-dialog/createVmDialog.tsx:1735
 msgid "Create VM from local or network installation medium"
 msgstr "로컬 또는 네트워크 설치 환경에서 VM을 생성합니다"
 
-#: src/components/vm/vmCloneDialog.jsx:74
+#: src/components/vm/vmCloneDialog.tsx:97
 msgid "Create a clone VM based on $0"
 msgstr "$0을 기반으로 복제 VM 만들기"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1446
+#: src/components/create-vm-dialog/createVmDialog.tsx:1621
 msgid "Create and edit"
 msgstr "생성과 편집"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1476
+#: src/components/create-vm-dialog/createVmDialog.tsx:1651
 msgid "Create and run"
-msgstr "생성과 동작"
+msgstr "생성과 실행"
 
 #: src/components/vm/disks/diskAdd.tsx:758
 msgid "Create new"
 msgstr "새로 만들기"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:962
+#: src/components/create-vm-dialog/createVmDialog.tsx:1104
 msgid "Create new qcow2 volume"
 msgstr "신규 qcow2 볼륨 생성"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:963
+#: src/components/create-vm-dialog/createVmDialog.tsx:1105
 msgid "Create new raw volume"
 msgstr "신규 단순 볼륨 만들기"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1461
+#: src/components/create-vm-dialog/createVmDialog.tsx:1636
 msgid "Create new virtual machine"
 msgstr "새로운 가상 머신 만들기"
 
@@ -581,7 +589,7 @@ msgstr ""
 "VFIO 장치가 있는 VM의 순간찍기 생성중에는 이들이 동작 중일 때에는 지원되지 않"
 "습니다."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1278
+#: src/components/create-vm-dialog/createVmDialog.tsx:1454
 msgid "Creation of VM $0 failed"
 msgstr "VM $0 생성이 실패했습니다"
 
@@ -589,7 +597,7 @@ msgstr "VM $0 생성이 실패했습니다"
 msgid "Creation time"
 msgstr "생성 시간"
 
-#: src/components/vm/consoles/vnc.jsx:267
+#: src/components/vm/consoles/vnc.jsx:268
 msgid "Ctrl+Alt+$0"
 msgstr "Ctrl+Alt+$0"
 
@@ -619,24 +627,25 @@ msgstr "사용자 지정 경로"
 msgid "DHCP Settings"
 msgstr "DHCP 설정"
 
-#: src/components/storagePools/storagePool.tsx:171
 #: src/components/networks/network.tsx:185
+#: src/components/storagePools/storagePool.tsx:171
 msgid "Deactivate"
 msgstr "비활성화"
 
+#: src/components/networks/network.tsx:166
+#: src/components/networks/network.tsx:169
 #: src/components/common/deleteResource.tsx:117
 #: src/components/common/deleteResource.tsx:177
 #: src/components/common/deleteResource.tsx:188
 #: src/components/storagePools/storagePoolDelete.tsx:217
 #: src/components/storagePools/storagePoolDelete.tsx:247
 #: src/components/storagePools/storagePoolDelete.tsx:257
-#: src/components/networks/network.tsx:166
-#: src/components/networks/network.tsx:169 src/components/vm/vmActions.jsx:496
-#: src/components/vm/vmActions.jsx:504 src/components/vm/deleteDialog.jsx:173
+#: src/components/vm/vmActions.tsx:531 src/components/vm/vmActions.tsx:539
+#: src/components/vm/deleteDialog.tsx:213
 msgid "Delete"
 msgstr "삭제"
 
-#: src/components/vm/deleteDialog.jsx:164
+#: src/components/vm/deleteDialog.tsx:199
 msgid "Delete $0 VM?"
 msgstr "$0 VM 삭제?"
 
@@ -649,7 +658,7 @@ msgid "Delete $0 volume"
 msgid_plural "Delete $0 volumes"
 msgstr[0] "$0 볼륨 삭제"
 
-#: src/components/vm/deleteDialog.jsx:84
+#: src/components/vm/deleteDialog.tsx:104
 msgid "Delete associated storage files:"
 msgstr "관련된 저장소 파일 삭제:"
 
@@ -673,45 +682,49 @@ msgstr ""
 msgid "Deleting shared directories is possible only when the guest is shut off"
 msgstr "공유된 디렉토리 삭제하기는 게스트가 종료된 경우에만 할 수 있습니다"
 
-#: src/components/vm/vmEditDescriptionDialog.jsx:64
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:137
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:89
+#: src/components/vm/vmEditDescriptionDialog.tsx:76
 msgid "Description"
 msgstr "설명"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:116
+#: src/components/vm/vmReplaceSpiceDialog.tsx:131
 msgid "Deselect others"
 msgstr "나머지 선택을 취소합니다"
 
-#: src/components/vm/vmMigrateDialog.jsx:49
+#: src/components/vm/vmMigrateDialog.tsx:64
 msgid "Destination URI"
 msgstr "대상 URI"
 
-#: src/components/vm/vmMigrateDialog.jsx:137
+#: src/components/vm/vmMigrateDialog.tsx:177
 msgid "Destination URI must not be empty"
 msgstr "대상 URI는 비워 두면 안됩니다"
+
+#: src/components/vm/consoles/consoles.jsx:301
+msgid "Detach"
+msgstr "분리"
 
 #: src/components/storagePools/storagePoolDelete.tsx:99
 msgid ""
 "Detach the disks using this pool from any VMs before attempting deletion."
 msgstr "삭제를 시도하기 전에 VM에서 이 풀을 사용하는 디스크를 분리하십시오."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1415
+#: src/components/create-vm-dialog/createVmDialog.tsx:1590
 msgid "Details"
 msgstr "상세정보"
 
 #: src/components/networks/networkList.tsx:73
 #: src/components/networks/createNetworkDialog.tsx:231
+#: src/components/vm/hostdevs/hostDevAdd.tsx:115
+#: src/components/vm/hostdevs/hostDevAdd.tsx:150
+#: src/components/vm/hostdevs/hostDevCard.tsx:103
+#: src/components/vm/hostdevs/hostDevCard.tsx:261
 #: src/components/vm/disks/diskAdd.tsx:462
 #: src/components/vm/disks/vmDisksCard.tsx:207
 #: src/components/vm/overview/bootOrder.tsx:119
 #: src/components/vm/overview/bootOrder.tsx:126
 #: src/components/vm/overview/bootOrder.tsx:158
 #: src/components/vm/overview/bootOrder.tsx:161
-#: src/components/vm/hostdevs/hostDevCard.tsx:103
-#: src/components/vm/hostdevs/hostDevCard.tsx:261
-#: src/components/vm/hostdevs/hostDevAdd.tsx:115
-#: src/components/vm/hostdevs/hostDevAdd.tsx:150
 msgid "Device"
 msgstr "장치"
 
@@ -719,13 +732,13 @@ msgstr "장치"
 msgid "Devices"
 msgstr "장치"
 
-#: src/components/vm/consoles/consoles.jsx:212
 #: src/components/vm/consoles/serialConsole.jsx:94
+#: src/components/vm/consoles/consoles.jsx:251
 msgid "Disconnect"
 msgstr "연결 끊김"
 
 #: src/components/vm/consoles/serial.jsx:93
-#: src/components/vm/consoles/vnc.jsx:442
+#: src/components/vm/consoles/vnc.jsx:470
 msgid "Disconnected"
 msgstr "연결 끊김"
 
@@ -749,7 +762,7 @@ msgstr "디스크를 추가하는데 실패했습니다"
 msgid "Disk identifier"
 msgstr "디스크 식별자"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:384
+#: src/components/create-vm-dialog/createVmDialog.tsx:468
 msgid "Disk image"
 msgstr "디스크 이미지"
 
@@ -757,7 +770,7 @@ msgstr "디스크 이미지"
 msgid "Disk image file"
 msgstr "디스크 이미지 파일"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:228
+#: src/components/create-vm-dialog/createVmDialog.tsx:275
 msgid "Disk image path must not be empty"
 msgstr "디스크 이름 경로는 비워두면 안됩니다"
 
@@ -765,7 +778,7 @@ msgstr "디스크 이름 경로는 비워두면 안됩니다"
 msgid "Disk images can be stored in user home directory"
 msgstr "디스크 이미지는 사용자 홈 디렉토리에 저장 될 수 있습니다"
 
-#: src/components/vm/disks/diskEdit.tsx:280
+#: src/components/vm/disks/diskEdit.tsx:279
 msgid "Disk settings could not be saved"
 msgstr "디스크 설정을 저장 할 수 없습니다"
 
@@ -773,11 +786,11 @@ msgstr "디스크 설정을 저장 할 수 없습니다"
 msgid "Disk-only snapshot"
 msgstr "디스크-전용 순간찍기"
 
-#: src/components/vm/vmDetailsPage.jsx:136
+#: src/components/vm/vmDetailsPage.tsx:192
 msgid "Disks"
 msgstr "디스크"
 
-#: src/components/vm/vmMigrateDialog.jsx:183
+#: src/components/vm/vmMigrateDialog.tsx:224
 msgid ""
 "Do not run this VM on the origin and destination hosts at the same time."
 msgstr "동시에 출발지와 대상 호스트에서 이 VM을 동작하지 마세요."
@@ -794,7 +807,7 @@ msgstr "도메인이 충돌했습니다"
 msgid "Domain is blocked on resource"
 msgstr "도메인은 리소스에서 차단되었습니다"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:367
+#: src/components/create-vm-dialog/createVmDialog.tsx:451
 msgid "Download an OS"
 msgstr "OS 내려받기"
 
@@ -818,7 +831,7 @@ msgstr "내려받기 중: $0%"
 msgid "Dump core"
 msgstr "덤프 코어"
 
-#: src/components/vm/vmMigrateDialog.jsx:64
+#: src/components/vm/vmMigrateDialog.tsx:85
 msgid "Duration"
 msgstr "지속기간"
 
@@ -826,25 +839,25 @@ msgstr "지속기간"
 msgid "Dying"
 msgstr "종료 중"
 
-#: src/components/vm/disks/diskEdit.tsx:217
+#: src/components/vm/disks/diskEdit.tsx:216
 #: src/components/vm/nics/vmNicsCard.tsx:538
 msgid "Edit"
 msgstr "편집"
 
-#: src/components/vm/disks/diskEdit.tsx:325
+#: src/components/vm/disks/diskEdit.tsx:324
 msgid "Edit $0 attributes"
 msgstr "$0 속성 편집"
 
 #: src/components/vm/consoles/vnc.jsx:145
-#: src/components/vm/consoles/vnc.jsx:317
+#: src/components/vm/consoles/vnc.jsx:319
 msgid "Edit VNC settings"
 msgstr "VNC 설정을 수정합니다"
 
-#: src/components/vm/vmActions.jsx:470
+#: src/components/vm/vmActions.tsx:505
 msgid "Edit description"
 msgstr "설명 편집"
 
-#: src/components/vm/vmEditDescriptionDialog.jsx:56
+#: src/components/vm/vmEditDescriptionDialog.tsx:63
 msgid "Edit description of VM $0"
 msgstr "VM $0의 설명을 편집합니다"
 
@@ -864,8 +877,8 @@ msgstr "임시 게스트의 네트워크 연결장치 편집하기는 허용되�
 msgid "Editing transient network interfaces is not allowed"
 msgstr "임시 네트워크 연결장치 편집하기는 허용되지 않습니다"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:233
 #: src/components/vm/disks/mediaEject.tsx:122
+#: src/components/vm/disks/vmDiskColumns.tsx:233
 msgid "Eject"
 msgstr "꺼내기"
 
@@ -890,23 +903,23 @@ msgstr "종료"
 msgid "End should not be empty"
 msgstr "끝은 비워둘 수 없습니다"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1301
+#: src/components/create-vm-dialog/createVmDialog.tsx:1477
 msgid "Enter root and/or user information to enable unattended installation."
 msgstr "무인 설치를 활성화 하기 위해 root 와 / 또는 사용자 정보를 입력하세요."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:540
+#: src/components/create-vm-dialog/createVmDialog.tsx:651
 msgid "Error checking token"
 msgstr "토큰 확인 중 오류"
 
-#: src/components/vm/vmMigrateDialog.jsx:53
+#: src/components/vm/vmMigrateDialog.tsx:68
 msgid "Example, $0"
 msgstr "예제, $0"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:310
+#: src/components/create-vm-dialog/createVmDialog.tsx:393
 msgid "Existing disk image on host's file system"
 msgstr "호스트의 파일 시스템에서 기존 디스크 이미지"
 
-#: src/components/vm/consoles/consoles.jsx:227
+#: src/components/vm/consoles/consoles.jsx:267
 msgid "Expand"
 msgstr "확장"
 
@@ -918,11 +931,11 @@ msgstr "확장된 속성"
 msgid "Failed"
 msgstr "실패함"
 
-#: src/components/vm/vmActions.jsx:187
+#: src/components/vm/vmActions.tsx:209
 msgid "Failed to add TPM to VM $0"
 msgstr "TPM을 VM $0에 추가하는 데 실패하였습니다"
 
-#: src/components/vm/consoles/vnc.jsx:482
+#: src/components/vm/consoles/vnc.jsx:510
 msgid "Failed to add VNC to VM $0"
 msgstr "VNC를 VM $0로 추가하는 데 실패함"
 
@@ -938,7 +951,7 @@ msgstr "공유 디렉토리에 추가하기 실패함"
 msgid "Failed to change firmware"
 msgstr "펌웨어 변경에 실패하였습니다"
 
-#: src/components/vm/vmCloneDialog.jsx:67
+#: src/components/vm/vmCloneDialog.tsx:90
 msgid "Failed to clone VM $0"
 msgstr "VM $0 복제에 실패하였습니다"
 
@@ -966,11 +979,11 @@ msgstr "몇 가지 자원 가져오기에 실패함"
 msgid "Failed to fetch the IP addresses of the interfaces present in $0"
 msgstr "$0에 표시된 연결장치의 IP 주소를 가져오지 못했습니다"
 
-#: src/components/vm/vmRenameDialog.jsx:57
+#: src/components/vm/vmRenameDialog.tsx:72
 msgid "Failed to rename VM $0"
 msgstr "VM $0 이름변경에 실패함"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:77
+#: src/components/vm/vmReplaceSpiceDialog.tsx:91
 msgid "Failed to replace SPICE devices"
 msgstr "SPICE 장치를 교체하는데 실패함"
 
@@ -978,15 +991,15 @@ msgstr "SPICE 장치를 교체하는데 실패함"
 msgid "Failed to save network settings"
 msgstr "네트워크 설정을 저장하는데 실패함"
 
-#: src/components/vm/consoles/vnc.jsx:262
+#: src/components/vm/consoles/vnc.jsx:263
 msgid "Failed to send key Ctrl+Alt+$0 to VM $1"
 msgstr "키 Ctrl+Alt+$0를 VM $1으로 보내지 못했습니다"
 
-#: src/components/vm/vmEditDescriptionDialog.jsx:48
+#: src/components/vm/vmEditDescriptionDialog.tsx:55
 msgid "Failed to set description of VM $0"
 msgstr "VM $0의 설명을 설정하는 데 실패했습니다"
 
-#: src/components/vm/overview/cpuModal.tsx:261
+#: src/components/vm/overview/cpuModal.tsx:262
 msgid "Fewer than the maximum number of virtual CPUs should be enabled."
 msgstr "최대 가상 CPU 수 보다 적은 수를 활성화해야 합니다."
 
@@ -1007,8 +1020,8 @@ msgstr "파일 시스템 디렉토리"
 msgid "Filter by name"
 msgstr "이름으로 필터링"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:267
 #: src/components/vm/overview/firmware.tsx:103
+#: src/components/vm/overview/vmOverviewCard.tsx:267
 msgid "Firmware"
 msgstr "펌웨어"
 
@@ -1016,11 +1029,11 @@ msgstr "펌웨어"
 msgid "Force eject"
 msgstr "강제로 꺼내기"
 
-#: src/components/vm/vmActions.jsx:369 src/components/vm/vmActions.jsx:374
+#: src/components/vm/vmActions.tsx:402 src/components/vm/vmActions.tsx:407
 msgid "Force reboot"
 msgstr "강제 재시작"
 
-#: src/components/vm/vmActions.jsx:362
+#: src/components/vm/vmActions.tsx:395
 msgid "Force reboot $0?"
 msgstr "$0를 강제 재시작 할까요?"
 
@@ -1028,16 +1041,16 @@ msgstr "$0를 강제 재시작 할까요?"
 msgid "Force revert"
 msgstr "강제로 되돌리기"
 
-#: src/components/vm/vmActions.jsx:305 src/components/vm/vmActions.jsx:310
+#: src/components/vm/vmActions.tsx:338 src/components/vm/vmActions.tsx:343
 msgid "Force shut down"
 msgstr "강제 종료"
 
-#: src/components/vm/vmActions.jsx:298
+#: src/components/vm/vmActions.tsx:331
 msgid "Force shut down $0?"
 msgstr "$0를 강제 종료 할까요?"
 
-#: src/components/storagePools/createStoragePoolDialog.tsx:257
 #: src/components/storagePools/storageVolumeCreateBody.tsx:120
+#: src/components/storagePools/createStoragePoolDialog.tsx:257
 #: src/components/vm/disks/vmDiskColumns.tsx:122
 msgid "Format"
 msgstr "포멧"
@@ -1050,7 +1063,7 @@ msgstr "포워드 모드"
 msgid "Forwarding mode"
 msgstr "포워딩 방법"
 
-#: src/components/vm/vmMigrateDialog.jsx:104
+#: src/components/vm/vmMigrateDialog.tsx:133
 msgid ""
 "Full disk images and the domain's memory will be migrated. Only non-shared, "
 "writable disk images will be transferred. Unused storage will remain on the "
@@ -1069,15 +1082,15 @@ msgstr "일반"
 msgid "Generate automatically"
 msgstr "자동 생성"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:514
+#: src/components/create-vm-dialog/createVmDialog.tsx:625
 msgid "Get a new RHSM token."
 msgstr "신규 RHSM 토큰 가져오기."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:912
-#: src/components/create-vm-dialog/createVmDialog.jsx:1019
 #: src/components/storagePools/storageVolumeCreateBody.tsx:152
 #: src/components/vm/disks/vmDisksCard.tsx:53
 #: src/components/vm/overview/memorySelectRow.tsx:108
+#: src/components/create-vm-dialog/createVmDialog.tsx:1027
+#: src/components/create-vm-dialog/createVmDialog.tsx:1161
 msgid "GiB"
 msgstr "GiB"
 
@@ -1093,11 +1106,11 @@ msgstr "데스크탑 가상화를 위한 훌륭한 선택"
 msgid "Gracefully shutdown"
 msgstr "우아한 종료"
 
-#: src/components/vm/consoles/consoles.jsx:107
+#: src/components/vm/consoles/consoles.jsx:127
 msgid "Graphical"
 msgstr "그래픽"
 
-#: src/components/vm/consoles/vnc.jsx:492
+#: src/components/vm/consoles/vnc.jsx:520
 msgid "Graphical console support not enabled"
 msgstr "그래픽 콘솔 지원이 활성화되지 않았습니다"
 
@@ -1117,7 +1130,7 @@ msgstr "추가 선택 숨기기"
 msgid "Host"
 msgstr "호스트"
 
-#: src/components/create-vm-dialog/pxe-helpers.js:169
+#: src/components/create-vm-dialog/pxe-helpers.tsx:160
 msgid "Host device"
 msgstr "호스트 장치"
 
@@ -1129,7 +1142,7 @@ msgstr "호스트 장치는 추가 할 수 없습니다"
 msgid "Host device will be removed from $0:"
 msgstr "호스트 장치는 $0에서 제거됩니다:"
 
-#: src/components/vm/vmDetailsPage.jsx:154
+#: src/components/vm/vmDetailsPage.tsx:210
 msgid "Host devices"
 msgstr "호스트 장치"
 
@@ -1166,8 +1179,8 @@ msgstr "IP 주소는 비워두면 안됩니다"
 msgid "IP configuration"
 msgstr "IP 구성"
 
-#: src/components/networks/createNetworkDialog.tsx:350
 #: src/components/networks/networkOverviewTab.tsx:149
+#: src/components/networks/createNetworkDialog.tsx:350
 msgid "IPv4 address"
 msgstr "IPv4 주소"
 
@@ -1195,8 +1208,8 @@ msgstr "IPv4 접두사 길이는 24 자 이내여야 합니다"
 msgid "IPv4 prefix length must be a multiple of 8"
 msgstr "IPv4 접두사 길이는 8의 배수여야 합니다"
 
-#: src/components/networks/createNetworkDialog.tsx:391
 #: src/components/networks/networkOverviewTab.tsx:169
+#: src/components/networks/createNetworkDialog.tsx:391
 msgid "IPv6 address"
 msgstr "IPv6 주소"
 
@@ -1236,19 +1249,19 @@ msgstr "유휴"
 msgid "Ignore"
 msgstr "무시"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1527
+#: src/components/create-vm-dialog/createVmDialog.tsx:1717
 msgid "Import VM"
 msgstr "VM 가져 오기"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1461
+#: src/components/create-vm-dialog/createVmDialog.tsx:1636
 msgid "Import a virtual machine"
 msgstr "가상 머신 가져 오기"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1446
+#: src/components/create-vm-dialog/createVmDialog.tsx:1621
 msgid "Import and edit"
 msgstr "가져오기와 편집"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1476
+#: src/components/create-vm-dialog/createVmDialog.tsx:1651
 msgid "Import and run"
 msgstr "가져 오기와 실행"
 
@@ -1256,7 +1269,7 @@ msgstr "가져 오기와 실행"
 msgid "Importing an image with a backing file is unsupported"
 msgstr "백업된 파일 이미지 가져오기는 지원되지 않습니다"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:318
+#: src/components/create-vm-dialog/createVmDialog.tsx:401
 msgid ""
 "In most configurations, macvtap does not work for host to guest network "
 "communication."
@@ -1289,19 +1302,19 @@ msgstr "디스크 미디어 넣기"
 msgid "Inside the VM"
 msgstr "VM 내부"
 
-#: src/components/vm/vmActions.jsx:401
+#: src/components/vm/vmActions.tsx:436
 msgid "Install"
 msgstr "설치"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:384
+#: src/components/create-vm-dialog/createVmDialog.tsx:468
 msgid "Installation source"
 msgstr "설치 원천"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:230
+#: src/components/create-vm-dialog/createVmDialog.tsx:277
 msgid "Installation source must not be empty"
 msgstr "설치 원천는 비워둘 수 없습니다"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:359
+#: src/components/create-vm-dialog/createVmDialog.tsx:443
 msgid "Installation type"
 msgstr "설치 유형"
 
@@ -1337,15 +1350,15 @@ msgstr "잘못된 IPv6 주소"
 msgid "Invalid IPv6 prefix"
 msgstr "잘못된 IPv6 프리픽스"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:214
+#: src/components/create-vm-dialog/createVmDialog.tsx:261
 msgid "Invalid filename"
 msgstr "잘못된 파일 이름"
 
-#: src/components/create-vm-dialog/pxe-helpers.js:109
+#: src/components/create-vm-dialog/pxe-helpers.tsx:107
 msgid "Isolated network"
 msgstr "격리된 네트워크"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:149
+#: src/components/vm/vmReplaceSpiceDialog.tsx:164
 msgid ""
 "It can also be used to enable the inline graphical console in the browser, "
 "which does not support SPICE."
@@ -1353,7 +1366,7 @@ msgstr ""
 "SPICE를 지원하지 않는 검색기에서 인라인 그래픽 콘솔을 활성화 하는 데 사용 될 "
 "수도 있습니다."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:832
+#: src/components/create-vm-dialog/createVmDialog.tsx:927
 msgid "Keys are located in ~/.ssh/ and have a \".pub\" extension."
 msgstr "키는 ~/.ssh/ 에 위치하고 \".pub\" 확장자를 갖고 있습니다."
 
@@ -1365,17 +1378,17 @@ msgstr "LVM 볼륨 그룹"
 msgid "Launch viewer"
 msgstr "표시기 시작"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:652
+#: src/components/create-vm-dialog/createVmDialog.tsx:781
 msgid ""
 "Leave the password blank if you do not wish to have a root account created"
 msgstr "root 계정을 만들지 않으려면 비밀번호를 비워 두세요"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:752
+#: src/components/create-vm-dialog/createVmDialog.tsx:829
 msgid ""
 "Leave the password blank if you do not wish to have a user account created"
 msgstr "사용자 계정을 만들지 않으려면 비밀번호를 비워 두세요"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:858
+#: src/components/create-vm-dialog/createVmDialog.tsx:959
 msgid "Leave the password blank if you do not wish to set a root password"
 msgstr "root 비밀번호를 설정하기를 원하지 않으면 비밀번호를 비워 두십시오"
 
@@ -1399,12 +1412,12 @@ msgstr "자원 적재 중"
 
 # translation auto-copied from project oVirt, version ovirt-3.5, document
 # frontend/webadmin/modules/webadmin/src/main/resources/org/ovirt/engine/ui/frontend/org.ovirt.engine.ui.webadmin.ApplicationConstants
-#: src/components/vm/consoles/serial.jsx:102
 #: src/components/vm/consoles/serialConsole.jsx:77
+#: src/components/vm/consoles/serial.jsx:102
 msgid "Loading..."
 msgstr "적재 중..."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:374
+#: src/components/create-vm-dialog/createVmDialog.tsx:458
 msgid "Local install media (ISO image or distro install tree)"
 msgstr "로컬 설치 미디어 (ISO 이미지 또는 저장소 설치 트리)"
 
@@ -1427,8 +1440,8 @@ msgstr "MAC"
 # auto translated by TM merge from project: RHOSP Director Installation and
 # Usage , version: 11-Korean, DocId: master
 #: src/components/networks/networkOverviewTab.tsx:259
-#: src/components/vm/nics/vmNicsCard.tsx:428
 #: src/components/vm/nics/nicEdit.tsx:70 src/components/vm/nics/nicAdd.tsx:91
+#: src/components/vm/nics/vmNicsCard.tsx:428
 msgid "MAC address"
 msgstr "MAC 주소"
 
@@ -1476,11 +1489,11 @@ msgstr "최대 할당"
 msgid "Maximum memory could not be saved"
 msgstr "최대 메모리는 저장 할 수 없습니다"
 
-#: src/components/vm/overview/cpuModal.tsx:243
+#: src/components/vm/overview/cpuModal.tsx:244
 msgid "Maximum number of virtual CPUs allocated for the guest OS"
 msgstr "게스트 OS에 할당된 가상 CPU의 최대 개수"
 
-#: src/components/vm/overview/cpuModal.tsx:242
+#: src/components/vm/overview/cpuModal.tsx:243
 msgid ""
 "Maximum number of virtual CPUs allocated for the guest OS, which must be "
 "between 1 and $0"
@@ -1498,9 +1511,9 @@ msgstr "미디어는 $0에서 꺼낼 수 없습니다"
 msgid "Media will be ejected from $0:"
 msgstr "미디어는 $0에서 꺼냅니다:"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:897
+#: src/components/vm/vmUsageCard.tsx:51
 #: src/components/vm/overview/vmOverviewCard.tsx:196
-#: src/components/vm/vmUsageCard.jsx:53
+#: src/components/create-vm-dialog/createVmDialog.tsx:1012
 msgid "Memory"
 msgstr "메모리"
 
@@ -1509,7 +1522,7 @@ msgstr "메모리"
 msgid "Memory could not be saved"
 msgstr "메모리는 저장 할 수 없습니다"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:237
+#: src/components/create-vm-dialog/createVmDialog.tsx:284
 msgid "Memory must not be 0"
 msgstr "메모리는 0이 아니어야 합니다"
 
@@ -1525,30 +1538,30 @@ msgstr "메모리 순간찍기는 대략 $0를 사용합니다."
 msgid "Memory state path"
 msgstr "메모리 상태 경로"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:910
-#: src/components/create-vm-dialog/createVmDialog.jsx:1017
 #: src/components/storagePools/storageVolumeCreateBody.tsx:150
 #: src/components/vm/overview/memorySelectRow.tsx:106
+#: src/components/create-vm-dialog/createVmDialog.tsx:1025
+#: src/components/create-vm-dialog/createVmDialog.tsx:1159
 msgid "MiB"
 msgstr "MiB"
 
-#: src/components/vm/vmMigrateDialog.jsx:196
-#: src/components/vm/vmActions.jsx:436
+#: src/components/vm/vmActions.tsx:471
+#: src/components/vm/vmMigrateDialog.tsx:237
 msgid "Migrate"
 msgstr "이전"
 
-#: src/components/vm/vmMigrateDialog.jsx:206
+#: src/components/vm/vmMigrateDialog.tsx:247
 msgid "Migrate VM to another host"
 msgstr "VM을 다른 호스트로 이전합니다"
 
-#: src/components/vm/vmMigrateDialog.jsx:162
+#: src/components/vm/vmMigrateDialog.tsx:203
 msgid "Migration failed"
 msgstr "이전이 실패했습니다"
 
-#: src/components/vm/overview/cpuModal.tsx:306
-#: src/components/vm/overview/cpuModal.tsx:308
-#: src/components/vm/nics/vmNicsCard.tsx:190
+#: src/components/vm/overview/cpuModal.tsx:307
+#: src/components/vm/overview/cpuModal.tsx:309
 #: src/components/vm/nics/nicBody.tsx:227
+#: src/components/vm/nics/vmNicsCard.tsx:190
 msgid "Mode"
 msgstr "모드"
 
@@ -1556,8 +1569,8 @@ msgstr "모드"
 msgid "Mode help"
 msgstr "방식(mode) 도움말"
 
-#: src/components/vm/nics/nicBody.tsx:75
 #: src/components/vm/hostdevs/hostDevCard.tsx:209
+#: src/components/vm/nics/nicBody.tsx:75
 msgid "Model"
 msgstr "방식"
 
@@ -1583,7 +1596,7 @@ msgstr "적재 태그는 비워두면 안됩니다"
 msgid "Must be an address instead of the network identifier, such as $0"
 msgstr "$0와 같은 네트워크 식별자 대신에 주소여야 합니다"
 
-#: src/components/create-vm-dialog/pxe-helpers.js:94
+#: src/components/create-vm-dialog/pxe-helpers.tsx:92
 msgid "NAT to $0"
 msgstr "$0에 NAT"
 
@@ -1591,17 +1604,17 @@ msgstr "$0에 NAT"
 msgid "NIC $0 of VM $1 failed to change state"
 msgstr "VM $1의 NIC $0은 상태 변경에 실패했습니다"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:268
-#: src/components/storagePools/storagePoolVolumesTab.tsx:90
-#: src/components/storagePools/createStoragePoolDialog.tsx:69
-#: src/components/storagePools/storagePoolList.tsx:76
-#: src/components/storagePools/storageVolumeCreateBody.tsx:64
 #: src/components/networks/networkList.tsx:72
 #: src/components/networks/createNetworkDialog.tsx:185
 #: src/components/vms/hostvmslist.tsx:201
+#: src/components/storagePools/storagePoolList.tsx:76
+#: src/components/storagePools/storageVolumeCreateBody.tsx:64
+#: src/components/storagePools/storagePoolVolumesTab.tsx:90
+#: src/components/storagePools/createStoragePoolDialog.tsx:69
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:127
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:70
-#: src/components/vm/vmCloneDialog.jsx:82
+#: src/components/vm/vmCloneDialog.tsx:105
+#: src/components/create-vm-dialog/createVmDialog.tsx:325
 msgid "Name"
 msgstr "이름"
 
@@ -1617,14 +1630,14 @@ msgstr "이름은 비워 둘 수 없습니다"
 msgid "Name contains invalid characters"
 msgstr "이름에 잘못된 문자가 있습니다"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:197
 #: src/components/storagePools/storageVolumeCreate.tsx:86
-#: src/components/vm/vmCloneDialog.jsx:47
+#: src/components/vm/vmCloneDialog.tsx:64
+#: src/components/create-vm-dialog/createVmDialog.tsx:243
 msgid "Name must not be empty"
 msgstr "이름을 입력하셔야 합니다"
 
-#: src/components/storagePools/createStoragePoolDialog.tsx:75
 #: src/components/networks/createNetworkDialog.tsx:90
+#: src/components/storagePools/createStoragePoolDialog.tsx:75
 msgid "Name should not be empty"
 msgstr "이름을 입력해야 합니다"
 
@@ -1652,7 +1665,7 @@ msgstr "네트워크 $0의 비활성화에 실패했습니다"
 msgid "Network $0 will be permanently deleted."
 msgstr "네트워크 $0는 영구히 삭제됩니다."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:379
+#: src/components/create-vm-dialog/createVmDialog.tsx:463
 msgid "Network boot (PXE)"
 msgstr "네트워크 부팅(PXE)"
 
@@ -1676,11 +1689,11 @@ msgstr "네트워크 연결장치 $0가 $1에서 제거됩니다"
 msgid "Network interface settings could not be saved"
 msgstr "네트워크 연결장치 설정을 저장하지 못했습니다"
 
-#: src/components/vm/vmDetailsPage.jsx:145
+#: src/components/vm/vmDetailsPage.tsx:201
 msgid "Network interfaces"
 msgstr "네트워크 연결장치"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:326
+#: src/components/create-vm-dialog/createVmDialog.tsx:409
 msgid "Network selection does not support PXE."
 msgstr "네트워크 선택은 PXE를 지원하지 않습니다."
 
@@ -1690,11 +1703,11 @@ msgstr "네트워크 선택은 PXE를 지원하지 않습니다."
 msgid "Networks"
 msgstr "네트워크"
 
-#: src/components/vm/vmRenameDialog.jsx:71
+#: src/components/vm/vmRenameDialog.tsx:91
 msgid "New name"
 msgstr "새로운 이름"
 
-#: src/components/vm/vmRenameDialog.jsx:77
+#: src/components/vm/vmRenameDialog.tsx:97
 msgid "New name must not be empty"
 msgstr "새로운 이름은 비워 두면 안됩니다"
 
@@ -1702,7 +1715,7 @@ msgstr "새로운 이름은 비워 두면 안됩니다"
 msgid "New volume name"
 msgstr "새 볼륨 이름"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:865
+#: src/components/create-vm-dialog/createVmDialog.tsx:966
 msgid "No SSH keys specified"
 msgstr "SSH 키가 지정되지 않았습니다"
 
@@ -1746,7 +1759,7 @@ msgstr "이 가상 머신에 네트워크 연결장치가 정의되지 않았습
 msgid "No network is defined on this host"
 msgstr "이 호스트에 정의된 네트워크가 없습니다"
 
-#: src/components/create-vm-dialog/pxe-helpers.js:175
+#: src/components/create-vm-dialog/pxe-helpers.tsx:166
 msgid "No networks available"
 msgstr "사용 가능한 네트워크가 없습니다"
 
@@ -1766,7 +1779,7 @@ msgstr "이 VM을 위해 정의된 순간찍기가 없음"
 msgid "No state"
 msgstr "상태 없음"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:967
+#: src/components/create-vm-dialog/createVmDialog.tsx:1109
 msgid "No storage"
 msgstr "저장소 없음"
 
@@ -1812,15 +1825,15 @@ msgstr "없음"
 msgid "None (isolated network)"
 msgstr "없음(격리된 네트워크)"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:601
+#: src/components/create-vm-dialog/createVmDialog.tsx:720
 msgid "Offline token"
 msgstr "오프라인 토큰"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:234
+#: src/components/create-vm-dialog/createVmDialog.tsx:281
 msgid "Offline token must not be empty"
 msgstr "오프라인 토큰은 비워 두면 안됩니다"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:544
+#: src/components/create-vm-dialog/createVmDialog.tsx:655
 msgid "Old token expired"
 msgstr "오래된 토큰이 만료됨"
 
@@ -1836,8 +1849,8 @@ msgstr ""
 "하나 이상의 선택된 볼륨이 도메인에서 사용되고 있습니다. 먼저 디스크를 분리하"
 "여 볼륨을 삭제하십시오."
 
-#: src/components/vm/overview/bootOrder.tsx:406
 #: src/components/vm/overview/memoryModal.tsx:187
+#: src/components/vm/overview/bootOrder.tsx:406
 #: src/components/vm/nics/nicEdit.tsx:67
 msgid "Only editable when the guest is shut off"
 msgstr "게스트가 종료된 경우에만 편집할 수 있습니다"
@@ -1846,7 +1859,7 @@ msgstr "게스트가 종료된 경우에만 편집할 수 있습니다"
 msgid "Open"
 msgstr "열기"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:469
+#: src/components/create-vm-dialog/createVmDialog.tsx:567
 msgid "Operating system"
 msgstr "운영 체제"
 
@@ -1855,14 +1868,14 @@ msgstr "운영 체제"
 msgid "Operation is in progress"
 msgstr "실행 중인 작업"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:100
+#: src/components/vm/vmReplaceSpiceDialog.tsx:115
 msgid "Other VMs using SPICE"
 msgstr "SPICE를 사용하는 다른 VM"
 
 # translation auto-copied from project virt-manager, version 0.10.0, document
 # virt-manager
 #: src/components/storagePools/storagePool.tsx:77
-#: src/components/vm/vmDetailsPage.jsx:109
+#: src/components/vm/vmDetailsPage.tsx:165
 msgid "Overview"
 msgstr "개요"
 
@@ -1892,10 +1905,10 @@ msgstr ""
 msgid "Password must be at most 8 characters."
 msgstr "비밀번호는 최대 8자까지입니다."
 
-#: src/components/vm/disks/diskEdit.tsx:63
 #: src/components/vm/hostdevs/hostDevCard.tsx:128
 #: src/components/vm/hostdevs/hostDevCard.tsx:132
-#: src/components/vm/deleteDialog.jsx:60
+#: src/components/vm/deleteDialog.tsx:80
+#: src/components/vm/disks/diskEdit.tsx:63
 msgid "Path"
 msgstr "경로"
 
@@ -1903,11 +1916,11 @@ msgstr "경로"
 msgid "Path on host's filesystem"
 msgstr "호스트 파일시스템의 경로"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:292
+#: src/components/create-vm-dialog/createVmDialog.tsx:375
 msgid "Path to ISO file on host's file system"
 msgstr "호스트의 파일 시스템에서 ISO 파일로의 경로"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:301
+#: src/components/create-vm-dialog/createVmDialog.tsx:384
 msgid "Path to cloud image file on host's file system"
 msgstr "호스트 파일 시스템에서 클라우드 이미지 파일 경로"
 
@@ -1919,7 +1932,7 @@ msgstr "디렉토리의 경로"
 msgid "Path to file on host's file system"
 msgstr "호스트 파일 시스템에서 파일의 경로"
 
-#: src/helpers.ts:289 src/components/vm/vmActions.jsx:220
+#: src/helpers.ts:289 src/components/vm/vmActions.tsx:253
 msgid "Pause"
 msgstr "일시정지"
 
@@ -1927,7 +1940,7 @@ msgstr "일시정지"
 msgid "Paused"
 msgstr "일시정지"
 
-#: src/components/vm/vmMigrateDialog.jsx:71
+#: src/components/vm/vmMigrateDialog.tsx:92
 msgid "Permanent (default)"
 msgstr "매개변수(기본값)"
 
@@ -1940,8 +1953,8 @@ msgstr "홈 디렉토리에서 디스크 이미지용 권한이 거부됨"
 msgid "Persistence"
 msgstr "고집"
 
-#: src/components/storagePools/storagePoolOverviewTab.tsx:68
 #: src/components/networks/networkOverviewTab.tsx:125
+#: src/components/storagePools/storagePoolOverviewTab.tsx:68
 msgid "Persistent"
 msgstr "지속적"
 
@@ -1969,15 +1982,15 @@ msgstr "볼륨을 선택하십시오"
 msgid "Please enter new volume name"
 msgstr "새 볼륨 이름을 입력해 주십시오"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:79
+#: src/components/vm/vmReplaceSpiceDialog.tsx:93
 msgid "Please see $0 how to reconfigure your VM manually."
 msgstr "자신의 VM을 수동으로 재구성하는 방법 $0를 참조하세요."
 
+#: src/components/vm/deleteDialog.tsx:88
+#: src/components/vm/disks/mediaEject.tsx:98
 #: src/components/vm/disks/diskAdd.tsx:216
 #: src/components/vm/disks/vmDiskColumns.tsx:50
-#: src/components/vm/disks/mediaEject.tsx:98
 #: src/components/vm/overview/bootOrder.tsx:121
-#: src/components/vm/deleteDialog.jsx:68
 msgid "Pool"
 msgstr "풀"
 
@@ -2029,7 +2042,7 @@ msgstr "전원 종료"
 msgid "Pre-formatted block device"
 msgstr "사전-초기화된 블록 장치"
 
-#: src/components/vm/overview/cpuModal.tsx:279
+#: src/components/vm/overview/cpuModal.tsx:280
 msgid "Preferred number of sockets to expose to the guest."
 msgstr "게스트에게 공개하기 위한 권장 소캣 수입니다."
 
@@ -2057,22 +2070,22 @@ msgstr ""
 msgid "Private"
 msgstr "비공개"
 
-#: src/components/vm/overview/bootOrder.tsx:153
-#: src/components/vm/overview/bootOrder.tsx:168
+#: src/components/vm/hostdevs/hostDevAdd.tsx:157
 #: src/components/vm/hostdevs/hostDevCard.tsx:252
 #: src/components/vm/hostdevs/hostDevCard.tsx:258
-#: src/components/vm/hostdevs/hostDevAdd.tsx:157
+#: src/components/vm/overview/bootOrder.tsx:153
+#: src/components/vm/overview/bootOrder.tsx:168
 msgid "Product"
 msgstr "제품"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:629
+#: src/components/create-vm-dialog/createVmDialog.tsx:758
 msgid "Profile"
 msgstr "프로파일"
 
+#: src/components/vm/hostdevs/hostDevCard.tsx:119
 #: src/components/vm/disks/vmDiskColumns.tsx:49
 #: src/components/vm/overview/bootOrder.tsx:120
 #: src/components/vm/overview/bootOrder.tsx:181
-#: src/components/vm/hostdevs/hostDevCard.tsx:119
 msgid "Protocol"
 msgstr "프로토콜"
 
@@ -2095,11 +2108,11 @@ msgstr ""
 msgid "Provides a virtual LAN with NAT to the outside world."
 msgstr "NAT을 통한 가상 랜을 외부 세상으로 제공합니다."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:829
+#: src/components/create-vm-dialog/createVmDialog.tsx:924
 msgid "Public SSH key"
 msgstr "공개용 SSH 키"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:825
+#: src/components/create-vm-dialog/createVmDialog.tsx:920
 msgid "Public key"
 msgstr "공개 키"
 
@@ -2112,24 +2125,24 @@ msgstr "범위"
 msgid "Read-only"
 msgstr "읽기-전용"
 
-#: src/components/vm/vmActions.jsx:265 src/components/vm/vmActions.jsx:349
-#: src/components/vm/vmActions.jsx:354
+#: src/components/vm/vmActions.tsx:298 src/components/vm/vmActions.tsx:382
+#: src/components/vm/vmActions.tsx:387
 msgid "Reboot"
 msgstr "재시작"
 
-#: src/components/vm/vmActions.jsx:342
+#: src/components/vm/vmActions.tsx:375
 msgid "Reboot $0?"
 msgstr "$0를 재시작 할까요?"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:447
+#: src/components/create-vm-dialog/createVmDialog.tsx:545
 msgid "Recommended operating systems"
 msgstr "추천된 운영체제"
 
-#: src/components/create-vm-dialog/createVmDialogUtils.js:87
+#: src/components/create-vm-dialog/createVmDialogUtils.tsx:89
 msgid "Released $0"
 msgstr "$0 출시됨"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:347
+#: src/components/create-vm-dialog/createVmDialog.tsx:430
 msgid "Remote URL"
 msgstr "원격 URL"
 
@@ -2154,20 +2167,20 @@ msgid "Remote viewer applications can connect to the following address:"
 msgstr "원격 표시기 응용프로그램은 다음 주소로 연결 할 수 있습니다:"
 
 #: src/components/networks/networkOverviewTab.tsx:81
+#: src/components/vm/hostdevs/hostDevCard.tsx:268
+#: src/components/vm/hostdevs/hostDevCard.tsx:274
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:72
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:81
 #: src/components/vm/disks/vmDiskColumns.tsx:166
 #: src/components/vm/disks/vmDiskColumns.tsx:252
-#: src/components/vm/overview/vsock.tsx:269
 #: src/components/vm/overview/watchdog.tsx:234
+#: src/components/vm/overview/vsock.tsx:269
 #: src/components/vm/nics/vmNicsCard.tsx:556
 #: src/components/vm/nics/vmNicsCard.tsx:566
-#: src/components/vm/hostdevs/hostDevCard.tsx:268
-#: src/components/vm/hostdevs/hostDevCard.tsx:274
 msgid "Remove"
 msgstr "제거"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:141
+#: src/components/vm/vmReplaceSpiceDialog.tsx:156
 msgid "Remove SPICE audio and host devices"
 msgstr "SPICE 오디오와 호스트 장치를 제거합니다"
 
@@ -2187,7 +2200,7 @@ msgstr "파일 시스템 제거?"
 msgid "Remove host device from VM?"
 msgstr "VM에서 호스트 장치를 제거?"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:841
+#: src/components/create-vm-dialog/createVmDialog.tsx:936
 msgid "Remove item"
 msgstr "항목 제거"
 
@@ -2199,33 +2212,32 @@ msgstr "네트워크 연결장치 제거?"
 msgid "Remove static host from DHCP"
 msgstr "DHCP에서 고정 호스트를 제거합니다"
 
-#: src/components/vm/vmRenameDialog.jsx:86 src/components/vm/vmActions.jsx:460
+#: src/components/vm/vmActions.tsx:495 src/components/vm/vmRenameDialog.tsx:106
 msgid "Rename"
 msgstr "이름변경"
 
-#: src/components/vm/vmRenameDialog.jsx:63
+#: src/components/vm/vmRenameDialog.tsx:78
 msgid "Rename VM $0"
 msgstr "VM $0 이름변경"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:160
+#: src/components/vm/vmReplaceSpiceDialog.tsx:175
 msgid "Replace"
 msgstr "교체"
 
-#: src/components/vm/usesSpice.jsx:38
-#: src/components/vm/vmReplaceSpiceDialog.jsx:125
-#: src/components/vm/vmActions.jsx:447
+#: src/components/vm/vmReplaceSpiceDialog.tsx:140
+#: src/components/vm/vmActions.tsx:482 src/components/vm/usesSpice.tsx:41
 msgid "Replace SPICE devices"
 msgstr "SPICE 장치를 교체합니다"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:125
+#: src/components/vm/vmReplaceSpiceDialog.tsx:140
 msgid "Replace SPICE devices in VM $0"
 msgstr "VM $0에서 SPICE 장치를 교체합니다"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:132
+#: src/components/vm/vmReplaceSpiceDialog.tsx:147
 msgid "Replace SPICE on selected VMs."
 msgstr "선택한 VM에서 SPICE 장치를 교체합니다."
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:133
+#: src/components/vm/vmReplaceSpiceDialog.tsx:148
 msgid "Replace SPICE on the virtual machine."
 msgstr "가상 장비에서 SPICE를 교체합니다."
 
@@ -2237,7 +2249,7 @@ msgstr "VNC로 교체합니다"
 msgid "Reset"
 msgstr "초기화"
 
-#: src/components/vm/consoles/vnc.jsx:515
+#: src/components/vm/consoles/vnc.jsx:543
 msgid "Restart this virtual machine to access its graphical console"
 msgstr "이와 같은 가상 장비를 재시작하고 해당 그래픽 콘솔에 접근하세요"
 
@@ -2250,12 +2262,12 @@ msgid ""
 "Restrictions in networking (SLIRP-based emulation) and PCI device assignment"
 msgstr "네트워크(SLIRP-기반 모의)와 PCI 장치 할당에서 제한"
 
-#: src/components/vm/vmActions.jsx:231
+#: src/components/vm/vmActions.tsx:264
 msgid "Resume"
 msgstr "다시 시작"
 
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:130
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:211
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:130
 msgid "Revert"
 msgstr "되돌리기"
 
@@ -2272,15 +2284,15 @@ msgstr ""
 "이 순간찍기로 되돌리면 VM이 순간찍기 촬영 시점으로 돌아가며 순간찍기에 획득되"
 "지 않은 데이터와 함께 현재 상태가 모두 손실됩니다"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:729
+#: src/components/create-vm-dialog/createVmDialog.tsx:811
 msgid "Root password"
 msgstr "root 비밀번호"
 
-#: src/components/create-vm-dialog/pxe-helpers.js:99
+#: src/components/create-vm-dialog/pxe-helpers.tsx:97
 msgid "Route to $0"
 msgstr "$0로 라우팅"
 
-#: src/components/create-vm-dialog/pxe-helpers.js:101
+#: src/components/create-vm-dialog/pxe-helpers.tsx:99
 msgid "Routed network"
 msgstr "라우팅된 네트워크"
 
@@ -2288,7 +2300,7 @@ msgstr "라우팅된 네트워크"
 msgid "Row select"
 msgstr "행 선택"
 
-#: src/components/vm/vmActions.jsx:389
+#: src/components/vm/vmActions.tsx:422
 msgid "Run"
 msgstr "실행"
 
@@ -2305,57 +2317,57 @@ msgstr "작동중"
 msgid "SPICE"
 msgstr "SPICE"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:134
-#: src/components/vm/vmReplaceSpiceDialog.jsx:136
+#: src/components/vm/vmReplaceSpiceDialog.tsx:149
+#: src/components/vm/vmReplaceSpiceDialog.tsx:151
 msgid "SPICE conversion"
 msgstr "SPICE 변환"
 
-#: src/components/vm/usesSpice.jsx:32
+#: src/components/vm/usesSpice.tsx:35
 msgid ""
 "SPICE is not supported on this host and will cause this virtual machine to "
 "not boot."
 msgstr ""
 "SPICE는 이 호스트에서 지원하지 않고 이 가상 장비가 부팅되지 않도록 합니다."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:866
+#: src/components/create-vm-dialog/createVmDialog.tsx:967
 msgid "SSH keys"
 msgstr "SSH 키"
 
 #: src/components/vm/consoles/vnc.jsx:156
-#: src/components/vm/disks/diskEdit.tsx:338
-#: src/components/vm/overview/bootOrder.tsx:365
-#: src/components/vm/overview/memoryModal.tsx:206
-#: src/components/vm/overview/vsock.tsx:223
+#: src/components/vm/vmEditDescriptionDialog.tsx:88
+#: src/components/vm/disks/diskEdit.tsx:337
 #: src/components/vm/overview/firmware.tsx:117
 #: src/components/vm/overview/watchdog.tsx:176
-#: src/components/vm/vmEditDescriptionDialog.jsx:76
+#: src/components/vm/overview/vsock.tsx:223
+#: src/components/vm/overview/memoryModal.tsx:206
+#: src/components/vm/overview/bootOrder.tsx:365
 #: src/components/vm/nics/nicEdit.tsx:237
 msgid "Save"
 msgstr "저장"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:116
+#: src/components/vm/vmReplaceSpiceDialog.tsx:131
 msgid "Select all"
 msgstr "모두 선택"
 
-#: src/components/vm/consoles/vnc.jsx:291
+#: src/components/vm/consoles/vnc.jsx:292
 msgid "Send key"
 msgstr "키 전송"
 
-#: src/components/vm/vmActions.jsx:325 src/components/vm/vmActions.jsx:330
+#: src/components/vm/vmActions.tsx:358 src/components/vm/vmActions.tsx:363
 msgid "Send non-maskable interrupt"
 msgstr "마스크 불가능 인터럽트 보내기"
 
-#: src/components/vm/vmActions.jsx:319
+#: src/components/vm/vmActions.tsx:352
 msgid "Send non-maskable interrupt to $0?"
 msgstr "마스크 불가능 인터럽트를 $0로 보낼까요?"
 
-#: src/components/vm/consoles/consoles.jsx:168
-#: src/components/vm/consoles/consoles.jsx:192
+#: src/components/vm/consoles/consoles.jsx:207
+#: src/components/vm/consoles/consoles.jsx:231
 #: src/components/vm/disks/vmDiskColumns.tsx:121
 msgid "Serial"
 msgstr "직렬"
 
-#: src/components/vm/consoles/consoles.jsx:168
+#: src/components/vm/consoles/consoles.jsx:207
 msgid "Serial ($0)"
 msgstr "직렬 ($0)"
 
@@ -2375,7 +2387,7 @@ msgstr "DHCP 범위 설정"
 msgid "Set manually"
 msgstr "수동 설정"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1453
+#: src/components/create-vm-dialog/createVmDialog.tsx:1628
 msgid ""
 "Setting the user passwords for unattended installation requires starting the "
 "VM when creating it"
@@ -2391,16 +2403,16 @@ msgstr "공유"
 msgid "Share a host directory with the guest"
 msgstr "게스트와 호스트 디텍토리를 공유합니다"
 
-#: src/components/vm/vmDetailsPage.jsx:175
+#: src/components/vm/vmDetailsPage.tsx:231
 msgid "Shared directories"
 msgstr "공유 디렉토리"
 
+#: src/components/vm/vmDetailsPage.tsx:233
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:193
-#: src/components/vm/vmDetailsPage.jsx:177
 msgid "Shared host directories need to be manually mounted inside the VM"
 msgstr "공유 호스트 디렉토리는 VM 안에세 수동으로 적재가 필요합니다"
 
-#: src/components/vm/vmMigrateDialog.jsx:99
+#: src/components/vm/vmMigrateDialog.tsx:128
 msgid "Shared storage"
 msgstr "공유 저장소"
 
@@ -2419,14 +2431,14 @@ msgstr "더 보기"
 
 # translation auto-copied from project virt-manager, version 0.10.0, document
 # virt-manager
-#: src/components/vm/vmActions.jsx:257 src/components/vm/vmActions.jsx:270
-#: src/components/vm/vmActions.jsx:285 src/components/vm/vmActions.jsx:290
+#: src/components/vm/vmActions.tsx:290 src/components/vm/vmActions.tsx:303
+#: src/components/vm/vmActions.tsx:318 src/components/vm/vmActions.tsx:323
 msgid "Shut down"
 msgstr "종료"
 
 # translation auto-copied from project virt-manager, version 0.10.0, document
 # virt-manager
-#: src/components/vm/vmActions.jsx:247 src/components/vm/vmActions.jsx:278
+#: src/components/vm/vmActions.tsx:280 src/components/vm/vmActions.tsx:311
 msgid "Shut down $0?"
 msgstr "$0를 종료 할까요?"
 
@@ -2442,17 +2454,17 @@ msgstr "펌웨어 구성을 편집하려면 VM을 종료하십시오"
 msgid "Shutting down"
 msgstr "종료 중"
 
-#: src/components/storagePools/storagePoolVolumesTab.tsx:90
 #: src/components/storagePools/storagePoolList.tsx:77
 #: src/components/storagePools/storageVolumeCreateBody.tsx:134
+#: src/components/storagePools/storagePoolVolumesTab.tsx:90
 msgid "Size"
 msgstr "크기"
 
-#: src/components/vm/overview/bootOrder.tsx:169
+#: src/components/vm/hostdevs/hostDevAdd.tsx:128
 #: src/components/vm/hostdevs/hostDevCard.tsx:106
 #: src/components/vm/hostdevs/hostDevCard.tsx:113
 #: src/components/vm/hostdevs/hostDevCard.tsx:253
-#: src/components/vm/hostdevs/hostDevAdd.tsx:128
+#: src/components/vm/overview/bootOrder.tsx:169
 msgid "Slot"
 msgstr "슬롯"
 
@@ -2470,13 +2482,13 @@ msgstr "순간찍기 $0는 $1에서 삭제됩니다. 획득된 모든 내용이 
 msgid "Snapshot failed to be created"
 msgstr "순간찍기를 생성하는데 실패했습니다"
 
-#: src/components/vm/vmDetailsPage.jsx:163
+#: src/components/vm/vmDetailsPage.tsx:219
 msgid "Snapshots"
 msgstr "순간찍기"
 
 # translation auto-copied from project Satellite6 Katello, version Sam-1.3.0,
 # document katello, author eukim
-#: src/components/vm/overview/cpuModal.tsx:277
+#: src/components/vm/overview/cpuModal.tsx:278
 msgid "Sockets"
 msgstr "소켓"
 
@@ -2485,12 +2497,12 @@ msgid "Some configuration changes only take effect after a fresh boot:"
 msgstr "몇 가지 구성은 일반적인 부팅 후에만 영향을 미칩니다:"
 
 #: src/components/storagePools/storagePoolOverviewTab.tsx:53
+#: src/components/vm/hostdevs/hostDevCard.tsx:229
 #: src/components/vm/disks/diskAdd.tsx:719
 #: src/components/vm/disks/diskAdd.tsx:755
 #: src/components/vm/disks/vmDisksCard.tsx:225
-#: src/components/vm/nics/vmNicsCard.tsx:484
 #: src/components/vm/nics/nicBody.tsx:216
-#: src/components/vm/hostdevs/hostDevCard.tsx:229
+#: src/components/vm/nics/vmNicsCard.tsx:484
 msgid "Source"
 msgstr "소스"
 
@@ -2517,7 +2529,7 @@ msgstr "소스 경로"
 msgid "Source path should not be empty"
 msgstr "소스 경로를 비워둘 수 없습니다"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:222
+#: src/components/create-vm-dialog/createVmDialog.tsx:269
 msgid "Source should start with http, ftp or nfs protocol"
 msgstr "소스는 http, ftp, nfs 프로토콜로 시작해야 합니다"
 
@@ -2539,7 +2551,7 @@ msgid "Start should not be empty"
 msgstr "시작은 비워둘 수 없습니다"
 
 #: src/components/vm/consoles/serial.jsx:130
-#: src/components/vm/consoles/vnc.jsx:462
+#: src/components/vm/consoles/vnc.jsx:490
 msgid "Start the virtual machine to access the console"
 msgstr "가상 장비를 시작하여 콘솔에 접근하세요."
 
@@ -2547,7 +2559,7 @@ msgstr "가상 장비를 시작하여 콘솔에 접근하세요."
 msgid "Start the virtual machine to launch remote viewer."
 msgstr "가상 장비를 시작하고 원격 콘솔 표시기를 시작하세요."
 
-#: src/components/vm/confirmDialog.jsx:74
+#: src/components/vm/confirmDialog.tsx:98
 msgid "Started"
 msgstr "시작됨"
 
@@ -2555,10 +2567,10 @@ msgstr "시작됨"
 msgid "Startup"
 msgstr "시작"
 
-#: src/components/storagePools/storagePoolList.tsx:79
 #: src/components/networks/networkList.tsx:76
 #: src/components/vms/hostvmslist.tsx:156
 #: src/components/vms/hostvmslist.tsx:203
+#: src/components/storagePools/storagePoolList.tsx:79
 #: src/components/vm/overview/vmOverviewCard.tsx:182
 #: src/components/vm/nics/vmNicsCard.tsx:489
 msgid "State"
@@ -2572,16 +2584,16 @@ msgstr "고정 호스트 항목"
 msgid "Static host from DHCP could not be removed"
 msgstr "DHCP에서 고정 호스트가 제거 될 수 없습니다"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:977
-#: src/components/vm/vmMigrateDialog.jsx:92
+#: src/components/vm/vmMigrateDialog.tsx:121
+#: src/components/create-vm-dialog/createVmDialog.tsx:1119
 msgid "Storage"
 msgstr "저장소"
 
-#: src/components/vm/vmMigrateDialog.jsx:111
+#: src/components/vm/vmMigrateDialog.tsx:140
 msgid "Storage is at a shared location"
 msgstr "저장소는 공유된 장소에 있습니다"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1004
+#: src/components/create-vm-dialog/createVmDialog.tsx:1146
 msgid "Storage limit"
 msgstr "저장소 제한"
 
@@ -2601,10 +2613,10 @@ msgstr "저장소 풀 생성에 실패했습니다"
 msgid "Storage pool name"
 msgstr "저장소 풀 이름"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:972
 #: src/components/storagePools/storagePoolList.tsx:64
 #: src/components/storagePools/storagePoolList.tsx:71
 #: src/components/storagePools/storagePoolList.tsx:73
+#: src/components/create-vm-dialog/createVmDialog.tsx:1114
 msgid "Storage pools"
 msgstr "저장장치 풀"
 
@@ -2612,7 +2624,7 @@ msgstr "저장장치 풀"
 msgid "Storage pools could not be fetched"
 msgstr "저장소 풀은 가져 올 수 없습니다"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:241
+#: src/components/create-vm-dialog/createVmDialog.tsx:288
 msgid "Storage size must not be 0"
 msgstr "저장소 크기가 0이 되어서는 안됩니다"
 
@@ -2633,7 +2645,7 @@ msgstr "저장소 볼륨"
 msgid "Storage volumes could not be deleted"
 msgstr "저장소 볼륨은 삭제 할 수 없습니다"
 
-#: src/components/vm/vmMigrateDialog.jsx:207
+#: src/components/vm/vmMigrateDialog.tsx:248
 msgid ""
 "Storage volumes must be shared between this host and the destination host."
 msgstr "저장소 볼륨은 이 호스트와 대상 호스트 사이에서 공유되어야 합니다."
@@ -2646,7 +2658,7 @@ msgstr "성공적으로 클립보드로 복사됨!"
 msgid "Suspended (PM)"
 msgstr "일시 정지됩니다(PM)"
 
-#: src/components/vm/usesSpice.jsx:33
+#: src/components/vm/usesSpice.tsx:36
 msgid "Switch to VNC to continue using this machine."
 msgstr "이 장비를 사용하도록 계속해서 VNC로 전환합니다."
 
@@ -2668,9 +2680,9 @@ msgstr "TPM"
 msgid "Table of selectable host devices"
 msgstr "선택 할 수 있는 호스트 장치의 표"
 
+#: src/components/vm/hostdevs/hostDevCard.tsx:114
 #: src/components/vm/disks/vmDiskColumns.tsx:170
 #: src/components/vm/overview/bootOrder.tsx:175
-#: src/components/vm/hostdevs/hostDevCard.tsx:114
 msgid "Target"
 msgstr "대상"
 
@@ -2683,15 +2695,15 @@ msgstr "대상 경로"
 msgid "Target path should not be empty"
 msgstr "대상 경로를 비워둘 수 없습니다"
 
-#: src/components/vm/vmMigrateDialog.jsx:75
+#: src/components/vm/vmMigrateDialog.tsx:96
 msgid "Temporary"
 msgstr "임시"
 
-#: src/components/vm/vmMigrateDialog.jsx:83
+#: src/components/vm/vmMigrateDialog.tsx:104
 msgid "Temporary migration"
 msgstr "임시 이전"
 
-#: src/components/vm/deleteDialog.jsx:82
+#: src/components/vm/deleteDialog.tsx:102
 msgid "The VM $0 is running and will be forced off before deletion."
 msgstr "VM $0는 실행되고 있으므로 삭제 전 강제로 종료됩니다."
 
@@ -2709,7 +2721,7 @@ msgstr "서버의 디렉토리를 내보내는 중"
 msgid "The host path that is to be exported."
 msgstr "내보내어야 할 호스트 경로."
 
-#: src/components/vm/vmMigrateDialog.jsx:72
+#: src/components/vm/vmMigrateDialog.tsx:93
 msgid ""
 "The migrated VM configuration is removed from the source host. The "
 "destination host is considered the new home of the VM."
@@ -2725,11 +2737,11 @@ msgstr "방식(mode)은 패킷 전달에 영향을 미칩니다."
 msgid "The pool is empty"
 msgstr "풀이 비어 있습니다"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:890
+#: src/components/create-vm-dialog/createVmDialog.tsx:1005
 msgid "The selected operating system has minimum memory requirement of $0 $1"
 msgstr "선택한 운영 체제의 최소 메모리 요구 사항은 $0 $1입니다"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:940
+#: src/components/create-vm-dialog/createVmDialog.tsx:1081
 msgid ""
 "The selected operating system has minimum storage size requirement of $0 $1"
 msgstr "선택한 운영 체제의 최소 저장소 크기 요구 사항은 $0 $1입니다"
@@ -2747,11 +2759,11 @@ msgstr "저장소 풀을 삭제 할 수 없습니다"
 msgid "The tag name to be used by the guest to mount this export point."
 msgstr "게스트가 이 내보내기 지점으로 적재하는데 사용되는 태그 이름."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:523
+#: src/components/create-vm-dialog/createVmDialog.tsx:634
 msgid "Then copy and paste it above."
 msgstr "그런 다음 복사하고 이를 위에 붙입니다."
 
-#: src/components/vm/vmActions.jsx:492
+#: src/components/vm/vmActions.tsx:527
 msgid "This VM is transient. Shut it down if you wish to delete it."
 msgstr "이 VM은 일시적입니다. 삭제하려면 VM을 종료하십시오."
 
@@ -2763,7 +2775,7 @@ msgstr "이 디스크는 $0에서 제거됩니다:"
 msgid "This filesystem will be removed from $0:"
 msgstr "이 파일시스템은 $0에서 제거됩니다:"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:146
+#: src/components/vm/vmReplaceSpiceDialog.tsx:161
 msgid ""
 "This is intended for a host which does not support SPICE due to upgrades or "
 "live migration."
@@ -2806,11 +2818,11 @@ msgstr ""
 msgid "This volume is already used by $0."
 msgstr "이 볼륨은 이미 $0에서 사용하고 있습니다."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1000
+#: src/components/create-vm-dialog/createVmDialog.tsx:1142
 msgid "This volume is already used by another VM."
 msgstr "이 볼륨은 이미 다른 가상 머신에서 사용하고 있습니다."
 
-#: src/components/vm/overview/cpuModal.tsx:297
+#: src/components/vm/overview/cpuModal.tsx:298
 msgid "Threads per core"
 msgstr "코어 당 스레드"
 
@@ -2828,6 +2840,8 @@ msgstr "문제 해결"
 
 #: src/components/storagePools/storagePoolOverviewTab.tsx:78
 #: src/components/storagePools/createStoragePoolDialog.tsx:115
+#: src/components/vm/hostdevs/hostDevAdd.tsx:56
+#: src/components/vm/hostdevs/hostDevCard.tsx:189
 #: src/components/vm/overview/bootOrder.tsx:138
 #: src/components/vm/overview/bootOrder.tsx:151
 #: src/components/vm/overview/bootOrder.tsx:166
@@ -2835,12 +2849,10 @@ msgstr "문제 해결"
 #: src/components/vm/overview/bootOrder.tsx:180
 #: src/components/vm/overview/bootOrder.tsx:186
 #: src/components/vm/nics/vmNicsCard.tsx:402
-#: src/components/vm/hostdevs/hostDevCard.tsx:189
-#: src/components/vm/hostdevs/hostDevAdd.tsx:56
 msgid "Type"
 msgstr "유형"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:376
+#: src/components/create-vm-dialog/createVmDialog.tsx:460
 msgid "URL (ISO image or distro install tree)"
 msgstr "URL (ISO 이미지 또는 저장소 설치 트리)"
 
@@ -2856,11 +2868,11 @@ msgstr "UUID"
 msgid "Undefined"
 msgstr "정의되지 않음"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:274
+#: src/components/create-vm-dialog/createVmDialog.tsx:331
 msgid "Unique name"
 msgstr "고유한 이름"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:274
+#: src/components/create-vm-dialog/createVmDialog.tsx:331
 msgid "Unique name, default: $0"
 msgstr "고유한 이름, 기본값: $0"
 
@@ -2880,14 +2892,14 @@ msgstr "알 수 없음"
 msgid "Unknown firmware"
 msgstr "알 수 없는 펌웨어"
 
-#: src/components/vm/overview/bootOrder.tsx:157
-#: src/components/vm/overview/bootOrder.tsx:158
 #: src/components/vm/hostdevs/hostDevCard.tsx:97
 #: src/components/vm/hostdevs/hostDevCard.tsx:98
+#: src/components/vm/overview/bootOrder.tsx:157
+#: src/components/vm/overview/bootOrder.tsx:158
 msgid "Unspecified"
 msgstr "지정되지 않음"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:450
+#: src/components/create-vm-dialog/createVmDialog.tsx:548
 msgid "Unsupported and older operating systems"
 msgstr "미지원 및 오래된 운영 체제"
 
@@ -2897,7 +2909,7 @@ msgstr "URL"
 
 # translation auto-copied from project subscription-manager, version 1.11.X,
 # document keys
-#: src/components/vm/vmDetailsPage.jsx:122
+#: src/components/vm/vmDetailsPage.tsx:177
 msgid "Usage"
 msgstr "사용량"
 
@@ -2910,7 +2922,7 @@ msgstr "기존 사용"
 msgid "Use extended attributes on files and directories"
 msgstr "파일과 디렉토리에서 확장된 속성을 사용합니다"
 
-#: src/components/vm/vmMigrateDialog.jsx:100
+#: src/components/vm/vmMigrateDialog.tsx:129
 msgid ""
 "Use the same location on both the origin and destination hosts for your "
 "storage. This can be a shared storage pool, NFS, or any other method of "
@@ -2928,23 +2940,23 @@ msgstr "사용 중"
 msgid "Used by"
 msgstr "사용되었습니다"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:740
+#: src/components/create-vm-dialog/createVmDialog.tsx:819
 msgid "User login"
 msgstr "사용자 로그인"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:258
+#: src/components/create-vm-dialog/createVmDialog.tsx:305
 msgid "User login must not be empty when SSH keys are set"
 msgstr "사용자 로그인은 SSH 키가 설정 될 때에 비워두지 않아야 합니다"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:256
+#: src/components/create-vm-dialog/createVmDialog.tsx:303
 msgid "User login must not be empty when user password is set"
 msgstr "사용자 로그인은 사용자 비밀번호 설정 할 때에 비워두지 않아야 합니다"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:748
+#: src/components/create-vm-dialog/createVmDialog.tsx:827
 msgid "User password"
 msgstr "사용자 비밀번호"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:253
+#: src/components/create-vm-dialog/createVmDialog.tsx:300
 msgid "User password must not be empty when user login is set"
 msgstr "사용자 비밀번호는 사용자 로그인 설정 할 때에 비워두지 않아야 합니다"
 
@@ -2952,7 +2964,7 @@ msgstr "사용자 비밀번호는 사용자 로그인 설정 할 때에 비워�
 msgid "User session"
 msgstr "사용자 세션"
 
-#: src/components/vm/usesSpice.jsx:22
+#: src/components/vm/usesSpice.tsx:25
 msgid "Uses SPICE"
 msgstr "SPICE를 사용합니다"
 
@@ -2960,7 +2972,7 @@ msgstr "SPICE를 사용합니다"
 msgid "VM $0 Host Devices"
 msgstr "VM $0 호스트 장치"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:199
+#: src/components/create-vm-dialog/createVmDialog.tsx:245
 msgid "VM $0 already exists"
 msgstr "VM $0이 이미 존재합니다"
 
@@ -2968,39 +2980,39 @@ msgstr "VM $0이 이미 존재합니다"
 msgid "VM $0 does not exist on $1 connection"
 msgstr "VM $0이(가) $1 연결에 존재하지 않습니다"
 
-#: src/components/vm/vmActions.jsx:108
+#: src/components/vm/vmActions.tsx:118
 msgid "VM $0 failed to force reboot"
 msgstr "VM $0의 강제 재시작에 실패했습니다"
 
-#: src/components/vm/vmActions.jsx:165
+#: src/components/vm/vmActions.tsx:183
 msgid "VM $0 failed to force shutdown"
 msgstr "VM $0 강제 종료에 실패했습니다"
 
-#: src/components/vm/vmActions.jsx:83
+#: src/components/vm/vmActions.tsx:89
 msgid "VM $0 failed to get installed"
 msgstr "VM $0 설치에 실패했습니다"
 
-#: src/components/vm/vmActions.jsx:137
+#: src/components/vm/vmActions.tsx:151
 msgid "VM $0 failed to pause"
 msgstr "VM $0 일시 정지에 실패했습니다"
 
-#: src/components/vm/vmActions.jsx:95
+#: src/components/vm/vmActions.tsx:103
 msgid "VM $0 failed to reboot"
 msgstr "VM $0의 재시작에 실패했습니다"
 
-#: src/components/vm/vmActions.jsx:150
+#: src/components/vm/vmActions.tsx:166
 msgid "VM $0 failed to resume"
 msgstr "VM $0 재개에 실패했습니다"
 
-#: src/components/vm/vmActions.jsx:178
+#: src/components/vm/vmActions.tsx:198
 msgid "VM $0 failed to send NMI"
 msgstr "VM $0의 NMI 전송에 실패했습니다"
 
-#: src/components/vm/vmActions.jsx:124
+#: src/components/vm/vmActions.tsx:136
 msgid "VM $0 failed to shutdown"
 msgstr "VM $0 종료에 실패했습니다"
 
-#: src/components/vm/vmActions.jsx:74
+#: src/components/vm/vmActions.tsx:78
 msgid "VM $0 failed to start"
 msgstr "VM $0 시작에 실패했습니다"
 
@@ -3032,30 +3044,30 @@ msgstr "VNC"
 msgid "VNC settings could not be saved"
 msgstr "VNC 설정을 저장 할 수 없습니다"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:548
+#: src/components/create-vm-dialog/createVmDialog.tsx:659
 msgid "Valid token"
 msgstr "유효한 토큰"
 
 # translation auto-copied from project subscription-manager, version 1.11.X,
 # document keys
-#: src/components/vm/overview/bootOrder.tsx:152
-#: src/components/vm/overview/bootOrder.tsx:167
+#: src/components/vm/hostdevs/hostDevAdd.tsx:157
 #: src/components/vm/hostdevs/hostDevCard.tsx:219
 #: src/components/vm/hostdevs/hostDevCard.tsx:251
 #: src/components/vm/hostdevs/hostDevCard.tsx:257
-#: src/components/vm/hostdevs/hostDevAdd.tsx:157
+#: src/components/vm/overview/bootOrder.tsx:152
+#: src/components/vm/overview/bootOrder.tsx:167
 msgid "Vendor"
 msgstr "제조사"
 
-#: src/components/create-vm-dialog/createVmDialogUtils.js:85
+#: src/components/create-vm-dialog/createVmDialogUtils.tsx:87
 msgid "Vendor support ended $0"
 msgstr "제조사 지원은 $0에 종료됩니다"
 
-#: src/components/storagePools/storagePoolList.tsx:61
 #: src/components/networks/networkList.tsx:57
 #: src/components/vms/hostvmslist.tsx:196
 #: src/components/vms/hostvmslist.tsx:198
-#: src/components/vm/vmDetailsPage.jsx:230 src/manifest.json:0
+#: src/components/storagePools/storagePoolList.tsx:61
+#: src/components/vm/vmDetailsPage.tsx:287 src/manifest.json:0
 msgid "Virtual machines"
 msgstr "가상 머신"
 
@@ -3063,7 +3075,7 @@ msgstr "가상 머신"
 msgid "Virtual machines management"
 msgstr "가상 머신 관리"
 
-#: src/components/create-vm-dialog/pxe-helpers.js:161
+#: src/components/create-vm-dialog/pxe-helpers.tsx:152
 msgid "Virtual network"
 msgstr "가상 네트워크"
 
@@ -3085,12 +3097,12 @@ msgstr ""
 msgid "Virtualization service (libvirt) is not active"
 msgstr "가상화 서비스(libvirt)가 활성화되어 있지 않습니다"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:989
+#: src/components/vm/deleteDialog.tsx:85
+#: src/components/vm/disks/mediaEject.tsx:102
 #: src/components/vm/disks/diskAdd.tsx:160
 #: src/components/vm/disks/vmDiskColumns.tsx:51
-#: src/components/vm/disks/mediaEject.tsx:102
 #: src/components/vm/overview/bootOrder.tsx:122
-#: src/components/vm/deleteDialog.jsx:65
+#: src/components/create-vm-dialog/createVmDialog.tsx:1131
 msgid "Volume"
 msgstr "볼륨"
 
@@ -3110,8 +3122,8 @@ msgstr "볼륨 그룹 이름은 비워둘 수 없습니다"
 msgid "Vsock"
 msgstr "Vsock"
 
-#: src/components/vm/overview/bootOrder.tsx:182
 #: src/components/vm/hostdevs/hostDevCard.tsx:120
+#: src/components/vm/overview/bootOrder.tsx:182
 msgid "WWPN"
 msgstr "WWPN"
 
@@ -3139,17 +3151,17 @@ msgstr "쓰기 가능"
 msgid "You can mount the shared folder using:"
 msgstr "다음을 사용하여 공유 폴더를 적재 할 수 있습니다:"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:202
+#: src/components/create-vm-dialog/createVmDialog.tsx:248
 msgid "You need to select the most closely matching operating system"
 msgstr "가장 일치하는 운영 체제를 선택해야합니다"
 
-#: src/components/storagePools/storagePool.tsx:66
 #: src/components/networks/network.tsx:67
+#: src/components/storagePools/storagePool.tsx:66
 msgid "active"
 msgstr "활성"
 
-#: src/components/vm/overview/vsock.tsx:317
 #: src/components/vm/overview/watchdog.tsx:274
+#: src/components/vm/overview/vsock.tsx:317
 msgid "add"
 msgstr "추가"
 
@@ -3165,7 +3177,7 @@ msgstr "브릿지"
 msgid "cdrom"
 msgstr "cdrom"
 
-#: src/helpers.ts:250 src/components/vm/overview/cpuModal.tsx:324
+#: src/helpers.ts:250 src/components/vm/overview/cpuModal.tsx:325
 msgid "custom"
 msgstr "사용자 지정"
 
@@ -3185,11 +3197,11 @@ msgstr "디스크"
 msgid "down"
 msgstr "아래로"
 
-#: src/components/vm/overview/bootOrder.tsx:399
+#: src/components/vm/overview/watchdog.tsx:274
 #: src/components/vm/overview/vsock.tsx:317
 #: src/components/vm/overview/vmOverviewCard.tsx:136
 #: src/components/vm/overview/vmOverviewCard.tsx:144
-#: src/components/vm/overview/watchdog.tsx:274
+#: src/components/vm/overview/bootOrder.tsx:399
 msgid "edit"
 msgstr "편집"
 
@@ -3233,8 +3245,8 @@ msgstr "iSCSI 대상"
 msgid "iSCSI target IQN"
 msgstr "iSCSI 대상 IQN"
 
-#: src/components/storagePools/storagePool.tsx:66
 #: src/components/networks/network.tsx:67
+#: src/components/storagePools/storagePool.tsx:66
 msgid "inactive"
 msgstr "비활성"
 
@@ -3262,12 +3274,12 @@ msgstr "mcast"
 msgid "more info"
 msgstr "더 많은 정보"
 
+#: src/components/vm/vmDetailsPage.tsx:242
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:203
-#: src/components/vm/vmDetailsPage.jsx:186
 msgid "mount point: The mount point inside the guest"
 msgstr "적재점: 게스트 안에서 적재점"
 
-#: src/components/vm/vmDetailsPage.jsx:185
+#: src/components/vm/vmDetailsPage.tsx:241
 msgid "mount tag: The tag associated to the exported mount point"
 msgstr "적재 태그: 내보낸 적재점과 연결된 태그"
 
@@ -3275,9 +3287,9 @@ msgstr "적재 태그: 내보낸 적재점과 연결된 태그"
 msgid "network"
 msgstr "네트워크"
 
-#: src/helpers.ts:279 src/components/storagePools/storagePoolOverviewTab.tsx:69
+#: src/helpers.ts:279 src/components/networks/networkOverviewTab.tsx:126
+#: src/components/storagePools/storagePoolOverviewTab.tsx:69
 #: src/components/storagePools/storagePoolOverviewTab.tsx:74
-#: src/components/networks/networkOverviewTab.tsx:126
 msgid "no"
 msgstr "아니요"
 
@@ -3286,8 +3298,8 @@ msgid "no state saved"
 msgstr "저장된 상태 없음"
 
 #: src/components/networks/networkOverviewTab.tsx:327
-#: src/components/vm/overview/vsock.tsx:299
 #: src/components/vm/overview/watchdog.tsx:270
+#: src/components/vm/overview/vsock.tsx:299
 msgid "none"
 msgstr "없음"
 
@@ -3331,17 +3343,17 @@ msgstr "위로"
 msgid "user"
 msgstr "사용자"
 
-#: src/components/vm/overview/cpuModal.tsx:208
+#: src/components/vm/overview/cpuModal.tsx:209
 msgid "vCPU and CPU topology settings could not be saved"
 msgstr "vCPU 및 CPU 형상 설정을 저장 할 수 없습니다"
 
-#: src/components/vm/overview/cpuModal.tsx:259
-#: src/components/vm/overview/cpuModal.tsx:269
+#: src/components/vm/overview/cpuModal.tsx:260
+#: src/components/vm/overview/cpuModal.tsx:270
 msgid "vCPU count"
 msgstr "vCPU 개수"
 
-#: src/components/vm/overview/cpuModal.tsx:239
-#: src/components/vm/overview/cpuModal.tsx:251
+#: src/components/vm/overview/cpuModal.tsx:240
+#: src/components/vm/overview/cpuModal.tsx:252
 msgid "vCPU maximum"
 msgstr "vCPU 최대"
 
@@ -3360,13 +3372,13 @@ msgstr "가상 호스트 사용자"
 msgid "view more..."
 msgstr "더 알아보기..."
 
-#: src/components/vm/vmActions.jsx:423
+#: src/components/vm/vmActions.tsx:458
 msgid ""
 "virt-install package needs to be installed on the system in order to clone "
 "VMs"
 msgstr "VM을 복제하려면 시스템에 virt-install 꾸러미를 설치해야 합니다"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1533
+#: src/components/create-vm-dialog/createVmDialog.tsx:1723
 msgid ""
 "virt-install package needs to be installed on the system in order to create "
 "new VMs"
@@ -3387,9 +3399,9 @@ msgstr "vm"
 msgid "vsock requires special software"
 msgstr "vsock은 특별한 소프트웨어가 필요합니다"
 
-#: src/helpers.ts:278 src/components/storagePools/storagePoolOverviewTab.tsx:69
+#: src/helpers.ts:278 src/components/networks/networkOverviewTab.tsx:126
+#: src/components/storagePools/storagePoolOverviewTab.tsx:69
 #: src/components/storagePools/storagePoolOverviewTab.tsx:74
-#: src/components/networks/networkOverviewTab.tsx:126
 msgid "yes"
 msgstr "예"
 
@@ -3429,9 +3441,6 @@ msgstr "예"
 
 #~ msgid "VNC address"
 #~ msgstr "VNC 주소"
-
-#~ msgid "VNC console"
-#~ msgstr "VNC 콘솔"
 
 #~ msgid "VNC port"
 #~ msgstr "VNC 포트"
@@ -3676,9 +3685,6 @@ msgstr "예"
 
 #~ msgid "Desktop"
 #~ msgstr "데스크탑"
-
-#~ msgid "Detachable"
-#~ msgstr "분리 가능"
 
 #~ msgid "Docking station"
 #~ msgstr "도킹 스테이션"
