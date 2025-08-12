@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-08-04 04:09+0000\n"
+"POT-Creation-Date: 2025-08-12 03:40+0000\n"
 "PO-Revision-Date: 2025-07-20 18:02+0000\n"
 "Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
 "memory@weblate.org>\n"
@@ -28,16 +28,16 @@ msgstr ""
 "&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
 "X-Generator: Weblate 5.12.2\n"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:929
+#: src/components/create-vm-dialog/createVmDialog.tsx:1070
 msgid "$0 $1 available at default location"
 msgstr "$0 $1 متاح في الموقع الافتراضي"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:246
-#: src/components/create-vm-dialog/createVmDialog.jsx:879
+#: src/components/create-vm-dialog/createVmDialog.tsx:293
+#: src/components/create-vm-dialog/createVmDialog.tsx:994
 msgid "$0 $1 available on host"
 msgstr "$0 $1 متاح على المضيف"
 
-#: src/components/vm/overview/cpuModal.tsx:334
+#: src/components/vm/overview/cpuModal.tsx:335
 msgid "$0 CPU details"
 msgstr "$0 تفاصيل المعالج"
 
@@ -61,7 +61,13 @@ msgstr[3] "$0 مجمعاً للتخزين"
 msgstr[4] "$0 مجمع تخزين"
 msgstr[5] "$0 مجمع تخزين"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1303
+#: src/components/vm/vmDetailsPage.tsx:128
+#, fuzzy
+#| msgid "VNC console"
+msgid "$0 console"
+msgstr "وحدة تحكم VNC"
+
+#: src/components/create-vm-dialog/createVmDialog.tsx:1479
 msgid "$0 does not support unattended installation."
 msgstr "لا يدعم $0 التثبيت بدون وجود مستخدم."
 
@@ -69,12 +75,12 @@ msgstr "لا يدعم $0 التثبيت بدون وجود مستخدم."
 msgid "$0 memory adjustment"
 msgstr "تعديل الذاكرة $0"
 
-#: src/components/create-vm-dialog/pxe-helpers.js:106
+#: src/components/create-vm-dialog/pxe-helpers.tsx:104
 msgid "$0 network"
 msgstr "الشبكة $0"
 
+#: src/components/vm/vmUsageCard.tsx:40
 #: src/components/vm/overview/vmOverviewCard.tsx:159
-#: src/components/vm/vmUsageCard.jsx:42
 msgid "$0 vCPU"
 msgid_plural "$0 vCPUs"
 msgstr[0] "$0 نواة افتراضية"
@@ -88,7 +94,7 @@ msgstr[5] "$0 نواة معالج افتراضية"
 msgid "$0 virtual network interface settings"
 msgstr "إعدادات واجهة الشبكة الافتراضية $0"
 
-#: src/components/vm/vmMigrateDialog.jsx:76
+#: src/components/vm/vmMigrateDialog.tsx:97
 msgid ""
 "A copy of the VM will run on the destination and will disappear when it is "
 "shut off. Meanwhile, the origin host keeps its copy of the VM configuration."
@@ -105,17 +111,17 @@ msgstr "وصول"
 msgid "Action"
 msgstr "نشاط"
 
-#: src/components/storagePools/storagePoolList.tsx:80
 #: src/components/networks/networkList.tsx:77
 #: src/components/vms/hostvmslist.tsx:204
-#: src/components/vm/disks/vmDisksCard.tsx:229
+#: src/components/storagePools/storagePoolList.tsx:80
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:199
+#: src/components/vm/disks/vmDisksCard.tsx:229
 #: src/components/vm/nics/vmNicsCard.tsx:498
 msgid "Actions"
 msgstr "إجراءات"
 
-#: src/components/storagePools/storagePool.tsx:180
 #: src/components/networks/network.tsx:189
+#: src/components/storagePools/storagePool.tsx:180
 msgid "Activate"
 msgstr "التنشيط"
 
@@ -124,23 +130,23 @@ msgid "Activate the storage pool to administer volumes"
 msgstr "تفعيل مجمّع التخزين لإدارة الوحدات التخزينية"
 
 #: src/components/networks/networkOverviewTab.tsx:281
-#: src/components/vm/disks/diskAdd.tsx:968
-#: src/components/vm/overview/vsock.tsx:223
-#: src/components/vm/overview/watchdog.tsx:176
-#: src/components/vm/nics/nicAdd.tsx:274
 #: src/components/vm/hostdevs/hostDevAdd.tsx:265
+#: src/components/vm/disks/diskAdd.tsx:968
+#: src/components/vm/overview/watchdog.tsx:176
+#: src/components/vm/overview/vsock.tsx:223
+#: src/components/vm/nics/nicAdd.tsx:274
 msgid "Add"
 msgstr "إضافة"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:867
+#: src/components/create-vm-dialog/createVmDialog.tsx:968
 msgid "Add SSH keys"
 msgstr "أضف مفاتيح SSH"
 
-#: src/components/vm/vmActions.jsx:483
+#: src/components/vm/vmActions.tsx:518
 msgid "Add TPM"
 msgstr "أضف TPM"
 
-#: src/components/vm/consoles/vnc.jsx:502
+#: src/components/vm/consoles/vnc.jsx:530
 msgid "Add VNC"
 msgstr "إضافة VNC"
 
@@ -153,8 +159,8 @@ msgstr "إضافة إدخال مضيف DHCP ثابت"
 msgid "Add disk"
 msgstr "إضافة قرص"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:152
 #: src/components/vm/hostdevs/hostDevAdd.tsx:282
+#: src/components/vm/hostdevs/hostDevCard.tsx:152
 msgid "Add host device"
 msgstr "إضافة جهاز مضيف"
 
@@ -214,7 +220,7 @@ msgstr "العنوان ليس ضمن الشبكة الفرعية"
 msgid "All"
 msgstr "الكل"
 
-#: src/components/vm/vmMigrateDialog.jsx:185
+#: src/components/vm/vmMigrateDialog.tsx:226
 msgid ""
 "All VM activity, including storage, will be temporary. This will result in "
 "data loss on the destination host."
@@ -243,7 +249,7 @@ msgstr "أرفق دائماً"
 msgid "An example of vsock-aware software is socat"
 msgstr "من الأمثلة على برمجيات تدعم vsock هو أداة socat"
 
-#: src/components/vm/overview/cpuModal.tsx:340
+#: src/components/vm/overview/cpuModal.tsx:341
 msgid "Apply"
 msgstr "تطبيق"
 
@@ -255,7 +261,13 @@ msgstr "طبّق عند إقلاع النظام التالي"
 msgid "Assign automatically"
 msgstr "تعيين تلقائي"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1302
+#: src/components/vm/deleteDialog.tsx:106
+#, fuzzy
+#| msgid "Delete associated storage files:"
+msgid "Associated storage files"
+msgstr "حذف ملفات التخزين المرتبطة بها:"
+
+#: src/components/create-vm-dialog/createVmDialog.tsx:1478
 msgid ""
 "Automated installs are only available when downloading an image or using "
 "cloud-init."
@@ -265,12 +277,12 @@ msgstr "تتوفر التثبيتات التلقائية فقط عند تنزي�
 msgid "Automatic"
 msgstr "تلقائي"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1419
+#: src/components/create-vm-dialog/createVmDialog.tsx:1594
 msgid "Automation"
 msgstr "أتمتة"
 
-#: src/components/storagePools/storagePoolOverviewTab.tsx:73
 #: src/components/networks/networkOverviewTab.tsx:130
+#: src/components/storagePools/storagePoolOverviewTab.tsx:73
 #: src/components/vm/overview/vmOverviewCard.tsx:213
 msgid "Autostart"
 msgstr "بدء تلقائي"
@@ -291,6 +303,10 @@ msgstr "طلب الإقلاع"
 msgid "Boot order settings could not be saved"
 msgstr "تعذّر حفظ إعدادات تسلسل الإقلاع"
 
+#: src/components/vm/hostdevs/hostDevAdd.tsx:116
+#: src/components/vm/hostdevs/hostDevCard.tsx:104
+#: src/components/vm/hostdevs/hostDevCard.tsx:112
+#: src/components/vm/hostdevs/hostDevCard.tsx:262
 #: src/components/vm/disks/diskAdd.tsx:306
 #: src/components/vm/disks/vmDisksCard.tsx:221
 #: src/components/vm/disks/diskEdit.tsx:133
@@ -299,10 +315,6 @@ msgstr "تعذّر حفظ إعدادات تسلسل الإقلاع"
 #: src/components/vm/overview/bootOrder.tsx:157
 #: src/components/vm/overview/bootOrder.tsx:160
 #: src/components/vm/overview/bootOrder.tsx:174
-#: src/components/vm/hostdevs/hostDevCard.tsx:104
-#: src/components/vm/hostdevs/hostDevCard.tsx:112
-#: src/components/vm/hostdevs/hostDevCard.tsx:262
-#: src/components/vm/hostdevs/hostDevAdd.tsx:116
 msgid "Bus"
 msgstr "ناقل"
 
@@ -311,12 +323,12 @@ msgid "CD/DVD disc"
 msgstr "قرص CD/DVD"
 
 #: src/components/common/needsShutdown.tsx:190
+#: src/components/vm/vmUsageCard.tsx:59
 #: src/components/vm/overview/vmOverviewCard.tsx:201
-#: src/components/vm/vmUsageCard.jsx:61
 msgid "CPU"
 msgstr "المعالج"
 
-#: src/components/vm/overview/cpuModal.tsx:221
+#: src/components/vm/overview/cpuModal.tsx:222
 msgid "CPU mode could not be saved"
 msgstr "تعذر حفظ وضع وحدة المعالج"
 
@@ -326,35 +338,35 @@ msgstr "تعذر حفظ وضع وحدة المعالج"
 msgid "Cache"
 msgstr "ذاكرة التخزين المؤقت"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1482
+#: src/components/networks/networkOverviewTab.tsx:284
+#: src/components/networks/createNetworkDialog.tsx:561
 #: src/components/common/deleteResource.tsx:129
 #: src/components/storagePools/storagePoolDelete.tsx:220
-#: src/components/storagePools/createStoragePoolDialog.tsx:529
 #: src/components/storagePools/storageVolumeCreate.tsx:146
-#: src/components/networks/createNetworkDialog.tsx:561
-#: src/components/networks/networkOverviewTab.tsx:284
-#: src/components/vm/vmMigrateDialog.jsx:199
-#: src/components/vm/vmRenameDialog.jsx:89
-#: src/components/vm/confirmDialog.jsx:56
+#: src/components/storagePools/createStoragePoolDialog.tsx:529
+#: src/components/vm/vmReplaceSpiceDialog.tsx:178
 #: src/components/vm/consoles/vnc.jsx:159
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:263
-#: src/components/vm/disks/diskAdd.tsx:971
-#: src/components/vm/disks/mediaEject.tsx:129
-#: src/components/vm/disks/diskEdit.tsx:341
-#: src/components/vm/overview/bootOrder.tsx:368
-#: src/components/vm/overview/cpuModal.tsx:343
-#: src/components/vm/overview/memoryModal.tsx:209
-#: src/components/vm/overview/vsock.tsx:272
-#: src/components/vm/overview/firmware.tsx:120
-#: src/components/vm/overview/watchdog.tsx:237
-#: src/components/vm/vmReplaceSpiceDialog.jsx:163
-#: src/components/vm/vmEditDescriptionDialog.jsx:79
+#: src/components/vm/confirmDialog.tsx:79
+#: src/components/vm/hostdevs/hostDevAdd.tsx:270
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:140
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:362
-#: src/components/vm/vmCloneDialog.jsx:101
+#: src/components/vm/vmCloneDialog.tsx:124
+#: src/components/vm/vmEditDescriptionDialog.tsx:91
+#: src/components/vm/vmMigrateDialog.tsx:240
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:263
+#: src/components/vm/vmRenameDialog.tsx:109
+#: src/components/vm/deleteDialog.tsx:216
+#: src/components/vm/disks/mediaEject.tsx:129
+#: src/components/vm/disks/diskAdd.tsx:971
+#: src/components/vm/disks/diskEdit.tsx:340
+#: src/components/vm/overview/firmware.tsx:120
+#: src/components/vm/overview/watchdog.tsx:237
+#: src/components/vm/overview/vsock.tsx:272
+#: src/components/vm/overview/memoryModal.tsx:209
+#: src/components/vm/overview/cpuModal.tsx:344
+#: src/components/vm/overview/bootOrder.tsx:368
 #: src/components/vm/nics/nicEdit.tsx:240 src/components/vm/nics/nicAdd.tsx:277
-#: src/components/vm/hostdevs/hostDevAdd.tsx:270
-#: src/components/vm/deleteDialog.jsx:176
+#: src/components/create-vm-dialog/createVmDialog.tsx:1657
 msgid "Cancel"
 msgstr "إلغاء"
 
@@ -398,11 +410,11 @@ msgstr ""
 "\"virtualization\"، \"VM\"، \"VMX\"، \"SVM\"، \"VTX\"، \"VTD\". راجع دليل "
 "جهازك للحصول على التفاصيل."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:536
+#: src/components/create-vm-dialog/createVmDialog.tsx:647
 msgid "Checking token validity..."
 msgstr "جاري التحقق من صلاحية الرمز الفريد..."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:474
+#: src/components/create-vm-dialog/createVmDialog.tsx:572
 msgid "Choose an operating system"
 msgstr "اختر نظام تشغيل"
 
@@ -419,7 +431,7 @@ msgid ""
 "Viewer application on your system."
 msgstr "سيؤدي النقر على \"تشغيل العارض عن بُعد\" إلى تنزيل ملف .vv وتشغيل $0."
 
-#: src/components/vm/vmCloneDialog.jsx:98 src/components/vm/vmActions.jsx:413
+#: src/components/vm/vmCloneDialog.tsx:121 src/components/vm/vmActions.tsx:448
 msgid "Clone"
 msgstr "استنساخ"
 
@@ -427,7 +439,7 @@ msgstr "استنساخ"
 msgid "Close"
 msgstr "أغلق"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:371
+#: src/components/create-vm-dialog/createVmDialog.tsx:455
 msgid "Cloud base image"
 msgstr "صورة الأساس السحابية"
 
@@ -435,7 +447,7 @@ msgstr "صورة الأساس السحابية"
 msgid "Cockpit Project"
 msgstr "مشروع Cockpit"
 
-#: src/components/vm/consoles/consoles.jsx:227
+#: src/components/vm/consoles/consoles.jsx:267
 msgid "Compress"
 msgstr "ضغط"
 
@@ -447,35 +459,35 @@ msgstr "قابل للكتابة بشكل متزامن"
 msgid "Confirm this action"
 msgstr "تأكيد هذا الإجراء"
 
-#: src/components/vm/consoles/serial.jsx:96
-#: src/components/vm/consoles/vnc.jsx:445
 #: src/components/vm/consoles/serialConsole.jsx:95
+#: src/components/vm/consoles/serial.jsx:96
+#: src/components/vm/consoles/vnc.jsx:473
 msgid "Connect"
 msgstr "اتصال"
 
-#: src/components/common/machinesConnectionSelector.tsx:54
-#: src/components/storagePools/storagePoolList.tsx:78
 #: src/components/networks/networkList.tsx:74
 #: src/components/networks/createNetworkDialog.tsx:47
 #: src/components/vms/hostvmslist.tsx:202
+#: src/components/common/machinesConnectionSelector.tsx:54
+#: src/components/storagePools/storagePoolList.tsx:78
 #: src/components/vm/overview/vmOverviewCard.tsx:177
 msgid "Connection"
 msgstr "الاتصال"
 
-#: src/components/vm/consoles/consoles.jsx:239
+#: src/components/vm/consoles/consoles.jsx:307
 msgid "Console"
 msgstr "وحدة تحكم"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:140
+#: src/components/vm/vmReplaceSpiceDialog.tsx:155
 msgid "Convert QXL video card to VGA"
 msgstr "تحويل بطاقة الفيديو QXL إلى VGA"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:139
+#: src/components/vm/vmReplaceSpiceDialog.tsx:154
 msgid "Convert SPICE graphics console to VNC"
 msgstr "تحويل وحدة تحكم رسوميات SPICE إلى VNC"
 
-#: src/components/vm/vmMigrateDialog.jsx:103
-#: src/components/vm/vmMigrateDialog.jsx:116
+#: src/components/vm/vmMigrateDialog.tsx:132
+#: src/components/vm/vmMigrateDialog.tsx:145
 msgid "Copy storage"
 msgstr "مخزن النسخ"
 
@@ -483,15 +495,15 @@ msgstr "مخزن النسخ"
 msgid "Copy to clipboard"
 msgstr "نسخ للحافظة"
 
-#: src/components/vm/overview/cpuModal.tsx:288
+#: src/components/vm/overview/cpuModal.tsx:289
 msgid "Cores per socket"
 msgstr "النوى لكل مقبس"
 
-#: src/components/vm/deleteDialog.jsx:156
+#: src/components/vm/deleteDialog.tsx:191
 msgid "Could not delete $0"
 msgstr "تعذر حذف $0"
 
-#: src/components/vm/deleteDialog.jsx:151
+#: src/components/vm/deleteDialog.tsx:186
 msgid "Could not delete all storage for $0"
 msgstr "تعذر حذف كل التخزين لـ $0"
 
@@ -511,34 +523,34 @@ msgstr "تعذر الرجوع إلى اللقطة"
 msgid "Crashed"
 msgstr "تعطَّل"
 
-#: src/components/storagePools/createStoragePoolDialog.tsx:526
-#: src/components/storagePools/storageVolumeCreate.tsx:143
 #: src/components/networks/createNetworkDialog.tsx:558
+#: src/components/storagePools/storageVolumeCreate.tsx:143
+#: src/components/storagePools/createStoragePoolDialog.tsx:526
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:359
 msgid "Create"
 msgstr "إنشاء"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1527
+#: src/components/create-vm-dialog/createVmDialog.tsx:1717
 msgid "Create VM"
 msgstr "إنشاء جهاز افتراضي"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1546
+#: src/components/create-vm-dialog/createVmDialog.tsx:1736
 msgid "Create VM by importing a disk image of an existing VM installation"
 msgstr "إنشاء آلة افتراضية عن طريق استيراد صورة قرص لتثبيت آلة افتراضية موجودة"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1545
+#: src/components/create-vm-dialog/createVmDialog.tsx:1735
 msgid "Create VM from local or network installation medium"
 msgstr "إنشاء آلة افتراضية من وسيط التثبيت المحلي أو الشبكة"
 
-#: src/components/vm/vmCloneDialog.jsx:74
+#: src/components/vm/vmCloneDialog.tsx:97
 msgid "Create a clone VM based on $0"
 msgstr "إنشاء جهاز افتراضي مستنسخ على أساس $0"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1446
+#: src/components/create-vm-dialog/createVmDialog.tsx:1621
 msgid "Create and edit"
 msgstr "إنشاء وتعديل"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1476
+#: src/components/create-vm-dialog/createVmDialog.tsx:1651
 msgid "Create and run"
 msgstr "إنشاء ثم تشغيل"
 
@@ -546,15 +558,15 @@ msgstr "إنشاء ثم تشغيل"
 msgid "Create new"
 msgstr "إنشاء جديد"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:962
+#: src/components/create-vm-dialog/createVmDialog.tsx:1104
 msgid "Create new qcow2 volume"
 msgstr "إنشاء قرص qcow2 جديد"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:963
+#: src/components/create-vm-dialog/createVmDialog.tsx:1105
 msgid "Create new raw volume"
 msgstr "إنشاء قرص raw جديد"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1461
+#: src/components/create-vm-dialog/createVmDialog.tsx:1636
 msgid "Create new virtual machine"
 msgstr "إنشاء جهاز افتراضي جديد"
 
@@ -596,7 +608,7 @@ msgid ""
 "running."
 msgstr "لا يتم دعم إنشاء لقطات للأجهزة الافتراضية مع أجهزة VFIO أثناء تشغيلها."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1278
+#: src/components/create-vm-dialog/createVmDialog.tsx:1454
 msgid "Creation of VM $0 failed"
 msgstr "فشل إنشاء الجهاز الافتراضي $0"
 
@@ -604,7 +616,7 @@ msgstr "فشل إنشاء الجهاز الافتراضي $0"
 msgid "Creation time"
 msgstr "وقت الإنشاء"
 
-#: src/components/vm/consoles/vnc.jsx:267
+#: src/components/vm/consoles/vnc.jsx:268
 msgid "Ctrl+Alt+$0"
 msgstr "Ctrl+Alt+$0"
 
@@ -634,24 +646,25 @@ msgstr "مسار مخصص"
 msgid "DHCP Settings"
 msgstr "إعدادات DHCP"
 
-#: src/components/storagePools/storagePool.tsx:171
 #: src/components/networks/network.tsx:185
+#: src/components/storagePools/storagePool.tsx:171
 msgid "Deactivate"
 msgstr "إلغاء التنشيط"
 
+#: src/components/networks/network.tsx:166
+#: src/components/networks/network.tsx:169
 #: src/components/common/deleteResource.tsx:117
 #: src/components/common/deleteResource.tsx:177
 #: src/components/common/deleteResource.tsx:188
 #: src/components/storagePools/storagePoolDelete.tsx:217
 #: src/components/storagePools/storagePoolDelete.tsx:247
 #: src/components/storagePools/storagePoolDelete.tsx:257
-#: src/components/networks/network.tsx:166
-#: src/components/networks/network.tsx:169 src/components/vm/vmActions.jsx:496
-#: src/components/vm/vmActions.jsx:504 src/components/vm/deleteDialog.jsx:173
+#: src/components/vm/vmActions.tsx:531 src/components/vm/vmActions.tsx:539
+#: src/components/vm/deleteDialog.tsx:213
 msgid "Delete"
 msgstr "حذف"
 
-#: src/components/vm/deleteDialog.jsx:164
+#: src/components/vm/deleteDialog.tsx:199
 msgid "Delete $0 VM?"
 msgstr "حذف الجهاز الافتراضي $0؟"
 
@@ -669,7 +682,7 @@ msgstr[3] "حذف $0 وحدات تخزين"
 msgstr[4] "حذف $0 وحدة تخزين"
 msgstr[5] "حذف $0 وحدة تخزين"
 
-#: src/components/vm/deleteDialog.jsx:84
+#: src/components/vm/deleteDialog.tsx:104
 msgid "Delete associated storage files:"
 msgstr "حذف ملفات التخزين المرتبطة بها:"
 
@@ -692,23 +705,29 @@ msgstr ""
 msgid "Deleting shared directories is possible only when the guest is shut off"
 msgstr "يمكن حذف المجلدات المشتركة فقط عند إطفاء المستخدم الضيف"
 
-#: src/components/vm/vmEditDescriptionDialog.jsx:64
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:137
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:89
+#: src/components/vm/vmEditDescriptionDialog.tsx:76
 msgid "Description"
 msgstr "الوصف"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:116
+#: src/components/vm/vmReplaceSpiceDialog.tsx:131
 msgid "Deselect others"
 msgstr "إلغاء تحديد البقية"
 
-#: src/components/vm/vmMigrateDialog.jsx:49
+#: src/components/vm/vmMigrateDialog.tsx:64
 msgid "Destination URI"
 msgstr "مصدر الوجهة"
 
-#: src/components/vm/vmMigrateDialog.jsx:137
+#: src/components/vm/vmMigrateDialog.tsx:177
 msgid "Destination URI must not be empty"
 msgstr "يجب ألا يكون عنوان الوجهة فارغاً"
+
+#: src/components/vm/consoles/consoles.jsx:301
+#, fuzzy
+#| msgid "Details"
+msgid "Detach"
+msgstr "التفاصيل"
 
 #: src/components/storagePools/storagePoolDelete.tsx:99
 msgid ""
@@ -716,22 +735,22 @@ msgid ""
 msgstr ""
 "افصل الأقراص باستخدام هذا المجمع من أي أجهزة افتراضية قبل محاولة الحذف."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1415
+#: src/components/create-vm-dialog/createVmDialog.tsx:1590
 msgid "Details"
 msgstr "التفاصيل"
 
 #: src/components/networks/networkList.tsx:73
 #: src/components/networks/createNetworkDialog.tsx:231
+#: src/components/vm/hostdevs/hostDevAdd.tsx:115
+#: src/components/vm/hostdevs/hostDevAdd.tsx:150
+#: src/components/vm/hostdevs/hostDevCard.tsx:103
+#: src/components/vm/hostdevs/hostDevCard.tsx:261
 #: src/components/vm/disks/diskAdd.tsx:462
 #: src/components/vm/disks/vmDisksCard.tsx:207
 #: src/components/vm/overview/bootOrder.tsx:119
 #: src/components/vm/overview/bootOrder.tsx:126
 #: src/components/vm/overview/bootOrder.tsx:158
 #: src/components/vm/overview/bootOrder.tsx:161
-#: src/components/vm/hostdevs/hostDevCard.tsx:103
-#: src/components/vm/hostdevs/hostDevCard.tsx:261
-#: src/components/vm/hostdevs/hostDevAdd.tsx:115
-#: src/components/vm/hostdevs/hostDevAdd.tsx:150
 msgid "Device"
 msgstr "جهاز"
 
@@ -739,13 +758,13 @@ msgstr "جهاز"
 msgid "Devices"
 msgstr "الأجهزة"
 
-#: src/components/vm/consoles/consoles.jsx:212
 #: src/components/vm/consoles/serialConsole.jsx:94
+#: src/components/vm/consoles/consoles.jsx:251
 msgid "Disconnect"
 msgstr "قطع الاتصال"
 
 #: src/components/vm/consoles/serial.jsx:93
-#: src/components/vm/consoles/vnc.jsx:442
+#: src/components/vm/consoles/vnc.jsx:470
 msgid "Disconnected"
 msgstr "مفصول"
 
@@ -769,7 +788,7 @@ msgstr "فشل إضافة القرص"
 msgid "Disk identifier"
 msgstr "معرف القرص"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:384
+#: src/components/create-vm-dialog/createVmDialog.tsx:468
 msgid "Disk image"
 msgstr "صورة القرص"
 
@@ -777,7 +796,7 @@ msgstr "صورة القرص"
 msgid "Disk image file"
 msgstr "ملف صورة القرص"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:228
+#: src/components/create-vm-dialog/createVmDialog.tsx:275
 msgid "Disk image path must not be empty"
 msgstr "يجب ألا يكون مسار صورة القرص فارغاً"
 
@@ -785,7 +804,7 @@ msgstr "يجب ألا يكون مسار صورة القرص فارغاً"
 msgid "Disk images can be stored in user home directory"
 msgstr "يمكن تخزين صور القرص في المجلد الرئيسي للمستخدم"
 
-#: src/components/vm/disks/diskEdit.tsx:280
+#: src/components/vm/disks/diskEdit.tsx:279
 msgid "Disk settings could not be saved"
 msgstr "تعذر حفظ إعدادات القرص"
 
@@ -793,11 +812,11 @@ msgstr "تعذر حفظ إعدادات القرص"
 msgid "Disk-only snapshot"
 msgstr "لقطة القرص فقط"
 
-#: src/components/vm/vmDetailsPage.jsx:136
+#: src/components/vm/vmDetailsPage.tsx:192
 msgid "Disks"
 msgstr "الأقراص"
 
-#: src/components/vm/vmMigrateDialog.jsx:183
+#: src/components/vm/vmMigrateDialog.tsx:224
 msgid ""
 "Do not run this VM on the origin and destination hosts at the same time."
 msgstr ""
@@ -816,7 +835,7 @@ msgstr "تعطل النطاق"
 msgid "Domain is blocked on resource"
 msgstr "النطاق محظور على المورد"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:367
+#: src/components/create-vm-dialog/createVmDialog.tsx:451
 msgid "Download an OS"
 msgstr "تنزيل نظام تشغيل"
 
@@ -842,7 +861,7 @@ msgstr "قيد التنزيل: $0%"
 msgid "Dump core"
 msgstr "قلب التفريغ"
 
-#: src/components/vm/vmMigrateDialog.jsx:64
+#: src/components/vm/vmMigrateDialog.tsx:85
 msgid "Duration"
 msgstr "المدة"
 
@@ -850,27 +869,27 @@ msgstr "المدة"
 msgid "Dying"
 msgstr "الموت"
 
-#: src/components/vm/disks/diskEdit.tsx:217
+#: src/components/vm/disks/diskEdit.tsx:216
 #: src/components/vm/nics/vmNicsCard.tsx:538
 msgid "Edit"
 msgstr "عدِّل"
 
-#: src/components/vm/disks/diskEdit.tsx:325
+#: src/components/vm/disks/diskEdit.tsx:324
 msgid "Edit $0 attributes"
 msgstr "تعديل خصائص $0"
 
 #: src/components/vm/consoles/vnc.jsx:145
-#: src/components/vm/consoles/vnc.jsx:317
+#: src/components/vm/consoles/vnc.jsx:319
 #, fuzzy
 #| msgid "DHCP Settings"
 msgid "Edit VNC settings"
 msgstr "إعدادات DHCP"
 
-#: src/components/vm/vmActions.jsx:470
+#: src/components/vm/vmActions.tsx:505
 msgid "Edit description"
 msgstr "تعديل الوصف"
 
-#: src/components/vm/vmEditDescriptionDialog.jsx:56
+#: src/components/vm/vmEditDescriptionDialog.tsx:63
 msgid "Edit description of VM $0"
 msgstr "تعديل الوصف للجهاز الافتراضي $0"
 
@@ -890,8 +909,8 @@ msgstr "لا يُسمح بتعديل واجهات الشبكة الخاصة با
 msgid "Editing transient network interfaces is not allowed"
 msgstr "تعديل واجهات الشبكة العابرة غير مسموح به"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:233
 #: src/components/vm/disks/mediaEject.tsx:122
+#: src/components/vm/disks/vmDiskColumns.tsx:233
 msgid "Eject"
 msgstr "إخراج"
 
@@ -916,23 +935,23 @@ msgstr "النهاية"
 msgid "End should not be empty"
 msgstr "يجب ألا تكون النهاية فارغة"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1301
+#: src/components/create-vm-dialog/createVmDialog.tsx:1477
 msgid "Enter root and/or user information to enable unattended installation."
 msgstr "أدخل معلومات الجذر و/أو المستخدم لتمكين التثبيت غير المراقب."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:540
+#: src/components/create-vm-dialog/createVmDialog.tsx:651
 msgid "Error checking token"
 msgstr "رمز التحقق من الخطأ"
 
-#: src/components/vm/vmMigrateDialog.jsx:53
+#: src/components/vm/vmMigrateDialog.tsx:68
 msgid "Example, $0"
 msgstr "على سبيل المثال، $0"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:310
+#: src/components/create-vm-dialog/createVmDialog.tsx:393
 msgid "Existing disk image on host's file system"
 msgstr "الصورة الموجودة على نظام الملفات للجهاز المضيف"
 
-#: src/components/vm/consoles/consoles.jsx:227
+#: src/components/vm/consoles/consoles.jsx:267
 msgid "Expand"
 msgstr "التوسعة"
 
@@ -944,11 +963,11 @@ msgstr "السمات الموسعة"
 msgid "Failed"
 msgstr "فشل"
 
-#: src/components/vm/vmActions.jsx:187
+#: src/components/vm/vmActions.tsx:209
 msgid "Failed to add TPM to VM $0"
 msgstr "لم يتم إضافة TPM إلى الجهاز الافتراضي $0"
 
-#: src/components/vm/consoles/vnc.jsx:482
+#: src/components/vm/consoles/vnc.jsx:510
 #, fuzzy
 #| msgid "Failed to add TPM to VM $0"
 msgid "Failed to add VNC to VM $0"
@@ -968,7 +987,7 @@ msgstr "فشل في إضافة مجلد مشترك"
 msgid "Failed to change firmware"
 msgstr "فشل في تغيير البرنامج الثابت"
 
-#: src/components/vm/vmCloneDialog.jsx:67
+#: src/components/vm/vmCloneDialog.tsx:90
 msgid "Failed to clone VM $0"
 msgstr "فشل في استنساخ الجهاز الافتراضي $0"
 
@@ -996,11 +1015,11 @@ msgstr "فشل في جلب بعض الموارد"
 msgid "Failed to fetch the IP addresses of the interfaces present in $0"
 msgstr "فشل في جلب عناوين IP للواجهات الموجودة في $0"
 
-#: src/components/vm/vmRenameDialog.jsx:57
+#: src/components/vm/vmRenameDialog.tsx:72
 msgid "Failed to rename VM $0"
 msgstr "فشل في إعادا تسمية الجهاز الافتراضي $0"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:77
+#: src/components/vm/vmReplaceSpiceDialog.tsx:91
 msgid "Failed to replace SPICE devices"
 msgstr "فشل في استبدال أجهزة SPICE"
 
@@ -1008,15 +1027,15 @@ msgstr "فشل في استبدال أجهزة SPICE"
 msgid "Failed to save network settings"
 msgstr "فشل فث حفظ إعدادات الشبكة"
 
-#: src/components/vm/consoles/vnc.jsx:262
+#: src/components/vm/consoles/vnc.jsx:263
 msgid "Failed to send key Ctrl+Alt+$0 to VM $1"
 msgstr "فشل في إرسال المفتاح Ctrl+Alt+$0 للجهاز الافتراضي $1"
 
-#: src/components/vm/vmEditDescriptionDialog.jsx:48
+#: src/components/vm/vmEditDescriptionDialog.tsx:55
 msgid "Failed to set description of VM $0"
 msgstr "فشل في تعيين وصف للجهاز الافتراضي $0"
 
-#: src/components/vm/overview/cpuModal.tsx:261
+#: src/components/vm/overview/cpuModal.tsx:262
 msgid "Fewer than the maximum number of virtual CPUs should be enabled."
 msgstr "يجب تمكين عدد أقل من الحد الأقصى لعدد أنوية المعالج."
 
@@ -1037,8 +1056,8 @@ msgstr "مجلد نظام الملفات"
 msgid "Filter by name"
 msgstr "التصفية حسب الاسم"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:267
 #: src/components/vm/overview/firmware.tsx:103
+#: src/components/vm/overview/vmOverviewCard.tsx:267
 msgid "Firmware"
 msgstr "برنامج ثابت"
 
@@ -1046,11 +1065,11 @@ msgstr "برنامج ثابت"
 msgid "Force eject"
 msgstr "إخراج بالقوة"
 
-#: src/components/vm/vmActions.jsx:369 src/components/vm/vmActions.jsx:374
+#: src/components/vm/vmActions.tsx:402 src/components/vm/vmActions.tsx:407
 msgid "Force reboot"
 msgstr "إعادة تشغيل النظام بالقوة"
 
-#: src/components/vm/vmActions.jsx:362
+#: src/components/vm/vmActions.tsx:395
 msgid "Force reboot $0?"
 msgstr "إعادة تشغيل نظام $0 بالقوة؟"
 
@@ -1058,16 +1077,16 @@ msgstr "إعادة تشغيل نظام $0 بالقوة؟"
 msgid "Force revert"
 msgstr "الإعادة بالقوة"
 
-#: src/components/vm/vmActions.jsx:305 src/components/vm/vmActions.jsx:310
+#: src/components/vm/vmActions.tsx:338 src/components/vm/vmActions.tsx:343
 msgid "Force shut down"
 msgstr "إيقاف التشغيل بالقوة"
 
-#: src/components/vm/vmActions.jsx:298
+#: src/components/vm/vmActions.tsx:331
 msgid "Force shut down $0?"
 msgstr "إيقاف تشغيل $0 بالقوة؟"
 
-#: src/components/storagePools/createStoragePoolDialog.tsx:257
 #: src/components/storagePools/storageVolumeCreateBody.tsx:120
+#: src/components/storagePools/createStoragePoolDialog.tsx:257
 #: src/components/vm/disks/vmDiskColumns.tsx:122
 msgid "Format"
 msgstr "تهيئة"
@@ -1080,7 +1099,7 @@ msgstr "الوضع الأمامي"
 msgid "Forwarding mode"
 msgstr "وضع إعادة التوجيه"
 
-#: src/components/vm/vmMigrateDialog.jsx:104
+#: src/components/vm/vmMigrateDialog.tsx:133
 msgid ""
 "Full disk images and the domain's memory will be migrated. Only non-shared, "
 "writable disk images will be transferred. Unused storage will remain on the "
@@ -1099,15 +1118,15 @@ msgstr "عام"
 msgid "Generate automatically"
 msgstr "التوليد تلقائياً"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:514
+#: src/components/create-vm-dialog/createVmDialog.tsx:625
 msgid "Get a new RHSM token."
 msgstr "احصل على رمز RHSM جديد."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:912
-#: src/components/create-vm-dialog/createVmDialog.jsx:1019
 #: src/components/storagePools/storageVolumeCreateBody.tsx:152
 #: src/components/vm/disks/vmDisksCard.tsx:53
 #: src/components/vm/overview/memorySelectRow.tsx:108
+#: src/components/create-vm-dialog/createVmDialog.tsx:1027
+#: src/components/create-vm-dialog/createVmDialog.tsx:1161
 msgid "GiB"
 msgstr "GiB"
 
@@ -1123,11 +1142,11 @@ msgstr "خيار جيد للمحاكاة الافتراضية لسطح المك�
 msgid "Gracefully shutdown"
 msgstr "إيقاف التشغيل الآمن"
 
-#: src/components/vm/consoles/consoles.jsx:107
+#: src/components/vm/consoles/consoles.jsx:127
 msgid "Graphical"
 msgstr "رسومي"
 
-#: src/components/vm/consoles/vnc.jsx:492
+#: src/components/vm/consoles/vnc.jsx:520
 msgid "Graphical console support not enabled"
 msgstr "لم يتم تمكين دعم وحدة التحكم الرسومية"
 
@@ -1147,7 +1166,7 @@ msgstr "إخفاء الخيارات الإضافية"
 msgid "Host"
 msgstr "المضيف"
 
-#: src/components/create-vm-dialog/pxe-helpers.js:169
+#: src/components/create-vm-dialog/pxe-helpers.tsx:160
 msgid "Host device"
 msgstr "جهاز مضيف"
 
@@ -1159,7 +1178,7 @@ msgstr "تعذّر توصيل الجهاز المضيف"
 msgid "Host device will be removed from $0:"
 msgstr "‏ستتم إزالة الجهاز المضيف من $0:"
 
-#: src/components/vm/vmDetailsPage.jsx:154
+#: src/components/vm/vmDetailsPage.tsx:210
 msgid "Host devices"
 msgstr "الأجهزة المضيفة"
 
@@ -1196,8 +1215,8 @@ msgstr "يجب ألا يكون حقل عنوان IP فارغاً"
 msgid "IP configuration"
 msgstr "إعداد الـ IP"
 
-#: src/components/networks/createNetworkDialog.tsx:350
 #: src/components/networks/networkOverviewTab.tsx:149
+#: src/components/networks/createNetworkDialog.tsx:350
 msgid "IPv4 address"
 msgstr "عنوان IPv4"
 
@@ -1225,8 +1244,8 @@ msgstr "يجب أن يكون طول بادئة IPv4 24 أو أقل"
 msgid "IPv4 prefix length must be a multiple of 8"
 msgstr "يجب أن يكون طول بادئة IPv4 من مضاعفات 8"
 
-#: src/components/networks/createNetworkDialog.tsx:391
 #: src/components/networks/networkOverviewTab.tsx:169
+#: src/components/networks/createNetworkDialog.tsx:391
 msgid "IPv6 address"
 msgstr "عنوان IPv6"
 
@@ -1266,19 +1285,19 @@ msgstr "خامل"
 msgid "Ignore"
 msgstr "تجاهل"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1527
+#: src/components/create-vm-dialog/createVmDialog.tsx:1717
 msgid "Import VM"
 msgstr "استيراد VM"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1461
+#: src/components/create-vm-dialog/createVmDialog.tsx:1636
 msgid "Import a virtual machine"
 msgstr "استيراد جهاز افتراضي"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1446
+#: src/components/create-vm-dialog/createVmDialog.tsx:1621
 msgid "Import and edit"
 msgstr "استيراد وتعديل"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1476
+#: src/components/create-vm-dialog/createVmDialog.tsx:1651
 msgid "Import and run"
 msgstr "استيراد وتشغيل"
 
@@ -1286,7 +1305,7 @@ msgstr "استيراد وتشغيل"
 msgid "Importing an image with a backing file is unsupported"
 msgstr "استيراد صورة بملف استراجاع غير مدعوم"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:318
+#: src/components/create-vm-dialog/createVmDialog.tsx:401
 msgid ""
 "In most configurations, macvtap does not work for host to guest network "
 "communication."
@@ -1317,19 +1336,19 @@ msgstr "إدخال وسائط القرص"
 msgid "Inside the VM"
 msgstr "داخل الجهاز الافتراضي"
 
-#: src/components/vm/vmActions.jsx:401
+#: src/components/vm/vmActions.tsx:436
 msgid "Install"
 msgstr "تثبيت"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:384
+#: src/components/create-vm-dialog/createVmDialog.tsx:468
 msgid "Installation source"
 msgstr "مصدر التثبيت"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:230
+#: src/components/create-vm-dialog/createVmDialog.tsx:277
 msgid "Installation source must not be empty"
 msgstr "يحب ألا يكون خقل مصدر التثبيت فارغاً"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:359
+#: src/components/create-vm-dialog/createVmDialog.tsx:443
 msgid "Installation type"
 msgstr "نوع التثبيت"
 
@@ -1365,15 +1384,15 @@ msgstr "عنوان IPv6 غير صالح"
 msgid "Invalid IPv6 prefix"
 msgstr "بادئة IPv6 غير صالحة"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:214
+#: src/components/create-vm-dialog/createVmDialog.tsx:261
 msgid "Invalid filename"
 msgstr "اسم ملف غير صالح"
 
-#: src/components/create-vm-dialog/pxe-helpers.js:109
+#: src/components/create-vm-dialog/pxe-helpers.tsx:107
 msgid "Isolated network"
 msgstr "شبكة معزولة"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:149
+#: src/components/vm/vmReplaceSpiceDialog.tsx:164
 msgid ""
 "It can also be used to enable the inline graphical console in the browser, "
 "which does not support SPICE."
@@ -1381,7 +1400,7 @@ msgstr ""
 "يمكن استخدامه أيضًا لتمكين وحدة التحكم الرسومية المضمنة في المتصفح، والتي لا "
 "تدعم SPICE."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:832
+#: src/components/create-vm-dialog/createVmDialog.tsx:927
 msgid "Keys are located in ~/.ssh/ and have a \".pub\" extension."
 msgstr "توجد المفاتيح في ~/.ssh/ وتكون بامتداد ”.pub“."
 
@@ -1395,17 +1414,17 @@ msgstr "مجموعة وحدة تخزين LVM"
 msgid "Launch viewer"
 msgstr "تشغيل العرض عن بعد"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:652
+#: src/components/create-vm-dialog/createVmDialog.tsx:781
 msgid ""
 "Leave the password blank if you do not wish to have a root account created"
 msgstr "اترك كلمة السر فارغة إذا كنت لا ترغب في إنشاء حساب جذر"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:752
+#: src/components/create-vm-dialog/createVmDialog.tsx:829
 msgid ""
 "Leave the password blank if you do not wish to have a user account created"
 msgstr "اترك كلمة السر فارغة إذا كنت لا ترغب في إنشاء حساب مستخدم"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:858
+#: src/components/create-vm-dialog/createVmDialog.tsx:959
 msgid "Leave the password blank if you do not wish to set a root password"
 msgstr "اترك كلمة السر فارغة إذا كنت لا ترغب في تعيين كلمة مرور الجذر"
 
@@ -1426,12 +1445,12 @@ msgstr "تحميل أجهزة الشبكة المتاحة"
 msgid "Loading resources"
 msgstr "تحميل المصادر"
 
-#: src/components/vm/consoles/serial.jsx:102
 #: src/components/vm/consoles/serialConsole.jsx:77
+#: src/components/vm/consoles/serial.jsx:102
 msgid "Loading..."
 msgstr "قيد التحميل..."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:374
+#: src/components/create-vm-dialog/createVmDialog.tsx:458
 msgid "Local install media (ISO image or distro install tree)"
 msgstr "وسائط التثبيت المحلية (صورة ISO أو شجرة تثبيت التوزيعة)"
 
@@ -1449,8 +1468,8 @@ msgid "MAC"
 msgstr "MAC"
 
 #: src/components/networks/networkOverviewTab.tsx:259
-#: src/components/vm/nics/vmNicsCard.tsx:428
 #: src/components/vm/nics/nicEdit.tsx:70 src/components/vm/nics/nicAdd.tsx:91
+#: src/components/vm/nics/vmNicsCard.tsx:428
 msgid "MAC address"
 msgstr "عنوان MAC"
 
@@ -1498,11 +1517,11 @@ msgstr "الحد الأقصى للتخصيص"
 msgid "Maximum memory could not be saved"
 msgstr "تعذر حفظ الذاكرة القصوى"
 
-#: src/components/vm/overview/cpuModal.tsx:243
+#: src/components/vm/overview/cpuModal.tsx:244
 msgid "Maximum number of virtual CPUs allocated for the guest OS"
 msgstr "الحد الأقصى لعدد أنوية المعالج الافتراضية المخصصة لنظام التشغيل الضيف"
 
-#: src/components/vm/overview/cpuModal.tsx:242
+#: src/components/vm/overview/cpuModal.tsx:243
 msgid ""
 "Maximum number of virtual CPUs allocated for the guest OS, which must be "
 "between 1 and $0"
@@ -1522,9 +1541,9 @@ msgstr "تعذر إخراج الوسائط من $0"
 msgid "Media will be ejected from $0:"
 msgstr "سيتم إخراج الوسائط من $0:"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:897
+#: src/components/vm/vmUsageCard.tsx:51
 #: src/components/vm/overview/vmOverviewCard.tsx:196
-#: src/components/vm/vmUsageCard.jsx:53
+#: src/components/create-vm-dialog/createVmDialog.tsx:1012
 msgid "Memory"
 msgstr "الذاكرة"
 
@@ -1533,7 +1552,7 @@ msgstr "الذاكرة"
 msgid "Memory could not be saved"
 msgstr "تعذر حفظ الذاكرة"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:237
+#: src/components/create-vm-dialog/createVmDialog.tsx:284
 msgid "Memory must not be 0"
 msgstr "يجب ألا تكون الذاكرة صفراً"
 
@@ -1549,30 +1568,30 @@ msgstr "ستستخدم لقطة الذاكرة حوالي $0."
 msgid "Memory state path"
 msgstr "مسار حالة الذاكرة"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:910
-#: src/components/create-vm-dialog/createVmDialog.jsx:1017
 #: src/components/storagePools/storageVolumeCreateBody.tsx:150
 #: src/components/vm/overview/memorySelectRow.tsx:106
+#: src/components/create-vm-dialog/createVmDialog.tsx:1025
+#: src/components/create-vm-dialog/createVmDialog.tsx:1159
 msgid "MiB"
 msgstr "MiB"
 
-#: src/components/vm/vmMigrateDialog.jsx:196
-#: src/components/vm/vmActions.jsx:436
+#: src/components/vm/vmActions.tsx:471
+#: src/components/vm/vmMigrateDialog.tsx:237
 msgid "Migrate"
 msgstr "ترحيل"
 
-#: src/components/vm/vmMigrateDialog.jsx:206
+#: src/components/vm/vmMigrateDialog.tsx:247
 msgid "Migrate VM to another host"
 msgstr "ترحيل الجهاز الافتراضي لمضيف آخر"
 
-#: src/components/vm/vmMigrateDialog.jsx:162
+#: src/components/vm/vmMigrateDialog.tsx:203
 msgid "Migration failed"
 msgstr "فشل الترحيل"
 
-#: src/components/vm/overview/cpuModal.tsx:306
-#: src/components/vm/overview/cpuModal.tsx:308
-#: src/components/vm/nics/vmNicsCard.tsx:190
+#: src/components/vm/overview/cpuModal.tsx:307
+#: src/components/vm/overview/cpuModal.tsx:309
 #: src/components/vm/nics/nicBody.tsx:227
+#: src/components/vm/nics/vmNicsCard.tsx:190
 msgid "Mode"
 msgstr "الطور"
 
@@ -1580,8 +1599,8 @@ msgstr "الطور"
 msgid "Mode help"
 msgstr "مساعدة الطور"
 
-#: src/components/vm/nics/nicBody.tsx:75
 #: src/components/vm/hostdevs/hostDevCard.tsx:209
+#: src/components/vm/nics/nicBody.tsx:75
 msgid "Model"
 msgstr "النموذج"
 
@@ -1607,7 +1626,7 @@ msgstr "يجب ألا يكون حقل علامة التركيب فارغاً"
 msgid "Must be an address instead of the network identifier, such as $0"
 msgstr "يجب أن يكون عنواناً وليس مُعرّف الشبكة، مثل $0"
 
-#: src/components/create-vm-dialog/pxe-helpers.js:94
+#: src/components/create-vm-dialog/pxe-helpers.tsx:92
 msgid "NAT to $0"
 msgstr "NAT إلى $0"
 
@@ -1615,17 +1634,17 @@ msgstr "NAT إلى $0"
 msgid "NIC $0 of VM $1 failed to change state"
 msgstr "فشلت بطاقة الشبكة (NIC) $0 للجهاز الافتراضي $1 في تغيير الحالة"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:268
-#: src/components/storagePools/storagePoolVolumesTab.tsx:90
-#: src/components/storagePools/createStoragePoolDialog.tsx:69
-#: src/components/storagePools/storagePoolList.tsx:76
-#: src/components/storagePools/storageVolumeCreateBody.tsx:64
 #: src/components/networks/networkList.tsx:72
 #: src/components/networks/createNetworkDialog.tsx:185
 #: src/components/vms/hostvmslist.tsx:201
+#: src/components/storagePools/storagePoolList.tsx:76
+#: src/components/storagePools/storageVolumeCreateBody.tsx:64
+#: src/components/storagePools/storagePoolVolumesTab.tsx:90
+#: src/components/storagePools/createStoragePoolDialog.tsx:69
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:127
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:70
-#: src/components/vm/vmCloneDialog.jsx:82
+#: src/components/vm/vmCloneDialog.tsx:105
+#: src/components/create-vm-dialog/createVmDialog.tsx:325
 msgid "Name"
 msgstr "الاسم"
 
@@ -1641,14 +1660,14 @@ msgstr "لا يمكن ترك الاسم فارغاً"
 msgid "Name contains invalid characters"
 msgstr "الاسم يحوي أحرفاً غير صالحة"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:197
 #: src/components/storagePools/storageVolumeCreate.tsx:86
-#: src/components/vm/vmCloneDialog.jsx:47
+#: src/components/vm/vmCloneDialog.tsx:64
+#: src/components/create-vm-dialog/createVmDialog.tsx:243
 msgid "Name must not be empty"
 msgstr "يجب ألا يكون الاسم فارغاً"
 
-#: src/components/storagePools/createStoragePoolDialog.tsx:75
 #: src/components/networks/createNetworkDialog.tsx:90
+#: src/components/storagePools/createStoragePoolDialog.tsx:75
 msgid "Name should not be empty"
 msgstr "ينبغي ألا يكون الاسم فارغاً"
 
@@ -1676,7 +1695,7 @@ msgstr "فشل إلغاء تنشيط الشبكة $0"
 msgid "Network $0 will be permanently deleted."
 msgstr "سيتم حذف الشبكة $0 نهائياً."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:379
+#: src/components/create-vm-dialog/createVmDialog.tsx:463
 msgid "Network boot (PXE)"
 msgstr "الإقلاع عبر الشبكة (PXE)"
 
@@ -1700,11 +1719,11 @@ msgstr "سيتم إزالة واجهة الشبكة $0 من $1"
 msgid "Network interface settings could not be saved"
 msgstr "تعذر حفظ إعدادات واجهة الشبكة"
 
-#: src/components/vm/vmDetailsPage.jsx:145
+#: src/components/vm/vmDetailsPage.tsx:201
 msgid "Network interfaces"
 msgstr "واجهات الشبكة"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:326
+#: src/components/create-vm-dialog/createVmDialog.tsx:409
 msgid "Network selection does not support PXE."
 msgstr "اختيار الشبكة الحالي لا يدعم التمهيد عبر الشبكة (PXE)."
 
@@ -1714,11 +1733,11 @@ msgstr "اختيار الشبكة الحالي لا يدعم التمهيد عب
 msgid "Networks"
 msgstr "الشبكات"
 
-#: src/components/vm/vmRenameDialog.jsx:71
+#: src/components/vm/vmRenameDialog.tsx:91
 msgid "New name"
 msgstr "اسم جديد"
 
-#: src/components/vm/vmRenameDialog.jsx:77
+#: src/components/vm/vmRenameDialog.tsx:97
 msgid "New name must not be empty"
 msgstr "حقل الاسم الجديد يجب ألا يكون فارغاً"
 
@@ -1726,7 +1745,7 @@ msgstr "حقل الاسم الجديد يجب ألا يكون فارغاً"
 msgid "New volume name"
 msgstr "اسم وحدة تخزين جديد"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:865
+#: src/components/create-vm-dialog/createVmDialog.tsx:966
 msgid "No SSH keys specified"
 msgstr "لم يتم تحديد مفاتيح SSH"
 
@@ -1770,7 +1789,7 @@ msgstr "لا توجد واجهات شبكة معرَّفة لهذا الجهاز
 msgid "No network is defined on this host"
 msgstr "لم يتم تحديد أي شبكة على هذا المضيف"
 
-#: src/components/create-vm-dialog/pxe-helpers.js:175
+#: src/components/create-vm-dialog/pxe-helpers.tsx:166
 msgid "No networks available"
 msgstr "لا شبكات متاحة"
 
@@ -1790,7 +1809,7 @@ msgstr "لا توجد لقطات محددة لهذا الجهاز الافترا
 msgid "No state"
 msgstr "لا حالة"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:967
+#: src/components/create-vm-dialog/createVmDialog.tsx:1109
 msgid "No storage"
 msgstr "لا تخزين"
 
@@ -1835,15 +1854,15 @@ msgstr "لا شيء"
 msgid "None (isolated network)"
 msgstr "لا شيء (شبكة معزولة)"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:601
+#: src/components/create-vm-dialog/createVmDialog.tsx:720
 msgid "Offline token"
 msgstr "رمز مصادقة غير متصل بالشبكة"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:234
+#: src/components/create-vm-dialog/createVmDialog.tsx:281
 msgid "Offline token must not be empty"
 msgstr "رمز المصادقة المستخدم في حال عدم الاتصال بالشبكة يجب ألا يترك فارغاً"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:544
+#: src/components/create-vm-dialog/createVmDialog.tsx:655
 msgid "Old token expired"
 msgstr "انتهت صلاحية الرمز القديم"
 
@@ -1859,8 +1878,8 @@ msgstr ""
 "وحدة تخزين أو أكثر من المحددة قيد الاستخدام من قبل النطاقات. افصل الأقراص "
 "أولاً للسماح بحذف وحدة التخزين."
 
-#: src/components/vm/overview/bootOrder.tsx:406
 #: src/components/vm/overview/memoryModal.tsx:187
+#: src/components/vm/overview/bootOrder.tsx:406
 #: src/components/vm/nics/nicEdit.tsx:67
 msgid "Only editable when the guest is shut off"
 msgstr "قابل للتعديل فقط عند إيقاف تشغيل الضيف"
@@ -1869,7 +1888,7 @@ msgstr "قابل للتعديل فقط عند إيقاف تشغيل الضيف"
 msgid "Open"
 msgstr "فتح"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:469
+#: src/components/create-vm-dialog/createVmDialog.tsx:567
 msgid "Operating system"
 msgstr "نظام التشغيل"
 
@@ -1878,12 +1897,12 @@ msgstr "نظام التشغيل"
 msgid "Operation is in progress"
 msgstr "العملية قد المعالجة"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:100
+#: src/components/vm/vmReplaceSpiceDialog.tsx:115
 msgid "Other VMs using SPICE"
 msgstr "الأجهزة الافتراضية الأخرى التي تستخدم SPICE"
 
 #: src/components/storagePools/storagePool.tsx:77
-#: src/components/vm/vmDetailsPage.jsx:109
+#: src/components/vm/vmDetailsPage.tsx:165
 msgid "Overview"
 msgstr "نظرة عامة"
 
@@ -1915,10 +1934,10 @@ msgstr ""
 msgid "Password must be at most 8 characters."
 msgstr "يجب أن تتكون كلمة السر من 8 أحرف على الأكثر."
 
-#: src/components/vm/disks/diskEdit.tsx:63
 #: src/components/vm/hostdevs/hostDevCard.tsx:128
 #: src/components/vm/hostdevs/hostDevCard.tsx:132
-#: src/components/vm/deleteDialog.jsx:60
+#: src/components/vm/deleteDialog.tsx:80
+#: src/components/vm/disks/diskEdit.tsx:63
 msgid "Path"
 msgstr "مسار"
 
@@ -1926,11 +1945,11 @@ msgstr "مسار"
 msgid "Path on host's filesystem"
 msgstr "المسار على نظام ملفات المضيف"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:292
+#: src/components/create-vm-dialog/createVmDialog.tsx:375
 msgid "Path to ISO file on host's file system"
 msgstr "المسار إلى ملف ISO على نظام ملفات المضيف"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:301
+#: src/components/create-vm-dialog/createVmDialog.tsx:384
 msgid "Path to cloud image file on host's file system"
 msgstr "المسار إلى ملف الصورة السحابية على نظام ملفات المضيف"
 
@@ -1942,7 +1961,7 @@ msgstr "المسار إلى المجلد"
 msgid "Path to file on host's file system"
 msgstr "المسار إلى الملف على نظام ملفات المضيف"
 
-#: src/helpers.ts:289 src/components/vm/vmActions.jsx:220
+#: src/helpers.ts:289 src/components/vm/vmActions.tsx:253
 msgid "Pause"
 msgstr "إيقاف مؤقَّت"
 
@@ -1950,7 +1969,7 @@ msgstr "إيقاف مؤقَّت"
 msgid "Paused"
 msgstr "تم إيقافه مؤقتاً"
 
-#: src/components/vm/vmMigrateDialog.jsx:71
+#: src/components/vm/vmMigrateDialog.tsx:92
 msgid "Permanent (default)"
 msgstr "دائم (افتراضي)"
 
@@ -1963,8 +1982,8 @@ msgstr "الصلاحيات غير كافية لصور القرص في دلائل
 msgid "Persistence"
 msgstr "الاستدامة"
 
-#: src/components/storagePools/storagePoolOverviewTab.tsx:68
 #: src/components/networks/networkOverviewTab.tsx:125
+#: src/components/storagePools/storagePoolOverviewTab.tsx:68
 msgid "Persistent"
 msgstr "استدامة"
 
@@ -1992,15 +2011,15 @@ msgstr "يُرجى اختيار وحدة تخزين"
 msgid "Please enter new volume name"
 msgstr "يُرجى إدخال اسم وحدة تخزين جديد"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:79
+#: src/components/vm/vmReplaceSpiceDialog.tsx:93
 msgid "Please see $0 how to reconfigure your VM manually."
 msgstr "يرجى النظر في $0 لمعرفة كيفية إعادة تكوين جهازك الافتراضي يدوياً."
 
+#: src/components/vm/deleteDialog.tsx:88
+#: src/components/vm/disks/mediaEject.tsx:98
 #: src/components/vm/disks/diskAdd.tsx:216
 #: src/components/vm/disks/vmDiskColumns.tsx:50
-#: src/components/vm/disks/mediaEject.tsx:98
 #: src/components/vm/overview/bootOrder.tsx:121
-#: src/components/vm/deleteDialog.jsx:68
 msgid "Pool"
 msgstr "مجمع"
 
@@ -2052,7 +2071,7 @@ msgstr "فصل مصدر الطاقة"
 msgid "Pre-formatted block device"
 msgstr "جهاز كتلي مُهيأ مسبقًا"
 
-#: src/components/vm/overview/cpuModal.tsx:279
+#: src/components/vm/overview/cpuModal.tsx:280
 msgid "Preferred number of sockets to expose to the guest."
 msgstr "العدد المفضل للمقابس (Sockets) لعرضها على النظام الضيف."
 
@@ -2079,22 +2098,22 @@ msgstr ""
 msgid "Private"
 msgstr "خاص"
 
-#: src/components/vm/overview/bootOrder.tsx:153
-#: src/components/vm/overview/bootOrder.tsx:168
+#: src/components/vm/hostdevs/hostDevAdd.tsx:157
 #: src/components/vm/hostdevs/hostDevCard.tsx:252
 #: src/components/vm/hostdevs/hostDevCard.tsx:258
-#: src/components/vm/hostdevs/hostDevAdd.tsx:157
+#: src/components/vm/overview/bootOrder.tsx:153
+#: src/components/vm/overview/bootOrder.tsx:168
 msgid "Product"
 msgstr "منتج"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:629
+#: src/components/create-vm-dialog/createVmDialog.tsx:758
 msgid "Profile"
 msgstr "ملف التعريف"
 
+#: src/components/vm/hostdevs/hostDevCard.tsx:119
 #: src/components/vm/disks/vmDiskColumns.tsx:49
 #: src/components/vm/overview/bootOrder.tsx:120
 #: src/components/vm/overview/bootOrder.tsx:181
-#: src/components/vm/hostdevs/hostDevCard.tsx:119
 msgid "Protocol"
 msgstr "بروتوكول"
 
@@ -2116,11 +2135,11 @@ msgstr "يوفر اتصالاً يتم وصف تفاصيله عبر تعريف �
 msgid "Provides a virtual LAN with NAT to the outside world."
 msgstr "توفير شبكة LAN افتراضية مع NAT للعالم الخارجي."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:829
+#: src/components/create-vm-dialog/createVmDialog.tsx:924
 msgid "Public SSH key"
 msgstr "متفاح SSH عام"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:825
+#: src/components/create-vm-dialog/createVmDialog.tsx:920
 msgid "Public key"
 msgstr "مفتاح عام"
 
@@ -2133,24 +2152,24 @@ msgstr "المدى"
 msgid "Read-only"
 msgstr "القراءة-فقط"
 
-#: src/components/vm/vmActions.jsx:265 src/components/vm/vmActions.jsx:349
-#: src/components/vm/vmActions.jsx:354
+#: src/components/vm/vmActions.tsx:298 src/components/vm/vmActions.tsx:382
+#: src/components/vm/vmActions.tsx:387
 msgid "Reboot"
 msgstr "إعادة تشغيل"
 
-#: src/components/vm/vmActions.jsx:342
+#: src/components/vm/vmActions.tsx:375
 msgid "Reboot $0?"
 msgstr "إعادة تشغيل $0؟"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:447
+#: src/components/create-vm-dialog/createVmDialog.tsx:545
 msgid "Recommended operating systems"
 msgstr "أنظمة التشغيل الموصى بها"
 
-#: src/components/create-vm-dialog/createVmDialogUtils.js:87
+#: src/components/create-vm-dialog/createVmDialogUtils.tsx:89
 msgid "Released $0"
 msgstr "تم الإصدار $0"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:347
+#: src/components/create-vm-dialog/createVmDialog.tsx:430
 msgid "Remote URL"
 msgstr "عنوان URL عن بُعد"
 
@@ -2181,20 +2200,20 @@ msgid "Remote viewer applications can connect to the following address:"
 msgstr "يمكن لتطبيقات العرض عن بُعد الاتصال بالعنوان التالي:"
 
 #: src/components/networks/networkOverviewTab.tsx:81
+#: src/components/vm/hostdevs/hostDevCard.tsx:268
+#: src/components/vm/hostdevs/hostDevCard.tsx:274
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:72
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:81
 #: src/components/vm/disks/vmDiskColumns.tsx:166
 #: src/components/vm/disks/vmDiskColumns.tsx:252
-#: src/components/vm/overview/vsock.tsx:269
 #: src/components/vm/overview/watchdog.tsx:234
+#: src/components/vm/overview/vsock.tsx:269
 #: src/components/vm/nics/vmNicsCard.tsx:556
 #: src/components/vm/nics/vmNicsCard.tsx:566
-#: src/components/vm/hostdevs/hostDevCard.tsx:268
-#: src/components/vm/hostdevs/hostDevCard.tsx:274
 msgid "Remove"
 msgstr "إزالة"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:141
+#: src/components/vm/vmReplaceSpiceDialog.tsx:156
 msgid "Remove SPICE audio and host devices"
 msgstr "إزالة أجهزة الصوت SPICE والأجهزة المضيفة"
 
@@ -2214,7 +2233,7 @@ msgstr "إزالة نظام الملفات؟"
 msgid "Remove host device from VM?"
 msgstr "إزالة جهاز مضيف من الجهاز الافتراضي؟"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:841
+#: src/components/create-vm-dialog/createVmDialog.tsx:936
 msgid "Remove item"
 msgstr "إزالة العنصر"
 
@@ -2226,33 +2245,32 @@ msgstr "إزالة واجهة شبكة؟"
 msgid "Remove static host from DHCP"
 msgstr "إزالة المضيف الثابت من DHCP"
 
-#: src/components/vm/vmRenameDialog.jsx:86 src/components/vm/vmActions.jsx:460
+#: src/components/vm/vmActions.tsx:495 src/components/vm/vmRenameDialog.tsx:106
 msgid "Rename"
 msgstr "أعد التسمية"
 
-#: src/components/vm/vmRenameDialog.jsx:63
+#: src/components/vm/vmRenameDialog.tsx:78
 msgid "Rename VM $0"
 msgstr "إعادة تسمية الجهاز الافتراضي $0"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:160
+#: src/components/vm/vmReplaceSpiceDialog.tsx:175
 msgid "Replace"
 msgstr "استبدل"
 
-#: src/components/vm/usesSpice.jsx:38
-#: src/components/vm/vmReplaceSpiceDialog.jsx:125
-#: src/components/vm/vmActions.jsx:447
+#: src/components/vm/vmReplaceSpiceDialog.tsx:140
+#: src/components/vm/vmActions.tsx:482 src/components/vm/usesSpice.tsx:41
 msgid "Replace SPICE devices"
 msgstr "استبدل أجهزة SPICE"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:125
+#: src/components/vm/vmReplaceSpiceDialog.tsx:140
 msgid "Replace SPICE devices in VM $0"
 msgstr "استبدل أجهزة SPICE في الجهاز الافتراضي $0"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:132
+#: src/components/vm/vmReplaceSpiceDialog.tsx:147
 msgid "Replace SPICE on selected VMs."
 msgstr "استبدل SPICE على الأجهزة الافتراضية المحددة."
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:133
+#: src/components/vm/vmReplaceSpiceDialog.tsx:148
 msgid "Replace SPICE on the virtual machine."
 msgstr "استبدل SPICE على الجهاز الافتراضي."
 
@@ -2266,7 +2284,7 @@ msgstr "استبدل"
 msgid "Reset"
 msgstr "صفر"
 
-#: src/components/vm/consoles/vnc.jsx:515
+#: src/components/vm/consoles/vnc.jsx:543
 #, fuzzy
 #| msgid "Please start the virtual machine to access its console."
 msgid "Restart this virtual machine to access its graphical console"
@@ -2283,12 +2301,12 @@ msgid ""
 "Restrictions in networking (SLIRP-based emulation) and PCI device assignment"
 msgstr "قيود في الشبكات (المحاكاة المعتمدة على SLIRP) وتعيين أجهزة PCI"
 
-#: src/components/vm/vmActions.jsx:231
+#: src/components/vm/vmActions.tsx:264
 msgid "Resume"
 msgstr "استئناف"
 
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:130
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:211
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:130
 msgid "Revert"
 msgstr "أرجع"
 
@@ -2305,15 +2323,15 @@ msgstr ""
 "سيؤدي العودة إلى لقطة النظام هذه إلى إعادة الآلة الافتراضية إلى وقت أخذ "
 "اللقطة، مع فقدان الحالة الحالية وأي بيانات غير مضمنة في اللقطة"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:729
+#: src/components/create-vm-dialog/createVmDialog.tsx:811
 msgid "Root password"
 msgstr "كلمة سر الجذر"
 
-#: src/components/create-vm-dialog/pxe-helpers.js:99
+#: src/components/create-vm-dialog/pxe-helpers.tsx:97
 msgid "Route to $0"
 msgstr "التوجيه إلى $0"
 
-#: src/components/create-vm-dialog/pxe-helpers.js:101
+#: src/components/create-vm-dialog/pxe-helpers.tsx:99
 msgid "Routed network"
 msgstr "الشبكة الموجّهة"
 
@@ -2321,7 +2339,7 @@ msgstr "الشبكة الموجّهة"
 msgid "Row select"
 msgstr "حدد الصف"
 
-#: src/components/vm/vmActions.jsx:389
+#: src/components/vm/vmActions.tsx:422
 msgid "Run"
 msgstr "شغِّل"
 
@@ -2338,57 +2356,57 @@ msgstr "التشغيل"
 msgid "SPICE"
 msgstr "SPICE"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:134
-#: src/components/vm/vmReplaceSpiceDialog.jsx:136
+#: src/components/vm/vmReplaceSpiceDialog.tsx:149
+#: src/components/vm/vmReplaceSpiceDialog.tsx:151
 msgid "SPICE conversion"
 msgstr "تحويل SPICE"
 
-#: src/components/vm/usesSpice.jsx:32
+#: src/components/vm/usesSpice.tsx:35
 msgid ""
 "SPICE is not supported on this host and will cause this virtual machine to "
 "not boot."
 msgstr ""
 "SPICE غير معتمد على هذا المضيف وسيؤدي إلى عدم إقلاع هذا الجهاز الافتراضي."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:866
+#: src/components/create-vm-dialog/createVmDialog.tsx:967
 msgid "SSH keys"
 msgstr "مفاتيح SSH"
 
 #: src/components/vm/consoles/vnc.jsx:156
-#: src/components/vm/disks/diskEdit.tsx:338
-#: src/components/vm/overview/bootOrder.tsx:365
-#: src/components/vm/overview/memoryModal.tsx:206
-#: src/components/vm/overview/vsock.tsx:223
+#: src/components/vm/vmEditDescriptionDialog.tsx:88
+#: src/components/vm/disks/diskEdit.tsx:337
 #: src/components/vm/overview/firmware.tsx:117
 #: src/components/vm/overview/watchdog.tsx:176
-#: src/components/vm/vmEditDescriptionDialog.jsx:76
+#: src/components/vm/overview/vsock.tsx:223
+#: src/components/vm/overview/memoryModal.tsx:206
+#: src/components/vm/overview/bootOrder.tsx:365
 #: src/components/vm/nics/nicEdit.tsx:237
 msgid "Save"
 msgstr "حفظ"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:116
+#: src/components/vm/vmReplaceSpiceDialog.tsx:131
 msgid "Select all"
 msgstr "حدد الكل"
 
-#: src/components/vm/consoles/vnc.jsx:291
+#: src/components/vm/consoles/vnc.jsx:292
 msgid "Send key"
 msgstr "إرسال مفتاح"
 
-#: src/components/vm/vmActions.jsx:325 src/components/vm/vmActions.jsx:330
+#: src/components/vm/vmActions.tsx:358 src/components/vm/vmActions.tsx:363
 msgid "Send non-maskable interrupt"
 msgstr "إرسال مقاطعة غير قابلة للإلغاء (NMI)"
 
-#: src/components/vm/vmActions.jsx:319
+#: src/components/vm/vmActions.tsx:352
 msgid "Send non-maskable interrupt to $0?"
 msgstr "إرسال مقاطعة غير قابلة للإلغاء (NMI) للقطة $0؟"
 
-#: src/components/vm/consoles/consoles.jsx:168
-#: src/components/vm/consoles/consoles.jsx:192
+#: src/components/vm/consoles/consoles.jsx:207
+#: src/components/vm/consoles/consoles.jsx:231
 #: src/components/vm/disks/vmDiskColumns.tsx:121
 msgid "Serial"
 msgstr "تسلسل"
 
-#: src/components/vm/consoles/consoles.jsx:168
+#: src/components/vm/consoles/consoles.jsx:207
 #, fuzzy
 #| msgid "Serial console ($0)"
 msgid "Serial ($0)"
@@ -2410,7 +2428,7 @@ msgstr "عيّن مدى DHCP"
 msgid "Set manually"
 msgstr "عيّن يدوياً"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1453
+#: src/components/create-vm-dialog/createVmDialog.tsx:1628
 msgid ""
 "Setting the user passwords for unattended installation requires starting the "
 "VM when creating it"
@@ -2426,16 +2444,16 @@ msgstr "مشاركة"
 msgid "Share a host directory with the guest"
 msgstr "‍شارك مجلد المضيف مع الضيف"
 
-#: src/components/vm/vmDetailsPage.jsx:175
+#: src/components/vm/vmDetailsPage.tsx:231
 msgid "Shared directories"
 msgstr "المجلدات المشتركة"
 
+#: src/components/vm/vmDetailsPage.tsx:233
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:193
-#: src/components/vm/vmDetailsPage.jsx:177
 msgid "Shared host directories need to be manually mounted inside the VM"
 msgstr "يجب تركيب مجلدات المضيف المشتركة يدوياً داخل الجهاز الافتراضي"
 
-#: src/components/vm/vmMigrateDialog.jsx:99
+#: src/components/vm/vmMigrateDialog.tsx:128
 msgid "Shared storage"
 msgstr "التخزين المشترك"
 
@@ -2452,12 +2470,12 @@ msgstr "عرض أقل"
 msgid "Show more"
 msgstr "أظهر المزيد"
 
-#: src/components/vm/vmActions.jsx:257 src/components/vm/vmActions.jsx:270
-#: src/components/vm/vmActions.jsx:285 src/components/vm/vmActions.jsx:290
+#: src/components/vm/vmActions.tsx:290 src/components/vm/vmActions.tsx:303
+#: src/components/vm/vmActions.tsx:318 src/components/vm/vmActions.tsx:323
 msgid "Shut down"
 msgstr "أوقف التشغيل"
 
-#: src/components/vm/vmActions.jsx:247 src/components/vm/vmActions.jsx:278
+#: src/components/vm/vmActions.tsx:280 src/components/vm/vmActions.tsx:311
 msgid "Shut down $0?"
 msgstr "إيقاف تشغيل $0؟"
 
@@ -2473,17 +2491,17 @@ msgstr "يجب إيقاف تشغيل الآلة الافتراضية لتعدي�
 msgid "Shutting down"
 msgstr "جاري إيقاف التشغيل"
 
-#: src/components/storagePools/storagePoolVolumesTab.tsx:90
 #: src/components/storagePools/storagePoolList.tsx:77
 #: src/components/storagePools/storageVolumeCreateBody.tsx:134
+#: src/components/storagePools/storagePoolVolumesTab.tsx:90
 msgid "Size"
 msgstr "الحجم"
 
-#: src/components/vm/overview/bootOrder.tsx:169
+#: src/components/vm/hostdevs/hostDevAdd.tsx:128
 #: src/components/vm/hostdevs/hostDevCard.tsx:106
 #: src/components/vm/hostdevs/hostDevCard.tsx:113
 #: src/components/vm/hostdevs/hostDevCard.tsx:253
-#: src/components/vm/hostdevs/hostDevAdd.tsx:128
+#: src/components/vm/overview/bootOrder.tsx:169
 msgid "Slot"
 msgstr "الفتحة"
 
@@ -2501,11 +2519,11 @@ msgstr "سيتم حذف اللقطة $0 من $1. ستفقد جميع محتوي�
 msgid "Snapshot failed to be created"
 msgstr "تعذر إنشاء اللقطة"
 
-#: src/components/vm/vmDetailsPage.jsx:163
+#: src/components/vm/vmDetailsPage.tsx:219
 msgid "Snapshots"
 msgstr "اللقطات"
 
-#: src/components/vm/overview/cpuModal.tsx:277
+#: src/components/vm/overview/cpuModal.tsx:278
 msgid "Sockets"
 msgstr "مقابس التوصيل"
 
@@ -2514,12 +2532,12 @@ msgid "Some configuration changes only take effect after a fresh boot:"
 msgstr "لا تسري بعض تغييرات التهيئة إلا بعد إقلاع جديد:"
 
 #: src/components/storagePools/storagePoolOverviewTab.tsx:53
+#: src/components/vm/hostdevs/hostDevCard.tsx:229
 #: src/components/vm/disks/diskAdd.tsx:719
 #: src/components/vm/disks/diskAdd.tsx:755
 #: src/components/vm/disks/vmDisksCard.tsx:225
-#: src/components/vm/nics/vmNicsCard.tsx:484
 #: src/components/vm/nics/nicBody.tsx:216
-#: src/components/vm/hostdevs/hostDevCard.tsx:229
+#: src/components/vm/nics/vmNicsCard.tsx:484
 msgid "Source"
 msgstr "مصدر"
 
@@ -2546,7 +2564,7 @@ msgstr "مسار المصدر"
 msgid "Source path should not be empty"
 msgstr "يجب ألا يترك مسار المصدر فارغاً"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:222
+#: src/components/create-vm-dialog/createVmDialog.tsx:269
 msgid "Source should start with http, ftp or nfs protocol"
 msgstr "المصدر يجب أن يبدأ ببروتوكول http, ftp، أو nfs"
 
@@ -2568,7 +2586,7 @@ msgid "Start should not be empty"
 msgstr "البدء يجب ألا يترك فارغاً"
 
 #: src/components/vm/consoles/serial.jsx:130
-#: src/components/vm/consoles/vnc.jsx:462
+#: src/components/vm/consoles/vnc.jsx:490
 #, fuzzy
 #| msgid "Please start the virtual machine to access its console."
 msgid "Start the virtual machine to access the console"
@@ -2580,7 +2598,7 @@ msgstr "يرجى بدء تشغيل الجهاز الافتراضي للوصول 
 msgid "Start the virtual machine to launch remote viewer."
 msgstr "يرجى بدء تشغيل الجهاز الافتراضي للوصول إلى وحدة التحكم الخاصة به."
 
-#: src/components/vm/confirmDialog.jsx:74
+#: src/components/vm/confirmDialog.tsx:98
 msgid "Started"
 msgstr "بدأ"
 
@@ -2588,10 +2606,10 @@ msgstr "بدأ"
 msgid "Startup"
 msgstr "بدء التشغيل"
 
-#: src/components/storagePools/storagePoolList.tsx:79
 #: src/components/networks/networkList.tsx:76
 #: src/components/vms/hostvmslist.tsx:156
 #: src/components/vms/hostvmslist.tsx:203
+#: src/components/storagePools/storagePoolList.tsx:79
 #: src/components/vm/overview/vmOverviewCard.tsx:182
 #: src/components/vm/nics/vmNicsCard.tsx:489
 msgid "State"
@@ -2605,16 +2623,16 @@ msgstr "إدخالات المضيف الثابت"
 msgid "Static host from DHCP could not be removed"
 msgstr "تعذرت إزالة المضيف الثابت من DHCP"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:977
-#: src/components/vm/vmMigrateDialog.jsx:92
+#: src/components/vm/vmMigrateDialog.tsx:121
+#: src/components/create-vm-dialog/createVmDialog.tsx:1119
 msgid "Storage"
 msgstr "التخزين"
 
-#: src/components/vm/vmMigrateDialog.jsx:111
+#: src/components/vm/vmMigrateDialog.tsx:140
 msgid "Storage is at a shared location"
 msgstr "التخزين في الموقع المشترك"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1004
+#: src/components/create-vm-dialog/createVmDialog.tsx:1146
 msgid "Storage limit"
 msgstr "حد التخزين"
 
@@ -2634,10 +2652,10 @@ msgstr "فشل إنشاء مجمع تخزين"
 msgid "Storage pool name"
 msgstr "اسم مجمع التخزين"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:972
 #: src/components/storagePools/storagePoolList.tsx:64
 #: src/components/storagePools/storagePoolList.tsx:71
 #: src/components/storagePools/storagePoolList.tsx:73
+#: src/components/create-vm-dialog/createVmDialog.tsx:1114
 msgid "Storage pools"
 msgstr "مجاميع التخزين"
 
@@ -2645,7 +2663,7 @@ msgstr "مجاميع التخزين"
 msgid "Storage pools could not be fetched"
 msgstr "تعذر جلب مجاميع التخزين"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:241
+#: src/components/create-vm-dialog/createVmDialog.tsx:288
 msgid "Storage size must not be 0"
 msgstr "حجم التجزين يجب ألا يكون صفراً"
 
@@ -2666,7 +2684,7 @@ msgstr "الوحدات التخزينية"
 msgid "Storage volumes could not be deleted"
 msgstr "تعذر حذف وحدات التخزين"
 
-#: src/components/vm/vmMigrateDialog.jsx:207
+#: src/components/vm/vmMigrateDialog.tsx:248
 msgid ""
 "Storage volumes must be shared between this host and the destination host."
 msgstr "يجب مشاركة الوحدات التخزينية بين هذا المضيف والمضيف الذي يمثل الوجهة."
@@ -2679,7 +2697,7 @@ msgstr "تم النسخ بنجاح إلى الحافظة!"
 msgid "Suspended (PM)"
 msgstr "موقوف عن العمل (PM)"
 
-#: src/components/vm/usesSpice.jsx:33
+#: src/components/vm/usesSpice.tsx:36
 msgid "Switch to VNC to continue using this machine."
 msgstr "حوِّل إلى بروتوكول VNC لمواصلة استخدام هذه الآلة."
 
@@ -2699,9 +2717,9 @@ msgstr "TPM"
 msgid "Table of selectable host devices"
 msgstr "جدول الأجهزة المضيفة القابلة للتحديد"
 
+#: src/components/vm/hostdevs/hostDevCard.tsx:114
 #: src/components/vm/disks/vmDiskColumns.tsx:170
 #: src/components/vm/overview/bootOrder.tsx:175
-#: src/components/vm/hostdevs/hostDevCard.tsx:114
 msgid "Target"
 msgstr "الهدف"
 
@@ -2714,15 +2732,15 @@ msgstr "المسار الهدف"
 msgid "Target path should not be empty"
 msgstr "المسار الهدف يجب ألا يكون فارغاً"
 
-#: src/components/vm/vmMigrateDialog.jsx:75
+#: src/components/vm/vmMigrateDialog.tsx:96
 msgid "Temporary"
 msgstr "مؤقت"
 
-#: src/components/vm/vmMigrateDialog.jsx:83
+#: src/components/vm/vmMigrateDialog.tsx:104
 msgid "Temporary migration"
 msgstr "الترحيل المؤقَّت"
 
-#: src/components/vm/deleteDialog.jsx:82
+#: src/components/vm/deleteDialog.tsx:102
 msgid "The VM $0 is running and will be forced off before deletion."
 msgstr "الجهاز الافتراضي $0 قيد التشغيل وسيتم إطفاؤه بالقوة قبل الحذف."
 
@@ -2740,7 +2758,7 @@ msgstr "المجلد المُصدَّر من الخادم"
 msgid "The host path that is to be exported."
 msgstr "مسار المضيف الذي سيتم تصديره."
 
-#: src/components/vm/vmMigrateDialog.jsx:72
+#: src/components/vm/vmMigrateDialog.tsx:93
 msgid ""
 "The migrated VM configuration is removed from the source host. The "
 "destination host is considered the new home of the VM."
@@ -2756,11 +2774,11 @@ msgstr "يؤثر الوضع على تسليم الحزم."
 msgid "The pool is empty"
 msgstr "المجمع فارغ"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:890
+#: src/components/create-vm-dialog/createVmDialog.tsx:1005
 msgid "The selected operating system has minimum memory requirement of $0 $1"
 msgstr "نظام التشغيل المحدد يتطلب على الأقل من الذاكرة $0$1"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:940
+#: src/components/create-vm-dialog/createVmDialog.tsx:1081
 msgid ""
 "The selected operating system has minimum storage size requirement of $0 $1"
 msgstr "نظام التشغيل المحدد يتطلب على الأقل من مساحة التخزين $0 $1"
@@ -2778,11 +2796,11 @@ msgstr "لا يمكن حذف مجمع التخزين"
 msgid "The tag name to be used by the guest to mount this export point."
 msgstr "اسم العلامة الذي سيستخدمها الضيف لتركيب نقطة التصدير هذه."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:523
+#: src/components/create-vm-dialog/createVmDialog.tsx:634
 msgid "Then copy and paste it above."
 msgstr "ثم انسخها وألصقها أعلاه."
 
-#: src/components/vm/vmActions.jsx:492
+#: src/components/vm/vmActions.tsx:527
 msgid "This VM is transient. Shut it down if you wish to delete it."
 msgstr "هذه الآلة الافتراضية مؤقتة. أوقف تشغيلها إذا أردت حذفها."
 
@@ -2794,7 +2812,7 @@ msgstr "ستتم إزالة هذا القرص من $0:"
 msgid "This filesystem will be removed from $0:"
 msgstr "سيتم إزالة نظام الملفات هذا من $0:"
 
-#: src/components/vm/vmReplaceSpiceDialog.jsx:146
+#: src/components/vm/vmReplaceSpiceDialog.tsx:161
 msgid ""
 "This is intended for a host which does not support SPICE due to upgrades or "
 "live migration."
@@ -2836,11 +2854,11 @@ msgstr ""
 msgid "This volume is already used by $0."
 msgstr "وحدة التخزين هذه قيد الاستخدام بالفعل من قبل $0."
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1000
+#: src/components/create-vm-dialog/createVmDialog.tsx:1142
 msgid "This volume is already used by another VM."
 msgstr "وحدة التخزين هذه مستخدمة بالفعل من قبل جهاز افتراضي آخر."
 
-#: src/components/vm/overview/cpuModal.tsx:297
+#: src/components/vm/overview/cpuModal.tsx:298
 msgid "Threads per core"
 msgstr "خيوط لكل نواة"
 
@@ -2858,6 +2876,8 @@ msgstr "استكشاف الأخطاء وإصلاحها"
 
 #: src/components/storagePools/storagePoolOverviewTab.tsx:78
 #: src/components/storagePools/createStoragePoolDialog.tsx:115
+#: src/components/vm/hostdevs/hostDevAdd.tsx:56
+#: src/components/vm/hostdevs/hostDevCard.tsx:189
 #: src/components/vm/overview/bootOrder.tsx:138
 #: src/components/vm/overview/bootOrder.tsx:151
 #: src/components/vm/overview/bootOrder.tsx:166
@@ -2865,12 +2885,10 @@ msgstr "استكشاف الأخطاء وإصلاحها"
 #: src/components/vm/overview/bootOrder.tsx:180
 #: src/components/vm/overview/bootOrder.tsx:186
 #: src/components/vm/nics/vmNicsCard.tsx:402
-#: src/components/vm/hostdevs/hostDevCard.tsx:189
-#: src/components/vm/hostdevs/hostDevAdd.tsx:56
 msgid "Type"
 msgstr "النوع"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:376
+#: src/components/create-vm-dialog/createVmDialog.tsx:460
 msgid "URL (ISO image or distro install tree)"
 msgstr "URL ( صورة ISO أو شجرة تثبيت توزيعة)"
 
@@ -2886,11 +2904,11 @@ msgstr "UUID"
 msgid "Undefined"
 msgstr "غير معرَّف"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:274
+#: src/components/create-vm-dialog/createVmDialog.tsx:331
 msgid "Unique name"
 msgstr "اسم فريد"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:274
+#: src/components/create-vm-dialog/createVmDialog.tsx:331
 msgid "Unique name, default: $0"
 msgstr "اسم فريد، الافتراضي:$0"
 
@@ -2910,14 +2928,14 @@ msgstr "غير معروف"
 msgid "Unknown firmware"
 msgstr "برنامج ثابت غير معروف"
 
-#: src/components/vm/overview/bootOrder.tsx:157
-#: src/components/vm/overview/bootOrder.tsx:158
 #: src/components/vm/hostdevs/hostDevCard.tsx:97
 #: src/components/vm/hostdevs/hostDevCard.tsx:98
+#: src/components/vm/overview/bootOrder.tsx:157
+#: src/components/vm/overview/bootOrder.tsx:158
 msgid "Unspecified"
 msgstr "غير محدد"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:450
+#: src/components/create-vm-dialog/createVmDialog.tsx:548
 msgid "Unsupported and older operating systems"
 msgstr "أنظمة تشغيل قديمة وغير مدعومة"
 
@@ -2925,7 +2943,7 @@ msgstr "أنظمة تشغيل قديمة وغير مدعومة"
 msgid "Url"
 msgstr "Url"
 
-#: src/components/vm/vmDetailsPage.jsx:122
+#: src/components/vm/vmDetailsPage.tsx:177
 msgid "Usage"
 msgstr "الاستخدام"
 
@@ -2938,7 +2956,7 @@ msgstr "استخدم الموجود"
 msgid "Use extended attributes on files and directories"
 msgstr "استخدام السمات الموسعة على الملفات والمجلدات"
 
-#: src/components/vm/vmMigrateDialog.jsx:100
+#: src/components/vm/vmMigrateDialog.tsx:129
 msgid ""
 "Use the same location on both the origin and destination hosts for your "
 "storage. This can be a shared storage pool, NFS, or any other method of "
@@ -2955,23 +2973,23 @@ msgstr "تم استخدامه"
 msgid "Used by"
 msgstr "مستخدم من قبل"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:740
+#: src/components/create-vm-dialog/createVmDialog.tsx:819
 msgid "User login"
 msgstr "تسجيل دخول المستخدم"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:258
+#: src/components/create-vm-dialog/createVmDialog.tsx:305
 msgid "User login must not be empty when SSH keys are set"
 msgstr "يجب ألا يكون حقل تسجيل دخول المستخدم فارغاً عند تعيين مفاتيح SSH"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:256
+#: src/components/create-vm-dialog/createVmDialog.tsx:303
 msgid "User login must not be empty when user password is set"
 msgstr "يجب ألا يكون حقل تسجيل دخول المستخدم فارغاً عند تعيين كلمة سر المستخدم"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:748
+#: src/components/create-vm-dialog/createVmDialog.tsx:827
 msgid "User password"
 msgstr "كلمة سر المستخدم"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:253
+#: src/components/create-vm-dialog/createVmDialog.tsx:300
 msgid "User password must not be empty when user login is set"
 msgstr "يجب ألا تكون كلمة مرور المستخدم فارغة عند تعيين تسجيل دخول المستخدم"
 
@@ -2979,7 +2997,7 @@ msgstr "يجب ألا تكون كلمة مرور المستخدم فارغة ع�
 msgid "User session"
 msgstr "جلسة المستخدم"
 
-#: src/components/vm/usesSpice.jsx:22
+#: src/components/vm/usesSpice.tsx:25
 msgid "Uses SPICE"
 msgstr "استخدم SPICE"
 
@@ -2987,7 +3005,7 @@ msgstr "استخدم SPICE"
 msgid "VM $0 Host Devices"
 msgstr "أجهزة المضيف للآلة الافتراضية $0"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:199
+#: src/components/create-vm-dialog/createVmDialog.tsx:245
 msgid "VM $0 already exists"
 msgstr "الجهاز الافتراضي $0 موجود بالفعل"
 
@@ -2995,39 +3013,39 @@ msgstr "الجهاز الافتراضي $0 موجود بالفعل"
 msgid "VM $0 does not exist on $1 connection"
 msgstr "الجهاز الافتراضي $0 غير موجود على الاتصال $1"
 
-#: src/components/vm/vmActions.jsx:108
+#: src/components/vm/vmActions.tsx:118
 msgid "VM $0 failed to force reboot"
 msgstr "فشل إعادة التشغيل الإجباري للجهاز الافتراضي $0"
 
-#: src/components/vm/vmActions.jsx:165
+#: src/components/vm/vmActions.tsx:183
 msgid "VM $0 failed to force shutdown"
 msgstr "فشل إيقاف التشغيل الإجباري للجهاز الافتراضي $0"
 
-#: src/components/vm/vmActions.jsx:83
+#: src/components/vm/vmActions.tsx:89
 msgid "VM $0 failed to get installed"
 msgstr "فشل تثبيت الجهاز الافتراضي $0"
 
-#: src/components/vm/vmActions.jsx:137
+#: src/components/vm/vmActions.tsx:151
 msgid "VM $0 failed to pause"
 msgstr "فشل الإيقاف المؤقت للجهاز الافتراضي $0"
 
-#: src/components/vm/vmActions.jsx:95
+#: src/components/vm/vmActions.tsx:103
 msgid "VM $0 failed to reboot"
 msgstr "فشل إعادة تشغيل الجهاز الافتراضي $0"
 
-#: src/components/vm/vmActions.jsx:150
+#: src/components/vm/vmActions.tsx:166
 msgid "VM $0 failed to resume"
 msgstr "فشل الجهاز الافتراضي $0 في الاستئناف"
 
-#: src/components/vm/vmActions.jsx:178
+#: src/components/vm/vmActions.tsx:198
 msgid "VM $0 failed to send NMI"
 msgstr "فشل الجهاز الافتراضي $0 في إرسال مُقاطعة غير قابلة للإلغاء (NMI)"
 
-#: src/components/vm/vmActions.jsx:124
+#: src/components/vm/vmActions.tsx:136
 msgid "VM $0 failed to shutdown"
 msgstr "فشل إيقاف تشغيل الجهاز الافتراضي $0"
 
-#: src/components/vm/vmActions.jsx:74
+#: src/components/vm/vmActions.tsx:78
 msgid "VM $0 failed to start"
 msgstr "فشل بدء الجهاز الافتراضي $0"
 
@@ -3061,28 +3079,28 @@ msgstr "VNC"
 msgid "VNC settings could not be saved"
 msgstr "تعذر حفظ إعدادات القرص"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:548
+#: src/components/create-vm-dialog/createVmDialog.tsx:659
 msgid "Valid token"
 msgstr "رمز غير صالح"
 
-#: src/components/vm/overview/bootOrder.tsx:152
-#: src/components/vm/overview/bootOrder.tsx:167
+#: src/components/vm/hostdevs/hostDevAdd.tsx:157
 #: src/components/vm/hostdevs/hostDevCard.tsx:219
 #: src/components/vm/hostdevs/hostDevCard.tsx:251
 #: src/components/vm/hostdevs/hostDevCard.tsx:257
-#: src/components/vm/hostdevs/hostDevAdd.tsx:157
+#: src/components/vm/overview/bootOrder.tsx:152
+#: src/components/vm/overview/bootOrder.tsx:167
 msgid "Vendor"
 msgstr "المُنتِج"
 
-#: src/components/create-vm-dialog/createVmDialogUtils.js:85
+#: src/components/create-vm-dialog/createVmDialogUtils.tsx:87
 msgid "Vendor support ended $0"
 msgstr "انتهى دعم الشركة المصنّعة في $0"
 
-#: src/components/storagePools/storagePoolList.tsx:61
 #: src/components/networks/networkList.tsx:57
 #: src/components/vms/hostvmslist.tsx:196
 #: src/components/vms/hostvmslist.tsx:198
-#: src/components/vm/vmDetailsPage.jsx:230 src/manifest.json:0
+#: src/components/storagePools/storagePoolList.tsx:61
+#: src/components/vm/vmDetailsPage.tsx:287 src/manifest.json:0
 msgid "Virtual machines"
 msgstr "أجهزة افتراضية"
 
@@ -3090,7 +3108,7 @@ msgstr "أجهزة افتراضية"
 msgid "Virtual machines management"
 msgstr "إدارة الآلات افتراضية"
 
-#: src/components/create-vm-dialog/pxe-helpers.js:161
+#: src/components/create-vm-dialog/pxe-helpers.tsx:152
 msgid "Virtual network"
 msgstr "شبكة افتراضية"
 
@@ -3111,12 +3129,12 @@ msgstr ""
 msgid "Virtualization service (libvirt) is not active"
 msgstr "خدمة المحاكاة (libvirt) غير نشطة"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:989
+#: src/components/vm/deleteDialog.tsx:85
+#: src/components/vm/disks/mediaEject.tsx:102
 #: src/components/vm/disks/diskAdd.tsx:160
 #: src/components/vm/disks/vmDiskColumns.tsx:51
-#: src/components/vm/disks/mediaEject.tsx:102
 #: src/components/vm/overview/bootOrder.tsx:122
-#: src/components/vm/deleteDialog.jsx:65
+#: src/components/create-vm-dialog/createVmDialog.tsx:1131
 msgid "Volume"
 msgstr "وحدة تخزين"
 
@@ -3136,8 +3154,8 @@ msgstr "ينبغي ألا يترك اسم مجموعة وحدة التخزين �
 msgid "Vsock"
 msgstr "مقبس الجهاز الافتراضي"
 
-#: src/components/vm/overview/bootOrder.tsx:182
 #: src/components/vm/hostdevs/hostDevCard.tsx:120
+#: src/components/vm/overview/bootOrder.tsx:182
 msgid "WWPN"
 msgstr "WWPN"
 
@@ -3165,17 +3183,17 @@ msgstr "قابل-للكتابة"
 msgid "You can mount the shared folder using:"
 msgstr "يمكنك تركيب مجلد النشاركة باستخدام:"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:202
+#: src/components/create-vm-dialog/createVmDialog.tsx:248
 msgid "You need to select the most closely matching operating system"
 msgstr "تحتاج إلى تحديد نظام التشغيل الأكثر توافقاً"
 
-#: src/components/storagePools/storagePool.tsx:66
 #: src/components/networks/network.tsx:67
+#: src/components/storagePools/storagePool.tsx:66
 msgid "active"
 msgstr "نشِط"
 
-#: src/components/vm/overview/vsock.tsx:317
 #: src/components/vm/overview/watchdog.tsx:274
+#: src/components/vm/overview/vsock.tsx:317
 msgid "add"
 msgstr "إضافة"
 
@@ -3191,7 +3209,7 @@ msgstr "جسر"
 msgid "cdrom"
 msgstr "cdrom"
 
-#: src/helpers.ts:250 src/components/vm/overview/cpuModal.tsx:324
+#: src/helpers.ts:250 src/components/vm/overview/cpuModal.tsx:325
 msgid "custom"
 msgstr "مخصّص"
 
@@ -3211,11 +3229,11 @@ msgstr "قرص"
 msgid "down"
 msgstr "أسفل"
 
-#: src/components/vm/overview/bootOrder.tsx:399
+#: src/components/vm/overview/watchdog.tsx:274
 #: src/components/vm/overview/vsock.tsx:317
 #: src/components/vm/overview/vmOverviewCard.tsx:136
 #: src/components/vm/overview/vmOverviewCard.tsx:144
-#: src/components/vm/overview/watchdog.tsx:274
+#: src/components/vm/overview/bootOrder.tsx:399
 msgid "edit"
 msgstr "عدِّل"
 
@@ -3259,8 +3277,8 @@ msgstr "هدف iSCSI"
 msgid "iSCSI target IQN"
 msgstr "الهدف iSCSI (IQN)"
 
-#: src/components/storagePools/storagePool.tsx:66
 #: src/components/networks/network.tsx:67
+#: src/components/storagePools/storagePool.tsx:66
 msgid "inactive"
 msgstr "غير نشط"
 
@@ -3288,12 +3306,12 @@ msgstr ""
 msgid "more info"
 msgstr "مزيد من المعلومات"
 
+#: src/components/vm/vmDetailsPage.tsx:242
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:203
-#: src/components/vm/vmDetailsPage.jsx:186
 msgid "mount point: The mount point inside the guest"
 msgstr ""
 
-#: src/components/vm/vmDetailsPage.jsx:185
+#: src/components/vm/vmDetailsPage.tsx:241
 msgid "mount tag: The tag associated to the exported mount point"
 msgstr ""
 
@@ -3301,9 +3319,9 @@ msgstr ""
 msgid "network"
 msgstr "الشَبكة"
 
-#: src/helpers.ts:279 src/components/storagePools/storagePoolOverviewTab.tsx:69
+#: src/helpers.ts:279 src/components/networks/networkOverviewTab.tsx:126
+#: src/components/storagePools/storagePoolOverviewTab.tsx:69
 #: src/components/storagePools/storagePoolOverviewTab.tsx:74
-#: src/components/networks/networkOverviewTab.tsx:126
 msgid "no"
 msgstr "لا"
 
@@ -3312,8 +3330,8 @@ msgid "no state saved"
 msgstr "لا توجد حالة محفوظة"
 
 #: src/components/networks/networkOverviewTab.tsx:327
-#: src/components/vm/overview/vsock.tsx:299
 #: src/components/vm/overview/watchdog.tsx:270
+#: src/components/vm/overview/vsock.tsx:299
 msgid "none"
 msgstr "لا شيء"
 
@@ -3357,17 +3375,17 @@ msgstr "أعلى"
 msgid "user"
 msgstr "المُستخدم"
 
-#: src/components/vm/overview/cpuModal.tsx:208
+#: src/components/vm/overview/cpuModal.tsx:209
 msgid "vCPU and CPU topology settings could not be saved"
 msgstr "تعذّر حفظ إعدادات وحدات المعالجة الافتراضية (vCPU) وهيكلية المعالج"
 
-#: src/components/vm/overview/cpuModal.tsx:259
-#: src/components/vm/overview/cpuModal.tsx:269
+#: src/components/vm/overview/cpuModal.tsx:260
+#: src/components/vm/overview/cpuModal.tsx:270
 msgid "vCPU count"
 msgstr "عدد وحدات المعالجة المركزية الافتراضية"
 
-#: src/components/vm/overview/cpuModal.tsx:239
-#: src/components/vm/overview/cpuModal.tsx:251
+#: src/components/vm/overview/cpuModal.tsx:240
+#: src/components/vm/overview/cpuModal.tsx:252
 msgid "vCPU maximum"
 msgstr "الحد الأقصى لوحدة المعالجة المركزية الافتراضية"
 
@@ -3383,13 +3401,13 @@ msgstr "واجهة المستخدم الافتراضية للمضيف"
 msgid "view more..."
 msgstr "عرض المزيد.."
 
-#: src/components/vm/vmActions.jsx:423
+#: src/components/vm/vmActions.tsx:458
 msgid ""
 "virt-install package needs to be installed on the system in order to clone "
 "VMs"
 msgstr "يجب تثبيت حزمة virt-install على النظام لاستنساخ الآلات الافتراضية"
 
-#: src/components/create-vm-dialog/createVmDialog.jsx:1533
+#: src/components/create-vm-dialog/createVmDialog.tsx:1723
 msgid ""
 "virt-install package needs to be installed on the system in order to create "
 "new VMs"
@@ -3409,9 +3427,9 @@ msgstr "VM"
 msgid "vsock requires special software"
 msgstr "يتطلب vsock برنامجاً خاصاً"
 
-#: src/helpers.ts:278 src/components/storagePools/storagePoolOverviewTab.tsx:69
+#: src/helpers.ts:278 src/components/networks/networkOverviewTab.tsx:126
+#: src/components/storagePools/storagePoolOverviewTab.tsx:69
 #: src/components/storagePools/storagePoolOverviewTab.tsx:74
-#: src/components/networks/networkOverviewTab.tsx:126
 msgid "yes"
 msgstr "نعم"
 
@@ -3450,9 +3468,6 @@ msgstr "نعم"
 
 #~ msgid "VNC address"
 #~ msgstr "عنوان VNC"
-
-#~ msgid "VNC console"
-#~ msgstr "وحدة تحكم VNC"
 
 #~ msgid "VNC port"
 #~ msgstr "منفذ VNC"
