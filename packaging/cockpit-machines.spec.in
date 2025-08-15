@@ -51,11 +51,12 @@ Suggests: qemu-kvm-block-curl
 # smaller footprint on Fedora, as qemu-kvm is really expensive on a server
 Requires: qemu-kvm-core
 Recommends: qemu-block-curl
-Recommends: qemu-char-spice
 Recommends: qemu-device-usb-host
 Recommends: qemu-device-usb-redirect
+# don't pull in spice support after 45, it's of no benefit to us
+%if 0%{?fedora} <= 45
+Recommends: qemu-char-spice
 # HACK: https://bugzilla.redhat.com/show_bug.cgi?id=2170110
-%if 0%{?fedora} >= 38
 Requires: (qemu-audio-spice if qemu-char-spice)
 %endif
 %endif
