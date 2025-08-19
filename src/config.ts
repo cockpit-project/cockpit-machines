@@ -30,6 +30,7 @@ interface VmsConfig {
     DummyVmsWaitInterval: number;
     WaitForRetryInstallVm: number;
     StorageMigrationSupported: boolean;
+    MaxConsoleCardStates: number;
 }
 
 const VMS_CONFIG: VmsConfig = {
@@ -37,6 +38,7 @@ const VMS_CONFIG: VmsConfig = {
     DummyVmsWaitInterval: 10 * 60 * 1000, // show dummy vms for max 10 minutes; to let virt-install do work before getting vm from virsh
     WaitForRetryInstallVm: 3 * 1000, // wait for vm to recover in the ui after failed install to show the error
     StorageMigrationSupported: true,
+    MaxConsoleCardStates: 10, // maximum number of console card states to keep in memory
 };
 
 export async function load_config(): Promise<void> {
@@ -53,6 +55,7 @@ export async function load_config(): Promise<void> {
     import_config("DummyVmsWaitInterval", import_number);
     import_config("WaitForRetryInstallVm", import_number);
     import_config("StorageMigrationSupported", import_boolean);
+    import_config("MaxConsoleCardStates", import_number);
 }
 
 export default VMS_CONFIG;

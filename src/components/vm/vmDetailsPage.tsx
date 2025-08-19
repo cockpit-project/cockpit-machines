@@ -19,7 +19,6 @@
 
 import React, { useEffect } from 'react';
 import cockpit from 'cockpit';
-import { useStateObject } from './consoles/state';
 
 import type { VM, StoragePool, Network, NodeDevice } from '../../types';
 import type { Config } from '../../reducers';
@@ -61,7 +60,8 @@ export const VmDetailsPage = ({
     onUsageStopPolling,
     networks,
     nodeDevices,
-    onAddErrorNotification
+    onAddErrorNotification,
+    consoleCardState,
 } : {
     vm: VM,
     vms: VM[],
@@ -73,6 +73,7 @@ export const VmDetailsPage = ({
     networks: Network[],
     nodeDevices: NodeDevice[],
     onAddErrorNotification: (n: Notification) => void,
+    consoleCardState: ConsoleCardState,
 }) => {
     useEffect(() => {
         // Anything in here is fired on component mount.
@@ -84,8 +85,11 @@ export const VmDetailsPage = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // We want to reset the ConsoleCardState when a machine starts or shuts down.
-    const consoleState = useStateObject(() => new ConsoleCardState(), [vm.state]);
+    // We want to clear any VNC connection errors when the machine is shut off
+    useEffect(() => {
+        if (vm.state == "shut off")
+            consoleCardState.vncState.setConnected(true);
+    }, [vm.state, consoleCardState]);
 
     const vmActionsPageSection = (
         <PageSection hasBodyWrapper className="actions-pagesection" isWidthLimited>
@@ -113,7 +117,7 @@ export const VmDetailsPage = ({
                       className="consoles-page-expanded no-masthead-sidebar">
                     <PageSection hasBodyWrapper={false}>
                         <ConsoleCard
-                            state={consoleState}
+                            state={consoleCardState}
                             vm={vm}
                             config={config}
                             onAddErrorNotification={onAddErrorNotification}
@@ -133,7 +137,7 @@ export const VmDetailsPage = ({
                     className="consoles-page-standalone"
                 >
                     <ConsoleCard
-                        state={consoleState}
+                        state={consoleCardState}
                         vm={vm}
                         config={config}
                         onAddErrorNotification={onAddErrorNotification}
@@ -179,7 +183,7 @@ export const VmDetailsPage = ({
         },
         {
             card: <ConsoleCard
-                      state={consoleState}
+                      state={consoleCardState}
                       key={`${vmId(vm.name)}-consoles`}
                       vm={vm}
                       config={config}
