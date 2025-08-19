@@ -122,6 +122,16 @@ fullscreen=0
         m = self.machine
         name = "vmWithSerialConsole"
 
+        # Restrict number of remembered console card states to
+        # two. This way we can test the automatic closing of channels
+        # when more than two machines are visited.
+
+        override = "/etc/cockpit/machines.override.json"
+        if m.image == "ubuntu-2204":
+            override = "/usr/share/cockpit/machines/override.json"
+        self.write_file(override,
+                        """{ "config": { "MaxConsoleCardStates": 2 } }\n""")
+
         self.createVm(name, graphics='vnc', ptyconsole=True)
 
         self.login_and_go("/machines")
@@ -142,8 +152,33 @@ fullscreen=0
             if "Welcome to Alpine Linux" in b.text(f"#{name}-terminal .xterm-accessibility-tree"):
                 break
             time.sleep(1)
+
+        def wait_for_alpine_greeting():
+            testlib.wait(lambda: "Welcome to Alpine Linux" in b.text(f"#{name}-terminal .xterm-accessibility-tree"))
+
         # Make sure the content of console is expected
-        testlib.wait(lambda: "Welcome to Alpine Linux" in b.text(f"#{name}-terminal .xterm-accessibility-tree"))
+
+        wait_for_alpine_greeting()
+
+        # Make sure the console keeps their content when navigating
+        # around
+
+        b.click(".consoles-card button:contains(Expand)")
+        b.wait_visible(".consoles-page-expanded")
+        wait_for_alpine_greeting()
+
+        b.click(".consoles-card button:contains(Compress)")
+        b.wait_visible(".consoles-card")
+        wait_for_alpine_greeting()
+
+        b.go("/machines#/")
+        self.waitPageInit()
+        self.waitVmRow(name)
+        self.goToVmPage(name)
+        b.wait_visible(f"#{name}-terminal")
+        wait_for_alpine_greeting()
+
+        # Test re-connecting
 
         b.click(".consoles-card button:contains(Disconnect)")
         b.wait_in_text(".consoles-card", "Disconnected")
@@ -183,14 +218,33 @@ fullscreen=0
             b.click(f'.consoles-card .pf-v6-c-toggle-group button:contains("Serial ({tag}{i})")')
             b.wait(channel_is_open_predicate(f"{tag}{i}"))
 
-        def console_channels():
-            return m.execute("(ps aux | grep 'virsh -c [q]emu:///system console vmWithSerialConsole') || true")
+        def count_console_channels():
+            return int(m.execute("ps aux | grep 'virsh -c [q]emu:///system console vmWithSerialConsole' | wc -l"))
 
-        # Verify that there is still at least one channel open
-        b.wait(lambda: console_channels() != "")
-        # Navigating away from the details page should close all channels
-        self.goToMainPage()
-        b.wait(lambda: console_channels() == "")
+        # Now we should have 6 channels open
+        b.wait(lambda: count_console_channels() == 6)
+
+        # Create two more machines navigate to them. Because we have
+        # set MaxConsoleCardStates to 2 at the start of the test, this
+        # will close all channels to the first machine.
+
+        def create_and_visit_machine(name):
+            self.createVm(name, graphics='vnc', ptyconsole=True, running=False)
+            b.go("/machines#/")
+            self.waitPageInit()
+            self.waitVmRow(name)
+            self.goToVmPage(name)
+
+        create_and_visit_machine(name + "2")
+
+        # Channels for the first machine should still be open, but no
+        # new ones should have been opened.
+        b.wait(lambda: count_console_channels() == 6)
+
+        create_and_visit_machine(name + "3")
+
+        # Now no channels should be open anymore.
+        b.wait(lambda: count_console_channels() == 0)
 
         # disconnecting the serial console closes the pty channel
         self.allow_journal_messages("connection unexpectedly closed by peer",
