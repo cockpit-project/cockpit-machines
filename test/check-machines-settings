@@ -955,9 +955,9 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
         b.click("#vm-subVmTest1-system-run")
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
-        # Because of bug in debian-testing, hotplug of vsock device fails
+        # Because of bug in Debian, hotplug of vsock device fails
         # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1033872
-        if m.image not in ["debian-testing", "debian-stable"]:
+        if m.image not in ["debian-testing", "debian-stable", "debian-trixie"]:
             # Test configuring vsock for running VM
             setVsockLive(new_auto=False, new_address="5")
             setVsockLive(new_auto=True, previous_auto=False, previous_address="5", reboot_machine=True)

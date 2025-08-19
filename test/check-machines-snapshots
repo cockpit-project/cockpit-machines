@@ -268,7 +268,7 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         # HACK: deleting external snapshots for non-running VMs is broken https://bugs.debian.org/bug=1061725
         # Work around that by temporarily disabling libvirtd's AppArmor profile. AppArmor isn't installed by
         # default in Debian, and we want the rest of the test to run, thus no naughty.
-        apparmor_hack = m.image in ["debian-testing"]
+        apparmor_hack = m.image in ["debian-testing", "debian-trixie"]
         if apparmor_hack:
             # we don't install apparmor-utils, so need to emulate aa-disable
             m.execute("ln -s /etc/apparmor.d/usr.sbin.libvirtd /etc/apparmor.d/disable/usr.sbin.libvirtd")
