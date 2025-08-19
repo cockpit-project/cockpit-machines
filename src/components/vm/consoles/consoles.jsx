@@ -25,8 +25,7 @@ import { ExpandIcon, CompressIcon, ExternalLinkAltIcon } from "@patternfly/react
 import { ToggleGroup, ToggleGroupItem } from '@patternfly/react-core/dist/esm/components/ToggleGroup';
 import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/index.js";
 
-import { ConsoleState } from './common';
-import { SerialActive, SerialInactive, SerialMissing, SerialPending } from './serial';
+import { SerialState, SerialActive, SerialInactive, SerialMissing, SerialPending } from './serial';
 import { VncState, VncActive, VncActiveActions, VncInactive, VncMissing, VncPending } from './vnc';
 import { SpiceActive, SpiceInactive } from './spice';
 
@@ -38,24 +37,30 @@ import './consoles.css';
 const _ = cockpit.gettext;
 
 class SerialStates extends StateObject {
-    constructor() {
-        super();
-        this.states = { };
-    }
+    states = [];
 
-    get(key) {
-        if (!(key in this.states)) {
-            const state = new ConsoleState();
-            this.follow(state);
-            this.states[key] = state;
+    ensure(vm, serials) {
+        serials.forEach((pty, idx) => {
+            if (idx >= this.states.length || this.states[idx].alias != pty.alias) {
+                console.log("NEW", idx, pty.alias);
+                if (this.states.length < idx)
+                    this.states[idx].close();
+                this.states[idx] = new SerialState(vm, pty.alias);
+                this.follow(this.states[idx]);
+            }
+        });
+        for (let idx = serials.length; idx < this.states.length; idx++) {
+            console.log("DEL", idx);
+            this.states[idx].close();
         }
-        return this.states[key];
+        this.states.length = serials.length;
+        console.log("STATES", this.states);
+        return this.states;
     }
 
     close() {
-        for (const k in this.states) {
-            this.states[k].close();
-        }
+        this.states.forEach(s => s.close());
+        this.states = [];
     }
 }
 
@@ -95,6 +100,7 @@ export const ConsoleCard = ({
     const inactive_vnc = vm.inactiveXML.displays.find(display => display.type == 'vnc');
     const spice = vm.displays.find(display => display.type == 'spice');
     const inactive_spice = vm.inactiveXML.displays.find(display => display.type == 'spice');
+    const serial_states = state.serialStates.ensure(vm, serials);
 
     const lastVncRemoteSize = useRef([1024, 768]);
 
@@ -212,13 +218,11 @@ export const ConsoleCard = ({
                 if (vm.state != "running") {
                     body = <SerialInactive vm={vm} />;
                 } else {
-                    const serial_state = state.serialStates.get(pty.alias || idx);
+                    const serial_state = serial_states[idx];
                     body = (
                         <SerialActive
                             state={serial_state}
-                            connectionName={vm.connectionName}
-                            vmName={vm.name}
-                            spawnArgs={domainSerialConsoleCommand({ vm, alias: pty.alias })}
+                            vm={vm}
                         />
                     );
                     body_state = serial_state;
