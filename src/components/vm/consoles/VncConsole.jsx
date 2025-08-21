@@ -51,7 +51,6 @@ export const VncConsole = ({
     scaleViewport = false,
     viewOnly = false,
     shared = false,
-    credentials,
     repeaterID = '',
     vncLogging = 'warn',
     consoleContainerId,
@@ -59,6 +58,7 @@ export const VncConsole = ({
     onDisconnected = () => {},
     onInitFailed,
     onSecurityFailure,
+    getCredentials,
 }) => {
     const rfb = React.useRef();
 
@@ -78,19 +78,31 @@ export const VncConsole = ({
         [onSecurityFailure]
     );
 
+    const _onCredentialsRequired = React.useCallback(
+        async (e) => {
+            if (rfb.current) {
+                const creds = await getCredentials();
+                rfb.current.sendCredentials(creds);
+            }
+        },
+        [getCredentials]
+    );
+
     const addEventListeners = React.useCallback(() => {
         if (rfb.current) {
             rfb.current?.addEventListener('disconnect', _onDisconnected);
             rfb.current?.addEventListener('securityfailure', _onSecurityFailure);
+            rfb.current?.addEventListener('credentialsrequired', _onCredentialsRequired);
         }
-    }, [rfb, _onDisconnected, _onSecurityFailure]);
+    }, [rfb, _onDisconnected, _onSecurityFailure, _onCredentialsRequired]);
 
     const removeEventListeners = React.useCallback(() => {
         if (rfb.current) {
             rfb.current.removeEventListener('disconnect', _onDisconnected);
             rfb.current.removeEventListener('securityfailure', _onSecurityFailure);
+            rfb.current.removeEventListener('credentialsrequired', _onCredentialsRequired);
         }
-    }, [rfb, _onDisconnected, _onSecurityFailure]);
+    }, [rfb, _onDisconnected, _onSecurityFailure, _onCredentialsRequired]);
 
     const connect = React.useCallback(() => {
         const protocol = encrypt ? 'wss' : 'ws';
@@ -99,7 +111,6 @@ export const VncConsole = ({
         const options = {
             repeaterID,
             shared,
-            credentials
         };
         rfb.current = new RFB(novncElem.current, url, options);
         addEventListeners();
@@ -122,7 +133,6 @@ export const VncConsole = ({
         rfb,
         repeaterID,
         shared,
-        credentials
     ]);
 
     React.useEffect(() => {

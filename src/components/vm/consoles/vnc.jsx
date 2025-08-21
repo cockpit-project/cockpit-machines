@@ -42,7 +42,7 @@ import { SimpleSelect } from 'cockpit-components-simple-select';
 import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
 import { useDialogs } from 'dialogs';
 
-import { logDebug } from '../../../helpers.js';
+import { logDebug, readQemuConf } from '../../../helpers.js';
 import { LaunchViewerButton, connection_address, ConsoleState } from './common';
 import { domainSendKey, domainAttachVnc, domainChangeVncSettings, domainGet } from '../../../libvirtApi/domain.js';
 
@@ -336,6 +336,7 @@ export class VncActive extends React.Component {
         this.connect = this.connect.bind(this);
         this.onConnected = this.onConnected.bind(this);
         this.onDisconnected = this.onDisconnected.bind(this);
+        this.getCredentials = this.getCredentials.bind(this);
         this.onInitFailed = this.onInitFailed.bind(this);
         this.onSecurityFailure = this.onSecurityFailure.bind(this);
 
@@ -393,6 +394,16 @@ export class VncActive extends React.Component {
         return window.location.protocol === 'https:';
     }
 
+    async getCredentials() {
+        let password = this.props.consoleDetail.password || "";
+        if (!password) {
+            const qemu_conf = await readQemuConf();
+            if (qemu_conf.vnc_password)
+                password = qemu_conf.vnc_password;
+        }
+        return { password };
+    }
+
     onConnected(vnc_element) {
         let canvas = null;
         if (this.props.onRemoteSizeChanged)
@@ -429,12 +440,6 @@ export class VncActive extends React.Component {
             return null;
         }
 
-        // We must pass the very same object to VncConsole.credentials
-        // on every render. Otherwise VncConsole thinks credentials
-        // have changed and will reconnect.
-        if (!this.credentials || this.credentials.password != consoleDetail.password)
-            this.credentials = { password: consoleDetail.password };
-
         const encrypt = this.getEncrypt();
 
         const footer = !isExpanded && (
@@ -455,10 +460,10 @@ export class VncActive extends React.Component {
                           path={path}
                           encrypt={encrypt}
                           shared
-                          credentials={this.credentials}
                           vncLogging={ window.debugging?.includes("vnc") ? 'debug' : 'warn' }
                           onConnected={this.onConnected}
                           onDisconnected={this.onDisconnected}
+                          getCredentials={this.getCredentials}
                           onInitFailed={this.onInitFailed}
                           onSecurityFailure={this.onSecurityFailure}
                           consoleContainerId={isExpanded ? "vnc-display-container-expanded" : "vnc-display-container-minimized"}

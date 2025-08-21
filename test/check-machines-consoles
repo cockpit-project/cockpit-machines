@@ -643,6 +643,27 @@ fullscreen=0
         # cleanup expects self.browser to be logged in.
         self.login_and_go("/machines")
 
+    def testGlobalVNCPassword(self):
+        b = self.browser
+        m = self.machine
+
+        # Configure a global password
+
+        self.write_file("/etc/libvirt/qemu.conf", '\nvnc_password = "barfoo"\n', append=True)
+        m.execute(f"systemctl restart {self.getLibvirtServiceName()}")
+
+        name = "subVmTest1"
+        self.createVm(name, graphics="vnc")
+
+        self.login_and_go("/machines")
+        self.waitPageInit()
+        self.waitVmRow(name)
+        self.goToVmPage(name)
+
+        # VNC viewer should be connected and should have a password
+        b.wait_visible(".vm-console-vnc canvas")
+        self.assertIn("password=on", m.execute(f"grep ^-vnc /var/log/libvirt/qemu/{name}.log"))
+
 
 if __name__ == '__main__':
     testlib.test_main()

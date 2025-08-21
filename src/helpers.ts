@@ -995,3 +995,25 @@ export function vmSupportsExternalSnapshots(config: { capabilities?: HypervisorC
 export function vmHasVFIOHostDevs(vm: VM): boolean {
     return !!vm.hostDevices.find(hd => hd.driver === "vfio");
 }
+
+export interface QemuConf {
+    vnc_password: string | null;
+}
+
+const VNC_PASSWORD_RX = /^[ \t]*vnc_password[ \t]*=[ \t]*"([^"\\]*(?:\\.[^"\\]*)*)"/m;
+
+export async function readQemuConf(): Promise<QemuConf> {
+    const conf: QemuConf = {
+        vnc_password: null,
+    };
+
+    const text = await cockpit.file("/etc/libvirt/qemu.conf", { superuser: "try" }).read();
+    if (!text)
+        return conf;
+
+    const password_match = text.match(VNC_PASSWORD_RX);
+    if (password_match)
+        conf.vnc_password = password_match[1].replaceAll('\\"', '"');
+
+    return conf;
+}
