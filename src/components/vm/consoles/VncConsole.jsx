@@ -55,7 +55,7 @@ export const VncConsole = ({
     vncLogging = 'warn',
     consoleContainerId,
     onConnected = (element) => {},
-    onDisconnected = () => {},
+    onDisconnected = (event) => {},
     onInitFailed,
     onSecurityFailure,
     getCredentials,
