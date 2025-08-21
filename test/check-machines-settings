@@ -783,7 +783,7 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
 
         m.execute("virsh destroy subVmTest1; virsh undefine subVmTest1")
         args = self.createVm("subVmTest1", os="linux2022")
-        has_watchdog = m.image not in ["debian-stable", "ubuntu-2204", "rhel-8-10"]
+        has_watchdog = m.image not in ["ubuntu-2204", "rhel-8-10"]
 
         self.goToVmPage("subVmTest1")
         if has_watchdog:
@@ -957,7 +957,7 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
 
         # Because of bug in Debian, hotplug of vsock device fails
         # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1033872
-        if m.image not in ["debian-testing", "debian-stable", "debian-trixie"]:
+        if m.image not in ["debian-testing", "debian-trixie"]:
             # Test configuring vsock for running VM
             setVsockLive(new_auto=False, new_address="5")
             setVsockLive(new_auto=True, previous_auto=False, previous_address="5", reboot_machine=True)
