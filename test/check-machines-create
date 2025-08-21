@@ -2308,9 +2308,6 @@ vnc_password= "{vnc_passwd}"
 
         self.allow_browser_errors("Failed when connecting: Connection closed")
         self.allow_journal_messages(".* couldn't shutdown fd: Transport endpoint is not connected")
-        # https://launchpad.net/bugs/1968187
-        if m.image == 'debian-stable':
-            self.allow_journal_messages('.*apparmor="DENIED".*name="/etc/ssl/openssl.cnf".*comm="swtpm".*')
 
     def testConfigureBeforeInstallBios(self):
         TestMachinesCreate.CreateVmRunner(self)
@@ -2423,10 +2420,6 @@ vnc_password= "{vnc_passwd}"
         # Install the VM
         b.click(f"#vm-{vmName}-system-install")
         b.wait_in_text(f"#vm-{vmName}-system-state", "Running")
-
-        # https://launchpad.net/bugs/1968187
-        if m.image == 'debian-stable':
-            self.allow_journal_messages('.*apparmor="DENIED".*name="/etc/ssl/openssl.cnf".*comm="swtpm".*')
 
     def testCreateDownloadRhel(self):
         runner = TestMachinesCreate.CreateVmRunner(self, rhel_download=True)

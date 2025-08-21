@@ -377,7 +377,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
 
         # Because of bug in debian-testing, attachment of virtio vNICs after restarting VM will fail
         # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1005284
-        if m.image not in ["debian-stable", "debian-testing"]:
+        if m.image not in ["debian-testing"]:
             # Test permanent attachment to running VM
             mac_address = self.get_next_mac(mac_address)
             self.NICAddDialog(
