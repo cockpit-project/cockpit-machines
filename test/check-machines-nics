@@ -375,49 +375,46 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.waitGuestBooted(args['logfile'])
 
-        # Because of bug in debian-testing, attachment of virtio vNICs after restarting VM will fail
-        # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1005284
-        if m.image not in ["debian-testing"]:
-            # Test permanent attachment to running VM
-            mac_address = self.get_next_mac(mac_address)
-            self.NICAddDialog(
-                self,
-                mac=mac_address,
-                source_type="network",
-                source="test_network",
-                permanent=True,
-            ).execute()
+        # Test permanent attachment to running VM
+        mac_address = self.get_next_mac(mac_address)
+        self.NICAddDialog(
+            self,
+            mac=mac_address,
+            source_type="network",
+            source="test_network",
+            permanent=True,
+        ).execute()
 
-            # Test NIC attaching to non-persistent VM
-            m.execute("virsh dumpxml --inactive subVmTest1 > /tmp/subVmTest1.xml; virsh undefine subVmTest1")
-            b.wait_visible("div[data-vm-transient=\"true\"]")
-            mac_address = self.get_next_mac(mac_address)
-            self.NICAddDialog(
-                self,
-                source_type="network",
-                source="test_network",
-                mac=mac_address,
-                nic_num=2,
-                persistent_vm=False,
-            ).execute()
-            m.execute("virsh define /tmp/subVmTest1.xml")
-            b.wait_visible("div[data-vm-transient=\"false\"]")
-            self.performAction("subVmTest1", "forceOff")
+        # Test NIC attaching to non-persistent VM
+        m.execute("virsh dumpxml --inactive subVmTest1 > /tmp/subVmTest1.xml; virsh undefine subVmTest1")
+        b.wait_visible("div[data-vm-transient=\"true\"]")
+        mac_address = self.get_next_mac(mac_address)
+        self.NICAddDialog(
+            self,
+            source_type="network",
+            source="test_network",
+            mac=mac_address,
+            nic_num=2,
+            persistent_vm=False,
+        ).execute()
+        m.execute("virsh define /tmp/subVmTest1.xml")
+        b.wait_visible("div[data-vm-transient=\"false\"]")
+        self.performAction("subVmTest1", "forceOff")
 
-            mac_address = self.get_next_mac(mac_address)
-            self.NICAddDialog(
-                self,
-                mac=mac_address,
-                remove=False,
-            ).execute()
+        mac_address = self.get_next_mac(mac_address)
+        self.NICAddDialog(
+            self,
+            mac=mac_address,
+            remove=False,
+        ).execute()
 
-            mac_address = self.get_next_mac(mac_address)
-            self.NICAddDialog(
-                self,
-                mac=mac_address,
-                nic_num=2,
-                remove=False,
-            ).execute()
+        mac_address = self.get_next_mac(mac_address)
+        self.NICAddDialog(
+            self,
+            mac=mac_address,
+            nic_num=2,
+            remove=False,
+        ).execute()
 
     class NICEditDialog:
 
