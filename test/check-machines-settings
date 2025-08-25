@@ -976,6 +976,46 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
             b.mouse("#vsock-dialog-apply", "mouseenter")
             b.wait_visible("#vsock-live-edit-tooltip")
 
+    def testBootOrderPreservesPasswords(self):
+        """Test that changing boot order preserves sensitive data like VNC passwords in domain XML"""
+        b = self.browser
+        m = self.machine
+
+        # Create a VM
+        self.createVm("bootOrderTestVM", graphics="vnc", running=False)
+
+        # Add VNC with password using virt-xml
+        vnc_password = "secret12"
+        m.execute(f"virt-xml bootOrderTestVM --edit --graphics vnc,passwd={vnc_password}")
+
+        # Verify the VNC password is present
+        original_xml = m.execute("virsh dumpxml bootOrderTestVM --security-info")
+        self.assertIn(vnc_password, original_xml)
+
+        self.login_and_go("/machines")
+        self.waitPageInit()
+        self.waitVmRow("bootOrderTestVM")
+
+        # Go to VM page
+        self.goToVmPage("bootOrderTestVM")
+
+        # Get current boot order
+        bootOrder = b.text("#vm-bootOrderTestVM-boot-order")
+
+        # Open boot order dialog and make a change
+        b.click("#vm-bootOrderTestVM-boot-order button")
+        b.wait_visible("#vm-bootOrderTestVM-order-modal-window")
+        b.click("#vm-bootOrderTestVM-order-modal-device-row-0 #vm-bootOrderTestVM-order-modal-down")
+        b.click("#vm-bootOrderTestVM-order-modal-save")
+        b.wait_not_present("#vm-bootOrderTestVM-order-modal-window")
+
+        # Verify boot order changed (indicating the API call succeeded)
+        b.wait_not_in_text("#vm-bootOrderTestVM-boot-order", bootOrder)
+
+        # Verify that VNC password is still present in the XML
+        updated_xml = m.execute("virsh dumpxml bootOrderTestVM --security-info")
+        self.assertIn(vnc_password, updated_xml, "VNC password should be preserved after boot order change")
+
 
 if __name__ == '__main__':
     testlib.test_main()
