@@ -339,7 +339,7 @@ export async function domainChangeBootOrder({
     connectionName: ConnectionName,
     devices: BootOrderDevice[],
 }): Promise<void> {
-    const [domXml] = await call<[string]>(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
+    const [domXml] = await call<[string]>(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE | Enum.VIR_DOMAIN_XML_SECURE], { timeout, type: 'u' });
     const updatedXML = updateBootOrder(domXml, devices);
     await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [updatedXML], { timeout, type: 's' });
 }
@@ -1272,7 +1272,7 @@ export async function domainSetMaxMemory({
     connectionName: ConnectionName,
     maxMemory: number // in KiB
 }): Promise<void> {
-    const [domXml] = await call<[string]>(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [0], { timeout, type: 'u' });
+    const [domXml] = await call<[string]>(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_SECURE], { timeout, type: 'u' });
     const updatedXML = updateMaxMemory(domXml, maxMemory);
     await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [updatedXML], { timeout, type: 's' });
 }
@@ -1286,7 +1286,7 @@ export async function domainSetOSFirmware({
     objPath: string,
     loaderType: optString;
 }): Promise<void> {
-    const [domXml] = await call<[string]>(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
+    const [domXml] = await call<[string]>(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE | Enum.VIR_DOMAIN_XML_SECURE], { timeout, type: 'u' });
     const s = new XMLSerializer();
     const doc = getDoc(domXml);
     const domainElem = doc.firstElementChild;
@@ -1430,7 +1430,7 @@ export async function domainUpdateDiskAttributes({
     existingTargets: string[],
     cache: optString,
 }): Promise<void> {
-    const [domXml] = await call<[string]>(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
+    const [domXml] = await call<[string]>(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE | Enum.VIR_DOMAIN_XML_SECURE], { timeout, type: 'u' });
     const updatedXML = updateDisk({ diskTarget: target, domXml, readonly, shareable, busType, existingTargets, cache });
     await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [updatedXML], { timeout, type: 's' });
 }
@@ -1444,7 +1444,7 @@ export async function domainReplaceSpice({
 }): Promise<void> {
     /* Ideally this would be done by virt-xml, but it doesn't offer that functionality yet
      * see https://issues.redhat.com/browse/RHEL-17436 */
-    const [domXML] = await call<[string]>(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
+    const [domXML] = await call<[string]>(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE | Enum.VIR_DOMAIN_XML_SECURE], { timeout, type: 'u' });
     const updatedXML = replaceSpice(domXML);
 
     // check that updatedXML is valid; if not, throw; it needs to be updated manually
