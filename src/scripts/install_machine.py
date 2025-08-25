@@ -1,6 +1,5 @@
 #! /usr/bin/python3
 
-import configparser
 import json
 import logging
 import os
@@ -54,51 +53,11 @@ def get_graphics_capabilies(connection):
 
 
 def prepare_graphics_params(connection):
-    # Check to make sure loopback has an IPv6 address assigned
-    # if not default back to IPv4
-    # once we stop supporting Python 3.6, use this:
-    # ip_lo = subprocess.run(['ip', '-6', 'addr', 'show', 'dev', 'lo'], capture_output=True, text=True)
-    ip_lo = subprocess.run(['ip', '-6', 'addr', 'show', 'dev', 'lo'], stdout=subprocess.PIPE, universal_newlines=True)
-
-    if ip_lo.returncode == 0 and "inet6" in ip_lo.stdout:
-        # Use ipv6 as workaround for https://bugs.launchpad.net/ubuntu/+source/qemu/+bug/1492621
-        spice_address = '::1'
-    else:
-        spice_address = '127.0.0.1'
-
-    graphics_config = {
-        'spice': {'listen': spice_address},
-        'vnc': {'listen': '127.0.0.1'}
-    }
-
-    try:
-        # Configparser needs a default section
-        with open("/etc/libvirt/qemu.conf", 'r') as f:
-            config_string = '[dummy_section]\n' + f.read()
-
-        config = configparser.ConfigParser()
-        config.read_string(config_string)
-
-        graphics_config['spice']['listen'] = config['dummy_section'].get('spice_listen', spice_address)
-        spice_password = config['dummy_section'].get('spice_password', None)
-        if spice_password is not None:
-            graphics_config['spice']['password'] = spice_password
-
-        graphics_config['vnc']['listen'] = config['dummy_section'].get('vnc_listen', '127.0.0.1')
-        vnc_password = config['dummy_section'].get('vnc_password', None)
-        if vnc_password is not None:
-            graphics_config['vnc']['password'] = vnc_password
-    except (EnvironmentError, configparser.Error) as exc:
-        logging.debug(exc)
-        pass
-    params = []
-
     graphics_cap = get_graphics_capabilies(connection)
+    params = []
     if graphics_cap:
         for graphics in graphics_cap:
-            config_options = graphics_config[graphics].keys()
-            graphics_options = (f"{option}={graphics_config[graphics][option]}" for option in config_options)
-            params += ['--graphics', graphics + "," + ",".join(graphics_options)]
+            params += ['--graphics', graphics]
     else:
         params += ['--graphics', 'none']
     return params

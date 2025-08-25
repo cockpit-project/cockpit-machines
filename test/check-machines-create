@@ -644,37 +644,6 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         b.wait_in_text("#vm-pxe-guest-boot-order", "disk")
         b.wait_not_in_text("#vm-pxe-guest-boot-order", "network")
 
-    def testCreateAndVerifyQemuConf(self):
-        runner = TestMachinesCreate.CreateVmRunner(self)
-        config = TestMachinesCreate.TestCreateConfig
-        m = self.machine
-
-        self.restore_file("/etc/libvirt/qemu.conf")
-
-        self.login_and_go("/machines")
-        self.waitPageInit()
-
-        vnc_listen = "192.168.2.6"
-        vnc_passwd = "mypass"
-
-        m.write("/etc/libvirt/qemu.conf", f'''vnc_listen = "{vnc_listen}"
-vnc_password= "{vnc_passwd}"
-''', append=True)
-
-        runner.createAndVerifyQemuConfParsedTest(
-            TestMachinesCreate.VmDialog(self, sourceType='file',
-                                        storage_pool=NO_STORAGE,
-                                        location=config.NOVELL_MOCKUP_ISO_PATH),
-            vnc_listen, "::1", vnc_passwd, None)
-
-        # Ensure that missing qemu.conf would not crash the script but just pick the 127.0.0.1 default value
-        m.execute("rm /etc/libvirt/qemu.conf")
-        runner.createAndVerifyQemuConfParsedTest(
-            TestMachinesCreate.VmDialog(self, sourceType='file',
-                                        storage_pool=NO_STORAGE,
-                                        location=config.NOVELL_MOCKUP_ISO_PATH),
-            "127.0.0.1", "::1", None, None)
-
     @testlib.skipImage("TODO: Arch Linux has no iscsi support", "arch")
     @testlib.skipImage("TODO: fails in 80% of runs", "opensuse-tumbleweed")
     def testCreateThenInstall(self):
@@ -1317,32 +1286,6 @@ vnc_password= "{vnc_passwd}"
 
             self.assertIn(f"backing file: {self.location}",
                           self.machine.execute(f"qemu-img info /var/lib/libvirt/images/{self.name}.qcow2"))
-
-        def createRespectQemuConfConsoleConfig(self, vnc_listen, spice_listen, vnc_passwd, spice_passwd):
-            m = self.machine
-
-            if self.create_and_run:
-                self.browser.click(".pf-v6-c-modal-box__footer button:contains(Create and run)")
-            else:
-                self.browser.click(".pf-v6-c-modal-box__footer button:contains(Create and edit)")
-            self.browser.wait_not_present("#create-vm-dialog")
-            self.browser.wait_text(f"#vm-{self.name}-{self.connection}-state", "Shut off")
-
-            domainXML = m.execute(f"virsh dumpxml --security-info {self.name}")
-            root = ET.fromstring(domainXML)
-
-            if m.image.startswith("rhel") or m.image.startswith("centos"):
-                # we don't expect any SPICE device, unsupported on RHEL
-                self.assertNotIn("spice", domainXML)
-            else:
-                # SPICE is supported on all other OSes
-                spice = root.findall(".//graphics[@type='spice']")
-                self.assertEqual(spice_listen, spice[0].attrib['listen'])
-                self.assertEqual(spice_passwd, spice[0].attrib.get('passwd', None))
-
-            vnc = root.findall(".//graphics[@type='vnc']")[0]
-            self.assertEqual(vnc_listen, vnc.attrib['listen'])
-            self.assertEqual(vnc_passwd, vnc.attrib.get('passwd', None))
 
         def createAndVerifyVirtInstallArgsUnattended(self):
             if self.create_and_run:
@@ -2085,14 +2028,6 @@ vnc_password= "{vnc_passwd}"
             dialog.open() \
                 .fill() \
                 .createAndVerifyVirtInstallArgsUnattended()
-            if dialog.delete:
-                self._deleteVm(dialog) \
-                    .checkEnvIsEmpty()
-
-        def createAndVerifyQemuConfParsedTest(self, dialog, vnc_listen, spice_listen, vnc_passwd, spice_passwd):
-            dialog.open() \
-                .fill() \
-                .createRespectQemuConfConsoleConfig(vnc_listen, spice_listen, vnc_passwd, spice_passwd)
             if dialog.delete:
                 self._deleteVm(dialog) \
                     .checkEnvIsEmpty()
