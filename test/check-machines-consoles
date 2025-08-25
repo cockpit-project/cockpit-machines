@@ -643,6 +643,103 @@ fullscreen=0
         # cleanup expects self.browser to be logged in.
         self.login_and_go("/machines")
 
+    def testGlobalVNCPassword(self):
+        b = self.browser
+        m = self.machine
+
+        # Configure a global password
+
+        self.write_file("/etc/libvirt/qemu.conf", '\nvnc_password = "barfoo"\n', append=True)
+        m.execute(f"systemctl restart {self.getLibvirtServiceName()}")
+
+        name = "subVmTest1"
+        self.createVm(name, graphics="vnc")
+
+        self.login_and_go("/machines")
+        self.waitPageInit()
+        self.waitVmRow(name)
+        self.goToVmPage(name)
+
+        # VNC viewer should be connected and should have a password
+        b.wait_visible(".vm-console-vnc canvas")
+        self.assertIn("password=on", m.execute(f"grep ^-vnc /var/log/libvirt/qemu/{name}.log"))
+
+        # Change global password, but without restarting the VM. This
+        # means that Cockpit will use the new password when
+        # connecting, but the VM still expects the old.
+        m.execute("sed -i -e 's/vnc_password = \"barfoo\"/vnc_password = \"foobar\"/' /etc/libvirt/qemu.conf")
+
+        # We are still connected, but reconnecting will fail
+        b.click(".consoles-card button:contains(Disconnect)")
+        b.wait_in_text(".consoles-card", "Disconnected")
+        b.click(".consoles-card button:contains(Connect)")
+        b.wait_in_text(".consoles-card", "Authentication failed")
+
+    def testNonSharedExternal(self):
+        b = self.browser
+        m = self.machine
+
+        # Upload the headless VNC client script to the test machine
+        m.upload(["files/headless-vnc-client.py"], "/tmp/headless-vnc-client.py")
+
+        name = "subVmTest1"
+        self.createVm(name, graphics="vnc")
+
+        self.login_and_go("/machines")
+        self.waitPageInit()
+        self.waitVmRow(name)
+        self.goToVmPage(name)
+
+        # VNC viewer should be connected
+        b.wait_visible(".vm-console-vnc canvas")
+
+        # Start external non-shared viewer
+        vnc_client_cmd = "python3 /tmp/headless-vnc-client.py 127.0.0.1 5900"
+        vnc_process = m.spawn(vnc_client_cmd, "vnc-disconnect-test")
+
+        # Our viewer should disconnect cleanly
+        b.wait_in_text(".consoles-card", "Disconnected")
+
+        # Trying to reconnect should fail while the external viewer is running
+        b.click('.consoles-card button:contains("Connect")')
+        b.wait_in_text(".consoles-card", "Failed to connect")
+
+        # Stopping the external viewer should allow us to connect again
+        m.execute(f"kill {vnc_process}")
+        b.click('.consoles-card button:contains("Retry")')
+        b.wait_visible(".vm-console-vnc canvas")
+
+    def testVNCTLS(self):
+        b = self.browser
+        m = self.machine
+
+        # Make some random certs
+        m.execute("""
+          mkdir -p /etc/pki/libvirt
+          cd /etc/pki/libvirt/
+          sscg --ca-file=ca-cert.pem --cert-file=server-cert.pem --cert-key-file=server-key.pem
+          chmod a+r /etc/pki/libvirt/*
+        """)
+
+        # Configure VNC to use TLS
+        self.write_file("/etc/libvirt/qemu.conf", """
+vnc_tls = 1
+vnc_tls_x509_cert_dir = "/etc/pki/libvirt"
+        """, append=True)
+
+        m.execute(f"systemctl restart {self.getLibvirtServiceName()}")
+
+        name = "subVmTest1"
+        self.createVm(name, graphics="vnc")
+
+        self.login_and_go("/machines")
+        self.waitPageInit()
+        self.waitVmRow(name)
+        self.goToVmPage(name)
+
+        # VNC viewer should not be connected, with a helpful message
+        b.wait_in_text(".consoles-card", "VNC with TLS is not supported")
+
 
 if __name__ == '__main__':
     testlib.test_main()
