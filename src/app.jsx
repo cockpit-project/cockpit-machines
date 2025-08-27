@@ -32,6 +32,7 @@ import HostVmsList from "./components/vms/hostvmslist.jsx";
 import { StoragePoolList } from "./components/storagePools/storagePoolList.jsx";
 import { NetworkList } from "./components/networks/networkList.jsx";
 import { VmDetailsPage } from './components/vm/vmDetailsPage.jsx';
+import { ConsoleCardStates } from './components/vm/consoles/consoles.jsx';
 import { CreateVmAction } from "./components/create-vm-dialog/createVmDialog.jsx";
 import LibvirtSlate from "./components/libvirtSlate.jsx";
 import { dummyVmsFilter, vmId } from "./helpers.js";
@@ -169,6 +170,8 @@ class AppActive extends React.Component {
         this.onDismissErrorNotification = this.onDismissErrorNotification.bind(this);
         this.getInlineNotifications = this.getInlineNotifications.bind(this);
         this.onNavigate = () => this.setState({ path: cockpit.location.path });
+
+        this.consoleCardStates = new ConsoleCardStates();
     }
 
     async componentDidMount() {
@@ -311,6 +314,7 @@ class AppActive extends React.Component {
                     <>
                         {vmNotifications}
                         <VmDetailsPage vm={vm} vms={combinedVms} config={config}
+                            consoleCardState={this.consoleCardStates.get(vm)}
                             libvirtVersion={systemInfo.libvirtVersion}
                             onAddErrorNotification={this.onAddErrorNotification}
                             storagePools={(storagePools || []).filter(pool => pool && pool.connectionName == connectionName)}

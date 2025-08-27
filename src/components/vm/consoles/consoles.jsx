@@ -18,6 +18,7 @@
  */
 import React, { useRef, useEffect } from 'react';
 import cockpit from 'cockpit';
+import { useOn } from 'hooks';
 import { StateObject } from './state';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core/dist/esm/components/Card';
@@ -25,12 +26,10 @@ import { ExpandIcon, CompressIcon, ExternalLinkAltIcon } from "@patternfly/react
 import { ToggleGroup, ToggleGroupItem } from '@patternfly/react-core/dist/esm/components/ToggleGroup';
 import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/index.js";
 
-import { ConsoleState } from './common';
-import { SerialActive, SerialInactive, SerialMissing, SerialPending } from './serial';
+import { SerialState, SerialActive, SerialInactive, SerialMissing, SerialPending } from './serial';
 import { VncState, VncActive, VncActiveActions, VncInactive, VncMissing, VncPending } from './vnc';
 import { SpiceActive, SpiceInactive } from './spice';
 
-import { domainSerialConsoleCommand } from '../../../libvirtApi/domain.js';
 import { vmId } from "../../../helpers.js";
 
 import './consoles.css';
@@ -38,24 +37,24 @@ import './consoles.css';
 const _ = cockpit.gettext;
 
 class SerialStates extends StateObject {
-    constructor() {
-        super();
-        this.states = { };
-    }
+    states = [];
 
-    get(key) {
-        if (!(key in this.states)) {
-            const state = new ConsoleState();
-            this.follow(state);
-            this.states[key] = state;
-        }
-        return this.states[key];
+    ensure(vm, serials) {
+        if (serials.length != this.states.length || serials.some((pty, i) => pty.alias != this.states[i].alias)) {
+            console.log("CHANGE", this.states.map(st => st.alias), serials.map(pty => pty.alias));
+            this.close();
+            this.states = serials.map(pty => {
+                const st = new SerialState(vm, pty.alias);
+                this.follow(st);
+                return st;
+            });
+        };
+        return this.states;
     }
 
     close() {
-        for (const k in this.states) {
-            this.states[k].close();
-        }
+        this.states.forEach(s => s.close());
+        this.states = [];
     }
 }
 
@@ -81,6 +80,20 @@ export class ConsoleCardState extends StateObject {
     }
 }
 
+export class ConsoleCardStates {
+    states = {};
+
+    get(vm) {
+        // TODO
+        // - Keep only N most recently used ones.
+        // - Include connectionName in key.
+        const key = vm.id;
+        if (!this.states[key])
+            this.states[key] = new ConsoleCardState();
+        return this.states[key];
+    }
+}
+
 export const ConsoleCard = ({
     state,
     vm,
@@ -89,12 +102,15 @@ export const ConsoleCard = ({
     isExpanded = false,
     isStandalone = false,
 }) => {
+    useOn(state, "render");
+
     const serials = vm.displays.filter(display => display.type == 'pty');
     const inactive_serials = vm.inactiveXML.displays.filter(display => display.type == 'pty');
     const vnc = vm.displays.find(display => display.type == 'vnc');
     const inactive_vnc = vm.inactiveXML.displays.find(display => display.type == 'vnc');
     const spice = vm.displays.find(display => display.type == 'spice');
     const inactive_spice = vm.inactiveXML.displays.find(display => display.type == 'spice');
+    const serial_states = state.serialStates.ensure(vm, serials);
 
     const lastVncRemoteSize = useRef([1024, 768]);
 
@@ -212,13 +228,11 @@ export const ConsoleCard = ({
                 if (vm.state != "running") {
                     body = <SerialInactive vm={vm} />;
                 } else {
-                    const serial_state = state.serialStates.get(pty.alias || idx);
+                    const serial_state = serial_states[idx];
                     body = (
                         <SerialActive
                             state={serial_state}
-                            connectionName={vm.connectionName}
-                            vmName={vm.name}
-                            spawnArgs={domainSerialConsoleCommand({ vm, alias: pty.alias })}
+                            vm={vm}
                         />
                     );
                     body_state = serial_state;
