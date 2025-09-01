@@ -99,3 +99,13 @@
 .resource-state-text .pf-v6-c-button {
     color: inherit;
 }
+
+// FIXME: Using an expandable content within a dialog would cause the card to be scrollable while nothing
+// would be in view. Makes it look like there is something to scroll to when there isn't anything.
+// PF deliberately makes expandable `[hidden]` content have `display: revert` which would make them have
+// `display: block` or whatever is default from the browser. They do this to make animations work.
+// Until fixed upstream we revert their `display: revert` rule.
+// https://github.com/patternfly/patternfly/issues/7746
+.pf-v6-c-modal-box__body .pf-v6-c-expandable-section__content:where([hidden]) {
+    display: none;
+}
