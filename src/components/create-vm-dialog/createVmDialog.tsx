@@ -25,7 +25,7 @@ import type { Dialogs } from 'dialogs';
 
 import { debounce } from 'throttle-debounce';
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
-import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
+import { Form, FormGroup, FormSection } from "@patternfly/react-core/dist/esm/components/Form";
 import { FormSelect, FormSelectOption, type FormSelectProps } from "@patternfly/react-core/dist/esm/components/FormSelect";
 import { Grid, GridItem } from "@patternfly/react-core/dist/esm/layouts/Grid";
 import { InputGroup } from "@patternfly/react-core/dist/esm/components/InputGroup";
@@ -1587,16 +1587,19 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
                     validationFailed={validationFailed} />
                 { this.props.mode === "create"
                     ? <Tabs activeKey={this.state.activeTabKey} onSelect={this.handleTabClick}>
-                        <Tab eventKey={0} title={<TabTitleText>{_("Details")}</TabTitleText>} id="details-tab" className="pf-v6-c-form">
-                            {detailsTab}
+                        <Tab eventKey={0} title={<TabTitleText>{_("Details")}</TabTitleText>} id="details-tab">
+                            <FormSection>
+                                {detailsTab}
+                            </FormSection>
                         </Tab>
                         <Tab eventKey={1}
                              title={<TabTitleText>{_("Automation")}</TabTitleText>}
                              id="automation"
-                             className="pf-v6-c-form"
                              {...automationTabTooltip && { tooltip: automationTabTooltip } }
                              isAriaDisabled={!!automationTabTooltip}>
-                            {automationTab}
+                            <FormSection>
+                                {automationTab}
+                            </FormSection>
                         </Tab>
                     </Tabs>
                     : detailsTab }
