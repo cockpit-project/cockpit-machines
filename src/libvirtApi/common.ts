@@ -39,11 +39,6 @@ import {
 } from "../actions/store-actions.js";
 
 import {
-    getRefreshInterval,
-    usagePollingEnabled
-} from "../selectors.js";
-import VMS_CONFIG from "../config.js";
-import {
     logDebug,
 } from "../helpers.js";
 
@@ -125,90 +120,6 @@ function calculateDiskStats(info: DBusProps): VM["disksStats"] {
         }
     }
     return disksStats;
-}
-
-function delayPollingHelper(action: () => void, timeout: number): void {
-    window.setTimeout(() => {
-        logDebug('Executing delayed action');
-        action();
-    }, timeout);
-}
-
-/**
- * Delay call of polling action.
- *
- * To avoid execution overlap, the setTimeout() is used instead of setInterval().
- *
- * The delayPolling() function is called after previous execution is finished so
- * the refresh interval starts counting since that moment.
- *
- * If the application is not visible, the polling action execution is skipped
- * and scheduled on later.
- *
- * @param action I.e. domainGetAll()
- * @param timeout Non-default timeout
- */
-function delayPolling(action: () => void, timeout: number | null): void {
-    timeout = timeout || getRefreshInterval(store.getState());
-
-    if (timeout > 0 && !cockpit.hidden) {
-        logDebug(`Scheduling ${timeout} ms delayed action`);
-        delayPollingHelper(action, timeout);
-    } else {
-        // logDebug(`Skipping delayed action since refreshing is switched off`);
-        window.setTimeout(() => delayPolling(action, timeout), VMS_CONFIG.DefaultRefreshInterval);
-    }
-}
-
-/**
- * Dispatch an action to initialize usage polling for Domain statistics.
- * @param  {String} name           Domain name.
- * @param  {String} connectionName D-Bus connection type; one of session/system.
- * @param  {String} objPath        D-Bus object path of the Domain we need to poll.
- * @return {Promise<void>}
- */
-async function doUsagePolling(
-    name: string,
-    connectionName: ConnectionName,
-    objPath: string,
-): Promise<void> {
-    logDebug(`doUsagePolling(${name}, ${connectionName}, ${objPath})`);
-
-    if (!usagePollingEnabled(store.getState(), name, connectionName)) {
-        logDebug(`doUsagePolling(${name}, ${connectionName}): usage polling disabled, stopping loop`);
-        return;
-    }
-    const flags = Enum.VIR_DOMAIN_STATS_BALLOON | Enum.VIR_DOMAIN_STATS_VCPU | Enum.VIR_DOMAIN_STATS_BLOCK | Enum.VIR_DOMAIN_STATS_STATE;
-
-    try {
-        const [info] = await call<[DBusProps]>(connectionName, objPath, "org.libvirt.Domain", "GetStats", [flags, 0], { timeout: 5000, type: "uu" });
-        if (Object.getOwnPropertyNames(info).length > 0) {
-            const props: Partial<VM> = { name, connectionName, id: objPath };
-            let avgvCpuTime = 0;
-
-            if ("balloon.rss" in info)
-                props.rssMemory = get_number_prop(info, "balloon.rss");
-            else if ("state.state" in info && get_number_prop(info, "state.state") == Enum.VIR_DOMAIN_SHUTOFF)
-                props.rssMemory = 0.0;
-            for (let i = 0; i < get_number_prop(info, "vcpu.maximum"); i++) {
-                if (!(`vcpu.${i}.time` in info))
-                    continue;
-                avgvCpuTime += get_number_prop(info, `vcpu.${i}.time`);
-            }
-            avgvCpuTime /= get_number_prop(info, "vcpu.current");
-            if (get_number_prop(info, "vcpu.current") > 0) {
-                props.actualTimeInMs = Date.now();
-                props.cpuTime = avgvCpuTime;
-            }
-            props.disksStats = calculateDiskStats(info);
-
-            logDebug(`doUsagePolling: ${JSON.stringify(props)}`);
-            store.dispatch(updateVm(props));
-        }
-    } catch (ex) {
-        console.warn(`GetStats(${name}, ${connectionName}) failed: ${String(ex)}`);
-    }
-    delayPolling(() => doUsagePolling(name, connectionName, objPath), null);
 }
 
 async function getLoggedInUser(): Promise<void> {
@@ -503,29 +414,102 @@ export const initState = (): Promise<[void, void]> => Promise.all([
     getOsInfoList(),
 ]);
 
-export function usageStartPolling({
-    name,
-    connectionName,
-    id: objPath
-} : {
-    name: string,
-    connectionName: ConnectionName,
-    id: string,
-}): void {
-    store.dispatch(updateVm({ connectionName, name, usagePolling: true }));
-    doUsagePolling(name, connectionName, objPath);
+/// USAGE POLLING
+
+// We can either poll a single VM (identified by its uuid), or none
+// (value is false), or all (value is true). This corresponds to the
+// different pages: the Details page for a single VM will tell us to
+// poll that VM, the Overview will tell us to poll all of them, and
+// the rest will not poll at all.
+//
+type UsagePollingSpec = boolean | string;
+let usagePolling: UsagePollingSpec = false;
+
+async function pollVmUsage(vm: VM) {
+    const flags = Enum.VIR_DOMAIN_STATS_BALLOON | Enum.VIR_DOMAIN_STATS_VCPU | Enum.VIR_DOMAIN_STATS_BLOCK | Enum.VIR_DOMAIN_STATS_STATE;
+
+    try {
+        const [info] = await call<[DBusProps]>(vm.connectionName, vm.id, "org.libvirt.Domain", "GetStats", [flags, 0], { timeout: 5000, type: "uu" });
+        if (Object.getOwnPropertyNames(info).length > 0) {
+            const props: Partial<VM> = { name: vm.name, connectionName: vm.connectionName, id: vm.id };
+            let avgvCpuTime = 0;
+
+            if ("balloon.rss" in info)
+                props.rssMemory = get_number_prop(info, "balloon.rss");
+            else if ("state.state" in info && get_number_prop(info, "state.state") == Enum.VIR_DOMAIN_SHUTOFF)
+                props.rssMemory = 0.0;
+            for (let i = 0; i < get_number_prop(info, "vcpu.maximum"); i++) {
+                if (!(`vcpu.${i}.time` in info))
+                    continue;
+                avgvCpuTime += get_number_prop(info, `vcpu.${i}.time`);
+            }
+            avgvCpuTime /= get_number_prop(info, "vcpu.current");
+            if (get_number_prop(info, "vcpu.current") > 0) {
+                props.actualTimeInMs = Date.now();
+                props.cpuTime = avgvCpuTime;
+            }
+            props.disksStats = calculateDiskStats(info);
+
+            logDebug(`pollVmUsage: ${JSON.stringify(props)}`);
+            store.dispatch(updateVm(props));
+        }
+    } catch (ex) {
+        console.warn(`GetStats(${vm.name}, ${vm.connectionName}) failed: ${String(ex)}`);
+    }
 }
 
-export function usageStopPolling({
-    name,
-    connectionName
-} : {
-    name: string,
-    connectionName: ConnectionName,
-}): void {
-    store.dispatch(updateVm({
-        connectionName,
-        name,
-        usagePolling: false
-    }));
+export async function pollUsageNow() {
+    const vms = store.getState().vms;
+
+    if (cockpit.hidden)
+        return;
+
+    if (typeof usagePolling === "string") {
+        const vm = vms.find(vm => vm.uuid === usagePolling);
+        if (vm)
+            await pollVmUsage(vm);
+    } else if (usagePolling === true) {
+        for (const vm of vms) {
+            if (usagePolling !== true || cockpit.hidden)
+                break;
+            await pollVmUsage(vm);
+        }
+    }
+}
+
+let usagePollingTimeout: number = 0;
+
+async function startUsagePolling() {
+    // We don't use setInterval since pollUsageNow might take
+    // considerable time itself. So we only restart the timer once
+    // polling is done.
+    await pollUsageNow();
+    if (usagePolling !== false && !cockpit.hidden && usagePollingTimeout == 0) {
+        usagePollingTimeout = window.setTimeout(() => {
+            usagePollingTimeout = 0;
+            startUsagePolling();
+        }, store.getState().config.refreshInterval);
+    }
+}
+
+function cancelUsagePolling() {
+    if (usagePollingTimeout) {
+        window.clearTimeout(usagePollingTimeout);
+        usagePollingTimeout = 0;
+    }
+}
+
+cockpit.addEventListener("visibilitychange", async () => {
+    if (cockpit.hidden)
+        cancelUsagePolling();
+    else
+        startUsagePolling();
+});
+
+export function ensureUsagePolling(spec: UsagePollingSpec) {
+    if (spec !== usagePolling) {
+        usagePolling = spec;
+        cancelUsagePolling();
+        startUsagePolling();
+    }
 }
