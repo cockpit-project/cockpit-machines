@@ -477,25 +477,25 @@ export async function pollUsageNow() {
     }
 }
 
-let usagePollingTimeout: number = 0;
+let usagePollingTimeoutId: number = 0;
 
 async function startUsagePolling() {
     // We don't use setInterval since pollUsageNow might take
     // considerable time itself. So we only restart the timer once
     // polling is done.
     await pollUsageNow();
-    if (usagePolling !== false && !cockpit.hidden && usagePollingTimeout == 0) {
-        usagePollingTimeout = window.setTimeout(() => {
-            usagePollingTimeout = 0;
+    if (usagePolling !== false && !cockpit.hidden && usagePollingTimeoutId == 0) {
+        usagePollingTimeoutId = window.setTimeout(() => {
+            usagePollingTimeoutId = 0;
             startUsagePolling();
         }, store.getState().config.refreshInterval);
     }
 }
 
 function cancelUsagePolling() {
-    if (usagePollingTimeout) {
-        window.clearTimeout(usagePollingTimeout);
-        usagePollingTimeout = 0;
+    if (usagePollingTimeoutId) {
+        window.clearTimeout(usagePollingTimeoutId);
+        usagePollingTimeoutId = 0;
     }
 }
 
