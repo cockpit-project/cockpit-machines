@@ -333,21 +333,22 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                           check_env_empty=False)
 
         # Create VMs until no default generated name
+        m.execute("touch /tmp/disk")
+        m.execute(
+            "virt-install --connect qemu:///system"
+            f" --name NAME"
+            f" --os-variant {config.FEDORA_28_SHORTID}"
+            f" --disk /tmp/disk"
+            " --memory 1 --wait -1 --print-xml >/tmp/xml")
+
+        start = time.time()
         for v in string.ascii_uppercase:
             vm_name = predicted_name + "-" + v
-            vm_path = "/tmp/" + vm_name
-
-            m.execute(f"touch {vm_path}")
-            m.execute(
-                "virt-install --connect qemu:///system"
-                f" --name {vm_name}"
-                f" --os-variant {config.FEDORA_28_SHORTID}"
-                f" --disk {vm_path}"
-                " --memory 1 --wait -1 --print-xml > /tmp/xml;"
-                " virsh define /tmp/xml")
+            m.execute(f"sed -e 's/NAME/{vm_name}/' </tmp/xml | grep -v uuid >/tmp/xml2; virsh define /tmp/xml2")
             b.wait_visible(f"#vm-{vm_name}-system-name")
-
             self.addCleanup(self.machine.execute, f"virsh undefine {vm_name}")
+        end = time.time()
+        print("TOOK", end - start)
 
         b.click("#create-new-vm")
         b.wait_visible("#create-vm-dialog")
