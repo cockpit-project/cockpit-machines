@@ -650,7 +650,7 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
             <ListingTable aria-label={`VM ${vm.name} Network Interface Cards`}
                           gridBreakPoint='grid-lg'
                           variant='compact'
-                          emptyCaption={_("No network interfaces defined for this VM")}
+                          emptyCaption={_("No network interfaces")}
                           columns={columnTitles}
                           rows={rows} />
         );

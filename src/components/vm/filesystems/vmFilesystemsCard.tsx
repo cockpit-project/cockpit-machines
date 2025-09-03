@@ -100,7 +100,7 @@ export const VmFilesystemsCard = ({
     return (
         <ListingTable variant='compact'
                           gridBreakPoint='grid-lg'
-                          emptyCaption={_("No directories shared between the host and this VM")}
+                          emptyCaption={_("No shared directories")}
                           columns={columnTitles}
                           rows={rows} />
     );

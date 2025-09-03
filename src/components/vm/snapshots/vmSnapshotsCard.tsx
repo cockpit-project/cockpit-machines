@@ -267,8 +267,8 @@ export class VmSnapshotsCard extends React.Component<VmSnapshotsCardProps> {
             <ListingTable aria-label={`VM ${vm.name} Snapshots Cards`}
                           gridBreakPoint='grid-lg'
                           variant="compact"
-                          emptyCaption={_("No snapshots defined for this VM")}
-                          emptyCaptionDetail={_("Previously taken snapshots allow you to revert to an earlier state if something goes wrong")}
+                          emptyCaption={_("No snapshots")}
+                          emptyCaptionDetail={_("Snapshots allow you to revert to an earlier state")}
                           columns={columnTitles}
                           rows={rows} />
         );
