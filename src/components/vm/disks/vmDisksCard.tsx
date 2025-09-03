@@ -291,7 +291,7 @@ export const VmDisksCard = ({
     return (
         <ListingTable variant='compact'
                 gridBreakPoint='grid-lg'
-                emptyCaption={_("No disks defined for this VM")}
+                emptyCaption={_("No disks")}
                 aria-label={`VM ${vm.name} Disks`}
                 columns={columnTitles}
                 rows={rows} />

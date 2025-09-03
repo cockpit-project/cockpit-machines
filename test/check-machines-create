@@ -1865,7 +1865,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                 else:
                     raise AssertionError("Unknown disk device")
             else:
-                b.wait_in_text(f"#vm-{name}-disks .pf-v6-c-empty-state", "No disks defined")
+                b.wait_in_text(f"#vm-{name}-disks .pf-v6-c-empty-state", "No disks")
                 b.click(f"#vm-{name}-disks-adddisk")
                 b.click(f"#vm-{name}-disks-adddisk-dialog-cancel")
 

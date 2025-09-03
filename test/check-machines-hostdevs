@@ -172,7 +172,7 @@ class TestMachinesHostDevs(machineslib.VirtualMachinesCase):
 
         self.goToVmPage("subVmTest1")
 
-        b.wait_in_text("#vm-subVmTest1-hostdevs .pf-v6-c-empty-state__body", "No host devices assigned to this VM")
+        b.wait_in_text("#vm-subVmTest1-hostdevs .pf-v6-c-empty-state__body", "No host devices")
 
         # Test hot plug of USB host device
         # A usb device might not always be present

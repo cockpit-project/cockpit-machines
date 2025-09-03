@@ -328,7 +328,7 @@ export const VmHostDevCard = ({
         <ListingTable aria-label={cockpit.format(_("VM $0 Host Devices"), vm.name)}
                       gridBreakPoint='grid-lg'
                       variant='compact'
-                      emptyCaption={_("No host devices assigned to this VM")}
+                      emptyCaption={_("No host devices")}
                       rows={rows}
                       columns={columnTitles} />
     );
