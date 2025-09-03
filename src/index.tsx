@@ -29,6 +29,7 @@ import store from './store.js';
 import { load_config } from './config.js';
 import App from './app.jsx';
 import { logDebug } from './helpers.js';
+import { initTestMock } from './mock';
 
 import "./machines.scss";
 
@@ -55,6 +56,7 @@ function appMain(): void {
 
 (function() {
     document.addEventListener("DOMContentLoaded", async function() {
+        initTestMock();
         await load_config();
         appMain();
     });
