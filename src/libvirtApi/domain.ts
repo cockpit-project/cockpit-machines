@@ -95,6 +95,8 @@ export const domainCanShutdown = (vmState: VMState) => domainCanReset(vmState);
 export const domainCanPause = (vmState: VMState) => vmState == 'running';
 export const domainCanRename = (vmState: VMState) => vmState == 'shut off';
 export const domainCanResume = (vmState: VMState) => vmState == 'paused';
+export const domainCanSuspendToDisk = (vmState: VMState) => vmState == 'running' || vmState == 'paused';
+export const domainCanSuspenImageRemove = (vmState: VMState, saveImage: Boolean) => vmState == "shut off" && saveImage == true;
 export const domainIsRunning = (vmState: VMState) => domainCanReset(vmState);
 export const domainSerialConsoleCommand = ({ vm, alias } : { vm: VM, alias: string }) => {
     if (vm.displays.find(display => display.type == 'pty'))
@@ -865,6 +867,9 @@ export async function domainGet({
             supportsTPM: getDomainCapSupportsTPM(domCaps),
         };
 
+        const [suspendImage] = await call<[number]>(connectionName, objPath, 'org.libvirt.Domain', 'HasManagedSaveImage', [0], { timeout, type: 'u' });
+        props.suspendImage = suspendImage?true:false;
+
         const [state] = await call<[number[]]>(connectionName, objPath, 'org.libvirt.Domain', 'GetState', [0], { timeout, type: 'u' });
         const stateStr = DOMAINSTATE[state[0]];
 
@@ -1149,6 +1154,36 @@ export function domainResume({
     id: string,
 }): Promise<void> {
     return call(connectionName, objPath, 'org.libvirt.Domain', 'Resume', [], { timeout, type: '' });
+}
+
+export function domainSuspendToDisk({
+    connectionName,
+    id: objPath,
+    flags
+} : {
+    connectionName: ConnectionName,
+    id: string,
+    flags: Number,
+}): Promise<void> {
+    return call(connectionName, objPath, 'org.libvirt.Domain', 'ManagedSave', [flags], { timeout, type: 'u' });
+}
+export function domainSuspendImageRemove({
+    connectionName,
+    id: objPath,
+} : {
+    connectionName: ConnectionName,
+    id: string,
+}): Promise<void> {
+    return call(connectionName, objPath, 'org.libvirt.Domain', 'ManagedSaveRemove', [0], { timeout, type: 'u' });
+}
+export function domainHasSuspendImage({
+    connectionName,
+    id: objPath,
+} : {
+    connectionName: ConnectionName,
+    id: string,
+}): Promise<void> {
+    return call(connectionName, objPath, 'org.libvirt.Domain', 'HasManagedSaveImage', [0], { timeout, type: 'u' });
 }
 
 export function domainSendKey({

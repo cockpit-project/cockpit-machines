@@ -52,6 +52,8 @@ import {
     domainCanPause,
     domainCanShutdown,
     domainForceOff,
+    domainCanSuspendToDisk,
+    domainCanSuspenImageRemove,
     domainForceReboot,
     domainInstall,
     domainPause,
@@ -61,6 +63,9 @@ import {
     domainShutdown,
     domainStart,
     domainAddTPM,
+    domainSuspendToDisk,
+    domainSuspendImageRemove,
+    domainHasSuspendImage,
 } from '../../libvirtApi/domain.js';
 import store from "../../store.js";
 
@@ -88,6 +93,11 @@ const onInstall = (vm: VM, onAddErrorNotification: (n: Notification) => void) =>
         onAddErrorNotification({
             text: cockpit.format(_("VM $0 failed to get installed"), vm.name),
             detail: ex.message.split(/Traceback(.+)/)[0],
+
+const onAddTPM = (vm, onAddErrorNotification) => domainAddTPM({ connectionName: vm.connectionName, vmName: vm.name })
+        .catch(ex => onAddErrorNotification({
+            text: cockpit.format(_("Failed to add TPM to VM $0"), vm.name),
+            detail: ex.message,
             resourceId: vm.id,
         });
     })
@@ -203,6 +213,47 @@ const onSendNMI = (vm: VM) => (
     })
 );
 
+const onSuspendToDisk = (vm: VM) => (
+    domainSuspendToDisk({ id: vm.id, connectionName: vm.connectionName, flags: vm.state == 'running' ? 2 : 4 }).catch(ex => {
+        store.dispatch(
+            updateVm({
+                connectionName: vm.connectionName,
+                name: vm.name,
+                error: {
+                    text: cockpit.format(_("VM $0 failed to save "), vm.name),
+                    detail: ex.message,
+                }
+            })
+        );
+    })
+);
+
+const onSuspendImageRemove = (vm: VM) => (
+    domainSuspendImageRemove({ id: vm.id, connectionName: vm.connectionName })
+        .then(() => domainHasSuspendImage({ id: vm.id, connectionName: vm.connectionName }))
+        .then((SuspendImage) => {
+            store.dispatch(
+                updateVm({
+                    connectionName: vm.connectionName,
+                    name: vm.name,
+                    suspendImage: SuspendImage[0],
+                })
+            );
+        })
+        .catch(ex => {
+            store.dispatch(
+                updateVm({
+                    connectionName: vm.connectionName,
+                    name: vm.name,
+                    error: {
+                        text: cockpit.format(_("VM $0 failed to remove save image "), vm.name),
+                        detail: ex.message,
+                    }
+                })
+            );
+    })
+);
+
 const onAddTPM = (vm: VM, onAddErrorNotification: (n: Notification) => void) => (
     domainAddTPM({ connectionName: vm.connectionName, vmName: vm.name })
             .catch(ex => onAddErrorNotification({
@@ -240,6 +291,7 @@ const VmActions = ({
 
     const id = `${vmId(vm.name)}-${vm.connectionName}`;
     const state = vm.state;
+    const suspendImage = vm.suspendImage;
     const hasInstallPhase = vm.metadata && vm.metadata.hasInstallPhase;
     const dropdownItems = [];
 
@@ -253,7 +305,17 @@ const VmActions = ({
                 {_("Pause")}
             </DropdownItem>
         );
-        dropdownItems.push(<Divider key="separator-pause" />);
+    }
+
+    if (domainCanSuspendToDisk(state)) {
+        dropdownItems.push(
+            <DropdownItem key={`${id}-save`}
+                          id={`${id}-save`}
+                          onClick={() => onSuspendToDisk(vm)}>
+                {_("Suspend to disk")}
+            </DropdownItem>
+        );
+        dropdownItems.push(<Divider key="separator-suspend" />);
     }
 
     if (domainCanResume(state)) {
@@ -266,6 +328,19 @@ const VmActions = ({
         );
         dropdownItems.push(<Divider key="separator-resume" />);
     }
+
+
+    if (domainCanSuspenImageRemove(state, suspendImage)) {
+        dropdownItems.push(
+            <DropdownItem key={`${id}-saveRemove`}
+                          id={`${id}-savedRemove`}
+                          onClick={() => onSuspendImageRemove(vm)}>
+                {_("Remove Suspend Image")}
+            </DropdownItem>
+        );
+        dropdownItems.push(<Divider key="separator-suspend" />);
+    }
+
 
     if (domainCanShutdown(state)) {
         shutdown = (
