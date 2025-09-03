@@ -258,7 +258,7 @@ const IpRow = ({
     validationFailed: ValidationFailed,
 }) => {
     return (
-        <FormGroup fieldId='create-network-ip-configuration' label={_("IP configuration")} isStack>
+        <FormGroup fieldId='create-network-ip-configuration' label={_("IP configuration")}>
             <FormSelect id='create-network-ip-configuration'
                         value={dialogValues.ip}
                         onChange={(_event, value) => onValueChanged('ip', value)}>
