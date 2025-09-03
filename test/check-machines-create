@@ -353,14 +353,11 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         b.wait_visible("#create-vm-dialog")
         b.wait_attr("#vm-name", "placeholder", "Unique name")
 
-        b.click("#os-select-group > div button")
-        b.click(f"#os-select li:contains('{config.FEDORA_28}') button")
-        b.wait_attr("#os-select-group input", "value", config.FEDORA_28)
+        b.set_input_text("#os-select-group input", config.FEDORA_28)
 
         b.click("#create-and-edit")
-        b.wait_visible("#create-vm-dialog")
-        b.wait_text("#vm-name-group .pf-v5-c-helper-text__item-text", "Name must not be empty")
-        b.wait_visible("#create-and-run[aria-disabled=true]")
+        b.wait_text("#vm-name-group .pf-v6-c-helper-text__item-text", "Name must not be empty")
+        b.wait_visible("#create-and-run[disabled]")
         b.wait_visible("#create-and-edit[aria-disabled=true]")
 
     def testCreateCloudBaseImage(self):
