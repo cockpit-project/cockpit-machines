@@ -605,6 +605,24 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         self.allow_browser_errors("Disconnection timed out.")
         self.allow_journal_messages(".* couldn't shutdown fd: Transport endpoint is not connected")
 
+    def testUiOnlyVm(self):
+        b = self.browser
+
+        self.login_and_go("/machines")
+        self.waitPageInit()
+
+        name = "uivm"
+
+        b.eval_js(f"window.testMock.addUiVm('{name}')")
+        self.waitVmRow(name)
+
+        b.wait_in_text(f"#vm-{name}-system-state", "Creating VM")
+        self.goToVmPage(name)
+        b.wait_visible(f"h1:contains('Creating VM {name}')")
+
+        b.click("button:contains('Go to VMs list')")
+        b.wait_visible("#virtual-machines-listing")
+
 
 if __name__ == '__main__':
     testlib.test_main()
