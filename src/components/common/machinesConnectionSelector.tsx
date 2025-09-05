@@ -101,18 +101,21 @@ export const MachinesConnectionSelector = ({
                        }
                        : {}
                    }>
-            <Radio isChecked={connectionName === LIBVIRT_SYSTEM_CONNECTION}
-                   onChange={() => onValueChanged('connectionName', LIBVIRT_SYSTEM_CONNECTION)}
-                   name="connectionName"
-                   id="connectionName-system"
-                   isDisabled={isDisabled}
-                   label={rephraseUI("connections", LIBVIRT_SYSTEM_CONNECTION)} />
-            <Radio isChecked={connectionName == LIBVIRT_SESSION_CONNECTION}
-                   onChange={() => onValueChanged('connectionName', LIBVIRT_SESSION_CONNECTION)}
-                   name="connectionName"
-                   id="connectionName-session"
-                   isDisabled={isDisabled}
-                   label={rephraseUI("connections", LIBVIRT_SESSION_CONNECTION)} />
+            { isDisabled
+                ? rephraseUI("connections", connectionName)
+                : <>
+                    <Radio isChecked={connectionName === LIBVIRT_SYSTEM_CONNECTION}
+                        onChange={() => onValueChanged('connectionName', LIBVIRT_SYSTEM_CONNECTION)}
+                        name="connectionName"
+                        id="connectionName-system"
+                        label={rephraseUI("connections", LIBVIRT_SYSTEM_CONNECTION)} />
+                    <Radio isChecked={connectionName == LIBVIRT_SESSION_CONNECTION}
+                        onChange={() => onValueChanged('connectionName', LIBVIRT_SESSION_CONNECTION)}
+                        name="connectionName"
+                        id="connectionName-session"
+                        label={rephraseUI("connections", LIBVIRT_SESSION_CONNECTION)} />
+                </>
+            }
         </FormGroup>
     );
 };

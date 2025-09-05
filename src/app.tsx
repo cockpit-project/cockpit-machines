@@ -165,6 +165,7 @@ export interface Notification {
 
 interface AppActiveProps {
     error: string;
+    systemSocketAvailable: boolean;
 }
 
 interface AppActiveState {
