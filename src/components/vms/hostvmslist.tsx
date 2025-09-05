@@ -69,6 +69,8 @@ const VmState = ({
         } else if (vm.createInProgress) {
             state = _("Creating VM");
         }
+    } else if (vm.state == "shut off" && vm.suspendImage === true) {
+        state = `${vm.state} (suspended)`;
     } else {
         state = vm.state;
     }
