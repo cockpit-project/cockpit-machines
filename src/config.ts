@@ -27,6 +27,7 @@ import { get_manifest_config_matchlist } from "utils";
 
 interface VmsConfig {
     DefaultRefreshInterval: number;
+    MaxPolledVMs: number;
     DummyVmsWaitInterval: number;
     WaitForRetryInstallVm: number;
     StorageMigrationSupported: boolean;
@@ -35,6 +36,7 @@ interface VmsConfig {
 
 const VMS_CONFIG: VmsConfig = {
     DefaultRefreshInterval: 10000, // in ms
+    MaxPolledVMs: 20, // When more than this number of machines are listed on the overview, no usage polling will be done. This avoids excessive traffic.
     DummyVmsWaitInterval: 10 * 60 * 1000, // show dummy vms for max 10 minutes; to let virt-install do work before getting vm from virsh
     WaitForRetryInstallVm: 3 * 1000, // wait for vm to recover in the ui after failed install to show the error
     StorageMigrationSupported: true,
@@ -52,6 +54,7 @@ export async function load_config(): Promise<void> {
     }
 
     import_config("DefaultRefreshInterval", import_number);
+    import_config("MaxPolledVMs", import_number);
     import_config("DummyVmsWaitInterval", import_number);
     import_config("WaitForRetryInstallVm", import_number);
     import_config("StorageMigrationSupported", import_boolean);
