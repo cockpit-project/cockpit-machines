@@ -145,6 +145,12 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         # CPU usage cannot be nonzero with blank image, so just ensure it's a percentage
         testlib.wait(lambda: float(usage) <= 100.0, delay=3)
 
+        # check usage on overview
+        b.go("/machines#/")
+        b.wait_visible("[data-row-id=vm-subVmTest1-system] [data-label=Memory] .pf-v6-c-progress")
+        b.wait_visible("[data-row-id=vm-subVmTest1-system] [data-label=CPU] .pf-v6-c-progress")
+        self.goToVmPage("subVmTest1")
+
         # suspend/resume
         m.execute("virsh suspend subVmTest1")
         b.wait_in_text("#vm-subVmTest1-system-state", "Paused")
@@ -229,7 +235,8 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         if run_pixel_tests:
             b.wait_visible("#import-existing-vm:not([aria-disabled=false])")
             b.wait_visible("#create-new-vm:not([aria-disabled=true]")
-            b.assert_pixels("#virtual-machines-page", "main-page")
+            b.assert_pixels("#virtual-machines-page", "main-page",
+                            ignore=["[data-label=CPU]", "[data-label=Memory]"])
 
         # stop second VM, event handling should still work
         self.performAction("subVmTest2", "forceOff")
@@ -604,6 +611,50 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         # Deleting a running guest will disconnect the serial console
         self.allow_browser_errors("Disconnection timed out.")
         self.allow_journal_messages(".* couldn't shutdown fd: Transport endpoint is not connected")
+
+    def create_many_vms(self, machine, names):
+        machine.execute("touch /tmp/disk")
+        machine.execute("virt-install --connect qemu:///system"
+                        " --name NAME"
+                        " --os-variant linux2016"
+                        " --check path_in_use=off"
+                        " --disk /tmp/disk"
+                        " --memory 1"
+                        " --wait -1 --print-xml >/tmp/xml")
+        for n in names:
+            machine.execute(f"sed -e 's/NAME/{n}/' </tmp/xml | grep -v uuid >/tmp/xml2; virsh define /tmp/xml2")
+
+    def testOverviewUsage(self):
+        b = self.browser
+        m = self.machine
+
+        # Create one running machine
+
+        name = "subVmTest1"
+        self.createVm(name)
+
+        self.login_and_go("/machines")
+        self.waitPageInit()
+        self.waitVmRow(name)
+
+        # It should have usage bars
+        b.wait_visible("[data-row-id=vm-subVmTest1-system] [data-label=Memory] .pf-v6-c-progress")
+        b.wait_visible("[data-row-id=vm-subVmTest1-system] [data-label=CPU] .pf-v6-c-progress")
+
+        # Quickly create 19 more non-running VMs
+        self.create_many_vms(m, ["extraVm" + str(n) for n in range(1, 20)])
+        self.waitVmRow("extraVm19")
+
+        # Usage bars for first machine should still be there
+        b.wait_visible("[data-row-id=vm-subVmTest1-system] [data-label=Memory] .pf-v6-c-progress")
+        b.wait_visible("[data-row-id=vm-subVmTest1-system] [data-label=CPU] .pf-v6-c-progress")
+
+        # Create one more
+        self.create_many_vms(m, ["extraVm20"])
+
+        # Usage columns should have disappeared completely
+        b.wait_not_present("[data-row-id=vm-subVmTest1-system] [data-label=Memory]")
+        b.wait_not_present("[data-row-id=vm-subVmTest1-system] [data-label=CPU]")
 
 
 if __name__ == '__main__':
