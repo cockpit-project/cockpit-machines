@@ -35,12 +35,22 @@ SOFTWARE.
 
 import React from 'react';
 
-import { initLogging } from '@novnc/novnc/lib/util/logging';
-import RFB_module from '@novnc/novnc/lib/rfb';
-const RFB = RFB_module.default;
+import RFB from '@novnc/novnc/lib/rfb';
+
+/* HACK - there is something weird going on with NoVNC modules and the
+ * way we bundle things. The default export should be the RFB
+ * class/constructor, but we get a wrapper that has the constructor in
+ * its "default" field.  The hack below gives us access to the
+ * constructor function but this is clearly not how this is intended
+ * to be done...
+ */
+const RFB_constructor: typeof RFB = (RFB as unknown as { default: typeof RFB }).default;
+
+export interface VncCredentials {
+    password: string;
+}
 
 export const VncConsole = ({
-    children,
     host,
     port = '80',
     path = '',
@@ -52,37 +62,54 @@ export const VncConsole = ({
     viewOnly = false,
     shared = false,
     repeaterID = '',
-    vncLogging = 'warn',
     consoleContainerId,
-    onConnected = (element) => {},
+    onConnected = () => {},
     onDisconnected = () => {},
     onInitFailed,
     onSecurityFailure,
     getCredentials,
+} : {
+    host: string,
+    port?: string,
+    path?: string,
+    encrypt?: boolean,
+    resizeSession?: boolean,
+    clipViewport?: boolean,
+    dragViewport?: boolean,
+    scaleViewport?: boolean,
+    viewOnly?: boolean,
+    shared?: boolean,
+    repeaterID?: string,
+    consoleContainerId: string,
+    onConnected?: (element: HTMLElement | null) => void,
+    onDisconnected: (clean: boolean) => void,
+    onInitFailed: (detail: unknown) => void,
+    onSecurityFailure: (reason: string | undefined) => void,
+    getCredentials: () => Promise<VncCredentials>,
 }) => {
-    const rfb = React.useRef();
+    const rfb = React.useRef<RFB>();
 
-    const novncElem = React.useRef(null);
+    const novncElem = React.useRef<HTMLDivElement>(null);
 
     const _onDisconnected = React.useCallback(
-        (e) => {
-            onDisconnected(e);
+        (e: CustomEvent<{ clean: boolean }>) => {
+            onDisconnected(e.detail.clean);
         },
         [onDisconnected]
     );
 
     const _onSecurityFailure = React.useCallback(
-        (e) => {
-            onSecurityFailure(e);
+        (e: CustomEvent<{ status: number; reason?: string }>) => {
+            onSecurityFailure(e.detail.reason);
         },
         [onSecurityFailure]
     );
 
     const _onCredentialsRequired = React.useCallback(
-        async (e) => {
+        async () => {
             if (rfb.current) {
                 const creds = await getCredentials();
-                rfb.current.sendCredentials(creds);
+                rfb.current.sendCredentials({ username: "", target: "", ...creds });
             }
         },
         [getCredentials]
@@ -112,13 +139,14 @@ export const VncConsole = ({
             repeaterID,
             shared,
         };
-        rfb.current = new RFB(novncElem.current, url, options);
+        const rfb_object = new RFB_constructor(novncElem.current!, url, options);
+        rfb_object.viewOnly = viewOnly;
+        rfb_object.clipViewport = clipViewport;
+        rfb_object.dragViewport = dragViewport;
+        rfb_object.scaleViewport = scaleViewport;
+        rfb_object.resizeSession = resizeSession;
+        rfb.current = rfb_object;
         addEventListeners();
-        rfb.current.viewOnly = viewOnly;
-        rfb.current.clipViewport = clipViewport;
-        rfb.current.dragViewport = dragViewport;
-        rfb.current.scaleViewport = scaleViewport;
-        rfb.current.resizeSession = resizeSession;
     }, [
         addEventListeners,
         host,
@@ -136,12 +164,11 @@ export const VncConsole = ({
     ]);
 
     React.useEffect(() => {
-        initLogging(vncLogging);
         try {
             connect();
             onConnected(novncElem.current);
         } catch (e) {
-            onInitFailed && onInitFailed(e);
+            if (onInitFailed) onInitFailed(e);
             rfb.current = undefined;
         }
 
@@ -150,7 +177,7 @@ export const VncConsole = ({
             removeEventListeners();
             rfb.current = undefined;
         };
-    }, [connect, onInitFailed, onConnected, removeEventListeners, vncLogging]);
+    }, [connect, onInitFailed, onConnected, removeEventListeners]);
 
     const disconnect = () => {
         if (!rfb.current) {

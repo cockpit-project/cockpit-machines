@@ -20,6 +20,8 @@
 import React from 'react';
 import cockpit from 'cockpit';
 
+import type { VM, VMGraphics } from '../../../types';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { EmptyState, EmptyStateBody, EmptyStateFooter, EmptyStateActions } from "@patternfly/react-core/dist/esm/components/EmptyState";
 import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/index.js";
@@ -31,7 +33,13 @@ import { LaunchViewerButton, connection_address } from './common';
 
 const _ = cockpit.gettext;
 
-const SpiceFooter = ({ vm, spice }) => {
+const SpiceFooter = ({
+    vm,
+    spice
+} : {
+    vm: VM,
+    spice: VMGraphics | null,
+}) => {
     return (
         <div className="vm-console-footer">
             <Split>
@@ -40,9 +48,8 @@ const SpiceFooter = ({ vm, spice }) => {
                     <LaunchViewerButton
                         vm={vm}
                         console={spice}
-                        url={spice && cockpit.format("spice://$0:$1", connection_address(), spice.port)}
-                        onEdit={null}
-                        editLabel={null}
+                        {...spice &&
+                            { url: cockpit.format("spice://$0:$1", connection_address(), spice.port) }}
                     />
                 </SplitItem>
             </Split>
@@ -50,7 +57,17 @@ const SpiceFooter = ({ vm, spice }) => {
     );
 };
 
-const Spice = ({ vm, isActive, isExpanded, spice }) => {
+const Spice = ({
+    vm,
+    isActive = false,
+    isExpanded,
+    spice
+} : {
+    vm: VM,
+    isActive?: boolean,
+    isExpanded: boolean,
+    spice: VMGraphics | null,
+}) => {
     const Dialogs = useDialogs();
 
     function replace_spice() {
@@ -84,10 +101,24 @@ const Spice = ({ vm, isActive, isExpanded, spice }) => {
     );
 };
 
-export const SpiceActive = ({ vm, isExpanded, spice }) => {
+export const SpiceActive = ({
+    vm,
+    isExpanded,
+    spice
+} : {
+    vm: VM,
+    isExpanded: boolean,
+    spice: VMGraphics,
+}) => {
     return <Spice isActive vm={vm} isExpanded={isExpanded} spice={spice} />;
 };
 
-export const SpiceInactive = ({ vm, isExpanded }) => {
-    return <Spice vm={vm} isExpanded={isExpanded} />;
+export const SpiceInactive = ({
+    vm,
+    isExpanded
+} : {
+    vm: VM,
+    isExpanded: boolean,
+}) => {
+    return <Spice vm={vm} isExpanded={isExpanded} spice={null} />;
 };

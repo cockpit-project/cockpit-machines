@@ -84,7 +84,7 @@ export class StateObject extends EventEmitter<StateEvents> {
         this.emit("render");
     }
 
-    follow(obj: StateObject, callback: () => void) {
+    follow(obj: StateObject, callback?: () => void) {
         return obj.on("render", callback || (() => this.update()));
     }
 
@@ -96,8 +96,8 @@ type Tuple = readonly [...unknown[]];
 type Comparator<T> = (a: T, b: T) => boolean;
 type Comparators<T extends Tuple> = {[ t in keyof T ]?: Comparator<T[t]>};
 
-export function useStateObject<D extends Tuple>(constructor: () => StateObject, deps: D, comps?: Comparators<D>) {
-    const state = useObject<StateObject, D>(constructor, obj => obj.close(), deps, comps);
+export function useStateObject<T extends StateObject, D extends Tuple>(constructor: () => T, deps: D, comps?: Comparators<D>): T {
+    const state = useObject<T, D>(constructor, obj => obj.close(), deps, comps);
     useOn(state, "render");
     return state;
 }

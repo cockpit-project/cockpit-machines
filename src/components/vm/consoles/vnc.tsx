@@ -20,6 +20,9 @@
 import React, { useState } from 'react';
 import cockpit from 'cockpit';
 
+import type { VM, VMGraphics } from '../../../types';
+import type { Notification } from '../../../app';
+
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Form, FormGroup, FormHelperText } from "@patternfly/react-core/dist/esm/components/Form";
@@ -46,53 +49,39 @@ import { logDebug, readQemuConf } from '../../../helpers.js';
 import { LaunchViewerButton, connection_address, ConsoleState } from './common';
 import { domainSendKey, domainAttachVnc, domainChangeVncSettings, domainGet } from '../../../libvirtApi/domain.js';
 
-import { VncConsole } from './VncConsole';
+import { VncConsole, VncCredentials } from './VncConsole';
 
 const _ = cockpit.gettext;
-// https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h
-const Enum = {
-    KEY_BACKSPACE: 14,
-    KEY_LEFTCTRL: 29,
-    KEY_LEFTALT: 56,
-    KEY_F1: 59,
-    KEY_F2: 60,
-    KEY_F3: 61,
-    KEY_F4: 62,
-    KEY_F5: 63,
-    KEY_F6: 64,
-    KEY_F7: 65,
-    KEY_F8: 66,
-    KEY_F9: 67,
-    KEY_F10: 68,
-    KEY_F11: 87,
-    KEY_F12: 88,
-    KEY_DELETE: 111,
-};
+
+export type VncSizeMode = "none" | "local" | "remote";
 
 export class VncState extends ConsoleState {
-    constructor() {
-        super();
-        this.sizeMode = "none";
-    }
+    sizeMode: VncSizeMode = "none";
 
-    setSizeMode(val) {
+    setSizeMode(val: VncSizeMode) {
         this.sizeMode = val;
         this.update();
     }
 }
 
-const VncEditModal = ({ vm, inactive_vnc }) => {
-    const config_port = (inactive_vnc.port == -1) ? "" : (inactive_vnc.port || "");
+const VncEditModal = ({
+    vm,
+    inactive_vnc
+} : {
+    vm: VM,
+    inactive_vnc: VMGraphics,
+}) => {
+    const config_port = (Number(inactive_vnc.port) == -1) ? "" : (inactive_vnc.port || "");
     const config_password = inactive_vnc.password || "";
 
     const Dialogs = useDialogs();
     const [port, setPort] = useState(config_port);
     const [password, setPassword] = useState(config_password);
     const [showPassword, setShowPassword] = useState(false);
-    const [portError, setPortError] = useState(null);
-    const [passwordError, setPasswordError] = useState(null);
-    const [applyError, setApplyError] = useState(null);
-    const [applyErrorDetail, setApplyErrorDetail] = useState(null);
+    const [portError, setPortError] = useState<null | string>(null);
+    const [passwordError, setPasswordError] = useState<null | string>(null);
+    const [applyError, setApplyError] = useState<null | string>(null);
+    const [applyErrorDetail, setApplyErrorDetail] = useState<string>("");
 
     function validate() {
         let field_errors = 0;
@@ -133,7 +122,7 @@ const VncEditModal = ({ vm, inactive_vnc }) => {
             Dialogs.close();
         } catch (ex) {
             setApplyError(_("VNC settings could not be saved"));
-            setApplyErrorDetail(ex.message);
+            setApplyErrorDetail(String(ex));
         }
     }
 
@@ -218,7 +207,43 @@ const VncEditModal = ({ vm, inactive_vnc }) => {
     );
 };
 
-export const VncActiveActions = ({ state, vm, vnc, isExpanded, onAddErrorNotification }) => {
+// https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h
+const ResetKeys = {
+    Backspace: 14,
+    Delete: 111,
+};
+
+const FunctionKeys = {
+    F1: 59,
+    F2: 60,
+    F3: 61,
+    F4: 62,
+    F5: 63,
+    F6: 64,
+    F7: 65,
+    F8: 66,
+    F9: 67,
+    F10: 68,
+    F11: 87,
+    F12: 88,
+};
+
+const Modifiers = {
+    LEFTCTRL: 29,
+    LEFTALT: 56,
+};
+
+export const VncActiveActions = ({
+    state,
+    vm,
+    onAddErrorNotification,
+    isExpanded,
+} : {
+    state: VncState,
+    vm: VM,
+    onAddErrorNotification: (notification: Notification) => void,
+    isExpanded: boolean,
+}) => {
     const [isOpen, setIsOpen] = useState(false);
 
     if (!state.connected)
@@ -227,7 +252,7 @@ export const VncActiveActions = ({ state, vm, vnc, isExpanded, onAddErrorNotific
     let scale_resize_dropdown = null;
     if (isExpanded) {
         scale_resize_dropdown = (
-            <SimpleSelect
+            <SimpleSelect<VncSizeMode>
                 toggleProps={{ id: "vm-console-vnc-scaling" }}
                 options={
                     [
@@ -243,7 +268,7 @@ export const VncActiveActions = ({ state, vm, vnc, isExpanded, onAddErrorNotific
         );
     }
 
-    const renderDropdownItem = keyName => {
+    const renderDropdownItem = ([keyName, keyCode] : [string, number]) => {
         return (
             <DropdownItem
                 id={cockpit.format("ctrl-alt-$0", keyName)}
@@ -254,9 +279,9 @@ export const VncActiveActions = ({ state, vm, vnc, isExpanded, onAddErrorNotific
                         connectionName: vm.connectionName,
                         id: vm.id,
                         keyCodes: [
-                            Enum.KEY_LEFTCTRL,
-                            Enum.KEY_LEFTALT,
-                            Enum[cockpit.format("KEY_$0", keyName.toUpperCase())]
+                            Modifiers.LEFTCTRL,
+                            Modifiers.LEFTALT,
+                            keyCode,
                         ]
                     })
                             .catch(ex => onAddErrorNotification({
@@ -271,9 +296,9 @@ export const VncActiveActions = ({ state, vm, vnc, isExpanded, onAddErrorNotific
     };
 
     const dropdownItems = [
-        ...['Delete', 'Backspace'].map(key => renderDropdownItem(key)),
+        ...Object.entries(ResetKeys).map(renderDropdownItem),
         <Divider key="separator" />,
-        ...[...Array(12).keys()].map(key => renderDropdownItem(cockpit.format("F$0", key + 1))),
+        ...Object.entries(FunctionKeys).map(renderDropdownItem),
     ];
 
     return (
@@ -303,7 +328,15 @@ export const VncActiveActions = ({ state, vm, vnc, isExpanded, onAddErrorNotific
     );
 };
 
-const VncFooter = ({ vm, vnc, inactive_vnc, onAddErrorNotification }) => {
+const VncFooter = ({
+    vm,
+    vnc,
+    inactive_vnc,
+} : {
+    vm: VM,
+    vnc: null | VMGraphics,
+    inactive_vnc: undefined | VMGraphics,
+}) => {
     const Dialogs = useDialogs();
 
     return (
@@ -315,7 +348,11 @@ const VncFooter = ({ vm, vnc, inactive_vnc, onAddErrorNotification }) => {
                         vm={vm}
                         console={vnc}
                         url={vnc && cockpit.format("vnc://$0:$1", connection_address(), vnc.port)}
-                        onEdit={() => Dialogs.show(<VncEditModal vm={vm} inactive_vnc={inactive_vnc} />)}
+                        onEdit={
+                            inactive_vnc
+                                ? () => Dialogs.show(<VncEditModal vm={vm} inactive_vnc={inactive_vnc} />)
+                                : null
+                        }
                         editLabel={_("Edit VNC settings")}
                     />
                 </SplitItem>
@@ -324,14 +361,28 @@ const VncFooter = ({ vm, vnc, inactive_vnc, onAddErrorNotification }) => {
     );
 };
 
-export class VncActive extends React.Component {
-    constructor(props) {
+interface VncActiveProps {
+    vm: VM,
+    consoleDetail: VMGraphics;
+    inactiveConsoleDetail: VMGraphics | undefined;
+    isExpanded: boolean;
+    state: VncState;
+    onRemoteSizeChanged?: (width: number, height: number, mode: VncSizeMode) => void,
+}
+
+interface VncActiveState {
+    path: undefined | string;
+}
+
+export class VncActive extends React.Component<VncActiveProps, VncActiveState> {
+    credentials: null | VncCredentials = null;
+    observer: MutationObserver;
+
+    constructor(props: VncActiveProps) {
         super(props);
         this.state = {
             path: undefined,
         };
-
-        this.credentials = null;
 
         this.connect = this.connect.bind(this);
         this.onConnected = this.onConnected.bind(this);
@@ -341,37 +392,41 @@ export class VncActive extends React.Component {
         this.onSecurityFailure = this.onSecurityFailure.bind(this);
 
         this.observer = new MutationObserver(entries => {
-            if (entries.length > 0)
+            if (entries.length > 0 && entries[0].target instanceof HTMLElement)
                 this.report_remote_size(entries[0].target);
         });
     }
 
-    report_remote_size(canvas) {
+    report_remote_size(canvas: HTMLElement) {
         const width = canvas.getAttribute("width");
         const height = canvas.getAttribute("height");
-        if (width && height && Number(width) > 0 && Number(height) > 0) {
+        if (this.props.onRemoteSizeChanged && width && height && Number(width) > 0 && Number(height) > 0) {
             this.props.onRemoteSizeChanged(Number(width), Number(height), this.props.state.sizeMode);
         }
     }
 
-    connect(props) {
+    connect(props: VncActiveProps) {
         if (this.state.path) { // already initialized
             return;
         }
 
         const { consoleDetail } = props;
-        if (!consoleDetail || consoleDetail.port == -1 || !consoleDetail.address) {
+        if (!consoleDetail || Number(consoleDetail.port) == -1 || !consoleDetail.address) {
             logDebug('Vnc component: console detail not yet provided');
             return;
         }
 
         cockpit.transport.wait(() => {
+            const portStr = consoleDetail.tlsPort || consoleDetail.port;
+            if (!portStr)
+                return;
+
             const prefix = (new URL(cockpit.transport.uri("channel/" + cockpit.transport.csrf_token))).pathname;
             const query = JSON.stringify({
                 payload: "stream",
                 binary: "raw",
                 address: consoleDetail.address,
-                port: parseInt(consoleDetail.tlsPort || consoleDetail.port, 10),
+                port: parseInt(portStr, 10),
                 // https://issues.redhat.com/browse/COCKPIT-870
                 // https://issues.redhat.com/browse/RHEL-3959
                 host: cockpit.transport.host,
@@ -390,7 +445,7 @@ export class VncActive extends React.Component {
         this.connect(this.props);
     }
 
-    getEncrypt() {
+    getEncrypt(): boolean {
         return window.location.protocol === 'https:';
     }
 
@@ -404,9 +459,9 @@ export class VncActive extends React.Component {
         return { password };
     }
 
-    onConnected(vnc_element) {
+    onConnected(vnc_element: HTMLElement | null) {
         let canvas = null;
-        if (this.props.onRemoteSizeChanged)
+        if (vnc_element && this.props.onRemoteSizeChanged)
             canvas = vnc_element.querySelector("canvas");
         if (canvas) {
             this.observer.observe(canvas, { attributes: true });
@@ -415,22 +470,22 @@ export class VncActive extends React.Component {
             this.observer.disconnect();
     }
 
-    onDisconnected(detail) { // server disconnected
-        console.info('Connection lost: ', detail);
+    onDisconnected(clean: boolean) { // server disconnected
+        console.info('Connection lost: ', clean ? "clean" : "unclean");
         this.props.state.setConnected(false);
     }
 
-    onInitFailed(detail) {
+    onInitFailed(detail: unknown) {
         console.error('VncConsole failed to init: ', detail, this);
     }
 
-    onSecurityFailure(event) {
-        console.info('Security failure:', event?.detail?.reason || "unknown reason");
+    onSecurityFailure(reason: string | undefined) {
+        console.info('Security failure:', reason || "unknown reason");
     }
 
     render() {
         const {
-            consoleDetail, inactiveConsoleDetail, vm, onAddErrorNotification, isExpanded,
+            consoleDetail, inactiveConsoleDetail, vm, isExpanded,
             state,
         } = this.props;
         const { path } = this.state;
@@ -447,7 +502,6 @@ export class VncActive extends React.Component {
                 vm={vm}
                 vnc={consoleDetail}
                 inactive_vnc={inactiveConsoleDetail}
-                onAddErrorNotification={onAddErrorNotification}
             />
         );
 
@@ -460,7 +514,6 @@ export class VncActive extends React.Component {
                           path={path}
                           encrypt={encrypt}
                           shared
-                          vncLogging={ window.debugging?.includes("vnc") ? 'debug' : 'warn' }
                           onConnected={this.onConnected}
                           onDisconnected={this.onDisconnected}
                           getCredentials={this.getCredentials}
@@ -487,7 +540,15 @@ export class VncActive extends React.Component {
     }
 }
 
-export const VncInactive = ({ vm, inactive_vnc, isExpanded, onAddErrorNotification }) => {
+export const VncInactive = ({
+    vm,
+    inactive_vnc,
+    isExpanded,
+} : {
+    vm: VM,
+    inactive_vnc: VMGraphics,
+    isExpanded: boolean,
+}) => {
     return (
         <>
             <EmptyState>
@@ -498,14 +559,21 @@ export const VncInactive = ({ vm, inactive_vnc, isExpanded, onAddErrorNotificati
             { !isExpanded &&
                 <VncFooter
                     vm={vm}
+                    vnc={null}
                     inactive_vnc={inactive_vnc}
-                    onAddErrorNotification={onAddErrorNotification} />
+                />
             }
         </>
     );
 };
 
-export const VncMissing = ({ vm, onAddErrorNotification }) => {
+export const VncMissing = ({
+    vm,
+    onAddErrorNotification
+} : {
+    vm: VM,
+    onAddErrorNotification: (notification: Notification) => void,
+}) => {
     const [inProgress, setInProgress] = useState(false);
 
     function add_vnc() {
@@ -540,7 +608,15 @@ export const VncMissing = ({ vm, onAddErrorNotification }) => {
     );
 };
 
-export const VncPending = ({ vm, inactive_vnc, isExpanded, onAddErrorNotification }) => {
+export const VncPending = ({
+    vm,
+    inactive_vnc,
+    isExpanded,
+} : {
+    vm: VM,
+    inactive_vnc: VMGraphics,
+    isExpanded: boolean,
+}) => {
     return (
         <>
             <EmptyState icon={PendingIcon} status="custom">
@@ -551,8 +627,9 @@ export const VncPending = ({ vm, inactive_vnc, isExpanded, onAddErrorNotificatio
             { !isExpanded &&
                 <VncFooter
                     vm={vm}
+                    vnc={null}
                     inactive_vnc={inactive_vnc}
-                    onAddErrorNotification={onAddErrorNotification} />
+                />
             }
         </>
     );
