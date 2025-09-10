@@ -115,7 +115,6 @@ export const VmDetailsPage = ({
                         <ConsoleCard
                             state={consoleCardState}
                             vm={vm}
-                            config={config}
                             onAddErrorNotification={onAddErrorNotification}
                             isExpanded />
                     </PageSection>
@@ -135,7 +134,6 @@ export const VmDetailsPage = ({
                     <ConsoleCard
                         state={consoleCardState}
                         vm={vm}
-                        config={config}
                         onAddErrorNotification={onAddErrorNotification}
                         isStandalone
                     />
@@ -182,8 +180,6 @@ export const VmDetailsPage = ({
                       state={consoleCardState}
                       key={`${vmId(vm.name)}-consoles`}
                       vm={vm}
-                      config={config}
-                      isExpanded={false}
                       onAddErrorNotification={onAddErrorNotification} />
         },
         {

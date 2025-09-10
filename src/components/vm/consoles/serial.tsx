@@ -19,6 +19,9 @@
 import React, { useState } from 'react';
 import cockpit from 'cockpit';
 
+import type { optString, VM } from '../../../types';
+import type { Notification } from '../../../app';
+
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import {
     EmptyState, EmptyStateBody, EmptyStateFooter, EmptyStateActions
@@ -32,11 +35,11 @@ import { ConsoleState } from './common';
 const _ = cockpit.gettext;
 
 export class SerialState extends ConsoleState {
-    vm;
-    alias;
-    terminal_state = null;
+    vm: VM;
+    alias: optString;
+    terminal_state: TerminalState | null = null;
 
-    constructor(vm, alias) {
+    constructor(vm: VM, alias: optString) {
         super();
         this.vm = vm;
         this.alias = alias;
@@ -44,20 +47,18 @@ export class SerialState extends ConsoleState {
 
     getTerminalState() {
         if (!this.terminal_state) {
-            const opts = {
+            const channel = cockpit.channel({
                 payload: "stream",
                 spawn: domainSerialConsoleCommand({ vm: this.vm, alias: this.alias }),
                 pty: true,
-            };
-            if (this.vm.connectionName == "system")
-                opts.superuser = "try";
-            const channel = cockpit.channel(opts);
+                ...(this.vm.connectionName == "system" ? { superuser: "try" } : { }),
+            });
             this.terminal_state = new TerminalState(channel);
         }
         return this.terminal_state;
     }
 
-    setConnected(val) {
+    setConnected(val: boolean) {
         if (!val && this.terminal_state) {
             this.terminal_state.close();
             this.terminal_state = null;
@@ -72,7 +73,13 @@ export class SerialState extends ConsoleState {
     }
 }
 
-export const SerialActive = ({ state, vm }) => {
+export const SerialActive = ({
+    state,
+    vm
+} : {
+    state: SerialState,
+    vm: VM,
+}) => {
     const pid = vm.name + "-terminal";
 
     let t;
@@ -102,7 +109,7 @@ export const SerialActive = ({ state, vm }) => {
     );
 };
 
-export const SerialInactive = ({ vm }) => {
+export const SerialInactive = () => {
     return (
         <EmptyState>
             <EmptyStateBody>
@@ -112,7 +119,13 @@ export const SerialInactive = ({ vm }) => {
     );
 };
 
-export const SerialMissing = ({ vm, onAddErrorNotification }) => {
+export const SerialMissing = ({
+    vm,
+    onAddErrorNotification
+} : {
+    vm: VM,
+    onAddErrorNotification: (notification: Notification) => void;
+}) => {
     const [inProgress, setInProgress] = useState(false);
 
     function add_serial() {
@@ -147,7 +160,7 @@ export const SerialMissing = ({ vm, onAddErrorNotification }) => {
     );
 };
 
-export const SerialPending = ({ vm }) => {
+export const SerialPending = () => {
     return (
         <EmptyState icon={PendingIcon} status="custom">
             <EmptyStateBody>

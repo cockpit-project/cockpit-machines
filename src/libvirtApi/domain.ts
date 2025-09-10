@@ -97,11 +97,11 @@ export const domainCanPause = (vmState: VMState) => vmState == 'running';
 export const domainCanRename = (vmState: VMState) => vmState == 'shut off';
 export const domainCanResume = (vmState: VMState) => vmState == 'paused';
 export const domainIsRunning = (vmState: VMState) => domainCanReset(vmState);
-export const domainSerialConsoleCommand = ({ vm, alias } : { vm: VM, alias: string }) => {
+export const domainSerialConsoleCommand = ({ vm, alias } : { vm: VM, alias: optString }) => {
     if (vm.displays.find(display => display.type == 'pty'))
         return ['virsh', '-c', `qemu:///${vm.connectionName}`, 'console', vm.name, alias || ''];
     else
-        return false;
+        return [];
 };
 
 function buildConsoleVVFile(consoleDetail: VMGraphics): string {
@@ -1160,7 +1160,7 @@ export function domainSendKey({
 } : {
     connectionName: ConnectionName,
     id: string,
-    keyCodes: string[],
+    keyCodes: number[],
 }): Promise<void> {
     const holdTime = 0;
     const flags = 0;

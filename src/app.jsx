@@ -306,7 +306,7 @@ class AppActive extends React.Component {
                 )
                 : undefined;
             // If vm.isUi is set we show a dummy placeholder until libvirt gets a real domain object for newly created V
-            const expandedContent = (vm.isUi && !vm.id)
+            const expandedContent = vm.isUi
                 ? null
                 : (
                     <>
