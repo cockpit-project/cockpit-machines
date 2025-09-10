@@ -55,6 +55,8 @@ import type {
     Network,
 } from '../../types';
 
+import type { Notification } from '../../app';
+
 import "./hostvmslist.scss";
 
 const VmState = ({
@@ -133,7 +135,7 @@ interface HostVmsListProps {
     storagePools: StoragePool[],
     actions: React.ReactNode,
     networks: Network[],
-    onAddErrorNotification: () => void,
+    onAddErrorNotification: (notification: Notification) => void,
 }
 
 const HostVmsList = ({

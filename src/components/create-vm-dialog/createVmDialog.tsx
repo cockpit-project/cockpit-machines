@@ -153,7 +153,7 @@ function getSpaceAvailable(storagePools: StoragePool[], connectionName: Connecti
     return space;
 }
 
-function getMemoryDefaults(nodeMaxMemory: optString) {
+function getMemoryDefaults(nodeMaxMemory: number | undefined) {
     // Use available memory on host as initial default value in modal
     let memorySizeUnit = units.MiB.name;
     let memorySize = nodeMaxMemory && Math.floor(convertToUnit(nodeMaxMemory, units.KiB, units.MiB));
@@ -232,7 +232,7 @@ interface ValidationFailed {
 
 interface ValidateParamsExtraArgs {
     osInfoList: OSInfo[];
-    nodeMaxMemory: string;
+    nodeMaxMemory: number | undefined;
     vms: VM[];
 }
 
@@ -356,8 +356,8 @@ const SourceRow = ({
     nodeDevices: NodeDevice[],
     os: OSInfo | undefined,
     osInfoList: OSInfo[],
-    cloudInitSupported: boolean,
-    downloadOSSupported: boolean,
+    cloudInitSupported: boolean | undefined,
+    downloadOSSupported: boolean | undefined,
     offlineToken: optString,
     onValueChanged: OnValueChanged,
     validationFailed: ValidationFailed,
@@ -746,7 +746,7 @@ const UnattendedRow = ({
     os: OSInfo,
     profile: string,
     rootPassword: optString,
-    unattendedUserLogin: boolean,
+    unattendedUserLogin: boolean | undefined,
     userLogin: optString,
     userPassword: optString,
     validationFailed: ValidationFailed,
@@ -799,7 +799,7 @@ const UsersConfigurationRow = ({
 } : {
     rootPassword: optString,
     rootPasswordLabelInfo: string,
-    showUserFields: boolean,
+    showUserFields: boolean | undefined,
     userLogin: optString,
     userPassword: optString,
     onValueChanged: OnValueChanged,
@@ -982,7 +982,7 @@ const MemoryRow = ({
 } : {
     memorySize: number,
     memorySizeUnit: string,
-    nodeMaxMemory: string,
+    nodeMaxMemory: number | undefined,
     minimumMemory: number,
     onValueChanged: OnValueChanged,
     validationFailed: ValidationFailed,
@@ -1173,15 +1173,15 @@ const StorageRow = ({
 
 interface CreateVmModalProps {
     mode: string;
-    downloadOSSupported: boolean;
-    cloudInitSupported: boolean;
-    unattendedSupported: boolean;
-    nodeMaxMemory: string;
+    downloadOSSupported: boolean | undefined;
+    cloudInitSupported: boolean | undefined;
+    unattendedSupported: boolean | undefined;
+    nodeMaxMemory: number | undefined;
     osInfoList: OSInfo[];
     vms: VM[];
     onAddErrorNotification: (n: Notification) => void;
     loggedUser: cockpit.UserInfo,
-    unattendedUserLogin: boolean,
+    unattendedUserLogin: boolean | undefined,
 }
 
 interface CreateVmModalState extends VmParams {
@@ -1668,14 +1668,14 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
 interface CreateVmActionProps {
     systemInfo: ReturnType<typeof store.getState>["systemInfo"];
     mode: string;
-    nodeMaxMemory: string;
+    nodeMaxMemory: number | undefined;
     vms: VM[];
     onAddErrorNotification: (n: Notification) => void;
-    cloudInitSupported: boolean;
-    downloadOSSupported: boolean;
-    unattendedSupported: boolean;
-    unattendedUserLogin: boolean;
-    virtInstallAvailable: boolean;
+    cloudInitSupported: boolean | undefined;
+    downloadOSSupported: boolean | undefined;
+    unattendedSupported: boolean | undefined;
+    unattendedUserLogin: boolean | undefined;
+    virtInstallAvailable: boolean | undefined;
 }
 
 export class CreateVmAction extends React.Component<CreateVmActionProps> {
