@@ -103,43 +103,25 @@ interface VmDisksCardLibvirtProps {
 }
 
 export class VmDisksCardLibvirt extends React.Component<VmDisksCardLibvirtProps> {
-    /**
-     * Returns true, if disk statistics are retrieved.
-     */
-    getDiskStatsSupport(vm: VM) {
-        /* Possible states for disk stats:
-            available ~ already read
-            supported, but not available yet ~ will be read soon
-         */
-        let areDiskStatsSupported = false;
-        if (vm.disksStats) {
-            // stats are read/supported if there is a non-NaN stat value
-            areDiskStatsSupported = !!Object.getOwnPropertyNames(vm.disksStats)
-                    .some(target => {
-                        const stats = vm.disksStats?.[target];
-                        if (!vm.disks[target] || (vm.disks[target].type !== 'volume' && !stats)) {
-                            return false; // not yet retrieved, can't decide about disk stats support
-                        }
-                        return vm.disks[target].type == 'volume' || !isNaN(Number(stats?.capacity)) || !isNaN(Number(stats?.allocation));
-                    });
-        }
+    prepareDiskData(vm: VM, disk: VMDisk, diskStats: VMDiskStat | undefined, storagePools: StoragePool[]): VMDiskWithData {
+        // A shut off VM reports the actual storage size on the host
+        // in the "allocation" property, while a running VM reports
+        // the same number in the "physical" property...
 
-        return areDiskStatsSupported;
-    }
-
-    prepareDiskData(disk: VMDisk, diskStats: VMDiskStat | undefined, storagePools: StoragePool[]): VMDiskWithData {
-        let used: optString | number = diskStats && diskStats.allocation;
+        let used: optString | number = diskStats && (vm.state == "shut off" ? diskStats.allocation : diskStats.physical);
         let capacity: optString | number = diskStats && diskStats.capacity;
 
         /*
-         * For disks of type `volume` allocation and capacity stats are not
-         * fetched with the virConnectGetAllDomainStats API so we need to get
-         * them from the volume.
+         * For disks of type `volume` allocation and capacity stats
+         * are not fetched with the virConnectGetAllDomainStats API
+         * when the VM is shut off, so we need to get them from the
+         * volume.  We do this only when necessary, since the
+         * domainstats are kept up-to-date.
          *
          * Both pool and volume of the disk might have been undefined so make
          * required checks before reading them.
          */
-        if (disk.type == 'volume') {
+        if ((!used || !capacity) && disk.type == 'volume') {
             const pool = storagePools.filter(pool => pool.name == disk.source.pool)[0];
             const volumes = pool ? pool.volumes : [];
             const volumeName = disk.source.volume;
@@ -163,13 +145,15 @@ export class VmDisksCardLibvirt extends React.Component<VmDisksCardLibvirtProps>
     render() {
         const { vm, vms, storagePools, supportedDiskBusTypes, onAddErrorNotification } = this.props;
 
-        const areDiskStatsSupported = this.getDiskStatsSupport(vm);
-
         const disks = Object.getOwnPropertyNames(vm.disks)
                 .sort() // by 'target'
-                .map(target => this.prepareDiskData(vm.disks[target],
+                .map(target => this.prepareDiskData(vm,
+                                                    vm.disks[target],
                                                     vm.disksStats && vm.disksStats[target],
                                                     storagePools));
+
+        const areDiskStatsSupported = disks.some(d => !!d.capacity);
+
         return (
             <VmDisksCard
                 vm={vm}
