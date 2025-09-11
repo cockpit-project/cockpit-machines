@@ -191,14 +191,14 @@ fullscreen=0
             pattern = f"virsh -c [q]emu:///system console vmWithSerialConsole {tag}"
             return lambda: m.execute(f"(ps aux | grep '{pattern}') || true") != ""
 
-        # Add a second serial console
+        # Add a second serial console, selector changes from toggle group to dropdown menu
         m.execute("""
             virsh destroy vmWithSerialConsole;
             virt-xml --add-device vmWithSerialConsole --console pty,target_type=virtio;
             virsh start vmWithSerialConsole""")
-        b.click('.consoles-card .pf-v6-c-toggle-group button:contains("Serial (serial0)")')
+        b.select_PF(".consoles-card .pf-v6-c-menu-toggle", "Serial (serial0)")
         b.wait(channel_is_open_predicate("serial0"))
-        b.click('.consoles-card .pf-v6-c-toggle-group button:contains("Serial (console1)")')
+        b.select_PF(".consoles-card .pf-v6-c-menu-toggle", "Serial (console1)")
         b.wait(channel_is_open_predicate("console1"))
 
         # Add multiple serial consoles
@@ -215,7 +215,7 @@ fullscreen=0
 
         for i in range(0, 6):
             tag = "serial" if i == 0 else "console"
-            b.click(f'.consoles-card .pf-v6-c-toggle-group button:contains("Serial ({tag}{i})")')
+            b.select_PF(".consoles-card .pf-v6-c-menu-toggle", f"Serial ({tag}{i})")
             b.wait(channel_is_open_predicate(f"{tag}{i}"))
 
         def count_console_channels():

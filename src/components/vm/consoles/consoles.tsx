@@ -30,6 +30,7 @@ import { ExpandIcon, CompressIcon, ExternalLinkAltIcon } from "@patternfly/react
 import { ToggleGroup, ToggleGroupItem } from '@patternfly/react-core/dist/esm/components/ToggleGroup';
 import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/index.js";
 
+import { SimpleSelect, SimpleSelectOption } from 'cockpit-components-simple-select';
 import { SerialState, SerialActive, SerialInactive, SerialMissing, SerialPending } from './serial';
 import { VncState, VncActive, VncActiveActions, VncInactive, VncMissing, VncPending } from './vnc';
 import { SpiceActive, SpiceInactive } from './spice';
@@ -169,16 +170,32 @@ export const ConsoleCard = ({
             type = "serial0";
     }
 
+    // We either make a TabGroup or a SimpleSelect, depending on how
+    // many consoles there are.
+
+    const use_tab_group = serials.length <= 1;
+    const tabs: React.ReactNode[] = [];
+    const select_options: SimpleSelectOption<string>[] = [];
+
+    function add_console_selector(console_type: string, text: string): void {
+        if (use_tab_group)
+            tabs.push(<ToggleGroupItem
+                          key={console_type}
+                          text={text}
+                          isSelected={type == console_type}
+                          onChange={() => state.setType(console_type)} />);
+        else
+            select_options.push({
+                value: console_type,
+                content: text,
+            });
+    }
+
     const actions = [];
-    const tabs = [];
     let body = null;
     let body_state: ConsoleState | null = null;
 
-    tabs.push(<ToggleGroupItem
-                  key="graphical"
-                  text={_("Graphical")}
-                  isSelected={type == "graphical"}
-                  onChange={() => state.setType("graphical")} />);
+    add_console_selector("graphical", _("Graphical"));
 
     if (type == "graphical") {
         if (vm.state != "running") {
@@ -256,12 +273,7 @@ export const ConsoleCard = ({
     if (serials.length > 0) {
         serials.forEach((pty, idx) => {
             const t = "serial" + idx;
-            tabs.push(<ToggleGroupItem
-                          key={t}
-                          text={serials.length == 1 ? _("Serial") : cockpit.format(_("Serial ($0)"), pty.alias || idx)}
-                          isSelected={type == t}
-                          onChange={() => state.setType(t)} />);
-
+            add_console_selector(t, serials.length == 1 ? _("Serial") : cockpit.format(_("Serial ($0)"), pty.alias || idx));
             if (type == t) {
                 if (vm.state != "running") {
                     body = <SerialInactive />;
@@ -278,12 +290,7 @@ export const ConsoleCard = ({
             }
         });
     } else {
-        tabs.push(<ToggleGroupItem
-                      key="serial0"
-                      text={_("Serial")}
-                      isSelected={type == "serial0"}
-                      onChange={() => state.setType("serial0")} />);
-
+        add_console_selector("serial0", _("Serial"));
         if (type == "serial0") {
             if (inactive_serials.length > 0) {
                 body = <SerialPending />;
@@ -374,7 +381,14 @@ export const ConsoleCard = ({
                                 {title}
                             </SplitItem>
                             <SplitItem>
-                                <ToggleGroup>{tabs}</ToggleGroup>
+                                { use_tab_group
+                                    ? <ToggleGroup>{tabs}</ToggleGroup>
+                                    : <SimpleSelect
+                                          options={select_options}
+                                          selected={type}
+                                          onSelect={t => state.setType(t)}
+                                    />
+                                }
                             </SplitItem>
                         </Split>
                     )
