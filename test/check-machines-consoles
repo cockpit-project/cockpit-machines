@@ -699,12 +699,7 @@ fullscreen=0
 
         b2.select_PF("#vm-console-vnc-scaling", "Remote resizing")
 
-        cockpit_version = int(m.execute('(/usr/libexec/cockpit-ws --version'
-                                        ' || /usr/lib/cockpit/cockpit-ws --version'
-                                        ' || echo "Version: 346")'
-                                        ' | grep ^Version: | cut -d" " -f2'))
-
-        if cockpit_version >= 346:
+        if not m.image.startswith(("rhel-9", "centos-9", "ubuntu-", "debian-trixie", "opensuse-")):
             # Cockpit will make a non-shared connection.  The embedded
             # console will be forcefully disconnected.
             b.wait_in_text(".consoles-card", "Disconnected")
