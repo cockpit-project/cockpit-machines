@@ -997,19 +997,26 @@ export function vmHasVFIOHostDevs(vm: VM): boolean {
 }
 
 export interface QemuConf {
+    vnc_tls: boolean;
     vnc_password: string | null;
 }
 
+const VNC_TLS_RX = /^[ \t]*vnc_tls[ \t]*=[ \t]*([0-9]*)/m;
 const VNC_PASSWORD_RX = /^[ \t]*vnc_password[ \t]*=[ \t]*"([^"\\]*(?:\\.[^"\\]*)*)"/m;
 
 export async function readQemuConf(): Promise<QemuConf> {
     const conf: QemuConf = {
+        vnc_tls: false,
         vnc_password: null,
     };
 
     const text = await cockpit.file("/etc/libvirt/qemu.conf", { superuser: "try" }).read();
     if (!text)
         return conf;
+
+    const tls_match = text.match(VNC_TLS_RX);
+    if (tls_match)
+        conf.vnc_tls = Number(tls_match[1]) != 0;
 
     const password_match = text.match(VNC_PASSWORD_RX);
     if (password_match)

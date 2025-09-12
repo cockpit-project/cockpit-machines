@@ -56,10 +56,29 @@ const _ = cockpit.gettext;
 export type VncSizeMode = "none" | "local" | "remote";
 
 export class VncState extends ConsoleState {
-    sizeMode: VncSizeMode = "none";
+    sizeMode: VncSizeMode;
+    failure_reason: string | null;
+
+    constructor() {
+        super();
+        this.sizeMode = "none";
+        this.failure_reason = null;
+    }
 
     setSizeMode(val: VncSizeMode) {
         this.sizeMode = val;
+        this.update();
+    }
+
+    setConnected(val: boolean) {
+        this.connected = val;
+        this.failure_reason = null;
+        this.update();
+    }
+
+    setDisconnected(reason: string | null) {
+        this.connected = false;
+        this.failure_reason = reason;
         this.update();
     }
 }
@@ -470,9 +489,25 @@ export class VncActive extends React.Component<VncActiveProps, VncActiveState> {
             this.observer.disconnect();
     }
 
-    onDisconnected(clean: boolean) { // server disconnected
+    async onDisconnected(clean: boolean) { // server disconnected
         console.info('Connection lost: ', clean ? "clean" : "unclean");
-        this.props.state.setConnected(false);
+        let reason;
+        if (clean)
+            reason = null;
+        else if (this.props.state.failure_reason) {
+            // The reason might have been set by onSecurityFailure
+            // already, so we keep it.
+            reason = this.props.state.failure_reason;
+        } else {
+            // This might be TLS.
+            const qemu_conf = await readQemuConf();
+            if (qemu_conf.vnc_tls) {
+                reason = _("VNC with TLS is not supported by the in-page viewer");
+            } else {
+                reason = _("Failed to connect");
+            }
+        }
+        this.props.state.setDisconnected(reason);
     }
 
     onInitFailed(detail: unknown) {
@@ -481,6 +516,7 @@ export class VncActive extends React.Component<VncActiveProps, VncActiveState> {
 
     onSecurityFailure(reason: string | undefined) {
         console.info('Security failure:', reason || "unknown reason");
+        this.props.state.setDisconnected(reason || _("Security failure"));
     }
 
     render() {
@@ -548,10 +584,14 @@ export class VncActive extends React.Component<VncActiveProps, VncActiveState> {
                     />
                     : <div className="vm-console-vnc">
                         <EmptyState>
-                            <EmptyStateBody>{_("Disconnected")}</EmptyStateBody>
+                            <EmptyStateBody>
+                                { state.failure_reason || _("Disconnected") }
+                            </EmptyStateBody>
                             <EmptyStateFooter>
-                                <Button variant="primary" onClick={() => state.setConnected(true)}>
-                                    {_("Connect")}
+                                <Button
+                                    variant="primary"
+                                    onClick={() => state.setConnected(true)}>
+                                    { state.failure_reason ? _("Retry") : _("Connect") }
                                 </Button>
                             </EmptyStateFooter>
                         </EmptyState>
