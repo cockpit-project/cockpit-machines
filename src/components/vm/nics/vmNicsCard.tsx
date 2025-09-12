@@ -258,7 +258,8 @@ enum IpAddressVersion {
 
 interface IpAddress {
     type: IpAddressVersion,
-    ip: string
+    ip: string,
+    prefix: number,
 }
 
 interface IpInterface {
@@ -273,17 +274,6 @@ interface VmNetworkTabState {
     ips: IpInterface[],
     dropdownOpenActions: number,
 }
-
-// RegExp for getting an IP without the mask (when using IP/mask format)
-// "192.168.122.242/12".match(reExtractIpMask)              // ["192.168.122.242", "12"]
-// "fe80::895f:ed79:7cee:4144/64".match(reExtractIpMask)    // ["fe80::895f:ed79:7cee:4144", "64"]
-//
-// With tests:
-// "192.168.122.242/12".test(reExtractIpMask)               // true
-// "192.168.122.242".test(reExtractIpMask)                  // false
-// "fe80::895f:ed79:7cee:4144/64".test(reExtractIpMask)     // true
-// "fe80::895f:ed79:7cee:4144".test(reExtractIpMask)        // false
-const reExtractIpMask = /(\b.*?)\/(\d{1,})/;
 
 export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTabState> {
     static contextType = DialogsContext;
@@ -359,7 +349,11 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
                                         iface[2].forEach(ifAddress => {
                                             if (ifAddress.length && ifAddress[0] in IpAddressVersion) {
                                                 // 0 cell -> type, 1 cell -> address, 2 cell -> prefix
-                                                address.ips.push({ type: ifAddress[0], ip: ifAddress[1] + '/' + ifAddress[2] });
+                                                address.ips.push({
+                                                    type: ifAddress[0],
+                                                    ip: ifAddress[1],
+                                                    prefix: ifAddress[2],
+                                                });
                                             }
                                         });
                                         ipaddresses.push(address);
@@ -460,11 +454,8 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
                 value: (network, networkId) => {
                     const ipInterfaces = this.state.ips.filter(ip => ip.mac === network.mac);
 
-                    // [string, string] is a tuple of IP and subnet mask
-                    const inetIps: {
-                        v4: [string, string][];
-                        v6: [string, string][];
-                    } = { v4: [], v6: [] };
+                    const inetIps: IpAddress[] = [];
+                    const inet6Ips: IpAddress[] = [];
 
                     // Setup a preferred order of IP/SUBNET-MASK we want to add.
                     // Helps ensure that the IP subnet mask are taken from the right source.
@@ -476,33 +467,16 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
                     };
                     ipInterfaces.sort((a, b) => source_order[a.source] - source_order[b.source]).forEach(ipInterface => {
                         ipInterface.ips.forEach(inet => {
-                            // Gets [0: matchedString, 1: IP, 2: Subnet mask] groups
-                            const match = inet.ip.match(reExtractIpMask);
-
-                            // TS type-check sanity as RegEx returns undefined
-                            if (!match)
-                                return;
-
                             // Separate out IPv4 and IPv6 and don't add duplicate IPs.
-                            let inetVersion: keyof typeof inetIps = "v4";
-                            switch (inet.type) {
-                            case IpAddressVersion.v4:
-                                inetVersion = "v4";
-                                break;
-                            case IpAddressVersion.v6:
-                                inetVersion = "v6";
-                                break;
-                            default:
-                                return;
-                            }
-
-                            if (!inetIps[inetVersion].some(inetIp => inetIp[0] === match[1])) {
-                                inetIps[inetVersion].push([match[1], match[2]]);
+                            if (inet.type === IpAddressVersion.v4 && !inetIps.some(inetIp => inetIp.ip == inet.ip)) {
+                                inetIps.push(inet);
+                            } else if (inet.type === IpAddressVersion.v6 && !inet6Ips.some(inet6Ip => inet6Ip.ip == inet.ip)) {
+                                inet6Ips.push(inet);
                             }
                         });
                     });
 
-                    if (inetIps.v4.length === 0 && inetIps.v6.length === 0) {
+                    if (inetIps.length === 0 && inet6Ips.length === 0) {
                         // There is not IP address associated with this NIC
                         return (
                             <span id={`${id}-network-${networkId}-ip-unknown`}>
@@ -513,26 +487,26 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
 
                     return (
                         <DescriptionList isHorizontal isFluid>
-                            {inetIps.v4.length && <DescriptionListGroup>
-                                {inetIps.v4.map((ipMask, index) => (
-                                    <React.Fragment key={ipMask[0]}>
+                            {inetIps.length && <DescriptionListGroup>
+                                {inetIps.map((ip, index) => (
+                                    <React.Fragment key={ip.ip}>
                                         <DescriptionListTerm>
                                             {_("inet")}
                                         </DescriptionListTerm>
                                         <DescriptionListDescription id={`${id}-network-${networkId}-ipv4-address-${index}`}>
-                                            {ipMask[0]}/{ipMask[1]}
+                                            {ip.ip}/{ip.prefix}
                                         </DescriptionListDescription>
                                     </React.Fragment>
                                 ))}
                             </DescriptionListGroup>}
-                            {inetIps.v6.length && <DescriptionListGroup>
-                                {inetIps.v6.map((ipMask, index) => (
-                                    <React.Fragment key={ipMask[0]}>
+                            {inet6Ips.length && <DescriptionListGroup>
+                                {inet6Ips.map((ip, index) => (
+                                    <React.Fragment key={ip.ip}>
                                         <DescriptionListTerm>
                                             {_("inet6")}
                                         </DescriptionListTerm>
                                         <DescriptionListDescription id={`${id}-network-${networkId}-ipv6-address-${index}`}>
-                                            {ipMask[0]}/{ipMask[1]}
+                                            {ip.ip}/{ip.prefix}
                                         </DescriptionListDescription>
                                     </React.Fragment>
                                 ))}
