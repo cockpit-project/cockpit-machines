@@ -165,8 +165,9 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             skip_layouts=["medium", "rtl"],
         )
 
-        # Start vm and wait until kernel is booted
-        testlib.wait(lambda: "1" in self.machine.execute("virsh domifaddr subVmTest1 | grep 192.168.122. | wc -l"),
+        # Start vm and wait until kernel is booted and guest agent is connected
+        testlib.wait(lambda: "1" in self.machine.execute("virsh domifaddr --source agent subVmTest1 | "
+                                                         "grep 192.168.122. | wc -l"),
                      delay=3)
 
         # Add a secondary IP which should show
