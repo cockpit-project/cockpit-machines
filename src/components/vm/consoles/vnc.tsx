@@ -505,6 +505,29 @@ export class VncActive extends React.Component<VncActiveProps, VncActiveState> {
             />
         );
 
+        let scaleViewport = true;
+        let resizeSession = false;
+        if (isExpanded) {
+            scaleViewport = (state.sizeMode == "local");
+            resizeSession = (state.sizeMode == "remote");
+        }
+
+        // Older versions of Cockpit would erroneously never close the
+        // remote end of a external channel when the local end was
+        // closed by the browser.  When this bug is present, all
+        // connections to the VNC server that we make here will stay
+        // open forever.  This is especially bad with non-shared
+        // connections: As long as it is open, no other connections
+        // can be made, not even other non-shared ones.
+        //
+        // Thus, we only make non-shared connections when this bug is
+        // fixed, which cockpit-ws will tell us via the transport
+        // capabilities.
+
+        const caps = cockpit.transport.options.capabilities;
+        const bug_is_fixed = Array.isArray(caps) && caps.includes("websocket-channel-close-fix");
+        const shared = !(resizeSession && bug_is_fixed);
+
         return (
             <>
                 { state.connected
@@ -513,15 +536,15 @@ export class VncActive extends React.Component<VncActiveProps, VncActiveState> {
                           port={window.location.port || (encrypt ? '443' : '80')}
                           path={path}
                           encrypt={encrypt}
-                          shared
                           onConnected={this.onConnected}
                           onDisconnected={this.onDisconnected}
                           getCredentials={this.getCredentials}
                           onInitFailed={this.onInitFailed}
                           onSecurityFailure={this.onSecurityFailure}
                           consoleContainerId={isExpanded ? "vnc-display-container-expanded" : "vnc-display-container-minimized"}
-                          scaleViewport={!isExpanded || state.sizeMode == "local"}
-                          resizeSession={!!isExpanded && state.sizeMode == "remote"}
+                          scaleViewport={scaleViewport}
+                          resizeSession={resizeSession}
+                          shared={shared}
                     />
                     : <div className="vm-console-vnc">
                         <EmptyState>
