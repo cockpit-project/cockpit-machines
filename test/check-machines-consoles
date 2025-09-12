@@ -685,6 +685,32 @@ fullscreen=0
         with b2.wait_timeout(60):
             b2.wait_attr(".vm-console-vnc canvas", "width", str(initial_remote))
 
+        # The embedded console has been disconnected now, but we can
+        # connect again.
+
+        b.wait_in_text(".consoles-card", "Disconnected")
+        b.click('.consoles-card button:contains("Connect")')
+        b.wait_visible(".vm-console-vnc canvas")
+
+        # But if we switch the detached console into "Remote
+        # resizing", the embedded one will be disconnected again
+        # because the detached now uses a non-shared connection. (On
+        # images that have the necessary cockpit-ws fix.)
+
+        b2.select_PF("#vm-console-vnc-scaling", "Remote resizing")
+
+        if not m.image.startswith(("rhel-9", "centos-9", "ubuntu-", "debian-trixie", "opensuse-tumbleweed")):
+            # Cockpit will make a non-shared connection.  The embedded
+            # console will be forcefully disconnected.
+            b.wait_in_text(".consoles-card", "Disconnected")
+        else:
+            # If Cockpit doesn't make a non-shared connection, check
+            # that we can re-connect.
+            b.click('.consoles-card button:contains("Disconnect")')
+            b.wait_in_text(".consoles-card", "Disconnected")
+            b.click('.consoles-card button:contains("Connect")')
+            b.wait_visible(".vm-console-vnc canvas")
+
         # Logging out should close both of the detached windows, the
         # one in "b" from the click on "Detach", and the explicitly
         # opened one in "b2".  We detect this by looking for another
