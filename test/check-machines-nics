@@ -165,26 +165,36 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             skip_layouts=["medium", "rtl"],
         )
 
-        # Start vm and wait until kernel is booted and guest agent is connected
-        testlib.wait(lambda: "1" in self.machine.execute("virsh domifaddr --source agent subVmTest1 | "
-                                                         "grep 192.168.122. | wc -l"),
+        # Start vm and wait until kernel is booted
+        testlib.wait(lambda: "1" in self.machine.execute("virsh domifaddr subVmTest1 | grep 192.168.122. | wc -l"),
                      delay=3)
 
-        # Add a secondary IP which should show
-        iface = "eth0"
-        secondary_ip = "192.168.123.100/24"
-        self.machine.execute(
-            "virsh qemu-agent-command subVmTest1 "
-            '\'{"execute": "guest-exec", "arguments":'
-            '{ "path": "ip", "arg": [ "address","add","' + secondary_ip + '", "dev", "' + iface + '" ], '
-            '"capture-output": true }}\''
-        )
+        # Add a secondary IP.  Secondary IP addresses are only
+        # reported by the "agent" source, but VMs created on rhel-8
+        # don't have a guest agent configured, so we have to skip this
+        # there.
 
-        testlib.wait(
-            lambda: "1" in self.machine.execute("virsh domifaddr --source agent subVmTest1 | "
-                                                "grep 192.168.123.100 | wc -l"),
-            delay=3
-        )
+        if "rhel-8" not in m.image:
+            # Wait until guest agent is connected.
+            testlib.wait(lambda: "1" in self.machine.execute("virsh domifaddr --source agent subVmTest1 | "
+                                                             "grep 192.168.122. | wc -l"),
+                         delay=3)
+
+            # Add a secondary IP which should show
+            iface = "eth0"
+            secondary_ip = "192.168.123.100/24"
+            self.machine.execute(
+                "virsh qemu-agent-command subVmTest1 "
+                '\'{"execute": "guest-exec", "arguments":'
+                '{ "path": "ip", "arg": [ "address","add","' + secondary_ip + '", "dev", "' + iface + '" ], '
+                '"capture-output": true }}\''
+            )
+
+            testlib.wait(
+                lambda: "1" in self.machine.execute("virsh domifaddr --source agent subVmTest1 | "
+                                                    "grep 192.168.123.100 | wc -l"),
+                delay=3
+            )
 
         b.reload()
         b.enter_page('/machines')
@@ -195,8 +205,11 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         # https://github.com/cockpit-project/cockpit-machines/issues/1142
         b.wait_visible("#vm-subVmTest1-network-1-ip-unknown")
         b.wait_in_text("#vm-subVmTest1-network-2-ipv4-address-0", "192.168.122.")
-        b.wait_in_text("#vm-subVmTest1-network-2-ipv4-address-1", secondary_ip)
-        b.wait_not_present("#vm-subVmTest1-network-2-ipv4-address-2")
+        if "rhel-8" not in m.image:
+            b.wait_in_text("#vm-subVmTest1-network-2-ipv4-address-1", secondary_ip)
+            b.wait_not_present("#vm-subVmTest1-network-2-ipv4-address-2")
+        else:
+            b.wait_not_present("#vm-subVmTest1-network-2-ipv4-address-1")
         b.wait_visible("#vm-subVmTest1-network-3-ip-unknown")
 
     def testNICPlugingAndUnpluging(self):
