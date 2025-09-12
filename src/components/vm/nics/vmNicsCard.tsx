@@ -275,10 +275,15 @@ interface VmNetworkTabState {
 }
 
 // RegExp for getting an IP without the mask (when using IP/mask format)
-// "192.168.122.242/12".test(regexpIpExcludeMask)  // true
-// "192.168.122.242/12".match(regexpIpExcludeMask) // ["192.168.122.242"]
-// "192.168.122.242".test(regexpIpExcludeMask)     // false
-const regexpIpExcludeSubnetMask = /.*?(?=\/\d{1,})/;
+// "192.168.122.242/12".match(reExtractIpMask)              // ["192.168.122.242", "12"]
+// "fe80::895f:ed79:7cee:4144/64".match(reExtractIpMask)    // ["fe80::895f:ed79:7cee:4144", "64"]
+//
+// With tests:
+// "192.168.122.242/12".test(reExtractIpMask)               // true
+// "192.168.122.242".test(reExtractIpMask)                  // false
+// "fe80::895f:ed79:7cee:4144/64".test(reExtractIpMask)     // true
+// "fe80::895f:ed79:7cee:4144".test(reExtractIpMask)        // false
+const reExtractIpMask = /(\b.*?)\/(\d{1,})/;
 
 export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTabState> {
     static contextType = DialogsContext;
@@ -455,33 +460,49 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
                 value: (network, networkId) => {
                     const ipInterfaces = this.state.ips.filter(ip => ip.mac === network.mac);
 
-                    const inetIps: string[] = [];
-                    const inet6Ips: string[] = [];
+                    // [string, string] is a tuple of IP and subnet mask
+                    const inetIps: {
+                        v4: [string, string][];
+                        v6: [string, string][];
+                    } = { v4: [], v6: [] };
 
                     // Setup a preferred order of IP/SUBNET-MASK we want to add.
                     // Helps ensure that the IP subnet mask are taken from the right source.
                     // agent > lease > arp
-                    ipInterfaces.sort((a, b) => {
-                        if (a.source === "agent")
-                            return -1;
-                        else if (a.source === "lease" && b.source !== "agent")
-                            return -1;
-                        return 1;
-                    }).forEach(ipInterface => {
+                    const source_order: {[index: string]: number} = {
+                        agent: 1,
+                        lease: 2,
+                        arp: 3
+                    };
+                    ipInterfaces.sort((a, b) => source_order[a.source] - source_order[b.source]).forEach(ipInterface => {
                         ipInterface.ips.forEach(inet => {
-                            // If match was not found we default to `inet.ip`
-                            const ip = inet.ip.match(regexpIpExcludeSubnetMask)?.[0] || inet.ip;
+                            // Gets [0: matchedString, 1: IP, 2: Subnet mask] groups
+                            const match = inet.ip.match(reExtractIpMask);
+
+                            // TS type-check sanity as RegEx returns undefined
+                            if (!match)
+                                return;
 
                             // Separate out IPv4 and IPv6 and don't add duplicate IPs.
-                            if (inet.type === IpAddressVersion.v4 && !inetIps.some(inetIp => inetIp.startsWith(ip))) {
-                                inetIps.push(inet.ip);
-                            } else if (inet.type === IpAddressVersion.v6 && !inet6Ips.some(inet6Ip => inet6Ip.startsWith(ip))) {
-                                inet6Ips.push(inet.ip);
+                            let inetVersion: keyof typeof inetIps = "v4";
+                            switch (inet.type) {
+                            case IpAddressVersion.v4:
+                                inetVersion = "v4";
+                                break;
+                            case IpAddressVersion.v6:
+                                inetVersion = "v6";
+                                break;
+                            default:
+                                return;
+                            }
+
+                            if (!inetIps[inetVersion].some(inetIp => inetIp[0] === match[1])) {
+                                inetIps[inetVersion].push([match[1], match[2]]);
                             }
                         });
                     });
 
-                    if (inetIps.length === 0 && inet6Ips.length === 0) {
+                    if (inetIps.v4.length === 0 && inetIps.v6.length === 0) {
                         // There is not IP address associated with this NIC
                         return (
                             <span id={`${id}-network-${networkId}-ip-unknown`}>
@@ -492,26 +513,26 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
 
                     return (
                         <DescriptionList isHorizontal isFluid>
-                            {inetIps && <DescriptionListGroup>
-                                {inetIps.map((ip, index) => (
-                                    <React.Fragment key={ip}>
+                            {inetIps.v4.length && <DescriptionListGroup>
+                                {inetIps.v4.map((ipMask, index) => (
+                                    <React.Fragment key={ipMask[0]}>
                                         <DescriptionListTerm>
                                             {_("inet")}
                                         </DescriptionListTerm>
                                         <DescriptionListDescription id={`${id}-network-${networkId}-ipv4-address-${index}`}>
-                                            {ip}
+                                            {ipMask[0]}/{ipMask[1]}
                                         </DescriptionListDescription>
                                     </React.Fragment>
                                 ))}
                             </DescriptionListGroup>}
-                            {inet6Ips && <DescriptionListGroup>
-                                {inet6Ips.map((ip, index) => (
-                                    <React.Fragment key={ip}>
+                            {inetIps.v6.length && <DescriptionListGroup>
+                                {inetIps.v6.map((ipMask, index) => (
+                                    <React.Fragment key={ipMask[0]}>
                                         <DescriptionListTerm>
                                             {_("inet6")}
                                         </DescriptionListTerm>
                                         <DescriptionListDescription id={`${id}-network-${networkId}-ipv6-address-${index}`}>
-                                            {ip}
+                                            {ipMask[0]}/{ipMask[1]}
                                         </DescriptionListDescription>
                                     </React.Fragment>
                                 ))}
