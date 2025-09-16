@@ -23,7 +23,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-08 03:31+0000\n"
+"POT-Creation-Date: 2025-09-15 03:30+0000\n"
 "PO-Revision-Date: 2025-08-12 21:42+0000\n"
 "Last-Translator: Conan Edogawa <conan05@users.noreply.translate."
 "fedoraproject.org>\n"
@@ -63,7 +63,7 @@ msgid_plural "$0 Storage pools"
 msgstr[0] "$0 Grupo de almacenamiento"
 msgstr[1] "$0 Grupos de almacenamiento"
 
-#: src/components/vm/vmDetailsPage.tsx:132
+#: src/components/vm/vmDetailsPage.tsx:127
 msgid "$0 console"
 msgstr "Consola $0"
 
@@ -100,7 +100,7 @@ msgstr ""
 "de la MV."
 
 #: src/components/vm/disks/diskEdit.tsx:166
-#: src/components/vm/disks/vmDisksCard.tsx:223
+#: src/components/vm/disks/vmDisksCard.tsx:207
 msgid "Access"
 msgstr "Acceso"
 
@@ -108,12 +108,12 @@ msgstr "Acceso"
 msgid "Action"
 msgstr "Acción"
 
-#: src/components/vm/disks/vmDisksCard.tsx:229
+#: src/components/vm/disks/vmDisksCard.tsx:213
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:199
 #: src/components/vm/nics/vmNicsCard.tsx:505
 #: src/components/networks/networkList.tsx:77
 #: src/components/storagePools/storagePoolList.tsx:80
-#: src/components/vms/hostvmslist.tsx:204
+#: src/components/vms/hostvmslist.tsx:266
 msgid "Actions"
 msgstr "Acciones"
 
@@ -143,7 +143,7 @@ msgstr "Añadir claves SSH"
 msgid "Add TPM"
 msgstr "Añadir TPM"
 
-#: src/components/vm/consoles/vnc.jsx:535
+#: src/components/vm/consoles/vnc.tsx:603
 msgid "Add VNC"
 msgstr "Añadir VNC"
 
@@ -167,7 +167,7 @@ msgstr "Añadir dispositivo del anfitrión"
 msgid "Add network interface"
 msgstr "Añadir una interfaz de red"
 
-#: src/components/vm/consoles/serial.jsx:142
+#: src/components/vm/consoles/serial.tsx:155
 msgid "Add serial console"
 msgstr "Añadir una consola serie"
 
@@ -196,7 +196,7 @@ msgid "Adding shared directories is possible only when the guest is shut off"
 msgstr ""
 "Sólo se pueden añadir directorios compartidos cuando el invitado esté apagado"
 
-#: src/components/vm/disks/vmDisksCard.tsx:227
+#: src/components/vm/disks/vmDisksCard.tsx:211
 msgid "Additional"
 msgstr "Adicional"
 
@@ -213,8 +213,8 @@ msgstr "Dirección"
 msgid "Address not within subnet"
 msgstr "La dirección no está dentro de la subred"
 
-#: src/components/vms/hostvmslist.tsx:111
-#: src/components/vms/hostvmslist.tsx:129
+#: src/components/vms/hostvmslist.tsx:164
+#: src/components/vms/hostvmslist.tsx:182
 msgid "All"
 msgstr "Todo"
 
@@ -302,7 +302,7 @@ msgid "Boot order settings could not be saved"
 msgstr "La configuración del orden de arranque no se pudo guardar"
 
 #: src/components/vm/disks/diskEdit.tsx:133
-#: src/components/vm/disks/vmDisksCard.tsx:221
+#: src/components/vm/disks/vmDisksCard.tsx:205
 #: src/components/vm/disks/diskAdd.tsx:306
 #: src/components/vm/hostdevs/hostDevCard.tsx:104
 #: src/components/vm/hostdevs/hostDevCard.tsx:112
@@ -323,6 +323,8 @@ msgstr "Disco CD/DVD"
 #: src/components/common/needsShutdown.tsx:190
 #: src/components/vm/vmUsageCard.tsx:59
 #: src/components/vm/overview/vmOverviewCard.tsx:201
+#: src/components/vms/hostvmslist.tsx:101
+#: src/components/vms/hostvmslist.tsx:244
 msgid "CPU"
 msgstr "CPU"
 
@@ -349,7 +351,7 @@ msgstr "Caché"
 #: src/components/vm/deleteDialog.tsx:216
 #: src/components/vm/vmRenameDialog.tsx:109
 #: src/components/vm/confirmDialog.tsx:79
-#: src/components/vm/consoles/vnc.jsx:159
+#: src/components/vm/consoles/vnc.tsx:148
 #: src/components/vm/hostdevs/hostDevAdd.tsx:270
 #: src/components/vm/overview/bootOrder.tsx:368
 #: src/components/vm/overview/cpuModal.tsx:344
@@ -376,7 +378,7 @@ msgstr "No se puede editar el dispositivo vsock en una MV temporal"
 msgid "Cannot edit watchdog device on a transient VM"
 msgstr "No se puede editar el dispositivo watchdog en una MV temporal"
 
-#: src/components/vm/disks/vmDisksCard.tsx:219
+#: src/components/vm/disks/vmDisksCard.tsx:203
 msgid "Capacity"
 msgstr "Capacidad"
 
@@ -398,7 +400,7 @@ msgstr "Hay cambios pendientes"
 msgid "Changes will take effect after shutting down the VM"
 msgstr "Los cambios entrarán en vigor después de apagar la máquina virtual"
 
-#: src/app.jsx:125
+#: src/app.tsx:127
 msgid ""
 "Changing BIOS/EFI settings is specific to each manufacturer. It involves "
 "pressing a hotkey during boot (ESC, F1, F12, Del). Enable a setting called "
@@ -423,7 +425,7 @@ msgstr "Escoja un sistema operativo"
 msgid "Class"
 msgstr "Clase"
 
-#: src/components/vm/consoles/common.jsx:76
+#: src/components/vm/consoles/common.tsx:85
 msgid ""
 "Clicking \"Launch viewer\" will download a $0 file and launch the Remote "
 "Viewer application on your system."
@@ -447,11 +449,11 @@ msgstr "Imágenes Cloud Base"
 msgid "Cockpit Project"
 msgstr "Proyecto Cockpit"
 
-#: src/components/vm/consoles/consoles.jsx:299
+#: src/components/vm/consoles/consoles.tsx:327
 msgid "Compress"
 msgstr "Comprimir"
 
-#: src/components/vm/disks/vmDisksCard.tsx:251
+#: src/components/vm/disks/vmDisksCard.tsx:235
 msgid "Concurrently writeable"
 msgstr "Escribible concurentemente"
 
@@ -459,9 +461,8 @@ msgstr "Escribible concurentemente"
 msgid "Confirm this action"
 msgstr "Confirme esta acción"
 
-#: src/components/vm/consoles/serialConsole.jsx:95
-#: src/components/vm/consoles/vnc.jsx:478
-#: src/components/vm/consoles/serial.jsx:85
+#: src/components/vm/consoles/serial.tsx:92
+#: src/components/vm/consoles/vnc.tsx:531
 msgid "Connect"
 msgstr "Conectar"
 
@@ -470,11 +471,11 @@ msgstr "Conectar"
 #: src/components/networks/networkList.tsx:74
 #: src/components/networks/createNetworkDialog.tsx:47
 #: src/components/storagePools/storagePoolList.tsx:78
-#: src/components/vms/hostvmslist.tsx:202
+#: src/components/vms/hostvmslist.tsx:263
 msgid "Connection"
 msgstr "Conexión"
 
-#: src/components/vm/consoles/consoles.jsx:339
+#: src/components/vm/consoles/consoles.tsx:367
 msgid "Console"
 msgstr "Consola"
 
@@ -491,7 +492,7 @@ msgstr "Convertir consolas gráficas SPICE a VNC"
 msgid "Copy storage"
 msgstr "Copiar almacenamiento"
 
-#: src/components/vm/consoles/common.jsx:114
+#: src/components/vm/consoles/common.tsx:123
 msgid "Copy to clipboard"
 msgstr "Copiar al portapapeles"
 
@@ -604,11 +605,11 @@ msgstr "Crear una red virtual"
 msgid "Create volume"
 msgstr "Crear un volumen"
 
-#: src/components/vms/hostvmslist.tsx:70
+#: src/components/vms/hostvmslist.tsx:77
 msgid "Creating VM"
 msgstr "Creando MV"
 
-#: src/app.jsx:290
+#: src/app.tsx:322
 msgid "Creating VM $0"
 msgstr "Creando la MV $0"
 
@@ -628,7 +629,7 @@ msgstr "La creación de la MV $0 falló"
 msgid "Creation time"
 msgstr "Hora de creación"
 
-#: src/components/vm/consoles/vnc.jsx:268
+#: src/components/vm/consoles/vnc.tsx:293
 msgid "Ctrl+Alt+$0"
 msgstr "Ctrl+Alt+$0"
 
@@ -732,7 +733,7 @@ msgstr "URI de destino"
 msgid "Destination URI must not be empty"
 msgstr "La URI de destino no debe estar vacía"
 
-#: src/components/vm/consoles/consoles.jsx:333
+#: src/components/vm/consoles/consoles.tsx:361
 msgid "Detach"
 msgstr "Desatar"
 
@@ -747,7 +748,7 @@ msgstr ""
 msgid "Details"
 msgstr "Detalles"
 
-#: src/components/vm/disks/vmDisksCard.tsx:207
+#: src/components/vm/disks/vmDisksCard.tsx:191
 #: src/components/vm/disks/diskAdd.tsx:462
 #: src/components/vm/hostdevs/hostDevCard.tsx:103
 #: src/components/vm/hostdevs/hostDevCard.tsx:261
@@ -766,20 +767,14 @@ msgstr "Dispositivo"
 msgid "Devices"
 msgstr "Dispositivos"
 
-#: src/components/vm/consoles/consoles.jsx:283
-#: src/components/vm/consoles/serialConsole.jsx:94
+#: src/components/vm/consoles/consoles.tsx:311
 msgid "Disconnect"
 msgstr "Desconectar"
 
-#: src/components/vm/consoles/vnc.jsx:475
-#: src/components/vm/consoles/serial.jsx:82
+#: src/components/vm/consoles/serial.tsx:89
+#: src/components/vm/consoles/vnc.tsx:528
 msgid "Disconnected"
 msgstr "Desconectado"
-
-#: src/components/vm/consoles/serialConsole.jsx:87
-msgid "Disconnected from serial console. Click the connect button."
-msgstr ""
-"Desconectado desde la consola serial. Haga clic en el botón de conectar."
 
 #: src/components/common/needsShutdown.tsx:168
 msgid "Disk"
@@ -822,7 +817,7 @@ msgstr "Las configuraciones del disco no se pudieron guardar"
 msgid "Disk-only snapshot"
 msgstr "Instantánea sólo de disco"
 
-#: src/components/vm/vmDetailsPage.tsx:196
+#: src/components/vm/vmDetailsPage.tsx:188
 msgid "Disks"
 msgstr "Discos"
 
@@ -849,25 +844,25 @@ msgstr "El dominio está bloqueado en el recurso"
 msgid "Download an OS"
 msgstr "Descargar un SO"
 
-#: src/app.jsx:294
+#: src/app.tsx:326
 msgid "Download progress"
 msgstr "Progreso de descarga"
 
 # auto translated by TM merge from project: Cockpit, version: rhel-8.0, DocId:
 # cockpit
-#: src/components/vm/consoles/common.jsx:101
+#: src/components/vm/consoles/common.tsx:110
 msgid "Download the MSI from $0"
 msgstr "Descargar el MSI desde$0"
 
 # auto translated by TM merge from project: Cockpit, version: rhel-8.0, DocId:
 # cockpit
-#: src/app.jsx:290
+#: src/app.tsx:322
 msgid "Downloading image for VM $0"
 msgstr "Descargando imagen para la MV $0"
 
 # auto translated by TM merge from project: Cockpit, version: rhel-8.0, DocId:
 # cockpit
-#: src/components/vms/hostvmslist.tsx:68
+#: src/components/vms/hostvmslist.tsx:75
 msgid "Downloading: $0%"
 msgstr "Descargando: $0%"
 
@@ -892,8 +887,8 @@ msgstr "Editar"
 msgid "Edit $0 attributes"
 msgstr "Editar $0 atributos"
 
-#: src/components/vm/consoles/vnc.jsx:145
-#: src/components/vm/consoles/vnc.jsx:319
+#: src/components/vm/consoles/vnc.tsx:134
+#: src/components/vm/consoles/vnc.tsx:356
 msgid "Edit VNC settings"
 msgstr "Modificar los parámetros VNC"
 
@@ -937,7 +932,7 @@ msgstr "¿Expulsar el disco de la MV?"
 msgid "Emulated machine"
 msgstr "Máquina emulada"
 
-#: src/app.jsx:123
+#: src/app.tsx:125
 msgid "Enable virtualization support in BIOS/EFI settings."
 msgstr "Habilite el soporte de virtualización en la configuración de BIOS/EFI."
 
@@ -968,7 +963,7 @@ msgstr "Por ejemplo, $0"
 msgid "Existing disk image on host's file system"
 msgstr "Imagen de disco existente en el sistema de archivos del anfitrión"
 
-#: src/components/vm/consoles/consoles.jsx:299
+#: src/components/vm/consoles/consoles.tsx:327
 msgid "Expand"
 msgstr "Expandir"
 
@@ -984,11 +979,11 @@ msgstr "Falló"
 msgid "Failed to add TPM to VM $0"
 msgstr "Fallo al añadir TPM a VM $0"
 
-#: src/components/vm/consoles/vnc.jsx:515
+#: src/components/vm/consoles/vnc.tsx:583
 msgid "Failed to add VNC to VM $0"
 msgstr "Fallo al añadir VNC a VM $0"
 
-#: src/components/vm/consoles/serial.jsx:122
+#: src/components/vm/consoles/serial.tsx:135
 msgid "Failed to add serial console to VM $0"
 msgstr "Fallo al añadir una consola serie la VM $0"
 
@@ -1020,7 +1015,7 @@ msgstr "Fallo al desvincular el vsock"
 msgid "Failed to detach watchdog"
 msgstr "Fallo al desvincular el watchdog"
 
-#: src/app.jsx:181
+#: src/app.tsx:210
 msgid "Failed to fetch some resources"
 msgstr "Fallo al solicitar algunos recursos"
 
@@ -1040,7 +1035,7 @@ msgstr "Fallo al reemplazar dispositivos SPICE"
 msgid "Failed to save network settings"
 msgstr "Fallo al guardar los ajustes de red"
 
-#: src/components/vm/consoles/vnc.jsx:263
+#: src/components/vm/consoles/vnc.tsx:288
 msgid "Failed to send key Ctrl+Alt+$0 to VM $1"
 msgstr "Fallo al enviar las teclas Ctrl+Alt+$0 a la VM $1"
 
@@ -1067,7 +1062,7 @@ msgstr "La $0 no se pudo eliminar"
 msgid "Filesystem directory"
 msgstr "Directorio del sistema de archivos"
 
-#: src/components/vms/hostvmslist.tsx:152
+#: src/components/vms/hostvmslist.tsx:205
 msgid "Filter by name"
 msgstr "Filtrar por nombre"
 
@@ -1145,7 +1140,7 @@ msgstr "Obtenga un nuevo token de RHSM."
 msgid "GiB"
 msgstr "GiB"
 
-#: src/app.jsx:280 src/app.jsx:291
+#: src/app.tsx:312 src/app.tsx:323
 msgid "Go to VMs list"
 msgstr "Ir a la lista de MVs"
 
@@ -1157,15 +1152,15 @@ msgstr "Buena opción para virtualización de escritorios"
 msgid "Gracefully shutdown"
 msgstr "Iniciar apagado normal"
 
-#: src/components/vm/consoles/consoles.jsx:161
+#: src/components/vm/consoles/consoles.tsx:198
 msgid "Graphical"
 msgstr "Gráfico"
 
-#: src/components/vm/consoles/vnc.jsx:525
+#: src/components/vm/consoles/vnc.tsx:593
 msgid "Graphical console support not enabled"
 msgstr "Soporte para la consola gráfica no está activo"
 
-#: src/app.jsx:120
+#: src/app.tsx:122
 msgid "Hardware virtualization is disabled"
 msgstr "La virtualización por hardware está desactivada"
 
@@ -1193,7 +1188,7 @@ msgstr "No se pudo agregar el dispositivo del anfitrión"
 msgid "Host device will be removed from $0:"
 msgstr "El dispositivo del anfitrión se quitará de $0:"
 
-#: src/components/vm/vmDetailsPage.tsx:214
+#: src/components/vm/vmDetailsPage.tsx:206
 msgid "Host devices"
 msgstr "Dispositivos del anfitrión"
 
@@ -1296,7 +1291,7 @@ msgstr "Puede que el identificador se acorte a $0 caracteres sin aviso "
 msgid "Idle"
 msgstr "Inactivo"
 
-#: src/app.jsx:134
+#: src/app.tsx:136
 msgid "Ignore"
 msgstr "Ignorar"
 
@@ -1427,7 +1422,7 @@ msgstr "Las claves se encuentran en ~/.ssh/ y tienen una extensión \".pub\"."
 msgid "LVM volume group"
 msgstr "Grupo de volumen de LVM"
 
-#: src/components/vm/consoles/common.jsx:166
+#: src/components/vm/consoles/common.tsx:195
 msgid "Launch viewer"
 msgstr "Lanzar visor"
 
@@ -1466,17 +1461,13 @@ msgstr "Cargando dispositivos de red disponibles"
 msgid "Loading resources"
 msgstr "Cargando recursos"
 
-#: src/components/vm/consoles/serialConsole.jsx:77
-msgid "Loading..."
-msgstr "Cargando..."
-
 #: src/components/create-vm-dialog/createVmDialog.tsx:458
 msgid "Local install media (ISO image or distro install tree)"
 msgstr ""
 "Medio de instalación local (imagen ISO o lista de instalación de "
 "distribución)"
 
-#: src/components/vm/consoles/vnc.jsx:235
+#: src/components/vm/consoles/vnc.tsx:260
 msgid "Local scaling"
 msgstr "Escalado local"
 
@@ -1568,6 +1559,8 @@ msgstr "Se expulsará de $0:"
 #: src/components/vm/vmUsageCard.tsx:51
 #: src/components/vm/overview/vmOverviewCard.tsx:196
 #: src/components/create-vm-dialog/createVmDialog.tsx:1012
+#: src/components/vms/hostvmslist.tsx:119
+#: src/components/vms/hostvmslist.tsx:245
 msgid "Memory"
 msgstr "Memoria"
 
@@ -1668,7 +1661,7 @@ msgstr "NIC $0 de la VM $1 falló al cambiar de estado"
 #: src/components/storagePools/storageVolumeCreateBody.tsx:64
 #: src/components/storagePools/createStoragePoolDialog.tsx:69
 #: src/components/create-vm-dialog/createVmDialog.tsx:325
-#: src/components/vms/hostvmslist.tsx:201
+#: src/components/vms/hostvmslist.tsx:262
 msgid "Name"
 msgstr "Nombre"
 
@@ -1743,7 +1736,7 @@ msgstr "Se quitará la interfaz de red $0 de $1"
 msgid "Network interface settings could not be saved"
 msgstr "No se pudo guardar la configuración de la interfaz de red"
 
-#: src/components/vm/vmDetailsPage.tsx:205
+#: src/components/vm/vmDetailsPage.tsx:197
 msgid "Network interfaces"
 msgstr "Interfaces de red"
 
@@ -1777,7 +1770,7 @@ msgstr "Nuevo nombre para el volumen"
 msgid "No SSH keys specified"
 msgstr "No se han especificado claves SSH"
 
-#: src/components/vms/hostvmslist.tsx:206
+#: src/components/vms/hostvmslist.tsx:268
 msgid "No VM is running or defined on this host"
 msgstr "No hay ninguna MV en ejecución o definida en este anfitrión"
 
@@ -1789,7 +1782,7 @@ msgstr "No se ha encontrado un dispositivo de arranque"
 msgid "No description"
 msgstr "Sin descripción"
 
-#: src/components/vm/disks/vmDisksCard.tsx:294
+#: src/components/vm/disks/vmDisksCard.tsx:278
 #, fuzzy
 #| msgid "disk"
 msgid "No disks"
@@ -1827,7 +1820,7 @@ msgstr "No hay redes disponibles"
 msgid "No parent"
 msgstr "Sin padre"
 
-#: src/components/vm/consoles/vnc.jsx:234
+#: src/components/vm/consoles/vnc.tsx:259
 msgid "No scaling or resizing"
 msgstr "Sin escalado ni cambio de tamaño"
 
@@ -1943,7 +1936,7 @@ msgstr "La operación está en progreso"
 msgid "Other VMs using SPICE"
 msgstr "Otros VM utilizan SPICE"
 
-#: src/components/vm/vmDetailsPage.tsx:169
+#: src/components/vm/vmDetailsPage.tsx:163
 #: src/components/storagePools/storagePool.tsx:77
 msgid "Overview"
 msgstr "Visión global"
@@ -1956,11 +1949,11 @@ msgstr "PCI"
 msgid "Parent snapshot"
 msgstr "Instantánea padre"
 
-#: src/components/vm/consoles/vnc.jsx:190
+#: src/components/vm/consoles/vnc.tsx:179
 msgid "Password"
 msgstr "Contraseña"
 
-#: src/components/vm/consoles/vnc.jsx:210
+#: src/components/vm/consoles/vnc.tsx:199
 msgid ""
 "Password must be 8 characters or less. VNC passwords do not provide "
 "encryption and are generally cryptographically weak. They can not be used to "
@@ -1970,7 +1963,7 @@ msgstr ""
 "proporcionan cifrado y generalmente son criptográficamente débiles. No se "
 "pueden usar para asegurar conexiones en redes no confiables."
 
-#: src/components/vm/consoles/vnc.jsx:110
+#: src/components/vm/consoles/vnc.tsx:99
 msgid "Password must be at most 8 characters."
 msgstr "La contraseña debe tener como máximo 8 caracteres."
 
@@ -2086,18 +2079,18 @@ msgid "Pool's volumes are used by VMs "
 msgstr "Las MVs están utilizando un grupo de volúmenes: "
 
 #: src/components/vm/disks/vmDiskColumns.tsx:53
-#: src/components/vm/consoles/vnc.jsx:171
+#: src/components/vm/consoles/vnc.tsx:160
 #: src/components/vm/overview/bootOrder.tsx:124
 #: src/components/vm/overview/bootOrder.tsx:140
 #: src/components/vm/nics/vmNicsCard.tsx:213
 msgid "Port"
 msgstr "Puerto"
 
-#: src/components/vm/consoles/vnc.jsx:104
+#: src/components/vm/consoles/vnc.tsx:93
 msgid "Port must be 5900 or larger."
 msgstr "El puerto debe ser 5900 o mayor."
 
-#: src/components/vm/consoles/vnc.jsx:184
+#: src/components/vm/consoles/vnc.tsx:173
 msgid ""
 "Port must be a number that is at least 5900. Leave empty to automatically "
 "assign a free port when the machine starts."
@@ -2105,7 +2098,7 @@ msgstr ""
 "El puerto debe ser un número que sea al menos 5900. Déjelo vacío para "
 "asignar automáticamente un puerto libre cuando la máquina se inicie."
 
-#: src/components/vm/consoles/vnc.jsx:101
+#: src/components/vm/consoles/vnc.tsx:90
 msgid "Port must be a number."
 msgstr "El puerto debe ser un número."
 
@@ -2189,7 +2182,7 @@ msgid "Range"
 msgstr "Rango"
 
 #: src/components/vm/disks/diskEdit.tsx:174
-#: src/components/vm/disks/vmDisksCard.tsx:251
+#: src/components/vm/disks/vmDisksCard.tsx:235
 msgid "Read-only"
 msgstr "Solo lectura"
 
@@ -2214,7 +2207,7 @@ msgstr "Publicado $0"
 msgid "Remote URL"
 msgstr "URL remota"
 
-#: src/components/vm/consoles/common.jsx:79
+#: src/components/vm/consoles/common.tsx:88
 msgid ""
 "Remote Viewer is available for most operating systems. To install it, search "
 "for \"Remote Viewer\" in GNOME Software, KDE Discover, or run the following:"
@@ -2223,15 +2216,15 @@ msgstr ""
 "instalarlo, búsque \"Remote Viewer\" en GNOME Software, KDE Discover, o "
 "ejecute:"
 
-#: src/components/vm/consoles/vnc.jsx:236
+#: src/components/vm/consoles/vnc.tsx:261
 msgid "Remote resizing"
 msgstr "Cambio de tamaño remoto"
 
-#: src/components/vm/consoles/common.jsx:139
+#: src/components/vm/consoles/common.tsx:156
 msgid "Remote viewer"
 msgstr "Visor remoto"
 
-#: src/components/vm/consoles/common.jsx:111
+#: src/components/vm/consoles/common.tsx:120
 msgid "Remote viewer applications can connect to the following address:"
 msgstr ""
 "Los programas de visor remoto pueden conectarse a la dirección siguiente:"
@@ -2313,7 +2306,7 @@ msgstr "Reemplazar SPICE en los VM seleccionados."
 msgid "Replace SPICE on the virtual machine."
 msgstr "Sustituye SPICE en la máquina virtual."
 
-#: src/components/vm/consoles/spice.jsx:77
+#: src/components/vm/consoles/spice.tsx:94
 msgid "Replace with VNC"
 msgstr "Reemplazar por VNC"
 
@@ -2321,11 +2314,11 @@ msgstr "Reemplazar por VNC"
 msgid "Reset"
 msgstr "Reiniciar"
 
-#: src/components/vm/consoles/vnc.jsx:548
+#: src/components/vm/consoles/vnc.tsx:624
 msgid "Restart this virtual machine to access its graphical console"
 msgstr "Reinicie esta máquina virtual para acceder a su consola gráfica."
 
-#: src/components/vm/consoles/serial.jsx:154
+#: src/components/vm/consoles/serial.tsx:167
 msgid "Restart this virtual machine to access its serial console"
 msgstr "Reinicie esta máquina virtual para acceder a su consola serie."
 
@@ -2411,7 +2404,7 @@ msgstr "Claves SSH"
 
 #: src/components/vm/disks/diskEdit.tsx:337
 #: src/components/vm/vmEditDescriptionDialog.tsx:88
-#: src/components/vm/consoles/vnc.jsx:156
+#: src/components/vm/consoles/vnc.tsx:145
 #: src/components/vm/overview/bootOrder.tsx:365
 #: src/components/vm/overview/memoryModal.tsx:206
 #: src/components/vm/overview/firmware.tsx:117
@@ -2425,7 +2418,7 @@ msgstr "Guardar"
 msgid "Select all"
 msgstr "Seleccionar todo"
 
-#: src/components/vm/consoles/vnc.jsx:292
+#: src/components/vm/consoles/vnc.tsx:317
 msgid "Send key"
 msgstr "Enviar tecla"
 
@@ -2438,12 +2431,12 @@ msgid "Send non-maskable interrupt to $0?"
 msgstr "¿Enviar interrupción no enmascarable a $0?"
 
 #: src/components/vm/disks/vmDiskColumns.tsx:121
-#: src/components/vm/consoles/consoles.jsx:241
-#: src/components/vm/consoles/consoles.jsx:263
+#: src/components/vm/consoles/consoles.tsx:276
+#: src/components/vm/consoles/consoles.tsx:293
 msgid "Serial"
 msgstr "Número de serie"
 
-#: src/components/vm/consoles/consoles.jsx:241
+#: src/components/vm/consoles/consoles.tsx:276
 msgid "Serial ($0)"
 msgstr "Serie ($0)"
 
@@ -2451,7 +2444,7 @@ msgstr "Serie ($0)"
 msgid "Serial console"
 msgstr "Consola serie"
 
-#: src/components/vm/consoles/serial.jsx:132
+#: src/components/vm/consoles/serial.tsx:145
 msgid "Serial console support not enabled"
 msgstr "Soporte para consola serie inactivo"
 
@@ -2479,12 +2472,12 @@ msgstr "Compartir"
 msgid "Share a host directory with the guest"
 msgstr "Compartir un directorio del anfitrión con el huésped"
 
-#: src/components/vm/vmDetailsPage.tsx:235
+#: src/components/vm/vmDetailsPage.tsx:227
 msgid "Shared directories"
 msgstr "Directorios compartidos"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:193
-#: src/components/vm/vmDetailsPage.tsx:237
+#: src/components/vm/vmDetailsPage.tsx:229
 msgid "Shared host directories need to be manually mounted inside the VM"
 msgstr ""
 "Los directorios compartidos deben ser montados manualmente dentro de la MV"
@@ -2556,7 +2549,7 @@ msgstr ""
 msgid "Snapshot failed to be created"
 msgstr "No se pudo crear la instantánea"
 
-#: src/components/vm/vmDetailsPage.tsx:223
+#: src/components/vm/vmDetailsPage.tsx:215
 msgid "Snapshots"
 msgstr "Instantáneas"
 
@@ -2579,7 +2572,7 @@ msgid "Some configuration changes only take effect after a fresh boot:"
 msgstr ""
 "Algunos cambios de configuración sólo toman efecto tras un inicio desde cero:"
 
-#: src/components/vm/disks/vmDisksCard.tsx:225
+#: src/components/vm/disks/vmDisksCard.tsx:209
 #: src/components/vm/disks/diskAdd.tsx:719
 #: src/components/vm/disks/diskAdd.tsx:755
 #: src/components/vm/hostdevs/hostDevCard.tsx:229
@@ -2633,12 +2626,12 @@ msgstr "Iniciar el grupo cuando el anfitrión arranque"
 msgid "Start should not be empty"
 msgstr "El inicio del rango no debe estar vacío"
 
-#: src/components/vm/consoles/vnc.jsx:495
-#: src/components/vm/consoles/serial.jsx:109
+#: src/components/vm/consoles/serial.tsx:116
+#: src/components/vm/consoles/vnc.tsx:556
 msgid "Start the virtual machine to access the console"
 msgstr "Arranque la máquina virtual para acceder a la consola."
 
-#: src/components/vm/consoles/spice.jsx:68
+#: src/components/vm/consoles/spice.tsx:85
 msgid "Start the virtual machine to launch remote viewer."
 msgstr "Arranque la máquina virtual para lanzar el visor remoto."
 
@@ -2654,8 +2647,8 @@ msgstr "Puesta en marcha"
 #: src/components/vm/nics/vmNicsCard.tsx:496
 #: src/components/networks/networkList.tsx:76
 #: src/components/storagePools/storagePoolList.tsx:79
-#: src/components/vms/hostvmslist.tsx:156
-#: src/components/vms/hostvmslist.tsx:203
+#: src/components/vms/hostvmslist.tsx:209
+#: src/components/vms/hostvmslist.tsx:264
 msgid "State"
 msgstr "Estado"
 
@@ -2737,7 +2730,7 @@ msgstr ""
 "Los volúmenes de almacenamiento deben estar compartidos entre este anfitrión "
 "y el anfitrión de destino."
 
-#: src/components/vm/consoles/common.jsx:115
+#: src/components/vm/consoles/common.tsx:124
 msgid "Successfully copied to clipboard!"
 msgstr "¡Copiado exitosamente al portapapeles!"
 
@@ -2898,7 +2891,7 @@ msgid "This is the recommended type for high performance or enhanced security."
 msgstr ""
 "Este es el tipo recomendado para rendimiento alto o seguridad mejorada."
 
-#: src/components/vm/consoles/spice.jsx:64
+#: src/components/vm/consoles/spice.tsx:81
 msgid "This machine has a SPICE graphical console that can not be shown here."
 msgstr ""
 "Esta máquina tiene una consola gráfica SPICE que no se puede mostrar aquí."
@@ -3012,7 +3005,7 @@ msgstr "No mantenidos y sistema operativo más antiguo"
 msgid "Url"
 msgstr "URL"
 
-#: src/components/vm/vmDetailsPage.tsx:181
+#: src/components/vm/vmDetailsPage.tsx:175
 msgid "Usage"
 msgstr "Uso"
 
@@ -3037,7 +3030,7 @@ msgstr ""
 "origen como destino. Esta ubicación puede ser un grupo de almacenamiento, "
 "NFS o cualquier otro método de almacenamiento compartido."
 
-#: src/components/vm/disks/vmDisksCard.tsx:217
+#: src/components/vm/disks/vmDisksCard.tsx:201
 msgid "Used"
 msgstr "Usado"
 
@@ -3083,7 +3076,7 @@ msgstr "Dispositivos del anfitrión en la MV $0"
 msgid "VM $0 already exists"
 msgstr "La MV $0 ya existe"
 
-#: src/app.jsx:279
+#: src/app.tsx:311
 msgid "VM $0 does not exist on $1 connection"
 msgstr "La MV $0 no existe en la conexión $1"
 
@@ -3147,7 +3140,7 @@ msgstr "MV lanzada con permisos de root"
 msgid "VNC"
 msgstr "VNC"
 
-#: src/components/vm/consoles/vnc.jsx:135
+#: src/components/vm/consoles/vnc.tsx:124
 msgid "VNC settings could not be saved"
 msgstr "Las configuraciones VNC no se pudieron guardar"
 
@@ -3168,11 +3161,11 @@ msgstr "Proveedor"
 msgid "Vendor support ended $0"
 msgstr "Soporte del proveedor finalizado $0"
 
-#: src/components/vm/vmDetailsPage.tsx:291
+#: src/components/vm/vmDetailsPage.tsx:283
 #: src/components/networks/networkList.tsx:57
 #: src/components/storagePools/storagePoolList.tsx:61
-#: src/components/vms/hostvmslist.tsx:196
-#: src/components/vms/hostvmslist.tsx:198 src/manifest.json:0
+#: src/components/vms/hostvmslist.tsx:257
+#: src/components/vms/hostvmslist.tsx:259 src/manifest.json:0
 msgid "Virtual machines"
 msgstr "Máquinas virtuales"
 
@@ -3248,7 +3241,7 @@ msgstr ""
 "adicional y ejecutar un servicio watchdog."
 
 #: src/components/vm/disks/diskEdit.tsx:183
-#: src/components/vm/disks/vmDisksCard.tsx:251
+#: src/components/vm/disks/vmDisksCard.tsx:235
 msgid "Writeable"
 msgstr "Puede escribirse"
 
@@ -3380,11 +3373,11 @@ msgid "more info"
 msgstr "más información"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:203
-#: src/components/vm/vmDetailsPage.tsx:246
+#: src/components/vm/vmDetailsPage.tsx:238
 msgid "mount point: The mount point inside the guest"
 msgstr "mount point: la ruta de montaje en el huésped"
 
-#: src/components/vm/vmDetailsPage.tsx:245
+#: src/components/vm/vmDetailsPage.tsx:237
 msgid "mount tag: The tag associated to the exported mount point"
 msgstr "mount tag: la etiqueta asociada a la ruta de montaje exportada"
 
@@ -3513,6 +3506,13 @@ msgstr "vsock requiere software especial"
 #: src/components/storagePools/storagePoolOverviewTab.tsx:74
 msgid "yes"
 msgstr "sí"
+
+#~ msgid "Disconnected from serial console. Click the connect button."
+#~ msgstr ""
+#~ "Desconectado desde la consola serial. Haga clic en el botón de conectar."
+
+#~ msgid "Loading..."
+#~ msgstr "Cargando..."
 
 #~ msgid "No directories shared between the host and this VM"
 #~ msgstr "No hay directorios compartidos entre el anfitrión y esta MV"
