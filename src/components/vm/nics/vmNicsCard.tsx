@@ -487,7 +487,7 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
 
                     return (
                         <DescriptionList isHorizontal isFluid>
-                            {inetIps.length && <DescriptionListGroup>
+                            {inetIps.length > 0 && <DescriptionListGroup>
                                 {inetIps.map((ip, index) => (
                                     <React.Fragment key={ip.ip}>
                                         <DescriptionListTerm>
@@ -499,7 +499,7 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
                                     </React.Fragment>
                                 ))}
                             </DescriptionListGroup>}
-                            {inet6Ips.length && <DescriptionListGroup>
+                            {inet6Ips.length > 0 && <DescriptionListGroup>
                                 {inet6Ips.map((ip, index) => (
                                     <React.Fragment key={ip.ip}>
                                         <DescriptionListTerm>
