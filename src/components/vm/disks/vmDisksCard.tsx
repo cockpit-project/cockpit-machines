@@ -24,6 +24,7 @@ import type { Notification } from '../../../app';
 import type { ListingTableColumnProps, ListingTableRowProps } from 'cockpit-components-table';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { useDialogs } from 'dialogs.jsx';
 
@@ -31,7 +32,7 @@ import { convertToUnit, toReadableNumber, units, vmId } from "../../../helpers.j
 import { AddDiskModalBody } from './diskAdd.jsx';
 import { needsShutdownDiskAccess, NeedsShutdownTooltip } from '../../common/needsShutdown.jsx';
 import { ListingTable } from "cockpit-components-table.jsx";
-import { DiskSourceCell, DiskExtras, DiskActions } from './vmDiskColumns.jsx';
+import { DiskSourceDescriptions, DiskSourceAbbrev, DiskExtraDescriptions, DiskActions } from './vmDiskColumns.jsx';
 
 const _ = cockpit.gettext;
 
@@ -152,8 +153,6 @@ export class VmDisksCardLibvirt extends React.Component<VmDisksCardLibvirtProps>
                                                     vm.disksStats && vm.disksStats[target],
                                                     storagePools));
 
-        const areDiskStatsSupported = disks.some(d => !!d.capacity);
-
         return (
             <VmDisksCard
                 vm={vm}
@@ -161,7 +160,6 @@ export class VmDisksCardLibvirt extends React.Component<VmDisksCardLibvirtProps>
                 disks={disks}
                 storagePools={storagePools}
                 onAddErrorNotification={onAddErrorNotification}
-                renderCapacity={areDiskStatsSupported}
                 supportedDiskBusTypes={supportedDiskBusTypes} />
         );
     }
@@ -171,7 +169,6 @@ export const VmDisksCard = ({
     vm,
     vms,
     disks,
-    renderCapacity,
     supportedDiskBusTypes,
     storagePools,
     onAddErrorNotification
@@ -179,76 +176,44 @@ export const VmDisksCard = ({
     vm: VM,
     vms: VM[],
     disks: VMDiskWithData[],
-    renderCapacity: boolean,
     supportedDiskBusTypes: string[],
     storagePools: StoragePool[],
     onAddErrorNotification: (notification: Notification) => void,
 }) => {
     const [openActions, setOpenActions] = useState(new Set());
-    let renderCapacityUsed = false;
-    let renderAccess = false;
-    let renderAdditional = false;
-    const columnTitles: (string | ListingTableColumnProps)[] = [_("Device")];
+    const columnTitles: (string | ListingTableColumnProps)[] = [];
     const idPrefix = `${vmId(vm.name)}-disks`;
 
     if (disks && disks.length > 0) {
-        renderCapacityUsed = disks.some(disk => (!!disk.used));
-        renderAccess = disks.some(disk => (typeof disk.readonly !== "undefined") || (typeof disk.shareable !== "undefined"));
-        renderAdditional = disks.some(disk => (disk.driver.cache || disk.driver.io || disk.driver.discard || disk.driver.errorPolicy || disk.driver.type || disk.serial));
-
-        if (renderCapacity) {
-            if (renderCapacityUsed) {
-                columnTitles.push(_("Used"));
-            }
-            columnTitles.push(_("Capacity"));
-        }
-        columnTitles.push(_("Bus"));
-        if (renderAccess) {
-            columnTitles.push(_("Access"));
-        }
         columnTitles.push(_("Source"));
-        if (renderAdditional)
-            columnTitles.push(_("Additional"));
-
+        columnTitles.push(_("Target"));
+        columnTitles.push(_("Size"));
+        columnTitles.push(_("Used on host"));
         columnTitles.push({ title: '', props: { "aria-label": _("Actions") } });
     }
 
     const rows: ListingTableRowProps[] = disks.map(disk => {
         const idPrefixRow = `${idPrefix}-${(disk.target || disk.device)}`;
         const columns: ListingTableRowProps["columns"] = [
-            { title: <VmDiskCell value={disk.device} id={`${idPrefixRow}-device`} key={`${idPrefixRow}-device`} /> },
-
         ];
 
-        if (renderCapacity) {
-            if (renderCapacityUsed) {
-                columns.push({ title: <StorageUnit value={disk.used} id={`${idPrefixRow}-used`} key={`${idPrefixRow}-used`} /> });
-            }
-            columns.push({ title: <StorageUnit value={disk.capacity} id={`${idPrefixRow}-capacity`} key={`${idPrefixRow}-capacity`} /> });
-        }
-
-        columns.push({ title: <VmDiskCell value={disk.bus} id={`${idPrefixRow}-bus`} key={`${idPrefixRow}-bus`} /> });
-
-        if (renderAccess) {
-            const access = (
-                <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${idPrefixRow}-access`}>
-                    <FlexItem>{ disk.readonly ? _("Read-only") : disk.shareable ? _("Concurrently writeable") : _("Writeable") }</FlexItem>
-                    { disk.target && needsShutdownDiskAccess(vm, disk.target) && <NeedsShutdownTooltip iconId={`${idPrefixRow}-access-tooltip`} tooltipId={`tip-${idPrefixRow}-access`} /> }
-                </Flex>
-            );
-            columns.push({ title: access });
-        }
-
-        columns.push({ title: <DiskSourceCell diskSource={disk.source} idPrefix={idPrefixRow} />, props: { width: 25 } });
-
-        if (renderAdditional) {
-            columns.push({
-                title: <DiskExtras idPrefix={idPrefixRow}
-                                   cache={disk.driver.cache}
-                                   type={disk.driver.type}
-                                   serial={disk.serial} />
-            });
-        }
+        columns.push({ title: <DiskSourceAbbrev disk={disk} /> });
+        columns.push({ title: <div id={`${idPrefixRow}-target`}>{disk.target}</div> });
+        columns.push({
+            title: <StorageUnit
+                       value={disk.capacity}
+                       id={`${idPrefixRow}-capacity`}
+                       key={`${idPrefixRow}-capacity`}
+            />
+        });
+        columns.push({
+            title: !isNaN(Number(disk.used)) &&
+                <StorageUnit
+                    value={disk.used}
+                    id={`${idPrefixRow}-used`}
+                    key={`${idPrefixRow}-used`}
+                />
+        });
 
         columns.push({
             title: <DiskActions vm={vm}
@@ -269,7 +234,47 @@ export const VmDisksCard = ({
                                 })
                                 } />
         });
-        return { columns, props: { key: idPrefixRow } };
+
+        const Description = ({ term, children } : { term: string, children: React.ReactNode }) => (
+            <DescriptionListGroup>
+                <DescriptionListTerm>{term}</DescriptionListTerm>
+                <DescriptionListDescription>{children}</DescriptionListDescription>
+            </DescriptionListGroup>
+        );
+
+        const expandedContent = (
+            <DescriptionList isAutoFit>
+                <Description term={_("Device")}>
+                    <VmDiskCell value={disk.device} id={`${idPrefixRow}-device`} key={`${idPrefixRow}-device`} />
+                </Description>
+                <Description term={_("Bus")}>
+                    <div id={`${idPrefixRow}-bus`}>{disk.bus}</div>
+                </Description>
+                <Description term={_("Access")}>
+                    <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${idPrefixRow}-access`}>
+                        <FlexItem>{ disk.readonly ? _("Read-only") : disk.shareable ? _("Concurrently writeable") : _("Writeable") }</FlexItem>
+                        { disk.target && needsShutdownDiskAccess(vm, disk.target) && <NeedsShutdownTooltip iconId={`${idPrefixRow}-access-tooltip`} tooltipId={`tip-${idPrefixRow}-access`} /> }
+                    </Flex>
+                </Description>
+                <DiskSourceDescriptions
+                    diskSource={disk.source}
+                    idPrefix={idPrefixRow}
+                />
+                <DiskExtraDescriptions
+                    idPrefix={idPrefixRow}
+                    cache={disk.driver.cache}
+                    type={disk.driver.type}
+                    serial={disk.serial}
+                />
+            </DescriptionList>
+        );
+
+        return {
+            columns,
+            props: { key: idPrefixRow, 'data-row-id': disk.target },
+            expandedContent,
+            hasPadding: true,
+        };
     });
 
     return (

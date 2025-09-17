@@ -55,15 +55,16 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
 
         self.goToVmPage("subVmTest1")
 
+        self.expandNicRow(1)
         b.wait_in_text("#vm-subVmTest1-network-1-type", "network")
-        b.wait_in_text('#vm-subVmTest1-networks td[data-label="Source"]', "Network")
         b.wait_in_text("#vm-subVmTest1-network-1-source", "default")
-        b.wait_in_text('#vm-subVmTest1-networks td[data-label="Source"]', "TAP device")
+        if "rhel-8" not in m.image:
+            # Interface names appear only with the agent source, and rhel-8 doesn't support that by default.
+            b.wait_in_text("#vm-subVmTest1-network-1-target", "eth0")
         b.wait_in_text("#vm-subVmTest1-network-1-tapdevice", "vnet0")
         b.wait_in_text("#vm-subVmTest1-network-1-ipv4-address-0", "192.168.122.")
         if "rhel-8" not in m.image:
             b.wait_in_text("#vm-subVmTest1-network-1-ipv6-address-0", "fe80::")
-        b.wait_visible('td[data-label="IP address"].pf-m-width-20')
         b.wait_in_text("#vm-subVmTest1-network-1-state", "up")
         b.assert_pixels(
             "#vm-subVmTest1-networks",
@@ -73,11 +74,9 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
                 "#vm-subVmTest1-network-1-ipv4-address-0",
                 "#vm-subVmTest1-network-1-ipv6-address-0",
             ],
-            # MAC and IP address values are not static, and their values affect the width of
-            # their columns and neighbouring columns
-            # With medium layout this variable width of the columns makes pixel tests references
-            # of the table different each test run
-            skip_layouts=["medium", "rtl"],
+            mock={
+                'td[data-label="IP address"]': "192.168.122.NN",
+            },
         )
 
         # Remove default interface
@@ -87,11 +86,12 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         m.execute("virsh attach-interface --domain subVmTest1 --type network --source default --target vnet1 "
                   "--model virtio --mac 52:54:00:4b:73:5f --config --live", timeout=300)
 
+        self.expandNicRow(1)
+        b.wait_in_text("#vm-subVmTest1-network-1-mac", "52:54:00:4b:73:5f")
         b.wait_in_text("#vm-subVmTest1-network-1-type", "network")
         b.wait_in_text("#vm-subVmTest1-network-1-source", "default")
         b.wait_in_text("#vm-subVmTest1-network-1-tapdevice", "vnet1")
         b.wait_in_text("#vm-subVmTest1-network-1-model", "virtio")
-        b.wait_in_text("#vm-subVmTest1-network-1-mac", "52:54:00:4b:73:5f")
         b.wait_in_text("#vm-subVmTest1-network-1-state", "up")
 
         # Test bridge network
@@ -99,15 +99,12 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
                   "--mac 52:54:00:4b:73:5e --config --live", timeout=300)
 
         # vNICs are alphabetically sorted by MAC address, so now the new vNIC is first in the list
-        b.wait_in_text("#vm-subVmTest1-network-1-type", "bridge")
-        b.wait_in_text('#vm-subVmTest1-networks tbody:nth-child(2) td[data-label="Source"]', "Bridge")
         b.wait_in_text("#vm-subVmTest1-network-1-source", "virbr0")
+        self.expandNicRow(1)
+        b.wait_in_text("#vm-subVmTest1-network-1-type", "bridge")
+        b.wait_in_text("#vm-subVmTest1-network-1-mac", "52:54:00:4b:73:5e")
 
-        # Non-running VM doesn't have IP address present, so the "IP address" column should not be present
-        b.wait_visible("th:contains('IP address')")
         self.performAction("subVmTest1", "forceOff")
-        b.wait_not_present("th:contains('IP address')")
-        b.wait_not_in_text('#vm-subVmTest1-networks tbody:nth-child(2) td[data-label="Source"]', "TAP device")
 
         # Sources in  Add vNIC dialog should be alphabetically sorted
         m.execute("ip link add name abridge type bridge")
@@ -203,14 +200,15 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         # Check interfaces have different IP addresses
         # This tests a fix for a bug[1] where we used to show same IP address for every interface
         # https://github.com/cockpit-project/cockpit-machines/issues/1142
-        b.wait_visible("#vm-subVmTest1-network-1-ip-unknown")
+
+        self.expandNicRow(2)
         b.wait_in_text("#vm-subVmTest1-network-2-ipv4-address-0", "192.168.122.")
         if "rhel-8" not in m.image:
             b.wait_in_text("#vm-subVmTest1-network-2-ipv4-address-1", secondary_ip)
             b.wait_not_present("#vm-subVmTest1-network-2-ipv4-address-2")
         else:
             b.wait_not_present("#vm-subVmTest1-network-2-ipv4-address-1")
-        b.wait_visible("#vm-subVmTest1-network-3-ip-unknown")
+        b.wait_not_present("#vm-subVmTest1-network-3-ipv4-address-0")
 
     def testNICPlugingAndUnpluging(self):
         b = self.browser
@@ -291,8 +289,10 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         b.wait_text("#vm-subVmTest1-network-1-mac", "52:54:00:4b:73:6f")
         b.wait_text("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:4f")
         b.wait_text("#vm-subVmTest1-network-3-mac", "52:54:00:4b:73:5f")
+        self.expandNicRow(3)
         b.wait_text("#vm-subVmTest1-network-3-model", "virtio")
         b.wait_text("#vm-subVmTest1-network-4-mac", "52:54:00:4b:73:5f")
+        self.expandNicRow(4)
         b.wait_text("#vm-subVmTest1-network-4-model", "e1000e")
         # Detach
         self.deleteIface(2, "52:54:00:4b:73:4f", "subVmTest1")
@@ -300,6 +300,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             b.wait_not_present("#vm-subVmTest1-network-4-mac")
         b.wait_text_not("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:4f")
         b.wait_text("#vm-subVmTest1-network-2-mac", "52:54:00:4b:73:5f")
+        self.expandNicRow(2)
         b.wait_text("#vm-subVmTest1-network-2-model", "virtio")
         # Test deleting the interface with same MAC address as the other vNIC will delete the correct one
         self.deleteIface(2, "52:54:00:4b:73:5f", "subVmTest1")
@@ -684,6 +685,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             mac="52:54:00:f0:eb:64",
             remove=False
         ).execute()
+
         self.NICEditDialog(
             self,
             nic_num=2,
@@ -725,9 +727,12 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             source_type="direct",
             source="eth43",
         ).execute()
+
         # Check "Source" of the 'direct' NIC
-        b.wait_in_text('#vm-subVmTest1-networks tbody tr:nth-child(1) td[data-label="Source"]', "Direct")
-        b.wait_not_in_text('#vm-subVmTest1-networks tbody tr:nth-child(1) td[data-label="Source"]', "TAP device")
+        self.expandNicRow(1)
+        b.wait_in_text('#vm-subVmTest1-network-1-type', "direct")
+        b.wait_in_text('#vm-subVmTest1-network-1-source', "eth43")
+        b.wait_not_present('#vm-subVmTest1-network-1-tapdevice')
 
         b.click("#vm-subVmTest1-system-run")
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
@@ -782,6 +787,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             self.machine = test_obj.machine
             self.assertEqual = test_obj.assertEqual
             self.deleteIface = test_obj.deleteIface
+            self.expandNicRow = test_obj.expandNicRow
 
             self.xfail = xfail
             self.xfail_error = xfail_error
@@ -875,6 +881,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
 
         def verify_overview(self):
             # The first NIC is default, our new NIC is second in row
+            self.expandNicRow(self.nic_num)
             self.browser.wait_in_text(f"#vm-subVmTest1-network-{self.nic_num}-type", self.source_type)
             if self.model:
                 self.browser.wait_in_text(f"#vm-subVmTest1-network-{self.nic_num}-model", self.model)

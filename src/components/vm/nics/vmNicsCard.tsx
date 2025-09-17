@@ -136,7 +136,7 @@ interface NetworkManagerDeviceProxy extends cockpit.DBusProxy {
     Interface: string;
 }
 
-const NetworkSource = ({
+const NetworkSourceDescriptions = ({
     network,
     networkId,
     vm,
@@ -170,31 +170,33 @@ const NetworkSource = ({
         label = label.charAt(0).toUpperCase() + label.slice(1);
 
         return (
-            <DescriptionListGroup>
-                <DescriptionListTerm>
-                    {label}
-                </DescriptionListTerm>
-                <DescriptionListDescription>
-                    <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${id}-network-${networkId}-source`}>
-                        <FlexItem>
-                            {checkDeviceAvailability(source)
-                                ? <Button variant="link" isInline onClick={sourceJump(source)}>{source}</Button>
-                                : source}
-                        </FlexItem>
-                        {needsShutdownIfaceSource(vm, network) && <NeedsShutdownTooltip iconId={`${id}-network-${networkId}-source-tooltip`} tooltipId="tip-network" />}
-                    </Flex>
-                </DescriptionListDescription>
+            <>
+                <DescriptionListGroup>
+                    <DescriptionListTerm>
+                        {label}
+                    </DescriptionListTerm>
+                    <DescriptionListDescription>
+                        <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${id}-network-${networkId}-source`}>
+                            <FlexItem>
+                                {checkDeviceAvailability(source)
+                                    ? <Button variant="link" isInline onClick={sourceJump(source)}>{source}</Button>
+                                    : source}
+                            </FlexItem>
+                            {needsShutdownIfaceSource(vm, network) && <NeedsShutdownTooltip iconId={`${id}-network-${networkId}-source-tooltip`} tooltipId="tip-network" />}
+                        </Flex>
+                    </DescriptionListDescription>
+                </DescriptionListGroup>
                 { network.source.mode &&
-                    <>
+                    <DescriptionListGroup>
                         <DescriptionListTerm>
                             {_("Mode")}
                         </DescriptionListTerm>
                         <DescriptionListDescription id={`${id}-network-${networkId}-source-mode`}>
                             {network.source.mode}
                         </DescriptionListDescription>
-                    </>
+                    </DescriptionListGroup>
                 }
-            </DescriptionListGroup>
+            </>
         );
     };
     const addressPortSourceElem = (source: { address: optString, port: optString }) => {
@@ -230,7 +232,7 @@ const NetworkSource = ({
     }
 
     return (
-        <DescriptionList isHorizontal isFluid>
+        <>
             {source}
             {network.target && <DescriptionListGroup>
                 <DescriptionListTerm>
@@ -240,15 +242,26 @@ const NetworkSource = ({
                     {network.target}
                 </DescriptionListDescription>
             </DescriptionListGroup>}
-        </DescriptionList>
+        </>
     );
 };
 
-interface VmNetworkTabProps {
-    vm: VM,
-    networks: Network[],
-    onAddErrorNotification: (notification: Notification) => void;
-}
+const NetworkSourceAbbrev = ({
+    network,
+    id,
+} : {
+    network: VMInterface,
+    id: string,
+}) => {
+    const source_name = getIfaceSourceName(network);
+
+    if (!source_name)
+        return null;
+    else if (typeof source_name == "string")
+        return <div id={id}>{source_name}</div>;
+    else
+        return <div id={id}>{source_name.address + ":" + source_name.port}</div>;
+};
 
 // To make it easier to know which is what from libvirt API we put them in an enum.
 enum IpAddressVersion {
@@ -269,9 +282,130 @@ interface IpInterface {
     source: string,
 }
 
+function sort_ips_by_source(ips: IpInterface[]): IpInterface[] {
+    // Setup a preferred order of IP/SUBNET-MASK we want to add.
+    // Helps ensure that the IP subnet mask are taken from the right source.
+    // agent > lease > arp
+    const source_order: {[index: string]: number} = {
+        agent: 1,
+        lease: 2,
+        arp: 3
+    };
+    return ips.sort((a, b) => source_order[a.source] - source_order[b.source]);
+}
+
+const IPDescriptions = ({
+    ipInterfaces,
+    id,
+    networkId,
+} : {
+    ipInterfaces: IpInterface[],
+    id: string,
+    networkId: number,
+}) => {
+    const inetIps: IpAddress[] = [];
+    const inet6Ips: IpAddress[] = [];
+
+    ipInterfaces.forEach(ipInterface => {
+        ipInterface.ips.forEach(inet => {
+            // Separate out IPv4 and IPv6 and don't add duplicate IPs.
+            if (inet.type === IpAddressVersion.v4 && !inetIps.some(inetIp => inetIp.ip == inet.ip)) {
+                inetIps.push(inet);
+            } else if (inet.type === IpAddressVersion.v6 && !inet6Ips.some(inet6Ip => inet6Ip.ip == inet.ip)) {
+                inet6Ips.push(inet);
+            }
+        });
+    });
+
+    if (inetIps.length === 0 && inet6Ips.length === 0) {
+        // There is not IP address associated with this NIC
+        return null;
+    }
+
+    return (
+        <>
+            {inetIps.length > 0 &&
+                <DescriptionListGroup>
+                    {inetIps.map((ip, index) => (
+                        <React.Fragment key={ip.ip}>
+                            <DescriptionListTerm>
+                                {_("IPv4 Address")}
+                            </DescriptionListTerm>
+                            <DescriptionListDescription id={`${id}-network-${networkId}-ipv4-address-${index}`}>
+                                {ip.ip}/{ip.prefix}
+                            </DescriptionListDescription>
+                        </React.Fragment>
+                    ))}
+                </DescriptionListGroup>
+            }
+            {inet6Ips.length > 0 &&
+                <DescriptionListGroup>
+                    {inet6Ips.map((ip, index) => (
+                        <React.Fragment key={ip.ip}>
+                            <DescriptionListTerm>
+                                {_("IPv6 Address")}
+                            </DescriptionListTerm>
+                            <DescriptionListDescription id={`${id}-network-${networkId}-ipv6-address-${index}`}>
+                                {ip.ip}/{ip.prefix}
+                            </DescriptionListDescription>
+                        </React.Fragment>
+                    ))}
+                </DescriptionListGroup>
+            }
+        </>
+    );
+};
+
+const IPTarget = ({
+    ipInterfaces,
+    id,
+} : {
+    ipInterfaces: IpInterface[],
+    id: string,
+}) => {
+    for (const iface of ipInterfaces) {
+        if (iface.source == "agent")
+            return <div id={id}>{iface.name}</div>;
+    }
+
+    return null;
+};
+
+const IPAbbrev = ({
+    ipInterfaces,
+} : {
+    ipInterfaces: IpInterface[],
+}) => {
+    /* Return the first IPv4 address, or the first IPv6 address.
+     */
+
+    for (const iface of ipInterfaces) {
+        for (const ip of iface.ips) {
+            if (ip.type == IpAddressVersion.v4)
+                return ip.ip;
+        }
+    }
+
+    for (const iface of ipInterfaces) {
+        for (const ip of iface.ips) {
+            if (ip.type == IpAddressVersion.v6)
+                return ip.ip;
+        }
+    }
+
+    return null;
+};
+
+interface VmNetworkTabProps {
+    vm: VM,
+    networks: Network[],
+    onAddErrorNotification: (notification: Notification) => void;
+}
+
 interface VmNetworkTabState {
     networkDevices: Record<string, NetworkDevice> | undefined,
     ips: IpInterface[],
+    haveAgentSource: boolean;
     dropdownOpenActions: number,
 }
 
@@ -288,6 +422,7 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
         this.state = {
             networkDevices: undefined,
             ips: [],
+            haveAgentSource: false,
             dropdownOpenActions: 0,
         };
 
@@ -329,6 +464,7 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
                         });
                     } else {
                         const ipaddresses: IpInterface[] = [];
+                        let haveAgentSource: boolean = false;
 
                         domifaddressAllSources
                                 .filter(promise => promise.status == 'fulfilled')
@@ -346,6 +482,8 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
                                             ips: [],
                                             source: promise.value.source,
                                         };
+                                        if (promise.value.source == "agent")
+                                            haveAgentSource = true;
                                         iface[2].forEach(ifAddress => {
                                             if (ifAddress.length && ifAddress[0] in IpAddressVersion) {
                                                 // 0 cell -> type, 1 cell -> address, 2 cell -> prefix
@@ -359,7 +497,7 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
                                         ipaddresses.push(address);
                                     });
                                 });
-                        this.setState({ ips: ipaddresses });
+                        this.setState({ ips: sort_ips_by_source(ipaddresses), haveAgentSource });
                     }
                 });
     }
@@ -410,7 +548,6 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
         interface Detail {
             name: string,
             value: keyof VMInterface | ((network: VMInterfaceWithIndex, networkId: number) => React.ReactNode),
-            props: object,
             hidden?: boolean,
             aria?: string,
         }
@@ -418,117 +555,43 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
         // Network data mapping to rows
         let detailMap: Detail[] = [
             {
-                name: _("Type"),
-                value: (network, networkId) => {
+                name: _("Source"),
+                value: (network) => {
                     return (
-                        <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${id}-network-${networkId}-type`}>
-                            <FlexItem>{network.type}</FlexItem>
-                            {needsShutdownIfaceType(vm, network) && <NeedsShutdownTooltip iconId={`${id}-network-${networkId}-type-tooltip`} tooltipId="tip-network" />}
-                        </Flex>
+                        <NetworkSourceAbbrev id={`${id}-network-${networkId}-source-abbrev`} network={network} />
                     );
                 },
-                props: { width: 10 },
-                hidden: ifaces.every(i => !i.type),
             },
             {
-                name: _("Model type"),
-                value: (network, networkId) => {
+                name: _("Target"),
+                value: (network) => {
                     return (
-                        <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${id}-network-${networkId}-model`}>
-                            <FlexItem>{network.model}</FlexItem>
-                            {needsShutdownIfaceModel(vm, network) && <NeedsShutdownTooltip iconId={`${id}-network-${networkId}-model-tooltip`} tooltipId="tip-network" />}
-                        </Flex>
+                        <IPTarget
+                            id={`${id}-network-${networkId}-target`}
+                            ipInterfaces={this.state.ips.filter(ip => ip.mac === network.mac)}
+                        />
                     );
                 },
-                props: { width: 10 },
-                hidden: ifaces.every(i => !i.model),
+                hidden: !this.state.haveAgentSource,
             },
             {
                 name: _("MAC address"),
                 value: 'mac',
-                props: { width: 15 },
-                hidden: ifaces.every(i => !i.mac),
+                hidden: this.state.haveAgentSource,
             },
             {
                 name: _("IP address"),
-                value: (network, networkId) => {
-                    const ipInterfaces = this.state.ips.filter(ip => ip.mac === network.mac);
-
-                    const inetIps: IpAddress[] = [];
-                    const inet6Ips: IpAddress[] = [];
-
-                    // Setup a preferred order of IP/SUBNET-MASK we want to add.
-                    // Helps ensure that the IP subnet mask are taken from the right source.
-                    // agent > lease > arp
-                    const source_order: {[index: string]: number} = {
-                        agent: 1,
-                        lease: 2,
-                        arp: 3
-                    };
-                    ipInterfaces.sort((a, b) => source_order[a.source] - source_order[b.source]).forEach(ipInterface => {
-                        ipInterface.ips.forEach(inet => {
-                            // Separate out IPv4 and IPv6 and don't add duplicate IPs.
-                            if (inet.type === IpAddressVersion.v4 && !inetIps.some(inetIp => inetIp.ip == inet.ip)) {
-                                inetIps.push(inet);
-                            } else if (inet.type === IpAddressVersion.v6 && !inet6Ips.some(inet6Ip => inet6Ip.ip == inet.ip)) {
-                                inet6Ips.push(inet);
-                            }
-                        });
-                    });
-
-                    if (inetIps.length === 0 && inet6Ips.length === 0) {
-                        // There is not IP address associated with this NIC
-                        return (
-                            <span id={`${id}-network-${networkId}-ip-unknown`}>
-                                {_("Unknown")}
-                            </span>
-                        );
-                    }
-
+                value: (network) => {
                     return (
-                        <DescriptionList isHorizontal isFluid>
-                            {inetIps.length > 0 && <DescriptionListGroup>
-                                {inetIps.map((ip, index) => (
-                                    <React.Fragment key={ip.ip}>
-                                        <DescriptionListTerm>
-                                            {_("inet")}
-                                        </DescriptionListTerm>
-                                        <DescriptionListDescription id={`${id}-network-${networkId}-ipv4-address-${index}`}>
-                                            {ip.ip}/{ip.prefix}
-                                        </DescriptionListDescription>
-                                    </React.Fragment>
-                                ))}
-                            </DescriptionListGroup>}
-                            {inet6Ips.length > 0 && <DescriptionListGroup>
-                                {inet6Ips.map((ip, index) => (
-                                    <React.Fragment key={ip.ip}>
-                                        <DescriptionListTerm>
-                                            {_("inet6")}
-                                        </DescriptionListTerm>
-                                        <DescriptionListDescription id={`${id}-network-${networkId}-ipv6-address-${index}`}>
-                                            {ip.ip}/{ip.prefix}
-                                        </DescriptionListDescription>
-                                    </React.Fragment>
-                                ))}
-                            </DescriptionListGroup>}
-                        </DescriptionList>
+                        <IPAbbrev ipInterfaces={this.state.ips.filter(ip => ip.mac === network.mac)} />
                     );
-                },
-                props: { width: Object.keys(this.state.ips).length ? 20 : 10 },
-                hidden: this.props.vm.state != 'running' && this.props.vm.state != 'paused',
-            },
-            {
-                name: _("Source"),
-                value: (network, networkId) => <NetworkSource network={network} networkId={networkId} vm={vm} hostDevices={this.hostDevices} />,
-                props: { width: 15 }
+                }
             },
             {
                 name: _("State"),
                 value: (network, networkId) => {
                     return <span className='machines-network-state' id={`${id}-network-${networkId}-state`}>{rephraseUI('networkState', String(network.state))}</span>;
                 },
-                props: { width: 10 },
-                hidden: ifaces.every(i => !i.state),
             },
             {
                 name: "",
@@ -639,7 +702,6 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
                         </div>
                     );
                 },
-                props: { width: 10 }
             },
         ];
 
@@ -664,16 +726,76 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
                 let column = null;
                 if (typeof d.value === 'string') {
                     if (target[d.value] !== undefined) {
-                        column = { title: <div id={`${id}-network-${networkId}-${d.value}`}>{String(target[d.value])}</div>, props: d.props };
+                        column = { title: <div id={`${id}-network-${networkId}-${d.value}`}>{String(target[d.value])}</div> };
                     }
                 }
                 if (typeof d.value === 'function') {
-                    column = { title: d.value(target, networkId), props: d.props };
+                    column = { title: d.value(target, networkId) };
                 }
                 return column;
             });
+
+            const Description = ({ term, children } : { term: string, children: React.ReactNode }) => (
+                <DescriptionListGroup>
+                    <DescriptionListTerm>{term}</DescriptionListTerm>
+                    <DescriptionListDescription>{children}</DescriptionListDescription>
+                </DescriptionListGroup>
+            );
+
+            const expandedContent = (
+                <DescriptionList isAutoFit>
+                    { this.state.haveAgentSource &&
+                        <Description term={_("MAC address")}>
+                            <div id={`${id}-network-${networkId}-mac`}>{target.mac}</div>
+                        </Description>
+                    }
+                    <Description term={_("Model type")}>
+                        <Flex
+                            spaceItems={{ default: 'spaceItemsSm' }}
+                            alignItems={{ default: 'alignItemsCenter' }}
+                            id={`${id}-network-${networkId}-model`}
+                        >
+                            <FlexItem>{target.model}</FlexItem>
+                            {needsShutdownIfaceModel(vm, target) &&
+                                <NeedsShutdownTooltip
+                                    iconId={`${id}-network-${networkId}-model-tooltip`}
+                                    tooltipId="tip-network"
+                                />
+                            }
+                        </Flex>
+                    </Description>
+                    <Description term={_("Type")}>
+                        <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${id}-network-${networkId}-type`}>
+                            <FlexItem>{target.type}</FlexItem>
+                            {needsShutdownIfaceType(vm, target) && <NeedsShutdownTooltip iconId={`${id}-network-${networkId}-type-tooltip`} tooltipId="tip-network" />}
+                        </Flex>
+                    </Description>
+                    <IPDescriptions
+                        ipInterfaces={this.state.ips.filter(ip => ip.mac === target.mac)}
+                        id={id}
+                        networkId={networkId}
+                    />
+                    <NetworkSourceDescriptions
+                        network={target}
+                        networkId={networkId}
+                        vm={vm}
+                        hostDevices={this.hostDevices}
+                    />
+                </DescriptionList>
+            );
+
+            const rowId = networkId;
+
             networkId++;
-            return { columns, props: { key: cockpit.format("$0-$1-$2", target.mac, target.address.bus || networkId, target.address.slot || '') } };
+            return {
+                columns,
+                props: {
+                    key: cockpit.format("$0-$1-$2", target.mac, target.address.bus || networkId, target.address.slot || ''),
+                    'data-row-id': rowId,
+                },
+                expandedContent,
+                hasPadding: true,
+            };
         });
 
         return (

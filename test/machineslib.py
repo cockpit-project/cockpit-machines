@@ -150,6 +150,24 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
         else:
             b.wait_not_present(network_row)
 
+    def expandDiskRow(self, target: str) -> None:
+        b = self.browser
+        sel = f".disks-card tbody tr[data-row-id=\"{target}\"]"
+        isExpanded = 'pf-m-expanded' in b.attr(f"{sel} + tr", "class")
+
+        if not isExpanded:
+            b.click(f"{sel} .pf-v6-c-table__toggle button")
+            b.wait_visible(f"{sel} + tr.pf-m-expanded")
+
+    def expandNicRow(self, nic_num: int | str) -> None:
+        b = self.browser
+        sel = f".networks-card tbody tr[data-row-id=\"{nic_num}\"]"
+        isExpanded = 'pf-m-expanded' in b.attr(f"{sel} + tr", "class")
+
+        if not isExpanded:
+            b.click(f"{sel} .pf-v6-c-table__toggle button")
+            b.wait_visible(f"{sel} + tr.pf-m-expanded")
+
     def getDomainMacAddress(self, vmName: str) -> str:
         m = self.machine
         dom_xml = f"virsh -c qemu:///system dumpxml --domain {vmName}"
@@ -288,7 +306,7 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
     def deleteDisk(self, target: str, vm_name: str = "subVmTest1", expect_path: str | None = None) -> None:
         b = self.browser
 
-        b.wait_visible(f"#vm-{vm_name}-disks-{target}-device")
+        b.wait_visible(f"#vm-{vm_name}-disks-{target}-target")
         self.dropdownAction(f"#vm-{vm_name}-disks-{target}-action-kebab", f"#delete-vm-{vm_name}-disks-{target}")
         b.wait_visible(".pf-v6-c-modal-box")
         b.wait_in_text("#delete-resource-modal-target", target)
@@ -382,7 +400,7 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
         makes trying to click on them racy.
         """
         for disk in expected_disks:
-            self.browser.wait_visible(f"#vm-{vm}-disks-{disk}-device")
+            self.browser.wait_visible(f"#vm-{vm}-disks-{disk}-target")
         # HACK: we need to wait on *something* else, but no idea what..
         time.sleep(0.5)
 
