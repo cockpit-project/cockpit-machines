@@ -66,6 +66,7 @@ export const App = () => {
     const [loadingResources, setLoadingResources] = useState(true);
     const [error, setError] = useState('');
     const [systemSocketInactive, setSystemSocketInactive] = useState(false);
+    const [systemSocketAvailable, setSystemSocketAvailable] = useState(false);
     const [virtualizationEnabled, setVirtualizationEnabled] = useState(true);
     const [emptyStateIgnored, setEmptyStateIgnored] = useState(() => {
         const ignored = localStorage.getItem('virtualization-disabled-ignored');
@@ -88,6 +89,8 @@ export const App = () => {
                             .filter(promise => promise.status === 'rejected')
                             .map(promise => promise.reason.message);
                     setError(errorMsgs.join(', '));
+                    if (connectionName == "system")
+                        setSystemSocketAvailable(true);
                 } catch (ex) {
                     // access denied is expected for unprivileged session
                     if (connectionName !== 'system' || superuser.allowed ||
@@ -149,7 +152,7 @@ export const App = () => {
             </Page>
         );
     } else return (
-        <AppActive error={error} />
+        <AppActive error={error} systemSocketAvailable={systemSocketAvailable} />
     );
 };
 
@@ -162,6 +165,7 @@ export interface Notification {
 
 interface AppActiveProps {
     error: string;
+    systemSocketAvailable: boolean;
 }
 
 interface AppActiveState {
@@ -291,6 +295,7 @@ class AppActive extends React.Component<AppActiveProps, AppActiveState> {
             unattendedSupported,
             unattendedUserLogin,
             virtInstallAvailable,
+            systemSocketAvailable: this.props.systemSocketAvailable,
         };
         const createVmAction = <CreateVmAction {...properties} mode='create' />;
         const importDiskAction = <CreateVmAction {...properties} mode='import' />;
