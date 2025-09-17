@@ -24,11 +24,12 @@ import type { Notification } from '../../../app';
 import type { DeleteResourceModalProps } from '../../common/deleteResource';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
-import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
+import { DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
 import { DropdownItem } from "@patternfly/react-core/dist/esm/components/Dropdown";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 
 import { KebabDropdown } from 'cockpit-components-dropdown.jsx';
+import { basename } from 'cockpit-path';
 
 import { useDialogs } from 'dialogs.jsx';
 import { domainDeleteStorage, domainDetachDisk, domainGet } from '../../../libvirtApi/domain.js';
@@ -62,7 +63,7 @@ export function getDiskSourceValue(diskSource: DiskSource, value: DiskSourceKey)
         return diskSource[value];
 }
 
-export const DiskSourceCell = ({
+export const DiskSourceDescriptions = ({
     diskSource,
     idPrefix
 } : {
@@ -87,10 +88,33 @@ export const DiskSourceCell = ({
     const chunks: React.ReactNode[] = [];
     DISK_SOURCE_LIST.forEach(entry => addOptional(chunks, getDiskSourceValue(diskSource, entry.name), entry.name, entry.label));
 
-    return <DescriptionList isHorizontal>{chunks}</DescriptionList>;
+    return chunks;
 };
 
-export const DiskExtras = ({
+export const DiskSourceAbbrev = ({
+    disk,
+} : {
+    disk: VMDisk,
+}) => {
+    const diskSource = disk.source;
+    if (diskSource.file) {
+        return basename(diskSource.file);
+    } else if (diskSource.dev) {
+        return diskSource.dev;
+    } else if (diskSource.volume) {
+        return diskSource.volume;
+    } else if (diskSource.host.name && diskSource.host.port) {
+        return diskSource.host.name + ":" + diskSource.host.port;
+    } else if (diskSource.host.name) {
+        return diskSource.host.name;
+    } else if (disk.device == "cdrom") {
+        return <div className="pf-v6-u-text-color-subtle">{_("(empty)")}</div>;
+    } else {
+        return null;
+    }
+};
+
+export const DiskExtraDescriptions = ({
     idPrefix,
     cache,
     type,
@@ -121,7 +145,7 @@ export const DiskExtras = ({
     addOptional(chunks, serial, "serial", _("Serial"));
     addOptional(chunks, type, "type", _("Format"));
 
-    return <DescriptionList isHorizontal>{chunks}</DescriptionList>;
+    return chunks;
 };
 
 export const RemoveDiskModal = ({

@@ -1027,6 +1027,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
             self.assertEqual = test_obj.assertEqual
             self.goToVmPage = test_obj.goToVmPage
             self.goToMainPage = test_obj.goToMainPage
+            self.expandDiskRow = test_obj.expandDiskRow
 
             self.sourceType = sourceType
             self.sourceTypeSecondChoice = sourceTypeSecondChoice
@@ -1271,8 +1272,9 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                 # Install the VM
                 self.browser.click(f"#vm-{self.name}-system-install")
 
-            self.browser.wait_text(f"#vm-{self.name}-disks-vda-bus", "virtio")
+            self.browser.wait_text(f"#vm-{self.name}-disks-vda-target", "vda")
             # A cloud-init NoCloud ISO file is generated, and attached to the VM as a CDROM device.
+            self.expandDiskRow("sda")
             self.browser.wait_text(f"#vm-{self.name}-disks-sda-device", "cdrom")
             self.goToMainPage()
 
@@ -1330,7 +1332,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
 
             if self.storage_pool != NO_STORAGE:
                 self.goToVmPage(self.name)
-                self.browser.wait_text(f"#vm-{self.name}-disks-vda-bus", "virtio")
+                self.browser.wait_text(f"#vm-{self.name}-disks-vda-target", "vda")
                 self.goToMainPage()
 
             # usual tricks: prevent grep from seeing itself in the output of ps
@@ -1847,6 +1849,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
 
             # check bus type
             if dialog.storage_pool != NO_STORAGE:
+                self.test_obj.expandDiskRow("vda")
                 b.wait_in_text(f"#vm-{name}-disks-vda-bus", "virtio")
             # check memory
             # adjust to how cockpit_format_bytes() formats sizes > 1024 MiB -- this depends on how much RAM
@@ -1888,8 +1891,10 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                                and dialog.sourceType == 'file') or dialog.sourceType == 'url')):
                 b.wait_visible(".disks-card table tbody:first-of-type")
                 if b.is_present(f"#vm-{name}-disks-sda-device"):
+                    self.test_obj.expandDiskRow("sda")
                     b.wait_in_text(f"#vm-{name}-disks-sda-device", "cdrom")
                 elif b.is_present(f"#vm-{name}-disks-hda-device"):
+                    self.test_obj.expandDiskRow("hda")
                     b.wait_in_text(f"#vm-{name}-disks-hda-device", "cdrom")
                 else:
                     raise AssertionError("Unknown disk device")
@@ -2268,7 +2273,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         self.assertEqual(b.get_checked("#vm-VmNotInstalled-autostart-switch"), autostart)
 
         # Check new vNIC have persisted
-        b.wait_visible("#vm-VmNotInstalled-network-1-type")
+        b.wait_visible("#vm-VmNotInstalled-network-1-source-abbrev")
 
         self.allow_browser_errors("Failed when connecting: Connection closed")
         self.allow_journal_messages(".* couldn't shutdown fd: Transport endpoint is not connected")
