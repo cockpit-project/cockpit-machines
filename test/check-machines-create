@@ -1271,7 +1271,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                 # Install the VM
                 self.browser.click(f"#vm-{self.name}-system-install")
 
-            self.browser.wait_text(f"#vm-{self.name}-disks-vda-bus", "virtio")
+            self.browser.wait_text(f"#vm-{self.name}-disks-vda-target", "vda")
             # A cloud-init NoCloud ISO file is generated, and attached to the VM as a CDROM device.
             self.browser.wait_text(f"#vm-{self.name}-disks-sda-device", "cdrom")
             self.goToMainPage()
@@ -1330,7 +1330,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
 
             if self.storage_pool != NO_STORAGE:
                 self.goToVmPage(self.name)
-                self.browser.wait_text(f"#vm-{self.name}-disks-vda-bus", "virtio")
+                self.browser.wait_text(f"#vm-{self.name}-disks-vda-target", "vda")
                 self.goToMainPage()
 
             # usual tricks: prevent grep from seeing itself in the output of ps
@@ -1847,6 +1847,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
 
             # check bus type
             if dialog.storage_pool != NO_STORAGE:
+                self.test_obj.expandDiskRow("vda")
                 b.wait_in_text(f"#vm-{name}-disks-vda-bus", "virtio")
             # check memory
             # adjust to how cockpit_format_bytes() formats sizes > 1024 MiB -- this depends on how much RAM
