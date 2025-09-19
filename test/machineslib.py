@@ -150,6 +150,24 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
         else:
             b.wait_not_present(network_row)
 
+    def expandDiskRow(self, target: str) -> None:
+        b = self.browser
+        sel = f".disks-card tbody tr[data-row-id=\"{target}\"]"
+        isExpanded = 'pf-m-expanded' in b.attr(f"{sel} + tr", "class")
+
+        if not isExpanded:
+            b.click(f"{sel} .pf-v6-c-table__toggle button")
+            b.wait_visible(f"{sel} + tr.pf-m-expanded")
+
+    def expandNicRow(self, nic_num: int | str) -> None:
+        b = self.browser
+        sel = f".networks-card tbody tr[data-row-id=\"{nic_num}\"]"
+        isExpanded = 'pf-m-expanded' in b.attr(f"{sel} + tr", "class")
+
+        if not isExpanded:
+            b.click(f"{sel} .pf-v6-c-table__toggle button")
+            b.wait_visible(f"{sel} + tr.pf-m-expanded")
+
     def getDomainMacAddress(self, vmName: str) -> str:
         m = self.machine
         dom_xml = f"virsh -c qemu:///system dumpxml --domain {vmName}"

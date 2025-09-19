@@ -341,6 +341,7 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         # virsh attach-disk doesn't send an event for offline VM changes
         b.reload()
         b.enter_page('/machines')
+        self.expandDiskRow("vdb")
         b.wait_visible("#vm-subVmTest1-disks-vdb-source-volume")
 
         # Let's check whether
@@ -368,6 +369,7 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         # virsh attach-disk doesn't send an event for offline VM changes
         b.reload()
         b.enter_page('/machines')
+        self.expandDiskRow("sdd")
         b.wait_visible("#vm-subVmTest1-disks-sdd-source-file")
         SnapshotCreateDialog(
             self,

@@ -441,6 +441,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
             with b.wait_timeout(30):
                 b.wait_not_present(f"#vm-{vmName}-disks-adddisk-dialog-modal-window")
 
+            self.expandDiskRow("vdb")
             b.wait_visible(f"#vm-{vmName}-disks-vdb-source-volume")
             b.wait_visible(f"#vm-{vmName}-disks-vdb-source-pool")
 

@@ -147,6 +147,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         # Shut off VM and see state has changed
         self.performAction("subVmTest1", "forceOff")
         # Check change has been applied after shutoff
+        self.expandDiskRow("vde")
         b.wait_in_text("#vm-subVmTest1-disks-vde-access", "Read-only")
         # See tooltip and label are longer present in disk listing table
         b.wait_not_present("#vm-subVmTest1-disks-vde-access-tooltip")
@@ -165,7 +166,6 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b.wait_not_present("#vm-subVmTest1-needs-shutdown")
 
         # Set "shareable" attribute externally
-        testlib.sit()
         m.execute("virt-xml --edit target=vde --disk shareable=on subVmTest1")
         b.wait_in_text("#vm-subVmTest1-disks-vde-access", "Concurrently writeable")
 
@@ -179,6 +179,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         # Close dialog
         save("vde")
         # Target has changed from vdX to sdX
+        self.expandDiskRow("sda")
         b.wait_in_text("#vm-subVmTest1-disks-sda-bus", "scsi")
         b.wait_in_text("#vm-subVmTest1-disks-sda-cache", "writeback")
 
@@ -189,6 +190,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         save("vdg")
         b.wait_not_present("#vm-subVmTest1-disks-vdg-access-tooltip")
         b.wait_not_present("#vm-subVmTest1-needs-shutdown")
+        self.expandDiskRow("vdg")
         b.wait_in_text("#vm-subVmTest1-disks-vdg-access", "Read-only")
 
         # Check that errors appear correctly and disappear when closing the dialog and reopening
@@ -246,6 +248,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         self.goToVmPage("subVmTest2")
         self.waitDisks(["hda"], vm="subVmTest2")
 
+        self.expandDiskRow("hda")
         b.wait_in_text("#vm-subVmTest2-disks-hda-bus", "ide")
 
         openDialog("hda", name="subVmTest2")
@@ -253,6 +256,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b.select_from_dropdown("#vm-subVmTest2-disks-hda-edit-bus-type", "sata")
         save("hda", name="subVmTest2")
 
+        self.expandDiskRow("sda")
         b.wait_in_text("#vm-subVmTest2-disks-sda-bus", "sata")
         openDialog("sda", name="subVmTest2")
         b.wait_not_present("#vm-subVmTest2-disks-hda-edit-bus-type option[value=ide]")
@@ -274,6 +278,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         self.goToVmPage("subVmTest1")
 
         # Test basic disk properties
+        self.expandDiskRow("vda")
         b.wait_in_text("#vm-subVmTest1-disks-vda-bus", "virtio")
 
         b.wait_in_text("#vm-subVmTest1-disks-vda-device", "disk")
@@ -295,6 +300,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
         b.wait_in_text("#vm-subVmTest1-disks-vda-bus", "virtio")
 
+        self.expandDiskRow("vdc")
         b.wait_in_text("#vm-subVmTest1-disks-vdc-bus", "virtio")
         b.wait_in_text("#vm-subVmTest1-disks-vdc-device", "disk")
         b.wait_in_text("#vm-subVmTest1-disks-vdc-source-file", "/var/lib/libvirt/images/image3.img")
@@ -423,6 +429,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
             disks = self._get_disks()
 
+            self.test_obj.expandDiskRow(self.target)
             if self.mode == "custom-path":
                 # verify UI shows correct media
                 b.wait_in_text(f'#vm-{self.vm_name}-disks-{self.target}-source-file', self.file_path)
@@ -735,11 +742,6 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
                 expected_bus_type = self.bus_type or "virtio"
                 expected_device = self.device or "disk"
 
-            b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.expected_target}-bus", expected_bus_type)
-            if self.expected_access:
-                b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.expected_target}-access", self.expected_access)
-            b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.expected_target}-device", expected_device)
-
             # Check volume was added to pool's volume list
             if self.mode == "create-new":
                 self.test_obj.goToMainPage()
@@ -754,6 +756,13 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
                 b.click(".machines-listing-breadcrumb li a:contains(Virtual machines)")
                 self.test_obj.goToVmPage(self.vm_name)
+
+            # Check basics
+            self.test_obj.expandDiskRow(self.expected_target)
+            b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.expected_target}-bus", expected_bus_type)
+            if self.expected_access:
+                b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.expected_target}-access", self.expected_access)
+            b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.expected_target}-device", expected_device)
 
             # Detect volume format
             if self.mode != "custom-path":
@@ -1329,6 +1338,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         # Ensure that the bus type autofilled value is according to the bus types of the existing disks of the guest,
         # even when these are not in the predefined value (see ide)
         m.execute("virt-xml subVmTest1 --edit --disk target=vda,bus=ide,path=/var/lib/libvirt/images/subVmTest1-2.img,clearxml=yes")  # noqa: E501
+        self.expandDiskRow("vda")
         b.wait_text("#vm-subVmTest1-disks-vda-bus", "ide")
         b.click(prefix)
         b.click(f"{prefix}-custompath")
@@ -1733,6 +1743,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         self.goToVmPage("subVmTest1")
 
         b.wait_in_text('#vm-subVmTest1-disks', "Block device")
+        self.expandDiskRow("vdb")
         b.wait_text('#vm-subVmTest1-disks-vdb-source-dev', loop_dev)
 
         if "debian" in m.image or "ubuntu" in m.image:
