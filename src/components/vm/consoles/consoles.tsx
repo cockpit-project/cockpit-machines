@@ -197,6 +197,21 @@ export const ConsoleCard = ({
 
     add_console_selector("graphical", _("Graphical"));
 
+    function get_card_element(selector: string) {
+        let element;
+
+        try {
+            element = document.getElementById(`${vmId(vm.name)}-consoles`)?.querySelector(selector);
+            if (!element)
+                console.error("Can't find card element:", selector);
+        } catch (e) {
+            element = null;
+            console.error("Error looking for card element:", selector, String(e));
+        }
+
+        return element;
+    }
+
     if (type == "graphical") {
         if (vm.state != "running") {
             if (!inactive_vnc && !inactive_spice) {
@@ -231,13 +246,15 @@ export const ConsoleCard = ({
                                 return;
                             lastVncRemoteSize.current = [w, h];
                             if (isStandalone && mode == "none") {
-                                // First we guess the height of the
-                                // header (53px), and then we measure
-                                // it.
-                                let header_height = 53;
-                                const title = document.querySelector(`#${vmId(vm.name)}-consoles .pf-v6-c-card__header`);
+                                // If we can't measure the height, we
+                                // guess it to be 53px, which is what
+                                // it currently is.
+                                let header_height;
+                                const title = get_card_element(".pf-v6-c-card__header");
                                 if (title && title instanceof HTMLElement)
                                     header_height = title.offsetHeight;
+                                else
+                                    header_height = 53;
                                 const delta_width = window.outerWidth - window.innerWidth;
                                 const delta_height = window.outerHeight - window.innerHeight;
                                 window.resizeTo(w + delta_width, h + header_height + delta_height);
@@ -341,12 +358,15 @@ export const ConsoleCard = ({
                 component="a"
                 href={href}
                 onClick={(event) => {
-                    let header_height = 53;
-                    const title = document.querySelector(`#${vmId(vm.name)}-consoles .pf-v6-c-card__header-main`);
+                    event.preventDefault();
+
+                    let header_height;
+                    const title = get_card_element(".pf-v6-c-card__header-main");
                     if (title && title instanceof HTMLElement) {
                         // The 8 below is the padding of the expanded version and fixed in consoles.css
                         header_height = 8 + title.offsetHeight + 8;
-                    }
+                    } else
+                        header_height = 53;
                     const sz = lastVncRemoteSize.current;
                     const options = `popup,width=${sz[0]},height=${sz[1] + header_height}`;
                     console.debug("Detaching VNC:", href, options);
@@ -354,8 +374,6 @@ export const ConsoleCard = ({
 
                     if (body_state)
                         body_state.setConnected(false);
-
-                    event.preventDefault();
                 }}
                 icon={<ExternalLinkAltIcon />}
                 iconPosition="right">{_("Detach")}

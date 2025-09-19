@@ -647,7 +647,10 @@ fullscreen=0
         b = self.browser
         m = self.machine
 
-        name = "subVmTest1"
+        # We use a name with funny characters to test that this
+        # doesn't trip up anything.
+
+        name = "subVm#Test.1"
         self.createVm(name, graphics="vnc")
 
         self.login_and_go("/machines")
