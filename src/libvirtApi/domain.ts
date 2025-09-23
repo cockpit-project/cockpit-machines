@@ -29,7 +29,7 @@ import store from '../store.js';
 import type {
     optString,
     ConnectionName,
-    VM, VMState, VMGraphics, VMDisk, VMHostDevice,
+    VM, VMInterfacePortForward, VMState, VMGraphics, VMDisk, VMHostDevice,
     NodeDevice,
     StoragePool,
 } from '../types';
@@ -62,6 +62,7 @@ import {
 import {
     getDiskElemByTarget,
     getDoc,
+    getElem,
     getDomainCapLoader,
     getDomainCapMaxVCPU,
     getDomainCapCPUCustomModels,
@@ -194,6 +195,16 @@ function script(connectionName: ConnectionName, script: string): cockpit.Spawn<s
         });
 }
 
+async function domainModifyXML(vm: VM, callback: (domain: Element) => boolean) {
+    const [domXml] = await call<[string]>(vm.connectionName, vm.id, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE | Enum.VIR_DOMAIN_XML_SECURE], { timeout, type: 'u' });
+    const xml = getElem(domXml);
+    if (callback(xml)) {
+        const s = new XMLSerializer();
+        const updatedDomXml = s.serializeToString(xml);
+        await call(vm.connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [updatedDomXml], { timeout, type: 's' });
+    }
+}
+
 export function domainAttachHostDevices({
     connectionName,
     vmName,
@@ -229,6 +240,7 @@ interface InterfaceSpec {
     source: string,
     sourceMode: string,
     model: string,
+    portForwards: VMInterfacePortForward[]
 }
 
 export async function domainAttachIface({
@@ -240,6 +252,7 @@ export async function domainAttachIface({
     source,
     sourceMode,
     model,
+    portForwards,
 }: { vm: VM } & InterfaceSpec): Promise<void> {
     virtXmlAdd(vm, "network", {
         mac,
@@ -249,10 +262,20 @@ export async function domainAttachIface({
             mode: sourceMode,
         },
         model,
+        portForward: portForwards,
     }, {
         update: hotplug,
         "no-define": hotplug && !permanent,
     });
+}
+
+function clearPortForwards(dom: Element, mac: string): boolean {
+    const elements = dom.querySelectorAll(`devices interface:has(mac[address="${CSS.escape(mac)}" i]) portForward`);
+    if (elements && elements.length > 0) {
+        elements.forEach(e => e.remove());
+        return true;
+    }
+    return false;
 }
 
 interface InterfaceChangeSpec {
@@ -264,6 +287,8 @@ interface InterfaceChangeSpec {
     networkSource?: string,
     networkSourceMode?: string,
     networkModel?: string,
+    networkBackend?: string,
+    portForwards?: VMInterfacePortForward[],
     state?: string,
 }
 
@@ -277,6 +302,8 @@ export async function domainChangeInterfaceSettings({
     networkSource,
     networkSourceMode,
     networkModel,
+    networkBackend,
+    portForwards,
     state,
 }: { vm: VM } & InterfaceChangeSpec): Promise<void> {
     let networkParams;
@@ -291,7 +318,13 @@ export async function domainChangeInterfaceSettings({
                 mode: networkSourceMode || (networkType == "direct" ? "bridge" : null),
             },
             model: networkModel,
+            backend: networkBackend,
+            portForward: portForwards,
         };
+        if (portForwards) {
+            // HACK - https://github.com/virt-manager/virt-manager/issues/982
+            await domainModifyXML(vm, dom => clearPortForwards(dom, macAddress));
+        }
     }
 
     const extra = {

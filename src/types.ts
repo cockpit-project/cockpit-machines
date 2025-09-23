@@ -96,6 +96,20 @@ export interface VMDisk {
     removable: optString;
 }
 
+export interface VMInterfacePortForwardRange {
+    start: optString;
+    end: optString;
+    to: optString;
+    exclude: optString;
+}
+
+export interface VMInterfacePortForward {
+    address: optString;
+    dev: optString;
+    proto: optString;
+    ranges: VMInterfacePortForwardRange[];
+}
+
 export interface VMInterface {
     type: string;
     managed: optString;
@@ -103,6 +117,7 @@ export interface VMInterface {
     target: optString;
     mac: optString;
     model: optString;
+    backend: optString;
     aliasName: optString;
     virtualportType: optString;
     driverName: optString;
@@ -128,6 +143,7 @@ export interface VMInterface {
         slot: optString;
         domain: optString;
     },
+    portForwards: VMInterfacePortForward[],
 }
 
 export interface VMRedirectedDevice {
