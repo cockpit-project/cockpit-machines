@@ -251,7 +251,9 @@ const AddHostDev = ({
     const body = (
         <Form isHorizontal>
             <TypeRow type={type} setType={setTypeWrapper} />
-            <DevRow idPrefix={idPrefix} selectableDevices={selectableDevices} setSelectableDevices={setSelectableDevices} />
+            <div style={{ overflowX: "auto" }}>
+                <DevRow idPrefix={idPrefix} selectableDevices={selectableDevices} setSelectableDevices={setSelectableDevices} />
+            </div>
         </Form>
     );
 
