@@ -34,7 +34,7 @@ import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { useDialogs } from 'dialogs.jsx';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
-import { domainRemoveWatchdog, domainSetWatchdog } from "../../../libvirtApi/domain.js";
+import { virtXmlAdd, virtXmlEdit, virtXmlHotRemove } from "../../../libvirtApi/domain.js";
 import { rephraseUI } from "../../../helpers.js";
 import { NeedsShutdownAlert, NeedsShutdownTooltip, needsShutdownWatchdog } from "../../common/needsShutdown.jsx";
 import { WATCHDOG_INFO_MESSAGE } from './helpers.jsx';
@@ -97,39 +97,46 @@ export const WatchdogModal = ({
 
     const Dialogs = useDialogs();
 
-    const setWatchdogColdplug = () => {
-        return domainSetWatchdog({
-            connectionName: vm.connectionName,
-            vmName: vm.name,
-            action: watchdogAction,
-            defineOffline: true,
-            hotplug: false,
-            isWatchdogAttached,
-        })
-                .then(Dialogs.close, exc => setDialogError({ text: _("Failed to configure watchdog"), detail: exc.message, variant: "danger" }));
+    async function setWatchdog(vm: VM, hotplug: boolean) {
+        if (isWatchdogAttached) {
+            await virtXmlEdit(vm, "watchdog", 1, { action: watchdogAction });
+        } else {
+            await virtXmlAdd(
+                vm,
+                "watchdog",
+                { action: watchdogAction },
+                { update: hotplug, "no-define": hotplug },
+            );
+        }
+    }
+
+    const setWatchdogColdplug = async () => {
+        try {
+            await setWatchdog(vm, false);
+            Dialogs.close();
+        } catch (exc) {
+            setDialogError({ text: _("Failed to configure watchdog"), detail: String(exc), variant: "danger" });
+        }
     };
 
-    const setWatchdogHotplug = () => {
-        return domainSetWatchdog({
-            connectionName: vm.connectionName,
-            vmName: vm.name,
-            action: watchdogAction,
-            defineOffline: false,
-            hotplug: true,
-            isWatchdogAttached,
-        })
-                .then(vm.persistent ? setWatchdogColdplug : Dialogs.close)
-                .catch(exc => {
-                    if (vm.persistent)
-                        setOfferColdplug(true);
+    const setWatchdogHotplug = async () => {
+        try {
+            await setWatchdog(vm, true);
+            if (vm.persistent)
+                await setWatchdogColdplug();
+            else
+                Dialogs.close();
+        } catch (exc) {
+            if (vm.persistent)
+                setOfferColdplug(true);
 
-                    setDialogError({
-                        text: _("Could not dynamically add watchdog"),
-                        detail: _("Adding a watchdog will require a reboot to take effect."),
-                        expandableDetail: exc.message,
-                        variant: vm.persistent ? "warning" : "danger"
-                    });
-                });
+            setDialogError({
+                text: _("Could not dynamically add watchdog"),
+                detail: _("Adding a watchdog will require a reboot to take effect."),
+                expandableDetail: String(exc),
+                variant: vm.persistent ? "warning" : "danger"
+            });
+        }
     };
 
     const save = (coldplug: boolean) => {
@@ -144,18 +151,15 @@ export const WatchdogModal = ({
                 .finally(() => setInProgress(false));
     };
 
-    const detach = () => {
-        cockpit.assert(vm.watchdog.model);
+    const detach = async () => {
         setInProgress(true);
-        return domainRemoveWatchdog({
-            connectionName: vm.connectionName,
-            vmName: vm.name,
-            hotplug: vm.state === "running",
-            permanent: vm.persistent,
-            model: vm.watchdog.model,
-        })
-                .then(Dialogs.close, exc => setDialogError({ text: _("Failed to detach watchdog"), detail: exc.message, variant: "danger" }))
-                .finally(() => setInProgress(false));
+        try {
+            await virtXmlHotRemove(vm, "watchdog", { model: vm.watchdog.model });
+            Dialogs.close();
+        } catch (exc) {
+            setDialogError({ text: _("Failed to detach watchdog"), detail: String(exc), variant: "danger" });
+        }
+        setInProgress(false);
     };
 
     const needsShutdown = () => {
