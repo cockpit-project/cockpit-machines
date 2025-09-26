@@ -17,19 +17,25 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 
-import type { optString, ConnectionName } from '../../../types';
+import type { optString, ConnectionName, VMInterfacePortForward } from '../../../types';
 import type { AvailableSources } from './vmNicsCard';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { EmptyState, EmptyStateBody } from "@patternfly/react-core/dist/esm/components/EmptyState";
 import { Flex } from "@patternfly/react-core/dist/esm/layouts/Flex";
-import { FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
+import { FormGroup, FormFieldGroup, FormFieldGroupHeader } from "@patternfly/react-core/dist/esm/components/Form";
 import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
 import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 import { PopoverPosition } from "@patternfly/react-core/dist/esm/components/Popover";
 import { Content, ContentVariants } from "@patternfly/react-core/dist/esm/components/Content";
-import { ExternalLinkSquareAltIcon } from '@patternfly/react-icons';
+import { ExternalLinkSquareAltIcon, TrashIcon, PlusIcon } from '@patternfly/react-icons';
+import { Grid } from "@patternfly/react-core/dist/esm/layouts/Grid";
+import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
+import { Checkbox } from '@patternfly/react-core/dist/esm/components/Checkbox';
+import { MenuToggle, MenuToggleAction } from '@patternfly/react-core/dist/esm/components/MenuToggle';
+import { Dropdown, DropdownList, DropdownItem } from "@patternfly/react-core/dist/esm/components/Dropdown";
 
 import { InfoPopover } from '../../common/infoPopover.jsx';
 
@@ -39,11 +45,37 @@ import './nic.css';
 
 const _ = cockpit.gettext;
 
+export interface DialogComplexPortForwardRange {
+    host: string;
+    guest: string;
+    exclude: boolean;
+}
+
+export interface DialogComplexPortForward {
+    kind: "complex";
+    text: string;
+    address: string;
+    dev: string;
+    proto: string;
+    ranges: DialogComplexPortForwardRange[];
+}
+
+export interface DialogSimplePortForward {
+    kind: "simple";
+    address: string;
+    proto: string;
+    host: string;
+    guest: string;
+}
+
+type DialogPortForward = DialogSimplePortForward | DialogComplexPortForward;
+
 export interface DialogBodyValues {
     networkModel: string;
     networkType: string;
     networkSource: string;
     networkSourceMode: string;
+    portForwards: DialogPortForward[];
 }
 
 type OnValueChanged = <K extends keyof DialogBodyValues>(key: K, value: DialogBodyValues[K]) => void;
@@ -139,17 +171,19 @@ export const NetworkTypeAndSourceRow = ({
         ];
     } else {
         availableNetworkTypes = [
-            ...virtualNetwork,
+            {
+                name: 'passt',
+                desc: 'Userspace PASST stack',
+                detailParagraph: _("Recommended method to provide a virtual LAN with NAT to the outside world. Supports port forwarding.")
+            },
             {
                 name: 'user',
-                desc: 'Userspace SLIRP stack',
-                detailParagraph: _("Provides a virtual LAN with NAT to the outside world.")
+                desc: 'Userspace SLIRP stack (legacy)',
+                detailParagraph: _("Legacy method to provide a virtual LAN with NAT to the outside world.")
             },
+            ...(dialogValues.availableSources.network.length > 0 ? virtualNetwork : []),
         ];
     }
-
-    // Bring to the first position in dropdown list the initial selection which reflects the current nic type
-    availableNetworkTypes.sort(function(x, y) { return x.name == defaultNetworkType ? -1 : y.name == defaultNetworkType ? 1 : 0 });
 
     if (["network", "direct", "bridge"].includes(dialogValues.networkType)) {
         let sources: string[] = [];
@@ -264,5 +298,613 @@ export const NetworkTypeAndSourceRow = ({
                 </FormGroup>
             )}
         </>
+    );
+};
+
+export function portForwardText(pf: VMInterfacePortForward): string {
+    let text = "";
+
+    if (pf.address)
+        text += pf.address + " ";
+    if (pf.dev)
+        text += pf.dev + " ";
+
+    if (!pf.ranges.some(r => r.exclude != "yes"))
+        text += _("all ports");
+    for (let i = 0; i < pf.ranges.length; i++) {
+        const r = pf.ranges[i];
+        if (text != "")
+            text += ", ";
+        if (r.exclude == "yes")
+            text += _("excluding ");
+        text += r.start;
+        if (r.end)
+            text += "-" + r.end;
+        if (r.to)
+            text += " → " + r.to + (r.end ? "-" + (Number(r.to) + Number(r.end) - Number(r.start)).toString() : "");
+        if (pf.proto && pf.proto != "tcp")
+            text += "/" + pf.proto;
+    }
+
+    return text;
+}
+
+export function interfacePortForwardsToDialog(portForwards: VMInterfacePortForward[]): DialogPortForward[] {
+    return portForwards.map(pf => {
+        if (!pf.dev && pf.ranges.length == 1 && pf.ranges[0].exclude != "yes") {
+            const r = pf.ranges[0];
+            return {
+                kind: "simple",
+                address: pf.address || "",
+                proto: pf.proto || "",
+                host: r.start + (r.end ? "-" + r.end : ""),
+                guest: r.to || "",
+            };
+        } else {
+            return {
+                kind: "complex",
+                text: portForwardText(pf),
+                address: pf.address || "",
+                dev: pf.dev || "",
+                proto: pf.proto || "tcp",
+                ranges: pf.ranges.map(r => {
+                    return {
+                        host: r.start + (r.end ? "-" + r.end : ""),
+                        guest: r.to || "",
+                        exclude: r.exclude == "yes",
+                    };
+                }),
+            };
+        }
+    });
+}
+
+export function dialogPortForwardsToInterface(portForwards: DialogPortForward[]): VMInterfacePortForward[] {
+    // XXX - Instead of validation the input (which no other part
+    // of the dialog does), we simply ignore rules with a empty host port.
+
+    function valid_range(r: DialogComplexPortForwardRange): boolean {
+        return !!r.host;
+    }
+
+    function valid_pf(pf: DialogPortForward): boolean {
+        if (pf.kind == "simple") {
+            return !!pf.host;
+        } else {
+            return pf.ranges.length == 0 || pf.ranges.some(valid_range);
+        }
+    }
+
+    return portForwards.filter(valid_pf).map((pf: DialogPortForward) => {
+        if (pf.kind == "simple") {
+            const range = pf.host.split("-");
+            return {
+                address: pf.address || null,
+                dev: null,
+                proto: pf.proto,
+                ranges: [
+                    {
+                        start: range[0],
+                        end: range[1] || null,
+                        to: pf.guest || null,
+                        exclude: null,
+                    }
+                ],
+            };
+        } else {
+            const ranges = pf.ranges.filter(valid_range).map((r: DialogComplexPortForwardRange) => {
+                const range = r.host.split("-");
+                return {
+                    start: range[0],
+                    end: range[1] || null,
+                    to: r.guest || null,
+                    exclude: r.exclude ? "yes" : null,
+                };
+            });
+            return {
+                address: pf.address || null,
+                dev: pf.dev || null,
+                proto: pf.proto,
+                ranges
+            };
+        }
+    });
+}
+
+const SimplePortForward = ({
+    id,
+    item,
+    onChange,
+    idx,
+    removeitem,
+} : {
+    id: string,
+    item: DialogSimplePortForward,
+    onChange: <K extends keyof DialogSimplePortForward>(idx: number, key: K, value: DialogSimplePortForward[K]) => void,
+    idx: number,
+    removeitem: (idx: number) => void,
+}) => {
+    return (
+        <Grid hasGutter id={id}>
+            <FormGroup className="pf-m-3-col-on-md"
+                id={id + "-ip-address-group"}
+                label={_("IP address")}
+                fieldId={id + "-ip-address"}
+                labelHelp={
+                    <InfoPopover
+                        aria-label={_("IP address help")}
+                        enableFlip
+                        bodyContent={_("If host IP is set to 0.0.0.0 or not set at all, the port will be bound on all IPs on the host.")}
+                    />
+                }>
+                <TextInput
+                    id={id + "-ip-address"}
+                    value={item.address}
+                    onChange={(_event, value) => {
+                        onChange(idx, 'address', value);
+                    }}
+                />
+            </FormGroup>
+            <FormGroup
+                className="pf-m-4-col-on-md"
+                id={id + "-host-port-group"}
+                label={_("Host port")}
+                fieldId={id + "-host-port"}
+                isRequired
+                labelHelp={
+                    <InfoPopover
+                        aria-label={_("Host port help")}
+                        enableFlip
+                        bodyContent={_("The port on the host that is fotwarded into the guest. You can also specify a range of ports like 4000-4050.")}
+                    />
+                }>
+                <TextInput
+                    id={id + "-host-port"}
+                    step={1}
+                    value={item.host}
+                    onChange={(_event, value) => {
+                        onChange(idx, 'host', value);
+                    }}
+                />
+            </FormGroup>
+            <FormGroup
+                className="pf-m-3-col-on-md"
+                id={id + "-guest-port-group"}
+                label={_("Guest port")}
+                fieldId={id + "-guest-port"}
+                labelHelp={
+                    <InfoPopover
+                        aria-label={_("Guest port help")}
+                        enableFlip
+                        bodyContent={_("The port on the guest. If left empty, the same port as on the host is used.")}
+                    />
+                }>
+                <TextInput
+                    id={id + "-guest-port"}
+                    value={item.guest}
+                    onChange={(_event, value) => {
+                        onChange(idx, 'guest', value);
+                    }}
+                />
+            </FormGroup>
+            <FormGroup
+                className="pf-m-2-col-on-md"
+                label={_("Protocol")}
+                fieldId={id + "-protocol"}
+            >
+                <FormSelect
+                    className='pf-v6-c-form-control'
+                    id={id + "-protocol"}
+                    value={item.proto}
+                    onChange={(_event, value) => onChange(idx, 'proto', value)}
+                >
+                    <FormSelectOption value='tcp' label={_("TCP")} />
+                    <FormSelectOption value='udp' label={_("UDP")} />
+                </FormSelect>
+            </FormGroup>
+            <FormGroup className="pf-m-1-col-on-md remove-button-group">
+                <Button
+                    variant='plain'
+                    className="btn-close"
+                    id={id + "-btn-close"}
+                    size="sm"
+                    aria-label={_("Remove item")}
+                    icon={<TrashIcon />}
+                    onClick={() => removeitem(idx)}
+                />
+            </FormGroup>
+        </Grid>
+    );
+};
+
+const ComplexPortForwardRange = ({
+    id,
+    item,
+    onChange,
+    idx,
+    removeitem,
+} : {
+    id: string,
+    item: DialogComplexPortForwardRange,
+    onChange: <K extends keyof DialogComplexPortForwardRange>(idx: number, key: K, value: DialogComplexPortForwardRange[K]) => void,
+    idx: number,
+    removeitem: (idx: number) => void,
+}) => {
+    return (
+        <Grid hasGutter id={id}>
+            <div className="pf-m-1-col-on-md" />
+            <FormGroup
+                className="pf-m-3-col-on-md"
+                id={id + "-host-port-group"}
+                label={_("Host port")}
+                fieldId={id + "-host-port"}
+                isRequired
+                labelHelp={
+                    <InfoPopover
+                        aria-label={_("Host port help")}
+                        enableFlip
+                        bodyContent={_("The port on the host that is fotwarded into the guest. You can also specify a range of ports like 4000-4050.")}
+                    />
+                }>
+                <TextInput
+                    id={id + "-host-port"}
+                    step={1}
+                    value={item.host}
+                    onChange={(_event, value) => {
+                        onChange(idx, 'host', value);
+                    }}
+                />
+            </FormGroup>
+            <FormGroup
+                className="pf-m-3-col-on-md"
+                id={id + "-guest-port-group"}
+                label={_("Guest port")}
+                fieldId={id + "-guest-port"}
+                labelHelp={
+                    <InfoPopover
+                        aria-label={_("Guest port help")}
+                        enableFlip
+                        bodyContent={_("The port on the guest. If left empty, the same port as on the host is used.")}
+                    />
+                }>
+                <TextInput
+                    id={id + "-guest-port"}
+                    value={item.guest}
+                    onChange={(_event, value) => {
+                        onChange(idx, 'guest', value);
+                    }}
+                />
+            </FormGroup>
+            <FormGroup
+                className="pf-m-3-col-on-md"
+                label=" "
+                fieldId={id + "-exclude"}
+            >
+                <Checkbox
+                    id={id + "-exclude"}
+                    label={_("Exclude")}
+                    isChecked={item.exclude}
+                    onChange={(_event, checked) => onChange(idx, 'exclude', checked)}
+                />
+            </FormGroup>
+            <FormGroup className="pf-m-1-col-on-md remove-button-group">
+                <Button
+                    variant='plain'
+                    className="btn-close"
+                    id={id + "-btn-close"}
+                    size="sm"
+                    aria-label={_("Remove item")}
+                    icon={<TrashIcon />}
+                    onClick={() => removeitem(idx)}
+                />
+            </FormGroup>
+        </Grid>
+    );
+};
+
+const ComplexPortForward = ({
+    id,
+    item,
+    onChange,
+    idx,
+    removeitem,
+    allowEditing,
+} : {
+    id: string,
+    item: DialogComplexPortForward,
+    onChange: <K extends keyof DialogComplexPortForward>(idx: number, key: K, value: DialogComplexPortForward[K]) => void,
+    idx: number,
+    removeitem: (idx: number) => void,
+    allowEditing: boolean,
+}) => {
+    if (!allowEditing) {
+        return (
+            <Grid hasGutter id={id}>
+                <div className="pf-m-12-col-on-md">
+                    {cockpit.format(_("Complex rule \"$0\" can not be edited here."), item.text)}
+                </div>
+                <FormGroup className="pf-m-1-col-on-md remove-button-group">
+                    <Button
+                        variant='plain'
+                        className="btn-close"
+                        id={id + "-btn-close"}
+                        size="sm"
+                        aria-label={_("Remove item")}
+                        icon={<TrashIcon />}
+                        onClick={() => removeitem(idx)}
+                    />
+                </FormGroup>
+            </Grid>
+        );
+    }
+
+    const def = {
+        host: "",
+        guest: "",
+        exclude: false,
+    };
+
+    function addItem() {
+        onChange(idx, 'ranges', item.ranges.concat({ ...def }));
+    }
+
+    function remItem(range_idx: number) {
+        item.ranges.splice(range_idx, 1);
+        onChange(idx, 'ranges', item.ranges);
+    }
+
+    function onRangeChange<K extends keyof DialogComplexPortForwardRange>(range_idx: number, key: K, value: DialogComplexPortForwardRange[K]) {
+        item.ranges[range_idx][key] = value;
+        onChange(idx, 'ranges', item.ranges);
+    }
+
+    return (
+        <>
+            <Grid hasGutter id={id}>
+                <FormGroup className="pf-m-3-col-on-md"
+                    id={id + "-ip-address-group"}
+                    label={_("IP address")}
+                    fieldId={id + "-ip-address"}
+                    labelHelp={
+                        <InfoPopover
+                            aria-label={_("IP address help")}
+                            enableFlip
+                            bodyContent={_("If host IP is set to 0.0.0.0 or not set at all, the port will be bound on all IPs on the host.")}
+                        />
+                    }>
+                    <TextInput
+                        id={id + "-ip-address"}
+                        value={item.address}
+                        onChange={(_event, value) => {
+                            onChange(idx, 'address', value);
+                        }}
+                    />
+                </FormGroup>
+                <FormGroup className="pf-m-3-col-on-md"
+                    id={id + "-dev-group"}
+                    label={_("Device")}
+                    fieldId={id + "-dev"}
+                    labelHelp={
+                        <InfoPopover
+                            aria-label={_("Device help")}
+                            enableFlip
+                            bodyContent={_("Optionally restrict port forwarding to this network device")}
+                        />
+                    }>
+                    <TextInput
+                        id={id + "-dev"}
+                        value={item.dev}
+                        onChange={(_event, value) => {
+                            onChange(idx, 'dev', value);
+                        }}
+                    />
+                </FormGroup>
+                <FormGroup
+                    className="pf-m-2-col-on-md"
+                    label={_("Protocol")}
+                    fieldId={id + "-protocol"}
+                >
+                    <FormSelect
+                        className='pf-v6-c-form-control'
+                        id={id + "-protocol"}
+                        value={item.proto}
+                        onChange={(_event, value) => onChange(idx, 'proto', value)}
+                    >
+                        <FormSelectOption value='tcp' label={_("TCP")} />
+                        <FormSelectOption value='udp' label={_("UDP")} />
+                    </FormSelect>
+                </FormGroup>
+                <FormGroup className="pf-m-1-col-on-md" label=" ">
+                    <Button
+                        variant='plain'
+                        className="btn-add"
+                        id={id + "-btn-add"}
+                        size="sm"
+                        aria-label={_("Add item")}
+                        icon={<PlusIcon />}
+                        onClick={() => addItem()}
+                    />
+                </FormGroup>
+                <FormGroup className="pf-m-1-col-on-md remove-button-group">
+                    <Button
+                        variant='plain'
+                        className="btn-close"
+                        id={id + "-btn-close"}
+                        size="sm"
+                        aria-label={_("Remove item")}
+                        icon={<TrashIcon />}
+                        onClick={() => removeitem(idx)}
+                    />
+                </FormGroup>
+            </Grid>
+            { item.ranges.map((r, idx) =>
+                <ComplexPortForwardRange
+                    id={id + "-range-" + idx}
+                    key={idx}
+                    item={r}
+                    idx={idx}
+                    removeitem={remItem}
+                    onChange={onRangeChange}
+                />)
+            }
+        </>
+    );
+};
+
+export const NetworkPortForwardsRow = ({
+    idPrefix,
+    onValueChanged,
+    dialogValues,
+    allowComplexEditing = false,
+} : {
+    idPrefix: string,
+    onValueChanged: OnValueChanged,
+    dialogValues: DialogBodyValues,
+    allowComplexEditing?: boolean,
+}) => {
+    const [actionOpen, setActionOpen] = useState(false);
+
+    const simple_default: DialogPortForward = {
+        kind: "simple",
+        address: "",
+        proto: "tcp",
+        host: "",
+        guest: "",
+    };
+
+    const complex_default: DialogPortForward = {
+        kind: "complex",
+        text: "",
+        address: "",
+        dev: "",
+        proto: "tcp",
+        ranges: [
+            {
+                host: "",
+                guest: "",
+                exclude: false,
+            }
+        ],
+    };
+
+    function addItem(item: DialogPortForward) {
+        onValueChanged('portForwards', dialogValues.portForwards.concat({ ...item }));
+    }
+
+    function addSimple() {
+        addItem(simple_default);
+    }
+
+    function addComplex() {
+        addItem(complex_default);
+    }
+
+    function remItem(idx: number) {
+        dialogValues.portForwards.splice(idx, 1);
+        onValueChanged('portForwards', dialogValues.portForwards);
+    }
+
+    function onSimpleChange<K extends keyof DialogSimplePortForward>(idx: number, key: K, value: DialogSimplePortForward[K]) {
+        if (dialogValues.portForwards[idx].kind == "simple") {
+            dialogValues.portForwards[idx][key] = value;
+            onValueChanged('portForwards', dialogValues.portForwards);
+        }
+    }
+
+    function onComplexChange<K extends keyof DialogComplexPortForward>(idx: number, key: K, value: DialogComplexPortForward[K]) {
+        if (dialogValues.portForwards[idx].kind == "complex") {
+            dialogValues.portForwards[idx][key] = value;
+            onValueChanged('portForwards', dialogValues.portForwards);
+        }
+    }
+
+    let action;
+    if (allowComplexEditing) {
+        action = (
+            <Dropdown
+                onOpenChange={setActionOpen}
+                onSelect={() => setActionOpen(false)}
+                toggle={(toggleRef) => (
+                    <MenuToggle
+                        variant="secondary"
+                        ref={toggleRef}
+                        onClick={() => setActionOpen(!actionOpen)}
+                        isExpanded={actionOpen}
+                        splitButtonItems={[
+                            <MenuToggleAction
+                                key="simple"
+                                onClick={addSimple}
+                            >
+                                {_("Add")}
+                            </MenuToggleAction>
+                        ]}
+                    />
+                )}
+                isOpen={actionOpen}
+            >
+                <DropdownList>
+                    <DropdownItem onClick={() => addComplex()}>
+                        {_("Add complex port forward")}
+                    </DropdownItem>
+                </DropdownList>
+            </Dropdown>
+        );
+    } else {
+        action = (
+            <Button
+                variant="secondary"
+                onClick={addSimple}
+            >
+                {_("Add")}
+            </Button>
+        );
+    }
+
+    return (
+        <FormFieldGroup
+            id={`${idPrefix}-port-forwards`}
+            className="nic-dynamic-form-group"
+            header={
+                <FormFieldGroupHeader
+                    titleText={{ id: `${idPrefix}-port-forwards-header`, text: _("Forwarded ports") }}
+                    actions={action}
+                />
+            }
+        >
+            {dialogValues.portForwards.length == 0 &&
+                <EmptyState>
+                    <EmptyStateBody>
+                        {_("No ports forwarded")}
+                    </EmptyStateBody>
+                </EmptyState>
+            }
+            {
+                dialogValues.portForwards.map((pf, idx) => {
+                    if (pf.kind == "simple")
+                        return (
+                            <SimplePortForward
+                                key={idx}
+                                id={`${idPrefix}-port-forwards-${idx}`}
+                                item={pf}
+                                onChange={onSimpleChange}
+                                idx={idx}
+                                removeitem={() => remItem(idx)}
+                            />
+                        );
+                    else
+                        return (
+                            <ComplexPortForward
+                                key={idx}
+                                id={`${idPrefix}-port-forwards-${idx}`}
+                                item={pf}
+                                onChange={onComplexChange}
+                                idx={idx}
+                                removeitem={() => remItem(idx)}
+                                allowEditing={allowComplexEditing}
+                            />
+                        );
+                })
+            }
+        </FormFieldGroup>
     );
 };
