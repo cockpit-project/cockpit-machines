@@ -113,6 +113,214 @@ function buildConsoleVVFile(consoleDetail: VMGraphics): string {
         'fullscreen=0\n';
 }
 
+function spawn(connectionName: ConnectionName, args: string[]): cockpit.Spawn<string> {
+    return cockpit.spawn(
+        args,
+        {
+            err: "message",
+            ...(connectionName === "system" ? { superuser: "try" } : { })
+        });
+}
+
+function script(connectionName: ConnectionName, script: string): cockpit.Spawn<string> {
+    return cockpit.script(
+        script,
+        undefined,
+        {
+            err: "message",
+            ...(connectionName === "system" ? { superuser: "try" } : { })
+        });
+}
+
+/* Running virt-xml
+
+   The virtXmlAdd, virtXmlEdit, and virtXmlRemove functions can be
+   used to run virt-xml with a "--add-device", "--edit", or
+   "--remove-device" action, respectively. A typical invocation looks
+   like this:
+
+       virtXmlAdd(vm, "graphics", { type: "vnc", port: 5900 });
+
+   The object is turned into the CSV style of virt-xml in the
+   'obvious' way.  The above will turn into "type=vnc,port=5900".
+   Everything will be properly quoted, of course.
+
+   Properties with "null", "false", or "undefined" as their values are
+   not added to the result at all.  The value "true" is added as the
+   string "yes".
+
+       { type: null, password: "", tls: true }
+       ->
+       password=,tls=yes
+
+   A property name can be the empty string. In that case its value is
+   added with the parent name.
+
+       { source: { "": "abc", mode: "123" } }
+       ->
+       source=abc,source.mode=123
+
+   Arrays are encoded by appending consecutive numbers to the parent.
+
+       { port: [ "a", "b", "c" ] }
+       ->
+       port0=a,port1=b,port2=c
+
+   Top-level values that are neither objects nor arrays are allowed
+   and are encoded without any property name.
+
+       "vnc"
+       ->
+       vnc
+*/
+
+interface virtXmlAction {
+    action: string,
+    location?: undefined | number | unknown,
+    option: string,
+    values: unknown,
+}
+
+async function runVirtXml(
+    vm: VM,
+    actions: virtXmlAction[],
+    extra_options: Record<string, boolean>,
+): Promise<void> {
+    // We don't pass the arguments for virt-xml through a shell, but
+    // virt-xml does its own parsing with the Python shlex module. So
+    // we need to do the equivalent of shlex.quote here.
+
+    function shlex_quote(str: string): string {
+        // yay, command line apis...
+        return "'" + str.replaceAll("'", "'\"'\"'") + "'";
+    }
+
+    function encode_into(args: string[], key: string, val: unknown) {
+        if (typeof val == "number" || typeof val == "string" || val === true) {
+            args.push(shlex_quote((key ? key + "=" : "") + (val === true ? "yes" : val)));
+        } else if (Array.isArray(val)) {
+            for (let i = 0; i < val.length; i++)
+                encode_into(args, key + String(i), val[i]);
+        } else if (val && typeof val == "object") {
+            for (const [k, v] of Object.entries(val)) {
+                encode_into(args, (key && k) ? key + "." + k : key || k, v);
+            }
+        }
+    }
+
+    const args: string[] = [];
+
+    function add_option(opt: string) {
+        args.push("--" + opt);
+    }
+
+    function add_values(val: unknown) {
+        if (typeof val == "number") {
+            // Special case: numbers all by themselves are not
+            // quoted. They are used for things like "--edit 1" or
+            // "--remove-device 2".  Virt-xml doesn't recognize
+            // them as numbers when we quote them as "--edit '1'",
+            // for example.
+            args.push(String(val));
+        } else {
+            const a: string[] = [];
+            encode_into(a, "", val);
+            args.push(a.join(","));
+        }
+    }
+
+    for (const a of actions) {
+        add_option(a.action);
+        if (a.location)
+            add_values(a.location);
+        add_option(a.option);
+        add_values(a.values);
+    }
+
+    for (const x in extra_options) {
+        if (extra_options[x])
+            add_option(x);
+    }
+
+    const cmd = ['virt-xml', '-c', `qemu:///${vm.connectionName}`, vm.uuid, ...args];
+
+    console.log("CMD", cmd);
+
+    await spawn(vm.connectionName, cmd);
+}
+
+export async function virtXmlAdd(
+    vm: VM,
+    option: string,
+    values: unknown,
+    extra_options: Record<string, boolean> = {}
+) {
+    console.log("ADD", option, values);
+    await runVirtXml(vm, [{ action: "add-device", option, values }], extra_options);
+}
+
+export async function virtXmlEdit(
+    vm: VM,
+    option: string,
+    location: number | unknown,
+    values: unknown,
+    extra_options: Record<string, boolean> = {}
+) {
+    console.log("EDIT", location, option, values);
+    await runVirtXml(vm, [{ action: "edit", location, option, values }], extra_options);
+}
+
+export async function virtXmlRemove(
+    vm: VM,
+    option: string,
+    values: unknown,
+    extra_options: Record<string, boolean> = {}
+) {
+    console.log("REM", option, values);
+    await runVirtXml(vm, [{ action: "remove-device", option, values }], extra_options);
+}
+
+function hotplugExtraOptions(vm: VM, device_persistent: boolean = true) {
+    return {
+        update: vm.state == "running",
+        "no-define": vm.state == "running" && !(vm.persistent && device_persistent),
+    };
+}
+
+export async function virtXmlHotAdd(
+    vm: VM,
+    option: string,
+    values: unknown,
+    device_persistent: boolean = true,
+    extra_options: Record<string, boolean> = {}
+) {
+    console.log("HOT ADD", option, values);
+    await virtXmlAdd(vm, option, values, { ...hotplugExtraOptions(vm, device_persistent), ...extra_options });
+}
+
+export async function virtXmlHotEdit(
+    vm: VM,
+    option: string,
+    location: number | unknown,
+    values: unknown,
+    device_persistent: boolean = true,
+    extra_options: Record<string, boolean> = {}
+) {
+    console.log("HOT EDIT", location, option, values);
+    await virtXmlEdit(vm, option, location, values, { ...hotplugExtraOptions(vm, device_persistent), ...extra_options });
+}
+
+export async function virtXmlHotRemove(
+    vm: VM,
+    option: string,
+    values: unknown,
+    device_persistent: boolean = true,
+    extra_options: Record<string, boolean> = {}
+) {
+    console.log("HOT REM", option, values);
+    await virtXmlRemove(vm, option, values, { ...hotplugExtraOptions(vm, device_persistent), ...extra_options });
+}
+
 function domainAttachDevice({
     connectionName,
     vmId,
@@ -175,25 +383,6 @@ export function domainAttachDisk({
     return domainAttachDevice({ connectionName, vmId, permanent, hotplug, xmlDesc });
 }
 
-function spawn(connectionName: ConnectionName, args: string[]): cockpit.Spawn<string> {
-    return cockpit.spawn(
-        args,
-        {
-            err: "message",
-            ...(connectionName === "system" ? { superuser: "try" } : { })
-        });
-}
-
-function script(connectionName: ConnectionName, script: string): cockpit.Spawn<string> {
-    return cockpit.script(
-        script,
-        undefined,
-        {
-            err: "message",
-            ...(connectionName === "system" ? { superuser: "try" } : { })
-        });
-}
-
 export function domainAttachHostDevices({
     connectionName,
     vmName,
@@ -217,98 +406,6 @@ export function domainAttachHostDevices({
 
     if (live)
         args.push("--update");
-
-    return spawn(connectionName, args);
-}
-
-interface InterfaceSpec {
-    mac: string | undefined,
-    permanent: boolean,
-    hotplug: boolean,
-    sourceType: string,
-    source: string,
-    sourceMode: string,
-    model: string,
-}
-
-export async function domainAttachIface({
-    connectionName,
-    vmName,
-    mac,
-    permanent,
-    hotplug,
-    sourceType,
-    source,
-    sourceMode,
-    model
-}: { connectionName: ConnectionName, vmName: string } & InterfaceSpec): Promise<void> {
-    const macArg = mac ? "mac=" + mac + "," : "";
-    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--add-device', '--network', `${macArg}type=${sourceType},source=${source},source.mode=${sourceMode},model=${model}`];
-
-    if (hotplug) {
-        args.push("--update");
-        if (!permanent)
-            args.push("--no-define");
-    }
-
-    await spawn(connectionName, args);
-}
-
-interface InterfaceChangeSpec {
-    hotplug?: boolean,
-    persistent?: boolean,
-    macAddress: string,
-    newMacAddress?: string,
-    networkType?: string,
-    networkSource?: string,
-    networkSourceMode?: string,
-    networkModel?: string,
-    state?: string,
-}
-
-export function domainChangeInterfaceSettings({
-    vmName,
-    connectionName,
-    hotplug,
-    persistent,
-    macAddress,
-    newMacAddress,
-    networkType,
-    networkSource,
-    networkSourceMode,
-    networkModel,
-    state,
-}: { connectionName: ConnectionName, vmName: string } & InterfaceChangeSpec): cockpit.Spawn<string> {
-    let networkParams = "";
-    if (state) {
-        networkParams = `link.state=${state}`;
-    } else {
-        if (newMacAddress)
-            networkParams += `mac=${newMacAddress},`;
-        if (networkType) {
-            networkParams += `type=${networkType},`;
-            if (networkType == `direct`)
-                networkParams += `source.mode=bridge,`;
-        }
-        if (networkSource)
-            networkParams += `source=${networkSource},`;
-        if (networkSourceMode)
-            networkParams += `source.mode=${networkSourceMode},`;
-        if (networkModel)
-            networkParams += `model=${networkModel},`;
-    }
-
-    const args = [
-        "virt-xml", "-c", `qemu:///${connectionName}`,
-        vmName, "--edit", `mac=${macAddress}`, "--network",
-        networkParams
-    ];
-
-    if (hotplug) {
-        args.push("--update");
-        if (!persistent)
-            args.push("--no-define");
-    }
 
     return spawn(connectionName, args);
 }
@@ -475,32 +572,6 @@ export async function domainCreate({
     }
 }
 
-export function domainCreateFilesystem({
-    connectionName,
-    vmName,
-    source,
-    target,
-    xattr
-} : {
-    connectionName: ConnectionName,
-    vmName: string,
-    source: string,
-    target: string,
-    xattr: boolean,
-}): cockpit.Spawn<string> {
-    let xattrOption = "";
-    if (xattr)
-        xattrOption = ",binary.xattr=on";
-
-    return spawn(
-        connectionName,
-        [
-            'virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--add-device', '--filesystem',
-            `type=mount,accessmode=passthrough,driver.type=virtiofs,source.dir=${source},target.dir=${target}${xattrOption}`
-        ],
-    );
-}
-
 export async function domainDelete({
     connectionName,
     id: objPath,
@@ -586,21 +657,6 @@ export function domainDeleteStorage({
     });
 }
 
-export async function domainDeleteFilesystem({
-    connectionName,
-    vmName,
-    target
-} : {
-    connectionName: ConnectionName,
-    vmName: string,
-    target: string,
-}): Promise<void> {
-    await spawn(
-        connectionName,
-        ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--remove-device', '--filesystem', `target.dir=${target}`],
-    );
-}
-
 /*
  * Basic, but working.
  * TODO: provide support for more complex scenarios, like with TLS or proxy
@@ -682,34 +738,6 @@ export async function domainDetachHostDevice({
     }
 }
 
-export async function domainDetachIface({
-    connectionName,
-    index,
-    vmName,
-    live,
-    persistent
-} : {
-    connectionName: ConnectionName,
-    index: number,
-    vmName: string,
-    live: boolean,
-    persistent: boolean,
-}): Promise<void> {
-    // Normally we should identify a vNIC to detach by a number of slot, bus, function and domain.
-    // Such detachment is however broken in virt-xml, so instead let's detach it by the index of <interface> in array of VM's XML <devices>
-    // This serves as workaround for https://github.com/virt-manager/virt-manager/issues/356
-    // virt-xml counts devices starting from 1, so we have to increase index by 1
-    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--remove-device', '--network', `${index + 1}`];
-
-    if (live) {
-        args.push("--update");
-        if (!persistent)
-            args.push("--no-define");
-    }
-
-    await spawn(connectionName, args);
-}
-
 export function domainRemoveVsock({
     connectionName,
     vmName,
@@ -723,29 +751,6 @@ export function domainRemoveVsock({
 }): cockpit.Spawn<string> {
     const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--remove-device', '--vsock', '1'];
 
-    if (hotplug) {
-        args.push("--update");
-        if (!permanent)
-            args.push("--no-define");
-    }
-
-    return spawn(connectionName, args);
-}
-
-export function domainRemoveWatchdog({
-    connectionName,
-    vmName,
-    permanent,
-    hotplug,
-    model
-} : {
-    connectionName: ConnectionName,
-    vmName: string,
-    permanent: boolean,
-    hotplug: boolean,
-    model: string,
-}): cockpit.Spawn<string> {
-    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--remove-device', '--watchdog', `model=${model}`];
     if (hotplug) {
         args.push("--update");
         if (!permanent)
@@ -1178,40 +1183,13 @@ export function domainSendNMI({
     return call(connectionName, objPath, 'org.libvirt.Domain', 'InjectNMI', [0], { timeout, type: 'u' });
 }
 
-function shlex_quote(str: string): string {
-    // yay, command line apis...
-    return "'" + str.replaceAll("'", "'\"'\"'") + "'";
-}
-
-async function domainModifyXML(
-    vm: VM,
-    action: string,
-    option: string,
-    type: string | null,
-    values: Record<string, string>
-): Promise<void> {
-    // We don't pass the arguments for virt-xml through a shell, but
-    // virt-xml does its own parsing with the Python shlex module. So
-    // we need to do the equivalent of shlex.quote here.
-
-    const args = [];
-    if (type)
-        args.push(shlex_quote(type));
-    for (const key in values)
-        args.push(shlex_quote(key + '=' + values[key]));
-
-    await spawn(
-        vm.connectionName,
-        ['virt-xml', '-c', `qemu:///${vm.connectionName}`, '--' + option, args.join(','), vm.uuid, '--' + action]);
-}
-
 export async function domainSetDescription(vm: VM, description: string): Promise<void> {
     // The description will appear in a "open" message for a "spawn"
     // channel, and excessive lengths will crash the session with a
     // protocol error. So let's limit it to a reasonable length here.
     if (description.length > 32000)
         description = description.slice(0, 32000);
-    await domainModifyXML(vm, "edit", "metadata", null, { description });
+    await virtXmlEdit(vm, "metadata", 1, { description });
 }
 
 export function domainSetCpuMode({
@@ -1365,34 +1343,6 @@ export function domainSetVsock({
     return spawn(connectionName, args);
 }
 
-export function domainSetWatchdog({
-    connectionName,
-    vmName,
-    defineOffline,
-    hotplug,
-    action,
-    isWatchdogAttached
-} : {
-    connectionName: ConnectionName,
-    vmName: string,
-    defineOffline: boolean,
-    hotplug: boolean,
-    action: string,
-    isWatchdogAttached: boolean,
-}): cockpit.Spawn<string> {
-    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, isWatchdogAttached ? '--edit' : '--add-device', '--watchdog', `action=${action}`];
-
-    // Only attaching new watchdog device to running VM works
-    // Editing existing watchdog device on running VM (live XML config) is not possible, in such situation we only change offline XML config
-    if (hotplug && !isWatchdogAttached) {
-        args.push("--update");
-        if (!defineOffline)
-            args.push("--no-define");
-    }
-
-    return spawn(connectionName, args);
-}
-
 export function domainShutdown({
     connectionName,
     id: objPath
@@ -1459,27 +1409,4 @@ export async function domainReplaceSpice({
         console.warn("domainReplaceSpice defining updated XML failed:", updatedXML); // not-covered: see above
         throw ex; // not-covered: see above
     }
-}
-
-export async function domainAddTPM({
-    connectionName,
-    vmName
-} : {
-    connectionName: ConnectionName,
-    vmName: string,
-}): Promise<void> {
-    const args = ["virt-xml", "-c", `qemu:///${connectionName}`, "--add-device", "--tpm", "default", vmName];
-    await spawn(connectionName, args);
-}
-
-export async function domainAttachVnc(vm: VM, values: Record<string, string>) {
-    await domainModifyXML(vm, "add-device", "graphics", "vnc", values);
-}
-
-export async function domainChangeVncSettings(vm: VM, values: Record<string, string>) {
-    await domainModifyXML(vm, "edit", "graphics", "vnc", values);
-}
-
-export async function domainAttachSerialConsole(vm: VM) {
-    await domainModifyXML(vm, "add-device", "console", "pty", { });
 }
