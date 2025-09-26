@@ -35,7 +35,7 @@ import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { DialogsContext } from 'dialogs.jsx';
 import { NetworkTypeAndSourceRow, NetworkModelRow } from './nicBody.jsx';
-import { domainChangeInterfaceSettings, domainGet } from '../../../libvirtApi/domain.js';
+import { virtXmlEdit, domainGet } from '../../../libvirtApi/domain.js';
 import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
 
 const _ = cockpit.gettext;
@@ -157,7 +157,7 @@ export class EditNICModal extends React.Component<EditNICModalProps, EditNICModa
         this.setState({ dialogError: text, dialogErrorDetail: detail });
     }
 
-    save() {
+    async save() {
         const Dialogs = this.context;
         const { vm, network } = this.props;
 
@@ -168,24 +168,34 @@ export class EditNICModal extends React.Component<EditNICModalProps, EditNICModa
             return;
         }
 
-        domainChangeInterfaceSettings({
-            vmName: vm.name,
-            connectionName: vm.connectionName,
-            persistent: vm.persistent,
-            macAddress: network.mac || "",
-            newMacAddress: this.state.networkMac,
-            networkModel: this.state.networkModel,
-            networkType: this.state.networkType,
-            networkSource: this.state.networkSource,
-            networkSourceMode: this.state.networkSourceMode,
-        })
-                .then(() => {
-                    domainGet({ connectionName: vm.connectionName, id: vm.id });
-                    Dialogs.close();
-                })
-                .catch((exc) => {
-                    this.dialogErrorSet(_("Network interface settings could not be saved"), exc.message);
-                });
+        try {
+            let source;
+            if (this.state.networkType == "direct") {
+                source = {
+                    "": this.state.networkSource,
+                    mode: this.state.networkSourceMode,
+                };
+            } else {
+                source = this.state.networkSource;
+            }
+            await virtXmlEdit(
+                vm,
+                "network",
+                {
+                    mac: network.mac
+                },
+                {
+                    mac: this.state.networkMac,
+                    model: this.state.networkModel,
+                    type: this.state.networkType,
+                    source,
+                }
+            );
+            domainGet({ connectionName: vm.connectionName, id: vm.id });
+            Dialogs.close();
+        } catch (exc) {
+            this.dialogErrorSet(_("Network interface settings could not be saved"), String(exc));
+        }
     }
 
     render() {
