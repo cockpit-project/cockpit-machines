@@ -526,7 +526,7 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
             return (e: React.MouseEvent) => {
                 e.stopPropagation();
                 if (network.mac) {
-                    domainChangeInterfaceSettings({ vmName: vm.name, connectionName: vm.connectionName, macAddress: network.mac, state: network.state === 'up' ? 'down' : 'up', hotplug: vm.state === "running" })
+                    domainChangeInterfaceSettings({ vm, macAddress: network.mac, state: network.state === 'up' ? 'down' : 'up', hotplug: vm.state === "running" })
                             .then(() => domainGet({ connectionName: vm.connectionName, id: vm.id }))
                             .catch(ex => {
                                 onAddErrorNotification({

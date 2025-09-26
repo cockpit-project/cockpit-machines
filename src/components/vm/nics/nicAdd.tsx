@@ -202,8 +202,7 @@ export class AddNIC extends React.Component<AddNICProps, AddNICState> {
 
         this.setState({ addVNicInProgress: true });
         domainAttachIface({
-            connectionName: vm.connectionName,
-            vmName: vm.name,
+            vm,
             model: this.state.networkModel,
             sourceType: this.state.networkType,
             source: this.state.networkSource,
