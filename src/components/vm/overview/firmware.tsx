@@ -32,8 +32,9 @@ import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { useDialogs, DialogsContext } from 'dialogs.jsx';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
-import { domainAddTPM, domainCanInstall, domainSetOSFirmware } from "../../../libvirtApi/domain.js";
+import { domainCanInstall, domainSetOSFirmware } from "../../../libvirtApi/domain.js";
 import { supportsUefiXml, labelForFirmwarePath } from './helpers.jsx';
+import { addTPM } from '../vmActions';
 
 const _ = cockpit.gettext;
 
@@ -79,7 +80,7 @@ class FirmwareModal extends React.Component<FirmwareModalProps, FirmwareModalSta
             });
 
             if (this.state.firmware == 'efi' && !vm.hasTPM && vm.capabilities.supportsTPM)
-                await domainAddTPM({ connectionName: vm.connectionName, vmName: vm.name });
+                await addTPM(vm);
 
             Dialogs.close();
         } catch (exc) {
