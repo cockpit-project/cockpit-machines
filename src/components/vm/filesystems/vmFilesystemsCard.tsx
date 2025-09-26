@@ -19,7 +19,7 @@
 import React, { useState } from 'react';
 import cockpit from 'cockpit';
 
-import type { ConnectionName, VMFilesystem } from '../../../types';
+import type { VM, VMFilesystem } from '../../../types';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
@@ -39,7 +39,7 @@ import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { FileAutoComplete } from "cockpit-components-file-autocomplete.jsx";
 import { useDialogs } from 'dialogs.jsx';
 
-import { domainCreateFilesystem, domainDeleteFilesystem, domainSetMemoryBacking } from "../../../libvirtApi/domain.js";
+import { virtXmlAdd, virtXmlRemove, virtXmlEdit } from "../../../libvirtApi/domain.js";
 import { vmId } from "../../../helpers.js";
 import { DeleteResourceButton } from '../../common/deleteResource.jsx';
 import { InfoPopover } from '../../common/infoPopover.jsx';
@@ -47,39 +47,37 @@ import { InfoPopover } from '../../common/infoPopover.jsx';
 const _ = cockpit.gettext;
 
 export const VmFilesystemsCard = ({
-    connectionName,
-    vmName,
-    vmState,
-    filesystems
+    vm,
 } : {
-    connectionName: ConnectionName,
-    vmName: string,
-    vmState: string,
-    filesystems: VMFilesystem[],
+    vm: VM,
 }) => {
     const columnTitles = [_("Source path"), _("Mount tag"), ""];
 
-    const rows = filesystems.map(filesystem => {
+    const rows = vm.filesystems.map(filesystem => {
         const keys: (keyof VMFilesystem["source"])[] = ["name", "dir", "file", "socket"];
         const sourceKey = keys.find(key => filesystem.source[key]);
         const filesystemSource = sourceKey ? filesystem.source[sourceKey] : undefined;
         const filesystemTarget = filesystem.target.dir;
-        const rowId = `${vmId(vmName)}-filesystem-${filesystemSource}-${filesystemTarget}`;
+        const rowId = `${vmId(vm.name)}-filesystem-${filesystemSource}-${filesystemTarget}`;
         const actions = (
             <div className='machines-listing-actions'>
                 <DeleteResourceButton objectId={rowId}
-                                      disabled={vmState != 'shut off'}
+                                      disabled={vm.state != 'shut off'}
                                       actionName={_("Remove")}
                                       dialogProps={{
                                           title: _("Remove filesystem?"),
                                           errorMessage: cockpit.format(_("Filesystem $0 could not be removed"), filesystemTarget),
-                                          actionDescription: cockpit.format(_("This filesystem will be removed from $0:"), vmName),
+                                          actionDescription: cockpit.format(_("This filesystem will be removed from $0:"), vm.name),
                                           objectDescription: [
                                               { name: _("Source path"), value: <span className="ct-monospace">{filesystemSource}</span> },
                                               { name: _("Mount tag"), value: <span className="ct-monospace">{filesystemTarget}</span> }
                                           ],
                                           actionName: _("Remove"),
-                                          deleteHandler: () => domainDeleteFilesystem({ connectionName, vmName, target: filesystemTarget }),
+                                          deleteHandler: () => virtXmlRemove(
+                                              vm,
+                                              "filesystem",
+                                              { target: { dir: filesystemTarget } }
+                                          ),
                                       }}
                                       overlayText={_("Deleting shared directories is possible only when the guest is shut off")}
                                       isSecondary />
@@ -107,32 +105,26 @@ export const VmFilesystemsCard = ({
 };
 
 export const VmFilesystemActions = ({
-    connectionName,
-    vmName,
-    vmState
+    vm,
 } : {
-    connectionName: ConnectionName,
-    vmName: string,
-    vmState: string,
+    vm: VM,
 }) => {
     const Dialogs = useDialogs();
-    const idPrefix = `${vmId(vmName)}-filesystems`;
-
+    const idPrefix = `${vmId(vm.name)}-filesystems`;
     function open() {
-        Dialogs.show(<VmFilesystemAddModal connectionName={connectionName}
-                                           vmName={vmName} />);
+        Dialogs.show(<VmFilesystemAddModal vm={vm} />);
     }
 
     const addButton = (
         <Button id={`${idPrefix}-add`}
-                isAriaDisabled={vmState != 'shut off'}
+                isAriaDisabled={vm.state != 'shut off'}
                 onClick={open}
                 variant="secondary">
             {_("Add shared directory")}
         </Button>
     );
 
-    return vmState == 'shut off' ? addButton : <Tooltip content={_("Adding shared directories is possible only when the guest is shut off")}>{addButton}</Tooltip>;
+    return vm.state == 'shut off' ? addButton : <Tooltip content={_("Adding shared directories is possible only when the guest is shut off")}>{addButton}</Tooltip>;
 };
 
 interface ValidationFailed {
@@ -141,11 +133,9 @@ interface ValidationFailed {
 }
 
 const VmFilesystemAddModal = ({
-    connectionName,
-    vmName
+    vm
 } : {
-    connectionName: ConnectionName,
-    vmName: string,
+    vm: VM
 }) => {
     const Dialogs = useDialogs();
     const [additionalOptionsExpanded, setAdditionalOptionsExpanded] = useState(false);
@@ -154,9 +144,9 @@ const VmFilesystemAddModal = ({
     const [source, setSource] = useState("");
     const [validationFailed, setValidationFailed] = useState<ValidationFailed>({});
     const [xattr, setXattr] = useState(false);
-    const idPrefix = `${vmId(vmName)}-filesystems`;
+    const idPrefix = `${vmId(vm.name)}-filesystems`;
 
-    const onAddClicked = () => {
+    const onAddClicked = async () => {
         const validationFailed: ValidationFailed = {};
 
         if (!mountTag)
@@ -167,22 +157,23 @@ const VmFilesystemAddModal = ({
         setValidationFailed(validationFailed);
 
         if (Object.getOwnPropertyNames(validationFailed).length == 0) {
-            domainSetMemoryBacking({
-                connectionName,
-                vmName,
-                type: "memfd",
-            })
-                    .then(() => domainCreateFilesystem({
-                        connectionName,
-                        vmName,
-                        source,
-                        target: mountTag,
-                        xattr,
-                    }))
-                    .then(
-                        Dialogs.close,
-                        exc => setDialogError(exc.message)
-                    );
+            try {
+                await virtXmlEdit(vm, "memorybacking", 1, {
+                    access: { mode: "shared" },
+                    source: { type: "memfd" },
+                });
+                await virtXmlAdd(vm, "filesystem", {
+                    type: "mount",
+                    accessmode: "passthrough",
+                    driver: { type: "virtiofs" },
+                    source: { dir: source },
+                    target: { dir: mountTag },
+                    binary: { xattr: xattr ? "on" : null },
+                });
+                Dialogs.close();
+            } catch (exc) {
+                setDialogError(String(exc));
+            }
         }
     };
     return (

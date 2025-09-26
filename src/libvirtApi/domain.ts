@@ -594,32 +594,6 @@ export async function domainCreate({
     }
 }
 
-export function domainCreateFilesystem({
-    connectionName,
-    vmName,
-    source,
-    target,
-    xattr
-} : {
-    connectionName: ConnectionName,
-    vmName: string,
-    source: string,
-    target: string,
-    xattr: boolean,
-}): cockpit.Spawn<string> {
-    let xattrOption = "";
-    if (xattr)
-        xattrOption = ",binary.xattr=on";
-
-    return spawn(
-        connectionName,
-        [
-            'virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--add-device', '--filesystem',
-            `type=mount,accessmode=passthrough,driver.type=virtiofs,source.dir=${source},target.dir=${target}${xattrOption}`
-        ],
-    );
-}
-
 export async function domainDelete({
     connectionName,
     id: objPath,
@@ -703,21 +677,6 @@ export function domainDeleteStorage({
             return Promise.resolve();
         }
     });
-}
-
-export async function domainDeleteFilesystem({
-    connectionName,
-    vmName,
-    target
-} : {
-    connectionName: ConnectionName,
-    vmName: string,
-    target: string,
-}): Promise<void> {
-    await spawn(
-        connectionName,
-        ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--remove-device', '--filesystem', `target.dir=${target}`],
-    );
 }
 
 /*
@@ -1296,39 +1255,6 @@ export async function domainSetDescription(vm: VM, description: string): Promise
     if (description.length > 32000)
         description = description.slice(0, 32000);
     await virtXmlEdit(vm, "metadata", 1, { description });
-}
-
-export function domainSetCpuMode({
-    name,
-    connectionName,
-    mode,
-    model,
-} : {
-    name: string,
-    connectionName: ConnectionName,
-    mode: string,
-    model: optString,
-}): cockpit.Spawn<string> {
-    const modelStr = model ? `,model=${model}` : "";
-
-    return spawn(connectionName, [
-        'virt-xml', '-c', `qemu:///${connectionName}`, '--cpu', `clearxml=true,mode=${mode}${modelStr}`, name, '--edit'
-    ]);
-}
-
-export function domainSetMemoryBacking({
-    connectionName,
-    vmName,
-    type
-} : {
-    connectionName: ConnectionName,
-    vmName: string,
-    type: string,
-}): cockpit.Spawn<string> {
-    return spawn(
-        connectionName,
-        ['virt-xml', '-c', `qemu:///${connectionName}`, '--memorybacking', `access.mode=shared,source.type=${type}`, vmName, '--edit']
-    );
 }
 
 export function domainSetMemory({

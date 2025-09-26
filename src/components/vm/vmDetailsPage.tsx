@@ -242,13 +242,8 @@ export const VmDetailsPage = ({
                         />
                     </>
                 ),
-                actions: <VmFilesystemActions connectionName={vm.connectionName}
-                                              vmName={vm.name}
-                                              vmState={vm.state} />,
-                body: <VmFilesystemsCard connectionName={vm.connectionName}
-                                         filesystems={vm.filesystems}
-                                         vmName={vm.name}
-                                         vmState={vm.state} />
+                actions: <VmFilesystemActions vm={vm} />,
+                body: <VmFilesystemsCard vm={vm} />
             }
         );
     }
