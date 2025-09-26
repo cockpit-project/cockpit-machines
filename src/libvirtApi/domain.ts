@@ -782,29 +782,6 @@ export function domainRemoveVsock({
     return spawn(connectionName, args);
 }
 
-export function domainRemoveWatchdog({
-    connectionName,
-    vmName,
-    permanent,
-    hotplug,
-    model
-} : {
-    connectionName: ConnectionName,
-    vmName: string,
-    permanent: boolean,
-    hotplug: boolean,
-    model: string,
-}): cockpit.Spawn<string> {
-    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--remove-device', '--watchdog', `model=${model}`];
-    if (hotplug) {
-        args.push("--update");
-        if (!permanent)
-            args.push("--no-define");
-    }
-
-    return spawn(connectionName, args);
-}
-
 export async function domainEjectDisk({
     connectionName,
     id: vmPath,
@@ -1369,34 +1346,6 @@ export function domainSetVsock({
     if (hotplug && !isVsockAttached) {
         args.push("--update");
         if (!permanent)
-            args.push("--no-define");
-    }
-
-    return spawn(connectionName, args);
-}
-
-export function domainSetWatchdog({
-    connectionName,
-    vmName,
-    defineOffline,
-    hotplug,
-    action,
-    isWatchdogAttached
-} : {
-    connectionName: ConnectionName,
-    vmName: string,
-    defineOffline: boolean,
-    hotplug: boolean,
-    action: string,
-    isWatchdogAttached: boolean,
-}): cockpit.Spawn<string> {
-    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, isWatchdogAttached ? '--edit' : '--add-device', '--watchdog', `action=${action}`];
-
-    // Only attaching new watchdog device to running VM works
-    // Editing existing watchdog device on running VM (live XML config) is not possible, in such situation we only change offline XML config
-    if (hotplug && !isWatchdogAttached) {
-        args.push("--update");
-        if (!defineOffline)
             args.push("--no-define");
     }
 
