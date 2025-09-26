@@ -1470,14 +1470,3 @@ export async function domainReplaceSpice({
         throw ex; // not-covered: see above
     }
 }
-
-export async function domainAddTPM({
-    connectionName,
-    vmName
-} : {
-    connectionName: ConnectionName,
-    vmName: string,
-}): Promise<void> {
-    const args = ["virt-xml", "-c", `qemu:///${connectionName}`, "--add-device", "--tpm", "default", vmName];
-    await spawn(connectionName, args);
-}
