@@ -432,98 +432,6 @@ export function domainAttachHostDevices({
     return spawn(connectionName, args);
 }
 
-interface InterfaceSpec {
-    mac: string | undefined,
-    permanent: boolean,
-    hotplug: boolean,
-    sourceType: string,
-    source: string,
-    sourceMode: string,
-    model: string,
-}
-
-export async function domainAttachIface({
-    connectionName,
-    vmName,
-    mac,
-    permanent,
-    hotplug,
-    sourceType,
-    source,
-    sourceMode,
-    model
-}: { connectionName: ConnectionName, vmName: string } & InterfaceSpec): Promise<void> {
-    const macArg = mac ? "mac=" + mac + "," : "";
-    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--add-device', '--network', `${macArg}type=${sourceType},source=${source},source.mode=${sourceMode},model=${model}`];
-
-    if (hotplug) {
-        args.push("--update");
-        if (!permanent)
-            args.push("--no-define");
-    }
-
-    await spawn(connectionName, args);
-}
-
-interface InterfaceChangeSpec {
-    hotplug?: boolean,
-    persistent?: boolean,
-    macAddress: string,
-    newMacAddress?: string,
-    networkType?: string,
-    networkSource?: string,
-    networkSourceMode?: string,
-    networkModel?: string,
-    state?: string,
-}
-
-export function domainChangeInterfaceSettings({
-    vmName,
-    connectionName,
-    hotplug,
-    persistent,
-    macAddress,
-    newMacAddress,
-    networkType,
-    networkSource,
-    networkSourceMode,
-    networkModel,
-    state,
-}: { connectionName: ConnectionName, vmName: string } & InterfaceChangeSpec): cockpit.Spawn<string> {
-    let networkParams = "";
-    if (state) {
-        networkParams = `link.state=${state}`;
-    } else {
-        if (newMacAddress)
-            networkParams += `mac=${newMacAddress},`;
-        if (networkType) {
-            networkParams += `type=${networkType},`;
-            if (networkType == `direct`)
-                networkParams += `source.mode=bridge,`;
-        }
-        if (networkSource)
-            networkParams += `source=${networkSource},`;
-        if (networkSourceMode)
-            networkParams += `source.mode=${networkSourceMode},`;
-        if (networkModel)
-            networkParams += `model=${networkModel},`;
-    }
-
-    const args = [
-        "virt-xml", "-c", `qemu:///${connectionName}`,
-        vmName, "--edit", `mac=${macAddress}`, "--network",
-        networkParams
-    ];
-
-    if (hotplug) {
-        args.push("--update");
-        if (!persistent)
-            args.push("--no-define");
-    }
-
-    return spawn(connectionName, args);
-}
-
 export async function domainChangeAutostart ({
     connectionName,
     vmName,
@@ -891,34 +799,6 @@ export async function domainDetachHostDevice({
 
         await call(connectionName, vmId, 'org.libvirt.Domain', 'DetachDevice', [hostdevXML, Enum.VIR_DOMAIN_AFFECT_LIVE], { timeout, type: 'su' });
     }
-}
-
-export async function domainDetachIface({
-    connectionName,
-    index,
-    vmName,
-    live,
-    persistent
-} : {
-    connectionName: ConnectionName,
-    index: number,
-    vmName: string,
-    live: boolean,
-    persistent: boolean,
-}): Promise<void> {
-    // Normally we should identify a vNIC to detach by a number of slot, bus, function and domain.
-    // Such detachment is however broken in virt-xml, so instead let's detach it by the index of <interface> in array of VM's XML <devices>
-    // This serves as workaround for https://github.com/virt-manager/virt-manager/issues/356
-    // virt-xml counts devices starting from 1, so we have to increase index by 1
-    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--remove-device', '--network', `${index + 1}`];
-
-    if (live) {
-        args.push("--update");
-        if (!persistent)
-            args.push("--no-define");
-    }
-
-    await spawn(connectionName, args);
 }
 
 export function domainRemoveVsock({
