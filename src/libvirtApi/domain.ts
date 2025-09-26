@@ -1481,15 +1481,3 @@ export async function domainAddTPM({
     const args = ["virt-xml", "-c", `qemu:///${connectionName}`, "--add-device", "--tpm", "default", vmName];
     await spawn(connectionName, args);
 }
-
-export async function domainAttachVnc(vm: VM, values: Record<string, string>) {
-    await virtXmlAdd(vm, "graphics", { type: "vnc", ...values });
-}
-
-export async function domainChangeVncSettings(vm: VM, values: Record<string, string>) {
-    await virtXmlEdit(vm, "graphics", { type: "vnc" }, values);
-}
-
-export async function domainAttachSerialConsole(vm: VM) {
-    await virtXmlAdd(vm, "console", { type: "pty" });
-}
