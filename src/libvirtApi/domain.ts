@@ -594,32 +594,6 @@ export async function domainCreate({
     }
 }
 
-export function domainCreateFilesystem({
-    connectionName,
-    vmName,
-    source,
-    target,
-    xattr
-} : {
-    connectionName: ConnectionName,
-    vmName: string,
-    source: string,
-    target: string,
-    xattr: boolean,
-}): cockpit.Spawn<string> {
-    let xattrOption = "";
-    if (xattr)
-        xattrOption = ",binary.xattr=on";
-
-    return spawn(
-        connectionName,
-        [
-            'virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--add-device', '--filesystem',
-            `type=mount,accessmode=passthrough,driver.type=virtiofs,source.dir=${source},target.dir=${target}${xattrOption}`
-        ],
-    );
-}
-
 export async function domainDelete({
     connectionName,
     id: objPath,
@@ -703,21 +677,6 @@ export function domainDeleteStorage({
             return Promise.resolve();
         }
     });
-}
-
-export async function domainDeleteFilesystem({
-    connectionName,
-    vmName,
-    target
-} : {
-    connectionName: ConnectionName,
-    vmName: string,
-    target: string,
-}): Promise<void> {
-    await spawn(
-        connectionName,
-        ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--remove-device', '--filesystem', `target.dir=${target}`],
-    );
 }
 
 /*
