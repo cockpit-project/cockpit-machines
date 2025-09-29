@@ -760,28 +760,6 @@ export async function domainDetachHostDevice({
     }
 }
 
-export function domainRemoveVsock({
-    connectionName,
-    vmName,
-    permanent,
-    hotplug
-} : {
-    connectionName: ConnectionName,
-    vmName: string,
-    permanent: boolean,
-    hotplug: boolean,
-}): cockpit.Spawn<string> {
-    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, '--remove-device', '--vsock', '1'];
-
-    if (hotplug) {
-        args.push("--update");
-        if (!permanent)
-            args.push("--no-define");
-    }
-
-    return spawn(connectionName, args);
-}
-
 export async function domainEjectDisk({
     connectionName,
     id: vmPath,
@@ -1319,37 +1297,6 @@ export function domainSetVCPUSettings ({
     return spawn(connectionName, [
         'virt-xml', '-c', `qemu:///${connectionName}`, '--vcpu', `${max},vcpu.current=${count},sockets=${sockets},cores=${cores},threads=${threads}`, name, '--edit'
     ]);
-}
-
-export function domainSetVsock({
-    connectionName,
-    vmName,
-    permanent,
-    hotplug,
-    auto,
-    address,
-    isVsockAttached
-} : {
-    connectionName: ConnectionName,
-    vmName: string,
-    permanent: boolean,
-    hotplug: boolean,
-    auto: string,
-    address: optString,
-    isVsockAttached: boolean,
-}): cockpit.Spawn<string> {
-    const cidAddressStr = address ? `,cid.address=${address}` : "";
-    const args = ['virt-xml', '-c', `qemu:///${connectionName}`, vmName, isVsockAttached ? '--edit' : '--add-device', '--vsock', `cid.auto=${auto}${cidAddressStr}`];
-
-    // Only attaching new vsock device to running VM works
-    // Editing existing vsock device on running VM (live XML config) is not possible, in such situation we only change offline XML config
-    if (hotplug && !isVsockAttached) {
-        args.push("--update");
-        if (!permanent)
-            args.push("--no-define");
-    }
-
-    return spawn(connectionName, args);
 }
 
 export function domainShutdown({

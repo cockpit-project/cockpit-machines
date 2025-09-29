@@ -35,7 +35,7 @@ import { fmt_to_fragments } from 'utils.jsx';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { FormHelper } from "cockpit-components-form-helper.jsx";
-import { domainRemoveVsock, domainSetVsock } from "../../../libvirtApi/domain.js";
+import { virtXmlHotAdd, virtXmlHotRemove, virtXmlEdit } from "../../../libvirtApi/domain.js";
 import { NeedsShutdownAlert, NeedsShutdownTooltip } from "../../common/needsShutdown.jsx";
 import { InfoPopover } from '../../common/infoPopover.jsx';
 import {
@@ -143,31 +143,36 @@ export const VsockModal = ({
 
     const Dialogs = useDialogs();
 
-    const save = () => {
+    const save = async () => {
+        const values = {
+            cid: {
+                auto: auto ? "yes" : "no",
+                address,
+            }
+        };
+
         setActionInProgress("save");
-        return domainSetVsock({
-            connectionName: vm.connectionName,
-            vmName: vm.name,
-            hotplug: vm.state === "running",
-            permanent: vm.persistent,
-            auto: auto ? "yes" : "no",
-            address: String(address),
-            isVsockAttached,
-        })
-                .then(Dialogs.close, exc => setDialogError({ text: _("Failed to configure vsock"), detail: exc.message }))
-                .finally(() => setActionInProgress(undefined));
+        try {
+            if (isVsockAttached)
+                await virtXmlEdit(vm, "vsock", 1, values);
+            else
+                await virtXmlHotAdd(vm, "vsock", values);
+            Dialogs.close();
+        } catch (exc) {
+            setDialogError({ text: _("Failed to configure vsock"), detail: String(exc) });
+        }
+        setActionInProgress(undefined);
     };
 
-    const detach = () => {
+    const detach = async () => {
         setActionInProgress("detach");
-        return domainRemoveVsock({
-            connectionName: vm.connectionName,
-            vmName: vm.name,
-            hotplug: vm.state === "running",
-            permanent: vm.persistent,
-        })
-                .then(Dialogs.close, exc => setDialogError({ text: _("Failed to detach vsock"), detail: exc.message }))
-                .finally(() => setActionInProgress(undefined));
+        try {
+            await virtXmlHotRemove(vm, "vsock", 1);
+            Dialogs.close();
+        } catch (exc) {
+            setDialogError({ text: _("Failed to detach vsock"), detail: String(exc) });
+        }
+        setActionInProgress(undefined);
     };
 
     const showWarning = () => {
