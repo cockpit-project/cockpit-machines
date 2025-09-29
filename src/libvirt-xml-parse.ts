@@ -175,20 +175,17 @@ export function parsePoolCapabilities(capsXML: string): StoragePoolCapabilites {
     }, {});
 }
 
-export function getDomainCapMaxVCPU(capsXML: string): optString {
-    const domainCapsElem = getElem(capsXML);
+export function getDomainCapMaxVCPU(domainCapsElem: Element): optString {
     const vcpuElem = domainCapsElem.getElementsByTagName("vcpu")?.[0];
     return vcpuElem && vcpuElem.getAttribute('max');
 }
 
-export function getDomainCapLoader(capsXML: string): HTMLCollection | undefined {
-    const domainCapsElem = getElem(capsXML);
+export function getDomainCapLoader(domainCapsElem: Element): HTMLCollection | undefined {
     const osElem = domainCapsElem.getElementsByTagName("os")?.[0];
     return osElem && osElem.getElementsByTagName("loader");
 }
 
-export function getDomainCapCPUCustomModels(capsXML: string): string[] {
-    const domainCapsElem = getElem(capsXML);
+export function getDomainCapCPUCustomModels(domainCapsElem: Element): string[] {
     const cpuElem = domainCapsElem.getElementsByTagName("cpu")?.[0];
     const modeElems = cpuElem && cpuElem.getElementsByTagName("mode");
     const customModeElem = modeElems && Array.prototype.find.call(modeElems, modeElem => modeElem.getAttribute("name") == "custom");
@@ -202,16 +199,14 @@ export function getDomainCapCPUCustomModels(capsXML: string): string[] {
     return res;
 }
 
-export function getDomainCapCPUHostModel(capsXML: string): optString {
-    const domainCapsElem = getElem(capsXML);
+export function getDomainCapCPUHostModel(domainCapsElem: Element): optString {
     const cpuElem = domainCapsElem.getElementsByTagName("cpu")?.[0];
     const modeElems = cpuElem && cpuElem.getElementsByTagName("mode");
     const hostModelModeElem = modeElems && Array.prototype.find.call(modeElems, modeElem => modeElem.getAttribute("name") == "host-model");
     return hostModelModeElem && Array.prototype.map.call(hostModelModeElem.getElementsByTagName("model"), modelElem => modelElem.textContent)[0];
 }
 
-export function getDomainCapDiskBusTypes(capsXML: string): string[] {
-    const domainCapsElem = getElem(capsXML);
+export function getDomainCapDiskBusTypes(domainCapsElem: Element): string[] {
     const devicesCapsElem = domainCapsElem.getElementsByTagName("devices")?.[0];
     const diskCapsElem = devicesCapsElem?.getElementsByTagName("disk")?.[0];
     const enumElems = diskCapsElem?.getElementsByTagName("enum");
@@ -227,8 +222,7 @@ export function getDomainCapDiskBusTypes(capsXML: string): string[] {
     return res;
 }
 
-export function getDomainCapSupportsSpice(capsXML: string): boolean {
-    const domainCapsElem = getElem(capsXML);
+export function getDomainCapSupportsSpice(domainCapsElem: Element): boolean {
     const graphicsCapsElems = domainCapsElem.getElementsByTagName("graphics")?.[0]
             ?.getElementsByTagName("enum")?.[0]
             ?.getElementsByTagName("value");
@@ -242,8 +236,7 @@ export function getDomainCapSupportsSpice(capsXML: string): boolean {
     return !!hasSpiceGraphics || !!hasSpiceChannel;
 }
 
-export function getDomainCapSupportsTPM(capsXML: string): boolean {
-    const domainCapsElem = getElem(capsXML);
+export function getDomainCapSupportsTPM(domainCapsElem: Element): boolean {
     const tpmCapsElems = domainCapsElem.getElementsByTagName("tpm")?.[0]
             ?.getElementsByTagName("enum")?.[0]
             ?.getElementsByTagName("value");

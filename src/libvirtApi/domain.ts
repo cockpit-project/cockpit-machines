@@ -29,6 +29,7 @@ import store from '../store.js';
 import type {
     optString,
     ConnectionName,
+    DomainCapabilities,
     VM, VMState, VMGraphics, VMDisk, VMHostDevice,
     NodeDevice,
     StoragePool,
@@ -62,6 +63,7 @@ import {
 import {
     getDiskElemByTarget,
     getDoc,
+    getElem,
     getDomainCapLoader,
     getDomainCapMaxVCPU,
     getDomainCapCPUCustomModels,
@@ -854,17 +856,11 @@ export async function domainGet({
         const dumpxmlParams = parseDomainDumpxml(connectionName, domainXML, objPath);
         Object.assign(props, dumpxmlParams);
 
-        const [domCaps] = await domainGetCapabilities({ connectionName, arch: dumpxmlParams.arch, model: dumpxmlParams.emulatedMachine });
-        // TODO - don't parse domCaps multiple times
-        props.capabilities = {
-            loaderElems: getDomainCapLoader(domCaps),
-            maxVcpu: getDomainCapMaxVCPU(domCaps),
-            cpuModels: getDomainCapCPUCustomModels(domCaps),
-            cpuHostModel: getDomainCapCPUHostModel(domCaps),
-            supportedDiskBusTypes: getDomainCapDiskBusTypes(domCaps),
-            supportsSpice: getDomainCapSupportsSpice(domCaps),
-            supportsTPM: getDomainCapSupportsTPM(domCaps),
-        };
+        props.capabilities = await domainGetCapabilities({
+            connectionName,
+            arch: dumpxmlParams.arch,
+            model: dumpxmlParams.emulatedMachine
+        });
 
         const [state] = await call<[number[]]>(connectionName, objPath, 'org.libvirt.Domain', 'GetState', [0], { timeout, type: 'u' });
         const stateStr = DOMAINSTATE[state[0]];
@@ -907,7 +903,9 @@ export async function domainGetAll({ connectionName } : { connectionName: Connec
     }
 }
 
-export function domainGetCapabilities({
+const domainCapabilitiesPromises: Record<string, Promise<DomainCapabilities>> = {};
+
+function domainGetCapabilities({
     connectionName,
     arch,
     model
@@ -915,8 +913,32 @@ export function domainGetCapabilities({
     connectionName: ConnectionName,
     arch: optString,
     model: optString,
-}): Promise<[string]> {
-    return call<[string]>(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'GetDomainCapabilities', ['', arch, model, '', 0], { timeout, type: 'ssssu' });
+}): Promise<DomainCapabilities> {
+    async function get() {
+        const [capsXML] =
+            await call<[string]>(
+                connectionName,
+                '/org/libvirt/QEMU', 'org.libvirt.Connect', 'GetDomainCapabilities',
+                ['', arch, model, '', 0],
+                { timeout, type: 'ssssu' });
+
+        const domCaps = getElem(capsXML);
+        const caps: DomainCapabilities = {
+            loaderElems: getDomainCapLoader(domCaps),
+            maxVcpu: getDomainCapMaxVCPU(domCaps),
+            cpuModels: getDomainCapCPUCustomModels(domCaps),
+            cpuHostModel: getDomainCapCPUHostModel(domCaps),
+            supportedDiskBusTypes: getDomainCapDiskBusTypes(domCaps),
+            supportsSpice: getDomainCapSupportsSpice(domCaps),
+            supportsTPM: getDomainCapSupportsTPM(domCaps),
+        };
+        return caps;
+    }
+
+    const key = `${arch}/${model}`;
+    if (!domainCapabilitiesPromises[key])
+        domainCapabilitiesPromises[key] = get();
+    return domainCapabilitiesPromises[key];
 }
 
 export async function domainGetStartTime({
