@@ -1013,45 +1013,6 @@ export async function domainInstall({ vm } : { vm: VM }): Promise<string> {
             .finally(() => setVmInstallInProgress({ name: vm.name, connectionName: vm.connectionName }, false));
 }
 
-export function domainInsertDisk({
-    connectionName,
-    vmName,
-    target,
-    diskType,
-    file,
-    poolName,
-    volumeName,
-    live = false,
-} : {
-    connectionName: ConnectionName,
-    vmName: string,
-    target: string,
-    diskType: string,
-    file: string | undefined,
-    poolName: string | undefined,
-    volumeName: string | undefined,
-    live?: boolean,
-}): cockpit.Spawn<string> {
-    let source;
-    if (diskType === "file")
-        source = `source.file=${file},type=file`;
-    else if (diskType === "volume")
-        source = `source.pool=${poolName},source.volume=${volumeName},type=volume`;
-    else
-        throw new Error(`Disk insertion is not supported for ${diskType} disks`);
-
-    const args = [
-        "virt-xml", "-c", `qemu:///${connectionName}`,
-        vmName, "--edit", `target.dev=${target}`,
-        "--disk", source,
-    ];
-
-    if (live)
-        args.push("--update");
-
-    return spawn(connectionName, args);
-}
-
 /* This is the shape of the return value of the
  * "org.libvirt.Domain.InterfaceAddresses" DBus method.
  */
