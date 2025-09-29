@@ -382,6 +382,16 @@ export interface VMDiskStat {
     allocation: number | string,
 }
 
+export interface DomainCapabilities {
+    loaderElems: HTMLCollection | undefined;
+    maxVcpu: optString;
+    cpuModels: string[];
+    cpuHostModel: optString;
+    supportedDiskBusTypes: string[];
+    supportsSpice: boolean;
+    supportsTPM: boolean;
+}
+
 export interface VM extends VMXML {
     isUi?: undefined; // To discriminate from UIVM, see below
 
@@ -404,15 +414,7 @@ export interface VM extends VMXML {
     openConsoleTab?: boolean;
     installInProgress?: boolean;
 
-    capabilities: {
-        loaderElems: HTMLCollection | undefined;
-        maxVcpu: optString;
-        cpuModels: string[];
-        cpuHostModel: optString;
-        supportedDiskBusTypes: string[];
-        supportsSpice: boolean;
-        supportsTPM: boolean;
-    };
+    capabilities: DomainCapabilities;
 
     rssMemory: number | undefined;
     cpuTime: number | undefined;
