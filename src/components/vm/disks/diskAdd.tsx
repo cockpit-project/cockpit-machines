@@ -46,7 +46,7 @@ import { FileAutoComplete } from 'cockpit-components-file-autocomplete.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { diskBusTypes, diskCacheModes, units, convertToUnit, getDefaultVolumeFormat, getNextAvailableTarget, getStorageVolumesUsage, getVmStoragePools } from '../../../helpers.js';
 import { VolumeCreateBody } from '../../storagePools/storageVolumeCreateBody.jsx';
-import { domainAttachDisk, domainGet, domainInsertDisk, domainIsRunning } from '../../../libvirtApi/domain.js';
+import { domainAttachDisk, domainGet, virtXmlHotEdit, domainIsRunning } from '../../../libvirtApi/domain.js';
 import { storagePoolGetAll } from '../../../libvirtApi/storagePool.js';
 import { storageVolumeCreateAndAttach } from '../../../libvirtApi/storageVolume.js';
 
@@ -874,18 +874,31 @@ const AddDiskModalFooter = ({
     const [addDiskInProgress, setAddDiskInProgress] = useState(false);
     const Dialogs = useDialogs();
 
-    const onInsertClicked = () => {
-        cockpit.assert(diskParams.target);
-        return domainInsertDisk({
-            connectionName: vm.connectionName,
-            vmName: vm.name,
-            target: diskParams.target,
-            diskType: mode === CUSTOM_PATH ? "file" : "volume",
-            file: diskParams.file,
-            poolName: storagePoolName,
-            volumeName: diskParams.existingVolumeName,
-            live: vm.state === "running",
-        });
+    const onInsertClicked = async () => {
+        let values;
+        if (mode === CUSTOM_PATH) {
+            values = {
+                type: "file",
+                source: {
+                    file: diskParams.file
+                }
+            };
+        } else {
+            values = {
+                type: "volume",
+                source: {
+                    pool: storagePoolName,
+                    volume: diskParams.existingVolumeName,
+                }
+            };
+        }
+
+        await virtXmlHotEdit(
+            vm,
+            "disk",
+            { target: { dev: diskParams.target } },
+            values
+        );
     };
 
     const onAddClicked = () => {
