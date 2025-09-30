@@ -80,7 +80,7 @@ export function changeMedia({
 }
 
 export function updateDisk({
-    domXml,
+    domainElem,
     diskTarget,
     readonly,
     shareable,
@@ -88,20 +88,15 @@ export function updateDisk({
     existingTargets,
     cache
 } : {
-    domXml: string,
+    domainElem: Element,
     diskTarget: optString,
     readonly: boolean,
     shareable: boolean,
     busType: optString,
     existingTargets: string[],
     cache: optString,
-}): string {
-    const s = new XMLSerializer();
-    const doc = getDoc(domXml);
-    const domainElem = doc.firstElementChild;
-    if (!domainElem)
-        throw new Error("updateDisk: domXML has no domain element");
-
+}): boolean {
+    const doc = domainElem.ownerDocument;
     const deviceElem = domainElem.getElementsByTagName("devices")[0];
     const disks = deviceElem.getElementsByTagName("disk");
 
@@ -145,16 +140,11 @@ export function updateDisk({
         }
     }
 
-    return s.serializeToString(doc);
+    return true;
 }
 
-export function updateBootOrder(domXml: string, devices: BootOrderDevice[]): string {
-    const s = new XMLSerializer();
-    const doc = getDoc(domXml);
-    const domainElem = doc.firstElementChild;
-    if (!domainElem)
-        throw new Error("updateBootOrder: domXML has no domain element");
-
+export function updateBootOrder(domainElem: Element, devices: BootOrderDevice[]): boolean {
+    const doc = domainElem.ownerDocument;
     const deviceElem = domainElem.getElementsByTagName("devices")[0];
     const disks = deviceElem.getElementsByTagName("disk");
     const interfaces = deviceElem.getElementsByTagName("interface");
@@ -337,22 +327,17 @@ export function updateBootOrder(domXml: string, devices: BootOrderDevice[]): str
         }
     }
 
-    return s.serializeToString(doc);
+    return true;
 }
 
 /*
  * This function is used to define only offline attribute of memory.
  */
-export function updateMaxMemory(domXml: string, maxMemory: number): string {
-    const doc = getDoc(domXml);
-    const domainElem = doc.firstElementChild;
-    const s = new XMLSerializer();
-
+export function updateMaxMemory(domainElem: Element, maxMemory: number): boolean {
     const memElem = domainElem?.getElementsByTagName("memory")[0];
     cockpit.assert(memElem, "No memory element");
     memElem.textContent = `${maxMemory}`;
-
-    return s.serializeToString(doc);
+    return true;
 }
 
 function xmlGetXPath(doc: XMLDocument, xpath: string): Element[] {

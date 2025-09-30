@@ -122,8 +122,7 @@ export class MemoryModal extends React.Component<MemoryModalProps, MemoryModalSt
 
         if (vm.memory !== this.state.maxMemory) {
             domainSetMaxMemory({
-                id: vm.id,
-                connectionName: vm.connectionName,
+                vm,
                 maxMemory: this.state.maxMemory
             })
                     .then(() => {
