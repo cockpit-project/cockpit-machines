@@ -35,7 +35,9 @@ import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput"
 import { DialogsContext } from 'dialogs.jsx';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
-import { NetworkTypeAndSourceRow, NetworkModelRow } from './nicBody.jsx';
+import {
+    NetworkTypeAndSourceRow, NetworkModelRow, dialogPortForwardsToInterface, NetworkPortForwardsRow
+} from './nicBody.jsx';
 import { virtXmlHotAdd, domainGet, domainIsRunning } from '../../../libvirtApi/domain.js';
 
 import './nic.css';
@@ -61,7 +63,6 @@ function getRandomMac(vms: VM[]): string | undefined {
             });
         });
 
-        console.log(mac);
         if (!addressConflicts)
             return mac;
     }
@@ -151,7 +152,7 @@ export class AddNIC extends React.Component<AddNICProps, AddNICState> {
 
         this.state = {
             dialogError: undefined,
-            networkType: "network",
+            networkType: this.props.vm.connectionName == "session" ? "user" : "network",
             networkSource: props.availableSources.network.length > 0 ? props.availableSources.network[0] : "",
             networkSourceMode: "bridge",
             networkModel: "virtio",
@@ -159,16 +160,21 @@ export class AddNIC extends React.Component<AddNICProps, AddNICState> {
             networkMac: "",
             permanent: false,
             addVNicInProgress: false,
+            portForwards: [],
         };
         this.add = this.add.bind(this);
         this.onValueChanged = this.onValueChanged.bind(this);
+        this.onBodyValueChanged = this.onBodyValueChanged.bind(this);
         this.dialogErrorSet = this.dialogErrorSet.bind(this);
     }
 
     onValueChanged<K extends keyof DialogValues>(key: K, value: DialogValues[K]): void {
         const stateDelta = { [key]: value } as Pick<AddNICState, K>;
-
         this.setState(stateDelta);
+    }
+
+    onBodyValueChanged<K extends keyof DialogBodyValues>(key: K, value: DialogBodyValues[K]): void {
+        this.onValueChanged(key, value as DialogValues[K]);
 
         if (key == 'networkType' && ['network', 'direct', 'bridge'].includes(value as DialogValues["networkType"])) {
             let sources;
@@ -211,6 +217,9 @@ export class AddNIC extends React.Component<AddNICProps, AddNICState> {
             } else {
                 source = this.state.networkSource;
             }
+            let backend = null;
+            if (this.state.networkType == "user" && vm.capabilities.interfaceBackends.includes("passt"))
+                backend = "passt";
             await virtXmlHotAdd(
                 vm,
                 "network",
@@ -218,7 +227,10 @@ export class AddNIC extends React.Component<AddNICProps, AddNICState> {
                     mac: this.state.setNetworkMac ? this.state.networkMac : getRandomMac(vms),
                     model: this.state.networkModel,
                     type: this.state.networkType,
+                    backend: { type: backend },
                     source,
+                    portForward: this.state.networkType == "user" ? dialogPortForwardsToInterface(this.state.portForwards) : null,
+
                 },
                 this.state.permanent
             );
@@ -235,27 +247,49 @@ export class AddNIC extends React.Component<AddNICProps, AddNICState> {
         const { idPrefix, vm } = this.props;
 
         const defaultBody = (
-            <Form onSubmit={e => e.preventDefault()} isHorizontal>
-                <NetworkTypeAndSourceRow idPrefix={idPrefix}
-                                         dialogValues={{ ...this.state, availableSources: this.props.availableSources }}
-                                         onValueChanged={this.onValueChanged}
-                                         connectionName={vm.connectionName} />
+            <>
+                <Form onSubmit={e => e.preventDefault()} isHorizontal>
+                    <NetworkTypeAndSourceRow
+                        vm={vm}
+                        idPrefix={idPrefix}
+                        dialogValues={{ ...this.state, availableSources: this.props.availableSources }}
+                        onValueChanged={this.onBodyValueChanged}
+                    />
 
-                <NetworkModelRow idPrefix={idPrefix}
-                                 dialogValues={this.state}
-                                 onValueChanged={this.onValueChanged}
-                                 osTypeArch={vm.arch}
-                                 osTypeMachine={vm.emulatedMachine} />
+                    <NetworkModelRow
+                        idPrefix={idPrefix}
+                        dialogValues={this.state}
+                        onValueChanged={this.onBodyValueChanged}
+                        osTypeArch={vm.arch}
+                        osTypeMachine={vm.emulatedMachine}
+                    />
 
-                <NetworkMacRow idPrefix={idPrefix}
-                               dialogValues={this.state}
-                               onValueChanged={this.onValueChanged} />
+                    <NetworkMacRow
+                        idPrefix={idPrefix}
+                        dialogValues={this.state}
+                        onValueChanged={this.onValueChanged}
+                    />
 
-                {domainIsRunning(vm.state) && vm.persistent &&
-                <PermanentChange idPrefix={idPrefix}
-                                 dialogValues={this.state}
-                                 onValueChanged={this.onValueChanged} />}
-            </Form>
+                    { domainIsRunning(vm.state) && vm.persistent &&
+                        <PermanentChange
+                            idPrefix={idPrefix}
+                            dialogValues={this.state}
+                            onValueChanged={this.onValueChanged}
+                        />
+                    }
+                </Form>
+                { this.state.networkType == "user" &&
+                    vm.capabilities.interfaceBackends.includes("passt") &&
+                    <Form>
+                        <br />
+                        <NetworkPortForwardsRow
+                            idPrefix={idPrefix}
+                            dialogValues={this.state}
+                            onValueChanged={this.onBodyValueChanged}
+                        />
+                    </Form>
+                }
+            </>
         );
 
         return (
