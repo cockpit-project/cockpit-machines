@@ -22,7 +22,7 @@ import cockpit from 'cockpit';
 import { optString } from './types';
 
 import { getDoc, getSingleOptionalElem } from './libvirt-xml-parse.js';
-import { getNextAvailableTarget, logDebug, BootOrderDevice } from './helpers.js';
+import { getNextAvailableTarget, BootOrderDevice } from './helpers.js';
 
 export function changeMedia({
     domXml,
@@ -353,58 +353,4 @@ export function updateMaxMemory(domXml: string, maxMemory: number): string {
     memElem.textContent = `${maxMemory}`;
 
     return s.serializeToString(doc);
-}
-
-function xmlGetXPath(doc: XMLDocument, xpath: string): Element[] {
-    const elements: Element[] = [];
-    let node = null;
-    const iterator = doc.evaluate(xpath, doc);
-    while ((node = iterator.iterateNext()))
-        if (node instanceof Element)
-            elements.push(node);
-    return elements;
-}
-
-export function replaceSpice(domXml: string): string {
-    // this implements https://access.redhat.com/solutions/6955095
-    logDebug("replaceSpice original XML:", domXml);
-
-    const doc = getDoc(domXml);
-
-    xmlGetXPath(doc, "/domain/devices/audio[@type='spice']").forEach(n => n.remove());
-    xmlGetXPath(doc, "//domain/devices/redirdev[@type='spicevmc']").forEach(n => n.remove());
-    xmlGetXPath(doc, "//domain/devices/channel[@type='spicevmc']").forEach(n => n.remove());
-
-    xmlGetXPath(doc, "//domain/devices/video").forEach(video => {
-        const model = getSingleOptionalElem(video, "model");
-        if (model?.getAttribute("type") === "qxl") {
-            // remove all attributes except for primary; don't change list while iterating
-            const removeAttrs = [];
-            for (let i = 0; i < model.attributes.length; i++) {
-                const attr = model.attributes.item(i);
-                if (attr && attr.name !== "primary")
-                    removeAttrs.push(attr.name);
-            }
-            removeAttrs.forEach(attr => model.removeAttribute(attr));
-            model.setAttribute("type", "vga");
-        }
-    });
-
-    const spice_graphics = xmlGetXPath(doc, "//domain/devices/graphics[@type='spice']");
-    // do we already have a VNC graphics device?
-    if (xmlGetXPath(doc, "//domain/devices/graphics[@type='vnc']").length > 0) {
-        // then simply remove the spice graphics device
-        spice_graphics.forEach(graphics => graphics.remove());
-    } else {
-        // otherwise replace spice graphics with VNC
-        spice_graphics.forEach(graphics => {
-            graphics.setAttribute("type", "vnc");
-            graphics.setAttribute("port", "-1");
-            getSingleOptionalElem(graphics, "image")?.remove();
-        });
-    }
-
-    const result = (new XMLSerializer()).serializeToString(doc);
-    logDebug("replaceSpice updated XML:", result);
-    return result;
 }
