@@ -138,14 +138,17 @@ export const NetworkTypeAndSourceRow = ({
             },
         ];
     } else {
-        availableNetworkTypes = [
-            ...virtualNetwork,
-            {
-                name: 'user',
-                desc: 'Userspace SLIRP stack',
-                detailParagraph: _("Provides a virtual LAN with NAT to the outside world.")
-            },
-        ];
+        // User session
+        if (dialogValues.availableSources.network.length > 0) {
+            availableNetworkTypes = [
+                {
+                    name: 'user',
+                    desc: 'Userspace stack',
+                    detailParagraph: _("Provides a virtual LAN with NAT to the outside world.")
+                },
+                ...virtualNetwork,
+            ];
+        }
     }
 
     if (["network", "direct", "bridge"].includes(dialogValues.networkType)) {
@@ -180,35 +183,40 @@ export const NetworkTypeAndSourceRow = ({
 
     return (
         <>
-            <FormGroup fieldId={`${idPrefix}-type`}
-                       label={_("Interface type")}
-                       labelHelp={
-                           <InfoPopover aria-label={_("Interface type help")}
-                                    position={PopoverPosition.bottom}
-                                    enableFlip={false}
-                                    bodyContent={<Flex direction={{ default: 'column' }}>
-                                        {availableNetworkTypes.map(type => (<Content key={type.name}>
+            { availableNetworkTypes.length > 0 &&
+                <FormGroup fieldId={`${idPrefix}-type`}
+                    label={_("Interface type")}
+                    labelHelp={
+                        <InfoPopover aria-label={_("Interface type help")}
+                            position={PopoverPosition.bottom}
+                            enableFlip={false}
+                            bodyContent={
+                                <Flex direction={{ default: 'column' }}>
+                                    {availableNetworkTypes.map(type => (
+                                        <Content key={type.name}>
                                             <Content component={ContentVariants.h4}>{type.desc}</Content>
                                             <strong>{type.detailHeadline}</strong>
                                             <p>{type.detailParagraph}</p>
                                         </Content>))}
-                                    </Flex>}
-                           />
-                       }>
-                <FormSelect id={`${idPrefix}-type`}
-                            onChange={(_event, value) => onValueChanged('networkType', value)}
-                            data-value={defaultNetworkType}
-                            value={defaultNetworkType}>
-                    {availableNetworkTypes
-                            .map(networkType => {
-                                return (
-                                    <FormSelectOption value={networkType.name} key={networkType.name}
-                                                      isDisabled={networkType.disabled || false}
-                                                      label={networkType.desc} />
-                                );
-                            })}
-                </FormSelect>
-            </FormGroup>
+                                </Flex>
+                            }
+                        />
+                    }>
+                    <FormSelect id={`${idPrefix}-type`}
+                        onChange={(_event, value) => onValueChanged('networkType', value)}
+                        data-value={defaultNetworkType}
+                        value={defaultNetworkType}>
+                        {availableNetworkTypes
+                                .map(networkType => {
+                                    return (
+                                        <FormSelectOption value={networkType.name} key={networkType.name}
+                                    isDisabled={networkType.disabled || false}
+                                    label={networkType.desc} />
+                                    );
+                                })}
+                    </FormSelect>
+                </FormGroup>
+            }
             {["network", "direct", "bridge"].includes(dialogValues.networkType) && (
                 <FormGroup fieldId={`${idPrefix}-source`} label={_("Source")}>
                     <FormSelect id={`${idPrefix}-source`}
