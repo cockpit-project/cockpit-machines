@@ -1229,28 +1229,6 @@ export async function domainSetOSFirmware({
     await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [s.serializeToString(doc)], { timeout, type: 's' });
 }
 
-export function domainSetVCPUSettings ({
-    name,
-    connectionName,
-    count,
-    max,
-    sockets,
-    cores,
-    threads,
-} : {
-    name: string,
-    connectionName: ConnectionName,
-    count: number,
-    max: number,
-    sockets: number,
-    cores: number,
-    threads: number,
-}): cockpit.Spawn<string> {
-    return spawn(connectionName, [
-        'virt-xml', '-c', `qemu:///${connectionName}`, '--vcpu', `${max},vcpu.current=${count},sockets=${sockets},cores=${cores},threads=${threads}`, name, '--edit'
-    ]);
-}
-
 export function domainShutdown({
     connectionName,
     id: objPath

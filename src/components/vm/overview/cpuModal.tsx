@@ -32,7 +32,7 @@ import { NumberInput } from "@patternfly/react-core/dist/esm/components/NumberIn
 
 import { useDialogs } from 'dialogs.jsx';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
-import { domainSetVCPUSettings, domainSetCpuMode } from "../../../libvirtApi/domain.js";
+import { virtXmlEdit } from "../../../libvirtApi/domain.js";
 import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
 import { InfoPopover } from '../../common/infoPopover.jsx';
 
@@ -197,30 +197,40 @@ export const CPUModal = ({
         setThreads(stateDelta.threads);
     }
 
-    function saveTopology() {
-        return domainSetVCPUSettings({
-            name: vm.name,
-            connectionName: vm.connectionName,
-            max,
-            count,
-            sockets,
-            threads,
-            cores,
-        }).then(Dialogs.close, exc => setError({ dialogError: _("vCPU and CPU topology settings could not be saved"), dialogErrorDetail: exc.message }));
+    async function saveTopology() {
+        try {
+            await virtXmlEdit(vm, "vcpu", 1, {
+                maxvcpus: max,
+                vcpu: {
+                    current: count,
+                },
+                sockets,
+                cores,
+                threads
+            });
+            Dialogs.close();
+        } catch (exc) {
+            setError({
+                dialogError: _("vCPU and CPU topology settings could not be saved"),
+                dialogErrorDetail: String(exc)
+            });
+        }
     }
 
     // First we need to update CPU mode, since libvirt resets topology upon mode/model change
-    function saveCPUMode() {
+    async function saveCPUMode() {
         setIsLoading(true);
-        domainSetCpuMode({
-            name: vm.name,
-            connectionName: vm.connectionName,
-            mode: cpuMode,
-            model: cpuModel
-        }).then(saveTopology, exc => {
-            setIsLoading(false);
-            setError({ dialogError: _("CPU mode could not be saved"), dialogErrorDetail: exc.message });
-        });
+        try {
+            await virtXmlEdit(vm, "cpu", 1, {
+                clearxml: true,
+                model: cpuModel,
+                mode: cpuMode,
+            });
+            await saveTopology();
+        } catch (exc) {
+            setError({ dialogError: _("CPU mode could not be saved"), dialogErrorDetail: String(exc) });
+        }
+        setIsLoading(false);
     }
 
     let caution = null;
