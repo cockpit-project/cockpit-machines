@@ -32,7 +32,7 @@ import { TextArea } from "@patternfly/react-core/dist/esm/components/TextArea";
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { useDialogs } from 'dialogs.jsx';
 
-import { domainSetDescription } from '../../libvirtApi/domain.js';
+import { virtXmlEdit } from '../../libvirtApi/domain.js';
 
 const _ = cockpit.gettext;
 
@@ -48,7 +48,10 @@ export const EditDescriptionDialog = ({ vm } : { vm: VM }) => {
 
     async function onSubmit() {
         try {
-            await domainSetDescription(vm, description);
+            // The description will appear in a "open" message for a "spawn"
+            // channel, and excessive lengths will crash the session with a
+            // protocol error. So let's limit it to a reasonable length here.
+            await virtXmlEdit(vm, "metadata", 1, { description: description.slice(0, 32000) });
             Dialogs.close();
         } catch (exc) {
             dialogErrorSet({

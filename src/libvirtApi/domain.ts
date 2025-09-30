@@ -1164,15 +1164,6 @@ export function domainSendNMI({
     return call(connectionName, objPath, 'org.libvirt.Domain', 'InjectNMI', [0], { timeout, type: 'u' });
 }
 
-export async function domainSetDescription(vm: VM, description: string): Promise<void> {
-    // The description will appear in a "open" message for a "spawn"
-    // channel, and excessive lengths will crash the session with a
-    // protocol error. So let's limit it to a reasonable length here.
-    if (description.length > 32000)
-        description = description.slice(0, 32000);
-    await virtXmlEdit(vm, "metadata", 1, { description });
-}
-
 export function domainSetMemory({
     id: objPath,
     connectionName,
