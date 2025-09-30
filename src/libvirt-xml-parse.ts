@@ -162,6 +162,13 @@ export function getElem(xml: string): Element {
     return elem;
 }
 
+export function getDocElement(doc: XMLDocument): Element {
+    const elem = doc.firstElementChild;
+    if (!elem)
+        throw new Error(`document is empty`);
+    return elem;
+}
+
 export function parsePoolCapabilities(capsXML: string): StoragePoolCapabilites {
     const poolCapsElem = getElem(capsXML);
     const poolElements = Array.from(poolCapsElem.getElementsByTagName("pool"));
