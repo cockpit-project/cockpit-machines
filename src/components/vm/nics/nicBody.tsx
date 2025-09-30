@@ -148,9 +148,6 @@ export const NetworkTypeAndSourceRow = ({
         ];
     }
 
-    // Bring to the first position in dropdown list the initial selection which reflects the current nic type
-    availableNetworkTypes.sort(function(x, y) { return x.name == defaultNetworkType ? -1 : y.name == defaultNetworkType ? 1 : 0 });
-
     if (["network", "direct", "bridge"].includes(dialogValues.networkType)) {
         let sources: string[] = [];
         if (dialogValues.networkType === "network")
