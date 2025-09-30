@@ -51,6 +51,10 @@ export interface HypervisorCapabilities {
     guests: GuestCapabilities[];
 }
 
+export interface VirtXmlCapabilities {
+    convert_to_vnc: boolean;
+}
+
 /** Virtual Machines **/
 
 export interface DetailedError {

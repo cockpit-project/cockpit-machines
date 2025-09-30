@@ -10,14 +10,14 @@ import { ExclamationTriangleIcon } from "@patternfly/react-icons";
 import cockpit from 'cockpit';
 import { useDialogs } from 'dialogs.jsx';
 
-import { ReplaceSpiceDialog } from './vmReplaceSpiceDialog.jsx';
+import { canReplaceSpice, ReplaceSpiceDialog } from './vmReplaceSpiceDialog.jsx';
 
 const _ = cockpit.gettext;
 
 export const VmUsesSpice = ({ vm, vms } : { vm: VM, vms?: VM[] }) => {
     const Dialogs = useDialogs();
 
-    if (!vm.hasSpice || vm.capabilities?.supportsSpice)
+    if (!vm.hasSpice || vm.capabilities?.supportsSpice || !canReplaceSpice())
         return null;
 
     const onReplace = () => Dialogs.show(<ReplaceSpiceDialog vm={vm} vms={vms} />);

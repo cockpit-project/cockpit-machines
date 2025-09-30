@@ -2488,6 +2488,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         finally:
             m.execute(f"for f in {plugins}; do mv {self.vm_tmpdir}/qemu/$(basename $f) $f; done")
 
+    @testlib.skipImage('SPICE conversion not supported', "ubuntu-2204", "ubuntu-2404")
     def testReplaceSpice(self):
         m = self.machine
         b = self.browser
@@ -2706,34 +2707,9 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         self.assertNotIn("spice", m.execute("virsh dumpxml --inactive SpiceThree"))
         self.assertIn("spice", m.execute("virsh dumpxml --inactive SpiceTwo"))
 
-        # failed migration
-        # we can't test this properly, as it's not possible to poke invalid XML into libvirt
-        # simulate it with hacking virt-xml-validate
-
-        self.write_file("/usr/local/bin/virt-xml-validate",
-                        # ensure to drain stdin (read the XML), to avoid exiting too early
-                        "#!/bin/sh\ncat >/dev/null\necho kaputt >&2\nexit 1",
-                        perm="0755")
-
-        vmKaputt = "Kaputt"
-        self.createVm(vmKaputt, graphics="spice", running=False)
-        self.waitVmRow(vmKaputt, "system")
-        self.goToVmPage(vmKaputt)
-        b.wait_text(f"#vm-{vmKaputt}-system-state", "Shut off")
-        domainXML = m.execute(f"virsh dumpxml {vmKaputt}")
-
-        self.performAction(vmKaputt, "replace-spice")
-        b.click("#replace-spice-dialog-confirm")
-        b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-alert", "Failed to replace SPICE devices")
-        b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
-        b.wait_not_present(".pf-v6-c-modal-box")
-
-        # no change to the XML
-        self.assertEqual(m.execute(f"virsh dumpxml {vmKaputt}"), domainXML)
-
     # we need this test to create a SPICE VM to simulate the host change to "no spice support"
     @testlib.skipImage('SPICE not supported on RHEL', "rhel-*", "centos-*")
-    @testlib.skipImage("SPICE support is compiled in, cannot be removed from the host", "ubuntu-2204")
+    @testlib.skipImage('SPICE conversion not supported', "ubuntu-2204", "ubuntu-2404")
     def testNoSpiceAlert(self):
         b = self.browser
 
