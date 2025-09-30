@@ -80,7 +80,6 @@ import {
     updateBootOrder,
     updateDisk,
     updateMaxMemory,
-    replaceSpice,
 } from '../libvirt-xml-update.js';
 import { storagePoolRefresh } from './storagePool.js';
 import { snapshotGetAll } from './snapshot.js';
@@ -256,7 +255,8 @@ async function runVirtXml(
         } else {
             const a: string[] = [];
             encode_into(a, "", val);
-            args.push(a.join(","));
+            if (a.length > 0)
+                args.push(a.join(","));
         }
     }
 
@@ -1271,28 +1271,4 @@ export async function domainUpdateDiskAttributes({
     const [domXml] = await call<[string]>(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE | Enum.VIR_DOMAIN_XML_SECURE], { timeout, type: 'u' });
     const updatedXML = updateDisk({ diskTarget: target, domXml, readonly, shareable, busType, existingTargets, cache });
     await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [updatedXML], { timeout, type: 's' });
-}
-
-export async function domainReplaceSpice({
-    connectionName,
-    id: objPath
-} : {
-    connectionName: ConnectionName,
-    id: string,
-}): Promise<void> {
-    /* Ideally this would be done by virt-xml, but it doesn't offer that functionality yet
-     * see https://issues.redhat.com/browse/RHEL-17436 */
-    const [domXML] = await call<[string]>(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE | Enum.VIR_DOMAIN_XML_SECURE], { timeout, type: 'u' });
-    const updatedXML = replaceSpice(domXML);
-
-    // check that updatedXML is valid; if not, throw; it needs to be updated manually
-    await (cockpit.spawn(["virt-xml-validate", "-"], { err: "message" }).input(updatedXML));
-
-    try {
-        await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [updatedXML], { timeout, type: 's' });
-    } catch (ex) { // not-covered: unreachable, belt-and-suspenders
-        // if this fails, libvirt should keep the original XML
-        console.warn("domainReplaceSpice defining updated XML failed:", updatedXML); // not-covered: see above
-        throw ex; // not-covered: see above
-    }
 }

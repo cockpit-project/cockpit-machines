@@ -21,6 +21,7 @@ import {
     DELETE_UI_VM,
     DELETE_UNLISTED_VMS,
     SET_CAPABILITIES,
+    SET_VIRT_XML_CAPABILITIES,
     SET_NODE_MAX_MEMORY,
     SET_LOGGED_IN_USER,
     UNDEFINE_NETWORK,
@@ -49,6 +50,7 @@ import type {
     NodeInterface,
     NodeDevice,
     HypervisorCapabilities,
+    VirtXmlCapabilities,
     OSInfo,
 } from '../types';
 
@@ -119,6 +121,15 @@ export function setLoggedInUser({
         type: SET_LOGGED_IN_USER,
         payload: {
             loggedUser
+        }
+    };
+}
+
+export function setVirtXmlCapabilities(capabilities: VirtXmlCapabilities) {
+    return {
+        type: SET_VIRT_XML_CAPABILITIES,
+        payload: {
+            capabilities
         }
     };
 }

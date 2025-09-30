@@ -551,18 +551,20 @@ fullscreen=0
 
         assert_state("This machine has a SPICE graphical console that can not be shown here.")
 
-        b.click(".consoles-card .pf-v6-c-empty-state button:contains(Replace with VNC)")
-        b.wait_text(".pf-v6-c-modal-box__title-text", f"Replace SPICE devices in VM {name}")
-        b.click("#replace-spice-dialog-confirm")
-        b.wait_not_present(".pf-v6-c-modal-box")
-
-        assert_state("Restart this virtual machine to access its graphical consol")
-
-        self.performAction(name, "forceOff")
-        assert_state("Start the virtual machine to access the console")
-
-        self.performAction(name, "run")
-        b.wait_visible(".vm-console-vnc canvas")
+        if self.machine.image in ["ubuntu-2204", "ubuntu-2404"]:
+            # virt-xml in older Ubuntus does not have the
+            # --convert-to-vnc option and Cockpit will omit the button
+            b.wait_not_present(".consoles-card .pf-v6-c-empty-state button:contains(Replace with VNC)")
+        else:
+            b.click(".consoles-card .pf-v6-c-empty-state button:contains(Replace with VNC)")
+            b.wait_text(".pf-v6-c-modal-box__title-text", f"Replace SPICE devices in VM {name}")
+            b.click("#replace-spice-dialog-confirm")
+            b.wait_not_present(".pf-v6-c-modal-box")
+            assert_state("Restart this virtual machine to access its graphical consol")
+            self.performAction(name, "forceOff")
+            assert_state("Start the virtual machine to access the console")
+            self.performAction(name, "run")
+            b.wait_visible(".vm-console-vnc canvas")
 
     @testlib.skipImage('No virtio video', "arch", "opensuse-*", "rhel-8-*")
     def testScaleResize(self):
