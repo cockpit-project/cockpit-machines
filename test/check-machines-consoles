@@ -702,7 +702,7 @@ fullscreen=0
 
         b2.select_PF("#vm-console-vnc-scaling", "Remote resizing")
 
-        if not m.image.startswith(("ubuntu-", "debian-trixie", "opensuse-tumbleweed")):
+        if not m.image.startswith(("ubuntu-", "debian-trixie")):
             # Cockpit will make a non-shared connection.  The embedded
             # console will be forcefully disconnected.
             b.wait_in_text(".consoles-card", "Disconnected")
