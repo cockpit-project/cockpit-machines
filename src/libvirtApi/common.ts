@@ -36,6 +36,7 @@ import {
     setLoggedInUser,
     setCapabilities,
     setNodeMaxMemory,
+    setVirtXmlCapabilities,
 } from "../actions/store-actions.js";
 
 import {
@@ -391,6 +392,19 @@ async function storagePoolStopOrUndefine(connectionName: ConnectionName, poolPat
     }
 }
 
+async function getVirtXmlCapabilities() {
+    try {
+        const help_text = await cockpit.spawn(["virt-xml", "--help"]);
+        store.dispatch(setVirtXmlCapabilities(
+            {
+                convert_to_vnc: help_text.includes("--convert-to-vnc"),
+            }
+        ));
+    } catch (exc) {
+        console.error("Failed to query virt-xml capabilities:", String(exc));
+    }
+}
+
 export function getApiData({
     connectionName
 } : {
@@ -409,9 +423,10 @@ export function getApiData({
     ]);
 }
 
-export const initState = (): Promise<[void, void]> => Promise.all([
+export const initState = () => Promise.all([
     getLoggedInUser(),
     getOsInfoList(),
+    getVirtXmlCapabilities(),
 ]);
 
 /// USAGE POLLING

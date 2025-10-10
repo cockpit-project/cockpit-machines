@@ -42,7 +42,7 @@ import { DeleteDialog } from "./deleteDialog.jsx";
 import { MigrateDialog } from './vmMigrateDialog.jsx';
 import { RenameDialog } from './vmRenameDialog.jsx';
 import { EditDescriptionDialog } from './vmEditDescriptionDialog.jsx';
-import { ReplaceSpiceDialog } from './vmReplaceSpiceDialog.jsx';
+import { canReplaceSpice, ReplaceSpiceDialog } from './vmReplaceSpiceDialog.jsx';
 import {
     domainCanInstall,
     domainCanReset,
@@ -481,7 +481,7 @@ const VmActions = ({
         dropdownItems.push(<Divider key="separator-migrate" />);
     }
 
-    if (vm.inactiveXML?.hasSpice) {
+    if (vm.inactiveXML?.hasSpice && canReplaceSpice()) {
         dropdownItems.push(
             <DropdownItem key={`${id}-replace-spice`}
                           id={`${id}-replace-spice`}

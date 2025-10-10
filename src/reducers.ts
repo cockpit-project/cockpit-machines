@@ -27,6 +27,7 @@ import {
     DELETE_UI_VM,
     DELETE_UNLISTED_VMS,
     SET_CAPABILITIES,
+    SET_VIRT_XML_CAPABILITIES,
     SET_NODE_MAX_MEMORY,
     SET_LOGGED_IN_USER,
     UNDEFINE_NETWORK,
@@ -54,6 +55,7 @@ import type {
     StoragePool,
     Network,
     HypervisorCapabilities,
+    VirtXmlCapabilities,
     OSInfo,
 } from './types';
 
@@ -339,6 +341,7 @@ interface SystemInfo {
     libvirtVersion: number;
     osInfoList: OSInfo[] | null;
     loggedUser: cockpit.UserInfo | null;
+    virt_xml_capabilities?: VirtXmlCapabilities;
 }
 
 function systemInfo(state: SystemInfo | undefined, action): SystemInfo {
@@ -365,6 +368,11 @@ function systemInfo(state: SystemInfo | undefined, action): SystemInfo {
     }
     case SET_LOGGED_IN_USER: {
         return Object.assign({}, state, { loggedUser: action.payload.loggedUser });
+    }
+    case SET_VIRT_XML_CAPABILITIES: {
+        const newState = Object.assign({}, state);
+        newState.virt_xml_capabilities = action.payload.capabilities;
+        return newState;
     }
     default: // by default all reducers should return initial state on unknown actions
         return state;

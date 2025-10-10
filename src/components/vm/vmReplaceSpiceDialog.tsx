@@ -20,6 +20,8 @@
 import cockpit from 'cockpit';
 import React, { useState } from 'react';
 
+import store from "../../store.js";
+
 import type { VM } from '../../types';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -38,11 +40,15 @@ import { fmt_to_fragments } from 'utils.jsx';
 
 import { NeedsShutdownAlert } from '../common/needsShutdown.jsx';
 import { InfoPopover } from '../common/infoPopover.jsx';
-import { domainReplaceSpice } from '../../libvirtApi/domain.js';
+import { virtXmlEdit } from '../../libvirtApi/domain.js';
 
 import './vmReplaceSpiceDialog.css';
 
 const _ = cockpit.gettext;
+
+export function canReplaceSpice(): boolean {
+    return !!store.getState().systemInfo.virt_xml_capabilities?.convert_to_vnc;
+}
 
 interface DialogError {
     dialogError: string;
@@ -77,9 +83,9 @@ export const ReplaceSpiceDialog = ({
                 // convert them serially, to avoid hammering libvirt with too many parallel requests
                 for (const sel of spiceVMs)
                     if (selected.includes(selectionId(sel)))
-                        await domainReplaceSpice({ connectionName: sel.connectionName, id: sel.id });
+                        await virtXmlEdit(sel, "convert-to-vnc", null, {});
             } else {
-                await domainReplaceSpice({ connectionName: vm.connectionName, id: vm.id });
+                await virtXmlEdit(vm, "convert-to-vnc", null, {});
             }
             Dialogs.close();
         } catch (ex) {
