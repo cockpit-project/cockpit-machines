@@ -1182,6 +1182,7 @@ interface CreateVmModalProps {
     onAddErrorNotification: (n: Notification) => void;
     loggedUser: cockpit.UserInfo,
     unattendedUserLogin: boolean | undefined,
+    systemSocketAvailable: boolean;
 }
 
 interface CreateVmModalState extends VmParams {
@@ -1219,7 +1220,7 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
             validate: false,
             vmName: '',
             suggestedVmName: '',
-            connectionName: LIBVIRT_SYSTEM_CONNECTION,
+            connectionName: this.props.systemSocketAvailable ? LIBVIRT_SYSTEM_CONNECTION : LIBVIRT_SESSION_CONNECTION,
             sourceType: defaultSourceType,
             source: '',
             os: undefined,
@@ -1505,6 +1506,7 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
                     connectionName={this.state.connectionName}
                     onValueChanged={this.onValueChanged}
                     loggedUser={loggedUser}
+                    isDisabled={!this.props.systemSocketAvailable}
                     showInfoHelper />
                 <SourceRow
                     connectionName={this.state.connectionName}
@@ -1676,6 +1678,7 @@ interface CreateVmActionProps {
     unattendedSupported: boolean | undefined;
     unattendedUserLogin: boolean | undefined;
     virtInstallAvailable: boolean | undefined;
+    systemSocketAvailable: boolean;
 }
 
 export class CreateVmAction extends React.Component<CreateVmActionProps> {
@@ -1701,7 +1704,9 @@ export class CreateVmAction extends React.Component<CreateVmActionProps> {
                                         downloadOSSupported={this.props.downloadOSSupported}
                                         unattendedSupported={this.props.unattendedSupported}
                                         unattendedUserLogin={this.props.unattendedUserLogin}
-                                        loggedUser={this.props.systemInfo.loggedUser} />);
+                                        loggedUser={this.props.systemInfo.loggedUser}
+                                        systemSocketAvailable={this.props.systemSocketAvailable}
+            />);
         };
 
         let testdata;
