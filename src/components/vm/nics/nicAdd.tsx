@@ -36,7 +36,7 @@ import { DialogsContext } from 'dialogs.jsx';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { NetworkTypeAndSourceRow, NetworkModelRow } from './nicBody.jsx';
-import { domainAttachIface, domainGet, domainIsRunning } from '../../../libvirtApi/domain.js';
+import { virtXmlHotAdd, domainGet, domainIsRunning } from '../../../libvirtApi/domain.js';
 
 import './nic.css';
 
@@ -190,7 +190,7 @@ export class AddNIC extends React.Component<AddNICProps, AddNICState> {
         this.setState({ dialogError: text, dialogErrorDetail: detail });
     }
 
-    add() {
+    async add() {
         const Dialogs = this.context;
         const { vm, vms } = this.props;
 
@@ -201,25 +201,33 @@ export class AddNIC extends React.Component<AddNICProps, AddNICState> {
         }
 
         this.setState({ addVNicInProgress: true });
-        domainAttachIface({
-            connectionName: vm.connectionName,
-            vmName: vm.name,
-            model: this.state.networkModel,
-            sourceType: this.state.networkType,
-            source: this.state.networkSource,
-            sourceMode: this.state.networkSourceMode,
-            // Generate our own random MAC address because virt-xml has bug which generates different MAC for online and offline XML
-            // https://github.com/virt-manager/virt-manager/issues/305
-            mac: this.state.setNetworkMac ? this.state.networkMac : getRandomMac(vms),
-            permanent: this.state.permanent,
-            hotplug: vm.state === "running",
-        })
-                .then(() => {
-                    domainGet({ connectionName: vm.connectionName, id: vm.id });
-                    Dialogs.close();
-                })
-                .catch(exc => this.dialogErrorSet(_("Network interface settings could not be saved"), exc.message))
-                .finally(() => this.setState({ addVNicInProgress: false }));
+        try {
+            let source;
+            if (this.state.networkType == "direct") {
+                source = {
+                    "": this.state.networkSource,
+                    mode: this.state.networkSourceMode,
+                };
+            } else {
+                source = this.state.networkSource;
+            }
+            await virtXmlHotAdd(
+                vm,
+                "network",
+                {
+                    mac: this.state.setNetworkMac ? this.state.networkMac : getRandomMac(vms),
+                    model: this.state.networkModel,
+                    type: this.state.networkType,
+                    source,
+                },
+                this.state.permanent
+            );
+            domainGet({ connectionName: vm.connectionName, id: vm.id });
+            Dialogs.close();
+        } catch (exc) {
+            this.dialogErrorSet(_("Network interface settings could not be saved"), String(exc));
+        }
+        this.setState({ addVNicInProgress: false });
     }
 
     render() {

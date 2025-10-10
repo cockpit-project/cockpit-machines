@@ -47,7 +47,7 @@ import { useDialogs } from 'dialogs';
 
 import { logDebug, readQemuConf } from '../../../helpers.js';
 import { LaunchViewerButton, connection_address, ConsoleState } from './common';
-import { domainSendKey, domainAttachVnc, domainChangeVncSettings, domainGet } from '../../../libvirtApi/domain.js';
+import { domainSendKey, virtXmlAdd, virtXmlEdit, domainGet } from '../../../libvirtApi/domain.js';
 
 import { VncConsole, VncCredentials } from './VncConsole';
 
@@ -129,14 +129,17 @@ const VncEditModal = ({
         setPortError(null);
         setPasswordError(null);
 
-        const vncParams = {
-            listen: inactive_vnc.address || "",
-            port,
-            password,
-        };
-
         try {
-            await domainChangeVncSettings(vm, vncParams);
+            await virtXmlEdit(
+                vm,
+                "graphics",
+                { type: "vnc" },
+                {
+                    listen: inactive_vnc.address || "",
+                    port,
+                    password,
+                }
+            );
             domainGet({ connectionName: vm.connectionName, id: vm.id });
             Dialogs.close();
         } catch (ex) {
@@ -639,15 +642,18 @@ export const VncMissing = ({
 }) => {
     const [inProgress, setInProgress] = useState(false);
 
-    function add_vnc() {
+    async function add_vnc() {
         setInProgress(true);
-        domainAttachVnc(vm, { })
-                .catch(ex => onAddErrorNotification({
-                    text: cockpit.format(_("Failed to add VNC to VM $0"), vm.name),
-                    detail: ex.message,
-                    resourceId: vm.id,
-                }))
-                .finally(() => setInProgress(false));
+        try {
+            await virtXmlAdd(vm, "graphics", { type: "vnc" });
+        } catch (ex) {
+            onAddErrorNotification({
+                text: cockpit.format(_("Failed to add VNC to VM $0"), vm.name),
+                detail: String(ex),
+                resourceId: vm.id,
+            });
+        }
+        setInProgress(false);
     }
 
     return (

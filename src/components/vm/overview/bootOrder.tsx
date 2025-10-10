@@ -273,8 +273,7 @@ class BootOrderModal extends React.Component<BootOrderModalProps, BootOrderModal
         const devices = this.state.devices.filter((device) => device.checked);
 
         domainChangeBootOrder({
-            id: vm.id,
-            connectionName: vm.connectionName,
+            vm,
             devices,
         })
                 .then(() => {

@@ -35,7 +35,7 @@ import AddNIC from './nicAdd.jsx';
 import { EditNICModal } from './nicEdit.jsx';
 import { needsShutdownIfaceModel, needsShutdownIfaceSource, needsShutdownIfaceType, NeedsShutdownTooltip } from '../../common/needsShutdown.jsx';
 import './nic.css';
-import { domainChangeInterfaceSettings, domainDetachIface, domainInterfaceAddresses, domainGet } from '../../../libvirtApi/domain.js';
+import { virtXmlEdit, virtXmlHotRemove, domainInterfaceAddresses, domainGet } from '../../../libvirtApi/domain.js';
 import { KebabDropdown } from "cockpit-components-dropdown";
 import { ListingTable } from "cockpit-components-table.jsx";
 import { DeleteResourceButton } from '../../common/deleteResource.jsx';
@@ -523,18 +523,24 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
         const id = vmId(vm.name);
 
         const onChangeState = (network: VMInterface) => {
-            return (e: React.MouseEvent) => {
+            return async (e: React.MouseEvent) => {
                 e.stopPropagation();
                 if (network.mac) {
-                    domainChangeInterfaceSettings({ vmName: vm.name, connectionName: vm.connectionName, macAddress: network.mac, state: network.state === 'up' ? 'down' : 'up', hotplug: vm.state === "running" })
-                            .then(() => domainGet({ connectionName: vm.connectionName, id: vm.id }))
-                            .catch(ex => {
-                                onAddErrorNotification({
-                                    text: cockpit.format(_("NIC $0 of VM $1 failed to change state"), network.mac, vm.name),
-                                    detail: ex.message,
-                                    resourceId: vm.id,
-                                });
-                            });
+                    try {
+                        await virtXmlEdit(
+                            vm,
+                            "network",
+                            { mac: network.mac },
+                            { link: { state: network.state === 'up' ? 'down' : 'up' } },
+                            { update: vm.state === "running" });
+                        domainGet({ connectionName: vm.connectionName, id: vm.id });
+                    } catch (ex) {
+                        onAddErrorNotification({
+                            text: cockpit.format(_("NIC $0 of VM $1 failed to change state"), network.mac, vm.name),
+                            detail: String(ex),
+                            resourceId: vm.id,
+                        });
+                    }
                 }
             };
         };
@@ -654,7 +660,12 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
                         errorMessage: cockpit.format(_("Network interface $0 could not be removed"), network.mac),
                         actionDescription: cockpit.format(_("Network interface $0 will be removed from $1"), network.mac, vm.name),
                         actionName: _("Remove"),
-                        deleteHandler: () => domainDetachIface({ connectionName: vm.connectionName, index: network.index, vmName: vm.name, live: vm.state === 'running', persistent: vm.persistent && nicPersistent }),
+                        deleteHandler: () => virtXmlHotRemove(
+                            vm,
+                            "network",
+                            network.index + 1,
+                            nicPersistent,
+                        )
                     };
                     const disabled = vm.state != 'shut off' && vm.state != 'running';
 

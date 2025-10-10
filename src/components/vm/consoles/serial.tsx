@@ -29,7 +29,7 @@ import {
 import { Terminal, TerminalState } from "cockpit-components-terminal.jsx";
 import { PendingIcon } from "@patternfly/react-icons";
 
-import { domainSerialConsoleCommand, domainAttachSerialConsole } from '../../../libvirtApi/domain.js';
+import { domainSerialConsoleCommand, virtXmlAdd } from '../../../libvirtApi/domain.js';
 import { ConsoleState } from './common';
 
 const _ = cockpit.gettext;
@@ -128,15 +128,18 @@ export const SerialMissing = ({
 }) => {
     const [inProgress, setInProgress] = useState(false);
 
-    function add_serial() {
+    async function add_serial() {
         setInProgress(true);
-        domainAttachSerialConsole(vm)
-                .catch(ex => onAddErrorNotification({
-                    text: cockpit.format(_("Failed to add serial console to VM $0"), vm.name),
-                    detail: ex.message,
-                    resourceId: vm.id,
-                }))
-                .finally(() => setInProgress(false));
+        try {
+            await virtXmlAdd(vm, "console", { type: "pty" });
+        } catch (ex) {
+            onAddErrorNotification({
+                text: cockpit.format(_("Failed to add serial console to VM $0"), vm.name),
+                detail: String(ex),
+                resourceId: vm.id,
+            });
+        }
+        setInProgress(false);
     }
 
     return (

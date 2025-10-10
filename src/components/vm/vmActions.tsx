@@ -60,7 +60,7 @@ import {
     domainSendNMI,
     domainShutdown,
     domainStart,
-    domainAddTPM,
+    virtXmlAdd
 } from '../../libvirtApi/domain.js';
 import store from "../../store.js";
 
@@ -203,14 +203,21 @@ const onSendNMI = (vm: VM) => (
     })
 );
 
-const onAddTPM = (vm: VM, onAddErrorNotification: (n: Notification) => void) => (
-    domainAddTPM({ connectionName: vm.connectionName, vmName: vm.name })
-            .catch(ex => onAddErrorNotification({
-                text: cockpit.format(_("Failed to add TPM to VM $0"), vm.name),
-                detail: ex.message,
-                resourceId: vm.id,
-            }))
-);
+export async function addTPM(vm: VM): Promise<void> {
+    await virtXmlAdd(vm, "tpm", "default");
+}
+
+const onAddTPM = async (vm: VM, onAddErrorNotification: (n: Notification) => void) => {
+    try {
+        await addTPM(vm);
+    } catch (ex) {
+        onAddErrorNotification({
+            text: cockpit.format(_("Failed to add TPM to VM $0"), vm.name),
+            detail: String(ex),
+            resourceId: vm.id,
+        });
+    }
+};
 
 const VmActions = ({
     vm,
