@@ -34,8 +34,11 @@ import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { DialogsContext } from 'dialogs.jsx';
-import { NetworkTypeAndSourceRow, NetworkModelRow } from './nicBody.jsx';
-import { virtXmlEdit, domainGet } from '../../../libvirtApi/domain.js';
+import {
+    NetworkTypeAndSourceRow, NetworkModelRow, NetworkPortForwardsRow,
+    interfacePortForwardsToDialog, dialogPortForwardsToInterface,
+} from './nicBody.jsx';
+import { virtXmlEdit, domainModifyXML, domainGet } from '../../../libvirtApi/domain.js';
 import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
 
 const _ = cockpit.gettext;
@@ -44,16 +47,14 @@ interface DialogValues extends DialogBodyValues {
     networkMac: string,
 }
 
-type OnValueChanged = <K extends keyof DialogValues>(key: K, value: DialogValues[K]) => void;
-
 const NetworkMacRow = ({
     mac,
-    onValueChanged,
+    onChanged,
     idPrefix,
     isShutoff
 } : {
     mac: string,
-    onValueChanged: OnValueChanged,
+    onChanged: (val: string) => void,
     idPrefix: string,
     isShutoff: boolean,
 }) => {
@@ -61,7 +62,7 @@ const NetworkMacRow = ({
         <TextInput id={`${idPrefix}-mac`}
                    value={mac}
                    {...(!isShutoff ? { readOnlyVariant: "plain" } : {})}
-                   onChange={(_, value) => onValueChanged("networkMac", value)} />
+                   onChange={(_, value) => onChanged(value)} />
     );
     if (!isShutoff)
         macInput = <Tooltip content={_("Only editable when the guest is shut off")}>{macInput}</Tooltip>;
@@ -116,10 +117,11 @@ export class EditNICModal extends React.Component<EditNICModalProps, EditNICModa
             networkSourceMode: props.network.type == "direct" ? (props.network.source.mode || "") : "bridge",
             networkModel: props.network.model || "",
             networkMac: props.network.mac || "",
+            portForwards: interfacePortForwardsToDialog(props.network.portForward),
             saveDisabled: false,
         };
         this.save = this.save.bind(this);
-        this.onValueChanged = this.onValueChanged.bind(this);
+        this.onBodyValueChanged = this.onBodyValueChanged.bind(this);
         this.dialogErrorSet = this.dialogErrorSet.bind(this);
     }
 
@@ -132,12 +134,12 @@ export class EditNICModal extends React.Component<EditNICModalProps, EditNICModa
             return network.source.bridge;
     }
 
-    onValueChanged<K extends keyof DialogValues>(key: K, value: DialogValues[K]): void {
+    onBodyValueChanged<K extends keyof DialogBodyValues>(key: K, value: DialogBodyValues[K]): void {
         const stateDelta = { [key]: value } as Pick<EditNICModalState, K>;
 
         this.setState(stateDelta);
 
-        if (key == 'networkType' && ['network', 'direct', 'bridge'].includes(value)) {
+        if (key == 'networkType' && typeof value == "string" && ['network', 'direct', 'bridge'].includes(value)) {
             let sources;
             if (value === "network")
                 sources = this.props.availableSources.network;
@@ -168,27 +170,52 @@ export class EditNICModal extends React.Component<EditNICModalProps, EditNICModa
             return;
         }
 
+        // Only touch port forwards for "user" interfaces with a
+        // default or "passt" backend.
+        const configure_port_forwards =
+            this.state.networkType == "user" && (!network.backend || network.backend == "passt");
+
+        // If the backend is still at "default" and there are port
+        // forwards, force it to "passt".
+        let force_backend = null;
+        if (configure_port_forwards && this.state.portForwards.length > 0)
+            force_backend = "passt";
+
+        let source;
+        if (this.state.networkType == "direct") {
+            source = {
+                "": this.state.networkSource,
+                mode: this.state.networkSourceMode,
+            };
+        } else {
+            source = this.state.networkSource;
+        }
+
         try {
-            let source;
-            if (this.state.networkType == "direct") {
-                source = {
-                    "": this.state.networkSource,
-                    mode: this.state.networkSourceMode,
-                };
-            } else {
-                source = this.state.networkSource;
+            const mac = network.mac;
+            if (configure_port_forwards && mac) {
+                // HACK - https://github.com/virt-manager/virt-manager/issues/982
+                await domainModifyXML(vm, dom => {
+                    const elements =
+                        dom.querySelectorAll(`devices interface:has(mac[address="${CSS.escape(mac)}" i]) portForward`);
+                    if (elements && elements.length > 0) {
+                        elements.forEach(e => e.remove());
+                        return true;
+                    }
+                    return false;
+                });
             }
             await virtXmlEdit(
                 vm,
                 "network",
-                {
-                    mac: network.mac
-                },
+                { mac },
                 {
                     mac: this.state.networkMac,
                     model: this.state.networkModel,
                     type: this.state.networkType,
+                    backend: { type: force_backend },
                     source,
+                    portForward: configure_port_forwards ? dialogPortForwardsToInterface(this.state.portForwards) : null,
                 }
             );
             domainGet({ connectionName: vm.connectionName, id: vm.id });
@@ -203,21 +230,39 @@ export class EditNICModal extends React.Component<EditNICModalProps, EditNICModa
         const { idPrefix, vm, network } = this.props;
 
         const defaultBody = (
-            <Form onSubmit={e => e.preventDefault()} isHorizontal>
-                <NetworkTypeAndSourceRow idPrefix={idPrefix}
-                                         dialogValues={{ ...this.state, availableSources: this.props.availableSources }}
-                                         onValueChanged={this.onValueChanged}
-                                         connectionName={vm.connectionName} />
-                <NetworkModelRow idPrefix={idPrefix}
-                                 dialogValues={this.state}
-                                 onValueChanged={this.onValueChanged}
-                                 osTypeArch={vm.arch}
-                                 osTypeMachine={vm.emulatedMachine} />
-                <NetworkMacRow mac={this.state.networkMac}
-                               onValueChanged={this.onValueChanged}
-                               idPrefix={idPrefix}
-                               isShutoff={vm.state == "shut off"} />
-            </Form>
+            <>
+                <Form onSubmit={e => e.preventDefault()} isHorizontal>
+                    <NetworkTypeAndSourceRow
+                        vm={vm}
+                        idPrefix={idPrefix}
+                        dialogValues={{ ...this.state, availableSources: this.props.availableSources }}
+                        onValueChanged={this.onBodyValueChanged}
+                    />
+                    <NetworkModelRow
+                        idPrefix={idPrefix}
+                        dialogValues={this.state}
+                        onValueChanged={this.onBodyValueChanged}
+                        osTypeArch={vm.arch}
+                        osTypeMachine={vm.emulatedMachine}
+                    />
+                    <NetworkMacRow
+                        mac={this.state.networkMac}
+                        onChanged={mac => this.setState({ networkMac: mac })}
+                        idPrefix={idPrefix}
+                        isShutoff={vm.state == "shut off"}
+                    />
+                </Form>
+                { this.state.networkType == "user" && (!network.backend || network.backend == "passt") &&
+                    <Form>
+                        <br />
+                        <NetworkPortForwardsRow
+                            idPrefix={idPrefix}
+                            dialogValues={this.state}
+                            onValueChanged={this.onBodyValueChanged}
+                        />
+                    </Form>
+                }
+            </>
         );
         const showWarning = () => {
             if (vm.state === 'running' && (
