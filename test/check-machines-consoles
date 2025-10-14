@@ -163,11 +163,11 @@ fullscreen=0
         # Make sure the console keeps their content when navigating
         # around
 
-        b.click(".consoles-card button:contains(Expand)")
+        b.click(".consoles-card a:contains(Expand)")
         b.wait_visible(".consoles-page-expanded")
         wait_for_alpine_greeting()
 
-        b.click(".consoles-card button:contains(Compress)")
+        b.click(".consoles-card a:contains(Compress)")
         b.wait_visible(".consoles-card")
         wait_for_alpine_greeting()
 
@@ -508,7 +508,7 @@ fullscreen=0
         self.waitVmRow(name)
         self.goToVmPage(name)
 
-        b.click(".consoles-card button:contains(Expand)")
+        b.click(".consoles-card a:contains(Expand)")
         b.wait_visible(".consoles-page-expanded")
         b.assert_pixels(".consoles-card", "expanded", ignore=[".vm-console-vnc"], chrome_hack_double_shots=True)
 
@@ -522,7 +522,7 @@ fullscreen=0
         # Compress, Serial should still be selected and VNC should stay
         # disconnected
 
-        b.click(".consoles-card button:contains(Compress)")
+        b.click(".consoles-card a:contains(Compress)")
         b.wait_visible("#vm-details")
         b.wait_visible(".consoles-card .vm-terminal")
         b.click('.consoles-card .pf-v6-c-toggle-group button:contains("Graphical")')
@@ -634,7 +634,7 @@ fullscreen=0
         # When collapsing and expanding again, nothing should have
         # changed.
 
-        b.click(".consoles-card button:contains(Compress)")
+        b.click(".consoles-card a:contains(Compress)")
         b.wait_visible("#vm-details")
         b.wait_not_present("#vm-console-vnc-scaling")
         b.click(".consoles-card button:contains(Expand)")
