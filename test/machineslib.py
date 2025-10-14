@@ -202,7 +202,7 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
 
     def createVm(self, name: str, graphics: str = 'none', *, ptyconsole: bool = False, running: bool = True,
                  memory: int = 128, connection: str = 'system', machine: testvm.Machine | None = None,
-                 os: str | None = None) -> Mapping[str, str | int]:
+                 os: str | None = None, memballoon_polling: bool = False) -> Mapping[str, str | int]:
         m = machine or self.machine
 
         if os is None:
@@ -236,6 +236,10 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
             console = "pty,target.type=serial "
         else:
             console = f"file,target.type=serial,source.path={args['logfile']} "
+        if memballoon_polling:
+            memballoon = "--memballoon virtio,stats.period=1 "
+        else:
+            memballoon = ""
 
         command = [f"virt-install --connect qemu:///{connection} --name {name} "
                    f"--os-variant {os} "
@@ -245,6 +249,7 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
                    f"--import --disk {img} "
                    f"--graphics {'none' if graphics == 'none' else graphics + ',listen=127.0.0.1'} "
                    f"--console {console}"
+                   f"{memballoon}"
                    f"--print-step 1 > /tmp/xml-{connection}"]
 
         command.append(f"virsh -c qemu:///{connection} define /tmp/xml-{connection}")

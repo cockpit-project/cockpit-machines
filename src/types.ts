@@ -368,6 +368,7 @@ export interface VMXML {
     metadata: VMMetadata;
     hasSpice: boolean;
     hasTPM: boolean;
+    hasPollingMemBalloon: boolean;
 }
 
 export type VMState =
@@ -410,7 +411,7 @@ export interface VM extends VMXML {
 
     capabilities: DomainCapabilities;
 
-    rssMemory: number | undefined;
+    memoryUsed: number | undefined;
     cpuTime: number | undefined;
     cpuUsage: number | undefined;
     actualTimeInMs: number | undefined;

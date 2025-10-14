@@ -108,18 +108,18 @@ const VmUsageCpu = ({ vm } : {vm: VM | UIVM, }) => {
 };
 
 const VmUsageMem = ({ vm } : {vm: VM | UIVM, }) => {
-    if (vm.isUi || vm.state != "running")
+    if (vm.isUi || vm.state != "running" || vm.memoryUsed === undefined)
         return null;
 
     const memTotal = vm.currentMemory ? vm.currentMemory * 1024 : 0;
-    const rssMem = vm.rssMemory ? vm.rssMemory * 1024 : 0;
+    const memUsed = vm.memoryUsed * 1024;
 
     return (
-        <Progress value={rssMem}
+        <Progress value={memUsed}
             aria-label={_("Memory")}
             className="pf-m-bg ct-simple-percentage-progress"
             min={0} max={memTotal}
-            variant={rssMem / memTotal > 0.9 ? ProgressVariant.danger : undefined}
+            variant={memUsed / memTotal > 0.9 ? ProgressVariant.danger : undefined}
         />
     );
 };
