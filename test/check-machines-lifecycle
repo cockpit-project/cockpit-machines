@@ -76,7 +76,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         m = self.machine
 
         # We want no initial watchdog
-        args = self.createVm("subVmTest1", os="linux2016")
+        args = self.createVm("subVmTest1", os="linux2016", memballoon_polling=True)
 
         self.login_and_go("/machines", user=user, superuser=superuser)
 
@@ -134,16 +134,21 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         # switch to and check Usage
         b.click("#vm-subVmTest1-usage")
         b.wait_in_text(".memory-usage-chart .pf-v6-c-progress__status > .pf-v6-c-progress__measure", "128 MiB")
-        b.wait_not_in_text(".memory-usage-chart .pf-v6-c-progress__status > .pf-v6-c-progress__measure", "0 /")
-        usage = b.text(".memory-usage-chart .pf-v6-c-progress__status > .pf-v6-c-progress__measure")
-        usage = usage.split("/ 128 MiB")[0]
-        testlib.wait(lambda: float(usage) > 0.0, delay=3)
+
+        def get_mem_usage():
+            usage = b.text(".memory-usage-chart .pf-v6-c-progress__status > .pf-v6-c-progress__measure")
+            return float(usage.split("/ 128 MiB")[0])
+
+        testlib.wait(lambda: get_mem_usage() > 0.0, delay=3)
 
         b.wait_in_text(".vcpu-usage-chart .pf-v6-c-progress__status > .pf-v6-c-progress__measure", "1 vCPU")
-        usage = b.text(".vcpu-usage-chart .pf-v6-c-progress__status > .pf-v6-c-progress__measure")
-        usage = usage.split("% of 1 vCPU")[0]
+
+        def get_cpu_usage():
+            usage = b.text(".vcpu-usage-chart .pf-v6-c-progress__status > .pf-v6-c-progress__measure")
+            return float(usage.split("% of 1 vCPU")[0])
+
         # CPU usage cannot be nonzero with blank image, so just ensure it's a percentage
-        testlib.wait(lambda: float(usage) <= 100.0, delay=3)
+        testlib.wait(lambda: get_cpu_usage() <= 100.0, delay=3)
 
         # check usage on overview
         b.go("/machines#/")
@@ -222,7 +227,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         m.execute("virsh define --file /tmp/subVmTest1.xml")
 
         # start another one, should appear automatically
-        args2 = self.createVm("subVmTest2")
+        args2 = self.createVm("subVmTest2", memballoon_polling=True)
         b.wait_in_text("#vm-subVmTest2-system-state", "Running")
         self.goToVmPage("subVmTest2")
         b.wait_in_text("#vm-subVmTest2-cpu", "1 vCPU")
@@ -235,6 +240,8 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         if run_pixel_tests:
             b.wait_visible("#import-existing-vm:not([aria-disabled=false])")
             b.wait_visible("#create-new-vm:not([aria-disabled=true]")
+            with b.wait_timeout(30):
+                b.wait_visible("[data-row-id=vm-subVmTest2-system] [data-label=Memory] .pf-v6-c-progress")
             b.assert_pixels("#virtual-machines-page", "main-page",
                             ignore=["[data-label=CPU]", "[data-label=Memory]"])
 
@@ -632,15 +639,16 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         # Create one running machine
 
         name = "subVmTest1"
-        self.createVm(name)
+        self.createVm(name, memballoon_polling=True)
 
         self.login_and_go("/machines")
         self.waitPageInit()
         self.waitVmRow(name)
 
-        # It should have usage bars
-        b.wait_visible("[data-row-id=vm-subVmTest1-system] [data-label=Memory] .pf-v6-c-progress")
-        b.wait_visible("[data-row-id=vm-subVmTest1-system] [data-label=CPU] .pf-v6-c-progress")
+        # It should have usage bars, after a while
+        with b.wait_timeout(30):
+            b.wait_visible("[data-row-id=vm-subVmTest1-system] [data-label=Memory] .pf-v6-c-progress")
+            b.wait_visible("[data-row-id=vm-subVmTest1-system] [data-label=CPU] .pf-v6-c-progress")
 
         # Quickly create 19 more non-running VMs
         self.create_many_vms(m, ["extraVm" + str(n) for n in range(1, 20)])

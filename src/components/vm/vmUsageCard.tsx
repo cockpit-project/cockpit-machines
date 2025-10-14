@@ -24,32 +24,41 @@ import type { VM } from '../../types';
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { Progress, ProgressVariant } from "@patternfly/react-core/dist/esm/components/Progress";
 
-import { logDebug } from "../../helpers.js";
-
 const _ = cockpit.gettext;
 
 const VmUsageTab = ({ vm } : { vm: VM }) => {
     const memTotal = vm.currentMemory ? vm.currentMemory * 1024 : 0;
     const [memTotalFmt, memTotalUnit] = cockpit.format_bytes(memTotal, { base2: true, separate: true });
-    const rssMem = vm.rssMemory ? vm.rssMemory * 1024 : 0;
-    const memRss = cockpit.format_bytes(rssMem, memTotalUnit, { base2: true, separate: true })[0];
+    let usedMem: number;
+    let usedMemFmt: string;
+    if (vm.state != "running") {
+        usedMem = 0;
+        usedMemFmt = "0";
+    } else if (vm.memoryUsed === undefined) {
+        usedMem = 0;
+        if (vm.hasPollingMemBalloon)
+            usedMemFmt = _("waiting");
+        else
+            usedMemFmt = _("unavailable");
+    } else {
+        usedMem = vm.memoryUsed * 1024;
+        usedMemFmt = cockpit.format_bytes(usedMem, memTotalUnit, { base2: true, separate: true })[0];
+    }
 
     const totalCpus = vm.vcpus && Number(vm.vcpus.count) > 0 ? Number(vm.vcpus.count) : 0;
     const vmCpuUsage = vm.cpuUsage;
     const cpuUsage = vmCpuUsage || 0;
     const totalCpusStr = cockpit.format(cockpit.ngettext("$0 vCPU", "$0 vCPUs", totalCpus), totalCpus);
 
-    logDebug(`VmUsageTab.render(): rssMem: ${rssMem} KiB, memTotal: ${memTotal} KiB, totalCpus: ${totalCpus}, cpuUsage: ${cpuUsage}`);
-
     return (
         <Flex direction={{ default: 'column' }}>
             <FlexItem className="memory-usage-chart">
-                <Progress value={rssMem}
+                <Progress value={usedMem}
                     className="pf-m-sm"
                     min={0} max={memTotal}
-                    variant={rssMem / memTotal > 0.9 ? ProgressVariant.danger : undefined}
+                    variant={usedMem / memTotal > 0.9 ? ProgressVariant.danger : undefined}
                     title={_("Memory")}
-                    label={cockpit.format("$0 / $1 $2", memRss, memTotalFmt, memTotalUnit)} />
+                    label={cockpit.format("$0 / $1 $2", usedMemFmt, memTotalFmt, memTotalUnit)} />
             </FlexItem>
             <FlexItem className="vcpu-usage-chart">
                 <Progress value={cpuUsage}

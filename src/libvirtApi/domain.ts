@@ -868,8 +868,10 @@ export async function domainGet({
         const [state] = await call<[number[]]>(connectionName, objPath, 'org.libvirt.Domain', 'GetState', [0], { timeout, type: 'u' });
         const stateStr = DOMAINSTATE[state[0]];
 
-        if (!domainIsRunning(stateStr))
+        if (!domainIsRunning(stateStr)) {
             props.actualTimeInMs = -1;
+            props.memoryUsed = undefined;
+        }
 
         logDebug(`${props.name}.GET_VM(${objPath}, ${connectionName}): update props ${JSON.stringify(props)}`);
 

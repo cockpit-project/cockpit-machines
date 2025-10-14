@@ -434,10 +434,25 @@ async function pollVmUsage(vm: VM) {
             const props: Partial<VM> = { name: vm.name, connectionName: vm.connectionName, id: vm.id };
             let avgvCpuTime = 0;
 
-            if ("balloon.rss" in info)
-                props.rssMemory = get_number_prop(info, "balloon.rss");
-            else if ("state.state" in info && get_number_prop(info, "state.state") == Enum.VIR_DOMAIN_SHUTOFF)
-                props.rssMemory = 0.0;
+            // "balloon.usable" is the same as MemAvailable in /proc/meminfo
+            if (vm.hasPollingMemBalloon &&
+                "balloon.current" in info &&
+                "balloon.usable" in info) {
+                const used = get_number_prop(info, "balloon.current") - get_number_prop(info, "balloon.usable");
+                // During boot a VM starts out with maximum memory and
+                // only reduces it to the actual target value once the
+                // balloon driver is running. During that process,
+                // there might be stat samples that have ballon.usable
+                // values from a time when there was maximum memory
+                // and ballon.current values that are already the
+                // smaller target. Thus, we can get negative numbers
+                // here...
+                if (used > 0)
+                    props.memoryUsed = used;
+                else
+                    props.memoryUsed = undefined;
+            } else
+                props.memoryUsed = undefined;
             for (let i = 0; i < get_number_prop(info, "vcpu.maximum"); i++) {
                 if (!(`vcpu.${i}.time` in info))
                     continue;

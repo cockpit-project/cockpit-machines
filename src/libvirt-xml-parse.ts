@@ -310,6 +310,7 @@ export function parseDomainDumpxml(connectionName: ConnectionName, domXml: strin
     const vsock = parseDumpxmlForVsock(devicesElem);
     const hasSpice = parseDumpxmlForSpice(devicesElem);
     const hasTPM = parseDumpxmlForTPM(devicesElem);
+    const hasPollingMemBalloon = parseDumpxmlForMemBalloon(devicesElem);
 
     const hasInstallPhase = parseDumpxmlMachinesMetadataElement(metadataElem, 'has_install_phase') === 'true';
     const installSourceType = parseDumpxmlMachinesMetadataElement(metadataElem, 'install_source_type');
@@ -357,6 +358,7 @@ export function parseDomainDumpxml(connectionName: ConnectionName, domXml: strin
         metadata,
         hasSpice,
         hasTPM,
+        hasPollingMemBalloon,
     };
 }
 
@@ -604,6 +606,10 @@ function parseDumpxmlForSpice(devicesElem: Element): boolean {
 
 function parseDumpxmlForTPM(devicesElem: Element): boolean {
     return devicesElem.getElementsByTagName('tpm').length > 0;
+}
+
+function parseDumpxmlForMemBalloon(devicesElem: Element): boolean {
+    return devicesElem.querySelectorAll('memballoon stats[period]').length > 0;
 }
 
 export function parseDumpxmlForFilesystems(devicesElem: Element): VMFilesystem[] {
