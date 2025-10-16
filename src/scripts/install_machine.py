@@ -221,6 +221,9 @@ def prepare_virt_install_params(args):
         if 'firmware' in args:
             params += ['--boot', args['firmware']]
 
+        # Balloon driver stats polling, we want that for the "Memory usage" bars.
+        params += ['--memballoon', 'stats.period=10']
+
         params += unattended_params
         params += cloud_init_params
 
