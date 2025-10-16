@@ -173,7 +173,7 @@ export const VmDetailsPage = ({
             id: `${vmId(vm.name)}-usage`,
             className: 'usage-card',
             title: _("Usage"),
-            body: <VmUsageTab vm={vm} />,
+            body: <VmUsageTab vm={vm} onAddErrorNotification={onAddErrorNotification} />,
         },
         {
             card: <ConsoleCard

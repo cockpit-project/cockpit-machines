@@ -343,6 +343,13 @@ export async function virtXmlHotRemove(
     await virtXmlRemove(vm, option, values, { ...hotplugExtraOptions(vm, device_persistent), ...extra_options });
 }
 
+/* Running virsh
+ */
+
+export async function runVirsh(vm: VM, args: string[]) {
+    await spawn(vm.connectionName, ["virsh", "-c", `qemu:///${vm.connectionName}`, ...args]);
+}
+
 function domainAttachDevice({
     connectionName,
     vmId,
