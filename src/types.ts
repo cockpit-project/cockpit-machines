@@ -418,6 +418,7 @@ export interface VM extends VMXML {
     capabilities: DomainCapabilities;
 
     memoryUsed: number | undefined;
+    hasPollingMemBalloonFailure: boolean | undefined;
     cpuTime: number | undefined;
     cpuUsage: number | undefined;
     actualTimeInMs: number | undefined;

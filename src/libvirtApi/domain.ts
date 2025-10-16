@@ -343,6 +343,24 @@ export async function virtXmlHotRemove(
     await virtXmlRemove(vm, option, values, { ...hotplugExtraOptions(vm, device_persistent), ...extra_options });
 }
 
+export async function ensureBalloonPolling(vm: VM) {
+    if (vm.state == "running" && !vm.hasPollingMemBalloon && !vm.hasPollingMemBalloonFailure) {
+        try {
+            const args = [
+                "dommemstat",
+                vm.uuid,
+                "--period", "10",
+                "--live",
+            ];
+            await spawn(vm.connectionName, ["virsh", "-c", `qemu:///${vm.connectionName}`, ...args]);
+            await domainGet(vm);
+        } catch (exc) {
+            console.warn("Failed to enable memory polling", String(exc));
+            vm.hasPollingMemBalloonFailure = true;
+        }
+    }
+}
+
 function domainAttachDevice({
     connectionName,
     vmId,

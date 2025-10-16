@@ -76,7 +76,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         m = self.machine
 
         # We want no initial watchdog
-        args = self.createVm("subVmTest1", os="linux2016", memballoon_polling=True)
+        args = self.createVm("subVmTest1", os="linux2016")
 
         self.login_and_go("/machines", user=user, superuser=superuser)
 
@@ -227,7 +227,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         m.execute("virsh define --file /tmp/subVmTest1.xml")
 
         # start another one, should appear automatically
-        args2 = self.createVm("subVmTest2", memballoon_polling=True)
+        args2 = self.createVm("subVmTest2")
         b.wait_in_text("#vm-subVmTest2-system-state", "Running")
         self.goToVmPage("subVmTest2")
         b.wait_in_text("#vm-subVmTest2-cpu", "1 vCPU")
@@ -639,7 +639,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         # Create one running machine
 
         name = "subVmTest1"
-        self.createVm(name, memballoon_polling=True)
+        self.createVm(name)
 
         self.login_and_go("/machines")
         self.waitPageInit()
