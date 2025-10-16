@@ -45,6 +45,7 @@ import {
 import {
     domainGet,
     domainGetAll,
+    ensureBalloonPolling,
 } from "../libvirtApi/domain.js";
 import {
     DBusProps,
@@ -429,14 +430,14 @@ async function pollVmUsage(vm: VM) {
     const flags = Enum.VIR_DOMAIN_STATS_BALLOON | Enum.VIR_DOMAIN_STATS_VCPU | Enum.VIR_DOMAIN_STATS_BLOCK | Enum.VIR_DOMAIN_STATS_STATE;
 
     try {
+        await ensureBalloonPolling(vm);
         const [info] = await call<[DBusProps]>(vm.connectionName, vm.id, "org.libvirt.Domain", "GetStats", [flags, 0], { timeout: 5000, type: "uu" });
         if (Object.getOwnPropertyNames(info).length > 0) {
             const props: Partial<VM> = { name: vm.name, connectionName: vm.connectionName, id: vm.id };
             let avgvCpuTime = 0;
 
             // "balloon.usable" is the same as MemAvailable in /proc/meminfo
-            if (vm.hasPollingMemBalloon &&
-                "balloon.current" in info &&
+            if ("balloon.current" in info &&
                 "balloon.usable" in info) {
                 const used = get_number_prop(info, "balloon.current") - get_number_prop(info, "balloon.usable");
                 // During boot a VM starts out with maximum memory and

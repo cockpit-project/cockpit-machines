@@ -36,10 +36,7 @@ const VmUsageTab = ({ vm } : { vm: VM }) => {
         usedMemFmt = "0";
     } else if (vm.memoryUsed === undefined) {
         usedMem = 0;
-        if (vm.hasPollingMemBalloon)
-            usedMemFmt = _("waiting");
-        else
-            usedMemFmt = _("unavailable");
+        usedMemFmt = _("waiting");
     } else {
         usedMem = vm.memoryUsed * 1024;
         usedMemFmt = cockpit.format_bytes(usedMem, memTotalUnit, { base2: true, separate: true })[0];
