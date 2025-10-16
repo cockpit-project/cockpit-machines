@@ -331,15 +331,16 @@ export const ConsoleCard = ({
     }
 
     if (!isStandalone) {
+        const options = { ...cockpit.location.options, name: vm.name, connection: vm.connectionName };
+        const path = isExpanded ? ["vm"] : ["vm", "console"];
+        const href = "#" + cockpit.location.encode(path, options);
+
         actions.push(
             <Button
                 key="expand-compress"
                 variant="link"
-                onClick={() => {
-                    const urlOptions = { name: vm.name, connection: vm.connectionName };
-                    const path = isExpanded ? ["vm"] : ["vm", "console"];
-                    return cockpit.location.go(path, { ...cockpit.location.options, ...urlOptions });
-                }}
+                component="a"
+                href={href}
                 icon={isExpanded ? <CompressIcon /> : <ExpandIcon />}
                 iconPosition="right">{isExpanded ? _("Compress") : _("Expand")}
             </Button>
@@ -347,9 +348,9 @@ export const ConsoleCard = ({
     }
 
     if (!isStandalone && type == "graphical") {
-        const urlOptions = { name: vm.name, connection: vm.connectionName };
+        const options = { ...cockpit.location.options, name: vm.name, connection: vm.connectionName };
         const path = ["vm", "vnc"];
-        const href = "#" + cockpit.location.encode(path, { ...cockpit.location.options, ...urlOptions });
+        const href = "#" + cockpit.location.encode(path, options);
 
         actions.push(
             <Button
