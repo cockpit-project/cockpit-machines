@@ -63,6 +63,11 @@ if [ "$ID" = fedora ]; then
     dnf install -y virtiofsd
 fi
 
+# Split of from qemu-kvm in RHEL 9
+if [ "$ID" = rhel ]; then
+   dnf install -y qemu-kvm-block-curl
+fi
+
 # Run tests in the cockpit tasks container, as unprivileged user
 # TODO: Run in "host" network ns, as some tests fail on unexpected veth/bridge claimed by the container
 # fix these and then use the isolation in starter-kit and friends
