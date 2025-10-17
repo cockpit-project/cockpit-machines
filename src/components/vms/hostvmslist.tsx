@@ -248,7 +248,7 @@ const HostVmsList = ({
 
     return (
         <WithDialogs key="vms-list">
-            <Page className="no-masthead-sidebar">
+            <Page className="pf-m-no-sidebar">
                 <PageSection hasBodyWrapper={false}>
                     <Gallery className="ct-cards-grid" hasGutter>
                         <AggregateStatusCards networks={networks} storagePools={storagePools} />

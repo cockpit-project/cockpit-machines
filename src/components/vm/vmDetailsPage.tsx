@@ -110,7 +110,7 @@ export const VmDetailsPage = ({
         return (
             <WithDialogs key="vm-details">
                 <Page id={"vm-" + vm.name + "-consoles-page"}
-                      className="consoles-page-expanded no-masthead-sidebar">
+                      className="consoles-page-expanded pf-m-no-sidebar">
                     <PageSection hasBodyWrapper={false}>
                         <ConsoleCard
                             state={consoleCardState}
@@ -269,7 +269,7 @@ export const VmDetailsPage = ({
     return (
         <WithDialogs>
             <Page id="vm-details"
-                  className="vm-details no-masthead-sidebar"
+                  className="vm-details pf-m-no-sidebar"
                   data-pools-count={storagePools.length}>
                 <PageGroup>
                     <PageBreadcrumb hasBodyWrapper={false}>
