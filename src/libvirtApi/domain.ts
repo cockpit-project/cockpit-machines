@@ -343,6 +343,24 @@ export async function virtXmlHotRemove(
     await virtXmlRemove(vm, option, values, { ...hotplugExtraOptions(vm, device_persistent), ...extra_options });
 }
 
+export async function ensureBalloonPolling(vm: VM) {
+    if (vm.state == "running" && !vm.hasPollingMemBalloon && !vm.hasPollingMemBalloonFailure) {
+        try {
+            const args = [
+                "dommemstat",
+                vm.uuid,
+                "--period", "10",
+                "--live",
+            ];
+            await spawn(vm.connectionName, ["virsh", "-c", `qemu:///${vm.connectionName}`, ...args]);
+            await domainGet(vm);
+        } catch (exc) {
+            console.warn("Failed to enable memory polling", String(exc));
+            vm.hasPollingMemBalloonFailure = true;
+        }
+    }
+}
+
 function domainAttachDevice({
     connectionName,
     vmId,
@@ -868,8 +886,10 @@ export async function domainGet({
         const [state] = await call<[number[]]>(connectionName, objPath, 'org.libvirt.Domain', 'GetState', [0], { timeout, type: 'u' });
         const stateStr = DOMAINSTATE[state[0]];
 
-        if (!domainIsRunning(stateStr))
+        if (!domainIsRunning(stateStr)) {
             props.actualTimeInMs = -1;
+            props.memoryUsed = undefined;
+        }
 
         logDebug(`${props.name}.GET_VM(${objPath}, ${connectionName}): update props ${JSON.stringify(props)}`);
 

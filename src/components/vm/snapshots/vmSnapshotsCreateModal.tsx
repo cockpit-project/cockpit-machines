@@ -311,16 +311,7 @@ export class CreateSnapshotModal extends React.Component<CreateSnapshotModalProp
     }
 
     estimateMemorySnapshotSize(vm: VM): number {
-        /* According to experiments, the memory snapshot is smaller
-           than the amount of RAM used by the virtual machine.
-
-           RSS       File
-           ----------------
-           254 MB    145 MB
-           636 MB    492 MB
-           1.57 GB   1.4 GB
-        */
-        return (vm.rssMemory || vm.currentMemory) * 1024;
+        return (vm.memoryUsed || vm.currentMemory) * 1024;
     }
 
     render() {
