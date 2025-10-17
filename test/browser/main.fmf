@@ -15,6 +15,18 @@
   test: ./browser.sh basic
   duration: 60m
 
+  adjust:
+    # RHEL
+    - require+:
+        # required by TestMachinesCreate.testCreateUrlSource
+        - qemu-kvm-block-curl
+      when: distro ~ rhel
+
+    # Fedora split out qemu-virtiofsd
+    - require+:
+        - virtiofsd
+      when: distro ~ fedora
+
 /network:
   summary: Run browser integration for network functionality
   require:
@@ -29,6 +41,12 @@
     - firewalld
   test: ./browser.sh network
   duration: 60m
+
+  adjust:
+    # Fedora split out qemu-virtiofsd
+    - require+:
+        - virtiofsd
+      when: distro ~ fedora
 
 /storage:
   summary: Run browser integration for storage functionality
@@ -47,3 +65,10 @@
     - targetcli
   test: ./browser.sh storage
   duration: 60m
+
+  adjust:
+    # Fedora split out qemu-virtiofsd
+    - require+:
+        - virtiofsd
+        - libvirt-daemon-driver-storage-iscsi-direct
+      when: distro ~ fedora

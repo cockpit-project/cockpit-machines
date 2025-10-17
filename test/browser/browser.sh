@@ -6,14 +6,6 @@ cd "${0%/*}/../.."
 
 . /usr/lib/os-release
 
-# we don't need the H.264 codec, and it is sometimes not available (rhbz#2005760)
-DNF="dnf install --disablerepo=fedora-cisco-openh264 -y"
-
-# RHEL/CentOS 8 and Fedora have this, but not RHEL 9/10; tests check this more precisely
-if [ "${PLATFORM_ID:-}" = "platform:el8" ] || [ "$ID" = "fedora" ]; then
-    $DNF libvirt-daemon-driver-storage-iscsi-direct
-fi
-
 # HACK: this package creates bogus/broken sda → nvme symlinks; it's new in rawhide TF default instances, not required for
 # our tests, and only causes trouble; https://github.com/amazonlinux/amazon-ec2-utils/issues/37
 if rpm -q amazon-ec2-utils; then
@@ -56,16 +48,6 @@ if [ "${PLATFORM_ID:-}" != "platform:el8" ]; then
     systemctl start virtnetworkd.socket
     systemctl start virtnodedevd.socket
     systemctl start virtstoraged.socket
-fi
-
-# Fedora split out qemu-virtiofsd
-if [ "$ID" = fedora ]; then
-    dnf install -y virtiofsd
-fi
-
-# Split of from qemu-kvm in RHEL 9
-if [ "$ID" = rhel ]; then
-   dnf install -y qemu-kvm-block-curl
 fi
 
 # Run tests in the cockpit tasks container, as unprivileged user
