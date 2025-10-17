@@ -47,6 +47,7 @@ Requires: libvirt-daemon-config-network
 Recommends: libvirt-daemon-driver-storage-disk
 %if 0%{?rhel}
 Requires: qemu-kvm
+Suggests: qemu-kvm-block-curl
 %else
 # smaller footprint on Fedora, as qemu-kvm is really expensive on a server
 Requires: qemu-kvm-core
