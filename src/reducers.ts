@@ -73,14 +73,7 @@ function replaceResource({ state, updatedResource, index }) {
 }
 
 // --- reducers ------------------
-interface StateWithProvider<S> {
-    provider?: {
-        reducer: ((state: S | undefined, action) => S) | undefined;
-    };
-    providerState?: S;
-}
-
-export interface Config extends StateWithProvider<unknown> {
+export interface Config {
     refreshInterval: number;
     nodeMaxMemory?: number;
     capabilities?: HypervisorCapabilities;
@@ -105,34 +98,6 @@ function config(state: Config | undefined, action): Config {
     default:
         return state;
     }
-}
-
-/**
- * Provider might optionally extend the reducer tree (see state.provider.reducer() function)
- */
-
-function lazyComposedReducer<T, S>({
-    parentReducer,
-    getSubreducer,
-    getSubstate,
-    setSubstate
-} : {
-    parentReducer: (state: T | undefined, action) => T,
-    getSubreducer: (state: T) => ((state: S | undefined, action) => S) | undefined,
-    getSubstate: (state: T) => S | undefined,
-    setSubstate: (state: T, substate: S) => T,
-}) {
-    return (state: T, action): T => {
-        let newState = parentReducer(state, action);
-        const subreducer = getSubreducer(newState);
-        if (subreducer) {
-            const newSubstate = subreducer(getSubstate(newState), action);
-            if (newSubstate !== getSubstate(newState)) {
-                newState = setSubstate(newState, newSubstate);
-            }
-        }
-        return newState;
-    };
 }
 
 function interfaces(state: NodeInterface[] | undefined, action): NodeInterface[] {
@@ -487,12 +452,7 @@ function timeSampleUsageData(newVmRecord, previousVmRecord) {
 }
 
 export default combineReducers({
-    config: lazyComposedReducer<Config, unknown>({
-        parentReducer: config,
-        getSubreducer: (state) => (state.provider && state.provider.reducer) ? state.provider.reducer : undefined,
-        getSubstate: (state) => state.providerState,
-        setSubstate: (state, subState) => ({ ...state, providerState: subState }),
-    }),
+    config,
     interfaces,
     networks,
     nodeDevices,
