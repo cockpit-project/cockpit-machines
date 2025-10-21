@@ -406,16 +406,6 @@ export interface VM extends VMXML {
     autostart: boolean;
 
     error?: DetailedError | null;
-
-    // Unused
-    ui: {
-        initiallyExpanded: boolean | undefined;
-        initiallyOpenedConsoleTab: boolean | undefined;
-    };
-
-    // Unused, and probably confused with "ui" above.
-    expanded?: boolean;
-    openConsoleTab?: boolean;
     installInProgress?: boolean;
 
     capabilities: DomainCapabilities;
@@ -436,8 +426,6 @@ export interface UIVM {
     connectionName: ConnectionName;
     name: string;
     error?: undefined;
-    expanded?: boolean;
-    openConsoleTab?: boolean;
     createInProgress?: boolean;
     downloadProgress?: string | undefined;
 }

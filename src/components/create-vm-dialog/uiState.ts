@@ -39,16 +39,12 @@ const timeouts: Record<ConnectionName, Record<string, Record<string, number>>> =
 export function setVmCreateInProgress(
     name: string,
     connectionName: ConnectionName,
-    settings?: Partial<UIVM>,
 ): void {
     const vm: UIVM = {
         name,
         connectionName,
         isUi: true,
-        expanded: true,
-        openConsoleTab: true,
         createInProgress: true,
-        ...settings
     };
 
     store.dispatch(addUiVm(vm));

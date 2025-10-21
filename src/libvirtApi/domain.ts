@@ -509,7 +509,7 @@ export async function domainCreate({
     accessToken: optString
 } & DomainSpec): Promise<void> {
     // shows dummy vm  until we get vm from virsh (cleans up inProgress)
-    setVmCreateInProgress(vmName, connectionName, { openConsoleTab: startVm });
+    setVmCreateInProgress(vmName, connectionName);
 
     if (startVm) {
         setVmInstallInProgress({ name: vmName, connectionName });
@@ -854,7 +854,7 @@ export async function domainGet({
             props.persistent = get_boolean_prop(returnProps, "Persistent");
         if ("Autostart" in returnProps)
             props.autostart = get_boolean_prop(returnProps, "Autostart");
-        props.ui = resolveUiState(props.name, connectionName);
+        resolveUiState(props.name, connectionName);
 
         const dumpxmlParams = parseDomainDumpxml(connectionName, domainXML, objPath);
         Object.assign(props, dumpxmlParams);

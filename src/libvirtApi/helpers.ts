@@ -25,7 +25,6 @@ import { logDebug } from '../helpers.js';
 import {
     optString,
     ConnectionName,
-    VM,
 } from '../types';
 
 import {
@@ -204,21 +203,9 @@ export function dbusClient(connectionName: ConnectionName): cockpit.DBusClient {
     return clientLibvirt[connectionName];
 }
 
-export function resolveUiState(name: optString, connectionName: ConnectionName): VM["ui"] {
-    const result: VM["ui"] = {
-        // used just the first time vm is shown
-        initiallyExpanded: false,
-        initiallyOpenedConsoleTab: false,
-    };
-
+export function resolveUiState(name: optString, connectionName: ConnectionName): void {
     const uiState = store.getState().ui.vms.find(vm => vm.name == name && vm.connectionName == connectionName);
-
     if (uiState && name) {
-        result.initiallyExpanded = uiState.expanded;
-        result.initiallyOpenedConsoleTab = uiState.openConsoleTab;
-
         clearVmUiState(name, connectionName);
     }
-
-    return result;
 }
