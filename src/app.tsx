@@ -38,7 +38,7 @@ import { VmDetailsPage } from './components/vm/vmDetailsPage.jsx';
 import { ConsoleCardStates } from './components/vm/consoles/consoles.jsx';
 import { CreateVmAction } from "./components/create-vm-dialog/createVmDialog.jsx";
 import LibvirtSlate from "./components/libvirtSlate.jsx";
-import { dummyVmsFilter, vmId } from "./helpers.js";
+import { dummyVmsFilter, vmId, addNotification, dismissNotification } from "./helpers.js";
 import { InlineNotification } from 'cockpit-components-inline-notification.jsx';
 import {
     getApiData,
@@ -165,9 +165,6 @@ interface AppActiveProps {
 }
 
 interface AppActiveState {
-    notifications: Notification[],
-    /* Dictionary with keys being a resource's UUID and values the number of active error notifications for that resource */
-    resourceHasError: Record<string, number>,
     path: string[],
     /* virt-install feature support checks */
     cloudInitSupported: boolean | undefined,
@@ -184,9 +181,6 @@ class AppActive extends React.Component<AppActiveProps, AppActiveState> {
     constructor(props: AppActiveProps) {
         super(props);
         this.state = {
-            notifications: [],
-            /* Dictionary with keys being a resource's UUID and values the number of active error notifications for that resource */
-            resourceHasError: {},
             path: cockpit.location.path,
             /* virt-install feature support checks */
             cloudInitSupported: undefined,
@@ -196,7 +190,6 @@ class AppActive extends React.Component<AppActiveProps, AppActiveState> {
             virtInstallAvailable: undefined,
         };
         this.onAddErrorNotification = this.onAddErrorNotification.bind(this);
-        this.onDismissErrorNotification = this.onDismissErrorNotification.bind(this);
         this.getInlineNotifications = this.getInlineNotifications.bind(this);
         this.onNavigate = () => this.setState({ path: cockpit.location.path });
 
@@ -229,52 +222,38 @@ class AppActive extends React.Component<AppActiveProps, AppActiveState> {
     }
 
     /*
-     * Adds a new notification object to the notifications array. It also updates
-     * the error count for a specific resource.
+     * Adds a new notification object to the notifications array.
      * @param {object} notification - The notification object to be added to the array.
      */
     onAddErrorNotification(notification: Notification) {
-        const resourceHasError = Object.assign({}, this.state.resourceHasError);
-
-        if (notification.resourceId) {
-            if (resourceHasError[notification.resourceId])
-                resourceHasError[notification.resourceId]++;
-            else
-                resourceHasError[notification.resourceId] = 1;
-        }
-
-        this.setState(prevState => ({
-            notifications: prevState.notifications.concat([notification]), // append new notification to the end of array
-            resourceHasError,
-        }));
+        addNotification(notification);
     }
 
-    /*
-     * Removes the notification with index notificationIndex from the notifications array.
-     * It also updates the error count for a specific resource.
-     * @param {int} notificationIndex - Index of the notification to be removed.
-     */
-    onDismissErrorNotification(notificationIndex: number) {
-        const notifications = [...this.state.notifications];
-
-        const resourceHasError = { ...this.state.resourceHasError };
-        if (notifications[notificationIndex].resourceId)
-            resourceHasError[notifications[notificationIndex].resourceId]--;
-
-        notifications.splice(notificationIndex, 1);
-
-        this.setState({ notifications, resourceHasError });
-    }
-
-    getInlineNotifications(notifications: Notification[]) {
-        return notifications.map((notification, index) => (
-            <InlineNotification type={notification.type || 'danger'} key={index}
-                isLiveRegion
-                isInline={false}
-                onDismiss={() => this.onDismissErrorNotification(index)}
-                text={notification.text}
-                detail={notification.detail} />
-        ));
+    getInlineNotifications(resourceId?: string) {
+        const notes = store.getState().ui.notifications.map((notification, index) => {
+            if (!resourceId || notification.resourceId == resourceId) {
+                return (
+                    <InlineNotification
+                        key={index}
+                        type={notification.type || 'danger'}
+                        isLiveRegion
+                        isInline={false}
+                        onDismiss={() => dismissNotification(index)}
+                        text={notification.text}
+                        detail={notification.detail}
+                    />
+                );
+            } else
+                return null;
+        }).filter(Boolean);
+        if (notes.length > 0) {
+            return (
+                <AlertGroup isToast>
+                    {notes}
+                </AlertGroup>
+            );
+        } else
+            return null;
     }
 
     render() {
@@ -297,17 +276,12 @@ class AppActive extends React.Component<AppActiveProps, AppActiveState> {
         const vmActions = <> {importDiskAction} {createVmAction} </>;
         const pathVms = path.length == 0 || (path.length > 0 && path[0] == 'vms');
 
-        const allNotifications = this.state.notifications.length > 0 &&
-            <AlertGroup isToast>
-                {this.getInlineNotifications(this.state.notifications)}
-            </AlertGroup>;
-
         if (path.length > 0 && path[0] == 'vm') {
             const vm = combinedVms.find(vm => vm.name == cockpit.location.options.name && vm.connectionName == cockpit.location.options.connection);
             if (!vm) {
                 return (
                     <>
-                        {allNotifications}
+                        {this.getInlineNotifications()}
                         <EmptyStatePanel title={ cockpit.format(_("VM $0 does not exist on $1 connection"), cockpit.location.options.name, cockpit.location.options.connection) }
                                          action={_("Go to VMs list")}
                                          actionVariant="link"
@@ -318,7 +292,7 @@ class AppActive extends React.Component<AppActiveProps, AppActiveState> {
             } else if (vm.isUi && vm.createInProgress) {
                 return (
                     <>
-                        {allNotifications}
+                        {this.getInlineNotifications()}
                         <EmptyStatePanel title={cockpit.format(vm.downloadProgress ? _("Downloading image for VM $0") : _("Creating VM $0"), cockpit.location.options.name)}
                                          action={_("Go to VMs list")}
                                          actionVariant="link"
@@ -332,19 +306,13 @@ class AppActive extends React.Component<AppActiveProps, AppActiveState> {
             }
 
             const connectionName = vm.connectionName;
-            const vmNotifications = !vm.isUi && this.state.resourceHasError[vm.id]
-                ? (
-                    <AlertGroup isToast>
-                        {this.getInlineNotifications(this.state.notifications.filter(notification => notification.resourceId == vm.id))}
-                    </AlertGroup>
-                )
-                : undefined;
+
             // If vm.isUi is set we show a dummy placeholder until libvirt gets a real domain object for newly created V
             const expandedContent = vm.isUi
                 ? null
                 : (
                     <>
-                        {vmNotifications}
+                        {this.getInlineNotifications(vm.id)}
                         <VmDetailsPage vm={vm} vms={vms} config={config}
                             consoleCardState={this.consoleCardStates.get(vm)}
                             libvirtVersion={systemInfo.libvirtVersion}
@@ -363,7 +331,7 @@ class AppActive extends React.Component<AppActiveProps, AppActiveState> {
 
         return (
             <>
-                {allNotifications}
+                {this.getInlineNotifications()}
                 {pathVms && <HostVmsList vms={vms}
                     ui={ui}
                     storagePools={storagePools}
