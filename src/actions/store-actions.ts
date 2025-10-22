@@ -37,6 +37,8 @@ import {
     UPDATE_OS_INFO_LIST,
     UPDATE_UI_VM,
     UPDATE_VM,
+    ADD_UI_NOTIFICATION,
+    DISMISS_UI_NOTIFICATION,
 } from '../constants/store-action-types.js';
 
 import type cockpit from "cockpit";
@@ -53,6 +55,7 @@ import type {
     VirtXmlCapabilities,
     OSInfo,
 } from '../types';
+import type { Notification } from '../app';
 
 /**
  * All actions dispatchable by in the application
@@ -269,5 +272,19 @@ export function updateVm(props: Partial<VM>) {
     return {
         type: UPDATE_VM,
         vm: props,
+    };
+}
+
+export function addUiNotification(notification: Notification) {
+    return {
+        type: ADD_UI_NOTIFICATION,
+        notification,
+    };
+}
+
+export function dismissUiNotification(index: number) {
+    return {
+        type: DISMISS_UI_NOTIFICATION,
+        index,
     };
 }

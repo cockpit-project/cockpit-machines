@@ -28,6 +28,8 @@ import type {
     StoragePool,
     HypervisorCapabilities,
 } from './types';
+import type { Notification } from './app';
+import { addUiNotification, dismissUiNotification } from './actions/store-actions';
 
 const _ = cockpit.gettext;
 
@@ -1023,4 +1025,12 @@ export async function readQemuConf(): Promise<QemuConf> {
         conf.vnc_password = password_match[1].replaceAll('\\"', '"');
 
     return conf;
+}
+
+export function addNotification(notification: Notification) {
+    store.dispatch(addUiNotification(notification));
+}
+
+export function dismissNotification(index: number) {
+    store.dispatch(dismissUiNotification(index));
 }
