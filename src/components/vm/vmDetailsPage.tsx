@@ -22,7 +22,6 @@ import cockpit from 'cockpit';
 
 import type { VM, StoragePool, Network, NodeDevice } from '../../types';
 import type { Config } from '../../reducers';
-import type { Notification } from '../../app';
 
 import { Breadcrumb, BreadcrumbItem } from "@patternfly/react-core/dist/esm/components/Breadcrumb";
 import { CodeBlock, CodeBlockCode } from "@patternfly/react-core/dist/esm/components/CodeBlock";
@@ -59,7 +58,6 @@ export const VmDetailsPage = ({
     storagePools,
     networks,
     nodeDevices,
-    onAddErrorNotification,
     consoleCardState,
 } : {
     vm: VM,
@@ -69,7 +67,6 @@ export const VmDetailsPage = ({
     storagePools: StoragePool[],
     networks: Network[],
     nodeDevices: NodeDevice[],
-    onAddErrorNotification: (n: Notification) => void,
     consoleCardState: ConsoleCardState,
 }) => {
     useEffect(() => {
@@ -92,7 +89,6 @@ export const VmDetailsPage = ({
             <div className="vm-top-panel" data-vm-transient={!vm.persistent}>
                 <h2 className="vm-name">{vm.name}</h2>
                 <VmActions vm={vm}
-                           onAddErrorNotification={onAddErrorNotification}
                            isDetailsPage />
                 <VmNeedsShutdown vm={vm} />
                 <VmUsesSpice vm={vm} />
@@ -115,7 +111,6 @@ export const VmDetailsPage = ({
                         <ConsoleCard
                             state={consoleCardState}
                             vm={vm}
-                            onAddErrorNotification={onAddErrorNotification}
                             isExpanded />
                     </PageSection>
                 </Page>
@@ -134,7 +129,6 @@ export const VmDetailsPage = ({
                     <ConsoleCard
                         state={consoleCardState}
                         vm={vm}
-                        onAddErrorNotification={onAddErrorNotification}
                         isStandalone
                     />
                 </div>
@@ -179,8 +173,7 @@ export const VmDetailsPage = ({
             card: <ConsoleCard
                       state={consoleCardState}
                       key={`${vmId(vm.name)}-consoles`}
-                      vm={vm}
-                      onAddErrorNotification={onAddErrorNotification} />
+                      vm={vm} />
         },
         {
             id: `${vmId(vm.name)}-disks`,
@@ -188,7 +181,6 @@ export const VmDetailsPage = ({
             title: _("Disks"),
             actions: <VmDisksActions vm={vm} vms={vms} supportedDiskBusTypes={vm.capabilities.supportedDiskBusTypes} />,
             body: <VmDisksCardLibvirt vm={vm} vms={vms} storagePools={storagePools}
-                                      onAddErrorNotification={onAddErrorNotification}
                                       supportedDiskBusTypes={vm.capabilities.supportedDiskBusTypes} />,
         },
         {
@@ -197,8 +189,7 @@ export const VmDetailsPage = ({
             title: _("Network interfaces"),
             actions: <VmNetworkActions vm={vm} vms={vms} networks={networks} />,
             body: <VmNetworkTab vm={vm}
-                                networks={networks}
-                                onAddErrorNotification={onAddErrorNotification} />,
+                                networks={networks} />,
         },
         {
             id: `${vmId(vm.name)}-hostdevs`,

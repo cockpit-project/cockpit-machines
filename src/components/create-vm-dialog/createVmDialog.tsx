@@ -20,7 +20,6 @@
 import React, { useEffect, useState } from 'react';
 
 import type { optString, ConnectionName, VM, StoragePool, Network, NodeDevice, OSInfo } from '../../types';
-import type { Notification } from '../../app';
 import type { Dialogs } from 'dialogs';
 
 import { debounce } from 'throttle-debounce';
@@ -59,6 +58,7 @@ import {
     getStorageVolumesUsage, type StorageVolumesUsage,
     LIBVIRT_SYSTEM_CONNECTION,
     LIBVIRT_SESSION_CONNECTION,
+    addNotification,
 } from "../../helpers.js";
 import {
     getPXEInitialNetworkSource,
@@ -1179,7 +1179,6 @@ interface CreateVmModalProps {
     nodeMaxMemory: number | undefined;
     osInfoList: OSInfo[];
     vms: VM[];
-    onAddErrorNotification: (n: Notification) => void;
     loggedUser: cockpit.UserInfo,
     unattendedUserLogin: boolean | undefined,
 }
@@ -1406,7 +1405,7 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
 
     onCreateClicked(startVm: boolean) {
         const Dialogs = this.context;
-        const { onAddErrorNotification, osInfoList, nodeMaxMemory, vms, loggedUser } = this.props;
+        const { osInfoList, nodeMaxMemory, vms, loggedUser } = this.props;
         const { storagePools } = store.getState();
         const vmName = isEmpty(this.state.vmName.trim()) ? this.state.suggestedVmName : this.state.vmName;
 
@@ -1450,7 +1449,7 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
                 }
             }, (exception) => {
                 console.error(`spawn 'vm creation' returned error: "${JSON.stringify(exception)}"`);
-                onAddErrorNotification({
+                addNotification({
                     text: cockpit.format(_("Creation of VM $0 failed"), vmParams.vmName),
                     detail: exception.message.split(/Traceback(.+)/)[0],
                 });
@@ -1670,7 +1669,6 @@ interface CreateVmActionProps {
     mode: string;
     nodeMaxMemory: number | undefined;
     vms: VM[];
-    onAddErrorNotification: (n: Notification) => void;
     cloudInitSupported: boolean | undefined;
     downloadOSSupported: boolean | undefined;
     unattendedSupported: boolean | undefined;
@@ -1696,7 +1694,6 @@ export class CreateVmAction extends React.Component<CreateVmActionProps> {
                                         nodeMaxMemory={this.props.nodeMaxMemory}
                                         vms={this.props.vms}
                                         osInfoList={this.props.systemInfo.osInfoList || []}
-                                        onAddErrorNotification={this.props.onAddErrorNotification}
                                         cloudInitSupported={this.props.cloudInitSupported}
                                         downloadOSSupported={this.props.downloadOSSupported}
                                         unattendedSupported={this.props.unattendedSupported}

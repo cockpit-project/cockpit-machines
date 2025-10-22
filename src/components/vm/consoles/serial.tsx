@@ -20,7 +20,6 @@ import React, { useState } from 'react';
 import cockpit from 'cockpit';
 
 import type { optString, VM } from '../../../types';
-import type { Notification } from '../../../app';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import {
@@ -31,6 +30,7 @@ import { PendingIcon } from "@patternfly/react-icons";
 
 import { domainSerialConsoleCommand, virtXmlAdd } from '../../../libvirtApi/domain.js';
 import { ConsoleState } from './common';
+import { addNotification } from '../../../helpers.js';
 
 const _ = cockpit.gettext;
 
@@ -120,11 +120,9 @@ export const SerialInactive = () => {
 };
 
 export const SerialMissing = ({
-    vm,
-    onAddErrorNotification
+    vm
 } : {
     vm: VM,
-    onAddErrorNotification: (notification: Notification) => void;
 }) => {
     const [inProgress, setInProgress] = useState(false);
 
@@ -133,7 +131,7 @@ export const SerialMissing = ({
         try {
             await virtXmlAdd(vm, "console", { type: "pty" });
         } catch (ex) {
-            onAddErrorNotification({
+            addNotification({
                 text: cockpit.format(_("Failed to add serial console to VM $0"), vm.name),
                 detail: String(ex),
                 resourceId: vm.id,

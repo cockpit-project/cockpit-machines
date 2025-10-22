@@ -189,7 +189,6 @@ class AppActive extends React.Component<AppActiveProps, AppActiveState> {
             unattendedUserLogin: undefined,
             virtInstallAvailable: undefined,
         };
-        this.onAddErrorNotification = this.onAddErrorNotification.bind(this);
         this.getInlineNotifications = this.getInlineNotifications.bind(this);
         this.onNavigate = () => this.setState({ path: cockpit.location.path });
 
@@ -200,7 +199,7 @@ class AppActive extends React.Component<AppActiveProps, AppActiveState> {
         cockpit.addEventListener("locationchanged", this.onNavigate);
 
         if (this.props.error)
-            this.onAddErrorNotification({ text: _("Failed to fetch some resources"), detail: this.props.error });
+            addNotification({ text: _("Failed to fetch some resources"), detail: this.props.error });
 
         const check_exec = (argv: string[]): Promise<string | false> => cockpit.spawn(argv, { err: 'ignore' })
                 .catch(() => false);
@@ -219,14 +218,6 @@ class AppActive extends React.Component<AppActiveProps, AppActiveState> {
 
     componentWillUnmount() {
         cockpit.removeEventListener("locationchanged", this.onNavigate);
-    }
-
-    /*
-     * Adds a new notification object to the notifications array.
-     * @param {object} notification - The notification object to be added to the array.
-     */
-    onAddErrorNotification(notification: Notification) {
-        addNotification(notification);
     }
 
     getInlineNotifications(resourceId?: string) {
@@ -262,7 +253,6 @@ class AppActive extends React.Component<AppActiveProps, AppActiveState> {
         const combinedVms = [...vms, ...dummyVmsFilter(vms, ui.vms)];
         const properties = {
             nodeMaxMemory: config.nodeMaxMemory,
-            onAddErrorNotification: this.onAddErrorNotification,
             systemInfo,
             vms,
             cloudInitSupported,
@@ -316,7 +306,6 @@ class AppActive extends React.Component<AppActiveProps, AppActiveState> {
                         <VmDetailsPage vm={vm} vms={vms} config={config}
                             consoleCardState={this.consoleCardStates.get(vm)}
                             libvirtVersion={systemInfo.libvirtVersion}
-                            onAddErrorNotification={this.onAddErrorNotification}
                             storagePools={(storagePools || []).filter(pool => pool && pool.connectionName == connectionName)}
                             networks={(networks || []).filter(network => network && network.connectionName == connectionName)}
                             nodeDevices={(nodeDevices || []).filter(device => device && device.connectionName == connectionName)}
@@ -336,8 +325,7 @@ class AppActive extends React.Component<AppActiveProps, AppActiveState> {
                     ui={ui}
                     storagePools={storagePools}
                     networks={networks}
-                    actions={vmActions}
-                    onAddErrorNotification={this.onAddErrorNotification} />
+                    actions={vmActions} />
                 }
                 {path.length > 0 && path[0] == 'storages' && loggedUser &&
                 <StoragePoolList storagePools={storagePools}
