@@ -20,7 +20,6 @@ import React from 'react';
 import cockpit from 'cockpit';
 
 import type { optString, VM, VMDisk, StoragePool } from '../../../types';
-import type { Notification } from '../../../app';
 import type { DeleteResourceModalProps } from '../../common/deleteResource';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -37,7 +36,7 @@ import { MediaEjectModal } from './mediaEject.jsx';
 import { EditDiskAction } from './diskEdit.jsx';
 import { AddDiskModalBody } from './diskAdd.jsx';
 import { DeleteResourceModal } from '../../common/deleteResource.jsx';
-import { canDeleteDiskFile } from '../../../helpers.js';
+import { canDeleteDiskFile, addNotification } from '../../../helpers.js';
 
 const _ = cockpit.gettext;
 
@@ -151,13 +150,11 @@ export const DiskExtraDescriptions = ({
 export const RemoveDiskModal = ({
     vm,
     disk,
-    storagePools,
-    onAddErrorNotification
+    storagePools
 } : {
     vm: VM,
     disk: VMDisk,
     storagePools: StoragePool[],
-    onAddErrorNotification: (notification: Notification) => void,
 }) => {
     const onRemoveDisk = (deleteFile: boolean) => {
         return domainDetachDisk({
@@ -172,7 +169,7 @@ export const RemoveDiskModal = ({
                     if (deleteFile) {
                         return domainDeleteStorage({ connectionName: vm.connectionName, storage: [disk], storagePools })
                                 .catch(exc => {
-                                    onAddErrorNotification({
+                                    addNotification({
                                         resourceId: vm.id,
                                         text: cockpit.format(_("Could not delete disk's storage")),
                                         detail: exc.message,
@@ -214,7 +211,6 @@ export const DiskActions = ({
     supportedDiskBusTypes,
     idPrefixRow,
     storagePools,
-    onAddErrorNotification,
     isActionOpen,
     setIsActionOpen
 } : {
@@ -224,7 +220,6 @@ export const DiskActions = ({
     supportedDiskBusTypes: string[],
     idPrefixRow: string,
     storagePools: StoragePool[],
-    onAddErrorNotification: (notification: Notification) => void,
     isActionOpen: boolean,
     setIsActionOpen: (open: boolean) => void,
 }) => {
@@ -270,8 +265,7 @@ export const DiskActions = ({
                       onClick={() => {
                           Dialogs.show(<RemoveDiskModal vm={vm}
                                                         disk={disk}
-                                                        storagePools={storagePools}
-                                                        onAddErrorNotification={onAddErrorNotification} />);
+                                                        storagePools={storagePools} />);
                       }}>
             {_("Remove")}
         </DropdownItem>

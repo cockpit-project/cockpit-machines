@@ -20,7 +20,6 @@ import cockpit from 'cockpit';
 import React, { useEffect, useState } from 'react';
 
 import type { VM } from '../../types';
-import type { Notification } from '../../app';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
@@ -34,6 +33,7 @@ import { KebabDropdown } from 'cockpit-components-dropdown.jsx';
 import { updateVm } from '../../actions/store-actions.js';
 import {
     vmId,
+    addNotification,
 } from "../../helpers.js";
 
 import { CloneDialog } from './vmCloneDialog.jsx';
@@ -83,9 +83,9 @@ const onStart = (vm: VM, setOperationInProgress: (val: boolean) => void) => (
     })
 );
 
-const onInstall = (vm: VM, onAddErrorNotification: (n: Notification) => void) => (
+const onInstall = (vm: VM) => (
     domainInstall({ vm }).catch(ex => {
-        onAddErrorNotification({
+        addNotification({
             text: cockpit.format(_("VM $0 failed to get installed"), vm.name),
             detail: ex.message.split(/Traceback(.+)/)[0],
             resourceId: vm.id,
@@ -207,11 +207,11 @@ export async function addTPM(vm: VM): Promise<void> {
     await virtXmlAdd(vm, "tpm", "default");
 }
 
-const onAddTPM = async (vm: VM, onAddErrorNotification: (n: Notification) => void) => {
+const onAddTPM = async (vm: VM) => {
     try {
         await addTPM(vm);
     } catch (ex) {
-        onAddErrorNotification({
+        addNotification({
             text: cockpit.format(_("Failed to add TPM to VM $0"), vm.name),
             detail: String(ex),
             resourceId: vm.id,
@@ -222,12 +222,10 @@ const onAddTPM = async (vm: VM, onAddErrorNotification: (n: Notification) => voi
 const VmActions = ({
     vm,
     vms,
-    onAddErrorNotification,
     isDetailsPage = undefined
 } : {
     vm : VM,
     vms?: VM[],
-    onAddErrorNotification: (n: Notification) => void,
     isDetailsPage?: boolean | undefined,
 }) => {
     const Dialogs = useDialogs();
@@ -438,7 +436,7 @@ const VmActions = ({
                 key='action-install' variant="secondary"
                 isLoading={!!vm.installInProgress}
                 isDisabled={!!vm.installInProgress}
-                onClick={() => onInstall(vm, onAddErrorNotification)} id={`${id}-install`}
+                onClick={() => onInstall(vm)} id={`${id}-install`}
             >
                 {_("Install")}
             </Button>
@@ -521,7 +519,7 @@ const VmActions = ({
         dropdownItems.push(
             <DropdownItem key={`${id}-add-tpm`}
                           id={`${id}-add-tpm`}
-                          onClick={() => onAddTPM(vm, onAddErrorNotification)}>
+                          onClick={() => onAddTPM(vm)}>
                 {_("Add TPM")}
             </DropdownItem>
         );
@@ -542,7 +540,7 @@ const VmActions = ({
         } else {
             dropdownItems.push(
                 <DropdownItem className='pf-m-danger' key={`${id}-delete`} id={`${id}-delete`}
-                              onClick={() => Dialogs.show(<DeleteDialog vm={vm} onAddErrorNotification={onAddErrorNotification} />)}>
+                              onClick={() => Dialogs.show(<DeleteDialog vm={vm} />)}>
                     {_("Delete")}
                 </DropdownItem>
             );

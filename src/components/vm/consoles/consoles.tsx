@@ -21,7 +21,6 @@ import cockpit from 'cockpit';
 import { useOn } from 'hooks';
 
 import type { VM, VMConsole, VMGraphics, VMPty } from '../../../types';
-import type { Notification } from '../../../app';
 
 import { StateObject } from './state';
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -125,13 +124,11 @@ export class ConsoleCardStates {
 export const ConsoleCard = ({
     state,
     vm,
-    onAddErrorNotification,
     isExpanded = false,
     isStandalone = false,
 } : {
     state: ConsoleCardState,
     vm: VM,
-    onAddErrorNotification: (notification: Notification) => void,
     isExpanded?: boolean,
     isStandalone?: boolean,
 }) => {
@@ -217,8 +214,7 @@ export const ConsoleCard = ({
             if (!inactive_vnc && !inactive_spice) {
                 body = (
                     <VncMissing
-                        vm={vm}
-                        onAddErrorNotification={onAddErrorNotification} />
+                        vm={vm} />
                 );
             } else if (inactive_vnc) {
                 body = (
@@ -267,8 +263,7 @@ export const ConsoleCard = ({
                         key="vnc-actions"
                         state={state.vncState}
                         vm={vm}
-                        isExpanded={isExpanded || isStandalone}
-                        onAddErrorNotification={onAddErrorNotification} />
+                        isExpanded={isExpanded || isStandalone} />
                 );
                 body_state = state.vncState;
             } else if (inactive_vnc) {
@@ -282,7 +277,7 @@ export const ConsoleCard = ({
             } else if (spice) {
                 body = <SpiceActive vm={vm} isExpanded={isExpanded || isStandalone} spice={spice} />;
             } else {
-                body = <VncMissing vm={vm} onAddErrorNotification={onAddErrorNotification} />;
+                body = <VncMissing vm={vm} />;
             }
         }
     }
@@ -312,7 +307,7 @@ export const ConsoleCard = ({
             if (inactive_serials.length > 0) {
                 body = <SerialPending />;
             } else {
-                body = <SerialMissing vm={vm} onAddErrorNotification={onAddErrorNotification} />;
+                body = <SerialMissing vm={vm} />;
             }
         }
     }

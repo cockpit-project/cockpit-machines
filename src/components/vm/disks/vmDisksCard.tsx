@@ -20,7 +20,6 @@ import React, { useState } from 'react';
 import cockpit from 'cockpit';
 
 import type { optString, VM, VMDisk, VMDiskStat, StoragePool } from '../../../types';
-import type { Notification } from '../../../app';
 import type { ListingTableColumnProps, ListingTableRowProps } from 'cockpit-components-table';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -100,7 +99,6 @@ interface VmDisksCardLibvirtProps {
     vms: VM[],
     storagePools: StoragePool[],
     supportedDiskBusTypes: string[],
-    onAddErrorNotification: (notification: Notification) => void,
 }
 
 export class VmDisksCardLibvirt extends React.Component<VmDisksCardLibvirtProps> {
@@ -144,7 +142,7 @@ export class VmDisksCardLibvirt extends React.Component<VmDisksCardLibvirtProps>
     }
 
     render() {
-        const { vm, vms, storagePools, supportedDiskBusTypes, onAddErrorNotification } = this.props;
+        const { vm, vms, storagePools, supportedDiskBusTypes } = this.props;
 
         const disks = Object.getOwnPropertyNames(vm.disks)
                 .sort() // by 'target'
@@ -159,7 +157,6 @@ export class VmDisksCardLibvirt extends React.Component<VmDisksCardLibvirtProps>
                 vms={vms}
                 disks={disks}
                 storagePools={storagePools}
-                onAddErrorNotification={onAddErrorNotification}
                 supportedDiskBusTypes={supportedDiskBusTypes} />
         );
     }
@@ -170,15 +167,13 @@ export const VmDisksCard = ({
     vms,
     disks,
     supportedDiskBusTypes,
-    storagePools,
-    onAddErrorNotification
+    storagePools
 } : {
     vm: VM,
     vms: VM[],
     disks: VMDiskWithData[],
     supportedDiskBusTypes: string[],
     storagePools: StoragePool[],
-    onAddErrorNotification: (notification: Notification) => void,
 }) => {
     const [openActions, setOpenActions] = useState(new Set());
     const columnTitles: (string | ListingTableColumnProps)[] = [];
@@ -220,7 +215,6 @@ export const VmDisksCard = ({
                                 vms={vms}
                                 disk={disk}
                                 storagePools={storagePools}
-                                onAddErrorNotification={onAddErrorNotification}
                                 supportedDiskBusTypes={supportedDiskBusTypes}
                                 idPrefixRow={idPrefixRow}
                                 isActionOpen={openActions.has(disk.target)}

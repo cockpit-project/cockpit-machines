@@ -21,7 +21,6 @@ import React, { useState } from 'react';
 import cockpit from 'cockpit';
 
 import type { VM, VMGraphics } from '../../../types';
-import type { Notification } from '../../../app';
 
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -45,7 +44,7 @@ import { SimpleSelect } from 'cockpit-components-simple-select';
 import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
 import { useDialogs } from 'dialogs';
 
-import { logDebug, readQemuConf } from '../../../helpers.js';
+import { logDebug, readQemuConf, addNotification } from '../../../helpers.js';
 import { LaunchViewerButton, connection_address, ConsoleState } from './common';
 import { domainSendKey, virtXmlAdd, virtXmlEdit, domainGet } from '../../../libvirtApi/domain.js';
 
@@ -258,12 +257,10 @@ const Modifiers = {
 export const VncActiveActions = ({
     state,
     vm,
-    onAddErrorNotification,
     isExpanded,
 } : {
     state: VncState,
     vm: VM,
-    onAddErrorNotification: (notification: Notification) => void,
     isExpanded: boolean,
 }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -306,7 +303,7 @@ export const VncActiveActions = ({
                             keyCode,
                         ]
                     })
-                            .catch(ex => onAddErrorNotification({
+                            .catch(ex => addNotification({
                                 text: cockpit.format(_("Failed to send key Ctrl+Alt+$0 to VM $1"), keyName, vm.name),
                                 detail: ex.message,
                                 resourceId: vm.id,
@@ -634,11 +631,9 @@ export const VncInactive = ({
 };
 
 export const VncMissing = ({
-    vm,
-    onAddErrorNotification
+    vm
 } : {
     vm: VM,
-    onAddErrorNotification: (notification: Notification) => void,
 }) => {
     const [inProgress, setInProgress] = useState(false);
 
@@ -647,7 +642,7 @@ export const VncMissing = ({
         try {
             await virtXmlAdd(vm, "graphics", { type: "vnc" });
         } catch (ex) {
-            onAddErrorNotification({
+            addNotification({
                 text: cockpit.format(_("Failed to add VNC to VM $0"), vm.name),
                 detail: String(ex),
                 resourceId: vm.id,

@@ -21,7 +21,6 @@ import cockpit from 'cockpit';
 import React from 'react';
 
 import type { VM, VMDisk } from '../../types';
-import type { Notification } from '../../app';
 
 import type { Dialogs } from 'dialogs';
 
@@ -33,7 +32,7 @@ import {
 } from '@patternfly/react-core/dist/esm/components/Modal';
 import { DialogsContext } from 'dialogs.jsx';
 
-import { canDeleteDiskFile, vmId, getVmStoragePools } from '../../helpers.js';
+import { canDeleteDiskFile, vmId, getVmStoragePools, addNotification } from '../../helpers.js';
 import { domainDelete, domainDeleteStorage } from '../../libvirtApi/domain.js';
 import { snapshotDelete } from '../../libvirtApi/snapshot.js';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
@@ -116,7 +115,6 @@ const DeleteDialogBody = ({
 
 interface DeleteDialogProps {
     vm: VM,
-    onAddErrorNotification: (notification: Notification) => void,
 }
 
 interface DeleteDialogState {
@@ -162,7 +160,7 @@ export class DeleteDialog extends React.Component<DeleteDialogProps, DeleteDialo
     delete() {
         const Dialogs = this.context;
         const storage = this.state.disks.filter(d => d.checked);
-        const { vm, onAddErrorNotification } = this.props;
+        const { vm } = this.props;
         const storagePools = getVmStoragePools(vm.connectionName);
 
         Promise.all(
@@ -182,7 +180,7 @@ export class DeleteDialog extends React.Component<DeleteDialogProps, DeleteDialo
                 })
                 .then(() => { // Cleanup operations
                     return domainDeleteStorage({ connectionName: vm.connectionName, storage, storagePools })
-                            .catch(exc => onAddErrorNotification({
+                            .catch(exc => addNotification({
                                 text: cockpit.format(_("Could not delete all storage for $0"), vm.name),
                                 detail: exc,
                                 type: "warning"
