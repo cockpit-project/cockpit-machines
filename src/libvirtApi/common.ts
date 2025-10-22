@@ -66,9 +66,6 @@ import {
     networkGetAll,
 } from "../libvirtApi/network.js";
 import {
-    nodeDeviceGetAll,
-} from "../libvirtApi/nodeDevice.js";
-import {
     storagePoolGet,
     storagePoolGetAll,
 } from "../libvirtApi/storagePool.js";
@@ -418,7 +415,6 @@ export function getApiData({
         storagePoolGetAll({ connectionName }),
         interfaceGetAll(),
         networkGetAll({ connectionName }),
-        nodeDeviceGetAll({ connectionName }),
         getNodeMaxMemory({ connectionName }),
         getCapabilities({ connectionName }),
     ]);

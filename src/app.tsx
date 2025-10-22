@@ -45,6 +45,9 @@ import {
     getLibvirtVersion,
     initState,
 } from "./libvirtApi/common.js";
+import {
+    nodeDeviceGetAll,
+} from "./libvirtApi/nodeDevice.js";
 import { useEvent } from "hooks";
 import store from './store.js';
 
@@ -88,6 +91,15 @@ export const App = () => {
                             .filter(promise => promise.status === 'rejected')
                             .map(promise => promise.reason.message);
                     setError(errorMsgs.join(', '));
+                    // Get the node devices in the background since
+                    // they are expensive to get and not important for
+                    // displaying VMs.
+                    nodeDeviceGetAll({ connectionName }).catch(exc => {
+                        addNotification({
+                            text: "Failed to retrieve node devices",
+                            detail: String(exc),
+                        });
+                    });
                 } catch (ex) {
                     // access denied is expected for unprivileged session
                     if (connectionName !== 'system' || superuser.allowed ||

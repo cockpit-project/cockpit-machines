@@ -31,6 +31,7 @@ import AddHostDev from "./hostDevAdd.jsx";
 import { domainGet, domainDetachHostDevice } from '../../../libvirtApi/domain.js';
 import { nodeDeviceGetAll } from '../../../libvirtApi/nodeDevice.js';
 import { DeleteResourceButton } from '../../common/deleteResource.jsx';
+import store from "../../../store.js";
 
 const _ = cockpit.gettext;
 
@@ -142,13 +143,14 @@ function getSource(hostDev: VMHostDevice, nodeDevices: NodeDevice[], hostdevId: 
 export const VmHostDevActions = ({ vm } : { vm: VM }) => {
     const Dialogs = useDialogs();
     const idPrefix = `${vmId(vm.name)}-hostdevs`;
+    const { nodeDevices } = store.getState();
 
     function open() {
         Dialogs.show(<AddHostDev idPrefix={idPrefix} vm={vm} />);
     }
 
     return (
-        <Button id={`${idPrefix}-add`} variant='secondary' onClick={open}>
+        <Button id={`${idPrefix}-add`} variant='secondary' onClick={open} isDisabled={nodeDevices.length == 0}>
             {_("Add host device")}
         </Button>
     );
