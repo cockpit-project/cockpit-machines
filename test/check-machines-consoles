@@ -495,6 +495,14 @@ fullscreen=0
                               b.text(f"#{name}-terminal .xterm-accessibility-tree")),
                      delay=5)
 
+    def waitForStableVNC(self):
+        initial_remote = 1280
+        if self.machine.image in ["ubuntu-2204", "rhel-8-10"]:
+            initial_remote = 1024
+        with self.browser.wait_timeout(60):
+            self.browser.wait_attr(".vm-console-vnc canvas", "width", str(initial_remote))
+        return initial_remote
+
     def testExpandedConsole(self):
         b = self.browser
 
@@ -510,6 +518,7 @@ fullscreen=0
 
         b.click(".consoles-card button:contains(Expand)")
         b.wait_visible(".consoles-page-expanded")
+        self.waitForStableVNC()
         b.assert_pixels(".consoles-card", "expanded", ignore=[".vm-console-vnc"], chrome_hack_double_shots=True)
 
         # Disconnect VNC, switch to Serial
@@ -663,12 +672,7 @@ fullscreen=0
         b2 = self.new_browser()
         cookie = b.cookie("cockpit")
 
-        initial_remote = 1280
-        if m.image in ["ubuntu-2204", "rhel-8-10"]:
-            initial_remote = 1024
-
-        with b.wait_timeout(60):
-            b.wait_attr(".vm-console-vnc canvas", "width", str(initial_remote))
+        width = self.waitForStableVNC()
 
         href = b.attr(".consoles-card a:contains(Detach)", "href")
         b.click(".consoles-card a:contains(Detach)")
@@ -682,13 +686,13 @@ fullscreen=0
         def is_detach_message(msg):
             return (msg.startswith("> debug: Detaching VNC: ") and
                     href in msg and
-                    f"width={initial_remote}" in msg)
+                    f"width={width}" in msg)
 
         testlib.wait(lambda: any(is_detach_message(msg) for msg in b.get_js_log()))
 
         b2.open("/cockpit/@localhost/machines/index.html" + href, cookie=cookie)
         with b2.wait_timeout(60):
-            b2.wait_attr(".vm-console-vnc canvas", "width", str(initial_remote))
+            b2.wait_attr(".vm-console-vnc canvas", "width", str(width))
 
         # The embedded console has been disconnected now, but we can
         # connect again.
