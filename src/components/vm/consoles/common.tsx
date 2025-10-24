@@ -197,3 +197,20 @@ export const LaunchViewerButton = ({
         </Flex>
     );
 };
+
+export const TextWithAction = ({
+    text,
+    action,
+    onClick,
+} : {
+    text: string,
+    action: string,
+    onClick: () => void,
+}) => {
+    return fmt_to_fragments(
+        text,
+        <Button component="span" isInline variant="link" onClick={onClick}>
+            {action}
+        </Button>
+    );
+};

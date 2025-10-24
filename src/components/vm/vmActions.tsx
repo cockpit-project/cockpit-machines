@@ -19,7 +19,7 @@
 import cockpit from 'cockpit';
 import React, { useEffect, useState } from 'react';
 
-import type { VM } from '../../types';
+import type { VM, VMState } from '../../types';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
@@ -66,12 +66,13 @@ import store from "../../store.js";
 
 const _ = cockpit.gettext;
 
-function startOperation(vm: VM) {
+function startOperation(vm: VM, from_state: VMState = vm.state) {
     store.dispatch(
         updateVm({
             connectionName: vm.connectionName,
             name: vm.name,
-            operationInProgressFromState: vm.state,
+            operationInProgressFromState: from_state,
+            onShutOff: null,
         })
     );
 }
@@ -82,6 +83,7 @@ function stopOperation(vm: VM) {
             connectionName: vm.connectionName,
             name: vm.name,
             operationInProgressFromState: undefined,
+            onShutOff: null,
         })
     );
 }
@@ -576,6 +578,53 @@ const VmActions = ({
                 dropdownItems={dropdownItems}
             />
         </div>
+    );
+};
+
+export function vmStart(vm: VM) {
+    startOperation(vm);
+    onStart(vm);
+}
+
+export const VmRestartDialog = ({ vm } : { vm: VM }) => {
+    function onRestart(force: boolean) {
+        console.log("RESTART", force);
+        startOperation(vm);
+        store.dispatch(
+            updateVm({
+                connectionName: vm.connectionName,
+                name: vm.name,
+                onShutOff: () => {
+                    startOperation(vm, "shut off");
+                    onStart(vm);
+                },
+            })
+        );
+        if (force)
+            onForceoff(vm);
+        else
+            onShutdown(vm);
+    }
+
+    return (
+        <ConfirmDialog idPrefix="vm-restart-dialog"
+            title={fmt_to_fragments(_("Shutdown and restart $0?"), <b>{vm.name}</b>)}
+            vm={vm}
+            titleIcon={RedoIcon}
+            actionsList={[
+                {
+                    variant: "primary",
+                    handler: () => onRestart(false),
+                    name: _("Shutdown and restart"),
+                    id: "restart",
+                },
+                {
+                    variant: "secondary",
+                    handler: () => onRestart(true),
+                    name: _("Force shutdown and restart"),
+                    id: "force-restart",
+                },
+            ]} />
     );
 };
 
