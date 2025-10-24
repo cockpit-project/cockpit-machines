@@ -19,7 +19,7 @@
 import cockpit from 'cockpit';
 import React, { useEffect, useState } from 'react';
 
-import type { VM } from '../../types';
+import type { VM, VMState } from '../../types';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
@@ -66,9 +66,35 @@ import store from "../../store.js";
 
 const _ = cockpit.gettext;
 
-const onStart = (vm: VM, setOperationInProgress: (val: boolean) => void) => (
+function startOperation(vm: VM, from_state: VMState = vm.state) {
+    store.dispatch(
+        updateVm({
+            connectionName: vm.connectionName,
+            name: vm.name,
+            operationInProgressFromState: from_state,
+            onShutOff: null,
+        })
+    );
+}
+
+function stopOperation(vm: VM) {
+    store.dispatch(
+        updateVm({
+            connectionName: vm.connectionName,
+            name: vm.name,
+            operationInProgressFromState: undefined,
+            onShutOff: null,
+        })
+    );
+}
+
+function isOperationInProgress(vm: VM) {
+    return vm.state == vm.operationInProgressFromState;
+}
+
+const onStart = (vm: VM) => (
     domainStart({ id: vm.id, connectionName: vm.connectionName }).catch(ex => {
-        setOperationInProgress(false);
+        stopOperation(vm);
         console.warn("Failed to start VM", vm.name, ":", cockpit.message(ex));
         store.dispatch(
             updateVm({
@@ -123,11 +149,11 @@ const onForceReboot = (vm: VM) => (
     })
 );
 
-const onShutdown = (vm: VM, setOperationInProgress: (val: boolean) => void) => (
+const onShutdown = (vm: VM) => (
     domainShutdown({ id: vm.id, connectionName: vm.connectionName })
             .then(() => !vm.persistent && cockpit.location.go(["vms"]))
             .catch(ex => {
-                setOperationInProgress(false);
+                stopOperation(vm);
                 store.dispatch(
                     updateVm({
                         connectionName: vm.connectionName,
@@ -229,19 +255,12 @@ const VmActions = ({
     isDetailsPage?: boolean | undefined,
 }) => {
     const Dialogs = useDialogs();
-    const [operationInProgress, setOperationInProgress] = useState(false);
-    const [prevVmState, setPrevVmState] = useState(vm.state);
     const [virtCloneAvailable, setVirtCloneAvailable] = useState(false);
 
     useEffect(() => {
         cockpit.script('type virt-clone', [], { err: 'ignore' })
                 .then(() => setVirtCloneAvailable(true));
     }, []);
-
-    if (vm.state !== prevVmState) {
-        setPrevVmState(vm.state);
-        setOperationInProgress(false);
-    }
 
     const id = `${vmId(vm.name)}-${vm.connectionName}`;
     const state = vm.state;
@@ -254,7 +273,7 @@ const VmActions = ({
         dropdownItems.push(
             <DropdownItem key={`${id}-pause`}
                           id={`${id}-pause`}
-                          onClick={() => onPause(vm)}>
+                          onClick={() => { stopOperation(vm); onPause(vm) }}>
                 {_("Pause")}
             </DropdownItem>
         );
@@ -265,7 +284,7 @@ const VmActions = ({
         dropdownItems.push(
             <DropdownItem key={`${id}-resume`}
                           id={`${id}-resume`}
-                          onClick={() => onResume(vm)}>
+                          onClick={() => { stopOperation(vm); onResume(vm) } }>
                 {_("Resume")}
             </DropdownItem>
         );
@@ -277,8 +296,8 @@ const VmActions = ({
             <Button key='action-shutdown'
                     size="sm"
                     variant="secondary"
-                    isLoading={operationInProgress}
-                    isDisabled={operationInProgress}
+                    isLoading={isOperationInProgress(vm)}
+                    isDisabled={isOperationInProgress(vm)}
                     id={`${id}-shutdown-button`}
                     onClick={() => Dialogs.show(
                         <ConfirmDialog idPrefix={id}
@@ -289,8 +308,8 @@ const VmActions = ({
                                 {
                                     variant: "primary",
                                     handler: () => {
-                                        setOperationInProgress(true);
-                                        onShutdown(vm, setOperationInProgress);
+                                        startOperation(vm);
+                                        onShutdown(vm);
                                     },
                                     name: _("Shut down"),
                                     id: "off",
@@ -298,6 +317,7 @@ const VmActions = ({
                                 {
                                     variant: "secondary",
                                     handler: () => {
+                                        stopOperation(vm);
                                         onReboot(vm);
                                     },
                                     name: _("Reboot"),
@@ -319,7 +339,7 @@ const VmActions = ({
                                   actionsList={[
                                       {
                                           variant: "primary",
-                                          handler: () => onShutdown(vm, setOperationInProgress),
+                                          handler: () => { startOperation(vm); onShutdown(vm) },
                                           name: _("Shut down"),
                                           id: "off",
                                       },
@@ -339,7 +359,7 @@ const VmActions = ({
                                   actionsList={[
                                       {
                                           variant: "primary",
-                                          handler: () => onForceoff(vm),
+                                          handler: () => { stopOperation(vm); onForceoff(vm) },
                                           name: _("Force shut down"),
                                           id: "forceOff",
                                       },
@@ -383,7 +403,7 @@ const VmActions = ({
                                   actionsList={[
                                       {
                                           variant: "primary",
-                                          handler: () => onReboot(vm),
+                                          handler: () => { stopOperation(vm); onReboot(vm) },
                                           name: _("Reboot"),
                                           id: "reboot",
                                       },
@@ -403,7 +423,7 @@ const VmActions = ({
                                   actionsList={[
                                       {
                                           variant: "primary",
-                                          handler: () => onForceReboot(vm),
+                                          handler: () => { stopOperation(vm); onForceReboot(vm) },
                                           name: _("Force reboot"),
                                           id: "forceReboot",
                                       },
@@ -421,9 +441,9 @@ const VmActions = ({
             <Button key='action-run'
                     size="sm"
                     variant={isDetailsPage ? 'primary' : 'secondary'}
-                    isLoading={operationInProgress}
-                    isDisabled={operationInProgress}
-                    onClick={() => { setOperationInProgress(true); onStart(vm, setOperationInProgress) }} id={`${id}-run`}>
+                    isLoading={isOperationInProgress(vm)}
+                    isDisabled={isOperationInProgress(vm)}
+                    onClick={() => { startOperation(vm); onStart(vm) }} id={`${id}-run`}>
                 {_("Run")}
             </Button>
         );
@@ -558,6 +578,53 @@ const VmActions = ({
                 dropdownItems={dropdownItems}
             />
         </div>
+    );
+};
+
+export function vmStart(vm: VM) {
+    startOperation(vm);
+    onStart(vm);
+}
+
+export const VmRestartDialog = ({ vm } : { vm: VM }) => {
+    function onRestart(force: boolean) {
+        console.log("RESTART", force);
+        startOperation(vm);
+        store.dispatch(
+            updateVm({
+                connectionName: vm.connectionName,
+                name: vm.name,
+                onShutOff: () => {
+                    startOperation(vm, "shut off");
+                    onStart(vm);
+                },
+            })
+        );
+        if (force)
+            onForceoff(vm);
+        else
+            onShutdown(vm);
+    }
+
+    return (
+        <ConfirmDialog idPrefix="vm-restart-dialog"
+            title={fmt_to_fragments(_("Shutdown and restart $0?"), <b>{vm.name}</b>)}
+            vm={vm}
+            titleIcon={RedoIcon}
+            actionsList={[
+                {
+                    variant: "primary",
+                    handler: () => onRestart(false),
+                    name: _("Shutdown and restart"),
+                    id: "restart",
+                },
+                {
+                    variant: "secondary",
+                    handler: () => onRestart(true),
+                    name: _("Force shutdown and restart"),
+                    id: "force-restart",
+                },
+            ]} />
     );
 };
 
