@@ -288,7 +288,7 @@ export const ConsoleCard = ({
             add_console_selector(t, serials.length == 1 ? _("Serial") : cockpit.format(_("Serial ($0)"), pty.alias || idx));
             if (type == t) {
                 if (vm.state != "running") {
-                    body = <SerialInactive />;
+                    body = <SerialInactive vm={vm} />;
                 } else {
                     const serial_state = serial_states[idx];
                     body = (
@@ -305,7 +305,7 @@ export const ConsoleCard = ({
         add_console_selector("serial0", _("Serial"));
         if (type == "serial0") {
             if (inactive_serials.length > 0) {
-                body = <SerialPending />;
+                body = <SerialPending vm={vm} />;
             } else {
                 body = <SerialMissing vm={vm} />;
             }

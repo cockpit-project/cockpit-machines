@@ -31,6 +31,8 @@ import { PendingIcon } from "@patternfly/react-icons";
 import { domainSerialConsoleCommand, virtXmlAdd } from '../../../libvirtApi/domain.js';
 import { ConsoleState } from './common';
 import { addNotification } from '../../../helpers.js';
+import { vmStart, VmRestartDialog } from '../vmActions';
+import { useDialogs } from 'dialogs';
 
 const _ = cockpit.gettext;
 
@@ -109,12 +111,24 @@ export const SerialActive = ({
     );
 };
 
-export const SerialInactive = () => {
+export const SerialInactive = ({
+    vm,
+} : {
+    vm: VM,
+}) => {
     return (
         <EmptyState>
             <EmptyStateBody>
                 {_("Start the virtual machine to access the console")}
             </EmptyStateBody>
+            <EmptyStateFooter>
+                <Button
+                    variant="secondary"
+                    onClick={() => vmStart(vm)}
+                >
+                    {_("Start")}
+                </Button>
+            </EmptyStateFooter>
         </EmptyState>
     );
 };
@@ -161,11 +175,27 @@ export const SerialMissing = ({
     );
 };
 
-export const SerialPending = () => {
+export const SerialPending = ({
+    vm,
+} : {
+    vm: VM,
+}) => {
+    const Dialogs = useDialogs();
+
     return (
         <EmptyState icon={PendingIcon} status="custom">
             <EmptyStateBody>
-                {_("Restart this virtual machine to access its serial console")}
+                <EmptyStateBody>
+                    {_("Restart this virtual machine to access its serial console")}
+                </EmptyStateBody>
+                <EmptyStateFooter>
+                    <Button
+                        variant="secondary"
+                        onClick={() => Dialogs.show(<VmRestartDialog vm={vm} />)}
+                    >
+                        {_("Shutdown and restart")}
+                    </Button>
+                </EmptyStateFooter>
             </EmptyStateBody>
         </EmptyState>
     );
