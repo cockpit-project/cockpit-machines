@@ -19,7 +19,7 @@
 import cockpit from 'cockpit';
 import React, { useEffect, useState } from 'react';
 
-import type { VM } from '../../types';
+import type { VM, VMState } from '../../types';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
@@ -44,164 +44,132 @@ import { RenameDialog } from './vmRenameDialog.jsx';
 import { EditDescriptionDialog } from './vmEditDescriptionDialog.jsx';
 import { canReplaceSpice, ReplaceSpiceDialog } from './vmReplaceSpiceDialog.jsx';
 import {
-    domainCanInstall,
     domainCanReset,
-    domainCanRename,
-    domainCanResume,
-    domainCanRun,
-    domainCanPause,
-    domainCanShutdown,
-    domainForceOff,
-    domainForceReboot,
+    domainCanInstall,
     domainInstall,
-    domainPause,
-    domainReboot,
-    domainResume,
-    domainSendNMI,
-    domainShutdown,
-    domainStart,
+    vmDomainMethod,
     virtXmlAdd
 } from '../../libvirtApi/domain.js';
 import store from "../../store.js";
 
 const _ = cockpit.gettext;
 
-const onStart = (vm: VM, setOperationInProgress: (val: boolean) => void) => (
-    domainStart({ id: vm.id, connectionName: vm.connectionName }).catch(ex => {
-        setOperationInProgress(false);
-        console.warn("Failed to start VM", vm.name, ":", cockpit.message(ex));
-        store.dispatch(
-            updateVm({
-                connectionName: vm.connectionName,
-                name: vm.name,
-                error: {
-                    text: cockpit.format(_("VM $0 failed to start"), vm.name),
-                    detail: ex.message,
-                }
-            })
-        );
-    })
-);
+const domainCanRun = (vmState: VMState, hasInstallPhase: boolean) => !hasInstallPhase && vmState == 'shut off';
+const domainCanShutdown = (vmState: VMState) => domainCanReset(vmState);
+const domainCanPause = (vmState: VMState) => vmState == 'running';
+const domainCanRename = (vmState: VMState) => vmState == 'shut off';
+const domainCanResume = (vmState: VMState) => vmState == 'paused';
 
-const onInstall = (vm: VM) => (
-    domainInstall({ vm }).catch(ex => {
+function startOperationProgress(vm: VM) {
+    store.dispatch(
+        updateVm({
+            connectionName: vm.connectionName,
+            name: vm.name,
+            operationInProgressFromState: vm.state,
+        })
+    );
+}
+
+function isOperationInProgress(vm: VM) {
+    return vm.state == vm.operationInProgressFromState;
+}
+
+function setVmError(vm: VM, msg: string, ex: unknown) {
+    console.warn(msg, ":", String(ex));
+    store.dispatch(
+        updateVm({
+            connectionName: vm.connectionName,
+            name: vm.name,
+            operationInProgressFromState: undefined,
+            error: {
+                text: msg,
+                detail: String(ex),
+            }
+        })
+    );
+}
+
+export async function vmStart(vm: VM) {
+    startOperationProgress(vm);
+    try {
+        await vmDomainMethod<void>(vm, 'Create', 'u', 0);
+    } catch (ex) {
+        setVmError(vm, cockpit.format(_("VM $0 failed to start"), vm.name), ex);
+    }
+}
+
+async function onInstall(vm: VM) {
+    try {
+        await domainInstall({ vm });
+    } catch (ex) {
         addNotification({
             text: cockpit.format(_("VM $0 failed to get installed"), vm.name),
-            detail: ex.message.split(/Traceback(.+)/)[0],
+            detail: String(ex).split(/Traceback(.+)/)[0],
             resourceId: vm.id,
         });
-    })
-);
+    }
+}
 
-const onReboot = (vm: VM) => (
-    domainReboot({ id: vm.id, connectionName: vm.connectionName }).catch(ex => {
-        store.dispatch(
-            updateVm({
-                connectionName: vm.connectionName,
-                name: vm.name,
-                error: {
-                    text: cockpit.format(_("VM $0 failed to reboot"), vm.name),
-                    detail: ex.message,
-                }
-            })
-        );
-    })
-);
+export async function vmReboot(vm: VM) {
+    try {
+        await vmDomainMethod<void>(vm, 'Reboot', 'u', 0);
+    } catch (ex) {
+        setVmError(vm, cockpit.format(_("VM $0 failed to reboot"), vm.name), ex);
+    }
+}
 
-const onForceReboot = (vm: VM) => (
-    domainForceReboot({ id: vm.id, connectionName: vm.connectionName }).catch(ex => {
-        store.dispatch(
-            updateVm({
-                connectionName: vm.connectionName,
-                name: vm.name,
-                error: {
-                    text: cockpit.format(_("VM $0 failed to force reboot"), vm.name),
-                    detail: ex.message,
-                }
-            })
-        );
-    })
-);
+export async function vmForceReboot(vm: VM) {
+    try {
+        await vmDomainMethod<void>(vm, 'Reset', 'u', 0);
+    } catch (ex) {
+        setVmError(vm, cockpit.format(_("VM $0 failed to force reboot"), vm.name), ex);
+    }
+}
 
-const onShutdown = (vm: VM, setOperationInProgress: (val: boolean) => void) => (
-    domainShutdown({ id: vm.id, connectionName: vm.connectionName })
-            .then(() => !vm.persistent && cockpit.location.go(["vms"]))
-            .catch(ex => {
-                setOperationInProgress(false);
-                store.dispatch(
-                    updateVm({
-                        connectionName: vm.connectionName,
-                        name: vm.name,
-                        error: {
-                            text: cockpit.format(_("VM $0 failed to shutdown"), vm.name),
-                            detail: ex.message,
-                        }
-                    })
-                );
-            })
-);
+export async function vmShutdown(vm: VM) {
+    startOperationProgress(vm);
+    try {
+        await vmDomainMethod<void>(vm, 'Shutdown', 'u', 0);
+        if (!vm.persistent)
+            cockpit.location.go(["vms"]);
+    } catch (ex) {
+        setVmError(vm, cockpit.format(_("VM $0 failed to shutdown"), vm.name), ex);
+    }
+}
 
-const onPause = (vm: VM) => (
-    domainPause({ id: vm.id, connectionName: vm.connectionName }).catch(ex => {
-        store.dispatch(
-            updateVm({
-                connectionName: vm.connectionName,
-                name: vm.name,
-                error: {
-                    text: cockpit.format(_("VM $0 failed to pause"), vm.name),
-                    detail: ex.message,
-                }
-            })
-        );
-    })
-);
+export async function vmPause(vm: VM) {
+    try {
+        await vmDomainMethod<void>(vm, 'Suspend', '');
+    } catch (ex) {
+        setVmError(vm, cockpit.format(_("VM $0 failed to pause"), vm.name), ex);
+    }
+}
 
-const onResume = (vm: VM) => (
-    domainResume({ id: vm.id, connectionName: vm.connectionName }).catch(ex => {
-        store.dispatch(
-            updateVm({
-                connectionName: vm.connectionName,
-                name: vm.name,
-                error: {
-                    text: cockpit.format(_("VM $0 failed to resume"), vm.name),
-                    detail: ex.message,
-                }
-            })
-        );
-    })
-);
+export async function vmResume(vm: VM) {
+    try {
+        await vmDomainMethod<void>(vm, 'Resume', '');
+    } catch (ex) {
+        setVmError(vm, cockpit.format(_("VM $0 failed to resume"), vm.name), ex);
+    }
+}
 
-const onForceoff = (vm: VM) => (
-    domainForceOff({ id: vm.id, connectionName: vm.connectionName })
-            .then(() => !vm.persistent && cockpit.location.go(["vms"]))
-            .catch(ex => {
-                store.dispatch(
-                    updateVm({
-                        connectionName: vm.connectionName,
-                        name: vm.name,
-                        error: {
-                            text: cockpit.format(_("VM $0 failed to force shutdown"), vm.name),
-                            detail: ex.message,
-                        }
-                    })
-                );
-            })
-);
+export async function vmForceOff(vm: VM) {
+    try {
+        await vmDomainMethod<void>(vm, 'Destroy', 'u', 0);
+        if (!vm.persistent)
+            cockpit.location.go(["vms"]);
+    } catch (ex) {
+        setVmError(vm, cockpit.format(_("VM $0 failed to force shutdown"), vm.name), ex);
+    }
+}
 
-const onSendNMI = (vm: VM) => (
-    domainSendNMI({ id: vm.id, connectionName: vm.connectionName }).catch(ex => {
-        store.dispatch(
-            updateVm({
-                connectionName: vm.connectionName,
-                name: vm.name,
-                error: {
-                    text: cockpit.format(_("VM $0 failed to send NMI"), vm.name),
-                    detail: ex.message,
-                }
-            })
-        );
-    })
-);
+export async function onSendNMI(vm: VM) {
+    try {
+        await vmDomainMethod<void>(vm, 'InjectNMI', 'u', 0);
+    } catch (ex) {
+        setVmError(vm, cockpit.format(_("VM $0 failed to send NMI"), vm.name), ex);
+    }
+}
 
 export async function addTPM(vm: VM): Promise<void> {
     await virtXmlAdd(vm, "tpm", "default");
@@ -229,19 +197,12 @@ const VmActions = ({
     isDetailsPage?: boolean | undefined,
 }) => {
     const Dialogs = useDialogs();
-    const [operationInProgress, setOperationInProgress] = useState(false);
-    const [prevVmState, setPrevVmState] = useState(vm.state);
     const [virtCloneAvailable, setVirtCloneAvailable] = useState(false);
 
     useEffect(() => {
         cockpit.script('type virt-clone', [], { err: 'ignore' })
                 .then(() => setVirtCloneAvailable(true));
     }, []);
-
-    if (vm.state !== prevVmState) {
-        setPrevVmState(vm.state);
-        setOperationInProgress(false);
-    }
 
     const id = `${vmId(vm.name)}-${vm.connectionName}`;
     const state = vm.state;
@@ -254,7 +215,7 @@ const VmActions = ({
         dropdownItems.push(
             <DropdownItem key={`${id}-pause`}
                           id={`${id}-pause`}
-                          onClick={() => onPause(vm)}>
+                          onClick={() => vmPause(vm)}>
                 {_("Pause")}
             </DropdownItem>
         );
@@ -265,7 +226,7 @@ const VmActions = ({
         dropdownItems.push(
             <DropdownItem key={`${id}-resume`}
                           id={`${id}-resume`}
-                          onClick={() => onResume(vm)}>
+                          onClick={() => vmResume(vm)}>
                 {_("Resume")}
             </DropdownItem>
         );
@@ -277,8 +238,8 @@ const VmActions = ({
             <Button key='action-shutdown'
                     size="sm"
                     variant="secondary"
-                    isLoading={operationInProgress}
-                    isDisabled={operationInProgress}
+                    isLoading={isOperationInProgress(vm)}
+                    isDisabled={isOperationInProgress(vm)}
                     id={`${id}-shutdown-button`}
                     onClick={() => Dialogs.show(
                         <ConfirmDialog idPrefix={id}
@@ -288,18 +249,13 @@ const VmActions = ({
                             actionsList={[
                                 {
                                     variant: "primary",
-                                    handler: () => {
-                                        setOperationInProgress(true);
-                                        onShutdown(vm, setOperationInProgress);
-                                    },
+                                    handler: () => vmShutdown(vm),
                                     name: _("Shut down"),
                                     id: "off",
                                 },
                                 {
                                     variant: "secondary",
-                                    handler: () => {
-                                        onReboot(vm);
-                                    },
+                                    handler: () => vmReboot(vm),
                                     name: _("Reboot"),
                                     id: "reboot",
                                 },
@@ -319,7 +275,7 @@ const VmActions = ({
                                   actionsList={[
                                       {
                                           variant: "primary",
-                                          handler: () => onShutdown(vm, setOperationInProgress),
+                                          handler: () => vmShutdown(vm),
                                           name: _("Shut down"),
                                           id: "off",
                                       },
@@ -339,7 +295,7 @@ const VmActions = ({
                                   actionsList={[
                                       {
                                           variant: "primary",
-                                          handler: () => onForceoff(vm),
+                                          handler: () => vmForceOff(vm),
                                           name: _("Force shut down"),
                                           id: "forceOff",
                                       },
@@ -383,7 +339,7 @@ const VmActions = ({
                                   actionsList={[
                                       {
                                           variant: "primary",
-                                          handler: () => onReboot(vm),
+                                          handler: () => vmReboot(vm),
                                           name: _("Reboot"),
                                           id: "reboot",
                                       },
@@ -403,7 +359,7 @@ const VmActions = ({
                                   actionsList={[
                                       {
                                           variant: "primary",
-                                          handler: () => onForceReboot(vm),
+                                          handler: () => vmForceReboot(vm),
                                           name: _("Force reboot"),
                                           id: "forceReboot",
                                       },
@@ -421,9 +377,9 @@ const VmActions = ({
             <Button key='action-run'
                     size="sm"
                     variant={isDetailsPage ? 'primary' : 'secondary'}
-                    isLoading={operationInProgress}
-                    isDisabled={operationInProgress}
-                    onClick={() => { setOperationInProgress(true); onStart(vm, setOperationInProgress) }} id={`${id}-run`}>
+                    isLoading={isOperationInProgress(vm)}
+                    isDisabled={isOperationInProgress(vm)}
+                    onClick={() => vmStart(vm)} id={`${id}-run`}>
                 {_("Run")}
             </Button>
         );

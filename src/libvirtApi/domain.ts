@@ -88,16 +88,11 @@ import { DBusProps, get_string_prop, get_boolean_prop, call, Enum, timeout, reso
 import { CLOUD_IMAGE, DOWNLOAD_AN_OS, LOCAL_INSTALL_MEDIA_SOURCE, needsRHToken } from "../components/create-vm-dialog/createVmDialogUtils.js";
 import { pollUsageNow } from './common';
 
-export const domainCanConsole = (vmState: VMState) => vmState == 'running';
 export const domainCanInstall = (vmState: VMState, hasInstallPhase: boolean) => vmState != 'running' && hasInstallPhase;
 export const domainCanReset = (vmState: VMState) => vmState == 'running' || vmState == 'blocked' || vmState == 'paused';
-export const domainCanRun = (vmState: VMState, hasInstallPhase: boolean) => !hasInstallPhase && vmState == 'shut off';
-export const domainCanSendNMI = (vmState: VMState) => domainCanReset(vmState);
-export const domainCanShutdown = (vmState: VMState) => domainCanReset(vmState);
-export const domainCanPause = (vmState: VMState) => vmState == 'running';
-export const domainCanRename = (vmState: VMState) => vmState == 'shut off';
-export const domainCanResume = (vmState: VMState) => vmState == 'paused';
 export const domainIsRunning = (vmState: VMState) => domainCanReset(vmState);
+
+export const domainCanConsole = (vmState: VMState) => vmState == 'running';
 export const domainSerialConsoleCommand = ({ vm, alias } : { vm: VM, alias: optString }) => {
     if (vm.displays.find(display => display.type == 'pty'))
         return ['virsh', '-c', `qemu:///${vm.connectionName}`, 'console', vm.name, alias || ''];
@@ -341,6 +336,10 @@ export async function virtXmlHotRemove(
     extra_options: Record<string, boolean> = {}
 ) {
     await virtXmlRemove(vm, option, values, { ...hotplugExtraOptions(vm, device_persistent), ...extra_options });
+}
+
+export async function vmDomainMethod<R>(vm: VM, method: string, signature: string, ...args: unknown[]): Promise<R> {
+    return await call<R>(vm.connectionName, vm.id, 'org.libvirt.Domain', method, args, { timeout, type: signature });
 }
 
 export async function ensureBalloonPolling(vm: VM) {
@@ -819,26 +818,6 @@ export async function domainEjectDisk({
     await call(connectionName, vmPath, 'org.libvirt.Domain', 'UpdateDevice', [diskXML, updateFlags], { timeout, type: 'su' });
 }
 
-export function domainForceOff({
-    connectionName,
-    id: objPath
-} : {
-    connectionName: ConnectionName,
-    id: string,
-}): Promise<void> {
-    return call(connectionName, objPath, 'org.libvirt.Domain', 'Destroy', [0], { timeout, type: 'u' });
-}
-
-export function domainForceReboot({
-    connectionName,
-    id: objPath
-} : {
-    connectionName: ConnectionName,
-    id: string,
-}): Promise<void> {
-    return call(connectionName, objPath, 'org.libvirt.Domain', 'Reset', [0], { timeout, type: 'u' });
-}
-
 /*
  * Read VM properties of a single VM
  *
@@ -889,6 +868,12 @@ export async function domainGet({
         if (!domainIsRunning(stateStr)) {
             props.actualTimeInMs = -1;
             props.memoryUsed = undefined;
+        }
+
+        const old_vm = store.getState().vms.find(vm => vm.connectionName == connectionName && vm.id == objPath);
+
+        if (old_vm && old_vm.operationInProgressFromState && stateStr != old_vm.operationInProgressFromState) {
+            props.operationInProgressFromState = undefined;
         }
 
         logDebug(`${props.name}.GET_VM(${objPath}, ${connectionName}): update props ${JSON.stringify(props)}`);
@@ -1118,26 +1103,6 @@ export function domainMigrateToUri({
     return call(connectionName, objPath, 'org.libvirt.Domain', 'MigrateToURI3', [destUri, {}, flags], { type: 'sa{sv}u' });
 }
 
-export function domainPause({
-    connectionName,
-    id: objPath
-} : {
-    connectionName: ConnectionName,
-    id: string,
-}): Promise<void> {
-    return call(connectionName, objPath, 'org.libvirt.Domain', 'Suspend', [], { timeout, type: '' });
-}
-
-export function domainReboot({
-    connectionName,
-    id: objPath
-} : {
-    connectionName: ConnectionName,
-    id: string,
-}): Promise<void> {
-    return call(connectionName, objPath, 'org.libvirt.Domain', 'Reboot', [0], { timeout, type: 'u' });
-}
-
 export function domainRename({
     connectionName,
     id: objPath,
@@ -1148,16 +1113,6 @@ export function domainRename({
     newName: string,
 }): Promise<void> {
     return call(connectionName, objPath, 'org.libvirt.Domain', 'Rename', [newName, 0], { timeout, type: 'su' });
-}
-
-export function domainResume({
-    connectionName,
-    id: objPath
-} : {
-    connectionName: ConnectionName,
-    id: string,
-}): Promise<void> {
-    return call(connectionName, objPath, 'org.libvirt.Domain', 'Resume', [], { timeout, type: '' });
 }
 
 export function domainSendKey({
@@ -1173,16 +1128,6 @@ export function domainSendKey({
     const flags = 0;
 
     return call(connectionName, id, 'org.libvirt.Domain', 'SendKey', [Enum.VIR_KEYCODE_SET_LINUX, holdTime, keyCodes, flags], { timeout, type: "uuauu" });
-}
-
-export function domainSendNMI({
-    connectionName,
-    id: objPath
-} : {
-    connectionName: ConnectionName,
-    id: string,
-}): Promise<void> {
-    return call(connectionName, objPath, 'org.libvirt.Domain', 'InjectNMI', [0], { timeout, type: 'u' });
 }
 
 export function domainSetMemory({
@@ -1248,26 +1193,6 @@ export async function domainSetOSFirmware({
     domainElem.appendChild(osElem);
 
     await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [s.serializeToString(doc)], { timeout, type: 's' });
-}
-
-export function domainShutdown({
-    connectionName,
-    id: objPath
-} : {
-    connectionName: ConnectionName,
-    id: string,
-}): Promise<void> {
-    return call(connectionName, objPath, 'org.libvirt.Domain', 'Shutdown', [0], { timeout, type: 'u' });
-}
-
-export function domainStart({
-    connectionName,
-    id: objPath
-} : {
-    connectionName: ConnectionName,
-    id: string,
-}): Promise<void> {
-    return call(connectionName, objPath, 'org.libvirt.Domain', 'Create', [0], { timeout, type: 'u' });
 }
 
 export async function domainUpdateDiskAttributes({
