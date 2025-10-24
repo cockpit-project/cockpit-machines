@@ -17,6 +17,8 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
 
+import time
+
 import machineslib
 import testlib
 
@@ -664,6 +666,35 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         # Usage columns should have disappeared completely
         b.wait_not_present("[data-row-id=vm-subVmTest1-system] [data-label=Memory]")
         b.wait_not_present("[data-row-id=vm-subVmTest1-system] [data-label=CPU]")
+
+    def testShutdownAndRestart(self):
+        b = self.browser
+        m = self.machine
+
+        # Create running machine
+
+        name = "subVmTest1"
+        args = self.createVm(name)
+        logfile = args['logfile']
+
+        self.login_and_go("/machines")
+        self.waitPageInit()
+        self.waitVmRow(name)
+        self.goToVmPage(name)
+        self.waitGuestBooted(logfile)
+
+        # Change network interface model
+        m.execute(f"virt-xml {name} --edit 1 --network model=e1000e")
+
+        # Shutdown and restart from "Pending Changes"
+        b.click("#vm-subVmTest1-needs-shutdown")
+        b.click(".pf-v6-c-popover button:contains('Shutdown and restart')")
+        m.execute(f"> {logfile}")  # clear logfile so that we can catch the next boot
+        b.wait_visible("#vm-restart-dialog-confirm-action-modal")
+        b.wait_visible("#uptime")
+        time.sleep(1)  # there is some animation and resizing going on that makes us miss the button sometimes
+        b.click("#vm-restart-dialog-restart")
+        self.waitGuestBooted(logfile)
 
 
 if __name__ == '__main__':

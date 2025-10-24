@@ -285,6 +285,10 @@ fullscreen=0
 
         b.wait_in_text(".consoles-card", "Start the virtual machine")
 
+        # Start it via the text
+        b.click(".consoles-card .pf-v6-c-button:contains(Start)")
+        b.wait_in_text(f"#vm-{name}-system-state", "Running")
+
         self.allow_journal_messages("connection unexpectedly closed by peer")
         self.allow_browser_errors("Disconnection timed out.",
                                   "Failed when connecting: Connection closed")
@@ -569,10 +573,9 @@ fullscreen=0
             b.wait_text(".pf-v6-c-modal-box__title-text", f"Replace SPICE devices in VM {name}")
             b.click("#replace-spice-dialog-confirm")
             b.wait_not_present(".pf-v6-c-modal-box")
-            assert_state("Restart this virtual machine to access its graphical consol")
-            self.performAction(name, "forceOff")
-            assert_state("Start the virtual machine to access the console")
-            self.performAction(name, "run")
+            assert_state("Restart this virtual machine to access its graphical console")
+            b.click(f"#vm-{name}-consoles .pf-v6-c-empty-state .pf-v6-c-button:contains(Shutdown and restart)")
+            b.click("#vm-restart-dialog-force-restart")
             b.wait_visible(".vm-console-vnc canvas")
 
     @testlib.skipImage('No virtio video', "arch", "opensuse-*", "rhel-8-*")

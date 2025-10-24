@@ -42,6 +42,7 @@ import { Modal, ModalVariant } from '@patternfly/react-core/dist/esm/deprecated/
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { SimpleSelect } from 'cockpit-components-simple-select';
 import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
+import { vmStart, VmRestartDialog } from '../vmActions';
 import { useDialogs } from 'dialogs';
 
 import { logDebug, readQemuConf, addNotification } from '../../../helpers.js';
@@ -618,6 +619,14 @@ export const VncInactive = ({
                 <EmptyStateBody>
                     {_("Start the virtual machine to access the console")}
                 </EmptyStateBody>
+                <EmptyStateFooter>
+                    <Button
+                        variant="secondary"
+                        onClick={() => vmStart(vm)}
+                    >
+                        {_("Start")}
+                    </Button>
+                </EmptyStateFooter>
             </EmptyState>
             { !isExpanded &&
                 <VncFooter
@@ -681,12 +690,22 @@ export const VncPending = ({
     inactive_vnc: VMGraphics,
     isExpanded: boolean,
 }) => {
+    const Dialogs = useDialogs();
+
     return (
         <>
             <EmptyState icon={PendingIcon} status="custom">
                 <EmptyStateBody>
                     {_("Restart this virtual machine to access its graphical console")}
                 </EmptyStateBody>
+                <EmptyStateFooter>
+                    <Button
+                        variant="secondary"
+                        onClick={() => Dialogs.show(<VmRestartDialog vm={vm} />)}
+                    >
+                        {_("Shutdown and restart")}
+                    </Button>
+                </EmptyStateFooter>
             </EmptyState>
             { !isExpanded &&
                 <VncFooter

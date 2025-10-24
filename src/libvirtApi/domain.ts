@@ -876,12 +876,26 @@ export async function domainGet({
             props.operationInProgressFromState = undefined;
         }
 
+        let shutOffHandler = null;
+        if (stateStr == "shut off") {
+            if (old_vm && old_vm.onShutOff) {
+                shutOffHandler = old_vm.onShutOff;
+                props.onShutOff = null;
+            }
+        }
+
         logDebug(`${props.name}.GET_VM(${objPath}, ${connectionName}): update props ${JSON.stringify(props)}`);
 
         props.state = stateStr;
 
         // TODO - change the code to make sure we construct a valid "VM" object.
         store.dispatch(updateOrAddVm(props as VM));
+
+        if (shutOffHandler) {
+            const new_vm = store.getState().vms.find(vm => vm.connectionName == connectionName && vm.id == objPath);
+            if (new_vm)
+                shutOffHandler(new_vm);
+        }
 
         if (props.name)
             clearVmUiState(props.name, connectionName);
