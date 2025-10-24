@@ -66,6 +66,7 @@ function startOperationProgress(vm: VM) {
             connectionName: vm.connectionName,
             name: vm.name,
             operationInProgressFromState: vm.state,
+            onShutOff: null,
         })
     );
 }
@@ -81,6 +82,7 @@ function setVmError(vm: VM, msg: string, ex: unknown) {
             connectionName: vm.connectionName,
             name: vm.name,
             operationInProgressFromState: undefined,
+            onShutOff: null,
             error: {
                 text: msg,
                 detail: String(ex),
@@ -514,6 +516,45 @@ const VmActions = ({
                 dropdownItems={dropdownItems}
             />
         </div>
+    );
+};
+
+export const VmRestartDialog = ({ vm } : { vm: VM }) => {
+    async function onRestart(force: boolean) {
+        startOperationProgress(vm);
+        store.dispatch(
+            updateVm({
+                connectionName: vm.connectionName,
+                name: vm.name,
+                onShutOff: vmStart,
+            })
+        );
+        try {
+            await vmDomainMethod<void>(vm, force ? 'Destroy' : 'Shutdown', 'u', 0);
+        } catch (ex) {
+            setVmError(vm, cockpit.format(_("VM $0 failed to shutdown"), vm.name), ex);
+        }
+    }
+
+    return (
+        <ConfirmDialog idPrefix="vm-restart-dialog"
+            title={fmt_to_fragments(_("Shutdown and restart $0?"), <b>{vm.name}</b>)}
+            vm={vm}
+            titleIcon={RedoIcon}
+            actionsList={[
+                {
+                    variant: "primary",
+                    handler: () => onRestart(false),
+                    name: _("Shutdown and restart"),
+                    id: "restart",
+                },
+                {
+                    variant: "secondary",
+                    handler: () => onRestart(true),
+                    name: _("Force shutdown and restart"),
+                    id: "force-restart",
+                },
+            ]} />
     );
 };
 

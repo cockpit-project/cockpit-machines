@@ -519,7 +519,7 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
             # this can only add it to the inactive XML, not live
             b.click("#vm-subVmTest1-needs-shutdown")
             b.wait_in_text(".pf-v6-c-popover", "TPM")
-            b.click(".pf-v6-c-popover button")
+            b.click(".pf-v6-c-popover .pf-v6-c-popover__close button")
             b.wait_not_present(".pf-v6-c-popover")
             self.assertIn("tpm", m.execute("virsh dumpxml --inactive subVmTest1"))
             self.assertNotIn("tpm", m.execute("virsh dumpxml subVmTest1"))
