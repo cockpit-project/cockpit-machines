@@ -40,7 +40,6 @@ import {
     UPDATE_ADD_STORAGE_POOL,
     UPDATE_LIBVIRT_VERSION,
     UPDATE_DOMAIN_SNAPSHOTS,
-    UPDATE_OS_INFO_LIST,
     UPDATE_UI_VM,
     UPDATE_VM,
     ADD_UI_NOTIFICATION,
@@ -58,7 +57,6 @@ import type {
     Network,
     HypervisorCapabilities,
     VirtXmlCapabilities,
-    OSInfo,
 } from './types';
 import type { Notification } from './app';
 
@@ -307,7 +305,6 @@ interface SystemInfo {
         unitState: string;
     };
     libvirtVersion: number;
-    osInfoList: OSInfo[] | null;
     loggedUser: cockpit.UserInfo | null;
     virt_xml_capabilities?: VirtXmlCapabilities;
 }
@@ -320,17 +317,10 @@ function systemInfo(state: SystemInfo | undefined, action): SystemInfo {
             unitState: 'unknown',
         },
         libvirtVersion: 0,
-        osInfoList: null,
         loggedUser: null,
     };
 
     switch (action.type) {
-    case UPDATE_OS_INFO_LIST: {
-        if (action.osInfoList instanceof Array) {
-            return Object.assign({}, state, { osInfoList: action.osInfoList });
-        }
-        return state;
-    }
     case UPDATE_LIBVIRT_VERSION: {
         return Object.assign({}, state, { libvirtVersion: action.libvirtVersion });
     }

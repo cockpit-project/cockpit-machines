@@ -34,7 +34,6 @@ import {
     UPDATE_ADD_VM,
     UPDATE_LIBVIRT_VERSION,
     UPDATE_DOMAIN_SNAPSHOTS,
-    UPDATE_OS_INFO_LIST,
     UPDATE_UI_VM,
     UPDATE_VM,
     ADD_UI_NOTIFICATION,
@@ -53,7 +52,6 @@ import type {
     NodeDevice,
     HypervisorCapabilities,
     VirtXmlCapabilities,
-    OSInfo,
 } from '../types';
 import type { Notification } from '../app';
 
@@ -251,13 +249,6 @@ export function updateOrAddVm(props: VM) {
     return {
         type: UPDATE_ADD_VM,
         vm: props,
-    };
-}
-
-export function updateOsInfoList(osInfoList: OSInfo[]) {
-    return {
-        type: UPDATE_OS_INFO_LIST,
-        osInfoList,
     };
 }
 
