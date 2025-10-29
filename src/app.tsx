@@ -43,7 +43,8 @@ import { InlineNotification } from 'cockpit-components-inline-notification.jsx';
 import {
     getApiData,
     getLibvirtVersion,
-    initState,
+    getLoggedInUser,
+    getVirtXmlCapabilities,
 } from "./libvirtApi/common.js";
 import {
     nodeDeviceGetAll,
@@ -80,7 +81,8 @@ export const App = () => {
     useEvent(superuser, "changed");
     useEffect(() => {
         (async () => {
-            await initState();
+            await getLoggedInUser();
+            getVirtXmlCapabilities(); // get these in the background, it takes quite long
             const connectionNames = await unknownConnectionName();
 
             await Promise.allSettled(connectionNames.map(async connectionName => {

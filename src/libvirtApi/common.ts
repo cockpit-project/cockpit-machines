@@ -31,7 +31,6 @@ import {
     undefineNetwork,
     undefineStoragePool,
     updateLibvirtVersion,
-    updateOsInfoList,
     updateVm,
     setLoggedInUser,
     setCapabilities,
@@ -121,7 +120,7 @@ function calculateDiskStats(info: DBusProps): VM["disksStats"] {
     return disksStats;
 }
 
-async function getLoggedInUser(): Promise<void> {
+export async function getLoggedInUser(): Promise<void> {
     const loggedUser = await cockpit.user();
     logDebug(`GET_LOGGED_IN_USER:`, loggedUser);
     store.dispatch(setLoggedInUser({ loggedUser }));
@@ -168,15 +167,23 @@ async function getNodeMaxMemory({
     }
 }
 
-async function getOsInfoList(): Promise<void> {
+let osInfoList: null | OSInfo[] = null;
+
+export async function getOsInfoList(): Promise<OSInfo[]> {
+    if (osInfoList !== null)
+        return osInfoList;
+
     logDebug(`GET_OS_INFO_LIST():`);
+    let info: OSInfo[] = [];
     try {
         const osList = await python.spawn(getOSListScript, undefined, { err: "message", environ: ['LC_ALL=C.UTF-8'] });
-        parseOsInfoList(osList);
+        info = JSON.parse(osList).filter((os: OSInfo) => os.shortId);
     } catch (ex) {
         console.error(`get os list returned error: "${JSON.stringify(ex)}"`);
-        parseOsInfoList('[]');
     }
+
+    osInfoList = info;
+    return info;
 }
 
 async function networkUpdateOrDelete(
@@ -193,12 +200,6 @@ async function networkUpdateOrDelete(
     } catch (ex) {
         console.warn("networkUpdateOrDelete action failed:", String(ex));
     }
-}
-
-function parseOsInfoList(osList: string): void {
-    const osinfodata: OSInfo[] = JSON.parse(osList);
-
-    store.dispatch(updateOsInfoList(osinfodata.filter((os: OSInfo) => os.shortId)));
 }
 
 /**
@@ -390,7 +391,7 @@ async function storagePoolStopOrUndefine(connectionName: ConnectionName, poolPat
     }
 }
 
-async function getVirtXmlCapabilities() {
+export async function getVirtXmlCapabilities() {
     try {
         const help_text = await cockpit.spawn(["virt-xml", "--help"]);
         store.dispatch(setVirtXmlCapabilities(
@@ -419,12 +420,6 @@ export function getApiData({
         getCapabilities({ connectionName }),
     ]);
 }
-
-export const initState = () => Promise.all([
-    getLoggedInUser(),
-    getOsInfoList(),
-    getVirtXmlCapabilities(),
-]);
 
 /// USAGE POLLING
 

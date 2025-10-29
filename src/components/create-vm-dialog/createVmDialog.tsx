@@ -92,6 +92,7 @@ import {
 import { domainCreate } from '../../libvirtApi/domain.js';
 import { storagePoolRefresh } from '../../libvirtApi/storagePool.js';
 import { getAccessToken } from '../../libvirtApi/rhel-images.js';
+import { getOsInfoList } from '../../libvirtApi/common.js';
 import { PasswordFormFields } from 'cockpit-components-password.jsx';
 import { DynamicListForm } from 'cockpit-components-dynamic-list.jsx';
 
@@ -1177,7 +1178,6 @@ interface CreateVmModalProps {
     cloudInitSupported: boolean | undefined;
     unattendedSupported: boolean | undefined;
     nodeMaxMemory: number | undefined;
-    osInfoList: OSInfo[];
     vms: VM[];
     loggedUser: cockpit.UserInfo,
     unattendedUserLogin: boolean | undefined,
@@ -1188,6 +1188,8 @@ interface CreateVmModalState extends VmParams {
     activeTabKey: string | number;
     validate: boolean;
     autodetectOSInProgress?: boolean;
+    osInfoListLoading: boolean;
+    osInfoList: OSInfo[];
     minimumMemory: number;
     minimumStorage: number;
     unattendedInstallation?: boolean;
@@ -1216,6 +1218,8 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
             createMode: NONE,
             activeTabKey: 0,
             validate: false,
+            osInfoListLoading: true,
+            osInfoList: [],
             vmName: '',
             suggestedVmName: '',
             connectionName: LIBVIRT_SYSTEM_CONNECTION,
@@ -1247,7 +1251,7 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
             this.autodetectOSPromise = autodetectOS(installMedia);
             this.autodetectOSPromise.then(resJSON => {
                 const res = JSON.parse(resJSON.trim());
-                const osEntry = this.props.osInfoList.filter(osEntry => osEntry.id == res.os);
+                const osEntry = this.state.osInfoList.filter(osEntry => osEntry.id == res.os);
 
                 if (osEntry && osEntry[0]) {
                     this.onValueChanged('os', osEntry[0]);
@@ -1265,6 +1269,10 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
                 console.log("osinfo-detect command failed: ", ex.message);
             });
         });
+    }
+
+    async componentDidMount() {
+        this.setState({ osInfoListLoading: false, osInfoList: await getOsInfoList() });
     }
 
     handleTabClick = (event: React.MouseEvent, tabIndex: number | string) => {
@@ -1405,7 +1413,8 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
 
     onCreateClicked(startVm: boolean) {
         const Dialogs = this.context;
-        const { osInfoList, nodeMaxMemory, vms, loggedUser } = this.props;
+        const { nodeMaxMemory, vms, loggedUser } = this.props;
+        const { osInfoList } = this.state;
         const { storagePools } = store.getState();
         const vmName = isEmpty(this.state.vmName.trim()) ? this.state.suggestedVmName : this.state.vmName;
 
@@ -1469,7 +1478,8 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
 
     render() {
         const Dialogs = this.context;
-        const { nodeMaxMemory, osInfoList, loggedUser, vms } = this.props;
+        const { nodeMaxMemory, loggedUser, vms } = this.props;
+        const { osInfoList } = this.state;
         const { storagePools, nodeDevices, networks } = store.getState();
         const validationFailed = this.state.validate ? validateParams({ ...this.state, osInfoList, nodeMaxMemory, vms: vms.filter(vm => vm.connectionName == this.state.connectionName) }) : { };
 
@@ -1513,7 +1523,7 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
                     sourceType={this.state.sourceType}
                     os={this.state.os}
                     offlineToken={this.state.offlineToken}
-                    osInfoList={this.props.osInfoList}
+                    osInfoList={this.state.osInfoList}
                     cloudInitSupported={this.props.cloudInitSupported}
                     downloadOSSupported={this.props.downloadOSSupported}
                     onValueChanged={this.onValueChanged}
@@ -1522,7 +1532,7 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
                 {this.state.sourceType != DOWNLOAD_AN_OS &&
                 <OSRow
                         os={this.state.os}
-                        osInfoList={this.props.osInfoList}
+                        osInfoList={this.state.osInfoList}
                         onValueChanged={this.onValueChanged}
                         isLoading={!!this.state.autodetectOSInProgress}
                         validationFailed={validationFailed} />}
@@ -1577,33 +1587,44 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
             </>
         );
 
-        const dialogBody = (
-            <Form isHorizontal>
-                <NameRow
-                    vmName={this.state.vmName}
-                    suggestedVmName={this.state.suggestedVmName}
-                    onValueChanged={this.onValueChanged}
-                    validationFailed={validationFailed} />
-                { this.props.mode === "create"
-                    ? <Tabs activeKey={this.state.activeTabKey} onSelect={this.handleTabClick}>
-                        <Tab eventKey={0} title={<TabTitleText>{_("Details")}</TabTitleText>} id="details-tab">
-                            <FormSection>
-                                {detailsTab}
-                            </FormSection>
-                        </Tab>
-                        <Tab eventKey={1}
-                             title={<TabTitleText>{_("Automation")}</TabTitleText>}
-                             id="automation"
-                             {...automationTabTooltip && { tooltip: automationTabTooltip } }
-                             isAriaDisabled={!!automationTabTooltip}>
-                            <FormSection>
-                                {automationTab}
-                            </FormSection>
-                        </Tab>
-                    </Tabs>
-                    : detailsTab }
-            </Form>
-        );
+        const dialogBody = this.state.osInfoListLoading
+            ? (
+                <Flex justifyContent={{ default: 'justifyContentCenter' }} alignItems={{ default: 'alignItemsCenter' }} style={{ minHeight: '200px' }}>
+                    <FlexItem>
+                        <Spinner size="lg" />
+                    </FlexItem>
+                    <FlexItem>
+                        {_("Loading operating system information...")}
+                    </FlexItem>
+                </Flex>
+            )
+            : (
+                <Form isHorizontal>
+                    <NameRow
+                        vmName={this.state.vmName}
+                        suggestedVmName={this.state.suggestedVmName}
+                        onValueChanged={this.onValueChanged}
+                        validationFailed={validationFailed} />
+                    { this.props.mode === "create"
+                        ? <Tabs activeKey={this.state.activeTabKey} onSelect={this.handleTabClick}>
+                            <Tab eventKey={0} title={<TabTitleText>{_("Details")}</TabTitleText>} id="details-tab">
+                                <FormSection>
+                                    {detailsTab}
+                                </FormSection>
+                            </Tab>
+                            <Tab eventKey={1}
+                                  title={<TabTitleText>{_("Automation")}</TabTitleText>}
+                                  id="automation"
+                                  {...automationTabTooltip && { tooltip: automationTabTooltip } }
+                                  isAriaDisabled={!!automationTabTooltip}>
+                                <FormSection>
+                                    {automationTab}
+                                </FormSection>
+                            </Tab>
+                        </Tabs>
+                        : detailsTab }
+                </Form>
+            );
 
         const unattendedInstallation = this.state.rootPassword || this.state.userLogin || this.state.userPassword;
         // This happens if offlineToken was supplied and we are either still obtaining access token (validating offline token) or failed to obtain one
@@ -1683,9 +1704,6 @@ export class CreateVmAction extends React.Component<CreateVmActionProps> {
     render() {
         const Dialogs = this.context;
 
-        if (this.props.systemInfo.osInfoList == null)
-            return null;
-
         const open = () => {
             // The initial resources fetching contains only ID - this will be immediately
             // replaced with the whole resource object but there is enough time to cause a crash if parsed here
@@ -1693,7 +1711,6 @@ export class CreateVmAction extends React.Component<CreateVmActionProps> {
             Dialogs.show(<CreateVmModal mode={this.props.mode}
                                         nodeMaxMemory={this.props.nodeMaxMemory}
                                         vms={this.props.vms}
-                                        osInfoList={this.props.systemInfo.osInfoList || []}
                                         cloudInitSupported={this.props.cloudInitSupported}
                                         downloadOSSupported={this.props.downloadOSSupported}
                                         unattendedSupported={this.props.unattendedSupported}
@@ -1702,9 +1719,7 @@ export class CreateVmAction extends React.Component<CreateVmActionProps> {
         };
 
         let testdata;
-        if (!this.props.systemInfo.osInfoList)
-            testdata = "disabledOsInfo";
-        else if (!this.props.virtInstallAvailable)
+        if (!this.props.virtInstallAvailable)
             testdata = "disabledVirtInstall";
         else if (this.props.downloadOSSupported === undefined || this.props.unattendedSupported === undefined)
             testdata = "disabledCheckingFeatures";
