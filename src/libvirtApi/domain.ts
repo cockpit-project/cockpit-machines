@@ -901,7 +901,8 @@ export async function domainGet({
         if (props.name)
             clearVmUiState(props.name, connectionName);
 
-        await snapshotGetAll({ connectionName, domainPath: objPath });
+        // Load snapshots in the background. This can be quite slow.
+        snapshotGetAll({ connectionName, domainPath: objPath });
     } catch (ex) {
         // "not found" is an expected error, as this runs on Stopped/Undefined events; so be quiet about these
         if (String(ex).startsWith("Domain not found"))

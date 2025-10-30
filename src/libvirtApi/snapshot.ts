@@ -144,7 +144,7 @@ export async function snapshotGetAll({
         store.dispatch(updateDomainSnapshots({
             connectionName,
             domainPath,
-            snaps: undefined,
+            snaps: false,
         }));
     }
 }

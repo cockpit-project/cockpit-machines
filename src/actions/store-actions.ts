@@ -205,7 +205,7 @@ export function updateDomainSnapshots({
 } : {
     connectionName: ConnectionName,
     domainPath: string,
-    snaps: VMSnapshot[] | undefined,
+    snaps: VMSnapshot[] | undefined | false,
 }) {
     return {
         type: UPDATE_DOMAIN_SNAPSHOTS,
