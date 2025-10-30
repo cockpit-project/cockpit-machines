@@ -21,7 +21,7 @@ import cockpit from 'cockpit';
 
 import type { Dialogs } from 'dialogs';
 import type { optString, VM, VMInterface } from '../../../types';
-import type { DialogBodyValues } from './nicBody';
+import type { DialogBodyValues, ValidationBody } from './nicBody';
 import type { AvailableSources } from './vmNicsCard';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -37,6 +37,7 @@ import { DialogsContext } from 'dialogs.jsx';
 import {
     NetworkTypeAndSourceRow, NetworkModelRow, NetworkPortForwardsRow,
     interfacePortForwardsToDialog, dialogPortForwardsToInterface,
+    validateDialogBodyValues,
 } from './nicBody.jsx';
 import { virtXmlEdit, domainModifyXML, domainGet } from '../../../libvirtApi/domain.js';
 import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
@@ -85,6 +86,8 @@ interface EditNICModalState extends DialogValues {
     dialogError: string | undefined,
     dialogErrorDetail?: string,
     saveDisabled: boolean,
+    validation: ValidationBody | undefined,
+    doOnlineValidation: boolean,
 }
 
 export class EditNICModal extends React.Component<EditNICModalProps, EditNICModalState> {
@@ -110,15 +113,21 @@ export class EditNICModal extends React.Component<EditNICModalProps, EditNICModa
         else
             defaultNetworkSource = availableSources.length > 0 ? availableSources[0] : "";
 
-        this.state = {
-            dialogError: undefined,
+        const init: DialogValues = {
             networkType: props.network.type,
             networkSource: defaultNetworkSource || "",
             networkSourceMode: props.network.type == "direct" ? (props.network.source.mode || "") : "bridge",
             networkModel: props.network.model || "",
             networkMac: props.network.mac || "",
             portForwards: interfacePortForwardsToDialog(props.network.portForward),
+        };
+
+        this.state = {
+            dialogError: undefined,
             saveDisabled: false,
+            ...init,
+            validation: validateDialogBodyValues(init),
+            doOnlineValidation: false,
         };
         this.save = this.save.bind(this);
         this.onBodyValueChanged = this.onBodyValueChanged.bind(this);
@@ -153,6 +162,9 @@ export class EditNICModal extends React.Component<EditNICModalProps, EditNICModa
             else
                 this.setState({ networkSource: "", saveDisabled: true });
         }
+
+        if (this.state.doOnlineValidation)
+            this.setState(state => ({ validation: validateDialogBodyValues(state) }));
     }
 
     dialogErrorSet(text: string, detail: string) {
@@ -167,6 +179,12 @@ export class EditNICModal extends React.Component<EditNICModalProps, EditNICModa
         if (this.state.networkMac != this.props.network.mac &&
               vm.interfaces.some(iface => iface.mac === this.state.networkMac)) {
             this.dialogErrorSet(_("MAC address already in use"), _("Please choose a different MAC address"));
+            return;
+        }
+
+        const validation = validateDialogBodyValues(this.state);
+        if (validation) {
+            this.setState({ validation, doOnlineValidation: true });
             return;
         }
 
@@ -262,6 +280,7 @@ export class EditNICModal extends React.Component<EditNICModalProps, EditNICModa
                         <NetworkPortForwardsRow
                             idPrefix={idPrefix}
                             dialogValues={this.state}
+                            validation={this.state.validation}
                             onValueChanged={this.onBodyValueChanged}
                         />
                     </Form>
@@ -292,7 +311,7 @@ export class EditNICModal extends React.Component<EditNICModalProps, EditNICModa
                     {defaultBody}
                 </ModalBody>
                 <ModalFooter>
-                    <Button isDisabled={this.state.saveDisabled} id={`${idPrefix}-save`} variant='primary' onClick={this.save}>
+                    <Button isDisabled={this.state.saveDisabled || !!this.state.validation} id={`${idPrefix}-save`} variant='primary' onClick={this.save}>
                         {_("Save")}
                     </Button>
                     <Button id={`${idPrefix}-cancel`} variant='link' onClick={Dialogs.close}>

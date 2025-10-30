@@ -19,6 +19,8 @@
 
 import React from 'react';
 
+import * as ipaddr from "ipaddr.js";
+
 import type { optString, VM, VMInterfacePortForward } from '../../../types';
 import type { AvailableSources } from './vmNicsCard';
 
@@ -37,6 +39,7 @@ import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput"
 import { InfoPopover } from '../../common/infoPopover.jsx';
 
 import cockpit from 'cockpit';
+import { FormHelper } from "cockpit-components-form-helper";
 
 import './nic.css';
 
@@ -55,7 +58,14 @@ export interface DialogSimplePortForward {
     guest: string;
 }
 
+interface ValidationSimplePortForward {
+    address: string | undefined;
+    host: string | undefined;
+    guest: string | undefined;
+}
+
 type DialogPortForward = DialogSimplePortForward | DialogComplexPortForward;
+type ValidationPortForward = ValidationSimplePortForward;
 
 export interface DialogBodyValues {
     networkModel: string;
@@ -66,6 +76,10 @@ export interface DialogBodyValues {
 }
 
 type OnValueChanged = <K extends keyof DialogBodyValues>(key: K, value: DialogBodyValues[K]) => void;
+
+export interface ValidationBody {
+    portForwards: (ValidationPortForward | undefined)[];
+}
 
 export const NetworkModelRow = ({
     idPrefix,
@@ -368,15 +382,59 @@ export function dialogPortForwardsToInterface(portForwards: DialogPortForward[])
     });
 }
 
+function validateAddress(addr: string): string | undefined {
+    if (addr && !ipaddr.isValid(addr))
+        return _("Invalid IP address");
+    return undefined;
+}
+
+function validatePort(port: string): string | undefined {
+    const p = Number(port);
+    if (isNaN(p))
+        return _("Port must be a number.");
+    if (p <= 0 || p > 65535)
+        return _("Port must be 1 to 65535.");
+    return undefined;
+}
+
+function validateHostPort(port: string): string | undefined {
+    if (!port)
+        return _("Host port can not be empty.");
+    const parts = port.split("-");
+    return validatePort(parts[0]) || (parts[1] && validatePort(parts[1]));
+}
+
+function validateGuestPort(port: string): string | undefined {
+    if (port)
+        return validatePort(port);
+    return undefined;
+}
+
+function validateDialogPortForward(d: DialogPortForward): ValidationPortForward | undefined {
+    if (d.kind == "simple") {
+        const v: ValidationPortForward = {
+            address: validateAddress(d.address),
+            host: validateHostPort(d.host),
+            guest: validateGuestPort(d.guest),
+        };
+        if (!v.address && !v.host && !v.guest)
+            return undefined;
+        return v;
+    } else
+        return undefined;
+}
+
 const SimplePortForward = ({
     id,
     item,
+    validation,
     onChange,
     idx,
     removeitem,
 } : {
     id: string,
     item: DialogSimplePortForward,
+    validation: ValidationSimplePortForward | undefined,
     onChange: <K extends keyof DialogSimplePortForward>(idx: number, key: K, value: DialogSimplePortForward[K]) => void,
     idx: number,
     removeitem: (idx: number) => void,
@@ -401,6 +459,7 @@ const SimplePortForward = ({
                         onChange(idx, 'address', value);
                     }}
                 />
+                <FormHelper helperTextInvalid={validation?.address} />
             </FormGroup>
             <FormGroup
                 className="pf-m-4-col-on-md"
@@ -423,6 +482,7 @@ const SimplePortForward = ({
                         onChange(idx, 'host', value);
                     }}
                 />
+                <FormHelper helperTextInvalid={validation?.host} />
             </FormGroup>
             <FormGroup
                 className="pf-m-3-col-on-md"
@@ -443,6 +503,7 @@ const SimplePortForward = ({
                         onChange(idx, 'guest', value);
                     }}
                 />
+                <FormHelper helperTextInvalid={validation?.guest} />
             </FormGroup>
             <FormGroup
                 className="pf-m-2-col-on-md"
@@ -513,10 +574,12 @@ export const NetworkPortForwardsRow = ({
     idPrefix,
     onValueChanged,
     dialogValues,
+    validation,
 } : {
     idPrefix: string,
     onValueChanged: OnValueChanged,
     dialogValues: DialogBodyValues,
+    validation: ValidationBody | undefined,
 }) => {
     const simple_default: DialogPortForward = {
         kind: "simple",
@@ -574,6 +637,7 @@ export const NetworkPortForwardsRow = ({
                                 key={idx}
                                 id={`${idPrefix}-port-forwards-${idx}`}
                                 item={pf}
+                                validation={validation?.portForwards ? validation.portForwards[idx] : undefined}
                                 onChange={onSimpleChange}
                                 idx={idx}
                                 removeitem={() => remItem(idx)}
@@ -594,3 +658,14 @@ export const NetworkPortForwardsRow = ({
         </FormFieldGroup>
     );
 };
+
+export function validateDialogBodyValues(d: DialogBodyValues): ValidationBody | undefined {
+    const v: ValidationBody = {
+        portForwards: d.portForwards.map(validateDialogPortForward),
+    };
+
+    if (!v.portForwards.some(pf => !!pf))
+        return undefined;
+
+    return v;
+}

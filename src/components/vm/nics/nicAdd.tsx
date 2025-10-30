@@ -21,7 +21,7 @@ import cockpit from 'cockpit';
 
 import type { Dialogs } from 'dialogs';
 import type { VM } from '../../../types';
-import type { DialogBodyValues } from './nicBody';
+import type { DialogBodyValues, ValidationBody } from './nicBody';
 import type { AvailableSources } from './vmNicsCard';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -36,7 +36,8 @@ import { DialogsContext } from 'dialogs.jsx';
 
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import {
-    NetworkTypeAndSourceRow, NetworkModelRow, dialogPortForwardsToInterface, NetworkPortForwardsRow
+    NetworkTypeAndSourceRow, NetworkModelRow, dialogPortForwardsToInterface, NetworkPortForwardsRow,
+    validateDialogBodyValues
 } from './nicBody.jsx';
 import { virtXmlHotAdd, domainGet, domainIsRunning } from '../../../libvirtApi/domain.js';
 
@@ -141,6 +142,8 @@ interface AddNICState extends DialogValues {
     dialogErrorDetail?: string,
     addVNicInProgress: boolean,
     saveDisabled?: boolean,
+    validation: ValidationBody | undefined,
+    doOnlineValidation: boolean,
 }
 
 export class AddNIC extends React.Component<AddNICProps, AddNICState> {
@@ -161,6 +164,9 @@ export class AddNIC extends React.Component<AddNICProps, AddNICState> {
             permanent: false,
             addVNicInProgress: false,
             portForwards: [],
+
+            validation: undefined,
+            doOnlineValidation: false,
         };
         this.add = this.add.bind(this);
         this.onValueChanged = this.onValueChanged.bind(this);
@@ -190,6 +196,9 @@ export class AddNIC extends React.Component<AddNICProps, AddNICState> {
             else
                 this.setState({ networkSource: "", saveDisabled: true });
         }
+
+        if (this.state.doOnlineValidation)
+            this.setState(state => ({ validation: validateDialogBodyValues(state) }));
     }
 
     dialogErrorSet(text: string, detail: string) {
@@ -203,6 +212,12 @@ export class AddNIC extends React.Component<AddNICProps, AddNICState> {
         // disallow duplicate MACs
         if (this.state.setNetworkMac && vm.interfaces.some(iface => iface.mac === this.state.networkMac)) {
             this.dialogErrorSet(_("MAC address already in use"), _("Please choose a different MAC address"));
+            return;
+        }
+
+        const validation = validateDialogBodyValues(this.state);
+        if (validation) {
+            this.setState({ validation, doOnlineValidation: true });
             return;
         }
 
@@ -285,6 +300,7 @@ export class AddNIC extends React.Component<AddNICProps, AddNICState> {
                         <NetworkPortForwardsRow
                             idPrefix={idPrefix}
                             dialogValues={this.state}
+                            validation={this.state.validation}
                             onValueChanged={this.onBodyValueChanged}
                         />
                     </Form>
@@ -308,7 +324,8 @@ export class AddNIC extends React.Component<AddNICProps, AddNICState> {
                     <Button isLoading={this.state.addVNicInProgress}
                             isDisabled={
                                 (["network", "direct", "bridge"].includes(this.state.networkType) && this.state.networkSource === undefined) ||
-                                this.state.addVNicInProgress
+                                    this.state.addVNicInProgress ||
+                                !!this.state.validation
                             }
                             id={`${idPrefix}-add`}
                             variant='primary'
