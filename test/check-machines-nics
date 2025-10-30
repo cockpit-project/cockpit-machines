@@ -944,8 +944,8 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         # Backend should now be "passt"
 
         b.wait_in_text("#vm-subVmTest1-network-1-backend", "passt")
-        b.wait_in_text("#vm-subVmTest1-network-1-port-forward-0", "8080-8090 → 80-90")
-        b.wait_in_text("#vm-subVmTest1-network-1-port-forward-1", "127.0.0.1, 2222 → 22")
+        b.wait_in_text("#vm-subVmTest1-network-1-port-forward-0", "8080-8090 → 80-90/tcp")
+        b.wait_in_text("#vm-subVmTest1-network-1-port-forward-1", "127.0.0.1:2222 → 22/tcp")
 
         # Remove the forwards
 
@@ -969,14 +969,14 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             "portForward0.range0.start=4000,portForward0.range0.end=4050,portForward0.range0.to=40,"
             "portForward0.range1.start=4040,portForward0.range1.exclude=yes",
             "session")
-        b.wait_in_text("#vm-subVmTest1-network-1-port-forward-0", "4000-4050 → 40-90, excluding 4040")
+        b.wait_in_text("#vm-subVmTest1-network-1-port-forward-0", "4000-4050 → 40-90, excluding 4040/tcp")
 
         # Delete the complex rule
 
         b.click("#vm-subVmTest1-network-1-edit-dialog")
         b.wait_visible("#vm-subVmTest1-network-1-edit-dialog-modal-window")
         b.wait_in_text("#vm-subVmTest1-network-1-edit-dialog-port-forwards-0",
-                       'Complex rule "4000-4050 → 40-90, excluding 4040" can not be edited here.')
+                       'Complex rule "4000-4050 → 40-90, excluding 4040/tcp" can not be edited here.')
         b.click("#vm-subVmTest1-network-1-edit-dialog-port-forwards-0-btn-close")
         b.click("#vm-subVmTest1-network-1-edit-dialog-save")
         b.wait_not_present("#vm-subVmTest1-network-1-edit-dialog-modal-window")
@@ -1011,7 +1011,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         self.expandNicRow(3)
         b.wait_in_text("#vm-subVmTest1-network-3-type", "user")
         b.wait_in_text("#vm-subVmTest1-network-3-backend", "passt")
-        b.wait_in_text("#vm-subVmTest1-network-3-port-forward-0", "8080 → 80")
+        b.wait_in_text("#vm-subVmTest1-network-3-port-forward-0", "8080 → 80/tcp")
 
         # Start VM
         b.click("#vm-subVmTest1-session-run")

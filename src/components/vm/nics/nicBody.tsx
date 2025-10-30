@@ -295,28 +295,24 @@ export function portForwardText(pf: VMInterfacePortForward): string {
     let text = "";
 
     if (pf.address)
-        text += pf.address;
+        text += pf.address + ":";
     if (pf.dev)
-        text += pf.dev;
-    if (!pf.range.some(r => r.exclude != "yes")) {
-        if (text != "")
-            text += ", ";
-        text += _("all ports");
-    }
+        text += pf.dev + ":";
+    if (!pf.range.some(r => r.exclude != "yes"))
+        text += _("all");
     for (let i = 0; i < pf.range.length; i++) {
         const r = pf.range[i];
-        if (text != "")
-            text += ", ";
+        if (i > 0)
+            text += ",";
         if (r.exclude == "yes")
-            text += _("excluding ");
+            text += _(" excluding ");
         text += r.start;
         if (r.end)
             text += "-" + r.end;
-        if (r.to)
-            text += " → " + r.to + (r.end ? "-" + (Number(r.to) + Number(r.end) - Number(r.start)).toString() : "");
-        if (pf.proto && pf.proto != "tcp")
-            text += "/" + pf.proto;
+        if (!r.exclude)
+            text += " → " + (r.to || r.start) + (r.end ? "-" + (Number(r.to || r.start) + Number(r.end) - Number(r.start)).toString() : "");
     }
+    text += "/" + pf.proto;
 
     return text;
 }
