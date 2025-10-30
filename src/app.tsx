@@ -111,8 +111,8 @@ export const App = () => {
                     if (connectionName == "system")
                         setSystemSocketInactive(true);
                 }
-                setLoadingResources(false);
             }));
+            setLoadingResources(false);
         })();
     }, []);
 
