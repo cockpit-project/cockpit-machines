@@ -28,6 +28,7 @@ import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { CheckIcon, InfoAltIcon } from '@patternfly/react-icons';
+import { Spinner } from "@patternfly/react-core/dist/esm/components/Spinner";
 
 import cockpit from 'cockpit';
 import { useDialogs, DialogsContext } from 'dialogs.jsx';
@@ -267,8 +268,8 @@ export class VmSnapshotsCard extends React.Component<VmSnapshotsCardProps> {
             <ListingTable aria-label={`VM ${vm.name} Snapshots Cards`}
                           gridBreakPoint='grid-lg'
                           variant="compact"
-                          emptyCaption={_("No snapshots")}
-                          emptyCaptionDetail={_("Snapshots allow you to revert to an earlier state")}
+                          emptyCaption={vm.snapshots ? _("No snapshots") : <Spinner />}
+                          emptyCaptionDetail={vm.snapshots && _("Snapshots allow you to revert to an earlier state")}
                           columns={columnTitles}
                           rows={rows} />
         );

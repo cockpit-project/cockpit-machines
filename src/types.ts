@@ -418,7 +418,8 @@ export interface VM extends VMXML {
     actualTimeInMs: number | undefined;
     disksStats: Record<string, VMDiskStat> | undefined;
 
-    snapshots: VMSnapshot[] | undefined;
+    // "false" means "not supported", "undefined" means "not yet loaded"
+    snapshots: VMSnapshot[] | undefined | false;
 }
 
 /** "Fake" VMs for the UI only **/

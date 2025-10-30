@@ -199,7 +199,7 @@ export const VmDetailsPage = ({
             body: <VmHostDevCard vm={vm} nodeDevices={nodeDevices} />,
         }
     ];
-    if (vm.snapshots) {
+    if (vm.snapshots !== false) {
         cardContents.push({
             id: cockpit.format("$0-snapshots", vmId(vm.name)),
             className: "snapshots-card",
