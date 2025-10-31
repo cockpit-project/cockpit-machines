@@ -27,7 +27,8 @@ import type {
     VMXML,
     VMOsBoot, VMCpu, VMVcpus, VMMetadata,
     VMConsole, VMGraphics, VMWatchdog, VMVsock,
-    VMDisk, VMDiskDevice, VMInterface, VMFilesystem, VMRedirectedDevice,
+    VMDisk, VMDiskDevice, VMInterface, VMInterfacePortForward, VMInterfacePortForwardRange,
+    VMFilesystem, VMRedirectedDevice,
     VMHostDevice, VMHostDeviceUsb, VMHostDevicePci, VMHostDeviceScsi, VMHostDeviceScsiHost,
     VMHostDeviceMdev, VMHostDeviceStorage, VMHostDeviceMisc, VMHostDeviceNet,
     VMSnapshot,
@@ -241,6 +242,14 @@ export function getDomainCapSupportsTPM(domainCapsElem: Element): boolean {
             ?.getElementsByTagName("enum")?.[0]
             ?.getElementsByTagName("value");
     return tpmCapsElems?.length > 0;
+}
+
+export function getDomainCapInterfaceBackends(domainCapsElem: Element): string[] {
+    const values = domainCapsElem.querySelectorAll("devices interface[supported='yes'] enum[name='backendType'] value");
+    if (values)
+        return Array.from(values).map(n => n.textContent || "");
+    else
+        return ["default"];
 }
 
 export function getSingleOptionalElem(parent: Element, name: string): Element | undefined {
@@ -879,6 +888,40 @@ export function parseDumpxmlForHostDevices(devicesElem: Element): VMHostDevice[]
     return hostdevs;
 }
 
+function parsePortForwards(interfaceElem: Element): VMInterfacePortForward[] {
+    const portForwards: VMInterfacePortForward[] = [];
+    const forwardElems = interfaceElem.getElementsByTagName('portForward');
+    if (forwardElems) {
+        for (let i = 0; i < forwardElems.length; i++) {
+            const forwardElem = forwardElems[i];
+            const range: VMInterfacePortForwardRange[] = [];
+            const rangeElems = forwardElem.getElementsByTagName('range');
+            if (rangeElems) {
+                for (let j = 0; j < rangeElems.length; j++) {
+                    const rangeElem = rangeElems[j];
+                    range.push({
+                        start: rangeElem.getAttribute("start"),
+                        end: rangeElem.getAttribute("end"),
+                        to: rangeElem.getAttribute("to"),
+                        exclude: rangeElem.getAttribute("exclude"),
+                    });
+                }
+            }
+            const address = forwardElem.getAttribute("address");
+            const dev = forwardElem.getAttribute("dev");
+            const proto = forwardElem.getAttribute("proto");
+            portForwards.push({
+                address,
+                dev,
+                proto,
+                range,
+            });
+        }
+    }
+
+    return portForwards;
+}
+
 export function parseDumpxmlForInterfaces(devicesElem: Element): VMInterface[] {
     const interfaces: VMInterface[] = [];
     const interfaceElems = devicesElem.getElementsByTagName('interface');
@@ -889,6 +932,7 @@ export function parseDumpxmlForInterfaces(devicesElem: Element): VMInterface[] {
             const targetElem = interfaceElem.getElementsByTagName('target')[0];
             const macElem = getSingleOptionalElem(interfaceElem, 'mac');
             const modelElem = getSingleOptionalElem(interfaceElem, 'model');
+            const backendElem = getSingleOptionalElem(interfaceElem, 'backend');
             const aliasElem = getSingleOptionalElem(interfaceElem, 'alias');
             const sourceElem = getSingleOptionalElem(interfaceElem, 'source');
             const driverElem = getSingleOptionalElem(interfaceElem, 'driver');
@@ -906,6 +950,7 @@ export function parseDumpxmlForInterfaces(devicesElem: Element): VMInterface[] {
                 target: targetElem?.getAttribute('dev'),
                 mac: macElem?.getAttribute('address'), // MAC address
                 model: modelElem?.getAttribute('type'), // Device model
+                backend: backendElem?.getAttribute('type'), // User mode backend, such as "passt"
                 aliasName: aliasElem?.getAttribute('name'),
                 virtualportType: virtualportElem?.getAttribute('type'),
                 driverName: driverElem?.getAttribute('name'),
@@ -931,6 +976,7 @@ export function parseDumpxmlForInterfaces(devicesElem: Element): VMInterface[] {
                     slot: addressElem?.getAttribute('slot'),
                     domain: addressElem?.getAttribute('domain'),
                 },
+                portForward: parsePortForwards(interfaceElem),
             };
             interfaces.push(networkInterface);
         }
