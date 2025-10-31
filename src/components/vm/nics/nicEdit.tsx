@@ -213,18 +213,7 @@ export class EditNICModal extends React.Component<EditNICModalProps, EditNICModa
 
         try {
             const mac = network.mac;
-            if (configure_port_forwards && mac) {
-                // HACK - https://github.com/virt-manager/virt-manager/issues/982
-                await domainModifyXML(vm, doc => {
-                    const elements =
-                        doc.querySelectorAll(`devices interface:has(mac[address="${CSS.escape(mac)}" i]) portForward`);
-                    if (elements && elements.length > 0) {
-                        elements.forEach(e => e.remove());
-                        return true;
-                    }
-                    return false;
-                });
-            }
+            const portForward = dialogPortForwardsToInterface(this.state.portForwards);
             await virtXmlEdit(
                 vm,
                 "network",
@@ -235,9 +224,26 @@ export class EditNICModal extends React.Component<EditNICModalProps, EditNICModa
                     type: this.state.networkType,
                     backend: { type: force_backend },
                     source,
-                    portForward: configure_port_forwards ? dialogPortForwardsToInterface(this.state.portForwards) : null,
+                    portForward: configure_port_forwards ? portForward : null,
                 }
             );
+            if (configure_port_forwards && mac) {
+                // HACK - https://github.com/virt-manager/virt-manager/issues/982
+                //
+                // virt-xml has no way to remove portForward elements,
+                // so we remove them here explicitly after virt-xml
+                // has done its job successfully.
+                await domainModifyXML(vm, doc => {
+                    const elements =
+                        doc.querySelectorAll(`devices interface:has(mac[address="${CSS.escape(mac)}" i]) portForward`);
+                    if (elements && elements.length > portForward.length) {
+                        for (let i = portForward.length; i < elements.length; i++)
+                            elements[i].remove();
+                        return true;
+                    }
+                    return false;
+                });
+            }
             domainGet({ connectionName: vm.connectionName, id: vm.id });
             Dialogs.close();
         } catch (exc) {

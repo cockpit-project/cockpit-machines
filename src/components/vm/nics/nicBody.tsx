@@ -352,27 +352,23 @@ export function interfacePortForwardsToDialog(portForwards: VMInterfacePortForwa
 }
 
 export function dialogPortForwardsToInterface(portForwards: DialogPortForward[]): VMInterfacePortForward[] {
-    // NOTE - Instead of validating the input (which no other part of
-    // the dialog does), we simply ignore rules with a empty host
-    // port.
-
-    function valid_pf(pf: DialogPortForward): boolean {
-        return !(pf.kind == "simple" && !pf.host);
-    }
-
-    return portForwards.filter(valid_pf).map((pf: DialogPortForward) => {
+    // NOTE: We have to set every field here, none of them can be
+    // "null". Our return value is passed to virt-xml, and we want
+    // virt-xml to set everything and not leave anything behind from
+    // the previous portForward XML element.
+    return portForwards.map((pf: DialogPortForward) => {
         if (pf.kind == "simple") {
             const range = pf.host.split("-");
             return {
-                address: pf.address || null,
-                dev: null,
+                address: pf.address,
+                dev: "",
                 proto: pf.proto,
                 range: [
                     {
                         start: range[0],
-                        end: range[1] || null,
-                        to: pf.guest || null,
-                        exclude: null,
+                        end: range[1] || "",
+                        to: pf.guest,
+                        exclude: "",
                     }
                 ],
             };
