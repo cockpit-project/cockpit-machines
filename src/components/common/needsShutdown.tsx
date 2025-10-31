@@ -20,6 +20,7 @@
 import React from 'react';
 import cockpit from 'cockpit';
 import { Alert } from "@patternfly/react-core/dist/esm/components/Alert";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Icon } from "@patternfly/react-core/dist/esm/components/Icon";
 import { Label } from "@patternfly/react-core/dist/esm/components/Label";
 import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List";
@@ -27,7 +28,10 @@ import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { PendingIcon } from "@patternfly/react-icons";
 
+import { useDialogs } from 'dialogs.jsx';
+
 import type { VM, VMXML, VMGraphics, VMDisk, VMInterface } from '../../types';
+import { VmRestartDialog } from '../vm/vmActions';
 
 import {
     getIfaceSourceName,
@@ -232,14 +236,15 @@ export const NeedsShutdownAlert = ({ idPrefix } : { idPrefix: string }) =>
     <Alert isInline id={`${idPrefix}-idle-message`} customIcon={<PendingIcon />} title={NEEDS_SHUTDOWN_MESSAGE} />;
 
 export const VmNeedsShutdown = ({ vm } : { vm: VM }) => {
+    const Dialogs = useDialogs();
     const devices = getDevicesRequiringShutdown(vm);
 
     if (devices.length === 0)
         return;
 
-    const body = (
+    const body = (hide: () => void) => (
         <>
-            {_("Some configuration changes only take effect after a fresh boot:")}
+            {_("Some configuration changes only take effect after a complete shutdown and restart:")}
             <List className="configuration-changes-list">
                 { devices.map(device => {
                     return (
@@ -249,6 +254,17 @@ export const VmNeedsShutdown = ({ vm } : { vm: VM }) => {
                     );
                 }) }
             </List>
+            <br />
+            <Button
+                size="sm"
+                variant="link"
+                onClick={() => {
+                    hide();
+                    Dialogs.show(<VmRestartDialog vm={vm} />);
+                }}
+            >
+                {_("Shutdown and restart")}
+            </Button>
         </>
     );
 

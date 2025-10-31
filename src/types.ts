@@ -409,6 +409,15 @@ export interface VM extends VMXML {
     error?: DetailedError | null;
     installInProgress?: boolean;
 
+    // An operation (shut down or start) has been initiated from this
+    // state. If the current state is still the same, we show a
+    // spinner.
+    operationInProgressFromState?: VMState | undefined;
+
+    // When the VM reaches the "shut off" state, this function is
+    // called, but only once.
+    onShutOff?: null | ((vm: VM) => void);
+
     capabilities: DomainCapabilities;
 
     memoryUsed: number | undefined;
