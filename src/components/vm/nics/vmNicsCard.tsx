@@ -18,7 +18,7 @@
  */
 import React from 'react';
 
-import type { optString, VM, VMInterface, Network } from '../../../types';
+import type { optString, VM, VMInterface, VMInterfacePortForward, Network } from '../../../types';
 
 import type { Dialogs } from 'dialogs';
 
@@ -32,7 +32,8 @@ import cockpit from 'cockpit';
 import { getIfaceSourceName, rephraseUI, vmId, addNotification } from "../../../helpers.js";
 import AddNIC from './nicAdd.jsx';
 import { EditNICModal } from './nicEdit.jsx';
-import { needsShutdownIfaceModel, needsShutdownIfaceSource, needsShutdownIfaceType, NeedsShutdownTooltip } from '../../common/needsShutdown.jsx';
+import { portForwardText } from './nicBody';
+import { needsShutdownIfaceModel, needsShutdownIfaceSource, needsShutdownIfaceType, needsShutdownIfaceBackend, needsShutdownIfacePortForward, NeedsShutdownTooltip } from '../../common/needsShutdown.jsx';
 import './nic.css';
 import { virtXmlEdit, virtXmlHotRemove, domainInterfaceAddresses, domainGet } from '../../../libvirtApi/domain.js';
 import { KebabDropdown } from "cockpit-components-dropdown";
@@ -260,6 +261,57 @@ const NetworkSourceAbbrev = ({
         return <div id={id}>{source_name}</div>;
     else
         return <div id={id}>{source_name.address + ":" + source_name.port}</div>;
+};
+
+const NetworkPortForwardDescriptions = ({
+    network,
+    networkId,
+    id,
+    needsShutdown,
+} : {
+    network: VMInterface,
+    networkId: number,
+    id: string,
+    needsShutdown: boolean,
+}) => {
+    function shutdownWrapper(content: React.ReactNode, needs: boolean) {
+        return (
+            <Flex
+                spaceItems={{ default: 'spaceItemsSm' }}
+                alignItems={{ default: 'alignItemsCenter' }}
+            >
+                <FlexItem>{content}</FlexItem>
+                {needs &&
+                    <NeedsShutdownTooltip
+                        iconId={`${id}-network-${networkId}-port-forward-tooltip`}
+                        tooltipId="tip-network"
+                    />
+                }
+            </Flex>
+        );
+    }
+
+    function row(pf: VMInterfacePortForward, index: number) {
+        return (
+            <DescriptionListDescription key={index} id={`${id}-network-${networkId}-port-forward-${index}`}>
+                {shutdownWrapper(portForwardText(pf), index == 0 && needsShutdown)}
+            </DescriptionListDescription>
+        );
+    }
+
+    return (
+        <DescriptionListGroup>
+            <DescriptionListTerm>
+                {_("Port forwards")}
+            </DescriptionListTerm>
+            { network.portForward.length == 0 &&
+                <DescriptionListDescription id={`${id}-network-${networkId}-port-forward`}>
+                    {shutdownWrapper(_("none"), needsShutdown)}
+                </DescriptionListDescription>
+            }
+            { network.portForward.map(row) }
+        </DescriptionListGroup>
+    );
 };
 
 // To make it easier to know which is what from libvirt API we put them in an enum.
@@ -614,7 +666,8 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
                         const editNICDialogProps = {
                             idPrefix: `${id}-network-${networkId}-edit-dialog`,
                             vm,
-                            network,
+                            // Always edit the inactive version of the interface
+                            network: vm.inactiveXML.interfaces[network.index],
                             availableSources,
                         };
 
@@ -790,6 +843,25 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
                         vm={vm}
                         hostDevices={this.hostDevices}
                     />
+                    { target.type == "user" &&
+                        <Description term={_("Backend")}>
+                            <Flex
+                                spaceItems={{ default: 'spaceItemsSm' }}
+                                alignItems={{ default: 'alignItemsCenter' }}
+                                id={`${id}-network-${networkId}-backend`}>
+                                <FlexItem>{target.backend || _("default")}</FlexItem>
+                                {needsShutdownIfaceBackend(vm, target) && <NeedsShutdownTooltip iconId={`${id}-network-${networkId}-backend-tooltip`} tooltipId="tip-network" />}
+                            </Flex>
+                        </Description>
+                    }
+                    { target.type == "user" && (!target.backend || target.backend == "passt") &&
+                        <NetworkPortForwardDescriptions
+                            network={target}
+                            networkId={networkId}
+                            id={id}
+                            needsShutdown={needsShutdownIfacePortForward(vm, target)}
+                        />
+                    }
                 </DescriptionList>
             );
 
