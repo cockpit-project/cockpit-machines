@@ -908,6 +908,179 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
                     self.browser.wait_not_present(f"#vm-subVmTest1-network-{self.nic_num}-mac")
                 self.browser.wait_not_present(".pf-v6-c-modal-box")
 
+    @testlib.skipImage('PASST not supported', "rhel-8-*", "ubuntu-2204", "ubuntu-2404")
+    def testPortForwards(self):
+        b = self.browser
+
+        # Ubuntu produces AppArmor denials...
+        self.allow_journal_messages('.*apparmor="DENIED".*operation="sendmsg".*comm="passt.avx2".*')
+
+        self.login_and_go("/machines", superuser=False)
+        self.waitPageInit()
+
+        self.createVm("subVmTest1", connection="session", running=False)
+        self.goToVmPage("subVmTest1", "session")
+
+        # Machine should have a NIC with "default" backend.
+
+        self.expandNicRow(1)
+        b.wait_in_text("#vm-subVmTest1-network-1-type", "user")
+        b.wait_in_text("#vm-subVmTest1-network-1-backend", "default")
+
+        # Add port forwards for 8080-8090 -> 80/udp and 127.0.0.1 2222 -> 22/tcp
+
+        b.click("#vm-subVmTest1-network-1-edit-dialog")
+        b.wait_visible("#vm-subVmTest1-network-1-edit-dialog-modal-window")
+        b.click("#vm-subVmTest1-network-1-edit-dialog-port-forwards button:contains(Add)")
+        b.set_input_text("#vm-subVmTest1-network-1-edit-dialog-port-forwards-0-host-port", "8080-8090")
+        b.set_input_text("#vm-subVmTest1-network-1-edit-dialog-port-forwards-0-guest-port", "80")
+        b.select_from_dropdown("#vm-subVmTest1-network-1-edit-dialog-port-forwards-0-protocol", "udp")
+        b.click("#vm-subVmTest1-network-1-edit-dialog-port-forwards button:contains(Add)")
+        b.set_input_text("#vm-subVmTest1-network-1-edit-dialog-port-forwards-1-ip-address", "127.0.0.1")
+        b.set_input_text("#vm-subVmTest1-network-1-edit-dialog-port-forwards-1-host-port", "2222")
+        b.set_input_text("#vm-subVmTest1-network-1-edit-dialog-port-forwards-1-guest-port", "22")
+        b.click("#vm-subVmTest1-network-1-edit-dialog-port-forwards button:contains(Add)")
+        b.set_input_text("#vm-subVmTest1-network-1-edit-dialog-port-forwards-2-ip-address", "localhost")
+        b.set_input_text("#vm-subVmTest1-network-1-edit-dialog-port-forwards-2-host-port", "")
+        b.set_input_text("#vm-subVmTest1-network-1-edit-dialog-port-forwards-2-guest-port", "ssh")
+        b.click("#vm-subVmTest1-network-1-edit-dialog-save")
+        b.wait_in_text("#vm-subVmTest1-network-1-edit-dialog-port-forwards-2-ip-address-group",
+                       "Invalid IP address")
+        b.wait_in_text("#vm-subVmTest1-network-1-edit-dialog-port-forwards-2-host-port-group",
+                       "Host port can not be empty")
+        b.wait_in_text("#vm-subVmTest1-network-1-edit-dialog-port-forwards-2-guest-port-group",
+                       "Port must be a number")
+        b.set_input_text("#vm-subVmTest1-network-1-edit-dialog-port-forwards-2-host-port", "xxx")
+        b.wait_in_text("#vm-subVmTest1-network-1-edit-dialog-port-forwards-2-host-port-group",
+                       "Port must be a number")
+        b.click("#vm-subVmTest1-network-1-edit-dialog-port-forwards-2-btn-close")
+        b.click("#vm-subVmTest1-network-1-edit-dialog-save")
+        b.wait_not_present("#vm-subVmTest1-network-1-edit-dialog-modal-window")
+
+        # Backend should now be "passt"
+
+        b.wait_in_text("#vm-subVmTest1-network-1-backend", "passt")
+        b.wait_in_text("#vm-subVmTest1-network-1-port-forward-0", "8080-8090 → 80-90/udp")
+        b.wait_in_text("#vm-subVmTest1-network-1-port-forward-1", "127.0.0.1:2222 → 22/tcp")
+
+        # Remove the forwards
+
+        b.click("#vm-subVmTest1-network-1-edit-dialog")
+        b.wait_visible("#vm-subVmTest1-network-1-edit-dialog-modal-window")
+        b.click("#vm-subVmTest1-network-1-edit-dialog-port-forwards-1-btn-close")
+        b.click("#vm-subVmTest1-network-1-edit-dialog-port-forwards-0-btn-close")
+        b.click("#vm-subVmTest1-network-1-edit-dialog-save")
+        b.wait_not_present("#vm-subVmTest1-network-1-edit-dialog-modal-window")
+
+        # Backend should still be "passt"
+
+        b.wait_in_text("#vm-subVmTest1-network-1-port-forward", "none")
+        b.wait_in_text("#vm-subVmTest1-network-1-backend", "passt")
+
+        # Add a complex port forward rule via virt-xml
+
+        self.run_admin(
+            "virt-xml -c qemu:///session subVmTest1 --edit 1 --network "
+            "portForward0.proto=tcp,"
+            "portForward0.range0.start=4000,portForward0.range0.end=4050,portForward0.range0.to=40,"
+            "portForward0.range1.start=4040,portForward0.range1.exclude=yes",
+            "session")
+        b.wait_in_text("#vm-subVmTest1-network-1-port-forward-0", "4000-4050 → 40-90, excluding 4040/tcp")
+
+        # Delete the complex rule
+
+        b.click("#vm-subVmTest1-network-1-edit-dialog")
+        b.wait_visible("#vm-subVmTest1-network-1-edit-dialog-modal-window")
+        b.wait_in_text("#vm-subVmTest1-network-1-edit-dialog-port-forwards-0",
+                       'Complex rule "4000-4050 → 40-90, excluding 4040/tcp" can not be edited here.')
+        b.click("#vm-subVmTest1-network-1-edit-dialog-port-forwards-0-btn-close")
+        b.click("#vm-subVmTest1-network-1-edit-dialog-save")
+        b.wait_not_present("#vm-subVmTest1-network-1-edit-dialog-modal-window")
+        b.wait_in_text("#vm-subVmTest1-network-1-port-forward", "none")
+
+        # Add new NIC without port forward
+
+        b.click("#vm-subVmTest1-add-iface-button")
+        b.wait_visible("#vm-subVmTest1-add-iface-dialog")
+        self.browser.click("#vm-subVmTest1-add-iface-set-mac")
+        self.browser.set_input_text("#vm-subVmTest1-add-iface-mac", "52:54:01:00:00:01")
+        b.click("#vm-subVmTest1-add-iface-add")
+        b.wait_not_present("#vm-subVmTest1-add-iface-dialog")
+
+        # Backend of new NICs should be "passt"
+
+        self.expandNicRow(2)
+        b.wait_in_text("#vm-subVmTest1-network-2-type", "user")
+        b.wait_in_text("#vm-subVmTest1-network-2-backend", "passt")
+
+        # Add another one with port forward, check it.
+
+        b.click("#vm-subVmTest1-add-iface-button")
+        b.wait_visible("#vm-subVmTest1-add-iface-dialog")
+        self.browser.click("#vm-subVmTest1-add-iface-set-mac")
+        self.browser.set_input_text("#vm-subVmTest1-add-iface-mac", "52:54:01:00:00:02")
+        b.click("#vm-subVmTest1-add-iface-port-forwards button:contains(Add)")
+        b.set_input_text("#vm-subVmTest1-add-iface-port-forwards-0-host-port", "8080")
+        b.set_input_text("#vm-subVmTest1-add-iface-port-forwards-0-guest-port", "80")
+        b.click("#vm-subVmTest1-add-iface-add")
+        b.wait_not_present("#vm-subVmTest1-add-iface-dialog")
+        self.expandNicRow(3)
+        b.wait_in_text("#vm-subVmTest1-network-3-type", "user")
+        b.wait_in_text("#vm-subVmTest1-network-3-backend", "passt")
+        b.wait_in_text("#vm-subVmTest1-network-3-port-forward-0", "8080 → 80/tcp")
+
+        # Start VM
+        b.click("#vm-subVmTest1-session-run")
+        b.wait_in_text("#vm-subVmTest1-session-state", "Running")
+
+        # Change port forward of a NIC, check "pending".
+        b.click("#vm-subVmTest1-network-3-edit-dialog")
+        b.wait_visible("#vm-subVmTest1-network-3-edit-dialog-modal-window")
+        b.set_input_text("#vm-subVmTest1-network-3-edit-dialog-port-forwards-0-guest-port", "88")
+        b.click("#vm-subVmTest1-network-3-edit-dialog-save")
+        b.wait_not_present("#vm-subVmTest1-network-3-edit-dialog-modal-window")
+        b.wait_visible("#vm-subVmTest1-network-3-port-forward-tooltip")
+
+    def testSession(self):
+        b = self.browser
+
+        self.login_and_go("/machines", superuser=False)
+        self.waitPageInit()
+
+        self.createVm("subVmTest1", connection="session", running=False)
+        self.goToVmPage("subVmTest1", "session")
+
+        # Machine should have a NIC with type "user" and model "virtio".
+
+        self.expandNicRow(1)
+        b.wait_in_text("#vm-subVmTest1-network-1-type", "user")
+        b.wait_in_text("#vm-subVmTest1-network-1-model", "virtio")
+
+        # Changing model should work
+
+        b.click("#vm-subVmTest1-network-1-edit-dialog")
+        b.wait_visible("#vm-subVmTest1-network-1-edit-dialog-modal-window")
+        b.select_from_dropdown("#vm-subVmTest1-network-1-edit-dialog-model", "e1000e")
+        b.click("#vm-subVmTest1-network-1-edit-dialog-save")
+        b.wait_not_present("#vm-subVmTest1-network-1-edit-dialog-modal-window")
+        b.wait_in_text("#vm-subVmTest1-network-1-model", "e1000e")
+
+        # Adding should work
+
+        b.click("#vm-subVmTest1-add-iface-button")
+        b.wait_visible("#vm-subVmTest1-add-iface-dialog")
+        self.browser.click("#vm-subVmTest1-add-iface-set-mac")
+        self.browser.set_input_text("#vm-subVmTest1-add-iface-mac", "52:54:01:00:00:01")
+        b.click("#vm-subVmTest1-add-iface-add")
+        b.wait_not_present("#vm-subVmTest1-add-iface-dialog")
+        self.expandNicRow(2)
+        b.wait_in_text("#vm-subVmTest1-network-2-type", "user")
+        b.wait_in_text("#vm-subVmTest1-network-2-model", "virtio")
+
+        # Removing should work
+
+        self.deleteIface(1)
+
 
 if __name__ == '__main__':
     testlib.test_main()

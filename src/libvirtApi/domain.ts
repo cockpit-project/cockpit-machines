@@ -71,6 +71,7 @@ import {
     getDomainCapDiskBusTypes,
     getDomainCapSupportsSpice,
     getDomainCapSupportsTPM,
+    getDomainCapInterfaceBackends,
     getSingleOptionalElem,
     parseDomainDumpxml,
     getHostDevElemBySource,
@@ -336,6 +337,24 @@ export async function virtXmlHotRemove(
     extra_options: Record<string, boolean> = {}
 ) {
     await virtXmlRemove(vm, option, values, { ...hotplugExtraOptions(vm, device_persistent), ...extra_options });
+}
+
+/* XML Manipulation
+
+   The domainModifyXML function calls a callback with the (inactive)
+   XML definition of he given VM.  The callback can make any kind of
+   modifications to that document, and when it returns true, the
+   document will be saved as the new (inactive) XML of that machine.
+*/
+
+export async function domainModifyXML(vm: VM, callback: (doc: XMLDocument) => boolean) {
+    const [domXml] = await call<[string]>(vm.connectionName, vm.id, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE | Enum.VIR_DOMAIN_XML_SECURE], { timeout, type: 'u' });
+    const doc = getDoc(domXml);
+    if (callback(doc)) {
+        const s = new XMLSerializer();
+        const updatedDomXml = s.serializeToString(doc);
+        await call(vm.connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [updatedDomXml], { timeout, type: 's' });
+    }
 }
 
 export async function vmDomainMethod<R>(vm: VM, method: string, signature: string, ...args: unknown[]): Promise<R> {
@@ -954,6 +973,7 @@ function domainGetCapabilities({
             supportedDiskBusTypes: getDomainCapDiskBusTypes(domCaps),
             supportsSpice: getDomainCapSupportsSpice(domCaps),
             supportsTPM: getDomainCapSupportsTPM(domCaps),
+            interfaceBackends: getDomainCapInterfaceBackends(domCaps),
         };
         return caps;
     }
