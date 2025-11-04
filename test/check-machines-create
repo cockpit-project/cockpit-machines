@@ -1368,7 +1368,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
             b.wait_not_present("#offline-token")
             if self.os_name:
                 b.click("#os-select-group button.pf-v6-c-menu-toggle__button")
-                b.click(f"#os-select li:contains('{self.os_name}') button")
+                b.click(f"#os-select li button:contains('{self.os_name}')")
                 b.wait_attr("#os-select-group input", "value", self.os_name)
 
             if self.sourceType != 'disk_image':
