@@ -1624,8 +1624,9 @@ vnc_password= "{vnc_passwd}"
             # Fake rhel 8 images
             rhel_8_1_xml = self.machine.execute("cat /usr/share/osinfo/os/redhat.com/rhel-8.1.xml")
             root = ET.fromstring(rhel_8_1_xml)
-            root.find('os').find('resources').find('minimum').find('ram').text = '134217728'
-            root.find('os').find('resources').find('minimum').find('storage').text = '134217728'
+            for r in root.find('os').findall("resources"):
+                r.find('minimum').find('ram').text = '134217728'
+                r.find('minimum').find('storage').text = '134217728'
             root.find('os').find('release-date').text = datetime.today().strftime('%Y-%m-%d')
             new_rhel_8_1_xml = ET.tostring(root)
             self.machine.execute(f"echo '{str(new_rhel_8_1_xml, 'utf-8')}' > {self.test_obj.vm_tmpdir}/rhel-8.1.xml")
@@ -1634,8 +1635,9 @@ vnc_password= "{vnc_passwd}"
 
             rhel_8_2_xml = self.machine.execute("cat /usr/share/osinfo/os/redhat.com/rhel-8.2.xml")
             root = ET.fromstring(rhel_8_2_xml)
-            root.find('os').find('resources').find('minimum').find('ram').text = '134217728'
-            root.find('os').find('resources').find('minimum').find('storage').text = '134217728'
+            for r in root.find('os').findall("resources"):
+                r.find('minimum').find('ram').text = '134217728'
+                r.find('minimum').find('storage').text = '134217728'
             root.find('os').find('release-date').text = datetime.today().strftime('%Y-%m-%d')
             new_rhel_8_2_xml = ET.tostring(root)
             self.machine.execute(f"echo '{str(new_rhel_8_2_xml, 'utf-8')}' > {self.test_obj.vm_tmpdir}/rhel-8.2.xml")
@@ -1645,8 +1647,9 @@ vnc_password= "{vnc_passwd}"
             # Fake rhel 7 image
             rhel_7_1_xml = self.machine.execute("cat /usr/share/osinfo/os/redhat.com/rhel-7.1.xml")
             root = ET.fromstring(rhel_7_1_xml)
-            root.find('os').find('resources').find('minimum').find('ram').text = '134217728'
-            root.find('os').find('resources').find('minimum').find('storage').text = '134217728'
+            for r in root.find('os').findall("resources"):
+                r.find('minimum').find('ram').text = '134217728'
+                r.find('minimum').find('storage').text = '134217728'
             new_rhel_7_1_xml = ET.tostring(root)
             self.machine.execute(f"echo '{str(new_rhel_7_1_xml, 'utf-8')}' > {self.test_obj.vm_tmpdir}/rhel-7.1.xml")
             self.machine.execute(f"mount -o bind  {self.test_obj.vm_tmpdir}/rhel-7.1.xml /usr/share/osinfo/os/redhat.com/rhel-7.1.xml")
