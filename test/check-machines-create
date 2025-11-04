@@ -1681,8 +1681,9 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                 filepath = f"/usr/share/osinfo/os/redhat.com/{filename}"
                 xml = self.machine.execute(f"cat {filepath}")
                 root = ET.fromstring(xml)
-                root.find('os').find('resources').find('minimum').find('ram').text = '134217728'
-                root.find('os').find('resources').find('minimum').find('storage').text = '134217728'
+                for r in root.find('os').findall("resources"):
+                    r.find('minimum').find('ram').text = '134217728'
+                    r.find('minimum').find('storage').text = '134217728'
                 root.find('os').find('release-date').text = datetime.today().strftime('%Y-%m-%d')
                 new_xml = ET.tostring(root)
                 self.machine.execute(f"echo '{str(new_xml, 'utf-8')}' > {self.test_obj.vm_tmpdir}/{filename}")
