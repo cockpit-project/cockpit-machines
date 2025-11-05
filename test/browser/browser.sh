@@ -6,6 +6,12 @@ cd "${0%/*}/../.."
 
 . /usr/lib/os-release
 
+
+# HACK: workaround https://bugzilla.redhat.com/show_bug.cgi?id=2412451
+if [ "$ID" = fedora ]; then
+    dnf install -y gobject-introspection
+fi
+
 # HACK: this package creates bogus/broken sda → nvme symlinks; it's new in rawhide TF default instances, not required for
 # our tests, and only causes trouble; https://github.com/amazonlinux/amazon-ec2-utils/issues/37
 if rpm -q amazon-ec2-utils; then
