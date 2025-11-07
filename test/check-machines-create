@@ -2481,6 +2481,9 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
             if m.image.startswith("debian") or m.image.startswith("ubuntu"):
                 # on Debian, spice graphics is built in, spicevmc channels are a plugin
                 self.assertNotIn("spicevmc", caps)
+            elif m.image.startswith("rhel-8-"):
+                # On RHEL 8, domain capabilities are unaffected for some reason.
+                pass
             else:
                 # in Fedora/RHEL we don't expect any remaining capability
                 self.assertNotIn("spice", caps)
@@ -2504,6 +2507,9 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
             if expect_vnc:
                 with b.wait_timeout(60):
                     b.wait_visible(".vm-console-vnc canvas")
+            else:
+                # Without VNC, the serial console is displayed by default. Switch to "Graphical".
+                b.click(".consoles-card .pf-v6-c-toggle-group button:contains(Graphical)")
 
             if not expect_vnc and not expect_spice:
                 b.wait_not_present(".vm-console-footer button.pf-m-plain")
@@ -2565,58 +2571,67 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         b.wait_text(f"#vm-{vmCockpit}-system-state", "Running")
         domainXML = m.execute(f"virsh dumpxml --inactive {vmCockpit}")
 
-        # no warning label: on RHEL the VM doesn't use SPICE, on other OSes the host supports SPICE
+        # no warning label: newly created machines never have spice
         b.wait_not_present(f"#vm-{vmCockpit}-uses-spice")
 
-        # on RHEL 9, SPICE is unsupported; on RHEL 8, we disable SPICE in VM creation; so we don't expect any device
-        if m.image.startswith("rhel") or m.image.startswith("centos"):
-            self.assertNotIn("spice", domainXML)
-            self.assertNotIn("qxl", domainXML)
-            # and thus no "Replace SPICE" menu entry
-            b.click(f"#vm-{vmCockpit}-system-action-kebab")
-            b.wait_visible(f"#vm-{vmCockpit}-system-delete")
-            self.assertNotIn("Replace SPICE",
-                             b.text("ul.pf-v6-c-menu__list"))
-        else:
-            # all other OSes configure SPICE by default
-            self.assertIn("graphics type='spice'", domainXML)
-            self.assertIn("channel type='spicevmc'", domainXML)
-            checkConnnectInfo(expect_vnc=True, expect_spice=True)
-
-            doReplaceSpiceSingle(vmCockpit, expect_running=True)
-
-            # "Replace SPICE" menu entry goes away (async)
-            for _retry in range(15):
-                time.sleep(1)
-                b.click(f"#vm-{vmCockpit}-system-action-kebab")
-                b.wait_visible(f"#vm-{vmCockpit}-system-delete")
-                menu = b.text("ul.pf-v6-c-menu__list")
-                b.click(f"#vm-{vmCockpit}-system-action-kebab")
-                b.wait_not_present("ul.pf-v6-c-menu__list")
-                if "Replace SPICE" not in menu:
-                    break
-            else:
-                self.fail("timed out waiting for Replace SPICE menu item removal")
-
-            # ensure that the VM can start without any SPICE plugins
-            with self.remove_spice_plugins():
-                # restart the VM to make the change effective
-                self.performAction(vmCockpit, "forceOff")
-                b.wait_not_present(f"#vm-{vmCockpit}-needs-shutdown")
-                b.wait_not_present(f"#vm-{vmCockpit}-uses-spice")
-                b.click(f"#vm-{vmCockpit}-system-run")
-                b.wait_text(f"#vm-{vmCockpit}-system-state", "Running")
-                checkConnnectInfo(expect_vnc=True, expect_spice=False)
-
-            b.wait_not_present(f"#vm-{vmCockpit}-needs-shutdown")
-            b.wait_not_present(f"#vm-{vmCockpit}-uses-spice")
-
-        self.goToMainPage()
-        self.machine.execute(f"virsh destroy {vmCockpit}; virsh undefine {vmCockpit}")
+        # we don't expect any device
+        self.assertNotIn("spice", domainXML)
+        self.assertNotIn("qxl", domainXML)
+        # and thus no "Replace SPICE" menu entry
+        b.click(f"#vm-{vmCockpit}-system-action-kebab")
+        b.wait_visible(f"#vm-{vmCockpit}-system-delete")
+        self.assertNotIn("Replace SPICE",
+                         b.text("ul.pf-v6-c-menu__list"))
 
         # RHEL ≥ 9 doesn't support SPICE, so skip the rest of the test
         if (m.image.startswith("rhel-") or m.image.startswith("centos-")) and "rhel-8" not in m.image:
             return
+
+        # add spice grapics. Remove vnc so that we can check that
+        # "replace spice" adds it back.
+        m.execute(f"virt-xml {vmCockpit} --add-device --graphics spice")
+        m.execute(f"virt-xml {vmCockpit} --remove-device --graphics vnc")
+        domainXML = m.execute(f"virsh dumpxml --inactive {vmCockpit}")
+
+        self.assertIn("graphics type='spice'", domainXML)
+
+        # Shutdown and restart VM
+        m.execute(f"virsh destroy {vmCockpit}")
+        b.wait_text(f"#vm-{vmCockpit}-system-state", "Shut off")
+        b.click(f"#vm-{vmCockpit}-system-run")
+        b.wait_text(f"#vm-{vmCockpit}-system-state", "Running")
+
+        checkConnnectInfo(expect_vnc=False, expect_spice=True)
+        doReplaceSpiceSingle(vmCockpit, expect_running=True)
+
+        # "Replace SPICE" menu entry goes away (async)
+        for _retry in range(15):
+            time.sleep(1)
+            b.click(f"#vm-{vmCockpit}-system-action-kebab")
+            b.wait_visible(f"#vm-{vmCockpit}-system-delete")
+            menu = b.text("ul.pf-v6-c-menu__list")
+            b.click(f"#vm-{vmCockpit}-system-action-kebab")
+            b.wait_not_present("ul.pf-v6-c-menu__list")
+            if "Replace SPICE" not in menu:
+                break
+        else:
+            self.fail("timed out waiting for Replace SPICE menu item removal")
+
+        # ensure that the VM can start without any SPICE plugins
+        with self.remove_spice_plugins():
+            # restart the VM to make the change effective
+            self.performAction(vmCockpit, "forceOff")
+            b.wait_not_present(f"#vm-{vmCockpit}-needs-shutdown")
+            b.wait_not_present(f"#vm-{vmCockpit}-uses-spice")
+            b.click(f"#vm-{vmCockpit}-system-run")
+            b.wait_text(f"#vm-{vmCockpit}-system-state", "Running")
+            checkConnnectInfo(expect_vnc=True, expect_spice=False)
+
+        b.wait_not_present(f"#vm-{vmCockpit}-needs-shutdown")
+        b.wait_not_present(f"#vm-{vmCockpit}-uses-spice")
+
+        self.goToMainPage()
+        self.machine.execute(f"virsh destroy {vmCockpit}; virsh undefine {vmCockpit}")
 
         #
         # some custom spice-only VMs, not running; test mass conversion
