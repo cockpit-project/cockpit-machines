@@ -87,14 +87,16 @@ export const StateIcon = ({
         </Flex>
     );
 
-    if (error)
+    if (error) {
+        console.warn("virtual machine state error: ", error.text, error.detail);
         return (
             <Popover headerContent={error.text} bodyContent={error.detail} className="ct-popover-alert">
                 {label}
             </Popover>
         );
-    else
+    } else {
         return label;
+    }
 };
 
 export default StateIcon;
