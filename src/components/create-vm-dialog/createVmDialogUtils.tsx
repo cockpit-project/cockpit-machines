@@ -154,6 +154,39 @@ export function correctSpecialCases(os: OSInfo): OSInfo {
         os.releaseDate = '2011-11-01';
     }
 
+    if (needsRHToken(os.shortId)) {
+        // We don't support unattended installation for RHEL via the
+        // "Download an OS" method.  (We do support it for the "Cloud
+        // base image" method.)
+        //
+        // It is probably technically possible, but doesn't currently
+        // work.  Because of access restrictions, we need to download
+        // the installation media for RHEL separately and can't just
+        // run "virt-install --install rhel-9.8" (for
+        // example). Instead, we download the "boot.iso" variant and
+        // then use "virt-install --cdrom ../rhel-9-8-boot.iso" (for
+        // example).  But the "--unattended" option of virt-install is
+        // not effective together with "--cdrom" for RHEL installation
+        // media.  The RHEL installer will not find the kickstart file
+        // provided by virt-install in this case.
+        //
+        // And even if it would, the "boot.iso" variant will need to
+        // subscribe to Red Hat to download the actual RPMs. Including
+        // the necessary credentials into the kickstart file is
+        // probably possible, but not implemented right now.
+        //
+        // So, if unattended installs of RHEL with "Download an OS"
+        // method is really wanted, it can probably be implemented,
+        // with changes to virt-install or libosinfo, and
+        // cockpit-machines.
+        //
+        // But it is more likely that people will use the RHEL Image
+        // Builder to make customized installation media (or cloud
+        // base images) and use those.
+
+        os.unattendedInstallable = false;
+    }
+
     return os;
 }
 
