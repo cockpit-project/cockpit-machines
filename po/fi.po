@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-10 03:42+0000\n"
+"POT-Creation-Date: 2025-11-16 03:40+0000\n"
 "PO-Revision-Date: 2025-10-31 09:49+0000\n"
 "Last-Translator: Ricky Tigg <ricky.tigg@gmail.com>\n"
 "Language-Team: Finnish <https://translate.fedoraproject.org/projects/cockpit/"
@@ -19,6 +19,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1\n"
 "X-Generator: Weblate 5.13.3\n"
+
+#: src/components/vm/nics/nicBody.tsx:322
+msgid " excluding "
+msgstr ""
 
 #: src/components/create-vm-dialog/createVmDialog.tsx:1071
 msgid "$0 $1 available at default location"
@@ -68,7 +72,7 @@ msgid_plural "$0 vCPUs"
 msgstr[0] "$0 vCPU"
 msgstr[1] "$0 vCPU:ta"
 
-#: src/components/vm/nics/nicEdit.tsx:234
+#: src/components/vm/nics/nicEdit.tsx:308
 msgid "$0 virtual network interface settings"
 msgstr "$0 virtuaalisen verkkoliitännän asetukset"
 
@@ -96,7 +100,7 @@ msgstr "Toiminto"
 #: src/components/vms/hostvmslist.tsx:262
 #: src/components/storagePools/storagePoolList.tsx:80
 #: src/components/networks/networkList.tsx:77
-#: src/components/vm/nics/vmNicsCard.tsx:602
+#: src/components/vm/nics/vmNicsCard.tsx:654
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:200
 #: src/components/vm/disks/vmDisksCard.tsx:187
 msgid "Actions"
@@ -113,7 +117,7 @@ msgstr "Aktivoi varastointivaranto taltioiden hallitsemiseksi"
 
 #: src/components/networks/networkOverviewTab.tsx:281
 #: src/components/vm/hostdevs/hostDevAdd.tsx:267
-#: src/components/vm/nics/nicAdd.tsx:282
+#: src/components/vm/nics/nicBody.tsx:606 src/components/vm/nics/nicAdd.tsx:333
 #: src/components/vm/disks/diskAdd.tsx:981
 #: src/components/vm/overview/vsock.tsx:228
 #: src/components/vm/overview/watchdog.tsx:180
@@ -146,7 +150,7 @@ msgstr "Lisää levy"
 msgid "Add host device"
 msgstr "Lisää isäntälaite"
 
-#: src/components/vm/nics/vmNicsCard.tsx:128
+#: src/components/vm/nics/vmNicsCard.tsx:129
 msgid "Add network interface"
 msgstr "Lisää verkkoliitäntä"
 
@@ -158,7 +162,7 @@ msgstr "Lisää sarjakonsoli"
 msgid "Add shared directory"
 msgstr "Lisää jaettu kansio"
 
-#: src/components/vm/nics/nicAdd.tsx:263
+#: src/components/vm/nics/nicAdd.tsx:313
 msgid "Add virtual network interface"
 msgstr "Lisää virtuaalinen verkkoliitäntä"
 
@@ -183,7 +187,7 @@ msgstr ""
 
 #: src/components/networks/networkOverviewTab.tsx:153
 #: src/components/networks/networkOverviewTab.tsx:173
-#: src/components/vm/nics/vmNicsCard.tsx:206
+#: src/components/vm/nics/vmNicsCard.tsx:207
 msgid "Address"
 msgstr "Osoite"
 
@@ -219,7 +223,7 @@ msgstr ""
 msgid "Also delete all volumes inside this pool:"
 msgstr "Poista myös tämän varannon sisäiset taltiot:"
 
-#: src/components/vm/nics/nicAdd.tsx:125
+#: src/components/vm/nics/nicAdd.tsx:127
 #: src/components/vm/disks/diskAdd.tsx:193
 msgid "Always attach"
 msgstr "Kiinnitä aina"
@@ -266,6 +270,10 @@ msgstr "Automatisointi"
 msgid "Autostart"
 msgstr "Automaattikäynnistys"
 
+#: src/components/vm/nics/vmNicsCard.tsx:847
+msgid "Backend"
+msgstr ""
+
 #: src/components/vm/disks/vmDiskColumns.tsx:48
 msgid "Block device"
 msgstr "lohkolaite"
@@ -302,7 +310,7 @@ msgid "CD/DVD disc"
 msgstr "CD/DVD-levy"
 
 #: src/components/vms/hostvmslist.tsx:99 src/components/vms/hostvmslist.tsx:240
-#: src/components/common/needsShutdown.tsx:194
+#: src/components/common/needsShutdown.tsx:210
 #: src/components/vm/vmUsageCard.tsx:65
 #: src/components/vm/overview/vmOverviewCard.tsx:201
 msgid "CPU"
@@ -330,7 +338,7 @@ msgstr "Välimuisti"
 #: src/components/vm/consoles/vnc.tsx:170
 #: src/components/vm/hostdevs/hostDevAdd.tsx:272
 #: src/components/vm/vmMigrateDialog.tsx:240
-#: src/components/vm/nics/nicEdit.tsx:250 src/components/vm/nics/nicAdd.tsx:285
+#: src/components/vm/nics/nicEdit.tsx:324 src/components/vm/nics/nicAdd.tsx:336
 #: src/components/vm/vmCloneDialog.tsx:124
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:254
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:140
@@ -366,7 +374,7 @@ msgstr "Vaihda käynnistysjärjestystä"
 msgid "Change firmware"
 msgstr "Vaihda laiteohjelmisto"
 
-#: src/components/common/needsShutdown.tsx:281
+#: src/components/common/needsShutdown.tsx:297
 msgid "Changes pending"
 msgstr "Muutokset odottavat"
 
@@ -421,6 +429,10 @@ msgstr "Pilvipohjainen levykuva"
 #: org.cockpit_project.machines.metainfo.xml:19
 msgid "Cockpit Project"
 msgstr "Cockpit-projekti"
+
+#: src/components/vm/nics/nicBody.tsx:550
+msgid "Complex rule \"$0\" can not be edited here."
+msgstr ""
 
 #: src/components/vm/consoles/consoles.tsx:339
 msgid "Compress"
@@ -741,7 +753,7 @@ msgstr "Katkaise yhteys"
 msgid "Disconnected"
 msgstr "Yhteys katkaistu"
 
-#: src/components/common/needsShutdown.tsx:172
+#: src/components/common/needsShutdown.tsx:186
 msgid "Disk"
 msgstr "Levy"
 
@@ -836,7 +848,7 @@ msgstr "Kesto"
 msgid "Dying"
 msgstr "Kuolemassa"
 
-#: src/components/vm/nics/vmNicsCard.tsx:642
+#: src/components/vm/nics/vmNicsCard.tsx:695
 #: src/components/vm/disks/diskEdit.tsx:216
 msgid "Edit"
 msgstr "Muokkaa"
@@ -866,12 +878,12 @@ msgstr "Muokkaa vsock-verkkoliitäntää"
 msgid "Edit watchdog device type"
 msgstr "Muokkaa vahtikoiran laitetyyppiä"
 
-#: src/components/vm/nics/vmNicsCard.tsx:630
+#: src/components/vm/nics/vmNicsCard.tsx:683
 msgid "Editing network interfaces of transient guests is not allowed"
 msgstr ""
 "Väliaikaisten vieraskoneiden verkkoliitäntöjen muokkaaminen ei ole sallittua"
 
-#: src/components/vm/nics/vmNicsCard.tsx:636
+#: src/components/vm/nics/vmNicsCard.tsx:689
 msgid "Editing transient network interfaces is not allowed"
 msgstr "Väliaikaisten verkkoliitäntöjen muokkaaminen ei ole sallittua"
 
@@ -979,7 +991,7 @@ msgstr "Vahtikoiran irrottaminen epäonnistui"
 msgid "Failed to fetch some resources"
 msgstr "Joidenkin resurssien hakeminen epäonnistui"
 
-#: src/components/vm/nics/vmNicsCard.tsx:459
+#: src/components/vm/nics/vmNicsCard.tsx:511
 msgid "Failed to fetch the IP addresses of the interfaces present in $0"
 msgstr "$0:ssa olevien liitäntöjen IP-osoitteiden noutaminen epäonnistui"
 
@@ -1069,6 +1081,12 @@ msgstr "Alusta"
 msgid "Forward mode"
 msgstr "Eteenpäin-tila"
 
+#: src/components/vm/nics/nicBody.tsx:616
+#, fuzzy
+#| msgid "Forward mode"
+msgid "Forwarded ports"
+msgstr "Eteenpäin-tila"
+
 #: src/components/networks/networkList.tsx:75
 msgid "Forwarding mode"
 msgstr "Edelleenlähetystila"
@@ -1088,7 +1106,7 @@ msgstr ""
 msgid "General"
 msgstr "Yleinen"
 
-#: src/components/vm/nics/nicAdd.tsx:95
+#: src/components/vm/nics/nicAdd.tsx:97
 msgid "Generate automatically"
 msgstr "Luo automaattisesti"
 
@@ -1123,6 +1141,14 @@ msgstr "Graafinen"
 #: src/components/vm/consoles/vnc.tsx:666
 msgid "Graphical console support not enabled"
 msgstr "Graafisen konsolin tuki ei käytössä"
+
+#: src/components/vm/nics/nicBody.tsx:486
+msgid "Guest port"
+msgstr ""
+
+#: src/components/vm/nics/nicBody.tsx:490
+msgid "Guest port help"
+msgstr ""
 
 #: src/app.tsx:136
 msgid "Hardware virtualization is disabled"
@@ -1160,6 +1186,22 @@ msgstr "Isäntälaite"
 msgid "Host name"
 msgstr "Isäntänimi"
 
+#: src/components/vm/nics/nicBody.tsx:463
+#, fuzzy
+#| msgid "Host"
+msgid "Host port"
+msgstr "Kone"
+
+#: src/components/vm/nics/nicBody.tsx:398
+#, fuzzy
+#| msgid "Host should not be empty"
+msgid "Host port can not be empty."
+msgstr "Nimen ei saa olla tyhjä"
+
+#: src/components/vm/nics/nicBody.tsx:468
+msgid "Host port help"
+msgstr ""
+
 #: src/components/storagePools/createStoragePoolDialog.tsx:173
 msgid "Host should not be empty"
 msgstr "Nimen ei saa olla tyhjä"
@@ -1177,8 +1219,15 @@ msgid "IP"
 msgstr "IP"
 
 #: src/components/networks/networkOverviewTab.tsx:268
-#: src/components/vm/nics/vmNicsCard.tsx:587
+#: src/components/vm/nics/nicBody.tsx:442
+#: src/components/vm/nics/vmNicsCard.tsx:639
 msgid "IP address"
+msgstr "IP-osoite"
+
+#: src/components/vm/nics/nicBody.tsx:446
+#, fuzzy
+#| msgid "IP address"
+msgid "IP address help"
 msgstr "IP-osoite"
 
 #: src/components/networks/networkOverviewTab.tsx:274
@@ -1189,7 +1238,7 @@ msgstr "IP-osoite ei saa olla tyhjä"
 msgid "IP configuration"
 msgstr "IP-määritykset"
 
-#: src/components/vm/nics/vmNicsCard.tsx:331
+#: src/components/vm/nics/vmNicsCard.tsx:383
 msgid "IPv4 Address"
 msgstr "IPv4-osoite"
 
@@ -1222,7 +1271,7 @@ msgstr "IPv4-etuliitteen pituus saa olla enintään 24 merkkiä"
 msgid "IPv4 prefix length must be a multiple of 8"
 msgstr "IPv4-etuliitteen merkkimäärän on oltava 8:n kerrannainen"
 
-#: src/components/vm/nics/vmNicsCard.tsx:345
+#: src/components/vm/nics/vmNicsCard.tsx:397
 msgid "IPv6 Address"
 msgstr "IPv6-osoite"
 
@@ -1262,6 +1311,12 @@ msgstr "Tunniste voidaan katkaista siitä erikseen kertomatta $0 merkkiin "
 #: src/helpers.ts:233
 msgid "Idle"
 msgstr "Jouten"
+
+#: src/components/vm/nics/nicBody.tsx:448
+msgid ""
+"If host IP is set to 0.0.0.0 or not set at all, the port will be bound on "
+"all IPs on the host."
+msgstr ""
 
 #: src/app.tsx:150
 msgid "Ignore"
@@ -1339,13 +1394,19 @@ msgstr "Asennustyyppi"
 msgid "Interface"
 msgstr "Liitäntä"
 
-#: src/components/vm/nics/nicBody.tsx:188
+#: src/components/vm/nics/nicBody.tsx:221
 msgid "Interface type"
 msgstr "Liitäntätyyppi"
 
-#: src/components/vm/nics/nicBody.tsx:190
+#: src/components/vm/nics/nicBody.tsx:223
 msgid "Interface type help"
 msgstr "Liitäntätyypin ohjeet"
+
+#: src/components/vm/nics/nicBody.tsx:383
+#, fuzzy
+#| msgid "Invalid IPv4 address"
+msgid "Invalid IP address"
+msgstr "Ei kelvollinen IPv4-osoite"
 
 #: src/components/networks/createNetworkDialog.tsx:113
 #: src/components/networks/createNetworkDialog.tsx:129
@@ -1421,7 +1482,7 @@ msgstr ""
 msgid "Libvirt or hypervisor does not support UEFI"
 msgstr "Libvirt tai hypervisori ei tue UEFI:a"
 
-#: src/components/vm/nics/vmNicsCard.tsx:633
+#: src/components/vm/nics/vmNicsCard.tsx:686
 msgid "Loading available network devices"
 msgstr "Ladataan käytettävissä olevat verkkolaitteet"
 
@@ -1453,13 +1514,13 @@ msgid "MAC"
 msgstr "MAC"
 
 #: src/components/networks/networkOverviewTab.tsx:259
-#: src/components/vm/nics/vmNicsCard.tsx:582
-#: src/components/vm/nics/vmNicsCard.tsx:757
-#: src/components/vm/nics/nicEdit.tsx:70 src/components/vm/nics/nicAdd.tsx:91
+#: src/components/vm/nics/vmNicsCard.tsx:634
+#: src/components/vm/nics/vmNicsCard.tsx:810
+#: src/components/vm/nics/nicEdit.tsx:72 src/components/vm/nics/nicAdd.tsx:93
 msgid "MAC address"
 msgstr "MAC-osoite"
 
-#: src/components/vm/nics/nicEdit.tsx:167 src/components/vm/nics/nicAdd.tsx:199
+#: src/components/vm/nics/nicEdit.tsx:181 src/components/vm/nics/nicAdd.tsx:214
 msgid "MAC address already in use"
 msgstr "MAC-osoite on jo käytössä"
 
@@ -1576,27 +1637,27 @@ msgstr "Siirrä virtuaalikone toiseen koneeseen"
 msgid "Migration failed"
 msgstr "Migraatio epäonnistui"
 
-#: src/components/vm/nics/nicBody.tsx:232
-#: src/components/vm/nics/vmNicsCard.tsx:191
+#: src/components/vm/nics/nicBody.tsx:265
+#: src/components/vm/nics/vmNicsCard.tsx:192
 #: src/components/vm/overview/cpuModal.tsx:317
 #: src/components/vm/overview/cpuModal.tsx:319
 msgid "Mode"
 msgstr "Tila"
 
-#: src/components/vm/nics/nicBody.tsx:236
+#: src/components/vm/nics/nicBody.tsx:269
 msgid "Mode help"
 msgstr "Tila-apu"
 
 #: src/components/vm/hostdevs/hostDevCard.tsx:211
-#: src/components/vm/nics/nicBody.tsx:75
+#: src/components/vm/nics/nicBody.tsx:108
 msgid "Model"
 msgstr "Malli"
 
-#: src/components/vm/nics/vmNicsCard.tsx:761
+#: src/components/vm/nics/vmNicsCard.tsx:814
 msgid "Model type"
 msgstr "Mallityyppi"
 
-#: src/components/vm/nics/nicBody.tsx:252
+#: src/components/vm/nics/nicBody.tsx:285
 msgid "More info"
 msgstr "Lisätietoja"
 
@@ -1618,7 +1679,7 @@ msgstr "On oltava osoite verkkotunnuksen sijaan, kuten $0"
 msgid "NAT to $0"
 msgstr "NAT $0:een"
 
-#: src/components/vm/nics/vmNicsCard.tsx:537
+#: src/components/vm/nics/vmNicsCard.tsx:589
 msgid "NIC $0 of VM $1 failed to change state"
 msgstr "Virtuaalikoneen $1 verkkokortti $0 ei muuttanut tilaa"
 
@@ -1691,19 +1752,19 @@ msgstr "Verkkokäynnistys (PXE)"
 msgid "Network file system"
 msgstr "Verkkotiedostojärjestelmä"
 
-#: src/components/common/needsShutdown.tsx:183
+#: src/components/common/needsShutdown.tsx:199
 msgid "Network interface"
 msgstr "verkkoliitäntä"
 
-#: src/components/vm/nics/vmNicsCard.tsx:658
+#: src/components/vm/nics/vmNicsCard.tsx:711
 msgid "Network interface $0 could not be removed"
 msgstr "Verkkoliitäntää $0 ei voitu poistaa"
 
-#: src/components/vm/nics/vmNicsCard.tsx:659
+#: src/components/vm/nics/vmNicsCard.tsx:712
 msgid "Network interface $0 will be removed from $1"
 msgstr "Verkkoliitäntä $0 poistetaan kohdasta $1"
 
-#: src/components/vm/nics/nicEdit.tsx:197 src/components/vm/nics/nicAdd.tsx:228
+#: src/components/vm/nics/nicEdit.tsx:250 src/components/vm/nics/nicAdd.tsx:255
 msgid "Network interface settings could not be saved"
 msgstr "Verkkoliitännän asetuksia ei voitu tallentaa"
 
@@ -1761,11 +1822,11 @@ msgstr "Isäntälaitetta ei valittu"
 msgid "No host devices"
 msgstr "Ei isäntälaitteita"
 
-#: src/components/vm/nics/nicBody.tsx:174
+#: src/components/vm/nics/nicBody.tsx:207
 msgid "No network devices"
 msgstr "Ei verkkolaitteita"
 
-#: src/components/vm/nics/vmNicsCard.tsx:814
+#: src/components/vm/nics/vmNicsCard.tsx:886
 msgid "No network interfaces"
 msgstr "Ei verkkoliitäntöjä"
 
@@ -1780,6 +1841,10 @@ msgstr "Verkkoja ei ole käytettävissä"
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:189
 msgid "No parent"
 msgstr "Ei vanhempi"
+
+#: src/components/vm/nics/nicBody.tsx:624
+msgid "No ports forwarded"
+msgstr ""
 
 #: src/components/vm/consoles/vnc.tsx:279
 msgid "No scaling or resizing"
@@ -1813,7 +1878,7 @@ msgstr "Ei varastointivarantoja saatavilla"
 msgid "No storage volumes defined for this storage pool"
 msgstr "Tälle varastointivarannolle ei ole määritetty varastointitaltioita"
 
-#: src/components/vm/nics/nicBody.tsx:172
+#: src/components/vm/nics/nicBody.tsx:205
 msgid "No virtual networks"
 msgstr "Ei virtuaaliverkkoja"
 
@@ -1869,7 +1934,7 @@ msgstr ""
 "Toimialueet käyttävät yhtä tai useampaa valittua taltiota. Irrota levyt "
 "ensin, jotta taltio voidaan poistaa."
 
-#: src/components/vm/nics/nicEdit.tsx:67
+#: src/components/vm/nics/nicEdit.tsx:69
 #: src/components/vm/overview/memoryModal.tsx:187
 #: src/components/vm/overview/bootOrder.tsx:406
 msgid "Only editable when the guest is shut off"
@@ -1966,7 +2031,7 @@ msgstr "Pysyvä (oletus)"
 msgid "Permissions denied for disk images in home directories"
 msgstr "Kotihakemistojen levykuvien käyttöoikeudet estetty"
 
-#: src/components/vm/nics/nicAdd.tsx:122
+#: src/components/vm/nics/nicAdd.tsx:124
 #: src/components/vm/disks/diskAdd.tsx:190
 msgid "Persistence"
 msgstr "Pysyvyys"
@@ -1984,7 +2049,7 @@ msgstr "Fyysinen levylaite"
 msgid "Physical disk device on host"
 msgstr "Fyysinen levylaite isännässä"
 
-#: src/components/vm/nics/nicEdit.tsx:167 src/components/vm/nics/nicAdd.tsx:199
+#: src/components/vm/nics/nicEdit.tsx:181 src/components/vm/nics/nicAdd.tsx:214
 msgid "Please choose a different MAC address"
 msgstr "Valitse toinen MAC-osoite"
 
@@ -2030,12 +2095,22 @@ msgid "Pool's volumes are used by VMs "
 msgstr "Varannon taltioita käyttävät virtuaalikoneet "
 
 #: src/components/vm/consoles/vnc.tsx:182
-#: src/components/vm/nics/vmNicsCard.tsx:214
+#: src/components/vm/nics/vmNicsCard.tsx:215
 #: src/components/vm/disks/vmDiskColumns.tsx:53
 #: src/components/vm/overview/bootOrder.tsx:124
 #: src/components/vm/overview/bootOrder.tsx:140
 msgid "Port"
 msgstr "Portti"
+
+#: src/components/vm/nics/vmNicsCard.tsx:305
+msgid "Port forwards"
+msgstr ""
+
+#: src/components/vm/nics/nicBody.tsx:392
+#, fuzzy
+#| msgid "Port must be 5900 or larger."
+msgid "Port must be 1 to 65535."
+msgstr "Portin on oltava 5900 tai suurempi."
 
 #: src/components/vm/consoles/vnc.tsx:112
 msgid "Port must be 5900 or larger."
@@ -2050,6 +2125,7 @@ msgstr ""
 "määrittääksesi automaattisesti vapaan portin käynnistyksen yhteydessä."
 
 #: src/components/vm/consoles/vnc.tsx:109
+#: src/components/vm/nics/nicBody.tsx:390
 msgid "Port must be a number."
 msgstr "Portin on oltava numero."
 
@@ -2094,13 +2170,14 @@ msgid "Profile"
 msgstr "Profiili"
 
 #: src/components/vm/hostdevs/hostDevCard.tsx:120
+#: src/components/vm/nics/nicBody.tsx:506
 #: src/components/vm/disks/vmDiskColumns.tsx:49
 #: src/components/vm/overview/bootOrder.tsx:120
 #: src/components/vm/overview/bootOrder.tsx:181
 msgid "Protocol"
 msgstr "Protokolla"
 
-#: src/components/vm/nics/nicBody.tsx:132
+#: src/components/vm/nics/nicBody.tsx:165
 msgid ""
 "Provides a bridge from the guest virtual machine directly onto the LAN. This "
 "needs a bridge device on the host with one or more physical NICs."
@@ -2108,14 +2185,14 @@ msgstr ""
 "Tarjoaa sillan vierasvirtuaalikoneesta suoraan lähiverkkoon. Tämä vaatii "
 "isäntälaitteen, jolla on yksi tai useampi fyysinen verkkokortti."
 
-#: src/components/vm/nics/nicBody.tsx:123
+#: src/components/vm/nics/nicBody.tsx:156
 msgid ""
 "Provides a connection whose details are described by the named network "
 "definition."
 msgstr ""
 "Tarjoaa yhteyden, jonka tiedot kuvataan nimetyllä verkon määritelmällä."
 
-#: src/components/vm/nics/nicBody.tsx:147
+#: src/components/vm/nics/nicBody.tsx:180
 msgid "Provides a virtual LAN with NAT to the outside world."
 msgstr "Tarjoaa virtuaalisen lähiverkon NATin kanssa ulkomaailmaan."
 
@@ -2181,8 +2258,8 @@ msgstr "Etäkatselimet voivat muodostaa yhteyden seuraavaan osoitteeseen:"
 #: src/components/networks/networkOverviewTab.tsx:81
 #: src/components/vm/hostdevs/hostDevCard.tsx:270
 #: src/components/vm/hostdevs/hostDevCard.tsx:276
-#: src/components/vm/nics/vmNicsCard.tsx:660
-#: src/components/vm/nics/vmNicsCard.tsx:675
+#: src/components/vm/nics/vmNicsCard.tsx:713
+#: src/components/vm/nics/vmNicsCard.tsx:728
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:66
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:75
 #: src/components/vm/disks/vmDiskColumns.tsx:187
@@ -2213,10 +2290,12 @@ msgid "Remove host device from VM?"
 msgstr "Poista isäntälaite VM:stä?"
 
 #: src/components/create-vm-dialog/createVmDialog.tsx:937
+#: src/components/vm/nics/nicBody.tsx:525
+#: src/components/vm/nics/nicBody.tsx:560
 msgid "Remove item"
 msgstr "Poista kohde"
 
-#: src/components/vm/nics/vmNicsCard.tsx:657
+#: src/components/vm/nics/vmNicsCard.tsx:710
 msgid "Remove network interface?"
 msgstr "Poista verkkoliitäntä?"
 
@@ -2333,7 +2412,7 @@ msgstr "Suorita, kun isäntä käynnistyy"
 msgid "Running"
 msgstr "Käynnissä"
 
-#: src/components/common/needsShutdown.tsx:202
+#: src/components/common/needsShutdown.tsx:218
 msgid "SPICE"
 msgstr "SPICE"
 
@@ -2356,7 +2435,7 @@ msgstr "SSH-avaimet"
 
 #: src/components/vm/vmEditDescriptionDialog.tsx:91
 #: src/components/vm/consoles/vnc.tsx:167
-#: src/components/vm/nics/nicEdit.tsx:247
+#: src/components/vm/nics/nicEdit.tsx:321
 #: src/components/vm/disks/diskEdit.tsx:337
 #: src/components/vm/overview/memoryModal.tsx:206
 #: src/components/vm/overview/vsock.tsx:228
@@ -2396,7 +2475,7 @@ msgstr "Sarjanumero"
 msgid "Serial ($0)"
 msgstr "Sarja ($0)"
 
-#: src/components/common/needsShutdown.tsx:210
+#: src/components/common/needsShutdown.tsx:226
 msgid "Serial console"
 msgstr "Sarjakonsoli"
 
@@ -2408,7 +2487,7 @@ msgstr "Sarjakonsolin tuki ei käytössä"
 msgid "Set DHCP range"
 msgstr "Määritä DHCP-alue"
 
-#: src/components/vm/nics/nicAdd.tsx:100
+#: src/components/vm/nics/nicAdd.tsx:102
 msgid "Set manually"
 msgstr "Aseta käsin"
 
@@ -2471,7 +2550,7 @@ msgstr "Sammuta"
 msgid "Shut off the VM in order to edit firmware configuration"
 msgstr "Sammuta virtuaalikone, jotta voit muokata laiteohjelmiston kokoonpanoa"
 
-#: src/components/common/needsShutdown.tsx:266
+#: src/components/common/needsShutdown.tsx:282
 #: src/components/vm/vmActions.tsx:548
 #: src/components/vm/consoles/serial.tsx:196
 #: src/components/vm/consoles/vnc.tsx:706
@@ -2531,7 +2610,7 @@ msgstr "Tilannevedosten avulla voit palata aiempaan tilaan"
 msgid "Sockets"
 msgstr "Pistokkeet"
 
-#: src/components/common/needsShutdown.tsx:247
+#: src/components/common/needsShutdown.tsx:263
 #, fuzzy
 #| msgid "Some configuration changes only take effect after a fresh boot:"
 msgid ""
@@ -2542,8 +2621,8 @@ msgstr ""
 
 #: src/components/storagePools/storagePoolOverviewTab.tsx:53
 #: src/components/vm/hostdevs/hostDevCard.tsx:231
-#: src/components/vm/nics/nicBody.tsx:221
-#: src/components/vm/nics/vmNicsCard.tsx:562
+#: src/components/vm/nics/nicBody.tsx:254
+#: src/components/vm/nics/vmNicsCard.tsx:614
 #: src/components/vm/disks/vmDisksCard.tsx:183
 #: src/components/vm/disks/diskAdd.tsx:719
 #: src/components/vm/disks/diskAdd.tsx:755
@@ -2617,7 +2696,7 @@ msgstr "Aloittaa"
 #: src/components/vms/hostvmslist.tsx:260
 #: src/components/storagePools/storagePoolList.tsx:79
 #: src/components/networks/networkList.tsx:76
-#: src/components/vm/nics/vmNicsCard.tsx:595
+#: src/components/vm/nics/vmNicsCard.tsx:647
 #: src/components/vm/overview/vmOverviewCard.tsx:182
 msgid "State"
 msgstr "Tila"
@@ -2713,11 +2792,17 @@ msgstr "Vaihda VNC:hen jatkaaksesi tämän koneen käyttöä."
 msgid "System"
 msgstr "Järjestelmä"
 
-#: src/components/vm/nics/vmNicsCard.tsx:238
+#: src/components/vm/nics/vmNicsCard.tsx:239
 msgid "TAP device"
 msgstr "TAP-laite"
 
-#: src/components/common/needsShutdown.tsx:214
+#: src/components/vm/nics/nicBody.tsx:515
+#, fuzzy
+#| msgid "CPU"
+msgid "TCP"
+msgstr "Suoritin"
+
+#: src/components/common/needsShutdown.tsx:230
 msgid "TPM"
 msgstr "TPM"
 
@@ -2726,7 +2811,7 @@ msgid "Table of selectable host devices"
 msgstr "Taulukko valittavista olevista isäntälaitteista"
 
 #: src/components/vm/hostdevs/hostDevCard.tsx:115
-#: src/components/vm/nics/vmNicsCard.tsx:570
+#: src/components/vm/nics/vmNicsCard.tsx:622
 #: src/components/vm/disks/vmDisksCard.tsx:184
 #: src/components/vm/disks/vmDiskColumns.tsx:191
 #: src/components/vm/overview/bootOrder.tsx:175
@@ -2755,8 +2840,8 @@ msgid "The VM $0 is running and will be forced off before deletion."
 msgstr ""
 "Virtuaalikone $0 on käynnissä ja se pakotetaan pois päältä ennen poistamista."
 
-#: src/components/vm/nics/vmNicsCard.tsx:676
-#: src/components/vm/nics/vmNicsCard.tsx:684
+#: src/components/vm/nics/vmNicsCard.tsx:729
+#: src/components/vm/nics/vmNicsCard.tsx:737
 #: src/components/vm/disks/vmDiskColumns.tsx:278
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr ""
@@ -2778,13 +2863,24 @@ msgstr ""
 "Siirretty virtuaalikoneen kokoonpano poistetaan lähdekoneesta. Kohdekonetta "
 "pidetään virtuaalikoneen uutena kotina."
 
-#: src/components/vm/nics/nicBody.tsx:242
+#: src/components/vm/nics/nicBody.tsx:275
 msgid "The mode influences the delivery of packets."
 msgstr "Tila vaikuttaa pakettien toimitukseen."
 
 #: src/components/vm/disks/diskAdd.tsx:152
 msgid "The pool is empty"
 msgstr "Varanto on tyhjä"
+
+#: src/components/vm/nics/nicBody.tsx:492
+msgid ""
+"The port on the guest. If left empty, the same port as on the host is used."
+msgstr ""
+
+#: src/components/vm/nics/nicBody.tsx:470
+msgid ""
+"The port on the host that is fotwarded into the guest. You can also specify "
+"a range of ports like 4000-4050."
+msgstr ""
 
 #: src/components/create-vm-dialog/createVmDialog.tsx:1006
 msgid "The selected operating system has minimum memory requirement of $0 $1"
@@ -2832,7 +2928,7 @@ msgstr ""
 "Tämä on tarkoitettu isännälle, joka ei tue SPICEa päivitysten tai "
 "reaaliaikaisen siirron vuoksi."
 
-#: src/components/vm/nics/nicBody.tsx:122
+#: src/components/vm/nics/nicBody.tsx:155
 msgid ""
 "This is the recommended type for general guest connectivity on hosts with "
 "dynamic / wireless networking configs."
@@ -2840,7 +2936,7 @@ msgstr ""
 "Tätä tyyppiä suositellaan yleiseen vierasyhteyteen isännillä, joilla on "
 "dynaamiset/langattomat verkkoasetukset."
 
-#: src/components/vm/nics/nicBody.tsx:131
+#: src/components/vm/nics/nicBody.tsx:164
 msgid ""
 "This is the recommended type for general guest connectivity on hosts with "
 "static wired networking configs."
@@ -2848,7 +2944,7 @@ msgstr ""
 "Tätä tyyppiä suositellaan yleiseen vierasyhteyteen isännillä, joilla on "
 "staattiset langalliset verkkoasetukset."
 
-#: src/components/vm/nics/nicBody.tsx:137
+#: src/components/vm/nics/nicBody.tsx:170
 msgid "This is the recommended type for high performance or enhanced security."
 msgstr ""
 "Tätä tyyppiä suositellaan korkean suorituskyvyn tai parannetun tietoturvan "
@@ -2897,7 +2993,7 @@ msgstr "Vianetsintä"
 #: src/components/storagePools/createStoragePoolDialog.tsx:115
 #: src/components/vm/hostdevs/hostDevAdd.tsx:56
 #: src/components/vm/hostdevs/hostDevCard.tsx:191
-#: src/components/vm/nics/vmNicsCard.tsx:776
+#: src/components/vm/nics/vmNicsCard.tsx:829
 #: src/components/vm/overview/bootOrder.tsx:138
 #: src/components/vm/overview/bootOrder.tsx:151
 #: src/components/vm/overview/bootOrder.tsx:166
@@ -2906,6 +3002,10 @@ msgstr "Vianetsintä"
 #: src/components/vm/overview/bootOrder.tsx:186
 msgid "Type"
 msgstr "Tyyppi"
+
+#: src/components/vm/nics/nicBody.tsx:516
+msgid "UDP"
+msgstr ""
 
 #: src/components/create-vm-dialog/createVmDialog.tsx:461
 msgid "URL (ISO image or distro install tree)"
@@ -3079,7 +3179,7 @@ msgstr ""
 "VM julkaistiin etuoikeutetulla rajoitetulla pääsyllä, jossa prosessin ja "
 "PTY:n omistaa käyttäjätilisi"
 
-#: src/components/common/needsShutdown.tsx:271
+#: src/components/common/needsShutdown.tsx:287
 msgid "VM needs shutdown"
 msgstr "Virtuaalikone vaatii sammutuksen"
 
@@ -3091,7 +3191,7 @@ msgstr "Virtuaalikoneen tila"
 msgid "VM will launch with root permissions"
 msgstr "VM käynnistyy pääkäyttäjän oikeuksin"
 
-#: src/components/common/needsShutdown.tsx:206
+#: src/components/common/needsShutdown.tsx:222
 msgid "VNC"
 msgstr "VNC"
 
@@ -3184,7 +3284,7 @@ msgstr "Vsock"
 msgid "WWPN"
 msgstr "WWPN"
 
-#: src/components/common/needsShutdown.tsx:198
+#: src/components/common/needsShutdown.tsx:214
 #: src/components/vm/overview/vmOverviewCard.tsx:219
 msgid "Watchdog"
 msgstr "Vahtikoira"
@@ -3226,6 +3326,12 @@ msgstr "lisää"
 msgid "add entry"
 msgstr "lisää merkintä"
 
+#: src/components/vm/nics/nicBody.tsx:316
+#, fuzzy
+#| msgid "All"
+msgid "all"
+msgstr "Kaikki"
+
 #: src/helpers.ts:259
 msgid "bridge"
 msgstr "silta"
@@ -3237,6 +3343,10 @@ msgstr "cd-rom"
 #: src/components/vm/overview/cpuModal.tsx:335 src/helpers.ts:252
 msgid "custom"
 msgstr "mukautettu"
+
+#: src/components/vm/nics/vmNicsCard.tsx:852
+msgid "default"
+msgstr ""
 
 #: src/helpers.ts:257
 msgid "direct"
@@ -3347,6 +3457,7 @@ msgid "no state saved"
 msgstr "ei tilaa tallennettuna"
 
 #: src/components/networks/networkOverviewTab.tsx:327
+#: src/components/vm/nics/vmNicsCard.tsx:309
 #: src/components/vm/overview/vsock.tsx:304
 #: src/components/vm/overview/watchdog.tsx:274
 msgid "none"
@@ -3406,7 +3517,7 @@ msgstr "vCPU-lasku"
 msgid "vCPU maximum"
 msgstr "vCPU enintään"
 
-#: src/components/common/needsShutdown.tsx:190
+#: src/components/common/needsShutdown.tsx:206
 msgid "vCPUs"
 msgstr "vCPU:t"
 
