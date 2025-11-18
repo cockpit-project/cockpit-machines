@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-10 03:42+0000\n"
-"PO-Revision-Date: 2025-11-10 05:58+0000\n"
+"POT-Creation-Date: 2025-11-16 03:40+0000\n"
+"PO-Revision-Date: 2025-11-15 04:58+0000\n"
 "Last-Translator: 김인수 <simmon@nplob.com>\n"
 "Language-Team: Korean <https://translate.fedoraproject.org/projects/cockpit/"
 "cockpit-machines/ko/>\n"
@@ -22,6 +22,10 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0\n"
 "X-Generator: Weblate 5.14.3\n"
+
+#: src/components/vm/nics/nicBody.tsx:322
+msgid " excluding "
+msgstr " 제외하기 "
 
 #: src/components/create-vm-dialog/createVmDialog.tsx:1071
 msgid "$0 $1 available at default location"
@@ -71,7 +75,7 @@ msgid "$0 vCPU"
 msgid_plural "$0 vCPUs"
 msgstr[0] "$0 vCPU"
 
-#: src/components/vm/nics/nicEdit.tsx:234
+#: src/components/vm/nics/nicEdit.tsx:308
 msgid "$0 virtual network interface settings"
 msgstr "$0 가상 네트워크 연결장치 설정"
 
@@ -101,7 +105,7 @@ msgstr "동작"
 #: src/components/vms/hostvmslist.tsx:262
 #: src/components/storagePools/storagePoolList.tsx:80
 #: src/components/networks/networkList.tsx:77
-#: src/components/vm/nics/vmNicsCard.tsx:602
+#: src/components/vm/nics/vmNicsCard.tsx:654
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:200
 #: src/components/vm/disks/vmDisksCard.tsx:187
 msgid "Actions"
@@ -118,7 +122,7 @@ msgstr "볼륨을 관리하려면 저장소 풀을 활성화하세요"
 
 #: src/components/networks/networkOverviewTab.tsx:281
 #: src/components/vm/hostdevs/hostDevAdd.tsx:267
-#: src/components/vm/nics/nicAdd.tsx:282
+#: src/components/vm/nics/nicBody.tsx:606 src/components/vm/nics/nicAdd.tsx:333
 #: src/components/vm/disks/diskAdd.tsx:981
 #: src/components/vm/overview/vsock.tsx:228
 #: src/components/vm/overview/watchdog.tsx:180
@@ -151,7 +155,7 @@ msgstr "디스크 추가"
 msgid "Add host device"
 msgstr "호스트 장치 추가"
 
-#: src/components/vm/nics/vmNicsCard.tsx:128
+#: src/components/vm/nics/vmNicsCard.tsx:129
 msgid "Add network interface"
 msgstr "네트워크 연결장치 추가"
 
@@ -163,7 +167,7 @@ msgstr "직렬 콘솔 추가"
 msgid "Add shared directory"
 msgstr "공유 디렉토리를 추가합니다"
 
-#: src/components/vm/nics/nicAdd.tsx:263
+#: src/components/vm/nics/nicAdd.tsx:313
 msgid "Add virtual network interface"
 msgstr "가상 네트워크 연결장치 추가"
 
@@ -185,7 +189,7 @@ msgstr "공유 디렉토리 추가는 게스트가 종료된 경우에만 편집
 
 #: src/components/networks/networkOverviewTab.tsx:153
 #: src/components/networks/networkOverviewTab.tsx:173
-#: src/components/vm/nics/vmNicsCard.tsx:206
+#: src/components/vm/nics/vmNicsCard.tsx:207
 msgid "Address"
 msgstr "주소"
 
@@ -219,7 +223,7 @@ msgstr "허용되는 문자: 기본 라틴 알파벳, 숫자와 제한된 구두
 msgid "Also delete all volumes inside this pool:"
 msgstr "또한 이 풀 안에 있는 모든 볼륨을 삭제합니다:"
 
-#: src/components/vm/nics/nicAdd.tsx:125
+#: src/components/vm/nics/nicAdd.tsx:127
 #: src/components/vm/disks/diskAdd.tsx:193
 msgid "Always attach"
 msgstr "항상 연결"
@@ -266,6 +270,10 @@ msgstr "자동화"
 msgid "Autostart"
 msgstr "자동 시작"
 
+#: src/components/vm/nics/vmNicsCard.tsx:847
+msgid "Backend"
+msgstr "백엔드"
+
 #: src/components/vm/disks/vmDiskColumns.tsx:48
 msgid "Block device"
 msgstr "블록 장치"
@@ -302,7 +310,7 @@ msgid "CD/DVD disc"
 msgstr "CD/DVD 디스크"
 
 #: src/components/vms/hostvmslist.tsx:99 src/components/vms/hostvmslist.tsx:240
-#: src/components/common/needsShutdown.tsx:194
+#: src/components/common/needsShutdown.tsx:210
 #: src/components/vm/vmUsageCard.tsx:65
 #: src/components/vm/overview/vmOverviewCard.tsx:201
 msgid "CPU"
@@ -330,7 +338,7 @@ msgstr "캐쉬"
 #: src/components/vm/consoles/vnc.tsx:170
 #: src/components/vm/hostdevs/hostDevAdd.tsx:272
 #: src/components/vm/vmMigrateDialog.tsx:240
-#: src/components/vm/nics/nicEdit.tsx:250 src/components/vm/nics/nicAdd.tsx:285
+#: src/components/vm/nics/nicEdit.tsx:324 src/components/vm/nics/nicAdd.tsx:336
 #: src/components/vm/vmCloneDialog.tsx:124
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:254
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:140
@@ -366,7 +374,7 @@ msgstr "부팅 순서 변경"
 msgid "Change firmware"
 msgstr "펌웨어 변경"
 
-#: src/components/common/needsShutdown.tsx:281
+#: src/components/common/needsShutdown.tsx:297
 msgid "Changes pending"
 msgstr "보류 중인 변경 부분"
 
@@ -421,6 +429,10 @@ msgstr "클라우드 기반 이미지"
 #: org.cockpit_project.machines.metainfo.xml:19
 msgid "Cockpit Project"
 msgstr "Cockpit 프로젝트"
+
+#: src/components/vm/nics/nicBody.tsx:550
+msgid "Complex rule \"$0\" can not be edited here."
+msgstr "복합 규칙 \"$0\" 는 여기에서 편질 될 수 없습니다."
 
 #: src/components/vm/consoles/consoles.tsx:339
 msgid "Compress"
@@ -737,7 +749,7 @@ msgstr "연결 끊김"
 msgid "Disconnected"
 msgstr "연결 끊김"
 
-#: src/components/common/needsShutdown.tsx:172
+#: src/components/common/needsShutdown.tsx:186
 msgid "Disk"
 msgstr "디스크"
 
@@ -830,7 +842,7 @@ msgstr "지속기간"
 msgid "Dying"
 msgstr "종료 중"
 
-#: src/components/vm/nics/vmNicsCard.tsx:642
+#: src/components/vm/nics/vmNicsCard.tsx:695
 #: src/components/vm/disks/diskEdit.tsx:216
 msgid "Edit"
 msgstr "편집"
@@ -860,11 +872,11 @@ msgstr "vsock 연결장치 편집"
 msgid "Edit watchdog device type"
 msgstr "와치독 장치 유형을 편집합니다"
 
-#: src/components/vm/nics/vmNicsCard.tsx:630
+#: src/components/vm/nics/vmNicsCard.tsx:683
 msgid "Editing network interfaces of transient guests is not allowed"
 msgstr "임시 게스트의 네트워크 연결장치 편집하기는 허용되지 않습니다"
 
-#: src/components/vm/nics/vmNicsCard.tsx:636
+#: src/components/vm/nics/vmNicsCard.tsx:689
 msgid "Editing transient network interfaces is not allowed"
 msgstr "임시 네트워크 연결장치 편집하기는 허용되지 않습니다"
 
@@ -970,7 +982,7 @@ msgstr "와치독을 분리하는데 실패함"
 msgid "Failed to fetch some resources"
 msgstr "몇 가지 자원 가져오기에 실패함"
 
-#: src/components/vm/nics/vmNicsCard.tsx:459
+#: src/components/vm/nics/vmNicsCard.tsx:511
 msgid "Failed to fetch the IP addresses of the interfaces present in $0"
 msgstr "$0에 표시된 연결장치의 IP 주소를 가져오지 못했습니다"
 
@@ -1058,6 +1070,10 @@ msgstr "포멧"
 msgid "Forward mode"
 msgstr "포워드 모드"
 
+#: src/components/vm/nics/nicBody.tsx:616
+msgid "Forwarded ports"
+msgstr "포워드된 포트"
+
 #: src/components/networks/networkList.tsx:75
 msgid "Forwarding mode"
 msgstr "포워딩 방법"
@@ -1077,7 +1093,7 @@ msgstr ""
 msgid "General"
 msgstr "일반"
 
-#: src/components/vm/nics/nicAdd.tsx:95
+#: src/components/vm/nics/nicAdd.tsx:97
 msgid "Generate automatically"
 msgstr "자동 생성"
 
@@ -1112,6 +1128,14 @@ msgstr "그래픽"
 #: src/components/vm/consoles/vnc.tsx:666
 msgid "Graphical console support not enabled"
 msgstr "그래픽 콘솔 지원이 활성화되지 않았습니다"
+
+#: src/components/vm/nics/nicBody.tsx:486
+msgid "Guest port"
+msgstr "게스트 포트"
+
+#: src/components/vm/nics/nicBody.tsx:490
+msgid "Guest port help"
+msgstr "게스트 포트 도움말"
 
 #: src/app.tsx:136
 msgid "Hardware virtualization is disabled"
@@ -1149,6 +1173,18 @@ msgstr "호스트 장치"
 msgid "Host name"
 msgstr "호스트 이름"
 
+#: src/components/vm/nics/nicBody.tsx:463
+msgid "Host port"
+msgstr "호스트 포트"
+
+#: src/components/vm/nics/nicBody.tsx:398
+msgid "Host port can not be empty."
+msgstr "호스트 포트는 비워둘 수 없습니다."
+
+#: src/components/vm/nics/nicBody.tsx:468
+msgid "Host port help"
+msgstr "호스트 포트 도움말"
+
 #: src/components/storagePools/createStoragePoolDialog.tsx:173
 msgid "Host should not be empty"
 msgstr "호스트는 비워둘 수 없습니다"
@@ -1166,9 +1202,14 @@ msgid "IP"
 msgstr "IP"
 
 #: src/components/networks/networkOverviewTab.tsx:268
-#: src/components/vm/nics/vmNicsCard.tsx:587
+#: src/components/vm/nics/nicBody.tsx:442
+#: src/components/vm/nics/vmNicsCard.tsx:639
 msgid "IP address"
 msgstr "네트워크 주소"
+
+#: src/components/vm/nics/nicBody.tsx:446
+msgid "IP address help"
+msgstr "IP 주소 도움말"
 
 #: src/components/networks/networkOverviewTab.tsx:274
 msgid "IP address must not be empty"
@@ -1178,7 +1219,7 @@ msgstr "IP 주소는 비워두면 안됩니다"
 msgid "IP configuration"
 msgstr "IP 구성"
 
-#: src/components/vm/nics/vmNicsCard.tsx:331
+#: src/components/vm/nics/vmNicsCard.tsx:383
 msgid "IPv4 Address"
 msgstr "IPv4 주소"
 
@@ -1211,7 +1252,7 @@ msgstr "IPv4 접두사 길이는 24 자 이내여야 합니다"
 msgid "IPv4 prefix length must be a multiple of 8"
 msgstr "IPv4 접두사 길이는 8의 배수여야 합니다"
 
-#: src/components/vm/nics/vmNicsCard.tsx:345
+#: src/components/vm/nics/vmNicsCard.tsx:397
 msgid "IPv6 Address"
 msgstr "IPv6 주소"
 
@@ -1251,6 +1292,14 @@ msgstr "식별자는 $0 문자로 자동으로 잘릴 수 있습니다 "
 #: src/helpers.ts:233
 msgid "Idle"
 msgstr "유휴"
+
+#: src/components/vm/nics/nicBody.tsx:448
+msgid ""
+"If host IP is set to 0.0.0.0 or not set at all, the port will be bound on "
+"all IPs on the host."
+msgstr ""
+"만약 호스트 IP가 0.0.0.0으로 설정되거나 또는 전혀 설정되지 않으면, 포트는 호"
+"스트의 모든 IP에서 묶이게 됩니다."
 
 #: src/app.tsx:150
 msgid "Ignore"
@@ -1329,13 +1378,17 @@ msgstr "설치 유형"
 msgid "Interface"
 msgstr "연결장치"
 
-#: src/components/vm/nics/nicBody.tsx:188
+#: src/components/vm/nics/nicBody.tsx:221
 msgid "Interface type"
 msgstr "연결장치 유형"
 
-#: src/components/vm/nics/nicBody.tsx:190
+#: src/components/vm/nics/nicBody.tsx:223
 msgid "Interface type help"
 msgstr "연결장치 유형 도움"
+
+#: src/components/vm/nics/nicBody.tsx:383
+msgid "Invalid IP address"
+msgstr "잘못된 IP 주소"
 
 #: src/components/networks/createNetworkDialog.tsx:113
 #: src/components/networks/createNetworkDialog.tsx:129
@@ -1409,7 +1462,7 @@ msgstr ""
 msgid "Libvirt or hypervisor does not support UEFI"
 msgstr "Libvirt 또는 하이퍼바이저는 UEFI를 지원하지 않습니다"
 
-#: src/components/vm/nics/vmNicsCard.tsx:633
+#: src/components/vm/nics/vmNicsCard.tsx:686
 msgid "Loading available network devices"
 msgstr "사용 할 수 있는 네트워크 장치 적재 중"
 
@@ -1444,13 +1497,13 @@ msgstr "MAC"
 # auto translated by TM merge from project: RHOSP Director Installation and
 # Usage , version: 11-Korean, DocId: master
 #: src/components/networks/networkOverviewTab.tsx:259
-#: src/components/vm/nics/vmNicsCard.tsx:582
-#: src/components/vm/nics/vmNicsCard.tsx:757
-#: src/components/vm/nics/nicEdit.tsx:70 src/components/vm/nics/nicAdd.tsx:91
+#: src/components/vm/nics/vmNicsCard.tsx:634
+#: src/components/vm/nics/vmNicsCard.tsx:810
+#: src/components/vm/nics/nicEdit.tsx:72 src/components/vm/nics/nicAdd.tsx:93
 msgid "MAC address"
 msgstr "MAC 주소"
 
-#: src/components/vm/nics/nicEdit.tsx:167 src/components/vm/nics/nicAdd.tsx:199
+#: src/components/vm/nics/nicEdit.tsx:181 src/components/vm/nics/nicAdd.tsx:214
 msgid "MAC address already in use"
 msgstr "MAC 주사기 이미 사용중입니다"
 
@@ -1564,27 +1617,27 @@ msgstr "VM을 다른 호스트로 이전합니다"
 msgid "Migration failed"
 msgstr "이전이 실패했습니다"
 
-#: src/components/vm/nics/nicBody.tsx:232
-#: src/components/vm/nics/vmNicsCard.tsx:191
+#: src/components/vm/nics/nicBody.tsx:265
+#: src/components/vm/nics/vmNicsCard.tsx:192
 #: src/components/vm/overview/cpuModal.tsx:317
 #: src/components/vm/overview/cpuModal.tsx:319
 msgid "Mode"
 msgstr "모드"
 
-#: src/components/vm/nics/nicBody.tsx:236
+#: src/components/vm/nics/nicBody.tsx:269
 msgid "Mode help"
 msgstr "방식(mode) 도움말"
 
 #: src/components/vm/hostdevs/hostDevCard.tsx:211
-#: src/components/vm/nics/nicBody.tsx:75
+#: src/components/vm/nics/nicBody.tsx:108
 msgid "Model"
 msgstr "방식"
 
-#: src/components/vm/nics/vmNicsCard.tsx:761
+#: src/components/vm/nics/vmNicsCard.tsx:814
 msgid "Model type"
 msgstr "모델 유형"
 
-#: src/components/vm/nics/nicBody.tsx:252
+#: src/components/vm/nics/nicBody.tsx:285
 msgid "More info"
 msgstr "더 많은 정보"
 
@@ -1606,7 +1659,7 @@ msgstr "$0와 같은 네트워크 식별자 대신에 주소여야 합니다"
 msgid "NAT to $0"
 msgstr "$0에 NAT"
 
-#: src/components/vm/nics/vmNicsCard.tsx:537
+#: src/components/vm/nics/vmNicsCard.tsx:589
 msgid "NIC $0 of VM $1 failed to change state"
 msgstr "VM $1의 NIC $0은 상태 변경에 실패했습니다"
 
@@ -1679,19 +1732,19 @@ msgstr "네트워크 부팅(PXE)"
 msgid "Network file system"
 msgstr "네트워크 파일 시스템"
 
-#: src/components/common/needsShutdown.tsx:183
+#: src/components/common/needsShutdown.tsx:199
 msgid "Network interface"
 msgstr "네트워크 연결장치"
 
-#: src/components/vm/nics/vmNicsCard.tsx:658
+#: src/components/vm/nics/vmNicsCard.tsx:711
 msgid "Network interface $0 could not be removed"
 msgstr "네트워크 연결장치 $0는 제거 될 수 없습니다"
 
-#: src/components/vm/nics/vmNicsCard.tsx:659
+#: src/components/vm/nics/vmNicsCard.tsx:712
 msgid "Network interface $0 will be removed from $1"
 msgstr "네트워크 연결장치 $0가 $1에서 제거됩니다"
 
-#: src/components/vm/nics/nicEdit.tsx:197 src/components/vm/nics/nicAdd.tsx:228
+#: src/components/vm/nics/nicEdit.tsx:250 src/components/vm/nics/nicAdd.tsx:255
 msgid "Network interface settings could not be saved"
 msgstr "네트워크 연결장치 설정을 저장하지 못했습니다"
 
@@ -1749,11 +1802,11 @@ msgstr "선택된 호스트 장치가 없습니다"
 msgid "No host devices"
 msgstr "호스트 장치 없음"
 
-#: src/components/vm/nics/nicBody.tsx:174
+#: src/components/vm/nics/nicBody.tsx:207
 msgid "No network devices"
 msgstr "네트워크 장치 없음"
 
-#: src/components/vm/nics/vmNicsCard.tsx:814
+#: src/components/vm/nics/vmNicsCard.tsx:886
 msgid "No network interfaces"
 msgstr "네트워크 연결장치 없음"
 
@@ -1768,6 +1821,10 @@ msgstr "사용 가능한 네트워크가 없습니다"
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:189
 msgid "No parent"
 msgstr "원인 개체 없음"
+
+#: src/components/vm/nics/nicBody.tsx:624
+msgid "No ports forwarded"
+msgstr "포워드된 포트가 없습니다"
 
 #: src/components/vm/consoles/vnc.tsx:279
 msgid "No scaling or resizing"
@@ -1801,7 +1858,7 @@ msgstr "사용 가능한 저장소 풀 없음"
 msgid "No storage volumes defined for this storage pool"
 msgstr "이 저장소 풀에 대해 정의된 저장소 볼륨 없음"
 
-#: src/components/vm/nics/nicBody.tsx:172
+#: src/components/vm/nics/nicBody.tsx:205
 msgid "No virtual networks"
 msgstr "가상 네트워크 없음"
 
@@ -1855,7 +1912,7 @@ msgstr ""
 "하나 이상의 선택된 볼륨이 도메인에서 사용되고 있습니다. 먼저 디스크를 분리하"
 "여 볼륨을 삭제하십시오."
 
-#: src/components/vm/nics/nicEdit.tsx:67
+#: src/components/vm/nics/nicEdit.tsx:69
 #: src/components/vm/overview/memoryModal.tsx:187
 #: src/components/vm/overview/bootOrder.tsx:406
 msgid "Only editable when the guest is shut off"
@@ -1954,7 +2011,7 @@ msgstr "매개변수(기본값)"
 msgid "Permissions denied for disk images in home directories"
 msgstr "홈 디렉토리에서 디스크 이미지용 권한이 거부됨"
 
-#: src/components/vm/nics/nicAdd.tsx:122
+#: src/components/vm/nics/nicAdd.tsx:124
 #: src/components/vm/disks/diskAdd.tsx:190
 msgid "Persistence"
 msgstr "고집"
@@ -1972,7 +2029,7 @@ msgstr "물리적 디스크 장치"
 msgid "Physical disk device on host"
 msgstr "호스트에서 물리적 디스크 장치"
 
-#: src/components/vm/nics/nicEdit.tsx:167 src/components/vm/nics/nicAdd.tsx:199
+#: src/components/vm/nics/nicEdit.tsx:181 src/components/vm/nics/nicAdd.tsx:214
 msgid "Please choose a different MAC address"
 msgstr "다른 MAC 주소를 선택하세요"
 
@@ -2017,12 +2074,20 @@ msgid "Pool's volumes are used by VMs "
 msgstr "풀 볼륨은 VM에서 사용됩니다 "
 
 #: src/components/vm/consoles/vnc.tsx:182
-#: src/components/vm/nics/vmNicsCard.tsx:214
+#: src/components/vm/nics/vmNicsCard.tsx:215
 #: src/components/vm/disks/vmDiskColumns.tsx:53
 #: src/components/vm/overview/bootOrder.tsx:124
 #: src/components/vm/overview/bootOrder.tsx:140
 msgid "Port"
 msgstr "포트"
+
+#: src/components/vm/nics/vmNicsCard.tsx:305
+msgid "Port forwards"
+msgstr "포트 포워드"
+
+#: src/components/vm/nics/nicBody.tsx:392
+msgid "Port must be 1 to 65535."
+msgstr "포트는 1에서 65535여야 합니다."
 
 #: src/components/vm/consoles/vnc.tsx:112
 msgid "Port must be 5900 or larger."
@@ -2037,6 +2102,7 @@ msgstr ""
 "유 포트를 자동으로 할당합니다."
 
 #: src/components/vm/consoles/vnc.tsx:109
+#: src/components/vm/nics/nicBody.tsx:390
 msgid "Port must be a number."
 msgstr "포트는 숫자여야 합니다."
 
@@ -2081,13 +2147,14 @@ msgid "Profile"
 msgstr "프로파일"
 
 #: src/components/vm/hostdevs/hostDevCard.tsx:120
+#: src/components/vm/nics/nicBody.tsx:506
 #: src/components/vm/disks/vmDiskColumns.tsx:49
 #: src/components/vm/overview/bootOrder.tsx:120
 #: src/components/vm/overview/bootOrder.tsx:181
 msgid "Protocol"
 msgstr "프로토콜"
 
-#: src/components/vm/nics/nicBody.tsx:132
+#: src/components/vm/nics/nicBody.tsx:165
 msgid ""
 "Provides a bridge from the guest virtual machine directly onto the LAN. This "
 "needs a bridge device on the host with one or more physical NICs."
@@ -2095,14 +2162,14 @@ msgstr ""
 "게스트 가상 장비에서 직접 LAN으로 브릿를 제공합니다. 이는 호스트에서 한 개 또"
 "는 더 많은 물리적인 NIC을 가지고 있는 브릿지 장치가 필요합니다."
 
-#: src/components/vm/nics/nicBody.tsx:123
+#: src/components/vm/nics/nicBody.tsx:156
 msgid ""
 "Provides a connection whose details are described by the named network "
 "definition."
 msgstr ""
 "이름을 갖고 있는 네트워크 정의에 의해 세부사항을 설명되는 연결을 제공합니다."
 
-#: src/components/vm/nics/nicBody.tsx:147
+#: src/components/vm/nics/nicBody.tsx:180
 msgid "Provides a virtual LAN with NAT to the outside world."
 msgstr "NAT을 통한 가상 랜을 외부 세상으로 제공합니다."
 
@@ -2167,8 +2234,8 @@ msgstr "원격 표시기 응용프로그램은 다음 주소로 연결 할 수 �
 #: src/components/networks/networkOverviewTab.tsx:81
 #: src/components/vm/hostdevs/hostDevCard.tsx:270
 #: src/components/vm/hostdevs/hostDevCard.tsx:276
-#: src/components/vm/nics/vmNicsCard.tsx:660
-#: src/components/vm/nics/vmNicsCard.tsx:675
+#: src/components/vm/nics/vmNicsCard.tsx:713
+#: src/components/vm/nics/vmNicsCard.tsx:728
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:66
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:75
 #: src/components/vm/disks/vmDiskColumns.tsx:187
@@ -2199,10 +2266,12 @@ msgid "Remove host device from VM?"
 msgstr "VM에서 호스트 장치를 제거?"
 
 #: src/components/create-vm-dialog/createVmDialog.tsx:937
+#: src/components/vm/nics/nicBody.tsx:525
+#: src/components/vm/nics/nicBody.tsx:560
 msgid "Remove item"
 msgstr "항목 제거"
 
-#: src/components/vm/nics/vmNicsCard.tsx:657
+#: src/components/vm/nics/vmNicsCard.tsx:710
 msgid "Remove network interface?"
 msgstr "네트워크 연결장치 제거?"
 
@@ -2315,7 +2384,7 @@ msgstr "호스트 부팅 시 실행"
 msgid "Running"
 msgstr "작동중"
 
-#: src/components/common/needsShutdown.tsx:202
+#: src/components/common/needsShutdown.tsx:218
 msgid "SPICE"
 msgstr "SPICE"
 
@@ -2337,7 +2406,7 @@ msgstr "SSH 키"
 
 #: src/components/vm/vmEditDescriptionDialog.tsx:91
 #: src/components/vm/consoles/vnc.tsx:167
-#: src/components/vm/nics/nicEdit.tsx:247
+#: src/components/vm/nics/nicEdit.tsx:321
 #: src/components/vm/disks/diskEdit.tsx:337
 #: src/components/vm/overview/memoryModal.tsx:206
 #: src/components/vm/overview/vsock.tsx:228
@@ -2377,7 +2446,7 @@ msgstr "직렬"
 msgid "Serial ($0)"
 msgstr "직렬 ($0)"
 
-#: src/components/common/needsShutdown.tsx:210
+#: src/components/common/needsShutdown.tsx:226
 msgid "Serial console"
 msgstr "직렬 콘솔"
 
@@ -2389,7 +2458,7 @@ msgstr "직렬 콘솔 지원이 활성화 되지 않았습니다"
 msgid "Set DHCP range"
 msgstr "DHCP 범위 설정"
 
-#: src/components/vm/nics/nicAdd.tsx:100
+#: src/components/vm/nics/nicAdd.tsx:102
 msgid "Set manually"
 msgstr "수동 설정"
 
@@ -2456,7 +2525,7 @@ msgstr "종료"
 msgid "Shut off the VM in order to edit firmware configuration"
 msgstr "펌웨어 구성을 편집하려면 VM을 종료하십시오"
 
-#: src/components/common/needsShutdown.tsx:266
+#: src/components/common/needsShutdown.tsx:282
 #: src/components/vm/vmActions.tsx:548
 #: src/components/vm/consoles/serial.tsx:196
 #: src/components/vm/consoles/vnc.tsx:706
@@ -2516,7 +2585,7 @@ msgstr "순간찍기는 당신이 이전 상태로 되돌 수 있도록 합니�
 msgid "Sockets"
 msgstr "소켓"
 
-#: src/components/common/needsShutdown.tsx:247
+#: src/components/common/needsShutdown.tsx:263
 msgid ""
 "Some configuration changes only take effect after a complete shutdown and "
 "restart:"
@@ -2524,8 +2593,8 @@ msgstr "몇 가지 구성은 완전 종료 및 재시작 후에만 영향을 미
 
 #: src/components/storagePools/storagePoolOverviewTab.tsx:53
 #: src/components/vm/hostdevs/hostDevCard.tsx:231
-#: src/components/vm/nics/nicBody.tsx:221
-#: src/components/vm/nics/vmNicsCard.tsx:562
+#: src/components/vm/nics/nicBody.tsx:254
+#: src/components/vm/nics/vmNicsCard.tsx:614
 #: src/components/vm/disks/vmDisksCard.tsx:183
 #: src/components/vm/disks/diskAdd.tsx:719
 #: src/components/vm/disks/diskAdd.tsx:755
@@ -2599,7 +2668,7 @@ msgstr "시작"
 #: src/components/vms/hostvmslist.tsx:260
 #: src/components/storagePools/storagePoolList.tsx:79
 #: src/components/networks/networkList.tsx:76
-#: src/components/vm/nics/vmNicsCard.tsx:595
+#: src/components/vm/nics/vmNicsCard.tsx:647
 #: src/components/vm/overview/vmOverviewCard.tsx:182
 msgid "State"
 msgstr "상태"
@@ -2696,11 +2765,15 @@ msgstr "이 장비를 사용하도록 계속해서 VNC로 전환합니다."
 msgid "System"
 msgstr "시스템"
 
-#: src/components/vm/nics/vmNicsCard.tsx:238
+#: src/components/vm/nics/vmNicsCard.tsx:239
 msgid "TAP device"
 msgstr "탭 장치"
 
-#: src/components/common/needsShutdown.tsx:214
+#: src/components/vm/nics/nicBody.tsx:515
+msgid "TCP"
+msgstr "TCP"
+
+#: src/components/common/needsShutdown.tsx:230
 msgid "TPM"
 msgstr "TPM"
 
@@ -2709,7 +2782,7 @@ msgid "Table of selectable host devices"
 msgstr "선택 할 수 있는 호스트 장치의 표"
 
 #: src/components/vm/hostdevs/hostDevCard.tsx:115
-#: src/components/vm/nics/vmNicsCard.tsx:570
+#: src/components/vm/nics/vmNicsCard.tsx:622
 #: src/components/vm/disks/vmDisksCard.tsx:184
 #: src/components/vm/disks/vmDiskColumns.tsx:191
 #: src/components/vm/overview/bootOrder.tsx:175
@@ -2737,8 +2810,8 @@ msgstr "임시 이전"
 msgid "The VM $0 is running and will be forced off before deletion."
 msgstr "VM $0는 실행되고 있으므로 삭제 전 강제로 종료됩니다."
 
-#: src/components/vm/nics/vmNicsCard.tsx:676
-#: src/components/vm/nics/vmNicsCard.tsx:684
+#: src/components/vm/nics/vmNicsCard.tsx:729
+#: src/components/vm/nics/vmNicsCard.tsx:737
 #: src/components/vm/disks/vmDiskColumns.tsx:278
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr "이 장치를 분리하려면 VM이 실행 중이거나 종료되어 있어야합니다"
@@ -2759,13 +2832,26 @@ msgstr ""
 "이전된 VM 구성은 원천 호스트에서 제거 됩니다. 대상 호스트는 VM의 신규 홈이 고"
 "려됩니다."
 
-#: src/components/vm/nics/nicBody.tsx:242
+#: src/components/vm/nics/nicBody.tsx:275
 msgid "The mode influences the delivery of packets."
 msgstr "방식(mode)은 패킷 전달에 영향을 미칩니다."
 
 #: src/components/vm/disks/diskAdd.tsx:152
 msgid "The pool is empty"
 msgstr "풀이 비어 있습니다"
+
+#: src/components/vm/nics/nicBody.tsx:492
+msgid ""
+"The port on the guest. If left empty, the same port as on the host is used."
+msgstr "게스트의 포트. 만약 비워두면, 호스트에서 동일한 포트기 사용됩니다."
+
+#: src/components/vm/nics/nicBody.tsx:470
+msgid ""
+"The port on the host that is fotwarded into the guest. You can also specify "
+"a range of ports like 4000-4050."
+msgstr ""
+"게스트로 포워드된 호스트의 포트. 당신은 4000-4050과 같은 포트 범위로 지정 될 "
+"수도 있습니다."
 
 #: src/components/create-vm-dialog/createVmDialog.tsx:1006
 msgid "The selected operating system has minimum memory requirement of $0 $1"
@@ -2812,7 +2898,7 @@ msgid ""
 msgstr ""
 "이는 향상 및 실시간 이전 때문에 SPICE를 지원하지 않는 호스트를 위한 것입니다."
 
-#: src/components/vm/nics/nicBody.tsx:122
+#: src/components/vm/nics/nicBody.tsx:155
 msgid ""
 "This is the recommended type for general guest connectivity on hosts with "
 "dynamic / wireless networking configs."
@@ -2820,7 +2906,7 @@ msgstr ""
 "이는 동적 / 무선 네트워크 환경을 갖는 호스트에서 일반적인 게스트 연결을 위해 "
 "추천되는 유형입니다."
 
-#: src/components/vm/nics/nicBody.tsx:131
+#: src/components/vm/nics/nicBody.tsx:164
 msgid ""
 "This is the recommended type for general guest connectivity on hosts with "
 "static wired networking configs."
@@ -2828,7 +2914,7 @@ msgstr ""
 "이는 고정된 유선 네트워크 구성과 함께 호스트에서 일반적인 게스트 연결을 위해 "
 "추천되는 유형입니다."
 
-#: src/components/vm/nics/nicBody.tsx:137
+#: src/components/vm/nics/nicBody.tsx:170
 msgid "This is the recommended type for high performance or enhanced security."
 msgstr "이는 고성능 또는 향상된 보안을 위해 추천된 유형입니다."
 
@@ -2872,7 +2958,7 @@ msgstr "문제 해결"
 #: src/components/storagePools/createStoragePoolDialog.tsx:115
 #: src/components/vm/hostdevs/hostDevAdd.tsx:56
 #: src/components/vm/hostdevs/hostDevCard.tsx:191
-#: src/components/vm/nics/vmNicsCard.tsx:776
+#: src/components/vm/nics/vmNicsCard.tsx:829
 #: src/components/vm/overview/bootOrder.tsx:138
 #: src/components/vm/overview/bootOrder.tsx:151
 #: src/components/vm/overview/bootOrder.tsx:166
@@ -2881,6 +2967,10 @@ msgstr "문제 해결"
 #: src/components/vm/overview/bootOrder.tsx:186
 msgid "Type"
 msgstr "유형"
+
+#: src/components/vm/nics/nicBody.tsx:516
+msgid "UDP"
+msgstr "UDP"
 
 #: src/components/create-vm-dialog/createVmDialog.tsx:461
 msgid "URL (ISO image or distro install tree)"
@@ -3050,7 +3140,7 @@ msgstr ""
 "자신의 사용자 계정에 의해 소유한 프로세스와 PTY와 함께 권한 없이 제한된 접근"
 "으로 시작된 가상장비"
 
-#: src/components/common/needsShutdown.tsx:271
+#: src/components/common/needsShutdown.tsx:287
 msgid "VM needs shutdown"
 msgstr "VM 종료가 필요합니다"
 
@@ -3062,7 +3152,7 @@ msgstr "VM 상태"
 msgid "VM will launch with root permissions"
 msgstr "가상장비는 root 권한으로 시작합니다"
 
-#: src/components/common/needsShutdown.tsx:206
+#: src/components/common/needsShutdown.tsx:222
 msgid "VNC"
 msgstr "VNC"
 
@@ -3157,7 +3247,7 @@ msgstr "Vsock"
 msgid "WWPN"
 msgstr "WWPN"
 
-#: src/components/common/needsShutdown.tsx:198
+#: src/components/common/needsShutdown.tsx:214
 #: src/components/vm/overview/vmOverviewCard.tsx:219
 msgid "Watchdog"
 msgstr "와치독"
@@ -3199,6 +3289,10 @@ msgstr "추가"
 msgid "add entry"
 msgstr "항목 추가"
 
+#: src/components/vm/nics/nicBody.tsx:316
+msgid "all"
+msgstr "전체"
+
 #: src/helpers.ts:259
 msgid "bridge"
 msgstr "브릿지"
@@ -3210,6 +3304,10 @@ msgstr "cdrom"
 #: src/components/vm/overview/cpuModal.tsx:335 src/helpers.ts:252
 msgid "custom"
 msgstr "사용자 지정"
+
+#: src/components/vm/nics/vmNicsCard.tsx:852
+msgid "default"
+msgstr "기본값"
 
 #: src/helpers.ts:257
 msgid "direct"
@@ -3320,6 +3418,7 @@ msgid "no state saved"
 msgstr "저장된 상태 없음"
 
 #: src/components/networks/networkOverviewTab.tsx:327
+#: src/components/vm/nics/vmNicsCard.tsx:309
 #: src/components/vm/overview/vsock.tsx:304
 #: src/components/vm/overview/watchdog.tsx:274
 msgid "none"
@@ -3382,7 +3481,7 @@ msgstr "vCPU 최대"
 # auto translated by TM merge from project: RHEV Administration Guide,
 # version: 3.6-async1, DocId: chap-
 # Administering_and_Maintaining_the_Red_Hat_Enterprise_Virtualization_Environment
-#: src/components/common/needsShutdown.tsx:190
+#: src/components/common/needsShutdown.tsx:206
 msgid "vCPUs"
 msgstr "vCPU"
 

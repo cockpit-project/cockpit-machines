@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-10 03:42+0000\n"
-"PO-Revision-Date: 2025-11-01 17:54+0000\n"
+"POT-Creation-Date: 2025-11-16 03:40+0000\n"
+"PO-Revision-Date: 2025-11-13 14:58+0000\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <https://translate.fedoraproject.org/projects/"
 "cockpit/cockpit-machines/uk/>\n"
@@ -20,7 +20,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 5.13.3\n"
+"X-Generator: Weblate 5.14.3\n"
+
+#: src/components/vm/nics/nicBody.tsx:322
+msgid " excluding "
+msgstr " виключаючи "
 
 #: src/components/create-vm-dialog/createVmDialog.tsx:1071
 msgid "$0 $1 available at default location"
@@ -73,7 +77,7 @@ msgstr[0] "$0 вірт. проц."
 msgstr[1] "$0 вірт. проц."
 msgstr[2] "$0 вірт. проц."
 
-#: src/components/vm/nics/nicEdit.tsx:234
+#: src/components/vm/nics/nicEdit.tsx:308
 msgid "$0 virtual network interface settings"
 msgstr "Параметри інтерфейсу віртуальної мережі $0"
 
@@ -101,7 +105,7 @@ msgstr "Дія"
 #: src/components/vms/hostvmslist.tsx:262
 #: src/components/storagePools/storagePoolList.tsx:80
 #: src/components/networks/networkList.tsx:77
-#: src/components/vm/nics/vmNicsCard.tsx:602
+#: src/components/vm/nics/vmNicsCard.tsx:654
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:200
 #: src/components/vm/disks/vmDisksCard.tsx:187
 msgid "Actions"
@@ -118,7 +122,7 @@ msgstr "Активувати буфер зберігання даних для �
 
 #: src/components/networks/networkOverviewTab.tsx:281
 #: src/components/vm/hostdevs/hostDevAdd.tsx:267
-#: src/components/vm/nics/nicAdd.tsx:282
+#: src/components/vm/nics/nicBody.tsx:606 src/components/vm/nics/nicAdd.tsx:333
 #: src/components/vm/disks/diskAdd.tsx:981
 #: src/components/vm/overview/vsock.tsx:228
 #: src/components/vm/overview/watchdog.tsx:180
@@ -151,7 +155,7 @@ msgstr "Додати диск"
 msgid "Add host device"
 msgstr "Додати пристрій основної системи"
 
-#: src/components/vm/nics/vmNicsCard.tsx:128
+#: src/components/vm/nics/vmNicsCard.tsx:129
 msgid "Add network interface"
 msgstr "Додати інтерфейс мережі"
 
@@ -163,7 +167,7 @@ msgstr "Додати послідовну консоль"
 msgid "Add shared directory"
 msgstr "Додати спільний каталог"
 
-#: src/components/vm/nics/nicAdd.tsx:263
+#: src/components/vm/nics/nicAdd.tsx:313
 msgid "Add virtual network interface"
 msgstr "Додати інтерфейс віртуальної мережі"
 
@@ -188,7 +192,7 @@ msgstr ""
 
 #: src/components/networks/networkOverviewTab.tsx:153
 #: src/components/networks/networkOverviewTab.tsx:173
-#: src/components/vm/nics/vmNicsCard.tsx:206
+#: src/components/vm/nics/vmNicsCard.tsx:207
 msgid "Address"
 msgstr "Адреса"
 
@@ -224,7 +228,7 @@ msgstr ""
 msgid "Also delete all volumes inside this pool:"
 msgstr "Також вилучити усі томи у цьому буфері:"
 
-#: src/components/vm/nics/nicAdd.tsx:125
+#: src/components/vm/nics/nicAdd.tsx:127
 #: src/components/vm/disks/diskAdd.tsx:193
 msgid "Always attach"
 msgstr "Завжди долучати"
@@ -271,6 +275,10 @@ msgstr "Автоматизація"
 msgid "Autostart"
 msgstr "Автозапуск"
 
+#: src/components/vm/nics/vmNicsCard.tsx:847
+msgid "Backend"
+msgstr "Модуль обробки"
+
 #: src/components/vm/disks/vmDiskColumns.tsx:48
 msgid "Block device"
 msgstr "Блоковий пристрій"
@@ -307,7 +315,7 @@ msgid "CD/DVD disc"
 msgstr "Диск CD/DVD"
 
 #: src/components/vms/hostvmslist.tsx:99 src/components/vms/hostvmslist.tsx:240
-#: src/components/common/needsShutdown.tsx:194
+#: src/components/common/needsShutdown.tsx:210
 #: src/components/vm/vmUsageCard.tsx:65
 #: src/components/vm/overview/vmOverviewCard.tsx:201
 msgid "CPU"
@@ -335,7 +343,7 @@ msgstr "Кеш"
 #: src/components/vm/consoles/vnc.tsx:170
 #: src/components/vm/hostdevs/hostDevAdd.tsx:272
 #: src/components/vm/vmMigrateDialog.tsx:240
-#: src/components/vm/nics/nicEdit.tsx:250 src/components/vm/nics/nicAdd.tsx:285
+#: src/components/vm/nics/nicEdit.tsx:324 src/components/vm/nics/nicAdd.tsx:336
 #: src/components/vm/vmCloneDialog.tsx:124
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:254
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:140
@@ -371,7 +379,7 @@ msgstr "Змінити порядок завантаження"
 msgid "Change firmware"
 msgstr "Змінити мікропрограму"
 
-#: src/components/common/needsShutdown.tsx:281
+#: src/components/common/needsShutdown.tsx:297
 msgid "Changes pending"
 msgstr "Зміни у черзі"
 
@@ -427,6 +435,10 @@ msgstr "Базовий образ хмари"
 #: org.cockpit_project.machines.metainfo.xml:19
 msgid "Cockpit Project"
 msgstr "Проєкт Cockpit"
+
+#: src/components/vm/nics/nicBody.tsx:550
+msgid "Complex rule \"$0\" can not be edited here."
+msgstr "Складене правило «$0» тут не можна редагувати."
 
 #: src/components/vm/consoles/consoles.tsx:339
 msgid "Compress"
@@ -747,7 +759,7 @@ msgstr "Від’єднатися"
 msgid "Disconnected"
 msgstr "Від'єднано"
 
-#: src/components/common/needsShutdown.tsx:172
+#: src/components/common/needsShutdown.tsx:186
 msgid "Disk"
 msgstr "Диск"
 
@@ -842,7 +854,7 @@ msgstr "Тривалість"
 msgid "Dying"
 msgstr "Вмирає"
 
-#: src/components/vm/nics/vmNicsCard.tsx:642
+#: src/components/vm/nics/vmNicsCard.tsx:695
 #: src/components/vm/disks/diskEdit.tsx:216
 msgid "Edit"
 msgstr "Змінити"
@@ -872,11 +884,11 @@ msgstr "Редагувати інтерфейс vsock"
 msgid "Edit watchdog device type"
 msgstr "Змінити тип пристрою нагляду"
 
-#: src/components/vm/nics/vmNicsCard.tsx:630
+#: src/components/vm/nics/vmNicsCard.tsx:683
 msgid "Editing network interfaces of transient guests is not allowed"
 msgstr "Редагування інтерфейсів мережі проміжних гостьових систем заборонено"
 
-#: src/components/vm/nics/vmNicsCard.tsx:636
+#: src/components/vm/nics/vmNicsCard.tsx:689
 msgid "Editing transient network interfaces is not allowed"
 msgstr "Редагування проміжних інтерфейсів мережі заборонено"
 
@@ -983,7 +995,7 @@ msgstr "Не вдалося від'єднати спостереження"
 msgid "Failed to fetch some resources"
 msgstr "Не вдалося отримати деякі ресурси"
 
-#: src/components/vm/nics/vmNicsCard.tsx:459
+#: src/components/vm/nics/vmNicsCard.tsx:511
 msgid "Failed to fetch the IP addresses of the interfaces present in $0"
 msgstr "Не вдалося отримати IP-адреси інтерфейсів, які є у $0"
 
@@ -1059,10 +1071,8 @@ msgid "Force shut down $0?"
 msgstr "Примусово вимкнути $0?"
 
 #: src/components/vm/vmActions.tsx:554
-#, fuzzy
-#| msgid "Force shut down"
 msgid "Force shutdown and restart"
-msgstr "Примусово вимкнути"
+msgstr "Примусово вимкнути і перезапустити"
 
 #: src/components/storagePools/storageVolumeCreateBody.tsx:120
 #: src/components/storagePools/createStoragePoolDialog.tsx:257
@@ -1073,6 +1083,10 @@ msgstr "Формат"
 #: src/components/networks/createNetworkDialog.tsx:206
 msgid "Forward mode"
 msgstr "Режим переспрямовування"
+
+#: src/components/vm/nics/nicBody.tsx:616
+msgid "Forwarded ports"
+msgstr "Переспрямовані порти"
 
 #: src/components/networks/networkList.tsx:75
 msgid "Forwarding mode"
@@ -1093,7 +1107,7 @@ msgstr ""
 msgid "General"
 msgstr "Загальний"
 
-#: src/components/vm/nics/nicAdd.tsx:95
+#: src/components/vm/nics/nicAdd.tsx:97
 msgid "Generate automatically"
 msgstr "Створити автоматично"
 
@@ -1128,6 +1142,14 @@ msgstr "Графіка"
 #: src/components/vm/consoles/vnc.tsx:666
 msgid "Graphical console support not enabled"
 msgstr "Підтримку графічної консолі не увімкнено"
+
+#: src/components/vm/nics/nicBody.tsx:486
+msgid "Guest port"
+msgstr "Гостьовий порт"
+
+#: src/components/vm/nics/nicBody.tsx:490
+msgid "Guest port help"
+msgstr "Довідка з гостьового порту"
 
 #: src/app.tsx:136
 msgid "Hardware virtualization is disabled"
@@ -1165,6 +1187,18 @@ msgstr "Пристрої основної системи"
 msgid "Host name"
 msgstr "Назва вузла"
 
+#: src/components/vm/nics/nicBody.tsx:463
+msgid "Host port"
+msgstr "Порт основної системи"
+
+#: src/components/vm/nics/nicBody.tsx:398
+msgid "Host port can not be empty."
+msgstr "Поле порту основної системи не може бути порожнім."
+
+#: src/components/vm/nics/nicBody.tsx:468
+msgid "Host port help"
+msgstr "Довідка з порту основної системи"
+
 #: src/components/storagePools/createStoragePoolDialog.tsx:173
 msgid "Host should not be empty"
 msgstr "Вузол не повинен бути порожнім"
@@ -1182,9 +1216,14 @@ msgid "IP"
 msgstr "IP"
 
 #: src/components/networks/networkOverviewTab.tsx:268
-#: src/components/vm/nics/vmNicsCard.tsx:587
+#: src/components/vm/nics/nicBody.tsx:442
+#: src/components/vm/nics/vmNicsCard.tsx:639
 msgid "IP address"
 msgstr "IP-адреса"
+
+#: src/components/vm/nics/nicBody.tsx:446
+msgid "IP address help"
+msgstr "Довідка з IP-адреси"
 
 #: src/components/networks/networkOverviewTab.tsx:274
 msgid "IP address must not be empty"
@@ -1194,7 +1233,7 @@ msgstr "IP-адреса має бути непорожньою"
 msgid "IP configuration"
 msgstr "Налаштування IP"
 
-#: src/components/vm/nics/vmNicsCard.tsx:331
+#: src/components/vm/nics/vmNicsCard.tsx:383
 msgid "IPv4 Address"
 msgstr "Адреса IPv4"
 
@@ -1227,7 +1266,7 @@ msgstr "Довжина префікса IPv4 не повинна перевищ�
 msgid "IPv4 prefix length must be a multiple of 8"
 msgstr "Довжина префікса IPv4 повинна бути кратною до 8"
 
-#: src/components/vm/nics/vmNicsCard.tsx:345
+#: src/components/vm/nics/vmNicsCard.tsx:397
 msgid "IPv6 Address"
 msgstr "Адреса IPv6"
 
@@ -1267,6 +1306,14 @@ msgstr "Ідентифікатор може бути без повідомлен
 #: src/helpers.ts:233
 msgid "Idle"
 msgstr "Бездіяльність"
+
+#: src/components/vm/nics/nicBody.tsx:448
+msgid ""
+"If host IP is set to 0.0.0.0 or not set at all, the port will be bound on "
+"all IPs on the host."
+msgstr ""
+"Якщо встановлено IP-адресу основної системи 0.0.0.0 або адресу взагалі не "
+"встановлено, порт буде пов'язано з усіма IP в основній системі."
 
 #: src/app.tsx:150
 msgid "Ignore"
@@ -1345,13 +1392,17 @@ msgstr "Тип встановлення"
 msgid "Interface"
 msgstr "Інтерфейс"
 
-#: src/components/vm/nics/nicBody.tsx:188
+#: src/components/vm/nics/nicBody.tsx:221
 msgid "Interface type"
 msgstr "Тип інтерфейсу"
 
-#: src/components/vm/nics/nicBody.tsx:190
+#: src/components/vm/nics/nicBody.tsx:223
 msgid "Interface type help"
 msgstr "Довідка щодо типу інтерфейсу"
+
+#: src/components/vm/nics/nicBody.tsx:383
+msgid "Invalid IP address"
+msgstr "Некоректна IP-адреса"
 
 #: src/components/networks/createNetworkDialog.tsx:113
 #: src/components/networks/createNetworkDialog.tsx:129
@@ -1430,7 +1481,7 @@ msgstr ""
 msgid "Libvirt or hypervisor does not support UEFI"
 msgstr "У libvirt або гіпервізорі не передбачено підтримки UEFI"
 
-#: src/components/vm/nics/vmNicsCard.tsx:633
+#: src/components/vm/nics/vmNicsCard.tsx:686
 msgid "Loading available network devices"
 msgstr "Завантажуємо доступні мережеві пристрої"
 
@@ -1462,13 +1513,13 @@ msgid "MAC"
 msgstr "MAC"
 
 #: src/components/networks/networkOverviewTab.tsx:259
-#: src/components/vm/nics/vmNicsCard.tsx:582
-#: src/components/vm/nics/vmNicsCard.tsx:757
-#: src/components/vm/nics/nicEdit.tsx:70 src/components/vm/nics/nicAdd.tsx:91
+#: src/components/vm/nics/vmNicsCard.tsx:634
+#: src/components/vm/nics/vmNicsCard.tsx:810
+#: src/components/vm/nics/nicEdit.tsx:72 src/components/vm/nics/nicAdd.tsx:93
 msgid "MAC address"
 msgstr "MAC-адреса"
 
-#: src/components/vm/nics/nicEdit.tsx:167 src/components/vm/nics/nicAdd.tsx:199
+#: src/components/vm/nics/nicEdit.tsx:181 src/components/vm/nics/nicAdd.tsx:214
 msgid "MAC address already in use"
 msgstr "MAC-адресу вже використано"
 
@@ -1586,27 +1637,27 @@ msgstr "Перенести ВМ на іншу основну систему"
 msgid "Migration failed"
 msgstr "Помилка під час перенесення"
 
-#: src/components/vm/nics/nicBody.tsx:232
-#: src/components/vm/nics/vmNicsCard.tsx:191
+#: src/components/vm/nics/nicBody.tsx:265
+#: src/components/vm/nics/vmNicsCard.tsx:192
 #: src/components/vm/overview/cpuModal.tsx:317
 #: src/components/vm/overview/cpuModal.tsx:319
 msgid "Mode"
 msgstr "Режим"
 
-#: src/components/vm/nics/nicBody.tsx:236
+#: src/components/vm/nics/nicBody.tsx:269
 msgid "Mode help"
 msgstr "Довідка щодо режиму"
 
 #: src/components/vm/hostdevs/hostDevCard.tsx:211
-#: src/components/vm/nics/nicBody.tsx:75
+#: src/components/vm/nics/nicBody.tsx:108
 msgid "Model"
 msgstr "Модель"
 
-#: src/components/vm/nics/vmNicsCard.tsx:761
+#: src/components/vm/nics/vmNicsCard.tsx:814
 msgid "Model type"
 msgstr "Тип моделі"
 
-#: src/components/vm/nics/nicBody.tsx:252
+#: src/components/vm/nics/nicBody.tsx:285
 msgid "More info"
 msgstr "Додаткова інформація"
 
@@ -1628,7 +1679,7 @@ msgstr "Має бути адресою, а не ідентифікатором �
 msgid "NAT to $0"
 msgstr "NAT до $0"
 
-#: src/components/vm/nics/vmNicsCard.tsx:537
+#: src/components/vm/nics/vmNicsCard.tsx:589
 msgid "NIC $0 of VM $1 failed to change state"
 msgstr "NIC $0 ВМ $1, не вдалося змінити стан"
 
@@ -1701,19 +1752,19 @@ msgstr "Мережеве завантаження (PXE)"
 msgid "Network file system"
 msgstr "Мережева файлова система"
 
-#: src/components/common/needsShutdown.tsx:183
+#: src/components/common/needsShutdown.tsx:199
 msgid "Network interface"
 msgstr "Інтерфейс мережі"
 
-#: src/components/vm/nics/vmNicsCard.tsx:658
+#: src/components/vm/nics/vmNicsCard.tsx:711
 msgid "Network interface $0 could not be removed"
 msgstr "Не вдалося вилучити інтерфейс мережі $0"
 
-#: src/components/vm/nics/vmNicsCard.tsx:659
+#: src/components/vm/nics/vmNicsCard.tsx:712
 msgid "Network interface $0 will be removed from $1"
 msgstr "Інтерфейс мережі $0 буде вилучено з $1"
 
-#: src/components/vm/nics/nicEdit.tsx:197 src/components/vm/nics/nicAdd.tsx:228
+#: src/components/vm/nics/nicEdit.tsx:250 src/components/vm/nics/nicAdd.tsx:255
 msgid "Network interface settings could not be saved"
 msgstr "Не вдалося зберегти параметри інтерфейсу мережі"
 
@@ -1771,11 +1822,11 @@ msgstr "Не вибрано пристрою основної системи"
 msgid "No host devices"
 msgstr "Немає пристроїв основної системи"
 
-#: src/components/vm/nics/nicBody.tsx:174
+#: src/components/vm/nics/nicBody.tsx:207
 msgid "No network devices"
 msgstr "Немає пристроїв мережі"
 
-#: src/components/vm/nics/vmNicsCard.tsx:814
+#: src/components/vm/nics/vmNicsCard.tsx:886
 msgid "No network interfaces"
 msgstr "Немає інтерфейсів мережі"
 
@@ -1790,6 +1841,10 @@ msgstr "Немає доступних мереж"
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:189
 msgid "No parent"
 msgstr "Немає батьківського запису"
+
+#: src/components/vm/nics/nicBody.tsx:624
+msgid "No ports forwarded"
+msgstr "Немає переспрямованих портів"
 
 #: src/components/vm/consoles/vnc.tsx:279
 msgid "No scaling or resizing"
@@ -1823,7 +1878,7 @@ msgstr "Немає доступних буферів зберігання дан
 msgid "No storage volumes defined for this storage pool"
 msgstr "Для цього буфера зберігання сховища не визначено томів сховища"
 
-#: src/components/vm/nics/nicBody.tsx:172
+#: src/components/vm/nics/nicBody.tsx:205
 msgid "No virtual networks"
 msgstr "Немає віртуальних мереж"
 
@@ -1878,7 +1933,7 @@ msgstr ""
 "Один або декілька позначених томів використовуються доменами. Щоб уможливити "
 "вилучення цих томів, спочатку від'єднайте диски."
 
-#: src/components/vm/nics/nicEdit.tsx:67
+#: src/components/vm/nics/nicEdit.tsx:69
 #: src/components/vm/overview/memoryModal.tsx:187
 #: src/components/vm/overview/bootOrder.tsx:406
 msgid "Only editable when the guest is shut off"
@@ -1975,7 +2030,7 @@ msgstr "Сталий (типовий)"
 msgid "Permissions denied for disk images in home directories"
 msgstr "Доступ заборонено для образів дисків у домашніх каталогах"
 
-#: src/components/vm/nics/nicAdd.tsx:122
+#: src/components/vm/nics/nicAdd.tsx:124
 #: src/components/vm/disks/diskAdd.tsx:190
 msgid "Persistence"
 msgstr "Сталість"
@@ -1993,7 +2048,7 @@ msgstr "Фізичний пристрій диска"
 msgid "Physical disk device on host"
 msgstr "Фізичний пристрій у основній системі"
 
-#: src/components/vm/nics/nicEdit.tsx:167 src/components/vm/nics/nicAdd.tsx:199
+#: src/components/vm/nics/nicEdit.tsx:181 src/components/vm/nics/nicAdd.tsx:214
 msgid "Please choose a different MAC address"
 msgstr "Будь ласка, виберіть іншу MAC-адресу"
 
@@ -2040,12 +2095,20 @@ msgid "Pool's volumes are used by VMs "
 msgstr "Томи буфера використовуються ВМ "
 
 #: src/components/vm/consoles/vnc.tsx:182
-#: src/components/vm/nics/vmNicsCard.tsx:214
+#: src/components/vm/nics/vmNicsCard.tsx:215
 #: src/components/vm/disks/vmDiskColumns.tsx:53
 #: src/components/vm/overview/bootOrder.tsx:124
 #: src/components/vm/overview/bootOrder.tsx:140
 msgid "Port"
 msgstr "Порт"
+
+#: src/components/vm/nics/vmNicsCard.tsx:305
+msgid "Port forwards"
+msgstr "Переспрямування портів"
+
+#: src/components/vm/nics/nicBody.tsx:392
+msgid "Port must be 1 to 65535."
+msgstr "Значенням порту має бути число від 1 до 65535."
 
 #: src/components/vm/consoles/vnc.tsx:112
 msgid "Port must be 5900 or larger."
@@ -2060,6 +2123,7 @@ msgstr ""
 "автоматично призначила вільний порт при запуску машини."
 
 #: src/components/vm/consoles/vnc.tsx:109
+#: src/components/vm/nics/nicBody.tsx:390
 msgid "Port must be a number."
 msgstr "Порт має бути вказано числом."
 
@@ -2104,13 +2168,14 @@ msgid "Profile"
 msgstr "Профіль"
 
 #: src/components/vm/hostdevs/hostDevCard.tsx:120
+#: src/components/vm/nics/nicBody.tsx:506
 #: src/components/vm/disks/vmDiskColumns.tsx:49
 #: src/components/vm/overview/bootOrder.tsx:120
 #: src/components/vm/overview/bootOrder.tsx:181
 msgid "Protocol"
 msgstr "Протокол"
 
-#: src/components/vm/nics/nicBody.tsx:132
+#: src/components/vm/nics/nicBody.tsx:165
 msgid ""
 "Provides a bridge from the guest virtual machine directly onto the LAN. This "
 "needs a bridge device on the host with one or more physical NICs."
@@ -2119,14 +2184,14 @@ msgstr ""
 "LAN. Потребує пристрою містка у основній системі із одним або декількома "
 "фізичними NIC."
 
-#: src/components/vm/nics/nicBody.tsx:123
+#: src/components/vm/nics/nicBody.tsx:156
 msgid ""
 "Provides a connection whose details are described by the named network "
 "definition."
 msgstr ""
 "Надає з'єднання, параметри якого описано іменованим визначенням мережі."
 
-#: src/components/vm/nics/nicBody.tsx:147
+#: src/components/vm/nics/nicBody.tsx:180
 msgid "Provides a virtual LAN with NAT to the outside world."
 msgstr "Надає віртуальну LAN з NAT для зовнішнього світу."
 
@@ -2195,8 +2260,8 @@ msgstr ""
 #: src/components/networks/networkOverviewTab.tsx:81
 #: src/components/vm/hostdevs/hostDevCard.tsx:270
 #: src/components/vm/hostdevs/hostDevCard.tsx:276
-#: src/components/vm/nics/vmNicsCard.tsx:660
-#: src/components/vm/nics/vmNicsCard.tsx:675
+#: src/components/vm/nics/vmNicsCard.tsx:713
+#: src/components/vm/nics/vmNicsCard.tsx:728
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:66
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:75
 #: src/components/vm/disks/vmDiskColumns.tsx:187
@@ -2227,10 +2292,12 @@ msgid "Remove host device from VM?"
 msgstr "Вилучити пристрій основної системи з ВМ?"
 
 #: src/components/create-vm-dialog/createVmDialog.tsx:937
+#: src/components/vm/nics/nicBody.tsx:525
+#: src/components/vm/nics/nicBody.tsx:560
 msgid "Remove item"
 msgstr "Вилучити запис"
 
-#: src/components/vm/nics/vmNicsCard.tsx:657
+#: src/components/vm/nics/vmNicsCard.tsx:710
 msgid "Remove network interface?"
 msgstr "Вилучити інтерфейс мережі?"
 
@@ -2350,7 +2417,7 @@ msgstr "Запустити під час завантаження основно
 msgid "Running"
 msgstr "Працює"
 
-#: src/components/common/needsShutdown.tsx:202
+#: src/components/common/needsShutdown.tsx:218
 msgid "SPICE"
 msgstr "SPICE"
 
@@ -2373,7 +2440,7 @@ msgstr "Ключі SSH"
 
 #: src/components/vm/vmEditDescriptionDialog.tsx:91
 #: src/components/vm/consoles/vnc.tsx:167
-#: src/components/vm/nics/nicEdit.tsx:247
+#: src/components/vm/nics/nicEdit.tsx:321
 #: src/components/vm/disks/diskEdit.tsx:337
 #: src/components/vm/overview/memoryModal.tsx:206
 #: src/components/vm/overview/vsock.tsx:228
@@ -2413,7 +2480,7 @@ msgstr "Серійний номер"
 msgid "Serial ($0)"
 msgstr "Послідовна ($0)"
 
-#: src/components/common/needsShutdown.tsx:210
+#: src/components/common/needsShutdown.tsx:226
 msgid "Serial console"
 msgstr "Послідовна консоль"
 
@@ -2425,7 +2492,7 @@ msgstr "Підтримку послідовної консолі не увімк
 msgid "Set DHCP range"
 msgstr "Встановити діапазон DHCP"
 
-#: src/components/vm/nics/nicAdd.tsx:100
+#: src/components/vm/nics/nicAdd.tsx:102
 msgid "Set manually"
 msgstr "Встановити вручну"
 
@@ -2491,18 +2558,16 @@ msgstr ""
 "Вимкніть віртуальну машину, щоб розпочати редагування налаштувань "
 "мікропрограми"
 
-#: src/components/common/needsShutdown.tsx:266
+#: src/components/common/needsShutdown.tsx:282
 #: src/components/vm/vmActions.tsx:548
 #: src/components/vm/consoles/serial.tsx:196
 #: src/components/vm/consoles/vnc.tsx:706
 msgid "Shutdown and restart"
-msgstr ""
+msgstr "Вимкнути і перезапустити"
 
 #: src/components/vm/vmActions.tsx:541
-#, fuzzy
-#| msgid "Shut down $0?"
 msgid "Shutdown and restart $0?"
-msgstr "Вимкнути $0?"
+msgstr "Вимкнути і перезапустити $0?"
 
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:162 src/helpers.ts:235
 msgid "Shutting down"
@@ -2550,19 +2615,18 @@ msgstr "За допомогою знімків ви зможете поверн�
 msgid "Sockets"
 msgstr "Сокети"
 
-#: src/components/common/needsShutdown.tsx:247
-#, fuzzy
-#| msgid "Some configuration changes only take effect after a fresh boot:"
+#: src/components/common/needsShutdown.tsx:263
 msgid ""
 "Some configuration changes only take effect after a complete shutdown and "
 "restart:"
 msgstr ""
-"Деякі зміни у налаштуваннях набудуть чинності лише після перезавантаження:"
+"Деякі зміни у налаштуваннях набудуть чинності лише після повного вимикання і "
+"перезапуску:"
 
 #: src/components/storagePools/storagePoolOverviewTab.tsx:53
 #: src/components/vm/hostdevs/hostDevCard.tsx:231
-#: src/components/vm/nics/nicBody.tsx:221
-#: src/components/vm/nics/vmNicsCard.tsx:562
+#: src/components/vm/nics/nicBody.tsx:254
+#: src/components/vm/nics/vmNicsCard.tsx:614
 #: src/components/vm/disks/vmDisksCard.tsx:183
 #: src/components/vm/disks/diskAdd.tsx:719
 #: src/components/vm/disks/diskAdd.tsx:755
@@ -2636,7 +2700,7 @@ msgstr "Запуск"
 #: src/components/vms/hostvmslist.tsx:260
 #: src/components/storagePools/storagePoolList.tsx:79
 #: src/components/networks/networkList.tsx:76
-#: src/components/vm/nics/vmNicsCard.tsx:595
+#: src/components/vm/nics/vmNicsCard.tsx:647
 #: src/components/vm/overview/vmOverviewCard.tsx:182
 msgid "State"
 msgstr "Стан"
@@ -2735,11 +2799,15 @@ msgstr "Перемкніться на VNC, щоб продовжити кори�
 msgid "System"
 msgstr "Система"
 
-#: src/components/vm/nics/vmNicsCard.tsx:238
+#: src/components/vm/nics/vmNicsCard.tsx:239
 msgid "TAP device"
 msgstr "Пристрій TAP"
 
-#: src/components/common/needsShutdown.tsx:214
+#: src/components/vm/nics/nicBody.tsx:515
+msgid "TCP"
+msgstr "TCP"
+
+#: src/components/common/needsShutdown.tsx:230
 msgid "TPM"
 msgstr "TPM"
 
@@ -2748,7 +2816,7 @@ msgid "Table of selectable host devices"
 msgstr "Таблиця придатних для вибору пристроїв основної системи"
 
 #: src/components/vm/hostdevs/hostDevCard.tsx:115
-#: src/components/vm/nics/vmNicsCard.tsx:570
+#: src/components/vm/nics/vmNicsCard.tsx:622
 #: src/components/vm/disks/vmDisksCard.tsx:184
 #: src/components/vm/disks/vmDiskColumns.tsx:191
 #: src/components/vm/overview/bootOrder.tsx:175
@@ -2777,8 +2845,8 @@ msgid "The VM $0 is running and will be forced off before deletion."
 msgstr ""
 "Запущено віртуальну машину $0. Її буде примусово зупинено перед вилученням."
 
-#: src/components/vm/nics/vmNicsCard.tsx:676
-#: src/components/vm/nics/vmNicsCard.tsx:684
+#: src/components/vm/nics/vmNicsCard.tsx:729
+#: src/components/vm/nics/vmNicsCard.tsx:737
 #: src/components/vm/disks/vmDiskColumns.tsx:278
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr ""
@@ -2801,13 +2869,28 @@ msgstr ""
 "Налаштування перенесеної ВМ вилучено з основної системи джерела. Основна "
 "система призначення тепер вважається новою домівкою ВМ."
 
-#: src/components/vm/nics/nicBody.tsx:242
+#: src/components/vm/nics/nicBody.tsx:275
 msgid "The mode influences the delivery of packets."
 msgstr "Режим впливає на отримання пакетів."
 
 #: src/components/vm/disks/diskAdd.tsx:152
 msgid "The pool is empty"
 msgstr "Буфер порожній"
+
+#: src/components/vm/nics/nicBody.tsx:492
+msgid ""
+"The port on the guest. If left empty, the same port as on the host is used."
+msgstr ""
+"Порт у гостьовій системі. Якщо не заповнювати, буде використано той самий "
+"порт, що і в основній системі."
+
+#: src/components/vm/nics/nicBody.tsx:470
+msgid ""
+"The port on the host that is fotwarded into the guest. You can also specify "
+"a range of ports like 4000-4050."
+msgstr ""
+"Порт в основній системі, який буде переспрямовано до гостьової системи. Ви "
+"також можете вказати діапазон портів, наприклад 4000-4050."
 
 #: src/components/create-vm-dialog/createVmDialog.tsx:1006
 msgid "The selected operating system has minimum memory requirement of $0 $1"
@@ -2860,7 +2943,7 @@ msgstr ""
 "Призначено для основної системи, у якій не передбачено підтримки SPICE через "
 "оновлення або інтерактивному перенесенню."
 
-#: src/components/vm/nics/nicBody.tsx:122
+#: src/components/vm/nics/nicBody.tsx:155
 msgid ""
 "This is the recommended type for general guest connectivity on hosts with "
 "dynamic / wireless networking configs."
@@ -2868,7 +2951,7 @@ msgstr ""
 "Це рекомендований тип для загальної можливості з'єднань у гостьовій системі "
 "на основних системах із динамічними/бездротовими налаштуваннями мережі."
 
-#: src/components/vm/nics/nicBody.tsx:131
+#: src/components/vm/nics/nicBody.tsx:164
 msgid ""
 "This is the recommended type for general guest connectivity on hosts with "
 "static wired networking configs."
@@ -2876,7 +2959,7 @@ msgstr ""
 "Це рекомендований тип для загальної можливості з'єднань у гостьовій системі "
 "на основних системах зі статичними дротовими налаштуваннями мережі."
 
-#: src/components/vm/nics/nicBody.tsx:137
+#: src/components/vm/nics/nicBody.tsx:170
 msgid "This is the recommended type for high performance or enhanced security."
 msgstr "Це рекомендований тип для високої швидкодії і додаткового захисту."
 
@@ -2923,7 +3006,7 @@ msgstr "Діагностика проблем"
 #: src/components/storagePools/createStoragePoolDialog.tsx:115
 #: src/components/vm/hostdevs/hostDevAdd.tsx:56
 #: src/components/vm/hostdevs/hostDevCard.tsx:191
-#: src/components/vm/nics/vmNicsCard.tsx:776
+#: src/components/vm/nics/vmNicsCard.tsx:829
 #: src/components/vm/overview/bootOrder.tsx:138
 #: src/components/vm/overview/bootOrder.tsx:151
 #: src/components/vm/overview/bootOrder.tsx:166
@@ -2932,6 +3015,10 @@ msgstr "Діагностика проблем"
 #: src/components/vm/overview/bootOrder.tsx:186
 msgid "Type"
 msgstr "Тип"
+
+#: src/components/vm/nics/nicBody.tsx:516
+msgid "UDP"
+msgstr "UDP"
 
 #: src/components/create-vm-dialog/createVmDialog.tsx:461
 msgid "URL (ISO image or distro install tree)"
@@ -3103,7 +3190,7 @@ msgstr ""
 "ВМ запущено із непривілейованим обмеженим доступом з процесом і PTY, "
 "власником яких є в ваш обліковий запис користувача"
 
-#: src/components/common/needsShutdown.tsx:271
+#: src/components/common/needsShutdown.tsx:287
 msgid "VM needs shutdown"
 msgstr "ВМ потребує вимикання"
 
@@ -3115,7 +3202,7 @@ msgstr "Стан ВМ"
 msgid "VM will launch with root permissions"
 msgstr "ВМ буде запущено із правами доступу root"
 
-#: src/components/common/needsShutdown.tsx:206
+#: src/components/common/needsShutdown.tsx:222
 msgid "VNC"
 msgstr "VNC"
 
@@ -3209,7 +3296,7 @@ msgstr "Vsock"
 msgid "WWPN"
 msgstr "WWPN"
 
-#: src/components/common/needsShutdown.tsx:198
+#: src/components/common/needsShutdown.tsx:214
 #: src/components/vm/overview/vmOverviewCard.tsx:219
 msgid "Watchdog"
 msgstr "Сторожовик"
@@ -3251,6 +3338,10 @@ msgstr "додати"
 msgid "add entry"
 msgstr "додати запис"
 
+#: src/components/vm/nics/nicBody.tsx:316
+msgid "all"
+msgstr "усі"
+
 #: src/helpers.ts:259
 msgid "bridge"
 msgstr "місток"
@@ -3262,6 +3353,10 @@ msgstr "cdrom"
 #: src/components/vm/overview/cpuModal.tsx:335 src/helpers.ts:252
 msgid "custom"
 msgstr "нетиповий"
+
+#: src/components/vm/nics/vmNicsCard.tsx:852
+msgid "default"
+msgstr "типовий"
 
 #: src/helpers.ts:257
 msgid "direct"
@@ -3373,6 +3468,7 @@ msgid "no state saved"
 msgstr "немає збережених станів"
 
 #: src/components/networks/networkOverviewTab.tsx:327
+#: src/components/vm/nics/vmNicsCard.tsx:309
 #: src/components/vm/overview/vsock.tsx:304
 #: src/components/vm/overview/watchdog.tsx:274
 msgid "none"
@@ -3433,7 +3529,7 @@ msgstr "К-ть вірт. процесорів"
 msgid "vCPU maximum"
 msgstr "Макс. вірт. процесорів"
 
-#: src/components/common/needsShutdown.tsx:190
+#: src/components/common/needsShutdown.tsx:206
 msgid "vCPUs"
 msgstr "Вірт. проц."
 
