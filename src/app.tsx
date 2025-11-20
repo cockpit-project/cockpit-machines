@@ -69,7 +69,6 @@ async function getConnectionNames(): Promise<ConnectionName[]> {
 
 export const App = () => {
     const [loadingResources, setLoadingResources] = useState(true);
-    const [error, setError] = useState('');
     const [systemSocketInactive, setSystemSocketInactive] = useState(false);
     const [virtualizationEnabled, setVirtualizationEnabled] = useState(true);
     const [emptyStateIgnored, setEmptyStateIgnored] = useState(() => {
@@ -96,7 +95,12 @@ export const App = () => {
                     const errorMsgs = promises
                             .filter(promise => promise.status === 'rejected')
                             .map(promise => promise.reason.message);
-                    setError(errorMsgs.join(', '));
+                    if (errorMsgs.length > 0) {
+                        addNotification({
+                            text: _("Failed to fetch some resources"),
+                            detail: errorMsgs.join(', ')
+                        });
+                    }
                     // Get the node devices in the background since
                     // they are expensive to get and not important for
                     // displaying VMs.
@@ -167,7 +171,7 @@ export const App = () => {
             </Page>
         );
     } else return (
-        <AppActive error={error} />
+        <AppActive />
     );
 };
 
@@ -178,20 +182,16 @@ export interface Notification {
     resourceId?: string;
 }
 
-interface AppActiveProps {
-    error: string;
-}
-
 interface AppActiveState {
     path: string[],
 }
 
-class AppActive extends React.Component<AppActiveProps, AppActiveState> {
+class AppActive extends React.Component<unknown, AppActiveState> {
     onNavigate: () => void;
     consoleCardStates: ConsoleCardStates;
 
-    constructor(props: AppActiveProps) {
-        super(props);
+    constructor() {
+        super({});
         this.state = {
             path: cockpit.location.path,
         };
@@ -203,9 +203,6 @@ class AppActive extends React.Component<AppActiveProps, AppActiveState> {
 
     async componentDidMount() {
         cockpit.addEventListener("locationchanged", this.onNavigate);
-
-        if (this.props.error)
-            addNotification({ text: _("Failed to fetch some resources"), detail: this.props.error });
     }
 
     componentWillUnmount() {
