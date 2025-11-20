@@ -37,6 +37,7 @@ interface MachinesConnectionSelectorProps {
     loggedUser: cockpit.UserInfo,
     connectionName: ConnectionName,
     id: string,
+    isDisabled?: boolean,
     showInfoHelper?: boolean,
 }
 
@@ -45,6 +46,7 @@ export const MachinesConnectionSelector = ({
     loggedUser,
     connectionName,
     id,
+    isDisabled = false,
     showInfoHelper
 }: MachinesConnectionSelectorProps) => {
     if (loggedUser.id == 0)
@@ -103,11 +105,13 @@ export const MachinesConnectionSelector = ({
                    onChange={() => onValueChanged('connectionName', LIBVIRT_SYSTEM_CONNECTION)}
                    name="connectionName"
                    id="connectionName-system"
+                   isDisabled={isDisabled}
                    label={rephraseUI("connections", LIBVIRT_SYSTEM_CONNECTION)} />
             <Radio isChecked={connectionName == LIBVIRT_SESSION_CONNECTION}
                    onChange={() => onValueChanged('connectionName', LIBVIRT_SESSION_CONNECTION)}
                    name="connectionName"
                    id="connectionName-session"
+                   isDisabled={isDisabled}
                    label={rephraseUI("connections", LIBVIRT_SESSION_CONNECTION)} />
         </FormGroup>
     );
