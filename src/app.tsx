@@ -56,7 +56,7 @@ const _ = cockpit.gettext;
 
 superuser.reload_page_on_change();
 
-async function unknownConnectionName(): Promise<ConnectionName[]> {
+async function getConnectionNames(): Promise<ConnectionName[]> {
     const loggedUser = await cockpit.user();
     // The 'root' user does not have its own qemu:///session just qemu:///system
     // https://bugzilla.redhat.com/show_bug.cgi?id=1045069
@@ -83,7 +83,7 @@ export const App = () => {
         (async () => {
             await getLoggedInUser();
             getVirtXmlCapabilities(); // get these in the background, it takes quite long
-            const connectionNames = await unknownConnectionName();
+            const connectionNames = await getConnectionNames();
 
             await Promise.allSettled(connectionNames.map(async connectionName => {
                 try {
