@@ -51,6 +51,14 @@ export interface HypervisorCapabilities {
     guests: GuestCapabilities[];
 }
 
+export interface VirtInstallCapabilities {
+    virtInstallAvailable: boolean,
+    cloudInitSupported?: boolean | undefined,
+    downloadOSSupported?: boolean | undefined,
+    unattendedSupported?: boolean | undefined,
+    unattendedUserLogin?: boolean | undefined,
+}
+
 export interface VirtXmlCapabilities {
     convert_to_vnc: boolean;
 }

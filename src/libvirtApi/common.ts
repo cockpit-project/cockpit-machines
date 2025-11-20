@@ -35,6 +35,7 @@ import {
     setLoggedInUser,
     setCapabilities,
     setNodeMaxMemory,
+    setVirtInstallCapabilities,
     setVirtXmlCapabilities,
 } from "../actions/store-actions.js";
 
@@ -389,6 +390,37 @@ async function storagePoolStopOrUndefine(connectionName: ConnectionName, poolPat
     } catch (ex) {
         console.warn("storagePoolStopOrUndefine action failed:", String(ex));
     }
+}
+
+export async function getVirtInstallCapabilities() {
+    async function check_exec(argv: string[]): Promise<string | false> {
+        try {
+            return await cockpit.spawn(argv, { err: 'ignore' });
+        } catch {
+            return false;
+        }
+    }
+
+    const virtInstallAvailable = !!await check_exec(['sh', '-c', 'type virt-install']);
+    if (!virtInstallAvailable) {
+        store.dispatch(setVirtInstallCapabilities(
+            {
+                virtInstallAvailable: false,
+            }
+        ));
+        return;
+    }
+
+    const unattended_out = await check_exec(['virt-install', '--unattended=?']);
+    store.dispatch(setVirtInstallCapabilities(
+        {
+            virtInstallAvailable: true,
+            downloadOSSupported: !!await check_exec(['virt-install', '--install=?']),
+            cloudInitSupported: !!await check_exec(['virt-install', '--cloud-init=?']),
+            unattendedSupported: !!unattended_out,
+            unattendedUserLogin: !!unattended_out && unattended_out.includes('user-login'),
+        }
+    ));
 }
 
 export async function getVirtXmlCapabilities() {

@@ -44,6 +44,7 @@ import {
     getApiData,
     getLibvirtVersion,
     getLoggedInUser,
+    getVirtInstallCapabilities,
     getVirtXmlCapabilities,
 } from "./libvirtApi/common.js";
 import {
@@ -82,7 +83,10 @@ export const App = () => {
     useEffect(() => {
         (async () => {
             await getLoggedInUser();
-            getVirtXmlCapabilities(); // get these in the background, it takes quite long
+            // get these in the background, it takes quite long
+            getVirtInstallCapabilities();
+            getVirtXmlCapabilities();
+
             const connectionNames = await getConnectionNames();
 
             await Promise.allSettled(connectionNames.map(async connectionName => {
@@ -180,12 +184,6 @@ interface AppActiveProps {
 
 interface AppActiveState {
     path: string[],
-    /* virt-install feature support checks */
-    cloudInitSupported: boolean | undefined,
-    downloadOSSupported: boolean | undefined,
-    unattendedSupported: boolean | undefined,
-    unattendedUserLogin: boolean | undefined,
-    virtInstallAvailable: boolean | undefined,
 }
 
 class AppActive extends React.Component<AppActiveProps, AppActiveState> {
@@ -196,12 +194,6 @@ class AppActive extends React.Component<AppActiveProps, AppActiveState> {
         super(props);
         this.state = {
             path: cockpit.location.path,
-            /* virt-install feature support checks */
-            cloudInitSupported: undefined,
-            downloadOSSupported: undefined,
-            unattendedSupported: undefined,
-            unattendedUserLogin: undefined,
-            virtInstallAvailable: undefined,
         };
         this.getInlineNotifications = this.getInlineNotifications.bind(this);
         this.onNavigate = () => this.setState({ path: cockpit.location.path });
@@ -214,20 +206,6 @@ class AppActive extends React.Component<AppActiveProps, AppActiveState> {
 
         if (this.props.error)
             addNotification({ text: _("Failed to fetch some resources"), detail: this.props.error });
-
-        const check_exec = (argv: string[]): Promise<string | false> => cockpit.spawn(argv, { err: 'ignore' })
-                .catch(() => false);
-
-        const virtInstallAvailable = !!await check_exec(['sh', '-c', 'type virt-install']);
-        this.setState({ virtInstallAvailable });
-        if (virtInstallAvailable) {
-            const downloadOSSupported = !!await check_exec(['virt-install', '--install=?']);
-            const cloudInitSupported = !!await check_exec(['virt-install', '--cloud-init=?']);
-            const unattended_out = await check_exec(['virt-install', '--unattended=?']);
-            const unattendedSupported = !!unattended_out;
-            const unattendedUserLogin = unattendedSupported && unattended_out.includes('user-login');
-            this.setState({ cloudInitSupported, downloadOSSupported, unattendedSupported, unattendedUserLogin });
-        }
     }
 
     componentWillUnmount() {
@@ -263,17 +241,12 @@ class AppActive extends React.Component<AppActiveProps, AppActiveState> {
 
     render() {
         const { vms, config, storagePools, systemInfo, ui, networks, nodeDevices } = store.getState();
-        const { path, cloudInitSupported, downloadOSSupported, unattendedSupported, unattendedUserLogin, virtInstallAvailable } = this.state;
+        const { path } = this.state;
         const combinedVms = [...vms, ...dummyVmsFilter(vms, ui.vms)];
         const properties = {
             nodeMaxMemory: config.nodeMaxMemory,
             systemInfo,
             vms,
-            cloudInitSupported,
-            downloadOSSupported,
-            unattendedSupported,
-            unattendedUserLogin,
-            virtInstallAvailable,
         };
         const createVmAction = <CreateVmAction {...properties} mode='create' />;
         const importDiskAction = <CreateVmAction {...properties} mode='import' />;

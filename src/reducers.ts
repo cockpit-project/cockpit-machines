@@ -27,6 +27,7 @@ import {
     DELETE_UI_VM,
     DELETE_UNLISTED_VMS,
     SET_CAPABILITIES,
+    SET_VIRT_INSTALL_CAPABILITIES,
     SET_VIRT_XML_CAPABILITIES,
     SET_NODE_MAX_MEMORY,
     SET_LOGGED_IN_USER,
@@ -56,6 +57,7 @@ import type {
     StoragePool,
     Network,
     HypervisorCapabilities,
+    VirtInstallCapabilities,
     VirtXmlCapabilities,
 } from './types';
 import type { Notification } from './app';
@@ -306,6 +308,7 @@ interface SystemInfo {
     };
     libvirtVersion: number;
     loggedUser: cockpit.UserInfo | null;
+    virt_install_capabilities?: VirtInstallCapabilities;
     virt_xml_capabilities?: VirtXmlCapabilities;
 }
 
@@ -326,6 +329,11 @@ function systemInfo(state: SystemInfo | undefined, action): SystemInfo {
     }
     case SET_LOGGED_IN_USER: {
         return Object.assign({}, state, { loggedUser: action.payload.loggedUser });
+    }
+    case SET_VIRT_INSTALL_CAPABILITIES: {
+        const newState = Object.assign({}, state);
+        newState.virt_install_capabilities = action.payload.capabilities;
+        return newState;
     }
     case SET_VIRT_XML_CAPABILITIES: {
         const newState = Object.assign({}, state);
