@@ -17,6 +17,7 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import React, { useState, useEffect } from 'react';
+import { EventEmitter } from 'cockpit/event';
 
 import type { ConnectionName } from './types';
 
@@ -49,7 +50,7 @@ import {
 import {
     nodeDeviceGetAll,
 } from "./libvirtApi/nodeDevice.js";
-import { useEvent, usePageLocation, useInit } from "hooks";
+import { useEvent, useOn, usePageLocation, useInit } from "hooks";
 import store from './store.js';
 
 const _ = cockpit.gettext;
@@ -100,9 +101,67 @@ function getInlineNotifications(resourceId?: string) {
         return null;
 }
 
+interface AppInitializerEvents {
+    changed: () => void,
+}
+
+class AppInitializer extends EventEmitter<AppInitializerEvents> {
+    loadingResources: boolean = true;
+    systemSocketInactive: boolean = false;
+
+    constructor() {
+        super();
+        this.initCommonData();
+    }
+
+    async initCommonData() {
+        await getLoggedInUser();
+
+        // get these in the background, it takes quite long
+        getVirtInstallCapabilities();
+        getVirtXmlCapabilities();
+
+        const connectionNames = await getConnectionNames();
+
+        await Promise.allSettled(connectionNames.map(async connectionName => {
+            try {
+                await getLibvirtVersion({ connectionName });
+                const promises = await getApiData({ connectionName });
+                const errorMsgs = promises
+                        .filter(promise => promise.status === 'rejected')
+                        .map(promise => promise.reason.message);
+                if (errorMsgs.length > 0) {
+                    addNotification({
+                        text: _("Failed to fetch some resources"),
+                        detail: errorMsgs.join(', ')
+                    });
+                }
+                // Get the node devices in the background since
+                // they are expensive to get and not important for
+                // displaying VMs.
+                nodeDeviceGetAll({ connectionName }).catch(exc => {
+                    addNotification({
+                        text: "Failed to retrieve node devices",
+                        detail: String(exc),
+                    });
+                });
+            } catch (ex) {
+                // access denied is expected for unprivileged session
+                if (connectionName !== 'system' || superuser.allowed ||
+                    !(ex && typeof ex === 'object' && 'name' in ex && ex.name == 'org.freedesktop.DBus.Error.AccessDenied'))
+                    console.error("Failed to get libvirt version from the dbus API:", ex);
+                /* If the API call failed on system connection and the user has superuser privileges then show the Empty state screen */
+                if (connectionName == "system")
+                    this.systemSocketInactive = true;
+            }
+        }));
+
+        this.loadingResources = false;
+        this.emit("changed");
+    }
+}
+
 export const App = () => {
-    const [loadingResources, setLoadingResources] = useState(true);
-    const [systemSocketInactive, setSystemSocketInactive] = useState(false);
     const [virtualizationEnabled, setVirtualizationEnabled] = useState(true);
     const [ignoreDisabledVirtualization, setIgnoreDisabledVirtualization] = useState(() => {
         const ignored = localStorage.getItem('virtualization-disabled-ignored');
@@ -116,50 +175,8 @@ export const App = () => {
 
     const consoleCardStates = useInit(() => new ConsoleCardStates());
 
-    useEffect(() => {
-        (async () => {
-            await getLoggedInUser();
-            // get these in the background, it takes quite long
-            getVirtInstallCapabilities();
-            getVirtXmlCapabilities();
-
-            const connectionNames = await getConnectionNames();
-
-            await Promise.allSettled(connectionNames.map(async connectionName => {
-                try {
-                    await getLibvirtVersion({ connectionName });
-                    const promises = await getApiData({ connectionName });
-                    const errorMsgs = promises
-                            .filter(promise => promise.status === 'rejected')
-                            .map(promise => promise.reason.message);
-                    if (errorMsgs.length > 0) {
-                        addNotification({
-                            text: _("Failed to fetch some resources"),
-                            detail: errorMsgs.join(', ')
-                        });
-                    }
-                    // Get the node devices in the background since
-                    // they are expensive to get and not important for
-                    // displaying VMs.
-                    nodeDeviceGetAll({ connectionName }).catch(exc => {
-                        addNotification({
-                            text: "Failed to retrieve node devices",
-                            detail: String(exc),
-                        });
-                    });
-                } catch (ex) {
-                    // access denied is expected for unprivileged session
-                    if (connectionName !== 'system' || superuser.allowed ||
-                        !(ex && typeof ex === 'object' && 'name' in ex && ex.name == 'org.freedesktop.DBus.Error.AccessDenied'))
-                        console.error("Failed to get libvirt version from the dbus API:", ex);
-                    /* If the API call failed on system connection and the user has superuser privileges then show the Empty state screen */
-                    if (connectionName == "system")
-                        setSystemSocketInactive(true);
-                }
-            }));
-            setLoadingResources(false);
-        })();
-    }, []);
+    const initializer = useInit(() => new AppInitializer());
+    useOn(initializer, "changed");
 
     useEffect(() => {
         (async () => {
@@ -176,9 +193,9 @@ export const App = () => {
 
     if (!virtualizationEnabled && !ignoreDisabledVirtualization) {
         return <AppVirtDisabled setIgnored={setIgnoreDisabledVirtualization} />;
-    } else if (loadingResources) {
+    } else if (initializer.loadingResources) {
         return <AppLoading />;
-    } else if (superuser.allowed && systemSocketInactive) {
+    } else if (superuser.allowed && initializer.systemSocketInactive) {
         return <AppServiceNotRunning />;
     } else if (path.length == 0 || (path.length > 0 && path[0] == 'vms')) {
         return <AppVMs />;
