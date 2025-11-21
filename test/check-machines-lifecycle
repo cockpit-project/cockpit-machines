@@ -49,7 +49,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
 
     def testBasicLibvirtUserUnprivileged(self):
         user = self.createUser(user_group='libvirt')
-        self._testBasic(user, superuser=False)
+        self._testBasic(user, superuser=False, libvirt_group_member=True)
 
     @testlib.skipImage("No SELinux", "debian-*", "ubuntu-*", "arch", "opensuse*")
     @testlib.skipImage("crashes C bridge", "rhel-8*")
@@ -57,7 +57,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         user = self.createUser(user_group='libvirt')
         self.machine.execute(f"semanage login -a -s sysadm_u {user}")
         self.addCleanup(self.machine.execute, f"semanage login -d -s sysadm_u {user}")
-        self._testBasic(user, superuser=False)
+        self._testBasic(user, superuser=False, libvirt_group_member=True)
 
     def testBasicAdminUser(self):
         # The group in debian based distro should be sudo
@@ -73,7 +73,8 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         # Check wheel group PRIVILEGED user will see VMs and can do operations on them
         self._testBasic(user)
 
-    def _testBasic(self, user=None, *, superuser=True, expect_empty_list=False, run_pixel_tests=False):
+    def _testBasic(self, user=None, *, superuser=True, expect_empty_list=False, run_pixel_tests=False,
+                   libvirt_group_member=False):
         b = self.browser
         m = self.machine
 
@@ -111,8 +112,17 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
             b.wait_in_text(".pf-v6-c-popover__body", message)
             m.execute("virt-xml subVmTest1 --remove-device --watchdog 1 --update")
 
-        checkConnectionDescription("#import-existing-vm", "Ideal for server VMs")
-        checkConnectionDescription("#create-new-vm", "Good choice for desktop virtualization")
+        if superuser or libvirt_group_member:
+            checkConnectionDescription("#import-existing-vm", "Ideal for server VMs")
+            checkConnectionDescription("#create-new-vm", "Good choice for desktop virtualization")
+        else:
+            b.click("#create-new-vm")
+            b.wait_visible("#create-vm-dialog")
+            b.wait_visible("#connectionName-system:disabled")
+            b.wait_visible("#connectionName-session:disabled")
+            b.click('#create-vm-dialog button:contains("Cancel")')
+            b.wait_not_present("#create-vm-dialog")
+
         checkNeedsShutdownLabel("Watchdog")
 
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
