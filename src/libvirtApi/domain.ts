@@ -932,6 +932,25 @@ export async function domainGet({
     }
 }
 
+export async function domainGetByName({
+    connectionName,
+    name,
+} : {
+    connectionName: ConnectionName,
+    name: string
+}): Promise<void> {
+    try {
+        const [objPath] = await call<[string]>(
+            connectionName, '/org/libvirt/QEMU',
+            'org.libvirt.Connect', 'DomainLookupByName',
+            [name], { timeout, type: 's' }
+        );
+        await domainGet({ connectionName, id: objPath });
+    } catch (ex) {
+        console.warn('GET_VM_BY_NAME action failed:', String(ex));
+    }
+}
+
 export async function domainGetAll({ connectionName } : { connectionName: ConnectionName }): Promise<void> {
     try {
         const [objPaths] = await call<[string[]]>(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListDomains', [0],
