@@ -47,6 +47,7 @@ import {
     getVirtInstallCapabilities,
     getVirtXmlCapabilities,
 } from "./libvirtApi/common.js";
+import { domainGetAll, domainGetByName } from './libvirtApi/domain';
 import {
     nodeDeviceGetAll,
 } from "./libvirtApi/nodeDevice.js";
@@ -109,6 +110,17 @@ class AppInitializer extends EventEmitter<AppInitializerEvents> {
     loadingResources: boolean = true;
     systemSocketInactive: boolean = false;
 
+    #commonDataInited: boolean = false;
+    #vmsInited: boolean = true;
+
+    #update() {
+        const loading = !(this.#commonDataInited && this.#vmsInited);
+        if (loading != this.loadingResources) {
+            this.loadingResources = loading;
+            this.emit("changed");
+        }
+    }
+
     #initPromise: Promise<void> | null = null;
 
     init(): Promise<void> {
@@ -157,19 +169,58 @@ class AppInitializer extends EventEmitter<AppInitializerEvents> {
                 }
             }));
 
-            this.loadingResources = false;
-            this.emit("changed");
+            this.#commonDataInited = true;
+            this.#update();
         };
 
         this.#initPromise = doit();
         return this.#initPromise;
+    }
+
+    #allVmsPromise: Promise<void> | null = null;
+
+    initAllVMs(quiet: boolean = false): Promise<void> {
+        if (this.#allVmsPromise)
+            return this.#allVmsPromise;
+
+        const doit = async () => {
+            const connectionNames = await getConnectionNames();
+            if (!quiet)
+                this.#vmsInited = false;
+            this.#update();
+            await Promise.allSettled(connectionNames.map(async connectionName => {
+                await domainGetAll({ connectionName }); // never fails
+            }));
+            this.#vmsInited = true;
+            this.#update();
+        };
+
+        this.#allVmsPromise = doit();
+        return this.#allVmsPromise;
+    }
+
+    #vmRequested: string = "";
+
+    async initVM(name: string, connectionName: ConnectionName) {
+        const key = name + ":" + connectionName;
+        if (this.#allVmsPromise || this.#vmRequested == key)
+            return;
+        this.#vmRequested = key;
+
+        this.#vmsInited = false;
+        this.#update();
+        await domainGetByName({ connectionName, name }); // never fails
+        if (this.#vmRequested == key) {
+            this.#vmsInited = true;
+            this.#update();
+        }
     }
 }
 
 const initializer = new AppInitializer();
 
 export async function getVms(): Promise<VM[]> {
-    await initializer.init();
+    await initializer.initAllVMs(true);
     return store.getState().vms;
 }
 
@@ -202,7 +253,24 @@ export const App = () => {
         })();
     }, []);
 
+    // Trigger initializations.  When we are on the details page for a
+    // single VM, only that VM is loaded.  Otherwise, all VMs are
+    // loaded.  We load all VMs even when we are on the page for
+    // storage pools etc, since that way we don't have to worry
+    // whether or not they use the list of global VMs.
+
+    let showVM: false | { name: string, connection: ConnectionName } = false;
+
     initializer.init();
+    if (path.length > 0 && path[0] == 'vm') {
+        const { name, connection } = cockpit.location.options;
+        if (typeof name == "string" && (connection == "system" || connection == "session")) {
+            showVM = { name, connection };
+            initializer.initVM(name, connection);
+        }
+    } else {
+        initializer.initAllVMs();
+    }
 
     if (!virtualizationEnabled && !ignoreDisabledVirtualization) {
         return <AppVirtDisabled setIgnored={setIgnoreDisabledVirtualization} />;
@@ -212,8 +280,8 @@ export const App = () => {
         return <AppServiceNotRunning />;
     } else if (path.length == 0 || (path.length > 0 && path[0] == 'vms')) {
         return <AppVMs />;
-    } else if (path.length > 0 && path[0] == 'vm') {
-        return <AppVM consoleCardStates={consoleCardStates} />;
+    } else if (showVM) {
+        return <AppVM consoleCardStates={consoleCardStates} {...showVM} />;
     } else if (path.length > 0 && path[0] == 'storages') {
         return <AppStoragePools />;
     } else if (path.length > 0 && path[0] == 'networks') {
@@ -309,18 +377,22 @@ const AppVMs = () => {
 
 const AppVM = ({
     consoleCardStates,
+    name,
+    connection,
 } : {
     consoleCardStates: ConsoleCardStates,
+    name: string,
+    connection: ConnectionName,
 }) => {
     const { vms, config, storagePools, systemInfo, ui, networks, nodeDevices } = store.getState();
     const combinedVms = [...vms, ...dummyVmsFilter(vms, ui.vms)];
 
-    const vm = combinedVms.find(vm => vm.name == cockpit.location.options.name && vm.connectionName == cockpit.location.options.connection);
+    const vm = combinedVms.find(vm => vm.name == name && vm.connectionName == connection);
     if (!vm) {
         return (
             <>
                 {getInlineNotifications()}
-                <EmptyStatePanel title={ cockpit.format(_("VM $0 does not exist on $1 connection"), cockpit.location.options.name, cockpit.location.options.connection) }
+                <EmptyStatePanel title={ cockpit.format(_("VM $0 does not exist on $1 connection"), name, connection) }
                     action={_("Go to VMs list")}
                     actionVariant="link"
                     onAction={() => cockpit.location.go(["vms"])}
@@ -331,7 +403,7 @@ const AppVM = ({
         return (
             <>
                 {getInlineNotifications()}
-                <EmptyStatePanel title={cockpit.format(vm.downloadProgress ? _("Downloading image for VM $0") : _("Creating VM $0"), cockpit.location.options.name)}
+                <EmptyStatePanel title={cockpit.format(vm.downloadProgress ? _("Downloading image for VM $0") : _("Creating VM $0"), name)}
                     action={_("Go to VMs list")}
                     actionVariant="link"
                     onAction={() => cockpit.location.go(["vms"])}

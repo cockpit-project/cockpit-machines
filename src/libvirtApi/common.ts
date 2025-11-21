@@ -45,7 +45,6 @@ import {
 
 import {
     domainGet,
-    domainGetAll,
     ensureBalloonPolling,
 } from "../libvirtApi/domain.js";
 import {
@@ -444,7 +443,6 @@ export function getApiData({
     dbusClient(connectionName);
     startEventMonitor({ connectionName });
     return Promise.allSettled([
-        domainGetAll({ connectionName }),
         storagePoolGetAll({ connectionName }),
         interfaceGetAll(),
         networkGetAll({ connectionName }),
