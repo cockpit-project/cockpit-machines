@@ -16,7 +16,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { EventEmitter } from 'cockpit/event';
 
 import type { ConnectionName } from './types';
 
@@ -49,7 +50,7 @@ import {
 import {
     nodeDeviceGetAll,
 } from "./libvirtApi/nodeDevice.js";
-import { useEvent, usePageLocation, useInit } from "hooks";
+import { useEvent, useOn, usePageLocation, useInit } from "hooks";
 import store from './store.js';
 
 const _ = cockpit.gettext;
@@ -100,25 +101,23 @@ function getInlineNotifications(resourceId?: string) {
         return null;
 }
 
-export const App = () => {
-    const [loadingResources, setLoadingResources] = useState(true);
-    const [systemSocketInactive, setSystemSocketInactive] = useState(false);
-    const [virtualizationEnabled, setVirtualizationEnabled] = useState(true);
-    const [ignoreDisabledVirtualization, setIgnoreDisabledVirtualization] = useState(() => {
-        const ignored = localStorage.getItem('virtualization-disabled-ignored');
-        const defaultValue = false;
+interface AppStateEvents {
+    changed: () => void,
+}
 
-        return ignored !== null ? JSON.parse(ignored) : defaultValue;
-    });
+class AppState extends EventEmitter<AppStateEvents> {
+    loadingResources: boolean = true;
+    systemSocketInactive: boolean = false;
 
-    useEvent(superuser, "changed");
-    const { path } = usePageLocation();
+    #initPromise: Promise<void> | null = null;
 
-    const consoleCardStates = useInit(() => new ConsoleCardStates());
+    init(): Promise<void> {
+        if (this.#initPromise)
+            return this.#initPromise;
 
-    useEffect(() => {
-        (async () => {
+        const doit = async () => {
             await getLoggedInUser();
+
             // get these in the background, it takes quite long
             getVirtInstallCapabilities();
             getVirtXmlCapabilities();
@@ -154,12 +153,38 @@ export const App = () => {
                         console.error("Failed to get libvirt version from the dbus API:", ex);
                     /* If the API call failed on system connection and the user has superuser privileges then show the Empty state screen */
                     if (connectionName == "system")
-                        setSystemSocketInactive(true);
+                        this.systemSocketInactive = true;
                 }
             }));
-            setLoadingResources(false);
-        })();
-    }, []);
+
+            this.loadingResources = false;
+            this.emit("changed");
+        };
+
+        this.#initPromise = doit();
+        return this.#initPromise;
+    }
+}
+
+export const AppStateContext = React.createContext<AppState | null>(null);
+export const useAppState = () => useContext(AppStateContext);
+
+export const App = () => {
+    const state = useInit(() => new AppState());
+    useOn(state, "changed");
+
+    const [virtualizationEnabled, setVirtualizationEnabled] = useState(true);
+    const [ignoreDisabledVirtualization, setIgnoreDisabledVirtualization] = useState(() => {
+        const ignored = localStorage.getItem('virtualization-disabled-ignored');
+        const defaultValue = false;
+
+        return ignored !== null ? JSON.parse(ignored) : defaultValue;
+    });
+
+    useEvent(superuser, "changed");
+    const { path } = usePageLocation();
+
+    const consoleCardStates = useInit(() => new ConsoleCardStates());
 
     useEffect(() => {
         (async () => {
@@ -174,24 +199,31 @@ export const App = () => {
         })();
     }, []);
 
+    // Trigger global initialization
+    state.init();
+
+    let body = null;
     if (!virtualizationEnabled && !ignoreDisabledVirtualization) {
-        return <AppVirtDisabled setIgnored={setIgnoreDisabledVirtualization} />;
-    } else if (loadingResources) {
-        return <AppLoading />;
-    } else if (superuser.allowed && systemSocketInactive) {
-        return <AppServiceNotRunning />;
+        body = <AppVirtDisabled setIgnored={setIgnoreDisabledVirtualization} />;
+    } else if (state.loadingResources) {
+        body = <AppLoading />;
+    } else if (superuser.allowed && state.systemSocketInactive) {
+        body = <AppServiceNotRunning />;
     } else if (path.length == 0 || (path.length > 0 && path[0] == 'vms')) {
-        return <AppVMs />;
+        body = <AppVMs />;
     } else if (path.length > 0 && path[0] == 'vm') {
-        return <AppVM consoleCardStates={consoleCardStates} />;
+        body = <AppVM consoleCardStates={consoleCardStates} />;
     } else if (path.length > 0 && path[0] == 'storages') {
-        return <AppStoragePools />;
+        body = <AppStoragePools />;
     } else if (path.length > 0 && path[0] == 'networks') {
-        return <AppNetworks />;
-    } else {
-        // XXX - not found?
-        return null;
+        body = <AppNetworks />;
     }
+
+    return (
+        <AppStateContext.Provider value={state}>
+            {body}
+        </AppStateContext.Provider>
+    );
 };
 
 const AppVirtDisabled = ({
