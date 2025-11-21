@@ -286,9 +286,9 @@ function vms(state: VM[] | undefined, action): VM[] {
                         (action.transientOnly && vm.persistent)));
     }
     case DELETE_UNLISTED_VMS: {
-        if (action.vmIDs)
+        if (action.vmIds)
             return state
-                    .filter(vm => (action.connectionName !== vm.connectionName || action.vmIDs.indexOf(vm.id) >= 0));
+                    .filter(vm => (action.connectionName !== vm.connectionName || action.vmIds.indexOf(vm.id) >= 0));
         else
             return state
                     .filter(vm => (action.connectionName !== vm.connectionName || action.vmNames.indexOf(vm.name) >= 0));
