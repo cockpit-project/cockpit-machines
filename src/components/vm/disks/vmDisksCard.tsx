@@ -65,11 +65,9 @@ const VmDiskCell = ({ value, id } : { value: React.ReactNode, id: string }) => {
 
 export const VmDisksActions = ({
     vm,
-    vms,
     supportedDiskBusTypes
 } : {
     vm: VM,
-    vms: VM[],
     supportedDiskBusTypes: string[],
 }) => {
     const Dialogs = useDialogs();
@@ -77,7 +75,7 @@ export const VmDisksActions = ({
 
     function open() {
         Dialogs.show(<AddDiskModalBody idPrefix={idPrefix + "-adddisk"}
-                                       vm={vm} vms={vms}
+                                       vm={vm}
                                        supportedDiskBusTypes={supportedDiskBusTypes} />);
     }
 
@@ -96,7 +94,6 @@ interface VMDiskWithData extends VMDisk {
 
 interface VmDisksCardLibvirtProps {
     vm: VM,
-    vms: VM[],
     storagePools: StoragePool[],
     supportedDiskBusTypes: string[],
 }
@@ -142,7 +139,7 @@ export class VmDisksCardLibvirt extends React.Component<VmDisksCardLibvirtProps>
     }
 
     render() {
-        const { vm, vms, storagePools, supportedDiskBusTypes } = this.props;
+        const { vm, storagePools, supportedDiskBusTypes } = this.props;
 
         const disks = Object.getOwnPropertyNames(vm.disks)
                 .sort() // by 'target'
@@ -154,7 +151,6 @@ export class VmDisksCardLibvirt extends React.Component<VmDisksCardLibvirtProps>
         return (
             <VmDisksCard
                 vm={vm}
-                vms={vms}
                 disks={disks}
                 storagePools={storagePools}
                 supportedDiskBusTypes={supportedDiskBusTypes} />
@@ -164,13 +160,11 @@ export class VmDisksCardLibvirt extends React.Component<VmDisksCardLibvirtProps>
 
 export const VmDisksCard = ({
     vm,
-    vms,
     disks,
     supportedDiskBusTypes,
     storagePools
 } : {
     vm: VM,
-    vms: VM[],
     disks: VMDiskWithData[],
     supportedDiskBusTypes: string[],
     storagePools: StoragePool[],
@@ -212,7 +206,6 @@ export const VmDisksCard = ({
 
         columns.push({
             title: <DiskActions vm={vm}
-                                vms={vms}
                                 disk={disk}
                                 storagePools={storagePools}
                                 supportedDiskBusTypes={supportedDiskBusTypes}

@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import cockpit from 'cockpit';
 
 import type { ConnectionName, VM } from '../../../types';
@@ -43,6 +43,7 @@ import {
     SOCAT_EXAMPLE_HEADER,
     VSOCK_INFO_MESSAGE,
 } from './helpers.jsx';
+import { getVms } from '../../../app';
 
 const _ = cockpit.gettext;
 
@@ -108,21 +109,28 @@ interface DialogError {
 
 export const VsockModal = ({
     vm,
-    vms,
     vmVsockNormalized,
     isVsockAttached,
     idPrefix
 } : {
     vm: VM,
-    vms: VM[],
     vmVsockNormalized: { auto: boolean, address: number },
     isVsockAttached: boolean,
     idPrefix: string,
 }) => {
     const [dialogError, setDialogError] = useState<undefined | DialogError>();
     const [auto, setAuto] = useState(vm.vsock.cid.auto ? vmVsockNormalized.auto : true);
-    const [address, _setAddress] = useState<number>(vmVsockNormalized.address || getNextAvailableVsockCID(vm.name, vm.connectionName, vms));
+    const [address, _setAddress] = useState<number>(vmVsockNormalized.address);
     const [actionInProgress, setActionInProgress] = useState<undefined | string>(undefined);
+    const [vms, setVms] = useState<VM[] | undefined>();
+
+    useEffect(() => {
+        getVms().then(vms => {
+            setVms(vms);
+            if (!vmVsockNormalized.address)
+                _setAddress(getNextAvailableVsockCID(vm.name, vm.connectionName, vms));
+        });
+    }, [vm.name, vm.connectionName, vmVsockNormalized.address]);
 
     const setAddress = (value: string) => {
         // Allow empty string
@@ -184,7 +192,7 @@ export const VsockModal = ({
             return <NeedsShutdownAlert idPrefix={idPrefix} />;
     };
 
-    const vsockUsage = getVsockUsageMessage(vm.name, vm.connectionName, vms, auto, address);
+    const vsockUsage = vms ? getVsockUsageMessage(vm.name, vm.connectionName, vms, auto, address) : undefined;
 
     const body = (
         <Form onSubmit={e => e.preventDefault()} isHorizontal>
@@ -209,8 +217,8 @@ export const VsockModal = ({
                 </Flex>
                 <FormHelper fieldId="vsock-cid-usage"
                     variant="warning"
-                    helperTextInvalid={vsockUsage as unknown as string} // XXX - fix FormHelper
-                    helperText={vsockUsage as unknown as string} />
+                    helperTextInvalid={vsockUsage}
+                    helperText={vsockUsage} />
             </FormGroup>
         </Form>
     );
@@ -283,11 +291,9 @@ export const VsockModal = ({
 
 export const VsockLink = ({
     vm,
-    vms,
     idPrefix
 } : {
     vm: VM,
-    vms: VM[],
     idPrefix: string,
 }) => {
     const Dialogs = useDialogs();
@@ -309,7 +315,7 @@ export const VsockLink = ({
     }
 
     function open() {
-        Dialogs.show(<VsockModal vm={vm} vms={vms} vmVsockNormalized={vmVsockNormalized} isVsockAttached={isVsockAttached} idPrefix={idPrefix} />);
+        Dialogs.show(<VsockModal vm={vm} vmVsockNormalized={vmVsockNormalized} isVsockAttached={isVsockAttached} idPrefix={idPrefix} />);
     }
 
     return (

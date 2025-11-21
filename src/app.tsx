@@ -19,7 +19,7 @@
 import React, { useState, useEffect } from 'react';
 import { EventEmitter } from 'cockpit/event';
 
-import type { ConnectionName } from './types';
+import type { ConnectionName, VM } from './types';
 
 import { AlertGroup, type AlertProps } from "@patternfly/react-core/dist/esm/components/Alert";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -109,56 +109,68 @@ class AppInitializer extends EventEmitter<AppInitializerEvents> {
     loadingResources: boolean = true;
     systemSocketInactive: boolean = false;
 
-    constructor() {
-        super();
-        this.initCommonData();
-    }
+    #initPromise: Promise<void> | null = null;
 
-    async initCommonData() {
-        await getLoggedInUser();
+    init(): Promise<void> {
+        if (this.#initPromise)
+            return this.#initPromise;
 
-        // get these in the background, it takes quite long
-        getVirtInstallCapabilities();
-        getVirtXmlCapabilities();
+        const doit = async () => {
+            await getLoggedInUser();
 
-        const connectionNames = await getConnectionNames();
+            // get these in the background, it takes quite long
+            getVirtInstallCapabilities();
+            getVirtXmlCapabilities();
 
-        await Promise.allSettled(connectionNames.map(async connectionName => {
-            try {
-                await getLibvirtVersion({ connectionName });
-                const promises = await getApiData({ connectionName });
-                const errorMsgs = promises
-                        .filter(promise => promise.status === 'rejected')
-                        .map(promise => promise.reason.message);
-                if (errorMsgs.length > 0) {
-                    addNotification({
-                        text: _("Failed to fetch some resources"),
-                        detail: errorMsgs.join(', ')
+            const connectionNames = await getConnectionNames();
+
+            await Promise.allSettled(connectionNames.map(async connectionName => {
+                try {
+                    await getLibvirtVersion({ connectionName });
+                    const promises = await getApiData({ connectionName });
+                    const errorMsgs = promises
+                            .filter(promise => promise.status === 'rejected')
+                            .map(promise => promise.reason.message);
+                    if (errorMsgs.length > 0) {
+                        addNotification({
+                            text: _("Failed to fetch some resources"),
+                            detail: errorMsgs.join(', ')
+                        });
+                    }
+                    // Get the node devices in the background since
+                    // they are expensive to get and not important for
+                    // displaying VMs.
+                    nodeDeviceGetAll({ connectionName }).catch(exc => {
+                        addNotification({
+                            text: "Failed to retrieve node devices",
+                            detail: String(exc),
+                        });
                     });
+                } catch (ex) {
+                    // access denied is expected for unprivileged session
+                    if (connectionName !== 'system' || superuser.allowed ||
+                        !(ex && typeof ex === 'object' && 'name' in ex && ex.name == 'org.freedesktop.DBus.Error.AccessDenied'))
+                        console.error("Failed to get libvirt version from the dbus API:", ex);
+                    /* If the API call failed on system connection and the user has superuser privileges then show the Empty state screen */
+                    if (connectionName == "system")
+                        this.systemSocketInactive = true;
                 }
-                // Get the node devices in the background since
-                // they are expensive to get and not important for
-                // displaying VMs.
-                nodeDeviceGetAll({ connectionName }).catch(exc => {
-                    addNotification({
-                        text: "Failed to retrieve node devices",
-                        detail: String(exc),
-                    });
-                });
-            } catch (ex) {
-                // access denied is expected for unprivileged session
-                if (connectionName !== 'system' || superuser.allowed ||
-                    !(ex && typeof ex === 'object' && 'name' in ex && ex.name == 'org.freedesktop.DBus.Error.AccessDenied'))
-                    console.error("Failed to get libvirt version from the dbus API:", ex);
-                /* If the API call failed on system connection and the user has superuser privileges then show the Empty state screen */
-                if (connectionName == "system")
-                    this.systemSocketInactive = true;
-            }
-        }));
+            }));
 
-        this.loadingResources = false;
-        this.emit("changed");
+            this.loadingResources = false;
+            this.emit("changed");
+        };
+
+        this.#initPromise = doit();
+        return this.#initPromise;
     }
+}
+
+const initializer = new AppInitializer();
+
+export async function getVms(): Promise<VM[]> {
+    await initializer.init();
+    return store.getState().vms;
 }
 
 export const App = () => {
@@ -175,7 +187,6 @@ export const App = () => {
 
     const consoleCardStates = useInit(() => new ConsoleCardStates());
 
-    const initializer = useInit(() => new AppInitializer());
     useOn(initializer, "changed");
 
     useEffect(() => {
@@ -190,6 +201,8 @@ export const App = () => {
             }
         })();
     }, []);
+
+    initializer.init();
 
     if (!virtualizationEnabled && !ignoreDisabledVirtualization) {
         return <AppVirtDisabled setIgnored={setIgnoreDisabledVirtualization} />;
@@ -338,7 +351,9 @@ const AppVM = ({
         : (
             <>
                 {getInlineNotifications(vm.id)}
-                <VmDetailsPage vm={vm} vms={vms} config={config}
+                <VmDetailsPage
+                    vm={vm}
+                    config={config}
                     consoleCardState={consoleCardStates.get(vm)}
                     libvirtVersion={systemInfo.libvirtVersion}
                     storagePools={(storagePools || []).filter(pool => pool && pool.connectionName == connectionName)}

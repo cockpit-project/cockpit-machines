@@ -60,7 +60,6 @@ const _ = cockpit.gettext;
 
 interface VmOverviewCardProps {
     vm: VM;
-    vms: VM[];
     maxVcpu: optString;
     cpuModels: string[];
     config: Config;
@@ -115,7 +114,7 @@ class VmOverviewCard extends React.Component<VmOverviewCardProps, VmOverviewCard
     }
 
     render() {
-        const { vm, vms, libvirtVersion } = this.props;
+        const { vm, libvirtVersion } = this.props;
         const idPrefix = vmId(vm.name);
 
         const autostart = (
@@ -246,7 +245,7 @@ class VmOverviewCard extends React.Component<VmOverviewCardProps, VmOverviewCard
                                 />
                             </DescriptionListTerm>
                             <DescriptionListDescription id={`${idPrefix}-vsock`}>
-                                <VsockLink vm={vm} vms={vms} idPrefix={idPrefix} />
+                                <VsockLink vm={vm} idPrefix={idPrefix} />
                             </DescriptionListDescription>
                         </DescriptionListGroup>
                     </DescriptionList>
