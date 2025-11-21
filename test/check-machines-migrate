@@ -193,7 +193,7 @@ class TestMachinesMigration(machineslib.VirtualMachinesCase):
         b.click("#migrate-button")
         if fail:
             with b.wait_timeout(120):
-                b.wait_visible(".pf-v6-c-modal-box__body .pf-v6-c-alert .pf-v6-c-alert__title:contains('Migration failed')")  # noqa: E501
+                b.wait_in_text(".pf-v6-c-modal-box__body .pf-v6-c-alert .pf-v6-c-alert__title", "Migration failed")
 
             if fail == "libvirtd":
                 machine2.execute(f"systemctl start {self.getLibvirtServiceName()}.service")

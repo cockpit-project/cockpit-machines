@@ -37,7 +37,7 @@ class TestMachinesVirtualization(machineslib.VirtualMachinesCase):
 
         self.login_and_go("/machines")
 
-        b.wait_visible("div.pf-v6-c-empty-state:contains('Hardware virtualization is disabled')")
+        b.wait_in_text("div.pf-v6-c-empty-state", "Hardware virtualization is disabled")
 
         b.assert_pixels(".pf-v6-c-empty-state", "virtualization-disabled-warning")
 
@@ -47,7 +47,7 @@ class TestMachinesVirtualization(machineslib.VirtualMachinesCase):
         b.wait_visible("#card-pf-networks")
         b.wait_visible("#virtual-machines-listing")
 
-        b.wait_visible(".pf-v6-c-page .pf-v6-c-card__title:contains('Virtual machines')")
+        b.wait_text(".pf-v6-c-page .pf-v6-c-card__title", "Virtual machines")
 
     def testLibvirt(self):
         b = self.browser
