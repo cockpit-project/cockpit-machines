@@ -40,6 +40,7 @@ import {
     validateDialogBodyValues
 } from './nicBody.jsx';
 import { virtXmlHotAdd, domainGet, domainIsRunning } from '../../../libvirtApi/domain.js';
+import { AppState } from '../../../app';
 
 import './nic.css';
 
@@ -133,8 +134,8 @@ const PermanentChange = ({
 interface AddNICProps {
     idPrefix: string,
     vm: VM,
-    vms: VM[],
     availableSources: AvailableSources;
+    appState: AppState;
 }
 
 interface AddNICState extends DialogValues {
@@ -207,7 +208,7 @@ export class AddNIC extends React.Component<AddNICProps, AddNICState> {
 
     async add() {
         const Dialogs = this.context;
-        const { vm, vms } = this.props;
+        const { vm } = this.props;
 
         // disallow duplicate MACs
         if (this.state.setNetworkMac && vm.interfaces.some(iface => iface.mac === this.state.networkMac)) {
@@ -239,7 +240,9 @@ export class AddNIC extends React.Component<AddNICProps, AddNICState> {
                 vm,
                 "network",
                 {
-                    mac: this.state.setNetworkMac ? this.state.networkMac : getRandomMac(vms),
+                    mac: (this.state.setNetworkMac
+                        ? this.state.networkMac
+                        : getRandomMac(await this.props.appState.getVms())),
                     model: this.state.networkModel,
                     type: this.state.networkType,
                     backend: { type: backend },
