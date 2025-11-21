@@ -37,7 +37,6 @@ import { NetworkList } from "./components/networks/networkList.jsx";
 import { VmDetailsPage } from './components/vm/vmDetailsPage.jsx';
 import { ConsoleCardStates } from './components/vm/consoles/consoles.jsx';
 import { CreateVmAction } from "./components/create-vm-dialog/createVmDialog.jsx";
-import LibvirtSlate from "./components/libvirtSlate.jsx";
 import { dummyVmsFilter, vmId, addNotification, dismissNotification } from "./helpers.js";
 import { InlineNotification } from 'cockpit-components-inline-notification.jsx';
 import {
@@ -50,7 +49,7 @@ import {
 import {
     nodeDeviceGetAll,
 } from "./libvirtApi/nodeDevice.js";
-import { useEvent } from "hooks";
+import { useEvent, usePageLocation, useInit } from "hooks";
 import store from './store.js';
 
 const _ = cockpit.gettext;
@@ -67,11 +66,45 @@ async function getConnectionNames(): Promise<ConnectionName[]> {
         return ["system", "session"];
 }
 
+export interface Notification {
+    text: string;
+    detail: string;
+    type?: AlertProps["variant"];
+    resourceId?: string;
+}
+
+function getInlineNotifications(resourceId?: string) {
+    const notes = store.getState().ui.notifications.map((notification, index) => {
+        if (!resourceId || notification.resourceId == resourceId) {
+            return (
+                <InlineNotification
+                    key={index}
+                    type={notification.type || 'danger'}
+                    isLiveRegion
+                    isInline={false}
+                    onDismiss={() => dismissNotification(index)}
+                    text={notification.text}
+                    detail={notification.detail}
+                />
+            );
+        } else
+            return null;
+    }).filter(Boolean);
+    if (notes.length > 0) {
+        return (
+            <AlertGroup isToast>
+                {notes}
+            </AlertGroup>
+        );
+    } else
+        return null;
+}
+
 export const App = () => {
     const [loadingResources, setLoadingResources] = useState(true);
     const [systemSocketInactive, setSystemSocketInactive] = useState(false);
     const [virtualizationEnabled, setVirtualizationEnabled] = useState(true);
-    const [emptyStateIgnored, setEmptyStateIgnored] = useState(() => {
+    const [ignoreDisabledVirtualization, setIgnoreDisabledVirtualization] = useState(() => {
         const ignored = localStorage.getItem('virtualization-disabled-ignored');
         const defaultValue = false;
 
@@ -79,6 +112,10 @@ export const App = () => {
     });
 
     useEvent(superuser, "changed");
+    const { path } = usePageLocation();
+
+    const consoleCardStates = useInit(() => new ConsoleCardStates());
+
     useEffect(() => {
         (async () => {
             await getLoggedInUser();
@@ -137,192 +174,192 @@ export const App = () => {
         })();
     }, []);
 
-    if (!virtualizationEnabled && !emptyStateIgnored) {
-        return (
-            <Page className="pf-m-no-sidebar">
-                <PageSection hasBodyWrapper={false}>
-                    <EmptyState headingLevel="h4" icon={VirtualMachineIcon} titleText={_("Hardware virtualization is disabled")} className="virtualization-disabled-empty-state">
-                        <EmptyStateBody>
-                            <Content>
-                                <Content component="p">{_("Enable virtualization support in BIOS/EFI settings.")}</Content>
-                                <Content component="p">
-                                    {_("Changing BIOS/EFI settings is specific to each manufacturer. It involves pressing a hotkey during boot (ESC, F1, F12, Del). Enable a setting called \"virtualization\", \"VM\", \"VMX\", \"SVM\", \"VTX\", \"VTD\". Consult your computer's manual for details.")}
-                                </Content>
+    if (!virtualizationEnabled && !ignoreDisabledVirtualization) {
+        return <AppVirtDisabled setIgnored={setIgnoreDisabledVirtualization} />;
+    } else if (loadingResources) {
+        return <AppLoading />;
+    } else if (superuser.allowed && systemSocketInactive) {
+        return <AppServiceNotRunning />;
+    } else if (path.length == 0 || (path.length > 0 && path[0] == 'vms')) {
+        return <AppVMs />;
+    } else if (path.length > 0 && path[0] == 'vm') {
+        return <AppVM consoleCardStates={consoleCardStates} />;
+    } else if (path.length > 0 && path[0] == 'storages') {
+        return <AppStoragePools />;
+    } else if (path.length > 0 && path[0] == 'networks') {
+        return <AppNetworks />;
+    } else {
+        // XXX - not found?
+        return null;
+    }
+};
+
+const AppVirtDisabled = ({
+    setIgnored,
+} : {
+    setIgnored: (val: boolean) => void,
+}) => {
+    return (
+        <Page className="pf-m-no-sidebar">
+            <PageSection hasBodyWrapper={false}>
+                <EmptyState headingLevel="h4" icon={VirtualMachineIcon} titleText={_("Hardware virtualization is disabled")} className="virtualization-disabled-empty-state">
+                    <EmptyStateBody>
+                        <Content>
+                            <Content component="p">{_("Enable virtualization support in BIOS/EFI settings.")}</Content>
+                            <Content component="p">
+                                {_("Changing BIOS/EFI settings is specific to each manufacturer. It involves pressing a hotkey during boot (ESC, F1, F12, Del). Enable a setting called \"virtualization\", \"VM\", \"VMX\", \"SVM\", \"VTX\", \"VTD\". Consult your computer's manual for details.")}
                             </Content>
-                        </EmptyStateBody>
-                        <EmptyStateFooter>
-                            <EmptyStateActions>
-                                <Button id="ignore-hw-virtualization-disabled-btn" variant="secondary" onClick={() => {
-                                    setEmptyStateIgnored(true);
-                                    localStorage.setItem('virtualization-disabled-ignored', "true");
-                                }}>{_("Ignore")}</Button>
-                            </EmptyStateActions>
-                        </EmptyStateFooter>
-                    </EmptyState>
-                </PageSection>
-            </Page>
-        );
-    } else if ((superuser.allowed && systemSocketInactive) || loadingResources) {
-        return (
-            <Page className="pf-m-no-sidebar">
-                <PageSection hasBodyWrapper={false}>
-                    <LibvirtSlate loadingResources={loadingResources} />
-                </PageSection>
-            </Page>
-        );
-    } else return (
-        <AppActive />
+                        </Content>
+                    </EmptyStateBody>
+                    <EmptyStateFooter>
+                        <EmptyStateActions>
+                            <Button id="ignore-hw-virtualization-disabled-btn" variant="secondary" onClick={() => {
+                                setIgnored(true);
+                                localStorage.setItem('virtualization-disabled-ignored', "true");
+                            }}>{_("Ignore")}</Button>
+                        </EmptyStateActions>
+                    </EmptyStateFooter>
+                </EmptyState>
+            </PageSection>
+        </Page>
     );
 };
 
-export interface Notification {
-    text: string;
-    detail: string;
-    type?: AlertProps["variant"];
-    resourceId?: string;
-}
+const AppLoading = () => {
+    return (
+        <Page className="pf-m-no-sidebar">
+            <PageSection hasBodyWrapper={false}>
+                <EmptyStatePanel title={ _("Loading resources") } loading />
+            </PageSection>
+        </Page>
+    );
+};
 
-interface AppActiveState {
-    path: string[],
-}
+const AppServiceNotRunning = () => {
+    return (
+        <Page className="pf-m-no-sidebar">
+            <PageSection hasBodyWrapper={false}>
+                <EmptyStatePanel
+                    icon={ ExclamationCircleIcon }
+                    title={ _("Virtualization service (libvirt) is not active") }
+                    action={_("Troubleshoot")}
+                    actionVariant="link"
+                    onAction={() => cockpit.jump("/system/services")}
+                />
+            </PageSection>
+        </Page>
+    );
+};
 
-class AppActive extends React.Component<unknown, AppActiveState> {
-    onNavigate: () => void;
-    consoleCardStates: ConsoleCardStates;
+const AppVMs = () => {
+    const { vms, config, storagePools, systemInfo, ui, networks } = store.getState();
 
-    constructor() {
-        super({});
-        this.state = {
-            path: cockpit.location.path,
-        };
-        this.getInlineNotifications = this.getInlineNotifications.bind(this);
-        this.onNavigate = () => this.setState({ path: cockpit.location.path });
+    const properties = {
+        nodeMaxMemory: config.nodeMaxMemory,
+        systemInfo,
+        vms,
+    };
+    const createVmAction = <CreateVmAction {...properties} mode='create' />;
+    const importDiskAction = <CreateVmAction {...properties} mode='import' />;
+    const vmActions = <> {importDiskAction} {createVmAction} </>;
 
-        this.consoleCardStates = new ConsoleCardStates();
-    }
+    return (
+        <>
+            {getInlineNotifications()}
+            <HostVmsList
+                vms={vms}
+                ui={ui}
+                storagePools={storagePools}
+                networks={networks}
+                actions={vmActions}
+            />
+        </>
+    );
+};
 
-    async componentDidMount() {
-        cockpit.addEventListener("locationchanged", this.onNavigate);
-    }
+const AppVM = ({
+    consoleCardStates,
+} : {
+    consoleCardStates: ConsoleCardStates,
+}) => {
+    const { vms, config, storagePools, systemInfo, ui, networks, nodeDevices } = store.getState();
+    const combinedVms = [...vms, ...dummyVmsFilter(vms, ui.vms)];
 
-    componentWillUnmount() {
-        cockpit.removeEventListener("locationchanged", this.onNavigate);
-    }
-
-    getInlineNotifications(resourceId?: string) {
-        const notes = store.getState().ui.notifications.map((notification, index) => {
-            if (!resourceId || notification.resourceId == resourceId) {
-                return (
-                    <InlineNotification
-                        key={index}
-                        type={notification.type || 'danger'}
-                        isLiveRegion
-                        isInline={false}
-                        onDismiss={() => dismissNotification(index)}
-                        text={notification.text}
-                        detail={notification.detail}
-                    />
-                );
-            } else
-                return null;
-        }).filter(Boolean);
-        if (notes.length > 0) {
-            return (
-                <AlertGroup isToast>
-                    {notes}
-                </AlertGroup>
-            );
-        } else
-            return null;
-    }
-
-    render() {
-        const { vms, config, storagePools, systemInfo, ui, networks, nodeDevices } = store.getState();
-        const { path } = this.state;
-        const combinedVms = [...vms, ...dummyVmsFilter(vms, ui.vms)];
-        const properties = {
-            nodeMaxMemory: config.nodeMaxMemory,
-            systemInfo,
-            vms,
-        };
-        const createVmAction = <CreateVmAction {...properties} mode='create' />;
-        const importDiskAction = <CreateVmAction {...properties} mode='import' />;
-        const vmActions = <> {importDiskAction} {createVmAction} </>;
-        const pathVms = path.length == 0 || (path.length > 0 && path[0] == 'vms');
-
-        if (path.length > 0 && path[0] == 'vm') {
-            const vm = combinedVms.find(vm => vm.name == cockpit.location.options.name && vm.connectionName == cockpit.location.options.connection);
-            if (!vm) {
-                return (
-                    <>
-                        {this.getInlineNotifications()}
-                        <EmptyStatePanel title={ cockpit.format(_("VM $0 does not exist on $1 connection"), cockpit.location.options.name, cockpit.location.options.connection) }
-                                         action={_("Go to VMs list")}
-                                         actionVariant="link"
-                                         onAction={() => cockpit.location.go(["vms"])}
-                                         icon={ExclamationCircleIcon} />
-                    </>
-                );
-            } else if (vm.isUi && vm.createInProgress) {
-                return (
-                    <>
-                        {this.getInlineNotifications()}
-                        <EmptyStatePanel title={cockpit.format(vm.downloadProgress ? _("Downloading image for VM $0") : _("Creating VM $0"), cockpit.location.options.name)}
-                                         action={_("Go to VMs list")}
-                                         actionVariant="link"
-                                         onAction={() => cockpit.location.go(["vms"])}
-                                         paragraph={vm.downloadProgress && <Progress aria-label={_("Download progress")}
-                                                                                     value={Number(vm.downloadProgress)}
-                                                                                     measureLocation={ProgressMeasureLocation.outside} />}
-                                         loading />
-                    </>
-                );
-            }
-
-            const connectionName = vm.connectionName;
-
-            // If vm.isUi is set we show a dummy placeholder until libvirt gets a real domain object for newly created V
-            const expandedContent = vm.isUi
-                ? null
-                : (
-                    <>
-                        {this.getInlineNotifications(vm.id)}
-                        <VmDetailsPage vm={vm} vms={vms} config={config}
-                            consoleCardState={this.consoleCardStates.get(vm)}
-                            libvirtVersion={systemInfo.libvirtVersion}
-                            storagePools={(storagePools || []).filter(pool => pool && pool.connectionName == connectionName)}
-                            networks={(networks || []).filter(network => network && network.connectionName == connectionName)}
-                            nodeDevices={(nodeDevices || []).filter(device => device && device.connectionName == connectionName)}
-                            key={vmId(vm.name)}
-                        />
-                    </>
-                );
-            return expandedContent;
-        }
-
-        const loggedUser = systemInfo.loggedUser;
-
+    const vm = combinedVms.find(vm => vm.name == cockpit.location.options.name && vm.connectionName == cockpit.location.options.connection);
+    if (!vm) {
         return (
             <>
-                {this.getInlineNotifications()}
-                {pathVms && <HostVmsList vms={vms}
-                    ui={ui}
-                    storagePools={storagePools}
-                    networks={networks}
-                    actions={vmActions} />
-                }
-                {path.length > 0 && path[0] == 'storages' && loggedUser &&
-                <StoragePoolList storagePools={storagePools}
-                    vms={vms}
-                    loggedUser={loggedUser}
-                    libvirtVersion={systemInfo.libvirtVersion} />
-                }
-                {path.length > 0 && path[0] == 'networks' &&
-                <NetworkList networks={networks} />
-                }
+                {getInlineNotifications()}
+                <EmptyStatePanel title={ cockpit.format(_("VM $0 does not exist on $1 connection"), cockpit.location.options.name, cockpit.location.options.connection) }
+                    action={_("Go to VMs list")}
+                    actionVariant="link"
+                    onAction={() => cockpit.location.go(["vms"])}
+                    icon={ExclamationCircleIcon} />
+            </>
+        );
+    } else if (vm.isUi && vm.createInProgress) {
+        return (
+            <>
+                {getInlineNotifications()}
+                <EmptyStatePanel title={cockpit.format(vm.downloadProgress ? _("Downloading image for VM $0") : _("Creating VM $0"), cockpit.location.options.name)}
+                    action={_("Go to VMs list")}
+                    actionVariant="link"
+                    onAction={() => cockpit.location.go(["vms"])}
+                    paragraph={vm.downloadProgress && <Progress aria-label={_("Download progress")}
+                                                          value={Number(vm.downloadProgress)}
+                                                          measureLocation={ProgressMeasureLocation.outside} />}
+                    loading />
             </>
         );
     }
-}
+
+    const connectionName = vm.connectionName;
+
+    // If vm.isUi is set we show a dummy placeholder until libvirt gets a real domain object for newly created V
+    const expandedContent = vm.isUi
+        ? null
+        : (
+            <>
+                {getInlineNotifications(vm.id)}
+                <VmDetailsPage vm={vm} vms={vms} config={config}
+                    consoleCardState={consoleCardStates.get(vm)}
+                    libvirtVersion={systemInfo.libvirtVersion}
+                    storagePools={(storagePools || []).filter(pool => pool && pool.connectionName == connectionName)}
+                    networks={(networks || []).filter(network => network && network.connectionName == connectionName)}
+                    nodeDevices={(nodeDevices || []).filter(device => device && device.connectionName == connectionName)}
+                    key={vmId(vm.name)}
+                />
+            </>
+        );
+    return expandedContent;
+};
+
+const AppStoragePools = () => {
+    const { vms, storagePools, systemInfo } = store.getState();
+    cockpit.assert(systemInfo.loggedUser);
+
+    return (
+        <>
+            {getInlineNotifications()}
+            <StoragePoolList
+                storagePools={storagePools}
+                vms={vms}
+                loggedUser={systemInfo.loggedUser}
+                libvirtVersion={systemInfo.libvirtVersion}
+            />
+        </>
+    );
+};
+
+const AppNetworks = () => {
+    const { networks } = store.getState();
+
+    return (
+        <>
+            {getInlineNotifications()}
+            <NetworkList networks={networks} />;
+        </>
+    );
+};
 
 export default App;
