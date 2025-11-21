@@ -73,7 +73,6 @@ const getNetworkDevices = (): Promise<Record<string, NetworkDevice>> => {
 
 interface VmNetworkActionsProps {
     vm: VM;
-    vms: VM[];
     networks: Network[];
 }
 
@@ -108,7 +107,7 @@ export class VmNetworkActions extends React.Component<VmNetworkActionsProps, VmN
             return null;
 
         const Dialogs = this.context;
-        const { vm, vms, networks } = this.props;
+        const { vm, networks } = this.props;
         const id = vmId(vm.name);
         const availableSources: AvailableSources = {
             network: networks.map(network => network.name),
@@ -118,7 +117,6 @@ export class VmNetworkActions extends React.Component<VmNetworkActionsProps, VmN
         const open = () => {
             Dialogs.show(<AddNIC idPrefix={`${id}-add-iface`}
                                  vm={vm}
-                                 vms={vms}
                                  availableSources={availableSources} />);
         };
 

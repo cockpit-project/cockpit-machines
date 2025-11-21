@@ -1690,11 +1690,6 @@ interface CreateVmActionProps {
     mode: string;
     nodeMaxMemory: number | undefined;
     vms: VM[];
-    cloudInitSupported: boolean | undefined;
-    downloadOSSupported: boolean | undefined;
-    unattendedSupported: boolean | undefined;
-    unattendedUserLogin: boolean | undefined;
-    virtInstallAvailable: boolean | undefined;
 }
 
 export class CreateVmAction extends React.Component<CreateVmActionProps> {
@@ -1703,26 +1698,28 @@ export class CreateVmAction extends React.Component<CreateVmActionProps> {
 
     render() {
         const Dialogs = this.context;
-
+        const vi_caps = this.props.systemInfo.virt_install_capabilities;
         const open = () => {
             // The initial resources fetching contains only ID - this will be immediately
             // replaced with the whole resource object but there is enough time to cause a crash if parsed here
             cockpit.assert(this.props.systemInfo.loggedUser);
+            cockpit.assert(vi_caps);
             Dialogs.show(<CreateVmModal mode={this.props.mode}
                                         nodeMaxMemory={this.props.nodeMaxMemory}
                                         vms={this.props.vms}
-                                        cloudInitSupported={this.props.cloudInitSupported}
-                                        downloadOSSupported={this.props.downloadOSSupported}
-                                        unattendedSupported={this.props.unattendedSupported}
-                                        unattendedUserLogin={this.props.unattendedUserLogin}
+                                        cloudInitSupported={vi_caps.cloudInitSupported}
+                                        downloadOSSupported={vi_caps.downloadOSSupported}
+                                        unattendedSupported={vi_caps.unattendedSupported}
+                                        unattendedUserLogin={vi_caps.unattendedUserLogin}
                                         loggedUser={this.props.systemInfo.loggedUser} />);
         };
 
         let testdata;
-        if (!this.props.virtInstallAvailable)
-            testdata = "disabledVirtInstall";
-        else if (this.props.downloadOSSupported === undefined || this.props.unattendedSupported === undefined)
+        if (!vi_caps)
             testdata = "disabledCheckingFeatures";
+        else if (!vi_caps.virtInstallAvailable)
+            testdata = "disabledVirtInstall";
+
         let createButton = (
             <Button isDisabled={testdata !== undefined}
                     test-data={testdata}
@@ -1732,7 +1729,7 @@ export class CreateVmAction extends React.Component<CreateVmActionProps> {
                 {this.props.mode == 'create' ? _("Create VM") : _("Import VM")}
             </Button>
         );
-        if (!this.props.virtInstallAvailable)
+        if (!vi_caps?.virtInstallAvailable)
             createButton = (
                 <Tooltip id='virt-install-not-available-tooltip'
                          content={_("virt-install package needs to be installed on the system in order to create new VMs")}>

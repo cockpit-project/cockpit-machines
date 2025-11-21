@@ -206,7 +206,6 @@ export const RemoveDiskModal = ({
 
 export const DiskActions = ({
     vm,
-    vms,
     disk,
     supportedDiskBusTypes,
     idPrefixRow,
@@ -215,7 +214,6 @@ export const DiskActions = ({
     setIsActionOpen
 } : {
     vm: VM,
-    vms: VM[],
     disk: VMDisk,
     supportedDiskBusTypes: string[],
     idPrefixRow: string,
@@ -227,7 +225,7 @@ export const DiskActions = ({
 
     function openMediaInsertionDialog() {
         Dialogs.show(<AddDiskModalBody idPrefix={idPrefixRow + "-insert-dialog-adddisk"}
-                                       vm={vm} vms={vms}
+                                       vm={vm}
                                        disk={disk}
                                        supportedDiskBusTypes={supportedDiskBusTypes}
                                        isMediaInsertion />);

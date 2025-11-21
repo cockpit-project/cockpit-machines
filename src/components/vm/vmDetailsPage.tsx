@@ -52,7 +52,6 @@ const _ = cockpit.gettext;
 
 export const VmDetailsPage = ({
     vm,
-    vms,
     config,
     libvirtVersion,
     storagePools,
@@ -61,7 +60,6 @@ export const VmDetailsPage = ({
     consoleCardState,
 } : {
     vm: VM,
-    vms: VM[],
     config: Config,
     libvirtVersion: number,
     storagePools: StoragePool[],
@@ -156,7 +154,6 @@ export const VmDetailsPage = ({
             id: `${vmId(vm.name)}-overview`,
             title: _("Overview"),
             body: <VmOverviewCard vm={vm}
-                                  vms={vms}
                                   config={config}
                                   loaderElems={vm.capabilities.loaderElems}
                                   maxVcpu={vm.capabilities.maxVcpu}
@@ -179,15 +176,15 @@ export const VmDetailsPage = ({
             id: `${vmId(vm.name)}-disks`,
             className: "disks-card",
             title: _("Disks"),
-            actions: <VmDisksActions vm={vm} vms={vms} supportedDiskBusTypes={vm.capabilities.supportedDiskBusTypes} />,
-            body: <VmDisksCardLibvirt vm={vm} vms={vms} storagePools={storagePools}
+            actions: <VmDisksActions vm={vm} supportedDiskBusTypes={vm.capabilities.supportedDiskBusTypes} />,
+            body: <VmDisksCardLibvirt vm={vm} storagePools={storagePools}
                                       supportedDiskBusTypes={vm.capabilities.supportedDiskBusTypes} />,
         },
         {
             id: `${vmId(vm.name)}-networks`,
             className: "networks-card",
             title: _("Network interfaces"),
-            actions: <VmNetworkActions vm={vm} vms={vms} networks={networks} />,
+            actions: <VmNetworkActions vm={vm} networks={networks} />,
             body: <VmNetworkTab vm={vm}
                                 networks={networks} />,
         },
