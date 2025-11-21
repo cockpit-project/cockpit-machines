@@ -49,6 +49,7 @@ import { VolumeCreateBody } from '../../storagePools/storageVolumeCreateBody.jsx
 import { domainAttachDisk, domainGet, virtXmlHotEdit, domainIsRunning } from '../../../libvirtApi/domain.js';
 import { storagePoolGetAll } from '../../../libvirtApi/storagePool.js';
 import { storageVolumeCreateAndAttach } from '../../../libvirtApi/storageVolume.js';
+import { useAppState } from '../../../app';
 
 const _ = cockpit.gettext;
 
@@ -483,16 +484,15 @@ export const AddDiskModalBody = ({
     idPrefix,
     isMediaInsertion,
     vm,
-    vms,
     supportedDiskBusTypes
 } : {
     disk?: VMDisk,
     idPrefix: string,
     isMediaInsertion?: boolean,
     vm: VM,
-    vms: VM[],
     supportedDiskBusTypes: string[],
 }) => {
+    const appState = useAppState();
     const [customDiskVerificationFailed, setCustomDiskVerificationFailed] = useState(false);
     const [customDiskVerificationMessage, setCustomDiskVerificationMessage] = useState<string | null>(null);
     const [dialogError, setDialogError] = useState<string | null>(null);
@@ -512,6 +512,7 @@ export const AddDiskModalBody = ({
     const [validate, setValidate] = useState(false);
     const [verificationInProgress, setVerificationInProgress] = useState(false);
     const [storagePools, setStoragePools] = useState<StoragePool[] | undefined>();
+    const [vms, setVms] = useState<VM[] | undefined>();
 
     const Dialogs = useDialogs();
 
@@ -541,6 +542,11 @@ export const AddDiskModalBody = ({
         }
         return params;
     };
+
+    useEffect(() => {
+        // Get the list of VMs.
+        appState.getVms().then(setVms);
+    }, [appState]);
 
     useEffect(() => {
         // Refresh storage volume list before displaying the dialog.
@@ -704,7 +710,7 @@ export const AddDiskModalBody = ({
     const validationFailed = validate ? _validationFailed : {};
 
     let defaultBody;
-    const dialogLoading = storagePools === undefined || diskParams.format === undefined;
+    const dialogLoading = storagePools === undefined || diskParams.format === undefined || vms === undefined;
     if (dialogLoading) {
         defaultBody = (
             <Bullseye>

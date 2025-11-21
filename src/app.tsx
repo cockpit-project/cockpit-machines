@@ -19,7 +19,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { EventEmitter } from 'cockpit/event';
 
-import type { ConnectionName } from './types';
+import type { ConnectionName, VM } from './types';
 
 import { AlertGroup, type AlertProps } from "@patternfly/react-core/dist/esm/components/Alert";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -105,7 +105,7 @@ interface AppStateEvents {
     changed: () => void,
 }
 
-class AppState extends EventEmitter<AppStateEvents> {
+export class AppState extends EventEmitter<AppStateEvents> {
     loadingResources: boolean = true;
     systemSocketInactive: boolean = false;
 
@@ -164,10 +164,22 @@ class AppState extends EventEmitter<AppStateEvents> {
         this.#initPromise = doit();
         return this.#initPromise;
     }
+
+    // Asynchronously wait until the list of VMs has been loaded, and
+    // then return it.
+
+    async getVms(): Promise<VM[]> {
+        await this.init();
+        return store.getState().vms;
+    }
 }
 
 export const AppStateContext = React.createContext<AppState | null>(null);
-export const useAppState = () => useContext(AppStateContext);
+export const useAppState = () => {
+    const state = useContext(AppStateContext);
+    cockpit.assert(state);
+    return state;
+};
 
 export const App = () => {
     const state = useInit(() => new AppState());
@@ -353,7 +365,9 @@ const AppVM = ({
         : (
             <>
                 {getInlineNotifications(vm.id)}
-                <VmDetailsPage vm={vm} vms={vms} config={config}
+                <VmDetailsPage
+                    vm={vm}
+                    config={config}
                     consoleCardState={consoleCardStates.get(vm)}
                     libvirtVersion={systemInfo.libvirtVersion}
                     storagePools={(storagePools || []).filter(pool => pool && pool.connectionName == connectionName)}
