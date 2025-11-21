@@ -145,8 +145,7 @@ export async function storagePoolGetAll({
                                                            ['org.libvirt.StoragePool', 'Active'], { timeout, type: 'ss' });
             if (get_variant_boolean(active))
                 await storagePoolRefresh({ connectionName, objPath: path });
-            else
-                await storagePoolGet({ connectionName, id: path });
+            await storagePoolGet({ connectionName, id: path });
         }));
     } catch (ex) {
         console.warn('GET_ALL_STORAGE_POOLS action failed:', String(ex));
