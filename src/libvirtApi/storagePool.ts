@@ -135,18 +135,18 @@ export async function storagePoolGetAll({
     connectionName,
 } : {
     connectionName: ConnectionName,
-}): Promise<void[]> {
+}): Promise<void> {
     try {
         const [objPaths]: [string[]] = await call(
             connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListStoragePools', [0],
             { timeout, type: 'u' });
-        return await Promise.all(objPaths.map(async path => {
+        await Promise.all(objPaths.map(async path => {
             const [active] = await call<[cockpit.Variant]>(connectionName, path, 'org.freedesktop.DBus.Properties', 'Get',
                                                            ['org.libvirt.StoragePool', 'Active'], { timeout, type: 'ss' });
             if (get_variant_boolean(active))
-                return storagePoolRefresh({ connectionName, objPath: path });
+                await storagePoolRefresh({ connectionName, objPath: path });
             else
-                return storagePoolGet({ connectionName, id: path });
+                await storagePoolGet({ connectionName, id: path });
         }));
     } catch (ex) {
         console.warn('GET_ALL_STORAGE_POOLS action failed:', String(ex));
