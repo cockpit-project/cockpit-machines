@@ -16,11 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 import type { optString, VM, VMInterface, VMInterfacePortForward, Network } from '../../../types';
 
-import type { Dialogs } from 'dialogs';
+import { useDialogs, Dialogs } from 'dialogs';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
@@ -46,91 +46,81 @@ interface NetworkDevice {
     type?: "bridge";
 }
 
-const getNetworkDevices = (): Promise<Record<string, NetworkDevice>> => {
-    const devs: Record<string, NetworkDevice> = {};
-    return cockpit.spawn(["find", "/sys/class/net", "-type", "l", "-printf", '%f\n'], { err: "message" })
-            .then(output => {
-                output.trim().split('\n')
-                        .forEach(dev => { devs[dev] = {} });
-                return cockpit.spawn(["ip", "-j", "link", "show", "type", "bridge"], { err: "message" });
-            })
-            .then(bridges => {
-                const bridgeNames: string[] = JSON.parse(bridges).map((br: { ifname: string }) => br.ifname);
-                bridgeNames.forEach(br => {
-                    if (devs[br]) {
-                        devs[br].type = "bridge";
-                    }
-                });
-            })
-            .then(() => {
-                return Promise.resolve(devs);
-            })
-            .catch(e => {
-                console.warn("could not read /sys/class/net:", e.toString());
-                return Promise.resolve({});
-            });
+const getNetworkDevices = async (): Promise<Record<string, NetworkDevice>> => {
+    try {
+        const output = await cockpit.spawn(["find", "/sys/class/net", "-type", "l", "-printf", '%f\n'],
+                                           { err: "message" });
+
+        const devs: Record<string, NetworkDevice> = {};
+        for (const dev of output.trim().split('\n')) {
+            devs[dev] = {};
+        }
+
+        const bridges = await cockpit.spawn(["ip", "-j", "link", "show", "type", "bridge"], { err: "message" });
+        const bridgeNames: string[] = JSON.parse(bridges).map((br: { ifname: string }) => br.ifname);
+
+        for (const br of bridgeNames) {
+            if (devs[br]) {
+                devs[br].type = "bridge";
+            }
+        }
+
+        return devs;
+    } catch (e) {
+        console.warn("could not read /sys/class/net:", String(e));
+        return {};
+    }
 };
-
-interface VmNetworkActionsProps {
-    vm: VM;
-    vms: VM[];
-    networks: Network[];
-}
-
-interface VmNetworkActionsState {
-    networkDevices: Record<string, NetworkDevice> | undefined;
-}
 
 export interface AvailableSources {
     network: string[];
     device: Record<string, NetworkDevice>;
 }
 
-export class VmNetworkActions extends React.Component<VmNetworkActionsProps, VmNetworkActionsState> {
-    static contextType = DialogsContext;
-    declare context: Dialogs;
+export const VmNetworkActions = ({
+    vm,
+    vms,
+    networks,
+} : {
+    vm: VM,
+    vms: VM[],
+    networks: Network[],
+}) => {
+    const Dialogs = useDialogs();
 
-    constructor(props: VmNetworkActionsProps) {
-        super(props);
+    const [networkDevices, setNetworkDevices] = useState<Record<string, NetworkDevice> | undefined>();
 
-        this.state = {
-            networkDevices: undefined,
-        };
-    }
+    useEffect(() => {
+        getNetworkDevices().then(setNetworkDevices);
+    }, []);
 
-    componentDidMount() {
-        // only consider symlinks -- there might be other stuff like "bonding_masters" which we don't want
-        getNetworkDevices().then(devs => this.setState({ networkDevices: devs }));
-    }
+    const id = vmId(vm.name);
+    const open = () => {
+        cockpit.assert(networkDevices);
 
-    render() {
-        if (!this.state.networkDevices)
-            return null;
-
-        const Dialogs = this.context;
-        const { vm, vms, networks } = this.props;
-        const id = vmId(vm.name);
         const availableSources: AvailableSources = {
             network: networks.map(network => network.name),
-            device: this.state.networkDevices,
+            device: networkDevices,
         };
 
-        const open = () => {
-            Dialogs.show(<AddNIC idPrefix={`${id}-add-iface`}
-                                 vm={vm}
-                                 vms={vms}
-                                 availableSources={availableSources} />);
-        };
-
-        return (
-            <Button id={`${id}-add-iface-button`} variant="secondary"
-                    isDisabled={this.state.networkDevices === undefined}
-                    onClick={open}>
-                {_("Add network interface")}
-            </Button>
+        Dialogs.show(
+            <AddNIC
+                idPrefix={`${id}-add-iface`}
+                vm={vm}
+                vms={vms}
+                availableSources={availableSources}
+            />
         );
-    }
-}
+    };
+
+    return (
+        <Button id={`${id}-add-iface-button`} variant="secondary"
+            isDisabled={networkDevices === undefined}
+            onClick={open}>
+            {_("Add network interface")}
+        </Button>
+    );
+};
 
 interface NetworkManagerDeviceProxy extends cockpit.DBusProxy {
     Interface: string;
