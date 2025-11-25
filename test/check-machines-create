@@ -1336,21 +1336,26 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                 self.goToMainPage()
 
             # usual tricks: prevent grep from seeing itself in the output of ps
-            virt_install_cmd = "ps aux | grep '[v]irt-install --connect'"
-            testlib.wait(lambda: self.machine.execute(virt_install_cmd), delay=3)
-            virt_install_cmd_out = self.machine.execute(virt_install_cmd)
-            self.assertIn(f"--install os={self.os_short_id}", virt_install_cmd_out)
-            if self.is_unattended:
-                self.assertIn(f"profile={self.profile}", virt_install_cmd_out)
-                if self.root_password:
-                    root_password_file = virt_install_cmd_out.split("admin-password-file=", 1)[1].split(",")[0]
-                    self.assertIn(self.machine.execute(f"cat {root_password_file}").rstrip(), self.root_password)
-                if self.user_password:
-                    user_password_file = virt_install_cmd_out.split("user-password-file=", 1)[1].split(",")[0]
-                    self.assertIn(self.machine.execute(f"cat {user_password_file}").rstrip(), self.user_password)
-                if self.user_login:
-                    user_login = virt_install_cmd_out.split("user-login=", 1)[1].split(",")[0].rstrip()
-                    self.assertIn(user_login, self.user_login)
+            virt_install_cmd = f"ps aux | grep '[v]irt-install --connect.*'{self.name}"
+
+            def virt_install_correct():
+                virt_install_cmd_out = self.machine.execute(virt_install_cmd)
+                print("OUT", virt_install_cmd_out)
+                self.assertIn(f"--install os={self.os_short_id}", virt_install_cmd_out)
+                if self.is_unattended:
+                    self.assertIn(f"profile={self.profile}", virt_install_cmd_out)
+                    if self.root_password:
+                        root_password_file = virt_install_cmd_out.split("admin-password-file=", 1)[1].split(",")[0]
+                        self.assertIn(self.machine.execute(f"cat {root_password_file}").rstrip(), self.root_password)
+                    if self.user_password:
+                        user_password_file = virt_install_cmd_out.split("user-password-file=", 1)[1].split(",")[0]
+                        self.assertIn(self.machine.execute(f"cat {user_password_file}").rstrip(), self.user_password)
+                    if self.user_login:
+                        user_login = virt_install_cmd_out.split("user-login=", 1)[1].split(",")[0].rstrip()
+                        self.assertIn(user_login, self.user_login)
+                return True
+
+            testlib.wait(virt_install_correct, delay=3)
 
             # HACK: on some OSes we need to wait for virt-install to
             # exit; on others, it wont ever exit but that's fine as
