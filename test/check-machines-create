@@ -2234,6 +2234,10 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         for ovmf_path in ovmf_paths:
             m.execute("umount " + ovmf_path)
 
+        # HACK - https://bugzilla.redhat.com/show_bug.cgi?id=2307853, still on centos-10
+        if m.image == "centos-10":
+            m.execute("touch /var/log/swtpm/libvirt/qemu/VmNotInstalled-swtpm.log")
+
         # Install the VM
         b.click("#vm-VmNotInstalled-system-install")
 
@@ -2391,6 +2395,10 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
             # did not add a second TPM; that would fail in the dialog anyway, but let's double-check the backend
             out = m.execute(f"virsh dumpxml {vmName} | xmllint --xpath /domain/devices/tpm - | grep --count '<tpm'")
             self.assertEqual(out.strip(), "1")
+
+        # HACK - https://bugzilla.redhat.com/show_bug.cgi?id=2307853, still on centos-10
+        if m.image == "centos-10":
+            m.execute(f"touch /var/log/swtpm/libvirt/qemu/{vmName}-swtpm.log")
 
         # Install the VM
         b.click(f"#vm-{vmName}-system-install")
