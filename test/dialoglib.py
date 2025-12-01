@@ -1,0 +1,90 @@
+# This file is part of Cockpit.
+#
+# Copyright (C) 2025 Red Hat, Inc.
+#
+# Cockpit is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License as published by
+# the Free Software Foundation; either version 2.1 of the License, or
+# (at your option) any later version.
+#
+# Cockpit is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
+
+
+# DIALOG HELPERS
+#
+# This is a class of dialog helpers. The idea is to insantiate one for
+# each test that wants it, maybe like so:
+#
+#
+#    def testBasic(self):
+#       b = self.browser
+#       d = DialogHelpers()
+#
+#       ...
+#       b.set_input_text(d.field("name.first"), "Jim")
+#       b.set_input_text(d.field("name.last"), "Kirk")
+#
+#
+# There are helpers for constructing CSS selectors for dialog elements
+# such as input fields, validation texts, and the buttons. There are
+# no helpers (yet?) for actually interactng with those elements.
+#
+# The basic function is this:
+#
+# - d.id(path, tag)
+#
+# This constructs the CSS selector for the DOM element that has been
+# instantiated with an ID attribute computed by "value.id(tag)", see
+# the documentation for the JavaScript dialog framework.  The "path"
+# parameter describes the way the value handle was derived in
+# JavaScript: For top-level ones created by "dlg.value(name)" it is
+# just "name". For sub-values created by "value.sub(name_or_index)" it
+# is the path of "value" followed by ".", followed by
+# "name_or_index". Nothing fancy.
+#
+# For example,
+#
+#    <input id={dlg.value("name").sub("first").id("input")} />
+#
+# can be selected in a test like this:
+#
+#    b.set_input_text(d.field("name.first", "input"), "Jim")
+#
+# There are some functions that encode the guidelines for choosing
+# tags. These should be used most of the time:
+#
+# - d.field(path)
+# - d.validation(path)
+#
+# Same as d.id(path, "field") and d.id(path, "validation"),
+# respectively.
+
+
+def css_escape(x: str) -> str:
+    return x.replace(".", "\\.")
+
+
+class DialogHelpers:
+    def id(self, path: str, tag: str) -> str:
+        return f"#dialog-{tag}-{css_escape(path)}"
+
+    def field(self, path: str) -> str:
+        return self.id(path, "field")
+
+    def validation(self, path: str) -> str:
+        return self.id(path, "validation")
+
+    def error(self):
+        return "#dialog-error-message"
+
+    def apply_button(self) -> str:
+        return "#dialog-apply"
+
+    def cancel_button(self) -> str:
+        return "#dialog-cancel"

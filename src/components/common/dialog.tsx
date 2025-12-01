@@ -22,8 +22,11 @@
 /* TODOs:
 
    - changing values as a consequence of other values changing.
-       dlg.value(name, trigger_func)?
-   - support for our tests
+     - dlg.value(name, trigger_func)?
+   - helper texts in general
+     - specifically for disabled inputs?
+     - only in the porcelain?
+   - info text for labels in the porcelain
    - progress reporting
    - action cancelling
    - async, debounced validation
@@ -261,6 +264,37 @@
    Calls the given async function when appropriate.  TODO - implement
    this and nail down the details.
 
+   TESTING
+
+   Our automated tests will want to drive the dialogs created by this
+   framework, of course.  To support this, the various DOM elements
+   instantiated for a dialog should be decorated with structured "id"
+   attributes. The code that instantiates an element can get suitable
+   IDs for dialog value handles with the following function:
+
+   - value.id(tag)
+
+   This will return a unique and predictable string for the value
+   handle that will also include "tag". This is suitable for the "id"
+   attribute of DOM elements associated with "value".  The "tag"
+   parameter can be used to generate multiple IDs if a value has
+   multiple interesting DOM elements.  The "tag" parameter defaults to
+   "field", see below.
+
+   There is a support library for use by the tests that can generate
+   the same IDs, and there are also some guidelines for how to use
+   these IDs:
+
+   - The main input element (text input, form select, ...) should use
+     the "field" tag.
+
+   - The validation text should use the "validation" tag.
+
+   - A set of radio buttons should use a different tag for each
+     button. Whatever makes sense in the specific case.
+
+   - ...
+
    PORCELAIN GALLERY
 
    Here are some noteworthy React components that integrate with the
@@ -324,11 +358,10 @@ import { EventEmitter } from 'cockpit/event';
 import cockpit from "cockpit";
 
 import { Button, type ButtonProps } from "@patternfly/react-core/dist/esm/components/Button/index.js";
-import { FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
+import { FormGroup, FormHelperText } from "@patternfly/react-core/dist/esm/components/Form";
 import { TextInput, type TextInputProps } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { Alert } from "@patternfly/react-core/dist/esm/components/Alert/index.js";
-
-import { FormHelper } from 'cockpit-components-form-helper.jsx';
+import { HelperText, HelperTextItem } from "@patternfly/react-core/dist/esm/components/HelperText";
 
 const _ = cockpit.gettext;
 
@@ -372,6 +405,10 @@ export class DialogValue<T> {
 
     set(val: T): void {
         this.setter(val);
+    }
+
+    id(tag: string = "field"): string {
+        return "dialog-" + tag + "-" + this.path;
     }
 
     map<X>(func: (val: DialogValue<ArrayElement<T>>, index: number) => X): X[] {
@@ -623,6 +660,7 @@ export function DialogErrorMessage<V>({
 
     return (
         <Alert
+            id="dialog-error-message"
             variant='danger'
             isInline
             title={title}
@@ -643,9 +681,10 @@ export function DialogActionButton<V>({
     children: React.ReactNode,
     action: (values: V) => Promise<void>,
     onClose?: undefined | (() => void)
-} & Omit<ButtonProps, "action" | "isLoading" | "isDisabled" | "variant" | "onClick">) {
+} & Omit<ButtonProps, "id" | "action" | "isLoading" | "isDisabled" | "variant" | "onClick">) {
     return (
         <Button
+            id="dialog-apply"
             isLoading={!!dialog && dialog.busy}
             isDisabled={!dialog || dialog.actions_disabled}
             variant="primary"
@@ -667,9 +706,10 @@ export function DialogCancelButton<V>({
 } : {
     dialog: DialogState<V>,
     onClose: () => void
-} & Omit<ButtonProps, "isDisabled" | "variant" | "onClick">) {
+} & Omit<ButtonProps, "id" | "isDisabled" | "variant" | "onClick">) {
     return (
         <Button
+            id="dialog-cancel"
             isDisabled={dialog.cancel_disabled}
             variant="link"
             onClick={onClose}
@@ -706,14 +746,21 @@ export function DialogValidationText<V>({
 
 export const OptionalFormGroup = ({
     label,
+    fieldId,
     children,
 } : {
     label: React.ReactNode,
+    fieldId?: undefined | string,
     children: React.ReactNode,
 }) => {
     if (label) {
         return (
-            <FormGroup label={label}>{children}</FormGroup>
+            <FormGroup
+                {...fieldId ? { fieldId } : {}}
+                label={label}
+            >
+                {children}
+            </FormGroup>
         );
     } else {
         return children;
@@ -727,10 +774,11 @@ export const DialogTextInput = ({
 } : {
     label?: React.ReactNode,
     value: DialogValue<string>
-} & Omit<TextInputProps, "label" | "value" | "onChange">) => {
+} & Omit<TextInputProps, "id" | "label" | "value" | "onChange">) => {
     return (
-        <OptionalFormGroup label={label}>
+        <OptionalFormGroup label={label} fieldId={value.id()}>
             <TextInput
+                id={value.id()}
                 value={value.get()}
                 onChange={(_event, val) => value.set(val)}
                 {...props}
