@@ -79,46 +79,43 @@ function getRandomMac(vms: VM[]): string | undefined {
 
 interface NetworkMacValue {
     set: boolean,
-    mac: string,
+    val: string,
 }
 
 const NetworkMacRow = ({
-    idPrefix,
     value,
 } : {
-    idPrefix: string,
     value: DialogValue<NetworkMacValue>
 }) => {
     const v_set = value.sub("set");
-    const v_mac = value.sub("mac");
+    const v_val = value.sub("val");
 
     return (
         <FormGroup
-            fieldId={`${idPrefix}-generate-mac`}
             label={_("MAC address")}
             hasNoPaddingTop
             isInline
         >
             <Radio
-                id={`${idPrefix}-generate-mac`}
+                id={v_set.id("off")}
                 name="mac-setting"
                 isChecked={!v_set.get()}
                 label={_("Generate automatically")}
                 onChange={() => v_set.set(false)}
             />
             <Radio
-                id={`${idPrefix}-set-mac`}
+                id={v_set.id("on")}
                 name="mac-setting"
                 isChecked={v_set.get()}
                 label={_("Set manually")}
                 onChange={() => v_set.set(true)}
             />
             <TextInput
-                id={`${idPrefix}-mac`}
+                id={v_val.id()}
                 className="nic-add-mac-setting-manual"
                 isDisabled={!v_set.get()}
-                value={v_mac.get()}
-                onChange={(_, value) => v_mac.set(value)}
+                value={v_val.get()}
+                onChange={(_, value) => v_val.set(value)}
             />
             <DialogValidationText value={value} />
         </FormGroup>
@@ -126,21 +123,19 @@ const NetworkMacRow = ({
 };
 
 function init_NetworkMacRow() {
-    return { set: false, mac: "" };
+    return { set: false, val: "" };
 }
 
 function validate_NetworkMacRow(value: DialogValue<NetworkMacValue>) {
     value.validate(v => {
-        if (v.set && v.mac === "")
+        if (v.set && v.val === "")
             return _("Network MAC can not be empty.");
     });
 }
 
 const PermanentChange = ({
-    idPrefix,
     value,
 } : {
-    idPrefix: string,
     value: DialogValue<boolean>,
 }) => {
     // By default for a running VM, the iface is attached until shut
@@ -148,12 +143,12 @@ const PermanentChange = ({
 
     return (
         <FormGroup
-            fieldId={`${idPrefix}-permanent`}
+            fieldId={value.id()}
             label={_("Persistence")}
             hasNoPaddingTop
         >
             <Checkbox
-                id={`${idPrefix}-permanent`}
+                id={value.id()}
                 isChecked={value.get()}
                 label={_("Always attach")}
                 onChange={(_event, checked) => value.set(checked)}
@@ -163,11 +158,11 @@ const PermanentChange = ({
 };
 
 interface AddNICValues {
-    networkModel: string,
-    networkType: string;
-    networkSource: string;
-    networkSourceMode: string;
-    networkMac: NetworkMacValue;
+    model: string,
+    type: string;
+    source: string;
+    source_mode: string;
+    mac: NetworkMacValue;
     portForwards: PortForwardsValue;
     permanent: boolean;
 }
@@ -186,19 +181,19 @@ export const AddNIC = ({
     const Dialogs = useDialogs();
 
     const init: AddNICValues = {
-        networkModel: "virtio",
-        networkType: vm.connectionName == "session" ? "user" : "network",
-        networkSource: availableSources.network.length > 0 ? availableSources.network[0] : "",
-        networkSourceMode: "bridge",
-        networkMac: init_NetworkMacRow(),
+        model: "virtio",
+        type: vm.connectionName == "session" ? "user" : "network",
+        source: availableSources.network.length > 0 ? availableSources.network[0] : "",
+        source_mode: "bridge",
+        mac: init_NetworkMacRow(),
         portForwards: [],
         permanent: false,
     };
 
     function validate() {
-        validate_NetworkMacRow(dlg.value("networkMac"));
-        validate_NetworkTypeAndSourceRow(dlg.value("networkSource"), vm, availableSources);
-        if (dlg.value("networkType").get() == "user")
+        validate_NetworkMacRow(dlg.value("mac"));
+        validate_NetworkTypeAndSourceRow(dlg.value("source"), vm, availableSources);
+        if (dlg.value("type").get() == "user")
             validate_PortForwards(dlg.value("portForwards"));
     }
 
@@ -206,37 +201,37 @@ export const AddNIC = ({
         console.log("ADD", values);
 
         // disallow duplicate MACs
-        if (values.networkMac.set && vm.interfaces.some(iface => iface.mac === values.networkMac.mac))
+        if (values.mac.set && vm.interfaces.some(iface => iface.mac === values.mac.val))
             throw new DialogError(_("MAC address already in use"), _("Please choose a different MAC address"));
 
         try {
             let source;
-            if (values.networkType == "direct") {
+            if (values.type == "direct") {
                 source = {
-                    "": values.networkSource,
-                    mode: values.networkSourceMode,
+                    "": values.source,
+                    mode: values.source_mode,
                 };
             } else {
-                source = values.networkSource;
+                source = values.source;
             }
             let backend = null;
-            if (values.networkType == "user" && vm.capabilities.interfaceBackends.includes("passt"))
+            if (values.type == "user" && vm.capabilities.interfaceBackends.includes("passt"))
                 backend = "passt";
             await virtXmlHotAdd(
                 vm,
                 "network",
                 {
                     mac: (
-                        values.networkMac.set
-                            ? values.networkMac.mac
+                        values.mac.set
+                            ? values.mac.val
                             : getRandomMac(await appState.getVms())
                     ),
-                    model: values.networkModel,
-                    type: values.networkType,
+                    model: values.model,
+                    type: values.type,
                     backend: { type: backend },
                     source,
                     portForward: (
-                        values.networkType == "user"
+                        values.type == "user"
                             ? dialogPortForwardsToInterface(values.portForwards)
                             : null
                     ),
@@ -256,40 +251,29 @@ export const AddNIC = ({
             <Form onSubmit={e => e.preventDefault()} isHorizontal>
                 <NetworkTypeAndSourceRow
                     vm={vm}
-                    idPrefix={idPrefix}
-                    type_value={dlg.value("networkType")}
-                    source_value={dlg.value("networkSource")}
-                    source_mode_value={dlg.value("networkSourceMode")}
+                    type_value={dlg.value("type")}
+                    source_value={dlg.value("source")}
+                    source_mode_value={dlg.value("source_mode")}
                     availableSources={availableSources}
                 />
 
                 <NetworkModelRow
-                    idPrefix={idPrefix}
-                    value={dlg.value("networkModel")}
+                    value={dlg.value("model")}
                     osTypeArch={vm.arch}
                     osTypeMachine={vm.emulatedMachine}
                 />
 
-                <NetworkMacRow
-                    idPrefix={idPrefix}
-                    value={dlg.value("networkMac")}
-                />
+                <NetworkMacRow value={dlg.value("mac")} />
 
                 { domainIsRunning(vm.state) && vm.persistent &&
-                    <PermanentChange
-                        idPrefix={idPrefix}
-                        value={dlg.value("permanent")}
-                    />
+                    <PermanentChange value={dlg.value("permanent")} />
                 }
             </Form>
-            { dlg.value("networkType").get() == "user" &&
+            { dlg.values.type == "user" &&
                 vm.capabilities.interfaceBackends.includes("passt") &&
                 <Form>
                     <br />
-                    <NetworkPortForwardsRow
-                        idPrefix={idPrefix}
-                        value={dlg.value("portForwards")}
-                    />
+                    <NetworkPortForwardsRow value={dlg.value("portForwards")} />
                 </Form>
             }
         </>
@@ -311,7 +295,6 @@ export const AddNIC = ({
             </ModalBody>
             <ModalFooter>
                 <DialogActionButton
-                    id={`${idPrefix}-add`}
                     dialog={dlg}
                     action={add}
                     onClose={Dialogs.close}
@@ -319,7 +302,6 @@ export const AddNIC = ({
                     {_("Add")}
                 </DialogActionButton>
                 <DialogCancelButton
-                    id={`${idPrefix}-cancel`}
                     dialog={dlg}
                     onClose={Dialogs.close}
                 />

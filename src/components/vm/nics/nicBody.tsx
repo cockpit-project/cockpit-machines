@@ -50,12 +50,10 @@ import './nic.css';
 const _ = cockpit.gettext;
 
 export const NetworkModelRow = ({
-    idPrefix,
     value,
     osTypeArch,
     osTypeMachine
 } : {
-    idPrefix: string,
     value: DialogValue<string>,
     osTypeArch: optString,
     osTypeMachine: optString,
@@ -71,9 +69,9 @@ export const NetworkModelRow = ({
         availableModelTypes.push({ name: 'spapr-vlan' });
 
     return (
-        <FormGroup fieldId={`${idPrefix}-model`} label={_("Model")}>
+        <FormGroup fieldId={value.id()} label={_("Model")}>
             <FormSelect
-                id={`${idPrefix}-model`}
+                id={value.id()}
                 onChange={(_event, val) => value.set(val)}
                 data-value={defaultModelType}
                 value={defaultModelType}
@@ -143,14 +141,12 @@ function getAvailableNetworkTypes(vm: VM, availableSources: AvailableSources) {
 
 export const NetworkTypeAndSourceRow = ({
     vm,
-    idPrefix,
     type_value,
     source_value,
     source_mode_value,
     availableSources,
 } : {
     vm: VM,
-    idPrefix: string,
     type_value: DialogValue<string>,
     source_value: DialogValue<string>,
     source_mode_value: DialogValue<string>,
@@ -207,7 +203,7 @@ export const NetworkTypeAndSourceRow = ({
     return (
         <>
             { availableNetworkTypes.length > 0 &&
-                <FormGroup fieldId={`${idPrefix}-type`}
+                <FormGroup fieldId={type_value.id()}
                     label={_("Interface type")}
                     labelHelp={
                         <InfoPopover aria-label={_("Interface type help")}
@@ -225,7 +221,7 @@ export const NetworkTypeAndSourceRow = ({
                             }
                         />
                     }>
-                    <FormSelect id={`${idPrefix}-type`}
+                    <FormSelect id={type_value.id()}
                         onChange={(_event, value) => setNetworkType(value)}
                         data-value={defaultNetworkType}
                         value={defaultNetworkType}>
@@ -241,8 +237,8 @@ export const NetworkTypeAndSourceRow = ({
                 </FormGroup>
             }
             {["network", "direct", "bridge"].includes(networkType) && (
-                <FormGroup fieldId={`${idPrefix}-source`} label={_("Source")}>
-                    <FormSelect id={`${idPrefix}-source`}
+                <FormGroup fieldId={source_value.id()} label={_("Source")}>
+                    <FormSelect id={source_value.id()}
                                 onChange={(_event, value) => source_value.set(value)}
                                 isDisabled={!networkSourceEnabled}
                                 data-value={defaultNetworkSource}
@@ -253,7 +249,7 @@ export const NetworkTypeAndSourceRow = ({
                 </FormGroup>
             )}
             {networkType == "direct" && (
-                <FormGroup id={`${idPrefix}-source-mode`} label={_("Mode")} hasNoPaddingTop isInline
+                <FormGroup id={source_mode_value.id()} label={_("Mode")} hasNoPaddingTop isInline
                     data-value={source_mode_value.get()}
                        labelHelp={
                            <InfoPopover
@@ -282,7 +278,7 @@ export const NetworkTypeAndSourceRow = ({
                     {["vepa", "bridge", "private", "passthrough"].map(mode =>
                         <Radio
                             key={mode}
-                            id={`${idPrefix}-source-mode-${mode}`}
+                            id={source_mode_value.id(mode)}
                             name={`mode-${mode}`}
                             isChecked={source_mode_value.get() == mode}
                             // The label is not translated since the
@@ -438,39 +434,33 @@ export function validate_PortForwards(value: DialogValue<PortForwardsValue>) {
 }
 
 const SimplePortForward = ({
-    id,
     value,
     idx,
     removeitem,
 } : {
-    id: string,
     value: DialogValue<DialogSimplePortForward>,
     idx: number,
     removeitem: (idx: number) => void,
 }) => {
     return (
-        <Grid hasGutter id={id}>
+        <Grid hasGutter id={value.id()}>
             <FormGroup className="pf-m-3-col-on-md"
-                id={id + "-ip-address-group"}
                 label={_("IP address")}
-                fieldId={id + "-ip-address"}
+                fieldId={value.sub("address").id()}
                 labelHelp={
                     <InfoPopover
                         aria-label={_("IP address help")}
                         enableFlip
                         bodyContent={_("If host IP is set to 0.0.0.0 or not set at all, the port will be bound on all IPs on the host.")}
                     />
-                }>
-                <DialogTextInput
-                    id={id + "-ip-address"}
-                    value={value.sub("address")}
-                />
+                }
+            >
+                <DialogTextInput value={value.sub("address")} />
             </FormGroup>
             <FormGroup
                 className="pf-m-4-col-on-md"
-                id={id + "-host-port-group"}
                 label={_("Host port")}
-                fieldId={id + "-host-port"}
+                fieldId={value.sub("host").id()}
                 isRequired
                 labelHelp={
                     <InfoPopover
@@ -478,18 +468,14 @@ const SimplePortForward = ({
                         enableFlip
                         bodyContent={_("The port on the host that is fotwarded into the guest. You can also specify a range of ports like 4000-4050.")}
                     />
-                }>
-                <DialogTextInput
-                    id={id + "-host-port"}
-                    step={1}
-                    value={value.sub("host")}
-                />
+                }
+            >
+                <DialogTextInput step={1} value={value.sub("host")} />
             </FormGroup>
             <FormGroup
                 className="pf-m-3-col-on-md"
-                id={id + "-guest-port-group"}
                 label={_("Guest port")}
-                fieldId={id + "-guest-port"}
+                fieldId={value.sub("guest").id()}
                 labelHelp={
                     <InfoPopover
                         aria-label={_("Guest port help")}
@@ -497,19 +483,16 @@ const SimplePortForward = ({
                         bodyContent={_("The port on the guest. If left empty, the same port as on the host is used.")}
                     />
                 }>
-                <DialogTextInput
-                    id={id + "-guest-port"}
-                    value={value.sub("guest")}
-                />
+                <DialogTextInput value={value.sub("guest")} />
             </FormGroup>
             <FormGroup
                 className="pf-m-2-col-on-md"
                 label={_("Protocol")}
-                fieldId={id + "-protocol"}
+                fieldId={value.sub("proto").id()}
             >
                 <FormSelect
                     className='pf-v6-c-form-control'
-                    id={id + "-protocol"}
+                    id={value.sub("proto").id()}
                     value={value.sub("proto").get()}
                     onChange={(_event, val) => value.sub("proto").set(val)}
                 >
@@ -521,7 +504,7 @@ const SimplePortForward = ({
                 <Button
                     variant='plain'
                     className="btn-close"
-                    id={id + "-btn-close"}
+                    id={value.id("remove")}
                     size="sm"
                     aria-label={_("Remove item")}
                     icon={<TrashIcon />}
@@ -533,18 +516,16 @@ const SimplePortForward = ({
 };
 
 const ComplexPortForward = ({
-    id,
     value,
     idx,
     removeitem,
 } : {
-    id: string,
     value: DialogValue<DialogComplexPortForward>,
     idx: number,
     removeitem: (idx: number) => void,
 }) => {
     return (
-        <Grid hasGutter id={id}>
+        <Grid hasGutter id={value.id()}>
             <div className="pf-m-12-col-on-md">
                 {
                     cockpit.format(
@@ -556,7 +537,7 @@ const ComplexPortForward = ({
                 <Button
                     variant='plain'
                     className="btn-close"
-                    id={id + "-btn-close"}
+                    id={value.id("remove")}
                     size="sm"
                     aria-label={_("Remove item")}
                     icon={<TrashIcon />}
@@ -568,10 +549,8 @@ const ComplexPortForward = ({
 };
 
 export const NetworkPortForwardsRow = ({
-    idPrefix,
     value,
 } : {
-    idPrefix: string,
     value: DialogValue<PortForwardsValue>,
 }) => {
     const simple_default: DialogPortForward = {
@@ -598,11 +577,11 @@ export const NetworkPortForwardsRow = ({
 
     return (
         <FormFieldGroup
-            id={`${idPrefix}-port-forwards`}
+            id={value.id()}
             className="nic-dynamic-form-group"
             header={
                 <FormFieldGroupHeader
-                    titleText={{ id: `${idPrefix}-port-forwards-header`, text: _("Forwarded ports") }}
+                    titleText={{ id: value.id("header"), text: _("Forwarded ports") }}
                     actions={action}
                 />
             }
@@ -620,7 +599,6 @@ export const NetworkPortForwardsRow = ({
                         return (
                             <SimplePortForward
                                 key={idx}
-                                id={`${idPrefix}-port-forwards-${idx}`}
                                 value={v as DialogValue<DialogSimplePortForward>}
                                 idx={idx}
                                 removeitem={() => remItem(idx)}
@@ -630,7 +608,6 @@ export const NetworkPortForwardsRow = ({
                         return (
                             <ComplexPortForward
                                 key={idx}
-                                id={`${idPrefix}-port-forwards-${idx}`}
                                 value={v as DialogValue<DialogComplexPortForward>}
                                 idx={idx}
                                 removeitem={() => remItem(idx)}
