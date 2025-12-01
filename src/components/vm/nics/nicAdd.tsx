@@ -32,7 +32,8 @@ import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 
 import {
-    NetworkTypeAndSourceRow, validate_NetworkTypeAndSourceRow,
+    NetworkTypeAndSourceValue, NetworkTypeAndSourceRow,
+    init_NetworkTypeAndSourceRow, validate_NetworkTypeAndSourceRow,
     NetworkModelRow,
     PortForwardsValue, NetworkPortForwardsRow, validate_PortForwards,
     dialogPortForwardsToInterface,
@@ -159,9 +160,7 @@ const PermanentChange = ({
 
 interface AddNICValues {
     model: string,
-    type: string;
-    source: string;
-    source_mode: string;
+    type_and_source: NetworkTypeAndSourceValue,
     mac: NetworkMacValue;
     portForwards: PortForwardsValue;
     permanent: boolean;
@@ -182,9 +181,7 @@ export const AddNIC = ({
 
     const init: AddNICValues = {
         model: "virtio",
-        type: vm.connectionName == "session" ? "user" : "network",
-        source: availableSources.network.length > 0 ? availableSources.network[0] : "",
-        source_mode: "bridge",
+        type_and_source: init_NetworkTypeAndSourceRow(vm, null, availableSources),
         mac: init_NetworkMacRow(),
         portForwards: [],
         permanent: false,
@@ -192,8 +189,8 @@ export const AddNIC = ({
 
     function validate() {
         validate_NetworkMacRow(dlg.value("mac"));
-        validate_NetworkTypeAndSourceRow(dlg.value("source"), vm, availableSources);
-        if (dlg.value("type").get() == "user")
+        validate_NetworkTypeAndSourceRow(dlg.value("type_and_source"));
+        if (dlg.values.type_and_source.type == "user")
             validate_PortForwards(dlg.value("portForwards"));
     }
 
@@ -205,17 +202,18 @@ export const AddNIC = ({
             throw new DialogError(_("MAC address already in use"), _("Please choose a different MAC address"));
 
         try {
+            const tas = values.type_and_source;
             let source;
-            if (values.type == "direct") {
+            if (tas.type == "direct") {
                 source = {
-                    "": values.source,
-                    mode: values.source_mode,
+                    "": tas.source,
+                    mode: tas.mode,
                 };
             } else {
-                source = values.source;
+                source = tas.source;
             }
             let backend = null;
-            if (values.type == "user" && vm.capabilities.interfaceBackends.includes("passt"))
+            if (tas.type == "user" && vm.capabilities.interfaceBackends.includes("passt"))
                 backend = "passt";
             await virtXmlHotAdd(
                 vm,
@@ -227,11 +225,11 @@ export const AddNIC = ({
                             : getRandomMac(await appState.getVms())
                     ),
                     model: values.model,
-                    type: values.type,
+                    type: tas.type,
                     backend: { type: backend },
                     source,
                     portForward: (
-                        values.type == "user"
+                        tas.type == "user"
                             ? dialogPortForwardsToInterface(values.portForwards)
                             : null
                     ),
@@ -249,13 +247,7 @@ export const AddNIC = ({
     const defaultBody = (
         <>
             <Form onSubmit={e => e.preventDefault()} isHorizontal>
-                <NetworkTypeAndSourceRow
-                    vm={vm}
-                    type_value={dlg.value("type")}
-                    source_value={dlg.value("source")}
-                    source_mode_value={dlg.value("source_mode")}
-                    availableSources={availableSources}
-                />
+                <NetworkTypeAndSourceRow value={dlg.value("type_and_source")} />
 
                 <NetworkModelRow
                     value={dlg.value("model")}
@@ -269,7 +261,7 @@ export const AddNIC = ({
                     <PermanentChange value={dlg.value("permanent")} />
                 }
             </Form>
-            { dlg.values.type == "user" &&
+            { dlg.values.type_and_source.type == "user" &&
                 vm.capabilities.interfaceBackends.includes("passt") &&
                 <Form>
                     <br />

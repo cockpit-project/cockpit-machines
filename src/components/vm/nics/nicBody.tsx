@@ -21,7 +21,7 @@ import React from 'react';
 
 import * as ipaddr from "ipaddr.js";
 
-import type { optString, VM, VMInterfacePortForward } from '../../../types';
+import type { optString, VM, VMInterface, VMInterfacePortForward } from '../../../types';
 import type { AvailableSources } from './vmNicsCard';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -139,40 +139,83 @@ function getAvailableNetworkTypes(vm: VM, availableSources: AvailableSources) {
     return availableNetworkTypes;
 }
 
-export const NetworkTypeAndSourceRow = ({
-    vm,
-    type_value,
-    source_value,
-    source_mode_value,
-    availableSources,
-} : {
+function getNetworkSource(network: VMInterface): optString {
+    if (network.type === "network")
+        return network.source.network;
+    else if (network.type === "direct")
+        return network.source.dev;
+    else if (network.type === "bridge")
+        return network.source.bridge;
+}
+
+export interface NetworkTypeAndSourceValue {
+    type: string;
+    source: string;
+    mode: string;
+
+    _availableTypes: NetworkTypeDescription[];
+    _availableSourcesForType: Record<string, string[]>;
+}
+
+export function init_NetworkTypeAndSourceRow(
     vm: VM,
-    type_value: DialogValue<string>,
-    source_value: DialogValue<string>,
-    source_mode_value: DialogValue<string>,
-    availableSources: AvailableSources,
+    network: VMInterface | null,
+    availableSources: AvailableSources
+): NetworkTypeAndSourceValue {
+    const _availableSourcesForType: Record<string, string[]> = {
+        network: availableSources.network,
+        direct: Object.keys(availableSources.device)
+                .filter(dev => availableSources.device[dev].type != "bridge"),
+        bridge: Object.keys(availableSources.device)
+                .filter(dev => availableSources.device[dev].type == "bridge")
+    };
+
+    const _availableTypes = getAvailableNetworkTypes(vm, availableSources);
+
+    let type: string;
+    let source: string;
+    let mode: string;
+
+    if (network) {
+        type = network.type;
+        source = getNetworkSource(network) || "";
+        mode = (type == "direct" ? (network.source.mode || "") : "bridge");
+    } else {
+        type = vm.connectionName == "session" ? "user" : "network";
+        source = "";
+        mode = "bridge";
+    }
+
+    const available = _availableSourcesForType[type] || [];
+    if (!available.includes(source))
+        source = available.length > 0 ? available[0] : "";
+
+    return {
+        type,
+        source,
+        mode,
+
+        _availableTypes,
+        _availableSourcesForType,
+    };
+}
+
+export const NetworkTypeAndSourceRow = ({
+    value,
+} : {
+    value: DialogValue<NetworkTypeAndSourceValue>,
 }) => {
-    const defaultNetworkType = type_value.get();
-    let defaultNetworkSource = source_value.get();
+    const {
+        type, source, mode,
+        _availableTypes, _availableSourcesForType
+    } = value.get();
+
+    let sourceValue = source;
     let networkSourcesContent: React.ReactNode;
     let networkSourceEnabled: boolean = true;
 
-    const availableNetworkTypes = getAvailableNetworkTypes(vm, availableSources);
-
-    function sources_for_type(type: string) {
-        if (type === "network")
-            return availableSources.network;
-        else if (type === "direct")
-            return Object.keys(availableSources.device).filter(dev => availableSources.device[dev].type != "bridge");
-        else if (type === "bridge")
-            return Object.keys(availableSources.device).filter(dev => availableSources.device[dev].type == "bridge");
-        else
-            return [];
-    }
-
-    const networkType = type_value.get();
-    if (["network", "direct", "bridge"].includes(networkType)) {
-        const sources = sources_for_type(networkType);
+    if (["network", "direct", "bridge"].includes(type)) {
+        const sources = _availableSourcesForType[type] || [];
         if (sources.length > 0) {
             networkSourcesContent = sources.sort().map(networkSource => {
                 return (
@@ -181,29 +224,29 @@ export const NetworkTypeAndSourceRow = ({
                 );
             });
         } else {
-            if (networkType === "network")
-                defaultNetworkSource = _("No virtual networks");
+            if (type === "network")
+                sourceValue = _("No virtual networks");
             else
-                defaultNetworkSource = _("No network devices");
+                sourceValue = _("No network devices");
 
             networkSourcesContent = (
                 <FormSelectOption value='empty-list' key='empty-list'
-                                  label={defaultNetworkSource} />
+                                  label={sourceValue} />
             );
             networkSourceEnabled = false;
         }
     }
 
     function setNetworkType(type: string) {
-        type_value.set(type);
-        const sources = sources_for_type(type);
-        source_value.set(sources.length > 0 ? sources[0] : "");
+        value.sub("type").set(type);
+        const sources = _availableSourcesForType[type] || [];
+        value.sub("source").set(sources.length > 0 ? sources[0] : "");
     }
 
     return (
         <>
-            { availableNetworkTypes.length > 0 &&
-                <FormGroup fieldId={type_value.id()}
+            { _availableTypes.length > 0 &&
+                <FormGroup fieldId={value.sub("type").id()}
                     label={_("Interface type")}
                     labelHelp={
                         <InfoPopover aria-label={_("Interface type help")}
@@ -211,7 +254,7 @@ export const NetworkTypeAndSourceRow = ({
                             enableFlip={false}
                             bodyContent={
                                 <Flex direction={{ default: 'column' }}>
-                                    {availableNetworkTypes.map(type => (
+                                    {_availableTypes.map(type => (
                                         <Content key={type.name}>
                                             <Content component={ContentVariants.h4}>{type.desc}</Content>
                                             <strong>{type.detailHeadline}</strong>
@@ -221,11 +264,11 @@ export const NetworkTypeAndSourceRow = ({
                             }
                         />
                     }>
-                    <FormSelect id={type_value.id()}
+                    <FormSelect id={value.sub("type").id()}
                         onChange={(_event, value) => setNetworkType(value)}
-                        data-value={defaultNetworkType}
-                        value={defaultNetworkType}>
-                        {availableNetworkTypes
+                        data-value={type}
+                        value={type}>
+                        {_availableTypes
                                 .map(networkType => {
                                     return (
                                         <FormSelectOption value={networkType.name} key={networkType.name}
@@ -236,56 +279,56 @@ export const NetworkTypeAndSourceRow = ({
                     </FormSelect>
                 </FormGroup>
             }
-            {["network", "direct", "bridge"].includes(networkType) && (
-                <FormGroup fieldId={source_value.id()} label={_("Source")}>
-                    <FormSelect id={source_value.id()}
-                                onChange={(_event, value) => source_value.set(value)}
+            {["network", "direct", "bridge"].includes(type) && (
+                <FormGroup fieldId={value.sub("source").id()} label={_("Source")}>
+                    <FormSelect id={value.sub("source").id()}
+                        onChange={(_event, val) => value.sub("source").set(val)}
                                 isDisabled={!networkSourceEnabled}
-                                data-value={defaultNetworkSource}
-                                value={defaultNetworkSource}>
+                                data-value={sourceValue}
+                                value={sourceValue}>
                         {networkSourcesContent}
                     </FormSelect>
-                    <DialogValidationText value={source_value} />
+                    <DialogValidationText value={value.sub("source")} />
                 </FormGroup>
             )}
-            {networkType == "direct" && (
-                <FormGroup id={source_mode_value.id()} label={_("Mode")} hasNoPaddingTop isInline
-                    data-value={source_mode_value.get()}
-                       labelHelp={
-                           <InfoPopover
-                               aria-label={_("Mode help")}
-                               position={PopoverPosition.bottom}
-                               enableFlip={false}
-                               bodyContent={
-                                   <Content>
-                                       <Content component={ContentVariants.p}>
-                                           {_("The mode influences the delivery of packets.")}
-                                       </Content>
-                                       <Content component={ContentVariants.p}>
-                                           <Button isInline
-                                               variant="link"
-                                               component="a"
-                                               icon={<ExternalLinkSquareAltIcon />}
-                                               iconPosition="right"
-                                               target="__blank"
-                                               href="https://libvirt.org/formatdomain.html#direct-attachment-to-physical-interface">
-                                               {_("More info")}
-                                           </Button>
-                                       </Content>
-                                   </Content>}
-                           />
-                       }>
-                    {["vepa", "bridge", "private", "passthrough"].map(mode =>
+            {type == "direct" && (
+                <FormGroup id={value.sub("mode").id()} label={_("Mode")} hasNoPaddingTop isInline
+                    data-value={mode}
+                    labelHelp={
+                        <InfoPopover
+                            aria-label={_("Mode help")}
+                            position={PopoverPosition.bottom}
+                            enableFlip={false}
+                            bodyContent={
+                                <Content>
+                                    <Content component={ContentVariants.p}>
+                                        {_("The mode influences the delivery of packets.")}
+                                    </Content>
+                                    <Content component={ContentVariants.p}>
+                                        <Button isInline
+                                            variant="link"
+                                            component="a"
+                                            icon={<ExternalLinkSquareAltIcon />}
+                                            iconPosition="right"
+                                            target="__blank"
+                                            href="https://libvirt.org/formatdomain.html#direct-attachment-to-physical-interface">
+                                            {_("More info")}
+                                        </Button>
+                                    </Content>
+                                </Content>}
+                        />
+                    }>
+                    {["vepa", "bridge", "private", "passthrough"].map(m =>
                         <Radio
-                            key={mode}
-                            id={source_mode_value.id(mode)}
-                            name={`mode-${mode}`}
-                            isChecked={source_mode_value.get() == mode}
+                            key={m}
+                            id={value.sub("mode").id(m)}
+                            name={`mode-${m}`}
+                            isChecked={mode == m}
                             // The label is not translated since the
                             // documentation we link to is always in
                             // English.
-                            label={<pre>{mode}</pre>}
-                            onChange={() => source_mode_value.set(mode)} />)}
+                            label={<pre>{m}</pre>}
+                            onChange={() => value.sub("mode").set(m)} />)}
                 </FormGroup>
             )}
         </>
@@ -293,13 +336,11 @@ export const NetworkTypeAndSourceRow = ({
 };
 
 export function validate_NetworkTypeAndSourceRow(
-    source_value: DialogValue<string>,
-    vm: VM,
-    availableSources: AvailableSources,
+    value: DialogValue<NetworkTypeAndSourceValue>,
 ) {
-    const availableNetworkTypes = getAvailableNetworkTypes(vm, availableSources);
-    if (availableNetworkTypes.length > 0)
-        source_value.validate(v => {
+    const val = value.get();
+    if (val._availableTypes.length > 0)
+        value.sub("source").validate(v => {
             if (v == "")
                 return _("No sources available");
         });

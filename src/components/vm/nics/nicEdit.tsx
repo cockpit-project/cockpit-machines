@@ -30,7 +30,8 @@ import {
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 
 import {
-    NetworkTypeAndSourceRow, validate_NetworkTypeAndSourceRow,
+    NetworkTypeAndSourceValue, NetworkTypeAndSourceRow,
+    init_NetworkTypeAndSourceRow, validate_NetworkTypeAndSourceRow,
     NetworkModelRow,
     PortForwardsValue, NetworkPortForwardsRow, validate_PortForwards,
     interfacePortForwardsToDialog, dialogPortForwardsToInterface,
@@ -79,10 +80,8 @@ function getNetworkSource(network: VMInterface): optString {
 }
 
 interface EditNICValues {
-    type: string;
-    source: string;
-    source_mode: string;
     model: string,
+    type_and_source: NetworkTypeAndSourceValue,
     mac: string;
     portForwards: PortForwardsValue;
 }
@@ -101,49 +100,34 @@ export const EditNICModal = ({
     const Dialogs = useDialogs();
 
     function init(): EditNICValues {
-        let defaultNetworkSource;
-        const currentSource = getNetworkSource(network);
-        let available: string[] = [];
-
-        if (network.type === "network")
-            available = availableSources.network;
-        else if (network.type === "direct")
-            available = Object.keys(availableSources.device).filter(dev => availableSources.device[dev].type != "bridge");
-        else if (network.type === "bridge")
-            available = Object.keys(availableSources.device).filter(dev => availableSources.device[dev].type == "bridge");
-
-        if (available.includes(currentSource || ""))
-            defaultNetworkSource = currentSource;
-        else
-            defaultNetworkSource = available.length > 0 ? available[0] : "";
-
         return {
-            type: network.type,
-            source: defaultNetworkSource || "",
-            source_mode: network.type == "direct" ? (network.source.mode || "") : "bridge",
             model: network.model || "",
+            type_and_source: init_NetworkTypeAndSourceRow(vm, network, availableSources),
             mac: network.mac || "",
             portForwards: interfacePortForwardsToDialog(network.portForward),
         };
     }
 
     function validate() {
-        validate_NetworkTypeAndSourceRow(dlg.value("source"), vm, availableSources);
-        if (dlg.values.type == "user")
+        validate_NetworkTypeAndSourceRow(dlg.value("type_and_source"));
+        if (dlg.values.type_and_source.type == "user")
             validate_PortForwards(dlg.value("portForwards"));
     }
 
     async function save(values: EditNICValues) {
         // disallow duplicate MACs
-        if (values.mac != network.mac &&
-              vm.interfaces.some(iface => iface.mac === values.mac)) {
-            throw new DialogError(_("MAC address already in use"), _("Please choose a different MAC address"));
+        if (values.mac != network.mac && vm.interfaces.some(iface => iface.mac === values.mac)) {
+            throw new DialogError(
+                _("MAC address already in use"),
+                _("Please choose a different MAC address"));
         }
+
+        const tas = values.type_and_source;
 
         // Only touch port forwards for "user" interfaces with a
         // default or "passt" backend.
         const configure_port_forwards =
-            values.type == "user" &&
+            tas.type == "user" &&
                 vm.capabilities.interfaceBackends.includes("passt") &&
                 (!network.backend || network.backend == "passt");
 
@@ -154,13 +138,13 @@ export const EditNICModal = ({
             force_backend = "passt";
 
         let source;
-        if (values.type == "direct") {
+        if (tas.type == "direct") {
             source = {
-                "": values.source,
-                mode: values.source_mode,
+                "": tas.source,
+                mode: tas.mode,
             };
         } else {
-            source = values.source;
+            source = tas.source;
         }
 
         try {
@@ -173,7 +157,7 @@ export const EditNICModal = ({
                 {
                     mac: values.mac,
                     model: values.model,
-                    type: values.type,
+                    type: tas.type,
                     backend: { type: force_backend },
                     source,
                     portForward: configure_port_forwards ? portForward : null,
@@ -206,8 +190,8 @@ export const EditNICModal = ({
 
     const showWarning = () => {
         if (vm.state === 'running' && (
-            dlg.values.type !== network.type ||
-                dlg.values.source !== getNetworkSource(network) ||
+            dlg.values.type_and_source.type !== network.type ||
+                dlg.values.type_and_source.source !== getNetworkSource(network) ||
                 dlg.values.model !== network.model)
         ) {
             return <NeedsShutdownAlert idPrefix={idPrefix} />;
@@ -217,13 +201,7 @@ export const EditNICModal = ({
     const defaultBody = (
         <>
             <Form onSubmit={e => e.preventDefault()} isHorizontal>
-                <NetworkTypeAndSourceRow
-                    vm={vm}
-                    type_value={dlg.value("type")}
-                    source_value={dlg.value("source")}
-                    source_mode_value={dlg.value("source_mode")}
-                    availableSources={availableSources}
-                />
+                <NetworkTypeAndSourceRow value={dlg.value("type_and_source")} />
                 <NetworkModelRow
                     value={dlg.value("model")}
                     osTypeArch={vm.arch}
@@ -234,7 +212,7 @@ export const EditNICModal = ({
                     isShutoff={vm.state == "shut off"}
                 />
             </Form>
-            { dlg.values.type == "user" &&
+            { dlg.values.type_and_source.type == "user" &&
                 vm.capabilities.interfaceBackends.includes("passt") &&
                 (!network.backend || network.backend == "passt") &&
                 <Form>
