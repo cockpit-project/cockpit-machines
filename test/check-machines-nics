@@ -35,8 +35,8 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
     @testlib.no_retry_when_changed
     def testVmNICs(self):
         b = self.browser
+        d = DialogHelpers(b)
         m = self.machine
-        d = DialogHelpers()
 
         self.createVm("subVmTest1")
 
@@ -120,17 +120,17 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         self.waitPageInit()
         b.click("#vm-subVmTest1-add-iface-button")  # open the Network Interfaces subtab
         b.wait_visible("#vm-subVmTest1-add-iface-dialog")
-        b.select_from_dropdown(d.field("type"), "bridge")
+        b.select_from_dropdown(d.field("type_and_source.type"), "bridge")
         # dropdown options are not visible, but still part of DOM tree, so let's use _wait_present
-        b._wait_present(d.field("source") + " option:nth-of-type(1):contains(0bridge)")
-        b._wait_present(d.field("source") + " option:nth-of-type(2):contains(abridge)")
+        b._wait_present(d.field("type_and_source.source") + " option:nth-of-type(1):contains(0bridge)")
+        b._wait_present(d.field("type_and_source.source") + " option:nth-of-type(2):contains(abridge)")
         if m.ws_container:
-            b._wait_present(d.field("source") + " option:nth-of-type(3):contains(cni-podman0)")
-            b._wait_present(d.field("source") + " option:nth-of-type(4):contains(virbr0)")
-            b._wait_present(d.field("source") + " option:nth-of-type(5):contains(xbridge)")
+            b._wait_present(d.field("type_and_source.source") + " option:nth-of-type(3):contains(cni-podman0)")
+            b._wait_present(d.field("type_and_source.source") + " option:nth-of-type(4):contains(virbr0)")
+            b._wait_present(d.field("type_and_source.source") + " option:nth-of-type(5):contains(xbridge)")
         else:
-            b._wait_present(d.field("source") + " option:nth-of-type(3):contains(virbr0)")
-            b._wait_present(d.field("source") + " option:nth-of-type(4):contains(xbridge)")
+            b._wait_present(d.field("type_and_source.source") + " option:nth-of-type(3):contains(virbr0)")
+            b._wait_present(d.field("type_and_source.source") + " option:nth-of-type(4):contains(xbridge)")
         b.click(d.cancel_button())
         b.wait_not_present("#vm-subVmTest1-add-iface-dialog")
 
@@ -473,7 +473,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             source_mode=None,
             xfail_error=None,
         ):
-            super.__init__(test_obj.browser)
+            super().__init__(test_obj.browser)
 
             self.assertEqual = test_obj.assertEqual
             self.browser = test_obj.browser
@@ -506,10 +506,10 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
 
             # select widget options are never visible for the headless chrome,
             # call therefore directly the js function
-            self.source_type_current = b.attr(self.field("type"), "data-value")
+            self.source_type_current = b.attr(self.field("type_and_source.type"), "data-value")
             if self.source_type_current == "direct":
-                self.source_mode_current = b.attr(self.field("source_mode"), "data-value")
-            self.source_current = b.attr(self.field("source"), "data-value")
+                self.source_mode_current = b.attr(self.field("type_and_source.mode"), "data-value")
+            self.source_current = b.attr(self.field("type_and_source.source"), "data-value")
             self.mac_current = b.val(self.field("mac"))
             self.model_current = b.attr(self.field("model"), "data-value")
 
@@ -517,11 +517,11 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             b = self.browser
 
             if self.source_type:
-                b.select_from_dropdown(self.field("type"), self.source_type)
+                b.select_from_dropdown(self.field("type_and_source.type"), self.source_type)
             if self.source_mode:
-                b.click(self.id("source_mode", self.source_mode))
+                b.click(self.id("type_and_source.mode", self.source_mode))
             if self.source:
-                b.select_from_dropdown(self.field("source"), self.source)
+                b.select_from_dropdown(self.field("type_and_source.source"), self.source)
             if self.model:
                 b.select_from_dropdown(self.field("model"), self.model)
 
@@ -701,7 +701,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         # The dialog fields should reflect the permanent configuration
         dialog = self.NICEditDialog(self)
         dialog.open()
-        b.wait_in_text(dialog.field("source"), "virbr0")
+        b.wait_in_text(dialog.field("type_and_source.source"), "virbr0")
         b.wait_val(dialog.field("mac"), MAC1)
         b.assert_pixels("#vm-subVmTest1-network-1-edit-dialog-modal-window", "vm-edit-nic-modal",
                         skip_layouts=["rtl"])
@@ -774,7 +774,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             permanent=False, mac=None, remove=True, persistent_vm=True,
             xfail=False, xfail_error=None, pixel_test_tag=None
         ):
-            super.__init__(test_obj.browser)
+            super().__init__(test_obj.browser)
 
             ip_output = json.loads(test_obj.machine.execute("ip -j link show type bridge"))
             self.bridge_devices = (entry['ifname'] for entry in ip_output)
@@ -815,19 +815,19 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
                                       "Add virtual network interface")
 
         def fill(self):
-            self.browser.select_from_dropdown(self.field("type"), self.source_type)
+            self.browser.select_from_dropdown(self.field("type_and_source.type"), self.source_type)
 
             # Ensure that Bridge to LAN option offers only bridge devices for selection and vice versa
             for bridge in self.bridge_devices:
                 if self.source_type != "bridge":
-                    self.browser.wait_not_present(self.field("source") + f" option[value={bridge}]")
+                    self.browser.wait_not_present(self.field("type_and_source.source") + f" option[value={bridge}]")
                 else:
-                    self.browser._wait_present(self.field("source") + f" option[value={bridge}]")
+                    self.browser._wait_present(self.field("type_and_source.source") + f" option[value={bridge}]")
 
             if self.source_mode:
-                self.browser.click(self.id("source_mode", self.source_mode))
+                self.browser.click(self.id("type_and_source.mode", self.source_mode))
             if self.source:
-                self.browser.select_from_dropdown(self.field("source"), self.source)
+                self.browser.select_from_dropdown(self.field("type_and_source.source"), self.source)
             if self.model:
                 self.browser.select_from_dropdown(self.field("model"), self.model)
 
