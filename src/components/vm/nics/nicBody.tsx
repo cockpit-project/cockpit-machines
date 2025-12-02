@@ -26,12 +26,8 @@ import type { AvailableSources } from './vmNicsCard';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { EmptyState, EmptyStateBody } from "@patternfly/react-core/dist/esm/components/EmptyState";
-import { Flex } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { FormGroup, FormFieldGroup, FormFieldGroupHeader } from "@patternfly/react-core/dist/esm/components/Form";
 import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
-import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
-import { PopoverPosition } from "@patternfly/react-core/dist/esm/components/Popover";
-import { Content, ContentVariants } from "@patternfly/react-core/dist/esm/components/Content";
 import { ExternalLinkSquareAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { Grid } from "@patternfly/react-core/dist/esm/layouts/Grid";
 
@@ -42,7 +38,8 @@ import cockpit from 'cockpit';
 import {
     DialogValue,
     DialogTextInput,
-    DialogValidationText,
+    DialogFormSelect,
+    DialogRadioSelect, DialogRadioSelectOption
 } from '../../common/dialog';
 
 import './nic.css';
@@ -63,28 +60,21 @@ export const NetworkModelRow = ({
         { name: 'e1000e', desc: 'PCI' },
         { name: 'e1000', desc: 'PCI, legacy' },
         { name: 'rtl8139', desc: 'PCI, legacy' }];
-    const defaultModelType = value.get();
 
     if (osTypeArch == 'ppc64' && osTypeMachine == 'pseries')
         availableModelTypes.push({ name: 'spapr-vlan' });
 
     return (
-        <FormGroup fieldId={value.id()} label={_("Model")}>
-            <FormSelect
-                id={value.id()}
-                onChange={(_event, val) => value.set(val)}
-                data-value={defaultModelType}
-                value={defaultModelType}
-            >
-                {availableModelTypes
-                        .map(networkModel => {
-                            return (
-                                <FormSelectOption value={networkModel.name} key={networkModel.name}
-                                                  label={networkModel.name + ' (' + networkModel.desc + ')'} />
-                            );
-                        })}
-            </FormSelect>
-        </FormGroup>
+        <DialogFormSelect label={_("Model")} value={value}>
+            {
+                availableModelTypes.map(networkModel => {
+                    return (
+                        <FormSelectOption value={networkModel.name} key={networkModel.name}
+                            label={networkModel.name + ' (' + networkModel.desc + ')'} />
+                    );
+                })
+            }
+        </DialogFormSelect>
     );
 };
 
@@ -92,20 +82,18 @@ interface NetworkTypeDescription {
     name: string,
     desc: string,
     detailHeadline?: React.ReactNode,
-    detailParagraph?: React.ReactNode,
-    externalDocs?: React.ReactNode,
-    disabled?: boolean,
+    disabled: boolean,
 }
 
-function getAvailableNetworkTypes(vm: VM, availableSources: AvailableSources) {
+function getAvailableNetworkTypes(vm: VM, availableSources: Record<string, string[]>) {
     let availableNetworkTypes: NetworkTypeDescription[] = [];
 
     // { name: 'ethernet', desc: 'Generic ethernet connection' }, Add back to the list when implemented
     const virtualNetwork: NetworkTypeDescription[] = [{
         name: 'network',
         desc: 'Virtual network',
-        detailHeadline: _("This is the recommended type for general guest connectivity on hosts with dynamic / wireless networking configs."),
-        detailParagraph: _("Provides a connection whose details are described by the named network definition.")
+        detailHeadline: _("For general guest connectivity on hosts with dynamic / wireless networking configs."),
+        disabled: !availableSources.network || availableSources.network.length == 0,
     }];
     if (vm.connectionName !== 'session') {
         availableNetworkTypes = [
@@ -113,23 +101,40 @@ function getAvailableNetworkTypes(vm: VM, availableSources: AvailableSources) {
             {
                 name: 'bridge',
                 desc: 'Bridge to LAN',
-                detailHeadline: _("This is the recommended type for general guest connectivity on hosts with static wired networking configs."),
-                detailParagraph: _("Provides a bridge from the guest virtual machine directly onto the LAN. This needs a bridge device on the host with one or more physical NICs.")
+                detailHeadline: _("For general guest connectivity on hosts with static wired networking configs."),
+                disabled: !availableSources.bridge || availableSources.bridge.length == 0,
             },
             {
                 name: 'direct',
                 desc: 'Direct attachment',
-                detailParagraph: _("This is the recommended type for high performance or enhanced security."),
+                detailHeadline: (
+                    <>
+                        {_("Advanced interface type for high performance or enhanced security.")}
+                        {"\n"}
+                        <Button
+                            isInline
+                            variant="link"
+                            component="a"
+                            icon={<ExternalLinkSquareAltIcon />}
+                            iconPosition="right"
+                            target="__blank"
+                            href="https://libvirt.org/formatdomain.html#direct-attachment-to-physical-interface">
+                            {_("More info")}
+                        </Button>
+                    </>
+                ),
+                disabled: !availableSources.direct || availableSources.direct.length == 0,
             },
         ];
     } else {
         // User session
-        if (availableSources.network.length > 0) {
+        if (availableSources.network && availableSources.network.length > 0) {
             availableNetworkTypes = [
                 {
                     name: 'user',
                     desc: 'Userspace stack',
-                    detailParagraph: _("Provides a virtual LAN with NAT to the outside world.")
+                    detailHeadline: _("Provides a virtual LAN with NAT to the outside world."),
+                    disabled: false,
                 },
                 ...virtualNetwork,
             ];
@@ -170,7 +175,21 @@ export function init_NetworkTypeAndSourceRow(
                 .filter(dev => availableSources.device[dev].type == "bridge")
     };
 
-    const _availableTypes = getAvailableNetworkTypes(vm, availableSources);
+    if (network) {
+        // Make sure the current network source is available, no
+        // matter what.
+        if (network.type in _availableSourcesForType) {
+            const avail = _availableSourcesForType[network.type];
+            const src = getNetworkSource(network) || "";
+            if (!avail.includes(src))
+                avail.push(src);
+        }
+    } else if (vm.connectionName == "system" && _availableSourcesForType.network.length == 0) {
+        // Offer to create the "default" network
+        _availableSourcesForType.network.push("$create");
+    }
+
+    const _availableTypes = getAvailableNetworkTypes(vm, _availableSourcesForType);
 
     let type: string;
     let source: string;
@@ -180,15 +199,22 @@ export function init_NetworkTypeAndSourceRow(
         type = network.type;
         source = getNetworkSource(network) || "";
         mode = (type == "direct" ? (network.source.mode || "") : "bridge");
-    } else {
-        type = vm.connectionName == "session" ? "user" : "network";
+    } else if (vm.connectionName == "session") {
+        type = "user";
         source = "";
+        mode = "";
+    } else {
+        type = "";
+        source = "";
+        for (let i = 0; i < _availableTypes.length; i++) {
+            if (!_availableTypes[i].disabled) {
+                type = _availableTypes[i].name;
+                source = _availableSourcesForType[type][0];
+                break;
+            }
+        }
         mode = "bridge";
     }
-
-    const available = _availableSourcesForType[type] || [];
-    if (!available.includes(source))
-        source = available.length > 0 ? available[0] : "";
 
     return {
         type,
@@ -200,151 +226,85 @@ export function init_NetworkTypeAndSourceRow(
     };
 }
 
+export async function createDefaultNetwork() {
+}
+
 export const NetworkTypeAndSourceRow = ({
     value,
 } : {
     value: DialogValue<NetworkTypeAndSourceValue>,
 }) => {
     const {
-        type, source, mode,
+        type,
         _availableTypes, _availableSourcesForType
     } = value.get();
 
-    let sourceValue = source;
     let networkSourcesContent: React.ReactNode;
-    let networkSourceEnabled: boolean = true;
 
     if (["network", "direct", "bridge"].includes(type)) {
         const sources = _availableSourcesForType[type] || [];
-        if (sources.length > 0) {
-            networkSourcesContent = sources.sort().map(networkSource => {
-                return (
-                    <FormSelectOption value={networkSource} key={networkSource}
-                                      label={networkSource} />
-                );
-            });
-        } else {
-            if (type === "network")
-                sourceValue = _("No virtual networks");
-            else
-                sourceValue = _("No network devices");
-
-            networkSourcesContent = (
-                <FormSelectOption value='empty-list' key='empty-list'
-                                  label={sourceValue} />
+        networkSourcesContent = sources.sort().map(networkSource => {
+            return (
+                <FormSelectOption
+                    value={networkSource}
+                    key={networkSource}
+                    label={networkSource == "$create" ? _("Create \"default\" network") : networkSource} />
             );
-            networkSourceEnabled = false;
-        }
+        });
     }
 
-    function setNetworkType(type: string) {
-        value.sub("type").set(type);
+    function updateType(type: string) {
         const sources = _availableSourcesForType[type] || [];
         value.sub("source").set(sources.length > 0 ? sources[0] : "");
+    }
+
+    function makeTypeOption(t: NetworkTypeDescription): DialogRadioSelectOption<string> {
+        return {
+            value: t.name,
+            label: t.desc,
+            excuse: t.disabled ? _("no sources") : null,
+            explanation: t.detailHeadline,
+        };
     }
 
     return (
         <>
             { _availableTypes.length > 0 &&
-                <FormGroup fieldId={value.sub("type").id()}
+                <DialogRadioSelect
                     label={_("Interface type")}
-                    labelHelp={
-                        <InfoPopover aria-label={_("Interface type help")}
-                            position={PopoverPosition.bottom}
-                            enableFlip={false}
-                            bodyContent={
-                                <Flex direction={{ default: 'column' }}>
-                                    {_availableTypes.map(type => (
-                                        <Content key={type.name}>
-                                            <Content component={ContentVariants.h4}>{type.desc}</Content>
-                                            <strong>{type.detailHeadline}</strong>
-                                            <p>{type.detailParagraph}</p>
-                                        </Content>))}
-                                </Flex>
-                            }
-                        />
-                    }>
-                    <FormSelect id={value.sub("type").id()}
-                        onChange={(_event, value) => setNetworkType(value)}
-                        data-value={type}
-                        value={type}>
-                        {_availableTypes
-                                .map(networkType => {
-                                    return (
-                                        <FormSelectOption value={networkType.name} key={networkType.name}
-                                    isDisabled={networkType.disabled || false}
-                                    label={networkType.desc} />
-                                    );
-                                })}
-                    </FormSelect>
-                </FormGroup>
+                    value={value.sub("type", updateType)}
+                    options={_availableTypes.map(makeTypeOption)}
+                />
             }
             {["network", "direct", "bridge"].includes(type) && (
-                <FormGroup fieldId={value.sub("source").id()} label={_("Source")}>
-                    <FormSelect id={value.sub("source").id()}
-                        onChange={(_event, val) => value.sub("source").set(val)}
-                                isDisabled={!networkSourceEnabled}
-                                data-value={sourceValue}
-                                value={sourceValue}>
-                        {networkSourcesContent}
-                    </FormSelect>
-                    <DialogValidationText value={value.sub("source")} />
-                </FormGroup>
+                <DialogFormSelect
+                    label={_("Source")}
+                    value={value.sub("source")}
+                >
+                    {networkSourcesContent}
+                </DialogFormSelect>
             )}
             {type == "direct" && (
-                <FormGroup id={value.sub("mode").id()} label={_("Mode")} hasNoPaddingTop isInline
-                    data-value={mode}
-                    labelHelp={
-                        <InfoPopover
-                            aria-label={_("Mode help")}
-                            position={PopoverPosition.bottom}
-                            enableFlip={false}
-                            bodyContent={
-                                <Content>
-                                    <Content component={ContentVariants.p}>
-                                        {_("The mode influences the delivery of packets.")}
-                                    </Content>
-                                    <Content component={ContentVariants.p}>
-                                        <Button isInline
-                                            variant="link"
-                                            component="a"
-                                            icon={<ExternalLinkSquareAltIcon />}
-                                            iconPosition="right"
-                                            target="__blank"
-                                            href="https://libvirt.org/formatdomain.html#direct-attachment-to-physical-interface">
-                                            {_("More info")}
-                                        </Button>
-                                    </Content>
-                                </Content>}
-                        />
-                    }>
-                    {["vepa", "bridge", "private", "passthrough"].map(m =>
-                        <Radio
-                            key={m}
-                            id={value.sub("mode").id(m)}
-                            name={`mode-${m}`}
-                            isChecked={mode == m}
+                <DialogRadioSelect
+                    label={_("Mode")}
+                    isInline
+                    value={value.sub("mode")}
+                    options={
+                        [
                             // The label is not translated since the
                             // documentation we link to is always in
                             // English.
-                            label={<pre>{m}</pre>}
-                            onChange={() => value.sub("mode").set(m)} />)}
-                </FormGroup>
+                            { value: "vepa", label: <pre>vepa</pre> },
+                            { value: "bridge", label: <pre>bridge</pre> },
+                            { value: "private", label: <pre>private</pre> },
+                            { value: "passthrough", label: <pre>passthrough</pre> },
+                        ]
+                    }
+                />
             )}
         </>
     );
 };
-
-export function validate_NetworkTypeAndSourceRow(
-    value: DialogValue<NetworkTypeAndSourceValue>,
-) {
-    const val = value.get();
-    if (val._availableTypes.length > 0)
-        value.sub("source").validate(v => {
-            if (v == "")
-                return _("No sources available");
-        });
-}
 
 export interface DialogComplexPortForward {
     kind: "complex";

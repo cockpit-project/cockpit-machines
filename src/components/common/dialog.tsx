@@ -21,12 +21,6 @@
 
 /* TODOs:
 
-   - changing values as a consequence of other values changing.
-     - dlg.value(name, trigger_func)?
-   - helper texts in general
-     - specifically for disabled inputs?
-     - only in the porcelain?
-   - info text for labels in the porcelain
    - progress reporting
    - action cancelling
    - async, debounced validation
@@ -151,12 +145,18 @@
    and methods.
 
    - value = dlg.value(name)
+   - value = dlg.value(name, update_func)
 
    This returns a handle for a specific field of the dialog
    values. Using handles like this becomes convenient when there are
    nested values, and when writing reusable porcelain components. They
    also work well with TypeScript. For simple dialogs they might feel
    a bit clunky.
+
+   The second argument, "update_func", is optional. If given, it
+   should be a function and that function will be called whenever the
+   dialog value is changed via the returned handle (and the returned
+   handle only).
 
    - value.get()
 
@@ -174,10 +174,12 @@
    things that you don't need to think about.
 
    - value.sub(name_or_index)
+   - value.sub(name_or_index, update_func)
 
    Get a handle for a nested value. When the current value is an
    object, you should pass the name of a nested field. If it is an
-   array, pass the index of the desired element.
+   array, pass the index of the desired element.  See "dlg.value"
+   above for more information about handles.
 
    - value.add(val)
 
@@ -218,10 +220,10 @@
 
    - dlg.run_action(func)
 
-   Performs input validation (if necessary). If that was successful,
-   calls "func" and puts the dialog in a "busy" state while it
-   runs. When "func" throws an error, it is caught and stored in
-   "dlg.error".
+   Performs input validation (if necessary) and if f that was
+   successful, calls "func" and puts the dialog in a "busy" state
+   while it runs. When "func" throws an error, it is caught and stored
+   in "dlg.error".
 
    Let's now finally talk about input validation.
 
@@ -256,7 +258,7 @@
    component for this value, of course.
 
    The "v => ..." function is only called when necessary, when the
-   value has actually changed. this might save you from some
+   value has actually changed. This might save you from some
    accidentally quadratic complexities.
 
    - value.validate_async(debounce, async v >= ...)
@@ -349,6 +351,95 @@
    manage the given value handle.  The "label" property is optional
    and omitting it will also omit the FormGroup.
 
+  - <DialogCheckbox label= value= .../>
+
+  For a single checkbox that drives a boolean.
+
+  - <DialogRadioSelect label= value= options= .../>
+
+  For a group of radio buttons.  The options can be disabled and have
+  explanations.
+
+  WRITING COMPLEX PORCELAIN COMPONENTS
+
+  Here is a pattern that you might want to follow when writing
+  complicated components. Even if they are not meant to be reused
+  much, it pays of to try to encapsulate their behavior.
+
+  First, declare the type of the value that the component works with.
+  For example:
+
+    export interface Person {
+      country: string,
+      first: string,
+      last: string,
+
+      _countries: string[],
+      _worldNames: Record<string, Set<string>>,
+    }
+
+  Your component will be given a DialogValue<PersonName>.  The value
+  can include private state for the component. In fact, your component
+  should not have any other properties than "value"! Anything needed
+  should be passed into a "init" function:
+
+    export function init_Person(namesOfTheWorld: Record<string, Set<string>>) {
+      const _countries: Object.keys(namesOfTheWorld).sort();
+      const country: _countries[0];
+
+      return {
+        country,
+        first: "",
+        last: "",
+
+        _countries,
+        _worldNames: namesOfTheWorld,
+      };
+    }
+
+  This way, everything is available during initialization and
+  validation, and it is clear that everything is fixed during
+  initialization.
+
+  Then write a validation function for the value:
+
+    export validate_Person(value: DialogValue<PersonValue>) {
+      value.sub("first").validate(v => {
+        if (!v)
+          return "First name can't be empty";
+      })
+    }
+
+  And of course the component itself:
+
+    export const Person = ({ value } : { value: DialogValue<PersonValue> }) => {
+      ...
+    }
+
+  It would be used in a dialog like this:
+
+    interface DialogValues {
+      person: PersonValue;
+    }
+
+    function init() {
+      return {
+        person: init_Person(...)
+      }
+    }
+
+    function validate() {
+      validate_Person(dlg.value("person"));
+    }
+
+    const dlg = useDialogState(init, validate);
+
+    return (
+      ...
+      <Person value={dlg.value("person")} />
+      ...
+    );
+
  */
 
 import React from "react";
@@ -358,10 +449,13 @@ import { EventEmitter } from 'cockpit/event';
 import cockpit from "cockpit";
 
 import { Button, type ButtonProps } from "@patternfly/react-core/dist/esm/components/Button/index.js";
-import { FormGroup, FormHelperText } from "@patternfly/react-core/dist/esm/components/Form";
+import { FormGroup, type FormGroupProps, FormHelperText } from "@patternfly/react-core/dist/esm/components/Form";
 import { TextInput, type TextInputProps } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { Alert } from "@patternfly/react-core/dist/esm/components/Alert/index.js";
 import { HelperText, HelperTextItem } from "@patternfly/react-core/dist/esm/components/HelperText";
+import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
+import { FormSelect, type FormSelectProps } from "@patternfly/react-core/dist/esm/components/FormSelect";
+import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 
 const _ = cockpit.gettext;
 
@@ -442,7 +536,7 @@ export class DialogValue<T> {
         }
     }
 
-    sub<K extends keyof T>(tag: K): DialogValue<T[K]> {
+    sub<K extends keyof T>(tag: K, update_func?: ((val: T[K]) => void) | undefined): DialogValue<T[K]> {
         return new DialogValue<T[K]>(
             this.dialog,
             () => this.get()[tag],
@@ -452,6 +546,8 @@ export class DialogValue<T> {
                     this.set(toSpliced(container, tag, 1, val) as T);
                 else
                     this.set({ ...container, [tag]: val });
+                if (update_func)
+                    update_func(val);
             },
             this.path + "." + String(tag));
     }
@@ -575,16 +671,18 @@ export class DialogState<V> extends EventEmitter<DialogStateEvents> {
         this.values = init;
     }
 
-    value<K extends keyof V>(tag: K): DialogValue<V[K]> {
+    value<K extends keyof V>(tag: K, update_func?: ((val: V[K]) => void) | undefined): DialogValue<V[K]> {
         return new DialogValue<V[K]>(
             this as DialogState<unknown>,
             () => this.values![tag],
             (val) => {
-                console.log("TOP SET", tag, JSON.stringify(val));
-                this.values = { ...this.values!, [tag]: val };
+                console.log("TOP SET", tag, val);
+                this.values = { ...this.values, [tag]: val };
                 this.update();
                 if (this.online_validation)
                     this.trigger_validation();
+                if (update_func)
+                    update_func(val);
             },
             String(tag));
     }
@@ -723,12 +821,19 @@ export function DialogCancelButton<V>({
 /* Common dialog field implementations.
  */
 
-export function DialogValidationText<V>({
+export function DialogHelperText<V>({
     value,
+    explanation = null,
 } : {
     value: DialogValue<V>,
+    explanation?: React.ReactNode;
 }) {
-    const text = value.validation_text();
+    let text: React.ReactNode = value.validation_text();
+    let variant: "error" | "default" = "error";
+    if (!text) {
+        text = explanation;
+        variant = "default";
+    }
 
     if (!text)
         return null;
@@ -736,7 +841,7 @@ export function DialogValidationText<V>({
     return (
         <FormHelperText>
             <HelperText>
-                <HelperTextItem id={value.id("validation")} variant="error">
+                <HelperTextItem id={value.id("validation")} variant={variant}>
                     {text}
                 </HelperTextItem>
             </HelperText>
@@ -746,18 +851,17 @@ export function DialogValidationText<V>({
 
 export const OptionalFormGroup = ({
     label,
-    fieldId,
     children,
+    ...props
 } : {
     label: React.ReactNode,
-    fieldId?: undefined | string,
     children: React.ReactNode,
-}) => {
+} & Omit<FormGroupProps, "label" | "children">) => {
     if (label) {
         return (
             <FormGroup
-                {...fieldId ? { fieldId } : {}}
                 label={label}
+                {...props}
             >
                 {children}
             </FormGroup>
@@ -770,10 +874,14 @@ export const OptionalFormGroup = ({
 export const DialogTextInput = ({
     label = null,
     value,
+    excuse = null,
+    isDisabled = false,
     ...props
 } : {
     label?: React.ReactNode,
-    value: DialogValue<string>
+    value: DialogValue<string>,
+    excuse?: null | string,
+    isDisabled?: boolean,
 } & Omit<TextInputProps, "id" | "label" | "value" | "onChange">) => {
     return (
         <OptionalFormGroup label={label} fieldId={value.id()}>
@@ -781,9 +889,110 @@ export const DialogTextInput = ({
                 id={value.id()}
                 value={value.get()}
                 onChange={(_event, val) => value.set(val)}
+                isDisabled={!!excuse || isDisabled}
                 {...props}
             />
-            <DialogValidationText value={value} />
+            <DialogHelperText explanation={excuse} value={value} />
         </OptionalFormGroup>
     );
 };
+
+export const DialogCheckbox = ({
+    field_label = null,
+    checkbox_label,
+    value,
+} : {
+    field_label?: React.ReactNode,
+    checkbox_label: string,
+    value: DialogValue<boolean>,
+}) => {
+    return (
+        <OptionalFormGroup label={field_label} hasNoPaddingTop>
+            <Checkbox
+                id={value.id()}
+                isChecked={value.get()}
+                label={checkbox_label}
+                onChange={(_event, checked) => value.set(checked)}
+            />
+            <DialogHelperText value={value} />
+        </OptionalFormGroup>
+    );
+};
+
+export function DialogFormSelect<T>({
+    label = null,
+    value,
+    children,
+    ...props
+} : {
+    label?: React.ReactNode,
+    value: DialogValue<T>,
+    children: React.ReactNode,
+} & Omit<FormSelectProps, "children" | "label" | "ref">) {
+    return (
+        <OptionalFormGroup label={label}>
+            <FormSelect
+                id={value.id()}
+                onChange={(_event, val) => value.set(val)}
+                value={value.get()}
+                {...props}
+            >
+                {children}
+            </FormSelect>
+            <DialogHelperText value={value} />
+        </OptionalFormGroup>
+    );
+}
+
+export interface DialogRadioSelectOption<T extends string> {
+    value: T,
+    label: React.ReactNode,
+    explanation?: React.ReactNode,
+    excuse?: undefined | null | string,
+}
+
+export function DialogRadioSelect<T extends string>({
+    label = null,
+    value,
+    options,
+    explanation = null,
+    isInline = false,
+} : {
+    label?: React.ReactNode,
+    value: DialogValue<T>,
+    options: DialogRadioSelectOption<T>[],
+    explanation?: React.ReactNode,
+    isInline?: boolean,
+}) {
+    function makeLabel(o: DialogRadioSelectOption<T>, i: number) {
+        const exc = o.excuse ? <> ({o.excuse})</> : null;
+        const pad = (i < options.length - 1) ? <><br />{"\u00A0"}</> : null;
+        const exp = o.explanation ? <><br /><small>{o.explanation}{pad}</small></> : null;
+        return <>{o.label}{exc}{exp}</>;
+    }
+
+    return (
+        <OptionalFormGroup
+            label={label}
+            hasNoPaddingTop
+            isInline={isInline}
+            id={value.id()}
+            data-value={value.get()}
+        >
+            {
+                options.map((o, i) =>
+                    <Radio
+                        key={o.value}
+                        id={value.id(o.value)}
+                        name={o.value}
+                        isChecked={value.get() == o.value}
+                        label={makeLabel(o, i)}
+                        onChange={() => value.set(o.value)}
+                        isDisabled={!!o.excuse}
+                    />
+                )
+            }
+            <DialogHelperText explanation={explanation} value={value} />
+        </OptionalFormGroup>
+    );
+}
