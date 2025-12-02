@@ -23,15 +23,13 @@ import { useDialogs } from 'dialogs';
 import type { optString, VM, VMInterface } from '../../../types';
 import type { AvailableSources } from './vmNicsCard';
 
-import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
+import { Form } from "@patternfly/react-core/dist/esm/components/Form";
 import {
     Modal, ModalBody, ModalFooter, ModalHeader
 } from '@patternfly/react-core/dist/esm/components/Modal';
-import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 
 import {
-    NetworkTypeAndSourceValue, NetworkTypeAndSourceRow,
-    init_NetworkTypeAndSourceRow, validate_NetworkTypeAndSourceRow,
+    NetworkTypeAndSourceValue, NetworkTypeAndSourceRow, init_NetworkTypeAndSourceRow,
     NetworkModelRow,
     PortForwardsValue, NetworkPortForwardsRow, validate_PortForwards,
     interfacePortForwardsToDialog, dialogPortForwardsToInterface,
@@ -55,18 +53,12 @@ const NetworkMacRow = ({
     value: DialogValue<string>,
     isShutoff: boolean,
 }) => {
-    let macInput = (
-        <DialogTextInput
-            value={value}
-            {...(!isShutoff ? { readOnlyVariant: "plain" } : {})} />
-    );
-    if (!isShutoff)
-        macInput = <Tooltip content={_("Only editable when the guest is shut off")}>{macInput}</Tooltip>;
-
     return (
-        <FormGroup fieldId={value.id()} label={_("MAC address")}>
-            {macInput}
-        </FormGroup>
+        <DialogTextInput
+            label={_("MAC address")}
+            value={value}
+            excuse={!isShutoff ? _("Only editable when the guest is shut off") : null}
+        />
     );
 };
 
@@ -80,8 +72,8 @@ function getNetworkSource(network: VMInterface): optString {
 }
 
 interface EditNICValues {
-    model: string,
     type_and_source: NetworkTypeAndSourceValue,
+    model: string,
     mac: string;
     portForwards: PortForwardsValue;
 }
@@ -101,15 +93,14 @@ export const EditNICModal = ({
 
     function init(): EditNICValues {
         return {
-            model: network.model || "",
             type_and_source: init_NetworkTypeAndSourceRow(vm, network, availableSources),
+            model: network.model || "",
             mac: network.mac || "",
             portForwards: interfacePortForwardsToDialog(network.portForward),
         };
     }
 
     function validate() {
-        validate_NetworkTypeAndSourceRow(dlg.value("type_and_source"));
         if (dlg.values.type_and_source.type == "user")
             validate_PortForwards(dlg.value("portForwards"));
     }

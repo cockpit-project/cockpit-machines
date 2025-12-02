@@ -23,7 +23,6 @@ import { useDialogs } from 'dialogs';
 import type { VM } from '../../../types';
 import type { AvailableSources } from './vmNicsCard';
 
-import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import {
     Modal, ModalBody, ModalFooter, ModalHeader
@@ -32,8 +31,7 @@ import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 
 import {
-    NetworkTypeAndSourceValue, NetworkTypeAndSourceRow,
-    init_NetworkTypeAndSourceRow, validate_NetworkTypeAndSourceRow,
+    NetworkTypeAndSourceValue, NetworkTypeAndSourceRow, init_NetworkTypeAndSourceRow,
     NetworkModelRow,
     PortForwardsValue, NetworkPortForwardsRow, validate_PortForwards,
     dialogPortForwardsToInterface,
@@ -43,8 +41,9 @@ import { AppState } from '../../../app';
 
 import {
     useDialogState, DialogValue, DialogError,
-    DialogErrorMessage, DialogValidationText,
-    DialogActionButton, DialogCancelButton
+    DialogErrorMessage, DialogHelperText,
+    DialogActionButton, DialogCancelButton,
+    DialogCheckbox,
 } from '../../common/dialog';
 
 import './nic.css';
@@ -118,7 +117,7 @@ const NetworkMacRow = ({
                 value={v_val.get()}
                 onChange={(_, value) => v_val.set(value)}
             />
-            <DialogValidationText value={value} />
+            <DialogHelperText value={value} />
         </FormGroup>
     );
 };
@@ -143,18 +142,11 @@ const PermanentChange = ({
     // down only. Enable permanent change of the domain.xml
 
     return (
-        <FormGroup
-            fieldId={value.id()}
-            label={_("Persistence")}
-            hasNoPaddingTop
-        >
-            <Checkbox
-                id={value.id()}
-                isChecked={value.get()}
-                label={_("Always attach")}
-                onChange={(_event, checked) => value.set(checked)}
-            />
-        </FormGroup>
+        <DialogCheckbox
+            field_label={_("Persistence")}
+            checkbox_label={_("Always attach")}
+            value={value}
+        />
     );
 };
 
@@ -189,7 +181,6 @@ export const AddNIC = ({
 
     function validate() {
         validate_NetworkMacRow(dlg.value("mac"));
-        validate_NetworkTypeAndSourceRow(dlg.value("type_and_source"));
         if (dlg.values.type_and_source.type == "user")
             validate_PortForwards(dlg.value("portForwards"));
     }
@@ -287,7 +278,14 @@ export const AddNIC = ({
             </ModalBody>
             <ModalFooter>
                 <DialogActionButton
-                    dialog={dlg}
+                    /* HACK - disable the "Add" button when all types
+                       are disabled.
+
+                       This is really rare. For example, the "direct"
+                       type will currently offer the "lo" loopback
+                       device, so that should always be enabled.
+                     */
+                    dialog={dlg.values.type_and_source.type == "" ? null : dlg}
                     action={add}
                     onClose={Dialogs.close}
                 >

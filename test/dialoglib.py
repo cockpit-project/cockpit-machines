@@ -65,12 +65,17 @@
 # Same as d.id(path, "field") and d.id(path, "validation"),
 # respectively.
 
+import testlib
+
 
 def css_escape(x: str) -> str:
     return x.replace(".", "\\.")
 
 
 class DialogHelpers:
+    def __init__(self, b: testlib.Browser):
+        self.browser = b
+
     def id(self, path: str, tag: str) -> str:
         return f"#dialog-{tag}-{css_escape(path)}"
 
@@ -88,3 +93,36 @@ class DialogHelpers:
 
     def cancel_button(self) -> str:
         return "#dialog-cancel"
+
+    # TextInput
+
+    def get_TextInput(self, path: str) -> str:
+        return self.browser.val(self.field(path))
+
+    # def wait_TextInput(self, path: str, val: str):
+    #     self.browser.wait_val(self.field(path), val)
+
+    def set_TextInput(self, path: str, val: str):
+        self.browser.set_input_text(self.field(path), val)
+
+    # RadioSelect
+
+    def get_RadioSelect(self, path: str) -> str:
+        return self.browser.attr(self.field(path), "data-value")
+
+    def wait_RadioSelect(self, path: str, val: str):
+        self.browser.wait_attr(self.field(path), "data-value", val)
+
+    def set_RadioSelect(self, path: str, val: str):
+        self.browser.click(self.id(path, val))
+
+    # FormSelect
+
+    def get_FormSelect(self, path: str) -> str:
+        return self.browser.val(self.field(path))
+
+    def wait_FormSelect(self, path: str, val: str):
+        self.browser.wait_val(self.field(path), val)
+
+    def set_FormSelect(self, path: str, val: str):
+        self.browser.select_from_dropdown(self.field(path), val)
