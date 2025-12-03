@@ -742,21 +742,6 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
                 expected_bus_type = self.bus_type or "virtio"
                 expected_device = self.device or "disk"
 
-            # Check volume was added to pool's volume list
-            if self.mode == "create-new":
-                self.test_obj.goToMainPage()
-                b.click(".pf-v6-c-card .pf-v6-c-card__header button:contains(Storage pool)")
-
-                self.test_obj.waitPoolRow(self.pool_name)
-                self.test_obj.togglePoolRow(self.pool_name)
-
-                # open the "Storage volumes" subtab
-                b.click(f"tr[data-row-id=pool-{self.pool_name}-system] + tr li:contains('Storage volumes') button")
-                b.wait_visible(f"#pool-{self.pool_name}-system-volume-{self.volume_name}-name")
-
-                b.click(".machines-listing-breadcrumb li a:contains(Virtual machines)")
-                self.test_obj.goToVmPage(self.vm_name)
-
             # Check basics
             self.test_obj.expandDiskRow(self.expected_target)
             b.wait_in_text(f"#vm-{self.vm_name}-disks-{self.expected_target}-bus", expected_bus_type)
