@@ -21,10 +21,10 @@
 
 /* TODOs:
 
+   - find a way to have optional values in DialogState...
    - progress reporting
    - action cancelling
-   - async, debounced validation
-   - async init
+   - debounced validation
    - different validation rules for different actions
  */
 
@@ -125,12 +125,9 @@
    component to re-render appropriately.
 
    The values of the input fields of a dialog are stored in a
-   JavaScript object, and that object is initialized to "init".  The
-   actual values of a dialog can be anything, strings, number, other
-   objects, arrays, etc, to an arbitrary depth.
-
-   The "init" parameter can directly be a JavaScript object that
-   contains the values, or a function that computes them.
+   JavaScript object, and that object is initialized to the result of
+   calling "init".  The actual values of a dialog can be anything,
+   strings, number, other objects, arrays, etc, to an arbitrary depth.
 
    The "validate" parameter is a function that performs input
    validation. It has to follow a very specific code pattern, which is
@@ -140,6 +137,16 @@
    initialization, called useDialogState_async. It takes a async init
    function and returns null until that function has resolved.  You
    should render a spinner in the dialog while "dlg" is null.
+
+   If the asynchronous "init" function throws an exception, "dlg" is
+   set to a DialogError object. In that case you should render the
+   error in the dialog.
+
+   The porcelain components that do not work on actual dialog values,
+   such as DialogActionButton and DialogErrorMessage, can deal with
+   their "dialog" properties being null or a DialogError, and will do
+   the right thing. [The DialogErrorMessage could even show the
+   spinner... hmm].
 
    The return value of useDialogState, "dlg", has a number of fields
    and methods.
@@ -181,6 +188,21 @@
    array, pass the index of the desired element.  See "dlg.value"
    above for more information about handles.
 
+   - value.at(witness)
+
+   Get a handle with a narrowed type for "value".  The new handle
+   works like "value" and modifies the same place in the dialog
+   values, but it's type will be the type of "witness".  This is
+   useful to carry over type inference into value handles.  The
+   general pattern is:
+
+     const val = value.get();
+     if (some_type_narrowing_condition(val)) {
+       const narrowed_value = value.at(val);
+
+       ...
+     }
+
    - value.add(val)
 
    If the current value is an array, append "val" at the end.
@@ -203,6 +225,7 @@
 
    Now back to the fields and methods of the dialog state.
 
+   - dlg.busy
    - dlg.actions_disabled
    - dlg.cancel_disabled
 
@@ -215,13 +238,13 @@
    The most recent error thrown by an action function.  This can be
    any kind of JavaScript value, but the idea is that it is something
    with a "message" field, or a DialogError instance.  The
-   ErrorMessage porcelain component will do the right thing with these
-   kind of error values.
+   DialogErrorMessage porcelain component will do the right thing with
+   these kind of error values.
 
    - dlg.run_action(func)
 
-   Performs input validation (if necessary) and if f that was
-   successful, calls "func" and puts the dialog in a "busy" state
+   Performs input validation (if necessary) and if that was
+   successful, calls "func" and puts the dialog into a "busy" state
    while it runs. When "func" throws an error, it is caught and stored
    in "dlg.error".
 
@@ -264,7 +287,7 @@
    - value.validate_async(debounce, async v >= ...)
 
    Calls the given async function when appropriate.  TODO - implement
-   this and nail down the details.
+   this fully and nail down the details.
 
    TESTING
 
@@ -279,7 +302,7 @@
    This will return a unique and predictable string for the value
    handle that will also include "tag". This is suitable for the "id"
    attribute of DOM elements associated with "value".  The "tag"
-   parameter can be used to generate multiple IDs if a value has
+   parameter can be used to generate multiple IDs if a component has
    multiple interesting DOM elements.  The "tag" parameter defaults to
    "field", see below.
 
@@ -302,11 +325,14 @@
    Here are some noteworthy React components that integrate with the
    plumbing API.
 
-   - <ErrorMessage dialog={dlg} />
+   - <DialogErrorMessage dialog={dlg} />
 
    This creates an appropriate Alert for "dlg.error", if it is set. It
    works well with instances of DialogError, and all usual errors
    thrown by the Cockpit API.
+
+   In addition to a proper DialogState, the "dialog" property can be
+   anything returned by "use_DialogState_async".
 
    If given one the of Cockpit API errors, the title of the Alert will
    be a generic "Failed" text. If you want more control, use a
@@ -328,18 +354,24 @@
 
    In that case, the details can be any React node.
 
-   - <ActionButton dialog={dlg} action={func} onClose={close_func}>Apply<ActionButton>
+   - <DialogActionButton dialog={dlg} action={func} onClose={close_func}>Apply<ActionButton>
 
    This will produce a action button for a dialog that correctly disables
    itself according to the state of "dlg".
 
+   In addition to a proper DialogState, the "dialog" property can be
+   anything returned by "use_DialogState_async".
+
    When clicked, "func" will be run via "dlg.run_action". If "func"
    completes successfully, "close_func" is called to close the dialog.
 
-   - <CancelButton dialog={dlg} onClose={close_func}>Cancel</CancelButton>
+   - <DialogCancelButton dialog={dlg} onClose={close_func}>Cancel</CancelButton>
 
    This will produce a cancel button for a dialog that correctly
    disables itself according to the state of "dlg".
+
+   In addition to a proper DialogState, the "dialog" property can be
+   anything returned by "use_DialogState_async".
 
    Clicking it will either just close the dialog by calling
    "close_func", or run the cancel function provided by the currently
@@ -369,7 +401,7 @@
   First, declare the type of the value that the component works with.
   For example:
 
-    export interface Person {
+    export interface PersonValue {
       country: string,
       first: string,
       last: string,
@@ -378,12 +410,12 @@
       _worldNames: Record<string, Set<string>>,
     }
 
-  Your component will be given a DialogValue<PersonName>.  The value
+  Your component will be given a DialogValue<PersonValue>.  The value
   can include private state for the component. In fact, your component
-  should not have any other properties than "value"! Anything needed
-  should be passed into a "init" function:
+  should not have any other properties (related to state) than
+  "value"! Anything needed should be passed into a "init" function:
 
-    export function init_Person(namesOfTheWorld: Record<string, Set<string>>) {
+    export function init_Person(namesOfTheWorld: Record<string, Set<string>>): PersonValue {
       const _countries: Object.keys(namesOfTheWorld).sort();
       const country: _countries[0];
 
@@ -403,7 +435,7 @@
 
   Then write a validation function for the value:
 
-    export validate_Person(value: DialogValue<PersonValue>) {
+    export function validate_Person(value: DialogValue<PersonValue>) {
       value.sub("first").validate(v => {
         if (!v)
           return "First name can't be empty";
@@ -413,6 +445,9 @@
   And of course the component itself:
 
     export const Person = ({ value } : { value: DialogValue<PersonValue> }) => {
+      const { country, first, last } = value.get();
+      ...
+        <DialogTextInput value={value.sub("first")} />
       ...
     }
 
@@ -440,10 +475,51 @@
       ...
     );
 
+  Here is a pattern for handling types that include alternatives, such
+  as "PersonValue | string".  This could be used to encode either the
+  state for a working Person component, or an excuse message that
+  explains why it can't work.
+
+    function init_Person(...): PersonValue | string {
+      if (some condition)
+        return _("Something wrong.");
+
+      return { ... };
+    }
+
+    function validate_Person(value: DialogValue<PersonValue | string>) {
+      const val = value.get();
+      if (typeof val == "string")
+          return;
+
+      const p_value = value.at(val);
+
+      p_value.sub("first").validate(v => {
+        if (!v)
+          return "First name can't be empty";
+      })
+    }
+
+    export const Person = ({ value } : { value: DialogValue<PersonValue | string> }) => {
+      const val = value.get();
+      if (typeof val == "string")
+          return null;
+
+      const p_value = value.at(val);
+
+      const { country, first, last } = p_value.get();
+      ...
+        <DialogTextInput value={p_value.sub("first")} />
+      ...
+    }
+
+  Note the use of the "value.at()" function to get a handle for a
+  PersonValue that can be used to access the "first" sub value, etc.
+
  */
 
-import React from "react";
-import { useObject, useOn } from 'hooks';
+import React, { useState } from "react";
+import { useObject, useInit, useOn } from 'hooks';
 import { EventEmitter } from 'cockpit/event';
 
 import cockpit from "cockpit";
@@ -452,9 +528,13 @@ import { Button, type ButtonProps } from "@patternfly/react-core/dist/esm/compon
 import { FormGroup, type FormGroupProps, FormHelperText } from "@patternfly/react-core/dist/esm/components/Form";
 import { TextInput, type TextInputProps } from "@patternfly/react-core/dist/esm/components/TextInput";
 import { Alert } from "@patternfly/react-core/dist/esm/components/Alert/index.js";
-import { HelperText, HelperTextItem } from "@patternfly/react-core/dist/esm/components/HelperText";
+import {
+    HelperText, HelperTextItem, type HelperTextItemProps
+} from "@patternfly/react-core/dist/esm/components/HelperText";
 import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
-import { FormSelect, type FormSelectProps } from "@patternfly/react-core/dist/esm/components/FormSelect";
+import {
+    FormSelect, type FormSelectProps, FormSelectOption
+} from "@patternfly/react-core/dist/esm/components/FormSelect";
 import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 
 const _ = cockpit.gettext;
@@ -465,7 +545,9 @@ type ArrayElement<ArrayType> =
 interface DialogValidationState {
     cached_value: unknown;
     cached_result: string | undefined;
-    // TODO - all the stuff for async
+    validation_promise: Promise<void> | undefined;
+    validation_object: Record<string, string | undefined>;
+    // TODO - all the stuff for debounce
 }
 
 function toSpliced<T>(arr: T[], start: number, deleteCount: number, ...rest: T[]): T[] {
@@ -552,6 +634,18 @@ export class DialogValue<T> {
             this.path + "." + String(tag));
     }
 
+    at<TT extends T>(witness: TT): DialogValue<TT> {
+        cockpit.assert(Object.is(witness, this.get()));
+        return new DialogValue<TT>(
+            this.dialog,
+            () => this.get() as TT,
+            (val) => {
+                this.set(val);
+            },
+            this.path,
+        );
+    }
+
     validate(func: (val: T) => string | undefined): void {
         const val = this.get();
         let v: string | undefined;
@@ -559,17 +653,22 @@ export class DialogValue<T> {
             Object.is(this.dialog.validation_state[this.path].cached_value, val)) {
             v = this.dialog.validation_state[this.path].cached_result;
             console.log("CACHE HIT", this.path, v);
+            this.dialog.validation_state[this.path].validation_object = this.dialog.validation;
         } else {
             v = func(val);
             if (!(this.path in this.dialog.validation_state)) {
                 this.dialog.validation_state[this.path] = {
                     cached_value: val,
-                    cached_result: v
+                    cached_result: v,
+                    validation_promise: undefined,
+                    validation_object: this.dialog.validation,
                 };
             } else {
                 const state = this.dialog.validation_state[this.path];
                 state.cached_value = val;
                 state.cached_result = v;
+                state.validation_promise = undefined;
+                state.validation_object = this.dialog.validation;
             }
             console.log("VALIDATE", this.path, v);
         }
@@ -578,6 +677,70 @@ export class DialogValue<T> {
             this.dialog.validation_failed = true;
             this.dialog.online_validation = true;
             this.dialog.update();
+        }
+    }
+
+    validate_async(_debounce: number, func: (val: T) => Promise<string | undefined>): void {
+        // TODO - implement debouncing
+        const val = this.get();
+        if (this.path in this.dialog.validation_state &&
+            Object.is(this.dialog.validation_state[this.path].cached_value, val)) {
+            const v = this.dialog.validation_state[this.path].cached_result;
+            console.log("CACHE HIT", this.path, v);
+            this.dialog.validation_state[this.path].validation_object = this.dialog.validation;
+            if (v) {
+                this.dialog.validation[this.path] = v;
+                this.dialog.validation_failed = true;
+                this.dialog.online_validation = true;
+                this.dialog.update();
+            }
+        } else {
+            console.log("START VALIDATE ASYNC", this.path, val);
+            const prom =
+                func(val)
+                        .catch(
+                            ex => {
+                                console.error(ex);
+                                return undefined;
+                            }
+                        )
+                        .then(
+                            v => {
+                                const state = this.dialog.validation_state[this.path];
+                                if (Object.is(state.validation_promise, prom)) {
+                                    state.validation_promise = undefined;
+                                    state.cached_result = v;
+                                    if (Object.is(state.validation_object, this.dialog.validation)) {
+                                        console.log("DONE VALIDATE ASYNC", this.path, v);
+                                        if (v) {
+                                            this.dialog.validation[this.path] = v;
+                                            this.dialog.validation_failed = true;
+                                            this.dialog.online_validation = true;
+                                            this.dialog.update();
+                                        }
+                                    } else {
+                                        console.log("OUTDATED", this.path);
+                                    }
+                                } else {
+                                    console.log("OVERTAKEN", this.path);
+                                }
+                            }
+                        );
+
+            if (!(this.path in this.dialog.validation_state)) {
+                this.dialog.validation_state[this.path] = {
+                    cached_value: val,
+                    cached_result: undefined,
+                    validation_promise: prom,
+                    validation_object: this.dialog.validation,
+                };
+            } else {
+                const state = this.dialog.validation_state[this.path];
+                state.cached_value = val;
+                state.cached_result = undefined;
+                state.validation_promise = prom;
+                state.validation_object = this.dialog.validation;
+            }
         }
     }
 }
@@ -619,6 +782,17 @@ export class DialogState<V> extends EventEmitter<DialogStateEvents> {
         this.validation_failed = false;
         this.validate_callback(this);
         this.update();
+    }
+
+    async wait_for_validation_promises(): Promise<void> {
+        for (const path in this.validation_state) {
+            const state = this.validation_state[path];
+            if (state.validation_promise) {
+                console.log("WAITING FOR", path);
+                await state.validation_promise;
+                console.log("WAITING DONE FOR", path);
+            }
+        }
     }
 
     rename_validation_state(path: string, from: number, to: number) {
@@ -674,7 +848,7 @@ export class DialogState<V> extends EventEmitter<DialogStateEvents> {
     value<K extends keyof V>(tag: K, update_func?: ((val: V[K]) => void) | undefined): DialogValue<V[K]> {
         return new DialogValue<V[K]>(
             this as DialogState<unknown>,
-            () => this.values![tag],
+            () => this.values[tag],
             (val) => {
                 console.log("TOP SET", tag, val);
                 this.values = { ...this.values, [tag]: val };
@@ -689,7 +863,7 @@ export class DialogState<V> extends EventEmitter<DialogStateEvents> {
 
     async validate(): Promise<boolean> {
         this.trigger_validation();
-        // TODO - wait for the asyncs to be done
+        await this.wait_for_validation_promises();
         return Object.keys(this.validation).length == 0;
     }
 }
@@ -708,7 +882,27 @@ export function useDialogState<V extends object>(
     return dlg;
 }
 
-// export function useDialogState_async<V>(...)
+export function useDialogState_async<V extends object>(
+    init: () => Promise<V>,
+    validate: (dlg: DialogState<V>) => void
+) : null | DialogError | DialogState<V> {
+    const [dlg, setDlg] = useState<null | DialogError | DialogState<V>>(null);
+    // HACK - Remove the "!" annotation once pkg/lib/hooks is fixed
+    // See https://github.com/cockpit-project/cockpit/pull/22677
+    useOn((dlg instanceof DialogError ? null : dlg)!, "changed");
+    useInit(async () => {
+        try {
+            const init_vals: V = await init();
+            setDlg(new DialogState(init_vals, validate));
+        } catch (ex) {
+            if (ex instanceof DialogError)
+                setDlg(ex);
+            else
+                setDlg(DialogError.fromError(_("Error during initialization"), ex));
+        }
+    });
+    return dlg;
+}
 
 // Common elements
 
@@ -736,15 +930,15 @@ export class DialogError {
 export function DialogErrorMessage<V>({
     dialog,
 } : {
-    dialog: DialogState<V>
+    dialog: DialogState<V> | DialogError | null,
 }) {
-    if (!dialog.error)
+    const err = (!dialog || dialog instanceof DialogError) ? dialog : dialog.error;
+    if (!err)
         return null;
 
     let title: string;
     let details: React.ReactNode;
 
-    const err = dialog.error;
     if (err instanceof DialogError) {
         title = err.title;
         details = err.details;
@@ -775,7 +969,7 @@ export function DialogActionButton<V>({
     onClose = undefined,
     ...props
 } : {
-    dialog: DialogState<V> | null,
+    dialog: DialogState<V> | DialogError | null,
     children: React.ReactNode,
     action: (values: V) => Promise<void>,
     onClose?: undefined | (() => void)
@@ -783,11 +977,11 @@ export function DialogActionButton<V>({
     return (
         <Button
             id="dialog-apply"
-            isLoading={!!dialog && dialog.busy}
-            isDisabled={!dialog || dialog.actions_disabled}
+            isLoading={!!dialog && !(dialog instanceof DialogError) && dialog.busy}
+            isDisabled={!dialog || dialog instanceof DialogError || dialog.actions_disabled}
             variant="primary"
             onClick={() => {
-                cockpit.assert(dialog);
+                cockpit.assert(dialog && !(dialog instanceof DialogError));
                 dialog.run_action(vals => action(vals).then(onClose || (() => {})));
             }}
             {...props}
@@ -802,13 +996,13 @@ export function DialogCancelButton<V>({
     onClose,
     ...props
 } : {
-    dialog: DialogState<V>,
+    dialog: DialogState<V> | DialogError | null,
     onClose: () => void
 } & Omit<ButtonProps, "id" | "isDisabled" | "variant" | "onClick">) {
     return (
         <Button
             id="dialog-cancel"
-            isDisabled={dialog.cancel_disabled}
+            isDisabled={!dialog || dialog instanceof DialogError || dialog.cancel_disabled}
             variant="link"
             onClick={onClose}
             {...props}
@@ -823,13 +1017,19 @@ export function DialogCancelButton<V>({
 
 export function DialogHelperText<V>({
     value,
+    warning = null,
     explanation = null,
 } : {
     value: DialogValue<V>,
+    warning?: React.ReactNode;
     explanation?: React.ReactNode;
 }) {
     let text: React.ReactNode = value.validation_text();
-    let variant: "error" | "default" = "error";
+    let variant: HelperTextItemProps["variant"] = "error";
+    if (!text && warning) {
+        text = warning;
+        variant = "warning";
+    }
     if (!text) {
         text = explanation;
         variant = "default";
@@ -875,12 +1075,14 @@ export const DialogTextInput = ({
     label = null,
     value,
     excuse = null,
+    warning = null,
     isDisabled = false,
     ...props
 } : {
     label?: React.ReactNode,
     value: DialogValue<string>,
     excuse?: null | string,
+    warning?: React.ReactNode,
     isDisabled?: boolean,
 } & Omit<TextInputProps, "id" | "label" | "value" | "onChange">) => {
     return (
@@ -892,7 +1094,7 @@ export const DialogTextInput = ({
                 isDisabled={!!excuse || isDisabled}
                 {...props}
             />
-            <DialogHelperText explanation={excuse} value={value} />
+            <DialogHelperText explanation={excuse} warning={warning} value={value} />
         </OptionalFormGroup>
     );
 };
@@ -993,6 +1195,46 @@ export function DialogRadioSelect<T extends string>({
                 )
             }
             <DialogHelperText explanation={explanation} value={value} />
+        </OptionalFormGroup>
+    );
+}
+
+export function DialogSelect<T>({
+    label,
+    value,
+    warning = null,
+    explanation = null,
+    options,
+    option_label = (o: T): string => { cockpit.assert(typeof o == "string"); return o },
+} : {
+    label: React.ReactNode,
+    value: DialogValue<T>,
+    warning?: React.ReactNode,
+    explanation?: React.ReactNode,
+    options: T[],
+    option_label?: (o: T) => string,
+}) {
+    return (
+        <OptionalFormGroup label={label}>
+            <FormSelect
+                id={value.id()}
+                onChange={(_event, val) => {
+                    const opt = options.find(o => option_label(o) == val);
+                    value.set(opt!);
+                }}
+                validated={warning ? "warning" : undefined}
+                value={option_label(value.get())}
+            >
+                {
+                    options.map(
+                        o => {
+                            const l = option_label(o);
+                            return <FormSelectOption key={l} value={l} label={l} />;
+                        }
+                    )
+                }
+            </FormSelect>
+            <DialogHelperText value={value} warning={warning} explanation={explanation} />
         </OptionalFormGroup>
     );
 }
