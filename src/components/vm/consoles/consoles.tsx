@@ -398,6 +398,7 @@ export const ConsoleCard = ({
                                     ? <ToggleGroup>{tabs}</ToggleGroup>
                                     : <SimpleSelect
                                           options={select_options}
+                                          isScrollable
                                           selected={type}
                                           onSelect={t => state.setType(t)}
                                     />
