@@ -34,63 +34,29 @@ import { PopoverPosition } from "@patternfly/react-core/dist/esm/components/Popo
 import { Content, ContentVariants } from "@patternfly/react-core/dist/esm/components/Content";
 import { ExternalLinkSquareAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { Grid } from "@patternfly/react-core/dist/esm/layouts/Grid";
-import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 
 import { InfoPopover } from '../../common/infoPopover.jsx';
 
 import cockpit from 'cockpit';
-import { FormHelper } from "cockpit-components-form-helper";
+
+import {
+    DialogValue,
+    DialogTextInput,
+    DialogValidationText,
+} from '../../common/dialog';
 
 import './nic.css';
 
 const _ = cockpit.gettext;
 
-export interface DialogComplexPortForward {
-    kind: "complex";
-    config: VMInterfacePortForward;
-}
-
-export interface DialogSimplePortForward {
-    kind: "simple";
-    address: string;
-    proto: string;
-    host: string;
-    guest: string;
-}
-
-interface ValidationSimplePortForward {
-    address: string | undefined;
-    host: string | undefined;
-    guest: string | undefined;
-}
-
-type DialogPortForward = DialogSimplePortForward | DialogComplexPortForward;
-type ValidationPortForward = ValidationSimplePortForward;
-
-export interface DialogBodyValues {
-    networkModel: string;
-    networkType: string;
-    networkSource: string;
-    networkSourceMode: string;
-    portForwards: DialogPortForward[];
-}
-
-type OnValueChanged = <K extends keyof DialogBodyValues>(key: K, value: DialogBodyValues[K]) => void;
-
-export interface ValidationBody {
-    portForwards: (ValidationPortForward | undefined)[];
-}
-
 export const NetworkModelRow = ({
     idPrefix,
-    onValueChanged,
-    dialogValues,
+    value,
     osTypeArch,
     osTypeMachine
 } : {
     idPrefix: string,
-    onValueChanged: OnValueChanged,
-    dialogValues: DialogBodyValues,
+    value: DialogValue<string>,
     osTypeArch: optString,
     osTypeMachine: optString,
 }) => {
@@ -99,17 +65,19 @@ export const NetworkModelRow = ({
         { name: 'e1000e', desc: 'PCI' },
         { name: 'e1000', desc: 'PCI, legacy' },
         { name: 'rtl8139', desc: 'PCI, legacy' }];
-    const defaultModelType = dialogValues.networkModel;
+    const defaultModelType = value.get();
 
     if (osTypeArch == 'ppc64' && osTypeMachine == 'pseries')
         availableModelTypes.push({ name: 'spapr-vlan' });
 
     return (
         <FormGroup fieldId={`${idPrefix}-model`} label={_("Model")}>
-            <FormSelect id={`${idPrefix}-model`}
-                        onChange={(_event, value) => onValueChanged('networkModel', value)}
-                        data-value={defaultModelType}
-                        value={defaultModelType}>
+            <FormSelect
+                id={`${idPrefix}-model`}
+                onChange={(_event, val) => value.set(val)}
+                data-value={defaultModelType}
+                value={defaultModelType}
+            >
                 {availableModelTypes
                         .map(networkModel => {
                             return (
@@ -122,31 +90,17 @@ export const NetworkModelRow = ({
     );
 };
 
-export const NetworkTypeAndSourceRow = ({
-    vm,
-    idPrefix,
-    onValueChanged,
-    dialogValues,
-} : {
-    vm: VM,
-    idPrefix: string,
-    onValueChanged: OnValueChanged,
-    dialogValues: DialogBodyValues & { availableSources: AvailableSources },
-}) => {
-    interface NetworkTypeDescription {
-        name: string,
-        desc: string,
-        detailHeadline?: React.ReactNode,
-        detailParagraph?: React.ReactNode,
-        externalDocs?: React.ReactNode,
-        disabled?: boolean,
-    }
+interface NetworkTypeDescription {
+    name: string,
+    desc: string,
+    detailHeadline?: React.ReactNode,
+    detailParagraph?: React.ReactNode,
+    externalDocs?: React.ReactNode,
+    disabled?: boolean,
+}
 
-    const defaultNetworkType = dialogValues.networkType;
+function getAvailableNetworkTypes(vm: VM, availableSources: AvailableSources) {
     let availableNetworkTypes: NetworkTypeDescription[] = [];
-    let defaultNetworkSource = dialogValues.networkSource;
-    let networkSourcesContent: React.ReactNode;
-    let networkSourceEnabled: boolean = true;
 
     // { name: 'ethernet', desc: 'Generic ethernet connection' }, Add back to the list when implemented
     const virtualNetwork: NetworkTypeDescription[] = [{
@@ -172,7 +126,7 @@ export const NetworkTypeAndSourceRow = ({
         ];
     } else {
         // User session
-        if (dialogValues.availableSources.network.length > 0) {
+        if (availableSources.network.length > 0) {
             availableNetworkTypes = [
                 {
                     name: 'user',
@@ -184,15 +138,45 @@ export const NetworkTypeAndSourceRow = ({
         }
     }
 
-    if (["network", "direct", "bridge"].includes(dialogValues.networkType)) {
-        let sources: string[] = [];
-        if (dialogValues.networkType === "network")
-            sources = dialogValues.availableSources.network;
-        else if (dialogValues.networkType === "direct")
-            sources = Object.keys(dialogValues.availableSources.device).filter(dev => dialogValues.availableSources.device[dev].type != "bridge");
-        else if (dialogValues.networkType === "bridge")
-            sources = Object.keys(dialogValues.availableSources.device).filter(dev => dialogValues.availableSources.device[dev].type == "bridge");
+    return availableNetworkTypes;
+}
 
+export const NetworkTypeAndSourceRow = ({
+    vm,
+    idPrefix,
+    type_value,
+    source_value,
+    source_mode_value,
+    availableSources,
+} : {
+    vm: VM,
+    idPrefix: string,
+    type_value: DialogValue<string>,
+    source_value: DialogValue<string>,
+    source_mode_value: DialogValue<string>,
+    availableSources: AvailableSources,
+}) => {
+    const defaultNetworkType = type_value.get();
+    let defaultNetworkSource = source_value.get();
+    let networkSourcesContent: React.ReactNode;
+    let networkSourceEnabled: boolean = true;
+
+    const availableNetworkTypes = getAvailableNetworkTypes(vm, availableSources);
+
+    function sources_for_type(type: string) {
+        if (type === "network")
+            return availableSources.network;
+        else if (type === "direct")
+            return Object.keys(availableSources.device).filter(dev => availableSources.device[dev].type != "bridge");
+        else if (type === "bridge")
+            return Object.keys(availableSources.device).filter(dev => availableSources.device[dev].type == "bridge");
+        else
+            return [];
+    }
+
+    const networkType = type_value.get();
+    if (["network", "direct", "bridge"].includes(networkType)) {
+        const sources = sources_for_type(networkType);
         if (sources.length > 0) {
             networkSourcesContent = sources.sort().map(networkSource => {
                 return (
@@ -201,7 +185,7 @@ export const NetworkTypeAndSourceRow = ({
                 );
             });
         } else {
-            if (dialogValues.networkType === "network")
+            if (networkType === "network")
                 defaultNetworkSource = _("No virtual networks");
             else
                 defaultNetworkSource = _("No network devices");
@@ -212,6 +196,12 @@ export const NetworkTypeAndSourceRow = ({
             );
             networkSourceEnabled = false;
         }
+    }
+
+    function setNetworkType(type: string) {
+        type_value.set(type);
+        const sources = sources_for_type(type);
+        source_value.set(sources.length > 0 ? sources[0] : "");
     }
 
     return (
@@ -236,7 +226,7 @@ export const NetworkTypeAndSourceRow = ({
                         />
                     }>
                     <FormSelect id={`${idPrefix}-type`}
-                        onChange={(_event, value) => onValueChanged('networkType', value)}
+                        onChange={(_event, value) => setNetworkType(value)}
                         data-value={defaultNetworkType}
                         value={defaultNetworkType}>
                         {availableNetworkTypes
@@ -250,20 +240,21 @@ export const NetworkTypeAndSourceRow = ({
                     </FormSelect>
                 </FormGroup>
             }
-            {["network", "direct", "bridge"].includes(dialogValues.networkType) && (
+            {["network", "direct", "bridge"].includes(networkType) && (
                 <FormGroup fieldId={`${idPrefix}-source`} label={_("Source")}>
                     <FormSelect id={`${idPrefix}-source`}
-                                onChange={(_event, value) => onValueChanged('networkSource', value)}
+                                onChange={(_event, value) => source_value.set(value)}
                                 isDisabled={!networkSourceEnabled}
                                 data-value={defaultNetworkSource}
                                 value={defaultNetworkSource}>
                         {networkSourcesContent}
                     </FormSelect>
+                    <DialogValidationText value={source_value} />
                 </FormGroup>
             )}
-            {dialogValues.networkType == "direct" && (
+            {networkType == "direct" && (
                 <FormGroup id={`${idPrefix}-source-mode`} label={_("Mode")} hasNoPaddingTop isInline
-                    data-value={dialogValues.networkSourceMode}
+                    data-value={source_mode_value.get()}
                        labelHelp={
                            <InfoPopover
                                aria-label={_("Mode help")}
@@ -293,17 +284,46 @@ export const NetworkTypeAndSourceRow = ({
                             key={mode}
                             id={`${idPrefix}-source-mode-${mode}`}
                             name={`mode-${mode}`}
-                            isChecked={dialogValues.networkSourceMode == mode}
+                            isChecked={source_mode_value.get() == mode}
                             // The label is not translated since the
                             // documentation we link to is always in
                             // English.
                             label={<pre>{mode}</pre>}
-                            onChange={() => onValueChanged('networkSourceMode', mode)} />)}
+                            onChange={() => source_mode_value.set(mode)} />)}
                 </FormGroup>
             )}
         </>
     );
 };
+
+export function validate_NetworkTypeAndSourceRow(
+    source_value: DialogValue<string>,
+    vm: VM,
+    availableSources: AvailableSources,
+) {
+    const availableNetworkTypes = getAvailableNetworkTypes(vm, availableSources);
+    if (availableNetworkTypes.length > 0)
+        source_value.validate(v => {
+            if (v == "")
+                return _("No sources available");
+        });
+}
+
+export interface DialogComplexPortForward {
+    kind: "complex";
+    config: VMInterfacePortForward;
+}
+
+export interface DialogSimplePortForward {
+    kind: "simple";
+    address: string;
+    proto: string;
+    host: string;
+    guest: string;
+}
+
+type DialogPortForward = DialogSimplePortForward | DialogComplexPortForward;
+export type PortForwardsValue = DialogPortForward[];
 
 export function portForwardText(pf: VMInterfacePortForward): string {
     let text = "";
@@ -406,32 +426,25 @@ function validateGuestPort(port: string): string | undefined {
     return undefined;
 }
 
-function validateDialogPortForward(d: DialogPortForward): ValidationPortForward | undefined {
-    if (d.kind == "simple") {
-        const v: ValidationPortForward = {
-            address: validateAddress(d.address),
-            host: validateHostPort(d.host),
-            guest: validateGuestPort(d.guest),
-        };
-        if (!v.address && !v.host && !v.guest)
-            return undefined;
-        return v;
-    } else
-        return undefined;
+export function validate_PortForwards(value: DialogValue<PortForwardsValue>) {
+    value.forEach(v => {
+        if (v.get().kind == "simple") {
+            const sv = v as DialogValue<DialogSimplePortForward>;
+            sv.sub("address").validate(validateAddress);
+            sv.sub("host").validate(validateHostPort);
+            sv.sub("guest").validate(validateGuestPort);
+        }
+    });
 }
 
 const SimplePortForward = ({
     id,
-    item,
-    validation,
-    onChange,
+    value,
     idx,
     removeitem,
 } : {
     id: string,
-    item: DialogSimplePortForward,
-    validation: ValidationSimplePortForward | undefined,
-    onChange: <K extends keyof DialogSimplePortForward>(idx: number, key: K, value: DialogSimplePortForward[K]) => void,
+    value: DialogValue<DialogSimplePortForward>,
     idx: number,
     removeitem: (idx: number) => void,
 }) => {
@@ -448,14 +461,10 @@ const SimplePortForward = ({
                         bodyContent={_("If host IP is set to 0.0.0.0 or not set at all, the port will be bound on all IPs on the host.")}
                     />
                 }>
-                <TextInput
+                <DialogTextInput
                     id={id + "-ip-address"}
-                    value={item.address}
-                    onChange={(_event, value) => {
-                        onChange(idx, 'address', value);
-                    }}
+                    value={value.sub("address")}
                 />
-                <FormHelper helperTextInvalid={validation?.address} />
             </FormGroup>
             <FormGroup
                 className="pf-m-4-col-on-md"
@@ -470,15 +479,11 @@ const SimplePortForward = ({
                         bodyContent={_("The port on the host that is fotwarded into the guest. You can also specify a range of ports like 4000-4050.")}
                     />
                 }>
-                <TextInput
+                <DialogTextInput
                     id={id + "-host-port"}
                     step={1}
-                    value={item.host}
-                    onChange={(_event, value) => {
-                        onChange(idx, 'host', value);
-                    }}
+                    value={value.sub("host")}
                 />
-                <FormHelper helperTextInvalid={validation?.host} />
             </FormGroup>
             <FormGroup
                 className="pf-m-3-col-on-md"
@@ -492,14 +497,10 @@ const SimplePortForward = ({
                         bodyContent={_("The port on the guest. If left empty, the same port as on the host is used.")}
                     />
                 }>
-                <TextInput
+                <DialogTextInput
                     id={id + "-guest-port"}
-                    value={item.guest}
-                    onChange={(_event, value) => {
-                        onChange(idx, 'guest', value);
-                    }}
+                    value={value.sub("guest")}
                 />
-                <FormHelper helperTextInvalid={validation?.guest} />
             </FormGroup>
             <FormGroup
                 className="pf-m-2-col-on-md"
@@ -509,8 +510,8 @@ const SimplePortForward = ({
                 <FormSelect
                     className='pf-v6-c-form-control'
                     id={id + "-protocol"}
-                    value={item.proto}
-                    onChange={(_event, value) => onChange(idx, 'proto', value)}
+                    value={value.sub("proto").get()}
+                    onChange={(_event, val) => value.sub("proto").set(val)}
                 >
                     <FormSelectOption value='tcp' label={_("TCP")} />
                     <FormSelectOption value='udp' label={_("UDP")} />
@@ -533,12 +534,12 @@ const SimplePortForward = ({
 
 const ComplexPortForward = ({
     id,
-    item,
+    value,
     idx,
     removeitem,
 } : {
     id: string,
-    item: DialogComplexPortForward,
+    value: DialogValue<DialogComplexPortForward>,
     idx: number,
     removeitem: (idx: number) => void,
 }) => {
@@ -548,7 +549,7 @@ const ComplexPortForward = ({
                 {
                     cockpit.format(
                         _("Complex rule \"$0\" can not be edited here."),
-                        portForwardText(item.config))
+                        portForwardText(value.get().config))
                 }
             </div>
             <FormGroup className="pf-m-1-col-on-md remove-button-group">
@@ -568,14 +569,10 @@ const ComplexPortForward = ({
 
 export const NetworkPortForwardsRow = ({
     idPrefix,
-    onValueChanged,
-    dialogValues,
-    validation,
+    value,
 } : {
     idPrefix: string,
-    onValueChanged: OnValueChanged,
-    dialogValues: DialogBodyValues,
-    validation: ValidationBody | undefined,
+    value: DialogValue<PortForwardsValue>,
 }) => {
     const simple_default: DialogPortForward = {
         kind: "simple",
@@ -586,19 +583,11 @@ export const NetworkPortForwardsRow = ({
     };
 
     function addSimple() {
-        onValueChanged('portForwards', dialogValues.portForwards.concat({ ...simple_default }));
+        value.add(simple_default);
     }
 
     function remItem(idx: number) {
-        dialogValues.portForwards.splice(idx, 1);
-        onValueChanged('portForwards', dialogValues.portForwards);
-    }
-
-    function onSimpleChange<K extends keyof DialogSimplePortForward>(idx: number, key: K, value: DialogSimplePortForward[K]) {
-        if (dialogValues.portForwards[idx].kind == "simple") {
-            dialogValues.portForwards[idx][key] = value;
-            onValueChanged('portForwards', dialogValues.portForwards);
-        }
+        value.remove(idx);
     }
 
     const action = (
@@ -618,7 +607,7 @@ export const NetworkPortForwardsRow = ({
                 />
             }
         >
-            {dialogValues.portForwards.length == 0 &&
+            {value.get().length == 0 &&
                 <EmptyState>
                     <EmptyStateBody>
                         {_("No ports forwarded")}
@@ -626,15 +615,13 @@ export const NetworkPortForwardsRow = ({
                 </EmptyState>
             }
             {
-                dialogValues.portForwards.map((pf, idx) => {
-                    if (pf.kind == "simple")
+                value.map((v, idx) => {
+                    if (v.get().kind == "simple")
                         return (
                             <SimplePortForward
                                 key={idx}
                                 id={`${idPrefix}-port-forwards-${idx}`}
-                                item={pf}
-                                validation={validation?.portForwards ? validation.portForwards[idx] : undefined}
-                                onChange={onSimpleChange}
+                                value={v as DialogValue<DialogSimplePortForward>}
                                 idx={idx}
                                 removeitem={() => remItem(idx)}
                             />
@@ -644,7 +631,7 @@ export const NetworkPortForwardsRow = ({
                             <ComplexPortForward
                                 key={idx}
                                 id={`${idPrefix}-port-forwards-${idx}`}
-                                item={pf}
+                                value={v as DialogValue<DialogComplexPortForward>}
                                 idx={idx}
                                 removeitem={() => remItem(idx)}
                             />
@@ -654,14 +641,3 @@ export const NetworkPortForwardsRow = ({
         </FormFieldGroup>
     );
 };
-
-export function validateDialogBodyValues(d: DialogBodyValues): ValidationBody | undefined {
-    const v: ValidationBody = {
-        portForwards: d.portForwards.map(validateDialogPortForward),
-    };
-
-    if (!v.portForwards.some(pf => !!pf))
-        return undefined;
-
-    return v;
-}
