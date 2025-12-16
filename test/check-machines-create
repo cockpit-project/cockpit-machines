@@ -2672,7 +2672,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         b.wait_text(".pf-v6-c-modal-box__title-text", "Replace SPICE devices")
         b.wait_in_text(".pf-v6-c-modal-box__body", "Replace SPICE on selected VMs")
         # action came from vmSpiceOnly, should be at the top and selected
-        b.wait_visible(f".pf-v6-c-menu__item:contains('{vmSpiceOnly}') input:checked")
+        b.wait_in_text(".pf-v6-c-menu__item:has(input:checked)", vmSpiceOnly)
         b.wait_visible(".pf-v6-c-menu__item input:checked")  # selector is ambiguous if anything else is checked
         # other SPICE VMs are also offered
         menu = b.text("#replace-spice-dialog-other")
@@ -2688,7 +2688,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         b.wait_text("#replace-spice-dialog-select-all", "Deselect others")
         b.click("#replace-spice-dialog-select-all")
         # only the first one selected now
-        b.wait_visible(f".pf-v6-c-menu__item:contains('{vmSpiceOnly}') input:checked")
+        b.wait_in_text(".pf-v6-c-menu__item:has(input:checked)", vmSpiceOnly)
         # fails due to ambiguity if others are
         b.wait_visible(".pf-v6-c-menu__item input:checked")
         b.click("#replace-spice-dialog-select-all")
