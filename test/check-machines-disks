@@ -682,8 +682,8 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
             # Expand additional options
             if self.cache_mode or self.bus_type or self.serial:
-                b.click("div.pf-v6-c-modal-box button:contains(Show additional options)")
-                b.wait_visible("div.pf-v6-c-modal-box button[aria-expanded=true]:contains(Hide additional options)")
+                b.click("div.pf-v6-c-modal-box button:contains('Show additional options')")
+                b.wait_in_text("div.pf-v6-c-modal-box button[aria-expanded=true]", "Hide additional options")
 
                 # Configure performance options
                 if self.cache_mode:
