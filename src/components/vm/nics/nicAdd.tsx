@@ -23,7 +23,6 @@ import { useDialogs } from 'dialogs';
 import type { VM } from '../../../types';
 import type { AvailableSources } from './vmNicsCard';
 
-import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import {
     Modal, ModalBody, ModalFooter, ModalHeader
@@ -32,8 +31,7 @@ import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 
 import {
-    NetworkTypeAndSourceValue, NetworkTypeAndSourceRow,
-    init_NetworkTypeAndSourceRow, validate_NetworkTypeAndSourceRow,
+    NetworkTypeAndSourceValue, NetworkTypeAndSourceRow, init_NetworkTypeAndSourceRow,
     NetworkModelRow,
     PortForwardsValue, NetworkPortForwardsRow, validate_PortForwards,
     dialogPortForwardsToInterface,
@@ -44,8 +42,11 @@ import { AppState } from '../../../app';
 import {
     useDialogState, DialogValue, DialogError,
     DialogErrorMessage, DialogHelperText,
-    DialogActionButton, DialogCancelButton
+    DialogActionButton, DialogCancelButton,
+    DialogCheckbox,
 } from 'cockpit/dialog';
+
+import create_default_network_sh from "./create-default-network.sh";
 
 import './nic.css';
 
@@ -143,18 +144,11 @@ const PermanentChange = ({
     // down only. Enable permanent change of the domain.xml
 
     return (
-        <FormGroup
-            fieldId={value.id()}
-            label={_("Persistence")}
-            hasNoPaddingTop
-        >
-            <Checkbox
-                id={value.id()}
-                isChecked={value.get()}
-                label={_("Always attach")}
-                onChange={(_event, checked) => value.set(checked)}
-            />
-        </FormGroup>
+        <DialogCheckbox
+            field_label={_("Persistence")}
+            checkbox_label={_("Always attach")}
+            value={value}
+        />
     );
 };
 
@@ -191,7 +185,6 @@ export const AddNIC = ({
 
     function validate() {
         validate_NetworkMacRow(dlg.value("mac"));
-        validate_NetworkTypeAndSourceRow(dlg.value("type_and_source"));
         if (dlg.values.type_and_source.type == "user")
             validate_PortForwards(dlg.value("portForwards"));
     }
@@ -217,6 +210,10 @@ export const AddNIC = ({
             let backend = null;
             if (tas.type == "user" && vm.capabilities.interfaceBackends.includes("passt"))
                 backend = "passt";
+            if (source == "$create") {
+                await cockpit.script(create_default_network_sh, [], { err: "message", superuser: "try" });
+                source = "default";
+            }
             await virtXmlHotAdd(
                 vm,
                 "network",
