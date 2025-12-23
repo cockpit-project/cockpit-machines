@@ -27,6 +27,8 @@ import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List"
 import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { PendingIcon } from "@patternfly/react-icons";
+import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
+import { DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
 
 import { useDialogs } from 'dialogs.jsx';
 
@@ -299,3 +301,50 @@ export const VmNeedsShutdown = ({ vm } : { vm: VM }) => {
         </Popover>
     );
 };
+
+export function MaybePendingDescription<O, V>({
+    idPrefix,
+    term,
+    active,
+    inactive,
+    accessor,
+    formatter,
+    equal = (a, b) => a == b,
+}: {
+    idPrefix: string,
+    term: string,
+    active: O,
+    inactive: O | null,
+    accessor: (obj: O) => V,
+    formatter: (val: V) => React.ReactNode,
+    equal?: (a: V, b: V) => boolean,
+}) {
+    const active_val = accessor(active);
+    const inactive_val = inactive ? accessor(inactive) : active_val;
+
+    console.log("P?", term, active_val, inactive_val);
+
+    return (
+        <DescriptionListGroup>
+            <DescriptionListTerm>{term}</DescriptionListTerm>
+            <DescriptionListDescription>
+                <Flex
+                    spaceItems={{ default: 'spaceItemsSm' }}
+                    alignItems={{ default: 'alignItemsCenter' }}
+                    id={idPrefix}
+                >
+                    <FlexItem>
+                        { formatter(active_val) }
+                    </FlexItem>
+                    { // TODO - show inactive_val as well
+                        !equal(active_val, inactive_val) &&
+                            <NeedsShutdownTooltip
+                                iconId={`${idPrefix}-tooltip`}
+                                tooltipId={`tip-${idPrefix}`}
+                            />
+                    }
+                </Flex>
+            </DescriptionListDescription>
+        </DescriptionListGroup>
+    );
+}
