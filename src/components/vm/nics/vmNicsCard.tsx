@@ -24,7 +24,6 @@ import { useDialogs, Dialogs } from 'dialogs';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
-import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { DialogsContext } from 'dialogs.jsx';
 
@@ -33,7 +32,7 @@ import { getIfaceSourceName, rephraseUI, vmId, addNotification } from "../../../
 import AddNIC from './nicAdd.jsx';
 import { EditNICModal } from './nicEdit.jsx';
 import { portForwardText } from './nicBody';
-import { needsShutdownIfaceModel, needsShutdownIfaceSource, needsShutdownIfaceType, needsShutdownIfaceBackend, needsShutdownIfacePortForward, NeedsShutdownTooltip } from '../../common/needsShutdown.jsx';
+import { needsShutdownIfaceModel, needsShutdownIfaceSource, needsShutdownIfaceType, needsShutdownIfaceBackend, needsShutdownIfacePortForward, WithPending } from '../../common/needsShutdown.jsx';
 import './nic.css';
 import { virtXmlEdit, virtXmlHotRemove, domainInterfaceAddresses, domainGet } from '../../../libvirtApi/domain.js';
 import { KebabDropdown } from "cockpit-components-dropdown";
@@ -166,14 +165,16 @@ const NetworkSourceDescriptions = ({
                         {label}
                     </DescriptionListTerm>
                     <DescriptionListDescription>
-                        <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${id}-network-${networkId}-source`}>
-                            <FlexItem>
-                                {checkDeviceAvailability(source)
+                        <WithPending
+                            id={`${id}-network-${networkId}-source`}
+                            isPending={needsShutdownIfaceSource(vm, network)}
+                        >
+                            {
+                                checkDeviceAvailability(source)
                                     ? <Button variant="link" isInline onClick={sourceJump(source)}>{source}</Button>
-                                    : source}
-                            </FlexItem>
-                            {needsShutdownIfaceSource(vm, network) && <NeedsShutdownTooltip iconId={`${id}-network-${networkId}-source-tooltip`} tooltipId="tip-network" />}
-                        </Flex>
+                                    : source
+                            }
+                        </WithPending>
                     </DescriptionListDescription>
                 </DescriptionListGroup>
                 { network.source.mode &&
@@ -264,27 +265,27 @@ const NetworkPortForwardDescriptions = ({
     id: string,
     needsShutdown: boolean,
 }) => {
-    function shutdownWrapper(content: React.ReactNode, needs: boolean) {
+    function shutdownWrapper(id: string, content: React.ReactNode, needs: boolean) {
         return (
-            <Flex
-                spaceItems={{ default: 'spaceItemsSm' }}
-                alignItems={{ default: 'alignItemsCenter' }}
+            <WithPending
+                id={id}
+                isPending={needs}
             >
-                <FlexItem>{content}</FlexItem>
-                {needs &&
-                    <NeedsShutdownTooltip
-                        iconId={`${id}-network-${networkId}-port-forward-tooltip`}
-                        tooltipId="tip-network"
-                    />
-                }
-            </Flex>
+                {content}
+            </WithPending>
         );
     }
 
     function row(pf: VMInterfacePortForward, index: number) {
         return (
-            <DescriptionListDescription key={index} id={`${id}-network-${networkId}-port-forward-${index}`}>
-                {shutdownWrapper(portForwardText(pf), index == 0 && needsShutdown)}
+            <DescriptionListDescription key={index}>
+                {
+                    shutdownWrapper(
+                        `${id}-network-${networkId}-port-forward-${index}`,
+                        portForwardText(pf),
+                        index == 0 && needsShutdown
+                    )
+                }
             </DescriptionListDescription>
         );
     }
@@ -295,8 +296,14 @@ const NetworkPortForwardDescriptions = ({
                 {_("Port forwards")}
             </DescriptionListTerm>
             { network.portForward.length == 0 &&
-                <DescriptionListDescription id={`${id}-network-${networkId}-port-forward`}>
-                    {shutdownWrapper(_("none"), needsShutdown)}
+                <DescriptionListDescription>
+                    {
+                        shutdownWrapper(
+                            `${id}-network-${networkId}-port-forward`,
+                            _("none"),
+                            needsShutdown
+                        )
+                    }
                 </DescriptionListDescription>
             }
             { network.portForward.map(row) }
@@ -794,6 +801,24 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
                 </DescriptionListGroup>
             );
 
+            const DescriptionWithPending = ({
+                id,
+                term,
+                isPending,
+                children,
+            } : {
+                id: string,
+                term: string,
+                isPending: boolean,
+                children: React.ReactNode
+            }) => (
+                <Description term={term}>
+                    <WithPending id={id} isPending={isPending}>
+                        {children}
+                    </WithPending>
+                </Description>
+            );
+
             const expandedContent = (
                 <DescriptionList isAutoFit>
                     { this.state.haveAgentSource &&
@@ -801,27 +826,20 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
                             <div id={`${id}-network-${networkId}-mac`}>{target.mac}</div>
                         </Description>
                     }
-                    <Description term={_("Model type")}>
-                        <Flex
-                            spaceItems={{ default: 'spaceItemsSm' }}
-                            alignItems={{ default: 'alignItemsCenter' }}
-                            id={`${id}-network-${networkId}-model`}
-                        >
-                            <FlexItem>{target.model}</FlexItem>
-                            {needsShutdownIfaceModel(vm, target) &&
-                                <NeedsShutdownTooltip
-                                    iconId={`${id}-network-${networkId}-model-tooltip`}
-                                    tooltipId="tip-network"
-                                />
-                            }
-                        </Flex>
-                    </Description>
-                    <Description term={_("Type")}>
-                        <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${id}-network-${networkId}-type`}>
-                            <FlexItem>{target.type}</FlexItem>
-                            {needsShutdownIfaceType(vm, target) && <NeedsShutdownTooltip iconId={`${id}-network-${networkId}-type-tooltip`} tooltipId="tip-network" />}
-                        </Flex>
-                    </Description>
+                    <DescriptionWithPending
+                        id={`${id}-network-${networkId}-model`}
+                        term={_("Model type")}
+                        isPending={needsShutdownIfaceModel(vm, target)}
+                    >
+                        {target.model}
+                    </DescriptionWithPending>
+                    <DescriptionWithPending
+                        id={`${id}-network-${networkId}-type`}
+                        term={_("Type")}
+                        isPending={needsShutdownIfaceType(vm, target)}
+                    >
+                        {target.type}
+                    </DescriptionWithPending>
                     <IPDescriptions
                         ipInterfaces={this.state.ips.filter(ip => ip.mac === target.mac)}
                         id={id}
@@ -834,15 +852,13 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
                         hostDevices={this.hostDevices}
                     />
                     { target.type == "user" &&
-                        <Description term={_("Backend")}>
-                            <Flex
-                                spaceItems={{ default: 'spaceItemsSm' }}
-                                alignItems={{ default: 'alignItemsCenter' }}
-                                id={`${id}-network-${networkId}-backend`}>
-                                <FlexItem>{target.backend || _("default")}</FlexItem>
-                                {needsShutdownIfaceBackend(vm, target) && <NeedsShutdownTooltip iconId={`${id}-network-${networkId}-backend-tooltip`} tooltipId="tip-network" />}
-                            </Flex>
-                        </Description>
+                        <DescriptionWithPending
+                            id={`${id}-network-${networkId}-backend`}
+                            term={_("Backend")}
+                            isPending={needsShutdownIfaceBackend(vm, target)}
+                        >
+                            {target.backend || _("default")}
+                        </DescriptionWithPending>
                     }
                     { target.type == "user" && (!target.backend || target.backend == "passt") &&
                         <NetworkPortForwardDescriptions

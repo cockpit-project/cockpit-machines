@@ -1039,7 +1039,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         b.set_input_text("#vm-subVmTest1-network-3-edit-dialog-port-forwards-0-guest-port", "88")
         b.click("#vm-subVmTest1-network-3-edit-dialog-save")
         b.wait_not_present("#vm-subVmTest1-network-3-edit-dialog-modal-window")
-        b.wait_visible("#vm-subVmTest1-network-3-port-forward-tooltip")
+        b.wait_visible("#vm-subVmTest1-network-3-port-forward-0-tooltip")
 
     def testSession(self):
         b = self.browser
