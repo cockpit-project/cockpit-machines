@@ -523,7 +523,7 @@ export function parseDumpxmlForDisks(devicesElem: Element): Record<string, VMDis
                     driver: {
                         name: driverElem?.getAttribute('name'), // optional
                         type: driverElem?.getAttribute('type'),
-                        cache: driverElem?.getAttribute('cache'), // optional
+                        cache: driverElem?.getAttribute('cache') || "default",
                         discard: driverElem?.getAttribute('discard'), // optional
                         io: driverElem?.getAttribute('io'), // optional
                         errorPolicy: driverElem?.getAttribute('error_policy'), // optional
