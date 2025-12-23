@@ -27,6 +27,7 @@ import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List"
 import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { PendingIcon } from "@patternfly/react-icons";
+import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 
 import { useDialogs } from 'dialogs.jsx';
 
@@ -299,3 +300,31 @@ export const VmNeedsShutdown = ({ vm } : { vm: VM }) => {
         </Popover>
     );
 };
+
+export function WithPending({
+    id,
+    isPending,
+    children,
+} : {
+    id?: string | undefined,
+    isPending: boolean,
+    children: React.ReactNode,
+}) {
+    return (
+        <Flex
+            spaceItems={{ default: 'spaceItemsSm' }}
+            alignItems={{ default: 'alignItemsCenter' }}
+            id={id}
+        >
+            <FlexItem>
+                {children}
+            </FlexItem>
+            { isPending &&
+                <NeedsShutdownTooltip
+                    iconId={`${id}-tooltip`}
+                    tooltipId={`tip-${id}`}
+                />
+            }
+        </Flex>
+    );
+}

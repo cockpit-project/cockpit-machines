@@ -24,12 +24,11 @@ import type { ListingTableColumnProps, ListingTableRowProps } from 'cockpit-comp
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { DescriptionList, DescriptionListDescription, DescriptionListGroup, DescriptionListTerm } from "@patternfly/react-core/dist/esm/components/DescriptionList";
-import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { useDialogs } from 'dialogs.jsx';
 
 import { convertToUnit, toReadableNumber, units, vmId } from "../../../helpers.js";
 import { AddDiskModalBody } from './diskAdd.jsx';
-import { needsShutdownDiskAccess, NeedsShutdownTooltip } from '../../common/needsShutdown.jsx';
+import { needsShutdownDiskAccess, WithPending } from '../../common/needsShutdown.jsx';
 import { ListingTable } from "cockpit-components-table.jsx";
 import { DiskSourceDescriptions, DiskSourceAbbrev, DiskExtraDescriptions, DiskActions } from './vmDiskColumns.jsx';
 
@@ -222,11 +221,35 @@ export const VmDisksCard = ({
                                 } />
         });
 
-        const Description = ({ term, children } : { term: string, children: React.ReactNode }) => (
+        const Description = ({
+            term,
+            children
+        } : {
+            term: string,
+            children: React.ReactNode
+        }) => (
             <DescriptionListGroup>
                 <DescriptionListTerm>{term}</DescriptionListTerm>
                 <DescriptionListDescription>{children}</DescriptionListDescription>
             </DescriptionListGroup>
+        );
+
+        const DescriptionWithPending = ({
+            id,
+            term,
+            isPending,
+            children,
+        } : {
+            id: string,
+            term: string,
+            isPending: boolean,
+            children: React.ReactNode
+        }) => (
+            <Description term={term}>
+                <WithPending id={id} isPending={isPending}>
+                    {children}
+                </WithPending>
+            </Description>
         );
 
         const expandedContent = (
@@ -237,12 +260,13 @@ export const VmDisksCard = ({
                 <Description term={_("Bus")}>
                     <div id={`${idPrefixRow}-bus`}>{disk.bus}</div>
                 </Description>
-                <Description term={_("Access")}>
-                    <Flex spaceItems={{ default: 'spaceItemsSm' }} alignItems={{ default: 'alignItemsCenter' }} id={`${idPrefixRow}-access`}>
-                        <FlexItem>{ disk.readonly ? _("Read-only") : disk.shareable ? _("Concurrently writeable") : _("Writeable") }</FlexItem>
-                        { disk.target && needsShutdownDiskAccess(vm, disk.target) && <NeedsShutdownTooltip iconId={`${idPrefixRow}-access-tooltip`} tooltipId={`tip-${idPrefixRow}-access`} /> }
-                    </Flex>
-                </Description>
+                <DescriptionWithPending
+                    id={`${idPrefixRow}-access`}
+                    term={_("Access")}
+                    isPending={!!disk.target && needsShutdownDiskAccess(vm, disk.target)}
+                >
+                    {disk.readonly ? _("Read-only") : disk.shareable ? _("Concurrently writeable") : _("Writeable")}
+                </DescriptionWithPending>
                 <DiskSourceDescriptions
                     diskSource={disk.source}
                     idPrefix={idPrefixRow}
