@@ -27,6 +27,7 @@ import { List, ListItem } from "@patternfly/react-core/dist/esm/components/List"
 import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
 import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { PendingIcon } from "@patternfly/react-icons";
+import { Flex, FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
 
 import { useDialogs } from 'dialogs.jsx';
 
@@ -53,6 +54,13 @@ export function needsShutdownDiskAccess(vm: VM, diskTarget: string) {
     return inactiveDisk &&
         (diskPropertyChanged(disk, inactiveDisk, "readonly") ||
          diskPropertyChanged(disk, inactiveDisk, "shareable"));
+}
+
+export function needsShutdownDiskCache(vm: VM, diskTarget: string) {
+    const inactiveDisk = vm.inactiveXML.disks[diskTarget];
+    const disk = vm.disks[diskTarget];
+
+    return inactiveDisk && disk.driver.cache != inactiveDisk.driver.cache;
 }
 
 export function needsShutdownIfaceType(vm: VM, iface: VMInterface) {
@@ -182,7 +190,8 @@ export function getDevicesRequiringShutdown(vm: VM) {
 
     // DISKS
     for (const target in vm.disks) {
-        if (needsShutdownDiskAccess(vm, target)) {
+        if (needsShutdownDiskAccess(vm, target) ||
+            needsShutdownDiskCache(vm, target)) {
             devices.push(_("Disk"));
             break;
         }
@@ -299,3 +308,31 @@ export const VmNeedsShutdown = ({ vm } : { vm: VM }) => {
         </Popover>
     );
 };
+
+export function WithPending({
+    id,
+    isPending,
+    children,
+} : {
+    id?: string | undefined,
+    isPending: boolean,
+    children: React.ReactNode,
+}) {
+    return (
+        <Flex
+            spaceItems={{ default: 'spaceItemsSm' }}
+            alignItems={{ default: 'alignItemsCenter' }}
+            id={id}
+        >
+            <FlexItem>
+                {children}
+            </FlexItem>
+            { isPending &&
+                <NeedsShutdownTooltip
+                    iconId={`${id}-tooltip`}
+                    tooltipId={`tip-${id}`}
+                />
+            }
+        </Flex>
+    );
+}

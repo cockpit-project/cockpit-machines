@@ -159,6 +159,36 @@ function get_prop(props: DBusProps, name: string): Variant {
     return p;
 }
 
+// The libvirt-dbus GetAll call erroneously wraps everything in an
+// additional variant, so we have to undo that with an additional
+// get_variant_variant call...
+//
+// For example:
+//
+//    # busctl call org.libvirt /org/libvirt/QEMU org.freedesktop.DBus.Properties GetAll s org.libvirt.Connect
+//    a{sv} 5 "Encrypted" v b false ...
+//
+// This should be read like this: The return value is a "a{sv}" with 5
+// elements, and the first has "Encrypted" as the "s" part, and "v b
+// false" as the "v" part. Thus, this is a boolean in a variant in a
+// variant (in a dictionary), while we expect a boolean in a variant
+// (in a dictionary).
+//
+// In other words, this should really be:
+//
+//    a{sv} 5 "Encrypted" b false ...
+//
+// Note that a Get call is correct:
+//
+//    # busctl call org.libvirt /org/libvirt/QEMU org.freedesktop.DBus.Properties Get ss org.libvirt.Connect Encrypted
+//    v b false
+//
+// Read this as: The return value is a "v" with content "b
+// false". Thus, this is a boolean in a variant, as expected.
+//
+// Fixing this would break API, so I guess we just document this quirk
+// here verbosely.  The GetStats method shares the same quirk.
+
 export function get_string_prop(props: DBusProps, name: string): string {
     return get_variant_string(get_variant_variant(get_prop(props, name)));
 }

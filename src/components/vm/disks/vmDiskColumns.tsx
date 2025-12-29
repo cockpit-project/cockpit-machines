@@ -115,12 +115,10 @@ export const DiskSourceAbbrev = ({
 
 export const DiskExtraDescriptions = ({
     idPrefix,
-    cache,
     type,
     serial
 } : {
     idPrefix: string,
-    cache: optString,
     type: optString,
     serial: optString,
 }) => {
@@ -140,7 +138,6 @@ export const DiskExtraDescriptions = ({
     };
 
     const chunks: React.ReactNode[] = [];
-    addOptional(chunks, cache, "cache", _("Cache"));
     addOptional(chunks, serial, "serial", _("Serial"));
     addOptional(chunks, type, "type", _("Format"));
 
@@ -287,10 +284,12 @@ export const DiskActions = ({
         <div className='machines-listing-actions'>
             { cdromAction }
             { vm.persistent && vm.inactiveXML.disks[disk.target] && // supported only  for persistent disks
-            <EditDiskAction disk={disk}
-                            vm={vm}
-                            idPrefix={`${idPrefixRow}-edit`}
-                            supportedDiskBusTypes={supportedDiskBusTypes} />}
+                <EditDiskAction
+                    disk={vm.inactiveXML.disks[disk.target]}
+                    vm={vm}
+                    idPrefix={`${idPrefixRow}-edit`}
+                />
+            }
             <KebabDropdown
                 key={idPrefixRow + "-action-kebab"}
                 toggleButtonId={idPrefixRow + "-action-kebab"}
