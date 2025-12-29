@@ -419,14 +419,16 @@ const AppVM = ({
         return (
             <>
                 {getInlineNotifications()}
-                <EmptyStatePanel title={cockpit.format(vm.downloadProgress ? _("Downloading image for VM $0") : _("Creating VM $0"), name)}
+                <EmptyStatePanel
+                    title={cockpit.format(vm.downloadProgress ? _("Downloading image for VM $0") : _("Creating VM $0"), name)}
                     action={_("Go to VMs list")}
                     actionVariant="link"
                     onAction={() => cockpit.location.go(["vms"])}
                     paragraph={vm.downloadProgress && <Progress aria-label={_("Download progress")}
                                                           value={Number(vm.downloadProgress)}
                                                           measureLocation={ProgressMeasureLocation.outside} />}
-                    loading />
+                    loading={!vm.downloadProgress}
+                />
             </>
         );
     }
