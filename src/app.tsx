@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import { EventEmitter } from 'cockpit/event';
 
 import type { ConnectionName, VM } from './types';
@@ -109,6 +109,7 @@ interface AppStateEvents {
 export class AppState extends EventEmitter<AppStateEvents> {
     loadingResources: boolean = true;
     systemSocketInactive: boolean = false;
+    hardwareVirtEnabled: boolean = true;
 
     #commonDataInited: boolean = false;
     #vmsInited: boolean = true;
@@ -127,6 +128,50 @@ export class AppState extends EventEmitter<AppStateEvents> {
         if (this.#initPromise)
             return this.#initPromise;
 
+        const init_connection = async (connectionName: ConnectionName) => {
+            try {
+                await getLibvirtVersion({ connectionName });
+                const promises = await getApiData({ connectionName });
+                const errorMsgs = promises
+                        .filter(promise => promise.status === 'rejected')
+                        .map(promise => promise.reason.message);
+                if (errorMsgs.length > 0) {
+                    addNotification({
+                        text: _("Failed to fetch some resources"),
+                        detail: errorMsgs.join(', ')
+                    });
+                }
+                // Get the node devices in the background since
+                // they are expensive to get and not important for
+                // displaying VMs.
+                nodeDeviceGetAll({ connectionName }).catch(exc => {
+                    addNotification({
+                        text: "Failed to retrieve node devices",
+                        detail: String(exc),
+                    });
+                });
+            } catch (ex) {
+                // access denied is expected for unprivileged session
+                if (connectionName !== 'system' || superuser.allowed ||
+                    !(ex && typeof ex === 'object' && 'name' in ex && ex.name == 'org.freedesktop.DBus.Error.AccessDenied'))
+                    console.error("Failed to get libvirt version from the dbus API:", ex);
+                /* If the API call failed on system connection and the user has superuser privileges then show the Empty state screen */
+                if (connectionName == "system")
+                    this.systemSocketInactive = true;
+            }
+        };
+
+        const init_hwvirt = async () => {
+            try {
+                const hardwareVirtCheck = await cockpit.script(
+                    "LANG=C.UTF-8 virt-host-validate qemu | grep 'Checking for hardware virtualization'");
+                this.hardwareVirtEnabled = hardwareVirtCheck.includes('PASS');
+            } catch (ex) {
+                // That line doesn't exist on some architectures, so the grep may fail
+                console.debug("Failed to check for hardware virtualization:", ex);
+            }
+        };
+
         const doit = async () => {
             await getLoggedInUser();
 
@@ -134,40 +179,12 @@ export class AppState extends EventEmitter<AppStateEvents> {
             getVirtInstallCapabilities();
             getVirtXmlCapabilities();
 
-            const connectionNames = await getConnectionNames();
-
-            await Promise.allSettled(connectionNames.map(async connectionName => {
-                try {
-                    await getLibvirtVersion({ connectionName });
-                    const promises = await getApiData({ connectionName });
-                    const errorMsgs = promises
-                            .filter(promise => promise.status === 'rejected')
-                            .map(promise => promise.reason.message);
-                    if (errorMsgs.length > 0) {
-                        addNotification({
-                            text: _("Failed to fetch some resources"),
-                            detail: errorMsgs.join(', ')
-                        });
-                    }
-                    // Get the node devices in the background since
-                    // they are expensive to get and not important for
-                    // displaying VMs.
-                    nodeDeviceGetAll({ connectionName }).catch(exc => {
-                        addNotification({
-                            text: "Failed to retrieve node devices",
-                            detail: String(exc),
-                        });
-                    });
-                } catch (ex) {
-                    // access denied is expected for unprivileged session
-                    if (connectionName !== 'system' || superuser.allowed ||
-                        !(ex && typeof ex === 'object' && 'name' in ex && ex.name == 'org.freedesktop.DBus.Error.AccessDenied'))
-                        console.error("Failed to get libvirt version from the dbus API:", ex);
-                    /* If the API call failed on system connection and the user has superuser privileges then show the Empty state screen */
-                    if (connectionName == "system")
-                        this.systemSocketInactive = true;
-                }
-            }));
+            await Promise.allSettled(
+                [
+                    ...(await getConnectionNames()).map(init_connection),
+                    init_hwvirt(),
+                ]
+            );
 
             this.#commonDataInited = true;
             this.#update();
@@ -236,7 +253,6 @@ export const App = () => {
     const state = useInit(() => new AppState());
     useOn(state, "changed");
 
-    const [virtualizationEnabled, setVirtualizationEnabled] = useState(true);
     const [ignoreDisabledVirtualization, setIgnoreDisabledVirtualization] = useState(() => {
         const ignored = localStorage.getItem('virtualization-disabled-ignored');
         const defaultValue = false;
@@ -248,19 +264,6 @@ export const App = () => {
     const { path } = usePageLocation();
 
     const consoleCardStates = useInit(() => new ConsoleCardStates());
-
-    useEffect(() => {
-        (async () => {
-            try {
-                const hardwareVirtCheck = await cockpit.script(
-                    "LANG=C.UTF-8 virt-host-validate qemu | grep 'Checking for hardware virtualization'");
-                setVirtualizationEnabled(hardwareVirtCheck.includes('PASS'));
-            } catch (ex) {
-                // That line doesn't exist on some architectures, so the grep may fail
-                console.debug("Failed to check for hardware virtualization:", ex);
-            }
-        })();
-    }, []);
 
     // Trigger global initializations.  When we are on the details page for a
     // single VM, only that VM is loaded.  Otherwise, all VMs are
@@ -282,10 +285,10 @@ export const App = () => {
     }
 
     let body = null;
-    if (!virtualizationEnabled && !ignoreDisabledVirtualization) {
-        body = <AppVirtDisabled setIgnored={setIgnoreDisabledVirtualization} />;
-    } else if (state.loadingResources) {
+    if (state.loadingResources) {
         body = <AppLoading />;
+    } else if (!state.hardwareVirtEnabled && !ignoreDisabledVirtualization) {
+        body = <AppVirtDisabled setIgnored={setIgnoreDisabledVirtualization} />;
     } else if (superuser.allowed && state.systemSocketInactive) {
         body = <AppServiceNotRunning />;
     } else if (path.length == 0 || (path.length > 0 && path[0] == 'vms')) {
