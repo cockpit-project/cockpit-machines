@@ -406,9 +406,9 @@ export type VMState =
     "pmsuspended";
 
 export interface VMDiskStat {
-    physical: number | string,
-    capacity: number | string,
-    allocation: number | string,
+    physical: number,
+    capacity: number,
+    allocation: number,
 }
 
 export interface DomainCapabilities {
