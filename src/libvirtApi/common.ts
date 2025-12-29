@@ -88,17 +88,8 @@ function calculateDiskStats(info: DBusProps): VM["disksStats"] {
     if (!count)
         return;
 
-    /* Note 1: Libvirt reports disk capacity since version 1.2.18 (year 2015)
-       TODO: If disk stats is required for old systems, find a way how to get
-       it when 'block.X.capacity' is not present, consider various options for
-       'sources'
-
-       Note 2: Casting to string happens for return types to be same with
-       results from libvirt.js file.
-     */
-
-    function get_stat(name: string): string | number {
-        return info[name] === undefined ? NaN : get_number_prop(info, name).toString();
+    function get_stat(name: string): number {
+        return info[name] === undefined ? NaN : get_number_prop(info, name);
     }
 
     for (let i = 0; i < count; i++) {
