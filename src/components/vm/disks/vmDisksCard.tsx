@@ -15,7 +15,7 @@ import { useDialogs } from 'dialogs.jsx';
 
 import { convertToUnit, toReadableNumber, units, vmId } from "../../../helpers.js";
 import { AddDiskModalBody } from './diskAdd.jsx';
-import { needsShutdownDiskAccess, WithPending } from '../../common/needsShutdown.jsx';
+import { needsShutdownDiskAccess, needsShutdownDiskCache, WithPending } from '../../common/needsShutdown.jsx';
 import { ListingTable } from "cockpit-components-table.jsx";
 import { DiskSourceDescriptions, DiskSourceAbbrev, DiskExtraDescriptions, DiskActions } from './vmDiskColumns.jsx';
 
@@ -258,6 +258,13 @@ export const VmDisksCard = ({
                     diskSource={disk.source}
                     idPrefix={idPrefixRow}
                 />
+                <DescriptionWithPending
+                    id={`${idPrefixRow}-cache`}
+                    term={_("Cache")}
+                    isPending={!!disk.target && needsShutdownDiskCache(vm, disk.target)}
+                >
+                    {disk.driver.cache}
+                </DescriptionWithPending>
                 <DiskExtraDescriptions
                     idPrefix={idPrefixRow}
                     cache={disk.driver.cache}
