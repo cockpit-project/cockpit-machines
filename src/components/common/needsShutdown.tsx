@@ -43,6 +43,13 @@ export function needsShutdownDiskAccess(vm: VM, diskTarget: string) {
          diskPropertyChanged(disk, inactiveDisk, "shareable"));
 }
 
+export function needsShutdownDiskCache(vm: VM, diskTarget: string) {
+    const inactiveDisk = vm.inactiveXML.disks[diskTarget];
+    const disk = vm.disks[diskTarget];
+
+    return inactiveDisk && disk.driver.cache != inactiveDisk.driver.cache;
+}
+
 export function needsShutdownIfaceType(vm: VM, iface: VMInterface) {
     const inactiveIface = nicLookupByMAC(vm.inactiveXML.interfaces, iface.mac);
 
@@ -170,7 +177,8 @@ export function getDevicesRequiringShutdown(vm: VM) {
 
     // DISKS
     for (const target in vm.disks) {
-        if (needsShutdownDiskAccess(vm, target)) {
+        if (needsShutdownDiskAccess(vm, target) ||
+            needsShutdownDiskCache(vm, target)) {
             devices.push(_("Disk"));
             break;
         }

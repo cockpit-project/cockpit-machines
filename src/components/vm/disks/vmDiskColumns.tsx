@@ -128,7 +128,6 @@ export const DiskExtraDescriptions = ({
     };
 
     const chunks: React.ReactNode[] = [];
-    addOptional(chunks, cache, "cache", _("Cache"));
     addOptional(chunks, serial, "serial", _("Serial"));
     addOptional(chunks, type, "type", _("Format"));
 
