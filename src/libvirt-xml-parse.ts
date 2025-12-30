@@ -183,7 +183,12 @@ export function getDomainCapMaxVCPU(domainCapsElem: Element): optString {
 
 export function getDomainCapLoader(domainCapsElem: Element): HTMLCollection | undefined {
     const osElem = domainCapsElem.getElementsByTagName("os")?.[0];
-    return osElem && osElem.getElementsByTagName("loader");
+    const loaderElems = osElem && osElem.getElementsByTagName("loader");
+    // The rest of the code assumes that if this function returns a
+    // HTMLCollection, then it contains at least one loader.
+    if (loaderElems && loaderElems.length == 0)
+        return undefined;
+    return loaderElems;
 }
 
 export function getDomainCapCPUCustomModels(domainCapsElem: Element): string[] {
