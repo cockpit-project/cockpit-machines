@@ -36,7 +36,7 @@ import { SpiceActive, SpiceInactive } from './spice';
 import { ConsoleState } from './common';
 
 import { vmId } from "../../../helpers.js";
-import VMS_CONFIG from '../../../config.ts';
+import { VMS_CONFIG } from '../../../config.ts';
 
 import './consoles.css';
 

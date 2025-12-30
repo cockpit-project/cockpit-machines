@@ -22,7 +22,7 @@
  * See https://github.com/libvirt/libvirt-dbus
  */
 import cockpit from 'cockpit';
-import store from '../store.js';
+import { store } from '../store.js';
 
 import type { ConnectionName, Network } from '../types';
 import type { NetworkSpec } from '../libvirt-xml-create.js';

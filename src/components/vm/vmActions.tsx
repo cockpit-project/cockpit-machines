@@ -50,7 +50,7 @@ import {
     vmDomainMethod,
     virtXmlAdd
 } from '../../libvirtApi/domain.js';
-import store from "../../store.js";
+import { store } from "../../store.js";
 
 const _ = cockpit.gettext;
 
@@ -189,7 +189,7 @@ const onAddTPM = async (vm: VM) => {
     }
 };
 
-const VmActions = ({
+export const VmActions = ({
     vm,
     vms,
     isDetailsPage = undefined
@@ -557,5 +557,3 @@ export const VmRestartDialog = ({ vm } : { vm: VM }) => {
             ]} />
     );
 };
-
-export default VmActions;

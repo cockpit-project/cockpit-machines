@@ -96,5 +96,3 @@ export const StateIcon = ({
     else
         return label;
 };
-
-export default StateIcon;

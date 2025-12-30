@@ -22,7 +22,7 @@
  * See https://github.com/libvirt/libvirt-dbus
  */
 import cockpit from "cockpit";
-import store from "../store.js";
+import { store } from "../store.js";
 import * as python from "python.js";
 
 import getOSListScript from "../getOSList.py";

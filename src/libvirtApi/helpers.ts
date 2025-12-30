@@ -18,7 +18,7 @@
  */
 
 import cockpit, { Variant } from 'cockpit';
-import store from '../store.js';
+import { store } from '../store.js';
 
 import { logDebug } from '../helpers.js';
 

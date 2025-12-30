@@ -47,7 +47,7 @@ import {
     vmId
 } from '../../../helpers.js';
 import { domainGet, domainChangeBootOrder } from '../../../libvirtApi/domain.js';
-import store from "../../../store.js";
+import { store } from "../../../store.js";
 
 import './bootOrder.css';
 

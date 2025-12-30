@@ -23,7 +23,7 @@
  */
 import cockpit from 'cockpit';
 
-import store from '../store.js';
+import { store } from '../store.js';
 
 import { updateOrAddInterface } from '../actions/store-actions.js';
 
