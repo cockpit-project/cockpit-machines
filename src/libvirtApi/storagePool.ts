@@ -22,7 +22,7 @@
  * See https://github.com/libvirt/libvirt-dbus
  */
 import cockpit from 'cockpit';
-import store from '../store.js';
+import { store } from '../store.js';
 
 import type { ConnectionName, StoragePool, StoragePoolCapabilites } from '../types';
 import type { StoragePoolSource } from '../libvirt-xml-create.js';

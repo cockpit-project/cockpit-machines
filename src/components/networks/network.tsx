@@ -29,7 +29,7 @@ import {
     rephraseUI,
     networkId
 } from '../../helpers.js';
-import StateIcon from '../common/stateIcon.jsx';
+import { StateIcon } from '../common/stateIcon.jsx';
 import { updateOrAddNetwork } from '../../actions/store-actions.js';
 import { NetworkOverviewTab } from './networkOverviewTab.jsx';
 import { DeleteResourceModal } from '../common/deleteResource.jsx';
@@ -38,7 +38,7 @@ import {
     networkDeactivate,
     networkUndefine
 } from '../../libvirtApi/network.js';
-import store from '../../store.js';
+import { store } from '../../store.js';
 
 import { KebabDropdown } from "cockpit-components-dropdown";
 

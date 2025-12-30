@@ -40,7 +40,7 @@ import { ModalError } from "cockpit-components-inline-notification.jsx";
 import { domainAttachHostDevices, domainGet } from "../../../libvirtApi/domain.js";
 import { findMatchingNodeDevices } from "../../../helpers.js";
 import { getOptionalValue } from "./hostDevCard.jsx";
-import store from "../../../store.js";
+import { store } from "../../../store.js";
 
 const _ = cockpit.gettext;
 
@@ -202,7 +202,7 @@ function getSelectableDevices(nodeDevices: NodeDevice2[], vm: VM, type: string):
     return devicesNotAlreadyAttached;
 }
 
-const AddHostDev = ({
+export const AddHostDev = ({
     idPrefix,
     vm
 } : {
@@ -292,5 +292,3 @@ const AddHostDev = ({
         </Modal>
     );
 };
-
-export default AddHostDev;

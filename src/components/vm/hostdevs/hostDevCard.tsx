@@ -27,11 +27,11 @@ import { useDialogs } from 'dialogs.jsx';
 import cockpit from 'cockpit';
 import { vmId, findMatchingNodeDevices, getHostDevSourceObject } from "../../../helpers.js";
 import { ListingTable } from "cockpit-components-table.jsx";
-import AddHostDev from "./hostDevAdd.jsx";
+import { AddHostDev } from "./hostDevAdd.jsx";
 import { domainGet, domainDetachHostDevice } from '../../../libvirtApi/domain.js';
 import { nodeDeviceGetAll } from '../../../libvirtApi/nodeDevice.js';
 import { DeleteResourceButton } from '../../common/deleteResource.jsx';
-import store from "../../../store.js";
+import { store } from "../../../store.js";
 
 const _ = cockpit.gettext;
 

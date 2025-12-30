@@ -21,7 +21,7 @@
  * Provider for Libvirt using libvirt-dbus API.
  * See https://github.com/libvirt/libvirt-dbus
  */
-import store from '../store.js';
+import { store } from '../store.js';
 
 import {
     ConnectionName,

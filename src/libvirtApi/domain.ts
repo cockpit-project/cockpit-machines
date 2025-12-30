@@ -24,7 +24,7 @@
 import cockpit from 'cockpit';
 import * as python from 'python.js';
 
-import store from '../store.js';
+import { store } from '../store.js';
 
 import type {
     optString,
