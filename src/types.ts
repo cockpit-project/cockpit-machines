@@ -441,19 +441,19 @@ export interface VM extends VMXML {
 
     // When the VM reaches the "shut off" state, this function is
     // called, but only once.
-    onShutOff?: null | ((vm: VM) => void);
+    onShutOff?: null | undefined | ((vm: VM) => void);
 
     capabilities: DomainCapabilities;
 
-    memoryUsed: number | undefined;
-    hasPollingMemBalloonFailure: boolean | undefined;
-    cpuTime: number | undefined;
-    cpuUsage: number | undefined;
-    actualTimeInMs: number | undefined;
-    disksStats: Record<string, VMDiskStat> | undefined;
+    memoryUsed?: number | undefined;
+    hasPollingMemBalloonFailure?: boolean | undefined;
+    cpuTime?: number | undefined;
+    cpuUsage?: number | undefined;
+    actualTimeInMs?: number | undefined;
+    disksStats?: Record<string, VMDiskStat> | undefined;
 
     // "false" means "not supported", "undefined" means "not yet loaded"
-    snapshots: VMSnapshot[] | undefined | false;
+    snapshots?: VMSnapshot[] | undefined | false;
 }
 
 /** "Fake" VMs for the UI only **/
