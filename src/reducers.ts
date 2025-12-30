@@ -20,7 +20,7 @@
 // @cockpit-ts-relaxed
 
 import { combineReducers } from 'redux';
-import VMS_CONFIG from "./config.js";
+import { VMS_CONFIG } from "./config.js";
 import { logDebug, isObjectEmpty } from './helpers.js';
 import {
     ADD_UI_VM,

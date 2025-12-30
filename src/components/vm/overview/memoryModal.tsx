@@ -37,7 +37,7 @@ import {
     convertToUnit,
     vmId
 } from '../../../helpers.js';
-import MemorySelectRow from './memorySelectRow.jsx';
+import { MemorySelectRow } from './memorySelectRow.jsx';
 import {
     domainGet,
     domainSetMemory,
@@ -213,5 +213,3 @@ export class MemoryModal extends React.Component<MemoryModalProps, MemoryModalSt
         );
     }
 }
-
-export default MemoryModal;

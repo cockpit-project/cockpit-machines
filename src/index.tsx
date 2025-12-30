@@ -25,9 +25,9 @@ import type { Root } from 'react-dom/client';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
-import store from './store.js';
+import { store } from './store.js';
 import { load_config } from './config.js';
-import App from './app.jsx';
+import { App } from './app.jsx';
 import { logDebug } from './helpers.js';
 
 import "./machines.scss";

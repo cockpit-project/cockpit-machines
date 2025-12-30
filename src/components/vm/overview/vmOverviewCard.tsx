@@ -32,7 +32,7 @@ import { Switch } from "@patternfly/react-core/dist/esm/components/Switch";
 import { DialogsContext } from 'dialogs.jsx';
 
 import { CPUModal } from './cpuModal.jsx';
-import MemoryModal from './memoryModal.jsx';
+import { MemoryModal } from './memoryModal.jsx';
 import {
     rephraseUI,
     vmId,
@@ -46,7 +46,7 @@ import { InfoPopover } from '../../common/infoPopover.jsx';
 import { VsockLink } from './vsock.jsx';
 import { StateIcon } from '../../common/stateIcon.jsx';
 import { domainChangeAutostart, domainGet } from '../../../libvirtApi/domain.js';
-import store from '../../../store.js';
+import { store } from '../../../store.js';
 import {
     SOCAT_EXAMPLE,
     SOCAT_EXAMPLE_HEADER,
@@ -71,7 +71,7 @@ interface VmOverviewCardState {
     virtXMLAvailable: boolean | undefined,
 }
 
-class VmOverviewCard extends React.Component<VmOverviewCardProps, VmOverviewCardState> {
+export class VmOverviewCard extends React.Component<VmOverviewCardProps, VmOverviewCardState> {
     static contextType = DialogsContext;
     declare context: Dialogs;
 
@@ -274,5 +274,3 @@ class VmOverviewCard extends React.Component<VmOverviewCardProps, VmOverviewCard
         );
     }
 }
-
-export default VmOverviewCard;

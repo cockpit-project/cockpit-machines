@@ -33,20 +33,20 @@ import { WithDialogs } from 'dialogs.jsx';
 
 import { Progress, ProgressVariant } from "@patternfly/react-core/dist/esm/components/Progress";
 
-import VmActions from '../vm/vmActions.jsx';
+import { VmActions } from '../vm/vmActions.jsx';
 import { updateVm } from '../../actions/store-actions.js';
 
 import { vmId, rephraseUI, dummyVmsFilter, DOMAINSTATE } from "../../helpers.js";
 
 import { ListingTable, type ListingTableColumnProps } from "cockpit-components-table.jsx";
-import StateIcon from '../common/stateIcon.jsx';
+import { StateIcon } from '../common/stateIcon.jsx';
 import { VmNeedsShutdown } from '../common/needsShutdown.jsx';
 import { VmUsesSpice } from '../vm/usesSpice.jsx';
 import { AggregateStatusCards } from "../aggregateStatusCards.jsx";
-import store from "../../store.js";
+import { store } from "../../store.js";
 import { ensureUsagePolling } from '../../libvirtApi/common';
 
-import VMS_CONFIG from "../../config.js";
+import { VMS_CONFIG } from "../../config.js";
 
 import type {
     VM,
@@ -135,7 +135,7 @@ interface HostVmsListProps {
     networks: Network[],
 }
 
-const HostVmsList = ({
+export const HostVmsList = ({
     vms,
     ui,
     storagePools,
@@ -320,5 +320,3 @@ const HostVmsList = ({
         </WithDialogs>
     );
 };
-
-export default HostVmsList;

@@ -52,7 +52,7 @@ interface MemorySelectRowState {
     inputHasFocus?: boolean;
 }
 
-class MemorySelectRow extends React.Component<MemorySelectRowProps, MemorySelectRowState> {
+export class MemorySelectRow extends React.Component<MemorySelectRowProps, MemorySelectRowState> {
     constructor(props: MemorySelectRowProps) {
         super(props);
         this.state = { memory: props.value.toFixed(0) };
@@ -115,5 +115,3 @@ class MemorySelectRow extends React.Component<MemorySelectRowProps, MemorySelect
         );
     }
 }
-
-export default MemorySelectRow;

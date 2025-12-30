@@ -29,7 +29,7 @@ import { DialogsContext } from 'dialogs.jsx';
 
 import cockpit from 'cockpit';
 import { getIfaceSourceName, rephraseUI, vmId, addNotification } from "../../../helpers.js";
-import AddNIC from './nicAdd.jsx';
+import { AddNIC } from './nicAdd.jsx';
 import { EditNICModal } from './nicEdit.jsx';
 import { portForwardText } from './nicBody';
 import { needsShutdownIfaceModel, needsShutdownIfaceSource, needsShutdownIfaceType, needsShutdownIfaceBackend, needsShutdownIfacePortForward, WithPending } from '../../common/needsShutdown.jsx';

@@ -34,7 +34,7 @@ interface VmsConfig {
     MaxConsoleCardStates: number;
 }
 
-const VMS_CONFIG: VmsConfig = {
+export const VMS_CONFIG: VmsConfig = {
     DefaultRefreshInterval: 10000, // in ms
     MaxPolledVMs: 20, // When more than this number of machines are listed on the overview, no usage polling will be done. This avoids excessive traffic.
     DummyVmsWaitInterval: 10 * 60 * 1000, // show dummy vms for max 10 minutes; to let virt-install do work before getting vm from virsh
@@ -60,5 +60,3 @@ export async function load_config(): Promise<void> {
     import_config("StorageMigrationSupported", import_boolean);
     import_config("MaxConsoleCardStates", import_number);
 }
-
-export default VMS_CONFIG;

@@ -32,7 +32,7 @@ import { superuser } from "superuser.js";
 import cockpit from 'cockpit';
 
 import { EmptyStatePanel } from "cockpit-components-empty-state.jsx";
-import HostVmsList from "./components/vms/hostvmslist.jsx";
+import { HostVmsList } from "./components/vms/hostvmslist.jsx";
 import { StoragePoolList } from "./components/storagePools/storagePoolList.jsx";
 import { NetworkList } from "./components/networks/networkList.jsx";
 import { VmDetailsPage } from './components/vm/vmDetailsPage.jsx';
@@ -52,7 +52,7 @@ import {
     nodeDeviceGetAll,
 } from "./libvirtApi/nodeDevice.js";
 import { useEvent, useOn, usePageLocation, useInit } from "hooks";
-import store from './store.js';
+import { store } from './store.js';
 
 const _ = cockpit.gettext;
 
@@ -483,5 +483,3 @@ const AppNetworks = () => {
         </>
     );
 };
-
-export default App;
