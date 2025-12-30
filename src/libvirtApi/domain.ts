@@ -24,7 +24,7 @@
 import cockpit from 'cockpit';
 import * as python from 'python.js';
 
-import store from '../store.js';
+import { appState } from '../state';
 
 import type {
     optString,
@@ -38,11 +38,6 @@ import type { BootOrderDevice } from '../helpers.js';
 
 import installVmScript from '../scripts/install_machine.py';
 
-import {
-    deleteUnlistedVMs,
-    undefineVm,
-    updateOrAddVm,
-} from '../actions/store-actions.js';
 import {
     getDiskXML,
 } from '../libvirt-xml-create.js';
@@ -548,6 +543,7 @@ export async function domainCreate({
     setVmCreateInProgress(vmName, connectionName);
 
     if (startVm) {
+        // XXX - this will do nothing, the VM object doesn't exist yet.
         setVmInstallInProgress({ name: vmName, connectionName });
     }
 
@@ -881,13 +877,16 @@ export async function domainGet({
 
         let usageDataUpdate: Partial<VM> = {};
         if (!domainIsRunning(stateStr)) {
+            // Clear usage data when machine is shut off
             usageDataUpdate = {
-                actualTimeInMs: -1,
+                actualTimeInMs: undefined,
+                cpuTime: undefined,
+                cpuUsage: undefined,
                 memoryUsed: undefined,
             };
         }
 
-        const old_vm = store.getState().vms.find(vm => vm.connectionName == connectionName && vm.id == objPath);
+        const old_vm = appState.vms.find(vm => vm.connectionName == connectionName && vm.id == objPath);
         let operationInProgressFromState;
         if (old_vm && old_vm.operationInProgressFromState && stateStr == old_vm.operationInProgressFromState) {
             operationInProgressFromState = old_vm.operationInProgressFromState;
@@ -902,7 +901,7 @@ export async function domainGet({
             }
         }
 
-        store.dispatch(updateOrAddVm({
+        appState.updateOrAddVm({
             ...dumpxmlParams,
             inactiveXML,
             state: stateStr,
@@ -912,10 +911,10 @@ export async function domainGet({
             operationInProgressFromState,
             onShutOff,
             ...usageDataUpdate,
-        }));
+        });
 
         if (shutOffHandler) {
-            const new_vm = store.getState().vms.find(vm => vm.connectionName == connectionName && vm.id == objPath);
+            const new_vm = appState.vms.find(vm => vm.connectionName == connectionName && vm.id == objPath);
             if (new_vm)
                 shutOffHandler(new_vm);
         }
@@ -931,7 +930,7 @@ export async function domainGet({
         else
             console.warn(`GET_VM failed for ${objPath}, undefining: ${String(ex)}`);
         // but undefine either way -- if we  can't get info about the VM, don't show it
-        store.dispatch(undefineVm({ connectionName, id: objPath }));
+        appState.undefineVm(connectionName, objPath);
     }
 }
 
@@ -958,7 +957,7 @@ export async function domainGetAll({ connectionName } : { connectionName: Connec
     try {
         const [objPaths] = await call<[string[]]>(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListDomains', [0],
                                                   { timeout, type: 'u' });
-        store.dispatch(deleteUnlistedVMs(connectionName, [], objPaths));
+        appState.deleteUnlistedVMs(connectionName, objPaths);
         await Promise.all(objPaths.map(path => domainGet({ connectionName, id: path })));
         pollUsageNow();
     } catch (ex) {
