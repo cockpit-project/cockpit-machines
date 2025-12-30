@@ -85,7 +85,7 @@ import {
 import { storagePoolRefresh } from './storagePool.js';
 import { snapshotGetAll } from './snapshot.js';
 import { downloadRhelImage, getRhelImageUrl } from './rhel-images.js';
-import { DBusProps, get_string_prop, get_boolean_prop, call, Enum, timeout, resolveUiState } from './helpers.js';
+import { DBusProps, get_boolean_prop, call, Enum, timeout, resolveUiState } from './helpers.js';
 import { CLOUD_IMAGE, DOWNLOAD_AN_OS, LOCAL_INSTALL_MEDIA_SOURCE, needsRHToken } from "../components/create-vm-dialog/createVmDialogUtils.js";
 import { pollUsageNow } from './common';
 
@@ -850,32 +850,27 @@ export async function domainGet({
     connectionName: ConnectionName,
     id: string,
 }): Promise<void> {
-    const props: Partial<VM> = {};
-
     try {
         const [domainXML] = await call<[string]>(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_SECURE], { timeout, type: 'u' });
         const [domInactiveXml] = await call<[string]>(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_SECURE | Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
-        props.inactiveXML = parseDomainDumpxml(connectionName, domInactiveXml, objPath);
-        props.connectionName = connectionName;
-        props.id = objPath;
+        const inactiveXML = parseDomainDumpxml(connectionName, domInactiveXml, objPath);
 
         const [returnProps] = await call<[DBusProps]>(connectionName, objPath, "org.freedesktop.DBus.Properties", "GetAll", ["org.libvirt.Domain"], { timeout, type: 's' });
 
         /* Sometimes not all properties are returned, for example when some domain got deleted while part
         * of the properties got fetched from libvirt. Make sure that there is check before reading the attributes.
-        */
-        if ("Name" in returnProps)
-            props.name = get_string_prop(returnProps, "Name");
+         */
+        let persistent = false;
+        let autostart = false;
         if ("Persistent" in returnProps)
-            props.persistent = get_boolean_prop(returnProps, "Persistent");
+            persistent = get_boolean_prop(returnProps, "Persistent");
         if ("Autostart" in returnProps)
-            props.autostart = get_boolean_prop(returnProps, "Autostart");
-        resolveUiState(props.name, connectionName);
+            autostart = get_boolean_prop(returnProps, "Autostart");
 
         const dumpxmlParams = parseDomainDumpxml(connectionName, domainXML, objPath);
-        Object.assign(props, dumpxmlParams);
+        resolveUiState(dumpxmlParams.name, connectionName);
 
-        props.capabilities = await domainGetCapabilities({
+        const capabilities = await domainGetCapabilities({
             connectionName,
             arch: dumpxmlParams.arch,
             model: dumpxmlParams.emulatedMachine
@@ -884,31 +879,44 @@ export async function domainGet({
         const [state] = await call<[number[]]>(connectionName, objPath, 'org.libvirt.Domain', 'GetState', [0], { timeout, type: 'u' });
         const stateStr = DOMAINSTATE[state[0]];
 
+        let usageDataUpdate: Partial<VM> = {};
         if (!domainIsRunning(stateStr)) {
-            props.actualTimeInMs = -1;
-            props.memoryUsed = undefined;
+            usageDataUpdate = {
+                actualTimeInMs: -1,
+                memoryUsed: undefined,
+            };
         }
 
         const old_vm = store.getState().vms.find(vm => vm.connectionName == connectionName && vm.id == objPath);
-
-        if (old_vm && old_vm.operationInProgressFromState && stateStr != old_vm.operationInProgressFromState) {
-            props.operationInProgressFromState = undefined;
+        let operationInProgressFromState;
+        if (old_vm && old_vm.operationInProgressFromState && stateStr == old_vm.operationInProgressFromState) {
+            operationInProgressFromState = old_vm.operationInProgressFromState;
         }
 
         let shutOffHandler = null;
+        let onShutOff = old_vm ? old_vm.onShutOff : null;
         if (stateStr == "shut off") {
             if (old_vm && old_vm.onShutOff) {
                 shutOffHandler = old_vm.onShutOff;
-                props.onShutOff = null;
+                onShutOff = null;
             }
         }
 
-        logDebug(`${props.name}.GET_VM(${objPath}, ${connectionName}): update props ${JSON.stringify(props)}`);
+        const vm: VM = {
+            ...dumpxmlParams,
+            inactiveXML,
+            state: stateStr,
+            persistent,
+            autostart,
+            capabilities,
+            operationInProgressFromState,
+            onShutOff,
+            ...usageDataUpdate,
+        };
 
-        props.state = stateStr;
+        logDebug(`${vm.name}.GET_VM(${objPath}, ${connectionName}): update props ${JSON.stringify(vm)}`);
 
-        // TODO - change the code to make sure we construct a valid "VM" object.
-        store.dispatch(updateOrAddVm(props as VM));
+        store.dispatch(updateOrAddVm(vm));
 
         if (shutOffHandler) {
             const new_vm = store.getState().vms.find(vm => vm.connectionName == connectionName && vm.id == objPath);
@@ -916,8 +924,7 @@ export async function domainGet({
                 shutOffHandler(new_vm);
         }
 
-        if (props.name)
-            clearVmUiState(props.name, connectionName);
+        clearVmUiState(dumpxmlParams.name, connectionName);
 
         // Load snapshots in the background. This can be quite slow.
         snapshotGetAll({ connectionName, domainPath: objPath });
