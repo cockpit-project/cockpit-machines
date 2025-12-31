@@ -47,7 +47,6 @@ const SpiceFooter = ({
                 <SplitItem>
                     <LaunchViewerButton
                         vm={vm}
-                        console={spice}
                         {...spice &&
                             { url: cockpit.format("spice://$0:$1", connection_address(), spice.port) }}
                     />
