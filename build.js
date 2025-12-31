@@ -2,16 +2,16 @@
 
 import fs from 'node:fs';
 import { createRequire } from 'node:module';
-import path from 'node:path';
 import os from 'node:os';
+import path from 'node:path';
 import process from 'node:process';
 
 import { sassPlugin } from 'esbuild-sass-plugin';
 
-import { cockpitCompressPlugin } from './pkg/lib/esbuild-compress-plugin.js';
 import { cockpitPoEsbuildPlugin } from './pkg/lib/cockpit-po-plugin.js';
 import { cockpitRsyncEsbuildPlugin } from './pkg/lib/cockpit-rsync-plugin.js';
 import { cleanPlugin } from './pkg/lib/esbuild-cleanup-plugin.js';
+import { cockpitCompressPlugin } from './pkg/lib/esbuild-compress-plugin.js';
 
 const useWasm = os.arch() !== 'x64';
 
@@ -32,7 +32,7 @@ const esbuild = await (async () => {
 })();
 
 const production = process.env.NODE_ENV === 'production';
-/* List of directories to use when resolving import statements */
+// List of directories to use when using import statements
 const nodePaths = ['pkg/lib'];
 const outdir = 'dist';
 
@@ -40,8 +40,10 @@ const outdir = 'dist';
 const packageJson = JSON.parse(fs.readFileSync('package.json'));
 
 const parser = (await import('argparse')).default.ArgumentParser();
+/* eslint-disable max-len */
 parser.add_argument('-r', '--rsync', { help: "rsync bundles to ssh target after build", metavar: "HOST" });
 parser.add_argument('-w', '--watch', { action: 'store_true', help: "Enable watch mode", default: process.env.ESBUILD_WATCH === "true" });
+/* eslint-enable max-len */
 const args = parser.parse_args();
 
 if (args.rsync)
@@ -70,9 +72,10 @@ function notifyEndPlugin() {
 function watch_dirs(dir, on_change) {
     const callback = (ev, dir, fname) => {
         // only listen for "change" events, as renames are noisy
-        // ignore hidden files and the "4913" temporary file created by vim
-        if (ev !== "change" || fname.startsWith('.') || fname === "4913")
+        // ignore hidden files
+        if (ev !== "change" || fname.startsWith('.')) {
             return;
+        }
         on_change(path.join(dir, fname));
     };
 
@@ -81,6 +84,7 @@ function watch_dirs(dir, on_change) {
     // watch all subdirectories in dir
     const d = fs.opendirSync(dir);
     let dirent;
+
     while ((dirent = d.readSync()) !== null) {
         if (dirent.isDirectory())
             watch_dirs(path.join(dir, dirent.name), on_change);
@@ -91,22 +95,23 @@ function watch_dirs(dir, on_change) {
 const context = await esbuild.context({
     ...!production ? { sourcemap: "linked" } : {},
     bundle: true,
-    entryPoints: ["./src/index.js"],
-    external: ['*.woff', '*.woff2', '*.jpg', '*.svg', '../../assets*'], // Allow external font files which live in ../../static/fonts
-    legalComments: 'external', // Move all legal comments to a .LEGAL.txt file
+    entryPoints: ['./src/index.js'],
+    // Allow external font files which live in ../../static/fonts
+    external: ['*.woff', '*.woff2', '*.jpg', '*.svg', '../../assets*'],
+    // Move all legal comments to a .LEGAL.txt file
+    legalComments: 'external',
     loader: {
         ".js": "jsx",
         ".py": "text",
         ".sh": "text",
     },
-    metafile: true,
     minify: production,
     nodePaths,
     outdir,
+    metafile: true,
     target: ['es2020'],
     plugins: [
         cleanPlugin(),
-
         // Esbuild will only copy assets that are explicitly imported and used in the code.
         // Copy the other files here.
         {
@@ -128,10 +133,8 @@ const context = await esbuild.context({
         }),
 
         cockpitPoEsbuildPlugin(),
-
         ...production ? [cockpitCompressPlugin()] : [],
         cockpitRsyncEsbuildPlugin({ dest: packageJson.name }),
-
         notifyEndPlugin(),
     ]
 });
@@ -175,12 +178,14 @@ if (args.watch) {
     const on_change = async path => {
         console.log("change detected:", path);
         await context.cancel();
+
         try {
             await context.rebuild();
         } catch (e) {} // ignore in watch mode
     };
 
     watch_dirs('src', on_change);
+
     // wait forever until Control-C
     await new Promise(() => {});
 }
