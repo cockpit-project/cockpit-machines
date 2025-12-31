@@ -8,8 +8,9 @@ downstream_package_name: cockpit-machines
 copy_upstream_release_description: true
 
 srpm_build_deps:
-- npm
+- jq
 - make
+- nodejs
 
 actions:
   post-upstream-clone: make cockpit-machines.spec
