@@ -405,8 +405,16 @@ export interface VMDiskStat {
     allocation: number,
 }
 
+export interface DomainLoaderCapabilities {
+    supported: boolean,
+    firmware_values: string[],
+    type_values: string[],
+    readonly_values: string[],
+    secure_values: string[],
+}
+
 export interface DomainCapabilities {
-    loaderElems: HTMLCollection | undefined;
+    loader: DomainLoaderCapabilities;
     maxVcpu: optString;
     cpuModels: string[];
     cpuHostModel: optString;
