@@ -982,7 +982,7 @@ function domainGetCapabilities({
     arch: optString,
     model: optString,
 }): Promise<DomainCapabilities> {
-    async function get() {
+    async function get(): Promise<DomainCapabilities> {
         const [capsXML] =
             await call<[string]>(
                 connectionName,
@@ -991,8 +991,8 @@ function domainGetCapabilities({
                 { timeout, type: 'ssssu' });
 
         const domCaps = getElem(capsXML);
-        const caps: DomainCapabilities = {
-            loaderElems: getDomainCapLoader(domCaps),
+        return {
+            loader: getDomainCapLoader(domCaps),
             maxVcpu: getDomainCapMaxVCPU(domCaps),
             cpuModels: getDomainCapCPUCustomModels(domCaps),
             cpuHostModel: getDomainCapCPUHostModel(domCaps),
@@ -1001,7 +1001,6 @@ function domainGetCapabilities({
             supportsTPM: getDomainCapSupportsTPM(domCaps),
             interfaceBackends: getDomainCapInterfaceBackends(domCaps),
         };
-        return caps;
     }
 
     const key = `${arch}/${model}`;

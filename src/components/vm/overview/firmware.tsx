@@ -128,25 +128,12 @@ class FirmwareModal extends React.Component<FirmwareModalProps, FirmwareModalSta
 
 export const FirmwareLink = ({
     vm,
-    loaderElems,
     idPrefix
 } : {
     vm: VM,
-    loaderElems: HTMLCollection,
     idPrefix: string,
 }) => {
     const Dialogs = useDialogs();
-
-    function getOVMFBinariesOnHost(loaderElems: HTMLCollection): string[] {
-        const res = [];
-        for (let i = 0; i < loaderElems.length; i++) {
-            const loader = loaderElems[i];
-            const valueElem = loader.getElementsByTagName('value');
-            if (valueElem && valueElem[0].parentNode == loader && valueElem[0].textContent)
-                res.push(valueElem[0].textContent);
-        }
-        return res;
-    }
 
     let firmwareLinkWrapper;
     const hasInstallPhase = vm.metadata && vm.metadata.hasInstallPhase;
@@ -167,7 +154,6 @@ export const FirmwareLink = ({
     if (!domainCanInstall(vm.state, hasInstallPhase) && sourceType !== "disk_image") {
         firmwareLinkWrapper = <div id={`${idPrefix}-firmware`}>{currentFirmware}</div>;
     } else {
-        const uefiPaths = getOVMFBinariesOnHost(loaderElems).filter(elem => elem !== undefined);
         const firmwareLink = (disabled: boolean) => {
             return (
                 <span id={`${idPrefix}-firmware-tooltip`}>
@@ -193,13 +179,13 @@ export const FirmwareLink = ({
                     </Tooltip>
                 );
             }
-        } else if (!supportsUefiXml(loaderElems[0])) {
+        } else if (!supportsUefiXml(vm.capabilities.loader)) {
             firmwareLinkWrapper = (
                 <Tooltip id='missing-uefi-support' content={_("Libvirt or hypervisor does not support UEFI")}>
                     {firmwareLink(true)}
                 </Tooltip>
             );
-        } else if (uefiPaths.length == 0) {
+        } else if (vm.capabilities.loader.firmware_values.length == 0) {
             firmwareLinkWrapper = (
                 <Tooltip id='missing-uefi-images' content={_("Libvirt did not detect any UEFI/OVMF firmware image installed on the host")}>
                     {firmwareLink(true)}

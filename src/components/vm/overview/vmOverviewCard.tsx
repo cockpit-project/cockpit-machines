@@ -63,7 +63,6 @@ interface VmOverviewCardProps {
     maxVcpu: optString;
     cpuModels: string[];
     config: Config;
-    loaderElems: HTMLCollection | undefined;
     libvirtVersion: number;
 }
 
@@ -261,11 +260,10 @@ export class VmOverviewCard extends React.Component<VmOverviewCardProps, VmOverv
                             <DescriptionListDescription id={`${idPrefix}-emulated-machine`}>{vm.emulatedMachine}</DescriptionListDescription>
                         </DescriptionListGroup>
 
-                        { this.props.loaderElems && libvirtVersion >= 5002000 && // <os firmware=[bios/efi]' settings is available only for libvirt version >= 5.2. Before that version it silently ignores this attribute in the XML
+                        { vm.capabilities.loader.supported && libvirtVersion >= 5002000 && // <os firmware=[bios/efi]' settings is available only for libvirt version >= 5.2. Before that version it silently ignores this attribute in the XML
                             <DescriptionListGroup>
                                 <DescriptionListTerm>{_("Firmware")}</DescriptionListTerm>
                                 <FirmwareLink vm={vm}
-                                              loaderElems={this.props.loaderElems}
                                               idPrefix={idPrefix} />
                             </DescriptionListGroup>}
                     </DescriptionList>
