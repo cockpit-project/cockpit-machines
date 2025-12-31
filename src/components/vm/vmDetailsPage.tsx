@@ -155,7 +155,6 @@ export const VmDetailsPage = ({
             title: _("Overview"),
             body: <VmOverviewCard vm={vm}
                                   config={config}
-                                  loaderElems={vm.capabilities.loaderElems}
                                   maxVcpu={vm.capabilities.maxVcpu}
                                   cpuModels={vm.capabilities.cpuModels}
                                   libvirtVersion={libvirtVersion} />,

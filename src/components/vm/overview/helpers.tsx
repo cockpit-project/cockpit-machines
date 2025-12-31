@@ -19,7 +19,7 @@
 import React from 'react';
 import cockpit from 'cockpit';
 
-import type { optString } from '../../../types';
+import type { optString, DomainLoaderCapabilities } from '../../../types';
 
 import { CodeBlock, CodeBlockCode } from "@patternfly/react-core/dist/esm/components/CodeBlock";
 import { FlexItem } from "@patternfly/react-core/dist/esm/layouts/Flex";
@@ -86,10 +86,7 @@ export function labelForFirmwarePath(path: optString, guest_arch: optString) {
     }
 }
 
-export function supportsUefiXml(loaderElem: Element) {
+export function supportsUefiXml(loaderCaps: DomainLoaderCapabilities) {
     /* Return True if libvirt advertises support for proper UEFI setup  */
-    const enums = loaderElem.getElementsByTagName("enum");
-    const readonly = Array.prototype.filter.call(enums, enm => enm.getAttribute("name") == "readonly");
-
-    return Array.prototype.filter.call(readonly[0].getElementsByTagName("value"), value => value.textContent == "yes").length > 0;
+    return loaderCaps.readonly_values.includes("yes");
 }

@@ -988,7 +988,7 @@ function domainGetCapabilities({
 
         const domCaps = getElem(capsXML);
         const caps: DomainCapabilities = {
-            loaderElems: getDomainCapLoader(domCaps),
+            loader: getDomainCapLoader(domCaps),
             maxVcpu: getDomainCapMaxVCPU(domCaps),
             cpuModels: getDomainCapCPUCustomModels(domCaps),
             cpuHostModel: getDomainCapCPUHostModel(domCaps),
@@ -997,6 +997,7 @@ function domainGetCapabilities({
             supportsTPM: getDomainCapSupportsTPM(domCaps),
             interfaceBackends: getDomainCapInterfaceBackends(domCaps),
         };
+        console.log("CAPS", caps);
         return caps;
     }
 

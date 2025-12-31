@@ -17,12 +17,14 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
+import cockpit from "cockpit";
+
 import type {
     optString,
 
     ConnectionName,
 
-    HypervisorCapabilities, GuestCapabilities,
+    HypervisorCapabilities, GuestCapabilities, DomainLoaderCapabilities,
 
     VMXML,
     VMOsBoot, VMCpu, VMVcpus, VMMetadata,
@@ -163,9 +165,134 @@ export function getElem(xml: string): Element {
     return elem;
 }
 
+/* Ad-hoc parsing utilities, not used a lot yet.
+
+   We don't use getElementsByTagName etc since those search
+   recursively and we don't want that. There is an argument, however,
+   that we should just use querySelector instead of the functions here
+   to do the parsing.
+
+   These functions are forgiving: You can pass "undefined" as the
+   element to parse and they treat that as an empty element.
+
+   - get_child(element, match1, match2, ...)
+
+     Follow the given matches and return the child that they lead to.
+
+     A match can be a string, in which case it is compared against the
+     tagName property. It can be an object, in which case the fields
+     of the object are compared to the values of attribute of the same
+     name. (And "tag" is compared to the tagName property.) It can be
+     a function, in which case a element matches when the function
+     returns true for it.
+
+   - get_children(element, match1, match2, ...)
+
+     Similar to get_child, but for the last match, all matching
+     children are collected into an array.
+
+   - get_text(element, match1, match2, ...)
+
+     Similar to get_child, but return the text content of the element
+     found by following the matches.
+
+   - get_attr(element, match1, match2, ..., attr)
+
+     Similar to get_child, but return the value of attribute "attr" of
+     the element found by following the matches.
+
+   - get_texts(element, match1, match2, ...)
+
+     Similar to get_children, but instead of the elements themselves,
+     their textContent is collected into an array.
+
+   Specialized functions for common libvirt patterns:
+
+   - get_enum_values(element, match1, match2, ..., name)
+
+     Same as get_texts(element, match1, match3, ..., { tag: "enum", name: name }, "value")
+
+ */
+
+type Match = string | Record<string, string> | ((elt: Element) => boolean);
+
+function element_matches(element: Element, match: Match): boolean {
+    if (typeof match == "string") {
+        return element.tagName == match;
+    } else if (typeof match == "object") {
+        return Object.entries(match).every(([key, value]) => {
+            if (key == "tag")
+                return element.tagName == value;
+            else
+                return element.getAttribute(key) == value;
+        });
+    } else {
+        return match(element);
+    }
+}
+
+function get_child(parent: Element | undefined, ...matches: Match[]): Element | undefined {
+    for (const match of matches) {
+        if (!parent)
+            return undefined;
+        const children = parent.children;
+        parent = undefined;
+        for (let i = 0; i < children.length; i++) {
+            const c = children[i];
+            if (element_matches(c, match)) {
+                parent = c;
+                break;
+            }
+        }
+    }
+    return parent;
+}
+
+function get_children(parent: Element | undefined, ...matches: Match[]): Element[] {
+    if (matches.length == 0)
+        return [];
+
+    parent = get_child(parent, ...matches.slice(0, -1));
+    if (!parent)
+        return [];
+
+    const res = [];
+    const children = parent.children;
+    for (let i = 0; i < children.length; i++) {
+        const c = children[i];
+        if (element_matches(c, matches[matches.length - 1]))
+            res.push(c);
+    }
+    return res;
+}
+
+function get_text(parent: Element | undefined, ...matches: Match[]): string | undefined {
+    return get_child(parent, ...matches)?.textContent;
+}
+
+function get_attr(parent: Element | undefined, ...matches: Match[]): string | undefined {
+    if (matches.length == 0)
+        return undefined;
+    const attr = matches[matches.length - 1];
+    cockpit.assert(typeof attr == "string");
+    return get_child(parent, ...matches.slice(0, -1))?.getAttribute(attr) || undefined;
+}
+
+function get_texts(parent: Element | undefined, ...matches: Match[]): string[] {
+    return get_children(parent, ...matches).map(e => e.textContent);
+}
+
+function get_enum_values(parent: Element | undefined, ...matches: Match[]): string[] {
+    if (matches.length == 0)
+        return [];
+    const name = matches[matches.length - 1];
+    cockpit.assert(typeof name == "string");
+    return get_texts(parent, ...matches.slice(0, -1), { tag: "enum", name }, "value");
+}
+
 export function parsePoolCapabilities(capsXML: string): StoragePoolCapabilites {
     const poolCapsElem = getElem(capsXML);
-    const poolElements = Array.from(poolCapsElem.getElementsByTagName("pool"));
+    const poolElements = get_children(poolCapsElem, "pool");
 
     return poolElements.reduce(function(result: StoragePoolCapabilites, item) {
         const type = item.getAttribute('type');
@@ -176,85 +303,45 @@ export function parsePoolCapabilities(capsXML: string): StoragePoolCapabilites {
     }, {});
 }
 
-export function getDomainCapMaxVCPU(domainCapsElem: Element): optString {
-    const vcpuElem = domainCapsElem.getElementsByTagName("vcpu")?.[0];
-    return vcpuElem && vcpuElem.getAttribute('max');
+export function getDomainCapMaxVCPU(caps: Element): optString {
+    return get_attr(caps, "vcpu", "max");
 }
 
-export function getDomainCapLoader(domainCapsElem: Element): HTMLCollection | undefined {
-    const osElem = domainCapsElem.getElementsByTagName("os")?.[0];
-    const loaderElems = osElem && osElem.getElementsByTagName("loader");
-    // The rest of the code assumes that if this function returns a
-    // HTMLCollection, then it contains at least one loader.
-    if (loaderElems && loaderElems.length == 0)
-        return undefined;
-    return loaderElems;
+export function getDomainCapLoader(caps: Element): DomainLoaderCapabilities {
+    const loaderElem = get_child(caps, "os", "loader");
+    return {
+        supported: !!loaderElem,
+        firmware_values: get_texts(loaderElem, "value"),
+        type_values: get_enum_values(loaderElem, "type"),
+        readonly_values: get_enum_values(loaderElem, "readonly"),
+        secure_values: get_enum_values(loaderElem, "secure"),
+    };
 }
 
-export function getDomainCapCPUCustomModels(domainCapsElem: Element): string[] {
-    const cpuElem = domainCapsElem.getElementsByTagName("cpu")?.[0];
-    const modeElems = cpuElem && cpuElem.getElementsByTagName("mode");
-    const customModeElem = modeElems && Array.prototype.find.call(modeElems, modeElem => modeElem.getAttribute("name") == "custom");
-
-    const res: string[] = [];
-    if (customModeElem) {
-        for (const modelElem of customModeElem.getElementsByTagName("model"))
-            if (modelElem.textContent)
-                res.push(modelElem.textContent);
-    }
-    return res;
+export function getDomainCapCPUCustomModels(caps: Element): string[] {
+    return get_texts(caps, "cpu", { tag: "mode", name: "custom" }, "model");
 }
 
-export function getDomainCapCPUHostModel(domainCapsElem: Element): optString {
-    const cpuElem = domainCapsElem.getElementsByTagName("cpu")?.[0];
-    const modeElems = cpuElem && cpuElem.getElementsByTagName("mode");
-    const hostModelModeElem = modeElems && Array.prototype.find.call(modeElems, modeElem => modeElem.getAttribute("name") == "host-model");
-    return hostModelModeElem && Array.prototype.map.call(hostModelModeElem.getElementsByTagName("model"), modelElem => modelElem.textContent)[0];
+export function getDomainCapCPUHostModel(caps: Element): optString {
+    return get_text(caps, "cpu", { tag: "mode", name: "host-model" }, "model");
 }
 
-export function getDomainCapDiskBusTypes(domainCapsElem: Element): string[] {
-    const devicesCapsElem = domainCapsElem.getElementsByTagName("devices")?.[0];
-    const diskCapsElem = devicesCapsElem?.getElementsByTagName("disk")?.[0];
-    const enumElems = diskCapsElem?.getElementsByTagName("enum");
-    const busElem = enumElems && Array.prototype.find.call(enumElems, enumElem => enumElem.getAttribute("name") == "bus");
-
-    const res: string[] = [];
-    if (busElem) {
-        const vals = busElem.getElementsByTagName("value");
-        for (let i = 0; i < vals.length; i++)
-            if (vals[i].textContent)
-                res.push(vals[i].textContent);
-    }
-    return res;
+export function getDomainCapDiskBusTypes(caps: Element): string[] {
+    return get_enum_values(caps, "devices", "disk", "bus");
 }
 
-export function getDomainCapSupportsSpice(domainCapsElem: Element): boolean {
-    const graphicsCapsElems = domainCapsElem.getElementsByTagName("graphics")?.[0]
-            ?.getElementsByTagName("enum")?.[0]
-            ?.getElementsByTagName("value");
-    const hasSpiceGraphics = graphicsCapsElems && Array.prototype.find.call(
-        graphicsCapsElems, valueElem => valueElem.textContent == "spice");
-    const channelCapsElems = domainCapsElem.getElementsByTagName("channel")?.[0]
-            ?.getElementsByTagName("enum")?.[0]
-            ?.getElementsByTagName("value");
-    const hasSpiceChannel = channelCapsElems && Array.prototype.find.call(
-        channelCapsElems, valueElem => valueElem.textContent == "spicevmc");
-    return !!hasSpiceGraphics || !!hasSpiceChannel;
+export function getDomainCapSupportsSpice(caps: Element): boolean {
+    const hasSpiceGraphics = get_enum_values(caps, "devices", "graphics", "type").includes("spice");
+    const hasSpiceChannel = get_enum_values(caps, "devices", "channel", "type").includes("spicevmc");
+    return hasSpiceGraphics || hasSpiceChannel;
 }
 
-export function getDomainCapSupportsTPM(domainCapsElem: Element): boolean {
-    const tpmCapsElems = domainCapsElem.getElementsByTagName("tpm")?.[0]
-            ?.getElementsByTagName("enum")?.[0]
-            ?.getElementsByTagName("value");
-    return tpmCapsElems?.length > 0;
+export function getDomainCapSupportsTPM(caps: Element): boolean {
+    return get_enum_values(caps, "devices", "tpm", "model").length > 0;
 }
 
-export function getDomainCapInterfaceBackends(domainCapsElem: Element): string[] {
-    const values = domainCapsElem.querySelectorAll("devices interface[supported='yes'] enum[name='backendType'] value");
-    if (values)
-        return Array.from(values).map(n => n.textContent || "");
-    else
-        return ["default"];
+export function getDomainCapInterfaceBackends(caps: Element): string[] {
+    return get_enum_values(caps, "devices", "interface", "backendType");
 }
 
 export function getSingleOptionalElem(parent: Element, name: string): Element | undefined {
