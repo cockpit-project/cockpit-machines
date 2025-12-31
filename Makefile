@@ -14,8 +14,8 @@ APPSTREAMFILE=org.cockpit_project.$(PACKAGE_NAME).metainfo.xml
 VM_IMAGE=$(CURDIR)/test/images/$(TEST_OS)
 # stamp file to check for node_modules/
 NODE_MODULES_TEST=package-lock.json
-# one example file in dist/ from bundler to check if that already ran
-DIST_TEST=dist/manifest.json
+# build.js ran in non-watch mode
+DIST_TEST=runtime-npm-modules.txt
 # one example file in pkg/lib to check if it was already checked out
 COCKPIT_REPO_STAMP=pkg/lib/cockpit-po-plugin.js
 # common arguments for tar, mostly to make the generated tarballs reproducible
@@ -84,8 +84,8 @@ po/LINGUAS:
 # Build/Install/dist
 #
 
-$(SPEC): packaging/$(SPEC).in $(NODE_MODULES_TEST)
-	provides=$$(npm ls --omit dev --package-lock-only --depth=Infinity | grep -Eo '[^[:space:]]+@[^[:space:]]+' | sort -u | sed 's/^/Provides: bundled(npm(/; s/\(.*\)@/\1)) = /'); \
+$(SPEC): packaging/$(SPEC).in $(DIST_TEST)
+	provides=$$(awk '{print "Provides: bundled(npm(" $$1 ")) = " $$2}' runtime-npm-modules.txt); \
 	awk -v p="$$provides" '{gsub(/%{VERSION}/, "$(VERSION)"); gsub(/%{NPM_PROVIDES}/, p)}1' $< > $@
 
 packaging/arch/PKGBUILD: packaging/arch/PKGBUILD.in
@@ -104,6 +104,7 @@ clean:
 	rm -rf dist/
 	rm -f $(SPEC) packaging/arch/PKGBUILD packaging/debian/changelog
 	rm -f po/LINGUAS
+	rm -f metafile.json runtime-npm-modules.txt
 
 install: $(DIST_TEST) po/LINGUAS
 	mkdir -p $(DESTDIR)$(PREFIX)/share/cockpit/$(PACKAGE_NAME)
@@ -143,7 +144,7 @@ $(TARFILE): $(DIST_TEST) $(SPEC) packaging/arch/PKGBUILD packaging/debian/change
 	tar --xz $(TAR_ARGS) -cf $(TARFILE) --transform 's,^,$(RPM_NAME)/,' \
 		--exclude '*.in' --exclude test/reference \
 		$$(git ls-files | grep -v node_modules) \
-		$(COCKPIT_REPO_FILES) $(NODE_MODULES_TEST) $(SPEC) $(TEST_NPMS) \
+		$(COCKPIT_REPO_FILES) $(NODE_MODULES_TEST) $(DIST_TEST) $(SPEC) $(TEST_NPMS) \
 		packaging/arch/PKGBUILD packaging/debian/changelog dist/
 
 $(NODE_CACHE): $(NODE_MODULES_TEST)
