@@ -202,12 +202,6 @@ export interface VMHostDevicePci extends VMHostDeviceBase {
     type: "pci";
     source: {
         address: {
-            vendor: {
-                id: optString;
-            },
-            product: {
-                id: optString;
-            },
             domain: optString;
             bus: optString;
             slot: optString;
