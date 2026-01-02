@@ -879,8 +879,6 @@ export function getNodeDevSource(dev: NodeDevice): string | undefined {
 export type HostDevSourceObject =
 {
     // common
-    vendor: optString;
-    product: optString;
     bus: optString;
 
     // pci
@@ -889,6 +887,8 @@ export type HostDevSourceObject =
     func?: optString;
 
     // usb
+    vendor?: optString;
+    product?: optString;
     device?: optString;
 }
 
@@ -900,11 +900,8 @@ export function getHostDevSourceObject(dev: VMHostDevice): HostDevSourceObject |
         const bus = dev.source.address.bus;
         const slot = dev.source.address.slot;
         const func = dev.source.address.func;
-        // In pci devices vendor and product is optional
-        const vendor = dev.source.address.vendor && dev.source.address.vendor.id;
-        const product = dev.source.address.product && dev.source.address.product.id;
 
-        source = { domain, bus, slot, func, vendor, product };
+        source = { domain, bus, slot, func };
     } else if (dev.type === "usb") {
         const device = dev.source.device;
         const bus = dev.source.bus;

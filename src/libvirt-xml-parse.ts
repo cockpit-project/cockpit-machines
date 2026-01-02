@@ -730,12 +730,6 @@ export function parseDumpxmlForHostDevices(devicesElem: Element | undefined): VM
                 driver,
                 source: {
                     address: {
-                        vendor: {
-                            id: get_attr(sourceElem, 'vendor', 'id'),
-                        },
-                        product: {
-                            id: get_attr(sourceElem, 'product', 'id'),
-                        },
                         domain: get_attr(addressElem, 'domain'),
                         bus: get_attr(addressElem, 'bus'),
                         slot: get_attr(addressElem, 'slot'),
