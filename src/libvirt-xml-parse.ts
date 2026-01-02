@@ -746,12 +746,6 @@ export function parseDumpxmlForHostDevices(devicesElem: Element): VMHostDevice[]
                 const sourceElem = hostdevElem.getElementsByTagName('source')[0];
                 const addressElem = sourceElem.getElementsByTagName('address')[0];
 
-                let vendorElem;
-                let productElem;
-                if (sourceElem) {
-                    vendorElem = sourceElem.getElementsByTagName('vendor')[0];
-                    productElem = sourceElem.getElementsByTagName('product')[0];
-                }
                 const dev: VMHostDevicePci = {
                     type,
                     mode,
@@ -759,12 +753,6 @@ export function parseDumpxmlForHostDevices(devicesElem: Element): VMHostDevice[]
                     driver,
                     source: {
                         address: {
-                            vendor: {
-                                id: vendorElem?.getAttribute('id'),
-                            },
-                            product: {
-                                id: productElem?.getAttribute('id'),
-                            },
                             domain: addressElem.getAttribute('domain'),
                             bus: addressElem.getAttribute('bus'),
                             slot: addressElem.getAttribute('slot'),
