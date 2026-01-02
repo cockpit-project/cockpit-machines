@@ -32,13 +32,13 @@ import {
     storagePoolId,
     units
 } from '../../helpers.js';
-import StateIcon from '../common/stateIcon.jsx';
+import { StateIcon } from '../common/stateIcon.jsx';
 import { updateOrAddStoragePool } from '../../actions/store-actions.js';
 import { StoragePoolOverviewTab } from './storagePoolOverviewTab.jsx';
 import { StoragePoolVolumesTab } from './storagePoolVolumesTab.jsx';
 import { StoragePoolDeleteAction } from './storagePoolDelete.jsx';
 import { storagePoolActivate, storagePoolDeactivate } from '../../libvirtApi/storagePool.js';
-import store from '../../store.js';
+import { store } from '../../store.js';
 
 import cockpit from 'cockpit';
 

@@ -41,7 +41,7 @@ import { useDialogs } from 'dialogs.jsx';
 
 import { InfoPopover } from '../common/infoPopover.jsx';
 
-import VMS_CONFIG from "../../config.js";
+import { VMS_CONFIG } from "../../config.js";
 
 import './vmMigrateDialog.css';
 

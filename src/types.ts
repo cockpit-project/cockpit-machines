@@ -202,12 +202,6 @@ export interface VMHostDevicePci extends VMHostDeviceBase {
     type: "pci";
     source: {
         address: {
-            vendor: {
-                id: optString;
-            },
-            product: {
-                id: optString;
-            },
             domain: optString;
             bus: optString;
             slot: optString;
@@ -406,13 +400,21 @@ export type VMState =
     "pmsuspended";
 
 export interface VMDiskStat {
-    physical: number | string,
-    capacity: number | string,
-    allocation: number | string,
+    physical: number,
+    capacity: number,
+    allocation: number,
+}
+
+export interface DomainLoaderCapabilities {
+    supported: boolean,
+    firmware_values: string[],
+    type_values: string[],
+    readonly_values: string[],
+    secure_values: string[],
 }
 
 export interface DomainCapabilities {
-    loaderElems: HTMLCollection | undefined;
+    loader: DomainLoaderCapabilities;
     maxVcpu: optString;
     cpuModels: string[];
     cpuHostModel: optString;
@@ -441,19 +443,19 @@ export interface VM extends VMXML {
 
     // When the VM reaches the "shut off" state, this function is
     // called, but only once.
-    onShutOff?: null | ((vm: VM) => void);
+    onShutOff?: null | undefined | ((vm: VM) => void);
 
     capabilities: DomainCapabilities;
 
-    memoryUsed: number | undefined;
-    hasPollingMemBalloonFailure: boolean | undefined;
-    cpuTime: number | undefined;
-    cpuUsage: number | undefined;
-    actualTimeInMs: number | undefined;
-    disksStats: Record<string, VMDiskStat> | undefined;
+    memoryUsed?: number | undefined;
+    hasPollingMemBalloonFailure?: boolean | undefined;
+    cpuTime?: number | undefined;
+    cpuUsage?: number | undefined;
+    actualTimeInMs?: number | undefined;
+    disksStats?: Record<string, VMDiskStat> | undefined;
 
     // "false" means "not supported", "undefined" means "not yet loaded"
-    snapshots: VMSnapshot[] | undefined | false;
+    snapshots?: VMSnapshot[] | undefined | false;
 }
 
 /** "Fake" VMs for the UI only **/

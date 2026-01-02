@@ -20,7 +20,7 @@
 import cockpit from 'cockpit';
 import React, { useState } from 'react';
 
-import store from "../../store.js";
+import { store } from "../../store.js";
 
 import type { VM } from '../../types';
 

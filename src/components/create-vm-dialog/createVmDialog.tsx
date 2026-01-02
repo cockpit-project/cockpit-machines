@@ -42,7 +42,7 @@ import { ExternalLinkAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { DialogsContext } from 'dialogs.jsx';
 import { useInit } from "hooks.js";
 import cockpit from 'cockpit';
-import store from "../../store.js";
+import { store } from "../../store.js";
 import { MachinesConnectionSelector } from '../common/machinesConnectionSelector.jsx';
 import { TypeaheadSelect, type TypeaheadSelectOption } from 'cockpit-components-typeahead-select';
 import { FormHelper } from "cockpit-components-form-helper.jsx";

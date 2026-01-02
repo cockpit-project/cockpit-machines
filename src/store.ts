@@ -26,9 +26,7 @@ interface ReduxWindow extends Window {
 }
 
 const composeEnhancers = (window as ReduxWindow).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const store = createStore(
+export const store = createStore(
     reducer,
     composeEnhancers(applyMiddleware(thunk))
 );
-
-export default store;

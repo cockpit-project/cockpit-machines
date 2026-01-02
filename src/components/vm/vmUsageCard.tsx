@@ -26,7 +26,7 @@ import { Progress, ProgressVariant } from "@patternfly/react-core/dist/esm/compo
 
 const _ = cockpit.gettext;
 
-const VmUsageTab = ({ vm } : { vm: VM }) => {
+export const VmUsageTab = ({ vm } : { vm: VM }) => {
     const memTotal = vm.currentMemory ? vm.currentMemory * 1024 : 0;
     const [memTotalFmt, memTotalUnit] = cockpit.format_bytes(memTotal, { base2: true, separate: true });
     let usedMem: number;
@@ -68,5 +68,3 @@ const VmUsageTab = ({ vm } : { vm: VM }) => {
         </Flex>
     );
 };
-
-export default VmUsageTab;

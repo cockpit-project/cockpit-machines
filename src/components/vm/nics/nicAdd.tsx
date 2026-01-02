@@ -343,5 +343,3 @@ export class AddNIC extends React.Component<AddNICProps, AddNICState> {
         );
     }
 }
-
-export default AddNIC;

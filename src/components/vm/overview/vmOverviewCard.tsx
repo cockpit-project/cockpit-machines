@@ -32,7 +32,7 @@ import { Switch } from "@patternfly/react-core/dist/esm/components/Switch";
 import { DialogsContext } from 'dialogs.jsx';
 
 import { CPUModal } from './cpuModal.jsx';
-import MemoryModal from './memoryModal.jsx';
+import { MemoryModal } from './memoryModal.jsx';
 import {
     rephraseUI,
     vmId,
@@ -46,7 +46,7 @@ import { InfoPopover } from '../../common/infoPopover.jsx';
 import { VsockLink } from './vsock.jsx';
 import { StateIcon } from '../../common/stateIcon.jsx';
 import { domainChangeAutostart, domainGet } from '../../../libvirtApi/domain.js';
-import store from '../../../store.js';
+import { store } from '../../../store.js';
 import {
     SOCAT_EXAMPLE,
     SOCAT_EXAMPLE_HEADER,
@@ -63,7 +63,6 @@ interface VmOverviewCardProps {
     maxVcpu: optString;
     cpuModels: string[];
     config: Config;
-    loaderElems: HTMLCollection | undefined;
     libvirtVersion: number;
 }
 
@@ -71,7 +70,7 @@ interface VmOverviewCardState {
     virtXMLAvailable: boolean | undefined,
 }
 
-class VmOverviewCard extends React.Component<VmOverviewCardProps, VmOverviewCardState> {
+export class VmOverviewCard extends React.Component<VmOverviewCardProps, VmOverviewCardState> {
     static contextType = DialogsContext;
     declare context: Dialogs;
 
@@ -261,11 +260,10 @@ class VmOverviewCard extends React.Component<VmOverviewCardProps, VmOverviewCard
                             <DescriptionListDescription id={`${idPrefix}-emulated-machine`}>{vm.emulatedMachine}</DescriptionListDescription>
                         </DescriptionListGroup>
 
-                        { this.props.loaderElems && libvirtVersion >= 5002000 && // <os firmware=[bios/efi]' settings is available only for libvirt version >= 5.2. Before that version it silently ignores this attribute in the XML
+                        { vm.capabilities.loader.supported && libvirtVersion >= 5002000 && // <os firmware=[bios/efi]' settings is available only for libvirt version >= 5.2. Before that version it silently ignores this attribute in the XML
                             <DescriptionListGroup>
                                 <DescriptionListTerm>{_("Firmware")}</DescriptionListTerm>
                                 <FirmwareLink vm={vm}
-                                              loaderElems={this.props.loaderElems}
                                               idPrefix={idPrefix} />
                             </DescriptionListGroup>}
                     </DescriptionList>
@@ -274,5 +272,3 @@ class VmOverviewCard extends React.Component<VmOverviewCardProps, VmOverviewCard
         );
     }
 }
-
-export default VmOverviewCard;

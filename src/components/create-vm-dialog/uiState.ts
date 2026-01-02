@@ -17,7 +17,7 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
-import store from '../../store.js';
+import { store } from '../../store.js';
 import {
     addUiVm,
     updateVm,
@@ -25,7 +25,7 @@ import {
     deleteUiVm,
 } from '../../actions/store-actions.js';
 
-import VMS_CONFIG from "../../config.js";
+import { VMS_CONFIG } from "../../config.js";
 
 import type { ConnectionName, UIVM } from '../../types';
 
