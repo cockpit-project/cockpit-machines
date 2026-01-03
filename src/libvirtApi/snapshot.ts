@@ -21,14 +21,13 @@
  * Provider for Libvirt using libvirt-dbus API.
  * See https://github.com/libvirt/libvirt-dbus
  */
-import store from '../store.js';
+import { appState } from '../state';
 
 import {
     ConnectionName,
     VM, VMSnapshot,
 } from '../types';
 
-import { updateDomainSnapshots } from '../actions/store-actions.js';
 import { getSnapshotXML } from '../libvirt-xml-create.js';
 import { parseDomainSnapshotDumpxml } from '../libvirt-xml-parse.js';
 import { call, Enum, timeout } from './helpers.js';
@@ -131,21 +130,21 @@ export async function snapshotGetAll({
                 console.warn("DomainSnapshot method GetXMLDesc failed", snap.reason.toString());
             }
         });
-        store.dispatch(updateDomainSnapshots({
-            connectionName,
-            domainPath,
-            snaps: snaps.sort((a, b) => Number(a.creationTime) - Number(b.creationTime))
-        }));
+        appState.updateVm(
+            {
+                connectionName,
+                id: domainPath,
+            },
+            {
+                snapshots: snaps.sort((a, b) => Number(a.creationTime) - Number(b.creationTime))
+            }
+        );
     } catch (ex) {
         if (ex && typeof ex === 'object' && 'name' in ex && ex.name === 'org.freedesktop.DBus.Error.UnknownMethod')
             logDebug("LIST_DOMAIN_SNAPSHOTS action failed for domain", domainPath, ", not supported by libvirt-dbus");
         else
             console.warn("LIST_DOMAIN_SNAPSHOTS action failed for domain", domainPath, ":", String(ex));
-        store.dispatch(updateDomainSnapshots({
-            connectionName,
-            domainPath,
-            snaps: false,
-        }));
+        appState.updateVm({ connectionName, id: domainPath }, { snapshots: false });
     }
 }
 

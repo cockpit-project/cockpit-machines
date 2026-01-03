@@ -40,7 +40,7 @@ import {
     validateDialogBodyValues
 } from './nicBody.jsx';
 import { virtXmlHotAdd, domainGet, domainIsRunning } from '../../../libvirtApi/domain.js';
-import { AppState } from '../../../app';
+import { appState } from '../../../state';
 
 import './nic.css';
 
@@ -135,7 +135,6 @@ interface AddNICProps {
     idPrefix: string,
     vm: VM,
     availableSources: AvailableSources;
-    appState: AppState;
 }
 
 interface AddNICState extends DialogValues {
@@ -242,7 +241,7 @@ export class AddNIC extends React.Component<AddNICProps, AddNICState> {
                 {
                     mac: (this.state.setNetworkMac
                         ? this.state.networkMac
-                        : getRandomMac(await this.props.appState.getVms())),
+                        : getRandomMac(await appState.getVms())),
                     model: this.state.networkModel,
                     type: this.state.networkType,
                     backend: { type: backend },
