@@ -13,8 +13,14 @@ srpm_build_deps:
 - nodejs
 
 actions:
-  post-upstream-clone: make cockpit-machines.spec
-  create-archive: make dist
+  post-upstream-clone:
+    - make node-cache dist
+
+  fix-spec-file:
+    # our locally built tarballs are not on the upstream releases page, point to the local files
+    sed -i 's|^\(Source[0-9]*:\s*\).*\/|\1|' cockpit-machines.spec
+
+  get-current-version: make print-version
 
 jobs:
   - job: tests
@@ -39,9 +45,9 @@ jobs:
       post-upstream-clone: make cockpit-machines.spec
       # HACK: tarball for releases (copr_build, koji, etc.), copying spec's Source0; this
       # really should be the default, see https://github.com/packit/packit-service/issues/1505
-      create-archive:
-        - sh -exc "curl -L -O https://github.com/cockpit-project/cockpit-machines/releases/download/${PACKIT_PROJECT_VERSION}/${PACKIT_PROJECT_NAME_VERSION}.tar.xz"
-        - sh -exc "ls ${PACKIT_PROJECT_NAME_VERSION}.tar.xz"
+      fix-spec-file:
+        - sh -exc "curl -L --fail -O https://github.com/cockpit-project/${PACKIT_UPSTREAM_PACKAGE_NAME}/releases/download/${PACKIT_PROJECT_VERSION}/${PACKIT_PROJECT_NAME_VERSION}.tar.xz"
+        - sh -exc "curl -L --fail -O https://github.com/cockpit-project/${PACKIT_UPSTREAM_PACKAGE_NAME}/releases/download/${PACKIT_PROJECT_VERSION}/${PACKIT_UPSTREAM_PACKAGE_NAME}-node-${PACKIT_PROJECT_VERSION}.tar.xz"
 
   - job: propose_downstream
     trigger: release

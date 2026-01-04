@@ -175,11 +175,11 @@ endif
 ifeq ("$(TEST_SCENARIO)","ws-container")
 VM_INSTALL = --upload $(TARFILE):/var/tmp/ --script $(CURDIR)/test/vm-ws.install
 else
-VM_INSTALL = --build $(TARFILE) --script $(CURDIR)/test/vm.install
+VM_INSTALL = --upload $(NODE_CACHE):/var/tmp --build $(TARFILE) --script $(CURDIR)/test/vm.install
 endif
 
 # build a VM with locally built distro pkgs installed
-$(VM_IMAGE): $(TARFILE) packaging/debian/rules packaging/debian/control packaging/arch/PKGBUILD bots
+$(VM_IMAGE): $(TARFILE) $(NODE_CACHE) packaging/debian/rules packaging/debian/control packaging/arch/PKGBUILD bots
 	bots/image-customize --fresh $(VM_CUSTOMIZE_FLAGS) $(VM_INSTALL) $(TEST_OS)
 
 # convenience target for the above
