@@ -7,11 +7,6 @@ downstream_package_name: cockpit-machines
 # use the nicely formatted release description from our upstream release, instead of git shortlog
 copy_upstream_release_description: true
 
-srpm_build_deps:
-- jq
-- make
-- nodejs
-
 actions:
   post-upstream-clone:
     - make node-cache dist
@@ -21,6 +16,11 @@ actions:
     sed -i 's|^\(Source[0-9]*:\s*\).*\/|\1|' cockpit-machines.spec
 
   get-current-version: make print-version
+
+srpm_build_deps:
+  - jq
+  - make
+  - nodejs
 
 jobs:
   - job: tests
