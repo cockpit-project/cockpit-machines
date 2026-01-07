@@ -49,7 +49,7 @@ import { VolumeCreateBody } from '../../storagePools/storageVolumeCreateBody.jsx
 import { domainAttachDisk, domainGet, virtXmlHotEdit, domainIsRunning } from '../../../libvirtApi/domain.js';
 import { storagePoolGetAll } from '../../../libvirtApi/storagePool.js';
 import { storageVolumeCreateAndAttach } from '../../../libvirtApi/storageVolume.js';
-import { useAppState } from '../../../app';
+import { appState } from '../../../state';
 
 const _ = cockpit.gettext;
 
@@ -492,7 +492,6 @@ export const AddDiskModalBody = ({
     vm: VM,
     supportedDiskBusTypes: string[],
 }) => {
-    const appState = useAppState();
     const [customDiskVerificationFailed, setCustomDiskVerificationFailed] = useState(false);
     const [customDiskVerificationMessage, setCustomDiskVerificationMessage] = useState<string | null>(null);
     const [dialogError, setDialogError] = useState<string | null>(null);
@@ -546,7 +545,7 @@ export const AddDiskModalBody = ({
     useEffect(() => {
         // Get the list of VMs.
         appState.getVms().then(setVms);
-    }, [appState]);
+    }, []);
 
     useEffect(() => {
         // Refresh storage volume list before displaying the dialog.

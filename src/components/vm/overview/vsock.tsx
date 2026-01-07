@@ -43,7 +43,7 @@ import {
     SOCAT_EXAMPLE_HEADER,
     VSOCK_INFO_MESSAGE,
 } from './helpers.jsx';
-import { useAppState } from '../../../app';
+import { appState } from '../../../state';
 
 const _ = cockpit.gettext;
 
@@ -118,7 +118,6 @@ export const VsockModal = ({
     isVsockAttached: boolean,
     idPrefix: string,
 }) => {
-    const appState = useAppState();
     const [dialogError, setDialogError] = useState<undefined | DialogError>();
     const [auto, setAuto] = useState(vm.vsock.cid.auto ? vmVsockNormalized.auto : true);
     const [address, _setAddress] = useState<number>(vmVsockNormalized.address);
@@ -131,7 +130,7 @@ export const VsockModal = ({
             if (!vmVsockNormalized.address)
                 _setAddress(getNextAvailableVsockCID(vm.name, vm.connectionName, vms));
         });
-    }, [appState, vm.name, vm.connectionName, vmVsockNormalized.address]);
+    }, [vm.name, vm.connectionName, vmVsockNormalized.address]);
 
     const setAddress = (value: string) => {
         // Allow empty string

@@ -38,7 +38,6 @@ import { virtXmlEdit, virtXmlHotRemove, domainInterfaceAddresses, domainGet } fr
 import { KebabDropdown } from "cockpit-components-dropdown";
 import { ListingTable } from "cockpit-components-table.jsx";
 import { DeleteResourceButton } from '../../common/deleteResource.jsx';
-import { useAppState } from '../../../app';
 
 const _ = cockpit.gettext;
 
@@ -85,8 +84,6 @@ export const VmNetworkActions = ({
     networks: Network[],
 }) => {
     const Dialogs = useDialogs();
-    const appState = useAppState();
-
     const [networkDevices, setNetworkDevices] = useState<Record<string, NetworkDevice> | undefined>();
 
     useEffect(() => {
@@ -107,7 +104,6 @@ export const VmNetworkActions = ({
                 idPrefix={`${id}-add-iface`}
                 vm={vm}
                 availableSources={availableSources}
-                appState={appState}
             />
         );
     };
