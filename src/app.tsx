@@ -16,10 +16,11 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
-import React, { useState, useContext } from 'react';
-import { EventEmitter } from 'cockpit/event';
 
-import type { ConnectionName, VM } from './types';
+import React, { useState } from 'react';
+
+import type { ConnectionName } from './types';
+import { appState } from './state';
 
 import { AlertGroup, type AlertProps } from "@patternfly/react-core/dist/esm/components/Alert";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -38,35 +39,14 @@ import { NetworkList } from "./components/networks/networkList.jsx";
 import { VmDetailsPage } from './components/vm/vmDetailsPage.jsx';
 import { ConsoleCardStates } from './components/vm/consoles/consoles.jsx';
 import { CreateVmAction } from "./components/create-vm-dialog/createVmDialog.jsx";
-import { dummyVmsFilter, vmId, addNotification, dismissNotification } from "./helpers.js";
+import { dummyVmsFilter, vmId, dismissNotification } from "./helpers.js";
 import { InlineNotification } from 'cockpit-components-inline-notification.jsx';
-import {
-    getApiData,
-    getLibvirtVersion,
-    getLoggedInUser,
-    getVirtInstallCapabilities,
-    getVirtXmlCapabilities,
-} from "./libvirtApi/common.js";
-import { domainGetAll, domainGetByName } from './libvirtApi/domain';
-import {
-    nodeDeviceGetAll,
-} from "./libvirtApi/nodeDevice.js";
 import { useEvent, useOn, usePageLocation, useInit } from "hooks";
 import { store } from './store.js';
 
 const _ = cockpit.gettext;
 
 superuser.reload_page_on_change();
-
-async function getConnectionNames(): Promise<ConnectionName[]> {
-    const loggedUser = await cockpit.user();
-    // The 'root' user does not have its own qemu:///session just qemu:///system
-    // https://bugzilla.redhat.com/show_bug.cgi?id=1045069
-    if (loggedUser.name == "root")
-        return ["system"];
-    else
-        return ["system", "session"];
-}
 
 export interface Notification {
     text: string;
@@ -102,156 +82,8 @@ function getInlineNotifications(resourceId?: string) {
         return null;
 }
 
-interface AppStateEvents {
-    changed: () => void,
-}
-
-export class AppState extends EventEmitter<AppStateEvents> {
-    loadingResources: boolean = true;
-    systemSocketInactive: boolean = false;
-    hardwareVirtEnabled: boolean = true;
-
-    #commonDataInited: boolean = false;
-    #vmsInited: boolean = true;
-
-    #update() {
-        const loading = !(this.#commonDataInited && this.#vmsInited);
-        if (loading != this.loadingResources) {
-            this.loadingResources = loading;
-            this.emit("changed");
-        }
-    }
-
-    #initPromise: Promise<void> | null = null;
-
-    init(): Promise<void> {
-        if (this.#initPromise)
-            return this.#initPromise;
-
-        const init_connection = async (connectionName: ConnectionName) => {
-            try {
-                await getLibvirtVersion({ connectionName });
-                const promises = await getApiData({ connectionName });
-                const errorMsgs = promises
-                        .filter(promise => promise.status === 'rejected')
-                        .map(promise => promise.reason.message);
-                if (errorMsgs.length > 0) {
-                    addNotification({
-                        text: _("Failed to fetch some resources"),
-                        detail: errorMsgs.join(', ')
-                    });
-                }
-                // Get the node devices in the background since
-                // they are expensive to get and not important for
-                // displaying VMs.
-                nodeDeviceGetAll({ connectionName }).catch(exc => {
-                    addNotification({
-                        text: "Failed to retrieve node devices",
-                        detail: String(exc),
-                    });
-                });
-            } catch (ex) {
-                // access denied is expected for unprivileged session
-                if (connectionName !== 'system' || superuser.allowed ||
-                    !(ex && typeof ex === 'object' && 'name' in ex && ex.name == 'org.freedesktop.DBus.Error.AccessDenied'))
-                    console.error("Failed to get libvirt version from the dbus API:", ex);
-                /* If the API call failed on system connection and the user has superuser privileges then show the Empty state screen */
-                if (connectionName == "system")
-                    this.systemSocketInactive = true;
-            }
-        };
-
-        const init_hwvirt = async () => {
-            try {
-                const hardwareVirtCheck = await cockpit.script(
-                    "LANG=C.UTF-8 virt-host-validate qemu | grep 'Checking for hardware virtualization'");
-                this.hardwareVirtEnabled = hardwareVirtCheck.includes('PASS');
-            } catch (ex) {
-                // That line doesn't exist on some architectures, so the grep may fail
-                console.debug("Failed to check for hardware virtualization:", ex);
-            }
-        };
-
-        const doit = async () => {
-            await getLoggedInUser();
-
-            // get these in the background, it takes quite long
-            getVirtInstallCapabilities();
-            getVirtXmlCapabilities();
-
-            await Promise.allSettled(
-                [
-                    ...(await getConnectionNames()).map(init_connection),
-                    init_hwvirt(),
-                ]
-            );
-
-            this.#commonDataInited = true;
-            this.#update();
-        };
-
-        this.#initPromise = doit();
-        return this.#initPromise;
-    }
-
-    #allVmsPromise: Promise<void> | null = null;
-
-    initAllVMs(quiet: boolean = false): Promise<void> {
-        if (this.#allVmsPromise)
-            return this.#allVmsPromise;
-
-        const doit = async () => {
-            const connectionNames = await getConnectionNames();
-            if (!quiet)
-                this.#vmsInited = false;
-            this.#update();
-            await Promise.allSettled(connectionNames.map(async connectionName => {
-                await domainGetAll({ connectionName }); // never fails
-            }));
-            this.#vmsInited = true;
-            this.#update();
-        };
-
-        this.#allVmsPromise = doit();
-        return this.#allVmsPromise;
-    }
-
-    #vmRequested: string = "";
-
-    async initVM(name: string, connectionName: ConnectionName) {
-        const key = name + ":" + connectionName;
-        if (this.#allVmsPromise || this.#vmRequested == key)
-            return;
-        this.#vmRequested = key;
-
-        this.#vmsInited = false;
-        this.#update();
-        await domainGetByName({ connectionName, name }); // never fails
-        if (this.#vmRequested == key) {
-            this.#vmsInited = true;
-            this.#update();
-        }
-    }
-
-    // Asynchronously wait until the list of VMs has been loaded, and
-    // then return it.
-
-    async getVms(): Promise<VM[]> {
-        await this.initAllVMs(true);
-        return store.getState().vms;
-    }
-}
-
-export const AppStateContext = React.createContext<AppState | null>(null);
-export const useAppState = () => {
-    const state = useContext(AppStateContext);
-    cockpit.assert(state);
-    return state;
-};
-
 export const App = () => {
-    const state = useInit(() => new AppState());
-    useOn(state, "changed");
+    useOn(appState, "changed");
 
     const [ignoreDisabledVirtualization, setIgnoreDisabledVirtualization] = useState(() => {
         const ignored = localStorage.getItem('virtualization-disabled-ignored');
@@ -273,23 +105,23 @@ export const App = () => {
 
     let showVM: false | { name: string, connection: ConnectionName } = false;
 
-    state.init();
+    appState.init();
     if (path.length > 0 && path[0] == 'vm') {
         const { name, connection } = cockpit.location.options;
         if (typeof name == "string" && (connection == "system" || connection == "session")) {
             showVM = { name, connection };
-            state.initVM(name, connection);
+            appState.initVM(name, connection);
         }
     } else {
-        state.initAllVMs();
+        appState.initAllVMs();
     }
 
     let body = null;
-    if (state.loadingResources) {
+    if (appState.loadingResources) {
         body = <AppLoading />;
-    } else if (!state.hardwareVirtEnabled && !ignoreDisabledVirtualization) {
+    } else if (!appState.hardwareVirtEnabled && !ignoreDisabledVirtualization) {
         body = <AppVirtDisabled setIgnored={setIgnoreDisabledVirtualization} />;
-    } else if (superuser.allowed && state.systemSocketInactive) {
+    } else if (superuser.allowed && appState.systemSocketInactive) {
         body = <AppServiceNotRunning />;
     } else if (path.length == 0 || (path.length > 0 && path[0] == 'vms')) {
         body = <AppVMs />;
@@ -301,11 +133,7 @@ export const App = () => {
         body = <AppNetworks />;
     }
 
-    return (
-        <AppStateContext.Provider value={state}>
-            {body}
-        </AppStateContext.Provider>
-    );
+    return body;
 };
 
 const AppVirtDisabled = ({
