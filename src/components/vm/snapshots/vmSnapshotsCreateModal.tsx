@@ -293,10 +293,10 @@ export class CreateSnapshotModal extends React.Component<CreateSnapshotModalProp
                         }))
                     .then(() => {
                         // VM Snapshots do not trigger any events so we have to refresh them manually
-                        snapshotGetAll({ connectionName: vm.connectionName, domainPath: vm.id });
+                        snapshotGetAll(vm);
                         // Creating an external snapshot might change
                         // the disk configuration of a VM without event.
-                        domainGet({ connectionName: vm.connectionName, id: vm.id });
+                        domainGet(vm);
                         Dialogs.close();
                     })
                     .catch(exc => {

@@ -23,6 +23,7 @@
  */
 import cockpit from "cockpit";
 import { store } from "../store.js";
+import { appState } from "../state";
 import * as python from "python.js";
 
 import getOSListScript from "../getOSList.py";
@@ -31,7 +32,6 @@ import {
     undefineNetwork,
     undefineStoragePool,
     updateLibvirtVersion,
-    updateVm,
     setLoggedInUser,
     setCapabilities,
     setNodeMaxMemory,
@@ -222,6 +222,7 @@ function startEventMonitorDomains(connectionName: ConnectionName): void {
         (path, iface, signal, args) => {
             const objPath = args[0] as string;
             const eventType = args[1] as number;
+            const key = { connectionName, id: objPath };
 
             logDebug(`signal on ${path}: ${iface}.${signal}(${JSON.stringify(args)})`);
 
@@ -230,23 +231,15 @@ function startEventMonitorDomains(connectionName: ConnectionName): void {
             case Enum.VIR_DOMAIN_EVENT_UNDEFINED:
             case Enum.VIR_DOMAIN_EVENT_STARTED:
             case Enum.VIR_DOMAIN_EVENT_STOPPED:
-                domainGet({ connectionName, id: objPath });
+                domainGet(key);
                 break;
 
             case Enum.VIR_DOMAIN_EVENT_SUSPENDED:
-                store.dispatch(updateVm({
-                    connectionName,
-                    id: objPath,
-                    state: "paused"
-                }));
+                appState.updateVm(key, { state: "paused" });
                 break;
 
             case Enum.VIR_DOMAIN_EVENT_RESUMED:
-                store.dispatch(updateVm({
-                    connectionName,
-                    id: objPath,
-                    state: "running"
-                }));
+                appState.updateVm(key, { state: "running" });
                 break;
 
             default:
@@ -453,6 +446,23 @@ export function getApiData({
 type UsagePollingSpec = boolean | string;
 let usagePolling: UsagePollingSpec = false;
 
+function timeSampleUsageData(props: Partial<VM>, vm: VM) {
+    if (vm.actualTimeInMs && vm.cpuTime && props.actualTimeInMs && props.cpuTime) { // diff can be computed
+        const timeDiff = (props.actualTimeInMs - vm.actualTimeInMs) * 1000000; // in nanosecs
+        if (timeDiff <= 0) {
+            logDebug(`-- timeSampleUsageData(): no time difference`);
+            return;
+        }
+        const cpuTimeDiff = props.cpuTime - vm.cpuTime; // in nanosecs
+
+        // store computed actual usage stats
+        props.cpuUsage = (100 * cpuTimeDiff / timeDiff);
+    } else {
+        logDebug(`timeSampleUsageData(): can't compute diff - missing previous record`);
+        props.cpuUsage = 0;
+    }
+}
+
 async function pollVmUsage(vm: VM) {
     const flags = Enum.VIR_DOMAIN_STATS_BALLOON | Enum.VIR_DOMAIN_STATS_VCPU | Enum.VIR_DOMAIN_STATS_BLOCK | Enum.VIR_DOMAIN_STATS_STATE;
 
@@ -460,7 +470,7 @@ async function pollVmUsage(vm: VM) {
         await ensureBalloonPolling(vm);
         const [info] = await call<[DBusProps]>(vm.connectionName, vm.id, "org.libvirt.Domain", "GetStats", [flags, 0], { timeout: 5000, type: "uu" });
         if (Object.getOwnPropertyNames(info).length > 0) {
-            const props: Partial<VM> = { name: vm.name, connectionName: vm.connectionName, id: vm.id };
+            const props: Partial<VM> = {};
             let avgvCpuTime = 0;
 
             // "balloon.usable" is the same as MemAvailable in /proc/meminfo
@@ -490,11 +500,12 @@ async function pollVmUsage(vm: VM) {
             if (get_number_prop(info, "vcpu.current") > 0) {
                 props.actualTimeInMs = Date.now();
                 props.cpuTime = avgvCpuTime;
+                timeSampleUsageData(props, vm);
             }
             props.disksStats = calculateDiskStats(info);
 
             logDebug(`pollVmUsage: ${JSON.stringify(props)}`);
-            store.dispatch(updateVm(props));
+            appState.updateVm(vm, props);
         }
     } catch (ex) {
         console.warn(`GetStats(${vm.name}, ${vm.connectionName}) failed: ${String(ex)}`);
@@ -502,7 +513,7 @@ async function pollVmUsage(vm: VM) {
 }
 
 export async function pollUsageNow() {
-    const vms = store.getState().vms;
+    const vms = appState.vms;
 
     if (cockpit.hidden)
         return;

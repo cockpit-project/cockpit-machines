@@ -34,7 +34,6 @@ import {
     nodeDeviceGetAll,
 } from "./libvirtApi/nodeDevice.js";
 import { addNotification } from "./helpers.js";
-import { store } from './store';
 
 const _ = cockpit.gettext;
 
@@ -52,20 +51,81 @@ interface AppStateEvents {
     changed: () => void,
 }
 
+interface ResourceKey {
+    connectionName: ConnectionName;
+    id: string;
+}
+
+function equal(a: ResourceKey, b: ResourceKey): boolean {
+    return a.connectionName == b.connectionName && a.id == b.id;
+}
+
+function replaceAtIndex<T>(input: T[], index: number, val: T): T[] {
+    return [
+        ...input.slice(0, index),
+        val,
+        ...input.slice(index + 1)
+    ];
+}
+
+function updateAtIndex<T>(input: T[], index: number, update: Partial<T>): T[] {
+    return replaceAtIndex(input, index, { ...input[index], ...update });
+}
+
+function updateExisting<K, T>(input: T[], key: K, update: Partial<T>, equal: (a: T, b: K) => boolean) {
+    const index = input.findIndex(v => equal(v, key));
+    if (index >= 0)
+        return updateAtIndex(input, index, update);
+    else
+        return input;
+}
+
+function removeExisting<K, T>(input: T[], key: K, equal: (a: T, b: K) => boolean) {
+    return input.filter(v => !equal(v, key));
+}
+
 export class AppState extends EventEmitter<AppStateEvents> {
     loadingResources: boolean = true;
     systemSocketInactive: boolean = false;
     hardwareVirtEnabled: boolean = true;
 
+    // VMs
+
+    vms: VM[] = [];
+
+    updateOrAddVm(props: VM) {
+        const index = this.vms.findIndex(vm => equal(vm, props));
+        if (index >= 0) {
+            this.vms = updateAtIndex(this.vms, index, props);
+        } else {
+            this.vms = [...this.vms, props];
+        }
+        this.#update();
+    }
+
+    updateVm(key: ResourceKey, props: Partial<VM>) {
+        this.vms = updateExisting(this.vms, key, props, equal);
+        this.#update();
+    }
+
+    undefineVm(key: ResourceKey) {
+        this.vms = removeExisting(this.vms, key, equal);
+        this.#update();
+    }
+
+    deleteUnlistedVMs(connectionName: ConnectionName, ids: string[]) {
+        this.vms = this.vms.filter(vm => (connectionName !== vm.connectionName || ids.indexOf(vm.id) >= 0));
+        this.#update();
+    }
+
+    // Initialization
+
     #commonDataInited: boolean = false;
     #vmsInited: boolean = true;
 
     #update() {
-        const loading = !(this.#commonDataInited && this.#vmsInited);
-        if (loading != this.loadingResources) {
-            this.loadingResources = loading;
-            this.emit("changed");
-        }
+        this.loadingResources = !(this.#commonDataInited && this.#vmsInited);
+        this.emit("changed");
     }
 
     #initPromise: Promise<void> | null = null;
@@ -184,7 +244,7 @@ export class AppState extends EventEmitter<AppStateEvents> {
 
     async getVms(): Promise<VM[]> {
         await this.initAllVMs(true);
-        return store.getState().vms;
+        return this.vms;
     }
 }
 

@@ -19,7 +19,6 @@
 import {
     ADD_UI_VM,
     DELETE_UI_VM,
-    DELETE_UNLISTED_VMS,
     SET_CAPABILITIES,
     SET_VIRT_INSTALL_CAPABILITIES,
     SET_VIRT_XML_CAPABILITIES,
@@ -27,16 +26,12 @@ import {
     SET_LOGGED_IN_USER,
     UNDEFINE_NETWORK,
     UNDEFINE_STORAGE_POOL,
-    UNDEFINE_VM,
     UPDATE_ADD_INTERFACE,
     UPDATE_ADD_NETWORK,
     UPDATE_ADD_NODE_DEVICE,
     UPDATE_ADD_STORAGE_POOL,
-    UPDATE_ADD_VM,
     UPDATE_LIBVIRT_VERSION,
-    UPDATE_DOMAIN_SNAPSHOTS,
     UPDATE_UI_VM,
-    UPDATE_VM,
     ADD_UI_NOTIFICATION,
     DISMISS_UI_NOTIFICATION,
 } from '../constants/store-action-types.js';
@@ -44,9 +39,7 @@ import {
 import type cockpit from "cockpit";
 import type {
     ConnectionName,
-    VM,
     UIVM,
-    VMSnapshot,
     StoragePool,
     Network,
     NodeInterface,
@@ -77,19 +70,6 @@ export function deleteUiVm(vm: { connectionName: ConnectionName, name: string })
     return {
         type: DELETE_UI_VM,
         vm,
-    };
-}
-
-export function deleteUnlistedVMs(
-    connectionName: ConnectionName,
-    vmNames: string[],
-    vmIds: string[]
-) {
-    return {
-        type: DELETE_UNLISTED_VMS,
-        vmNames,
-        vmIds,
-        connectionName,
     };
 }
 
@@ -178,26 +158,6 @@ export function undefineStoragePool({
     };
 }
 
-export function undefineVm({
-    connectionName,
-    name,
-    id,
-    transientOnly
-} : {
-    connectionName: ConnectionName,
-    name?: string,
-    id?: string,
-    transientOnly?: boolean,
-}) {
-    return {
-        type: UNDEFINE_VM,
-        name,
-        id,
-        connectionName,
-        transientOnly,
-    };
-}
-
 export function updateLibvirtVersion({
     libvirtVersion
 } : {
@@ -206,25 +166,6 @@ export function updateLibvirtVersion({
     return {
         type: UPDATE_LIBVIRT_VERSION,
         libvirtVersion,
-    };
-}
-
-export function updateDomainSnapshots({
-    connectionName,
-    domainPath,
-    snaps
-} : {
-    connectionName: ConnectionName,
-    domainPath: string,
-    snaps: VMSnapshot[] | undefined | false,
-}) {
-    return {
-        type: UPDATE_DOMAIN_SNAPSHOTS,
-        payload: {
-            connectionName,
-            domainPath,
-            snaps,
-        },
     };
 }
 
@@ -256,24 +197,10 @@ export function updateOrAddStoragePool(props: Partial<StoragePool>, updateOnly?:
     };
 }
 
-export function updateOrAddVm(props: VM) {
-    return {
-        type: UPDATE_ADD_VM,
-        vm: props,
-    };
-}
-
 export function updateUiVm(vm: Partial<UIVM>) {
     return {
         type: UPDATE_UI_VM,
         vm,
-    };
-}
-
-export function updateVm(props: Partial<VM>) {
-    return {
-        type: UPDATE_VM,
-        vm: props,
     };
 }
 

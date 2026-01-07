@@ -224,8 +224,8 @@ export class VmSnapshotsCard extends React.Component<VmSnapshotsCardProps> {
                                         .then(() => {
                                             // Deleting an external snapshot might change the disk
                                             // configuration of a VM without event.
-                                            domainGet({ connectionName: vm.connectionName, id: vm.id });
-                                            snapshotGetAll({ connectionName: vm.connectionName, domainPath: vm.id });
+                                            domainGet(vm);
+                                            snapshotGetAll(vm);
                                         });
                             },
                         };

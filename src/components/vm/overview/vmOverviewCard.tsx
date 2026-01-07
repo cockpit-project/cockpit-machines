@@ -37,7 +37,6 @@ import {
     rephraseUI,
     vmId,
 } from '../../../helpers.js';
-import { updateVm } from '../../../actions/store-actions.js';
 import { BootOrderLink } from './bootOrder.jsx';
 import { FirmwareLink } from './firmware.jsx';
 import { WatchdogLink } from './watchdog.jsx';
@@ -46,7 +45,7 @@ import { InfoPopover } from '../../common/infoPopover.jsx';
 import { VsockLink } from './vsock.jsx';
 import { StateIcon } from '../../common/stateIcon.jsx';
 import { domainChangeAutostart, domainGet } from '../../../libvirtApi/domain.js';
-import { store } from '../../../store.js';
+import { appState } from '../../../state';
 import {
     SOCAT_EXAMPLE,
     SOCAT_EXAMPLE_HEADER,
@@ -179,14 +178,12 @@ export class VmOverviewCard extends React.Component<VmOverviewCardProps, VmOverv
                         <DescriptionListGroup>
                             <DescriptionListTerm>{_("State")}</DescriptionListTerm>
                             <DescriptionListDescription>
-                                <StateIcon error={vm.error}
-                                               state={vm.state}
-                                               valueId={`${idPrefix}-${vm.connectionName}-state`}
-                                               dismissError={() => store.dispatch(updateVm({
-                                                   connectionName: vm.connectionName,
-                                                   name: vm.name,
-                                                   error: null
-                                               }))} />
+                                <StateIcon
+                                    error={vm.error}
+                                    state={vm.state}
+                                    valueId={`${idPrefix}-${vm.connectionName}-state`}
+                                    dismissError={() => appState.updateVm(vm, { error: null })}
+                                />
                             </DescriptionListDescription>
                         </DescriptionListGroup>
 
