@@ -21,14 +21,13 @@
  * Provider for Libvirt using libvirt-dbus API.
  * See https://github.com/libvirt/libvirt-dbus
  */
-import { store } from '../store.js';
+import { appState } from '../state';
 
 import {
     ConnectionName,
     VM, VMSnapshot,
 } from '../types';
 
-import { updateDomainSnapshots } from '../actions/store-actions.js';
 import { getSnapshotXML } from '../libvirt-xml-create.js';
 import { parseDomainSnapshotDumpxml } from '../libvirt-xml-parse.js';
 import { call, Enum, timeout } from './helpers.js';
@@ -103,21 +102,15 @@ export async function snapshotDelete({
     await call(connectionName, objPath, 'org.libvirt.DomainSnapshot', 'Delete', [0], { timeout, type: 'u' });
 }
 
-export async function snapshotGetAll({
-    connectionName,
-    domainPath
-} : {
-    connectionName: ConnectionName,
-    domainPath: string,
-}): Promise<void> {
+export async function snapshotGetAll(vm: VM): Promise<void> {
     try {
-        const [objPaths] = await call<[string[]]>(connectionName, domainPath,
+        const [objPaths] = await call<[string[]]>(vm.connectionName, vm.id,
                                                   'org.libvirt.Domain', 'ListDomainSnapshots', [0],
                                                   { timeout, type: 'u' });
 
         const snapXmlList = await Promise.allSettled(objPaths.map(async objPath => {
-            const [xml] = await call<[string]>(connectionName, objPath, 'org.libvirt.DomainSnapshot', 'GetXMLDesc', [0], { timeout, type: 'u' });
-            const [isCurrent] = await call<[boolean]>(connectionName, objPath, 'org.libvirt.DomainSnapshot', 'IsCurrent', [0], { timeout, type: 'u' });
+            const [xml] = await call<[string]>(vm.connectionName, objPath, 'org.libvirt.DomainSnapshot', 'GetXMLDesc', [0], { timeout, type: 'u' });
+            const [isCurrent] = await call<[boolean]>(vm.connectionName, objPath, 'org.libvirt.DomainSnapshot', 'IsCurrent', [0], { timeout, type: 'u' });
             return { xml, isCurrent };
         }));
 
@@ -131,21 +124,13 @@ export async function snapshotGetAll({
                 console.warn("DomainSnapshot method GetXMLDesc failed", snap.reason.toString());
             }
         });
-        store.dispatch(updateDomainSnapshots({
-            connectionName,
-            domainPath,
-            snaps: snaps.sort((a, b) => Number(a.creationTime) - Number(b.creationTime))
-        }));
+        appState.updateVm(vm, { snapshots: snaps.sort((a, b) => Number(a.creationTime) - Number(b.creationTime)) });
     } catch (ex) {
         if (ex && typeof ex === 'object' && 'name' in ex && ex.name === 'org.freedesktop.DBus.Error.UnknownMethod')
-            logDebug("LIST_DOMAIN_SNAPSHOTS action failed for domain", domainPath, ", not supported by libvirt-dbus");
+            logDebug("LIST_DOMAIN_SNAPSHOTS action failed for domain", vm.id, ", not supported by libvirt-dbus");
         else
-            console.warn("LIST_DOMAIN_SNAPSHOTS action failed for domain", domainPath, ":", String(ex));
-        store.dispatch(updateDomainSnapshots({
-            connectionName,
-            domainPath,
-            snaps: false,
-        }));
+            console.warn("LIST_DOMAIN_SNAPSHOTS action failed for domain", vm.id, ":", String(ex));
+        appState.updateVm(vm, { snapshots: false });
     }
 }
 

@@ -21,11 +21,10 @@
 
 import { combineReducers } from 'redux';
 import { VMS_CONFIG } from "./config.js";
-import { logDebug, isObjectEmpty } from './helpers.js';
+import { isObjectEmpty } from './helpers.js';
 import {
     ADD_UI_VM,
     DELETE_UI_VM,
-    DELETE_UNLISTED_VMS,
     SET_CAPABILITIES,
     SET_VIRT_INSTALL_CAPABILITIES,
     SET_VIRT_XML_CAPABILITIES,
@@ -33,24 +32,18 @@ import {
     SET_LOGGED_IN_USER,
     UNDEFINE_NETWORK,
     UNDEFINE_STORAGE_POOL,
-    UNDEFINE_VM,
     UPDATE_ADD_INTERFACE,
     UPDATE_ADD_NETWORK,
     UPDATE_ADD_NODE_DEVICE,
-    UPDATE_ADD_VM,
     UPDATE_ADD_STORAGE_POOL,
     UPDATE_LIBVIRT_VERSION,
-    UPDATE_DOMAIN_SNAPSHOTS,
     UPDATE_UI_VM,
-    UPDATE_VM,
     ADD_UI_NOTIFICATION,
     DISMISS_UI_NOTIFICATION,
 } from './constants/store-action-types.js';
 
 import type cockpit from 'cockpit';
 import type {
-    ConnectionName,
-    VM,
     UIVM,
     NodeDevice,
     NodeInterface,
@@ -196,110 +189,6 @@ function nodeDevices(state: NodeDevice[] | undefined, action): NodeDevice[] {
     }
 }
 
-function vms(state: VM[] | undefined, action): VM[] {
-    state = state || [];
-
-    logDebug('reducer vms: action=' + JSON.stringify(action));
-
-    function findVmToUpdate(
-        state: VM[],
-        { connectionName, id, name } : { connectionName: ConnectionName, id: string, name?: string }
-    ): null | { index: number, vmCopy: VM } {
-        const index = id
-            ? getFirstIndexOfResource(state, 'id', id, connectionName)
-            : getFirstIndexOfResource(state, 'name', name, connectionName);
-        if (index < 0) {
-            if (id)
-                logDebug(`vms reducer: vm (id='${id}', connectionName='${connectionName}') not found, skipping`);
-            else
-                logDebug(`vms reducer: vm (name='${name}', connectionName='${connectionName}') not found, skipping`);
-            return null;
-        }
-        return { // return object of {index, copyOfVm}
-            index,
-            vmCopy: Object.assign({}, state[index]), // TODO: consider immutableJs
-        };
-    }
-
-    switch (action.type) {
-    case UPDATE_ADD_VM: {
-        if (isObjectEmpty(action.vm))
-            return [...state, action.vm]; // initialize vm to empty object
-
-        const connectionName = action.vm.connectionName;
-        const index = action.vm.id
-            ? getFirstIndexOfResource(state, 'id', action.vm.id, connectionName)
-            : getFirstIndexOfResource(state, 'name', action.vm.name, connectionName);
-        if (index < 0) { // add
-            const initObjIndex = state.findIndex(obj => isObjectEmpty(obj));
-            if (initObjIndex >= 0)
-                state.splice(initObjIndex, 1); // remove empty initial object
-            return [...state, action.vm];
-        }
-
-        const updatedVm = Object.assign({}, state[index], action.vm);
-        if (action.vm.actualTimeInMs < 0) { // clear the usage data (i.e. VM went down)
-            logDebug(`Clearing usage data for vm '${action.vm.name}'`);
-            clearUsageData(updatedVm);
-        }
-        return replaceResource({ state, updatedResource: updatedVm, index });
-    }
-    case UPDATE_VM: {
-        const indexedVm = findVmToUpdate(state, action.vm);
-        if (!indexedVm) {
-            return state;
-        }
-
-        let updatedVm;
-        if (action.vm.actualTimeInMs < 0) { // clear the usage data (i.e. VM went down)
-            logDebug(`Clearing usage data for vm '${action.vm.name}'`);
-            updatedVm = Object.assign(indexedVm.vmCopy, action.vm);
-            clearUsageData(updatedVm);
-        } else {
-            timeSampleUsageData(action.vm, indexedVm.vmCopy);
-            updatedVm = Object.assign(indexedVm.vmCopy, action.vm);
-        }
-
-        // replace whole object
-        return replaceResource({ state, updatedResource: updatedVm, index: indexedVm.index });
-    }
-    case UPDATE_DOMAIN_SNAPSHOTS: {
-        const { connectionName, domainPath, snaps } = action.payload;
-        const index = getFirstIndexOfResource(state, 'id', domainPath, connectionName);
-        const indexedVm = findVmToUpdate(state, { connectionName, id: domainPath });
-
-        if (index < 0 || !indexedVm)
-            return state;
-
-        const updatedVm = Object.assign({}, state[index]);
-
-        updatedVm.snapshots = snaps;
-
-        return replaceResource({ state, updatedResource: updatedVm, index: indexedVm.index });
-    }
-    case UNDEFINE_VM: {
-        if (action.id)
-            return state
-                    .filter(vm => (action.connectionName !== vm.connectionName || action.id != vm.id ||
-                        (action.transientOnly && vm.persistent)));
-        else
-            return state
-                    .filter(vm => (action.connectionName !== vm.connectionName || action.name != vm.name ||
-                        (action.transientOnly && vm.persistent)));
-    }
-    case DELETE_UNLISTED_VMS: {
-        if (action.vmIds)
-            return state
-                    .filter(vm => (action.connectionName !== vm.connectionName || action.vmIds.indexOf(vm.id) >= 0));
-        else
-            return state
-                    .filter(vm => (action.connectionName !== vm.connectionName || action.vmNames.indexOf(vm.name) >= 0));
-    }
-    default: // by default all reducers should return initial state on unknown actions
-        return state;
-    }
-}
-
 interface SystemInfo {
     libvirtService: {
         name: string;
@@ -433,39 +322,11 @@ function ui(state: UIState | undefined, action): UIState {
     }
 }
 
-function clearUsageData(updatedVm) {
-    updatedVm.actualTimeInMs = undefined;
-    updatedVm.cpuTime = undefined;
-    updatedVm.cpuUsage = undefined;
-
-    updatedVm.rssMemory = undefined;
-}
-
-function timeSampleUsageData(newVmRecord, previousVmRecord) {
-    if (newVmRecord.actualTimeInMs) { // new usage data are provided
-        if (previousVmRecord.actualTimeInMs) { // diff can be computed
-            const timeDiff = (newVmRecord.actualTimeInMs - previousVmRecord.actualTimeInMs) * 1000000; // in nanosecs
-            if (timeDiff <= 0) {
-                logDebug(`-- timeSampleUsageData(): no time difference`);
-                return;
-            }
-            const cpuTimeDiff = newVmRecord.cpuTime - previousVmRecord.cpuTime; // in nanosecs
-
-            // store computed actual usage stats
-            newVmRecord.cpuUsage = (100 * cpuTimeDiff / timeDiff);
-        } else {
-            logDebug(`timeSampleUsageData(): can't compute diff - missing previous record`);
-            newVmRecord.cpuUsage = 0;
-        }
-    }
-}
-
 export default combineReducers({
     config,
     interfaces,
     networks,
     nodeDevices,
-    vms,
     systemInfo,
     storagePools,
     ui,

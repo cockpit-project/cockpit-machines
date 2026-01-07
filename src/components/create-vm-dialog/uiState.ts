@@ -20,7 +20,6 @@
 import { store } from '../../store.js';
 import {
     addUiVm,
-    updateVm,
     updateUiVm,
     deleteUiVm,
 } from '../../actions/store-actions.js';
@@ -49,20 +48,6 @@ export function setVmCreateInProgress(
 
     store.dispatch(addUiVm(vm));
     setupCleanupTimeout(name, connectionName, CREATE_TIMEOUT);
-}
-
-export function setVmInstallInProgress(
-    original_vm: { name: string, connectionName: ConnectionName },
-    installInProgress: boolean = true
-): void {
-    const vm = {
-        ...original_vm,
-        expanded: installInProgress,
-        openConsoleTab: installInProgress,
-        installInProgress,
-    };
-
-    store.dispatch(updateVm(vm));
 }
 
 export function updateImageDownloadProgress(

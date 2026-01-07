@@ -30,7 +30,6 @@ import { useDialogs } from 'dialogs.jsx';
 import { fmt_to_fragments } from 'utils.jsx';
 import { KebabDropdown } from 'cockpit-components-dropdown.jsx';
 
-import { updateVm } from '../../actions/store-actions.js';
 import {
     vmId,
     addNotification,
@@ -50,7 +49,7 @@ import {
     vmDomainMethod,
     virtXmlAdd
 } from '../../libvirtApi/domain.js';
-import { store } from "../../store.js";
+import { appState } from "../../state";
 
 const _ = cockpit.gettext;
 
@@ -61,14 +60,7 @@ const domainCanRename = (vmState: VMState) => vmState == 'shut off';
 const domainCanResume = (vmState: VMState) => vmState == 'paused';
 
 function startOperationProgress(vm: VM) {
-    store.dispatch(
-        updateVm({
-            connectionName: vm.connectionName,
-            name: vm.name,
-            operationInProgressFromState: vm.state,
-            onShutOff: null,
-        })
-    );
+    appState.updateVm(vm, { operationInProgressFromState: vm.state, onShutOff: null });
 }
 
 function isOperationInProgress(vm: VM) {
@@ -77,17 +69,16 @@ function isOperationInProgress(vm: VM) {
 
 function setVmError(vm: VM, msg: string, ex: unknown) {
     console.warn(msg, ":", String(ex));
-    store.dispatch(
-        updateVm({
-            connectionName: vm.connectionName,
-            name: vm.name,
+    appState.updateVm(
+        vm,
+        {
             operationInProgressFromState: undefined,
             onShutOff: null,
             error: {
                 text: msg,
                 detail: String(ex),
             }
-        })
+        }
     );
 }
 
@@ -522,13 +513,7 @@ export const VmActions = ({
 export const VmRestartDialog = ({ vm } : { vm: VM }) => {
     async function onRestart(force: boolean) {
         startOperationProgress(vm);
-        store.dispatch(
-            updateVm({
-                connectionName: vm.connectionName,
-                name: vm.name,
-                onShutOff: vmStart,
-            })
-        );
+        appState.updateVm(vm, { onShutOff: vmStart });
         try {
             await vmDomainMethod<void>(vm, force ? 'Destroy' : 'Shutdown', 'u', 0);
         } catch (ex) {

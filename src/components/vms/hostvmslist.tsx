@@ -34,7 +34,6 @@ import { WithDialogs } from 'dialogs.jsx';
 import { Progress, ProgressVariant } from "@patternfly/react-core/dist/esm/components/Progress";
 
 import { VmActions } from '../vm/vmActions.jsx';
-import { updateVm } from '../../actions/store-actions.js';
 
 import { vmId, rephraseUI, dummyVmsFilter, DOMAINSTATE } from "../../helpers.js";
 
@@ -44,6 +43,7 @@ import { VmNeedsShutdown } from '../common/needsShutdown.jsx';
 import { VmUsesSpice } from '../vm/usesSpice.jsx';
 import { AggregateStatusCards } from "../aggregateStatusCards.jsx";
 import { store } from "../../store.js";
+import { appState } from "../../state";
 import { ensureUsagePolling } from '../../libvirtApi/common';
 
 import { VMS_CONFIG } from "../../config.js";
@@ -288,13 +288,14 @@ export const HostVmsList = ({
                                                     { title: rephraseUI('connections', vm.connectionName) },
                                                     {
                                                         title: (
-                                                            <VmState vm={vm}
-                                                                 vms={vms}
-                                                                 dismissError={() => store.dispatch(updateVm({
-                                                                     connectionName: vm.connectionName,
-                                                                     name: vm.name,
-                                                                     error: null
-                                                                 }))} />
+                                                            <VmState
+                                                                vm={vm}
+                                                                vms={vms}
+                                                                dismissError={() => {
+                                                                    if (!vm.isUi)
+                                                                        appState.updateVm(vm, { error: null });
+                                                                }}
+                                                            />
                                                         ),
                                                     },
                                                     ...(showUsage

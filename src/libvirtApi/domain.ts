@@ -24,7 +24,7 @@
 import cockpit from 'cockpit';
 import * as python from 'python.js';
 
-import { store } from '../store.js';
+import { appState } from '../state';
 
 import type {
     optString,
@@ -39,16 +39,10 @@ import type { BootOrderDevice } from '../helpers.js';
 import installVmScript from '../scripts/install_machine.py';
 
 import {
-    deleteUnlistedVMs,
-    undefineVm,
-    updateOrAddVm,
-} from '../actions/store-actions.js';
-import {
     getDiskXML,
 } from '../libvirt-xml-create.js';
 import {
     setVmCreateInProgress,
-    setVmInstallInProgress,
     updateImageDownloadProgress,
     clearVmUiState,
 } from '../components/create-vm-dialog/uiState.js';
@@ -547,10 +541,6 @@ export async function domainCreate({
     // shows dummy vm  until we get vm from virsh (cleans up inProgress)
     setVmCreateInProgress(vmName, connectionName);
 
-    if (startVm) {
-        setVmInstallInProgress({ name: vmName, connectionName });
-    }
-
     type DomainCreateScriptArgs = { connectionName: ConnectionName, type: string } & DomainSpec;
 
     const args: DomainCreateScriptArgs = {
@@ -881,13 +871,16 @@ export async function domainGet({
 
         let usageDataUpdate: Partial<VM> = {};
         if (!domainIsRunning(stateStr)) {
+            // Clear usage data when machine is shut off
             usageDataUpdate = {
-                actualTimeInMs: -1,
+                actualTimeInMs: undefined,
+                cpuTime: undefined,
+                cpuUsage: undefined,
                 memoryUsed: undefined,
             };
         }
 
-        const old_vm = store.getState().vms.find(vm => vm.connectionName == connectionName && vm.id == objPath);
+        const old_vm = appState.vms.find(vm => vm.connectionName == connectionName && vm.id == objPath);
         let operationInProgressFromState;
         if (old_vm && old_vm.operationInProgressFromState && stateStr == old_vm.operationInProgressFromState) {
             operationInProgressFromState = old_vm.operationInProgressFromState;
@@ -916,10 +909,10 @@ export async function domainGet({
 
         logDebug(`${vm.name}.GET_VM(${objPath}, ${connectionName}): update props ${JSON.stringify(vm)}`);
 
-        store.dispatch(updateOrAddVm(vm));
+        appState.updateOrAddVm(vm);
 
         if (shutOffHandler) {
-            const new_vm = store.getState().vms.find(vm => vm.connectionName == connectionName && vm.id == objPath);
+            const new_vm = appState.vms.find(vm => vm.connectionName == connectionName && vm.id == objPath);
             if (new_vm)
                 shutOffHandler(new_vm);
         }
@@ -927,7 +920,7 @@ export async function domainGet({
         clearVmUiState(dumpxmlParams.name, connectionName);
 
         // Load snapshots in the background. This can be quite slow.
-        snapshotGetAll({ connectionName, domainPath: objPath });
+        snapshotGetAll(vm);
     } catch (ex) {
         // "not found" is an expected error, as this runs on Stopped/Undefined events; so be quiet about these
         if (String(ex).startsWith("Domain not found"))
@@ -935,7 +928,7 @@ export async function domainGet({
         else
             console.warn(`GET_VM failed for ${objPath}, undefining: ${String(ex)}`);
         // but undefine either way -- if we  can't get info about the VM, don't show it
-        store.dispatch(undefineVm({ connectionName, id: objPath }));
+        appState.undefineVm({ connectionName, id: objPath });
     }
 }
 
@@ -962,7 +955,7 @@ export async function domainGetAll({ connectionName } : { connectionName: Connec
     try {
         const [objPaths] = await call<[string[]]>(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'ListDomains', [0],
                                                   { timeout, type: 'u' });
-        store.dispatch(deleteUnlistedVMs(connectionName, [], objPaths));
+        appState.deleteUnlistedVMs(connectionName, objPaths);
         await Promise.all(objPaths.map(path => domainGet({ connectionName, id: path })));
         pollUsageNow();
     } catch (ex) {
@@ -1047,9 +1040,8 @@ export async function domainGetStartTime({
 
 export async function domainInstall({ vm } : { vm: VM }): Promise<string> {
     logDebug(`INSTALL_VM(${vm.name}):`);
-    // shows dummy vm until we get vm from virsh (cleans up inProgress)
-    // vm should be returned even if script fails
-    setVmInstallInProgress(vm);
+
+    appState.updateVm(vm, { installInProgress: true });
 
     const args = JSON.stringify({
         connectionName: vm.connectionName,
@@ -1075,7 +1067,7 @@ export async function domainInstall({ vm } : { vm: VM }): Promise<string> {
                 console.error(JSON.stringify(ex));
                 return Promise.reject(ex);
             })
-            .finally(() => setVmInstallInProgress({ name: vm.name, connectionName: vm.connectionName }, false));
+            .finally(() => appState.updateVm(vm, { installInProgress: false }));
 }
 
 /* This is the shape of the return value of the
