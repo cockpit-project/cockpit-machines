@@ -393,7 +393,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
 
         b.set_input_text("#rename-dialog-new-name", "test%")
         b.click("#rename-dialog-confirm")
-        b.wait(lambda: "vm?name=test%25&connection=system" in b.eval_js("window.location.href"))
+        b.wait(lambda: "vm?connection=system&name=test%25" in b.eval_js("window.location.href"))
         b.wait_text("h2.vm-name", "test%")
         b.wait_not_present("#navbar-oops")
 
