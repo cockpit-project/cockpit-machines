@@ -28,7 +28,7 @@ import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 import { DialogsContext } from 'dialogs.jsx';
 
 import cockpit from 'cockpit';
-import { getIfaceSourceName, rephraseUI, vmId, addNotification } from "../../../helpers.js";
+import { getIfaceSourceName, rephraseUI, vmId } from "../../../helpers.js";
 import { AddNIC } from './nicAdd.jsx';
 import { EditNICModal } from './nicEdit.jsx';
 import { portForwardText } from './nicBody';
@@ -38,6 +38,7 @@ import { virtXmlEdit, virtXmlHotRemove, domainInterfaceAddresses, domainGet } fr
 import { KebabDropdown } from "cockpit-components-dropdown";
 import { ListingTable } from "cockpit-components-table.jsx";
 import { DeleteResourceButton } from '../../common/deleteResource.jsx';
+import { appState } from '../../../state';
 
 const _ = cockpit.gettext;
 
@@ -500,7 +501,7 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
                     );
 
                     if (allRejected && !domainNotFound) {
-                        addNotification({
+                        appState.addNotification({
                             text: cockpit.format(_("Failed to fetch the IP addresses of the interfaces present in $0"), this.props.vm.name),
                             detail: [...new Set(domifaddressAllSources.map(promise => promise.status == 'rejected' && promise.reason ? promise.reason.message : ''))].join(', '),
                             resourceId: this.props.vm.id,
@@ -578,7 +579,7 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
                             { update: vm.state === "running" });
                         domainGet({ connectionName: vm.connectionName, id: vm.id });
                     } catch (ex) {
-                        addNotification({
+                        appState.addNotification({
                             text: cockpit.format(_("NIC $0 of VM $1 failed to change state"), network.mac, vm.name),
                             detail: String(ex),
                             resourceId: vm.id,

@@ -39,7 +39,7 @@ import { NetworkList } from "./components/networks/networkList.jsx";
 import { VmDetailsPage } from './components/vm/vmDetailsPage.jsx';
 import { ConsoleCardStates } from './components/vm/consoles/consoles.jsx';
 import { CreateVmAction } from "./components/create-vm-dialog/createVmDialog.jsx";
-import { dummyVmsFilter, vmId, dismissNotification } from "./helpers.js";
+import { dummyVmsFilter, vmId } from "./helpers.js";
 import { InlineNotification } from 'cockpit-components-inline-notification.jsx';
 import { useEvent, useOn, usePageLocation, useInit } from "hooks";
 import { store } from './store.js';
@@ -56,7 +56,7 @@ export interface Notification {
 }
 
 function getInlineNotifications(resourceId?: string) {
-    const notes = store.getState().ui.notifications.map((notification, index) => {
+    const notes = appState.notifications.map((notification, index) => {
         if (!resourceId || notification.resourceId == resourceId) {
             return (
                 <InlineNotification
@@ -64,7 +64,7 @@ function getInlineNotifications(resourceId?: string) {
                     type={notification.type || 'danger'}
                     isLiveRegion
                     isInline={false}
-                    onDismiss={() => dismissNotification(index)}
+                    onDismiss={() => appState.dismissNotification(index)}
                     text={notification.text}
                     detail={notification.detail}
                 />

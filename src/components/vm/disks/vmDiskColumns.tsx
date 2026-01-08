@@ -36,7 +36,8 @@ import { MediaEjectModal } from './mediaEject.jsx';
 import { EditDiskAction } from './diskEdit.jsx';
 import { AddDiskModalBody } from './diskAdd.jsx';
 import { DeleteResourceModal } from '../../common/deleteResource.jsx';
-import { canDeleteDiskFile, addNotification } from '../../../helpers.js';
+import { canDeleteDiskFile } from '../../../helpers.js';
+import { appState } from '../../../state';
 
 const _ = cockpit.gettext;
 
@@ -169,7 +170,7 @@ export const RemoveDiskModal = ({
                     if (deleteFile) {
                         return domainDeleteStorage({ connectionName: vm.connectionName, storage: [disk], storagePools })
                                 .catch(exc => {
-                                    addNotification({
+                                    appState.addNotification({
                                         resourceId: vm.id,
                                         text: cockpit.format(_("Could not delete disk's storage")),
                                         detail: exc.message,
