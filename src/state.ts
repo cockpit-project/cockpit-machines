@@ -21,7 +21,7 @@ import cockpit from 'cockpit';
 import { EventEmitter } from 'cockpit/event';
 import { superuser } from "superuser.js";
 
-import type { ConnectionName, VM, UIVM, UIVMProps } from './types';
+import type { ConnectionName, VM, UIVM, UIVMProps, VirtInstallCapabilities, VirtXmlCapabilities } from './types';
 import {
     getApiData,
     getLibvirtVersion,
@@ -86,9 +86,14 @@ function removeExisting<K, T>(input: T[], key: K, equal: (a: T, b: K) => boolean
 
 export class AppState extends EventEmitter<AppStateEvents> {
     loadingResources: boolean = true;
+
+    // System information
+
     systemSocketInactive: boolean = false;
     hardwareVirtEnabled: boolean = true;
     libvirtVersion: number = 0;
+    virtInstallCapabilities: VirtInstallCapabilities | null = null;
+    virtXmlCapabilities: VirtXmlCapabilities | null = null;
 
     // Notifications
 
@@ -222,8 +227,8 @@ export class AppState extends EventEmitter<AppStateEvents> {
             await getLoggedInUser();
 
             // get these in the background, it takes quite long
-            getVirtInstallCapabilities();
-            getVirtXmlCapabilities();
+            getVirtInstallCapabilities().then(caps => { this.virtInstallCapabilities = caps; this.#update() });
+            getVirtXmlCapabilities().then(caps => { this.virtXmlCapabilities = caps; this.#update() });
 
             await Promise.allSettled(
                 [

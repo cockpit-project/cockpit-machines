@@ -34,8 +34,6 @@ import {
     setLoggedInUser,
     setCapabilities,
     setNodeMaxMemory,
-    setVirtInstallCapabilities,
-    setVirtXmlCapabilities,
 } from "../actions/store-actions.js";
 
 import {
@@ -71,7 +69,7 @@ import {
     parseDumpxmlForCapabilities
 } from "../libvirt-xml-parse.js";
 
-import type { ConnectionName, VM, OSInfo } from '../types';
+import type { ConnectionName, VM, OSInfo, VirtInstallCapabilities, VirtXmlCapabilities } from '../types';
 
 /**
  * Calculates disk statistics.
@@ -374,7 +372,7 @@ async function storagePoolStopOrUndefine(connectionName: ConnectionName, poolPat
     }
 }
 
-export async function getVirtInstallCapabilities() {
+export async function getVirtInstallCapabilities(): Promise<VirtInstallCapabilities> {
     async function check_exec(argv: string[]): Promise<string | false> {
         try {
             return await cockpit.spawn(argv, { err: 'ignore' });
@@ -385,36 +383,30 @@ export async function getVirtInstallCapabilities() {
 
     const virtInstallAvailable = !!await check_exec(['sh', '-c', 'type virt-install']);
     if (!virtInstallAvailable) {
-        store.dispatch(setVirtInstallCapabilities(
-            {
-                virtInstallAvailable: false,
-            }
-        ));
-        return;
+        return {
+            virtInstallAvailable: false,
+        };
     }
 
     const unattended_out = await check_exec(['virt-install', '--unattended=?']);
-    store.dispatch(setVirtInstallCapabilities(
-        {
-            virtInstallAvailable: true,
-            downloadOSSupported: !!await check_exec(['virt-install', '--install=?']),
-            cloudInitSupported: !!await check_exec(['virt-install', '--cloud-init=?']),
-            unattendedSupported: !!unattended_out,
-            unattendedUserLogin: !!unattended_out && unattended_out.includes('user-login'),
-        }
-    ));
+    return {
+        virtInstallAvailable: true,
+        downloadOSSupported: !!await check_exec(['virt-install', '--install=?']),
+        cloudInitSupported: !!await check_exec(['virt-install', '--cloud-init=?']),
+        unattendedSupported: !!unattended_out,
+        unattendedUserLogin: !!unattended_out && unattended_out.includes('user-login'),
+    };
 }
 
-export async function getVirtXmlCapabilities() {
+export async function getVirtXmlCapabilities(): Promise<VirtXmlCapabilities | null> {
     try {
         const help_text = await cockpit.spawn(["virt-xml", "--help"]);
-        store.dispatch(setVirtXmlCapabilities(
-            {
-                convert_to_vnc: help_text.includes("--convert-to-vnc"),
-            }
-        ));
+        return {
+            convert_to_vnc: help_text.includes("--convert-to-vnc"),
+        };
     } catch (exc) {
         console.error("Failed to query virt-xml capabilities:", String(exc));
+        return null;
     }
 }
 

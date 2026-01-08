@@ -24,8 +24,6 @@ import { VMS_CONFIG } from "./config.js";
 import { isObjectEmpty } from './helpers.js';
 import {
     SET_CAPABILITIES,
-    SET_VIRT_INSTALL_CAPABILITIES,
-    SET_VIRT_XML_CAPABILITIES,
     SET_NODE_MAX_MEMORY,
     SET_LOGGED_IN_USER,
     UNDEFINE_NETWORK,
@@ -43,8 +41,6 @@ import type {
     StoragePool,
     Network,
     HypervisorCapabilities,
-    VirtInstallCapabilities,
-    VirtXmlCapabilities,
 } from './types';
 
 // --- helpers -------------------
@@ -188,8 +184,6 @@ interface SystemInfo {
         unitState: string;
     };
     loggedUser: cockpit.UserInfo | null;
-    virt_install_capabilities?: VirtInstallCapabilities;
-    virt_xml_capabilities?: VirtXmlCapabilities;
 }
 
 function systemInfo(state: SystemInfo | undefined, action): SystemInfo {
@@ -205,16 +199,6 @@ function systemInfo(state: SystemInfo | undefined, action): SystemInfo {
     switch (action.type) {
     case SET_LOGGED_IN_USER: {
         return Object.assign({}, state, { loggedUser: action.payload.loggedUser });
-    }
-    case SET_VIRT_INSTALL_CAPABILITIES: {
-        const newState = Object.assign({}, state);
-        newState.virt_install_capabilities = action.payload.capabilities;
-        return newState;
-    }
-    case SET_VIRT_XML_CAPABILITIES: {
-        const newState = Object.assign({}, state);
-        newState.virt_xml_capabilities = action.payload.capabilities;
-        return newState;
     }
     default: // by default all reducers should return initial state on unknown actions
         return state;
