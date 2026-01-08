@@ -79,7 +79,7 @@ import {
 import { storagePoolRefresh } from './storagePool.js';
 import { snapshotGetAll } from './snapshot.js';
 import { downloadRhelImage, getRhelImageUrl } from './rhel-images.js';
-import { DBusProps, get_boolean_prop, call, Enum, timeout, resolveUiState } from './helpers.js';
+import { DBusProps, get_boolean_prop, call, Enum, timeout } from './helpers.js';
 import { CLOUD_IMAGE, DOWNLOAD_AN_OS, LOCAL_INSTALL_MEDIA_SOURCE, needsRHToken } from "../components/create-vm-dialog/createVmDialogUtils.js";
 import { pollUsageNow } from './common';
 
@@ -858,7 +858,6 @@ export async function domainGet({
             autostart = get_boolean_prop(returnProps, "Autostart");
 
         const dumpxmlParams = parseDomainDumpxml(connectionName, domainXML, objPath);
-        resolveUiState(dumpxmlParams.name, connectionName);
 
         const capabilities = await domainGetCapabilities({
             connectionName,
@@ -917,7 +916,7 @@ export async function domainGet({
                 shutOffHandler(new_vm);
         }
 
-        clearVmUiState(dumpxmlParams.name, connectionName);
+        clearVmUiState(vm.name, connectionName);
 
         // Load snapshots in the background. This can be quite slow.
         snapshotGetAll(vm);

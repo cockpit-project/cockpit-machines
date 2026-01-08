@@ -42,7 +42,6 @@ import { StateIcon } from '../common/stateIcon.jsx';
 import { VmNeedsShutdown } from '../common/needsShutdown.jsx';
 import { VmUsesSpice } from '../vm/usesSpice.jsx';
 import { AggregateStatusCards } from "../aggregateStatusCards.jsx";
-import { store } from "../../store.js";
 import { appState } from "../../state";
 import { ensureUsagePolling } from '../../libvirtApi/common';
 
@@ -60,11 +59,9 @@ import "./hostvmslist.scss";
 const VmState = ({
     vm,
     vms,
-    dismissError
 } : {
     vm: VM | UIVM,
     vms: VM[],
-    dismissError: () => void,
 }) => {
     let state = "";
 
@@ -77,6 +74,13 @@ const VmState = ({
     } else {
         state = vm.state;
     }
+
+    const dismissError = () => {
+        if (vm.isUi)
+            appState.setUiVm(vm.connectionName, vm.name, { error: undefined });
+        else
+            appState.updateVm(vm, { error: null });
+    };
 
     return (
         <StateIcon dismissError={dismissError}
@@ -129,7 +133,7 @@ const _ = cockpit.gettext;
  */
 interface HostVmsListProps {
     vms: VM[],
-    ui: ReturnType<typeof store.getState>["ui"],
+    uivms: UIVM[],
     storagePools: StoragePool[],
     actions: React.ReactNode,
     networks: Network[],
@@ -137,7 +141,7 @@ interface HostVmsListProps {
 
 export const HostVmsList = ({
     vms,
-    ui,
+    uivms,
     storagePools,
     actions,
     networks,
@@ -160,7 +164,7 @@ export const HostVmsList = ({
     const [statusSelected, setStatusSelected] = useState<StateFilter>({ value: _("All") });
     const [currentTextFilter, setCurrentTextFilter] = useState("");
     const [statusIsExpanded, setStatusIsExpanded] = useState(false);
-    const combinedVms = [...vms, ...dummyVmsFilter(vms, ui.vms)];
+    const combinedVms = [...vms, ...dummyVmsFilter(vms, uivms)];
     const combinedVmsFiltered = combinedVms
             // searching VM should be case insensitive
             .filter(vm => vm.name && vm.name.toUpperCase().indexOf(currentTextFilter.toUpperCase()) != -1 && (!statusSelected.apiState || (!vm.isUi && statusSelected.apiState == vm.state)));
@@ -288,14 +292,7 @@ export const HostVmsList = ({
                                                     { title: rephraseUI('connections', vm.connectionName) },
                                                     {
                                                         title: (
-                                                            <VmState
-                                                                vm={vm}
-                                                                vms={vms}
-                                                                dismissError={() => {
-                                                                    if (!vm.isUi)
-                                                                        appState.updateVm(vm, { error: null });
-                                                                }}
-                                                            />
+                                                            <VmState vm={vm} vms={vms} />
                                                         ),
                                                     },
                                                     ...(showUsage
