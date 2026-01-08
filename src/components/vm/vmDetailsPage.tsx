@@ -45,6 +45,7 @@ import { VmNeedsShutdown } from '../common/needsShutdown.jsx';
 import { InfoPopover } from '../common/infoPopover.jsx';
 import { VmUsesSpice } from './usesSpice.jsx';
 import { ensureUsagePolling } from './../../libvirtApi/common';
+import { appState } from '../../state';
 
 import './vmDetailsPage.scss';
 
@@ -53,7 +54,6 @@ const _ = cockpit.gettext;
 export const VmDetailsPage = ({
     vm,
     config,
-    libvirtVersion,
     storagePools,
     networks,
     nodeDevices,
@@ -61,7 +61,6 @@ export const VmDetailsPage = ({
 } : {
     vm: VM,
     config: Config,
-    libvirtVersion: number,
     storagePools: StoragePool[],
     networks: Network[],
     nodeDevices: NodeDevice[],
@@ -156,8 +155,7 @@ export const VmDetailsPage = ({
             body: <VmOverviewCard vm={vm}
                                   config={config}
                                   maxVcpu={vm.capabilities.maxVcpu}
-                                  cpuModels={vm.capabilities.cpuModels}
-                                  libvirtVersion={libvirtVersion} />,
+                                  cpuModels={vm.capabilities.cpuModels} />,
         },
         {
             id: `${vmId(vm.name)}-usage`,
@@ -204,7 +202,7 @@ export const VmDetailsPage = ({
             body: <VmSnapshotsCard vm={vm} />
         });
     }
-    if (libvirtVersion && libvirtVersion >= 6008000 && vm.connectionName == "system") {
+    if (appState.libvirtVersion >= 6008000 && vm.connectionName == "system") {
         cardContents.push(
             {
                 id: `${vmId(vm.name)}-filesystems`,

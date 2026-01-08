@@ -34,7 +34,6 @@ import {
     UPDATE_ADD_NETWORK,
     UPDATE_ADD_NODE_DEVICE,
     UPDATE_ADD_STORAGE_POOL,
-    UPDATE_LIBVIRT_VERSION,
 } from './constants/store-action-types.js';
 
 import type cockpit from 'cockpit';
@@ -188,7 +187,6 @@ interface SystemInfo {
         activeState: string;
         unitState: string;
     };
-    libvirtVersion: number;
     loggedUser: cockpit.UserInfo | null;
     virt_install_capabilities?: VirtInstallCapabilities;
     virt_xml_capabilities?: VirtXmlCapabilities;
@@ -201,14 +199,10 @@ function systemInfo(state: SystemInfo | undefined, action): SystemInfo {
             activeState: 'unknown',
             unitState: 'unknown',
         },
-        libvirtVersion: 0,
         loggedUser: null,
     };
 
     switch (action.type) {
-    case UPDATE_LIBVIRT_VERSION: {
-        return Object.assign({}, state, { libvirtVersion: action.libvirtVersion });
-    }
     case SET_LOGGED_IN_USER: {
         return Object.assign({}, state, { loggedUser: action.payload.loggedUser });
     }
