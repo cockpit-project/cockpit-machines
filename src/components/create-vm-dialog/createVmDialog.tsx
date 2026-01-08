@@ -1179,7 +1179,6 @@ interface CreateVmModalProps {
     unattendedSupported: boolean | undefined;
     nodeMaxMemory: number | undefined;
     vms: VM[];
-    loggedUser: cockpit.UserInfo,
     unattendedUserLogin: boolean | undefined,
 }
 
@@ -1413,7 +1412,7 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
 
     onCreateClicked(startVm: boolean) {
         const Dialogs = this.context;
-        const { nodeMaxMemory, vms, loggedUser } = this.props;
+        const { nodeMaxMemory, vms } = this.props;
         const { osInfoList } = this.state;
         const { storagePools } = store.getState();
         const vmName = isEmpty(this.state.vmName.trim()) ? this.state.suggestedVmName : this.state.vmName;
@@ -1447,7 +1446,6 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
                 sshKeys: this.state.sshKeys.map(key => key.value),
                 startVm,
                 accessToken: this.state.accessToken,
-                loggedUser
             };
 
             domainCreate(vmParams).then(() => {
@@ -1478,7 +1476,7 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
 
     render() {
         const Dialogs = this.context;
-        const { nodeMaxMemory, loggedUser, vms } = this.props;
+        const { nodeMaxMemory, vms } = this.props;
         const { osInfoList } = this.state;
         const { storagePools, nodeDevices, networks } = store.getState();
         const validationFailed = this.state.validate ? validateParams({ ...this.state, osInfoList, nodeMaxMemory, vms: vms.filter(vm => vm.connectionName == this.state.connectionName) }) : { };
@@ -1513,7 +1511,6 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
                     id='connection'
                     connectionName={this.state.connectionName}
                     onValueChanged={this.onValueChanged}
-                    loggedUser={loggedUser}
                     showInfoHelper />
                 <SourceRow
                     connectionName={this.state.connectionName}
@@ -1686,7 +1683,6 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
 }
 
 interface CreateVmActionProps {
-    systemInfo: ReturnType<typeof store.getState>["systemInfo"];
     mode: string;
     nodeMaxMemory: number | undefined;
     vms: VM[];
@@ -1702,7 +1698,6 @@ export class CreateVmAction extends React.Component<CreateVmActionProps> {
         const open = () => {
             // The initial resources fetching contains only ID - this will be immediately
             // replaced with the whole resource object but there is enough time to cause a crash if parsed here
-            cockpit.assert(this.props.systemInfo.loggedUser);
             cockpit.assert(vi_caps);
             Dialogs.show(<CreateVmModal mode={this.props.mode}
                                         nodeMaxMemory={this.props.nodeMaxMemory}
@@ -1710,8 +1705,7 @@ export class CreateVmAction extends React.Component<CreateVmActionProps> {
                                         cloudInitSupported={vi_caps.cloudInitSupported}
                                         downloadOSSupported={vi_caps.downloadOSSupported}
                                         unattendedSupported={vi_caps.unattendedSupported}
-                                        unattendedUserLogin={vi_caps.unattendedUserLogin}
-                                        loggedUser={this.props.systemInfo.loggedUser} />);
+                                        unattendedUserLogin={vi_caps.unattendedUserLogin} />);
         };
 
         let testdata;

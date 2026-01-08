@@ -19,6 +19,8 @@
 
 import React from 'react';
 
+import { appState } from '../../state';
+
 import { LIBVIRT_SYSTEM_CONNECTION, LIBVIRT_SESSION_CONNECTION, rephraseUI } from '../../helpers.js';
 import { FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
@@ -34,7 +36,6 @@ const _ = cockpit.gettext;
 
 interface MachinesConnectionSelectorProps {
     onValueChanged: (prop: "connectionName", value: ConnectionName) => void,
-    loggedUser: cockpit.UserInfo,
     connectionName: ConnectionName,
     id: string,
     showInfoHelper?: boolean,
@@ -42,12 +43,12 @@ interface MachinesConnectionSelectorProps {
 
 export const MachinesConnectionSelector = ({
     onValueChanged,
-    loggedUser,
     connectionName,
     id,
     showInfoHelper
 }: MachinesConnectionSelectorProps) => {
-    if (loggedUser.id == 0)
+    cockpit.assert(appState.loggedUser);
+    if (appState.loggedUser.id == 0)
         return null;
 
     return (

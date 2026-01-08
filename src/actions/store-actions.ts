@@ -19,7 +19,6 @@
 import {
     SET_CAPABILITIES,
     SET_NODE_MAX_MEMORY,
-    SET_LOGGED_IN_USER,
     UNDEFINE_NETWORK,
     UNDEFINE_STORAGE_POOL,
     UPDATE_ADD_INTERFACE,
@@ -28,7 +27,6 @@ import {
     UPDATE_ADD_STORAGE_POOL,
 } from '../constants/store-action-types.js';
 
-import type cockpit from "cockpit";
 import type {
     ConnectionName,
     StoragePool,
@@ -67,19 +65,6 @@ export function setCapabilities({
     return {
         type: SET_CAPABILITIES,
         payload: { capabilities }
-    };
-}
-
-export function setLoggedInUser({
-    loggedUser
-} : {
-    loggedUser: cockpit.UserInfo
-}) {
-    return {
-        type: SET_LOGGED_IN_USER,
-        payload: {
-            loggedUser
-        }
     };
 }
 
