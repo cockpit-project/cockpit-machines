@@ -1698,7 +1698,7 @@ export class CreateVmAction extends React.Component<CreateVmActionProps> {
 
     render() {
         const Dialogs = this.context;
-        const vi_caps = this.props.systemInfo.virt_install_capabilities;
+        const vi_caps = appState.virtInstallCapabilities;
         const open = () => {
             // The initial resources fetching contains only ID - this will be immediately
             // replaced with the whole resource object but there is enough time to cause a crash if parsed here

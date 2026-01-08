@@ -20,7 +20,7 @@
 import cockpit from 'cockpit';
 import React, { useState } from 'react';
 
-import { store } from "../../store.js";
+import { appState } from "../../state";
 
 import type { VM } from '../../types';
 
@@ -47,7 +47,7 @@ import './vmReplaceSpiceDialog.css';
 const _ = cockpit.gettext;
 
 export function canReplaceSpice(): boolean {
-    return !!store.getState().systemInfo.virt_xml_capabilities?.convert_to_vnc;
+    return !!appState.virtXmlCapabilities?.convert_to_vnc;
 }
 
 interface DialogError {
