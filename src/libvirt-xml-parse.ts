@@ -538,7 +538,7 @@ export function parseDumpxmlForDisks(devicesElem: Element | undefined): Record<s
                 driver: {
                     name: get_attr(driverElem, 'name'), // optional
                     type: get_attr(driverElem, 'type'),
-                    cache: get_attr(driverElem, 'cache'), // optional
+                    cache: get_attr(driverElem, 'cache') || "default", // optional
                     discard: get_attr(driverElem, 'discard'), // optional
                     io: get_attr(driverElem, 'io'), // optional
                     errorPolicy: get_attr(driverElem, 'error_policy'), // optional

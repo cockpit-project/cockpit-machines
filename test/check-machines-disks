@@ -8,6 +8,7 @@ import xml.etree.ElementTree as ET
 
 import machineslib
 import testlib
+from dialoglib import DialogHelpers
 
 SYSTEM_LOCAL_CONF = '''<!DOCTYPE busconfig PUBLIC
 "-//freedesktop//DTD D-Bus Bus Configuration 1.0//EN"
@@ -58,6 +59,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
     def testDiskEdit(self):
         b = self.browser
+        d = DialogHelpers(b)
         m = self.machine
 
         def openDialog(target, name="subVmTest1"):
@@ -65,11 +67,11 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             b.wait_visible(f"#vm-{name}-disks-{target}-edit-dialog")
 
         def cancel(target, name="subVmTest1"):
-            b.click(f"#vm-{name}-disks-{target}-edit-dialog-cancel")
+            b.click(d.cancel_button())
             b.wait_not_present(f"#vm-{name}-disks-{target}-edit-dialog")
 
         def save(target, name="subVmTest1", xfail=None):
-            b.click(f"#vm-{name}-disks-{target}-edit-dialog-save")
+            b.click(d.apply_button())
             if xfail:
                 b.wait_in_text(f"#vm-{name}-disks-{target}-edit-dialog .pf-v6-c-alert", xfail)
             else:
@@ -110,14 +112,14 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
         # Test qcow2 disk has both read-only and writeable configurable
         openDialog("vdg")
-        b.wait_visible("#vm-subVmTest1-disks-vdg-edit-readonly")
-        b.wait_visible("#vm-subVmTest1-disks-vdg-edit-writable")
+        b.wait_visible(d.id("access.mode", "readonly"))
+        b.wait_visible(d.id("access.mode", "writable"))
         cancel("vdg")
 
         # Test configuration of readonly and shareable attributes
         openDialog("vde")
         # Changing readonly with running VM
-        b.set_checked("#vm-subVmTest1-disks-vde-edit-readonly", True)
+        d.set_RadioSelect("access.mode", "readonly")
 
         # Tooltip in dialog should show
         b.wait_visible("#vm-subVmTest1-disks-vde-edit-idle-message")
@@ -140,7 +142,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
         openDialog("vde")
         # Changing to writeable
-        b.set_checked("#vm-subVmTest1-disks-vde-edit-writable", True)
+        d.set_RadioSelect("access.mode", "writable")
         # Tooltip in dialog should not be present
         b.wait_not_present("#vm-subVmTest1-disks-vde-edit-idle-message")
 
@@ -155,11 +157,11 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest1-disks-vde-access", "Concurrently writeable")
 
         b.wait_in_text("#vm-subVmTest1-disks-vde-bus", "virtio")
-        b.wait_not_present("#vm-subVmTest1-disks-vde-cache")
+        b.wait_in_text("#vm-subVmTest1-disks-vde-cache", "default")
         # Change bus type to scsi and cache mode to writeback
         openDialog("vde")
-        b.select_from_dropdown("#vm-subVmTest1-disks-vde-edit-bus-type", "scsi")
-        b.select_from_dropdown("#vm-subVmTest1-disks-vde-edit-cache-mode", "writeback")
+        d.set_DropdownSelect("bus.type", "scsi")
+        d.set_DropdownSelect("cache", "writeback")
 
         # Close dialog
         save("vde")
@@ -170,7 +172,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
 
         # Configure readonly for the qcow2 disk
         openDialog("vdg")
-        b.set_checked("#vm-subVmTest1-disks-vdg-edit-readonly", True)
+        d.set_RadioSelect("access.mode", "readonly")
 
         save("vdg")
         b.wait_not_present("#vm-subVmTest1-disks-vdg-access-tooltip")
@@ -185,7 +187,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         # expected devices after bus type change
         self.waitDisks(["sda", "sdb", "vda", "vdg"])
         openDialog("sdb")
-        b.set_checked("#vm-subVmTest1-disks-sdb-edit-readonly", True)
+        d.set_RadioSelect("access.mode", "readonly")
         save("sdb", xfail="readonly sata disks are not supported")
         cancel("sdb")
         openDialog("sdb")
@@ -205,22 +207,21 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         self.waitDisks(["hda", "sdb", "vda", "vdg"])
 
         openDialog("hda")
-        b._wait_present("#vm-subVmTest1-disks-hda-edit-bus-type option[value=sata]")
-        self.assertFalse(b.is_present("#vm-subVmTest1-disks-hda-edit-bus-type option[value=virtio]"))
+        b._wait_present(d.field("bus.type") + " option[value=sata]")
+        self.assertFalse(b.is_present(d.field("bus.type") + " option[value=virtio]"))
 
         # As CDROMs are readonly access mode editing should be disabled
-        b.wait_visible("#vm-subVmTest1-disks-hda-edit-readonly")
-        b.wait_not_present("#vm-subVmTest1-disks-hda-edit-writable")
+        b.wait_visible(d.id("access.mode", "readonly"))
+        b.wait_not_present(d.id("access.mode", "writable"))
         cancel("hda")
 
         # Start Vm
         b.click("#vm-subVmTest1-system-run")
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
 
-        # Test disk's bus and cache cannot be changed on running VM
+        # Test disk's bus cannot be changed on running VM
         openDialog("sda")
-        b.wait_visible("#vm-subVmTest1-disks-sda-edit-bus-type:disabled")
-        b.wait_visible("#vm-subVmTest1-disks-sda-edit-cache-mode:disabled")
+        b.wait_visible(d.field("bus.type") + ":disabled")
         b.click("#vm-subVmTest1-disks-sda-edit-dialog button[aria-label='Close']")
         b.wait_not_present("#vm-subVmTest1-disks-sda-edit-dialog")
 
@@ -237,14 +238,17 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b.wait_in_text("#vm-subVmTest2-disks-hda-bus", "ide")
 
         openDialog("hda", name="subVmTest2")
-        b._wait_present("#vm-subVmTest2-disks-hda-edit-bus-type option[value=ide]:disabled")
-        b.select_from_dropdown("#vm-subVmTest2-disks-hda-edit-bus-type", "sata")
+        # "ide" is not among the supported bus types, but it is the
+        # current bus type, so it should be an option.
+        b._wait_present(d.field("bus.type") + " option[value=ide]")
+        d.set_DropdownSelect("bus.type", "sata")
         save("hda", name="subVmTest2")
 
         self.expandDiskRow("sda")
         b.wait_in_text("#vm-subVmTest2-disks-sda-bus", "sata")
         openDialog("sda", name="subVmTest2")
-        b.wait_not_present("#vm-subVmTest2-disks-hda-edit-bus-type option[value=ide]")
+        # Now "ide" should not be an option anymore.
+        b.wait_not_present(d.field("bus.type") + " option[value=ide]")
 
     def testDisks(self):
         b = self.browser
