@@ -31,7 +31,6 @@ import getOSListScript from "../getOSList.py";
 import {
     undefineNetwork,
     undefineStoragePool,
-    updateLibvirtVersion,
     setLoggedInUser,
     setCapabilities,
     setNodeMaxMemory,
@@ -121,9 +120,9 @@ export async function getLibvirtVersion({
     connectionName
 } : {
     connectionName: ConnectionName
-}): Promise<void> {
+}): Promise<number> {
     const [version] = await call<[cockpit.Variant]>(connectionName, "/org/libvirt/QEMU", "org.freedesktop.DBus.Properties", "Get", ["org.libvirt.Connect", "LibVersion"], { timeout, type: "ss" });
-    store.dispatch(updateLibvirtVersion({ libvirtVersion: get_variant_number(version) }));
+    return get_variant_number(version);
 }
 
 async function getCapabilities({

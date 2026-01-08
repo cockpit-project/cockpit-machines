@@ -88,6 +88,7 @@ export class AppState extends EventEmitter<AppStateEvents> {
     loadingResources: boolean = true;
     systemSocketInactive: boolean = false;
     hardwareVirtEnabled: boolean = true;
+    libvirtVersion: number = 0;
 
     // Notifications
 
@@ -175,7 +176,7 @@ export class AppState extends EventEmitter<AppStateEvents> {
 
         const init_connection = async (connectionName: ConnectionName) => {
             try {
-                await getLibvirtVersion({ connectionName });
+                this.libvirtVersion = await getLibvirtVersion({ connectionName });
                 const promises = await getApiData({ connectionName });
                 const errorMsgs = promises
                         .filter(promise => promise.status === 'rejected')

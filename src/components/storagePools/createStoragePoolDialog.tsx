@@ -41,6 +41,8 @@ import { MachinesConnectionSelector } from '../common/machinesConnectionSelector
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { FileAutoComplete } from 'cockpit-components-file-autocomplete.jsx';
 import { storagePoolCreate, storagePoolGetCapabilities } from '../../libvirtApi/storagePool.js';
+import { appState } from '../../state';
+
 import cockpit from 'cockpit';
 
 const _ = cockpit.gettext;
@@ -80,12 +82,10 @@ const StoragePoolNameRow = ({
 const StoragePoolTypeRow = ({
     onValueChanged,
     dialogValues,
-    libvirtVersion,
     poolCapabilities
 } : {
     onValueChanged: OnValueChanged,
     dialogValues: DialogValues,
-    libvirtVersion: number,
     poolCapabilities: StoragePoolCapabilites,
 }) => {
     const poolTypes = [
@@ -97,7 +97,7 @@ const StoragePoolTypeRow = ({
         { type: 'fs', detail: _("Pre-formatted block device") },
     ];
     // iscsi-direct exists since 4.7.0
-    if (libvirtVersion && libvirtVersion >= 4007000)
+    if (appState.libvirtVersion >= 4007000)
         poolTypes.push({ type: 'iscsi-direct', detail: _("iSCSI direct target") });
 
     const supportedPoolTypes = poolTypes.filter(pool => poolCapabilities[pool.type] ? poolCapabilities[pool.type].supported === "yes" : true);
@@ -304,7 +304,6 @@ const StoragePoolAutostartRow = ({
 };
 
 interface CreateStoragePoolModalProps {
-    libvirtVersion: number,
     loggedUser: cockpit.UserInfo,
     poolCapabilities: StoragePoolCapabilites,
 }
@@ -499,7 +498,6 @@ class CreateStoragePoolModal extends React.Component<CreateStoragePoolModalProps
                 <StoragePoolNameRow dialogValues={this.state}
                                     onValueChanged={this.onValueChanged} />
                 <StoragePoolTypeRow dialogValues={this.state}
-                                    libvirtVersion={this.props.libvirtVersion}
                                     poolCapabilities={this.props.poolCapabilities}
                                     onValueChanged={this.onValueChanged} />
                 <StoragePoolTargetRow dialogValues={this.state}
@@ -535,7 +533,6 @@ class CreateStoragePoolModal extends React.Component<CreateStoragePoolModalProps
 }
 
 interface CreateStoragePoolActionProps {
-    libvirtVersion: number,
     loggedUser: cockpit.UserInfo,
 }
 
@@ -564,7 +561,6 @@ export class CreateStoragePoolAction extends React.Component<CreateStoragePoolAc
         const open = () => {
             if (this.state.poolCapabilities)
                 Dialogs.show(<CreateStoragePoolModal poolCapabilities={this.state.poolCapabilities}
-                                                     libvirtVersion={this.props.libvirtVersion}
                                                      loggedUser={this.props.loggedUser} />);
         };
 

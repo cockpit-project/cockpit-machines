@@ -229,7 +229,7 @@ const AppVM = ({
     name: string,
     connection: ConnectionName,
 }) => {
-    const { config, storagePools, systemInfo, networks, nodeDevices } = store.getState();
+    const { config, storagePools, networks, nodeDevices } = store.getState();
     const { vms, uivms } = appState;
     const combinedVms = [...vms, ...dummyVmsFilter(vms, uivms)];
 
@@ -275,7 +275,6 @@ const AppVM = ({
                     vm={vm}
                     config={config}
                     consoleCardState={consoleCardStates.get(vm)}
-                    libvirtVersion={systemInfo.libvirtVersion}
                     storagePools={(storagePools || []).filter(pool => pool && pool.connectionName == connectionName)}
                     networks={(networks || []).filter(network => network && network.connectionName == connectionName)}
                     nodeDevices={(nodeDevices || []).filter(device => device && device.connectionName == connectionName)}
@@ -298,7 +297,6 @@ const AppStoragePools = () => {
                 storagePools={storagePools}
                 vms={vms}
                 loggedUser={systemInfo.loggedUser}
-                libvirtVersion={systemInfo.libvirtVersion}
             />
         </>
     );

@@ -28,7 +28,6 @@ import {
     UPDATE_ADD_NETWORK,
     UPDATE_ADD_NODE_DEVICE,
     UPDATE_ADD_STORAGE_POOL,
-    UPDATE_LIBVIRT_VERSION,
 } from '../constants/store-action-types.js';
 
 import type cockpit from "cockpit";
@@ -135,17 +134,6 @@ export function undefineStoragePool({
             connectionName,
             id,
         }
-    };
-}
-
-export function updateLibvirtVersion({
-    libvirtVersion
-} : {
-    libvirtVersion: number
-}) {
-    return {
-        type: UPDATE_LIBVIRT_VERSION,
-        libvirtVersion,
     };
 }
 

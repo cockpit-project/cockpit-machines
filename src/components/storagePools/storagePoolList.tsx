@@ -37,7 +37,6 @@ const _ = cockpit.gettext;
 interface StoragePoolListProps {
     storagePools: StoragePool[],
     vms: VM[],
-    libvirtVersion: number,
     loggedUser: cockpit.UserInfo,
 }
 
@@ -48,9 +47,9 @@ export class StoragePoolList extends React.Component<StoragePoolListProps> {
     }
 
     render() {
-        const { storagePools, loggedUser, vms, libvirtVersion } = this.props;
+        const { storagePools, loggedUser, vms } = this.props;
         const sortFunction = (storagePoolA: StoragePool, storagePoolB: StoragePool) => storagePoolA.name.localeCompare(storagePoolB.name);
-        const actions = (<CreateStoragePoolAction loggedUser={loggedUser} libvirtVersion={libvirtVersion} />);
+        const actions = (<CreateStoragePoolAction loggedUser={loggedUser} />);
 
         return (
             <WithDialogs key="storage-pool-list">
