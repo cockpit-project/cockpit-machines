@@ -280,7 +280,6 @@ export const VmDisksCard = ({
                 </DescriptionWithPending>
                 <DiskExtraDescriptions
                     idPrefix={idPrefixRow}
-                    cache={disk.driver.cache}
                     type={disk.driver.type}
                     serial={disk.serial}
                 />
