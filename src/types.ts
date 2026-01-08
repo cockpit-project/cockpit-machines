@@ -64,7 +64,7 @@ export interface VMDisk {
     driver: {
         name: optString;
         type: optString;
-        cache: optString;
+        cache: string;
         discard: optString;
         io: optString;
         errorPolicy: optString;
