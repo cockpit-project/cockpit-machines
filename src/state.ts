@@ -33,7 +33,7 @@ import { domainGetAll, domainGetByName } from './libvirtApi/domain';
 import {
     nodeDeviceGetAll,
 } from "./libvirtApi/nodeDevice.js";
-import { addNotification } from "./helpers.js";
+import type { Notification } from './app';
 
 const _ = cockpit.gettext;
 
@@ -89,6 +89,20 @@ export class AppState extends EventEmitter<AppStateEvents> {
     systemSocketInactive: boolean = false;
     hardwareVirtEnabled: boolean = true;
 
+    // Notifications
+
+    notifications: Notification[] = [];
+
+    addNotification(notification: Notification) {
+        this.notifications = this.notifications.concat(notification);
+        this.#update();
+    }
+
+    dismissNotification(index: number) {
+        this.notifications = [...this.notifications.slice(0, index), ...this.notifications.slice(index + 1)];
+        this.#update();
+    }
+
     // VMs
 
     vms: VM[] = [];
@@ -142,7 +156,7 @@ export class AppState extends EventEmitter<AppStateEvents> {
                         .filter(promise => promise.status === 'rejected')
                         .map(promise => promise.reason.message);
                 if (errorMsgs.length > 0) {
-                    addNotification({
+                    this.addNotification({
                         text: _("Failed to fetch some resources"),
                         detail: errorMsgs.join(', ')
                     });
@@ -151,7 +165,7 @@ export class AppState extends EventEmitter<AppStateEvents> {
                 // they are expensive to get and not important for
                 // displaying VMs.
                 nodeDeviceGetAll({ connectionName }).catch(exc => {
-                    addNotification({
+                    this.addNotification({
                         text: "Failed to retrieve node devices",
                         detail: String(exc),
                     });

@@ -30,8 +30,8 @@ import { PendingIcon } from "@patternfly/react-icons";
 
 import { domainSerialConsoleCommand, virtXmlAdd } from '../../../libvirtApi/domain.js';
 import { ConsoleState } from './common';
-import { addNotification } from '../../../helpers.js';
 import { vmStart, VmRestartDialog } from '../vmActions';
+import { appState } from '../../../state';
 import { useDialogs } from 'dialogs';
 
 const _ = cockpit.gettext;
@@ -145,7 +145,7 @@ export const SerialMissing = ({
         try {
             await virtXmlAdd(vm, "console", { type: "pty" });
         } catch (ex) {
-            addNotification({
+            appState.addNotification({
                 text: cockpit.format(_("Failed to add serial console to VM $0"), vm.name),
                 detail: String(ex),
                 resourceId: vm.id,

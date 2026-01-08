@@ -30,10 +30,7 @@ import { useDialogs } from 'dialogs.jsx';
 import { fmt_to_fragments } from 'utils.jsx';
 import { KebabDropdown } from 'cockpit-components-dropdown.jsx';
 
-import {
-    vmId,
-    addNotification,
-} from "../../helpers.js";
+import { vmId } from "../../helpers.js";
 
 import { CloneDialog } from './vmCloneDialog.jsx';
 import { ConfirmDialog } from './confirmDialog.jsx';
@@ -95,7 +92,7 @@ async function onInstall(vm: VM) {
     try {
         await domainInstall({ vm });
     } catch (ex) {
-        addNotification({
+        appState.addNotification({
             text: cockpit.format(_("VM $0 failed to get installed"), vm.name),
             detail: String(ex).split(/Traceback(.+)/)[0],
             resourceId: vm.id,
@@ -172,7 +169,7 @@ const onAddTPM = async (vm: VM) => {
     try {
         await addTPM(vm);
     } catch (ex) {
-        addNotification({
+        appState.addNotification({
             text: cockpit.format(_("Failed to add TPM to VM $0"), vm.name),
             detail: String(ex),
             resourceId: vm.id,

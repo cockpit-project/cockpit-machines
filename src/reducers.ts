@@ -38,8 +38,6 @@ import {
     UPDATE_ADD_STORAGE_POOL,
     UPDATE_LIBVIRT_VERSION,
     UPDATE_UI_VM,
-    ADD_UI_NOTIFICATION,
-    DISMISS_UI_NOTIFICATION,
 } from './constants/store-action-types.js';
 
 import type cockpit from 'cockpit';
@@ -53,7 +51,6 @@ import type {
     VirtInstallCapabilities,
     VirtXmlCapabilities,
 } from './types';
-import type { Notification } from './app';
 
 // --- helpers -------------------
 function getFirstIndexOfResource(state, field, value, connectionName) {
@@ -275,14 +272,12 @@ function storagePools(state: StoragePool[] | undefined, action): StoragePool[] {
 
 interface UIState {
     vms: UIVM[];
-    notifications: Notification[];
 }
 
 function ui(state: UIState | undefined, action): UIState {
     // transient properties
     state = state || {
         vms: [], // transient property
-        notifications: [],
     };
     const addVm = () => {
         const existingVm = state.vms.find(vm => vm.name == action.vm.name && vm.connectionName == action.vm.connectionName);
@@ -310,12 +305,6 @@ function ui(state: UIState | undefined, action): UIState {
         return addVm();
     case DELETE_UI_VM: {
         return { ...state, vms: state.vms.filter(vm => !(vm.name == action.vm.name && vm.connectionName == action.vm.connectionName)) };
-    }
-    case ADD_UI_NOTIFICATION: {
-        return { ...state, notifications: state.notifications.concat(action.notification) };
-    }
-    case DISMISS_UI_NOTIFICATION: {
-        return { ...state, notifications: [...state.notifications.slice(0, action.index), ...state.notifications.slice(action.index + 1)] };
     }
     default:
         return state;

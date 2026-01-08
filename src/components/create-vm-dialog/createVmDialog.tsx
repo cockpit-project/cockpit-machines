@@ -58,7 +58,6 @@ import {
     getStorageVolumesUsage, type StorageVolumesUsage,
     LIBVIRT_SYSTEM_CONNECTION,
     LIBVIRT_SESSION_CONNECTION,
-    addNotification,
 } from "../../helpers.js";
 import {
     getPXEInitialNetworkSource,
@@ -95,6 +94,7 @@ import { getAccessToken } from '../../libvirtApi/rhel-images.js';
 import { getOsInfoList } from '../../libvirtApi/common.js';
 import { PasswordFormFields } from 'cockpit-components-password.jsx';
 import { DynamicListForm } from 'cockpit-components-dynamic-list.jsx';
+import { appState } from '../../state';
 
 import './createVmDialog.css';
 
@@ -1458,7 +1458,7 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
                 }
             }, (exception) => {
                 console.error(`spawn 'vm creation' returned error: "${JSON.stringify(exception)}"`);
-                addNotification({
+                appState.addNotification({
                     text: cockpit.format(_("Creation of VM $0 failed"), vmParams.vmName),
                     detail: exception.message.split(/Traceback(.+)/)[0],
                 });

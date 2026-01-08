@@ -45,9 +45,10 @@ import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
 import { vmStart, VmRestartDialog } from '../vmActions';
 import { useDialogs } from 'dialogs';
 
-import { logDebug, readQemuConf, addNotification } from '../../../helpers.js';
+import { logDebug, readQemuConf } from '../../../helpers.js';
 import { LaunchViewerButton, connection_address, ConsoleState } from './common';
 import { domainSendKey, virtXmlAdd, virtXmlEdit, domainGet } from '../../../libvirtApi/domain.js';
+import { appState } from '../../../state';
 
 import { VncConsole, VncCredentials } from './VncConsole';
 
@@ -304,7 +305,7 @@ export const VncActiveActions = ({
                             keyCode,
                         ]
                     })
-                            .catch(ex => addNotification({
+                            .catch(ex => appState.addNotification({
                                 text: cockpit.format(_("Failed to send key Ctrl+Alt+$0 to VM $1"), keyName, vm.name),
                                 detail: ex.message,
                                 resourceId: vm.id,
@@ -651,7 +652,7 @@ export const VncMissing = ({
         try {
             await virtXmlAdd(vm, "graphics", { type: "vnc" });
         } catch (ex) {
-            addNotification({
+            appState.addNotification({
                 text: cockpit.format(_("Failed to add VNC to VM $0"), vm.name),
                 detail: String(ex),
                 resourceId: vm.id,

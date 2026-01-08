@@ -32,8 +32,6 @@ import {
     UPDATE_ADD_STORAGE_POOL,
     UPDATE_LIBVIRT_VERSION,
     UPDATE_UI_VM,
-    ADD_UI_NOTIFICATION,
-    DISMISS_UI_NOTIFICATION,
 } from '../constants/store-action-types.js';
 
 import type cockpit from "cockpit";
@@ -48,7 +46,6 @@ import type {
     VirtInstallCapabilities,
     VirtXmlCapabilities,
 } from '../types';
-import type { Notification } from '../app';
 
 /**
  * All actions dispatchable by in the application
@@ -201,19 +198,5 @@ export function updateUiVm(vm: Partial<UIVM>) {
     return {
         type: UPDATE_UI_VM,
         vm,
-    };
-}
-
-export function addUiNotification(notification: Notification) {
-    return {
-        type: ADD_UI_NOTIFICATION,
-        notification,
-    };
-}
-
-export function dismissUiNotification(index: number) {
-    return {
-        type: DISMISS_UI_NOTIFICATION,
-        index,
     };
 }
