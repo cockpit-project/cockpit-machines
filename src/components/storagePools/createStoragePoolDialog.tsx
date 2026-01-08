@@ -304,7 +304,6 @@ const StoragePoolAutostartRow = ({
 };
 
 interface CreateStoragePoolModalProps {
-    loggedUser: cockpit.UserInfo,
     poolCapabilities: StoragePoolCapabilites,
 }
 
@@ -493,8 +492,7 @@ class CreateStoragePoolModal extends React.Component<CreateStoragePoolModalProps
                 }
                 <MachinesConnectionSelector id='storage-pool-dialog-connection'
                     connectionName={this.state.connectionName}
-                    onValueChanged={this.onValueChanged}
-                    loggedUser={this.props.loggedUser} />
+                    onValueChanged={this.onValueChanged} />
                 <StoragePoolNameRow dialogValues={this.state}
                                     onValueChanged={this.onValueChanged} />
                 <StoragePoolTypeRow dialogValues={this.state}
@@ -532,9 +530,7 @@ class CreateStoragePoolModal extends React.Component<CreateStoragePoolModalProps
     }
 }
 
-interface CreateStoragePoolActionProps {
-    loggedUser: cockpit.UserInfo,
-}
+type CreateStoragePoolActionProps = Record<string, never>; // empty
 
 interface CreateStoragePoolActionState {
     poolCapabilities: StoragePoolCapabilites | undefined,
@@ -560,8 +556,7 @@ export class CreateStoragePoolAction extends React.Component<CreateStoragePoolAc
 
         const open = () => {
             if (this.state.poolCapabilities)
-                Dialogs.show(<CreateStoragePoolModal poolCapabilities={this.state.poolCapabilities}
-                                                     loggedUser={this.props.loggedUser} />);
+                Dialogs.show(<CreateStoragePoolModal poolCapabilities={this.state.poolCapabilities} />);
         };
 
         return (

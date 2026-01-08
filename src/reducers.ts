@@ -25,7 +25,6 @@ import { isObjectEmpty } from './helpers.js';
 import {
     SET_CAPABILITIES,
     SET_NODE_MAX_MEMORY,
-    SET_LOGGED_IN_USER,
     UNDEFINE_NETWORK,
     UNDEFINE_STORAGE_POOL,
     UPDATE_ADD_INTERFACE,
@@ -34,7 +33,6 @@ import {
     UPDATE_ADD_STORAGE_POOL,
 } from './constants/store-action-types.js';
 
-import type cockpit from 'cockpit';
 import type {
     NodeDevice,
     NodeInterface,
@@ -177,34 +175,6 @@ function nodeDevices(state: NodeDevice[] | undefined, action): NodeDevice[] {
     }
 }
 
-interface SystemInfo {
-    libvirtService: {
-        name: string;
-        activeState: string;
-        unitState: string;
-    };
-    loggedUser: cockpit.UserInfo | null;
-}
-
-function systemInfo(state: SystemInfo | undefined, action): SystemInfo {
-    state = state || {
-        libvirtService: {
-            name: 'unknown',
-            activeState: 'unknown',
-            unitState: 'unknown',
-        },
-        loggedUser: null,
-    };
-
-    switch (action.type) {
-    case SET_LOGGED_IN_USER: {
-        return Object.assign({}, state, { loggedUser: action.payload.loggedUser });
-    }
-    default: // by default all reducers should return initial state on unknown actions
-        return state;
-    }
-}
-
 function storagePools(state: StoragePool[] | undefined, action): StoragePool[] {
     state = state || [];
 
@@ -249,6 +219,5 @@ export default combineReducers({
     interfaces,
     networks,
     nodeDevices,
-    systemInfo,
     storagePools,
 });

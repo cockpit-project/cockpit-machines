@@ -530,15 +530,13 @@ export async function domainCreate({
     userPassword,
     vmName,
     accessToken,
-    loggedUser,
     sshKeys,
 } : {
     connectionName: ConnectionName,
     osVersion: string,
-    loggedUser: cockpit.UserInfo,
     accessToken: optString
 } & DomainSpec): Promise<void> {
-    // shows dummy vm  until we get vm from virsh (cleans up inProgress)
+    // shows dummy vm until we get vm from virsh (cleans up inProgress)
     setVmCreateInProgress(vmName, connectionName);
 
     type DomainCreateScriptArgs = { connectionName: ConnectionName, type: string } & DomainSpec;
@@ -589,7 +587,8 @@ export async function domainCreate({
             const url = outObj.url;
             const filename = outObj.filename;
             const isSystem = connectionName === LIBVIRT_SYSTEM_CONNECTION;
-            const downloadDir = isSystem ? "/var/lib/libvirt/images/" : loggedUser.home + "/.local/share/libvirt/images/";
+            cockpit.assert(appState.loggedUser);
+            const downloadDir = isSystem ? "/var/lib/libvirt/images/" : appState.loggedUser.home + "/.local/share/libvirt/images/";
             args.sourceType = LOCAL_INSTALL_MEDIA_SOURCE;
             args.source = downloadDir + filename;
 

@@ -194,12 +194,11 @@ const AppServiceNotRunning = () => {
 };
 
 const AppVMs = () => {
-    const { config, storagePools, systemInfo, networks } = store.getState();
+    const { config, storagePools, networks } = store.getState();
     const { vms, uivms } = appState;
 
     const properties = {
         nodeMaxMemory: config.nodeMaxMemory,
-        systemInfo,
         vms,
     };
     const createVmAction = <CreateVmAction {...properties} mode='create' />;
@@ -286,9 +285,8 @@ const AppVM = ({
 };
 
 const AppStoragePools = () => {
-    const { storagePools, systemInfo } = store.getState();
+    const { storagePools } = store.getState();
     const { vms } = appState;
-    cockpit.assert(systemInfo.loggedUser);
 
     return (
         <>
@@ -296,7 +294,6 @@ const AppStoragePools = () => {
             <StoragePoolList
                 storagePools={storagePools}
                 vms={vms}
-                loggedUser={systemInfo.loggedUser}
             />
         </>
     );

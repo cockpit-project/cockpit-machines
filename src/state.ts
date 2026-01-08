@@ -22,10 +22,10 @@ import { EventEmitter } from 'cockpit/event';
 import { superuser } from "superuser.js";
 
 import type { ConnectionName, VM, UIVM, UIVMProps, VirtInstallCapabilities, VirtXmlCapabilities } from './types';
+
 import {
     getApiData,
     getLibvirtVersion,
-    getLoggedInUser,
     getVirtInstallCapabilities,
     getVirtXmlCapabilities,
 } from "./libvirtApi/common.js";
@@ -89,6 +89,7 @@ export class AppState extends EventEmitter<AppStateEvents> {
 
     // System information
 
+    loggedUser: cockpit.UserInfo | null = null;
     systemSocketInactive: boolean = false;
     hardwareVirtEnabled: boolean = true;
     libvirtVersion: number = 0;
@@ -224,7 +225,7 @@ export class AppState extends EventEmitter<AppStateEvents> {
         };
 
         const doit = async () => {
-            await getLoggedInUser();
+            this.loggedUser = await cockpit.user();
 
             // get these in the background, it takes quite long
             getVirtInstallCapabilities().then(caps => { this.virtInstallCapabilities = caps; this.#update() });

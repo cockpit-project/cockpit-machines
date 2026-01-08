@@ -31,7 +31,6 @@ import getOSListScript from "../getOSList.py";
 import {
     undefineNetwork,
     undefineStoragePool,
-    setLoggedInUser,
     setCapabilities,
     setNodeMaxMemory,
 } from "../actions/store-actions.js";
@@ -106,12 +105,6 @@ function calculateDiskStats(info: DBusProps): VM["disksStats"] {
         }
     }
     return disksStats;
-}
-
-export async function getLoggedInUser(): Promise<void> {
-    const loggedUser = await cockpit.user();
-    logDebug(`GET_LOGGED_IN_USER:`, loggedUser);
-    store.dispatch(setLoggedInUser({ loggedUser }));
 }
 
 export async function getLibvirtVersion({
