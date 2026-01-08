@@ -460,13 +460,16 @@ export interface VM extends VMXML {
 
 /** "Fake" VMs for the UI only **/
 
-export interface UIVM {
-    isUi: true;
-    connectionName: ConnectionName;
-    name: string;
+export interface UIVMProps {
     error?: undefined;
     createInProgress?: boolean;
     downloadProgress?: string | undefined;
+}
+
+export interface UIVM extends UIVMProps {
+    isUi: true;
+    connectionName: ConnectionName;
+    name: string;
 }
 
 /** Storage Pools **/

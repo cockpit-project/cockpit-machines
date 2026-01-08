@@ -21,7 +21,7 @@ import cockpit from 'cockpit';
 import { EventEmitter } from 'cockpit/event';
 import { superuser } from "superuser.js";
 
-import type { ConnectionName, VM } from './types';
+import type { ConnectionName, VM, UIVM, UIVMProps } from './types';
 import {
     getApiData,
     getLibvirtVersion,
@@ -129,6 +129,31 @@ export class AppState extends EventEmitter<AppStateEvents> {
 
     deleteUnlistedVMs(connectionName: ConnectionName, ids: string[]) {
         this.vms = this.vms.filter(vm => (connectionName !== vm.connectionName || ids.indexOf(vm.id) >= 0));
+        this.#update();
+    }
+
+    // "Fake UI only" VMs
+
+    uivms: UIVM[] = [];
+
+    setUiVm(connectionName: ConnectionName, name: string, props: Partial<UIVMProps>) {
+        const index = this.uivms.findIndex(vm => vm.connectionName == connectionName && vm.name == name);
+        if (index == -1) {
+            const uivm: UIVM = {
+                isUi: true,
+                connectionName,
+                name,
+                ...props,
+            };
+            this.uivms = [...this.uivms, uivm];
+        } else {
+            this.uivms = updateAtIndex<UIVM>(this.uivms, index, props);
+        }
+        this.#update();
+    }
+
+    deleteUiVm(connectionName: ConnectionName, name: string) {
+        this.uivms = this.uivms.filter(vm => !(vm.name == name && vm.connectionName == connectionName));
         this.#update();
     }
 

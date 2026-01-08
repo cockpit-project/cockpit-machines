@@ -23,8 +23,6 @@ import { combineReducers } from 'redux';
 import { VMS_CONFIG } from "./config.js";
 import { isObjectEmpty } from './helpers.js';
 import {
-    ADD_UI_VM,
-    DELETE_UI_VM,
     SET_CAPABILITIES,
     SET_VIRT_INSTALL_CAPABILITIES,
     SET_VIRT_XML_CAPABILITIES,
@@ -37,12 +35,10 @@ import {
     UPDATE_ADD_NODE_DEVICE,
     UPDATE_ADD_STORAGE_POOL,
     UPDATE_LIBVIRT_VERSION,
-    UPDATE_UI_VM,
 } from './constants/store-action-types.js';
 
 import type cockpit from 'cockpit';
 import type {
-    UIVM,
     NodeDevice,
     NodeInterface,
     StoragePool,
@@ -270,47 +266,6 @@ function storagePools(state: StoragePool[] | undefined, action): StoragePool[] {
     }
 }
 
-interface UIState {
-    vms: UIVM[];
-}
-
-function ui(state: UIState | undefined, action): UIState {
-    // transient properties
-    state = state || {
-        vms: [], // transient property
-    };
-    const addVm = () => {
-        const existingVm = state.vms.find(vm => vm.name == action.vm.name && vm.connectionName == action.vm.connectionName);
-        if (existingVm === undefined) {
-            return {
-                ...state,
-                vms: [...state.vms, action.vm]
-            };
-        } else {
-            if (existingVm.isUi) {
-                const updatedVm = Object.assign(existingVm, action.vm);
-                return {
-                    ...state,
-                    vms: [...state.vms.filter(vm => !(vm.name == action.vm.name && vm.connectionName == action.vm.connectionName)), updatedVm]
-                };
-            } else {
-                return state;
-            }
-        }
-    };
-
-    switch (action.type) {
-    case ADD_UI_VM:
-    case UPDATE_UI_VM:
-        return addVm();
-    case DELETE_UI_VM: {
-        return { ...state, vms: state.vms.filter(vm => !(vm.name == action.vm.name && vm.connectionName == action.vm.connectionName)) };
-    }
-    default:
-        return state;
-    }
-}
-
 export default combineReducers({
     config,
     interfaces,
@@ -318,5 +273,4 @@ export default combineReducers({
     nodeDevices,
     systemInfo,
     storagePools,
-    ui,
 });

@@ -17,12 +17,7 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { store } from '../../store.js';
-import {
-    addUiVm,
-    updateUiVm,
-    deleteUiVm,
-} from '../../actions/store-actions.js';
+import { appState } from '../../state';
 
 import { VMS_CONFIG } from "../../config.js";
 
@@ -39,14 +34,7 @@ export function setVmCreateInProgress(
     name: string,
     connectionName: ConnectionName,
 ): void {
-    const vm: UIVM = {
-        name,
-        connectionName,
-        isUi: true,
-        createInProgress: true,
-    };
-
-    store.dispatch(addUiVm(vm));
+    appState.setUiVm(connectionName, name, { createInProgress: true });
     setupCleanupTimeout(name, connectionName, CREATE_TIMEOUT);
 }
 
@@ -56,13 +44,7 @@ export function updateImageDownloadProgress(
     downloadProgress: string | undefined,
     settings?: Partial<UIVM>,
 ): void {
-    const vm = {
-        name,
-        connectionName,
-        downloadProgress,
-        ...settings
-    };
-    store.dispatch(updateUiVm(vm));
+    appState.setUiVm(connectionName, name, { downloadProgress, ...settings });
 }
 
 export function clearVmUiState(
@@ -73,11 +55,8 @@ export function clearVmUiState(
     clearTimeout(name, connectionName, CREATE_TIMEOUT);
     clearSettings(name, connectionName);
 
-    // clear store state
-    store.dispatch(deleteUiVm({
-        name,
-        connectionName,
-    }));
+    // clear state
+    appState.deleteUiVm(connectionName, name);
 }
 
 function setupCleanupTimeout(

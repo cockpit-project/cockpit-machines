@@ -194,8 +194,8 @@ const AppServiceNotRunning = () => {
 };
 
 const AppVMs = () => {
-    const { config, storagePools, systemInfo, ui, networks } = store.getState();
-    const { vms } = appState;
+    const { config, storagePools, systemInfo, networks } = store.getState();
+    const { vms, uivms } = appState;
 
     const properties = {
         nodeMaxMemory: config.nodeMaxMemory,
@@ -211,7 +211,7 @@ const AppVMs = () => {
             {getInlineNotifications()}
             <HostVmsList
                 vms={vms}
-                ui={ui}
+                uivms={uivms}
                 storagePools={storagePools}
                 networks={networks}
                 actions={vmActions}
@@ -229,9 +229,9 @@ const AppVM = ({
     name: string,
     connection: ConnectionName,
 }) => {
-    const { config, storagePools, systemInfo, ui, networks, nodeDevices } = store.getState();
-    const { vms } = appState;
-    const combinedVms = [...vms, ...dummyVmsFilter(vms, ui.vms)];
+    const { config, storagePools, systemInfo, networks, nodeDevices } = store.getState();
+    const { vms, uivms } = appState;
+    const combinedVms = [...vms, ...dummyVmsFilter(vms, uivms)];
 
     const vm = combinedVms.find(vm => vm.name == name && vm.connectionName == connection);
     if (!vm) {

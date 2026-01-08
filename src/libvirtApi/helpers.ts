@@ -18,18 +18,10 @@
  */
 
 import cockpit, { Variant } from 'cockpit';
-import { store } from '../store.js';
 
 import { logDebug } from '../helpers.js';
 
-import {
-    optString,
-    ConnectionName,
-} from '../types';
-
-import {
-    clearVmUiState,
-} from '../components/create-vm-dialog/uiState.js';
+import { ConnectionName } from '../types';
 
 /* Default timeout for libvirt-dbus method calls */
 export const timeout = 30000;
@@ -231,11 +223,4 @@ export function dbusClient(connectionName: ConnectionName): cockpit.DBusClient {
     }
 
     return clientLibvirt[connectionName];
-}
-
-export function resolveUiState(name: optString, connectionName: ConnectionName): void {
-    const uiState = store.getState().ui.vms.find(vm => vm.name == name && vm.connectionName == connectionName);
-    if (uiState && name) {
-        clearVmUiState(name, connectionName);
-    }
 }

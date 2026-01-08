@@ -17,8 +17,6 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import {
-    ADD_UI_VM,
-    DELETE_UI_VM,
     SET_CAPABILITIES,
     SET_VIRT_INSTALL_CAPABILITIES,
     SET_VIRT_XML_CAPABILITIES,
@@ -31,13 +29,11 @@ import {
     UPDATE_ADD_NODE_DEVICE,
     UPDATE_ADD_STORAGE_POOL,
     UPDATE_LIBVIRT_VERSION,
-    UPDATE_UI_VM,
 } from '../constants/store-action-types.js';
 
 import type cockpit from "cockpit";
 import type {
     ConnectionName,
-    UIVM,
     StoragePool,
     Network,
     NodeInterface,
@@ -56,19 +52,6 @@ import type {
  *  The naming convention for action creator names is: <verb><Noun>
  *  with the present tense.
  */
-export function addUiVm(vm: UIVM) {
-    return {
-        type: ADD_UI_VM,
-        vm,
-    };
-}
-
-export function deleteUiVm(vm: { connectionName: ConnectionName, name: string }) {
-    return {
-        type: DELETE_UI_VM,
-        vm,
-    };
-}
 
 export function setNodeMaxMemory({
     memory
@@ -191,12 +174,5 @@ export function updateOrAddStoragePool(props: Partial<StoragePool>, updateOnly?:
     return {
         type: UPDATE_ADD_STORAGE_POOL,
         payload: { storagePool: props, updateOnly },
-    };
-}
-
-export function updateUiVm(vm: Partial<UIVM>) {
-    return {
-        type: UPDATE_UI_VM,
-        vm,
     };
 }
