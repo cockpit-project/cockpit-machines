@@ -916,80 +916,66 @@ export function parseDumpxmlMachinesMetadataElement(metadataElem: Element | unde
 }
 
 export function parseNetDumpxml(netXml: string): NetworkXML {
-    const retObj: Partial<NetworkXML> = {};
     const netElem = getElem(netXml);
 
-    retObj.uuid = netElem.getElementsByTagName("uuid")[0].childNodes[0].nodeValue;
-
-    const forwardElem = netElem.getElementsByTagName("forward")[0];
-    const bridgeElem = netElem.getElementsByTagName("bridge")[0];
-
+    let bridge;
+    const bridgeElem = get_child(netElem, "bridge");
     if (bridgeElem)
-        retObj.bridge = { name: bridgeElem.getAttribute("name") };
-
-    const ipElems = netElem.getElementsByTagName("ip");
-    retObj.ip = parseNetDumpxmlForIp(ipElems);
-
-    const mtuElem = netElem.getElementsByTagName("mtu")[0];
-    retObj.mtu = mtuElem?.getAttribute("size");
+        bridge = { name: get_attr(bridgeElem, "name") };
 
     // if mode is not specified, "nat" is assumed, see https://libvirt.org/formatnetwork.html#elementsConnect
+    let forward;
+    const forwardElem = get_child(netElem, "forward");
     if (forwardElem) {
-        const ifaceElem = forwardElem.getElementsByTagName("interface")[0];
-        if (ifaceElem)
-            retObj.interface = { interface: { dev: ifaceElem.getAttribute("dev") } };
-
-        retObj.forward = { mode: (forwardElem.getAttribute("mode") || "nat") };
+        forward = {
+            mode: get_attr(forwardElem, "mode") || "nat",
+            dev: get_attr(forwardElem, "interface", "dev"),
+        };
     }
 
-    return retObj as NetworkXML;
+    return {
+        uuid: get_text(netElem, "uuid"),
+        ip: parseNetDumpxmlForIp(get_children(netElem, "ip")),
+        mtu: get_attr(netElem, "mtu", "size"),
+        ...(bridge ? { bridge } : { }),
+        ...(forward ? { forward } : { }),
+    };
 }
 
-function parseNetDumpxmlForIp(ipElems: HTMLCollection): NetworkIp[] {
+function parseNetDumpxmlForIp(ipElems: Element[]): NetworkIp[] {
     const ip: NetworkIp[] = [];
 
-    for (let i = 0; i < ipElems.length; i++) {
-        const ipElem = ipElems[i];
-
-        let family = ipElem.getAttribute("family");
-        if (!family)
-            family = "ipv4";
-        const address = ipElem.getAttribute("address");
-        const netmask = ipElem.getAttribute("netmask");
-        const prefix = ipElem.getAttribute("prefix");
-        const dhcpElem = ipElem.getElementsByTagName("dhcp")[0];
-
+    for (const ipElem of ipElems) {
         let rangeElem;
         let bootp;
         const dhcpHosts: NetworkDhcpHost[] = [];
+        const dhcpElem = get_child(ipElem, "dhcp");
         if (dhcpElem) {
-            rangeElem = dhcpElem.getElementsByTagName("range")[0];
-            const hostElems = dhcpElem.getElementsByTagName("host");
-
-            for (let i = 0; i < hostElems.length; i++) {
+            rangeElem = get_child(dhcpElem, "range");
+            for (const hostElem of get_children(dhcpElem, "host")) {
                 const host: NetworkDhcpHost = {
-                    ip: hostElems[i].getAttribute("ip") || "",
-                    name: hostElems[i].getAttribute("name"),
-                    mac: hostElems[i].getAttribute("mac") || "",
-                    id: hostElems[i].getAttribute("id"),
+                    ip: get_attr(hostElem, "ip") || "",
+                    name: get_attr(hostElem, "name"),
+                    mac: get_attr(hostElem, "mac") || "",
+                    id: get_attr(hostElem, "id"),
                 };
                 dhcpHosts.push(host);
             }
 
-            const bootpElem = dhcpElem.getElementsByTagName("bootp")[0];
+            const bootpElem = get_child(dhcpElem, "bootp");
             if (bootpElem)
-                bootp = { file: bootpElem.getAttribute("file") };
+                bootp = { file: get_attr(bootpElem, "file") };
         }
 
         const tmp: NetworkIp = {
-            address,
-            family,
-            netmask,
-            prefix,
+            address: get_attr(ipElem, "address"),
+            family: get_attr(ipElem, "family") || "ipv4",
+            netmask: get_attr(ipElem, "netmask"),
+            prefix: get_attr(ipElem, "prefix"),
             dhcp: {
                 range: {
-                    start: rangeElem?.getAttribute("start"),
-                    end: rangeElem?.getAttribute("end"),
+                    start: get_attr(rangeElem, "start"),
+                    end: get_attr(rangeElem, "end"),
                 },
                 hosts: dhcpHosts,
                 bootp,
