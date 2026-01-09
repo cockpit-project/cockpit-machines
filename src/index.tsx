@@ -20,37 +20,20 @@ import "cockpit-dark-theme";
 import 'patternfly/patternfly-6-cockpit.scss';
 import 'polyfills'; // once per application
 
-import type { Root } from 'react-dom/client';
-
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { store } from './store.js';
 import { load_config } from './config.js';
 import { App } from './app.jsx';
-import { logDebug } from './helpers.js';
 
 import "./machines.scss";
-
-function render(root: Root): void {
-    // do initial render
-    root.render(<App />);
-}
-
-function renderApp(): void {
-    // re-render app every time the state changes
-    const root = createRoot(document.getElementById('app')!);
-    store.subscribe(() => render(root));
-
-    render(root);
-}
 
 /**
  * Start the application.
  */
 function appMain(): void {
-    logDebug('index.js: initial state: ' + JSON.stringify(store.getState()));
-    renderApp();
+    const root = createRoot(document.getElementById('app')!);
+    root.render(<App />);
 }
 
 (function() {
