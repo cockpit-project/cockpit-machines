@@ -22,12 +22,11 @@
  * See https://github.com/libvirt/libvirt-dbus
  */
 import cockpit from 'cockpit';
-import { store } from '../store.js';
+import { appState } from '../state';
 
 import type { ConnectionName, Network } from '../types';
 import type { NetworkSpec } from '../libvirt-xml-create.js';
 
-import { updateOrAddNetwork } from '../actions/store-actions.js';
 import { getNetworkXML } from '../libvirt-xml-create.js';
 import { parseNetDumpxml } from '../libvirt-xml-parse.js';
 import { DBusProps, get_string_prop, get_boolean_prop, call, timeout, Enum } from './helpers.js';
@@ -125,9 +124,10 @@ export async function networkGet({
     updateOnly?: boolean,
 }): Promise<void> {
     try {
-        const props: Partial<Network> & { id: string, connectionName: ConnectionName } = {
+        const props: Partial<Network> & { id: string, connectionName: ConnectionName, name: string } = {
             id: objPath,
-            connectionName
+            connectionName,
+            name: "",
         };
 
         const [resultProps] = await call<[DBusProps]>(connectionName, objPath, 'org.freedesktop.DBus.Properties', 'GetAll', ['org.libvirt.Network'], { timeout, type: 's' });
@@ -144,8 +144,15 @@ export async function networkGet({
             props.name = get_string_prop(resultProps, "Name");
 
         const [xml] = await call<[string]>(connectionName, objPath, 'org.libvirt.Network', 'GetXMLDesc', [0], { timeout, type: 'u' });
-        const network = parseNetDumpxml(xml);
-        store.dispatch(updateOrAddNetwork(Object.assign(props, network), !!updateOnly));
+        const network: Network = {
+            ...parseNetDumpxml(xml),
+            ...props,
+        };
+
+        if (updateOnly)
+            appState.updateNetwork(network, network);
+        else
+            appState.addNetwork(network);
     } catch (ex) {
         console.warn('GET_NETWORK action failed for path', objPath, String(ex));
     }

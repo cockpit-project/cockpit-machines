@@ -42,7 +42,6 @@ import { ExternalLinkAltIcon, TrashIcon } from '@patternfly/react-icons';
 import { DialogsContext } from 'dialogs.jsx';
 import { useInit } from "hooks.js";
 import cockpit from 'cockpit';
-import { store } from "../../store.js";
 import { MachinesConnectionSelector } from '../common/machinesConnectionSelector.jsx';
 import { TypeaheadSelect, type TypeaheadSelectOption } from 'cockpit-components-typeahead-select';
 import { FormHelper } from "cockpit-components-form-helper.jsx";
@@ -1298,7 +1297,7 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
             cockpit.assert(typeof value == "string");
             this.setState({ sourceType: value });
             if (value == PXE_SOURCE) {
-                const { networks } = store.getState();
+                const { networks } = appState;
                 const initialPXESource = getPXEInitialNetworkSource(appState.nodeDevices.filter(nodeDevice => nodeDevice.connectionName == this.state.connectionName),
                                                                     networks.filter(network => network.connectionName == this.state.connectionName));
                 this.setState({ source: initialPXESource });
@@ -1478,8 +1477,7 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
         const Dialogs = this.context;
         const { nodeMaxMemory, vms } = this.props;
         const { osInfoList } = this.state;
-        const { networks } = store.getState();
-        const { storagePools } = appState;
+        const { storagePools, networks } = appState;
         const validationFailed = this.state.validate ? validateParams({ ...this.state, osInfoList, nodeMaxMemory, vms: vms.filter(vm => vm.connectionName == this.state.connectionName) }) : { };
 
         const unattendedInstructionsMessage = _("Enter root and/or user information to enable unattended installation.");

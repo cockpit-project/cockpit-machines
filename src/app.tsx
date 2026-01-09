@@ -42,7 +42,6 @@ import { CreateVmAction } from "./components/create-vm-dialog/createVmDialog.jsx
 import { dummyVmsFilter, vmId } from "./helpers.js";
 import { InlineNotification } from 'cockpit-components-inline-notification.jsx';
 import { useEvent, useOn, usePageLocation, useInit } from "hooks";
-import { store } from './store.js';
 
 const _ = cockpit.gettext;
 
@@ -194,8 +193,7 @@ const AppServiceNotRunning = () => {
 };
 
 const AppVMs = () => {
-    const { networks } = store.getState();
-    const { vms, uivms, storagePools } = appState;
+    const { vms, uivms, storagePools, networks } = appState;
 
     const createVmAction = <CreateVmAction vms={vms} mode='create' />;
     const importDiskAction = <CreateVmAction vms={vms} mode='import' />;
@@ -224,8 +222,7 @@ const AppVM = ({
     name: string,
     connection: ConnectionName,
 }) => {
-    const { networks } = store.getState();
-    const { vms, uivms, storagePools } = appState;
+    const { vms, uivms, storagePools, networks } = appState;
     const combinedVms = [...vms, ...dummyVmsFilter(vms, uivms)];
 
     const vm = combinedVms.find(vm => vm.name == name && vm.connectionName == connection);
@@ -294,7 +291,7 @@ const AppStoragePools = () => {
 };
 
 const AppNetworks = () => {
-    const { networks } = store.getState();
+    const { networks } = appState;
 
     return (
         <>
