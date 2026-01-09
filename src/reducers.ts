@@ -20,11 +20,8 @@
 // @cockpit-ts-relaxed
 
 import { combineReducers } from 'redux';
-import { VMS_CONFIG } from "./config.js";
 import { isObjectEmpty } from './helpers.js';
 import {
-    SET_CAPABILITIES,
-    SET_NODE_MAX_MEMORY,
     UNDEFINE_NETWORK,
     UNDEFINE_STORAGE_POOL,
     UPDATE_ADD_INTERFACE,
@@ -38,7 +35,6 @@ import type {
     NodeInterface,
     StoragePool,
     Network,
-    HypervisorCapabilities,
 } from './types';
 
 // --- helpers -------------------
@@ -55,33 +51,6 @@ function replaceResource({ state, updatedResource, index }) {
 }
 
 // --- reducers ------------------
-export interface Config {
-    refreshInterval: number;
-    nodeMaxMemory?: number;
-    capabilities?: HypervisorCapabilities;
-}
-
-function config(state: Config | undefined, action): Config {
-    state = state || {
-        refreshInterval: VMS_CONFIG.DefaultRefreshInterval,
-    };
-
-    switch (action.type) {
-    case SET_NODE_MAX_MEMORY: {
-        const newState = Object.assign({}, state);
-        newState.nodeMaxMemory = action.payload.memory;
-        return newState;
-    }
-    case SET_CAPABILITIES: {
-        const newState = Object.assign({}, state);
-        newState.capabilities = action.payload.capabilities;
-        return newState;
-    }
-    default:
-        return state;
-    }
-}
-
 function interfaces(state: NodeInterface[] | undefined, action): NodeInterface[] {
     state = state || [];
 
@@ -215,7 +184,6 @@ function storagePools(state: StoragePool[] | undefined, action): StoragePool[] {
 }
 
 export default combineReducers({
-    config,
     interfaces,
     networks,
     nodeDevices,

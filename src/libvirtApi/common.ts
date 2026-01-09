@@ -24,6 +24,7 @@
 import cockpit from "cockpit";
 import { store } from "../store.js";
 import { appState } from "../state";
+import { VMS_CONFIG } from "../config.js";
 import * as python from "python.js";
 
 import getOSListScript from "../getOSList.py";
@@ -31,8 +32,6 @@ import getOSListScript from "../getOSList.py";
 import {
     undefineNetwork,
     undefineStoragePool,
-    setCapabilities,
-    setNodeMaxMemory,
 } from "../actions/store-actions.js";
 
 import {
@@ -125,7 +124,7 @@ async function getCapabilities({
         const [capabilitiesXML] = await call<[string]>(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "GetCapabilities", [],
                                                        { timeout, type: "" });
         const capabilities = parseDumpxmlForCapabilities(capabilitiesXML);
-        store.dispatch(setCapabilities({ capabilities }));
+        appState.setHypervisorCapabilities(capabilities);
     } catch (ex) {
         console.warn("NodeGetMemoryStats failed:", String(ex));
         throw ex;
@@ -141,7 +140,7 @@ async function getNodeMaxMemory({
     // Using -1 == VIR_NODE_MEMORY_STATS_ALL_CELLS will return memory across all cells
     try {
         const [stats] = await call<[{ total: number }]>(connectionName, "/org/libvirt/QEMU", "org.libvirt.Connect", "NodeGetMemoryStats", [-1, 0], { timeout, type: "iu" });
-        store.dispatch(setNodeMaxMemory({ memory: stats.total }));
+        appState.setNodeMaxMemory(stats.total);
     } catch (ex) {
         console.warn("NodeGetMemoryStats failed:", String(ex));
         throw ex;
@@ -526,7 +525,7 @@ async function startUsagePolling() {
         usagePollingTimeoutId = window.setTimeout(() => {
             usagePollingTimeoutId = 0;
             startUsagePolling();
-        }, store.getState().config.refreshInterval);
+        }, VMS_CONFIG.DefaultRefreshInterval);
     }
 }
 

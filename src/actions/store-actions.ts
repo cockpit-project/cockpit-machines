@@ -17,8 +17,6 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 import {
-    SET_CAPABILITIES,
-    SET_NODE_MAX_MEMORY,
     UNDEFINE_NETWORK,
     UNDEFINE_STORAGE_POOL,
     UPDATE_ADD_INTERFACE,
@@ -33,7 +31,6 @@ import type {
     Network,
     NodeInterface,
     NodeDevice,
-    HypervisorCapabilities,
 } from '../types';
 
 /**
@@ -45,28 +42,6 @@ import type {
  *  The naming convention for action creator names is: <verb><Noun>
  *  with the present tense.
  */
-
-export function setNodeMaxMemory({
-    memory
-} : {
-    memory: number
-}) {
-    return {
-        type: SET_NODE_MAX_MEMORY,
-        payload: { memory }
-    };
-}
-
-export function setCapabilities({
-    capabilities
-} : {
-    capabilities: HypervisorCapabilities
-}) {
-    return {
-        type: SET_CAPABILITIES,
-        payload: { capabilities }
-    };
-}
 
 export function undefineNetwork({
     connectionName,

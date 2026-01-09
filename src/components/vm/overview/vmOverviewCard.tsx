@@ -20,7 +20,6 @@ import React from 'react';
 import cockpit from 'cockpit';
 
 import type { optString, VM } from '../../../types';
-import type { Config } from '../../../reducers';
 import type { Dialogs } from 'dialogs';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -61,7 +60,6 @@ interface VmOverviewCardProps {
     vm: VM;
     maxVcpu: optString;
     cpuModels: string[];
-    config: Config;
 }
 
 interface VmOverviewCardState {
@@ -107,7 +105,7 @@ export class VmOverviewCard extends React.Component<VmOverviewCardProps, VmOverv
 
     openMemory() {
         const Dialogs = this.context;
-        Dialogs.show(<MemoryModal vm={this.props.vm} config={this.props.config} />);
+        Dialogs.show(<MemoryModal vm={this.props.vm} />);
     }
 
     render() {

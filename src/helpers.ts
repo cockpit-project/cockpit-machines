@@ -19,6 +19,7 @@
 
 import cockpit from 'cockpit';
 import { store } from './store.js';
+import { appState } from './state';
 import type {
     optString,
     ConnectionName,
@@ -26,7 +27,6 @@ import type {
     UIVM,
     NodeDevice,
     StoragePool,
-    HypervisorCapabilities,
 } from './types';
 
 const _ = cockpit.gettext;
@@ -953,11 +953,13 @@ export function getStoragePoolPath(
     return pool?.target?.path;
 }
 
-export function vmSupportsExternalSnapshots(config: { capabilities?: HypervisorCapabilities }, vm: VM): boolean {
+export function vmSupportsExternalSnapshots(vm: VM): boolean {
+    const capabilities = appState.hypervisorCapabilities;
+
     // External snapshot should only be used if the VM's os types/architecture allow it
     // and if snapshot features are present among guest capabilities:
     // https://libvirt.org/formatcaps.html#guest-capabilities
-    if (!config.capabilities?.guests.some(guest => guest.osType === vm.osType &&
+    if (!capabilities?.guests.some(guest => guest.osType === vm.osType &&
                                                    guest.arch === vm.arch &&
                                                    guest.features?.externalSnapshot)) {
         logDebug(`vmSupportsExternalSnapshots: vm ${vm.name} has no external snapshot support`);

@@ -19,7 +19,7 @@
 
 import React from 'react';
 
-import type { VM, VMSnapshot, HypervisorCapabilities } from '../../../types';
+import type { VM, VMSnapshot } from '../../../types';
 import type { Dialogs } from 'dialogs';
 import type { ListingTableColumnProps, ListingTableRowProps } from 'cockpit-components-table.jsx';
 import type { TdProps } from '@patternfly/react-table';
@@ -48,15 +48,13 @@ const _ = cockpit.gettext;
 
 export const VmSnapshotsActions = ({
     vm,
-    config,
 } : {
     vm: VM,
-    config: { capabilities?: HypervisorCapabilities },
 }) => {
     const Dialogs = useDialogs();
     const id = vmId(vm.name);
 
-    const isExternal = vmSupportsExternalSnapshots(config, vm);
+    const isExternal = vmSupportsExternalSnapshots(vm);
 
     function open() {
         Dialogs.show(<CreateSnapshotModal idPrefix={`${id}-create-snapshot`}

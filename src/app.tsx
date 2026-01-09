@@ -194,15 +194,11 @@ const AppServiceNotRunning = () => {
 };
 
 const AppVMs = () => {
-    const { config, storagePools, networks } = store.getState();
+    const { storagePools, networks } = store.getState();
     const { vms, uivms } = appState;
 
-    const properties = {
-        nodeMaxMemory: config.nodeMaxMemory,
-        vms,
-    };
-    const createVmAction = <CreateVmAction {...properties} mode='create' />;
-    const importDiskAction = <CreateVmAction {...properties} mode='import' />;
+    const createVmAction = <CreateVmAction vms={vms} mode='create' />;
+    const importDiskAction = <CreateVmAction vms={vms} mode='import' />;
     const vmActions = <> {importDiskAction} {createVmAction} </>;
 
     return (
@@ -228,7 +224,7 @@ const AppVM = ({
     name: string,
     connection: ConnectionName,
 }) => {
-    const { config, storagePools, networks, nodeDevices } = store.getState();
+    const { storagePools, networks, nodeDevices } = store.getState();
     const { vms, uivms } = appState;
     const combinedVms = [...vms, ...dummyVmsFilter(vms, uivms)];
 
@@ -272,7 +268,6 @@ const AppVM = ({
                 {getInlineNotifications(vm.id)}
                 <VmDetailsPage
                     vm={vm}
-                    config={config}
                     consoleCardState={consoleCardStates.get(vm)}
                     storagePools={(storagePools || []).filter(pool => pool && pool.connectionName == connectionName)}
                     networks={(networks || []).filter(network => network && network.connectionName == connectionName)}
