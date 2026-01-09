@@ -33,12 +33,11 @@ import {
     units
 } from '../../helpers.js';
 import { StateIcon } from '../common/stateIcon.jsx';
-import { updateOrAddStoragePool } from '../../actions/store-actions.js';
 import { StoragePoolOverviewTab } from './storagePoolOverviewTab.jsx';
 import { StoragePoolVolumesTab } from './storagePoolVolumesTab.jsx';
 import { StoragePoolDeleteAction } from './storagePoolDelete.jsx';
 import { storagePoolActivate, storagePoolDeactivate } from '../../libvirtApi/storagePool.js';
-import { store } from '../../store.js';
+import { appState } from '../../state';
 
 import cockpit from 'cockpit';
 
@@ -65,11 +64,7 @@ export const getStoragePoolRow = ({ storagePool, vms } : { storagePool: StorageP
     const state = (
         <StateIcon error={storagePool.error} state={storagePool.active ? _("active") : _("inactive") }
                    valueId={`${idPrefix}-state`}
-                   dismissError={() => store.dispatch(updateOrAddStoragePool({
-                       connectionName: storagePool.connectionName,
-                       name: storagePool.name,
-                       error: null
-                   }))} />
+                   dismissError={() => appState.updateStoragePool(storagePool, { error: null })} />
     );
 
     const tabRenderers = [
@@ -125,15 +120,14 @@ class StoragePoolActions extends React.Component<StoragePoolActionsProps, Storag
         this.setState({ operationInProgress: true });
         storagePoolActivate({ connectionName: storagePool.connectionName, objPath: storagePool.id })
                 .catch(exc => {
-                    store.dispatch(
-                        updateOrAddStoragePool({
-                            connectionName: storagePool.connectionName,
-                            name: storagePool.name,
+                    appState.updateStoragePool(
+                        storagePool,
+                        {
                             error: {
                                 text: cockpit.format(_("Storage pool $0 failed to get activated"), storagePool.name),
                                 detail: exc.message,
                             }
-                        }, true)
+                        }
                     );
                 })
                 .finally(() => this.setState({ operationInProgress: false }));
@@ -145,15 +139,14 @@ class StoragePoolActions extends React.Component<StoragePoolActionsProps, Storag
         this.setState({ operationInProgress: true });
         storagePoolDeactivate({ connectionName: storagePool.connectionName, objPath: storagePool.id })
                 .catch(exc => {
-                    store.dispatch(
-                        updateOrAddStoragePool({
-                            connectionName: storagePool.connectionName,
-                            name: storagePool.name,
+                    appState.updateStoragePool(
+                        storagePool,
+                        {
                             error: {
                                 text: cockpit.format(_("Storage pool $0 failed to get deactivated"), storagePool.name),
                                 detail: exc.message,
                             }
-                        }, true)
+                        }
                     );
                 })
                 .finally(() => this.setState({ operationInProgress: false }));

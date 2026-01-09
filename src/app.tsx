@@ -194,8 +194,8 @@ const AppServiceNotRunning = () => {
 };
 
 const AppVMs = () => {
-    const { storagePools, networks } = store.getState();
-    const { vms, uivms } = appState;
+    const { networks } = store.getState();
+    const { vms, uivms, storagePools } = appState;
 
     const createVmAction = <CreateVmAction vms={vms} mode='create' />;
     const importDiskAction = <CreateVmAction vms={vms} mode='import' />;
@@ -224,8 +224,8 @@ const AppVM = ({
     name: string,
     connection: ConnectionName,
 }) => {
-    const { storagePools, networks } = store.getState();
-    const { vms, uivms } = appState;
+    const { networks } = store.getState();
+    const { vms, uivms, storagePools } = appState;
     const combinedVms = [...vms, ...dummyVmsFilter(vms, uivms)];
 
     const vm = combinedVms.find(vm => vm.name == name && vm.connectionName == connection);
@@ -280,8 +280,7 @@ const AppVM = ({
 };
 
 const AppStoragePools = () => {
-    const { storagePools } = store.getState();
-    const { vms } = appState;
+    const { vms, storagePools } = appState;
 
     return (
         <>

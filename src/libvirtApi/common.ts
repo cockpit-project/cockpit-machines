@@ -31,7 +31,6 @@ import getOSListScript from "../getOSList.py";
 
 import {
     undefineNetwork,
-    undefineStoragePool,
 } from "../actions/store-actions.js";
 
 import {
@@ -324,7 +323,7 @@ function startEventMonitorStoragePools(connectionName: ConnectionName): void {
                 break;
             case Enum.VIR_STORAGE_POOL_EVENT_UNDEFINED:
                 logDebug(`StoragePoolEvent on ${connectionName} ${objPath}: UNDEFINED`);
-                store.dispatch(undefineStoragePool({ connectionName, id: objPath }));
+                appState.undefineStoragePool({ connectionName, id: objPath });
                 break;
             case Enum.VIR_STORAGE_POOL_EVENT_DELETED:
                 logDebug(`StoragePoolEvent on ${connectionName} ${objPath}: DELETED`);
@@ -358,7 +357,7 @@ async function storagePoolStopOrUndefine(connectionName: ConnectionName, poolPat
         if (objPaths.includes(poolPath))
             await storagePoolGet({ connectionName, id: poolPath, updateOnly: true });
         else // Transient pool which got undefined when stopped
-            store.dispatch(undefineStoragePool({ connectionName, id: poolPath }));
+            appState.undefineStoragePool({ connectionName, id: poolPath });
     } catch (ex) {
         console.warn("storagePoolStopOrUndefine action failed:", String(ex));
     }
