@@ -556,12 +556,7 @@ export interface NetworkXML {
     mtu: optString;
     forward?: {
         mode: string;
-    };
-    // FIXME - this should certainly be forward.interface.dev instead of interface.interface.dev
-    interface?: {
-        interface: {
-            dev: optString;
-        };
+        dev: optString;
     };
 }
 

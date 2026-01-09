@@ -83,7 +83,7 @@ function getVirtualNetworkDescription(virtualNetwork: Network): string {
 
     if (forward) {
         mode = forward.mode;
-        dev = virtualNetwork.interface && virtualNetwork.interface.interface.dev;
+        dev = forward.dev;
     }
 
     if (mode || dev) {
