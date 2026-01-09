@@ -22,16 +22,11 @@
  * See https://github.com/libvirt/libvirt-dbus
  */
 import cockpit from "cockpit";
-import { store } from "../store.js";
 import { appState } from "../state";
 import { VMS_CONFIG } from "../config.js";
 import * as python from "python.js";
 
 import getOSListScript from "../getOSList.py";
-
-import {
-    undefineNetwork,
-} from "../actions/store-actions.js";
 
 import {
     logDebug,
@@ -175,7 +170,7 @@ async function networkUpdateOrDelete(
         if (objPaths.includes(netPath))
             return networkGet({ connectionName, id: netPath, updateOnly: true });
         else // Transient network which got undefined when stopped
-            store.dispatch(undefineNetwork({ connectionName, id: netPath }));
+            appState.undefineNetwork({ connectionName, id: netPath });
     } catch (ex) {
         console.warn("networkUpdateOrDelete action failed:", String(ex));
     }
@@ -277,7 +272,7 @@ function startEventMonitorNetworks(connectionName: ConnectionName): void {
                 networkUpdateOrDelete(connectionName, objPath);
                 break;
             case Enum.VIR_NETWORK_EVENT_UNDEFINED:
-                store.dispatch(undefineNetwork({ connectionName, id: objPath }));
+                appState.undefineNetwork({ connectionName, id: objPath });
                 break;
             default:
                 logDebug(`handle Network on ${connectionName}: ignoring event ${signal}`);

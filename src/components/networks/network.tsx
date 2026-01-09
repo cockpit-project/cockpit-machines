@@ -30,7 +30,6 @@ import {
     networkId
 } from '../../helpers.js';
 import { StateIcon } from '../common/stateIcon.jsx';
-import { updateOrAddNetwork } from '../../actions/store-actions.js';
 import { NetworkOverviewTab } from './networkOverviewTab.jsx';
 import { DeleteResourceModal } from '../common/deleteResource.jsx';
 import {
@@ -38,7 +37,7 @@ import {
     networkDeactivate,
     networkUndefine
 } from '../../libvirtApi/network.js';
-import { store } from '../../store.js';
+import { appState } from '../../state';
 
 import { KebabDropdown } from "cockpit-components-dropdown";
 
@@ -66,11 +65,13 @@ export const getNetworkRow = ({ network } : { network: Network }) => {
     const state = (
         <StateIcon error={network.error} state={network.active ? _("active") : _("inactive") }
                    valueId={`${idPrefix}-state`}
-                   dismissError={() => store.dispatch(updateOrAddNetwork({
-                       connectionName: network.connectionName,
-                       name: network.name,
-                       error: null
-                   }))} />
+            dismissError={() => appState.updateNetwork(
+                network,
+                {
+                    error: null
+                }
+            )}
+        />
     );
     const cols = [
         { title: name, header: true },
@@ -98,48 +99,34 @@ const NetworkActions = ({ network } : { network: Network }) => {
     const onActivate = () => {
         setOperationInProgress(true);
         networkActivate({ connectionName: network.connectionName, objPath: network.id })
-                .then(() => store.dispatch(
-                    updateOrAddNetwork({
-                        connectionName: network.connectionName,
-                        name: network.name,
-                        error: null
-                    })))
+                .then(() => appState.updateNetwork(network, { error: null }))
                 .finally(() => setOperationInProgress(false))
                 .catch(exc => {
-                    store.dispatch(
-                        updateOrAddNetwork({
-                            connectionName: network.connectionName,
-                            name: network.name,
+                    appState.updateNetwork(
+                        network,
+                        {
                             error: {
                                 text: cockpit.format(_("Network $0 failed to get activated"), network.name),
                                 detail: exc.message,
                             }
-                        }, true)
-                    );
+                        });
                 });
     };
 
     const onDeactivate = () => {
         setOperationInProgress(true);
         networkDeactivate({ connectionName: network.connectionName, objPath: network.id })
-                .then(() => store.dispatch(
-                    updateOrAddNetwork({
-                        connectionName: network.connectionName,
-                        name: network.name,
-                        error: null
-                    })))
+                .then(() => appState.updateNetwork(network, { error: null }))
                 .finally(() => setOperationInProgress(false))
                 .catch(exc => {
-                    store.dispatch(
-                        updateOrAddNetwork({
-                            connectionName: network.connectionName,
-                            name: network.name,
+                    appState.updateNetwork(
+                        network,
+                        {
                             error: {
                                 text: cockpit.format(_("Network $0 failed to get deactivated"), network.name),
                                 detail: exc.message,
                             }
-                        }, true)
-                    );
+                        });
                 });
     };
 

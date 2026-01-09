@@ -26,6 +26,7 @@ import type {
     HypervisorCapabilities, VirtInstallCapabilities, VirtXmlCapabilities,
     NodeDevice, NodeInterface,
     StoragePool,
+    Network,
 } from './types';
 
 import {
@@ -220,6 +221,25 @@ export class AppState extends EventEmitter<AppStateEvents> {
 
     undefineStoragePool(key: ResourceKey) {
         this.storagePools = removeExisting(this.storagePools, key, equal);
+        this.#update();
+    }
+
+    // Networks
+
+    networks: Network[] = [];
+
+    addNetwork(network: Network) {
+        this.networks = replaceOrAdd(this.networks, network, equal);
+        this.#update();
+    }
+
+    updateNetwork(key: ResourceKey, props: Partial<Network>) {
+        this.networks = updateExisting(this.networks, key, props, equal);
+        this.#update();
+    }
+
+    undefineNetwork(key: ResourceKey) {
+        this.networks = removeExisting(this.networks, key, equal);
         this.#update();
     }
 
