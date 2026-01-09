@@ -18,14 +18,11 @@
  */
 import {
     UNDEFINE_NETWORK,
-    UNDEFINE_STORAGE_POOL,
     UPDATE_ADD_NETWORK,
-    UPDATE_ADD_STORAGE_POOL,
 } from '../constants/store-action-types.js';
 
 import type {
     ConnectionName,
-    StoragePool,
     Network,
 } from '../types';
 
@@ -55,32 +52,9 @@ export function undefineNetwork({
     };
 }
 
-export function undefineStoragePool({
-    connectionName,
-    id
-} : {
-    connectionName: ConnectionName,
-    id: string,
-}) {
-    return {
-        type: UNDEFINE_STORAGE_POOL,
-        payload: {
-            connectionName,
-            id,
-        }
-    };
-}
-
 export function updateOrAddNetwork(props: Partial<Network>, updateOnly?: boolean) {
     return {
         type: UPDATE_ADD_NETWORK,
         payload: { network: props, updateOnly },
-    };
-}
-
-export function updateOrAddStoragePool(props: Partial<StoragePool>, updateOnly?: boolean) {
-    return {
-        type: UPDATE_ADD_STORAGE_POOL,
-        payload: { storagePool: props, updateOnly },
     };
 }

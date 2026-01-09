@@ -18,7 +18,6 @@
  */
 
 import cockpit from 'cockpit';
-import { store } from './store.js';
 import { appState } from './state';
 import type {
     optString,
@@ -915,7 +914,7 @@ export function getHostDevSourceObject(dev: VMHostDevice): HostDevSourceObject |
 }
 
 export function getVmStoragePools(connectionName: ConnectionName): StoragePool[] {
-    const { storagePools } = store.getState();
+    const { storagePools } = appState;
     return storagePools.filter(sp => sp && sp.name && sp.connectionName == connectionName && sp.active);
 }
 

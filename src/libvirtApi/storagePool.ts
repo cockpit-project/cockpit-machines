@@ -22,12 +22,11 @@
  * See https://github.com/libvirt/libvirt-dbus
  */
 import cockpit from 'cockpit';
-import { store } from '../store.js';
+import { appState } from '../state';
 
 import type { ConnectionName, StoragePool, StoragePoolCapabilites } from '../types';
 import type { StoragePoolSource } from '../libvirt-xml-create.js';
 
-import { updateOrAddStoragePool } from '../actions/store-actions.js';
 import { getPoolXML } from '../libvirt-xml-create.js';
 import { parsePoolCapabilities, parseStoragePoolDumpxml } from '../libvirt-xml-parse.js';
 import { storageVolumeGetAll } from './storageVolume.js';
@@ -125,7 +124,16 @@ export async function storagePoolGet({
                 return;
             props.volumes = volumes;
         }
-        store.dispatch(updateOrAddStoragePool(Object.assign({}, dumpxmlParams, props), !!updateOnly));
+
+        const pool: StoragePool = {
+            ...dumpxmlParams,
+            ...props,
+        };
+
+        if (updateOnly)
+            appState.updateStoragePool(pool, pool);
+        else
+            appState.addStoragePool(pool);
     } catch (ex) {
         console.warn('GET_STORAGE_POOL action failed for path', objPath, String(ex));
     }

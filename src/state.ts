@@ -25,6 +25,7 @@ import type {
     ConnectionName, VM, UIVM, UIVMProps,
     HypervisorCapabilities, VirtInstallCapabilities, VirtXmlCapabilities,
     NodeDevice, NodeInterface,
+    StoragePool,
 } from './types';
 
 import {
@@ -200,6 +201,25 @@ export class AppState extends EventEmitter<AppStateEvents> {
 
     addNodeInterface(iface: NodeInterface) {
         this.nodeInterfaces = replaceOrAdd(this.nodeInterfaces, iface, (a, b) => a.name == b.name);
+        this.#update();
+    }
+
+    // Storage pools
+
+    storagePools: StoragePool[] = [];
+
+    addStoragePool(pool: StoragePool) {
+        this.storagePools = replaceOrAdd(this.storagePools, pool, equal);
+        this.#update();
+    }
+
+    updateStoragePool(key: ResourceKey, props: Partial<StoragePool>) {
+        this.storagePools = updateExisting(this.storagePools, key, props, equal);
+        this.#update();
+    }
+
+    undefineStoragePool(key: ResourceKey) {
+        this.storagePools = removeExisting(this.storagePools, key, equal);
         this.#update();
     }
 

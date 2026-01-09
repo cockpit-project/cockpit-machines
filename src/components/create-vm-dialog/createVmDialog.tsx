@@ -1310,7 +1310,7 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
             break;
         case 'storagePool': {
             cockpit.assert(typeof value == "string");
-            const storagePool = store.getState().storagePools.filter(pool => pool.connectionName === this.state.connectionName).find(pool => pool.name === value);
+            const storagePool = appState.storagePools.filter(pool => pool.connectionName === this.state.connectionName).find(pool => pool.name === value);
             const storageVolumes = storagePool ? storagePool.volumes : undefined;
             const storageVolume = storageVolumes ? storageVolumes[0] : undefined;
             this.setState({
@@ -1414,7 +1414,7 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
         const Dialogs = this.context;
         const { nodeMaxMemory, vms } = this.props;
         const { osInfoList } = this.state;
-        const { storagePools } = store.getState();
+        const { storagePools } = appState;
         const vmName = isEmpty(this.state.vmName.trim()) ? this.state.suggestedVmName : this.state.vmName;
 
         const validation = validateParams({ ...this.state, osInfoList, nodeMaxMemory, vms: vms.filter(vm => vm.connectionName == this.state.connectionName) });
@@ -1478,7 +1478,8 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
         const Dialogs = this.context;
         const { nodeMaxMemory, vms } = this.props;
         const { osInfoList } = this.state;
-        const { storagePools, networks } = store.getState();
+        const { networks } = store.getState();
+        const { storagePools } = appState;
         const validationFailed = this.state.validate ? validateParams({ ...this.state, osInfoList, nodeMaxMemory, vms: vms.filter(vm => vm.connectionName == this.state.connectionName) }) : { };
 
         const unattendedInstructionsMessage = _("Enter root and/or user information to enable unattended installation.");

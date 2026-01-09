@@ -23,13 +23,10 @@ import { combineReducers } from 'redux';
 import { isObjectEmpty } from './helpers.js';
 import {
     UNDEFINE_NETWORK,
-    UNDEFINE_STORAGE_POOL,
     UPDATE_ADD_NETWORK,
-    UPDATE_ADD_STORAGE_POOL,
 } from './constants/store-action-types.js';
 
 import type {
-    StoragePool,
     Network,
 } from './types';
 
@@ -86,46 +83,6 @@ function networks(state: Network[] | undefined, action): Network[] {
     }
 }
 
-function storagePools(state: StoragePool[] | undefined, action): StoragePool[] {
-    state = state || [];
-
-    switch (action.type) {
-    case UNDEFINE_STORAGE_POOL: {
-        const { connectionName, id } = action.payload;
-
-        return state
-                .filter(storagePool => (connectionName !== storagePool.connectionName || id != storagePool.id));
-    }
-    case UPDATE_ADD_STORAGE_POOL: {
-        const { storagePool, updateOnly, } = action.payload;
-
-        if (isObjectEmpty(storagePool))
-            return [...state, storagePool]; // initialize pool to empty object
-
-        const connectionName = storagePool.connectionName;
-        const index = storagePool.id
-            ? getFirstIndexOfResource(state, 'id', storagePool.id, connectionName)
-            : getFirstIndexOfResource(state, 'name', storagePool.name, connectionName);
-        if (index < 0) {
-            if (!updateOnly) {
-                const initObjIndex = state.findIndex(obj => isObjectEmpty(obj));
-                if (initObjIndex >= 0)
-                    state.splice(initObjIndex, 1); // remove empty initial object
-                return [...state, storagePool];
-            } else {
-                return state;
-            }
-        }
-
-        const updatedStoragePool = Object.assign({}, state[index], storagePool);
-        return replaceResource({ state, updatedResource: updatedStoragePool, index });
-    }
-    default:
-        return state;
-    }
-}
-
 export default combineReducers({
     networks,
-    storagePools,
 });
