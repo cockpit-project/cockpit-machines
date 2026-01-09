@@ -21,7 +21,6 @@ import React, { useEffect } from 'react';
 import cockpit from 'cockpit';
 
 import type { VM, StoragePool, Network, NodeDevice } from '../../types';
-import type { Config } from '../../reducers';
 
 import { Breadcrumb, BreadcrumbItem } from "@patternfly/react-core/dist/esm/components/Breadcrumb";
 import { CodeBlock, CodeBlockCode } from "@patternfly/react-core/dist/esm/components/CodeBlock";
@@ -53,14 +52,12 @@ const _ = cockpit.gettext;
 
 export const VmDetailsPage = ({
     vm,
-    config,
     storagePools,
     networks,
     nodeDevices,
     consoleCardState,
 } : {
     vm: VM,
-    config: Config,
     storagePools: StoragePool[],
     networks: Network[],
     nodeDevices: NodeDevice[],
@@ -153,7 +150,6 @@ export const VmDetailsPage = ({
             id: `${vmId(vm.name)}-overview`,
             title: _("Overview"),
             body: <VmOverviewCard vm={vm}
-                                  config={config}
                                   maxVcpu={vm.capabilities.maxVcpu}
                                   cpuModels={vm.capabilities.cpuModels} />,
         },
@@ -198,7 +194,7 @@ export const VmDetailsPage = ({
             id: cockpit.format("$0-snapshots", vmId(vm.name)),
             className: "snapshots-card",
             title: _("Snapshots"),
-            actions: <VmSnapshotsActions vm={vm} config={config} />,
+            actions: <VmSnapshotsActions vm={vm} />,
             body: <VmSnapshotsCard vm={vm} />
         });
     }

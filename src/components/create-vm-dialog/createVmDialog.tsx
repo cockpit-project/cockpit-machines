@@ -1684,7 +1684,6 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
 
 interface CreateVmActionProps {
     mode: string;
-    nodeMaxMemory: number | undefined;
     vms: VM[];
 }
 
@@ -1700,7 +1699,7 @@ export class CreateVmAction extends React.Component<CreateVmActionProps> {
             // replaced with the whole resource object but there is enough time to cause a crash if parsed here
             cockpit.assert(vi_caps);
             Dialogs.show(<CreateVmModal mode={this.props.mode}
-                                        nodeMaxMemory={this.props.nodeMaxMemory}
+                                        nodeMaxMemory={appState.nodeMaxMemory}
                                         vms={this.props.vms}
                                         cloudInitSupported={vi_caps.cloudInitSupported}
                                         downloadOSSupported={vi_caps.downloadOSSupported}

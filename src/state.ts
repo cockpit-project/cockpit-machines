@@ -21,7 +21,10 @@ import cockpit from 'cockpit';
 import { EventEmitter } from 'cockpit/event';
 import { superuser } from "superuser.js";
 
-import type { ConnectionName, VM, UIVM, UIVMProps, VirtInstallCapabilities, VirtXmlCapabilities } from './types';
+import type {
+    ConnectionName, VM, UIVM, UIVMProps,
+    HypervisorCapabilities, VirtInstallCapabilities, VirtXmlCapabilities
+} from './types';
 
 import {
     getApiData,
@@ -93,8 +96,20 @@ export class AppState extends EventEmitter<AppStateEvents> {
     systemSocketInactive: boolean = false;
     hardwareVirtEnabled: boolean = true;
     libvirtVersion: number = 0;
+    nodeMaxMemory: number = 0;
+    hypervisorCapabilities: HypervisorCapabilities | null = null;
     virtInstallCapabilities: VirtInstallCapabilities | null = null;
     virtXmlCapabilities: VirtXmlCapabilities | null = null;
+
+    setNodeMaxMemory(memory: number) {
+        this.nodeMaxMemory = memory;
+        this.#update();
+    }
+
+    setHypervisorCapabilities(caps: HypervisorCapabilities) {
+        this.hypervisorCapabilities = caps;
+        this.#update();
+    }
 
     // Notifications
 

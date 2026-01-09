@@ -19,8 +19,9 @@
 
 import React from 'react';
 
+import { appState } from '../../../state';
+
 import type { VM } from '../../../types';
-import type { Config } from '../../../reducers';
 import type { Dialogs } from 'dialogs';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -50,7 +51,6 @@ const _ = cockpit.gettext;
 
 interface MemoryModalProps {
     vm: VM;
-    config: Config;
 }
 
 interface MemoryModalState {
@@ -75,7 +75,7 @@ export class MemoryModal extends React.Component<MemoryModalProps, MemoryModalSt
             memoryUnit: units.MiB.name,
             maxMemory: props.vm.memory, // Stored always in KiB to ease checks; the conversions to the user presented values happen inside the render
             maxMemoryUnit: units.MiB.name,
-            nodeMaxMemory: props.config.nodeMaxMemory || NaN,
+            nodeMaxMemory: appState.nodeMaxMemory || NaN,
             minAllowedMemory: convertToUnit(128, 'MiB', 'KiB'),
         };
         this.save = this.save.bind(this);
