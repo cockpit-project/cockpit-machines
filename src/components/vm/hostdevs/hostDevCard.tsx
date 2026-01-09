@@ -31,7 +31,7 @@ import { AddHostDev } from "./hostDevAdd.jsx";
 import { domainGet, domainDetachHostDevice } from '../../../libvirtApi/domain.js';
 import { nodeDeviceGetAll } from '../../../libvirtApi/nodeDevice.js';
 import { DeleteResourceButton } from '../../common/deleteResource.jsx';
-import { store } from "../../../store.js";
+import { appState } from "../../../state";
 
 const _ = cockpit.gettext;
 
@@ -143,7 +143,7 @@ function getSource(hostDev: VMHostDevice, nodeDevices: NodeDevice[], hostdevId: 
 export const VmHostDevActions = ({ vm } : { vm: VM }) => {
     const Dialogs = useDialogs();
     const idPrefix = `${vmId(vm.name)}-hostdevs`;
-    const { nodeDevices } = store.getState();
+    const { nodeDevices } = appState;
 
     function open() {
         Dialogs.show(<AddHostDev idPrefix={idPrefix} vm={vm} />);

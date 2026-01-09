@@ -22,11 +22,10 @@
  * See https://github.com/libvirt/libvirt-dbus
  */
 import cockpit from 'cockpit';
-import { store } from '../store.js';
+import { appState } from '../state';
 
 import type { ConnectionName, NodeDevice } from '../types';
 
-import { updateOrAddNodeDevice } from '../actions/store-actions.js';
 import { parseNodeDeviceDumpxml } from '../libvirt-xml-parse.js';
 import { call, timeout } from './helpers.js';
 
@@ -64,7 +63,7 @@ export async function nodeDeviceGet({
                 }
             }
 
-            store.dispatch(updateOrAddNodeDevice(deviceXmlObject));
+            appState.addNodeDevice(deviceXmlObject);
         }
     } catch (ex) {
         console.warn('GET_NODE_DEVICE action failed for path', objPath, String(ex));

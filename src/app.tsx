@@ -224,7 +224,7 @@ const AppVM = ({
     name: string,
     connection: ConnectionName,
 }) => {
-    const { storagePools, networks, nodeDevices } = store.getState();
+    const { storagePools, networks } = store.getState();
     const { vms, uivms } = appState;
     const combinedVms = [...vms, ...dummyVmsFilter(vms, uivms)];
 
@@ -271,7 +271,7 @@ const AppVM = ({
                     consoleCardState={consoleCardStates.get(vm)}
                     storagePools={(storagePools || []).filter(pool => pool && pool.connectionName == connectionName)}
                     networks={(networks || []).filter(network => network && network.connectionName == connectionName)}
-                    nodeDevices={(nodeDevices || []).filter(device => device && device.connectionName == connectionName)}
+                    nodeDevices={appState.nodeDevices.filter(device => device && device.connectionName == connectionName)}
                     key={vmId(vm.name)}
                 />
             </>

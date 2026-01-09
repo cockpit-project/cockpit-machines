@@ -1298,8 +1298,8 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
             cockpit.assert(typeof value == "string");
             this.setState({ sourceType: value });
             if (value == PXE_SOURCE) {
-                const { nodeDevices, networks } = store.getState();
-                const initialPXESource = getPXEInitialNetworkSource(nodeDevices.filter(nodeDevice => nodeDevice.connectionName == this.state.connectionName),
+                const { networks } = store.getState();
+                const initialPXESource = getPXEInitialNetworkSource(appState.nodeDevices.filter(nodeDevice => nodeDevice.connectionName == this.state.connectionName),
                                                                     networks.filter(network => network.connectionName == this.state.connectionName));
                 this.setState({ source: initialPXESource });
             } else if (this.state.sourceType == PXE_SOURCE && value != PXE_SOURCE) {
@@ -1478,7 +1478,7 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
         const Dialogs = this.context;
         const { nodeMaxMemory, vms } = this.props;
         const { osInfoList } = this.state;
-        const { storagePools, nodeDevices, networks } = store.getState();
+        const { storagePools, networks } = store.getState();
         const validationFailed = this.state.validate ? validateParams({ ...this.state, osInfoList, nodeMaxMemory, vms: vms.filter(vm => vm.connectionName == this.state.connectionName) }) : { };
 
         const unattendedInstructionsMessage = _("Enter root and/or user information to enable unattended installation.");
@@ -1515,7 +1515,7 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
                 <SourceRow
                     connectionName={this.state.connectionName}
                     networks={networks.filter(network => network.connectionName == this.state.connectionName)}
-                    nodeDevices={nodeDevices.filter(nodeDevice => nodeDevice.connectionName == this.state.connectionName)}
+                    nodeDevices={appState.nodeDevices.filter(nodeDevice => nodeDevice.connectionName == this.state.connectionName)}
                     source={this.state.source}
                     sourceType={this.state.sourceType}
                     os={this.state.os}
