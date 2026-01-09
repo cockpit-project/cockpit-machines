@@ -47,7 +47,7 @@ import {
     vmId
 } from '../../../helpers.js';
 import { domainGet, domainChangeBootOrder } from '../../../libvirtApi/domain.js';
-import { store } from "../../../store.js";
+import { appState } from "../../../state";
 
 import './bootOrder.css';
 
@@ -322,7 +322,7 @@ class BootOrderModal extends React.Component<BootOrderModalProps, BootOrderModal
     render() {
         const Dialogs = this.context;
         const { vm } = this.props;
-        const { nodeDevices } = store.getState();
+        const { nodeDevices } = appState;
         const idPrefix = vmId(vm.name) + '-order-modal';
         const defaultBody = (
             <DataList aria-label="Boot order"

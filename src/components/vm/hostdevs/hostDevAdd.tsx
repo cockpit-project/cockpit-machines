@@ -40,7 +40,7 @@ import { ModalError } from "cockpit-components-inline-notification.jsx";
 import { domainAttachHostDevices, domainGet } from "../../../libvirtApi/domain.js";
 import { findMatchingNodeDevices } from "../../../helpers.js";
 import { getOptionalValue } from "./hostDevCard.jsx";
-import { store } from "../../../store.js";
+import { appState } from "../../../state";
 
 const _ = cockpit.gettext;
 
@@ -216,7 +216,7 @@ export const AddHostDev = ({
     const [dialogErrorDetail, setDialogErrorDetail] = useState("");
     const [addHostDevInProgress, setAddHostDevInProgress] = useState(false);
 
-    const { nodeDevices } = useMemo(() => store.getState(), []);
+    const nodeDevices = useMemo(() => appState.nodeDevices, []);
     const allDevices = useMemo(() => devicesHaveAChild([...nodeDevices]), [nodeDevices]);
 
     useEffect(() => {

@@ -19,9 +19,7 @@
 import {
     UNDEFINE_NETWORK,
     UNDEFINE_STORAGE_POOL,
-    UPDATE_ADD_INTERFACE,
     UPDATE_ADD_NETWORK,
-    UPDATE_ADD_NODE_DEVICE,
     UPDATE_ADD_STORAGE_POOL,
 } from '../constants/store-action-types.js';
 
@@ -29,8 +27,6 @@ import type {
     ConnectionName,
     StoragePool,
     Network,
-    NodeInterface,
-    NodeDevice,
 } from '../types';
 
 /**
@@ -75,24 +71,10 @@ export function undefineStoragePool({
     };
 }
 
-export function updateOrAddInterface(props: NodeInterface) {
-    return {
-        type: UPDATE_ADD_INTERFACE,
-        payload: { iface: props },
-    };
-}
-
 export function updateOrAddNetwork(props: Partial<Network>, updateOnly?: boolean) {
     return {
         type: UPDATE_ADD_NETWORK,
         payload: { network: props, updateOnly },
-    };
-}
-
-export function updateOrAddNodeDevice(props: NodeDevice) {
-    return {
-        type: UPDATE_ADD_NODE_DEVICE,
-        payload: { nodedev: props },
     };
 }
 

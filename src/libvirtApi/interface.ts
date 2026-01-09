@@ -23,9 +23,7 @@
  */
 import cockpit from 'cockpit';
 
-import { store } from '../store.js';
-
-import { updateOrAddInterface } from '../actions/store-actions.js';
+import { appState } from '../state';
 
 export async function interfaceGetAll(): Promise<void> {
     let ifaces = [];
@@ -38,10 +36,10 @@ export async function interfaceGetAll(): Promise<void> {
     }
 
     for (const iface of ifaces) {
-        store.dispatch(updateOrAddInterface({
+        appState.addNodeInterface({
             name: iface.ifname,
             MAC: iface.address,
             Active: iface.operstate === "UP",
-        }));
+        });
     }
 }

@@ -753,7 +753,7 @@ export function getStorageVolumesUsage(vms: VM[], storagePool: StoragePool): Sto
  * by merging all network node devices and interfaces.
  */
 export function getNetworkDevices(): string[] {
-    const { nodeDevices, interfaces } = store.getState();
+    const { nodeDevices, nodeInterfaces } = appState;
     const devs: string[] = [];
 
     nodeDevices.forEach(dev => {
@@ -761,7 +761,7 @@ export function getNetworkDevices(): string[] {
             devs.push(dev.capability.interface);
     });
 
-    interfaces.forEach(iface => {
+    nodeInterfaces.forEach(iface => {
         devs.push(iface.name);
     });
 

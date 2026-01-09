@@ -23,7 +23,8 @@ import { superuser } from "superuser.js";
 
 import type {
     ConnectionName, VM, UIVM, UIVMProps,
-    HypervisorCapabilities, VirtInstallCapabilities, VirtXmlCapabilities
+    HypervisorCapabilities, VirtInstallCapabilities, VirtXmlCapabilities,
+    NodeDevice, NodeInterface,
 } from './types';
 
 import {
@@ -73,6 +74,14 @@ function replaceAtIndex<T>(input: T[], index: number, val: T): T[] {
 
 function updateAtIndex<T>(input: T[], index: number, update: Partial<T>): T[] {
     return replaceAtIndex(input, index, { ...input[index], ...update });
+}
+
+function replaceOrAdd<T>(input: T[], val: T, equal: (a: T, b: T) => boolean): T[] {
+    const index = input.findIndex(v => equal(v, val));
+    if (index < 0)
+        return [...input, val];
+    else
+        return replaceAtIndex(input, index, val);
 }
 
 function updateExisting<K, T>(input: T[], key: K, update: Partial<T>, equal: (a: T, b: K) => boolean) {
@@ -176,6 +185,21 @@ export class AppState extends EventEmitter<AppStateEvents> {
 
     deleteUiVm(connectionName: ConnectionName, name: string) {
         this.uivms = this.uivms.filter(vm => !(vm.name == name && vm.connectionName == connectionName));
+        this.#update();
+    }
+
+    // Node devices and interfaces
+
+    nodeDevices: NodeDevice[] = [];
+    nodeInterfaces: NodeInterface[] = [];
+
+    addNodeDevice(dev: NodeDevice) {
+        this.nodeDevices = replaceOrAdd(this.nodeDevices, dev, (a, b) => a.connectionName == b.connectionName && a.name == b.name);
+        this.#update();
+    }
+
+    addNodeInterface(iface: NodeInterface) {
+        this.nodeInterfaces = replaceOrAdd(this.nodeInterfaces, iface, (a, b) => a.name == b.name);
         this.#update();
     }
 

@@ -24,15 +24,11 @@ import { isObjectEmpty } from './helpers.js';
 import {
     UNDEFINE_NETWORK,
     UNDEFINE_STORAGE_POOL,
-    UPDATE_ADD_INTERFACE,
     UPDATE_ADD_NETWORK,
-    UPDATE_ADD_NODE_DEVICE,
     UPDATE_ADD_STORAGE_POOL,
 } from './constants/store-action-types.js';
 
 import type {
-    NodeDevice,
-    NodeInterface,
     StoragePool,
     Network,
 } from './types';
@@ -51,33 +47,6 @@ function replaceResource({ state, updatedResource, index }) {
 }
 
 // --- reducers ------------------
-function interfaces(state: NodeInterface[] | undefined, action): NodeInterface[] {
-    state = state || [];
-
-    switch (action.type) {
-    case UPDATE_ADD_INTERFACE: {
-        const { iface } = action.payload;
-
-        if (isObjectEmpty(iface))
-            return [...state, iface]; // initialize iface to empty object
-
-        const connectionName = iface.connectionName;
-        const index = getFirstIndexOfResource(state, 'name', iface.name, connectionName);
-        if (index < 0) { // add
-            const initObjIndex = state.findIndex(obj => isObjectEmpty(obj));
-            if (initObjIndex >= 0)
-                state.splice(initObjIndex, 1); // remove empty initial object
-            return [...state, iface];
-        }
-
-        const updatedIface = Object.assign({}, state[index], iface);
-        return replaceResource({ state, updatedResource: updatedIface, index });
-    }
-    default:
-        return state;
-    }
-}
-
 function networks(state: Network[] | undefined, action): Network[] {
     state = state || [];
 
@@ -111,33 +80,6 @@ function networks(state: Network[] | undefined, action): Network[] {
 
         const updatedNetwork = Object.assign({}, state[index], network);
         return replaceResource({ state, updatedResource: updatedNetwork, index });
-    }
-    default:
-        return state;
-    }
-}
-
-function nodeDevices(state: NodeDevice[] | undefined, action): NodeDevice[] {
-    state = state || [];
-
-    switch (action.type) {
-    case UPDATE_ADD_NODE_DEVICE: {
-        const { nodedev } = action.payload;
-
-        if (isObjectEmpty(nodedev))
-            return [...state, nodedev]; // initialize nodedev to empty object
-
-        const connectionName = nodedev.connectionName;
-        const index = getFirstIndexOfResource(state, 'name', nodedev.name, connectionName);
-        if (index < 0) { // add
-            const initObjIndex = state.findIndex(obj => isObjectEmpty(obj));
-            if (initObjIndex >= 0)
-                state.splice(initObjIndex, 1); // remove empty initial object
-            return [...state, nodedev];
-        }
-
-        const updatedNodedev = Object.assign({}, state[index], nodedev);
-        return replaceResource({ state, updatedResource: updatedNodedev, index });
     }
     default:
         return state;
@@ -184,8 +126,6 @@ function storagePools(state: StoragePool[] | undefined, action): StoragePool[] {
 }
 
 export default combineReducers({
-    interfaces,
     networks,
-    nodeDevices,
     storagePools,
 });
