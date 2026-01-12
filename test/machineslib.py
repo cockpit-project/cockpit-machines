@@ -237,15 +237,15 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
         else:
             console = f"file,target.type=serial,source.path={args['logfile']} "
 
-        command = [f"virt-install --connect qemu:///{connection} --name {name} "
-                   f"--os-variant {os} "
-                   "--boot hd,network "
-                   "--vcpus 1 "
-                   f"--memory {memory} "
-                   f"--import --disk {img} "
-                   f"--graphics {'none' if graphics == 'none' else graphics + ',listen=127.0.0.1'} "
-                   f"--console {console}"
-                   f"--print-step 1 > /tmp/xml-{connection}"]
+        command = [(f"virt-install --connect qemu:///{connection} --name {name} "
+                    f"--os-variant {os} "
+                    "--boot hd,network "
+                    "--vcpus 1 "
+                    f"--memory {memory} "
+                    f"--import --disk {img} "
+                    f"--graphics {'none' if graphics == 'none' else graphics + ',listen=127.0.0.1'} "
+                    f"--console {console}"
+                    f"--print-step 1 > /tmp/xml-{connection}")]
 
         command.append(f"virsh -c qemu:///{connection} define /tmp/xml-{connection}")
         if running:
