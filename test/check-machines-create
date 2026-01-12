@@ -1287,6 +1287,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                 self.assertIn("--cloud-init user-data=", virt_install_cmd_out)
                 # parse the file
                 user_data_path = virt_install_cmd_out.split("user-data=", 1)[1].split()[0]
+                user_data_path = user_data_path.replace(",meta-data=/dev/null", "")
                 user_data = self.machine.execute("cat " + user_data_path)
 
                 if self.user_password:

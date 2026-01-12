@@ -119,7 +119,8 @@ def prepare_cloud_init(args):
             user_data_file.write("  expire: False\n")
 
         user_data_file.flush()
-        params.append(f"user-data={user_data_file.name}")
+        # The "meta-data=/dev/null" is for https://github.com/virt-manager/virt-manager/issues/975
+        params.append(f"user-data={user_data_file.name},meta-data=/dev/null")
 
     yield params
 
