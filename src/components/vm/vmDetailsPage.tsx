@@ -198,7 +198,8 @@ export const VmDetailsPage = ({
             body: <VmSnapshotsCard vm={vm} />
         });
     }
-    if (appState.libvirtVersion >= 6008000 && vm.connectionName == "system") {
+    if ((appState.libvirtVersion >= 6008000 && vm.connectionName == "system") ||
+        (appState.libvirtVersion >= 10000000 && vm.connectionName == "session")) {
         cardContents.push(
             {
                 id: `${vmId(vm.name)}-filesystems`,

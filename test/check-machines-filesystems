@@ -42,7 +42,8 @@ class TestMachinesFilesystems(machineslib.VirtualMachinesCase):
         # wait until page initialized
         b.wait_visible("#vm-subVmTest1-hostdevs")
 
-        if connection == "session":
+        if m.image in ["ubuntu-2204", "rhel-8-10"] and connection == "session":
+            # libvirt is too old
             b.wait_not_present("#vm-subVmTest1-filesystems-add")
             return
 
@@ -84,14 +85,15 @@ class TestMachinesFilesystems(machineslib.VirtualMachinesCase):
         b.wait_in_text("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir1/-dir1'] td[data-label='Mount tag']",
                        "dir1")
 
-        domain_xml = "virsh -c qemu:///system dumpxml subVmTest1"
-        xmllint_element = f"{domain_xml} | xmllint --xpath 'string(//domain/{{prop}})' -"
+        def xmllint_element(prop):
+            domain_xml = f"virsh -c qemu:///{connection} dumpxml subVmTest1"
+            cmd = f"{domain_xml} | xmllint --xpath \"string(//domain/{prop})\" -"
+            return self.run_admin(cmd, connection).strip()
 
-        self.assertEqual('/tmp/dir1/',
-                         m.execute(xmllint_element.format(prop='devices/filesystem/source/@dir')).strip())
-        self.assertEqual('dir1', m.execute(xmllint_element.format(prop='devices/filesystem/target/@dir')).strip())
-        self.assertEqual('on', m.execute(xmllint_element.format(prop='devices/filesystem/binary/@xattr')).strip())
-        self.assertEqual('shared', m.execute(xmllint_element.format(prop='memoryBacking/access/@mode')).strip())
+        self.assertEqual('/tmp/dir1/', xmllint_element('devices/filesystem/source/@dir'))
+        self.assertEqual('dir1', xmllint_element('devices/filesystem/target/@dir'))
+        self.assertEqual('on', xmllint_element('devices/filesystem/binary/@xattr'))
+        self.assertEqual('shared', xmllint_element('memoryBacking/access/@mode'))
 
         # Add a new shared filesystem - now the memoryBacking is configured and hidden from the dialog
         b.click("#vm-subVmTest1-filesystems-add")
@@ -107,10 +109,9 @@ class TestMachinesFilesystems(machineslib.VirtualMachinesCase):
         b.wait_in_text("tr[data-row-id='vm-subVmTest1-filesystem-/tmp/dir2/-dir2'] td[data-label='Mount tag']",
                        "dir2")
 
-        self.assertEqual('/tmp/dir2/',
-                         m.execute(xmllint_element.format(prop='devices/filesystem[2]/source/@dir')).strip())
-        self.assertEqual('dir2', m.execute(xmllint_element.format(prop='devices/filesystem[2]/target/@dir')).strip())
-        self.assertEqual('', m.execute(xmllint_element.format(prop='devices/filesystem[2]/binary/@xattr')).strip())
+        self.assertEqual('/tmp/dir2/', xmllint_element('devices/filesystem[2]/source/@dir'))
+        self.assertEqual('dir2', xmllint_element('devices/filesystem[2]/target/@dir'))
+        self.assertEqual('', xmllint_element('devices/filesystem[2]/binary/@xattr'))
 
         # Try to add a new shared filesystem with the same mount tag
         b.click("#vm-subVmTest1-filesystems-add")
@@ -133,7 +134,7 @@ class TestMachinesFilesystems(machineslib.VirtualMachinesCase):
         b.wait_not_present(".pf-v6-c-modal-box__body ")
 
         # Start VM and ensure that adding filesystem is disabled
-        b.click("#vm-subVmTest1-system-run")
+        b.click(f"#vm-subVmTest1-{connection}-run")
         b.wait_visible("#vm-subVmTest1-filesystems-add[aria-disabled=true]")
 
     def testDelete(self):
