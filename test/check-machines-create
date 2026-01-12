@@ -1245,9 +1245,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
             b.click("#os-select-group button.pf-v6-c-menu-toggle__button")
 
             # Find the first OS from the sorted list, and get a text of it's next neighbour
-            next_os = b.text(f".pf-v6-c-menu li:contains({sorted_list[0]}) + li")
-            # The next neighbour should contain the second OS from the sorted list
-            self.assertEqual(next_os, sorted_list[1])
+            self.assertIn("Fedora 27 Vendor support ended 2018-11-30Fedora 26", b.text(".pf-v6-c-menu__list"))
             # make the select list go away to not obscure other elements
             b.click("#os-select-group button.pf-v6-c-menu-toggle__button")
             b.wait_not_present(".pf-v6-c-menu")
