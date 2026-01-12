@@ -2692,8 +2692,8 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         b.click("#replace-spice-dialog-select-all")
         b.wait_not_present(".pf-v6-c-menu__item input:not(:checked)")
         # uncheck SpiceTwo
-        b.click(".pf-v6-c-menu__item:contains('SpiceTwo') input")
-        b.wait_visible(".pf-v6-c-menu__item:contains('SpiceTwo') input:not(:checked)")
+        b.click(".pf-v6-c-menu__item:contains('SpiceTwo')")
+        b.wait_in_text(".pf-v6-c-menu__item:has(input:not(:checked))", 'SpiceTwo')
 
         # ensure we don't have an alert for failed install of subVmTest1, as it would interfere with the pixel test;
         # this is unfortunately unpredictable
@@ -2727,8 +2727,8 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         self.performAction("SpiceTwo", "replace-spice")
         b.wait_text(".pf-v6-c-modal-box__title-text", "Replace SPICE devices")
         b.click("#replace-spice-dialog-select-all")
-        b.click(".pf-v6-c-menu__item:contains('SpiceTwo') input")
-        b.wait_visible(".pf-v6-c-menu__item:contains('SpiceTwo') input:not(:checked)")
+        b.click(".pf-v6-c-menu__item:contains('SpiceTwo')")
+        b.wait_in_text(".pf-v6-c-menu__item:has(input:not(:checked))", 'SpiceTwo')
         b.click("#replace-spice-dialog-confirm")
         b.wait_not_present(".pf-v6-c-modal-box")
         self.assertNotIn("spice", m.execute("virsh dumpxml --inactive SpiceThree"))
