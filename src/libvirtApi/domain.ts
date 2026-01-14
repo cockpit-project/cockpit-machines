@@ -1027,7 +1027,7 @@ export async function domainGetStartTime({
         const pidStr = await script(connectionName, `cat '${pidFile}'`);
         const pid = parseInt(pidStr.trim(), 10);
 
-        if (isNaN(pid)) {
+        if (isNaN(pid) || pid <= 0) {
             console.log("Invalid PID from pidfile:", pidStr);
             return null;
         }
@@ -1046,7 +1046,9 @@ export async function domainGetStartTime({
 
         // Get system boot time and clock ticks per second
         const bootTimeCmd = `awk '{print $1}' /proc/uptime`;
-        const ticksPerSecCmd = `getconf CLK_TCK || echo 100`;
+        // CLK_TCK is typically 100 on most systems, used as fallback
+        const DEFAULT_CLK_TCK = 100;
+        const ticksPerSecCmd = `getconf CLK_TCK || echo ${DEFAULT_CLK_TCK}`;
 
         const [uptimeStr, ticksPerSecStr] = await Promise.all([
             script(connectionName, bootTimeCmd),
