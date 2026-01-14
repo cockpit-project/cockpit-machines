@@ -9,6 +9,7 @@ import tempfile
 import traceback
 import xml.etree.ElementTree as ET
 from contextlib import contextmanager
+from urllib.parse import urlparse
 
 
 def virsh(connection, *args):
@@ -138,7 +139,7 @@ def prepare_installation_source(args):
     elif args['sourceType'] in ['disk_image', 'cloud']:
         params.append("--import")
     elif ((args['source'][0] == '/' and os.path.isfile(args['source'])) or
-            (args['sourceType'] == 'url' and args['source'].endswith(".iso"))):
+            (args['sourceType'] == 'url' and urlparse(args['source']).path.endswith(".iso"))):
         params += ['--cdrom', args['source']]
     else:
         params += ['--location', args['source']]

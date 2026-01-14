@@ -2,6 +2,7 @@
 
 import json
 import sys
+from urllib.parse import urlparse
 
 import gi
 
@@ -14,7 +15,7 @@ loader = Libosinfo.Loader()
 loader.process_default_path()
 db = loader.get_db()
 
-url_type_media = sys.argv[1].endswith(".iso")
+url_type_media = urlparse(sys.argv[1]).path.endswith(".iso")
 
 os = None
 res = {}
