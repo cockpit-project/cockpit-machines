@@ -1007,27 +1007,68 @@ export async function domainGetStartTime({
 }): Promise<Date | null> {
     const loggedUser = await cockpit.user();
 
-    /* The possible paths of logfiles path, as of libvirt 9.3.0 are defined in:
-        * https://gitlab.com/libvirt/libvirt/-/blob/v9.3.0/src/qemu/qemu_conf.c#L153
-        * There libvirt defines 3 possible directories where they can be located
-        * - /root/log/qemu/ - That is however only relevant for "qemu:///embed", and not cockpit's use case
-        * - /var/log/libvirt/qemu/ - For privileged (qemu:///system) VMs
-        * - ~/.cache/libvirt/qemu/logs - For non-privileged  (qemu:///session) VMs
-        */
-    const logFile = connectionName === "system" ? `/var/log/libvirt/qemu/${vmName}.log` : `${loggedUser.home}/.cache/libvirt/qemu/log/${vmName}.log`;
+    /* Get the VM start time from the QEMU process start time.
+     * This method works for all users (including libvirt group members)
+     * as it only requires reading /proc which is world-readable.
+     *
+     * The pidfiles are stored in:
+     * - /var/run/libvirt/qemu/ for system VMs
+     * - ~/.cache/libvirt/qemu/run/ for session VMs
+     */
+    const pidFile = connectionName === "system"
+        ? `/var/run/libvirt/qemu/${vmName}.pid`
+        : `${loggedUser.home}/.cache/libvirt/qemu/run/${vmName}.pid`;
 
     try {
         // Use libvirt APIs for getting VM start up time when it's implemented:
         // https://gitlab.com/libvirt/libvirt/-/issues/481
-        const line = await script(connectionName, `grep ': starting up' '${logFile}' | tail -1`);
 
-        // Line from a log with a start up time is expected to look like this:
-        // 2023-05-05 11:22:03.043+0000: starting up libvirt version: 8.6.0, package: 3.fc37 (Fedora Project, 2022-08-09-13:54:03, ), qemu version: 7.0.0qemu-7.0.0-9.fc37, kernel: 6.0.6-300.fc37.x86_64, hostname: fedora
+        // Read the PID from the pidfile
+        const pidStr = await script(connectionName, `cat '${pidFile}'`);
+        const pid = parseInt(pidStr.trim(), 10);
 
-        // Alternatively regex line.match(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/g) can be used
-        const timeStr = line.split(': starting up')[0];
-        const date = new Date(timeStr);
-        return isNaN(date.getTime()) ? null : date;
+        if (isNaN(pid)) {
+            console.log("Invalid PID from pidfile:", pidStr);
+            return null;
+        }
+
+        // Read process start time from /proc/<pid>/stat
+        // Field 22 contains starttime in clock ticks since system boot
+        // We use awk to extract it because the process name (field 2) can contain spaces and parentheses
+        const statCmd = `awk '{print $22}' /proc/${pid}/stat`;
+        const startTimeTicks = await script(connectionName, statCmd);
+        const ticks = parseInt(startTimeTicks.trim(), 10);
+
+        if (isNaN(ticks)) {
+            console.log("Invalid start time ticks:", startTimeTicks);
+            return null;
+        }
+
+        // Get system boot time and clock ticks per second
+        const bootTimeCmd = `awk '{print $1}' /proc/uptime`;
+        const ticksPerSecCmd = `getconf CLK_TCK || echo 100`;
+
+        const [uptimeStr, ticksPerSecStr] = await Promise.all([
+            script(connectionName, bootTimeCmd),
+            script(connectionName, ticksPerSecCmd)
+        ]);
+
+        const uptime = parseFloat(uptimeStr.trim());
+        const ticksPerSec = parseInt(ticksPerSecStr.trim(), 10);
+
+        if (isNaN(uptime) || isNaN(ticksPerSec)) {
+            console.log("Invalid uptime or ticks per second:", uptimeStr, ticksPerSecStr);
+            return null;
+        }
+
+        // Calculate process start time
+        // Process start time = current time - uptime + (start_ticks / ticks_per_sec)
+        const processStartSecs = ticks / ticksPerSec;
+        const currentTime = Date.now();
+        const systemBootTime = currentTime - (uptime * 1000);
+        const processStartTime = new Date(systemBootTime + (processStartSecs * 1000));
+
+        return processStartTime;
     } catch (ex) {
         console.log("Unable to detect domain start time:", ex);
         return null;
