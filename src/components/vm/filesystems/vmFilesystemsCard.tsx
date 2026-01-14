@@ -39,7 +39,7 @@ import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { FileAutoComplete } from "cockpit-components-file-autocomplete.jsx";
 import { useDialogs } from 'dialogs.jsx';
 
-import { virtXmlAdd, virtXmlRemove, virtXmlEdit } from "../../../libvirtApi/domain.js";
+import { virtXmlHotAdd, virtXmlHotRemove, virtXmlEdit } from "../../../libvirtApi/domain.js";
 import { vmId } from "../../../helpers.js";
 import { DeleteResourceButton } from '../../common/deleteResource.jsx';
 import { InfoPopover } from '../../common/infoPopover.jsx';
@@ -62,7 +62,6 @@ export const VmFilesystemsCard = ({
         const actions = (
             <div className='machines-listing-actions'>
                 <DeleteResourceButton objectId={rowId}
-                                      disabled={vm.state != 'shut off'}
                                       actionName={_("Remove")}
                                       dialogProps={{
                                           title: _("Remove filesystem?"),
@@ -73,7 +72,7 @@ export const VmFilesystemsCard = ({
                                               { name: _("Mount tag"), value: <span className="ct-monospace">{filesystemTarget}</span> }
                                           ],
                                           actionName: _("Remove"),
-                                          deleteHandler: () => virtXmlRemove(
+                                          deleteHandler: () => virtXmlHotRemove(
                                               vm,
                                               "filesystem",
                                               { target: { dir: filesystemTarget } }
@@ -115,16 +114,22 @@ export const VmFilesystemActions = ({
         Dialogs.show(<VmFilesystemAddModal vm={vm} />);
     }
 
+    /* We can hot-add filesystems, but we can not hot-add a
+       memoryBacking element. But if it is there, we assume we don't
+       need to change it.
+     */
+    const enabled = vm.memoryBacking || vm.state == 'shut off';
+
     const addButton = (
         <Button id={`${idPrefix}-add`}
-                isAriaDisabled={vm.state != 'shut off'}
+                isAriaDisabled={!enabled}
                 onClick={open}
                 variant="secondary">
             {_("Add shared directory")}
         </Button>
     );
 
-    return vm.state == 'shut off' ? addButton : <Tooltip content={_("Adding shared directories is possible only when the guest is shut off")}>{addButton}</Tooltip>;
+    return enabled ? addButton : <Tooltip content={_("Adding shared directories is possible only when the guest is shut off")}>{addButton}</Tooltip>;
 };
 
 interface ValidationFailed {
@@ -158,11 +163,13 @@ const VmFilesystemAddModal = ({
 
         if (Object.getOwnPropertyNames(validationFailed).length == 0) {
             try {
-                await virtXmlEdit(vm, "memorybacking", 1, {
-                    access: { mode: "shared" },
-                    source: { type: "memfd" },
-                });
-                await virtXmlAdd(vm, "filesystem", {
+                if (!vm.memoryBacking) {
+                    await virtXmlEdit(vm, "memorybacking", 1, {
+                        access: { mode: "shared" },
+                        source: { type: "memfd" },
+                    });
+                }
+                await virtXmlHotAdd(vm, "filesystem", {
                     type: "mount",
                     accessmode: "passthrough",
                     driver: { type: "virtiofs" },

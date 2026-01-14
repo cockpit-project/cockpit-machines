@@ -37,7 +37,7 @@ class TestMachinesFilesystems(machineslib.VirtualMachinesCase):
 
         self.login_and_go("/machines")
         self.waitPageInit()
-        self.createVm("subVmTest1", running=False, connection=connection)
+        self.createVm("subVmTest1", connection=connection)
         self.goToVmPage("subVmTest1", connectionName=connection)
         # wait until page initialized
         b.wait_visible("#vm-subVmTest1-hostdevs")
@@ -46,6 +46,17 @@ class TestMachinesFilesystems(machineslib.VirtualMachinesCase):
             # libvirt is too old
             b.wait_not_present("#vm-subVmTest1-filesystems-add")
             return
+
+        # Initially, the VM is missing a suitable memoryBacking
+        # config, which can't be modified while it is running.  The
+        # button should be disabled.
+
+        b.wait_visible("#vm-subVmTest1-filesystems-add[aria-disabled=true]")
+
+        # Stopping the machine enables it.
+
+        self.performAction("subVmTest1", "forceOff", connectionName=connection)
+        b.wait_visible("#vm-subVmTest1-filesystems-add:not([aria-disabled=true])")
 
         # Form validation
         b.click("#vm-subVmTest1-filesystems-add")
@@ -67,7 +78,9 @@ class TestMachinesFilesystems(machineslib.VirtualMachinesCase):
 
         b.click("#vm-subVmTest1-filesystems-modal-cancel")
 
-        # Add a new shared filesystem
+        # Add a new shared filesystem while the VM is off. This will
+        # add the necessary memoryBacking config.
+
         b.click("#vm-subVmTest1-filesystems-add")
         b.set_file_autocomplete_val("#vm-subVmTest1-filesystems-modal-source-group", "/tmp/dir1/")
         b.set_input_text("#vm-subVmTest1-filesystems-modal-mountTag", "dir1")
@@ -95,7 +108,13 @@ class TestMachinesFilesystems(machineslib.VirtualMachinesCase):
         self.assertEqual('on', xmllint_element('devices/filesystem/binary/@xattr'))
         self.assertEqual('shared', xmllint_element('memoryBacking/access/@mode'))
 
-        # Add a new shared filesystem - now the memoryBacking is configured and hidden from the dialog
+        # Start the machine. Adding filesystems should still be
+        # possible since it now has a memoryBacking config.
+
+        b.click(f"#vm-subVmTest1-{connection}-run")
+        b.wait_in_text(f"#vm-subVmTest1-{connection}-state", "Running")
+
+        # Add a new shared filesystem
         b.click("#vm-subVmTest1-filesystems-add")
         b.set_file_autocomplete_val("#vm-subVmTest1-filesystems-modal-source-group", "/tmp/dir2/")
         b.set_input_text("#vm-subVmTest1-filesystems-modal-mountTag", "dir2")
@@ -132,10 +151,6 @@ class TestMachinesFilesystems(machineslib.VirtualMachinesCase):
         b.wait_not_present(".pf-v6-c-menu")
         b.click("#vm-subVmTest1-filesystems-modal-cancel")
         b.wait_not_present(".pf-v6-c-modal-box__body ")
-
-        # Start VM and ensure that adding filesystem is disabled
-        b.click(f"#vm-subVmTest1-{connection}-run")
-        b.wait_visible("#vm-subVmTest1-filesystems-add[aria-disabled=true]")
 
     def testDelete(self):
         b = self.browser
