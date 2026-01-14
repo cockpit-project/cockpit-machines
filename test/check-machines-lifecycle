@@ -462,11 +462,11 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
 
         self.performAction(name, "delete")
 
-        b.wait_visible(f"#vm-{name}-delete-modal-dialog .pf-v6-c-modal-box__body:contains(The VM {name} is running)")
-        b.wait_visible(f"#vm-{name}-delete-modal-dialog ul li:first-child .disk-source-file:contains({img2})")
+        b.wait_in_text(f"#vm-{name}-delete-modal-dialog .pf-v6-c-modal-box__body", f"The VM {name} is running")
+        b.wait_in_text(f"#vm-{name}-delete-modal-dialog ul li:first-child .disk-source-file", img2)
         # virsh attach-disk does not create disks of type volume
-        b.wait_visible(f"#vm-{name}-delete-modal-dialog .disk-source-volume:contains({secondDiskVolName})")
-        b.wait_visible(f"#vm-{name}-delete-modal-dialog .disk-source-pool:contains({poolName})")
+        b.wait_in_text(f"#vm-{name}-delete-modal-dialog .disk-source-volume", secondDiskVolName)
+        b.wait_in_text(f"#vm-{name}-delete-modal-dialog .disk-source-pool", poolName)
         b.assert_pixels(f"#vm-{name}-delete-modal-dialog", "vm-delete-dialog", skip_layouts=["rtl"])
         b.click(f"#vm-{name}-delete-modal-dialog button:contains(Delete)")
         b.wait_not_present(f"#vm-{name}-delete-modal-dialog")
@@ -606,7 +606,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
 
         self.performAction(name, "delete")
 
-        b.wait_visible(f"#vm-{name}-delete-modal-dialog .disk-source-file:contains({img2})")
+        b.wait_in_text(f"#vm-{name}-delete-modal-dialog .disk-source-file", img2)
         b.wait_visible(f"#vm-{name}-delete-modal-dialog input[name='check-action-vda']:checked")
         b.click(f"#vm-{name}-delete-modal-dialog button:contains(Delete)")
         b.wait_not_present(f"#vm-{name}-delete-modal-dialog")
