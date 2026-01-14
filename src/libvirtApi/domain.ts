@@ -1031,7 +1031,10 @@ export async function domainGetStartTime({
         const pidStr = await script(connectionName, `cat '${pidFile}'`);
         const pid = parseInt(pidStr.trim(), 10);
 
-        if (isNaN(pid) || pid <= 0) {
+        // Validate PID: must be a positive integer within reasonable bounds
+        // Linux PIDs are typically limited to PID_MAX_LIMIT (4194304 by default)
+        const MAX_PID = 4194304;
+        if (isNaN(pid) || pid <= 0 || pid > MAX_PID) {
             console.log("Invalid PID from pidfile:", pidStr);
             return null;
         }
@@ -1039,6 +1042,7 @@ export async function domainGetStartTime({
         // Read process start time from /proc/<pid>/stat
         // Field 22 contains starttime in clock ticks since system boot
         // We use awk to extract it because the process name (field 2) can contain spaces and parentheses
+        // The PID is validated to be a safe integer, so no escaping needed
         const statCmd = `awk '{print $22}' /proc/${pid}/stat`;
         const startTimeTicks = await script(connectionName, statCmd);
         const ticks = parseInt(startTimeTicks.trim(), 10);
