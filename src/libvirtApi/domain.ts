@@ -1062,7 +1062,8 @@ export async function domainGetStartTime({
         }
 
         // Calculate process start time
-        // Process start time = current time - uptime + (start_ticks / ticks_per_sec)
+        // System boot time = current time - uptime
+        // Process start time = system boot time + (start_ticks / ticks_per_sec)
         const processStartSecs = ticks / ticksPerSec;
         const currentTime = Date.now();
         const systemBootTime = currentTime - (uptime * 1000);
