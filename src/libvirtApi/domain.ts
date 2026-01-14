@@ -37,6 +37,7 @@ import type {
 import type { BootOrderDevice } from '../helpers.js';
 
 import installVmScript from '../scripts/install_machine.py';
+import getVmStartTimeScript from '../scripts/get_vm_start_time.py';
 
 import {
     getDiskXML,
@@ -81,10 +82,6 @@ import { snapshotGetAll } from './snapshot.js';
 import { downloadRhelImage, getRhelImageUrl } from './rhel-images.js';
 import { DBusProps, get_boolean_prop, call, Enum, timeout } from './helpers.js';
 import { CLOUD_IMAGE, DOWNLOAD_AN_OS, LOCAL_INSTALL_MEDIA_SOURCE, needsRHToken } from "../components/create-vm-dialog/createVmDialogUtils.js";
-
-// Clock ticks per second - typical default value on most Linux systems
-const DEFAULT_CLK_TCK = 100;
-const MILLIS_PER_SECOND = 1000;
 
 export const domainCanInstall = (vmState: VMState, hasInstallPhase: boolean) => vmState != 'running' && hasInstallPhase;
 export const domainCanReset = (vmState: VMState) => vmState == 'running' || vmState == 'blocked' || vmState == 'paused';
@@ -1027,58 +1024,22 @@ export async function domainGetStartTime({
         // Use libvirt APIs for getting VM start up time when it's implemented:
         // https://gitlab.com/libvirt/libvirt/-/issues/481
 
-        // Read the PID from the pidfile
-        const pidStr = await script(connectionName, `cat '${pidFile}'`);
-        const pid = parseInt(pidStr.trim(), 10);
+        // Run Python script to get the start time
+        const result = await python.spawn(
+            getVmStartTimeScript,
+            [pidFile],
+            {
+                err: "message",
+                environ: ['LC_ALL=C.UTF-8'],
+                ...(connectionName === "system" ? { superuser: "try" } : {})
+            }
+        );
 
-        // Validate PID: must be a positive integer within reasonable bounds
-        // Linux PIDs are typically limited to PID_MAX_LIMIT (4194304 by default)
-        const MAX_PID = 4194304;
-        if (isNaN(pid) || pid <= 0 || pid > MAX_PID) {
-            console.log("Invalid PID from pidfile:", pidStr);
-            return null;
+        const parsed = JSON.parse(result);
+        if (parsed.startTime) {
+            return new Date(parsed.startTime);
         }
-
-        // Read process start time from /proc/<pid>/stat
-        // Field 22 contains starttime in clock ticks since system boot
-        // We use awk to extract it because the process name (field 2) can contain spaces and parentheses
-        // The PID is validated to be a safe integer, so no escaping needed
-        const statCmd = `awk '{print $22}' /proc/${pid}/stat`;
-        const startTimeTicks = await script(connectionName, statCmd);
-        const ticks = parseInt(startTimeTicks.trim(), 10);
-
-        if (isNaN(ticks)) {
-            console.log("Invalid start time ticks:", startTimeTicks);
-            return null;
-        }
-
-        // Get system uptime (seconds since boot) and clock ticks per second
-        const uptimeCmd = `awk '{print $1}' /proc/uptime`;
-        const ticksPerSecCmd = `getconf CLK_TCK || echo ${DEFAULT_CLK_TCK}`;
-
-        const [uptimeStr, ticksPerSecStr] = await Promise.all([
-            script(connectionName, uptimeCmd),
-            script(connectionName, ticksPerSecCmd)
-        ]);
-
-        const systemUptimeSeconds = parseFloat(uptimeStr.trim());
-        const ticksPerSec = parseInt(ticksPerSecStr.trim(), 10);
-
-        if (isNaN(systemUptimeSeconds) || isNaN(ticksPerSec)) {
-            console.log("Invalid uptime or ticks per second:", uptimeStr, ticksPerSecStr);
-            return null;
-        }
-
-        // Calculate process start time
-        // System boot time = current time - system uptime
-        // Process start time (seconds since boot) = start ticks / ticks per second
-        // Process start time (absolute) = system boot time + process start seconds since boot
-        const processStartSecondsSinceBoot = ticks / ticksPerSec;
-        const currentTime = Date.now();
-        const systemBootTime = currentTime - (systemUptimeSeconds * MILLIS_PER_SECOND);
-        const processStartTime = new Date(systemBootTime + (processStartSecondsSinceBoot * MILLIS_PER_SECOND));
-
-        return processStartTime;
+        return null;
     } catch (ex) {
         console.log("Unable to detect domain start time:", ex);
         return null;
