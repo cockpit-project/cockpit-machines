@@ -379,7 +379,9 @@ export const VmActions = ({
     if (domainCanInstall(state, hasInstallPhase)) {
         install = (
             <Button
-                key='action-install' variant="secondary"
+                key='action-install'
+                variant="secondary"
+                size="sm"
                 isLoading={!!vm.installInProgress}
                 isDisabled={!!vm.installInProgress}
                 onClick={() => onInstall(vm)} id={`${id}-install`}
