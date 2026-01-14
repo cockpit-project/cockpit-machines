@@ -82,6 +82,10 @@ import { downloadRhelImage, getRhelImageUrl } from './rhel-images.js';
 import { DBusProps, get_boolean_prop, call, Enum, timeout } from './helpers.js';
 import { CLOUD_IMAGE, DOWNLOAD_AN_OS, LOCAL_INSTALL_MEDIA_SOURCE, needsRHToken } from "../components/create-vm-dialog/createVmDialogUtils.js";
 
+// Clock ticks per second - typical default value on most Linux systems
+const DEFAULT_CLK_TCK = 100;
+const MILLIS_PER_SECOND = 1000;
+
 export const domainCanInstall = (vmState: VMState, hasInstallPhase: boolean) => vmState != 'running' && hasInstallPhase;
 export const domainCanReset = (vmState: VMState) => vmState == 'running' || vmState == 'blocked' || vmState == 'paused';
 export const domainIsRunning = (vmState: VMState) => domainCanReset(vmState);
@@ -1046,8 +1050,6 @@ export async function domainGetStartTime({
 
         // Get system boot time and clock ticks per second
         const bootTimeCmd = `awk '{print $1}' /proc/uptime`;
-        // CLK_TCK is typically 100 on most systems, used as fallback
-        const DEFAULT_CLK_TCK = 100;
         const ticksPerSecCmd = `getconf CLK_TCK || echo ${DEFAULT_CLK_TCK}`;
 
         const [uptimeStr, ticksPerSecStr] = await Promise.all([
@@ -1068,8 +1070,8 @@ export async function domainGetStartTime({
         // Process start time = system boot time + (start_ticks / ticks_per_sec)
         const processStartSecs = ticks / ticksPerSec;
         const currentTime = Date.now();
-        const systemBootTime = currentTime - (uptime * 1000);
-        const processStartTime = new Date(systemBootTime + (processStartSecs * 1000));
+        const systemBootTime = currentTime - (uptime * MILLIS_PER_SECOND);
+        const processStartTime = new Date(systemBootTime + (processStartSecs * MILLIS_PER_SECOND));
 
         return processStartTime;
     } catch (ex) {
