@@ -1048,30 +1048,31 @@ export async function domainGetStartTime({
             return null;
         }
 
-        // Get system boot time and clock ticks per second
-        const bootTimeCmd = `awk '{print $1}' /proc/uptime`;
+        // Get system uptime (seconds since boot) and clock ticks per second
+        const uptimeCmd = `awk '{print $1}' /proc/uptime`;
         const ticksPerSecCmd = `getconf CLK_TCK || echo ${DEFAULT_CLK_TCK}`;
 
         const [uptimeStr, ticksPerSecStr] = await Promise.all([
-            script(connectionName, bootTimeCmd),
+            script(connectionName, uptimeCmd),
             script(connectionName, ticksPerSecCmd)
         ]);
 
-        const uptime = parseFloat(uptimeStr.trim());
+        const systemUptimeSeconds = parseFloat(uptimeStr.trim());
         const ticksPerSec = parseInt(ticksPerSecStr.trim(), 10);
 
-        if (isNaN(uptime) || isNaN(ticksPerSec)) {
+        if (isNaN(systemUptimeSeconds) || isNaN(ticksPerSec)) {
             console.log("Invalid uptime or ticks per second:", uptimeStr, ticksPerSecStr);
             return null;
         }
 
         // Calculate process start time
-        // System boot time = current time - uptime
-        // Process start time = system boot time + (start_ticks / ticks_per_sec)
-        const processStartSecs = ticks / ticksPerSec;
+        // System boot time = current time - system uptime
+        // Process start time (seconds since boot) = start ticks / ticks per second
+        // Process start time (absolute) = system boot time + process start seconds since boot
+        const processStartSecondsSinceBoot = ticks / ticksPerSec;
         const currentTime = Date.now();
-        const systemBootTime = currentTime - (uptime * MILLIS_PER_SECOND);
-        const processStartTime = new Date(systemBootTime + (processStartSecs * MILLIS_PER_SECOND));
+        const systemBootTime = currentTime - (systemUptimeSeconds * MILLIS_PER_SECOND);
+        const processStartTime = new Date(systemBootTime + (processStartSecondsSinceBoot * MILLIS_PER_SECOND));
 
         return processStartTime;
     } catch (ex) {
