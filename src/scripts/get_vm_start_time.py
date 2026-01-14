@@ -36,14 +36,12 @@ def get_vm_start_time(pid_file):
         # Parse the stat file - split by spaces but handle process name in parentheses
         # The process name (field 2) can contain spaces, so we need to be careful
         # Fields after the closing parenthesis are numbered from 3 onwards
-        # Field 22 is at index 21 (0-based) after the closing parenthesis
+        # Field 22 is at index 19 in fields_after_name (since field 3 is at index 0: 22-3=19)
         paren_close = stat_data.rfind(')')
         if paren_close == -1:
             return None
         
         fields_after_name = stat_data[paren_close + 1:].split()
-        # Field 22 in the original format is at index 19 in fields_after_name
-        # (field 3 is at index 0, so field 22 is at index 19)
         if len(fields_after_name) < 20:
             return None
         
@@ -57,7 +55,7 @@ def get_vm_start_time(pid_file):
         # Get clock ticks per second
         try:
             ticks_per_sec = os.sysconf(os.sysconf_names['SC_CLK_TCK'])
-        except (KeyError, AttributeError):
+        except (KeyError, AttributeError, OSError):
             ticks_per_sec = 100  # Default fallback
         
         # Calculate process start time
@@ -72,7 +70,7 @@ def get_vm_start_time(pid_file):
         # Return ISO format timestamp
         return time.strftime('%Y-%m-%dT%H:%M:%S.000Z', time.gmtime(process_start_time))
     
-    except (IOError, OSError, ValueError, IndexError) as e:
+    except (IOError, OSError, ValueError, IndexError):
         # Unable to determine start time
         return None
 
