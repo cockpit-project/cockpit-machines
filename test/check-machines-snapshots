@@ -258,7 +258,7 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
                                f"{self.name} will be deleted from {self.vm_name}")
                 b.click('.pf-v6-c-modal-box__footer button:contains("Delete")')
                 b.wait_not_present(".pf-v6-c-modal-box")
-                b.wait_not_present(f"#vm-subVmTest1-snapshot-{self.snap_num}-name:contains({self.name})")
+                b.wait_not_in_text("#vm-subVmTest1-snapshots", self.name)
 
         # No Snapshots present
         b.wait_visible("#vm-subVmTest1-add-snapshot-button")
