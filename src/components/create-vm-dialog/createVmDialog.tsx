@@ -1220,7 +1220,9 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
             osInfoList: [],
             vmName: '',
             suggestedVmName: '',
-            connectionName: LIBVIRT_SYSTEM_CONNECTION,
+            connectionName: (appState.systemSocketInactive
+                ? LIBVIRT_SESSION_CONNECTION
+                : LIBVIRT_SYSTEM_CONNECTION),
             sourceType: defaultSourceType,
             source: '',
             os: undefined,
@@ -1510,7 +1512,9 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
                     id='connection'
                     connectionName={this.state.connectionName}
                     onValueChanged={this.onValueChanged}
-                    showInfoHelper />
+                    showInfoHelper
+                    isReadonly={appState.systemSocketInactive}
+                />
                 <SourceRow
                     connectionName={this.state.connectionName}
                     networks={networks.filter(network => network.connectionName == this.state.connectionName)}
