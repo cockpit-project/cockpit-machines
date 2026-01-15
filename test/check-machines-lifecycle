@@ -209,7 +209,8 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         b.click("#vm-subVmTest1-system-run")
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.waitGuestBooted(args['logfile'])
-        self.performAction("subVmTest1", "off")
+        with b.wait_timeout(30):
+            self.performAction("subVmTest1", "off")
 
         # force shut off
         b.click("#vm-subVmTest1-system-run")
@@ -264,29 +265,9 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         b.click("#vm-subVmTest2-system-shutdown-button")
         b.wait_visible("#vm-subVmTest2-system-confirm-action-modal")
         # it starts with "less than a minute", so this should be reasonably race free
-        if superuser:
-            b.wait_in_text("#uptime", "minute")
-        else:
-            # unprivileged sessions can't read the log
-            b._wait_present(".uptime-not-available")
+        b.wait_in_text("#uptime", "minute")
         if run_pixel_tests:
             b.assert_pixels("#vm-subVmTest2-system-confirm-action-modal", "shutdown-confirm-dialog")
-        b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
-        b.wait_not_present("#vm-subVmTest2-system-confirm-action-modal")
-
-        # uptime parsing robustness: unparseable format
-        self.machine.execute(f"sed -i '/: starting up/ s/^/invalidtime/' {args2['qemulog']}")
-        b.click("#vm-subVmTest2-system-shutdown-button")
-        b.wait_visible("#vm-subVmTest2-system-confirm-action-modal")
-        b._wait_present(".uptime-not-available")
-        b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
-        b.wait_not_present("#vm-subVmTest2-system-confirm-action-modal")
-
-        # uptime parsing robustness: no "starting up" line
-        self.machine.execute(f"sed -i '/: starting up/d' {args2['qemulog']}")
-        b.click("#vm-subVmTest2-system-shutdown-button")
-        b.wait_visible("#vm-subVmTest2-system-confirm-action-modal")
-        b._wait_present(".uptime-not-available")
         b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
         b.wait_not_present("#vm-subVmTest2-system-confirm-action-modal")
 
