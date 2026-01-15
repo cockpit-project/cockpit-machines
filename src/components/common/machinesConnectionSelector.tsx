@@ -39,13 +39,15 @@ interface MachinesConnectionSelectorProps {
     connectionName: ConnectionName,
     id: string,
     showInfoHelper?: boolean,
+    isReadonly?: boolean,
 }
 
 export const MachinesConnectionSelector = ({
     onValueChanged,
     connectionName,
     id,
-    showInfoHelper
+    showInfoHelper,
+    isReadonly,
 }: MachinesConnectionSelectorProps) => {
     cockpit.assert(appState.loggedUser);
     if (appState.loggedUser.id == 0)
@@ -56,7 +58,7 @@ export const MachinesConnectionSelector = ({
                    isInline
                    id={id}
                    className="machines-connection-selector"
-                   {...showInfoHelper
+                   {...(showInfoHelper && !isReadonly)
                        ? {
                            labelHelp:
                            <InfoPopover id="machines-connection-selector-popover"
@@ -100,16 +102,25 @@ export const MachinesConnectionSelector = ({
                        }
                        : {}
                    }>
-            <Radio isChecked={connectionName === LIBVIRT_SYSTEM_CONNECTION}
-                   onChange={() => onValueChanged('connectionName', LIBVIRT_SYSTEM_CONNECTION)}
-                   name="connectionName"
-                   id="connectionName-system"
-                   label={rephraseUI("connections", LIBVIRT_SYSTEM_CONNECTION)} />
-            <Radio isChecked={connectionName == LIBVIRT_SESSION_CONNECTION}
-                   onChange={() => onValueChanged('connectionName', LIBVIRT_SESSION_CONNECTION)}
-                   name="connectionName"
-                   id="connectionName-session"
-                   label={rephraseUI("connections", LIBVIRT_SESSION_CONNECTION)} />
+            { isReadonly
+                ? rephraseUI("connections", connectionName)
+                : <>
+                    <Radio
+                        isChecked={connectionName === LIBVIRT_SYSTEM_CONNECTION}
+                        onChange={() => onValueChanged('connectionName', LIBVIRT_SYSTEM_CONNECTION)}
+                        name="connectionName"
+                        id="connectionName-system"
+                        label={rephraseUI("connections", LIBVIRT_SYSTEM_CONNECTION)}
+                    />
+                    <Radio
+                        isChecked={connectionName == LIBVIRT_SESSION_CONNECTION}
+                        onChange={() => onValueChanged('connectionName', LIBVIRT_SESSION_CONNECTION)}
+                        name="connectionName"
+                        id="connectionName-session"
+                        label={rephraseUI("connections", LIBVIRT_SESSION_CONNECTION)}
+                    />
+                </>
+            }
         </FormGroup>
     );
 };
