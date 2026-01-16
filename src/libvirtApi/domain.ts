@@ -112,16 +112,6 @@ function spawn(connectionName: ConnectionName, args: string[]): cockpit.Spawn<st
         });
 }
 
-function script(connectionName: ConnectionName, script: string): cockpit.Spawn<string> {
-    return cockpit.script(
-        script,
-        undefined,
-        {
-            err: "message",
-            ...(connectionName === "system" ? { superuser: "try" } : { })
-        });
-}
-
 /* Running virt-xml
 
    The virtXmlAdd, virtXmlEdit, etc family of functions can be used to
@@ -200,6 +190,11 @@ interface virtXmlAction {
     values: unknown,
 }
 
+function shlex_quote(str: string): string {
+    // yay, command line apis...
+    return "'" + str.replaceAll("'", "'\"'\"'") + "'";
+}
+
 async function runVirtXml(
     vm: VM,
     actions: virtXmlAction[],
@@ -208,11 +203,6 @@ async function runVirtXml(
     // We don't pass the arguments for virt-xml through a shell, but
     // virt-xml does its own parsing with the Python shlex module. So
     // we need to do the equivalent of shlex.quote here.
-
-    function shlex_quote(str: string): string {
-        // yay, command line apis...
-        return "'" + str.replaceAll("'", "'\"'\"'") + "'";
-    }
 
     function encode_into(args: string[], key: string, val: unknown) {
         if (typeof val == "number" || typeof val == "string" || val === true) {
@@ -1005,29 +995,27 @@ export async function domainGetStartTime({
     connectionName: ConnectionName,
     vmName: string,
 }): Promise<Date | null> {
-    const loggedUser = await cockpit.user();
+    const quotedName = shlex_quote(vmName);
+    let pidFile;
+    if (connectionName == "system")
+        pidFile = `/run/libvirt/qemu/${quotedName}.pid`;
+    else
+        pidFile = `\${XDG_RUNTIME_DIR:/run/user/$UID}/libvirt/qemu/run/${quotedName}.pid`;
 
-    /* The possible paths of logfiles path, as of libvirt 9.3.0 are defined in:
-        * https://gitlab.com/libvirt/libvirt/-/blob/v9.3.0/src/qemu/qemu_conf.c#L153
-        * There libvirt defines 3 possible directories where they can be located
-        * - /root/log/qemu/ - That is however only relevant for "qemu:///embed", and not cockpit's use case
-        * - /var/log/libvirt/qemu/ - For privileged (qemu:///system) VMs
-        * - ~/.cache/libvirt/qemu/logs - For non-privileged  (qemu:///session) VMs
-        */
-    const logFile = connectionName === "system" ? `/var/log/libvirt/qemu/${vmName}.log` : `${loggedUser.home}/.cache/libvirt/qemu/log/${vmName}.log`;
+    const cmd = `ps --date-format %s -o lstart= $(cat ${pidFile})`;
 
     try {
-        // Use libvirt APIs for getting VM start up time when it's implemented:
-        // https://gitlab.com/libvirt/libvirt/-/issues/481
-        const line = await script(connectionName, `grep ': starting up' '${logFile}' | tail -1`);
+        const result = await cockpit.script(
+            cmd,
+            [],
+            {
+                err: "message",
+                ...(connectionName === "system" ? { superuser: "try" } : { })
+            }
+        );
 
-        // Line from a log with a start up time is expected to look like this:
-        // 2023-05-05 11:22:03.043+0000: starting up libvirt version: 8.6.0, package: 3.fc37 (Fedora Project, 2022-08-09-13:54:03, ), qemu version: 7.0.0qemu-7.0.0-9.fc37, kernel: 6.0.6-300.fc37.x86_64, hostname: fedora
-
-        // Alternatively regex line.match(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/g) can be used
-        const timeStr = line.split(': starting up')[0];
-        const date = new Date(timeStr);
-        return isNaN(date.getTime()) ? null : date;
+        const startTime = parseFloat(result.trim()); // seconds since epoch
+        return isNaN(startTime) ? null : new Date(startTime * 1000);
     } catch (ex) {
         console.log("Unable to detect domain start time:", ex);
         return null;
