@@ -37,7 +37,6 @@ import type {
 import type { BootOrderDevice } from '../helpers.js';
 
 import installVmScript from '../scripts/install_machine.py';
-import getVmStartTimeScript from '../scripts/get_vm_start_time.py';
 
 import {
     getDiskXML,
@@ -191,6 +190,11 @@ interface virtXmlAction {
     values: unknown,
 }
 
+function shlex_quote(str: string): string {
+    // yay, command line apis...
+    return "'" + str.replaceAll("'", "'\"'\"'") + "'";
+}
+
 async function runVirtXml(
     vm: VM,
     actions: virtXmlAction[],
@@ -199,11 +203,6 @@ async function runVirtXml(
     // We don't pass the arguments for virt-xml through a shell, but
     // virt-xml does its own parsing with the Python shlex module. So
     // we need to do the equivalent of shlex.quote here.
-
-    function shlex_quote(str: string): string {
-        // yay, command line apis...
-        return "'" + str.replaceAll("'", "'\"'\"'") + "'";
-    }
 
     function encode_into(args: string[], key: string, val: unknown) {
         if (typeof val == "number" || typeof val == "string" || val === true) {
@@ -996,14 +995,24 @@ export async function domainGetStartTime({
     connectionName: ConnectionName,
     vmName: string,
 }): Promise<Date | null> {
+    const quotedName = shlex_quote(vmName);
+    let pidFile;
+    if (connectionName == "system")
+        pidFile = `/run/libvirt/qemu/${quotedName}.pid`;
+    else
+        pidFile = `\${XDG_RUNTIME_DIR:/run/user/$UID}/libvirt/qemu/run/${quotedName}.pid`;
+
+    const cmd = `ps --date-format %s -o lstart= $(cat ${pidFile})`;
+
     try {
-        const result = await python.spawn(
-            getVmStartTimeScript,
-            [connectionName, vmName],
+        const result = await cockpit.script(
+            cmd,
+            [],
             {
                 err: "message",
                 ...(connectionName === "system" ? { superuser: "try" } : { })
-            });
+            }
+        );
 
         const startTime = parseFloat(result.trim()); // seconds since epoch
         return isNaN(startTime) ? null : new Date(startTime * 1000);
