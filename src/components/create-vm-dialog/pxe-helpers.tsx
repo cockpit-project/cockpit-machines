@@ -39,6 +39,7 @@ function filterVirtualBridgesFromNetNodeDevices(
     const libvirtVirBridges = getLibvirtNetworkBridges(virtualNetworks);
 
     return netNodeDevices.filter(netNodeDevice => {
+        cockpit.assert(netNodeDevice.capability.type == "net");
         if (!netNodeDevice.capability.interface || !netNodeDevice.capability.interface.endsWith('-nic'))
             return true;
 
@@ -130,8 +131,8 @@ export function getPXEInitialNetworkSource(nodeDevices: NodeDevice[], virtualNet
     );
 
     // Don't use localhost as default PXE source
-    const source = netNodeDevices.find(dev => dev.capability.interface !== "lo");
-    if (source)
+    const source = netNodeDevices.find(dev => dev.capability.type == "net" && dev.capability.interface !== "lo");
+    if (source && source.capability.type == "net")
         return cockpit.format('type=direct,source=$0,source.mode=bridge', source.capability.interface);
 }
 
@@ -155,6 +156,7 @@ export function getPXENetworkRows(nodeDevices: NodeDevice[], virtualNetworks: Ne
     });
 
     const netNodeDevicesRows = netNodeDevices.map(netNodeDevice => {
+        cockpit.assert(netNodeDevice.capability.type == "net");
         const iface = netNodeDevice.capability.interface;
         const data = cockpit.format('type=direct,source=$0,source.mode=bridge', iface);
         const label = cockpit.format("$0 $1: macvtap", _("Host device"), iface);

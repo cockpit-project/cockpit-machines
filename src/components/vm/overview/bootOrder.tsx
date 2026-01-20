@@ -148,6 +148,7 @@ const DeviceRow = ({
             const nodeDev = nodeDevs[0];
             switch (device.device.type) {
             case "usb": {
+                cockpit.assert(nodeDev.capability.type == "usb_device");
                 addOptional(additionalInfo, device.device.type, _("Type"));
                 addOptional(additionalInfo, nodeDev.capability.vendor?._value, _("Vendor"));
                 addOptional(additionalInfo, nodeDev.capability.product?._value, _("Product"));
@@ -163,6 +164,7 @@ const DeviceRow = ({
                 break;
             }
             case "pci": {
+                cockpit.assert(nodeDev.capability.type == "pci");
                 addOptional(additionalInfo, device.device.type, _("Type"));
                 addOptional(additionalInfo, nodeDev.capability.vendor?._value, _("Vendor"));
                 addOptional(additionalInfo, nodeDev.capability.product?._value, _("Product"));

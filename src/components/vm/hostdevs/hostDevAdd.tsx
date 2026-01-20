@@ -146,6 +146,16 @@ const DevRow = ({
         setSelectableDevices(newDevs);
     }
 
+    function get_product(ndev: NodeDevice) {
+        if (ndev.capability.type == "usb_device" || ndev.capability.type == "pci")
+            return ndev.capability.product._value;
+    }
+
+    function get_vendor(ndev: NodeDevice) {
+        if (ndev.capability.type == "usb_device" || ndev.capability.type == "pci")
+            return ndev.capability.vendor._value;
+    }
+
     return (
         <FormGroup fieldId={`${idPrefix}-dev`} label={_("Device")} hasNoPaddingTop isInline>
             <Table variant={TableVariant.compact}
@@ -169,8 +179,8 @@ const DevRow = ({
                                         isDisabled: dev.nodeDev.hasChildren
                                     }}
                                 />
-                                <Td>{dev.nodeDev.capability.product?._value || "(" + _("Undefined") + ")"}</Td>
-                                <Td>{dev.nodeDev.capability.vendor?._value}</Td>
+                                <Td>{get_product(dev.nodeDev) || "(" + _("Undefined") + ")"}</Td>
+                                <Td>{get_vendor(dev.nodeDev)}</Td>
                                 <Td><DescriptionList key='source' isHorizontal>{getSource(dev.nodeDev, rowIndex)}</DescriptionList></Td>
                             </Tr>
                         );
