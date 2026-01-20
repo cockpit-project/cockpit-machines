@@ -42,8 +42,8 @@ function findMatchingNodeDevice(hostDev: VMHostDevice, nodeDevices: NodeDevice[]
 
 function getClass(hostDev: VMHostDevice, nodeDevices: NodeDevice[]): optString {
     const nodeDev = findMatchingNodeDevice(hostDev, nodeDevices);
-    if (nodeDev && (["usb_device", "pci"].includes(nodeDev.capability.type)))
-        return nodeDev.class;
+    if (nodeDev && nodeDev.capability.type == "pci")
+        return nodeDev.pciClass;
 }
 
 function getProduct(hostDev: VMHostDevice, nodeDevices: NodeDevice[]): optString {
@@ -88,8 +88,9 @@ function getSource(hostDev: VMHostDevice, nodeDevices: NodeDevice[], hostdevId: 
         let bus;
 
         if (nodeDev) {
-            device = nodeDev.devnum;
-            bus = nodeDev.busnum;
+            cockpit.assert(nodeDev.capability.type == "usb_device");
+            device = nodeDev.capability.device;
+            bus = nodeDev.capability.bus;
         } else {
             // If there are no or multiple usb devices without specified bus/device and same vendor/product,
             // it's impossible to identify which one is the one referred in VM's XML

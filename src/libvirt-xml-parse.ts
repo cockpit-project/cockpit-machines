@@ -1033,6 +1033,7 @@ export function parseNodeDeviceDumpxml(nodeDevice: string): NodeDeviceXML | null
             type,
             product: get_opt_id(capabilityElem, "product"),
             vendor: get_opt_id(capabilityElem, "vendor"),
+            class: get_text(capabilityElem, "class"),
             domain: get_text(capabilityElem, "domain"),
             bus: get_text(capabilityElem, "bus"),
             function: get_text(capabilityElem, "function"),

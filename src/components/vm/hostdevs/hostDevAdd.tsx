@@ -109,11 +109,8 @@ const DevRow = ({
     function getSource(nodeDev: NodeDevice, id: number): React.ReactNode {
         const cells = [];
         if (nodeDev.capability.type === "usb_device") {
-            const device = nodeDev.devnum;
-            const bus = nodeDev.busnum;
-
-            cells.push(getOptionalValue(device, `${id}-device`, _("Device")));
-            cells.push(getOptionalValue(bus, `${id}-bus`, _("Bus")));
+            cells.push(getOptionalValue(nodeDev.capability.device, `${id}-device`, _("Device")));
+            cells.push(getOptionalValue(nodeDev.capability.bus, `${id}-bus`, _("Bus")));
         } else if (nodeDev.capability.type === "pci") {
             const domain_num = Number(nodeDev.capability.domain);
             const bus_num = Number(nodeDev.capability.bus);

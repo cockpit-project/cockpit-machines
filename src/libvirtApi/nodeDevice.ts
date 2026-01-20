@@ -22,12 +22,60 @@
  * See https://github.com/libvirt/libvirt-dbus
  */
 import cockpit from 'cockpit';
+import { basename } from 'cockpit-path';
 import { appState } from '../state';
 
-import type { ConnectionName, NodeDevice } from '../types';
+import type { optString, ConnectionName, NodeDevice } from '../types';
 
 import { parseNodeDeviceDumpxml } from '../libvirt-xml-parse.js';
 import { call, timeout } from './helpers.js';
+
+const _ = cockpit.gettext;
+
+// From https://wiki.osdev.org/PCI
+
+// TODO: Consider showing the subclass instead of the class. It is
+// much more informative ("RAID controller" vs just "Mass Storage
+// Controller"), and there aren't very many of those either.
+
+const pciClasses: string[] = [
+    _("Unclassified"),
+    _("Mass Storage Controller"),
+    _("Network Controller"),
+    _("Display Controller"),
+    _("Multimedia Controller"),
+    _("Memory Controller"),
+    _("Bridge"),
+    _("Simple Communication Controller"),
+    _("Base System Peripheral"),
+    _("Input Device Controller"),
+    _("Docking Station"),
+    _("Processor"),
+    _("Serial Bus Controller"),
+    _("Wireless Controller"),
+    _("Intelligent Controller"),
+    _("Satellite Communication Controller"),
+    _("Encryption Controller"),
+    _("Signal Processing Controller"),
+    _("Processing Accelerator"),
+    _("Non-Essential Instrumentation"),
+];
+
+function getPciClassString(classString: optString): optString {
+    if (!classString)
+        return undefined;
+    const classNumber = parseInt(classString);
+    if (isNaN(classNumber))
+        return undefined;
+    const topClass = classNumber >> 16;
+    if (topClass == 0x40)
+        return _("Co-Processor");
+    if (topClass == 255)
+        return _("Miscellaneous");
+    if (topClass < 0 || topClass >= pciClasses.length)
+        return undefined;
+    return pciClasses[topClass];
+}
 
 /*
  * Read properties of a single NodeDevice
@@ -50,17 +98,10 @@ export async function nodeDeviceGet({
                 ...parsed,
             };
 
-            if (deviceXmlObject.path && ["pci", "usb_device"].includes(deviceXmlObject.capability.type)) {
-                const output = await cockpit.spawn(["udevadm", "info", "--path", deviceXmlObject.path], { err: "message" });
-                const nodeDev = parseUdevDB(output);
-                if (nodeDev && nodeDev.SUBSYSTEM === "pci") {
-                    deviceXmlObject.pciSlotName = nodeDev.PCI_SLOT_NAME;
-                    deviceXmlObject.class = nodeDev.ID_PCI_CLASS_FROM_DATABASE;
-                } else if (nodeDev && nodeDev.SUBSYSTEM === "usb") {
-                    deviceXmlObject.class = nodeDev.ID_USB_CLASS_FROM_DATABASE;
-                    deviceXmlObject.busnum = nodeDev.BUSNUM;
-                    deviceXmlObject.devnum = nodeDev.DEVNUM;
-                }
+            if (deviceXmlObject.capability.type == "pci") {
+                if (deviceXmlObject.path)
+                    deviceXmlObject.pciSlotName = basename(deviceXmlObject.path);
+                deviceXmlObject.pciClass = getPciClassString(deviceXmlObject.capability.class);
             }
 
             appState.addNodeDevice(deviceXmlObject);
@@ -88,24 +129,4 @@ export async function nodeDeviceGetAll({
         console.warn('GET_ALL_NODE_DEVICES action failed:', String(ex));
         throw ex;
     }
-}
-
-/**
- * Parses output of "udevadm info --path [devicePath]" into a node device object
- * Inspired by parseUdevDB() from cockpit's pkg/lib/machine-info.js
- */
-function parseUdevDB(text: string): Record<string, string> | undefined {
-    const udevPropertyRE = /^E: (\w+)=(.*)$/;
-    const device: Record<string, string> = {};
-
-    if (!(text = text.trim()))
-        return;
-
-    text.split("\n").forEach(line => {
-        const match = line.match(udevPropertyRE);
-        if (match)
-            device[match[1]] = match[2];
-    });
-
-    return device;
 }

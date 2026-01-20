@@ -869,8 +869,8 @@ export function getNodeDevSource(dev: NodeDevice): string | undefined {
 
         source = `${domain_str}:${bus_str}:${slot_str}.${func_str}`;
     } else if (dev.capability.type === "usb_device") {
-        const device = dev.devnum;
-        const bus = dev.busnum;
+        const device = dev.capability.device;
+        const bus = dev.capability.bus;
 
         source = `${bus}.${device}`;
     } else {

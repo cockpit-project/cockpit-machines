@@ -614,6 +614,7 @@ export interface NodeDeviceCapabilityPci {
         id: optString;
         _value: optString;
     };
+    class: optString;
     domain: optString;
     bus: optString;
     function: optString;
@@ -658,9 +659,7 @@ export interface NodeDeviceXML {
 export interface NodeDevice extends NodeDeviceXML {
     connectionName: ConnectionName;
     pciSlotName?: string;
-    class?: string;
-    busnum?: string;
-    devnum?: string;
+    pciClass?: optString;
 }
 
 /** Interface **/
