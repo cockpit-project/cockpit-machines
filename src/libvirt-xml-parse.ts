@@ -991,61 +991,81 @@ function parseNetDumpxmlForIp(ipElems: Element[]): NetworkIp[] {
 export function parseNodeDeviceDumpxml(nodeDevice: string): NodeDeviceXML | null {
     const deviceElem = getElem(nodeDevice);
 
-    const name = get_text(deviceElem, "name");
-    const path = get_text(deviceElem, "path");
-    const parentName = get_text(deviceElem, "parent");
     const capabilityElem = get_child(deviceElem, "capability");
-
     const type = get_attr(capabilityElem, "type");
     if (!type)
         return null;
 
-    const capability: NodeDeviceCapability = {
-        type,
-    };
-
-    if (capability.type == 'net')
-        capability.interface = get_text(capabilityElem, "interface");
-    else if (capability.type == 'storage')
-        capability.block = get_text(capabilityElem, "block");
-    else if (capability.type == 'misc')
-        capability.char = get_text(capabilityElem, "char");
-    else if (capability.type == 'usb_device' || capability.type == 'pci') {
-        capability.product = {};
-        capability.vendor = {};
-
-        const productElem = get_child(capabilityElem, "product");
-        const vendorElem = get_child(capabilityElem, "vendor");
-        if (productElem) {
-            capability.product.id = get_attr(productElem, "id");
-            capability.product._value = get_text(productElem);
-        }
-        if (vendorElem) {
-            capability.vendor.id = get_attr(vendorElem, "id");
-            capability.vendor._value = get_text(vendorElem);
-        }
-
-        if (capability.type == "pci") {
-            capability.domain = get_text(capabilityElem, "domain");
-            capability.bus = get_text(capabilityElem, "bus");
-            capability.function = get_text(capabilityElem, "function");
-            capability.slot = get_text(capabilityElem, "slot");
-        } else if (capability.type == "usb_device") {
-            capability.device = get_text(capabilityElem, "device");
-            capability.bus = get_text(capabilityElem, "bus");
-        }
-    } else if (capability.type == 'scsi') {
-        capability.bus = { _value: get_text(capabilityElem, "bus") };
-        capability.lun = { _value: get_text(capabilityElem, "lun") };
-        capability.target = { _value: get_text(capabilityElem, "target") };
-    } else if (capability.type == 'scsi_host') {
-        capability.host = { _value: get_text(capabilityElem, "host") };
-        capability.uniqueId = { _value: get_text(capabilityElem, "unique_id") };
-    } else if (capability.type == 'mdev') {
-        capability.uuid = get_text(capabilityElem, "uuid");
+    function get_opt_id(elt: Element | undefined, tag: string) {
+        return {
+            id: get_attr(elt, tag, "id"),
+            _value: get_text(elt, tag),
+        };
     }
 
-    return { name, path, parent: parentName, capability };
+    let capability: NodeDeviceCapability;
+
+    if (type == 'net') {
+        capability = {
+            type,
+            interface: get_text(capabilityElem, "interface"),
+        };
+    } else if (type == 'storage') {
+        capability = {
+            type,
+            block: get_text(capabilityElem, "block"),
+        };
+    } else if (type == 'misc') {
+        capability = {
+            type,
+            char: get_text(capabilityElem, "char"),
+        };
+    } else if (type == 'usb_device') {
+        capability = {
+            type,
+            product: get_opt_id(capabilityElem, "product"),
+            vendor: get_opt_id(capabilityElem, "vendor"),
+            device: get_text(capabilityElem, "device"),
+            bus: get_text(capabilityElem, "bus"),
+        };
+    } else if (type == 'pci') {
+        capability = {
+            type,
+            product: get_opt_id(capabilityElem, "product"),
+            vendor: get_opt_id(capabilityElem, "vendor"),
+            domain: get_text(capabilityElem, "domain"),
+            bus: get_text(capabilityElem, "bus"),
+            function: get_text(capabilityElem, "function"),
+            slot: get_text(capabilityElem, "slot"),
+        };
+    } else if (type == 'scsi') {
+        capability = {
+            type,
+            bus: get_text(capabilityElem, "bus"),
+            lun: get_text(capabilityElem, "lun"),
+            target: get_text(capabilityElem, "target"),
+        };
+    } else if (type == 'scsi_host') {
+        capability = {
+            type,
+            host: get_text(capabilityElem, "host"),
+            uniqueId: get_text(capabilityElem, "unique_id"),
+        };
+    } else if (type == 'mdev') {
+        capability = {
+            type,
+            uuid: get_text(capabilityElem, "uuid"),
+        };
+    } else {
+        return null;
+    }
+
+    return {
+        name: get_text(deviceElem, "name"),
+        path: get_text(deviceElem, "path"),
+        parent: get_text(deviceElem, "parent"),
+        capability
+    };
 }
 
 export function parseStoragePoolDumpxml(

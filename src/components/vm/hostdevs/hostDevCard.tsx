@@ -35,22 +35,23 @@ import { appState } from "../../../state";
 
 const _ = cockpit.gettext;
 
-function getClass(hostDev: VMHostDevice, nodeDevices: NodeDevice[]): optString {
-    const nodeDev = findMatchingNodeDevices(hostDev, nodeDevices)[0];
+function findMatchingNodeDevice(hostDev: VMHostDevice, nodeDevices: NodeDevice[]): NodeDevice | null {
+    const nodeDevs = findMatchingNodeDevices(hostDev, nodeDevices);
+    return nodeDevs.length == 1 ? nodeDevs[0] : null;
+}
 
+function getClass(hostDev: VMHostDevice, nodeDevices: NodeDevice[]): optString {
+    const nodeDev = findMatchingNodeDevice(hostDev, nodeDevices);
     if (nodeDev && (["usb_device", "pci"].includes(nodeDev.capability.type)))
         return nodeDev.class;
 }
 
 function getProduct(hostDev: VMHostDevice, nodeDevices: NodeDevice[]): optString {
-    const nodeDev = findMatchingNodeDevices(hostDev, nodeDevices)[0];
-
-    if (["usb", "pci"].includes(hostDev.type)) {
-        if (nodeDev)
-            return nodeDev.capability.product?._value;
-        else if (hostDev.type === "usb")
-            return hostDev.source.product.id;
-    }
+    const nodeDev = findMatchingNodeDevice(hostDev, nodeDevices);
+    if (nodeDev && (nodeDev.capability.type == "usb_device" || nodeDev.capability.type == "pci"))
+        return nodeDev.capability.product?._value;
+    else if (hostDev.type === "usb")
+        return hostDev.source.product.id;
 }
 
 function getPciSlot(hostDev: VMHostDevicePci): string {
@@ -72,28 +73,25 @@ function getPciSlot(hostDev: VMHostDevicePci): string {
 }
 
 function getVendor(hostDev: VMHostDevice, nodeDevices: NodeDevice[]): optString {
-    const nodeDev = findMatchingNodeDevices(hostDev, nodeDevices)[0];
-
-    if (["usb", "pci"].includes(hostDev.type)) {
-        if (nodeDev)
-            return nodeDev.capability.vendor?._value;
-        else if (hostDev.type === "usb")
-            return hostDev.source.vendor.id;
-    }
+    const nodeDev = findMatchingNodeDevice(hostDev, nodeDevices);
+    if (nodeDev && (nodeDev.capability.type == "usb_device" || nodeDev.capability.type == "pci"))
+        return nodeDev.capability.vendor?._value;
+    else if (hostDev.type === "usb")
+        return hostDev.source.vendor.id;
 }
 
 function getSource(hostDev: VMHostDevice, nodeDevices: NodeDevice[], hostdevId: number): React.ReactNode {
     const cells = [];
     if (hostDev.type === "usb") {
-        const nodeDevs = findMatchingNodeDevices(hostDev, nodeDevices);
+        const nodeDev = findMatchingNodeDevice(hostDev, nodeDevices);
         let device;
         let bus;
 
-        if (nodeDevs.length === 1) {
-            device = nodeDevs[0].devnum;
-            bus = nodeDevs[0].busnum;
+        if (nodeDev) {
+            device = nodeDev.devnum;
+            bus = nodeDev.busnum;
         } else {
-            // If there are multiple usb devices without specified bus/device and same vendor/product,
+            // If there are no or multiple usb devices without specified bus/device and same vendor/product,
             // it's impossible to identify which one is the one referred in VM's XML
             device = _("Unspecified");
             bus = _("Unspecified");

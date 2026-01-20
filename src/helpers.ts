@@ -390,7 +390,8 @@ export function findMatchingNodeDevices(hostdev: VMHostDevice, nodeDevices: Node
             // But there are cases when usb and device are not specified.
             // If there are 2 usb devices without specified bus/device and same vendor/product,
             // it's impossible to identify which one is the one referred in VM's XML, so we return an array of all matching
-            if (vendorId &&
+            if (d.capability.type == "usb_device" &&
+                vendorId &&
                 productId &&
                 d.capability.vendor &&
                 d.capability.product &&
@@ -417,6 +418,7 @@ export function findMatchingNodeDevices(hostdev: VMHostDevice, nodeDevices: Node
                 slot &&
                 func &&
                 domain &&
+                d.capability.type == "pci" &&
                 d.capability.bus == bus &&
                 d.capability.slot == slot &&
                 d.capability.function == func &&
@@ -433,12 +435,13 @@ export function findMatchingNodeDevices(hostdev: VMHostDevice, nodeDevices: Node
 
         nodeDevs = nodeDevices.filter(d => {
             if ((bus && target && unit) &&
+                d.capability.type == "scsi" &&
                 d.capability.bus &&
                 d.capability.lun &&
                 d.capability.target &&
-                d.capability.bus instanceof Object && d.capability.bus._value == bus &&
-                d.capability.lun._value == unit &&
-                d.capability.target._value == target)
+                d.capability.bus == bus &&
+                d.capability.lun == unit &&
+                d.capability.target == target)
                 return true;
             return false;
         });
@@ -453,6 +456,7 @@ export function findMatchingNodeDevices(hostdev: VMHostDevice, nodeDevices: Node
 
         nodeDevs = nodeDevices.filter(d => {
             if ((uuid) &&
+                d.capability.type == "mdev" &&
                 d.capability.uuid == uuid)
                 return true;
             return false;
@@ -464,6 +468,7 @@ export function findMatchingNodeDevices(hostdev: VMHostDevice, nodeDevices: Node
 
         nodeDevs = nodeDevices.filter(d => {
             if ((block) &&
+                d.capability.type == "storage" &&
                 d.capability.block == block)
                 return true;
             return false;
@@ -475,6 +480,7 @@ export function findMatchingNodeDevices(hostdev: VMHostDevice, nodeDevices: Node
 
         nodeDevs = nodeDevices.filter(d => {
             if ((ch) &&
+                d.capability.type == "misc" &&
                 d.capability.char == ch)
                 return true;
             return false;
@@ -486,6 +492,7 @@ export function findMatchingNodeDevices(hostdev: VMHostDevice, nodeDevices: Node
 
         nodeDevs = nodeDevices.filter(d => {
             if ((iface) &&
+                d.capability.type == "net" &&
                 d.capability.interface == iface)
                 return true;
             return false;

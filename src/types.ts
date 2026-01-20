@@ -575,45 +575,78 @@ export interface Network extends NetworkXML {
 
 /** Node Devices **/
 
-export interface NodeDeviceCapability {
-    type: string;
-
-    // type == 'net'
-    interface?: optString;
-
-    // type == 'storage'
-    block?: optString;
-
-    // type == 'misc'
-    char?: optString;
-
-    // type == 'usb_device' or 'pci'
-    product?: {
-        id?: optString;
-        _value?: optString;
-    };
-    vendor?: {
-        id?: optString;
-        _value?: optString;
-    };
-    domain?: optString;
-    bus?: optString | { _value?: optString }; // latter from 'scsi'
-    function?: optString;
-    slot?: optString;
-    device?: optString;
-
-    // type == 'scsi'
-    // see above for 'bus'
-    lun?: { _value?: optString };
-    target?: { _value?: optString };
-
-    // type == 'scsi_host'
-    host?: { _value?: optString };
-    uniqueId?: { _value?: optString };
-
-    // type == 'mdev'
-    uuid?: optString;
+export interface NodeDeviceCapabilityNet {
+    type: "net";
+    interface: optString;
 }
+
+export interface NodeDeviceCapabilityStorage {
+    type: "storage";
+    block: optString;
+}
+
+export interface NodeDeviceCapabilityMisc {
+    type: "misc";
+    char: optString;
+}
+
+export interface NodeDeviceCapabilityUsbDevice {
+    type: "usb_device";
+    product: {
+        id: optString;
+        _value: optString;
+    };
+    vendor: {
+        id: optString;
+        _value: optString;
+    };
+    bus: optString;
+    device: optString;
+}
+
+export interface NodeDeviceCapabilityPci {
+    type: "pci";
+    product: {
+        id: optString;
+        _value: optString;
+    };
+    vendor: {
+        id: optString;
+        _value: optString;
+    };
+    domain: optString;
+    bus: optString;
+    function: optString;
+    slot: optString;
+}
+
+export interface NodeDeviceCapabilityScsi {
+    type: "scsi";
+    bus: optString;
+    lun: optString;
+    target: optString;
+}
+
+export interface NodeDeviceCapabilityScsiHost {
+    type: "scsi_host";
+    host: optString;
+    uniqueId: optString;
+}
+
+export interface NodeDeviceCapabilityMdev {
+    type: "mdev";
+    uuid: optString;
+}
+
+export type NodeDeviceCapability =
+    NodeDeviceCapabilityNet
+        | NodeDeviceCapabilityStorage
+        | NodeDeviceCapabilityMisc
+        | NodeDeviceCapabilityUsbDevice
+        | NodeDeviceCapabilityPci
+        | NodeDeviceCapabilityScsi
+        | NodeDeviceCapabilityScsiHost
+        | NodeDeviceCapabilityMdev;
 
 export interface NodeDeviceXML {
     name: optString;
