@@ -19,7 +19,7 @@
 import cockpit from 'cockpit';
 import React, { useEffect, useState } from 'react';
 
-import type { VM, VMState } from '../../types';
+import type { ConnectionName, VM, VMState } from '../../types';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
@@ -57,7 +57,7 @@ const domainCanRename = (vmState: VMState) => vmState == 'shut off';
 const domainCanResume = (vmState: VMState) => vmState == 'paused';
 
 function startOperationProgress(vm: VM) {
-    appState.updateVm(vm, { operationInProgressFromState: vm.state, onShutOff: null });
+    appState.updateVm(vm, { operationInProgressFromState: vm.state });
 }
 
 function isOperationInProgress(vm: VM) {
@@ -70,7 +70,6 @@ function setVmError(vm: VM, msg: string, ex: unknown) {
         vm,
         {
             operationInProgressFromState: undefined,
-            onShutOff: null,
             error: {
                 text: msg,
                 detail: String(ex),
@@ -512,10 +511,17 @@ export const VmActions = ({
 export const VmRestartDialog = ({ vm } : { vm: VM }) => {
     async function onRestart(force: boolean) {
         startOperationProgress(vm);
-        appState.updateVm(vm, { onShutOff: vmStart });
+        const off = appState.on("vmStateEvent", (id: string, connectionName: ConnectionName, state: VMState) => {
+            if (id == vm.id && connectionName == vm.connectionName && state == "shut off") {
+                off();
+                vmStart(vm);
+            }
+        });
+
         try {
             await vmDomainMethod<void>(vm, force ? 'Destroy' : 'Shutdown', 'u', 0);
         } catch (ex) {
+            off();
             setVmError(vm, cockpit.format(_("VM $0 failed to shutdown"), vm.name), ex);
         }
     }
