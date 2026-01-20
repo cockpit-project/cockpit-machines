@@ -441,10 +441,6 @@ export interface VM extends VMXML {
     // spinner.
     operationInProgressFromState?: VMState | undefined;
 
-    // When the VM reaches the "shut off" state, this function is
-    // called, but only once.
-    onShutOff?: null | undefined | ((vm: VM) => void);
-
     capabilities: DomainCapabilities;
 
     memoryUsed?: number | undefined;

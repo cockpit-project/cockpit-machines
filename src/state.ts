@@ -22,7 +22,7 @@ import { EventEmitter } from 'cockpit/event';
 import { superuser } from "superuser.js";
 
 import type {
-    ConnectionName, VM, UIVM, UIVMProps,
+    ConnectionName, VM, VMState, UIVM, UIVMProps,
     HypervisorCapabilities, VirtInstallCapabilities, VirtXmlCapabilities,
     NodeDevice, NodeInterface,
     StoragePool,
@@ -55,6 +55,13 @@ async function getConnectionNames(): Promise<ConnectionName[]> {
 
 interface AppStateEvents {
     changed: () => void,
+
+    // A real life-cycle event has happened for the given VM.  This is
+    // useful for edge-triggered actions. When this event is emitted,
+    // the VM data structures in the state have very likely not yet
+    // been updated.
+    //
+    vmStateEvent: (id: string, connectionName: ConnectionName, state: VMState) => void,
 }
 
 interface ResourceKey {
@@ -370,6 +377,10 @@ export class AppState extends EventEmitter<AppStateEvents> {
     async getVms(): Promise<VM[]> {
         await this.initAllVMs(true);
         return this.vms;
+    }
+
+    emitVmStateEvent(key: ResourceKey, state: VMState) {
+        this.emit("vmStateEvent", key.id, key.connectionName, state);
     }
 }
 
