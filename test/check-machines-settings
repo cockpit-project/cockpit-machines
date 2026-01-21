@@ -502,6 +502,7 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
 
         # Add TPM to running VM
         b.click("#vm-subVmTest1-system-run")
+        print('should fail here')
         b.wait_in_text("#vm-subVmTest1-system-state", "Running")
         self.assertNotIn("tpm", m.execute("virsh dumpxml subVmTest1"))
         self.assertNotIn("tpm", m.execute("virsh dumpxml --inactive subVmTest1"))
