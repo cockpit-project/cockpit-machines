@@ -338,7 +338,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         b.wait_in_text(f"{prefix}-existing-select-pool:disabled", "No storage pools available")
         b.wait_visible(f"{prefix}-dialog-add:disabled")
 
-    class VMInsertMediaDialog(object):
+    class VMInsertMediaDialog:
         def __init__(
             self, test_obj,
             vm_name='subVmTest1',
@@ -526,7 +526,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             # Empty cdrom should have no source
             self.test_obj.assertEqual(disks[self.target]['source'], '-')
 
-    class VMAddDiskDialog(object):
+    class VMAddDiskDialog:
         def __init__(
             self, test_obj, pool_name=None, volume_name=None,
             vm_name='subVmTest1',

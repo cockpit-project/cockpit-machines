@@ -144,7 +144,7 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
           return document.getElementById(id).parentElement.parentElement.querySelector(selector).textContent;
         }""")
 
-        class NetworkCreateDialog(object):
+        class NetworkCreateDialog:
             def __init__(
                 self, test_obj, name, forward_mode=None, ip_conf=None, ipv4_address=None, ipv4_netmask=None,
                 ipv6_address=None, ipv6_prefix=None, device=None, ipv4_dhcp_start=None, ipv4_dhcp_end=None,
@@ -891,7 +891,7 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         self.waitNetworkRow("test_network2_clash", connectionName, present=False)
 
     def testNetworkAddStaticDCHPHosts(self):
-        class NetworkAddStaticDCHPHostsDialog(object):
+        class NetworkAddStaticDCHPHostsDialog:
             def __init__(
                 self, test_obj=None, network_name="default", connection_name="system", mac=None, ip=None, entry_id=0,
                 xfail=None, close_dialog=True, remove=True

@@ -232,7 +232,7 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         b.wait_in_text("#card-pf-storage-pools .pf-v6-c-card__header button", "Storage pools")
         b.click(".pf-v6-c-card .pf-v6-c-card__header button:contains(Storage pools)")
 
-        class StoragePoolCreateDialog(object):
+        class StoragePoolCreateDialog:
             def __init__(
                 self, test_obj, name, pool_type=None, target=None, source=None,
                 autostart=None, xfail=False, xfail_error=None, remove=True,
@@ -548,7 +548,7 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         b.wait_in_text("#card-pf-storage-pools .pf-v6-c-card__header button", "Storage pools")
         b.click(".pf-v6-c-card .pf-v6-c-card__header button:contains(Storage pools)")
 
-        class StorageVolumeCreateDialog(object):
+        class StorageVolumeCreateDialog:
             def __init__(
                 self, test_obj, pool_name, vol_name, size="128", unit="MiB", fmt='qcow2',
                 pool_type="dir", xfail=False, xfail_objects=None, xfail_error=None, remove=True,
