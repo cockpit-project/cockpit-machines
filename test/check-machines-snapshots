@@ -121,7 +121,7 @@ class TestMachinesSnapshots(machineslib.VirtualMachinesCase):
         # Shut off domain
         self.performAction("subVmTest1", "forceOff")
 
-        class SnapshotCreateDialog(object):
+        class SnapshotCreateDialog:
             def __init__(
                 self, test_obj, name=None, description=None, memory_path=None, state="shutoff", snap_num=0,
                 vm_name="subVmTest1", expect_external=False, xfail=None, remove=True

@@ -43,7 +43,7 @@ def find_pci_hostdev(root, slot_parts):
     return False
 
 
-class HostDevAddDialog(object):
+class HostDevAddDialog:
     def __init__(
         self, test_obj, connection_name, dev_type="usb_device", dev_id=0, vm_dev_id=1, remove=True, fail_message=None
     ):
