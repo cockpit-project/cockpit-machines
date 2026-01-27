@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-16 03:53+0000\n"
+"POT-Creation-Date: 2026-01-26 04:10+0000\n"
 "PO-Revision-Date: 2025-11-16 11:51+0000\n"
 "Last-Translator: Weblate Translation Memory <noreply-mt-weblate-translation-"
 "memory@weblate.org>\n"
@@ -71,7 +71,7 @@ msgstr "$0 不支持无人值守安装。"
 msgid "$0 memory adjustment"
 msgstr "$0 内存调整"
 
-#: src/components/create-vm-dialog/pxe-helpers.tsx:104
+#: src/components/create-vm-dialog/pxe-helpers.tsx:105
 msgid "$0 network"
 msgstr "$0 网络"
 
@@ -125,7 +125,7 @@ msgid "Activate the storage pool to administer volumes"
 msgstr "激活存储池以管理卷"
 
 #: src/components/networks/networkOverviewTab.tsx:281
-#: src/components/vm/hostdevs/hostDevAdd.tsx:267
+#: src/components/vm/hostdevs/hostDevAdd.tsx:274
 #: src/components/vm/nics/nicBody.tsx:606 src/components/vm/nics/nicAdd.tsx:335
 #: src/components/vm/disks/diskAdd.tsx:986
 #: src/components/vm/overview/vsock.tsx:236
@@ -154,8 +154,8 @@ msgstr "添加一个DHCP静态主机条目"
 msgid "Add disk"
 msgstr "添加磁盘"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:284
-#: src/components/vm/hostdevs/hostDevCard.tsx:154
+#: src/components/vm/hostdevs/hostDevAdd.tsx:291
+#: src/components/vm/hostdevs/hostDevCard.tsx:153
 msgid "Add host device"
 msgstr "添加主机设备"
 
@@ -167,7 +167,7 @@ msgstr "添加网络接口"
 msgid "Add serial console"
 msgstr "添加串行控制台"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:123
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:128
 msgid "Add shared directory"
 msgstr "添加共享的目录"
 
@@ -187,7 +187,7 @@ msgstr "添加 watchdog 设备类型"
 msgid "Adding a watchdog will require a reboot to take effect."
 msgstr "添加 watchdog 将需要重启才能生效。"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:127
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:132
 msgid "Adding shared directories is possible only when the guest is shut off"
 msgstr "只有在客户机处于关机状态时才能添加共享目录"
 
@@ -275,6 +275,10 @@ msgstr "自动启动"
 msgid "Backend"
 msgstr "后端："
 
+#: src/libvirtApi/nodeDevice.ts:50
+msgid "Base System Peripheral"
+msgstr ""
+
 #: src/components/vm/disks/vmDiskColumns.tsx:49
 msgid "Block device"
 msgstr "块设备"
@@ -287,22 +291,28 @@ msgstr "受阻"
 msgid "Boot order"
 msgstr "启动顺序"
 
-#: src/components/vm/overview/bootOrder.tsx:284
+#: src/components/vm/overview/bootOrder.tsx:286
 msgid "Boot order settings could not be saved"
 msgstr "无法保存启动顺序"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:116
-#: src/components/vm/hostdevs/hostDevCard.tsx:105
-#: src/components/vm/hostdevs/hostDevCard.tsx:113
-#: src/components/vm/hostdevs/hostDevCard.tsx:264
+#: src/libvirtApi/nodeDevice.ts:48
+#, fuzzy
+#| msgid "bridge"
+msgid "Bridge"
+msgstr "网桥"
+
+#: src/components/vm/hostdevs/hostDevAdd.tsx:113
+#: src/components/vm/hostdevs/hostDevCard.tsx:104
+#: src/components/vm/hostdevs/hostDevCard.tsx:112
+#: src/components/vm/hostdevs/hostDevCard.tsx:263
 #: src/components/vm/disks/diskEdit.tsx:133
 #: src/components/vm/disks/vmDisksCard.tsx:260
 #: src/components/vm/disks/diskAdd.tsx:307
 #: src/components/vm/overview/bootOrder.tsx:127
 #: src/components/vm/overview/bootOrder.tsx:139
-#: src/components/vm/overview/bootOrder.tsx:157
-#: src/components/vm/overview/bootOrder.tsx:160
-#: src/components/vm/overview/bootOrder.tsx:174
+#: src/components/vm/overview/bootOrder.tsx:158
+#: src/components/vm/overview/bootOrder.tsx:161
+#: src/components/vm/overview/bootOrder.tsx:176
 msgid "Bus"
 msgstr "总线"
 
@@ -338,11 +348,11 @@ msgstr "缓存"
 #: src/components/vm/vmEditDescriptionDialog.tsx:94
 #: src/components/vm/confirmDialog.tsx:79
 #: src/components/vm/consoles/vnc.tsx:171
-#: src/components/vm/hostdevs/hostDevAdd.tsx:272
+#: src/components/vm/hostdevs/hostDevAdd.tsx:279
 #: src/components/vm/vmMigrateDialog.tsx:240
 #: src/components/vm/nics/nicEdit.tsx:324 src/components/vm/nics/nicAdd.tsx:338
 #: src/components/vm/vmCloneDialog.tsx:124
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:254
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:261
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:140
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:353
 #: src/components/vm/disks/diskEdit.tsx:340
@@ -354,7 +364,7 @@ msgstr "缓存"
 #: src/components/vm/overview/cpuModal.tsx:354
 #: src/components/vm/overview/vsock.tsx:285
 #: src/components/vm/overview/firmware.tsx:121
-#: src/components/vm/overview/bootOrder.tsx:368
+#: src/components/vm/overview/bootOrder.tsx:370
 #: src/components/vm/overview/watchdog.tsx:241
 #: src/components/vm/deleteDialog.tsx:215
 msgid "Cancel"
@@ -368,7 +378,7 @@ msgstr "无法编辑临时虚拟机上的 vsock 设备"
 msgid "Cannot edit watchdog device on a transient VM"
 msgstr "无法编辑临时虚拟机上的 watchdog 设置"
 
-#: src/components/vm/overview/bootOrder.tsx:353
+#: src/components/vm/overview/bootOrder.tsx:355
 msgid "Change boot order"
 msgstr "更改引导顺序"
 
@@ -403,7 +413,7 @@ msgstr "检查令牌有效性..."
 msgid "Choose an operating system"
 msgstr "选择一个操作系统"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:201
+#: src/components/vm/hostdevs/hostDevCard.tsx:200
 msgid "Class"
 msgstr "等级"
 
@@ -426,6 +436,10 @@ msgstr "关闭"
 #: src/components/create-vm-dialog/createVmDialog.tsx:455
 msgid "Cloud base image"
 msgstr "Cloud 基础镜像"
+
+#: src/libvirtApi/nodeDevice.ts:72
+msgid "Co-Processor"
+msgstr ""
 
 #: org.cockpit_project.machines.metainfo.xml:19
 msgid "Cockpit Project"
@@ -682,7 +696,7 @@ msgid ""
 "will not be deleted."
 msgstr "删除一个不活跃的存储池将只会取消定义这个池。它的内容不会被删除。"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:82
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:81
 msgid "Deleting shared directories is possible only when the guest is shut off"
 msgstr "只有在客户机处于关机状态时才能删除共享目录"
 
@@ -719,16 +733,16 @@ msgstr "详情"
 
 #: src/components/networks/networkList.tsx:73
 #: src/components/networks/createNetworkDialog.tsx:231
-#: src/components/vm/hostdevs/hostDevAdd.tsx:115
-#: src/components/vm/hostdevs/hostDevAdd.tsx:150
-#: src/components/vm/hostdevs/hostDevCard.tsx:104
-#: src/components/vm/hostdevs/hostDevCard.tsx:263
+#: src/components/vm/hostdevs/hostDevAdd.tsx:112
+#: src/components/vm/hostdevs/hostDevAdd.tsx:157
+#: src/components/vm/hostdevs/hostDevCard.tsx:103
+#: src/components/vm/hostdevs/hostDevCard.tsx:262
 #: src/components/vm/disks/vmDisksCard.tsx:257
 #: src/components/vm/disks/diskAdd.tsx:463
 #: src/components/vm/overview/bootOrder.tsx:119
 #: src/components/vm/overview/bootOrder.tsx:126
-#: src/components/vm/overview/bootOrder.tsx:158
-#: src/components/vm/overview/bootOrder.tsx:161
+#: src/components/vm/overview/bootOrder.tsx:159
+#: src/components/vm/overview/bootOrder.tsx:162
 msgid "Device"
 msgstr "设备"
 
@@ -789,6 +803,10 @@ msgstr "纯磁盘快照"
 msgid "Disks"
 msgstr "磁盘"
 
+#: src/libvirtApi/nodeDevice.ts:45
+msgid "Display Controller"
+msgstr ""
+
 #: src/components/vm/vmMigrateDialog.tsx:224
 msgid ""
 "Do not run this VM on the origin and destination hosts at the same time."
@@ -797,6 +815,12 @@ msgstr "不要同时在原始主机和目标主机上运行此虚拟机。"
 #: src/helpers.ts:289
 msgid "Do nothing"
 msgstr "什么都不做"
+
+#: src/libvirtApi/nodeDevice.ts:52
+#, fuzzy
+#| msgid "Docking station"
+msgid "Docking Station"
+msgstr "Docking station"
 
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:163
 msgid "Domain has crashed"
@@ -893,6 +917,10 @@ msgstr "虚拟的机器"
 msgid "Enable virtualization support in BIOS/EFI settings."
 msgstr "在 BIOS/EFI 设置中启用虚拟化支持。"
 
+#: src/libvirtApi/nodeDevice.ts:58
+msgid "Encryption Controller"
+msgstr ""
+
 #: src/components/networks/createNetworkDialog.tsx:325
 msgid "End"
 msgstr "结束"
@@ -922,7 +950,7 @@ msgstr "主机文件系统上存在的磁盘镜像"
 msgid "Expand"
 msgstr "展开"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:236
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:243
 msgid "Extended attributes"
 msgstr "扩展属性"
 
@@ -942,7 +970,7 @@ msgstr "向虚拟机 $0 添加 VNC 失败"
 msgid "Failed to add serial console to VM $0"
 msgstr "向虚拟机 $0 添加串行控制台失败"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:204
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:211
 msgid "Failed to add shared directory"
 msgstr "添加共享目录失败"
 
@@ -1011,7 +1039,7 @@ msgstr "启用的虚拟 CPU 数量应少于最大虚拟 CPU 数量。"
 msgid "File"
 msgstr "文件"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:69
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:68
 msgid "Filesystem $0 could not be removed"
 msgstr "文件系统 $0 无法删除"
 
@@ -1136,7 +1164,7 @@ msgstr "客户机端口帮助"
 msgid "Hardware virtualization is disabled"
 msgstr "硬件虚拟化被禁用"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:231
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:238
 #: src/components/vm/disks/diskAdd.tsx:292
 msgid "Hide additional options"
 msgstr "隐藏额外操作"
@@ -1148,15 +1176,15 @@ msgstr "隐藏额外操作"
 msgid "Host"
 msgstr "主机"
 
-#: src/components/create-vm-dialog/pxe-helpers.tsx:160
+#: src/components/create-vm-dialog/pxe-helpers.tsx:162
 msgid "Host device"
 msgstr "主机设备"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:242
+#: src/components/vm/hostdevs/hostDevAdd.tsx:249
 msgid "Host device could not be attached"
 msgstr "无法连接主机设备"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:274
+#: src/components/vm/hostdevs/hostDevCard.tsx:273
 msgid "Host device will be removed from $0:"
 msgstr "主机设备将从 $0 中删除："
 
@@ -1335,6 +1363,10 @@ msgstr "启动器不能为空"
 msgid "Inject a non-maskable interrupt"
 msgstr "注入不可屏蔽中断"
 
+#: src/libvirtApi/nodeDevice.ts:51
+msgid "Input Device Controller"
+msgstr ""
+
 #: src/components/vm/disks/diskAdd.tsx:986
 #: src/components/vm/disks/vmDiskColumns.tsx:243
 msgid "Insert"
@@ -1364,7 +1396,11 @@ msgstr "安装源不能为空"
 msgid "Installation type"
 msgstr "安装类型"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:137
+#: src/libvirtApi/nodeDevice.ts:56
+msgid "Intelligent Controller"
+msgstr ""
+
+#: src/components/vm/hostdevs/hostDevCard.tsx:136
 msgid "Interface"
 msgstr "接口"
 
@@ -1404,7 +1440,7 @@ msgstr "无效的 IPv6 前缀"
 msgid "Invalid filename"
 msgstr "无效的文件名"
 
-#: src/components/create-vm-dialog/pxe-helpers.tsx:107
+#: src/components/create-vm-dialog/pxe-helpers.tsx:108
 msgid "Isolated network"
 msgstr "隔离的网络"
 
@@ -1469,7 +1505,7 @@ msgstr "本地安装媒体（ISO镜像或者发行版安装树）"
 msgid "Local scaling"
 msgstr "本地缩放"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:157
+#: src/components/vm/hostdevs/hostDevAdd.tsx:164
 msgid "Location"
 msgstr "位置"
 
@@ -1521,6 +1557,13 @@ msgstr "掩码或前缀长度"
 msgid "Mask or prefix length should not be empty"
 msgstr "掩码或前缀长度不能为空"
 
+#: src/libvirtApi/nodeDevice.ts:43
+#, fuzzy
+#| msgid "$0 Storage pool"
+#| msgid_plural "$0 Storage pools"
+msgid "Mass Storage Controller"
+msgstr "$0 存储池"
+
 #: src/components/vm/overview/memoryModal.tsx:180
 msgid "Maximum allocation"
 msgstr "最大分配"
@@ -1557,6 +1600,12 @@ msgstr "介质将从 $0 中弹出："
 #: src/components/vm/overview/vmOverviewCard.tsx:188
 msgid "Memory"
 msgstr "内存"
+
+#: src/libvirtApi/nodeDevice.ts:47
+#, fuzzy
+#| msgid "Memory file"
+msgid "Memory Controller"
+msgstr "内存文件"
 
 #: src/components/vm/overview/memoryModal.tsx:142
 #: src/components/vm/overview/memoryModal.tsx:158
@@ -1599,6 +1648,10 @@ msgstr "将虚拟机迁移到另一主机"
 msgid "Migration failed"
 msgstr "迁移失败"
 
+#: src/libvirtApi/nodeDevice.ts:74
+msgid "Miscellaneous"
+msgstr ""
+
 #: src/components/vm/nics/nicBody.tsx:265
 #: src/components/vm/nics/vmNicsCard.tsx:180
 #: src/components/vm/overview/cpuModal.tsx:317
@@ -1610,7 +1663,7 @@ msgstr "模式"
 msgid "Mode help"
 msgstr "模式帮助"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:211
+#: src/components/vm/hostdevs/hostDevCard.tsx:210
 #: src/components/vm/nics/nicBody.tsx:108
 msgid "Model"
 msgstr "型号"
@@ -1624,20 +1677,24 @@ msgid "More info"
 msgstr "更多信息"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:54
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:73
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:219
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:72
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:226
 msgid "Mount tag"
 msgstr "挂载标签"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:153
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:158
 msgid "Mount tag must not be empty"
 msgstr "挂载标签不能为空"
+
+#: src/libvirtApi/nodeDevice.ts:46
+msgid "Multimedia Controller"
+msgstr ""
 
 #: src/components/networks/createNetworkDialog.tsx:118
 msgid "Must be an address instead of the network identifier, such as $0"
 msgstr "必须是地址而不是网络标识符，如 $0"
 
-#: src/components/create-vm-dialog/pxe-helpers.tsx:92
+#: src/components/create-vm-dialog/pxe-helpers.tsx:93
 msgid "NAT to $0"
 msgstr "NAT 到 $0"
 
@@ -1706,6 +1763,12 @@ msgstr "网络 $0 取消激活失败"
 msgid "Network $0 will be permanently deleted."
 msgstr "网络 $0 将被永久删除。"
 
+#: src/libvirtApi/nodeDevice.ts:44
+#, fuzzy
+#| msgid "Network interface"
+msgid "Network Controller"
+msgstr "网络接口"
+
 #: src/components/create-vm-dialog/createVmDialog.tsx:463
 msgid "Network boot (PXE)"
 msgstr "网络引导 (PXE)"
@@ -1764,7 +1827,7 @@ msgstr "没有指定 SSH 密钥"
 msgid "No VM is running or defined on this host"
 msgstr "该主机上没有定义或运行虚拟机"
 
-#: src/components/vm/overview/bootOrder.tsx:380
+#: src/components/vm/overview/bootOrder.tsx:382
 msgid "No boot device found"
 msgstr "没有找到引导设备"
 
@@ -1776,11 +1839,11 @@ msgstr "没有描述"
 msgid "No disks"
 msgstr "无磁盘"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:247
+#: src/components/vm/hostdevs/hostDevAdd.tsx:254
 msgid "No host device selected"
 msgstr "没有选择主机设备"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:333
+#: src/components/vm/hostdevs/hostDevCard.tsx:332
 msgid "No host devices"
 msgstr "无主机设备"
 
@@ -1796,7 +1859,7 @@ msgstr "无网络接口"
 msgid "No network is defined on this host"
 msgstr "没有在这个主机上定义网络"
 
-#: src/components/create-vm-dialog/pxe-helpers.tsx:166
+#: src/components/create-vm-dialog/pxe-helpers.tsx:168
 msgid "No networks available"
 msgstr "没有可用的网络"
 
@@ -1812,7 +1875,7 @@ msgstr "未转发任何端口"
 msgid "No scaling or resizing"
 msgstr "无缩放或大小调整"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:101
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:100
 msgid "No shared directories"
 msgstr "无共享目录"
 
@@ -1847,6 +1910,10 @@ msgstr "没有虚拟网络"
 #: src/components/storagePools/storagePoolDelete.tsx:197
 msgid "No volumes exist in this storage pool."
 msgstr "这个存储池中没有卷。"
+
+#: src/libvirtApi/nodeDevice.ts:61
+msgid "Non-Essential Instrumentation"
+msgstr ""
 
 #: src/components/networks/network.tsx:152
 msgid ""
@@ -1892,7 +1959,7 @@ msgstr "一个或多个卷被域使用。需要先分离磁盘后才可以删除
 
 #: src/components/vm/nics/nicEdit.tsx:69
 #: src/components/vm/overview/memoryModal.tsx:187
-#: src/components/vm/overview/bootOrder.tsx:406
+#: src/components/vm/overview/bootOrder.tsx:408
 msgid "Only editable when the guest is shut off"
 msgstr "只有在客户机关闭后才可以编辑"
 
@@ -1943,8 +2010,8 @@ msgstr ""
 msgid "Password must be at most 8 characters."
 msgstr "密码至多8个字符。"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:129
-#: src/components/vm/hostdevs/hostDevCard.tsx:133
+#: src/components/vm/hostdevs/hostDevCard.tsx:128
+#: src/components/vm/hostdevs/hostDevCard.tsx:132
 #: src/components/vm/disks/diskEdit.tsx:63
 #: src/components/vm/deleteDialog.tsx:80
 msgid "Path"
@@ -2107,11 +2174,19 @@ msgstr "前缀长度不能为空"
 msgid "Private"
 msgstr "私有"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:157
-#: src/components/vm/hostdevs/hostDevCard.tsx:254
-#: src/components/vm/hostdevs/hostDevCard.tsx:260
-#: src/components/vm/overview/bootOrder.tsx:153
-#: src/components/vm/overview/bootOrder.tsx:168
+#: src/libvirtApi/nodeDevice.ts:60
+msgid "Processing Accelerator"
+msgstr ""
+
+#: src/libvirtApi/nodeDevice.ts:53
+msgid "Processor"
+msgstr ""
+
+#: src/components/vm/hostdevs/hostDevAdd.tsx:164
+#: src/components/vm/hostdevs/hostDevCard.tsx:253
+#: src/components/vm/hostdevs/hostDevCard.tsx:259
+#: src/components/vm/overview/bootOrder.tsx:154
+#: src/components/vm/overview/bootOrder.tsx:170
 msgid "Product"
 msgstr "产品"
 
@@ -2119,11 +2194,11 @@ msgstr "产品"
 msgid "Profile"
 msgstr "配置集"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:120
+#: src/components/vm/hostdevs/hostDevCard.tsx:119
 #: src/components/vm/nics/nicBody.tsx:506
 #: src/components/vm/disks/vmDiskColumns.tsx:50
 #: src/components/vm/overview/bootOrder.tsx:120
-#: src/components/vm/overview/bootOrder.tsx:181
+#: src/components/vm/overview/bootOrder.tsx:183
 msgid "Protocol"
 msgstr "协议"
 
@@ -2204,12 +2279,12 @@ msgid "Remote viewer applications can connect to the following address:"
 msgstr "远程查看器应用可连接至以下地址："
 
 #: src/components/networks/networkOverviewTab.tsx:81
-#: src/components/vm/hostdevs/hostDevCard.tsx:270
-#: src/components/vm/hostdevs/hostDevCard.tsx:276
+#: src/components/vm/hostdevs/hostDevCard.tsx:269
+#: src/components/vm/hostdevs/hostDevCard.tsx:275
 #: src/components/vm/nics/vmNicsCard.tsx:707
 #: src/components/vm/nics/vmNicsCard.tsx:722
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:66
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:75
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:65
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:74
 #: src/components/vm/disks/vmDiskColumns.tsx:188
 #: src/components/vm/disks/vmDiskColumns.tsx:269
 #: src/components/vm/overview/vsock.tsx:282
@@ -2229,11 +2304,11 @@ msgstr "删除文件"
 msgid "Remove disk from VM?"
 msgstr "从虚拟机中删除磁盘？"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:68
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:67
 msgid "Remove filesystem?"
 msgstr "删除文件系统？"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:272
+#: src/components/vm/hostdevs/hostDevCard.tsx:271
 msgid "Remove host device from VM?"
 msgstr "从虚拟机中删除主机设备？"
 
@@ -2331,15 +2406,15 @@ msgstr ""
 msgid "Root password"
 msgstr "Root 密码"
 
-#: src/components/create-vm-dialog/pxe-helpers.tsx:97
+#: src/components/create-vm-dialog/pxe-helpers.tsx:98
 msgid "Route to $0"
 msgstr "路由到 $0"
 
-#: src/components/create-vm-dialog/pxe-helpers.tsx:99
+#: src/components/create-vm-dialog/pxe-helpers.tsx:100
 msgid "Routed network"
 msgstr "路由的网络"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:156
+#: src/components/vm/hostdevs/hostDevAdd.tsx:163
 msgid "Row select"
 msgstr "行选择"
 
@@ -2375,6 +2450,10 @@ msgstr "此主机上不支持 SPICE，并将导致此虚拟机无法引导。"
 msgid "SSH keys"
 msgstr "SSH 密钥"
 
+#: src/libvirtApi/nodeDevice.ts:57
+msgid "Satellite Communication Controller"
+msgstr ""
+
 #: src/components/vm/vmEditDescriptionDialog.tsx:91
 #: src/components/vm/consoles/vnc.tsx:168
 #: src/components/vm/nics/nicEdit.tsx:321
@@ -2382,7 +2461,7 @@ msgstr "SSH 密钥"
 #: src/components/vm/overview/memoryModal.tsx:206
 #: src/components/vm/overview/vsock.tsx:236
 #: src/components/vm/overview/firmware.tsx:118
-#: src/components/vm/overview/bootOrder.tsx:365
+#: src/components/vm/overview/bootOrder.tsx:367
 #: src/components/vm/overview/watchdog.tsx:180
 msgid "Save"
 msgstr "保存"
@@ -2417,6 +2496,12 @@ msgstr "序列号"
 msgid "Serial ($0)"
 msgstr "串口 ($0)"
 
+#: src/libvirtApi/nodeDevice.ts:54
+#, fuzzy
+#| msgid "Serial console"
+msgid "Serial Bus Controller"
+msgstr "串行控制台"
+
 #: src/components/common/needsShutdown.tsx:227
 msgid "Serial console"
 msgstr "串行控制台"
@@ -2439,11 +2524,11 @@ msgid ""
 "VM when creating it"
 msgstr "为无人值守安装设置用户密码要求在创建 VM 的时候启动它"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:249
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:256
 msgid "Share"
 msgstr "共享"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:181
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:188
 msgid "Share a host directory with the guest"
 msgstr "与虚拟客户机共享主机目录"
 
@@ -2452,7 +2537,7 @@ msgid "Shared directories"
 msgstr "共享的目录"
 
 #: src/components/vm/vmDetailsPage.tsx:211
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:184
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:191
 msgid "Shared host directories need to be manually mounted inside the VM"
 msgstr "共享的主机目录需要手动挂载到虚拟机中"
 
@@ -2460,7 +2545,7 @@ msgstr "共享的主机目录需要手动挂载到虚拟机中"
 msgid "Shared storage"
 msgstr "共享的存储"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:231
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:238
 #: src/components/vm/disks/diskAdd.tsx:292
 msgid "Show additional options"
 msgstr "显示额外操作"
@@ -2505,6 +2590,14 @@ msgstr "关闭与重启 $0?"
 msgid "Shutting down"
 msgstr "正在关机"
 
+#: src/libvirtApi/nodeDevice.ts:59
+msgid "Signal Processing Controller"
+msgstr ""
+
+#: src/libvirtApi/nodeDevice.ts:49
+msgid "Simple Communication Controller"
+msgstr ""
+
 #: src/components/storagePools/storagePoolVolumesTab.tsx:90
 #: src/components/storagePools/storageVolumeCreateBody.tsx:134
 #: src/components/storagePools/storagePoolList.tsx:75
@@ -2512,11 +2605,11 @@ msgstr "正在关机"
 msgid "Size"
 msgstr "大小"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:128
-#: src/components/vm/hostdevs/hostDevCard.tsx:107
-#: src/components/vm/hostdevs/hostDevCard.tsx:114
-#: src/components/vm/hostdevs/hostDevCard.tsx:255
-#: src/components/vm/overview/bootOrder.tsx:169
+#: src/components/vm/hostdevs/hostDevAdd.tsx:125
+#: src/components/vm/hostdevs/hostDevCard.tsx:106
+#: src/components/vm/hostdevs/hostDevCard.tsx:113
+#: src/components/vm/hostdevs/hostDevCard.tsx:254
+#: src/components/vm/overview/bootOrder.tsx:171
 msgid "Slot"
 msgstr "插槽"
 
@@ -2553,7 +2646,7 @@ msgid ""
 msgstr "一些配置更改只有在完全关闭与重启后才会生效："
 
 #: src/components/storagePools/storagePoolOverviewTab.tsx:53
-#: src/components/vm/hostdevs/hostDevCard.tsx:231
+#: src/components/vm/hostdevs/hostDevCard.tsx:230
 #: src/components/vm/nics/nicBody.tsx:254
 #: src/components/vm/nics/vmNicsCard.tsx:608
 #: src/components/vm/disks/vmDisksCard.tsx:176
@@ -2566,7 +2659,7 @@ msgstr "源"
 msgid "Source format"
 msgstr "源格式"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:155
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:160
 msgid "Source must not be empty"
 msgstr "源不能为空"
 
@@ -2575,8 +2668,8 @@ msgstr "源不能为空"
 #: src/components/storagePools/createStoragePoolDialog.tsx:231
 #: src/components/storagePools/createStoragePoolDialog.tsx:248
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:54
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:72
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:207
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:71
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:214
 msgid "Source path"
 msgstr "源路径"
 
@@ -2736,15 +2829,15 @@ msgstr "TCP"
 msgid "TPM"
 msgstr "TPM"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:153
+#: src/components/vm/hostdevs/hostDevAdd.tsx:160
 msgid "Table of selectable host devices"
 msgstr "可选择的主机设备表"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:115
+#: src/components/vm/hostdevs/hostDevCard.tsx:114
 #: src/components/vm/nics/vmNicsCard.tsx:616
 #: src/components/vm/disks/vmDisksCard.tsx:177
 #: src/components/vm/disks/vmDiskColumns.tsx:192
-#: src/components/vm/overview/bootOrder.tsx:175
+#: src/components/vm/overview/bootOrder.tsx:177
 msgid "Target"
 msgstr "目标"
 
@@ -2779,7 +2872,7 @@ msgstr "虚拟机需要运行或关闭才能分离该设备"
 msgid "The directory on the server being exported"
 msgstr "服务器上的目录被导出"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:209
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:216
 msgid "The host path that is to be exported."
 msgstr "要导出的主机路径。"
 
@@ -2826,7 +2919,7 @@ msgstr "$0 的静态主机条目将被删除："
 msgid "The storage pool could not be deleted"
 msgstr "存储池不能被删除"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:222
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:229
 msgid "The tag name to be used by the guest to mount this export point."
 msgstr "客户机用来挂载此导出点的标签名称。"
 
@@ -2842,7 +2935,7 @@ msgstr "此 VM 是瞬态的。如果希望删除它，请将其关机。"
 msgid "This disk will be removed from $0:"
 msgstr "这个磁盘将从 $0 中删除："
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:70
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:69
 msgid "This filesystem will be removed from $0:"
 msgstr "这个文件系统将从 $0 中删除："
 
@@ -2906,14 +2999,14 @@ msgstr "故障排除"
 #: src/components/storagePools/storagePoolOverviewTab.tsx:78
 #: src/components/storagePools/createStoragePoolDialog.tsx:115
 #: src/components/vm/hostdevs/hostDevAdd.tsx:56
-#: src/components/vm/hostdevs/hostDevCard.tsx:191
+#: src/components/vm/hostdevs/hostDevCard.tsx:190
 #: src/components/vm/nics/vmNicsCard.tsx:835
 #: src/components/vm/overview/bootOrder.tsx:138
-#: src/components/vm/overview/bootOrder.tsx:151
-#: src/components/vm/overview/bootOrder.tsx:166
-#: src/components/vm/overview/bootOrder.tsx:173
-#: src/components/vm/overview/bootOrder.tsx:180
-#: src/components/vm/overview/bootOrder.tsx:186
+#: src/components/vm/overview/bootOrder.tsx:152
+#: src/components/vm/overview/bootOrder.tsx:168
+#: src/components/vm/overview/bootOrder.tsx:175
+#: src/components/vm/overview/bootOrder.tsx:182
+#: src/components/vm/overview/bootOrder.tsx:188
 msgid "Type"
 msgstr "类型"
 
@@ -2929,11 +3022,17 @@ msgstr "URL（ISO镜像或者发行版安装树）"
 msgid "USB"
 msgstr "USB"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:125
+#: src/components/vm/hostdevs/hostDevCard.tsx:124
 msgid "UUID"
 msgstr "UUID"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:172
+#: src/libvirtApi/nodeDevice.ts:42
+#, fuzzy
+#| msgid "Unspecified"
+msgid "Unclassified"
+msgstr "未指定"
+
+#: src/components/vm/hostdevs/hostDevAdd.tsx:179
 msgid "Undefined"
 msgstr "未定义"
 
@@ -2949,7 +3048,7 @@ msgstr "唯一名称，默认：$0"
 msgid "Unique network name"
 msgstr "唯一的网络名称"
 
-#: src/components/vm/overview/bootOrder.tsx:176
+#: src/components/vm/overview/bootOrder.tsx:178
 msgid "Unit"
 msgstr "单元"
 
@@ -2957,10 +3056,10 @@ msgstr "单元"
 msgid "Unknown firmware"
 msgstr "未知固件"
 
+#: src/components/vm/hostdevs/hostDevCard.tsx:97
 #: src/components/vm/hostdevs/hostDevCard.tsx:98
-#: src/components/vm/hostdevs/hostDevCard.tsx:99
-#: src/components/vm/overview/bootOrder.tsx:157
 #: src/components/vm/overview/bootOrder.tsx:158
+#: src/components/vm/overview/bootOrder.tsx:159
 msgid "Unspecified"
 msgstr "未指定"
 
@@ -2981,7 +3080,7 @@ msgstr "占用率"
 msgid "Use existing"
 msgstr "使用现有的"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:239
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:246
 msgid "Use extended attributes on files and directories"
 msgstr "对文件和目录使用扩展属性"
 
@@ -3030,7 +3129,7 @@ msgstr "用户会话"
 msgid "Uses SPICE"
 msgstr "使用 SPICE"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:330
+#: src/components/vm/hostdevs/hostDevCard.tsx:329
 msgid "VM $0 Host Devices"
 msgstr "虚拟机 $0 主机设备"
 
@@ -3112,12 +3211,12 @@ msgstr "页内查看器不支持启用了 TLS 的 VNC"
 msgid "Valid token"
 msgstr "有效令牌"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:157
-#: src/components/vm/hostdevs/hostDevCard.tsx:221
-#: src/components/vm/hostdevs/hostDevCard.tsx:253
-#: src/components/vm/hostdevs/hostDevCard.tsx:259
-#: src/components/vm/overview/bootOrder.tsx:152
-#: src/components/vm/overview/bootOrder.tsx:167
+#: src/components/vm/hostdevs/hostDevAdd.tsx:164
+#: src/components/vm/hostdevs/hostDevCard.tsx:220
+#: src/components/vm/hostdevs/hostDevCard.tsx:252
+#: src/components/vm/hostdevs/hostDevCard.tsx:258
+#: src/components/vm/overview/bootOrder.tsx:153
+#: src/components/vm/overview/bootOrder.tsx:169
 msgid "Vendor"
 msgstr "厂商"
 
@@ -3137,7 +3236,7 @@ msgstr "虚拟机"
 msgid "Virtual machines management"
 msgstr "虚拟机管理"
 
-#: src/components/create-vm-dialog/pxe-helpers.tsx:152
+#: src/components/create-vm-dialog/pxe-helpers.tsx:153
 msgid "Virtual network"
 msgstr "虚拟网络"
 
@@ -3183,8 +3282,8 @@ msgstr "卷组名称不应为空"
 msgid "Vsock"
 msgstr "Vsock"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:121
-#: src/components/vm/overview/bootOrder.tsx:182
+#: src/components/vm/hostdevs/hostDevCard.tsx:120
+#: src/components/vm/overview/bootOrder.tsx:184
 msgid "WWPN"
 msgstr "WWPN"
 
@@ -3202,12 +3301,16 @@ msgstr ""
 "系统停止响应时 watchdogs 的行为。要使用此虚拟 watchdog 设备，客户端系统也需要"
 "有一个额外的驱动程序和一个正在运行的 watchdog 服务。"
 
+#: src/libvirtApi/nodeDevice.ts:55
+msgid "Wireless Controller"
+msgstr ""
+
 #: src/components/vm/disks/diskEdit.tsx:183
 #: src/components/vm/disks/vmDisksCard.tsx:268
 msgid "Writeable"
 msgstr "可写"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:186
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:193
 msgid "You can mount the shared folder using:"
 msgstr "您可以使用以下方法挂载共享文件夹："
 
@@ -3268,7 +3371,7 @@ msgstr "已关闭"
 #: src/components/vm/overview/vsock.tsx:328
 #: src/components/vm/overview/vmOverviewCard.tsx:130
 #: src/components/vm/overview/vmOverviewCard.tsx:138
-#: src/components/vm/overview/bootOrder.tsx:399
+#: src/components/vm/overview/bootOrder.tsx:401
 #: src/components/vm/overview/watchdog.tsx:278
 msgid "edit"
 msgstr "编辑"
@@ -3335,7 +3438,7 @@ msgid "more info"
 msgstr "更多信息"
 
 #: src/components/vm/vmDetailsPage.tsx:220
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:194
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:201
 msgid "mount point: The mount point inside the guest"
 msgstr "挂载点：客户机内的挂载点"
 
@@ -3545,11 +3648,6 @@ msgstr "是"
 #~ msgstr "VNC 端口"
 
 #, fuzzy
-#~| msgid "bridge"
-#~ msgid "Bridge"
-#~ msgstr "网桥"
-
-#, fuzzy
 #~| msgid "host passthrough"
 #~ msgid "Passthrough"
 #~ msgstr "主机透传"
@@ -3576,9 +3674,6 @@ msgstr "是"
 
 #~ msgid "More info for source path field"
 #~ msgstr "源路径字段的更多信息"
-
-#~ msgid "Memory file"
-#~ msgstr "内存文件"
 
 #~ msgid "Uptime"
 #~ msgstr "Uptime"
@@ -3786,9 +3881,6 @@ msgstr "是"
 
 #~ msgid "Desktop"
 #~ msgstr "桌面"
-
-#~ msgid "Docking station"
-#~ msgstr "Docking station"
 
 #~ msgid "Dual rank"
 #~ msgstr "Dual rank"

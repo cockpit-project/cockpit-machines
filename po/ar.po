@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-16 03:53+0000\n"
+"POT-Creation-Date: 2026-01-26 04:10+0000\n"
 "PO-Revision-Date: 2025-10-12 02:53+0000\n"
 "Last-Translator: joo es <jonnyse@users.noreply.translate.fedoraproject.org>\n"
 "Language-Team: Arabic <https://translate.fedoraproject.org/projects/cockpit/"
@@ -78,7 +78,7 @@ msgstr "لا يدعم $0 التثبيت بدون وجود مستخدم."
 msgid "$0 memory adjustment"
 msgstr "تعديل الذاكرة $0"
 
-#: src/components/create-vm-dialog/pxe-helpers.tsx:104
+#: src/components/create-vm-dialog/pxe-helpers.tsx:105
 msgid "$0 network"
 msgstr "الشبكة $0"
 
@@ -137,7 +137,7 @@ msgid "Activate the storage pool to administer volumes"
 msgstr "تفعيل مجمّع التخزين لإدارة الوحدات التخزينية"
 
 #: src/components/networks/networkOverviewTab.tsx:281
-#: src/components/vm/hostdevs/hostDevAdd.tsx:267
+#: src/components/vm/hostdevs/hostDevAdd.tsx:274
 #: src/components/vm/nics/nicBody.tsx:606 src/components/vm/nics/nicAdd.tsx:335
 #: src/components/vm/disks/diskAdd.tsx:986
 #: src/components/vm/overview/vsock.tsx:236
@@ -166,8 +166,8 @@ msgstr "إضافة إدخال مضيف DHCP ثابت"
 msgid "Add disk"
 msgstr "إضافة قرص"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:284
-#: src/components/vm/hostdevs/hostDevCard.tsx:154
+#: src/components/vm/hostdevs/hostDevAdd.tsx:291
+#: src/components/vm/hostdevs/hostDevCard.tsx:153
 msgid "Add host device"
 msgstr "إضافة جهاز مضيف"
 
@@ -181,7 +181,7 @@ msgstr "إضافة واجهة شبكة"
 msgid "Add serial console"
 msgstr "وحدة التحكم المتسلسلة"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:123
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:128
 msgid "Add shared directory"
 msgstr "إضافة مجلد مشاركة"
 
@@ -201,7 +201,7 @@ msgstr "إضافة جهاز Watchdog"
 msgid "Adding a watchdog will require a reboot to take effect."
 msgstr "إضافة Watchdog ستتطلب إعادة تشغيل النظام لتصبح فعالة."
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:127
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:132
 msgid "Adding shared directories is possible only when the guest is shut off"
 msgstr "إضافة مجلدات مشتركة ممكنة فقط عندما يكون النظام الضيف مُطفأً"
 
@@ -294,6 +294,10 @@ msgstr "بدء تلقائي"
 msgid "Backend"
 msgstr ""
 
+#: src/libvirtApi/nodeDevice.ts:50
+msgid "Base System Peripheral"
+msgstr ""
+
 #: src/components/vm/disks/vmDiskColumns.tsx:49
 msgid "Block device"
 msgstr "حجب الجحاز"
@@ -306,22 +310,28 @@ msgstr "محظور"
 msgid "Boot order"
 msgstr "طلب الإقلاع"
 
-#: src/components/vm/overview/bootOrder.tsx:284
+#: src/components/vm/overview/bootOrder.tsx:286
 msgid "Boot order settings could not be saved"
 msgstr "تعذّر حفظ إعدادات تسلسل الإقلاع"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:116
-#: src/components/vm/hostdevs/hostDevCard.tsx:105
-#: src/components/vm/hostdevs/hostDevCard.tsx:113
-#: src/components/vm/hostdevs/hostDevCard.tsx:264
+#: src/libvirtApi/nodeDevice.ts:48
+#, fuzzy
+#| msgid "bridge"
+msgid "Bridge"
+msgstr "جسر"
+
+#: src/components/vm/hostdevs/hostDevAdd.tsx:113
+#: src/components/vm/hostdevs/hostDevCard.tsx:104
+#: src/components/vm/hostdevs/hostDevCard.tsx:112
+#: src/components/vm/hostdevs/hostDevCard.tsx:263
 #: src/components/vm/disks/diskEdit.tsx:133
 #: src/components/vm/disks/vmDisksCard.tsx:260
 #: src/components/vm/disks/diskAdd.tsx:307
 #: src/components/vm/overview/bootOrder.tsx:127
 #: src/components/vm/overview/bootOrder.tsx:139
-#: src/components/vm/overview/bootOrder.tsx:157
-#: src/components/vm/overview/bootOrder.tsx:160
-#: src/components/vm/overview/bootOrder.tsx:174
+#: src/components/vm/overview/bootOrder.tsx:158
+#: src/components/vm/overview/bootOrder.tsx:161
+#: src/components/vm/overview/bootOrder.tsx:176
 msgid "Bus"
 msgstr "ناقل"
 
@@ -357,11 +367,11 @@ msgstr "ذاكرة التخزين المؤقت"
 #: src/components/vm/vmEditDescriptionDialog.tsx:94
 #: src/components/vm/confirmDialog.tsx:79
 #: src/components/vm/consoles/vnc.tsx:171
-#: src/components/vm/hostdevs/hostDevAdd.tsx:272
+#: src/components/vm/hostdevs/hostDevAdd.tsx:279
 #: src/components/vm/vmMigrateDialog.tsx:240
 #: src/components/vm/nics/nicEdit.tsx:324 src/components/vm/nics/nicAdd.tsx:338
 #: src/components/vm/vmCloneDialog.tsx:124
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:254
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:261
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:140
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:353
 #: src/components/vm/disks/diskEdit.tsx:340
@@ -373,7 +383,7 @@ msgstr "ذاكرة التخزين المؤقت"
 #: src/components/vm/overview/cpuModal.tsx:354
 #: src/components/vm/overview/vsock.tsx:285
 #: src/components/vm/overview/firmware.tsx:121
-#: src/components/vm/overview/bootOrder.tsx:368
+#: src/components/vm/overview/bootOrder.tsx:370
 #: src/components/vm/overview/watchdog.tsx:241
 #: src/components/vm/deleteDialog.tsx:215
 msgid "Cancel"
@@ -387,7 +397,7 @@ msgstr "لا يمكن تعديل جهاز vsock في آلة افتراضية ع�
 msgid "Cannot edit watchdog device on a transient VM"
 msgstr "لا يمكن تعديل جهاز watchdog في آلة افتراضية عابرة (transient VM)"
 
-#: src/components/vm/overview/bootOrder.tsx:353
+#: src/components/vm/overview/bootOrder.tsx:355
 msgid "Change boot order"
 msgstr "تغيير تسلسل الإقلاع"
 
@@ -423,7 +433,7 @@ msgstr "جاري التحقق من صلاحية الرمز الفريد..."
 msgid "Choose an operating system"
 msgstr "اختر نظام تشغيل"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:201
+#: src/components/vm/hostdevs/hostDevCard.tsx:200
 msgid "Class"
 msgstr "الصنف"
 
@@ -447,6 +457,10 @@ msgstr "أغلق"
 #: src/components/create-vm-dialog/createVmDialog.tsx:455
 msgid "Cloud base image"
 msgstr "صورة الأساس السحابية"
+
+#: src/libvirtApi/nodeDevice.ts:72
+msgid "Co-Processor"
+msgstr ""
 
 #: org.cockpit_project.machines.metainfo.xml:19
 msgid "Cockpit Project"
@@ -709,7 +723,7 @@ msgid ""
 msgstr ""
 "سيؤدي حذف مجمع تخزين غير نشط إلى إلغاء تعريف المجمع فقط. لن يتم حذف محتواه."
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:82
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:81
 msgid "Deleting shared directories is possible only when the guest is shut off"
 msgstr "يمكن حذف المجلدات المشتركة فقط عند إطفاء المستخدم الضيف"
 
@@ -749,16 +763,16 @@ msgstr "التفاصيل"
 
 #: src/components/networks/networkList.tsx:73
 #: src/components/networks/createNetworkDialog.tsx:231
-#: src/components/vm/hostdevs/hostDevAdd.tsx:115
-#: src/components/vm/hostdevs/hostDevAdd.tsx:150
-#: src/components/vm/hostdevs/hostDevCard.tsx:104
-#: src/components/vm/hostdevs/hostDevCard.tsx:263
+#: src/components/vm/hostdevs/hostDevAdd.tsx:112
+#: src/components/vm/hostdevs/hostDevAdd.tsx:157
+#: src/components/vm/hostdevs/hostDevCard.tsx:103
+#: src/components/vm/hostdevs/hostDevCard.tsx:262
 #: src/components/vm/disks/vmDisksCard.tsx:257
 #: src/components/vm/disks/diskAdd.tsx:463
 #: src/components/vm/overview/bootOrder.tsx:119
 #: src/components/vm/overview/bootOrder.tsx:126
-#: src/components/vm/overview/bootOrder.tsx:158
-#: src/components/vm/overview/bootOrder.tsx:161
+#: src/components/vm/overview/bootOrder.tsx:159
+#: src/components/vm/overview/bootOrder.tsx:162
 msgid "Device"
 msgstr "جهاز"
 
@@ -819,6 +833,10 @@ msgstr "لقطة القرص فقط"
 msgid "Disks"
 msgstr "الأقراص"
 
+#: src/libvirtApi/nodeDevice.ts:45
+msgid "Display Controller"
+msgstr ""
+
 #: src/components/vm/vmMigrateDialog.tsx:224
 msgid ""
 "Do not run this VM on the origin and destination hosts at the same time."
@@ -829,6 +847,12 @@ msgstr ""
 #: src/helpers.ts:289
 msgid "Do nothing"
 msgstr "لا تفعل شيئاً"
+
+#: src/libvirtApi/nodeDevice.ts:52
+#, fuzzy
+#| msgid "Location"
+msgid "Docking Station"
+msgstr "الموقع"
 
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:163
 msgid "Domain has crashed"
@@ -929,6 +953,10 @@ msgstr "آلة مقلدة"
 msgid "Enable virtualization support in BIOS/EFI settings."
 msgstr "تمكين دعم المحاكاة الافتراضية في إعدادات BIOS/EFI."
 
+#: src/libvirtApi/nodeDevice.ts:58
+msgid "Encryption Controller"
+msgstr ""
+
 #: src/components/networks/createNetworkDialog.tsx:325
 msgid "End"
 msgstr "النهاية"
@@ -958,7 +986,7 @@ msgstr "الصورة الموجودة على نظام الملفات للجها�
 msgid "Expand"
 msgstr "التوسعة"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:236
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:243
 msgid "Extended attributes"
 msgstr "السمات الموسعة"
 
@@ -982,7 +1010,7 @@ msgstr "لم يتم إضافة TPM إلى الجهاز الافتراضي $0"
 msgid "Failed to add serial console to VM $0"
 msgstr "لم يتم إضافة TPM إلى الجهاز الافتراضي $0"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:204
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:211
 msgid "Failed to add shared directory"
 msgstr "فشل في إضافة مجلد مشترك"
 
@@ -1053,7 +1081,7 @@ msgstr "يجب تمكين عدد أقل من الحد الأقصى لعدد أن
 msgid "File"
 msgstr "ملف"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:69
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:68
 msgid "Filesystem $0 could not be removed"
 msgstr "تعذر إزالة نظام الملفات $0"
 
@@ -1183,7 +1211,7 @@ msgstr ""
 msgid "Hardware virtualization is disabled"
 msgstr "المحاكاة الافتراضية للعتاد معطلة"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:231
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:238
 #: src/components/vm/disks/diskAdd.tsx:292
 msgid "Hide additional options"
 msgstr "إخفاء الخيارات الإضافية"
@@ -1195,15 +1223,15 @@ msgstr "إخفاء الخيارات الإضافية"
 msgid "Host"
 msgstr "المضيف"
 
-#: src/components/create-vm-dialog/pxe-helpers.tsx:160
+#: src/components/create-vm-dialog/pxe-helpers.tsx:162
 msgid "Host device"
 msgstr "جهاز مضيف"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:242
+#: src/components/vm/hostdevs/hostDevAdd.tsx:249
 msgid "Host device could not be attached"
 msgstr "تعذّر توصيل الجهاز المضيف"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:274
+#: src/components/vm/hostdevs/hostDevCard.tsx:273
 msgid "Host device will be removed from $0:"
 msgstr "‏ستتم إزالة الجهاز المضيف من $0:"
 
@@ -1393,6 +1421,10 @@ msgstr "يجب ألا يكون حقل البادئ فارغاً"
 msgid "Inject a non-maskable interrupt"
 msgstr "حقن المقاطعة الغير فابلة للتعطيل"
 
+#: src/libvirtApi/nodeDevice.ts:51
+msgid "Input Device Controller"
+msgstr ""
+
 #: src/components/vm/disks/diskAdd.tsx:986
 #: src/components/vm/disks/vmDiskColumns.tsx:243
 msgid "Insert"
@@ -1422,7 +1454,11 @@ msgstr "يحب ألا يكون خقل مصدر التثبيت فارغاً"
 msgid "Installation type"
 msgstr "نوع التثبيت"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:137
+#: src/libvirtApi/nodeDevice.ts:56
+msgid "Intelligent Controller"
+msgstr ""
+
+#: src/components/vm/hostdevs/hostDevCard.tsx:136
 msgid "Interface"
 msgstr "الواجهة"
 
@@ -1464,7 +1500,7 @@ msgstr "بادئة IPv6 غير صالحة"
 msgid "Invalid filename"
 msgstr "اسم ملف غير صالح"
 
-#: src/components/create-vm-dialog/pxe-helpers.tsx:107
+#: src/components/create-vm-dialog/pxe-helpers.tsx:108
 msgid "Isolated network"
 msgstr "شبكة معزولة"
 
@@ -1535,7 +1571,7 @@ msgstr "وسائط التثبيت المحلية (صورة ISO أو شجرة ت�
 msgid "Local scaling"
 msgstr ""
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:157
+#: src/components/vm/hostdevs/hostDevAdd.tsx:164
 msgid "Location"
 msgstr "الموقع"
 
@@ -1587,6 +1623,13 @@ msgstr "قناع أو طول البادئة"
 msgid "Mask or prefix length should not be empty"
 msgstr "يجب ألا يكون حقل طول القناع أو البادئة فارغًا"
 
+#: src/libvirtApi/nodeDevice.ts:43
+#, fuzzy
+#| msgid "$0 Storage pool"
+#| msgid_plural "$0 Storage pools"
+msgid "Mass Storage Controller"
+msgstr "بلا مجمع تخزين"
+
 #: src/components/vm/overview/memoryModal.tsx:180
 msgid "Maximum allocation"
 msgstr "الحد الأقصى للتخصيص"
@@ -1625,6 +1668,10 @@ msgstr "سيتم إخراج الوسائط من $0:"
 #: src/components/vm/overview/vmOverviewCard.tsx:188
 msgid "Memory"
 msgstr "الذاكرة"
+
+#: src/libvirtApi/nodeDevice.ts:47
+msgid "Memory Controller"
+msgstr ""
 
 #: src/components/vm/overview/memoryModal.tsx:142
 #: src/components/vm/overview/memoryModal.tsx:158
@@ -1667,6 +1714,10 @@ msgstr "ترحيل الجهاز الافتراضي لمضيف آخر"
 msgid "Migration failed"
 msgstr "فشل الترحيل"
 
+#: src/libvirtApi/nodeDevice.ts:74
+msgid "Miscellaneous"
+msgstr ""
+
 #: src/components/vm/nics/nicBody.tsx:265
 #: src/components/vm/nics/vmNicsCard.tsx:180
 #: src/components/vm/overview/cpuModal.tsx:317
@@ -1678,7 +1729,7 @@ msgstr "الطور"
 msgid "Mode help"
 msgstr "مساعدة الطور"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:211
+#: src/components/vm/hostdevs/hostDevCard.tsx:210
 #: src/components/vm/nics/nicBody.tsx:108
 msgid "Model"
 msgstr "النموذج"
@@ -1692,20 +1743,24 @@ msgid "More info"
 msgstr "مزيد من المعلومات"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:54
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:73
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:219
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:72
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:226
 msgid "Mount tag"
 msgstr "علامة التركيب"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:153
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:158
 msgid "Mount tag must not be empty"
 msgstr "يجب ألا يكون حقل علامة التركيب فارغاً"
+
+#: src/libvirtApi/nodeDevice.ts:46
+msgid "Multimedia Controller"
+msgstr ""
 
 #: src/components/networks/createNetworkDialog.tsx:118
 msgid "Must be an address instead of the network identifier, such as $0"
 msgstr "يجب أن يكون عنواناً وليس مُعرّف الشبكة، مثل $0"
 
-#: src/components/create-vm-dialog/pxe-helpers.tsx:92
+#: src/components/create-vm-dialog/pxe-helpers.tsx:93
 msgid "NAT to $0"
 msgstr "NAT إلى $0"
 
@@ -1774,6 +1829,12 @@ msgstr "فشل إلغاء تنشيط الشبكة $0"
 msgid "Network $0 will be permanently deleted."
 msgstr "سيتم حذف الشبكة $0 نهائياً."
 
+#: src/libvirtApi/nodeDevice.ts:44
+#, fuzzy
+#| msgid "Network interface"
+msgid "Network Controller"
+msgstr "واجهة الشبكة"
+
 #: src/components/create-vm-dialog/createVmDialog.tsx:463
 msgid "Network boot (PXE)"
 msgstr "الإقلاع عبر الشبكة (PXE)"
@@ -1832,7 +1893,7 @@ msgstr "لم يتم تحديد مفاتيح SSH"
 msgid "No VM is running or defined on this host"
 msgstr "لم يتم تشغيل أو تعريف أي جهاز افتراضي على هذا المضيف"
 
-#: src/components/vm/overview/bootOrder.tsx:380
+#: src/components/vm/overview/bootOrder.tsx:382
 msgid "No boot device found"
 msgstr "لم يعثر على جهاز إقلاع"
 
@@ -1846,11 +1907,11 @@ msgstr "لا وصف"
 msgid "No disks"
 msgstr "قرص"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:247
+#: src/components/vm/hostdevs/hostDevAdd.tsx:254
 msgid "No host device selected"
 msgstr "لم يتم تحديد جهاز مضيف"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:333
+#: src/components/vm/hostdevs/hostDevCard.tsx:332
 #, fuzzy
 #| msgid "host device"
 msgid "No host devices"
@@ -1870,7 +1931,7 @@ msgstr "واجهات الشبكة"
 msgid "No network is defined on this host"
 msgstr "لم يتم تحديد أي شبكة على هذا المضيف"
 
-#: src/components/create-vm-dialog/pxe-helpers.tsx:166
+#: src/components/create-vm-dialog/pxe-helpers.tsx:168
 msgid "No networks available"
 msgstr "لا شبكات متاحة"
 
@@ -1886,7 +1947,7 @@ msgstr ""
 msgid "No scaling or resizing"
 msgstr ""
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:101
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:100
 #, fuzzy
 #| msgid "Shared directories"
 msgid "No shared directories"
@@ -1925,6 +1986,10 @@ msgstr "لا شبكات افتراضية"
 #: src/components/storagePools/storagePoolDelete.tsx:197
 msgid "No volumes exist in this storage pool."
 msgstr "لا وحدات تخزين موجودة في مجمع التخزين هذا."
+
+#: src/libvirtApi/nodeDevice.ts:61
+msgid "Non-Essential Instrumentation"
+msgstr ""
 
 #: src/components/networks/network.tsx:152
 msgid ""
@@ -1973,7 +2038,7 @@ msgstr ""
 
 #: src/components/vm/nics/nicEdit.tsx:69
 #: src/components/vm/overview/memoryModal.tsx:187
-#: src/components/vm/overview/bootOrder.tsx:406
+#: src/components/vm/overview/bootOrder.tsx:408
 msgid "Only editable when the guest is shut off"
 msgstr "قابل للتعديل فقط عند إيقاف تشغيل الضيف"
 
@@ -2027,8 +2092,8 @@ msgstr ""
 msgid "Password must be at most 8 characters."
 msgstr "يجب أن تتكون كلمة السر من 8 أحرف على الأكثر."
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:129
-#: src/components/vm/hostdevs/hostDevCard.tsx:133
+#: src/components/vm/hostdevs/hostDevCard.tsx:128
+#: src/components/vm/hostdevs/hostDevCard.tsx:132
 #: src/components/vm/disks/diskEdit.tsx:63
 #: src/components/vm/deleteDialog.tsx:80
 msgid "Path"
@@ -2195,11 +2260,19 @@ msgstr "طول البادئة ينبغي ألا يترك فارغاً"
 msgid "Private"
 msgstr "خاص"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:157
-#: src/components/vm/hostdevs/hostDevCard.tsx:254
-#: src/components/vm/hostdevs/hostDevCard.tsx:260
-#: src/components/vm/overview/bootOrder.tsx:153
-#: src/components/vm/overview/bootOrder.tsx:168
+#: src/libvirtApi/nodeDevice.ts:60
+msgid "Processing Accelerator"
+msgstr ""
+
+#: src/libvirtApi/nodeDevice.ts:53
+msgid "Processor"
+msgstr ""
+
+#: src/components/vm/hostdevs/hostDevAdd.tsx:164
+#: src/components/vm/hostdevs/hostDevCard.tsx:253
+#: src/components/vm/hostdevs/hostDevCard.tsx:259
+#: src/components/vm/overview/bootOrder.tsx:154
+#: src/components/vm/overview/bootOrder.tsx:170
 msgid "Product"
 msgstr "منتج"
 
@@ -2207,11 +2280,11 @@ msgstr "منتج"
 msgid "Profile"
 msgstr "ملف التعريف"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:120
+#: src/components/vm/hostdevs/hostDevCard.tsx:119
 #: src/components/vm/nics/nicBody.tsx:506
 #: src/components/vm/disks/vmDiskColumns.tsx:50
 #: src/components/vm/overview/bootOrder.tsx:120
-#: src/components/vm/overview/bootOrder.tsx:181
+#: src/components/vm/overview/bootOrder.tsx:183
 msgid "Protocol"
 msgstr "بروتوكول"
 
@@ -2298,12 +2371,12 @@ msgid "Remote viewer applications can connect to the following address:"
 msgstr "يمكن لتطبيقات العرض عن بُعد الاتصال بالعنوان التالي:"
 
 #: src/components/networks/networkOverviewTab.tsx:81
-#: src/components/vm/hostdevs/hostDevCard.tsx:270
-#: src/components/vm/hostdevs/hostDevCard.tsx:276
+#: src/components/vm/hostdevs/hostDevCard.tsx:269
+#: src/components/vm/hostdevs/hostDevCard.tsx:275
 #: src/components/vm/nics/vmNicsCard.tsx:707
 #: src/components/vm/nics/vmNicsCard.tsx:722
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:66
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:75
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:65
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:74
 #: src/components/vm/disks/vmDiskColumns.tsx:188
 #: src/components/vm/disks/vmDiskColumns.tsx:269
 #: src/components/vm/overview/vsock.tsx:282
@@ -2323,11 +2396,11 @@ msgstr "إزالة وحذف ملف"
 msgid "Remove disk from VM?"
 msgstr "إزالة قرص من الجهاز الافتراضي؟"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:68
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:67
 msgid "Remove filesystem?"
 msgstr "إزالة نظام الملفات؟"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:272
+#: src/components/vm/hostdevs/hostDevCard.tsx:271
 msgid "Remove host device from VM?"
 msgstr "إزالة جهاز مضيف من الجهاز الافتراضي؟"
 
@@ -2431,15 +2504,15 @@ msgstr ""
 msgid "Root password"
 msgstr "كلمة سر الجذر"
 
-#: src/components/create-vm-dialog/pxe-helpers.tsx:97
+#: src/components/create-vm-dialog/pxe-helpers.tsx:98
 msgid "Route to $0"
 msgstr "التوجيه إلى $0"
 
-#: src/components/create-vm-dialog/pxe-helpers.tsx:99
+#: src/components/create-vm-dialog/pxe-helpers.tsx:100
 msgid "Routed network"
 msgstr "الشبكة الموجّهة"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:156
+#: src/components/vm/hostdevs/hostDevAdd.tsx:163
 msgid "Row select"
 msgstr "حدد الصف"
 
@@ -2476,6 +2549,10 @@ msgstr ""
 msgid "SSH keys"
 msgstr "مفاتيح SSH"
 
+#: src/libvirtApi/nodeDevice.ts:57
+msgid "Satellite Communication Controller"
+msgstr ""
+
 #: src/components/vm/vmEditDescriptionDialog.tsx:91
 #: src/components/vm/consoles/vnc.tsx:168
 #: src/components/vm/nics/nicEdit.tsx:321
@@ -2483,7 +2560,7 @@ msgstr "مفاتيح SSH"
 #: src/components/vm/overview/memoryModal.tsx:206
 #: src/components/vm/overview/vsock.tsx:236
 #: src/components/vm/overview/firmware.tsx:118
-#: src/components/vm/overview/bootOrder.tsx:365
+#: src/components/vm/overview/bootOrder.tsx:367
 #: src/components/vm/overview/watchdog.tsx:180
 msgid "Save"
 msgstr "حفظ"
@@ -2520,6 +2597,12 @@ msgstr "تسلسل"
 msgid "Serial ($0)"
 msgstr "وحدة التحكم المتسلسلة ($0)"
 
+#: src/libvirtApi/nodeDevice.ts:54
+#, fuzzy
+#| msgid "Serial console"
+msgid "Serial Bus Controller"
+msgstr "وحدة التحكم المتسلسلة"
+
 #: src/components/common/needsShutdown.tsx:227
 msgid "Serial console"
 msgstr "وحدة التحكم المتسلسلة"
@@ -2544,11 +2627,11 @@ msgstr ""
 "يتطلب تعيين كلمات سر المستخدم للتثبيت غير المراقب بدء تشغيل الجهاز الافتراضي "
 "عند إنشائه"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:249
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:256
 msgid "Share"
 msgstr "مشاركة"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:181
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:188
 msgid "Share a host directory with the guest"
 msgstr "‍شارك مجلد المضيف مع الضيف"
 
@@ -2557,7 +2640,7 @@ msgid "Shared directories"
 msgstr "المجلدات المشتركة"
 
 #: src/components/vm/vmDetailsPage.tsx:211
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:184
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:191
 msgid "Shared host directories need to be manually mounted inside the VM"
 msgstr "يجب تركيب مجلدات المضيف المشتركة يدوياً داخل الجهاز الافتراضي"
 
@@ -2565,7 +2648,7 @@ msgstr "يجب تركيب مجلدات المضيف المشتركة يدويا�
 msgid "Shared storage"
 msgstr "التخزين المشترك"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:231
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:238
 #: src/components/vm/disks/diskAdd.tsx:292
 msgid "Show additional options"
 msgstr "إظهار خيارات إضافية"
@@ -2612,6 +2695,14 @@ msgstr "إيقاف تشغيل $0؟"
 msgid "Shutting down"
 msgstr "جاري إيقاف التشغيل"
 
+#: src/libvirtApi/nodeDevice.ts:59
+msgid "Signal Processing Controller"
+msgstr ""
+
+#: src/libvirtApi/nodeDevice.ts:49
+msgid "Simple Communication Controller"
+msgstr ""
+
 #: src/components/storagePools/storagePoolVolumesTab.tsx:90
 #: src/components/storagePools/storageVolumeCreateBody.tsx:134
 #: src/components/storagePools/storagePoolList.tsx:75
@@ -2619,11 +2710,11 @@ msgstr "جاري إيقاف التشغيل"
 msgid "Size"
 msgstr "الحجم"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:128
-#: src/components/vm/hostdevs/hostDevCard.tsx:107
-#: src/components/vm/hostdevs/hostDevCard.tsx:114
-#: src/components/vm/hostdevs/hostDevCard.tsx:255
-#: src/components/vm/overview/bootOrder.tsx:169
+#: src/components/vm/hostdevs/hostDevAdd.tsx:125
+#: src/components/vm/hostdevs/hostDevCard.tsx:106
+#: src/components/vm/hostdevs/hostDevCard.tsx:113
+#: src/components/vm/hostdevs/hostDevCard.tsx:254
+#: src/components/vm/overview/bootOrder.tsx:171
 msgid "Slot"
 msgstr "الفتحة"
 
@@ -2667,7 +2758,7 @@ msgid ""
 msgstr "لا تسري بعض تغييرات التهيئة إلا بعد إقلاع جديد:"
 
 #: src/components/storagePools/storagePoolOverviewTab.tsx:53
-#: src/components/vm/hostdevs/hostDevCard.tsx:231
+#: src/components/vm/hostdevs/hostDevCard.tsx:230
 #: src/components/vm/nics/nicBody.tsx:254
 #: src/components/vm/nics/vmNicsCard.tsx:608
 #: src/components/vm/disks/vmDisksCard.tsx:176
@@ -2680,7 +2771,7 @@ msgstr "مصدر"
 msgid "Source format"
 msgstr "تهيئة المصدر"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:155
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:160
 msgid "Source must not be empty"
 msgstr "يجب ألا يترك المصدر فارغاً"
 
@@ -2689,8 +2780,8 @@ msgstr "يجب ألا يترك المصدر فارغاً"
 #: src/components/storagePools/createStoragePoolDialog.tsx:231
 #: src/components/storagePools/createStoragePoolDialog.tsx:248
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:54
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:72
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:207
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:71
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:214
 msgid "Source path"
 msgstr "مسار المصدر"
 
@@ -2856,15 +2947,15 @@ msgstr "المعالج"
 msgid "TPM"
 msgstr "TPM"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:153
+#: src/components/vm/hostdevs/hostDevAdd.tsx:160
 msgid "Table of selectable host devices"
 msgstr "جدول الأجهزة المضيفة القابلة للتحديد"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:115
+#: src/components/vm/hostdevs/hostDevCard.tsx:114
 #: src/components/vm/nics/vmNicsCard.tsx:616
 #: src/components/vm/disks/vmDisksCard.tsx:177
 #: src/components/vm/disks/vmDiskColumns.tsx:192
-#: src/components/vm/overview/bootOrder.tsx:175
+#: src/components/vm/overview/bootOrder.tsx:177
 msgid "Target"
 msgstr "الهدف"
 
@@ -2899,7 +2990,7 @@ msgstr "يجب أن يكون الجهاز الافتراضي قيد التشغي
 msgid "The directory on the server being exported"
 msgstr "المجلد المُصدَّر من الخادم"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:209
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:216
 msgid "The host path that is to be exported."
 msgstr "مسار المضيف الذي سيتم تصديره."
 
@@ -2948,7 +3039,7 @@ msgstr "ستتم إزالة إدخال المضيف الثابت لـ$0:"
 msgid "The storage pool could not be deleted"
 msgstr "لا يمكن حذف مجمع التخزين"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:222
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:229
 msgid "The tag name to be used by the guest to mount this export point."
 msgstr "اسم العلامة الذي سيستخدمها الضيف لتركيب نقطة التصدير هذه."
 
@@ -2964,7 +3055,7 @@ msgstr "هذه الآلة الافتراضية مؤقتة. أوقف تشغيله
 msgid "This disk will be removed from $0:"
 msgstr "ستتم إزالة هذا القرص من $0:"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:70
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:69
 msgid "This filesystem will be removed from $0:"
 msgstr "سيتم إزالة نظام الملفات هذا من $0:"
 
@@ -3033,14 +3124,14 @@ msgstr "استكشاف الأخطاء وإصلاحها"
 #: src/components/storagePools/storagePoolOverviewTab.tsx:78
 #: src/components/storagePools/createStoragePoolDialog.tsx:115
 #: src/components/vm/hostdevs/hostDevAdd.tsx:56
-#: src/components/vm/hostdevs/hostDevCard.tsx:191
+#: src/components/vm/hostdevs/hostDevCard.tsx:190
 #: src/components/vm/nics/vmNicsCard.tsx:835
 #: src/components/vm/overview/bootOrder.tsx:138
-#: src/components/vm/overview/bootOrder.tsx:151
-#: src/components/vm/overview/bootOrder.tsx:166
-#: src/components/vm/overview/bootOrder.tsx:173
-#: src/components/vm/overview/bootOrder.tsx:180
-#: src/components/vm/overview/bootOrder.tsx:186
+#: src/components/vm/overview/bootOrder.tsx:152
+#: src/components/vm/overview/bootOrder.tsx:168
+#: src/components/vm/overview/bootOrder.tsx:175
+#: src/components/vm/overview/bootOrder.tsx:182
+#: src/components/vm/overview/bootOrder.tsx:188
 msgid "Type"
 msgstr "النوع"
 
@@ -3056,11 +3147,17 @@ msgstr "URL ( صورة ISO أو شجرة تثبيت توزيعة)"
 msgid "USB"
 msgstr "USB"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:125
+#: src/components/vm/hostdevs/hostDevCard.tsx:124
 msgid "UUID"
 msgstr "UUID"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:172
+#: src/libvirtApi/nodeDevice.ts:42
+#, fuzzy
+#| msgid "Unspecified"
+msgid "Unclassified"
+msgstr "غير محدد"
+
+#: src/components/vm/hostdevs/hostDevAdd.tsx:179
 msgid "Undefined"
 msgstr "غير معرَّف"
 
@@ -3076,7 +3173,7 @@ msgstr "اسم فريد، الافتراضي:$0"
 msgid "Unique network name"
 msgstr "اسم شبكة فريد"
 
-#: src/components/vm/overview/bootOrder.tsx:176
+#: src/components/vm/overview/bootOrder.tsx:178
 msgid "Unit"
 msgstr "وحدة"
 
@@ -3084,10 +3181,10 @@ msgstr "وحدة"
 msgid "Unknown firmware"
 msgstr "برنامج ثابت غير معروف"
 
+#: src/components/vm/hostdevs/hostDevCard.tsx:97
 #: src/components/vm/hostdevs/hostDevCard.tsx:98
-#: src/components/vm/hostdevs/hostDevCard.tsx:99
-#: src/components/vm/overview/bootOrder.tsx:157
 #: src/components/vm/overview/bootOrder.tsx:158
+#: src/components/vm/overview/bootOrder.tsx:159
 msgid "Unspecified"
 msgstr "غير محدد"
 
@@ -3108,7 +3205,7 @@ msgstr "الاستخدام"
 msgid "Use existing"
 msgstr "استخدم الموجود"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:239
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:246
 msgid "Use extended attributes on files and directories"
 msgstr "استخدام السمات الموسعة على الملفات والمجلدات"
 
@@ -3157,7 +3254,7 @@ msgstr "جلسة المستخدم"
 msgid "Uses SPICE"
 msgstr "استخدم SPICE"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:330
+#: src/components/vm/hostdevs/hostDevCard.tsx:329
 msgid "VM $0 Host Devices"
 msgstr "أجهزة المضيف للآلة الافتراضية $0"
 
@@ -3243,12 +3340,12 @@ msgstr ""
 msgid "Valid token"
 msgstr "رمز غير صالح"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:157
-#: src/components/vm/hostdevs/hostDevCard.tsx:221
-#: src/components/vm/hostdevs/hostDevCard.tsx:253
-#: src/components/vm/hostdevs/hostDevCard.tsx:259
-#: src/components/vm/overview/bootOrder.tsx:152
-#: src/components/vm/overview/bootOrder.tsx:167
+#: src/components/vm/hostdevs/hostDevAdd.tsx:164
+#: src/components/vm/hostdevs/hostDevCard.tsx:220
+#: src/components/vm/hostdevs/hostDevCard.tsx:252
+#: src/components/vm/hostdevs/hostDevCard.tsx:258
+#: src/components/vm/overview/bootOrder.tsx:153
+#: src/components/vm/overview/bootOrder.tsx:169
 msgid "Vendor"
 msgstr "المُنتِج"
 
@@ -3268,7 +3365,7 @@ msgstr "أجهزة افتراضية"
 msgid "Virtual machines management"
 msgstr "إدارة الآلات افتراضية"
 
-#: src/components/create-vm-dialog/pxe-helpers.tsx:152
+#: src/components/create-vm-dialog/pxe-helpers.tsx:153
 msgid "Virtual network"
 msgstr "شبكة افتراضية"
 
@@ -3314,8 +3411,8 @@ msgstr "ينبغي ألا يترك اسم مجموعة وحدة التخزين �
 msgid "Vsock"
 msgstr "مقبس الجهاز الافتراضي"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:121
-#: src/components/vm/overview/bootOrder.tsx:182
+#: src/components/vm/hostdevs/hostDevCard.tsx:120
+#: src/components/vm/overview/bootOrder.tsx:184
 msgid "WWPN"
 msgstr "WWPN"
 
@@ -3334,12 +3431,16 @@ msgstr ""
 "المراقبة الافتراضي هذا، يحتاج نظام الضيف إلى برنامج تشغيل إضافي وخدمة مراقبة "
 "قيد التشغيل."
 
+#: src/libvirtApi/nodeDevice.ts:55
+msgid "Wireless Controller"
+msgstr ""
+
 #: src/components/vm/disks/diskEdit.tsx:183
 #: src/components/vm/disks/vmDisksCard.tsx:268
 msgid "Writeable"
 msgstr "قابل-للكتابة"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:186
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:193
 msgid "You can mount the shared folder using:"
 msgstr "يمكنك تركيب مجلد النشاركة باستخدام:"
 
@@ -3402,7 +3503,7 @@ msgstr "أسفل"
 #: src/components/vm/overview/vsock.tsx:328
 #: src/components/vm/overview/vmOverviewCard.tsx:130
 #: src/components/vm/overview/vmOverviewCard.tsx:138
-#: src/components/vm/overview/bootOrder.tsx:399
+#: src/components/vm/overview/bootOrder.tsx:401
 #: src/components/vm/overview/watchdog.tsx:278
 msgid "edit"
 msgstr "عدِّل"
@@ -3469,7 +3570,7 @@ msgid "more info"
 msgstr "معلومات إضافية"
 
 #: src/components/vm/vmDetailsPage.tsx:220
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:194
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:201
 msgid "mount point: The mount point inside the guest"
 msgstr ""
 
