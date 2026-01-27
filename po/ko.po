@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-16 03:53+0000\n"
-"PO-Revision-Date: 2025-12-25 18:09+0000\n"
+"POT-Creation-Date: 2026-01-26 04:10+0000\n"
+"PO-Revision-Date: 2026-01-25 13:58+0000\n"
 "Last-Translator: 김인수 <simmon@nplob.com>\n"
 "Language-Team: Korean <https://translate.fedoraproject.org/projects/cockpit/"
 "cockpit-machines/ko/>\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0\n"
-"X-Generator: Weblate 5.15.1\n"
+"X-Generator: Weblate 5.15.2\n"
 
 #: src/components/vm/nics/nicBody.tsx:322
 msgid " excluding "
@@ -62,7 +62,7 @@ msgstr "$0는 무인 설치를 지원하지 않습니다."
 msgid "$0 memory adjustment"
 msgstr "$0 메모리 조정"
 
-#: src/components/create-vm-dialog/pxe-helpers.tsx:104
+#: src/components/create-vm-dialog/pxe-helpers.tsx:105
 msgid "$0 network"
 msgstr "$0 네트워크"
 
@@ -121,7 +121,7 @@ msgid "Activate the storage pool to administer volumes"
 msgstr "볼륨을 관리하려면 저장소 풀을 활성화하세요"
 
 #: src/components/networks/networkOverviewTab.tsx:281
-#: src/components/vm/hostdevs/hostDevAdd.tsx:267
+#: src/components/vm/hostdevs/hostDevAdd.tsx:274
 #: src/components/vm/nics/nicBody.tsx:606 src/components/vm/nics/nicAdd.tsx:335
 #: src/components/vm/disks/diskAdd.tsx:986
 #: src/components/vm/overview/vsock.tsx:236
@@ -150,8 +150,8 @@ msgstr "DHCP 고정 호스트 항목 추가"
 msgid "Add disk"
 msgstr "디스크 추가"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:284
-#: src/components/vm/hostdevs/hostDevCard.tsx:154
+#: src/components/vm/hostdevs/hostDevAdd.tsx:291
+#: src/components/vm/hostdevs/hostDevCard.tsx:153
 msgid "Add host device"
 msgstr "호스트 장치 추가"
 
@@ -163,7 +163,7 @@ msgstr "네트워크 연결장치 추가"
 msgid "Add serial console"
 msgstr "직렬 콘솔 추가"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:123
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:128
 msgid "Add shared directory"
 msgstr "공유 디렉토리를 추가합니다"
 
@@ -183,7 +183,7 @@ msgstr "와치독 장치 유형 추가"
 msgid "Adding a watchdog will require a reboot to take effect."
 msgstr "워치독 추가하기는 적용을 위해 재부팅이 필요합니다."
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:127
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:132
 msgid "Adding shared directories is possible only when the guest is shut off"
 msgstr "공유 디렉토리 추가는 게스트가 종료된 경우에만 편집 할 수 있습니다"
 
@@ -274,6 +274,10 @@ msgstr "자동 시작"
 msgid "Backend"
 msgstr "백엔드"
 
+#: src/libvirtApi/nodeDevice.ts:50
+msgid "Base System Peripheral"
+msgstr "기본 시스템 주변 장치"
+
 #: src/components/vm/disks/vmDiskColumns.tsx:49
 msgid "Block device"
 msgstr "블록 장치"
@@ -286,22 +290,26 @@ msgstr "차단됩니다"
 msgid "Boot order"
 msgstr "부팅 순서"
 
-#: src/components/vm/overview/bootOrder.tsx:284
+#: src/components/vm/overview/bootOrder.tsx:286
 msgid "Boot order settings could not be saved"
 msgstr "부팅 순서 설정을 저장 할 수 없습니다"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:116
-#: src/components/vm/hostdevs/hostDevCard.tsx:105
-#: src/components/vm/hostdevs/hostDevCard.tsx:113
-#: src/components/vm/hostdevs/hostDevCard.tsx:264
+#: src/libvirtApi/nodeDevice.ts:48
+msgid "Bridge"
+msgstr "브릿지"
+
+#: src/components/vm/hostdevs/hostDevAdd.tsx:113
+#: src/components/vm/hostdevs/hostDevCard.tsx:104
+#: src/components/vm/hostdevs/hostDevCard.tsx:112
+#: src/components/vm/hostdevs/hostDevCard.tsx:263
 #: src/components/vm/disks/diskEdit.tsx:133
 #: src/components/vm/disks/vmDisksCard.tsx:260
 #: src/components/vm/disks/diskAdd.tsx:307
 #: src/components/vm/overview/bootOrder.tsx:127
 #: src/components/vm/overview/bootOrder.tsx:139
-#: src/components/vm/overview/bootOrder.tsx:157
-#: src/components/vm/overview/bootOrder.tsx:160
-#: src/components/vm/overview/bootOrder.tsx:174
+#: src/components/vm/overview/bootOrder.tsx:158
+#: src/components/vm/overview/bootOrder.tsx:161
+#: src/components/vm/overview/bootOrder.tsx:176
 msgid "Bus"
 msgstr "버스"
 
@@ -337,11 +345,11 @@ msgstr "캐쉬"
 #: src/components/vm/vmEditDescriptionDialog.tsx:94
 #: src/components/vm/confirmDialog.tsx:79
 #: src/components/vm/consoles/vnc.tsx:171
-#: src/components/vm/hostdevs/hostDevAdd.tsx:272
+#: src/components/vm/hostdevs/hostDevAdd.tsx:279
 #: src/components/vm/vmMigrateDialog.tsx:240
 #: src/components/vm/nics/nicEdit.tsx:324 src/components/vm/nics/nicAdd.tsx:338
 #: src/components/vm/vmCloneDialog.tsx:124
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:254
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:261
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:140
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:353
 #: src/components/vm/disks/diskEdit.tsx:340
@@ -353,7 +361,7 @@ msgstr "캐쉬"
 #: src/components/vm/overview/cpuModal.tsx:354
 #: src/components/vm/overview/vsock.tsx:285
 #: src/components/vm/overview/firmware.tsx:121
-#: src/components/vm/overview/bootOrder.tsx:368
+#: src/components/vm/overview/bootOrder.tsx:370
 #: src/components/vm/overview/watchdog.tsx:241
 #: src/components/vm/deleteDialog.tsx:215
 msgid "Cancel"
@@ -367,7 +375,7 @@ msgstr "과도적인 VM에서 vsock 장치를 편집 할 수 없습니다"
 msgid "Cannot edit watchdog device on a transient VM"
 msgstr "과도적인 VM에서 와치독 장치를 편집 할 수 없습니다"
 
-#: src/components/vm/overview/bootOrder.tsx:353
+#: src/components/vm/overview/bootOrder.tsx:355
 msgid "Change boot order"
 msgstr "부팅 순서 변경"
 
@@ -403,7 +411,7 @@ msgstr "토큰 유효성 확인 중..."
 msgid "Choose an operating system"
 msgstr "운영 체제를 선택하십시오"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:201
+#: src/components/vm/hostdevs/hostDevCard.tsx:200
 msgid "Class"
 msgstr "등급"
 
@@ -426,6 +434,10 @@ msgstr "닫기"
 #: src/components/create-vm-dialog/createVmDialog.tsx:455
 msgid "Cloud base image"
 msgstr "클라우드 기반 이미지"
+
+#: src/libvirtApi/nodeDevice.ts:72
+msgid "Co-Processor"
+msgstr "보조-프로세서"
 
 #: org.cockpit_project.machines.metainfo.xml:19
 msgid "Cockpit Project"
@@ -687,7 +699,7 @@ msgstr ""
 "비활성화된 저장소 풀 삭제는 풀만 정의 해제하면 됩니다. 내용는 삭제되지 않습니"
 "다."
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:82
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:81
 msgid "Deleting shared directories is possible only when the guest is shut off"
 msgstr "공유된 디렉토리 삭제하기는 게스트가 종료된 경우에만 할 수 있습니다"
 
@@ -724,16 +736,16 @@ msgstr "상세정보"
 
 #: src/components/networks/networkList.tsx:73
 #: src/components/networks/createNetworkDialog.tsx:231
-#: src/components/vm/hostdevs/hostDevAdd.tsx:115
-#: src/components/vm/hostdevs/hostDevAdd.tsx:150
-#: src/components/vm/hostdevs/hostDevCard.tsx:104
-#: src/components/vm/hostdevs/hostDevCard.tsx:263
+#: src/components/vm/hostdevs/hostDevAdd.tsx:112
+#: src/components/vm/hostdevs/hostDevAdd.tsx:157
+#: src/components/vm/hostdevs/hostDevCard.tsx:103
+#: src/components/vm/hostdevs/hostDevCard.tsx:262
 #: src/components/vm/disks/vmDisksCard.tsx:257
 #: src/components/vm/disks/diskAdd.tsx:463
 #: src/components/vm/overview/bootOrder.tsx:119
 #: src/components/vm/overview/bootOrder.tsx:126
-#: src/components/vm/overview/bootOrder.tsx:158
-#: src/components/vm/overview/bootOrder.tsx:161
+#: src/components/vm/overview/bootOrder.tsx:159
+#: src/components/vm/overview/bootOrder.tsx:162
 msgid "Device"
 msgstr "장치"
 
@@ -794,6 +806,10 @@ msgstr "디스크-전용 순간찍기"
 msgid "Disks"
 msgstr "디스크"
 
+#: src/libvirtApi/nodeDevice.ts:45
+msgid "Display Controller"
+msgstr "화면 제어기"
+
 #: src/components/vm/vmMigrateDialog.tsx:224
 msgid ""
 "Do not run this VM on the origin and destination hosts at the same time."
@@ -802,6 +818,10 @@ msgstr "동시에 출발지와 대상 호스트에서 이 VM을 동작하지 마
 #: src/helpers.ts:289
 msgid "Do nothing"
 msgstr "아무 것도 하지 않기"
+
+#: src/libvirtApi/nodeDevice.ts:52
+msgid "Docking Station"
+msgstr "도킹 스테이션"
 
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:163
 msgid "Domain has crashed"
@@ -898,6 +918,10 @@ msgstr "모의된 장비"
 msgid "Enable virtualization support in BIOS/EFI settings."
 msgstr "BIOS/EFI 설정에서 가상화 지원을 활성화합니다."
 
+#: src/libvirtApi/nodeDevice.ts:58
+msgid "Encryption Controller"
+msgstr "암호 제어기"
+
 #: src/components/networks/createNetworkDialog.tsx:325
 msgid "End"
 msgstr "종료"
@@ -927,7 +951,7 @@ msgstr "호스트의 파일 시스템에서 기존 디스크 이미지"
 msgid "Expand"
 msgstr "확장"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:236
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:243
 msgid "Extended attributes"
 msgstr "확장된 속성"
 
@@ -947,7 +971,7 @@ msgstr "VNC를 VM $0로 추가하는 데 실패함"
 msgid "Failed to add serial console to VM $0"
 msgstr "직렬 콘솔을 VM $0에 추가하는 데 실패함"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:204
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:211
 msgid "Failed to add shared directory"
 msgstr "공유 디렉토리에 추가하기 실패함"
 
@@ -1016,7 +1040,7 @@ msgstr "최대 가상 CPU 수 보다 적은 수를 활성화해야 합니다."
 msgid "File"
 msgstr "파일"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:69
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:68
 msgid "Filesystem $0 could not be removed"
 msgstr "파일시스템 $0는 제거 될 수 없습니다"
 
@@ -1142,7 +1166,7 @@ msgstr "게스트 포트 도움말"
 msgid "Hardware virtualization is disabled"
 msgstr "하드웨어 가상화가 비활성화 되었습니다"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:231
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:238
 #: src/components/vm/disks/diskAdd.tsx:292
 msgid "Hide additional options"
 msgstr "추가 선택 숨기기"
@@ -1154,15 +1178,15 @@ msgstr "추가 선택 숨기기"
 msgid "Host"
 msgstr "호스트"
 
-#: src/components/create-vm-dialog/pxe-helpers.tsx:160
+#: src/components/create-vm-dialog/pxe-helpers.tsx:162
 msgid "Host device"
 msgstr "호스트 장치"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:242
+#: src/components/vm/hostdevs/hostDevAdd.tsx:249
 msgid "Host device could not be attached"
 msgstr "호스트 장치는 추가 할 수 없습니다"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:274
+#: src/components/vm/hostdevs/hostDevCard.tsx:273
 msgid "Host device will be removed from $0:"
 msgstr "호스트 장치는 $0에서 제거됩니다:"
 
@@ -1346,6 +1370,10 @@ msgstr "초기자는 비워둘 수 없습니다"
 msgid "Inject a non-maskable interrupt"
 msgstr "마스크 불가능 인터럽트 주입"
 
+#: src/libvirtApi/nodeDevice.ts:51
+msgid "Input Device Controller"
+msgstr "입력 장치 제어기"
+
 #: src/components/vm/disks/diskAdd.tsx:986
 #: src/components/vm/disks/vmDiskColumns.tsx:243
 msgid "Insert"
@@ -1375,7 +1403,11 @@ msgstr "설치 원천는 비워둘 수 없습니다"
 msgid "Installation type"
 msgstr "설치 유형"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:137
+#: src/libvirtApi/nodeDevice.ts:56
+msgid "Intelligent Controller"
+msgstr "지능형 제어기"
+
+#: src/components/vm/hostdevs/hostDevCard.tsx:136
 msgid "Interface"
 msgstr "연결장치"
 
@@ -1415,7 +1447,7 @@ msgstr "잘못된 IPv6 프리픽스"
 msgid "Invalid filename"
 msgstr "잘못된 파일 이름"
 
-#: src/components/create-vm-dialog/pxe-helpers.tsx:107
+#: src/components/create-vm-dialog/pxe-helpers.tsx:108
 msgid "Isolated network"
 msgstr "격리된 네트워크"
 
@@ -1484,7 +1516,7 @@ msgid "Local scaling"
 msgstr "일부 크기 조절"
 
 # ctx::sourcefile::Navigation Menu
-#: src/components/vm/hostdevs/hostDevAdd.tsx:157
+#: src/components/vm/hostdevs/hostDevAdd.tsx:164
 msgid "Location"
 msgstr "위치"
 
@@ -1540,6 +1572,10 @@ msgstr "매스크 또는프리픽스 길이"
 msgid "Mask or prefix length should not be empty"
 msgstr "매스크 또는 프리픽스 길이는 비워둘 수 없습니다"
 
+#: src/libvirtApi/nodeDevice.ts:43
+msgid "Mass Storage Controller"
+msgstr "대용량 저장소 제어기"
+
 #: src/components/vm/overview/memoryModal.tsx:180
 msgid "Maximum allocation"
 msgstr "최대 할당"
@@ -1576,6 +1612,10 @@ msgstr "미디어는 $0에서 꺼냅니다:"
 #: src/components/vm/overview/vmOverviewCard.tsx:188
 msgid "Memory"
 msgstr "메모리"
+
+#: src/libvirtApi/nodeDevice.ts:47
+msgid "Memory Controller"
+msgstr "메모리 제어기"
 
 #: src/components/vm/overview/memoryModal.tsx:142
 #: src/components/vm/overview/memoryModal.tsx:158
@@ -1618,6 +1658,10 @@ msgstr "VM을 다른 호스트로 이전합니다"
 msgid "Migration failed"
 msgstr "이전이 실패했습니다"
 
+#: src/libvirtApi/nodeDevice.ts:74
+msgid "Miscellaneous"
+msgstr "기타"
+
 #: src/components/vm/nics/nicBody.tsx:265
 #: src/components/vm/nics/vmNicsCard.tsx:180
 #: src/components/vm/overview/cpuModal.tsx:317
@@ -1629,7 +1673,7 @@ msgstr "모드"
 msgid "Mode help"
 msgstr "방식(mode) 도움말"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:211
+#: src/components/vm/hostdevs/hostDevCard.tsx:210
 #: src/components/vm/nics/nicBody.tsx:108
 msgid "Model"
 msgstr "방식"
@@ -1643,20 +1687,24 @@ msgid "More info"
 msgstr "더 많은 정보"
 
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:54
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:73
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:219
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:72
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:226
 msgid "Mount tag"
 msgstr "적재 태그"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:153
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:158
 msgid "Mount tag must not be empty"
 msgstr "적재 태그는 비워두면 안됩니다"
+
+#: src/libvirtApi/nodeDevice.ts:46
+msgid "Multimedia Controller"
+msgstr "멀티미디어 제어기"
 
 #: src/components/networks/createNetworkDialog.tsx:118
 msgid "Must be an address instead of the network identifier, such as $0"
 msgstr "$0와 같은 네트워크 식별자 대신에 주소여야 합니다"
 
-#: src/components/create-vm-dialog/pxe-helpers.tsx:92
+#: src/components/create-vm-dialog/pxe-helpers.tsx:93
 msgid "NAT to $0"
 msgstr "$0에 NAT"
 
@@ -1725,6 +1773,10 @@ msgstr "네트워크 $0의 비활성화에 실패했습니다"
 msgid "Network $0 will be permanently deleted."
 msgstr "네트워크 $0는 영구히 삭제됩니다."
 
+#: src/libvirtApi/nodeDevice.ts:44
+msgid "Network Controller"
+msgstr "네트워크 제어기"
+
 #: src/components/create-vm-dialog/createVmDialog.tsx:463
 msgid "Network boot (PXE)"
 msgstr "네트워크 부팅(PXE)"
@@ -1783,7 +1835,7 @@ msgstr "SSH 키가 지정되지 않았습니다"
 msgid "No VM is running or defined on this host"
 msgstr "이 호스트에서 실행 중이거나 정의된 가상 머신이 없습니다"
 
-#: src/components/vm/overview/bootOrder.tsx:380
+#: src/components/vm/overview/bootOrder.tsx:382
 msgid "No boot device found"
 msgstr "부팅 장치를 찾을 수 없습니다"
 
@@ -1795,11 +1847,11 @@ msgstr "설명 없음"
 msgid "No disks"
 msgstr "디스크 없음"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:247
+#: src/components/vm/hostdevs/hostDevAdd.tsx:254
 msgid "No host device selected"
 msgstr "선택된 호스트 장치가 없습니다"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:333
+#: src/components/vm/hostdevs/hostDevCard.tsx:332
 msgid "No host devices"
 msgstr "호스트 장치 없음"
 
@@ -1815,7 +1867,7 @@ msgstr "네트워크 연결장치 없음"
 msgid "No network is defined on this host"
 msgstr "이 호스트에 정의된 네트워크가 없습니다"
 
-#: src/components/create-vm-dialog/pxe-helpers.tsx:166
+#: src/components/create-vm-dialog/pxe-helpers.tsx:168
 msgid "No networks available"
 msgstr "사용 가능한 네트워크가 없습니다"
 
@@ -1831,7 +1883,7 @@ msgstr "포워드된 포트가 없습니다"
 msgid "No scaling or resizing"
 msgstr "크기 조정이나 확장이 어렵습니다"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:101
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:100
 msgid "No shared directories"
 msgstr "공유 디렉토리 없음"
 
@@ -1866,6 +1918,10 @@ msgstr "가상 네트워크 없음"
 #: src/components/storagePools/storagePoolDelete.tsx:197
 msgid "No volumes exist in this storage pool."
 msgstr "이 저장소 풀에 대해 볼륨이 없습니다."
+
+#: src/libvirtApi/nodeDevice.ts:61
+msgid "Non-Essential Instrumentation"
+msgstr "필수적이지 않은 장치"
 
 #: src/components/networks/network.tsx:152
 msgid ""
@@ -1915,7 +1971,7 @@ msgstr ""
 
 #: src/components/vm/nics/nicEdit.tsx:69
 #: src/components/vm/overview/memoryModal.tsx:187
-#: src/components/vm/overview/bootOrder.tsx:406
+#: src/components/vm/overview/bootOrder.tsx:408
 msgid "Only editable when the guest is shut off"
 msgstr "게스트가 종료된 경우에만 편집할 수 있습니다"
 
@@ -1969,8 +2025,8 @@ msgstr ""
 msgid "Password must be at most 8 characters."
 msgstr "비밀번호는 최대 8자까지입니다."
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:129
-#: src/components/vm/hostdevs/hostDevCard.tsx:133
+#: src/components/vm/hostdevs/hostDevCard.tsx:128
+#: src/components/vm/hostdevs/hostDevCard.tsx:132
 #: src/components/vm/disks/diskEdit.tsx:63
 #: src/components/vm/deleteDialog.tsx:80
 msgid "Path"
@@ -2135,11 +2191,19 @@ msgstr "프리픽스 길이는 비워둘 수 없습니다"
 msgid "Private"
 msgstr "비공개"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:157
-#: src/components/vm/hostdevs/hostDevCard.tsx:254
-#: src/components/vm/hostdevs/hostDevCard.tsx:260
-#: src/components/vm/overview/bootOrder.tsx:153
-#: src/components/vm/overview/bootOrder.tsx:168
+#: src/libvirtApi/nodeDevice.ts:60
+msgid "Processing Accelerator"
+msgstr "처리 가속기"
+
+#: src/libvirtApi/nodeDevice.ts:53
+msgid "Processor"
+msgstr "프로세서"
+
+#: src/components/vm/hostdevs/hostDevAdd.tsx:164
+#: src/components/vm/hostdevs/hostDevCard.tsx:253
+#: src/components/vm/hostdevs/hostDevCard.tsx:259
+#: src/components/vm/overview/bootOrder.tsx:154
+#: src/components/vm/overview/bootOrder.tsx:170
 msgid "Product"
 msgstr "제품"
 
@@ -2147,11 +2211,11 @@ msgstr "제품"
 msgid "Profile"
 msgstr "프로파일"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:120
+#: src/components/vm/hostdevs/hostDevCard.tsx:119
 #: src/components/vm/nics/nicBody.tsx:506
 #: src/components/vm/disks/vmDiskColumns.tsx:50
 #: src/components/vm/overview/bootOrder.tsx:120
-#: src/components/vm/overview/bootOrder.tsx:181
+#: src/components/vm/overview/bootOrder.tsx:183
 msgid "Protocol"
 msgstr "프로토콜"
 
@@ -2233,12 +2297,12 @@ msgid "Remote viewer applications can connect to the following address:"
 msgstr "원격 표시기 응용프로그램은 다음 주소로 연결 할 수 있습니다:"
 
 #: src/components/networks/networkOverviewTab.tsx:81
-#: src/components/vm/hostdevs/hostDevCard.tsx:270
-#: src/components/vm/hostdevs/hostDevCard.tsx:276
+#: src/components/vm/hostdevs/hostDevCard.tsx:269
+#: src/components/vm/hostdevs/hostDevCard.tsx:275
 #: src/components/vm/nics/vmNicsCard.tsx:707
 #: src/components/vm/nics/vmNicsCard.tsx:722
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:66
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:75
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:65
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:74
 #: src/components/vm/disks/vmDiskColumns.tsx:188
 #: src/components/vm/disks/vmDiskColumns.tsx:269
 #: src/components/vm/overview/vsock.tsx:282
@@ -2258,11 +2322,11 @@ msgstr "제거하고 파일을 삭제합니다"
 msgid "Remove disk from VM?"
 msgstr "VM에서 디스크 제거?"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:68
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:67
 msgid "Remove filesystem?"
 msgstr "파일 시스템 제거?"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:272
+#: src/components/vm/hostdevs/hostDevCard.tsx:271
 msgid "Remove host device from VM?"
 msgstr "VM에서 호스트 장치를 제거?"
 
@@ -2360,15 +2424,15 @@ msgstr ""
 msgid "Root password"
 msgstr "root 비밀번호"
 
-#: src/components/create-vm-dialog/pxe-helpers.tsx:97
+#: src/components/create-vm-dialog/pxe-helpers.tsx:98
 msgid "Route to $0"
 msgstr "$0로 라우팅"
 
-#: src/components/create-vm-dialog/pxe-helpers.tsx:99
+#: src/components/create-vm-dialog/pxe-helpers.tsx:100
 msgid "Routed network"
 msgstr "라우팅된 네트워크"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:156
+#: src/components/vm/hostdevs/hostDevAdd.tsx:163
 msgid "Row select"
 msgstr "행 선택"
 
@@ -2405,6 +2469,10 @@ msgstr ""
 msgid "SSH keys"
 msgstr "SSH 키"
 
+#: src/libvirtApi/nodeDevice.ts:57
+msgid "Satellite Communication Controller"
+msgstr "위성 통신 제어기"
+
 #: src/components/vm/vmEditDescriptionDialog.tsx:91
 #: src/components/vm/consoles/vnc.tsx:168
 #: src/components/vm/nics/nicEdit.tsx:321
@@ -2412,7 +2480,7 @@ msgstr "SSH 키"
 #: src/components/vm/overview/memoryModal.tsx:206
 #: src/components/vm/overview/vsock.tsx:236
 #: src/components/vm/overview/firmware.tsx:118
-#: src/components/vm/overview/bootOrder.tsx:365
+#: src/components/vm/overview/bootOrder.tsx:367
 #: src/components/vm/overview/watchdog.tsx:180
 msgid "Save"
 msgstr "저장"
@@ -2447,6 +2515,10 @@ msgstr "직렬"
 msgid "Serial ($0)"
 msgstr "직렬 ($0)"
 
+#: src/libvirtApi/nodeDevice.ts:54
+msgid "Serial Bus Controller"
+msgstr "직렬 버스 제어기"
+
 #: src/components/common/needsShutdown.tsx:227
 msgid "Serial console"
 msgstr "직렬 콘솔"
@@ -2471,11 +2543,11 @@ msgstr ""
 "자동 설치를 위한 사용자 비밀번호를 설정하려면 VM을 생성할 때 VM을 시작해야 합"
 "니다"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:249
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:256
 msgid "Share"
 msgstr "공유"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:181
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:188
 msgid "Share a host directory with the guest"
 msgstr "게스트와 호스트 디텍토리를 공유합니다"
 
@@ -2484,7 +2556,7 @@ msgid "Shared directories"
 msgstr "공유 디렉토리"
 
 #: src/components/vm/vmDetailsPage.tsx:211
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:184
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:191
 msgid "Shared host directories need to be manually mounted inside the VM"
 msgstr "공유 호스트 디렉토리는 VM 안에세 수동으로 적재가 필요합니다"
 
@@ -2492,7 +2564,7 @@ msgstr "공유 호스트 디렉토리는 VM 안에세 수동으로 적재가 필
 msgid "Shared storage"
 msgstr "공유 저장소"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:231
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:238
 #: src/components/vm/disks/diskAdd.tsx:292
 msgid "Show additional options"
 msgstr "추가 옵션 표시"
@@ -2543,6 +2615,14 @@ msgstr "종료 및 $0 재시작 ?"
 msgid "Shutting down"
 msgstr "종료 중"
 
+#: src/libvirtApi/nodeDevice.ts:59
+msgid "Signal Processing Controller"
+msgstr "신호 처리 제어기"
+
+#: src/libvirtApi/nodeDevice.ts:49
+msgid "Simple Communication Controller"
+msgstr "단순 통신 제어기"
+
 #: src/components/storagePools/storagePoolVolumesTab.tsx:90
 #: src/components/storagePools/storageVolumeCreateBody.tsx:134
 #: src/components/storagePools/storagePoolList.tsx:75
@@ -2550,11 +2630,11 @@ msgstr "종료 중"
 msgid "Size"
 msgstr "크기"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:128
-#: src/components/vm/hostdevs/hostDevCard.tsx:107
-#: src/components/vm/hostdevs/hostDevCard.tsx:114
-#: src/components/vm/hostdevs/hostDevCard.tsx:255
-#: src/components/vm/overview/bootOrder.tsx:169
+#: src/components/vm/hostdevs/hostDevAdd.tsx:125
+#: src/components/vm/hostdevs/hostDevCard.tsx:106
+#: src/components/vm/hostdevs/hostDevCard.tsx:113
+#: src/components/vm/hostdevs/hostDevCard.tsx:254
+#: src/components/vm/overview/bootOrder.tsx:171
 msgid "Slot"
 msgstr "슬롯"
 
@@ -2593,7 +2673,7 @@ msgid ""
 msgstr "몇 가지 구성은 완전 종료 및 재시작 후에만 영향을 미칩니다:"
 
 #: src/components/storagePools/storagePoolOverviewTab.tsx:53
-#: src/components/vm/hostdevs/hostDevCard.tsx:231
+#: src/components/vm/hostdevs/hostDevCard.tsx:230
 #: src/components/vm/nics/nicBody.tsx:254
 #: src/components/vm/nics/vmNicsCard.tsx:608
 #: src/components/vm/disks/vmDisksCard.tsx:176
@@ -2606,7 +2686,7 @@ msgstr "원천"
 msgid "Source format"
 msgstr "원천 형식"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:155
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:160
 msgid "Source must not be empty"
 msgstr "원천은 비워두지 않아야 합니다"
 
@@ -2615,8 +2695,8 @@ msgstr "원천은 비워두지 않아야 합니다"
 #: src/components/storagePools/createStoragePoolDialog.tsx:231
 #: src/components/storagePools/createStoragePoolDialog.tsx:248
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:54
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:72
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:207
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:71
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:214
 msgid "Source path"
 msgstr "원천 경로"
 
@@ -2778,15 +2858,15 @@ msgstr "TCP"
 msgid "TPM"
 msgstr "TPM"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:153
+#: src/components/vm/hostdevs/hostDevAdd.tsx:160
 msgid "Table of selectable host devices"
 msgstr "선택 할 수 있는 호스트 장치의 표"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:115
+#: src/components/vm/hostdevs/hostDevCard.tsx:114
 #: src/components/vm/nics/vmNicsCard.tsx:616
 #: src/components/vm/disks/vmDisksCard.tsx:177
 #: src/components/vm/disks/vmDiskColumns.tsx:192
-#: src/components/vm/overview/bootOrder.tsx:175
+#: src/components/vm/overview/bootOrder.tsx:177
 msgid "Target"
 msgstr "대상"
 
@@ -2821,7 +2901,7 @@ msgstr "이 장치를 분리하려면 VM이 실행 중이거나 종료되어 있
 msgid "The directory on the server being exported"
 msgstr "서버의 디렉토리를 내보내는 중"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:209
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:216
 msgid "The host path that is to be exported."
 msgstr "내보내어야 할 호스트 경로."
 
@@ -2872,7 +2952,7 @@ msgstr "$0를 위한 고정 호스트 항목이 제거됩니다:"
 msgid "The storage pool could not be deleted"
 msgstr "저장소 풀을 삭제 할 수 없습니다"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:222
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:229
 msgid "The tag name to be used by the guest to mount this export point."
 msgstr "게스트가 이 내보내기 지점으로 적재하는데 사용되는 태그 이름."
 
@@ -2888,7 +2968,7 @@ msgstr "이 VM은 일시적입니다. 삭제하려면 VM을 종료하십시오."
 msgid "This disk will be removed from $0:"
 msgstr "이 디스크는 $0에서 제거됩니다:"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:70
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:69
 msgid "This filesystem will be removed from $0:"
 msgstr "이 파일시스템은 $0에서 제거됩니다:"
 
@@ -2958,14 +3038,14 @@ msgstr "문제 해결"
 #: src/components/storagePools/storagePoolOverviewTab.tsx:78
 #: src/components/storagePools/createStoragePoolDialog.tsx:115
 #: src/components/vm/hostdevs/hostDevAdd.tsx:56
-#: src/components/vm/hostdevs/hostDevCard.tsx:191
+#: src/components/vm/hostdevs/hostDevCard.tsx:190
 #: src/components/vm/nics/vmNicsCard.tsx:835
 #: src/components/vm/overview/bootOrder.tsx:138
-#: src/components/vm/overview/bootOrder.tsx:151
-#: src/components/vm/overview/bootOrder.tsx:166
-#: src/components/vm/overview/bootOrder.tsx:173
-#: src/components/vm/overview/bootOrder.tsx:180
-#: src/components/vm/overview/bootOrder.tsx:186
+#: src/components/vm/overview/bootOrder.tsx:152
+#: src/components/vm/overview/bootOrder.tsx:168
+#: src/components/vm/overview/bootOrder.tsx:175
+#: src/components/vm/overview/bootOrder.tsx:182
+#: src/components/vm/overview/bootOrder.tsx:188
 msgid "Type"
 msgstr "유형"
 
@@ -2981,11 +3061,15 @@ msgstr "URL (ISO 이미지 또는 저장소 설치 트리)"
 msgid "USB"
 msgstr "USB"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:125
+#: src/components/vm/hostdevs/hostDevCard.tsx:124
 msgid "UUID"
 msgstr "UUID"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:172
+#: src/libvirtApi/nodeDevice.ts:42
+msgid "Unclassified"
+msgstr "미분류"
+
+#: src/components/vm/hostdevs/hostDevAdd.tsx:179
 msgid "Undefined"
 msgstr "정의되지 않음"
 
@@ -3001,7 +3085,7 @@ msgstr "고유한 이름, 기본값: $0"
 msgid "Unique network name"
 msgstr "고유한 네트워크 이름"
 
-#: src/components/vm/overview/bootOrder.tsx:176
+#: src/components/vm/overview/bootOrder.tsx:178
 msgid "Unit"
 msgstr "단위"
 
@@ -3009,10 +3093,10 @@ msgstr "단위"
 msgid "Unknown firmware"
 msgstr "알 수 없는 펌웨어"
 
+#: src/components/vm/hostdevs/hostDevCard.tsx:97
 #: src/components/vm/hostdevs/hostDevCard.tsx:98
-#: src/components/vm/hostdevs/hostDevCard.tsx:99
-#: src/components/vm/overview/bootOrder.tsx:157
 #: src/components/vm/overview/bootOrder.tsx:158
+#: src/components/vm/overview/bootOrder.tsx:159
 msgid "Unspecified"
 msgstr "지정되지 않음"
 
@@ -3035,7 +3119,7 @@ msgstr "사용량"
 msgid "Use existing"
 msgstr "기존 사용"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:239
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:246
 msgid "Use extended attributes on files and directories"
 msgstr "파일과 디렉토리에서 확장된 속성을 사용합니다"
 
@@ -3085,7 +3169,7 @@ msgstr "사용자 세션"
 msgid "Uses SPICE"
 msgstr "SPICE를 사용합니다"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:330
+#: src/components/vm/hostdevs/hostDevCard.tsx:329
 msgid "VM $0 Host Devices"
 msgstr "VM $0 호스트 장치"
 
@@ -3171,12 +3255,12 @@ msgstr "유효한 토큰"
 
 # translation auto-copied from project subscription-manager, version 1.11.X,
 # document keys
-#: src/components/vm/hostdevs/hostDevAdd.tsx:157
-#: src/components/vm/hostdevs/hostDevCard.tsx:221
-#: src/components/vm/hostdevs/hostDevCard.tsx:253
-#: src/components/vm/hostdevs/hostDevCard.tsx:259
-#: src/components/vm/overview/bootOrder.tsx:152
-#: src/components/vm/overview/bootOrder.tsx:167
+#: src/components/vm/hostdevs/hostDevAdd.tsx:164
+#: src/components/vm/hostdevs/hostDevCard.tsx:220
+#: src/components/vm/hostdevs/hostDevCard.tsx:252
+#: src/components/vm/hostdevs/hostDevCard.tsx:258
+#: src/components/vm/overview/bootOrder.tsx:153
+#: src/components/vm/overview/bootOrder.tsx:169
 msgid "Vendor"
 msgstr "제조사"
 
@@ -3196,7 +3280,7 @@ msgstr "가상 머신"
 msgid "Virtual machines management"
 msgstr "가상 머신 관리"
 
-#: src/components/create-vm-dialog/pxe-helpers.tsx:152
+#: src/components/create-vm-dialog/pxe-helpers.tsx:153
 msgid "Virtual network"
 msgstr "가상 네트워크"
 
@@ -3243,8 +3327,8 @@ msgstr "볼륨 그룹 이름은 비워둘 수 없습니다"
 msgid "Vsock"
 msgstr "Vsock"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:121
-#: src/components/vm/overview/bootOrder.tsx:182
+#: src/components/vm/hostdevs/hostDevCard.tsx:120
+#: src/components/vm/overview/bootOrder.tsx:184
 msgid "WWPN"
 msgstr "WWPN"
 
@@ -3263,12 +3347,16 @@ msgstr ""
 "면, 게스트 시스템은 또한 추가적인 드라이버와 동작중인 와치독 서비스도 있어야 "
 "합니다."
 
+#: src/libvirtApi/nodeDevice.ts:55
+msgid "Wireless Controller"
+msgstr "무선 제어기"
+
 #: src/components/vm/disks/diskEdit.tsx:183
 #: src/components/vm/disks/vmDisksCard.tsx:268
 msgid "Writeable"
 msgstr "쓰기 가능"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:186
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:193
 msgid "You can mount the shared folder using:"
 msgstr "다음을 사용하여 공유 폴더를 적재 할 수 있습니다:"
 
@@ -3329,7 +3417,7 @@ msgstr "아래로"
 #: src/components/vm/overview/vsock.tsx:328
 #: src/components/vm/overview/vmOverviewCard.tsx:130
 #: src/components/vm/overview/vmOverviewCard.tsx:138
-#: src/components/vm/overview/bootOrder.tsx:399
+#: src/components/vm/overview/bootOrder.tsx:401
 #: src/components/vm/overview/watchdog.tsx:278
 msgid "edit"
 msgstr "편집"
@@ -3396,7 +3484,7 @@ msgid "more info"
 msgstr "더 많은 정보"
 
 #: src/components/vm/vmDetailsPage.tsx:220
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:194
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:201
 msgid "mount point: The mount point inside the guest"
 msgstr "적재점: 게스트 안에서 적재점"
 
@@ -3612,9 +3700,6 @@ msgstr "예"
 #~ msgid "VNC port"
 #~ msgstr "VNC 포트"
 
-#~ msgid "Bridge"
-#~ msgstr "브릿지"
-
 #~ msgid "Passthrough"
 #~ msgstr "통과 규칙"
 
@@ -3641,9 +3726,6 @@ msgstr "예"
 
 #~ msgid "More info for source path field"
 #~ msgstr "원천 경로 입력 부분을 위한 더 많은 정보"
-
-#~ msgid "Memory file"
-#~ msgstr "메모리 파일"
 
 #~ msgid "Uptime"
 #~ msgstr "가동 시간"
@@ -3849,9 +3931,6 @@ msgstr "예"
 
 #~ msgid "Desktop"
 #~ msgstr "데스크탑"
-
-#~ msgid "Docking station"
-#~ msgstr "도킹 스테이션"
 
 #~ msgid "Dual rank"
 #~ msgstr "듀얼 랭크(Dual Rank)"
