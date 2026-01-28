@@ -136,6 +136,8 @@ def prepare_installation_source(args):
         params += ['--pxe', '--network', args['source']]
     elif args['sourceType'] == "os":
         params += ['--install', f"os={args['os']}"]
+        if args['extraArguments']:
+            params += ['--extra-args', args['extraArguments']]
     elif args['sourceType'] in ['disk_image', 'cloud']:
         params.append("--import")
     elif ((args['source'][0] == '/' and os.path.isfile(args['source'])) or
@@ -143,6 +145,8 @@ def prepare_installation_source(args):
         params += ['--cdrom', args['source']]
     else:
         params += ['--location', args['source']]
+        if args['extraArguments']:
+            params += ['--extra-args', args['extraArguments']]
 
     return params
 

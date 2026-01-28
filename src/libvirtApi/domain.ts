@@ -509,6 +509,7 @@ interface DomainSpec {
     userPassword: optString,
     vmName: string,
     sshKeys: string[],
+    extraArguments: optString,
 }
 
 export async function domainCreate({
@@ -530,6 +531,7 @@ export async function domainCreate({
     vmName,
     accessToken,
     sshKeys,
+    extraArguments,
 } : {
     connectionName: ConnectionName,
     osVersion: string,
@@ -558,6 +560,7 @@ export async function domainCreate({
         userPassword,
         vmName,
         sshKeys,
+        extraArguments,
     };
 
     logDebug(`CREATE_VM(${vmName}): install_machine.py '${JSON.stringify(args)}'`);
