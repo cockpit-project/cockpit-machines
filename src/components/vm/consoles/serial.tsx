@@ -33,6 +33,7 @@ import { ConsoleState } from './common';
 import { vmStart, VmRestartDialog } from '../vmActions';
 import { appState } from '../../../state';
 import { useDialogs } from 'dialogs';
+import { EmptyStatePanel } from 'cockpit-components-empty-state.js';
 
 const _ = cockpit.gettext;
 
@@ -83,6 +84,10 @@ export const SerialActive = ({
     vm: VM,
 }) => {
     const pid = vm.name + "-terminal";
+    // Check if WebGL2 is available
+    // Only checking if WebGL2RenderingContext is defined is not sufficient, in Firefox tests it is defined
+    // as WebGL is enabled but it is not available in headless mode.
+    const webglAvailable = !!document.createElement("canvas").getContext("webgl2");
 
     let t;
     if (!state.connected) {
@@ -96,6 +101,8 @@ export const SerialActive = ({
                 </EmptyStateFooter>
             </EmptyState>
         );
+    } else if (!webglAvailable) {
+        t = <EmptyStatePanel title={_("Terminal not available")} paragraph={_("This browser does not support WebGL2.")} />;
     } else {
         t = (
             <Terminal
