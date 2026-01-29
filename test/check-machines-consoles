@@ -896,6 +896,50 @@ vnc_tls_x509_cert_dir = "/etc/pki/libvirt"
         # VNC viewer should not be connected, with a helpful message
         b.wait_in_text(".consoles-card", "VNC with TLS is not supported")
 
+    def testVncAutoconnect(self):
+        b = self.browser
+        m = self.machine
+
+        name = "subVmTest1"
+        self.createVm(name, graphics="vnc")
+
+        self.login_and_go("/machines")
+        self.waitPageInit()
+        self.waitVmRow(name)
+        self.goToVmPage(name)
+
+        # VNC viewer should initially be connected
+        b.wait_visible(".vm-console-vnc canvas")
+
+        # Switching the machine off and on again should connect
+        # automatically reconnect
+        self.performAction(name, "forceOff")
+        b.wait_not_present(".vm-console-vnc canvas")
+        b.wait_in_text(".consoles-card", "Start the virtual machine")
+        self.performAction(name, "run")
+        b.wait_visible(".vm-console-vnc canvas")
+
+        # Same for resuming after a pause
+        self.performAction(name, "pause")
+        b.wait_not_present(".vm-console-vnc canvas")
+        b.wait_in_text(".consoles-card", "Start the virtual machine")
+        self.performAction(name, "resume")
+        b.wait_visible(".vm-console-vnc canvas")
+
+        # Same for reverting an internal snapshot
+        m.execute(f"virsh snapshot-create-as {name} snapshot1")
+        m.execute(f"virsh snapshot-revert {name} snapshot1")
+        time.sleep(5)
+        b.wait_visible(".vm-console-vnc canvas")
+
+        # Same for reverting an external snapshot
+        # (libvirt in ubuntu-2204 and rhel-8-10 does not support reverting external snapshots...)
+        if m.image not in ["ubuntu-2204", "rhel-8-10"]:
+            m.execute(f"virsh snapshot-create-as {name} snapshot2 --memspec /var/lib/libvirt/images/{name}.mem")
+            m.execute(f"virsh snapshot-revert {name} snapshot2")
+            time.sleep(5)
+            b.wait_visible(".vm-console-vnc canvas")
+
 
 if __name__ == '__main__':
     testlib.test_main()
