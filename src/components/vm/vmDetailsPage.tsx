@@ -72,9 +72,9 @@ export const VmDetailsPage = ({
         };
     }, [vm.uuid]);
 
-    // We want to clear any VNC connection errors when the machine is shut off
+    // We want to clear any VNC connection errors when the machine is shut off or paused
     useEffect(() => {
-        if (vm.state == "shut off")
+        if (vm.state != "running")
             consoleCardState.vncState.setConnected(true);
     }, [vm.state, consoleCardState]);
 
