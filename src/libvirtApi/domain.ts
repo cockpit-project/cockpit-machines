@@ -883,15 +883,6 @@ export async function domainGet({
             operationInProgressFromState = old_vm.operationInProgressFromState;
         }
 
-        let shutOffHandler = null;
-        let onShutOff = old_vm ? old_vm.onShutOff : null;
-        if (stateStr == "shut off") {
-            if (old_vm && old_vm.onShutOff) {
-                shutOffHandler = old_vm.onShutOff;
-                onShutOff = null;
-            }
-        }
-
         const vm: VM = {
             ...dumpxmlParams,
             inactiveXML,
@@ -900,20 +891,12 @@ export async function domainGet({
             autostart,
             capabilities,
             operationInProgressFromState,
-            onShutOff,
             ...usageDataUpdate,
         };
 
         logDebug(`${vm.name}.GET_VM(${objPath}, ${connectionName}): update props ${JSON.stringify(vm)}`);
 
         appState.updateOrAddVm(vm);
-
-        if (shutOffHandler) {
-            const new_vm = appState.vms.find(vm => vm.connectionName == connectionName && vm.id == objPath);
-            if (new_vm)
-                shutOffHandler(new_vm);
-        }
-
         clearVmUiState(vm.name, connectionName);
 
         // Load snapshots in the background. This can be quite slow.

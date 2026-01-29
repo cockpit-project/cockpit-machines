@@ -212,16 +212,26 @@ function startEventMonitorDomains(connectionName: ConnectionName): void {
             switch (eventType) {
             case Enum.VIR_DOMAIN_EVENT_DEFINED:
             case Enum.VIR_DOMAIN_EVENT_UNDEFINED:
+                domainGet(key);
+                break;
+
             case Enum.VIR_DOMAIN_EVENT_STARTED:
+                appState.emitVmStateEvent(key, "running");
+                domainGet(key);
+                break;
+
             case Enum.VIR_DOMAIN_EVENT_STOPPED:
+                appState.emitVmStateEvent(key, "shut off");
                 domainGet(key);
                 break;
 
             case Enum.VIR_DOMAIN_EVENT_SUSPENDED:
+                appState.emitVmStateEvent(key, "paused");
                 appState.updateVm(key, { state: "paused" });
                 break;
 
             case Enum.VIR_DOMAIN_EVENT_RESUMED:
+                appState.emitVmStateEvent(key, "running");
                 appState.updateVm(key, { state: "running" });
                 break;
 

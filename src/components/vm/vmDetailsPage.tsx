@@ -72,11 +72,13 @@ export const VmDetailsPage = ({
         };
     }, [vm.uuid]);
 
-    // We want to clear any VNC connection errors when the machine is shut off
+    // We want to autoconnect the VNC console when a machine starts (or is resumed).
     useEffect(() => {
-        if (vm.state == "shut off")
-            consoleCardState.vncState.setConnected(true);
-    }, [vm.state, consoleCardState]);
+        return appState.on("vmStateEvent", (id, connectionName, state) => {
+            if (vm.id == id && vm.connectionName == connectionName && state == "running")
+                consoleCardState.vncState.setConnected(true);
+        });
+    }, [consoleCardState, vm.id, vm.connectionName]);
 
     const vmActionsPageSection = (
         <PageSection hasBodyWrapper className="actions-pagesection" isWidthLimited>
