@@ -143,18 +143,26 @@ fullscreen=0
 
         b.click(".consoles-card .pf-v6-c-toggle-group button:contains(Serial)")
 
-        # In case the OS already finished booting, press Enter into the console to re-trigger the login prompt
-        # Sometimes, pressing Enter one time doesn't take effect, so loop to press Enter to make sure
-        # the console has accepted it.
-        for _ in range(0, 60):
-            b.focus(f"#{name}-terminal .xterm-accessibility-tree")
-            b.key("Enter")
-            if "Welcome to Alpine Linux" in b.text(f"#{name}-terminal .xterm-accessibility-tree"):
-                break
-            time.sleep(1)
+        # WebGL2 is not supported in firefox headless mode
+        if b.browser != "firefox":
+            # In case the OS already finished booting, press Enter into the console to re-trigger the login prompt
+            # Sometimes, pressing Enter one time doesn't take effect, so loop to press Enter to make sure
+            # the console has accepted it.
+            for _ in range(0, 60):
+                b.focus(f"#{name}-terminal .xterm-accessibility-tree")
+                b.key("Enter")
+                if "Welcome to Alpine Linux" in b.text(f"#{name}-terminal .xterm-accessibility-tree"):
+                    break
+                time.sleep(1)
 
         def wait_for_alpine_greeting():
-            testlib.wait(lambda: "Welcome to Alpine Linux" in b.text(f"#{name}-terminal .xterm-accessibility-tree"))
+            # WebGL2 is not supported in firefox headless mode
+            if b.browser != "firefox":
+                testlib.wait(lambda: "Welcome to Alpine Linux" in
+                    b.text(f"#{name}-terminal .xterm-accessibility-tree"))
+            else:
+                # check that empty state is shown instead of console
+                b.wait_in_text(".vm-console .pf-v6-c-empty-state", "Terminal not available")
 
         # Make sure the content of console is expected
 
@@ -184,8 +192,16 @@ fullscreen=0
         b.wait_in_text(".consoles-card", "Disconnected")
 
         b.click('.consoles-card button:contains("Connect")')
-        b.wait_in_text(f"#{name}-terminal .xterm-accessibility-tree > div:nth-child(1)",
-                       f"Connected to domain '{name}'")
+        if b.browser != "firefox":
+            b.wait_in_text(f"#{name}-terminal .xterm-accessibility-tree > div:nth-child(1)",
+                           f"Connected to domain '{name}'")
+        else:
+            b.wait_in_text(".vm-console .pf-v6-c-empty-state", "Terminal not available")
+
+        # WebGL2 is not supported in firefox headless mode
+        # Skip multiple console channel tests in firefox
+        if b.browser == "firefox":
+            return
 
         def channel_is_open_predicate(tag):
             pattern = f"virsh -c [q]emu:///system console vmWithSerialConsole {tag}"
@@ -473,9 +489,11 @@ fullscreen=0
         assert_state("Start the virtual machine to access the console")
 
         self.performAction(name, "run")
-        testlib.wait(lambda: ("Welcome to Alpine Linux" in
-                              b.text(f"#{name}-terminal .xterm-accessibility-tree")),
-                     delay=5)
+        # WebGL2 is not supported in firefox headless mode
+        if b.browser != "firefox":
+            testlib.wait(lambda: ("Welcome to Alpine Linux" in
+                                  b.text(f"#{name}-terminal .xterm-accessibility-tree")),
+                         delay=5)
 
         # Shutdown, remove, start, and add it while VM is running
         self.performAction(name, "forceOff")
@@ -495,9 +513,11 @@ fullscreen=0
         self.performAction("subVmTest1", "forceOff")
         assert_state("Start the virtual machine to access the console")
         self.performAction(name, "run")
-        testlib.wait(lambda: ("Welcome to Alpine Linux" in
-                              b.text(f"#{name}-terminal .xterm-accessibility-tree")),
-                     delay=5)
+        # WebGL2 is not supported in firefox headless mode
+        if b.browser != "firefox":
+            testlib.wait(lambda: ("Welcome to Alpine Linux" in
+                                  b.text(f"#{name}-terminal .xterm-accessibility-tree")),
+                         delay=5)
 
     def waitForStableVNC(self):
         initial_remote = 1280
