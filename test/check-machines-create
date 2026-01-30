@@ -1353,7 +1353,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                         self.assertIn(user_login, self.user_login)
                 return True
 
-            testlib.wait(virt_install_correct, delay=3)
+            testlib.wait(virt_install_correct, tries=180)
 
             # HACK: on some OSes we need to wait for virt-install to
             # exit; on others, it wont ever exit but that's fine as
