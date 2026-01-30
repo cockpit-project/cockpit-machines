@@ -215,6 +215,7 @@ interface VmParams {
     rootPassword: optString;
     sshKeys: { value: string }[];
     startVm: boolean;
+    extraArguments: optString,
 }
 
 type OnValueChanged = <K extends keyof VmParams>(key: K, value: VmParams[K]) => void;
@@ -1035,6 +1036,36 @@ const MemoryRow = ({
     );
 };
 
+const ExtraArgumentsRow = ({
+    extraArguments,
+    onValueChanged,
+    source,
+    sourceType,
+} : {
+    extraArguments: optString,
+    onValueChanged: OnValueChanged,
+    source: optString,
+    sourceType: string,
+}) => {
+    if ((sourceType !== URL_SOURCE && sourceType !== LOCAL_INSTALL_MEDIA_SOURCE) ||
+        (!source || source.endsWith(".iso"))) {
+        return null;
+    }
+
+    return (
+        <FormGroup label={_("Extra arguments")}
+                       fieldId='extra-arguments' id='argument-group'>
+            <InputGroup>
+                <TextInput id='extra-argument' value={extraArguments || ''}
+                               className="extra-argument-input"
+                               onChange={(_, value) => onValueChanged('extraArguments', value.trim())} />
+            </InputGroup>
+            <FormHelper fieldId="extra-argument"
+                            helperText={_("Extra kernel arguments")} />
+        </FormGroup>
+    );
+};
+
 const StorageRow = ({
     connectionName,
     allowNoDisk,
@@ -1239,6 +1270,7 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
             userLogin: '',
             accessToken: '',
             offlineToken: '',
+            extraArguments: '',
             sshKeys: [],
         };
         this.onCreateClicked = this.onCreateClicked.bind(this);
@@ -1447,6 +1479,7 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
                 sshKeys: this.state.sshKeys.map(key => key.value),
                 startVm,
                 accessToken: this.state.accessToken,
+                extraArguments: this.state.extraArguments,
             };
 
             domainCreate(vmParams).then(() => {
@@ -1559,6 +1592,12 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
                     onValueChanged={this.onValueChanged}
                     validationFailed={validationFailed}
                     minimumMemory={this.state.minimumMemory}
+                />
+                <ExtraArgumentsRow
+                    source={this.state.source}
+                    sourceType={this.state.sourceType}
+                    extraArguments={this.state.extraArguments}
+                    onValueChanged={this.onValueChanged}
                 />
             </>
         );
