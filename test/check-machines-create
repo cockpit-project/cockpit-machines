@@ -1905,7 +1905,10 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
             else:
                 b.wait_in_text(f"#vm-{name}-disks .pf-v6-c-empty-state", "No disks")
                 b.click(f"#vm-{name}-disks-adddisk")
+                # wait for the dialog to initialize and have a stable layout
+                b.wait_visible(f"#vm-{name}-disks-adddisk-source-group")
                 b.click(f"#vm-{name}-disks-adddisk-dialog-cancel")
+                b.wait_not_present(".pf-v6-c-modal-box")
 
             if dialog.sourceType == 'pxe' and "network" not in dialog.location:
                 testlib.wait(lambda: "mode='bridge'" in m.execute(f"virsh dumpxml {name}"))
