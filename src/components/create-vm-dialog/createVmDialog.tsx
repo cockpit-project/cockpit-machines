@@ -374,6 +374,7 @@ const SourceRow = ({
             <FileAutoComplete id={installationSourceId}
                 placeholder={_("Path to ISO file on host's file system")}
                 onChange={(value: string) => onValueChanged('source', value)}
+                value={source || ''}
                 superuser="try" />
         );
         break;
@@ -383,6 +384,7 @@ const SourceRow = ({
             <FileAutoComplete id={installationSourceId}
                 placeholder={_("Path to cloud image file on host's file system")}
                 onChange={(value: string) => onValueChanged('source', value)}
+                value={source || ''}
                 superuser="try" />
         );
         break;
@@ -392,6 +394,7 @@ const SourceRow = ({
             <FileAutoComplete id={installationSourceId}
                 placeholder={_("Existing disk image on host's file system")}
                 onChange={(value: string) => onValueChanged('source', value)}
+                value={source || ''}
                 superuser="try" />
         );
         break;
@@ -1179,6 +1182,11 @@ interface CreateVmModalProps {
     nodeMaxMemory: number | undefined;
     vms: VM[];
     unattendedUserLogin: boolean | undefined,
+    initialSource?: string | undefined;
+    initialOS?: string | undefined;
+    initialName?: string | undefined;
+    initialSourceType?: string | undefined;
+    onClose?: () => void;
 }
 
 interface CreateVmModalState extends VmParams {
@@ -1194,7 +1202,7 @@ interface CreateVmModalState extends VmParams {
     sourceMediaID?: string;
 }
 
-class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalState> {
+export class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalState> {
     static contextType = DialogsContext;
     declare context: Dialogs;
 
@@ -1204,10 +1212,14 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
     constructor(props: CreateVmModalProps) {
         let defaultSourceType;
         if (props.mode == 'create') {
-            if (!props.downloadOSSupported)
+            // Use initialSourceType if provided, otherwise fall back to defaults
+            if (props.initialSourceType) {
+                defaultSourceType = props.initialSourceType;
+            } else if (!props.downloadOSSupported) {
                 defaultSourceType = LOCAL_INSTALL_MEDIA_SOURCE;
-            else
+            } else {
                 defaultSourceType = DOWNLOAD_AN_OS;
+            }
         } else {
             defaultSourceType = EXISTING_DISK_IMAGE_SOURCE;
         }
@@ -1218,13 +1230,13 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
             validate: false,
             osInfoListLoading: true,
             osInfoList: [],
-            vmName: '',
+            vmName: props.initialName || '',
             suggestedVmName: '',
             connectionName: (appState.systemSocketInactive
                 ? LIBVIRT_SESSION_CONNECTION
                 : LIBVIRT_SYSTEM_CONNECTION),
             sourceType: defaultSourceType,
-            source: '',
+            source: props.initialSource || '',
             os: undefined,
             ...getMemoryDefaults(props.nodeMaxMemory),
             ...getStorageDefaults(),
@@ -1272,7 +1284,16 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
     }
 
     async componentDidMount() {
-        this.setState({ osInfoListLoading: false, osInfoList: await getOsInfoList() });
+        const osInfoList = await getOsInfoList();
+        this.setState({ osInfoListLoading: false, osInfoList });
+
+        // If initialOS was provided via props, find and set the matching OS
+        if (this.props.initialOS) {
+            const matchingOS = osInfoList.find(os => os.shortId === this.props.initialOS);
+            if (matchingOS) {
+                this.onValueChanged('os', matchingOS);
+            }
+        }
     }
 
     handleTabClick = (event: React.MouseEvent, tabIndex: number | string) => {
@@ -1463,7 +1484,7 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
                 });
             });
 
-            Dialogs.close();
+            (this.props.onClose ?? Dialogs.close)();
 
             if (!startVm) {
                 cockpit.location.go(["vm"], {
@@ -1654,8 +1675,10 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
             );
         }
 
+        const handleClose = this.props.onClose ?? Dialogs.close;
+
         return (
-            <Modal position="top" variant="medium" id='create-vm-dialog' isOpen onClose={Dialogs.close}>
+            <Modal position="top" variant="medium" id='create-vm-dialog' isOpen onClose={handleClose}>
                 <ModalHeader title={this.props.mode == 'create' ? _("Create new virtual machine") : _("Import a virtual machine")} />
                 <ModalBody>
                     {dialogBody}
@@ -1676,7 +1699,7 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
                     {createAndEdit}
                     <Button variant='link'
                             key="cancel-button"
-                            onClick={Dialogs.close}>
+                            onClick={handleClose}>
                         {_("Cancel")}
                     </Button>
                 </ModalFooter>
@@ -1686,70 +1709,57 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
 }
 
 interface CreateVmActionProps {
-    mode: string;
-    vms: VM[];
+    mode: 'create' | 'import';
 }
 
-export class CreateVmAction extends React.Component<CreateVmActionProps> {
-    static contextType = DialogsContext;
-    declare context: Dialogs;
+export const CreateVmAction = ({ mode }: CreateVmActionProps) => {
+    const vi_caps = appState.virtInstallCapabilities;
 
-    render() {
-        const Dialogs = this.context;
-        const vi_caps = appState.virtInstallCapabilities;
-        const open = () => {
-            // The initial resources fetching contains only ID - this will be immediately
-            // replaced with the whole resource object but there is enough time to cause a crash if parsed here
-            cockpit.assert(vi_caps);
-            Dialogs.show(<CreateVmModal mode={this.props.mode}
-                                        nodeMaxMemory={appState.nodeMaxMemory}
-                                        vms={this.props.vms}
-                                        cloudInitSupported={vi_caps.cloudInitSupported}
-                                        downloadOSSupported={vi_caps.downloadOSSupported}
-                                        unattendedSupported={vi_caps.unattendedSupported}
-                                        unattendedUserLogin={vi_caps.unattendedUserLogin} />);
-        };
+    const open = () => {
+        // Open dialog by setting URL parameter - dialog is rendered declaratively based on URL
+        cockpit.location.replace(cockpit.location.path, { action: mode });
+    };
 
-        let testdata;
-        if (!vi_caps)
-            testdata = "disabledCheckingFeatures";
-        else if (!vi_caps.virtInstallAvailable)
-            testdata = "disabledVirtInstall";
+    let testdata;
+    if (!vi_caps)
+        testdata = "disabledCheckingFeatures";
+    else if (!vi_caps.virtInstallAvailable)
+        testdata = "disabledVirtInstall";
 
-        let createButton = (
-            <Button isDisabled={testdata !== undefined}
-                    test-data={testdata}
-                    id={this.props.mode == 'create' ? 'create-new-vm' : 'import-existing-vm'}
-                    variant='secondary'
-                    onClick={open}>
-                {this.props.mode == 'create' ? _("Create VM") : _("Import VM")}
-            </Button>
+    let createButton = (
+        <Button isDisabled={testdata !== undefined}
+                test-data={testdata}
+                id={mode === 'create' ? 'create-new-vm' : 'import-existing-vm'}
+                variant='secondary'
+                onClick={open}>
+            {mode === 'create' ? _("Create VM") : _("Import VM")}
+        </Button>
+    );
+
+    if (!vi_caps?.virtInstallAvailable)
+        createButton = (
+            <Tooltip id='virt-install-not-available-tooltip'
+                     content={_("virt-install package needs to be installed on the system in order to create new VMs")}>
+                <span>
+                    {createButton}
+                </span>
+            </Tooltip>
         );
-        if (!vi_caps?.virtInstallAvailable)
-            createButton = (
-                <Tooltip id='virt-install-not-available-tooltip'
-                         content={_("virt-install package needs to be installed on the system in order to create new VMs")}>
-                    <span>
-                        {createButton}
-                    </span>
-                </Tooltip>
-            );
-        else
-            createButton = (
-                <Tooltip id={this.props.mode + '-button-tooltip'}
-                         position={this.props.mode === "create" ? "top-end" : "top"}
-                         className={this.props.mode === "create" ? "custom-arrow" : ""}
-                         content={this.props.mode === "create"
-                             ? _("Create VM from local or network installation medium")
-                             : _("Create VM by importing a disk image of an existing VM installation")
-                         }
-                         isContentLeftAligned>
-                    <span>
-                        {createButton}
-                    </span>
-                </Tooltip>
-            );
+    else
+        createButton = (
+            <Tooltip id={mode + '-button-tooltip'}
+                     position={mode === "create" ? "top-end" : "top"}
+                     className={mode === "create" ? "custom-arrow" : ""}
+                     content={mode === "create"
+                         ? _("Create VM from local or network installation medium")
+                         : _("Create VM by importing a disk image of an existing VM installation")
+                     }
+                     isContentLeftAligned>
+                <span>
+                    {createButton}
+                </span>
+            </Tooltip>
+        );
 
-        return createButton;
-    }
-}
+    return createButton;
+};

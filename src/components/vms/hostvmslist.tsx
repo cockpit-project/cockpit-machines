@@ -33,6 +33,8 @@ import { WithDialogs } from 'dialogs.jsx';
 
 import { Progress, ProgressVariant } from "@patternfly/react-core/dist/esm/components/Progress";
 
+import { CreateVmModal } from '../create-vm-dialog/createVmDialog.jsx';
+
 import { VmActions } from '../vm/vmActions.jsx';
 
 import { vmId, rephraseUI, dummyVmsFilter, DOMAINSTATE } from "../../helpers.js";
@@ -44,6 +46,7 @@ import { VmUsesSpice } from '../vm/usesSpice.jsx';
 import { AggregateStatusCards } from "../aggregateStatusCards.jsx";
 import { appState } from "../../state";
 import { ensureUsagePolling } from '../../libvirtApi/common';
+import { useOn, usePageLocation } from "hooks";
 
 import { VMS_CONFIG } from "../../config.js";
 
@@ -127,6 +130,73 @@ const VmUsageMem = ({ vm } : {vm: VM | UIVM, }) => {
 };
 
 const _ = cockpit.gettext;
+
+/**
+ * Component that renders the Create/Import VM dialog when URL parameters are present.
+ * Uses declarative rendering based on URL state (the URL is the single source of truth).
+ *
+ * Supported URL formats:
+ * - Import VM: /machines#?action=import&source=/path/to/disk.qcow2&os=fedora40&name=my-vm
+ * - Create VM: /machines#?action=create&name=my-vm&type=url&source=http://example.com/install.iso&os=fedora40
+ *
+ * Parameters:
+ * - action: 'import' or 'create' (required)
+ * - name: VM name (optional)
+ * - os: OS shortId like 'fedora40', 'rhel9.4' (optional)
+ * - source: disk image path (import) or installation source URL/path (create)
+ * - type: source type - 'os', 'url', 'file', 'cloud', 'pxe' (create only)
+ */
+const CreateVmDialogOpener = ({ vms }: { vms: VM[] }) => {
+    // Subscribe to appState changes (for virtInstallCapabilities)
+    useOn(appState, "changed");
+
+    // Subscribe to URL changes - re-renders when location changes
+    const { options } = usePageLocation();
+
+    const vi_caps = appState.virtInstallCapabilities;
+    const action = options.action;
+
+    // Determine if dialog should be shown
+    const showDialog = (action === 'import' || action === 'create') &&
+                       vi_caps?.virtInstallAvailable;
+
+    if (!showDialog) return null;
+
+    // Parse URL parameters
+    const mode = action === 'import' ? 'import' : 'create';
+    const initialName = typeof options.name === 'string' ? options.name : undefined;
+    const initialOS = typeof options.os === 'string' ? options.os : undefined;
+    const initialSource = typeof options.source === 'string' ? options.source : undefined;
+    const initialSourceType = action === 'create' && typeof options.type === 'string'
+        ? options.type
+        : undefined;
+
+    // Close handler clears URL parameters
+    const handleClose = () => {
+        cockpit.location.replace(cockpit.location.path, {});
+    };
+
+    // Generate key from URL params to force re-mount when params change
+    const dialogKey = `${action}-${options.name}-${options.os}-${options.source}-${options.type}`;
+
+    return (
+        <CreateVmModal
+            key={dialogKey}
+            mode={mode}
+            onClose={handleClose}
+            nodeMaxMemory={appState.nodeMaxMemory}
+            vms={vms}
+            cloudInitSupported={vi_caps.cloudInitSupported}
+            downloadOSSupported={vi_caps.downloadOSSupported}
+            unattendedSupported={vi_caps.unattendedSupported}
+            unattendedUserLogin={vi_caps.unattendedUserLogin}
+            initialSource={initialSource}
+            initialOS={initialOS}
+            initialName={initialName}
+            initialSourceType={initialSourceType}
+        />
+    );
+};
 
 /**
  * List of all VMs defined on this host
@@ -248,6 +318,7 @@ export const HostVmsList = ({
 
     return (
         <WithDialogs key="vms-list">
+            <CreateVmDialogOpener vms={vms} />
             <Page className="pf-m-no-sidebar">
                 <PageSection hasBodyWrapper={false}>
                     <Gallery className="ct-cards-grid" hasGutter>

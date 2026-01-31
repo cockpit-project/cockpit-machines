@@ -23,6 +23,7 @@ import os
 import re
 import string
 import time
+import urllib
 import xml.etree.ElementTree as ET
 from datetime import datetime
 
@@ -2772,6 +2773,117 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
             b.click(f"#vm-{vmName}-system-run")
             b.wait_text(f"#vm-{vmName}-system-state", "Running")
             b.wait_not_present(f"#vm-{vmName}-system-state-error")
+
+    def testImportUrlParameters(self):
+        """Test that URL parameters can open the import dialog with pre-filled values (full and partial)"""
+        b = self.browser
+        m = self.machine
+
+        config = TestMachinesCreate.TestCreateConfig
+
+        # Create a test disk image to import
+        test_disk_path = "/var/lib/libvirt/images/test-import-disk.qcow2"
+        m.execute(f"qemu-img create -f qcow2 {test_disk_path} 1G")
+        self.addCleanup(m.execute, f"rm -f {test_disk_path}")
+
+        encoded_path = urllib.parse.quote(test_disk_path, safe='')
+
+        # Test 1: Full parameters (source, os, name)
+        test_vm_name = "my-test-vm"
+        self.login_and_go(f"/machines#?action=import&source={encoded_path}&os={config.FEDORA_28_SHORTID}&name={test_vm_name}")
+        self.waitPageInit()
+
+        b.wait_visible("#create-vm-dialog")
+        b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-modal-box__header .pf-v6-c-modal-box__title",
+                       "Import a virtual machine")
+        b.wait_val("#vm-name", test_vm_name)
+        b.wait_val("#source-disk input", test_disk_path)
+        b.wait_attr_contains("#os-select-group input", "value", config.FEDORA_28)
+
+        b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
+        b.wait_not_present("#create-vm-dialog")
+
+        # Test 2: Partial parameters (source only)
+        b.go(f"/machines#?action=import&source={encoded_path}")
+
+        b.wait_visible("#create-vm-dialog")
+        b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-modal-box__header .pf-v6-c-modal-box__title",
+                       "Import a virtual machine")
+        b.wait_val("#source-disk input", test_disk_path)
+        b.wait_attr("#os-select-group input", "value", "")
+
+        b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
+        b.wait_not_present("#create-vm-dialog")
+
+        # Test 3: Partial parameters (source + name, no OS)
+        test_vm_name = "partial-test-vm"
+        b.go(f"/machines#?action=import&source={encoded_path}&name={test_vm_name}")
+
+        b.wait_visible("#create-vm-dialog")
+        b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-modal-box__header .pf-v6-c-modal-box__title",
+                       "Import a virtual machine")
+        b.wait_val("#vm-name", test_vm_name)
+        b.wait_val("#source-disk input", test_disk_path)
+        b.wait_attr("#os-select-group input", "value", "")
+
+        b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
+        b.wait_not_present("#create-vm-dialog")
+
+    def testCreateUrlParameters(self):
+        """Test that URL parameters can open the create dialog with pre-filled values (full and partial)"""
+        b = self.browser
+
+        config = TestMachinesCreate.TestCreateConfig
+
+        # Test 1: Full parameters (name, type=os, os)
+        test_vm_name = "my-create-vm"
+        self.login_and_go(f"/machines#?action=create&name={test_vm_name}&type=os&os={config.FEDORA_28_SHORTID}")
+        self.waitPageInit()
+
+        b.wait_visible("#create-vm-dialog")
+        b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-modal-box__header .pf-v6-c-modal-box__title",
+                       "Create new virtual machine")
+        b.wait_val("#vm-name", test_vm_name)
+        b.wait_val("#source-type", "os")
+        b.wait_attr_contains("#os-select-group input", "value", config.FEDORA_28)
+
+        b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
+        b.wait_not_present("#create-vm-dialog")
+
+        # Test 2: Partial parameters (name + type=url, no OS)
+        test_vm_name = "partial-create-vm"
+        b.go(f"/machines#?action=create&name={test_vm_name}&type=url")
+
+        b.wait_visible("#create-vm-dialog")
+        b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-modal-box__header .pf-v6-c-modal-box__title",
+                       "Create new virtual machine")
+        b.wait_val("#vm-name", test_vm_name)
+        b.wait_val("#source-type", "url")
+        b.wait_attr("#os-select-group input", "value", "")
+
+        b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
+        b.wait_not_present("#create-vm-dialog")
+
+        # Test 3: Partial parameters (type=file only)
+        b.go("/machines#?action=create&type=file")
+
+        b.wait_visible("#create-vm-dialog")
+        b.wait_val("#source-type", "file")
+
+        b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
+        b.wait_not_present("#create-vm-dialog")
+
+        # Test 4: Partial parameters (type=url + source)
+        test_source_url = "http://example.com/install.iso"
+        encoded_source = urllib.parse.quote(test_source_url, safe='')
+        b.go(f"/machines#?action=create&type=url&source={encoded_source}")
+
+        b.wait_visible("#create-vm-dialog")
+        b.wait_val("#source-type", "url")
+        b.wait_val("#source-url", test_source_url)
+
+        b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
+        b.wait_not_present("#create-vm-dialog")
 
 
 if __name__ == '__main__':
