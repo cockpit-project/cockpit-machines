@@ -374,6 +374,7 @@ const SourceRow = ({
             <FileAutoComplete id={installationSourceId}
                 placeholder={_("Path to ISO file on host's file system")}
                 onChange={(value: string) => onValueChanged('source', value)}
+                value={source || ''}
                 superuser="try" />
         );
         break;
@@ -383,6 +384,7 @@ const SourceRow = ({
             <FileAutoComplete id={installationSourceId}
                 placeholder={_("Path to cloud image file on host's file system")}
                 onChange={(value: string) => onValueChanged('source', value)}
+                value={source || ''}
                 superuser="try" />
         );
         break;
@@ -392,6 +394,7 @@ const SourceRow = ({
             <FileAutoComplete id={installationSourceId}
                 placeholder={_("Existing disk image on host's file system")}
                 onChange={(value: string) => onValueChanged('source', value)}
+                value={source || ''}
                 superuser="try" />
         );
         break;
@@ -1179,6 +1182,8 @@ interface CreateVmModalProps {
     nodeMaxMemory: number | undefined;
     vms: VM[];
     unattendedUserLogin: boolean | undefined,
+    initialSource?: string | undefined;
+    initialOS?: string | undefined; // OS shortId (e.g., "fedora40", "rhel9.4")
 }
 
 interface CreateVmModalState extends VmParams {
@@ -1194,7 +1199,7 @@ interface CreateVmModalState extends VmParams {
     sourceMediaID?: string;
 }
 
-class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalState> {
+export class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalState> {
     static contextType = DialogsContext;
     declare context: Dialogs;
 
@@ -1224,7 +1229,7 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
                 ? LIBVIRT_SESSION_CONNECTION
                 : LIBVIRT_SYSTEM_CONNECTION),
             sourceType: defaultSourceType,
-            source: '',
+            source: props.initialSource || '',
             os: undefined,
             ...getMemoryDefaults(props.nodeMaxMemory),
             ...getStorageDefaults(),
@@ -1272,7 +1277,16 @@ class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalSta
     }
 
     async componentDidMount() {
-        this.setState({ osInfoListLoading: false, osInfoList: await getOsInfoList() });
+        const osInfoList = await getOsInfoList();
+        this.setState({ osInfoListLoading: false, osInfoList });
+
+        // If initialOS was provided via props, find and set the matching OS
+        if (this.props.initialOS) {
+            const matchingOS = osInfoList.find(os => os.shortId === this.props.initialOS);
+            if (matchingOS) {
+                this.onValueChanged('os', matchingOS);
+            }
+        }
     }
 
     handleTabClick = (event: React.MouseEvent, tabIndex: number | string) => {
