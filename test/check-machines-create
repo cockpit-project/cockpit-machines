@@ -2773,6 +2773,71 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
             b.wait_text(f"#vm-{vmName}-system-state", "Running")
             b.wait_not_present(f"#vm-{vmName}-system-state-error")
 
+    def testImportUrlParameters(self):
+        """Test that URL parameters can open the import dialog with pre-filled values"""
+        b = self.browser
+        m = self.machine
+
+        config = TestMachinesCreate.TestCreateConfig
+
+        # Create a test disk image to import
+        test_disk_path = "/var/lib/libvirt/images/test-import-disk.qcow2"
+        m.execute(f"qemu-img create -f qcow2 {test_disk_path} 1G")
+        self.addCleanup(m.execute, f"rm -f {test_disk_path}")
+
+        # URL-encode the disk path (/ becomes %2F)
+        encoded_path = test_disk_path.replace("/", "%2F")
+
+        # Navigate to the machines page with URL parameters to open import dialog
+        # The URL format is: /machines#?action=import&source=<encoded_path>&os=<shortId>
+        self.login_and_go(f"/machines#?action=import&source={encoded_path}&os={config.FEDORA_28_SHORTID}")
+
+        # Wait for the import dialog to open automatically
+        b.wait_visible("#create-vm-dialog")
+        b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-modal-box__header .pf-v6-c-modal-box__title",
+                       "Import a virtual machine")
+
+        # Check that the source field is pre-filled with the disk path
+        b.wait_val("#source-disk", test_disk_path)
+
+        # Check that the OS field is pre-filled with the expected OS
+        b.wait_attr_contains("#os-select-group input", "value", config.FEDORA_28)
+
+        # Cancel the dialog
+        b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
+        b.wait_not_present("#create-vm-dialog")
+
+    def testImportUrlParametersPartial(self):
+        """Test that URL parameters work with only some fields specified"""
+        b = self.browser
+        m = self.machine
+
+        # Create a test disk image to import
+        test_disk_path = "/var/lib/libvirt/images/test-import-disk2.qcow2"
+        m.execute(f"qemu-img create -f qcow2 {test_disk_path} 1G")
+        self.addCleanup(m.execute, f"rm -f {test_disk_path}")
+
+        # URL-encode the disk path
+        encoded_path = test_disk_path.replace("/", "%2F")
+
+        # Navigate with only source parameter (no OS)
+        self.login_and_go(f"/machines#?action=import&source={encoded_path}")
+
+        # Wait for the import dialog to open automatically
+        b.wait_visible("#create-vm-dialog")
+        b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-modal-box__header .pf-v6-c-modal-box__title",
+                       "Import a virtual machine")
+
+        # Check that the source field is pre-filled
+        b.wait_val("#source-disk", test_disk_path)
+
+        # OS field should be empty (user needs to select)
+        b.wait_attr("#os-select-group input", "value", "")
+
+        # Cancel the dialog
+        b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
+        b.wait_not_present("#create-vm-dialog")
+
 
 if __name__ == '__main__':
     testlib.test_main()
