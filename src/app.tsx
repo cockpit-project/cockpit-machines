@@ -195,8 +195,8 @@ const AppServiceNotRunning = () => {
 const AppVMs = () => {
     const { vms, uivms, storagePools, networks } = appState;
 
-    const createVmAction = <CreateVmAction vms={vms} mode='create' />;
-    const importDiskAction = <CreateVmAction vms={vms} mode='import' />;
+    const createVmAction = <CreateVmAction mode='create' />;
+    const importDiskAction = <CreateVmAction mode='import' />;
     const vmActions = <> {importDiskAction} {createVmAction} </>;
 
     return (
