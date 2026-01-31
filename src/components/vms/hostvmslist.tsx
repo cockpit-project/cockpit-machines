@@ -17,7 +17,7 @@
  * along with Cockpit; If not, see <http://www.gnu.org/licenses/>.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import cockpit from 'cockpit';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -29,9 +29,11 @@ import { Toolbar, ToolbarContent, ToolbarItem } from "@patternfly/react-core/dis
 import { Select, SelectList, SelectOption } from "@patternfly/react-core/dist/esm/components/Select";
 import { MenuToggle, MenuToggleElement } from "@patternfly/react-core/dist/esm/components/MenuToggle";
 import { Page, PageSection } from "@patternfly/react-core/dist/esm/components/Page";
-import { WithDialogs } from 'dialogs.jsx';
+import { WithDialogs, useDialogs } from 'dialogs.jsx';
 
 import { Progress, ProgressVariant } from "@patternfly/react-core/dist/esm/components/Progress";
+
+import { CreateVmModal } from '../create-vm-dialog/createVmDialog.jsx';
 
 import { VmActions } from '../vm/vmActions.jsx';
 
@@ -44,6 +46,7 @@ import { VmUsesSpice } from '../vm/usesSpice.jsx';
 import { AggregateStatusCards } from "../aggregateStatusCards.jsx";
 import { appState } from "../../state";
 import { ensureUsagePolling } from '../../libvirtApi/common';
+import { useOn } from "hooks";
 
 import { VMS_CONFIG } from "../../config.js";
 
@@ -127,6 +130,57 @@ const VmUsageMem = ({ vm } : {vm: VM | UIVM, }) => {
 };
 
 const _ = cockpit.gettext;
+
+/**
+ * Component that automatically opens the import dialog when URL parameters are present.
+ * Checks for ?action=import&source=<filepath>&os=<shortId> parameters.
+ * URL format: /machines#?action=import&source=/path/to/disk.qcow2&os=fedora40
+ */
+const ImportDialogOpener = ({ vms }: { vms: VM[] }) => {
+    const Dialogs = useDialogs();
+    // Use a ref to track if we've already opened the dialog (persists across re-renders)
+    const hasOpenedRef = useRef(false);
+
+    // Subscribe to appState changes to detect when virtInstallCapabilities becomes available
+    useOn(appState, "changed");
+
+    const vi_caps = appState.virtInstallCapabilities;
+
+    useEffect(() => {
+        // Only open once
+        if (hasOpenedRef.current)
+            return;
+
+        const options = cockpit.location.options;
+
+        if (options.action !== 'import')
+            return;
+
+        // Wait for virt-install capabilities to be available
+        if (!vi_caps || !vi_caps.virtInstallAvailable)
+            return;
+
+        // Mark as opened to prevent re-triggering
+        hasOpenedRef.current = true;
+
+        // Extract initial values from URL parameters (decode URI components for paths with special chars)
+        const initialSource = typeof options.source === 'string' ? decodeURIComponent(options.source) : undefined;
+        const initialOS = typeof options.os === 'string' ? decodeURIComponent(options.os) : undefined;
+
+        // Open the import dialog with initial values
+        Dialogs.show(<CreateVmModal mode="import"
+                                    nodeMaxMemory={appState.nodeMaxMemory}
+                                    vms={vms}
+                                    cloudInitSupported={vi_caps.cloudInitSupported}
+                                    downloadOSSupported={vi_caps.downloadOSSupported}
+                                    unattendedSupported={vi_caps.unattendedSupported}
+                                    unattendedUserLogin={vi_caps.unattendedUserLogin}
+                                    initialSource={initialSource}
+                                    initialOS={initialOS} />);
+    }, [Dialogs, vms, vi_caps]);
+
+    return null; // This component doesn't render anything
+};
 
 /**
  * List of all VMs defined on this host
@@ -248,6 +302,7 @@ export const HostVmsList = ({
 
     return (
         <WithDialogs key="vms-list">
+            <ImportDialogOpener vms={vms} />
             <Page className="pf-m-no-sidebar">
                 <PageSection hasBodyWrapper={false}>
                     <Gallery className="ct-cards-grid" hasGutter>
