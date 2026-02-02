@@ -21,7 +21,7 @@ import { useDialogs } from 'dialogs.jsx';
 import { domainDeleteStorage, domainDetachDisk, domainGet } from '../../../libvirtApi/domain.js';
 import { MediaEjectModal } from './mediaEject.jsx';
 import { EditDiskAction } from './diskEdit.jsx';
-import { AddDiskModalBody } from './diskAdd.jsx';
+import { AddDisk } from './diskAdd.jsx';
 import { DeleteResourceModal } from '../../common/deleteResource.jsx';
 import { canDeleteDiskFile } from '../../../helpers.js';
 import { appState } from '../../../state';
@@ -212,11 +212,13 @@ export const DiskActions = ({
     const Dialogs = useDialogs();
 
     function openMediaInsertionDialog() {
-        Dialogs.show(<AddDiskModalBody idPrefix={idPrefixRow + "-insert-dialog-adddisk"}
-                                       vm={vm}
-                                       disk={disk}
-                                       supportedDiskBusTypes={supportedDiskBusTypes}
-                                       isMediaInsertion />);
+        Dialogs.show(
+            <AddDisk
+                idPrefix={idPrefixRow + "-insert-dialog-adddisk"}
+                vm={vm}
+                isMediaInsertion disk={disk}
+            />
+        );
     }
 
     let cdromAction;
