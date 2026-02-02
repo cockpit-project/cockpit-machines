@@ -40,7 +40,8 @@ const getNetworkDevices = async (): Promise<Record<string, NetworkDevice>> => {
 
         const devs: Record<string, NetworkDevice> = {};
         for (const dev of output.trim().split('\n')) {
-            devs[dev] = {};
+            if (dev != "")
+                devs[dev] = {};
         }
 
         const bridges = await cockpit.spawn(["ip", "-j", "link", "show", "type", "bridge"], { err: "message" });
