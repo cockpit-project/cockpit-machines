@@ -367,7 +367,6 @@ const VncFooter = ({
                 <SplitItem>
                     <LaunchViewerButton
                         vm={vm}
-                        console={vnc}
                         url={vnc && cockpit.format("vnc://$0:$1", connection_address(), vnc.port)}
                         onEdit={
                             inactive_vnc
