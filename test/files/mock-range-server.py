@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: LGPL-2.1-or-later
 # HTTPS server which accepts byte range option. (bytes=N-N)
 #
 # QEMU refuses to curl the url if server doesn't support range.
