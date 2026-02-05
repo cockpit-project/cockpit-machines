@@ -55,9 +55,9 @@ import {
     logDebug,
 } from '../helpers.js';
 import {
-    getDiskElemByTarget,
     getDoc,
     getElem,
+    getDiskElemByTarget,
     getDomainCapLoader,
     getDomainCapMaxVCPU,
     getDomainCapCPUCustomModels,
@@ -335,7 +335,7 @@ export async function virtXmlHotRemove(
 /* XML Manipulation
 
    The domainModifyXML function calls a callback with the (inactive)
-   XML definition of he given VM.  The callback can make any kind of
+   XML definition of the given VM.  The callback can make any kind of
    modifications to that document, and when it returns true, the
    document will be saved as the new (inactive) XML of that machine.
 */
@@ -480,17 +480,13 @@ export async function domainChangeAutostart ({
 }
 
 export async function domainChangeBootOrder({
-    id: objPath,
-    connectionName,
+    vm,
     devices,
 } : {
-    id: string,
-    connectionName: ConnectionName,
+    vm: VM,
     devices: BootOrderDevice[],
 }): Promise<void> {
-    const [domXml] = await call<[string]>(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE | Enum.VIR_DOMAIN_XML_SECURE], { timeout, type: 'u' });
-    const updatedXML = updateBootOrder(domXml, devices);
-    await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [updatedXML], { timeout, type: 's' });
+    await domainModifyXML(vm, doc => updateBootOrder(doc, devices));
 }
 
 interface DomainSpec {
@@ -1178,55 +1174,47 @@ export function domainSetMemory({
 }
 
 export async function domainSetMaxMemory({
-    id: objPath,
-    connectionName,
+    vm,
     maxMemory // in KiB
 } : {
-    id: string,
-    connectionName: ConnectionName,
+    vm: VM,
     maxMemory: number // in KiB
 }): Promise<void> {
-    const [domXml] = await call<[string]>(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_SECURE], { timeout, type: 'u' });
-    const updatedXML = updateMaxMemory(domXml, maxMemory);
-    await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [updatedXML], { timeout, type: 's' });
+    await domainModifyXML(vm, doc => updateMaxMemory(doc, maxMemory));
 }
 
 export async function domainSetOSFirmware({
-    connectionName,
-    objPath,
+    vm,
     loaderType
 } : {
-    connectionName: ConnectionName,
-    objPath: string,
+    vm: VM,
     loaderType: optString;
 }): Promise<void> {
-    const [domXml] = await call<[string]>(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE | Enum.VIR_DOMAIN_XML_SECURE], { timeout, type: 'u' });
-    const s = new XMLSerializer();
-    const doc = getDoc(domXml);
-    const domainElem = doc.firstElementChild;
+    await domainModifyXML(vm, doc => {
+        const domainElem = doc.firstElementChild;
 
-    if (!domainElem)
-        throw new Error("setOSFirmware: domXML has no domain element");
+        if (!domainElem)
+            throw new Error("setOSFirmware: domXML has no domain element");
 
-    const osElem = domainElem.getElementsByTagNameNS("", "os")[0];
-    const loaderElem = getSingleOptionalElem(osElem, "loader");
+        const osElem = domainElem.getElementsByTagNameNS("", "os")[0];
+        const loaderElem = getSingleOptionalElem(osElem, "loader");
 
-    if (loaderElem)
-        loaderElem.remove();
+        if (loaderElem)
+            loaderElem.remove();
 
-    if (!loaderType)
-        osElem.removeAttribute("firmware");
-    else
-        osElem.setAttribute("firmware", loaderType);
+        if (!loaderType)
+            osElem.removeAttribute("firmware");
+        else
+            osElem.setAttribute("firmware", loaderType);
 
-    domainElem.appendChild(osElem);
+        domainElem.appendChild(osElem);
 
-    await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [s.serializeToString(doc)], { timeout, type: 's' });
+        return true;
+    });
 }
 
 export async function domainUpdateDiskAttributes({
-    connectionName,
-    objPath,
+    vm,
     target,
     readonly,
     shareable,
@@ -1234,8 +1222,7 @@ export async function domainUpdateDiskAttributes({
     existingTargets,
     cache
 } : {
-    connectionName: ConnectionName,
-    objPath: string,
+    vm: VM,
     target: optString,
     readonly: boolean,
     shareable: boolean,
@@ -1243,7 +1230,13 @@ export async function domainUpdateDiskAttributes({
     existingTargets: string[],
     cache: optString,
 }): Promise<void> {
-    const [domXml] = await call<[string]>(connectionName, objPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE | Enum.VIR_DOMAIN_XML_SECURE], { timeout, type: 'u' });
-    const updatedXML = updateDisk({ diskTarget: target, domXml, readonly, shareable, busType, existingTargets, cache });
-    await call(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'DomainDefineXML', [updatedXML], { timeout, type: 's' });
+    await domainModifyXML(vm, doc => updateDisk({
+        doc,
+        diskTarget: target,
+        readonly,
+        shareable,
+        busType,
+        existingTargets,
+        cache
+    }));
 }
