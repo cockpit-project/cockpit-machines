@@ -451,24 +451,23 @@ function validateGuestPort(port: string): string | undefined {
 }
 
 export function validate_PortForwards(field: DialogField<PortForwardsValue>) {
-    field.forEach(v => {
-        if (v.get().kind == "simple") {
-            const sv = v as DialogField<DialogSimplePortForward>;
-            sv.sub("address").validate(validateAddress);
-            sv.sub("host").validate(validateHostPort);
-            sv.sub("guest").validate(validateGuestPort);
+    field.forEach(f => {
+        const v = f.get();
+        if (v.kind == "simple") {
+            const sf = f.at(v);
+            sf.sub("address").validate(validateAddress);
+            sf.sub("host").validate(validateHostPort);
+            sf.sub("guest").validate(validateGuestPort);
         }
     });
 }
 
 const SimplePortForward = ({
     field,
-    idx,
     removeitem,
 } : {
     field: DialogField<DialogSimplePortForward>,
-    idx: number,
-    removeitem: (idx: number) => void,
+    removeitem: () => void,
 }) => {
     return (
         <Grid hasGutter id={field.id()}>
@@ -536,7 +535,7 @@ const SimplePortForward = ({
                     size="sm"
                     aria-label={_("Remove item")}
                     icon={<TrashIcon />}
-                    onClick={() => removeitem(idx)}
+                    onClick={removeitem}
                 />
             </FormGroup>
         </Grid>
@@ -545,12 +544,10 @@ const SimplePortForward = ({
 
 const ComplexPortForward = ({
     field,
-    idx,
     removeitem,
 } : {
     field: DialogField<DialogComplexPortForward>,
-    idx: number,
-    removeitem: (idx: number) => void,
+    removeitem: () => void,
 }) => {
     return (
         <Grid hasGutter id={field.id()}>
@@ -569,7 +566,7 @@ const ComplexPortForward = ({
                     size="sm"
                     aria-label={_("Remove item")}
                     icon={<TrashIcon />}
-                    onClick={() => removeitem(idx)}
+                    onClick={removeitem}
                 />
             </FormGroup>
         </Grid>
@@ -629,7 +626,6 @@ export const NetworkPortForwardsRow = ({
                             <SimplePortForward
                                 key={idx}
                                 field={f.at(v)}
-                                idx={idx}
                                 removeitem={() => remItem(idx)}
                             />
                         );
@@ -638,7 +634,6 @@ export const NetworkPortForwardsRow = ({
                             <ComplexPortForward
                                 key={idx}
                                 field={f.at(v)}
-                                idx={idx}
                                 removeitem={() => remItem(idx)}
                             />
                         );
