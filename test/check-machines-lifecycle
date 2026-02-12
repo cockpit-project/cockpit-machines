@@ -6,6 +6,7 @@ import time
 
 import machineslib
 import testlib
+from dialoglib import DialogHelpers
 
 
 @testlib.nondestructive
@@ -395,6 +396,7 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
 
     def testDelete(self):
         b = self.browser
+        d = DialogHelpers(b)
         m = self.machine
 
         name = "subVmTest1"
@@ -417,13 +419,13 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
             b.wait_visible(f"#vm-{vmName}-disks-adddisk-dialog-modal-window")
             b.wait_visible("label:contains(Create new)")  # radio button label in the modal dialog
 
-            b.select_from_dropdown(f"#vm-{vmName}-disks-adddisk-new-select-pool", poolName)
-            b.set_input_text(f"#vm-{vmName}-disks-adddisk-new-name", volName)
-            b.set_input_text(f"#vm-{vmName}-disks-adddisk-new-size", "10")
-            b.select_from_dropdown(f"#vm-{vmName}-disks-adddisk-new-unit", "MiB")
-            b.click(f"#vm-{vmName}-disks-adddisk-permanent")
+            d.set_DropdownSelect("create_new.pool", poolName)
+            d.set_TextInput("create_new.volume.name", volName)
+            d.set_TextInput("create_new.volume.size", "10")
+            d.set_DropdownSelect("create_new.volume.unit", "MiB")
+            b.click(d.field("permanent"))
 
-            b.click(f"#vm-{vmName}-disks-adddisk-dialog-add")
+            b.click(d.apply_button())
             with b.wait_timeout(30):
                 b.wait_not_present(f"#vm-{vmName}-disks-adddisk-dialog-modal-window")
 

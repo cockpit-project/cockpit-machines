@@ -14,7 +14,7 @@ import { DescriptionList, DescriptionListDescription, DescriptionListGroup, Desc
 import { useDialogs } from 'dialogs.jsx';
 
 import { convertToUnit, toReadableNumber, units, vmId } from "../../../helpers.js";
-import { AddDiskModalBody } from './diskAdd.jsx';
+import { AddDisk } from './diskAdd.jsx';
 import { needsShutdownDiskAccess, WithPending } from '../../common/needsShutdown.jsx';
 import { ListingTable } from "cockpit-components-table.jsx";
 import { DiskSourceDescriptions, DiskSourceAbbrev, DiskExtraDescriptions, DiskActions } from './vmDiskColumns.jsx';
@@ -60,9 +60,7 @@ export const VmDisksActions = ({
     const idPrefix = `${vmId(vm.name)}-disks`;
 
     function open() {
-        Dialogs.show(<AddDiskModalBody idPrefix={idPrefix + "-adddisk"}
-                                       vm={vm}
-                                       supportedDiskBusTypes={supportedDiskBusTypes} />);
+        Dialogs.show(<AddDisk idPrefix={idPrefix + "-adddisk"} vm={vm} />);
     }
 
     return (

@@ -6,6 +6,7 @@ import os
 
 import machineslib
 import testlib
+from dialoglib import DialogHelpers
 
 
 @testlib.skipImage("NFS kernel oops https://bugzilla.redhat.com/show_bug.cgi?id=2344326",
@@ -533,11 +534,13 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
         b.wait_in_text("#card-pf-storage-pools .pf-v6-c-card__header button", "Storage pools")
         b.click(".pf-v6-c-card .pf-v6-c-card__header button:contains(Storage pools)")
 
-        class StorageVolumeCreateDialog:
+        class StorageVolumeCreateDialog(DialogHelpers):
             def __init__(
                 self, test_obj, pool_name, vol_name, size="128", unit="MiB", fmt='qcow2',
                 pool_type="dir", xfail=False, xfail_objects=None, xfail_error=None, remove=True,
             ):
+                super().__init__(test_obj.browser)
+
                 self.test_obj = test_obj
                 self.pool_name = pool_name
                 self.pool_type = pool_type
@@ -572,34 +575,33 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
                                "Create storage volume")
 
             def fill(self):
-                b.set_input_text("#create-volume-dialog-name", self.vol_name)
+                self.set_TextInput("volume.name", self.vol_name)
 
                 if self.size:
-                    b.set_input_text("#create-volume-dialog-size", self.size)
+                    self.set_TextInput("volume.size", self.size)
 
                 if self.unit:
-                    b.select_from_dropdown("#create-volume-dialog-unit", self.unit)
+                    self.set_TextInput("volume.unit", self.unit)
 
                 if self.fmt:
-                    b.select_from_dropdown("#create-volume-dialog-format", self.fmt)
+                    self.set_DropdownSelect("volume.format", self.fmt)
 
             def cancel(self):
-                b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
+                b.click(self.cancel_button())
                 b.wait_not_present("#create-storage-pool-dialog")
 
             def create(self):
-                b.click(".pf-v6-c-modal-box__footer button:contains(Create)")
+                b.click(self.apply_button())
 
                 if not self.xfail:
                     # Creation of volumes might take longer for some pool types
                     if self.pool_type in ["disk", "netfs"]:
-                        b.wait_visible(".pf-v6-c-modal-box__footer button.pf-m-in-progress")
-                        b.wait_visible(".pf-v6-c-modal-box__footer button:contains(Create):disabled")
+                        b.wait_visible(self.apply_button() + ".pf-m-in-progress")
+                        b.wait_visible(self.apply_button() + ":disabled")
                     b.wait_not_present("#create-volume-dialog-modal")
                 else:
                     for xfo in self.xfail_objects:
-                        b.wait_in_text(f"#create-volume-dialog-{xfo}-group .pf-v6-c-form__helper-text .pf-m-error",
-                                       self.xfail_error)
+                        b.wait_in_text(self.helper_text(xfo), self.xfail_error)
 
             def verify(self):
                 # Check that the defined volume is now visible
@@ -640,7 +642,7 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
             fmt="qcow2",
             remove=True,
             xfail=True,
-            xfail_objects=['size'],
+            xfail_objects=['volume.size'],
             xfail_error="exceed the storage pool",
         ).execute()
 
