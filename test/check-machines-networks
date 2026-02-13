@@ -1062,6 +1062,28 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         testlib.wait(lambda: "1" in self.machine.execute("virsh domifaddr subVmTest1 | grep 192.168.122.222 | wc -l"),
                      delay=3)
 
+    def testNetworksCreateDefault(self):
+        b = self.browser
+
+        self.login_and_go("/machines")
+        self.waitPageInit()
+
+        # Click on Networks card
+        b.wait_in_text("#card-pf-networks .pf-v6-c-card__header button", "Network")
+        b.click(".pf-v6-c-card .pf-v6-c-card__header button:contains(Network)")
+
+        # Delete "default" network
+        b.click("#network-default-system-action-kebab")
+        b.click("#delete-network-default-system")
+        b.wait_visible("#delete-resource-modal")
+        b.click("#delete-resource-modal button:contains(Delete)")
+        b.wait_not_present("#delete-resource-modal")
+
+        # Recreate it
+        b.wait_in_text("#networks-listing", "No network is defined on this host")
+        b.click("""button:contains('Create the "default" virtual network')""")
+        b.wait_text("#network-default-system-state", "active")
+
 
 if __name__ == '__main__':
     testlib.test_main()
