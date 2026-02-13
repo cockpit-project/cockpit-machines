@@ -7,6 +7,7 @@ import xml.etree.ElementTree as ET
 
 import machineslib
 import testlib
+from dialoglib import DialogHelpers
 from machinesxmls import (
     TEST_NETWORK2_CLASH_XML,
     TEST_NETWORK2_XML,
@@ -532,6 +533,7 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
 
     def testNetworkSettings(self):
         b = self.browser
+        d = DialogHelpers(b)
         m = self.machine
 
         self.createVm("subVmTest1")
@@ -566,7 +568,7 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         b.wait_not_present("#vm-subVmTest1-network-1-edit-dialog-idle-message")
 
         # Cancel dialog
-        b.click("#vm-subVmTest1-network-1-edit-dialog-cancel")
+        b.click(d.cancel_button())
         b.wait_not_present("#vm-subVmTest1-network-1-edit-dialog-modal-window")
 
         # Fetch current NIC model type
@@ -577,15 +579,15 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         b.click("#vm-subVmTest1-network-2-edit-dialog")
 
         # Change network model type of a running domain
-        b.select_from_dropdown("#vm-subVmTest1-network-2-edit-dialog-model", "e1000e")
+        b.select_from_dropdown(d.field("model"), "e1000e")
         # Wait for the dialog warning to appear
         b.wait_visible("#vm-subVmTest1-network-2-edit-dialog-idle-message")
         # Change network type and source of a running domain
-        b.wait_val("#vm-subVmTest1-network-2-edit-dialog-type", "network")
-        b.wait_val("#vm-subVmTest1-network-2-edit-dialog-source", "default")
-        b.select_from_dropdown("#vm-subVmTest1-network-2-edit-dialog-source", "test_network")
+        b.wait_val(d.field("type_and_source.type"), "network")
+        b.wait_val(d.field("type_and_source.source"), "default")
+        b.select_from_dropdown(d.field("type_and_source.source"), "test_network")
         # Save the network settings
-        b.click("#vm-subVmTest1-network-2-edit-dialog-save")
+        b.click(d.apply_button())
         b.wait_not_present("#vm-subVmTest1-network-2-edit-dialog-modal-window")
         # Wait for the tooltips to appear next to the elements we changed
         b.wait_in_text("#vm-subVmTest1-network-2-model", current_model_type)
@@ -627,12 +629,12 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         # Open the modal dialog
         b.click("#vm-subVmTest1-network-1-edit-dialog")
 
-        b.wait_val("#vm-subVmTest1-network-1-edit-dialog-type", "bridge")
-        b.select_from_dropdown("#vm-subVmTest1-network-1-edit-dialog-type", "direct")
-        source = b.val("#vm-subVmTest1-network-1-edit-dialog-source")
+        b.wait_val(d.field("type_and_source.type"), "bridge")
+        b.select_from_dropdown(d.field("type_and_source.type"), "direct")
+        source = b.val(d.field("type_and_source.source"))
 
         # Save the network settings
-        b.click("#vm-subVmTest1-network-1-edit-dialog-save")
+        b.click(d.apply_button())
         b.wait_not_present("#vm-subVmTest1-network-1-edit-dialog-modal-window")
 
         b.wait_in_text("#vm-subVmTest1-network-1-type", "direct")
@@ -642,20 +644,20 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         # Open the modal dialog
         b.click("#vm-subVmTest1-network-1-edit-dialog")
 
-        b.wait_val("#vm-subVmTest1-network-1-edit-dialog-type", "direct")
-        b.select_from_dropdown("#vm-subVmTest1-network-1-edit-dialog-type", "bridge")
-        b.select_from_dropdown("#vm-subVmTest1-network-1-edit-dialog-source", "virbr0")
+        b.wait_val(d.field("type_and_source.type"), "direct")
+        b.select_from_dropdown(d.field("type_and_source.type"), "bridge")
+        b.select_from_dropdown(d.field("type_and_source.source"), "virbr0")
 
         # Save the network settings
-        b.click("#vm-subVmTest1-network-1-edit-dialog-save")
+        b.click(d.apply_button())
         b.wait_not_present("#vm-subVmTest1-network-1-edit-dialog-modal-window")
 
         b.wait_in_text("#vm-subVmTest1-network-1-type", "bridge")
         b.wait_in_text("#vm-subVmTest1-network-1-source", "virbr0")
 
         b.click("#vm-subVmTest1-network-1-edit-dialog")
-        b.wait_in_text("#vm-subVmTest1-network-1-edit-dialog-source", "virbr0")
-        b.click("#vm-subVmTest1-network-1-edit-dialog-save")
+        b.wait_in_text(d.field("type_and_source.source"), "virbr0")
+        b.click(d.apply_button())
         b.wait_not_present("#vm-subVmTest1-network-1-edit-dialog-modal-window")
         b.wait_in_text("#vm-subVmTest1-network-1-source", "virbr0")
 
@@ -663,12 +665,12 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         # Open the modal dialog
         b.click("#vm-subVmTest1-network-1-edit-dialog")
 
-        b.wait_val("#vm-subVmTest1-network-1-edit-dialog-type", "bridge")
-        b.select_from_dropdown("#vm-subVmTest1-network-1-edit-dialog-type", "network")
-        b.select_from_dropdown("#vm-subVmTest1-network-1-edit-dialog-source", "test_network")
+        b.wait_val(d.field("type_and_source.type"), "bridge")
+        b.select_from_dropdown(d.field("type_and_source.type"), "network")
+        b.select_from_dropdown(d.field("type_and_source.source"), "test_network")
 
         # Save the network settings
-        b.click("#vm-subVmTest1-network-1-edit-dialog-save")
+        b.click(d.apply_button())
         b.wait_not_present("#vm-subVmTest1-network-1-edit-dialog-modal-window")
 
         b.wait_in_text("#vm-subVmTest1-network-1-type", "network")
@@ -708,10 +710,12 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         b.click("#vm-subVmTest1-network-1-edit-dialog")
 
         # And ensure that the network sources dropdown is disabled
-        b.wait_val("#vm-subVmTest1-network-1-edit-dialog-type", "bridge")
-        b.select_from_dropdown("#vm-subVmTest1-network-1-edit-dialog-type", "network")
-        b.wait_visible("#vm-subVmTest1-network-1-edit-dialog-save:disabled")
-        b.click(".pf-v6-c-modal-box__footer button:contains(Cancel)")
+        b.wait_val(d.field("type_and_source.type"), "bridge")
+        b.select_from_dropdown(d.field("type_and_source.type"), "network")
+        b.click(d.apply_button())
+        b.wait_in_text(d.helper_text("type_and_source.source"), "No sources available")
+        b.wait_visible(d.apply_button() + ":disabled")
+        b.click(d.cancel_button())
 
         # Ensure that when the source of a NIC was removed we can still change it
 
@@ -731,9 +735,9 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         # Try to edit the interface changing the source to a non deleted network
         b.click("#vm-subVmTest1-network-1-edit-dialog")
         b.wait_visible("#vm-subVmTest1-network-1-edit-dialog-modal-window")
-        b.select_from_dropdown("#vm-subVmTest1-network-1-edit-dialog-type", "network")
-        b.select_from_dropdown("#vm-subVmTest1-network-1-edit-dialog-source", "test_network")
-        b.click("#vm-subVmTest1-network-1-edit-dialog-save")
+        b.select_from_dropdown(d.field("type_and_source.type"), "network")
+        b.select_from_dropdown(d.field("type_and_source.source"), "test_network")
+        b.click(d.apply_button())
         b.wait_not_present("#vm-subVmTest1-network-1-edit-dialog-modal-window")
         self.expandNicRow(1)
         b.wait_in_text("#vm-subVmTest1-network-1-source", "test_network")

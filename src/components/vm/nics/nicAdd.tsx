@@ -6,12 +6,10 @@
 import React from 'react';
 import cockpit from 'cockpit';
 
-import type { Dialogs } from 'dialogs';
+import { useDialogs } from 'dialogs';
 import type { VM } from '../../../types';
-import type { DialogBodyValues, ValidationBody } from './nicBody';
 import type { AvailableSources } from './vmNicsCard';
 
-import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import {
@@ -19,15 +17,22 @@ import {
 } from '@patternfly/react-core/dist/esm/components/Modal';
 import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
-import { DialogsContext } from 'dialogs.jsx';
 
-import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import {
-    NetworkTypeAndSourceRow, NetworkModelRow, dialogPortForwardsToInterface, NetworkPortForwardsRow,
-    validateDialogBodyValues
+    NetworkTypeAndSourceValue, NetworkTypeAndSourceRow,
+    init_NetworkTypeAndSourceRow, validate_NetworkTypeAndSourceRow,
+    NetworkModelRow,
+    PortForwardsValue, NetworkPortForwardsRow, validate_PortForwards,
+    dialogPortForwardsToInterface,
 } from './nicBody.jsx';
 import { virtXmlHotAdd, domainGet, domainIsRunning } from '../../../libvirtApi/domain.js';
 import { appState } from '../../../state';
+
+import {
+    useDialogState, DialogField, DialogError,
+    DialogErrorMessage, DialogHelperText,
+    DialogActionButton, DialogCancelButton
+} from 'cockpit/dialog';
 
 import './nic.css';
 
@@ -60,272 +65,224 @@ function getRandomMac(vms: VM[]): string | undefined {
     return undefined;
 }
 
-interface DialogValues extends DialogBodyValues {
-    setNetworkMac: boolean;
-    networkMac: string;
+interface NetworkMacValue {
+    set: boolean,
+    val: string,
+}
+
+const NetworkMacRow = ({
+    field,
+} : {
+    field: DialogField<NetworkMacValue>
+}) => {
+    const f_set = field.sub("set");
+    const f_val = field.sub("val");
+
+    return (
+        <FormGroup
+            label={_("MAC address")}
+            hasNoPaddingTop
+            isInline
+        >
+            <Radio
+                id={f_set.id("off")}
+                name="mac-setting"
+                isChecked={!f_set.get()}
+                label={_("Generate automatically")}
+                onChange={() => f_set.set(false)}
+            />
+            <Radio
+                id={f_set.id("on")}
+                name="mac-setting"
+                isChecked={f_set.get()}
+                label={_("Set manually")}
+                onChange={() => f_set.set(true)}
+            />
+            <TextInput
+                id={f_val.id()}
+                className="nic-add-mac-setting-manual"
+                isDisabled={!f_set.get()}
+                value={f_val.get()}
+                onChange={(_, value) => f_val.set(value)}
+            />
+            <DialogHelperText field={field} />
+        </FormGroup>
+    );
+};
+
+function init_NetworkMacRow() {
+    return { set: false, val: "" };
+}
+
+function validate_NetworkMacRow(field: DialogField<NetworkMacValue>) {
+    field.validate(v => {
+        if (v.set && v.val === "")
+            return _("Network MAC can not be empty.");
+    });
+}
+
+const PermanentChange = ({
+    field,
+} : {
+    field: DialogField<boolean>,
+}) => {
+    // By default for a running VM, the iface is attached until shut
+    // down only. Enable permanent change of the domain.xml
+
+    return (
+        <FormGroup
+            fieldId={field.id()}
+            label={_("Persistence")}
+            hasNoPaddingTop
+        >
+            <Checkbox
+                id={field.id()}
+                isChecked={field.get()}
+                label={_("Always attach")}
+                onChange={(_event, checked) => field.set(checked)}
+            />
+        </FormGroup>
+    );
+};
+
+interface AddNICValues {
+    model: string,
+    type_and_source: NetworkTypeAndSourceValue,
+    mac: NetworkMacValue;
+    portForwards: PortForwardsValue;
     permanent: boolean;
 }
 
-type OnValueChanged = <K extends keyof DialogValues>(key: K, value: DialogValues[K]) => void;
-
-const NetworkMacRow = ({
+export const AddNIC = ({
     idPrefix,
-    dialogValues,
-    onValueChanged
+    vm,
+    availableSources,
 } : {
-    idPrefix: string,
-    dialogValues: DialogValues,
-    onValueChanged: OnValueChanged,
-}) => {
-    return (
-        <FormGroup fieldId={`${idPrefix}-generate-mac`} label={_("MAC address")} hasNoPaddingTop isInline>
-            <Radio id={`${idPrefix}-generate-mac`}
-                   name="mac-setting"
-                   isChecked={!dialogValues.setNetworkMac}
-                   label={_("Generate automatically")}
-                   onChange={() => onValueChanged('setNetworkMac', false)} />
-            <Radio id={`${idPrefix}-set-mac`}
-                   name="mac-setting"
-                   isChecked={dialogValues.setNetworkMac}
-                   label={_("Set manually")}
-                   onChange={() => onValueChanged('setNetworkMac', true)} />
-            <TextInput id={`${idPrefix}-mac`}
-                       className="nic-add-mac-setting-manual"
-                       isDisabled={!dialogValues.setNetworkMac}
-                       value={dialogValues.networkMac}
-                       onChange={(_, value) => onValueChanged('networkMac', value)} />
-        </FormGroup>
-    );
-};
-
-const PermanentChange = ({
-    idPrefix,
-    onValueChanged,
-    dialogValues
-} : {
-    idPrefix: string,
-    onValueChanged: OnValueChanged,
-    dialogValues: DialogValues,
-}) => {
-    // By default for a running VM, the iface is attached until shut down only. Enable permanent change of the domain.xml
-    return (
-        <FormGroup label={_("Persistence")} fieldId={`${idPrefix}-permanent`} hasNoPaddingTop>
-            <Checkbox id={`${idPrefix}-permanent`}
-                      isChecked={dialogValues.permanent}
-                      label={_("Always attach")}
-                      onChange={(_event, checked) => onValueChanged('permanent', checked)} />
-        </FormGroup>
-    );
-};
-
-interface AddNICProps {
     idPrefix: string,
     vm: VM,
-    availableSources: AvailableSources;
-}
+    availableSources: AvailableSources,
+}) => {
+    const Dialogs = useDialogs();
 
-interface AddNICState extends DialogValues {
-    dialogError: string | undefined,
-    dialogErrorDetail?: string,
-    addVNicInProgress: boolean,
-    saveDisabled?: boolean,
-    validation: ValidationBody | undefined,
-    doOnlineValidation: boolean,
-}
-
-export class AddNIC extends React.Component<AddNICProps, AddNICState> {
-    static contextType = DialogsContext;
-    declare context: Dialogs;
-
-    constructor(props: AddNICProps) {
-        super(props);
-
-        this.state = {
-            dialogError: undefined,
-            networkType: this.props.vm.connectionName == "session" ? "user" : "network",
-            networkSource: props.availableSources.network.length > 0 ? props.availableSources.network[0] : "",
-            networkSourceMode: "bridge",
-            networkModel: "virtio",
-            setNetworkMac: false,
-            networkMac: "",
-            permanent: false,
-            addVNicInProgress: false,
+    function init(): AddNICValues {
+        return {
+            model: "virtio",
+            type_and_source: init_NetworkTypeAndSourceRow(vm, null, availableSources),
+            mac: init_NetworkMacRow(),
             portForwards: [],
-
-            validation: undefined,
-            doOnlineValidation: false,
+            permanent: false,
         };
-        this.add = this.add.bind(this);
-        this.onValueChanged = this.onValueChanged.bind(this);
-        this.onBodyValueChanged = this.onBodyValueChanged.bind(this);
-        this.dialogErrorSet = this.dialogErrorSet.bind(this);
     }
 
-    onValueChanged<K extends keyof DialogValues>(key: K, value: DialogValues[K]): void {
-        const stateDelta = { [key]: value } as Pick<AddNICState, K>;
-        this.setState(stateDelta);
+    function validate() {
+        validate_NetworkMacRow(dlg.field("mac"));
+        validate_NetworkTypeAndSourceRow(dlg.field("type_and_source"));
+        if (dlg.values.type_and_source.type == "user")
+            validate_PortForwards(dlg.field("portForwards"));
     }
 
-    onBodyValueChanged<K extends keyof DialogBodyValues>(key: K, value: DialogBodyValues[K]): void {
-        this.onValueChanged(key, value as DialogValues[K]);
-
-        if (key == 'networkType' && ['network', 'direct', 'bridge'].includes(value as DialogValues["networkType"])) {
-            let sources;
-            if (value === "network")
-                sources = this.props.availableSources.network;
-            else if (value === "direct")
-                sources = Object.keys(this.props.availableSources.device).filter(dev => this.props.availableSources.device[dev].type != "bridge");
-            else if (value === "bridge")
-                sources = Object.keys(this.props.availableSources.device).filter(dev => this.props.availableSources.device[dev].type == "bridge");
-
-            if (sources && sources.length > 0)
-                this.setState({ networkSource: sources[0], saveDisabled: false });
-            else
-                this.setState({ networkSource: "", saveDisabled: true });
-        }
-
-        if (this.state.doOnlineValidation)
-            this.setState(state => ({ validation: validateDialogBodyValues(state) }));
-    }
-
-    dialogErrorSet(text: string, detail: string) {
-        this.setState({ dialogError: text, dialogErrorDetail: detail });
-    }
-
-    async add() {
-        const Dialogs = this.context;
-        const { vm } = this.props;
-
+    async function add(values: AddNICValues) {
         // disallow duplicate MACs
-        if (this.state.setNetworkMac && vm.interfaces.some(iface => iface.mac === this.state.networkMac)) {
-            this.dialogErrorSet(_("MAC address already in use"), _("Please choose a different MAC address"));
-            return;
-        }
+        if (values.mac.set && vm.interfaces.some(iface => iface.mac === values.mac.val))
+            throw new DialogError(_("MAC address already in use"), _("Please choose a different MAC address"));
 
-        const validation = validateDialogBodyValues(this.state);
-        if (validation) {
-            this.setState({ validation, doOnlineValidation: true });
-            return;
-        }
-
-        this.setState({ addVNicInProgress: true });
         try {
+            const tas = values.type_and_source;
             let source;
-            if (this.state.networkType == "direct") {
+            if (tas.type == "direct") {
                 source = {
-                    "": this.state.networkSource,
-                    mode: this.state.networkSourceMode,
+                    "": tas.source,
+                    mode: tas.mode,
                 };
             } else {
-                source = this.state.networkSource;
+                source = tas.source;
             }
             let backend = null;
-            if (this.state.networkType == "user" && vm.capabilities.interfaceBackends.includes("passt"))
+            if (tas.type == "user" && vm.capabilities.interfaceBackends.includes("passt"))
                 backend = "passt";
             await virtXmlHotAdd(
                 vm,
                 "network",
                 {
-                    mac: (this.state.setNetworkMac
-                        ? this.state.networkMac
-                        : getRandomMac(await appState.getVms())),
-                    model: this.state.networkModel,
-                    type: this.state.networkType,
+                    mac: (
+                        values.mac.set
+                            ? values.mac.val
+                            : getRandomMac(await appState.getVms())
+                    ),
+                    model: values.model,
+                    type: tas.type,
                     backend: { type: backend },
                     source,
-                    portForward: this.state.networkType == "user" ? dialogPortForwardsToInterface(this.state.portForwards) : null,
-
+                    portForward: (
+                        tas.type == "user"
+                            ? dialogPortForwardsToInterface(values.portForwards)
+                            : null
+                    ),
                 },
-                this.state.permanent
+                values.permanent
             );
             domainGet({ connectionName: vm.connectionName, id: vm.id });
-            Dialogs.close();
         } catch (exc) {
-            this.dialogErrorSet(_("Network interface settings could not be saved"), String(exc));
+            throw DialogError.fromError(_("Network interface settings could not be saved"), exc);
         }
-        this.setState({ addVNicInProgress: false });
     }
 
-    render() {
-        const Dialogs = this.context;
-        const { idPrefix, vm } = this.props;
+    const dlg = useDialogState(init, validate);
 
-        const defaultBody = (
-            <>
-                <Form onSubmit={e => e.preventDefault()} isHorizontal>
-                    <NetworkTypeAndSourceRow
-                        vm={vm}
-                        idPrefix={idPrefix}
-                        dialogValues={{ ...this.state, availableSources: this.props.availableSources }}
-                        onValueChanged={this.onBodyValueChanged}
-                    />
+    const defaultBody = (
+        <>
+            <Form onSubmit={e => e.preventDefault()} isHorizontal>
+                <NetworkTypeAndSourceRow field={dlg.field("type_and_source")} />
 
-                    <NetworkModelRow
-                        idPrefix={idPrefix}
-                        dialogValues={this.state}
-                        onValueChanged={this.onBodyValueChanged}
-                        osTypeArch={vm.arch}
-                        osTypeMachine={vm.emulatedMachine}
-                    />
+                <NetworkModelRow
+                    field={dlg.field("model")}
+                    osTypeArch={vm.arch}
+                    osTypeMachine={vm.emulatedMachine}
+                />
 
-                    <NetworkMacRow
-                        idPrefix={idPrefix}
-                        dialogValues={this.state}
-                        onValueChanged={this.onValueChanged}
-                    />
+                <NetworkMacRow field={dlg.field("mac")} />
 
-                    { domainIsRunning(vm.state) && vm.persistent &&
-                        <PermanentChange
-                            idPrefix={idPrefix}
-                            dialogValues={this.state}
-                            onValueChanged={this.onValueChanged}
-                        />
-                    }
-                </Form>
-                { this.state.networkType == "user" &&
-                    vm.capabilities.interfaceBackends.includes("passt") &&
-                    <Form>
-                        <br />
-                        <NetworkPortForwardsRow
-                            idPrefix={idPrefix}
-                            dialogValues={this.state}
-                            validation={this.state.validation}
-                            onValueChanged={this.onBodyValueChanged}
-                        />
-                    </Form>
+                { domainIsRunning(vm.state) && vm.persistent &&
+                    <PermanentChange field={dlg.field("permanent")} />
                 }
-            </>
-        );
+            </Form>
+            { dlg.values.type_and_source.type == "user" &&
+                vm.capabilities.interfaceBackends.includes("passt") &&
+                <Form>
+                    <br />
+                    <NetworkPortForwardsRow field={dlg.field("portForwards")} />
+                </Form>
+            }
+        </>
+    );
 
-        return (
-            <Modal position="top" variant="medium" id={`${idPrefix}-dialog`} isOpen onClose={Dialogs.close} className='nic-add'>
-                <ModalHeader title={_("Add virtual network interface")} />
-                <ModalBody>
-                    {this.state.dialogError &&
-                        <ModalError
-                            dialogError={this.state.dialogError}
-                            {...this.state.dialogErrorDetail && { dialogErrorDetail: this.state.dialogErrorDetail } }
-                        />
-                    }
-                    {defaultBody}
-                </ModalBody>
-                <ModalFooter>
-                    <Button isLoading={this.state.addVNicInProgress}
-                            isDisabled={
-                                (["network", "direct", "bridge"].includes(this.state.networkType) && this.state.networkSource === undefined) ||
-                                    this.state.addVNicInProgress ||
-                                !!this.state.validation
-                            }
-                            id={`${idPrefix}-add`}
-                            variant='primary'
-                            onClick={this.add}>
-                        {_("Add")}
-                    </Button>
-                    <Button id={`${idPrefix}-cancel`} variant='link' onClick={Dialogs.close}>
-                        {_("Cancel")}
-                    </Button>
-                </ModalFooter>
-            </Modal>
-        );
-    }
-}
+    return (
+        <Modal
+            position="top"
+            variant="medium"
+            id={`${idPrefix}-dialog`}
+            isOpen
+            onClose={Dialogs.close}
+            className='nic-add'
+        >
+            <ModalHeader title={_("Add virtual network interface")} />
+            <ModalBody>
+                <DialogErrorMessage dialog={dlg} />
+                {defaultBody}
+            </ModalBody>
+            <ModalFooter>
+                <DialogActionButton
+                    dialog={dlg}
+                    action={add}
+                    onClose={Dialogs.close}
+                >
+                    {_("Add")}
+                </DialogActionButton>
+                <DialogCancelButton
+                    dialog={dlg}
+                    onClose={Dialogs.close}
+                />
+            </ModalFooter>
+        </Modal>
+    );
+};
