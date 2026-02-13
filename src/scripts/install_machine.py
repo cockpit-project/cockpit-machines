@@ -144,6 +144,8 @@ def prepare_installation_source(args):
         params += ['--cdrom', args['source']]
     else:
         params += ['--location', args['source']]
+        if args['extraArguments']:
+            params += ['--extra-args', args['extraArguments']]
 
     return params
 
