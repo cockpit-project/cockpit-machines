@@ -61,8 +61,7 @@ class FirmwareModal extends React.Component<FirmwareModalProps, FirmwareModalSta
         const vm = this.props.vm;
         try {
             await domainSetOSFirmware({
-                connectionName: vm.connectionName,
-                objPath: vm.id,
+                vm,
                 loaderType: stateToXml(this.state.firmware)
             });
 

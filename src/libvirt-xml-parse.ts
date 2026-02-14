@@ -277,6 +277,13 @@ function get_enum_values(parent: Element | undefined, ...matches: Match[]): stri
     return get_texts(parent, ...matches.slice(0, -1), { tag: "enum", name }, "value");
 }
 
+export function getDocElement(doc: XMLDocument): Element {
+    const elem = doc.firstElementChild;
+    if (!elem)
+        throw new Error(`document is empty`);
+    return elem;
+}
+
 export function parsePoolCapabilities(capsXML: string): StoragePoolCapabilites {
     const poolCapsElem = getElem(capsXML);
     const poolElements = get_children(poolCapsElem, "pool");
