@@ -105,7 +105,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         self.waitPageInit()
         b.click("#vm-subVmTest1-add-iface-button")  # open the Network Interfaces subtab
         b.wait_visible("#vm-subVmTest1-add-iface-dialog")
-        b.select_from_dropdown(d.field("type_and_source.type"), "bridge")
+        d.set_RadioSelect("type_and_source.type", "bridge")
         # dropdown options are not visible, but still part of DOM tree, so let's use _wait_present
         b._wait_present(d.field("type_and_source.source") + " option:nth-of-type(1):contains('0bridge')")
         b._wait_present(d.field("type_and_source.source") + " option:nth-of-type(2):contains('abridge')")
@@ -448,6 +448,32 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             remove=False,
         ).execute()
 
+    def testNICAddNoDefault(self):
+        m = self.machine
+
+        self.createVm("subVmTest1", running=False)
+
+        # Delete the "default" virtual network and hide all real interfaces.
+        m.execute("virsh net-destroy default; virsh net-undefine default")
+        m.execute('mount -t tmpfs tmpfs /sys/class/net')
+        self.addCleanup(self.machine.execute, "umount /sys/class/net")
+
+        self.login_and_go("/machines")
+        self.waitPageInit()
+        self.goToVmPage("subVmTest1")
+        self.deleteIface(1)  # Remove default vNIC
+
+        mac_address = "52:54:00:a5:f8:00"
+        self.NICAddDialog(
+            self,
+            mac=mac_address,
+            nic_num=1,
+            source_type="network",
+            source="default",
+            expect_no_sources=True,
+            remove=False,
+        ).execute()
+
     class NICEditDialog(DialogHelpers):
 
         def __init__(
@@ -494,29 +520,29 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
 
             # select widget options are never visible for the headless chrome,
             # call therefore directly the js function
-            self.source_type_current = b.attr(self.field("type_and_source.type"), "data-value")
+            self.source_type_current = self.get_RadioSelect("type_and_source.type")
             if self.source_type_current == "direct":
-                self.source_mode_current = b.attr(self.field("type_and_source.mode"), "data-value")
-            self.source_current = b.attr(self.field("type_and_source.source"), "data-value")
-            self.mac_current = b.val(self.field("mac"))
-            self.model_current = b.attr(self.field("model"), "data-value")
+                self.source_mode_current = self.get_RadioSelect("type_and_source.mode")
+            self.source_current = self.get_DropdownSelect("type_and_source.source")
+            self.mac_current = self.get_TextInput("mac")
+            self.model_current = self.get_DropdownSelect("model")
 
         def fill(self):
             b = self.browser
 
             if self.source_type:
-                b.select_from_dropdown(self.field("type_and_source.type"), self.source_type)
+                self.set_RadioSelect("type_and_source.type", self.source_type)
             if self.source_mode:
-                b.click(self.id("type_and_source.mode", self.source_mode))
+                self.set_RadioSelect("type_and_source.mode", self.source_mode)
             if self.source:
-                b.select_from_dropdown(self.field("type_and_source.source"), self.source)
+                self.set_DropdownSelect("type_and_source.source", self.source)
             if self.model:
-                b.select_from_dropdown(self.field("model"), self.model)
+                self.set_DropdownSelect("model", self.model)
 
             if self.vm_state == "running":
-                b.wait_attr(self.field("mac"), "readonly", "")
+                b.wait_attr(self.field("mac"), "disabled", "")
             else:
-                b.set_input_text(self.field("mac"), self.mac)
+                self.set_TextInput("mac", self.mac)
 
             if (self.vm_state == "running" and
                     ((self.source_type is not None and self.source_type != self.source_type_current) or
@@ -760,7 +786,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             # and $virsh detach-interface
             self, test_obj, source_type="direct", source_mode=None, source=None, model=None, nic_num=1,
             permanent=False, mac=None, remove=True, persistent_vm=True,
-            xfail=False, xfail_error=None, pixel_test_tag=None
+            xfail=False, xfail_error=None, pixel_test_tag=None, expect_no_sources=False
         ):
             super().__init__(test_obj.browser)
 
@@ -775,6 +801,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             self.remove = remove
             self.persistent_vm = persistent_vm
             self.nic_num = nic_num
+            self.expect_no_sources = expect_no_sources
 
             self.browser = test_obj.browser
             self.machine = test_obj.machine
@@ -788,6 +815,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
 
         def execute(self):
             self.open()
+            self.handle_no_sources()
             self.fill()
             self.assert_pixels()
             self.create()
@@ -802,8 +830,14 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             self.browser.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-modal-box__header .pf-v6-c-modal-box__title",
                                       "Add virtual network interface")
 
+        def handle_no_sources(self):
+            if self.expect_no_sources:
+                self.browser.wait_in_text(".pf-v6-c-modal-box", "There are no sources for virtual network interfaces")
+                self.browser.click("""button:contains('Create the "default" virtual network')""")
+                self.browser.wait_visible(self.field("type_and_source.type"))
+
         def fill(self):
-            self.browser.select_from_dropdown(self.field("type_and_source.type"), self.source_type)
+            self.set_RadioSelect("type_and_source.type", self.source_type)
 
             # Ensure that Bridge to LAN option offers only bridge devices for selection and vice versa
             for bridge in self.bridge_devices:
@@ -813,15 +847,15 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
                     self.browser._wait_present(self.field("type_and_source.source") + f" option[value={bridge}]")
 
             if self.source_mode:
-                self.browser.click(self.id("type_and_source.mode", self.source_mode))
+                self.set_RadioSelect("type_and_source.mode", self.source_mode)
             if self.source:
-                self.browser.select_from_dropdown(self.field("type_and_source.source"), self.source)
+                self.set_DropdownSelect("type_and_source.source", self.source)
             if self.model:
-                self.browser.select_from_dropdown(self.field("model"), self.model)
+                self.set_DropdownSelect("model", self.model)
 
             if self.mac:
                 self.browser.click(self.id("mac.set", "on"))
-                self.browser.set_input_text(self.field("mac.val"), self.mac)
+                self.set_TextInput("mac.val", self.mac)
 
             if self.permanent:
                 self.browser.click(self.field("permanent"))
@@ -857,7 +891,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             if (self.source_type == "network"):
                 self.assertEqual("network", self.machine.execute(xmllint_element.format(prop='@type')).strip())
                 if self.source:
-                    self.assertEqual(self.source,
+                    self.assertEqual("default" if self.source == "$create" else self.source,
                                      self.machine.execute(xmllint_element.format(prop='source/@network')).strip())
             elif (self.source_type == "direct"):
                 self.assertEqual("direct", self.machine.execute(xmllint_element.format(prop='@type')).strip())
@@ -879,7 +913,8 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
             if self.model:
                 self.browser.wait_in_text(f"#vm-subVmTest1-network-{self.nic_num}-model", self.model)
             if self.source:
-                self.browser.wait_in_text(f"#vm-subVmTest1-network-{self.nic_num}-source", self.source)
+                self.browser.wait_in_text(f"#vm-subVmTest1-network-{self.nic_num}-source",
+                                          "default" if self.source == "$create" else self.source)
             if self.source_mode:
                 self.browser.wait_in_text(f"#vm-subVmTest1-network-{self.nic_num}-source-mode", self.source_mode)
             if self.mac:
@@ -926,22 +961,22 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         b.click("#vm-subVmTest1-network-1-edit-dialog")
         b.wait_visible("#vm-subVmTest1-network-1-edit-dialog-modal-window")
         b.click(d.field("portForwards") + " button:contains(Add)")
-        b.set_input_text(d.field("portForwards.0.host"), "8080-8090")
-        b.set_input_text(d.field("portForwards.0.guest"), "80")
-        b.select_from_dropdown(d.field("portForwards.0.proto"), "udp")
+        d.set_TextInput("portForwards.0.host", "8080-8090")
+        d.set_TextInput("portForwards.0.guest", "80")
+        d.set_DropdownSelect("portForwards.0.proto", "udp")
         b.click(d.field("portForwards") + " button:contains(Add)")
-        b.set_input_text(d.field("portForwards.1.address"), "127.0.0.1")
-        b.set_input_text(d.field("portForwards.1.host"), "2222")
-        b.set_input_text(d.field("portForwards.1.guest"), "22")
+        d.set_TextInput("portForwards.1.address", "127.0.0.1")
+        d.set_TextInput("portForwards.1.host", "2222")
+        d.set_TextInput("portForwards.1.guest", "22")
         b.click(d.field("portForwards") + " button:contains(Add)")
-        b.set_input_text(d.field("portForwards.2.address"), "localhost")
-        b.set_input_text(d.field("portForwards.2.host"), "")
-        b.set_input_text(d.field("portForwards.2.guest"), "ssh")
+        d.set_TextInput("portForwards.2.address", "localhost")
+        d.set_TextInput("portForwards.2.host", "")
+        d.set_TextInput("portForwards.2.guest", "ssh")
         b.click(d.apply_button())
         b.wait_in_text(d.helper_text("portForwards.2.address"), "Invalid IP address")
         b.wait_in_text(d.helper_text("portForwards.2.host"), "Host port can not be empty")
         b.wait_in_text(d.helper_text("portForwards.2.guest"), "Port must be a number")
-        b.set_input_text(d.field("portForwards.2.host"), "xxx")
+        d.set_TextInput("portForwards.2.host", "xxx")
         b.wait_in_text(d.helper_text("portForwards.2.host"), "Port must be a number")
         b.click(d.id("portForwards.2", "remove"))
         b.click(d.apply_button())
@@ -992,8 +1027,8 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
 
         b.click("#vm-subVmTest1-add-iface-button")
         b.wait_visible("#vm-subVmTest1-add-iface-dialog")
-        self.browser.click(d.id("mac.set", "on"))
-        self.browser.set_input_text(d.field("mac.val"), "52:54:01:00:00:01")
+        b.click(d.id("mac.set", "on"))
+        d.set_TextInput("mac.val", "52:54:01:00:00:01")
         b.click(d.apply_button())
         b.wait_not_present("#vm-subVmTest1-add-iface-dialog")
 
@@ -1007,11 +1042,11 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
 
         b.click("#vm-subVmTest1-add-iface-button")
         b.wait_visible("#vm-subVmTest1-add-iface-dialog")
-        self.browser.click(d.id("mac.set", "on"))
-        self.browser.set_input_text(d.field("mac.val"), "52:54:01:00:00:02")
+        b.click(d.id("mac.set", "on"))
+        d.set_TextInput("mac.val", "52:54:01:00:00:02")
         b.click(d.field("portForwards") + " button:contains(Add)")
-        b.set_input_text(d.field("portForwards.0.host"), "8080")
-        b.set_input_text(d.field("portForwards.0.guest"), "80")
+        d.set_TextInput("portForwards.0.host", "8080")
+        d.set_TextInput("portForwards.0.guest", "80")
         b.click(d.apply_button())
         b.wait_not_present("#vm-subVmTest1-add-iface-dialog")
         self.expandNicRow(3)
@@ -1026,7 +1061,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         # Change port forward of a NIC, check "pending".
         b.click("#vm-subVmTest1-network-3-edit-dialog")
         b.wait_visible("#vm-subVmTest1-network-3-edit-dialog-modal-window")
-        b.set_input_text(d.field("portForwards.0.guest"), "88")
+        d.set_TextInput("portForwards.0.guest", "88")
         b.click(d.apply_button())
         b.wait_not_present("#vm-subVmTest1-network-3-edit-dialog-modal-window")
         b.wait_visible("#vm-subVmTest1-network-3-port-forward-0-tooltip")

@@ -7,8 +7,10 @@ import React from 'react';
 
 import type { Network } from '../../types';
 
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Breadcrumb, BreadcrumbItem } from "@patternfly/react-core/dist/esm/components/Breadcrumb";
 import { Card, CardHeader, CardTitle } from '@patternfly/react-core/dist/esm/components/Card';
+import { EmptyState, EmptyStateBody, EmptyStateFooter } from "@patternfly/react-core/dist/esm/components/EmptyState";
 import { Page, PageBreadcrumb, PageSection } from "@patternfly/react-core/dist/esm/components/Page";
 import { WithDialogs } from 'dialogs.jsx';
 
@@ -17,6 +19,9 @@ import { superuser } from 'superuser';
 import { ListingTable } from 'cockpit-components-table.jsx';
 import { getNetworkRow } from './network.jsx';
 import { CreateNetworkAction } from './createNetworkDialog.jsx';
+
+import { appState } from '../../state';
+import { networkCreateDefault } from '../../libvirtApi/network';
 
 const _ = cockpit.gettext;
 
@@ -34,6 +39,17 @@ export class NetworkList extends React.Component<NetworkListProps> {
         const { networks } = this.props;
         const sortFunction = (networkA: Network, networkB: Network) => networkA.name.localeCompare(networkB.name);
         const unlocked = superuser.allowed;
+
+        async function createDefaultNetwork() {
+            try {
+                await networkCreateDefault();
+            } catch (ex) {
+                appState.addNotification({
+                    text: _("Failed to create \"default\" network"),
+                    detail: String(ex),
+                });
+            }
+        }
 
         return (
             <WithDialogs key="network-list">
@@ -63,7 +79,28 @@ export class NetworkList extends React.Component<NetworkListProps> {
                                     { title: _("State"), props: { width: 20 } },
                                     { title: "", props: { width: 20, "aria-label": _("Actions") } },
                                 ]}
-                                emptyCaption={_("No network is defined on this host")}
+                                emptyComponent={
+                                    <EmptyState>
+                                        <EmptyStateBody>
+                                            {_("No network is defined on this host")}
+                                        </EmptyStateBody>
+                                        {
+                                            /* The "default" network is pretty much assumed
+                                               to exist always, so give the user an easy
+                                               way to re-create it if it every gets lost.
+                                             */
+                                            !appState.systemSocketInactive &&
+                                                <EmptyStateFooter>
+                                                    <Button
+                                                        variant="secondary"
+                                                        onClick={createDefaultNetwork}
+                                                    >
+                                                        {_("Create the \"default\" virtual network")}
+                                                    </Button>
+                                                </EmptyStateFooter>
+                                        }
+                                    </EmptyState>
+                                }
                                 rows={networks
                                         .sort(sortFunction)
                                         .map(network => getNetworkRow({ network }))
