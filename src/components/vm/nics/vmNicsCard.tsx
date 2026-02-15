@@ -326,14 +326,14 @@ function sort_ips_by_source(ips: IpInterface[]): IpInterface[] {
     return ips.sort((a, b) => source_order[a.source] - source_order[b.source]);
 }
 
-const IPDescriptions = ({
-    ipInterfaces,
+const IPAddresses = ({
     id,
     networkId,
+    ipInterfaces,
 } : {
-    ipInterfaces: IpInterface[],
     id: string,
     networkId: number,
+    ipInterfaces: IpInterface[],
 }) => {
     const inetIps: IpAddress[] = [];
     const inet6Ips: IpAddress[] = [];
@@ -349,43 +349,21 @@ const IPDescriptions = ({
         });
     });
 
-    if (inetIps.length === 0 && inet6Ips.length === 0) {
-        // There is not IP address associated with this NIC
-        return null;
+    function render_ip(ip: IpAddress, index: number, type: string) {
+        return (
+            <div
+                id={`${id}-network-${networkId}-${type}-address-${index}`}
+                key={ip.ip}
+            >
+                {ip.ip}/{ip.prefix}
+            </div>
+        );
     }
 
-    return (
-        <>
-            {inetIps.length > 0 &&
-                <DescriptionListGroup>
-                    {inetIps.map((ip, index) => (
-                        <React.Fragment key={ip.ip}>
-                            <DescriptionListTerm>
-                                {_("IPv4 Address")}
-                            </DescriptionListTerm>
-                            <DescriptionListDescription id={`${id}-network-${networkId}-ipv4-address-${index}`}>
-                                {ip.ip}/{ip.prefix}
-                            </DescriptionListDescription>
-                        </React.Fragment>
-                    ))}
-                </DescriptionListGroup>
-            }
-            {inet6Ips.length > 0 &&
-                <DescriptionListGroup>
-                    {inet6Ips.map((ip, index) => (
-                        <React.Fragment key={ip.ip}>
-                            <DescriptionListTerm>
-                                {_("IPv6 Address")}
-                            </DescriptionListTerm>
-                            <DescriptionListDescription id={`${id}-network-${networkId}-ipv6-address-${index}`}>
-                                {ip.ip}/{ip.prefix}
-                            </DescriptionListDescription>
-                        </React.Fragment>
-                    ))}
-                </DescriptionListGroup>
-            }
-        </>
-    );
+    return [
+        ...inetIps.map((ip, index) => render_ip(ip, index, "ipv4")),
+        ...inet6Ips.map((ip, index) => render_ip(ip, index, "ipv6")),
+    ];
 };
 
 const IPTarget = ({
@@ -398,31 +376,6 @@ const IPTarget = ({
     for (const iface of ipInterfaces) {
         if (iface.source == "agent")
             return <div id={id}>{iface.name}</div>;
-    }
-
-    return null;
-};
-
-const IPAbbrev = ({
-    ipInterfaces,
-} : {
-    ipInterfaces: IpInterface[],
-}) => {
-    /* Return the first IPv4 address, or the first IPv6 address.
-     */
-
-    for (const iface of ipInterfaces) {
-        for (const ip of iface.ips) {
-            if (ip.type == IpAddressVersion.v4)
-                return ip.ip;
-        }
-    }
-
-    for (const iface of ipInterfaces) {
-        for (const ip of iface.ips) {
-            if (ip.type == IpAddressVersion.v6)
-                return ip.ip;
-        }
     }
 
     return null;
@@ -620,7 +573,11 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
                 name: _("IP address"),
                 value: (network) => {
                     return (
-                        <IPAbbrev ipInterfaces={this.state.ips.filter(ip => ip.mac === network.mac)} />
+                        <IPAddresses
+                            id={id}
+                            networkId={networkId}
+                            ipInterfaces={this.state.ips.filter(ip => ip.mac === network.mac)}
+                        />
                     );
                 }
             },
@@ -824,11 +781,6 @@ export class VmNetworkTab extends React.Component<VmNetworkTabProps, VmNetworkTa
                     >
                         {target.type}
                     </DescriptionWithPending>
-                    <IPDescriptions
-                        ipInterfaces={this.state.ips.filter(ip => ip.mac === target.mac)}
-                        id={id}
-                        networkId={networkId}
-                    />
                     <NetworkSourceDescriptions
                         network={target}
                         networkId={networkId}
