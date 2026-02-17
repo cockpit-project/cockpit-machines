@@ -174,8 +174,7 @@ const EditDisk = ({
 
         try {
             await domainUpdateDiskAttributes({
-                connectionName: vm.connectionName,
-                objPath: vm.id,
+                vm,
                 target: disk.target,
                 readonly: values.access.mode == "readonly",
                 shareable: disk.shareable,
