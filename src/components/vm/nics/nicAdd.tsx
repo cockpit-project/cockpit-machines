@@ -10,7 +10,8 @@ import { useDialogs } from 'dialogs';
 import type { VM } from '../../../types';
 import type { AvailableSources } from './vmNicsCard';
 
-import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
+import { Button } from "@patternfly/react-core/dist/esm/components/Button";
+import { EmptyState, EmptyStateBody, EmptyStateFooter } from "@patternfly/react-core/dist/esm/components/EmptyState";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import {
     Modal, ModalBody, ModalFooter, ModalHeader
@@ -19,19 +20,22 @@ import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 
 import {
-    NetworkTypeAndSourceValue, NetworkTypeAndSourceRow,
-    init_NetworkTypeAndSourceRow, validate_NetworkTypeAndSourceRow,
+    NetworkTypeAndSourceValue, NetworkTypeAndSourceRow, init_NetworkTypeAndSourceRow,
+    NetworkTypeAndSource_has_sources,
     NetworkModelRow,
     PortForwardsValue, NetworkPortForwardsRow, validate_PortForwards,
     dialogPortForwardsToInterface,
 } from './nicBody.jsx';
 import { virtXmlHotAdd, domainGet, domainIsRunning } from '../../../libvirtApi/domain.js';
+import { networkCreateDefault } from '../../../libvirtApi/network';
+
 import { appState } from '../../../state';
 
 import {
     useDialogState, DialogField, DialogError,
     DialogErrorMessage, DialogHelperText,
-    DialogActionButton, DialogCancelButton
+    DialogActionButton, DialogCancelButton,
+    DialogCheckbox,
 } from 'cockpit/dialog';
 
 import './nic.css';
@@ -130,18 +134,11 @@ const PermanentChange = ({
     // down only. Enable permanent change of the domain.xml
 
     return (
-        <FormGroup
-            fieldId={field.id()}
-            label={_("Persistence")}
-            hasNoPaddingTop
-        >
-            <Checkbox
-                id={field.id()}
-                isChecked={field.get()}
-                label={_("Always attach")}
-                onChange={(_event, checked) => field.set(checked)}
-            />
-        </FormGroup>
+        <DialogCheckbox
+            field_label={_("Persistence")}
+            checkbox_label={_("Always attach")}
+            field={field}
+        />
     );
 };
 
@@ -176,9 +173,18 @@ export const AddNIC = ({
 
     function validate() {
         validate_NetworkMacRow(dlg.field("mac"));
-        validate_NetworkTypeAndSourceRow(dlg.field("type_and_source"));
         if (dlg.values.type_and_source.type == "user")
             validate_PortForwards(dlg.field("portForwards"));
+    }
+
+    async function createDefaultNetwork() {
+        if (await dlg.run_action(networkCreateDefault)) {
+            const newAvailableSources: AvailableSources = {
+                network: ["default"],
+                device: availableSources.device,
+            };
+            dlg.field("type_and_source").set(init_NetworkTypeAndSourceRow(vm, null, newAvailableSources));
+        }
     }
 
     async function add(values: AddNICValues) {
@@ -228,33 +234,55 @@ export const AddNIC = ({
     }
 
     const dlg = useDialogState(init, validate);
+    const have_sources = NetworkTypeAndSource_has_sources(dlg.values.type_and_source);
 
-    const defaultBody = (
-        <>
-            <Form onSubmit={e => e.preventDefault()} isHorizontal>
-                <NetworkTypeAndSourceRow field={dlg.field("type_and_source")} />
+    let defaultBody;
+    if (have_sources) {
+        defaultBody = (
+            <>
+                <Form onSubmit={e => e.preventDefault()} isHorizontal>
+                    <NetworkTypeAndSourceRow field={dlg.field("type_and_source")} />
 
-                <NetworkModelRow
-                    field={dlg.field("model")}
-                    osTypeArch={vm.arch}
-                    osTypeMachine={vm.emulatedMachine}
-                />
+                    <NetworkModelRow
+                        field={dlg.field("model")}
+                        osTypeArch={vm.arch}
+                        osTypeMachine={vm.emulatedMachine}
+                    />
 
-                <NetworkMacRow field={dlg.field("mac")} />
+                    <NetworkMacRow field={dlg.field("mac")} />
 
-                { domainIsRunning(vm.state) && vm.persistent &&
-                    <PermanentChange field={dlg.field("permanent")} />
-                }
-            </Form>
-            { dlg.values.type_and_source.type == "user" &&
-                vm.capabilities.interfaceBackends.includes("passt") &&
-                <Form>
-                    <br />
-                    <NetworkPortForwardsRow field={dlg.field("portForwards")} />
+                    { domainIsRunning(vm.state) && vm.persistent &&
+                        <PermanentChange field={dlg.field("permanent")} />
+                    }
                 </Form>
-            }
-        </>
-    );
+                { dlg.values.type_and_source.type == "user" &&
+                    vm.capabilities.interfaceBackends.includes("passt") &&
+                    <Form>
+                        <br />
+                        <NetworkPortForwardsRow field={dlg.field("portForwards")} />
+                    </Form>
+                }
+            </>
+        );
+    } else {
+        defaultBody = (
+            <EmptyState>
+                <EmptyStateBody>
+                    {_("There are no sources for virtual network interfaces on this host.")}
+                </EmptyStateBody>
+                { vm.connectionName == "system" &&
+                    <EmptyStateFooter>
+                        <Button
+                            variant="secondary"
+                            onClick={createDefaultNetwork}
+                        >
+                            {_("Create the \"default\" virtual network")}
+                        </Button>
+                    </EmptyStateFooter>
+                }
+            </EmptyState>
+        );
+    }
 
     return (
         <Modal
@@ -272,7 +300,7 @@ export const AddNIC = ({
             </ModalBody>
             <ModalFooter>
                 <DialogActionButton
-                    dialog={dlg}
+                    dialog={have_sources ? dlg : null}
                     action={add}
                     onClose={Dialogs.close}
                 >

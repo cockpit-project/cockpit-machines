@@ -18,6 +18,8 @@ import { getNetworkXML } from '../libvirt-xml-create.js';
 import { parseNetDumpxml } from '../libvirt-xml-parse.js';
 import { DBusProps, get_string_prop, get_boolean_prop, call, timeout, Enum } from './helpers.js';
 
+import create_default_network_sh from "./create-default-network.sh";
+
 export function networkActivate({
     connectionName,
     objPath
@@ -195,4 +197,8 @@ function networkUpdateStaticHostEntries({
         [commandFlag, Enum.VIR_NETWORK_SECTION_IP_DHCP_HOST, parentIndex, `<host mac='${macAddress}' ip='${ipAddress}' />`, flags]
         , { timeout, type: 'uuisu' }
     );
+}
+
+export async function networkCreateDefault() {
+    await cockpit.script(create_default_network_sh, [], { err: "message", superuser: "try" });
 }
