@@ -202,6 +202,7 @@ interface VmParams {
     rootPassword: optString;
     sshKeys: { value: string }[];
     startVm: boolean;
+    extraArguments: optString,
 }
 
 type OnValueChanged = <K extends keyof VmParams>(key: K, value: VmParams[K]) => void;
@@ -1025,6 +1026,36 @@ const MemoryRow = ({
     );
 };
 
+const ExtraArgumentsRow = ({
+    extraArguments,
+    onValueChanged,
+    os,
+} : {
+    extraArguments: optString,
+    onValueChanged: OnValueChanged,
+    os: OSInfo,
+}) => {
+    return (
+        <FormGroup label={_("Boot arguments")}
+                       fieldId='extra-arguments' id='argument-group'>
+            <InputGroup>
+                <TextInput id='extra-argument' value={extraArguments || ''}
+                               className="extra-argument-input"
+                               onChange={(_, value) => onValueChanged('extraArguments', value)} />
+            </InputGroup>
+            <FormHelper fieldId="extra-argument-help"
+                            helperText={(
+                                <p>
+                                    {cockpit.format(
+                                        _("Arguments passed to the booted kernel can often be used to control the installer. Refer to the documentation of the installer of $0."),
+                                        os.name
+                                    )}
+                                </p>
+                            )} />
+        </FormGroup>
+    );
+};
+
 const StorageRow = ({
     connectionName,
     allowNoDisk,
@@ -1238,6 +1269,7 @@ export class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmM
             userLogin: '',
             accessToken: '',
             offlineToken: '',
+            extraArguments: '',
             sshKeys: [],
         };
         this.onCreateClicked = this.onCreateClicked.bind(this);
@@ -1455,6 +1487,7 @@ export class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmM
                 sshKeys: this.state.sshKeys.map(key => key.value),
                 startVm,
                 accessToken: this.state.accessToken,
+                extraArguments: this.state.extraArguments,
             };
 
             domainCreate(vmParams).then(() => {
@@ -1491,25 +1524,32 @@ export class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmM
         const validationFailed = this.state.validate ? validateParams({ ...this.state, osInfoList, nodeMaxMemory, vms: vms.filter(vm => vm.connectionName == this.state.connectionName) }) : { };
 
         const unattendedInstructionsMessage = _("Enter root and/or user information to enable unattended installation.");
-        const unattendedUnavailableMessage = _("Automated installs are only available when downloading an image or using cloud-init.");
+        const unattendedUnavailableMessage = _("Automated installs are only available when downloading an image, an install tree or using cloud-init.");
         const unattendedOsUnsupportedMessageFormat = (os: string) => cockpit.format(_("$0 does not support unattended installation."), os);
 
-        let unattendedDisabled = true;
+        let showUnattendedRow = false;
+        let showCloudInitRow = false;
+        let showExtraArgsRow = false;
         if ((this.state.sourceType == URL_SOURCE || this.state.sourceType == LOCAL_INSTALL_MEDIA_SOURCE) && this.state.os) {
             if (this.state.os.medias && this.state.sourceMediaID && this.state.sourceMediaID in this.state.os.medias)
-                unattendedDisabled = !this.state.os.medias[this.state.sourceMediaID].unattendedInstallable;
+                showUnattendedRow = this.state.os.medias[this.state.sourceMediaID].unattendedInstallable;
             else
-                unattendedDisabled = !this.state.os.unattendedInstallable;
+                showUnattendedRow = this.state.os.unattendedInstallable;
+
+            if (this.state.source && !this.state.source.endsWith(".iso"))
+                showExtraArgsRow = this.state.os.treeInstallable;
         } else if (this.state.sourceType == DOWNLOAD_AN_OS) {
-            unattendedDisabled = !this.state.os || !this.state.os.unattendedInstallable;
+            showUnattendedRow = !!this.state.os?.unattendedInstallable;
+            showExtraArgsRow = !!this.state.os?.treeInstallable;
+        } else if (this.state.sourceType === CLOUD_IMAGE && this.props.cloudInitSupported) {
+            showCloudInitRow = true;
         }
 
         let automationTabTooltip;
-        if (!((this.state.sourceType === CLOUD_IMAGE && this.props.cloudInitSupported) ||
-            (this.state.os && this.state.sourceType === DOWNLOAD_AN_OS && this.props.unattendedSupported))) {
+        if (!showUnattendedRow && !showCloudInitRow && !showExtraArgsRow) {
             automationTabTooltip = <Tooltip content={unattendedUnavailableMessage} />;
         } else if (this.state.os && this.state.sourceType === DOWNLOAD_AN_OS && this.props.unattendedSupported) {
-            if (unattendedDisabled) {
+            if (!showUnattendedRow && !showExtraArgsRow) {
                 automationTabTooltip = <Tooltip content={unattendedOsUnsupportedMessageFormat(getOSStringRepresentation(this.state.os))} />;
             }
         }
@@ -1573,8 +1613,8 @@ export class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmM
 
         const automationTab = (
             <>
-                {unattendedInstructionsMessage}
-                {this.state.os && this.state.sourceType === DOWNLOAD_AN_OS && this.props.unattendedSupported &&
+                {(showUnattendedRow || showCloudInitRow) && unattendedInstructionsMessage}
+                {showUnattendedRow && this.state.os &&
                 <UnattendedRow
                     validationFailed={validationFailed}
                     rootPassword={this.state.rootPassword}
@@ -1585,12 +1625,19 @@ export class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmM
                     profile={this.state.profile}
                     onValueChanged={this.onValueChanged} />
                 }
-                {this.state.sourceType === CLOUD_IMAGE && this.props.cloudInitSupported &&
+                {showCloudInitRow &&
                 <CloudInitOptionsRow validationFailed={validationFailed}
                                      rootPassword={this.state.rootPassword}
                                      userLogin={this.state.userLogin}
                                      userPassword={this.state.userPassword}
                                      onValueChanged={this.onValueChanged} />
+                }
+                {showExtraArgsRow && this.state.os &&
+                <ExtraArgumentsRow
+                    extraArguments={this.state.extraArguments}
+                    onValueChanged={this.onValueChanged}
+                    os={this.state.os}
+                />
                 }
             </>
         );
