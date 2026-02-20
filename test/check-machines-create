@@ -1622,8 +1622,8 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                 self._fakeFedoraTree()
 
             # Make sure we don't run into long DNS timeouts when trying to contact this server
-            self.machine.write("/etc/hosts", "127.0.0.42 mirror.i3d.net", append=True)
-            self.machine.write("/etc/hosts", "::1 mirror.i3d.net", append=True)
+            self.machine.write("/etc/hosts", "127.0.0.42 mirror.i3d.net\n", append=True)
+            self.machine.write("/etc/hosts", "::1 mirror.i3d.net\n", append=True)
 
             # console for try INSTALL
             self.test_obj.allow_journal_messages('.*connection.*')
