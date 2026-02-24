@@ -22,8 +22,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-16 04:50+0000\n"
-"PO-Revision-Date: 2026-02-09 11:58+0000\n"
+"POT-Creation-Date: 2026-02-22 04:31+0000\n"
+"PO-Revision-Date: 2026-02-23 03:58+0000\n"
 "Last-Translator: Ettore Atalan <atalanttore@googlemail.com>\n"
 "Language-Team: German <https://translate.fedoraproject.org/projects/cockpit/"
 "cockpit-machines/de/>\n"
@@ -32,7 +32,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1\n"
-"X-Generator: Weblate 5.15.2\n"
+"X-Generator: Weblate 5.16\n"
 
 #: src/components/vm/nics/nicBody.tsx:366
 msgid " excluding "
@@ -71,7 +71,7 @@ msgstr "$0-Konsole"
 msgid "$0 does not support unattended installation."
 msgstr "$0 unterstützt keine unbeaufsichtigte Installation."
 
-#: src/components/vm/overview/memoryModal.tsx:181
+#: src/components/vm/overview/memoryModal.tsx:180
 msgid "$0 memory adjustment"
 msgstr "$0 Speicher-Anpassung"
 
@@ -80,8 +80,8 @@ msgid "$0 network"
 msgstr "$0 Netzwerk"
 
 # ctx::sourcefile::/rhn/systems/details/virtualization/VirtualGuestsList.do
-#: src/components/vm/overview/vmOverviewCard.tsx:140
 #: src/components/vm/vmUsageCard.tsx:35
+#: src/components/vm/overview/vmOverviewCard.tsx:140
 msgid "$0 vCPU"
 msgid_plural "$0 vCPUs"
 msgstr[0] "$0 vCPU"
@@ -104,7 +104,7 @@ msgstr ""
 "dieser ausgeschaltet wird. In der Zwischenzeit behält der ursprüngliche Host "
 "seine Kopie der VM-Konfiguration."
 
-#: src/components/vm/disks/diskEdit.tsx:153
+#: src/components/vm/disks/diskEdit.tsx:128
 #: src/components/vm/disks/vmDisksCard.tsx:252
 msgid "Access"
 msgstr "Zugriff"
@@ -113,12 +113,12 @@ msgstr "Zugriff"
 msgid "Action"
 msgstr "Aktion"
 
+#: src/components/vms/hostvmslist.tsx:324
 #: src/components/storagePools/storagePoolList.tsx:65
+#: src/components/networks/networkList.tsx:64
 #: src/components/vm/nics/vmNicsCard.tsx:635
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:185
 #: src/components/vm/disks/vmDisksCard.tsx:167
-#: src/components/vms/hostvmslist.tsx:324
-#: src/components/networks/networkList.tsx:64
 msgid "Actions"
 msgstr "Aktionen"
 
@@ -131,12 +131,12 @@ msgstr "Aktivieren"
 msgid "Activate the storage pool to administer volumes"
 msgstr "Aktivieren Sie den Speicher-Pool zum Verwalten von Datenträgern"
 
+#: src/components/networks/networkOverviewTab.tsx:268
+#: src/components/vm/hostdevs/hostDevAdd.tsx:261
+#: src/components/vm/nics/nicBody.tsx:599 src/components/vm/nics/nicAdd.tsx:279
+#: src/components/vm/disks/diskAdd.tsx:973
 #: src/components/vm/overview/vsock.tsx:223
 #: src/components/vm/overview/watchdog.tsx:167
-#: src/components/vm/nics/nicAdd.tsx:279 src/components/vm/nics/nicBody.tsx:599
-#: src/components/vm/hostdevs/hostDevAdd.tsx:261
-#: src/components/vm/disks/diskAdd.tsx:973
-#: src/components/networks/networkOverviewTab.tsx:268
 msgid "Add"
 msgstr "Hinzufügen"
 
@@ -156,13 +156,13 @@ msgstr "VNC hinzufügen"
 msgid "Add a DHCP static host entry"
 msgstr "Statischen DHCP-Host-Eintrag hinzufügen"
 
-#: src/components/vm/disks/diskAdd.tsx:811
 #: src/components/vm/disks/vmDisksCard.tsx:71
+#: src/components/vm/disks/diskAdd.tsx:811
 msgid "Add disk"
 msgstr "Festplatte hinzufügen"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:140
 #: src/components/vm/hostdevs/hostDevAdd.tsx:278
+#: src/components/vm/hostdevs/hostDevCard.tsx:140
 msgid "Add host device"
 msgstr "Host-Gerät hinzufügen"
 
@@ -199,9 +199,9 @@ msgid "Adding shared directories is possible only when the guest is shut off"
 msgstr ""
 "Geteiltes Verzeichnis kann nur hinzugefügt werden wenn Gast ausgeschaltet ist"
 
-#: src/components/vm/nics/vmNicsCard.tsx:182
 #: src/components/networks/networkOverviewTab.tsx:140
 #: src/components/networks/networkOverviewTab.tsx:160
+#: src/components/vm/nics/vmNicsCard.tsx:182
 msgid "Address"
 msgstr "Adresse"
 
@@ -279,8 +279,8 @@ msgid "Automation"
 msgstr "Automatisierung"
 
 #: src/components/storagePools/storagePoolOverviewTab.tsx:60
-#: src/components/vm/overview/vmOverviewCard.tsx:192
 #: src/components/networks/networkOverviewTab.tsx:117
+#: src/components/vm/overview/vmOverviewCard.tsx:192
 msgid "Autostart"
 msgstr "Autostart"
 
@@ -304,7 +304,7 @@ msgstr "Gesperrt"
 msgid "Boot order"
 msgstr "Boot-Reihenfolge"
 
-#: src/components/vm/overview/bootOrder.tsx:273
+#: src/components/vm/overview/bootOrder.tsx:272
 msgid "Boot order settings could not be saved"
 msgstr "Boot-Reihenfolge konnte nicht gespeichert werden"
 
@@ -312,18 +312,18 @@ msgstr "Boot-Reihenfolge konnte nicht gespeichert werden"
 msgid "Bridge"
 msgstr "Brücke"
 
+#: src/components/vm/hostdevs/hostDevAdd.tsx:100
+#: src/components/vm/hostdevs/hostDevCard.tsx:91
+#: src/components/vm/hostdevs/hostDevCard.tsx:99
+#: src/components/vm/hostdevs/hostDevCard.tsx:250
+#: src/components/vm/disks/diskEdit.tsx:91
+#: src/components/vm/disks/vmDisksCard.tsx:247
+#: src/components/vm/disks/diskAdd.tsx:294
 #: src/components/vm/overview/bootOrder.tsx:114
 #: src/components/vm/overview/bootOrder.tsx:126
 #: src/components/vm/overview/bootOrder.tsx:145
 #: src/components/vm/overview/bootOrder.tsx:148
 #: src/components/vm/overview/bootOrder.tsx:163
-#: src/components/vm/hostdevs/hostDevCard.tsx:91
-#: src/components/vm/hostdevs/hostDevCard.tsx:99
-#: src/components/vm/hostdevs/hostDevCard.tsx:250
-#: src/components/vm/hostdevs/hostDevAdd.tsx:100
-#: src/components/vm/disks/diskEdit.tsx:120
-#: src/components/vm/disks/diskAdd.tsx:294
-#: src/components/vm/disks/vmDisksCard.tsx:247
 msgid "Bus"
 msgstr "Bus"
 
@@ -331,10 +331,10 @@ msgstr "Bus"
 msgid "CD/DVD disc"
 msgstr "CD/DVD"
 
-#: src/components/common/needsShutdown.tsx:198
+#: src/components/vms/hostvmslist.tsx:93 src/components/vms/hostvmslist.tsx:301
+#: src/components/common/needsShutdown.tsx:206
+#: src/components/vm/vmUsageCard.tsx:52
 #: src/components/vm/overview/vmOverviewCard.tsx:180
-#: src/components/vm/vmUsageCard.tsx:52 src/components/vms/hostvmslist.tsx:93
-#: src/components/vms/hostvmslist.tsx:301
 msgid "CPU"
 msgstr "CPU"
 
@@ -342,40 +342,39 @@ msgstr "CPU"
 msgid "CPU mode could not be saved"
 msgstr "CPU-Modus konnte nicht gespeichert werden"
 
-#: src/components/vm/disks/diskEdit.tsx:78
+#: src/components/vm/disks/diskEdit.tsx:165
+#: src/components/vm/disks/vmDisksCard.tsx:263
 #: src/components/vm/disks/diskAdd.tsx:283
-#: src/components/vm/disks/vmDiskColumns.tsx:131
 msgid "Cache"
 msgstr "Cache"
 
-#: src/components/common/deleteResource.tsx:116
+#: src/components/create-vm-dialog/createVmDialog.tsx:1690
+#: src/components/storagePools/storageVolumeCreate.tsx:133
 #: src/components/storagePools/storagePoolDelete.tsx:207
 #: src/components/storagePools/createStoragePoolDialog.tsx:512
-#: src/components/storagePools/storageVolumeCreate.tsx:133
-#: src/components/vm/overview/memoryModal.tsx:196
-#: src/components/vm/overview/cpuModal.tsx:341
-#: src/components/vm/overview/vsock.tsx:272
-#: src/components/vm/overview/bootOrder.tsx:357
-#: src/components/vm/overview/watchdog.tsx:228
-#: src/components/vm/overview/firmware.tsx:108
-#: src/components/vm/vmRenameDialog.tsx:96
-#: src/components/vm/vmReplaceSpiceDialog.tsx:171
-#: src/components/vm/hostdevs/hostDevAdd.tsx:266
-#: src/components/vm/vmCloneDialog.tsx:111
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:340
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:127
-#: src/components/vm/consoles/vnc.tsx:158
-#: src/components/vm/deleteDialog.tsx:202
-#: src/components/vm/vmMigrateDialog.tsx:227
-#: src/components/vm/confirmDialog.tsx:66
-#: src/components/vm/vmEditDescriptionDialog.tsx:81
-#: src/components/vm/disks/diskEdit.tsx:327
-#: src/components/vm/disks/mediaEject.tsx:116
-#: src/components/vm/disks/diskAdd.tsx:976
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:248
-#: src/components/create-vm-dialog/createVmDialog.tsx:1690
 #: src/components/networks/networkOverviewTab.tsx:271
 #: src/components/networks/createNetworkDialog.tsx:548
+#: src/components/common/deleteResource.tsx:116
+#: src/components/vm/vmEditDescriptionDialog.tsx:81
+#: src/components/vm/confirmDialog.tsx:66
+#: src/components/vm/consoles/vnc.tsx:158
+#: src/components/vm/hostdevs/hostDevAdd.tsx:266
+#: src/components/vm/vmMigrateDialog.tsx:227
+#: src/components/vm/vmCloneDialog.tsx:111
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:248
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:127
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:340
+#: src/components/vm/disks/diskAdd.tsx:976
+#: src/components/vm/disks/mediaEject.tsx:116
+#: src/components/vm/vmRenameDialog.tsx:96
+#: src/components/vm/vmReplaceSpiceDialog.tsx:171
+#: src/components/vm/overview/memoryModal.tsx:195
+#: src/components/vm/overview/cpuModal.tsx:341
+#: src/components/vm/overview/vsock.tsx:272
+#: src/components/vm/overview/firmware.tsx:107
+#: src/components/vm/overview/bootOrder.tsx:356
+#: src/components/vm/overview/watchdog.tsx:228
+#: src/components/vm/deleteDialog.tsx:202
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -387,15 +386,15 @@ msgstr "Bearbeiten des vsock-Geräts ist bei einer transienten VM nicht möglich
 msgid "Cannot edit watchdog device on a transient VM"
 msgstr "Watchdog-Gerät einer transienten VM kann nicht bearbeitet werden"
 
-#: src/components/vm/overview/bootOrder.tsx:342
+#: src/components/vm/overview/bootOrder.tsx:341
 msgid "Change boot order"
 msgstr "Boot-Reihenfolge ändern"
 
-#: src/components/vm/overview/firmware.tsx:82
+#: src/components/vm/overview/firmware.tsx:81
 msgid "Change firmware"
 msgstr "Firmware ändern"
 
-#: src/components/common/needsShutdown.tsx:285
+#: src/components/common/needsShutdown.tsx:293
 msgid "Changes pending"
 msgstr "Änderungen ausstehend"
 
@@ -436,7 +435,7 @@ msgstr ""
 "\"Betrachter starten\" lädt die Datei $0 herunter und startet den "
 "Fernbetrachter auf Ihrem System."
 
-#: src/components/vm/vmCloneDialog.tsx:108 src/components/vm/vmActions.tsx:387
+#: src/components/vm/vmActions.tsx:387 src/components/vm/vmCloneDialog.tsx:108
 msgid "Clone"
 msgstr "Klonen"
 
@@ -477,12 +476,12 @@ msgstr "Aktion bestätigen"
 msgid "Connect"
 msgstr "Verbinden"
 
-#: src/components/common/machinesConnectionSelector.tsx:44
-#: src/components/storagePools/storagePoolList.tsx:63
-#: src/components/vm/overview/vmOverviewCard.tsx:158
 #: src/components/vms/hostvmslist.tsx:321
+#: src/components/storagePools/storagePoolList.tsx:63
 #: src/components/networks/networkList.tsx:61
 #: src/components/networks/createNetworkDialog.tsx:34
+#: src/components/common/machinesConnectionSelector.tsx:44
+#: src/components/vm/overview/vmOverviewCard.tsx:158
 msgid "Connection"
 msgstr "Verbindung"
 
@@ -519,7 +518,7 @@ msgstr "$0 konnte nicht gelöscht werden"
 msgid "Could not delete all storage for $0"
 msgstr "Speicher für $0 konnte nicht komplett gelöscht werden"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:162
+#: src/components/vm/disks/vmDiskColumns.tsx:159
 msgid "Could not delete disk's storage"
 msgstr "Festplattenspeicher konnte nicht gelöscht werden"
 
@@ -535,10 +534,10 @@ msgstr "Konnte den Schnappschuss nicht zurücksetzen"
 msgid "Crashed"
 msgstr "Abgestürzt"
 
-#: src/components/storagePools/createStoragePoolDialog.tsx:509
 #: src/components/storagePools/storageVolumeCreate.tsx:130
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:337
+#: src/components/storagePools/createStoragePoolDialog.tsx:509
 #: src/components/networks/createNetworkDialog.tsx:545
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:337
 msgid "Create"
 msgstr "Erstellen"
 
@@ -652,11 +651,11 @@ msgstr "Strg + Alt +$0"
 msgid "Current"
 msgstr "Aktuell"
 
-#: src/components/vm/overview/memoryModal.tsx:158
+#: src/components/vm/overview/memoryModal.tsx:157
 msgid "Current allocation"
 msgstr "aktuelle Zuweisung"
 
-#: src/components/vm/overview/firmware.tsx:134
+#: src/components/vm/overview/firmware.tsx:133
 msgid "Custom firmware: $0"
 msgstr "Benutzerdefinierte Firmware: $0"
 
@@ -679,15 +678,16 @@ msgstr "DHCP-Einstellungen"
 msgid "Deactivate"
 msgstr "Deaktivieren"
 
-#: src/components/common/deleteResource.tsx:104
-#: src/components/common/deleteResource.tsx:164
-#: src/components/common/deleteResource.tsx:175
 #: src/components/storagePools/storagePoolDelete.tsx:204
 #: src/components/storagePools/storagePoolDelete.tsx:234
 #: src/components/storagePools/storagePoolDelete.tsx:244
-#: src/components/vm/deleteDialog.tsx:199 src/components/vm/vmActions.tsx:470
-#: src/components/vm/vmActions.tsx:478 src/components/networks/network.tsx:140
+#: src/components/networks/network.tsx:140
 #: src/components/networks/network.tsx:143
+#: src/components/common/deleteResource.tsx:104
+#: src/components/common/deleteResource.tsx:164
+#: src/components/common/deleteResource.tsx:175
+#: src/components/vm/vmActions.tsx:470 src/components/vm/vmActions.tsx:478
+#: src/components/vm/deleteDialog.tsx:199
 msgid "Delete"
 msgstr "Löschen"
 
@@ -731,9 +731,9 @@ msgstr ""
 "Das Löschen von gemeinsamen Verzeichnissen ist nur möglich, wenn der Gast "
 "ausgeschaltet ist"
 
+#: src/components/vm/vmEditDescriptionDialog.tsx:66
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:76
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:123
-#: src/components/vm/vmEditDescriptionDialog.tsx:66
 msgid "Description"
 msgstr "Beschreibung"
 
@@ -764,18 +764,18 @@ msgstr ""
 msgid "Details"
 msgstr "Details"
 
+#: src/components/networks/networkList.tsx:60
+#: src/components/networks/createNetworkDialog.tsx:218
+#: src/components/vm/hostdevs/hostDevAdd.tsx:99
+#: src/components/vm/hostdevs/hostDevAdd.tsx:144
+#: src/components/vm/hostdevs/hostDevCard.tsx:90
+#: src/components/vm/hostdevs/hostDevCard.tsx:249
+#: src/components/vm/disks/vmDisksCard.tsx:244
+#: src/components/vm/disks/diskAdd.tsx:450
 #: src/components/vm/overview/bootOrder.tsx:106
 #: src/components/vm/overview/bootOrder.tsx:113
 #: src/components/vm/overview/bootOrder.tsx:146
 #: src/components/vm/overview/bootOrder.tsx:149
-#: src/components/vm/hostdevs/hostDevCard.tsx:90
-#: src/components/vm/hostdevs/hostDevCard.tsx:249
-#: src/components/vm/hostdevs/hostDevAdd.tsx:99
-#: src/components/vm/hostdevs/hostDevAdd.tsx:144
-#: src/components/vm/disks/diskAdd.tsx:450
-#: src/components/vm/disks/vmDisksCard.tsx:244
-#: src/components/networks/networkList.tsx:60
-#: src/components/networks/createNetworkDialog.tsx:218
 msgid "Device"
 msgstr "Gerät"
 
@@ -792,11 +792,11 @@ msgstr "Verbindung trennen"
 msgid "Disconnected"
 msgstr "Getrennt"
 
-#: src/components/common/needsShutdown.tsx:174
+#: src/components/common/needsShutdown.tsx:182
 msgid "Disk"
 msgstr "Festplatten"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:176
+#: src/components/vm/disks/vmDiskColumns.tsx:173
 msgid "Disk $0 could not be removed"
 msgstr "Festplatte $0 konnte nicht entfernt werden"
 
@@ -826,7 +826,7 @@ msgstr ""
 "Festplattenabbilder können im Home-Verzeichnis des Benutzers gespeichert "
 "werden"
 
-#: src/components/vm/disks/diskEdit.tsx:266
+#: src/components/vm/disks/diskEdit.tsx:186
 msgid "Disk settings could not be saved"
 msgstr "Festplatten-Einstellungen konnten nicht gespeichert werden"
 
@@ -898,11 +898,11 @@ msgid "Dying"
 msgstr "Sterbend"
 
 #: src/components/vm/nics/vmNicsCard.tsx:676
-#: src/components/vm/disks/diskEdit.tsx:203
+#: src/components/vm/disks/diskEdit.tsx:245
 msgid "Edit"
 msgstr "Bearbeiten"
 
-#: src/components/vm/disks/diskEdit.tsx:311
+#: src/components/vm/disks/diskEdit.tsx:200
 msgid "Edit $0 attributes"
 msgstr "$0 Attribute bearbeiten"
 
@@ -939,7 +939,7 @@ msgstr ""
 "Die Bearbeitung vorübergehender Netzwerkschnittstellen ist nicht erlaubt"
 
 #: src/components/vm/disks/mediaEject.tsx:109
-#: src/components/vm/disks/vmDiskColumns.tsx:238
+#: src/components/vm/disks/vmDiskColumns.tsx:235
 msgid "Eject"
 msgstr "Auswerfen"
 
@@ -1015,7 +1015,7 @@ msgstr "Fehler beim Hinzufügen der seriellen Konsole zur VM $0"
 msgid "Failed to add shared directory"
 msgstr "Fehler beim Hinzufügen eines gemeinsamen Verzeichnisses"
 
-#: src/components/vm/overview/firmware.tsx:74
+#: src/components/vm/overview/firmware.tsx:73
 msgid "Failed to change firmware"
 msgstr "Firmware konnte nicht geändert werden"
 
@@ -1078,8 +1078,8 @@ msgstr ""
 
 # translation auto-copied from project Customer Portal Translations, version
 # 006_DrupalPO, document interface, author hpeters
-#: src/components/vm/overview/bootOrder.tsx:105
 #: src/components/vm/disks/vmDiskColumns.tsx:35
+#: src/components/vm/overview/bootOrder.tsx:105
 msgid "File"
 msgstr "Datei"
 
@@ -1095,8 +1095,8 @@ msgstr "Dateisystemverzeichnis"
 msgid "Filter by name"
 msgstr "Nach Namen filtern"
 
+#: src/components/vm/overview/firmware.tsx:90
 #: src/components/vm/overview/vmOverviewCard.tsx:246
-#: src/components/vm/overview/firmware.tsx:91
 msgid "Firmware"
 msgstr "Firmware"
 
@@ -1128,9 +1128,9 @@ msgstr "Herunterfahren von $0 erzwingen?"
 msgid "Force shutdown and restart"
 msgstr "Herunterfahren und Neustart erzwingen"
 
-#: src/components/storagePools/createStoragePoolDialog.tsx:244
 #: src/components/storagePools/storageVolumeCreateBody.tsx:107
-#: src/components/vm/disks/vmDiskColumns.tsx:133
+#: src/components/storagePools/createStoragePoolDialog.tsx:244
+#: src/components/vm/disks/vmDiskColumns.tsx:130
 msgid "Format"
 msgstr "Formatieren"
 
@@ -1157,8 +1157,8 @@ msgstr ""
 "Festplattenabbilder übertragen. Ungenutzter Speicherplatz verbleibt nach der "
 "Migration auf dem Ursprung."
 
-#: src/components/vm/overview/vmOverviewCard.tsx:154
 #: src/components/networks/networkOverviewTab.tsx:108
+#: src/components/vm/overview/vmOverviewCard.tsx:154
 msgid "General"
 msgstr "Allgemein"
 
@@ -1170,11 +1170,11 @@ msgstr "Automatisch generieren"
 msgid "Get a new RHSM token."
 msgstr "Ein neues RHSM-Token erhalten."
 
-#: src/components/storagePools/storageVolumeCreateBody.tsx:139
-#: src/components/vm/overview/memorySelectRow.tsx:95
-#: src/components/vm/disks/vmDisksCard.tsx:39
 #: src/components/create-vm-dialog/createVmDialog.tsx:1017
 #: src/components/create-vm-dialog/createVmDialog.tsx:1151
+#: src/components/storagePools/storageVolumeCreateBody.tsx:139
+#: src/components/vm/disks/vmDisksCard.tsx:39
+#: src/components/vm/overview/memorySelectRow.tsx:95
 msgid "GiB"
 msgstr "GiB"
 
@@ -1210,15 +1210,15 @@ msgstr "Hilfe zum Gast-Port"
 msgid "Hardware virtualization is disabled"
 msgstr "Hardware-Virtualisierung ist deaktiviert"
 
-#: src/components/vm/disks/diskAdd.tsx:279
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:225
+#: src/components/vm/disks/diskAdd.tsx:279
 msgid "Hide additional options"
 msgstr "Zusätzlichen Einstellungen verstecken"
 
 #: src/components/storagePools/storagePoolOverviewTab.tsx:23
 #: src/components/storagePools/createStoragePoolDialog.tsx:154
-#: src/components/vm/overview/bootOrder.tsx:110
 #: src/components/vm/disks/vmDiskColumns.tsx:40
+#: src/components/vm/overview/bootOrder.tsx:110
 msgid "Host"
 msgstr "Host"
 
@@ -1262,7 +1262,7 @@ msgstr "Host sollte nicht leer sein"
 msgid "Hypervisor details"
 msgstr "Hypervisor-Details"
 
-#: src/components/vm/disks/diskEdit.tsx:48
+#: src/components/vm/disks/diskEdit.tsx:42
 msgid "ID"
 msgstr "ID"
 
@@ -1270,9 +1270,9 @@ msgstr "ID"
 msgid "IP"
 msgstr "IP"
 
+#: src/components/networks/networkOverviewTab.tsx:255
 #: src/components/vm/nics/nicBody.tsx:475
 #: src/components/vm/nics/vmNicsCard.tsx:620
-#: src/components/networks/networkOverviewTab.tsx:255
 msgid "IP address"
 msgstr "IP-Adresse"
 
@@ -1420,7 +1420,7 @@ msgid "Input Device Controller"
 msgstr "Eingabegerätcontroller"
 
 #: src/components/vm/disks/diskAdd.tsx:973
-#: src/components/vm/disks/vmDiskColumns.tsx:230
+#: src/components/vm/disks/vmDiskColumns.tsx:227
 msgid "Insert"
 msgstr "Einfügen"
 
@@ -1535,13 +1535,13 @@ msgid "Leave the password blank if you do not wish to set a root password"
 msgstr ""
 "Lassen Sie das Passwort leer, wenn Sie kein Root-Passwort festlegen möchten"
 
-#: src/components/vm/overview/firmware.tsx:177
+#: src/components/vm/overview/firmware.tsx:176
 msgid ""
 "Libvirt did not detect any UEFI/OVMF firmware image installed on the host"
 msgstr ""
 "Libvirt hat kein UEFI/OVMF Firmware-Abbild auf dem Host-System gefunden"
 
-#: src/components/vm/overview/firmware.tsx:171
+#: src/components/vm/overview/firmware.tsx:170
 msgid "Libvirt or hypervisor does not support UEFI"
 msgstr "Libvirt oder der Hypervisor unterstützen UEFI nicht"
 
@@ -1569,15 +1569,15 @@ msgstr "Lokale Skalierung"
 msgid "Location"
 msgstr "Ort"
 
-#: src/components/vm/overview/bootOrder.tsx:120
 #: src/components/networks/networkOverviewTab.tsx:66
+#: src/components/vm/overview/bootOrder.tsx:120
 msgid "MAC"
 msgstr "MAC"
 
-#: src/components/vm/nics/nicEdit.tsx:54 src/components/vm/nics/nicAdd.tsx:83
+#: src/components/networks/networkOverviewTab.tsx:246
 #: src/components/vm/nics/vmNicsCard.tsx:615
 #: src/components/vm/nics/vmNicsCard.tsx:809
-#: src/components/networks/networkOverviewTab.tsx:246
+#: src/components/vm/nics/nicEdit.tsx:54 src/components/vm/nics/nicAdd.tsx:83
 msgid "MAC address"
 msgstr "MAC-Adresse"
 
@@ -1589,13 +1589,9 @@ msgstr "Bereits verwendete MAC-Adresse"
 msgid "MAC address must not be empty"
 msgstr "MAC-Adresse darf nicht leer sein"
 
-#: src/components/vm/disks/diskEdit.tsx:122
+#: src/components/vm/disks/diskEdit.tsx:79
 msgid "Machine must be shut off before changing bus type"
 msgstr "Vor dem Wechsel des Bustyps muss die Maschine ausgeschaltet werden"
-
-#: src/components/vm/disks/diskEdit.tsx:80
-msgid "Machine must be shut off before changing cache mode"
-msgstr "Zum Ändern des Cache-Mode muss die Maschine muss ausgeschaltet sein"
 
 #: org.cockpit_project.machines.metainfo.xml:5
 msgid "Machines"
@@ -1621,11 +1617,11 @@ msgstr "Masken- oder Präfixlänge sollte nicht leer sein"
 msgid "Mass Storage Controller"
 msgstr "Massenspeichercontroller"
 
-#: src/components/vm/overview/memoryModal.tsx:167
+#: src/components/vm/overview/memoryModal.tsx:166
 msgid "Maximum allocation"
 msgstr "Maximale Zuweisung"
 
-#: src/components/vm/overview/memoryModal.tsx:132
+#: src/components/vm/overview/memoryModal.tsx:131
 msgid "Maximum memory could not be saved"
 msgstr "Maximaler Speicher konnte nicht gespeichert werden"
 
@@ -1653,10 +1649,10 @@ msgstr "Medium konnte nicht aus $0 ausgeworfen werden"
 msgid "Media will be ejected from $0:"
 msgstr "Medium wird aus $0 ausgeworfen:"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:175
-#: src/components/vm/vmUsageCard.tsx:44 src/components/vms/hostvmslist.tsx:111
-#: src/components/vms/hostvmslist.tsx:302
 #: src/components/create-vm-dialog/createVmDialog.tsx:1002
+#: src/components/vms/hostvmslist.tsx:111
+#: src/components/vms/hostvmslist.tsx:302 src/components/vm/vmUsageCard.tsx:44
+#: src/components/vm/overview/vmOverviewCard.tsx:175
 msgid "Memory"
 msgstr "Speicher"
 
@@ -1664,8 +1660,8 @@ msgstr "Speicher"
 msgid "Memory Controller"
 msgstr "Speichercontroller"
 
-#: src/components/vm/overview/memoryModal.tsx:129
-#: src/components/vm/overview/memoryModal.tsx:145
+#: src/components/vm/overview/memoryModal.tsx:128
+#: src/components/vm/overview/memoryModal.tsx:144
 msgid "Memory could not be saved"
 msgstr "Speicher konnte nicht gespeichert werden"
 
@@ -1685,15 +1681,15 @@ msgstr "Der Speicherschnappschuss verbraucht etwa $0."
 msgid "Memory state path"
 msgstr "Speicherstatuspfad"
 
-#: src/components/storagePools/storageVolumeCreateBody.tsx:137
-#: src/components/vm/overview/memorySelectRow.tsx:93
 #: src/components/create-vm-dialog/createVmDialog.tsx:1015
 #: src/components/create-vm-dialog/createVmDialog.tsx:1149
+#: src/components/storagePools/storageVolumeCreateBody.tsx:137
+#: src/components/vm/overview/memorySelectRow.tsx:93
 msgid "MiB"
 msgstr "MiB"
 
-#: src/components/vm/vmMigrateDialog.tsx:224
 #: src/components/vm/vmActions.tsx:410
+#: src/components/vm/vmMigrateDialog.tsx:224
 msgid "Migrate"
 msgstr "Migrieren"
 
@@ -1709,10 +1705,10 @@ msgstr "Migration fehlgeschlagen"
 msgid "Miscellaneous"
 msgstr "Verschiedenes"
 
-#: src/components/vm/overview/cpuModal.tsx:304
-#: src/components/vm/overview/cpuModal.tsx:306
 #: src/components/vm/nics/nicBody.tsx:282
 #: src/components/vm/nics/vmNicsCard.tsx:167
+#: src/components/vm/overview/cpuModal.tsx:304
+#: src/components/vm/overview/cpuModal.tsx:306
 msgid "Mode"
 msgstr "Modus"
 
@@ -1720,8 +1716,8 @@ msgstr "Modus"
 msgid "Mode help"
 msgstr "Modus Hilfe"
 
-#: src/components/vm/nics/nicBody.tsx:59
 #: src/components/vm/hostdevs/hostDevCard.tsx:197
+#: src/components/vm/nics/nicBody.tsx:59
 msgid "Model"
 msgstr "Modell"
 
@@ -1759,17 +1755,17 @@ msgstr "NAT auf $0"
 msgid "NIC $0 of VM $1 failed to change state"
 msgstr "NIC $0 von VM $1 konnte den Status nicht ändern"
 
+#: src/components/create-vm-dialog/createVmDialog.tsx:312
+#: src/components/vms/hostvmslist.tsx:320
 #: src/components/storagePools/storagePoolVolumesTab.tsx:77
-#: src/components/storagePools/createStoragePoolDialog.tsx:58
-#: src/components/storagePools/storagePoolList.tsx:61
 #: src/components/storagePools/storageVolumeCreateBody.tsx:51
+#: src/components/storagePools/storagePoolList.tsx:61
+#: src/components/storagePools/createStoragePoolDialog.tsx:58
+#: src/components/networks/networkList.tsx:59
+#: src/components/networks/createNetworkDialog.tsx:172
 #: src/components/vm/vmCloneDialog.tsx:92
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:57
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:113
-#: src/components/vms/hostvmslist.tsx:320
-#: src/components/create-vm-dialog/createVmDialog.tsx:312
-#: src/components/networks/networkList.tsx:59
-#: src/components/networks/createNetworkDialog.tsx:172
 msgid "Name"
 msgstr "Name"
 
@@ -1785,9 +1781,9 @@ msgstr "Name darf nicht leer sein"
 msgid "Name contains invalid characters"
 msgstr "Name enthält ungültige Zeichen"
 
+#: src/components/create-vm-dialog/createVmDialog.tsx:230
 #: src/components/storagePools/storageVolumeCreate.tsx:73
 #: src/components/vm/vmCloneDialog.tsx:51
-#: src/components/create-vm-dialog/createVmDialog.tsx:230
 msgid "Name must not be empty"
 msgstr "Name darf nicht leer sein"
 
@@ -1825,10 +1821,8 @@ msgid "Network Controller"
 msgstr "Netzwerk-Controller"
 
 #: src/components/vm/nics/nicAdd.tsx:120
-#, fuzzy
-#| msgid "Name can not be empty"
 msgid "Network MAC can not be empty."
-msgstr "Name darf nicht leer sein"
+msgstr "Netzwerk-MAC darf nicht leer sein."
 
 #: src/components/create-vm-dialog/createVmDialog.tsx:453
 msgid "Network boot (PXE)"
@@ -1838,7 +1832,7 @@ msgstr "Netzwerk-Bootvorgang (PXE)"
 msgid "Network file system"
 msgstr "Netzwerkdateisystem"
 
-#: src/components/common/needsShutdown.tsx:187
+#: src/components/common/needsShutdown.tsx:195
 msgid "Network interface"
 msgstr "Netzwerkschnittstelle"
 
@@ -1889,7 +1883,7 @@ msgid "No VM is running or defined on this host"
 msgstr ""
 "Auf diesem Host ist weder eine VM definiert, noch wird eine VM ausgeführt"
 
-#: src/components/vm/overview/bootOrder.tsx:369
+#: src/components/vm/overview/bootOrder.tsx:368
 msgid "No boot device found"
 msgstr "Kein Startgerät gefunden"
 
@@ -1897,7 +1891,7 @@ msgstr "Kein Startgerät gefunden"
 msgid "No description"
 msgstr "Keine Beschreibung"
 
-#: src/components/vm/disks/vmDisksCard.tsx:281
+#: src/components/vm/disks/vmDisksCard.tsx:287
 msgid "No disks"
 msgstr "Keine Festplatten"
 
@@ -1946,10 +1940,8 @@ msgid "No snapshots"
 msgstr "Keine Schnappschüsse"
 
 #: src/components/vm/nics/nicBody.tsx:332
-#, fuzzy
-#| msgid "No storage pools available"
 msgid "No sources available"
-msgstr "Keine Speicherpools vorhanden"
+msgstr "Keine Quellen verfügbar"
 
 #: src/helpers.ts:225
 msgid "No state"
@@ -2031,9 +2023,9 @@ msgstr ""
 "Ein oder mehrere Datenträger werden von Domänen verwendet. Geben Sie die "
 "Festplatten zuerst frei, um die Datenträger zu löschen."
 
-#: src/components/vm/overview/memoryModal.tsx:174
-#: src/components/vm/overview/bootOrder.tsx:395
 #: src/components/vm/nics/nicEdit.tsx:51
+#: src/components/vm/overview/memoryModal.tsx:173
+#: src/components/vm/overview/bootOrder.tsx:394
 msgid "Only editable when the guest is shut off"
 msgstr "Kann nur bearbeitet werden wenn Gast ausgeschaltet ist"
 
@@ -2088,8 +2080,8 @@ msgstr "Das Passwort darf höchstens 8 Zeichen lang sein."
 
 #: src/components/vm/hostdevs/hostDevCard.tsx:115
 #: src/components/vm/hostdevs/hostDevCard.tsx:119
+#: src/components/vm/disks/diskEdit.tsx:44
 #: src/components/vm/deleteDialog.tsx:67
-#: src/components/vm/disks/diskEdit.tsx:50
 msgid "Path"
 msgstr "Pfad"
 
@@ -2167,11 +2159,11 @@ msgstr "Bitte geben Sie den neuen Datenträgernamen ein"
 msgid "Please see $0 how to reconfigure your VM manually."
 msgstr "Bitte beachten Sie $0 für die manuelle Neukonfiguration Ihrer VM."
 
+#: src/components/vm/disks/diskAdd.tsx:204
+#: src/components/vm/disks/mediaEject.tsx:85
+#: src/components/vm/disks/vmDiskColumns.tsx:38
 #: src/components/vm/overview/bootOrder.tsx:108
 #: src/components/vm/deleteDialog.tsx:75
-#: src/components/vm/disks/mediaEject.tsx:85
-#: src/components/vm/disks/diskAdd.tsx:204
-#: src/components/vm/disks/vmDiskColumns.tsx:38
 msgid "Pool"
 msgstr "Pool"
 
@@ -2191,11 +2183,11 @@ msgstr "Pool-Typ unterstützt keine Datenträgererstellung"
 msgid "Pool's volumes are used by VMs "
 msgstr "Pool-Datenträger werden von VMs verwendet "
 
+#: src/components/vm/consoles/vnc.tsx:170
+#: src/components/vm/nics/vmNicsCard.tsx:190
+#: src/components/vm/disks/vmDiskColumns.tsx:41
 #: src/components/vm/overview/bootOrder.tsx:111
 #: src/components/vm/overview/bootOrder.tsx:127
-#: src/components/vm/nics/vmNicsCard.tsx:190
-#: src/components/vm/consoles/vnc.tsx:170
-#: src/components/vm/disks/vmDiskColumns.tsx:41
 msgid "Port"
 msgstr "Port"
 
@@ -2219,7 +2211,7 @@ msgstr ""
 "Der Port muss eine Nummer sein, die mindestens 5900 beträgt. Leer lassen, um "
 "beim Start der Maschine automatisch einen freien Port zuzuweisen."
 
-#: src/components/vm/nics/nicBody.tsx:434 src/components/vm/consoles/vnc.tsx:97
+#: src/components/vm/consoles/vnc.tsx:97 src/components/vm/nics/nicBody.tsx:434
 msgid "Port must be a number."
 msgstr "Der Port muss eine Nummer sein."
 
@@ -2261,11 +2253,11 @@ msgstr ""
 msgid "Processor"
 msgstr "Prozessor"
 
-#: src/components/vm/overview/bootOrder.tsx:141
-#: src/components/vm/overview/bootOrder.tsx:157
+#: src/components/vm/hostdevs/hostDevAdd.tsx:151
 #: src/components/vm/hostdevs/hostDevCard.tsx:240
 #: src/components/vm/hostdevs/hostDevCard.tsx:246
-#: src/components/vm/hostdevs/hostDevAdd.tsx:151
+#: src/components/vm/overview/bootOrder.tsx:141
+#: src/components/vm/overview/bootOrder.tsx:157
 msgid "Product"
 msgstr "Produkt"
 
@@ -2273,11 +2265,11 @@ msgstr "Produkt"
 msgid "Profile"
 msgstr "Profil"
 
+#: src/components/vm/hostdevs/hostDevCard.tsx:106
+#: src/components/vm/nics/nicBody.tsx:517
+#: src/components/vm/disks/vmDiskColumns.tsx:37
 #: src/components/vm/overview/bootOrder.tsx:107
 #: src/components/vm/overview/bootOrder.tsx:170
-#: src/components/vm/nics/nicBody.tsx:517
-#: src/components/vm/hostdevs/hostDevCard.tsx:106
-#: src/components/vm/disks/vmDiskColumns.tsx:37
 msgid "Protocol"
 msgstr "Protokoll"
 
@@ -2314,7 +2306,7 @@ msgstr "Öffentlicher Schlüssel"
 msgid "Range"
 msgstr "Bereich"
 
-#: src/components/vm/disks/diskEdit.tsx:161
+#: src/components/vm/disks/diskEdit.tsx:108
 #: src/components/vm/disks/vmDisksCard.tsx:255
 msgid "Read-only"
 msgstr "Nur lesen"
@@ -2362,17 +2354,17 @@ msgid "Remote viewer applications can connect to the following address:"
 msgstr ""
 "Fernbetrachter-Anwendungen können sich mit folgenden Adressen verbinden:"
 
-#: src/components/vm/overview/vsock.tsx:269
-#: src/components/vm/overview/watchdog.tsx:225
-#: src/components/vm/nics/vmNicsCard.tsx:694
-#: src/components/vm/nics/vmNicsCard.tsx:709
+#: src/components/networks/networkOverviewTab.tsx:68
 #: src/components/vm/hostdevs/hostDevCard.tsx:256
 #: src/components/vm/hostdevs/hostDevCard.tsx:262
-#: src/components/vm/disks/vmDiskColumns.tsx:175
-#: src/components/vm/disks/vmDiskColumns.tsx:256
+#: src/components/vm/nics/vmNicsCard.tsx:694
+#: src/components/vm/nics/vmNicsCard.tsx:709
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:52
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:61
-#: src/components/networks/networkOverviewTab.tsx:68
+#: src/components/vm/disks/vmDiskColumns.tsx:172
+#: src/components/vm/disks/vmDiskColumns.tsx:253
+#: src/components/vm/overview/vsock.tsx:269
+#: src/components/vm/overview/watchdog.tsx:225
 msgid "Remove"
 msgstr "Entfernen"
 
@@ -2380,11 +2372,11 @@ msgstr "Entfernen"
 msgid "Remove SPICE audio and host devices"
 msgstr "SPICE-Audio- und Host-Geräte entfernen"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:188
+#: src/components/vm/disks/vmDiskColumns.tsx:185
 msgid "Remove and delete file"
 msgstr "Datei entfernen und löschen"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:174
+#: src/components/vm/disks/vmDiskColumns.tsx:171
 msgid "Remove disk from VM?"
 msgstr "Festplatte aus der VM entfernen?"
 
@@ -2396,9 +2388,9 @@ msgstr "Dateisystem entfernen?"
 msgid "Remove host device from VM?"
 msgstr "Host-Gerät aus VM entfernen?"
 
+#: src/components/create-vm-dialog/createVmDialog.tsx:926
 #: src/components/vm/nics/nicBody.tsx:536
 #: src/components/vm/nics/nicBody.tsx:567
-#: src/components/create-vm-dialog/createVmDialog.tsx:926
 msgid "Remove item"
 msgstr "Element entfernen"
 
@@ -2410,7 +2402,7 @@ msgstr "Netzwerkschnittstelle entfernen?"
 msgid "Remove static host from DHCP"
 msgstr "Statischen Host aus DHCP entfernen"
 
-#: src/components/vm/vmRenameDialog.tsx:93 src/components/vm/vmActions.tsx:434
+#: src/components/vm/vmActions.tsx:434 src/components/vm/vmRenameDialog.tsx:93
 msgid "Rename"
 msgstr "Umbenennen"
 
@@ -2422,8 +2414,8 @@ msgstr "VM $0 umbenennen"
 msgid "Replace"
 msgstr "Ersetzen"
 
-#: src/components/vm/vmReplaceSpiceDialog.tsx:133
 #: src/components/vm/vmActions.tsx:421 src/components/vm/usesSpice.tsx:42
+#: src/components/vm/vmReplaceSpiceDialog.tsx:133
 msgid "Replace SPICE devices"
 msgstr "SPICE-Geräte ersetzen"
 
@@ -2474,8 +2466,8 @@ msgstr "Fortfahren"
 msgid "Retry"
 msgstr "Erneut versuchen"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.tsx:197
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:117
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:197
 msgid "Revert"
 msgstr "Zurückkehren"
 
@@ -2513,8 +2505,8 @@ msgstr "Zeilenauswahl"
 msgid "Run"
 msgstr "Ausführen"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:107
 #: src/components/networks/networkOverviewTab.tsx:122
+#: src/components/vm/overview/vmOverviewCard.tsx:107
 msgid "Run when host boots"
 msgstr "Starten wenn Host hochfährt"
 
@@ -2522,7 +2514,7 @@ msgstr "Starten wenn Host hochfährt"
 msgid "Running"
 msgstr "Läuft"
 
-#: src/components/common/needsShutdown.tsx:206
+#: src/components/common/needsShutdown.tsx:214
 msgid "SPICE"
 msgstr "SPICE"
 
@@ -2547,15 +2539,15 @@ msgstr "SSH-Schlüssel"
 msgid "Satellite Communication Controller"
 msgstr ""
 
-#: src/components/vm/overview/memoryModal.tsx:193
-#: src/components/vm/overview/vsock.tsx:223
-#: src/components/vm/overview/bootOrder.tsx:354
-#: src/components/vm/overview/watchdog.tsx:167
-#: src/components/vm/overview/firmware.tsx:105
-#: src/components/vm/nics/nicEdit.tsx:234
-#: src/components/vm/consoles/vnc.tsx:155
 #: src/components/vm/vmEditDescriptionDialog.tsx:78
-#: src/components/vm/disks/diskEdit.tsx:324
+#: src/components/vm/consoles/vnc.tsx:155
+#: src/components/vm/nics/nicEdit.tsx:234
+#: src/components/vm/disks/diskEdit.tsx:208
+#: src/components/vm/overview/memoryModal.tsx:192
+#: src/components/vm/overview/vsock.tsx:223
+#: src/components/vm/overview/firmware.tsx:104
+#: src/components/vm/overview/bootOrder.tsx:353
+#: src/components/vm/overview/watchdog.tsx:167
 msgid "Save"
 msgstr "Speichern"
 
@@ -2581,7 +2573,7 @@ msgstr "Nicht-maskierbaren Interrupt an $0 senden?"
 
 #: src/components/vm/consoles/consoles.tsx:275
 #: src/components/vm/consoles/consoles.tsx:292
-#: src/components/vm/disks/vmDiskColumns.tsx:132
+#: src/components/vm/disks/vmDiskColumns.tsx:129
 msgid "Serial"
 msgstr "Seriell"
 
@@ -2593,7 +2585,7 @@ msgstr "Seriell ($0)"
 msgid "Serial Bus Controller"
 msgstr "Serieller Bus-Controller"
 
-#: src/components/common/needsShutdown.tsx:214
+#: src/components/common/needsShutdown.tsx:222
 msgid "Serial console"
 msgstr "Serielle Konsole"
 
@@ -2640,8 +2632,8 @@ msgstr ""
 msgid "Shared storage"
 msgstr "Gemeinsamer Speicher"
 
-#: src/components/vm/disks/diskAdd.tsx:279
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:225
+#: src/components/vm/disks/diskAdd.tsx:279
 msgid "Show additional options"
 msgstr "Zusätzlicher Optionen anzeigen"
 
@@ -2666,14 +2658,15 @@ msgstr "$0 herunterfahren?"
 msgid "Shut off"
 msgstr "Ausgeschaltet"
 
-#: src/components/vm/overview/firmware.tsx:158
+#: src/components/vm/overview/firmware.tsx:157
 msgid "Shut off the VM in order to edit firmware configuration"
 msgstr ""
 "Fahren Sie die VM herunter, um die Firmware-Konfiguration zu bearbeiten"
 
-#: src/components/common/needsShutdown.tsx:270
+#: src/components/common/needsShutdown.tsx:278
+#: src/components/vm/vmActions.tsx:525
 #: src/components/vm/consoles/serial.tsx:190
-#: src/components/vm/consoles/vnc.tsx:694 src/components/vm/vmActions.tsx:525
+#: src/components/vm/consoles/vnc.tsx:694
 msgid "Shutdown and restart"
 msgstr "Herunterfahren und Neustart"
 
@@ -2694,17 +2687,17 @@ msgid "Simple Communication Controller"
 msgstr ""
 
 #: src/components/storagePools/storagePoolVolumesTab.tsx:77
-#: src/components/storagePools/storagePoolList.tsx:62
 #: src/components/storagePools/storageVolumeCreateBody.tsx:121
+#: src/components/storagePools/storagePoolList.tsx:62
 #: src/components/vm/disks/vmDisksCard.tsx:165
 msgid "Size"
 msgstr "Größe"
 
-#: src/components/vm/overview/bootOrder.tsx:158
+#: src/components/vm/hostdevs/hostDevAdd.tsx:112
 #: src/components/vm/hostdevs/hostDevCard.tsx:93
 #: src/components/vm/hostdevs/hostDevCard.tsx:100
 #: src/components/vm/hostdevs/hostDevCard.tsx:241
-#: src/components/vm/hostdevs/hostDevAdd.tsx:112
+#: src/components/vm/overview/bootOrder.tsx:158
 msgid "Slot"
 msgstr "Slot"
 
@@ -2739,7 +2732,7 @@ msgstr ""
 msgid "Sockets"
 msgstr "Sockets"
 
-#: src/components/common/needsShutdown.tsx:251
+#: src/components/common/needsShutdown.tsx:259
 msgid ""
 "Some configuration changes only take effect after a complete shutdown and "
 "restart:"
@@ -2748,12 +2741,12 @@ msgstr ""
 "Herunterfahren und Neustart wirksam:"
 
 #: src/components/storagePools/storagePoolOverviewTab.tsx:40
+#: src/components/vm/hostdevs/hostDevCard.tsx:217
 #: src/components/vm/nics/nicBody.tsx:270
 #: src/components/vm/nics/vmNicsCard.tsx:595
-#: src/components/vm/hostdevs/hostDevCard.tsx:217
+#: src/components/vm/disks/vmDisksCard.tsx:163
 #: src/components/vm/disks/diskAdd.tsx:711
 #: src/components/vm/disks/diskAdd.tsx:747
-#: src/components/vm/disks/vmDisksCard.tsx:163
 msgid "Source"
 msgstr "Quelle"
 
@@ -2788,9 +2781,9 @@ msgstr "Die Quelle sollte mit dem http,ftp oder nfs Protokoll starten"
 msgid "Source volume group"
 msgstr "Quellen-Datenträgergruppe"
 
+#: src/components/networks/createNetworkDialog.tsx:305
 #: src/components/vm/consoles/serial.tsx:123
 #: src/components/vm/consoles/vnc.tsx:615
-#: src/components/networks/createNetworkDialog.tsx:305
 msgid "Start"
 msgstr "Starten"
 
@@ -2820,12 +2813,12 @@ msgstr "Gestartet"
 msgid "Startup"
 msgstr "Anlaufen"
 
-#: src/components/storagePools/storagePoolList.tsx:64
-#: src/components/vm/overview/vmOverviewCard.tsx:163
-#: src/components/vm/nics/vmNicsCard.tsx:628
 #: src/components/vms/hostvmslist.tsx:266
 #: src/components/vms/hostvmslist.tsx:322
+#: src/components/storagePools/storagePoolList.tsx:64
 #: src/components/networks/networkList.tsx:63
+#: src/components/vm/nics/vmNicsCard.tsx:628
+#: src/components/vm/overview/vmOverviewCard.tsx:163
 msgid "State"
 msgstr "Status"
 
@@ -2837,8 +2830,8 @@ msgstr "Statische Host-Einträge"
 msgid "Static host from DHCP could not be removed"
 msgstr "Statischer Host aus DHCP konnte nicht entfernt werden"
 
-#: src/components/vm/vmMigrateDialog.tsx:108
 #: src/components/create-vm-dialog/createVmDialog.tsx:1109
+#: src/components/vm/vmMigrateDialog.tsx:108
 msgid "Storage"
 msgstr "Speicher"
 
@@ -2866,10 +2859,10 @@ msgstr "Speicherpool konnte nicht erstellt werden"
 msgid "Storage pool name"
 msgstr "Speicherpoolname"
 
+#: src/components/create-vm-dialog/createVmDialog.tsx:1104
 #: src/components/storagePools/storagePoolList.tsx:49
 #: src/components/storagePools/storagePoolList.tsx:56
 #: src/components/storagePools/storagePoolList.tsx:58
-#: src/components/create-vm-dialog/createVmDialog.tsx:1104
 msgid "Storage pools"
 msgstr "Speicherpools"
 
@@ -2881,7 +2874,7 @@ msgstr "Fehler beim Abrufen der Speicher-Pools"
 msgid "Storage size must not be 0"
 msgstr "Speichergröße darf nicht 0 sein"
 
-#: src/components/vm/disks/diskEdit.tsx:54
+#: src/components/vm/disks/diskEdit.tsx:48
 msgid "Storage volume"
 msgstr "Speichervolumen"
 
@@ -2931,7 +2924,7 @@ msgstr "TAP-Gerät"
 msgid "TCP"
 msgstr "TCP"
 
-#: src/components/common/needsShutdown.tsx:218
+#: src/components/common/needsShutdown.tsx:226
 msgid "TPM"
 msgstr "TPM"
 
@@ -2939,11 +2932,11 @@ msgstr "TPM"
 msgid "Table of selectable host devices"
 msgstr "Tabelle der auswählbaren Host-Geräte"
 
-#: src/components/vm/overview/bootOrder.tsx:164
-#: src/components/vm/nics/vmNicsCard.tsx:603
 #: src/components/vm/hostdevs/hostDevCard.tsx:101
-#: src/components/vm/disks/vmDiskColumns.tsx:179
+#: src/components/vm/nics/vmNicsCard.tsx:603
 #: src/components/vm/disks/vmDisksCard.tsx:164
+#: src/components/vm/disks/vmDiskColumns.tsx:176
+#: src/components/vm/overview/bootOrder.tsx:164
 msgid "Target"
 msgstr "Ziel"
 
@@ -2975,7 +2968,7 @@ msgstr ""
 
 #: src/components/vm/nics/vmNicsCard.tsx:710
 #: src/components/vm/nics/vmNicsCard.tsx:718
-#: src/components/vm/disks/vmDiskColumns.tsx:264
+#: src/components/vm/disks/vmDiskColumns.tsx:261
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr "Um das Gerät zu entfernen muss die VM laufen oder ausgeschaltet sein"
 
@@ -3058,7 +3051,7 @@ msgstr ""
 msgid "This browser does not support WebGL2."
 msgstr "Dieser Browser unterstützt WebGL2 nicht."
 
-#: src/components/vm/disks/vmDiskColumns.tsx:177
+#: src/components/vm/disks/vmDiskColumns.tsx:174
 msgid "This disk will be removed from $0:"
 msgstr "Diese Festplatte wird aus $0 entfernt:"
 
@@ -3126,7 +3119,7 @@ msgstr "Fäden pro Kern"
 msgid "Total space available: $0."
 msgstr "Verfügbarer Platz insgesamt: $0."
 
-#: src/components/vm/overview/firmware.tsx:164
+#: src/components/vm/overview/firmware.tsx:163
 msgid "Transient VMs don't support editing firmware configuration"
 msgstr ""
 "Vorübergehende VMs unterstützen die Bearbeitung der Firmware-Konfiguration "
@@ -3138,15 +3131,15 @@ msgstr "Fehlersuche"
 
 #: src/components/storagePools/storagePoolOverviewTab.tsx:65
 #: src/components/storagePools/createStoragePoolDialog.tsx:102
+#: src/components/vm/hostdevs/hostDevAdd.tsx:43
+#: src/components/vm/hostdevs/hostDevCard.tsx:177
+#: src/components/vm/nics/vmNicsCard.tsx:822
 #: src/components/vm/overview/bootOrder.tsx:125
 #: src/components/vm/overview/bootOrder.tsx:139
 #: src/components/vm/overview/bootOrder.tsx:155
 #: src/components/vm/overview/bootOrder.tsx:162
 #: src/components/vm/overview/bootOrder.tsx:169
 #: src/components/vm/overview/bootOrder.tsx:175
-#: src/components/vm/nics/vmNicsCard.tsx:822
-#: src/components/vm/hostdevs/hostDevCard.tsx:177
-#: src/components/vm/hostdevs/hostDevAdd.tsx:43
 msgid "Type"
 msgstr "Typ"
 
@@ -3190,14 +3183,14 @@ msgstr "Eindeutiger Netzwerkname"
 msgid "Unit"
 msgstr "Einheit"
 
-#: src/components/vm/overview/firmware.tsx:136
+#: src/components/vm/overview/firmware.tsx:135
 msgid "Unknown firmware"
 msgstr "Unbekannte Firmware"
 
-#: src/components/vm/overview/bootOrder.tsx:145
-#: src/components/vm/overview/bootOrder.tsx:146
 #: src/components/vm/hostdevs/hostDevCard.tsx:84
 #: src/components/vm/hostdevs/hostDevCard.tsx:85
+#: src/components/vm/overview/bootOrder.tsx:145
+#: src/components/vm/overview/bootOrder.tsx:146
 msgid "Unspecified"
 msgstr "Nicht spezifiziert"
 
@@ -3205,7 +3198,7 @@ msgstr "Nicht spezifiziert"
 msgid "Unsupported and older operating systems"
 msgstr "Nicht unterstützte und ältere Betriebssysteme"
 
-#: src/components/vm/disks/diskEdit.tsx:52
+#: src/components/vm/disks/diskEdit.tsx:46
 msgid "Url"
 msgstr "Url"
 
@@ -3331,7 +3324,7 @@ msgstr ""
 "VM mit unprivilegiertem, eingeschränktem Zugriff gestartet, wobei der "
 "Prozess und PTY Ihrem Benutzerkonto gehören"
 
-#: src/components/common/needsShutdown.tsx:275
+#: src/components/common/needsShutdown.tsx:283
 msgid "VM needs shutdown"
 msgstr "VM muss heruntergefahren werden"
 
@@ -3343,7 +3336,7 @@ msgstr "VM-Status"
 msgid "VM will launch with root permissions"
 msgstr "VM wird mit Root-Rechten gestartet"
 
-#: src/components/common/needsShutdown.tsx:210
+#: src/components/common/needsShutdown.tsx:218
 msgid "VNC"
 msgstr "VNC"
 
@@ -3362,12 +3355,12 @@ msgstr "Gültiges Token"
 
 # translation auto-copied from project subscription-manager, version 1.9.X,
 # document keys
-#: src/components/vm/overview/bootOrder.tsx:140
-#: src/components/vm/overview/bootOrder.tsx:156
+#: src/components/vm/hostdevs/hostDevAdd.tsx:151
 #: src/components/vm/hostdevs/hostDevCard.tsx:207
 #: src/components/vm/hostdevs/hostDevCard.tsx:239
 #: src/components/vm/hostdevs/hostDevCard.tsx:245
-#: src/components/vm/hostdevs/hostDevAdd.tsx:151
+#: src/components/vm/overview/bootOrder.tsx:140
+#: src/components/vm/overview/bootOrder.tsx:156
 msgid "Vendor"
 msgstr "Anbieter"
 
@@ -3375,11 +3368,11 @@ msgstr "Anbieter"
 msgid "Vendor support ended $0"
 msgstr "Unterstützung durch den Anbieter endet $0"
 
-#: src/components/storagePools/storagePoolList.tsx:46
-#: src/components/vm/vmDetailsPage.tsx:249
 #: src/components/vms/hostvmslist.tsx:315
 #: src/components/vms/hostvmslist.tsx:317
-#: src/components/networks/networkList.tsx:44 src/manifest.json:0
+#: src/components/storagePools/storagePoolList.tsx:46
+#: src/components/networks/networkList.tsx:44
+#: src/components/vm/vmDetailsPage.tsx:249 src/manifest.json:0
 msgid "Virtual machines"
 msgstr "Virtuelle Maschinen"
 
@@ -3409,12 +3402,12 @@ msgstr ""
 msgid "Virtualization service (libvirt) is not active"
 msgstr "Der Virtualisierungsdienst (libvirt) ist nicht aktiv"
 
+#: src/components/create-vm-dialog/createVmDialog.tsx:1121
+#: src/components/vm/disks/diskAdd.tsx:148
+#: src/components/vm/disks/mediaEject.tsx:89
+#: src/components/vm/disks/vmDiskColumns.tsx:39
 #: src/components/vm/overview/bootOrder.tsx:109
 #: src/components/vm/deleteDialog.tsx:72
-#: src/components/vm/disks/mediaEject.tsx:89
-#: src/components/vm/disks/diskAdd.tsx:148
-#: src/components/vm/disks/vmDiskColumns.tsx:39
-#: src/components/create-vm-dialog/createVmDialog.tsx:1121
 msgid "Volume"
 msgstr "Datenträger"
 
@@ -3434,12 +3427,12 @@ msgstr "Der Datenträgergruppenname darf nicht leer sein"
 msgid "Vsock"
 msgstr "Vsock"
 
-#: src/components/vm/overview/bootOrder.tsx:171
 #: src/components/vm/hostdevs/hostDevCard.tsx:107
+#: src/components/vm/overview/bootOrder.tsx:171
 msgid "WWPN"
 msgstr "WWPN"
 
-#: src/components/common/needsShutdown.tsx:202
+#: src/components/common/needsShutdown.tsx:210
 #: src/components/vm/overview/vmOverviewCard.tsx:198
 msgid "Watchdog"
 msgstr "Watchdog"
@@ -3458,7 +3451,7 @@ msgstr ""
 msgid "Wireless Controller"
 msgstr "Drahtloscontroller"
 
-#: src/components/vm/disks/diskEdit.tsx:170
+#: src/components/vm/disks/diskEdit.tsx:112
 #: src/components/vm/disks/vmDisksCard.tsx:255
 msgid "Writeable"
 msgstr "Beschreibbar"
@@ -3522,10 +3515,10 @@ msgid "down"
 msgstr "runter"
 
 #: src/components/vm/overview/vsock.tsx:315
-#: src/components/vm/overview/bootOrder.tsx:388
-#: src/components/vm/overview/watchdog.tsx:265
 #: src/components/vm/overview/vmOverviewCard.tsx:117
 #: src/components/vm/overview/vmOverviewCard.tsx:125
+#: src/components/vm/overview/bootOrder.tsx:387
+#: src/components/vm/overview/watchdog.tsx:265
 msgid "edit"
 msgstr "bearbeiten"
 
@@ -3615,10 +3608,10 @@ msgstr "Nein"
 msgid "no state saved"
 msgstr "kein Zustand gespeichert"
 
+#: src/components/networks/networkOverviewTab.tsx:314
+#: src/components/vm/nics/vmNicsCard.tsx:287
 #: src/components/vm/overview/vsock.tsx:297
 #: src/components/vm/overview/watchdog.tsx:261
-#: src/components/vm/nics/vmNicsCard.tsx:287
-#: src/components/networks/networkOverviewTab.tsx:314
 msgid "none"
 msgstr "keine"
 
@@ -3679,7 +3672,7 @@ msgid "vCPU maximum"
 msgstr "vCPU-Maximum"
 
 # ctx::sourcefile::/rhn/systems/details/virtualization/VirtualGuestsList.do
-#: src/components/common/needsShutdown.tsx:194
+#: src/components/common/needsShutdown.tsx:202
 msgid "vCPUs"
 msgstr "vCPUs"
 
@@ -3732,6 +3725,9 @@ msgstr "warte"
 #: src/components/networks/networkOverviewTab.tsx:113 src/helpers.ts:264
 msgid "yes"
 msgstr "Ja"
+
+#~ msgid "Machine must be shut off before changing cache mode"
+#~ msgstr "Zum Ändern des Cache-Mode muss die Maschine muss ausgeschaltet sein"
 
 #~ msgid "Additional"
 #~ msgstr "Mehr"
