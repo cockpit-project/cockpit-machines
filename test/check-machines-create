@@ -742,6 +742,13 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                                                  storage_pool=NO_STORAGE))
         self.allow_browser_errors("Requested operation is not valid: network 'default' is not active")
 
+        # Check "Download an OS" with separate install phase
+        runner.createThenInstallTest(TestMachinesCreate.VmDialog(self, sourceType='os',
+                                                                 os_name=config.FEDORA_28,
+                                                                 os_short_id=config.FEDORA_28_SHORTID,
+                                                                 memory_size=128, memory_size_unit='MiB',
+                                                                 storage_pool=NO_STORAGE))
+
         # Try performing an installation which will fail and ensure that the 'Install' button is still available
         runner.createThenInstallTest(TestMachinesCreate.VmDialog(self, sourceType='file',
                                                                  location=config.NOVELL_MOCKUP_ISO_PATH,
@@ -1974,7 +1981,8 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                 try:
                     # has cockpit-machines specific metadata
                     self.test_obj.assertIn(f"<cockpit_machines:has_install_phase>{install_phase}", dumpxml)
-                    self.test_obj.assertIn("<cockpit_machines:install_source>", dumpxml)
+                    self.test_obj.assertTrue("<cockpit_machines:install_source>" in dumpxml
+                                             or "<cockpit_machines:install_source/>" in dumpxml)
                     # The running XML has always substituted port
                     # This checks that the defined domain is using the proper inactive XML
                     self.test_obj.assertIn("type='vnc' port='-1'", dumpxml)

@@ -1015,6 +1015,7 @@ export async function domainInstall({ vm } : { vm: VM }): Promise<string> {
         rootPassword: vm.metadata.rootPassword,
         userLogin: vm.metadata.userLogin,
         userPassword: vm.metadata.userPassword,
+        extraArguments: "", // XXX - get those also from metadata
         type: "install",
         vmName: vm.name,
     });
