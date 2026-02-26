@@ -303,6 +303,10 @@ def inject_metadata(xml):
             METADATA += f"<cockpit_machines:user_login>{args['userLogin']}</cockpit_machines:user_login>"
         if args['userPassword']:
             METADATA += f"<cockpit_machines:user_password>{args['userPassword']}</cockpit_machines:user_password>"
+
+    if args['extraArguments']:
+        METADATA += f"<cockpit_machines:extra_arguments>{args['extraArguments']}</cockpit_machines:extra_arguments>"
+
     METADATA += "</cockpit_machines:data>"
 
     cockpit_machines_metadata_new = ET.fromstring(METADATA)
