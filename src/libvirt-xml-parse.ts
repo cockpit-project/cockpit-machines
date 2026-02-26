@@ -380,6 +380,7 @@ export function parseDomainDumpxml(connectionName: ConnectionName, domXml: strin
             rootPassword: parseDumpxmlMachinesMetadataElement(metadataElem, 'root_password'),
             userLogin: parseDumpxmlMachinesMetadataElement(metadataElem, 'user_login'),
             userPassword: parseDumpxmlMachinesMetadataElement(metadataElem, 'user_password'),
+            extraArguments: parseDumpxmlMachinesMetadataElement(metadataElem, 'extra_arguments'),
         },
 
         // OS

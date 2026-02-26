@@ -332,6 +332,7 @@ export interface VMMetadata {
     rootPassword: optString;
     userLogin: optString;
     userPassword: optString;
+    extraArguments: optString;
 }
 
 export interface VMSnapshot {
