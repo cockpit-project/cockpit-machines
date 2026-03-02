@@ -112,6 +112,8 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
         m.execute("virsh attach-interface --domain subVmTest1 --type network --source default --model virtio "
                   "--mac 52:54:00:4b:73:6f --live", timeout=300)
         b.wait_in_text("#vm-subVmTest1-network-3-mac", "52:54:00:4b:73:6f")
+        # add network interface is initialized as expected in the pixel tests
+        b.wait_visible("#vm-subVmTest1-add-iface-button:not(:disabled)")
         # vNIC which is only attached to live config cannot be edited
         b.wait_visible("#vm-subVmTest1-network-3-edit-dialog[aria-disabled=true]")
         # validate css is correct even if edit button is disabled
