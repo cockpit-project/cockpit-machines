@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-22 04:31+0000\n"
-"PO-Revision-Date: 2026-02-16 16:58+0000\n"
+"POT-Creation-Date: 2026-03-03 04:27+0000\n"
+"PO-Revision-Date: 2026-02-25 14:58+0000\n"
 "Last-Translator: Burak Yavuz <hitowerdigit@hotmail.com>\n"
 "Language-Team: Turkish <https://translate.fedoraproject.org/projects/cockpit/"
 "cockpit-machines/tr/>\n"
@@ -20,18 +20,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n>1)\n"
-"X-Generator: Weblate 5.15.2\n"
+"X-Generator: Weblate 5.16\n"
 
 #: src/components/vm/nics/nicBody.tsx:366
 msgid " excluding "
 msgstr " hariç "
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1060
+#: src/components/create-vm-dialog/createVmDialog.tsx:1091
 msgid "$0 $1 available at default location"
 msgstr "Varsayılan konumda $0 $1 kullanılabilir"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:280
-#: src/components/create-vm-dialog/createVmDialog.tsx:984
+#: src/components/create-vm-dialog/createVmDialog.tsx:281
+#: src/components/create-vm-dialog/createVmDialog.tsx:985
 msgid "$0 $1 available on host"
 msgstr "Anamakinede $0 $1 kullanılabilir"
 
@@ -55,7 +55,7 @@ msgstr[1] "$0 Depolama havuzu"
 msgid "$0 console"
 msgstr "$0 konsolu"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1495
+#: src/components/create-vm-dialog/createVmDialog.tsx:1528
 msgid "$0 does not support unattended installation."
 msgstr "$0 katılımsız kurulumu desteklemiyor."
 
@@ -67,8 +67,8 @@ msgstr "$0 bellek ayarlaması"
 msgid "$0 network"
 msgstr "$0 ağ"
 
-#: src/components/vm/vmUsageCard.tsx:35
 #: src/components/vm/overview/vmOverviewCard.tsx:140
+#: src/components/vm/vmUsageCard.tsx:35
 msgid "$0 vCPU"
 msgid_plural "$0 vCPUs"
 msgstr[0] "$0 vCPU"
@@ -100,12 +100,12 @@ msgstr "Erişim"
 msgid "Action"
 msgstr "Eylem"
 
-#: src/components/vms/hostvmslist.tsx:324
 #: src/components/storagePools/storagePoolList.tsx:65
-#: src/components/networks/networkList.tsx:64
-#: src/components/vm/nics/vmNicsCard.tsx:635
+#: src/components/vm/nics/vmNicsCard.tsx:592
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:185
 #: src/components/vm/disks/vmDisksCard.tsx:167
+#: src/components/vms/hostvmslist.tsx:324
+#: src/components/networks/networkList.tsx:64
 msgid "Actions"
 msgstr "Eylemler"
 
@@ -118,16 +118,16 @@ msgstr "Etkinleştir"
 msgid "Activate the storage pool to administer volumes"
 msgstr "Birimleri yönetmek için depolama havuzunu etkinleştir"
 
-#: src/components/networks/networkOverviewTab.tsx:268
-#: src/components/vm/hostdevs/hostDevAdd.tsx:261
-#: src/components/vm/nics/nicBody.tsx:599 src/components/vm/nics/nicAdd.tsx:279
-#: src/components/vm/disks/diskAdd.tsx:973
 #: src/components/vm/overview/vsock.tsx:223
 #: src/components/vm/overview/watchdog.tsx:167
+#: src/components/vm/nics/nicAdd.tsx:279 src/components/vm/nics/nicBody.tsx:599
+#: src/components/vm/hostdevs/hostDevAdd.tsx:261
+#: src/components/vm/disks/diskAdd.tsx:973
+#: src/components/networks/networkOverviewTab.tsx:268
 msgid "Add"
 msgstr "Ekle"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:958
+#: src/components/create-vm-dialog/createVmDialog.tsx:959
 msgid "Add SSH keys"
 msgstr "SSH anahtarları ekle"
 
@@ -143,13 +143,13 @@ msgstr "VNC ekle"
 msgid "Add a DHCP static host entry"
 msgstr "DHCP sabit anamakine girişi ekle"
 
-#: src/components/vm/disks/vmDisksCard.tsx:71
 #: src/components/vm/disks/diskAdd.tsx:811
+#: src/components/vm/disks/vmDisksCard.tsx:71
 msgid "Add disk"
 msgstr "Disk ekle"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:278
 #: src/components/vm/hostdevs/hostDevCard.tsx:140
+#: src/components/vm/hostdevs/hostDevAdd.tsx:278
 msgid "Add host device"
 msgstr "Anamakine aygıtı ekle"
 
@@ -185,9 +185,9 @@ msgstr "Gözlemci eklemenin etkili olması için yeniden başlatma gerekir."
 msgid "Adding shared directories is possible only when the guest is shut off"
 msgstr "Paylaşılan dizinler eklemek yalnızca konuk kapalı olduğunda mümkündür"
 
+#: src/components/vm/nics/vmNicsCard.tsx:182
 #: src/components/networks/networkOverviewTab.tsx:140
 #: src/components/networks/networkOverviewTab.tsx:160
-#: src/components/vm/nics/vmNicsCard.tsx:182
 msgid "Address"
 msgstr "Adres"
 
@@ -240,6 +240,12 @@ msgstr "Uygula"
 msgid "Apply on next boot"
 msgstr "Sonraki önyüklemede uygula"
 
+#: src/components/create-vm-dialog/createVmDialog.tsx:1050
+msgid ""
+"Arguments passed to the booted kernel can often be used to control the "
+"installer. Refer to the documentation of the installer of $0."
+msgstr ""
+
 #: src/components/vm/overview/vsock.tsx:37
 msgid "Assign automatically"
 msgstr "Otomatik olarak ata"
@@ -248,10 +254,14 @@ msgstr "Otomatik olarak ata"
 msgid "Associated storage files"
 msgstr "İlişkilendirilmiş depolama dosyaları"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1494
+#: src/components/create-vm-dialog/createVmDialog.tsx:1527
+#, fuzzy
+#| msgid ""
+#| "Automated installs are only available when downloading an image or using "
+#| "cloud-init."
 msgid ""
-"Automated installs are only available when downloading an image or using "
-"cloud-init."
+"Automated installs are only available when downloading an image, an install "
+"tree or using cloud-init."
 msgstr ""
 "Otomatik kurulumlar yalnızca bir kalıp indirilirken veya cloud-init ile "
 "kullanılabilir."
@@ -260,17 +270,17 @@ msgstr ""
 msgid "Automatic"
 msgstr "Otomatik"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1624
+#: src/components/create-vm-dialog/createVmDialog.tsx:1666
 msgid "Automation"
 msgstr "Otomasyon"
 
 #: src/components/storagePools/storagePoolOverviewTab.tsx:60
-#: src/components/networks/networkOverviewTab.tsx:117
 #: src/components/vm/overview/vmOverviewCard.tsx:192
+#: src/components/networks/networkOverviewTab.tsx:117
 msgid "Autostart"
 msgstr "Otomatik başlat"
 
-#: src/components/vm/nics/vmNicsCard.tsx:841
+#: src/components/vm/nics/vmNicsCard.tsx:793
 msgid "Backend"
 msgstr "Arka uç"
 
@@ -286,6 +296,10 @@ msgstr "Blok aygıtı"
 msgid "Blocked"
 msgstr "Engellendi"
 
+#: src/components/create-vm-dialog/createVmDialog.tsx:1039
+msgid "Boot arguments"
+msgstr ""
+
 #: src/components/vm/overview/vmOverviewCard.tsx:185
 msgid "Boot order"
 msgstr "Önyükleme sırası"
@@ -298,18 +312,18 @@ msgstr "Önyükleme sırası ayarları kaydedilemedi"
 msgid "Bridge"
 msgstr "Köprü"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:100
-#: src/components/vm/hostdevs/hostDevCard.tsx:91
-#: src/components/vm/hostdevs/hostDevCard.tsx:99
-#: src/components/vm/hostdevs/hostDevCard.tsx:250
-#: src/components/vm/disks/diskEdit.tsx:91
-#: src/components/vm/disks/vmDisksCard.tsx:247
-#: src/components/vm/disks/diskAdd.tsx:294
 #: src/components/vm/overview/bootOrder.tsx:114
 #: src/components/vm/overview/bootOrder.tsx:126
 #: src/components/vm/overview/bootOrder.tsx:145
 #: src/components/vm/overview/bootOrder.tsx:148
 #: src/components/vm/overview/bootOrder.tsx:163
+#: src/components/vm/hostdevs/hostDevCard.tsx:91
+#: src/components/vm/hostdevs/hostDevCard.tsx:99
+#: src/components/vm/hostdevs/hostDevCard.tsx:250
+#: src/components/vm/hostdevs/hostDevAdd.tsx:100
+#: src/components/vm/disks/diskEdit.tsx:91
+#: src/components/vm/disks/diskAdd.tsx:294
+#: src/components/vm/disks/vmDisksCard.tsx:247
 msgid "Bus"
 msgstr "Veri yolu"
 
@@ -317,10 +331,10 @@ msgstr "Veri yolu"
 msgid "CD/DVD disc"
 msgstr "CD/DVD disk"
 
-#: src/components/vms/hostvmslist.tsx:93 src/components/vms/hostvmslist.tsx:301
 #: src/components/common/needsShutdown.tsx:206
-#: src/components/vm/vmUsageCard.tsx:52
 #: src/components/vm/overview/vmOverviewCard.tsx:180
+#: src/components/vm/vmUsageCard.tsx:52 src/components/vms/hostvmslist.tsx:93
+#: src/components/vms/hostvmslist.tsx:301
 msgid "CPU"
 msgstr "CPU"
 
@@ -329,38 +343,38 @@ msgid "CPU mode could not be saved"
 msgstr "CPU modu kaydedilemedi"
 
 #: src/components/vm/disks/diskEdit.tsx:165
-#: src/components/vm/disks/vmDisksCard.tsx:263
 #: src/components/vm/disks/diskAdd.tsx:283
+#: src/components/vm/disks/vmDisksCard.tsx:263
 msgid "Cache"
 msgstr "Önbellek"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1690
-#: src/components/storagePools/storageVolumeCreate.tsx:133
+#: src/components/common/deleteResource.tsx:116
 #: src/components/storagePools/storagePoolDelete.tsx:207
 #: src/components/storagePools/createStoragePoolDialog.tsx:512
-#: src/components/networks/networkOverviewTab.tsx:271
-#: src/components/networks/createNetworkDialog.tsx:548
-#: src/components/common/deleteResource.tsx:116
-#: src/components/vm/vmEditDescriptionDialog.tsx:81
-#: src/components/vm/confirmDialog.tsx:66
-#: src/components/vm/consoles/vnc.tsx:158
-#: src/components/vm/hostdevs/hostDevAdd.tsx:266
-#: src/components/vm/vmMigrateDialog.tsx:227
-#: src/components/vm/vmCloneDialog.tsx:111
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:248
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:127
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:340
-#: src/components/vm/disks/diskAdd.tsx:976
-#: src/components/vm/disks/mediaEject.tsx:116
-#: src/components/vm/vmRenameDialog.tsx:96
-#: src/components/vm/vmReplaceSpiceDialog.tsx:171
+#: src/components/storagePools/storageVolumeCreate.tsx:133
 #: src/components/vm/overview/memoryModal.tsx:195
 #: src/components/vm/overview/cpuModal.tsx:341
 #: src/components/vm/overview/vsock.tsx:272
-#: src/components/vm/overview/firmware.tsx:107
 #: src/components/vm/overview/bootOrder.tsx:356
 #: src/components/vm/overview/watchdog.tsx:228
+#: src/components/vm/overview/firmware.tsx:107
+#: src/components/vm/vmRenameDialog.tsx:96
+#: src/components/vm/vmReplaceSpiceDialog.tsx:171
+#: src/components/vm/hostdevs/hostDevAdd.tsx:266
+#: src/components/vm/vmCloneDialog.tsx:111
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:340
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:127
+#: src/components/vm/consoles/vnc.tsx:158
 #: src/components/vm/deleteDialog.tsx:202
+#: src/components/vm/vmMigrateDialog.tsx:227
+#: src/components/vm/confirmDialog.tsx:66
+#: src/components/vm/vmEditDescriptionDialog.tsx:81
+#: src/components/vm/disks/mediaEject.tsx:116
+#: src/components/vm/disks/diskAdd.tsx:976
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:248
+#: src/components/create-vm-dialog/createVmDialog.tsx:1732
+#: src/components/networks/networkOverviewTab.tsx:271
+#: src/components/networks/createNetworkDialog.tsx:548
 msgid "Cancel"
 msgstr "İptal"
 
@@ -401,11 +415,11 @@ msgstr ""
 "adlandırılan bir ayarı etkinleştirin. Ayrıntılar için bilgisayarınızın "
 "kılavuzuna bakın."
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:637
+#: src/components/create-vm-dialog/createVmDialog.tsx:638
 msgid "Checking token validity..."
 msgstr "Belirteç geçerliliği denetleniyor..."
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:562
+#: src/components/create-vm-dialog/createVmDialog.tsx:563
 msgid "Choose an operating system"
 msgstr "Bir işletim sistemi seçin"
 
@@ -421,7 +435,7 @@ msgstr ""
 "\"Görüntüleyiciyi başlat\"a tıklamak bir $0 dosyası indirecek ve "
 "sisteminizde Remote Viewer uygulamasını başlatacak."
 
-#: src/components/vm/vmActions.tsx:387 src/components/vm/vmCloneDialog.tsx:108
+#: src/components/vm/vmCloneDialog.tsx:108 src/components/vm/vmActions.tsx:387
 msgid "Clone"
 msgstr "Kopya"
 
@@ -429,7 +443,7 @@ msgstr "Kopya"
 msgid "Close"
 msgstr "Kapat"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:445
+#: src/components/create-vm-dialog/createVmDialog.tsx:446
 msgid "Cloud base image"
 msgstr "Bulut temel kalıbı"
 
@@ -462,12 +476,12 @@ msgstr "Bu eylemi onayla"
 msgid "Connect"
 msgstr "Bağlan"
 
-#: src/components/vms/hostvmslist.tsx:321
+#: src/components/common/machinesConnectionSelector.tsx:44
 #: src/components/storagePools/storagePoolList.tsx:63
+#: src/components/vm/overview/vmOverviewCard.tsx:158
+#: src/components/vms/hostvmslist.tsx:321
 #: src/components/networks/networkList.tsx:61
 #: src/components/networks/createNetworkDialog.tsx:34
-#: src/components/common/machinesConnectionSelector.tsx:44
-#: src/components/vm/overview/vmOverviewCard.tsx:158
 msgid "Connection"
 msgstr "Bağlantı"
 
@@ -520,24 +534,24 @@ msgstr "Anlık görüntüye geri döndürülemedi"
 msgid "Crashed"
 msgstr "Çöktü"
 
-#: src/components/storagePools/storageVolumeCreate.tsx:130
 #: src/components/storagePools/createStoragePoolDialog.tsx:509
-#: src/components/networks/createNetworkDialog.tsx:545
+#: src/components/storagePools/storageVolumeCreate.tsx:130
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:337
+#: src/components/networks/createNetworkDialog.tsx:545
 msgid "Create"
 msgstr "Oluştur"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1722
+#: src/components/create-vm-dialog/createVmDialog.tsx:1764
 msgid "Create VM"
 msgstr "Sanal makine oluştur"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1742
+#: src/components/create-vm-dialog/createVmDialog.tsx:1784
 msgid "Create VM by importing a disk image of an existing VM installation"
 msgstr ""
 "Mevcut bir sanal makine kurulumunun disk kalıbını içe aktararak sanal makine "
 "oluşturun"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1741
+#: src/components/create-vm-dialog/createVmDialog.tsx:1783
 msgid "Create VM from local or network installation medium"
 msgstr "Yerel veya ağ kurulum ortamından sanal makine oluşturun"
 
@@ -545,11 +559,11 @@ msgstr "Yerel veya ağ kurulum ortamından sanal makine oluşturun"
 msgid "Create a clone VM based on $0"
 msgstr "$0'a dayalı bir kopya sanal makine oluştur"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1652
+#: src/components/create-vm-dialog/createVmDialog.tsx:1694
 msgid "Create and edit"
 msgstr "Oluştur ve düzenle"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1684
+#: src/components/create-vm-dialog/createVmDialog.tsx:1726
 msgid "Create and run"
 msgstr "Oluştur ve çalıştır"
 
@@ -557,15 +571,15 @@ msgstr "Oluştur ve çalıştır"
 msgid "Create new"
 msgstr "Yeni oluştur"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1094
+#: src/components/create-vm-dialog/createVmDialog.tsx:1125
 msgid "Create new qcow2 volume"
 msgstr "Yeni qcow2 birimi oluştur"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1095
+#: src/components/create-vm-dialog/createVmDialog.tsx:1126
 msgid "Create new raw volume"
 msgstr "Yeni ham birim oluştur"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1669
+#: src/components/create-vm-dialog/createVmDialog.tsx:1711
 msgid "Create new virtual machine"
 msgstr "Yeni sanal makine oluştur"
 
@@ -609,7 +623,7 @@ msgstr ""
 "VFIO aygıtlarına sahip sanal makinelerin çalışırken anlık görüntülerinin "
 "oluşturulması desteklenmiyor."
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1469
+#: src/components/create-vm-dialog/createVmDialog.tsx:1502
 msgid "Creation of VM $0 failed"
 msgstr "$0 sanal makinesini oluşturma başarısız oldu"
 
@@ -652,16 +666,15 @@ msgstr "DHCP Ayarları"
 msgid "Deactivate"
 msgstr "Devre dışı bırak"
 
-#: src/components/storagePools/storagePoolDelete.tsx:204
-#: src/components/storagePools/storagePoolDelete.tsx:234
-#: src/components/storagePools/storagePoolDelete.tsx:244
-#: src/components/networks/network.tsx:140
-#: src/components/networks/network.tsx:143
 #: src/components/common/deleteResource.tsx:104
 #: src/components/common/deleteResource.tsx:164
 #: src/components/common/deleteResource.tsx:175
-#: src/components/vm/vmActions.tsx:470 src/components/vm/vmActions.tsx:478
-#: src/components/vm/deleteDialog.tsx:199
+#: src/components/storagePools/storagePoolDelete.tsx:204
+#: src/components/storagePools/storagePoolDelete.tsx:234
+#: src/components/storagePools/storagePoolDelete.tsx:244
+#: src/components/vm/deleteDialog.tsx:199 src/components/vm/vmActions.tsx:470
+#: src/components/vm/vmActions.tsx:478 src/components/networks/network.tsx:140
+#: src/components/networks/network.tsx:143
 msgid "Delete"
 msgstr "Sil"
 
@@ -703,9 +716,9 @@ msgstr ""
 msgid "Deleting shared directories is possible only when the guest is shut off"
 msgstr "Paylaşılan dizinleri silmek yalnızca konuk kapalı olduğunda mümkündür"
 
-#: src/components/vm/vmEditDescriptionDialog.tsx:66
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:76
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:123
+#: src/components/vm/vmEditDescriptionDialog.tsx:66
 msgid "Description"
 msgstr "Açıklama"
 
@@ -732,22 +745,22 @@ msgstr ""
 "Silmeyi denemeden önce bu havuzu kullanan diskleri herhangi bir sanal "
 "makineden ayırın."
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1618
+#: src/components/create-vm-dialog/createVmDialog.tsx:1660
 msgid "Details"
 msgstr "Ayrıntılar"
 
-#: src/components/networks/networkList.tsx:60
-#: src/components/networks/createNetworkDialog.tsx:218
-#: src/components/vm/hostdevs/hostDevAdd.tsx:99
-#: src/components/vm/hostdevs/hostDevAdd.tsx:144
-#: src/components/vm/hostdevs/hostDevCard.tsx:90
-#: src/components/vm/hostdevs/hostDevCard.tsx:249
-#: src/components/vm/disks/vmDisksCard.tsx:244
-#: src/components/vm/disks/diskAdd.tsx:450
 #: src/components/vm/overview/bootOrder.tsx:106
 #: src/components/vm/overview/bootOrder.tsx:113
 #: src/components/vm/overview/bootOrder.tsx:146
 #: src/components/vm/overview/bootOrder.tsx:149
+#: src/components/vm/hostdevs/hostDevCard.tsx:90
+#: src/components/vm/hostdevs/hostDevCard.tsx:249
+#: src/components/vm/hostdevs/hostDevAdd.tsx:99
+#: src/components/vm/hostdevs/hostDevAdd.tsx:144
+#: src/components/vm/disks/diskAdd.tsx:450
+#: src/components/vm/disks/vmDisksCard.tsx:244
+#: src/components/networks/networkList.tsx:60
+#: src/components/networks/createNetworkDialog.tsx:218
 msgid "Device"
 msgstr "Aygıt"
 
@@ -780,7 +793,7 @@ msgstr "Diskin eklenmesi başarısız oldu"
 msgid "Disk identifier"
 msgstr "Disk tanımlayıcısı"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:458
+#: src/components/create-vm-dialog/createVmDialog.tsx:459
 msgid "Disk image"
 msgstr "Disk kalıbı"
 
@@ -788,7 +801,7 @@ msgstr "Disk kalıbı"
 msgid "Disk image file"
 msgstr "Disk kalıp dosyası"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:262
+#: src/components/create-vm-dialog/createVmDialog.tsx:263
 msgid "Disk image path must not be empty"
 msgstr "Disk kalıbı yolu boş olmamalıdır"
 
@@ -834,7 +847,7 @@ msgstr "Etki alanı çöktü"
 msgid "Domain is blocked on resource"
 msgstr "Etki alanı, kaynakta engellendi"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:441
+#: src/components/create-vm-dialog/createVmDialog.tsx:442
 msgid "Download an OS"
 msgstr "Bir işletim sistemi indir"
 
@@ -866,7 +879,7 @@ msgstr "Süre"
 msgid "Dying"
 msgstr "Sonlanıyor"
 
-#: src/components/vm/nics/vmNicsCard.tsx:676
+#: src/components/vm/nics/vmNicsCard.tsx:633
 #: src/components/vm/disks/diskEdit.tsx:245
 msgid "Edit"
 msgstr "Düzenle"
@@ -896,11 +909,11 @@ msgstr "vsock arayüzünü düzenle"
 msgid "Edit watchdog device type"
 msgstr "Gözlemci aygıt türünü düzenle"
 
-#: src/components/vm/nics/vmNicsCard.tsx:664
+#: src/components/vm/nics/vmNicsCard.tsx:621
 msgid "Editing network interfaces of transient guests is not allowed"
 msgstr "Geçici konukların ağ arayüzlerini düzenlemeye izin verilmiyor"
 
-#: src/components/vm/nics/vmNicsCard.tsx:670
+#: src/components/vm/nics/vmNicsCard.tsx:627
 msgid "Editing transient network interfaces is not allowed"
 msgstr "Geçici ağ arayüzlerini düzenlemeye izin verilmiyor"
 
@@ -934,13 +947,13 @@ msgstr "Bitiş"
 msgid "End should not be empty"
 msgstr "Bitiş boş olmamalıdır"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1493
+#: src/components/create-vm-dialog/createVmDialog.tsx:1526
 msgid "Enter root and/or user information to enable unattended installation."
 msgstr ""
 "Katılımsız kurulumu etkinleştirmek için root ve/veya kullanıcı bilgilerini "
 "girin."
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:641
+#: src/components/create-vm-dialog/createVmDialog.tsx:642
 msgid "Error checking token"
 msgstr "Belirteç denetlenirken hata oluştu"
 
@@ -948,7 +961,7 @@ msgstr "Belirteç denetlenirken hata oluştu"
 msgid "Example, $0"
 msgstr "Örneğin, $0"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:382
+#: src/components/create-vm-dialog/createVmDialog.tsx:383
 msgid "Existing disk image on host's file system"
 msgstr "Anamakinenin dosya sisteminde varolan disk kalıbı"
 
@@ -1012,7 +1025,7 @@ msgstr "Gözlemci ayırma başarısız oldu"
 msgid "Failed to fetch some resources"
 msgstr "Bazı kaynakların alınması başarısız oldu"
 
-#: src/components/vm/nics/vmNicsCard.tsx:492
+#: src/components/vm/nics/vmNicsCard.tsx:445
 msgid "Failed to fetch the IP addresses of the interfaces present in $0"
 msgstr "$0 içinde bulunan arayüzlerin IP adreslerinin alınması başarısız oldu"
 
@@ -1041,8 +1054,8 @@ msgstr "$0 sanal makinesinin açıklamasını ayarlama başarısız oldu"
 msgid "Fewer than the maximum number of virtual CPUs should be enabled."
 msgstr "En fazla sanal CPU sayısından daha azı etkinleştirilmelidir."
 
-#: src/components/vm/disks/vmDiskColumns.tsx:35
 #: src/components/vm/overview/bootOrder.tsx:105
+#: src/components/vm/disks/vmDiskColumns.tsx:35
 msgid "File"
 msgstr "Dosya"
 
@@ -1058,8 +1071,8 @@ msgstr "Dosya sistemi dizini"
 msgid "Filter by name"
 msgstr "Ada göre süz"
 
-#: src/components/vm/overview/firmware.tsx:90
 #: src/components/vm/overview/vmOverviewCard.tsx:246
+#: src/components/vm/overview/firmware.tsx:90
 msgid "Firmware"
 msgstr "Aygıt yazılımı"
 
@@ -1091,8 +1104,8 @@ msgstr "$0 kapatmaya zorlansın mı?"
 msgid "Force shutdown and restart"
 msgstr "Kapatmaya ve yeniden başlatmaya zorla"
 
-#: src/components/storagePools/storageVolumeCreateBody.tsx:107
 #: src/components/storagePools/createStoragePoolDialog.tsx:244
+#: src/components/storagePools/storageVolumeCreateBody.tsx:107
 #: src/components/vm/disks/vmDiskColumns.tsx:130
 msgid "Format"
 msgstr "Biçimlendir"
@@ -1119,8 +1132,8 @@ msgstr ""
 "paylaşılmayan, yazılabilir disk kalıpları aktarılacaktır. Kullanılmayan "
 "depolama, taşınmadan sonra kaynakta kalacaktır."
 
-#: src/components/networks/networkOverviewTab.tsx:108
 #: src/components/vm/overview/vmOverviewCard.tsx:154
+#: src/components/networks/networkOverviewTab.tsx:108
 msgid "General"
 msgstr "Genel"
 
@@ -1128,15 +1141,15 @@ msgstr "Genel"
 msgid "Generate automatically"
 msgstr "Otomatik olarak oluştur"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:615
+#: src/components/create-vm-dialog/createVmDialog.tsx:616
 msgid "Get a new RHSM token."
 msgstr "Yeni bir RHSM belirteci edinin."
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1017
-#: src/components/create-vm-dialog/createVmDialog.tsx:1151
 #: src/components/storagePools/storageVolumeCreateBody.tsx:139
-#: src/components/vm/disks/vmDisksCard.tsx:39
 #: src/components/vm/overview/memorySelectRow.tsx:95
+#: src/components/vm/disks/vmDisksCard.tsx:39
+#: src/components/create-vm-dialog/createVmDialog.tsx:1018
+#: src/components/create-vm-dialog/createVmDialog.tsx:1182
 msgid "GiB"
 msgstr "GiB"
 
@@ -1172,15 +1185,15 @@ msgstr "Misafir bağlantı noktası yardım"
 msgid "Hardware virtualization is disabled"
 msgstr "Donanım sanallaştırma etkisizleştirildi"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:225
 #: src/components/vm/disks/diskAdd.tsx:279
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:225
 msgid "Hide additional options"
 msgstr "Ek seçenekleri gizle"
 
 #: src/components/storagePools/storagePoolOverviewTab.tsx:23
 #: src/components/storagePools/createStoragePoolDialog.tsx:154
-#: src/components/vm/disks/vmDiskColumns.tsx:40
 #: src/components/vm/overview/bootOrder.tsx:110
+#: src/components/vm/disks/vmDiskColumns.tsx:40
 msgid "Host"
 msgstr "Anamakine"
 
@@ -1232,9 +1245,9 @@ msgstr "Kimlik"
 msgid "IP"
 msgstr "IP"
 
-#: src/components/networks/networkOverviewTab.tsx:255
 #: src/components/vm/nics/nicBody.tsx:475
-#: src/components/vm/nics/vmNicsCard.tsx:620
+#: src/components/vm/nics/vmNicsCard.tsx:573
+#: src/components/networks/networkOverviewTab.tsx:255
 msgid "IP address"
 msgstr "IP adresi"
 
@@ -1249,10 +1262,6 @@ msgstr "IP adresi boş olmamak zorundadır"
 #: src/components/networks/createNetworkDialog.tsx:248
 msgid "IP configuration"
 msgstr "IP yapılandırması"
-
-#: src/components/vm/nics/vmNicsCard.tsx:364
-msgid "IPv4 Address"
-msgstr "IPv4 Adresi"
 
 #: src/components/networks/networkOverviewTab.tsx:136
 #: src/components/networks/createNetworkDialog.tsx:337
@@ -1282,10 +1291,6 @@ msgstr "IPv4 ön ek uzunluğu 24 veya daha az olmalıdır"
 #: src/components/networks/createNetworkDialog.tsx:90
 msgid "IPv4 prefix length must be a multiple of 8"
 msgstr "IPv4 ön ek uzunluğu 8'in katı olmalıdır"
-
-#: src/components/vm/nics/vmNicsCard.tsx:378
-msgid "IPv6 Address"
-msgstr "IPv6 Adresi"
 
 #: src/components/networks/networkOverviewTab.tsx:156
 #: src/components/networks/createNetworkDialog.tsx:378
@@ -1336,19 +1341,19 @@ msgstr ""
 msgid "Ignore"
 msgstr "Yok say"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1722
+#: src/components/create-vm-dialog/createVmDialog.tsx:1764
 msgid "Import VM"
 msgstr "Sanal makineyi içe aktar"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1669
+#: src/components/create-vm-dialog/createVmDialog.tsx:1711
 msgid "Import a virtual machine"
 msgstr "Bir sanal makineyi içe aktar"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1652
+#: src/components/create-vm-dialog/createVmDialog.tsx:1694
 msgid "Import and edit"
 msgstr "İçe aktar ve düzenle"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1684
+#: src/components/create-vm-dialog/createVmDialog.tsx:1726
 msgid "Import and run"
 msgstr "İçe aktar ve çalıştır"
 
@@ -1356,7 +1361,7 @@ msgstr "İçe aktar ve çalıştır"
 msgid "Importing an image with a backing file is unsupported"
 msgstr "Destek dosyası olan bir kalıbın içe aktarılması desteklenmiyor"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:391
+#: src/components/create-vm-dialog/createVmDialog.tsx:392
 msgid ""
 "In most configurations, macvtap does not work for host to guest network "
 "communication."
@@ -1396,15 +1401,15 @@ msgstr "Sanal makine içinde"
 msgid "Install"
 msgstr "Yükle"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:458
+#: src/components/create-vm-dialog/createVmDialog.tsx:459
 msgid "Installation source"
 msgstr "Kurulum kaynağı"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:264
+#: src/components/create-vm-dialog/createVmDialog.tsx:265
 msgid "Installation source must not be empty"
 msgstr "Kurulum kaynağı boş olmamalıdır"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:433
+#: src/components/create-vm-dialog/createVmDialog.tsx:434
 msgid "Installation type"
 msgstr "Kurulum türü"
 
@@ -1448,7 +1453,7 @@ msgstr "Geçersiz IPv6 adresi"
 msgid "Invalid IPv6 prefix"
 msgstr "Geçersiz IPv6 ön eki"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:248
+#: src/components/create-vm-dialog/createVmDialog.tsx:249
 msgid "Invalid filename"
 msgstr "Geçersiz dosya adı"
 
@@ -1464,7 +1469,7 @@ msgstr ""
 "Ayrıca, SPICE desteklemeyen tarayıcıda satır içi grafiksel konsolu "
 "etkinleştirmek için de kullanılabilir."
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:917
+#: src/components/create-vm-dialog/createVmDialog.tsx:918
 msgid "Keys are located in ~/.ssh/ and have a \".pub\" extension."
 msgstr "Anahtarlar ~/.ssh/ dizininde bulunur ve \".pub\" uzantısına sahiptir."
 
@@ -1476,18 +1481,18 @@ msgstr "LVM birimi grubu"
 msgid "Launch viewer"
 msgstr "Görüntüleyiciyi başlat"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:771
+#: src/components/create-vm-dialog/createVmDialog.tsx:772
 msgid ""
 "Leave the password blank if you do not wish to have a root account created"
 msgstr "Bir root hesabının oluşturulmasını istemiyorsanız parolayı boş bırakın"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:819
+#: src/components/create-vm-dialog/createVmDialog.tsx:820
 msgid ""
 "Leave the password blank if you do not wish to have a user account created"
 msgstr ""
 "Bir kullanıcı hesabının oluşturulmasını istemiyorsanız parolayı boş bırakın"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:949
+#: src/components/create-vm-dialog/createVmDialog.tsx:950
 msgid "Leave the password blank if you do not wish to set a root password"
 msgstr "Bir root parolası ayarlamak istemiyorsanız parolayı boş bırakın"
 
@@ -1502,11 +1507,11 @@ msgstr ""
 msgid "Libvirt or hypervisor does not support UEFI"
 msgstr "Libvirt veya hipervizör UEFI'yi desteklemiyor"
 
-#: src/components/vm/nics/vmNicsCard.tsx:667
+#: src/components/vm/nics/vmNicsCard.tsx:624
 msgid "Loading available network devices"
 msgstr "Kullanılabilir ağ aygıtları yükleniyor"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1605
+#: src/components/create-vm-dialog/createVmDialog.tsx:1647
 msgid "Loading operating system information..."
 msgstr "İşletim sistemi bilgileri yükleniyor..."
 
@@ -1514,7 +1519,7 @@ msgstr "İşletim sistemi bilgileri yükleniyor..."
 msgid "Loading resources"
 msgstr "Kaynaklar yükleniyor"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:448
+#: src/components/create-vm-dialog/createVmDialog.tsx:449
 msgid "Local install media (ISO image or distro install tree)"
 msgstr "Yerel kurulum ortamı (ISO kalıbı veya dağıtım kurulum ağacı)"
 
@@ -1526,15 +1531,15 @@ msgstr "Yerel ölçeklendirme"
 msgid "Location"
 msgstr "Konum"
 
-#: src/components/networks/networkOverviewTab.tsx:66
 #: src/components/vm/overview/bootOrder.tsx:120
+#: src/components/networks/networkOverviewTab.tsx:66
 msgid "MAC"
 msgstr "MAC"
 
-#: src/components/networks/networkOverviewTab.tsx:246
-#: src/components/vm/nics/vmNicsCard.tsx:615
-#: src/components/vm/nics/vmNicsCard.tsx:809
 #: src/components/vm/nics/nicEdit.tsx:54 src/components/vm/nics/nicAdd.tsx:83
+#: src/components/vm/nics/vmNicsCard.tsx:568
+#: src/components/vm/nics/vmNicsCard.tsx:766
+#: src/components/networks/networkOverviewTab.tsx:246
 msgid "MAC address"
 msgstr "MAC adresi"
 
@@ -1606,10 +1611,10 @@ msgstr "Ortam $0 sanal makinesinden çıkarılamadı"
 msgid "Media will be ejected from $0:"
 msgstr "Ortam $0 sanal makinesinden çıkarılacak:"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1002
-#: src/components/vms/hostvmslist.tsx:111
-#: src/components/vms/hostvmslist.tsx:302 src/components/vm/vmUsageCard.tsx:44
 #: src/components/vm/overview/vmOverviewCard.tsx:175
+#: src/components/vm/vmUsageCard.tsx:44 src/components/vms/hostvmslist.tsx:111
+#: src/components/vms/hostvmslist.tsx:302
+#: src/components/create-vm-dialog/createVmDialog.tsx:1003
 msgid "Memory"
 msgstr "Bellek"
 
@@ -1622,7 +1627,7 @@ msgstr "Bellek Denetleyicisi"
 msgid "Memory could not be saved"
 msgstr "Bellek kaydedilemedi"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:271
+#: src/components/create-vm-dialog/createVmDialog.tsx:272
 msgid "Memory must not be 0"
 msgstr "Bellek 0 olmamak zorundadır"
 
@@ -1638,15 +1643,15 @@ msgstr "Bellek anlık görüntüsü yaklaşık $0 kullanacak."
 msgid "Memory state path"
 msgstr "Bellek durumu konumu"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1015
-#: src/components/create-vm-dialog/createVmDialog.tsx:1149
 #: src/components/storagePools/storageVolumeCreateBody.tsx:137
 #: src/components/vm/overview/memorySelectRow.tsx:93
+#: src/components/create-vm-dialog/createVmDialog.tsx:1016
+#: src/components/create-vm-dialog/createVmDialog.tsx:1180
 msgid "MiB"
 msgstr "MiB"
 
-#: src/components/vm/vmActions.tsx:410
 #: src/components/vm/vmMigrateDialog.tsx:224
+#: src/components/vm/vmActions.tsx:410
 msgid "Migrate"
 msgstr "Taşı"
 
@@ -1662,10 +1667,10 @@ msgstr "Taşıma başarısız oldu"
 msgid "Miscellaneous"
 msgstr "Çeşitli"
 
-#: src/components/vm/nics/nicBody.tsx:282
-#: src/components/vm/nics/vmNicsCard.tsx:167
 #: src/components/vm/overview/cpuModal.tsx:304
 #: src/components/vm/overview/cpuModal.tsx:306
+#: src/components/vm/nics/nicBody.tsx:282
+#: src/components/vm/nics/vmNicsCard.tsx:167
 msgid "Mode"
 msgstr "Kip"
 
@@ -1673,12 +1678,12 @@ msgstr "Kip"
 msgid "Mode help"
 msgstr "Mod yardımı"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:197
 #: src/components/vm/nics/nicBody.tsx:59
+#: src/components/vm/hostdevs/hostDevCard.tsx:197
 msgid "Model"
 msgstr "Model"
 
-#: src/components/vm/nics/vmNicsCard.tsx:815
+#: src/components/vm/nics/vmNicsCard.tsx:772
 msgid "Model type"
 msgstr "Model türü"
 
@@ -1708,21 +1713,21 @@ msgstr "Ağ tanımlayıcısı yerine bir adres olmalıdır, örneğin $0"
 msgid "NAT to $0"
 msgstr "$0 ağına NAT yap"
 
-#: src/components/vm/nics/vmNicsCard.tsx:570
+#: src/components/vm/nics/vmNicsCard.tsx:523
 msgid "NIC $0 of VM $1 failed to change state"
 msgstr "$1 sanal makinesinin $0 NIC'inin durumunu değiştirme başarısız oldu"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:312
-#: src/components/vms/hostvmslist.tsx:320
 #: src/components/storagePools/storagePoolVolumesTab.tsx:77
-#: src/components/storagePools/storageVolumeCreateBody.tsx:51
-#: src/components/storagePools/storagePoolList.tsx:61
 #: src/components/storagePools/createStoragePoolDialog.tsx:58
-#: src/components/networks/networkList.tsx:59
-#: src/components/networks/createNetworkDialog.tsx:172
+#: src/components/storagePools/storagePoolList.tsx:61
+#: src/components/storagePools/storageVolumeCreateBody.tsx:51
 #: src/components/vm/vmCloneDialog.tsx:92
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:57
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:113
+#: src/components/vms/hostvmslist.tsx:320
+#: src/components/create-vm-dialog/createVmDialog.tsx:313
+#: src/components/networks/networkList.tsx:59
+#: src/components/networks/createNetworkDialog.tsx:172
 msgid "Name"
 msgstr "Ad"
 
@@ -1738,9 +1743,9 @@ msgstr "Ad boş olamaz"
 msgid "Name contains invalid characters"
 msgstr "Ad geçersiz karakterler içeriyor"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:230
 #: src/components/storagePools/storageVolumeCreate.tsx:73
 #: src/components/vm/vmCloneDialog.tsx:51
+#: src/components/create-vm-dialog/createVmDialog.tsx:231
 msgid "Name must not be empty"
 msgstr "Ad boş olmamak zorundadır"
 
@@ -1781,7 +1786,7 @@ msgstr "Ağ Denetleyicisi"
 msgid "Network MAC can not be empty."
 msgstr "Ağ MAC alanı boş olamaz."
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:453
+#: src/components/create-vm-dialog/createVmDialog.tsx:454
 msgid "Network boot (PXE)"
 msgstr "Ağ üzerinden önyükleme (PXE)"
 
@@ -1793,11 +1798,11 @@ msgstr "Ağ dosya sistemi (NFS)"
 msgid "Network interface"
 msgstr "Ağ arayüzü"
 
-#: src/components/vm/nics/vmNicsCard.tsx:692
+#: src/components/vm/nics/vmNicsCard.tsx:649
 msgid "Network interface $0 could not be removed"
 msgstr "$0 ağ arayüzü kaldırılamadı"
 
-#: src/components/vm/nics/vmNicsCard.tsx:693
+#: src/components/vm/nics/vmNicsCard.tsx:650
 msgid "Network interface $0 will be removed from $1"
 msgstr "$0 ağ arayüzü $1 sanal makinesinden kaldırılacak"
 
@@ -1809,7 +1814,7 @@ msgstr "Ağ arayüzü ayarları kaydedilemedi"
 msgid "Network interfaces"
 msgstr "Ağ arayüzleri"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:399
+#: src/components/create-vm-dialog/createVmDialog.tsx:400
 msgid "Network selection does not support PXE."
 msgstr "Ağ seçimi PXE'yi desteklemiyor."
 
@@ -1831,7 +1836,7 @@ msgstr "Yeni ad boş olmamalıdır"
 msgid "New volume name"
 msgstr "Yeni birim adı"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:956
+#: src/components/create-vm-dialog/createVmDialog.tsx:957
 msgid "No SSH keys specified"
 msgstr "SSH anahtarı belirtilmedi"
 
@@ -1863,7 +1868,7 @@ msgstr "Anamakine aygıtları yok"
 msgid "No network devices"
 msgstr "Ağ aygıtları yok"
 
-#: src/components/vm/nics/vmNicsCard.tsx:876
+#: src/components/vm/nics/vmNicsCard.tsx:828
 msgid "No network interfaces"
 msgstr "Ağ arayüzleri yok"
 
@@ -1903,7 +1908,7 @@ msgstr "Mevcut kaynaklar yok"
 msgid "No state"
 msgstr "Durum yok"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1099
+#: src/components/create-vm-dialog/createVmDialog.tsx:1130
 msgid "No storage"
 msgstr "Depolama yok"
 
@@ -1954,15 +1959,15 @@ msgstr "Yok"
 msgid "None (isolated network)"
 msgstr "Yok (yalıtılmış ağ)"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:710
+#: src/components/create-vm-dialog/createVmDialog.tsx:711
 msgid "Offline token"
 msgstr "Çevrim dışı belirteç"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:268
+#: src/components/create-vm-dialog/createVmDialog.tsx:269
 msgid "Offline token must not be empty"
 msgstr "Çevrim dışı belirteç boş olmamalıdır"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:645
+#: src/components/create-vm-dialog/createVmDialog.tsx:646
 msgid "Old token expired"
 msgstr "Eski belirtecin süresi doldu"
 
@@ -1978,9 +1983,9 @@ msgstr ""
 "Seçilen bir veya daha fazla birim etki alanları tarafından kullanılıyor. "
 "Birimi silmeye izin vermek için önce diskleri ayırın."
 
-#: src/components/vm/nics/nicEdit.tsx:51
 #: src/components/vm/overview/memoryModal.tsx:173
 #: src/components/vm/overview/bootOrder.tsx:394
+#: src/components/vm/nics/nicEdit.tsx:51
 msgid "Only editable when the guest is shut off"
 msgstr "Sadece konuk kapatıldığında düzenlenebilir"
 
@@ -1988,7 +1993,7 @@ msgstr "Sadece konuk kapatıldığında düzenlenebilir"
 msgid "Open"
 msgstr "Açık"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:557
+#: src/components/create-vm-dialog/createVmDialog.tsx:558
 msgid "Operating system"
 msgstr "İşletim sistemi"
 
@@ -2034,8 +2039,8 @@ msgstr "Parola en fazla 8 karakter olmak zorundadır."
 
 #: src/components/vm/hostdevs/hostDevCard.tsx:115
 #: src/components/vm/hostdevs/hostDevCard.tsx:119
-#: src/components/vm/disks/diskEdit.tsx:44
 #: src/components/vm/deleteDialog.tsx:67
+#: src/components/vm/disks/diskEdit.tsx:44
 msgid "Path"
 msgstr "Yol"
 
@@ -2043,11 +2048,11 @@ msgstr "Yol"
 msgid "Path on host's filesystem"
 msgstr "Anamakinenin dosya sistemi üzerindeki yol"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:362
+#: src/components/create-vm-dialog/createVmDialog.tsx:363
 msgid "Path to ISO file on host's file system"
 msgstr "Anamakinenin dosya sistemi üzerindeki ISO dosyasının yolu"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:372
+#: src/components/create-vm-dialog/createVmDialog.tsx:373
 msgid "Path to cloud image file on host's file system"
 msgstr "Anamakinenin dosya sistemi üzerindeki bulut kalıp dosyasının yolu"
 
@@ -2115,11 +2120,11 @@ msgstr ""
 "Sanal makinenizi elle nasıl yeniden yapılandıracağınızı öğrenmek için lütfen "
 "$0 adresine bakın."
 
-#: src/components/vm/disks/diskAdd.tsx:204
-#: src/components/vm/disks/mediaEject.tsx:85
-#: src/components/vm/disks/vmDiskColumns.tsx:38
 #: src/components/vm/overview/bootOrder.tsx:108
 #: src/components/vm/deleteDialog.tsx:75
+#: src/components/vm/disks/mediaEject.tsx:85
+#: src/components/vm/disks/diskAdd.tsx:204
+#: src/components/vm/disks/vmDiskColumns.tsx:38
 msgid "Pool"
 msgstr "Havuz"
 
@@ -2139,11 +2144,11 @@ msgstr "Havuz türü birim oluşturmayı desteklemiyor"
 msgid "Pool's volumes are used by VMs "
 msgstr "Havuzun birimleri sanal makineler tarafından kullanılıyor "
 
-#: src/components/vm/consoles/vnc.tsx:170
-#: src/components/vm/nics/vmNicsCard.tsx:190
-#: src/components/vm/disks/vmDiskColumns.tsx:41
 #: src/components/vm/overview/bootOrder.tsx:111
 #: src/components/vm/overview/bootOrder.tsx:127
+#: src/components/vm/nics/vmNicsCard.tsx:190
+#: src/components/vm/consoles/vnc.tsx:170
+#: src/components/vm/disks/vmDiskColumns.tsx:41
 msgid "Port"
 msgstr "Bağlantı noktası"
 
@@ -2168,7 +2173,7 @@ msgstr ""
 "başladığında otomatik olarak serbest bir bağlantı noktası atamak için boş "
 "bırakın."
 
-#: src/components/vm/consoles/vnc.tsx:97 src/components/vm/nics/nicBody.tsx:434
+#: src/components/vm/nics/nicBody.tsx:434 src/components/vm/consoles/vnc.tsx:97
 msgid "Port must be a number."
 msgstr "Bağlantı noktası bir sayı olmak zorundadır."
 
@@ -2208,23 +2213,23 @@ msgstr "İşleme Hızlandırıcı"
 msgid "Processor"
 msgstr "İşlemci"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:151
-#: src/components/vm/hostdevs/hostDevCard.tsx:240
-#: src/components/vm/hostdevs/hostDevCard.tsx:246
 #: src/components/vm/overview/bootOrder.tsx:141
 #: src/components/vm/overview/bootOrder.tsx:157
+#: src/components/vm/hostdevs/hostDevCard.tsx:240
+#: src/components/vm/hostdevs/hostDevCard.tsx:246
+#: src/components/vm/hostdevs/hostDevAdd.tsx:151
 msgid "Product"
 msgstr "Ürün"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:748
+#: src/components/create-vm-dialog/createVmDialog.tsx:749
 msgid "Profile"
 msgstr "Profil"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:106
-#: src/components/vm/nics/nicBody.tsx:517
-#: src/components/vm/disks/vmDiskColumns.tsx:37
 #: src/components/vm/overview/bootOrder.tsx:107
 #: src/components/vm/overview/bootOrder.tsx:170
+#: src/components/vm/nics/nicBody.tsx:517
+#: src/components/vm/hostdevs/hostDevCard.tsx:106
+#: src/components/vm/disks/vmDiskColumns.tsx:37
 msgid "Protocol"
 msgstr "Protokol"
 
@@ -2247,11 +2252,11 @@ msgstr "Ayrıntıları adlandırılan ağ tanımıyla açıklanan bir bağlantı
 msgid "Provides a virtual LAN with NAT to the outside world."
 msgstr "NAT ile dış dünyaya sanal bir LAN sağlar."
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:914
+#: src/components/create-vm-dialog/createVmDialog.tsx:915
 msgid "Public SSH key"
 msgstr "Ortak SSH anahtarı"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:910
+#: src/components/create-vm-dialog/createVmDialog.tsx:911
 msgid "Public key"
 msgstr "Ortak anahtar"
 
@@ -2273,7 +2278,7 @@ msgstr "Yeniden başlat"
 msgid "Reboot $0?"
 msgstr "$0 yeniden başlatılsın mı?"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:535
+#: src/components/create-vm-dialog/createVmDialog.tsx:536
 msgid "Recommended operating systems"
 msgstr "Tavsiye edilen işletim sistemleri"
 
@@ -2281,7 +2286,7 @@ msgstr "Tavsiye edilen işletim sistemleri"
 msgid "Released $0"
 msgstr "$0 tarihinde yayınlandı"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:420
+#: src/components/create-vm-dialog/createVmDialog.tsx:421
 msgid "Remote URL"
 msgstr "Uzak URL"
 
@@ -2306,17 +2311,17 @@ msgstr "Uzak görüntüleyici"
 msgid "Remote viewer applications can connect to the following address:"
 msgstr "Uzak görüntüleyici uygulamaları aşağıdaki adrese bağlanabilir:"
 
-#: src/components/networks/networkOverviewTab.tsx:68
-#: src/components/vm/hostdevs/hostDevCard.tsx:256
-#: src/components/vm/hostdevs/hostDevCard.tsx:262
-#: src/components/vm/nics/vmNicsCard.tsx:694
-#: src/components/vm/nics/vmNicsCard.tsx:709
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:52
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:61
-#: src/components/vm/disks/vmDiskColumns.tsx:172
-#: src/components/vm/disks/vmDiskColumns.tsx:253
 #: src/components/vm/overview/vsock.tsx:269
 #: src/components/vm/overview/watchdog.tsx:225
+#: src/components/vm/nics/vmNicsCard.tsx:651
+#: src/components/vm/nics/vmNicsCard.tsx:666
+#: src/components/vm/hostdevs/hostDevCard.tsx:256
+#: src/components/vm/hostdevs/hostDevCard.tsx:262
+#: src/components/vm/disks/vmDiskColumns.tsx:172
+#: src/components/vm/disks/vmDiskColumns.tsx:253
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:52
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:61
+#: src/components/networks/networkOverviewTab.tsx:68
 msgid "Remove"
 msgstr "Kaldır"
 
@@ -2340,13 +2345,13 @@ msgstr "Dosya sistemi kaldırılsın mı?"
 msgid "Remove host device from VM?"
 msgstr "Anamakine aygıtı sanal makineden kaldırılsın mı?"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:926
 #: src/components/vm/nics/nicBody.tsx:536
 #: src/components/vm/nics/nicBody.tsx:567
+#: src/components/create-vm-dialog/createVmDialog.tsx:927
 msgid "Remove item"
 msgstr "Ögeyi kaldır"
 
-#: src/components/vm/nics/vmNicsCard.tsx:691
+#: src/components/vm/nics/vmNicsCard.tsx:648
 msgid "Remove network interface?"
 msgstr "Ağ arayüzü kaldırılsın mı?"
 
@@ -2354,7 +2359,7 @@ msgstr "Ağ arayüzü kaldırılsın mı?"
 msgid "Remove static host from DHCP"
 msgstr "DHCP'den sabit anamakineyi kaldır"
 
-#: src/components/vm/vmActions.tsx:434 src/components/vm/vmRenameDialog.tsx:93
+#: src/components/vm/vmRenameDialog.tsx:93 src/components/vm/vmActions.tsx:434
 msgid "Rename"
 msgstr "Yeniden adlandır"
 
@@ -2366,8 +2371,8 @@ msgstr "$0 sanal makinesini yeniden adlandır"
 msgid "Replace"
 msgstr "Değiştir"
 
-#: src/components/vm/vmActions.tsx:421 src/components/vm/usesSpice.tsx:42
 #: src/components/vm/vmReplaceSpiceDialog.tsx:133
+#: src/components/vm/vmActions.tsx:421 src/components/vm/usesSpice.tsx:42
 msgid "Replace SPICE devices"
 msgstr "SPICE aygıtlarını değiştir"
 
@@ -2413,8 +2418,8 @@ msgstr "Devam"
 msgid "Retry"
 msgstr "Yeniden dene"
 
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:117
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:197
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:117
 msgid "Revert"
 msgstr "Geri döndür"
 
@@ -2432,7 +2437,7 @@ msgstr ""
 "oluşturulduğu zamana geri götürecek ve anlık görüntüde kaydedilmeyen "
 "verilerle birlikte şu anki durum kaybedilecektir"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:801
+#: src/components/create-vm-dialog/createVmDialog.tsx:802
 msgid "Root password"
 msgstr "Root parolası"
 
@@ -2452,8 +2457,8 @@ msgstr "Satır seçimi"
 msgid "Run"
 msgstr "Çalıştır"
 
-#: src/components/networks/networkOverviewTab.tsx:122
 #: src/components/vm/overview/vmOverviewCard.tsx:107
+#: src/components/networks/networkOverviewTab.tsx:122
 msgid "Run when host boots"
 msgstr "Anamakine önyüklendiğinde çalıştır"
 
@@ -2478,7 +2483,7 @@ msgstr ""
 "SPICE bu anamakinede desteklenmiyor ve bu sanal makinenin önyükleme "
 "yapmamasına neden olacak."
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:957
+#: src/components/create-vm-dialog/createVmDialog.tsx:958
 msgid "SSH keys"
 msgstr "SSH anahtarları"
 
@@ -2486,15 +2491,15 @@ msgstr "SSH anahtarları"
 msgid "Satellite Communication Controller"
 msgstr "Uydu İletişim Denetleyicisi"
 
-#: src/components/vm/vmEditDescriptionDialog.tsx:78
-#: src/components/vm/consoles/vnc.tsx:155
-#: src/components/vm/nics/nicEdit.tsx:234
-#: src/components/vm/disks/diskEdit.tsx:208
 #: src/components/vm/overview/memoryModal.tsx:192
 #: src/components/vm/overview/vsock.tsx:223
-#: src/components/vm/overview/firmware.tsx:104
 #: src/components/vm/overview/bootOrder.tsx:353
 #: src/components/vm/overview/watchdog.tsx:167
+#: src/components/vm/overview/firmware.tsx:104
+#: src/components/vm/nics/nicEdit.tsx:234
+#: src/components/vm/consoles/vnc.tsx:155
+#: src/components/vm/vmEditDescriptionDialog.tsx:78
+#: src/components/vm/disks/diskEdit.tsx:208
 msgid "Save"
 msgstr "Kaydet"
 
@@ -2548,7 +2553,7 @@ msgstr "DHCP aralığını ayarla"
 msgid "Set manually"
 msgstr "El ile ayarla"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1659
+#: src/components/create-vm-dialog/createVmDialog.tsx:1701
 msgid ""
 "Setting the user passwords for unattended installation requires starting the "
 "VM when creating it"
@@ -2579,8 +2584,8 @@ msgstr ""
 msgid "Shared storage"
 msgstr "Paylaşılan depolama"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:225
 #: src/components/vm/disks/diskAdd.tsx:279
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:225
 msgid "Show additional options"
 msgstr "Ek seçenekleri göster"
 
@@ -2610,9 +2615,8 @@ msgid "Shut off the VM in order to edit firmware configuration"
 msgstr "Aygıt yazılımı yapılandırmasını düzenlemek için sanal makineyi kapatın"
 
 #: src/components/common/needsShutdown.tsx:278
-#: src/components/vm/vmActions.tsx:525
 #: src/components/vm/consoles/serial.tsx:190
-#: src/components/vm/consoles/vnc.tsx:694
+#: src/components/vm/consoles/vnc.tsx:694 src/components/vm/vmActions.tsx:525
 msgid "Shutdown and restart"
 msgstr "Kapat ve yeniden başlat"
 
@@ -2633,17 +2637,17 @@ msgid "Simple Communication Controller"
 msgstr "Basit İletişim Denetleyicisi"
 
 #: src/components/storagePools/storagePoolVolumesTab.tsx:77
-#: src/components/storagePools/storageVolumeCreateBody.tsx:121
 #: src/components/storagePools/storagePoolList.tsx:62
+#: src/components/storagePools/storageVolumeCreateBody.tsx:121
 #: src/components/vm/disks/vmDisksCard.tsx:165
 msgid "Size"
 msgstr "Boyut"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:112
+#: src/components/vm/overview/bootOrder.tsx:158
 #: src/components/vm/hostdevs/hostDevCard.tsx:93
 #: src/components/vm/hostdevs/hostDevCard.tsx:100
 #: src/components/vm/hostdevs/hostDevCard.tsx:241
-#: src/components/vm/overview/bootOrder.tsx:158
+#: src/components/vm/hostdevs/hostDevAdd.tsx:112
 msgid "Slot"
 msgstr "Yuva"
 
@@ -2684,12 +2688,12 @@ msgstr ""
 "sonra etkili olur:"
 
 #: src/components/storagePools/storagePoolOverviewTab.tsx:40
-#: src/components/vm/hostdevs/hostDevCard.tsx:217
 #: src/components/vm/nics/nicBody.tsx:270
-#: src/components/vm/nics/vmNicsCard.tsx:595
-#: src/components/vm/disks/vmDisksCard.tsx:163
+#: src/components/vm/nics/vmNicsCard.tsx:548
+#: src/components/vm/hostdevs/hostDevCard.tsx:217
 #: src/components/vm/disks/diskAdd.tsx:711
 #: src/components/vm/disks/diskAdd.tsx:747
+#: src/components/vm/disks/vmDisksCard.tsx:163
 msgid "Source"
 msgstr "Kaynak"
 
@@ -2716,7 +2720,7 @@ msgstr "Kaynak yolu"
 msgid "Source path should not be empty"
 msgstr "Kaynak yolu boş olmamalıdır"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:256
+#: src/components/create-vm-dialog/createVmDialog.tsx:257
 msgid "Source should start with http, ftp or nfs protocol"
 msgstr "Kaynak http, ftp veya nfs protokolüyle başlamalıdır"
 
@@ -2724,9 +2728,9 @@ msgstr "Kaynak http, ftp veya nfs protokolüyle başlamalıdır"
 msgid "Source volume group"
 msgstr "Kaynak birim grubu"
 
-#: src/components/networks/createNetworkDialog.tsx:305
 #: src/components/vm/consoles/serial.tsx:123
 #: src/components/vm/consoles/vnc.tsx:615
+#: src/components/networks/createNetworkDialog.tsx:305
 msgid "Start"
 msgstr "Başlat"
 
@@ -2756,12 +2760,12 @@ msgstr "Başlatıldı"
 msgid "Startup"
 msgstr "Başlatma"
 
+#: src/components/storagePools/storagePoolList.tsx:64
+#: src/components/vm/overview/vmOverviewCard.tsx:163
+#: src/components/vm/nics/vmNicsCard.tsx:585
 #: src/components/vms/hostvmslist.tsx:266
 #: src/components/vms/hostvmslist.tsx:322
-#: src/components/storagePools/storagePoolList.tsx:64
 #: src/components/networks/networkList.tsx:63
-#: src/components/vm/nics/vmNicsCard.tsx:628
-#: src/components/vm/overview/vmOverviewCard.tsx:163
 msgid "State"
 msgstr "Durum"
 
@@ -2773,8 +2777,8 @@ msgstr "Sabit anamakine girişleri"
 msgid "Static host from DHCP could not be removed"
 msgstr "DHCP'den sabit anamakine kaldırılamadı"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1109
 #: src/components/vm/vmMigrateDialog.tsx:108
+#: src/components/create-vm-dialog/createVmDialog.tsx:1140
 msgid "Storage"
 msgstr "Depolama"
 
@@ -2782,7 +2786,7 @@ msgstr "Depolama"
 msgid "Storage is at a shared location"
 msgstr "Depolama, paylaşılan bir konumda"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1136
+#: src/components/create-vm-dialog/createVmDialog.tsx:1167
 msgid "Storage limit"
 msgstr "Depolama sınırı"
 
@@ -2802,10 +2806,10 @@ msgstr "Depolama havuzunun oluşturulması başarısız oldu"
 msgid "Storage pool name"
 msgstr "Depolama havuzu adı"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1104
 #: src/components/storagePools/storagePoolList.tsx:49
 #: src/components/storagePools/storagePoolList.tsx:56
 #: src/components/storagePools/storagePoolList.tsx:58
+#: src/components/create-vm-dialog/createVmDialog.tsx:1135
 msgid "Storage pools"
 msgstr "Depolama havuzları"
 
@@ -2813,7 +2817,7 @@ msgstr "Depolama havuzları"
 msgid "Storage pools could not be fetched"
 msgstr "Depolama havuzları alınamadı"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:275
+#: src/components/create-vm-dialog/createVmDialog.tsx:276
 msgid "Storage size must not be 0"
 msgstr "Depolama boyutu 0 olmamak zorundadır"
 
@@ -2875,11 +2879,11 @@ msgstr "TPM"
 msgid "Table of selectable host devices"
 msgstr "Seçilebilir anamakine aygıtları tablosu"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:101
-#: src/components/vm/nics/vmNicsCard.tsx:603
-#: src/components/vm/disks/vmDisksCard.tsx:164
-#: src/components/vm/disks/vmDiskColumns.tsx:176
 #: src/components/vm/overview/bootOrder.tsx:164
+#: src/components/vm/nics/vmNicsCard.tsx:556
+#: src/components/vm/hostdevs/hostDevCard.tsx:101
+#: src/components/vm/disks/vmDiskColumns.tsx:176
+#: src/components/vm/disks/vmDisksCard.tsx:164
 msgid "Target"
 msgstr "Hedef"
 
@@ -2909,8 +2913,8 @@ msgid "The VM $0 is running and will be forced off before deletion."
 msgstr ""
 "$0 sanal makinesi çalışıyor ve silinmeden önce kapanmaya zorlanacaktır."
 
-#: src/components/vm/nics/vmNicsCard.tsx:710
-#: src/components/vm/nics/vmNicsCard.tsx:718
+#: src/components/vm/nics/vmNicsCard.tsx:667
+#: src/components/vm/nics/vmNicsCard.tsx:675
 #: src/components/vm/disks/vmDiskColumns.tsx:261
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr ""
@@ -2956,11 +2960,11 @@ msgstr ""
 "Misafire yönlendirilen anamakinedeki bağlantı noktası. Ayrıca 4000-4050 gibi "
 "bir bağlantı noktası aralığı da belirleyebilirsiniz."
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:995
+#: src/components/create-vm-dialog/createVmDialog.tsx:996
 msgid "The selected operating system has minimum memory requirement of $0 $1"
 msgstr "Seçilen işletim sisteminin en az $0 $1 bellek gereksinimi var"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1071
+#: src/components/create-vm-dialog/createVmDialog.tsx:1102
 msgid ""
 "The selected operating system has minimum storage size requirement of $0 $1"
 msgstr "Seçilen işletim sisteminin en az $0 $1 depolama alanı gereksinimi var"
@@ -2980,7 +2984,7 @@ msgstr ""
 "Konuk tarafından bu dışa aktarma noktasını bağlamak için kullanılacak etiket "
 "adı."
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:624
+#: src/components/create-vm-dialog/createVmDialog.tsx:625
 msgid "Then copy and paste it above."
 msgstr "Ardından kopyalayın ve yukarıya yapıştırın."
 
@@ -3044,7 +3048,7 @@ msgstr ""
 msgid "This volume is already used by $0."
 msgstr "Bu birim zaten $0 tarafından kullanılıyor."
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1132
+#: src/components/create-vm-dialog/createVmDialog.tsx:1163
 msgid "This volume is already used by another VM."
 msgstr "Bu birim zaten başka bir sanal makine tarafından kullanılıyor."
 
@@ -3068,15 +3072,15 @@ msgstr "Sorun gider"
 
 #: src/components/storagePools/storagePoolOverviewTab.tsx:65
 #: src/components/storagePools/createStoragePoolDialog.tsx:102
-#: src/components/vm/hostdevs/hostDevAdd.tsx:43
-#: src/components/vm/hostdevs/hostDevCard.tsx:177
-#: src/components/vm/nics/vmNicsCard.tsx:822
 #: src/components/vm/overview/bootOrder.tsx:125
 #: src/components/vm/overview/bootOrder.tsx:139
 #: src/components/vm/overview/bootOrder.tsx:155
 #: src/components/vm/overview/bootOrder.tsx:162
 #: src/components/vm/overview/bootOrder.tsx:169
 #: src/components/vm/overview/bootOrder.tsx:175
+#: src/components/vm/nics/vmNicsCard.tsx:779
+#: src/components/vm/hostdevs/hostDevCard.tsx:177
+#: src/components/vm/hostdevs/hostDevAdd.tsx:43
 msgid "Type"
 msgstr "Tür"
 
@@ -3084,7 +3088,7 @@ msgstr "Tür"
 msgid "UDP"
 msgstr "UDP"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:450
+#: src/components/create-vm-dialog/createVmDialog.tsx:451
 msgid "URL (ISO image or distro install tree)"
 msgstr "URL (ISO kalıbı veya dağıtım kurulum ağacı)"
 
@@ -3104,11 +3108,11 @@ msgstr "Sınıflandırılmamış"
 msgid "Undefined"
 msgstr "Tanımlanmadı"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:318
+#: src/components/create-vm-dialog/createVmDialog.tsx:319
 msgid "Unique name"
 msgstr "Benzersiz ad"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:318
+#: src/components/create-vm-dialog/createVmDialog.tsx:319
 msgid "Unique name, default: $0"
 msgstr "Benzersiz ad, varsayılan: $0"
 
@@ -3124,14 +3128,14 @@ msgstr "Birim"
 msgid "Unknown firmware"
 msgstr "Bilinmeyen aygıt yazılımı"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:84
-#: src/components/vm/hostdevs/hostDevCard.tsx:85
 #: src/components/vm/overview/bootOrder.tsx:145
 #: src/components/vm/overview/bootOrder.tsx:146
+#: src/components/vm/hostdevs/hostDevCard.tsx:84
+#: src/components/vm/hostdevs/hostDevCard.tsx:85
 msgid "Unspecified"
 msgstr "Belirtilmedi"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:538
+#: src/components/create-vm-dialog/createVmDialog.tsx:539
 msgid "Unsupported and older operating systems"
 msgstr "Desteklenmeyen ve eski işletim sistemleri"
 
@@ -3170,27 +3174,27 @@ msgstr "Kullanan"
 msgid "Used on host"
 msgstr "Anamakinede kullanılır"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:809
+#: src/components/create-vm-dialog/createVmDialog.tsx:810
 msgid "User login"
 msgstr "Kullanıcı oturumu açma"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:292
+#: src/components/create-vm-dialog/createVmDialog.tsx:293
 msgid "User login must not be empty when SSH keys are set"
 msgstr ""
 "SSH anahtarları ayarlandığında kullanıcı oturum açma bilgileri boş "
 "olmamalıdır"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:290
+#: src/components/create-vm-dialog/createVmDialog.tsx:291
 msgid "User login must not be empty when user password is set"
 msgstr ""
 "Kullanıcı parolası ayarlandığında kullanıcı oturum açma bilgileri boş "
 "olmamalıdır"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:817
+#: src/components/create-vm-dialog/createVmDialog.tsx:818
 msgid "User password"
 msgstr "Kullanıcı parolası"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:287
+#: src/components/create-vm-dialog/createVmDialog.tsx:288
 msgid "User password must not be empty when user login is set"
 msgstr ""
 "Kullanıcı oturum açma bilgileri ayarlandığında kullanıcı parolası boş "
@@ -3208,7 +3212,7 @@ msgstr "SPICE kullanıyor"
 msgid "VM $0 Host Devices"
 msgstr "$0 Sanal Makinesi Anamakine Aygıtları"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:232
+#: src/components/create-vm-dialog/createVmDialog.tsx:233
 msgid "VM $0 already exists"
 msgstr "$0 sanal makinesi zaten var"
 
@@ -3284,16 +3288,16 @@ msgstr "VNC ayarları kaydedilemedi"
 msgid "VNC with TLS is not supported by the in-page viewer"
 msgstr "TLS ile VNC, sayfa içi görüntüleyici tarafından desteklenmiyor"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:649
+#: src/components/create-vm-dialog/createVmDialog.tsx:650
 msgid "Valid token"
 msgstr "Geçerli belirteç"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:151
+#: src/components/vm/overview/bootOrder.tsx:140
+#: src/components/vm/overview/bootOrder.tsx:156
 #: src/components/vm/hostdevs/hostDevCard.tsx:207
 #: src/components/vm/hostdevs/hostDevCard.tsx:239
 #: src/components/vm/hostdevs/hostDevCard.tsx:245
-#: src/components/vm/overview/bootOrder.tsx:140
-#: src/components/vm/overview/bootOrder.tsx:156
+#: src/components/vm/hostdevs/hostDevAdd.tsx:151
 msgid "Vendor"
 msgstr "Üretici"
 
@@ -3301,11 +3305,11 @@ msgstr "Üretici"
 msgid "Vendor support ended $0"
 msgstr "Üretici desteği $0 tarihinde sona erdi"
 
+#: src/components/storagePools/storagePoolList.tsx:46
+#: src/components/vm/vmDetailsPage.tsx:249
 #: src/components/vms/hostvmslist.tsx:315
 #: src/components/vms/hostvmslist.tsx:317
-#: src/components/storagePools/storagePoolList.tsx:46
-#: src/components/networks/networkList.tsx:44
-#: src/components/vm/vmDetailsPage.tsx:249 src/manifest.json:0
+#: src/components/networks/networkList.tsx:44 src/manifest.json:0
 msgid "Virtual machines"
 msgstr "Sanal makineler"
 
@@ -3335,12 +3339,12 @@ msgstr ""
 msgid "Virtualization service (libvirt) is not active"
 msgstr "Sanallaştırma hizmeti (libvirt) etkin değil"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1121
-#: src/components/vm/disks/diskAdd.tsx:148
-#: src/components/vm/disks/mediaEject.tsx:89
-#: src/components/vm/disks/vmDiskColumns.tsx:39
 #: src/components/vm/overview/bootOrder.tsx:109
 #: src/components/vm/deleteDialog.tsx:72
+#: src/components/vm/disks/mediaEject.tsx:89
+#: src/components/vm/disks/diskAdd.tsx:148
+#: src/components/vm/disks/vmDiskColumns.tsx:39
+#: src/components/create-vm-dialog/createVmDialog.tsx:1152
 msgid "Volume"
 msgstr "Birim"
 
@@ -3360,8 +3364,8 @@ msgstr "Birim grubu adı boş olmamalıdır"
 msgid "Vsock"
 msgstr "Vsock"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:107
 #: src/components/vm/overview/bootOrder.tsx:171
+#: src/components/vm/hostdevs/hostDevCard.tsx:107
 msgid "WWPN"
 msgstr "WWPN"
 
@@ -3393,7 +3397,7 @@ msgstr "Yazılabilir"
 msgid "You can mount the shared folder using:"
 msgstr "Paylaşılan klasörü şu komutu kullanarak bağlayabilirsiniz:"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:235
+#: src/components/create-vm-dialog/createVmDialog.tsx:236
 msgid "You need to select the most closely matching operating system"
 msgstr "En yakından eşleşen işletim sistemini seçmeniz gerekli"
 
@@ -3427,7 +3431,7 @@ msgstr "cdrom"
 msgid "custom"
 msgstr "özel"
 
-#: src/components/vm/nics/vmNicsCard.tsx:844
+#: src/components/vm/nics/vmNicsCard.tsx:796
 msgid "default"
 msgstr "varsayılan"
 
@@ -3448,10 +3452,10 @@ msgid "down"
 msgstr "kapalı"
 
 #: src/components/vm/overview/vsock.tsx:315
-#: src/components/vm/overview/vmOverviewCard.tsx:117
-#: src/components/vm/overview/vmOverviewCard.tsx:125
 #: src/components/vm/overview/bootOrder.tsx:387
 #: src/components/vm/overview/watchdog.tsx:265
+#: src/components/vm/overview/vmOverviewCard.tsx:117
+#: src/components/vm/overview/vmOverviewCard.tsx:125
 msgid "edit"
 msgstr "düzenle"
 
@@ -3540,10 +3544,10 @@ msgstr "hayır"
 msgid "no state saved"
 msgstr "kaydedilen durum yok"
 
-#: src/components/networks/networkOverviewTab.tsx:314
-#: src/components/vm/nics/vmNicsCard.tsx:287
 #: src/components/vm/overview/vsock.tsx:297
 #: src/components/vm/overview/watchdog.tsx:261
+#: src/components/vm/nics/vmNicsCard.tsx:287
+#: src/components/networks/networkOverviewTab.tsx:314
 msgid "none"
 msgstr "yok"
 
@@ -3621,7 +3625,7 @@ msgstr ""
 "Sanal makineleri çoğaltmak için sistemde virt-install paketinin yüklenmesi "
 "gerekir"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1729
+#: src/components/create-vm-dialog/createVmDialog.tsx:1771
 msgid ""
 "virt-install package needs to be installed on the system in order to create "
 "new VMs"
@@ -3654,6 +3658,12 @@ msgstr "bekliyor"
 #: src/components/networks/networkOverviewTab.tsx:113 src/helpers.ts:264
 msgid "yes"
 msgstr "evet"
+
+#~ msgid "IPv4 Address"
+#~ msgstr "IPv4 Adresi"
+
+#~ msgid "IPv6 Address"
+#~ msgstr "IPv6 Adresi"
 
 #~ msgid "Machine must be shut off before changing cache mode"
 #~ msgstr "Önbellek kipini değiştirmeden önce makine kapatılmak zorundadır"
