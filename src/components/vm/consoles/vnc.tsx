@@ -460,6 +460,7 @@ export class VncActive extends React.Component<VncActiveProps, VncActiveState> {
     async getCredentials() {
         let password = this.props.consoleDetail.password || "";
         if (!password) {
+            console.log("Reading password from qemu.conf");
             const qemu_conf = await readQemuConf();
             if (qemu_conf.vnc_password)
                 password = qemu_conf.vnc_password;

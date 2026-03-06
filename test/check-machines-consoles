@@ -740,6 +740,33 @@ fullscreen=0
         # cleanup expects self.browser to be logged in.
         self.login_and_go("/machines")
 
+    def waitForAuthenticationFailed(self):
+        # Quite often a connection fails with code 1006 (Abnormal
+        # Closure) instead of the expected "Authentication failed",
+        # but retrying will give us the expected error message,
+        # usually on the second try.
+        #
+        # However, in the ws-container scenario, the 1006 failure will
+        # never go away.  (TODO - debug this)
+
+        if self.machine.ws_container:
+            b.wait_in_text(".consoles-card", "Failed to connect")
+            return
+
+        b = self.browser
+        for _ in range(5):
+            try:
+                b.wait_in_text(".consoles-card", "Authentication failed")
+                break
+            except testlib.Error:
+                if "Failed to connect" in b.text(".consoles-card"):
+                    print("Unexpected error message. Retrying...")
+                    b.click(".consoles-card button:contains(Retry)")
+                else:
+                    raise
+
+        b.wait_in_text(".consoles-card", "Authentication failed")
+
     def testGlobalVNCPassword(self):
         b = self.browser
         m = self.machine
@@ -761,40 +788,45 @@ fullscreen=0
         b.wait_visible(".vm-console-vnc canvas")
         self.assertIn("password=on", m.execute(f"grep ^-vnc /var/log/libvirt/qemu/{name}.log"))
 
-        if not m.ws_container:
-            # We consistently get a 1006 error in the "ws-container"
-            # scenario instead of the expected "Authentication
-            # failed", for unknown reasons.
-            #
-            # TODO: Debug this properly.
+        # Change global password, but without restarting the VM. This
+        # means that Cockpit will use the new password when
+        # connecting, but the VM still expects the old.
+        m.execute("sed -i -e 's/vnc_password = \"barfoo\"/vnc_password = \"foobar\"/' /etc/libvirt/qemu.conf")
 
-            # Change global password, but without restarting the VM. This
-            # means that Cockpit will use the new password when
-            # connecting, but the VM still expects the old.
-            m.execute("sed -i -e 's/vnc_password = \"barfoo\"/vnc_password = \"foobar\"/' /etc/libvirt/qemu.conf")
+        # We are still connected, but reconnecting will fail.
 
-            # We are still connected, but reconnecting will fail.
+        b.click(".consoles-card button:contains(Disconnect)")
+        b.wait_in_text(".consoles-card", "Disconnected")
 
-            b.click(".consoles-card button:contains(Disconnect)")
-            b.wait_in_text(".consoles-card", "Disconnected")
+        b.click(".consoles-card button:contains(Connect)")
+        self.waitForAuthenticationFailed()
 
-            # Quite often the reconnection here fails with code 1006
-            # (Abnormal Closure), but retrying will give us the expected
-            # error message, usually on the second try.
+    def testLibvirtUserUnprivileged(self):
+        m = self.machine
 
-            b.click(".consoles-card button:contains(Connect)")
-            for _ in range(5):
-                try:
-                    b.wait_in_text(".consoles-card", "Authentication failed")
-                    break
-                except testlib.Error:
-                    if "Failed to connect" in b.text(".consoles-card"):
-                        print("Unexpected error message. Retrying...")
-                        b.click(".consoles-card button:contains(Retry)")
-                    else:
-                        raise
+        # Configure a global VNC password. A unprivileged user can not
+        # read it and Cockpit should not crash because of that.
 
-            b.wait_in_text(".consoles-card", "Authentication failed")
+        self.write_file("/etc/libvirt/qemu.conf", '\nvnc_password = "barfoo"\n', append=True)
+        m.execute(f"systemctl restart {self.getLibvirtServiceName()}")
+
+        user = self.createUser(user_group='libvirt')
+
+        name = "subVmTest1"
+        self.createVm(name, graphics='vnc')
+
+        self.login_and_go("/machines", user=user, superuser=False)
+
+        self.waitPageInit()
+        self.waitVmRow(name)
+        self.goToVmPage(name)
+
+        # VNC should be configured and use a password, but the
+        # connection should fail with "Authentication failed" since
+        # Cockpit can't read qemu.conf to discover the password.
+
+        self.assertIn("password=on", m.execute(f"grep ^-vnc /var/log/libvirt/qemu/{name}.log"))
+        self.waitForAuthenticationFailed()
 
     @testlib.skipImage("cockpit-ws too old",
                        "rhel-9-*", "centos-9-*", "ubuntu-*", "debian-trixie", "opensuse-tumbleweed")
