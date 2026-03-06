@@ -424,6 +424,7 @@ class VirtualMachinesCase(VirtualMachinesCaseHelpers, storagelib.StorageHelpers,
         # Keep pristine state of libvirt
         self.restore_dir("/var/lib/libvirt")
         self.restore_dir("/etc/libvirt")
+        self.machine.execute("chmod u=rwx,g=,o= /etc/libvirt")  # keep original permissions
         self.restore_dir("/home/admin/.local/share/libvirt/")
 
         self.startLibvirt(m)
@@ -560,6 +561,20 @@ class VirtualMachinesCase(VirtualMachinesCaseHelpers, storagelib.StorageHelpers,
             self.downloadVmXml(vm)
             self.downloadVmLog(vm)
             self.downloadVmConsole(vm)
+
+    def createUser(self, user_group: str) -> str:
+        user_name = f"test_{user_group if user_group else 'none'}_user"
+        self.machine.execute(f"useradd{' -G ' + user_group if user_group else ''} {user_name}")
+        self.machine.execute(f"echo '{user_name}:foobar' | chpasswd")
+        # user libvirtd instance tends to SIGABRT with "Failed to find user record for uid .."
+        # on shutdown during cleanup
+        # so make sure that there are no leftover user processes that bleed into the next test
+        self.addCleanup(self.machine.execute,
+                        f"pkill -u {user_name} || true; while pgrep -u {user_name}; do sleep 0.5; done")
+        # HACK: ...but it still tends to crash during shutdown (without known stack trace)
+        self.allow_journal_messages('Process .*libvirtd.* of user 10.* dumped core.*')
+
+        return user_name
 
     def tearDown(self) -> None:
         b = self.browser

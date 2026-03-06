@@ -1002,7 +1002,13 @@ export async function readQemuConf(): Promise<QemuConf> {
         vnc_password: null,
     };
 
-    const text = await cockpit.file("/etc/libvirt/qemu.conf", { superuser: "try" }).read();
+    let text = "";
+    try {
+        text = await cockpit.file("/etc/libvirt/qemu.conf", { superuser: "try" }).read();
+    } catch (ex) {
+        console.warn("Failed to read qemu.conf:", String(ex));
+    }
+
     if (!text)
         return conf;
 
