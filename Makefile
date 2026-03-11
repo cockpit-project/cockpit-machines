@@ -199,8 +199,7 @@ prepare-check: $(NODE_MODULES_TEST) $(VM_IMAGE) test/common test/reference
 # run the browser integration tests
 # this will run all tests/check-* and format them as TAP
 check: prepare-check
-	sed -i -e 's/os.cpu_count()/8/' test/common/run-tests
-	test/common/run-tests --debug ${RUN_TESTS_OPTIONS}
+	test/common/run-tests --debug --capacity-factor 0.8 ${RUN_TESTS_OPTIONS}
 
 bots: test/common
 	test/common/make-bots
