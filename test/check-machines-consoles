@@ -749,11 +749,13 @@ fullscreen=0
         # However, in the ws-container scenario, the 1006 failure will
         # never go away.  (TODO - debug this)
 
-        if self.machine.ws_container:
+        b = self.browser
+        m = self.machine
+
+        if m.ws_container:
             b.wait_in_text(".consoles-card", "Failed to connect")
             return
 
-        b = self.browser
         for _ in range(5):
             try:
                 b.wait_in_text(".consoles-card", "Authentication failed")
