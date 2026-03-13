@@ -6,10 +6,8 @@
 
 import cockpit from 'cockpit';
 
-import { optString } from './types';
-
 import { getDoc, getDocElement, getSingleOptionalElem } from './libvirt-xml-parse.js';
-import { getNextAvailableTarget, BootOrderDevice } from './helpers.js';
+import { BootOrderDevice } from './helpers.js';
 
 export function changeMedia({
     domXml,
@@ -64,70 +62,6 @@ export function changeMedia({
     }
 
     return deviceXml ? s.serializeToString(deviceXml) : domXml;
-}
-
-export function updateDisk({
-    doc,
-    diskTarget,
-    readonly,
-    shareable,
-    busType,
-    existingTargets,
-    cache
-} : {
-    doc: XMLDocument,
-    diskTarget: optString,
-    readonly: boolean,
-    shareable: boolean,
-    busType: optString,
-    existingTargets: string[],
-    cache: optString,
-}): boolean {
-    const domainElem = getDocElement(doc);
-    const deviceElem = domainElem.getElementsByTagName("devices")[0];
-    const disks = deviceElem.getElementsByTagName("disk");
-
-    for (let i = 0; i < disks.length; i++) {
-        const disk = disks[i];
-        const target = disk.getElementsByTagName("target")[0].getAttribute("dev");
-        if (target == diskTarget) {
-            let shareAbleElem = getSingleOptionalElem(disk, "shareable");
-            if (!shareAbleElem && shareable) {
-                shareAbleElem = doc.createElement("shareable");
-                disk.appendChild(shareAbleElem);
-            } else if (shareAbleElem && !shareable) {
-                shareAbleElem.remove();
-            }
-
-            let readOnlyElem = getSingleOptionalElem(disk, "readonly");
-            if (!readOnlyElem && readonly) {
-                readOnlyElem = doc.createElement("readonly");
-                disk.appendChild(readOnlyElem);
-            } else if (readOnlyElem && !readonly) {
-                readOnlyElem.remove();
-            }
-
-            const targetElem = disk.getElementsByTagName("target")[0];
-            const oldBusType = targetElem.getAttribute("bus");
-            if (busType && oldBusType !== busType) {
-                targetElem.setAttribute("bus", busType);
-                const newTarget = getNextAvailableTarget(existingTargets, busType);
-                if (!newTarget)
-                    throw new Error("updateBootOrder: no free target");
-                targetElem.setAttribute("dev", newTarget);
-
-                const addressElem = getSingleOptionalElem(disk, "address");
-                if (addressElem)
-                    addressElem.remove();
-            }
-
-            const driverElem = disk.getElementsByTagName("driver")[0];
-            if (cache)
-                driverElem.setAttribute("cache", cache);
-        }
-    }
-
-    return true;
 }
 
 export function updateBootOrder(doc: XMLDocument, devices: BootOrderDevice[]): boolean {
