@@ -26,8 +26,10 @@ import {
     DialogCancelButton,
 } from 'cockpit/dialog';
 
-import { domainUpdateDiskAttributes } from '../../../libvirtApi/domain.js';
-import { diskBusTypes, diskCacheModes, getDiskPrettyName, getDiskFullName } from '../../../helpers.js';
+import { virtXmlEdit } from "../../../libvirtApi/domain.js";
+import {
+    diskBusTypes, diskCacheModes, getDiskPrettyName, getDiskFullName, getNextAvailableTarget
+} from '../../../helpers.js';
 import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
 
 const _ = cockpit.gettext;
@@ -171,17 +173,45 @@ const EditDisk = ({
 
     async function save(values: EditDiskValues) {
         const existingTargets = Object.getOwnPropertyNames(vm.disks);
+        let newTarget: string | undefined = disk.target;
+        let address = null;
+
+        if (values.bus.type != disk.bus) {
+            newTarget = getNextAvailableTarget(existingTargets, values.bus.type);
+            if (!newTarget)
+                throw new DialogError(cockpit.format(_("No free targets for bus type $0."), values.bus.type));
+
+            // HACK - virt-xml will not reset the address when
+            // changing the bus type, and we need to add
+            // "xpath0.delete=./address" explicitly. However, not all
+            // versions of virt-xml that we care about support xpath
+            // yet, so we reset the address explicitly to something
+            // acceptable.
+            //
+            // See https://github.com/virt-manager/virt-manager/issues/430
+
+            if (values.bus.type == "virtio") {
+                address = { type: "pci" };
+            } else if (values.bus.type == "usb") {
+                address = { type: "usb", bus: 0 };
+            } else if (values.bus.type == "scsi" || values.bus.type == "sata") {
+                address = { type: "drive", bus: 0 };
+            }
+        }
 
         try {
-            await domainUpdateDiskAttributes({
+            await virtXmlEdit(
                 vm,
-                target: disk.target,
-                readonly: values.access.mode == "readonly",
-                shareable: disk.shareable,
-                busType: values.bus.type,
-                cache: values.cache,
-                existingTargets
-            });
+                "disk",
+                { target: disk.target },
+                {
+                    target: newTarget,
+                    bus: values.bus.type,
+                    address,
+                    cache: values.cache,
+                    readonly: (values.access.mode == "readonly") ? "yes" : "no",
+                }
+            );
         } catch (ex) {
             throw DialogError.fromError(_("Disk settings could not be saved"), ex);
         }
