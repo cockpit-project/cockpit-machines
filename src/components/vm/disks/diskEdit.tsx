@@ -26,8 +26,10 @@ import {
     DialogCancelButton,
 } from 'cockpit/dialog';
 
-import { domainUpdateDiskAttributes } from '../../../libvirtApi/domain.js';
-import { diskBusTypes, diskCacheModes, getDiskPrettyName, getDiskFullName } from '../../../helpers.js';
+import { virtXmlEdit } from "../../../libvirtApi/domain.js";
+import {
+    diskBusTypes, diskCacheModes, getDiskPrettyName, getDiskFullName, getNextAvailableTarget
+} from '../../../helpers.js';
 import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
 
 const _ = cockpit.gettext;
@@ -171,17 +173,26 @@ const EditDisk = ({
 
     async function save(values: EditDiskValues) {
         const existingTargets = Object.getOwnPropertyNames(vm.disks);
+        let newTarget: string | undefined = disk.target;
+        if (values.bus.type != disk.bus) {
+            newTarget = getNextAvailableTarget(existingTargets, values.bus.type);
+            if (!newTarget)
+                throw new DialogError(cockpit.format(_("No free targets for bus type $0."), values.bus.type));
+        }
 
         try {
-            await domainUpdateDiskAttributes({
+            await virtXmlEdit(
                 vm,
-                target: disk.target,
-                readonly: values.access.mode == "readonly",
-                shareable: disk.shareable,
-                busType: values.bus.type,
-                cache: values.cache,
-                existingTargets
-            });
+                "disk",
+                { target: disk.target },
+                {
+                    target: newTarget,
+                    bus: values.bus.type,
+                    driver: { cache: values.cache },
+                    readonly: (values.access.mode == "readonly") ? "yes" : "no",
+                    xpath: [{ delete: "./address" }],
+                }
+            );
         } catch (ex) {
             throw DialogError.fromError(_("Disk settings could not be saved"), ex);
         }
