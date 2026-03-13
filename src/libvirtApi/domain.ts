@@ -60,7 +60,6 @@ import {
 import {
     changeMedia,
     updateBootOrder,
-    updateDisk,
     updateMaxMemory,
 } from '../libvirt-xml-update.js';
 import { storagePoolRefresh } from './storagePool.js';
@@ -1202,32 +1201,4 @@ export async function domainSetOSFirmware({
 
         return true;
     });
-}
-
-export async function domainUpdateDiskAttributes({
-    vm,
-    target,
-    readonly,
-    shareable,
-    busType,
-    existingTargets,
-    cache
-} : {
-    vm: VM,
-    target: optString,
-    readonly: boolean,
-    shareable: boolean,
-    busType: optString,
-    existingTargets: string[],
-    cache: optString,
-}): Promise<void> {
-    await domainModifyXML(vm, doc => updateDisk({
-        doc,
-        diskTarget: target,
-        readonly,
-        shareable,
-        busType,
-        existingTargets,
-        cache
-    }));
 }
