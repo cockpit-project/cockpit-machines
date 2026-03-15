@@ -4,7 +4,7 @@
  * Copyright (C) 2025 Red Hat, Inc.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import cockpit from 'cockpit';
 
 import type { VM, VMGraphics } from '../../../types';
@@ -13,7 +13,10 @@ import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Content, ContentVariants } from "@patternfly/react-core/dist/esm/components/Content";
 import { ClipboardCopy } from "@patternfly/react-core/dist/esm/components/ClipboardCopy/index.js";
 import { Flex } from "@patternfly/react-core/dist/esm/layouts/Flex";
-import { DownloadIcon } from "@patternfly/react-icons";
+import { DownloadIcon, ExternalLinkAltIcon } from "@patternfly/react-icons";
+import { MenuToggle, MenuToggleAction, MenuToggleElement } from "@patternfly/react-core/dist/esm/components/MenuToggle";
+import { Dropdown, DropdownList, DropdownItem } from "@patternfly/react-core/dist/esm/components/Dropdown";
+
 import { fmt_to_fragments } from 'utils.jsx';
 import { InfoPopover } from '../../common/infoPopover';
 
@@ -50,9 +53,18 @@ export function connection_address() {
     return address;
 }
 
-export function console_launch(vm: VM, consoleDetail: VMGraphics) {
-    // fire download of the .vv file
-    domainDesktopConsole({ name: vm.name, consoleDetail: { ...consoleDetail, address: connection_address() } });
+export function console_launch(vm: VM, consoleDetail: VMGraphics, download: boolean) {
+    if (!download) {
+        // Launch via direct link
+        // XXX - figure out TLS
+        const protocol = consoleDetail.type;
+        const host = connection_address();
+        const port = consoleDetail.tlsPort || consoleDetail.port;
+        // We use our parent (the Shell) in order to avoid Content-Security-Policy issues.
+        window.parent.location = `${protocol}://${host}:${port}`;
+    } else {
+        domainDesktopConsole({ name: vm.name, consoleDetail: { ...consoleDetail, address: connection_address() } });
+    }
 }
 
 const RemoteConnectionInfo = ({
@@ -155,17 +167,68 @@ const RemoteConnectionPopover = ({
 
 export const LaunchViewerButton = ({
     vm,
-    console,
     url = null,
     onEdit = null,
     editLabel = null,
 } : {
     vm: VM,
-    console: VMGraphics | null,
     url?: null | string,
     onEdit?: null | (() => void),
     editLabel?: null | string,
 }) => {
+    const vnc = vm.displays.find((d): d is VMGraphics => d.type == "vnc");
+    const spice = vm.displays.find((d): d is VMGraphics => d.type == "spice");
+
+    const [active, setActive] = useState(0);
+    const [isOpen, setIsOpen] = useState(false);
+
+    interface LaunchAction {
+        title: string;
+        desc: string;
+        download: boolean;
+        console: VMGraphics;
+    }
+
+    const actions: LaunchAction[] = [];
+
+    if (vnc) {
+        actions.push(
+            {
+                title: _("Launch VNC viewer"),
+                desc: _("By downloading a console.vv file"),
+                download: true,
+                console: vnc,
+            },
+            {
+                title: _("Launch VNC viewer"),
+                desc: _("Via a vnc://... URL"),
+                download: false,
+                console: vnc,
+            }
+        );
+    }
+
+    if (spice) {
+        actions.push(
+            {
+                title: _("Launch SPICE viewer"),
+                desc: _("By downloading a console.vv file"),
+                download: true,
+                console: spice,
+            },
+            {
+                title: _("Launch SPICE viewer"),
+                desc: _("Via a spice://... URL"),
+                download: false,
+                console: spice,
+            }
+        );
+    }
+
+    function launch(action: LaunchAction) {
+        console_launch(vm, action.console, action.download);
+    }
+
     return (
         <Flex columnGap={{ default: 'columnGapSm' }}>
             <RemoteConnectionPopover
@@ -173,14 +236,44 @@ export const LaunchViewerButton = ({
                 onEdit={onEdit}
                 editLabel={editLabel}
             />
-            <Button
-                icon={<DownloadIcon />}
-                variant="secondary"
-                onClick={() => console && console_launch(vm, console)}
-                isDisabled={!console}
+            <Dropdown
+                isOpen={isOpen}
+                onSelect={
+                    (_event, val) => {
+                        if (typeof val == "number")
+                            setActive(val);
+                        setIsOpen(false);
+                    }
+                }
+                onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
+                toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+                    <MenuToggle
+                        ref={toggleRef}
+                        onClick={() => setIsOpen(!isOpen)}
+                        isExpanded={isOpen}
+                        variant="secondary"
+                        splitButtonItems={[
+                            <MenuToggleAction
+                                key="action"
+                                onClick={() => launch(actions[active])}
+                            >
+                                {actions[active].download ? <DownloadIcon /> : <ExternalLinkAltIcon />}
+                                {"\n"}
+                                {actions[active].title}
+                            </MenuToggleAction>
+                        ]}
+                    />)}
             >
-                {_("Launch viewer")}
-            </Button>
+                <DropdownList>
+                    {
+                        actions.map((a, idx) => (
+                            <DropdownItem key={idx} value={idx} description={a.desc} isSelected={idx == active}>
+                                {a.title}
+                            </DropdownItem>
+                        ))
+                    }
+                </DropdownList>
+            </Dropdown>
         </Flex>
     );
 };
