@@ -10,7 +10,6 @@ import { useDialogs } from 'dialogs';
 import type { VM } from '../../../types';
 import type { AvailableSources } from './vmNicsCard';
 
-import { Checkbox } from "@patternfly/react-core/dist/esm/components/Checkbox";
 import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
 import {
     Modal, ModalBody, ModalFooter, ModalHeader
@@ -19,19 +18,20 @@ import { Radio } from "@patternfly/react-core/dist/esm/components/Radio";
 import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
 
 import {
-    NetworkTypeAndSourceValue, NetworkTypeAndSourceRow,
-    init_NetworkTypeAndSourceRow, validate_NetworkTypeAndSourceRow,
+    NetworkTypeAndSourceValue, NetworkTypeAndSourceRow, init_NetworkTypeAndSourceRow,
     NetworkModelRow,
     PortForwardsValue, NetworkPortForwardsRow, validate_PortForwards,
     dialogPortForwardsToInterface,
 } from './nicBody.jsx';
 import { virtXmlHotAdd, domainGet, domainIsRunning } from '../../../libvirtApi/domain.js';
+
 import { appState } from '../../../state';
 
 import {
-    useDialogState, DialogField, DialogError,
+    useDialogState_async, DialogState, DialogField, DialogError,
     DialogErrorMessage, DialogHelperText,
-    DialogActionButton, DialogCancelButton
+    DialogActionButton, DialogCancelButton,
+    DialogCheckbox,
 } from 'cockpit/dialog';
 
 import './nic.css';
@@ -130,18 +130,11 @@ const PermanentChange = ({
     // down only. Enable permanent change of the domain.xml
 
     return (
-        <FormGroup
-            fieldId={field.id()}
-            label={_("Persistence")}
-            hasNoPaddingTop
-        >
-            <Checkbox
-                id={field.id()}
-                isChecked={field.get()}
-                label={_("Always attach")}
-                onChange={(_event, checked) => field.set(checked)}
-            />
-        </FormGroup>
+        <DialogCheckbox
+            field_label={_("Persistence")}
+            checkbox_label={_("Always attach")}
+            field={field}
+        />
     );
 };
 
@@ -164,7 +157,7 @@ export const AddNIC = ({
 }) => {
     const Dialogs = useDialogs();
 
-    function init(): AddNICValues {
+    async function init(): Promise<AddNICValues> {
         return {
             model: "virtio",
             type_and_source: init_NetworkTypeAndSourceRow(vm, null, availableSources),
@@ -174,9 +167,8 @@ export const AddNIC = ({
         };
     }
 
-    function validate() {
+    function validate(dlg: DialogState<AddNICValues>) {
         validate_NetworkMacRow(dlg.field("mac"));
-        validate_NetworkTypeAndSourceRow(dlg.field("type_and_source"));
         if (dlg.values.type_and_source.type == "user")
             validate_PortForwards(dlg.field("portForwards"));
     }
@@ -227,34 +219,37 @@ export const AddNIC = ({
         }
     }
 
-    const dlg = useDialogState(init, validate);
+    const dlg = useDialogState_async(init, validate);
 
-    const defaultBody = (
-        <>
-            <Form onSubmit={e => e.preventDefault()} isHorizontal>
-                <NetworkTypeAndSourceRow field={dlg.field("type_and_source")} />
+    let defaultBody: React.ReactNode;
+    if (dlg instanceof DialogState) {
+        defaultBody = (
+            <>
+                <Form onSubmit={e => e.preventDefault()} isHorizontal>
+                    <NetworkTypeAndSourceRow field={dlg.field("type_and_source").at(dlg.values.type_and_source)} />
 
-                <NetworkModelRow
-                    field={dlg.field("model")}
-                    osTypeArch={vm.arch}
-                    osTypeMachine={vm.emulatedMachine}
-                />
+                    <NetworkModelRow
+                        field={dlg.field("model")}
+                        osTypeArch={vm.arch}
+                        osTypeMachine={vm.emulatedMachine}
+                    />
 
-                <NetworkMacRow field={dlg.field("mac")} />
+                    <NetworkMacRow field={dlg.field("mac")} />
 
-                { domainIsRunning(vm.state) && vm.persistent &&
-                    <PermanentChange field={dlg.field("permanent")} />
-                }
-            </Form>
-            { dlg.values.type_and_source.type == "user" &&
-                vm.capabilities.interfaceBackends.includes("passt") &&
-                <Form>
-                    <br />
-                    <NetworkPortForwardsRow field={dlg.field("portForwards")} />
+                    { domainIsRunning(vm.state) && vm.persistent &&
+                        <PermanentChange field={dlg.field("permanent")} />
+                    }
                 </Form>
-            }
-        </>
-    );
+                { dlg.values.type_and_source.type == "user" &&
+                    vm.capabilities.interfaceBackends.includes("passt") &&
+                    <Form>
+                        <br />
+                        <NetworkPortForwardsRow field={dlg.field("portForwards")} />
+                    </Form>
+                }
+            </>
+        );
+    }
 
     return (
         <Modal

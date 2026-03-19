@@ -302,7 +302,7 @@ class VirtualMachinesCaseHelpers(testlib.MachineCase):
         b.wait_not_present(".pf-v6-c-modal-box")
         b.wait_not_present(f"#vm-{vm_name}-disks-{target}-device")
 
-    def deleteIface(self, iface: str, mac: str | None = None, vm_name: str | None = None) -> None:
+    def deleteIface(self, iface: int, mac: str | None = None, vm_name: str | None = None) -> None:
         b = self.browser
 
         self.dropdownAction(f"#vm-subVmTest1-iface-{iface}-action-kebab", f"#delete-vm-subVmTest1-iface-{iface}")
