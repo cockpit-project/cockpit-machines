@@ -10,15 +10,13 @@ import { useDialogs } from 'dialogs';
 import type { optString, VM, VMInterface } from '../../../types';
 import type { AvailableSources } from './vmNicsCard';
 
-import { Form, FormGroup } from "@patternfly/react-core/dist/esm/components/Form";
+import { Form } from "@patternfly/react-core/dist/esm/components/Form";
 import {
     Modal, ModalBody, ModalFooter, ModalHeader
 } from '@patternfly/react-core/dist/esm/components/Modal';
-import { Tooltip } from "@patternfly/react-core/dist/esm/components/Tooltip";
 
 import {
-    NetworkTypeAndSourceValue, NetworkTypeAndSourceRow,
-    init_NetworkTypeAndSourceRow, validate_NetworkTypeAndSourceRow,
+    NetworkTypeAndSourceValue, NetworkTypeAndSourceRow, init_NetworkTypeAndSourceRow,
     NetworkModelRow,
     PortForwardsValue, NetworkPortForwardsRow, validate_PortForwards,
     interfacePortForwardsToDialog, dialogPortForwardsToInterface,
@@ -27,7 +25,7 @@ import { virtXmlEdit, domainModifyXML, domainGet } from '../../../libvirtApi/dom
 import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
 
 import {
-    useDialogState, DialogField, DialogError,
+    useDialogState_async, DialogState, DialogField, DialogError,
     DialogErrorMessage,
     DialogTextInput,
     DialogActionButton, DialogCancelButton,
@@ -42,18 +40,12 @@ const NetworkMacRow = ({
     field: DialogField<string>,
     isShutoff: boolean,
 }) => {
-    let macInput = (
-        <DialogTextInput
-            field={field}
-            {...(!isShutoff ? { readOnlyVariant: "plain" } : {})} />
-    );
-    if (!isShutoff)
-        macInput = <Tooltip content={_("Only editable when the guest is shut off")}>{macInput}</Tooltip>;
-
     return (
-        <FormGroup fieldId={field.id()} label={_("MAC address")}>
-            {macInput}
-        </FormGroup>
+        <DialogTextInput
+            label={_("MAC address")}
+            field={field}
+            excuse={!isShutoff ? _("Only editable when the guest is shut off") : null}
+        />
     );
 };
 
@@ -67,8 +59,8 @@ function getNetworkSource(network: VMInterface): optString {
 }
 
 interface EditNICValues {
-    model: string,
     type_and_source: NetworkTypeAndSourceValue,
+    model: string,
     mac: string;
     portForwards: PortForwardsValue;
 }
@@ -86,17 +78,16 @@ export const EditNICModal = ({
 }) => {
     const Dialogs = useDialogs();
 
-    function init(): EditNICValues {
+    async function init(): Promise<EditNICValues> {
         return {
-            model: network.model || "",
             type_and_source: init_NetworkTypeAndSourceRow(vm, network, availableSources),
+            model: network.model || "",
             mac: network.mac || "",
             portForwards: interfacePortForwardsToDialog(network.portForward),
         };
     }
 
-    function validate() {
-        validate_NetworkTypeAndSourceRow(dlg.field("type_and_source"));
+    function validate(dlg: DialogState<EditNICValues>) {
         if (dlg.values.type_and_source.type == "user")
             validate_PortForwards(dlg.field("portForwards"));
     }
@@ -173,10 +164,11 @@ export const EditNICModal = ({
         }
     }
 
-    const dlg = useDialogState<EditNICValues>(init, validate);
+    const dlg = useDialogState_async<EditNICValues>(init, validate);
 
     const showWarning = () => {
-        if (vm.state === 'running' && (
+        if (vm.state === 'running' &&
+            dlg instanceof DialogState && (
             dlg.values.type_and_source.type !== network.type ||
                 dlg.values.type_and_source.source !== getNetworkSource(network) ||
                 dlg.values.model !== network.model)
@@ -185,30 +177,34 @@ export const EditNICModal = ({
         }
     };
 
-    const defaultBody = (
-        <>
-            <Form onSubmit={e => e.preventDefault()} isHorizontal>
-                <NetworkTypeAndSourceRow field={dlg.field("type_and_source")} />
-                <NetworkModelRow
-                    field={dlg.field("model")}
-                    osTypeArch={vm.arch}
-                    osTypeMachine={vm.emulatedMachine}
-                />
-                <NetworkMacRow
-                    field={dlg.field("mac")}
-                    isShutoff={vm.state == "shut off"}
-                />
-            </Form>
-            { dlg.values.type_and_source.type == "user" &&
-                vm.capabilities.interfaceBackends.includes("passt") &&
-                (!network.backend || network.backend == "passt") &&
-                <Form>
-                    <br />
-                    <NetworkPortForwardsRow field={dlg.field("portForwards")} />
+    let defaultBody: React.ReactNode;
+
+    if (dlg instanceof DialogState) {
+        defaultBody = (
+            <>
+                <Form onSubmit={e => e.preventDefault()} isHorizontal>
+                    <NetworkTypeAndSourceRow field={dlg.field("type_and_source")} />
+                    <NetworkModelRow
+                        field={dlg.field("model")}
+                        osTypeArch={vm.arch}
+                        osTypeMachine={vm.emulatedMachine}
+                    />
+                    <NetworkMacRow
+                        field={dlg.field("mac")}
+                        isShutoff={vm.state == "shut off"}
+                    />
                 </Form>
-            }
-        </>
-    );
+                { dlg.values.type_and_source.type == "user" &&
+                    vm.capabilities.interfaceBackends.includes("passt") &&
+                    (!network.backend || network.backend == "passt") &&
+                    <Form>
+                        <br />
+                        <NetworkPortForwardsRow field={dlg.field("portForwards")} />
+                    </Form>
+                }
+            </>
+        );
+    }
 
     return (
         <Modal
