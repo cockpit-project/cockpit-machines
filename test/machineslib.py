@@ -438,7 +438,13 @@ class VirtualMachinesCase(VirtualMachinesCaseHelpers, storagelib.StorageHelpers,
             mach.execute('if test "$(rpmquery selinux-policy)" = selinux-policy-40.13.6-1.el10.noarch; then setenforce 0; fi')  # noqa: E501
 
         def stop_all() -> None:
-            # domains
+            # Domains.
+            #
+            # Stopping (destroying) a domain is enough. They will all
+            # be undefined when the libvirt state is restored to what
+            # it was before the test. See the "restore_dir" calls
+            # above.
+
             # this is a race condition: a test may leave a domain shutting down, so it may go away while iterating
             m.execute('for d in $(virsh -c qemu:///system list --name); do '
                       '  if ! out=$(virsh -c qemu:///system destroy $d 2>&1); then '
@@ -446,6 +452,13 @@ class VirtualMachinesCase(VirtualMachinesCaseHelpers, storagelib.StorageHelpers,
                       "  fi; done")
             m.execute("runuser -l admin -c 'for d in $(virsh -c qemu:///session list --all --name); do "
                       "virsh -c qemu:///session undefine $d --snapshots-metadata; done'")
+
+            # Check that they are really all destroyed.  If a running
+            # machine leaks from one test to another, it's going to be
+            # confusing to figure out where it comes from.  It is
+            # better to detect it here.
+
+            self.assertEqual(m.execute("virsh -c qemu:///system list --name"), "\n")
 
             # pools
             m.execute("""
