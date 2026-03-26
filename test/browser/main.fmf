@@ -72,4 +72,4 @@
     - require+:
         - virtiofsd
         - libvirt-daemon-driver-storage-iscsi-direct
-      when: distro ~ fedora
+      when: distro ~ fedora and distro != fedora-eln
