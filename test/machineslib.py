@@ -579,6 +579,14 @@ class VirtualMachinesCase(VirtualMachinesCaseHelpers, storagelib.StorageHelpers,
         user_name = f"test_{user_group if user_group else 'none'}_user"
         self.machine.execute(f"useradd{' -G ' + user_group if user_group else ''} {user_name}")
         self.machine.execute(f"echo '{user_name}:foobar' | chpasswd")
+        # If at any time prior a user with the same user id existed as
+        # the one that we have just created, the classic dbus-daemon
+        # might still use the groups of that old user when making
+        # policy decisions. (The modern dbus-broken does not seem to
+        # have that problem.) So let's reload it to stop that from
+        # happening.
+        if self.machine.image.startswith(("rhel-8-10", "ubuntu-2204")):
+            self.machine.execute("systemctl reload dbus")
         # user libvirtd instance tends to SIGABRT with "Failed to find user record for uid .."
         # on shutdown during cleanup
         # so make sure that there are no leftover user processes that bleed into the next test
