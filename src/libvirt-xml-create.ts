@@ -186,7 +186,7 @@ export function getVolumeXML(
 
     const allocationElem = doc.createElement('capacity');
     allocationElem.setAttribute('unit', 'MiB');
-    allocationElem.appendChild(doc.createTextNode(String(size)));
+    allocationElem.appendChild(doc.createTextNode(String(Math.round(size))));
     volElem.appendChild(allocationElem);
 
     const targetElem = doc.createElement('target');

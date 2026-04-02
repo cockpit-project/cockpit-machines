@@ -10,6 +10,7 @@ from collections.abc import Mapping, Sequence
 import netlib
 import storagelib
 import testlib
+from dialoglib import DialogHelpers
 from machine import testvm
 
 
@@ -611,3 +612,18 @@ class VirtualMachinesCase(VirtualMachinesCaseHelpers, storagelib.StorageHelpers,
                 traceback.print_exc(file=sys.stderr)
 
         super().tearDown()
+
+
+class MachinesDialogHelpers(DialogHelpers):
+
+    # FileAutoComplete
+
+    def set_FileAutoComplete(self, path: str, val: str) -> None:
+        b = self.browser
+        sel = self.field(path)
+        b.set_input_text(f"{sel}.pf-v6-c-menu-toggle input", val)
+        # select the file
+        b.wait_text(".pf-v6-c-menu ul li:nth-child(1) button", val)
+        b.click(".pf-v6-c-menu ul li:nth-child(1) button")
+        b.wait_not_present(".pf-v6-c-menu")
+        b.wait_val(f"{sel}.pf-v6-c-menu-toggle input", val)
