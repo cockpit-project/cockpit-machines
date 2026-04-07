@@ -561,66 +561,93 @@ export async function domainDelete({
     }
 }
 
-export function domainDeleteStorage({
-    connectionName,
-    storage,
-    storagePools
-} : {
-    connectionName: ConnectionName,
-    storage: VMDisk[],
-    storagePools: StoragePool[],
-}): Promise<void> {
-    const storageVolPromises: Promise<void | [string]>[] = [];
+export interface StorageDeleteInfo {
+    volume: string | null;
+    pool: StoragePool | undefined;
+    file: string | null;
+}
 
-    storage.forEach(disk => {
-        switch (disk.type) {
-        case 'file': {
-            logDebug(`deleteStorage: deleting file storage ${disk.source.file}`);
+export async function getStorageDeleteInfoForDisk(vm: VM, disk: VMDisk): Promise<StorageDeleteInfo | null> {
+    // When deleting a disk image (for example when deleting a VM or
+    // when detaching a disk), we prefer to delete it via the libvirt
+    // storage pool API. So we try to find the volume for it, even for
+    // disks of type "file".
+    //
+    // But we can't rely on our list of storage volumes to be
+    // up-to-date. So let's fetch everything explicitly.
 
-            storageVolPromises.push(
-                call<[string]>(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StorageVolLookupByPath', [disk.source.file], { timeout, type: 's' })
-                        .then(([volPath]) => call(connectionName, volPath, 'org.libvirt.StorageVol', 'Delete', [0], { timeout, type: 'u' }))
-                        .catch(ex => {
-                            if (!ex.message.includes("no storage vol with matching"))
-                                return Promise.reject(ex);
-                            else
-                                return cockpit.file(disk.source.file!, { superuser: "try" }).replace(null)
-                                        .then(() => { }); // delete key file
-                        })
+    if (disk.type == "file" && disk.source.file) {
+        try {
+            const [path] = await call<[string]>(
+                vm.connectionName,
+                '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StorageVolLookupByPath',
+                [disk.source.file],
+                { timeout, type: 's' }
             );
-            const pool = storagePools.find(pool => pool.connectionName === connectionName && pool.volumes.some(vol => vol.path === disk.source.file));
-            if (pool)
-                storageVolPromises.push(storagePoolRefresh({ connectionName, objPath: pool.id }));
-            break;
+            return {
+                volume: path,
+                pool: appState.storagePools.find(
+                    p => p.connectionName === vm.connectionName && p.volumes.some(v => v.path === disk.source.file)),
+                file: null,
+            };
+        } catch (ex) {
+            if (!String(ex).includes("no storage vol with matching"))
+                throw ex;
+            return {
+                volume: null,
+                pool: undefined,
+                file: disk.source.file,
+            };
         }
-        case 'volume': {
-            logDebug(`deleteStorage: deleting volume storage ${disk.source.volume} on pool ${disk.source.pool}`);
-            storageVolPromises.push(
-                call<[string]>(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName', [disk.source.pool], { timeout, type: 's' })
-                        .then(([objPath]) => call<[string]>(connectionName, objPath, 'org.libvirt.StoragePool', 'StorageVolLookupByName', [disk.source.volume], { timeout, type: 's' }))
-                        .then(([volPath]) => call(connectionName, volPath, 'org.libvirt.StorageVol', 'Delete', [0], { timeout, type: 'u' }))
-            );
-            const pool = storagePools.find(pool => pool.connectionName === connectionName && pool.name === disk.source.pool);
-            if (pool)
-                storageVolPromises.push(storagePoolRefresh({ connectionName, objPath: pool.id }));
-            break;
-        }
-        default:
-            logDebug(`Disks of type ${disk.type} are currently ignored during VM deletion`);
-        }
-    });
+    }
 
-    if (storage.length > 0 && storageVolPromises.length == 0)
-        return Promise.reject(new Error("Could not find storage file to delete."));
+    if (disk.type == "volume" && disk.source.pool && disk.source.volume) {
+        const [pool] = await call<[string]>(
+            vm.connectionName,
+            '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName',
+            [disk.source.pool],
+            { timeout, type: 's' }
+        );
+        const [path] = await call<[string]>(
+            vm.connectionName,
+            pool, 'org.libvirt.StoragePool', 'StorageVolLookupByName',
+            [disk.source.volume],
+            { timeout, type: 's' }
+        );
+        return {
+            volume: path,
+            pool: appState.storagePools.find(p => p.connectionName === vm.connectionName && p.name === disk.source.pool),
+            file: null,
+        };
+    }
 
-    return Promise.allSettled(storageVolPromises).then(results => {
-        const rejectedMsgs = results.filter(result => result.status == "rejected").map(result => result.reason?.message);
-        if (rejectedMsgs.length > 0) {
-            return Promise.reject(rejectedMsgs.join(", "));
-        } else {
-            return Promise.resolve();
+    return null;
+}
+
+export async function deleteStorage(vm: VM, infos: StorageDeleteInfo[]): Promise<void> {
+    const messages: string[] = [];
+
+    for (const info of infos) {
+        try {
+            if (info.volume) {
+                await call(
+                    vm.connectionName,
+                    info.volume, 'org.libvirt.StorageVol', 'Delete',
+                    [0],
+                    { timeout, type: 'u' }
+                );
+            }
+            if (info.file)
+                await cockpit.file(info.file, { superuser: "try" }).replace(null);
+            if (info.pool)
+                await storagePoolRefresh({ connectionName: vm.connectionName, objPath: info.pool.id });
+        } catch (exc) {
+            messages.push(String(exc));
         }
-    });
+    }
+
+    if (messages.length > 0)
+        throw messages.join(", ");
 }
 
 /*
