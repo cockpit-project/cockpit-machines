@@ -722,7 +722,9 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
                 volume_xml = m.execute(f"virsh vol-dumpxml {self.volume_name} {self.pool_name} ")
                 detect_format_cmd = "echo \"{0}\" | xmllint --xpath '{1}' -"
 
-                b.wait_in_text(f'#vm-{self.vm_name}-disks-{self.expected_target}-source-volume', self.volume_name)
+                source = "dev" if self.pool_type in ["disk", "iscsi"] else "file"
+                path = m.execute(f"virsh vol-path --pool {self.pool_name} {self.volume_name}").strip()
+                b.wait_in_text(f'#vm-{self.vm_name}-disks-{self.expected_target}-source-{source}', path)
 
                 expected_format = self.getExpectedFormat(self.pool_type, self.expected_volume_format)
                 # Unknown pool format isn't present in xml anymore
