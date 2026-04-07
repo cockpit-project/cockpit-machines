@@ -659,7 +659,12 @@ interface DiskMapFile {
     source: optString;
 }
 
-type DiskMap = DiskMapVolume | DiskMapFile;
+interface DiskMapBlock {
+    type: "block";
+    source: optString;
+}
+
+type DiskMap = DiskMapVolume | DiskMapFile | DiskMapBlock;
 
 function getVmDisksMap(vms: VM[], connectionName: ConnectionName): Record<string, Array<DiskMap>> {
     const vmDisksMap: Record<string, Array<DiskMap>> = {};
@@ -678,6 +683,8 @@ function getVmDisksMap(vms: VM[], connectionName: ConnectionName): Record<string
                 vmDisksMap[vm.name].push({ type: 'volume', pool: diskProps.source.pool, volume: diskProps.source.volume });
             else if (diskProps.type == 'file')
                 vmDisksMap[vm.name].push({ type: 'file', source: diskProps.source.file });
+            else if (diskProps.type == 'block')
+                vmDisksMap[vm.name].push({ type: 'block', source: diskProps.source.dev });
             /* Other disk types should be handled as well when we allow their creation from cockpit UI */
         }
     }
@@ -718,22 +725,21 @@ export function getStorageVolumesUsage(vms: VM[], storagePool: StoragePool): Sto
 
     // And make it a dictionary of volumeName -> array of Domains using volume
     const isVolumeUsed: Record<string, Array<string>> = {};
-    for (const i in volumes) {
-        const volumeName = volumes[i].name;
-        const targetPath = storagePool.target ? storagePool.target.path : '';
-        const volumePath = [targetPath, volumeName].join('/');
-        isVolumeUsed[volumeName] = [];
+    for (const vol of volumes) {
+        isVolumeUsed[vol.name] = [];
 
         for (const vmName in vmDisksMap) {
             const disks = vmDisksMap[vmName];
 
-            for (const i in disks) {
-                const disk = disks[i];
-                if (disk.type == 'volume' && disk.volume == volumeName && disk.pool == storagePool.name)
-                    isVolumeUsed[volumeName].push(vmName);
+            for (const disk of disks) {
+                if (disk.type == 'volume' && disk.volume == vol.name && disk.pool == storagePool.name)
+                    isVolumeUsed[vol.name].push(vmName);
 
-                if (disk.type == 'file' && disk.source == volumePath)
-                    isVolumeUsed[volumeName].push(vmName);
+                if (disk.type == 'file' && disk.source == vol.path)
+                    isVolumeUsed[vol.name].push(vmName);
+
+                if (disk.type == 'block' && disk.source == vol.path)
+                    isVolumeUsed[vol.name].push(vmName);
             }
         }
     }

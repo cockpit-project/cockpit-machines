@@ -52,7 +52,7 @@ export function update_VolumeCreate(field: DialogField<VolumeCreateValue>, stora
 
 export function validate_VolumeCreate(field: DialogField<VolumeCreateValue>) {
     field.sub("name").validate(v => {
-        if (!v)
+        if (!v.trim())
             return _("Please enter new volume name");
     });
     field.sub("newSize").validate(v => {

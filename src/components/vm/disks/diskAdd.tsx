@@ -23,9 +23,9 @@ import {
     VolumeCreate, init_VolumeCreate, update_VolumeCreate, validate_VolumeCreate,
     type VolumeCreateValue,
 } from '../../storagePools/storageVolumeCreateBody.jsx';
-import { domainAttachDisk, domainGet, virtXmlHotEdit, domainIsRunning } from '../../../libvirtApi/domain.js';
+import { domainGet, virtXmlHotAdd, virtXmlHotEdit, domainIsRunning } from '../../../libvirtApi/domain.js';
 import { storagePoolGetAll } from '../../../libvirtApi/storagePool.js';
-import { storageVolumeCreateAndAttach } from '../../../libvirtApi/storageVolume.js';
+import { storageVolumeCreate } from '../../../libvirtApi/storageVolume.js';
 import { appState } from '../../../state';
 
 import {
@@ -55,8 +55,8 @@ function clearSerial(serial: string): string {
 
 function getFilteredVolumes(vmStoragePool: StoragePool, disks: Record<string, VMDisk>): StorageVolume[] {
     const usedDiskPaths = Object.getOwnPropertyNames(disks)
-            .filter(target => disks[target].source && (disks[target].source.file || disks[target].source.volume))
-            .map(target => (disks[target].source && (disks[target].source.file || disks[target].source.volume)));
+            .map(target => (disks[target].source && (disks[target].source.file || disks[target].source.volume || disks[target].source.dev)))
+            .filter(Boolean);
 
     const filteredVolumes = (vmStoragePool.volumes || []).filter(volume => !usedDiskPaths.includes(volume.path) && !usedDiskPaths.includes(volume.name));
 
@@ -387,7 +387,7 @@ function validate_CustomPath(field: DialogField<CustomPathValue>) {
     const { _fileInfoCache } = field.get();
     field.sub("file").validate_async(0, async file => {
         if (!file)
-            return _("Path can not be empty");
+            return _("Path cannot be empty");
 
         const { usesBackingFile } = await getFileInfo(file, _fileInfoCache);
         if (usesBackingFile)
@@ -648,56 +648,75 @@ export const AddDisk = ({
             if (!target)
                 throw new DialogError(_("Failed to add disk"), _("Can not determine guest device name"));
 
-            const hotplug = domainIsRunning(vm.state);
-
             const common = {
-                permanent: values.permanent,
-                hotplug,
-                vmId: vm.id,
-                cacheMode: values.additional_options.cache_mode,
-                busType: values.additional_options.bus_type,
-                serial: values.additional_options.serial,
+                target,
+                // Using "cache=default" is mostly the same as
+                // omitting cache altogether, except when
+                // "type=block". In that case, "cache=default" is an
+                // error and omitting "cache" gives the real default
+                // for block devices, which is "cache=none". So we
+                // omit "cache" when the user selects "default" to
+                // cover both cases.
+                cache: values.additional_options.cache_mode == "default" ? null : values.additional_options.cache_mode,
+                bus: values.additional_options.bus_type,
+                serial: values.additional_options.serial === "" ? null : values.additional_options.serial,
+                driver: {
+                    // virt-install does this by default for the OS
+                    // disk, but virt-xml does not when adding
+                    // additional ones. Cockpit-machines has been
+                    // doing it since 078628b75167, so we keep doing it.
+                    discard: "unmap",
+                },
             };
 
             if (values.mode === CREATE_NEW && typeof values.create_new != "string") {
                 const params = values.create_new;
                 const size = convertToUnit(params.volume.newSize.size, params.volume.newSize.unit, 'MiB');
-                await storageVolumeCreateAndAttach({
+                await storageVolumeCreate({
                     connectionName: vm.connectionName,
-                    target,
                     poolName: params.pool.name,
-                    volumeName: params.volume.name,
-                    format: params.volume.format,
+                    volName: params.volume.name,
                     size,
-                    ...common
+                    format: params.volume.format,
                 });
+                await virtXmlHotAdd(
+                    vm,
+                    "disk",
+                    {
+                        vol: params.pool.name + "/" + params.volume.name,
+                        format: params.volume.format,
+                        ...common,
+                    },
+                    values.permanent,
+                );
             } else if (values.mode == CUSTOM_PATH) {
                 const params = values.custom_path;
                 const file_info = await getFileInfo(params.file, params._fileInfoCache);
-                await domainAttachDisk({
-                    connectionName: vm.connectionName,
-                    target,
-                    type: "file",
-                    file: params.file,
-                    device: params.device,
-                    format: file_info.format,
-                    shareable: false,
-                    ...common
-                });
+                await virtXmlHotAdd(
+                    vm,
+                    "disk",
+                    {
+                        path: params.file,
+                        format: file_info.format,
+                        device: params.device,
+                        ...common,
+                    },
+                    values.permanent,
+                );
             } else if (values.mode == USE_EXISTING && typeof values.use_existing != "string") {
                 const params = values.use_existing;
                 const { device, format } = getPoolFormatAndDevice(params.pool._storagePool, params.volume);
-                await domainAttachDisk({
-                    connectionName: vm.connectionName,
-                    target,
-                    type: "volume",
-                    device,
-                    format,
-                    poolName: params.pool.name,
-                    volumeName: params.volume,
-                    shareable: false,
-                    ...common
-                });
+                await virtXmlHotAdd(
+                    vm,
+                    "disk",
+                    {
+                        vol: params.pool.name + "/" + params.volume,
+                        format,
+                        device,
+                        ...common,
+                    },
+                    values.permanent,
+                );
             }
 
             // force reload of VM data, events are not reliable (i.e. for a down VM)
