@@ -938,10 +938,6 @@ export function getIfaceSourceName(iface: VMInterface): SourceName {
     return mapper[iface.type || ""] && mapper[iface.type || ""](iface.source);
 }
 
-export function canDeleteDiskFile(disk: VMDisk): boolean {
-    return disk.type === "volume" || (disk.type === "file" && !!disk.source.file);
-}
-
 export function getStoragePoolPath(
     storagePools: StoragePool[],
     poolName: string,

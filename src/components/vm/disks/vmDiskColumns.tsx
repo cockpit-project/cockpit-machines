@@ -3,7 +3,8 @@
  *
  * Copyright (C) 2016 Red Hat, Inc.
  */
-import React from 'react';
+import React, { useState } from 'react';
+import { useInit } from 'hooks';
 import cockpit from 'cockpit';
 
 import type { optString, VM, VMDisk } from '../../../types';
@@ -18,12 +19,15 @@ import { KebabDropdown } from 'cockpit-components-dropdown.jsx';
 import { basename } from 'cockpit-path';
 
 import { useDialogs } from 'dialogs.jsx';
-import { domainDeleteStorage, virtXmlHotRemove, domainGet } from '../../../libvirtApi/domain.js';
+import {
+    StorageDeleteInfo, getStorageDeleteInfoForDisk, deleteStorage,
+    virtXmlHotRemove,
+    domainGet
+} from '../../../libvirtApi/domain.js';
 import { MediaEjectModal } from './mediaEject.jsx';
 import { EditDiskAction } from './diskEdit.jsx';
 import { AddDisk } from './diskAdd.jsx';
 import { DeleteResourceModal } from '../../common/deleteResource.jsx';
-import { canDeleteDiskFile } from '../../../helpers.js';
 import { appState } from '../../../state';
 
 const _ = cockpit.gettext;
@@ -139,17 +143,16 @@ export const RemoveDiskModal = ({
     vm: VM,
     disk: VMDisk,
 }) => {
-    const onRemoveDisk = async (deleteFile: boolean) => {
+    const [info, setInfo] = useState<null | StorageDeleteInfo>(null);
+    useInit(async () => { setInfo(await getStorageDeleteInfoForDisk(vm, disk)) });
+
+    const onRemoveDisk = async (deleteInfo: null | StorageDeleteInfo) => {
         await virtXmlHotRemove(vm, "disk", { target: disk.target }, disk.target in vm.inactiveXML.disks);
         await domainGet(vm);
 
-        if (deleteFile) {
+        if (deleteInfo) {
             try {
-                await domainDeleteStorage({
-                    connectionName: vm.connectionName,
-                    storage: [disk],
-                    storagePools: appState.storagePools
-                });
+                await deleteStorage(vm, [deleteInfo]);
             } catch (exc) {
                 appState.addNotification({
                     resourceId: vm.id,
@@ -172,12 +175,12 @@ export const RemoveDiskModal = ({
                 ? { name: entry.label, value: <span className="ct-monospace">{getDiskSourceValue(disk.source, entry.name)}</span> }
                 : [])
         ],
-        deleteHandler: () => onRemoveDisk(false),
+        deleteHandler: () => onRemoveDisk(null),
     };
 
-    if (canDeleteDiskFile(disk)) {
-        dialogProps.actionNameSecondary = _("Remove and delete file");
-        dialogProps.deleteHandlerSecondary = () => onRemoveDisk(true);
+    if (info) {
+        dialogProps.actionNameSecondary = _("Remove disk and delete disk image");
+        dialogProps.deleteHandlerSecondary = () => onRemoveDisk(info);
     }
 
     return <DeleteResourceModal {...dialogProps} />;
