@@ -19,8 +19,8 @@ import {
 } from '@patternfly/react-core/dist/esm/components/Modal';
 import { DialogsContext } from 'dialogs.jsx';
 
-import { canDeleteDiskFile, vmId, getVmStoragePools } from '../../helpers.js';
-import { domainDelete, domainDeleteStorage } from '../../libvirtApi/domain.js';
+import { vmId } from '../../helpers.js';
+import { domainDelete, StorageDeleteInfo, getStorageDeleteInfoForDisk, deleteStorage } from '../../libvirtApi/domain.js';
 import { snapshotDelete } from '../../libvirtApi/snapshot.js';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { appState } from '../../state';
@@ -30,6 +30,7 @@ import './deleteDialog.css';
 const _ = cockpit.gettext;
 
 interface UIDisk extends VMDisk {
+    deleteInfo: StorageDeleteInfo;
     checked: boolean;
 }
 
@@ -121,17 +122,25 @@ export class DeleteDialog extends React.Component<DeleteDialogProps, DeleteDialo
         this.onDiskCheckedChanged = this.onDiskCheckedChanged.bind(this);
         this.dialogErrorSet = this.dialogErrorSet.bind(this);
 
-        const vm = props.vm;
+        this.state = { disks: [] };
+    }
+
+    async componentDidMount() {
+        const vm = this.props.vm;
         const disks: UIDisk[] = [];
 
-        Object.keys(vm.disks).sort()
-                .forEach(t => {
-                    const d = vm.disks[t];
+        for (const t of Object.keys(vm.disks).sort()) {
+            const d = vm.disks[t];
+            const info = await getStorageDeleteInfoForDisk(vm, d);
 
-                    if (canDeleteDiskFile(d))
-                        disks.push(Object.assign(d, { checked: !d.readonly }));
-                });
-        this.state = { disks };
+            if (info)
+                disks.push(Object.assign(d, {
+                    deleteInfo: info,
+                    checked: !d.readonly,
+                }));
+        }
+
+        this.setState({ disks });
     }
 
     dialogErrorSet(text: string, detail: string) {
@@ -149,7 +158,6 @@ export class DeleteDialog extends React.Component<DeleteDialogProps, DeleteDialo
         const Dialogs = this.context;
         const storage = this.state.disks.filter(d => d.checked);
         const { vm } = this.props;
-        const storagePools = getVmStoragePools(vm.connectionName);
 
         Promise.all(
             (Array.isArray(vm.snapshots) ? vm.snapshots : [])
@@ -167,7 +175,7 @@ export class DeleteDialog extends React.Component<DeleteDialogProps, DeleteDialo
                             });
                 })
                 .then(() => { // Cleanup operations
-                    return domainDeleteStorage({ connectionName: vm.connectionName, storage, storagePools })
+                    return deleteStorage(vm, storage.map(s => s.deleteInfo))
                             .catch(exc => appState.addNotification({
                                 text: cockpit.format(_("Could not delete all storage for $0"), vm.name),
                                 detail: exc,
