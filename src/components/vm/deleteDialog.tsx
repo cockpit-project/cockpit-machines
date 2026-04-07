@@ -68,6 +68,11 @@ const DeleteDialogBody = ({
                                     <span> {_("Path")} </span>
                                     <strong className='disk-source-file'> {disk.source.file} </strong>
                                 </div>}
+                                {disk.type == 'block' &&
+                                <div className='disk-source'>
+                                    <span> {_("Block device")} </span>
+                                    <strong className='disk-source-dev'> {disk.source.dev} </strong>
+                                </div>}
                                 {disk.type == 'volume' &&
                                 <div className='disk-source'>
                                     <span> {_("Volume")} </span>

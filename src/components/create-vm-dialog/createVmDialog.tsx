@@ -75,7 +75,7 @@ import {
     saveOfflineToken,
 } from "./createVmDialogUtils.js";
 import { domainCreate } from '../../libvirtApi/domain.js';
-import { storagePoolRefresh } from '../../libvirtApi/storagePool.js';
+import { storagePoolRefresh, storagePoolGetAll } from '../../libvirtApi/storagePool.js';
 import { getAccessToken } from '../../libvirtApi/rhel-images.js';
 import { getOsInfoList } from '../../libvirtApi/common.js';
 import { PasswordFormFields } from 'cockpit-components-password.jsx';
@@ -1304,6 +1304,8 @@ export class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmM
 
     async componentDidMount() {
         const osInfoList = await getOsInfoList();
+        await storagePoolGetAll({ connectionName: this.state.connectionName });
+
         this.setState({ osInfoListLoading: false, osInfoList });
 
         // If initialOS was provided via props, find and set the matching OS
