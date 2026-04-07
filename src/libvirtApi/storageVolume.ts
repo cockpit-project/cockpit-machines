@@ -18,7 +18,6 @@ import type {
 import { getVolumeXML } from '../libvirt-xml-create.js';
 import { parseStorageVolumeDumpxml } from '../libvirt-xml-parse.js';
 import { storagePoolRefresh } from './storagePool.js';
-import { domainAttachDisk } from './domain.js';
 import { call, timeout } from './helpers.js';
 
 export async function storageVolumeCreate({
@@ -40,42 +39,6 @@ export async function storageVolumeCreate({
                                         [poolName], { timeout, type: 's' });
     await call(connectionName, path, 'org.libvirt.StoragePool', 'StorageVolCreateXML', [volXmlDesc, 0], { timeout, type: 'su' });
     await storagePoolRefresh({ connectionName, objPath: path });
-}
-
-export interface StorageVolumeCreateAndAttachParams {
-    connectionName: ConnectionName,
-    poolName: string,
-    volumeName: string,
-    size: number,
-    format: string,
-    target: string,
-    vmId: string,
-    permanent: boolean,
-    hotplug: boolean,
-    cacheMode: string,
-    busType: string,
-    serial: string,
-}
-
-export async function storageVolumeCreateAndAttach({
-    connectionName,
-    poolName,
-    volumeName,
-    size,
-    format,
-    target,
-    vmId,
-    permanent,
-    hotplug,
-    cacheMode,
-    busType,
-    serial,
-}: StorageVolumeCreateAndAttachParams): Promise<void> {
-    const volXmlDesc = getVolumeXML(volumeName, size, format);
-    const [storagePoolPath] = await call<[string]>(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName', [poolName], { timeout, type: 's' });
-    await call(connectionName, storagePoolPath, 'org.libvirt.StoragePool', 'StorageVolCreateXML', [volXmlDesc, 0], { timeout, type: 'su' });
-    await storagePoolRefresh({ connectionName, objPath: storagePoolPath });
-    await domainAttachDisk({ connectionName, type: "volume", device: "disk", poolName, volumeName, format, target, vmId, permanent, hotplug, cacheMode, busType, serial });
 }
 
 export async function storageVolumeDelete({
