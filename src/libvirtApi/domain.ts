@@ -576,30 +576,41 @@ export async function getStorageDeleteInfoForDisk(vm: VM, disk: VMDisk): Promise
     // But we can't rely on our list of storage volumes to be
     // up-to-date. So let's fetch everything explicitly.
 
-    if (disk.type == "file" && disk.source.file) {
+    async function getInfoByPath(path: string): Promise<StorageDeleteInfo | null> {
         try {
-            const [path] = await call<[string]>(
+            const [dbusPath] = await call<[string]>(
                 vm.connectionName,
                 '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StorageVolLookupByPath',
-                [disk.source.file],
+                [path],
                 { timeout, type: 's' }
             );
             return {
-                volume: path,
+                volume: dbusPath,
                 pool: appState.storagePools.find(
-                    p => p.connectionName === vm.connectionName && p.volumes.some(v => v.path === disk.source.file)),
+                    p => p.connectionName === vm.connectionName && p.volumes.some(v => v.path === path)),
                 file: null,
             };
         } catch (ex) {
             if (!String(ex).includes("no storage vol with matching"))
                 throw ex;
-            return {
-                volume: null,
-                pool: undefined,
-                file: disk.source.file,
-            };
+            return null;
         }
     }
+
+    if (disk.type == "file" && disk.source.file) {
+        const info = await getInfoByPath(disk.source.file);
+        if (info)
+            return info;
+
+        return {
+            volume: null,
+            pool: undefined,
+            file: disk.source.file,
+        };
+    }
+
+    if (disk.type == "block" && disk.source.dev)
+        return await getInfoByPath(disk.source.dev);
 
     if (disk.type == "volume" && disk.source.pool && disk.source.volume) {
         const [pool] = await call<[string]>(

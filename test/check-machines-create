@@ -704,6 +704,10 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                                                  storage_pool="poolDisk",
                                                                  storage_volume=partition))
 
+        # Deleting the storage of the machine will remove the
+        # partition in "poolDisk". Recreate it.
+        self.machine.execute(f"virsh vol-create-as poolDisk {partition} 1024")
+
         if "debian" not in self.machine.image and "ubuntu" not in self.machine.image:
             target_iqn = "iqn.2019-09.cockpit.lan"
             self.prepareStorageDeviceOnISCSI(target_iqn)
@@ -742,6 +746,10 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                                                                  memory_size=128, memory_size_unit='MiB',
                                                                  storage_pool="poolDisk",
                                                                  storage_volume=partition))
+
+        # Deleting the storage of the machine will remove the
+        # partition in "poolDisk". Recreate it.
+        self.machine.execute(f"virsh vol-create-as poolDisk {partition} 1024")
 
         # Make sure VM can be created with extraArgs
         runner.createThenInstallTest(TestMachinesCreate.VmDialog(self, sourceType='url',
