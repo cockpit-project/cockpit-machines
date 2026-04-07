@@ -6,66 +6,6 @@
 
 import type { optString } from './types';
 
-export function getDiskXML(
-    type: string,
-    file: string | undefined,
-    device: string,
-    poolName: string | undefined,
-    volumeName: string | undefined,
-    format: string,
-    target: string,
-    cacheMode: string,
-    shareable: boolean | undefined,
-    busType: string,
-    serial: string,
-): string {
-    const doc = document.implementation.createDocument('', '', null);
-
-    const diskElem = doc.createElement('disk');
-    diskElem.setAttribute('type', type);
-    diskElem.setAttribute('device', device);
-
-    const driverElem = doc.createElement('driver');
-    driverElem.setAttribute('name', 'qemu');
-    if (format && ['qcow2', 'raw'].includes(format))
-        driverElem.setAttribute('type', format);
-    driverElem.setAttribute('cache', cacheMode);
-    driverElem.setAttribute('discard', 'unmap');
-    diskElem.appendChild(driverElem);
-
-    const sourceElem = doc.createElement('source');
-    if (type === 'file') {
-        if (file)
-            sourceElem.setAttribute('file', file);
-    } else {
-        if (volumeName)
-            sourceElem.setAttribute('volume', volumeName);
-        if (poolName)
-            sourceElem.setAttribute('pool', poolName);
-    }
-    diskElem.appendChild(sourceElem);
-
-    const targetElem = doc.createElement('target');
-    targetElem.setAttribute('dev', target);
-    targetElem.setAttribute('bus', busType);
-    diskElem.appendChild(targetElem);
-
-    if (shareable) {
-        const shareableElem = doc.createElement('shareable');
-        diskElem.appendChild(shareableElem);
-    }
-
-    if (serial) {
-        const serialElem = doc.createElement('serial');
-        serialElem.appendChild(doc.createTextNode(serial));
-        diskElem.appendChild(serialElem);
-    }
-
-    doc.appendChild(diskElem);
-
-    return new XMLSerializer().serializeToString(doc.documentElement);
-}
-
 export interface NetworkSpec {
     name: string,
     forwardMode: string,
