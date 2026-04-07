@@ -136,7 +136,6 @@ export class VmDisksCardLibvirt extends React.Component<VmDisksCardLibvirtProps>
             <VmDisksCard
                 vm={vm}
                 disks={disks}
-                storagePools={storagePools}
                 supportedDiskBusTypes={supportedDiskBusTypes} />
         );
     }
@@ -146,12 +145,10 @@ export const VmDisksCard = ({
     vm,
     disks,
     supportedDiskBusTypes,
-    storagePools
 } : {
     vm: VM,
     disks: VMDiskWithData[],
     supportedDiskBusTypes: string[],
-    storagePools: StoragePool[],
 }) => {
     const [openActions, setOpenActions] = useState(new Set());
     const columnTitles: (string | ListingTableColumnProps)[] = [];
@@ -191,7 +188,6 @@ export const VmDisksCard = ({
         columns.push({
             title: <DiskActions vm={vm}
                                 disk={disk}
-                                storagePools={storagePools}
                                 supportedDiskBusTypes={supportedDiskBusTypes}
                                 idPrefixRow={idPrefixRow}
                                 isActionOpen={openActions.has(disk.target)}

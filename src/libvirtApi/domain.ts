@@ -644,35 +644,6 @@ export function domainDesktopConsole({
     });
 }
 
-export async function domainDetachDisk({
-    connectionName,
-    id: vmPath,
-    target,
-    live = false,
-    persistent
-} : {
-    connectionName: ConnectionName,
-    id: string,
-    target: string,
-    live?: boolean,
-    persistent: boolean,
-}): Promise<void> {
-    let detachFlags = Enum.VIR_DOMAIN_AFFECT_CURRENT;
-    if (live)
-        detachFlags |= Enum.VIR_DOMAIN_AFFECT_LIVE;
-
-    const [domXml] = await call<[string]>(connectionName, vmPath, 'org.libvirt.Domain', 'GetXMLDesc', [0], { timeout, type: 'u' });
-    const diskXML = getDiskElemByTarget(domXml, target);
-
-    const [domInactiveXml] = await call<[string]>(connectionName, vmPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
-
-    const diskInactiveXML = getDiskElemByTarget(domInactiveXml, target);
-    if (diskInactiveXML && persistent)
-        detachFlags |= Enum.VIR_DOMAIN_AFFECT_CONFIG;
-
-    await call(connectionName, vmPath, 'org.libvirt.Domain', 'DetachDevice', [diskXML, detachFlags], { timeout, type: 'su' });
-}
-
 // Cannot use virt-xml until https://github.com/virt-manager/virt-manager/issues/357 is fixed
 export async function domainDetachHostDevice({
     connectionName,
