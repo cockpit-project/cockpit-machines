@@ -6,7 +6,7 @@
 import React from 'react';
 import cockpit from 'cockpit';
 
-import type { optString, VM, VMDisk, StoragePool } from '../../../types';
+import type { optString, VM, VMDisk } from '../../../types';
 import type { DeleteResourceModalProps } from '../../common/deleteResource';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -18,7 +18,7 @@ import { KebabDropdown } from 'cockpit-components-dropdown.jsx';
 import { basename } from 'cockpit-path';
 
 import { useDialogs } from 'dialogs.jsx';
-import { domainDeleteStorage, domainDetachDisk, domainGet } from '../../../libvirtApi/domain.js';
+import { domainDeleteStorage, virtXmlHotRemove, domainGet } from '../../../libvirtApi/domain.js';
 import { MediaEjectModal } from './mediaEject.jsx';
 import { EditDiskAction } from './diskEdit.jsx';
 import { AddDisk } from './diskAdd.jsx';
@@ -135,36 +135,30 @@ export const DiskExtraDescriptions = ({
 export const RemoveDiskModal = ({
     vm,
     disk,
-    storagePools
 } : {
     vm: VM,
     disk: VMDisk,
-    storagePools: StoragePool[],
 }) => {
-    const onRemoveDisk = (deleteFile: boolean) => {
-        return domainDetachDisk({
-            connectionName: vm.connectionName,
-            id: vm.id,
-            target: disk.target,
-            live: vm.state === 'running',
-            persistent: vm.persistent,
-        })
-                .then(() => domainGet({ connectionName: vm.connectionName, id: vm.id }))
-                .then(() => { // Cleanup operations
-                    if (deleteFile) {
-                        return domainDeleteStorage({ connectionName: vm.connectionName, storage: [disk], storagePools })
-                                .catch(exc => {
-                                    appState.addNotification({
-                                        resourceId: vm.id,
-                                        text: cockpit.format(_("Could not delete disk's storage")),
-                                        detail: exc.message,
-                                        type: "warning"
-                                    });
-                                });
-                    } else {
-                        return Promise.resolve();
-                    }
+    const onRemoveDisk = async (deleteFile: boolean) => {
+        await virtXmlHotRemove(vm, "disk", { target: disk.target }, disk.target in vm.inactiveXML.disks);
+        await domainGet(vm);
+
+        if (deleteFile) {
+            try {
+                await domainDeleteStorage({
+                    connectionName: vm.connectionName,
+                    storage: [disk],
+                    storagePools: appState.storagePools
                 });
+            } catch (exc) {
+                appState.addNotification({
+                    resourceId: vm.id,
+                    text: cockpit.format(_("Could not delete disk's storage")),
+                    detail: String(exc),
+                    type: "warning"
+                });
+            }
+        }
     };
 
     const dialogProps: DeleteResourceModalProps = {
@@ -194,7 +188,6 @@ export const DiskActions = ({
     disk,
     supportedDiskBusTypes,
     idPrefixRow,
-    storagePools,
     isActionOpen,
     setIsActionOpen
 } : {
@@ -202,7 +195,6 @@ export const DiskActions = ({
     disk: VMDisk,
     supportedDiskBusTypes: string[],
     idPrefixRow: string,
-    storagePools: StoragePool[],
     isActionOpen: boolean,
     setIsActionOpen: (open: boolean) => void,
 }) => {
@@ -248,9 +240,7 @@ export const DiskActions = ({
                       key={`delete-${idPrefixRow}`}
                       isDisabled={disabled}
                       onClick={() => {
-                          Dialogs.show(<RemoveDiskModal vm={vm}
-                                                        disk={disk}
-                                                        storagePools={storagePools} />);
+                          Dialogs.show(<RemoveDiskModal vm={vm} disk={disk} />);
                       }}>
             {_("Remove")}
         </DropdownItem>
