@@ -19,9 +19,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-31 05:01+0000\n"
-"PO-Revision-Date: 2026-03-17 15:56+0000\n"
-"Last-Translator: Luke Na <narukeu@outlook.com>\n"
+"POT-Creation-Date: 2026-04-13 05:29+0000\n"
+"PO-Revision-Date: 2026-04-13 22:58+0000\n"
+"Last-Translator: Jesse Guo <jesseguotech@outlook.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.fedoraproject.org/"
 "projects/cockpit/cockpit-machines/zh_CN/>\n"
 "Language: zh_CN\n"
@@ -31,7 +31,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0\n"
 "X-Generator: Weblate 5.16.2\n"
 
-#: src/components/vm/nics/nicBody.tsx:366
+#: src/components/vm/nics/nicBody.tsx:325
 msgid " excluding "
 msgstr " 除外 "
 
@@ -74,13 +74,13 @@ msgstr "$0 内存调整"
 msgid "$0 network"
 msgstr "$0 网络"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:140
 #: src/components/vm/vmUsageCard.tsx:35
+#: src/components/vm/overview/vmOverviewCard.tsx:140
 msgid "$0 vCPU"
 msgid_plural "$0 vCPUs"
 msgstr[0] "$0 vCPU"
 
-#: src/components/vm/nics/nicEdit.tsx:222
+#: src/components/vm/nics/nicEdit.tsx:218
 msgid "$0 virtual network interface settings"
 msgstr "$0 虚拟网络接口设置"
 
@@ -96,7 +96,7 @@ msgstr ""
 "一个虚拟机的副本将在目标上运行，并在其关闭时消失。同时，原始主机会保留其虚拟"
 "机配置的副本。"
 
-#: src/components/vm/disks/vmDisksCard.tsx:252
+#: src/components/vm/disks/vmDisksCard.tsx:250
 #: src/components/vm/disks/diskEdit.tsx:128
 msgid "Access"
 msgstr "访问"
@@ -105,12 +105,12 @@ msgstr "访问"
 msgid "Action"
 msgstr "操作"
 
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:185
+#: src/components/vm/nics/vmNicsCard.tsx:593
+#: src/components/vm/disks/vmDisksCard.tsx:165
+#: src/components/vms/hostvmslist.tsx:324
 #: src/components/networks/networkList.tsx:64
 #: src/components/storagePools/storagePoolList.tsx:65
-#: src/components/vms/hostvmslist.tsx:324
-#: src/components/vm/snapshots/vmSnapshotsCard.tsx:185
-#: src/components/vm/disks/vmDisksCard.tsx:167
-#: src/components/vm/nics/vmNicsCard.tsx:592
 msgid "Actions"
 msgstr "操作"
 
@@ -123,12 +123,12 @@ msgstr "激活"
 msgid "Activate the storage pool to administer volumes"
 msgstr "激活存储池以管理卷"
 
-#: src/components/networks/networkOverviewTab.tsx:268
-#: src/components/vm/disks/diskAdd.tsx:973
+#: src/components/vm/hostdevs/hostDevAdd.tsx:261
+#: src/components/vm/nics/nicAdd.tsx:274 src/components/vm/nics/nicBody.tsx:558
 #: src/components/vm/overview/vsock.tsx:223
 #: src/components/vm/overview/watchdog.tsx:167
-#: src/components/vm/nics/nicBody.tsx:599 src/components/vm/nics/nicAdd.tsx:279
-#: src/components/vm/hostdevs/hostDevAdd.tsx:261
+#: src/components/vm/disks/diskAdd.tsx:730
+#: src/components/networks/networkOverviewTab.tsx:268
 msgid "Add"
 msgstr "添加"
 
@@ -148,8 +148,8 @@ msgstr "新增 VNC"
 msgid "Add a DHCP static host entry"
 msgstr "添加一个DHCP静态主机条目"
 
-#: src/components/vm/disks/vmDisksCard.tsx:71
-#: src/components/vm/disks/diskAdd.tsx:811
+#: src/components/vm/disks/vmDisksCard.tsx:69
+#: src/components/vm/disks/diskAdd.tsx:718
 msgid "Add disk"
 msgstr "添加磁盘"
 
@@ -158,7 +158,7 @@ msgstr "添加磁盘"
 msgid "Add host device"
 msgstr "添加主机设备"
 
-#: src/components/vm/nics/vmNicsCard.tsx:103
+#: src/components/vm/nics/vmNicsCard.tsx:104
 msgid "Add network interface"
 msgstr "添加网络接口"
 
@@ -170,7 +170,7 @@ msgstr "添加串行控制台"
 msgid "Add shared directory"
 msgstr "添加共享的目录"
 
-#: src/components/vm/nics/nicAdd.tsx:268
+#: src/components/vm/nics/nicAdd.tsx:263
 msgid "Add virtual network interface"
 msgstr "添加虚拟网络接口"
 
@@ -190,9 +190,9 @@ msgstr "添加 watchdog 将需要重启才能生效。"
 msgid "Adding shared directories is possible only when the guest is shut off"
 msgstr "只有在客户机处于关机状态时才能添加共享目录"
 
+#: src/components/vm/nics/vmNicsCard.tsx:183
 #: src/components/networks/networkOverviewTab.tsx:140
 #: src/components/networks/networkOverviewTab.tsx:160
-#: src/components/vm/nics/vmNicsCard.tsx:182
 msgid "Address"
 msgstr "地址"
 
@@ -202,6 +202,10 @@ msgstr "地址"
 #: src/components/networks/createNetworkDialog.tsx:153
 msgid "Address not within subnet"
 msgstr "地址不在子网内"
+
+#: src/components/vm/nics/nicBody.tsx:108
+msgid "Advanced interface type for high performance or enhanced security."
+msgstr "用于高性能或增强安全性的高级接口类型。"
 
 #: src/components/vms/hostvmslist.tsx:221
 #: src/components/vms/hostvmslist.tsx:239
@@ -215,7 +219,7 @@ msgid ""
 msgstr ""
 "所有虚拟机的活动（包括存储）都将是临时的。这将导致目标主机上的数据会丢失。"
 
-#: src/components/vm/disks/diskAdd.tsx:325
+#: src/components/vm/disks/diskAdd.tsx:141
 msgid ""
 "Allowed characters: basic Latin alphabet, numbers, and limited punctuation "
 "(-, _, +, .)"
@@ -225,8 +229,8 @@ msgstr "允许的字符：基本的拉丁字母、数字和有限的标点（-�
 msgid "Also delete all volumes inside this pool:"
 msgstr "同时删除这个池中的所有卷："
 
-#: src/components/vm/disks/diskAdd.tsx:181
-#: src/components/vm/nics/nicAdd.tsx:141
+#: src/components/vm/nics/nicAdd.tsx:135
+#: src/components/vm/disks/diskAdd.tsx:594
 msgid "Always attach"
 msgstr "保证连接"
 
@@ -271,13 +275,13 @@ msgstr "自动"
 msgid "Automation"
 msgstr "自动化"
 
+#: src/components/vm/overview/vmOverviewCard.tsx:192
 #: src/components/networks/networkOverviewTab.tsx:117
 #: src/components/storagePools/storagePoolOverviewTab.tsx:60
-#: src/components/vm/overview/vmOverviewCard.tsx:192
 msgid "Autostart"
 msgstr "自动启动"
 
-#: src/components/vm/nics/vmNicsCard.tsx:793
+#: src/components/vm/nics/vmNicsCard.tsx:794
 msgid "Backend"
 msgstr "后端："
 
@@ -309,29 +313,29 @@ msgstr "无法保存启动顺序"
 msgid "Bridge"
 msgstr "网桥"
 
-#: src/components/vm/disks/vmDisksCard.tsx:247
-#: src/components/vm/disks/diskAdd.tsx:294
-#: src/components/vm/disks/diskEdit.tsx:91
+#: src/components/vm/hostdevs/hostDevAdd.tsx:100
+#: src/components/vm/hostdevs/hostDevCard.tsx:91
+#: src/components/vm/hostdevs/hostDevCard.tsx:99
+#: src/components/vm/hostdevs/hostDevCard.tsx:250
 #: src/components/vm/overview/bootOrder.tsx:114
 #: src/components/vm/overview/bootOrder.tsx:126
 #: src/components/vm/overview/bootOrder.tsx:145
 #: src/components/vm/overview/bootOrder.tsx:148
 #: src/components/vm/overview/bootOrder.tsx:163
-#: src/components/vm/hostdevs/hostDevAdd.tsx:100
-#: src/components/vm/hostdevs/hostDevCard.tsx:91
-#: src/components/vm/hostdevs/hostDevCard.tsx:99
-#: src/components/vm/hostdevs/hostDevCard.tsx:250
+#: src/components/vm/disks/vmDisksCard.tsx:245
+#: src/components/vm/disks/diskAdd.tsx:177
+#: src/components/vm/disks/diskEdit.tsx:91
 msgid "Bus"
 msgstr "总线"
 
-#: src/components/vm/disks/diskAdd.tsx:460
+#: src/components/vm/disks/diskAdd.tsx:425
 msgid "CD/DVD disc"
 msgstr "CD/DVD 盘"
 
-#: src/components/common/needsShutdown.tsx:206
-#: src/components/vms/hostvmslist.tsx:93 src/components/vms/hostvmslist.tsx:301
-#: src/components/vm/overview/vmOverviewCard.tsx:180
 #: src/components/vm/vmUsageCard.tsx:52
+#: src/components/vm/overview/vmOverviewCard.tsx:180
+#: src/components/vms/hostvmslist.tsx:93 src/components/vms/hostvmslist.tsx:301
+#: src/components/common/needsShutdown.tsx:206
 msgid "CPU"
 msgstr "CPU"
 
@@ -339,39 +343,41 @@ msgstr "CPU"
 msgid "CPU mode could not be saved"
 msgstr "无法保存 CPU 模式"
 
-#: src/components/vm/disks/vmDisksCard.tsx:263
-#: src/components/vm/disks/diskAdd.tsx:283
+#: src/components/vm/disks/vmDisksCard.tsx:261
+#: src/components/vm/disks/diskAdd.tsx:172
 #: src/components/vm/disks/diskEdit.tsx:165
 msgid "Cache"
 msgstr "缓存"
 
-#: src/components/common/deleteResource.tsx:116
+#: src/components/vm/disks/diskAdd.tsx:649
+msgid "Can not determine guest device name"
+msgstr "无法确定客户机设备名"
+
+#: src/components/vm/vmReplaceSpiceDialog.tsx:171
+#: src/components/vm/confirmDialog.tsx:66
+#: src/components/vm/vmRenameDialog.tsx:96
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:340
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:127
+#: src/components/vm/hostdevs/hostDevAdd.tsx:266
+#: src/components/vm/consoles/vnc.tsx:158
+#: src/components/vm/vmEditDescriptionDialog.tsx:81
+#: src/components/vm/overview/vsock.tsx:272
+#: src/components/vm/overview/bootOrder.tsx:356
+#: src/components/vm/overview/firmware.tsx:107
+#: src/components/vm/overview/watchdog.tsx:228
+#: src/components/vm/overview/memoryModal.tsx:195
+#: src/components/vm/overview/cpuModal.tsx:341
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:248
+#: src/components/vm/disks/mediaEject.tsx:116
+#: src/components/vm/vmCloneDialog.tsx:111
+#: src/components/vm/deleteDialog.tsx:202
+#: src/components/vm/vmMigrateDialog.tsx:227
+#: src/components/create-vm-dialog/createVmDialog.tsx:1732
 #: src/components/networks/createNetworkDialog.tsx:548
 #: src/components/networks/networkOverviewTab.tsx:271
 #: src/components/storagePools/storagePoolDelete.tsx:207
 #: src/components/storagePools/createStoragePoolDialog.tsx:512
-#: src/components/storagePools/storageVolumeCreate.tsx:133
-#: src/components/create-vm-dialog/createVmDialog.tsx:1732
-#: src/components/vm/vmMigrateDialog.tsx:227
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:127
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:340
-#: src/components/vm/vmEditDescriptionDialog.tsx:81
-#: src/components/vm/confirmDialog.tsx:66
-#: src/components/vm/deleteDialog.tsx:202
-#: src/components/vm/disks/mediaEject.tsx:116
-#: src/components/vm/disks/diskAdd.tsx:976
-#: src/components/vm/vmRenameDialog.tsx:96
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:248
-#: src/components/vm/overview/vsock.tsx:272
-#: src/components/vm/overview/bootOrder.tsx:356
-#: src/components/vm/overview/cpuModal.tsx:341
-#: src/components/vm/overview/watchdog.tsx:228
-#: src/components/vm/overview/memoryModal.tsx:195
-#: src/components/vm/overview/firmware.tsx:107
-#: src/components/vm/vmReplaceSpiceDialog.tsx:171
-#: src/components/vm/vmCloneDialog.tsx:111
-#: src/components/vm/hostdevs/hostDevAdd.tsx:266
-#: src/components/vm/consoles/vnc.tsx:158
+#: src/components/common/deleteResource.tsx:116
 msgid "Cancel"
 msgstr "取消"
 
@@ -450,7 +456,7 @@ msgstr "协处理器"
 msgid "Cockpit Project"
 msgstr "Cockpit 项目"
 
-#: src/components/vm/nics/nicBody.tsx:557
+#: src/components/vm/nics/nicBody.tsx:516
 msgid "Complex rule \"$0\" can not be edited here."
 msgstr "复杂规则 \"$0\" 无法在此处被编辑。"
 
@@ -458,7 +464,7 @@ msgstr "复杂规则 \"$0\" 无法在此处被编辑。"
 msgid "Compress"
 msgstr "压缩"
 
-#: src/components/vm/disks/vmDisksCard.tsx:255
+#: src/components/vm/disks/vmDisksCard.tsx:253
 msgid "Concurrently writeable"
 msgstr "可并发写入"
 
@@ -466,17 +472,17 @@ msgstr "可并发写入"
 msgid "Confirm this action"
 msgstr "确认此操作"
 
-#: src/components/vm/consoles/vnc.tsx:584
 #: src/components/vm/consoles/serial.tsx:86
+#: src/components/vm/consoles/vnc.tsx:584
 msgid "Connect"
 msgstr "连接"
 
-#: src/components/common/machinesConnectionSelector.tsx:44
+#: src/components/vm/overview/vmOverviewCard.tsx:158
+#: src/components/vms/hostvmslist.tsx:321
 #: src/components/networks/createNetworkDialog.tsx:34
 #: src/components/networks/networkList.tsx:61
 #: src/components/storagePools/storagePoolList.tsx:63
-#: src/components/vms/hostvmslist.tsx:321
-#: src/components/vm/overview/vmOverviewCard.tsx:158
+#: src/components/common/machinesConnectionSelector.tsx:44
 msgid "Connection"
 msgstr "连接"
 
@@ -529,10 +535,10 @@ msgstr "无法恢复到快照"
 msgid "Crashed"
 msgstr "已崩溃"
 
-#: src/components/networks/createNetworkDialog.tsx:545
-#: src/components/storagePools/createStoragePoolDialog.tsx:509
-#: src/components/storagePools/storageVolumeCreate.tsx:130
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:337
+#: src/components/networks/createNetworkDialog.tsx:545
+#: src/components/storagePools/storageVolumeCreate.tsx:95
+#: src/components/storagePools/createStoragePoolDialog.tsx:509
 msgid "Create"
 msgstr "创建"
 
@@ -560,7 +566,7 @@ msgstr "创建并编辑"
 msgid "Create and run"
 msgstr "创建并运行"
 
-#: src/components/vm/disks/diskAdd.tsx:750
+#: src/components/vm/disks/diskAdd.tsx:552
 msgid "Create new"
 msgstr "新建"
 
@@ -586,7 +592,7 @@ msgstr "创建快照"
 msgid "Create storage pool"
 msgstr "创建存储池"
 
-#: src/components/storagePools/storageVolumeCreate.tsx:109
+#: src/components/storagePools/storageVolumeCreate.tsx:86
 msgid "Create storage volume"
 msgstr "创建存储卷"
 
@@ -595,8 +601,8 @@ msgstr "创建存储卷"
 msgid "Create virtual network"
 msgstr "创建虚拟网络"
 
-#: src/components/storagePools/storageVolumeCreate.tsx:161
-#: src/components/storagePools/storageVolumeCreate.tsx:172
+#: src/components/storagePools/storageVolumeCreate.tsx:126
+#: src/components/storagePools/storageVolumeCreate.tsx:145
 msgid "Create volume"
 msgstr "创建卷"
 
@@ -642,9 +648,8 @@ msgstr "自定义固件：$0"
 msgid "Custom identifier"
 msgstr "自定义标识符"
 
-#: src/components/vm/disks/diskAdd.tsx:442
-#: src/components/vm/disks/diskAdd.tsx:714
-#: src/components/vm/disks/diskAdd.tsx:760
+#: src/components/vm/disks/diskAdd.tsx:413
+#: src/components/vm/disks/diskAdd.tsx:562
 msgid "Custom path"
 msgstr "自定义路径"
 
@@ -657,16 +662,16 @@ msgstr "DHCP 设置"
 msgid "Deactivate"
 msgstr "取消激活"
 
-#: src/components/common/deleteResource.tsx:104
-#: src/components/common/deleteResource.tsx:164
-#: src/components/common/deleteResource.tsx:175
+#: src/components/vm/vmActions.tsx:470 src/components/vm/vmActions.tsx:478
+#: src/components/vm/deleteDialog.tsx:199
 #: src/components/networks/network.tsx:140
 #: src/components/networks/network.tsx:143
 #: src/components/storagePools/storagePoolDelete.tsx:204
 #: src/components/storagePools/storagePoolDelete.tsx:234
 #: src/components/storagePools/storagePoolDelete.tsx:244
-#: src/components/vm/vmActions.tsx:470 src/components/vm/vmActions.tsx:478
-#: src/components/vm/deleteDialog.tsx:199
+#: src/components/common/deleteResource.tsx:104
+#: src/components/common/deleteResource.tsx:164
+#: src/components/common/deleteResource.tsx:175
 msgid "Delete"
 msgstr "删除"
 
@@ -736,18 +741,18 @@ msgstr "尝试删除之前，从所有 VM 中分离使用这个池的磁盘。"
 msgid "Details"
 msgstr "详情"
 
-#: src/components/networks/createNetworkDialog.tsx:218
-#: src/components/networks/networkList.tsx:60
-#: src/components/vm/disks/vmDisksCard.tsx:244
-#: src/components/vm/disks/diskAdd.tsx:450
-#: src/components/vm/overview/bootOrder.tsx:106
-#: src/components/vm/overview/bootOrder.tsx:113
-#: src/components/vm/overview/bootOrder.tsx:146
-#: src/components/vm/overview/bootOrder.tsx:149
 #: src/components/vm/hostdevs/hostDevAdd.tsx:99
 #: src/components/vm/hostdevs/hostDevAdd.tsx:144
 #: src/components/vm/hostdevs/hostDevCard.tsx:90
 #: src/components/vm/hostdevs/hostDevCard.tsx:249
+#: src/components/vm/overview/bootOrder.tsx:106
+#: src/components/vm/overview/bootOrder.tsx:113
+#: src/components/vm/overview/bootOrder.tsx:146
+#: src/components/vm/overview/bootOrder.tsx:149
+#: src/components/vm/disks/vmDisksCard.tsx:242
+#: src/components/vm/disks/diskAdd.tsx:420
+#: src/components/networks/createNetworkDialog.tsx:218
+#: src/components/networks/networkList.tsx:60
 msgid "Device"
 msgstr "设备"
 
@@ -759,8 +764,8 @@ msgstr "设备"
 msgid "Disconnect"
 msgstr "断开"
 
-#: src/components/vm/consoles/vnc.tsx:578
 #: src/components/vm/consoles/serial.tsx:83
+#: src/components/vm/consoles/vnc.tsx:578
 msgid "Disconnected"
 msgstr "已断开连接"
 
@@ -772,11 +777,11 @@ msgstr "磁盘"
 msgid "Disk $0 could not be removed"
 msgstr "无法删除磁盘 $0"
 
-#: src/components/vm/disks/diskAdd.tsx:959
+#: src/components/vm/disks/diskAdd.tsx:706
 msgid "Disk failed to be added"
 msgstr "添加磁盘失败"
 
-#: src/components/vm/disks/diskAdd.tsx:309
+#: src/components/vm/disks/diskAdd.tsx:183
 msgid "Disk identifier"
 msgstr "磁盘识别符"
 
@@ -784,7 +789,7 @@ msgstr "磁盘识别符"
 msgid "Disk image"
 msgstr "磁盘镜像"
 
-#: src/components/vm/disks/diskAdd.tsx:458
+#: src/components/vm/disks/diskAdd.tsx:424
 msgid "Disk image file"
 msgstr "磁盘镜像文件"
 
@@ -865,8 +870,8 @@ msgstr "持续时间"
 msgid "Dying"
 msgstr "停止工作"
 
+#: src/components/vm/nics/vmNicsCard.tsx:634
 #: src/components/vm/disks/diskEdit.tsx:245
-#: src/components/vm/nics/vmNicsCard.tsx:633
 msgid "Edit"
 msgstr "编辑"
 
@@ -895,16 +900,16 @@ msgstr "编辑 vsock 接口"
 msgid "Edit watchdog device type"
 msgstr "编辑 watchdog 设备类型"
 
-#: src/components/vm/nics/vmNicsCard.tsx:621
+#: src/components/vm/nics/vmNicsCard.tsx:622
 msgid "Editing network interfaces of transient guests is not allowed"
 msgstr "不允许编辑临时客户机的网络接口"
 
-#: src/components/vm/nics/vmNicsCard.tsx:627
+#: src/components/vm/nics/vmNicsCard.tsx:628
 msgid "Editing transient network interfaces is not allowed"
 msgstr "不允许编辑临时网络接口"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:235
 #: src/components/vm/disks/mediaEject.tsx:109
+#: src/components/vm/disks/vmDiskColumns.tsx:237
 msgid "Eject"
 msgstr "弹出"
 
@@ -969,6 +974,10 @@ msgstr "向虚拟机 $0 添加 TPM 失败"
 msgid "Failed to add VNC to VM $0"
 msgstr "向虚拟机 $0 添加 VNC 失败"
 
+#: src/components/vm/disks/diskAdd.tsx:649
+msgid "Failed to add disk"
+msgstr "添加磁盘失败"
+
 #: src/components/vm/consoles/serial.tsx:143
 msgid "Failed to add serial console to VM $0"
 msgstr "向虚拟机 $0 添加串行控制台失败"
@@ -1009,7 +1018,7 @@ msgstr "分离 watchdog 失败"
 msgid "Failed to fetch some resources"
 msgstr "获取一些资源失败"
 
-#: src/components/vm/nics/vmNicsCard.tsx:445
+#: src/components/vm/nics/vmNicsCard.tsx:446
 msgid "Failed to fetch the IP addresses of the interfaces present in $0"
 msgstr "获取在 $0 中的接口的 IP 地址失败"
 
@@ -1037,8 +1046,8 @@ msgstr "设置虚拟机 $0 的描述失败"
 msgid "Fewer than the maximum number of virtual CPUs should be enabled."
 msgstr "启用的虚拟 CPU 数量应少于最大虚拟 CPU 数量。"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:35
 #: src/components/vm/overview/bootOrder.tsx:105
+#: src/components/vm/disks/vmDiskColumns.tsx:35
 msgid "File"
 msgstr "文件"
 
@@ -1058,6 +1067,17 @@ msgstr "根据名称过滤"
 #: src/components/vm/overview/firmware.tsx:90
 msgid "Firmware"
 msgstr "固件"
+
+#: src/components/vm/nics/nicBody.tsx:91
+msgid ""
+"For general guest connectivity on hosts with dynamic / wireless networking "
+"configs."
+msgstr "用于动态/无线网络配置的主机上的常规客户机连通性。"
+
+#: src/components/vm/nics/nicBody.tsx:100
+msgid ""
+"For general guest connectivity on hosts with static wired networking configs."
+msgstr "用于静态有线网络配置的主机上的常规客户机连通性。"
 
 #: src/components/vm/disks/mediaEject.tsx:113
 msgid "Force eject"
@@ -1087,9 +1107,9 @@ msgstr "强制关闭 $0?"
 msgid "Force shutdown and restart"
 msgstr "强制关机与重启"
 
-#: src/components/storagePools/createStoragePoolDialog.tsx:244
-#: src/components/storagePools/storageVolumeCreateBody.tsx:107
 #: src/components/vm/disks/vmDiskColumns.tsx:130
+#: src/components/storagePools/storageVolumeCreateBody.tsx:103
+#: src/components/storagePools/createStoragePoolDialog.tsx:244
 msgid "Format"
 msgstr "格式化"
 
@@ -1097,7 +1117,7 @@ msgstr "格式化"
 msgid "Forward mode"
 msgstr "转发模式"
 
-#: src/components/vm/nics/nicBody.tsx:609
+#: src/components/vm/nics/nicBody.tsx:568
 msgid "Forwarded ports"
 msgstr "已转发端口"
 
@@ -1114,8 +1134,8 @@ msgstr ""
 "完整的磁盘镜像和域的内存将被迁移。只有非共享的、可写入磁盘的镜像才会被迁移。"
 "迁移后，未使用的存储将保留在原始系统上。"
 
-#: src/components/networks/networkOverviewTab.tsx:108
 #: src/components/vm/overview/vmOverviewCard.tsx:154
+#: src/components/networks/networkOverviewTab.tsx:108
 msgid "General"
 msgstr "通用"
 
@@ -1127,11 +1147,11 @@ msgstr "自动产生"
 msgid "Get a new RHSM token."
 msgstr "获取一个新的 RHSM 令牌。"
 
-#: src/components/storagePools/storageVolumeCreateBody.tsx:139
+#: src/components/vm/overview/memorySelectRow.tsx:95
+#: src/components/vm/disks/vmDisksCard.tsx:39
 #: src/components/create-vm-dialog/createVmDialog.tsx:1018
 #: src/components/create-vm-dialog/createVmDialog.tsx:1182
-#: src/components/vm/disks/vmDisksCard.tsx:39
-#: src/components/vm/overview/memorySelectRow.tsx:95
+#: src/components/common/dialog.tsx:100
 msgid "GiB"
 msgstr "GiB"
 
@@ -1155,11 +1175,11 @@ msgstr "图形化"
 msgid "Graphical console support not enabled"
 msgstr "图形控制台支持未启用"
 
-#: src/components/vm/nics/nicBody.tsx:504
+#: src/components/vm/nics/nicBody.tsx:463
 msgid "Guest port"
 msgstr "客户机端口"
 
-#: src/components/vm/nics/nicBody.tsx:508
+#: src/components/vm/nics/nicBody.tsx:467
 msgid "Guest port help"
 msgstr "客户机端口帮助"
 
@@ -1167,15 +1187,15 @@ msgstr "客户机端口帮助"
 msgid "Hardware virtualization is disabled"
 msgstr "硬件虚拟化被禁用"
 
-#: src/components/vm/disks/diskAdd.tsx:279
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:225
+#: src/components/vm/disks/diskAdd.tsx:164
 msgid "Hide additional options"
 msgstr "隐藏额外操作"
 
+#: src/components/vm/overview/bootOrder.tsx:110
+#: src/components/vm/disks/vmDiskColumns.tsx:40
 #: src/components/storagePools/storagePoolOverviewTab.tsx:23
 #: src/components/storagePools/createStoragePoolDialog.tsx:154
-#: src/components/vm/disks/vmDiskColumns.tsx:40
-#: src/components/vm/overview/bootOrder.tsx:110
 msgid "Host"
 msgstr "主机"
 
@@ -1199,15 +1219,15 @@ msgstr "主机设备"
 msgid "Host name"
 msgstr "主机名"
 
-#: src/components/vm/nics/nicBody.tsx:489
+#: src/components/vm/nics/nicBody.tsx:448
 msgid "Host port"
 msgstr "主机端口"
 
-#: src/components/vm/nics/nicBody.tsx:442
+#: src/components/vm/nics/nicBody.tsx:401
 msgid "Host port can not be empty."
 msgstr "主机端口不能为空。"
 
-#: src/components/vm/nics/nicBody.tsx:494
+#: src/components/vm/nics/nicBody.tsx:453
 msgid "Host port help"
 msgstr "主机端口帮助"
 
@@ -1227,13 +1247,13 @@ msgstr "ID"
 msgid "IP"
 msgstr "IP"
 
+#: src/components/vm/nics/vmNicsCard.tsx:574
+#: src/components/vm/nics/nicBody.tsx:434
 #: src/components/networks/networkOverviewTab.tsx:255
-#: src/components/vm/nics/nicBody.tsx:475
-#: src/components/vm/nics/vmNicsCard.tsx:573
 msgid "IP address"
 msgstr "IP 地址"
 
-#: src/components/vm/nics/nicBody.tsx:479
+#: src/components/vm/nics/nicBody.tsx:438
 msgid "IP address help"
 msgstr "IP 地址帮助"
 
@@ -1301,7 +1321,7 @@ msgid ""
 "same time."
 msgstr "标识符被$0 使用。具有相同标识符的虚拟机无法同时运行。"
 
-#: src/components/vm/disks/diskAdd.tsx:330
+#: src/components/vm/disks/diskAdd.tsx:189
 msgid "Identifier may be silently truncated to $0 characters "
 msgstr "标识符可能会被静默地截断为 $0 个字符 "
 
@@ -1309,7 +1329,7 @@ msgstr "标识符可能会被静默地截断为 $0 个字符 "
 msgid "Idle"
 msgstr "休眠"
 
-#: src/components/vm/nics/nicBody.tsx:481
+#: src/components/vm/nics/nicBody.tsx:440
 msgid ""
 "If host IP is set to 0.0.0.0 or not set at all, the port will be bound on "
 "all IPs on the host."
@@ -1336,7 +1356,7 @@ msgstr "导入并编辑"
 msgid "Import and run"
 msgstr "导入并运行"
 
-#: src/components/vm/disks/diskAdd.tsx:619
+#: src/components/vm/disks/diskAdd.tsx:394
 msgid "Importing an image with a backing file is unsupported"
 msgstr "导入镜像文件(不支持的基础镜像文件)"
 
@@ -1362,12 +1382,12 @@ msgstr "注入不可屏蔽中断"
 msgid "Input Device Controller"
 msgstr "输入设备控制器"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:227
-#: src/components/vm/disks/diskAdd.tsx:973
+#: src/components/vm/disks/diskAdd.tsx:727
+#: src/components/vm/disks/vmDiskColumns.tsx:229
 msgid "Insert"
 msgstr "插入"
 
-#: src/components/vm/disks/diskAdd.tsx:811
+#: src/components/vm/disks/diskAdd.tsx:718
 msgid "Insert disc media"
 msgstr "插入磁盘介质"
 
@@ -1399,15 +1419,11 @@ msgstr "智能控制器"
 msgid "Interface"
 msgstr "接口"
 
-#: src/components/vm/nics/nicBody.tsx:237
+#: src/components/vm/nics/nicBody.tsx:261
 msgid "Interface type"
 msgstr "接口类型"
 
-#: src/components/vm/nics/nicBody.tsx:239
-msgid "Interface type help"
-msgstr "接口类型帮助"
-
-#: src/components/vm/nics/nicBody.tsx:427
+#: src/components/vm/nics/nicBody.tsx:386
 msgid "Invalid IP address"
 msgstr "无效的 IP 地址"
 
@@ -1480,7 +1496,7 @@ msgstr "Libvirt 未检测到安装在主机上的任何 UEFI/OVMF 固件镜像"
 msgid "Libvirt or hypervisor does not support UEFI"
 msgstr "Libvirt 或虚拟机管理器不支持 UEFI"
 
-#: src/components/vm/nics/vmNicsCard.tsx:624
+#: src/components/vm/nics/vmNicsCard.tsx:625
 msgid "Loading available network devices"
 msgstr "加载可用的网络设备"
 
@@ -1504,20 +1520,20 @@ msgstr "本地缩放"
 msgid "Location"
 msgstr "位置"
 
-#: src/components/networks/networkOverviewTab.tsx:66
 #: src/components/vm/overview/bootOrder.tsx:120
+#: src/components/networks/networkOverviewTab.tsx:66
 msgid "MAC"
 msgstr "MAC"
 
-#: src/components/networks/networkOverviewTab.tsx:246
-#: src/components/vm/nics/nicEdit.tsx:54
-#: src/components/vm/nics/vmNicsCard.tsx:568
-#: src/components/vm/nics/vmNicsCard.tsx:766
 #: src/components/vm/nics/nicAdd.tsx:83
+#: src/components/vm/nics/vmNicsCard.tsx:569
+#: src/components/vm/nics/vmNicsCard.tsx:767
+#: src/components/vm/nics/nicEdit.tsx:45
+#: src/components/networks/networkOverviewTab.tsx:246
 msgid "MAC address"
 msgstr "MAC 地址"
 
-#: src/components/vm/nics/nicEdit.tsx:108 src/components/vm/nics/nicAdd.tsx:187
+#: src/components/vm/nics/nicAdd.tsx:179 src/components/vm/nics/nicEdit.tsx:99
 msgid "MAC address already in use"
 msgstr "已使用的 MAC 地址"
 
@@ -1579,15 +1595,19 @@ msgstr "最大传输单元"
 msgid "Media could not be ejected from $0"
 msgstr "介质无法从 $0 弹出"
 
+#: src/components/vm/disks/diskAdd.tsx:639
+msgid "Media failed to be inserted"
+msgstr "介质插入失败"
+
 #: src/components/vm/disks/mediaEject.tsx:103
 msgid "Media will be ejected from $0:"
 msgstr "介质将从 $0 中弹出："
 
+#: src/components/vm/vmUsageCard.tsx:44
+#: src/components/vm/overview/vmOverviewCard.tsx:175
 #: src/components/vms/hostvmslist.tsx:111
 #: src/components/vms/hostvmslist.tsx:302
 #: src/components/create-vm-dialog/createVmDialog.tsx:1003
-#: src/components/vm/overview/vmOverviewCard.tsx:175
-#: src/components/vm/vmUsageCard.tsx:44
 msgid "Memory"
 msgstr "内存"
 
@@ -1616,15 +1636,15 @@ msgstr "内存快照将使用大约 $0 。"
 msgid "Memory state path"
 msgstr "内存状态路径"
 
-#: src/components/storagePools/storageVolumeCreateBody.tsx:137
+#: src/components/vm/overview/memorySelectRow.tsx:93
 #: src/components/create-vm-dialog/createVmDialog.tsx:1016
 #: src/components/create-vm-dialog/createVmDialog.tsx:1180
-#: src/components/vm/overview/memorySelectRow.tsx:93
+#: src/components/common/dialog.tsx:99
 msgid "MiB"
 msgstr "MiB"
 
-#: src/components/vm/vmMigrateDialog.tsx:224
 #: src/components/vm/vmActions.tsx:410
+#: src/components/vm/vmMigrateDialog.tsx:224
 msgid "Migrate"
 msgstr "迁移"
 
@@ -1640,27 +1660,23 @@ msgstr "迁移失败"
 msgid "Miscellaneous"
 msgstr "杂项"
 
+#: src/components/vm/nics/vmNicsCard.tsx:168
+#: src/components/vm/nics/nicBody.tsx:275
 #: src/components/vm/overview/cpuModal.tsx:304
 #: src/components/vm/overview/cpuModal.tsx:306
-#: src/components/vm/nics/nicBody.tsx:282
-#: src/components/vm/nics/vmNicsCard.tsx:167
 msgid "Mode"
 msgstr "模式"
 
-#: src/components/vm/nics/nicBody.tsx:286
-msgid "Mode help"
-msgstr "模式帮助"
-
-#: src/components/vm/nics/nicBody.tsx:59
 #: src/components/vm/hostdevs/hostDevCard.tsx:197
+#: src/components/vm/nics/nicBody.tsx:57
 msgid "Model"
 msgstr "型号"
 
-#: src/components/vm/nics/vmNicsCard.tsx:772
+#: src/components/vm/nics/vmNicsCard.tsx:773
 msgid "Model type"
 msgstr "型号类型"
 
-#: src/components/vm/nics/nicBody.tsx:302
+#: src/components/vm/nics/nicBody.tsx:118
 msgid "More info"
 msgstr "更多信息"
 
@@ -1686,21 +1702,21 @@ msgstr "必须是地址而不是网络标识符，如 $0"
 msgid "NAT to $0"
 msgstr "NAT 到 $0"
 
-#: src/components/vm/nics/vmNicsCard.tsx:523
+#: src/components/vm/nics/vmNicsCard.tsx:524
 msgid "NIC $0 of VM $1 failed to change state"
 msgstr "VM $1 的 NIC $0 无法改变状态"
 
-#: src/components/networks/createNetworkDialog.tsx:172
-#: src/components/networks/networkList.tsx:59
-#: src/components/storagePools/storagePoolVolumesTab.tsx:77
-#: src/components/storagePools/createStoragePoolDialog.tsx:58
-#: src/components/storagePools/storagePoolList.tsx:61
-#: src/components/storagePools/storageVolumeCreateBody.tsx:51
-#: src/components/vms/hostvmslist.tsx:320
-#: src/components/create-vm-dialog/createVmDialog.tsx:313
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:113
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:57
 #: src/components/vm/vmCloneDialog.tsx:92
+#: src/components/vms/hostvmslist.tsx:320
+#: src/components/create-vm-dialog/createVmDialog.tsx:313
+#: src/components/networks/createNetworkDialog.tsx:172
+#: src/components/networks/networkList.tsx:59
+#: src/components/storagePools/storagePoolList.tsx:61
+#: src/components/storagePools/storagePoolVolumesTab.tsx:77
+#: src/components/storagePools/storageVolumeCreateBody.tsx:113
+#: src/components/storagePools/createStoragePoolDialog.tsx:58
 msgid "Name"
 msgstr "名称"
 
@@ -1716,9 +1732,8 @@ msgstr "名称不能为空"
 msgid "Name contains invalid characters"
 msgstr "名称包含无效的字符"
 
-#: src/components/storagePools/storageVolumeCreate.tsx:73
-#: src/components/create-vm-dialog/createVmDialog.tsx:231
 #: src/components/vm/vmCloneDialog.tsx:51
+#: src/components/create-vm-dialog/createVmDialog.tsx:231
 msgid "Name must not be empty"
 msgstr "名称不能为空"
 
@@ -1771,21 +1786,25 @@ msgstr "网络文件系统"
 msgid "Network interface"
 msgstr "网络接口"
 
-#: src/components/vm/nics/vmNicsCard.tsx:649
+#: src/components/vm/nics/vmNicsCard.tsx:650
 msgid "Network interface $0 could not be removed"
 msgstr "无法删除网络接口 $0"
 
-#: src/components/vm/nics/vmNicsCard.tsx:650
+#: src/components/vm/nics/vmNicsCard.tsx:651
 msgid "Network interface $0 will be removed from $1"
 msgstr "网络接口 $0 将从 $1 中删除"
 
-#: src/components/vm/nics/nicEdit.tsx:172 src/components/vm/nics/nicAdd.tsx:226
+#: src/components/vm/nics/nicAdd.tsx:218 src/components/vm/nics/nicEdit.tsx:163
 msgid "Network interface settings could not be saved"
 msgstr "网络接口设置不能被保存"
 
 #: src/components/vm/vmDetailsPage.tsx:168
 msgid "Network interfaces"
 msgstr "网络接口"
+
+#: src/components/vm/nics/nicBody.tsx:183
+msgid "Network interfaces of type \"$0\" can not be edited here."
+msgstr "类型为 \"$0\" 的网络接口无法在此处被编辑。"
 
 #: src/components/create-vm-dialog/createVmDialog.tsx:400
 msgid "Network selection does not support PXE."
@@ -1805,7 +1824,7 @@ msgstr "新名称"
 msgid "New name must not be empty"
 msgstr "新名称不能为空"
 
-#: src/components/storagePools/storageVolumeCreateBody.tsx:54
+#: src/components/storagePools/storageVolumeCreateBody.tsx:116
 msgid "New volume name"
 msgstr "新卷名称"
 
@@ -1821,11 +1840,15 @@ msgstr "该主机上没有定义或运行虚拟机"
 msgid "No boot device found"
 msgstr "没有找到引导设备"
 
+#: src/components/vm/nics/nicBody.tsx:101
+msgid "No bridge devices"
+msgstr "无桥接设备"
+
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:127
 msgid "No description"
 msgstr "没有描述"
 
-#: src/components/vm/disks/vmDisksCard.tsx:287
+#: src/components/vm/disks/vmDisksCard.tsx:285
 msgid "No disks"
 msgstr "无磁盘"
 
@@ -1837,11 +1860,11 @@ msgstr "没有选择主机设备"
 msgid "No host devices"
 msgstr "无主机设备"
 
-#: src/components/vm/nics/nicBody.tsx:217
+#: src/components/vm/nics/nicBody.tsx:122
 msgid "No network devices"
 msgstr "没有网络设备"
 
-#: src/components/vm/nics/vmNicsCard.tsx:828
+#: src/components/vm/nics/vmNicsCard.tsx:829
 msgid "No network interfaces"
 msgstr "无网络接口"
 
@@ -1857,7 +1880,11 @@ msgstr "没有可用的网络"
 msgid "No parent"
 msgstr "没有上级"
 
-#: src/components/vm/nics/nicBody.tsx:617
+#: src/components/vm/disks/diskAdd.tsx:210
+msgid "No pools that allow volume creation"
+msgstr "没有支持卷创建的池"
+
+#: src/components/vm/nics/nicBody.tsx:576
 msgid "No ports forwarded"
 msgstr "未转发任何端口"
 
@@ -1873,10 +1900,6 @@ msgstr "无共享目录"
 msgid "No snapshots"
 msgstr "无快照"
 
-#: src/components/vm/nics/nicBody.tsx:332
-msgid "No sources available"
-msgstr "没有可用的源"
-
 #: src/helpers.ts:225
 msgid "No state"
 msgstr "无状态"
@@ -1889,15 +1912,15 @@ msgstr "没有存储"
 msgid "No storage pool is defined on this host"
 msgstr "没有在这个主机上定义存储池"
 
-#: src/components/vm/disks/diskAdd.tsx:220
-msgid "No storage pools available"
-msgstr "没有可用的存储池"
-
 #: src/components/storagePools/storagePoolVolumesTab.tsx:111
 msgid "No storage volumes defined for this storage pool"
 msgstr "没有为这个存储池定义存储卷"
 
-#: src/components/vm/nics/nicBody.tsx:215
+#: src/components/vm/disks/diskAdd.tsx:289
+msgid "No usable storage volumes"
+msgstr "没有可用存储卷"
+
+#: src/components/vm/nics/nicBody.tsx:92
 msgid "No virtual networks"
 msgstr "没有虚拟网络"
 
@@ -1951,9 +1974,9 @@ msgid ""
 "allow volume deletion."
 msgstr "一个或多个卷被域使用。需要先分离磁盘后才可以删除卷。"
 
+#: src/components/vm/nics/nicEdit.tsx:47
 #: src/components/vm/overview/bootOrder.tsx:394
 #: src/components/vm/overview/memoryModal.tsx:173
-#: src/components/vm/nics/nicEdit.tsx:51
 msgid "Only editable when the guest is shut off"
 msgstr "只有在客户机关闭后才可以编辑"
 
@@ -1974,8 +1997,8 @@ msgstr "操作进行中"
 msgid "Other VMs using SPICE"
 msgstr "使用 SPICE 的其他虚拟机"
 
-#: src/components/storagePools/storagePool.tsx:59
 #: src/components/vm/vmDetailsPage.tsx:140
+#: src/components/storagePools/storagePool.tsx:59
 msgid "Overview"
 msgstr "概览"
 
@@ -2004,12 +2027,16 @@ msgstr ""
 msgid "Password must be at most 8 characters."
 msgstr "密码至多8个字符。"
 
-#: src/components/vm/deleteDialog.tsx:67
-#: src/components/vm/disks/diskEdit.tsx:44
 #: src/components/vm/hostdevs/hostDevCard.tsx:115
 #: src/components/vm/hostdevs/hostDevCard.tsx:119
+#: src/components/vm/disks/diskEdit.tsx:44
+#: src/components/vm/deleteDialog.tsx:67
 msgid "Path"
 msgstr "路径"
+
+#: src/components/vm/disks/diskAdd.tsx:390
+msgid "Path can not be empty"
+msgstr "路径不能为空"
 
 #: src/components/storagePools/createStoragePoolDialog.tsx:134
 msgid "Path on host's filesystem"
@@ -2027,7 +2054,7 @@ msgstr "到主机文件系统上 cloud 镜像文件的路径"
 msgid "Path to directory"
 msgstr "指向目录的路径"
 
-#: src/components/vm/disks/diskAdd.tsx:445
+#: src/components/vm/disks/diskAdd.tsx:415
 msgid "Path to file on host's file system"
 msgstr "到主机文件系统上的文件的路径"
 
@@ -2047,8 +2074,8 @@ msgstr "永久（默认）"
 msgid "Permissions denied for disk images in home directories"
 msgstr "主目录中磁盘映像的权限被拒绝"
 
-#: src/components/vm/disks/diskAdd.tsx:178
-#: src/components/vm/nics/nicAdd.tsx:135
+#: src/components/vm/nics/nicAdd.tsx:134
+#: src/components/vm/disks/diskAdd.tsx:593
 msgid "Persistence"
 msgstr "持久"
 
@@ -2065,19 +2092,11 @@ msgstr "物理磁盘设备"
 msgid "Physical disk device on host"
 msgstr "主机上的物理磁盘设备"
 
-#: src/components/vm/nics/nicEdit.tsx:109 src/components/vm/nics/nicAdd.tsx:187
+#: src/components/vm/nics/nicAdd.tsx:179 src/components/vm/nics/nicEdit.tsx:100
 msgid "Please choose a different MAC address"
 msgstr "请选择一个不同的 MAC 地址"
 
-#: src/components/vm/disks/diskAdd.tsx:671
-msgid "Please choose a storage pool"
-msgstr "请选择一个存储池"
-
-#: src/components/vm/disks/diskAdd.tsx:689
-msgid "Please choose a volume"
-msgstr "请选择一个卷"
-
-#: src/components/vm/disks/diskAdd.tsx:678
+#: src/components/storagePools/storageVolumeCreateBody.tsx:56
 msgid "Please enter new volume name"
 msgstr "请输入新的卷名"
 
@@ -2085,23 +2104,20 @@ msgstr "请输入新的卷名"
 msgid "Please see $0 how to reconfigure your VM manually."
 msgstr "请参阅 $0 如何手动重新配置您的虚拟机。"
 
-#: src/components/vm/deleteDialog.tsx:75
-#: src/components/vm/disks/vmDiskColumns.tsx:38
-#: src/components/vm/disks/mediaEject.tsx:85
-#: src/components/vm/disks/diskAdd.tsx:204
 #: src/components/vm/overview/bootOrder.tsx:108
+#: src/components/vm/disks/diskAdd.tsx:248
+#: src/components/vm/disks/diskAdd.tsx:321
+#: src/components/vm/disks/mediaEject.tsx:85
+#: src/components/vm/disks/vmDiskColumns.tsx:38
+#: src/components/vm/deleteDialog.tsx:75
 msgid "Pool"
 msgstr "池"
 
-#: src/components/storagePools/storageVolumeCreate.tsx:167
+#: src/components/storagePools/storageVolumeCreate.tsx:136
 msgid "Pool needs to be active to create volume"
 msgstr "池需要激活才能创建卷"
 
-#: src/components/vm/disks/diskAdd.tsx:681
-msgid "Pool type $0 does not support volume creation"
-msgstr "池类型 $0 不支持创建卷"
-
-#: src/components/storagePools/storageVolumeCreate.tsx:167
+#: src/components/storagePools/storageVolumeCreate.tsx:135
 msgid "Pool type doesn't support volume creation"
 msgstr "池类型不支持创建卷"
 
@@ -2109,19 +2125,19 @@ msgstr "池类型不支持创建卷"
 msgid "Pool's volumes are used by VMs "
 msgstr "池的卷被 VM 使用 "
 
-#: src/components/vm/disks/vmDiskColumns.tsx:41
+#: src/components/vm/consoles/vnc.tsx:170
+#: src/components/vm/nics/vmNicsCard.tsx:191
 #: src/components/vm/overview/bootOrder.tsx:111
 #: src/components/vm/overview/bootOrder.tsx:127
-#: src/components/vm/nics/vmNicsCard.tsx:190
-#: src/components/vm/consoles/vnc.tsx:170
+#: src/components/vm/disks/vmDiskColumns.tsx:41
 msgid "Port"
 msgstr "端口"
 
-#: src/components/vm/nics/vmNicsCard.tsx:280
+#: src/components/vm/nics/vmNicsCard.tsx:281
 msgid "Port forwards"
 msgstr "端口转发"
 
-#: src/components/vm/nics/nicBody.tsx:436
+#: src/components/vm/nics/nicBody.tsx:395
 msgid "Port must be 1 to 65535."
 msgstr "端口号必须是 1 至 65535。"
 
@@ -2135,7 +2151,7 @@ msgid ""
 "assign a free port when the machine starts."
 msgstr "端口号必须是不小于5900的数字。 留空则在机器启动时自动分配一空端口。"
 
-#: src/components/vm/nics/nicBody.tsx:434 src/components/vm/consoles/vnc.tsx:97
+#: src/components/vm/consoles/vnc.tsx:97 src/components/vm/nics/nicBody.tsx:393
 msgid "Port must be a number."
 msgstr "端口号必须是数字。"
 
@@ -2175,11 +2191,11 @@ msgstr "处理加速器"
 msgid "Processor"
 msgstr "处理器"
 
-#: src/components/vm/overview/bootOrder.tsx:141
-#: src/components/vm/overview/bootOrder.tsx:157
 #: src/components/vm/hostdevs/hostDevAdd.tsx:151
 #: src/components/vm/hostdevs/hostDevCard.tsx:240
 #: src/components/vm/hostdevs/hostDevCard.tsx:246
+#: src/components/vm/overview/bootOrder.tsx:141
+#: src/components/vm/overview/bootOrder.tsx:157
 msgid "Product"
 msgstr "产品"
 
@@ -2187,29 +2203,15 @@ msgstr "产品"
 msgid "Profile"
 msgstr "配置集"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:37
+#: src/components/vm/hostdevs/hostDevCard.tsx:106
+#: src/components/vm/nics/nicBody.tsx:476
 #: src/components/vm/overview/bootOrder.tsx:107
 #: src/components/vm/overview/bootOrder.tsx:170
-#: src/components/vm/nics/nicBody.tsx:517
-#: src/components/vm/hostdevs/hostDevCard.tsx:106
+#: src/components/vm/disks/vmDiskColumns.tsx:37
 msgid "Protocol"
 msgstr "协议"
 
-#: src/components/vm/nics/nicBody.tsx:104
-msgid ""
-"Provides a bridge from the guest virtual machine directly onto the LAN. This "
-"needs a bridge device on the host with one or more physical NICs."
-msgstr ""
-"从客户虚拟机直接提供桥接到 LAN。这需要带有一个或多个物理 NIC 的主机上的桥接设"
-"备。"
-
-#: src/components/vm/nics/nicBody.tsx:95
-msgid ""
-"Provides a connection whose details are described by the named network "
-"definition."
-msgstr "提供一个连接，其详细信息由指定网络定义描述。"
-
-#: src/components/vm/nics/nicBody.tsx:119
+#: src/components/vm/nics/nicBody.tsx:132
 msgid "Provides a virtual LAN with NAT to the outside world."
 msgstr "通过 NAT 向外界提供虚拟 LAN。"
 
@@ -2225,7 +2227,7 @@ msgstr "公钥"
 msgid "Range"
 msgstr "范围"
 
-#: src/components/vm/disks/vmDisksCard.tsx:255
+#: src/components/vm/disks/vmDisksCard.tsx:253
 #: src/components/vm/disks/diskEdit.tsx:108
 msgid "Read-only"
 msgstr "只读"
@@ -2271,17 +2273,17 @@ msgstr "远程查看器"
 msgid "Remote viewer applications can connect to the following address:"
 msgstr "远程查看器应用可连接至以下地址："
 
-#: src/components/networks/networkOverviewTab.tsx:68
-#: src/components/vm/disks/vmDiskColumns.tsx:172
-#: src/components/vm/disks/vmDiskColumns.tsx:253
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:52
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:61
-#: src/components/vm/overview/vsock.tsx:269
-#: src/components/vm/overview/watchdog.tsx:225
-#: src/components/vm/nics/vmNicsCard.tsx:651
-#: src/components/vm/nics/vmNicsCard.tsx:666
 #: src/components/vm/hostdevs/hostDevCard.tsx:256
 #: src/components/vm/hostdevs/hostDevCard.tsx:262
+#: src/components/vm/nics/vmNicsCard.tsx:652
+#: src/components/vm/nics/vmNicsCard.tsx:667
+#: src/components/vm/overview/vsock.tsx:269
+#: src/components/vm/overview/watchdog.tsx:225
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:52
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:61
+#: src/components/vm/disks/vmDiskColumns.tsx:172
+#: src/components/vm/disks/vmDiskColumns.tsx:255
+#: src/components/networks/networkOverviewTab.tsx:68
 msgid "Remove"
 msgstr "删除"
 
@@ -2305,13 +2307,13 @@ msgstr "删除文件系统？"
 msgid "Remove host device from VM?"
 msgstr "从虚拟机中删除主机设备？"
 
+#: src/components/vm/nics/nicBody.tsx:495
+#: src/components/vm/nics/nicBody.tsx:526
 #: src/components/create-vm-dialog/createVmDialog.tsx:927
-#: src/components/vm/nics/nicBody.tsx:536
-#: src/components/vm/nics/nicBody.tsx:567
 msgid "Remove item"
 msgstr "删除项目"
 
-#: src/components/vm/nics/vmNicsCard.tsx:648
+#: src/components/vm/nics/vmNicsCard.tsx:649
 msgid "Remove network interface?"
 msgstr "删除网络接口？"
 
@@ -2319,7 +2321,7 @@ msgstr "删除网络接口？"
 msgid "Remove static host from DHCP"
 msgstr "从 DHCP 中删除静态主机"
 
-#: src/components/vm/vmActions.tsx:434 src/components/vm/vmRenameDialog.tsx:93
+#: src/components/vm/vmRenameDialog.tsx:93 src/components/vm/vmActions.tsx:434
 msgid "Rename"
 msgstr "重命名"
 
@@ -2331,8 +2333,8 @@ msgstr "重命名虚拟机 $0"
 msgid "Replace"
 msgstr "替换"
 
-#: src/components/vm/vmActions.tsx:421 src/components/vm/usesSpice.tsx:42
 #: src/components/vm/vmReplaceSpiceDialog.tsx:133
+#: src/components/vm/vmActions.tsx:421 src/components/vm/usesSpice.tsx:42
 msgid "Replace SPICE devices"
 msgstr "替换 SPICE 设备"
 
@@ -2377,8 +2379,8 @@ msgstr "继续"
 msgid "Retry"
 msgstr "重试"
 
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:117
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:197
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:117
 msgid "Revert"
 msgstr "恢复"
 
@@ -2415,8 +2417,8 @@ msgstr "行选择"
 msgid "Run"
 msgstr "运行"
 
-#: src/components/networks/networkOverviewTab.tsx:122
 #: src/components/vm/overview/vmOverviewCard.tsx:107
+#: src/components/networks/networkOverviewTab.tsx:122
 msgid "Run when host boots"
 msgstr "在主机引导时运行"
 
@@ -2447,15 +2449,15 @@ msgstr "SSH 密钥"
 msgid "Satellite Communication Controller"
 msgstr "卫星通讯控制器"
 
+#: src/components/vm/consoles/vnc.tsx:155
 #: src/components/vm/vmEditDescriptionDialog.tsx:78
-#: src/components/vm/disks/diskEdit.tsx:208
+#: src/components/vm/nics/nicEdit.tsx:230
 #: src/components/vm/overview/vsock.tsx:223
 #: src/components/vm/overview/bootOrder.tsx:353
+#: src/components/vm/overview/firmware.tsx:104
 #: src/components/vm/overview/watchdog.tsx:167
 #: src/components/vm/overview/memoryModal.tsx:192
-#: src/components/vm/overview/firmware.tsx:104
-#: src/components/vm/nics/nicEdit.tsx:234
-#: src/components/vm/consoles/vnc.tsx:155
+#: src/components/vm/disks/diskEdit.tsx:208
 msgid "Save"
 msgstr "保存"
 
@@ -2479,9 +2481,9 @@ msgstr "发送不可屏蔽中断"
 msgid "Send non-maskable interrupt to $0?"
 msgstr "向 $0 发送不可屏蔽中断？"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:129
 #: src/components/vm/consoles/consoles.tsx:275
 #: src/components/vm/consoles/consoles.tsx:292
+#: src/components/vm/disks/vmDiskColumns.tsx:129
 msgid "Serial"
 msgstr "串口"
 
@@ -2536,8 +2538,8 @@ msgstr "共享的主机目录需要手动挂载到虚拟机中"
 msgid "Shared storage"
 msgstr "共享的存储"
 
-#: src/components/vm/disks/diskAdd.tsx:279
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:225
+#: src/components/vm/disks/diskAdd.tsx:164
 msgid "Show additional options"
 msgstr "显示额外操作"
 
@@ -2566,9 +2568,9 @@ msgstr "关闭"
 msgid "Shut off the VM in order to edit firmware configuration"
 msgstr "关闭 VM 以编辑固件配置"
 
-#: src/components/common/needsShutdown.tsx:278
-#: src/components/vm/vmActions.tsx:525 src/components/vm/consoles/vnc.tsx:695
 #: src/components/vm/consoles/serial.tsx:190
+#: src/components/vm/consoles/vnc.tsx:695 src/components/vm/vmActions.tsx:525
+#: src/components/common/needsShutdown.tsx:278
 msgid "Shutdown and restart"
 msgstr "关闭与重启"
 
@@ -2588,18 +2590,22 @@ msgstr "信号处理控制器"
 msgid "Simple Communication Controller"
 msgstr "简易通信控制器"
 
-#: src/components/storagePools/storagePoolVolumesTab.tsx:77
+#: src/components/vm/disks/vmDisksCard.tsx:163
 #: src/components/storagePools/storagePoolList.tsx:62
-#: src/components/storagePools/storageVolumeCreateBody.tsx:121
-#: src/components/vm/disks/vmDisksCard.tsx:165
+#: src/components/storagePools/storagePoolVolumesTab.tsx:77
+#: src/components/storagePools/storageVolumeCreateBody.tsx:120
 msgid "Size"
 msgstr "大小"
 
-#: src/components/vm/overview/bootOrder.tsx:158
+#: src/components/storagePools/storageVolumeCreateBody.tsx:62
+msgid "Size must be a number"
+msgstr "大小必须是数字。"
+
 #: src/components/vm/hostdevs/hostDevAdd.tsx:112
 #: src/components/vm/hostdevs/hostDevCard.tsx:93
 #: src/components/vm/hostdevs/hostDevCard.tsx:100
 #: src/components/vm/hostdevs/hostDevCard.tsx:241
+#: src/components/vm/overview/bootOrder.tsx:158
 msgid "Slot"
 msgstr "插槽"
 
@@ -2635,13 +2641,12 @@ msgid ""
 "restart:"
 msgstr "一些配置更改只有在完全关闭与重启后才会生效："
 
-#: src/components/storagePools/storagePoolOverviewTab.tsx:40
-#: src/components/vm/disks/vmDisksCard.tsx:163
-#: src/components/vm/disks/diskAdd.tsx:711
-#: src/components/vm/disks/diskAdd.tsx:747
-#: src/components/vm/nics/nicBody.tsx:270
-#: src/components/vm/nics/vmNicsCard.tsx:548
 #: src/components/vm/hostdevs/hostDevCard.tsx:217
+#: src/components/vm/nics/vmNicsCard.tsx:549
+#: src/components/vm/nics/nicBody.tsx:268
+#: src/components/vm/disks/vmDisksCard.tsx:161
+#: src/components/vm/disks/diskAdd.tsx:574
+#: src/components/storagePools/storagePoolOverviewTab.tsx:40
 msgid "Source"
 msgstr "源"
 
@@ -2653,13 +2658,13 @@ msgstr "源格式"
 msgid "Source must not be empty"
 msgstr "源不能为空"
 
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:41
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:58
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:201
 #: src/components/storagePools/storagePoolOverviewTab.tsx:30
 #: src/components/storagePools/storagePoolOverviewTab.tsx:35
 #: src/components/storagePools/createStoragePoolDialog.tsx:218
 #: src/components/storagePools/createStoragePoolDialog.tsx:235
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:41
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:58
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:201
 msgid "Source path"
 msgstr "源路径"
 
@@ -2676,9 +2681,9 @@ msgstr "源应该以 http、ftp 或 nfs 协议开头"
 msgid "Source volume group"
 msgstr "源卷组"
 
-#: src/components/networks/createNetworkDialog.tsx:305
-#: src/components/vm/consoles/vnc.tsx:616
 #: src/components/vm/consoles/serial.tsx:123
+#: src/components/vm/consoles/vnc.tsx:616
+#: src/components/networks/createNetworkDialog.tsx:305
 msgid "Start"
 msgstr "启动"
 
@@ -2691,8 +2696,8 @@ msgstr "在主机引导时启动池"
 msgid "Start should not be empty"
 msgstr "开始不能为空"
 
-#: src/components/vm/consoles/vnc.tsx:609
 #: src/components/vm/consoles/serial.tsx:116
+#: src/components/vm/consoles/vnc.tsx:609
 msgid "Start the virtual machine to access the console"
 msgstr "启动虚拟机来访问控制台"
 
@@ -2708,12 +2713,12 @@ msgstr "启动"
 msgid "Startup"
 msgstr "启动"
 
-#: src/components/networks/networkList.tsx:63
-#: src/components/storagePools/storagePoolList.tsx:64
+#: src/components/vm/nics/vmNicsCard.tsx:586
+#: src/components/vm/overview/vmOverviewCard.tsx:163
 #: src/components/vms/hostvmslist.tsx:266
 #: src/components/vms/hostvmslist.tsx:322
-#: src/components/vm/overview/vmOverviewCard.tsx:163
-#: src/components/vm/nics/vmNicsCard.tsx:585
+#: src/components/networks/networkList.tsx:63
+#: src/components/storagePools/storagePoolList.tsx:64
 msgid "State"
 msgstr "状态"
 
@@ -2725,8 +2730,8 @@ msgstr "静态主机条目"
 msgid "Static host from DHCP could not be removed"
 msgstr "无法从 DHCP 中删除静态主机"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1140
 #: src/components/vm/vmMigrateDialog.tsx:108
+#: src/components/create-vm-dialog/createVmDialog.tsx:1140
 msgid "Storage"
 msgstr "存储"
 
@@ -2754,16 +2759,12 @@ msgstr "创建存储池失败"
 msgid "Storage pool name"
 msgstr "存储池名"
 
+#: src/components/create-vm-dialog/createVmDialog.tsx:1135
 #: src/components/storagePools/storagePoolList.tsx:49
 #: src/components/storagePools/storagePoolList.tsx:56
 #: src/components/storagePools/storagePoolList.tsx:58
-#: src/components/create-vm-dialog/createVmDialog.tsx:1135
 msgid "Storage pools"
 msgstr "存储池"
-
-#: src/components/vm/disks/diskAdd.tsx:543
-msgid "Storage pools could not be fetched"
-msgstr "存储池不能被获取"
 
 #: src/components/create-vm-dialog/createVmDialog.tsx:276
 msgid "Storage size must not be 0"
@@ -2773,8 +2774,7 @@ msgstr "储存空间大小不能为 0"
 msgid "Storage volume"
 msgstr "存储卷"
 
-#: src/components/storagePools/storageVolumeCreate.tsx:76
-#: src/components/vm/disks/diskAdd.tsx:685
+#: src/components/storagePools/storageVolumeCreateBody.tsx:65
 msgid "Storage volume size must not exceed the storage pool's capacity ($0 $1)"
 msgstr "存储卷大小不能超过存储池的容量（$0 $1）"
 
@@ -2807,11 +2807,11 @@ msgstr "切换到 VNC 继续使用此机器。"
 msgid "System"
 msgstr "系统"
 
-#: src/components/vm/nics/vmNicsCard.tsx:214
+#: src/components/vm/nics/vmNicsCard.tsx:215
 msgid "TAP device"
 msgstr "TAP 设备"
 
-#: src/components/vm/nics/nicBody.tsx:526
+#: src/components/vm/nics/nicBody.tsx:485
 msgid "TCP"
 msgstr "TCP"
 
@@ -2823,11 +2823,11 @@ msgstr "TPM"
 msgid "Table of selectable host devices"
 msgstr "可选择的主机设备表"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:176
-#: src/components/vm/disks/vmDisksCard.tsx:164
-#: src/components/vm/overview/bootOrder.tsx:164
-#: src/components/vm/nics/vmNicsCard.tsx:556
 #: src/components/vm/hostdevs/hostDevCard.tsx:101
+#: src/components/vm/nics/vmNicsCard.tsx:557
+#: src/components/vm/overview/bootOrder.tsx:164
+#: src/components/vm/disks/vmDisksCard.tsx:162
+#: src/components/vm/disks/vmDiskColumns.tsx:176
 msgid "Target"
 msgstr "目标"
 
@@ -2856,9 +2856,9 @@ msgstr "终端不可用"
 msgid "The VM $0 is running and will be forced off before deletion."
 msgstr "虚拟机 $0 正在运行，在删除前将被强制关闭。"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:261
-#: src/components/vm/nics/vmNicsCard.tsx:667
-#: src/components/vm/nics/vmNicsCard.tsx:675
+#: src/components/vm/nics/vmNicsCard.tsx:668
+#: src/components/vm/nics/vmNicsCard.tsx:676
+#: src/components/vm/disks/vmDiskColumns.tsx:263
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr "虚拟机需要运行或关闭才能分离该设备"
 
@@ -2876,20 +2876,12 @@ msgid ""
 "destination host is considered the new home of the VM."
 msgstr "迁移的虚拟机配置将从源主机中删除。目标主机被视为虚拟机的新主目录。"
 
-#: src/components/vm/nics/nicBody.tsx:292
-msgid "The mode influences the delivery of packets."
-msgstr "模式会影响数据包的传输。"
-
-#: src/components/vm/disks/diskAdd.tsx:140
-msgid "The pool is empty"
-msgstr "池为空"
-
-#: src/components/vm/nics/nicBody.tsx:510
+#: src/components/vm/nics/nicBody.tsx:469
 msgid ""
 "The port on the guest. If left empty, the same port as on the host is used."
 msgstr "客户机上的端口。若留空则使用与主机相同的端口。"
 
-#: src/components/vm/nics/nicBody.tsx:496
+#: src/components/vm/nics/nicBody.tsx:455
 msgid ""
 "The port on the host that is fotwarded into the guest. You can also specify "
 "a range of ports like 4000-4050."
@@ -2921,6 +2913,12 @@ msgstr "客户机用来挂载此导出点的标签名称。"
 msgid "Then copy and paste it above."
 msgstr "然后复制并在上面粘贴它。"
 
+#: src/components/vm/nics/nicBody.tsx:213
+msgid ""
+"There are no sources for virtual network interfaces on this host. You might "
+"want to create a virtual network."
+msgstr "该主机上没有虚拟网络接口源。您可能想要创建一个虚拟网络。"
+
 #: src/components/vm/vmActions.tsx:466
 msgid "This VM is transient. Shut it down if you wish to delete it."
 msgstr "此 VM 是瞬态的。如果希望删除它，请将其关机。"
@@ -2943,22 +2941,6 @@ msgid ""
 "live migration."
 msgstr "这适用于因为升级或实时迁移而不支持 SPICE 的主机。"
 
-#: src/components/vm/nics/nicBody.tsx:94
-msgid ""
-"This is the recommended type for general guest connectivity on hosts with "
-"dynamic / wireless networking configs."
-msgstr "这是对使用动态/无线网络配置的主机上的常规客户机连接的建议类型。"
-
-#: src/components/vm/nics/nicBody.tsx:103
-msgid ""
-"This is the recommended type for general guest connectivity on hosts with "
-"static wired networking configs."
-msgstr "这是对使用静态有线网络配置的主机上的常规客户机连接的建议类型。"
-
-#: src/components/vm/nics/nicBody.tsx:109
-msgid "This is the recommended type for high performance or enhanced security."
-msgstr "这是为高性能或增强安全性而推荐的类型。"
-
 #: src/components/vm/consoles/spice.tsx:68
 msgid "This machine has a SPICE graphical console that can not be shown here."
 msgstr "这台机器拥有一个无法在此显示的 SPICE 图形控制台。"
@@ -2970,7 +2952,7 @@ msgid ""
 msgstr ""
 "此工具管理虚拟机。通过它，您可以创建、监控和控制 libvirt 子系统的虚拟机。"
 
-#: src/components/vm/disks/diskAdd.tsx:74
+#: src/components/vm/disks/diskAdd.tsx:77
 msgid "This volume is already used by $0."
 msgstr "这个卷已经被 $0 使用。"
 
@@ -2994,21 +2976,21 @@ msgstr "瞬态 VM 不支持编辑固件配置"
 msgid "Troubleshoot"
 msgstr "故障排除"
 
-#: src/components/storagePools/storagePoolOverviewTab.tsx:65
-#: src/components/storagePools/createStoragePoolDialog.tsx:102
+#: src/components/vm/hostdevs/hostDevAdd.tsx:43
+#: src/components/vm/hostdevs/hostDevCard.tsx:177
+#: src/components/vm/nics/vmNicsCard.tsx:780
 #: src/components/vm/overview/bootOrder.tsx:125
 #: src/components/vm/overview/bootOrder.tsx:139
 #: src/components/vm/overview/bootOrder.tsx:155
 #: src/components/vm/overview/bootOrder.tsx:162
 #: src/components/vm/overview/bootOrder.tsx:169
 #: src/components/vm/overview/bootOrder.tsx:175
-#: src/components/vm/nics/vmNicsCard.tsx:779
-#: src/components/vm/hostdevs/hostDevAdd.tsx:43
-#: src/components/vm/hostdevs/hostDevCard.tsx:177
+#: src/components/storagePools/storagePoolOverviewTab.tsx:65
+#: src/components/storagePools/createStoragePoolDialog.tsx:102
 msgid "Type"
 msgstr "类型"
 
-#: src/components/vm/nics/nicBody.tsx:527
+#: src/components/vm/nics/nicBody.tsx:486
 msgid "UDP"
 msgstr "UDP"
 
@@ -3052,10 +3034,10 @@ msgstr "单元"
 msgid "Unknown firmware"
 msgstr "未知固件"
 
-#: src/components/vm/overview/bootOrder.tsx:145
-#: src/components/vm/overview/bootOrder.tsx:146
 #: src/components/vm/hostdevs/hostDevCard.tsx:84
 #: src/components/vm/hostdevs/hostDevCard.tsx:85
+#: src/components/vm/overview/bootOrder.tsx:145
+#: src/components/vm/overview/bootOrder.tsx:146
 msgid "Unspecified"
 msgstr "未指定"
 
@@ -3071,8 +3053,7 @@ msgstr "Url"
 msgid "Usage"
 msgstr "占用率"
 
-#: src/components/vm/disks/diskAdd.tsx:719
-#: src/components/vm/disks/diskAdd.tsx:755
+#: src/components/vm/disks/diskAdd.tsx:557
 msgid "Use existing"
 msgstr "使用现有的"
 
@@ -3093,7 +3074,7 @@ msgstr ""
 msgid "Used by"
 msgstr "使用者"
 
-#: src/components/vm/disks/vmDisksCard.tsx:166
+#: src/components/vm/disks/vmDisksCard.tsx:164
 msgid "Used on host"
 msgstr "宿主机占用"
 
@@ -3207,12 +3188,12 @@ msgstr "页内查看器不支持启用了 TLS 的 VNC"
 msgid "Valid token"
 msgstr "有效令牌"
 
-#: src/components/vm/overview/bootOrder.tsx:140
-#: src/components/vm/overview/bootOrder.tsx:156
 #: src/components/vm/hostdevs/hostDevAdd.tsx:151
 #: src/components/vm/hostdevs/hostDevCard.tsx:207
 #: src/components/vm/hostdevs/hostDevCard.tsx:239
 #: src/components/vm/hostdevs/hostDevCard.tsx:245
+#: src/components/vm/overview/bootOrder.tsx:140
+#: src/components/vm/overview/bootOrder.tsx:156
 msgid "Vendor"
 msgstr "厂商"
 
@@ -3220,11 +3201,11 @@ msgstr "厂商"
 msgid "Vendor support ended $0"
 msgstr "厂商支持终止 $0"
 
-#: src/components/networks/networkList.tsx:44
-#: src/components/storagePools/storagePoolList.tsx:46
+#: src/components/vm/vmDetailsPage.tsx:249
 #: src/components/vms/hostvmslist.tsx:315
 #: src/components/vms/hostvmslist.tsx:317
-#: src/components/vm/vmDetailsPage.tsx:249 src/manifest.json:0
+#: src/components/networks/networkList.tsx:44
+#: src/components/storagePools/storagePoolList.tsx:46 src/manifest.json:0
 msgid "Virtual machines"
 msgstr "虚拟机"
 
@@ -3253,16 +3234,16 @@ msgstr ""
 msgid "Virtualization service (libvirt) is not active"
 msgstr "虚拟化服务（libvirt）未激活"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1152
-#: src/components/vm/deleteDialog.tsx:72
-#: src/components/vm/disks/vmDiskColumns.tsx:39
-#: src/components/vm/disks/mediaEject.tsx:89
-#: src/components/vm/disks/diskAdd.tsx:148
 #: src/components/vm/overview/bootOrder.tsx:109
+#: src/components/vm/disks/diskAdd.tsx:327
+#: src/components/vm/disks/mediaEject.tsx:89
+#: src/components/vm/disks/vmDiskColumns.tsx:39
+#: src/components/vm/deleteDialog.tsx:72
+#: src/components/create-vm-dialog/createVmDialog.tsx:1152
 msgid "Volume"
 msgstr "卷"
 
-#: src/components/storagePools/storageVolumeCreate.tsx:97
+#: src/components/storagePools/storageVolumeCreate.tsx:73
 msgid "Volume failed to be created"
 msgstr "创建磁盘失败"
 
@@ -3278,13 +3259,13 @@ msgstr "卷组名称不应为空"
 msgid "Vsock"
 msgstr "Vsock"
 
-#: src/components/vm/overview/bootOrder.tsx:171
 #: src/components/vm/hostdevs/hostDevCard.tsx:107
+#: src/components/vm/overview/bootOrder.tsx:171
 msgid "WWPN"
 msgstr "WWPN"
 
-#: src/components/common/needsShutdown.tsx:210
 #: src/components/vm/overview/vmOverviewCard.tsx:198
+#: src/components/common/needsShutdown.tsx:210
 msgid "Watchdog"
 msgstr "监督者"
 
@@ -3301,7 +3282,7 @@ msgstr ""
 msgid "Wireless Controller"
 msgstr "无线控制器"
 
-#: src/components/vm/disks/vmDisksCard.tsx:255
+#: src/components/vm/disks/vmDisksCard.tsx:253
 #: src/components/vm/disks/diskEdit.tsx:112
 msgid "Writeable"
 msgstr "可写"
@@ -3328,7 +3309,7 @@ msgstr "添加"
 msgid "add entry"
 msgstr "添加条目"
 
-#: src/components/vm/nics/nicBody.tsx:360
+#: src/components/vm/nics/nicBody.tsx:319
 msgid "all"
 msgstr "所有"
 
@@ -3344,7 +3325,7 @@ msgstr "光驱"
 msgid "custom"
 msgstr "自定义"
 
-#: src/components/vm/nics/vmNicsCard.tsx:796
+#: src/components/vm/nics/vmNicsCard.tsx:797
 msgid "default"
 msgstr "默认"
 
@@ -3365,10 +3346,10 @@ msgid "down"
 msgstr "已关闭"
 
 #: src/components/vm/overview/vsock.tsx:315
-#: src/components/vm/overview/bootOrder.tsx:387
-#: src/components/vm/overview/watchdog.tsx:265
 #: src/components/vm/overview/vmOverviewCard.tsx:117
 #: src/components/vm/overview/vmOverviewCard.tsx:125
+#: src/components/vm/overview/bootOrder.tsx:387
+#: src/components/vm/overview/watchdog.tsx:265
 msgid "edit"
 msgstr "编辑"
 
@@ -3456,10 +3437,10 @@ msgstr "否"
 msgid "no state saved"
 msgstr "无保存的状态"
 
-#: src/components/networks/networkOverviewTab.tsx:314
+#: src/components/vm/nics/vmNicsCard.tsx:288
 #: src/components/vm/overview/vsock.tsx:297
 #: src/components/vm/overview/watchdog.tsx:261
-#: src/components/vm/nics/vmNicsCard.tsx:287
+#: src/components/networks/networkOverviewTab.tsx:314
 msgid "none"
 msgstr "空"
 
@@ -3482,10 +3463,6 @@ msgstr "重定向设备"
 #: src/components/networks/networkOverviewTab.tsx:57
 msgid "remove"
 msgstr "移除"
-
-#: src/components/vm/disks/diskAdd.tsx:311
-msgid "serial number"
-msgstr "序列号"
 
 #: src/helpers.ts:248
 msgid "server"
@@ -3564,6 +3541,51 @@ msgstr "等待"
 #: src/components/storagePools/storagePoolOverviewTab.tsx:61 src/helpers.ts:264
 msgid "yes"
 msgstr "是"
+
+#~ msgid "No storage pools available"
+#~ msgstr "没有可用的存储池"
+
+#~ msgid "Please choose a storage pool"
+#~ msgstr "请选择一个存储池"
+
+#~ msgid "Please choose a volume"
+#~ msgstr "请选择一个卷"
+
+#~ msgid "Pool type $0 does not support volume creation"
+#~ msgstr "池类型 $0 不支持创建卷"
+
+#~ msgid "Storage pools could not be fetched"
+#~ msgstr "存储池不能被获取"
+
+#~ msgid "The pool is empty"
+#~ msgstr "池为空"
+
+#~ msgid "serial number"
+#~ msgstr "序列号"
+
+#~ msgid "Interface type help"
+#~ msgstr "接口类型帮助"
+
+#~ msgid "Mode help"
+#~ msgstr "模式帮助"
+
+#~ msgid "No sources available"
+#~ msgstr "没有可用的源"
+
+#~ msgid ""
+#~ "Provides a bridge from the guest virtual machine directly onto the LAN. "
+#~ "This needs a bridge device on the host with one or more physical NICs."
+#~ msgstr ""
+#~ "从客户虚拟机直接提供桥接到 LAN。这需要带有一个或多个物理 NIC 的主机上的桥"
+#~ "接设备。"
+
+#~ msgid ""
+#~ "Provides a connection whose details are described by the named network "
+#~ "definition."
+#~ msgstr "提供一个连接，其详细信息由指定网络定义描述。"
+
+#~ msgid "The mode influences the delivery of packets."
+#~ msgstr "模式会影响数据包的传输。"
 
 #~ msgid "IPv4 Address"
 #~ msgstr "IPv4 地址"

@@ -25,7 +25,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-31 05:01+0000\n"
+"POT-Creation-Date: 2026-04-13 05:29+0000\n"
 "PO-Revision-Date: 2026-02-01 04:58+0000\n"
 "Last-Translator: Arif Budiman <arifpedia@gmail.com>\n"
 "Language-Team: Indonesian <https://translate.fedoraproject.org/projects/"
@@ -37,7 +37,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0\n"
 "X-Generator: Weblate 5.15.2\n"
 
-#: src/components/vm/nics/nicBody.tsx:366
+#: src/components/vm/nics/nicBody.tsx:325
 msgid " excluding "
 msgstr " tidak termasuk "
 
@@ -80,13 +80,13 @@ msgstr "Penyesuaian memori $0"
 msgid "$0 network"
 msgstr "$0 Jaringan"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:140
 #: src/components/vm/vmUsageCard.tsx:35
+#: src/components/vm/overview/vmOverviewCard.tsx:140
 msgid "$0 vCPU"
 msgid_plural "$0 vCPUs"
 msgstr[0] "vCPU $0"
 
-#: src/components/vm/nics/nicEdit.tsx:222
+#: src/components/vm/nics/nicEdit.tsx:218
 msgid "$0 virtual network interface settings"
 msgstr "Pengaturan antarmuka jaringan virtual $0"
 
@@ -102,7 +102,7 @@ msgstr ""
 "Salinan VM akan dijalankan di tujuan dan akan menghilang ketika dimatikan. "
 "Sementara itu, host asal menyimpan salinan konfigurasi VM-nya."
 
-#: src/components/vm/disks/vmDisksCard.tsx:252
+#: src/components/vm/disks/vmDisksCard.tsx:250
 #: src/components/vm/disks/diskEdit.tsx:128
 msgid "Access"
 msgstr "Akses"
@@ -111,12 +111,12 @@ msgstr "Akses"
 msgid "Action"
 msgstr "Tindakan"
 
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:185
+#: src/components/vm/nics/vmNicsCard.tsx:593
+#: src/components/vm/disks/vmDisksCard.tsx:165
+#: src/components/vms/hostvmslist.tsx:324
 #: src/components/networks/networkList.tsx:64
 #: src/components/storagePools/storagePoolList.tsx:65
-#: src/components/vms/hostvmslist.tsx:324
-#: src/components/vm/snapshots/vmSnapshotsCard.tsx:185
-#: src/components/vm/disks/vmDisksCard.tsx:167
-#: src/components/vm/nics/vmNicsCard.tsx:592
 msgid "Actions"
 msgstr "Tindakan"
 
@@ -129,12 +129,12 @@ msgstr "Aktifkan"
 msgid "Activate the storage pool to administer volumes"
 msgstr "Aktifkan kolam penyimpanan untuk mengelola volume"
 
-#: src/components/networks/networkOverviewTab.tsx:268
-#: src/components/vm/disks/diskAdd.tsx:973
+#: src/components/vm/hostdevs/hostDevAdd.tsx:261
+#: src/components/vm/nics/nicAdd.tsx:274 src/components/vm/nics/nicBody.tsx:558
 #: src/components/vm/overview/vsock.tsx:223
 #: src/components/vm/overview/watchdog.tsx:167
-#: src/components/vm/nics/nicBody.tsx:599 src/components/vm/nics/nicAdd.tsx:279
-#: src/components/vm/hostdevs/hostDevAdd.tsx:261
+#: src/components/vm/disks/diskAdd.tsx:730
+#: src/components/networks/networkOverviewTab.tsx:268
 msgid "Add"
 msgstr "Tambah"
 
@@ -154,8 +154,8 @@ msgstr "Tambahkan VNC"
 msgid "Add a DHCP static host entry"
 msgstr "Tambahkan entri host statis DHCP"
 
-#: src/components/vm/disks/vmDisksCard.tsx:71
-#: src/components/vm/disks/diskAdd.tsx:811
+#: src/components/vm/disks/vmDisksCard.tsx:69
+#: src/components/vm/disks/diskAdd.tsx:718
 msgid "Add disk"
 msgstr "Tambah Disk"
 
@@ -164,7 +164,7 @@ msgstr "Tambah Disk"
 msgid "Add host device"
 msgstr "Tambahkan perangkat host"
 
-#: src/components/vm/nics/vmNicsCard.tsx:103
+#: src/components/vm/nics/vmNicsCard.tsx:104
 msgid "Add network interface"
 msgstr "Tambah Antarmuka Jaringan"
 
@@ -176,7 +176,7 @@ msgstr "Tambahkan konsol serial"
 msgid "Add shared directory"
 msgstr "Tambahkan direktori bersama"
 
-#: src/components/vm/nics/nicAdd.tsx:268
+#: src/components/vm/nics/nicAdd.tsx:263
 msgid "Add virtual network interface"
 msgstr "Tambah Antarmuka Jaringan Virtual"
 
@@ -197,9 +197,9 @@ msgid "Adding shared directories is possible only when the guest is shut off"
 msgstr ""
 "Penambahan direktori bersama hanya dapat dilakukan ketika guest dimatikan"
 
+#: src/components/vm/nics/vmNicsCard.tsx:183
 #: src/components/networks/networkOverviewTab.tsx:140
 #: src/components/networks/networkOverviewTab.tsx:160
-#: src/components/vm/nics/vmNicsCard.tsx:182
 msgid "Address"
 msgstr "Alamat"
 
@@ -209,6 +209,15 @@ msgstr "Alamat"
 #: src/components/networks/createNetworkDialog.tsx:153
 msgid "Address not within subnet"
 msgstr "Alamat tidak berada dalam subnet"
+
+#: src/components/vm/nics/nicBody.tsx:108
+#, fuzzy
+#| msgid ""
+#| "This is the recommended type for high performance or enhanced security."
+msgid "Advanced interface type for high performance or enhanced security."
+msgstr ""
+"Ini adalah jenis yang direkomendasikan untuk kinerja tinggi atau keamanan "
+"yang ditingkatkan."
 
 #: src/components/vms/hostvmslist.tsx:221
 #: src/components/vms/hostvmslist.tsx:239
@@ -223,7 +232,7 @@ msgstr ""
 "Semua aktivitas VM, termasuk penyimpanan, akan bersifat sementara. Ini akan "
 "mengakibatkan kehilangan data di host tujuan."
 
-#: src/components/vm/disks/diskAdd.tsx:325
+#: src/components/vm/disks/diskAdd.tsx:141
 msgid ""
 "Allowed characters: basic Latin alphabet, numbers, and limited punctuation "
 "(-, _, +, .)"
@@ -235,8 +244,8 @@ msgstr ""
 msgid "Also delete all volumes inside this pool:"
 msgstr "Juga hapus semua volume di dalam kolam ini:"
 
-#: src/components/vm/disks/diskAdd.tsx:181
-#: src/components/vm/nics/nicAdd.tsx:141
+#: src/components/vm/nics/nicAdd.tsx:135
+#: src/components/vm/disks/diskAdd.tsx:594
 msgid "Always attach"
 msgstr "Selalu pasang"
 
@@ -286,13 +295,13 @@ msgstr "Otomatis"
 msgid "Automation"
 msgstr "Otomatisasi"
 
+#: src/components/vm/overview/vmOverviewCard.tsx:192
 #: src/components/networks/networkOverviewTab.tsx:117
 #: src/components/storagePools/storagePoolOverviewTab.tsx:60
-#: src/components/vm/overview/vmOverviewCard.tsx:192
 msgid "Autostart"
 msgstr "Mulai otomatis"
 
-#: src/components/vm/nics/vmNicsCard.tsx:793
+#: src/components/vm/nics/vmNicsCard.tsx:794
 msgid "Backend"
 msgstr "Backend"
 
@@ -324,29 +333,29 @@ msgstr "Pengaturan urutan boot tidak dapat disimpan"
 msgid "Bridge"
 msgstr "Bridge"
 
-#: src/components/vm/disks/vmDisksCard.tsx:247
-#: src/components/vm/disks/diskAdd.tsx:294
-#: src/components/vm/disks/diskEdit.tsx:91
+#: src/components/vm/hostdevs/hostDevAdd.tsx:100
+#: src/components/vm/hostdevs/hostDevCard.tsx:91
+#: src/components/vm/hostdevs/hostDevCard.tsx:99
+#: src/components/vm/hostdevs/hostDevCard.tsx:250
 #: src/components/vm/overview/bootOrder.tsx:114
 #: src/components/vm/overview/bootOrder.tsx:126
 #: src/components/vm/overview/bootOrder.tsx:145
 #: src/components/vm/overview/bootOrder.tsx:148
 #: src/components/vm/overview/bootOrder.tsx:163
-#: src/components/vm/hostdevs/hostDevAdd.tsx:100
-#: src/components/vm/hostdevs/hostDevCard.tsx:91
-#: src/components/vm/hostdevs/hostDevCard.tsx:99
-#: src/components/vm/hostdevs/hostDevCard.tsx:250
+#: src/components/vm/disks/vmDisksCard.tsx:245
+#: src/components/vm/disks/diskAdd.tsx:177
+#: src/components/vm/disks/diskEdit.tsx:91
 msgid "Bus"
 msgstr "Bus"
 
-#: src/components/vm/disks/diskAdd.tsx:460
+#: src/components/vm/disks/diskAdd.tsx:425
 msgid "CD/DVD disc"
 msgstr "Cakram CD/DVD"
 
-#: src/components/common/needsShutdown.tsx:206
-#: src/components/vms/hostvmslist.tsx:93 src/components/vms/hostvmslist.tsx:301
-#: src/components/vm/overview/vmOverviewCard.tsx:180
 #: src/components/vm/vmUsageCard.tsx:52
+#: src/components/vm/overview/vmOverviewCard.tsx:180
+#: src/components/vms/hostvmslist.tsx:93 src/components/vms/hostvmslist.tsx:301
+#: src/components/common/needsShutdown.tsx:206
 msgid "CPU"
 msgstr "CPU"
 
@@ -354,39 +363,41 @@ msgstr "CPU"
 msgid "CPU mode could not be saved"
 msgstr "Mode CPU tidak dapat disimpan"
 
-#: src/components/vm/disks/vmDisksCard.tsx:263
-#: src/components/vm/disks/diskAdd.tsx:283
+#: src/components/vm/disks/vmDisksCard.tsx:261
+#: src/components/vm/disks/diskAdd.tsx:172
 #: src/components/vm/disks/diskEdit.tsx:165
 msgid "Cache"
 msgstr "Cache"
 
-#: src/components/common/deleteResource.tsx:116
+#: src/components/vm/disks/diskAdd.tsx:649
+msgid "Can not determine guest device name"
+msgstr ""
+
+#: src/components/vm/vmReplaceSpiceDialog.tsx:171
+#: src/components/vm/confirmDialog.tsx:66
+#: src/components/vm/vmRenameDialog.tsx:96
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:340
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:127
+#: src/components/vm/hostdevs/hostDevAdd.tsx:266
+#: src/components/vm/consoles/vnc.tsx:158
+#: src/components/vm/vmEditDescriptionDialog.tsx:81
+#: src/components/vm/overview/vsock.tsx:272
+#: src/components/vm/overview/bootOrder.tsx:356
+#: src/components/vm/overview/firmware.tsx:107
+#: src/components/vm/overview/watchdog.tsx:228
+#: src/components/vm/overview/memoryModal.tsx:195
+#: src/components/vm/overview/cpuModal.tsx:341
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:248
+#: src/components/vm/disks/mediaEject.tsx:116
+#: src/components/vm/vmCloneDialog.tsx:111
+#: src/components/vm/deleteDialog.tsx:202
+#: src/components/vm/vmMigrateDialog.tsx:227
+#: src/components/create-vm-dialog/createVmDialog.tsx:1732
 #: src/components/networks/createNetworkDialog.tsx:548
 #: src/components/networks/networkOverviewTab.tsx:271
 #: src/components/storagePools/storagePoolDelete.tsx:207
 #: src/components/storagePools/createStoragePoolDialog.tsx:512
-#: src/components/storagePools/storageVolumeCreate.tsx:133
-#: src/components/create-vm-dialog/createVmDialog.tsx:1732
-#: src/components/vm/vmMigrateDialog.tsx:227
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:127
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:340
-#: src/components/vm/vmEditDescriptionDialog.tsx:81
-#: src/components/vm/confirmDialog.tsx:66
-#: src/components/vm/deleteDialog.tsx:202
-#: src/components/vm/disks/mediaEject.tsx:116
-#: src/components/vm/disks/diskAdd.tsx:976
-#: src/components/vm/vmRenameDialog.tsx:96
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:248
-#: src/components/vm/overview/vsock.tsx:272
-#: src/components/vm/overview/bootOrder.tsx:356
-#: src/components/vm/overview/cpuModal.tsx:341
-#: src/components/vm/overview/watchdog.tsx:228
-#: src/components/vm/overview/memoryModal.tsx:195
-#: src/components/vm/overview/firmware.tsx:107
-#: src/components/vm/vmReplaceSpiceDialog.tsx:171
-#: src/components/vm/vmCloneDialog.tsx:111
-#: src/components/vm/hostdevs/hostDevAdd.tsx:266
-#: src/components/vm/consoles/vnc.tsx:158
+#: src/components/common/deleteResource.tsx:116
 msgid "Cancel"
 msgstr "Batal"
 
@@ -466,7 +477,7 @@ msgstr "Ko-Prosesor"
 msgid "Cockpit Project"
 msgstr "Proyek Cockpit"
 
-#: src/components/vm/nics/nicBody.tsx:557
+#: src/components/vm/nics/nicBody.tsx:516
 msgid "Complex rule \"$0\" can not be edited here."
 msgstr "Aturan kompleks \"$0\" tidak dapat diedit di sini."
 
@@ -474,7 +485,7 @@ msgstr "Aturan kompleks \"$0\" tidak dapat diedit di sini."
 msgid "Compress"
 msgstr "Kompres"
 
-#: src/components/vm/disks/vmDisksCard.tsx:255
+#: src/components/vm/disks/vmDisksCard.tsx:253
 msgid "Concurrently writeable"
 msgstr "Dapat ditulis bersamaan"
 
@@ -482,17 +493,17 @@ msgstr "Dapat ditulis bersamaan"
 msgid "Confirm this action"
 msgstr "Konfirmasi tindakan ini"
 
-#: src/components/vm/consoles/vnc.tsx:584
 #: src/components/vm/consoles/serial.tsx:86
+#: src/components/vm/consoles/vnc.tsx:584
 msgid "Connect"
 msgstr "Hubungkan"
 
-#: src/components/common/machinesConnectionSelector.tsx:44
+#: src/components/vm/overview/vmOverviewCard.tsx:158
+#: src/components/vms/hostvmslist.tsx:321
 #: src/components/networks/createNetworkDialog.tsx:34
 #: src/components/networks/networkList.tsx:61
 #: src/components/storagePools/storagePoolList.tsx:63
-#: src/components/vms/hostvmslist.tsx:321
-#: src/components/vm/overview/vmOverviewCard.tsx:158
+#: src/components/common/machinesConnectionSelector.tsx:44
 msgid "Connection"
 msgstr "Sambungan"
 
@@ -545,10 +556,10 @@ msgstr "Tidak dapat kembali ke snapshot"
 msgid "Crashed"
 msgstr "Crash"
 
-#: src/components/networks/createNetworkDialog.tsx:545
-#: src/components/storagePools/createStoragePoolDialog.tsx:509
-#: src/components/storagePools/storageVolumeCreate.tsx:130
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:337
+#: src/components/networks/createNetworkDialog.tsx:545
+#: src/components/storagePools/storageVolumeCreate.tsx:95
+#: src/components/storagePools/createStoragePoolDialog.tsx:509
 msgid "Create"
 msgstr "Buat"
 
@@ -576,7 +587,7 @@ msgstr "Buat dan edit"
 msgid "Create and run"
 msgstr "Buat dan jalankan"
 
-#: src/components/vm/disks/diskAdd.tsx:750
+#: src/components/vm/disks/diskAdd.tsx:552
 msgid "Create new"
 msgstr "Buat Baru"
 
@@ -602,7 +613,7 @@ msgstr "Buat snapshot"
 msgid "Create storage pool"
 msgstr "Buat kolam penyimpanan"
 
-#: src/components/storagePools/storageVolumeCreate.tsx:109
+#: src/components/storagePools/storageVolumeCreate.tsx:86
 msgid "Create storage volume"
 msgstr "Buat volume penyimpanan"
 
@@ -611,8 +622,8 @@ msgstr "Buat volume penyimpanan"
 msgid "Create virtual network"
 msgstr "Buat Jaringan Virtual"
 
-#: src/components/storagePools/storageVolumeCreate.tsx:161
-#: src/components/storagePools/storageVolumeCreate.tsx:172
+#: src/components/storagePools/storageVolumeCreate.tsx:126
+#: src/components/storagePools/storageVolumeCreate.tsx:145
 msgid "Create volume"
 msgstr "Buat volume"
 
@@ -660,9 +671,8 @@ msgstr "Firmware kustom: $0"
 msgid "Custom identifier"
 msgstr "Pengidentifikasi kustom"
 
-#: src/components/vm/disks/diskAdd.tsx:442
-#: src/components/vm/disks/diskAdd.tsx:714
-#: src/components/vm/disks/diskAdd.tsx:760
+#: src/components/vm/disks/diskAdd.tsx:413
+#: src/components/vm/disks/diskAdd.tsx:562
 msgid "Custom path"
 msgstr "Jalur kustom"
 
@@ -675,16 +685,16 @@ msgstr "Pengaturan DHCP"
 msgid "Deactivate"
 msgstr "Nonaktifkan"
 
-#: src/components/common/deleteResource.tsx:104
-#: src/components/common/deleteResource.tsx:164
-#: src/components/common/deleteResource.tsx:175
+#: src/components/vm/vmActions.tsx:470 src/components/vm/vmActions.tsx:478
+#: src/components/vm/deleteDialog.tsx:199
 #: src/components/networks/network.tsx:140
 #: src/components/networks/network.tsx:143
 #: src/components/storagePools/storagePoolDelete.tsx:204
 #: src/components/storagePools/storagePoolDelete.tsx:234
 #: src/components/storagePools/storagePoolDelete.tsx:244
-#: src/components/vm/vmActions.tsx:470 src/components/vm/vmActions.tsx:478
-#: src/components/vm/deleteDialog.tsx:199
+#: src/components/common/deleteResource.tsx:104
+#: src/components/common/deleteResource.tsx:164
+#: src/components/common/deleteResource.tsx:175
 msgid "Delete"
 msgstr "Hapus"
 
@@ -759,18 +769,18 @@ msgstr ""
 msgid "Details"
 msgstr "Detail"
 
-#: src/components/networks/createNetworkDialog.tsx:218
-#: src/components/networks/networkList.tsx:60
-#: src/components/vm/disks/vmDisksCard.tsx:244
-#: src/components/vm/disks/diskAdd.tsx:450
-#: src/components/vm/overview/bootOrder.tsx:106
-#: src/components/vm/overview/bootOrder.tsx:113
-#: src/components/vm/overview/bootOrder.tsx:146
-#: src/components/vm/overview/bootOrder.tsx:149
 #: src/components/vm/hostdevs/hostDevAdd.tsx:99
 #: src/components/vm/hostdevs/hostDevAdd.tsx:144
 #: src/components/vm/hostdevs/hostDevCard.tsx:90
 #: src/components/vm/hostdevs/hostDevCard.tsx:249
+#: src/components/vm/overview/bootOrder.tsx:106
+#: src/components/vm/overview/bootOrder.tsx:113
+#: src/components/vm/overview/bootOrder.tsx:146
+#: src/components/vm/overview/bootOrder.tsx:149
+#: src/components/vm/disks/vmDisksCard.tsx:242
+#: src/components/vm/disks/diskAdd.tsx:420
+#: src/components/networks/createNetworkDialog.tsx:218
+#: src/components/networks/networkList.tsx:60
 msgid "Device"
 msgstr "Perangkat"
 
@@ -782,8 +792,8 @@ msgstr "Perangkat"
 msgid "Disconnect"
 msgstr "Terputus"
 
-#: src/components/vm/consoles/vnc.tsx:578
 #: src/components/vm/consoles/serial.tsx:83
+#: src/components/vm/consoles/vnc.tsx:578
 msgid "Disconnected"
 msgstr "Terputus"
 
@@ -795,11 +805,11 @@ msgstr "Disk"
 msgid "Disk $0 could not be removed"
 msgstr "Disk $0 tidak dapat dihapus"
 
-#: src/components/vm/disks/diskAdd.tsx:959
+#: src/components/vm/disks/diskAdd.tsx:706
 msgid "Disk failed to be added"
 msgstr "Gagal menambahkan disk"
 
-#: src/components/vm/disks/diskAdd.tsx:309
+#: src/components/vm/disks/diskAdd.tsx:183
 msgid "Disk identifier"
 msgstr "Pengidentifikasi disk"
 
@@ -807,7 +817,7 @@ msgstr "Pengidentifikasi disk"
 msgid "Disk image"
 msgstr "Citra disk"
 
-#: src/components/vm/disks/diskAdd.tsx:458
+#: src/components/vm/disks/diskAdd.tsx:424
 msgid "Disk image file"
 msgstr "Berkas citra disk"
 
@@ -888,8 +898,8 @@ msgstr "Durasi"
 msgid "Dying"
 msgstr "Sedang mati"
 
+#: src/components/vm/nics/vmNicsCard.tsx:634
 #: src/components/vm/disks/diskEdit.tsx:245
-#: src/components/vm/nics/vmNicsCard.tsx:633
 msgid "Edit"
 msgstr "Edit"
 
@@ -918,16 +928,16 @@ msgstr "Edit antarmuka vsock"
 msgid "Edit watchdog device type"
 msgstr "Edit tipe perangkat watchdog"
 
-#: src/components/vm/nics/vmNicsCard.tsx:621
+#: src/components/vm/nics/vmNicsCard.tsx:622
 msgid "Editing network interfaces of transient guests is not allowed"
 msgstr "Mengedit antarmuka jaringan untuk guest sementara tidak diizinkan"
 
-#: src/components/vm/nics/vmNicsCard.tsx:627
+#: src/components/vm/nics/vmNicsCard.tsx:628
 msgid "Editing transient network interfaces is not allowed"
 msgstr "Mengedit antarmuka jaringan sementara tidak diizinkan"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:235
 #: src/components/vm/disks/mediaEject.tsx:109
+#: src/components/vm/disks/vmDiskColumns.tsx:237
 msgid "Eject"
 msgstr "Keluarkan"
 
@@ -994,6 +1004,12 @@ msgstr "Gagal menambahkan TPM ke VM $0"
 msgid "Failed to add VNC to VM $0"
 msgstr "Gagal menambahkan VNC ke VM $0"
 
+#: src/components/vm/disks/diskAdd.tsx:649
+#, fuzzy
+#| msgid "Failed to detach vsock"
+msgid "Failed to add disk"
+msgstr "Gagal melepas vsock"
+
 #: src/components/vm/consoles/serial.tsx:143
 msgid "Failed to add serial console to VM $0"
 msgstr "Gagal menambahkan konsol serial ke VM $0"
@@ -1034,7 +1050,7 @@ msgstr "Gagal melepas watchdog"
 msgid "Failed to fetch some resources"
 msgstr "Gagal mengambil beberapa sumber daya"
 
-#: src/components/vm/nics/vmNicsCard.tsx:445
+#: src/components/vm/nics/vmNicsCard.tsx:446
 msgid "Failed to fetch the IP addresses of the interfaces present in $0"
 msgstr "Gagal mengambil alamat IP dari antarmuka yang ada di $0"
 
@@ -1062,8 +1078,8 @@ msgstr "Gagal mengatur deskripsi VM $0"
 msgid "Fewer than the maximum number of virtual CPUs should be enabled."
 msgstr "Jumlah CPU virtual yang diaktifkan harus kurang dari jumlah maksimum."
 
-#: src/components/vm/disks/vmDiskColumns.tsx:35
 #: src/components/vm/overview/bootOrder.tsx:105
+#: src/components/vm/disks/vmDiskColumns.tsx:35
 msgid "File"
 msgstr "Berkas"
 
@@ -1083,6 +1099,29 @@ msgstr "Saring berdasarkan nama"
 #: src/components/vm/overview/firmware.tsx:90
 msgid "Firmware"
 msgstr "Firmware"
+
+#: src/components/vm/nics/nicBody.tsx:91
+#, fuzzy
+#| msgid ""
+#| "This is the recommended type for general guest connectivity on hosts with "
+#| "dynamic / wireless networking configs."
+msgid ""
+"For general guest connectivity on hosts with dynamic / wireless networking "
+"configs."
+msgstr ""
+"Ini adalah jenis yang direkomendasikan untuk konektivitas umum guest pada "
+"host dengan konfigurasi jaringan dinamis/nirkabel."
+
+#: src/components/vm/nics/nicBody.tsx:100
+#, fuzzy
+#| msgid ""
+#| "This is the recommended type for general guest connectivity on hosts with "
+#| "static wired networking configs."
+msgid ""
+"For general guest connectivity on hosts with static wired networking configs."
+msgstr ""
+"Ini adalah jenis yang direkomendasikan untuk konektivitas umum guest pada "
+"host dengan konfigurasi jaringan kabel statis."
 
 #: src/components/vm/disks/mediaEject.tsx:113
 msgid "Force eject"
@@ -1112,9 +1151,9 @@ msgstr "Paksa matikan $0?"
 msgid "Force shutdown and restart"
 msgstr "Paksa matikan dan mulai ulang"
 
-#: src/components/storagePools/createStoragePoolDialog.tsx:244
-#: src/components/storagePools/storageVolumeCreateBody.tsx:107
 #: src/components/vm/disks/vmDiskColumns.tsx:130
+#: src/components/storagePools/storageVolumeCreateBody.tsx:103
+#: src/components/storagePools/createStoragePoolDialog.tsx:244
 msgid "Format"
 msgstr "Format"
 
@@ -1122,7 +1161,7 @@ msgstr "Format"
 msgid "Forward mode"
 msgstr "Mode penerusan"
 
-#: src/components/vm/nics/nicBody.tsx:609
+#: src/components/vm/nics/nicBody.tsx:568
 msgid "Forwarded ports"
 msgstr "Port yang diteruskan"
 
@@ -1140,8 +1179,8 @@ msgstr ""
 "dapat ditulis dan tidak dibagikan yang akan ditransfer. Penyimpanan yang "
 "tidak digunakan akan tetap berada di asal setelah migrasi."
 
-#: src/components/networks/networkOverviewTab.tsx:108
 #: src/components/vm/overview/vmOverviewCard.tsx:154
+#: src/components/networks/networkOverviewTab.tsx:108
 msgid "General"
 msgstr "Umum"
 
@@ -1153,11 +1192,11 @@ msgstr "Hasilkan secara otomatis"
 msgid "Get a new RHSM token."
 msgstr "Dapatkan token RHSM baru."
 
-#: src/components/storagePools/storageVolumeCreateBody.tsx:139
+#: src/components/vm/overview/memorySelectRow.tsx:95
+#: src/components/vm/disks/vmDisksCard.tsx:39
 #: src/components/create-vm-dialog/createVmDialog.tsx:1018
 #: src/components/create-vm-dialog/createVmDialog.tsx:1182
-#: src/components/vm/disks/vmDisksCard.tsx:39
-#: src/components/vm/overview/memorySelectRow.tsx:95
+#: src/components/common/dialog.tsx:100
 msgid "GiB"
 msgstr "GiB"
 
@@ -1181,11 +1220,11 @@ msgstr "Grafis"
 msgid "Graphical console support not enabled"
 msgstr "Dukungan konsol grafis belum diaktifkan"
 
-#: src/components/vm/nics/nicBody.tsx:504
+#: src/components/vm/nics/nicBody.tsx:463
 msgid "Guest port"
 msgstr "Port guest"
 
-#: src/components/vm/nics/nicBody.tsx:508
+#: src/components/vm/nics/nicBody.tsx:467
 msgid "Guest port help"
 msgstr "Bantuan port guest"
 
@@ -1193,15 +1232,15 @@ msgstr "Bantuan port guest"
 msgid "Hardware virtualization is disabled"
 msgstr "Virtualisasi perangkat keras dinonaktifkan"
 
-#: src/components/vm/disks/diskAdd.tsx:279
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:225
+#: src/components/vm/disks/diskAdd.tsx:164
 msgid "Hide additional options"
 msgstr "Sembunyikan opsi tambahan"
 
+#: src/components/vm/overview/bootOrder.tsx:110
+#: src/components/vm/disks/vmDiskColumns.tsx:40
 #: src/components/storagePools/storagePoolOverviewTab.tsx:23
 #: src/components/storagePools/createStoragePoolDialog.tsx:154
-#: src/components/vm/disks/vmDiskColumns.tsx:40
-#: src/components/vm/overview/bootOrder.tsx:110
 msgid "Host"
 msgstr "Host"
 
@@ -1225,15 +1264,15 @@ msgstr "Perangkat host"
 msgid "Host name"
 msgstr "Nama Host"
 
-#: src/components/vm/nics/nicBody.tsx:489
+#: src/components/vm/nics/nicBody.tsx:448
 msgid "Host port"
 msgstr "Port host"
 
-#: src/components/vm/nics/nicBody.tsx:442
+#: src/components/vm/nics/nicBody.tsx:401
 msgid "Host port can not be empty."
 msgstr "Port host tidak boleh kosong."
 
-#: src/components/vm/nics/nicBody.tsx:494
+#: src/components/vm/nics/nicBody.tsx:453
 msgid "Host port help"
 msgstr "Bantuan port host"
 
@@ -1253,13 +1292,13 @@ msgstr "ID"
 msgid "IP"
 msgstr "IP"
 
+#: src/components/vm/nics/vmNicsCard.tsx:574
+#: src/components/vm/nics/nicBody.tsx:434
 #: src/components/networks/networkOverviewTab.tsx:255
-#: src/components/vm/nics/nicBody.tsx:475
-#: src/components/vm/nics/vmNicsCard.tsx:573
 msgid "IP address"
 msgstr "Alamat IP"
 
-#: src/components/vm/nics/nicBody.tsx:479
+#: src/components/vm/nics/nicBody.tsx:438
 msgid "IP address help"
 msgstr "Bantuan alamat IP"
 
@@ -1329,7 +1368,7 @@ msgstr ""
 "Pengidentifikasi sedang digunakan oleh $0. VM dengan pengidentifikasi yang "
 "sama tidak dapat dijalankan secara bersamaan."
 
-#: src/components/vm/disks/diskAdd.tsx:330
+#: src/components/vm/disks/diskAdd.tsx:189
 msgid "Identifier may be silently truncated to $0 characters "
 msgstr "Pengidentifikasi mungkin akan dipangkas diam-diam hingga $0 karakter "
 
@@ -1337,7 +1376,7 @@ msgstr "Pengidentifikasi mungkin akan dipangkas diam-diam hingga $0 karakter "
 msgid "Idle"
 msgstr "Menganggur"
 
-#: src/components/vm/nics/nicBody.tsx:481
+#: src/components/vm/nics/nicBody.tsx:440
 msgid ""
 "If host IP is set to 0.0.0.0 or not set at all, the port will be bound on "
 "all IPs on the host."
@@ -1365,7 +1404,7 @@ msgstr "Impor dan edit"
 msgid "Import and run"
 msgstr "Impor dan jalankan"
 
-#: src/components/vm/disks/diskAdd.tsx:619
+#: src/components/vm/disks/diskAdd.tsx:394
 msgid "Importing an image with a backing file is unsupported"
 msgstr "Mengimpor citra dengan berkas pendukung tidak didukung"
 
@@ -1393,12 +1432,12 @@ msgstr "Suntikkan interupsi non-maskable"
 msgid "Input Device Controller"
 msgstr "Pengontrol Perangkat Input"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:227
-#: src/components/vm/disks/diskAdd.tsx:973
+#: src/components/vm/disks/diskAdd.tsx:727
+#: src/components/vm/disks/vmDiskColumns.tsx:229
 msgid "Insert"
 msgstr "Masukkan"
 
-#: src/components/vm/disks/diskAdd.tsx:811
+#: src/components/vm/disks/diskAdd.tsx:718
 msgid "Insert disc media"
 msgstr "Masukkan media cakram"
 
@@ -1430,15 +1469,11 @@ msgstr "Pengontrol Cerdas"
 msgid "Interface"
 msgstr "Antarmuka"
 
-#: src/components/vm/nics/nicBody.tsx:237
+#: src/components/vm/nics/nicBody.tsx:261
 msgid "Interface type"
 msgstr "Jenis antarmuka"
 
-#: src/components/vm/nics/nicBody.tsx:239
-msgid "Interface type help"
-msgstr "Bantuan jenis antarmuka"
-
-#: src/components/vm/nics/nicBody.tsx:427
+#: src/components/vm/nics/nicBody.tsx:386
 msgid "Invalid IP address"
 msgstr "Alamat IP tidak valid"
 
@@ -1516,7 +1551,7 @@ msgstr ""
 msgid "Libvirt or hypervisor does not support UEFI"
 msgstr "Libvirt atau hypervisor tidak mendukung UEFI"
 
-#: src/components/vm/nics/vmNicsCard.tsx:624
+#: src/components/vm/nics/vmNicsCard.tsx:625
 msgid "Loading available network devices"
 msgstr "Memuat perangkat jaringan yang tersedia"
 
@@ -1540,20 +1575,20 @@ msgstr "Skala lokal"
 msgid "Location"
 msgstr "Lokasi"
 
-#: src/components/networks/networkOverviewTab.tsx:66
 #: src/components/vm/overview/bootOrder.tsx:120
+#: src/components/networks/networkOverviewTab.tsx:66
 msgid "MAC"
 msgstr "MAC"
 
-#: src/components/networks/networkOverviewTab.tsx:246
-#: src/components/vm/nics/nicEdit.tsx:54
-#: src/components/vm/nics/vmNicsCard.tsx:568
-#: src/components/vm/nics/vmNicsCard.tsx:766
 #: src/components/vm/nics/nicAdd.tsx:83
+#: src/components/vm/nics/vmNicsCard.tsx:569
+#: src/components/vm/nics/vmNicsCard.tsx:767
+#: src/components/vm/nics/nicEdit.tsx:45
+#: src/components/networks/networkOverviewTab.tsx:246
 msgid "MAC address"
 msgstr "Alamat MAC"
 
-#: src/components/vm/nics/nicEdit.tsx:108 src/components/vm/nics/nicAdd.tsx:187
+#: src/components/vm/nics/nicAdd.tsx:179 src/components/vm/nics/nicEdit.tsx:99
 msgid "MAC address already in use"
 msgstr "Alamat MAC sudah digunakan"
 
@@ -1617,15 +1652,21 @@ msgstr "Unit transmisi maksimum"
 msgid "Media could not be ejected from $0"
 msgstr "Media tidak dapat dikeluarkan dari $0"
 
+#: src/components/vm/disks/diskAdd.tsx:639
+#, fuzzy
+#| msgid "VM $0 failed to get installed"
+msgid "Media failed to be inserted"
+msgstr "VM $0 gagal diinstal"
+
 #: src/components/vm/disks/mediaEject.tsx:103
 msgid "Media will be ejected from $0:"
 msgstr "Media akan dikeluarkan dari $0:"
 
+#: src/components/vm/vmUsageCard.tsx:44
+#: src/components/vm/overview/vmOverviewCard.tsx:175
 #: src/components/vms/hostvmslist.tsx:111
 #: src/components/vms/hostvmslist.tsx:302
 #: src/components/create-vm-dialog/createVmDialog.tsx:1003
-#: src/components/vm/overview/vmOverviewCard.tsx:175
-#: src/components/vm/vmUsageCard.tsx:44
 msgid "Memory"
 msgstr "Memori"
 
@@ -1654,15 +1695,15 @@ msgstr "Snapshot memori akan menggunakan sekitar $0."
 msgid "Memory state path"
 msgstr "Jalur status memori"
 
-#: src/components/storagePools/storageVolumeCreateBody.tsx:137
+#: src/components/vm/overview/memorySelectRow.tsx:93
 #: src/components/create-vm-dialog/createVmDialog.tsx:1016
 #: src/components/create-vm-dialog/createVmDialog.tsx:1180
-#: src/components/vm/overview/memorySelectRow.tsx:93
+#: src/components/common/dialog.tsx:99
 msgid "MiB"
 msgstr "MiB"
 
-#: src/components/vm/vmMigrateDialog.tsx:224
 #: src/components/vm/vmActions.tsx:410
+#: src/components/vm/vmMigrateDialog.tsx:224
 msgid "Migrate"
 msgstr "Migrasi"
 
@@ -1678,27 +1719,23 @@ msgstr "Migrasi gagal"
 msgid "Miscellaneous"
 msgstr "Lain-lain"
 
+#: src/components/vm/nics/vmNicsCard.tsx:168
+#: src/components/vm/nics/nicBody.tsx:275
 #: src/components/vm/overview/cpuModal.tsx:304
 #: src/components/vm/overview/cpuModal.tsx:306
-#: src/components/vm/nics/nicBody.tsx:282
-#: src/components/vm/nics/vmNicsCard.tsx:167
 msgid "Mode"
 msgstr "Mode"
 
-#: src/components/vm/nics/nicBody.tsx:286
-msgid "Mode help"
-msgstr "Bantuan mode"
-
-#: src/components/vm/nics/nicBody.tsx:59
 #: src/components/vm/hostdevs/hostDevCard.tsx:197
+#: src/components/vm/nics/nicBody.tsx:57
 msgid "Model"
 msgstr "Model"
 
-#: src/components/vm/nics/vmNicsCard.tsx:772
+#: src/components/vm/nics/vmNicsCard.tsx:773
 msgid "Model type"
 msgstr "Jenis model"
 
-#: src/components/vm/nics/nicBody.tsx:302
+#: src/components/vm/nics/nicBody.tsx:118
 msgid "More info"
 msgstr "Info lebih lanjut"
 
@@ -1724,21 +1761,21 @@ msgstr "Harus berupa alamat, bukan pengenal jaringan, misalnya $0"
 msgid "NAT to $0"
 msgstr "NAT ke $0"
 
-#: src/components/vm/nics/vmNicsCard.tsx:523
+#: src/components/vm/nics/vmNicsCard.tsx:524
 msgid "NIC $0 of VM $1 failed to change state"
 msgstr "NIC $0 dari VM $1 gagal mengubah status"
 
-#: src/components/networks/createNetworkDialog.tsx:172
-#: src/components/networks/networkList.tsx:59
-#: src/components/storagePools/storagePoolVolumesTab.tsx:77
-#: src/components/storagePools/createStoragePoolDialog.tsx:58
-#: src/components/storagePools/storagePoolList.tsx:61
-#: src/components/storagePools/storageVolumeCreateBody.tsx:51
-#: src/components/vms/hostvmslist.tsx:320
-#: src/components/create-vm-dialog/createVmDialog.tsx:313
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:113
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:57
 #: src/components/vm/vmCloneDialog.tsx:92
+#: src/components/vms/hostvmslist.tsx:320
+#: src/components/create-vm-dialog/createVmDialog.tsx:313
+#: src/components/networks/createNetworkDialog.tsx:172
+#: src/components/networks/networkList.tsx:59
+#: src/components/storagePools/storagePoolList.tsx:61
+#: src/components/storagePools/storagePoolVolumesTab.tsx:77
+#: src/components/storagePools/storageVolumeCreateBody.tsx:113
+#: src/components/storagePools/createStoragePoolDialog.tsx:58
 msgid "Name"
 msgstr "Nama"
 
@@ -1754,9 +1791,8 @@ msgstr "Nama tidak boleh kosong"
 msgid "Name contains invalid characters"
 msgstr "Nama mengandung karakter tidak valid"
 
-#: src/components/storagePools/storageVolumeCreate.tsx:73
-#: src/components/create-vm-dialog/createVmDialog.tsx:231
 #: src/components/vm/vmCloneDialog.tsx:51
+#: src/components/create-vm-dialog/createVmDialog.tsx:231
 msgid "Name must not be empty"
 msgstr "Nama tidak boleh kosong"
 
@@ -1811,21 +1847,27 @@ msgstr "Sistem berkas jaringan"
 msgid "Network interface"
 msgstr "Antarmuka jaringan"
 
-#: src/components/vm/nics/vmNicsCard.tsx:649
+#: src/components/vm/nics/vmNicsCard.tsx:650
 msgid "Network interface $0 could not be removed"
 msgstr "Antarmuka jaringan $0 tidak dapat dihapus"
 
-#: src/components/vm/nics/vmNicsCard.tsx:650
+#: src/components/vm/nics/vmNicsCard.tsx:651
 msgid "Network interface $0 will be removed from $1"
 msgstr "Antarmuka jaringan $0 akan dihapus dari $1"
 
-#: src/components/vm/nics/nicEdit.tsx:172 src/components/vm/nics/nicAdd.tsx:226
+#: src/components/vm/nics/nicAdd.tsx:218 src/components/vm/nics/nicEdit.tsx:163
 msgid "Network interface settings could not be saved"
 msgstr "Pengaturan antarmuka jaringan tidak dapat disimpan"
 
 #: src/components/vm/vmDetailsPage.tsx:168
 msgid "Network interfaces"
 msgstr "Antarmuka jaringan"
+
+#: src/components/vm/nics/nicBody.tsx:183
+#, fuzzy
+#| msgid "Complex rule \"$0\" can not be edited here."
+msgid "Network interfaces of type \"$0\" can not be edited here."
+msgstr "Aturan kompleks \"$0\" tidak dapat diedit di sini."
 
 #: src/components/create-vm-dialog/createVmDialog.tsx:400
 msgid "Network selection does not support PXE."
@@ -1845,7 +1887,7 @@ msgstr "Nama baru"
 msgid "New name must not be empty"
 msgstr "Nama baru tidak boleh kosong"
 
-#: src/components/storagePools/storageVolumeCreateBody.tsx:54
+#: src/components/storagePools/storageVolumeCreateBody.tsx:116
 msgid "New volume name"
 msgstr "Nama volume baru"
 
@@ -1861,11 +1903,17 @@ msgstr "Tidak ada VM yang berjalan atau didefinisikan di host ini"
 msgid "No boot device found"
 msgstr "Tidak ditemukan perangkat boot"
 
+#: src/components/vm/nics/nicBody.tsx:101
+#, fuzzy
+#| msgid "No host devices"
+msgid "No bridge devices"
+msgstr "Tidak ada perangkat host"
+
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:127
 msgid "No description"
 msgstr "Tidak ada deskripsi"
 
-#: src/components/vm/disks/vmDisksCard.tsx:287
+#: src/components/vm/disks/vmDisksCard.tsx:285
 msgid "No disks"
 msgstr "Tidak ada disk"
 
@@ -1877,11 +1925,11 @@ msgstr "Tidak ada perangkat host yang dipilih"
 msgid "No host devices"
 msgstr "Tidak ada perangkat host"
 
-#: src/components/vm/nics/nicBody.tsx:217
+#: src/components/vm/nics/nicBody.tsx:122
 msgid "No network devices"
 msgstr "Tidak ada perangkat jaringan"
 
-#: src/components/vm/nics/vmNicsCard.tsx:828
+#: src/components/vm/nics/vmNicsCard.tsx:829
 msgid "No network interfaces"
 msgstr "Tidak ada antarmuka jaringan"
 
@@ -1897,7 +1945,13 @@ msgstr "Tidak ada jaringan yang tersedia"
 msgid "No parent"
 msgstr "Tidak ada induk"
 
-#: src/components/vm/nics/nicBody.tsx:617
+#: src/components/vm/disks/diskAdd.tsx:210
+#, fuzzy
+#| msgid "Pool type doesn't support volume creation"
+msgid "No pools that allow volume creation"
+msgstr "Jenis kolam tidak mendukung pembuatan volume"
+
+#: src/components/vm/nics/nicBody.tsx:576
 msgid "No ports forwarded"
 msgstr "Tidak ada port yang diteruskan"
 
@@ -1913,12 +1967,6 @@ msgstr "Tidak ada direktori bersama"
 msgid "No snapshots"
 msgstr "Tidak ada snapshot"
 
-#: src/components/vm/nics/nicBody.tsx:332
-#, fuzzy
-#| msgid "No storage pools available"
-msgid "No sources available"
-msgstr "Tidak ada kolam penyimpanan yang tersedia"
-
 #: src/helpers.ts:225
 msgid "No state"
 msgstr "Tidak ada status"
@@ -1931,16 +1979,18 @@ msgstr "Tidak ada penyimpanan"
 msgid "No storage pool is defined on this host"
 msgstr "Tidak ada kolam penyimpanan yang didefinisikan di host ini"
 
-#: src/components/vm/disks/diskAdd.tsx:220
-msgid "No storage pools available"
-msgstr "Tidak ada kolam penyimpanan yang tersedia"
-
 #: src/components/storagePools/storagePoolVolumesTab.tsx:111
 msgid "No storage volumes defined for this storage pool"
 msgstr ""
 "Tidak ada volume penyimpanan yang didefinisikan untuk kolam penyimpanan ini"
 
-#: src/components/vm/nics/nicBody.tsx:215
+#: src/components/vm/disks/diskAdd.tsx:289
+#, fuzzy
+#| msgid "Create storage volume"
+msgid "No usable storage volumes"
+msgstr "Buat volume penyimpanan"
+
+#: src/components/vm/nics/nicBody.tsx:92
 msgid "No virtual networks"
 msgstr "Tidak ada jaringan virtual"
 
@@ -2000,9 +2050,9 @@ msgstr ""
 "Satu atau lebih volume yang dipilih sedang digunakan oleh domain. Lepaskan "
 "disk terlebih dahulu agar volume dapat dihapus."
 
+#: src/components/vm/nics/nicEdit.tsx:47
 #: src/components/vm/overview/bootOrder.tsx:394
 #: src/components/vm/overview/memoryModal.tsx:173
-#: src/components/vm/nics/nicEdit.tsx:51
 msgid "Only editable when the guest is shut off"
 msgstr "Hanya dapat diedit ketika guest dimatikan"
 
@@ -2023,8 +2073,8 @@ msgstr "Operasi sedang berlangsung"
 msgid "Other VMs using SPICE"
 msgstr "VM lain yang menggunakan SPICE"
 
-#: src/components/storagePools/storagePool.tsx:59
 #: src/components/vm/vmDetailsPage.tsx:140
+#: src/components/storagePools/storagePool.tsx:59
 msgid "Overview"
 msgstr "Ringkasan"
 
@@ -2054,12 +2104,18 @@ msgstr ""
 msgid "Password must be at most 8 characters."
 msgstr "Kata sandi harus paling banyak 8 karakter."
 
-#: src/components/vm/deleteDialog.tsx:67
-#: src/components/vm/disks/diskEdit.tsx:44
 #: src/components/vm/hostdevs/hostDevCard.tsx:115
 #: src/components/vm/hostdevs/hostDevCard.tsx:119
+#: src/components/vm/disks/diskEdit.tsx:44
+#: src/components/vm/deleteDialog.tsx:67
 msgid "Path"
 msgstr "Jalur"
+
+#: src/components/vm/disks/diskAdd.tsx:390
+#, fuzzy
+#| msgid "Name can not be empty"
+msgid "Path can not be empty"
+msgstr "Nama tidak boleh kosong"
 
 #: src/components/storagePools/createStoragePoolDialog.tsx:134
 msgid "Path on host's filesystem"
@@ -2077,7 +2133,7 @@ msgstr "Jalur ke berkas citra cloud di sistem berkas host"
 msgid "Path to directory"
 msgstr "Jalur ke direktori"
 
-#: src/components/vm/disks/diskAdd.tsx:445
+#: src/components/vm/disks/diskAdd.tsx:415
 msgid "Path to file on host's file system"
 msgstr "Jalur ke berkas di sistem berkas host"
 
@@ -2097,8 +2153,8 @@ msgstr "Permanen (default)"
 msgid "Permissions denied for disk images in home directories"
 msgstr "Izin ditolak untuk citra disk di direktori home"
 
-#: src/components/vm/disks/diskAdd.tsx:178
-#: src/components/vm/nics/nicAdd.tsx:135
+#: src/components/vm/nics/nicAdd.tsx:134
+#: src/components/vm/disks/diskAdd.tsx:593
 msgid "Persistence"
 msgstr "Persistensi"
 
@@ -2115,19 +2171,11 @@ msgstr "Perangkat disk fisik"
 msgid "Physical disk device on host"
 msgstr "Perangkat disk fisik pada host"
 
-#: src/components/vm/nics/nicEdit.tsx:109 src/components/vm/nics/nicAdd.tsx:187
+#: src/components/vm/nics/nicAdd.tsx:179 src/components/vm/nics/nicEdit.tsx:100
 msgid "Please choose a different MAC address"
 msgstr "Silakan pilih alamat MAC yang berbeda"
 
-#: src/components/vm/disks/diskAdd.tsx:671
-msgid "Please choose a storage pool"
-msgstr "Silakan pilih kolam penyimpanan"
-
-#: src/components/vm/disks/diskAdd.tsx:689
-msgid "Please choose a volume"
-msgstr "Silakan pilih volume"
-
-#: src/components/vm/disks/diskAdd.tsx:678
+#: src/components/storagePools/storageVolumeCreateBody.tsx:56
 msgid "Please enter new volume name"
 msgstr "Silakan masukkan nama volume baru"
 
@@ -2136,23 +2184,20 @@ msgid "Please see $0 how to reconfigure your VM manually."
 msgstr ""
 "Silakan lihat $0 untuk cara mengonfigurasi ulang VM Anda secara manual."
 
-#: src/components/vm/deleteDialog.tsx:75
-#: src/components/vm/disks/vmDiskColumns.tsx:38
-#: src/components/vm/disks/mediaEject.tsx:85
-#: src/components/vm/disks/diskAdd.tsx:204
 #: src/components/vm/overview/bootOrder.tsx:108
+#: src/components/vm/disks/diskAdd.tsx:248
+#: src/components/vm/disks/diskAdd.tsx:321
+#: src/components/vm/disks/mediaEject.tsx:85
+#: src/components/vm/disks/vmDiskColumns.tsx:38
+#: src/components/vm/deleteDialog.tsx:75
 msgid "Pool"
 msgstr "Pool"
 
-#: src/components/storagePools/storageVolumeCreate.tsx:167
+#: src/components/storagePools/storageVolumeCreate.tsx:136
 msgid "Pool needs to be active to create volume"
 msgstr "Kolam harus aktif untuk membuat volume"
 
-#: src/components/vm/disks/diskAdd.tsx:681
-msgid "Pool type $0 does not support volume creation"
-msgstr "Jenis kolam $0 tidak mendukung pembuatan volume"
-
-#: src/components/storagePools/storageVolumeCreate.tsx:167
+#: src/components/storagePools/storageVolumeCreate.tsx:135
 msgid "Pool type doesn't support volume creation"
 msgstr "Jenis kolam tidak mendukung pembuatan volume"
 
@@ -2160,19 +2205,19 @@ msgstr "Jenis kolam tidak mendukung pembuatan volume"
 msgid "Pool's volumes are used by VMs "
 msgstr "Volume dalam kolam digunakan oleh VM "
 
-#: src/components/vm/disks/vmDiskColumns.tsx:41
+#: src/components/vm/consoles/vnc.tsx:170
+#: src/components/vm/nics/vmNicsCard.tsx:191
 #: src/components/vm/overview/bootOrder.tsx:111
 #: src/components/vm/overview/bootOrder.tsx:127
-#: src/components/vm/nics/vmNicsCard.tsx:190
-#: src/components/vm/consoles/vnc.tsx:170
+#: src/components/vm/disks/vmDiskColumns.tsx:41
 msgid "Port"
 msgstr "Port"
 
-#: src/components/vm/nics/vmNicsCard.tsx:280
+#: src/components/vm/nics/vmNicsCard.tsx:281
 msgid "Port forwards"
 msgstr "Penerusan port"
 
-#: src/components/vm/nics/nicBody.tsx:436
+#: src/components/vm/nics/nicBody.tsx:395
 msgid "Port must be 1 to 65535."
 msgstr "Port harus antara 1 hingga 65535."
 
@@ -2188,7 +2233,7 @@ msgstr ""
 "Port harus berupa angka minimal 5900. Biarkan kosong untuk menetapkan port "
 "bebas secara otomatis saat mesin dimulai."
 
-#: src/components/vm/nics/nicBody.tsx:434 src/components/vm/consoles/vnc.tsx:97
+#: src/components/vm/consoles/vnc.tsx:97 src/components/vm/nics/nicBody.tsx:393
 msgid "Port must be a number."
 msgstr "Port harus berupa angka."
 
@@ -2228,11 +2273,11 @@ msgstr "Akselerator Pemrosesan"
 msgid "Processor"
 msgstr "Prosesor"
 
-#: src/components/vm/overview/bootOrder.tsx:141
-#: src/components/vm/overview/bootOrder.tsx:157
 #: src/components/vm/hostdevs/hostDevAdd.tsx:151
 #: src/components/vm/hostdevs/hostDevCard.tsx:240
 #: src/components/vm/hostdevs/hostDevCard.tsx:246
+#: src/components/vm/overview/bootOrder.tsx:141
+#: src/components/vm/overview/bootOrder.tsx:157
 msgid "Product"
 msgstr "Produk"
 
@@ -2240,31 +2285,15 @@ msgstr "Produk"
 msgid "Profile"
 msgstr "Profil"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:37
+#: src/components/vm/hostdevs/hostDevCard.tsx:106
+#: src/components/vm/nics/nicBody.tsx:476
 #: src/components/vm/overview/bootOrder.tsx:107
 #: src/components/vm/overview/bootOrder.tsx:170
-#: src/components/vm/nics/nicBody.tsx:517
-#: src/components/vm/hostdevs/hostDevCard.tsx:106
+#: src/components/vm/disks/vmDiskColumns.tsx:37
 msgid "Protocol"
 msgstr "Protokol"
 
-#: src/components/vm/nics/nicBody.tsx:104
-msgid ""
-"Provides a bridge from the guest virtual machine directly onto the LAN. This "
-"needs a bridge device on the host with one or more physical NICs."
-msgstr ""
-"Menyediakan jembatan dari mesin virtual guest langsung ke LAN. Ini "
-"memerlukan perangkat jembatan di host dengan satu atau lebih NIC fisik."
-
-#: src/components/vm/nics/nicBody.tsx:95
-msgid ""
-"Provides a connection whose details are described by the named network "
-"definition."
-msgstr ""
-"Menyediakan koneksi dengan detail yang dijelaskan oleh definisi jaringan "
-"bernama."
-
-#: src/components/vm/nics/nicBody.tsx:119
+#: src/components/vm/nics/nicBody.tsx:132
 msgid "Provides a virtual LAN with NAT to the outside world."
 msgstr "Menyediakan LAN virtual dengan NAT ke dunia luar."
 
@@ -2280,7 +2309,7 @@ msgstr "Kunci publik"
 msgid "Range"
 msgstr "Rentang"
 
-#: src/components/vm/disks/vmDisksCard.tsx:255
+#: src/components/vm/disks/vmDisksCard.tsx:253
 #: src/components/vm/disks/diskEdit.tsx:108
 msgid "Read-only"
 msgstr "Hanya-baca"
@@ -2327,17 +2356,17 @@ msgstr "Penampil jarak jauh"
 msgid "Remote viewer applications can connect to the following address:"
 msgstr "Aplikasi penampil jarak jauh dapat terhubung ke alamat berikut:"
 
-#: src/components/networks/networkOverviewTab.tsx:68
-#: src/components/vm/disks/vmDiskColumns.tsx:172
-#: src/components/vm/disks/vmDiskColumns.tsx:253
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:52
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:61
-#: src/components/vm/overview/vsock.tsx:269
-#: src/components/vm/overview/watchdog.tsx:225
-#: src/components/vm/nics/vmNicsCard.tsx:651
-#: src/components/vm/nics/vmNicsCard.tsx:666
 #: src/components/vm/hostdevs/hostDevCard.tsx:256
 #: src/components/vm/hostdevs/hostDevCard.tsx:262
+#: src/components/vm/nics/vmNicsCard.tsx:652
+#: src/components/vm/nics/vmNicsCard.tsx:667
+#: src/components/vm/overview/vsock.tsx:269
+#: src/components/vm/overview/watchdog.tsx:225
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:52
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:61
+#: src/components/vm/disks/vmDiskColumns.tsx:172
+#: src/components/vm/disks/vmDiskColumns.tsx:255
+#: src/components/networks/networkOverviewTab.tsx:68
 msgid "Remove"
 msgstr "Hapus"
 
@@ -2361,13 +2390,13 @@ msgstr "Hapus sistem berkas?"
 msgid "Remove host device from VM?"
 msgstr "Hapus perangkat host dari VM?"
 
+#: src/components/vm/nics/nicBody.tsx:495
+#: src/components/vm/nics/nicBody.tsx:526
 #: src/components/create-vm-dialog/createVmDialog.tsx:927
-#: src/components/vm/nics/nicBody.tsx:536
-#: src/components/vm/nics/nicBody.tsx:567
 msgid "Remove item"
 msgstr "Hapus item"
 
-#: src/components/vm/nics/vmNicsCard.tsx:648
+#: src/components/vm/nics/vmNicsCard.tsx:649
 msgid "Remove network interface?"
 msgstr "Hapus antarmuka jaringan?"
 
@@ -2375,7 +2404,7 @@ msgstr "Hapus antarmuka jaringan?"
 msgid "Remove static host from DHCP"
 msgstr "Hapus host statis dari DHCP"
 
-#: src/components/vm/vmActions.tsx:434 src/components/vm/vmRenameDialog.tsx:93
+#: src/components/vm/vmRenameDialog.tsx:93 src/components/vm/vmActions.tsx:434
 msgid "Rename"
 msgstr "Ganti nama"
 
@@ -2387,8 +2416,8 @@ msgstr "Ganti nama VM $0"
 msgid "Replace"
 msgstr "Ganti"
 
-#: src/components/vm/vmActions.tsx:421 src/components/vm/usesSpice.tsx:42
 #: src/components/vm/vmReplaceSpiceDialog.tsx:133
+#: src/components/vm/vmActions.tsx:421 src/components/vm/usesSpice.tsx:42
 msgid "Replace SPICE devices"
 msgstr "Ganti perangkat SPICE"
 
@@ -2434,8 +2463,8 @@ msgstr "Lanjutkan"
 msgid "Retry"
 msgstr "Coba lagi"
 
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:117
 #: src/components/vm/snapshots/vmSnapshotsCard.tsx:197
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:117
 msgid "Revert"
 msgstr "Kembalikan"
 
@@ -2473,8 +2502,8 @@ msgstr "Pilih baris"
 msgid "Run"
 msgstr "Jalankan"
 
-#: src/components/networks/networkOverviewTab.tsx:122
 #: src/components/vm/overview/vmOverviewCard.tsx:107
+#: src/components/networks/networkOverviewTab.tsx:122
 msgid "Run when host boots"
 msgstr "Jalankan saat host melakukan boot"
 
@@ -2507,15 +2536,15 @@ msgstr "Kunci SSH"
 msgid "Satellite Communication Controller"
 msgstr "Pengontrol Komunikasi Satelit"
 
+#: src/components/vm/consoles/vnc.tsx:155
 #: src/components/vm/vmEditDescriptionDialog.tsx:78
-#: src/components/vm/disks/diskEdit.tsx:208
+#: src/components/vm/nics/nicEdit.tsx:230
 #: src/components/vm/overview/vsock.tsx:223
 #: src/components/vm/overview/bootOrder.tsx:353
+#: src/components/vm/overview/firmware.tsx:104
 #: src/components/vm/overview/watchdog.tsx:167
 #: src/components/vm/overview/memoryModal.tsx:192
-#: src/components/vm/overview/firmware.tsx:104
-#: src/components/vm/nics/nicEdit.tsx:234
-#: src/components/vm/consoles/vnc.tsx:155
+#: src/components/vm/disks/diskEdit.tsx:208
 msgid "Save"
 msgstr "Simpan"
 
@@ -2539,9 +2568,9 @@ msgstr "Kirim interupsi non-maskable"
 msgid "Send non-maskable interrupt to $0?"
 msgstr "Kirim interupsi non-maskable ke $0?"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:129
 #: src/components/vm/consoles/consoles.tsx:275
 #: src/components/vm/consoles/consoles.tsx:292
+#: src/components/vm/disks/vmDiskColumns.tsx:129
 msgid "Serial"
 msgstr "Serial"
 
@@ -2598,8 +2627,8 @@ msgstr "Direktori host yang dibagikan harus dipasang secara manual di dalam VM"
 msgid "Shared storage"
 msgstr "Penyimpanan bersama"
 
-#: src/components/vm/disks/diskAdd.tsx:279
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:225
+#: src/components/vm/disks/diskAdd.tsx:164
 msgid "Show additional options"
 msgstr "Tampilkan opsi tambahan"
 
@@ -2628,9 +2657,9 @@ msgstr "Dimatikan"
 msgid "Shut off the VM in order to edit firmware configuration"
 msgstr "Matikan VM untuk mengedit konfigurasi firmware"
 
-#: src/components/common/needsShutdown.tsx:278
-#: src/components/vm/vmActions.tsx:525 src/components/vm/consoles/vnc.tsx:695
 #: src/components/vm/consoles/serial.tsx:190
+#: src/components/vm/consoles/vnc.tsx:695 src/components/vm/vmActions.tsx:525
+#: src/components/common/needsShutdown.tsx:278
 msgid "Shutdown and restart"
 msgstr "Matikan dan mulai ulang"
 
@@ -2650,18 +2679,24 @@ msgstr "Pengontrol Pemrosesan Sinyal"
 msgid "Simple Communication Controller"
 msgstr "Pengontrol Komunikasi Sederhana"
 
-#: src/components/storagePools/storagePoolVolumesTab.tsx:77
+#: src/components/vm/disks/vmDisksCard.tsx:163
 #: src/components/storagePools/storagePoolList.tsx:62
-#: src/components/storagePools/storageVolumeCreateBody.tsx:121
-#: src/components/vm/disks/vmDisksCard.tsx:165
+#: src/components/storagePools/storagePoolVolumesTab.tsx:77
+#: src/components/storagePools/storageVolumeCreateBody.tsx:120
 msgid "Size"
 msgstr "Ukuran"
 
-#: src/components/vm/overview/bootOrder.tsx:158
+#: src/components/storagePools/storageVolumeCreateBody.tsx:62
+#, fuzzy
+#| msgid "Port must be a number."
+msgid "Size must be a number"
+msgstr "Port harus berupa angka."
+
 #: src/components/vm/hostdevs/hostDevAdd.tsx:112
 #: src/components/vm/hostdevs/hostDevCard.tsx:93
 #: src/components/vm/hostdevs/hostDevCard.tsx:100
 #: src/components/vm/hostdevs/hostDevCard.tsx:241
+#: src/components/vm/overview/bootOrder.tsx:158
 msgid "Slot"
 msgstr "Slot"
 
@@ -2700,13 +2735,12 @@ msgstr ""
 "Beberapa perubahan konfigurasi hanya berlaku setelah VM dimatikan dan "
 "dinyalakan kembali sepenuhnya:"
 
-#: src/components/storagePools/storagePoolOverviewTab.tsx:40
-#: src/components/vm/disks/vmDisksCard.tsx:163
-#: src/components/vm/disks/diskAdd.tsx:711
-#: src/components/vm/disks/diskAdd.tsx:747
-#: src/components/vm/nics/nicBody.tsx:270
-#: src/components/vm/nics/vmNicsCard.tsx:548
 #: src/components/vm/hostdevs/hostDevCard.tsx:217
+#: src/components/vm/nics/vmNicsCard.tsx:549
+#: src/components/vm/nics/nicBody.tsx:268
+#: src/components/vm/disks/vmDisksCard.tsx:161
+#: src/components/vm/disks/diskAdd.tsx:574
+#: src/components/storagePools/storagePoolOverviewTab.tsx:40
 msgid "Source"
 msgstr "Sumber"
 
@@ -2718,13 +2752,13 @@ msgstr "Format sumber"
 msgid "Source must not be empty"
 msgstr "Sumber tidak boleh kosong"
 
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:41
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:58
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:201
 #: src/components/storagePools/storagePoolOverviewTab.tsx:30
 #: src/components/storagePools/storagePoolOverviewTab.tsx:35
 #: src/components/storagePools/createStoragePoolDialog.tsx:218
 #: src/components/storagePools/createStoragePoolDialog.tsx:235
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:41
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:58
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:201
 msgid "Source path"
 msgstr "Jalur sumber"
 
@@ -2741,9 +2775,9 @@ msgstr "Sumber harus dimulai dengan protokol http, ftp, atau nfs"
 msgid "Source volume group"
 msgstr "Grup volume sumber"
 
-#: src/components/networks/createNetworkDialog.tsx:305
-#: src/components/vm/consoles/vnc.tsx:616
 #: src/components/vm/consoles/serial.tsx:123
+#: src/components/vm/consoles/vnc.tsx:616
+#: src/components/networks/createNetworkDialog.tsx:305
 msgid "Start"
 msgstr "Mulai"
 
@@ -2756,8 +2790,8 @@ msgstr "Mulai kolam saat host melakukan boot"
 msgid "Start should not be empty"
 msgstr "Bagian mulai tidak boleh kosong"
 
-#: src/components/vm/consoles/vnc.tsx:609
 #: src/components/vm/consoles/serial.tsx:116
+#: src/components/vm/consoles/vnc.tsx:609
 msgid "Start the virtual machine to access the console"
 msgstr "Mulai mesin virtual untuk mengakses konsol"
 
@@ -2773,12 +2807,12 @@ msgstr "Dimulai"
 msgid "Startup"
 msgstr "Startup"
 
-#: src/components/networks/networkList.tsx:63
-#: src/components/storagePools/storagePoolList.tsx:64
+#: src/components/vm/nics/vmNicsCard.tsx:586
+#: src/components/vm/overview/vmOverviewCard.tsx:163
 #: src/components/vms/hostvmslist.tsx:266
 #: src/components/vms/hostvmslist.tsx:322
-#: src/components/vm/overview/vmOverviewCard.tsx:163
-#: src/components/vm/nics/vmNicsCard.tsx:585
+#: src/components/networks/networkList.tsx:63
+#: src/components/storagePools/storagePoolList.tsx:64
 msgid "State"
 msgstr "Status"
 
@@ -2790,8 +2824,8 @@ msgstr "Entri host statis"
 msgid "Static host from DHCP could not be removed"
 msgstr "Host statis dari DHCP tidak dapat dihapus"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1140
 #: src/components/vm/vmMigrateDialog.tsx:108
+#: src/components/create-vm-dialog/createVmDialog.tsx:1140
 msgid "Storage"
 msgstr "Penyimpanan"
 
@@ -2819,16 +2853,12 @@ msgstr "Gagal membuat kolam penyimpanan"
 msgid "Storage pool name"
 msgstr "Nama kolam penyimpanan"
 
+#: src/components/create-vm-dialog/createVmDialog.tsx:1135
 #: src/components/storagePools/storagePoolList.tsx:49
 #: src/components/storagePools/storagePoolList.tsx:56
 #: src/components/storagePools/storagePoolList.tsx:58
-#: src/components/create-vm-dialog/createVmDialog.tsx:1135
 msgid "Storage pools"
 msgstr "Kolam penyimpanan"
-
-#: src/components/vm/disks/diskAdd.tsx:543
-msgid "Storage pools could not be fetched"
-msgstr "Kolam penyimpanan tidak dapat diambil"
 
 #: src/components/create-vm-dialog/createVmDialog.tsx:276
 msgid "Storage size must not be 0"
@@ -2838,8 +2868,7 @@ msgstr "Ukuran penyimpanan tidak boleh 0"
 msgid "Storage volume"
 msgstr "Volume penyimpanan"
 
-#: src/components/storagePools/storageVolumeCreate.tsx:76
-#: src/components/vm/disks/diskAdd.tsx:685
+#: src/components/storagePools/storageVolumeCreateBody.tsx:65
 msgid "Storage volume size must not exceed the storage pool's capacity ($0 $1)"
 msgstr ""
 "Ukuran volume penyimpanan tidak boleh melebihi kapasitas kolam penyimpanan "
@@ -2874,11 +2903,11 @@ msgstr "Beralih ke VNC untuk melanjutkan penggunaan mesin ini."
 msgid "System"
 msgstr "Sistem"
 
-#: src/components/vm/nics/vmNicsCard.tsx:214
+#: src/components/vm/nics/vmNicsCard.tsx:215
 msgid "TAP device"
 msgstr "Perangkat TAP"
 
-#: src/components/vm/nics/nicBody.tsx:526
+#: src/components/vm/nics/nicBody.tsx:485
 msgid "TCP"
 msgstr "TCP"
 
@@ -2890,11 +2919,11 @@ msgstr "TPM"
 msgid "Table of selectable host devices"
 msgstr "Tabel perangkat host yang dapat dipilih"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:176
-#: src/components/vm/disks/vmDisksCard.tsx:164
-#: src/components/vm/overview/bootOrder.tsx:164
-#: src/components/vm/nics/vmNicsCard.tsx:556
 #: src/components/vm/hostdevs/hostDevCard.tsx:101
+#: src/components/vm/nics/vmNicsCard.tsx:557
+#: src/components/vm/overview/bootOrder.tsx:164
+#: src/components/vm/disks/vmDisksCard.tsx:162
+#: src/components/vm/disks/vmDiskColumns.tsx:176
 msgid "Target"
 msgstr "Target"
 
@@ -2923,9 +2952,9 @@ msgstr "Terminal tidak tersedia"
 msgid "The VM $0 is running and will be forced off before deletion."
 msgstr "VM $0 sedang berjalan dan akan dipaksa dimatikan sebelum dihapus."
 
-#: src/components/vm/disks/vmDiskColumns.tsx:261
-#: src/components/vm/nics/vmNicsCard.tsx:667
-#: src/components/vm/nics/vmNicsCard.tsx:675
+#: src/components/vm/nics/vmNicsCard.tsx:668
+#: src/components/vm/nics/vmNicsCard.tsx:676
+#: src/components/vm/disks/vmDiskColumns.tsx:263
 msgid "The VM needs to be running or shut off to detach this device"
 msgstr ""
 "VM harus dalam kondisi berjalan atau dimatikan untuk melepaskan perangkat ini"
@@ -2946,22 +2975,14 @@ msgstr ""
 "Konfigurasi VM yang dimigrasikan dihapus dari host sumber. Host tujuan "
 "dianggap sebagai rumah baru VM."
 
-#: src/components/vm/nics/nicBody.tsx:292
-msgid "The mode influences the delivery of packets."
-msgstr "Mode memengaruhi pengiriman paket."
-
-#: src/components/vm/disks/diskAdd.tsx:140
-msgid "The pool is empty"
-msgstr "Kolam kosong"
-
-#: src/components/vm/nics/nicBody.tsx:510
+#: src/components/vm/nics/nicBody.tsx:469
 msgid ""
 "The port on the guest. If left empty, the same port as on the host is used."
 msgstr ""
 "Port pada guest. Jika dibiarkan kosong, port yang sama seperti pada host "
 "akan digunakan."
 
-#: src/components/vm/nics/nicBody.tsx:496
+#: src/components/vm/nics/nicBody.tsx:455
 msgid ""
 "The port on the host that is fotwarded into the guest. You can also specify "
 "a range of ports like 4000-4050."
@@ -2999,6 +3020,12 @@ msgstr ""
 msgid "Then copy and paste it above."
 msgstr "Kemudian salin dan tempel di atas."
 
+#: src/components/vm/nics/nicBody.tsx:213
+msgid ""
+"There are no sources for virtual network interfaces on this host. You might "
+"want to create a virtual network."
+msgstr ""
+
 #: src/components/vm/vmActions.tsx:466
 msgid "This VM is transient. Shut it down if you wish to delete it."
 msgstr "VM ini bersifat sementara. Matikan jika Anda ingin menghapusnya."
@@ -3023,28 +3050,6 @@ msgstr ""
 "Ini ditujukan untuk host yang tidak mendukung SPICE karena pembaruan atau "
 "migrasi langsung."
 
-#: src/components/vm/nics/nicBody.tsx:94
-msgid ""
-"This is the recommended type for general guest connectivity on hosts with "
-"dynamic / wireless networking configs."
-msgstr ""
-"Ini adalah jenis yang direkomendasikan untuk konektivitas umum guest pada "
-"host dengan konfigurasi jaringan dinamis/nirkabel."
-
-#: src/components/vm/nics/nicBody.tsx:103
-msgid ""
-"This is the recommended type for general guest connectivity on hosts with "
-"static wired networking configs."
-msgstr ""
-"Ini adalah jenis yang direkomendasikan untuk konektivitas umum guest pada "
-"host dengan konfigurasi jaringan kabel statis."
-
-#: src/components/vm/nics/nicBody.tsx:109
-msgid "This is the recommended type for high performance or enhanced security."
-msgstr ""
-"Ini adalah jenis yang direkomendasikan untuk kinerja tinggi atau keamanan "
-"yang ditingkatkan."
-
 #: src/components/vm/consoles/spice.tsx:68
 msgid "This machine has a SPICE graphical console that can not be shown here."
 msgstr ""
@@ -3058,7 +3063,7 @@ msgstr ""
 "Alat ini mengelola mesin virtual. Dengan ini, Anda dapat membuat, memantau, "
 "dan mengendalikan mesin virtual dari subsistem libvirt."
 
-#: src/components/vm/disks/diskAdd.tsx:74
+#: src/components/vm/disks/diskAdd.tsx:77
 msgid "This volume is already used by $0."
 msgstr "Volume ini sudah digunakan oleh $0."
 
@@ -3082,21 +3087,21 @@ msgstr "VM sementara tidak mendukung pengeditan konfigurasi firmware"
 msgid "Troubleshoot"
 msgstr "Pemecahan masalah"
 
-#: src/components/storagePools/storagePoolOverviewTab.tsx:65
-#: src/components/storagePools/createStoragePoolDialog.tsx:102
+#: src/components/vm/hostdevs/hostDevAdd.tsx:43
+#: src/components/vm/hostdevs/hostDevCard.tsx:177
+#: src/components/vm/nics/vmNicsCard.tsx:780
 #: src/components/vm/overview/bootOrder.tsx:125
 #: src/components/vm/overview/bootOrder.tsx:139
 #: src/components/vm/overview/bootOrder.tsx:155
 #: src/components/vm/overview/bootOrder.tsx:162
 #: src/components/vm/overview/bootOrder.tsx:169
 #: src/components/vm/overview/bootOrder.tsx:175
-#: src/components/vm/nics/vmNicsCard.tsx:779
-#: src/components/vm/hostdevs/hostDevAdd.tsx:43
-#: src/components/vm/hostdevs/hostDevCard.tsx:177
+#: src/components/storagePools/storagePoolOverviewTab.tsx:65
+#: src/components/storagePools/createStoragePoolDialog.tsx:102
 msgid "Type"
 msgstr "Jenis"
 
-#: src/components/vm/nics/nicBody.tsx:527
+#: src/components/vm/nics/nicBody.tsx:486
 msgid "UDP"
 msgstr "UDP"
 
@@ -3140,10 +3145,10 @@ msgstr "Unit"
 msgid "Unknown firmware"
 msgstr "Firmware tidak dikenal"
 
-#: src/components/vm/overview/bootOrder.tsx:145
-#: src/components/vm/overview/bootOrder.tsx:146
 #: src/components/vm/hostdevs/hostDevCard.tsx:84
 #: src/components/vm/hostdevs/hostDevCard.tsx:85
+#: src/components/vm/overview/bootOrder.tsx:145
+#: src/components/vm/overview/bootOrder.tsx:146
 msgid "Unspecified"
 msgstr "Tidak ditentukan"
 
@@ -3159,8 +3164,7 @@ msgstr "Url"
 msgid "Usage"
 msgstr "Penggunaan"
 
-#: src/components/vm/disks/diskAdd.tsx:719
-#: src/components/vm/disks/diskAdd.tsx:755
+#: src/components/vm/disks/diskAdd.tsx:557
 msgid "Use existing"
 msgstr "Gunakan yang sudah ada"
 
@@ -3182,7 +3186,7 @@ msgstr ""
 msgid "Used by"
 msgstr "Digunakan oleh"
 
-#: src/components/vm/disks/vmDisksCard.tsx:166
+#: src/components/vm/disks/vmDisksCard.tsx:164
 msgid "Used on host"
 msgstr "Digunakan di host"
 
@@ -3298,12 +3302,12 @@ msgstr "VNC dengan TLS tidak didukung oleh penampil dalam halaman"
 msgid "Valid token"
 msgstr "Token valid"
 
-#: src/components/vm/overview/bootOrder.tsx:140
-#: src/components/vm/overview/bootOrder.tsx:156
 #: src/components/vm/hostdevs/hostDevAdd.tsx:151
 #: src/components/vm/hostdevs/hostDevCard.tsx:207
 #: src/components/vm/hostdevs/hostDevCard.tsx:239
 #: src/components/vm/hostdevs/hostDevCard.tsx:245
+#: src/components/vm/overview/bootOrder.tsx:140
+#: src/components/vm/overview/bootOrder.tsx:156
 msgid "Vendor"
 msgstr "Vendor"
 
@@ -3311,11 +3315,11 @@ msgstr "Vendor"
 msgid "Vendor support ended $0"
 msgstr "Dukungan vendor berakhir $0"
 
-#: src/components/networks/networkList.tsx:44
-#: src/components/storagePools/storagePoolList.tsx:46
+#: src/components/vm/vmDetailsPage.tsx:249
 #: src/components/vms/hostvmslist.tsx:315
 #: src/components/vms/hostvmslist.tsx:317
-#: src/components/vm/vmDetailsPage.tsx:249 src/manifest.json:0
+#: src/components/networks/networkList.tsx:44
+#: src/components/storagePools/storagePoolList.tsx:46 src/manifest.json:0
 msgid "Virtual machines"
 msgstr "Mesin virtual"
 
@@ -3345,16 +3349,16 @@ msgstr ""
 msgid "Virtualization service (libvirt) is not active"
 msgstr "Layanan virtualisasi (libvirt) tidak aktif"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1152
-#: src/components/vm/deleteDialog.tsx:72
-#: src/components/vm/disks/vmDiskColumns.tsx:39
-#: src/components/vm/disks/mediaEject.tsx:89
-#: src/components/vm/disks/diskAdd.tsx:148
 #: src/components/vm/overview/bootOrder.tsx:109
+#: src/components/vm/disks/diskAdd.tsx:327
+#: src/components/vm/disks/mediaEject.tsx:89
+#: src/components/vm/disks/vmDiskColumns.tsx:39
+#: src/components/vm/deleteDialog.tsx:72
+#: src/components/create-vm-dialog/createVmDialog.tsx:1152
 msgid "Volume"
 msgstr "Volume"
 
-#: src/components/storagePools/storageVolumeCreate.tsx:97
+#: src/components/storagePools/storageVolumeCreate.tsx:73
 msgid "Volume failed to be created"
 msgstr "Gagal membuat volume"
 
@@ -3370,13 +3374,13 @@ msgstr "Nama grup volume tidak boleh kosong"
 msgid "Vsock"
 msgstr "Vsock"
 
-#: src/components/vm/overview/bootOrder.tsx:171
 #: src/components/vm/hostdevs/hostDevCard.tsx:107
+#: src/components/vm/overview/bootOrder.tsx:171
 msgid "WWPN"
 msgstr "WWPN"
 
-#: src/components/common/needsShutdown.tsx:210
 #: src/components/vm/overview/vmOverviewCard.tsx:198
+#: src/components/common/needsShutdown.tsx:210
 msgid "Watchdog"
 msgstr "Watchdog"
 
@@ -3394,7 +3398,7 @@ msgstr ""
 msgid "Wireless Controller"
 msgstr "Pengontrol Nirkabel"
 
-#: src/components/vm/disks/vmDisksCard.tsx:255
+#: src/components/vm/disks/vmDisksCard.tsx:253
 #: src/components/vm/disks/diskEdit.tsx:112
 msgid "Writeable"
 msgstr "Dapat ditulis"
@@ -3421,7 +3425,7 @@ msgstr "tambahkan"
 msgid "add entry"
 msgstr "tambahkan entri"
 
-#: src/components/vm/nics/nicBody.tsx:360
+#: src/components/vm/nics/nicBody.tsx:319
 msgid "all"
 msgstr "semua"
 
@@ -3437,7 +3441,7 @@ msgstr "cdrom"
 msgid "custom"
 msgstr "kustom"
 
-#: src/components/vm/nics/vmNicsCard.tsx:796
+#: src/components/vm/nics/vmNicsCard.tsx:797
 msgid "default"
 msgstr "default"
 
@@ -3458,10 +3462,10 @@ msgid "down"
 msgstr "turun"
 
 #: src/components/vm/overview/vsock.tsx:315
-#: src/components/vm/overview/bootOrder.tsx:387
-#: src/components/vm/overview/watchdog.tsx:265
 #: src/components/vm/overview/vmOverviewCard.tsx:117
 #: src/components/vm/overview/vmOverviewCard.tsx:125
+#: src/components/vm/overview/bootOrder.tsx:387
+#: src/components/vm/overview/watchdog.tsx:265
 msgid "edit"
 msgstr "ubah"
 
@@ -3549,10 +3553,10 @@ msgstr "tidak"
 msgid "no state saved"
 msgstr "tidak ada status yang disimpan"
 
-#: src/components/networks/networkOverviewTab.tsx:314
+#: src/components/vm/nics/vmNicsCard.tsx:288
 #: src/components/vm/overview/vsock.tsx:297
 #: src/components/vm/overview/watchdog.tsx:261
-#: src/components/vm/nics/vmNicsCard.tsx:287
+#: src/components/networks/networkOverviewTab.tsx:314
 msgid "none"
 msgstr "tidak ada"
 
@@ -3575,10 +3579,6 @@ msgstr "perangkat yang dialihkan"
 #: src/components/networks/networkOverviewTab.tsx:57
 msgid "remove"
 msgstr "hapus"
-
-#: src/components/vm/disks/diskAdd.tsx:311
-msgid "serial number"
-msgstr "nomor seri"
 
 #: src/helpers.ts:248
 msgid "server"
@@ -3658,6 +3658,55 @@ msgstr "menunggu"
 #: src/components/storagePools/storagePoolOverviewTab.tsx:61 src/helpers.ts:264
 msgid "yes"
 msgstr "ya"
+
+#~ msgid "No storage pools available"
+#~ msgstr "Tidak ada kolam penyimpanan yang tersedia"
+
+#~ msgid "Please choose a storage pool"
+#~ msgstr "Silakan pilih kolam penyimpanan"
+
+#~ msgid "Please choose a volume"
+#~ msgstr "Silakan pilih volume"
+
+#~ msgid "Pool type $0 does not support volume creation"
+#~ msgstr "Jenis kolam $0 tidak mendukung pembuatan volume"
+
+#~ msgid "Storage pools could not be fetched"
+#~ msgstr "Kolam penyimpanan tidak dapat diambil"
+
+#~ msgid "The pool is empty"
+#~ msgstr "Kolam kosong"
+
+#~ msgid "serial number"
+#~ msgstr "nomor seri"
+
+#~ msgid "Interface type help"
+#~ msgstr "Bantuan jenis antarmuka"
+
+#~ msgid "Mode help"
+#~ msgstr "Bantuan mode"
+
+#, fuzzy
+#~| msgid "No storage pools available"
+#~ msgid "No sources available"
+#~ msgstr "Tidak ada kolam penyimpanan yang tersedia"
+
+#~ msgid ""
+#~ "Provides a bridge from the guest virtual machine directly onto the LAN. "
+#~ "This needs a bridge device on the host with one or more physical NICs."
+#~ msgstr ""
+#~ "Menyediakan jembatan dari mesin virtual guest langsung ke LAN. Ini "
+#~ "memerlukan perangkat jembatan di host dengan satu atau lebih NIC fisik."
+
+#~ msgid ""
+#~ "Provides a connection whose details are described by the named network "
+#~ "definition."
+#~ msgstr ""
+#~ "Menyediakan koneksi dengan detail yang dijelaskan oleh definisi jaringan "
+#~ "bernama."
+
+#~ msgid "The mode influences the delivery of packets."
+#~ msgstr "Mode memengaruhi pengiriman paket."
 
 #~ msgid "IPv4 Address"
 #~ msgstr "Alamat IPv4"
