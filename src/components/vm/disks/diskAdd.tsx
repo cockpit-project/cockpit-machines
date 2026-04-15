@@ -338,12 +338,7 @@ interface FileInfo {
     usesBackingFile: boolean;
 }
 
-type FileInfoCache = Record<string, FileInfo>;
-
-async function getFileInfo(file: string, cache: FileInfoCache): Promise<FileInfo> {
-    if (file in cache)
-        return cache[file];
-
+async function getFileInfo(file: string): Promise<FileInfo> {
     const file_header = await cockpit.spawn(
         ["head", "--bytes=16", file],
         { binary: true, err: "message", superuser: "try" }
@@ -365,32 +360,33 @@ async function getFileInfo(file: string, cache: FileInfoCache): Promise<FileInfo
         };
     }
 
-    cache[file] = result;
     return result;
 }
 
 interface CustomPathValue {
     file: string,
     device: "disk" | "cdrom",
-    _fileInfoCache: FileInfoCache,
+    info: FileInfo | null,
 }
 
 function init_CustomPath(): CustomPathValue {
     return {
         file: "",
         device: "disk",
-        _fileInfoCache: {},
+        info: null,
     };
 }
 
 function validate_CustomPath(field: DialogField<CustomPathValue>) {
-    const { _fileInfoCache } = field.get();
-    field.sub("file").validate_async(0, async file => {
+    field.sub("file").validate_async(0, async (file, task) => {
         if (!file)
             return _("Path can not be empty");
 
-        const { usesBackingFile } = await getFileInfo(file, _fileInfoCache);
-        if (usesBackingFile)
+        const info = await getFileInfo(file);
+        if (!task.is_cancelled())
+            field.sub("info").set(info);
+
+        if (info.usesBackingFile)
             return _("Importing an image with a backing file is unsupported");
     });
 }
@@ -673,14 +669,14 @@ export const AddDisk = ({
                 });
             } else if (values.mode == CUSTOM_PATH) {
                 const params = values.custom_path;
-                const file_info = await getFileInfo(params.file, params._fileInfoCache);
+                cockpit.assert(params.info);
                 await domainAttachDisk({
                     connectionName: vm.connectionName,
                     target,
                     type: "file",
                     file: params.file,
                     device: params.device,
-                    format: file_info.format,
+                    format: params.info.format,
                     shareable: false,
                     ...common
                 });
