@@ -1264,9 +1264,8 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         def checkOsFiltered(self):
             b = self.browser
 
-            b.focus("#os-select-group input")
             # os_search_name is meant to be used to test substring match
-            b.input_text(self.os_search_name or self.os_name)
+            b.set_input_text("#os-select-group input", self.os_search_name or self.os_name)
 
             if not self.os_is_not_found:
                 # There should be exactly one entry
