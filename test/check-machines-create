@@ -2586,7 +2586,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         finally:
             m.execute(f"for f in {plugins}; do mv {self.vm_tmpdir}/qemu/$(basename $f) $f; done")
 
-    @testlib.skipImage('SPICE conversion not supported', "ubuntu-2204", "ubuntu-2404")
+    @testlib.skipImage('SPICE conversion not supported', "ubuntu-2404")
     def testReplaceSpice(self):
         m = self.machine
         b = self.browser
@@ -2819,7 +2819,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
 
     # we need this test to create a SPICE VM to simulate the host change to "no spice support"
     @testlib.skipImage('SPICE not supported on RHEL', "rhel-*", "centos-*")
-    @testlib.skipImage('SPICE conversion not supported', "ubuntu-2204", "ubuntu-2404")
+    @testlib.skipImage('SPICE conversion not supported', "ubuntu-2404")
     def testNoSpiceAlert(self):
         b = self.browser
 
