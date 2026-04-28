@@ -17,11 +17,7 @@ class TestMachinesManifest(testlib.MachineCase):
         self.login_and_go(None)
         b.wait_in_text("#host-apps .pf-m-current", "Overview")
 
-        # Cockpit with a C bridge
-        if m.image == "ubuntu-2204":
-            self.assertIn("Virtual machines", b.text("#host-apps"))
-        else:
-            self.assertNotIn("Virtual machines", b.text("#host-apps"))
+        self.assertNotIn("Virtual machines", b.text("#host-apps"))
 
 
 if __name__ == '__main__':
