@@ -923,7 +923,7 @@ class TestMachinesNICs(machineslib.VirtualMachinesCase):
                     self.browser.wait_not_present(f"#vm-subVmTest1-network-{self.nic_num}-mac")
                 self.browser.wait_not_present(".pf-v6-c-modal-box")
 
-    @testlib.skipImage('PASST not supported', "rhel-8-*", "ubuntu-2204", "ubuntu-2404")
+    @testlib.skipImage('PASST not supported', "rhel-8-*", "ubuntu-2404")
     def testPortForwards(self):
         b = self.browser
         d = DialogHelpers(b)

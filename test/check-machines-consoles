@@ -112,8 +112,6 @@ fullscreen=0
         # when more than two machines are visited.
 
         override = "/etc/cockpit/machines.override.json"
-        if m.image == "ubuntu-2204":
-            override = "/usr/share/cockpit/machines/override.json"
         self.write_file(override,
                         """{ "config": { "MaxConsoleCardStates": 2 } }\n""")
 
@@ -506,7 +504,7 @@ fullscreen=0
 
     def waitForStableVNC(self):
         initial_remote = 1280
-        if self.machine.image in ["ubuntu-2204", "rhel-8-10"]:
+        if self.machine.image in ["rhel-8-10"]:
             initial_remote = 1024
         with self.browser.wait_timeout(60):
             self.browser.wait_attr(".vm-console-vnc canvas", "width", str(initial_remote))
@@ -569,7 +567,7 @@ fullscreen=0
 
         assert_state("This machine has a SPICE graphical console that can not be shown here.")
 
-        if self.machine.image in ["ubuntu-2204", "ubuntu-2404"]:
+        if self.machine.image in ["ubuntu-2404"]:
             # virt-xml in older Ubuntus does not have the
             # --convert-to-vnc option and Cockpit will omit the button
             b.wait_not_present(".consoles-card .pf-v6-c-empty-state button:contains(Replace with VNC)")
@@ -586,7 +584,6 @@ fullscreen=0
     @testlib.skipImage('No virtio video', "arch", "opensuse-*", "rhel-8-*")
     def testScaleResize(self):
         b = self.browser
-        m = self.machine
 
         name = "subVmTest1"
         self.createVm(name, graphics="vnc")
@@ -632,8 +629,6 @@ fullscreen=0
         # that.
 
         initial_remote = 1280
-        if m.image in ["ubuntu-2204"]:
-            initial_remote = 1024
 
         b.wait_text("#vm-console-vnc-scaling", "No scaling or resizing")
         wait_widths(lambda remote, local, ui: remote == initial_remote and local == remote and local > ui)
@@ -716,7 +711,7 @@ fullscreen=0
 
         b2.select_PF("#vm-console-vnc-scaling", "Remote resizing")
 
-        if m.image not in ["ubuntu-2204", "ubuntu-2404", "debian-trixie"]:
+        if m.image not in ["ubuntu-2404", "debian-trixie"]:
             # Cockpit will make a non-shared connection.  The embedded
             # console will be forcefully disconnected.
             b.wait_in_text(".consoles-card", "Disconnected")
@@ -952,8 +947,8 @@ vnc_tls_x509_cert_dir = "/etc/pki/libvirt"
         b.wait_visible(".vm-console-vnc canvas")
 
         # Same for reverting an external snapshot
-        # (libvirt in ubuntu-2204 and rhel-8-10 does not support reverting external snapshots...)
-        if m.image not in ["ubuntu-2204", "rhel-8-10"]:
+        # (libvirt in  rhel-8-10 does not support reverting external snapshots...)
+        if m.image not in ["rhel-8-10"]:
             m.execute(f"virsh snapshot-create-as {name} snapshot2 --memspec /var/lib/libvirt/images/{name}.mem")
             m.execute(f"virsh snapshot-revert {name} snapshot2")
             time.sleep(5)

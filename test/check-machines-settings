@@ -768,7 +768,7 @@ class TestMachinesSettings(machineslib.VirtualMachinesCase):
 
         m.execute("virsh destroy subVmTest1; virsh undefine subVmTest1")
         args = self.createVm("subVmTest1", os="linux2022")
-        has_watchdog = m.image not in ["ubuntu-2204", "rhel-8-10"]
+        has_watchdog = m.image not in ["rhel-8-10"]
 
         self.goToVmPage("subVmTest1")
         if has_watchdog:

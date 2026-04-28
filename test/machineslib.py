@@ -586,7 +586,7 @@ class VirtualMachinesCase(VirtualMachinesCaseHelpers, storagelib.StorageHelpers,
         # policy decisions. (The modern dbus-broken does not seem to
         # have that problem.) So let's reload it to stop that from
         # happening.
-        if self.machine.image.startswith(("rhel-8-10", "ubuntu-2204")):
+        if self.machine.image.startswith(("rhel-8-10")):
             self.machine.execute("systemctl reload dbus")
         # user libvirtd instance tends to SIGABRT with "Failed to find user record for uid .."
         # on shutdown during cleanup

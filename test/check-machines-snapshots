@@ -19,9 +19,7 @@ def supportsSnapshot(image):
 
 def supportsExternalSnapshots(image):
     # external memory snapshots introduced in libvirt 9.9.0
-    return not (
-        image.startswith("rhel-8") or
-        image in ["ubuntu-2204"])
+    return not image.startswith("rhel-8")
 
 
 @testlib.nondestructive
