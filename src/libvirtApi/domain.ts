@@ -26,9 +26,6 @@ import type { BootOrderDevice } from '../helpers.js';
 import installVmScript from '../scripts/install_machine.py';
 
 import {
-    getDiskXML,
-} from '../libvirt-xml-create.js';
-import {
     setVmCreateInProgress,
     updateImageDownloadProgress,
     clearVmUiState,
@@ -60,7 +57,6 @@ import {
 import {
     changeMedia,
     updateBootOrder,
-    updateDisk,
     updateMaxMemory,
 } from '../libvirt-xml-update.js';
 import { storagePoolRefresh } from './storagePool.js';
@@ -357,68 +353,6 @@ export async function ensureBalloonPolling(vm: VM) {
             vm.hasPollingMemBalloonFailure = true;
         }
     }
-}
-
-function domainAttachDevice({
-    connectionName,
-    vmId,
-    permanent,
-    hotplug,
-    xmlDesc
-} : {
-    connectionName: ConnectionName,
-    vmId: string,
-    permanent: boolean,
-    hotplug: boolean,
-    xmlDesc: string,
-}): Promise<void> {
-    let flags = Enum.VIR_DOMAIN_AFFECT_CURRENT;
-    if (hotplug)
-        flags |= Enum.VIR_DOMAIN_AFFECT_LIVE;
-    if (permanent)
-        flags |= Enum.VIR_DOMAIN_AFFECT_CONFIG;
-
-    // Error handling is done from the calling side
-    return call(connectionName, vmId, 'org.libvirt.Domain', 'AttachDevice', [xmlDesc, flags], { timeout, type: 'su' });
-}
-
-export interface DiskSpec {
-    type: string,
-    file?: string,
-    device: string,
-    poolName?: string | undefined,
-    volumeName?: string | undefined,
-    format: string,
-    target: string,
-    vmId: string,
-    permanent: boolean,
-    hotplug: boolean,
-    cacheMode: string,
-    shareable?: boolean,
-    busType: string,
-    serial: string,
-}
-
-export function domainAttachDisk({
-    connectionName,
-    type,
-    file,
-    device,
-    poolName,
-    volumeName,
-    format,
-    target,
-    vmId,
-    permanent,
-    hotplug,
-    cacheMode,
-    shareable,
-    busType,
-    serial,
-} : { connectionName: ConnectionName } & DiskSpec): Promise<void> {
-    const xmlDesc = getDiskXML(type, file, device, poolName, volumeName, format, target, cacheMode, shareable, busType, serial);
-
-    return domainAttachDevice({ connectionName, vmId, permanent, hotplug, xmlDesc });
 }
 
 export function domainAttachHostDevices({
@@ -1202,32 +1136,4 @@ export async function domainSetOSFirmware({
 
         return true;
     });
-}
-
-export async function domainUpdateDiskAttributes({
-    vm,
-    target,
-    readonly,
-    shareable,
-    busType,
-    existingTargets,
-    cache
-} : {
-    vm: VM,
-    target: optString,
-    readonly: boolean,
-    shareable: boolean,
-    busType: optString,
-    existingTargets: string[],
-    cache: optString,
-}): Promise<void> {
-    await domainModifyXML(vm, doc => updateDisk({
-        doc,
-        diskTarget: target,
-        readonly,
-        shareable,
-        busType,
-        existingTargets,
-        cache
-    }));
 }
