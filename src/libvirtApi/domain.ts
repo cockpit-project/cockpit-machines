@@ -26,9 +26,6 @@ import type { BootOrderDevice } from '../helpers.js';
 import installVmScript from '../scripts/install_machine.py';
 
 import {
-    getDiskXML,
-} from '../libvirt-xml-create.js';
-import {
     setVmCreateInProgress,
     updateImageDownloadProgress,
     clearVmUiState,
@@ -60,7 +57,6 @@ import {
 import {
     changeMedia,
     updateBootOrder,
-    updateDisk,
     updateMaxMemory,
 } from '../libvirt-xml-update.js';
 import { storagePoolRefresh } from './storagePool.js';
@@ -359,68 +355,6 @@ export async function ensureBalloonPolling(vm: VM) {
     }
 }
 
-function domainAttachDevice({
-    connectionName,
-    vmId,
-    permanent,
-    hotplug,
-    xmlDesc
-} : {
-    connectionName: ConnectionName,
-    vmId: string,
-    permanent: boolean,
-    hotplug: boolean,
-    xmlDesc: string,
-}): Promise<void> {
-    let flags = Enum.VIR_DOMAIN_AFFECT_CURRENT;
-    if (hotplug)
-        flags |= Enum.VIR_DOMAIN_AFFECT_LIVE;
-    if (permanent)
-        flags |= Enum.VIR_DOMAIN_AFFECT_CONFIG;
-
-    // Error handling is done from the calling side
-    return call(connectionName, vmId, 'org.libvirt.Domain', 'AttachDevice', [xmlDesc, flags], { timeout, type: 'su' });
-}
-
-export interface DiskSpec {
-    type: string,
-    file?: string,
-    device: string,
-    poolName?: string | undefined,
-    volumeName?: string | undefined,
-    format: string,
-    target: string,
-    vmId: string,
-    permanent: boolean,
-    hotplug: boolean,
-    cacheMode: string,
-    shareable?: boolean,
-    busType: string,
-    serial: string,
-}
-
-export function domainAttachDisk({
-    connectionName,
-    type,
-    file,
-    device,
-    poolName,
-    volumeName,
-    format,
-    target,
-    vmId,
-    permanent,
-    hotplug,
-    cacheMode,
-    shareable,
-    busType,
-    serial,
-} : { connectionName: ConnectionName } & DiskSpec): Promise<void> {
-    const xmlDesc = getDiskXML(type, file, device, poolName, volumeName, format, target, cacheMode, shareable, busType, serial);
-
-    return domainAttachDevice({ connectionName, vmId, permanent, hotplug, xmlDesc });
-}
-
 export function domainAttachHostDevices({
     connectionName,
     vmName,
@@ -627,66 +561,95 @@ export async function domainDelete({
     }
 }
 
-export function domainDeleteStorage({
-    connectionName,
-    storage,
-    storagePools
-} : {
-    connectionName: ConnectionName,
-    storage: VMDisk[],
-    storagePools: StoragePool[],
-}): Promise<void> {
-    const storageVolPromises: Promise<void | [string]>[] = [];
+export interface StorageDeleteInfo {
+    volume: string | null;
+    pool: StoragePool | undefined;
+    file: string | null;
+}
 
-    storage.forEach(disk => {
-        switch (disk.type) {
-        case 'file': {
-            logDebug(`deleteStorage: deleting file storage ${disk.source.file}`);
+export async function getStorageDeleteInfoForDisk(vm: VM, disk: VMDisk): Promise<StorageDeleteInfo | null> {
+    // When deleting a disk image (for example when deleting a VM or
+    // when detaching a disk), we prefer to delete it via the libvirt
+    // storage pool API. So we try to find the volume for it, even for
+    // disks of type "file".
+    //
+    // But we can't rely on our list of storage volumes to be
+    // up-to-date. So let's fetch everything explicitly.
 
-            storageVolPromises.push(
-                call<[string]>(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StorageVolLookupByPath', [disk.source.file], { timeout, type: 's' })
-                        .then(([volPath]) => call(connectionName, volPath, 'org.libvirt.StorageVol', 'Delete', [0], { timeout, type: 'u' }))
-                        .catch(ex => {
-                            if (!ex.message.includes("no storage vol with matching"))
-                                return Promise.reject(ex);
-                            else
-                                return cockpit.file(disk.source.file!, { superuser: "try" }).replace(null)
-                                        .then(() => { }); // delete key file
-                        })
+    async function getInfoByPath(path: string): Promise<StorageDeleteInfo | null> {
+        try {
+            const [dbusPath] = await call<[string]>(
+                vm.connectionName,
+                '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StorageVolLookupByPath',
+                [path],
+                { timeout, type: 's' }
             );
-            const pool = storagePools.find(pool => pool.connectionName === connectionName && pool.volumes.some(vol => vol.path === disk.source.file));
-            if (pool)
-                storageVolPromises.push(storagePoolRefresh({ connectionName, objPath: pool.id }));
-            break;
+            return {
+                volume: dbusPath,
+                pool: appState.storagePools.find(
+                    p => p.connectionName === vm.connectionName && p.volumes.some(v => v.path === path)),
+                file: null,
+            };
+        } catch (ex) {
+            if (!String(ex).includes("no storage vol with matching"))
+                throw ex;
+            return null;
         }
-        case 'volume': {
-            logDebug(`deleteStorage: deleting volume storage ${disk.source.volume} on pool ${disk.source.pool}`);
-            storageVolPromises.push(
-                call<[string]>(connectionName, '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName', [disk.source.pool], { timeout, type: 's' })
-                        .then(([objPath]) => call<[string]>(connectionName, objPath, 'org.libvirt.StoragePool', 'StorageVolLookupByName', [disk.source.volume], { timeout, type: 's' }))
-                        .then(([volPath]) => call(connectionName, volPath, 'org.libvirt.StorageVol', 'Delete', [0], { timeout, type: 'u' }))
+    }
+
+    if (disk.type == "file" && disk.source.file) {
+        const info = await getInfoByPath(disk.source.file);
+        if (info)
+            return info;
+
+        return {
+            volume: null,
+            pool: undefined,
+            file: disk.source.file,
+        };
+    }
+
+    if (disk.type == "block" && disk.source.dev)
+        return await getInfoByPath(disk.source.dev);
+
+    if (disk.type == "volume" && disk.source.pool && disk.source.volume) {
+        const [pool] = await call<[string]>(
+            vm.connectionName,
+            '/org/libvirt/QEMU', 'org.libvirt.Connect', 'StoragePoolLookupByName',
+            [disk.source.pool],
+            { timeout, type: 's' }
+        );
+        const [path] = await call<[string]>(
+            vm.connectionName,
+            pool, 'org.libvirt.StoragePool', 'StorageVolLookupByName',
+            [disk.source.volume],
+            { timeout, type: 's' }
+        );
+        return {
+            volume: path,
+            pool: appState.storagePools.find(p => p.connectionName === vm.connectionName && p.name === disk.source.pool),
+            file: null,
+        };
+    }
+
+    return null;
+}
+
+export async function deleteStorage(vm: VM, infos: StorageDeleteInfo[]): Promise<void> {
+    for (const info of infos) {
+        if (info.volume) {
+            await call(
+                vm.connectionName,
+                info.volume, 'org.libvirt.StorageVol', 'Delete',
+                [0],
+                { timeout, type: 'u' }
             );
-            const pool = storagePools.find(pool => pool.connectionName === connectionName && pool.name === disk.source.pool);
-            if (pool)
-                storageVolPromises.push(storagePoolRefresh({ connectionName, objPath: pool.id }));
-            break;
         }
-        default:
-            logDebug(`Disks of type ${disk.type} are currently ignored during VM deletion`);
-        }
-    });
-
-    if (storage.length > 0 && storageVolPromises.length == 0)
-        return Promise.reject(new Error("Could not find storage file to delete."));
-
-    return Promise.allSettled(storageVolPromises).then(results => {
-        const rejectedMsgs = results.filter(result => result.status == "rejected").map(result => result.reason?.message);
-        if (rejectedMsgs.length > 0) {
-            return Promise.reject(rejectedMsgs.join(", "));
-        } else {
-            return Promise.resolve();
-        }
-    });
+        if (info.file)
+            await cockpit.file(info.file, { superuser: "try" }).replace(null);
+        if (info.pool)
+            await storagePoolRefresh({ connectionName: vm.connectionName, objPath: info.pool.id });
+    }
 }
 
 /*
@@ -708,35 +671,6 @@ export function domainDesktopConsole({
         fileName: 'console.vv',
         mimeType: 'application/x-virt-viewer'
     });
-}
-
-export async function domainDetachDisk({
-    connectionName,
-    id: vmPath,
-    target,
-    live = false,
-    persistent
-} : {
-    connectionName: ConnectionName,
-    id: string,
-    target: string,
-    live?: boolean,
-    persistent: boolean,
-}): Promise<void> {
-    let detachFlags = Enum.VIR_DOMAIN_AFFECT_CURRENT;
-    if (live)
-        detachFlags |= Enum.VIR_DOMAIN_AFFECT_LIVE;
-
-    const [domXml] = await call<[string]>(connectionName, vmPath, 'org.libvirt.Domain', 'GetXMLDesc', [0], { timeout, type: 'u' });
-    const diskXML = getDiskElemByTarget(domXml, target);
-
-    const [domInactiveXml] = await call<[string]>(connectionName, vmPath, 'org.libvirt.Domain', 'GetXMLDesc', [Enum.VIR_DOMAIN_XML_INACTIVE], { timeout, type: 'u' });
-
-    const diskInactiveXML = getDiskElemByTarget(domInactiveXml, target);
-    if (diskInactiveXML && persistent)
-        detachFlags |= Enum.VIR_DOMAIN_AFFECT_CONFIG;
-
-    await call(connectionName, vmPath, 'org.libvirt.Domain', 'DetachDevice', [diskXML, detachFlags], { timeout, type: 'su' });
 }
 
 // Cannot use virt-xml until https://github.com/virt-manager/virt-manager/issues/357 is fixed
@@ -1202,32 +1136,4 @@ export async function domainSetOSFirmware({
 
         return true;
     });
-}
-
-export async function domainUpdateDiskAttributes({
-    vm,
-    target,
-    readonly,
-    shareable,
-    busType,
-    existingTargets,
-    cache
-} : {
-    vm: VM,
-    target: optString,
-    readonly: boolean,
-    shareable: boolean,
-    busType: optString,
-    existingTargets: string[],
-    cache: optString,
-}): Promise<void> {
-    await domainModifyXML(vm, doc => updateDisk({
-        doc,
-        diskTarget: target,
-        readonly,
-        shareable,
-        busType,
-        existingTargets,
-        cache
-    }));
 }

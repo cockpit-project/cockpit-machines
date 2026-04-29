@@ -588,7 +588,7 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
 
             def cancel(self):
                 b.click(self.cancel_button())
-                b.wait_not_present("#create-storage-pool-dialog")
+                b.wait_not_present("#create-volume-dialog-modal")
 
             def create(self):
                 b.click(self.apply_button())

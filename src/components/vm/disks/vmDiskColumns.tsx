@@ -3,10 +3,11 @@
  *
  * Copyright (C) 2016 Red Hat, Inc.
  */
-import React from 'react';
+import React, { useState } from 'react';
+import { useInit } from 'hooks';
 import cockpit from 'cockpit';
 
-import type { optString, VM, VMDisk, StoragePool } from '../../../types';
+import type { optString, VM, VMDisk } from '../../../types';
 import type { DeleteResourceModalProps } from '../../common/deleteResource';
 
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
@@ -18,12 +19,15 @@ import { KebabDropdown } from 'cockpit-components-dropdown.jsx';
 import { basename } from 'cockpit-path';
 
 import { useDialogs } from 'dialogs.jsx';
-import { domainDeleteStorage, domainDetachDisk, domainGet } from '../../../libvirtApi/domain.js';
+import {
+    StorageDeleteInfo, getStorageDeleteInfoForDisk, deleteStorage,
+    virtXmlHotRemove,
+    domainGet
+} from '../../../libvirtApi/domain.js';
 import { MediaEjectModal } from './mediaEject.jsx';
 import { EditDiskAction } from './diskEdit.jsx';
 import { AddDisk } from './diskAdd.jsx';
 import { DeleteResourceModal } from '../../common/deleteResource.jsx';
-import { canDeleteDiskFile } from '../../../helpers.js';
 import { appState } from '../../../state';
 
 const _ = cockpit.gettext;
@@ -135,41 +139,34 @@ export const DiskExtraDescriptions = ({
 export const RemoveDiskModal = ({
     vm,
     disk,
-    storagePools
 } : {
     vm: VM,
     disk: VMDisk,
-    storagePools: StoragePool[],
 }) => {
-    const onRemoveDisk = (deleteFile: boolean) => {
-        return domainDetachDisk({
-            connectionName: vm.connectionName,
-            id: vm.id,
-            target: disk.target,
-            live: vm.state === 'running',
-            persistent: vm.persistent,
-        })
-                .then(() => domainGet({ connectionName: vm.connectionName, id: vm.id }))
-                .then(() => { // Cleanup operations
-                    if (deleteFile) {
-                        return domainDeleteStorage({ connectionName: vm.connectionName, storage: [disk], storagePools })
-                                .catch(exc => {
-                                    appState.addNotification({
-                                        resourceId: vm.id,
-                                        text: cockpit.format(_("Could not delete disk's storage")),
-                                        detail: exc.message,
-                                        type: "warning"
-                                    });
-                                });
-                    } else {
-                        return Promise.resolve();
-                    }
+    const [info, setInfo] = useState<null | StorageDeleteInfo>(null);
+    useInit(async () => { setInfo(await getStorageDeleteInfoForDisk(vm, disk)) });
+
+    const onRemoveDisk = async (deleteFile: boolean) => {
+        await virtXmlHotRemove(vm, "disk", { target: disk.target }, disk.target in vm.inactiveXML.disks);
+        await domainGet(vm);
+
+        if (deleteFile && info) {
+            try {
+                await deleteStorage(vm, [info]);
+            } catch (exc) {
+                appState.addNotification({
+                    resourceId: vm.id,
+                    text: cockpit.format(_("Could not delete disk's storage")),
+                    detail: String(exc),
+                    type: "warning"
                 });
+            }
+        }
     };
 
     const dialogProps: DeleteResourceModalProps = {
         title: _("Remove disk from VM?"),
-        actionName: _("Remove"),
+        actionName: _("Remove disk"),
         errorMessage: cockpit.format(_("Disk $0 could not be removed"), disk.target),
         actionDescription: cockpit.format(_("This disk will be removed from $0:"), vm.name),
         objectDescription: [
@@ -181,8 +178,8 @@ export const RemoveDiskModal = ({
         deleteHandler: () => onRemoveDisk(false),
     };
 
-    if (canDeleteDiskFile(disk)) {
-        dialogProps.actionNameSecondary = _("Remove and delete file");
+    if (info) {
+        dialogProps.actionNameSecondary = _("Remove disk and delete disk image");
         dialogProps.deleteHandlerSecondary = () => onRemoveDisk(true);
     }
 
@@ -194,7 +191,6 @@ export const DiskActions = ({
     disk,
     supportedDiskBusTypes,
     idPrefixRow,
-    storagePools,
     isActionOpen,
     setIsActionOpen
 } : {
@@ -202,7 +198,6 @@ export const DiskActions = ({
     disk: VMDisk,
     supportedDiskBusTypes: string[],
     idPrefixRow: string,
-    storagePools: StoragePool[],
     isActionOpen: boolean,
     setIsActionOpen: (open: boolean) => void,
 }) => {
@@ -248,9 +243,7 @@ export const DiskActions = ({
                       key={`delete-${idPrefixRow}`}
                       isDisabled={disabled}
                       onClick={() => {
-                          Dialogs.show(<RemoveDiskModal vm={vm}
-                                                        disk={disk}
-                                                        storagePools={storagePools} />);
+                          Dialogs.show(<RemoveDiskModal vm={vm} disk={disk} />);
                       }}>
             {_("Remove")}
         </DropdownItem>
