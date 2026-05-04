@@ -177,9 +177,13 @@ else
 VM_INSTALL = --upload $(NODE_CACHE):/var/tmp --build $(TARFILE) --script $(CURDIR)/test/vm.install
 endif
 
+ifeq ($(NODE_ENV),development)
+VM_NO_REBUILD = --build-options '--define "rebuild_bundle 0"'
+endif
+
 # build a VM with locally built distro pkgs installed
 $(VM_IMAGE): $(TARFILE) $(NODE_CACHE) packaging/debian/rules packaging/debian/control packaging/arch/PKGBUILD bots
-	bots/image-customize --fresh $(VM_CUSTOMIZE_FLAGS) $(VM_INSTALL) $(TEST_OS)
+	bots/image-customize --fresh $(VM_CUSTOMIZE_FLAGS) $(VM_NO_REBUILD) $(VM_INSTALL) $(TEST_OS)
 
 # convenience target for the above
 vm: $(VM_IMAGE)
