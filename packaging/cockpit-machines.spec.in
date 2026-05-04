@@ -10,8 +10,9 @@ License:        LGPL-2.1-or-later AND MIT
 URL:            https://github.com/cockpit-project/cockpit-machines
 
 # distributions which ship nodejs-esbuild can rebuild the bundle during package build
+# allow override from command line (e.g. for development builds)
 %if 0%{?fedora} >= 42
-%define rebuild_bundle 1
+%{!?rebuild_bundle: %define rebuild_bundle 1}
 %endif
 
 Source0: https://github.com/cockpit-project/%{name}/releases/download/%{version}/%{name}-%{version}.tar.xz
@@ -28,7 +29,7 @@ BuildRequires: gettext
 %if 0%{?rhel} && 0%{?rhel} <= 8
 BuildRequires: libappstream-glib-devel
 %endif
-%if %{defined rebuild_bundle}
+%if 0%{?rebuild_bundle}
 BuildRequires: /usr/bin/node
 BuildRequires: nodejs-esbuild
 %endif
@@ -74,12 +75,12 @@ Cockpit component for managing libvirt virtual machines.
 
 %prep
 %setup -q -n %{name}
-%if %{defined rebuild_bundle}
+%if 0%{?rebuild_bundle}
 %setup -q -D -T -a 1 -n %{name}
 %endif
 
 %build
-%if %{defined rebuild_bundle}
+%if 0%{?rebuild_bundle}
 rm -rf dist
 # HACK: node module packaging is broken in Fedora ≤ 43; should be in
 # common location, not major version specific one
