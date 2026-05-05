@@ -115,6 +115,7 @@ interface DeleteDialogState {
     dialogError?: string;
     dialogErrorDetail?: string;
     disks: UIDisk[],
+    disksReady: boolean,
 }
 
 export class DeleteDialog extends React.Component<DeleteDialogProps, DeleteDialogState> {
@@ -127,7 +128,7 @@ export class DeleteDialog extends React.Component<DeleteDialogProps, DeleteDialo
         this.onDiskCheckedChanged = this.onDiskCheckedChanged.bind(this);
         this.dialogErrorSet = this.dialogErrorSet.bind(this);
 
-        this.state = { disks: [] };
+        this.state = { disks: [], disksReady: false };
     }
 
     async componentDidMount() {
@@ -145,7 +146,7 @@ export class DeleteDialog extends React.Component<DeleteDialogProps, DeleteDialo
                 }));
         }
 
-        this.setState({ disks });
+        this.setState({ disks, disksReady: true });
     }
 
     dialogErrorSet(text: string, detail: string) {
@@ -208,7 +209,7 @@ export class DeleteDialog extends React.Component<DeleteDialogProps, DeleteDialo
                     <DeleteDialogBody disks={this.state.disks} vmName={this.props.vm.name} destroy={this.props.vm.state != 'shut off'} onChange={this.onDiskCheckedChanged} />
                 </ModalBody>
                 <ModalFooter>
-                    <Button variant='danger' onClick={this.delete}>
+                    <Button variant='danger' onClick={this.delete} isDisabled={!this.state.disksReady}>
                         {_("Delete")}
                     </Button>
                     <Button variant='link' onClick={Dialogs.close}>
