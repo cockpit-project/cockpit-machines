@@ -1902,8 +1902,18 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         def _deleteVm(self, dialog):
             b = self.browser
 
+            if dialog.storage_pool == "iscsi-pool" and self.machine.image == "rhel-9-9":
+                # RHEL-9-9 sometimes needs to be kicked before it can look up iscsi volumes by path again
+                self.machine.execute("systemctl restart virtstoraged")
+                self.machine.execute("systemctl restart libvirt-dbus")
             self.test_obj.performAction(dialog.name, "delete", connectionName=dialog.connection)
             b.wait_visible(f"#vm-{dialog.name}-delete-modal-dialog")
+            if dialog.storage_volume:
+                target = "vda"
+                cmd = f"virsh domblklist {dialog.name} | grep {target} | awk '{{ print $2 }}'"
+                path = self.machine.execute(cmd).strip()
+                b.wait_visible(f"#vm-{dialog.name}-delete-modal-dialog li:contains('{path}')")
+                self.assertTrue(b.get_checked(f"#vm-{dialog.name}-delete-modal-dialog input[rowid={target}]"))
             b.click(f"#vm-{dialog.name}-delete-modal-dialog button:contains(Delete)")
             b.wait_not_present(f"#vm-{dialog.name}-delete-modal-dialog")
 
