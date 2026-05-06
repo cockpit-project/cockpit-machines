@@ -187,12 +187,18 @@ function networkUpdateStaticHostEntries({
     if (isNetworkActive)
         flags |= Enum.VIR_NETWORK_UPDATE_AFFECT_LIVE;
 
+    const doc = document.implementation.createDocument('', '', null);
+    const hostElem = doc.createElement('host');
+    hostElem.setAttribute('mac', macAddress);
+    hostElem.setAttribute('ip', ipAddress);
+    const hostXml = new XMLSerializer().serializeToString(hostElem);
+
     return call(
         connectionName,
         objPath,
         'org.libvirt.Network',
         'Update',
-        [commandFlag, Enum.VIR_NETWORK_SECTION_IP_DHCP_HOST, parentIndex, `<host mac='${macAddress}' ip='${ipAddress}' />`, flags]
+        [commandFlag, Enum.VIR_NETWORK_SECTION_IP_DHCP_HOST, parentIndex, hostXml, flags]
         , { timeout, type: 'uuisu' }
     );
 }
