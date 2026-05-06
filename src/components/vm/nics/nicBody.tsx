@@ -113,7 +113,7 @@ function getAvailableNetworkTypes(vm: VM, availableSources: AvailableSourcesForT
                             component="a"
                             icon={<ExternalLinkSquareAltIcon />}
                             iconPosition="right"
-                            target="__blank"
+                            target="_blank"
                             href="https://libvirt.org/formatdomain.html#direct-attachment-to-physical-interface">
                             {_("More info")}
                         </Button>
