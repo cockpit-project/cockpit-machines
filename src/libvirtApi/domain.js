@@ -306,9 +306,9 @@ export async function domainCreate({
             const promises = [];
             const options = { err: "message" };
             if (args.userPassword)
-                promises.push(cockpit.spawn(['openssl', 'passwd', '-5', args.userPassword], options));
+                promises.push(cockpit.spawn(['openssl', 'passwd', '-5', '--stdin'], options).input(args.userPassword));
             if (args.rootPassword)
-                promises.push(cockpit.spawn(['openssl', 'passwd', '-5', args.rootPassword], options));
+                promises.push(cockpit.spawn(['openssl', 'passwd', '-5', '--stdin'], options).input(args.rootPassword));
 
             const ret = await Promise.all(promises);
             if (args.userPassword)
