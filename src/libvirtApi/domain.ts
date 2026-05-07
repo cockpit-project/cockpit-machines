@@ -486,9 +486,9 @@ export async function domainCreate({
         if (args.sourceType === CLOUD_IMAGE) {
             const promises = [];
             if (args.userPassword)
-                promises.push(spawn("session", ['openssl', 'passwd', '-5', args.userPassword]));
+                promises.push(spawn("session", ['openssl', 'passwd', '-5', '--stdin']).input(args.userPassword));
             if (args.rootPassword)
-                promises.push(spawn("session", ['openssl', 'passwd', '-5', args.rootPassword]));
+                promises.push(spawn("session", ['openssl', 'passwd', '-5', '--stdin']).input(args.rootPassword));
 
             const ret = await Promise.all(promises);
             if (args.userPassword)
