@@ -101,3 +101,15 @@ CI machinery do this on a draft pull request.
 Please see [Cockpit's test documentation](https://github.com/cockpit-project/cockpit/blob/main/test/README.md)
 for details how to run against existing VMs, interactive browser window,
 interacting with the test VM, and more.
+
+# Debugging tips
+
+Snippet collection for interactive testing or writing libvirt/upstream bug reproducers.
+
+ * Create a test libvirt VM:
+
+   This is useful for exercising the libvirt API/CLI without taking much resources, and without needing any other setup:
+
+   ```sh
+   virt-install --memory 50 --pxe --virt-type qemu --os-variant alpinelinux3.8 --disk none --wait 0 --name test1
+   ```
