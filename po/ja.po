@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-12 05:54+0000\n"
+"POT-Creation-Date: 2026-05-19 06:35+0000\n"
 "PO-Revision-Date: 2026-02-23 03:58+0000\n"
 "Last-Translator: Kohei Takahashi <flast@flast.jp>\n"
 "Language-Team: Japanese <https://translate.fedoraproject.org/projects/"
@@ -69,8 +69,8 @@ msgstr "$0 メモリー調整"
 msgid "$0 network"
 msgstr "$0 ネットワーク"
 
-#: src/components/vm/vmUsageCard.tsx:35
 #: src/components/vm/overview/vmOverviewCard.tsx:140
+#: src/components/vm/vmUsageCard.tsx:35
 msgid "$0 vCPU"
 msgid_plural "$0 vCPUs"
 msgstr[0] "$0 vCPU"
@@ -100,17 +100,17 @@ msgstr "アクセス"
 msgid "Action"
 msgstr "アクション"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.tsx:185
+#: src/components/storagePools/storagePoolList.tsx:65
+#: src/components/vms/hostvmslist.tsx:324
 #: src/components/vm/nics/vmNicsCard.tsx:593
 #: src/components/vm/disks/vmDisksCard.tsx:162
-#: src/components/vms/hostvmslist.tsx:324
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:185
 #: src/components/networks/networkList.tsx:64
-#: src/components/storagePools/storagePoolList.tsx:65
 msgid "Actions"
 msgstr "動作"
 
-#: src/components/networks/network.tsx:163
 #: src/components/storagePools/storagePool.tsx:160
+#: src/components/networks/network.tsx:163
 msgid "Activate"
 msgstr "有効化"
 
@@ -118,11 +118,11 @@ msgstr "有効化"
 msgid "Activate the storage pool to administer volumes"
 msgstr "ストレージプールをアクティベートしてボリュームを管理"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:261
 #: src/components/vm/nics/nicAdd.tsx:274 src/components/vm/nics/nicBody.tsx:559
-#: src/components/vm/overview/vsock.tsx:223
 #: src/components/vm/overview/watchdog.tsx:167
+#: src/components/vm/overview/vsock.tsx:223
 #: src/components/vm/disks/diskAdd.tsx:749
+#: src/components/vm/hostdevs/hostDevAdd.tsx:261
 #: src/components/networks/networkOverviewTab.tsx:268
 msgid "Add"
 msgstr "追加"
@@ -143,8 +143,8 @@ msgstr "VNC の追加"
 msgid "Add a DHCP static host entry"
 msgstr "DHCP 静的ホストエントリーの追加"
 
-#: src/components/vm/disks/vmDisksCard.tsx:69
 #: src/components/vm/disks/diskAdd.tsx:737
+#: src/components/vm/disks/vmDisksCard.tsx:69
 msgid "Add disk"
 msgstr "ディスクの追加"
 
@@ -286,9 +286,9 @@ msgstr "自動"
 msgid "Automation"
 msgstr "自動化"
 
+#: src/components/storagePools/storagePoolOverviewTab.tsx:60
 #: src/components/vm/overview/vmOverviewCard.tsx:192
 #: src/components/networks/networkOverviewTab.tsx:117
-#: src/components/storagePools/storagePoolOverviewTab.tsx:60
 msgid "Autostart"
 msgstr "自動起動"
 
@@ -300,8 +300,8 @@ msgstr ""
 msgid "Base System Peripheral"
 msgstr ""
 
-#: src/components/vm/disks/vmDiskColumns.tsx:40
 #: src/components/vm/deleteDialog.tsx:73
+#: src/components/vm/disks/vmDiskColumns.tsx:40
 msgid "Block device"
 msgstr "ブロックデバイス"
 
@@ -325,18 +325,18 @@ msgstr "ブート順序の設定は保存できませんでした"
 msgid "Bridge"
 msgstr "ブリッジ"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:100
-#: src/components/vm/hostdevs/hostDevCard.tsx:91
-#: src/components/vm/hostdevs/hostDevCard.tsx:99
-#: src/components/vm/hostdevs/hostDevCard.tsx:250
 #: src/components/vm/overview/bootOrder.tsx:114
 #: src/components/vm/overview/bootOrder.tsx:126
 #: src/components/vm/overview/bootOrder.tsx:145
 #: src/components/vm/overview/bootOrder.tsx:148
 #: src/components/vm/overview/bootOrder.tsx:163
-#: src/components/vm/disks/vmDisksCard.tsx:241
 #: src/components/vm/disks/diskAdd.tsx:177
+#: src/components/vm/disks/vmDisksCard.tsx:241
 #: src/components/vm/disks/diskEdit.tsx:93
+#: src/components/vm/hostdevs/hostDevAdd.tsx:100
+#: src/components/vm/hostdevs/hostDevCard.tsx:91
+#: src/components/vm/hostdevs/hostDevCard.tsx:99
+#: src/components/vm/hostdevs/hostDevCard.tsx:250
 msgid "Bus"
 msgstr "バス"
 
@@ -344,9 +344,9 @@ msgstr "バス"
 msgid "CD/DVD disc"
 msgstr "CD/DVD ディスク"
 
-#: src/components/vm/vmUsageCard.tsx:52
-#: src/components/vm/overview/vmOverviewCard.tsx:180
 #: src/components/vms/hostvmslist.tsx:93 src/components/vms/hostvmslist.tsx:301
+#: src/components/vm/overview/vmOverviewCard.tsx:180
+#: src/components/vm/vmUsageCard.tsx:52
 #: src/components/common/needsShutdown.tsx:206
 msgid "CPU"
 msgstr "CPU"
@@ -355,8 +355,8 @@ msgstr "CPU"
 msgid "CPU mode could not be saved"
 msgstr "CPU モードを保存できませんでした"
 
-#: src/components/vm/disks/vmDisksCard.tsx:257
 #: src/components/vm/disks/diskAdd.tsx:172
+#: src/components/vm/disks/vmDisksCard.tsx:257
 #: src/components/vm/disks/diskEdit.tsx:167
 msgid "Cache"
 msgstr "キャッシュ"
@@ -365,31 +365,31 @@ msgstr "キャッシュ"
 msgid "Can not determine guest device name"
 msgstr ""
 
-#: src/components/vm/vmReplaceSpiceDialog.tsx:171
-#: src/components/vm/confirmDialog.tsx:66
-#: src/components/vm/vmRenameDialog.tsx:96
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:340
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:127
-#: src/components/vm/hostdevs/hostDevAdd.tsx:266
-#: src/components/vm/consoles/vnc.tsx:158
-#: src/components/vm/vmEditDescriptionDialog.tsx:81
-#: src/components/vm/overview/vsock.tsx:272
-#: src/components/vm/overview/bootOrder.tsx:356
-#: src/components/vm/overview/firmware.tsx:107
-#: src/components/vm/overview/watchdog.tsx:228
-#: src/components/vm/overview/memoryModal.tsx:195
-#: src/components/vm/overview/cpuModal.tsx:341
+#: src/components/storagePools/storagePoolDelete.tsx:207
+#: src/components/storagePools/createStoragePoolDialog.tsx:512
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:248
-#: src/components/vm/disks/mediaEject.tsx:116
-#: src/components/vm/vmCloneDialog.tsx:111
 #: src/components/vm/deleteDialog.tsx:216
 #: src/components/vm/vmMigrateDialog.tsx:227
+#: src/components/vm/overview/watchdog.tsx:228
+#: src/components/vm/overview/firmware.tsx:107
+#: src/components/vm/overview/memoryModal.tsx:195
+#: src/components/vm/overview/vsock.tsx:272
+#: src/components/vm/overview/bootOrder.tsx:356
+#: src/components/vm/overview/cpuModal.tsx:341
+#: src/components/vm/confirmDialog.tsx:66
+#: src/components/vm/consoles/vnc.tsx:158
+#: src/components/vm/disks/mediaEject.tsx:116
+#: src/components/vm/vmRenameDialog.tsx:96
+#: src/components/vm/hostdevs/hostDevAdd.tsx:266
+#: src/components/vm/vmCloneDialog.tsx:111
+#: src/components/vm/vmEditDescriptionDialog.tsx:81
+#: src/components/vm/vmReplaceSpiceDialog.tsx:171
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:127
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:340
+#: src/components/common/deleteResource.tsx:116
 #: src/components/create-vm-dialog/createVmDialog.tsx:1734
 #: src/components/networks/createNetworkDialog.tsx:548
 #: src/components/networks/networkOverviewTab.tsx:271
-#: src/components/storagePools/storagePoolDelete.tsx:207
-#: src/components/storagePools/createStoragePoolDialog.tsx:512
-#: src/components/common/deleteResource.tsx:116
 msgid "Cancel"
 msgstr "取り消し"
 
@@ -493,12 +493,12 @@ msgstr "この動作を確認"
 msgid "Connect"
 msgstr "接続"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:158
-#: src/components/vms/hostvmslist.tsx:321
-#: src/components/networks/createNetworkDialog.tsx:34
-#: src/components/networks/networkList.tsx:61
 #: src/components/storagePools/storagePoolList.tsx:63
+#: src/components/vms/hostvmslist.tsx:321
+#: src/components/vm/overview/vmOverviewCard.tsx:158
 #: src/components/common/machinesConnectionSelector.tsx:44
+#: src/components/networks/networkList.tsx:61
+#: src/components/networks/createNetworkDialog.tsx:34
 msgid "Connection"
 msgstr "接続"
 
@@ -551,10 +551,10 @@ msgstr "スナップショットに戻すことができませんでした"
 msgid "Crashed"
 msgstr "クラッシュした"
 
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:337
-#: src/components/networks/createNetworkDialog.tsx:545
 #: src/components/storagePools/storageVolumeCreate.tsx:95
 #: src/components/storagePools/createStoragePoolDialog.tsx:509
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:337
+#: src/components/networks/createNetworkDialog.tsx:545
 msgid "Create"
 msgstr "作成"
 
@@ -600,8 +600,8 @@ msgstr "raw ボリュームの新規作成"
 msgid "Create new virtual machine"
 msgstr "仮想マシンの新規作成"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.tsx:61
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:324
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:61
 msgid "Create snapshot"
 msgstr "スナップショットの作成"
 
@@ -677,21 +677,21 @@ msgstr "カスタムパス"
 msgid "DHCP Settings"
 msgstr "DHCP 設定"
 
-#: src/components/networks/network.tsx:159
 #: src/components/storagePools/storagePool.tsx:151
+#: src/components/networks/network.tsx:159
 msgid "Deactivate"
 msgstr "解除"
 
-#: src/components/vm/vmActions.tsx:470 src/components/vm/vmActions.tsx:478
-#: src/components/vm/deleteDialog.tsx:213
-#: src/components/networks/network.tsx:140
-#: src/components/networks/network.tsx:143
 #: src/components/storagePools/storagePoolDelete.tsx:204
 #: src/components/storagePools/storagePoolDelete.tsx:234
 #: src/components/storagePools/storagePoolDelete.tsx:244
+#: src/components/vm/deleteDialog.tsx:213 src/components/vm/vmActions.tsx:470
+#: src/components/vm/vmActions.tsx:478
 #: src/components/common/deleteResource.tsx:104
 #: src/components/common/deleteResource.tsx:164
 #: src/components/common/deleteResource.tsx:175
+#: src/components/networks/network.tsx:140
+#: src/components/networks/network.tsx:143
 msgid "Delete"
 msgstr "削除"
 
@@ -733,9 +733,9 @@ msgid "Deleting shared directories is possible only when the guest is shut off"
 msgstr ""
 "共有ディレクトリーの削除は、ゲストがシャットオフされた場合に限り可能です"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.tsx:123
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:76
 #: src/components/vm/vmEditDescriptionDialog.tsx:66
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:76
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:123
 msgid "Description"
 msgstr "説明"
 
@@ -766,18 +766,18 @@ msgstr "削除を試みる前に、このプールを使用して VM からデ�
 msgid "Details"
 msgstr "詳細"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:99
-#: src/components/vm/hostdevs/hostDevAdd.tsx:144
-#: src/components/vm/hostdevs/hostDevCard.tsx:90
-#: src/components/vm/hostdevs/hostDevCard.tsx:249
 #: src/components/vm/overview/bootOrder.tsx:106
 #: src/components/vm/overview/bootOrder.tsx:113
 #: src/components/vm/overview/bootOrder.tsx:146
 #: src/components/vm/overview/bootOrder.tsx:149
-#: src/components/vm/disks/vmDisksCard.tsx:238
 #: src/components/vm/disks/diskAdd.tsx:420
-#: src/components/networks/createNetworkDialog.tsx:218
+#: src/components/vm/disks/vmDisksCard.tsx:238
+#: src/components/vm/hostdevs/hostDevAdd.tsx:99
+#: src/components/vm/hostdevs/hostDevAdd.tsx:144
+#: src/components/vm/hostdevs/hostDevCard.tsx:90
+#: src/components/vm/hostdevs/hostDevCard.tsx:249
 #: src/components/networks/networkList.tsx:60
+#: src/components/networks/createNetworkDialog.tsx:218
 msgid "Device"
 msgstr "デバイス"
 
@@ -940,8 +940,8 @@ msgstr "一時的なゲストのネットワークインターフェースの編
 msgid "Editing transient network interfaces is not allowed"
 msgstr "一時的なネットワークインターフェースの編集は許可されていません"
 
-#: src/components/vm/disks/mediaEject.tsx:109
 #: src/components/vm/disks/vmDiskColumns.tsx:232
+#: src/components/vm/disks/mediaEject.tsx:109
 msgid "Eject"
 msgstr "取り出し"
 
@@ -1097,8 +1097,8 @@ msgstr "ファイルシステムのディレクトリー"
 msgid "Filter by name"
 msgstr "名前での絞り込み"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:246
 #: src/components/vm/overview/firmware.tsx:90
+#: src/components/vm/overview/vmOverviewCard.tsx:246
 msgid "Firmware"
 msgstr "ファームウェア"
 
@@ -1155,9 +1155,9 @@ msgstr "シャットダウンの強制 $0?"
 msgid "Force shutdown and restart"
 msgstr "シャットダウンの強制"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:134
 #: src/components/storagePools/storageVolumeCreateBody.tsx:103
 #: src/components/storagePools/createStoragePoolDialog.tsx:244
+#: src/components/vm/disks/vmDiskColumns.tsx:134
 msgid "Format"
 msgstr "フォーマット"
 
@@ -1200,9 +1200,9 @@ msgstr "新しい RHSM トークンを取得します。"
 
 #: src/components/vm/overview/memorySelectRow.tsx:95
 #: src/components/vm/disks/vmDisksCard.tsx:39
+#: src/components/common/dialog.tsx:100
 #: src/components/create-vm-dialog/createVmDialog.tsx:1018
 #: src/components/create-vm-dialog/createVmDialog.tsx:1182
-#: src/components/common/dialog.tsx:100
 msgid "GiB"
 msgstr "GiB"
 
@@ -1243,10 +1243,10 @@ msgstr "ハードウェア仮想化が無効になっています"
 msgid "Hide additional options"
 msgstr "その他のオプションを非表示にします"
 
-#: src/components/vm/overview/bootOrder.tsx:110
-#: src/components/vm/disks/vmDiskColumns.tsx:44
 #: src/components/storagePools/storagePoolOverviewTab.tsx:23
 #: src/components/storagePools/createStoragePoolDialog.tsx:154
+#: src/components/vm/overview/bootOrder.tsx:110
+#: src/components/vm/disks/vmDiskColumns.tsx:44
 msgid "Host"
 msgstr "ホスト"
 
@@ -1599,10 +1599,9 @@ msgstr "場所"
 msgid "MAC"
 msgstr "MAC"
 
-#: src/components/vm/nics/nicAdd.tsx:83
 #: src/components/vm/nics/vmNicsCard.tsx:569
 #: src/components/vm/nics/vmNicsCard.tsx:767
-#: src/components/vm/nics/nicEdit.tsx:45
+#: src/components/vm/nics/nicAdd.tsx:83 src/components/vm/nics/nicEdit.tsx:45
 #: src/components/networks/networkOverviewTab.tsx:246
 msgid "MAC address"
 msgstr "MAC アドレス"
@@ -1681,10 +1680,10 @@ msgstr "VM $0 のインストールに失敗しました"
 msgid "Media will be ejected from $0:"
 msgstr "メディアは $0 から取り出されます:"
 
-#: src/components/vm/vmUsageCard.tsx:44
-#: src/components/vm/overview/vmOverviewCard.tsx:175
 #: src/components/vms/hostvmslist.tsx:111
 #: src/components/vms/hostvmslist.tsx:302
+#: src/components/vm/overview/vmOverviewCard.tsx:175
+#: src/components/vm/vmUsageCard.tsx:44
 #: src/components/create-vm-dialog/createVmDialog.tsx:1003
 msgid "Memory"
 msgstr "メモリ"
@@ -1717,14 +1716,14 @@ msgid "Memory state path"
 msgstr "メモリー状態パス"
 
 #: src/components/vm/overview/memorySelectRow.tsx:93
+#: src/components/common/dialog.tsx:99
 #: src/components/create-vm-dialog/createVmDialog.tsx:1016
 #: src/components/create-vm-dialog/createVmDialog.tsx:1180
-#: src/components/common/dialog.tsx:99
 msgid "MiB"
 msgstr "MiB"
 
-#: src/components/vm/vmActions.tsx:410
 #: src/components/vm/vmMigrateDialog.tsx:224
+#: src/components/vm/vmActions.tsx:410
 msgid "Migrate"
 msgstr "移行"
 
@@ -1747,8 +1746,8 @@ msgstr ""
 msgid "Mode"
 msgstr "モード"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:197
 #: src/components/vm/nics/nicBody.tsx:57
+#: src/components/vm/hostdevs/hostDevCard.tsx:197
 msgid "Model"
 msgstr "モデル"
 
@@ -1788,17 +1787,17 @@ msgstr "$0 への NAT"
 msgid "NIC $0 of VM $1 failed to change state"
 msgstr "仮想マシン $1 の NIC $0 は、状態の変更に失敗しました"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.tsx:113
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:57
-#: src/components/vm/vmCloneDialog.tsx:92
-#: src/components/vms/hostvmslist.tsx:320
-#: src/components/create-vm-dialog/createVmDialog.tsx:313
-#: src/components/networks/createNetworkDialog.tsx:172
-#: src/components/networks/networkList.tsx:59
 #: src/components/storagePools/storagePoolList.tsx:61
 #: src/components/storagePools/storagePoolVolumesTab.tsx:77
 #: src/components/storagePools/storageVolumeCreateBody.tsx:113
 #: src/components/storagePools/createStoragePoolDialog.tsx:58
+#: src/components/vms/hostvmslist.tsx:320
+#: src/components/vm/vmCloneDialog.tsx:92
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:57
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:113
+#: src/components/create-vm-dialog/createVmDialog.tsx:313
+#: src/components/networks/networkList.tsx:59
+#: src/components/networks/createNetworkDialog.tsx:172
 msgid "Name"
 msgstr "名前"
 
@@ -1819,8 +1818,8 @@ msgstr "名前に無効な文字が含まれています"
 msgid "Name must not be empty"
 msgstr "名前は空欄にできません"
 
-#: src/components/networks/createNetworkDialog.tsx:77
 #: src/components/storagePools/createStoragePoolDialog.tsx:64
+#: src/components/networks/createNetworkDialog.tsx:77
 msgid "Name should not be empty"
 msgstr "名前は空欄にできません"
 
@@ -2087,8 +2086,8 @@ msgstr ""
 "ディスクを切断し、ボリュームが削除できるようにします。"
 
 #: src/components/vm/nics/nicEdit.tsx:47
-#: src/components/vm/overview/bootOrder.tsx:394
 #: src/components/vm/overview/memoryModal.tsx:173
+#: src/components/vm/overview/bootOrder.tsx:394
 msgid "Only editable when the guest is shut off"
 msgstr "ゲストがシャットオフされた場合のみ、編集可能です"
 
@@ -2110,8 +2109,8 @@ msgstr "操作を実行中"
 msgid "Other VMs using SPICE"
 msgstr "SPICE を使用する他の仮想マシン"
 
-#: src/components/vm/vmDetailsPage.tsx:140
 #: src/components/storagePools/storagePool.tsx:59
+#: src/components/vm/vmDetailsPage.tsx:140
 msgid "Overview"
 msgstr "概要"
 
@@ -2138,10 +2137,10 @@ msgstr ""
 msgid "Password must be at most 8 characters."
 msgstr ""
 
+#: src/components/vm/deleteDialog.tsx:68
+#: src/components/vm/disks/diskEdit.tsx:46
 #: src/components/vm/hostdevs/hostDevCard.tsx:115
 #: src/components/vm/hostdevs/hostDevCard.tsx:119
-#: src/components/vm/disks/diskEdit.tsx:46
-#: src/components/vm/deleteDialog.tsx:68
 msgid "Path"
 msgstr "パス"
 
@@ -2193,8 +2192,8 @@ msgstr ""
 msgid "Persistence"
 msgstr "永続"
 
-#: src/components/networks/networkOverviewTab.tsx:112
 #: src/components/storagePools/storagePoolOverviewTab.tsx:55
+#: src/components/networks/networkOverviewTab.tsx:112
 msgid "Persistent"
 msgstr "永続"
 
@@ -2218,12 +2217,12 @@ msgstr "新しいボリューム名を入力してください"
 msgid "Please see $0 how to reconfigure your VM manually."
 msgstr "$0 仮想マシンを手動で再設定する方法を参照してください。"
 
+#: src/components/vm/deleteDialog.tsx:81
 #: src/components/vm/overview/bootOrder.tsx:108
 #: src/components/vm/disks/diskAdd.tsx:248
 #: src/components/vm/disks/diskAdd.tsx:321
-#: src/components/vm/disks/mediaEject.tsx:85
 #: src/components/vm/disks/vmDiskColumns.tsx:42
-#: src/components/vm/deleteDialog.tsx:81
+#: src/components/vm/disks/mediaEject.tsx:85
 msgid "Pool"
 msgstr "プール"
 
@@ -2239,10 +2238,10 @@ msgstr "プールタイプは、ボリューム作成をサポートしません
 msgid "Pool's volumes are used by VMs "
 msgstr "プールのボリュームは VM が使用します "
 
-#: src/components/vm/consoles/vnc.tsx:170
 #: src/components/vm/nics/vmNicsCard.tsx:191
 #: src/components/vm/overview/bootOrder.tsx:111
 #: src/components/vm/overview/bootOrder.tsx:127
+#: src/components/vm/consoles/vnc.tsx:170
 #: src/components/vm/disks/vmDiskColumns.tsx:45
 msgid "Port"
 msgstr "ポート"
@@ -2267,7 +2266,7 @@ msgid ""
 "assign a free port when the machine starts."
 msgstr ""
 
-#: src/components/vm/consoles/vnc.tsx:97 src/components/vm/nics/nicBody.tsx:394
+#: src/components/vm/nics/nicBody.tsx:394 src/components/vm/consoles/vnc.tsx:97
 #, fuzzy
 #| msgid "Hours must be a number between 0 and 23"
 msgid "Port must be a number."
@@ -2309,11 +2308,11 @@ msgstr ""
 msgid "Processor"
 msgstr ""
 
+#: src/components/vm/overview/bootOrder.tsx:141
+#: src/components/vm/overview/bootOrder.tsx:157
 #: src/components/vm/hostdevs/hostDevAdd.tsx:151
 #: src/components/vm/hostdevs/hostDevCard.tsx:240
 #: src/components/vm/hostdevs/hostDevCard.tsx:246
-#: src/components/vm/overview/bootOrder.tsx:141
-#: src/components/vm/overview/bootOrder.tsx:157
 msgid "Product"
 msgstr "製品"
 
@@ -2321,11 +2320,11 @@ msgstr "製品"
 msgid "Profile"
 msgstr "プロファイル"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:106
 #: src/components/vm/nics/nicBody.tsx:477
 #: src/components/vm/overview/bootOrder.tsx:107
 #: src/components/vm/overview/bootOrder.tsx:170
 #: src/components/vm/disks/vmDiskColumns.tsx:41
+#: src/components/vm/hostdevs/hostDevCard.tsx:106
 msgid "Protocol"
 msgstr "プロトコル"
 
@@ -2394,16 +2393,16 @@ msgstr "リモートビューアーの詳細"
 msgid "Remote viewer applications can connect to the following address:"
 msgstr ""
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:256
-#: src/components/vm/hostdevs/hostDevCard.tsx:262
-#: src/components/vm/nics/vmNicsCard.tsx:652
-#: src/components/vm/nics/vmNicsCard.tsx:667
-#: src/components/vm/overview/vsock.tsx:269
-#: src/components/vm/overview/watchdog.tsx:225
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:52
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:61
+#: src/components/vm/nics/vmNicsCard.tsx:652
+#: src/components/vm/nics/vmNicsCard.tsx:667
+#: src/components/vm/overview/watchdog.tsx:225
+#: src/components/vm/overview/vsock.tsx:269
 #: src/components/vm/disks/vmDiskColumns.tsx:169
 #: src/components/vm/disks/vmDiskColumns.tsx:248
+#: src/components/vm/hostdevs/hostDevCard.tsx:256
+#: src/components/vm/hostdevs/hostDevCard.tsx:262
 #: src/components/networks/networkOverviewTab.tsx:68
 msgid "Remove"
 msgstr "削除"
@@ -2456,8 +2455,8 @@ msgstr "仮想マシン $0 の名前を変更"
 msgid "Replace"
 msgstr "置き換え"
 
+#: src/components/vm/usesSpice.tsx:42 src/components/vm/vmActions.tsx:421
 #: src/components/vm/vmReplaceSpiceDialog.tsx:133
-#: src/components/vm/vmActions.tsx:421 src/components/vm/usesSpice.tsx:42
 msgid "Replace SPICE devices"
 msgstr "SPICE デバイスの置き換え"
 
@@ -2510,8 +2509,8 @@ msgstr "再開"
 msgid "Retry"
 msgstr ""
 
-#: src/components/vm/snapshots/vmSnapshotsCard.tsx:197
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:117
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:197
 msgid "Revert"
 msgstr "元に戻す"
 
@@ -2582,15 +2581,15 @@ msgstr "SSH キー"
 msgid "Satellite Communication Controller"
 msgstr ""
 
-#: src/components/vm/consoles/vnc.tsx:155
-#: src/components/vm/vmEditDescriptionDialog.tsx:78
 #: src/components/vm/nics/nicEdit.tsx:230
+#: src/components/vm/overview/watchdog.tsx:167
+#: src/components/vm/overview/firmware.tsx:104
+#: src/components/vm/overview/memoryModal.tsx:192
 #: src/components/vm/overview/vsock.tsx:223
 #: src/components/vm/overview/bootOrder.tsx:353
-#: src/components/vm/overview/firmware.tsx:104
-#: src/components/vm/overview/watchdog.tsx:167
-#: src/components/vm/overview/memoryModal.tsx:192
+#: src/components/vm/consoles/vnc.tsx:155
 #: src/components/vm/disks/diskEdit.tsx:238
+#: src/components/vm/vmEditDescriptionDialog.tsx:78
 msgid "Save"
 msgstr "保存"
 
@@ -2668,8 +2667,8 @@ msgstr "ホストディレクトリーをゲストと共有"
 msgid "Shared directories"
 msgstr "共有ディレクトリー"
 
-#: src/components/vm/vmDetailsPage.tsx:200
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:178
+#: src/components/vm/vmDetailsPage.tsx:200
 msgid "Shared host directories need to be manually mounted inside the VM"
 msgstr ""
 "共有ホストのディレクトリーは、仮想マシン内に手動でマウントする必要があります"
@@ -2732,10 +2731,10 @@ msgstr ""
 msgid "Simple Communication Controller"
 msgstr ""
 
-#: src/components/vm/disks/vmDisksCard.tsx:160
 #: src/components/storagePools/storagePoolList.tsx:62
 #: src/components/storagePools/storagePoolVolumesTab.tsx:77
 #: src/components/storagePools/storageVolumeCreateBody.tsx:120
+#: src/components/vm/disks/vmDisksCard.tsx:160
 msgid "Size"
 msgstr "サイズ"
 
@@ -2745,11 +2744,11 @@ msgstr "サイズ"
 msgid "Size must be a number"
 msgstr "時間は 0 から 23 の間の数字で指定する必要があります"
 
+#: src/components/vm/overview/bootOrder.tsx:158
 #: src/components/vm/hostdevs/hostDevAdd.tsx:112
 #: src/components/vm/hostdevs/hostDevCard.tsx:93
 #: src/components/vm/hostdevs/hostDevCard.tsx:100
 #: src/components/vm/hostdevs/hostDevCard.tsx:241
-#: src/components/vm/overview/bootOrder.tsx:158
 msgid "Slot"
 msgstr "スロット"
 
@@ -2795,12 +2794,12 @@ msgid ""
 "restart:"
 msgstr "一部の設定変更は、再起動後にのみ有効になります:"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:217
+#: src/components/storagePools/storagePoolOverviewTab.tsx:40
 #: src/components/vm/nics/vmNicsCard.tsx:549
 #: src/components/vm/nics/nicBody.tsx:269
-#: src/components/vm/disks/vmDisksCard.tsx:158
 #: src/components/vm/disks/diskAdd.tsx:574
-#: src/components/storagePools/storagePoolOverviewTab.tsx:40
+#: src/components/vm/disks/vmDisksCard.tsx:158
+#: src/components/vm/hostdevs/hostDevCard.tsx:217
 msgid "Source"
 msgstr "ソース"
 
@@ -2812,13 +2811,13 @@ msgstr "ソースフォーマット"
 msgid "Source must not be empty"
 msgstr "ソースは空欄にできません"
 
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:41
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:58
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:201
 #: src/components/storagePools/storagePoolOverviewTab.tsx:30
 #: src/components/storagePools/storagePoolOverviewTab.tsx:35
 #: src/components/storagePools/createStoragePoolDialog.tsx:218
 #: src/components/storagePools/createStoragePoolDialog.tsx:235
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:41
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:58
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:201
 msgid "Source path"
 msgstr "ソースパス"
 
@@ -2871,12 +2870,12 @@ msgstr "開始"
 msgid "Startup"
 msgstr "起動"
 
-#: src/components/vm/nics/vmNicsCard.tsx:586
-#: src/components/vm/overview/vmOverviewCard.tsx:163
+#: src/components/storagePools/storagePoolList.tsx:64
 #: src/components/vms/hostvmslist.tsx:266
 #: src/components/vms/hostvmslist.tsx:322
+#: src/components/vm/nics/vmNicsCard.tsx:586
+#: src/components/vm/overview/vmOverviewCard.tsx:163
 #: src/components/networks/networkList.tsx:63
-#: src/components/storagePools/storagePoolList.tsx:64
 msgid "State"
 msgstr "状態"
 
@@ -2917,10 +2916,10 @@ msgstr "ストレージプールの作成に失敗しました"
 msgid "Storage pool name"
 msgstr "ストレージプール名"
 
-#: src/components/create-vm-dialog/createVmDialog.tsx:1135
 #: src/components/storagePools/storagePoolList.tsx:49
 #: src/components/storagePools/storagePoolList.tsx:56
 #: src/components/storagePools/storagePoolList.tsx:58
+#: src/components/create-vm-dialog/createVmDialog.tsx:1135
 msgid "Storage pools"
 msgstr "ストレージプール"
 
@@ -2987,11 +2986,11 @@ msgstr "TPM"
 msgid "Table of selectable host devices"
 msgstr "選択可能なホストデバイスの表"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:101
 #: src/components/vm/nics/vmNicsCard.tsx:557
 #: src/components/vm/overview/bootOrder.tsx:164
 #: src/components/vm/disks/vmDisksCard.tsx:159
 #: src/components/vm/disks/vmDiskColumns.tsx:173
+#: src/components/vm/hostdevs/hostDevCard.tsx:101
 msgid "Target"
 msgstr "ターゲット"
 
@@ -3148,8 +3147,8 @@ msgstr "transient VM はファームウェア設定の編集をサポートし�
 msgid "Troubleshoot"
 msgstr "トラブルシュート"
 
-#: src/components/vm/hostdevs/hostDevAdd.tsx:43
-#: src/components/vm/hostdevs/hostDevCard.tsx:177
+#: src/components/storagePools/storagePoolOverviewTab.tsx:65
+#: src/components/storagePools/createStoragePoolDialog.tsx:102
 #: src/components/vm/nics/vmNicsCard.tsx:780
 #: src/components/vm/overview/bootOrder.tsx:125
 #: src/components/vm/overview/bootOrder.tsx:139
@@ -3157,8 +3156,8 @@ msgstr "トラブルシュート"
 #: src/components/vm/overview/bootOrder.tsx:162
 #: src/components/vm/overview/bootOrder.tsx:169
 #: src/components/vm/overview/bootOrder.tsx:175
-#: src/components/storagePools/storagePoolOverviewTab.tsx:65
-#: src/components/storagePools/createStoragePoolDialog.tsx:102
+#: src/components/vm/hostdevs/hostDevAdd.tsx:43
+#: src/components/vm/hostdevs/hostDevCard.tsx:177
 msgid "Type"
 msgstr "タイプ"
 
@@ -3208,10 +3207,10 @@ msgstr "ユニット"
 msgid "Unknown firmware"
 msgstr "不明なファームウェア"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:84
-#: src/components/vm/hostdevs/hostDevCard.tsx:85
 #: src/components/vm/overview/bootOrder.tsx:145
 #: src/components/vm/overview/bootOrder.tsx:146
+#: src/components/vm/hostdevs/hostDevCard.tsx:84
+#: src/components/vm/hostdevs/hostDevCard.tsx:85
 msgid "Unspecified"
 msgstr "指定なし"
 
@@ -3367,12 +3366,12 @@ msgstr ""
 msgid "Valid token"
 msgstr "有効なトークン"
 
+#: src/components/vm/overview/bootOrder.tsx:140
+#: src/components/vm/overview/bootOrder.tsx:156
 #: src/components/vm/hostdevs/hostDevAdd.tsx:151
 #: src/components/vm/hostdevs/hostDevCard.tsx:207
 #: src/components/vm/hostdevs/hostDevCard.tsx:239
 #: src/components/vm/hostdevs/hostDevCard.tsx:245
-#: src/components/vm/overview/bootOrder.tsx:140
-#: src/components/vm/overview/bootOrder.tsx:156
 msgid "Vendor"
 msgstr "ベンダー"
 
@@ -3380,11 +3379,11 @@ msgstr "ベンダー"
 msgid "Vendor support ended $0"
 msgstr "ベンダーサポートが $0 に終了しました"
 
-#: src/components/vm/vmDetailsPage.tsx:249
+#: src/components/storagePools/storagePoolList.tsx:46
 #: src/components/vms/hostvmslist.tsx:315
 #: src/components/vms/hostvmslist.tsx:317
-#: src/components/networks/networkList.tsx:44
-#: src/components/storagePools/storagePoolList.tsx:46 src/manifest.json:0
+#: src/components/vm/vmDetailsPage.tsx:249
+#: src/components/networks/networkList.tsx:44 src/manifest.json:0
 msgid "Virtual machines"
 msgstr "仮想マシン"
 
@@ -3414,11 +3413,11 @@ msgstr ""
 msgid "Virtualization service (libvirt) is not active"
 msgstr "仮想化サービス (libvirt) は有効ではありません"
 
+#: src/components/vm/deleteDialog.tsx:78
 #: src/components/vm/overview/bootOrder.tsx:109
 #: src/components/vm/disks/diskAdd.tsx:327
-#: src/components/vm/disks/mediaEject.tsx:89
 #: src/components/vm/disks/vmDiskColumns.tsx:43
-#: src/components/vm/deleteDialog.tsx:78
+#: src/components/vm/disks/mediaEject.tsx:89
 #: src/components/create-vm-dialog/createVmDialog.tsx:1152
 msgid "Volume"
 msgstr "ボリューム"
@@ -3439,8 +3438,8 @@ msgstr "ボリュームグループ名は空欄にできません"
 msgid "Vsock"
 msgstr "Vsock"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:107
 #: src/components/vm/overview/bootOrder.tsx:171
+#: src/components/vm/hostdevs/hostDevCard.tsx:107
 msgid "WWPN"
 msgstr "WWPN"
 
@@ -3476,13 +3475,13 @@ msgstr "以下を使用して、共有フォルダーをマウントできます
 msgid "You need to select the most closely matching operating system"
 msgstr "最も近いオペレーティングシステムを選択する必要があります"
 
-#: src/components/networks/network.tsx:53
 #: src/components/storagePools/storagePool.tsx:52
+#: src/components/networks/network.tsx:53
 msgid "active"
 msgstr "アクティブ"
 
-#: src/components/vm/overview/vsock.tsx:315
 #: src/components/vm/overview/watchdog.tsx:265
+#: src/components/vm/overview/vsock.tsx:315
 msgid "add"
 msgstr "追加"
 
@@ -3528,11 +3527,11 @@ msgstr "ディスク"
 msgid "down"
 msgstr "下へ"
 
+#: src/components/vm/overview/watchdog.tsx:265
 #: src/components/vm/overview/vsock.tsx:315
 #: src/components/vm/overview/vmOverviewCard.tsx:117
 #: src/components/vm/overview/vmOverviewCard.tsx:125
 #: src/components/vm/overview/bootOrder.tsx:387
-#: src/components/vm/overview/watchdog.tsx:265
 msgid "edit"
 msgstr "編集"
 
@@ -3576,8 +3575,8 @@ msgstr "iSCSI ターゲット"
 msgid "iSCSI target IQN"
 msgstr "iSCSI ターゲット IQN"
 
-#: src/components/networks/network.tsx:53
 #: src/components/storagePools/storagePool.tsx:52
+#: src/components/networks/network.tsx:53
 msgid "inactive"
 msgstr "非アクティブ"
 
@@ -3597,8 +3596,8 @@ msgstr "mcast"
 msgid "more info"
 msgstr "詳細"
 
-#: src/components/vm/vmDetailsPage.tsx:209
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:188
+#: src/components/vm/vmDetailsPage.tsx:209
 msgid "mount point: The mount point inside the guest"
 msgstr "マウントポイント: ゲスト内のマウントポイント"
 
@@ -3610,9 +3609,9 @@ msgstr "マウントタグ: エクスポートされたマウントポイント�
 msgid "network"
 msgstr "ネットワーク"
 
-#: src/components/networks/networkOverviewTab.tsx:113
 #: src/components/storagePools/storagePoolOverviewTab.tsx:56
-#: src/components/storagePools/storagePoolOverviewTab.tsx:61 src/helpers.ts:265
+#: src/components/storagePools/storagePoolOverviewTab.tsx:61
+#: src/components/networks/networkOverviewTab.tsx:113 src/helpers.ts:265
 msgid "no"
 msgstr "いいえ"
 
@@ -3621,8 +3620,8 @@ msgid "no state saved"
 msgstr "保存されている状態がありません"
 
 #: src/components/vm/nics/vmNicsCard.tsx:288
-#: src/components/vm/overview/vsock.tsx:297
 #: src/components/vm/overview/watchdog.tsx:261
+#: src/components/vm/overview/vsock.tsx:297
 #: src/components/networks/networkOverviewTab.tsx:314
 msgid "none"
 msgstr "なし"
@@ -3725,9 +3724,9 @@ msgstr "vsock には特別なソフトウェアが必要です"
 msgid "waiting"
 msgstr ""
 
-#: src/components/networks/networkOverviewTab.tsx:113
 #: src/components/storagePools/storagePoolOverviewTab.tsx:56
-#: src/components/storagePools/storagePoolOverviewTab.tsx:61 src/helpers.ts:264
+#: src/components/storagePools/storagePoolOverviewTab.tsx:61
+#: src/components/networks/networkOverviewTab.tsx:113 src/helpers.ts:264
 msgid "yes"
 msgstr "はい"
 
