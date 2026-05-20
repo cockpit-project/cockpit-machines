@@ -63,8 +63,7 @@ export const getStoragePoolRow = ({ storagePool, vms } : { storagePool: StorageP
         },
         {
             name: _("Storage volumes"),
-            renderer: StoragePoolVolumesTab,
-            data: { storagePool, vms },
+            renderer: () => <StoragePoolVolumesTab vms={vms} storagePool={storagePool} />,
             id: `${idPrefix}-storage-volumes`
         },
     ];

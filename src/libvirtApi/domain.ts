@@ -98,7 +98,6 @@ function spawn(connectionName: ConnectionName, args: string[]): cockpit.Spawn<st
 function script(connectionName: ConnectionName, script: string): cockpit.Spawn<string> {
     return cockpit.script(
         script,
-        undefined,
         {
             err: "message",
             ...(connectionName === "system" ? { superuser: "try" } : { })
