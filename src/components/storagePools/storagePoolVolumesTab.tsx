@@ -44,7 +44,7 @@ export class StoragePoolVolumesTab extends React.Component<StoragePoolVolumesTab
         this.onSelect = this.onSelect.bind(this);
     }
 
-    static getDerivedStateFromProps(props: StoragePoolVolumesTabProps, current_state: StoragePoolVolumesTabState) {
+    static getDerivedStateFromProps(props: Readonly<StoragePoolVolumesTabProps>, current_state: StoragePoolVolumesTabState) {
         if (props.storagePool.volumes.length !== current_state.rows.length) {
             return { rows: props.storagePool.volumes };
         }
