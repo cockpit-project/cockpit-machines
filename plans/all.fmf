@@ -12,10 +12,6 @@ adjust:
 execute:
     how: tmt
 
-# Let's handle them upstream only, don't break Fedora/RHEL reverse dependency gating
-environment:
-    TEST_AUDIT_NO_SELINUX: 1
-
 /basic:
     summary: Run basic tests (creation and lifetime)
     discover+:
