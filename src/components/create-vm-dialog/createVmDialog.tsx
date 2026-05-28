@@ -957,8 +957,8 @@ const CloudInitOptionsRow = ({
                 emptyStateString={_("No SSH keys specified")}
                 label={_("SSH keys")}
                 actionLabel={_("Add SSH keys")}
-                onChange={(value: { value: string}[]) => onValueChanged('sshKeys', value)}
-                itemcomponent={SshKeysRow} />
+                onChange={value => onValueChanged('sshKeys', value.filter(x => !!x) as unknown as { value: string }[])}
+                itemcomponent={SshKeysRow as unknown as InstanceType<typeof DynamicListForm>["props"]["itemcomponent"]} />
         </>
     );
 };
