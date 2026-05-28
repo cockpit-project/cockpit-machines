@@ -96,6 +96,7 @@ function watch_dirs(dir, on_change) {
 const context = await esbuild.context({
     ...!production ? { sourcemap: "linked" } : {},
     bundle: true,
+    format: "esm",
     entryPoints: ['./src/index.js'],
     // Allow external font files which live in ../../static/fonts
     external: ['*.woff', '*.woff2', '*.jpg', '*.svg', '../../assets*'],
@@ -111,6 +112,7 @@ const context = await esbuild.context({
     outdir,
     metafile: true,
     target: ['es2020'],
+    supported: { 'top-level-await': true },
     plugins: [
         cleanPlugin(),
         // Esbuild will only copy assets that are explicitly imported and used in the code.

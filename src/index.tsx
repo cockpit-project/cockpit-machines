@@ -15,17 +15,10 @@ import { App } from './app.jsx';
 
 import "./machines.scss";
 
-/**
- * Start the application.
- */
-function appMain(): void {
+async function appMain() {
+    await load_config();
     const root = createRoot(document.getElementById('app')!);
     root.render(<App />);
 }
 
-(function() {
-    document.addEventListener("DOMContentLoaded", async function() {
-        await load_config();
-        appMain();
-    });
-}());
+appMain();
