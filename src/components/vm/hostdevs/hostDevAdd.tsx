@@ -154,7 +154,7 @@ const DevRow = ({
                 <Tbody>
                     {selectableDevices.map((dev, rowIndex) => {
                         return (
-                            <Tr key={"row-" + rowIndex}>
+                            <Tr key={"row-" + rowIndex} data-row={rowIndex}>
                                 <Td
                                     select={{
                                         rowIndex,
