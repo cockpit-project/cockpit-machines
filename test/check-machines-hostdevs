@@ -65,7 +65,7 @@ class HostDevAddDialog:
     def fill(self):
         b = self.test_obj.browser
         b.click(f"input#{self.dev_type}")
-        b.set_checked(f".pf-v6-c-table input[name='checkrow{self.dev_id}']", True)
+        b.set_checked(f".pf-v6-c-table [data-row='{self.dev_id}'] input", True)
         sel = f"#vm-subVmTest1-hostdevs-dialog table tbody tr:nth-child({self.dev_id + 1})"
         self._model = b.text(f"{sel} td:nth-child(2)")
         self._vendor = b.text(f"{sel} td:nth-child(3)")
@@ -299,10 +299,10 @@ class TestMachinesHostDevs(machineslib.VirtualMachinesCase):
         b.wait_in_text(".pf-v6-c-modal-box .pf-v6-c-modal-box__header .pf-v6-c-modal-box__title", "Add host device")
         b.click("input#pci")
 
-        b.set_checked(".pf-v6-c-table input[name='checkrow0']", True)
+        b.set_checked(".pf-v6-c-table tr[data-row='0'] input", True)
         slot1 = b.text("#vm-subVmTest1-hostdevs-dialog table tbody tr:nth-child(1) td:nth-child(4) dd")
 
-        b.set_checked(".pf-v6-c-table input[name='checkrow1']", True)
+        b.set_checked(".pf-v6-c-table tr[data-row='1'] input", True)
         slot2 = b.text("#vm-subVmTest1-hostdevs-dialog table tbody tr:nth-child(2) td:nth-child(4) dd")
 
         # PCI devices will be sorted in the UI by slot
