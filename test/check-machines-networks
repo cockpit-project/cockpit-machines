@@ -231,7 +231,7 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
                     b.wait_not_present("#create-network-dialog")
 
             def verify_expected_error_on_head(self, error_message):
-                b.click(f'#network-{self.name}-system-state-error button:contains("view more")')
+                b.click(f'#network-{self.name}-system-state-error')
                 b.wait_in_text(".pf-v6-c-popover", error_message)
                 b.click(f'#network-{self.name}-system-state-error button[aria-label=Close]')
 
