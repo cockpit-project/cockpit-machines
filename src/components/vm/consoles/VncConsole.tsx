@@ -34,16 +34,7 @@ SOFTWARE.
 
 import React from 'react';
 
-import RFB from '@novnc/novnc/lib/rfb';
-
-/* HACK - there is something weird going on with NoVNC modules and the
- * way we bundle things. The default export should be the RFB
- * class/constructor, but we get a wrapper that has the constructor in
- * its "default" field.  The hack below gives us access to the
- * constructor function but this is clearly not how this is intended
- * to be done...
- */
-const RFB_constructor: typeof RFB = (RFB as unknown as { default: typeof RFB }).default;
+import RFB from '@novnc/novnc';
 
 export interface VncCredentials {
     password: string;
@@ -138,7 +129,7 @@ export const VncConsole = ({
             repeaterID,
             shared,
         };
-        const rfb_object = new RFB_constructor(novncElem.current!, url, options);
+        const rfb_object = new RFB(novncElem.current!, url, options);
         rfb_object.viewOnly = viewOnly;
         rfb_object.clipViewport = clipViewport;
         rfb_object.dragViewport = dragViewport;
