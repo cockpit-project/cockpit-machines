@@ -1407,7 +1407,7 @@ export class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmM
 
             break;
         case 'os': {
-            cockpit.assert(((_x: unknown): _x is OSInfo => true)(value));
+            cockpit.assert(((x: unknown): x is OSInfo => !!x || !x)(value));
             const stateDelta: Partial<CreateVmModalState> = { os: value };
 
             if (value && value.profiles)
