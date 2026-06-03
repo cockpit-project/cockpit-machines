@@ -50,14 +50,9 @@ export const getNetworkRow = ({ network } : { network: Network }) => {
         </span>
     );
     const state = (
-        <StateIcon error={network.error} state={network.active ? _("active") : _("inactive") }
-                   valueId={`${idPrefix}-state`}
-            dismissError={() => appState.updateNetwork(
-                network,
-                {
-                    error: null
-                }
-            )}
+        <StateIcon
+            state={network.active ? _("active") : _("inactive") }
+            valueId={`${idPrefix}-state`}
         />
     );
     const cols = [
@@ -83,48 +78,39 @@ const NetworkActions = ({ network } : { network: Network }) => {
     const Dialogs = useDialogs();
     const [operationInProgress, setOperationInProgress] = useState(false);
 
-    const onActivate = () => {
+    const onActivate = async () => {
         setOperationInProgress(true);
-        networkActivate({ connectionName: network.connectionName, objPath: network.id })
-                .then(() => appState.updateNetwork(network, { error: null }))
-                .finally(() => setOperationInProgress(false))
-                .catch(exc => {
-                    appState.updateNetwork(
-                        network,
-                        {
-                            error: {
-                                text: cockpit.format(_("Network $0 failed to get activated"), network.name),
-                                detail: exc.message,
-                            }
-                        });
-                });
+        try {
+            await networkActivate({ connectionName: network.connectionName, objPath: network.id });
+        } catch (exc) {
+            appState.addNotification({
+                text: cockpit.format(_("Network $0 failed to get activated"), network.name),
+                detail: String(exc),
+                resourceId: network.id,
+            });
+        }
+        setOperationInProgress(false);
     };
 
-    const onDeactivate = () => {
+    const onDeactivate = async () => {
         setOperationInProgress(true);
-        networkDeactivate({ connectionName: network.connectionName, objPath: network.id })
-                .then(() => appState.updateNetwork(network, { error: null }))
-                .finally(() => setOperationInProgress(false))
-                .catch(exc => {
-                    appState.updateNetwork(
-                        network,
-                        {
-                            error: {
-                                text: cockpit.format(_("Network $0 failed to get deactivated"), network.name),
-                                detail: exc.message,
-                            }
-                        });
-                });
+        try {
+            await networkDeactivate({ connectionName: network.connectionName, objPath: network.id });
+        } catch (exc) {
+            appState.addNotification({
+                text: cockpit.format(_("Network $0 failed to get deactivated"), network.name),
+                detail: String(exc),
+                resourceId: network.id,
+            });
+        }
+        setOperationInProgress(false);
     };
 
     const id = networkId(network.name, network.connectionName);
-    const deleteHandler = (network: Network): Promise<void> => {
-        if (network.active) {
-            return networkDeactivate({ connectionName: network.connectionName, objPath: network.id })
-                    .then(() => networkUndefine({ connectionName: network.connectionName, objPath: network.id }));
-        } else {
-            return networkUndefine({ connectionName: network.connectionName, objPath: network.id });
-        }
+    const deleteHandler = async (network: Network): Promise<void> => {
+        if (network.active)
+            await networkDeactivate({ connectionName: network.connectionName, objPath: network.id });
+        await networkUndefine({ connectionName: network.connectionName, objPath: network.id });
     };
     const dialogProps = {
         title: _("Delete network?"),

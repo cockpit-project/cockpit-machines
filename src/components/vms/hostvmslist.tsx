@@ -65,19 +65,12 @@ const VmState = ({
         state = vm.state;
     }
 
-    const dismissError = () => {
-        if (vm.isUi)
-            appState.setUiVm(vm.connectionName, vm.name, { error: undefined });
-        else
-            appState.updateVm(vm, { error: null });
-    };
-
     return (
-        <StateIcon dismissError={dismissError}
-            error={vm.error}
+        <StateIcon
             state={state}
             valueId={`${vmId(vm.name)}-${vm.connectionName}-state`}
-            additionalState={!vm.isUi && <><VmNeedsShutdown vm={vm} /><VmUsesSpice vm={vm} vms={vms} /></>} />
+            additionalState={!vm.isUi && <><VmNeedsShutdown vm={vm} /><VmUsesSpice vm={vm} vms={vms} /></>}
+        />
     );
 };
 
