@@ -4,12 +4,12 @@
  * Copyright (C) 2019 Red Hat, Inc.
  */
 
-import React from 'react';
 import cockpit from 'cockpit';
 
-import type { optString, NodeDevice, Network } from '../../types';
+import type { optString, ConnectionName, NodeDevice, Network } from '../../types';
+import { appState } from '../../state';
 
-import { FormSelectOption } from "@patternfly/react-core/dist/esm/components/FormSelect";
+import { DialogDropdownSelectOption } from 'cockpit/dialog';
 
 const _ = cockpit.gettext;
 
@@ -57,8 +57,8 @@ function getNodeDevicesOfType(nodeDevices: NodeDevice[], type: string): NodeDevi
 /**
  * Return the Virtual Network matching a name from a Virtual Networks list.
  */
-export function getVirtualNetworkByName(virtualNetworkName: string, virtualNetworks: Network[]): Network {
-    return virtualNetworks.filter(virtualNetwork => virtualNetwork.name == virtualNetworkName)[0];
+export function getVirtualNetworkByName(connectionName: ConnectionName, virtualNetworkName: string): Network {
+    return appState.networks.filter(virtualNetwork => virtualNetwork.connectionName == connectionName && virtualNetwork.name == virtualNetworkName)[0];
 }
 
 /**
@@ -126,7 +126,10 @@ export function getPXEInitialNetworkSource(nodeDevices: NodeDevice[], virtualNet
 /**
  * Returns the Select Entries rows for the PXE Network Sources.
  */
-export function getPXENetworkRows(nodeDevices: NodeDevice[], virtualNetworks: Network[]): React.ReactNode {
+export function getPXENetworkOptions(connectionName: ConnectionName): DialogDropdownSelectOption<string>[] {
+    const nodeDevices = appState.nodeDevices.filter(d => d.connectionName == connectionName);
+    const virtualNetworks = appState.networks.filter(n => n.connectionName == connectionName);
+
     /* Do not show to the user the libvirt virbrX-nic devices since these are
      * supposed to be managed through virtual networks
      */
@@ -139,7 +142,7 @@ export function getPXENetworkRows(nodeDevices: NodeDevice[], virtualNetworks: Ne
         const data = cockpit.format('network=$0', network.name);
         const label = cockpit.format("$0 $1: $2", _("Virtual network"), network.name, getVirtualNetworkDescription(network));
 
-        return <FormSelectOption key={data} value={data} label={label} />;
+        return { value: data, label };
     });
 
     const netNodeDevicesRows = netNodeDevices.map(netNodeDevice => {
@@ -148,14 +151,14 @@ export function getPXENetworkRows(nodeDevices: NodeDevice[], virtualNetworks: Ne
         const data = cockpit.format('type=direct,source=$0,source.mode=bridge', iface);
         const label = cockpit.format("$0 $1: macvtap", _("Host device"), iface);
 
-        return <FormSelectOption key={data} value={data} label={label} />;
+        return { value: data, label };
     });
 
     if (virtualNetworkRows.length == 0 && netNodeDevicesRows.length == 0) {
         const label = _("No networks available");
 
-        return [<FormSelectOption key='not-resource' value='no-resource' label={label} />];
+        return [{ value: 'no-resource', label }];
     }
 
-    return [virtualNetworkRows, netNodeDevicesRows];
+    return [...virtualNetworkRows, ...netNodeDevicesRows];
 }

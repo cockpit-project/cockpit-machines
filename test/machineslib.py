@@ -616,6 +616,11 @@ class VirtualMachinesCase(VirtualMachinesCaseHelpers, storagelib.StorageHelpers,
 
 class MachinesDialogHelpers(DialogHelpers):
 
+    # Secondary actions
+
+    def apply_button_variant(self, variant: str) -> str:
+        return "#dialog-apply" + "-" + variant
+
     # FileAutoComplete
 
     def set_FileAutoComplete(self, path: str, val: str) -> None:
@@ -627,3 +632,26 @@ class MachinesDialogHelpers(DialogHelpers):
         b.click(".pf-v6-c-menu ul li:nth-child(1) button")
         b.wait_not_present(".pf-v6-c-menu")
         b.wait_val(f"{sel}.pf-v6-c-menu-toggle input", val)
+
+    # TypeaheadSelect
+
+    def set_TypeaheadSelect(self, path: str, val: str) -> None:
+        b = self.browser
+        sel = self.field(path)
+        b.click(f"{sel} button.pf-v6-c-menu-toggle__button")
+        b.click(f".pf-v6-c-menu ul li button:contains('{val}')")
+        b.wait_not_present(".pf-v6-c-menu")
+        b.wait_val(f"{sel}.pf-v6-c-menu-toggle input", val)
+
+    def wait_TypeaheadSelect(self, path: str, val: str) -> None:
+        b = self.browser
+        sel = self.field(path)
+        b.wait_val(f"{sel}.pf-v6-c-menu-toggle input", val)
+
+    # SimpleSelect
+
+    def set_SimpleSelect(self, path: str, val: str) -> None:
+        b = self.browser
+        sel = self.field(path)
+        b.click(sel)
+        b.click(f".pf-v6-c-menu li button:contains('{val}')")
