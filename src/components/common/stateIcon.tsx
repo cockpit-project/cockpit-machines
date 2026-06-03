@@ -6,7 +6,6 @@
 import React from 'react';
 import cockpit from 'cockpit';
 
-import { Button } from "@patternfly/react-core/dist/esm/components/Button";
 import { Flex } from "@patternfly/react-core/dist/esm/layouts/Flex";
 import { Label, LabelProps } from "@patternfly/react-core/dist/esm/components/Label";
 import { Popover } from "@patternfly/react-core/dist/esm/components/Popover";
@@ -55,13 +54,13 @@ export const StateIcon = ({
             {error &&
             <Label color="red"
                 icon={<ErrorCircleOIcon />}
-                className="resource-state-text"
+                className="resource-state-text pf-m-editable"
                 closeBtnAriaLabel={_("Close")}
                 onClose={dismissError}
+                isClickable
                 id={`${valueId}-error`}>
                 <>
-                    {_("Failed")}
-                    <Button variant="link" isInline>{_("view more...")}</Button>
+                    {_("Failed (view more)")}
                 </>
             </Label>}
             <Label {...(stateMap[state] && stateMap[state].color) ? { color: stateMap[state].color } : {}}

@@ -294,13 +294,13 @@ class TestMachinesLifecycle(machineslib.VirtualMachinesCase):
         b.wait_visible("#vm-subVmTest1-system-state-error")
         if run_pixel_tests:
             b.assert_pixels("tr[data-row-id=vm-subVmTest1-system]", "vm-state-error")
-        b.click('#vm-subVmTest1-system-state-error button:contains("view more")')
+        b.click('#vm-subVmTest1-system-state-error')
         b.wait_in_text(".pf-v6-c-popover", "VM subVmTest1 failed to start")
         b.click('#vm-subVmTest1-system-state-error button[aria-label=Close]')
 
         # Try to run subVmTest2
         tryRunDomain('subVmTest2', 'system')
-        b.click('#vm-subVmTest2-system-state-error button:contains("view more")')
+        b.click('#vm-subVmTest2-system-state-error')
         b.wait_in_text(".pf-v6-c-popover", "VM subVmTest2 failed to start")
         b.click('#vm-subVmTest2-system-state-error button[aria-label=Close]')
 
