@@ -914,8 +914,10 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
             virsh pool-start loop-disk
             virsh vol-create-as loop-disk {existing_disk} 1M
             virsh vol-create-as loop-disk {existing_disk2} 1M""")
+        self.addCleanup(m.execute, f"wipefs -a {loop_dev}")
 
         args = self.createVm("subVmTest1")
+        self.addCleanup(m.execute, "virsh destroy subVmTest1")
 
         # Wait for the system to completely start
         self.waitGuestBooted(args['logfile'])
@@ -1687,6 +1689,7 @@ class TestMachinesDisks(machineslib.VirtualMachinesCase):
         self.createVm("subVmTest1", running=False)
         m.execute(f"virt-xml subVmTest1 --add-device --disk source.type=block,source.dev={loop_dev}")
         m.execute("virsh start subVmTest1")
+        self.addCleanup(m.execute, "virsh destroy subVmTest1")
 
         self.login_and_go("/machines")
         self.waitPageInit()
