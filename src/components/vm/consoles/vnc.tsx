@@ -25,7 +25,9 @@ import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/
 import { MenuToggle } from "@patternfly/react-core/dist/esm/components/MenuToggle";
 import { Dropdown, DropdownList, DropdownItem } from "@patternfly/react-core/dist/esm/components/Dropdown";
 
-import { Modal, ModalVariant } from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
+import {
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 import { ModalError } from 'cockpit-components-inline-notification.jsx';
 import { SimpleSelect } from 'cockpit-components-simple-select';
 import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
@@ -140,33 +142,19 @@ const VncEditModal = ({
         <Modal
             id="vnc-edit-dialog"
             position="top"
-            variant={ModalVariant.medium}
-            title={_("Edit VNC settings")}
+            variant="medium"
             isOpen
             onClose={Dialogs.close}
-            footer={
-                <>
-                    <Button
-                         id="vnc-edit-save"
-                         isDisabled={!!(portError || passwordError)}
-                         variant='primary'
-                         onClick={apply}
-                    >
-                        {_("Save")}
-                    </Button>
-                    <Button id="vnc-edit-cancel" variant='link' onClick={Dialogs.close}>
-                        {_("Cancel")}
-                    </Button>
-                </>
-            }
         >
-            { vm.state === 'running' && !applyError &&
-                <NeedsShutdownAlert idPrefix="vnc-edit" />
-            }
-            { applyError &&
-                <ModalError dialogError={applyError} dialogErrorDetail={applyErrorDetail} />
-            }
-            <Form onSubmit={e => e.preventDefault()} isHorizontal>
+            <ModalHeader title={_("Edit VNC settings")} />
+            <ModalBody>
+                { vm.state === 'running' && !applyError &&
+                    <NeedsShutdownAlert idPrefix="vnc-edit" />
+                }
+                { applyError &&
+                    <ModalError dialogError={applyError} dialogErrorDetail={applyErrorDetail} />
+                }
+                <Form onSubmit={e => e.preventDefault()} isHorizontal>
                 <FormGroup label={_("Port")}>
                     <TextInput
                         id="vnc-edit-port"
@@ -213,6 +201,20 @@ const VncEditModal = ({
                     </FormHelperText>
                 </FormGroup>
             </Form>
+            </ModalBody>
+            <ModalFooter>
+                <Button
+                     id="vnc-edit-save"
+                     isDisabled={!!(portError || passwordError)}
+                     variant='primary'
+                     onClick={apply}
+                >
+                    {_("Save")}
+                </Button>
+                <Button id="vnc-edit-cancel" variant='link' onClick={Dialogs.close}>
+                    {_("Cancel")}
+                </Button>
+            </ModalFooter>
         </Modal>
     );
 };

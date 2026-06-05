@@ -382,7 +382,7 @@ export const ConsoleCard = ({
                             </SplitItem>
                             <SplitItem>
                                 { use_tab_group
-                                    ? <ToggleGroup>{tabs}</ToggleGroup>
+                                    ? <ToggleGroup aria-label={_("Console type")}>{tabs}</ToggleGroup>
                                     : <SimpleSelect
                                           options={select_options}
                                           isScrollable
