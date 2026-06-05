@@ -36,7 +36,7 @@ export function connection_address() {
     if (cockpit.transport.host == "localhost") {
         const app = cockpit.transport.application();
         if (app.startsWith("cockpit+=")) {
-            address = app.substr(9);
+            address = app.slice(9);
         } else {
             address = window.location.hostname;
         }
@@ -44,7 +44,7 @@ export function connection_address() {
         address = cockpit.transport.host;
         const pos = address.indexOf("@");
         if (pos >= 0) {
-            address = address.substr(pos + 1);
+            address = address.slice(pos + 1);
         }
     }
     return address;
