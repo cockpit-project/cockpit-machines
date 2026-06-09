@@ -11,11 +11,8 @@ import type { VM, VMGraphics } from '../../../types';
 
 import { Divider } from "@patternfly/react-core/dist/esm/components/Divider";
 import { Button } from "@patternfly/react-core/dist/esm/components/Button";
-import { Form, FormGroup, FormHelperText } from "@patternfly/react-core/dist/esm/components/Form";
-import { HelperText, HelperTextItem } from "@patternfly/react-core/dist/esm/components/HelperText";
-import { TextInput } from "@patternfly/react-core/dist/esm/components/TextInput";
-import { InputGroup } from "@patternfly/react-core/dist/esm/components/InputGroup";
-import { EyeIcon, EyeSlashIcon, PendingIcon } from "@patternfly/react-icons";
+import { Form } from "@patternfly/react-core/dist/esm/components/Form";
+import { PendingIcon } from "@patternfly/react-icons";
 
 import {
     EmptyState, EmptyStateBody, EmptyStateFooter, EmptyStateActions
@@ -25,12 +22,17 @@ import { Split, SplitItem } from "@patternfly/react-core/dist/esm/layouts/Split/
 import { MenuToggle } from "@patternfly/react-core/dist/esm/components/MenuToggle";
 import { Dropdown, DropdownList, DropdownItem } from "@patternfly/react-core/dist/esm/components/Dropdown";
 
-import { Modal, ModalVariant } from '@patternfly/react-core/dist/esm/deprecated/components/Modal';
-import { ModalError } from 'cockpit-components-inline-notification.jsx';
+import {
+    Modal, ModalBody, ModalFooter, ModalHeader
+} from '@patternfly/react-core/dist/esm/components/Modal';
 import { SimpleSelect } from 'cockpit-components-simple-select';
 import { NeedsShutdownAlert } from '../../common/needsShutdown.jsx';
 import { vmStart, VmRestartDialog } from '../vmActions';
 import { useDialogs } from 'dialogs';
+import {
+    useDialogState, DialogError, DialogErrorMessage,
+    DialogActionButton, DialogCancelButton, DialogTextInput, DialogPasswordInput,
+} from 'cockpit/dialog';
 
 import { logDebug, readQemuConf } from '../../../helpers.js';
 import { LaunchViewerButton, connection_address, ConsoleState } from './common';
@@ -71,6 +73,11 @@ export class VncState extends ConsoleState {
     }
 }
 
+interface VncEditValues {
+    port: string;
+    password: string;
+}
+
 const VncEditModal = ({
     vm,
     inactive_vnc
@@ -78,45 +85,39 @@ const VncEditModal = ({
     vm: VM,
     inactive_vnc: VMGraphics,
 }) => {
-    const config_port = (Number(inactive_vnc.port) == -1) ? "" : (inactive_vnc.port || "");
-    const config_password = inactive_vnc.password || "";
-
     const Dialogs = useDialogs();
-    const [port, setPort] = useState(config_port);
-    const [password, setPassword] = useState(config_password);
-    const [showPassword, setShowPassword] = useState(false);
-    const [portError, setPortError] = useState<null | string>(null);
-    const [passwordError, setPasswordError] = useState<null | string>(null);
-    const [applyError, setApplyError] = useState<null | string>(null);
-    const [applyErrorDetail, setApplyErrorDetail] = useState<string>("");
 
-    function validate() {
-        let field_errors = 0;
-        if (port != "") {
-            if (!port.match("^[0-9]+$")) {
-                setPortError(_("Port must be a number."));
-                field_errors += 1;
-            } else if (Number(port) < 5900) {
-                setPortError(_("Port must be 5900 or larger."));
-                field_errors += 1;
-            }
-        }
+    function init(): VncEditValues {
+        const config_port = (Number(inactive_vnc.port) == -1) ? "" : (inactive_vnc.port || "");
+        const config_password = inactive_vnc.password || "";
 
-        if (password.length > 8) {
-            setPasswordError(_("Password must be at most 8 characters."));
-            field_errors += 1;
-        }
-
-        return field_errors == 0;
+        return {
+            port: config_port,
+            password: config_password,
+        };
     }
 
-    async function apply() {
-        if (!validate())
-            return;
+    function validate() {
+        dlg.field("port").validate(v => {
+            if (v !== "") {
+                if (!v.match("^[0-9]+$")) {
+                    return _("Port must be a number.");
+                } else if (Number(v) < 5900) {
+                    return _("Port must be 5900 or larger.");
+                }
+            }
+        });
 
-        setPortError(null);
-        setPasswordError(null);
+        dlg.field("password").validate(v => {
+            if (v.length > 8) {
+                return _("Password must be at most 8 characters.");
+            }
+        });
+    }
 
+    const dlg = useDialogState<VncEditValues>(init, validate);
+
+    async function apply(values: VncEditValues) {
         try {
             await virtXmlEdit(
                 vm,
@@ -124,15 +125,13 @@ const VncEditModal = ({
                 { type: "vnc" },
                 {
                     listen: inactive_vnc.address || "",
-                    port,
-                    password,
+                    port: values.port,
+                    password: values.password,
                 }
             );
             domainGet({ connectionName: vm.connectionName, id: vm.id });
-            Dialogs.close();
         } catch (ex) {
-            setApplyError(_("VNC settings could not be saved"));
-            setApplyErrorDetail(String(ex));
+            throw DialogError.fromError(_("VNC settings could not be saved"), ex);
         }
     }
 
@@ -140,79 +139,35 @@ const VncEditModal = ({
         <Modal
             id="vnc-edit-dialog"
             position="top"
-            variant={ModalVariant.medium}
-            title={_("Edit VNC settings")}
+            variant="medium"
             isOpen
             onClose={Dialogs.close}
-            footer={
-                <>
-                    <Button
-                         id="vnc-edit-save"
-                         isDisabled={!!(portError || passwordError)}
-                         variant='primary'
-                         onClick={apply}
-                    >
-                        {_("Save")}
-                    </Button>
-                    <Button id="vnc-edit-cancel" variant='link' onClick={Dialogs.close}>
-                        {_("Cancel")}
-                    </Button>
-                </>
-            }
         >
-            { vm.state === 'running' && !applyError &&
-                <NeedsShutdownAlert idPrefix="vnc-edit" />
-            }
-            { applyError &&
-                <ModalError dialogError={applyError} dialogErrorDetail={applyErrorDetail} />
-            }
-            <Form onSubmit={e => e.preventDefault()} isHorizontal>
-                <FormGroup label={_("Port")}>
-                    <TextInput
-                        id="vnc-edit-port"
-                        type="text"
-                        value={port}
-                        onChange={(_ev, val) => { setPortError(null); setPort(val) }}
-                        onBlur={validate}
+            <ModalHeader title={_("Edit VNC settings")} />
+            <ModalBody>
+                { vm.state === 'running' &&
+                    <NeedsShutdownAlert idPrefix="vnc-edit" />
+                }
+                <DialogErrorMessage dialog={dlg} />
+                <Form onSubmit={e => e.preventDefault()} isHorizontal>
+                    <DialogTextInput
+                        label={_("Port")}
+                        field={dlg.field("port")}
+                        explanation={_("Port must be a number that is at least 5900. Leave empty to automatically assign a free port when the machine starts.")}
                     />
-                    <FormHelperText>
-                        <HelperText>
-                            { portError
-                                ? <HelperTextItem variant='error'>{portError}</HelperTextItem>
-                                : <HelperTextItem>
-                                    {_("Port must be a number that is at least 5900. Leave empty to automatically assign a free port when the machine starts.")}
-                                </HelperTextItem>
-                            }
-                        </HelperText>
-                    </FormHelperText>
-                </FormGroup>
-                <FormGroup label={_("Password")}>
-                    <InputGroup>
-                        <TextInput
-                            id="vnc-edit-password"
-                            type={showPassword ? "text" : "password"}
-                            value={password}
-                            onChange={(_ev, val) => { setPasswordError(null); setPassword(val) }}
-                            onBlur={validate}
-                        />
-                        <Button
-                            variant="control"
-                            onClick={() => setShowPassword(!showPassword)}>
-                            { showPassword ? <EyeSlashIcon /> : <EyeIcon /> }
-                        </Button>
-                    </InputGroup>
-                    <FormHelperText>
-                        <HelperText>
-                            { passwordError
-                                ? <HelperTextItem variant='error'>{passwordError}</HelperTextItem>
-                                : <HelperTextItem>
-                                    {_("Password must be 8 characters or less. VNC passwords do not provide encryption and are generally cryptographically weak. They can not be used to secure connections in untrusted networks.")}
-                                </HelperTextItem>
-                            }
-                        </HelperText>
-                    </FormHelperText>
-                </FormGroup>
-            </Form>
+                    <DialogPasswordInput
+                        label={_("Password")}
+                        field={dlg.field("password")}
+                        explanation={_("Password must be 8 characters or less. VNC passwords do not provide encryption and are generally cryptographically weak. They can not be used to secure connections in untrusted networks.")}
+                    />
+                </Form>
+            </ModalBody>
+            <ModalFooter>
+                <DialogActionButton dialog={dlg} action={apply} onClose={Dialogs.close}>
+                    {_("Save")}
+                </DialogActionButton>
+                <DialogCancelButton dialog={dlg} onClose={Dialogs.close} />
+            </ModalFooter>
         </Modal>
     );
 };
