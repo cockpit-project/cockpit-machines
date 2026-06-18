@@ -2857,9 +2857,9 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
             b.wait_visible(f"#vm-{vmName}-uses-spice")
             # and indeed startup fails
             b.click(f"#vm-{vmName}-system-run")
-            b.wait_in_text(f"#vm-{vmName}-system-state-error", "Failed")
-            b.click(f"#vm-{vmName}-system-state-error button[aria-label=Close]")
-            b.wait_not_present(f"#vm-{vmName}-system-state-error")
+            b.wait_in_text(".pf-m-toast .pf-v6-c-alert", f"VM {vmName} failed to start")
+            b.click(".pf-m-toast .pf-v6-c-alert .pf-v6-c-alert__action button")
+            b.wait_not_present(".pf-m-toast")
 
             b.click(f"#vm-{vmName}-uses-spice")
             b.wait_in_text(".pf-v6-c-popover", "Uses SPICE")

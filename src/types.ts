@@ -52,11 +52,6 @@ export interface VirtXmlCapabilities {
 
 /** Virtual Machines **/
 
-export interface DetailedError {
-    text: string;
-    detail: string;
-}
-
 export type VMDiskDevice = "floppy" | "disk" | "cdrom" | "lun";
 
 export interface VMDisk {
@@ -421,7 +416,6 @@ export interface VM extends VMXML {
     persistent: boolean;
     autostart: boolean;
 
-    error?: DetailedError | null;
     installInProgress?: boolean;
 
     // An operation (shut down or start) has been initiated from this
@@ -504,8 +498,6 @@ export interface StoragePool {
     persistent?: boolean;
     autostart?: boolean;
     volumes: StorageVolume[];
-
-    error?: DetailedError | null | undefined;
 }
 
 export type StoragePoolCapabilites = Record<string, { supported: optString}>;
@@ -554,7 +546,6 @@ export interface Network extends NetworkXML {
     active?: boolean;
     persistent?: boolean;
     autostart?: boolean;
-    error?: DetailedError | null;
 }
 
 /** Node Devices **/

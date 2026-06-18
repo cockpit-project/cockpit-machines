@@ -49,9 +49,10 @@ export const getStoragePoolRow = ({ storagePool, vms } : { storagePool: StorageP
     );
 
     const state = (
-        <StateIcon error={storagePool.error} state={storagePool.active ? _("active") : _("inactive") }
-                   valueId={`${idPrefix}-state`}
-                   dismissError={() => appState.updateStoragePool(storagePool, { error: null })} />
+        <StateIcon
+            state={storagePool.active ? _("active") : _("inactive") }
+            valueId={`${idPrefix}-state`}
+        />
     );
 
     const tabRenderers = [
@@ -101,42 +102,36 @@ class StoragePoolActions extends React.Component<StoragePoolActionsProps, Storag
         this.onDeactivate = this.onDeactivate.bind(this);
     }
 
-    onActivate() {
+    async onActivate() {
         const storagePool = this.props.storagePool;
 
         this.setState({ operationInProgress: true });
-        storagePoolActivate({ connectionName: storagePool.connectionName, objPath: storagePool.id })
-                .catch(exc => {
-                    appState.updateStoragePool(
-                        storagePool,
-                        {
-                            error: {
-                                text: cockpit.format(_("Storage pool $0 failed to get activated"), storagePool.name),
-                                detail: exc.message,
-                            }
-                        }
-                    );
-                })
-                .finally(() => this.setState({ operationInProgress: false }));
+        try {
+            await storagePoolActivate({ connectionName: storagePool.connectionName, objPath: storagePool.id });
+        } catch (exc) {
+            appState.addNotification({
+                text: cockpit.format(_("Storage pool $0 failed to get activated"), storagePool.name),
+                detail: String(exc),
+                resourceId: storagePool.id,
+            });
+        }
+        this.setState({ operationInProgress: false });
     }
 
-    onDeactivate() {
+    async onDeactivate() {
         const storagePool = this.props.storagePool;
 
         this.setState({ operationInProgress: true });
-        storagePoolDeactivate({ connectionName: storagePool.connectionName, objPath: storagePool.id })
-                .catch(exc => {
-                    appState.updateStoragePool(
-                        storagePool,
-                        {
-                            error: {
-                                text: cockpit.format(_("Storage pool $0 failed to get deactivated"), storagePool.name),
-                                detail: exc.message,
-                            }
-                        }
-                    );
-                })
-                .finally(() => this.setState({ operationInProgress: false }));
+        try {
+            await storagePoolDeactivate({ connectionName: storagePool.connectionName, objPath: storagePool.id });
+        } catch (exc) {
+            appState.addNotification({
+                text: cockpit.format(_("Storage pool $0 failed to get deactivated"), storagePool.name),
+                detail: String(exc),
+                resourceId: storagePool.id,
+            });
+        }
+        this.setState({ operationInProgress: false });
     }
 
     render() {
