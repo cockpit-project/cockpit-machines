@@ -51,18 +51,14 @@ function isOperationInProgress(vm: VM) {
     return vm.state == vm.operationInProgressFromState;
 }
 
-function setVmError(vm: VM, msg: string, ex: unknown) {
+function showVmError(vm: VM, msg: string, ex: unknown) {
     console.warn(msg, ":", String(ex));
-    appState.updateVm(
-        vm,
-        {
-            operationInProgressFromState: undefined,
-            error: {
-                text: msg,
-                detail: String(ex),
-            }
-        }
-    );
+    appState.updateVm(vm, { operationInProgressFromState: undefined });
+    appState.addNotification({
+        text: msg,
+        detail: String(ex),
+        resourceId: vm.id,
+    });
 }
 
 export async function vmStart(vm: VM) {
@@ -70,7 +66,7 @@ export async function vmStart(vm: VM) {
     try {
         await vmDomainMethod<void>(vm, 'Create', 'u', 0);
     } catch (ex) {
-        setVmError(vm, cockpit.format(_("VM $0 failed to start"), vm.name), ex);
+        showVmError(vm, cockpit.format(_("VM $0 failed to start"), vm.name), ex);
     }
 }
 
@@ -90,7 +86,7 @@ export async function vmReboot(vm: VM) {
     try {
         await vmDomainMethod<void>(vm, 'Reboot', 'u', 0);
     } catch (ex) {
-        setVmError(vm, cockpit.format(_("VM $0 failed to reboot"), vm.name), ex);
+        showVmError(vm, cockpit.format(_("VM $0 failed to reboot"), vm.name), ex);
     }
 }
 
@@ -98,7 +94,7 @@ export async function vmForceReboot(vm: VM) {
     try {
         await vmDomainMethod<void>(vm, 'Reset', 'u', 0);
     } catch (ex) {
-        setVmError(vm, cockpit.format(_("VM $0 failed to force reboot"), vm.name), ex);
+        showVmError(vm, cockpit.format(_("VM $0 failed to force reboot"), vm.name), ex);
     }
 }
 
@@ -109,7 +105,7 @@ export async function vmShutdown(vm: VM) {
         if (!vm.persistent)
             cockpit.location.go(["vms"]);
     } catch (ex) {
-        setVmError(vm, cockpit.format(_("VM $0 failed to shutdown"), vm.name), ex);
+        showVmError(vm, cockpit.format(_("VM $0 failed to shutdown"), vm.name), ex);
     }
 }
 
@@ -117,7 +113,7 @@ export async function vmPause(vm: VM) {
     try {
         await vmDomainMethod<void>(vm, 'Suspend', '');
     } catch (ex) {
-        setVmError(vm, cockpit.format(_("VM $0 failed to pause"), vm.name), ex);
+        showVmError(vm, cockpit.format(_("VM $0 failed to pause"), vm.name), ex);
     }
 }
 
@@ -125,7 +121,7 @@ export async function vmResume(vm: VM) {
     try {
         await vmDomainMethod<void>(vm, 'Resume', '');
     } catch (ex) {
-        setVmError(vm, cockpit.format(_("VM $0 failed to resume"), vm.name), ex);
+        showVmError(vm, cockpit.format(_("VM $0 failed to resume"), vm.name), ex);
     }
 }
 
@@ -135,7 +131,7 @@ export async function vmForceOff(vm: VM) {
         if (!vm.persistent)
             cockpit.location.go(["vms"]);
     } catch (ex) {
-        setVmError(vm, cockpit.format(_("VM $0 failed to force shutdown"), vm.name), ex);
+        showVmError(vm, cockpit.format(_("VM $0 failed to force shutdown"), vm.name), ex);
     }
 }
 
@@ -143,7 +139,7 @@ export async function onSendNMI(vm: VM) {
     try {
         await vmDomainMethod<void>(vm, 'InjectNMI', 'u', 0);
     } catch (ex) {
-        setVmError(vm, cockpit.format(_("VM $0 failed to send NMI"), vm.name), ex);
+        showVmError(vm, cockpit.format(_("VM $0 failed to send NMI"), vm.name), ex);
     }
 }
 
@@ -509,7 +505,7 @@ export const VmRestartDialog = ({ vm } : { vm: VM }) => {
             await vmDomainMethod<void>(vm, force ? 'Destroy' : 'Shutdown', 'u', 0);
         } catch (ex) {
             off();
-            setVmError(vm, cockpit.format(_("VM $0 failed to shutdown"), vm.name), ex);
+            showVmError(vm, cockpit.format(_("VM $0 failed to shutdown"), vm.name), ex);
         }
     }
 

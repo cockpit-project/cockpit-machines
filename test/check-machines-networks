@@ -231,9 +231,10 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
                     b.wait_not_present("#create-network-dialog")
 
             def verify_expected_error_on_head(self, error_message):
-                b.click(f'#network-{self.name}-system-state-error button:contains("view more")')
-                b.wait_in_text(".pf-v6-c-popover", error_message)
-                b.click(f'#network-{self.name}-system-state-error button[aria-label=Close]')
+                b.click('.pf-m-toast .pf-v6-c-alert button:contains("show more")')
+                b.wait_in_text(".pf-m-toast .pf-v6-c-alert", error_message)
+                b.click(".pf-m-toast .pf-v6-c-alert .pf-v6-c-alert__action button")
+                b.wait_not_present(".pf-m-toast")
 
             def verify_dialog(self):
                 # Check that the defined network is now visible
@@ -838,8 +839,9 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         self.waitNetworkRow("test_network2_clash", connectionName)
         m.execute("virsh net-start test_network2")
         b.click(f"#activate-network-test_network2_clash-{connectionName}")
-        b.wait_visible(f"#network-test_network2_clash-{connectionName}-state-error")
-        b.wait_in_text(f"#network-test_network2_clash-{connectionName}-state-error", "Failed")
+        b.wait_in_text(".pf-m-toast .pf-v6-c-alert", "Network test_network2_clash failed to get activated")
+        b.click(".pf-m-toast .pf-v6-c-alert .pf-v6-c-alert__action button")
+        b.wait_not_present(".pf-m-toast")
 
         # error should disappear if resolved
         b.wait_visible(f"#deactivate-network-test_network2-{connectionName}")
@@ -848,7 +850,6 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         b.wait_visible(f"#activate-network-test_network2-{connectionName}")
         b.click(f"#activate-network-test_network2_clash-{connectionName}")
         b.wait_in_text(f"#network-test_network2_clash-{connectionName}-state", "active")
-        b.wait_not_present(f"#network-test_network2_clash-{connectionName}-state-error")
 
         # check "X" button of the deletion dialog
         self.dropdownAction(f"#network-test_network2-{connectionName}-action-kebab",

@@ -163,10 +163,8 @@ export class VmOverviewCard extends React.Component<VmOverviewCardProps, VmOverv
                             <DescriptionListTerm>{_("State")}</DescriptionListTerm>
                             <DescriptionListDescription>
                                 <StateIcon
-                                    error={vm.error}
                                     state={vm.state}
                                     valueId={`${idPrefix}-${vm.connectionName}-state`}
-                                    dismissError={() => appState.updateVm(vm, { error: null })}
                                 />
                             </DescriptionListDescription>
                         </DescriptionListGroup>
