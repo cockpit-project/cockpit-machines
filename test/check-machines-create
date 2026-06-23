@@ -2696,7 +2696,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
                          b.text("ul.pf-v6-c-menu__list"))
 
         # RHEL ≥ 9 doesn't support SPICE, so skip the rest of the test
-        if (m.image.startswith("rhel-") or m.image.startswith("centos-")) and "rhel-8" not in m.image:
+        if m.image.startswith(("rhel-", "centos-", "fedora-eln")) and "rhel-8" not in m.image:
             return
 
         # add spice grapics. Remove vnc so that we can check that
@@ -2836,7 +2836,7 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
         self.assertIn("spice", m.execute("virsh dumpxml --inactive SpiceTwo"))
 
     # we need this test to create a SPICE VM to simulate the host change to "no spice support"
-    @testlib.skipImage('SPICE not supported on RHEL', "rhel-*", "centos-*")
+    @testlib.skipImage('SPICE not supported on RHEL', "rhel-*", "centos-*", "fedora-eln")
     @testlib.skipImage('SPICE conversion not supported', "ubuntu-2404")
     def testNoSpiceAlert(self):
         b = self.browser
