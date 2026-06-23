@@ -76,6 +76,7 @@ import {
 } from "./createVmDialogUtils.js";
 import { domainCreate } from '../../libvirtApi/domain.js';
 import { storagePoolRefresh, storagePoolGetAll } from '../../libvirtApi/storagePool.js';
+import { getInstallMediaPools } from '../../libvirtApi/installMediaPools.js';
 import { getAccessToken } from '../../libvirtApi/rhel-images.js';
 import { getOsInfoList } from '../../libvirtApi/common.js';
 import { PasswordFormFields } from 'cockpit-components-password.jsx';
@@ -335,7 +336,8 @@ const SourceRow = ({
     downloadOSSupported,
     offlineToken,
     onValueChanged,
-    validationFailed
+    validationFailed,
+    installMediaSourceKey,
 } : {
     connectionName: ConnectionName,
     source: optString,
@@ -349,6 +351,7 @@ const SourceRow = ({
     offlineToken: optString,
     onValueChanged: OnValueChanged,
     validationFailed: ValidationFailed,
+    installMediaSourceKey: number,
 }) => {
     let installationSource;
     let installationSourceId;
@@ -359,7 +362,8 @@ const SourceRow = ({
     case LOCAL_INSTALL_MEDIA_SOURCE:
         installationSourceId = "source-file";
         installationSource = (
-            <FileAutoComplete id={installationSourceId}
+            <FileAutoComplete key={installMediaSourceKey}
+                id={installationSourceId}
                 placeholder={_("Path to ISO file on host's file system")}
                 onChange={(value: string) => onValueChanged('source', value)}
                 value={source || ''}
@@ -1218,6 +1222,9 @@ interface CreateVmModalState extends VmParams {
     minimumStorage: number;
     unattendedInstallation?: boolean;
     sourceMediaID?: string;
+    // bumped once when the install source is pre-filled, to remount the
+    // FileAutoComplete so it picks up the new value (it only reads `value` on mount)
+    installMediaSourceKey: number;
 }
 
 export class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmModalState> {
@@ -1255,6 +1262,7 @@ export class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmM
                 : LIBVIRT_SYSTEM_CONNECTION),
             sourceType: defaultSourceType,
             source: props.initialSource || '',
+            installMediaSourceKey: 0,
             os: undefined,
             ...getMemoryDefaults(props.nodeMaxMemory),
             ...getStorageDefaults(),
@@ -1308,6 +1316,11 @@ export class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmM
 
         this.setState({ osInfoListLoading: false, osInfoList });
 
+        // Pre-fill the local install-media source from a pool the user marked
+        // for installation media (also runs when switching to that source type).
+        if (this.state.sourceType == LOCAL_INSTALL_MEDIA_SOURCE)
+            await this.prefillInstallMediaSource();
+
         // If initialOS was provided via props, find and set the matching OS
         if (this.props.initialOS) {
             const matchingOS = osInfoList.find(os => os.shortId === this.props.initialOS);
@@ -1316,6 +1329,31 @@ export class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmM
             }
         }
     }
+
+    // Default the local install-media source to the directory of a storage pool
+    // the user marked for installation media, so the path picker opens there
+    // instead of at the filesystem root. Only when no source was provided/typed.
+    prefillInstallMediaSource = async () => {
+        if (this.props.initialSource || this.state.source)
+            return;
+
+        try {
+            const markedUuids = await getInstallMediaPools(this.state.connectionName);
+            const pool = appState.storagePools.find(
+                p => p.connectionName == this.state.connectionName &&
+                     !!p.uuid && markedUuids.includes(p.uuid) &&
+                     !!(p.target && p.target.path));
+            if (pool && pool.target && pool.target.path && !this.state.source) {
+                const path = pool.target.path.replace(/\/?$/, "/");
+                this.setState(state => ({
+                    source: path,
+                    installMediaSourceKey: state.installMediaSourceKey + 1,
+                }));
+            }
+        } catch (ex) {
+            console.warn("Could not pre-fill installation media source:", String(ex));
+        }
+    };
 
     handleTabClick = (event: React.MouseEvent, tabIndex: number | string) => {
         // Prevent the form from being submitted.
@@ -1350,6 +1388,8 @@ export class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmM
                 // all the other choices are string set by the user
                 this.setState({ source: '' });
             }
+            if (value == LOCAL_INSTALL_MEDIA_SOURCE)
+                this.prefillInstallMediaSource();
             break;
         case 'storagePool': {
             cockpit.assert(typeof value == "string");
@@ -1572,7 +1612,8 @@ export class CreateVmModal extends React.Component<CreateVmModalProps, CreateVmM
                     cloudInitSupported={this.props.cloudInitSupported}
                     downloadOSSupported={this.props.downloadOSSupported}
                     onValueChanged={this.onValueChanged}
-                    validationFailed={validationFailed} />
+                    validationFailed={validationFailed}
+                    installMediaSourceKey={this.state.installMediaSourceKey} />
 
                 {this.state.sourceType != DOWNLOAD_AN_OS &&
                 <OSRow
