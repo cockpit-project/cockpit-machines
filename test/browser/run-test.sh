@@ -22,6 +22,10 @@ if [ "$TEST_OS" = "centos-9" ]; then
     TEST_OS="${TEST_OS}-stream"
 fi
 
+if [ "${VARIANT_ID:-}" = "eln" ]; then
+    TEST_OS="fedora-eln"
+fi
+
 #
 # exclude known-broken tests
 #
