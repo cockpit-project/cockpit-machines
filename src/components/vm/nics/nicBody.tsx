@@ -4,7 +4,7 @@
  * Copyright (C) 2019 Red Hat, Inc.
  */
 
-import React from 'react';
+import React, { useId } from 'react';
 
 import * as ipaddr from "ipaddr.js";
 
@@ -429,11 +429,16 @@ const SimplePortForward = ({
     field: DialogField<DialogSimplePortForward>,
     removeitem: () => void,
 }) => {
+    const address_id = useId();
+    const host_id = useId();
+    const guest_id = useId();
+    const proto_id = useId();
+
     return (
-        <Grid hasGutter id={field.id()}>
+        <Grid hasGutter data-ouia-component-id={field.ouia_id()}>
             <FormGroup className="pf-m-3-col-on-md"
                 label={_("IP address")}
-                fieldId={field.sub("address").id()}
+                fieldId={address_id}
                 labelHelp={
                     <InfoPopover
                         aria-label={_("IP address help")}
@@ -442,12 +447,15 @@ const SimplePortForward = ({
                     />
                 }
             >
-                <DialogTextInput field={field.sub("address")} />
+                <DialogTextInput
+                    id={address_id}
+                    field={field.sub("address")}
+                />
             </FormGroup>
             <FormGroup
                 className="pf-m-4-col-on-md"
                 label={_("Host port")}
-                fieldId={field.sub("host").id()}
+                fieldId={host_id}
                 isRequired
                 labelHelp={
                     <InfoPopover
@@ -457,12 +465,16 @@ const SimplePortForward = ({
                     />
                 }
             >
-                <DialogTextInput step={1} field={field.sub("host")} />
+                <DialogTextInput
+                    id={host_id}
+                    step={1}
+                    field={field.sub("host")}
+                />
             </FormGroup>
             <FormGroup
                 className="pf-m-3-col-on-md"
                 label={_("Guest port")}
-                fieldId={field.sub("guest").id()}
+                fieldId={guest_id}
                 labelHelp={
                     <InfoPopover
                         aria-label={_("Guest port help")}
@@ -470,16 +482,20 @@ const SimplePortForward = ({
                         bodyContent={_("The port on the guest. If left empty, the same port as on the host is used.")}
                     />
                 }>
-                <DialogTextInput field={field.sub("guest")} />
+                <DialogTextInput
+                    id={guest_id}
+                    field={field.sub("guest")}
+                />
             </FormGroup>
             <FormGroup
                 className="pf-m-2-col-on-md"
                 label={_("Protocol")}
-                fieldId={field.sub("proto").id()}
+                fieldId={proto_id}
             >
                 <FormSelect
                     className='pf-v6-c-form-control'
-                    id={field.sub("proto").id()}
+                    id={proto_id}
+                    ouiaId={field.sub("proto").ouia_id()}
                     value={field.sub("proto").get()}
                     onChange={(_event, val) => field.sub("proto").set(val)}
                 >
@@ -491,7 +507,7 @@ const SimplePortForward = ({
                 <Button
                     variant='plain'
                     className="btn-close"
-                    id={field.id("remove")}
+                    ouiaId={field.ouia_id("remove")}
                     size="sm"
                     aria-label={_("Remove item")}
                     icon={<TrashIcon />}
@@ -510,7 +526,7 @@ const ComplexPortForward = ({
     removeitem: () => void,
 }) => {
     return (
-        <Grid hasGutter id={field.id()}>
+        <Grid hasGutter data-ouia-component-id={field.ouia_id()}>
             <div className="pf-m-12-col-on-md">
                 {
                     cockpit.format(
@@ -522,7 +538,7 @@ const ComplexPortForward = ({
                 <Button
                     variant='plain'
                     className="btn-close"
-                    id={field.id("remove")}
+                    ouiaId={field.ouia_id("remove")}
                     size="sm"
                     aria-label={_("Remove item")}
                     icon={<TrashIcon />}
@@ -538,6 +554,8 @@ export const NetworkPortForwardsRow = ({
 } : {
     field: DialogField<PortForwardsValue>,
 }) => {
+    const id = useId();
+
     const simple_default: DialogPortForward = {
         kind: "simple",
         address: "",
@@ -562,11 +580,11 @@ export const NetworkPortForwardsRow = ({
 
     return (
         <FormFieldGroup
-            id={field.id()}
+            data-ouia-component-id={field.ouia_id()}
             className="nic-dynamic-form-group"
             header={
                 <FormFieldGroupHeader
-                    titleText={{ id: field.id("header"), text: _("Forwarded ports") }}
+                    titleText={{ id, text: _("Forwarded ports") }}
                     actions={action}
                 />
             }

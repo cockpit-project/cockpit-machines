@@ -9,7 +9,7 @@
  */
 
 import cockpit from "cockpit";
-import React from 'react';
+import React, { useId } from 'react';
 
 import { InputGroup } from "@patternfly/react-core/dist/esm/components/InputGroup";
 
@@ -37,13 +37,16 @@ export const FileAutoComplete = ({
 }) => {
     return (
         <OptionalFormGroup label={label}>
-            <CockpitFileAutoComplete
-                id={field.id()}
-                placeholder={placeholder}
-                onChange={(value: string) => field.set(value)}
-                value={field.get()}
-                superuser="try"
-            />
+            <div
+                data-ouia-component-id={field.ouia_id()}
+            >
+                <CockpitFileAutoComplete
+                    placeholder={placeholder}
+                    onChange={(value: string) => field.set(value)}
+                    value={field.get()}
+                    superuser="try"
+                />
+            </div>
             <DialogHelperText field={field} />
         </OptionalFormGroup>
     );
@@ -67,13 +70,14 @@ export const SizeInput = ({
     warning?: React.ReactNode;
     explanation?: React.ReactNode;
 }) => {
+    const id = useId();
     const { unit } = field.get();
     const maxSize = parseFloat(convertToUnit(max, units.B, unit).toFixed(2));
 
     return (
         <OptionalFormGroup
             label={label}
-            fieldId={field.sub("size").id()}
+            fieldId={id}
         >
             <InputGroup>
                 {/* We don't do anything special while the user is
@@ -85,6 +89,7 @@ export const SizeInput = ({
                     during validation.
                   */}
                 <DialogTextInput
+                    id={id}
                     field={field.sub("size")}
                     type="number"
                     inputMode='numeric'
