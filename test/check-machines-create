@@ -14,6 +14,7 @@ from datetime import datetime
 
 import machineslib
 import testlib
+from dialoglib import DialogHelpers
 from machinesxmls import NETWORK_XML_PXE, PXE_SERVER_CFG
 
 NO_STORAGE = "No storage"
@@ -1994,9 +1995,10 @@ class TestMachinesCreate(machineslib.VirtualMachinesCase):
             else:
                 b.wait_in_text(f"#vm-{name}-disks .pf-v6-c-empty-state", "No disks")
                 b.click(f"#vm-{name}-disks-adddisk")
+                d = DialogHelpers(b, f"#vm-{name}-disks-adddisk-dialog-modal-window")
                 # wait for the dialog to initialize and have a stable layout
-                b.wait_visible("#dialog-field-mode")
-                b.click("#dialog-cancel")
+                b.wait_visible(d.field("mode"))
+                b.click(d.cancel_button())
                 b.wait_not_present(".pf-v6-c-modal-box")
 
             if dialog.sourceType == 'pxe' and "network" not in dialog.location:

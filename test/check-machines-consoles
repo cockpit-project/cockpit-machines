@@ -361,7 +361,6 @@ fullscreen=0
 
     def testAddEditVNC(self):
         b = self.browser
-        d = DialogHelpers(b)
 
         # Create a machine without any consoles
 
@@ -395,6 +394,8 @@ fullscreen=0
         self.assertEqual(len(graphics), 1)
         self.assertEqual(graphics[0].get('port'), "-1")
         self.assertEqual(graphics[0].get('passwd'), None)
+
+        d = DialogHelpers(b, "#vnc-edit-dialog")
 
         b.click(".vm-console-footer .pf-v6-c-button.pf-m-link")
         b.click(".ct-remote-viewer-popover button:contains('Edit VNC settings')")

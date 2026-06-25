@@ -534,7 +534,6 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
 
     def testNetworkSettings(self):
         b = self.browser
-        d = DialogHelpers(b)
         m = self.machine
 
         self.createVm("subVmTest1")
@@ -563,6 +562,8 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         b.wait_visible("#vm-subVmTest1-network-1-edit-dialog")
         b.wait_visible("#vm-subVmTest1-network-2-edit-dialog")
 
+        d = DialogHelpers(b, "#vm-subVmTest1-network-1-edit-dialog-modal-window")
+
         b.click("#vm-subVmTest1-network-1-edit-dialog")
 
         # Make sure the dialog warning does not appear until we change something
@@ -575,6 +576,8 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         # Fetch current NIC model type
         self.expandNicRow(2)
         current_model_type = b.text("#vm-subVmTest1-network-2-model")
+
+        d = DialogHelpers(b, "#vm-subVmTest1-network-2-edit-dialog-modal-window")
 
         # Reopen dialog modal
         b.click("#vm-subVmTest1-network-2-edit-dialog")
@@ -629,6 +632,7 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
         # Change interface type to direct
         # Open the modal dialog
         b.click("#vm-subVmTest1-network-1-edit-dialog")
+        d = DialogHelpers(b, "#vm-subVmTest1-network-1-edit-dialog-modal-window")
 
         d.wait_RadioSelect("type_and_source.type", "bridge")
         d.set_RadioSelect("type_and_source.type", "direct")
@@ -732,6 +736,8 @@ class TestMachinesNetworks(machineslib.VirtualMachinesCase):
 
         # Try to edit the interface changing the source to a non deleted network
         b.click("#vm-subVmTest1-network-2-edit-dialog")
+        d = DialogHelpers(b, "#vm-subVmTest1-network-2-edit-dialog-modal-window")
+
         b.wait_visible("#vm-subVmTest1-network-2-edit-dialog-modal-window")
         d.wait_RadioSelect("type_and_source.type", "network")
         d.wait_DropdownSelect("type_and_source.source", "default")

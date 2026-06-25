@@ -537,7 +537,7 @@ class TestMachinesStoragePools(machineslib.VirtualMachinesCase):
                 self, test_obj, pool_name, vol_name, size="128", unit="MiB", fmt='qcow2',
                 pool_type="dir", xfail=False, xfail_objects=None, xfail_error=None, remove=True,
             ):
-                super().__init__(test_obj.browser)
+                super().__init__(test_obj.browser, "#create-volume-dialog-modal")
 
                 self.test_obj = test_obj
                 self.pool_name = pool_name
