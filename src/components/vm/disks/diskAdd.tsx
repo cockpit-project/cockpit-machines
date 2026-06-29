@@ -39,7 +39,7 @@ import {
     DialogActionButton, DialogCancelButton,
 } from 'cockpit/dialog';
 
-import { FileAutoComplete } from '../../common/dialog';
+import { DialogFileChooserInput, regexFilter } from "cockpit/react/FileChooser";
 
 const _ = cockpit.gettext;
 
@@ -407,12 +407,27 @@ const CustomPath = ({
             field.sub("device").set("cdrom");
     }
 
+    const image_filters = [
+        regexFilter("Disk image files", "\\.(iso|qcow2|raw)$")
+    ];
+
     return (
         <>
-            <FileAutoComplete
-                label={_("Custom path")}
+
+            <DialogFileChooserInput
                 field={field.sub("file", update_file)}
+                label={_("Custom path")}
                 placeholder={_("Path to file on host's file system")}
+                fileChooserProps={
+                    {
+                        title: _("Select disk image"),
+                        filters: image_filters,
+                        shortcuts: [
+                            { label: _("Disk images"), path: "/var/lib/libvirt/images" },
+                        ],
+                        superuser: "try",
+                    }
+                }
             />
             {
                 !hideDeviceRow &&
