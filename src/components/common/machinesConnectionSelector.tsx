@@ -24,7 +24,8 @@ const _ = cockpit.gettext;
 interface MachinesConnectionSelectorProps {
     onValueChanged: (prop: "connectionName", value: ConnectionName) => void,
     connectionName: ConnectionName,
-    id: string,
+    id?: string,
+    ouiaId?: string,
     showInfoHelper?: boolean,
     isReadonly?: boolean,
 }
@@ -33,6 +34,7 @@ export const MachinesConnectionSelector = ({
     onValueChanged,
     connectionName,
     id,
+    ouiaId,
     showInfoHelper,
     isReadonly,
 }: MachinesConnectionSelectorProps) => {
@@ -44,6 +46,7 @@ export const MachinesConnectionSelector = ({
         <FormGroup label={_("Connection")}
                    isInline
                    id={id}
+                   data-ouia-component-id={ouiaId}
                    className="machines-connection-selector"
                    {...(showInfoHelper && !isReadonly)
                        ? {
