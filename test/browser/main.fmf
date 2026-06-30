@@ -16,11 +16,11 @@
   duration: 60m
 
   adjust:
-    # RHEL
+    # RHEL/ELN
     - require+:
         # required by TestMachinesCreate.testCreateUrlSource
         - qemu-kvm-block-curl
-      when: distro ~ rhel
+      when: distro ~ rhel or distro == fedora-eln
 
     # Fedora split out qemu-virtiofsd
     - require+:
