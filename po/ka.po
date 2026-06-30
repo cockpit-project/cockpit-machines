@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE_VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-07 06:50+0000\n"
-"PO-Revision-Date: 2026-05-06 11:59+0000\n"
+"POT-Creation-Date: 2026-06-29 07:15+0000\n"
+"PO-Revision-Date: 2026-06-26 19:17+0000\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translate.fedoraproject.org/projects/"
 "cockpit/cockpit-machines/ka/>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.17.1\n"
+"X-Generator: Weblate 2026.6.1\n"
 
 #: src/components/vm/nics/nicBody.tsx:326
 msgid " excluding "
@@ -65,8 +65,8 @@ msgstr "$0-ის მეხსიერების შესწორება"
 msgid "$0 network"
 msgstr "$0 ქსელი"
 
-#: src/components/vm/vmUsageCard.tsx:35
 #: src/components/vm/overview/vmOverviewCard.tsx:140
+#: src/components/vm/vmUsageCard.tsx:35
 msgid "$0 vCPU"
 msgid_plural "$0 vCPUs"
 msgstr[0] "$0 ცალი vCPU"
@@ -88,8 +88,8 @@ msgstr ""
 "VM-ის ასლი გაეშვება სამიზნე მანქანაზე და გაქრება, როცა ის გამოირთვება. ამავე "
 "დროს საწყისი ჰოსტს VM-ის კონფიგურაცის საკუთარი ასლი გააჩნია."
 
-#: src/components/vm/disks/diskEdit.tsx:130
 #: src/components/vm/disks/vmDisksCard.tsx:246
+#: src/components/vm/disks/diskEdit.tsx:130
 msgid "Access"
 msgstr "წვდომა"
 
@@ -98,16 +98,16 @@ msgid "Action"
 msgstr "ქმედება"
 
 #: src/components/vm/disks/vmDisksCard.tsx:162
-#: src/components/vm/snapshots/vmSnapshotsCard.tsx:185
 #: src/components/vm/nics/vmNicsCard.tsx:593
-#: src/components/networks/networkList.tsx:64
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:185
 #: src/components/storagePools/storagePoolList.tsx:65
-#: src/components/vms/hostvmslist.tsx:324
+#: src/components/vms/hostvmslist.tsx:317
+#: src/components/networks/networkList.tsx:64
 msgid "Actions"
 msgstr "ქმედებები"
 
-#: src/components/networks/network.tsx:163
-#: src/components/storagePools/storagePool.tsx:160
+#: src/components/storagePools/storagePool.tsx:155
+#: src/components/networks/network.tsx:149
 msgid "Activate"
 msgstr "აქტივაცია"
 
@@ -116,9 +116,9 @@ msgid "Activate the storage pool to administer volumes"
 msgstr "საცავის პულის აქტივაცია საცავების ადმინისტრირებისთვის"
 
 #: src/components/vm/disks/diskAdd.tsx:749
-#: src/components/vm/overview/watchdog.tsx:167
+#: src/components/vm/nics/nicBody.tsx:559 src/components/vm/nics/nicAdd.tsx:274
 #: src/components/vm/overview/vsock.tsx:223
-#: src/components/vm/nics/nicAdd.tsx:274 src/components/vm/nics/nicBody.tsx:559
+#: src/components/vm/overview/watchdog.tsx:167
 #: src/components/vm/hostdevs/hostDevAdd.tsx:261
 #: src/components/networks/networkOverviewTab.tsx:268
 msgid "Add"
@@ -128,11 +128,11 @@ msgstr "დამატება"
 msgid "Add SSH keys"
 msgstr "SSH გასაღებების დამატება"
 
-#: src/components/vm/vmActions.tsx:457
+#: src/components/vm/vmActions.tsx:453
 msgid "Add TPM"
 msgstr "TPM-ის დამატება"
 
-#: src/components/vm/consoles/vnc.tsx:665
+#: src/components/vm/consoles/vnc.tsx:620
 msgid "Add VNC"
 msgstr "VNC-ის დამატება"
 
@@ -145,8 +145,8 @@ msgstr "ჰოსტის DHCP სტატიკური ელემენ�
 msgid "Add disk"
 msgstr "დისკის დამატება"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:140
 #: src/components/vm/hostdevs/hostDevAdd.tsx:278
+#: src/components/vm/hostdevs/hostDevCard.tsx:140
 msgid "Add host device"
 msgstr "ჰოსტის მოწყობილობის დამატება"
 
@@ -204,8 +204,8 @@ msgstr ""
 "დამატებითი ინტერფეისის ტიპი მაღალი წარმადობისთვის, ან დამატებითი "
 "უსაფრთხოებისთვის."
 
-#: src/components/vms/hostvmslist.tsx:221
-#: src/components/vms/hostvmslist.tsx:239
+#: src/components/vms/hostvmslist.tsx:214
+#: src/components/vms/hostvmslist.tsx:232
 msgid "All"
 msgstr "ყველა"
 
@@ -278,9 +278,9 @@ msgstr "ავტომატური"
 msgid "Automation"
 msgstr "ავტომატიზაცია"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:192
-#: src/components/networks/networkOverviewTab.tsx:117
+#: src/components/vm/overview/vmOverviewCard.tsx:190
 #: src/components/storagePools/storagePoolOverviewTab.tsx:60
+#: src/components/networks/networkOverviewTab.tsx:117
 msgid "Autostart"
 msgstr "ავტომატური გაშვება"
 
@@ -292,8 +292,8 @@ msgstr "უკანაბოლო"
 msgid "Base System Peripheral"
 msgstr "საბაზისო სისტემის პერიფერია"
 
-#: src/components/vm/deleteDialog.tsx:73
 #: src/components/vm/disks/vmDiskColumns.tsx:40
+#: src/components/vm/deleteDialog.tsx:73
 msgid "Block device"
 msgstr "ბლოკური მოწყობილობა"
 
@@ -305,7 +305,7 @@ msgstr "დაბლოკილია"
 msgid "Boot arguments"
 msgstr "ჩატვირთვის არგუმენტები"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:185
+#: src/components/vm/overview/vmOverviewCard.tsx:183
 msgid "Boot order"
 msgstr "ჩატვირთვის მიმდევრობა"
 
@@ -317,18 +317,18 @@ msgstr "ჩატვირთვის მიმდევრობის შე�
 msgid "Bridge"
 msgstr "ხიდი"
 
-#: src/components/vm/disks/diskEdit.tsx:93
 #: src/components/vm/disks/diskAdd.tsx:177
 #: src/components/vm/disks/vmDisksCard.tsx:241
+#: src/components/vm/disks/diskEdit.tsx:93
 #: src/components/vm/overview/bootOrder.tsx:114
 #: src/components/vm/overview/bootOrder.tsx:126
 #: src/components/vm/overview/bootOrder.tsx:145
 #: src/components/vm/overview/bootOrder.tsx:148
 #: src/components/vm/overview/bootOrder.tsx:163
+#: src/components/vm/hostdevs/hostDevAdd.tsx:100
 #: src/components/vm/hostdevs/hostDevCard.tsx:91
 #: src/components/vm/hostdevs/hostDevCard.tsx:99
 #: src/components/vm/hostdevs/hostDevCard.tsx:250
-#: src/components/vm/hostdevs/hostDevAdd.tsx:100
 msgid "Bus"
 msgstr "მატარებელი"
 
@@ -336,10 +336,10 @@ msgstr "მატარებელი"
 msgid "CD/DVD disc"
 msgstr "CD/DVD დისკი"
 
-#: src/components/vm/vmUsageCard.tsx:52
-#: src/components/vm/overview/vmOverviewCard.tsx:180
 #: src/components/common/needsShutdown.tsx:206
-#: src/components/vms/hostvmslist.tsx:93 src/components/vms/hostvmslist.tsx:301
+#: src/components/vm/overview/vmOverviewCard.tsx:178
+#: src/components/vm/vmUsageCard.tsx:52 src/components/vms/hostvmslist.tsx:86
+#: src/components/vms/hostvmslist.tsx:294
 msgid "CPU"
 msgstr "CPU"
 
@@ -347,9 +347,9 @@ msgstr "CPU"
 msgid "CPU mode could not be saved"
 msgstr "CPU-ის პარამეტრების შენახვის შეცდომა"
 
-#: src/components/vm/disks/diskEdit.tsx:167
 #: src/components/vm/disks/diskAdd.tsx:172
 #: src/components/vm/disks/vmDisksCard.tsx:257
+#: src/components/vm/disks/diskEdit.tsx:167
 msgid "Cache"
 msgstr "ქეში"
 
@@ -357,31 +357,30 @@ msgstr "ქეში"
 msgid "Can not determine guest device name"
 msgstr "სტუმარი მოწყობილობის სახელის დადგენა შეუძლებელია"
 
-#: src/components/vm/vmCloneDialog.tsx:111
-#: src/components/vm/vmRenameDialog.tsx:96
-#: src/components/vm/vmReplaceSpiceDialog.tsx:171
-#: src/components/vm/deleteDialog.tsx:216
+#: src/components/create-vm-dialog/createVmDialog.tsx:1734
+#: src/components/common/deleteResource.tsx:116
 #: src/components/vm/disks/mediaEject.tsx:116
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:127
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:340
-#: src/components/vm/overview/watchdog.tsx:228
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:248
 #: src/components/vm/overview/firmware.tsx:107
+#: src/components/vm/overview/bootOrder.tsx:356
 #: src/components/vm/overview/cpuModal.tsx:341
 #: src/components/vm/overview/memoryModal.tsx:195
-#: src/components/vm/overview/bootOrder.tsx:356
 #: src/components/vm/overview/vsock.tsx:272
+#: src/components/vm/overview/watchdog.tsx:228
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:340
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:127
+#: src/components/vm/vmReplaceSpiceDialog.tsx:171
 #: src/components/vm/confirmDialog.tsx:66
-#: src/components/vm/vmEditDescriptionDialog.tsx:81
-#: src/components/vm/consoles/vnc.tsx:158
 #: src/components/vm/hostdevs/hostDevAdd.tsx:266
 #: src/components/vm/vmMigrateDialog.tsx:227
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:248
-#: src/components/create-vm-dialog/createVmDialog.tsx:1734
-#: src/components/networks/createNetworkDialog.tsx:548
-#: src/components/networks/networkOverviewTab.tsx:271
-#: src/components/storagePools/storagePoolDelete.tsx:207
+#: src/components/vm/vmEditDescriptionDialog.tsx:81
+#: src/components/vm/vmCloneDialog.tsx:111
+#: src/components/vm/deleteDialog.tsx:216
+#: src/components/vm/vmRenameDialog.tsx:96
 #: src/components/storagePools/createStoragePoolDialog.tsx:512
-#: src/components/common/deleteResource.tsx:116
+#: src/components/storagePools/storagePoolDelete.tsx:207
+#: src/components/networks/networkOverviewTab.tsx:271
+#: src/components/networks/createNetworkDialog.tsx:548
 msgid "Cancel"
 msgstr "გაუქმება"
 
@@ -441,13 +440,9 @@ msgstr ""
 "\"დამთვალიერებლის გაშვებაზე\" დაჭერა გადმოწერს $0 ფაილს და გაუშვებს "
 "დაშორებული დამთვალიერებლის აპლიკაციას თქვენს სისტემაზე."
 
-#: src/components/vm/vmCloneDialog.tsx:108 src/components/vm/vmActions.tsx:387
+#: src/components/vm/vmActions.tsx:383 src/components/vm/vmCloneDialog.tsx:108
 msgid "Clone"
 msgstr "კლონი"
-
-#: src/components/common/stateIcon.tsx:59
-msgid "Close"
-msgstr "დახურვა"
 
 #: src/components/create-vm-dialog/createVmDialog.tsx:446
 msgid "Cloud base image"
@@ -478,22 +473,26 @@ msgid "Confirm this action"
 msgstr "ქმედების დასტური"
 
 #: src/components/vm/consoles/serial.tsx:86
-#: src/components/vm/consoles/vnc.tsx:584
+#: src/components/vm/consoles/vnc.tsx:539
 msgid "Connect"
 msgstr "დაკავშირება"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:158
-#: src/components/networks/createNetworkDialog.tsx:34
-#: src/components/networks/networkList.tsx:61
-#: src/components/storagePools/storagePoolList.tsx:63
 #: src/components/common/machinesConnectionSelector.tsx:44
-#: src/components/vms/hostvmslist.tsx:321
+#: src/components/vm/overview/vmOverviewCard.tsx:158
+#: src/components/storagePools/storagePoolList.tsx:63
+#: src/components/vms/hostvmslist.tsx:314
+#: src/components/networks/networkList.tsx:61
+#: src/components/networks/createNetworkDialog.tsx:34
 msgid "Connection"
 msgstr "კავშირი"
 
 #: src/components/vm/consoles/consoles.tsx:367
 msgid "Console"
 msgstr "კონსოლი"
+
+#: src/components/vm/consoles/consoles.tsx:385
+msgid "Console type"
+msgstr "კონსოლის ტიპი"
 
 #: src/components/vm/vmReplaceSpiceDialog.tsx:148
 msgid "Convert QXL video card to VGA"
@@ -541,9 +540,9 @@ msgid "Crashed"
 msgstr "გაითიშა"
 
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:337
-#: src/components/networks/createNetworkDialog.tsx:545
-#: src/components/storagePools/storageVolumeCreate.tsx:95
 #: src/components/storagePools/createStoragePoolDialog.tsx:509
+#: src/components/storagePools/storageVolumeCreate.tsx:95
+#: src/components/networks/createNetworkDialog.tsx:545
 msgid "Create"
 msgstr "შექმნა"
 
@@ -587,8 +586,8 @@ msgstr "ახალი raw ტომის შექმნა"
 msgid "Create new virtual machine"
 msgstr "ახალი ვირტუალური მანქანის შექმნა"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.tsx:61
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:324
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:61
 msgid "Create snapshot"
 msgstr "სწრაფი ასლის შექმნა"
 
@@ -635,7 +634,7 @@ msgstr "ვმ-ის ($0) შექმნის შეცდომა"
 msgid "Creation time"
 msgstr "შექმნის დრო"
 
-#: src/components/vm/consoles/vnc.tsx:301
+#: src/components/vm/consoles/vnc.tsx:256
 msgid "Ctrl+Alt+$0"
 msgstr "Ctrl+Alt+$0"
 
@@ -664,20 +663,21 @@ msgstr "ხელით მითითებული ბილიკი"
 msgid "DHCP Settings"
 msgstr "DHCP-ის მორგება"
 
-#: src/components/networks/network.tsx:159
-#: src/components/storagePools/storagePool.tsx:151
+#: src/components/storagePools/storagePool.tsx:146
+#: src/components/networks/network.tsx:145
 msgid "Deactivate"
 msgstr "დეაქტივაცია"
 
-#: src/components/vm/deleteDialog.tsx:213 src/components/vm/vmActions.tsx:470
-#: src/components/vm/vmActions.tsx:478 src/components/networks/network.tsx:140
-#: src/components/networks/network.tsx:143
-#: src/components/storagePools/storagePoolDelete.tsx:204
-#: src/components/storagePools/storagePoolDelete.tsx:234
-#: src/components/storagePools/storagePoolDelete.tsx:244
 #: src/components/common/deleteResource.tsx:104
 #: src/components/common/deleteResource.tsx:164
 #: src/components/common/deleteResource.tsx:175
+#: src/components/vm/vmActions.tsx:466 src/components/vm/vmActions.tsx:474
+#: src/components/vm/deleteDialog.tsx:213
+#: src/components/storagePools/storagePoolDelete.tsx:204
+#: src/components/storagePools/storagePoolDelete.tsx:234
+#: src/components/storagePools/storagePoolDelete.tsx:244
+#: src/components/networks/network.tsx:126
+#: src/components/networks/network.tsx:129
 msgid "Delete"
 msgstr "წაშლა"
 
@@ -699,7 +699,7 @@ msgstr[1] "$0 ტომის წაშლა"
 msgid "Delete associated storage files:"
 msgstr "საცავის მიბმული ფაილების წაშლა:"
 
-#: src/components/networks/network.tsx:130
+#: src/components/networks/network.tsx:116
 msgid "Delete network?"
 msgstr "წავშალო ქსელი?"
 
@@ -721,8 +721,8 @@ msgstr ""
 "გაზიარებული საქაღალდეების წაშლა მხოლოდ სტუმრის გამორთულობის დროსაა "
 "შესაძლებელი"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.tsx:123
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:76
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:123
 #: src/components/vm/vmEditDescriptionDialog.tsx:66
 msgid "Description"
 msgstr "აღწერა"
@@ -759,12 +759,12 @@ msgstr "დეტალები"
 #: src/components/vm/overview/bootOrder.tsx:113
 #: src/components/vm/overview/bootOrder.tsx:146
 #: src/components/vm/overview/bootOrder.tsx:149
-#: src/components/vm/hostdevs/hostDevCard.tsx:90
-#: src/components/vm/hostdevs/hostDevCard.tsx:249
 #: src/components/vm/hostdevs/hostDevAdd.tsx:99
 #: src/components/vm/hostdevs/hostDevAdd.tsx:144
-#: src/components/networks/createNetworkDialog.tsx:218
+#: src/components/vm/hostdevs/hostDevCard.tsx:90
+#: src/components/vm/hostdevs/hostDevCard.tsx:249
 #: src/components/networks/networkList.tsx:60
+#: src/components/networks/createNetworkDialog.tsx:218
 msgid "Device"
 msgstr "მოწყობილობა"
 
@@ -777,7 +777,7 @@ msgid "Disconnect"
 msgstr "გათიშვა"
 
 #: src/components/vm/consoles/serial.tsx:83
-#: src/components/vm/consoles/vnc.tsx:578
+#: src/components/vm/consoles/vnc.tsx:533
 msgid "Disconnected"
 msgstr "გათიშულია"
 
@@ -891,12 +891,12 @@ msgstr "ჩასწორება"
 msgid "Edit $0 attributes"
 msgstr "$0-ის ატრიბუტების ჩასწორება"
 
-#: src/components/vm/consoles/vnc.tsx:144
-#: src/components/vm/consoles/vnc.tsx:364
+#: src/components/vm/consoles/vnc.tsx:146
+#: src/components/vm/consoles/vnc.tsx:319
 msgid "Edit VNC settings"
 msgstr "VNC-ის პარამეტრების ჩასწორება"
 
-#: src/components/vm/vmActions.tsx:444
+#: src/components/vm/vmActions.tsx:440
 msgid "Edit description"
 msgstr "აღწერის ჩასწორება"
 
@@ -929,7 +929,7 @@ msgstr "გამოღება"
 msgid "Eject disc from VM?"
 msgstr "გამოვიღო დისკი ვმ-დან?"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:240
+#: src/components/vm/overview/vmOverviewCard.tsx:238
 msgid "Emulated machine"
 msgstr "ემულირებული მანქანა"
 
@@ -975,15 +975,11 @@ msgstr "გაფართოება"
 msgid "Extended attributes"
 msgstr "გაფართოებული ატრიბუტები"
 
-#: src/components/common/stateIcon.tsx:63
-msgid "Failed"
-msgstr "ჩავარდა"
-
-#: src/components/vm/vmActions.tsx:159
+#: src/components/vm/vmActions.tsx:155
 msgid "Failed to add TPM to VM $0"
 msgstr "ჩავარდა TPM-ის დამატება ვმ-ზე $0"
 
-#: src/components/vm/consoles/vnc.tsx:644
+#: src/components/vm/consoles/vnc.tsx:599
 msgid "Failed to add VNC to VM $0"
 msgstr "ჩავარდა VNC-ის დამატება ვმ-ზე $0"
 
@@ -1015,7 +1011,7 @@ msgstr "Vsock-ის მორგების შეცდომა"
 msgid "Failed to configure watchdog"
 msgstr "Watchdog-ის მორგების შეცდომა"
 
-#: src/components/vm/consoles/vnc.tsx:497
+#: src/components/vm/consoles/vnc.tsx:452
 msgid "Failed to connect"
 msgstr "დაკავშირების შეცდომა"
 
@@ -1047,7 +1043,7 @@ msgstr "SPICE მოწყობილობების ჩანაცვლ�
 msgid "Failed to save network settings"
 msgstr "ქსელის პარამეტრების შენახვის შეცდომა"
 
-#: src/components/vm/consoles/vnc.tsx:296
+#: src/components/vm/consoles/vnc.tsx:251
 msgid "Failed to send key Ctrl+Alt+$0 to VM $1"
 msgstr "Ctrl+Alt+$0-ის ვმ-თან ($1) გაგზავნის შეცდომა"
 
@@ -1072,12 +1068,12 @@ msgstr "ფაილური სისტემის წაშლის შე
 msgid "Filesystem directory"
 msgstr "ფაილური სიტემის საქაღალდე"
 
-#: src/components/vms/hostvmslist.tsx:262
+#: src/components/vms/hostvmslist.tsx:255
 msgid "Filter by name"
 msgstr "სახელით გაფილტვრა"
 
 #: src/components/vm/overview/firmware.tsx:90
-#: src/components/vm/overview/vmOverviewCard.tsx:246
+#: src/components/vm/overview/vmOverviewCard.tsx:244
 msgid "Firmware"
 msgstr "მიკროკოდი"
 
@@ -1100,11 +1096,11 @@ msgstr ""
 msgid "Force eject"
 msgstr "ძალით გამოღება"
 
-#: src/components/vm/vmActions.tsx:339 src/components/vm/vmActions.tsx:344
+#: src/components/vm/vmActions.tsx:335 src/components/vm/vmActions.tsx:340
 msgid "Force reboot"
 msgstr "ძალით გადატვირთვა"
 
-#: src/components/vm/vmActions.tsx:332
+#: src/components/vm/vmActions.tsx:328
 msgid "Force reboot $0?"
 msgstr "გადავტვირთო ძალით $0?"
 
@@ -1112,21 +1108,21 @@ msgstr "გადავტვირთო ძალით $0?"
 msgid "Force revert"
 msgstr "ძალით დაბრუნება"
 
-#: src/components/vm/vmActions.tsx:275 src/components/vm/vmActions.tsx:280
+#: src/components/vm/vmActions.tsx:271 src/components/vm/vmActions.tsx:276
 msgid "Force shut down"
 msgstr "ძალით გამორთვა"
 
-#: src/components/vm/vmActions.tsx:268
+#: src/components/vm/vmActions.tsx:264
 msgid "Force shut down $0?"
 msgstr "გამოვრთო ძალით $0?"
 
-#: src/components/vm/vmActions.tsx:531
+#: src/components/vm/vmActions.tsx:527
 msgid "Force shutdown and restart"
 msgstr "ძალით გამორთვა და გადატვირთვა"
 
 #: src/components/vm/disks/vmDiskColumns.tsx:134
-#: src/components/storagePools/createStoragePoolDialog.tsx:244
 #: src/components/storagePools/storageVolumeCreateBody.tsx:103
+#: src/components/storagePools/createStoragePoolDialog.tsx:244
 msgid "Format"
 msgstr "ფორმატი"
 
@@ -1165,11 +1161,11 @@ msgstr "ავტომატური გენერაცია"
 msgid "Get a new RHSM token."
 msgstr "ახალი RHSM კოდის მიღება."
 
-#: src/components/vm/disks/vmDisksCard.tsx:39
-#: src/components/vm/overview/memorySelectRow.tsx:95
 #: src/components/create-vm-dialog/createVmDialog.tsx:1018
 #: src/components/create-vm-dialog/createVmDialog.tsx:1182
 #: src/components/common/dialog.tsx:100
+#: src/components/vm/disks/vmDisksCard.tsx:39
+#: src/components/vm/overview/memorySelectRow.tsx:95
 msgid "GiB"
 msgstr "გიბ"
 
@@ -1189,7 +1185,7 @@ msgstr "ძალით გამორთვა"
 msgid "Graphical"
 msgstr "გრაფიკული"
 
-#: src/components/vm/consoles/vnc.tsx:655
+#: src/components/vm/consoles/vnc.tsx:610
 msgid "Graphical console support not enabled"
 msgstr "გრაფიკული კონსოლის მხარდაჭერა ჩართული არაა"
 
@@ -1212,8 +1208,8 @@ msgstr "დამატებითი პარამეტრების დ�
 
 #: src/components/vm/disks/vmDiskColumns.tsx:44
 #: src/components/vm/overview/bootOrder.tsx:110
-#: src/components/storagePools/storagePoolOverviewTab.tsx:23
 #: src/components/storagePools/createStoragePoolDialog.tsx:154
+#: src/components/storagePools/storagePoolOverviewTab.tsx:23
 msgid "Host"
 msgstr "ჰოსტი"
 
@@ -1253,7 +1249,7 @@ msgstr "ჰოსტის პორტის დახმარება"
 msgid "Host should not be empty"
 msgstr "ჰოსტი ცარიელი არ შეიძლება იყოს"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:236
+#: src/components/vm/overview/vmOverviewCard.tsx:234
 msgid "Hypervisor details"
 msgstr "ინფორმაცია ჰაიპერვაიზორის შესახებ"
 
@@ -1283,8 +1279,8 @@ msgstr "IP მისამართი ცარიელი არ შეიძ
 msgid "IP configuration"
 msgstr "IP კონფიგურაცია"
 
-#: src/components/networks/createNetworkDialog.tsx:337
 #: src/components/networks/networkOverviewTab.tsx:136
+#: src/components/networks/createNetworkDialog.tsx:337
 msgid "IPv4 address"
 msgstr "IPv4 მისამართი"
 
@@ -1312,8 +1308,8 @@ msgstr "IPv4 პრეფიქსის სიგრძე 24 ან ნაკ�
 msgid "IPv4 prefix length must be a multiple of 8"
 msgstr "IPv4 პრეფიქსის სიგრძე რვის ნამრავლი უნდა იყოს"
 
-#: src/components/networks/createNetworkDialog.tsx:378
 #: src/components/networks/networkOverviewTab.tsx:156
+#: src/components/networks/createNetworkDialog.tsx:378
 msgid "IPv6 address"
 msgstr "IPv6 მისამართი"
 
@@ -1416,7 +1412,7 @@ msgstr "დისკის ჩადება"
 msgid "Inside the VM"
 msgstr "ვმ-ის შიგნით"
 
-#: src/components/vm/vmActions.tsx:375
+#: src/components/vm/vmActions.tsx:371
 msgid "Install"
 msgstr "დაყენება"
 
@@ -1538,7 +1534,7 @@ msgid "Local install media (ISO image or distro install tree)"
 msgstr ""
 "დაყენების ლოკალური წყარო (ISO გამოსახულება ან დისტრიბუტივის დასაყენებელი ხე)"
 
-#: src/components/vm/consoles/vnc.tsx:268
+#: src/components/vm/consoles/vnc.tsx:223
 msgid "Local scaling"
 msgstr "ლოკალური მასშტაბი"
 
@@ -1551,15 +1547,14 @@ msgstr "მდებარეობა"
 msgid "MAC"
 msgstr "MAC"
 
-#: src/components/vm/nics/nicAdd.tsx:83
+#: src/components/vm/nics/nicEdit.tsx:45 src/components/vm/nics/nicAdd.tsx:83
 #: src/components/vm/nics/vmNicsCard.tsx:569
 #: src/components/vm/nics/vmNicsCard.tsx:767
-#: src/components/vm/nics/nicEdit.tsx:45
 #: src/components/networks/networkOverviewTab.tsx:246
 msgid "MAC address"
 msgstr "MAC მისამართი"
 
-#: src/components/vm/nics/nicAdd.tsx:179 src/components/vm/nics/nicEdit.tsx:99
+#: src/components/vm/nics/nicEdit.tsx:99 src/components/vm/nics/nicAdd.tsx:179
 msgid "MAC address already in use"
 msgstr "MAC მისამართი უკვე გამოიყენება"
 
@@ -1631,11 +1626,10 @@ msgstr "მედიის ჩასმა ჩავარდა"
 msgid "Media will be ejected from $0:"
 msgstr "მოხდება დისკის $0-დან ამოღება:"
 
-#: src/components/vm/vmUsageCard.tsx:44
-#: src/components/vm/overview/vmOverviewCard.tsx:175
 #: src/components/create-vm-dialog/createVmDialog.tsx:1003
-#: src/components/vms/hostvmslist.tsx:111
-#: src/components/vms/hostvmslist.tsx:302
+#: src/components/vm/overview/vmOverviewCard.tsx:173
+#: src/components/vm/vmUsageCard.tsx:44 src/components/vms/hostvmslist.tsx:104
+#: src/components/vms/hostvmslist.tsx:295
 msgid "Memory"
 msgstr "მეხსიერება"
 
@@ -1664,14 +1658,14 @@ msgstr "მეხსიერების სწრაფი ასლი და
 msgid "Memory state path"
 msgstr "მეხსიერების მდგომარეობის ბილიკი"
 
-#: src/components/vm/overview/memorySelectRow.tsx:93
 #: src/components/create-vm-dialog/createVmDialog.tsx:1016
 #: src/components/create-vm-dialog/createVmDialog.tsx:1180
 #: src/components/common/dialog.tsx:99
+#: src/components/vm/overview/memorySelectRow.tsx:93
 msgid "MiB"
 msgstr "მიბ"
 
-#: src/components/vm/vmActions.tsx:410
+#: src/components/vm/vmActions.tsx:406
 #: src/components/vm/vmMigrateDialog.tsx:224
 msgid "Migrate"
 msgstr "მიგრაცია"
@@ -1688,10 +1682,10 @@ msgstr "მიგრაციის შეცდომა"
 msgid "Miscellaneous"
 msgstr "სხვადასხვა"
 
-#: src/components/vm/overview/cpuModal.tsx:304
-#: src/components/vm/overview/cpuModal.tsx:306
 #: src/components/vm/nics/nicBody.tsx:276
 #: src/components/vm/nics/vmNicsCard.tsx:168
+#: src/components/vm/overview/cpuModal.tsx:304
+#: src/components/vm/overview/cpuModal.tsx:306
 msgid "Mode"
 msgstr "რეჟიმი"
 
@@ -1734,17 +1728,17 @@ msgstr "NAT $0მდე"
 msgid "NIC $0 of VM $1 failed to change state"
 msgstr "ვმ-ის ($1) ქსელური ინტერფეისის($0) მდგომარეობის შეცვლის შეცდომა"
 
-#: src/components/vm/vmCloneDialog.tsx:92
-#: src/components/vm/snapshots/vmSnapshotsCard.tsx:113
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:57
 #: src/components/create-vm-dialog/createVmDialog.tsx:313
-#: src/components/networks/createNetworkDialog.tsx:172
-#: src/components/networks/networkList.tsx:59
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:57
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:113
+#: src/components/vm/vmCloneDialog.tsx:92
+#: src/components/storagePools/storageVolumeCreateBody.tsx:113
+#: src/components/storagePools/createStoragePoolDialog.tsx:58
 #: src/components/storagePools/storagePoolList.tsx:61
 #: src/components/storagePools/storagePoolVolumesTab.tsx:77
-#: src/components/storagePools/createStoragePoolDialog.tsx:58
-#: src/components/storagePools/storageVolumeCreateBody.tsx:113
-#: src/components/vms/hostvmslist.tsx:320
+#: src/components/vms/hostvmslist.tsx:313
+#: src/components/networks/networkList.tsx:59
+#: src/components/networks/createNetworkDialog.tsx:172
 msgid "Name"
 msgstr "სახელი"
 
@@ -1760,13 +1754,13 @@ msgstr "სახელი ცარიელი არ უნდა იყო�
 msgid "Name contains invalid characters"
 msgstr "სახელი შეიცავს არასწორ სიმბოლოებს"
 
-#: src/components/vm/vmCloneDialog.tsx:51
 #: src/components/create-vm-dialog/createVmDialog.tsx:231
+#: src/components/vm/vmCloneDialog.tsx:51
 msgid "Name must not be empty"
 msgstr "სახელი ცარიელი არ შეიძლება იყოს"
 
-#: src/components/networks/createNetworkDialog.tsx:77
 #: src/components/storagePools/createStoragePoolDialog.tsx:64
+#: src/components/networks/createNetworkDialog.tsx:77
 msgid "Name should not be empty"
 msgstr "სახელ ცარიელი არ შეიძლება იყოს"
 
@@ -1778,19 +1772,19 @@ msgstr "სახელი: "
 msgid "Netmask"
 msgstr "ქსელის ნიღაბი"
 
-#: src/components/networks/network.tsx:131
+#: src/components/networks/network.tsx:117
 msgid "Network $0 could not be deleted"
 msgstr "ქსელის წაშლის შეცდომა: $0"
 
-#: src/components/networks/network.tsx:96
+#: src/components/networks/network.tsx:87
 msgid "Network $0 failed to get activated"
 msgstr "ქსელის ($0) აქტივაციის შეცდომა"
 
-#: src/components/networks/network.tsx:113
+#: src/components/networks/network.tsx:101
 msgid "Network $0 failed to get deactivated"
 msgstr "ქსელის ($0) დეაქტივაციის შეცდომა"
 
-#: src/components/networks/network.tsx:132
+#: src/components/networks/network.tsx:118
 msgid "Network $0 will be permanently deleted."
 msgstr "ქსელი სამუდამოდ წაიშლება: $0."
 
@@ -1822,7 +1816,7 @@ msgstr "ქსელის ინტერფეისის წაშლის 
 msgid "Network interface $0 will be removed from $1"
 msgstr "ქსელის ინტერფეისი $0 წაშლილი იქნება $1-დან"
 
-#: src/components/vm/nics/nicAdd.tsx:218 src/components/vm/nics/nicEdit.tsx:163
+#: src/components/vm/nics/nicEdit.tsx:163 src/components/vm/nics/nicAdd.tsx:218
 msgid "Network interface settings could not be saved"
 msgstr "ქსელის ინტერფეისის პარამეტრების შენახვის შეცდომა"
 
@@ -1860,7 +1854,7 @@ msgstr "ახალი ტომის სახელი"
 msgid "No SSH keys specified"
 msgstr "SSH გასაღებები მითითებული არაა"
 
-#: src/components/vms/hostvmslist.tsx:326
+#: src/components/vms/hostvmslist.tsx:319
 msgid "No VM is running or defined on this host"
 msgstr "ამ ჰოსტზე გაშვებული ან აღწერილი ვმ-ი არ არსებობს"
 
@@ -1920,7 +1914,7 @@ msgstr "ტომის შექმნის დაშვების მქო
 msgid "No ports forwarded"
 msgstr "პორტების გადამისამართების გარეშე"
 
-#: src/components/vm/consoles/vnc.tsx:267
+#: src/components/vm/consoles/vnc.tsx:222
 msgid "No scaling or resizing"
 msgstr "მასშტაბის ან ზომის შეცვლის გარეშე"
 
@@ -1964,7 +1958,7 @@ msgstr "საცავის პულში ტომები არ არ�
 msgid "Non-Essential Instrumentation"
 msgstr "არააუცილებელი ინსტრუმენტები"
 
-#: src/components/networks/network.tsx:139
+#: src/components/networks/network.tsx:125
 msgid ""
 "Non-persistent network cannot be deleted. It ceases to exists when it's "
 "deactivated."
@@ -2009,9 +2003,9 @@ msgstr ""
 "ერთი ან მეტი არჩეული ტომი დომენების მიერ გამოიყენება. ტომის წასაშლელად ჯერ "
 "მოაძრეთ დისკები."
 
-#: src/components/vm/overview/memoryModal.tsx:173
-#: src/components/vm/overview/bootOrder.tsx:394
 #: src/components/vm/nics/nicEdit.tsx:47
+#: src/components/vm/overview/bootOrder.tsx:394
+#: src/components/vm/overview/memoryModal.tsx:173
 msgid "Only editable when the guest is shut off"
 msgstr "ჩასწორებადია მხოლოდ მაშინ, როცა სტუმარი გათიშულია"
 
@@ -2023,8 +2017,8 @@ msgstr "გახსნა"
 msgid "Operating system"
 msgstr "ოპერაციული სისტემა"
 
-#: src/components/storagePools/storagePool.tsx:165
-#: src/components/storagePools/storagePool.tsx:172
+#: src/components/storagePools/storagePool.tsx:160
+#: src/components/storagePools/storagePool.tsx:167
 msgid "Operation is in progress"
 msgstr "ოპერაცია მიმდინარეობს"
 
@@ -2033,7 +2027,7 @@ msgid "Other VMs using SPICE"
 msgstr "სხვა VM-ები, რომლებიც SPICE-ს იყენებენ"
 
 #: src/components/vm/vmDetailsPage.tsx:140
-#: src/components/storagePools/storagePool.tsx:59
+#: src/components/storagePools/storagePool.tsx:60
 msgid "Overview"
 msgstr "გადახედვა"
 
@@ -2045,11 +2039,11 @@ msgstr "PCI"
 msgid "Parent snapshot"
 msgstr "მშობელი სწრაფი ასლი"
 
-#: src/components/vm/consoles/vnc.tsx:189
+#: src/components/vm/consoles/vnc.tsx:159
 msgid "Password"
 msgstr "პაროლი"
 
-#: src/components/vm/consoles/vnc.tsx:209
+#: src/components/vm/consoles/vnc.tsx:161
 msgid ""
 "Password must be 8 characters or less. VNC passwords do not provide "
 "encryption and are generally cryptographically weak. They can not be used to "
@@ -2059,14 +2053,14 @@ msgstr ""
 "და ზოგადად კრიპტოგრაფიულად სუსტია. ის არ შეიძლება, გამოყენებული იყოს "
 "კავშირის დასაცავად არასანდო ქსელებში."
 
-#: src/components/vm/consoles/vnc.tsx:106
+#: src/components/vm/consoles/vnc.tsx:113
 msgid "Password must be at most 8 characters."
 msgstr "პაროლი მაქს. 8 სიმბოლოს უნდა შეიცავდეს."
 
-#: src/components/vm/deleteDialog.tsx:68
 #: src/components/vm/disks/diskEdit.tsx:46
 #: src/components/vm/hostdevs/hostDevCard.tsx:115
 #: src/components/vm/hostdevs/hostDevCard.tsx:119
+#: src/components/vm/deleteDialog.tsx:68
 msgid "Path"
 msgstr "ბილიკი"
 
@@ -2094,7 +2088,7 @@ msgstr "ბილიკი საქაღალდემდე"
 msgid "Path to file on host's file system"
 msgstr "ბილიკი ფაილამდე ჰოსტის ფალურ სისტემაზე"
 
-#: src/helpers.ts:275 src/components/vm/vmActions.tsx:195
+#: src/components/vm/vmActions.tsx:191 src/helpers.ts:275
 msgid "Pause"
 msgstr "პაუზა"
 
@@ -2115,8 +2109,8 @@ msgstr "საწყისი საქაღალდეებიდან დ�
 msgid "Persistence"
 msgstr "მუდმივობა"
 
-#: src/components/networks/networkOverviewTab.tsx:112
 #: src/components/storagePools/storagePoolOverviewTab.tsx:55
+#: src/components/networks/networkOverviewTab.tsx:112
 msgid "Persistent"
 msgstr "მუდმივი"
 
@@ -2128,7 +2122,7 @@ msgstr "დისკის ფიზიკური მოწყობილო�
 msgid "Physical disk device on host"
 msgstr "დისკის ფიზიკური მოწყობილობა ჰოსტზე"
 
-#: src/components/vm/nics/nicAdd.tsx:179 src/components/vm/nics/nicEdit.tsx:100
+#: src/components/vm/nics/nicEdit.tsx:100 src/components/vm/nics/nicAdd.tsx:179
 msgid "Please choose a different MAC address"
 msgstr "აირჩიეთ სხვა MAC მისამართი"
 
@@ -2140,12 +2134,12 @@ msgstr "შეიყვანეთ ახალი ტომის სახე
 msgid "Please see $0 how to reconfigure your VM manually."
 msgstr "იხილეთ $0, რომ გაიგოთ, როგორ მოირგოთ თქვენი ვმ-ი ხელით."
 
-#: src/components/vm/deleteDialog.tsx:81
 #: src/components/vm/disks/diskAdd.tsx:248
 #: src/components/vm/disks/diskAdd.tsx:321
 #: src/components/vm/disks/mediaEject.tsx:85
 #: src/components/vm/disks/vmDiskColumns.tsx:42
 #: src/components/vm/overview/bootOrder.tsx:108
+#: src/components/vm/deleteDialog.tsx:81
 msgid "Pool"
 msgstr "პული"
 
@@ -2162,10 +2156,10 @@ msgid "Pool's volumes are used by VMs "
 msgstr "პულის ტომები გამოიყენება ვმ-ების მიერ "
 
 #: src/components/vm/disks/vmDiskColumns.tsx:45
+#: src/components/vm/nics/vmNicsCard.tsx:191
+#: src/components/vm/consoles/vnc.tsx:154
 #: src/components/vm/overview/bootOrder.tsx:111
 #: src/components/vm/overview/bootOrder.tsx:127
-#: src/components/vm/nics/vmNicsCard.tsx:191
-#: src/components/vm/consoles/vnc.tsx:170
 msgid "Port"
 msgstr "პორტი"
 
@@ -2177,11 +2171,11 @@ msgstr "პორტის გადამისამართებები"
 msgid "Port must be 1 to 65535."
 msgstr "პორტი უნდა იყოს შუალედიდან 1-65535."
 
-#: src/components/vm/consoles/vnc.tsx:100
+#: src/components/vm/consoles/vnc.tsx:106
 msgid "Port must be 5900 or larger."
 msgstr "პორტი 5900, ან უფრო დიდი უნდა იყოს."
 
-#: src/components/vm/consoles/vnc.tsx:183
+#: src/components/vm/consoles/vnc.tsx:156
 msgid ""
 "Port must be a number that is at least 5900. Leave empty to automatically "
 "assign a free port when the machine starts."
@@ -2189,7 +2183,8 @@ msgstr ""
 "პორტის ნომერი 5900-ზე მეტი რიცხვი უნდა იყოს. დატოვეთ ის ცარიელი, რომ პორტის "
 "ნომრის ავტომატური მინიჭება მოხდეს, როცა მანქანა ჩაირთვება."
 
-#: src/components/vm/nics/nicBody.tsx:394 src/components/vm/consoles/vnc.tsx:97
+#: src/components/vm/nics/nicBody.tsx:394
+#: src/components/vm/consoles/vnc.tsx:104
 msgid "Port must be a number."
 msgstr "პორტის ნომერი რიცხვი უნდა იყოს."
 
@@ -2231,9 +2226,9 @@ msgstr "პროცესორი"
 
 #: src/components/vm/overview/bootOrder.tsx:141
 #: src/components/vm/overview/bootOrder.tsx:157
+#: src/components/vm/hostdevs/hostDevAdd.tsx:151
 #: src/components/vm/hostdevs/hostDevCard.tsx:240
 #: src/components/vm/hostdevs/hostDevCard.tsx:246
-#: src/components/vm/hostdevs/hostDevAdd.tsx:151
 msgid "Product"
 msgstr "პროდუქტი"
 
@@ -2242,9 +2237,9 @@ msgid "Profile"
 msgstr "პროფილი"
 
 #: src/components/vm/disks/vmDiskColumns.tsx:41
+#: src/components/vm/nics/nicBody.tsx:477
 #: src/components/vm/overview/bootOrder.tsx:107
 #: src/components/vm/overview/bootOrder.tsx:170
-#: src/components/vm/nics/nicBody.tsx:477
 #: src/components/vm/hostdevs/hostDevCard.tsx:106
 msgid "Protocol"
 msgstr "პროტოკოლი"
@@ -2265,17 +2260,17 @@ msgstr "საჯარო გასაღები"
 msgid "Range"
 msgstr "დიაპაზონი"
 
-#: src/components/vm/disks/diskEdit.tsx:110
 #: src/components/vm/disks/vmDisksCard.tsx:249
+#: src/components/vm/disks/diskEdit.tsx:110
 msgid "Read-only"
 msgstr "მხოლოდ-წასაკითხად"
 
-#: src/components/vm/vmActions.tsx:235 src/components/vm/vmActions.tsx:319
-#: src/components/vm/vmActions.tsx:324
+#: src/components/vm/vmActions.tsx:231 src/components/vm/vmActions.tsx:315
+#: src/components/vm/vmActions.tsx:320
 msgid "Reboot"
 msgstr "გადატვირთვა"
 
-#: src/components/vm/vmActions.tsx:312
+#: src/components/vm/vmActions.tsx:308
 msgid "Reboot $0?"
 msgstr "გადავტვირთო $0?"
 
@@ -2300,7 +2295,7 @@ msgstr ""
 "უმრავლესობისთვის. დასაყენებლად მოძებნეთ დაშორებული დამთვალიერებელი GNOME-ის "
 "პროგრამებში, KDE Discover-ში, ან გაუშვით:"
 
-#: src/components/vm/consoles/vnc.tsx:269
+#: src/components/vm/consoles/vnc.tsx:224
 msgid "Remote resizing"
 msgstr "დაშორებული ზომის შეცვლა"
 
@@ -2316,14 +2311,14 @@ msgstr ""
 
 #: src/components/vm/disks/vmDiskColumns.tsx:169
 #: src/components/vm/disks/vmDiskColumns.tsx:248
-#: src/components/vm/overview/watchdog.tsx:225
-#: src/components/vm/overview/vsock.tsx:269
-#: src/components/vm/nics/vmNicsCard.tsx:652
-#: src/components/vm/nics/vmNicsCard.tsx:667
-#: src/components/vm/hostdevs/hostDevCard.tsx:256
-#: src/components/vm/hostdevs/hostDevCard.tsx:262
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:52
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:61
+#: src/components/vm/nics/vmNicsCard.tsx:652
+#: src/components/vm/nics/vmNicsCard.tsx:667
+#: src/components/vm/overview/vsock.tsx:269
+#: src/components/vm/overview/watchdog.tsx:225
+#: src/components/vm/hostdevs/hostDevCard.tsx:256
+#: src/components/vm/hostdevs/hostDevCard.tsx:262
 #: src/components/networks/networkOverviewTab.tsx:68
 msgid "Remove"
 msgstr "წაშლა"
@@ -2348,9 +2343,9 @@ msgstr "წავშალო ფაილური სისტემა?"
 msgid "Remove host device from VM?"
 msgstr "წავშალო ჰოსტის მოწყობილობა ვმ-დან?"
 
+#: src/components/create-vm-dialog/createVmDialog.tsx:927
 #: src/components/vm/nics/nicBody.tsx:496
 #: src/components/vm/nics/nicBody.tsx:527
-#: src/components/create-vm-dialog/createVmDialog.tsx:927
 msgid "Remove item"
 msgstr "ელემენტის წაშლა"
 
@@ -2362,7 +2357,7 @@ msgstr "წავშალო ქსელის ინტერფეისი?
 msgid "Remove static host from DHCP"
 msgstr "host-ის სტატიკური ჩანაწერების DHCP-დან წაშლა"
 
-#: src/components/vm/vmRenameDialog.tsx:93 src/components/vm/vmActions.tsx:434
+#: src/components/vm/vmActions.tsx:430 src/components/vm/vmRenameDialog.tsx:93
 msgid "Rename"
 msgstr "გადარქმევა"
 
@@ -2374,8 +2369,8 @@ msgstr "ვმ-ის გადარქმევა ($0)"
 msgid "Replace"
 msgstr "ჩანაცვლება"
 
+#: src/components/vm/usesSpice.tsx:42 src/components/vm/vmActions.tsx:417
 #: src/components/vm/vmReplaceSpiceDialog.tsx:133
-#: src/components/vm/usesSpice.tsx:42 src/components/vm/vmActions.tsx:421
 msgid "Replace SPICE devices"
 msgstr "SPICE მოწყობილობების ჩანაცვლება"
 
@@ -2399,7 +2394,7 @@ msgstr "ჩანაცვლება VNC-ით"
 msgid "Reset"
 msgstr "საწყის მნიშვნელობებზე დაბრუნება"
 
-#: src/components/vm/consoles/vnc.tsx:688
+#: src/components/vm/consoles/vnc.tsx:643
 msgid "Restart this virtual machine to access its graphical console"
 msgstr ""
 "გრაფიკულ კონსოლზე წვდომისათვის საჭიროა ვირტუალური მანქანა ჯერ გადატვირთეთ"
@@ -2416,16 +2411,16 @@ msgstr ""
 "ქსელის შეზღუდვები (SIRP-ზე ბაზირებული ემულაცია) და PCI მოწყობილობების "
 "მინიჭება"
 
-#: src/components/vm/vmActions.tsx:206
+#: src/components/vm/vmActions.tsx:202
 msgid "Resume"
 msgstr "გაგრძელება"
 
-#: src/components/vm/consoles/vnc.tsx:584
+#: src/components/vm/consoles/vnc.tsx:539
 msgid "Retry"
 msgstr "თავიდან ცდა"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.tsx:197
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:117
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:197
 msgid "Revert"
 msgstr "დაბრუნება"
 
@@ -2458,7 +2453,7 @@ msgstr "დარაუტებული ქსელი"
 msgid "Row select"
 msgstr "მწკრივის არჩევა"
 
-#: src/components/vm/vmActions.tsx:359
+#: src/components/vm/vmActions.tsx:355
 msgid "Run"
 msgstr "გაშვება"
 
@@ -2497,18 +2492,18 @@ msgid "Satellite Communication Controller"
 msgstr "თანამგზავრული კომუნიკაციის კონტროლერი"
 
 #: src/components/vm/disks/diskEdit.tsx:238
-#: src/components/vm/overview/watchdog.tsx:167
-#: src/components/vm/overview/firmware.tsx:104
-#: src/components/vm/overview/memoryModal.tsx:192
-#: src/components/vm/overview/bootOrder.tsx:353
-#: src/components/vm/overview/vsock.tsx:223
 #: src/components/vm/nics/nicEdit.tsx:230
+#: src/components/vm/consoles/vnc.tsx:167
+#: src/components/vm/overview/firmware.tsx:104
+#: src/components/vm/overview/bootOrder.tsx:353
+#: src/components/vm/overview/memoryModal.tsx:192
+#: src/components/vm/overview/vsock.tsx:223
+#: src/components/vm/overview/watchdog.tsx:167
 #: src/components/vm/vmEditDescriptionDialog.tsx:78
-#: src/components/vm/consoles/vnc.tsx:155
 msgid "Save"
 msgstr "შენახვა"
 
-#: src/components/vm/consoles/vnc.tsx:509
+#: src/components/vm/consoles/vnc.tsx:464
 msgid "Security failure"
 msgstr "უსაფრთხოების ჩავარდნა"
 
@@ -2516,15 +2511,15 @@ msgstr "უსაფრთხოების ჩავარდნა"
 msgid "Select all"
 msgstr "ყველას მონიშვნა"
 
-#: src/components/vm/consoles/vnc.tsx:325
+#: src/components/vm/consoles/vnc.tsx:280
 msgid "Send key"
 msgstr "ღილაკის გაგზავნა"
 
-#: src/components/vm/vmActions.tsx:295 src/components/vm/vmActions.tsx:300
+#: src/components/vm/vmActions.tsx:291 src/components/vm/vmActions.tsx:296
 msgid "Send non-maskable interrupt"
 msgstr "შეუნიღბვადი წყვეტის გაგზავნა"
 
-#: src/components/vm/vmActions.tsx:289
+#: src/components/vm/vmActions.tsx:285
 msgid "Send non-maskable interrupt to $0?"
 msgstr "გავუგზავნო შეუნიღბვადი წყვეტა $0-ს?"
 
@@ -2600,12 +2595,12 @@ msgstr "ნაკლების ჩვენება"
 msgid "Show more"
 msgstr "მეტის ჩვენება"
 
-#: src/components/vm/vmActions.tsx:229 src/components/vm/vmActions.tsx:240
-#: src/components/vm/vmActions.tsx:255 src/components/vm/vmActions.tsx:260
+#: src/components/vm/vmActions.tsx:225 src/components/vm/vmActions.tsx:236
+#: src/components/vm/vmActions.tsx:251 src/components/vm/vmActions.tsx:256
 msgid "Shut down"
 msgstr "გამორთვა"
 
-#: src/components/vm/vmActions.tsx:222 src/components/vm/vmActions.tsx:248
+#: src/components/vm/vmActions.tsx:218 src/components/vm/vmActions.tsx:244
 msgid "Shut down $0?"
 msgstr "გამოვრთო $0?"
 
@@ -2617,18 +2612,18 @@ msgstr "გათიშვა"
 msgid "Shut off the VM in order to edit firmware configuration"
 msgstr "მიკროკოდის კონფიგურაციისთვის საჭიროა ვმ-ის გამორთვა"
 
-#: src/components/vm/vmActions.tsx:525
-#: src/components/vm/consoles/serial.tsx:190
-#: src/components/vm/consoles/vnc.tsx:695
 #: src/components/common/needsShutdown.tsx:278
+#: src/components/vm/vmActions.tsx:521
+#: src/components/vm/consoles/serial.tsx:190
+#: src/components/vm/consoles/vnc.tsx:650
 msgid "Shutdown and restart"
 msgstr "გამორთვა და გადატვირთვა"
 
-#: src/components/vm/vmActions.tsx:518
+#: src/components/vm/vmActions.tsx:514
 msgid "Shutdown and restart $0?"
 msgstr "გამოვრთო და გადავტვირთო $0?"
 
-#: src/helpers.ts:219 src/components/vm/snapshots/vmSnapshotsCard.tsx:147
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:147 src/helpers.ts:219
 msgid "Shutting down"
 msgstr "მიმდინარეობს გათიშვა"
 
@@ -2641,9 +2636,9 @@ msgid "Simple Communication Controller"
 msgstr "მარტივი კომუნიკაციის კონტოლერი"
 
 #: src/components/vm/disks/vmDisksCard.tsx:160
+#: src/components/storagePools/storageVolumeCreateBody.tsx:120
 #: src/components/storagePools/storagePoolList.tsx:62
 #: src/components/storagePools/storagePoolVolumesTab.tsx:77
-#: src/components/storagePools/storageVolumeCreateBody.tsx:120
 msgid "Size"
 msgstr "ზომა"
 
@@ -2652,10 +2647,10 @@ msgid "Size must be a number"
 msgstr "ზომა რიცხვი უნდა იყოს"
 
 #: src/components/vm/overview/bootOrder.tsx:158
+#: src/components/vm/hostdevs/hostDevAdd.tsx:112
 #: src/components/vm/hostdevs/hostDevCard.tsx:93
 #: src/components/vm/hostdevs/hostDevCard.tsx:100
 #: src/components/vm/hostdevs/hostDevCard.tsx:241
-#: src/components/vm/hostdevs/hostDevAdd.tsx:112
 msgid "Slot"
 msgstr "სლოტი"
 
@@ -2714,10 +2709,10 @@ msgstr "წყარო ცარიელი არ შეიძლება �
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:41
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:58
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:201
-#: src/components/storagePools/storagePoolOverviewTab.tsx:30
-#: src/components/storagePools/storagePoolOverviewTab.tsx:35
 #: src/components/storagePools/createStoragePoolDialog.tsx:218
 #: src/components/storagePools/createStoragePoolDialog.tsx:235
+#: src/components/storagePools/storagePoolOverviewTab.tsx:30
+#: src/components/storagePools/storagePoolOverviewTab.tsx:35
 msgid "Source path"
 msgstr "წყაროს ბილიკი"
 
@@ -2735,7 +2730,7 @@ msgid "Source volume group"
 msgstr "წყარო ტომების ჯგუფი"
 
 #: src/components/vm/consoles/serial.tsx:123
-#: src/components/vm/consoles/vnc.tsx:616
+#: src/components/vm/consoles/vnc.tsx:571
 #: src/components/networks/createNetworkDialog.tsx:305
 msgid "Start"
 msgstr "გაშვება"
@@ -2750,7 +2745,7 @@ msgid "Start should not be empty"
 msgstr "დასაწყისი ცარიელი არ შეიძლება იყოს"
 
 #: src/components/vm/consoles/serial.tsx:116
-#: src/components/vm/consoles/vnc.tsx:609
+#: src/components/vm/consoles/vnc.tsx:564
 msgid "Start the virtual machine to access the console"
 msgstr "კონსოლზე წვდომისთვის გაუშვით ვირტუალური მანქანა"
 
@@ -2767,12 +2762,12 @@ msgstr "გაშვებულია"
 msgid "Startup"
 msgstr "გაშვება"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:163
 #: src/components/vm/nics/vmNicsCard.tsx:586
-#: src/components/networks/networkList.tsx:63
+#: src/components/vm/overview/vmOverviewCard.tsx:163
 #: src/components/storagePools/storagePoolList.tsx:64
-#: src/components/vms/hostvmslist.tsx:266
-#: src/components/vms/hostvmslist.tsx:322
+#: src/components/vms/hostvmslist.tsx:259
+#: src/components/vms/hostvmslist.tsx:315
+#: src/components/networks/networkList.tsx:63
 msgid "State"
 msgstr "მდგომარეობა"
 
@@ -2784,8 +2779,8 @@ msgstr "host-ის სტატიკური ჩანაწერები"
 msgid "Static host from DHCP could not be removed"
 msgstr "host-ის სტატიკური ჩანაწერების DHCP-დან წაშლის შეცდომა"
 
-#: src/components/vm/vmMigrateDialog.tsx:108
 #: src/components/create-vm-dialog/createVmDialog.tsx:1140
+#: src/components/vm/vmMigrateDialog.tsx:108
 msgid "Storage"
 msgstr "საცავი"
 
@@ -2797,11 +2792,11 @@ msgstr "საცავი გაზიარებულ ადგილას�
 msgid "Storage limit"
 msgstr "საცავის ლიმიტი"
 
-#: src/components/storagePools/storagePool.tsx:114
+#: src/components/storagePools/storagePool.tsx:113
 msgid "Storage pool $0 failed to get activated"
 msgstr "საცავის პულის $0 აქტივაციის შეცდომა"
 
-#: src/components/storagePools/storagePool.tsx:133
+#: src/components/storagePools/storagePool.tsx:129
 msgid "Storage pool $0 failed to get deactivated"
 msgstr "საცავის პულის ($0) დეაქტივაციის შეცდომა"
 
@@ -2832,7 +2827,7 @@ msgstr "საცავის ტომი"
 msgid "Storage volume size must not exceed the storage pool's capacity ($0 $1)"
 msgstr "საცავის ტომის ზომამ საცავის პულის ზომას არ უნდა გადააჭარბოს ($0 $1)"
 
-#: src/components/storagePools/storagePool.tsx:65
+#: src/components/storagePools/storagePool.tsx:66
 msgid "Storage volumes"
 msgstr "საცავის ტომები"
 
@@ -2877,16 +2872,16 @@ msgstr "TPM"
 msgid "Table of selectable host devices"
 msgstr "ჰოსტის არჩევადი მოწყობილობების ცხრილი"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:173
 #: src/components/vm/disks/vmDisksCard.tsx:159
-#: src/components/vm/overview/bootOrder.tsx:164
+#: src/components/vm/disks/vmDiskColumns.tsx:173
 #: src/components/vm/nics/vmNicsCard.tsx:557
+#: src/components/vm/overview/bootOrder.tsx:164
 #: src/components/vm/hostdevs/hostDevCard.tsx:101
 msgid "Target"
 msgstr "სამიზნე"
 
-#: src/components/storagePools/storagePoolOverviewTab.tsx:50
 #: src/components/storagePools/createStoragePoolDialog.tsx:130
+#: src/components/storagePools/storagePoolOverviewTab.tsx:50
 msgid "Target path"
 msgstr "სამიზნე ბილიკი"
 
@@ -2983,7 +2978,7 @@ msgstr ""
 "ამ ჰოსტზე ვირტუალური ქსელის ინტერფეისებისთვის წყაროები არ არსებობს. "
 "შეიძლება, ვირტუალური ქსელის შექმნა გნებავთ."
 
-#: src/components/vm/vmActions.tsx:466
+#: src/components/vm/vmActions.tsx:462
 msgid "This VM is transient. Shut it down if you wish to delete it."
 msgstr "ვმ-ი დროებითია. წასაშლელად გამორთეთ."
 
@@ -3044,17 +3039,17 @@ msgstr ""
 msgid "Troubleshoot"
 msgstr "პრობლემების პოვნა"
 
+#: src/components/vm/nics/vmNicsCard.tsx:780
 #: src/components/vm/overview/bootOrder.tsx:125
 #: src/components/vm/overview/bootOrder.tsx:139
 #: src/components/vm/overview/bootOrder.tsx:155
 #: src/components/vm/overview/bootOrder.tsx:162
 #: src/components/vm/overview/bootOrder.tsx:169
 #: src/components/vm/overview/bootOrder.tsx:175
-#: src/components/vm/nics/vmNicsCard.tsx:780
-#: src/components/vm/hostdevs/hostDevCard.tsx:177
 #: src/components/vm/hostdevs/hostDevAdd.tsx:43
-#: src/components/storagePools/storagePoolOverviewTab.tsx:65
+#: src/components/vm/hostdevs/hostDevCard.tsx:177
 #: src/components/storagePools/createStoragePoolDialog.tsx:102
+#: src/components/storagePools/storagePoolOverviewTab.tsx:65
 msgid "Type"
 msgstr "ტიპი"
 
@@ -3188,39 +3183,39 @@ msgstr "ვმ ($0) უკვე არსებობს"
 msgid "VM $0 does not exist on $1 connection"
 msgstr "ვმ-ი ($0) არ არსებობს ამ ($1) კავშირდზე"
 
-#: src/components/vm/vmActions.tsx:101
+#: src/components/vm/vmActions.tsx:97
 msgid "VM $0 failed to force reboot"
 msgstr "ვმ-ის ($0) ძალით გადატვირთვის შეცდომა"
 
-#: src/components/vm/vmActions.tsx:138
+#: src/components/vm/vmActions.tsx:134
 msgid "VM $0 failed to force shutdown"
 msgstr "ვმ-ის ($0) ძალით გამორთვის შეცდომა"
 
-#: src/components/vm/vmActions.tsx:82
+#: src/components/vm/vmActions.tsx:78
 msgid "VM $0 failed to get installed"
 msgstr "ვმ-ის ($0) დაყენების შეცდომა"
 
-#: src/components/vm/vmActions.tsx:120
+#: src/components/vm/vmActions.tsx:116
 msgid "VM $0 failed to pause"
 msgstr "ვმ-ის ($0) შეჩერების შეცდომა"
 
-#: src/components/vm/vmActions.tsx:93
+#: src/components/vm/vmActions.tsx:89
 msgid "VM $0 failed to reboot"
 msgstr "ვმ-ის ($0) გადატვირთვის შეცდომა"
 
-#: src/components/vm/vmActions.tsx:128
+#: src/components/vm/vmActions.tsx:124
 msgid "VM $0 failed to resume"
 msgstr "ვმ-ის ($0) გაგრძელების შეცდომა"
 
-#: src/components/vm/vmActions.tsx:146
+#: src/components/vm/vmActions.tsx:142
 msgid "VM $0 failed to send NMI"
 msgstr "ვმ-მა ($0) ვერ შეძლო NMI-ის გაგზავნა"
 
-#: src/components/vm/vmActions.tsx:112 src/components/vm/vmActions.tsx:512
+#: src/components/vm/vmActions.tsx:108 src/components/vm/vmActions.tsx:508
 msgid "VM $0 failed to shutdown"
 msgstr "ვმ-ის ($0) გამორთვის შეცდომა"
 
-#: src/components/vm/vmActions.tsx:73
+#: src/components/vm/vmActions.tsx:69
 msgid "VM $0 failed to start"
 msgstr "ვმ-ის ($0) გაშვების შეცდომა"
 
@@ -3252,7 +3247,7 @@ msgstr "VNC"
 msgid "VNC settings could not be saved"
 msgstr "VNC-ის პარამეტრების შენახვის შეცდომა"
 
-#: src/components/vm/consoles/vnc.tsx:495
+#: src/components/vm/consoles/vnc.tsx:450
 msgid "VNC with TLS is not supported by the in-page viewer"
 msgstr "VNC TLS-ით გვერდშივე დამთვალიერებლის მიერ მხარდაჭერილი არაა"
 
@@ -3262,10 +3257,10 @@ msgstr "სწორი კოდი"
 
 #: src/components/vm/overview/bootOrder.tsx:140
 #: src/components/vm/overview/bootOrder.tsx:156
+#: src/components/vm/hostdevs/hostDevAdd.tsx:151
 #: src/components/vm/hostdevs/hostDevCard.tsx:207
 #: src/components/vm/hostdevs/hostDevCard.tsx:239
 #: src/components/vm/hostdevs/hostDevCard.tsx:245
-#: src/components/vm/hostdevs/hostDevAdd.tsx:151
 msgid "Vendor"
 msgstr "მომწოდებელი"
 
@@ -3274,10 +3269,10 @@ msgid "Vendor support ended $0"
 msgstr "მომწოდებლის მხარდაჭერა დასრულდა $0"
 
 #: src/components/vm/vmDetailsPage.tsx:249
-#: src/components/networks/networkList.tsx:44
 #: src/components/storagePools/storagePoolList.tsx:46
-#: src/components/vms/hostvmslist.tsx:315
-#: src/components/vms/hostvmslist.tsx:317 src/manifest.json:0
+#: src/components/vms/hostvmslist.tsx:308
+#: src/components/vms/hostvmslist.tsx:310
+#: src/components/networks/networkList.tsx:44 src/manifest.json:0
 msgid "Virtual machines"
 msgstr "ვირტუალური მანქანები"
 
@@ -3307,12 +3302,12 @@ msgstr ""
 msgid "Virtualization service (libvirt) is not active"
 msgstr "ვირტუალიზაციის სერვისი (libvirt) აქტიური არაა"
 
-#: src/components/vm/deleteDialog.tsx:78
+#: src/components/create-vm-dialog/createVmDialog.tsx:1152
 #: src/components/vm/disks/diskAdd.tsx:327
 #: src/components/vm/disks/mediaEject.tsx:89
 #: src/components/vm/disks/vmDiskColumns.tsx:43
 #: src/components/vm/overview/bootOrder.tsx:109
-#: src/components/create-vm-dialog/createVmDialog.tsx:1152
+#: src/components/vm/deleteDialog.tsx:78
 msgid "Volume"
 msgstr "ტომი"
 
@@ -3328,7 +3323,7 @@ msgstr "ტომების ჯგუფის სახელი"
 msgid "Volume group name should not be empty"
 msgstr "ტომების ჯგუფის სახელი ცარიელი არ შეიძლება იყოს"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:212
+#: src/components/vm/overview/vmOverviewCard.tsx:210
 msgid "Vsock"
 msgstr "Vsock"
 
@@ -3337,8 +3332,8 @@ msgstr "Vsock"
 msgid "WWPN"
 msgstr "WWPN"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:198
 #: src/components/common/needsShutdown.tsx:210
+#: src/components/vm/overview/vmOverviewCard.tsx:196
 msgid "Watchdog"
 msgstr "საკონტროლო ტაიმერი"
 
@@ -3356,8 +3351,8 @@ msgstr ""
 msgid "Wireless Controller"
 msgstr "უსადენო ქსელის კონტროლერი"
 
-#: src/components/vm/disks/diskEdit.tsx:114
 #: src/components/vm/disks/vmDisksCard.tsx:249
+#: src/components/vm/disks/diskEdit.tsx:114
 msgid "Writeable"
 msgstr "ჩაწერადი"
 
@@ -3369,13 +3364,13 @@ msgstr "შეგიძლიათ მიამაგროთ გაზია�
 msgid "You need to select the most closely matching operating system"
 msgstr "აირჩიეთ ყველაზე ახლოს მდგომი ოპერაციული სისტემა"
 
-#: src/components/networks/network.tsx:53
-#: src/components/storagePools/storagePool.tsx:52
+#: src/components/storagePools/storagePool.tsx:53
+#: src/components/networks/network.tsx:54
 msgid "active"
 msgstr "აქტიური"
 
-#: src/components/vm/overview/watchdog.tsx:265
 #: src/components/vm/overview/vsock.tsx:315
+#: src/components/vm/overview/watchdog.tsx:265
 msgid "add"
 msgstr "დამატება"
 
@@ -3395,7 +3390,7 @@ msgstr "ხიდი"
 msgid "cdrom"
 msgstr "cdrom"
 
-#: src/helpers.ts:236 src/components/vm/overview/cpuModal.tsx:322
+#: src/components/vm/overview/cpuModal.tsx:322 src/helpers.ts:236
 msgid "custom"
 msgstr "ხელით"
 
@@ -3419,11 +3414,11 @@ msgstr "დისკი"
 msgid "down"
 msgstr "დაბლა"
 
-#: src/components/vm/overview/watchdog.tsx:265
 #: src/components/vm/overview/bootOrder.tsx:387
 #: src/components/vm/overview/vsock.tsx:315
 #: src/components/vm/overview/vmOverviewCard.tsx:117
 #: src/components/vm/overview/vmOverviewCard.tsx:125
+#: src/components/vm/overview/watchdog.tsx:265
 msgid "edit"
 msgstr "ჩასწორება"
 
@@ -3467,8 +3462,8 @@ msgstr "iSCSI სამიზნე"
 msgid "iSCSI target IQN"
 msgstr "iSCSI target-ის IQN"
 
-#: src/components/networks/network.tsx:53
-#: src/components/storagePools/storagePool.tsx:52
+#: src/components/storagePools/storagePool.tsx:53
+#: src/components/networks/network.tsx:54
 msgid "inactive"
 msgstr "არააქტიური"
 
@@ -3501,9 +3496,9 @@ msgstr "მიმაგრების ჭდე: გამოტანილ �
 msgid "network"
 msgstr "ქსელი"
 
-#: src/helpers.ts:265 src/components/networks/networkOverviewTab.tsx:113
 #: src/components/storagePools/storagePoolOverviewTab.tsx:56
 #: src/components/storagePools/storagePoolOverviewTab.tsx:61
+#: src/components/networks/networkOverviewTab.tsx:113 src/helpers.ts:265
 msgid "no"
 msgstr "არა"
 
@@ -3511,9 +3506,9 @@ msgstr "არა"
 msgid "no state saved"
 msgstr "მდგომარეობა შენახული არაა"
 
-#: src/components/vm/overview/watchdog.tsx:261
-#: src/components/vm/overview/vsock.tsx:297
 #: src/components/vm/nics/vmNicsCard.tsx:288
+#: src/components/vm/overview/vsock.tsx:297
+#: src/components/vm/overview/watchdog.tsx:261
 #: src/components/networks/networkOverviewTab.tsx:314
 msgid "none"
 msgstr "არცერთი"
@@ -3576,11 +3571,7 @@ msgstr "vCPU-ები"
 msgid "vhostuser"
 msgstr "vhostuser"
 
-#: src/components/common/stateIcon.tsx:64
-msgid "view more..."
-msgstr "მეტის ნახვა..."
-
-#: src/components/vm/vmActions.tsx:397
+#: src/components/vm/vmActions.tsx:393
 msgid ""
 "virt-install package needs to be installed on the system in order to clone "
 "VMs"
@@ -3602,7 +3593,7 @@ msgstr "ამ ატრიბუტის ჩასასწორებლა�
 msgid "vm"
 msgstr "ვმ"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:216
+#: src/components/vm/overview/vmOverviewCard.tsx:214
 msgid "vsock requires special software"
 msgstr "vsock-ს სპეციალური პროგრამები სჭირდება"
 
@@ -3610,11 +3601,20 @@ msgstr "vsock-ს სპეციალური პროგრამები 
 msgid "waiting"
 msgstr "მოლოდინი"
 
-#: src/helpers.ts:264 src/components/networks/networkOverviewTab.tsx:113
 #: src/components/storagePools/storagePoolOverviewTab.tsx:56
 #: src/components/storagePools/storagePoolOverviewTab.tsx:61
+#: src/components/networks/networkOverviewTab.tsx:113 src/helpers.ts:264
 msgid "yes"
 msgstr "დიახ"
+
+#~ msgid "Close"
+#~ msgstr "დახურვა"
+
+#~ msgid "Failed"
+#~ msgstr "ჩავარდა"
+
+#~ msgid "view more..."
+#~ msgstr "მეტის ნახვა..."
 
 #~ msgid "No storage pools available"
 #~ msgstr "საცავის პულები ხელმიუწვდომელია"

@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-07 06:50+0000\n"
-"PO-Revision-Date: 2026-05-06 11:59+0000\n"
+"POT-Creation-Date: 2026-06-29 07:15+0000\n"
+"PO-Revision-Date: 2026-06-26 19:17+0000\n"
 "Last-Translator: Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>\n"
 "Language-Team: Romanian <https://translate.fedoraproject.org/projects/"
 "cockpit/cockpit-machines/ro/>\n"
@@ -25,7 +25,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
 "20)) ? 1 : 2;\n"
-"X-Generator: Weblate 5.17.1\n"
+"X-Generator: Weblate 2026.6.1\n"
 
 #: src/components/vm/nics/nicBody.tsx:326
 msgid " excluding "
@@ -74,8 +74,8 @@ msgstr "Ajustare memorie $0"
 msgid "$0 network"
 msgstr "Rețea $0"
 
-#: src/components/vm/vmUsageCard.tsx:35
 #: src/components/vm/overview/vmOverviewCard.tsx:140
+#: src/components/vm/vmUsageCard.tsx:35
 msgid "$0 vCPU"
 msgid_plural "$0 vCPUs"
 msgstr[0] "$0 CPU virtual"
@@ -99,8 +99,8 @@ msgstr ""
 "dispărea odată cu oprirea acestuia. În același timp, gazda de origine "
 "păstrează propria copie a configurației MV."
 
-#: src/components/vm/disks/diskEdit.tsx:130
 #: src/components/vm/disks/vmDisksCard.tsx:246
+#: src/components/vm/disks/diskEdit.tsx:130
 msgid "Access"
 msgstr "Acces"
 
@@ -109,16 +109,16 @@ msgid "Action"
 msgstr "Acțiune"
 
 #: src/components/vm/disks/vmDisksCard.tsx:162
-#: src/components/vm/snapshots/vmSnapshotsCard.tsx:185
 #: src/components/vm/nics/vmNicsCard.tsx:593
-#: src/components/networks/networkList.tsx:64
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:185
 #: src/components/storagePools/storagePoolList.tsx:65
-#: src/components/vms/hostvmslist.tsx:324
+#: src/components/vms/hostvmslist.tsx:317
+#: src/components/networks/networkList.tsx:64
 msgid "Actions"
 msgstr "Acțiuni"
 
-#: src/components/networks/network.tsx:163
-#: src/components/storagePools/storagePool.tsx:160
+#: src/components/storagePools/storagePool.tsx:155
+#: src/components/networks/network.tsx:149
 msgid "Activate"
 msgstr "Activare"
 
@@ -127,9 +127,9 @@ msgid "Activate the storage pool to administer volumes"
 msgstr "Activați grupul de stocare pentru a administra volumele"
 
 #: src/components/vm/disks/diskAdd.tsx:749
-#: src/components/vm/overview/watchdog.tsx:167
+#: src/components/vm/nics/nicBody.tsx:559 src/components/vm/nics/nicAdd.tsx:274
 #: src/components/vm/overview/vsock.tsx:223
-#: src/components/vm/nics/nicAdd.tsx:274 src/components/vm/nics/nicBody.tsx:559
+#: src/components/vm/overview/watchdog.tsx:167
 #: src/components/vm/hostdevs/hostDevAdd.tsx:261
 #: src/components/networks/networkOverviewTab.tsx:268
 msgid "Add"
@@ -139,11 +139,11 @@ msgstr "Adaugă"
 msgid "Add SSH keys"
 msgstr "Adăugare chei SSH"
 
-#: src/components/vm/vmActions.tsx:457
+#: src/components/vm/vmActions.tsx:453
 msgid "Add TPM"
 msgstr "Adaugă TPM"
 
-#: src/components/vm/consoles/vnc.tsx:665
+#: src/components/vm/consoles/vnc.tsx:620
 msgid "Add VNC"
 msgstr "Adaugă VNC"
 
@@ -156,8 +156,8 @@ msgstr "Adaugă o intrare statică de gazdă DHCP"
 msgid "Add disk"
 msgstr "Adaugă un disc"
 
-#: src/components/vm/hostdevs/hostDevCard.tsx:140
 #: src/components/vm/hostdevs/hostDevAdd.tsx:278
+#: src/components/vm/hostdevs/hostDevCard.tsx:140
 msgid "Add host device"
 msgstr "Adaugă un dispozitiv gazdă"
 
@@ -215,8 +215,8 @@ msgid "Advanced interface type for high performance or enhanced security."
 msgstr ""
 "Tip de interfață avansată pentru performanțe ridicate sau securitate sporită."
 
-#: src/components/vms/hostvmslist.tsx:221
-#: src/components/vms/hostvmslist.tsx:239
+#: src/components/vms/hostvmslist.tsx:214
+#: src/components/vms/hostvmslist.tsx:232
 msgid "All"
 msgstr "Toate"
 
@@ -290,9 +290,9 @@ msgstr "Automat"
 msgid "Automation"
 msgstr "Automatizare"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:192
-#: src/components/networks/networkOverviewTab.tsx:117
+#: src/components/vm/overview/vmOverviewCard.tsx:190
 #: src/components/storagePools/storagePoolOverviewTab.tsx:60
+#: src/components/networks/networkOverviewTab.tsx:117
 msgid "Autostart"
 msgstr "Autopornire"
 
@@ -304,8 +304,8 @@ msgstr "Modul de procesare"
 msgid "Base System Peripheral"
 msgstr "Periferic al sistemului de bază"
 
-#: src/components/vm/deleteDialog.tsx:73
 #: src/components/vm/disks/vmDiskColumns.tsx:40
+#: src/components/vm/deleteDialog.tsx:73
 msgid "Block device"
 msgstr "Dispozitiv de blocuri"
 
@@ -317,7 +317,7 @@ msgstr "Blocat"
 msgid "Boot arguments"
 msgstr "Argumente de pornire"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:185
+#: src/components/vm/overview/vmOverviewCard.tsx:183
 msgid "Boot order"
 msgstr "Ordinea de pornire"
 
@@ -329,18 +329,18 @@ msgstr "Configurarea ordinii de pornire nu a putut fi salvată"
 msgid "Bridge"
 msgstr "Punte"
 
-#: src/components/vm/disks/diskEdit.tsx:93
 #: src/components/vm/disks/diskAdd.tsx:177
 #: src/components/vm/disks/vmDisksCard.tsx:241
+#: src/components/vm/disks/diskEdit.tsx:93
 #: src/components/vm/overview/bootOrder.tsx:114
 #: src/components/vm/overview/bootOrder.tsx:126
 #: src/components/vm/overview/bootOrder.tsx:145
 #: src/components/vm/overview/bootOrder.tsx:148
 #: src/components/vm/overview/bootOrder.tsx:163
+#: src/components/vm/hostdevs/hostDevAdd.tsx:100
 #: src/components/vm/hostdevs/hostDevCard.tsx:91
 #: src/components/vm/hostdevs/hostDevCard.tsx:99
 #: src/components/vm/hostdevs/hostDevCard.tsx:250
-#: src/components/vm/hostdevs/hostDevAdd.tsx:100
 msgid "Bus"
 msgstr "Magistrală"
 
@@ -348,10 +348,10 @@ msgstr "Magistrală"
 msgid "CD/DVD disc"
 msgstr "Disc CD/DVD"
 
-#: src/components/vm/vmUsageCard.tsx:52
-#: src/components/vm/overview/vmOverviewCard.tsx:180
 #: src/components/common/needsShutdown.tsx:206
-#: src/components/vms/hostvmslist.tsx:93 src/components/vms/hostvmslist.tsx:301
+#: src/components/vm/overview/vmOverviewCard.tsx:178
+#: src/components/vm/vmUsageCard.tsx:52 src/components/vms/hostvmslist.tsx:86
+#: src/components/vms/hostvmslist.tsx:294
 msgid "CPU"
 msgstr "CPU"
 
@@ -359,9 +359,9 @@ msgstr "CPU"
 msgid "CPU mode could not be saved"
 msgstr "Modul CPU nu a putut fi salvat"
 
-#: src/components/vm/disks/diskEdit.tsx:167
 #: src/components/vm/disks/diskAdd.tsx:172
 #: src/components/vm/disks/vmDisksCard.tsx:257
+#: src/components/vm/disks/diskEdit.tsx:167
 msgid "Cache"
 msgstr "Cache"
 
@@ -369,31 +369,30 @@ msgstr "Cache"
 msgid "Can not determine guest device name"
 msgstr "Nu se poate determina numele dispozitivului invitat"
 
-#: src/components/vm/vmCloneDialog.tsx:111
-#: src/components/vm/vmRenameDialog.tsx:96
-#: src/components/vm/vmReplaceSpiceDialog.tsx:171
-#: src/components/vm/deleteDialog.tsx:216
+#: src/components/create-vm-dialog/createVmDialog.tsx:1734
+#: src/components/common/deleteResource.tsx:116
 #: src/components/vm/disks/mediaEject.tsx:116
-#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:127
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:340
-#: src/components/vm/overview/watchdog.tsx:228
+#: src/components/vm/filesystems/vmFilesystemsCard.tsx:248
 #: src/components/vm/overview/firmware.tsx:107
+#: src/components/vm/overview/bootOrder.tsx:356
 #: src/components/vm/overview/cpuModal.tsx:341
 #: src/components/vm/overview/memoryModal.tsx:195
-#: src/components/vm/overview/bootOrder.tsx:356
 #: src/components/vm/overview/vsock.tsx:272
+#: src/components/vm/overview/watchdog.tsx:228
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:340
+#: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:127
+#: src/components/vm/vmReplaceSpiceDialog.tsx:171
 #: src/components/vm/confirmDialog.tsx:66
-#: src/components/vm/vmEditDescriptionDialog.tsx:81
-#: src/components/vm/consoles/vnc.tsx:158
 #: src/components/vm/hostdevs/hostDevAdd.tsx:266
 #: src/components/vm/vmMigrateDialog.tsx:227
-#: src/components/vm/filesystems/vmFilesystemsCard.tsx:248
-#: src/components/create-vm-dialog/createVmDialog.tsx:1734
-#: src/components/networks/createNetworkDialog.tsx:548
-#: src/components/networks/networkOverviewTab.tsx:271
-#: src/components/storagePools/storagePoolDelete.tsx:207
+#: src/components/vm/vmEditDescriptionDialog.tsx:81
+#: src/components/vm/vmCloneDialog.tsx:111
+#: src/components/vm/deleteDialog.tsx:216
+#: src/components/vm/vmRenameDialog.tsx:96
 #: src/components/storagePools/createStoragePoolDialog.tsx:512
-#: src/components/common/deleteResource.tsx:116
+#: src/components/storagePools/storagePoolDelete.tsx:207
+#: src/components/networks/networkOverviewTab.tsx:271
+#: src/components/networks/createNetworkDialog.tsx:548
 msgid "Cancel"
 msgstr "Anulează"
 
@@ -454,13 +453,9 @@ msgstr ""
 "Facând clic cu mausul pe «Lansați vizorul» se va descărca un fișier $0 și va "
 "fi lansată aplicația «Remote Viewer - Vizor la distanță» în sistemul dvs."
 
-#: src/components/vm/vmCloneDialog.tsx:108 src/components/vm/vmActions.tsx:387
+#: src/components/vm/vmActions.tsx:383 src/components/vm/vmCloneDialog.tsx:108
 msgid "Clone"
 msgstr "Clonare"
-
-#: src/components/common/stateIcon.tsx:59
-msgid "Close"
-msgstr "Închide"
 
 #: src/components/create-vm-dialog/createVmDialog.tsx:446
 msgid "Cloud base image"
@@ -491,22 +486,26 @@ msgid "Confirm this action"
 msgstr "Confirmați această acțiune"
 
 #: src/components/vm/consoles/serial.tsx:86
-#: src/components/vm/consoles/vnc.tsx:584
+#: src/components/vm/consoles/vnc.tsx:539
 msgid "Connect"
 msgstr "Conectare"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:158
-#: src/components/networks/createNetworkDialog.tsx:34
-#: src/components/networks/networkList.tsx:61
-#: src/components/storagePools/storagePoolList.tsx:63
 #: src/components/common/machinesConnectionSelector.tsx:44
-#: src/components/vms/hostvmslist.tsx:321
+#: src/components/vm/overview/vmOverviewCard.tsx:158
+#: src/components/storagePools/storagePoolList.tsx:63
+#: src/components/vms/hostvmslist.tsx:314
+#: src/components/networks/networkList.tsx:61
+#: src/components/networks/createNetworkDialog.tsx:34
 msgid "Connection"
 msgstr "Conexiune"
 
 #: src/components/vm/consoles/consoles.tsx:367
 msgid "Console"
 msgstr "Consolă"
+
+#: src/components/vm/consoles/consoles.tsx:385
+msgid "Console type"
+msgstr "Tipul consolei"
 
 #: src/components/vm/vmReplaceSpiceDialog.tsx:148
 msgid "Convert QXL video card to VGA"
@@ -554,9 +553,9 @@ msgid "Crashed"
 msgstr "Prăbuşită"
 
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:337
-#: src/components/networks/createNetworkDialog.tsx:545
-#: src/components/storagePools/storageVolumeCreate.tsx:95
 #: src/components/storagePools/createStoragePoolDialog.tsx:509
+#: src/components/storagePools/storageVolumeCreate.tsx:95
+#: src/components/networks/createNetworkDialog.tsx:545
 msgid "Create"
 msgstr "Creează"
 
@@ -601,8 +600,8 @@ msgstr "Creează un volum brut nou"
 msgid "Create new virtual machine"
 msgstr "Creează o mașină virtuală nouă"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.tsx:61
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:324
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:61
 msgid "Create snapshot"
 msgstr "Creează o imagine instantanee"
 
@@ -649,7 +648,7 @@ msgstr "Crearea mașinii virtuale $0 a eșuat"
 msgid "Creation time"
 msgstr "Data+ora creării"
 
-#: src/components/vm/consoles/vnc.tsx:301
+#: src/components/vm/consoles/vnc.tsx:256
 msgid "Ctrl+Alt+$0"
 msgstr "«Ctrl+Alt+$0»"
 
@@ -678,20 +677,21 @@ msgstr "Rută personalizată"
 msgid "DHCP Settings"
 msgstr "Opțiuni DHCP"
 
-#: src/components/networks/network.tsx:159
-#: src/components/storagePools/storagePool.tsx:151
+#: src/components/storagePools/storagePool.tsx:146
+#: src/components/networks/network.tsx:145
 msgid "Deactivate"
 msgstr "Dezactivează"
 
-#: src/components/vm/deleteDialog.tsx:213 src/components/vm/vmActions.tsx:470
-#: src/components/vm/vmActions.tsx:478 src/components/networks/network.tsx:140
-#: src/components/networks/network.tsx:143
-#: src/components/storagePools/storagePoolDelete.tsx:204
-#: src/components/storagePools/storagePoolDelete.tsx:234
-#: src/components/storagePools/storagePoolDelete.tsx:244
 #: src/components/common/deleteResource.tsx:104
 #: src/components/common/deleteResource.tsx:164
 #: src/components/common/deleteResource.tsx:175
+#: src/components/vm/vmActions.tsx:466 src/components/vm/vmActions.tsx:474
+#: src/components/vm/deleteDialog.tsx:213
+#: src/components/storagePools/storagePoolDelete.tsx:204
+#: src/components/storagePools/storagePoolDelete.tsx:234
+#: src/components/storagePools/storagePoolDelete.tsx:244
+#: src/components/networks/network.tsx:126
+#: src/components/networks/network.tsx:129
 msgid "Delete"
 msgstr "Șterge"
 
@@ -714,7 +714,7 @@ msgstr[2] "Șterge $0 de volume"
 msgid "Delete associated storage files:"
 msgstr "Șterge fișierele de stocare asociate:"
 
-#: src/components/networks/network.tsx:130
+#: src/components/networks/network.tsx:116
 msgid "Delete network?"
 msgstr "Ștergeți rețeaua?"
 
@@ -736,8 +736,8 @@ msgstr ""
 "Ștergerea directoarelor partajate este posibilă numai după ce invitatul este "
 "oprit"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.tsx:123
 #: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:76
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:123
 #: src/components/vm/vmEditDescriptionDialog.tsx:66
 msgid "Description"
 msgstr "Descriere"
@@ -775,12 +775,12 @@ msgstr "Detalii"
 #: src/components/vm/overview/bootOrder.tsx:113
 #: src/components/vm/overview/bootOrder.tsx:146
 #: src/components/vm/overview/bootOrder.tsx:149
-#: src/components/vm/hostdevs/hostDevCard.tsx:90
-#: src/components/vm/hostdevs/hostDevCard.tsx:249
 #: src/components/vm/hostdevs/hostDevAdd.tsx:99
 #: src/components/vm/hostdevs/hostDevAdd.tsx:144
-#: src/components/networks/createNetworkDialog.tsx:218
+#: src/components/vm/hostdevs/hostDevCard.tsx:90
+#: src/components/vm/hostdevs/hostDevCard.tsx:249
 #: src/components/networks/networkList.tsx:60
+#: src/components/networks/createNetworkDialog.tsx:218
 msgid "Device"
 msgstr "Dispozitiv"
 
@@ -793,7 +793,7 @@ msgid "Disconnect"
 msgstr "Deconectare"
 
 #: src/components/vm/consoles/serial.tsx:83
-#: src/components/vm/consoles/vnc.tsx:578
+#: src/components/vm/consoles/vnc.tsx:533
 msgid "Disconnected"
 msgstr "Deconectat"
 
@@ -910,12 +910,12 @@ msgstr "Editare"
 msgid "Edit $0 attributes"
 msgstr "Editează atributele $0"
 
-#: src/components/vm/consoles/vnc.tsx:144
-#: src/components/vm/consoles/vnc.tsx:364
+#: src/components/vm/consoles/vnc.tsx:146
+#: src/components/vm/consoles/vnc.tsx:319
 msgid "Edit VNC settings"
 msgstr "Modifică parametrii VNC"
 
-#: src/components/vm/vmActions.tsx:444
+#: src/components/vm/vmActions.tsx:440
 msgid "Edit description"
 msgstr "Editează descrierea"
 
@@ -949,7 +949,7 @@ msgstr "Ejectare"
 msgid "Eject disc from VM?"
 msgstr "Se extrage discul din mașina virtuală?"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:240
+#: src/components/vm/overview/vmOverviewCard.tsx:238
 msgid "Emulated machine"
 msgstr "Mașina emulată"
 
@@ -996,15 +996,11 @@ msgstr "Extindere"
 msgid "Extended attributes"
 msgstr "Atribute extinse"
 
-#: src/components/common/stateIcon.tsx:63
-msgid "Failed"
-msgstr "Nu a funcționat"
-
-#: src/components/vm/vmActions.tsx:159
+#: src/components/vm/vmActions.tsx:155
 msgid "Failed to add TPM to VM $0"
 msgstr "Adăugarea TPM la mașina virtuală $0 a eșuat"
 
-#: src/components/vm/consoles/vnc.tsx:644
+#: src/components/vm/consoles/vnc.tsx:599
 msgid "Failed to add VNC to VM $0"
 msgstr "Adăugarea VNC la mașina virtuală $0 a eșuat"
 
@@ -1036,7 +1032,7 @@ msgstr "Configurarea vsock a eșuat"
 msgid "Failed to configure watchdog"
 msgstr "Configurarea watcdog a eșuat"
 
-#: src/components/vm/consoles/vnc.tsx:497
+#: src/components/vm/consoles/vnc.tsx:452
 msgid "Failed to connect"
 msgstr "Nu s-a putut conecta"
 
@@ -1068,7 +1064,7 @@ msgstr "Înlocuirea dispozitivelor SPICE a eșuat"
 msgid "Failed to save network settings"
 msgstr "Salvarea parametrilor de rețea a eșuat"
 
-#: src/components/vm/consoles/vnc.tsx:296
+#: src/components/vm/consoles/vnc.tsx:251
 msgid "Failed to send key Ctrl+Alt+$0 to VM $1"
 msgstr ""
 "Trimiterea semnalului generat de apăsarea combinației de taste «Ctrl+Alt+$0» "
@@ -1097,12 +1093,12 @@ msgstr "Sistemul de fișiere $0 nu a putut fi eliminat"
 msgid "Filesystem directory"
 msgstr "Directorul sistemului de fișiere"
 
-#: src/components/vms/hostvmslist.tsx:262
+#: src/components/vms/hostvmslist.tsx:255
 msgid "Filter by name"
 msgstr "Filtrează după nume"
 
 #: src/components/vm/overview/firmware.tsx:90
-#: src/components/vm/overview/vmOverviewCard.tsx:246
+#: src/components/vm/overview/vmOverviewCard.tsx:244
 msgid "Firmware"
 msgstr "Firmware"
 
@@ -1125,11 +1121,11 @@ msgstr ""
 msgid "Force eject"
 msgstr "Forțează ejectarea"
 
-#: src/components/vm/vmActions.tsx:339 src/components/vm/vmActions.tsx:344
+#: src/components/vm/vmActions.tsx:335 src/components/vm/vmActions.tsx:340
 msgid "Force reboot"
 msgstr "Forțează repornirea"
 
-#: src/components/vm/vmActions.tsx:332
+#: src/components/vm/vmActions.tsx:328
 msgid "Force reboot $0?"
 msgstr "Se forțează repornirea $0?"
 
@@ -1137,21 +1133,21 @@ msgstr "Se forțează repornirea $0?"
 msgid "Force revert"
 msgstr "Forțează revenirea"
 
-#: src/components/vm/vmActions.tsx:275 src/components/vm/vmActions.tsx:280
+#: src/components/vm/vmActions.tsx:271 src/components/vm/vmActions.tsx:276
 msgid "Force shut down"
 msgstr "Forțează oprirea"
 
-#: src/components/vm/vmActions.tsx:268
+#: src/components/vm/vmActions.tsx:264
 msgid "Force shut down $0?"
 msgstr "Se forțează oprirea $0?"
 
-#: src/components/vm/vmActions.tsx:531
+#: src/components/vm/vmActions.tsx:527
 msgid "Force shutdown and restart"
 msgstr "Forțează oprirea și repornește"
 
 #: src/components/vm/disks/vmDiskColumns.tsx:134
-#: src/components/storagePools/createStoragePoolDialog.tsx:244
 #: src/components/storagePools/storageVolumeCreateBody.tsx:103
+#: src/components/storagePools/createStoragePoolDialog.tsx:244
 msgid "Format"
 msgstr "Formatare"
 
@@ -1191,11 +1187,11 @@ msgstr "Generează automat"
 msgid "Get a new RHSM token."
 msgstr "Obțineți un nou jeton RHSM."
 
-#: src/components/vm/disks/vmDisksCard.tsx:39
-#: src/components/vm/overview/memorySelectRow.tsx:95
 #: src/components/create-vm-dialog/createVmDialog.tsx:1018
 #: src/components/create-vm-dialog/createVmDialog.tsx:1182
 #: src/components/common/dialog.tsx:100
+#: src/components/vm/disks/vmDisksCard.tsx:39
+#: src/components/vm/overview/memorySelectRow.tsx:95
 msgid "GiB"
 msgstr "Gio"
 
@@ -1215,7 +1211,7 @@ msgstr "Oprire corectă"
 msgid "Graphical"
 msgstr "Grafică"
 
-#: src/components/vm/consoles/vnc.tsx:655
+#: src/components/vm/consoles/vnc.tsx:610
 msgid "Graphical console support not enabled"
 msgstr "Suportul pentru consola grafică nu este activat"
 
@@ -1238,8 +1234,8 @@ msgstr "Ascunde opțiunile suplimentare"
 
 #: src/components/vm/disks/vmDiskColumns.tsx:44
 #: src/components/vm/overview/bootOrder.tsx:110
-#: src/components/storagePools/storagePoolOverviewTab.tsx:23
 #: src/components/storagePools/createStoragePoolDialog.tsx:154
+#: src/components/storagePools/storagePoolOverviewTab.tsx:23
 msgid "Host"
 msgstr "Gazda"
 
@@ -1279,7 +1275,7 @@ msgstr "Ajutor pentru portul gazdă"
 msgid "Host should not be empty"
 msgstr "Câmpul „Gazda“ nu poate fi lăsat gol"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:236
+#: src/components/vm/overview/vmOverviewCard.tsx:234
 msgid "Hypervisor details"
 msgstr "Detalii hipervizor"
 
@@ -1309,8 +1305,8 @@ msgstr "Adresa IP nu trebuie să fie goală"
 msgid "IP configuration"
 msgstr "Configurarea IP"
 
-#: src/components/networks/createNetworkDialog.tsx:337
 #: src/components/networks/networkOverviewTab.tsx:136
+#: src/components/networks/createNetworkDialog.tsx:337
 msgid "IPv4 address"
 msgstr "Adresă IPv4"
 
@@ -1338,8 +1334,8 @@ msgstr "Lungimea prefixului IPv4 trebuie să fie de 24 sau mai puțin"
 msgid "IPv4 prefix length must be a multiple of 8"
 msgstr "Lungimea prefixului IPv4 trebuie să fie un multiplu de 8"
 
-#: src/components/networks/createNetworkDialog.tsx:378
 #: src/components/networks/networkOverviewTab.tsx:156
+#: src/components/networks/createNetworkDialog.tsx:378
 msgid "IPv6 address"
 msgstr "Adresă IPv6"
 
@@ -1445,7 +1441,7 @@ msgstr "Introduceți discul"
 msgid "Inside the VM"
 msgstr "În interiorul mașinii virtuale"
 
-#: src/components/vm/vmActions.tsx:375
+#: src/components/vm/vmActions.tsx:371
 msgid "Install"
 msgstr "Instalează"
 
@@ -1573,7 +1569,7 @@ msgstr ""
 "Suport de instalare local (imagine ISO sau arborele de instalare al "
 "distribuției)"
 
-#: src/components/vm/consoles/vnc.tsx:268
+#: src/components/vm/consoles/vnc.tsx:223
 msgid "Local scaling"
 msgstr "Scalarea locală"
 
@@ -1586,15 +1582,14 @@ msgstr "Locație"
 msgid "MAC"
 msgstr "MAC"
 
-#: src/components/vm/nics/nicAdd.tsx:83
+#: src/components/vm/nics/nicEdit.tsx:45 src/components/vm/nics/nicAdd.tsx:83
 #: src/components/vm/nics/vmNicsCard.tsx:569
 #: src/components/vm/nics/vmNicsCard.tsx:767
-#: src/components/vm/nics/nicEdit.tsx:45
 #: src/components/networks/networkOverviewTab.tsx:246
 msgid "MAC address"
 msgstr "Adresa MAC"
 
-#: src/components/vm/nics/nicAdd.tsx:179 src/components/vm/nics/nicEdit.tsx:99
+#: src/components/vm/nics/nicEdit.tsx:99 src/components/vm/nics/nicAdd.tsx:179
 msgid "MAC address already in use"
 msgstr "Adresa MAC este deja în uz"
 
@@ -1667,11 +1662,10 @@ msgstr "Inserarea suportului media a eșuat"
 msgid "Media will be ejected from $0:"
 msgstr "Suportul media va fi ejectat din $0:"
 
-#: src/components/vm/vmUsageCard.tsx:44
-#: src/components/vm/overview/vmOverviewCard.tsx:175
 #: src/components/create-vm-dialog/createVmDialog.tsx:1003
-#: src/components/vms/hostvmslist.tsx:111
-#: src/components/vms/hostvmslist.tsx:302
+#: src/components/vm/overview/vmOverviewCard.tsx:173
+#: src/components/vm/vmUsageCard.tsx:44 src/components/vms/hostvmslist.tsx:104
+#: src/components/vms/hostvmslist.tsx:295
 msgid "Memory"
 msgstr "Memorie"
 
@@ -1700,14 +1694,14 @@ msgstr "Instantaneea de memorie va utiliza aproximativ $0."
 msgid "Memory state path"
 msgstr "Ruta către starea memoriei"
 
-#: src/components/vm/overview/memorySelectRow.tsx:93
 #: src/components/create-vm-dialog/createVmDialog.tsx:1016
 #: src/components/create-vm-dialog/createVmDialog.tsx:1180
 #: src/components/common/dialog.tsx:99
+#: src/components/vm/overview/memorySelectRow.tsx:93
 msgid "MiB"
 msgstr "Mio"
 
-#: src/components/vm/vmActions.tsx:410
+#: src/components/vm/vmActions.tsx:406
 #: src/components/vm/vmMigrateDialog.tsx:224
 msgid "Migrate"
 msgstr "Migrare"
@@ -1724,10 +1718,10 @@ msgstr "Migrare eșuată"
 msgid "Miscellaneous"
 msgstr "Diverse"
 
-#: src/components/vm/overview/cpuModal.tsx:304
-#: src/components/vm/overview/cpuModal.tsx:306
 #: src/components/vm/nics/nicBody.tsx:276
 #: src/components/vm/nics/vmNicsCard.tsx:168
+#: src/components/vm/overview/cpuModal.tsx:304
+#: src/components/vm/overview/cpuModal.tsx:306
 msgid "Mode"
 msgstr "Mod"
 
@@ -1770,17 +1764,17 @@ msgstr "NAT către $0"
 msgid "NIC $0 of VM $1 failed to change state"
 msgstr "NIC-ul $0 al mașinii virtuale $1 nu a reușit să-și schimbe starea"
 
-#: src/components/vm/vmCloneDialog.tsx:92
-#: src/components/vm/snapshots/vmSnapshotsCard.tsx:113
-#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:57
 #: src/components/create-vm-dialog/createVmDialog.tsx:313
-#: src/components/networks/createNetworkDialog.tsx:172
-#: src/components/networks/networkList.tsx:59
+#: src/components/vm/snapshots/vmSnapshotsCreateModal.tsx:57
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:113
+#: src/components/vm/vmCloneDialog.tsx:92
+#: src/components/storagePools/storageVolumeCreateBody.tsx:113
+#: src/components/storagePools/createStoragePoolDialog.tsx:58
 #: src/components/storagePools/storagePoolList.tsx:61
 #: src/components/storagePools/storagePoolVolumesTab.tsx:77
-#: src/components/storagePools/createStoragePoolDialog.tsx:58
-#: src/components/storagePools/storageVolumeCreateBody.tsx:113
-#: src/components/vms/hostvmslist.tsx:320
+#: src/components/vms/hostvmslist.tsx:313
+#: src/components/networks/networkList.tsx:59
+#: src/components/networks/createNetworkDialog.tsx:172
 msgid "Name"
 msgstr "Nume"
 
@@ -1796,13 +1790,13 @@ msgstr "Numele nu poate fi gol"
 msgid "Name contains invalid characters"
 msgstr "Numele conține caractere nevalide"
 
-#: src/components/vm/vmCloneDialog.tsx:51
 #: src/components/create-vm-dialog/createVmDialog.tsx:231
+#: src/components/vm/vmCloneDialog.tsx:51
 msgid "Name must not be empty"
 msgstr "Numele nu trebuie să fie gol"
 
-#: src/components/networks/createNetworkDialog.tsx:77
 #: src/components/storagePools/createStoragePoolDialog.tsx:64
+#: src/components/networks/createNetworkDialog.tsx:77
 msgid "Name should not be empty"
 msgstr "Câmpul „Nume” nu trebuie să fie gol"
 
@@ -1814,19 +1808,19 @@ msgstr "Nume: "
 msgid "Netmask"
 msgstr "Masca de rețea"
 
-#: src/components/networks/network.tsx:131
+#: src/components/networks/network.tsx:117
 msgid "Network $0 could not be deleted"
 msgstr "Rețeaua $0 nu a putut fi ștearsă"
 
-#: src/components/networks/network.tsx:96
+#: src/components/networks/network.tsx:87
 msgid "Network $0 failed to get activated"
 msgstr "Rețeaua $0 nu a putut fi activată"
 
-#: src/components/networks/network.tsx:113
+#: src/components/networks/network.tsx:101
 msgid "Network $0 failed to get deactivated"
 msgstr "Rețeaua $0 nu a putut fi dezactivată"
 
-#: src/components/networks/network.tsx:132
+#: src/components/networks/network.tsx:118
 msgid "Network $0 will be permanently deleted."
 msgstr "Rețeaua $0 va fi ștearsă definitiv."
 
@@ -1858,7 +1852,7 @@ msgstr "Interfața de rețea $0 nu a putut fi eliminată"
 msgid "Network interface $0 will be removed from $1"
 msgstr "Interfața de rețea $0 va fi eliminată din $1"
 
-#: src/components/vm/nics/nicAdd.tsx:218 src/components/vm/nics/nicEdit.tsx:163
+#: src/components/vm/nics/nicEdit.tsx:163 src/components/vm/nics/nicAdd.tsx:218
 msgid "Network interface settings could not be saved"
 msgstr "Parametrii de configurare a rețelei nu au putut fi salvați"
 
@@ -1896,7 +1890,7 @@ msgstr "Numele volumului nou"
 msgid "No SSH keys specified"
 msgstr "Nu s-au specificat chei SSH"
 
-#: src/components/vms/hostvmslist.tsx:326
+#: src/components/vms/hostvmslist.tsx:319
 msgid "No VM is running or defined on this host"
 msgstr "Pe acest gazdă nu rulează și nu este definită nicio MV"
 
@@ -1956,7 +1950,7 @@ msgstr "Nu există niciun grup care să permită crearea de volume"
 msgid "No ports forwarded"
 msgstr "Nu există porturi redirecționate"
 
-#: src/components/vm/consoles/vnc.tsx:267
+#: src/components/vm/consoles/vnc.tsx:222
 msgid "No scaling or resizing"
 msgstr "Fără scalare sau redimensionare"
 
@@ -2000,7 +1994,7 @@ msgstr "Nu există volume în acest grup de stocare."
 msgid "Non-Essential Instrumentation"
 msgstr "Instrumentar neesențial"
 
-#: src/components/networks/network.tsx:139
+#: src/components/networks/network.tsx:125
 msgid ""
 "Non-persistent network cannot be deleted. It ceases to exists when it's "
 "deactivated."
@@ -2048,9 +2042,9 @@ msgstr ""
 "Unul sau mai multe volume selectate sunt utilizate de domenii. Deconectați "
 "mai întâi discurile pentru a permite ștergerea volumelor."
 
-#: src/components/vm/overview/memoryModal.tsx:173
-#: src/components/vm/overview/bootOrder.tsx:394
 #: src/components/vm/nics/nicEdit.tsx:47
+#: src/components/vm/overview/bootOrder.tsx:394
+#: src/components/vm/overview/memoryModal.tsx:173
 msgid "Only editable when the guest is shut off"
 msgstr "Se poate edita numai când invitatul este oprit"
 
@@ -2062,8 +2056,8 @@ msgstr "Deschide"
 msgid "Operating system"
 msgstr "Sistemul de operare"
 
-#: src/components/storagePools/storagePool.tsx:165
-#: src/components/storagePools/storagePool.tsx:172
+#: src/components/storagePools/storagePool.tsx:160
+#: src/components/storagePools/storagePool.tsx:167
 msgid "Operation is in progress"
 msgstr "Operație în curs de desfășurare"
 
@@ -2072,7 +2066,7 @@ msgid "Other VMs using SPICE"
 msgstr "Alte mașini virtuale utilizează SPICE"
 
 #: src/components/vm/vmDetailsPage.tsx:140
-#: src/components/storagePools/storagePool.tsx:59
+#: src/components/storagePools/storagePool.tsx:60
 msgid "Overview"
 msgstr "Vedere de ansamblu"
 
@@ -2084,11 +2078,11 @@ msgstr "PCI"
 msgid "Parent snapshot"
 msgstr "Instantaneea părinte"
 
-#: src/components/vm/consoles/vnc.tsx:189
+#: src/components/vm/consoles/vnc.tsx:159
 msgid "Password"
 msgstr "Parola"
 
-#: src/components/vm/consoles/vnc.tsx:209
+#: src/components/vm/consoles/vnc.tsx:161
 msgid ""
 "Password must be 8 characters or less. VNC passwords do not provide "
 "encryption and are generally cryptographically weak. They can not be used to "
@@ -2098,14 +2092,14 @@ msgstr ""
 "criptarea și sunt, în general, slabe din punct de vedere criptografic. "
 "Acestea nu pot fi utilizate pentru a securiza conexiunile în rețele nesigure."
 
-#: src/components/vm/consoles/vnc.tsx:106
+#: src/components/vm/consoles/vnc.tsx:113
 msgid "Password must be at most 8 characters."
 msgstr "Parola trebuie să aibă cel mult 8 caractere."
 
-#: src/components/vm/deleteDialog.tsx:68
 #: src/components/vm/disks/diskEdit.tsx:46
 #: src/components/vm/hostdevs/hostDevCard.tsx:115
 #: src/components/vm/hostdevs/hostDevCard.tsx:119
+#: src/components/vm/deleteDialog.tsx:68
 msgid "Path"
 msgstr "Ruta"
 
@@ -2133,7 +2127,7 @@ msgstr "Ruta către director"
 msgid "Path to file on host's file system"
 msgstr "Ruta către fișier în sistemul de fișiere al gazdei"
 
-#: src/helpers.ts:275 src/components/vm/vmActions.tsx:195
+#: src/components/vm/vmActions.tsx:191 src/helpers.ts:275
 msgid "Pause"
 msgstr "Pauză"
 
@@ -2154,8 +2148,8 @@ msgstr "Accesul la imaginile de disc din directoarele personale a fost refuzat"
 msgid "Persistence"
 msgstr "Persistența"
 
-#: src/components/networks/networkOverviewTab.tsx:112
 #: src/components/storagePools/storagePoolOverviewTab.tsx:55
+#: src/components/networks/networkOverviewTab.tsx:112
 msgid "Persistent"
 msgstr "Persistentă"
 
@@ -2167,7 +2161,7 @@ msgstr "Dispozitiv de disc fizic"
 msgid "Physical disk device on host"
 msgstr "Dispozitiv de disc fizic pe gazdă"
 
-#: src/components/vm/nics/nicAdd.tsx:179 src/components/vm/nics/nicEdit.tsx:100
+#: src/components/vm/nics/nicEdit.tsx:100 src/components/vm/nics/nicAdd.tsx:179
 msgid "Please choose a different MAC address"
 msgstr "Vă rugăm să alegeți o altă adresă MAC"
 
@@ -2180,12 +2174,12 @@ msgid "Please see $0 how to reconfigure your VM manually."
 msgstr ""
 "Consultați $0 pentru a afla cum să reconfigurați manual mașina virtuală."
 
-#: src/components/vm/deleteDialog.tsx:81
 #: src/components/vm/disks/diskAdd.tsx:248
 #: src/components/vm/disks/diskAdd.tsx:321
 #: src/components/vm/disks/mediaEject.tsx:85
 #: src/components/vm/disks/vmDiskColumns.tsx:42
 #: src/components/vm/overview/bootOrder.tsx:108
+#: src/components/vm/deleteDialog.tsx:81
 msgid "Pool"
 msgstr "Grup"
 
@@ -2202,10 +2196,10 @@ msgid "Pool's volumes are used by VMs "
 msgstr "Volumele grupului sunt utilizate de mașinile virtuale "
 
 #: src/components/vm/disks/vmDiskColumns.tsx:45
+#: src/components/vm/nics/vmNicsCard.tsx:191
+#: src/components/vm/consoles/vnc.tsx:154
 #: src/components/vm/overview/bootOrder.tsx:111
 #: src/components/vm/overview/bootOrder.tsx:127
-#: src/components/vm/nics/vmNicsCard.tsx:191
-#: src/components/vm/consoles/vnc.tsx:170
 msgid "Port"
 msgstr "Port"
 
@@ -2217,11 +2211,11 @@ msgstr "Redirecționarea porturilor"
 msgid "Port must be 1 to 65535."
 msgstr "Numărul portului trebuie să fie în intervalul 1 - 65535."
 
-#: src/components/vm/consoles/vnc.tsx:100
+#: src/components/vm/consoles/vnc.tsx:106
 msgid "Port must be 5900 or larger."
 msgstr "Portul trebuie să fie 5900 sau mai mare."
 
-#: src/components/vm/consoles/vnc.tsx:183
+#: src/components/vm/consoles/vnc.tsx:156
 msgid ""
 "Port must be a number that is at least 5900. Leave empty to automatically "
 "assign a free port when the machine starts."
@@ -2229,7 +2223,8 @@ msgstr ""
 "Portul trebuie să fie un număr de cel puțin 5900. Lăsați câmpul necompletat "
 "pentru a se aloca automat un port liber la pornirea mașinii."
 
-#: src/components/vm/nics/nicBody.tsx:394 src/components/vm/consoles/vnc.tsx:97
+#: src/components/vm/nics/nicBody.tsx:394
+#: src/components/vm/consoles/vnc.tsx:104
 msgid "Port must be a number."
 msgstr "Portul trebuie să fie un număr."
 
@@ -2271,9 +2266,9 @@ msgstr "Procesor"
 
 #: src/components/vm/overview/bootOrder.tsx:141
 #: src/components/vm/overview/bootOrder.tsx:157
+#: src/components/vm/hostdevs/hostDevAdd.tsx:151
 #: src/components/vm/hostdevs/hostDevCard.tsx:240
 #: src/components/vm/hostdevs/hostDevCard.tsx:246
-#: src/components/vm/hostdevs/hostDevAdd.tsx:151
 msgid "Product"
 msgstr "Produs"
 
@@ -2282,9 +2277,9 @@ msgid "Profile"
 msgstr "Profil"
 
 #: src/components/vm/disks/vmDiskColumns.tsx:41
+#: src/components/vm/nics/nicBody.tsx:477
 #: src/components/vm/overview/bootOrder.tsx:107
 #: src/components/vm/overview/bootOrder.tsx:170
-#: src/components/vm/nics/nicBody.tsx:477
 #: src/components/vm/hostdevs/hostDevCard.tsx:106
 msgid "Protocol"
 msgstr "Protocol"
@@ -2305,17 +2300,17 @@ msgstr "Cheie publică"
 msgid "Range"
 msgstr "Interval"
 
-#: src/components/vm/disks/diskEdit.tsx:110
 #: src/components/vm/disks/vmDisksCard.tsx:249
+#: src/components/vm/disks/diskEdit.tsx:110
 msgid "Read-only"
 msgstr "Numai-citire"
 
-#: src/components/vm/vmActions.tsx:235 src/components/vm/vmActions.tsx:319
-#: src/components/vm/vmActions.tsx:324
+#: src/components/vm/vmActions.tsx:231 src/components/vm/vmActions.tsx:315
+#: src/components/vm/vmActions.tsx:320
 msgid "Reboot"
 msgstr "Repornire"
 
-#: src/components/vm/vmActions.tsx:312
+#: src/components/vm/vmActions.tsx:308
 msgid "Reboot $0?"
 msgstr "Reporniți $0?"
 
@@ -2340,7 +2335,7 @@ msgstr ""
 "operare. Pentru a-l instala, căutați „Remote Viewer” în GNOME Software, KDE "
 "Discover sau executați următoarea comandă:"
 
-#: src/components/vm/consoles/vnc.tsx:269
+#: src/components/vm/consoles/vnc.tsx:224
 msgid "Remote resizing"
 msgstr "Redimensionarea de la distanță"
 
@@ -2355,14 +2350,14 @@ msgstr ""
 
 #: src/components/vm/disks/vmDiskColumns.tsx:169
 #: src/components/vm/disks/vmDiskColumns.tsx:248
-#: src/components/vm/overview/watchdog.tsx:225
-#: src/components/vm/overview/vsock.tsx:269
-#: src/components/vm/nics/vmNicsCard.tsx:652
-#: src/components/vm/nics/vmNicsCard.tsx:667
-#: src/components/vm/hostdevs/hostDevCard.tsx:256
-#: src/components/vm/hostdevs/hostDevCard.tsx:262
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:52
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:61
+#: src/components/vm/nics/vmNicsCard.tsx:652
+#: src/components/vm/nics/vmNicsCard.tsx:667
+#: src/components/vm/overview/vsock.tsx:269
+#: src/components/vm/overview/watchdog.tsx:225
+#: src/components/vm/hostdevs/hostDevCard.tsx:256
+#: src/components/vm/hostdevs/hostDevCard.tsx:262
 #: src/components/networks/networkOverviewTab.tsx:68
 msgid "Remove"
 msgstr "Elimină"
@@ -2387,9 +2382,9 @@ msgstr "Eliminați sistemul de fișiere?"
 msgid "Remove host device from VM?"
 msgstr "Eliminați dispozitivul gazdă din mașina virtuală?"
 
+#: src/components/create-vm-dialog/createVmDialog.tsx:927
 #: src/components/vm/nics/nicBody.tsx:496
 #: src/components/vm/nics/nicBody.tsx:527
-#: src/components/create-vm-dialog/createVmDialog.tsx:927
 msgid "Remove item"
 msgstr "Elimină elementul"
 
@@ -2401,7 +2396,7 @@ msgstr "Eliminați interfața de rețea?"
 msgid "Remove static host from DHCP"
 msgstr "Elimină gazda statică din DHCP"
 
-#: src/components/vm/vmRenameDialog.tsx:93 src/components/vm/vmActions.tsx:434
+#: src/components/vm/vmActions.tsx:430 src/components/vm/vmRenameDialog.tsx:93
 msgid "Rename"
 msgstr "Redenumește"
 
@@ -2413,8 +2408,8 @@ msgstr "Redenumește mașina virtuală $0"
 msgid "Replace"
 msgstr "Înlocuiește"
 
+#: src/components/vm/usesSpice.tsx:42 src/components/vm/vmActions.tsx:417
 #: src/components/vm/vmReplaceSpiceDialog.tsx:133
-#: src/components/vm/usesSpice.tsx:42 src/components/vm/vmActions.tsx:421
 msgid "Replace SPICE devices"
 msgstr "Înlocuiește dispozitivele SPICE"
 
@@ -2438,7 +2433,7 @@ msgstr "Înlocuiește cu VNC"
 msgid "Reset"
 msgstr "Restabilește"
 
-#: src/components/vm/consoles/vnc.tsx:688
+#: src/components/vm/consoles/vnc.tsx:643
 msgid "Restart this virtual machine to access its graphical console"
 msgstr ""
 "Reporniți această mașină virtuală pentru a accesa consola grafică a acesteia"
@@ -2454,16 +2449,16 @@ msgstr ""
 "Restricții în rețea (emulare bazată pe SLIRP) și în alocarea dispozitivelor "
 "PCI"
 
-#: src/components/vm/vmActions.tsx:206
+#: src/components/vm/vmActions.tsx:202
 msgid "Resume"
 msgstr "Reluare"
 
-#: src/components/vm/consoles/vnc.tsx:584
+#: src/components/vm/consoles/vnc.tsx:539
 msgid "Retry"
 msgstr "Reîncercați"
 
-#: src/components/vm/snapshots/vmSnapshotsCard.tsx:197
 #: src/components/vm/snapshots/vmSnapshotsRevertModal.tsx:117
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:197
 msgid "Revert"
 msgstr "Revenire (la valorile dinainte)"
 
@@ -2497,7 +2492,7 @@ msgstr "Rețea direcționată"
 msgid "Row select"
 msgstr "Selectare rând"
 
-#: src/components/vm/vmActions.tsx:359
+#: src/components/vm/vmActions.tsx:355
 msgid "Run"
 msgstr "Rulează"
 
@@ -2536,18 +2531,18 @@ msgid "Satellite Communication Controller"
 msgstr "Controlor de comunicare prin satelit"
 
 #: src/components/vm/disks/diskEdit.tsx:238
-#: src/components/vm/overview/watchdog.tsx:167
-#: src/components/vm/overview/firmware.tsx:104
-#: src/components/vm/overview/memoryModal.tsx:192
-#: src/components/vm/overview/bootOrder.tsx:353
-#: src/components/vm/overview/vsock.tsx:223
 #: src/components/vm/nics/nicEdit.tsx:230
+#: src/components/vm/consoles/vnc.tsx:167
+#: src/components/vm/overview/firmware.tsx:104
+#: src/components/vm/overview/bootOrder.tsx:353
+#: src/components/vm/overview/memoryModal.tsx:192
+#: src/components/vm/overview/vsock.tsx:223
+#: src/components/vm/overview/watchdog.tsx:167
 #: src/components/vm/vmEditDescriptionDialog.tsx:78
-#: src/components/vm/consoles/vnc.tsx:155
 msgid "Save"
 msgstr "Salvează"
 
-#: src/components/vm/consoles/vnc.tsx:509
+#: src/components/vm/consoles/vnc.tsx:464
 msgid "Security failure"
 msgstr "Deficiență de securitate"
 
@@ -2555,15 +2550,15 @@ msgstr "Deficiență de securitate"
 msgid "Select all"
 msgstr "Selectează tot"
 
-#: src/components/vm/consoles/vnc.tsx:325
+#: src/components/vm/consoles/vnc.tsx:280
 msgid "Send key"
 msgstr "Trimite combinația de taste"
 
-#: src/components/vm/vmActions.tsx:295 src/components/vm/vmActions.tsx:300
+#: src/components/vm/vmActions.tsx:291 src/components/vm/vmActions.tsx:296
 msgid "Send non-maskable interrupt"
 msgstr "Trimite o întrerupere care nu poate fi mascată"
 
-#: src/components/vm/vmActions.tsx:289
+#: src/components/vm/vmActions.tsx:285
 msgid "Send non-maskable interrupt to $0?"
 msgstr "Trimiteți o întrerupere care nu poate fi mascată la $0?"
 
@@ -2641,12 +2636,12 @@ msgstr "Afișează mai puțin"
 msgid "Show more"
 msgstr "Afișează mai mult"
 
-#: src/components/vm/vmActions.tsx:229 src/components/vm/vmActions.tsx:240
-#: src/components/vm/vmActions.tsx:255 src/components/vm/vmActions.tsx:260
+#: src/components/vm/vmActions.tsx:225 src/components/vm/vmActions.tsx:236
+#: src/components/vm/vmActions.tsx:251 src/components/vm/vmActions.tsx:256
 msgid "Shut down"
 msgstr "Oprire"
 
-#: src/components/vm/vmActions.tsx:222 src/components/vm/vmActions.tsx:248
+#: src/components/vm/vmActions.tsx:218 src/components/vm/vmActions.tsx:244
 msgid "Shut down $0?"
 msgstr "Opriți $0?"
 
@@ -2658,18 +2653,18 @@ msgstr "Oprește"
 msgid "Shut off the VM in order to edit firmware configuration"
 msgstr "Opriți mașina virtuală pentru a edita configurația firmware-ului"
 
-#: src/components/vm/vmActions.tsx:525
-#: src/components/vm/consoles/serial.tsx:190
-#: src/components/vm/consoles/vnc.tsx:695
 #: src/components/common/needsShutdown.tsx:278
+#: src/components/vm/vmActions.tsx:521
+#: src/components/vm/consoles/serial.tsx:190
+#: src/components/vm/consoles/vnc.tsx:650
 msgid "Shutdown and restart"
 msgstr "Oprire și repornire"
 
-#: src/components/vm/vmActions.tsx:518
+#: src/components/vm/vmActions.tsx:514
 msgid "Shutdown and restart $0?"
 msgstr "Opriți și reporniți $0?"
 
-#: src/helpers.ts:219 src/components/vm/snapshots/vmSnapshotsCard.tsx:147
+#: src/components/vm/snapshots/vmSnapshotsCard.tsx:147 src/helpers.ts:219
 msgid "Shutting down"
 msgstr "Oprirea"
 
@@ -2682,9 +2677,9 @@ msgid "Simple Communication Controller"
 msgstr "Controlor de comunicare simplă"
 
 #: src/components/vm/disks/vmDisksCard.tsx:160
+#: src/components/storagePools/storageVolumeCreateBody.tsx:120
 #: src/components/storagePools/storagePoolList.tsx:62
 #: src/components/storagePools/storagePoolVolumesTab.tsx:77
-#: src/components/storagePools/storageVolumeCreateBody.tsx:120
 msgid "Size"
 msgstr "Dimensiune"
 
@@ -2693,10 +2688,10 @@ msgid "Size must be a number"
 msgstr "Dimensiunea trebuie să fie un număr"
 
 #: src/components/vm/overview/bootOrder.tsx:158
+#: src/components/vm/hostdevs/hostDevAdd.tsx:112
 #: src/components/vm/hostdevs/hostDevCard.tsx:93
 #: src/components/vm/hostdevs/hostDevCard.tsx:100
 #: src/components/vm/hostdevs/hostDevCard.tsx:241
-#: src/components/vm/hostdevs/hostDevAdd.tsx:112
 msgid "Slot"
 msgstr "Slot"
 
@@ -2756,10 +2751,10 @@ msgstr "Sursa nu trebuie să fie goală"
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:41
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:58
 #: src/components/vm/filesystems/vmFilesystemsCard.tsx:201
-#: src/components/storagePools/storagePoolOverviewTab.tsx:30
-#: src/components/storagePools/storagePoolOverviewTab.tsx:35
 #: src/components/storagePools/createStoragePoolDialog.tsx:218
 #: src/components/storagePools/createStoragePoolDialog.tsx:235
+#: src/components/storagePools/storagePoolOverviewTab.tsx:30
+#: src/components/storagePools/storagePoolOverviewTab.tsx:35
 msgid "Source path"
 msgstr "Ruta sursei"
 
@@ -2777,7 +2772,7 @@ msgid "Source volume group"
 msgstr "Grupul de volume sursă"
 
 #: src/components/vm/consoles/serial.tsx:123
-#: src/components/vm/consoles/vnc.tsx:616
+#: src/components/vm/consoles/vnc.tsx:571
 #: src/components/networks/createNetworkDialog.tsx:305
 msgid "Start"
 msgstr "Pornire"
@@ -2792,7 +2787,7 @@ msgid "Start should not be empty"
 msgstr "Începutul intervalului nu trebuie să fie gol"
 
 #: src/components/vm/consoles/serial.tsx:116
-#: src/components/vm/consoles/vnc.tsx:609
+#: src/components/vm/consoles/vnc.tsx:564
 msgid "Start the virtual machine to access the console"
 msgstr "Porniți mașina virtuală pentru a accesa consola"
 
@@ -2809,12 +2804,12 @@ msgstr "Pornit"
 msgid "Startup"
 msgstr "Lansare"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:163
 #: src/components/vm/nics/vmNicsCard.tsx:586
-#: src/components/networks/networkList.tsx:63
+#: src/components/vm/overview/vmOverviewCard.tsx:163
 #: src/components/storagePools/storagePoolList.tsx:64
-#: src/components/vms/hostvmslist.tsx:266
-#: src/components/vms/hostvmslist.tsx:322
+#: src/components/vms/hostvmslist.tsx:259
+#: src/components/vms/hostvmslist.tsx:315
+#: src/components/networks/networkList.tsx:63
 msgid "State"
 msgstr "Stare"
 
@@ -2826,8 +2821,8 @@ msgstr "Intrări de gazdă statice"
 msgid "Static host from DHCP could not be removed"
 msgstr "Nu s-a putut elimina gazda statică din DHCP"
 
-#: src/components/vm/vmMigrateDialog.tsx:108
 #: src/components/create-vm-dialog/createVmDialog.tsx:1140
+#: src/components/vm/vmMigrateDialog.tsx:108
 msgid "Storage"
 msgstr "Stocare"
 
@@ -2839,11 +2834,11 @@ msgstr "Spațiul de stocare se află într-o locație partajată"
 msgid "Storage limit"
 msgstr "Limita de stocare"
 
-#: src/components/storagePools/storagePool.tsx:114
+#: src/components/storagePools/storagePool.tsx:113
 msgid "Storage pool $0 failed to get activated"
 msgstr "Grupul de stocare $0 nu a putut fi activat"
 
-#: src/components/storagePools/storagePool.tsx:133
+#: src/components/storagePools/storagePool.tsx:129
 msgid "Storage pool $0 failed to get deactivated"
 msgstr "Grupul de stocare $0 nu a putut fi dezactivat"
 
@@ -2876,7 +2871,7 @@ msgstr ""
 "Dimensiunea volumului de stocare nu trebuie să depășească capacitatea "
 "grupului de stocare ($0 $1)"
 
-#: src/components/storagePools/storagePool.tsx:65
+#: src/components/storagePools/storagePool.tsx:66
 msgid "Storage volumes"
 msgstr "Volumele de stocare"
 
@@ -2923,16 +2918,16 @@ msgstr "TPM"
 msgid "Table of selectable host devices"
 msgstr "Tabelul dispozitivelor gazdă selectabile"
 
-#: src/components/vm/disks/vmDiskColumns.tsx:173
 #: src/components/vm/disks/vmDisksCard.tsx:159
-#: src/components/vm/overview/bootOrder.tsx:164
+#: src/components/vm/disks/vmDiskColumns.tsx:173
 #: src/components/vm/nics/vmNicsCard.tsx:557
+#: src/components/vm/overview/bootOrder.tsx:164
 #: src/components/vm/hostdevs/hostDevCard.tsx:101
 msgid "Target"
 msgstr "Ținta"
 
-#: src/components/storagePools/storagePoolOverviewTab.tsx:50
 #: src/components/storagePools/createStoragePoolDialog.tsx:130
+#: src/components/storagePools/storagePoolOverviewTab.tsx:50
 msgid "Target path"
 msgstr "Ruta către țintă"
 
@@ -3035,7 +3030,7 @@ msgstr ""
 "Nu există surse pentru interfețele de rețea virtuale pe această mașină "
 "gazdă. Poate doriți să creați o rețea virtuală."
 
-#: src/components/vm/vmActions.tsx:466
+#: src/components/vm/vmActions.tsx:462
 msgid "This VM is transient. Shut it down if you wish to delete it."
 msgstr ""
 "Această mașină virtuală este tranzitorie. Opriți-o dacă doriți să o ștergeți."
@@ -3100,17 +3095,17 @@ msgstr ""
 msgid "Troubleshoot"
 msgstr "Soluționare probleme"
 
+#: src/components/vm/nics/vmNicsCard.tsx:780
 #: src/components/vm/overview/bootOrder.tsx:125
 #: src/components/vm/overview/bootOrder.tsx:139
 #: src/components/vm/overview/bootOrder.tsx:155
 #: src/components/vm/overview/bootOrder.tsx:162
 #: src/components/vm/overview/bootOrder.tsx:169
 #: src/components/vm/overview/bootOrder.tsx:175
-#: src/components/vm/nics/vmNicsCard.tsx:780
-#: src/components/vm/hostdevs/hostDevCard.tsx:177
 #: src/components/vm/hostdevs/hostDevAdd.tsx:43
-#: src/components/storagePools/storagePoolOverviewTab.tsx:65
+#: src/components/vm/hostdevs/hostDevCard.tsx:177
 #: src/components/storagePools/createStoragePoolDialog.tsx:102
+#: src/components/storagePools/storagePoolOverviewTab.tsx:65
 msgid "Type"
 msgstr "Tip"
 
@@ -3249,40 +3244,40 @@ msgstr "Mașina virtuală $0 există deja"
 msgid "VM $0 does not exist on $1 connection"
 msgstr "Mașina virtuală $0 nu există pe conexiunea $1"
 
-#: src/components/vm/vmActions.tsx:101
+#: src/components/vm/vmActions.tsx:97
 msgid "VM $0 failed to force reboot"
 msgstr "Repornirea forțată a mașinii virtuale $0 a eșuat"
 
-#: src/components/vm/vmActions.tsx:138
+#: src/components/vm/vmActions.tsx:134
 msgid "VM $0 failed to force shutdown"
 msgstr "Oprirea forțată a mașinii virtuale $0 a eșuat"
 
-#: src/components/vm/vmActions.tsx:82
+#: src/components/vm/vmActions.tsx:78
 msgid "VM $0 failed to get installed"
 msgstr "Instalarea mașinii virtuale $0 a eșuat"
 
-#: src/components/vm/vmActions.tsx:120
+#: src/components/vm/vmActions.tsx:116
 msgid "VM $0 failed to pause"
 msgstr "Punerea în pauză a mașinii virtuale $0 a eșuat"
 
-#: src/components/vm/vmActions.tsx:93
+#: src/components/vm/vmActions.tsx:89
 msgid "VM $0 failed to reboot"
 msgstr "Repornirea mașinii virtuale $0 a eșuat"
 
-#: src/components/vm/vmActions.tsx:128
+#: src/components/vm/vmActions.tsx:124
 msgid "VM $0 failed to resume"
 msgstr "Reluarea execuției mașinii virtuale $0 a eșuat"
 
-#: src/components/vm/vmActions.tsx:146
+#: src/components/vm/vmActions.tsx:142
 msgid "VM $0 failed to send NMI"
 msgstr ""
 "Mașina virtuală $0 nu a reușit să trimită NMI (noua interfață a mașinii)"
 
-#: src/components/vm/vmActions.tsx:112 src/components/vm/vmActions.tsx:512
+#: src/components/vm/vmActions.tsx:108 src/components/vm/vmActions.tsx:508
 msgid "VM $0 failed to shutdown"
 msgstr "Oprirea mașinii virtuale $0 a eșuat"
 
-#: src/components/vm/vmActions.tsx:73
+#: src/components/vm/vmActions.tsx:69
 msgid "VM $0 failed to start"
 msgstr "Pornirea mașinii virtuale $0 a eșuat"
 
@@ -3314,7 +3309,7 @@ msgstr "VNC"
 msgid "VNC settings could not be saved"
 msgstr "Parametrii de configurare ai VNC nu au putut fi salvați"
 
-#: src/components/vm/consoles/vnc.tsx:495
+#: src/components/vm/consoles/vnc.tsx:450
 msgid "VNC with TLS is not supported by the in-page viewer"
 msgstr ""
 "VNC cu TLS nu este acceptat de programul de vizualizare încorporat în pagină"
@@ -3325,10 +3320,10 @@ msgstr "Jeton valid"
 
 #: src/components/vm/overview/bootOrder.tsx:140
 #: src/components/vm/overview/bootOrder.tsx:156
+#: src/components/vm/hostdevs/hostDevAdd.tsx:151
 #: src/components/vm/hostdevs/hostDevCard.tsx:207
 #: src/components/vm/hostdevs/hostDevCard.tsx:239
 #: src/components/vm/hostdevs/hostDevCard.tsx:245
-#: src/components/vm/hostdevs/hostDevAdd.tsx:151
 msgid "Vendor"
 msgstr "Fabricant"
 
@@ -3337,10 +3332,10 @@ msgid "Vendor support ended $0"
 msgstr "Asistența oferită de fabricant a încetat $0"
 
 #: src/components/vm/vmDetailsPage.tsx:249
-#: src/components/networks/networkList.tsx:44
 #: src/components/storagePools/storagePoolList.tsx:46
-#: src/components/vms/hostvmslist.tsx:315
-#: src/components/vms/hostvmslist.tsx:317 src/manifest.json:0
+#: src/components/vms/hostvmslist.tsx:308
+#: src/components/vms/hostvmslist.tsx:310
+#: src/components/networks/networkList.tsx:44 src/manifest.json:0
 msgid "Virtual machines"
 msgstr "Mașini virtuale"
 
@@ -3370,12 +3365,12 @@ msgstr ""
 msgid "Virtualization service (libvirt) is not active"
 msgstr "Serviciul de virtualizare (libvirt) nu este activ"
 
-#: src/components/vm/deleteDialog.tsx:78
+#: src/components/create-vm-dialog/createVmDialog.tsx:1152
 #: src/components/vm/disks/diskAdd.tsx:327
 #: src/components/vm/disks/mediaEject.tsx:89
 #: src/components/vm/disks/vmDiskColumns.tsx:43
 #: src/components/vm/overview/bootOrder.tsx:109
-#: src/components/create-vm-dialog/createVmDialog.tsx:1152
+#: src/components/vm/deleteDialog.tsx:78
 msgid "Volume"
 msgstr "Volum"
 
@@ -3391,7 +3386,7 @@ msgstr "Numele grupului de volume"
 msgid "Volume group name should not be empty"
 msgstr "Numele grupului de volume nu trebuie să fie gol"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:212
+#: src/components/vm/overview/vmOverviewCard.tsx:210
 msgid "Vsock"
 msgstr "Vsock"
 
@@ -3400,8 +3395,8 @@ msgstr "Vsock"
 msgid "WWPN"
 msgstr "WWPN"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:198
 #: src/components/common/needsShutdown.tsx:210
+#: src/components/vm/overview/vmOverviewCard.tsx:196
 msgid "Watchdog"
 msgstr "Watchdog"
 
@@ -3419,8 +3414,8 @@ msgstr ""
 msgid "Wireless Controller"
 msgstr "controlor dispozitiv wireless"
 
-#: src/components/vm/disks/diskEdit.tsx:114
 #: src/components/vm/disks/vmDisksCard.tsx:249
+#: src/components/vm/disks/diskEdit.tsx:114
 msgid "Writeable"
 msgstr "Poate fi scris"
 
@@ -3432,13 +3427,13 @@ msgstr "Puteți monta dosarul partajat folosind:"
 msgid "You need to select the most closely matching operating system"
 msgstr "Trebuie să selectați sistemul de operare care corespunde cel mai bine"
 
-#: src/components/networks/network.tsx:53
-#: src/components/storagePools/storagePool.tsx:52
+#: src/components/storagePools/storagePool.tsx:53
+#: src/components/networks/network.tsx:54
 msgid "active"
 msgstr "activă"
 
-#: src/components/vm/overview/watchdog.tsx:265
 #: src/components/vm/overview/vsock.tsx:315
+#: src/components/vm/overview/watchdog.tsx:265
 msgid "add"
 msgstr "adaugă"
 
@@ -3458,7 +3453,7 @@ msgstr "punte"
 msgid "cdrom"
 msgstr "cdrom"
 
-#: src/helpers.ts:236 src/components/vm/overview/cpuModal.tsx:322
+#: src/components/vm/overview/cpuModal.tsx:322 src/helpers.ts:236
 msgid "custom"
 msgstr "personalizat"
 
@@ -3482,11 +3477,11 @@ msgstr "disc"
 msgid "down"
 msgstr "jos"
 
-#: src/components/vm/overview/watchdog.tsx:265
 #: src/components/vm/overview/bootOrder.tsx:387
 #: src/components/vm/overview/vsock.tsx:315
 #: src/components/vm/overview/vmOverviewCard.tsx:117
 #: src/components/vm/overview/vmOverviewCard.tsx:125
+#: src/components/vm/overview/watchdog.tsx:265
 msgid "edit"
 msgstr "editează"
 
@@ -3530,8 +3525,8 @@ msgstr "țintă iSCSI"
 msgid "iSCSI target IQN"
 msgstr "IQN țintă de iSCSI"
 
-#: src/components/networks/network.tsx:53
-#: src/components/storagePools/storagePool.tsx:52
+#: src/components/storagePools/storagePool.tsx:53
+#: src/components/networks/network.tsx:54
 msgid "inactive"
 msgstr "inactiv"
 
@@ -3564,9 +3559,9 @@ msgstr "etichetă montare: Eticheta asociată punctului de montare exportat"
 msgid "network"
 msgstr "rețea"
 
-#: src/helpers.ts:265 src/components/networks/networkOverviewTab.tsx:113
 #: src/components/storagePools/storagePoolOverviewTab.tsx:56
 #: src/components/storagePools/storagePoolOverviewTab.tsx:61
+#: src/components/networks/networkOverviewTab.tsx:113 src/helpers.ts:265
 msgid "no"
 msgstr "nu"
 
@@ -3574,9 +3569,9 @@ msgstr "nu"
 msgid "no state saved"
 msgstr "nu s-a salvat nicio stare"
 
-#: src/components/vm/overview/watchdog.tsx:261
-#: src/components/vm/overview/vsock.tsx:297
 #: src/components/vm/nics/vmNicsCard.tsx:288
+#: src/components/vm/overview/vsock.tsx:297
+#: src/components/vm/overview/watchdog.tsx:261
 #: src/components/networks/networkOverviewTab.tsx:314
 msgid "none"
 msgstr "niciunul"
@@ -3639,11 +3634,7 @@ msgstr "vCPU-uri"
 msgid "vhostuser"
 msgstr "vhostuser"
 
-#: src/components/common/stateIcon.tsx:64
-msgid "view more..."
-msgstr "vezi mai multe..."
-
-#: src/components/vm/vmActions.tsx:397
+#: src/components/vm/vmActions.tsx:393
 msgid ""
 "virt-install package needs to be installed on the system in order to clone "
 "VMs"
@@ -3670,7 +3661,7 @@ msgstr ""
 msgid "vm"
 msgstr "mașină virtuală"
 
-#: src/components/vm/overview/vmOverviewCard.tsx:216
+#: src/components/vm/overview/vmOverviewCard.tsx:214
 msgid "vsock requires special software"
 msgstr "vsock necesită un software special"
 
@@ -3678,11 +3669,20 @@ msgstr "vsock necesită un software special"
 msgid "waiting"
 msgstr "se așteaptă"
 
-#: src/helpers.ts:264 src/components/networks/networkOverviewTab.tsx:113
 #: src/components/storagePools/storagePoolOverviewTab.tsx:56
 #: src/components/storagePools/storagePoolOverviewTab.tsx:61
+#: src/components/networks/networkOverviewTab.tsx:113 src/helpers.ts:264
 msgid "yes"
 msgstr "da"
+
+#~ msgid "Close"
+#~ msgstr "Închide"
+
+#~ msgid "Failed"
+#~ msgstr "Nu a funcționat"
+
+#~ msgid "view more..."
+#~ msgstr "vezi mai multe..."
 
 #~ msgid "No storage pools available"
 #~ msgstr "Nu există grupuri de stocare disponibile"
